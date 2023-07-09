@@ -2636,33 +2636,34 @@ wb_add_numfmt <- function(
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
-#' @param extLst extension list something like `<extLst>...</extLst>`
+#' @param ext_lst extension list something like `<extLst>...</extLst>`
 #' @param hidden logical cell is hidden
 #' @param horizontal align content horizontal ('left', 'center', 'right')
 #' @param indent logical indent content
-#' @param justifyLastLine logical justify last line
+#' @param justify_last_line logical justify last line
 #' @param locked logical cell is locked
-#' @param pivotButton unknown
-#' @param quotePrefix unknown
-#' @param readingOrder reading order left to right
-#' @param relativeIndent relative indentation
-#' @param shrinkToFit logical shrink to fit
-#' @param textRotation degrees of text rotation
+#' @param pivot_button unknown
+#' @param quote_prefix unknown
+#' @param reading_order reading order left to right
+#' @param relative_indent relative indentation
+#' @param shrink_to_fit logical shrink to fit
+#' @param text_rotation degrees of text rotation
 #' @param vertical vertical alignment of content ('top', 'center', 'bottom')
-#' @param wrapText wrap text in cell
+#' @param wrap_text wrap text in cell
 # alignments
-#' @param applyAlignment logical apply alignment
-#' @param applyBorder logical apply border
-#' @param applyFill logical apply fill
-#' @param applyFont logical apply font
-#' @param applyNumberFormat logical apply number format
-#' @param applyProtection logical apply protection
+#' @param apply_alignment logical apply alignment
+#' @param apply_border logical apply border
+#' @param apply_fill logical apply fill
+#' @param apply_font logical apply font
+#' @param apply_number_format logical apply number format
+#' @param apply_protection logical apply protection
 # ids
-#' @param borderId border ID to apply
-#' @param fillId fill ID to apply
-#' @param fontId font ID to apply
-#' @param numFmtId number format ID to apply
-#' @param xfId xf ID to apply
+#' @param border_id border ID to apply
+#' @param fill_id fill ID to apply
+#' @param font_id font ID to apply
+#' @param num_fmt_id number format ID to apply
+#' @param xf_id xf ID to apply
+#' @param ... additional arguments
 #' @examples
 #'  wb <-
 #'    wb_workbook() %>%
@@ -2683,63 +2684,65 @@ wb_add_numfmt <- function(
 #' @export
 wb_add_cell_style <- function(
     wb,
-    sheet             = current_sheet(),
-    dims              = "A1",
-    applyAlignment    = NULL,
-    applyBorder       = NULL,
-    applyFill         = NULL,
-    applyFont         = NULL,
-    applyNumberFormat = NULL,
-    applyProtection   = NULL,
-    borderId          = NULL,
-    extLst            = NULL,
-    fillId            = NULL,
-    fontId            = NULL,
-    hidden            = NULL,
-    horizontal        = NULL,
-    indent            = NULL,
-    justifyLastLine   = NULL,
-    locked            = NULL,
-    numFmtId          = NULL,
-    pivotButton       = NULL,
-    quotePrefix       = NULL,
-    readingOrder      = NULL,
-    relativeIndent    = NULL,
-    shrinkToFit       = NULL,
-    textRotation      = NULL,
-    vertical          = NULL,
-    wrapText          = NULL,
-    xfId              = NULL
+    sheet               = current_sheet(),
+    dims                = "A1",
+    apply_alignment     = NULL,
+    apply_border        = NULL,
+    apply_fill          = NULL,
+    apply_font          = NULL,
+    apply_number_format = NULL,
+    apply_protection    = NULL,
+    border_id           = NULL,
+    ext_lst             = NULL,
+    fill_id             = NULL,
+    font_id             = NULL,
+    hidden              = NULL,
+    horizontal          = NULL,
+    indent              = NULL,
+    justify_last_line   = NULL,
+    locked              = NULL,
+    num_fmt_id          = NULL,
+    pivot_button        = NULL,
+    quote_prefix        = NULL,
+    reading_order       = NULL,
+    relative_indent     = NULL,
+    shrink_to_fit       = NULL,
+    text_rotation       = NULL,
+    vertical            = NULL,
+    wrap_text           = NULL,
+    xf_id               = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_cell_style(
-    sheet             = sheet,
-    dims              = dims,
-    applyAlignment    = applyAlignment,
-    applyBorder       = applyBorder,
-    applyFill         = applyFill,
-    applyFont         = applyFont,
-    applyNumberFormat = applyNumberFormat,
-    applyProtection   = applyProtection,
-    borderId          = borderId,
-    extLst            = extLst,
-    fillId            = fillId,
-    fontId            = fontId,
-    hidden            = hidden,
-    horizontal        = horizontal,
-    indent            = indent,
-    justifyLastLine   = justifyLastLine,
-    locked            = locked,
-    numFmtId          = numFmtId,
-    pivotButton       = pivotButton,
-    quotePrefix       = quotePrefix,
-    readingOrder      = readingOrder,
-    relativeIndent    = relativeIndent,
-    shrinkToFit       = shrinkToFit,
-    textRotation      = textRotation,
-    vertical          = vertical,
-    wrapText          = wrapText,
-    xfId              = xfId
+    sheet               = sheet,
+    dims                = dims,
+    apply_alignment     = apply_alignment,
+    apply_border        = apply_border,
+    apply_fill          = apply_fill,
+    apply_font          = apply_font,
+    apply_number_format = apply_number_format,
+    apply_protection    = apply_protection,
+    border_id           = border_id,
+    ext_lst             = ext_lst,
+    fill_id             = fill_id,
+    font_id             = font_id,
+    hidden              = hidden,
+    horizontal          = horizontal,
+    indent              = indent,
+    justify_last_line   = justify_last_line,
+    locked              = locked,
+    num_fmt_id          = num_fmt_id,
+    pivot_button        = pivot_button,
+    quote_prefix        = quote_prefix,
+    reading_order       = reading_order,
+    relative_indent     = relative_indent,
+    shrink_to_fit       = shrink_to_fit,
+    text_rotation       = text_rotation,
+    vertical            = vertical,
+    wrap_text           = wrap_text,
+    xfId                = xf_id,
+    ...                 = ...
   )
 }
 

@@ -8,31 +8,32 @@ wb_add_cell_style(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  applyAlignment = NULL,
-  applyBorder = NULL,
-  applyFill = NULL,
-  applyFont = NULL,
-  applyNumberFormat = NULL,
-  applyProtection = NULL,
-  borderId = NULL,
-  extLst = NULL,
-  fillId = NULL,
-  fontId = NULL,
+  apply_alignment = NULL,
+  apply_border = NULL,
+  apply_fill = NULL,
+  apply_font = NULL,
+  apply_number_format = NULL,
+  apply_protection = NULL,
+  border_id = NULL,
+  ext_lst = NULL,
+  fill_id = NULL,
+  font_id = NULL,
   hidden = NULL,
   horizontal = NULL,
   indent = NULL,
-  justifyLastLine = NULL,
+  justify_last_line = NULL,
   locked = NULL,
-  numFmtId = NULL,
-  pivotButton = NULL,
-  quotePrefix = NULL,
-  readingOrder = NULL,
-  relativeIndent = NULL,
-  shrinkToFit = NULL,
-  textRotation = NULL,
+  num_fmt_id = NULL,
+  pivot_button = NULL,
+  quote_prefix = NULL,
+  reading_order = NULL,
+  relative_indent = NULL,
+  shrink_to_fit = NULL,
+  text_rotation = NULL,
   vertical = NULL,
-  wrapText = NULL,
-  xfId = NULL
+  wrap_text = NULL,
+  xf_id = NULL,
+  ...
 )
 }
 \arguments{
@@ -42,25 +43,25 @@ wb_add_cell_style(
 
 \item{dims}{the cell range}
 
-\item{applyAlignment}{logical apply alignment}
+\item{apply_alignment}{logical apply alignment}
 
-\item{applyBorder}{logical apply border}
+\item{apply_border}{logical apply border}
 
-\item{applyFill}{logical apply fill}
+\item{apply_fill}{logical apply fill}
 
-\item{applyFont}{logical apply font}
+\item{apply_font}{logical apply font}
 
-\item{applyNumberFormat}{logical apply number format}
+\item{apply_number_format}{logical apply number format}
 
-\item{applyProtection}{logical apply protection}
+\item{apply_protection}{logical apply protection}
 
-\item{borderId}{border ID to apply}
+\item{border_id}{border ID to apply}
 
-\item{extLst}{extension list something like \verb{<extLst>...</extLst>}}
+\item{ext_lst}{extension list something like \verb{<extLst>...</extLst>}}
 
-\item{fillId}{fill ID to apply}
+\item{fill_id}{fill ID to apply}
 
-\item{fontId}{font ID to apply}
+\item{font_id}{font ID to apply}
 
 \item{hidden}{logical cell is hidden}
 
@@ -68,29 +69,31 @@ wb_add_cell_style(
 
 \item{indent}{logical indent content}
 
-\item{justifyLastLine}{logical justify last line}
+\item{justify_last_line}{logical justify last line}
 
 \item{locked}{logical cell is locked}
 
-\item{numFmtId}{number format ID to apply}
+\item{num_fmt_id}{number format ID to apply}
 
-\item{pivotButton}{unknown}
+\item{pivot_button}{unknown}
 
-\item{quotePrefix}{unknown}
+\item{quote_prefix}{unknown}
 
-\item{readingOrder}{reading order left to right}
+\item{reading_order}{reading order left to right}
 
-\item{relativeIndent}{relative indentation}
+\item{relative_indent}{relative indentation}
 
-\item{shrinkToFit}{logical shrink to fit}
+\item{shrink_to_fit}{logical shrink to fit}
 
-\item{textRotation}{degrees of text rotation}
+\item{text_rotation}{degrees of text rotation}
 
 \item{vertical}{vertical alignment of content ('top', 'center', 'bottom')}
 
-\item{wrapText}{wrap text in cell}
+\item{wrap_text}{wrap text in cell}
 
-\item{xfId}{xf ID to apply}
+\item{xf_id}{xf ID to apply}
+
+\item{...}{additional arguments}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly

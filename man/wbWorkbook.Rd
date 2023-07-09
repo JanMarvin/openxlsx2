@@ -2753,31 +2753,32 @@ provide simple cell style format function
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_cell_style(
   sheet = current_sheet(),
   dims = "A1",
-  applyAlignment = NULL,
-  applyBorder = NULL,
-  applyFill = NULL,
-  applyFont = NULL,
-  applyNumberFormat = NULL,
-  applyProtection = NULL,
-  borderId = NULL,
-  extLst = NULL,
-  fillId = NULL,
-  fontId = NULL,
+  apply_alignment = NULL,
+  apply_border = NULL,
+  apply_fill = NULL,
+  apply_font = NULL,
+  apply_number_format = NULL,
+  apply_protection = NULL,
+  border_id = NULL,
+  ext_lst = NULL,
+  fill_id = NULL,
+  font_id = NULL,
   hidden = NULL,
   horizontal = NULL,
   indent = NULL,
-  justifyLastLine = NULL,
+  justify_last_line = NULL,
   locked = NULL,
-  numFmtId = NULL,
-  pivotButton = NULL,
-  quotePrefix = NULL,
-  readingOrder = NULL,
-  relativeIndent = NULL,
-  shrinkToFit = NULL,
-  textRotation = NULL,
+  num_fmt_id = NULL,
+  pivot_button = NULL,
+  quote_prefix = NULL,
+  reading_order = NULL,
+  relative_indent = NULL,
+  shrink_to_fit = NULL,
+  text_rotation = NULL,
   vertical = NULL,
-  wrapText = NULL,
-  xfId = NULL
+  wrap_text = NULL,
+  xf_id = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2788,25 +2789,25 @@ provide simple cell style format function
 
 \item{\code{dims}}{the cell range}
 
-\item{\code{applyAlignment}}{logical apply alignment}
+\item{\code{apply_alignment}}{logical apply alignment}
 
-\item{\code{applyBorder}}{logical apply border}
+\item{\code{apply_border}}{logical apply border}
 
-\item{\code{applyFill}}{logical apply fill}
+\item{\code{apply_fill}}{logical apply fill}
 
-\item{\code{applyFont}}{logical apply font}
+\item{\code{apply_font}}{logical apply font}
 
-\item{\code{applyNumberFormat}}{logical apply number format}
+\item{\code{apply_number_format}}{logical apply number format}
 
-\item{\code{applyProtection}}{logical apply protection}
+\item{\code{apply_protection}}{logical apply protection}
 
-\item{\code{borderId}}{border ID to apply}
+\item{\code{border_id}}{border ID to apply}
 
-\item{\code{extLst}}{extension list something like \verb{<extLst>...</extLst>}}
+\item{\code{ext_lst}}{extension list something like \verb{<extLst>...</extLst>}}
 
-\item{\code{fillId}}{fill ID to apply}
+\item{\code{fill_id}}{fill ID to apply}
 
-\item{\code{fontId}}{font ID to apply}
+\item{\code{font_id}}{font ID to apply}
 
 \item{\code{hidden}}{logical cell is hidden}
 
@@ -2814,29 +2815,31 @@ provide simple cell style format function
 
 \item{\code{indent}}{logical indent content}
 
-\item{\code{justifyLastLine}}{logical justify last line}
+\item{\code{justify_last_line}}{logical justify last line}
 
 \item{\code{locked}}{logical cell is locked}
 
-\item{\code{numFmtId}}{number format ID to apply}
+\item{\code{num_fmt_id}}{number format ID to apply}
 
-\item{\code{pivotButton}}{unknown}
+\item{\code{pivot_button}}{unknown}
 
-\item{\code{quotePrefix}}{unknown}
+\item{\code{quote_prefix}}{unknown}
 
-\item{\code{readingOrder}}{reading order left to right}
+\item{\code{reading_order}}{reading order left to right}
 
-\item{\code{relativeIndent}}{relative indentation}
+\item{\code{relative_indent}}{relative indentation}
 
-\item{\code{shrinkToFit}}{logical shrink to fit}
+\item{\code{shrink_to_fit}}{logical shrink to fit}
 
-\item{\code{textRotation}}{degrees of text rotation}
+\item{\code{text_rotation}}{degrees of text rotation}
 
 \item{\code{vertical}}{vertical alignment of content ('top', 'center', 'bottom')}
 
-\item{\code{wrapText}}{wrap text in cell}
+\item{\code{wrap_text}}{wrap text in cell}
 
-\item{\code{xfId}}{xf ID to apply}
+\item{\code{xf_id}}{xf ID to apply}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
