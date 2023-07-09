@@ -2305,24 +2305,23 @@ add a named region
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
   sheet = current_sheet(),
   dims = "A1",
-  cols,
-  rows,
   name,
-  localSheet = FALSE,
+  local_sheet = FALSE,
   overwrite = FALSE,
   comment = NULL,
-  customMenu = NULL,
+  custom_menu = NULL,
   description = NULL,
   is_function = NULL,
-  functionGroupId = NULL,
+  function_group_id = NULL,
   help = NULL,
   hidden = NULL,
-  localName = NULL,
-  publishToServer = NULL,
-  statusBar = NULL,
-  vbProcedure = NULL,
-  workbookParameter = NULL,
-  xml = NULL
+  local_name = NULL,
+  publish_to_server = NULL,
+  status_bar = NULL,
+  vb_procedure = NULL,
+  workbook_parameter = NULL,
+  xml = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2333,41 +2332,39 @@ add a named region
 
 \item{\code{dims}}{dims}
 
-\item{\code{cols}}{cols}
-
-\item{\code{rows}}{rows}
-
 \item{\code{name}}{name}
 
-\item{\code{localSheet}}{localSheet}
+\item{\code{local_sheet}}{local_sheet}
 
 \item{\code{overwrite}}{overwrite}
 
 \item{\code{comment}}{comment}
 
-\item{\code{customMenu}}{customMenu}
+\item{\code{custom_menu}}{custom_menu}
 
 \item{\code{description}}{description}
 
 \item{\code{is_function}}{function}
 
-\item{\code{functionGroupId}}{function group id}
+\item{\code{function_group_id}}{function group id}
 
 \item{\code{help}}{help}
 
 \item{\code{hidden}}{hidden}
 
-\item{\code{localName}}{localName}
+\item{\code{local_name}}{localName}
 
-\item{\code{publishToServer}}{publish to server}
+\item{\code{publish_to_server}}{publish to server}
 
-\item{\code{statusBar}}{status bar}
+\item{\code{status_bar}}{status bar}
 
-\item{\code{vbProcedure}}{wbProcedure}
+\item{\code{vb_procedure}}{vb procedure}
 
-\item{\code{workbookParameter}}{workbookParameter}
+\item{\code{workbook_parameter}}{workbookParameter}
 
 \item{\code{xml}}{xml}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

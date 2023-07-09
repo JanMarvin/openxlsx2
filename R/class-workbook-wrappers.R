@@ -1603,24 +1603,23 @@ wb_set_order <- function(wb, sheets) {
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @param rows Numeric vector specifying rows to include in region
-#' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to FALSE
-#' @param localSheet If `TRUE` the named region will be local for this sheet
+#' @param local_sheet If `TRUE` the named region will be local for this sheet
 #' @param comment description text for named region
-#' @param customMenu customMenu (unknown xml feature)
+#' @param custom_menu customMenu (unknown xml feature)
 #' @param description description (unknown xml feature)
 #' @param is_function function (unknown xml feature)
-#' @param functionGroupId function group id (unknown xml feature)
+#' @param function_group_id function group id (unknown xml feature)
 #' @param help help (unknown xml feature)
 #' @param hidden hidden if the named region should be hidden
-#' @param localName localName (unknown xml feature)
-#' @param publishToServer publish to server (unknown xml feature)
-#' @param statusBar status bar (unknown xml feature)
-#' @param vbProcedure wbProcedure (unknown xml feature)
-#' @param workbookParameter workbookParameter (unknown xml feature)
+#' @param local_name localName (unknown xml feature)
+#' @param publish_to_server publish to server (unknown xml feature)
+#' @param status_bar status bar (unknown xml feature)
+#' @param vb_procedure wbProcedure (unknown xml feature)
+#' @param workbook_parameter workbookParameter (unknown xml feature)
 #' @param xml xml (unknown xml feature)
+#' @param ... additional arguments
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
 #' @examples
 #' ## create named regions
@@ -1666,47 +1665,45 @@ wb_add_named_region <- function(
   wb,
   sheet             = current_sheet(),
   dims              = "A1",
-  cols,
-  rows,
   name,
-  localSheet        = FALSE,
-  overwrite         = FALSE,
-  comment           = NULL,
-  customMenu        = NULL,
-  description       = NULL,
-  is_function       = NULL,
-  functionGroupId   = NULL,
-  help              = NULL,
-  hidden            = NULL,
-  localName         = NULL,
-  publishToServer   = NULL,
-  statusBar         = NULL,
-  vbProcedure       = NULL,
-  workbookParameter = NULL,
-  xml               = NULL
+  local_sheet        = FALSE,
+  overwrite          = FALSE,
+  comment            = NULL,
+  custom_menu        = NULL,
+  description        = NULL,
+  is_function        = NULL,
+  function_group_id  = NULL,
+  help               = NULL,
+  hidden             = NULL,
+  local_name         = NULL,
+  publish_to_server  = NULL,
+  status_bar         = NULL,
+  vb_procedure       = NULL,
+  workbook_parameter = NULL,
+  xml                = NULL,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_named_region(
-    sheet             = sheet,
-    dims              = dims,
-    cols              = cols,
-    rows              = rows,
-    name              = name,
-    localSheet        = localSheet,
-    overwrite         = overwrite,
-    comment           = comment,
-    customMenu        = customMenu,
-    description       = description,
-    is_function       = is_function,
-    functionGroupId   = functionGroupId,
-    help              = help,
-    hidden            = hidden,
-    localName         = localName,
-    publishToServer   = publishToServer,
-    statusBar         = statusBar,
-    vbProcedure       = vbProcedure,
-    workbookParameter = workbookParameter,
-    xml               = xml
+    sheet              = sheet,
+    dims               = dims,
+    name               = name,
+    local_sheet        = local_sheet,
+    overwrite          = overwrite,
+    comment            = comment,
+    custom_menu        = custom_menu,
+    description        = description,
+    is_function        = is_function,
+    function_group_id  = function_group_id,
+    help               = help,
+    hidden             = hidden,
+    local_name         = local_name,
+    publish_to_server  = publish_to_server,
+    status_bar         = status_bar,
+    vb_procedure       = vb_procedure,
+    workbook_parameter = workbook_parameter,
+    xml                = xml,
+    ...                = ...
   )
 }
 

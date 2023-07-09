@@ -5331,68 +5331,60 @@ wbWorkbook <- R6::R6Class(
     #' @description add a named region
     #' @param sheet sheet
     #' @param dims dims
-    #' @param cols cols
-    #' @param rows rows
     #' @param name name
-    #' @param localSheet localSheet
+    #' @param local_sheet local_sheet
     #' @param overwrite overwrite
     #' @param comment comment
-    #' @param customMenu customMenu
+    #' @param custom_menu custom_menu
     #' @param description description
     #' @param is_function function
-    #' @param functionGroupId function group id
+    #' @param function_group_id function group id
     #' @param help help
     #' @param hidden hidden
-    #' @param localName localName
-    #' @param publishToServer publish to server
-    #' @param statusBar status bar
-    #' @param vbProcedure wbProcedure
-    #' @param workbookParameter workbookParameter
+    #' @param local_name localName
+    #' @param publish_to_server publish to server
+    #' @param status_bar status bar
+    #' @param vb_procedure vb procedure
+    #' @param workbook_parameter workbookParameter
     #' @param xml xml
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_named_region = function(
       sheet = current_sheet(),
       dims = "A1",
-      cols,
-      rows,
       name,
-      localSheet        = FALSE,
-      overwrite         = FALSE,
-      comment           = NULL,
-      customMenu        = NULL,
-      description       = NULL,
-      is_function       = NULL,
-      functionGroupId   = NULL,
-      help              = NULL,
-      hidden            = NULL,
-      localName         = NULL,
-      publishToServer   = NULL,
-      statusBar         = NULL,
-      vbProcedure       = NULL,
-      workbookParameter = NULL,
-      xml               = NULL
+      local_sheet        = FALSE,
+      overwrite          = FALSE,
+      comment            = NULL,
+      custom_menu        = NULL,
+      description        = NULL,
+      is_function        = NULL,
+      function_group_id  = NULL,
+      help               = NULL,
+      hidden             = NULL,
+      local_name         = NULL,
+      publish_to_server  = NULL,
+      status_bar         = NULL,
+      vb_procedure       = NULL,
+      workbook_parameter = NULL,
+      xml                = NULL,
+      ...
     ) {
+
+      standardize_case_names(...)
+
       sheet <- private$get_sheet_index(sheet)
 
-      if (!missing(cols) && !missing(rows)) {
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
 
-        if (!is.numeric(rows)) {
-          stop("rows argument must be a numeric/integer vector")
-        }
-
-        if (!is.numeric(cols) && !is.character(cols)) {
-          stop("cols argument must be a character or numeric/integer vector")
-        }
-
-        # TODO not sure why this is here
-        cols <- round(cols)
-        rows <- round(rows)
-
+      if (!is.null(rows) && !is.null(cols)) {
+        .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dims(rows, cols)
       }
 
       localSheetId <- ""
-      if (localSheet) localSheetId <- as.character(sheet)
+      if (local_sheet) localSheetId <- as.character(sheet)
 
       ## check name doesn't already exist
       ## named region
@@ -5438,17 +5430,17 @@ wbWorkbook <- R6::R6Class(
         sheet              = self$sheet_names[sheet],
         localSheetId       = localSheetId,
         comment            = comment,
-        customMenu         = customMenu,
+        customMenu         = custom_menu,
         description        = description,
         is_function        = is_function,
-        functionGroupId    = functionGroupId,
+        functionGroupId    = function_group_id,
         help               = help,
         hidden             = hidden,
-        localName          = localName,
-        publishToServer    = publishToServer,
-        statusBar          = statusBar,
-        vbProcedure        = vbProcedure,
-        workbookParameter  = workbookParameter,
+        localName          = local_name,
+        publishToServer    = publish_to_server,
+        statusBar          = status_bar,
+        vbProcedure        = vb_procedure,
+        workbookParameter  = workbook_parameter,
         xml                = xml
       )
 

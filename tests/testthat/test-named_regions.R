@@ -10,8 +10,11 @@ test_that("Maintaining Named Regions on Load", {
   wb$add_named_region(
     sheet = 1,
     name = "iris",
-    rows = seq_len(nrow(iris) + 1),
-    cols = seq_len(ncol(iris))
+    dims = rowcol_to_dims(
+      seq_len(nrow(iris) + 1),
+      seq_len(ncol(iris)
+      )
+    )
   )
 
   ## using write_data 'name' argument
@@ -144,19 +147,25 @@ test_that("Missing rows in named regions", {
   wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
   delete_data(wb, sheet = 1, cols = 1:2, rows = c(6, 6))
 
-  wb$add_named_region(
-    sheet = 1,
-    name = "iris",
-    rows = 1:(5 + 1),
-    cols = 1:2
+  expect_warning(
+    wb$add_named_region(
+      sheet = 1,
+      name = "iris",
+      rows = 1:(5 + 1),
+      cols = 1:2
+    ),
+    "'cols/rows' is deprecated."
   )
 
-  wb$add_named_region(
-    sheet = 1,
-    name = "iris2",
-    rows = 1:(5 + 2),
-    cols = 1:2
-  )
+  expect_warning(
+    wb$add_named_region(
+      sheet = 1,
+      name = "iris2",
+      rows = 1:(5 + 2),
+      cols = 1:2
+    ),
+  "'cols/rows' is deprecated."
+)
 
   ## iris region is rows 1:6 & cols 1:2
   ## iris2 region is rows 1:7 & cols 1:2
@@ -220,15 +229,19 @@ test_that("Missing columns in named regions", {
   wb$add_named_region(
     sheet = 1,
     name = "iris",
-    rows = 1:5,
-    cols = 1:2
+    dims = rowcol_to_dims(
+      1:5,
+      1:2
+    )
   )
 
   wb$add_named_region(
     sheet = 1,
     name = "iris2",
-    rows = 1:5,
-    cols = 1:3
+    dims = rowcol_to_dims(
+      1:5,
+      1:3
+    )
   )
 
   ## iris region is rows 1:5 & cols 1:2
@@ -372,10 +385,10 @@ test_that("Overwrite and delete named regions", {
   # no overwrite
   expect_error(wb$add_data(1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris"))
 
-  expect_error(wb$add_named_region(1, name = "iris", rows = 1:5, cols = 1:2))
+  expect_error(wb$add_named_region(1, name = "iris", dims = rowcol_to_dims(1:5, 1:2)))
 
   # overwrite
-  wb$add_named_region(1, name = "iris", rows = 1:5, cols = 1:2, overwrite = TRUE)
+  wb$add_named_region(1, name = "iris", dims = "A1:B5", overwrite = TRUE)
 
   exp <- data.frame(
     name   = "iris",
@@ -396,7 +409,7 @@ test_that("Overwrite and delete named regions", {
   wb$remove_named_region(name = "iris")
   expect_false("iris" %in% wb_get_named_regions(wb)$name)
 
-  wb$add_named_region(1, name = "iris", rows = 1:5, cols = 1:2)
+  wb$add_named_region(1, name = "iris", dims = "A1:B5")
   expect_identical(wb_get_named_regions(wb), exp)
 
   # removing a worksheet removes the named region as well
@@ -416,8 +429,10 @@ test_that("load table", {
   wb$add_named_region(
     sheet = 2,
     name = "iris",
-    rows = seq_len(nrow(iris) + 1),
-    cols = seq_along(iris)
+    dims = rowcol_to_dims(
+      seq_len(nrow(iris) + 1),
+      seq_along(iris)
+    )
   )
 
   expect_equal(c("iris", "iris_tab"), wb_get_named_regions(wb, tables = TRUE)$name)
