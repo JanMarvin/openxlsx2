@@ -1789,20 +1789,20 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param cols Contiguous columns to apply conditional formatting to
-#' @param rows Contiguous rows to apply conditional formatting to
+#' @param dims A cell dimension ("A1" or "A1:B2")
 #' @param type One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list' (see examples)
 #' @param operator One of 'between', 'notBetween', 'equal',
 #'  'notEqual', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'
 #' @param value a vector of length 1 or 2 depending on operator (see examples)
-#' @param allowBlank logical
-#' @param showInputMsg logical
-#' @param showErrorMsg logical
-#' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
-#' @param errorTitle The error title
+#' @param allow_blank logical
+#' @param show_input_msg logical
+#' @param show_error_msg logical
+#' @param error_style The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+#' @param error_title The error title
 #' @param error The error text
-#' @param promptTitle The prompt title
+#' @param prompt_title The prompt title
 #' @param prompt The prompt text
+#' @param ... additional arguments
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1811,11 +1811,11 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data_table(1, x = iris[1:30, ])
 #' wb$add_data_validation(1,
-#'   col = 1:3, rows = 2:31, type = "whole",
+#'   dims = "A2:C31", type = "whole",
 #'   operator = "between", value = c(1, 9)
 #' )
 #' wb$add_data_validation(1,
-#'   col = 5, rows = 2:31, type = "textLength",
+#'   dims = "E2:E31", type = "textLength",
 #'   operator = "between", value = c(4, 6)
 #' )
 #'
@@ -1830,7 +1830,7 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
 #' wb$add_data_validation(2,
-#'   col = 2, rows = 2:12, type = "time",
+#'   dims = "B2:B12", type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
 #'
@@ -1846,40 +1846,39 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #' wb$add_data_table(sheet = 1, x = iris[1:30, ])
 #' wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
-#' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#' wb$add_data_validation(1, dims = "A2:A31", type = "list", value = "'Sheet 2'!$A$1:$A$10")
 wb_add_data_validation <- function(
     wb,
-    sheet = current_sheet(),
-    cols,
-    rows,
+    sheet          = current_sheet(),
+    dims           = "A1",
     type,
     operator,
     value,
-    allowBlank = TRUE,
-    showInputMsg = TRUE,
-    showErrorMsg = TRUE,
-    errorStyle = NULL,
-    errorTitle = NULL,
-    error = NULL,
-    promptTitle = NULL,
-    prompt = NULL
+    allow_blank    = TRUE,
+    show_input_msg = TRUE,
+    show_error_msg = TRUE,
+    error_style    = NULL,
+    error_title    = NULL,
+    error          = NULL,
+    prompt_title   = NULL,
+    prompt         = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_data_validation(
-    sheet        = sheet,
-    cols         = cols,
-    rows         = rows,
-    type         = type,
-    operator     = operator,
-    value        = value,
-    allowBlank   = allowBlank,
-    showInputMsg = showInputMsg,
-    showErrorMsg = showErrorMsg,
-    errorStyle   = errorStyle,
-    errorTitle   = errorTitle,
-    error        = error,
-    promptTitle  = promptTitle,
-    prompt       = prompt
+    sheet          = sheet,
+    type           = type,
+    operator       = operator,
+    value          = value,
+    allowBlank     = allow_blank,
+    show_input_msg = show_input_msg,
+    show_error_msg = show_error_msg,
+    error_style    = error_style,
+    error_title    = error_title,
+    error          = error,
+    prompt_title   = prompt_title,
+    prompt         = prompt,
+    ...            = ...
   )
 }
 
@@ -2555,7 +2554,7 @@ wb_add_fill <- function(
 #' @param scheme font scheme
 #' @param shadow shadow
 #' @param extend extend
-#' @param vertAlign vertical alignment
+#' @param vert_align vertical alignment
 #' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
@@ -2565,47 +2564,47 @@ wb_add_fill <- function(
 #' @export
 wb_add_font <- function(
       wb,
-      sheet     = current_sheet(),
-      dims      = "A1",
-      name      = "Calibri",
-      color     = wb_color(hex = "FF000000"),
-      size      = "11",
-      bold      = "",
-      italic    = "",
-      outline   = "",
-      strike    = "",
-      underline = "",
+      sheet      = current_sheet(),
+      dims       = "A1",
+      name       = "Calibri",
+      color      = wb_color(hex = "FF000000"),
+      size       = "11",
+      bold       = "",
+      italic     = "",
+      outline    = "",
+      strike     = "",
+      underline  = "",
       # fine tuning
-      charset   = "",
-      condense  = "",
-      extend    = "",
-      family    = "",
-      scheme    = "",
-      shadow    = "",
-      vertAlign = "",
+      charset    = "",
+      condense   = "",
+      extend     = "",
+      family     = "",
+      scheme     = "",
+      shadow     = "",
+      vert_align = "",
       ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
-    sheet     = sheet,
-    dims      = dims,
-    name      = name,
-    color     = color,
-    size      = size,
-    bold      = bold,
-    italic    = italic,
-    outline   = outline,
-    strike    = strike,
-    underline = underline,
+    sheet      = sheet,
+    dims       = dims,
+    name       = name,
+    color      = color,
+    size       = size,
+    bold       = bold,
+    italic     = italic,
+    outline    = outline,
+    strike     = strike,
+    underline  = underline,
     # fine tuning
-    charset   = charset,
-    condense  = condense,
-    extend    = extend,
-    family    = family,
-    scheme    = scheme,
-    shadow    = shadow,
-    vertAlign = vertAlign,
-    ...       = ...
+    charset    = charset,
+    condense   = condense,
+    extend     = extend,
+    family     = family,
+    scheme     = scheme,
+    shadow     = shadow,
+    vert_align = vert_align,
+    ...        = ...
   )
 }
 

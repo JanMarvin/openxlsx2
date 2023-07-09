@@ -3378,48 +3378,52 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Adds data validation
     #' @param sheet sheet
-    #' @param cols cols
-    #' @param rows rows
+    #' @param dims cell dimension
     #' @param type type
     #' @param operator operator
     #' @param value value
-    #' @param allowBlank allowBlank
-    #' @param showInputMsg showInputMsg
-    #' @param showErrorMsg showErrorMsg
-    #' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
-    #' @param errorTitle The error title
+    #' @param allow_blank allowBlank
+    #' @param show_input_msg showInputMsg
+    #' @param show_error_msg showErrorMsg
+    #' @param error_style The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+    #' @param error_title The error title
     #' @param error The error text
-    #' @param promptTitle The prompt title
+    #' @param prompt_title The prompt title
     #' @param prompt The prompt text
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_data_validation = function(
-      sheet = current_sheet(),
-      cols,
-      rows,
+      sheet          = current_sheet(),
+      dims           = "A1",
       type,
       operator,
       value,
-      allowBlank = TRUE,
-      showInputMsg = TRUE,
-      showErrorMsg = TRUE,
-      errorStyle = NULL,
-      errorTitle = NULL,
-      error = NULL,
-      promptTitle = NULL,
-      prompt = NULL
+      allow_blank    = TRUE,
+      show_input_msg = TRUE,
+      show_error_msg = TRUE,
+      error_style    = NULL,
+      error_title    = NULL,
+      error          = NULL,
+      prompt_title   = NULL,
+      prompt         = NULL,
+      ...
     ) {
 
       sheet <- private$get_sheet_index(sheet)
 
-      ## rows and cols
-      if (!is.numeric(cols)) {
-        cols <- col2int(cols)
-      }
-      rows <- as.integer(rows)
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
 
-      assert_class(allowBlank, "logical")
-      assert_class(showInputMsg, "logical")
-      assert_class(showErrorMsg, "logical")
+      if (!is.null(rows) && !is.null(cols)) {
+        .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      standardize(...)
+
+      assert_class(allow_blank, "logical")
+      assert_class(show_input_msg, "logical")
+      assert_class(show_error_msg, "logical")
 
       ## check length of value
       if (length(value) > 2) {
@@ -3477,23 +3481,10 @@ wbWorkbook <- R6::R6Class(
         stop("If type == 'time' value argument must be a POSIXct or POSIXlt vector.")
       }
 
-
       value <- head(value, 2)
-      allowBlank <- as.character(as.integer(allowBlank[1]))
-      showInputMsg <- as.character(as.integer(showInputMsg[1]))
-      showErrorMsg <- as.character(as.integer(showErrorMsg[1]))
 
       # prepare for worksheet
       origin <- get_date_origin(self, origin = TRUE)
-
-      sqref <- stri_join(
-        get_cell_refs(data.frame(
-          "x" = c(min(rows), max(rows)),
-          "y" = c(min(cols), max(cols))
-        )),
-        sep = " ",
-        collapse = ":"
-      )
 
       if (type == "list") {
         operator <- NULL
@@ -3503,16 +3494,16 @@ wbWorkbook <- R6::R6Class(
         type         = type,
         operator     = operator,
         value        = value,
-        allowBlank   = allowBlank,
-        showInputMsg = showInputMsg,
-        showErrorMsg = showErrorMsg,
-        errorStyle   = errorStyle,
-        errorTitle   = errorTitle,
+        allowBlank   = as_xml_attr(allow_blank),
+        showInputMsg = as_xml_attr(show_input_msg),
+        showErrorMsg = as_xml_attr(show_error_msg),
+        errorStyle   = error_style,
+        errorTitle   = error_title,
         error        = error,
-        promptTitle  = promptTitle,
+        promptTitle  = prompt_title,
         prompt       = prompt,
         origin       = origin,
-        sqref        = sqref
+        sqref        = dims
       )
 
       invisible(self)
@@ -6108,31 +6099,31 @@ wbWorkbook <- R6::R6Class(
     #' @param scheme font scheme
     #' @param shadow shadow
     #' @param extend extend
-    #' @param vertAlign vertical alignment
+    #' @param vert_align vertical alignment
     #' @param ... ...
     #' @examples
     #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
     #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
     #' @return The `wbWorksheetObject`, invisibly
     add_font = function(
-        sheet     = current_sheet(),
-        dims      = "A1",
-        name      = "Calibri",
-        color     = wb_color(hex = "FF000000"),
-        size      = "11",
-        bold      = "",
-        italic    = "",
-        outline   = "",
-        strike    = "",
-        underline = "",
+        sheet      = current_sheet(),
+        dims       = "A1",
+        name       = "Calibri",
+        color      = wb_color(hex = "FF000000"),
+        size       = "11",
+        bold       = "",
+        italic     = "",
+        outline    = "",
+        strike     = "",
+        underline  = "",
         # fine tuning
-        charset   = "",
-        condense  = "",
-        extend    = "",
-        family    = "",
-        scheme    = "",
-        shadow    = "",
-        vertAlign = "",
+        charset    = "",
+        condense   = "",
+        extend     = "",
+        family     = "",
+        scheme     = "",
+        shadow     = "",
+        vert_align = "",
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
@@ -6145,7 +6136,7 @@ wbWorkbook <- R6::R6Class(
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
 
-      standardize_color_names(...)
+      standardize(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -6165,7 +6156,7 @@ wbWorkbook <- R6::R6Class(
           strike = strike,
           sz = size,
           u = underline,
-          vertAlign = vertAlign
+          vertAlign = vert_align
         )
         self$styles_mgr$add(new_font, new_font)
 
