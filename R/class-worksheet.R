@@ -151,35 +151,40 @@ wbWorksheet <- R6::R6Class(
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
-    #' @param print_grid_lines printGridLines
+    #' @param grid_lines printGridLines
+    #' @param ... additional arguments
     #' @return a `wbWorksheet` object
     initialize = function(
-      tabColor   = NULL,
-      oddHeader   = NULL,
-      oddFooter   = NULL,
-      evenHeader  = NULL,
-      evenFooter  = NULL,
-      firstHeader = NULL,
-      firstFooter = NULL,
-      paperSize   = 9,
-      orientation = "portrait",
-      hdpi        = 300,
-      vdpi        = 300,
-      printGridLines = FALSE
+      tab_color    = NULL,
+      odd_header   = NULL,
+      odd_footer   = NULL,
+      even_header  = NULL,
+      even_footer  = NULL,
+      first_header = NULL,
+      first_footer = NULL,
+      paper_size   = 9,
+      orientation  = "portrait",
+      hdpi         = 300,
+      vdpi         = 300,
+      grid_lines   = FALSE,
+      ...
     ) {
-      if (!is.null(tabColor)) {
-        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColor)
+
+      standardize_case_names(...)
+
+      if (!is.null(tab_color)) {
+        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tab_color)
       } else {
         tabColor <- character()
       }
 
       hf <- list(
-        oddHeader   = na_to_null(oddHeader),
-        oddFooter   = na_to_null(oddFooter),
-        evenHeader  = na_to_null(evenHeader),
-        evenFooter  = na_to_null(evenFooter),
-        firstHeader = na_to_null(firstHeader),
-        firstFooter = na_to_null(firstFooter)
+        oddHeader   = na_to_null(odd_header),
+        oddFooter   = na_to_null(odd_footer),
+        evenHeader  = na_to_null(even_header),
+        evenFooter  = na_to_null(even_footer),
+        firstHeader = na_to_null(first_header),
+        firstFooter = na_to_null(first_footer)
       )
 
       if (all(lengths(hf) == 0)) {
@@ -187,8 +192,8 @@ wbWorksheet <- R6::R6Class(
       }
 
       # only add if printGridLines not TRUE. The openxml default is TRUE
-      if (printGridLines) {
-       self$set_print_options(gridLines = printGridLines, gridLinesSet = printGridLines)
+      if (grid_lines) {
+       self$set_print_options(gridLines = grid_lines, gridLinesSet = grid_lines)
       }
 
       ## list of all possible children
@@ -203,7 +208,7 @@ wbWorksheet <- R6::R6Class(
       self$dataValidations       <- NULL
       self$hyperlinks            <- list()
       self$pageMargins           <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
-      self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s"/>', paperSize, orientation, hdpi, vdpi)
+      self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s"/>', paper_size, orientation, hdpi, vdpi)
       self$headerFooter          <- hf
       self$rowBreaks             <- character()
       self$colBreaks             <- character()

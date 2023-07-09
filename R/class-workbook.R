@@ -679,18 +679,18 @@ wbWorkbook <- R6::R6Class(
       ## append to worksheets list
       self$append("worksheets",
         wbWorksheet$new(
-          tabColor       = tab_color,
-          oddHeader      = odd_header,
-          oddFooter      = odd_footer,
-          evenHeader     = even_header,
-          evenFooter     = even_footer,
-          firstHeader    = first_header,
-          firstFooter    = first_footer,
-          paperSize      = paper_size,
-          orientation    = orientation,
-          hdpi           = hdpi,
-          vdpi           = vdpi,
-          printGridLines = grid_lines
+          tab_color    = tab_color,
+          odd_header   = odd_header,
+          odd_footer   = odd_footer,
+          even_header  = even_header,
+          even_footer  = even_footer,
+          first_header = first_header,
+          first_footer = first_footer,
+          paper_size   = paper_size,
+          orientation  = orientation,
+          hdpi         = hdpi,
+          vdpi         = vdpi,
+          grid_lines   = grid_lines
         )
       )
 

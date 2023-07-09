@@ -130,30 +130,25 @@ A Worksheet
 Creates a new \code{wbWorksheet} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$new(
-  tabColor = NULL,
-  oddHeader = NULL,
-  oddFooter = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL,
-  paperSize = 9,
+  tab_color = NULL,
+  odd_header = NULL,
+  odd_footer = NULL,
+  even_header = NULL,
+  even_footer = NULL,
+  first_header = NULL,
+  first_footer = NULL,
+  paper_size = 9,
   orientation = "portrait",
   hdpi = 300,
   vdpi = 300,
-  printGridLines = FALSE
+  grid_lines = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{orientation}}{orientation}
-
-\item{\code{hdpi}}{hdpi}
-
-\item{\code{vdpi}}{vdpi}
-
 \item{\code{tab_color}}{tabColor}
 
 \item{\code{odd_header}}{oddHeader}
@@ -170,7 +165,15 @@ Creates a new \code{wbWorksheet} object
 
 \item{\code{paper_size}}{paperSize}
 
-\item{\code{print_grid_lines}}{printGridLines}
+\item{\code{orientation}}{orientation}
+
+\item{\code{hdpi}}{hdpi}
+
+\item{\code{vdpi}}{vdpi}
+
+\item{\code{grid_lines}}{printGridLines}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
