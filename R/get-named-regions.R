@@ -59,38 +59,6 @@ wb_get_named_regions_tab <- function(wb) {
 #' Workbook object
 #' @param x An xlsx file or Workbook object
 #' @param tables add tables too
-#' @seealso [wb_add_named_region()] [wb_remove_named_region()]
-#' @examples
-#' ## create named regions
-#' wb <- wb_workbook()
-#' wb$add_worksheet("Sheet 1")
-#'
-#' ## specify region
-#' wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
-#' wb$add_named_region(
-#'   sheet = 1,
-#'   name = "iris",
-#'   rows = seq_len(nrow(iris) + 1),
-#'   cols = seq_along(iris)
-#' )
-#'
-#'
-#' ## using write_data 'name' argument to create a named region
-#' wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
-#'
-#' out_file <- temp_xlsx()
-#' wb$save(out_file, overwrite = TRUE)
-#'
-#' ## see named regions
-#' wb_get_named_regions(wb) ## From Workbook object
-#' wb_get_named_regions(out_file) ## From xlsx file
-#'
-#' ## read named regions
-#' df <- read_xlsx(wb, namedRegion = "iris")
-#' head(df)
-#'
-#' df <- read_xlsx(out_file, namedRegion = "iris2")
-#' head(df)
 #' @name named_region
 NULL
 

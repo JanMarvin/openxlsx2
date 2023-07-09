@@ -1631,8 +1631,10 @@ wb_set_order <- function(wb, sheets) {
 #' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
-#'   rows = seq_len(nrow(iris) + 1),
-#'   cols = seq_along(iris)
+#'   dims = rowcol_to_dims(
+#'     row = seq_len(nrow(iris) + 1),
+#'     col = seq_along(iris)
+#'   )
 #' )
 #'
 #'
