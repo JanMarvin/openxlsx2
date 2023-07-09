@@ -3053,15 +3053,16 @@ Ignore error on worksheet
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_ignore_error(
   sheet = current_sheet(),
   dims = "A1",
-  calculatedColumn = FALSE,
-  emptyCellReference = FALSE,
-  evalError = FALSE,
+  calculated_column = FALSE,
+  empty_cell_reference = FALSE,
+  eval_error = FALSE,
   formula = FALSE,
-  formulaRange = FALSE,
-  listDataValidation = FALSE,
-  numberStoredAsText = FALSE,
-  twoDigitTextYear = FALSE,
-  unlockedFormula = FALSE
+  formula_range = FALSE,
+  list_data_validation = FALSE,
+  number_stored_as_text = FALSE,
+  two_digit_text_year = FALSE,
+  unlocked_formula = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -3072,23 +3073,25 @@ Ignore error on worksheet
 
 \item{\code{dims}}{dims}
 
-\item{\code{calculatedColumn}}{calculatedColumn}
+\item{\code{calculated_column}}{calculatedColumn}
 
-\item{\code{emptyCellReference}}{emptyCellReference}
+\item{\code{empty_cell_reference}}{emptyCellReference}
 
-\item{\code{evalError}}{evalError}
+\item{\code{eval_error}}{evalError}
 
 \item{\code{formula}}{formula}
 
-\item{\code{formulaRange}}{formulaRange}
+\item{\code{formula_range}}{formulaRange}
 
-\item{\code{listDataValidation}}{listDataValidation}
+\item{\code{list_data_validation}}{listDataValidation}
 
-\item{\code{numberStoredAsText}}{numberStoredAsText}
+\item{\code{number_stored_as_text}}{numberStoredAsText}
 
-\item{\code{twoDigitTextYear}}{twoDigitTextYear}
+\item{\code{two_digit_text_year}}{twoDigitTextYear}
 
-\item{\code{unlockedFormula}}{unlockedFormula}
+\item{\code{unlocked_formula}}{unlockedFormula}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

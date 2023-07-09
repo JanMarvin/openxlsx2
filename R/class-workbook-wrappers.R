@@ -3086,42 +3086,45 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
 #' @param wb workbook
 #' @param sheet sheet
 #' @param dims dims
-#' @param calculatedColumn calculatedColumn
-#' @param emptyCellReference emptyCellReference
-#' @param evalError evalError
+#' @param calculated_column calculatedColumn
+#' @param empty_cell_reference emptyCellReference
+#' @param eval_error evalError
 #' @param formula formula
-#' @param formulaRange formulaRange
-#' @param listDataValidation listDataValidation
-#' @param numberStoredAsText numberStoredAsText
-#' @param twoDigitTextYear twoDigitTextYear
-#' @param unlockedFormula unlockedFormula
+#' @param formula_range formulaRange
+#' @param list_data_validation listDataValidation
+#' @param number_stored_as_text numberStoredAsText
+#' @param two_digit_text_year twoDigitTextYear
+#' @param unlocked_formula unlockedFormula
+#' @param ... additional arguments
 wb_add_ignore_error <- function(
     wb,
-    sheet              = current_sheet(),
-    dims               = "A1",
-    calculatedColumn   = FALSE,
-    emptyCellReference = FALSE,
-    evalError          = FALSE,
-    formula            = FALSE,
-    formulaRange       = FALSE,
-    listDataValidation = FALSE,
-    numberStoredAsText = FALSE,
-    twoDigitTextYear   = FALSE,
-    unlockedFormula    = FALSE
+    sheet                 = current_sheet(),
+    dims                  = "A1",
+    calculated_column     = FALSE,
+    empty_cell_reference  = FALSE,
+    eval_error            = FALSE,
+    formula               = FALSE,
+    formula_range         = FALSE,
+    list_data_validation  = FALSE,
+    number_stored_as_text = FALSE,
+    two_digit_text_year   = FALSE,
+    unlocked_formula      = FALSE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_ignore_error(
-    sheet              = sheet,
-    dims               = dims,
-    calculatedColumn   = calculatedColumn,
-    emptyCellReference = emptyCellReference,
-    evalError          = evalError,
-    formula            = formula,
-    formulaRange       = formulaRange,
-    listDataValidation = listDataValidation,
-    numberStoredAsText = numberStoredAsText,
-    twoDigitTextYear   = twoDigitTextYear,
-    unlockedFormula    = unlockedFormula
+    sheet                 = sheet,
+    dims                  = dims,
+    calculated_column     = calculated_column,
+    empty_cell_reference  = empty_cell_reference,
+    eval_error            = eval_error,
+    formula               = formula,
+    formula_range         = formula_range,
+    list_data_validation  = list_data_validation,
+    number_stored_as_text = number_stored_as_text,
+    two_digit_text_year   = two_digit_text_year,
+    unlocked_formula      = unlocked_formula,
+    ...                   = ...
     )
 }
 

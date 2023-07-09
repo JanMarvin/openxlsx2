@@ -6593,40 +6593,43 @@ wbWorkbook <- R6::R6Class(
     #' @description Ignore error on worksheet
     #' @param sheet sheet
     #' @param dims dims
-    #' @param calculatedColumn calculatedColumn
-    #' @param emptyCellReference emptyCellReference
-    #' @param evalError evalError
+    #' @param calculated_column calculatedColumn
+    #' @param empty_cell_reference emptyCellReference
+    #' @param eval_error evalError
     #' @param formula formula
-    #' @param formulaRange formulaRange
-    #' @param listDataValidation listDataValidation
-    #' @param numberStoredAsText numberStoredAsText
-    #' @param twoDigitTextYear twoDigitTextYear
-    #' @param unlockedFormula unlockedFormula
+    #' @param formula_range formulaRange
+    #' @param list_data_validation listDataValidation
+    #' @param number_stored_as_text numberStoredAsText
+    #' @param two_digit_text_year twoDigitTextYear
+    #' @param unlocked_formula unlockedFormula
+    #' @param ... additional arguments
     add_ignore_error = function(
-      sheet              = current_sheet(),
-      dims               = "A1",
-      calculatedColumn   = FALSE,
-      emptyCellReference = FALSE,
-      evalError          = FALSE,
-      formula            = FALSE,
-      formulaRange       = FALSE,
-      listDataValidation = FALSE,
-      numberStoredAsText = FALSE,
-      twoDigitTextYear   = FALSE,
-      unlockedFormula    = FALSE
+      sheet                 = current_sheet(),
+      dims                  = "A1",
+      calculated_column     = FALSE,
+      empty_cell_reference  = FALSE,
+      eval_error            = FALSE,
+      formula               = FALSE,
+      formula_range         = FALSE,
+      list_data_validation  = FALSE,
+      number_stored_as_text = FALSE,
+      two_digit_text_year   = FALSE,
+      unlocked_formula      = FALSE,
+      ...
     ) {
+      standardize_case_names(...)
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$ignore_error(
         dims               = dims,
-        calculatedColumn   = calculatedColumn,
-        emptyCellReference = emptyCellReference,
-        evalError          = evalError,
+        calculatedColumn   = calculated_column,
+        emptyCellReference = empty_cell_reference,
+        evalError          = eval_error,
         formula            = formula,
-        formulaRange       = formulaRange,
-        listDataValidation = listDataValidation,
-        numberStoredAsText = numberStoredAsText,
-        twoDigitTextYear   = twoDigitTextYear,
-        unlockedFormula    = unlockedFormula
+        formulaRange       = formula_range,
+        listDataValidation = list_data_validation,
+        numberStoredAsText = number_stored_as_text,
+        twoDigitTextYear   = two_digit_text_year,
+        unlockedFormula    = unlocked_formula
       )
     },
 
