@@ -79,8 +79,8 @@ import_styles <- function(x) {
 #' @description
 #' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
 #' Border colors are of the following type: c(rgb="FF000000")
-#' @param diagonalDown x
-#' @param diagonalUp x
+#' @param diagonal_down x
+#' @param diagonal_up x
 #' @param outline x
 #' @param bottom X
 #' @param bottom_color X
@@ -100,8 +100,8 @@ import_styles <- function(x) {
 #'
 #' @export
 create_border <- function(
-    diagonalDown   = "",
-    diagonalUp     = "",
+    diagonal_down  = "",
+    diagonal_up    = "",
     outline        = "",
     bottom         = NULL,
     bottom_color   = NULL,
@@ -120,7 +120,7 @@ create_border <- function(
     ...
 ) {
 
-  standardize_color_names(...)
+  standardize(...)
 
   if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
   if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
@@ -154,8 +154,8 @@ create_border <- function(
     right            = right,
     top              = top,
     bottom           = bottom,
-    diagonalDown     = diagonalDown,
-    diagonalUp       = diagonalUp,
+    diagonalDown     = diagonal_down,
+    diagonalUp       = diagonal_up,
     diagonal         = diagonal,
     vertical         = vertical,
     horizontal       = horizontal,
