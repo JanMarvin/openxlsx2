@@ -5149,20 +5149,25 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param header header
     #' @param footer footer
-    #' @param evenHeader evenHeader
-    #' @param evenFooter evenFooter
-    #' @param firstHeader firstHeader
-    #' @param firstFooter firstFooter
+    #' @param even_header evenHeader
+    #' @param even_footer evenFooter
+    #' @param first_header firstHeader
+    #' @param first_footer firstFooter
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     set_header_footer = function(
       sheet = current_sheet(),
-      header      = NULL,
-      footer      = NULL,
-      evenHeader  = NULL,
-      evenFooter  = NULL,
-      firstHeader = NULL,
-      firstFooter = NULL
+      header       = NULL,
+      footer       = NULL,
+      even_header  = NULL,
+      even_footer  = NULL,
+      first_header = NULL,
+      first_footer = NULL,
+      ...
     ) {
+
+      standardize_case_names(...)
+
       sheet <- private$get_sheet_index(sheet)
 
       if (!is.null(header) && length(header) != 3) {
@@ -5173,29 +5178,29 @@ wbWorkbook <- R6::R6Class(
         stop("footer must have length 3 where elements correspond to positions: left, center, right.")
       }
 
-      if (!is.null(evenHeader) && length(evenHeader) != 3) {
+      if (!is.null(even_header) && length(even_header) != 3) {
         stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
       }
 
-      if (!is.null(evenFooter) && length(evenFooter) != 3) {
+      if (!is.null(even_footer) && length(even_footer) != 3) {
         stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
       }
 
-      if (!is.null(firstHeader) && length(firstHeader) != 3) {
+      if (!is.null(first_header) && length(first_header) != 3) {
         stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
       }
 
-      if (!is.null(firstFooter) && length(firstFooter) != 3) {
+      if (!is.null(first_footer) && length(first_footer) != 3) {
         stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
       }
 
       # TODO this could probably be moved to the hf assignment
       oddHeader   <- headerFooterSub(header)
       oddFooter   <- headerFooterSub(footer)
-      evenHeader  <- headerFooterSub(evenHeader)
-      evenFooter  <- headerFooterSub(evenFooter)
-      firstHeader <- headerFooterSub(firstHeader)
-      firstFooter <- headerFooterSub(firstFooter)
+      evenHeader  <- headerFooterSub(even_header)
+      evenFooter  <- headerFooterSub(even_footer)
+      firstHeader <- headerFooterSub(first_header)
+      firstFooter <- headerFooterSub(first_footer)
 
       hf <- list(
         oddHeader = naToNULLList(oddHeader),

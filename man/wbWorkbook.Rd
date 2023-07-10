@@ -2181,10 +2181,11 @@ Sets headers and footers
   sheet = current_sheet(),
   header = NULL,
   footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL
+  even_header = NULL,
+  even_footer = NULL,
+  first_header = NULL,
+  first_footer = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2197,13 +2198,15 @@ Sets headers and footers
 
 \item{\code{footer}}{footer}
 
-\item{\code{evenHeader}}{evenHeader}
+\item{\code{even_header}}{evenHeader}
 
-\item{\code{evenFooter}}{evenFooter}
+\item{\code{even_footer}}{evenFooter}
 
-\item{\code{firstHeader}}{firstHeader}
+\item{\code{first_header}}{firstHeader}
 
-\item{\code{firstFooter}}{firstFooter}
+\item{\code{first_footer}}{firstFooter}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

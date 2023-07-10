@@ -1171,10 +1171,11 @@ wb_set_bookview <- function(
 #' @param sheet A name or index of a worksheet
 #' @param header document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
 #' @param footer document footer. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
-#' @param evenHeader document header for even pages.
-#' @param evenFooter document footer for even pages.
-#' @param firstHeader document header for first page only.
-#' @param firstFooter document footer for first page only.
+#' @param even_header document header for even pages.
+#' @param even_footer document footer for even pages.
+#' @param first_header document header for first page only.
+#' @param first_footer document footer for first page only.
+#' @param ... additional arguments
 #' @details Headers and footers can contain special tags
 #' \itemize{
 #'   \item{**&\[Page\]**}{ Page number}
@@ -1231,23 +1232,25 @@ wb_set_bookview <- function(
 #' )
 wb_set_header_footer <- function(
     wb,
-    sheet       = current_sheet(),
-    header      = NULL,
-    footer      = NULL,
-    evenHeader  = NULL,
-    evenFooter  = NULL,
-    firstHeader = NULL,
-    firstFooter = NULL
+    sheet        = current_sheet(),
+    header       = NULL,
+    footer       = NULL,
+    even_header  = NULL,
+    even_footer  = NULL,
+    first_header = NULL,
+    first_footer = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_header_footer(
-    sheet       = sheet,
-    header      = header,
-    footer      = footer,
-    evenHeader  = evenHeader,
-    evenFooter  = evenFooter,
-    firstHeader = firstHeader,
-    firstFooter = firstFooter
+    sheet        = sheet,
+    header       = header,
+    footer       = footer,
+    even_header  = even_header,
+    even_footer  = even_footer,
+    first_header = first_header,
+    first_footer = first_footer,
+    ...          = ...
   )
 }
 
