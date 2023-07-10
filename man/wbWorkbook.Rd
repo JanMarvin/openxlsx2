@@ -1147,50 +1147,53 @@ The \code{wbWorkbook} object
 Set the book views
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_bookview(
-  activeTab = NULL,
-  autoFilterDateGrouping = NULL,
-  firstSheet = NULL,
+  active_tab = NULL,
+  auto_filter_date_grouping = NULL,
+  first_sheet = NULL,
   minimized = NULL,
-  showHorizontalScroll = NULL,
-  showSheetTabs = NULL,
-  showVerticalScroll = NULL,
-  tabRatio = NULL,
+  show_horizontal_scroll = NULL,
+  show_sheet_tabs = NULL,
+  show_vertical_scroll = NULL,
+  tab_ratio = NULL,
   visibility = NULL,
-  windowHeight = NULL,
-  windowWidth = NULL,
-  xWindow = NULL,
-  yWindow = NULL
+  window_height = NULL,
+  window_width = NULL,
+  x_window = NULL,
+  y_window = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{activeTab}}{activeTab}
+\item{\code{active_tab}}{activeTab}
 
-\item{\code{autoFilterDateGrouping}}{autoFilterDateGrouping}
+\item{\code{auto_filter_date_grouping}}{autoFilterDateGrouping}
 
-\item{\code{firstSheet}}{firstSheet}
+\item{\code{first_sheet}}{firstSheet}
 
 \item{\code{minimized}}{minimized}
 
-\item{\code{showHorizontalScroll}}{showHorizontalScroll}
+\item{\code{show_horizontal_scroll}}{showHorizontalScroll}
 
-\item{\code{showSheetTabs}}{showSheetTabs}
+\item{\code{show_sheet_tabs}}{showSheetTabs}
 
-\item{\code{showVerticalScroll}}{showVerticalScroll}
+\item{\code{show_vertical_scroll}}{showVerticalScroll}
 
-\item{\code{tabRatio}}{tabRatio}
+\item{\code{tab_ratio}}{tabRatio}
 
 \item{\code{visibility}}{visibility}
 
-\item{\code{windowHeight}}{windowHeight}
+\item{\code{window_height}}{windowHeight}
 
-\item{\code{windowWidth}}{windowWidth}
+\item{\code{window_width}}{windowWidth}
 
-\item{\code{xWindow}}{xWindow}
+\item{\code{x_window}}{xWindow}
 
-\item{\code{yWindow}}{yWindow}
+\item{\code{y_window}}{yWindow}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

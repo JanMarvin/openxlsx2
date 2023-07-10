@@ -2584,35 +2584,39 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Set the book views
-    #' @param activeTab activeTab
-    #' @param autoFilterDateGrouping autoFilterDateGrouping
-    #' @param firstSheet firstSheet
+    #' @param active_tab activeTab
+    #' @param auto_filter_date_grouping autoFilterDateGrouping
+    #' @param first_sheet firstSheet
     #' @param minimized minimized
-    #' @param showHorizontalScroll showHorizontalScroll
-    #' @param showSheetTabs showSheetTabs
-    #' @param showVerticalScroll showVerticalScroll
-    #' @param tabRatio tabRatio
+    #' @param show_horizontal_scroll showHorizontalScroll
+    #' @param show_sheet_tabs showSheetTabs
+    #' @param show_vertical_scroll showVerticalScroll
+    #' @param tab_ratio tabRatio
     #' @param visibility visibility
-    #' @param windowHeight windowHeight
-    #' @param windowWidth windowWidth
-    #' @param xWindow xWindow
-    #' @param yWindow yWindow
+    #' @param window_height windowHeight
+    #' @param window_width windowWidth
+    #' @param x_window xWindow
+    #' @param y_window yWindow
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     set_bookview = function(
-      activeTab              = NULL,
-      autoFilterDateGrouping = NULL,
-      firstSheet             = NULL,
-      minimized              = NULL,
-      showHorizontalScroll   = NULL,
-      showSheetTabs          = NULL,
-      showVerticalScroll     = NULL,
-      tabRatio               = NULL,
-      visibility             = NULL,
-      windowHeight           = NULL,
-      windowWidth            = NULL,
-      xWindow                = NULL,
-      yWindow                = NULL
+      active_tab                = NULL,
+      auto_filter_date_grouping = NULL,
+      first_sheet               = NULL,
+      minimized                 = NULL,
+      show_horizontal_scroll    = NULL,
+      show_sheet_tabs           = NULL,
+      show_vertical_scroll      = NULL,
+      tab_ratio                 = NULL,
+      visibility                = NULL,
+      window_height             = NULL,
+      window_width              = NULL,
+      x_window                  = NULL,
+      y_window                  = NULL,
+      ...
     ) {
+
+      standardize_case_names(...)
 
       wbv <- self$workbook$bookViews
 
@@ -2625,19 +2629,19 @@ wbWorkbook <- R6::R6Class(
       wbv <- xml_attr_mod(
         wbv,
         xml_attributes = c(
-          activeTab              = as_xml_attr(activeTab),
-          autoFilterDateGrouping = as_xml_attr(autoFilterDateGrouping),
-          firstSheet             = as_xml_attr(firstSheet),
+          activeTab              = as_xml_attr(active_tab),
+          autoFilterDateGrouping = as_xml_attr(auto_filter_date_grouping),
+          firstSheet             = as_xml_attr(first_sheet),
           minimized              = as_xml_attr(minimized),
-          showHorizontalScroll   = as_xml_attr(showHorizontalScroll),
-          showSheetTabs          = as_xml_attr(showSheetTabs),
-          showVerticalScroll     = as_xml_attr(showVerticalScroll),
-          tabRatio               = as_xml_attr(tabRatio),
+          showHorizontalScroll   = as_xml_attr(show_horizontal_scroll),
+          showSheetTabs          = as_xml_attr(show_sheet_tabs),
+          showVerticalScroll     = as_xml_attr(show_vertical_scroll),
+          tabRatio               = as_xml_attr(tab_ratio),
           visibility             = as_xml_attr(visibility),
-          windowHeight           = as_xml_attr(windowHeight),
-          windowWidth            = as_xml_attr(windowWidth),
-          xWindow                = as_xml_attr(xWindow),
-          yWindow                = as_xml_attr(yWindow)
+          windowHeight           = as_xml_attr(window_height),
+          windowWidth            = as_xml_attr(window_width),
+          xWindow                = as_xml_attr(x_window),
+          yWindow                = as_xml_attr(y_window)
         ),
         remove_empty_attr = FALSE
       )
@@ -7505,12 +7509,12 @@ wbWorkbook <- R6::R6Class(
 
       if (is.null(self$workbook$bookViews))
         self$set_bookview(
-          xWindow      = 0,
-          yWindow      = 0,
-          windowWidth  = 13125,
-          windowHeight = 13125,
-          firstSheet   = visible_sheet_index - 1L,
-          activeTab    = visible_sheet_index - 1L
+          x_window      = 0,
+          y_window      = 0,
+          window_width  = 13125,
+          window_height = 13125,
+          first_sheet   = visible_sheet_index - 1L,
+          active_tab    = visible_sheet_index - 1L
         )
 
       # Failsafe: hidden sheet can not be selected.

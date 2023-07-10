@@ -902,7 +902,7 @@ wb_set_active_sheet <- function(wb, sheet) {
   # active tab requires a c index
   assert_workbook(wb)
   sheet <- wb_validate_sheet(wb, sheet)
-  wb$clone()$set_bookview(activeTab = sheet - 1L)
+  wb$clone()$set_bookview(active_tab = sheet - 1L)
 }
 
 #' @name select_active_sheet

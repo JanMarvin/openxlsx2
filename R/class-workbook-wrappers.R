@@ -1111,52 +1111,55 @@ wb_get_base_font <- function(wb) {
 #'
 #' Get the base font used in the workbook.
 #' @param wb A [wbWorkbook] object
-#' @param activeTab activeTab
-#' @param autoFilterDateGrouping autoFilterDateGrouping
-#' @param firstSheet firstSheet
+#' @param active_tab activeTab
+#' @param auto_filter_date_grouping autoFilterDateGrouping
+#' @param first_sheet firstSheet
 #' @param minimized minimized
-#' @param showHorizontalScroll showHorizontalScroll
-#' @param showSheetTabs showSheetTabs
-#' @param showVerticalScroll showVerticalScroll
-#' @param tabRatio tabRatio
+#' @param show_horizontal_scroll showHorizontalScroll
+#' @param show_sheet_tabs showSheetTabs
+#' @param show_vertical_scroll showVerticalScroll
+#' @param tab_ratio tabRatio
 #' @param visibility visibility
-#' @param windowHeight windowHeight
-#' @param windowWidth windowWidth
-#' @param xWindow xWindow
-#' @param yWindow yWindow
+#' @param window_height windowHeight
+#' @param window_width windowWidth
+#' @param x_window xWindow
+#' @param y_window yWindow
+#' @param ... additional arguments
 #' @return The `wbWorkbook` object
 #' @export
 wb_set_bookview <- function(
     wb,
-    activeTab              = NULL,
-    autoFilterDateGrouping = NULL,
-    firstSheet             = NULL,
-    minimized              = NULL,
-    showHorizontalScroll   = NULL,
-    showSheetTabs          = NULL,
-    showVerticalScroll     = NULL,
-    tabRatio               = NULL,
-    visibility             = NULL,
-    windowHeight           = NULL,
-    windowWidth            = NULL,
-    xWindow                = NULL,
-    yWindow                = NULL
+    active_tab                = NULL,
+    auto_filter_date_grouping = NULL,
+    first_sheet               = NULL,
+    minimized                 = NULL,
+    show_horizontal_scroll    = NULL,
+    show_sheet_tabs           = NULL,
+    show_vertical_scroll      = NULL,
+    tab_ratio                 = NULL,
+    visibility                = NULL,
+    window_height             = NULL,
+    window_width              = NULL,
+    x_window                  = NULL,
+    y_window                  = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_bookview(
-    activeTab              = activeTab,
-    autoFilterDateGrouping = autoFilterDateGrouping,
-    firstSheet             = firstSheet,
-    minimized              = minimized,
-    showHorizontalScroll   = showHorizontalScroll,
-    showSheetTabs          = showSheetTabs,
-    showVerticalScroll     = showVerticalScroll,
-    tabRatio               = tabRatio,
-    visibility             = visibility,
-    windowHeight           = windowHeight,
-    windowWidth            = windowWidth,
-    xWindow                = xWindow,
-    yWindow                = yWindow
+    active_tab                = active_tab,
+    auto_filter_date_grouping = auto_filter_date_grouping,
+    first_sheet               = first_sheet,
+    minimized                 = minimized,
+    show_horizontal_scroll    = show_horizontal_scroll,
+    show_sheet_tabs           = show_sheet_tabs,
+    show_vertical_scroll      = show_vertical_scroll,
+    tab_ratio                 = tab_ratio,
+    visibility                = visibility,
+    window_height             = window_height,
+    window_width              = window_width,
+    x_window                  = x_window,
+    y_window                  = y_window,
+    ...                       = ...
   )
 }
 
