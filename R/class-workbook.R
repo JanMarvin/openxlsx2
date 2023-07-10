@@ -2563,16 +2563,21 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Get the base font
-    #' @param fontSize fontSize
-    #' @param fontColor fontColor
-    #' @param fontName fontName
+    #' @param font_size fontSize
+    #' @param font_color font_color
+    #' @param font_name font_name
     #' @param ... ...
     #' @return The `wbWorkbook` object
-    set_base_font = function(fontSize = 11, fontColor = wb_color(theme = "1"), fontName = "Calibri", ...) {
-      if (fontSize < 0) stop("Invalid fontSize")
-      standardize_color_names(...)
-      if (is.character(fontColor) && is.null(names(fontColor))) fontColor <- wb_color(fontColor)
-      self$styles_mgr$styles$fonts[[1]] <- create_font(sz = as.character(fontSize), color = fontColor, name = fontName)
+    set_base_font = function(
+      font_size  = 11,
+      font_color = wb_color(theme = "1"),
+      font_name  = "Calibri",
+       ...
+    ) {
+      standardize(...)
+      if (font_size < 0) stop("Invalid font_size")
+      if (!is_wbColour(font_color)) font_color <- wb_color(font_color)
+      self$styles_mgr$styles$fonts[[1]] <- create_font(sz = font_size, color = font_color, name = font_name)
     },
 
     ### book views ----

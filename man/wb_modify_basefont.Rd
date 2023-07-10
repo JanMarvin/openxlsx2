@@ -7,20 +7,20 @@
 \usage{
 wb_set_base_font(
   wb,
-  fontSize = 11,
-  fontColor = wb_color(theme = "1"),
-  fontName = "Calibri",
+  font_size = 11,
+  font_color = wb_color(theme = "1"),
+  font_name = "Calibri",
   ...
 )
 }
 \arguments{
 \item{wb}{A workbook object}
 
-\item{fontSize}{font size}
+\item{font_size}{font size}
 
-\item{fontColor}{font color}
+\item{font_color}{font color}
 
-\item{fontName}{Name of a font}
+\item{font_name}{Name of a font}
 
 \item{...}{...}
 }

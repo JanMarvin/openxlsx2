@@ -1050,9 +1050,9 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @title Modify the default font
 #' @description Modify the default font for this workbook
 #' @param wb A workbook object
-#' @param fontSize font size
-#' @param fontColor font color
-#' @param fontName Name of a font
+#' @param font_size font size
+#' @param font_color font color
+#' @param font_name Name of a font
 #' @param ... ...
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
@@ -1068,17 +1068,17 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
 wb_set_base_font <- function(
   wb,
-  fontSize  = 11,
-  fontColor = wb_color(theme = "1"),
-  fontName  = "Calibri",
+  font_size  = 11,
+  font_color = wb_color(theme = "1"),
+  font_name  = "Calibri",
   ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
-    fontSize   = fontSize,
-    fontColor  = fontColor,
-    fontName   = fontName,
-    ...        = ...
+    font_size   = font_size,
+    font_color  = font_color,
+    font_name   = font_name,
+    ...         = ...
   )
 }
 

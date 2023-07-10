@@ -1116,9 +1116,9 @@ A list of of the font
 Get the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
-  fontSize = 11,
-  fontColor = wb_color(theme = "1"),
-  fontName = "Calibri",
+  font_size = 11,
+  font_color = wb_color(theme = "1"),
+  font_name = "Calibri",
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -1126,11 +1126,11 @@ Get the base font
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{fontSize}}{fontSize}
+\item{\code{font_size}}{fontSize}
 
-\item{\code{fontColor}}{fontColor}
+\item{\code{font_color}}{font_color}
 
-\item{\code{fontName}}{fontName}
+\item{\code{font_name}}{font_name}
 
 \item{\code{...}}{...}
 }
