@@ -59,7 +59,8 @@ col2int <- function(x) {
 #' # "B1"
 #' get_cell_refs(data.frame(1:3, 2:4))
 #' # "B1" "C2" "D3"
-#' @export
+#' @keywords internal
+#' @noRd
 get_cell_refs <- function(cellCoords) {
   assert_class(cellCoords, "data.frame")
   stopifnot(ncol(cellCoords) == 2L)

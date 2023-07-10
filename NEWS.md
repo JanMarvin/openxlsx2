@@ -7,6 +7,7 @@
 ## Breaking changes
 
 * Order of arguments in `wb_add_named_region()` changed, because previously overlooked `dims` argument was added.
+* In various functions the order of `dims` was changed, to highlight it's importance
 
 * Cleanups
   * remove deprecated functions
@@ -17,6 +18,9 @@
     
   * deprecating function
     * `convertToExcelDate()` for `convert_to_excel_date()`
+  
+  * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()` internal functions
+  * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartsheet`, `wbComment`, `wbHyperlink` internal
   
 ***************************************************************************
 

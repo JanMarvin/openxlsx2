@@ -83,7 +83,8 @@ dataframe_to_dims <- function(df) {
 #' function to estimate the column type.
 #' 0 = character, 1 = numeric, 2 = date.
 #' @param tt dataframe produced by wb_to_df()
-#' @export
+#' @keywords internal
+#' @noRd
 guess_col_type <- function(tt) {
 
   # all columns are character

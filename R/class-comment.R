@@ -2,7 +2,8 @@
 #'
 #' A comment
 #'
-#' @export
+#' @keywords internal
+#' @noRd
 wbComment <- R6::R6Class(
   "wbComment",
 

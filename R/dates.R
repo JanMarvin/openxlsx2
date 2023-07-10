@@ -106,7 +106,8 @@ convert_hms <- function(x) {
 #'
 #' get_date_origin(wb_workbook())
 #' get_date_origin(wb_workbook(), origin = TRUE)
-#' @export
+#' @keywords internal
+#' @noRd
 get_date_origin <- function(xlsxFile, origin = FALSE) {
 
   # TODO: allow using a workbook?

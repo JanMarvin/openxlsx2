@@ -5,7 +5,8 @@
 #'
 #' A Worksheet
 #'
-#' @export
+#' @keywords internal
+#' @noRd
 wbWorksheet <- R6::R6Class(
   "wbWorksheet",
 
