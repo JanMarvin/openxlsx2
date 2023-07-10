@@ -1,18 +1,27 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Function arguments are now defaulting to `snake_case`. For the time being, both arguments are accepted and `camelCase` will be switched to `snake_case` under the hood. Documentation like vignettes and examples are currently still displaying `camelCase` and maybe some `camelCase` function slipped through.  [678](https://github.com/JanMarvin/openxlsx2/pull/678)
+
 ## Breaking changes
 
 * Order of arguments in `wb_add_named_region()` changed, because previously overlooked `dims` argument was added.
+* In various functions the order of `dims` was changed, to highlight it's importance
 
 * Cleanups
   * remove deprecated functions
   
   * remove deprecated arguments
     * `xy` argument
+    * arguments `col`, `row`, `cols`, `rows`. `start_col`, `start_row` and `gridExpand` were deprecated in favor of `dims`. Numeric vectors can be converted to `dims` using `rowcol_to_dims()`
     
   * deprecating function
     * `convertToExcelDate()` for `convert_to_excel_date()`
-
+  
+  * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()` internal functions
+  * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartsheet`, `wbComment`, `wbHyperlink` internal
+  
 ***************************************************************************
 
 

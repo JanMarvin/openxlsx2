@@ -8,15 +8,16 @@ wb_add_ignore_error(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  calculatedColumn = FALSE,
-  emptyCellReference = FALSE,
-  evalError = FALSE,
+  calculated_column = FALSE,
+  empty_cell_reference = FALSE,
+  eval_error = FALSE,
   formula = FALSE,
-  formulaRange = FALSE,
-  listDataValidation = FALSE,
-  numberStoredAsText = FALSE,
-  twoDigitTextYear = FALSE,
-  unlockedFormula = FALSE
+  formula_range = FALSE,
+  list_data_validation = FALSE,
+  number_stored_as_text = FALSE,
+  two_digit_text_year = FALSE,
+  unlocked_formula = FALSE,
+  ...
 )
 }
 \arguments{
@@ -26,23 +27,25 @@ wb_add_ignore_error(
 
 \item{dims}{dims}
 
-\item{calculatedColumn}{calculatedColumn}
+\item{calculated_column}{calculatedColumn}
 
-\item{emptyCellReference}{emptyCellReference}
+\item{empty_cell_reference}{emptyCellReference}
 
-\item{evalError}{evalError}
+\item{eval_error}{evalError}
 
 \item{formula}{formula}
 
-\item{formulaRange}{formulaRange}
+\item{formula_range}{formulaRange}
 
-\item{listDataValidation}{listDataValidation}
+\item{list_data_validation}{listDataValidation}
 
-\item{numberStoredAsText}{numberStoredAsText}
+\item{number_stored_as_text}{numberStoredAsText}
 
-\item{twoDigitTextYear}{twoDigitTextYear}
+\item{two_digit_text_year}{twoDigitTextYear}
 
-\item{unlockedFormula}{unlockedFormula}
+\item{unlocked_formula}{unlockedFormula}
+
+\item{...}{additional arguments}
 }
 \description{
 Ignore error on worksheet

@@ -265,7 +265,8 @@ as_xml <- function(x, ...) {
 #' @param fl file name with full path
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escape, assuming that xml to export is already valid.
-#' @export
+#' @keywords internal
+#' @noRd
 # TODO needs a unit test
 write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   if (getOption("openxlsx2.force_utf8_encoding", default = FALSE)) {

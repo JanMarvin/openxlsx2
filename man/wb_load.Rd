@@ -4,12 +4,19 @@
 \alias{wb_load}
 \title{Load an existing .xlsx file}
 \usage{
-wb_load(file, xlsxFile = NULL, sheet, data_only = FALSE, calc_chain = FALSE)
+wb_load(
+  file,
+  xlsx_file = NULL,
+  sheet,
+  data_only = FALSE,
+  calc_chain = FALSE,
+  ...
+)
 }
 \arguments{
 \item{file}{A path to an existing .xlsx or .xlsm file}
 
-\item{xlsxFile}{alias for file}
+\item{xlsx_file}{alias for file}
 
 \item{sheet}{optional sheet parameter. if this is applied, only the selected
 sheet will be loaded.}
@@ -23,6 +30,8 @@ evaluated. Removing the calculation chain is considered harmless. The calc
 chain will be created upon the next time the worksheet is loaded in
 spreadsheet software. Keeping it, might only speed loading time in said
 software.}
+
+\item{...}{additional arguments}
 }
 \value{
 Workbook object.

@@ -7,19 +7,19 @@
 wb_add_data_validation(
   wb,
   sheet = current_sheet(),
-  cols,
-  rows,
+  dims = "A1",
   type,
   operator,
   value,
-  allowBlank = TRUE,
-  showInputMsg = TRUE,
-  showErrorMsg = TRUE,
-  errorStyle = NULL,
-  errorTitle = NULL,
+  allow_blank = TRUE,
+  show_input_msg = TRUE,
+  show_error_msg = TRUE,
+  error_style = NULL,
+  error_title = NULL,
   error = NULL,
-  promptTitle = NULL,
-  prompt = NULL
+  prompt_title = NULL,
+  prompt = NULL,
+  ...
 )
 }
 \arguments{
@@ -27,9 +27,7 @@ wb_add_data_validation(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{cols}{Contiguous columns to apply conditional formatting to}
-
-\item{rows}{Contiguous rows to apply conditional formatting to}
+\item{dims}{A cell dimension ("A1" or "A1:B2")}
 
 \item{type}{One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list' (see examples)}
 
@@ -38,21 +36,23 @@ wb_add_data_validation(
 
 \item{value}{a vector of length 1 or 2 depending on operator (see examples)}
 
-\item{allowBlank}{logical}
+\item{allow_blank}{logical}
 
-\item{showInputMsg}{logical}
+\item{show_input_msg}{logical}
 
-\item{showErrorMsg}{logical}
+\item{show_error_msg}{logical}
 
-\item{errorStyle}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+\item{error_style}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
 
-\item{errorTitle}{The error title}
+\item{error_title}{The error title}
 
 \item{error}{The error text}
 
-\item{promptTitle}{The prompt title}
+\item{prompt_title}{The prompt title}
 
 \item{prompt}{The prompt text}
+
+\item{...}{additional arguments}
 }
 \description{
 Add Excel data validation to cells
@@ -64,11 +64,11 @@ wb$add_worksheet("Sheet 2")
 
 wb$add_data_table(1, x = iris[1:30, ])
 wb$add_data_validation(1,
-  col = 1:3, rows = 2:31, type = "whole",
+  dims = "A2:C31", type = "whole",
   operator = "between", value = c(1, 9)
 )
 wb$add_data_validation(1,
-  col = 5, rows = 2:31, type = "textLength",
+  dims = "E2:E31", type = "textLength",
   operator = "between", value = c(4, 6)
 )
 
@@ -83,7 +83,7 @@ wb$add_data_validation(2,
   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 )
 wb$add_data_validation(2,
-  col = 2, rows = 2:12, type = "time",
+  dims = "B2:B12", type = "time",
   operator = "between", value = df$t[c(4, 8)]
 )
 
@@ -99,5 +99,5 @@ wb$add_worksheet("Sheet 2")
 wb$add_data_table(sheet = 1, x = iris[1:30, ])
 wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 
-wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+wb$add_data_validation(1, dims = "A2:A31", type = "list", value = "'Sheet 2'!$A$1:$A$10")
 }

@@ -8,13 +8,14 @@ write_formula(
   wb,
   sheet,
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
   cm = FALSE,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
+  ...
 )
 }
 \arguments{
@@ -24,19 +25,21 @@ write_formula(
 
 \item{x}{A character vector.}
 
-\item{startCol}{A vector specifying the starting column to write to.}
-
-\item{startRow}{A vector specifying the starting row to write to.}
-
 \item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
+
+\item{start_col}{A vector specifying the starting column to write to.}
+
+\item{start_row}{A vector specifying the starting row to write to.}
 
 \item{array}{A bool if the function written is of type array}
 
 \item{cm}{A bool if the function is of type cm (array with hidden curly braces)}
 
-\item{applyCellStyle}{apply styles when writing on the sheet}
+\item{apply_cell_style}{apply styles when writing on the sheet}
 
-\item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
+\item{remove_cell_style}{if writing into existing cells, should the cell style be removed?}
+
+\item{...}{additional arguments}
 }
 \description{
 Write a a character vector containing Excel formula to a worksheet.

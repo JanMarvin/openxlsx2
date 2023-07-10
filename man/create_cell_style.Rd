@@ -5,62 +5,62 @@
 \title{create_cell_style}
 \usage{
 create_cell_style(
-  borderId = "",
-  fillId = "",
-  fontId = "",
-  numFmtId = "",
-  pivotButton = "",
-  quotePrefix = "",
-  xfId = "",
+  border_id = "",
+  fill_id = "",
+  font_id = "",
+  num_fmt_id = "",
+  pivot_button = "",
+  quote_prefix = "",
+  xf_id = "",
   horizontal = "",
   indent = "",
-  justifyLastLine = "",
-  readingOrder = "",
-  relativeIndent = "",
-  shrinkToFit = "",
-  textRotation = "",
+  justify_last_line = "",
+  reading_order = "",
+  relative_indent = "",
+  shrink_to_fit = "",
+  text_rotation = "",
   vertical = "",
-  wrapText = "",
-  extLst = "",
+  wrap_text = "",
+  ext_lst = "",
   hidden = "",
   locked = "",
   ...
 )
 }
 \arguments{
-\item{borderId}{dummy}
+\item{border_id}{dummy}
 
-\item{fillId}{dummy}
+\item{fill_id}{dummy}
 
-\item{fontId}{dummy}
+\item{font_id}{dummy}
 
-\item{numFmtId}{a numFmt ID for a builtin style}
+\item{num_fmt_id}{a numFmt ID for a builtin style}
 
-\item{pivotButton}{dummy}
+\item{pivot_button}{dummy}
 
-\item{quotePrefix}{dummy}
+\item{quote_prefix}{dummy}
 
-\item{xfId}{dummy}
+\item{xf_id}{dummy}
 
 \item{horizontal}{alignment can be "", "center", "right"}
 
 \item{indent}{dummy}
 
-\item{justifyLastLine}{dummy}
+\item{justify_last_line}{dummy}
 
-\item{readingOrder}{dummy}
+\item{reading_order}{dummy}
 
-\item{relativeIndent}{dummy}
+\item{relative_indent}{dummy}
 
-\item{shrinkToFit}{dummy}
+\item{shrink_to_fit}{dummy}
 
-\item{textRotation}{dummy}
+\item{text_rotation}{dummy}
 
 \item{vertical}{alignment can be "", "center", "right"}
 
-\item{wrapText}{dummy}
+\item{wrap_text}{dummy}
 
-\item{extLst}{dummy}
+\item{ext_lst}{dummy}
 
 \item{hidden}{dummy}
 

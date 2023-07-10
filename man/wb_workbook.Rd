@@ -9,8 +9,9 @@ wb_workbook(
   title = NULL,
   subject = NULL,
   category = NULL,
-  datetimeCreated = Sys.time(),
-  theme = NULL
+  datetime_created = Sys.time(),
+  theme = NULL,
+  ...
 )
 }
 \arguments{
@@ -22,9 +23,11 @@ wb_workbook(
 
 \item{category}{Workbook properties category}
 
-\item{datetimeCreated}{The time of the workbook is created}
+\item{datetime_created}{The time of the workbook is created}
 
 \item{theme}{Optional theme identified by string or number}
+
+\item{...}{additional arguments}
 }
 \value{
 A \link{wbWorkbook} object

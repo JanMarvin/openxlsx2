@@ -1,7 +1,7 @@
 #' @name wb_load
 #' @title Load an existing .xlsx file
 #' @param file A path to an existing .xlsx or .xlsm file
-#' @param xlsxFile alias for file
+#' @param xlsx_file alias for file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #' sheet will be loaded.
 #' @param data_only mode to import if only a data frame should be returned. This
@@ -12,6 +12,7 @@
 #' chain will be created upon the next time the worksheet is loaded in
 #' spreadsheet software. Keeping it, might only speed loading time in said
 #' software.
+#' @param ... additional arguments
 #' @description  wb_load returns a workbook object conserving styles and
 #' formatting of the original .xlsx file.
 #' @details A warning is displayed if an xml namespace for main is found in the
@@ -32,13 +33,16 @@
 #' wb$add_worksheet("A new worksheet")
 wb_load <- function(
     file,
-    xlsxFile = NULL,
+    xlsx_file = NULL,
     sheet,
     data_only = FALSE,
-    calc_chain = FALSE
+    calc_chain = FALSE,
+    ...
 ) {
 
-  file <- xlsxFile %||% file
+  standardize_case_names(...)
+
+  file <- xlsx_file %||% file
   file <- getFile(file)
 
   if (!file.exists(file)) {
