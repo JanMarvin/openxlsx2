@@ -370,23 +370,23 @@ create_fill <- function(
 
 # TODO can be further generalized with additional xf attributes and children
 #' create_cell_style
-#' @param borderId dummy
-#' @param fillId dummy
-#' @param fontId dummy
-#' @param numFmtId a numFmt ID for a builtin style
-#' @param pivotButton dummy
-#' @param quotePrefix dummy
-#' @param xfId dummy
+#' @param border_id dummy
+#' @param fill_id dummy
+#' @param font_id dummy
+#' @param num_fmt_id a numFmt ID for a builtin style
+#' @param pivot_button dummy
+#' @param quote_prefix dummy
+#' @param xf_id dummy
 #' @param horizontal dummy
 #' @param indent dummy
-#' @param justifyLastLine dummy
-#' @param readingOrder dummy
-#' @param relativeIndent dummy
-#' @param shrinkToFit dummy
-#' @param textRotation dummy
+#' @param justify_last_line dummy
+#' @param reading_order dummy
+#' @param relative_indent dummy
+#' @param shrink_to_fit dummy
+#' @param text_rotation dummy
 #' @param vertical dummy
-#' @param wrapText dummy
-#' @param extLst dummy
+#' @param wrap_text dummy
+#' @param ext_lst dummy
 #' @param hidden dummy
 #' @param locked dummy
 #' @param horizontal alignment can be "", "center", "right"
@@ -426,51 +426,52 @@ create_fill <- function(
 #'  | "49" | "@"                         |
 #' @export
 create_cell_style <- function(
-    borderId        = "",
-    fillId          = "",
-    fontId          = "",
-    numFmtId        = "",
-    pivotButton     = "",
-    quotePrefix     = "",
-    xfId            = "",
-    horizontal      = "",
-    indent          = "",
-    justifyLastLine = "",
-    readingOrder    = "",
-    relativeIndent  = "",
-    shrinkToFit     = "",
-    textRotation    = "",
-    vertical        = "",
-    wrapText        = "",
-    extLst          = "",
-    hidden          = "",
-    locked          = "",
+    border_id         = "",
+    fill_id           = "",
+    font_id           = "",
+    num_fmt_id        = "",
+    pivot_button      = "",
+    quote_prefix      = "",
+    xf_id             = "",
+    horizontal        = "",
+    indent            = "",
+    justify_last_line = "",
+    reading_order     = "",
+    relative_indent   = "",
+    shrink_to_fit     = "",
+    text_rotation     = "",
+    vertical          = "",
+    wrap_text         = "",
+    ext_lst           = "",
+    hidden            = "",
+    locked            = "",
     ...
 ) {
-  n <- length(numFmtId)
+  n <- length(num_fmt_id)
 
   args <- list(...)
+  standardize_case_names(...)
 
   is_cell_style_xf <- isTRUE(args$is_cell_style_xf)
 
   applyAlignment <- ""
-  if (any(horizontal != "") || any(textRotation != "") || any(vertical != "")) applyAlignment <- "1"
+  if (any(horizontal != "") || any(text_rotation != "") || any(vertical != "")) applyAlignment <- "1"
   if (is_cell_style_xf) applyAlignment <- "0"
 
   applyBorder <- ""
-  if (any(borderId != "")) applyBorder <- "1"
-  if (is_cell_style_xf && isTRUE(borderId == "")) applyBorder <- "0"
+  if (any(border_id != "")) applyBorder <- "1"
+  if (is_cell_style_xf && isTRUE(border_id == "")) applyBorder <- "0"
 
   applyFill <- ""
-  if (any(fillId != "")) applyFill <- "1"
-  if (is_cell_style_xf && isTRUE(fillId == "")) applyFill <- "0"
+  if (any(fill_id != "")) applyFill <- "1"
+  if (is_cell_style_xf && isTRUE(fill_id == "")) applyFill <- "0"
 
   applyFont <- ""
-  if (any(fontId != "")) applyFont <- "1"
-  if (is_cell_style_xf && isTRUE(fontId > "1")) applyFont <- "0"
+  if (any(font_id != "")) applyFont <- "1"
+  if (is_cell_style_xf && isTRUE(font_id > "1")) applyFont <- "0"
 
   applyNumberFormat <- ""
-  if (any(numFmtId != "")) applyNumberFormat <- "1"
+  if (any(num_fmt_id != "")) applyNumberFormat <- "1"
   if (is_cell_style_xf) applyNumberFormat <- "0"
 
   applyProtection <- ""
@@ -485,23 +486,23 @@ create_cell_style <- function(
     applyFont         = rep(applyFont, n),
     applyNumberFormat = rep(applyNumberFormat, n),
     applyProtection   = rep(applyProtection, n),
-    borderId          = rep(as_xml_attr(borderId), n),
-    fillId            = rep(as_xml_attr(fillId), n),
-    fontId            = rep(as_xml_attr(fontId), n),
-    numFmtId          = as_xml_attr(numFmtId),
-    pivotButton       = rep(as_xml_attr(pivotButton), n),
-    quotePrefix       = rep(as_xml_attr(quotePrefix), n),
-    xfId              = rep(as_xml_attr(xfId), n),
+    borderId          = rep(as_xml_attr(border_id), n),
+    fillId            = rep(as_xml_attr(fill_id), n),
+    fontId            = rep(as_xml_attr(font_id), n),
+    numFmtId          = as_xml_attr(num_fmt_id),
+    pivotButton       = rep(as_xml_attr(pivot_button), n),
+    quotePrefix       = rep(as_xml_attr(quote_prefix), n),
+    xfId              = rep(as_xml_attr(xf_id), n),
     horizontal        = rep(as_xml_attr(horizontal), n),
     indent            = rep(as_xml_attr(indent), n),
-    justifyLastLine   = rep(as_xml_attr(justifyLastLine), n),
-    readingOrder      = rep(as_xml_attr(readingOrder), n),
-    relativeIndent    = rep(as_xml_attr(relativeIndent), n),
-    shrinkToFit       = rep(as_xml_attr(shrinkToFit), n),
-    textRotation      = rep(as_xml_attr(textRotation), n),
+    justifyLastLine   = rep(as_xml_attr(justify_last_line), n),
+    readingOrder      = rep(as_xml_attr(reading_order), n),
+    relativeIndent    = rep(as_xml_attr(relative_indent), n),
+    shrinkToFit       = rep(as_xml_attr(shrink_to_fit), n),
+    textRotation      = rep(as_xml_attr(text_rotation), n),
     vertical          = rep(as_xml_attr(vertical), n),
-    wrapText          = rep(as_xml_attr(wrapText), n),
-    extLst            = rep(extLst, n),
+    wrapText          = rep(as_xml_attr(wrap_text), n),
+    extLst            = rep(ext_lst, n),
     hidden            = rep(as_xml_attr(hidden), n),
     locked            = rep(as_xml_attr(locked), n),
     stringsAsFactors  = FALSE
@@ -793,114 +794,118 @@ create_dxfs_style <- function(
 
 #' create tableStyle
 #' @param name name
-#' @param wholeTable wholeTable
-#' @param headerRow headerRow
-#' @param totalRow totalRow
-#' @param firstColumn firstColumn
-#' @param lastColumn lastColumn
-#' @param firstRowStripe firstRowStripe
-#' @param secondRowStripe secondRowStripe
-#' @param firstColumnStripe firstColumnStripe
-#' @param secondColumnStripe secondColumnStripe
-#' @param firstHeaderCell firstHeaderCell
-#' @param lastHeaderCell lastHeaderCell
-#' @param firstTotalCell firstTotalCell
-#' @param lastTotalCell lastTotalCell
+#' @param whole_table wholeTable
+#' @param header_row headerRow
+#' @param total_row totalRow
+#' @param first_column firstColumn
+#' @param last_column lastColumn
+#' @param first_row_stripe firstRowStripe
+#' @param second_row_stripe secondRowStripe
+#' @param first_column_stripe firstColumnStripe
+#' @param second_column_stripe secondColumnStripe
+#' @param first_header_cell firstHeaderCell
+#' @param last_header_cell lastHeaderCell
+#' @param first_total_cell firstTotalCell
+#' @param last_total_cell lastTotalCell
+#' @param ... additional arguments
 #' @export
 create_tablestyle <- function(
     name,
-    wholeTable         = NULL,
-    headerRow          = NULL,
-    totalRow           = NULL,
-    firstColumn        = NULL,
-    lastColumn         = NULL,
-    firstRowStripe     = NULL,
-    secondRowStripe    = NULL,
-    firstColumnStripe  = NULL,
-    secondColumnStripe = NULL,
-    firstHeaderCell    = NULL,
-    lastHeaderCell     = NULL,
-    firstTotalCell     = NULL,
-    lastTotalCell      = NULL
+    whole_table          = NULL,
+    header_row           = NULL,
+    total_row            = NULL,
+    first_column         = NULL,
+    last_column          = NULL,
+    first_row_stripe     = NULL,
+    second_row_stripe    = NULL,
+    first_column_stripe  = NULL,
+    second_column_stripe = NULL,
+    first_header_cell    = NULL,
+    last_header_cell     = NULL,
+    first_total_cell     = NULL,
+    last_total_cell      = NULL,
+    ...
 ) {
 
+  standardize_case_names(...)
+
   tab_wholeTable <- NULL
-  if (length(wholeTable)) {
+  if (length(whole_table)) {
     tab_wholeTable <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "wholeTable", dxfId = wholeTable))
+      xml_attributes = c(type = "wholeTable", dxfId = whole_table))
   }
   tab_headerRow <- NULL
-  if (length(headerRow)) {
+  if (length(header_row)) {
     tab_headerRow <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "headerRow", dxfId = headerRow))
+      xml_attributes = c(type = "headerRow", dxfId = header_row))
   }
   tab_totalRow <- NULL
-  if (length(totalRow)) {
+  if (length(total_row)) {
     tab_totalRow <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "totalRow", dxfId = totalRow))
+      xml_attributes = c(type = "totalRow", dxfId = total_row))
   }
   tab_firstColumn <- NULL
-  if (length(firstColumn)) {
+  if (length(first_column)) {
     tab_firstColumn <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "firstColumn", dxfId = firstColumn))
+      xml_attributes = c(type = "firstColumn", dxfId = first_column))
   }
   tab_lastColumn <- NULL
-  if (length(lastColumn)) {
+  if (length(last_column)) {
     tab_lastColumn <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "lastColumn", dxfId = lastColumn))
+      xml_attributes = c(type = "lastColumn", dxfId = last_column))
   }
   tab_firstRowStripe <- NULL
-  if (length(firstRowStripe)) {
+  if (length(first_row_stripe)) {
     tab_firstRowStripe <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "firstRowStripe", dxfId = firstRowStripe))
+      xml_attributes = c(type = "firstRowStripe", dxfId = first_row_stripe))
   }
   tab_secondRowStripe <- NULL
-  if (length(secondRowStripe)) {
+  if (length(second_row_stripe)) {
     tab_secondRowStripe <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "secondRowStripe", dxfId = secondRowStripe))
+      xml_attributes = c(type = "secondRowStripe", dxfId = second_row_stripe))
   }
   tab_firstColumnStripe <- NULL
-  if (length(firstColumnStripe)) {
+  if (length(first_column_stripe)) {
     tab_firstColumnStripe <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "firstColumnStripe", dxfId = firstColumnStripe))
+      xml_attributes = c(type = "firstColumnStripe", dxfId = first_column_stripe))
   }
   tab_secondColumnStripe <- NULL
-  if (length(secondColumnStripe)) {
+  if (length(second_column_stripe)) {
     tab_secondColumnStripe <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "secondColumnStripe", dxfId = secondColumnStripe))
+      xml_attributes = c(type = "secondColumnStripe", dxfId = second_column_stripe))
   }
   tab_firstHeaderCell <- NULL
-  if (length(firstHeaderCell)) {
+  if (length(first_header_cell)) {
     tab_firstHeaderCell <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "firstHeaderCell", dxfId = firstHeaderCell))
+      xml_attributes = c(type = "firstHeaderCell", dxfId = first_header_cell))
   }
   tab_lastHeaderCell <- NULL
-  if (length(lastHeaderCell)) {
+  if (length(last_header_cell)) {
     tab_lastHeaderCell <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "lastHeaderCell", dxfId = lastHeaderCell))
+      xml_attributes = c(type = "lastHeaderCell", dxfId = last_header_cell))
   }
   tab_firstTotalCell <- NULL
-  if (length(firstTotalCell)) {
+  if (length(first_total_cell)) {
     tab_firstTotalCell <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "firstTotalCell", dxfId = firstTotalCell))
+      xml_attributes = c(type = "firstTotalCell", dxfId = first_total_cell))
   }
   tab_lastTotalCell <- NULL
-  if (length(lastTotalCell)) {
+  if (length(last_total_cell)) {
     tab_lastTotalCell <- xml_node_create(
       "tableStyleElement",
-      xml_attributes = c(type = "lastTotalCell", dxfId = lastTotalCell))
+      xml_attributes = c(type = "lastTotalCell", dxfId = last_total_cell))
   }
 
   xml_elements <- c(
@@ -927,6 +932,7 @@ create_tablestyle <- function(
       name      = name,
       pivot     = "0", # pivot uses different styles
       count     = as_xml_attr(length(xml_elements)),
+       # possible st_guid()
       `xr9:uid` = sprintf("{CE23B8CA-E823-724F-9713-%s}", rand_str)
     ),
     xml_children = xml_elements
