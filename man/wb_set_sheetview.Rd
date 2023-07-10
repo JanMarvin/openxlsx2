@@ -7,25 +7,26 @@
 wb_set_sheetview(
   wb,
   sheet = current_sheet(),
-  colorId = NULL,
-  defaultGridColor = NULL,
-  rightToLeft = NULL,
-  showFormulas = NULL,
-  showGridLines = NULL,
-  showOutlineSymbols = NULL,
-  showRowColHeaders = NULL,
-  showRuler = NULL,
-  showWhiteSpace = NULL,
-  showZeros = NULL,
-  tabSelected = NULL,
-  topLeftCell = NULL,
+  color_id = NULL,
+  default_grid_color = NULL,
+  right_to_left = NULL,
+  show_formulas = NULL,
+  show_grid_lines = NULL,
+  show_outline_symbols = NULL,
+  show_row_col_headers = NULL,
+  show_ruler = NULL,
+  show_white_space = NULL,
+  show_zeros = NULL,
+  tab_selected = NULL,
+  top_left_cell = NULL,
   view = NULL,
-  windowProtection = NULL,
-  workbookViewId = NULL,
-  zoomScale = NULL,
-  zoomScaleNormal = NULL,
-  zoomScalePageLayoutView = NULL,
-  zoomScaleSheetLayoutView = NULL
+  window_protection = NULL,
+  workbook_view_id = NULL,
+  zoom_scale = NULL,
+  zoom_scale_normal = NULL,
+  zoom_scale_page_layout_view = NULL,
+  zoom_scale_sheet_layout_view = NULL,
+  ...
 )
 }
 \arguments{
@@ -33,35 +34,37 @@ wb_set_sheetview(
 
 \item{sheet}{sheet}
 
-\item{colorId, defaultGridColor}{Integer: A color, default is 64}
+\item{color_id, default_grid_color}{Integer: A color, default is 64}
 
-\item{rightToLeft}{Logical: if TRUE column ordering is right  to left}
+\item{right_to_left}{Logical: if TRUE column ordering is right  to left}
 
-\item{showFormulas}{Logical: if TRUE cell formulas are shown}
+\item{show_formulas}{Logical: if TRUE cell formulas are shown}
 
-\item{showGridLines}{Logical: if TRUE the worksheet grid is shown}
+\item{show_grid_lines}{Logical: if TRUE the worksheet grid is shown}
 
-\item{showOutlineSymbols}{Logical: if TRUE outline symbols are shown}
+\item{show_outline_symbols}{Logical: if TRUE outline symbols are shown}
 
-\item{showRowColHeaders}{Logical: if TRUE row and column headers are shown}
+\item{show_row_col_headers}{Logical: if TRUE row and column headers are shown}
 
-\item{showRuler}{Logical: if TRUE a ruler is shown in page layout view}
+\item{show_ruler}{Logical: if TRUE a ruler is shown in page layout view}
 
-\item{showWhiteSpace}{Logical: if TRUE margins are shown in page layout view}
+\item{show_white_space}{Logical: if TRUE margins are shown in page layout view}
 
-\item{showZeros}{Logical: if FALSE cells containing zero are shown blank if !showFormulas}
+\item{show_zeros}{Logical: if FALSE cells containing zero are shown blank if !showFormulas}
 
-\item{tabSelected}{Integer: zero vector indicating the selected tab}
+\item{tab_selected}{Integer: zero vector indicating the selected tab}
 
-\item{topLeftCell}{Cell: the cell shown in the top left corner / or top right with rightToLeft}
+\item{top_left_cell}{Cell: the cell shown in the top left corner / or top right with rightToLeft}
 
 \item{view}{View: "normal", "pageBreakPreview" or "pageLayout"}
 
-\item{windowProtection}{Logical: if TRUE the panes are protected}
+\item{window_protection}{Logical: if TRUE the panes are protected}
 
-\item{workbookViewId}{integer: Pointing to some other view inside the workbook}
+\item{workbook_view_id}{integer: Pointing to some other view inside the workbook}
 
-\item{zoomScale, zoomScaleNormal, zoomScalePageLayoutView, zoomScaleSheetLayoutView}{Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.}
+\item{zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view, zoom_scale_sheet_layout_view}{Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.}
+
+\item{...}{additional arguments}
 }
 \value{
 The \code{wbWorksheetObject}, invisibly

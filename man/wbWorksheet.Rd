@@ -420,68 +420,65 @@ The \code{wbWorksheetObject}, invisibly
 add sheetview
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorksheet$set_sheetview(
-  colorId = NULL,
-  defaultGridColor = NULL,
-  rightToLeft = NULL,
-  showFormulas = NULL,
-  showGridLines = NULL,
-  showOutlineSymbols = NULL,
-  showRowColHeaders = NULL,
-  showRuler = NULL,
-  showWhiteSpace = NULL,
-  showZeros = NULL,
-  tabSelected = NULL,
-  topLeftCell = NULL,
+  color_id = NULL,
+  default_grid_color = NULL,
+  right_to_left = NULL,
+  show_formulas = NULL,
+  show_grid_lines = NULL,
+  show_outline_symbols = NULL,
+  show_row_col_headers = NULL,
+  show_ruler = NULL,
+  show_white_space = NULL,
+  show_zeros = NULL,
+  tab_selected = NULL,
+  top_left_cell = NULL,
   view = NULL,
-  windowProtection = NULL,
-  workbookViewId = NULL,
-  zoomScale = NULL,
-  zoomScaleNormal = NULL,
-  zoomScalePageLayoutView = NULL,
-  zoomScaleSheetLayoutView = NULL
+  window_protection = NULL,
+  workbook_view_id = NULL,
+  zoom_scale = NULL,
+  zoom_scale_normal = NULL,
+  zoom_scale_page_layout_view = NULL,
+  zoom_scale_sheet_layout_view = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{colorId}}{colorId}
+\item{\code{color_id, default_grid_color}}{Integer: A color, default is 64}
 
-\item{\code{defaultGridColor}}{defaultGridColor}
+\item{\code{right_to_left}}{Logical: if TRUE column ordering is right  to left}
 
-\item{\code{rightToLeft}}{rightToLeft}
+\item{\code{show_formulas}}{Logical: if TRUE cell formulas are shown}
 
-\item{\code{showFormulas}}{showFormulas}
+\item{\code{show_grid_lines}}{Logical: if TRUE the worksheet grid is shown}
 
-\item{\code{showGridLines}}{showGridLines}
+\item{\code{show_outline_symbols}}{Logical: if TRUE outline symbols are shown}
 
-\item{\code{showOutlineSymbols}}{showOutlineSymbols}
+\item{\code{show_row_col_headers}}{Logical: if TRUE row and column headers are shown}
 
-\item{\code{showRowColHeaders}}{showRowColHeaders}
+\item{\code{show_ruler}}{Logical: if TRUE a ruler is shown in page layout view}
 
-\item{\code{showRuler}}{showRuler}
+\item{\code{show_white_space}}{Logical: if TRUE margins are shown in page layout view}
 
-\item{\code{showWhiteSpace}}{showWhiteSpace}
+\item{\code{show_zeros}}{Logical: if FALSE cells containing zero are shown blank if !showFormulas}
 
-\item{\code{showZeros}}{showZeros}
+\item{\code{tab_selected}}{Integer: zero vector indicating the selected tab}
 
-\item{\code{tabSelected}}{tabSelected}
+\item{\code{top_left_cell}}{Cell: the cell shown in the top left corner / or top right with rightToLeft}
 
-\item{\code{topLeftCell}}{topLeftCell}
+\item{\code{view}}{View: "normal", "pageBreakPreview" or "pageLayout"}
 
-\item{\code{view}}{view}
+\item{\code{window_protection}}{Logical: if TRUE the panes are protected}
 
-\item{\code{windowProtection}}{windowProtection}
+\item{\code{workbook_view_id}}{integer: Pointing to some other view inside the workbook}
 
-\item{\code{workbookViewId}}{workbookViewId}
+\item{\code{zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view, zoom_scale_sheet_layout_view}}{Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.}
 
-\item{\code{zoomScale}}{zoomScale}
+\item{\code{...}}{additional arguments}
 
-\item{\code{zoomScaleNormal}}{zoomScaleNormal}
-
-\item{\code{zoomScalePageLayoutView}}{zoomScalePageLayoutView}
-
-\item{\code{zoomScaleSheetLayoutView}}{zoomScaleSheetLayoutView}
+\item{\code{sheet}}{sheet}
 }
 \if{html}{\out{</div>}}
 }

@@ -450,9 +450,9 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$worksheets[[newSheetIndex]]$set_sheetview(
-        workbookViewId = 0,
-        zoomScale      = zoom,
-        tabSelected    = newSheetIndex == 1
+        workbook_view_id = 0,
+        zoom_scale       = zoom,
+        tab_selected     = newSheetIndex == 1
       )
 
       self$append("sheet_names", sheet)
@@ -699,12 +699,12 @@ wbWorkbook <- R6::R6Class(
 
       # set preselected set for sheetview
       self$worksheets[[newSheetIndex]]$set_sheetview(
-        workbookViewId    = 0,
-        zoomScale         = zoom,
-        showGridLines     = grid_lines,
-        showRowColHeaders = row_col_headers,
-        tabSelected       = newSheetIndex == 1,
-        rightToLeft       = rightToLeft
+        workbook_view_id     = 0,
+        zoom_scale           = zoom,
+        show_grid_lines      = grid_lines,
+        show_row_col_headers = row_col_headers,
+        tab_selected         = newSheetIndex == 1,
+        right_to_left        = rightToLeft
       )
 
 
@@ -6649,69 +6649,68 @@ wbWorkbook <- R6::R6Class(
 
     #' @description add sheetview
     #' @param sheet sheet
-    #' @param colorId colorId
-    #' @param defaultGridColor defaultGridColor
-    #' @param rightToLeft rightToLeft
-    #' @param showFormulas showFormulas
-    #' @param showGridLines showGridLines
-    #' @param showOutlineSymbols showOutlineSymbols
-    #' @param showRowColHeaders showRowColHeaders
-    #' @param showRuler showRuler
-    #' @param showWhiteSpace showWhiteSpace
-    #' @param showZeros showZeros
-    #' @param tabSelected tabSelected
-    #' @param topLeftCell topLeftCell
-    #' @param view view
-    #' @param windowProtection windowProtection
-    #' @param workbookViewId workbookViewId
-    #' @param zoomScale zoomScale
-    #' @param zoomScaleNormal zoomScaleNormal
-    #' @param zoomScalePageLayoutView zoomScalePageLayoutView
-    #' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+    #' @param color_id,default_grid_color Integer: A color, default is 64
+    #' @param right_to_left Logical: if TRUE column ordering is right  to left
+    #' @param show_formulas Logical: if TRUE cell formulas are shown
+    #' @param show_grid_lines Logical: if TRUE the worksheet grid is shown
+    #' @param show_outline_symbols Logical: if TRUE outline symbols are shown
+    #' @param show_row_col_headers Logical: if TRUE row and column headers are shown
+    #' @param show_ruler Logical: if TRUE a ruler is shown in page layout view
+    #' @param show_white_space Logical: if TRUE margins are shown in page layout view
+    #' @param show_zeros Logical: if FALSE cells containing zero are shown blank if !showFormulas
+    #' @param tab_selected Integer: zero vector indicating the selected tab
+    #' @param top_left_cell Cell: the cell shown in the top left corner / or top right with rightToLeft
+    #' @param view View: "normal", "pageBreakPreview" or "pageLayout"
+    #' @param window_protection Logical: if TRUE the panes are protected
+    #' @param workbook_view_id integer: Pointing to some other view inside the workbook
+    #' @param zoom_scale,zoom_scale_normal,zoom_scale_page_layout_view,zoom_scale_sheet_layout_view Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
+    #' @param ... additional arguments
     #' @return The `wbWorksheetObject`, invisibly
     set_sheetview = function(
       sheet                    = current_sheet(),
-      colorId                  = NULL,
-      defaultGridColor         = NULL,
-      rightToLeft              = NULL,
-      showFormulas             = NULL,
-      showGridLines            = NULL,
-      showOutlineSymbols       = NULL,
-      showRowColHeaders        = NULL,
-      showRuler                = NULL,
-      showWhiteSpace           = NULL,
-      showZeros                = NULL,
-      tabSelected              = NULL,
-      topLeftCell              = NULL,
-      view                     = NULL,
-      windowProtection         = NULL,
-      workbookViewId           = NULL,
-      zoomScale                = NULL,
-      zoomScaleNormal          = NULL,
-      zoomScalePageLayoutView  = NULL,
-      zoomScaleSheetLayoutView = NULL
+      color_id                     = NULL,
+      default_grid_color           = NULL,
+      right_to_left                = NULL,
+      show_formulas                = NULL,
+      show_grid_lines              = NULL,
+      show_outline_symbols         = NULL,
+      show_row_col_headers         = NULL,
+      show_ruler                   = NULL,
+      show_white_space             = NULL,
+      show_zeros                   = NULL,
+      tab_selected                 = NULL,
+      top_left_cell                = NULL,
+      view                         = NULL,
+      window_protection            = NULL,
+      workbook_view_id             = NULL,
+      zoom_scale                   = NULL,
+      zoom_scale_normal            = NULL,
+      zoom_scale_page_layout_view  = NULL,
+      zoom_scale_sheet_layout_view = NULL,
+      ...
     ) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$set_sheetview(
-        colorId                  = colorId,
-        defaultGridColor         = defaultGridColor,
-        rightToLeft              = rightToLeft,
-        showFormulas             = showFormulas,
-        showGridLines            = showGridLines,
-        showOutlineSymbols       = showOutlineSymbols,
-        showRowColHeaders        = showRowColHeaders,
-        showRuler                = showRuler,
-        showWhiteSpace           = showWhiteSpace,
-        showZeros                = showZeros,
-        tabSelected              = tabSelected,
-        topLeftCell              = topLeftCell,
-        view                     = view,
-        windowProtection         = windowProtection,
-        workbookViewId           = workbookViewId,
-        zoomScale                = zoomScale,
-        zoomScaleNormal          = zoomScaleNormal,
-        zoomScalePageLayoutView  = zoomScalePageLayoutView,
-        zoomScaleSheetLayoutView = zoomScaleSheetLayoutView
+        color_id                     = color_id,
+        default_grid_color           = default_grid_color,
+        right_to_left                = right_to_left,
+        show_formulas                = show_formulas,
+        show_grid_lines              = show_grid_lines,
+        show_outline_symbols         = show_outline_symbols,
+        show_row_col_headers         = show_row_col_headers,
+        show_ruler                   = show_ruler,
+        show_white_space             = show_white_space,
+        show_zeros                   = show_zeros,
+        tab_selected                 = tab_selected,
+        top_left_cell                = top_left_cell,
+        view                         = view,
+        window_protection            = window_protection,
+        workbook_view_id             = workbook_view_id,
+        zoom_scale                   = zoom_scale,
+        zoom_scale_normal            = zoom_scale_normal,
+        zoom_scale_page_layout_view  = zoom_scale_page_layout_view,
+        zoom_scale_sheet_layout_view = zoom_scale_sheet_layout_view,
+        ...                          = ...
       )
       invisible(self)
     }
