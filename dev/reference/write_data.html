@@ -69,38 +69,40 @@ Write an object to worksheet with optional styling."><meta name="robots" content
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  with_filter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">write_data</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  <span class="va">sheet</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  with_filter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -118,31 +120,31 @@ Write an object to worksheet with optional styling."><meta name="robots" content
 <dd><p>Object to be written. For classes supported look at the examples.</p></dd>
 
 
-<dt>startCol</dt>
+<dt>dims</dt>
+<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
+
+
+<dt>start_col</dt>
 <dd><p>A vector specifying the starting column to write to.</p></dd>
 
 
-<dt>startRow</dt>
+<dt>start_row</dt>
 <dd><p>A vector specifying the starting row to write to.</p></dd>
-
-
-<dt>dims</dt>
-<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
 
 
 <dt>array</dt>
 <dd><p>A bool if the function written is of type array</p></dd>
 
 
-<dt>colNames</dt>
+<dt>col_names</dt>
 <dd><p>If <code>TRUE</code>, column names of x are written.</p></dd>
 
 
-<dt>rowNames</dt>
+<dt>row_names</dt>
 <dd><p>If <code>TRUE</code>, data.frame row names of x are written.</p></dd>
 
 
-<dt>withFilter</dt>
+<dt>with_filter</dt>
 <dd><p>If <code>TRUE</code>, add filters to the column name row. NOTE can only have one filter per worksheet.</p></dd>
 
 
@@ -154,11 +156,11 @@ Write an object to worksheet with optional styling."><meta name="robots" content
 <dd><p>Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).</p></dd>
 
 
-<dt>applyCellStyle</dt>
+<dt>apply_cell_style</dt>
 <dd><p>apply styles when writing on the sheet</p></dd>
 
 
-<dt>removeCellStyle</dt>
+<dt>remove_cell_style</dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
 
 
@@ -169,6 +171,10 @@ Write an object to worksheet with optional styling."><meta name="robots" content
 
 <dt>inline_strings</dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">

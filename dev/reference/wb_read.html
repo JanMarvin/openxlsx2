@@ -63,18 +63,18 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_read</span><span class="op">(</span></span>
-<span>  <span class="va">xlsxFile</span>,</span>
+<span>  <span class="va">xlsx_file</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  skipEmptyRows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  skipEmptyCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  skip_empty_rows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  skip_empty_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  detectDates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">namedRegion</span>,</span>
+<span>  detect_dates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">named_region</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="st">"NA"</span>,</span>
 <span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -83,7 +83,7 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>xlsxFile</dt>
+    <dl><dt>xlsx_file</dt>
 <dd><p>An xlsx file, Workbook object or URL to xlsx file.</p></dd>
 
 
@@ -91,28 +91,28 @@
 <dd><p>The name or index of the sheet to read data from.</p></dd>
 
 
-<dt>startRow</dt>
+<dt>start_row</dt>
 <dd><p>first row to begin looking for data.</p></dd>
 
 
-<dt>startCol</dt>
+<dt>start_col</dt>
 <dd><p>first column to begin looking for data.</p></dd>
 
 
-<dt>rowNames</dt>
+<dt>row_names</dt>
 <dd><p>If <code>TRUE</code>, first column of data will be used as row names.</p></dd>
 
 
-<dt>colNames</dt>
+<dt>col_names</dt>
 <dd><p>If <code>TRUE</code>, the first row of data will be used as column names.</p></dd>
 
 
-<dt>skipEmptyRows</dt>
+<dt>skip_empty_rows</dt>
 <dd><p>If <code>TRUE</code>, empty rows are skipped else empty rows after the first row containing data
 will return a row of NAs.</p></dd>
 
 
-<dt>skipEmptyCols</dt>
+<dt>skip_empty_cols</dt>
 <dd><p>If <code>TRUE</code>, empty columns are skipped.</p></dd>
 
 
@@ -126,11 +126,11 @@ If NULL, all rows are read.</p></dd>
 If NULL, all columns are read.</p></dd>
 
 
-<dt>detectDates</dt>
+<dt>detect_dates</dt>
 <dd><p>If <code>TRUE</code>, attempt to recognize dates and perform conversion.</p></dd>
 
 
-<dt>namedRegion</dt>
+<dt>named_region</dt>
 <dd><p>A named region in the Workbook. If not NULL startRow, rows and cols parameters are ignored.</p></dd>
 
 

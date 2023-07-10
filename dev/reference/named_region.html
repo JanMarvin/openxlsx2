@@ -72,24 +72,23 @@ Workbook object</p>
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
-<span>  <span class="va">cols</span>,</span>
-<span>  <span class="va">rows</span>,</span>
 <span>  <span class="va">name</span>,</span>
-<span>  localSheet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  local_sheet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  comment <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  customMenu <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  custom_menu <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  is_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  functionGroupId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  function_group_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  help <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hidden <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  localName <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  publishToServer <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  statusBar <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  vbProcedure <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  workbookParameter <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xml <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  local_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  publish_to_server <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  status_bar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vb_procedure <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbook_parameter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xml <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_remove_named_region</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
@@ -111,19 +110,11 @@ Workbook object</p>
 <dd><p>Worksheet dimension, single cell ("A1") or cell range ("A1:D4")</p></dd>
 
 
-<dt>cols</dt>
-<dd><p>Numeric vector specifying columns to include in region</p></dd>
-
-
-<dt>rows</dt>
-<dd><p>Numeric vector specifying rows to include in region</p></dd>
-
-
 <dt>name</dt>
 <dd><p>Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.</p></dd>
 
 
-<dt>localSheet</dt>
+<dt>local_sheet</dt>
 <dd><p>If <code>TRUE</code> the named region will be local for this sheet</p></dd>
 
 
@@ -135,7 +126,7 @@ Workbook object</p>
 <dd><p>description text for named region</p></dd>
 
 
-<dt>customMenu</dt>
+<dt>custom_menu</dt>
 <dd><p>customMenu (unknown xml feature)</p></dd>
 
 
@@ -147,7 +138,7 @@ Workbook object</p>
 <dd><p>function (unknown xml feature)</p></dd>
 
 
-<dt>functionGroupId</dt>
+<dt>function_group_id</dt>
 <dd><p>function group id (unknown xml feature)</p></dd>
 
 
@@ -159,28 +150,32 @@ Workbook object</p>
 <dd><p>hidden if the named region should be hidden</p></dd>
 
 
-<dt>localName</dt>
+<dt>local_name</dt>
 <dd><p>localName (unknown xml feature)</p></dd>
 
 
-<dt>publishToServer</dt>
+<dt>publish_to_server</dt>
 <dd><p>publish to server (unknown xml feature)</p></dd>
 
 
-<dt>statusBar</dt>
+<dt>status_bar</dt>
 <dd><p>status bar (unknown xml feature)</p></dd>
 
 
-<dt>vbProcedure</dt>
+<dt>vb_procedure</dt>
 <dd><p>wbProcedure (unknown xml feature)</p></dd>
 
 
-<dt>workbookParameter</dt>
+<dt>workbook_parameter</dt>
 <dd><p>workbookParameter (unknown xml feature)</p></dd>
 
 
 <dt>xml</dt>
 <dd><p>xml (unknown xml feature)</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 
 <dt>x</dt>
@@ -195,10 +190,6 @@ Workbook object</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Region is given by: min(cols):max(cols) X min(rows):max(rows)</p>
     </div>
-    <div class="section level2">
-    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code>wb_add_named_region()</code> <code>wb_remove_named_region()</code></p></div>
-    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -211,8 +202,10 @@ Workbook object</p>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  sheet <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  name <span class="op">=</span> <span class="st">"iris"</span>,</span></span>
-<span class="r-in"><span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    row <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -237,56 +230,6 @@ Workbook object</p>
 <span class="r-in"><span><span class="fu">wb_get_named_regions</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name                 value  sheets  coords id local sheet</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 iris 'Sheet 1'!$A$1:$E$151 Sheet 1 A1:E151  1     0     1</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## read named regions</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="va">wb</span>, namedRegion <span class="op">=</span> <span class="st">"iris"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          5.1         3.5          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          4.9         3.0          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          4.7         3.2          1.3         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          4.6         3.1          1.5         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          5.0         3.6          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          5.4         3.9          1.7         0.4  setosa</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="va">out_file</span>, namedRegion <span class="op">=</span> <span class="st">"iris2"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          5.1         3.5          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          4.9         3.0          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          4.7         3.2          1.3         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          4.6         3.1          1.5         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          5.0         3.6          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          5.4         3.9          1.7         0.4  setosa</span>
-<span class="r-in"><span><span class="co">## create named regions</span></span></span>
-<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 1"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## specify region</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span>, startCol <span class="op">=</span> <span class="fl">1</span>, startRow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  sheet <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"iris"</span>,</span></span>
-<span class="r-in"><span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## using write_data 'name' argument to create a named region</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span>, name <span class="op">=</span> <span class="st">"iris2"</span>, startCol <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="va">out_file</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## see named regions</span></span></span>
-<span class="r-in"><span><span class="fu">wb_get_named_regions</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span> <span class="co">## From Workbook object</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    name                 value  sheets  coords id local sheet</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  iris 'Sheet 1'!$A$1:$E$151 Sheet 1 A1:E151  1     0     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 iris2     'Sheet 1'!J1:N151 Sheet 1 J1:N151  2     0     1</span>
-<span class="r-in"><span><span class="fu">wb_get_named_regions</span><span class="op">(</span><span class="va">out_file</span><span class="op">)</span> <span class="co">## From xlsx file</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    name                 value  sheets  coords id local sheet</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  iris 'Sheet 1'!$A$1:$E$151 Sheet 1 A1:E151  1     0     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 iris2     'Sheet 1'!J1:N151 Sheet 1 J1:N151  2     0     1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## read named regions</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="va">wb</span>, namedRegion <span class="op">=</span> <span class="st">"iris"</span><span class="op">)</span></span></span>

@@ -66,13 +66,14 @@
 <span>  <span class="va">wb</span>,</span>
 <span>  <span class="va">sheet</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,16 +91,16 @@
 <dd><p>A character vector.</p></dd>
 
 
-<dt>startCol</dt>
+<dt>dims</dt>
+<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
+
+
+<dt>start_col</dt>
 <dd><p>A vector specifying the starting column to write to.</p></dd>
 
 
-<dt>startRow</dt>
+<dt>start_row</dt>
 <dd><p>A vector specifying the starting row to write to.</p></dd>
-
-
-<dt>dims</dt>
-<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
 
 
 <dt>array</dt>
@@ -110,12 +111,16 @@
 <dd><p>A bool if the function is of type cm (array with hidden curly braces)</p></dd>
 
 
-<dt>applyCellStyle</dt>
+<dt>apply_cell_style</dt>
 <dd><p>apply styles when writing on the sheet</p></dd>
 
 
-<dt>removeCellStyle</dt>
+<dt>remove_cell_style</dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">

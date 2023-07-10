@@ -463,8 +463,9 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  datetimeCreated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  theme <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  datetime_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -486,7 +487,7 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>category</p></dd>
 
 
-<dt><code>datetimeCreated</code></dt>
+<dt><code>datetime_created</code></dt>
 <dd><p>The datetime (as <code>POSIXt</code>) the workbook is
 created.  Defaults to the current <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time()</a></code> when the workbook object
 is created, not when the Excel files are saved.</p></dd>
@@ -494,6 +495,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>theme</code></dt>
 <dd><p>Optional theme identified by string or number</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -561,7 +566,7 @@ is created, not when the Excel files are saved.</p></dd>
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chartsheet</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">next_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  tabColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tab_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -574,8 +579,8 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>tabColor</code></dt>
-<dd><p>tabColor</p></dd>
+<dt><code>tab_color</code></dt>
+<dd><p>tab_color</p></dd>
 
 
 <dt><code>zoom</code></dt>
@@ -603,21 +608,21 @@ is created, not when the Excel files are saved.</p></dd>
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">next_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tabColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  grid_lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_col_headers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  tab_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  oddHeader <span class="op">=</span> <span class="va">header</span>,</span>
-<span>  oddFooter <span class="op">=</span> <span class="va">footer</span>,</span>
-<span>  evenHeader <span class="op">=</span> <span class="va">header</span>,</span>
-<span>  evenFooter <span class="op">=</span> <span class="va">footer</span>,</span>
-<span>  firstHeader <span class="op">=</span> <span class="va">header</span>,</span>
-<span>  firstFooter <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  odd_header <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  odd_footer <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  even_header <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  even_footer <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  first_header <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  first_footer <span class="op">=</span> <span class="va">footer</span>,</span>
 <span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,</span>
-<span>  hasDrawing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  paperSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.paperSize"</span>, default <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
+<span>  has_drawing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  paper_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.paperSize"</span>, default <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.orientation"</span>, default <span class="op">=</span> <span class="st">"portrait"</span><span class="op">)</span>,</span>
 <span>  hdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.hdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  vdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.vdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -631,15 +636,15 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>gridLines</code></dt>
+<dt><code>grid_lines</code></dt>
 <dd><p>gridLines</p></dd>
 
 
-<dt><code>rowColHeaders</code></dt>
+<dt><code>row_col_headers</code></dt>
 <dd><p>rowColHeaders</p></dd>
 
 
-<dt><code>tabColor</code></dt>
+<dt><code>tab_color</code></dt>
 <dd><p>tabColor</p></dd>
 
 
@@ -655,27 +660,27 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>footer</p></dd>
 
 
-<dt><code>oddHeader</code></dt>
+<dt><code>odd_header</code></dt>
 <dd><p>oddHeader</p></dd>
 
 
-<dt><code>oddFooter</code></dt>
+<dt><code>odd_footer</code></dt>
 <dd><p>oddFooter</p></dd>
 
 
-<dt><code>evenHeader</code></dt>
+<dt><code>even_header</code></dt>
 <dd><p>evenHeader</p></dd>
 
 
-<dt><code>evenFooter</code></dt>
+<dt><code>even_footer</code></dt>
 <dd><p>evenFooter</p></dd>
 
 
-<dt><code>firstHeader</code></dt>
+<dt><code>first_header</code></dt>
 <dd><p>firstHeader</p></dd>
 
 
-<dt><code>firstFooter</code></dt>
+<dt><code>first_footer</code></dt>
 <dd><p>firstFooter</p></dd>
 
 
@@ -683,11 +688,11 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>visible</p></dd>
 
 
-<dt><code>hasDrawing</code></dt>
+<dt><code>has_drawing</code></dt>
 <dd><p>hasDrawing</p></dd>
 
 
-<dt><code>paperSize</code></dt>
+<dt><code>paper_size</code></dt>
 <dd><p>paperSize</p></dd>
 
 
@@ -741,19 +746,20 @@ is created, not when the Excel files are saved.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  with_filter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -767,31 +773,31 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>x</p></dd>
 
 
-<dt><code>startCol</code></dt>
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
+<dt><code>start_col</code></dt>
 <dd><p>startCol</p></dd>
 
 
-<dt><code>startRow</code></dt>
+<dt><code>start_row</code></dt>
 <dd><p>startRow</p></dd>
-
-
-<dt><code>dims</code></dt>
-<dd><p>dims</p></dd>
 
 
 <dt><code>array</code></dt>
 <dd><p>array</p></dd>
 
 
-<dt><code>colNames</code></dt>
+<dt><code>col_names</code></dt>
 <dd><p>colNames</p></dd>
 
 
-<dt><code>rowNames</code></dt>
+<dt><code>row_names</code></dt>
 <dd><p>rowNames</p></dd>
 
 
-<dt><code>withFilter</code></dt>
+<dt><code>with_filter</code></dt>
 <dd><p>withFilter</p></dd>
 
 
@@ -803,11 +809,11 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>sep</p></dd>
 
 
-<dt><code>applyCellStyle</code></dt>
+<dt><code>apply_cell_style</code></dt>
 <dd><p>applyCellStyle</p></dd>
 
 
-<dt><code>removeCellStyle</code></dt>
+<dt><code>remove_cell_style</code></dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
 
 
@@ -818,6 +824,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>inline_strings</code></dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 <dt><code>return</code></dt>
@@ -834,23 +844,24 @@ is created, not when the Excel files are saved.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tableStyle <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,</span>
-<span>  tableName <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  withFilter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  table_style <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,</span>
+<span>  table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  with_filter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
-<span>  firstColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  first_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  last_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  banded_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  banded_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -864,35 +875,35 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>x</p></dd>
 
 
-<dt><code>startCol</code></dt>
-<dd><p>startCol</p></dd>
-
-
-<dt><code>startRow</code></dt>
-<dd><p>startRow</p></dd>
-
-
 <dt><code>dims</code></dt>
 <dd><p>dims</p></dd>
 
 
-<dt><code>colNames</code></dt>
+<dt><code>start_col</code></dt>
+<dd><p>startCol</p></dd>
+
+
+<dt><code>start_row</code></dt>
+<dd><p>startRow</p></dd>
+
+
+<dt><code>col_names</code></dt>
 <dd><p>colNames</p></dd>
 
 
-<dt><code>rowNames</code></dt>
+<dt><code>row_names</code></dt>
 <dd><p>rowNames</p></dd>
 
 
-<dt><code>tableStyle</code></dt>
+<dt><code>table_style</code></dt>
 <dd><p>tableStyle</p></dd>
 
 
-<dt><code>tableName</code></dt>
+<dt><code>table_name</code></dt>
 <dd><p>tableName</p></dd>
 
 
-<dt><code>withFilter</code></dt>
+<dt><code>with_filter</code></dt>
 <dd><p>withFilter</p></dd>
 
 
@@ -900,27 +911,27 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>sep</p></dd>
 
 
-<dt><code>firstColumn</code></dt>
+<dt><code>first_column</code></dt>
 <dd><p>firstColumn</p></dd>
 
 
-<dt><code>lastColumn</code></dt>
+<dt><code>last_column</code></dt>
 <dd><p>lastColumn</p></dd>
 
 
-<dt><code>bandedRows</code></dt>
+<dt><code>banded_rows</code></dt>
 <dd><p>bandedRows</p></dd>
 
 
-<dt><code>bandedCols</code></dt>
+<dt><code>banded_cols</code></dt>
 <dd><p>bandedCols</p></dd>
 
 
-<dt><code>applyCellStyle</code></dt>
+<dt><code>apply_cell_style</code></dt>
 <dd><p>applyCellStyle</p></dd>
 
 
-<dt><code>removeCellStyle</code></dt>
+<dt><code>remove_cell_style</code></dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
 
 
@@ -931,6 +942,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>inline_strings</code></dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -1001,13 +1016,14 @@ is created, not when the Excel files are saved.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -1021,16 +1037,16 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>x</p></dd>
 
 
-<dt><code>startCol</code></dt>
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
+
+
+<dt><code>start_col</code></dt>
 <dd><p>startCol</p></dd>
 
 
-<dt><code>startRow</code></dt>
+<dt><code>start_row</code></dt>
 <dd><p>startRow</p></dd>
-
-
-<dt><code>dims</code></dt>
-<dd><p>dims</p></dd>
 
 
 <dt><code>array</code></dt>
@@ -1041,12 +1057,16 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>cm</p></dd>
 
 
-<dt><code>applyCellStyle</code></dt>
+<dt><code>apply_cell_style</code></dt>
 <dd><p>applyCellStyle</p></dd>
 
 
-<dt><code>removeCellStyle</code></dt>
+<dt><code>remove_cell_style</code></dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -1078,26 +1098,27 @@ is created, not when the Excel files are saved.</p></dd>
 <h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">to_df</span><span class="op">(</span></span>
 <span>  <span class="va">sheet</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  skipEmptyRows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  skipEmptyCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  skipHiddenRows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  skipHiddenCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  skip_empty_rows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  skip_empty_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  skip_hidden_rows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  skip_hidden_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  detectDates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  detect_dates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
 <span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  fillMergedCells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fill_merged_cells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">dims</span>,</span>
-<span>  showFormula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_formula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  convert <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">types</span>,</span>
 <span>  <span class="va">named_region</span>,</span>
-<span>  keep_attributes <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  keep_attributes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -1107,35 +1128,35 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>Either sheet name or index. When missing the first sheet in the workbook is selected.</p></dd>
 
 
-<dt><code>startRow</code></dt>
+<dt><code>start_row</code></dt>
 <dd><p>first row to begin looking for data.</p></dd>
 
 
-<dt><code>startCol</code></dt>
+<dt><code>start_col</code></dt>
 <dd><p>first column to begin looking for data.</p></dd>
 
 
-<dt><code>rowNames</code></dt>
+<dt><code>row_names</code></dt>
 <dd><p>If TRUE, the first col of data will be used as row names.</p></dd>
 
 
-<dt><code>colNames</code></dt>
+<dt><code>col_names</code></dt>
 <dd><p>If TRUE, the first row of data will be used as column names.</p></dd>
 
 
-<dt><code>skipEmptyRows</code></dt>
+<dt><code>skip_empty_rows</code></dt>
 <dd><p>If TRUE, empty rows are skipped.</p></dd>
 
 
-<dt><code>skipEmptyCols</code></dt>
+<dt><code>skip_empty_cols</code></dt>
 <dd><p>If TRUE, empty columns are skipped.</p></dd>
 
 
-<dt><code>skipHiddenRows</code></dt>
+<dt><code>skip_hidden_rows</code></dt>
 <dd><p>If TRUE, hidden rows are skipped.</p></dd>
 
 
-<dt><code>skipHiddenCols</code></dt>
+<dt><code>skip_hidden_cols</code></dt>
 <dd><p>If TRUE, hidden columns are skipped.</p></dd>
 
 
@@ -1147,7 +1168,7 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.</p></dd>
 
 
-<dt><code>detectDates</code></dt>
+<dt><code>detect_dates</code></dt>
 <dd><p>If TRUE, attempt to recognize dates and perform conversion.</p></dd>
 
 
@@ -1159,7 +1180,7 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.</p></dd>
 
 
-<dt><code>fillMergedCells</code></dt>
+<dt><code>fill_merged_cells</code></dt>
 <dd><p>If TRUE, the value in a merged cell is given to all cells within the merge.</p></dd>
 
 
@@ -1167,7 +1188,7 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>Character string of type "A1:B2" as optional dimensions to be imported.</p></dd>
 
 
-<dt><code>showFormula</code></dt>
+<dt><code>show_formula</code></dt>
 <dd><p>If TRUE, the underlying Excel formulas are shown.</p></dd>
 
 
@@ -1187,6 +1208,10 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>If TRUE additional attributes are returned. (These are used internally to define a cell type.)</p></dd>
 
 
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
+
+
 </dl><p></p></div>
 </div>
 <div class="section">
@@ -1200,10 +1225,11 @@ is created, not when the Excel files are saved.</p></dd>
 <h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">load</span><span class="op">(</span></span>
 <span>  <span class="va">file</span>,</span>
-<span>  xlsxFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xlsx_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">sheet</span>,</span>
 <span>  data_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  calc_chain <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  calc_chain <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -1213,8 +1239,8 @@ is created, not when the Excel files are saved.</p></dd>
 <dd><p>file</p></dd>
 
 
-<dt><code>xlsxFile</code></dt>
-<dd><p>xlsxFile</p></dd>
+<dt><code>xlsx_file</code></dt>
+<dd><p>xlsx_file</p></dd>
 
 
 <dt><code>sheet</code></dt>
@@ -1227,6 +1253,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>calc_chain</code></dt>
 <dd><p>calc_chain</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -1451,25 +1481,25 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <p>Get the base font</p><div class="section">
 <h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_base_font</span><span class="op">(</span></span>
-<span>  fontSize <span class="op">=</span> <span class="fl">11</span>,</span>
-<span>  fontColor <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span>,</span>
-<span>  fontName <span class="op">=</span> <span class="st">"Calibri"</span>,</span>
+<span>  font_size <span class="op">=</span> <span class="fl">11</span>,</span>
+<span>  font_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span>,</span>
+<span>  font_name <span class="op">=</span> <span class="st">"Calibri"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-19">Arguments<a class="anchor" aria-label="anchor" href="#arguments-19"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>fontSize</code></dt>
+<p></p><div class="arguments"><dl><dt><code>font_size</code></dt>
 <dd><p>fontSize</p></dd>
 
 
-<dt><code>fontColor</code></dt>
-<dd><p>fontColor</p></dd>
+<dt><code>font_color</code></dt>
+<dd><p>font_color</p></dd>
 
 
-<dt><code>fontName</code></dt>
-<dd><p>fontName</p></dd>
+<dt><code>font_name</code></dt>
+<dd><p>font_name</p></dd>
 
 
 <dt><code>...</code></dt>
@@ -1488,33 +1518,34 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <p>Set the book views</p><div class="section">
 <h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_bookview</span><span class="op">(</span></span>
-<span>  activeTab <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  autoFilterDateGrouping <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  firstSheet <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  active_tab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  auto_filter_date_grouping <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first_sheet <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  minimized <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showHorizontalScroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showSheetTabs <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showVerticalScroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tabRatio <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_horizontal_scroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_sheet_tabs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_vertical_scroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tab_ratio <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  visibility <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  windowHeight <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  windowWidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xWindow <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  yWindow <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  window_height <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window_width <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  y_window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>activeTab</code></dt>
+<p></p><div class="arguments"><dl><dt><code>active_tab</code></dt>
 <dd><p>activeTab</p></dd>
 
 
-<dt><code>autoFilterDateGrouping</code></dt>
+<dt><code>auto_filter_date_grouping</code></dt>
 <dd><p>autoFilterDateGrouping</p></dd>
 
 
-<dt><code>firstSheet</code></dt>
+<dt><code>first_sheet</code></dt>
 <dd><p>firstSheet</p></dd>
 
 
@@ -1522,19 +1553,19 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <dd><p>minimized</p></dd>
 
 
-<dt><code>showHorizontalScroll</code></dt>
+<dt><code>show_horizontal_scroll</code></dt>
 <dd><p>showHorizontalScroll</p></dd>
 
 
-<dt><code>showSheetTabs</code></dt>
+<dt><code>show_sheet_tabs</code></dt>
 <dd><p>showSheetTabs</p></dd>
 
 
-<dt><code>showVerticalScroll</code></dt>
+<dt><code>show_vertical_scroll</code></dt>
 <dd><p>showVerticalScroll</p></dd>
 
 
-<dt><code>tabRatio</code></dt>
+<dt><code>tab_ratio</code></dt>
 <dd><p>tabRatio</p></dd>
 
 
@@ -1542,20 +1573,24 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <dd><p>visibility</p></dd>
 
 
-<dt><code>windowHeight</code></dt>
+<dt><code>window_height</code></dt>
 <dd><p>windowHeight</p></dd>
 
 
-<dt><code>windowWidth</code></dt>
+<dt><code>window_width</code></dt>
 <dd><p>windowWidth</p></dd>
 
 
-<dt><code>xWindow</code></dt>
+<dt><code>x_window</code></dt>
 <dd><p>xWindow</p></dd>
 
 
-<dt><code>yWindow</code></dt>
+<dt><code>y_window</code></dt>
 <dd><p>yWindow</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -1895,19 +1930,19 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-34">Usage<a class="anchor" aria-label="anchor" href="#usage-34"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data_validation</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">cols</span>,</span>
-<span>  <span class="va">rows</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
 <span>  <span class="va">type</span>,</span>
 <span>  <span class="va">operator</span>,</span>
 <span>  <span class="va">value</span>,</span>
-<span>  allowBlank <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  showInputMsg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  showErrorMsg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  errorStyle <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  errorTitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  allow_blank <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_input_msg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_error_msg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  error_style <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  error_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  error <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  promptTitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  prompt <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  prompt_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prompt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -1917,12 +1952,8 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>cols</code></dt>
-<dd><p>cols</p></dd>
-
-
-<dt><code>rows</code></dt>
-<dd><p>rows</p></dd>
+<dt><code>dims</code></dt>
+<dd><p>cell dimension</p></dd>
 
 
 <dt><code>type</code></dt>
@@ -1937,23 +1968,23 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>value</p></dd>
 
 
-<dt><code>allowBlank</code></dt>
+<dt><code>allow_blank</code></dt>
 <dd><p>allowBlank</p></dd>
 
 
-<dt><code>showInputMsg</code></dt>
+<dt><code>show_input_msg</code></dt>
 <dd><p>showInputMsg</p></dd>
 
 
-<dt><code>showErrorMsg</code></dt>
+<dt><code>show_error_msg</code></dt>
 <dd><p>showErrorMsg</p></dd>
 
 
-<dt><code>errorStyle</code></dt>
+<dt><code>error_style</code></dt>
 <dd><p>The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)</p></dd>
 
 
-<dt><code>errorTitle</code></dt>
+<dt><code>error_title</code></dt>
 <dd><p>The error title</p></dd>
 
 
@@ -1961,12 +1992,16 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>The error text</p></dd>
 
 
-<dt><code>promptTitle</code></dt>
+<dt><code>prompt_title</code></dt>
 <dd><p>The prompt title</p></dd>
 
 
 <dt><code>prompt</code></dt>
 <dd><p>The prompt text</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2066,27 +2101,13 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-add-comment-">Method <code>add_comment()</code><a class="anchor" aria-label="anchor" href="#method-add-comment-"></a></h3>
 <p>Add comment</p><div class="section">
 <h4 id="usage-38">Usage<a class="anchor" aria-label="anchor" href="#usage-38"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_comment</span><span class="op">(</span></span>
-<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
-<span>  <span class="va">comment</span></span>
-<span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_comment</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">comment</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-36">Arguments<a class="anchor" aria-label="anchor" href="#arguments-36"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
-
-
-<dt><code>col</code></dt>
-<dd><p>column to apply the comment</p></dd>
-
-
-<dt><code>row</code></dt>
-<dd><p>row to apply the comment</p></dd>
 
 
 <dt><code>dims</code></dt>
@@ -2097,6 +2118,10 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>a comment to apply to the worksheet</p></dd>
 
 
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
+
+
 </dl><p></p></div>
 </div>
 
@@ -2104,13 +2129,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-remove-comment-">Method <code><a href="comment.html">remove_comment()</a></code><a class="anchor" aria-label="anchor" href="#method-remove-comment-"></a></h3>
 <p>Remove comment</p><div class="section">
 <h4 id="usage-39">Usage<a class="anchor" aria-label="anchor" href="#usage-39"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_comment</span><span class="op">(</span></span>
-<span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
-<span>  gridExpand <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_comment</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2119,20 +2138,12 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>col</code></dt>
-<dd><p>column to apply the comment</p></dd>
-
-
-<dt><code>row</code></dt>
-<dd><p>row to apply the comment</p></dd>
-
-
 <dt><code>dims</code></dt>
 <dd><p>row and column as spreadsheet dimension, e.g. "A1"</p></dd>
 
 
-<dt><code>gridExpand</code></dt>
-<dd><p>Remove all comments inside the grid. Similar to dims "A1:B2"</p></dd>
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2201,16 +2212,15 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-41">Usage<a class="anchor" aria-label="anchor" href="#usage-41"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_image</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
 <span>  <span class="va">file</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rowOffset <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  row_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  col_offset <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
 <span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span></span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2218,6 +2228,10 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="arguments-39">Arguments<a class="anchor" aria-label="anchor" href="#arguments-39"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
 
 
 <dt><code>file</code></dt>
@@ -2232,20 +2246,8 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>height</p></dd>
 
 
-<dt><code>startRow</code></dt>
-<dd><p>startRow</p></dd>
-
-
-<dt><code>startCol</code></dt>
-<dd><p>startCol</p></dd>
-
-
-<dt><code>rowOffset</code></dt>
-<dd><p>rowOffset</p></dd>
-
-
-<dt><code>colOffset</code></dt>
-<dd><p>colOffset</p></dd>
+<dt><code>row_offset, col_offset</code></dt>
+<dd><p>offsets</p></dd>
 
 
 <dt><code>units</code></dt>
@@ -2256,8 +2258,8 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>dpi</p></dd>
 
 
-<dt><code>dims</code></dt>
-<dd><p>dims</p></dd>
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2273,16 +2275,15 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-42">Usage<a class="anchor" aria-label="anchor" href="#usage-42"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_plot</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rowOffset <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  fileType <span class="op">=</span> <span class="st">"png"</span>,</span>
+<span>  row_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  col_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  file_type <span class="op">=</span> <span class="st">"png"</span>,</span>
 <span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
 <span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span></span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2290,6 +2291,10 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="arguments-40">Arguments<a class="anchor" aria-label="anchor" href="#arguments-40"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
 <dd><p>sheet</p></dd>
+
+
+<dt><code>dims</code></dt>
+<dd><p>dims</p></dd>
 
 
 <dt><code>width</code></dt>
@@ -2300,23 +2305,11 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>height</p></dd>
 
 
-<dt><code>startRow</code></dt>
-<dd><p>startRow</p></dd>
+<dt><code>row_offset, col_offset</code></dt>
+<dd><p>offsets</p></dd>
 
 
-<dt><code>startCol</code></dt>
-<dd><p>startCol</p></dd>
-
-
-<dt><code>rowOffset</code></dt>
-<dd><p>rowOffset</p></dd>
-
-
-<dt><code>colOffset</code></dt>
-<dd><p>colOffset</p></dd>
-
-
-<dt><code>fileType</code></dt>
+<dt><code>file_type</code></dt>
 <dd><p>fileType</p></dd>
 
 
@@ -2328,8 +2321,8 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>dpi</p></dd>
 
 
-<dt><code>dims</code></dt>
-<dd><p>dims</p></dd>
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2341,10 +2334,11 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-43">Usage<a class="anchor" aria-label="anchor" href="#usage-43"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_drawing</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
 <span>  <span class="va">xml</span>,</span>
-<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span>  col_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  row_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2354,16 +2348,20 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>xml</code></dt>
-<dd><p>xml</p></dd>
-
-
 <dt><code>dims</code></dt>
 <dd><p>dims</p></dd>
 
 
-<dt><code>colOffset, rowOffset</code></dt>
+<dt><code>xml</code></dt>
+<dd><p>xml</p></dd>
+
+
+<dt><code>col_offset, row_offset</code></dt>
 <dd><p>offsets for column and row</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2377,10 +2375,11 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-44">Usage<a class="anchor" aria-label="anchor" href="#usage-44"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_chart_xml</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">xml</span>,</span>
 <span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span>  <span class="va">xml</span>,</span>
+<span>  col_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  row_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2390,16 +2389,20 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>xml</code></dt>
-<dd><p>xml</p></dd>
-
-
 <dt><code>dims</code></dt>
 <dd><p>dims</p></dd>
 
 
-<dt><code>colOffset, rowOffset</code></dt>
-<dd><p>startCol and startRow</p></dd>
+<dt><code>xml</code></dt>
+<dd><p>xml</p></dd>
+
+
+<dt><code>col_offset, row_offset</code></dt>
+<dd><p>positioning parameters</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2413,8 +2416,9 @@ are repeated across length of <code>cols</code></p></dd>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">graph</span>,</span>
-<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span>  col_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  row_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2432,8 +2436,12 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>mschart graph</p></dd>
 
 
-<dt><code>colOffset, rowOffset</code></dt>
-<dd><p>startCol and startRow</p></dd>
+<dt><code>col_offset, row_offset</code></dt>
+<dd><p>offsets for column and row</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2774,10 +2782,11 @@ are removed.</p></dd>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  evenHeader <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  evenFooter <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  firstHeader <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  firstFooter <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  even_header <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  even_footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first_header <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first_footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2795,20 +2804,24 @@ are removed.</p></dd>
 <dd><p>footer</p></dd>
 
 
-<dt><code>evenHeader</code></dt>
+<dt><code>even_header</code></dt>
 <dd><p>evenHeader</p></dd>
 
 
-<dt><code>evenFooter</code></dt>
+<dt><code>even_footer</code></dt>
 <dd><p>evenFooter</p></dd>
 
 
-<dt><code>firstHeader</code></dt>
+<dt><code>first_header</code></dt>
 <dd><p>firstHeader</p></dd>
 
 
-<dt><code>firstFooter</code></dt>
+<dt><code>first_footer</code></dt>
 <dd><p>firstFooter</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2929,24 +2942,23 @@ are removed.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_named_region</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
-<span>  <span class="va">cols</span>,</span>
-<span>  <span class="va">rows</span>,</span>
 <span>  <span class="va">name</span>,</span>
-<span>  localSheet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  local_sheet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  comment <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  customMenu <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  custom_menu <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  is_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  functionGroupId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  function_group_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  help <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hidden <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  localName <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  publishToServer <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  statusBar <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  vbProcedure <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  workbookParameter <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xml <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  local_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  publish_to_server <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  status_bar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vb_procedure <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbook_parameter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xml <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2960,20 +2972,12 @@ are removed.</p></dd>
 <dd><p>dims</p></dd>
 
 
-<dt><code>cols</code></dt>
-<dd><p>cols</p></dd>
-
-
-<dt><code>rows</code></dt>
-<dd><p>rows</p></dd>
-
-
 <dt><code>name</code></dt>
 <dd><p>name</p></dd>
 
 
-<dt><code>localSheet</code></dt>
-<dd><p>localSheet</p></dd>
+<dt><code>local_sheet</code></dt>
+<dd><p>local_sheet</p></dd>
 
 
 <dt><code>overwrite</code></dt>
@@ -2984,8 +2988,8 @@ are removed.</p></dd>
 <dd><p>comment</p></dd>
 
 
-<dt><code>customMenu</code></dt>
-<dd><p>customMenu</p></dd>
+<dt><code>custom_menu</code></dt>
+<dd><p>custom_menu</p></dd>
 
 
 <dt><code>description</code></dt>
@@ -2996,7 +3000,7 @@ are removed.</p></dd>
 <dd><p>function</p></dd>
 
 
-<dt><code>functionGroupId</code></dt>
+<dt><code>function_group_id</code></dt>
 <dd><p>function group id</p></dd>
 
 
@@ -3008,28 +3012,32 @@ are removed.</p></dd>
 <dd><p>hidden</p></dd>
 
 
-<dt><code>localName</code></dt>
+<dt><code>local_name</code></dt>
 <dd><p>localName</p></dd>
 
 
-<dt><code>publishToServer</code></dt>
+<dt><code>publish_to_server</code></dt>
 <dd><p>publish to server</p></dd>
 
 
-<dt><code>statusBar</code></dt>
+<dt><code>status_bar</code></dt>
 <dd><p>status bar</p></dd>
 
 
-<dt><code>vbProcedure</code></dt>
-<dd><p>wbProcedure</p></dd>
+<dt><code>vb_procedure</code></dt>
+<dd><p>vb procedure</p></dd>
 
 
-<dt><code>workbookParameter</code></dt>
+<dt><code>workbook_parameter</code></dt>
 <dd><p>workbookParameter</p></dd>
 
 
 <dt><code>xml</code></dt>
 <dd><p>xml</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -3345,7 +3353,7 @@ are removed.</p></dd>
 <span>  family <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  scheme <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  shadow <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  vertAlign <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  vert_align <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -3416,7 +3424,7 @@ are removed.</p></dd>
 <dd><p>shadow</p></dd>
 
 
-<dt><code>vertAlign</code></dt>
+<dt><code>vert_align</code></dt>
 <dd><p>vertical alignment</p></dd>
 
 
@@ -3478,31 +3486,32 @@ are removed.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
-<span>  applyAlignment <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  applyBorder <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  applyFill <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  applyFont <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  applyNumberFormat <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  applyProtection <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  borderId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  extLst <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fillId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fontId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  apply_alignment <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  apply_border <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  apply_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  apply_font <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  apply_number_format <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  apply_protection <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  border_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ext_lst <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  font_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hidden <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  horizontal <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  indent <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  justifyLastLine <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  justify_last_line <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  locked <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  numFmtId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pivotButton <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quotePrefix <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  readingOrder <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  relativeIndent <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  shrinkToFit <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  textRotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  num_fmt_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pivot_button <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quote_prefix <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  reading_order <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  relative_indent <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shrink_to_fit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  text_rotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vertical <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  wrapText <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xfId <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  wrap_text <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xf_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -3516,43 +3525,43 @@ are removed.</p></dd>
 <dd><p>the cell range</p></dd>
 
 
-<dt><code>applyAlignment</code></dt>
+<dt><code>apply_alignment</code></dt>
 <dd><p>logical apply alignment</p></dd>
 
 
-<dt><code>applyBorder</code></dt>
+<dt><code>apply_border</code></dt>
 <dd><p>logical apply border</p></dd>
 
 
-<dt><code>applyFill</code></dt>
+<dt><code>apply_fill</code></dt>
 <dd><p>logical apply fill</p></dd>
 
 
-<dt><code>applyFont</code></dt>
+<dt><code>apply_font</code></dt>
 <dd><p>logical apply font</p></dd>
 
 
-<dt><code>applyNumberFormat</code></dt>
+<dt><code>apply_number_format</code></dt>
 <dd><p>logical apply number format</p></dd>
 
 
-<dt><code>applyProtection</code></dt>
+<dt><code>apply_protection</code></dt>
 <dd><p>logical apply protection</p></dd>
 
 
-<dt><code>borderId</code></dt>
+<dt><code>border_id</code></dt>
 <dd><p>border ID to apply</p></dd>
 
 
-<dt><code>extLst</code></dt>
+<dt><code>ext_lst</code></dt>
 <dd><p>extension list something like <code>&lt;extLst&gt;...&lt;/extLst&gt;</code></p></dd>
 
 
-<dt><code>fillId</code></dt>
+<dt><code>fill_id</code></dt>
 <dd><p>fill ID to apply</p></dd>
 
 
-<dt><code>fontId</code></dt>
+<dt><code>font_id</code></dt>
 <dd><p>font ID to apply</p></dd>
 
 
@@ -3568,7 +3577,7 @@ are removed.</p></dd>
 <dd><p>logical indent content</p></dd>
 
 
-<dt><code>justifyLastLine</code></dt>
+<dt><code>justify_last_line</code></dt>
 <dd><p>logical justify last line</p></dd>
 
 
@@ -3576,31 +3585,31 @@ are removed.</p></dd>
 <dd><p>logical cell is locked</p></dd>
 
 
-<dt><code>numFmtId</code></dt>
+<dt><code>num_fmt_id</code></dt>
 <dd><p>number format ID to apply</p></dd>
 
 
-<dt><code>pivotButton</code></dt>
+<dt><code>pivot_button</code></dt>
 <dd><p>unknown</p></dd>
 
 
-<dt><code>quotePrefix</code></dt>
+<dt><code>quote_prefix</code></dt>
 <dd><p>unknown</p></dd>
 
 
-<dt><code>readingOrder</code></dt>
+<dt><code>reading_order</code></dt>
 <dd><p>reading order left to right</p></dd>
 
 
-<dt><code>relativeIndent</code></dt>
+<dt><code>relative_indent</code></dt>
 <dd><p>relative indentation</p></dd>
 
 
-<dt><code>shrinkToFit</code></dt>
+<dt><code>shrink_to_fit</code></dt>
 <dd><p>logical shrink to fit</p></dd>
 
 
-<dt><code>textRotation</code></dt>
+<dt><code>text_rotation</code></dt>
 <dd><p>degrees of text rotation</p></dd>
 
 
@@ -3608,12 +3617,16 @@ are removed.</p></dd>
 <dd><p>vertical alignment of content ('top', 'center', 'bottom')</p></dd>
 
 
-<dt><code>wrapText</code></dt>
+<dt><code>wrap_text</code></dt>
 <dd><p>wrap text in cell</p></dd>
 
 
-<dt><code>xfId</code></dt>
+<dt><code>xf_id</code></dt>
 <dd><p>xf ID to apply</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -3729,12 +3742,12 @@ These styles are used with conditional formatting and custom table styles</p><di
 <span>  font_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  font_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  font_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  numFmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  num_fmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border_color <span class="op">=</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderColor"</span>, <span class="st">"black"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  border_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderStyle"</span>, <span class="st">"thin"</span><span class="op">)</span>,</span>
-<span>  bgFill <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  gradientFill <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  bg_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gradient_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text_bold <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text_italic <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text_underline <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -3760,7 +3773,7 @@ These styles are used with conditional formatting and custom table styles</p><di
 <dd><p>the font color (a <code><a href="wbColour.html">wb_color()</a></code> object)</p></dd>
 
 
-<dt><code>numFmt</code></dt>
+<dt><code>num_fmt</code></dt>
 <dd><p>the number format</p></dd>
 
 
@@ -3776,11 +3789,11 @@ These styles are used with conditional formatting and custom table styles</p><di
 <dd><p>the border style</p></dd>
 
 
-<dt><code>bgFill</code></dt>
+<dt><code>bg_fill</code></dt>
 <dd><p>any background fill</p></dd>
 
 
-<dt><code>gradientFill</code></dt>
+<dt><code>gradient_fill</code></dt>
 <dd><p>any gradient fill</p></dd>
 
 
@@ -3854,15 +3867,16 @@ These styles are used with conditional formatting and custom table styles</p><di
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_ignore_error</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="st">"A1"</span>,</span>
-<span>  calculatedColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  emptyCellReference <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  evalError <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  calculated_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  empty_cell_reference <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  eval_error <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  formula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  formulaRange <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  listDataValidation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  numberStoredAsText <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  twoDigitTextYear <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  unlockedFormula <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  formula_range <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  list_data_validation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  number_stored_as_text <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  two_digit_text_year <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  unlocked_formula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -3876,15 +3890,15 @@ These styles are used with conditional formatting and custom table styles</p><di
 <dd><p>dims</p></dd>
 
 
-<dt><code>calculatedColumn</code></dt>
+<dt><code>calculated_column</code></dt>
 <dd><p>calculatedColumn</p></dd>
 
 
-<dt><code>emptyCellReference</code></dt>
+<dt><code>empty_cell_reference</code></dt>
 <dd><p>emptyCellReference</p></dd>
 
 
-<dt><code>evalError</code></dt>
+<dt><code>eval_error</code></dt>
 <dd><p>evalError</p></dd>
 
 
@@ -3892,24 +3906,28 @@ These styles are used with conditional formatting and custom table styles</p><di
 <dd><p>formula</p></dd>
 
 
-<dt><code>formulaRange</code></dt>
+<dt><code>formula_range</code></dt>
 <dd><p>formulaRange</p></dd>
 
 
-<dt><code>listDataValidation</code></dt>
+<dt><code>list_data_validation</code></dt>
 <dd><p>listDataValidation</p></dd>
 
 
-<dt><code>numberStoredAsText</code></dt>
+<dt><code>number_stored_as_text</code></dt>
 <dd><p>numberStoredAsText</p></dd>
 
 
-<dt><code>twoDigitTextYear</code></dt>
+<dt><code>two_digit_text_year</code></dt>
 <dd><p>twoDigitTextYear</p></dd>
 
 
-<dt><code>unlockedFormula</code></dt>
+<dt><code>unlocked_formula</code></dt>
 <dd><p>unlockedFormula</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -3921,25 +3939,26 @@ These styles are used with conditional formatting and custom table styles</p><di
 <h4 id="usage-80">Usage<a class="anchor" aria-label="anchor" href="#usage-80"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_sheetview</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  defaultGridColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rightToLeft <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showFormulas <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showGridLines <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showOutlineSymbols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showRowColHeaders <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showRuler <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showWhiteSpace <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showZeros <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tabSelected <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  topLeftCell <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  default_grid_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  right_to_left <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_formulas <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_grid_lines <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_outline_symbols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_row_col_headers <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_ruler <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_white_space <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_zeros <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tab_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_left_cell <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  view <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  windowProtection <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  workbookViewId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScale <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScaleNormal <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScalePageLayoutView <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScaleSheetLayoutView <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  window_protection <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbook_view_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale_normal <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale_page_layout_view <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale_sheet_layout_view <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -3949,80 +3968,68 @@ These styles are used with conditional formatting and custom table styles</p><di
 <dd><p>sheet</p></dd>
 
 
-<dt><code>colorId</code></dt>
-<dd><p>colorId</p></dd>
+<dt><code>color_id, default_grid_color</code></dt>
+<dd><p>Integer: A color, default is 64</p></dd>
 
 
-<dt><code>defaultGridColor</code></dt>
-<dd><p>defaultGridColor</p></dd>
+<dt><code>right_to_left</code></dt>
+<dd><p>Logical: if TRUE column ordering is right  to left</p></dd>
 
 
-<dt><code>rightToLeft</code></dt>
-<dd><p>rightToLeft</p></dd>
+<dt><code>show_formulas</code></dt>
+<dd><p>Logical: if TRUE cell formulas are shown</p></dd>
 
 
-<dt><code>showFormulas</code></dt>
-<dd><p>showFormulas</p></dd>
+<dt><code>show_grid_lines</code></dt>
+<dd><p>Logical: if TRUE the worksheet grid is shown</p></dd>
 
 
-<dt><code>showGridLines</code></dt>
-<dd><p>showGridLines</p></dd>
+<dt><code>show_outline_symbols</code></dt>
+<dd><p>Logical: if TRUE outline symbols are shown</p></dd>
 
 
-<dt><code>showOutlineSymbols</code></dt>
-<dd><p>showOutlineSymbols</p></dd>
+<dt><code>show_row_col_headers</code></dt>
+<dd><p>Logical: if TRUE row and column headers are shown</p></dd>
 
 
-<dt><code>showRowColHeaders</code></dt>
-<dd><p>showRowColHeaders</p></dd>
+<dt><code>show_ruler</code></dt>
+<dd><p>Logical: if TRUE a ruler is shown in page layout view</p></dd>
 
 
-<dt><code>showRuler</code></dt>
-<dd><p>showRuler</p></dd>
+<dt><code>show_white_space</code></dt>
+<dd><p>Logical: if TRUE margins are shown in page layout view</p></dd>
 
 
-<dt><code>showWhiteSpace</code></dt>
-<dd><p>showWhiteSpace</p></dd>
+<dt><code>show_zeros</code></dt>
+<dd><p>Logical: if FALSE cells containing zero are shown blank if !showFormulas</p></dd>
 
 
-<dt><code>showZeros</code></dt>
-<dd><p>showZeros</p></dd>
+<dt><code>tab_selected</code></dt>
+<dd><p>Integer: zero vector indicating the selected tab</p></dd>
 
 
-<dt><code>tabSelected</code></dt>
-<dd><p>tabSelected</p></dd>
-
-
-<dt><code>topLeftCell</code></dt>
-<dd><p>topLeftCell</p></dd>
+<dt><code>top_left_cell</code></dt>
+<dd><p>Cell: the cell shown in the top left corner / or top right with rightToLeft</p></dd>
 
 
 <dt><code>view</code></dt>
-<dd><p>view</p></dd>
+<dd><p>View: "normal", "pageBreakPreview" or "pageLayout"</p></dd>
 
 
-<dt><code>windowProtection</code></dt>
-<dd><p>windowProtection</p></dd>
+<dt><code>window_protection</code></dt>
+<dd><p>Logical: if TRUE the panes are protected</p></dd>
 
 
-<dt><code>workbookViewId</code></dt>
-<dd><p>workbookViewId</p></dd>
+<dt><code>workbook_view_id</code></dt>
+<dd><p>integer: Pointing to some other view inside the workbook</p></dd>
 
 
-<dt><code>zoomScale</code></dt>
-<dd><p>zoomScale</p></dd>
+<dt><code>zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view, zoom_scale_sheet_layout_view</code></dt>
+<dd><p>Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.</p></dd>
 
 
-<dt><code>zoomScaleNormal</code></dt>
-<dd><p>zoomScaleNormal</p></dd>
-
-
-<dt><code>zoomScalePageLayoutView</code></dt>
-<dd><p>zoomScalePageLayoutView</p></dd>
-
-
-<dt><code>zoomScaleSheetLayoutView</code></dt>
-<dd><p>zoomScaleSheetLayoutView</p></dd>
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>

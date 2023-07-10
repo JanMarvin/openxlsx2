@@ -52,7 +52,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Add mschart object to an existing workbook</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/wb_functions.R" class="external-link"><code>R/wb_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_mschart.Rd</code></div>
     </div>
 
@@ -67,8 +67,9 @@
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">graph</span>,</span>
-<span>  colOffset <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  rowOffset <span class="op">=</span> <span class="fl">0</span></span>
+<span>  col_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  row_offset <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,13 +91,17 @@
 <dd><p>mschart object</p></dd>
 
 
-<dt>colOffset, rowOffset</dt>
-<dd><p>startCol and startRow</p></dd>
+<dt>col_offset, row_offset</dt>
+<dd><p>offsets for column and row</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="wb_data.html">wb_data()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="wb_data.html">wb_data()</a></code> <code><a href="wb_add_chart_xml.html">wb_add_chart_xml()</a></code> <a href="wb_add_image.html">wb_add_image</a> <code>wb_add_mschart()</code> <a href="wb_add_plot.html">wb_add_plot</a></p></div>
     </div>
 
     <div class="section level2">

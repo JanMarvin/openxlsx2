@@ -65,25 +65,26 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_set_sheetview</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  colorId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  defaultGridColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rightToLeft <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showFormulas <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showGridLines <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showOutlineSymbols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showRowColHeaders <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showRuler <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showWhiteSpace <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showZeros <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tabSelected <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  topLeftCell <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  default_grid_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  right_to_left <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_formulas <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_grid_lines <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_outline_symbols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_row_col_headers <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_ruler <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_white_space <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_zeros <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tab_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_left_cell <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  view <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  windowProtection <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  workbookViewId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScale <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScaleNormal <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScalePageLayoutView <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  zoomScaleSheetLayoutView <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  window_protection <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  workbook_view_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale_normal <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale_page_layout_view <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  zoom_scale_sheet_layout_view <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,47 +98,47 @@
 <dd><p>sheet</p></dd>
 
 
-<dt>colorId, defaultGridColor</dt>
+<dt>color_id, default_grid_color</dt>
 <dd><p>Integer: A color, default is 64</p></dd>
 
 
-<dt>rightToLeft</dt>
+<dt>right_to_left</dt>
 <dd><p>Logical: if TRUE column ordering is right  to left</p></dd>
 
 
-<dt>showFormulas</dt>
+<dt>show_formulas</dt>
 <dd><p>Logical: if TRUE cell formulas are shown</p></dd>
 
 
-<dt>showGridLines</dt>
+<dt>show_grid_lines</dt>
 <dd><p>Logical: if TRUE the worksheet grid is shown</p></dd>
 
 
-<dt>showOutlineSymbols</dt>
+<dt>show_outline_symbols</dt>
 <dd><p>Logical: if TRUE outline symbols are shown</p></dd>
 
 
-<dt>showRowColHeaders</dt>
+<dt>show_row_col_headers</dt>
 <dd><p>Logical: if TRUE row and column headers are shown</p></dd>
 
 
-<dt>showRuler</dt>
+<dt>show_ruler</dt>
 <dd><p>Logical: if TRUE a ruler is shown in page layout view</p></dd>
 
 
-<dt>showWhiteSpace</dt>
+<dt>show_white_space</dt>
 <dd><p>Logical: if TRUE margins are shown in page layout view</p></dd>
 
 
-<dt>showZeros</dt>
+<dt>show_zeros</dt>
 <dd><p>Logical: if FALSE cells containing zero are shown blank if !showFormulas</p></dd>
 
 
-<dt>tabSelected</dt>
+<dt>tab_selected</dt>
 <dd><p>Integer: zero vector indicating the selected tab</p></dd>
 
 
-<dt>topLeftCell</dt>
+<dt>top_left_cell</dt>
 <dd><p>Cell: the cell shown in the top left corner / or top right with rightToLeft</p></dd>
 
 
@@ -145,16 +146,20 @@
 <dd><p>View: "normal", "pageBreakPreview" or "pageLayout"</p></dd>
 
 
-<dt>windowProtection</dt>
+<dt>window_protection</dt>
 <dd><p>Logical: if TRUE the panes are protected</p></dd>
 
 
-<dt>workbookViewId</dt>
+<dt>workbook_view_id</dt>
 <dd><p>integer: Pointing to some other view inside the workbook</p></dd>
 
 
-<dt>zoomScale, zoomScaleNormal, zoomScalePageLayoutView, zoomScaleSheetLayoutView</dt>
+<dt>zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view, zoom_scale_sheet_layout_view</dt>
 <dd><p>Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">

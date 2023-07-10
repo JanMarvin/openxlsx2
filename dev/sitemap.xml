@@ -100,15 +100,6 @@
     <loc>/dev/reference/fmt_txt.html</loc>
   </url>
   <url>
-    <loc>/dev/reference/get_cell_refs.html</loc>
-  </url>
-  <url>
-    <loc>/dev/reference/get_date_origin.html</loc>
-  </url>
-  <url>
-    <loc>/dev/reference/guess_col_type.html</loc>
-  </url>
-  <url>
     <loc>/dev/reference/index.html</loc>
   </url>
   <url>
@@ -148,9 +139,6 @@
     <loc>/dev/reference/sheet_visibility.html</loc>
   </url>
   <url>
-    <loc>/dev/reference/style_mgr.html</loc>
-  </url>
-  <url>
     <loc>/dev/reference/styles_on_sheet.html</loc>
   </url>
   <url>
@@ -166,19 +154,7 @@
     <loc>/dev/reference/wbColour.html</loc>
   </url>
   <url>
-    <loc>/dev/reference/wbComment.html</loc>
-  </url>
-  <url>
-    <loc>/dev/reference/wbHyperlink.html</loc>
-  </url>
-  <url>
-    <loc>/dev/reference/wbSheetData.html</loc>
-  </url>
-  <url>
     <loc>/dev/reference/wbWorkbook.html</loc>
-  </url>
-  <url>
-    <loc>/dev/reference/wbWorksheet.html</loc>
   </url>
   <url>
     <loc>/dev/reference/wb_add_border.html</loc>
@@ -368,9 +344,6 @@
   </url>
   <url>
     <loc>/dev/reference/write_datatable.html</loc>
-  </url>
-  <url>
-    <loc>/dev/reference/write_file.html</loc>
   </url>
   <url>
     <loc>/dev/reference/write_formula.html</loc>

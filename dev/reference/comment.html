@@ -98,23 +98,9 @@ are called comments in openxml. Modification of what Excel now calls comment
 <span>  dims <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">wb_add_comment</span><span class="op">(</span></span>
-<span>  <span class="va">wb</span>,</span>
-<span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
-<span>  <span class="va">comment</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">wb_add_comment</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">comment</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">wb_remove_comment</span><span class="op">(</span></span>
-<span>  <span class="va">wb</span>,</span>
-<span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span>,</span>
-<span>  gridExpand <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">wb_remove_comment</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -168,7 +154,12 @@ are called comments in openxml. Modification of what Excel now calls comment
 
 
 <dt>gridExpand</dt>
-<dd><p>Remove all comments inside the grid. Similar to dims "A1:B2"</p></dd>
+<dd><p>If <code>TRUE</code>, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
+will be removed.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">

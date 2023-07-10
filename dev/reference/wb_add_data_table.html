@@ -66,23 +66,24 @@
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tableStyle <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,</span>
-<span>  tableName <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  withFilter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  table_style <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,</span>
+<span>  table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  with_filter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
-<span>  firstColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  first_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  last_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  banded_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  banded_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,36 +101,36 @@
 <dd><p>A dataframe.</p></dd>
 
 
-<dt>startCol</dt>
-<dd><p>A vector specifying the starting column to write df</p></dd>
-
-
-<dt>startRow</dt>
-<dd><p>A vector specifying the starting row to write df</p></dd>
-
-
 <dt>dims</dt>
 <dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
 
 
-<dt>colNames</dt>
+<dt>start_col</dt>
+<dd><p>A vector specifying the starting column to write df</p></dd>
+
+
+<dt>start_row</dt>
+<dd><p>A vector specifying the starting row to write df</p></dd>
+
+
+<dt>col_names</dt>
 <dd><p>If <code>TRUE</code>, column names of x are written.</p></dd>
 
 
-<dt>rowNames</dt>
+<dt>row_names</dt>
 <dd><p>If <code>TRUE</code>, row names of x are written.</p></dd>
 
 
-<dt>tableStyle</dt>
+<dt>table_style</dt>
 <dd><p>Any excel table style name or "none" (see "formatting"
 vignette).</p></dd>
 
 
-<dt>tableName</dt>
+<dt>table_name</dt>
 <dd><p>name of table in workbook. The table name must be unique.</p></dd>
 
 
-<dt>withFilter</dt>
+<dt>with_filter</dt>
 <dd><p>If <code>TRUE</code>, columns with have filters in the first row.</p></dd>
 
 
@@ -141,27 +142,27 @@ sep).
 <br><img src="figures/tableoptions.png" width="40%" alt="Figure: table_options.png"></p></dd>
 
 
-<dt>firstColumn</dt>
+<dt>first_column</dt>
 <dd><p>logical. If TRUE, the first column is bold</p></dd>
 
 
-<dt>lastColumn</dt>
+<dt>last_column</dt>
 <dd><p>logical. If TRUE, the last column is bold</p></dd>
 
 
-<dt>bandedRows</dt>
+<dt>banded_rows</dt>
 <dd><p>logical. If TRUE, rows are color banded</p></dd>
 
 
-<dt>bandedCols</dt>
+<dt>banded_cols</dt>
 <dd><p>logical. If TRUE, the columns are color banded</p></dd>
 
 
-<dt>applyCellStyle</dt>
+<dt>apply_cell_style</dt>
 <dd><p>Should we write cell styles to the workbook</p></dd>
 
 
-<dt>removeCellStyle</dt>
+<dt>remove_cell_style</dt>
 <dd><p>keep the cell style?</p></dd>
 
 
@@ -172,6 +173,10 @@ sep).
 
 <dt>inline_strings</dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">
