@@ -11,12 +11,12 @@ wb_add_dxfs_style(
   font_name = NULL,
   font_size = NULL,
   font_color = NULL,
-  numFmt = NULL,
+  num_fmt = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
-  bgFill = NULL,
-  gradientFill = NULL,
+  bg_fill = NULL,
+  gradient_fill = NULL,
   text_bold = NULL,
   text_italic = NULL,
   text_underline = NULL,
@@ -34,7 +34,7 @@ wb_add_dxfs_style(
 
 \item{font_color}{the font color (a \code{wb_color()} object)}
 
-\item{numFmt}{the number format}
+\item{num_fmt}{the number format}
 
 \item{border}{logical if borders are applied}
 
@@ -42,9 +42,9 @@ wb_add_dxfs_style(
 
 \item{border_style}{the border style}
 
-\item{bgFill}{any background fill}
+\item{bg_fill}{any background fill}
 
-\item{gradientFill}{any gradient fill}
+\item{gradient_fill}{any gradient fill}
 
 \item{text_bold}{logical if text is bold}
 

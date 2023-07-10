@@ -9,10 +9,11 @@ wb_set_header_footer(
   sheet = current_sheet(),
   header = NULL,
   footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL
+  even_header = NULL,
+  even_footer = NULL,
+  first_header = NULL,
+  first_footer = NULL,
+  ...
 )
 }
 \arguments{
@@ -24,13 +25,15 @@ wb_set_header_footer(
 
 \item{footer}{document footer. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.}
 
-\item{evenHeader}{document header for even pages.}
+\item{even_header}{document header for even pages.}
 
-\item{evenFooter}{document footer for even pages.}
+\item{even_footer}{document footer for even pages.}
 
-\item{firstHeader}{document header for first page only.}
+\item{first_header}{document header for first page only.}
 
-\item{firstFooter}{document footer for first page only.}
+\item{first_footer}{document footer for first page only.}
+
+\item{...}{additional arguments}
 }
 \description{
 Set document headers and footers

@@ -6,49 +6,52 @@
 \usage{
 create_tablestyle(
   name,
-  wholeTable = NULL,
-  headerRow = NULL,
-  totalRow = NULL,
-  firstColumn = NULL,
-  lastColumn = NULL,
-  firstRowStripe = NULL,
-  secondRowStripe = NULL,
-  firstColumnStripe = NULL,
-  secondColumnStripe = NULL,
-  firstHeaderCell = NULL,
-  lastHeaderCell = NULL,
-  firstTotalCell = NULL,
-  lastTotalCell = NULL
+  whole_table = NULL,
+  header_row = NULL,
+  total_row = NULL,
+  first_column = NULL,
+  last_column = NULL,
+  first_row_stripe = NULL,
+  second_row_stripe = NULL,
+  first_column_stripe = NULL,
+  second_column_stripe = NULL,
+  first_header_cell = NULL,
+  last_header_cell = NULL,
+  first_total_cell = NULL,
+  last_total_cell = NULL,
+  ...
 )
 }
 \arguments{
 \item{name}{name}
 
-\item{wholeTable}{wholeTable}
+\item{whole_table}{wholeTable}
 
-\item{headerRow}{headerRow}
+\item{header_row}{headerRow}
 
-\item{totalRow}{totalRow}
+\item{total_row}{totalRow}
 
-\item{firstColumn}{firstColumn}
+\item{first_column}{firstColumn}
 
-\item{lastColumn}{lastColumn}
+\item{last_column}{lastColumn}
 
-\item{firstRowStripe}{firstRowStripe}
+\item{first_row_stripe}{firstRowStripe}
 
-\item{secondRowStripe}{secondRowStripe}
+\item{second_row_stripe}{secondRowStripe}
 
-\item{firstColumnStripe}{firstColumnStripe}
+\item{first_column_stripe}{firstColumnStripe}
 
-\item{secondColumnStripe}{secondColumnStripe}
+\item{second_column_stripe}{secondColumnStripe}
 
-\item{firstHeaderCell}{firstHeaderCell}
+\item{first_header_cell}{firstHeaderCell}
 
-\item{lastHeaderCell}{lastHeaderCell}
+\item{last_header_cell}{lastHeaderCell}
 
-\item{firstTotalCell}{firstTotalCell}
+\item{first_total_cell}{firstTotalCell}
 
-\item{lastTotalCell}{lastTotalCell}
+\item{last_total_cell}{lastTotalCell}
+
+\item{...}{additional arguments}
 }
 \description{
 create tableStyle

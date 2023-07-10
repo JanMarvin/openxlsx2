@@ -5,8 +5,8 @@
 \title{create border}
 \usage{
 create_border(
-  diagonalDown = "",
-  diagonalUp = "",
+  diagonal_down = "",
+  diagonal_up = "",
   outline = "",
   bottom = NULL,
   bottom_color = NULL,
@@ -26,9 +26,9 @@ create_border(
 )
 }
 \arguments{
-\item{diagonalDown}{x}
+\item{diagonal_down}{x}
 
-\item{diagonalUp}{x}
+\item{diagonal_up}{x}
 
 \item{outline}{x}
 

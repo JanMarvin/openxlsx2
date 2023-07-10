@@ -4,14 +4,14 @@
 \alias{write_xlsx}
 \title{write data to an xlsx file}
 \usage{
-write_xlsx(x, file, asTable = FALSE, ...)
+write_xlsx(x, file, as_table = FALSE, ...)
 }
 \arguments{
 \item{x}{object or a list of objects that can be handled by \code{\link[=write_data]{write_data()}} to write to file}
 
 \item{file}{xlsx file name}
 
-\item{asTable}{write using write_datatable as opposed to write_data}
+\item{as_table}{write using write_datatable as opposed to write_data}
 
 \item{...}{optional parameters to pass to functions:
 \itemize{

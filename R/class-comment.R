@@ -2,7 +2,8 @@
 #'
 #' A comment
 #'
-#' @export
+#' @keywords internal
+#' @noRd
 wbComment <- R6::R6Class(
   "wbComment",
 
@@ -179,6 +180,7 @@ create_comment <- function(text,
 #' @param comment A Comment object. See [create_comment()].
 #' @param dims worksheet cell "A1"
 #' @rdname comment
+#' @keywords internal
 #' @export
 write_comment <- function(
     wb,
@@ -339,6 +341,7 @@ write_comment <- function(
 #' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 #' will be removed.
 #' @rdname comment
+#' @keywords internal
 #' @export
 remove_comment <- function(
     wb,
@@ -378,7 +381,9 @@ remove_comment <- function(
 
   toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
 
+  # FIXME: if all comments are removed we should drop to wb$comments <- list()
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
+
 }
 
 wb_comment <- function(text = character(), author = character(), style = character()) {

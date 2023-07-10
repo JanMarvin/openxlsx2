@@ -43,27 +43,3 @@ wb_color <- function(
 wb_colour <- wb_color
 
 is_wbColour <- function(x) inherits(x, "wbColour")
-
-#' takes colour and returns color
-#' @param ... ...
-#' @returns void. assigns an object in the parent frame
-#' @keywords internal
-#' @noRd
-standardize_color_names <- function(...) {
-
-  # since R 4.1.0: ...names()
-  args <- list(...)
-  got <- names(args)
-  # can be Color or color
-  got_color <- which(grepl("colour", tolower(got)))
-
-  if (length(got_color)) {
-    for (got_col in got_color) {
-      color <- got[got_col]
-      name_color <- stringi::stri_replace_all_fixed(color, "olour", "olor", )
-      # since R 3.5.0: ...elt(got_col)
-      value_color <- args[[got_col]]
-      assign(name_color, value_color, parent.frame())
-    }
-  }
-}

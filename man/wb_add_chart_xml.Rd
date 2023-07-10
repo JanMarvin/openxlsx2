@@ -7,10 +7,11 @@
 wb_add_chart_xml(
   wb,
   sheet = current_sheet(),
-  xml,
   dims = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  xml,
+  col_offset = 0,
+  row_offset = 0,
+  ...
 )
 }
 \arguments{
@@ -18,12 +19,17 @@ wb_add_chart_xml(
 
 \item{sheet}{the sheet on which the graph will appear}
 
-\item{xml}{chart xml}
-
 \item{dims}{the dimensions where the sheet will appear}
 
-\item{colOffset, rowOffset}{startCol and startRow}
+\item{xml}{chart xml}
+
+\item{col_offset, row_offset}{positioning}
+
+\item{...}{additional arguments}
 }
 \description{
 add a chart xml to a workbook
+}
+\seealso{
+\code{\link[=wb_add_drawing]{wb_add_drawing()}} \code{\link[=wb_add_image]{wb_add_image()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}} \code{\link[=wb_add_plot]{wb_add_plot()}}
 }

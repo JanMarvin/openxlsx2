@@ -253,10 +253,10 @@ test_that("wb_grid_lines() is a wrapper", {
 
 test_that("wb_add_named_region(), wb_remove_named_region() are wrappers", {
   wb <- wb_workbook()$add_worksheet("a")
-  params <- list(sheet = 1, cols = 1, rows = 1, name = "cool")
+  params <- list(sheet = 1, dims = "A1", name = "cool")
   expect_wrapper("add_named_region", wb = wb, params = params)
   # now add the named region so that we can remove it
-  wb$add_named_region(sheet = 1, cols = 1, rows = 1, name = "cool")
+  wb$add_named_region(sheet = 1, dims = "A1", name = "cool")
   expect_wrapper("remove_named_region", wb = wb, params = list(name = "cool"))
 })
 
@@ -279,7 +279,7 @@ test_that("wb_get_sheet_visibility(), wb_set_sheet_visibility() are wrappers", {
 
 test_that("wb_add_data_validation() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
-  params <- list(sheet = 1, cols = 1, rows = 1, type = "whole", operator = "between", value = c(0, 1))
+  params <- list(sheet = 1, dims = "A1", type = "whole", operator = "between", value = c(0, 1))
   expect_wrapper("add_data_validation", wb = wb, params = params)
 })
 

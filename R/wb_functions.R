@@ -83,7 +83,8 @@ dataframe_to_dims <- function(df) {
 #' function to estimate the column type.
 #' 0 = character, 1 = numeric, 2 = date.
 #' @param tt dataframe produced by wb_to_df()
-#' @export
+#' @keywords internal
+#' @noRd
 guess_col_type <- function(tt) {
 
   # all columns are character
@@ -269,28 +270,29 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #' Simple function to create a dataframe from a workbook. Simple as in simply
 #' written down.
 #'
-#' @param xlsxFile An xlsx file, Workbook object or URL to xlsx file.
+#' @param xlsx_file An xlsx file, Workbook object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
-#' @param colNames If TRUE, the first row of data will be used as column names.
-#' @param rowNames If TRUE, the first col of data will be used as row names.
+#' @param col_names If TRUE, the first row of data will be used as column names.
+#' @param row_names If TRUE, the first col of data will be used as row names.
 #' @param dims Character string of type "A1:B2" as optional dimensions to be imported.
-#' @param detectDates If TRUE, attempt to recognize dates and perform conversion.
-#' @param showFormula If TRUE, the underlying Excel formulas are shown.
+#' @param detect_dates If TRUE, attempt to recognize dates and perform conversion.
+#' @param show_formula If TRUE, the underlying Excel formulas are shown.
 #' @param convert If TRUE, a conversion to dates and numerics is attempted.
-#' @param skipEmptyCols If TRUE, empty columns are skipped.
-#' @param skipEmptyRows If TRUE, empty rows are skipped.
-#' @param skipHiddenCols If TRUE, hidden columns are skipped.
-#' @param skipHiddenRows If TRUE, hidden rows are skipped.
-#' @param startRow first row to begin looking for data.
-#' @param startCol first column to begin looking for data.
+#' @param skip_empty_cols If TRUE, empty columns are skipped.
+#' @param skip_empty_rows If TRUE, empty rows are skipped.
+#' @param skip_hidden_cols If TRUE, hidden columns are skipped.
+#' @param skip_hidden_rows If TRUE, hidden rows are skipped.
+#' @param start_row first row to begin looking for data.
+#' @param start_col first column to begin looking for data.
 #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
 #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
 #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
 #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
 #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
 #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
-#' @param fillMergedCells If TRUE, the value in a merged cell is given to all cells within the merge.
+#' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
 #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
+#' @param ... additional arguments
 #' @details
 #' Depending if the R package `hms` is loaded, `wb_to_df()` returns `hms` variables or string variables in the `hh:mm:ss` format.
 #' @examples
@@ -355,43 +357,44 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #'
 #' @export
 wb_to_df <- function(
-    xlsxFile,
+    xlsx_file,
     sheet,
-    startRow        = 1,
-    startCol        = NULL,
-    rowNames        = FALSE,
-    colNames        = TRUE,
-    skipEmptyRows   = FALSE,
-    skipEmptyCols   = FALSE,
-    skipHiddenRows  = FALSE,
-    skipHiddenCols  = FALSE,
-    rows            = NULL,
-    cols            = NULL,
-    detectDates     = TRUE,
-    na.strings      = "#N/A",
-    na.numbers      = NA,
-    fillMergedCells = FALSE,
+    start_row         = 1,
+    start_col         = NULL,
+    row_names         = FALSE,
+    col_names         = TRUE,
+    skip_empty_rows   = FALSE,
+    skip_empty_cols   = FALSE,
+    skip_hidden_rows  = FALSE,
+    skip_hidden_cols  = FALSE,
+    rows              = NULL,
+    cols              = NULL,
+    detect_dates      = TRUE,
+    na.strings        = "#N/A",
+    na.numbers        = NA,
+    fill_merged_cells = FALSE,
     dims,
-    showFormula     = FALSE,
-    convert         = TRUE,
+    show_formula      = FALSE,
+    convert           = TRUE,
     types,
     named_region,
-    keep_attributes = FALSE
+    keep_attributes   = FALSE,
+    ...
 ) {
 
-  # .mc <- match.call() # not (yet) used?
+  standardize_case_names(...)
 
   if (!is.null(cols)) cols <- col2int(cols)
 
-  if (inherits(xlsxFile, "wbWorkbook")) {
-    wb <- xlsxFile
+  if (inherits(xlsx_file, "wbWorkbook")) {
+    wb <- xlsx_file
   } else {
     # passes missing further on
     if (missing(sheet))
       sheet <- substitute()
 
     # possible false positive on current lintr runs
-    wb <- wb_load(xlsxFile, sheet = sheet, data_only = TRUE) # nolint
+    wb <- wb_load(xlsx_file, sheet = sheet, data_only = TRUE) # nolint
   }
 
   if (!missing(named_region)) {
@@ -478,13 +481,13 @@ wb_to_df <- function(
   maxRow <- max(as.numeric(keep_rows))
   maxCol <- max(col2int(keep_cols))
 
-  if (startRow > 1) {
-    keep_rows <- as.character(seq(startRow, maxRow))
-    if (startRow <= maxRow) {
+  if (start_row > 1) {
+    keep_rows <- as.character(seq(start_row, maxRow))
+    if (start_row <= maxRow) {
       z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
       tt <- tt[rownames(tt) %in% keep_rows, , drop = FALSE]
     } else {
-      keep_rows <- as.character(startRow)
+      keep_rows <- as.character(start_row)
       z  <- z[keep_rows, , drop = FALSE]
       tt <- tt[keep_rows, , drop = FALSE]
 
@@ -508,8 +511,8 @@ wb_to_df <- function(
     }
   }
 
-  if (!is.null(startCol)) {
-    keep_cols <- int2col(seq(col2int(startCol), maxCol))
+  if (!is.null(start_col)) {
+    keep_cols <- int2col(seq(col2int(start_col), maxCol))
 
     if (!all(keep_cols %in% colnames(z))) {
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
@@ -562,7 +565,7 @@ wb_to_df <- function(
     cc$val[sel] <- replaceXMLEntities(cc$v[sel])
     cc$typ[sel] <- "s"
   }
-  if (showFormula) {
+  if (show_formula) {
     sel <- cc$f != ""
     cc$val[sel] <- replaceXMLEntities(cc$f[sel])
     cc$typ[sel] <- "s"
@@ -607,7 +610,7 @@ wb_to_df <- function(
   # dates
   if (!is.null(cc$c_s)) {
     # if a cell is t="s" the content is a sst and not da date
-    if (detectDates && missing(types)) {
+    if (detect_dates && missing(types)) {
       cc$is_string <- FALSE
       if (!is.null(cc$c_t))
         cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
@@ -663,7 +666,7 @@ wb_to_df <- function(
 
   # backward compatible option. get the mergedCells dimension and fill it with
   # the value of the first cell in the range. do the same for tt.
-  if (fillMergedCells) {
+  if (fill_merged_cells) {
     mc <- wb$worksheets[[sheet]]$mergeCells
     if (length(mc)) {
 
@@ -681,14 +684,14 @@ wb_to_df <- function(
           # TODO there probably is a better way in not reducing cc above, so
           # that we do not have to go through large xlsx files multiple times
           z_fill <- wb_to_df(
-            xlsxFile = wb,
-            sheet = sheet,
-            dims = filler,
-            na.strings = na.strings,
-            convert = FALSE,
-            colNames = FALSE,
-            detectDates = detectDates,
-            showFormula = showFormula,
+            xlsx_file       = wb,
+            sheet           = sheet,
+            dims            = filler,
+            na.strings      = na.strings,
+            convert         = FALSE,
+            col_names       = FALSE,
+            detect_dates    = detect_dates,
+            show_formula    = show_formula,
             keep_attributes = TRUE
           )
 
@@ -704,7 +707,7 @@ wb_to_df <- function(
 
   # the following two skip hidden columns and row and need a valid keep_rows and
   # keep_cols length.
-  if (skipHiddenRows) {
+  if (skip_hidden_rows) {
     sel <- row_attr$hidden == "1" | row_attr$hidden == "true"
     if (any(sel)) {
       hide   <- !keep_rows %in% row_attr$r[sel]
@@ -714,7 +717,7 @@ wb_to_df <- function(
     }
   }
 
-  if (skipHiddenCols) {
+  if (skip_hidden_cols) {
     col_attr <- wb$worksheets[[sheet]]$unfold_cols()
     sel <- col_attr$hidden == "1" | col_attr$hidden == "true"
     if (any(sel)) {
@@ -726,14 +729,14 @@ wb_to_df <- function(
   }
 
   # is.na needs convert
-  if (skipEmptyRows) {
+  if (skip_empty_rows) {
     empty <- vapply(seq_len(nrow(z)), function(x) all(is.na(z[x, ])), NA)
 
     z  <- z[!empty, , drop = FALSE]
     tt <- tt[!empty, , drop = FALSE]
   }
 
-  if (skipEmptyCols) {
+  if (skip_empty_cols) {
 
     empty <- vapply(z, function(x) all(is.na(x)), NA)
 
@@ -750,7 +753,7 @@ wb_to_df <- function(
   names(xlsx_cols_names) <- xlsx_cols_names
 
   # if colNames, then change tt too
-  if (colNames) {
+  if (col_names) {
     # select first row as colnames, but do not yet assign. it might contain
     # missing values and if assigned, convert below might break with unambiguous
     # names.
@@ -762,7 +765,7 @@ wb_to_df <- function(
     tt <- tt[-1, , drop = FALSE]
   }
 
-  if (rowNames) {
+  if (row_names) {
     rownames(z)  <- z[, 1]
     rownames(tt) <- z[, 1]
     xlsx_cols_names <- xlsx_cols_names[-1]
@@ -811,7 +814,7 @@ wb_to_df <- function(
     }
   }
 
-  if (colNames) {
+  if (col_names) {
     names(z)  <- xlsx_cols_names
     names(tt) <- xlsx_cols_names
   }
@@ -900,7 +903,7 @@ wb_set_active_sheet <- function(wb, sheet) {
   # active tab requires a c index
   assert_workbook(wb)
   sheet <- wb_validate_sheet(wb, sheet)
-  wb$clone()$set_bookview(activeTab = sheet - 1L)
+  wb$clone()$set_bookview(active_tab = sheet - 1L)
 }
 
 #' @name select_active_sheet
@@ -935,58 +938,6 @@ wb_set_selected <- function(wb, sheet) {
   }
 
   wb
-}
-
-#' Add mschart object to an existing workbook
-#' @param wb a workbook
-#' @param sheet the sheet on which the graph will appear
-#' @param dims the dimensions where the sheet will appear
-#' @param graph mschart object
-#' @param colOffset,rowOffset startCol and startRow
-#' @examples
-#' if (requireNamespace("mschart")) {
-#' require(mschart)
-#'
-#' ## Add mschart to worksheet (adds data and chart)
-#' scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
-#' scatter <- chart_settings(scatter, scatterstyle = "marker")
-#'
-#' wb <- wb_workbook() %>%
-#'  wb_add_worksheet() %>%
-#'  wb_add_mschart(dims = "F4:L20", graph = scatter)
-#'
-#' ## Add mschart to worksheet and use available data
-#' wb <- wb_workbook() %>%
-#'   wb_add_worksheet() %>%
-#'   wb_add_data(x = mtcars, dims = "B2")
-#'
-#' # create wb_data object
-#' dat <- wb_data(wb, 1, dims = "B2:E6")
-#'
-#' # call ms_scatterplot
-#' data_plot <- ms_scatterchart(
-#'   data = dat,
-#'   x = "mpg",
-#'   y = c("disp", "hp"),
-#'   labels = c("disp", "hp")
-#' )
-#'
-#' # add the scatterplot to the data
-#' wb <- wb %>%
-#'   wb_add_mschart(dims = "F4:L20", graph = data_plot)
-#' }
-#' @seealso [wb_data()]
-#' @export
-wb_add_mschart <- function(
-    wb,
-    sheet     = current_sheet(),
-    dims      = NULL,
-    graph,
-    colOffset = 0,
-    rowOffset = 0
-) {
-  assert_workbook(wb)
-  wb$clone()$add_mschart(sheet = sheet, dims = dims, graph = graph, colOffset = colOffset, rowOffset = rowOffset)
 }
 
 #' provide wb_data object as mschart input

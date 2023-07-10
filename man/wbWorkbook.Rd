@@ -346,8 +346,9 @@ Creates a new \code{wbWorkbook} object
   title = NULL,
   subject = NULL,
   category = NULL,
-  datetimeCreated = Sys.time(),
-  theme = NULL
+  datetime_created = Sys.time(),
+  theme = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -362,11 +363,13 @@ Creates a new \code{wbWorkbook} object
 
 \item{\code{category}}{category}
 
-\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
+\item{\code{datetime_created}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
 is created, not when the Excel files are saved.}
 
 \item{\code{theme}}{Optional theme identified by string or number}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -435,7 +438,7 @@ Add a chart sheet to the workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chartsheet(
   sheet = next_sheet(),
-  tabColor = NULL,
+  tab_color = NULL,
   zoom = 100,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
   ...
@@ -447,7 +450,7 @@ Add a chart sheet to the workbook
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{tabColor}}{tabColor}
+\item{\code{tab_color}}{tab_color}
 
 \item{\code{zoom}}{zoom}
 
@@ -469,21 +472,21 @@ Add worksheet to the \code{wbWorkbook} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_worksheet(
   sheet = next_sheet(),
-  gridLines = TRUE,
-  rowColHeaders = TRUE,
-  tabColor = NULL,
+  grid_lines = TRUE,
+  row_col_headers = TRUE,
+  tab_color = NULL,
   zoom = 100,
   header = NULL,
   footer = NULL,
-  oddHeader = header,
-  oddFooter = footer,
-  evenHeader = header,
-  evenFooter = footer,
-  firstHeader = header,
-  firstFooter = footer,
+  odd_header = header,
+  odd_footer = footer,
+  even_header = header,
+  even_footer = footer,
+  first_header = header,
+  first_footer = footer,
   visible = c("true", "false", "hidden", "visible", "veryhidden"),
-  hasDrawing = FALSE,
-  paperSize = getOption("openxlsx2.paperSize", default = 9),
+  has_drawing = FALSE,
+  paper_size = getOption("openxlsx2.paperSize", default = 9),
   orientation = getOption("openxlsx2.orientation", default = "portrait"),
   hdpi = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
   vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
@@ -496,11 +499,11 @@ Add worksheet to the \code{wbWorkbook} object
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{gridLines}}{gridLines}
+\item{\code{grid_lines}}{gridLines}
 
-\item{\code{rowColHeaders}}{rowColHeaders}
+\item{\code{row_col_headers}}{rowColHeaders}
 
-\item{\code{tabColor}}{tabColor}
+\item{\code{tab_color}}{tabColor}
 
 \item{\code{zoom}}{zoom}
 
@@ -508,23 +511,23 @@ Add worksheet to the \code{wbWorkbook} object
 
 \item{\code{footer}}{footer}
 
-\item{\code{oddHeader}}{oddHeader}
+\item{\code{odd_header}}{oddHeader}
 
-\item{\code{oddFooter}}{oddFooter}
+\item{\code{odd_footer}}{oddFooter}
 
-\item{\code{evenHeader}}{evenHeader}
+\item{\code{even_header}}{evenHeader}
 
-\item{\code{evenFooter}}{evenFooter}
+\item{\code{even_footer}}{evenFooter}
 
-\item{\code{firstHeader}}{firstHeader}
+\item{\code{first_header}}{firstHeader}
 
-\item{\code{firstFooter}}{firstFooter}
+\item{\code{first_footer}}{firstFooter}
 
 \item{\code{visible}}{visible}
 
-\item{\code{hasDrawing}}{hasDrawing}
+\item{\code{has_drawing}}{hasDrawing}
 
-\item{\code{paperSize}}{paperSize}
+\item{\code{paper_size}}{paperSize}
 
 \item{\code{orientation}}{orientation}
 
@@ -568,19 +571,20 @@ add data
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
   sheet = current_sheet(),
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
-  colNames = TRUE,
-  rowNames = FALSE,
-  withFilter = FALSE,
+  col_names = TRUE,
+  row_names = FALSE,
+  with_filter = FALSE,
   name = NULL,
   sep = ", ",
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE,
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
   na.strings = na_strings(),
-  inline_strings = TRUE
+  inline_strings = TRUE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -591,32 +595,34 @@ add data
 
 \item{\code{x}}{x}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{startRow}}{startRow}
-
 \item{\code{dims}}{dims}
+
+\item{\code{start_col}}{startCol}
+
+\item{\code{start_row}}{startRow}
 
 \item{\code{array}}{array}
 
-\item{\code{colNames}}{colNames}
+\item{\code{col_names}}{colNames}
 
-\item{\code{rowNames}}{rowNames}
+\item{\code{row_names}}{rowNames}
 
-\item{\code{withFilter}}{withFilter}
+\item{\code{with_filter}}{withFilter}
 
 \item{\code{name}}{name}
 
 \item{\code{sep}}{sep}
 
-\item{\code{applyCellStyle}}{applyCellStyle}
+\item{\code{apply_cell_style}}{applyCellStyle}
 
-\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+\item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
 
 \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+
+\item{\code{...}}{additional arguments}
 
 \item{\code{return}}{The \code{wbWorkbook} object}
 }
@@ -632,23 +638,24 @@ add a data table
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
   sheet = current_sheet(),
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
-  colNames = TRUE,
-  rowNames = FALSE,
-  tableStyle = "TableStyleLight9",
-  tableName = NULL,
-  withFilter = TRUE,
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
+  col_names = TRUE,
+  row_names = FALSE,
+  table_style = "TableStyleLight9",
+  table_name = NULL,
+  with_filter = TRUE,
   sep = ", ",
-  firstColumn = FALSE,
-  lastColumn = FALSE,
-  bandedRows = TRUE,
-  bandedCols = FALSE,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE,
+  first_column = FALSE,
+  last_column = FALSE,
+  banded_rows = TRUE,
+  banded_cols = FALSE,
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
   na.strings = na_strings(),
-  inline_strings = TRUE
+  inline_strings = TRUE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -659,40 +666,42 @@ add a data table
 
 \item{\code{x}}{x}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{startRow}}{startRow}
-
 \item{\code{dims}}{dims}
 
-\item{\code{colNames}}{colNames}
+\item{\code{start_col}}{startCol}
 
-\item{\code{rowNames}}{rowNames}
+\item{\code{start_row}}{startRow}
 
-\item{\code{tableStyle}}{tableStyle}
+\item{\code{col_names}}{colNames}
 
-\item{\code{tableName}}{tableName}
+\item{\code{row_names}}{rowNames}
 
-\item{\code{withFilter}}{withFilter}
+\item{\code{table_style}}{tableStyle}
+
+\item{\code{table_name}}{tableName}
+
+\item{\code{with_filter}}{withFilter}
 
 \item{\code{sep}}{sep}
 
-\item{\code{firstColumn}}{firstColumn}
+\item{\code{first_column}}{firstColumn}
 
-\item{\code{lastColumn}}{lastColumn}
+\item{\code{last_column}}{lastColumn}
 
-\item{\code{bandedRows}}{bandedRows}
+\item{\code{banded_rows}}{bandedRows}
 
-\item{\code{bandedCols}}{bandedCols}
+\item{\code{banded_cols}}{bandedCols}
 
-\item{\code{applyCellStyle}}{applyCellStyle}
+\item{\code{apply_cell_style}}{applyCellStyle}
 
-\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+\item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
 
 \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -749,13 +758,14 @@ add formula
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
   cm = FALSE,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -766,19 +776,21 @@ add formula
 
 \item{\code{x}}{x}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{startRow}}{startRow}
-
 \item{\code{dims}}{dims}
+
+\item{\code{start_col}}{startCol}
+
+\item{\code{start_row}}{startRow}
 
 \item{\code{array}}{array}
 
 \item{\code{cm}}{cm}
 
-\item{\code{applyCellStyle}}{applyCellStyle}
+\item{\code{apply_cell_style}}{applyCellStyle}
 
-\item{\code{removeCellStyle}}{if writing into existing cells, should the cell style be removed?}
+\item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -810,26 +822,27 @@ to_df
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$to_df(
   sheet,
-  startRow = 1,
-  startCol = NULL,
-  rowNames = FALSE,
-  colNames = TRUE,
-  skipEmptyRows = FALSE,
-  skipEmptyCols = FALSE,
-  skipHiddenRows = FALSE,
-  skipHiddenCols = FALSE,
+  start_row = 1,
+  start_col = NULL,
+  row_names = FALSE,
+  col_names = TRUE,
+  skip_empty_rows = FALSE,
+  skip_empty_cols = FALSE,
+  skip_hidden_rows = FALSE,
+  skip_hidden_cols = FALSE,
   rows = NULL,
   cols = NULL,
-  detectDates = TRUE,
+  detect_dates = TRUE,
   na.strings = "#N/A",
   na.numbers = NA,
-  fillMergedCells = FALSE,
+  fill_merged_cells = FALSE,
   dims,
-  showFormula = FALSE,
+  show_formula = FALSE,
   convert = TRUE,
   types,
   named_region,
-  keep_attributes = FALSE
+  keep_attributes = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -838,37 +851,37 @@ to_df
 \describe{
 \item{\code{sheet}}{Either sheet name or index. When missing the first sheet in the workbook is selected.}
 
-\item{\code{startRow}}{first row to begin looking for data.}
+\item{\code{start_row}}{first row to begin looking for data.}
 
-\item{\code{startCol}}{first column to begin looking for data.}
+\item{\code{start_col}}{first column to begin looking for data.}
 
-\item{\code{rowNames}}{If TRUE, the first col of data will be used as row names.}
+\item{\code{row_names}}{If TRUE, the first col of data will be used as row names.}
 
-\item{\code{colNames}}{If TRUE, the first row of data will be used as column names.}
+\item{\code{col_names}}{If TRUE, the first row of data will be used as column names.}
 
-\item{\code{skipEmptyRows}}{If TRUE, empty rows are skipped.}
+\item{\code{skip_empty_rows}}{If TRUE, empty rows are skipped.}
 
-\item{\code{skipEmptyCols}}{If TRUE, empty columns are skipped.}
+\item{\code{skip_empty_cols}}{If TRUE, empty columns are skipped.}
 
-\item{\code{skipHiddenRows}}{If TRUE, hidden rows are skipped.}
+\item{\code{skip_hidden_rows}}{If TRUE, hidden rows are skipped.}
 
-\item{\code{skipHiddenCols}}{If TRUE, hidden columns are skipped.}
+\item{\code{skip_hidden_cols}}{If TRUE, hidden columns are skipped.}
 
 \item{\code{rows}}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
 
 \item{\code{cols}}{A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.}
 
-\item{\code{detectDates}}{If TRUE, attempt to recognize dates and perform conversion.}
+\item{\code{detect_dates}}{If TRUE, attempt to recognize dates and perform conversion.}
 
 \item{\code{na.strings}}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
 
 \item{\code{na.numbers}}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
 
-\item{\code{fillMergedCells}}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+\item{\code{fill_merged_cells}}{If TRUE, the value in a merged cell is given to all cells within the merge.}
 
 \item{\code{dims}}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
-\item{\code{showFormula}}{If TRUE, the underlying Excel formulas are shown.}
+\item{\code{show_formula}}{If TRUE, the underlying Excel formulas are shown.}
 
 \item{\code{convert}}{If TRUE, a conversion to dates and numerics is attempted.}
 
@@ -877,6 +890,8 @@ to_df
 \item{\code{named_region}}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
 
 \item{\code{keep_attributes}}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -892,10 +907,11 @@ load workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$load(
   file,
-  xlsxFile = NULL,
+  xlsx_file = NULL,
   sheet,
   data_only = FALSE,
-  calc_chain = FALSE
+  calc_chain = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -904,13 +920,15 @@ load workbook
 \describe{
 \item{\code{file}}{file}
 
-\item{\code{xlsxFile}}{xlsxFile}
+\item{\code{xlsx_file}}{xlsx_file}
 
 \item{\code{sheet}}{sheet}
 
 \item{\code{data_only}}{data_only}
 
 \item{\code{calc_chain}}{calc_chain}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1098,9 +1116,9 @@ A list of of the font
 Get the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
-  fontSize = 11,
-  fontColor = wb_color(theme = "1"),
-  fontName = "Calibri",
+  font_size = 11,
+  font_color = wb_color(theme = "1"),
+  font_name = "Calibri",
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -1108,11 +1126,11 @@ Get the base font
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{fontSize}}{fontSize}
+\item{\code{font_size}}{fontSize}
 
-\item{\code{fontColor}}{fontColor}
+\item{\code{font_color}}{font_color}
 
-\item{\code{fontName}}{fontName}
+\item{\code{font_name}}{font_name}
 
 \item{\code{...}}{...}
 }
@@ -1129,50 +1147,53 @@ The \code{wbWorkbook} object
 Set the book views
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_bookview(
-  activeTab = NULL,
-  autoFilterDateGrouping = NULL,
-  firstSheet = NULL,
+  active_tab = NULL,
+  auto_filter_date_grouping = NULL,
+  first_sheet = NULL,
   minimized = NULL,
-  showHorizontalScroll = NULL,
-  showSheetTabs = NULL,
-  showVerticalScroll = NULL,
-  tabRatio = NULL,
+  show_horizontal_scroll = NULL,
+  show_sheet_tabs = NULL,
+  show_vertical_scroll = NULL,
+  tab_ratio = NULL,
   visibility = NULL,
-  windowHeight = NULL,
-  windowWidth = NULL,
-  xWindow = NULL,
-  yWindow = NULL
+  window_height = NULL,
+  window_width = NULL,
+  x_window = NULL,
+  y_window = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{activeTab}}{activeTab}
+\item{\code{active_tab}}{activeTab}
 
-\item{\code{autoFilterDateGrouping}}{autoFilterDateGrouping}
+\item{\code{auto_filter_date_grouping}}{autoFilterDateGrouping}
 
-\item{\code{firstSheet}}{firstSheet}
+\item{\code{first_sheet}}{firstSheet}
 
 \item{\code{minimized}}{minimized}
 
-\item{\code{showHorizontalScroll}}{showHorizontalScroll}
+\item{\code{show_horizontal_scroll}}{showHorizontalScroll}
 
-\item{\code{showSheetTabs}}{showSheetTabs}
+\item{\code{show_sheet_tabs}}{showSheetTabs}
 
-\item{\code{showVerticalScroll}}{showVerticalScroll}
+\item{\code{show_vertical_scroll}}{showVerticalScroll}
 
-\item{\code{tabRatio}}{tabRatio}
+\item{\code{tab_ratio}}{tabRatio}
 
 \item{\code{visibility}}{visibility}
 
-\item{\code{windowHeight}}{windowHeight}
+\item{\code{window_height}}{windowHeight}
 
-\item{\code{windowWidth}}{windowWidth}
+\item{\code{window_width}}{windowWidth}
 
-\item{\code{xWindow}}{xWindow}
+\item{\code{x_window}}{xWindow}
 
-\item{\code{yWindow}}{yWindow}
+\item{\code{y_window}}{yWindow}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1474,19 +1495,19 @@ Adds data validation
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_validation(
   sheet = current_sheet(),
-  cols,
-  rows,
+  dims = "A1",
   type,
   operator,
   value,
-  allowBlank = TRUE,
-  showInputMsg = TRUE,
-  showErrorMsg = TRUE,
-  errorStyle = NULL,
-  errorTitle = NULL,
+  allow_blank = TRUE,
+  show_input_msg = TRUE,
+  show_error_msg = TRUE,
+  error_style = NULL,
+  error_title = NULL,
   error = NULL,
-  promptTitle = NULL,
-  prompt = NULL
+  prompt_title = NULL,
+  prompt = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1495,9 +1516,7 @@ Adds data validation
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{cols}}{cols}
-
-\item{\code{rows}}{rows}
+\item{\code{dims}}{cell dimension}
 
 \item{\code{type}}{type}
 
@@ -1505,21 +1524,23 @@ Adds data validation
 
 \item{\code{value}}{value}
 
-\item{\code{allowBlank}}{allowBlank}
+\item{\code{allow_blank}}{allowBlank}
 
-\item{\code{showInputMsg}}{showInputMsg}
+\item{\code{show_input_msg}}{showInputMsg}
 
-\item{\code{showErrorMsg}}{showErrorMsg}
+\item{\code{show_error_msg}}{showErrorMsg}
 
-\item{\code{errorStyle}}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+\item{\code{error_style}}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
 
-\item{\code{errorTitle}}{The error title}
+\item{\code{error_title}}{The error title}
 
 \item{\code{error}}{The error text}
 
-\item{\code{promptTitle}}{The prompt title}
+\item{\code{prompt_title}}{The prompt title}
 
 \item{\code{prompt}}{The prompt text}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1608,13 +1629,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{add_comment()}}{
 Add comment
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_comment(
-  sheet = current_sheet(),
-  col = NULL,
-  row = NULL,
-  dims = rowcol_to_dim(row, col),
-  comment
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_comment(sheet = current_sheet(), dims = "A1", comment, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1622,13 +1637,11 @@ Add comment
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{col}}{column to apply the comment}
-
-\item{\code{row}}{row to apply the comment}
-
 \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
 \item{\code{comment}}{a comment to apply to the worksheet}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1639,13 +1652,7 @@ Add comment
 \subsection{Method \code{remove_comment()}}{
 Remove comment
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_comment(
-  sheet = current_sheet(),
-  col = NULL,
-  row = NULL,
-  dims = rowcol_to_dims(row, col),
-  gridExpand = TRUE
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_comment(sheet = current_sheet(), dims = "A1", ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1653,13 +1660,9 @@ Remove comment
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{col}}{column to apply the comment}
-
-\item{\code{row}}{row to apply the comment}
-
 \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
-\item{\code{gridExpand}}{Remove all comments inside the grid. Similar to dims "A1:B2"}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1716,16 +1719,15 @@ Insert an image into a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_image(
   sheet = current_sheet(),
+  dims = "A1",
   file,
   width = 6,
   height = 3,
-  startRow = 1,
-  startCol = 1,
-  rowOffset = 0,
-  colOffset = 0,
+  row_offset = 0,
+  col_offset = 0,
   units = "in",
   dpi = 300,
-  dims = rowcol_to_dim(startRow, startCol)
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1734,25 +1736,21 @@ Insert an image into a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
+\item{\code{dims}}{dims}
+
 \item{\code{file}}{file}
 
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
 
-\item{\code{startRow}}{startRow}
-
-\item{\code{startCol}}{startCol}
-
-\item{\code{rowOffset}}{rowOffset}
-
-\item{\code{colOffset}}{colOffset}
+\item{\code{row_offset, col_offset}}{offsets}
 
 \item{\code{units}}{units}
 
 \item{\code{dpi}}{dpi}
 
-\item{\code{dims}}{dims}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1768,16 +1766,15 @@ Add plot. A wrapper for add_image()
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_plot(
   sheet = current_sheet(),
+  dims = "A1",
   width = 6,
   height = 4,
-  startRow = 1,
-  startCol = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  fileType = "png",
+  row_offset = 0,
+  col_offset = 0,
+  file_type = "png",
   units = "in",
   dpi = 300,
-  dims = rowcol_to_dim(startRow, startCol)
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1786,25 +1783,21 @@ Add plot. A wrapper for add_image()
 \describe{
 \item{\code{sheet}}{sheet}
 
+\item{\code{dims}}{dims}
+
 \item{\code{width}}{width}
 
 \item{\code{height}}{height}
 
-\item{\code{startRow}}{startRow}
+\item{\code{row_offset, col_offset}}{offsets}
 
-\item{\code{startCol}}{startCol}
-
-\item{\code{rowOffset}}{rowOffset}
-
-\item{\code{colOffset}}{colOffset}
-
-\item{\code{fileType}}{fileType}
+\item{\code{file_type}}{fileType}
 
 \item{\code{units}}{units}
 
 \item{\code{dpi}}{dpi}
 
-\item{\code{dims}}{dims}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1817,10 +1810,11 @@ Add xml drawing
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_drawing(
   sheet = current_sheet(),
+  dims = "A1",
   xml,
-  dims = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1829,11 +1823,13 @@ Add xml drawing
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{xml}}{xml}
-
 \item{\code{dims}}{dims}
 
-\item{\code{colOffset, rowOffset}}{offsets for column and row}
+\item{\code{xml}}{xml}
+
+\item{\code{col_offset, row_offset}}{offsets for column and row}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1849,10 +1845,11 @@ Add xml chart
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(
   sheet = current_sheet(),
-  xml,
   dims = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  xml,
+  col_offset = 0,
+  row_offset = 0,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1861,11 +1858,13 @@ Add xml chart
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{xml}}{xml}
-
 \item{\code{dims}}{dims}
 
-\item{\code{colOffset, rowOffset}}{startCol and startRow}
+\item{\code{xml}}{xml}
+
+\item{\code{col_offset, row_offset}}{positioning parameters}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1880,8 +1879,9 @@ Add mschart chart to the workbook
   sheet = current_sheet(),
   dims = NULL,
   graph,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1894,7 +1894,9 @@ Add mschart chart to the workbook
 
 \item{\code{graph}}{mschart graph}
 
-\item{\code{colOffset, rowOffset}}{startCol and startRow}
+\item{\code{col_offset, row_offset}}{offsets for column and row}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -2179,10 +2181,11 @@ Sets headers and footers
   sheet = current_sheet(),
   header = NULL,
   footer = NULL,
-  evenHeader = NULL,
-  evenFooter = NULL,
-  firstHeader = NULL,
-  firstFooter = NULL
+  even_header = NULL,
+  even_footer = NULL,
+  first_header = NULL,
+  first_footer = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2195,13 +2198,15 @@ Sets headers and footers
 
 \item{\code{footer}}{footer}
 
-\item{\code{evenHeader}}{evenHeader}
+\item{\code{even_header}}{evenHeader}
 
-\item{\code{evenFooter}}{evenFooter}
+\item{\code{even_footer}}{evenFooter}
 
-\item{\code{firstHeader}}{firstHeader}
+\item{\code{first_header}}{firstHeader}
 
-\item{\code{firstFooter}}{firstFooter}
+\item{\code{first_footer}}{firstFooter}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -2315,24 +2320,23 @@ add a named region
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_named_region(
   sheet = current_sheet(),
   dims = "A1",
-  cols,
-  rows,
   name,
-  localSheet = FALSE,
+  local_sheet = FALSE,
   overwrite = FALSE,
   comment = NULL,
-  customMenu = NULL,
+  custom_menu = NULL,
   description = NULL,
   is_function = NULL,
-  functionGroupId = NULL,
+  function_group_id = NULL,
   help = NULL,
   hidden = NULL,
-  localName = NULL,
-  publishToServer = NULL,
-  statusBar = NULL,
-  vbProcedure = NULL,
-  workbookParameter = NULL,
-  xml = NULL
+  local_name = NULL,
+  publish_to_server = NULL,
+  status_bar = NULL,
+  vb_procedure = NULL,
+  workbook_parameter = NULL,
+  xml = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2343,41 +2347,39 @@ add a named region
 
 \item{\code{dims}}{dims}
 
-\item{\code{cols}}{cols}
-
-\item{\code{rows}}{rows}
-
 \item{\code{name}}{name}
 
-\item{\code{localSheet}}{localSheet}
+\item{\code{local_sheet}}{local_sheet}
 
 \item{\code{overwrite}}{overwrite}
 
 \item{\code{comment}}{comment}
 
-\item{\code{customMenu}}{customMenu}
+\item{\code{custom_menu}}{custom_menu}
 
 \item{\code{description}}{description}
 
 \item{\code{is_function}}{function}
 
-\item{\code{functionGroupId}}{function group id}
+\item{\code{function_group_id}}{function group id}
 
 \item{\code{help}}{help}
 
 \item{\code{hidden}}{hidden}
 
-\item{\code{localName}}{localName}
+\item{\code{local_name}}{localName}
 
-\item{\code{publishToServer}}{publish to server}
+\item{\code{publish_to_server}}{publish to server}
 
-\item{\code{statusBar}}{status bar}
+\item{\code{status_bar}}{status bar}
 
-\item{\code{vbProcedure}}{wbProcedure}
+\item{\code{vb_procedure}}{vb procedure}
 
-\item{\code{workbookParameter}}{workbookParameter}
+\item{\code{workbook_parameter}}{workbookParameter}
 
 \item{\code{xml}}{xml}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -2665,7 +2667,7 @@ provide simple font function
   family = "",
   scheme = "",
   shadow = "",
-  vertAlign = "",
+  vert_align = "",
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -2705,7 +2707,7 @@ provide simple font function
 
 \item{\code{shadow}}{shadow}
 
-\item{\code{vertAlign}}{vertical alignment}
+\item{\code{vert_align}}{vertical alignment}
 
 \item{\code{...}}{...}
 }
@@ -2766,31 +2768,32 @@ provide simple cell style format function
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_cell_style(
   sheet = current_sheet(),
   dims = "A1",
-  applyAlignment = NULL,
-  applyBorder = NULL,
-  applyFill = NULL,
-  applyFont = NULL,
-  applyNumberFormat = NULL,
-  applyProtection = NULL,
-  borderId = NULL,
-  extLst = NULL,
-  fillId = NULL,
-  fontId = NULL,
+  apply_alignment = NULL,
+  apply_border = NULL,
+  apply_fill = NULL,
+  apply_font = NULL,
+  apply_number_format = NULL,
+  apply_protection = NULL,
+  border_id = NULL,
+  ext_lst = NULL,
+  fill_id = NULL,
+  font_id = NULL,
   hidden = NULL,
   horizontal = NULL,
   indent = NULL,
-  justifyLastLine = NULL,
+  justify_last_line = NULL,
   locked = NULL,
-  numFmtId = NULL,
-  pivotButton = NULL,
-  quotePrefix = NULL,
-  readingOrder = NULL,
-  relativeIndent = NULL,
-  shrinkToFit = NULL,
-  textRotation = NULL,
+  num_fmt_id = NULL,
+  pivot_button = NULL,
+  quote_prefix = NULL,
+  reading_order = NULL,
+  relative_indent = NULL,
+  shrink_to_fit = NULL,
+  text_rotation = NULL,
   vertical = NULL,
-  wrapText = NULL,
-  xfId = NULL
+  wrap_text = NULL,
+  xf_id = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2801,25 +2804,25 @@ provide simple cell style format function
 
 \item{\code{dims}}{the cell range}
 
-\item{\code{applyAlignment}}{logical apply alignment}
+\item{\code{apply_alignment}}{logical apply alignment}
 
-\item{\code{applyBorder}}{logical apply border}
+\item{\code{apply_border}}{logical apply border}
 
-\item{\code{applyFill}}{logical apply fill}
+\item{\code{apply_fill}}{logical apply fill}
 
-\item{\code{applyFont}}{logical apply font}
+\item{\code{apply_font}}{logical apply font}
 
-\item{\code{applyNumberFormat}}{logical apply number format}
+\item{\code{apply_number_format}}{logical apply number format}
 
-\item{\code{applyProtection}}{logical apply protection}
+\item{\code{apply_protection}}{logical apply protection}
 
-\item{\code{borderId}}{border ID to apply}
+\item{\code{border_id}}{border ID to apply}
 
-\item{\code{extLst}}{extension list something like \verb{<extLst>...</extLst>}}
+\item{\code{ext_lst}}{extension list something like \verb{<extLst>...</extLst>}}
 
-\item{\code{fillId}}{fill ID to apply}
+\item{\code{fill_id}}{fill ID to apply}
 
-\item{\code{fontId}}{font ID to apply}
+\item{\code{font_id}}{font ID to apply}
 
 \item{\code{hidden}}{logical cell is hidden}
 
@@ -2827,29 +2830,31 @@ provide simple cell style format function
 
 \item{\code{indent}}{logical indent content}
 
-\item{\code{justifyLastLine}}{logical justify last line}
+\item{\code{justify_last_line}}{logical justify last line}
 
 \item{\code{locked}}{logical cell is locked}
 
-\item{\code{numFmtId}}{number format ID to apply}
+\item{\code{num_fmt_id}}{number format ID to apply}
 
-\item{\code{pivotButton}}{unknown}
+\item{\code{pivot_button}}{unknown}
 
-\item{\code{quotePrefix}}{unknown}
+\item{\code{quote_prefix}}{unknown}
 
-\item{\code{readingOrder}}{reading order left to right}
+\item{\code{reading_order}}{reading order left to right}
 
-\item{\code{relativeIndent}}{relative indentation}
+\item{\code{relative_indent}}{relative indentation}
 
-\item{\code{shrinkToFit}}{logical shrink to fit}
+\item{\code{shrink_to_fit}}{logical shrink to fit}
 
-\item{\code{textRotation}}{degrees of text rotation}
+\item{\code{text_rotation}}{degrees of text rotation}
 
 \item{\code{vertical}}{vertical alignment of content ('top', 'center', 'bottom')}
 
-\item{\code{wrapText}}{wrap text in cell}
+\item{\code{wrap_text}}{wrap text in cell}
 
-\item{\code{xfId}}{xf ID to apply}
+\item{\code{xf_id}}{xf ID to apply}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -2957,12 +2962,12 @@ These styles are used with conditional formatting and custom table styles
   font_name = NULL,
   font_size = NULL,
   font_color = NULL,
-  numFmt = NULL,
+  num_fmt = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
-  bgFill = NULL,
-  gradientFill = NULL,
+  bg_fill = NULL,
+  gradient_fill = NULL,
   text_bold = NULL,
   text_italic = NULL,
   text_underline = NULL,
@@ -2981,7 +2986,7 @@ These styles are used with conditional formatting and custom table styles
 
 \item{\code{font_color}}{the font color (a \code{wb_color()} object)}
 
-\item{\code{numFmt}}{the number format}
+\item{\code{num_fmt}}{the number format}
 
 \item{\code{border}}{logical if borders are applied}
 
@@ -2989,9 +2994,9 @@ These styles are used with conditional formatting and custom table styles
 
 \item{\code{border_style}}{the border style}
 
-\item{\code{bgFill}}{any background fill}
+\item{\code{bg_fill}}{any background fill}
 
-\item{\code{gradientFill}}{any gradient fill}
+\item{\code{gradient_fill}}{any gradient fill}
 
 \item{\code{text_bold}}{logical if text is bold}
 
@@ -3054,15 +3059,16 @@ Ignore error on worksheet
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_ignore_error(
   sheet = current_sheet(),
   dims = "A1",
-  calculatedColumn = FALSE,
-  emptyCellReference = FALSE,
-  evalError = FALSE,
+  calculated_column = FALSE,
+  empty_cell_reference = FALSE,
+  eval_error = FALSE,
   formula = FALSE,
-  formulaRange = FALSE,
-  listDataValidation = FALSE,
-  numberStoredAsText = FALSE,
-  twoDigitTextYear = FALSE,
-  unlockedFormula = FALSE
+  formula_range = FALSE,
+  list_data_validation = FALSE,
+  number_stored_as_text = FALSE,
+  two_digit_text_year = FALSE,
+  unlocked_formula = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -3073,23 +3079,25 @@ Ignore error on worksheet
 
 \item{\code{dims}}{dims}
 
-\item{\code{calculatedColumn}}{calculatedColumn}
+\item{\code{calculated_column}}{calculatedColumn}
 
-\item{\code{emptyCellReference}}{emptyCellReference}
+\item{\code{empty_cell_reference}}{emptyCellReference}
 
-\item{\code{evalError}}{evalError}
+\item{\code{eval_error}}{evalError}
 
 \item{\code{formula}}{formula}
 
-\item{\code{formulaRange}}{formulaRange}
+\item{\code{formula_range}}{formulaRange}
 
-\item{\code{listDataValidation}}{listDataValidation}
+\item{\code{list_data_validation}}{listDataValidation}
 
-\item{\code{numberStoredAsText}}{numberStoredAsText}
+\item{\code{number_stored_as_text}}{numberStoredAsText}
 
-\item{\code{twoDigitTextYear}}{twoDigitTextYear}
+\item{\code{two_digit_text_year}}{twoDigitTextYear}
 
-\item{\code{unlockedFormula}}{unlockedFormula}
+\item{\code{unlocked_formula}}{unlockedFormula}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -3102,25 +3110,26 @@ add sheetview
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_sheetview(
   sheet = current_sheet(),
-  colorId = NULL,
-  defaultGridColor = NULL,
-  rightToLeft = NULL,
-  showFormulas = NULL,
-  showGridLines = NULL,
-  showOutlineSymbols = NULL,
-  showRowColHeaders = NULL,
-  showRuler = NULL,
-  showWhiteSpace = NULL,
-  showZeros = NULL,
-  tabSelected = NULL,
-  topLeftCell = NULL,
+  color_id = NULL,
+  default_grid_color = NULL,
+  right_to_left = NULL,
+  show_formulas = NULL,
+  show_grid_lines = NULL,
+  show_outline_symbols = NULL,
+  show_row_col_headers = NULL,
+  show_ruler = NULL,
+  show_white_space = NULL,
+  show_zeros = NULL,
+  tab_selected = NULL,
+  top_left_cell = NULL,
   view = NULL,
-  windowProtection = NULL,
-  workbookViewId = NULL,
-  zoomScale = NULL,
-  zoomScaleNormal = NULL,
-  zoomScalePageLayoutView = NULL,
-  zoomScaleSheetLayoutView = NULL
+  window_protection = NULL,
+  workbook_view_id = NULL,
+  zoom_scale = NULL,
+  zoom_scale_normal = NULL,
+  zoom_scale_page_layout_view = NULL,
+  zoom_scale_sheet_layout_view = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -3129,43 +3138,37 @@ add sheetview
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{colorId}}{colorId}
+\item{\code{color_id, default_grid_color}}{Integer: A color, default is 64}
 
-\item{\code{defaultGridColor}}{defaultGridColor}
+\item{\code{right_to_left}}{Logical: if TRUE column ordering is right  to left}
 
-\item{\code{rightToLeft}}{rightToLeft}
+\item{\code{show_formulas}}{Logical: if TRUE cell formulas are shown}
 
-\item{\code{showFormulas}}{showFormulas}
+\item{\code{show_grid_lines}}{Logical: if TRUE the worksheet grid is shown}
 
-\item{\code{showGridLines}}{showGridLines}
+\item{\code{show_outline_symbols}}{Logical: if TRUE outline symbols are shown}
 
-\item{\code{showOutlineSymbols}}{showOutlineSymbols}
+\item{\code{show_row_col_headers}}{Logical: if TRUE row and column headers are shown}
 
-\item{\code{showRowColHeaders}}{showRowColHeaders}
+\item{\code{show_ruler}}{Logical: if TRUE a ruler is shown in page layout view}
 
-\item{\code{showRuler}}{showRuler}
+\item{\code{show_white_space}}{Logical: if TRUE margins are shown in page layout view}
 
-\item{\code{showWhiteSpace}}{showWhiteSpace}
+\item{\code{show_zeros}}{Logical: if FALSE cells containing zero are shown blank if !showFormulas}
 
-\item{\code{showZeros}}{showZeros}
+\item{\code{tab_selected}}{Integer: zero vector indicating the selected tab}
 
-\item{\code{tabSelected}}{tabSelected}
+\item{\code{top_left_cell}}{Cell: the cell shown in the top left corner / or top right with rightToLeft}
 
-\item{\code{topLeftCell}}{topLeftCell}
+\item{\code{view}}{View: "normal", "pageBreakPreview" or "pageLayout"}
 
-\item{\code{view}}{view}
+\item{\code{window_protection}}{Logical: if TRUE the panes are protected}
 
-\item{\code{windowProtection}}{windowProtection}
+\item{\code{workbook_view_id}}{integer: Pointing to some other view inside the workbook}
 
-\item{\code{workbookViewId}}{workbookViewId}
+\item{\code{zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view, zoom_scale_sheet_layout_view}}{Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.}
 
-\item{\code{zoomScale}}{zoomScale}
-
-\item{\code{zoomScaleNormal}}{zoomScaleNormal}
-
-\item{\code{zoomScalePageLayoutView}}{zoomScalePageLayoutView}
-
-\item{\code{zoomScaleSheetLayoutView}}{zoomScaleSheetLayoutView}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

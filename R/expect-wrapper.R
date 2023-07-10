@@ -199,7 +199,7 @@ expect_pseudo_wrapper <- function(
   method_args <- names(method_forms)
   fun_args    <- names(fun_forms)
 
-  ignore <- "xlsxFile"
+  ignore <- "xlsx_file"
 
   # remove ignores from fun
   m <- match(ignore, fun_args, 0L)

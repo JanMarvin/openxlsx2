@@ -8,13 +8,13 @@ create_dxfs_style(
   font_name = NULL,
   font_size = NULL,
   font_color = NULL,
-  numFmt = NULL,
+  num_fmt = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
-  bgFill = NULL,
-  fgColor = NULL,
-  gradientFill = NULL,
+  bg_fill = NULL,
+  fg_color = NULL,
+  gradient_fill = NULL,
   text_bold = NULL,
   text_strike = NULL,
   text_italic = NULL,
@@ -33,7 +33,7 @@ If fontSize is NULL, the workbook base font size is used. (Defaults to 11)}
 or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 (Defaults to black)}
 
-\item{numFmt}{Cell formatting. Some custom openxml format}
+\item{num_fmt}{Cell formatting. Some custom openxml format}
 
 \item{border}{NULL or TRUE}
 
@@ -41,11 +41,11 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 
 \item{border_style}{"thin"}
 
-\item{bgFill}{Cell background fill color.}
+\item{bg_fill}{Cell background fill color.}
 
-\item{fgColor}{Cell foreground fill color.}
+\item{fg_color}{Cell foreground fill color.}
 
-\item{gradientFill}{An xml string beginning with \verb{<gradientFill>} ...}
+\item{gradient_fill}{An xml string beginning with \verb{<gradientFill>} ...}
 
 \item{text_bold}{bold}
 
