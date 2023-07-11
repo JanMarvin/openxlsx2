@@ -133,7 +133,6 @@ parseOffset <- function(tz) {
 #' @name as_POSIXct_utc
 #' @title Convert to POSIXct with timezone UTC
 #' @param x something as.POSIXct can convert
-#' @keywords internal
 #' @noRd
 as_POSIXct_utc <- function(x) {
   z <- as.POSIXct(x, tz = "UTC")
@@ -142,7 +141,6 @@ as_POSIXct_utc <- function(x) {
 }
 #' helper function to convert hms to posix
 #' @param x a hms object
-#' @keywords internal
 #' @noRd
 as_POSIXlt_hms <- function(x) {
   z <- as.POSIXlt("1970-01-01")

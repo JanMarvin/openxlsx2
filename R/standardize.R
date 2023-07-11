@@ -2,7 +2,6 @@
 #' takes colour and returns color
 #' @param ... ...
 #' @returns void. assigns an object in the parent frame
-#' @keywords internal
 #' @noRd
 standardize_color_names <- function(..., return = FALSE) {
 
@@ -36,7 +35,6 @@ standardize_color_names <- function(..., return = FALSE) {
 #' takes camelCase and returns camel_case
 #' @param ... ...
 #' @returns void. assigns an object in the parent frame
-#' @keywords internal
 #' @noRd
 standardize_case_names <- function(..., return = FALSE) {
 
@@ -77,7 +75,6 @@ standardize_case_names <- function(..., return = FALSE) {
 #' takes camelCase and colour returns camel_case and color
 #' @param ... ...
 #' @returns void. assigns an object in the parent frame
-#' @keywords internal
 #' @noRd
 standardize <- function(...) {
 

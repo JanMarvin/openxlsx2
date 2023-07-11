@@ -54,7 +54,6 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 
 #' helper function to create temporary directory for testing purpose
 #' @inheritParams base::tempfile pattern
-#' @keywords internal
 #' @noRd
 temp_dir <- function(pattern = "file") {
 
@@ -142,7 +141,6 @@ as_xml_attr <- function(x) {
 #'
 #' @inheritParams stringi::stri_rand_strings
 #' @param keep_seed logical should the default seed be kept unaltered
-#' @keywords internal
 #' @noRd
 random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed = TRUE) {
   # https://github.com/ycphs/openxlsx/issues/183

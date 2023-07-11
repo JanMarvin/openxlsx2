@@ -122,7 +122,6 @@ getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 #'
 #' @param color color
 #' @param errorMsg Error message
-#' @keywords internal
 #' @noRd
 validateColor <- function(color, errorMsg = "Invalid color!") {
   color <- check_valid_color(color)
@@ -154,16 +153,16 @@ check_valid_color <- function(color) {
   }
 }
 # `col2hex()` ------------------------------------------------------------------
-#' @description convert rgb to hex
-#' @param creator my.col
-#' @keywords internal
+#' Convert rgb to hex
+#'
+#' @param my.col my.col
 #' @noRd
 col2hex <- function(my.col) {
   rgb(t(col2rgb(my.col)), maxColorValue = 255)
 }
 
 
-## header and footer replacements
+## header and footer replacements -------
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
     x <- replace_illegal_chars(x)
@@ -228,7 +227,6 @@ pxml <- function(x) {
 # `amp_split()` ----------------------------------------------------------------
 #' split headerFooter xml into left, center, and right.
 #' @param x xml string
-#' @keywords internal
 #' @noRd
 amp_split <- function(x) {
   if (length(x) == 0) return(NULL)
@@ -250,7 +248,6 @@ amp_split <- function(x) {
 # Header footer ---------------------------------------------------------------
 #' get headerFooter from xml into list with left, center, and right.
 #' @param x xml string
-#' @keywords internal
 #' @noRd
 getHeaderFooterNode <- function(x) {
 
@@ -270,7 +267,6 @@ getHeaderFooterNode <- function(x) {
 
 #' generate headerFooter xml from left, center, and right characters
 #' @param x xml string
-#' @keywords internal
 #' @noRd
 genHeaderFooterNode <- function(x) {
 
@@ -1174,7 +1170,6 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
 
 #' convert objects with attribute labels into strings
 #' @param x an object to convert
-#' @keywords internal
 #' @noRd
 to_string <- function(x) {
   lbls <- attr(x, "labels")

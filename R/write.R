@@ -509,7 +509,7 @@ write_datatable <- function(
 #' @param colNames has colNames (only in update_cell)
 #' @param removeCellStyle remove the cell style (only in update_cell)
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.#' @keywords internal
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @noRd
 inner_update <- function(
     wb,
@@ -608,6 +608,7 @@ inner_update <- function(
 }
 # `write_data2()` -------------------------------------
 #' dummy function to write data
+#'
 #' @param wb workbook
 #' @param sheet sheet
 #' @param data data to export
@@ -641,7 +642,6 @@ inner_update <- function(
 #'
 #' wb$add_worksheet("sheet4")
 #' write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
-#' @keywords internal
 #' @noRd
 write_data2 <- function(
     wb,
@@ -1128,7 +1128,6 @@ write_data2 <- function(
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @noRd
-#' @keywords internal
 write_data_table <- function(
     wb,
     sheet,
@@ -1393,7 +1392,6 @@ write_data_table <- function(
 #' @param sheet the sheet you want to update
 #' @param new_cells the cell you want to update in Excel connotation e.g. "A1"
 #'
-#' @keywords internal
 #' @noRd
 initialize_cell <- function(wb, sheet, new_cells) {
 
@@ -1423,7 +1421,6 @@ initialize_cell <- function(wb, sheet, new_cells) {
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #'
-#' @keywords internal
 #' @noRd
 update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
                         removeCellStyle = FALSE, na.strings) {
