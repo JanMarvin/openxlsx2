@@ -1,13 +1,14 @@
-#' @name create_hyperlink
-#' @title create Excel hyperlink string
-#' @description Wrapper to create internal hyperlink string to pass to write_formula(). Either link to external urls or local files or straight to cells of local Excel sheets.
+# `create_hyperlink()` ---------------------------------------------------------
+#' Create Excel hyperlink string
+#'
+#' Wrapper to create internal hyperlink string to pass to [write_formula()].
+#' Either link to external URLs or local files or straight to cells of local Excel sheets.
+#'
 #' @param sheet Name of a worksheet
 #' @param row integer row number for hyperlink to link to
 #' @param col column number of letter for hyperlink to link to
 #' @param text display text
 #' @param file Excel file name to point to. If NULL hyperlink is internal.
-#' @seealso [write_formula()]
-#' @export create_hyperlink
 #' @examples
 #'
 #' ## Writing internal hyperlinks
@@ -80,6 +81,7 @@
 #' ## Link to internal file
 #' x = create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
 #' write_formula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
+#' @export
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
@@ -115,9 +117,9 @@ getRId <- function(x) reg_match0(x, '(?<= r:id=")[0-9A-Za-z]+')
 
 getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
-
-#' @name validateColor
-#' @description validate the color input
+# `validateColor()` ------------------------------------------------------------
+#' Validate the color input
+#'
 #' @param color color
 #' @param errorMsg Error message
 #' @keywords internal
@@ -151,8 +153,7 @@ check_valid_color <- function(color) {
     FALSE
   }
 }
-
-#' @name col2hex
+# `col2hex()` ------------------------------------------------------------------
 #' @description convert rgb to hex
 #' @param creator my.col
 #' @keywords internal
@@ -224,7 +225,7 @@ pxml <- function(x) {
   # paste(unique(unlist(x)), collapse = "")
   paste(unlist(x), collapse = "")
 }
-
+# `amp_split()` ----------------------------------------------------------------
 #' split headerFooter xml into left, center, and right.
 #' @param x xml string
 #' @keywords internal
@@ -246,7 +247,7 @@ amp_split <- function(x) {
   # return the string vector
   unname(res)
 }
-
+# Header footer ---------------------------------------------------------------
 #' get headerFooter from xml into list with left, center, and right.
 #' @param x xml string
 #' @keywords internal
