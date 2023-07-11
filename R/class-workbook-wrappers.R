@@ -312,14 +312,13 @@ wb_add_pivot_table <- function(
 #'
 #' @details Currently only the English version of functions are supported. Please don't use the local translation.
 #' The examples below show a small list of possible formulas:
-#' \itemize{
-#'     \item{SUM(B2:B4)}
-#'     \item{AVERAGE(B2:B4)}
-#'     \item{MIN(B2:B4)}
-#'     \item{MAX(B2:B4)}
-#'     \item{...}
 #'
-#' }
+#' * SUM(B2:B4)
+#' * AVERAGE(B2:B4)
+#' * MIN(B2:B4)
+#' * MAX(B2:B4)
+#' * ...
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A character vector.
