@@ -57,7 +57,7 @@ If NULL, all columns are read.}
 \item{...}{additional arguments passed to \code{wb_to_df()}}
 }
 \value{
-data.frame
+A data.frame
 }
 \description{
 Read data from an Excel file or Workbook object into a data.frame
