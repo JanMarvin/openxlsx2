@@ -1040,7 +1040,7 @@ download_testfiles <- function() {
   out <- paste0(test_path, "/", fls)
   url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", fls)
   try({
-    download.file(url, destfile = out, quiet = TRUE)
+    download.file(url, destfile = out, quiet = TRUE, method = "libcurl")
   })
 
   return(TRUE)
