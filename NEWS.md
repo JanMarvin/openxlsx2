@@ -1,6 +1,7 @@
 # openxlsx2 (development version)
 
-## New features
+
+## API Change
 
 * Function arguments are now defaulting to `snake_case`. For the time being, both arguments are accepted and `camelCase` will be switched to `snake_case` under the hood. Documentation like vignettes and examples are currently still displaying `camelCase` and maybe some `camelCase` function slipped through.  [678](https://github.com/JanMarvin/openxlsx2/pull/678)
 
@@ -22,6 +23,10 @@
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartsheet`, `wbComment`, `wbHyperlink` internal
   
+## Refactoring
+
+* Cleanup / revisit documentation and vignettes (#682, @olivroy) 
+
 ***************************************************************************
 
 
