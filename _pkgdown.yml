@@ -90,3 +90,6 @@ reference:
 - title: Deprecated
   contents:
   - openxlsx2-deprecated
+
+redirects:
+  - ["articles/openxlsx2_basic_manual.html", "articles/openxlsx2.html"]
