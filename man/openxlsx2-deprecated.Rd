@@ -8,7 +8,8 @@ These functions are provided for compatibility with older versions of \code{open
 }
 \details{
 \itemize{
-\item \code{convertToExcelDate()} -> \code{\link[=convert_to_excel_date]{convert_to_excel_date()}}
+\item \code{\link[=convertToExcelDate]{convertToExcelDate()}} -> \code{\link[=convert_to_excel_date]{convert_to_excel_date()}}
+\item \code{\link[=read_sheet_names]{read_sheet_names()}} -> \code{\link[=wb_read_sheet_names]{wb_read_sheet_names()}}
 }
 }
 \seealso{

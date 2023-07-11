@@ -137,15 +137,18 @@ wb_read <- function(
   )
 
 }
-
-#' @name read_sheet_names
-#' @title Get names of worksheets
-#' @description Returns the worksheet names within an xlsx file
+# `read_sheet_names()` ----------------------------------------------
+# TODO Move to a file named R/openxlsx2-deprecated.R
+#' Get names of worksheets
+#'
+#' Returns the worksheet names within an xlsx file
+#'
 #' @param file An xlsx or xlsm file.
 #' @return Character vector of worksheet names.
 #' @examples
 #' wb_load(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))$get_sheet_names()
 #' @export
+#' @keywords internal
 read_sheet_names <- function(file) {
   if (!inherits(file, "wbWorkbook")) {
     wb <- wb_load(file)
