@@ -27,17 +27,6 @@
 #' for examples
 #'
 #' @details
-#' The openxlsx2 package uses global options to simplify formatting:
-#'
-#' * `options("openxlsx2.borderColor" = "black")`
-#' * `options("openxlsx2.borderStyle" = "thin")`
-#' * `options("openxlsx2.dateFormat" = "mm/dd/yyyy")`
-#' * `options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`
-#' * `options("openxlsx2.numFmt" = NULL)`
-#' * `options("openxlsx2.paperSize" = 9)` ## A4
-#' * `options("openxlsx2.orientation" = "portrait")` ## page orientation
-#' * `options("openxlsx2.sheet.default_name" = "Sheet")`
-#' * `options("openxlsx2.rightToLeft" = NULL)`
 #' By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou'). However, both spellings are supported. So where the documentation uses a 'color', the function should also accept a 'color'. However, this is not indicated by the autocompletion.
 #'
 #' ## Authors and contributions
@@ -58,8 +47,24 @@
 #'
 #' This package is licensed under the MIT license and is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
 #' @keywords internal
-NULL
+"_PACKAGE"
 
+#' openxlsx2 Options
+#'
+#' The openxlsx2 package uses global options to simplify formatting:
+#'
+#' * `options("openxlsx2.borderColor" = "black")`
+#' * `options("openxlsx2.borderStyle" = "thin")`
+#' * `options("openxlsx2.dateFormat" = "mm/dd/yyyy")`
+#' * `options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`
+#' * `options("openxlsx2.numFmt" = NULL)`
+#' * `options("openxlsx2.paperSize" = 9)` ## A4
+#' * `options("openxlsx2.orientation" = "portrait")` ## page orientation
+#' * `options("openxlsx2.sheet.default_name" = "Sheet")`
+#' * `options("openxlsx2.rightToLeft" = NULL)`
+#'
+#' @name openxlsx2_options
+NULL
 # matches enum celltype
 openxlsx2_celltype <- c(
   short_date     = 0,
@@ -85,7 +90,7 @@ openxlsx2_celltype <- c(
 #' These functions are provided for compatibility with older versions of `openxlsx2`, and may be defunct as soon as the next release.
 #'
 #' @details
-#' `convertToExcelDate()` -> `convert_to_excel_date()`
+#' * `convertToExcelDate()` -> [convert_to_excel_date()]
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
 NULL

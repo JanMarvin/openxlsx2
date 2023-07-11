@@ -7,7 +7,9 @@
 These functions are provided for compatibility with older versions of \code{openxlsx2}, and may be defunct as soon as the next release.
 }
 \details{
-\code{convertToExcelDate()} -> \code{convert_to_excel_date()}
+\itemize{
+\item \code{convertToExcelDate()} -> \code{\link[=convert_to_excel_date]{convert_to_excel_date()}}
+}
 }
 \seealso{
 \link{.Deprecated}

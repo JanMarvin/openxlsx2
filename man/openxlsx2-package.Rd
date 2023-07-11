@@ -2,6 +2,7 @@
 % Please edit documentation in R/openxlsx2.R
 \docType{package}
 \name{openxlsx2-package}
+\alias{openxlsx2}
 \alias{openxlsx2-package}
 \title{xlsx reading, writing and editing.}
 \description{
@@ -12,19 +13,7 @@ Based on a powerful XML library and focusing on modern programming flows in pipe
 or chains, \code{openxlsx2} allows to break many new ground.
 }
 \details{
-The openxlsx2 package uses global options to simplify formatting:
-\itemize{
-\item \code{options("openxlsx2.borderColor" = "black")}
-\item \code{options("openxlsx2.borderStyle" = "thin")}
-\item \code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}
-\item \code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}
-\item \code{options("openxlsx2.numFmt" = NULL)}
-\item \code{options("openxlsx2.paperSize" = 9)} ## A4
-\item \code{options("openxlsx2.orientation" = "portrait")} ## page orientation
-\item \code{options("openxlsx2.sheet.default_name" = "Sheet")}
-\item \code{options("openxlsx2.rightToLeft" = NULL)}
 By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou'). However, both spellings are supported. So where the documentation uses a 'color', the function should also accept a 'color'. However, this is not indicated by the autocompletion.
-}
 \subsection{Authors and contributions}{
 
 For a full list of all authors that have made this package possible and for whom we are greatful, please see:
@@ -53,5 +42,20 @@ This package is licensed under the MIT license and is based on \href{https://git
 \item \code{\link[=read_xlsx]{read_xlsx()}}
 for examples
 }
+}
+\author{
+\strong{Maintainer}: Jan Marvin Garbuszus \email{jan.garbuszus@ruhr-uni-bochum.de}
+
+Authors:
+\itemize{
+  \item Jordan Mark Barbone \email{jmbarbone@gmail.com} (\href{https://orcid.org/0000-0001-9788-3628}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item  openxlsx authors (openxlsx package) [copyright holder]
+  \item Arseny Kapoulkine (Author of included pugixml code) [contributor, copyright holder]
+}
+
 }
 \keyword{internal}

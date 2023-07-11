@@ -75,6 +75,7 @@ reference:
 
 - title: Misc and helpers
   contents:
+  - openlsx2_options
   - temp_xlsx
   - read_sheet_names
   - clean_worksheet_name
