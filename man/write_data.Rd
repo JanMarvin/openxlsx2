@@ -102,6 +102,7 @@ This is because only the formula is written and left to Excel to evaluate the fo
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame contains this string, the output will be broken.
 }
 \examples{
+
 ## See formatting vignette for further examples.
 
 ## Options for default styling (These are the defaults)
@@ -109,7 +110,7 @@ options("openxlsx2.dateFormat" = "mm/dd/yyyy")
 options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 options("openxlsx2.numFmt" = NULL)
 
-#############################################################################
+#####################################################################################
 ## Create Workbook object and add worksheets
 wb <- wb_workbook()
 
@@ -120,7 +121,7 @@ wb$add_worksheet("Formula")
 x <- mtcars[1:6, ]
 wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 
-#############################################################################
+#####################################################################################
 ## Hyperlinks
 ## - vectors/columns with class 'hyperlink' are written as hyperlinks'
 
@@ -129,7 +130,7 @@ names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display t
 class(v) <- "hyperlink"
 wb$add_data("Cars", x = v, dims = c("B32"))
 
-#############################################################################
+#####################################################################################
 ## Formulas
 ## - vectors/columns with class 'formula' are written as formulas'
 
@@ -143,7 +144,7 @@ class(df$z) <- c(class(df$z), "formula")
 
 wb$add_data(sheet = "Formula", x = df)
 
-#############################################################################
+###########################################################################
 # update cell range and add mtcars
 xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 wb2 <- wb_load(xlsxFile)
