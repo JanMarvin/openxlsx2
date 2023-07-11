@@ -53,7 +53,7 @@ library(ggplot2)
 
 print(ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
   ggtitle("Distribution of Gas Mileage") +
-  geom_density(alpha = I(.5)))
+  geom_density(alpha = 0.5))
 
 # Add ggplot to the workbook
 wb$add_worksheet("add_plot")$

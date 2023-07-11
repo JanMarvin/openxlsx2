@@ -38,11 +38,12 @@ This package is licensed under the MIT license and is based on \href{https://git
 }
 \seealso{
 \itemize{
-\item \code{vignette(package = "openxlsx2")}
+\item \code{browseVignettes("openxlsx2")}
 \item \code{\link[=write_data]{write_data()}}
 \item \code{\link[=write_datatable]{write_datatable()}}
 \item \code{\link[=write_xlsx]{write_xlsx()}}
 \item \code{\link[=read_xlsx]{read_xlsx()}}
+\item \url{https://janmarvin.github.io/openxlsx2}
 for examples
 }
 }

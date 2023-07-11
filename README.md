@@ -81,6 +81,8 @@ with `openxlsx2`.
   (overwritten or rewritten). Afterwards the `wbWorkbook` objects can be
   written as openxml files and processed by suitable spreadsheet
   software.
+- Finally, `openxlsx2` has a unified interface with snake_case functions
+  and arguments.
 
 Many examples how to work with `openxlsx2` are in our [manual
 pages](https://janmarvin.github.io/openxlsx2/reference/index.html) and

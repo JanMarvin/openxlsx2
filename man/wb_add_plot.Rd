@@ -56,7 +56,7 @@ wb$add_worksheet("Sheet 1", gridLines = FALSE)
 require(ggplot2)
 p1 <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
   ggtitle("Distribution of Gas Mileage") +
-  geom_density(alpha = I(.5))
+  geom_density(alpha = 0.5)
 p2 <- ggplot(Orange, aes(x = age, y = circumference, color = Tree)) +
   geom_point() + geom_line()
 

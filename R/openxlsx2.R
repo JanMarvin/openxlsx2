@@ -19,11 +19,12 @@
 #' @importFrom zip zip
 #'
 #' @seealso
-#' * `vignette(package = "openxlsx2")`
+#' * `browseVignettes("openxlsx2")`
 #' * [write_data()]
 #' * [write_datatable()]
 #' * [write_xlsx()]
 #' * [read_xlsx()]
+#' * <https://janmarvin.github.io/openxlsx2>
 #' for examples
 #'
 #' @details
