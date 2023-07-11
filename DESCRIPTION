@@ -13,7 +13,7 @@ Description: Simplifies the creation of 'xlsx' files by
     providing a high level interface to writing, styling and editing
     worksheets.
 License: MIT + file LICENSE
-URL: https://github.com/JanMarvin/openxlsx2
+URL: https://janmarvin.github.io/openxlsx2/, https://github.com/JanMarvin/openxlsx2
 BugReports: https://github.com/JanMarvin/openxlsx2/issues
 Depends:
     R (>= 3.5.0)
