@@ -21,9 +21,6 @@
 #' @param ignore_wb for pseudo wbWorkbook wrappers such as wb_load() we have
 #'   to ignore wb
 #' @returns Nothing, called for its side-effects
-#' @rdname expect_wrapper
-#' @keywords internal
-#' @noRd
 expect_wrapper <- function(
     method,
     fun           = paste0("wb_", method),
@@ -181,12 +178,9 @@ expect_wrapper <- function(
   testthat::succeed()
   return(invisible())
 }
-
-#' @description
+# `expect_pseudo_wrapper()` -------
 #' A trimmed down pseudo wrapper to check internal wrapped functions.
 #' @rdname expect_wrapper
-#' @keywords internal
-#' @noRd
 expect_pseudo_wrapper <- function(
     method,
     fun           = paste0("wb_", method)
@@ -955,11 +949,8 @@ expected_shared_strings <- function() {
   ), uniqueCount = "2114")
 }
 
-#nocov start
 
 #' initiates testfiles in local testthat folder
-#' @keywords internal
-#' @noRd
 download_testfiles <- function() {
 
   fls <- c(
@@ -1019,8 +1010,6 @@ download_testfiles <- function() {
 
 #' provides testfile path for testthat
 #' @param x a file assumed in testfiles folder
-#' @keywords internal
-#' @noRd
 testfile_path <- function(x) {
   # apparently this runs in a different folder
   fl <- testthat::test_path("testfiles", x)
@@ -1030,5 +1019,3 @@ testfile_path <- function(x) {
     return(fl)
   }
 }
-
-#nocov end
