@@ -27,11 +27,14 @@
 #' for examples
 #'
 #' @details
-#' By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou'). However, both spellings are supported. So where the documentation uses a 'color', the function should also accept a 'color'. However, this is not indicated by the autocompletion.
+#' By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou').
+#' However, both spellings are supported.
+#' So where the documentation uses a 'color', the function should also accept a 'colour'.
+#' However, this is not indicated by the autocompletion.
 #'
 #' ## Authors and contributions
 #'
-#' For a full list of all authors that have made this package possible and for whom we are greatful, please see:
+#' For a full list of all authors that have made this package possible and for whom we are grateful, please see:
 #'
 #' ``` r
 #' system.file("AUTHORS", package = "openxlsx2")

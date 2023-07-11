@@ -13,10 +13,13 @@ Based on a powerful XML library and focusing on modern programming flows in pipe
 or chains, \code{openxlsx2} allows to break many new ground.
 }
 \details{
-By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou'). However, both spellings are supported. So where the documentation uses a 'color', the function should also accept a 'color'. However, this is not indicated by the autocompletion.
+By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou').
+However, both spellings are supported.
+So where the documentation uses a 'color', the function should also accept a 'colour'.
+However, this is not indicated by the autocompletion.
 \subsection{Authors and contributions}{
 
-For a full list of all authors that have made this package possible and for whom we are greatful, please see:
+For a full list of all authors that have made this package possible and for whom we are grateful, please see:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{system.file("AUTHORS", package = "openxlsx2")
 }\if{html}{\out{</div>}}
