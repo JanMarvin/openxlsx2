@@ -6,7 +6,7 @@
 #' Based on a powerful XML library and focusing on modern programming flows in pipes
 #' or chains, `openxlsx2` allows to break many new ground.
 #'
-#' @name openxlsx2
+#' @name openxlsx2-package
 #' @docType package
 #' @useDynLib openxlsx2, .registration=TRUE
 #'
@@ -19,29 +19,25 @@
 #' @importFrom zip zip
 #'
 #' @seealso
-#' \itemize{
-#'    \item{`vignette(package = "openxlsx2")`}
-#'    \item{[write_data()]}
-#'    \item{[write_datatable()]}
-#'    \item{[write_xlsx()]}
-#'    \item{[read_xlsx()]}
-#'   }
+#' * `vignette(package = "openxlsx2")`
+#' * [write_data()]
+#' * [write_datatable()]
+#' * [write_xlsx()]
+#' * [read_xlsx()]
 #' for examples
 #'
 #' @details
-#' The openxlsx package uses global options to simplify formatting:
+#' The openxlsx2 package uses global options to simplify formatting:
 #'
-#' \itemize{
-#'    \item{`options("openxlsx2.borderColor" = "black")`}
-#'    \item{`options("openxlsx2.borderStyle" = "thin")`}
-#'    \item{`options("openxlsx2.dateFormat" = "mm/dd/yyyy")`}
-#'    \item{`options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`}
-#'    \item{`options("openxlsx2.numFmt" = NULL)`}
-#'    \item{`options("openxlsx2.paperSize" = 9)`} ## A4
-#'    \item{`options("openxlsx2.orientation" = "portrait")`} ## page orientation
-#'    \item{`options("openxlsx2.sheet.default_name" = "Sheet")`}
-#'    \item{`options("openxlsx2.rightToLeft" = NULL)`}
-#' }
+#' * `options("openxlsx2.borderColor" = "black")`
+#' * `options("openxlsx2.borderStyle" = "thin")`
+#' * `options("openxlsx2.dateFormat" = "mm/dd/yyyy")`
+#' * `options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`
+#' * `options("openxlsx2.numFmt" = NULL)`
+#' * `options("openxlsx2.paperSize" = 9)` ## A4
+#' * `options("openxlsx2.orientation" = "portrait")` ## page orientation
+#' * `options("openxlsx2.sheet.default_name" = "Sheet")`
+#' * `options("openxlsx2.rightToLeft" = NULL)`
 #' By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou'). However, both spellings are supported. So where the documentation uses a 'color', the function should also accept a 'color'. However, this is not indicated by the autocompletion.
 #'
 #' ## Authors and contributions
@@ -61,7 +57,7 @@
 #' ## License
 #'
 #' This package is licensed under the MIT license and is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
-#'
+#' @keywords internal
 NULL
 
 # matches enum celltype
