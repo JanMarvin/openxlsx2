@@ -171,15 +171,26 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 
   return(res)
 }
-
-#' dims helpers
-#' @description Internal helpers to (de)construct a dims argument from/to a row
-#'  and column vector. Exported for user convenience.
-#' @name dims_helper
+# dims helpers -----------------------------------------------------------------
+#' @title Helper functions to work with `dims`
+#'
+#' @description
+#' Internal helpers to (de)construct a dims argument from/to a row and column
+#' vector. Exported for user convenience.
+#'
 #' @param x a dimension object "A1" or "A1:A1"
-#' @param as_integer optional if the output should be returned as integer
+#' @param as_integer If the output should be returned as integer, (defaults to string)
+#' @param row a numeric vector of rows
+#' @param col a numeric or character vector of cols
+#' @returns
+#'   * A `dims` string for `_to_dim` i.e  "A1:A1"
+#'   * A list of rows and columns for `to_rowcol`
 #' @examples
 #' dims_to_rowcol("A1:J10")
+#' rowcol_to_dims(1:10, 1:10)
+#' @name dims_helper
+NULL
+#' @rdname dims_helper
 #' @export
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
@@ -220,26 +231,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   list(cols_out, rows_out)
 }
-#' row and col to dims
-#' @param row a numeric vector of rows
-#' @param col a numeric or character vector of cols
-#' @noRd
-rowcol_to_dim <- function(row, col) {
-  # no assert for col. will output character anyways
-  # assert_class(row, "numeric") - complains if integer
-  col_int <- col2int(col)
-  min_col <- int2col(min(col_int))
-  min_row <- min(row)
-
-  # we will always return something like "A1"
-  stringi::stri_join(min_col, min_row)
-}
-
 #' @rdname dims_helper
-#' @param row a numeric vector of rows
-#' @param col a numeric or character vector of cols
-#' @examples
-#' rowcol_to_dims(1:10, 1:10)
 #' @export
 rowcol_to_dims <- function(row, col) {
 
@@ -258,7 +250,19 @@ rowcol_to_dims <- function(row, col) {
   stringi::stri_join(min_col, min_row, ":", max_col, max_row)
 
 }
+#' @rdname dims_helper
+#' @noRd
+rowcol_to_dim <- function(row, col) {
+  # no assert for col. will output character anyways
+  # assert_class(row, "numeric") - complains if integer
+  col_int <- col2int(col)
+  min_col <- int2col(min(col_int))
+  min_row <- min(row)
 
+  # we will always return something like "A1"
+  stringi::stri_join(min_col, min_row)
+}
+# Relationship helpers --------------------
 #' removes entries from worksheets_rels
 #' @param x character string
 #' @noRd
@@ -303,7 +307,6 @@ read_xml_files <- function(x) {
 
 #' unlist modifies names
 #' @param x a cf list
-#' @keywords internal
 #' @noRd
 un_list <- function(x) {
 

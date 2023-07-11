@@ -4,7 +4,7 @@
 \alias{dims_helper}
 \alias{dims_to_rowcol}
 \alias{rowcol_to_dims}
-\title{dims helpers}
+\title{Helper functions to work with \code{dims}}
 \usage{
 dims_to_rowcol(x, as_integer = FALSE)
 
@@ -13,15 +13,21 @@ rowcol_to_dims(row, col)
 \arguments{
 \item{x}{a dimension object "A1" or "A1:A1"}
 
-\item{as_integer}{optional if the output should be returned as integer}
+\item{as_integer}{If the output should be returned as integer, (defaults to string)}
 
 \item{row}{a numeric vector of rows}
 
 \item{col}{a numeric or character vector of cols}
 }
+\value{
+\itemize{
+\item A \code{dims} string for \verb{_to_dim} i.e  "A1:A1"
+\item A list of rows and columns for \code{to_rowcol}
+}
+}
 \description{
-Internal helpers to (de)construct a dims argument from/to a row
-and column vector. Exported for user convenience.
+Internal helpers to (de)construct a dims argument from/to a row and column
+vector. Exported for user convenience.
 }
 \examples{
 dims_to_rowcol("A1:J10")
