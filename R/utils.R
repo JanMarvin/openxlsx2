@@ -53,7 +53,7 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 }
 
 #' helper function to create temporary directory for testing purpose
-#' @param pattern pattern from `base::tempfile()`
+#' @inheritParams base::tempfile pattern
 #' @keywords internal
 #' @noRd
 temp_dir <- function(pattern = "file") {
@@ -320,11 +320,38 @@ un_list <- function(x) {
   names(x) <- nams
   x
 }
-
+# `fmt_txt()` ------------------------------------------------------------------
 #' format strings independent of the cell style.
+#'
+#'
 #' @details
 #' The result is an xml string. It is possible to paste multiple `fmt_txt()`
 #' strings together to create a string with differing styles.
+#'
+#' Using `fmt_txt(charset = 161)` will give the Greek Character Set
+#'
+#'  | charset| "Character Set"      |
+#'  |--------|----------------------|
+#'  |  0     | "ANSI_CHARSET"       |
+#'  |  1     | "DEFAULT_CHARSET"    |
+#'  |  2     | "SYMBOL_CHARSET"     |
+#'  | 77     | "MAC_CHARSET"        |
+#'  | 128    | "SHIFTJIS_CHARSET"   |
+#'  | 129    | "HANGUL_CHARSET"     |
+#'  | 130    | "JOHAB_CHARSET"      |
+#'  | 134    | "GB2312_CHARSET"     |
+#'  | 136    | "CHINESEBIG5_CHARSET"|
+#'  | 161    | "GREEK_CHARSET"      |
+#'  | 162    | "TURKISH_CHARSET"    |
+#'  | 163    | "VIETNAMESE_CHARSET" |
+#'  | 177    | "HEBREW_CHARSET"     |
+#'  | 178    | "ARABIC_CHARSET"     |
+#'  | 186    | "BALTIC_CHARSET"     |
+#'  | 204    | "RUSSIAN_CHARSET"    |
+#'  | 222    | "THAI_CHARSET"       |
+#'  | 238    | "EASTEUROPE_CHARSET" |
+#'  | 255    | "OEM_CHARSET"        |
+#'
 #' @param x a string or part of a string
 #' @param bold bold
 #' @param italic italic
@@ -336,31 +363,8 @@ un_list <- function(x) {
 #' @param charset integer value from the table below
 #' @param outline TRUE or FALSE
 #' @param vertAlign baseline, superscript, or subscript
-#' @details
-#'  |"Value" | "Character Set"      |
-#'  |--------|----------------------|
-#'  |"0"     | "ANSI_CHARSET"       |
-#'  |"1"     | "DEFAULT_CHARSET"    |
-#'  |"2"     | "SYMBOL_CHARSET"     |
-#'  |"77"    | "MAC_CHARSET"        |
-#'  |"128"   | "SHIFTJIS_CHARSET"   |
-#'  |"129"   | "HANGUL_CHARSET"     |
-#'  |"130"   | "JOHAB_CHARSET"      |
-#'  |"134"   | "GB2312_CHARSET"     |
-#'  |"136"   | "CHINESEBIG5_CHARSET"|
-#'  |"161"   | "GREEK_CHARSET"      |
-#'  |"162"   | "TURKISH_CHARSET"    |
-#'  |"163"   | "VIETNAMESE_CHARSET" |
-#'  |"177"   | "HEBREW_CHARSET"     |
-#'  |"178"   | "ARABIC_CHARSET"     |
-#'  |"186"   | "BALTIC_CHARSET"     |
-#'  |"204"   | "RUSSIAN_CHARSET"    |
-#'  |"222"   | "THAI_CHARSET"       |
-#'  |"238"   | "EASTEUROPE_CHARSET" |
-#'  |"255"   | "OEM_CHARSET"        |
 #' @examples
 #' fmt_txt("bar", underline = TRUE)
-#' @name fmt_txt
 #' @export
 fmt_txt <- function(
     x,
@@ -448,13 +452,12 @@ fmt_txt <- function(
   out
 }
 
-#' @rdname fmt_txt
 #' @method + fmt_txt
-#' @param x an openxlsx2 fmt_txt string
-#' @param y an openxlsx2 fmt_txt string
+#' @param x,y an openxlsx2 fmt_txt string
 #' @details You can join additional objects into fmt_txt() objects using "+". Though be aware that `fmt_txt("sum:") + (2 + 2)` is different to `fmt_txt("sum:") + 2 + 2`.
 #' @examples
 #' fmt_txt("foo ", bold = TRUE) + fmt_txt("bar")
+#' @rdname fmt_txt
 #' @export
 "+.fmt_txt" <- function(x, y) {
 
