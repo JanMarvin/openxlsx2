@@ -4,7 +4,7 @@ expect_equal_workbooks <- function(object, expected, ..., ignore_fields = NULL) 
 
   # object <- as.list(object)
   # expected <- as.list(expected)
-
+  requireNamespace("waldo")
   assert_workbook(object)
   assert_workbook(expected)
 

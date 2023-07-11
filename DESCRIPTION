@@ -33,7 +33,8 @@ Suggests:
     mschart (>= 0.4),
     rmarkdown,
     rvg,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    waldo
 VignetteBuilder:
     knitr
 Encoding: UTF-8
