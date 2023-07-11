@@ -237,5 +237,3 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
 
   z
 }
-
-
