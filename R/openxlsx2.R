@@ -90,7 +90,7 @@ openxlsx2_celltype <- c(
 #' These functions are provided for compatibility with older versions of `openxlsx2`, and may be defunct as soon as the next release.
 #' @details
 #' * [convertToExcelDate()] -> [convert_to_excel_date()]
-#' * [read_sheet_names()] -> [wb_read_sheet_names()]
+#' * [read_sheet_names()] -> [wb_get_sheet_names()]
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
 NULL
