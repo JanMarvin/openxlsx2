@@ -4,7 +4,7 @@
 \alias{convert_date}
 \alias{convert_datetime}
 \alias{convert_hms}
-\title{Convert from excel date, datetime or hms number to R Date type}
+\title{Convert from Excel date, datetime or hms number to R Date type}
 \usage{
 convert_date(x, origin = "1900-01-01", ...)
 
@@ -17,23 +17,35 @@ convert_hms(x)
 
 \item{origin}{date. Default value is for Windows Excel 2010}
 
-\item{...}{additional parameters passed to as.Date()}
+\item{...}{
+  Arguments passed on to \code{\link[base:as.Date]{base::as.Date}}
+  \describe{
+    \item{\code{}}{}
+  }}
+}
+\value{
+A date, datetime, or hms.
 }
 \description{
-Convert from excel date number to R Date type
+Convert from Excel date number to R Date type
 }
 \details{
 Excel stores dates as number of days from some origin day
 }
 \examples{
+# date --
 ## 2014 April 21st to 25th
 convert_date(c(41750, 41751, 41752, 41753, 41754, NA))
 convert_date(c(41750.2, 41751.99, NA, 41753))
-## 2014-07-01, 2014-06-30, 2014-06-29
+
+# datetime --
+2014-07-01, 2014-06-30, 2014-06-29
 x <- c(41821.8127314815, 41820.8127314815, NA, 41819, NaN)
 convert_datetime(x)
 convert_datetime(x, tz = "Australia/Perth")
 convert_datetime(x, tz = "UTC")
+
+# hms ---
 ## 12:13:14
 x <- 0.50918982
 convert_hms(x)

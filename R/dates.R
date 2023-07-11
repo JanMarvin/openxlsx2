@@ -1,28 +1,33 @@
-#' @name as_POSIXct_utc
-#' @title Convert to POSIXct with timezone UTC
-#' @param x something as.POSIXct can convert
-#' @keywords internal
-#' @noRd
-as_POSIXct_utc <- function(x) {
-  z <- as.POSIXct(x, tz = "UTC")
-  attr(z, "tzone") <- "UTC"
-  z
-}
-
-
-#' @name convert_date
-#' @title Convert from excel date, datetime or hms number to R Date type
-#' @description Convert from excel date number to R Date type
+# `convert_date()` ------------------------------------------------
+#' Convert from Excel date, datetime or hms number to R Date type
+#'
+#' Convert from Excel date number to R Date type
+#'
+#' Excel stores dates as number of days from some origin day
+#'
+#' @seealso [write_data()]
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
-#' @param ... additional parameters passed to as.Date()
-#' @details Excel stores dates as number of days from some origin day
-#' @seealso [write_data()]
+#' @inheritDotParams base::as.Date
+#' @return A date, datetime, or hms.
 #' @export
 #' @examples
+#' # date --
 #' ## 2014 April 21st to 25th
 #' convert_date(c(41750, 41751, 41752, 41753, 41754, NA))
 #' convert_date(c(41750.2, 41751.99, NA, 41753))
+#'
+#' # datetime --
+#' 2014-07-01, 2014-06-30, 2014-06-29
+#' x <- c(41821.8127314815, 41820.8127314815, NA, 41819, NaN)
+#' convert_datetime(x)
+#' convert_datetime(x, tz = "Australia/Perth")
+#' convert_datetime(x, tz = "UTC")
+#'
+#' # hms ---
+#' ## 12:13:14
+#' x <- 0.50918982
+#' convert_hms(x)
 convert_date <- function(x, origin = "1900-01-01", ...) {
 
   # use as.integer to only get the integer part of a number.
@@ -41,12 +46,6 @@ convert_date <- function(x, origin = "1900-01-01", ...) {
 
 #' @rdname convert_date
 #' @export
-#' @examples
-#' ## 2014-07-01, 2014-06-30, 2014-06-29
-#' x <- c(41821.8127314815, 41820.8127314815, NA, 41819, NaN)
-#' convert_datetime(x)
-#' convert_datetime(x, tz = "Australia/Perth")
-#' convert_datetime(x, tz = "UTC")
 convert_datetime <- function(x, origin = "1900-01-01", ...) {
   x <- as.numeric(x)
   date <- convert_date(x, origin)
@@ -69,10 +68,6 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 
 #' @rdname convert_date
 #' @export
-#' @examples
-#' ## 12:13:14
-#' x <- 0.50918982
-#' convert_hms(x)
 convert_hms <- function(x) {
   if (isNamespaceLoaded("hms")) {
     x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
@@ -83,18 +78,19 @@ convert_hms <- function(x) {
   }
   x
 }
-
-#' @name get_date_origin
-#' @title Get the date origin an xlsx file is using
-#' @description Return the date origin used internally by an xlsx or xlsm file
+# `convert_date()` helpers --------------------
+#' Get the date origin an xlsx file is using
+#'
+#' Return the date origin used internally by an xlsx or xlsm file
+#'
+#' Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
+#' checks the date origin being used in an Excel file and returns is so it can be used in [convert_date()]
+#'
 #' @param xlsxFile An xlsx or xlsm file or a wbWorkbook object.
 #' @param origin return the origin instead of the character string.
-#' @details Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
-#' checks the date origin being used in an Excel file and returns is so it can be used in [convert_date()]
 #' @return One of "1900-01-01" or "1904-01-01".
 #' @seealso [convert_date()]
 #' @examples
-#'
 #' ## create a file with some dates
 #' temp <- temp_xlsx()
 #' write_xlsx(as.Date("2015-01-10") - (0:4), file = temp)
@@ -106,7 +102,6 @@ convert_hms <- function(x) {
 #'
 #' get_date_origin(wb_workbook())
 #' get_date_origin(wb_workbook(), origin = TRUE)
-#' @keywords internal
 #' @noRd
 get_date_origin <- function(xlsxFile, origin = FALSE) {
 
@@ -135,7 +130,16 @@ parseOffset <- function(tz) {
 
   ifelse(is.na(z), 0, z)
 }
-
+#' @name as_POSIXct_utc
+#' @title Convert to POSIXct with timezone UTC
+#' @param x something as.POSIXct can convert
+#' @keywords internal
+#' @noRd
+as_POSIXct_utc <- function(x) {
+  z <- as.POSIXct(x, tz = "UTC")
+  attr(z, "tzone") <- "UTC"
+  z
+}
 #' helper function to convert hms to posix
 #' @param x a hms object
 #' @keywords internal
@@ -146,11 +150,41 @@ as_POSIXlt_hms <- function(x) {
   z$sec <- as.numeric(x)
   z
 }
+# `convert_to_excel_date()` ---------------------------
+#' convert back to an Excel Date
+#' @param df dataframe
+#' @param date1904 take different origin
+#' @examples
+#'  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#'  wb1 <- wb_load(xlsxFile)
+#'  df <- wb_to_df(wb1)
+#'  # conversion is done on dataframes only
+#'  convert_to_excel_date(df = df["Var5"], date1904 = FALSE)
+#' @export
+convert_to_excel_date <- function(df, date1904 = FALSE) {
 
+  is_date <- vapply(
+    df,
+    function(x) {
+      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "hms")
+    },
+    NA
+  )
+
+  df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
+
+  df
+}
+#' @export
+#' @rdname convert_to_excel_date
+convertToExcelDate <- function(df, date1904 = FALSE) {
+  .Deprecated(old = "convertToExcelDate", new = "convert_to_excel_date", package = "openxlsx2")
+  convert_to_excel_date(df = df, date1904 = date1904)
+}
+# `convert_to_excel_date()` helpers -----------------------------------
 #' conversion helper function
 #' @param x a date, posixct or hms object
 #' @param date1904 a special time format in openxml
-#' @keywords internal
 #' @noRd
 conv_to_excel_date <- function(x, date1904 = FALSE) {
 
@@ -204,33 +238,4 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
   z
 }
 
-#' convert back to ExcelDate
-#' @param df dataframe
-#' @param date1904 take different origin
-#' @examples
-#'  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'  wb1 <- wb_load(xlsxFile)
-#'  df <- wb_to_df(wb1)
-#'  # conversion is done on dataframes only
-#'  convert_to_excel_date(df = df["Var5"], date1904 = FALSE)
-#' @export
-convert_to_excel_date <- function(df, date1904 = FALSE) {
 
-  is_date <- vapply(
-    df,
-    function(x) {
-      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "hms")
-    },
-    NA
-  )
-
-  df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
-
-  df
-}
-#' @export
-#' @rdname convert_to_excel_date
-convertToExcelDate <- function(df, date1904 = FALSE) {
-  .Deprecated(old = "convertToExcelDate", new = "convert_to_excel_date", package = "openxlsx2")
-  convert_to_excel_date(df = df, date1904 = date1904)
-}
