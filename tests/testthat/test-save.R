@@ -280,7 +280,7 @@ test_that("write cells without data", {
   got <- wb$worksheets[[1]]$sheet_data$cc
   expect_equal(exp, got)
 
-  sheet <- paste0(tmp, "/xl/worksheets/sheet1.xml")
+  sheet <- paste0(tmp_dir, "/xl/worksheets/sheet1.xml")
   exp <- "<sheetData><row r=\"2\"><c r=\"B2\"/><c r=\"C2\"/></row><row r=\"3\"><c r=\"B3\"/><c r=\"C3\"/></row></sheetData>"
   got <- xml_node(sheet, "worksheet", "sheetData")
   expect_equal(exp, got)
