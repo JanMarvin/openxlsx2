@@ -1,20 +1,11 @@
-#' @name write_xlsx
-#' @title write data to an xlsx file
-#' @description write a data.frame or list of data.frames to an xlsx file
-#' @param x object or a list of objects that can be handled by [write_data()] to write to file
-#' @param file xlsx file name
-#' @param as_table write using write_datatable as opposed to write_data
-#' @param ... optional parameters to pass to functions:
-#' \itemize{
-#'   \item{[wb_workbook()]}
-#'   \item{[wb_add_worksheet()]}
-#'   \item{[wb_add_data()]}
-#'   \item{[wb_freeze_pane]}
-#'   \item{[wb_save()]}
-#' }
+# `write_xlsx()` ---------------------------------------------------------------
+#' Write data to an xlsx file
 #'
-#' see details.
-#' @details Optional parameters are:
+#' Write a data.frame or list of data.frames to an xlsx file
+#'
+#' @seealso [wb_add_worksheet()], [write_data()]
+#' @details
+#' Optional parameters are:
 #'
 #' **wb_workbook Parameters**
 #' \itemize{
@@ -61,10 +52,23 @@
 #'
 #' columns of x with class Date or POSIXt are automatically
 #' styled as dates and datetimes respectively.
-#' @seealso [wb_add_worksheet()], [write_data()]
+#'
+#' @param x object or a list of objects that can be handled by [write_data()] to write to file
+#' @param file xlsx file name
+#' @param as_table write using write_datatable as opposed to write_data
+#' @param ... optional parameters to pass to functions:
+#' \itemize{
+#'   \item{[wb_workbook()]}
+#'   \item{[wb_add_worksheet()]}
+#'   \item{[wb_add_data()]}
+#'   \item{[wb_freeze_pane]}
+#'   \item{[wb_save()]}
+#' }
+#'
+#' see details.
+#'
 #' @return A workbook object
 #' @examples
-#'
 #' ## write to working directory
 #' write_xlsx(iris, file = temp_xlsx(), colNames = TRUE)
 #'
@@ -87,7 +91,6 @@
 #' write_xlsx(l, temp_xlsx(), colWidths = 20)
 #' write_xlsx(l, temp_xlsx(), colWidths = list(100, 200, 300))
 #' write_xlsx(l, temp_xlsx(), colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
-#'
 #' @export
 write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
