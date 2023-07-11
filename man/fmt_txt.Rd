@@ -51,8 +51,6 @@ fmt_txt(
 \item{vertAlign}{baseline, superscript, or subscript}
 
 \item{...}{additional arguments for default print}
-
-\item{x}{an openxlsx2 fmt_txt string}
 }
 \description{
 format strings independent of the cell style.

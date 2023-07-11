@@ -172,9 +172,8 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
   return(res)
 }
 # dims helpers -----------------------------------------------------------------
-#' @title Helper functions to work with `dims`
+#' Helper functions to work with `dims`
 #'
-#' @description
 #' Internal helpers to (de)construct a dims argument from/to a row and column
 #' vector. Exported for user convenience.
 #'
@@ -352,7 +351,7 @@ un_list <- function(x) {
 #'  | 238    | "EASTEUROPE_CHARSET" |
 #'  | 255    | "OEM_CHARSET"        |
 #'
-#' @param x a string or part of a string
+# #' @param x a string or part of a string
 #' @param bold bold
 #' @param italic italic
 #' @param underline underline
@@ -472,7 +471,7 @@ fmt_txt <- function(
 
 #' @rdname fmt_txt
 #' @method as.character fmt_txt
-#' @param x an openxlsx2 fmt_txt string
+# #' @param x an openxlsx2 fmt_txt string
 #' @param ... unused
 #' @examples
 #' as.character(fmt_txt(2))
@@ -483,7 +482,7 @@ as.character.fmt_txt <- function(x, ...) {
 
 #' @rdname fmt_txt
 #' @method print fmt_txt
-#' @param x an openxlsx2 fmt_txt string
+# #' @param x an openxlsx2 fmt_txt string
 #' @param ... additional arguments for default print
 #' @export
 print.fmt_txt <- function(x, ...) {
