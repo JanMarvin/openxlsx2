@@ -25,7 +25,7 @@
   
 ## Refactoring
 
-* Cleanup / revisit documentation and vignettes (#682, @olivroy) 
+* Cleanup / revisit documentation and vignettes  ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
 
 ***************************************************************************
 
