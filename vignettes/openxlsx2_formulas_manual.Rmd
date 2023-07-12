@@ -126,7 +126,7 @@ wb <- wb_workbook()$add_worksheet()$
 | 3 |     30      |  11  |      2        |
 | 4 |     40      |  13  |      3        |
 
-Given a basic table like the above, a similarly basic formula for `total_sales` would be  "total_sales = A2 * C2" with the row value changing at each row.
+Given a basic table like the above, a similarly basic formula for `total_sales` would be "= A2 * C2" with the row value changing at each row.
 
 An implementation for this formula using `wb_add_formula()` would look this (taken from current documentation) lets say we've read in the data and assigned it to the table `company_sales`
 
