@@ -349,6 +349,7 @@ un_list <- function(x) {
 #'  | 238    | "EASTEUROPE_CHARSET" |
 #'  | 255    | "OEM_CHARSET"        |
 #'
+# FIXME review the `fmt_txt.Rd`
 # #' @param x a string or part of a string
 #' @param bold bold
 #' @param italic italic
@@ -469,6 +470,7 @@ fmt_txt <- function(
 
 #' @rdname fmt_txt
 #' @method as.character fmt_txt
+# FIXME review the `fmt_txt.Rd`
 # #' @param x an openxlsx2 fmt_txt string
 #' @param ... unused
 #' @examples
@@ -480,6 +482,7 @@ as.character.fmt_txt <- function(x, ...) {
 
 #' @rdname fmt_txt
 #' @method print fmt_txt
+# FIXME review the `fmt_txt.Rd`
 # #' @param x an openxlsx2 fmt_txt string
 #' @param ... additional arguments for default print
 #' @export
