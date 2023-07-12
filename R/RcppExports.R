@@ -336,3 +336,15 @@ write_xmlPtr <- function(doc, fl) {
     invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
 }
 
+sst <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_sst`, filePath, outPath, debug)
+}
+
+workbook <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_workbook`, filePath, outPath, debug)
+}
+
+worksheet <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_worksheet`, filePath, outPath, debug)
+}
+
