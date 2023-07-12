@@ -181,12 +181,12 @@ wbWorkbook <- R6::R6Class(
     #' @param ... additional arguments
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator         = NULL,
-      title           = NULL,
-      subject         = NULL,
-      category        = NULL,
+      creator          = NULL,
+      title            = NULL,
+      subject          = NULL,
+      category         = NULL,
       datetime_created = Sys.time(),
-      theme           = NULL,
+      theme            = NULL,
       ...
     ) {
 
@@ -7159,7 +7159,7 @@ wbWorkbook <- R6::R6Class(
 
     generate_base_core = function() {
       # how do self$datetimeCreated and genBaseCore time differ?
-      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category)
+      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category, datetimeCreated = self$datetimeCreated)
       invisible(self)
     },
 
