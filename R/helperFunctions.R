@@ -162,7 +162,7 @@ col2hex <- function(my.col) {
 }
 
 
-## header and footer replacements -------
+## header and footer replacements ----------------------------------------------
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
     x <- replace_illegal_chars(x)
