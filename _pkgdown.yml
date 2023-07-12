@@ -61,13 +61,6 @@ reference:
   - as_xml
   - starts_with("print")
 
-- title: Transformers
-  contents:
-  - int2col
-  - col2int
-  - fmt_txt
-  - starts_with("convert_")
-
 - title: R6 Classes
   contents:
   - wbWorkbook
@@ -76,6 +69,10 @@ reference:
 - title: Misc and helpers
   contents:
   - openxlsx2_options
+  - int2col
+  - col2int
+  - fmt_txt
+  - starts_with("convert_")
   - temp_xlsx
   - read_sheet_names
   - clean_worksheet_name
