@@ -15,36 +15,36 @@ library(openxlsx2)
 ## Basic read and write functions
 
 Welcome to the `openxlsx2` update vignette. In this vignette we will take some common code examples from `openxlsx` and show you how similar results can be replicated in `openxlsx2`. Thank you for taking a look, and let's get started.
-While previous `openxlsx` functions used the `.` in function calls, as well as camel-case, we have tried to switch to snake-case (this is still a work in progress, there are still function arguments that use camel-case).
+While previous `openxlsx` functions used the `.` in function calls, as well as camelCase, we have tried to switch to snake_case (this is still a work in progress, there may still be function arguments that use camelCase).
 
 ### Read xlsx or xlsm files
 
 The basic read function changed from `read.xlsx` to `read_xlsx`. Using a default xlsx file included in the package:
 
 ```{r read}
-xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+xlsx_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
 
 The old syntax looked like this:
 
 ```{r old_read, eval = FALSE}
 # read in openxlsx
-openxlsx::read.xlsx(xlsxFile)
+openxlsx::read.xlsx(xlsxFile = xlsx_file)
 ```
 
 This has changed to this:
 
 ```{r new_read}
 # read in openxlsx2
-openxlsx2::read_xlsx(xlsxFile)
+openxlsx2::read_xlsx(xlsx_file = xlsx_file)
 ```
 
 
-As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxlsx2. Another thing to see above, we return the cell row as rowname for the data frame returned. `openxlsx2` should return a data frame of the selected size, even if it empty. If you preferred `readWorksheet()` this has become `wb_read()`. All of these are wrappers for the newly introduced function `wb_to_df()` which provides the most options. `read_xlsx()` and `wb_read()` were created for backward comparability.
+As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxlsx2. Another thing to see above, we return the cell row as rowname for the data frame returned. `openxlsx2` should return a data frame of the selected size, even if it empty. If you preferred `openxlsx::readWorkbook()` this has become `wb_read()`. All of these are wrappers for the newly introduced function `wb_to_df()` which provides the most options. `read_xlsx()` and `wb_read()` were created for backward comparability.
 
 ## Write xlsx files
 
-Basic writing in `openxlsx2` behaves identical to `openxlsx`. Though be aware that `overwrite` is an optional parameter in `openxlsx2` and just like in other functions like `base::write.csv` if you write onto an existing file name, this file will be replaced.
+Basic writing in `openxlsx2` behaves identical to `openxlsx`. Though be aware that `overwrite` is an optional parameter in `openxlsx2` and just like in other functions like `base::write.csv()` if you write onto an existing file name, this file will be replaced.
 
 Setting the output to some temporary xlsx file
 ```{r write}
@@ -62,7 +62,7 @@ The new function looks quite similar:
 
 ```{r new_write}
 # write in openxlsx2
-openxlsx2::write_xlsx(iris, file = output, colNames = TRUE)
+openxlsx2::write_xlsx(iris, file = output, col_names = TRUE)
 ```
 
 
@@ -75,13 +75,13 @@ Workbook functions have been renamed to begin with `wb_` there are plenty of the
 A major feature in `openxlsx` are workbooks. Obviously they remain a central piece in `openxlsx2`. Previous you would load them with:
 
 ```{r old_workbook, eval = FALSE}
-wb <- loadWorkbook(xlsxFile)
+wb <- openxlsx::loadWorkbook(file = xlsx_file)
 ```
 
 In `openxlsx2` loading was changed to:
 
 ```{r workbook}
-wb <- wb_load(xlsxFile)
+wb <- wb_load(file = xlsx_file)
 ```
 
 There are plenty of functions to interact with workbooks and we will not describe every single one here. A detailed list can be found over at [our references](https://janmarvin.github.io/openxlsx2/reference/index.html)
@@ -91,8 +91,9 @@ There are plenty of functions to interact with workbooks and we will not describ
 One of the biggest user facing change was the removal of the `stylesObject`. In the following section we use code from [addStyle](https://ycphs.github.io/openxlsx/reference/addStyle.html)
 
 ```{r old_style, eval = FALSE}
+# openxlsx
 ## Create a new workbook
-wb <- createWorkbook("My name here")
+wb <- createWorkbook(creator = "My name here")
 addWorksheet(wb, "Expenditure", gridLines = FALSE)
 writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
 
@@ -107,10 +108,11 @@ setColWidths(wb, 1, cols = 1, widths = 21)
 In `openxlsx2` the same code looks something like this:
 
 ```{r new_style}
+# openxlsx2 chained
 border_color <- wb_color(hex = "FF4F81BD")
-wb <- wb_workbook("My name here")$
-  add_worksheet("Expenditure", gridLines = FALSE)$
-  add_data(x = USPersonalExpenditure, rowNames = TRUE)$
+wb <- wb_workbook(creator = "My name here")$
+  add_worksheet("Expenditure", grid_lines = FALSE)$
+  add_data(x = USPersonalExpenditure, row_names = TRUE)$
   add_border( # add the outer and inner border
     dims = "A1:F6",
     top_border = "thin", top_color = border_color,
@@ -120,7 +122,7 @@ wb <- wb_workbook("My name here")$
   )$
   set_col_widths( # set column width
     cols = 1:6,
-    widths = c("20", rep("10", 5))
+    widths = c(20, rep(10, 5))
   )$ # remove the value in A1
   add_data(dims = "A1", x = "")
 ```
@@ -130,10 +132,11 @@ The code above uses chaining. If you prefer piping, we provide the chained funct
 With pipes the code from above becomes
 
 ```{r new_style_pipes}
+# openxlsx2 with pipes
 border_color <- wb_color(hex = "FF4F81BD")
-wb <- wb_workbook("My name here") %>%
-  wb_add_worksheet("Expenditure", gridLines = FALSE) %>%
-  wb_add_data(x = USPersonalExpenditure, rowNames = TRUE) %>%
+wb <- wb_workbook(creator = "My name here") %>%
+  wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
+  wb_add_data(x = USPersonalExpenditure, row_names = TRUE) %>%
   wb_add_border( # add the outer and inner border
     dims = "A1:F6",
     top_border = "thin", top_color = border_color,
@@ -143,7 +146,7 @@ wb <- wb_workbook("My name here") %>%
   ) %>%
   wb_set_col_widths( # set column width
     cols = 1:6,
-    widths = c("20", rep("10", 5))
+    widths = c(20, rep(10, 5))
   ) %>% # remove the value in A1
   wb_add_data(dims = "A1", x = "")
 ```
@@ -151,6 +154,7 @@ wb <- wb_workbook("My name here") %>%
 Be aware that chains modify an object in place and pipes do not.
 
 ```{r pipe_chain}
+# openxlsx2
 wbp <- wb_workbook() %>% wb_add_worksheet()
 wbc <- wb_workbook()$add_worksheet()
 
@@ -168,17 +172,17 @@ Additional examples regarding styles can be found in the styles vignette.
 Extended examples for conditional formatting can be found in the conditional formatting vignette. A minimal example is the following:
 
 ```{r new_cf}
-# with chains
+# openxlsx2 with chains
 wb <- wb_workbook()$
   add_worksheet("a")$
-  add_data(x = 1:4, colNames = FALSE)$
-  add_conditional_formatting(cols = 1, rows = 1:4, rule = ">2")
+  add_data(x = 1:4, col_names = FALSE)$
+  add_conditional_formatting(dims = "A1:A4", rule = ">2")
 
-# with pipes
+# openxlsx2 with pipes
 wb <- wb_workbook() %>%
   wb_add_worksheet("a") %>%
-  wb_add_data(x = 1:4, colNames = FALSE) %>%
-  wb_add_conditional_formatting(cols = 1, rows = 1:4, rule = ">2")
+  wb_add_data(x = 1:4, col_names = FALSE) %>%
+  wb_add_conditional_formatting(dims = "A1:A4", rule = ">2")
 ```
 
 ### Data validation
@@ -186,6 +190,7 @@ wb <- wb_workbook() %>%
 Similar data validation has been updated and improved. This `openxlsx` code for data validation
 
 ```{r old_dv, eval = FALSE}
+# openxlsx
 wb <- createWorkbook()
 addWorksheet(wb, "Sheet 1")
 writeDataTable(wb, 1, x = iris[1:30, ])
@@ -198,21 +203,21 @@ dataValidation(wb, 1,
 looks in `openxlsx2` something like this:
 
 ```{r new_dv}
-# with chains
+# openxlsx2 with chains
 wb <- wb_workbook()$
   add_worksheet("Sheet 1")$
   add_data_table(1, x = iris[1:30, ])$
   add_data_validation(1,
-    col = 1:3, rows = 2:31, type = "whole",
+    dims = "A2:C31", type = "whole",
     operator = "between", value = c(1, 9)
   )
 
-# with pipes
+# openxlsx2 with pipes
 wb <- wb_workbook() %>%
   wb_add_worksheet("Sheet 1") %>%
   wb_add_data_table(1, x = iris[1:30, ]) %>%
   wb_add_data_validation(1,
-    col = 1:3, rows = 2:31, type = "whole",
+    dims = "A2:C31", type = "whole",
     operator = "between", value = c(1, 9)
   )
 ```

@@ -6,7 +6,6 @@
 #' @param theme A zero based index referencing a value in the theme.
 #' @param tint A tint value applied. Range from -1 (dark) to 1 (light).
 #' @return a `wbColour` object
-#' @rdname wbColour
 #' @export
 wb_color <- function(
     name = NULL,
@@ -38,7 +37,7 @@ wb_color <- function(
 }
 
 #' @export
-#' @rdname wbColour
+#' @rdname wb_color
 #' @usage NULL
 wb_colour <- wb_color
 

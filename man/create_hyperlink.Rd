@@ -2,7 +2,7 @@
 % Please edit documentation in R/helperFunctions.R
 \name{create_hyperlink}
 \alias{create_hyperlink}
-\title{create Excel hyperlink string}
+\title{Create Excel hyperlink string}
 \usage{
 create_hyperlink(sheet, row = 1, col = 1, text = NULL, file = NULL)
 }
@@ -18,7 +18,8 @@ create_hyperlink(sheet, row = 1, col = 1, text = NULL, file = NULL)
 \item{file}{Excel file name to point to. If NULL hyperlink is internal.}
 }
 \description{
-Wrapper to create internal hyperlink string to pass to write_formula(). Either link to external urls or local files or straight to cells of local Excel sheets.
+Wrapper to create internal hyperlink string to pass to \code{\link[=write_formula]{write_formula()}}.
+Either link to external URLs or local files or straight to cells of local Excel sheets.
 }
 \examples{
 
@@ -92,7 +93,4 @@ write_formula(
 ## Link to internal file
 x = create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
 write_formula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
-}
-\seealso{
-\code{\link[=write_formula]{write_formula()}}
 }

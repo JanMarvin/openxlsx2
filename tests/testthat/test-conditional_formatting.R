@@ -607,17 +607,17 @@ test_that("create dxfs style without font family and size", {
   exp <- "<dxf><font><color rgb=\"FF9C0006\"/></font><fill><patternFill patternType=\"solid\"><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
   got <- create_dxfs_style(
     font_color = wb_colour(hex = "FF9C0006"),
-    bgFill = wb_colour(hex = "FFFFC7CE")
+    bg_fill =    wb_colour(hex = "FFFFC7CE")
   )
   expect_equal(exp, got)
 
   # the fully fletched old default dxfs style
   exp <- "<dxf><font><color rgb=\"FF9C0006\"/><name val=\"Calibri\"/><sz val=\"11\"/></font><fill><patternFill patternType=\"solid\"><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
   got <- create_dxfs_style(
-    font_name = "Calibri",
-    font_size = 11,
+    font_name  = "Calibri",
+    font_size  = 11,
     font_color = wb_colour(hex = "FF9C0006"),
-    bgFill = wb_colour(hex = "FFFFC7CE")
+    bg_fill   = wb_colour(hex = "FFFFC7CE")
   )
   expect_equal(exp, got)
 

@@ -42,7 +42,6 @@ legal_sub     <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",
 
 #' converts & to &amp;
 #' @param x some xml string
-#' @keywords internal
 #' @noRd
 replace_legal_chars <- function(x) {
   x <- as.character(x)
@@ -63,7 +62,6 @@ replace_illegal_chars <- function(x, replacement = " ") {
 
 #' converts &amp; to &
 #' @param x some xml string
-#' @keywords internal
 #' @noRd
 replaceXMLEntities <- function(x) {
   stringi::stri_replace_all_fixed(

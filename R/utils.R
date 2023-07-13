@@ -53,8 +53,7 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 }
 
 #' helper function to create temporary directory for testing purpose
-#' @param pattern pattern from `base::tempfile()`
-#' @keywords internal
+#' @inheritParams base::tempfile pattern
 #' @noRd
 temp_dir <- function(pattern = "file") {
 
@@ -142,7 +141,6 @@ as_xml_attr <- function(x) {
 #'
 #' @inheritParams stringi::stri_rand_strings
 #' @param keep_seed logical should the default seed be kept unaltered
-#' @keywords internal
 #' @noRd
 random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed = TRUE) {
   # https://github.com/ycphs/openxlsx/issues/183
@@ -171,15 +169,25 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 
   return(res)
 }
-
-#' dims helpers
-#' @description Internal helpers to (de)construct a dims argument from/to a row
-#'  and column vector. Exported for user convenience.
-#' @name dims_helper
+# dims helpers -----------------------------------------------------------------
+#' Helper functions to work with `dims`
+#'
+#' Internal helpers to (de)construct a dims argument from/to a row and column
+#' vector. Exported for user convenience.
+#'
 #' @param x a dimension object "A1" or "A1:A1"
-#' @param as_integer optional if the output should be returned as integer
+#' @param as_integer If the output should be returned as integer, (defaults to string)
+#' @param row a numeric vector of rows
+#' @param col a numeric or character vector of cols
+#' @returns
+#'   * A `dims` string for `_to_dim` i.e  "A1:A1"
+#'   * A list of rows and columns for `to_rowcol`
 #' @examples
 #' dims_to_rowcol("A1:J10")
+#' rowcol_to_dims(1:10, 1:10)
+#' @name dims_helper
+NULL
+#' @rdname dims_helper
 #' @export
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
@@ -220,26 +228,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   list(cols_out, rows_out)
 }
-#' row and col to dims
-#' @param row a numeric vector of rows
-#' @param col a numeric or character vector of cols
-#' @noRd
-rowcol_to_dim <- function(row, col) {
-  # no assert for col. will output character anyways
-  # assert_class(row, "numeric") - complains if integer
-  col_int <- col2int(col)
-  min_col <- int2col(min(col_int))
-  min_row <- min(row)
-
-  # we will always return something like "A1"
-  stringi::stri_join(min_col, min_row)
-}
-
 #' @rdname dims_helper
-#' @param row a numeric vector of rows
-#' @param col a numeric or character vector of cols
-#' @examples
-#' rowcol_to_dims(1:10, 1:10)
 #' @export
 rowcol_to_dims <- function(row, col) {
 
@@ -258,7 +247,19 @@ rowcol_to_dims <- function(row, col) {
   stringi::stri_join(min_col, min_row, ":", max_col, max_row)
 
 }
+#' @rdname dims_helper
+#' @noRd
+rowcol_to_dim <- function(row, col) {
+  # no assert for col. will output character anyways
+  # assert_class(row, "numeric") - complains if integer
+  col_int <- col2int(col)
+  min_col <- int2col(min(col_int))
+  min_row <- min(row)
 
+  # we will always return something like "A1"
+  stringi::stri_join(min_col, min_row)
+}
+# Relationship helpers --------------------
 #' removes entries from worksheets_rels
 #' @param x character string
 #' @noRd
@@ -303,7 +304,6 @@ read_xml_files <- function(x) {
 
 #' unlist modifies names
 #' @param x a cf list
-#' @keywords internal
 #' @noRd
 un_list <- function(x) {
 
@@ -317,12 +317,40 @@ un_list <- function(x) {
   names(x) <- nams
   x
 }
-
+# `fmt_txt()` ------------------------------------------------------------------
 #' format strings independent of the cell style.
+#'
+#'
 #' @details
 #' The result is an xml string. It is possible to paste multiple `fmt_txt()`
 #' strings together to create a string with differing styles.
-#' @param x a string or part of a string
+#'
+#' Using `fmt_txt(charset = 161)` will give the Greek Character Set
+#'
+#'  | charset| "Character Set"      |
+#'  |--------|----------------------|
+#'  |  0     | "ANSI_CHARSET"       |
+#'  |  1     | "DEFAULT_CHARSET"    |
+#'  |  2     | "SYMBOL_CHARSET"     |
+#'  | 77     | "MAC_CHARSET"        |
+#'  | 128    | "SHIFTJIS_CHARSET"   |
+#'  | 129    | "HANGUL_CHARSET"     |
+#'  | 130    | "JOHAB_CHARSET"      |
+#'  | 134    | "GB2312_CHARSET"     |
+#'  | 136    | "CHINESEBIG5_CHARSET"|
+#'  | 161    | "GREEK_CHARSET"      |
+#'  | 162    | "TURKISH_CHARSET"    |
+#'  | 163    | "VIETNAMESE_CHARSET" |
+#'  | 177    | "HEBREW_CHARSET"     |
+#'  | 178    | "ARABIC_CHARSET"     |
+#'  | 186    | "BALTIC_CHARSET"     |
+#'  | 204    | "RUSSIAN_CHARSET"    |
+#'  | 222    | "THAI_CHARSET"       |
+#'  | 238    | "EASTEUROPE_CHARSET" |
+#'  | 255    | "OEM_CHARSET"        |
+#'
+# FIXME review the `fmt_txt.Rd`
+# #' @param x a string or part of a string
 #' @param bold bold
 #' @param italic italic
 #' @param underline underline
@@ -333,31 +361,8 @@ un_list <- function(x) {
 #' @param charset integer value from the table below
 #' @param outline TRUE or FALSE
 #' @param vertAlign baseline, superscript, or subscript
-#' @details
-#'  |"Value" | "Character Set"      |
-#'  |--------|----------------------|
-#'  |"0"     | "ANSI_CHARSET"       |
-#'  |"1"     | "DEFAULT_CHARSET"    |
-#'  |"2"     | "SYMBOL_CHARSET"     |
-#'  |"77"    | "MAC_CHARSET"        |
-#'  |"128"   | "SHIFTJIS_CHARSET"   |
-#'  |"129"   | "HANGUL_CHARSET"     |
-#'  |"130"   | "JOHAB_CHARSET"      |
-#'  |"134"   | "GB2312_CHARSET"     |
-#'  |"136"   | "CHINESEBIG5_CHARSET"|
-#'  |"161"   | "GREEK_CHARSET"      |
-#'  |"162"   | "TURKISH_CHARSET"    |
-#'  |"163"   | "VIETNAMESE_CHARSET" |
-#'  |"177"   | "HEBREW_CHARSET"     |
-#'  |"178"   | "ARABIC_CHARSET"     |
-#'  |"186"   | "BALTIC_CHARSET"     |
-#'  |"204"   | "RUSSIAN_CHARSET"    |
-#'  |"222"   | "THAI_CHARSET"       |
-#'  |"238"   | "EASTEUROPE_CHARSET" |
-#'  |"255"   | "OEM_CHARSET"        |
 #' @examples
 #' fmt_txt("bar", underline = TRUE)
-#' @name fmt_txt
 #' @export
 fmt_txt <- function(
     x,
@@ -445,13 +450,12 @@ fmt_txt <- function(
   out
 }
 
-#' @rdname fmt_txt
 #' @method + fmt_txt
-#' @param x an openxlsx2 fmt_txt string
-#' @param y an openxlsx2 fmt_txt string
+#' @param x,y an openxlsx2 fmt_txt string
 #' @details You can join additional objects into fmt_txt() objects using "+". Though be aware that `fmt_txt("sum:") + (2 + 2)` is different to `fmt_txt("sum:") + 2 + 2`.
 #' @examples
 #' fmt_txt("foo ", bold = TRUE) + fmt_txt("bar")
+#' @rdname fmt_txt
 #' @export
 "+.fmt_txt" <- function(x, y) {
 
@@ -466,7 +470,8 @@ fmt_txt <- function(
 
 #' @rdname fmt_txt
 #' @method as.character fmt_txt
-#' @param x an openxlsx2 fmt_txt string
+# FIXME review the `fmt_txt.Rd`
+# #' @param x an openxlsx2 fmt_txt string
 #' @param ... unused
 #' @examples
 #' as.character(fmt_txt(2))
@@ -477,7 +482,8 @@ as.character.fmt_txt <- function(x, ...) {
 
 #' @rdname fmt_txt
 #' @method print fmt_txt
-#' @param x an openxlsx2 fmt_txt string
+# FIXME review the `fmt_txt.Rd`
+# #' @param x an openxlsx2 fmt_txt string
 #' @param ... additional arguments for default print
 #' @export
 print.fmt_txt <- function(x, ...) {

@@ -34,11 +34,10 @@ knitr::include_graphics("img/cf_cells.jpg")
 ```{r}
 wb$add_worksheet("cellIs")
 wb$add_data("cellIs", -5:5)
-wb$add_data("cellIs", LETTERS[1:11], startCol = 2)
+wb$add_data("cellIs", LETTERS[1:11], start_col = 2)
 wb$add_conditional_formatting(
   "cellIs",
-  cols = 1,
-  rows = 1:11,
+  dims = "A1:A11",
   rule = "!=0",
   style = "negStyle"
 )
@@ -53,25 +52,23 @@ wb$add_conditional_formatting(
 
 ## Highlight row dependent on first cell in row
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo = FALSE, warning = FALSE}
 knitr::include_graphics("img/cf_moving_row.jpg")
 ```
 
 ```{r}
 wb$add_worksheet("Moving Row")
 wb$add_data("Moving Row", -5:5)
-wb$add_data("Moving Row", LETTERS[1:11], startCol = 2)
+wb$add_data("Moving Row", LETTERS[1:11], start_col = 2)
 wb$add_conditional_formatting(
   "Moving Row",
-  cols = 1:2,
-  rows = 1:11,
+  dims = "A1:B11",
   rule = "$A1<0",
   style = "negStyle"
 )
 wb$add_conditional_formatting(
   "Moving Row",
-  cols = 1:2,
-  rows = 1:11,
+  dims = "A1:B11",
   rule = "$A1>0",
   style = "posStyle"
 )
@@ -86,11 +83,10 @@ knitr::include_graphics("img/cf_moving_col.jpg")
 ```{r}
 wb$add_worksheet("Moving Col")
 wb$add_data("Moving Col", -5:5)
-wb$add_data("Moving Col", LETTERS[1:11], startCol = 2)
+wb$add_data("Moving Col", LETTERS[1:11], start_col = 2)
 wb$add_conditional_formatting(
   "Moving Col",
-  cols = 1:2,
-  rows = 1:11,
+  dims = "A1:B11",
   rule = "A$1<0",
   style = "negStyle"
 )
@@ -105,18 +101,17 @@ wb$add_conditional_formatting(
 
 ## Highlight entire range cols X rows dependent only on cell A1
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo = FALSE, warning = FALSE}
 knitr::include_graphics("img/cf_dependent_on.jpg")
 ```
 
 ```{r}
 wb$add_worksheet("Dependent on")
 wb$add_data("Dependent on", -5:5)
-wb$add_data("Dependent on", LETTERS[1:11], startCol = 2)
+wb$add_data("Dependent on", LETTERS[1:11], start_col = 2)
 wb$add_conditional_formatting(
   "Dependent on",
-  cols = 1:2,
-  rows = 1:11,
+  dims = "A1:B11",
   rule = "$A$1 < 0",
   style = "negStyle"
 )
@@ -279,21 +274,19 @@ knitr::include_graphics("img/cf_databar.jpg")
 ```{r}
 wb$add_worksheet("databar")
 ## Databars
-wb$add_data("databar", -5:5, startCol = 1)
+wb$add_data("databar", -5:5, start_col = 1)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",
-  cols = 1,
-  rows = 1:11,
+  dims = "A1:A11",
   type = "dataBar"
 ) ## Default colors
 
-wb$add_data("databar", -5:5, startCol = 3)
+wb$add_data("databar", -5:5, start_col = 3)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",
-  cols = 3,
-  rows = 1:11,
+  dims = "C1:C11",
   type = "dataBar",
   params = list(
     showValue = FALSE,
@@ -301,23 +294,21 @@ wb <- wb_add_conditional_formatting(
   )
 ) ## Default colors
 
-wb$add_data("databar", -5:5, startCol = 5)
+wb$add_data("databar", -5:5, start_col = 5)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",
-  cols = 5,
-  rows = 1:11,
+  dims = "E1:E11",
   type = "dataBar",
   style = c("#a6a6a6"),
   params = list(showValue = FALSE)
 )
 
-wb$add_data("databar", -5:5, startCol = 7)
+wb$add_data("databar", -5:5, start_col = 7)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",
-  cols = 7,
-  rows = 1:11,
+  dims = "G1:G11",
   type = "dataBar",
   style = c("red"),
   params = list(
@@ -327,7 +318,7 @@ wb <- wb_add_conditional_formatting(
 )
 
 # custom color
-wb$add_data("databar", -5:5, startCol = 9)
+wb$add_data("databar", -5:5, start_col = 9)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",
@@ -339,7 +330,7 @@ wb <- wb_add_conditional_formatting(
 )
 
 # with rule
-wb$add_data(x = -5:5, startCol = 11)
+wb$add_data(x = -5:5, start_col = 11)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",

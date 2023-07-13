@@ -107,7 +107,7 @@ read_xlsx(path)
 #> 6  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>       2 17:24:53
 #> 7  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>     <NA>
 #> 8  FALSE    1 NA   1.7     f 2023-03-02         <NA>     2.7 08:45:58
-#> 9     NA   NA NA  <NA>  <NA> 2023-04-17         <NA>    <NA>     <NA>
+#> 9     NA   NA NA  <NA>  <NA>       <NA>         <NA>    <NA>     <NA>
 #> 10 FALSE    2 NA    23     h 2023-12-24         <NA>      25     <NA>
 #> 11 FALSE    3 NA  67.3     i 2023-12-25         <NA>       3     <NA>
 #> 12    NA    1 NA   123  <NA> 2023-07-31         <NA>     122     <NA>
@@ -118,8 +118,8 @@ wb
 #> A Workbook object.
 #>  
 #> Worksheets:
-#>  Sheets: Sheet1 
-#>  Write order: 1
+#>  Sheets: Sheet1 Sheet2 
+#>  Write order: 1, 2
 
 # read a data frame
 wb_to_df(wb)
@@ -130,7 +130,7 @@ wb_to_df(wb)
 #> 6  FALSE    2 NA  <NA> #NUM!       <NA>         <NA>       2 17:24:53
 #> 7  FALSE    3 NA  1.56     e       <NA>         <NA>    <NA>     <NA>
 #> 8  FALSE    1 NA   1.7     f 2023-03-02         <NA>     2.7 08:45:58
-#> 9     NA   NA NA  <NA>  <NA> 2023-04-17         <NA>    <NA>     <NA>
+#> 9     NA   NA NA  <NA>  <NA>       <NA>         <NA>    <NA>     <NA>
 #> 10 FALSE    2 NA    23     h 2023-12-24         <NA>      25     <NA>
 #> 11 FALSE    3 NA  67.3     i 2023-12-25         <NA>       3     <NA>
 #> 12    NA    1 NA   123  <NA> 2023-07-31         <NA>     122     <NA>

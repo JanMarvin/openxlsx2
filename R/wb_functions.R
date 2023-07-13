@@ -83,7 +83,7 @@ dataframe_to_dims <- function(df) {
 #' function to estimate the column type.
 #' 0 = character, 1 = numeric, 2 = date.
 #' @param tt dataframe produced by wb_to_df()
-#' @keywords internal
+#'
 #' @noRd
 guess_col_type <- function(tt) {
 
@@ -116,7 +116,6 @@ guess_col_type <- function(tt) {
 
 #' check if numFmt is date. internal function
 #' @param numFmt numFmt xml nodes
-#' @keywords internal
 #' @noRd
 numfmt_is_date <- function(numFmt) {
 
@@ -147,7 +146,6 @@ numfmt_is_date <- function(numFmt) {
 
 #' check if numFmt is posix. internal function
 #' @param numFmt numFmt xml nodes
-#' @keywords internal
 #' @noRd
 numfmt_is_posix <- function(numFmt) {
 
@@ -180,7 +178,6 @@ numfmt_is_posix <- function(numFmt) {
 
 #' check if numFmt is posix. internal function
 #' @param numFmt numFmt xml nodes
-#' @keywords internal
 #' @noRd
 numfmt_is_hms <- function(numFmt) {
 
@@ -215,7 +212,6 @@ numfmt_is_hms <- function(numFmt) {
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
-#' @keywords internal
 #' @noRd
 style_is_date <- function(cellXfs, numfmt_date) {
 
@@ -233,7 +229,6 @@ style_is_date <- function(cellXfs, numfmt_date) {
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
-#' @keywords internal
 #' @noRd
 style_is_posix <- function(cellXfs, numfmt_date) {
 
@@ -251,7 +246,6 @@ style_is_posix <- function(cellXfs, numfmt_date) {
 #'
 #' @param cellXfs cellXfs xml nodes
 #' @param numfmt_date custom numFmtId dates
-#' @keywords internal
 #' @noRd
 style_is_hms <- function(cellXfs, numfmt_date) {
 
