@@ -28,7 +28,7 @@ fmt_txt(
 \method{print}{fmt_txt}(x, ...)
 }
 \arguments{
-\item{x}{an openxlsx2 fmt_txt string}
+\item{x, y}{an openxlsx2 fmt_txt string}
 
 \item{bold}{bold}
 
@@ -50,8 +50,6 @@ fmt_txt(
 
 \item{vertAlign}{baseline, superscript, or subscript}
 
-\item{y}{an openxlsx2 fmt_txt string}
-
 \item{...}{additional arguments for default print}
 }
 \description{
@@ -61,27 +59,27 @@ format strings independent of the cell style.
 The result is an xml string. It is possible to paste multiple \code{fmt_txt()}
 strings together to create a string with differing styles.
 
-\tabular{ll}{
-   "Value" \tab "Character Set" \cr
-   "0" \tab "ANSI_CHARSET" \cr
-   "1" \tab "DEFAULT_CHARSET" \cr
-   "2" \tab "SYMBOL_CHARSET" \cr
-   "77" \tab "MAC_CHARSET" \cr
-   "128" \tab "SHIFTJIS_CHARSET" \cr
-   "129" \tab "HANGUL_CHARSET" \cr
-   "130" \tab "JOHAB_CHARSET" \cr
-   "134" \tab "GB2312_CHARSET" \cr
-   "136" \tab "CHINESEBIG5_CHARSET" \cr
-   "161" \tab "GREEK_CHARSET" \cr
-   "162" \tab "TURKISH_CHARSET" \cr
-   "163" \tab "VIETNAMESE_CHARSET" \cr
-   "177" \tab "HEBREW_CHARSET" \cr
-   "178" \tab "ARABIC_CHARSET" \cr
-   "186" \tab "BALTIC_CHARSET" \cr
-   "204" \tab "RUSSIAN_CHARSET" \cr
-   "222" \tab "THAI_CHARSET" \cr
-   "238" \tab "EASTEUROPE_CHARSET" \cr
-   "255" \tab "OEM_CHARSET" \cr
+Using \code{fmt_txt(charset = 161)} will give the Greek Character Set\tabular{ll}{
+   charset \tab "Character Set" \cr
+   0 \tab "ANSI_CHARSET" \cr
+   1 \tab "DEFAULT_CHARSET" \cr
+   2 \tab "SYMBOL_CHARSET" \cr
+   77 \tab "MAC_CHARSET" \cr
+   128 \tab "SHIFTJIS_CHARSET" \cr
+   129 \tab "HANGUL_CHARSET" \cr
+   130 \tab "JOHAB_CHARSET" \cr
+   134 \tab "GB2312_CHARSET" \cr
+   136 \tab "CHINESEBIG5_CHARSET" \cr
+   161 \tab "GREEK_CHARSET" \cr
+   162 \tab "TURKISH_CHARSET" \cr
+   163 \tab "VIETNAMESE_CHARSET" \cr
+   177 \tab "HEBREW_CHARSET" \cr
+   178 \tab "ARABIC_CHARSET" \cr
+   186 \tab "BALTIC_CHARSET" \cr
+   204 \tab "RUSSIAN_CHARSET" \cr
+   222 \tab "THAI_CHARSET" \cr
+   238 \tab "EASTEUROPE_CHARSET" \cr
+   255 \tab "OEM_CHARSET" \cr
 }
 
 You can join additional objects into fmt_txt() objects using "+". Though be aware that \code{fmt_txt("sum:") + (2 + 2)} is different to \code{fmt_txt("sum:") + 2 + 2}.

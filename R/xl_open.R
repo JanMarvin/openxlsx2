@@ -1,26 +1,26 @@
 #' Open a Microsoft Excel file (xls/xlsx) or an openxlsx2 wbWorkbook
 #'
-#' @description This function tries to open a Microsoft Excel (xls/xlsx) file or
-#'   an openxlsx2 wbWorkbook with the proper application, in a portable manner.
+#' @description
+#' This function tries to open a Microsoft Excel (xls/xlsx) file or,
+#' an openxlsx2 wbWorkbook with the proper application, in a portable manner.
 #'
-#'   In Windows it uses `base::shell.exec()` (Windows only function) to
-#'   determine the appropriate program.
+#' On Windows it uses `base::shell.exec()` (Windows only function) to
+#' determine the appropriate program.
 #'
-#'   In Mac (c) it uses system default handlers, given the file type.
+#' In Mac (c) it uses system default handlers, given the file type.
 #'
-#'   In Linux it searches (via `which`) for available xls/xlsx reader
-#'   applications (unless `options('openxlsx2.excelApp')` is set to the app bin
-#'   path), and if it finds anything, sets `options('openxlsx2.excelApp')` to the
-#'   program chosen by the user via a menu (if many are present, otherwise it
-#'   will set the only available). Currently searched for apps are
-#'   Libreoffice/Openoffice (`soffice` bin), Gnumeric (`gnumeric`) and Calligra
-#'   Sheets (`calligrasheets`).
+#' In Linux it searches (via `which`) for available xls/xlsx reader
+#' applications (unless `options('openxlsx2.excelApp')` is set to the app bin
+#' path), and if it finds anything, sets `options('openxlsx2.excelApp')` to the
+#' program chosen by the user via a menu (if many are present, otherwise it
+#' will set the only available). Currently searched for apps are
+#' Libreoffice/Openoffice (`soffice` bin), Gnumeric (`gnumeric`) and Calligra
+#' Sheets (`calligrasheets`).
 #'
 #' @param x A path to the Excel (xls/xlsx) file or Workbook object.
 #' @param interactive If `FALSE` will throw a warning and not open the path.
 #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses the
 #'   value returned from [base::interactive()]
-#' @export
 #' @examples
 #' \donttest{
 #' if (interactive()) {
@@ -35,6 +35,7 @@
 #'   xl_open(wb)
 #' }
 #' }
+#' @export
 xl_open <- function(x, interactive = NA) {
   UseMethod("xl_open")
 }

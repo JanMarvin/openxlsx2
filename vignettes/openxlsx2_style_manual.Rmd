@@ -101,12 +101,12 @@ wb$styles_mgr$add(new_font, "new_font")
 
 # create a new cell style, that uses the fill, the font and the border style
 new_cellxfs <- create_cell_style(
-  numFmtId = 0,
+  num_fmt_id = 0,
   horizontal = "center",
-  textRotation = 45,
-  fillId = wb$styles_mgr$get_fill_id("new_fill"),
-  fontId = wb$styles_mgr$get_font_id("new_font"),
-  borderId = wb$styles_mgr$get_border_id("new_border")
+  text_rotation = 45,
+  fill_id = wb$styles_mgr$get_fill_id("new_fill"),
+  font_id = wb$styles_mgr$get_font_id("new_font"),
+  border_id = wb$styles_mgr$get_border_id("new_border")
 )
 # assign this style to the workbook
 wb$styles_mgr$add(new_cellxfs, "new_styles")
@@ -126,7 +126,7 @@ x <- c(
 )
 
 # create styles
-new_cellxfs <- create_cell_style(numFmtId = x, horizontal = "center")
+new_cellxfs <- create_cell_style(num_fmt_id = x, horizontal = "center")
 
 # assign the styles to the workbook
 for (i in seq_along(x)) {
@@ -242,14 +242,14 @@ wb <- wb %>% wb_set_col_widths(cols = cols, widths = "auto")
 ```{r}
 wb <- wb_workbook()
 # full inner grid
-wb$add_worksheet("S1", gridLines = FALSE)$add_data(x = mtcars)
+wb$add_worksheet("S1", grid_lines = FALSE)$add_data(x = mtcars)
 wb$add_border(
   dims = "A2:K33",
   inner_hgrid = "thin", inner_hcolor = wb_color(hex = "FF808080"),
   inner_vgrid = "thin", inner_vcolor = wb_color(hex = "FF808080")
 )
 # only horizontal grid
-wb$add_worksheet("S2", gridLines = FALSE)$add_data(x = mtcars)
+wb$add_worksheet("S2", grid_lines = FALSE)$add_data(x = mtcars)
 wb$add_border(dims = "A2:K33", inner_hgrid = "thin", inner_hcolor = wb_color(hex = "FF808080"))
 # only vertical grid
 wb$add_worksheet("S3", gridLines = FALSE)$add_data(x = mtcars)
@@ -276,7 +276,7 @@ colnames(mat) <- make.names(seq_len(ncol(mat)))
 
 wb <- wb_workbook() %>%
   wb_add_worksheet("test") %>%
-  wb_add_data(x = mat, colNames = TRUE, startCol = 2, startRow = 2) %>%
+  wb_add_data(x = mat, col_names = TRUE, start_col = 2, start_row = 2) %>%
   # center first row
   wb_add_cell_style(dims = "B2:C2", horizontal = "center") %>%
   # add border for first row
@@ -474,7 +474,7 @@ dx8 <- create_dxfs_style(
 
 
 wb <- wb_workbook() %>%
-  wb_add_worksheet(gridLines = FALSE)
+  wb_add_worksheet(grid_lines = FALSE)
 
 wb$add_style(dx0)
 wb$add_style(dx1)
@@ -488,16 +488,16 @@ wb$add_style(dx8)
 
 # finally create the table
 xml <- create_tablestyle(
-  name               = "red_table",
-  wholeTable         = wb$styles_mgr$get_dxf_id("dx8"),
-  headerRow          = wb$styles_mgr$get_dxf_id("dx7"),
-  totalRow           = wb$styles_mgr$get_dxf_id("dx6"),
-  firstColumn        = wb$styles_mgr$get_dxf_id("dx5"),
-  lastColumn         = wb$styles_mgr$get_dxf_id("dx4"),
-  firstRowStripe     = wb$styles_mgr$get_dxf_id("dx3"),
-  secondRowStripe    = wb$styles_mgr$get_dxf_id("dx2"),
-  firstColumnStripe  = wb$styles_mgr$get_dxf_id("dx1"),
-  secondColumnStripe = wb$styles_mgr$get_dxf_id("dx0")
+  name                 = "red_table",
+  whole_table          = wb$styles_mgr$get_dxf_id("dx8"),
+  header_row           = wb$styles_mgr$get_dxf_id("dx7"),
+  total_row            = wb$styles_mgr$get_dxf_id("dx6"),
+  first_column         = wb$styles_mgr$get_dxf_id("dx5"),
+  last_column          = wb$styles_mgr$get_dxf_id("dx4"),
+  first_row_stripe     = wb$styles_mgr$get_dxf_id("dx3"),
+  second_row_stripe    = wb$styles_mgr$get_dxf_id("dx2"),
+  first_column_stripe  = wb$styles_mgr$get_dxf_id("dx1"),
+  second_column_stripe = wb$styles_mgr$get_dxf_id("dx0")
 )
 
 
@@ -505,5 +505,5 @@ wb$add_style(xml)
 
 # create a table and apply the custom style
 wb <- wb %>%
-  wb_add_data_table(x = mtcars, tableStyle = "red_table")
+  wb_add_data_table(x = mtcars, table_style = "red_table")
 ```

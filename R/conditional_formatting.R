@@ -2,7 +2,6 @@
 #' @name cf_rules
 #' @param formula formula
 #' @param values values
-#' @keywords internal
 #' @noRd
 cf_create_colorscale <- function(formula, values) {
 
@@ -84,11 +83,10 @@ cf_create_colorscale <- function(formula, values) {
 }
 
 #' @rdname cf_rules
+#' @details `cf_create_databar()` returns extLst for worksheet
 #' @param extLst extLst
 #' @param params params
 #' @param sqref sqref
-#' @keywords internal
-#' @details `cf_create_databar()` returns extLst for worksheet
 #' @noRd
 cf_create_databar <- function(extLst, formula, params, sqref, values) {
   if (length(formula) == 2L) {
@@ -201,7 +199,6 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
 #' @rdname cf_rules
 #' @param dxfId dxfId
 #' @param formula formula
-#' @keywords internal
 #' @noRd
 cf_create_expression <- function(dxfId, formula) {
   cf_rule <- sprintf(
@@ -218,7 +215,6 @@ cf_create_expression <- function(dxfId, formula) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_create_duplicated_values <- function(dxfId) {
   cf_rule <- sprintf(
@@ -231,7 +227,6 @@ cf_create_duplicated_values <- function(dxfId) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_create_contains_text <- function(dxfId, sqref, values) {
   cf_rule <- sprintf(
@@ -250,7 +245,6 @@ cf_create_contains_text <- function(dxfId, sqref, values) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_create_not_contains_text <- function(dxfId, sqref, values) {
   cf_rule <- sprintf(
@@ -269,7 +263,6 @@ cf_create_not_contains_text <- function(dxfId, sqref, values) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_begins_with <- function(dxfId, sqref, values) {
   cf_rule <- sprintf(
@@ -289,7 +282,6 @@ cf_begins_with <- function(dxfId, sqref, values) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_ends_with <- function(dxfId, sqref, values) {
   cf_rule <- sprintf(
@@ -309,7 +301,6 @@ cf_ends_with <- function(dxfId, sqref, values) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_between <- function(dxfId, formula) {
   cf_rule <- sprintf(
@@ -328,7 +319,6 @@ cf_between <- function(dxfId, formula) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_top_n <- function(dxfId, values) {
   cf_rule <- sprintf(
@@ -343,7 +333,6 @@ cf_top_n <- function(dxfId, values) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_bottom_n <- function(dxfId, values) {
   cf_rule <- sprintf(
@@ -358,7 +347,6 @@ cf_bottom_n <- function(dxfId, values) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_icon_set <- function(
     values,
@@ -423,7 +411,6 @@ cf_icon_set <- function(
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_unique_values <- function(dxfId) {
   cf_rule <- sprintf(
@@ -435,7 +422,6 @@ cf_unique_values <- function(dxfId) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_iserror <- function(dxfId, sqref) {
   cf_rule <- sprintf(
@@ -452,7 +438,6 @@ cf_iserror <- function(dxfId, sqref) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_isnoerror <- function(dxfId, sqref) {
   cf_rule <- sprintf(
@@ -469,7 +454,6 @@ cf_isnoerror <- function(dxfId, sqref) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_isblank <- function(dxfId, sqref) {
   cf_rule <- sprintf(
@@ -486,7 +470,6 @@ cf_isblank <- function(dxfId, sqref) {
 }
 
 #' @rdname cf_rules
-#' @keywords internal
 #' @noRd
 cf_isnoblank <- function(dxfId, sqref) {
   cf_rule <- sprintf(

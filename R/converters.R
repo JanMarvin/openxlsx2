@@ -59,7 +59,6 @@ col2int <- function(x) {
 #' # "B1"
 #' get_cell_refs(data.frame(1:3, 2:4))
 #' # "B1" "C2" "D3"
-#' @keywords internal
 #' @noRd
 get_cell_refs <- function(cellCoords) {
   assert_class(cellCoords, "data.frame")
@@ -79,7 +78,6 @@ get_cell_refs <- function(cellCoords) {
 #'
 #' @param base_font the base font name and fontsize
 #' @param col_width column width
-#' @keywords internal
 #' @examples
 #' base_font <- wb_get_base_font(wb)
 #' calc_col_width(base_font, col_width = 10)

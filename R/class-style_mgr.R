@@ -65,7 +65,6 @@
 #' wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 #' # wb_open(wb)
 #'
-#' @keywords internal
 #' @noRd
 style_mgr <- R6::R6Class("wbStylesMgr", {
 

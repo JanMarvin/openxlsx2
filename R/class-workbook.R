@@ -6782,7 +6782,7 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- as.character(sheet)
       if (has_illegal_chars(sheet)) {
-        stop("illegal characters found in sheet. Please remove. See ?openxlsx::clean_worksheet_name")
+        stop("illegal characters found in sheet. Please remove. See ?openxlsx2::clean_worksheet_name")
       }
 
       if (!nzchar(sheet)) {

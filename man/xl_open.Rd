@@ -20,10 +20,10 @@ This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses
 value returned from \code{\link[base:interactive]{base::interactive()}}}
 }
 \description{
-This function tries to open a Microsoft Excel (xls/xlsx) file or
+This function tries to open a Microsoft Excel (xls/xlsx) file or,
 an openxlsx2 wbWorkbook with the proper application, in a portable manner.
 
-In Windows it uses \code{base::shell.exec()} (Windows only function) to
+On Windows it uses \code{base::shell.exec()} (Windows only function) to
 determine the appropriate program.
 
 In Mac (c) it uses system default handlers, given the file type.
