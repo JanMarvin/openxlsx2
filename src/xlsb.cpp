@@ -93,35 +93,35 @@ void CellParsedFormula(std::istream& sas) {
 
   cce = readbin(cce, sas, 0);
   Rcpp::Rcout << "cce: " << cce << std::endl;
-  // sas.seekg(cce, sas.cur);
+  sas.seekg(cce, sas.cur);
 
-  int32_t val = 0;
-  val = readbin((int8_t)val, sas, 0);
-  Rcpp::Rcout << val << std::endl;
-
-  // this will be a nightmare ...
-  if (val == 0x44) {
-
-    Rcpp::Rcout << "PtgRef" << ": " << sas.tellg() << std::endl;
-    uint8_t ptg = 0;
-    ptg = readbin(ptg, sas, 0);
-
-    int8_t A, B;
-
-    A = (ptg >> 5) & 0b11;
-    B = (ptg >> 7) & 1;
-
-    uint32_t row = 0;
-    row = readbin(row, sas, 0);
-
-    uint16_t col = 0;
-    col = readbin(col, sas, 0);
-
-    Rcpp::Rcout << (uint8_t)A << " : " << (uint8_t)B << " : " << row << " : " << col << std::endl;
-  }
-
-  val = readbin((int8_t)val, sas, 0);
-  Rcpp::Rcout << val << std::endl;
+  // int32_t val = 0;
+  // val = readbin((int8_t)val, sas, 0);
+  // Rcpp::Rcout << val << std::endl;
+  //
+  // // this will be a nightmare ...
+  // if (val == 0x44) {
+  //
+  //   Rcpp::Rcout << "PtgRef" << ": " << sas.tellg() << std::endl;
+  //   uint8_t ptg = 0;
+  //   ptg = readbin(ptg, sas, 0);
+  //
+  //   int8_t A, B;
+  //
+  //   A = (ptg >> 5) & 0b11;
+  //   B = (ptg >> 7) & 1;
+  //
+  //   uint32_t row = 0;
+  //   row = readbin(row, sas, 0);
+  //
+  //   uint16_t col = 0;
+  //   col = readbin(col, sas, 0);
+  //
+  //   Rcpp::Rcout << (uint8_t)A << " : " << (uint8_t)B << " : " << row << " : " << col << std::endl;
+  // }
+  //
+  // val = readbin((int8_t)val, sas, 0);
+  // Rcpp::Rcout << val << std::endl;
 
 
   // if (cce != 0) {
@@ -130,9 +130,10 @@ void CellParsedFormula(std::istream& sas) {
 
   cb = readbin(cb, sas, 0);
   Rcpp::Rcout << "cb: " << cb << std::endl;
-  if (cb != 0) {
-    Rcpp::stop("cb != 0");
-  }
+  // if (cb != 0) {
+  //   Rcpp::stop("cb != 0");
+  // }
+  sas.seekg(cb, sas.cur);
 }
 
 // [[Rcpp::export]]
@@ -333,6 +334,8 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
     bool in_worksheet = false;
     bool in_sheet_data = false;
 
+    bool first_row = true;
+
     auto itr = 0;
     while(!bin.eof()) {
 
@@ -461,12 +464,16 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (x == BrtBeginSheetData)  {
-        Rcpp::Rcout << "<sheetData>" << bin.tellg() << std::endl;
+        out << "<sheetData>" << std::endl; //  << bin.tellg()
         in_sheet_data = true;
       } // 2.2.1 Cell Table
 
       if (in_sheet_data && x == BrtRowHdr)  {
         Rcpp::Rcout << "BrtRowHdr: " << bin.tellg() << std::endl;
+        if (!first_row) {
+          out << "</row>" <<std::endl;
+        }
+        first_row = false;
       }
 
       // prelude to row entry
@@ -502,7 +509,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       if (x == BrtRowHdr) {
 
-        Rcpp::Rcout << "<r> " << bin.tellg() << std::endl;
+        out << "<row r=\""; //  << bin.tellg()
         uint8_t bits1, bits2, bits3, fExtraAsc, fExtraDsc, fCollapsed,
         fDyZero, fUnsynced, fGhostDirty, fReserved, fPhShow;
         uint16_t miyRw;
@@ -540,6 +547,8 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         Rcpp::Rcout << ccolspan << std::endl;
 
+        out << rw << "\">" << std::endl;
+
         Rcpp::Rcout << rw << " : " << ixfe << " : " << miyRw << " : " << (int32_t)fExtraAsc << " : " <<
           (int32_t)fExtraDsc << " : " << unk32 << " : " << (int32_t)fCollapsed << " : " << (int32_t)fDyZero << " : " <<
             (int32_t)fUnsynced << " : " << (int32_t)fGhostDirty << " : " << (int32_t)fReserved << " : " << (int32_t)fPhShow << " : " <<
@@ -550,41 +559,53 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       if (in_sheet_data && x == BrtCellIsst)  { // shared string
         Rcpp::Rcout << "BrtCellIsst: " << bin.tellg() << std::endl;
 
-        int32_t val;
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << val << std::endl;
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << val << std::endl;
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << val << std::endl;
+        int32_t val1, val2, val3;
+        val1 = readbin(val1, bin, 0);
+        Rcpp::Rcout << val1 << std::endl;
+        val2 = readbin(val2, bin, 0);
+        Rcpp::Rcout << val2 << std::endl;
+        val3 = readbin(val3, bin, 0);
+        Rcpp::Rcout << val3 << std::endl;
+
+        out << "<c r=\"" << val1 << "\" t=\"s\">" << std::endl;
+        out << "<v>" << val3 << "</v>" << std::endl;
+        out << "</c>" << std::endl;
 
       }
 
       if (in_sheet_data && x == BrtCellBool) { // bool
         Rcpp::Rcout << "BrtCellBool: " << bin.tellg() << std::endl;
 
-        uint8_t val8;
 
-        int32_t val;
-        val = readbin(val, bin, 0);
-        out << val << std::endl;
-        val = readbin(val, bin, 0);
-        out << val << std::endl;
-        val = readbin(val8, bin, 0);
-        out << val << std::endl;
+        int32_t val1, val2;
+        uint8_t val3;
+        val1 = readbin(val1, bin, 0);
+        // out << val1 << std::endl;
+        val2 = readbin(val2, bin, 0);
+        // out << val2 << std::endl;
+        val3 = readbin(val3, bin, 0);
+        // out << val3 << std::endl;
+
+        out << "<c r=\"" << val1 << "\" t=\"b\">" << std::endl;
+        out << "<v>" << (int32_t)val3 << "</v>" << std::endl;
+        out << "</c>" << std::endl;
       }
 
       if (x == BrtCellRk) { // integer?
         Rcpp::Rcout << "BrtCellRk: " << bin.tellg() << std::endl;
 
-        int32_t val;
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << val << std::endl;
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << val << std::endl;
+        int32_t val1, val2, val3;
+        val1 = readbin(val1, bin, 0);
+        // Rcpp::Rcout << val << std::endl;
+        val2 = readbin(val2, bin, 0);
+        // Rcpp::Rcout << val << std::endl;
         // wrong?
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << RkNumber(val) << std::endl;
+        val3 = readbin(val3, bin, 0);
+        // Rcpp::Rcout << RkNumber(val) << std::endl;
+
+        out << "<c r=\"" << val1 << "\">" << std::endl;
+        out << "<v>" << RkNumber(val3) << "</v>" << std::endl;
+        out << "</c>" << std::endl;
       }
 
       if (x == BrtFmlaError) { // t="e" & <f>
@@ -596,7 +617,9 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         std::string fErr;
         fErr = BErr(bin);
-        Rcpp::Rcout << fErr << std::endl;
+        out << "<c>" << std::endl;
+        out << "<v>" << fErr << "</v>" << std::endl;
+        out << "</c>" << std::endl;
 
         uint16_t frbitfmla = 0;
         // [0] == 0
@@ -614,15 +637,21 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       if (x == BrtCellReal) {
         Rcpp::Rcout << "BrtCellReal: " << bin.tellg() << std::endl;
-        int32_t val;
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << val << std::endl;
-        val = readbin(val, bin, 0);
-        Rcpp::Rcout << val << std::endl;
+        int32_t val1, val2;
+        val1 = readbin(val1, bin, 0);
+        // Rcpp::Rcout << val << std::endl;
+        val2 = readbin(val2, bin, 0);
+        // Rcpp::Rcout << val << std::endl;
 
         double dbl;
         dbl = readbin(dbl, bin, 0);
-        Rcpp::Rcout << dbl << std::endl;
+        // Rcpp::Rcout << dbl << std::endl;
+
+        #include <iomanip>
+
+        out << "<c r=\"" << val1 << "\">" << std::endl;
+        out << "<v>" << std::setprecision(16) << dbl << "</v>" << std::endl; // << std::fixed
+        out << "</c>" << std::endl;
       }
 
       // 0 ?
@@ -636,13 +665,18 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         uint8_t val8;
 
-        int32_t val;
-        val = readbin(val, bin, 0);
-        out << val << std::endl;
-        val = readbin(val, bin, 0);
-        out << val << std::endl;
-        val = readbin(val8, bin, 0);
-        out << val << std::endl;
+        int32_t val1, val2, val3;
+        val1 = readbin(val1, bin, 0);
+        // out << val << std::endl;
+        val2 = readbin(val2, bin, 0);
+        // out << val << std::endl;
+        // val3 = readbin(val8, bin, 0);
+        // out << val3 << std::endl;
+
+        out << "<c r=\"" << val1 << "\" t=\"e\">" << std::endl;
+        out << "<v>" << BErr(bin) << "</v>" << std::endl;
+        out << "</c>" << std::endl;
+
       }
 
       if (x == BrtFmlaNum) {
@@ -650,12 +684,15 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (in_sheet_data && x == BrtEndSheetData) {
+        if (!first_row) {
+          out << "</row>" << std::endl;
+        }
         out << "</sheetData>" << std::endl;
         in_sheet_data = false;
-        break;
-      }
-
-      if (x == BrtEndSheet) {
+      // break;
+      // }
+      //
+      // if (x == BrtEndSheet) {
         out << "</worksheet>" << std::endl;
         in_worksheet = false;
         break;
