@@ -40,12 +40,100 @@ std::vector<int> UncheckedRfX(std::istream& sas) {
 
 std::vector<int> Cell(std::istream& sas) {
 
-  std::vector<int> out;
-  int32_t rwFirst, rwLast, colFirst, colLast;
+  std::vector<int> out(3);
+
+  int32_t uint;
+  out[0] = readbin(uint, sas, 0);
+  uint = readbin(uint, sas, 0);
+
+  out[1] = uint >> 8;   // iStyleRef
+  out[2] = uint & 0xFF; // unused
 
   return(out);
 }
 
+static double RkNumber(int32_t val) {
+
+  double out;
+  if (val & 0x02) { // integer
+    int32_t tmp = (int32_t)val >> 2;
+    out = (double)tmp;
+  } else { // double
+    uint64_t tmp = val & 0xfffffffc;
+    tmp <<= 32;
+    memcpy(&out, &tmp, sizeof(uint64_t));
+  }
+
+  if (val & 0x01) {
+    out /= 100.0;
+  }
+  return out;
+}
+
+std::string BErr(std::istream& sas) {
+  uint8_t error = 0;
+  error = readbin(error, sas, 0);
+
+  if (error == 0x00) return "#NULL!";
+  if (error == 0x07) return "#DIV/0";
+  if (error == 0x0F) return "#VALUE!";
+  if (error == 0x17) return "#REF!";
+  if (error == 0x1D) return "#NAME?";
+  if (error == 0x24) return "#NUM!";
+  if (error == 0x2A) return "#N/A";
+  if (error == 0x2B) return "#GETTING_DATA";
+
+  return "unknown_ERROR";
+}
+
+void CellParsedFormula(std::istream& sas) {
+  uint32_t  cce, cb;
+
+  Rcpp::Rcout << sas.tellg() << std::endl;
+
+  cce = readbin(cce, sas, 0);
+  Rcpp::Rcout << "cce: " << cce << std::endl;
+  // sas.seekg(cce, sas.cur);
+
+  int32_t val = 0;
+  val = readbin((int8_t)val, sas, 0);
+  Rcpp::Rcout << val << std::endl;
+
+  // this will be a nightmare ...
+  if (val == 0x44) {
+
+    Rcpp::Rcout << "PtgRef" << ": " << sas.tellg() << std::endl;
+    uint8_t ptg = 0;
+    ptg = readbin(ptg, sas, 0);
+
+    int8_t A, B;
+
+    A = (ptg >> 5) & 0b11;
+    B = (ptg >> 7) & 1;
+
+    uint32_t row = 0;
+    row = readbin(row, sas, 0);
+
+    uint16_t col = 0;
+    col = readbin(col, sas, 0);
+
+    Rcpp::Rcout << (uint8_t)A << " : " << (uint8_t)B << " : " << row << " : " << col << std::endl;
+  }
+
+  val = readbin((int8_t)val, sas, 0);
+  Rcpp::Rcout << val << std::endl;
+
+
+  // if (cce != 0) {
+  //   Rcpp::stop("cce != 0");
+  // }
+
+  cb = readbin(cb, sas, 0);
+  Rcpp::Rcout << "cb: " << cb << std::endl;
+  if (cb != 0) {
+    Rcpp::stop("cb != 0");
+  }
+}
 
 // [[Rcpp::export]]
 int sst(std::string filePath, std::string outPath, bool debug) {
@@ -71,13 +159,13 @@ int sst(std::string filePath, std::string outPath, bool debug) {
         uniqueCount = readbin(uniqueCount, bin, 0);
         out << "<sst " <<
           "count=\"" << count <<
-          "\" uniqueCount=\"" << uniqueCount <<
-          "\">" << std::endl;
+            "\" uniqueCount=\"" << uniqueCount <<
+              "\">" << std::endl;
       }
 
       if (x == BrtSSTItem) {
         out << "<si><t>" << RichStr(bin) <<
-                    "</t></si>" << std::endl;
+          "</t></si>" << std::endl;
       }
 
       if (x == BrtEndSst) {
@@ -154,24 +242,75 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
 }
 
-int32_t RECORD(uint8_t highByte, uint8_t lowByte) {
 
-  if (highByte & 0x80) {
+int32_t RECORD_ID(std::istream& sas) {
+  uint8_t var1 = 0, var2 = 0;
+  var1 = readbin(var1, sas, 0);
+
+  if (var1 & 0x80) {
+
+    var2 = readbin(var2, sas, 0);
+
     // If the high bit is 1, then it's a two-byte record type
-    int32_t recordType = ((lowByte & 0x7F) << 7) | (highByte & 0x7F);
+    int32_t recordType = ((var2 & 0x7F) << 7) | (var1 & 0x7F);
     if (recordType >= 128 && recordType < 16384) {
       return recordType;
     }
   } else {
     // If the high bit is not 1, then it's a one-byte record type
-    int32_t recordType = highByte;
+    int32_t recordType = var1;
     if (recordType >= 0 && recordType < 128) {
       return recordType;
     }
   }
+  return -1;
+}
+
+int32_t RECORD_SIZE(std::istream& sas) {
+  int8_t sar1 = 0, sar2 = 0, sar3 = 0, sar4 = 0;
+
+  sar1 = readbin(sar1, sas, 0);
+  if (sar1 & 0x80) sar2 = readbin(sar2, sas, 0);
+  if (sar2 & 0x80) sar3 = readbin(sar3, sas, 0);
+  if (sar3 & 0x80) sar4 = readbin(sar4, sas, 0);
+
+  // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
+
+
+  if (sar2 != 0 & sar3 != 0 && sar4 != 0) {
+    int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 != 0 & sar3 != 0 && sar4 == 0) {
+    int32_t recordType = ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 != 0 & sar3 == 0 && sar4 == 0) {
+    int32_t recordType = ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 == 0 & sar3 == 0 && sar4 == 0) {
+    // Rcpp::Rcout << "yes" << std::endl;
+    int32_t recordType = sar1;
+    return recordType;
+  }
 
   // Return -1 if the record type is invalid
   return -1;
+}
+
+int32_t RECORD(int &rid, int &rsize, std::istream& sas) {
+
+  /* Record ID ---------------------------------------------------------------*/
+  rid = RECORD_ID(sas);
+
+  /* Record Size -------------------------------------------------------------*/
+  rsize = RECORD_SIZE(sas);
+
+  return 0;
 }
 
 
@@ -199,48 +338,48 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       uint8_t unk, high, low;
       uint16_t tmp;
-      int32_t x = 0;
+      int32_t x = 0, size = 0;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
-      tmp = readbin(tmp, bin, 0);
-      // Rcpp::Rcout << tmp << std::endl;
-      uint8_t hi = tmp & 0xff;
-      uint8_t lo = (tmp >> 8) & 0xff;
 
-      if (debug) Rprintf("high/low = %d : %d\n", hi, lo);
+      RECORD(x, size, bin);
 
-      x = RECORD(hi, lo);
-      if (debug) Rcpp::Rcout << "x: " << x << std::endl;
-
+      if (debug) {
+        Rcpp::Rcout << "x: " << x << std::endl;
+        Rcpp::Rcout << "size: " << size << std::endl;
+        Rcpp::Rcout << "@: " << bin.tellg() << std::endl;
+      }
 
       if (x == BrtBeginSheet) {
         out << "<worksheet>" << std::endl;
         in_worksheet = true;
 
-        uint8_t A, B;
+        // uint8_t A, B;
+        //
+        // B = readbin(B, bin, 0); // len?
 
-        B = readbin(B, bin, 0); // len?
+        // if (debug) {
+        //   printf("%d : %d\n", A, B);
+        // }
 
-        if (debug) {
-          printf("%d : %d\n", A, B);
-        }
+        Rcpp::Rcout << "End of <worksheet>: " << bin.tellg() << std::endl;
       }
 
       if (in_worksheet && x == BrtWsProp) {
         Rcpp::Rcout << "WsProp: " << bin.tellg() << std::endl;
 
-        uint8_t A, B;
-
-        B = readbin(B, bin, 0); // len?
-
-        if (debug) {
-          printf("%d : %d\n", A, B);
-        }
+        // uint8_t A, B;
+        //
+        // B = readbin(B, bin, 0); // len?
+        //
+        // if (debug) {
+        //   printf("%d : %d\n", A, B);
+        // }
 
         uint8_t fShowAutoBreaks, fPublish, fDialog, fApplyStyles, fRowSumsBelow,
-                fColSumsBelow, fColSumsRight, fFitToPage, reserved2,
-                fShowOutlineSymbols, reserved3, fSyncHoriz, fSyncVert,
-                fAltExprEval, fAltFormulaEntry, fFilterMode, fCondFmtCalc;
+        fColSumsBelow, fColSumsRight, fFitToPage, reserved2,
+        fShowOutlineSymbols, reserved3, fSyncHoriz, fSyncVert,
+        fAltExprEval, fAltFormulaEntry, fFilterMode, fCondFmtCalc;
         uint16_t rserved1;
         uint32_t rwSync, colSync;
         int64_t brtcolorTab;
@@ -269,19 +408,19 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         // colSync = readbin(colSync, bin, 0);
         // strName a code name ...
 
-        bin.seekg(B, bin.cur);
+        bin.seekg(size, bin.cur);
       }
 
       if (in_worksheet && x == BrtWsDim) {
         Rcpp::Rcout << "WsDim: " << bin.tellg() << std::endl;
 
-        uint8_t A, B;
-
-        B = readbin(B, bin, 0); // len?
-
-        if (debug) {
-          printf("%d : %d\n", A, B);
-        }
+        // uint8_t A, B;
+        //
+        // B = readbin(B, bin, 0); // len?
+        //
+        // if (debug) {
+        //   printf("%d : %d\n", A, B);
+        // }
 
         // 16 bit
         std::vector<int> dims;
@@ -292,127 +431,228 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (in_worksheet && x == BrtBeginWsViews) {
-        out << "<sheetViews>: " << bin.tellg() << std::endl;
-        uint8_t A, B;
-
-        B = readbin(B, bin, 0); // len?
-
-        if (debug) {
-          printf("%d : %d\n", A, B);
-        }
-      }
-
-      if (in_worksheet && x == BrtBeginWsView) {
-        out << "<sheetView>: " << bin.tellg() << std::endl;
-      }
-
-      if (in_worksheet && x == BrtEndWsView) {
-        out << "</sheetView>: " << bin.tellg() << std::endl;
-      }
-
-      if (in_worksheet && x == BrtEndWsViews) {
-        out << "</sheetViews>: " << bin.tellg() << std::endl;
-      }
-
-      if (!in_sheet_data && x == BrtBeginSheetData)  {
-        out << "<sheetData>" << bin.tellg() << std::endl;
-        in_sheet_data = true;
-
+        Rcpp::Rcout << "<sheetViews>: " << bin.tellg() << std::endl;
         // uint8_t A, B;
         //
-        // A = readbin(A, bin, 0); // 1?
         // B = readbin(B, bin, 0); // len?
         //
         // if (debug) {
         //   printf("%d : %d\n", A, B);
         // }
+      }
 
+      // whatever this is
+      if (x == BrtSel) {
+        Rcpp::Rcout << "BrtSel: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (in_worksheet && x == BrtBeginWsView) {
+        Rcpp::Rcout << "<sheetView>: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (in_worksheet && x == BrtEndWsView) {
+        Rcpp::Rcout << "</sheetView>: " << bin.tellg() << std::endl;
+      }
+
+      if (in_worksheet && x == BrtEndWsViews) {
+        Rcpp::Rcout << "</sheetViews>: " << bin.tellg() << std::endl;
+      }
+
+      if (x == BrtBeginSheetData)  {
+        Rcpp::Rcout << "<sheetData>" << bin.tellg() << std::endl;
+        in_sheet_data = true;
       } // 2.2.1 Cell Table
 
       if (in_sheet_data && x == BrtRowHdr)  {
         Rcpp::Rcout << "BrtRowHdr: " << bin.tellg() << std::endl;
+      }
 
-        uint8_t A, B;
-
-        // A = readbin(A, bin, 0); // 1?
-        B = readbin(B, bin, 0); // len?
-
-        if (debug) {
-          printf("%d : %d\n", A, B);
-        }
-
-          // 17?
-          bin.seekg(15, bin.cur); // ??? Not sure what is going on there some pre <r> lines?
-
-          out << "<r> " << bin.tellg() << std::endl;
-          uint8_t bits1, bits2, bits3, fExtraAsc, fExtraDsc, fCollapsed,
-                  fDyZero, fUnsynced, fGhostDirty, fReserved, fPhShow;
-          uint16_t miyRw;
-
-          // uint24_t;
-          int32_t rw;
-          uint32_t ixfe, ccolspan, unk32, colMic, colLast;
-
-          rw = readbin(rw, bin, 0);
-          ixfe = readbin(ixfe, bin, 0);
-          miyRw = readbin(miyRw, bin, 0);
-
-          bits1 = readbin(bits1, bin, 0);
-          // fExtraAsc = 1
-          // fExtraDsc = 1
-          // reserved1 = 6
-
-          bits2 = readbin(bits2, bin, 0);
-          // iOutLevel   = 3
-          // fCollapsed  = 1
-          // fDyZero     = 1
-          // fUnsynced   = 1
-          // fGhostDirty = 1
-          // fReserved   = 1
-
-          bits3 = readbin(bits3, bin, 0);
-          // fPhShow   = 1
-          // fReserved = 7
-
-          ccolspan = readbin(ccolspan, bin, 0);
-          // rgBrtColspan
-          // not sure if these are alway around. maybe ccolspan is a counter
-          colMic = readbin(colMic, bin, 0);
-          colLast = readbin(colLast, bin, 0);
-
-          Rcpp::Rcout << ccolspan << std::endl;
-
-          Rcpp::Rcout << rw << " : " << ixfe << " : " << miyRw << " : " << (int32_t)fExtraAsc << " : " <<
-            (int32_t)fExtraDsc << " : " << unk32 << " : " << (int32_t)fCollapsed << " : " << (int32_t)fDyZero << " : " <<
-              (int32_t)fUnsynced << " : " << (int32_t)fGhostDirty << " : " << (int32_t)fReserved << " : " << (int32_t)fPhShow << " : " <<
-                ccolspan << "; " << bin.tellg() << std::endl;
-
+      // prelude to row entry
+      if (x == BrtACBegin) {
+        Rcpp::Rcout << "BrtACBegin: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+        // int16_t nversions, version;
+        // nversions = readbin(nversions, bin , 0);
+        // std::vector<int> versions;
+        //
+        // for (int i = 0; i < nversions; ++i) {
+        //   version = readbin(version, bin, 0);
+        //   versions.push_back(version);
         // }
+        //
+        // Rf_PrintValue(Rcpp::wrap(versions));
       }
 
-      if (x == row_description) {
-        bin.seekg(15, bin.cur);
+      if (x == BrtACEnd) {
+        Rcpp::Rcout << "BrtACEnd: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
       }
 
-      if (x == BrtCellIsst)  {
+      if (x == BrtWsFmtInfo) {
+        Rcpp::Rcout << "BrtWsFmtInfo: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtRwDescent) {
+        Rcpp::Rcout << "BrtRwDescent: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtRowHdr) {
+
+        Rcpp::Rcout << "<r> " << bin.tellg() << std::endl;
+        uint8_t bits1, bits2, bits3, fExtraAsc, fExtraDsc, fCollapsed,
+        fDyZero, fUnsynced, fGhostDirty, fReserved, fPhShow;
+        uint16_t miyRw;
+
+        // uint24_t;
+        int32_t rw;
+        uint32_t ixfe, ccolspan, unk32, colMic, colLast;
+
+        rw = readbin(rw, bin, 0);
+        ixfe = readbin(ixfe, bin, 0);
+        miyRw = readbin(miyRw, bin, 0);
+
+        bits1 = readbin(bits1, bin, 0);
+        // fExtraAsc = 1
+        // fExtraDsc = 1
+        // reserved1 = 6
+
+        bits2 = readbin(bits2, bin, 0);
+        // iOutLevel   = 3
+        // fCollapsed  = 1
+        // fDyZero     = 1
+        // fUnsynced   = 1
+        // fGhostDirty = 1
+        // fReserved   = 1
+
+        bits3 = readbin(bits3, bin, 0);
+        // fPhShow   = 1
+        // fReserved = 7
+
+        ccolspan = readbin(ccolspan, bin, 0);
+        // rgBrtColspan
+        // not sure if these are alway around. maybe ccolspan is a counter
+        colMic = readbin(colMic, bin, 0);
+        colLast = readbin(colLast, bin, 0);
+
+        Rcpp::Rcout << ccolspan << std::endl;
+
+        Rcpp::Rcout << rw << " : " << ixfe << " : " << miyRw << " : " << (int32_t)fExtraAsc << " : " <<
+          (int32_t)fExtraDsc << " : " << unk32 << " : " << (int32_t)fCollapsed << " : " << (int32_t)fDyZero << " : " <<
+            (int32_t)fUnsynced << " : " << (int32_t)fGhostDirty << " : " << (int32_t)fReserved << " : " << (int32_t)fPhShow << " : " <<
+              ccolspan << "; " << bin.tellg() << std::endl;
+
+      }
+
+      if (in_sheet_data && x == BrtCellIsst)  { // shared string
         Rcpp::Rcout << "BrtCellIsst: " << bin.tellg() << std::endl;
 
-        // bin.seekg(8, bin.cur);
+        int32_t val;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+
+      }
+
+      if (in_sheet_data && x == BrtCellBool) { // bool
+        Rcpp::Rcout << "BrtCellBool: " << bin.tellg() << std::endl;
+
+        uint8_t val8;
 
         int32_t val;
         val = readbin(val, bin, 0);
         out << val << std::endl;
         val = readbin(val, bin, 0);
         out << val << std::endl;
-        val = readbin(val, bin, 0);
+        val = readbin(val8, bin, 0);
         out << val << std::endl;
-        // Rcpp::stop("stop");
       }
 
+      if (x == BrtCellRk) { // integer?
+        Rcpp::Rcout << "BrtCellRk: " << bin.tellg() << std::endl;
+
+        int32_t val;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+        // wrong?
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << RkNumber(val) << std::endl;
+      }
+
+      if (x == BrtFmlaError) { // t="e" & <f>
+        Rcpp::Rcout << "BrtFmlaError: " << bin.tellg() << std::endl;
+        // bin.seekg(size, bin.cur);
+        std::vector<int> cell;
+        cell = Cell(bin);
+        Rf_PrintValue(Rcpp::wrap(cell));
+
+        std::string fErr;
+        fErr = BErr(bin);
+        Rcpp::Rcout << fErr << std::endl;
+
+        uint16_t frbitfmla = 0;
+        // [0] == 0
+        // [1] == fAlwaysCalc
+        // [2-15] == unused
+        frbitfmla = readbin(frbitfmla, bin, 0);
+
+        // int32_t len = size - 4 * 32 - 2 * 8;
+        // std::string fml(len, '\0');
+
+        CellParsedFormula(bin);
+
+      }
+
+
+      if (x == BrtCellReal) {
+        Rcpp::Rcout << "BrtCellReal: " << bin.tellg() << std::endl;
+        int32_t val;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+
+        double dbl;
+        dbl = readbin(dbl, bin, 0);
+        Rcpp::Rcout << dbl << std::endl;
+      }
+
+      // 0 ?
+      if (x == BrtCellBlank) {
+        Rcpp::Rcout << "BrtCellBlank: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtCellError) { // t="e" & <v>#NUM!</v>
+        Rcpp::Rcout << "BrtCellError: " << bin.tellg() << std::endl;
+
+        uint8_t val8;
+
+        int32_t val;
+        val = readbin(val, bin, 0);
+        out << val << std::endl;
+        val = readbin(val, bin, 0);
+        out << val << std::endl;
+        val = readbin(val8, bin, 0);
+        out << val << std::endl;
+      }
+
+      if (x == BrtFmlaNum) {
+        bin.seekg(size, bin.cur);
+      }
 
       if (in_sheet_data && x == BrtEndSheetData) {
         out << "</sheetData>" << std::endl;
         in_sheet_data = false;
+        break;
       }
 
       if (x == BrtEndSheet) {
@@ -422,7 +662,9 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       }
 
       itr++;
-      // if (itr == 2) Rcpp::stop("stop");
+      // if (itr == 20) {
+      //   Rcpp::stop("stop");
+      // }
     }
 
     out.close();

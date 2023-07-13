@@ -104,7 +104,6 @@ std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
 // https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes
 {
-  row_description = 2304,
   BrtRowHdr = 0,
   BrtCellBlank = 1,
   BrtCellRk = 2,
