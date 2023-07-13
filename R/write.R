@@ -654,12 +654,12 @@ write_data2 <- function(
 
   return(wb)
 }
-
-
-#' internal driver function to write_data and write_data_table
-#' @name write_datatable
-#' @title Write to a worksheet as an Excel table
-#' @description Write to a worksheet and format as an Excel table
+# `write_data_table()` ---------------------------------------------------------
+# `write_data_table()` an internal driver function to `write_data` and `write_data_table` ----
+#' Write to a worksheet as an Excel table
+#'
+#' Write to a worksheet and format as an Excel table
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A data frame.
@@ -685,6 +685,7 @@ write_data2 <- function(
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @noRd
+#' @keywords internal
 write_data_table <- function(
     wb,
     sheet,
@@ -941,10 +942,15 @@ write_data_table <- function(
   return(wb)
 }
 
-
-#' @name write_data
-#' @title Write an object to a worksheet
-#' @description Write an object to worksheet with optional styling.
+# `write_data()` ---------------------------------------------------------------
+#' Write an object to a worksheet
+#'
+#' Write an object to worksheet with optional styling.
+#'
+#' Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+#' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
@@ -964,14 +970,8 @@ write_data_table <- function(
 #' @param inline_strings write characters as inline strings
 #' @param ... additional arguments
 #' @seealso [write_datatable()]
-#' @export write_data
-#' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
-#' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
-#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
-#' @rdname write_data
 #' @return invisible(0)
 #' @examples
-#'
 #' ## See formatting vignette for further examples.
 #'
 #' ## Options for default styling (These are the defaults)
@@ -979,7 +979,7 @@ write_data_table <- function(
 #' options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 #' options("openxlsx2.numFmt" = NULL)
 #'
-#' #####################################################################################
+#' #############################################################################
 #' ## Create Workbook object and add worksheets
 #' wb <- wb_workbook()
 #'
@@ -990,7 +990,7 @@ write_data_table <- function(
 #' x <- mtcars[1:6, ]
 #' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 #'
-#' #####################################################################################
+#' #############################################################################
 #' ## Hyperlinks
 #' ## - vectors/columns with class 'hyperlink' are written as hyperlinks'
 #'
@@ -999,7 +999,7 @@ write_data_table <- function(
 #' class(v) <- "hyperlink"
 #' wb$add_data("Cars", x = v, dims = c("B32"))
 #'
-#' #####################################################################################
+#' #############################################################################
 #' ## Formulas
 #' ## - vectors/columns with class 'formula' are written as formulas'
 #'
@@ -1013,7 +1013,7 @@ write_data_table <- function(
 #'
 #' wb$add_data(sheet = "Formula", x = df)
 #'
-#' ###########################################################################
+#' #############################################################################
 #' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #' wb2 <- wb_load(xlsxFile)
@@ -1022,6 +1022,7 @@ write_data_table <- function(
 #' wb_to_df(wb2)
 #' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
 #' wb_to_df(wb2)
+#' @export
 write_data <- function(
     wb,
     sheet,
@@ -1071,20 +1072,20 @@ write_data <- function(
   )
 }
 
-
-#' @name write_formula
-#' @title Write a character vector as an Excel Formula
-#' @description Write a a character vector containing Excel formula to a worksheet.
-#' @details Currently only the English version of functions are supported. Please don't use the local translation.
-#' The examples below show a small list of possible formulas:
-#' \itemize{
-#'     \item{SUM(B2:B4)}
-#'     \item{AVERAGE(B2:B4)}
-#'     \item{MIN(B2:B4)}
-#'     \item{MAX(B2:B4)}
-#'     \item{...}
+# write_formula() -------------------------------------------
+#' Write a character vector as an Excel Formula
 #'
-#' }
+#' Write a a character vector containing Excel formula to a worksheet.
+#'
+#' @details
+#' Currently only the English version of functions are supported. Please don't use the local translation.
+#' The examples below show a small list of possible formulas:
+#' * SUM(B2:B4)
+#' * AVERAGE(B2:B4)
+#' * MIN(B2:B4)
+#' * MAX(B2:B4)
+#' * ...
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A character vector.
@@ -1097,17 +1098,14 @@ write_data <- function(
 #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
 #' @param ... additional arguments
 #' @seealso [write_data()]
-#' @export write_formula
-#' @rdname write_formula
 #' @examples
-#'
 #' ## There are 3 ways to write a formula
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_data("Sheet 1", x = iris)
 #'
-#' ## SEE int2col() to convert int to Excel column label
+#' ## SEE `int2col()` to convert int to Excel column label
 #'
 #' ## 1. -  As a character vector using write_formula
 #'
@@ -1133,7 +1131,6 @@ write_data <- function(
 #' wb$add_data(sheet = 2, x = df)
 #'
 #'
-#'
 #' ## 3. - As a vector with class "formula" using write_data
 #'
 #' v2 <- c("SUM(A2:A4)", "AVERAGE(B2:B4)", "MEDIAN(C2:C4)")
@@ -1141,12 +1138,14 @@ write_data <- function(
 #'
 #' wb$add_data(sheet = 2, x = v2, startCol = 10, startRow = 2)
 #'
+#'
 #' ## 4. - Writing internal hyperlinks
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet1")
 #' wb$add_worksheet("Sheet2")
 #' write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
+#'
 #'
 #' ## 5. - Writing array formulas
 #'
@@ -1161,7 +1160,7 @@ write_data <- function(
 #' write_formula(wb, "df", startCol = "E", startRow = "2",
 #'              x = "SUM(C2:C11*D2:D11)",
 #'              array = TRUE)
-#'
+#' @export
 write_formula <- function(
     wb,
     sheet,
@@ -1262,10 +1261,11 @@ write_formula <- function(
 
 }
 
-
-#' @name write_datatable
-#' @title Write to a worksheet as an Excel table
-#' @description Write to a worksheet and format as an Excel table
+# `write_datatable()` ----------------------
+#' Write to a worksheet as an Excel table
+#'
+#' Write to a worksheet and format as an Excel table
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A data frame.
@@ -1299,11 +1299,11 @@ write_formula <- function(
 #' hyperlinks, percentages respectively.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
-#' @seealso [wb_add_worksheet()]
-#' @seealso [write_data()]
-#' @seealso [wb_remove_tables()]
-#' @seealso [wb_get_tables()]
-#' @export
+#' @seealso
+#'   [wb_add_worksheet()]
+#'   [write_data()]
+#'   [wb_remove_tables()]
+#'   [wb_get_tables()]
 #' @examples
 #' ## see package vignettes for further examples.
 #'
@@ -1386,6 +1386,7 @@ write_formula <- function(
 #'     tableStyle = style, startRow = 7, startCol = i * 3 - 2
 #'   )
 #' }
+#' @export
 write_datatable <- function(
     wb,
     sheet,

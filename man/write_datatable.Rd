@@ -172,10 +172,7 @@ for (i in 1:11) {
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
-
 \code{\link[=write_data]{write_data()}}
-
 \code{\link[=wb_remove_tables]{wb_remove_tables()}}
-
 \code{\link[=wb_get_tables]{wb_get_tables()}}
 }
