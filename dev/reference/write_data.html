@@ -223,15 +223,14 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## See formatting vignette for further examples.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## See formatting vignette for further examples.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Options for default styling (These are the defaults)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"openxlsx2.dateFormat"</span> <span class="op">=</span> <span class="st">"mm/dd/yyyy"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"openxlsx2.datetimeFormat"</span> <span class="op">=</span> <span class="st">"yyyy-mm-dd hh:mm:ss"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"openxlsx2.numFmt"</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#####################################################################################</span></span></span>
+<span class="r-in"><span><span class="co">#############################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Create Workbook object and add worksheets</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -242,7 +241,7 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Cars"</span>, <span class="va">x</span>, startCol <span class="op">=</span> <span class="fl">2</span>, startRow <span class="op">=</span> <span class="fl">3</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#####################################################################################</span></span></span>
+<span class="r-in"><span><span class="co">#############################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Hyperlinks</span></span></span>
 <span class="r-in"><span><span class="co">## - vectors/columns with class 'hyperlink' are written as hyperlinks'</span></span></span>
 <span class="r-in"><span></span></span>
@@ -251,7 +250,7 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"hyperlink"</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Cars"</span>, x <span class="op">=</span> <span class="va">v</span>, dims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B32"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#####################################################################################</span></span></span>
+<span class="r-in"><span><span class="co">#############################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Formulas</span></span></span>
 <span class="r-in"><span><span class="co">## - vectors/columns with class 'formula' are written as formulas'</span></span></span>
 <span class="r-in"><span></span></span>
@@ -265,7 +264,7 @@ The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. I
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Formula"</span>, x <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">###########################################################################</span></span></span>
+<span class="r-in"><span><span class="co">#############################################################################</span></span></span>
 <span class="r-in"><span><span class="co"># update cell range and add mtcars</span></span></span>
 <span class="r-in"><span><span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb2</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></span>
