@@ -22,7 +22,10 @@ These styles are used with conditional formatting and custom table styles"><meta
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -30,7 +33,6 @@ These styles are used with conditional formatting and custom table styles"><meta
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -76,7 +78,7 @@ These styles are used with conditional formatting and custom table styles</p>
 <span>  font_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  num_fmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  border_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderColor"</span>, <span class="st">"black"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  border_color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderColor"</span>, <span class="st">"black"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  border_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderStyle"</span>, <span class="st">"thin"</span><span class="op">)</span>,</span>
 <span>  bg_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gradient_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -106,7 +108,7 @@ These styles are used with conditional formatting and custom table styles</p>
 
 
 <dt>font_color</dt>
-<dd><p>the font color (a <code><a href="wbColour.html">wb_color()</a></code> object)</p></dd>
+<dd><p>the font color (a <code><a href="wb_color.html">wb_color()</a></code> object)</p></dd>
 
 
 <dt>num_fmt</dt>
@@ -162,8 +164,8 @@ These styles are used with conditional formatting and custom table styles</p>
 <span class="r-in"><span>  <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">wb_add_dxfs_style</span><span class="op">(</span></span></span>
 <span class="r-in"><span>   name <span class="op">=</span> <span class="st">"nay"</span>,</span></span>
-<span class="r-in"><span>   font_color <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9C0006"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>   bgFill <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFC7CE"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   font_color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF9C0006"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   bgFill <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFC7CE"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 </code></pre></div>
     </div>

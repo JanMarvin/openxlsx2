@@ -37,6 +37,9 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item dropdown">
@@ -44,7 +47,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -94,9 +96,9 @@ vignette we will take some common code examples from
 <code>openxlsx</code> and show you how similar results can be replicated
 in <code>openxlsx2</code>. Thank you for taking a look, and let’s get
 started. While previous <code>openxlsx</code> functions used the
-<code>.</code> in function calls, as well as camel-case, we have tried
-to switch to snake-case (this is still a work in progress, there are
-still function arguments that use camel-case).</p>
+<code>.</code> in function calls, as well as camelCase, we have tried to
+switch to snake_case (this is still a work in progress, there may still
+be function arguments that use camelCase).</p>
 <div class="section level3">
 <h3 id="read-xlsx-or-xlsm-files">Read xlsx or xlsm files<a class="anchor" aria-label="anchor" href="#read-xlsx-or-xlsm-files"></a>
 </h3>
@@ -104,15 +106,15 @@ still function arguments that use camel-case).</p>
 <code>read_xlsx</code>. Using a default xlsx file included in the
 package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xlsxFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">xlsx_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
 <p>The old syntax looked like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in openxlsx</span></span>
-<span><span class="fu">openxlsx</span><span class="fu">::</span><span class="fu">read.xlsx</span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">openxlsx</span><span class="fu">::</span><span class="fu">read.xlsx</span><span class="op">(</span>xlsxFile <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
 <p>This has changed to this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in openxlsx2</span></span>
-<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span>xlsx_file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
 <span><span class="co">## 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
 <span><span class="co">## 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
@@ -128,10 +130,10 @@ package:</p>
 <code>#NUM</code>) in openxlsx2. Another thing to see above, we return
 the cell row as rowname for the data frame returned.
 <code>openxlsx2</code> should return a data frame of the selected size,
-even if it empty. If you preferred <code>readWorksheet()</code> this has
-become <code><a href="../reference/wb_read.html">wb_read()</a></code>. All of these are wrappers for the newly
-introduced function <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> which provides the most
-options. <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code> and <code><a href="../reference/wb_read.html">wb_read()</a></code> were
+even if it empty. If you preferred <code>openxlsx::readWorkbook()</code>
+this has become <code><a href="../reference/wb_read.html">wb_read()</a></code>. All of these are wrappers for
+the newly introduced function <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> which provides the
+most options. <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code> and <code><a href="../reference/wb_read.html">wb_read()</a></code> were
 created for backward comparability.</p>
 </div>
 </div>
@@ -141,7 +143,7 @@ created for backward comparability.</p>
 <p>Basic writing in <code>openxlsx2</code> behaves identical to
 <code>openxlsx</code>. Though be aware that <code>overwrite</code> is an
 optional parameter in <code>openxlsx2</code> and just like in other
-functions like <code>base::write.csv</code> if you write onto an
+functions like <code>base::write.csv()</code> if you write onto an
 existing file name, this file will be replaced.</p>
 <p>Setting the output to some temporary xlsx file</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -153,7 +155,7 @@ existing file name, this file will be replaced.</p>
 <p>The new function looks quite similar:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># write in openxlsx2</span></span>
-<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/write_xlsx.html">write_xlsx</a></span><span class="op">(</span><span class="va">iris</span>, file <span class="op">=</span> <span class="va">output</span>, colNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/write_xlsx.html">write_xlsx</a></span><span class="op">(</span><span class="va">iris</span>, file <span class="op">=</span> <span class="va">output</span>, col_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="basic-workbook-functions">Basic workbook functions<a class="anchor" aria-label="anchor" href="#basic-workbook-functions"></a>
@@ -169,13 +171,13 @@ workbook.</p>
 they remain a central piece in <code>openxlsx2</code>. Previous you
 would load them with:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">loadWorkbook</span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu">loadWorkbook</span><span class="op">(</span>file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
 <p>In <code>openxlsx2</code> loading was changed to:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">xlsxFile</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
 <p>There are plenty of functions to interact with workbooks and we will
 not describe every single one here. A detailed list can be found over at
-<a href="https://janmarvin.github.io/openxlsx2/reference/index.html" class="external-link">our
+<a href="https://janmarvin.github.io/openxlsx2/reference/index.html">our
 references</a></p>
 </div>
 <div class="section level3">
@@ -184,8 +186,9 @@ references</a></p>
 <p>One of the biggest user facing change was the removal of the
 <code>stylesObject</code>. In the following section we use code from <a href="https://ycphs.github.io/openxlsx/reference/addStyle.html" class="external-link">addStyle</a></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Create a new workbook</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">createWorkbook</span><span class="op">(</span><span class="st">"My name here"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># openxlsx</span></span>
+<span><span class="co">## Create a new workbook</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">createWorkbook</span><span class="op">(</span>creator <span class="op">=</span> <span class="st">"My name here"</span><span class="op">)</span></span>
 <span><span class="fu">addWorksheet</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Expenditure"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu">writeData</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fl">1</span>, <span class="va">USPersonalExpenditure</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -198,10 +201,11 @@ references</a></p>
 <p>In <code>openxlsx2</code> the same code looks something like
 this:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">border_color</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4F81BD"</span><span class="op">)</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="st">"My name here"</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Expenditure"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span></span>
+<code class="sourceCode R"><span><span class="co"># openxlsx2 chained</span></span>
+<span><span class="va">border_color</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4F81BD"</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span>creator <span class="op">=</span> <span class="st">"My name here"</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Expenditure"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_border</span><span class="op">(</span> <span class="co"># add the outer and inner border</span></span>
 <span>    dims <span class="op">=</span> <span class="st">"A1:F6"</span>,</span>
 <span>    top_border <span class="op">=</span> <span class="st">"thin"</span>, top_color <span class="op">=</span> <span class="va">border_color</span>,</span>
@@ -211,7 +215,7 @@ this:</p>
 <span>  <span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">set_col_widths</span><span class="op">(</span> <span class="co"># set column width</span></span>
 <span>    cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,</span>
-<span>    widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"20"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"10"</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span>    widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span><span class="op">$</span> <span class="co"># remove the value in A1</span></span>
 <span>  <span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
 <p>The code above uses chaining. If you prefer piping, we provide the
@@ -222,10 +226,11 @@ be the functions to use with pipes <code>%&gt;%</code> or
 <code>|&gt;</code>.</p>
 <p>With pipes the code from above becomes</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">border_color</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4F81BD"</span><span class="op">)</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="st">"My name here"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"Expenditure"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="co"># openxlsx2 with pipes</span></span>
+<span><span class="va">border_color</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4F81BD"</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span>creator <span class="op">=</span> <span class="st">"My name here"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Expenditure"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_border.html">wb_add_border</a></span><span class="op">(</span> <span class="co"># add the outer and inner border</span></span>
 <span>    dims <span class="op">=</span> <span class="st">"A1:F6"</span>,</span>
 <span>    top_border <span class="op">=</span> <span class="st">"thin"</span>, top_color <span class="op">=</span> <span class="va">border_color</span>,</span>
@@ -235,12 +240,13 @@ be the functions to use with pipes <code>%&gt;%</code> or
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_set_col_widths.html">wb_set_col_widths</a></span><span class="op">(</span> <span class="co"># set column width</span></span>
 <span>    cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,</span>
-<span>    widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"20"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"10"</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span>    widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># remove the value in A1</span></span>
 <span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
 <p>Be aware that chains modify an object in place and pipes do not.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># openxlsx2</span></span>
+<span><span class="va">wbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">wbc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># need to assign wbp</span></span>
@@ -262,17 +268,17 @@ vignette.</p>
 <p>Extended examples for conditional formatting can be found in the
 conditional formatting vignette. A minimal example is the following:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># with chains</span></span>
+<code class="sourceCode R"><span><span class="co"># openxlsx2 with chains</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_conditional_formatting</span><span class="op">(</span>cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, rule <span class="op">=</span> <span class="st">"&gt;2"</span><span class="op">)</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_conditional_formatting</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:A4"</span>, rule <span class="op">=</span> <span class="st">"&gt;2"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># with pipes</span></span>
+<span><span class="co"># openxlsx2 with pipes</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, colNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, rule <span class="op">=</span> <span class="st">"&gt;2"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:A4"</span>, rule <span class="op">=</span> <span class="st">"&gt;2"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-validation">Data validation<a class="anchor" aria-label="anchor" href="#data-validation"></a>
@@ -280,7 +286,8 @@ conditional formatting vignette. A minimal example is the following:</p>
 <p>Similar data validation has been updated and improved. This
 <code>openxlsx</code> code for data validation</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">createWorkbook</span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># openxlsx</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">createWorkbook</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">addWorksheet</span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Sheet 1"</span><span class="op">)</span></span>
 <span><span class="fu">writeDataTable</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu">dataValidation</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>,</span>
@@ -289,21 +296,21 @@ conditional formatting vignette. A minimal example is the following:</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>looks in <code>openxlsx2</code> something like this:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># with chains</span></span>
+<code class="sourceCode R"><span><span class="co"># openxlsx2 with chains</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 1"</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data_table</span><span class="op">(</span><span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data_validation</span><span class="op">(</span><span class="fl">1</span>,</span>
-<span>    col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">31</span>, type <span class="op">=</span> <span class="st">"whole"</span>,</span>
+<span>    dims <span class="op">=</span> <span class="st">"A2:C31"</span>, type <span class="op">=</span> <span class="st">"whole"</span>,</span>
 <span>    operator <span class="op">=</span> <span class="st">"between"</span>, value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="co"># with pipes</span></span>
+<span><span class="co"># openxlsx2 with pipes</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"Sheet 1"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_data_table.html">wb_add_data_table</a></span><span class="op">(</span><span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_data_validation.html">wb_add_data_validation</a></span><span class="op">(</span><span class="fl">1</span>,</span>
-<span>    col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">31</span>, type <span class="op">=</span> <span class="st">"whole"</span>,</span>
+<span>    dims <span class="op">=</span> <span class="st">"A2:C31"</span>, type <span class="op">=</span> <span class="st">"whole"</span>,</span>
 <span>    operator <span class="op">=</span> <span class="st">"between"</span>, value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </div>

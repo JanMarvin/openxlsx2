@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -88,7 +90,7 @@ print(x, ...)</code></pre></div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt>x, y</dt>
 <dd><p>an openxlsx2 fmt_txt string</p></dd>
 
 
@@ -132,10 +134,6 @@ print(x, ...)</code></pre></div>
 <dd><p>baseline, superscript, or subscript</p></dd>
 
 
-<dt>y</dt>
-<dd><p>an openxlsx2 fmt_txt string</p></dd>
-
-
 <dt>...</dt>
 <dd><p>additional arguments for default print</p></dd>
 
@@ -144,7 +142,7 @@ print(x, ...)</code></pre></div>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The result is an xml string. It is possible to paste multiple <code>fmt_txt()</code>
 strings together to create a string with differing styles.</p>
-<table class="table table"><tr><td>"Value"</td><td>"Character Set"</td></tr><tr><td>"0"</td><td>"ANSI_CHARSET"</td></tr><tr><td>"1"</td><td>"DEFAULT_CHARSET"</td></tr><tr><td>"2"</td><td>"SYMBOL_CHARSET"</td></tr><tr><td>"77"</td><td>"MAC_CHARSET"</td></tr><tr><td>"128"</td><td>"SHIFTJIS_CHARSET"</td></tr><tr><td>"129"</td><td>"HANGUL_CHARSET"</td></tr><tr><td>"130"</td><td>"JOHAB_CHARSET"</td></tr><tr><td>"134"</td><td>"GB2312_CHARSET"</td></tr><tr><td>"136"</td><td>"CHINESEBIG5_CHARSET"</td></tr><tr><td>"161"</td><td>"GREEK_CHARSET"</td></tr><tr><td>"162"</td><td>"TURKISH_CHARSET"</td></tr><tr><td>"163"</td><td>"VIETNAMESE_CHARSET"</td></tr><tr><td>"177"</td><td>"HEBREW_CHARSET"</td></tr><tr><td>"178"</td><td>"ARABIC_CHARSET"</td></tr><tr><td>"186"</td><td>"BALTIC_CHARSET"</td></tr><tr><td>"204"</td><td>"RUSSIAN_CHARSET"</td></tr><tr><td>"222"</td><td>"THAI_CHARSET"</td></tr><tr><td>"238"</td><td>"EASTEUROPE_CHARSET"</td></tr><tr><td>"255"</td><td>"OEM_CHARSET"</td></tr></table><p>You can join additional objects into fmt_txt() objects using "+". Though be aware that <code>fmt_txt("sum:") + (2 + 2)</code> is different to <code>fmt_txt("sum:") + 2 + 2</code>.</p>
+<p>Using <code>fmt_txt(charset = 161)</code> will give the Greek Character Set</p><table class="table table"><tr><td>charset</td><td>"Character Set"</td></tr><tr><td>0</td><td>"ANSI_CHARSET"</td></tr><tr><td>1</td><td>"DEFAULT_CHARSET"</td></tr><tr><td>2</td><td>"SYMBOL_CHARSET"</td></tr><tr><td>77</td><td>"MAC_CHARSET"</td></tr><tr><td>128</td><td>"SHIFTJIS_CHARSET"</td></tr><tr><td>129</td><td>"HANGUL_CHARSET"</td></tr><tr><td>130</td><td>"JOHAB_CHARSET"</td></tr><tr><td>134</td><td>"GB2312_CHARSET"</td></tr><tr><td>136</td><td>"CHINESEBIG5_CHARSET"</td></tr><tr><td>161</td><td>"GREEK_CHARSET"</td></tr><tr><td>162</td><td>"TURKISH_CHARSET"</td></tr><tr><td>163</td><td>"VIETNAMESE_CHARSET"</td></tr><tr><td>177</td><td>"HEBREW_CHARSET"</td></tr><tr><td>178</td><td>"ARABIC_CHARSET"</td></tr><tr><td>186</td><td>"BALTIC_CHARSET"</td></tr><tr><td>204</td><td>"RUSSIAN_CHARSET"</td></tr><tr><td>222</td><td>"THAI_CHARSET"</td></tr><tr><td>238</td><td>"EASTEUROPE_CHARSET"</td></tr><tr><td>255</td><td>"OEM_CHARSET"</td></tr></table><p>You can join additional objects into fmt_txt() objects using "+". Though be aware that <code>fmt_txt("sum:") + (2 + 2)</code> is different to <code>fmt_txt("sum:") + 2 + 2</code>.</p>
     </div>
 
     <div class="section level2">

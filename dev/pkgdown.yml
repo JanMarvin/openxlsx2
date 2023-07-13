@@ -4,9 +4,12 @@ pkgdown_sha: ~
 articles:
   Update-from-openxlsx: Update-from-openxlsx.html
   conditional-formatting: conditional-formatting.html
-  openxlsx2_basic_manual: openxlsx2_basic_manual.html
+  openxlsx2: openxlsx2.html
   openxlsx2_charts_manual: openxlsx2_charts_manual.html
   openxlsx2_formulas_manual: openxlsx2_formulas_manual.html
   openxlsx2_style_manual: openxlsx2_style_manual.html
-last_built: 2023-07-10T20:50Z
+last_built: 2023-07-13T16:30Z
+urls:
+  reference: https://janmarvin.github.io/openxlsx2/reference
+  article: https://janmarvin.github.io/openxlsx2/articles
 

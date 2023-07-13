@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -74,7 +76,7 @@
           
           <code><a href="write_xlsx.html">write_xlsx()</a></code> 
         </dt>
-        <dd>write data to an xlsx file</dd>
+        <dd>Write data to an xlsx file</dd>
       </dl><dl><dt>
           
           <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
@@ -400,6 +402,82 @@ These styles are used with conditional formatting and custom table styles</dd>
         </dt>
         <dd>add sheetview</dd>
       </dl></div><div class="section level2">
+      <h2 id="wb-misc">wb Misc<a class="anchor" aria-label="anchor" href="#wb-misc"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_protect.html">wb_protect()</a></code> 
+        </dt>
+        <dd>Protect a workbook from modifications</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_protect_worksheet.html">wb_protect_worksheet()</a></code> 
+        </dt>
+        <dd>Protect a worksheet from modifications</dd>
+      </dl><dl><dt>
+          
+          <code><a href="Hyperlink.html">wb_hyperlink()</a></code> 
+        </dt>
+        <dd>Create a new hyperlink object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="cleanup.html">wb_clean_sheet()</a></code> <code><a href="cleanup.html">delete_data()</a></code> 
+        </dt>
+        <dd>clean sheet (remove all values)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code> 
+        </dt>
+        <dd>Freeze a worksheet pane</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_open.html">wb_open()</a></code> 
+        </dt>
+        <dd>little worksheet opener</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_clone_sheet_style.html">wb_clone_sheet_style()</a></code> 
+        </dt>
+        <dd>clone sheets style</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_clone_worksheet.html">wb_clone_worksheet()</a></code> 
+        </dt>
+        <dd>Clone a worksheet to a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_copy_cells.html">wb_copy_cells()</a></code> 
+        </dt>
+        <dd>copy cells around</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_color.html">wb_color()</a></code> 
+        </dt>
+        <dd>Create a new wbColour object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_data.html">wb_data()</a></code> 
+        </dt>
+        <dd>provide wb_data object as mschart input</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_grid_lines.html">wb_grid_lines()</a></code> 
+        </dt>
+        <dd>Set worksheet gridlines to show or hide.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_update_table.html">wb_update_table()</a></code> 
+        </dt>
+        <dd>update a data_table</dd>
+      </dl></div><div class="section level2">
       <h2 id="create-functions">create functions<a class="anchor" aria-label="anchor" href="#create-functions"></a></h2>
       
       
@@ -439,7 +517,7 @@ These styles are used with conditional formatting and custom table styles</dd>
           
           <code><a href="create_hyperlink.html">create_hyperlink()</a></code> 
         </dt>
-        <dd>create Excel hyperlink string</dd>
+        <dd>Create Excel hyperlink string</dd>
       </dl><dl><dt>
           
           <code><a href="create_numfmt.html">create_numfmt()</a></code> 
@@ -501,8 +579,18 @@ These styles are used with conditional formatting and custom table styles</dd>
           <code><a href="as_xml.html">as_xml()</a></code> 
         </dt>
         <dd>loads character string to pugixml and returns an externalptr</dd>
+      </dl><dl><dt>
+          
+          <code><a href="fmt_txt.html">fmt_txt()</a></code> <code><a href="fmt_txt.html">`+`(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">as.character(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">print(<i>&lt;fmt_txt&gt;</i>)</a></code> 
+        </dt>
+        <dd>format strings independent of the cell style.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="print.pugi_xml.html">print(<i>&lt;pugi_xml&gt;</i>)</a></code> 
+        </dt>
+        <dd>print pugi_xml</dd>
       </dl></div><div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="r-classes">R6 Classes<a class="anchor" aria-label="anchor" href="#r-classes"></a></h2>
       
       
 
@@ -514,109 +602,30 @@ These styles are used with conditional formatting and custom table styles</dd>
 
       <dl><dt>
           
-          <code><a href="Hyperlink.html">wb_hyperlink()</a></code> 
+          <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
         </dt>
-        <dd>Create a new hyperlink object</dd>
+        <dd>R6 class for a Workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="as_xml.html">as_xml()</a></code> 
+          <code><a href="wbChartSheet.html">wbChartSheet</a></code> 
         </dt>
-        <dd>loads character string to pugixml and returns an externalptr</dd>
-      </dl><dl><dt>
+        <dd>R6 class for a Workbook Chart Sheet</dd>
+      </dl></div><div class="section level2">
+      <h2 id="misc-and-helpers">Misc and helpers<a class="anchor" aria-label="anchor" href="#misc-and-helpers"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
-          <code><a href="cell_style.html">wb_get_cell_style()</a></code> <code><a href="cell_style.html">wb_set_cell_style()</a></code> 
+          <code><a href="openxlsx2_options.html">openxlsx2_options</a></code> 
         </dt>
-        <dd>get and set cell style</dd>
-      </dl><dl><dt>
-          
-          <code><a href="clean_worksheet_name.html">clean_worksheet_name()</a></code> 
-        </dt>
-        <dd>Clean worksheet name</dd>
-      </dl><dl><dt>
-          
-          <code><a href="cleanup.html">wb_clean_sheet()</a></code> <code><a href="cleanup.html">delete_data()</a></code> 
-        </dt>
-        <dd>clean sheet (remove all values)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="col2int.html">col2int()</a></code> 
-        </dt>
-        <dd>Convert Excel column to integer</dd>
-      </dl><dl><dt>
-          
-          <code><a href="convert_date.html">convert_date()</a></code> <code><a href="convert_date.html">convert_datetime()</a></code> <code><a href="convert_date.html">convert_hms()</a></code> 
-        </dt>
-        <dd>Convert from excel date, datetime or hms number to R Date type</dd>
-      </dl><dl><dt>
-          
-          <code><a href="convert_to_excel_date.html">convert_to_excel_date()</a></code> <code><a href="convert_to_excel_date.html">convertToExcelDate()</a></code> 
-        </dt>
-        <dd>convert back to ExcelDate</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_border.html">create_border()</a></code> 
-        </dt>
-        <dd>create border</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_cell_style.html">create_cell_style()</a></code> 
-        </dt>
-        <dd>create_cell_style</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_dxfs_style.html">create_dxfs_style()</a></code> 
-        </dt>
-        <dd>Create a custom formatting style</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_fill.html">create_fill()</a></code> 
-        </dt>
-        <dd>create fill</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_font.html">create_font()</a></code> 
-        </dt>
-        <dd>create font format</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_hyperlink.html">create_hyperlink()</a></code> 
-        </dt>
-        <dd>create Excel hyperlink string</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_numfmt.html">create_numfmt()</a></code> 
-        </dt>
-        <dd>create number format</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_sparklines.html">create_sparklines()</a></code> 
-        </dt>
-        <dd>create sparklines used in <code>add_sparline()</code></dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_tablestyle.html">create_tablestyle()</a></code> 
-        </dt>
-        <dd>create tableStyle</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dataframe_to_dims.html">dataframe_to_dims()</a></code> 
-        </dt>
-        <dd>create dimensions from dataframe</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dims_helper.html">dims_to_rowcol()</a></code> <code><a href="dims_helper.html">rowcol_to_dims()</a></code> 
-        </dt>
-        <dd>dims helpers</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dims_to_dataframe.html">dims_to_dataframe()</a></code> 
-        </dt>
-        <dd>create dataframe from dimensions</dd>
-      </dl><dl><dt>
-          
-          <code><a href="fmt_txt.html">fmt_txt()</a></code> <code><a href="fmt_txt.html">`+`(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">as.character(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">print(<i>&lt;fmt_txt&gt;</i>)</a></code> 
-        </dt>
-        <dd>format strings independent of the cell style.</dd>
+        <dd>openxlsx2 Options</dd>
       </dl><dl><dt>
           
           <code><a href="int2col.html">int2col()</a></code> 
@@ -624,59 +633,24 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>Convert integer to Excel column</dd>
       </dl><dl><dt>
           
-          <code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> <code><a href="named_region.html">wb_get_named_regions()</a></code> 
+          <code><a href="col2int.html">col2int()</a></code> 
         </dt>
-        <dd>Create / delete a named region</dd>
+        <dd>Convert Excel column to integer</dd>
       </dl><dl><dt>
           
-          <code><a href="openxlsx2-deprecated.html">openxlsx2-deprecated</a></code> 
+          <code><a href="fmt_txt.html">fmt_txt()</a></code> <code><a href="fmt_txt.html">`+`(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">as.character(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">print(<i>&lt;fmt_txt&gt;</i>)</a></code> 
         </dt>
-        <dd>Deprecated Functions in Package <em>openxlsx2</em></dd>
+        <dd>format strings independent of the cell style.</dd>
       </dl><dl><dt>
           
-          <code><a href="openxlsx2.html">openxlsx2</a></code> 
+          <code><a href="convert_date.html">convert_date()</a></code> <code><a href="convert_date.html">convert_datetime()</a></code> <code><a href="convert_date.html">convert_hms()</a></code> 
         </dt>
-        <dd>xlsx reading, writing and editing.</dd>
+        <dd>Convert from Excel date, datetime or hms number to R Date type</dd>
       </dl><dl><dt>
           
-          <code><a href="print.pugi_xml.html">print(<i>&lt;pugi_xml&gt;</i>)</a></code> 
+          <code><a href="convert_to_excel_date.html">convert_to_excel_date()</a></code> <code><a href="convert_to_excel_date.html">convertToExcelDate()</a></code> 
         </dt>
-        <dd>print pugi_xml</dd>
-      </dl><dl><dt>
-          
-          <code><a href="pugixml.html">xml_node()</a></code> <code><a href="pugixml.html">xml_node_name()</a></code> <code><a href="pugixml.html">xml_value()</a></code> <code><a href="pugixml.html">xml_attr()</a></code> 
-        </dt>
-        <dd>xml_node</dd>
-      </dl><dl><dt>
-          
-          <code><a href="read_sheet_names.html">read_sheet_names()</a></code> 
-        </dt>
-        <dd>Get names of worksheets</dd>
-      </dl><dl><dt>
-          
-          <code><a href="read_xlsx.html">read_xlsx()</a></code> 
-        </dt>
-        <dd>Read from an Excel file or Workbook object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="read_xml.html">read_xml()</a></code> 
-        </dt>
-        <dd>read xml file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="select_active_sheet.html">wb_get_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_set_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_get_selected()</a></code> <code><a href="select_active_sheet.html">wb_set_selected()</a></code> 
-        </dt>
-        <dd>get and set table of sheets and their state as selected and active</dd>
-      </dl><dl><dt>
-          
-          <code><a href="sheet_visibility.html">wb_get_sheet_visibility()</a></code> <code><a href="sheet_visibility.html">wb_set_sheet_visibility()</a></code> 
-        </dt>
-        <dd>Get/set worksheet visible state</dd>
-      </dl><dl><dt>
-          
-          <code><a href="styles_on_sheet.html">styles_on_sheet()</a></code> 
-        </dt>
-        <dd>get all styles on a sheet</dd>
+        <dd>convert back to an Excel Date</dd>
       </dl><dl><dt>
           
           <code><a href="temp_xlsx.html">temp_xlsx()</a></code> 
@@ -684,330 +658,59 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>helper function to create temporary directory for testing purpose</dd>
       </dl><dl><dt>
           
+          <code><a href="read_sheet_names.html">read_sheet_names()</a></code> 
+        </dt>
+        <dd>Get names of worksheets</dd>
+      </dl><dl><dt>
+          
+          <code><a href="clean_worksheet_name.html">clean_worksheet_name()</a></code> 
+        </dt>
+        <dd>Clean worksheet name</dd>
+      </dl><dl><dt>
+          
+          <code><a href="styles_on_sheet.html">styles_on_sheet()</a></code> 
+        </dt>
+        <dd>get all styles on a sheet</dd>
+      </dl><dl><dt>
+          
           <code><a href="waivers.html">current_sheet()</a></code> <code><a href="waivers.html">next_sheet()</a></code> <code><a href="waivers.html">na_strings()</a></code> 
         </dt>
         <dd><code>openxlsx2</code> waivers</dd>
       </dl><dl><dt>
           
-          <code><a href="wbChartSheet.html">wbChartSheet</a></code> 
+          <code><a href="ws_cell_merge.html">wb_merge_cells()</a></code> <code><a href="ws_cell_merge.html">wb_unmerge_cells()</a></code> 
         </dt>
-        <dd>R6 class for a Workbook Chart Sheet</dd>
+        <dd>Worksheet cell merging</dd>
       </dl><dl><dt>
           
-          <code><a href="wbColour.html">wb_color()</a></code> 
+          <code><a href="ws_page_setup.html">wb_page_setup()</a></code> 
         </dt>
-        <dd>Create a new wbColour object</dd>
+        <dd>Set page margins, orientation and print scaling</dd>
       </dl><dl><dt>
           
-          <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
+          <code><a href="xl_open.html">xl_open()</a></code> 
         </dt>
-        <dd>R6 class for a Workbook</dd>
+        <dd>Open a Microsoft Excel file (xls/xlsx) or an openxlsx2 wbWorkbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_border.html">wb_add_border()</a></code> 
+          <code><a href="dims_helper.html">dims_to_rowcol()</a></code> <code><a href="dims_helper.html">rowcol_to_dims()</a></code> 
         </dt>
-        <dd>add border for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_cell_style.html">wb_add_cell_style()</a></code> 
-        </dt>
-        <dd>add cell style for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_chart_xml.html">wb_add_chart_xml()</a></code> 
-        </dt>
-        <dd>add a chart xml to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code> 
-        </dt>
-        <dd>Add a chartsheet to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> 
-        </dt>
-        <dd>Add conditional formatting to cells</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_data_table.html">wb_add_data_table()</a></code> 
-        </dt>
-        <dd>Add data to a worksheet as an Excel table</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_data_validation.html">wb_add_data_validation()</a></code> 
-        </dt>
-        <dd>Add data validation to cells</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_drawing.html">wb_add_drawing()</a></code> 
-        </dt>
-        <dd>add drawings to workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> 
-        </dt>
-        <dd>add dxfs style
-These styles are used with conditional formatting and custom table styles</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_fill.html">wb_add_fill()</a></code> 
-        </dt>
-        <dd>add fill for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_filter.html">wb_add_filter()</a></code> 
-        </dt>
-        <dd>Add column filters</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_font.html">wb_add_font()</a></code> 
-        </dt>
-        <dd>add font for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_form_control.html">wb_add_form_control()</a></code> 
-        </dt>
-        <dd>Add form control Checkbox, Radiobuttons or Dropmenu</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_formula.html">wb_add_formula()</a></code> 
-        </dt>
-        <dd>Add a character vector as an Excel Formula</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_ignore_error.html">wb_add_ignore_error()</a></code> 
-        </dt>
-        <dd>Ignore error on worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_image.html">wb_add_image()</a></code> 
-        </dt>
-        <dd>Insert an image into a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_mschart.html">wb_add_mschart()</a></code> 
-        </dt>
-        <dd>Add mschart object to an existing workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_named_style.html">wb_add_named_style()</a></code> 
-        </dt>
-        <dd>add named style for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_numfmt.html">wb_add_numfmt()</a></code> 
-        </dt>
-        <dd>add numfmt for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_page_break.html">wb_add_page_break()</a></code> 
-        </dt>
-        <dd>Add a page break to a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code> 
-        </dt>
-        <dd>Add pivot table to a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_plot.html">wb_add_plot()</a></code> 
-        </dt>
-        <dd>Insert the current plot into a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_sparklines.html">wb_add_sparklines()</a></code> 
-        </dt>
-        <dd>add sparklines to workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_style.html">wb_add_style()</a></code> 
-        </dt>
-        <dd>add style to workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code> 
-        </dt>
-        <dd>Add a worksheet to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_clone_sheet_style.html">wb_clone_sheet_style()</a></code> 
-        </dt>
-        <dd>clone sheets style</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_clone_worksheet.html">wb_clone_worksheet()</a></code> 
-        </dt>
-        <dd>Clone a worksheet to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_copy_cells.html">wb_copy_cells()</a></code> 
-        </dt>
-        <dd>copy cells around</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_creators.html">wb_add_creators()</a></code> <code><a href="wb_creators.html">wb_set_creators()</a></code> <code><a href="wb_creators.html">wb_remove_creators()</a></code> <code><a href="wb_creators.html">wb_get_creators()</a></code> 
-        </dt>
-        <dd>Workbook creators</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_data.html">wb_data()</a></code> 
-        </dt>
-        <dd>provide wb_data object as mschart input</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code> 
-        </dt>
-        <dd>Freeze a worksheet pane</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_get_base_font.html">wb_get_base_font()</a></code> 
-        </dt>
-        <dd>Return the workbook default font</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_get_sheet_name.html">wb_get_sheet_name()</a></code> 
-        </dt>
-        <dd>Get sheet name</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_get_sheet_names.html">wb_get_sheet_names()</a></code> 
-        </dt>
-        <dd>Get worksheet names for a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_get_tables.html">wb_get_tables()</a></code> 
-        </dt>
-        <dd>List Excel tables in a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_get_worksheet.html">wb_get_worksheet()</a></code> <code><a href="wb_get_worksheet.html">wb_ws()</a></code> 
-        </dt>
-        <dd>Get a worksheet from a <code>wbWorkbook</code> object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_grid_lines.html">wb_grid_lines()</a></code> 
-        </dt>
-        <dd>Set worksheet gridlines to show or hide.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_load.html">wb_load()</a></code> 
-        </dt>
-        <dd>Load an existing .xlsx file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_modify_basefont.html">wb_set_base_font()</a></code> 
-        </dt>
-        <dd>Modify the default font</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_open.html">wb_open()</a></code> 
-        </dt>
-        <dd>little worksheet opener</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_order.html">wb_get_order()</a></code> <code><a href="wb_order.html">wb_set_order()</a></code> 
-        </dt>
-        <dd>Order of worksheets in xlsx file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_protect.html">wb_protect()</a></code> 
-        </dt>
-        <dd>Protect a workbook from modifications</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_protect_worksheet.html">wb_protect_worksheet()</a></code> 
-        </dt>
-        <dd>Protect a worksheet from modifications</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_read.html">wb_read()</a></code> 
-        </dt>
-        <dd>Read from an Excel file or Workbook object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_col_widths.html">wb_remove_col_widths()</a></code> 
-        </dt>
-        <dd>Remove column widths from a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_filter.html">wb_remove_filter()</a></code> 
-        </dt>
-        <dd>Remove a worksheet filter</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_row_heights.html">wb_remove_row_heights()</a></code> 
-        </dt>
-        <dd>Remove custom row heights from a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_tables.html">wb_remove_tables()</a></code> 
-        </dt>
-        <dd>Remove an Excel table in a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_worksheet.html">wb_remove_worksheet()</a></code> 
-        </dt>
-        <dd>Remove a worksheet from a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_save.html">wb_save()</a></code> 
-        </dt>
-        <dd>Save Workbook to file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_bookview.html">wb_set_bookview()</a></code> 
-        </dt>
-        <dd>Set the workbook position, size and filter</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_col_widths.html">wb_set_col_widths()</a></code> 
-        </dt>
-        <dd>Set worksheet column widths</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_header_footer.html">wb_set_header_footer()</a></code> 
-        </dt>
-        <dd>Set document headers and footers</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by()</a></code> 
-        </dt>
-        <dd>Add another author to the meta data of the file.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_row_heights.html">wb_set_row_heights()</a></code> 
-        </dt>
-        <dd>Set worksheet row heights</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_sheet_names.html">wb_set_sheet_names()</a></code> 
-        </dt>
-        <dd>Set worksheet names for a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_sheetview.html">wb_set_sheetview()</a></code> 
-        </dt>
-        <dd>add sheetview</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_to_df.html">wb_to_df()</a></code> 
-        </dt>
-        <dd>Create Dataframe from Workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_update_table.html">wb_update_table()</a></code> 
-        </dt>
-        <dd>update a data_table</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_workbook.html">wb_workbook()</a></code> 
-        </dt>
-        <dd>Create a new Workbook object</dd>
+        <dd>Helper functions to work with <code>dims</code></dd>
       </dl><dl><dt>
           
           <code><a href="workbook_grouping.html">wb_group_cols()</a></code> <code><a href="workbook_grouping.html">wb_ungroup_cols()</a></code> <code><a href="workbook_grouping.html">wb_group_rows()</a></code> <code><a href="workbook_grouping.html">wb_ungroup_rows()</a></code> 
         </dt>
         <dd>Group Rows and Columns</dd>
+      </dl><dl><dt>
+          
+          <code><a href="dataframe_to_dims.html">dataframe_to_dims()</a></code> 
+        </dt>
+        <dd>create dimensions from dataframe</dd>
+      </dl><dl><dt>
+          
+          <code><a href="dims_to_dataframe.html">dims_to_dataframe()</a></code> 
+        </dt>
+        <dd>create dataframe from dimensions</dd>
       </dl><dl><dt>
           
           <code><a href="write_data.html">wb_add_data()</a></code> <code><a href="write_data.html">write_data()</a></code> 
@@ -1027,42 +730,23 @@ These styles are used with conditional formatting and custom table styles</dd>
           
           <code><a href="write_xlsx.html">write_xlsx()</a></code> 
         </dt>
-        <dd>write data to an xlsx file</dd>
-      </dl><dl><dt>
+        <dd>Write data to an xlsx file</dd>
+      </dl></div><div class="section level2">
+      <h2 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
-          <code><a href="ws_cell_merge.html">wb_merge_cells()</a></code> <code><a href="ws_cell_merge.html">wb_unmerge_cells()</a></code> 
+          <code><a href="openxlsx2-deprecated.html">openxlsx2-deprecated</a></code> 
         </dt>
-        <dd>Worksheet cell merging</dd>
-      </dl><dl><dt>
-          
-          <code><a href="ws_page_setup.html">wb_page_setup()</a></code> 
-        </dt>
-        <dd>Set page margins, orientation and print scaling</dd>
-      </dl><dl><dt>
-          
-          <code><a href="xl_open.html">xl_open()</a></code> 
-        </dt>
-        <dd>Open a Microsoft Excel file (xls/xlsx) or an openxlsx2 wbWorkbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="xml_add_child.html">xml_add_child()</a></code> 
-        </dt>
-        <dd>append xml child to node</dd>
-      </dl><dl><dt>
-          
-          <code><a href="xml_attr_mod.html">xml_attr_mod()</a></code> 
-        </dt>
-        <dd>adds or updates attribute(s) in existing xml node</dd>
-      </dl><dl><dt>
-          
-          <code><a href="xml_node_create.html">xml_node_create()</a></code> 
-        </dt>
-        <dd>create xml_node from R objects</dd>
-      </dl><dl><dt>
-          
-          <code><a href="xml_rm_child.html">xml_rm_child()</a></code> 
-        </dt>
-        <dd>remove xml child to node</dd>
+        <dd>Deprecated Functions in Package <em>openxlsx2</em></dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

@@ -19,6 +19,9 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -58,7 +60,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="api-change-development-version">API Change<a class="anchor" aria-label="anchor" href="#api-change-development-version"></a></h3>
 <ul><li>Function arguments are now defaulting to <code>snake_case</code>. For the time being, both arguments are accepted and <code>camelCase</code> will be switched to <code>snake_case</code> under the hood. Documentation like vignettes and examples are currently still displaying <code>camelCase</code> and maybe some <code>camelCase</code> function slipped through. <a href="https://github.com/JanMarvin/openxlsx2/pull/678" class="external-link">678</a>
 </li>
 </ul></div>
@@ -85,6 +87,10 @@
 <li><p>make <code>get_cell_refs()</code>, <code>get_date_origin()</code>, <code>guess_col_type()</code>, and <code>write_file()</code> internal functions</p></li>
 <li><p>make classes <code>styles_mgr()</code>, <code>wbSheetData</code>, <code>wbWorksheet</code>, <code>wbChartsheet</code>, <code>wbComment</code>, <code>wbHyperlink</code> internal</p></li>
 </ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="refactoring-development-version">Refactoring<a class="anchor" aria-label="anchor" href="#refactoring-development-version"></a></h3>
+<ul><li>Cleanup / revisit documentation and vignettes (<a href="https://github.com/JanMarvin/openxlsx2/pull/682" class="external-link">682</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -207,7 +213,7 @@
 <h3 id="new-features-0-5">New features<a class="anchor" aria-label="anchor" href="#new-features-0-5"></a></h3>
 <ul><li><p>Improve column and row grouping. It is now possible to group by list, so that you can create various levels of groupings. <a href="https://github.com/JanMarvin/openxlsx2/pull/486" class="external-link">486</a></p></li>
 <li><p><code>writeData()</code> calls <code>force(x)</code> to evaluate the object before options are set (<a href="https://github.com/ycphs/openxlsx/issues/264" class="external-link">#264</a>)</p></li>
-<li><p><code>tabColor</code> in <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code> now allows passing <code><a href="../reference/wbColour.html">wb_color()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/500" class="external-link">500</a></p></li>
+<li><p><code>tabColor</code> in <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code> now allows passing <code><a href="../reference/wb_color.html">wb_color()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/500" class="external-link">500</a></p></li>
 <li><p>Add <code><a href="../reference/wb_copy_cells.html">wb_copy_cells()</a></code> a wrapper that allows copying cell ranges in a workbook as direct copy, as reference or as value. <a href="https://github.com/JanMarvin/openxlsx2/pull/515" class="external-link">515</a></p></li>
 <li>
 <p>Experimental option: <code>openxlsx2.string_nums</code> to write string numerics differently. A string numeric is a numeric in a string like: <code>as.character(1.5)</code>. The option can be</p>
@@ -321,7 +327,7 @@
 <div class="section level3">
 <h3 id="new-features-0-3">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3"></a></h3>
 <ul><li><p>New argument <code>startCol</code> in read to data frame functions <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, <code><a href="../reference/wb_read.html">wb_read()</a></code> and <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/330" class="external-link">330</a></p></li>
-<li><p>New function <code><a href="../reference/wbColour.html">wb_colour()</a></code> to ease working with color vectors used in <code>openxlsx2</code> styles. <a href="https://github.com/JanMarvin/openxlsx2/issues/292" class="external-link">292</a></p></li>
+<li><p>New function <code><a href="../reference/wb_color.html">wb_colour()</a></code> to ease working with color vectors used in <code>openxlsx2</code> styles. <a href="https://github.com/JanMarvin/openxlsx2/issues/292" class="external-link">292</a></p></li>
 <li><p>Deprecated <code>get_cell_style()</code> and <code>set_cell_style()</code> in favor of newly introduced wrapper functions <code><a href="../reference/cell_style.html">wb_get_cell_style()</a></code> and <code><a href="../reference/cell_style.html">wb_set_cell_style()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/306" class="external-link">306</a></p></li>
 <li><p>Improvements to <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code>. Cloning of chartsheets as well as worksheets containing charts, pivot tables, drawings and tables is now possible or tweaked. Slicers are removed from the cloned worksheet. <a href="https://github.com/JanMarvin/openxlsx2/issues/305" class="external-link">305</a></p></li>
 <li><p>Allow writing class <code>data.table</code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/313" class="external-link">313</a></p></li>
@@ -341,7 +347,7 @@
 <li><p>Changes to various internal pugixml functions, to improve handling of XML strings. <a href="https://github.com/JanMarvin/openxlsx2/issues/279" class="external-link">279</a></p></li>
 <li><p>Provide internal helper <code><a href="../reference/xml_rm_child.html">xml_rm_child()</a></code> to remove children of XML strings. <a href="https://github.com/JanMarvin/openxlsx2/issues/273" class="external-link">273</a></p></li>
 <li><p>Fixes a bug in <code>update_cell()</code> that slowed down writing on worksheets with data. In addition, this function has been cleaned up and further improved. It is no longer exported, as users only need to use <code><a href="../reference/write_data.html">wb_add_data()</a></code> or <code><a href="../reference/write_data.html">write_data()</a></code>, each of which calls <code>update_cell()</code> under the hood. <a href="https://github.com/JanMarvin/openxlsx2/pull/275" class="external-link">275</a> <a href="https://github.com/JanMarvin/openxlsx2/pull/276" class="external-link">276</a></p></li>
-<li><p>Various (mostly internal) changes to <code>conditional_formatting</code>. Created <code>style_mgr</code> integration for <code>dxf</code> (cf-styles) and cleaned up internal code. The syntax has changed slightly, see <a href="https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html" class="external-link">conditional formatting vignette</a> for reference. Add <code>whitespace</code> argument to <code><a href="../reference/read_xml.html">read_xml()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/268" class="external-link">268</a></p></li>
+<li><p>Various (mostly internal) changes to <code>conditional_formatting</code>. Created <code>style_mgr</code> integration for <code>dxf</code> (cf-styles) and cleaned up internal code. The syntax has changed slightly, see <a href="https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html">conditional formatting vignette</a> for reference. Add <code>whitespace</code> argument to <code><a href="../reference/read_xml.html">read_xml()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/268" class="external-link">268</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-0-3">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3"></a></h3>
