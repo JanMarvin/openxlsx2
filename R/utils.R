@@ -261,9 +261,14 @@ rowcol_to_dim <- function(row, col) {
 }
 
 #' @rdname dims_helper
-#' @param ... dims arguments, row/col, rows/cols or objects that can be converted to data frame
+#' @param ... construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame
+#' @examples
+#' # either vectors
+#' wb_dims(rows = 1:10, cols = 1:10)
+#' # or objects
+#' wb_dims(mtcars)
 #' @export
-dims <- function(...) {
+wb_dims <- function(...) {
 
   args <- list(...)
   nams <- names(args)
@@ -271,28 +276,48 @@ dims <- function(...) {
   col_names <- args$col_names
   row_names <- args$row_names
 
-  if (is.null(col_names)) col_names <- FALSE
-  if (is.null(row_names)) row_names <- FALSE
+  has_cnam <- is.null(col_names)
+  has_rnam <- is.null(row_names)
+
+  if (has_cnam) col_names <- FALSE
+  if (has_rnam) row_names <- FALSE
 
   assert_class(col_names, "logical")
   assert_class(row_names, "logical")
 
-  if (any("row" %in% nams) && any("col" %in% nams)) {
-    dims <- rowcol_to_dim(args$row, args$col)
-  } else if (any("rows" %in% nams) && any("cols" %in% nams)) {
-    dims <- rowcol_to_dims(args$rows, args$cols)
+  # wb_dims(rows, cols)
+  if (length(args) == 2 && has_cnam && has_rnam) {
+    rows <- 1L
+    cols <- 2L
+
+    # wb_dims(rows = rows, cols = cols)
+    sel <- pmatch(nams, c("rows", "cols"))
+    valid <- length(sel[!is.na(sel)])
+    if (valid == 2) {
+      rows <- sel[rows]
+      cols <- sel[cols]
+    } else if (valid == 1) {
+      stop("found only one cols/rows argument")
+    }
+
+    rows <- args[[rows]]
+    cols <- args[[cols]]
+
   } else {
 
+    # wb_dims(data.frame())
     x <- as.data.frame(args[[1]])
     rows <- seq_len(nrow(x) + col_names)
     cols <- seq_len(ncol(x) + row_names)
 
-    if (length(rows) == 1L && length(cols) == 1L) {
-      dims <- rowcol_to_dim(rows, cols)
-    } else {
-      dims <- rowcol_to_dims(rows, cols)
-    }
+  }
 
+  if (length(rows) == 1 && length(cols) == 1) {
+    # A1
+    dims <- rowcol_to_dim(rows, cols)
+  } else {
+    # A1:B2
+    dims <- rowcol_to_dims(rows, cols)
   }
 
   dims

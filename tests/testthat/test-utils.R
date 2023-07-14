@@ -46,21 +46,30 @@ test_that("dims to col & row and back", {
 
 })
 
-test_that("dims() works", {
+test_that("wb_dims() works", {
 
   # dim(mtcars)
 
-  expect_equal(dims(mtcars), "A1:K32")
+  expect_equal(wb_dims(mtcars), "A1:K32")
+  expect_equal(wb_dims(mtcars, col_names = TRUE, row_names = TRUE), "A1:L33")
 
-  expect_equal(dims(letters), "A1:A26")
+  expect_equal(wb_dims(letters), "A1:A26")
 
-  expect_equal(dims(t(letters)), "A1:Z1")
+  expect_equal(wb_dims(t(letters)), "A1:Z1")
 
-  expect_equal(dims(1), "A1")
+  expect_equal(wb_dims(1), "A1")
 
-  expect_equal(dims(rows =  1:10, cols = 5:7), "E1:G10")
+  expect_equal(wb_dims(rows =  1:10, cols = 5:7), "E1:G10")
+  expect_equal(wb_dims(cols =  1:10, rows = 5:7), "A5:J7")
+  expect_error(
+    wb_dims(cols =  1:10, col = 5:7),
+    "found only one cols/rows argument"
+  )
 
-  expect_equal(dims(row = 5, col = 7), "G5")
+  expect_equal(wb_dims(row = 5, col = 7), "G5")
+
+  expect_equal(wb_dims(1:10, LETTERS), "A1:Z10")
+  expect_equal(wb_dims(1:10, 1:26), "A1:Z10")
 
 })
 
