@@ -14,9 +14,9 @@ test_that("test data validation list and sparklines", {
   wb <- wb_workbook()$
     add_worksheet()$add_data(x = iris[1:30, ])$
     add_worksheet()$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))$
-    add_data_validation(sheet = 1, col = 1, rows = 2:11, type = "list", value = '"O1,O2"')$
+    add_data_validation(sheet = 1, dims = "A2:A11", type = "list", value = '"O1,O2"')$
     add_sparklines(sheet = 1, sparklines = s1)$
-    add_data_validation(sheet = 1, col = 1, rows = 12:21, type = "list", value = '"O2,O3"')$
+    add_data_validation(sheet = 1, dims = "A12:A21", type = "list", value = '"O2,O3"')$
     add_sparklines(sheet = 1, sparklines = s2)
 
   exp <- c(
@@ -35,7 +35,7 @@ test_that("old and new data validations", {
     add_worksheet()$
     add_data(x = sample(c("O1", "O2"), 10, TRUE))$
     add_data(dims = "B1", x = sample(c("O1", "O2"), 10, TRUE))$
-    add_data_validation(sheet = 1, col = 2, rows = 1:10, type = "list", value = '"O1,O2"')
+    add_data_validation(sheet = 1, dims = "B1:B10", type = "list", value = '"O1,O2"')
 
   # add data validations list as x14. this was the default in openxlsx and openxlsx2 <= 0.3
   wb$worksheets[[1]]$extLst <- "<ext xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" uri=\"{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}\"><x14:dataValidations xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\" count=\"2\"><x14:dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\"><x14:formula1><xm:f>\"O1,O2\"</xm:f></x14:formula1><xm:sqref>A2:A11</xm:sqref></x14:dataValidation></x14:dataValidations></ext>"

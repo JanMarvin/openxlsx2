@@ -9,6 +9,7 @@ test_that("standardize works", {
   expect_equal(get("tabColor"), "green")
 
   camelCase <- NULL
+  camel_case <- NULL
   standardize_case_names(camelCase = "green")
   expect_equal(get("camel_case"), "green")
 
