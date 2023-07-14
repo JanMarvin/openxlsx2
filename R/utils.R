@@ -259,6 +259,45 @@ rowcol_to_dim <- function(row, col) {
   # we will always return something like "A1"
   stringi::stri_join(min_col, min_row)
 }
+
+#' @rdname dims_helper
+#' @param ... dims arguments, row/col, rows/cols or objects that can be converted to data frame
+#' @export
+dims <- function(...) {
+
+  args <- list(...)
+  nams <- names(args)
+
+  col_names <- args$col_names
+  row_names <- args$row_names
+
+  if (is.null(col_names)) col_names <- FALSE
+  if (is.null(row_names)) row_names <- FALSE
+
+  assert_class(col_names, "logical")
+  assert_class(row_names, "logical")
+
+  if (any("row" %in% nams) && any("col" %in% nams)) {
+    dims <- rowcol_to_dim(args$row, args$col)
+  } else if (any("rows" %in% nams) && any("cols" %in% nams)) {
+    dims <- rowcol_to_dims(args$rows, args$cols)
+  } else {
+
+    x <- as.data.frame(args[[1]])
+    rows <- seq_len(nrow(x) + col_names)
+    cols <- seq_len(ncol(x) + row_names)
+
+    if (length(rows) == 1L && length(cols) == 1L) {
+      dims <- rowcol_to_dim(rows, cols)
+    } else {
+      dims <- rowcol_to_dims(rows, cols)
+    }
+
+  }
+
+  dims
+}
+
 # Relationship helpers --------------------
 #' removes entries from worksheets_rels
 #' @param x character string

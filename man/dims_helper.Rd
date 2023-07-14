@@ -4,11 +4,14 @@
 \alias{dims_helper}
 \alias{dims_to_rowcol}
 \alias{rowcol_to_dims}
+\alias{dims}
 \title{Helper functions to work with \code{dims}}
 \usage{
 dims_to_rowcol(x, as_integer = FALSE)
 
 rowcol_to_dims(row, col)
+
+dims(...)
 }
 \arguments{
 \item{x}{a dimension object "A1" or "A1:A1"}
@@ -18,6 +21,8 @@ rowcol_to_dims(row, col)
 \item{row}{a numeric vector of rows}
 
 \item{col}{a numeric or character vector of cols}
+
+\item{...}{dims arguments, row/col, rows/cols or objects that can be converted to data frame}
 }
 \value{
 \itemize{

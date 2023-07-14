@@ -46,6 +46,23 @@ test_that("dims to col & row and back", {
 
 })
 
+test_that("dims() works", {
+
+  # dim(mtcars)
+
+  expect_equal(dims(mtcars), "A1:K32")
+
+  expect_equal(dims(letters), "A1:A26")
+
+  expect_equal(dims(t(letters)), "A1:Z1")
+
+  expect_equal(dims(1), "A1")
+
+  expect_equal(dims(rows =  1:10, cols = 5:7), "E1:G10")
+
+  expect_equal(dims(row = 5, col = 7), "G5")
+
+})
 
 test_that("create_char_dataframe", {
 
