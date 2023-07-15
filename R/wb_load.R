@@ -308,7 +308,7 @@ wb_load <- function(
         overrideAttr <- as.data.frame(do.call("rbind", override))
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$add_worksheet(sheets$name[i], visible = is_visible[i], hasDrawing = !is.na(drawings[i]))
+        wb$add_worksheet(sheets$name[i], visible = is_visible[i], has_drawing = !is.na(drawings[i]))
       }
     }
 

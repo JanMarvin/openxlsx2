@@ -97,13 +97,23 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
   ## set scientific notation penalty
 
+  arguments <- c(ls(), "creator",  "sheet_name", "grid_lines",
+    "tab_color", "tab_colour",
+    "zoom", "header", "footer", "even_header", "even_footer", "first_header",
+    "first_footer", "start_col", "start_row",
+    "col.names", "row.names", "col_names", "row_names", "table_style",
+    "table_name", "with_filter", "first_active_row", "first_active_col",
+    "first_row", "first_col", "col_widths", "na.strings",
+    "overwrite", "title", "subject", "category"
+  )
+
   params <- list(...)
 
   # we need them in params
-  params <- standardize_case_names(params, return = TRUE)
+  params <- standardize_case_names(params, arguments = arguments, return = TRUE)
 
   # and in global env for `asTable`
-  standardize_case_names(...)
+  standardize_case_names(..., arguments = arguments)
 
   ## Possible parameters
 

@@ -4069,7 +4069,8 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      standardize_case_names(...)
+      arguments <- c(ls(), "start_row", "start_col")
+      standardize_case_names(..., arguments = arguments)
 
       if (exists("start_row") && !is.null(start_row) &&
           exists("start_col") && !is.null(start_col)) {
@@ -5391,7 +5392,8 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      standardize_case_names(...)
+      arguments <- c(ls(), "rows", "cols")
+      standardize_case_names(..., arguments = arguments)
 
       sheet <- private$get_sheet_index(sheet)
 

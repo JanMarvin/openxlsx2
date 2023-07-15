@@ -17,11 +17,11 @@ test_that("regression test for #248", {
   tempFile <- temp_xlsx()
 
   # no formatting
-  expect_silent(write_xlsx(df, tempFile, borders = "columns", overwrite = TRUE))
+  expect_silent(write_xlsx(df, tempFile, overwrite = TRUE))
 
   # Change column class to percentage
   class(df$percent) <- "percentage"
-  expect_silent(write_xlsx(df, tempFile, borders = "columns", overwrite = TRUE))
+  expect_silent(write_xlsx(df, tempFile, overwrite = TRUE))
 })
 
 
@@ -133,7 +133,7 @@ test_that("write xlsx", {
   expect_silent(write_xlsx(df, tmp, row.names = TRUE))
   expect_error(write_xlsx(df, tmp, rowNames = "NO"))
   expect_silent(write_xlsx(df, tmp, rowNames = TRUE))
-  expect_silent(write_xlsx(df, tmp, colWidth = "auto"))
+  expect_silent(write_xlsx(df, tmp, colWidths = "auto"))
   expect_silent(write_xlsx(list(df, df), tmp, firstActiveCol = 2, firstActiveRow = 2))
   expect_silent(write_xlsx(list(df, df), tmp, firstCol = FALSE, firstRow = FALSE))
   expect_silent(write_xlsx(list(df, df), tmp, firstCol = TRUE, firstRow = TRUE))

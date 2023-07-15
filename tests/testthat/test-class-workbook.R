@@ -235,7 +235,7 @@ test_that("data validation", {
     wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
     add_data_table(x = head(iris))$
-    add_data_validation(col = "A", rows = 2:151, type = "whole",
+    add_data_validation(dims = "A2:A151", type = "whole",
                         operator = "between", value = c(1, 9, 19)
     ),
     "length <= 2"
@@ -246,7 +246,7 @@ test_that("data validation", {
     wb <- wb_workbook()$
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
-      add_data_validation(col = "A", rows = 2:151, type = "even",
+      add_data_validation(dims = "A2:A151", type = "even",
                           operator = "between", value = c(1, 9)
       ),
     "Invalid 'type' argument!"
@@ -257,7 +257,7 @@ test_that("data validation", {
     wb <- wb_workbook()$
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
-      add_data_validation(col = "A", rows = 2:151, type = "whole",
+      add_data_validation(dims = "A2:A151", type = "whole",
                           operator = "lower", value = c(1, 9)
       ),
     "Invalid 'operator' argument!"
@@ -269,7 +269,7 @@ test_that("data validation", {
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
       # whole numbers are fine
-      add_data_validation(col = 1, rows = 2:12, type = "date",
+      add_data_validation(dims = "A2:A12", type = "date",
                           operator = "greaterThanOrEqual", value = 7
       ),
     "If type == 'date' value argument must be a Date vector"
@@ -281,7 +281,7 @@ test_that("data validation", {
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
       # whole numbers are fine
-      add_data_validation(col = 1, rows = 2:12, type = "time",
+      add_data_validation(dims = "A2:A12", type = "time",
                           operator = "greaterThanOrEqual", value = 7
       ),
     "If type == 'time' value argument must be a POSIXct or POSIXlt vector."

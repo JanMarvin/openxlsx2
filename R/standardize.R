@@ -36,7 +36,11 @@ standardize_color_names <- function(..., return = FALSE) {
 #' @param ... ...
 #' @returns void. assigns an object in the parent frame
 #' @noRd
-standardize_case_names <- function(..., return = FALSE) {
+standardize_case_names <- function(..., return = FALSE, arguments = NULL) {
+
+  if (is.null(arguments)) {
+    arguments <- ls(envir = parent.frame())
+  }
 
   # since R 4.1.0: ...names()
   args <- list(...)
@@ -58,6 +62,7 @@ standardize_case_names <- function(..., return = FALSE) {
         x           = camel_case,
         perl        = TRUE
       )
+      got[got_camel_case] <- name_camel_case
       # since R 3.5.0: ...elt(got_col)
       if (return) {
         names(args)[got_camel_case] <- name_camel_case
@@ -66,6 +71,11 @@ standardize_case_names <- function(..., return = FALSE) {
         assign(name_camel_case, value_camel_calse, parent.frame())
       }
     }
+  }
+
+  sel <- !got %in% arguments
+  if (any(sel)) {
+    warning("unused arguments (", paste(got[sel], collapse = ", "), ")")
   }
 
   if (return) args
@@ -79,9 +89,10 @@ standardize_case_names <- function(..., return = FALSE) {
 standardize <- function(...) {
 
   nms <- list(...)
+  arguments <- ls(envir = parent.frame())
 
   rtns <- standardize_color_names(nms, return = TRUE)
-  rtns <- standardize_case_names(rtns, return = TRUE)
+  rtns <- standardize_case_names(rtns, return = TRUE, arguments = arguments)
 
   nms <- names(rtns)
   for (i in seq_along(nms)) {

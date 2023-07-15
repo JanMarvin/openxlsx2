@@ -449,8 +449,9 @@ create_cell_style <- function(
 ) {
   n <- length(num_fmt_id)
 
+  arguments <- c(ls(), "is_cell_style_xf")
+  standardize_case_names(..., arguments = arguments)
   args <- list(...)
-  standardize_case_names(...)
 
   is_cell_style_xf <- isTRUE(args$is_cell_style_xf)
 
