@@ -1,9 +1,9 @@
 
 #PKG_CPPFLAGS = -I. -I../inst/include/pugixml -Ixlcpp -DXLCPP_EXPORT
-PKG_CXXFLAGS =  -I. -Ixlcpp -I../inst/include/pugixml -DXLCPP_EXPORT
+PKG_CXXFLAGS = @PKG_CXXFLAGS@ -I. -Ixlcpp -I../inst/include/pugixml -DXLCPP_EXPORT
 
 #PKG_LIBS=-Lpugixml -Lcfbf -L/usr/lib -larchive -L/usr/lib -lfmt
-PKG_LIBS = -larchive  -Lpugixml -Lxlcpp -lfmt
+PKG_LIBS = @PKG_LIBS@ -Lpugixml -Lxlcpp -lfmt
 
 PKGROOT = ./xlcpp
 

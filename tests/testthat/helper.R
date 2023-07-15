@@ -1021,7 +1021,8 @@ download_testfiles <- function() {
     "umlauts.xlsx",
     "unemployment-nrw202208.xlsx",
     "update_test.xlsx",
-    "vml_numbering.xlsx"
+    "vml_numbering.xlsx",
+    "openxlsx2_example_pass.xlsx"
   )
 
   test_path <- testthat::test_path("testfiles")

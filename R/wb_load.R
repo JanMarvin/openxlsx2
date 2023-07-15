@@ -49,6 +49,14 @@ wb_load <- function(
     stop("File does not exist.")
   }
 
+  pwd <- list(...)$password
+
+  if (!is.null(pwd)) {
+    unencrypted_xlsx <- temp_xlsx()
+    read_encryption(PATH = path.expand(file), OUT = unencrypted_xlsx, PASSWORD = pwd)
+    file <- unencrypted_xlsx
+  }
+
   ## create temp dir
   xmlDir <- temp_dir("_openxlsx_wb_load")
 

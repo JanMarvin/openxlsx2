@@ -397,3 +397,15 @@ test_that("sheetView is not switched", {
   expect_equal(exp, got)
 
 })
+
+test_that("loading password protected workbooks works", {
+
+  fl <- testfile_path("openxlsx2_example_pass.xlsx")
+
+  wb <- wb_load(fl, password = "openxlsx2")
+
+  exp <- c(10, 9)
+  got <- dim(wb_to_df(wb))
+  expect_equal(exp, got)
+
+})

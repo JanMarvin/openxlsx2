@@ -11,6 +11,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// read_encryption
+void read_encryption(std::string PATH, std::string OUT, std::string PASSWORD);
+RcppExport SEXP _openxlsx2_read_encryption(SEXP PATHSEXP, SEXP OUTSEXP, SEXP PASSWORDSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type PATH(PATHSEXP);
+    Rcpp::traits::input_parameter< std::string >::type OUT(OUTSEXP);
+    Rcpp::traits::input_parameter< std::string >::type PASSWORD(PASSWORDSEXP);
+    read_encryption(PATH, OUT, PASSWORD);
+    return R_NilValue;
+END_RCPP
+}
 // to_long
 bool to_long(std::string path);
 RcppExport SEXP _openxlsx2_to_long(SEXP pathSEXP) {
@@ -842,6 +854,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_openxlsx2_read_encryption", (DL_FUNC) &_openxlsx2_read_encryption, 3},
     {"_openxlsx2_to_long", (DL_FUNC) &_openxlsx2_to_long, 1},
     {"_openxlsx2_openxlsx2_type", (DL_FUNC) &_openxlsx2_openxlsx2_type, 1},
     {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},

@@ -43,3 +43,5 @@ Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Config/testthat/start-first: aaa
+SystemRequirements: C++20, libarchive: libarchive-dev (deb),
+    libarchive-devel (rpm), libarchive (homebrew), libarchive_dev (csw)
