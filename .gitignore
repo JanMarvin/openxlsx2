@@ -4,6 +4,7 @@
 .DS_Store
 .vscode/*
 src/*.o
+src/xlcpp/*.o
 src/*.so
 src/*.dll
 src-i386/*.dll
