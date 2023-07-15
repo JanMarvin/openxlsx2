@@ -48,14 +48,12 @@ test_that("dims to col & row and back", {
 
 test_that("wb_dims() works", {
 
-  # dim(mtcars)
-
-  expect_equal(wb_dims(mtcars), "A1:K32")
-  expect_equal(wb_dims(mtcars, col_names = TRUE, row_names = TRUE), "A1:L33")
+  expect_equal(wb_dims(mtcars), "A1:K33")
+  expect_equal(wb_dims(mtcars, col_names = FALSE, row_names = TRUE), "A1:L32")
 
   expect_equal(wb_dims(letters), "A1:A26")
 
-  expect_equal(wb_dims(t(letters)), "A1:Z1")
+  expect_equal(wb_dims(t(letters)), "A1:Z2")
 
   expect_equal(wb_dims(1), "A1")
 

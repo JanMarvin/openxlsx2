@@ -276,17 +276,11 @@ wb_dims <- function(...) {
   col_names <- args$col_names
   row_names <- args$row_names
 
-  has_cnam <- is.null(col_names)
-  has_rnam <- is.null(row_names)
-
-  if (has_cnam) col_names <- FALSE
-  if (has_rnam) row_names <- FALSE
-
-  assert_class(col_names, "logical")
-  assert_class(row_names, "logical")
+  cnam_null <- is.null(col_names)
+  rnam_null <- is.null(row_names)
 
   # wb_dims(rows, cols)
-  if (length(args) == 2 && has_cnam && has_rnam) {
+  if (length(args) == 2 && cnam_null && rnam_null) {
     rows <- 1L
     cols <- 2L
 
@@ -305,8 +299,17 @@ wb_dims <- function(...) {
 
   } else {
 
+    x <- args[[1]]
+    exp_name <- inherits(x, "data.frame") || inherits(x, "matrix")
+
+    if (cnam_null) col_names <- exp_name
+    if (rnam_null) row_names <- FALSE
+
+    assert_class(col_names, "logical")
+    assert_class(row_names, "logical")
+
     # wb_dims(data.frame())
-    x <- as.data.frame(args[[1]])
+    x <- as.data.frame(x)
     rows <- seq_len(nrow(x) + col_names)
     cols <- seq_len(ncol(x) + row_names)
 
