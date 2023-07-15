@@ -279,8 +279,20 @@ wb_dims <- function(...) {
   cnam_null <- is.null(col_names)
   rnam_null <- is.null(row_names)
 
+  srow <- args$start_row
+  scol <- args$start_col
+
+  scol_null <- is.null(scol)
+  srow_null <- is.null(srow)
+
+  if (srow_null) srow <- 0 else srow <- srow - 1L
+  if (scol_null) scol <- 0 else scol <- col2int(scol) - 1L
+
+  x <- args[[1]]
+  exp_name <- inherits(x, "data.frame") || inherits(x, "matrix")
+
   # wb_dims(rows, cols)
-  if (length(args) == 2 && cnam_null && rnam_null) {
+  if (length(args) >= 2 && !exp_name) {
     rows <- 1L
     cols <- 2L
 
@@ -295,12 +307,9 @@ wb_dims <- function(...) {
     }
 
     rows <- args[[rows]]
-    cols <- args[[cols]]
+    cols <- col2int(args[[cols]])
 
   } else {
-
-    x <- args[[1]]
-    exp_name <- inherits(x, "data.frame") || inherits(x, "matrix")
 
     if (cnam_null) col_names <- exp_name
     if (rnam_null) row_names <- FALSE
@@ -314,6 +323,9 @@ wb_dims <- function(...) {
     cols <- seq_len(ncol(x) + row_names)
 
   }
+
+  rows <- rows + srow
+  cols <- cols + scol
 
   if (length(rows) == 1 && length(cols) == 1) {
     # A1

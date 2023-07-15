@@ -69,6 +69,9 @@ test_that("wb_dims() works", {
   expect_equal(wb_dims(1:10, LETTERS), "A1:Z10")
   expect_equal(wb_dims(1:10, 1:26), "A1:Z10")
 
+  expect_equal(wb_dims(1:2, 1:4, start_row = 2, start_col = "B"), "B2:E3")
+  expect_equal(wb_dims(mtcars, start_row = 2, start_col = "B"), "B2:L34")
+
 })
 
 test_that("create_char_dataframe", {
