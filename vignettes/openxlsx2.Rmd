@@ -172,6 +172,33 @@ wb$save("mtcars.xlsx")
 try(wb$save("mtcars.xlsx", overwrite = FALSE))
 ```
 
+## `dims`
+
+In `openxlsx2` functions that interact with worksheet cells are using `dims` as argument and require the users to provide these. `dims` are cells or cell ranges in A1 notation. The single argument `dims` hereby replaces `col`/`row`, `cols`/`rows` and `xy`. Since A1 notation is rather simple in the first few columns it might get confusing after the 26. Therefore we provide a wrapper to construct it:
+
+```{r}
+# various options
+wb_dims(4)
+
+wb_dims(row = 4, col = 4)
+
+wb_dims(row = 4:10, col = 5:9)
+
+wb_dims(row = 4:10, col = "A:D")
+
+wb_dims(mtcars)
+
+# in a wb chain
+wb <- wb_workbook()$
+  add_worksheet()$
+  add_data(x = mtcars)$
+  add_fill(
+    dims = wb_dims(mtcars, start_row = 5),
+    color = wb_color("yellow")
+  )
+```
+
+
 ## A note on speed and memory usage
 
 The current state of `openxlsx2` is that it is reasonably fast. That is, it works well with reasonably large input data when reading or writing. It may not work well with data that tests the limits of the openxml specification. Things may slow down on the R side of things, and performance and usability will depend on the speed and size of the local operating system's CPU and memory.
