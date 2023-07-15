@@ -75,8 +75,7 @@
 <p>remove deprecated arguments</p>
 <ul><li>
 <code>xy</code> argument</li>
-<li>arguments <code>col</code>, <code>row</code>, <code>cols</code>, <code>rows</code>. <code>start_col</code>, <code>start_row</code> and <code>gridExpand</code> were deprecated in favor of <code>dims</code>. Numeric vectors can be converted to <code>dims</code> using <code><a href="../reference/dims_helper.html">rowcol_to_dims()</a></code>
-</li>
+<li>arguments <code>col</code>, <code>row</code>, <code>cols</code>, <code>rows</code>. <code>start_col</code>, <code>start_row</code> and <code>gridExpand</code> were deprecated in favor of <code>dims</code>. Row and column vectors can be converted to <code>dims</code> using <code><a href="../reference/dims_helper.html">wb_dims()</a></code>.</li>
 </ul></li>
 <li>
 <p>deprecating function</p>
@@ -87,6 +86,15 @@
 <li><p>make <code>get_cell_refs()</code>, <code>get_date_origin()</code>, <code>guess_col_type()</code>, and <code>write_file()</code> internal functions</p></li>
 <li><p>make classes <code>styles_mgr()</code>, <code>wbSheetData</code>, <code>wbWorksheet</code>, <code>wbChartsheet</code>, <code>wbComment</code>, <code>wbHyperlink</code> internal</p></li>
 </ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/dims_helper.html">wb_dims()</a></code> was added as a more convenient replacement for <code><a href="../reference/dims_helper.html">rowcol_to_dims()</a></code>. The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coerceable to data frame. This allows the following variants:</li>
+<li><code>wb_dims(1:5, letters)</code></li>
+<li><code>wb_dims(1:5, 1:26)</code></li>
+<li>
+<code>wb_dims(matrix(1, 5, 26))</code> with an added row for column names</li>
 </ul></div>
 <div class="section level3">
 <h3 id="refactoring-development-version">Refactoring<a class="anchor" aria-label="anchor" href="#refactoring-development-version"></a></h3>

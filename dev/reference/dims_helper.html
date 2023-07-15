@@ -69,7 +69,9 @@ vector. Exported for user convenience.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dims_to_rowcol</span><span class="op">(</span><span class="va">x</span>, as_integer <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_dims</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -88,6 +90,10 @@ vector. Exported for user convenience.</p>
 
 <dt>col</dt>
 <dd><p>a numeric or character vector of cols</p></dd>
+
+
+<dt>...</dt>
+<dd><p>construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -109,6 +115,12 @@ vector. Exported for user convenience.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A1:J10"</span>
+<span class="r-in"><span><span class="co"># either vectors</span></span></span>
+<span class="r-in"><span><span class="fu">wb_dims</span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A1:J10"</span>
+<span class="r-in"><span><span class="co"># or objects</span></span></span>
+<span class="r-in"><span><span class="fu">wb_dims</span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A1:K33"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -500,6 +500,44 @@ opened by another process) will not be replaced.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="dims">
+<code>dims</code><a class="anchor" aria-label="anchor" href="#dims"></a>
+</h2>
+<p>In <code>openxlsx2</code> functions that interact with worksheet
+cells are using <code>dims</code> as argument and require the users to
+provide these. <code>dims</code> are cells or cell ranges in A1
+notation. The single argument <code>dims</code> hereby replaces
+<code>col</code>/<code>row</code>, <code>cols</code>/<code>rows</code>
+and <code>xy</code>. Since A1 notation is rather simple in the first few
+columns it might get confusing after the 26. Therefore we provide a
+wrapper to construct it:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># various options</span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "A1"</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">4</span>, col <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "D4"</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, col <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "E4:I10"</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, col <span class="op">=</span> <span class="st">"A:D"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "A4:D10"</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "A1:K33"</span></span>
+<span></span>
+<span><span class="co"># in a wb chain</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_fill</span><span class="op">(</span></span>
+<span>    dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">mtcars</span>, start_row <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"yellow"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="a-note-on-speed-and-memory-usage">A note on speed and memory usage<a class="anchor" aria-label="anchor" href="#a-note-on-speed-and-memory-usage"></a>
 </h2>
 <p>The current state of <code>openxlsx2</code> is that it is reasonably
