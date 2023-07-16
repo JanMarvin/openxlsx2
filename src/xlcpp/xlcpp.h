@@ -1,6 +1,6 @@
 #pragma once
 
-#include <filesystem>
+#include <string>
 #include <chrono>
 #include <string>
 #include <list>
@@ -39,7 +39,7 @@ class sheet;
 class XLCPP workbook {
 public:
     workbook();
-    workbook(const std::filesystem::path& fn, std::string_view password = "", std::string_view outfile = "");
+    workbook(std::string& fn, std::string_view password = "", std::string_view outfile = "");
     workbook(std::span<uint8_t> sv, std::string_view password = "", std::string_view outfile = "");
     ~workbook();
 

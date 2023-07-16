@@ -26,25 +26,13 @@ typedef struct {
 class workbook_pimpl {
 public:
     workbook_pimpl() = default;
-    workbook_pimpl(const std::filesystem::path& fn, std::string_view password, std::string_view outfile);
+    workbook_pimpl(std::string& fn, std::string_view password, std::string_view outfile);
     workbook_pimpl(std::span<uint8_t> sv, std::string_view password, std::string_view outfile);
     std::string data() const;
 
     // void write_archive(struct archive* a) const;
     // la_ssize_t write_callback(struct archive* a, const void* buffer, size_t length) const;
     void load_archive(struct archive* a);
-
-#ifdef _WIN32
-    void rename(const std::filesystem::path& fn) const;
-#endif
-
-    mutable std::string buf;
-
-#ifdef _WIN32
-    unique_handle h;
-    HANDLE h2;
-    uint8_t readbuf[1048576];
-#endif
 
 private:
     void load_from_memory(std::span<uint8_t> sv, std::string_view password, std::string_view outfile);

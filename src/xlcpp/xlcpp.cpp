@@ -10,13 +10,10 @@
 #include <array>
 #include <charconv>
 
-// #ifdef _WIN32
+#ifdef _WIN32
+#include <stringapiset.h>
 // #include <windows.h>
-// #endif
-
-// #define FMT_HEADER_ONLY
-// #include <fmt/format.h>
-// #include <fmt/compile.h>
+#endif
 
 #define BLOCK_SIZE 20480
 
@@ -30,13 +27,6 @@ static const string NS_PACKAGE_RELATIONSHIPS = "http://schemas.openxmlformats.or
 static const string NS_CONTENT_TYPES = "http://schemas.openxmlformats.org/package/2006/content-types";
 
 #define NUMFMT_OFFSET 165
-
-// static string try_decode(const optional<xml_enc_string_view>& sv) {
-//     if (!sv)
-//         return "";
-//
-//     return sv.value().decode();
-// }
 
 namespace xlcpp {
 
@@ -83,8 +73,7 @@ std::vector<uint8_t> loadFile(const std::string& filename) {
   }
 }
 
-
-workbook_pimpl::workbook_pimpl(const filesystem::path& fn, string_view password, string_view outfile) {
+workbook_pimpl::workbook_pimpl(string& fn, string_view password, string_view outfile) {
 
     std::string path = fn;
 
@@ -148,7 +137,7 @@ void workbook_pimpl::load_from_memory(span<uint8_t> mem, string_view password, s
 
 }
 
-workbook::workbook(const filesystem::path& fn, std::string_view password, std::string_view outfile) {
+workbook::workbook(string& fn, std::string_view password, std::string_view outfile) {
     impl = new workbook_pimpl(fn, password, outfile);
 }
 
