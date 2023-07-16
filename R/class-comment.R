@@ -435,24 +435,41 @@ as_fmt_txt <- function(x) {
 
 wb_get_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
   sheet_id <- wb$validate_sheet(sheet)
-  cmts <- as.data.frame(do.call("rbind", wb$comments[[sheet_id]]))
-  if (!is.null(dims)) cmts <- cmts[cmts$ref == dims,]
-  cmts <- cmts[c("ref", "author", "comment")]
-  cmts$comment <- as_fmt_txt(cmts$comment)
+  cmts <- list()
+  if (length(wb$comments)) {
+    cmts <- as.data.frame(do.call("rbind", wb$comments[[sheet_id]]))
+    if (!is.null(dims)) cmts <- cmts[cmts$ref == dims, ]
+    # print(cmts)
+    cmts <- cmts[c("ref", "author", "comment")]
+    if (nrow(cmts)) {
+      cmts$comment <- as_fmt_txt(cmts$comment)
+      cmts$sheet_id <- sheet_id
+    }
+  }
   cmts
 }
 
-wb_add_threaded_comment <- function(wb, sheet = current_sheet(), dims = "A1", comment, person_id) {
+#' add threaded comment to worksheet
+#' @param wb a workbook
+#' @param sheet a worksheet
+#' @param dims a cell
+#' @param comment the comment to add
+#' @param person_id the person Id this should be added for
+#' @param reply logical if the comment is a reply
+#' @param resolve logical if the comment should be maked as resolved
+#' @export
+wb_add_threaded_comment <- function(wb, sheet = current_sheet(), dims = "A1", comment = NULL, person_id, reply = FALSE, resolve = FALSE) {
 
   assert_workbook(wb)
 
   sheet <- wb$validate_sheet(sheet)
+  wb_cmt <- wb_get_comment(wb, sheet, dims)
 
-  if (length(cmt <- wb_get_comment(wb, dims)$comment)) {
+  if (length(cmt <- wb_cmt$comment)) {
     # TODO not sure yet what to do
   } else {
     cmt <- create_comment(text = comment, author = "")
-    wb$add_comment(sheet = sheet, dims = dims, comment = c1)
+    wb$add_comment(sheet = sheet, dims = dims, comment = cmt)
   }
 
   if (!length(wb$worksheets[[sheet]]$relships$threadedComment)) {
@@ -473,37 +490,89 @@ wb_add_threaded_comment <- function(wb, sheet = current_sheet(), dims = "A1", co
       )
     )
 
-    wb$threadComments <- "<ThreadedComments xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments\" xmlns:x=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"></ThreadedComments>"
-
+    wb$threadComments[[sheet]] <- character()
   }
 
+  parentId <- NULL
+  tcs <- rbindlist(xml_attr(wb$threadComments[[sheet]], "threadedComment"))
+  sel <- which(tcs$ref == dims)
 
-  tc <- xml_node_create(
-    "threadedComment",
-    xml_attributes = c(
+  if (reply && nrow(tcs)) {
+    if (length(sel))  {
+      parentId <- tcs[sel[1], ]$id
+    } else {
+      warning("cannot reply, will create a new thread")
+    }
+  }
+
+  # update or remove any previous thread from the dims
+  if (length(sel)) {
+    if (resolve) {
+      wb$threadComments[[sheet]][sel[1]] <- xml_attr_mod(
+        wb$threadComments[[sheet]][sel[1]],
+        xml_attributes = c(done = as_xml_attr(resolve))
+      )
+    } else if (!reply) {
+      wb$threadComments[[sheet]] <- wb$threadComments[[sheet]][-(sel)]
+    }
+  }
+
+  if (!is.null(comment)) {
+
+    # For replies we can update the comment, but the id remains the parentId
+    cmt_id <- st_guid()
+
+    done <- as_xml_attr(resolve)
+    if (reply) done <- NULL
+
+    tc <- xml_node_create(
+      "threadedComment",
+      xml_attributes = c(
+        ref      = dims,
+        dT       = format(as_POSIXct_utc(Sys.time()), "%Y-%m-%dT%H:%M:%SZ"),
+        personId = person_id,
+        id       = cmt_id,
+        parentId = parentId,
+        done     = done
+      ),
+      xml_children = xml_node_create("text", xml_children = comment)
+    )
+
+    wb$threadComments[[sheet]] <- append(
+      wb$threadComments[[sheet]],
+      tc
+    )
+
+    if (reply) cmt_id <- parentId
+
+    wb_cmt <- wb_get_comment(wb, sheet, dims)
+    sId <- wb_cmt$sheet_id
+    cId <- as.integer(rownames(wb_cmt))
+
+    tc <- cbind(
+      rbindlist(xml_attr(wb$threadComments[[sheet]], "threadedComment")),
+      text = xml_value(wb$threadComments[[sheet]], "threadedComment", "text")
+    )
+
+    # probably correclty ordered, but we could order these by date?
+    tc <- tc[which(tc$ref == dims), ]
+
+    tc <- paste0(
+      "<t>[Threaded comment]\n\nYour spreadsheet software allows you to read this threaded comment; ",
+      "however, any edits to it will get removed if the file is opened in a newer version of a certain spreadsheet software.\n\n",
+      paste("Comment:", paste0(tc$text, collapse = "\nReplie:")),
+      "</t>"
+    )
+
+    wb$comments[[sId]][[cId]] <- list(
       ref = dims,
-      dT = as_POSIXct_utc(Sys.time()),
-      personId = person_id,
-      id = st_guid()
-    ),
-    xml_children = xml_node_create("text", xml_children = comment)
-  )
+      author = sprintf("tc=%s", cmt_id),
+      comment = tc,
+      style = FALSE,
+      clientData = NULL
+    )
 
-  wb$threadComments <- xml_add_child(
-    wb$threadComments,
-    xml_child = tc
-  )
-
-
-  # wb$threadComments <-
-  #   xml_add_child(
-  #     wb$threadComments,
-  #     xml_child = c(
-  #       sprintf("<threadedComment ref=\"A1\" dT=\"2023-07-01T19:19:30.08\" personId=\"%s\" id=\"%s\"><text>Remember when I added threaded comments? Would be cool if we can have these in {openxlsx2}!</text></threadedComment>", wb_get_person()$id[2], c1_id),
-  #       sprintf("<threadedComment ref=\"A1\" dT=\"2023-07-02T19:19:30.08\" personId=\"%s\" id=\"%s\" parentId=\"%s\"><text>Yes, I do remember! Let's check this out.</text></threadedComment>", wb_get_person()$id[1], c2_id, c1_id),
-  #       sprintf("<threadedComment ref=\"A1\" dT=\"2023-07-02T19:19:30.08\" personId=\"%s\" id=\"%s\" parentId=\"%s\"><text>Yes, I do remember! Let's check this out.</text></threadedComment>", wb_get_person()$id[1], st_guid(), c1_id)
-  #     )
-  #   )
+  }
 
   wb
 }

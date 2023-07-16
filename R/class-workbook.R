@@ -1621,7 +1621,9 @@ wbWorkbook <- R6::R6Class(
         for (i in seq_len(nSheets)) {
           if (length(self$threadComments[[i]])) {
             write_file(
-              body = self$threadComments[[i]],
+              head = "<ThreadedComments xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments\" xmlns:x=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">",
+              body = pxml(self$threadComments[[i]]),
+              tail = "</ThreadedComments>",
               fl = file.path(xlThreadComments, sprintf("threadedComment%s.xml", i))
             )
           }
