@@ -356,7 +356,7 @@ struct encryption_header {
     uint32_t provider_type;
     uint32_t reserved1;
     uint32_t reserved2;
-    char16_t csp_name[0];
+    char16_t csp_name;
 };
 
 #pragma pack(pop)
