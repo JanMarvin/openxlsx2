@@ -148,7 +148,11 @@ test_that("reading charts", {
   img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 
   which(wb$get_sheet_names() == "Uebersicht_Quoten")
-  wb$add_image(19, img, startRow = 5, startCol = 3, width = 6, height = 5)
+  expect_warning(
+    wb$add_image(19, file = img, startRow = 5, startCol = 3, width = 6, height = 5),
+    "'start_col/start_row' is deprecated."
+  )
+
   wb$save(temp)
 
   # check that we wrote a chartshape

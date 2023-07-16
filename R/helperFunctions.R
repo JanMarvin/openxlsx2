@@ -1,13 +1,14 @@
-#' @name create_hyperlink
-#' @title create Excel hyperlink string
-#' @description Wrapper to create internal hyperlink string to pass to write_formula(). Either link to external urls or local files or straight to cells of local Excel sheets.
+# `create_hyperlink()` ---------------------------------------------------------
+#' Create Excel hyperlink string
+#'
+#' Wrapper to create internal hyperlink string to pass to [write_formula()].
+#' Either link to external URLs or local files or straight to cells of local Excel sheets.
+#'
 #' @param sheet Name of a worksheet
 #' @param row integer row number for hyperlink to link to
 #' @param col column number of letter for hyperlink to link to
 #' @param text display text
 #' @param file Excel file name to point to. If NULL hyperlink is internal.
-#' @seealso [write_formula()]
-#' @export create_hyperlink
 #' @examples
 #'
 #' ## Writing internal hyperlinks
@@ -80,6 +81,7 @@
 #' ## Link to internal file
 #' x = create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
 #' write_formula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
+#' @export
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   if (missing(sheet)) {
     if (!missing(row) || !missing(col)) warning("Option for col and/or row found, but no sheet was provided.")
@@ -110,17 +112,13 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
   return(str)
 }
 
-
-getRId <- function(x) reg_match0(x, '(?<= r:id=")[0-9A-Za-z]+')
-
 getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
-
-#' @name validateColor
-#' @description validate the color input
+# `validateColor()` ------------------------------------------------------------
+#' Validate the color input
+#'
 #' @param color color
 #' @param errorMsg Error message
-#' @keywords internal
 #' @noRd
 validateColor <- function(color, errorMsg = "Invalid color!") {
   color <- check_valid_color(color)
@@ -151,18 +149,17 @@ check_valid_color <- function(color) {
     FALSE
   }
 }
-
-#' @name col2hex
-#' @description convert rgb to hex
-#' @param creator my.col
-#' @keywords internal
+# `col2hex()` ------------------------------------------------------------------
+#' Convert rgb to hex
+#'
+#' @param my.col my.col
 #' @noRd
 col2hex <- function(my.col) {
   rgb(t(col2rgb(my.col)), maxColorValue = 255)
 }
 
 
-## header and footer replacements
+## header and footer replacements ----------------------------------------------
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
     x <- replace_illegal_chars(x)
@@ -226,9 +223,9 @@ pxml <- function(x) {
   paste(unlist(x), collapse = "")
 }
 
+# `amp_split()` ----------------------------------------------------------------
 #' split headerFooter xml into left, center, and right.
 #' @param x xml string
-#' @keywords internal
 #' @noRd
 amp_split <- function(x) {
   if (length(x) == 0) return(NULL)
@@ -248,9 +245,9 @@ amp_split <- function(x) {
   unname(res)
 }
 
+# Header footer ---------------------------------------------------------------
 #' get headerFooter from xml into list with left, center, and right.
 #' @param x xml string
-#' @keywords internal
 #' @noRd
 getHeaderFooterNode <- function(x) {
 
@@ -270,7 +267,6 @@ getHeaderFooterNode <- function(x) {
 
 #' generate headerFooter xml from left, center, and right characters
 #' @param x xml string
-#' @keywords internal
 #' @noRd
 genHeaderFooterNode <- function(x) {
 
@@ -1174,7 +1170,6 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
 
 #' convert objects with attribute labels into strings
 #' @param x an object to convert
-#' @keywords internal
 #' @noRd
 to_string <- function(x) {
   lbls <- attr(x, "labels")
@@ -1185,4 +1180,26 @@ to_string <- function(x) {
     if (length(sel_l)) chr[sel_l] <- names(lbls)
   }
   chr
+}
+
+#' create a guid string
+#' @keywords internal
+#' @noRd
+st_guid <- function() {
+  paste0(
+    "{",
+    random_string(length = 8, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 12, pattern = "[A-F0-9]"),
+    "}"
+  )
+}
+
+#' create a userid
+#' @keywords internal
+#' @noRd
+st_userid <- function() {
+  random_string(length = 16, pattern = "[a-z0-9]")
 }

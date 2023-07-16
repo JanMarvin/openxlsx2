@@ -12,24 +12,23 @@ wb_add_named_region(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  cols,
-  rows,
   name,
-  localSheet = FALSE,
+  local_sheet = FALSE,
   overwrite = FALSE,
   comment = NULL,
-  customMenu = NULL,
+  custom_menu = NULL,
   description = NULL,
   is_function = NULL,
-  functionGroupId = NULL,
+  function_group_id = NULL,
   help = NULL,
   hidden = NULL,
-  localName = NULL,
-  publishToServer = NULL,
-  statusBar = NULL,
-  vbProcedure = NULL,
-  workbookParameter = NULL,
-  xml = NULL
+  local_name = NULL,
+  publish_to_server = NULL,
+  status_bar = NULL,
+  vb_procedure = NULL,
+  workbook_parameter = NULL,
+  xml = NULL,
+  ...
 )
 
 wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
@@ -43,41 +42,39 @@ wb_get_named_regions(x, tables = FALSE)
 
 \item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
 
-\item{cols}{Numeric vector specifying columns to include in region}
-
-\item{rows}{Numeric vector specifying rows to include in region}
-
 \item{name}{Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.}
 
-\item{localSheet}{If \code{TRUE} the named region will be local for this sheet}
+\item{local_sheet}{If \code{TRUE} the named region will be local for this sheet}
 
 \item{overwrite}{Boolean. Overwrite if exists? Default to FALSE}
 
 \item{comment}{description text for named region}
 
-\item{customMenu}{customMenu (unknown xml feature)}
+\item{custom_menu}{customMenu (unknown xml feature)}
 
 \item{description}{description (unknown xml feature)}
 
 \item{is_function}{function (unknown xml feature)}
 
-\item{functionGroupId}{function group id (unknown xml feature)}
+\item{function_group_id}{function group id (unknown xml feature)}
 
 \item{help}{help (unknown xml feature)}
 
 \item{hidden}{hidden if the named region should be hidden}
 
-\item{localName}{localName (unknown xml feature)}
+\item{local_name}{localName (unknown xml feature)}
 
-\item{publishToServer}{publish to server (unknown xml feature)}
+\item{publish_to_server}{publish to server (unknown xml feature)}
 
-\item{statusBar}{status bar (unknown xml feature)}
+\item{status_bar}{status bar (unknown xml feature)}
 
-\item{vbProcedure}{wbProcedure (unknown xml feature)}
+\item{vb_procedure}{wbProcedure (unknown xml feature)}
 
-\item{workbookParameter}{workbookParameter (unknown xml feature)}
+\item{workbook_parameter}{workbookParameter (unknown xml feature)}
 
 \item{xml}{xml (unknown xml feature)}
+
+\item{...}{additional arguments}
 
 \item{x}{An xlsx file or Workbook object}
 
@@ -102,8 +99,10 @@ wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
 wb$add_named_region(
   sheet = 1,
   name = "iris",
-  rows = seq_len(nrow(iris) + 1),
-  cols = seq_along(iris)
+  dims = rowcol_to_dims(
+    row = seq_len(nrow(iris) + 1),
+    col = seq_along(iris)
+  )
 )
 
 
@@ -127,37 +126,4 @@ head(df)
 
 df <- read_xlsx(out_file, namedRegion = "iris2")
 head(df)
-## create named regions
-wb <- wb_workbook()
-wb$add_worksheet("Sheet 1")
-
-## specify region
-wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
-wb$add_named_region(
-  sheet = 1,
-  name = "iris",
-  rows = seq_len(nrow(iris) + 1),
-  cols = seq_along(iris)
-)
-
-
-## using write_data 'name' argument to create a named region
-wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
-
-out_file <- temp_xlsx()
-wb$save(out_file, overwrite = TRUE)
-
-## see named regions
-wb_get_named_regions(wb) ## From Workbook object
-wb_get_named_regions(out_file) ## From xlsx file
-
-## read named regions
-df <- read_xlsx(wb, namedRegion = "iris")
-head(df)
-
-df <- read_xlsx(out_file, namedRegion = "iris2")
-head(df)
-}
-\seealso{
-\code{\link[=wb_add_named_region]{wb_add_named_region()}} \code{\link[=wb_remove_named_region]{wb_remove_named_region()}}
 }

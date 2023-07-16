@@ -30,107 +30,108 @@ For this example we will use example data provided by the package. You can locat
 ### Basic import
 We begin with the `openxlsx2_example.xlsx` file by telling R where to find this file on our system
 ```{r}
-xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+xlsx_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
 
 The object contains a path to the xlsx file and we pass this file to our function to read the workbook into R
 ```{r}
 # import workbook
-wb_to_df(xlsxFile)
+library(openxlsx2)
+wb_to_df(xlsx_file)
 ```
 
 The output is created as a data frame and contains data types date, logical, numeric and character. The function to import the file to R, `wb_to_df()` provides similar options as the `openxlsx` functions `read.xlsx()` and `readWorkbook()` and a few new functions we will go through the options. As you might have noticed, we return the column of the xlsx file as the row name of the data frame returned.
 Per default the first sheet in the workbook is imported. If you want to switch this, either provide the `sheet` parameter with the correct index or provide the sheet name.
 
-### colNames - first row as column name
+### `col_names` - first row as column name
 In the previous example the first imported row was used as column name for the data frame. This is the default behavior, but not always wanted or expected. Therefore this behavior can be disabled by the user.
 ```{r}
-# do not convert first row to colNames
-wb_to_df(xlsxFile, colNames = FALSE)
+# do not convert first row to column names
+wb_to_df(xlsx_file, col_names = FALSE)
 ```
 
-### detectDates - convert cells to R dates
+### `detect_dates` - convert cells to R dates
 The creators of the openxml standard are well known for mistakenly treating something as a date and `openxlsx2` has built in ways to identify a cell as a date and will try to convert the value for you, but unfortunately this is not always a trivial task and might fail. In such a case we provide an option to disable the date conversion entirely. In this case the underlying numerical value will be returned.
 ```{r}
 # do not try to identify dates in the data
-wb_to_df(xlsxFile, detectDates = FALSE)
+wb_to_df(xlsx_file, detect_dates = FALSE)
 ```
 
-### showFormula - show formulas instead of results
-Sometimes things might feel off. This can be because the openxml files are not updating formula results in the sheets unless they are opened in software that provides such functionality as certain tabular calculation software. Therefore the user might be interested in the underlying functions to see what is going on in the sheet. Using `showFormula` this is possible
+### `show_formula` - show formulas instead of results
+Sometimes things might feel off. This can be because the openxml files are not updating formula results in the sheets unless they are opened in software that provides such functionality as certain tabular calculation software. Therefore the user might be interested in the underlying functions to see what is going on in the sheet. Using `show_formula` this is possible
 ```{r}
 # return the underlying Excel formula instead of their values
-wb_to_df(xlsxFile, showFormula = TRUE)
+wb_to_df(xlsx_file, show_formula = TRUE)
 ```
 
-### dims - read specific dimension
+### `dims` - read specific dimension
 Sometimes the entire worksheet contains to much data, in such case we provide functions to read only a selected dimension range. Such a range consists of either a specific cell like "A1" or a cell range in the notion used in the openxml standard
 ```{r}
-# read dimension withot colNames
-wb_to_df(xlsxFile, dims = "A2:C5", colNames = FALSE)
+# read dimension withot column names
+wb_to_df(xlsx_file, dims = "A2:C5", col_names = FALSE)
 ```
 
-### cols - read selected columns
+### `cols` - read selected columns
 If you do not want to read a specific cell, but a cell range you can use the column attribute. This attribute takes a numeric vector as argument
 ```{r}
 # read selected cols
-wb_to_df(xlsxFile, cols = c("A:B", "G"))
+wb_to_df(xlsx_file, cols = c("A:B", "G"))
 ```
 
-### rows - read selected rows
+### `rows` - read selected rows
 The same goes with rows. You can select them using numeric vectors
 ```{r}
 # read selected rows
-wb_to_df(xlsxFile, rows = c(2, 4, 6))
+wb_to_df(xlsx_file, rows = c(2, 4, 6))
 ```
 
-### convert - convert input to guessed type
+### `convert` - convert input to guessed type
 In xml exists no difference between value types. All values are per default characters. To provide these as numerics, logicals or dates, `openxlsx2` and every other software dealing with xlsx files has to make assumptions about the cell type. This is especially tricky due to the notion of worksheets. Unlike in a data frame, a worksheet can have a wild mix of all types of data. Even though the conversion process from character to date or numeric is rather solid, sometimes the user might want to see the data without any conversion applied. This might be useful in cases where something unexpected happened or the import created warnings. In such a case you can look at the raw input data. If you want to disable date detection as well, please see the entry above.
 ```{r}
 # convert characters to numerics and date (logical too?)
-wb_to_df(xlsxFile, convert = FALSE)
+wb_to_df(xlsx_file, convert = FALSE)
 ```
 
-### skipEmptyRows - remove empty rows
+### `skip_empty_rows` - remove empty rows
 Even though `openxlsx2` imports everything as requested, sometimes it might be helpful to remove empty lines from the data. These might be either left empty intentional or empty because they are were formatted, but the cell value was removed afterwards. This was added mostly for backward comparability, but the default has been changed to `FALSE`. The behavior has changed a bit as well. Previously empty cells were removed prior to the conversion to R data frames, now they are removed after the conversion and are removed only if they are completely empty
 ```{r}
-# erase empty Rows from dataset
-wb_to_df(xlsxFile, sheet = 1, skipEmptyRows = TRUE) |> tail()
+# erase empty rows from dataset
+wb_to_df(xlsx_file, sheet = 1, skip_empty_rows = TRUE) |> tail()
 ```
 
-### skipEmptyCols - remove empty columns
+### `skip_empty_cols` - remove empty columns
 The same for columns
 ```{r}
-# erase empty Cols from dataset
-wb_to_df(xlsxFile, skipEmptyCols = TRUE)
+# erase empty cols from dataset
+wb_to_df(xlsx_file, skip_empty_cols = TRUE)
 ```
 
-### rowNames - keep rownames from input
+### `row_names` - keep rownames from input
 Sometimes the data source might provide rownames as well. In such a case you can `openxlsx2` to treat the first column as rowname
 ```{r}
 # convert first row to rownames
-wb_to_df(xlsxFile, sheet = 2, dims = "C6:G9", rowNames = TRUE)
+wb_to_df(xlsx_file, sheet = 2, dims = "C6:G9", row_names = TRUE)
 ```
 
-### types - convert column to specific type
+### `types` - convert column to specific type
 If the user know better than the software what type to expect in a worksheet, this can be provided via types. This parameter takes a named numeric. `0` is character, `1` is numeric and `2` is date
 ```{r}
 # define type of the data.frame
-wb_to_df(xlsxFile, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
+wb_to_df(xlsx_file, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
 ```
 
-### startRow - where to begin
-Often the creator of the worksheet has used a lot of creativity and the data does not begin in the first row, instead it begins somewhere else. To define the row where to begin reading, define it via the `startRow` parameter
+### `start_row` - where to begin
+Often the creator of the worksheet has used a lot of creativity and the data does not begin in the first row, instead it begins somewhere else. To define the row where to begin reading, define it via the `start_row` parameter
 ```{r}
 # start in row 5
-wb_to_df(xlsxFile, startRow = 5, colNames = FALSE)
+wb_to_df(xlsx_file, start_row = 5, col_names = FALSE)
 ```
 
-### na.strings - define missing values
+### `na.strings` - define missing values
 There is the "#N/A" string, but often the user will be faced with custom missing values and other values we are not interested. Such strings can be passed as character vector via `na.strings`
 ```{r}
-# na string
-wb_to_df(xlsxFile, na.strings = "")
+# na strings
+wb_to_df(xlsx_file, na.strings = "")
 ```
 
 ### Importing as workbook
@@ -140,9 +141,9 @@ In addition to importing directly from xlsx or xlsm files, `openxlsx2` provides 
 Importing a file into a workbook looks like this:
 ```{r}
 # the file we are going to load
-xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+xlsx_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 # loading the file into the workbook
-wb <- wb_load(file = xlsxFile)
+wb <- wb_load(file = xlsx_file)
 ```
 
 The additional options `wb_load()` provides are for internal use: `sheet` loads only a selected sheet from the workbook and `data_only` reads only the data parts from a workbook and ignores any additional graphics or pivot tables. Both functions create workbook objects that can only be used to read data, and we do not recommend end users to use them. Especially not if they intend to re-export the workbook afterwards.
@@ -156,10 +157,10 @@ Once a workbook is imported, we provide several functions to interact with and m
 If you want to export a data frame from R, you can use `write_xlsx()` which will create an xlsx file. This file can be tweaked further. The man page provides various options (further explanation and examples will follow).
 
 ```{r, eval = FALSE}
-write_xlsx(mtcars, "mtcars.xlsx")
+write_xlsx(x = mtcars, file = "mtcars.xlsx")
 ```
 
-### Exporting `wbWorkbooks`
+### Exporting a `wbWorkbook`
 
 Imported workbooks can be saved as xlsx or xlsm files with the wrapper `wb_save()` or with `wb$save()`. Both functions take the filename and an optional `Overwrite` option. If the latter is set, an optional guard is provided to check if the file you want to write already exists. But be careful, this is optional. The default is to save the file and replace an existing file. Of course, in Windows, files that are locked (for example, if they were opened by another process) will not be replaced.
 
@@ -167,9 +168,36 @@ Imported workbooks can be saved as xlsx or xlsm files with the wrapper `wb_save(
 # replace the existing file
 wb$save("mtcars.xlsx")
 
-# do not overwrite the exisisting file
+# do not overwrite the existing file
 try(wb$save("mtcars.xlsx", overwrite = FALSE))
 ```
+
+## `dims`
+
+In `openxlsx2` functions that interact with worksheet cells are using `dims` as argument and require the users to provide these. `dims` are cells or cell ranges in A1 notation. The single argument `dims` hereby replaces `col`/`row`, `cols`/`rows` and `xy`. Since A1 notation is rather simple in the first few columns it might get confusing after the 26. Therefore we provide a wrapper to construct it:
+
+```{r}
+# various options
+wb_dims(4)
+
+wb_dims(row = 4, col = 4)
+
+wb_dims(row = 4:10, col = 5:9)
+
+wb_dims(row = 4:10, col = "A:D")
+
+wb_dims(mtcars)
+
+# in a wb chain
+wb <- wb_workbook()$
+  add_worksheet()$
+  add_data(x = mtcars)$
+  add_fill(
+    dims = wb_dims(mtcars, start_row = 5),
+    color = wb_color("yellow")
+  )
+```
+
 
 ## A note on speed and memory usage
 

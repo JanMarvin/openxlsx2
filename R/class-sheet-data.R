@@ -3,7 +3,7 @@
 #'
 #' A hyperlink
 #'
-#' @export
+#' @noRd
 wbSheetData <- R6::R6Class(
   "wbSheetData",
   public = list(
@@ -27,8 +27,9 @@ wbSheetData <- R6::R6Class(
   )
 )
 
+## TODO is this even used?
 #' @rdname wbSheetData
-#' @export
+#' @noRd
 wb_sheet_data <- function() {
   wbSheetData$new()
 }

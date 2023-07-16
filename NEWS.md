@@ -1,17 +1,38 @@
 # openxlsx2 (development version)
 
+
+## API Change
+
+* Function arguments are now defaulting to `snake_case`. For the time being, both arguments are accepted and `camelCase` will be switched to `snake_case` under the hood. Documentation like vignettes and examples are currently still displaying `camelCase` and maybe some `camelCase` function slipped through.  [678](https://github.com/JanMarvin/openxlsx2/pull/678)
+
 ## Breaking changes
 
 * Order of arguments in `wb_add_named_region()` changed, because previously overlooked `dims` argument was added.
+* In various functions the order of `dims` was changed, to highlight it's importance
 
 * Cleanups
   * remove deprecated functions
   
   * remove deprecated arguments
     * `xy` argument
+    * arguments `col`, `row`, `cols`, `rows`. `start_col`, `start_row` and `gridExpand` were deprecated in favor of `dims`. Row and column vectors can be converted to `dims` using `wb_dims()`.
     
   * deprecating function
     * `convertToExcelDate()` for `convert_to_excel_date()`
+  
+  * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()` internal functions
+  * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartsheet`, `wbComment`, `wbHyperlink` internal
+  
+## New features
+
+* `wb_dims()` was added as a more convenient replacement for `rowcol_to_dims()`. The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coerceable to data frame. This allows the following variants:
+* `wb_dims(1:5, letters)`
+* `wb_dims(1:5, 1:26)`
+* `wb_dims(matrix(1, 5, 26))` with an added row for column names
+  
+## Refactoring
+
+* Cleanup / revisit documentation and vignettes  ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
 
 ***************************************************************************
 

@@ -22,7 +22,7 @@ wb_add_font(
   family = "",
   scheme = "",
   shadow = "",
-  vertAlign = "",
+  vert_align = "",
   ...
 )
 }
@@ -61,7 +61,7 @@ wb_add_font(
 
 \item{shadow}{shadow}
 
-\item{vertAlign}{vertical alignment}
+\item{vert_align}{vertical alignment}
 
 \item{...}{...}
 }

@@ -8,23 +8,24 @@ write_datatable(
   wb,
   sheet,
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
-  colNames = TRUE,
-  rowNames = FALSE,
-  tableStyle = "TableStyleLight9",
-  tableName = NULL,
-  withFilter = TRUE,
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
+  col_names = TRUE,
+  row_names = FALSE,
+  table_style = "TableStyleLight9",
+  table_name = NULL,
+  with_filter = TRUE,
   sep = ", ",
-  firstColumn = FALSE,
-  lastColumn = FALSE,
-  bandedRows = TRUE,
-  bandedCols = FALSE,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE,
+  first_column = FALSE,
+  last_column = FALSE,
+  banded_rows = TRUE,
+  banded_cols = FALSE,
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
   na.strings = na_strings(),
-  inline_strings = TRUE
+  inline_strings = TRUE,
+  ...
 )
 }
 \arguments{
@@ -34,21 +35,21 @@ write_datatable(
 
 \item{x}{A data frame.}
 
-\item{startCol}{A vector specifying the starting column to write df}
-
-\item{startRow}{A vector specifying the starting row to write df}
-
 \item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
 
-\item{colNames}{If \code{TRUE}, column names of x are written.}
+\item{start_col}{A vector specifying the starting column to write df}
 
-\item{rowNames}{If \code{TRUE}, row names of x are written.}
+\item{start_row}{A vector specifying the starting row to write df}
 
-\item{tableStyle}{Any excel table style name or "none" (see "formatting" vignette).}
+\item{col_names}{If \code{TRUE}, column names of x are written.}
 
-\item{tableName}{name of table in workbook. The table name must be unique.}
+\item{row_names}{If \code{TRUE}, row names of x are written.}
 
-\item{withFilter}{If \code{TRUE}, columns with have filters in the first row.}
+\item{table_style}{Any excel table style name or "none" (see "formatting" vignette).}
+
+\item{table_name}{name of table in workbook. The table name must be unique.}
+
+\item{with_filter}{If \code{TRUE}, columns with have filters in the first row.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
 \cr\cr
@@ -57,22 +58,24 @@ write_datatable(
 \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}}
 
-\item{firstColumn}{logical. If TRUE, the first column is bold}
+\item{first_column}{logical. If TRUE, the first column is bold}
 
-\item{lastColumn}{logical. If TRUE, the last column is bold}
+\item{last_column}{logical. If TRUE, the last column is bold}
 
-\item{bandedRows}{logical. If TRUE, rows are color banded}
+\item{banded_rows}{logical. If TRUE, rows are color banded}
 
-\item{bandedCols}{logical. If TRUE, the columns are color banded}
+\item{banded_cols}{logical. If TRUE, the columns are color banded}
 
-\item{applyCellStyle}{apply styles when writing on the sheet}
+\item{apply_cell_style}{apply styles when writing on the sheet}
 
-\item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
+\item{remove_cell_style}{if writing into existing cells, should the cell style be removed?}
 
 \item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
+
+\item{...}{additional arguments}
 }
 \description{
 Write to a worksheet and format as an Excel table
@@ -169,10 +172,7 @@ for (i in 1:11) {
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
-
 \code{\link[=write_data]{write_data()}}
-
 \code{\link[=wb_remove_tables]{wb_remove_tables()}}
-
 \code{\link[=wb_get_tables]{wb_get_tables()}}
 }

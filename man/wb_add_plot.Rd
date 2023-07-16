@@ -7,16 +7,15 @@
 wb_add_plot(
   wb,
   sheet = current_sheet(),
+  dims = "A1",
   width = 6,
   height = 4,
-  startRow = 1,
-  startCol = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  fileType = "png",
+  row_offset = 0,
+  col_offset = 0,
+  file_type = "png",
   units = "in",
   dpi = 300,
-  dims = rowcol_to_dim(startRow, startCol)
+  ...
 )
 }
 \arguments{
@@ -24,25 +23,21 @@ wb_add_plot(
 
 \item{sheet}{A name or index of a worksheet}
 
+\item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
+
 \item{width}{Width of figure. Defaults to \code{6}in.}
 
 \item{height}{Height of figure . Defaults to \code{4}in.}
 
-\item{startRow}{Row coordinate of upper left corner of figure.}
+\item{row_offset, col_offset}{offset for column and row}
 
-\item{startCol}{Column coordinate of upper left corner of figure.}
-
-\item{rowOffset}{offset within cell (row)}
-
-\item{colOffset}{offset within cell (column)}
-
-\item{fileType}{File type of image}
+\item{file_type}{File type of image}
 
 \item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution}
 
-\item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
+\item{...}{additional arguments}
 }
 \description{
 The current plot is saved to a temporary image file using
@@ -61,7 +56,7 @@ wb$add_worksheet("Sheet 1", gridLines = FALSE)
 require(ggplot2)
 p1 <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
   ggtitle("Distribution of Gas Mileage") +
-  geom_density(alpha = I(.5))
+  geom_density(alpha = 0.5)
 p2 <- ggplot(Orange, aes(x = age, y = circumference, color = Tree)) +
   geom_point() + geom_line()
 
@@ -76,5 +71,5 @@ wb$add_plot(1, dims = "J2", width = 16, height = 10, fileType = "png", units = "
 }
 }
 \seealso{
-\code{\link[=wb_add_image]{wb_add_image()}}
+\code{\link[=wb_add_chart_xml]{wb_add_chart_xml()}} \code{\link[=wb_add_drawing]{wb_add_drawing()}} \code{\link[=wb_add_image]{wb_add_image()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}}
 }

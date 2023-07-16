@@ -258,16 +258,19 @@ as_xml <- function(x, ...) {
 }
 
 #' write xml file
-#' @description brings the added benefit of xml checking
+#'
+#' brings the added benefit of xml checking
+#'
 #' @param head head part of xml
 #' @param body body part of xml
 #' @param tail tail part of xml
 #' @param fl file name with full path
 #' @param escapes bool if characters like "&" should be escaped. The default is
 #' no escape, assuming that xml to export is already valid.
-#' @export
-# TODO needs a unit test
+#'
+#' @noRd
 write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
+  # TODO `write_file()` needs a unit test
   if (getOption("openxlsx2.force_utf8_encoding", default = FALSE)) {
       from_enc <- getOption("openxlsx2.native_encoding")
       head <- stringi::stri_encode(head, from = from_enc, to = "UTF-8")

@@ -6,49 +6,52 @@
 \usage{
 wb_set_bookview(
   wb,
-  activeTab = NULL,
-  autoFilterDateGrouping = NULL,
-  firstSheet = NULL,
+  active_tab = NULL,
+  auto_filter_date_grouping = NULL,
+  first_sheet = NULL,
   minimized = NULL,
-  showHorizontalScroll = NULL,
-  showSheetTabs = NULL,
-  showVerticalScroll = NULL,
-  tabRatio = NULL,
+  show_horizontal_scroll = NULL,
+  show_sheet_tabs = NULL,
+  show_vertical_scroll = NULL,
+  tab_ratio = NULL,
   visibility = NULL,
-  windowHeight = NULL,
-  windowWidth = NULL,
-  xWindow = NULL,
-  yWindow = NULL
+  window_height = NULL,
+  window_width = NULL,
+  x_window = NULL,
+  y_window = NULL,
+  ...
 )
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}
 
-\item{activeTab}{activeTab}
+\item{active_tab}{activeTab}
 
-\item{autoFilterDateGrouping}{autoFilterDateGrouping}
+\item{auto_filter_date_grouping}{autoFilterDateGrouping}
 
-\item{firstSheet}{firstSheet}
+\item{first_sheet}{firstSheet}
 
 \item{minimized}{minimized}
 
-\item{showHorizontalScroll}{showHorizontalScroll}
+\item{show_horizontal_scroll}{showHorizontalScroll}
 
-\item{showSheetTabs}{showSheetTabs}
+\item{show_sheet_tabs}{showSheetTabs}
 
-\item{showVerticalScroll}{showVerticalScroll}
+\item{show_vertical_scroll}{showVerticalScroll}
 
-\item{tabRatio}{tabRatio}
+\item{tab_ratio}{tabRatio}
 
 \item{visibility}{visibility}
 
-\item{windowHeight}{windowHeight}
+\item{window_height}{windowHeight}
 
-\item{windowWidth}{windowWidth}
+\item{window_width}{windowWidth}
 
-\item{xWindow}{xWindow}
+\item{x_window}{xWindow}
 
-\item{yWindow}{yWindow}
+\item{y_window}{yWindow}
+
+\item{...}{additional arguments}
 }
 \value{
 The \code{wbWorkbook} object

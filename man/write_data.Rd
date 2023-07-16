@@ -9,38 +9,40 @@ wb_add_data(
   wb,
   sheet = current_sheet(),
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
-  colNames = TRUE,
-  rowNames = FALSE,
-  withFilter = FALSE,
+  col_names = TRUE,
+  row_names = FALSE,
+  with_filter = FALSE,
   name = NULL,
   sep = ", ",
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE,
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
   na.strings = na_strings(),
-  inline_strings = TRUE
+  inline_strings = TRUE,
+  ...
 )
 
 write_data(
   wb,
   sheet,
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
-  colNames = TRUE,
-  rowNames = FALSE,
-  withFilter = FALSE,
+  col_names = TRUE,
+  row_names = FALSE,
+  with_filter = FALSE,
   sep = ", ",
   name = NULL,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE,
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
   na.strings = na_strings(),
-  inline_strings = TRUE
+  inline_strings = TRUE,
+  ...
 )
 }
 \arguments{
@@ -50,32 +52,34 @@ write_data(
 
 \item{x}{Object to be written. For classes supported look at the examples.}
 
-\item{startCol}{A vector specifying the starting column to write to.}
-
-\item{startRow}{A vector specifying the starting row to write to.}
-
 \item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
+
+\item{start_col}{A vector specifying the starting column to write to.}
+
+\item{start_row}{A vector specifying the starting row to write to.}
 
 \item{array}{A bool if the function written is of type array}
 
-\item{colNames}{If \code{TRUE}, column names of x are written.}
+\item{col_names}{If \code{TRUE}, column names of x are written.}
 
-\item{rowNames}{If \code{TRUE}, data.frame row names of x are written.}
+\item{row_names}{If \code{TRUE}, data.frame row names of x are written.}
 
-\item{withFilter}{If \code{TRUE}, add filters to the column name row. NOTE can only have one filter per worksheet.}
+\item{with_filter}{If \code{TRUE}, add filters to the column name row. NOTE can only have one filter per worksheet.}
 
 \item{name}{If not NULL, a named region is defined.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
 
-\item{applyCellStyle}{apply styles when writing on the sheet}
+\item{apply_cell_style}{apply styles when writing on the sheet}
 
-\item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
+\item{remove_cell_style}{if writing into existing cells, should the cell style be removed?}
 
 \item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
+
+\item{...}{additional arguments}
 }
 \value{
 A clone of `wb``
@@ -98,7 +102,6 @@ This is because only the formula is written and left to Excel to evaluate the fo
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame contains this string, the output will be broken.
 }
 \examples{
-
 ## See formatting vignette for further examples.
 
 ## Options for default styling (These are the defaults)
@@ -106,7 +109,7 @@ options("openxlsx2.dateFormat" = "mm/dd/yyyy")
 options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 options("openxlsx2.numFmt" = NULL)
 
-#####################################################################################
+#############################################################################
 ## Create Workbook object and add worksheets
 wb <- wb_workbook()
 
@@ -117,7 +120,7 @@ wb$add_worksheet("Formula")
 x <- mtcars[1:6, ]
 wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
 
-#####################################################################################
+#############################################################################
 ## Hyperlinks
 ## - vectors/columns with class 'hyperlink' are written as hyperlinks'
 
@@ -126,7 +129,7 @@ names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display t
 class(v) <- "hyperlink"
 wb$add_data("Cars", x = v, dims = c("B32"))
 
-#####################################################################################
+#############################################################################
 ## Formulas
 ## - vectors/columns with class 'formula' are written as formulas'
 
@@ -140,7 +143,7 @@ class(df$z) <- c(class(df$z), "formula")
 
 wb$add_data(sheet = "Formula", x = df)
 
-###########################################################################
+#############################################################################
 # update cell range and add mtcars
 xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 wb2 <- wb_load(xlsxFile)

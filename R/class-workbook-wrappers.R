@@ -7,8 +7,9 @@
 #' @param title Workbook properties title
 #' @param subject Workbook properties subject
 #' @param category Workbook properties category
-#' @param datetimeCreated The time of the workbook is created
+#' @param datetime_created The time of the workbook is created
 #' @param theme Optional theme identified by string or number
+#' @param ... additional arguments
 #' @return A [wbWorkbook] object
 #'
 #' @export
@@ -33,20 +34,22 @@
 #'   category = "sales"
 #' )
 wb_workbook <- function(
-  creator         = NULL,
-  title           = NULL,
-  subject         = NULL,
-  category        = NULL,
-  datetimeCreated = Sys.time(),
-  theme           = NULL
+  creator          = NULL,
+  title            = NULL,
+  subject          = NULL,
+  category         = NULL,
+  datetime_created = Sys.time(),
+  theme            = NULL,
+  ...
 ) {
   wbWorkbook$new(
-    creator         = creator,
-    title           = title,
-    subject         = subject,
-    category        = category,
-    datetimeCreated = datetimeCreated,
-    theme           = theme
+    creator          = creator,
+    title            = title,
+    subject          = subject,
+    category         = category,
+    datetime_created = datetime_created,
+    theme            = theme,
+    ...              = ...
   )
 }
 
@@ -86,20 +89,21 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
-#' @param startCol A vector specifying the starting column to write to.
-#' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param start_col A vector specifying the starting column to write to.
+#' @param start_row A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
-#' @param colNames If `TRUE`, column names of x are written.
-#' @param rowNames If `TRUE`, data.frame row names of x are written.
-#' @param withFilter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
+#' @param col_names If `TRUE`, column names of x are written.
+#' @param row_names If `TRUE`, data.frame row names of x are written.
+#' @param with_filter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' @param applyCellStyle Should we write cell styles to the workbook
-#' @param removeCellStyle keep the cell style?
+#' @param apply_cell_style Should we write cell styles to the workbook
+#' @param remove_cell_style keep the cell style?
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
+#' @param ... additional arguments
 #' @export
 #' @details Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
@@ -110,39 +114,41 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @return A clone of `wb``
 wb_add_data <- function(
     wb,
-    sheet           = current_sheet(),
+    sheet             = current_sheet(),
     x,
-    startCol        = 1,
-    startRow        = 1,
-    dims            = rowcol_to_dims(startRow, startCol),
-    array           = FALSE,
-    colNames        = TRUE,
-    rowNames        = FALSE,
-    withFilter      = FALSE,
-    name            = NULL,
-    sep             = ", ",
-    applyCellStyle  = TRUE,
-    removeCellStyle = FALSE,
-    na.strings      = na_strings(),
-    inline_strings  = TRUE
+    dims              = rowcol_to_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    array             = FALSE,
+    col_names         = TRUE,
+    row_names         = FALSE,
+    with_filter       = FALSE,
+    name              = NULL,
+    sep               = ", ",
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    na.strings        = na_strings(),
+    inline_strings    = TRUE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_data(
-    sheet           = sheet,
-    x               = x,
-    startCol        = startCol,
-    startRow        = startRow,
-    dims            = dims,
-    array           = array,
-    colNames        = colNames,
-    rowNames        = rowNames,
-    withFilter      = withFilter,
-    name            = name,
-    sep             = sep,
-    applyCellStyle  = applyCellStyle,
-    removeCellStyle = removeCellStyle,
-    na.strings      = na.strings,
-    inline_strings  = inline_strings
+    sheet             = sheet,
+    x                 = x,
+    dims              = dims,
+    start_col         = start_col,
+    start_row         = start_row,
+    array             = array,
+    col_names         = col_names,
+    row_names         = row_names,
+    with_filter       = with_filter,
+    name              = name,
+    sep               = sep,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    na.strings        = na.strings,
+    inline_strings    = inline_strings,
+    ...               = ...
   )
 }
 
@@ -153,15 +159,15 @@ wb_add_data <- function(
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A dataframe.
-#' @param startCol A vector specifying the starting column to write df
-#' @param startRow A vector specifying the starting row to write df
+#' @param start_col A vector specifying the starting column to write df
+#' @param start_row A vector specifying the starting row to write df
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param colNames If `TRUE`, column names of x are written.
-#' @param rowNames If `TRUE`, row names of x are written.
-#' @param tableStyle Any excel table style name or "none" (see "formatting"
+#' @param col_names If `TRUE`, column names of x are written.
+#' @param row_names If `TRUE`, row names of x are written.
+#' @param table_style Any excel table style name or "none" (see "formatting"
 #'   vignette).
-#' @param tableName name of table in workbook. The table name must be unique.
-#' @param withFilter If `TRUE`, columns with have filters in the first row.
+#' @param table_name name of table in workbook. The table name must be unique.
+#' @param with_filter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list
 #'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
 #'   sep).
@@ -171,15 +177,16 @@ wb_add_data <- function(
 #' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 #' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
 #'
-#' @param firstColumn logical. If TRUE, the first column is bold
-#' @param lastColumn logical. If TRUE, the last column is bold
-#' @param bandedRows logical. If TRUE, rows are color banded
-#' @param bandedCols logical. If TRUE, the columns are color banded
-#' @param applyCellStyle Should we write cell styles to the workbook
-#' @param removeCellStyle keep the cell style?
+#' @param first_column logical. If TRUE, the first column is bold
+#' @param last_column logical. If TRUE, the last column is bold
+#' @param banded_rows logical. If TRUE, rows are color banded
+#' @param banded_cols logical. If TRUE, the columns are color banded
+#' @param apply_cell_style Should we write cell styles to the workbook
+#' @param remove_cell_style keep the cell style?
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
+#' @param ... additional arguments
 #'
 #' @details columns of x with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,
@@ -190,47 +197,49 @@ wb_add_data <- function(
 #' @export
 wb_add_data_table <- function(
     wb,
-    sheet       = current_sheet(),
+    sheet             = current_sheet(),
     x,
-    startCol    = 1,
-    startRow    = 1,
-    dims        = rowcol_to_dims(startRow, startCol),
-    colNames    = TRUE,
-    rowNames    = FALSE,
-    tableStyle  = "TableStyleLight9",
-    tableName   = NULL,
-    withFilter  = TRUE,
-    sep         = ", ",
-    firstColumn = FALSE,
-    lastColumn  = FALSE,
-    bandedRows  = TRUE,
-    bandedCols  = FALSE,
-    applyCellStyle  = TRUE,
-    removeCellStyle = FALSE,
-    na.strings     = na_strings(),
-    inline_strings = TRUE
+    dims              = rowcol_to_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    col_names         = TRUE,
+    row_names         = FALSE,
+    table_style       = "TableStyleLight9",
+    table_name        = NULL,
+    with_filter       = TRUE,
+    sep               = ", ",
+    first_column      = FALSE,
+    last_column       = FALSE,
+    banded_rows       = TRUE,
+    banded_cols       = FALSE,
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    na.strings        = na_strings(),
+    inline_strings    = TRUE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_data_table(
-    sheet       = sheet,
-    x           = x,
-    startCol    = startCol,
-    startRow    = startRow,
-    dims        = dims,
-    colNames    = colNames,
-    rowNames    = rowNames,
-    tableStyle  = tableStyle,
-    tableName   = tableName,
-    withFilter  = withFilter,
-    sep         = sep,
-    firstColumn = firstColumn,
-    lastColumn  = lastColumn,
-    bandedRows  = bandedRows,
-    bandedCols  = bandedCols,
-    applyCellStyle  = applyCellStyle,
-    removeCellStyle = removeCellStyle,
-    na.strings  = na.strings,
-    inline_strings = inline_strings
+    sheet             = sheet,
+    x                 = x,
+    dims              = dims,
+    start_col         = start_col,
+    start_row         = start_row,
+    col_names         = col_names,
+    row_names         = row_names,
+    table_style       = table_style,
+    table_name        = table_name,
+    with_filter       = with_filter,
+    sep               = sep,
+    first_column      = first_column,
+    last_column       = last_column,
+    banded_rows       = banded_rows,
+    banded_cols       = banded_cols,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    na.strings        = na.strings,
+    inline_strings    = inline_strings,
+    ...               = ...
   )
 }
 
@@ -303,49 +312,51 @@ wb_add_pivot_table <- function(
 #'
 #' @details Currently only the English version of functions are supported. Please don't use the local translation.
 #' The examples below show a small list of possible formulas:
-#' \itemize{
-#'     \item{SUM(B2:B4)}
-#'     \item{AVERAGE(B2:B4)}
-#'     \item{MIN(B2:B4)}
-#'     \item{MAX(B2:B4)}
-#'     \item{...}
 #'
-#' }
+#' * SUM(B2:B4)
+#' * AVERAGE(B2:B4)
+#' * MIN(B2:B4)
+#' * MAX(B2:B4)
+#' * ...
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x A character vector.
-#' @param startCol A vector specifying the starting column to write to.
-#' @param startRow A vector specifying the starting row to write to.
 #' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param start_col A vector specifying the starting column to write to.
+#' @param start_row A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
 #' @param cm A special kind of array function that hides the curly braces in the cell. Add this, if you see "@" inserted into your formulas
-#' @param applyCellStyle Should we write cell styles to the workbook
-#' @param removeCellStyle keep the cell style?
+#' @param apply_cell_style Should we write cell styles to the workbook
+#' @param remove_cell_style keep the cell style?,
+#' @param ... additional arguments
 #' @family workbook wrappers
 #' @export
 wb_add_formula <- function(
     wb,
-    sheet           = current_sheet(),
+    sheet             = current_sheet(),
     x,
-    startCol        = 1,
-    startRow        = 1,
-    dims            = rowcol_to_dims(startRow, startCol),
-    array           = FALSE,
-    cm              = FALSE,
-    applyCellStyle  = TRUE,
-    removeCellStyle = FALSE
+    dims              = rowcol_to_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    array             = FALSE,
+    cm                = FALSE,
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_formula(
-    sheet           = sheet,
-    x               = x,
-    startCol        = startCol,
-    startRow        = startRow,
-    dims            = dims,
-    array           = array,
-    cm              = cm,
-    applyCellStyle  = applyCellStyle,
-    removeCellStyle = removeCellStyle
+    sheet             = sheet,
+    x                 = x,
+    dims              = dims,
+    start_col         = start_col,
+    start_row         = start_row,
+    array             = array,
+    cm                = cm,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    ...               = ...
   )
 }
 
@@ -475,7 +486,7 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #'
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheet A name for the new worksheet
-#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#' @param tab_color Color of the worksheet tab. A valid color (belonging to
 #'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
@@ -488,16 +499,16 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NU
 #' @export
 wb_add_chartsheet <- function(
   wb,
-  sheet       = next_sheet(),
-  tabColor    = NULL,
-  zoom        = 100,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
+  sheet     = next_sheet(),
+  tab_color = NULL,
+  zoom      = 100,
+  visible   = c("true", "false", "hidden", "visible", "veryhidden"),
   ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
     sheet       = sheet,
-    tabColor    = tabColor,
+    tab_color   = tab_color,
     zoom        = zoom,
     visible     = visible,
     ...         = ...
@@ -508,22 +519,22 @@ wb_add_chartsheet <- function(
 #'
 #' @param wb A Workbook object to attach the new worksheet
 #' @param sheet A name for the new worksheet
-#' @param gridLines A logical. If `FALSE`, the worksheet grid lines will be
+#' @param grid_lines A logical. If `FALSE`, the worksheet grid lines will be
 #'   hidden.
-#' @param rowColHeaders A logical. If `FALSE`, the worksheet colname and rowname will be
+#' @param row_col_headers A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tabColor Color of the worksheet tab. A valid color (belonging to
+#' @param tab_color Color of the worksheet tab. A valid color (belonging to
 #'   colors()) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
-#' @param header,oddHeader,evenHeader,firstHeader,footer,oddFooter,evenFooter,firstFooter
+#' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
 #'   Character vector of length 3 corresponding to positions left, center,
 #'   right.  `header` and `footer` are used to default additional arguments.
 #'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
 #'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
-#' @param hasDrawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paperSize An integer corresponding to a paper size. See ?ws_page_setup for
+#' @param has_drawing If TRUE prepare a drawing output (TODO does this work?)
+#' @param paper_size An integer corresponding to a paper size. See ?ws_page_setup for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
 #' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
@@ -585,46 +596,46 @@ wb_add_chartsheet <- function(
 #' wb$add_data(sheet = 8, 1:400)
 wb_add_worksheet <- function(
   wb,
-  sheet       = next_sheet(),
-  gridLines   = TRUE,
-  rowColHeaders = TRUE,
-  tabColor    = NULL,
-  zoom        = 100,
-  header      = NULL,
-  footer      = NULL,
-  oddHeader   = header,
-  oddFooter   = footer,
-  evenHeader  = header,
-  evenFooter  = footer,
-  firstHeader = header,
-  firstFooter = footer,
-  visible     = c("true", "false", "hidden", "visible", "veryhidden"),
-  hasDrawing  = FALSE,
-  paperSize   = getOption("openxlsx2.paperSize", default = 9),
-  orientation = getOption("openxlsx2.orientation", default = "portrait"),
-  hdpi        = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi        = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  sheet           = next_sheet(),
+  grid_lines      = TRUE,
+  row_col_headers = TRUE,
+  tab_color       = NULL,
+  zoom            = 100,
+  header          = NULL,
+  footer          = NULL,
+  odd_header      = header,
+  odd_footer      = footer,
+  even_header     = header,
+  even_footer     = footer,
+  first_header    = header,
+  first_footer    = footer,
+  visible         = c("true", "false", "hidden", "visible", "veryhidden"),
+  has_drawing     = FALSE,
+  paper_size      = getOption("openxlsx2.paperSize", default = 9),
+  orientation     = getOption("openxlsx2.orientation", default = "portrait"),
+  hdpi            = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
   ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_worksheet(
-    sheet       = sheet,
-    gridLines   = gridLines,
-    rowColHeaders = rowColHeaders,
-    tabColor    = tabColor,
-    zoom        = zoom,
-    oddHeader   = headerFooterSub(oddHeader),
-    oddFooter   = headerFooterSub(oddFooter),
-    evenHeader  = headerFooterSub(evenHeader),
-    evenFooter  = headerFooterSub(evenFooter),
-    firstHeader = headerFooterSub(firstHeader),
-    firstFooter = headerFooterSub(firstFooter),
-    visible     = visible,
-    paperSize   = paperSize,
-    orientation = orientation,
-    vdpi        = vdpi,
-    hdpi        = hdpi,
-    ...         = ...
+    sheet           = sheet,
+    grid_lines      = grid_lines,
+    row_col_headers = row_col_headers,
+    tab_color       = tab_color,
+    zoom            = zoom,
+    odd_header      = headerFooterSub(odd_header),
+    odd_footer      = headerFooterSub(odd_footer),
+    even_header     = headerFooterSub(even_header),
+    even_footer     = headerFooterSub(even_footer),
+    first_header    = headerFooterSub(first_header),
+    first_footer    = headerFooterSub(first_footer),
+    visible         = visible,
+    paper_size      = paper_size,
+    orientation     = orientation,
+    vdpi            = vdpi,
+    hdpi            = hdpi,
+    ...             = ...
   )
 }
 
@@ -846,17 +857,15 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param startRow Row coordinate of upper left corner of figure.
-#' @param startCol Column coordinate of upper left corner of figure.
-#' @param rowOffset offset within cell (row)
-#' @param colOffset offset within cell (column)
+#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
+#' @param row_offset,col_offset offset for column and row
 #' @param width Width of figure. Defaults to `6`in.
 #' @param height Height of figure . Defaults to `4`in.
-#' @param fileType File type of image
+#' @param file_type File type of image
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution
-#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @seealso [wb_add_image()]
+#' @param ... additional arguments
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()]
 #' @export
 #' @examples
 #' if (requireNamespace("ggplot2") && interactive()) {
@@ -870,7 +879,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' require(ggplot2)
 #' p1 <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
 #'   ggtitle("Distribution of Gas Mileage") +
-#'   geom_density(alpha = I(.5))
+#'   geom_density(alpha = 0.5)
 #' p2 <- ggplot(Orange, aes(x = age, y = circumference, color = Tree)) +
 #'   geom_point() + geom_line()
 #'
@@ -885,40 +894,39 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' }
 wb_add_plot <- function(
     wb,
-    sheet     = current_sheet(),
-    width     = 6,
-    height    = 4,
-    startRow  = 1,
-    startCol  = 1,
-    rowOffset = 0,
-    colOffset = 0,
-    fileType  = "png",
-    units     = "in",
-    dpi       = 300,
-    dims      = rowcol_to_dim(startRow, startCol)
+    sheet      = current_sheet(),
+    dims       = "A1",
+    width      = 6,
+    height     = 4,
+    row_offset = 0,
+    col_offset = 0,
+    file_type  = "png",
+    units      = "in",
+    dpi        = 300,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_plot(
-    sheet     = sheet,
-    width     = width,
-    height    = height,
-    startRow  = startRow,
-    startCol  = startCol,
-    rowOffset = rowOffset,
-    colOffset = colOffset,
-    fileType  = fileType,
-    units     = units,
-    dpi       = dpi,
-    dims      = dims
+    sheet      = sheet,
+    dims       = dims,
+    width      = width,
+    height     = height,
+    row_offset = row_offset,
+    col_offset = col_offset,
+    file_type  = file_type,
+    units      = units,
+    dpi        = dpi,
+    ...        = ...
   )
 }
 
 #' add drawings to workbook
 #' @param wb a wbWorkbook
 #' @param sheet a sheet in the workbook
-#' @param xml the drawing xml as character or file
 #' @param dims the dimension where the drawing is added. Can be NULL
-#' @param colOffset,rowOffset offsets for column and row
+#' @param xml the drawing xml as character or file
+#' @param col_offset,row_offset offsets for column and row
+#' @param ... additional arguments
 #' @examples
 #' if (requireNamespace("rvg") && interactive()) {
 #'
@@ -934,22 +942,86 @@ wb_add_plot <- function(
 #'   add_drawing(xml = tmp)$
 #'   add_drawing(xml = tmp, dims = NULL)
 #' }
+#' @seealso [wb_add_chart_xml()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #‘ @export
 wb_add_drawing <- function(
   wb,
-  sheet     = current_sheet(),
+  sheet      = current_sheet(),
+  dims       = "A1",
   xml,
-  dims      = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_drawing(
-    sheet     = sheet,
-    xml       = xml,
-    dims      = dims,
-    colOffset = colOffset,
-    rowOffset = rowOffset
+    sheet      = sheet,
+    dims       = dims,
+    xml        = xml,
+    col_offset = col_offset,
+    row_offset = row_offset,
+    ...        = ...
+  )
+}
+
+#' Add mschart object to an existing workbook
+#' @param wb a workbook
+#' @param sheet the sheet on which the graph will appear
+#' @param dims the dimensions where the sheet will appear
+#' @param graph mschart object
+#' @param col_offset,row_offset offsets for column and row
+#' @param ... additional arguments
+#' @examples
+#' if (requireNamespace("mschart")) {
+#' require(mschart)
+#'
+#' ## Add mschart to worksheet (adds data and chart)
+#' scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
+#' scatter <- chart_settings(scatter, scatterstyle = "marker")
+#'
+#' wb <- wb_workbook() %>%
+#'  wb_add_worksheet() %>%
+#'  wb_add_mschart(dims = "F4:L20", graph = scatter)
+#'
+#' ## Add mschart to worksheet and use available data
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet() %>%
+#'   wb_add_data(x = mtcars, dims = "B2")
+#'
+#' # create wb_data object
+#' dat <- wb_data(wb, 1, dims = "B2:E6")
+#'
+#' # call ms_scatterplot
+#' data_plot <- ms_scatterchart(
+#'   data = dat,
+#'   x = "mpg",
+#'   y = c("disp", "hp"),
+#'   labels = c("disp", "hp")
+#' )
+#'
+#' # add the scatterplot to the data
+#' wb <- wb %>%
+#'   wb_add_mschart(dims = "F4:L20", graph = data_plot)
+#' }
+#' @seealso [wb_data()] [wb_add_chart_xml()] [wb_add_image] [wb_add_mschart()] [wb_add_plot]
+#' @export
+wb_add_mschart <- function(
+    wb,
+    sheet      = current_sheet(),
+    dims       = NULL,
+    graph,
+    col_offset = 0,
+    row_offset = 0,
+    ...
+) {
+  assert_workbook(wb)
+  wb$clone()$add_mschart(
+    sheet      = sheet,
+    dims       = dims,
+    graph      = graph,
+    col_offset = col_offset,
+    row_offset = row_offset,
+    ...        = ...
   )
 }
 
@@ -977,9 +1049,9 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @title Modify the default font
 #' @description Modify the default font for this workbook
 #' @param wb A workbook object
-#' @param fontSize font size
-#' @param fontColor font color
-#' @param fontName Name of a font
+#' @param font_size font size
+#' @param font_color font color
+#' @param font_name Name of a font
 #' @param ... ...
 #' @details The font name is not validated in anyway.  Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
@@ -995,17 +1067,17 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
 wb_set_base_font <- function(
   wb,
-  fontSize  = 11,
-  fontColor = wb_color(theme = "1"),
-  fontName  = "Calibri",
+  font_size  = 11,
+  font_color = wb_color(theme = "1"),
+  font_name  = "Calibri",
   ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
-    fontSize   = fontSize,
-    fontColor  = fontColor,
-    fontName   = fontName,
-    ...        = ...
+    font_size   = font_size,
+    font_color  = font_color,
+    font_name   = font_name,
+    ...         = ...
   )
 }
 
@@ -1038,52 +1110,55 @@ wb_get_base_font <- function(wb) {
 #'
 #' Get the base font used in the workbook.
 #' @param wb A [wbWorkbook] object
-#' @param activeTab activeTab
-#' @param autoFilterDateGrouping autoFilterDateGrouping
-#' @param firstSheet firstSheet
+#' @param active_tab activeTab
+#' @param auto_filter_date_grouping autoFilterDateGrouping
+#' @param first_sheet firstSheet
 #' @param minimized minimized
-#' @param showHorizontalScroll showHorizontalScroll
-#' @param showSheetTabs showSheetTabs
-#' @param showVerticalScroll showVerticalScroll
-#' @param tabRatio tabRatio
+#' @param show_horizontal_scroll showHorizontalScroll
+#' @param show_sheet_tabs showSheetTabs
+#' @param show_vertical_scroll showVerticalScroll
+#' @param tab_ratio tabRatio
 #' @param visibility visibility
-#' @param windowHeight windowHeight
-#' @param windowWidth windowWidth
-#' @param xWindow xWindow
-#' @param yWindow yWindow
+#' @param window_height windowHeight
+#' @param window_width windowWidth
+#' @param x_window xWindow
+#' @param y_window yWindow
+#' @param ... additional arguments
 #' @return The `wbWorkbook` object
 #' @export
 wb_set_bookview <- function(
     wb,
-    activeTab              = NULL,
-    autoFilterDateGrouping = NULL,
-    firstSheet             = NULL,
-    minimized              = NULL,
-    showHorizontalScroll   = NULL,
-    showSheetTabs          = NULL,
-    showVerticalScroll     = NULL,
-    tabRatio               = NULL,
-    visibility             = NULL,
-    windowHeight           = NULL,
-    windowWidth            = NULL,
-    xWindow                = NULL,
-    yWindow                = NULL
+    active_tab                = NULL,
+    auto_filter_date_grouping = NULL,
+    first_sheet               = NULL,
+    minimized                 = NULL,
+    show_horizontal_scroll    = NULL,
+    show_sheet_tabs           = NULL,
+    show_vertical_scroll      = NULL,
+    tab_ratio                 = NULL,
+    visibility                = NULL,
+    window_height             = NULL,
+    window_width              = NULL,
+    x_window                  = NULL,
+    y_window                  = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_bookview(
-    activeTab              = activeTab,
-    autoFilterDateGrouping = autoFilterDateGrouping,
-    firstSheet             = firstSheet,
-    minimized              = minimized,
-    showHorizontalScroll   = showHorizontalScroll,
-    showSheetTabs          = showSheetTabs,
-    showVerticalScroll     = showVerticalScroll,
-    tabRatio               = tabRatio,
-    visibility             = visibility,
-    windowHeight           = windowHeight,
-    windowWidth            = windowWidth,
-    xWindow                = xWindow,
-    yWindow                = yWindow
+    active_tab                = active_tab,
+    auto_filter_date_grouping = auto_filter_date_grouping,
+    first_sheet               = first_sheet,
+    minimized                 = minimized,
+    show_horizontal_scroll    = show_horizontal_scroll,
+    show_sheet_tabs           = show_sheet_tabs,
+    show_vertical_scroll      = show_vertical_scroll,
+    tab_ratio                 = tab_ratio,
+    visibility                = visibility,
+    window_height             = window_height,
+    window_width              = window_width,
+    x_window                  = x_window,
+    y_window                  = y_window,
+    ...                       = ...
   )
 }
 
@@ -1095,10 +1170,11 @@ wb_set_bookview <- function(
 #' @param sheet A name or index of a worksheet
 #' @param header document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
 #' @param footer document footer. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.
-#' @param evenHeader document header for even pages.
-#' @param evenFooter document footer for even pages.
-#' @param firstHeader document header for first page only.
-#' @param firstFooter document footer for first page only.
+#' @param even_header document header for even pages.
+#' @param even_footer document footer for even pages.
+#' @param first_header document header for first page only.
+#' @param first_footer document footer for first page only.
+#' @param ... additional arguments
 #' @details Headers and footers can contain special tags
 #' \itemize{
 #'   \item{**&\[Page\]**}{ Page number}
@@ -1155,23 +1231,25 @@ wb_set_bookview <- function(
 #' )
 wb_set_header_footer <- function(
     wb,
-    sheet       = current_sheet(),
-    header      = NULL,
-    footer      = NULL,
-    evenHeader  = NULL,
-    evenFooter  = NULL,
-    firstHeader = NULL,
-    firstFooter = NULL
+    sheet        = current_sheet(),
+    header       = NULL,
+    footer       = NULL,
+    even_header  = NULL,
+    even_footer  = NULL,
+    first_header = NULL,
+    first_footer = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_header_footer(
-    sheet       = sheet,
-    header      = header,
-    footer      = footer,
-    evenHeader  = evenHeader,
-    evenFooter  = evenFooter,
-    firstHeader = firstHeader,
-    firstFooter = firstFooter
+    sheet        = sheet,
+    header       = header,
+    footer       = footer,
+    even_header  = even_header,
+    even_footer  = even_footer,
+    first_header = first_header,
+    first_footer = first_footer,
+    ...          = ...
   )
 }
 
@@ -1539,24 +1617,23 @@ wb_set_order <- function(wb, sheets) {
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @param rows Numeric vector specifying rows to include in region
-#' @param cols Numeric vector specifying columns to include in region
 #' @param name Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to FALSE
-#' @param localSheet If `TRUE` the named region will be local for this sheet
+#' @param local_sheet If `TRUE` the named region will be local for this sheet
 #' @param comment description text for named region
-#' @param customMenu customMenu (unknown xml feature)
+#' @param custom_menu customMenu (unknown xml feature)
 #' @param description description (unknown xml feature)
 #' @param is_function function (unknown xml feature)
-#' @param functionGroupId function group id (unknown xml feature)
+#' @param function_group_id function group id (unknown xml feature)
 #' @param help help (unknown xml feature)
 #' @param hidden hidden if the named region should be hidden
-#' @param localName localName (unknown xml feature)
-#' @param publishToServer publish to server (unknown xml feature)
-#' @param statusBar status bar (unknown xml feature)
-#' @param vbProcedure wbProcedure (unknown xml feature)
-#' @param workbookParameter workbookParameter (unknown xml feature)
+#' @param local_name localName (unknown xml feature)
+#' @param publish_to_server publish to server (unknown xml feature)
+#' @param status_bar status bar (unknown xml feature)
+#' @param vb_procedure wbProcedure (unknown xml feature)
+#' @param workbook_parameter workbookParameter (unknown xml feature)
 #' @param xml xml (unknown xml feature)
+#' @param ... additional arguments
 #' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
 #' @examples
 #' ## create named regions
@@ -1568,8 +1645,10 @@ wb_set_order <- function(wb, sheets) {
 #' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
-#'   rows = seq_len(nrow(iris) + 1),
-#'   cols = seq_along(iris)
+#'   dims = rowcol_to_dims(
+#'     row = seq_len(nrow(iris) + 1),
+#'     col = seq_along(iris)
+#'   )
 #' )
 #'
 #'
@@ -1602,47 +1681,45 @@ wb_add_named_region <- function(
   wb,
   sheet             = current_sheet(),
   dims              = "A1",
-  cols,
-  rows,
   name,
-  localSheet        = FALSE,
-  overwrite         = FALSE,
-  comment           = NULL,
-  customMenu        = NULL,
-  description       = NULL,
-  is_function       = NULL,
-  functionGroupId   = NULL,
-  help              = NULL,
-  hidden            = NULL,
-  localName         = NULL,
-  publishToServer   = NULL,
-  statusBar         = NULL,
-  vbProcedure       = NULL,
-  workbookParameter = NULL,
-  xml               = NULL
+  local_sheet        = FALSE,
+  overwrite          = FALSE,
+  comment            = NULL,
+  custom_menu        = NULL,
+  description        = NULL,
+  is_function        = NULL,
+  function_group_id  = NULL,
+  help               = NULL,
+  hidden             = NULL,
+  local_name         = NULL,
+  publish_to_server  = NULL,
+  status_bar         = NULL,
+  vb_procedure       = NULL,
+  workbook_parameter = NULL,
+  xml                = NULL,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_named_region(
-    sheet             = sheet,
-    dims              = dims,
-    cols              = cols,
-    rows              = rows,
-    name              = name,
-    localSheet        = localSheet,
-    overwrite         = overwrite,
-    comment           = comment,
-    customMenu        = customMenu,
-    description       = description,
-    is_function       = is_function,
-    functionGroupId   = functionGroupId,
-    help              = help,
-    hidden            = hidden,
-    localName         = localName,
-    publishToServer   = publishToServer,
-    statusBar         = statusBar,
-    vbProcedure       = vbProcedure,
-    workbookParameter = workbookParameter,
-    xml               = xml
+    sheet              = sheet,
+    dims               = dims,
+    name               = name,
+    local_sheet        = local_sheet,
+    overwrite          = overwrite,
+    comment            = comment,
+    custom_menu        = custom_menu,
+    description        = description,
+    is_function        = is_function,
+    function_group_id  = function_group_id,
+    help               = help,
+    hidden             = hidden,
+    local_name         = local_name,
+    publish_to_server  = publish_to_server,
+    status_bar         = status_bar,
+    vb_procedure       = vb_procedure,
+    workbook_parameter = workbook_parameter,
+    xml                = xml,
+    ...                = ...
   )
 }
 
@@ -1726,20 +1803,20 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param cols Contiguous columns to apply conditional formatting to
-#' @param rows Contiguous rows to apply conditional formatting to
+#' @param dims A cell dimension ("A1" or "A1:B2")
 #' @param type One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list' (see examples)
 #' @param operator One of 'between', 'notBetween', 'equal',
 #'  'notEqual', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'
 #' @param value a vector of length 1 or 2 depending on operator (see examples)
-#' @param allowBlank logical
-#' @param showInputMsg logical
-#' @param showErrorMsg logical
-#' @param errorStyle The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
-#' @param errorTitle The error title
+#' @param allow_blank logical
+#' @param show_input_msg logical
+#' @param show_error_msg logical
+#' @param error_style The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)
+#' @param error_title The error title
 #' @param error The error text
-#' @param promptTitle The prompt title
+#' @param prompt_title The prompt title
 #' @param prompt The prompt text
+#' @param ... additional arguments
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -1748,11 +1825,11 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data_table(1, x = iris[1:30, ])
 #' wb$add_data_validation(1,
-#'   col = 1:3, rows = 2:31, type = "whole",
+#'   dims = "A2:C31", type = "whole",
 #'   operator = "between", value = c(1, 9)
 #' )
 #' wb$add_data_validation(1,
-#'   col = 5, rows = 2:31, type = "textLength",
+#'   dims = "E2:E31", type = "textLength",
 #'   operator = "between", value = c(4, 6)
 #' )
 #'
@@ -1767,7 +1844,7 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
 #' wb$add_data_validation(2,
-#'   col = 2, rows = 2:12, type = "time",
+#'   dims = "B2:B12", type = "time",
 #'   operator = "between", value = df$t[c(4, 8)]
 #' )
 #'
@@ -1783,40 +1860,39 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #' wb$add_data_table(sheet = 1, x = iris[1:30, ])
 #' wb$add_data(sheet = 2, x = sample(iris$Sepal.Length, 10))
 #'
-#' wb$add_data_validation(1, col = 1, rows = 2:31, type = "list", value = "'Sheet 2'!$A$1:$A$10")
+#' wb$add_data_validation(1, dims = "A2:A31", type = "list", value = "'Sheet 2'!$A$1:$A$10")
 wb_add_data_validation <- function(
     wb,
-    sheet = current_sheet(),
-    cols,
-    rows,
+    sheet          = current_sheet(),
+    dims           = "A1",
     type,
     operator,
     value,
-    allowBlank = TRUE,
-    showInputMsg = TRUE,
-    showErrorMsg = TRUE,
-    errorStyle = NULL,
-    errorTitle = NULL,
-    error = NULL,
-    promptTitle = NULL,
-    prompt = NULL
+    allow_blank    = TRUE,
+    show_input_msg = TRUE,
+    show_error_msg = TRUE,
+    error_style    = NULL,
+    error_title    = NULL,
+    error          = NULL,
+    prompt_title   = NULL,
+    prompt         = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_data_validation(
-    sheet        = sheet,
-    cols         = cols,
-    rows         = rows,
-    type         = type,
-    operator     = operator,
-    value        = value,
-    allowBlank   = allowBlank,
-    showInputMsg = showInputMsg,
-    showErrorMsg = showErrorMsg,
-    errorStyle   = errorStyle,
-    errorTitle   = errorTitle,
-    error        = error,
-    promptTitle  = promptTitle,
-    prompt       = prompt
+    sheet          = sheet,
+    type           = type,
+    operator       = operator,
+    value          = value,
+    allowBlank     = allow_blank,
+    show_input_msg = show_input_msg,
+    show_error_msg = show_error_msg,
+    error_style    = error_style,
+    error_title    = error_title,
+    error          = error,
+    prompt_title   = prompt_title,
+    prompt         = prompt,
+    ...            = ...
   )
 }
 
@@ -2171,59 +2247,52 @@ wb_set_last_modified_by <- function(wb, LastModifiedBy) {
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
+#' @param dims Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor
 #' @param file An image file. Valid file types are:` "jpeg"`, `"png"`, `"bmp"`
 #' @param width Width of figure.
 #' @param height Height of figure.
-#' @param startRow Row coordinate of upper left corner of the image
-#' @param startCol Column coordinate of upper left corner of the image
-#' @param rowOffset offset vector for one or two cell anchor within cell (row)
-#' @param colOffset offset vector for one or two cell anchor within cell (column)
+#' @param row_offset offset vector for one or two cell anchor within cell (row)
+#' @param col_offset offset vector for one or two cell anchor within cell (column)
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
-#' @param dims Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor
-#' @seealso [wb_add_plot()]
+#' @param ... additional arguments
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 #' @examples
-#' ## Create a new workbook
-#' wb <- wb_workbook("Ayanami")
-#'
-#' ## Add some worksheets
-#' wb$add_worksheet("Sheet 1")
-#' wb$add_worksheet("Sheet 2")
-#' wb$add_worksheet("Sheet 3")
-#'
-#' ## Insert images
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-#' wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-#' wb$add_image(2, img, startRow = 2, startCol = 2)
-#' wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+#'
+#' wb <- wb_workbook()$
+#'   add_worksheet()$
+#'   add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5)$
+#'   add_worksheet()$
+#'   add_image(dims = "B2", file = img)$
+#'   add_worksheet()$
+#'   add_image(dims = "G3", file = img, width = 15, height = 12, units = "cm")
 wb_add_image <- function(
   wb,
-  sheet     = current_sheet(),
+  sheet      = current_sheet(),
+  dims       = "A1",
   file,
-  width     = 6,
-  height    = 3,
-  startRow  = 1,
-  startCol  = 1,
-  rowOffset = 0,
-  colOffset = 0,
-  units     = "in",
-  dpi       = 300,
-  dims      = rowcol_to_dim(startRow, startCol)
+  width      = 6,
+  height     = 3,
+  row_offset = 0,
+  col_offset = 0,
+  units      = "in",
+  dpi        = 300,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_image(
-    sheet     = sheet,
-    file      = file,
-    startRow  = startRow,
-    startCol  = startCol,
-    width     = width,
-    height    = height,
-    rowOffset = rowOffset,
-    colOffset = colOffset,
-    units     = units,
-    dpi       = dpi,
-    dims      = dims
+    sheet      = sheet,
+    dims       = dims,
+    file       = file,
+    width      = width,
+    height     = height,
+    row_offset = row_offset,
+    col_offset = col_offset,
+    units      = units,
+    dpi        = dpi,
+    ...
   )
 }
 
@@ -2231,20 +2300,30 @@ wb_add_image <- function(
 #' add a chart xml to a workbook
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
-#' @param xml chart xml
 #' @param dims the dimensions where the sheet will appear
-#' @param colOffset,rowOffset startCol and startRow
+#' @param xml chart xml
+#' @param col_offset,row_offset positioning
+#' @param ... additional arguments
+#' @seealso [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 wb_add_chart_xml <- function(
   wb,
-  sheet     = current_sheet(),
+  sheet      = current_sheet(),
+  dims       = NULL,
   xml,
-  dims      = NULL,
-  colOffset = 0,
-  rowOffset = 0
+  col_offset = 0,
+  row_offset = 0,
+  ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_chart_xml(sheet, xml, dims, colOffset, rowOffset)
+  wb$clone()$add_chart_xml(
+    sheet      = sheet,
+    xml        = xml,
+    dims       = dims,
+    col_offset = col_offset,
+    row_offset = row_offset,
+    ...        = ...
+  )
 }
 
 
@@ -2489,7 +2568,7 @@ wb_add_fill <- function(
 #' @param scheme font scheme
 #' @param shadow shadow
 #' @param extend extend
-#' @param vertAlign vertical alignment
+#' @param vert_align vertical alignment
 #' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
@@ -2499,47 +2578,47 @@ wb_add_fill <- function(
 #' @export
 wb_add_font <- function(
       wb,
-      sheet     = current_sheet(),
-      dims      = "A1",
-      name      = "Calibri",
-      color     = wb_color(hex = "FF000000"),
-      size      = "11",
-      bold      = "",
-      italic    = "",
-      outline   = "",
-      strike    = "",
-      underline = "",
+      sheet      = current_sheet(),
+      dims       = "A1",
+      name       = "Calibri",
+      color      = wb_color(hex = "FF000000"),
+      size       = "11",
+      bold       = "",
+      italic     = "",
+      outline    = "",
+      strike     = "",
+      underline  = "",
       # fine tuning
-      charset   = "",
-      condense  = "",
-      extend    = "",
-      family    = "",
-      scheme    = "",
-      shadow    = "",
-      vertAlign = "",
+      charset    = "",
+      condense   = "",
+      extend     = "",
+      family     = "",
+      scheme     = "",
+      shadow     = "",
+      vert_align = "",
       ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
-    sheet     = sheet,
-    dims      = dims,
-    name      = name,
-    color     = color,
-    size      = size,
-    bold      = bold,
-    italic    = italic,
-    outline   = outline,
-    strike    = strike,
-    underline = underline,
+    sheet      = sheet,
+    dims       = dims,
+    name       = name,
+    color      = color,
+    size       = size,
+    bold       = bold,
+    italic     = italic,
+    outline    = outline,
+    strike     = strike,
+    underline  = underline,
     # fine tuning
-    charset   = charset,
-    condense  = condense,
-    extend    = extend,
-    family    = family,
-    scheme    = scheme,
-    shadow    = shadow,
-    vertAlign = vertAlign,
-    ...       = ...
+    charset    = charset,
+    condense   = condense,
+    extend     = extend,
+    family     = family,
+    scheme     = scheme,
+    shadow     = shadow,
+    vert_align = vert_align,
+    ...        = ...
   )
 }
 
@@ -2572,33 +2651,34 @@ wb_add_numfmt <- function(
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
-#' @param extLst extension list something like `<extLst>...</extLst>`
+#' @param ext_lst extension list something like `<extLst>...</extLst>`
 #' @param hidden logical cell is hidden
 #' @param horizontal align content horizontal ('left', 'center', 'right')
 #' @param indent logical indent content
-#' @param justifyLastLine logical justify last line
+#' @param justify_last_line logical justify last line
 #' @param locked logical cell is locked
-#' @param pivotButton unknown
-#' @param quotePrefix unknown
-#' @param readingOrder reading order left to right
-#' @param relativeIndent relative indentation
-#' @param shrinkToFit logical shrink to fit
-#' @param textRotation degrees of text rotation
+#' @param pivot_button unknown
+#' @param quote_prefix unknown
+#' @param reading_order reading order left to right
+#' @param relative_indent relative indentation
+#' @param shrink_to_fit logical shrink to fit
+#' @param text_rotation degrees of text rotation
 #' @param vertical vertical alignment of content ('top', 'center', 'bottom')
-#' @param wrapText wrap text in cell
+#' @param wrap_text wrap text in cell
 # alignments
-#' @param applyAlignment logical apply alignment
-#' @param applyBorder logical apply border
-#' @param applyFill logical apply fill
-#' @param applyFont logical apply font
-#' @param applyNumberFormat logical apply number format
-#' @param applyProtection logical apply protection
+#' @param apply_alignment logical apply alignment
+#' @param apply_border logical apply border
+#' @param apply_fill logical apply fill
+#' @param apply_font logical apply font
+#' @param apply_number_format logical apply number format
+#' @param apply_protection logical apply protection
 # ids
-#' @param borderId border ID to apply
-#' @param fillId fill ID to apply
-#' @param fontId font ID to apply
-#' @param numFmtId number format ID to apply
-#' @param xfId xf ID to apply
+#' @param border_id border ID to apply
+#' @param fill_id fill ID to apply
+#' @param font_id font ID to apply
+#' @param num_fmt_id number format ID to apply
+#' @param xf_id xf ID to apply
+#' @param ... additional arguments
 #' @examples
 #'  wb <-
 #'    wb_workbook() %>%
@@ -2619,63 +2699,65 @@ wb_add_numfmt <- function(
 #' @export
 wb_add_cell_style <- function(
     wb,
-    sheet             = current_sheet(),
-    dims              = "A1",
-    applyAlignment    = NULL,
-    applyBorder       = NULL,
-    applyFill         = NULL,
-    applyFont         = NULL,
-    applyNumberFormat = NULL,
-    applyProtection   = NULL,
-    borderId          = NULL,
-    extLst            = NULL,
-    fillId            = NULL,
-    fontId            = NULL,
-    hidden            = NULL,
-    horizontal        = NULL,
-    indent            = NULL,
-    justifyLastLine   = NULL,
-    locked            = NULL,
-    numFmtId          = NULL,
-    pivotButton       = NULL,
-    quotePrefix       = NULL,
-    readingOrder      = NULL,
-    relativeIndent    = NULL,
-    shrinkToFit       = NULL,
-    textRotation      = NULL,
-    vertical          = NULL,
-    wrapText          = NULL,
-    xfId              = NULL
+    sheet               = current_sheet(),
+    dims                = "A1",
+    apply_alignment     = NULL,
+    apply_border        = NULL,
+    apply_fill          = NULL,
+    apply_font          = NULL,
+    apply_number_format = NULL,
+    apply_protection    = NULL,
+    border_id           = NULL,
+    ext_lst             = NULL,
+    fill_id             = NULL,
+    font_id             = NULL,
+    hidden              = NULL,
+    horizontal          = NULL,
+    indent              = NULL,
+    justify_last_line   = NULL,
+    locked              = NULL,
+    num_fmt_id          = NULL,
+    pivot_button        = NULL,
+    quote_prefix        = NULL,
+    reading_order       = NULL,
+    relative_indent     = NULL,
+    shrink_to_fit       = NULL,
+    text_rotation       = NULL,
+    vertical            = NULL,
+    wrap_text           = NULL,
+    xf_id               = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_cell_style(
-    sheet             = sheet,
-    dims              = dims,
-    applyAlignment    = applyAlignment,
-    applyBorder       = applyBorder,
-    applyFill         = applyFill,
-    applyFont         = applyFont,
-    applyNumberFormat = applyNumberFormat,
-    applyProtection   = applyProtection,
-    borderId          = borderId,
-    extLst            = extLst,
-    fillId            = fillId,
-    fontId            = fontId,
-    hidden            = hidden,
-    horizontal        = horizontal,
-    indent            = indent,
-    justifyLastLine   = justifyLastLine,
-    locked            = locked,
-    numFmtId          = numFmtId,
-    pivotButton       = pivotButton,
-    quotePrefix       = quotePrefix,
-    readingOrder      = readingOrder,
-    relativeIndent    = relativeIndent,
-    shrinkToFit       = shrinkToFit,
-    textRotation      = textRotation,
-    vertical          = vertical,
-    wrapText          = wrapText,
-    xfId              = xfId
+    sheet               = sheet,
+    dims                = dims,
+    apply_alignment     = apply_alignment,
+    apply_border        = apply_border,
+    apply_fill          = apply_fill,
+    apply_font          = apply_font,
+    apply_number_format = apply_number_format,
+    apply_protection    = apply_protection,
+    border_id           = border_id,
+    ext_lst             = ext_lst,
+    fill_id             = fill_id,
+    font_id             = font_id,
+    hidden              = hidden,
+    horizontal          = horizontal,
+    indent              = indent,
+    justify_last_line   = justify_last_line,
+    locked              = locked,
+    num_fmt_id          = num_fmt_id,
+    pivot_button        = pivot_button,
+    quote_prefix        = quote_prefix,
+    reading_order       = reading_order,
+    relative_indent     = relative_indent,
+    shrink_to_fit       = shrink_to_fit,
+    text_rotation       = text_rotation,
+    vertical            = vertical,
+    wrap_text           = wrap_text,
+    xfId                = xf_id,
+    ...                 = ...
   )
 }
 
@@ -2713,12 +2795,12 @@ wb_add_named_style <- function(
 #' @param font_name the font name
 #' @param font_size the font size
 #' @param font_color the font color (a `wb_color()` object)
-#' @param numFmt the number format
+#' @param num_fmt the number format
 #' @param border logical if borders are applied
 #' @param border_color the border color
 #' @param border_style the border style
-#' @param bgFill any background fill
-#' @param gradientFill any gradient fill
+#' @param bg_fill any background fill
+#' @param gradient_fill any gradient fill
 #' @param text_bold logical if text is bold
 #' @param text_italic logical if text is italic
 #' @param text_underline logical if text is underlined
@@ -2739,12 +2821,12 @@ wb_add_dxfs_style <- function(
   font_name      = NULL,
   font_size      = NULL,
   font_color     = NULL,
-  numFmt         = NULL,
+  num_fmt        = NULL,
   border         = NULL,
   border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style   = getOption("openxlsx2.borderStyle", "thin"),
-  bgFill         = NULL,
-  gradientFill   = NULL,
+  bg_fill        = NULL,
+  gradient_fill  = NULL,
   text_bold      = NULL,
   text_italic    = NULL,
   text_underline = NULL,
@@ -2757,12 +2839,12 @@ wb_add_dxfs_style <- function(
     font_name      = font_name,
     font_size      = font_size,
     font_color     = font_color,
-    numFmt         = numFmt,
+    num_fmt        = num_fmt,
     border         = border,
     border_color   = border_color,
     border_style   = border_style,
-    bgFill         = bgFill,
-    gradientFill   = gradientFill,
+    bg_fill        = bg_fill,
+    gradient_fill  = gradient_fill,
     text_bold      = text_bold,
     text_italic    = text_italic,
     text_underline = text_underline,
@@ -2778,16 +2860,16 @@ wb_add_dxfs_style <- function(
 #' @param row A row to apply the comment
 #' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
 #' @param comment A comment to apply to the worksheet
+#' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @rdname comment
 #' @export
 wb_add_comment <- function(
     wb,
     sheet   = current_sheet(),
-    col     = NULL,
-    row     = NULL,
-    dims    = rowcol_to_dim(row, col),
-    comment
+    dims    = "A1",
+    comment,
+    ...
   ) {
 
   assert_workbook(wb)
@@ -2795,40 +2877,33 @@ wb_add_comment <- function(
 
   wb$clone()$add_comment(
     sheet   = sheet,
-    col     = col,
-    row     = row,
     dims    = dims,
-    comment = comment
+    comment = comment,
+    ...     = ...
   )
 }
 
 #' Remove comment from worksheet
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param col A column to apply the comment
-#' @param row A row to apply the comment
 #' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
-#' @param gridExpand Remove all comments inside the grid. Similar to dims "A1:B2"
+#' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @rdname comment
 #' @export
 wb_remove_comment <- function(
     wb,
     sheet      = current_sheet(),
-    col        = NULL,
-    row        = NULL,
-    dims       = rowcol_to_dims(row, col),
-    gridExpand = TRUE
+    dims       = "A1",
+    ...
   ) {
 
   assert_workbook(wb)
 
-  wb$clone()$remove_comment(
-    sheet      = sheet,
-    col        = col,
-    row        = row,
-    dims       = dims,
-    gridExpand = gridExpand
+  wb$clone(deep = TRUE)$remove_comment(
+    sheet       = sheet,
+    dims        = dims,
+    ...         = ...
   )
 }
 
@@ -3016,63 +3091,67 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
 #' @param wb workbook
 #' @param sheet sheet
 #' @param dims dims
-#' @param calculatedColumn calculatedColumn
-#' @param emptyCellReference emptyCellReference
-#' @param evalError evalError
+#' @param calculated_column calculatedColumn
+#' @param empty_cell_reference emptyCellReference
+#' @param eval_error evalError
 #' @param formula formula
-#' @param formulaRange formulaRange
-#' @param listDataValidation listDataValidation
-#' @param numberStoredAsText numberStoredAsText
-#' @param twoDigitTextYear twoDigitTextYear
-#' @param unlockedFormula unlockedFormula
+#' @param formula_range formulaRange
+#' @param list_data_validation listDataValidation
+#' @param number_stored_as_text numberStoredAsText
+#' @param two_digit_text_year twoDigitTextYear
+#' @param unlocked_formula unlockedFormula
+#' @param ... additional arguments
 wb_add_ignore_error <- function(
     wb,
-    sheet              = current_sheet(),
-    dims               = "A1",
-    calculatedColumn   = FALSE,
-    emptyCellReference = FALSE,
-    evalError          = FALSE,
-    formula            = FALSE,
-    formulaRange       = FALSE,
-    listDataValidation = FALSE,
-    numberStoredAsText = FALSE,
-    twoDigitTextYear   = FALSE,
-    unlockedFormula    = FALSE
+    sheet                 = current_sheet(),
+    dims                  = "A1",
+    calculated_column     = FALSE,
+    empty_cell_reference  = FALSE,
+    eval_error            = FALSE,
+    formula               = FALSE,
+    formula_range         = FALSE,
+    list_data_validation  = FALSE,
+    number_stored_as_text = FALSE,
+    two_digit_text_year   = FALSE,
+    unlocked_formula      = FALSE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_ignore_error(
-    sheet              = sheet,
-    dims               = dims,
-    calculatedColumn   = calculatedColumn,
-    emptyCellReference = emptyCellReference,
-    evalError          = evalError,
-    formula            = formula,
-    formulaRange       = formulaRange,
-    listDataValidation = listDataValidation,
-    numberStoredAsText = numberStoredAsText,
-    twoDigitTextYear   = twoDigitTextYear,
-    unlockedFormula    = unlockedFormula
+    sheet                 = sheet,
+    dims                  = dims,
+    calculated_column     = calculated_column,
+    empty_cell_reference  = empty_cell_reference,
+    eval_error            = eval_error,
+    formula               = formula,
+    formula_range         = formula_range,
+    list_data_validation  = list_data_validation,
+    number_stored_as_text = number_stored_as_text,
+    two_digit_text_year   = two_digit_text_year,
+    unlocked_formula      = unlocked_formula,
+    ...                   = ...
     )
 }
 
 #' add sheetview
 #' @param wb workbook
 #' @param sheet sheet
-#' @param colorId,defaultGridColor Integer: A color, default is 64
-#' @param rightToLeft Logical: if TRUE column ordering is right  to left
-#' @param showFormulas Logical: if TRUE cell formulas are shown
-#' @param showGridLines Logical: if TRUE the worksheet grid is shown
-#' @param showOutlineSymbols Logical: if TRUE outline symbols are shown
-#' @param showRowColHeaders Logical: if TRUE row and column headers are shown
-#' @param showRuler Logical: if TRUE a ruler is shown in page layout view
-#' @param showWhiteSpace Logical: if TRUE margins are shown in page layout view
-#' @param showZeros Logical: if FALSE cells containing zero are shown blank if !showFormulas
-#' @param tabSelected Integer: zero vector indicating the selected tab
-#' @param topLeftCell Cell: the cell shown in the top left corner / or top right with rightToLeft
+#' @param color_id,default_grid_color Integer: A color, default is 64
+#' @param right_to_left Logical: if TRUE column ordering is right  to left
+#' @param show_formulas Logical: if TRUE cell formulas are shown
+#' @param show_grid_lines Logical: if TRUE the worksheet grid is shown
+#' @param show_outline_symbols Logical: if TRUE outline symbols are shown
+#' @param show_row_col_headers Logical: if TRUE row and column headers are shown
+#' @param show_ruler Logical: if TRUE a ruler is shown in page layout view
+#' @param show_white_space Logical: if TRUE margins are shown in page layout view
+#' @param show_zeros Logical: if FALSE cells containing zero are shown blank if !showFormulas
+#' @param tab_selected Integer: zero vector indicating the selected tab
+#' @param top_left_cell Cell: the cell shown in the top left corner / or top right with rightToLeft
 #' @param view View: "normal", "pageBreakPreview" or "pageLayout"
-#' @param windowProtection Logical: if TRUE the panes are protected
-#' @param workbookViewId integer: Pointing to some other view inside the workbook
-#' @param zoomScale,zoomScaleNormal,zoomScalePageLayoutView,zoomScaleSheetLayoutView Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
+#' @param window_protection Logical: if TRUE the panes are protected
+#' @param workbook_view_id integer: Pointing to some other view inside the workbook
+#' @param zoom_scale,zoom_scale_normal,zoom_scale_page_layout_view,zoom_scale_sheet_layout_view Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
+#' @param ... additional arguments
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()
 #'
@@ -3094,48 +3173,50 @@ wb_add_ignore_error <- function(
 #' @export
 wb_set_sheetview <- function(
     wb,
-    sheet                    = current_sheet(),
-    colorId                  = NULL,
-    defaultGridColor         = NULL,
-    rightToLeft              = NULL,
-    showFormulas             = NULL,
-    showGridLines            = NULL,
-    showOutlineSymbols       = NULL,
-    showRowColHeaders        = NULL,
-    showRuler                = NULL,
-    showWhiteSpace           = NULL,
-    showZeros                = NULL,
-    tabSelected              = NULL,
-    topLeftCell              = NULL,
-    view                     = NULL,
-    windowProtection         = NULL,
-    workbookViewId           = NULL,
-    zoomScale                = NULL,
-    zoomScaleNormal          = NULL,
-    zoomScalePageLayoutView  = NULL,
-    zoomScaleSheetLayoutView = NULL
+    sheet                        = current_sheet(),
+    color_id                     = NULL,
+    default_grid_color           = NULL,
+    right_to_left                = NULL,
+    show_formulas                = NULL,
+    show_grid_lines              = NULL,
+    show_outline_symbols         = NULL,
+    show_row_col_headers         = NULL,
+    show_ruler                   = NULL,
+    show_white_space             = NULL,
+    show_zeros                   = NULL,
+    tab_selected                 = NULL,
+    top_left_cell                = NULL,
+    view                         = NULL,
+    window_protection            = NULL,
+    workbook_view_id             = NULL,
+    zoom_scale                   = NULL,
+    zoom_scale_normal            = NULL,
+    zoom_scale_page_layout_view  = NULL,
+    zoom_scale_sheet_layout_view = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_sheetview(
-    sheet                    = sheet,
-    colorId                  = colorId,
-    defaultGridColor         = defaultGridColor,
-    rightToLeft              = rightToLeft,
-    showFormulas             = showFormulas,
-    showGridLines            = showGridLines,
-    showOutlineSymbols       = showOutlineSymbols,
-    showRowColHeaders        = showRowColHeaders,
-    showRuler                = showRuler,
-    showWhiteSpace           = showWhiteSpace,
-    showZeros                = showZeros,
-    tabSelected              = tabSelected,
-    topLeftCell              = topLeftCell,
-    view                     = view,
-    windowProtection         = windowProtection,
-    workbookViewId           = workbookViewId,
-    zoomScale                = zoomScale,
-    zoomScaleNormal          = zoomScaleNormal,
-    zoomScalePageLayoutView  = zoomScalePageLayoutView,
-    zoomScaleSheetLayoutView = zoomScaleSheetLayoutView
+    sheet                        = sheet,
+    color_id                     = color_id,
+    default_grid_color           = default_grid_color,
+    right_to_left                = right_to_left,
+    show_formulas                = show_formulas,
+    show_grid_lines              = show_grid_lines,
+    show_outline_symbols         = show_outline_symbols,
+    show_row_col_headers         = show_row_col_headers,
+    show_ruler                   = show_ruler,
+    show_white_space             = show_white_space,
+    show_zeros                   = show_zeros,
+    tab_selected                 = tab_selected,
+    top_left_cell                = top_left_cell,
+    view                         = view,
+    window_protection            = window_protection,
+    workbook_view_id             = workbook_view_id,
+    zoom_scale                   = zoom_scale,
+    zoom_scale_normal            = zoom_scale_normal,
+    zoom_scale_page_layout_view  = zoom_scale_page_layout_view,
+    zoom_scale_sheet_layout_view = zoom_scale_sheet_layout_view,
+    ...                          = ...
   )
 }

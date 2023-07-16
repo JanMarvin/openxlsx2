@@ -7,16 +7,15 @@
 wb_add_image(
   wb,
   sheet = current_sheet(),
+  dims = "A1",
   file,
   width = 6,
   height = 3,
-  startRow = 1,
-  startCol = 1,
-  rowOffset = 0,
-  colOffset = 0,
+  row_offset = 0,
+  col_offset = 0,
   units = "in",
   dpi = 300,
-  dims = rowcol_to_dim(startRow, startCol)
+  ...
 )
 }
 \arguments{
@@ -24,44 +23,38 @@ wb_add_image(
 
 \item{sheet}{A name or index of a worksheet}
 
+\item{dims}{Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor}
+
 \item{file}{An image file. Valid file types are:\code{ "jpeg"}, \code{"png"}, \code{"bmp"}}
 
 \item{width}{Width of figure.}
 
 \item{height}{Height of figure.}
 
-\item{startRow}{Row coordinate of upper left corner of the image}
+\item{row_offset}{offset vector for one or two cell anchor within cell (row)}
 
-\item{startCol}{Column coordinate of upper left corner of the image}
-
-\item{rowOffset}{offset vector for one or two cell anchor within cell (row)}
-
-\item{colOffset}{offset vector for one or two cell anchor within cell (column)}
+\item{col_offset}{offset vector for one or two cell anchor within cell (column)}
 
 \item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution used for conversion between units.}
 
-\item{dims}{Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor}
+\item{...}{additional arguments}
 }
 \description{
 Insert an image into a worksheet
 }
 \examples{
-## Create a new workbook
-wb <- wb_workbook("Ayanami")
-
-## Add some worksheets
-wb$add_worksheet("Sheet 1")
-wb$add_worksheet("Sheet 2")
-wb$add_worksheet("Sheet 3")
-
-## Insert images
 img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-wb$add_image("Sheet 1", img, startRow = 5, startCol = 3, width = 6, height = 5)
-wb$add_image(2, img, startRow = 2, startCol = 2)
-wb$add_image(3, img, width = 15, height = 12, startRow = 3, startCol = "G", units = "cm")
+
+wb <- wb_workbook()$
+  add_worksheet()$
+  add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5)$
+  add_worksheet()$
+  add_image(dims = "B2", file = img)$
+  add_worksheet()$
+  add_image(dims = "G3", file = img, width = 15, height = 12, units = "cm")
 }
 \seealso{
-\code{\link[=wb_add_plot]{wb_add_plot()}}
+\code{\link[=wb_add_chart_xml]{wb_add_chart_xml()}} \code{\link[=wb_add_drawing]{wb_add_drawing()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}} \code{\link[=wb_add_plot]{wb_add_plot()}}
 }

@@ -21,3 +21,7 @@ PackageCleanBeforeInstall: No
 PackageInstallArgs: --no-multiarch --with-keep.source
 PackageCheckArgs: --as-cran
 PackageRoxygenize: rd,collate,namespace,vignette
+
+UseNativePipeOperator: No
+
+SpellingDictionary: en_US

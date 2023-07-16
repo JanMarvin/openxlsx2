@@ -1,4 +1,12 @@
+url: https://janmarvin.github.io/openxlsx2
+
 destination: docs
+
+template:
+  bootstrap: 5
+
+development:
+  mode: auto
 
 reference:
 - title: Main
@@ -25,23 +33,61 @@ reference:
   - starts_with("wb_get_")
   - starts_with("wb_set_")
 
+- title: wb Misc
+  contents:
+  - starts_with("wb_protect")
+  - wb_hyperlink
+  - cleanup
+  - wb_freeze_pane
+  - wb_open
+  - starts_with("wb_clone")
+  - starts_with("wb_copy")
+  - wb_color
+  - wb_data
+  - wb_grid_lines
+  - wb_update_table
+  - wb_copy_cells
+
 - title: create functions
   contents:
   - starts_with("create_")
 
 - title: XML functions
-  desc: A curated list of XML functions used in openxlsx2.
+  desc: >
+    A curated list of XML functions used in openxlsx2.
   contents:
   - read_xml
   - starts_with("xml_")
   - as_xml
+  - starts_with("print")
 
-- title: All functions
+- title: R6 Classes
   contents:
-  - matches(".*")
+  - wbWorkbook
+  - wbChartSheet
 
-template:
-  bootstrap: 5
+- title: Misc and helpers
+  contents:
+  - openxlsx2_options
+  - int2col
+  - col2int
+  - fmt_txt
+  - starts_with("convert_")
+  - temp_xlsx
+  - read_sheet_names
+  - clean_worksheet_name
+  - styles_on_sheet
+  - waivers
+  - starts_with("ws_")
+  - xl_open
+  - dims_helper
+  - workbook_grouping
+  - contains("dims")
+  - starts_with("write_")
 
-development:
-  mode: auto
+- title: Deprecated
+  contents:
+  - openxlsx2-deprecated
+
+redirects:
+  - ["articles/openxlsx2_basic_manual.html", "articles/openxlsx2.html"]

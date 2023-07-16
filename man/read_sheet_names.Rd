@@ -18,3 +18,4 @@ Returns the worksheet names within an xlsx file
 \examples{
 wb_load(system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))$get_sheet_names()
 }
+\keyword{internal}

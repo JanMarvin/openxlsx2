@@ -8,13 +8,14 @@ write_formula(
   wb,
   sheet,
   x,
-  startCol = 1,
-  startRow = 1,
-  dims = rowcol_to_dims(startRow, startCol),
+  dims = rowcol_to_dims(start_row, start_col),
+  start_col = 1,
+  start_row = 1,
   array = FALSE,
   cm = FALSE,
-  applyCellStyle = TRUE,
-  removeCellStyle = FALSE
+  apply_cell_style = TRUE,
+  remove_cell_style = FALSE,
+  ...
 )
 }
 \arguments{
@@ -24,19 +25,21 @@ write_formula(
 
 \item{x}{A character vector.}
 
-\item{startCol}{A vector specifying the starting column to write to.}
-
-\item{startRow}{A vector specifying the starting row to write to.}
-
 \item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
+
+\item{start_col}{A vector specifying the starting column to write to.}
+
+\item{start_row}{A vector specifying the starting row to write to.}
 
 \item{array}{A bool if the function written is of type array}
 
 \item{cm}{A bool if the function is of type cm (array with hidden curly braces)}
 
-\item{applyCellStyle}{apply styles when writing on the sheet}
+\item{apply_cell_style}{apply styles when writing on the sheet}
 
-\item{removeCellStyle}{if writing into existing cells, should the cell style be removed?}
+\item{remove_cell_style}{if writing into existing cells, should the cell style be removed?}
+
+\item{...}{additional arguments}
 }
 \description{
 Write a a character vector containing Excel formula to a worksheet.
@@ -45,23 +48,21 @@ Write a a character vector containing Excel formula to a worksheet.
 Currently only the English version of functions are supported. Please don't use the local translation.
 The examples below show a small list of possible formulas:
 \itemize{
-\item{SUM(B2:B4)}
-\item{AVERAGE(B2:B4)}
-\item{MIN(B2:B4)}
-\item{MAX(B2:B4)}
-\item{...}
-
+\item SUM(B2:B4)
+\item AVERAGE(B2:B4)
+\item MIN(B2:B4)
+\item MAX(B2:B4)
+\item ...
 }
 }
 \examples{
-
 ## There are 3 ways to write a formula
 
 wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 wb$add_data("Sheet 1", x = iris)
 
-## SEE int2col() to convert int to Excel column label
+## SEE `int2col()` to convert int to Excel column label
 
 ## 1. -  As a character vector using write_formula
 
@@ -87,7 +88,6 @@ wb$add_worksheet("Sheet 2")
 wb$add_data(sheet = 2, x = df)
 
 
-
 ## 3. - As a vector with class "formula" using write_data
 
 v2 <- c("SUM(A2:A4)", "AVERAGE(B2:B4)", "MEDIAN(C2:C4)")
@@ -95,12 +95,14 @@ class(v2) <- c(class(v2), "formula")
 
 wb$add_data(sheet = 2, x = v2, startCol = 10, startRow = 2)
 
+
 ## 4. - Writing internal hyperlinks
 
 wb <- wb_workbook()
 wb$add_worksheet("Sheet1")
 wb$add_worksheet("Sheet2")
 write_formula(wb, "Sheet1", x = '=HYPERLINK("#Sheet2!B3", "Text to Display - Link to Sheet2")')
+
 
 ## 5. - Writing array formulas
 
@@ -115,7 +117,6 @@ wb$add_data("df", df, startCol = "C")
 write_formula(wb, "df", startCol = "E", startRow = "2",
              x = "SUM(C2:C11*D2:D11)",
              array = TRUE)
-
 }
 \seealso{
 \code{\link[=write_data]{write_data()}}

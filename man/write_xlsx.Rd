@@ -2,16 +2,16 @@
 % Please edit documentation in R/write_xlsx.R
 \name{write_xlsx}
 \alias{write_xlsx}
-\title{write data to an xlsx file}
+\title{Write data to an xlsx file}
 \usage{
-write_xlsx(x, file, asTable = FALSE, ...)
+write_xlsx(x, file, as_table = FALSE, ...)
 }
 \arguments{
 \item{x}{object or a list of objects that can be handled by \code{\link[=write_data]{write_data()}} to write to file}
 
 \item{file}{xlsx file name}
 
-\item{asTable}{write using write_datatable as opposed to write_data}
+\item{as_table}{write using write_datatable as opposed to write_data}
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
@@ -28,7 +28,7 @@ see details.}
 A workbook object
 }
 \description{
-write a data.frame or list of data.frames to an xlsx file
+Write a data.frame or list of data.frames to an xlsx file
 }
 \details{
 Optional parameters are:
@@ -78,7 +78,6 @@ columns of x with class Date or POSIXt are automatically
 styled as dates and datetimes respectively.
 }
 \examples{
-
 ## write to working directory
 write_xlsx(iris, file = temp_xlsx(), colNames = TRUE)
 
@@ -101,7 +100,6 @@ write_xlsx(l, temp_xlsx(),
 write_xlsx(l, temp_xlsx(), colWidths = 20)
 write_xlsx(l, temp_xlsx(), colWidths = list(100, 200, 300))
 write_xlsx(l, temp_xlsx(), colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
-
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=write_data]{write_data()}}

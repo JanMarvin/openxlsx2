@@ -2,7 +2,7 @@
 #'
 #' A hyperlink
 #'
-#' @export
+#' @noRd
 wbHyperlink <- R6::R6Class(
   "wbHyperlink",
 

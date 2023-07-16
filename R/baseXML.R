@@ -58,7 +58,6 @@ genClientData <- function(col, row, visible, height, width) {
 #' @param range range (input cell range)
 #' @param type type (Checkbox, Radio, Drop)
 #' @param checked checked (bool)
-#' @keywords internal
 #' @noRd
 genClientDataFC <- function(left, top, right, bottom, link, range, type, checked) {
 

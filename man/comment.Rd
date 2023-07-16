@@ -35,23 +35,9 @@ remove_comment(
   dims = NULL
 )
 
-wb_add_comment(
-  wb,
-  sheet = current_sheet(),
-  col = NULL,
-  row = NULL,
-  dims = rowcol_to_dim(row, col),
-  comment
-)
+wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
 
-wb_remove_comment(
-  wb,
-  sheet = current_sheet(),
-  col = NULL,
-  row = NULL,
-  dims = rowcol_to_dims(row, col),
-  gridExpand = TRUE
-)
+wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 }
 \arguments{
 \item{text}{Comment text. Character vector.}
@@ -78,7 +64,10 @@ wb_remove_comment(
 
 \item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 
-\item{gridExpand}{Remove all comments inside the grid. Similar to dims "A1:B2"}
+\item{gridExpand}{If \code{TRUE}, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
+will be removed.}
+
+\item{...}{additional arguments}
 }
 \value{
 The \code{wbWorkbook} object
@@ -113,3 +102,4 @@ write_comment(wb, 1, col = 6, row = 3, comment = c3)
 # remove the first comment
 remove_comment(wb, 1, col = "B", row = 10)
 }
+\keyword{internal}

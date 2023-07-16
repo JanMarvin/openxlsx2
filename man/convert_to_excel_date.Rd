@@ -3,7 +3,7 @@
 \name{convert_to_excel_date}
 \alias{convert_to_excel_date}
 \alias{convertToExcelDate}
-\title{convert back to ExcelDate}
+\title{convert back to an Excel Date}
 \usage{
 convert_to_excel_date(df, date1904 = FALSE)
 
@@ -15,7 +15,7 @@ convertToExcelDate(df, date1904 = FALSE)
 \item{date1904}{take different origin}
 }
 \description{
-convert back to ExcelDate
+convert back to an Excel Date
 }
 \examples{
  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")

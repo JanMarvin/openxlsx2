@@ -46,6 +46,33 @@ test_that("dims to col & row and back", {
 
 })
 
+test_that("wb_dims() works", {
+
+  expect_equal(wb_dims(mtcars), "A1:K33")
+  expect_equal(wb_dims(mtcars, col_names = FALSE, row_names = TRUE), "A1:L32")
+
+  expect_equal(wb_dims(letters), "A1:A26")
+
+  expect_equal(wb_dims(t(letters)), "A1:Z2")
+
+  expect_equal(wb_dims(1), "A1")
+
+  expect_equal(wb_dims(rows =  1:10, cols = 5:7), "E1:G10")
+  expect_equal(wb_dims(cols =  1:10, rows = 5:7), "A5:J7")
+  expect_error(
+    wb_dims(cols =  1:10, col = 5:7),
+    "found only one cols/rows argument"
+  )
+
+  expect_equal(wb_dims(row = 5, col = 7), "G5")
+
+  expect_equal(wb_dims(1:10, LETTERS), "A1:Z10")
+  expect_equal(wb_dims(1:10, 1:26), "A1:Z10")
+
+  expect_equal(wb_dims(1:2, 1:4, start_row = 2, start_col = "B"), "B2:E3")
+  expect_equal(wb_dims(mtcars, start_row = 2, start_col = "B"), "B2:L34")
+
+})
 
 test_that("create_char_dataframe", {
 

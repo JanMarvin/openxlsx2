@@ -65,7 +65,7 @@
 #' wb$set_cell_style("SUM", "C7:C16", wb$styles_mgr$get_xf_id("new_xf"))
 #' # wb_open(wb)
 #'
-#' @export
+#' @noRd
 style_mgr <- R6::R6Class("wbStylesMgr", {
 
   public <- list(
@@ -603,7 +603,6 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' "Title"
     #' "Total"
     #' "Warning Text"
-    #' @export
     init_named_style = function(name, font_name = "Arial", font_size = 11) {
 
       # we probably should only have unique named styles. check if style is found.
@@ -973,7 +972,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         border_id <- self$get_border_id(border_xml)
       }
 
-      cell_style_xml <- create_cell_style(numFmtId = numFmtId, fontId = font_id, fillId = fill_id, borderId = border_id, is_cell_style_xf = TRUE)
+      cell_style_xml <- create_cell_style(num_fmt_id = numFmtId, font_id = font_id, fill_id = fill_id, border_id = border_id, is_cell_style_xf = TRUE)
       attr(cell_style_xml, "cellStyleXf") <- TRUE
       self$add(cell_style_xml, name)
       xf_fr_id <- self$get_cellStyleXf_id(name)

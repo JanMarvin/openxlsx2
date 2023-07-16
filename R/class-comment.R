@@ -2,7 +2,7 @@
 #'
 #' A comment
 #'
-#' @export
+#' @noRd
 wbComment <- R6::R6Class(
   "wbComment",
 
@@ -339,6 +339,7 @@ write_comment <- function(
 #' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 #' will be removed.
 #' @rdname comment
+#' @keywords internal
 #' @export
 remove_comment <- function(
     wb,
@@ -378,9 +379,131 @@ remove_comment <- function(
 
   toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
 
+  # FIXME: if all comments are removed we should drop to wb$comments <- list()
   wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
+
 }
 
 wb_comment <- function(text = character(), author = character(), style = character()) {
   wbComment$new(text = text, author = author, style = style)
+}
+
+#' Add person to use for threaded comment
+#'
+#' If a threaded comment is added, it needs a person attached with it. The default is to create a person with provider id `"None"`. Other providers are possible with specific values for `id` and `user_id`. If you require the following, create a workbook via spreadsheet software load it and get the values with `wb_get_person()`
+#' @param wb a workbook
+#' @param name the name to display
+#' @param id (optional) the display id
+#' @param user_id (optional) the user id
+#' @param provider_id (optional) the provider id
+#' @keywords comments
+#' @export
+wb_add_person <- function(
+    wb,
+    name        = NULL,
+    id          = NULL,
+    user_id     = NULL,
+    provider_id = "None"
+) {
+  assert_workbook(wb)
+  wb$clone()$add_person(
+    name        = name,
+    id          = id,
+    user_id     = user_id,
+    provider_id = provider_id
+  )
+}
+
+#' Get Person list from workbook
+#'
+#' Persons are required for threaded comments
+#' @param wb a workbook
+#' @param name a specific name
+#' @export
+wb_get_person <- function(wb, name = NULL) {
+  assert_workbook(wb)
+  wb$get_person(name)
+}
+
+as_fmt_txt <- function(x) {
+  vapply(x, function(y) {
+    ifelse(is_xml(y), si_to_txt(xml_node_create("si", xml_children = y)), y)
+  },
+  NA_character_
+  )
+}
+
+wb_get_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
+  sheet_id <- wb$validate_sheet(sheet)
+  cmts <- as.data.frame(do.call("rbind", wb$comments[[sheet_id]]))
+  if (!is.null(dims)) cmts <- cmts[cmts$ref == dims,]
+  cmts <- cmts[c("ref", "author", "comment")]
+  cmts$comment <- as_fmt_txt(cmts$comment)
+  cmts
+}
+
+wb_add_threaded_comment <- function(wb, sheet = current_sheet(), dims = "A1", comment, person_id) {
+
+  assert_workbook(wb)
+
+  sheet <- wb$validate_sheet(sheet)
+
+  if (length(cmt <- wb_get_comment(wb, dims)$comment)) {
+    # TODO not sure yet what to do
+  } else {
+    cmt <- create_comment(text = comment, author = "")
+    wb$add_comment(sheet = sheet, dims = dims, comment = c1)
+  }
+
+  if (!length(wb$worksheets[[sheet]]$relships$threadedComment)) {
+
+    # TODO the sheet id is correct ... ?
+    wb$worksheets[[sheet]]$relships$threadedComment <- sheet
+
+    wb$append(
+      "Content_Types",
+      # "<Default Extension=\"vml\" ContentType=\"application/vnd.openxmlformats-officedocument.vmlDrawing\"/>",
+      sprintf("<Override PartName=\"/xl/threadedComments/threadedComment%s.xml\" ContentType=\"application/vnd.ms-excel.threadedcomments+xml\"/>", sheet)
+    )
+
+    wb$worksheets_rels[[sheet]] <- append(
+      wb$worksheets_rels[[sheet]],
+      c(
+        sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/threadedComment\" Target=\"../threadedComments/threadedComment%s.xml\"/>", length(wb$worksheets_rels[[1]]) + 1L, sheet)
+      )
+    )
+
+    wb$threadComments <- "<ThreadedComments xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments\" xmlns:x=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"></ThreadedComments>"
+
+  }
+
+
+  tc <- xml_node_create(
+    "threadedComment",
+    xml_attributes = c(
+      ref = dims,
+      dT = as_POSIXct_utc(Sys.time()),
+      personId = person_id,
+      id = st_guid()
+    ),
+    xml_children = xml_node_create("text", xml_children = comment)
+  )
+
+  wb$threadComments <- xml_add_child(
+    wb$threadComments,
+    xml_child = tc
+  )
+
+
+  # wb$threadComments <-
+  #   xml_add_child(
+  #     wb$threadComments,
+  #     xml_child = c(
+  #       sprintf("<threadedComment ref=\"A1\" dT=\"2023-07-01T19:19:30.08\" personId=\"%s\" id=\"%s\"><text>Remember when I added threaded comments? Would be cool if we can have these in {openxlsx2}!</text></threadedComment>", wb_get_person()$id[2], c1_id),
+  #       sprintf("<threadedComment ref=\"A1\" dT=\"2023-07-02T19:19:30.08\" personId=\"%s\" id=\"%s\" parentId=\"%s\"><text>Yes, I do remember! Let's check this out.</text></threadedComment>", wb_get_person()$id[1], c2_id, c1_id),
+  #       sprintf("<threadedComment ref=\"A1\" dT=\"2023-07-02T19:19:30.08\" personId=\"%s\" id=\"%s\" parentId=\"%s\"><text>Yes, I do remember! Let's check this out.</text></threadedComment>", wb_get_person()$id[1], st_guid(), c1_id)
+  #     )
+  #   )
+
+  wb
 }

@@ -127,22 +127,22 @@ test_that("data validation", {
     add_worksheet("Sheet 1")$
     add_data_table(x = iris)$
     # whole numbers are fine
-    add_data_validation(col = 1:3, rows = 2:151, type = "whole",
+    add_data_validation(dims = "A2:C151", type = "whole",
                         operator = "between", value = c(1, 9)
     )$
     # text width 7-9 is fine
-    add_data_validation(col = 5, rows = 2:151, type = "textLength",
+    add_data_validation(dims = "E2:E151", type = "textLength",
                         operator = "between", value = c(7, 9)
     )$
     ## Date and Time cell validation
     add_worksheet("Sheet 2")$
     add_data_table(x = df)$
     # date >= 2016-01-01 is fine
-    add_data_validation(col = 1, rows = 2:12, type = "date",
+    add_data_validation(dims = "A2:A12", type = "date",
                         operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
     )$
     # a few timestamps are fine
-    add_data_validation(col = 2, rows = 2:12, type = "time",
+    add_data_validation(dims = "B2:B12", type = "time",
                         operator = "between", value = df$t[c(4, 8)]
     )$
     ## validate list: validate inputs on one sheet with another
@@ -150,7 +150,7 @@ test_that("data validation", {
     add_data_table(x = iris[1:30, ])$
     add_worksheet("Sheet 4")$
     add_data(x = sample(iris$Sepal.Length, 10))$
-    add_data_validation("Sheet 3", col = 1, rows = 2:31, type = "list",
+    add_data_validation("Sheet 3", dims = "A2:A31", type = "list",
                         value = "'Sheet 4'!$A$1:$A$10")
 
   exp <- c(
@@ -198,8 +198,11 @@ test_that("data validation", {
     wb2$worksheets[[3]]$dataValidations
   )
 
-  wb2$add_data_validation("Sheet 3", col = 2, rows = 2:31, type = "list",
-                          value = "'Sheet 4'!$A$1:$A$10")
+  expect_warning(
+    wb2$add_data_validation("Sheet 3", cols = 2, rows = 2:31, type = "list",
+                            value = "'Sheet 4'!$A$1:$A$10"),
+    "'cols/rows' is deprecated."
+  )
 
   exp <- c(
     "<dataValidation type=\"list\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:A31\"><formula1>'Sheet 4'!$A$1:$A$10</formula1></dataValidation>",
@@ -211,13 +214,16 @@ test_that("data validation", {
   ### tests if conditions
 
   # test col2int
-  wb <- wb_workbook()$
-    add_worksheet("Sheet 1")$
-    add_data_table(x = head(iris))$
-    # whole numbers are fine
-    add_data_validation(col = "A", rows = 2:151, type = "whole",
-                        operator = "between", value = c(1, 9)
-    )
+  expect_warning(
+    wb <- wb_workbook()$
+      add_worksheet("Sheet 1")$
+      add_data_table(x = head(iris))$
+      # whole numbers are fine
+      add_data_validation(cols = "A", rows = 2:151, type = "whole",
+                          operator = "between", value = c(1, 9)
+      ),
+    "'cols/rows' is deprecated."
+  )
 
   exp <- "<dataValidation type=\"whole\" operator=\"between\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A2:A151\"><formula1>1</formula1><formula2>9</formula2></dataValidation>"
   got <- wb$worksheets[[1]]$dataValidations
@@ -229,7 +235,7 @@ test_that("data validation", {
     wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
     add_data_table(x = head(iris))$
-    add_data_validation(col = "A", rows = 2:151, type = "whole",
+    add_data_validation(dims = "A2:A151", type = "whole",
                         operator = "between", value = c(1, 9, 19)
     ),
     "length <= 2"
@@ -240,7 +246,7 @@ test_that("data validation", {
     wb <- wb_workbook()$
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
-      add_data_validation(col = "A", rows = 2:151, type = "even",
+      add_data_validation(dims = "A2:A151", type = "even",
                           operator = "between", value = c(1, 9)
       ),
     "Invalid 'type' argument!"
@@ -251,7 +257,7 @@ test_that("data validation", {
     wb <- wb_workbook()$
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
-      add_data_validation(col = "A", rows = 2:151, type = "whole",
+      add_data_validation(dims = "A2:A151", type = "whole",
                           operator = "lower", value = c(1, 9)
       ),
     "Invalid 'operator' argument!"
@@ -263,7 +269,7 @@ test_that("data validation", {
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
       # whole numbers are fine
-      add_data_validation(col = 1, rows = 2:12, type = "date",
+      add_data_validation(dims = "A2:A12", type = "date",
                           operator = "greaterThanOrEqual", value = 7
       ),
     "If type == 'date' value argument must be a Date vector"
@@ -275,7 +281,7 @@ test_that("data validation", {
       add_worksheet("Sheet 1")$
       add_data_table(x = head(iris))$
       # whole numbers are fine
-      add_data_validation(col = 1, rows = 2:12, type = "time",
+      add_data_validation(dims = "A2:A12", type = "time",
                           operator = "greaterThanOrEqual", value = 7
       ),
     "If type == 'time' value argument must be a POSIXct or POSIXlt vector."
@@ -287,7 +293,7 @@ test_that("data validation", {
     add_worksheet("Sheet 1")$
     add_data(x = c(-1:1), colNames = FALSE)$
     # whole numbers are fine
-    add_data_validation(col = 1, rows = 1:3, type = "whole",
+    add_data_validation(dims = "A1:A3", type = "whole",
                         operator = "greaterThan", value = c(0),
                         errorStyle = "information", errorTitle = "ERROR!",
                         error = "Some error ocurred!",
@@ -304,7 +310,7 @@ test_that("data validation", {
     add_worksheet("Sheet 1")$
     add_data(x = data.frame(x = 1, y = 2), colNames = FALSE)$
     # whole numbers are fine
-    add_data_validation(col = 1, rows = 1:3, type = "custom", value = "A1=B1")
+    add_data_validation(dims = "A1:A3", type = "custom", value = "A1=B1")
 
   exp <- "<dataValidation type=\"custom\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"A1:A3\"><formula1>A1=B1</formula1></dataValidation>"
   got <- wb$worksheets[[1]]$dataValidations
@@ -693,7 +699,7 @@ test_that("various image functions work as expected", {
 
   expect_warning(
     wb$add_worksheet()$add_image(file = img, width = 6, height = 5, dims = NULL, startRow = 2, startCol = 2),
-    "dims is NULL, startRow/startCol will have no impact"
+    "'start_col/start_row' is deprecated."
   )
 
 })

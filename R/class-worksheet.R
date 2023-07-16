@@ -5,7 +5,7 @@
 #'
 #' A Worksheet
 #'
-#' @export
+#' @noRd
 wbWorksheet <- R6::R6Class(
   "wbWorksheet",
 
@@ -140,46 +140,51 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorksheet` object
-    #' @param tabColor tabColor
-    #' @param oddHeader oddHeader
-    #' @param oddFooter oddFooter
-    #' @param evenHeader evenHeader
-    #' @param evenFooter evenFooter
-    #' @param firstHeader firstHeader
-    #' @param firstFooter firstFooter
-    #' @param paperSize paperSize
+    #' @param tab_color tabColor
+    #' @param odd_header oddHeader
+    #' @param odd_footer oddFooter
+    #' @param even_header evenHeader
+    #' @param even_footer evenFooter
+    #' @param first_header firstHeader
+    #' @param first_footer firstFooter
+    #' @param paper_size paperSize
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
-    #' @param printGridLines printGridLines
+    #' @param grid_lines printGridLines
+    #' @param ... additional arguments
     #' @return a `wbWorksheet` object
     initialize = function(
-      tabColor   = NULL,
-      oddHeader   = NULL,
-      oddFooter   = NULL,
-      evenHeader  = NULL,
-      evenFooter  = NULL,
-      firstHeader = NULL,
-      firstFooter = NULL,
-      paperSize   = 9,
-      orientation = "portrait",
-      hdpi        = 300,
-      vdpi        = 300,
-      printGridLines = FALSE
+      tab_color    = NULL,
+      odd_header   = NULL,
+      odd_footer   = NULL,
+      even_header  = NULL,
+      even_footer  = NULL,
+      first_header = NULL,
+      first_footer = NULL,
+      paper_size   = 9,
+      orientation  = "portrait",
+      hdpi         = 300,
+      vdpi         = 300,
+      grid_lines   = FALSE,
+      ...
     ) {
-      if (!is.null(tabColor)) {
-        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColor)
+
+      standardize_case_names(...)
+
+      if (!is.null(tab_color)) {
+        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tab_color)
       } else {
         tabColor <- character()
       }
 
       hf <- list(
-        oddHeader   = na_to_null(oddHeader),
-        oddFooter   = na_to_null(oddFooter),
-        evenHeader  = na_to_null(evenHeader),
-        evenFooter  = na_to_null(evenFooter),
-        firstHeader = na_to_null(firstHeader),
-        firstFooter = na_to_null(firstFooter)
+        oddHeader   = na_to_null(odd_header),
+        oddFooter   = na_to_null(odd_footer),
+        evenHeader  = na_to_null(even_header),
+        evenFooter  = na_to_null(even_footer),
+        firstHeader = na_to_null(first_header),
+        firstFooter = na_to_null(first_footer)
       )
 
       if (all(lengths(hf) == 0)) {
@@ -187,8 +192,8 @@ wbWorksheet <- R6::R6Class(
       }
 
       # only add if printGridLines not TRUE. The openxml default is TRUE
-      if (printGridLines) {
-       self$set_print_options(gridLines = printGridLines, gridLinesSet = printGridLines)
+      if (grid_lines) {
+       self$set_print_options(gridLines = grid_lines, gridLinesSet = grid_lines)
       }
 
       ## list of all possible children
@@ -203,7 +208,7 @@ wbWorksheet <- R6::R6Class(
       self$dataValidations       <- NULL
       self$hyperlinks            <- list()
       self$pageMargins           <- '<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>'
-      self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s"/>', paperSize, orientation, hdpi, vdpi)
+      self$pageSetup             <- sprintf('<pageSetup paperSize="%s" orientation="%s" horizontalDpi="%s" verticalDpi="%s"/>', paper_size, orientation, hdpi, vdpi)
       self$headerFooter          <- hf
       self$rowBreaks             <- character()
       self$colBreaks             <- character()
@@ -674,47 +679,48 @@ wbWorksheet <- R6::R6Class(
     },
 
     #' @description add sheetview
-    #' @param colorId colorId
-    #' @param defaultGridColor defaultGridColor
-    #' @param rightToLeft rightToLeft
-    #' @param showFormulas showFormulas
-    #' @param showGridLines showGridLines
-    #' @param showOutlineSymbols showOutlineSymbols
-    #' @param showRowColHeaders showRowColHeaders
-    #' @param showRuler showRuler
-    #' @param showWhiteSpace showWhiteSpace
-    #' @param showZeros showZeros
-    #' @param tabSelected tabSelected
-    #' @param topLeftCell topLeftCell
-    #' @param view view
-    #' @param windowProtection windowProtection
-    #' @param workbookViewId workbookViewId
-    #' @param zoomScale zoomScale
-    #' @param zoomScaleNormal zoomScaleNormal
-    #' @param zoomScalePageLayoutView zoomScalePageLayoutView
-    #' @param zoomScaleSheetLayoutView zoomScaleSheetLayoutView
+    #' @param sheet sheet
+    #' @param color_id,default_grid_color Integer: A color, default is 64
+    #' @param right_to_left Logical: if TRUE column ordering is right  to left
+    #' @param show_formulas Logical: if TRUE cell formulas are shown
+    #' @param show_grid_lines Logical: if TRUE the worksheet grid is shown
+    #' @param show_outline_symbols Logical: if TRUE outline symbols are shown
+    #' @param show_row_col_headers Logical: if TRUE row and column headers are shown
+    #' @param show_ruler Logical: if TRUE a ruler is shown in page layout view
+    #' @param show_white_space Logical: if TRUE margins are shown in page layout view
+    #' @param show_zeros Logical: if FALSE cells containing zero are shown blank if !showFormulas
+    #' @param tab_selected Integer: zero vector indicating the selected tab
+    #' @param top_left_cell Cell: the cell shown in the top left corner / or top right with rightToLeft
+    #' @param view View: "normal", "pageBreakPreview" or "pageLayout"
+    #' @param window_protection Logical: if TRUE the panes are protected
+    #' @param workbook_view_id integer: Pointing to some other view inside the workbook
+    #' @param zoom_scale,zoom_scale_normal,zoom_scale_page_layout_view,zoom_scale_sheet_layout_view Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
+    #' @param ... additional arguments
     #' @return The `wbWorksheetObject`, invisibly
     set_sheetview = function(
-      colorId                  = NULL,
-      defaultGridColor         = NULL,
-      rightToLeft              = NULL,
-      showFormulas             = NULL,
-      showGridLines            = NULL,
-      showOutlineSymbols       = NULL,
-      showRowColHeaders        = NULL,
-      showRuler                = NULL,
-      showWhiteSpace           = NULL,
-      showZeros                = NULL,
-      tabSelected              = NULL,
-      topLeftCell              = NULL,
-      view                     = NULL,
-      windowProtection         = NULL,
-      workbookViewId           = NULL,
-      zoomScale                = NULL,
-      zoomScaleNormal          = NULL,
-      zoomScalePageLayoutView  = NULL,
-      zoomScaleSheetLayoutView = NULL
+      color_id                     = NULL,
+      default_grid_color           = NULL,
+      right_to_left                = NULL,
+      show_formulas                = NULL,
+      show_grid_lines              = NULL,
+      show_outline_symbols         = NULL,
+      show_row_col_headers         = NULL,
+      show_ruler                   = NULL,
+      show_white_space             = NULL,
+      show_zeros                   = NULL,
+      tab_selected                 = NULL,
+      top_left_cell                = NULL,
+      view                         = NULL,
+      window_protection            = NULL,
+      workbook_view_id             = NULL,
+      zoom_scale                   = NULL,
+      zoom_scale_normal            = NULL,
+      zoom_scale_page_layout_view  = NULL,
+      zoom_scale_sheet_layout_view = NULL,
+      ...
     ) {
+
+      standardize(...)
 
       # all zoom scales must be in the range of 10 - 400
 
@@ -727,25 +733,25 @@ wbWorksheet <- R6::R6Class(
       sheetView <- xml_attr_mod(
         sheetView,
         xml_attributes = c(
-          colorId                  = as_xml_attr(colorId),
-          defaultGridColor         = as_xml_attr(defaultGridColor),
-          rightToLeft              = as_xml_attr(rightToLeft),
-          showFormulas             = as_xml_attr(showFormulas),
-          showGridLines            = as_xml_attr(showGridLines),
-          showOutlineSymbols       = as_xml_attr(showOutlineSymbols),
-          showRowColHeaders        = as_xml_attr(showRowColHeaders),
-          showRuler                = as_xml_attr(showRuler),
-          showWhiteSpace           = as_xml_attr(showWhiteSpace),
-          showZeros                = as_xml_attr(showZeros),
-          tabSelected              = as_xml_attr(tabSelected),
-          topLeftCell              = as_xml_attr(topLeftCell),
+          colorId                  = as_xml_attr(color_id),
+          defaultGridColor         = as_xml_attr(default_grid_color),
+          rightToLeft              = as_xml_attr(right_to_left),
+          showFormulas             = as_xml_attr(show_formulas),
+          showGridLines            = as_xml_attr(show_grid_lines),
+          showOutlineSymbols       = as_xml_attr(show_outline_symbols),
+          showRowColHeaders        = as_xml_attr(show_row_col_headers),
+          showRuler                = as_xml_attr(show_ruler),
+          showWhiteSpace           = as_xml_attr(show_white_space),
+          showZeros                = as_xml_attr(show_zeros),
+          tabSelected              = as_xml_attr(tab_selected),
+          topLeftCell              = as_xml_attr(top_left_cell),
           view                     = as_xml_attr(view),
-          windowProtection         = as_xml_attr(windowProtection),
-          workbookViewId           = as_xml_attr(workbookViewId),
-          zoomScale                = as_xml_attr(zoomScale),
-          zoomScaleNormal          = as_xml_attr(zoomScaleNormal),
-          zoomScalePageLayoutView  = as_xml_attr(zoomScalePageLayoutView),
-          zoomScaleSheetLayoutView = as_xml_attr(zoomScaleSheetLayoutView)
+          windowProtection         = as_xml_attr(window_protection),
+          workbookViewId           = as_xml_attr(workbook_view_id),
+          zoomScale                = as_xml_attr(zoom_scale),
+          zoomScaleNormal          = as_xml_attr(zoom_scale_normal),
+          zoomScalePageLayoutView  = as_xml_attr(zoom_scale_page_layout_view),
+          zoomScaleSheetLayoutView = as_xml_attr(zoom_scale_sheet_layout_view)
         ),
         remove_empty_attr = FALSE
       )

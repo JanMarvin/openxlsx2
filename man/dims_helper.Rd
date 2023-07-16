@@ -4,26 +4,41 @@
 \alias{dims_helper}
 \alias{dims_to_rowcol}
 \alias{rowcol_to_dims}
-\title{dims helpers}
+\alias{wb_dims}
+\title{Helper functions to work with \code{dims}}
 \usage{
 dims_to_rowcol(x, as_integer = FALSE)
 
 rowcol_to_dims(row, col)
+
+wb_dims(...)
 }
 \arguments{
 \item{x}{a dimension object "A1" or "A1:A1"}
 
-\item{as_integer}{optional if the output should be returned as integer}
+\item{as_integer}{If the output should be returned as integer, (defaults to string)}
 
 \item{row}{a numeric vector of rows}
 
 \item{col}{a numeric or character vector of cols}
+
+\item{...}{construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame}
+}
+\value{
+\itemize{
+\item A \code{dims} string for \verb{_to_dim} i.e  "A1:A1"
+\item A list of rows and columns for \code{to_rowcol}
+}
 }
 \description{
-Internal helpers to (de)construct a dims argument from/to a row
-and column vector. Exported for user convenience.
+Internal helpers to (de)construct a dims argument from/to a row and column
+vector. Exported for user convenience.
 }
 \examples{
 dims_to_rowcol("A1:J10")
 rowcol_to_dims(1:10, 1:10)
+# either vectors
+wb_dims(rows = 1:10, cols = 1:10)
+# or objects
+wb_dims(mtcars)
 }
