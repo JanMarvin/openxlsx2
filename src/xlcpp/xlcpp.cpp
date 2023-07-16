@@ -1,10 +1,9 @@
 #include "openxlsx2.h"
-#include<iostream>
-#include<fstream>
+#include <iostream>
+#include <fstream>
 
 #include "xlcpp.h"
 #include "xlcpp-pimpl.h"
-#include "mmap.h"
 #include "cfbf.h"
 #include "utf16.h"
 #include <vector>
@@ -67,22 +66,29 @@ __inline string utf16_to_utf8(const u16string_view& s) {
 }
 #endif
 
+std::vector<const uint8_t> loadFile(const std::string& filename) {
+  std::ifstream file(filename, std::ios::binary | std::ios::ate);
+  if (!file.is_open()) {
+    Rcpp::stop("Failed to open file");
+  }
+
+  std::streamsize fileSize = file.tellg();
+  file.seekg(0, std::ios::beg);
+
+  std::vector<const uint8_t> buffer(fileSize);
+  if (file.read(const_cast<char*>(reinterpret_cast<const char*>(buffer.data())), fileSize)) {
+    return buffer;
+  } else {
+    Rcpp::stop("Failed to read file");
+  }
+}
+
+
 workbook_pimpl::workbook_pimpl(const filesystem::path& fn, string_view password, string_view outfile) {
-// #ifdef _WIN32
-//     unique_handle hup{CreateFileW((LPCWSTR)fn.u16string().c_str(), FILE_READ_DATA | DELETE, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-//                                   FILE_ATTRIBUTE_NORMAL, nullptr)};
-//     if (hup.get() == INVALID_HANDLE_VALUE)
-//         throw last_error("CreateFile", GetLastError());
-// #else
-    unique_handle hup{open(fn.string().c_str(), O_RDONLY)};
 
-    if (hup.get() == -1)
-        Rcpp::stop("open failed (errno = {})", errno);
-// #endif
+    std::string path = fn;
 
-    mmap m(hup.get());
-
-    auto mem = m.map();
+    std::vector<const uint8_t> mem = loadFile(path);
 
     load_from_memory(mem, password, outfile);
 }
@@ -94,6 +100,7 @@ workbook_pimpl::workbook_pimpl(span<const uint8_t> sv, string_view password, str
 void workbook_pimpl::load_from_memory(span<const uint8_t> mem, string_view password, string_view outfile) {
     vector<uint8_t> plaintext;
 
+    std::ofstream xlsx((std::string)outfile, ios::out | ios::binary);
     if (mem.size() >= sizeof(uint64_t) && *(uint64_t*)mem.data() == CFBF_SIGNATURE) {
         cfbf c(mem);
         string enc_info, enc_package;
@@ -135,16 +142,10 @@ void workbook_pimpl::load_from_memory(span<const uint8_t> mem, string_view passw
         c.parse_enc_info(span((uint8_t*)enc_info.data(), enc_info.size()), u16password);
         plaintext = c.decrypt(span((uint8_t*)enc_package.data(), enc_package.size()));
 
-        mem = plaintext;
+        xlsx.write((char *) plaintext.data(), plaintext.size());
     }
+    xlsx.close();
 
-    // FIXME I'm to stupid to write the file with libarchive
-
-    if (outfile.compare("") != 0) {
-      std::ofstream xlsx((std::string)outfile, ios::out | ios::binary);
-      xlsx.write((char *) mem.data(), mem.size());
-      xlsx.close();
-    }
 }
 
 workbook::workbook(const filesystem::path& fn, std::string_view password, std::string_view outfile) {

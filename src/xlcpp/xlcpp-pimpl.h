@@ -1,7 +1,6 @@
 #pragma once
 
 #include "xlcpp.h"
-#include "mmap.h"
 #include <list>
 #include <variant>
 #include <map>
@@ -11,8 +10,6 @@
 #include <optional>
 #include <stack>
 #include <span>
-// #include <archive.h>
-// #include <archive_entry.h>
 
 namespace xlcpp {
 
@@ -105,25 +102,3 @@ private:
     bool empty_tag;
     std::vector<ns_list> namespaces;
 };
-
-// class archive_read_closer {
-// public:
-//     typedef archive* pointer;
-//
-//     void operator()(archive* a) {
-//         archive_read_free(a);
-//     }
-// };
-//
-// using archive_read_t = std::unique_ptr<archive*, archive_read_closer>;
-//
-// class archive_write_closer {
-// public:
-//     typedef archive* pointer;
-//
-//     void operator()(archive* a) {
-//         archive_write_free(a);
-//     }
-// };
-//
-// using archive_write_t = std::unique_ptr<archive*, archive_write_closer>;

@@ -40,6 +40,7 @@ wb_load <- function(
     ...
 ) {
 
+  password <- NULL
   standardize_case_names(...)
 
   file <- xlsx_file %||% file

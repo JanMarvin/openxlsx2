@@ -1,6 +1,5 @@
 #pragma once
 
-#include "mmap.h"
 #include <string>
 #include <string_view>
 #include <filesystem>
@@ -51,7 +50,6 @@ private:
     const dirent& find_dirent(uint32_t num);
     std::vector<uint8_t> decrypt44(std::span<uint8_t> enc_package);
 
-    std::unique_ptr<mmap> m;
     std::array<uint8_t, 32> key;
     unsigned int key_size;
     std::array<uint8_t, 16> salt;

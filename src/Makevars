@@ -15,7 +15,6 @@ OBJECTS = decrypt.o \
 					$(PKGROOT)/aes.o \
 					$(PKGROOT)/b64.o \
 					$(PKGROOT)/cfbf.o \
-					$(PKGROOT)/mmap.o \
 					$(PKGROOT)/sha1.o \
 					$(PKGROOT)/sha512.o \
 					$(PKGROOT)/xlcpp.o \
@@ -25,7 +24,6 @@ OBJECTS = decrypt.o \
 XLCPP = $(PKGROOT)/aes.cpp \
 				$(PKGROOT)/b64.cpp \
 				$(PKGROOT)/cfbf.cpp \
-				$(PKGROOT)/mmap.cpp \
 				$(PKGROOT)/sha1.cpp \
 				$(PKGROOT)/sha512.cpp \
 				$(PKGROOT)/xml-reader.cpp \
