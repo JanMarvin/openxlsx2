@@ -336,3 +336,63 @@ static string esc_char(string_view s) {
         return string{string_view(t, 4)};
     }
 }
+
+string xml_enc_string_view::decode() const {
+  auto v = sv;
+  string s;
+
+  s.reserve(v.length());
+
+  while (!v.empty()) {
+    if (v.front() == '&') {
+      v.remove_prefix(1);
+
+      if (v.starts_with("amp;")) {
+        s += "&";
+        v.remove_prefix(4);
+      } else if (v.starts_with("lt;")) {
+        s += "<";
+        v.remove_prefix(3);
+      } else if (v.starts_with("gt;")) {
+        s += ">";
+        v.remove_prefix(3);
+      } else if (v.starts_with("quot;")) {
+        s += "\"";
+        v.remove_prefix(5);
+      } else if (v.starts_with("apos;")) {
+        s += "'";
+        v.remove_prefix(5);
+      } else if (v.starts_with("#")) {
+        string_view bit;
+
+        v.remove_prefix(1);
+
+        auto sc = v.find_first_of(';');
+        if (sc == string::npos) {
+          bit = v;
+          v = "";
+        } else {
+          bit = v.substr(0, sc);
+          v.remove_prefix(sc + 1);
+        }
+
+        s += esc_char(bit);
+      } else
+        s += "&";
+    } else {
+      s += v.front();
+      v.remove_prefix(1);
+    }
+  }
+
+  return s;
+}
+
+bool xml_enc_string_view::cmp(string_view str) const {
+  for (auto c : sv) {
+    if (c == '&')
+      return decode() == str;
+  }
+
+  return sv == str;
+}

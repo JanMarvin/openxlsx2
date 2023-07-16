@@ -11,8 +11,8 @@
 #include <optional>
 #include <stack>
 #include <span>
-#include <archive.h>
-#include <archive_entry.h>
+// #include <archive.h>
+// #include <archive_entry.h>
 
 namespace xlcpp {
 
@@ -33,8 +33,8 @@ public:
     workbook_pimpl(std::span<const uint8_t> sv, std::string_view password, std::string_view outfile);
     std::string data() const;
 
-    void write_archive(struct archive* a) const;
-    la_ssize_t write_callback(struct archive* a, const void* buffer, size_t length) const;
+    // void write_archive(struct archive* a) const;
+    // la_ssize_t write_callback(struct archive* a, const void* buffer, size_t length) const;
     void load_archive(struct archive* a);
 
 #ifdef _WIN32
@@ -53,32 +53,34 @@ private:
     void load_from_memory(std::span<const uint8_t> sv, std::string_view password, std::string_view outfile);
 };
 
-enum class xml_node {
-    unknown,
-    text,
-    whitespace,
-    element,
-    end_element,
-    processing_instruction,
-    comment,
-    cdata
-};
+}; // end namespace xlcpp
 
+
+enum class xml_node {
+  unknown,
+  text,
+  whitespace,
+  element,
+  end_element,
+  processing_instruction,
+  comment,
+  cdata
+};
 
 class xml_enc_string_view {
 public:
-    xml_enc_string_view() { }
-    xml_enc_string_view(std::string_view sv) : sv(sv) { }
+  xml_enc_string_view() { }
+  xml_enc_string_view(std::string_view sv) : sv(sv) { }
 
-    bool empty() const noexcept {
-        return sv.empty();
-    }
+  bool empty() const noexcept {
+    return sv.empty();
+  }
 
-    std::string decode() const;
-    bool cmp(std::string_view str) const;
+  std::string decode() const;
+  bool cmp(std::string_view str) const;
 
 private:
-    std::string_view sv;
+  std::string_view sv;
 };
 
 using ns_list = std::vector<std::pair<std::string_view, xml_enc_string_view>>;
@@ -104,24 +106,24 @@ private:
     std::vector<ns_list> namespaces;
 };
 
-class archive_read_closer {
-public:
-    typedef archive* pointer;
-
-    void operator()(archive* a) {
-        archive_read_free(a);
-    }
-};
-
-using archive_read_t = std::unique_ptr<archive*, archive_read_closer>;
-
-class archive_write_closer {
-public:
-    typedef archive* pointer;
-
-    void operator()(archive* a) {
-        archive_write_free(a);
-    }
-};
-
-using archive_write_t = std::unique_ptr<archive*, archive_write_closer>;
+// class archive_read_closer {
+// public:
+//     typedef archive* pointer;
+//
+//     void operator()(archive* a) {
+//         archive_read_free(a);
+//     }
+// };
+//
+// using archive_read_t = std::unique_ptr<archive*, archive_read_closer>;
+//
+// class archive_write_closer {
+// public:
+//     typedef archive* pointer;
+//
+//     void operator()(archive* a) {
+//         archive_write_free(a);
+//     }
+// };
+//
+// using archive_write_t = std::unique_ptr<archive*, archive_write_closer>;

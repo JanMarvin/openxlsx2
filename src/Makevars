@@ -1,9 +1,7 @@
 
-#PKG_CPPFLAGS = -I. -I../inst/include/pugixml -Ixlcpp -DXLCPP_EXPORT
 PKG_CXXFLAGS =  -I. -Ixlcpp -I../inst/include/pugixml -DXLCPP_EXPORT
 
-#PKG_LIBS=-Lpugixml -Lcfbf -L/usr/lib -larchive -L/usr/lib -lfmt
-PKG_LIBS = -larchive  -Lpugixml -Lxlcpp
+PKG_LIBS = -Lpugixml -Lxlcpp
 
 PKGROOT = ./xlcpp
 
@@ -15,24 +13,23 @@ OBJECTS = decrypt.o \
 					styles_xml.o \
 					write_file.o \
 					$(PKGROOT)/aes.o \
-          $(PKGROOT)/b64.o \
-          $(PKGROOT)/cfbf.o \
-          $(PKGROOT)/mmap.o \
-          $(PKGROOT)/sha1.o \
-          $(PKGROOT)/sha512.o \
-          $(PKGROOT)/xlcpp.o \
-          $(PKGROOT)/xml-reader.o \
-          RcppExports.o
-
+					$(PKGROOT)/b64.o \
+					$(PKGROOT)/cfbf.o \
+					$(PKGROOT)/mmap.o \
+					$(PKGROOT)/sha1.o \
+					$(PKGROOT)/sha512.o \
+					$(PKGROOT)/xlcpp.o \
+					$(PKGROOT)/xml-reader.o \
+					RcppExports.o
 
 XLCPP = $(PKGROOT)/aes.cpp \
-        $(PKGROOT)/b64.cpp \
-        $(PKGROOT)/cfbf.cpp \
-      	$(PKGROOT)/mmap.cpp \
-      	$(PKGROOT)/sha1.cpp \
-      	$(PKGROOT)/sha512.cpp \
-      	$(PKGROOT)/xml-reader.cpp \
-      	$(PKGROOT)/xlcpp.cpp
+				$(PKGROOT)/b64.cpp \
+				$(PKGROOT)/cfbf.cpp \
+				$(PKGROOT)/mmap.cpp \
+				$(PKGROOT)/sha1.cpp \
+				$(PKGROOT)/sha512.cpp \
+				$(PKGROOT)/xml-reader.cpp \
+				$(PKGROOT)/xlcpp.cpp
 
 PUGIXML = ../inst/include/pugixml/pugixml.cpp
 

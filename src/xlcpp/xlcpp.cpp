@@ -7,15 +7,13 @@
 #include "mmap.h"
 #include "cfbf.h"
 #include "utf16.h"
-#include <archive.h>
-#include <archive_entry.h>
 #include <vector>
 #include <array>
 #include <charconv>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+// #ifdef _WIN32
+// #include <windows.h>
+// #endif
 
 // #define FMT_HEADER_ONLY
 // #include <fmt/format.h>
@@ -70,17 +68,17 @@ __inline string utf16_to_utf8(const u16string_view& s) {
 #endif
 
 workbook_pimpl::workbook_pimpl(const filesystem::path& fn, string_view password, string_view outfile) {
-#ifdef _WIN32
-    unique_handle hup{CreateFileW((LPCWSTR)fn.u16string().c_str(), FILE_READ_DATA | DELETE, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-                                  FILE_ATTRIBUTE_NORMAL, nullptr)};
-    if (hup.get() == INVALID_HANDLE_VALUE)
-        throw last_error("CreateFile", GetLastError());
-#else
+// #ifdef _WIN32
+//     unique_handle hup{CreateFileW((LPCWSTR)fn.u16string().c_str(), FILE_READ_DATA | DELETE, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+//                                   FILE_ATTRIBUTE_NORMAL, nullptr)};
+//     if (hup.get() == INVALID_HANDLE_VALUE)
+//         throw last_error("CreateFile", GetLastError());
+// #else
     unique_handle hup{open(fn.string().c_str(), O_RDONLY)};
 
     if (hup.get() == -1)
         Rcpp::stop("open failed (errno = {})", errno);
-#endif
+// #endif
 
     mmap m(hup.get());
 
