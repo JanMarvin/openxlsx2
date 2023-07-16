@@ -6714,6 +6714,65 @@ wbWorkbook <- R6::R6Class(
         ...                          = ...
       )
       invisible(self)
+    },
+
+    #' @description add person to workook
+    #' @param name name
+    #' @param id id
+    #' @param user_id user_id
+    #' @param provider_id provider_id
+    add_person = function (
+      name        = NULL,
+      id          = NULL,
+      user_id     = NULL,
+      provider_id = "None"
+    ) {
+
+      if (is.null(name))    name    <- Sys.getenv("USERNAME", Sys.getenv("USER"))
+      if (is.null(id))      id      <- st_guid()
+      if (is.null(user_id)) user_id <- st_userid()
+
+      xml_person <- xml_node_create(
+        "person",
+        xml_attributes = c(
+          displayName = name,
+          id          = id,
+          userId      = user_id,
+          providerId  = "None"
+        )
+      )
+
+      if (is.null(self$persons)) {
+        self$persons <- xml_node_create(
+          "personList",
+          xml_attributes = c(
+            `xmlns`   = "http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments",
+            `xmlns:x` = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+          )
+        )
+
+        self$append(
+          "workbook.xml.rels",
+          "<Relationship Id=\"rId5\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/person\" Target=\"persons/person.xml\"/>"
+        )
+
+        wb$append(
+          "Content_Types",
+          "<Override PartName=\"/xl/persons/person.xml\" ContentType=\"application/vnd.ms-excel.person+xml\"/>"
+        )
+      }
+
+      self$persons <- xml_add_child(self$persons, xml_person)
+
+      invisible(self)
+    },
+
+    #' description get person
+    #' @param name name
+    get_person = function(name = NULL) {
+      persons <- rbindlist(xml_attr(self$persons, "personList", "person"))
+      if (!is.null(name)) persons <- persons[persons$displayName == name, ]
+      persons
     }
 
   ),

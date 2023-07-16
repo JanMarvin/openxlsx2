@@ -332,6 +332,8 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-add_sparklines}{\code{wbWorkbook$add_sparklines()}}
 \item \href{#method-wbWorkbook-add_ignore_error}{\code{wbWorkbook$add_ignore_error()}}
 \item \href{#method-wbWorkbook-set_sheetview}{\code{wbWorkbook$set_sheetview()}}
+\item \href{#method-wbWorkbook-add_person}{\code{wbWorkbook$add_person()}}
+\item \href{#method-wbWorkbook-get_person}{\code{wbWorkbook$get_person()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -3174,6 +3176,51 @@ add sheetview
 }
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_person"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_person}{}}}
+\subsection{Method \code{add_person()}}{
+add person to workook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_person(
+  name = NULL,
+  id = NULL,
+  user_id = NULL,
+  provider_id = "None"
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+
+\item{\code{id}}{id}
+
+\item{\code{user_id}}{user_id}
+
+\item{\code{provider_id}}{provider_id
+description get person}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_person"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_person}{}}}
+\subsection{Method \code{get_person()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_person(name = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

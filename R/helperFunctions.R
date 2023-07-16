@@ -112,9 +112,6 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
   return(str)
 }
 
-
-getRId <- function(x) reg_match0(x, '(?<= r:id=")[0-9A-Za-z]+')
-
 getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
 # `validateColor()` ------------------------------------------------------------
@@ -225,6 +222,7 @@ pxml <- function(x) {
   # paste(unique(unlist(x)), collapse = "")
   paste(unlist(x), collapse = "")
 }
+
 # `amp_split()` ----------------------------------------------------------------
 #' split headerFooter xml into left, center, and right.
 #' @param x xml string
@@ -246,6 +244,7 @@ amp_split <- function(x) {
   # return the string vector
   unname(res)
 }
+
 # Header footer ---------------------------------------------------------------
 #' get headerFooter from xml into list with left, center, and right.
 #' @param x xml string
@@ -1181,4 +1180,26 @@ to_string <- function(x) {
     if (length(sel_l)) chr[sel_l] <- names(lbls)
   }
   chr
+}
+
+#' create a guid string
+#' @keywords internal
+#' @noRd
+st_guid <- function() {
+  paste0(
+    "{",
+    random_string(length = 8, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 12, pattern = "[A-F0-9]"),
+    "}"
+  )
+}
+
+#' create a userid
+#' @keywords internal
+#' @noRd
+st_userid <- function() {
+  random_string(length = 16, pattern = "[a-z0-9]")
 }
