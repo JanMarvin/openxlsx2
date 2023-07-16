@@ -47,7 +47,7 @@ wb_add_thread(
 These functions allow adding thread comments to spreadsheets. This is not yet supported by all spreadsheet software.
 }
 \details{
-If a threaded comment is added, it needs a person attached with it. The default is to create a person with provider id \code{"None"}. Other providers are possible with specific values for \code{id} and \code{user_id}. If you require the following, create a workbook via spreadsheet software load it and get the values with \code{wb_get_person()}
+If a threaded comment is added, it needs a person attached with it. The default is to create a person with provider id \code{"None"}. Other providers are possible with specific values for \code{id} and \code{user_id}. If you require the following, create a workbook via spreadsheet software load it and get the values with \code{\link[=wb_get_person]{wb_get_person()}}
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()$

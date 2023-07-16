@@ -3746,6 +3746,11 @@ wbWorkbook <- R6::R6Class(
       resolve    = FALSE
     ) {
 
+      if (missing(person_id)) {
+        person_id <- getOption("openxlsx2.thread_id")
+        if (is.null(person_id)) stop("no person id found")
+      }
+
       sheet <- self$validate_sheet(sheet)
       wb_cmt <- wb_get_comment(self, sheet, dims)
 
@@ -6873,6 +6878,8 @@ wbWorkbook <- R6::R6Class(
           providerId  = "None"
         )
       )
+
+      options("openxlsx2.thread_id" = id)
 
       if (is.null(self$persons)) {
         self$persons <- xml_node_create(

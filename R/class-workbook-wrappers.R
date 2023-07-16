@@ -2974,6 +2974,11 @@ wb_add_thread <- function(
     reply     = FALSE,
     resolve   = FALSE
 ) {
+
+  if (missing(person_id)) {
+    person_id <- substitute()
+  }
+
   assert_workbook(wb)
   wb$clone()$add_thread(
     sheet     = sheet,

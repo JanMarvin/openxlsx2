@@ -236,3 +236,15 @@ test_that("threaded comments work", {
   expect_equal(exp, got)
 
 })
+
+test_that("thread option works", {
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_person(name = "Kirk")
+  wb <- wb %>% wb_add_thread(comment = "works")
+
+  exp <- "works"
+  got <- wb_get_thread(wb)$text
+  expect_equal(exp, got)
+
+})
