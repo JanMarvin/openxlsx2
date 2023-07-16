@@ -29,6 +29,7 @@
 * `wb_dims(1:5, letters)`
 * `wb_dims(1:5, 1:26)`
 * `wb_dims(matrix(1, 5, 26))` with an added row for column names
+* Handling of thread comments is not possible via `wb_add_thread()`. This includes options to reply and resolve comments.
   
 ## Refactoring
 
