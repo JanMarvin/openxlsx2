@@ -291,6 +291,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-wbWorkbook-add_comment}{\code{wbWorkbook$add_comment()}}
 \item \href{#method-wbWorkbook-remove_comment}{\code{wbWorkbook$remove_comment()}}
+\item \href{#method-wbWorkbook-add_thread}{\code{wbWorkbook$add_thread()}}
 \item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
@@ -1665,6 +1666,40 @@ Remove comment
 \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
 \item{\code{...}}{additional arguments}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_thread"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_thread}{}}}
+\subsection{Method \code{add_thread()}}{
+add threaded comment to worksheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_thread(
+  sheet = current_sheet(),
+  dims = "A1",
+  comment = NULL,
+  person_id,
+  reply = FALSE,
+  resolve = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{a cell}
+
+\item{\code{comment}}{the comment to add}
+
+\item{\code{person_id}}{the person Id this should be added for}
+
+\item{\code{reply}}{logical if the comment is a reply}
+
+\item{\code{resolve}}{logical if the comment should be maked as resolved}
 }
 \if{html}{\out{</div>}}
 }

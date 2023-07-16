@@ -3737,7 +3737,7 @@ wbWorkbook <- R6::R6Class(
     #' @param reply logical if the comment is a reply
     #' @param resolve logical if the comment should be maked as resolved
     #' @export
-    add_threaded_comment = function(
+    add_thread = function(
       sheet      = current_sheet(),
       dims       = "A1",
       comment    = NULL,
@@ -6853,7 +6853,7 @@ wbWorkbook <- R6::R6Class(
     #' @param id id
     #' @param user_id user_id
     #' @param provider_id provider_id
-    add_person = function (
+    add_person = function(
       name        = NULL,
       id          = NULL,
       user_id     = NULL,
@@ -6888,7 +6888,7 @@ wbWorkbook <- R6::R6Class(
           "<Relationship Id=\"rId5\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/person\" Target=\"persons/person.xml\"/>"
         )
 
-        wb$append(
+        self$append(
           "Content_Types",
           "<Override PartName=\"/xl/persons/person.xml\" ContentType=\"application/vnd.ms-excel.person+xml\"/>"
         )

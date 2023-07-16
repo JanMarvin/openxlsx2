@@ -87,9 +87,10 @@ wbComment <- R6::R6Class(
 #' @name create_comment
 #' @title Create, write and remove comments
 #' @description The comment functions (create, write and remove) allow the
-#' modification of comments. In newer Excels they are called notes, while they
-#' are called comments in openxml. Modification of what Excel now calls comment
-#' (openxml calls them threadedComments) is not yet possible
+#' modification of comments. In newer spreadsheet software they are called
+#' notes, while they are called comments in openxml. Modification of what
+#' newer spreadsheet software now calls comment is possible via
+#' [wb_add_thread()].
 #' @param text Comment text. Character vector.
 #' @param author Author of comment. Character vector of length 1
 #' @param style A Style object or list of style objects the same length as comment vector.
@@ -412,7 +413,7 @@ wb_get_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
   cmts
 }
 
-wb_get_threaded_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
+wb_get_thread <- function(wb, sheet = current_sheet(), dims = "A1") {
 
   sheet <- wb$validate_sheet(sheet)
 
