@@ -137,54 +137,54 @@ errno_error::errno_error(string_view function, int en) : msg(function) {
 		case EIDRM:
 			msg += "EIDRM";
 			break;
-		case ECHRNG:
-			msg += "ECHRNG";
-			break;
-		case EL2NSYNC:
-			msg += "EL2NSYNC";
-			break;
-		case EL3HLT:
-			msg += "EL3HLT";
-			break;
-		case EL3RST:
-			msg += "EL3RST";
-			break;
-		case ELNRNG:
-			msg += "ELNRNG";
-			break;
-		case EUNATCH:
-			msg += "EUNATCH";
-			break;
-		case ENOCSI:
-			msg += "ENOCSI";
-			break;
-		case EL2HLT:
-			msg += "EL2HLT";
-			break;
-		case EBADE:
-			msg += "EBADE";
-			break;
-		case EBADR:
-			msg += "EBADR";
-			break;
-		case EXFULL:
-			msg += "EXFULL";
-			break;
-		case ENOANO:
-			msg += "ENOANO";
-			break;
-		case EBADRQC:
-			msg += "EBADRQC";
-			break;
-		case EBADSLT:
-			msg += "EBADSLT";
-			break;
-		case EDEADLOCK:
-			msg += "EDEADLOCK";
-			break;
-		case EBFONT:
-			msg += "EBFONT";
-			break;
+		// case ECHRNG:
+		// 	msg += "ECHRNG";
+		// 	break;
+		// case EL2NSYNC:
+		// 	msg += "EL2NSYNC";
+		// 	break;
+		// case EL3HLT:
+		// 	msg += "EL3HLT";
+		// 	break;
+		// case EL3RST:
+		// 	msg += "EL3RST";
+		// 	break;
+		// case ELNRNG:
+		// 	msg += "ELNRNG";
+		// 	break;
+		// case EUNATCH:
+		// 	msg += "EUNATCH";
+		// 	break;
+		// case ENOCSI:
+		// 	msg += "ENOCSI";
+		// 	break;
+		// case EL2HLT:
+		// 	msg += "EL2HLT";
+		// 	break;
+		// case EBADE:
+		// 	msg += "EBADE";
+		// 	break;
+		// case EBADR:
+		// 	msg += "EBADR";
+		// 	break;
+		// case EXFULL:
+		// 	msg += "EXFULL";
+		// 	break;
+		// case ENOANO:
+		// 	msg += "ENOANO";
+		// 	break;
+		// case EBADRQC:
+		// 	msg += "EBADRQC";
+		// 	break;
+		// case EBADSLT:
+		// 	msg += "EBADSLT";
+		// 	break;
+		// case EDEADLOCK:
+		// 	msg += "EDEADLOCK";
+		// 	break;
+		// case EBFONT:
+		// 	msg += "EBFONT";
+		// 	break;
 		case ENOSTR:
 			msg += "ENOSTR";
 			break;
@@ -197,75 +197,75 @@ errno_error::errno_error(string_view function, int en) : msg(function) {
 		case ENOSR:
 			msg += "ENOSR";
 			break;
-		case ENONET:
-			msg += "ENONET";
-			break;
-		case ENOPKG:
-			msg += "ENOPKG";
-			break;
+		// case ENONET:
+		// 	msg += "ENONET";
+		// 	break;
+		// case ENOPKG:
+		// 	msg += "ENOPKG";
+		// 	break;
 		case EREMOTE:
 			msg += "EREMOTE";
 			break;
 		case ENOLINK:
 			msg += "ENOLINK";
 			break;
-		case EADV:
-			msg += "EADV";
-			break;
-		case ESRMNT:
-			msg += "ESRMNT";
-			break;
-		case ECOMM:
-			msg += "ECOMM";
-			break;
+		// case EADV:
+		// 	msg += "EADV";
+		// 	break;
+		// case ESRMNT:
+		// 	msg += "ESRMNT";
+		// 	break;
+		// case ECOMM:
+		// 	msg += "ECOMM";
+		// 	break;
 		case EPROTO:
 			msg += "EPROTO";
 			break;
 		case EMULTIHOP:
 			msg += "EMULTIHOP";
 			break;
-		case EDOTDOT:
-			msg += "EDOTDOT";
-			break;
+		// case EDOTDOT:
+		// 	msg += "EDOTDOT";
+		// 	break;
 		case EBADMSG:
 			msg += "EBADMSG";
 			break;
 		case EOVERFLOW:
 			msg += "EOVERFLOW";
 			break;
-		case ENOTUNIQ:
-			msg += "ENOTUNIQ";
-			break;
-		case EBADFD:
-			msg += "EBADFD";
-			break;
-		case EREMCHG:
-			msg += "EREMCHG";
-			break;
-		case ELIBACC:
-			msg += "ELIBACC";
-			break;
-		case ELIBBAD:
-			msg += "ELIBBAD";
-			break;
-		case ELIBSCN:
-			msg += "ELIBSCN";
-			break;
-		case ELIBMAX:
-			msg += "ELIBMAX";
-			break;
-		case ELIBEXEC:
-			msg += "ELIBEXEC";
-			break;
+		// case ENOTUNIQ:
+		// 	msg += "ENOTUNIQ";
+		// 	break;
+		// case EBADFD:
+		// 	msg += "EBADFD";
+		// 	break;
+		// case EREMCHG:
+		// 	msg += "EREMCHG";
+		// 	break;
+		// case ELIBACC:
+		// 	msg += "ELIBACC";
+		// 	break;
+		// case ELIBBAD:
+		// 	msg += "ELIBBAD";
+		// 	break;
+		// case ELIBSCN:
+		// 	msg += "ELIBSCN";
+		// 	break;
+		// case ELIBMAX:
+		// 	msg += "ELIBMAX";
+		// 	break;
+		// case ELIBEXEC:
+		// 	msg += "ELIBEXEC";
+		// 	break;
 		case EILSEQ:
 			msg += "EILSEQ";
 			break;
-		case ERESTART:
-			msg += "ERESTART";
-			break;
-		case ESTRPIPE:
-			msg += "ESTRPIPE";
-			break;
+		// case ERESTART:
+		// 	msg += "ERESTART";
+		// 	break;
+		// case ESTRPIPE:
+		// 	msg += "ESTRPIPE";
+		// 	break;
 		case EUSERS:
 			msg += "EUSERS";
 			break;
@@ -356,57 +356,57 @@ errno_error::errno_error(string_view function, int en) : msg(function) {
 		case ESTALE:
 			msg += "ESTALE";
 			break;
-		case EUCLEAN:
-			msg += "EUCLEAN";
-			break;
-		case ENOTNAM:
-			msg += "ENOTNAM";
-			break;
-		case ENAVAIL:
-			msg += "ENAVAIL";
-			break;
-		case EISNAM:
-			msg += "EISNAM";
-			break;
-		case EREMOTEIO:
-			msg += "EREMOTEIO";
-			break;
+		// case EUCLEAN:
+		// 	msg += "EUCLEAN";
+		// 	break;
+		// case ENOTNAM:
+		// 	msg += "ENOTNAM";
+		// 	break;
+		// case ENAVAIL:
+		// 	msg += "ENAVAIL";
+		// 	break;
+		// case EISNAM:
+		// 	msg += "EISNAM";
+		// 	break;
+		// case EREMOTEIO:
+		// 	msg += "EREMOTEIO";
+		// 	break;
 		case EDQUOT:
 			msg += "EDQUOT";
 			break;
-		case ENOMEDIUM:
-			msg += "ENOMEDIUM";
-			break;
-		case EMEDIUMTYPE:
-			msg += "EMEDIUMTYPE";
-			break;
+		// case ENOMEDIUM:
+		// 	msg += "ENOMEDIUM";
+		// 	break;
+		// case EMEDIUMTYPE:
+		// 	msg += "EMEDIUMTYPE";
+		// 	break;
 		case ECANCELED:
 			msg += "ECANCELED";
 			break;
-		case ENOKEY:
-			msg += "ENOKEY";
-			break;
-		case EKEYEXPIRED:
-			msg += "EKEYEXPIRED";
-			break;
-		case EKEYREVOKED:
-			msg += "EKEYREVOKED";
-			break;
-		case EKEYREJECTED:
-			msg += "EKEYREJECTED";
-			break;
+		// case ENOKEY:
+		// 	msg += "ENOKEY";
+		// 	break;
+		// case EKEYEXPIRED:
+		// 	msg += "EKEYEXPIRED";
+		// 	break;
+		// case EKEYREVOKED:
+		// 	msg += "EKEYREVOKED";
+		// 	break;
+		// case EKEYREJECTED:
+		// 	msg += "EKEYREJECTED";
+		// 	break;
 		case EOWNERDEAD:
 			msg += "EOWNERDEAD";
 			break;
 		case ENOTRECOVERABLE:
 			msg += "ENOTRECOVERABLE";
 			break;
-		case ERFKILL:
-			msg += "ERFKILL";
-			break;
-		case EHWPOISON:
-			msg += "EHWPOISON";
-			break;
+		// case ERFKILL:
+		// 	msg += "ERFKILL";
+		// 	break;
+		// case EHWPOISON:
+		// 	msg += "EHWPOISON";
+		// 	break;
 		default:
 			msg += to_string(en);
 			break;
