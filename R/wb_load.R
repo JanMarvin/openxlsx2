@@ -140,7 +140,7 @@ wb_load <- function(
   on.exit(
     unlink(
       # TODO: this removes all files, the folders remain. grep instead grep_xml?
-      grep_xml("media|vmlDrawing|customXml|comment|embeddings|vbaProject|person", ignore.case = TRUE, invert = TRUE),
+      grep_xml("media|vmlDrawing|customXml|embeddings|vbaProject", ignore.case = TRUE, invert = TRUE),
       recursive = TRUE, force = TRUE
     ),
     add = TRUE
@@ -1095,10 +1095,17 @@ wb_load <- function(
 
         comments <- lapply(comments, function(x) {
           text <- xml_node(x, "comment", "text")
-          list(
-            style = xml_node(text, "text", "r", "rPr"),
-            comments = xml_node(text, "text", "r", "t")
-          )
+          if (all(xml_node_name(x, "comment", "text") == "t")) {
+            list(
+              style = FALSE,
+              comments = xml_node(text, "text", "t")
+            )
+          } else {
+            list(
+              style = xml_node(text, "text", "r", "rPr"),
+              comments = xml_node(text, "text", "r", "t")
+            )
+          }
         })
 
         wb$comments[[comment_xml]] <- lapply(seq_along(comments), function(j) {
@@ -1115,19 +1122,11 @@ wb_load <- function(
 
     ## Threaded comments
     if (length(threadCommentsXML) > 0) {
-      threadCommentsXMLrelationship <- lapply(xml, function(x) grep("threadedComment[0-9]+\\.xml", x, value = TRUE))
-      hasThreadComments <- lengths(threadCommentsXMLrelationship) > 0
-      if (any(hasThreadComments)) {
-        for (i in seq_along(xml)) {
-          if (hasThreadComments[i]) {
-            target <- apply_reg_match(threadCommentsXMLrelationship[[i]], '(?<=Target=").*?"')
-            target <- basename(gsub('"$', "", target))
 
-            wb$threadComments[[i]] <- grep(target, threadCommentsXML, value = TRUE)
-
-          }
-        }
+      if (lengths(threadCommentsXML)) {
+        wb$threadComments <- lapply(threadCommentsXML, read_xml, pointer = FALSE)
       }
+
       wb$append(
         "Content_Types",
         sprintf('<Override PartName="/xl/threadedComments/%s" ContentType="application/vnd.ms-excel.threadedcomments+xml"/>',
@@ -1137,7 +1136,8 @@ wb_load <- function(
 
     ## Persons (needed for Threaded Comment)
     if (length(personXML) > 0) {
-      wb$persons <- personXML
+      wb$persons <- read_xml(personXML, pointer = FALSE)
+
       wb$append(
         "Content_Types",
         '<Override PartName="/xl/persons/person.xml" ContentType="application/vnd.ms-excel.person+xml"/>'

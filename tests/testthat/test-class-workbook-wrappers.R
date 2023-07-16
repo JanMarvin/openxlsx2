@@ -389,6 +389,37 @@ test_that("wb_remove_comment() is a wrapper", {
 
 })
 
+# wb_add_thread() ---------------------------------------------------------
+
+test_that("wb_add_thread() is a wrapper", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_wrapper(
+    "add_person",
+    wb = wb,
+    params = list(name = "me")
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_person("me")
+
+  expect_wrapper(
+    "get_person",
+    wb = wb,
+    params = list(name = "me")
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_person("me")
+  me_id <- wb$get_person("me")$id
+
+  expect_wrapper(
+    "add_thread",
+    wb = wb,
+    params = list(comment = "test", person_id = me_id)
+  )
+
+})
+
 # wb_add_form_control() ---------------------------------------------------
 
 test_that("wb_add_form_control() is a wrapper", {

@@ -175,3 +175,76 @@ test_that("fmt_txt in comment", {
   expect_equal(exp, got)
 
 })
+
+test_that("threaded comments work", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  wb$add_person(name = "Kirk")
+  wb$add_person(name = "Uhura")
+  wb$add_person(name = "Spock")
+  wb$add_person(name = "Scotty")
+
+  kirk_id <- wb$get_person(name = "Kirk")$id
+  uhura_id <- wb$get_person(name = "Uhura")$id
+  spock_id <- wb$get_person(name = "Spock")$id
+  scotty_id <- wb$get_person(name = "Scotty")$id
+
+  # write a comment to a thread, reply to one and solve some
+  wb <- wb %>%
+    wb_add_thread(dims = "A1", comment = "wow it works!", person_id = kirk_id) %>%
+    wb_add_thread(dims = "A2", comment = "indeed", person_id = uhura_id, resolve = TRUE) %>%
+    wb_add_thread(dims = "A1", comment = "fascinating", person_id = spock_id, reply = TRUE)
+
+  exp <- data.frame(
+    ref = c("A1", "A1"),
+    displayName = c("Kirk", "Spock"),
+    text = c("wow it works!", "fascinating"),
+    done = c("0", "")
+  )
+  got <- wb_get_thread(wb)[, -1]
+  expect_equal(exp, got)
+
+  exp <- "[Threaded comment]\n\nYour spreadsheet software allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of a certain spreadsheet software.\n\nComment: wow it works!\nReplie:fascinating"
+  got <- wb_get_comment(wb)$comment
+  expect_equal(exp, got)
+
+  # start a new thread
+  wb <- wb %>%
+    wb_add_thread(dims = "A1", comment = "oops", person_id = kirk_id)
+
+  exp <- data.frame(
+    ref = "A1",
+    displayName = "Kirk",
+    text = "oops",
+    done = "0"
+  )
+  got <- wb_get_thread(wb)[, -1]
+  expect_equal(exp, got)
+
+  wb <- wb %>%
+    wb_add_worksheet() %>%
+    wb_add_thread(dims = "A1", comment = "hmpf", person_id = scotty_id)
+
+  exp <- data.frame(
+    ref = "A1",
+    displayName = "Scotty",
+    text = "hmpf",
+    done = "0"
+  )
+  got <- wb_get_thread(wb)[, -1]
+  expect_equal(exp, got)
+
+})
+
+test_that("thread option works", {
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_person(name = "Kirk")
+  wb <- wb %>% wb_add_thread(comment = "works")
+
+  exp <- "works"
+  got <- wb_get_thread(wb)$text
+  expect_equal(exp, got)
+
+})

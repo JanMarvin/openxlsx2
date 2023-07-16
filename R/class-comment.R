@@ -87,9 +87,10 @@ wbComment <- R6::R6Class(
 #' @name create_comment
 #' @title Create, write and remove comments
 #' @description The comment functions (create, write and remove) allow the
-#' modification of comments. In newer Excels they are called notes, while they
-#' are called comments in openxml. Modification of what Excel now calls comment
-#' (openxml calls them threadedComments) is not yet possible
+#' modification of comments. In newer spreadsheet software they are called
+#' notes, while they are called comments in openxml. Modification of what
+#' newer spreadsheet software now calls comment is possible via
+#' [wb_add_thread()].
 #' @param text Comment text. Character vector.
 #' @param author Author of comment. Character vector of length 1
 #' @param style A Style object or list of style objects the same length as comment vector.
@@ -179,7 +180,6 @@ create_comment <- function(text,
 #' @param comment A Comment object. See [create_comment()].
 #' @param dims worksheet cell "A1"
 #' @rdname comment
-#' @keywords internal
 #' @export
 write_comment <- function(
     wb,
@@ -387,4 +387,51 @@ remove_comment <- function(
 
 wb_comment <- function(text = character(), author = character(), style = character()) {
   wbComment$new(text = text, author = author, style = style)
+}
+
+as_fmt_txt <- function(x) {
+  vapply(x, function(y) {
+    ifelse(is_xml(y), si_to_txt(xml_node_create("si", xml_children = y)), y)
+  },
+  NA_character_
+  )
+}
+
+wb_get_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
+  sheet_id <- wb$validate_sheet(sheet)
+  cmts <- list()
+  if (length(wb$comments) >= sheet_id) {
+    cmts <- as.data.frame(do.call("rbind", wb$comments[[sheet_id]]))
+    if (!is.null(dims)) cmts <- cmts[cmts$ref == dims, ]
+    # print(cmts)
+    cmts <- cmts[c("ref", "author", "comment")]
+    if (nrow(cmts)) {
+      cmts$comment <- as_fmt_txt(cmts$comment)
+      cmts$sheet_id <- sheet_id
+    }
+  }
+  cmts
+}
+
+wb_get_thread <- function(wb, sheet = current_sheet(), dims = "A1") {
+
+  sheet <- wb$validate_sheet(sheet)
+
+  tc <- cbind(
+    rbindlist(xml_attr(wb$threadComments[[sheet]], "threadedComment")),
+    text = xml_value(wb$threadComments[[sheet]], "threadedComment", "text")
+  )
+
+  if (!is.null(dims)) {
+    tc <- tc[tc$ref == dims, ]
+  }
+
+  persons <- wb$get_person()
+
+  tc <- merge(tc, persons, by.x = "personId", by.y = "id",
+              all.x = TRUE, all.y = FALSE)
+
+  tc$dT <- as.POSIXct(tc$dT, format = "%Y-%m-%dT%H:%M:%SZ")
+
+  tc[c("dT", "ref", "displayName", "text", "done")]
 }

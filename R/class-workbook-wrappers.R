@@ -2863,6 +2863,7 @@ wb_add_dxfs_style <- function(
 #' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @rdname comment
+#' @seealso [wb_add_thread()]
 #' @export
 wb_add_comment <- function(
     wb,
@@ -2904,6 +2905,88 @@ wb_remove_comment <- function(
     sheet       = sheet,
     dims        = dims,
     ...         = ...
+  )
+}
+
+#' @rdname wb_add_thread
+#' @details
+#' If a threaded comment is added, it needs a person attached with it. The default is to create a person with provider id `"None"`. Other providers are possible with specific values for `id` and `user_id`. If you require the following, create a workbook via spreadsheet software load it and get the values with [wb_get_person()]
+#' @param wb a workbook
+#' @param name the name to display
+#' @param id (optional) the display id
+#' @param user_id (optional) the user id
+#' @param provider_id (optional) the provider id
+#' @keywords comments
+#' @export
+wb_add_person <- function(
+    wb,
+    name        = NULL,
+    id          = NULL,
+    user_id     = NULL,
+    provider_id = "None"
+) {
+  assert_workbook(wb)
+  wb$clone()$add_person(
+    name        = name,
+    id          = id,
+    user_id     = user_id,
+    provider_id = provider_id
+  )
+}
+
+#' @rdname wb_add_thread
+#' @export
+wb_get_person <- function(wb, name = NULL) {
+  assert_workbook(wb)
+  wb$get_person(name)
+}
+
+#' add threaded comment to worksheet
+#'
+#' These functions allow adding thread comments to spreadsheets. This is not yet supported by all spreadsheet software.
+#' @param wb a workbook
+#' @param sheet a worksheet
+#' @param dims a cell
+#' @param comment the comment to add
+#' @param person_id the person Id this should be added for
+#' @param reply logical if the comment is a reply
+#' @param resolve logical if the comment should be maked as resolved
+#' @seealso [wb_add_comment()]
+#' @name wb_add_thread
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()$
+#' add_person(name = "openxlsx2")
+#'
+#' pid <- wb$get_person(name = "openxlsx")$id
+#'
+#' # write a comment to a thread, reply to one and solve some
+#' wb <- wb %>%
+#'   wb_add_thread(dims = "A1", comment = "wow it works!", person_id = pid) %>%
+#'   wb_add_thread(dims = "A2", comment = "indeed", person_id = pid, resolve = TRUE) %>%
+#'   wb_add_thread(dims = "A1", comment = "so cool", person_id = pid, reply = TRUE)
+#' @export
+wb_add_thread <- function(
+    wb,
+    sheet     = current_sheet(),
+    dims      = "A1",
+    comment   = NULL,
+    person_id,
+    reply     = FALSE,
+    resolve   = FALSE
+) {
+
+  if (missing(person_id)) {
+    person_id <- substitute()
+  }
+
+  assert_workbook(wb)
+  wb$clone()$add_thread(
+    sheet     = sheet,
+    dims      = dims,
+    comment   = comment,
+    person_id = person_id,
+    reply     = reply,
+    resolve   = resolve
   )
 }
 

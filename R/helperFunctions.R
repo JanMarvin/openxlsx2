@@ -112,9 +112,6 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
   return(str)
 }
 
-
-getRId <- function(x) reg_match0(x, '(?<= r:id=")[0-9A-Za-z]+')
-
 getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
 # `validateColor()` ------------------------------------------------------------
@@ -198,9 +195,10 @@ write_comment_xml <- function(comment_list, file_name) {
         comment <- sprintf('<t xml:space="preserve">%s</t>', comment_list[[i]]$comment[[j]])
       }
 
+      # either a <r> node or <t> from unstyled comment
       is_fmt_txt <- FALSE
       if (is_xml(comment))
-      is_fmt_txt <- all(xml_node_name(comment) == "r")
+        is_fmt_txt <- all(xml_node_name(comment) == "r") || isFALSE(comment_list[[i]]$style[[j]])
 
       if (is_fmt_txt) {
         xml <- c(xml, comment)
@@ -224,6 +222,7 @@ pxml <- function(x) {
   # paste(unique(unlist(x)), collapse = "")
   paste(unlist(x), collapse = "")
 }
+
 # `amp_split()` ----------------------------------------------------------------
 #' split headerFooter xml into left, center, and right.
 #' @param x xml string
@@ -245,6 +244,7 @@ amp_split <- function(x) {
   # return the string vector
   unname(res)
 }
+
 # Header footer ---------------------------------------------------------------
 #' get headerFooter from xml into list with left, center, and right.
 #' @param x xml string
@@ -1180,4 +1180,26 @@ to_string <- function(x) {
     if (length(sel_l)) chr[sel_l] <- names(lbls)
   }
   chr
+}
+
+#' create a guid string
+#' @keywords internal
+#' @noRd
+st_guid <- function() {
+  paste0(
+    "{",
+    random_string(length = 8, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 4, pattern = "[A-F0-9]"), "-",
+    random_string(length = 12, pattern = "[A-F0-9]"),
+    "}"
+  )
+}
+
+#' create a userid
+#' @keywords internal
+#' @noRd
+st_userid <- function() {
+  random_string(length = 16, pattern = "[a-z0-9]")
 }

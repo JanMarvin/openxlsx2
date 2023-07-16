@@ -76,9 +76,10 @@ The \code{wbWorkbook} object
 }
 \description{
 The comment functions (create, write and remove) allow the
-modification of comments. In newer Excels they are called notes, while they
-are called comments in openxml. Modification of what Excel now calls comment
-(openxml calls them threadedComments) is not yet possible
+modification of comments. In newer spreadsheet software they are called
+notes, while they are called comments in openxml. Modification of what
+newer spreadsheet software now calls comment is possible via
+\code{\link[=wb_add_thread]{wb_add_thread()}}.
 }
 \examples{
 wb <- wb_workbook()
@@ -101,5 +102,8 @@ write_comment(wb, 1, col = 6, row = 3, comment = c3)
 
 # remove the first comment
 remove_comment(wb, 1, col = "B", row = 10)
+}
+\seealso{
+\code{\link[=wb_add_thread]{wb_add_thread()}}
 }
 \keyword{internal}
