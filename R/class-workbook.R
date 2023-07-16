@@ -3728,6 +3728,136 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+
+    #' @description add threaded comment to worksheet
+    #' @param sheet a worksheet
+    #' @param dims a cell
+    #' @param comment the comment to add
+    #' @param person_id the person Id this should be added for
+    #' @param reply logical if the comment is a reply
+    #' @param resolve logical if the comment should be maked as resolved
+    #' @export
+    add_threaded_comment = function(
+      sheet      = current_sheet(),
+      dims       = "A1",
+      comment    = NULL,
+      person_id,
+      reply      = FALSE,
+      resolve    = FALSE
+    ) {
+
+      sheet <- self$validate_sheet(sheet)
+      wb_cmt <- wb_get_comment(self, sheet, dims)
+
+      if (length(cmt <- wb_cmt$comment)) {
+        # TODO not sure yet what to do
+      } else {
+        cmt <- create_comment(text = comment, author = "")
+        self$add_comment(sheet = sheet, dims = dims, comment = cmt)
+      }
+
+      if (!length(self$worksheets[[sheet]]$relships$threadedComment)) {
+
+        # TODO the sheet id is correct ... ?
+        self$worksheets[[sheet]]$relships$threadedComment <- sheet
+
+        self$append(
+          "Content_Types",
+          sprintf("<Override PartName=\"/xl/threadedComments/threadedComment%s.xml\" ContentType=\"application/vnd.ms-excel.threadedcomments+xml\"/>", sheet)
+        )
+
+        self$worksheets_rels[[sheet]] <- append(
+          self$worksheets_rels[[sheet]],
+          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/threadedComment\" Target=\"../threadedComments/threadedComment%s.xml\"/>", length(self$worksheets_rels[[sheet]]) + 1L, sheet)
+        )
+
+        self$threadComments[[sheet]] <- character()
+      }
+
+      parentId <- NULL
+      tcs <- rbindlist(xml_attr(self$threadComments[[sheet]], "threadedComment"))
+      sel <- which(tcs$ref == dims)
+
+      if (reply && nrow(tcs)) {
+        if (length(sel))  {
+          parentId <- tcs[sel[1], ]$id
+        } else {
+          warning("cannot reply, will create a new thread")
+        }
+      }
+
+      # update or remove any previous thread from the dims
+      if (length(sel)) {
+        if (resolve) {
+          self$threadComments[[sheet]][sel[1]] <- xml_attr_mod(
+            self$threadComments[[sheet]][sel[1]],
+            xml_attributes = c(done = as_xml_attr(resolve))
+          )
+        } else if (!reply) {
+          self$threadComments[[sheet]] <- self$threadComments[[sheet]][-(sel)]
+        }
+      }
+
+      if (!is.null(comment)) {
+
+        # For replies we can update the comment, but the id remains the parentId
+        cmt_id <- st_guid()
+
+        done <- as_xml_attr(resolve)
+        if (reply) done <- NULL
+
+        tc <- xml_node_create(
+          "threadedComment",
+          xml_attributes = c(
+            ref      = dims,
+            dT       = format(as_POSIXct_utc(Sys.time()), "%Y-%m-%dT%H:%M:%SZ"),
+            personId = person_id,
+            id       = cmt_id,
+            parentId = parentId,
+            done     = done
+          ),
+          xml_children = xml_node_create("text", xml_children = comment)
+        )
+
+        self$threadComments[[sheet]] <- append(
+          self$threadComments[[sheet]],
+          tc
+        )
+
+        if (reply) cmt_id <- parentId
+
+        wb_cmt <- wb_get_comment(self, sheet, dims)
+        sId <- wb_cmt$sheet_id
+        cId <- as.integer(rownames(wb_cmt))
+
+        tc <- cbind(
+          rbindlist(xml_attr(self$threadComments[[sheet]], "threadedComment")),
+          text = xml_value(self$threadComments[[sheet]], "threadedComment", "text")
+        )
+
+        # probably correclty ordered, but we could order these by date?
+        tc <- tc[which(tc$ref == dims), ]
+
+        tc <- paste0(
+          "<t>[Threaded comment]\n\nYour spreadsheet software allows you to read this threaded comment; ",
+          "however, any edits to it will get removed if the file is opened in a newer version of a certain spreadsheet software.\n\n",
+          paste("Comment:", paste0(tc$text, collapse = "\nReplie:")),
+          "</t>"
+        )
+
+        self$comments[[sId]][[cId]] <- list(
+          ref = dims,
+          author = sprintf("tc=%s", cmt_id),
+          comment = tc,
+          style = FALSE,
+          clientData = NULL
+        )
+
+      }
+
+      invisible(self)
+    },
+
     ## conditional formatting ----
 
     # TODO remove_conditional_formatting?

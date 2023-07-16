@@ -2907,6 +2907,72 @@ wb_remove_comment <- function(
   )
 }
 
+#' Add person to use for threaded comment
+#'
+#' If a threaded comment is added, it needs a person attached with it. The default is to create a person with provider id `"None"`. Other providers are possible with specific values for `id` and `user_id`. If you require the following, create a workbook via spreadsheet software load it and get the values with `wb_get_person()`
+#' @param wb a workbook
+#' @param name the name to display
+#' @param id (optional) the display id
+#' @param user_id (optional) the user id
+#' @param provider_id (optional) the provider id
+#' @keywords comments
+#' @export
+wb_add_person <- function(
+    wb,
+    name        = NULL,
+    id          = NULL,
+    user_id     = NULL,
+    provider_id = "None"
+) {
+  assert_workbook(wb)
+  wb$clone()$add_person(
+    name        = name,
+    id          = id,
+    user_id     = user_id,
+    provider_id = provider_id
+  )
+}
+
+#' Get Person list from workbook
+#'
+#' Persons are required for threaded comments
+#' @param wb a workbook
+#' @param name a specific name
+#' @export
+wb_get_person <- function(wb, name = NULL) {
+  assert_workbook(wb)
+  wb$get_person(name)
+}
+
+#' add threaded comment to worksheet
+#' @param wb a workbook
+#' @param sheet a worksheet
+#' @param dims a cell
+#' @param comment the comment to add
+#' @param person_id the person Id this should be added for
+#' @param reply logical if the comment is a reply
+#' @param resolve logical if the comment should be maked as resolved
+#' @export
+wb_add_threaded_comment <- function(
+    wb,
+    sheet     = current_sheet(),
+    dims      = "A1",
+    comment   = NULL,
+    person_id,
+    reply     = FALSE,
+    resolve   = FALSE
+) {
+  assert_workbook(wb)
+  wb$clone()$add_threaded_comment(
+    sheet     = sheet,
+    dims      = dims,
+    comment   = comment,
+    person_id = person_id,
+    reply     = reply,
+    resolve   = resolve
+  )
+}
+
 #' Add form control Checkbox, Radiobuttons or Dropmenu
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
