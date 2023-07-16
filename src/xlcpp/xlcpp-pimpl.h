@@ -27,7 +27,7 @@ class workbook_pimpl {
 public:
     workbook_pimpl() = default;
     workbook_pimpl(const std::filesystem::path& fn, std::string_view password, std::string_view outfile);
-    workbook_pimpl(std::span<const uint8_t> sv, std::string_view password, std::string_view outfile);
+    workbook_pimpl(std::span<uint8_t> sv, std::string_view password, std::string_view outfile);
     std::string data() const;
 
     // void write_archive(struct archive* a) const;
@@ -47,7 +47,7 @@ public:
 #endif
 
 private:
-    void load_from_memory(std::span<const uint8_t> sv, std::string_view password, std::string_view outfile);
+    void load_from_memory(std::span<uint8_t> sv, std::string_view password, std::string_view outfile);
 };
 
 }; // end namespace xlcpp

@@ -66,7 +66,7 @@ __inline string utf16_to_utf8(const u16string_view& s) {
 }
 #endif
 
-std::vector<const uint8_t> loadFile(const std::string& filename) {
+std::vector<uint8_t> loadFile(const std::string& filename) {
   std::ifstream file(filename, std::ios::binary | std::ios::ate);
   if (!file.is_open()) {
     Rcpp::stop("Failed to open file");
@@ -75,8 +75,8 @@ std::vector<const uint8_t> loadFile(const std::string& filename) {
   std::streamsize fileSize = file.tellg();
   file.seekg(0, std::ios::beg);
 
-  std::vector<const uint8_t> buffer(fileSize);
-  if (file.read(const_cast<char*>(reinterpret_cast<const char*>(buffer.data())), fileSize)) {
+  std::vector<uint8_t> buffer(fileSize);
+  if (file.read(reinterpret_cast<char*>(buffer.data()), fileSize)) {
     return buffer;
   } else {
     Rcpp::stop("Failed to read file");
@@ -88,16 +88,16 @@ workbook_pimpl::workbook_pimpl(const filesystem::path& fn, string_view password,
 
     std::string path = fn;
 
-    std::vector<const uint8_t> mem = loadFile(path);
+    std::vector<uint8_t> mem = loadFile(path);
 
     load_from_memory(mem, password, outfile);
 }
 
-workbook_pimpl::workbook_pimpl(span<const uint8_t> sv, string_view password, string_view outfile) {
+workbook_pimpl::workbook_pimpl(span<uint8_t> sv, string_view password, string_view outfile) {
     load_from_memory(sv, password, outfile);
 }
 
-void workbook_pimpl::load_from_memory(span<const uint8_t> mem, string_view password, string_view outfile) {
+void workbook_pimpl::load_from_memory(span<uint8_t> mem, string_view password, string_view outfile) {
     vector<uint8_t> plaintext;
 
     std::ofstream xlsx((std::string)outfile, ios::out | ios::binary);
@@ -152,7 +152,7 @@ workbook::workbook(const filesystem::path& fn, std::string_view password, std::s
     impl = new workbook_pimpl(fn, password, outfile);
 }
 
-workbook::workbook(span<const uint8_t> sv, std::string_view password, std::string_view outfile) {
+workbook::workbook(span<uint8_t> sv, std::string_view password, std::string_view outfile) {
     impl = new workbook_pimpl(sv, password, outfile);
 }
 

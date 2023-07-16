@@ -40,7 +40,7 @@ class XLCPP workbook {
 public:
     workbook();
     workbook(const std::filesystem::path& fn, std::string_view password = "", std::string_view outfile = "");
-    workbook(std::span<const uint8_t> sv, std::string_view password = "", std::string_view outfile = "");
+    workbook(std::span<uint8_t> sv, std::string_view password = "", std::string_view outfile = "");
     ~workbook();
 
     workbook_pimpl* impl;
