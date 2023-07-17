@@ -971,6 +971,7 @@ write_data_table <- function(
 #' @param ... additional arguments
 #' @seealso [wb_add_data()], [wb_add_data_table()]
 #' @return invisible(0)
+# TODO examples them from here, as docs of `wb_add_data()` and `write_data()` are now separated.
 #' @examples
 #' ## See formatting vignette for further examples.
 #'

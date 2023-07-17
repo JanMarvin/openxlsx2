@@ -112,6 +112,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @family workbook wrappers
 #' @return A clone of `wb`
 #' @examples
+# TODO Update examples here to reflect the switch to `wb_add` syntax and delete them for `write_data()`
 #' ## See formatting vignette for further examples.
 #'
 #' ## Options for default styling (These are the defaults)
