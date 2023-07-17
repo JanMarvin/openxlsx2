@@ -2133,13 +2133,15 @@ are removed.}
 \subsection{Method \code{set_last_modified_by()}}{
 Change the last modified by
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_last_modified_by(LastModifiedBy = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_last_modified_by(name, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{LastModifiedBy}}{A new value}
+\item{\code{name}}{A new value}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

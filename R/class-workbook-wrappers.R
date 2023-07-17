@@ -459,21 +459,21 @@ wb_copy_cells <- function(
 #' wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
 #' wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
 #'
-#' @name wb_cell_merge
+#' @name wb_merge_cells
 #' @family workbook wrappers
 NULL
 
 
 
 #' @export
-#' @rdname wb_cell_merge
+#' @rdname wb_merge_cells
 wb_merge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$merge_cells(sheet = sheet, rows = rows, cols = cols)
 }
 
 #' @export
-#' @rdname wb_cell_merge
+#' @rdname wb_merge_cells
 wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$unmerge_cells(sheet = sheet, rows = rows, cols = cols)
@@ -2244,7 +2244,7 @@ wb_get_sheet_names <- function(wb) {
 #'
 #' @param wb A workbook object
 #' @param name A string object with the name of the LastModifiedBy-User
-#' @param ...
+#' @param ... additional arguments
 #'
 #' @export
 #' @family workbook wrappers
