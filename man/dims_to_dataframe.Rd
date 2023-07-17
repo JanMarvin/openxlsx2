@@ -2,20 +2,19 @@
 % Please edit documentation in R/wb_functions.R
 \name{dims_to_dataframe}
 \alias{dims_to_dataframe}
-\title{create dataframe from dimensions}
+\title{Create dataframe from dimensions}
 \usage{
 dims_to_dataframe(dims, fill = FALSE)
 }
 \arguments{
 \item{dims}{Character vector of expected dimension.}
 
-\item{fill}{If TRUE, fills the dataframe with variables}
+\item{fill}{If \code{TRUE}, fills the dataframe with variables}
 }
 \description{
-create dataframe from dimensions
+Create dataframe from dimensions
 }
 \examples{
-{
-  dims_to_dataframe("A1:B2")
+dims_to_dataframe("A1:B2")
 }
-}
+\keyword{internal}
