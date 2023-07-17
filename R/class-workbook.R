@@ -1078,7 +1078,7 @@ wbWorkbook <- R6::R6Class(
     add_data = function(
         sheet            = current_sheet(),
         x,
-        dims              = rowcol_to_dims(start_row, start_col),
+        dims              = wb_dims(start_row, start_col),
         start_col         = 1,
         start_row         = 1,
         array             = FALSE,
@@ -1143,7 +1143,7 @@ wbWorkbook <- R6::R6Class(
     add_data_table = function(
         sheet             = current_sheet(),
         x,
-        dims              = rowcol_to_dims(start_row, start_col),
+        dims              = wb_dims(start_row, start_col),
         start_col         = 1,
         start_row         = 1,
         col_names         = TRUE,
@@ -1353,7 +1353,7 @@ wbWorkbook <- R6::R6Class(
     add_formula = function(
         sheet             = current_sheet(),
         x,
-        dims              = rowcol_to_dims(start_row, start_col),
+        dims              = wb_dims(start_row, start_col),
         start_col         = 1,
         start_row         = 1,
         array             = FALSE,
@@ -3707,7 +3707,7 @@ wbWorkbook <- R6::R6Class(
 
       if ((!is.null(row) && !is.null(col))) {
         .Deprecated(old = "col/row/gridExpand", new = "dims", package = "openxlsx2")
-        dims <- rowcol_to_dims(row, col)
+        dims <- wb_dims(row, col)
       }
 
       # TODO: remove with deprication

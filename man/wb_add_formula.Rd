@@ -8,7 +8,7 @@ wb_add_formula(
   wb,
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   array = FALSE,

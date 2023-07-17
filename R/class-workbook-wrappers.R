@@ -116,7 +116,7 @@ wb_add_data <- function(
     wb,
     sheet             = current_sheet(),
     x,
-    dims              = rowcol_to_dims(start_row, start_col),
+    dims              = wb_dims(start_row, start_col),
     start_col         = 1,
     start_row         = 1,
     array             = FALSE,
@@ -199,7 +199,7 @@ wb_add_data_table <- function(
     wb,
     sheet             = current_sheet(),
     x,
-    dims              = rowcol_to_dims(start_row, start_col),
+    dims              = wb_dims(start_row, start_col),
     start_col         = 1,
     start_row         = 1,
     col_names         = TRUE,
@@ -336,7 +336,7 @@ wb_add_formula <- function(
     wb,
     sheet             = current_sheet(),
     x,
-    dims              = rowcol_to_dims(start_row, start_col),
+    dims              = wb_dims(start_row, start_col),
     start_col         = 1,
     start_row         = 1,
     array             = FALSE,
@@ -1645,7 +1645,7 @@ wb_set_order <- function(wb, sheets) {
 #' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
-#'   dims = rowcol_to_dims(
+#'   dims = wb_dims(
 #'     row = seq_len(nrow(iris) + 1),
 #'     col = seq_along(iris)
 #'   )

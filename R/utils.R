@@ -306,7 +306,7 @@ wb_dims <- function(...) {
       stop("found only one cols/rows argument")
     }
 
-    rows <- args[[rows]]
+    rows <- as.integer(args[[rows]])
     cols <- col2int(args[[cols]])
 
   } else {

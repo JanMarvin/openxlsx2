@@ -574,7 +574,7 @@ add data
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   array = FALSE,
@@ -641,7 +641,7 @@ add a data table
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   col_names = TRUE,
@@ -761,7 +761,7 @@ add formula
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   array = FALSE,
