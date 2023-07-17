@@ -751,7 +751,7 @@ is created, not when the Excel files are saved.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
 <span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -849,7 +849,7 @@ is created, not when the Excel files are saved.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
 <span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1021,7 +1021,7 @@ is created, not when the Excel files are saved.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
 <span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  array <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -2066,10 +2066,11 @@ are repeated across length of <code>cols</code></p></dd>
 <h4 id="usage-37">Usage<a class="anchor" aria-label="anchor" href="#usage-37"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">freeze_pane</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  firstActiveRow <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  firstActiveCol <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  firstRow <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  firstCol <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  first_active_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first_active_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first_row <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  first_col <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2079,20 +2080,24 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>firstActiveRow</code></dt>
-<dd><p>firstActiveRow</p></dd>
+<dt><code>first_active_row</code></dt>
+<dd><p>first_active_row</p></dd>
 
 
-<dt><code>firstActiveCol</code></dt>
-<dd><p>firstActiveCol</p></dd>
+<dt><code>first_active_col</code></dt>
+<dd><p>first_active_col</p></dd>
 
 
-<dt><code>firstRow</code></dt>
-<dd><p>firstRow</p></dd>
+<dt><code>first_row</code></dt>
+<dd><p>first_row</p></dd>
 
 
-<dt><code>firstCol</code></dt>
-<dd><p>firstCol</p></dd>
+<dt><code>first_col</code></dt>
+<dd><p>first_col</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2566,12 +2571,13 @@ are repeated across length of <code>cols</code></p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">protect</span><span class="op">(</span></span>
 <span>  protect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  lockStructure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  lockWindows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  lock_structure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  lock_windows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  type <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  fileSharing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  file_sharing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.info.html" class="external-link">Sys.info</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="st">"user"</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>  readOnlyRecommended <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  read_only_recommended <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2585,28 +2591,32 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>password</p></dd>
 
 
-<dt><code>lockStructure</code></dt>
-<dd><p>lockStructure</p></dd>
+<dt><code>lock_structure</code></dt>
+<dd><p>lock_structure</p></dd>
 
 
-<dt><code>lockWindows</code></dt>
-<dd><p>lockWindows</p></dd>
+<dt><code>lock_windows</code></dt>
+<dd><p>lock_windows</p></dd>
 
 
 <dt><code>type</code></dt>
 <dd><p>type</p></dd>
 
 
-<dt><code>fileSharing</code></dt>
-<dd><p>fileSharing</p></dd>
+<dt><code>file_sharing</code></dt>
+<dd><p>file_sharing</p></dd>
 
 
 <dt><code>username</code></dt>
 <dd><p>username</p></dd>
 
 
-<dt><code>readOnlyRecommended</code></dt>
-<dd><p>readOnlyRecommended</p></dd>
+<dt><code>read_only_recommended</code></dt>
+<dd><p>read_only_recommended</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2709,13 +2719,17 @@ are removed.</p></dd>
 <h3 id="method-set-last-modified-by-">Method <code>set_last_modified_by()</code><a class="anchor" aria-label="anchor" href="#method-set-last-modified-by-"></a></h3>
 <p>Change the last modified by</p><div class="section">
 <h4 id="usage-54">Usage<a class="anchor" aria-label="anchor" href="#usage-54"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_last_modified_by</span><span class="op">(</span>LastModifiedBy <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_last_modified_by</span><span class="op">(</span><span class="va">name</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-51">Arguments<a class="anchor" aria-label="anchor" href="#arguments-51"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>LastModifiedBy</code></dt>
+<p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>A new value</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2739,13 +2753,14 @@ are removed.</p></dd>
 <span>  bottom <span class="op">=</span> <span class="fl">0.75</span>,</span>
 <span>  header <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  footer <span class="op">=</span> <span class="fl">0.3</span>,</span>
-<span>  fitToWidth <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  fitToHeight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  paperSize <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  printTitleRows <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  printTitleCols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  summaryRow <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  summaryCol <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  fit_to_width <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fit_to_height <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  paper_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  print_title_rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  print_title_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  summary_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  summary_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2787,32 +2802,36 @@ are removed.</p></dd>
 <dd><p>footer</p></dd>
 
 
-<dt><code>fitToWidth</code></dt>
+<dt><code>fit_to_width</code></dt>
 <dd><p>fitToWidth</p></dd>
 
 
-<dt><code>fitToHeight</code></dt>
+<dt><code>fit_to_height</code></dt>
 <dd><p>fitToHeight</p></dd>
 
 
-<dt><code>paperSize</code></dt>
+<dt><code>paper_size</code></dt>
 <dd><p>paperSize</p></dd>
 
 
-<dt><code>printTitleRows</code></dt>
+<dt><code>print_title_rows</code></dt>
 <dd><p>printTitleRows</p></dd>
 
 
-<dt><code>printTitleCols</code></dt>
+<dt><code>print_title_cols</code></dt>
 <dd><p>printTitleCols</p></dd>
 
 
-<dt><code>summaryRow</code></dt>
+<dt><code>summary_row</code></dt>
 <dd><p>summaryRow</p></dd>
 
 
-<dt><code>summaryCol</code></dt>
+<dt><code>summary_col</code></dt>
 <dd><p>summaryCol</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>

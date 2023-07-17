@@ -277,6 +277,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_merge_cells.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_modify_basefont.html</loc>
   </url>
   <url>
@@ -284,6 +287,9 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_order.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_page_setup.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_protect.html</loc>
@@ -356,12 +362,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/write_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/ws_cell_merge.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/ws_page_setup.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/xl_open.html</loc>
