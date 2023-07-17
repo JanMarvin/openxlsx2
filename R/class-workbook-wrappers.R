@@ -116,7 +116,7 @@ wb_add_data <- function(
     wb,
     sheet             = current_sheet(),
     x,
-    dims              = rowcol_to_dims(start_row, start_col),
+    dims              = wb_dims(start_row, start_col),
     start_col         = 1,
     start_row         = 1,
     array             = FALSE,
@@ -199,7 +199,7 @@ wb_add_data_table <- function(
     wb,
     sheet             = current_sheet(),
     x,
-    dims              = rowcol_to_dims(start_row, start_col),
+    dims              = wb_dims(start_row, start_col),
     start_col         = 1,
     start_row         = 1,
     col_names         = TRUE,
@@ -336,7 +336,7 @@ wb_add_formula <- function(
     wb,
     sheet             = current_sheet(),
     x,
-    dims              = rowcol_to_dims(start_row, start_col),
+    dims              = wb_dims(start_row, start_col),
     start_col         = 1,
     start_row         = 1,
     array             = FALSE,
@@ -459,21 +459,21 @@ wb_copy_cells <- function(
 #' wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
 #' wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
 #'
-#' @name ws_cell_merge
+#' @name wb_merge_cells
 #' @family workbook wrappers
 NULL
 
 
 
 #' @export
-#' @rdname ws_cell_merge
+#' @rdname wb_merge_cells
 wb_merge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$merge_cells(sheet = sheet, rows = rows, cols = cols)
 }
 
 #' @export
-#' @rdname ws_cell_merge
+#' @rdname wb_merge_cells
 wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$unmerge_cells(sheet = sheet, rows = rows, cols = cols)
@@ -534,7 +534,7 @@ wb_add_chartsheet <- function(
 #'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
 #' @param has_drawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paper_size An integer corresponding to a paper size. See ?ws_page_setup for
+#' @param paper_size An integer corresponding to a paper size. See [wb_page_setup()] for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
 #' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
@@ -676,10 +676,11 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' @description Freeze a worksheet pane
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param firstActiveRow Top row of active region
-#' @param firstActiveCol Furthest left column of active region
-#' @param firstRow If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)
-#' @param firstCol If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)
+#' @param first_active_row Top row of active region
+#' @param first_active_col Furthest left column of active region
+#' @param first_row If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)
+#' @param first_col If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)
+#' @param ... additional arguments
 #'
 #' @export
 #' @family workbook wrappers
@@ -699,14 +700,22 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
 #' wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
 #' wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
-wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
+wb_freeze_pane <- function(
+  wb,
+  sheet            = current_sheet(),
+  first_active_row = NULL,
+  first_active_col = NULL,
+  first_row        = FALSE,
+  first_col        = FALSE,
+  ...
+) {
   assert_workbook(wb)
   wb$clone()$freeze_pane(
-    sheet          = sheet,
-    firstActiveRow = firstActiveRow,
-    firstActiveCol = firstActiveCol,
-    firstRow       = firstRow,
-    firstCol       = firstCol
+    sheet            = sheet,
+    first_active_row = first_active_row,
+    first_active_col = first_active_col,
+    first_row        = first_row,
+    first_col        = first_col
   )
 }
 
@@ -1255,7 +1264,7 @@ wb_set_header_footer <- function(
 
 
 
-#' @name ws_page_setup
+#' @name wb_page_setup
 #' @title Set page margins, orientation and print scaling
 #' @description Set page margins, orientation and print scaling
 #' @param wb A workbook object
@@ -1268,13 +1277,14 @@ wb_set_header_footer <- function(
 #' @param bottom bottom page margin in inches
 #' @param header header margin in inches
 #' @param footer footer margin in inches
-#' @param fitToWidth If `TRUE`, worksheet is scaled to fit to page width on printing.
-#' @param fitToHeight If `TRUE`, worksheet is scaled to fit to page height on printing.
-#' @param paperSize See details. Default value is 9 (A4 paper).
-#' @param printTitleRows Rows to repeat at top of page when printing. Integer vector.
-#' @param printTitleCols Columns to repeat at left when printing. Integer vector.
-#' @param summaryRow Location of summary rows in groupings. One of "Above" or "Below".
-#' @param summaryCol Location of summary columns in groupings. One of "Right" or "Left".
+#' @param fit_to_width If `TRUE`, worksheet is scaled to fit to page width on printing.
+#' @param fit_to_height If `TRUE`, worksheet is scaled to fit to page height on printing.
+#' @param paper_size See details. Default value is 9 (A4 paper).
+#' @param print_title_rows Rows to repeat at top of page when printing. Integer vector.
+#' @param print_title_cols Columns to repeat at left when printing. Integer vector.
+#' @param summary_row Location of summary rows in groupings. One of "Above" or "Below".
+#' @param summary_col Location of summary columns in groupings. One of "Right" or "Left".
+#' @param ... additional arguments
 #' @export
 #' @details
 #' paperSize is an integer corresponding to:
@@ -1371,41 +1381,43 @@ wb_set_header_footer <- function(
 #' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 wb_page_setup <- function(
     wb,
-    sheet          = current_sheet(),
-    orientation    = NULL,
-    scale          = 100,
-    left           = 0.7,
-    right          = 0.7,
-    top            = 0.75,
-    bottom         = 0.75,
-    header         = 0.3,
-    footer         = 0.3,
-    fitToWidth     = FALSE,
-    fitToHeight    = FALSE,
-    paperSize      = NULL,
-    printTitleRows = NULL,
-    printTitleCols = NULL,
-    summaryRow     = NULL,
-    summaryCol     = NULL
+    sheet            = current_sheet(),
+    orientation      = NULL,
+    scale            = 100,
+    left             = 0.7,
+    right            = 0.7,
+    top              = 0.75,
+    bottom           = 0.75,
+    header           = 0.3,
+    footer           = 0.3,
+    fit_to_width     = FALSE,
+    fit_to_height    = FALSE,
+    paper_size       = NULL,
+    print_title_rows = NULL,
+    print_title_cols = NULL,
+    summary_row      = NULL,
+    summary_col      = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$page_setup(
-    sheet          = sheet,
-    orientation    = orientation,
-    scale          = scale,
-    left           = left,
-    right          = right,
-    top            = top,
-    bottom         = bottom,
-    header         = header,
-    footer         = footer,
-    fitToWidth     = fitToWidth,
-    fitToHeight    = fitToHeight,
-    paperSize      = paperSize,
-    printTitleRows = printTitleRows,
-    printTitleCols = printTitleCols,
-    summaryRow     = summaryRow,
-    summaryCol     = summaryCol
+    sheet            = sheet,
+    orientation      = orientation,
+    scale            = scale,
+    left             = left,
+    right            = right,
+    top              = top,
+    bottom           = bottom,
+    header           = header,
+    footer           = footer,
+    fit_to_width     = fit_to_width,
+    fit_to_height    = fit_to_height,
+    paper_size       = paper_size,
+    print_title_rows = print_title_rows,
+    print_title_cols = print_title_cols,
+    summary_row      = summary_row,
+    summary_col      = summary_col,
+    ...              = ...
   )
 }
 
@@ -1474,15 +1486,16 @@ wb_protect_worksheet <- function(
 #' @param wb A workbook object
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the workbook
-#' @param lockStructure Whether the workbook structure should be locked
-#' @param lockWindows Whether the window position of the spreadsheet should be
+#' @param lock_structure Whether the workbook structure should be locked
+#' @param lock_windows Whether the window position of the spreadsheet should be
 #'   locked
 #' @param type Lock type (see details)
-#' @param fileSharing Whether to enable a popup requesting the unlock password
+#' @param file_sharing Whether to enable a popup requesting the unlock password
 #'   is prompted
 #' @param username The username for the `fileSharing` popup
-#' @param readOnlyRecommended Whether or not a post unlock message appears
+#' @param read_only_recommended Whether or not a post unlock message appears
 #'   stating that the workbook is recommended to be opened in readonly mode.
+#' @param ... additional arguments
 #'
 #' @details
 #' Lock types:
@@ -1516,25 +1529,27 @@ wb_protect_worksheet <- function(
 #'
 wb_protect <- function(
     wb,
-    protect             = TRUE,
-    password            = NULL,
-    lockStructure       = FALSE,
-    lockWindows         = FALSE,
-    type                = 1,
-    fileSharing         = FALSE,
-    username            = unname(Sys.info()["user"]),
-    readOnlyRecommended = FALSE
+    protect               = TRUE,
+    password              = NULL,
+    lock_structure        = FALSE,
+    lock_windows          = FALSE,
+    type                  = 1,
+    file_sharing          = FALSE,
+    username              = unname(Sys.info()["user"]),
+    read_only_recommended = FALSE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$protect(
-    protect             = protect,
-    password            = password,
-    lockStructure       = lockStructure,
-    lockWindows         = lockWindows,
-    type                = type,
-    fileSharing         = fileSharing,
-    username            = username,
-    readOnlyRecommended = readOnlyRecommended
+    protect               = protect,
+    password              = password,
+    lock_structure        = lock_structure,
+    lock_windows          = lock_windows,
+    type                  = type,
+    file_sharing          = file_sharing,
+    username              = username,
+    read_only_recommended = read_only_recommended,
+    ...                   = ...
   )
 }
 
@@ -1645,7 +1660,7 @@ wb_set_order <- function(wb, sheets) {
 #' wb$add_named_region(
 #'   sheet = 1,
 #'   name = "iris",
-#'   dims = rowcol_to_dims(
+#'   dims = wb_dims(
 #'     row = seq_len(nrow(iris) + 1),
 #'     col = seq_along(iris)
 #'   )
@@ -2228,7 +2243,8 @@ wb_get_sheet_names <- function(wb) {
 #' Just a wrapper of wb$set_last_modified_by()
 #'
 #' @param wb A workbook object
-#' @param LastModifiedBy A string object with the name of the LastModifiedBy-User
+#' @param name A string object with the name of the LastModifiedBy-User
+#' @param ... additional arguments
 #'
 #' @export
 #' @family workbook wrappers
@@ -2236,9 +2252,10 @@ wb_get_sheet_names <- function(wb) {
 #' @examples
 #' wb <- wb_workbook()
 #' wb_set_last_modified_by(wb, "test")
-wb_set_last_modified_by <- function(wb, LastModifiedBy) {
+wb_set_last_modified_by <- function(wb, name, ...) {
+  if (missing(name)) name <- substitute()
   assert_workbook(wb)
-  wb$clone()$set_last_modified_by(LastModifiedBy)
+  wb$clone()$set_last_modified_by(name, ...)
 }
 
 #' Insert an image into a worksheet

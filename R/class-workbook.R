@@ -1078,7 +1078,7 @@ wbWorkbook <- R6::R6Class(
     add_data = function(
         sheet            = current_sheet(),
         x,
-        dims              = rowcol_to_dims(start_row, start_col),
+        dims              = wb_dims(start_row, start_col),
         start_col         = 1,
         start_row         = 1,
         array             = FALSE,
@@ -1143,7 +1143,7 @@ wbWorkbook <- R6::R6Class(
     add_data_table = function(
         sheet             = current_sheet(),
         x,
-        dims              = rowcol_to_dims(start_row, start_col),
+        dims              = wb_dims(start_row, start_col),
         start_col         = 1,
         start_row         = 1,
         col_names         = TRUE,
@@ -1353,7 +1353,7 @@ wbWorkbook <- R6::R6Class(
     add_formula = function(
         sheet             = current_sheet(),
         x,
-        dims              = rowcol_to_dims(start_row, start_col),
+        dims              = wb_dims(start_row, start_col),
         start_col         = 1,
         start_row         = 1,
         array             = FALSE,
@@ -3564,82 +3564,86 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Set freeze panes for a sheet
     #' @param sheet sheet
-    #' @param firstActiveRow firstActiveRow
-    #' @param firstActiveCol firstActiveCol
-    #' @param firstRow firstRow
-    #' @param firstCol firstCol
+    #' @param first_active_row first_active_row
+    #' @param first_active_col first_active_col
+    #' @param first_row first_row
+    #' @param first_col first_col
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     freeze_pane = function(
-      sheet = current_sheet(),
-      firstActiveRow = NULL,
-      firstActiveCol = NULL,
-      firstRow = FALSE,
-      firstCol = FALSE
+      sheet            = current_sheet(),
+      first_active_row = NULL,
+      first_active_col = NULL,
+      first_row        = FALSE,
+      first_col        = FALSE,
+      ...
     ) {
+
       # TODO rename to setFreezePanes?
+      standardize_case_names(...)
 
       # fine to do the validation before the actual check to prevent other errors
       sheet <- private$get_sheet_index(sheet)
 
-      if (is.null(firstActiveRow) & is.null(firstActiveCol) & !firstRow & !firstCol) {
+      if (is.null(first_active_row) & is.null(first_active_col) & !first_row & !first_col) {
         return(invisible(self))
       }
 
       # TODO simplify asserts
-      if (!is.logical(firstRow)) stop("firstRow must be TRUE/FALSE")
-      if (!is.logical(firstCol)) stop("firstCol must be TRUE/FALSE")
+      if (!is.logical(first_row)) stop("first_row must be TRUE/FALSE")
+      if (!is.logical(first_col)) stop("first_col must be TRUE/FALSE")
 
       # make overwrides for arguments
-      if (firstRow & !firstCol) {
-        firstActiveCol <- NULL
-        firstActiveRow <- NULL
-        firstCol <- FALSE
-      } else if (firstCol & !firstRow) {
-        firstActiveRow <- NULL
-        firstActiveCol <- NULL
-        firstRow <- FALSE
-      } else if (firstRow & firstCol) {
-        firstActiveRow <- 2L
-        firstActiveCol <- 2L
-        firstRow <- FALSE
-        firstCol <- FALSE
+      if (first_row & !first_col) {
+        first_active_col <- NULL
+        first_active_row <- NULL
+        first_col <- FALSE
+      } else if (first_col & !first_row) {
+        first_active_row <- NULL
+        first_active_col <- NULL
+        first_row <- FALSE
+      } else if (first_row & first_col) {
+        first_active_row <- 2L
+        first_active_col <- 2L
+        first_row <- FALSE
+        first_col <- FALSE
       } else {
         ## else both firstRow and firstCol are FALSE
-        firstActiveRow <- firstActiveRow %||% 1L
-        firstActiveCol <- firstActiveCol %||% 1L
+        first_active_row <- first_active_row %||% 1L
+        first_active_col <- first_active_col %||% 1L
 
         # Convert to numeric if column letter given
         # TODO is col2int() safe for non characters?
-        firstActiveRow <- col2int(firstActiveRow)
-        firstActiveCol <- col2int(firstActiveCol)
+        first_active_row <- col2int(first_active_row)
+        first_active_col <- col2int(first_active_col)
       }
 
       paneNode <-
-        if (firstRow) {
+        if (first_row) {
           '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>'
-        } else if (firstCol) {
+        } else if (first_col) {
           '<pane xSplit="1" topLeftCell="B1" activePane="topRight" state="frozen"/>'
         } else {
-          if (firstActiveRow == 1 & firstActiveCol == 1) {
+          if (first_active_row == 1 & first_active_col == 1) {
             ## nothing to do
             # return(NULL)
             return(invisible(self))
           }
 
-          if (firstActiveRow > 1 & firstActiveCol == 1) {
-            attrs <- sprintf('ySplit="%s"', firstActiveRow - 1L)
+          if (first_active_row > 1 & first_active_col == 1) {
+            attrs <- sprintf('ySplit="%s"', first_active_row - 1L)
             activePane <- "bottomLeft"
           }
 
-          if (firstActiveRow == 1 & firstActiveCol > 1) {
-            attrs <- sprintf('xSplit="%s"', firstActiveCol - 1L)
+          if (first_active_row == 1 & first_active_col > 1) {
+            attrs <- sprintf('xSplit="%s"', first_active_col - 1L)
             activePane <- "topRight"
           }
 
-          if (firstActiveRow > 1 & firstActiveCol > 1) {
+          if (first_active_row > 1 & first_active_col > 1) {
             attrs <- sprintf('ySplit="%s" xSplit="%s"',
-              firstActiveRow - 1L,
-              firstActiveCol - 1L
+              first_active_row - 1L,
+              first_active_col - 1L
             )
             activePane <- "bottomRight"
           }
@@ -3647,7 +3651,7 @@ wbWorkbook <- R6::R6Class(
           sprintf(
             '<pane %s topLeftCell="%s" activePane="%s" state="frozen"/><selection pane="%s"/>',
             stri_join(attrs, collapse = " ", sep = " "),
-            get_cell_refs(data.frame(firstActiveRow, firstActiveCol)),
+            get_cell_refs(data.frame(first_active_row, first_active_col)),
             activePane,
             activePane
           )
@@ -3707,7 +3711,7 @@ wbWorkbook <- R6::R6Class(
 
       if ((!is.null(row) && !is.null(col))) {
         .Deprecated(old = "col/row/gridExpand", new = "dims", package = "openxlsx2")
-        dims <- rowcol_to_dims(row, col)
+        dims <- wb_dims(row, col)
       }
 
       # TODO: remove with deprication
@@ -4953,24 +4957,28 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Protect a workbook
     #' @param protect protect
-    #' @param lockStructure lockStructure
-    #' @param lockWindows lockWindows
+    #' @param lock_structure lock_structure
+    #' @param lock_windows lock_windows
     #' @param password password
     #' @param type type
-    #' @param fileSharing fileSharing
+    #' @param file_sharing file_sharing
     #' @param username username
-    #' @param readOnlyRecommended readOnlyRecommended
+    #' @param read_only_recommended read_only_recommended
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     protect = function(
-      protect             = TRUE,
-      password            = NULL,
-      lockStructure       = FALSE,
-      lockWindows         = FALSE,
-      type                = 1,
-      fileSharing         = FALSE,
-      username            = unname(Sys.info()["user"]),
-      readOnlyRecommended = FALSE
+      protect               = TRUE,
+      password              = NULL,
+      lock_structure        = FALSE,
+      lock_windows          = FALSE,
+      type                  = 1,
+      file_sharing          = FALSE,
+      username              = unname(Sys.info()["user"]),
+      read_only_recommended = FALSE,
+      ...
     ) {
+
+      standardize_case_names(...)
 
       if (!protect) {
         self$workbook$workbookProtection <- NULL
@@ -4984,12 +4992,12 @@ wbWorkbook <- R6::R6Class(
       # TODO: Shall we parse the existing protection settings and preserve all
       # unchanged attributes?
 
-      if (fileSharing) {
+      if (file_sharing) {
         self$workbook$fileSharing <- xml_node_create(
           "fileSharing",
           xml_attributes = c(
             userName = username,
-            readOnlyRecommended = if (readOnlyRecommended | type == "2") "1",
+            readOnlyRecommended = if (read_only_recommended | type == "2") "1",
             reservationPassword = password
           )
         )
@@ -4999,8 +5007,8 @@ wbWorkbook <- R6::R6Class(
         "workbookProtection",
         xml_attributes = c(
           hashPassword = password,
-          lockStructure = toString(as.numeric(lockStructure)),
-          lockWindows = toString(as.numeric(lockWindows))
+          lockStructure = toString(as.numeric(lock_structure)),
+          lockWindows = toString(as.numeric(lock_windows))
         )
       )
 
@@ -5095,18 +5103,23 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Change the last modified by
-    #' @param LastModifiedBy A new value
+    #' @param name A new value
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    set_last_modified_by = function(LastModifiedBy = NULL) {
+    set_last_modified_by = function(name, ...) {
+      if (missing(name) && list(...)$LastModifiedBy) {
+        .Deprecated(old = "LastModifiedBy", new = "name", package = "openxlsx2")
+        name <- list(...)$LastModifiedBy
+      }
       # TODO rename to wb_set_last_modified_by() ?
-      if (!is.null(LastModifiedBy)) {
+      if (!is.null(name)) {
         current_LastModifiedBy <-
           stri_match(self$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
         self$core <-
           stri_replace_all_fixed(
             self$core,
             pattern = current_LastModifiedBy,
-            replacement = LastModifiedBy
+            replacement = name
           )
       }
 
@@ -5123,32 +5136,37 @@ wbWorkbook <- R6::R6Class(
     #' @param bottom bottom
     #' @param header header
     #' @param footer footer
-    #' @param fitToWidth fitToWidth
-    #' @param fitToHeight fitToHeight
-    #' @param paperSize paperSize
-    #' @param printTitleRows printTitleRows
-    #' @param printTitleCols printTitleCols
-    #' @param summaryRow summaryRow
-    #' @param summaryCol summaryCol
+    #' @param fit_to_width fitToWidth
+    #' @param fit_to_height fitToHeight
+    #' @param paper_size paperSize
+    #' @param print_title_rows printTitleRows
+    #' @param print_title_cols printTitleCols
+    #' @param summary_row summaryRow
+    #' @param summary_col summaryCol
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     page_setup = function(
-      sheet = current_sheet(),
-      orientation    = NULL,
-      scale          = 100,
-      left           = 0.7,
-      right          = 0.7,
-      top            = 0.75,
-      bottom         = 0.75,
-      header         = 0.3,
-      footer         = 0.3,
-      fitToWidth     = FALSE,
-      fitToHeight    = FALSE,
-      paperSize      = NULL,
-      printTitleRows = NULL,
-      printTitleCols = NULL,
-      summaryRow     = NULL,
-      summaryCol     = NULL
+      sheet            = current_sheet(),
+      orientation      = NULL,
+      scale            = 100,
+      left             = 0.7,
+      right            = 0.7,
+      top              = 0.75,
+      bottom           = 0.75,
+      header           = 0.3,
+      footer           = 0.3,
+      fit_to_width     = FALSE,
+      fit_to_height    = FALSE,
+      paper_size       = NULL,
+      print_title_rows = NULL,
+      print_title_cols = NULL,
+      summary_row      = NULL,
+      summary_col      = NULL,
+      ...
     ) {
+
+      standardize_case_names(...)
+
       sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
 
@@ -5164,15 +5182,15 @@ wbWorkbook <- R6::R6Class(
         stop("Scale must be between 10 and 400.")
       }
 
-      if (!is.null(paperSize)) {
-        paperSizes <- 1:68
-        paperSizes <- paperSizes[!paperSizes %in% 48:49]
-        if (!paperSize %in% paperSizes) {
-          stop("paperSize must be an integer in range [1, 68]. See ?ws_page_setup details.")
+      if (!is.null(paper_size)) {
+        paper_sizes <- 1:68
+        paper_sizes <- paper_sizes[!paper_sizes %in% 48:49]
+        if (!paper_size %in% paper_sizes) {
+          stop("paper_size must be an integer in range [1, 68]. See ?wb_page_setup details.")
         }
-        paperSize <- as.integer(paperSize)
+        paper_size <- as.integer(paper_size)
       } else {
-        paperSize <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
+        paper_size <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
       }
 
       ## Keep defaults on orientation, hdpi, vdpi, paperSize ----
@@ -5182,41 +5200,41 @@ wbWorkbook <- R6::R6Class(
       ## Update ----
       self$worksheets[[sheet]]$pageSetup <- sprintf(
         '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s"/>',
-        paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
+        paper_size, orientation, scale, as_xml_attr(fit_to_width), as_xml_attr(fit_to_height), hdpi, vdpi
       )
 
-      if (fitToHeight || fitToWidth) {
+      if (fit_to_height || fit_to_width) {
         self$worksheets[[sheet]]$sheetPr <- unique(c(self$worksheets[[sheet]]$sheetPr, '<pageSetupPr fitToPage="1"/>'))
       }
 
       self$worksheets[[sheet]]$pageMargins <-
         sprintf('<pageMargins left="%s" right="%s" top="%s" bottom="%s" header="%s" footer="%s"/>', left, right, top, bottom, header, footer)
 
-      validRow <- function(summaryRow) {
-        return(tolower(summaryRow) %in% c("above", "below"))
+      validRow <- function(summary_row) {
+        return(tolower(summary_row) %in% c("above", "below"))
       }
-      validCol <- function(summaryCol) {
-        return(tolower(summaryCol) %in% c("left", "right"))
+      validCol <- function(summary_col) {
+        return(tolower(summary_col) %in% c("left", "right"))
       }
 
       outlinepr <- ""
 
-      if (!is.null(summaryRow)) {
+      if (!is.null(summary_row)) {
 
-        if (!validRow(summaryRow)) {
-          stop("Invalid \`summaryRow\` option. Must be one of \"Above\" or \"Below\".")
-        } else if (tolower(summaryRow) == "above") {
+        if (!validRow(summary_row)) {
+          stop("Invalid \`summary_row\` option. Must be one of \"Above\" or \"Below\".")
+        } else if (tolower(summary_row) == "above") {
           outlinepr <- ' summaryBelow=\"0\"'
         } else {
           outlinepr <- ' summaryBelow=\"1\"'
         }
       }
 
-      if (!is.null(summaryCol)) {
+      if (!is.null(summary_col)) {
 
-        if (!validCol(summaryCol)) {
-          stop("Invalid \`summaryCol\` option. Must be one of \"Left\" or \"Right\".")
-        } else if (tolower(summaryCol) == "left") {
+        if (!validCol(summary_col)) {
+          stop("Invalid \`summary_col\` option. Must be one of \"Left\" or \"Right\".")
+        } else if (tolower(summary_col) == "left") {
           outlinepr <- paste0(outlinepr, ' summaryRight=\"0\"')
         } else {
           outlinepr <- paste0(outlinepr, ' summaryRight=\"1\"')
@@ -5228,24 +5246,24 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## print Titles ----
-      if (!is.null(printTitleRows) && is.null(printTitleCols)) {
-        if (!is.numeric(printTitleRows)) {
-          stop("printTitleRows must be numeric.")
+      if (!is.null(print_title_rows) && is.null(print_title_cols)) {
+        if (!is.numeric(print_title_rows)) {
+          stop("print_title_rows must be numeric.")
         }
 
         private$create_named_region(
-          ref1 = paste0("$", min(printTitleRows)),
-          ref2 = paste0("$", max(printTitleRows)),
+          ref1 = paste0("$", min(print_title_rows)),
+          ref2 = paste0("$", max(print_title_rows)),
           name = "_xlnm.Print_Titles",
           sheet = self$get_sheet_names()[[sheet]],
           localSheetId = sheet - 1L
         )
-      } else if (!is.null(printTitleCols) && is.null(printTitleRows)) {
-        if (!is.numeric(printTitleCols)) {
-          stop("printTitleCols must be numeric.")
+      } else if (!is.null(print_title_cols) && is.null(print_title_rows)) {
+        if (!is.numeric(print_title_cols)) {
+          stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(printTitleCols))
+        cols <- int2col(range(print_title_cols))
         private$create_named_region(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
@@ -5253,17 +5271,17 @@ wbWorkbook <- R6::R6Class(
           sheet = self$get_sheet_names()[[sheet]],
           localSheetId = sheet - 1L
         )
-      } else if (!is.null(printTitleCols) && !is.null(printTitleRows)) {
-        if (!is.numeric(printTitleRows)) {
-          stop("printTitleRows must be numeric.")
+      } else if (!is.null(print_title_cols) && !is.null(print_title_rows)) {
+        if (!is.numeric(print_title_rows)) {
+          stop("print_title_rows must be numeric.")
         }
 
-        if (!is.numeric(printTitleCols)) {
-          stop("printTitleCols must be numeric.")
+        if (!is.numeric(print_title_cols)) {
+          stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(printTitleCols))
-        rows <- range(printTitleRows)
+        cols <- int2col(range(print_title_cols))
+        rows <- range(print_title_rows)
 
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")

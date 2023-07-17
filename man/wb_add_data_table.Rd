@@ -8,7 +8,7 @@ wb_add_data_table(
   wb,
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   col_names = TRUE,
@@ -102,12 +102,12 @@ Other workbook wrappers:
 \code{\link{wb_creators}},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_get_base_font}()},
+\code{\link{wb_merge_cells}()},
 \code{\link{wb_save}()},
 \code{\link{wb_set_col_widths}()},
 \code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()},
-\code{\link{workbook_grouping}},
-\code{\link{ws_cell_merge}}
+\code{\link{workbook_grouping}}
 }
 \concept{workbook wrappers}

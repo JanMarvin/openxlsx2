@@ -18,3 +18,18 @@ test_that("standardize works", {
   expect_equal(get("tab_color"), "green")
 
 })
+
+test_that("deprecation warning works", {
+
+  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+  wb1 <- wb_load(xlsxFile)
+
+  options("openxlsx2.soon_deprecated" = TRUE)
+
+  expect_warning(
+    wb_to_df(wb1, colNames = TRUE),
+    "Found camelCase arguments in code. These will be deprecated in the next major release. Consider using: col_names"
+  )
+
+  options("openxlsx2.soon_deprecated" = FALSE)
+})

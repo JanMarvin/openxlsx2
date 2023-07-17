@@ -8,12 +8,13 @@ wb_protect(
   wb,
   protect = TRUE,
   password = NULL,
-  lockStructure = FALSE,
-  lockWindows = FALSE,
+  lock_structure = FALSE,
+  lock_windows = FALSE,
   type = 1,
-  fileSharing = FALSE,
+  file_sharing = FALSE,
   username = unname(Sys.info()["user"]),
-  readOnlyRecommended = FALSE
+  read_only_recommended = FALSE,
+  ...
 )
 }
 \arguments{
@@ -23,20 +24,22 @@ wb_protect(
 
 \item{password}{(optional) password required to unprotect the workbook}
 
-\item{lockStructure}{Whether the workbook structure should be locked}
+\item{lock_structure}{Whether the workbook structure should be locked}
 
-\item{lockWindows}{Whether the window position of the spreadsheet should be
+\item{lock_windows}{Whether the window position of the spreadsheet should be
 locked}
 
 \item{type}{Lock type (see details)}
 
-\item{fileSharing}{Whether to enable a popup requesting the unlock password
+\item{file_sharing}{Whether to enable a popup requesting the unlock password
 is prompted}
 
 \item{username}{The username for the \code{fileSharing} popup}
 
-\item{readOnlyRecommended}{Whether or not a post unlock message appears
+\item{read_only_recommended}{Whether or not a post unlock message appears
 stating that the workbook is recommended to be opened in readonly mode.}
+
+\item{...}{additional arguments}
 }
 \description{
 Protect or unprotect a workbook from modifications by the user in the

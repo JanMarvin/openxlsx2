@@ -574,7 +574,7 @@ add data
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data(
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   array = FALSE,
@@ -641,7 +641,7 @@ add a data table
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_data_table(
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   col_names = TRUE,
@@ -761,7 +761,7 @@ add formula
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
   x,
-  dims = rowcol_to_dims(start_row, start_col),
+  dims = wb_dims(start_row, start_col),
   start_col = 1,
   start_row = 1,
   array = FALSE,
@@ -1600,10 +1600,11 @@ Set freeze panes for a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$freeze_pane(
   sheet = current_sheet(),
-  firstActiveRow = NULL,
-  firstActiveCol = NULL,
-  firstRow = FALSE,
-  firstCol = FALSE
+  first_active_row = NULL,
+  first_active_col = NULL,
+  first_row = FALSE,
+  first_col = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1612,13 +1613,15 @@ Set freeze panes for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{firstActiveRow}}{firstActiveRow}
+\item{\code{first_active_row}}{first_active_row}
 
-\item{\code{firstActiveCol}}{firstActiveCol}
+\item{\code{first_active_col}}{first_active_col}
 
-\item{\code{firstRow}}{firstRow}
+\item{\code{first_row}}{first_row}
 
-\item{\code{firstCol}}{firstCol}
+\item{\code{first_col}}{first_col}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -2000,12 +2003,13 @@ Protect a workbook
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect(
   protect = TRUE,
   password = NULL,
-  lockStructure = FALSE,
-  lockWindows = FALSE,
+  lock_structure = FALSE,
+  lock_windows = FALSE,
   type = 1,
-  fileSharing = FALSE,
+  file_sharing = FALSE,
   username = unname(Sys.info()["user"]),
-  readOnlyRecommended = FALSE
+  read_only_recommended = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2016,17 +2020,19 @@ Protect a workbook
 
 \item{\code{password}}{password}
 
-\item{\code{lockStructure}}{lockStructure}
+\item{\code{lock_structure}}{lock_structure}
 
-\item{\code{lockWindows}}{lockWindows}
+\item{\code{lock_windows}}{lock_windows}
 
 \item{\code{type}}{type}
 
-\item{\code{fileSharing}}{fileSharing}
+\item{\code{file_sharing}}{file_sharing}
 
 \item{\code{username}}{username}
 
-\item{\code{readOnlyRecommended}}{readOnlyRecommended}
+\item{\code{read_only_recommended}}{read_only_recommended}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -2127,13 +2133,15 @@ are removed.}
 \subsection{Method \code{set_last_modified_by()}}{
 Change the last modified by
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_last_modified_by(LastModifiedBy = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_last_modified_by(name, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{LastModifiedBy}}{A new value}
+\item{\code{name}}{A new value}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -2157,13 +2165,14 @@ page_setup()
   bottom = 0.75,
   header = 0.3,
   footer = 0.3,
-  fitToWidth = FALSE,
-  fitToHeight = FALSE,
-  paperSize = NULL,
-  printTitleRows = NULL,
-  printTitleCols = NULL,
-  summaryRow = NULL,
-  summaryCol = NULL
+  fit_to_width = FALSE,
+  fit_to_height = FALSE,
+  paper_size = NULL,
+  print_title_rows = NULL,
+  print_title_cols = NULL,
+  summary_row = NULL,
+  summary_col = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2188,19 +2197,21 @@ page_setup()
 
 \item{\code{footer}}{footer}
 
-\item{\code{fitToWidth}}{fitToWidth}
+\item{\code{fit_to_width}}{fitToWidth}
 
-\item{\code{fitToHeight}}{fitToHeight}
+\item{\code{fit_to_height}}{fitToHeight}
 
-\item{\code{paperSize}}{paperSize}
+\item{\code{paper_size}}{paperSize}
 
-\item{\code{printTitleRows}}{printTitleRows}
+\item{\code{print_title_rows}}{printTitleRows}
 
-\item{\code{printTitleCols}}{printTitleCols}
+\item{\code{print_title_cols}}{printTitleCols}
 
-\item{\code{summaryRow}}{summaryRow}
+\item{\code{summary_row}}{summaryRow}
 
-\item{\code{summaryCol}}{summaryCol}
+\item{\code{summary_col}}{summaryCol}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

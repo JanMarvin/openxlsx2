@@ -99,7 +99,7 @@ wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
 wb$add_named_region(
   sheet = 1,
   name = "iris",
-  dims = rowcol_to_dims(
+  dims = wb_dims(
     row = seq_len(nrow(iris) + 1),
     col = seq_along(iris)
   )

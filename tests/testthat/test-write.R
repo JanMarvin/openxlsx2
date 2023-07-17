@@ -9,7 +9,7 @@ test_that("write_formula", {
          c_t = "", c_cm = "",
          c_ph = "", c_vm = "",
          v = "", f = "SUM(C2:C11*D2:D11)",
-         f_t = "array", f_ref = "E2:E2",
+         f_t = "array", f_ref = "E2",
          f_ca = "", f_si = "",
          is = "", typ = "11"),
     row.names = 23L, class = "data.frame")

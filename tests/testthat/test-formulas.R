@@ -40,7 +40,7 @@ test_that("writing formulas with cell metadata works", {
   exp <- data.frame(
     r = "A1", row_r = "1", c_r = "A", c_s = "", c_t = "",
     c_cm = "1", c_ph = "", c_vm = "", v = "", f = "SUM(ABS(A2:A11))",
-    f_t = "array", f_ref = "A1:A1", f_ca = "", f_si = "", is = "",
+    f_t = "array", f_ref = "A1", f_ca = "", f_si = "", is = "",
     typ = "14")
   got <- wb$worksheets[[1]]$sheet_data$cc[1, ]
   expect_equal(exp, got)

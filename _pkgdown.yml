@@ -47,6 +47,8 @@ reference:
   - wb_grid_lines
   - wb_update_table
   - wb_copy_cells
+  - wb_merge_cells
+  - wb_page_setup
 
 - title: create functions
   contents:
@@ -78,7 +80,6 @@ reference:
   - clean_worksheet_name
   - styles_on_sheet
   - waivers
-  - starts_with("ws_")
   - xl_open
   - dims_helper
   - workbook_grouping
