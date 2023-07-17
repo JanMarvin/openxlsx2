@@ -188,79 +188,6 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #' @name dims_helper
 NULL
 #' @rdname dims_helper
-#' @export
-dims_to_rowcol <- function(x, as_integer = FALSE) {
-
-  dims <- x
-  if (length(x) == 1 && grepl(";", x))
-    dims <- unlist(strsplit(x, ";"))
-
-  cols_out <- NULL
-  rows_out <- NULL
-  for (dim in dims) {
-    dimensions <- unlist(strsplit(dim, ":"))
-    cols <- gsub("[[:digit:]]", "", dimensions)
-    rows <- gsub("[[:upper:]]", "", dimensions)
-
-    # if "A:B"
-    if (any(rows == "")) rows[rows == ""] <- "1"
-
-    # convert cols to integer
-    cols_int <- col2int(cols)
-    rows_int <- as.integer(rows)
-
-    if (length(dimensions) == 2) {
-      # needs integer to create sequence
-      cols <- int2col(seq.int(min(cols_int), max(cols_int)))
-      rows_int <- seq.int(min(rows_int), max(rows_int))
-    }
-
-    if (as_integer) {
-      cols <- cols_int
-      rows <- rows_int
-    } else {
-      rows <- as.character(rows_int)
-    }
-
-    cols_out <- unique(c(cols_out, cols))
-    rows_out <- unique(c(rows_out, rows))
-  }
-
-  list(cols_out, rows_out)
-}
-#' @rdname dims_helper
-#' @export
-rowcol_to_dims <- function(row, col) {
-
-  # no assert for col. will output character anyways
-  # assert_class(row, "numeric") - complains if integer
-
-  col_int <- col2int(col)
-
-  min_col <- int2col(min(col_int))
-  max_col <- int2col(max(col_int))
-
-  min_row <- min(row)
-  max_row <- max(row)
-
-  # we will always return something like "A1:A1", even for single cells
-  stringi::stri_join(min_col, min_row, ":", max_col, max_row)
-
-}
-#' @rdname dims_helper
-#' @noRd
-rowcol_to_dim <- function(row, col) {
-  # no assert for col. will output character anyways
-  # assert_class(row, "numeric") - complains if integer
-  col_int <- col2int(col)
-  min_col <- int2col(min(col_int))
-  min_row <- min(row)
-
-  # we will always return something like "A1"
-  stringi::stri_join(min_col, min_row)
-}
-
-#' @rdname dims_helper
 #' @param ... construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame
 #' @examples
 #' # either vectors
@@ -337,6 +264,80 @@ wb_dims <- function(...) {
 
   dims
 }
+#' @rdname dims_helper
+#' @export
+dims_to_rowcol <- function(x, as_integer = FALSE) {
+
+  dims <- x
+  if (length(x) == 1 && grepl(";", x))
+    dims <- unlist(strsplit(x, ";"))
+
+  cols_out <- NULL
+  rows_out <- NULL
+  for (dim in dims) {
+    dimensions <- unlist(strsplit(dim, ":"))
+    cols <- gsub("[[:digit:]]", "", dimensions)
+    rows <- gsub("[[:upper:]]", "", dimensions)
+
+    # if "A:B"
+    if (any(rows == "")) rows[rows == ""] <- "1"
+
+    # convert cols to integer
+    cols_int <- col2int(cols)
+    rows_int <- as.integer(rows)
+
+    if (length(dimensions) == 2) {
+      # needs integer to create sequence
+      cols <- int2col(seq.int(min(cols_int), max(cols_int)))
+      rows_int <- seq.int(min(rows_int), max(rows_int))
+    }
+
+    if (as_integer) {
+      cols <- cols_int
+      rows <- rows_int
+    } else {
+      rows <- as.character(rows_int)
+    }
+
+    cols_out <- unique(c(cols_out, cols))
+    rows_out <- unique(c(rows_out, rows))
+  }
+
+  list(cols_out, rows_out)
+}
+#' @rdname dims_helper
+#' @export
+rowcol_to_dims <- function(row, col) {
+
+  # no assert for col. will output character anyways
+  # assert_class(row, "numeric") - complains if integer
+
+  col_int <- col2int(col)
+
+  min_col <- int2col(min(col_int))
+  max_col <- int2col(max(col_int))
+
+  min_row <- min(row)
+  max_row <- max(row)
+
+  # we will always return something like "A1:A1", even for single cells
+  stringi::stri_join(min_col, min_row, ":", max_col, max_row)
+
+}
+#' @rdname dims_helper
+#' @noRd
+rowcol_to_dim <- function(row, col) {
+  # no assert for col. will output character anyways
+  # assert_class(row, "numeric") - complains if integer
+  col_int <- col2int(col)
+  min_col <- int2col(min(col_int))
+  min_row <- min(row)
+
+  # we will always return something like "A1"
+  stringi::stri_join(min_col, min_row)
+}
+
+
 
 # Relationship helpers --------------------
 #' removes entries from worksheets_rels
