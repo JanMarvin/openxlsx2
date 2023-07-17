@@ -20,12 +20,12 @@
   * deprecating function
     * `convertToExcelDate()` for `convert_to_excel_date()`
   
-  * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()` internal functions
+  * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartsheet`, `wbComment`, `wbHyperlink` internal
   
 ## New features
 
-* `wb_dims()` was added as a more convenient replacement for `rowcol_to_dims()`. The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coerceable to data frame. This allows the following variants:
+* `wb_dims()` was added as a more convenient replacement for `rowcol_to_dims()`. The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coercible to data frame. This allows the following variants:
 * `wb_dims(1:5, letters)`
 * `wb_dims(1:5, 1:26)`
 * `wb_dims(matrix(1, 5, 26))` with an added row for column names

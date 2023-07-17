@@ -83,7 +83,6 @@ reference:
   - xl_open
   - dims_helper
   - workbook_grouping
-  - contains("dims")
   - starts_with("write_")
 
 - title: Deprecated
