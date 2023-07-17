@@ -71,6 +71,14 @@ standardize_case_names <- function(..., return = FALSE, arguments = NULL) {
         assign(name_camel_case, value_camel_calse, parent.frame())
       }
     }
+    if(getOption("openxlsx2.soon_deprecated", default = FALSE)) {
+      msg <- paste(
+        "Found camelCase arguments in code.",
+        "These will be deprecated in the next major release.",
+        "Consider using:", paste(got[got_camel_cases], collapse = ", ")
+      )
+      .Deprecated(msg = msg)
+    }
   }
 
   sel <- !got %in% arguments
