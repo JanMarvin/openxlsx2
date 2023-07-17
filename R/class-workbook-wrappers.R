@@ -2924,13 +2924,11 @@ wb_add_dxfs_style <- function(
 #' Add comment to worksheet
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param col A column to apply the comment
-#' @param row A row to apply the comment
 #' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
 #' @param comment A comment to apply to the worksheet
+# To fit, maybe comment, can be `x`
 #' @param ... additional arguments
 #' @returns The `wbWorkbook` object
-#' @rdname comment
 #' @seealso [wb_add_thread()]
 #' @export
 wb_add_comment <- function(
