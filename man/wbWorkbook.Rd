@@ -1600,10 +1600,11 @@ Set freeze panes for a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$freeze_pane(
   sheet = current_sheet(),
-  firstActiveRow = NULL,
-  firstActiveCol = NULL,
-  firstRow = FALSE,
-  firstCol = FALSE
+  first_active_row = NULL,
+  first_active_col = NULL,
+  first_row = FALSE,
+  first_col = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1612,13 +1613,15 @@ Set freeze panes for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{firstActiveRow}}{firstActiveRow}
+\item{\code{first_active_row}}{first_active_row}
 
-\item{\code{firstActiveCol}}{firstActiveCol}
+\item{\code{first_active_col}}{first_active_col}
 
-\item{\code{firstRow}}{firstRow}
+\item{\code{first_row}}{first_row}
 
-\item{\code{firstCol}}{firstCol}
+\item{\code{first_col}}{first_col}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

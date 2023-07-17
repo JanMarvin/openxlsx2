@@ -7,10 +7,11 @@
 wb_freeze_pane(
   wb,
   sheet = current_sheet(),
-  firstActiveRow = NULL,
-  firstActiveCol = NULL,
-  firstRow = FALSE,
-  firstCol = FALSE
+  first_active_row = NULL,
+  first_active_col = NULL,
+  first_row = FALSE,
+  first_col = FALSE,
+  ...
 )
 }
 \arguments{
@@ -18,13 +19,15 @@ wb_freeze_pane(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{firstActiveRow}{Top row of active region}
+\item{first_active_row}{Top row of active region}
 
-\item{firstActiveCol}{Furthest left column of active region}
+\item{first_active_col}{Furthest left column of active region}
 
-\item{firstRow}{If \code{TRUE}, freezes the first row (equivalent to firstActiveRow = 2)}
+\item{first_row}{If \code{TRUE}, freezes the first row (equivalent to firstActiveRow = 2)}
 
-\item{firstCol}{If \code{TRUE}, freezes the first column (equivalent to firstActiveCol = 2)}
+\item{first_col}{If \code{TRUE}, freezes the first column (equivalent to firstActiveCol = 2)}
+
+\item{...}{additional arguments}
 }
 \description{
 Freeze a worksheet pane

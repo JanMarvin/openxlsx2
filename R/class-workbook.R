@@ -3564,82 +3564,86 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Set freeze panes for a sheet
     #' @param sheet sheet
-    #' @param firstActiveRow firstActiveRow
-    #' @param firstActiveCol firstActiveCol
-    #' @param firstRow firstRow
-    #' @param firstCol firstCol
+    #' @param first_active_row first_active_row
+    #' @param first_active_col first_active_col
+    #' @param first_row first_row
+    #' @param first_col first_col
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     freeze_pane = function(
-      sheet = current_sheet(),
-      firstActiveRow = NULL,
-      firstActiveCol = NULL,
-      firstRow = FALSE,
-      firstCol = FALSE
+      sheet            = current_sheet(),
+      first_active_row = NULL,
+      first_active_col = NULL,
+      first_row        = FALSE,
+      first_col        = FALSE,
+      ...
     ) {
+
       # TODO rename to setFreezePanes?
+      standardize_case_names(...)
 
       # fine to do the validation before the actual check to prevent other errors
       sheet <- private$get_sheet_index(sheet)
 
-      if (is.null(firstActiveRow) & is.null(firstActiveCol) & !firstRow & !firstCol) {
+      if (is.null(first_active_row) & is.null(first_active_col) & !first_row & !first_col) {
         return(invisible(self))
       }
 
       # TODO simplify asserts
-      if (!is.logical(firstRow)) stop("firstRow must be TRUE/FALSE")
-      if (!is.logical(firstCol)) stop("firstCol must be TRUE/FALSE")
+      if (!is.logical(first_row)) stop("first_row must be TRUE/FALSE")
+      if (!is.logical(first_col)) stop("first_col must be TRUE/FALSE")
 
       # make overwrides for arguments
-      if (firstRow & !firstCol) {
-        firstActiveCol <- NULL
-        firstActiveRow <- NULL
-        firstCol <- FALSE
-      } else if (firstCol & !firstRow) {
-        firstActiveRow <- NULL
-        firstActiveCol <- NULL
-        firstRow <- FALSE
-      } else if (firstRow & firstCol) {
-        firstActiveRow <- 2L
-        firstActiveCol <- 2L
-        firstRow <- FALSE
-        firstCol <- FALSE
+      if (first_row & !first_col) {
+        first_active_col <- NULL
+        first_active_row <- NULL
+        first_col <- FALSE
+      } else if (first_col & !first_row) {
+        first_active_row <- NULL
+        first_active_col <- NULL
+        first_row <- FALSE
+      } else if (first_row & first_col) {
+        first_active_row <- 2L
+        first_active_col <- 2L
+        first_row <- FALSE
+        first_col <- FALSE
       } else {
         ## else both firstRow and firstCol are FALSE
-        firstActiveRow <- firstActiveRow %||% 1L
-        firstActiveCol <- firstActiveCol %||% 1L
+        first_active_row <- first_active_row %||% 1L
+        first_active_col <- first_active_col %||% 1L
 
         # Convert to numeric if column letter given
         # TODO is col2int() safe for non characters?
-        firstActiveRow <- col2int(firstActiveRow)
-        firstActiveCol <- col2int(firstActiveCol)
+        first_active_row <- col2int(first_active_row)
+        first_active_col <- col2int(first_active_col)
       }
 
       paneNode <-
-        if (firstRow) {
+        if (first_row) {
           '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>'
-        } else if (firstCol) {
+        } else if (first_col) {
           '<pane xSplit="1" topLeftCell="B1" activePane="topRight" state="frozen"/>'
         } else {
-          if (firstActiveRow == 1 & firstActiveCol == 1) {
+          if (first_active_row == 1 & first_active_col == 1) {
             ## nothing to do
             # return(NULL)
             return(invisible(self))
           }
 
-          if (firstActiveRow > 1 & firstActiveCol == 1) {
-            attrs <- sprintf('ySplit="%s"', firstActiveRow - 1L)
+          if (first_active_row > 1 & first_active_col == 1) {
+            attrs <- sprintf('ySplit="%s"', first_active_row - 1L)
             activePane <- "bottomLeft"
           }
 
-          if (firstActiveRow == 1 & firstActiveCol > 1) {
-            attrs <- sprintf('xSplit="%s"', firstActiveCol - 1L)
+          if (first_active_row == 1 & first_active_col > 1) {
+            attrs <- sprintf('xSplit="%s"', first_active_col - 1L)
             activePane <- "topRight"
           }
 
-          if (firstActiveRow > 1 & firstActiveCol > 1) {
+          if (first_active_row > 1 & first_active_col > 1) {
             attrs <- sprintf('ySplit="%s" xSplit="%s"',
-              firstActiveRow - 1L,
-              firstActiveCol - 1L
+              first_active_row - 1L,
+              first_active_col - 1L
             )
             activePane <- "bottomRight"
           }
@@ -3647,7 +3651,7 @@ wbWorkbook <- R6::R6Class(
           sprintf(
             '<pane %s topLeftCell="%s" activePane="%s" state="frozen"/><selection pane="%s"/>',
             stri_join(attrs, collapse = " ", sep = " "),
-            get_cell_refs(data.frame(firstActiveRow, firstActiveCol)),
+            get_cell_refs(data.frame(first_active_row, first_active_col)),
             activePane,
             activePane
           )

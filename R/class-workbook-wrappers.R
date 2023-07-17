@@ -676,10 +676,11 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' @description Freeze a worksheet pane
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param firstActiveRow Top row of active region
-#' @param firstActiveCol Furthest left column of active region
-#' @param firstRow If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)
-#' @param firstCol If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)
+#' @param first_active_row Top row of active region
+#' @param first_active_col Furthest left column of active region
+#' @param first_row If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)
+#' @param first_col If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)
+#' @param ... additional arguments
 #'
 #' @export
 #' @family workbook wrappers
@@ -699,14 +700,22 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
 #' wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
 #' wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
-wb_freeze_pane <- function(wb, sheet = current_sheet(), firstActiveRow = NULL, firstActiveCol = NULL, firstRow = FALSE, firstCol = FALSE) {
+wb_freeze_pane <- function(
+  wb,
+  sheet            = current_sheet(),
+  first_active_row = NULL,
+  first_active_col = NULL,
+  first_row        = FALSE,
+  first_col        = FALSE,
+  ...
+) {
   assert_workbook(wb)
   wb$clone()$freeze_pane(
-    sheet          = sheet,
-    firstActiveRow = firstActiveRow,
-    firstActiveCol = firstActiveCol,
-    firstRow       = firstRow,
-    firstCol       = firstCol
+    sheet            = sheet,
+    first_active_row = first_active_row,
+    first_active_col = first_active_col,
+    first_row        = first_row,
+    first_col        = first_col
   )
 }
 
