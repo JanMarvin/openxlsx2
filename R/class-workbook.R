@@ -5103,18 +5103,23 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Change the last modified by
-    #' @param LastModifiedBy A new value
+    #' @param name A new value
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    set_last_modified_by = function(LastModifiedBy = NULL) {
+    set_last_modified_by = function(name, ...) {
+      if (missing(name) && list(...)$LastModifiedBy) {
+        .Deprecated(old = "LastModifiedBy", new = "name", package = "openxlsx2")
+        name <- list(...)$LastModifiedBy
+      }
       # TODO rename to wb_set_last_modified_by() ?
-      if (!is.null(LastModifiedBy)) {
+      if (!is.null(name)) {
         current_LastModifiedBy <-
           stri_match(self$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
         self$core <-
           stri_replace_all_fixed(
             self$core,
             pattern = current_LastModifiedBy,
-            replacement = LastModifiedBy
+            replacement = name
           )
       }
 

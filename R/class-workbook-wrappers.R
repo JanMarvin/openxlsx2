@@ -2243,7 +2243,8 @@ wb_get_sheet_names <- function(wb) {
 #' Just a wrapper of wb$set_last_modified_by()
 #'
 #' @param wb A workbook object
-#' @param LastModifiedBy A string object with the name of the LastModifiedBy-User
+#' @param name A string object with the name of the LastModifiedBy-User
+#' @param ...
 #'
 #' @export
 #' @family workbook wrappers
@@ -2251,9 +2252,10 @@ wb_get_sheet_names <- function(wb) {
 #' @examples
 #' wb <- wb_workbook()
 #' wb_set_last_modified_by(wb, "test")
-wb_set_last_modified_by <- function(wb, LastModifiedBy) {
+wb_set_last_modified_by <- function(wb, name, ...) {
+  if (missing(name)) name <- substitute()
   assert_workbook(wb)
-  wb$clone()$set_last_modified_by(LastModifiedBy)
+  wb$clone()$set_last_modified_by(name, ...)
 }
 
 #' Insert an image into a worksheet

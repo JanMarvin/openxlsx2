@@ -129,11 +129,17 @@ test_that("wb_set_creators() is a wrapper", {
   expect_wrapper("set_creators", params = list(creators = "myself"))
 })
 
-# wb_remove_creators() --------------------------------------------------------
+# wb_set_last_modified_by() ---------------------------------------------------
 
-test_that("wb_remove_creators() is a wrapper", {
-  wb <- wb_workbook(creator = "myself")
-  expect_wrapper("remove_creators", params = list(creators = "myself"))
+test_that("wb_set_last_modified_by() is a wrapper", {
+  wb <- wb_workbook()
+  expect_wrapper("set_last_modified_by", params = list(name = "myself"))
+})
+
+# wb_set_creators() -----------------------------------------------------------
+
+test_that("wb_set_creators() is a wrapper", {
+  expect_wrapper("set_creators", params = list(creators = "myself"))
 })
 
 # wb_page_setup() -------------------------------------------------------------
