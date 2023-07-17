@@ -89,7 +89,7 @@ invisible(0)
 \description{
 Add data to worksheet with optional styling.
 
-Write an object to worksheet with optional styling.
+Write an object to worksheet with optional styling. Use \code{\link[=wb_add_data]{wb_add_data()}} in new code.
 }
 \details{
 Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
@@ -154,7 +154,7 @@ write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
 wb_to_df(wb2)
 }
 \seealso{
-\code{\link[=write_datatable]{write_datatable()}}
+\code{\link[=wb_add_data]{wb_add_data()}}, \code{\link[=wb_add_data_table]{wb_add_data_table()}}
 
 Other workbook wrappers: 
 \code{\link{wb_add_chartsheet}()},
@@ -176,3 +176,4 @@ Other workbook wrappers:
 \code{\link{workbook_grouping}}
 }
 \concept{workbook wrappers}
+\keyword{internal}

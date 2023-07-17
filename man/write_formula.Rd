@@ -43,6 +43,7 @@ write_formula(
 }
 \description{
 Write a a character vector containing Excel formula to a worksheet.
+Use \code{\link[=wb_add_formula]{wb_add_formula()}} or \code{add_formula()} in new code
 }
 \details{
 Currently only the English version of functions are supported. Please don't use the local translation.
@@ -118,6 +119,4 @@ write_formula(wb, "df", startCol = "E", startRow = "2",
              x = "SUM(C2:C11*D2:D11)",
              array = TRUE)
 }
-\seealso{
-\code{\link[=write_data]{write_data()}}
-}
+\keyword{internal}

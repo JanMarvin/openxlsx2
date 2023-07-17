@@ -5,6 +5,9 @@
 
 * Function arguments are now defaulting to `snake_case`. For the time being, both arguments are accepted and `camelCase` will be switched to `snake_case` under the hood. Documentation like vignettes and examples are currently still displaying `camelCase` and maybe some `camelCase` function slipped through.  [678](https://github.com/JanMarvin/openxlsx2/pull/678)
 
+* `write_formula()`, `write_data()`, `write_datatable()` are no longer recommended,
+  * Use `wb_add_formula()`, `wb_add_data()`, `wb_add_data_table()` instead
+
 ## Breaking changes
 
 * Order of arguments in `wb_add_named_region()` changed, because previously overlooked `dims` argument was added.
