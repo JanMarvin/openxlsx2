@@ -459,21 +459,21 @@ wb_copy_cells <- function(
 #' wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
 #' wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
 #'
-#' @name ws_cell_merge
+#' @name wb_cell_merge
 #' @family workbook wrappers
 NULL
 
 
 
 #' @export
-#' @rdname ws_cell_merge
+#' @rdname wb_cell_merge
 wb_merge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$merge_cells(sheet = sheet, rows = rows, cols = cols)
 }
 
 #' @export
-#' @rdname ws_cell_merge
+#' @rdname wb_cell_merge
 wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
   assert_workbook(wb)
   wb$clone()$unmerge_cells(sheet = sheet, rows = rows, cols = cols)
@@ -534,7 +534,7 @@ wb_add_chartsheet <- function(
 #'   skip a position.
 #' @param visible If FALSE, sheet is hidden else visible.
 #' @param has_drawing If TRUE prepare a drawing output (TODO does this work?)
-#' @param paper_size An integer corresponding to a paper size. See ?ws_page_setup for
+#' @param paper_size An integer corresponding to a paper size. See [wb_page_setup()] for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
 #' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
@@ -1255,7 +1255,7 @@ wb_set_header_footer <- function(
 
 
 
-#' @name ws_page_setup
+#' @name wb_page_setup
 #' @title Set page margins, orientation and print scaling
 #' @description Set page margins, orientation and print scaling
 #' @param wb A workbook object

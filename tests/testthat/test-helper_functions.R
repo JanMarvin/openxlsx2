@@ -49,7 +49,7 @@ test_that("openxlsx2_types", {
 })
 
 
-test_that("ws_page_setup example", {
+test_that("wb_page_setup example", {
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")

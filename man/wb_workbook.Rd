@@ -62,6 +62,7 @@ Other workbook wrappers:
 \code{\link{wb_add_formula}()},
 \code{\link{wb_add_pivot_table}()},
 \code{\link{wb_add_worksheet}()},
+\code{\link{wb_cell_merge}},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_copy_cells}()},
 \code{\link{wb_creators}},
@@ -71,7 +72,6 @@ Other workbook wrappers:
 \code{\link{wb_set_col_widths}()},
 \code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_set_row_heights}()},
-\code{\link{workbook_grouping}},
-\code{\link{ws_cell_merge}}
+\code{\link{workbook_grouping}}
 }
 \concept{workbook wrappers}

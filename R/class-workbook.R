@@ -5168,7 +5168,7 @@ wbWorkbook <- R6::R6Class(
         paperSizes <- 1:68
         paperSizes <- paperSizes[!paperSizes %in% 48:49]
         if (!paperSize %in% paperSizes) {
-          stop("paperSize must be an integer in range [1, 68]. See ?ws_page_setup details.")
+          stop("paperSize must be an integer in range [1, 68]. See ?wb_page_setup details.")
         }
         paperSize <- as.integer(paperSize)
       } else {
