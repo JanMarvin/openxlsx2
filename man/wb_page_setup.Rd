@@ -15,13 +15,14 @@ wb_page_setup(
   bottom = 0.75,
   header = 0.3,
   footer = 0.3,
-  fitToWidth = FALSE,
-  fitToHeight = FALSE,
-  paperSize = NULL,
-  printTitleRows = NULL,
-  printTitleCols = NULL,
-  summaryRow = NULL,
-  summaryCol = NULL
+  fit_to_width = FALSE,
+  fit_to_height = FALSE,
+  paper_size = NULL,
+  print_title_rows = NULL,
+  print_title_cols = NULL,
+  summary_row = NULL,
+  summary_col = NULL,
+  ...
 )
 }
 \arguments{
@@ -45,19 +46,21 @@ wb_page_setup(
 
 \item{footer}{footer margin in inches}
 
-\item{fitToWidth}{If \code{TRUE}, worksheet is scaled to fit to page width on printing.}
+\item{fit_to_width}{If \code{TRUE}, worksheet is scaled to fit to page width on printing.}
 
-\item{fitToHeight}{If \code{TRUE}, worksheet is scaled to fit to page height on printing.}
+\item{fit_to_height}{If \code{TRUE}, worksheet is scaled to fit to page height on printing.}
 
-\item{paperSize}{See details. Default value is 9 (A4 paper).}
+\item{paper_size}{See details. Default value is 9 (A4 paper).}
 
-\item{printTitleRows}{Rows to repeat at top of page when printing. Integer vector.}
+\item{print_title_rows}{Rows to repeat at top of page when printing. Integer vector.}
 
-\item{printTitleCols}{Columns to repeat at left when printing. Integer vector.}
+\item{print_title_cols}{Columns to repeat at left when printing. Integer vector.}
 
-\item{summaryRow}{Location of summary rows in groupings. One of "Above" or "Below".}
+\item{summary_row}{Location of summary rows in groupings. One of "Above" or "Below".}
 
-\item{summaryCol}{Location of summary columns in groupings. One of "Right" or "Left".}
+\item{summary_col}{Location of summary columns in groupings. One of "Right" or "Left".}
+
+\item{...}{additional arguments}
 }
 \description{
 Set page margins, orientation and print scaling

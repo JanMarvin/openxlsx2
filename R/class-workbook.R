@@ -5123,32 +5123,37 @@ wbWorkbook <- R6::R6Class(
     #' @param bottom bottom
     #' @param header header
     #' @param footer footer
-    #' @param fitToWidth fitToWidth
-    #' @param fitToHeight fitToHeight
-    #' @param paperSize paperSize
-    #' @param printTitleRows printTitleRows
-    #' @param printTitleCols printTitleCols
-    #' @param summaryRow summaryRow
-    #' @param summaryCol summaryCol
+    #' @param fit_to_width fitToWidth
+    #' @param fit_to_height fitToHeight
+    #' @param paper_size paperSize
+    #' @param print_title_rows printTitleRows
+    #' @param print_title_cols printTitleCols
+    #' @param summary_row summaryRow
+    #' @param summary_col summaryCol
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     page_setup = function(
-      sheet = current_sheet(),
-      orientation    = NULL,
-      scale          = 100,
-      left           = 0.7,
-      right          = 0.7,
-      top            = 0.75,
-      bottom         = 0.75,
-      header         = 0.3,
-      footer         = 0.3,
-      fitToWidth     = FALSE,
-      fitToHeight    = FALSE,
-      paperSize      = NULL,
-      printTitleRows = NULL,
-      printTitleCols = NULL,
-      summaryRow     = NULL,
-      summaryCol     = NULL
+      sheet            = current_sheet(),
+      orientation      = NULL,
+      scale            = 100,
+      left             = 0.7,
+      right            = 0.7,
+      top              = 0.75,
+      bottom           = 0.75,
+      header           = 0.3,
+      footer           = 0.3,
+      fit_to_width     = FALSE,
+      fit_to_height    = FALSE,
+      paper_size       = NULL,
+      print_title_rows = NULL,
+      print_title_cols = NULL,
+      summary_row      = NULL,
+      summary_col      = NULL,
+      ...
     ) {
+
+      standardize_case_names(...)
+
       sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
 
@@ -5164,15 +5169,15 @@ wbWorkbook <- R6::R6Class(
         stop("Scale must be between 10 and 400.")
       }
 
-      if (!is.null(paperSize)) {
-        paperSizes <- 1:68
-        paperSizes <- paperSizes[!paperSizes %in% 48:49]
-        if (!paperSize %in% paperSizes) {
-          stop("paperSize must be an integer in range [1, 68]. See ?wb_page_setup details.")
+      if (!is.null(paper_size)) {
+        paper_sizes <- 1:68
+        paper_sizes <- paper_sizes[!paper_sizes %in% 48:49]
+        if (!paper_size %in% paper_sizes) {
+          stop("paper_size must be an integer in range [1, 68]. See ?wb_page_setup details.")
         }
-        paperSize <- as.integer(paperSize)
+        paper_size <- as.integer(paper_size)
       } else {
-        paperSize <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
+        paper_size <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
       }
 
       ## Keep defaults on orientation, hdpi, vdpi, paperSize ----
@@ -5182,41 +5187,41 @@ wbWorkbook <- R6::R6Class(
       ## Update ----
       self$worksheets[[sheet]]$pageSetup <- sprintf(
         '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s"/>',
-        paperSize, orientation, scale, as.integer(fitToWidth), as.integer(fitToHeight), hdpi, vdpi
+        paper_size, orientation, scale, as_xml_attr(fit_to_width), as_xml_attr(fit_to_height), hdpi, vdpi
       )
 
-      if (fitToHeight || fitToWidth) {
+      if (fit_to_height || fit_to_width) {
         self$worksheets[[sheet]]$sheetPr <- unique(c(self$worksheets[[sheet]]$sheetPr, '<pageSetupPr fitToPage="1"/>'))
       }
 
       self$worksheets[[sheet]]$pageMargins <-
         sprintf('<pageMargins left="%s" right="%s" top="%s" bottom="%s" header="%s" footer="%s"/>', left, right, top, bottom, header, footer)
 
-      validRow <- function(summaryRow) {
-        return(tolower(summaryRow) %in% c("above", "below"))
+      validRow <- function(summary_row) {
+        return(tolower(summary_row) %in% c("above", "below"))
       }
-      validCol <- function(summaryCol) {
-        return(tolower(summaryCol) %in% c("left", "right"))
+      validCol <- function(summary_col) {
+        return(tolower(summary_col) %in% c("left", "right"))
       }
 
       outlinepr <- ""
 
-      if (!is.null(summaryRow)) {
+      if (!is.null(summary_row)) {
 
-        if (!validRow(summaryRow)) {
-          stop("Invalid \`summaryRow\` option. Must be one of \"Above\" or \"Below\".")
-        } else if (tolower(summaryRow) == "above") {
+        if (!validRow(summary_row)) {
+          stop("Invalid \`summary_row\` option. Must be one of \"Above\" or \"Below\".")
+        } else if (tolower(summary_row) == "above") {
           outlinepr <- ' summaryBelow=\"0\"'
         } else {
           outlinepr <- ' summaryBelow=\"1\"'
         }
       }
 
-      if (!is.null(summaryCol)) {
+      if (!is.null(summary_col)) {
 
-        if (!validCol(summaryCol)) {
-          stop("Invalid \`summaryCol\` option. Must be one of \"Left\" or \"Right\".")
-        } else if (tolower(summaryCol) == "left") {
+        if (!validCol(summary_col)) {
+          stop("Invalid \`summary_col\` option. Must be one of \"Left\" or \"Right\".")
+        } else if (tolower(summary_col) == "left") {
           outlinepr <- paste0(outlinepr, ' summaryRight=\"0\"')
         } else {
           outlinepr <- paste0(outlinepr, ' summaryRight=\"1\"')
@@ -5228,24 +5233,24 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## print Titles ----
-      if (!is.null(printTitleRows) && is.null(printTitleCols)) {
-        if (!is.numeric(printTitleRows)) {
-          stop("printTitleRows must be numeric.")
+      if (!is.null(print_title_rows) && is.null(print_title_cols)) {
+        if (!is.numeric(print_title_rows)) {
+          stop("print_title_rows must be numeric.")
         }
 
         private$create_named_region(
-          ref1 = paste0("$", min(printTitleRows)),
-          ref2 = paste0("$", max(printTitleRows)),
+          ref1 = paste0("$", min(print_title_rows)),
+          ref2 = paste0("$", max(print_title_rows)),
           name = "_xlnm.Print_Titles",
           sheet = self$get_sheet_names()[[sheet]],
           localSheetId = sheet - 1L
         )
-      } else if (!is.null(printTitleCols) && is.null(printTitleRows)) {
-        if (!is.numeric(printTitleCols)) {
-          stop("printTitleCols must be numeric.")
+      } else if (!is.null(print_title_cols) && is.null(print_title_rows)) {
+        if (!is.numeric(print_title_cols)) {
+          stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(printTitleCols))
+        cols <- int2col(range(print_title_cols))
         private$create_named_region(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
@@ -5253,17 +5258,17 @@ wbWorkbook <- R6::R6Class(
           sheet = self$get_sheet_names()[[sheet]],
           localSheetId = sheet - 1L
         )
-      } else if (!is.null(printTitleCols) && !is.null(printTitleRows)) {
-        if (!is.numeric(printTitleRows)) {
-          stop("printTitleRows must be numeric.")
+      } else if (!is.null(print_title_cols) && !is.null(print_title_rows)) {
+        if (!is.numeric(print_title_rows)) {
+          stop("print_title_rows must be numeric.")
         }
 
-        if (!is.numeric(printTitleCols)) {
-          stop("printTitleCols must be numeric.")
+        if (!is.numeric(print_title_cols)) {
+          stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(printTitleCols))
-        rows <- range(printTitleRows)
+        cols <- int2col(range(print_title_cols))
+        rows <- range(print_title_rows)
 
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")

@@ -2157,13 +2157,14 @@ page_setup()
   bottom = 0.75,
   header = 0.3,
   footer = 0.3,
-  fitToWidth = FALSE,
-  fitToHeight = FALSE,
-  paperSize = NULL,
-  printTitleRows = NULL,
-  printTitleCols = NULL,
-  summaryRow = NULL,
-  summaryCol = NULL
+  fit_to_width = FALSE,
+  fit_to_height = FALSE,
+  paper_size = NULL,
+  print_title_rows = NULL,
+  print_title_cols = NULL,
+  summary_row = NULL,
+  summary_col = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2188,19 +2189,21 @@ page_setup()
 
 \item{\code{footer}}{footer}
 
-\item{\code{fitToWidth}}{fitToWidth}
+\item{\code{fit_to_width}}{fitToWidth}
 
-\item{\code{fitToHeight}}{fitToHeight}
+\item{\code{fit_to_height}}{fitToHeight}
 
-\item{\code{paperSize}}{paperSize}
+\item{\code{paper_size}}{paperSize}
 
-\item{\code{printTitleRows}}{printTitleRows}
+\item{\code{print_title_rows}}{printTitleRows}
 
-\item{\code{printTitleCols}}{printTitleCols}
+\item{\code{print_title_cols}}{printTitleCols}
 
-\item{\code{summaryRow}}{summaryRow}
+\item{\code{summary_row}}{summaryRow}
 
-\item{\code{summaryCol}}{summaryCol}
+\item{\code{summary_col}}{summaryCol}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

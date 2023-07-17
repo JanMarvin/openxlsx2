@@ -1268,13 +1268,14 @@ wb_set_header_footer <- function(
 #' @param bottom bottom page margin in inches
 #' @param header header margin in inches
 #' @param footer footer margin in inches
-#' @param fitToWidth If `TRUE`, worksheet is scaled to fit to page width on printing.
-#' @param fitToHeight If `TRUE`, worksheet is scaled to fit to page height on printing.
-#' @param paperSize See details. Default value is 9 (A4 paper).
-#' @param printTitleRows Rows to repeat at top of page when printing. Integer vector.
-#' @param printTitleCols Columns to repeat at left when printing. Integer vector.
-#' @param summaryRow Location of summary rows in groupings. One of "Above" or "Below".
-#' @param summaryCol Location of summary columns in groupings. One of "Right" or "Left".
+#' @param fit_to_width If `TRUE`, worksheet is scaled to fit to page width on printing.
+#' @param fit_to_height If `TRUE`, worksheet is scaled to fit to page height on printing.
+#' @param paper_size See details. Default value is 9 (A4 paper).
+#' @param print_title_rows Rows to repeat at top of page when printing. Integer vector.
+#' @param print_title_cols Columns to repeat at left when printing. Integer vector.
+#' @param summary_row Location of summary rows in groupings. One of "Above" or "Below".
+#' @param summary_col Location of summary columns in groupings. One of "Right" or "Left".
+#' @param ... additional arguments
 #' @export
 #' @details
 #' paperSize is an integer corresponding to:
@@ -1371,41 +1372,43 @@ wb_set_header_footer <- function(
 #' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
 wb_page_setup <- function(
     wb,
-    sheet          = current_sheet(),
-    orientation    = NULL,
-    scale          = 100,
-    left           = 0.7,
-    right          = 0.7,
-    top            = 0.75,
-    bottom         = 0.75,
-    header         = 0.3,
-    footer         = 0.3,
-    fitToWidth     = FALSE,
-    fitToHeight    = FALSE,
-    paperSize      = NULL,
-    printTitleRows = NULL,
-    printTitleCols = NULL,
-    summaryRow     = NULL,
-    summaryCol     = NULL
+    sheet            = current_sheet(),
+    orientation      = NULL,
+    scale            = 100,
+    left             = 0.7,
+    right            = 0.7,
+    top              = 0.75,
+    bottom           = 0.75,
+    header           = 0.3,
+    footer           = 0.3,
+    fit_to_width     = FALSE,
+    fit_to_height    = FALSE,
+    paper_size       = NULL,
+    print_title_rows = NULL,
+    print_title_cols = NULL,
+    summary_row      = NULL,
+    summary_col      = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$page_setup(
-    sheet          = sheet,
-    orientation    = orientation,
-    scale          = scale,
-    left           = left,
-    right          = right,
-    top            = top,
-    bottom         = bottom,
-    header         = header,
-    footer         = footer,
-    fitToWidth     = fitToWidth,
-    fitToHeight    = fitToHeight,
-    paperSize      = paperSize,
-    printTitleRows = printTitleRows,
-    printTitleCols = printTitleCols,
-    summaryRow     = summaryRow,
-    summaryCol     = summaryCol
+    sheet            = sheet,
+    orientation      = orientation,
+    scale            = scale,
+    left             = left,
+    right            = right,
+    top              = top,
+    bottom           = bottom,
+    header           = header,
+    footer           = footer,
+    fit_to_width     = fit_to_width,
+    fit_to_height    = fit_to_height,
+    paper_size       = paper_size,
+    print_title_rows = print_title_rows,
+    print_title_cols = print_title_cols,
+    summary_row      = summary_row,
+    summary_col      = summary_col,
+    ...              = ...
   )
 }
 
