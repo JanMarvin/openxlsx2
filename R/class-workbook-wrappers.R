@@ -111,6 +111,57 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' Many base classes are covered, though not all and far from all third-party classes. When data of an unknown class is written, it is handled with `as.character()`.
 #' @family workbook wrappers
 #' @return A clone of `wb`
+#' @examples
+#' ## See formatting vignette for further examples.
+#'
+#' ## Options for default styling (These are the defaults)
+#' options("openxlsx2.dateFormat" = "mm/dd/yyyy")
+#' options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
+#' options("openxlsx2.numFmt" = NULL)
+#'
+#' #############################################################################
+#' ## Create Workbook object and add worksheets
+#' wb <- wb_workbook()
+#'
+#' ## Add worksheets
+#' wb$add_worksheet("Cars")
+#' wb$add_worksheet("Formula")
+#'
+#' x <- mtcars[1:6, ]
+#' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+#'
+#' #############################################################################
+#' ## Hyperlinks
+#' ## - vectors/columns with class 'hyperlink' are written as hyperlinks'
+#'
+#' v <- rep("https://CRAN.R-project.org/", 4)
+#' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
+#' class(v) <- "hyperlink"
+#' wb$add_data("Cars", x = v, dims = c("B32"))
+#'
+#' #############################################################################
+#' ## Formulas
+#' ## - vectors/columns with class 'formula' are written as formulas'
+#'
+#' df <- data.frame(
+#'   x = 1:3, y = 1:3,
+#'   z = paste(paste0("A", 1:3 + 1L), paste0("B", 1:3 + 1L), sep = "+"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' class(df$z) <- c(class(df$z), "formula")
+#'
+#' wb$add_data(sheet = "Formula", x = df)
+#'
+#' #############################################################################
+#' # update cell range and add mtcars
+#' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' wb2 <- wb_load(xlsxFile)
+#'
+#' # read dataset with inlinestr
+#' wb_to_df(wb2)
+#' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
+#' wb_to_df(wb2)
 wb_add_data <- function(
     wb,
     sheet             = current_sheet(),
