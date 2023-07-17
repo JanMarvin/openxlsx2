@@ -198,7 +198,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' @param strike strike
 #' @param sz font size: default "11",
 #' @param u underline
-#' @param vertAlign vertical alignment
+#' @param vert_align vertical alignment
 #' @param ... ...
 #' @examples
 #' font <- create_font()
@@ -211,25 +211,25 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' # cat(col("Test"))
 #' @export
 create_font <- function(
-    b         = "",
-    charset   = "",
-    color     = wb_color(hex = "FF000000"),
-    condense  = "",
-    extend    = "",
-    family    = "2",
-    i         = "",
-    name      = "Calibri",
-    outline   = "",
-    scheme    = "minor",
-    shadow    = "",
-    strike    = "",
-    sz        = "11",
-    u         = "",
-    vertAlign = "",
+    b          = "",
+    charset    = "",
+    color      = wb_color(hex = "FF000000"),
+    condense   = "",
+    extend     = "",
+    family     = "2",
+    i          = "",
+    name       = "Calibri",
+    outline    = "",
+    scheme     = "minor",
+    shadow     = "",
+    strike     = "",
+    sz         = "11",
+    u          = "",
+    vert_align = "",
     ...
 ) {
 
-  standardize_color_names(...)
+  standardize(...)
 
   if (b != "") {
     b <- xml_node_create("b", xml_attributes = c("val" = as_xml_attr(b)))
@@ -289,8 +289,8 @@ create_font <- function(
     u <- xml_node_create("u", xml_attributes = c("val" = as_xml_attr(u)))
   }
 
-  if (vertAlign != "") {
-    vertAlign <- xml_node_create("vertAlign", xml_attributes = c("val" = as_xml_attr(vertAlign)))
+  if (vert_align != "") {
+    vert_align <- xml_node_create("vertAlign", xml_attributes = c("val" = as_xml_attr(vert_align)))
   }
 
   df_font <- data.frame(
@@ -308,7 +308,7 @@ create_font <- function(
     strike           = strike,
     sz               = sz,
     u                = u,
-    vertAlign        = vertAlign,
+    vertAlign        = vert_align,
     stringsAsFactors = FALSE
   )
   font <- write_font(df_font)

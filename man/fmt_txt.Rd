@@ -18,7 +18,7 @@ fmt_txt(
   font = NULL,
   charset = NULL,
   outline = NULL,
-  vertAlign = NULL
+  vert_align = NULL
 )
 
 \method{+}{fmt_txt}(x, y)
@@ -48,7 +48,7 @@ fmt_txt(
 
 \item{outline}{TRUE or FALSE}
 
-\item{vertAlign}{baseline, superscript, or subscript}
+\item{vert_align}{baseline, superscript, or subscript}
 
 \item{...}{additional arguments for default print}
 }

@@ -439,7 +439,7 @@ un_list <- function(x) {
 #' @param font the font name
 #' @param charset integer value from the table below
 #' @param outline TRUE or FALSE
-#' @param vertAlign baseline, superscript, or subscript
+#' @param vert_align baseline, superscript, or subscript
 #' @examples
 #' fmt_txt("bar", underline = TRUE)
 #' @export
@@ -454,7 +454,7 @@ fmt_txt <- function(
     font      = NULL,
     charset   = NULL,
     outline   = NULL,
-    vertAlign = NULL
+    vert_align = NULL
 ) {
 
   xml_b     <- NULL
@@ -495,8 +495,8 @@ fmt_txt <- function(
   if (length(outline)) {
     xml_otln <- xml_node_create("outline", xml_attributes = c("val" = as_xml_attr(outline)))
   }
-  if (length(vertAlign)) {
-    xml_vrtln <- xml_node_create("vertAlign", xml_attributes = c("val" = as_xml_attr(vertAlign)))
+  if (length(vert_align)) {
+    xml_vrtln <- xml_node_create("vertAlign", xml_attributes = c("val" = as_xml_attr(vert_align)))
   }
 
   xml_t_attr <- if (grepl("(^\\s+)|(\\s+$)", x)) c("xml:space" = "preserve") else NULL

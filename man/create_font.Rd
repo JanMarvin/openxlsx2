@@ -19,7 +19,7 @@ create_font(
   strike = "",
   sz = "11",
   u = "",
-  vertAlign = "",
+  vert_align = "",
   ...
 )
 }
@@ -52,7 +52,7 @@ create_font(
 
 \item{u}{underline}
 
-\item{vertAlign}{vertical alignment}
+\item{vert_align}{vertical alignment}
 
 \item{...}{...}
 }
