@@ -1486,15 +1486,16 @@ wb_protect_worksheet <- function(
 #' @param wb A workbook object
 #' @param protect Whether to protect or unprotect the sheet (default=TRUE)
 #' @param password (optional) password required to unprotect the workbook
-#' @param lockStructure Whether the workbook structure should be locked
-#' @param lockWindows Whether the window position of the spreadsheet should be
+#' @param lock_structure Whether the workbook structure should be locked
+#' @param lock_windows Whether the window position of the spreadsheet should be
 #'   locked
 #' @param type Lock type (see details)
-#' @param fileSharing Whether to enable a popup requesting the unlock password
+#' @param file_sharing Whether to enable a popup requesting the unlock password
 #'   is prompted
 #' @param username The username for the `fileSharing` popup
-#' @param readOnlyRecommended Whether or not a post unlock message appears
+#' @param read_only_recommended Whether or not a post unlock message appears
 #'   stating that the workbook is recommended to be opened in readonly mode.
+#' @param ... additional arguments
 #'
 #' @details
 #' Lock types:
@@ -1528,25 +1529,27 @@ wb_protect_worksheet <- function(
 #'
 wb_protect <- function(
     wb,
-    protect             = TRUE,
-    password            = NULL,
-    lockStructure       = FALSE,
-    lockWindows         = FALSE,
-    type                = 1,
-    fileSharing         = FALSE,
-    username            = unname(Sys.info()["user"]),
-    readOnlyRecommended = FALSE
+    protect               = TRUE,
+    password              = NULL,
+    lock_structure        = FALSE,
+    lock_windows          = FALSE,
+    type                  = 1,
+    file_sharing          = FALSE,
+    username              = unname(Sys.info()["user"]),
+    read_only_recommended = FALSE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$protect(
-    protect             = protect,
-    password            = password,
-    lockStructure       = lockStructure,
-    lockWindows         = lockWindows,
-    type                = type,
-    fileSharing         = fileSharing,
-    username            = username,
-    readOnlyRecommended = readOnlyRecommended
+    protect               = protect,
+    password              = password,
+    lock_structure        = lock_structure,
+    lock_windows          = lock_windows,
+    type                  = type,
+    file_sharing          = file_sharing,
+    username              = username,
+    read_only_recommended = read_only_recommended,
+    ...                   = ...
   )
 }
 

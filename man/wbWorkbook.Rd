@@ -2003,12 +2003,13 @@ Protect a workbook
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$protect(
   protect = TRUE,
   password = NULL,
-  lockStructure = FALSE,
-  lockWindows = FALSE,
+  lock_structure = FALSE,
+  lock_windows = FALSE,
   type = 1,
-  fileSharing = FALSE,
+  file_sharing = FALSE,
   username = unname(Sys.info()["user"]),
-  readOnlyRecommended = FALSE
+  read_only_recommended = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2019,17 +2020,19 @@ Protect a workbook
 
 \item{\code{password}}{password}
 
-\item{\code{lockStructure}}{lockStructure}
+\item{\code{lock_structure}}{lock_structure}
 
-\item{\code{lockWindows}}{lockWindows}
+\item{\code{lock_windows}}{lock_windows}
 
 \item{\code{type}}{type}
 
-\item{\code{fileSharing}}{fileSharing}
+\item{\code{file_sharing}}{file_sharing}
 
 \item{\code{username}}{username}
 
-\item{\code{readOnlyRecommended}}{readOnlyRecommended}
+\item{\code{read_only_recommended}}{read_only_recommended}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

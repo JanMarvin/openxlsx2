@@ -4957,24 +4957,28 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Protect a workbook
     #' @param protect protect
-    #' @param lockStructure lockStructure
-    #' @param lockWindows lockWindows
+    #' @param lock_structure lock_structure
+    #' @param lock_windows lock_windows
     #' @param password password
     #' @param type type
-    #' @param fileSharing fileSharing
+    #' @param file_sharing file_sharing
     #' @param username username
-    #' @param readOnlyRecommended readOnlyRecommended
+    #' @param read_only_recommended read_only_recommended
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     protect = function(
-      protect             = TRUE,
-      password            = NULL,
-      lockStructure       = FALSE,
-      lockWindows         = FALSE,
-      type                = 1,
-      fileSharing         = FALSE,
-      username            = unname(Sys.info()["user"]),
-      readOnlyRecommended = FALSE
+      protect               = TRUE,
+      password              = NULL,
+      lock_structure        = FALSE,
+      lock_windows          = FALSE,
+      type                  = 1,
+      file_sharing          = FALSE,
+      username              = unname(Sys.info()["user"]),
+      read_only_recommended = FALSE,
+      ...
     ) {
+
+      standardize_case_names(...)
 
       if (!protect) {
         self$workbook$workbookProtection <- NULL
@@ -4988,12 +4992,12 @@ wbWorkbook <- R6::R6Class(
       # TODO: Shall we parse the existing protection settings and preserve all
       # unchanged attributes?
 
-      if (fileSharing) {
+      if (file_sharing) {
         self$workbook$fileSharing <- xml_node_create(
           "fileSharing",
           xml_attributes = c(
             userName = username,
-            readOnlyRecommended = if (readOnlyRecommended | type == "2") "1",
+            readOnlyRecommended = if (read_only_recommended | type == "2") "1",
             reservationPassword = password
           )
         )
@@ -5003,8 +5007,8 @@ wbWorkbook <- R6::R6Class(
         "workbookProtection",
         xml_attributes = c(
           hashPassword = password,
-          lockStructure = toString(as.numeric(lockStructure)),
-          lockWindows = toString(as.numeric(lockWindows))
+          lockStructure = toString(as.numeric(lock_structure)),
+          lockWindows = toString(as.numeric(lock_windows))
         )
       )
 
