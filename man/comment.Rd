@@ -4,7 +4,6 @@
 \alias{create_comment}
 \alias{write_comment}
 \alias{remove_comment}
-\alias{wb_add_comment}
 \alias{wb_remove_comment}
 \title{Create, write and remove comments}
 \usage{
@@ -35,8 +34,6 @@ remove_comment(
   dims = NULL
 )
 
-wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
-
 wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 }
 \arguments{
@@ -56,11 +53,11 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 
 \item{sheet}{A worksheet of the workbook}
 
-\item{col}{A column to apply the comment}
+\item{col}{Column a column number of letter. For \code{remove_comment} this can be a range.}
 
-\item{row}{A row to apply the comment}
+\item{row}{A row number. For \code{remove_comment} this can be a range.}
 
-\item{comment}{A comment to apply to the worksheet}
+\item{comment}{A Comment object. See \code{\link[=create_comment]{create_comment()}}.}
 
 \item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 
@@ -70,8 +67,6 @@ will be removed.}
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorkbook} object
-
 The \code{wbWorkbook} object
 }
 \description{
@@ -102,8 +97,5 @@ write_comment(wb, 1, col = 6, row = 3, comment = c3)
 
 # remove the first comment
 remove_comment(wb, 1, col = "B", row = 10)
-}
-\seealso{
-\code{\link[=wb_add_thread]{wb_add_thread()}}
 }
 \keyword{internal}

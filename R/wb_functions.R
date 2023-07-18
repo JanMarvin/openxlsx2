@@ -1,11 +1,11 @@
-
-#' create dataframe from dimensions
+#' Create dataframe from dimensions
+#'
 #' @param dims Character vector of expected dimension.
-#' @param fill If TRUE, fills the dataframe with variables
-#' @examples {
-#'   dims_to_dataframe("A1:B2")
-#' }
+#' @param fill If `TRUE`, fills the dataframe with variables
+#' @examples
+#' dims_to_dataframe("A1:B2")
 #' @export
+#' @keywords internal
 dims_to_dataframe <- function(dims, fill = FALSE) {
 
   if (grepl(";", dims)) {
@@ -48,13 +48,15 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   )
 }
 
-#' create dimensions from dataframe
+#' Create dimensions from dataframe
+#'
+#' Use [wb_dims()]
 #' @param df dataframe with spreadsheet columns and rows
-#' @examples {
-#'   df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
-#'   dataframe_to_dims(df)
-#' }
+#' @examples
+#'  df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
+#'  dataframe_to_dims(df)
 #' @export
+#' @keywords internal
 dataframe_to_dims <- function(df) {
 
   # get continuous sequences of columns and rows in df

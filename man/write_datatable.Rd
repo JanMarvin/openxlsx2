@@ -78,7 +78,7 @@ write_datatable(
 \item{...}{additional arguments}
 }
 \description{
-Write to a worksheet and format as an Excel table
+Write to a worksheet and format as an Excel table. Use \code{\link[=wb_add_data_table]{wb_add_data_table()}} in new code.
 }
 \details{
 columns of x with class Date/POSIXt, currency, accounting,
@@ -172,7 +172,8 @@ for (i in 1:11) {
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
-\code{\link[=write_data]{write_data()}}
+\code{\link[=wb_add_data_table]{wb_add_data_table()}}
 \code{\link[=wb_remove_tables]{wb_remove_tables()}}
 \code{\link[=wb_get_tables]{wb_get_tables()}}
 }
+\keyword{internal}

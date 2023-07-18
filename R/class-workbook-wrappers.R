@@ -89,12 +89,12 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param dims Spreadsheet dimensions that will determine `start_col` and `start_row`: "A1", "A1:B2", "A:B"
 #' @param start_col A vector specifying the starting column to write to.
 #' @param start_row A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, data.frame row names of x are written.
+#' @param col_names If `TRUE`, column names of `x` are written.
+#' @param row_names If `TRUE`, data.frame row names of `x` are written.
 #' @param with_filter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
@@ -109,9 +109,59 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
 #' Many base classes are covered, though not all and far from all third-party classes. When data of an unknown class is written, it is handled with `as.character()`.
-#' @rdname write_data
 #' @family workbook wrappers
-#' @return A clone of `wb``
+#' @return A clone of `wb`
+#' @examples
+#' ## See formatting vignette for further examples.
+#'
+#' ## Options for default styling (These are the defaults)
+#' options("openxlsx2.dateFormat" = "mm/dd/yyyy")
+#' options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
+#' options("openxlsx2.numFmt" = NULL)
+#'
+#' #############################################################################
+#' ## Create Workbook object and add worksheets
+#' wb <- wb_workbook()
+#'
+#' ## Add worksheets
+#' wb$add_worksheet("Cars")
+#' wb$add_worksheet("Formula")
+#'
+#' x <- mtcars[1:6, ]
+#' wb$add_data("Cars", x, start_col = 2, start_row = 3, row_names = TRUE)
+#'
+#' #############################################################################
+#' ## Hyperlinks
+#' ## - vectors/columns with class 'hyperlink' are written as hyperlinks'
+#'
+#' v <- rep("https://CRAN.R-project.org/", 4)
+#' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
+#' class(v) <- "hyperlink"
+#' wb$add_data("Cars", x = v, dims = c("B32"))
+#'
+#' #############################################################################
+#' ## Formulas
+#' ## - vectors/columns with class 'formula' are written as formulas'
+#'
+#' df <- data.frame(
+#'   x = 1:3, y = 1:3,
+#'   z = paste(paste0("A", 1:3 + 1L), paste0("B", 1:3 + 1L), sep = "+"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' class(df$z) <- c(class(df$z), "formula")
+#'
+#' wb$add_data(sheet = "Formula", x = df)
+#'
+#' #############################################################################
+#' # update cell range and add mtcars
+#' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' wb2 <- wb_load(xlsxFile)
+#'
+#' # read dataset with inlinestr
+#' wb_to_df(wb2)
+#' wb2 <- wb2 %>% wb_add_data(sheet = 1, mtcars, dims = wb_dims(4, 4))
+#' wb_to_df(wb2)
 wb_add_data <- function(
     wb,
     sheet             = current_sheet(),
@@ -161,16 +211,16 @@ wb_add_data <- function(
 #' @param x A dataframe.
 #' @param start_col A vector specifying the starting column to write df
 #' @param start_row A vector specifying the starting row to write df
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, row names of x are written.
+#' @param dims Spreadsheet dimensions that will determine `start_col` and `start_row`: "A1", "A1:B2", "A:B"
+#' @param col_names If `TRUE`, column names of `x` are written.
+#' @param row_names If `TRUE`, row names of `x` are written.
 #' @param table_style Any excel table style name or "none" (see "formatting"
 #'   vignette).
 #' @param table_name name of table in workbook. The table name must be unique.
 #' @param with_filter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list
-#'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
-#'   sep).
+#'   columns to a character vector e.g. `sapply(x$list_column, paste, collapse =
+#'   sep)`.
 #' \cr\cr
 #' \cr**The below options correspond to Excel table options:**
 #' \cr
@@ -188,7 +238,7 @@ wb_add_data <- function(
 #' @param inline_strings write characters as inline strings
 #' @param ... additional arguments
 #'
-#' @details columns of x with class Date/POSIXt, currency, accounting,
+#' @details columns of `x` with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,
 #' accounting, hyperlinks, percentages respectively. The string `"_openxlsx_NA"`
 #' is reserved for `openxlsx2`. If the data frame contains this string, the
@@ -247,7 +297,7 @@ wb_add_data_table <- function(
 #'
 #' @description add pivot table
 #' @param wb A Workbook object containing a #' worksheet.
-#' @param x a wb_data object
+#' @param x a `wb_data` object
 #' @param sheet a worksheet
 #' @param dims the worksheet cell where the pivot table is placed
 #' @param filter a character object with names used to filter
@@ -952,7 +1002,7 @@ wb_add_plot <- function(
 #'   add_drawing(xml = tmp, dims = NULL)
 #' }
 #' @seealso [wb_add_chart_xml()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
-#‘ @export
+#' @export
 wb_add_drawing <- function(
   wb,
   sheet      = current_sheet(),
@@ -2873,13 +2923,11 @@ wb_add_dxfs_style <- function(
 #' Add comment to worksheet
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param col A column to apply the comment
-#' @param row A row to apply the comment
 #' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
 #' @param comment A comment to apply to the worksheet
+# To fit, maybe comment, can be `x`
 #' @param ... additional arguments
 #' @returns The `wbWorkbook` object
-#' @rdname comment
 #' @seealso [wb_add_thread()]
 #' @export
 wb_add_comment <- function(

@@ -137,7 +137,7 @@ as_xml_attr <- function(x) {
 
 #' random string function that does not alter the seed.
 #'
-#' simple wrapper around `stringi::stri_rand_strings()``
+#' simple wrapper around `stringi::stri_rand_strings()`
 #'
 #' @inheritParams stringi::stri_rand_strings
 #' @param keep_seed logical should the default seed be kept unaltered
@@ -259,7 +259,6 @@ rowcol_to_dim <- function(row, col) {
   # we will always return something like "A1"
   stringi::stri_join(min_col, min_row)
 }
-
 #' @rdname dims_helper
 #' @param ... construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame
 #' @examples
@@ -337,6 +336,7 @@ wb_dims <- function(...) {
 
   dims
 }
+
 
 # Relationship helpers --------------------
 #' removes entries from worksheets_rels

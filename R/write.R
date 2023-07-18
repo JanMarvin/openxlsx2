@@ -945,7 +945,7 @@ write_data_table <- function(
 # `write_data()` ---------------------------------------------------------------
 #' Write an object to a worksheet
 #'
-#' Write an object to worksheet with optional styling.
+#' Write an object to worksheet with optional styling. Use [wb_add_data()] in new code.
 #'
 #' Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
@@ -969,8 +969,9 @@ write_data_table <- function(
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
 #' @param ... additional arguments
-#' @seealso [write_datatable()]
+#' @seealso [wb_add_data()], [wb_add_data_table()]
 #' @return invisible(0)
+# TODO examples them from here, as docs of `wb_add_data()` and `write_data()` are now separated.
 #' @examples
 #' ## See formatting vignette for further examples.
 #'
@@ -1023,6 +1024,7 @@ write_data_table <- function(
 #' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
 #' wb_to_df(wb2)
 #' @export
+#' @keywords internal
 write_data <- function(
     wb,
     sheet,
@@ -1076,6 +1078,7 @@ write_data <- function(
 #' Write a character vector as an Excel Formula
 #'
 #' Write a a character vector containing Excel formula to a worksheet.
+#' Use [wb_add_formula()] or `add_formula()` in new code
 #'
 #' @details
 #' Currently only the English version of functions are supported. Please don't use the local translation.
@@ -1097,7 +1100,6 @@ write_data <- function(
 #' @param apply_cell_style apply styles when writing on the sheet
 #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
 #' @param ... additional arguments
-#' @seealso [write_data()]
 #' @examples
 #' ## There are 3 ways to write a formula
 #'
@@ -1161,6 +1163,7 @@ write_data <- function(
 #'              x = "SUM(C2:C11*D2:D11)",
 #'              array = TRUE)
 #' @export
+#' @keywords internal
 write_formula <- function(
     wb,
     sheet,
@@ -1264,7 +1267,7 @@ write_formula <- function(
 # `write_datatable()` ----------------------
 #' Write to a worksheet as an Excel table
 #'
-#' Write to a worksheet and format as an Excel table
+#' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
 #'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
@@ -1301,7 +1304,7 @@ write_formula <- function(
 #' contains this string, the output will be broken.
 #' @seealso
 #'   [wb_add_worksheet()]
-#'   [write_data()]
+#'   [wb_add_data_table()]
 #'   [wb_remove_tables()]
 #'   [wb_get_tables()]
 #' @examples
@@ -1387,6 +1390,7 @@ write_formula <- function(
 #'   )
 #' }
 #' @export
+#' @keywords internal
 write_datatable <- function(
     wb,
     sheet,
