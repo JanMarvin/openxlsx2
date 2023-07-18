@@ -50,14 +50,14 @@ You can include `{ggplot2}` plots similar to how you would include them with `op
 if (requireNamespace("ggplot2")) {
 
 library(ggplot2)
-
-print(ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
+p <- ggplot(mtcars, aes(x = mpg, fill = as.factor(gear))) +
   ggtitle("Distribution of Gas Mileage") +
-  geom_density(alpha = 0.5))
+  geom_density(alpha = 0.5)
+print(p)
 
 # Add ggplot to the workbook
 wb$add_worksheet("add_plot")$
-  add_plot(width = 5, height = 3.5, fileType = "png", units = "in")
+  add_plot(width = 5, height = 3.5, file_type = "png", units = "in")
 
 }
 ```
@@ -73,12 +73,15 @@ if (requireNamespace("ggplot2") && requireNamespace("rvg")) {
 library(rvg)
 
 ## create rvg example
+
+p <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Width)) +
+  geom_point() + 
+  labs(title = "With font Bradley Hand") +
+  theme_minimal(base_family = "sans", base_size = 18)
+
 tmp <- tempfile(fileext = ".xml")
-dml_xlsx(file =  tmp, fonts = list(sans = "Bradley Hand"))
-print(ggplot(data = iris,
-       mapping = aes(x = Sepal.Length, y = Petal.Width)) +
-  geom_point() + labs(title = "With font Bradley Hand") +
-  theme_minimal(base_family = "sans", base_size = 18))
+rvg::dml_xlsx(file =  tmp, fonts = list(sans = "Bradley Hand"))
+print(p)
 dev.off()
 
 # Add rvg to the workbook
@@ -115,7 +118,7 @@ wb$add_worksheet("add_mschart")$add_mschart(dims = "A10:G25", graph = mylc)
 # write data starting at B2
 wb$add_worksheet("add_mschart - wb_data")$
   add_data(x = mtcars, dims = "B2")$
-  add_data(x = data.frame(name = rownames(mtcars)), dims = "A2")
+  add_data(x = data.frame(name = rownames(mtcars)), dims = wb_dims(start_row = 2))
 
 # create wb_data object this will tell this mschart
 # from this PR to create a file corresponding to openxlsx2

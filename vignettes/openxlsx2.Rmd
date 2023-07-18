@@ -65,10 +65,17 @@ wb_to_df(xlsx_file, show_formula = TRUE)
 ```
 
 ### `dims` - read specific dimension
-Sometimes the entire worksheet contains to much data, in such case we provide functions to read only a selected dimension range. Such a range consists of either a specific cell like "A1" or a cell range in the notion used in the openxml standard
+Sometimes the entire worksheet contains to much data, in such case we provide functions to read only a selected dimension range. Such a range consists of either a specific cell like "A1" or a cell range in the notion used in the `openxml` standard
 ```{r}
-# read dimension withot column names
+# read dimension without column names
 wb_to_df(xlsx_file, dims = "A2:C5", col_names = FALSE)
+```
+
+Alternatively, if you don't know the Excel sheet's address, you can use `wb_dims()` to specify the dimension. See below or in`?wb_dims` for more details.
+
+```{r}
+# read dimension without column names with `wb_dims()`
+wb_to_df(xlsx_file, dims = wb_dims(rows = 2:5, cols = 1:3), col_names = FALSE)
 ```
 
 ### `cols` - read selected columns
@@ -154,7 +161,7 @@ Once a workbook is imported, we provide several functions to interact with and m
 
 ### Exporting data frames or vectors
 
-If you want to export a data frame from R, you can use `write_xlsx()` which will create an xlsx file. This file can be tweaked further. The man page provides various options (further explanation and examples will follow).
+If you want to export a data frame from R, you can use `write_xlsx()` which will create an xlsx file. This file can be tweaked further. See `?write_xlsx` to see all the options. (further explanation and examples will follow).
 
 ```{r, eval = FALSE}
 write_xlsx(x = mtcars, file = "mtcars.xlsx")
@@ -162,7 +169,7 @@ write_xlsx(x = mtcars, file = "mtcars.xlsx")
 
 ### Exporting a `wbWorkbook`
 
-Imported workbooks can be saved as xlsx or xlsm files with the wrapper `wb_save()` or with `wb$save()`. Both functions take the filename and an optional `Overwrite` option. If the latter is set, an optional guard is provided to check if the file you want to write already exists. But be careful, this is optional. The default is to save the file and replace an existing file. Of course, in Windows, files that are locked (for example, if they were opened by another process) will not be replaced.
+Imported workbooks can be saved as xlsx or xlsm files with the wrapper `wb_save()` or with `wb$save()`. Both functions take the filename and an optional `overwrite` option. If the latter is set, an optional guard is provided to check if the file you want to write already exists. But be careful, this is optional. The default is to save the file and replace an existing file. Of course, on Windows, files that are locked (for example, if they were opened by another process) will not be replaced.
 
 ```{r, eval = FALSE}
 # replace the existing file
@@ -172,7 +179,7 @@ wb$save("mtcars.xlsx")
 try(wb$save("mtcars.xlsx", overwrite = FALSE))
 ```
 
-## `dims`
+## `dims`/ `wb_dims()`
 
 In `openxlsx2` functions that interact with worksheet cells are using `dims` as argument and require the users to provide these. `dims` are cells or cell ranges in A1 notation. The single argument `dims` hereby replaces `col`/`row`, `cols`/`rows` and `xy`. Since A1 notation is rather simple in the first few columns it might get confusing after the 26. Therefore we provide a wrapper to construct it:
 
@@ -180,11 +187,11 @@ In `openxlsx2` functions that interact with worksheet cells are using `dims` as 
 # various options
 wb_dims(4)
 
-wb_dims(row = 4, col = 4)
+wb_dims(rows = 4, cols = 4)
 
-wb_dims(row = 4:10, col = 5:9)
+wb_dims(rows = 4:10, cols = 5:9)
 
-wb_dims(row = 4:10, col = "A:D")
+wb_dims(rows = 4:10, cols = "A:D")
 
 wb_dims(mtcars)
 
@@ -201,7 +208,7 @@ wb <- wb_workbook()$
 
 ## A note on speed and memory usage
 
-The current state of `openxlsx2` is that it is reasonably fast. That is, it works well with reasonably large input data when reading or writing. It may not work well with data that tests the limits of the openxml specification. Things may slow down on the R side of things, and performance and usability will depend on the speed and size of the local operating system's CPU and memory.
+The current state of `openxlsx2` is that it is reasonably fast. That is, it works well with reasonably large input data when reading or writing. It may not work well with data that tests the limits of the `openxml` specification. Things may slow down on the R side of things, and performance and usability will depend on the speed and size of the local operating system's CPU and memory.
 
 Note that there are at least two cases where `openxlsx2` constructs potentially large data frames (i) when loading, `openxlsx2` usually needs to read the entire input file into pugixml and convert it into long data frame(s), and `wb_to_df()` converts one long data frame into two data frames that construct the output object and (ii) when adding data to the workbook, `openxlsx2` reshapes the input data frame into a long data frame and stores it in the workbook, and writes the entire worksheet into a pugixml file that is written when it is complete. Applying cell styles, date conversions etc. will further slow down the process and finally the sheets will be zipped to provide the xlsx output.
 

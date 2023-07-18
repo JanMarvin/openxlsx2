@@ -322,8 +322,7 @@ wb$add_data("databar", -5:5, start_col = 9)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",
-  cols = 9,
-  rows = 1:11,
+  dims = wb_dims(rows = 1:11, cols = 9),
   type = "dataBar",
   style = c("#a6a6a6", "#a6a6a6"),
   params = list(showValue = TRUE, gradient = FALSE)
@@ -334,8 +333,7 @@ wb$add_data(x = -5:5, start_col = 11)
 wb <- wb_add_conditional_formatting(
   wb,
   "databar",
-  cols = 11,
-  rows = 1:11,
+  dims = wb_dims(rows = 1:11, cols = 11),
   type = "dataBar",
   rule = c(0, 5),
   style = c("#a6a6a6", "#a6a6a6"),
@@ -356,8 +354,7 @@ wb$add_worksheet("between")
 wb$add_data("between", -5:5)
 wb$add_conditional_formatting(
   "between",
-  cols = 1,
-  rows = 1:11,
+  dims = wb_dims(rows = 2:11, cols = 1),
   type = "between",
   rule = c(-2, 2)
 )
@@ -374,26 +371,24 @@ knitr::include_graphics("img/cf_top_n.jpg")
 wb$add_data("topN", data.frame(x = 1:10, y = rnorm(10)))
 ```
 
-Highlight top 5 values in column x
+Highlight top 5 values in column `x`
 
 ```{r}
 wb$add_conditional_formatting(
   "topN",
-  cols = 1,
-  rows = 2:11,
+  dims = wb_dims(rows = 2:11, cols = 1),
   style = "posStyle",
   type = "topN",
   params = list(rank = 5)
 )
 ```
 
-Highlight top 20 percentage in column y
+Highlight top 20 percentage in column `y`
 
 ```{r}
 wb$add_conditional_formatting(
   "topN",
-  cols = 2,
-  rows = 2:11,
+  dims = wb_dims(rows = 2:11, cols = 2),
   style = "posStyle",
   type = "topN",
   params = list(rank = 20, percent = TRUE)
@@ -411,13 +406,12 @@ knitr::include_graphics("img/cf_bottom_n.jpg")
 wb$add_data("bottomN", data.frame(x = 1:10, y = rnorm(10)))
 ```
 
-Highlight bottom 5 values in column x
+Highlight bottom 5 values in column `x`
 
 ```{r}
 wb$add_conditional_formatting(
   "bottomN",
-  cols = 1,
-  rows = 2:11,
+  dims = wb_dims(rows = 2:11, cols = 1),
   style = "negStyle",
   type = "bottomN",
   params = list(rank = 5)
@@ -450,8 +444,7 @@ You can use Excels logical Operators
 wb$add_data("logical operators", 1:10)
 wb$add_conditional_formatting(
   "logical operators",
-  cols = 1,
-  rows = 1:10,
+  dims = wb_dims(rows = 1:10, cols = 1),
   rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
 )
 ```
