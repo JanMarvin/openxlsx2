@@ -59,6 +59,10 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
+msoc <- function(mode, inFile, outFile, pass) {
+    .Call(`_openxlsx2_msoc`, mode, inFile, outFile, pass)
+}
+
 readXMLPtr <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {
     .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
 }

@@ -23,3 +23,5 @@ cran-comments.md
 ^inst/img$
 ^tests/testthat/_snaps$
 ^tests/testthat/testfiles$
+^src/cryptography$
+^configure.log$

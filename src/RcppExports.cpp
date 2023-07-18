@@ -170,6 +170,20 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// msoc
+int msoc(std::string mode, std::string inFile, std::string outFile, std::string pass);
+RcppExport SEXP _openxlsx2_msoc(SEXP modeSEXP, SEXP inFileSEXP, SEXP outFileSEXP, SEXP passSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type mode(modeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type inFile(inFileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outFile(outFileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type pass(passSEXP);
+    rcpp_result_gen = Rcpp::wrap(msoc(mode, inFile, outFile, pass));
+    return rcpp_result_gen;
+END_RCPP
+}
 // readXMLPtr
 SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control);
 RcppExport SEXP _openxlsx2_readXMLPtr(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP whitespaceSEXP, SEXP empty_tagsSEXP, SEXP skip_controlSEXP) {
@@ -855,6 +869,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
+    {"_openxlsx2_msoc", (DL_FUNC) &_openxlsx2_msoc, 4},
     {"_openxlsx2_readXMLPtr", (DL_FUNC) &_openxlsx2_readXMLPtr, 7},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 7},
     {"_openxlsx2_is_xml", (DL_FUNC) &_openxlsx2_is_xml, 1},
