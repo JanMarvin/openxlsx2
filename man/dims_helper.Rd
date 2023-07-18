@@ -2,20 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{dims_helper}
 \alias{dims_helper}
-\alias{wb_dims}
 \alias{dims_to_rowcol}
 \alias{rowcol_to_dims}
+\alias{wb_dims}
 \title{Helper functions to work with \code{dims}}
 \usage{
-wb_dims(...)
-
 dims_to_rowcol(x, as_integer = FALSE)
 
 rowcol_to_dims(row, col)
+
+wb_dims(...)
 }
 \arguments{
-\item{...}{construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame}
-
 \item{x}{a dimension object "A1" or "A1:A1"}
 
 \item{as_integer}{If the output should be returned as integer, (defaults to string)}
@@ -23,6 +21,8 @@ rowcol_to_dims(row, col)
 \item{row}{a numeric vector of rows}
 
 \item{col}{a numeric or character vector of cols}
+
+\item{...}{construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame}
 }
 \value{
 \itemize{
