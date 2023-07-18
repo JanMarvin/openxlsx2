@@ -1002,7 +1002,7 @@ wb_add_plot <- function(
 #'   add_drawing(xml = tmp, dims = NULL)
 #' }
 #' @seealso [wb_add_chart_xml()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
-#‘ @export
+#' @export
 wb_add_drawing <- function(
   wb,
   sheet      = current_sheet(),
