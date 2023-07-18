@@ -35,7 +35,7 @@
 	#include <dirent.h>
 #endif
 #ifdef __APPLE__
-	#include <mach-o/dyld.h>
+	// #include <mach-o/dyld.h>
 #endif
 
 namespace cybozu {
@@ -414,10 +414,12 @@ inline std::string GetExePath(std::string *baseName = 0)
 	}
 #else
 #if defined(__APPLE__)
-	uint32_t size = (uint32_t)path.size();
-	if (_NSGetExecutablePath(&path[0], &size) != 0) {
-		return "";
-	}
+	// the included apple header contains enum TRUE/FALSE.
+	// Comment this, otherwise clang will complain that FALSE is already defined
+	// uint32_t size = (uint32_t)path.size();
+	// if (_NSGetExecutablePath(&path[0], &size) != 0) {
+	// 	return "";
+	// }
 	path.resize(strlen(&path[0]));
 #else
 	int ret = readlink("/proc/self/exe", &path[0], path.size() - 2);
