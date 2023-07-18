@@ -12,6 +12,7 @@
 	#pragma warning(disable : 4702)
 #endif
 
+#include "openxlsx2.h"
 #include <string>
 #include <cstring>
 #include <assert.h>
@@ -302,11 +303,11 @@ public:
 	*/
 	void dump(const char *msg = 0) const
 	{
-		if (msg) printf("%s", msg);
+		if (msg) Rprintf("%s", msg);
 		for (size_t i = 0; i < size(); i++) {
-			printf("%08x ", str_[i]);
+			Rprintf("%08x ", str_[i]);
 		}
-		printf("\n");
+		Rprintf("\n");
 	}
 
 	/**

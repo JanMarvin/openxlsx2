@@ -96,7 +96,7 @@ inline void EncContent(std::string& encryptedPackage, const std::string& org, co
 }
 
 /*
-‚±‚ê‚Ì‹t‡‚ÅˆÃ†‰»
+ï¿½ï¿½ï¿½ï¿½Ì‹tï¿½ï¿½ï¿½ÅˆÃï¿½ï¿½ï¿½
 fix parameter : c1(blkKey_VerifierHashInput)
                 c2(blkKey_encryptedVerifierHashValue)
                 c3(blkKey_encryptedKeyValue)
@@ -107,20 +107,20 @@ output: iv,
         encryptedVerifierHashValue,
         encryptedKeyValue
 
-iv(encryptedKey.saltValue)‚ğƒ‰ƒ“ƒ_ƒ€¶¬
+iv(encryptedKey.saltValue)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 pwHash = hashPassword(iv, pass, spinCount)
 skey1 = generateKey(pwHash, c1)
 skey2 = generateKey(pwHash, c2)
 
-verifierHashInput‚ğƒ‰ƒ“ƒ_ƒ€¶¬
+verifierHashInputï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 encryptedVerifierHashInput = Enc(verifierHashInput, skey1, iv)
 hashedVerifier = H(verifierHashInput)
 
 encryptedVerifierHashValue = Enc(verifierHash, skey2, iv)
 
 skey3 = generateKey(pwHash, c3)
-secretKey‚ğƒ‰ƒ“ƒ_ƒ€¶¬
+secretKeyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 encryptedKeyValue = Enc(secretKey, skey3, iv)
 */
 
@@ -150,7 +150,7 @@ inline bool encode_in(
 	std::string& iv = encryptedKey.saltValue;
 	FillRand(iv, encryptedKey.saltSize);
 #ifdef SAME_KEY
-	puts("QQQ defined SAME_KEY QQQ");
+	Rprintf("QQQ defined SAME_KEY QQQ");
 	iv = fromHex("F4994F9B2DCD5E0E84BC6386D4523D2C");
 #endif
 	const std::string pwHash = hashPassword(encryptedKey.hashName, iv, pass, spinCount);

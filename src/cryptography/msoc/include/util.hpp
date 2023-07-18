@@ -73,10 +73,10 @@ inline void dump(const void *p, size_t size, bool putColon = true)
 {
 	const uint8_t *str = reinterpret_cast<const uint8_t*>(p);
 	for (size_t i = 0; i < size; i++) {
-		printf("%02X", (unsigned char)str[i]);
-		if (putColon) putchar(':');
+		Rprintf("%02X", (unsigned char)str[i]);
+		if (putColon) Rprintf(":");
 	}
-	printf("\n");
+	Rprintf("\n");
 }
 
 inline void dump(const std::string& str, bool putColon = true)
@@ -88,10 +88,10 @@ inline void dump16(const std::string& str, size_t size = size_t(-1))
 {
 	if (size > str.size()) size = str.size();
 	for (size_t i = 0; i < size; i++) {
-		printf("%02X ", (unsigned char)str[i]);
-		if ((i % 16) == 15) putchar('\n');
+		Rprintf("%02X ", (unsigned char)str[i]);
+		if ((i % 16) == 15) Rprintf("\n");
 	}
-	printf("\n");
+	Rprintf("\n");
 }
 
 inline void saveFile(const std::string& file, const std::string& str)
@@ -129,18 +129,18 @@ inline std::string hex(const std::string& str)
 
 inline bool dumpDiff(const std::string& x, const std::string& y)
 {
-	printf("dumpDiff %d %d\n", (int)x.size(), (int)y.size());
+	Rprintf("dumpDiff %d %d\n", (int)x.size(), (int)y.size());
 	int ccc = 0;
 	for (int i = 0; i < (int)std::min(x.size(), y.size()); i++) {
 		char c = x[i];
 		char d = y[i];
 		if (c != d) {
-			printf("%8d(0x%x) %02x %02x\n", i, i, (uint8_t)c, (uint8_t)d);
+			Rprintf("%8d(0x%x) %02x %02x\n", i, i, (uint8_t)c, (uint8_t)d);
 			ccc++;
 			if (ccc == 100) break;
 		}
 	}
-	if (ccc == 0) printf("no diff\n");
+	if (ccc == 0) Rprintf("no diff\n");
 	return ccc == 0;
 }
 
@@ -207,6 +207,6 @@ inline std::string Char16toChar8(const cybozu::String16& w)
 
 #define MS_ASSERT(x) ms::validate((x), #x, __FILE__, __LINE__)
 #define MS_ASSERT_EQUAL(x, y) ms::validateEqual((x), (y), #x, #y, __FILE__, __LINE__)
-#define PUT(x) printf(#x "=%s(%d)\n", ms::hex(x).c_str(), (int)x.size())
+#define PUT(x) Rprintf(#x "=%s(%d)\n", ms::hex(x).c_str(), (int)x.size())
 
 } // ms

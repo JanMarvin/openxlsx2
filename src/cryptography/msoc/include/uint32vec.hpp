@@ -55,9 +55,9 @@ struct Uint32VecT<8> {
 	{
 		uint32_t v[8];
 		memcpy(&v, &x_, sizeof(v));
-		if (msg) printf("%s", msg);
-		printf("%08x:%08x:%08x:%08x", v[3], v[2], v[1], v[0]);
-		if (msg) putchar('\n');
+		if (msg) Rprintf("%s", msg);
+		Rprintf("%08x:%08x:%08x:%08x", v[3], v[2], v[1], v[0]);
+		if (msg) Rprintf('\n');
 	}
 };
 
@@ -133,9 +133,9 @@ struct Uint32VecT<4> {
 	{
 		uint32_t v[4];
 		memcpy(&v, &x_, sizeof(v));
-		if (msg) printf("%s", msg);
-		printf("%08x:%08x:%08x:%08x", v[3], v[2], v[1], v[0]);
-		if (msg) putchar('\n');
+		if (msg) Rprintf("%s", msg);
+		Rprintf("%08x:%08x:%08x:%08x", v[3], v[2], v[1], v[0]);
+		if (msg) Rprintf('\n');
 	}
 };
 

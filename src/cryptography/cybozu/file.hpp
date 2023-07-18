@@ -165,9 +165,9 @@ public:
 			sync();
 			close();
 		} catch (std::exception& e) {
-			fprintf(stderr, "File:dstr:%s\n", e.what());
+			Rprintf("File:dstr:%s\n", e.what());
 		} catch (...) {
-			fprintf(stderr, "File:dstr:unknown\n");
+		  Rprintf("File:dstr:unknown\n");
 		}
 	}
 	bool isOpen() const CYBOZU_NOEXCEPT { return hdl_ != INVALID_HANDLE_VALUE; }

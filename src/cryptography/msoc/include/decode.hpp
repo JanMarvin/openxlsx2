@@ -104,8 +104,8 @@ inline bool getAgileSecretKey(std::string& secretKey, const EncryptionInfo& info
 	const std::string skey3 = generateKey(encryptedKey, pwHash, ms::blkKey_encryptedKeyValue);
 	secretKey = cipher(encryptedKey.cipherName, info.encryptedKeyValue, skey3, iv, cybozu::crypto::Cipher::Decoding);
 	if (isDebug()) {
-		printf("salt = "); dump(keyData.saltValue, false);
-		printf("secretKey = "); dump(secretKey, false);
+		Rprintf("salt = "); dump(keyData.saltValue, false);
+		Rprintf("secretKey = "); dump(secretKey, false);
 	}
 	return true;
 }
@@ -117,11 +117,11 @@ inline bool decodeAgile(std::string& decData, const std::string& encryptedPackag
 	if (secretKey.empty()) {
 		if (!getAgileSecretKey(secretKey, info, pass)) return false;
 		if (putSecretKeyInstance()) {
-			printf("secretKey = "); ms::dump(secretKey, false);
+			Rprintf("secretKey = "); ms::dump(secretKey, false);
 		}
 
 		if (!VerifyIntegrity(encryptedPackage, keyData, secretKey, keyData.saltValue, info.encryptedHmacKey, info.encryptedHmacValue)) {
-			printf("warning : mac err : data may be broken\n");
+			Rprintf("warning : mac err : data may be broken\n");
 //			return false;
 		}
 	}
@@ -162,7 +162,7 @@ inline bool decodeStandardEncryption(std::string& dec, const std::string& encryp
 		}
 	}
 	if (isDebug()) {
-		printf("secretKey = "); dump(secretKey, false);
+		Rprintf("secretKey = "); dump(secretKey, false);
 	}
 
 	const char *p = encryptedPackage.data();

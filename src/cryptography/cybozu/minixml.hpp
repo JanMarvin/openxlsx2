@@ -103,7 +103,7 @@ public:
 		std::string tabstr(level + indentWidth, ' ');
 		const char *tab = tabstr.c_str();
 		for (Map::const_iterator i = m_.begin(), ie = m_.end(); i != ie; ++i) {
-			printf("%s%s=%s\n", tab, i->first.c_str(), i->second.c_str());
+			Rprintf("%s%s=%s\n", tab, i->first.c_str(), i->second.c_str());
 		}
 	}
 	void swap(Attributes& attr) CYBOZU_NOEXCEPT
@@ -166,10 +166,10 @@ struct Node {
 	{
 		std::string tabstr(level, ' ');
 		const char *tab = tabstr.c_str();
-		printf("%s<%s>\n", tab, name.c_str());
+		Rprintf("%s<%s>\n", tab, name.c_str());
 		if (!content.empty()) {
-			printf("%s[content]\n", tab);
-			printf("%s%s\n", tab, content.c_str());
+			Rprintf("%s[content]\n", tab);
+			Rprintf("%s%s\n", tab, content.c_str());
 		}
 		attr.put(level);
 		for (NodeList::const_iterator i = child.begin(), ie = child.end(); i != ie; ++i) {

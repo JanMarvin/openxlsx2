@@ -90,19 +90,19 @@ inline void putCompact(const T& vec)
 		uint32_t v = vec[j];
 		if (v == prev + 1 && j != n - 1) {
 			if (isFirst) {
-				printf(" ..");
+				Rprintf(" ..");
 				isFirst = false;
 			}
 		} else {
 			if (!isFirst && j > 1) {
-				printf(" %s", toStr(vec[j - 1]).c_str());
+				Rprintf(" %s", toStr(vec[j - 1]).c_str());
 			}
-			printf(" %s", toStr(v).c_str());
+			Rprintf(" %s", toStr(v).c_str());
 			isFirst = true;
 		}
 		prev = v;
 	}
-	putchar('\n');
+	Rprintf("\n");
 }
 
 struct Header {
@@ -271,17 +271,17 @@ struct Header {
 	void put() const
 	{
 		if (!isDebug()) return;
-		printf("version : major = %u, minor = 0x%04x\n", majorVersion, minorVersion);
-		printf("sectorShift = %u\n", sectorShift);
-		printf("numDirectorySectors = %u\n", numDirectorySectors);
-		printf("numFatSectors = %u\n", numFatSectors);
-		printf("firstDirectorySectorLocation = %u\n", firstDirectorySectorLocation);
-		printf("transactionSignatureNumber = %u\n", transactionSignatureNumber);
-		printf("firstMiniFatSectorLocation = %s\n", toStr(firstMiniFatSectorLocation).c_str());
-		printf("numMiniFatSectors = %u\n", numMiniFatSectors);
-		printf("firstDifatSectorLocation = %s\n", toStr(firstDifatSectorLocation).c_str());
-		printf("numDifatSectors = %u\n", numDifatSectors);
-		printf("difat size=%d\n", (int)difat.size());
+		Rprintf("version : major = %u, minor = 0x%04x\n", majorVersion, minorVersion);
+		Rprintf("sectorShift = %u\n", sectorShift);
+		Rprintf("numDirectorySectors = %u\n", numDirectorySectors);
+		Rprintf("numFatSectors = %u\n", numFatSectors);
+		Rprintf("firstDirectorySectorLocation = %u\n", firstDirectorySectorLocation);
+		Rprintf("transactionSignatureNumber = %u\n", transactionSignatureNumber);
+		Rprintf("firstMiniFatSectorLocation = %s\n", toStr(firstMiniFatSectorLocation).c_str());
+		Rprintf("numMiniFatSectors = %u\n", numMiniFatSectors);
+		Rprintf("firstDifatSectorLocation = %s\n", toStr(firstDifatSectorLocation).c_str());
+		Rprintf("numDifatSectors = %u\n", numDifatSectors);
+		Rprintf("difat size=%d\n", (int)difat.size());
 		putCompact(difat);
 	}
 private:
@@ -451,7 +451,7 @@ struct DirectoryEntry {
 		startingSectorLocation = cybozu::Get32bitAsLE(data + 0x74);
 		streamSize = cybozu::Get64bitAsLE(data + 0x78);
 		if (streamSize >= uint64_t(0x100000000ULL)) {
-			printf("warning too large size=%lld\n", (long long)streamSize);
+			Rprintf("warning too large size=%lld\n", (long long)streamSize);
 			// clear upper 32bit if version 3
 			streamSize &= 0xffffffff;
 		}
@@ -525,29 +525,29 @@ struct DirectoryEntry {
 	void put() const
 	{
 		if (!isDebug()) return;
-		printf("directoryEntryName = ");
+		Rprintf("directoryEntryName = ");
 #ifdef _WIN32
 		if (directoryEntryName.empty()) {
-			printf("<none>");
+			Rprintf("<none>");
 		} else {
-			printf("%S", &directoryEntryName[0]);
+			Rprintf("%S", &directoryEntryName[0]);
 		}
 #else
-		printf("%s", toHex(reinterpret_cast<const char*>(&directoryEntryName[0]), directoryEntryNameLength).c_str());
+		Rprintf("%s", toHex(reinterpret_cast<const char*>(&directoryEntryName[0]), directoryEntryNameLength).c_str());
 #endif
-		printf("(%u)\n", directoryEntryNameLength);
-		printf("objectType = %d(%s)\n", objectType, toStr(objectType).c_str());
-		printf("colorFlag = %d(%s)\n", colorFlag, toStr(colorFlag).c_str());
-		printf("leftSiblingId = %s, ", toStr(leftSiblingId).c_str());
-		printf("rightSiblingId = %s\n", toStr(rightSiblingId).c_str());
-		printf("childId = %s\n", toStr(childId).c_str());
-		printf("clsid = %s, ", toHex(clsid.c_str(), clsid.size()).c_str());
-		printf("stateBits = 0x%08x\n", stateBits);
-		printf("creation/modified Time = %s / %s\n", creationTime.toString().c_str(), modifiedTime.toString().c_str());
-		printf("startingSectorLocation = %s\n", toStr(startingSectorLocation).c_str());
-		printf("streamSize = %lld\n", (long long)streamSize);
+		Rprintf("(%u)\n", directoryEntryNameLength);
+		Rprintf("objectType = %d(%s)\n", objectType, toStr(objectType).c_str());
+		Rprintf("colorFlag = %d(%s)\n", colorFlag, toStr(colorFlag).c_str());
+		Rprintf("leftSiblingId = %s, ", toStr(leftSiblingId).c_str());
+		Rprintf("rightSiblingId = %s\n", toStr(rightSiblingId).c_str());
+		Rprintf("childId = %s\n", toStr(childId).c_str());
+		Rprintf("clsid = %s, ", toHex(clsid.c_str(), clsid.size()).c_str());
+		Rprintf("stateBits = 0x%08x\n", stateBits);
+		Rprintf("creation/modified Time = %s / %s\n", creationTime.toString().c_str(), modifiedTime.toString().c_str());
+		Rprintf("startingSectorLocation = %s\n", toStr(startingSectorLocation).c_str());
+		Rprintf("streamSize = %lld\n", (long long)streamSize);
 		if (content.empty()) {
-			printf("data=<empty>\n");
+			Rprintf("data=<empty>\n");
 		} else {
 			if (isDebug(2)) {
 				std::string fileName = cybozu::ToUtf8(directoryEntryName) + ".dump";
@@ -558,18 +558,18 @@ struct DirectoryEntry {
 				saveFile(fileName, content);
 			}
 			if (streamSize <= 256) {
-				printf("data=\n");
+				Rprintf("data=\n");
 				dump16(content, content.size());
 			} else {
-				printf("data=[");
+				Rprintf("data=[");
 				for (size_t i = 0; i < 5; i++) {
-					printf("%02x:", (uint8_t)content[i]);
+					Rprintf("%02x:", (uint8_t)content[i]);
 				}
-				printf(" ... ");
+				Rprintf(" ... ");
 				for (size_t i = content.size() - 5; i < content.size(); i++) {
-					printf("%02x:", (uint8_t)content[i]);
+					Rprintf("%02x:", (uint8_t)content[i]);
 				}
-				printf("]\n");
+				Rprintf("]\n");
 			}
 		}
 	}
@@ -761,13 +761,13 @@ struct CompoundFile {
 	{
 		if (!isDebug()) return;
 		header.put();
-		printf("FatSectors\n");
+		Rprintf("FatSectors\n");
 		fats.put();
-		printf("mini FatSectors\n");
+		Rprintf("mini FatSectors\n");
 		miniFats.put();
 		for (size_t i = 0; i < dirs.size(); i++) {
-			printf("----------------------------\n");
-			printf("DirectoryEntry %lld\n", (long long)i);
+			Rprintf("----------------------------\n");
+			Rprintf("DirectoryEntry %lld\n", (long long)i);
 			dirs[i].put();
 		}
 	}

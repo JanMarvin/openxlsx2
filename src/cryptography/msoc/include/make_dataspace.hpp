@@ -48,13 +48,13 @@ inline void makeDataSpace(
                     /7:Transformation/8:StrongEncryptionTransform/9:Primary(F)
 
   <10:B>
-   Å^Å_
+   ÔøΩ^ÔøΩ_
 <2:R> <1:R>
 ---------------
   <4:B>
-   Å^Å_
+   ÔøΩ^ÔøΩ_
 <3:B>  <5:B>
-         Å_
+         ÔøΩ_
           <7:R>
 ---------------
 <6:B>

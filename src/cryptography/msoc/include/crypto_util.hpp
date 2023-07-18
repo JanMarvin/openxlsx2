@@ -45,7 +45,7 @@ Xbyak::util::Clock clk;
 struct XXX {
 	~XXX()
 	{
-		printf("%.1f Mclk\n", clk.getClock() / double(clk.getCount()) * 1e-6);
+		Rprintf("%.1f Mclk\n", clk.getClock() / double(clk.getCount()) * 1e-6);
 	}
 } xxx;
 #endif
@@ -115,13 +115,13 @@ struct CipherParam {
 	}
 	void put() const
 	{
-		printf("cipherName = %s\n", cipherNameStr.c_str());
-		printf("saltSize = %d\n", (int)saltSize);
-		printf("blockSize = %d\n", (int)blockSize);
-		printf("keyBits = %d\n", (int)keyBits);
-		printf("hashName = %s\n", hashNameStr.c_str());
-		printf("hashSize = %d\n", hashSize);
-		printf("saltValue = "); dump(saltValue, false);
+		Rprintf("cipherName = %s\n", cipherNameStr.c_str());
+		Rprintf("saltSize = %d\n", (int)saltSize);
+		Rprintf("blockSize = %d\n", (int)blockSize);
+		Rprintf("keyBits = %d\n", (int)keyBits);
+		Rprintf("hashName = %s\n", hashNameStr.c_str());
+		Rprintf("hashSize = %d\n", hashSize);
+		Rprintf("saltValue = "); dump(saltValue, false);
 	}
 	explicit CipherParam(const cybozu::minixml::Node *node)
 	{
@@ -272,23 +272,23 @@ struct EncryptionInfo {
 	void put() const
 	{
 		if (!isDebug(0)) return;
-		printf("major = %d\n", major);
-		printf("minor = %d\n", minor);
-		printf("isStandardEncryption = %d\n", isStandardEncryption);
+		Rprintf("major = %d\n", major);
+		Rprintf("minor = %d\n", minor);
+		Rprintf("isStandardEncryption = %d\n", isStandardEncryption);
 		if (isStandardEncryption) {
 			seHeader.put();
 			seVerifier.put();
 		} else {
-			printf("spinCount = %d\n", spinCount);
-			puts("keyData");
+			Rprintf("spinCount = %d\n", spinCount);
+			Rprintf("keyData");
 			keyData.put();
-			printf("encryptedHmacKey = "); dump(encryptedHmacKey, false);
-			printf("encryptedHmacValue = "); dump(encryptedHmacValue, false);
-			puts("encryptedKey");
+			Rprintf("encryptedHmacKey = "); dump(encryptedHmacKey, false);
+			Rprintf("encryptedHmacValue = "); dump(encryptedHmacValue, false);
+			Rprintf("encryptedKey");
 			encryptedKey.put();
-			printf("encryptedVerifierHashInput = "); dump(encryptedVerifierHashInput, false);
-			printf("encryptedVerifierHashValue = "); dump(encryptedVerifierHashValue, false);
-			printf("encryptedKeyValue = "); dump(encryptedKeyValue, false);
+			Rprintf("encryptedVerifierHashInput = "); dump(encryptedVerifierHashInput, false);
+			Rprintf("encryptedVerifierHashValue = "); dump(encryptedVerifierHashValue, false);
+			Rprintf("encryptedKeyValue = "); dump(encryptedKeyValue, false);
 		}
 	}
 
@@ -311,7 +311,7 @@ struct EncryptionInfo {
 
 		p += encryptionHeaderSize;
 		dataSize -= encryptionHeaderSize;
-		printf("dataSize=%u\n", (uint32_t)dataSize);
+		Rprintf("dataSize=%u\n", (uint32_t)dataSize);
 		seVerifier.analyze(p, dataSize);
 		seVerifier.put();
 	}
