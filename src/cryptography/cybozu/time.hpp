@@ -178,10 +178,10 @@ public:
 		char buf[128];
 		struct tm tm;
 #if defined _WIN32
-#if _USE_32BIT_TIME_T
-		bool isOK = _gmtime32_s(&tm, &time_) == 0;
-#else
+#ifndef _USE_32BIT_TIME_T
 		bool isOK = _gmtime64_s(&tm, &time_) == 0;
+#else
+		bool isOK = _gmtime32_s(&tm, &time_) == 0;
 #endif
 #else
 		bool isOK = gmtime_r(&time_, &tm) != 0;
