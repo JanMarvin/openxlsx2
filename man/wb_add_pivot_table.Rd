@@ -20,7 +20,7 @@ wb_add_pivot_table(
 \arguments{
 \item{wb}{A Workbook object containing a #' worksheet.}
 
-\item{x}{a wb_data object}
+\item{x}{a \code{wb_data} object}
 
 \item{sheet}{a worksheet}
 

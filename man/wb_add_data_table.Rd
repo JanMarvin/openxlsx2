@@ -35,15 +35,15 @@ wb_add_data_table(
 
 \item{x}{A dataframe.}
 
-\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
+\item{dims}{Spreadsheet dimensions that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
 
 \item{start_col}{A vector specifying the starting column to write df}
 
 \item{start_row}{A vector specifying the starting row to write df}
 
-\item{col_names}{If \code{TRUE}, column names of x are written.}
+\item{col_names}{If \code{TRUE}, column names of \code{x} are written.}
 
-\item{row_names}{If \code{TRUE}, row names of x are written.}
+\item{row_names}{If \code{TRUE}, row names of \code{x} are written.}
 
 \item{table_style}{Any excel table style name or "none" (see "formatting"
 vignette).}
@@ -53,8 +53,7 @@ vignette).}
 \item{with_filter}{If \code{TRUE}, columns with have filters in the first row.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list
-columns to a character vector e.g. sapply(x$list_column, paste, collapse =
-sep).
+columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse = sep)}.
 \cr\cr
 \cr\strong{The below options correspond to Excel table options:}
 \cr
@@ -84,7 +83,7 @@ sep).
 Add data to a worksheet and format as an Excel table
 }
 \details{
-columns of x with class Date/POSIXt, currency, accounting,
+columns of \code{x} with class Date/POSIXt, currency, accounting,
 hyperlink, percentage are automatically styled as dates, currency,
 accounting, hyperlinks, percentages respectively. The string \code{"_openxlsx_NA"}
 is reserved for \code{openxlsx2}. If the data frame contains this string, the

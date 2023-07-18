@@ -89,12 +89,12 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
+#' @param dims Spreadsheet dimensions that will determine `start_col` and `start_row`: "A1", "A1:B2", "A:B"
 #' @param start_col A vector specifying the starting column to write to.
 #' @param start_row A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, data.frame row names of x are written.
+#' @param col_names If `TRUE`, column names of `x` are written.
+#' @param row_names If `TRUE`, data.frame row names of `x` are written.
 #' @param with_filter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
 #' @param name If not NULL, a named region is defined.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
@@ -112,7 +112,6 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' @family workbook wrappers
 #' @return A clone of `wb`
 #' @examples
-# TODO Update examples here to reflect the switch to `wb_add` syntax and delete them for `write_data()`
 #' ## See formatting vignette for further examples.
 #'
 #' ## Options for default styling (These are the defaults)
@@ -129,7 +128,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #' wb$add_worksheet("Formula")
 #'
 #' x <- mtcars[1:6, ]
-#' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+#' wb$add_data("Cars", x, start_col = 2, start_row = 3, row_names = TRUE)
 #'
 #' #############################################################################
 #' ## Hyperlinks
@@ -161,7 +160,7 @@ wb_save <- function(wb, path = NULL, overwrite = TRUE) {
 #'
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)
-#' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
+#' wb2 <- wb2 %>% wb_add_data(sheet = 1, mtcars, dims = wb_dims(4, 4))
 #' wb_to_df(wb2)
 wb_add_data <- function(
     wb,
@@ -212,16 +211,16 @@ wb_add_data <- function(
 #' @param x A dataframe.
 #' @param start_col A vector specifying the starting column to write df
 #' @param start_row A vector specifying the starting row to write df
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, row names of x are written.
+#' @param dims Spreadsheet dimensions that will determine `start_col` and `start_row`: "A1", "A1:B2", "A:B"
+#' @param col_names If `TRUE`, column names of `x` are written.
+#' @param row_names If `TRUE`, row names of `x` are written.
 #' @param table_style Any excel table style name or "none" (see "formatting"
 #'   vignette).
 #' @param table_name name of table in workbook. The table name must be unique.
 #' @param with_filter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list
-#'   columns to a character vector e.g. sapply(x$list_column, paste, collapse =
-#'   sep).
+#'   columns to a character vector e.g. `sapply(x$list_column, paste, collapse =
+#'   sep)`.
 #' \cr\cr
 #' \cr**The below options correspond to Excel table options:**
 #' \cr
@@ -239,7 +238,7 @@ wb_add_data <- function(
 #' @param inline_strings write characters as inline strings
 #' @param ... additional arguments
 #'
-#' @details columns of x with class Date/POSIXt, currency, accounting,
+#' @details columns of `x` with class Date/POSIXt, currency, accounting,
 #' hyperlink, percentage are automatically styled as dates, currency,
 #' accounting, hyperlinks, percentages respectively. The string `"_openxlsx_NA"`
 #' is reserved for `openxlsx2`. If the data frame contains this string, the
@@ -298,7 +297,7 @@ wb_add_data_table <- function(
 #'
 #' @description add pivot table
 #' @param wb A Workbook object containing a #' worksheet.
-#' @param x a wb_data object
+#' @param x a `wb_data` object
 #' @param sheet a worksheet
 #' @param dims the worksheet cell where the pivot table is placed
 #' @param filter a character object with names used to filter

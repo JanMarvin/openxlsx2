@@ -31,7 +31,7 @@ wb_add_data(
 
 \item{x}{Object to be written. For classes supported look at the examples.}
 
-\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
+\item{dims}{Spreadsheet dimensions that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
 
 \item{start_col}{A vector specifying the starting column to write to.}
 
@@ -39,9 +39,9 @@ wb_add_data(
 
 \item{array}{A bool if the function written is of type array}
 
-\item{col_names}{If \code{TRUE}, column names of x are written.}
+\item{col_names}{If \code{TRUE}, column names of \code{x} are written.}
 
-\item{row_names}{If \code{TRUE}, data.frame row names of x are written.}
+\item{row_names}{If \code{TRUE}, data.frame row names of \code{x} are written.}
 
 \item{with_filter}{If \code{TRUE}, add filters to the column name row. NOTE can only have one filter per worksheet.}
 
@@ -89,7 +89,7 @@ wb$add_worksheet("Cars")
 wb$add_worksheet("Formula")
 
 x <- mtcars[1:6, ]
-wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+wb$add_data("Cars", x, start_col = 2, start_row = 3, row_names = TRUE)
 
 #############################################################################
 ## Hyperlinks
@@ -121,7 +121,7 @@ wb2 <- wb_load(xlsxFile)
 
 # read dataset with inlinestr
 wb_to_df(wb2)
-write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
+wb2 <- wb2 \%>\% wb_add_data(sheet = 1, mtcars, dims = wb_dims(4, 4))
 wb_to_df(wb2)
 }
 \seealso{
