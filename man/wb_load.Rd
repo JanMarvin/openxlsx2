@@ -10,6 +10,7 @@ wb_load(
   sheet,
   data_only = FALSE,
   calc_chain = FALSE,
+  password = NULL,
   ...
 )
 }
@@ -30,6 +31,13 @@ evaluated. Removing the calculation chain is considered harmless. The calc
 chain will be created upon the next time the worksheet is loaded in
 spreadsheet software. Keeping it, might only speed loading time in said
 software.}
+
+\item{password}{an optional password to decrypt the input file. The input is
+decrypted into a temporary folder on the hard drive. Afterwards it is loaded
+into a wbWorkbook object and can be interacted with. Unless it is saved with
+\code{\link[=wb_save]{wb_save()}} argument \code{password} it remains decrypted. And the password is
+expected to be plain text. If security is of importance, do not use this
+argument.}
 
 \item{...}{additional arguments}
 }

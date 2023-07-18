@@ -4,7 +4,7 @@
 \alias{wb_save}
 \title{Save Workbook to file}
 \usage{
-wb_save(wb, path = NULL, overwrite = TRUE)
+wb_save(wb, path = NULL, overwrite = TRUE, password = NULL)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
@@ -12,6 +12,11 @@ wb_save(wb, path = NULL, overwrite = TRUE)
 \item{path}{A path to save the workbook to}
 
 \item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
+
+\item{password}{an optional password to encrypt the input file. The input is
+encrypted once the output file is written. The password is expected to be
+plain text. If security is of importance, do not use this argument. If the
+password is lost, opening the file will be impossible.}
 }
 \value{
 the \code{wbWorkbook} object, invisibly

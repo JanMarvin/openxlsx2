@@ -1490,6 +1490,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param data_only data_only
     #' @param calc_chain calc_chain
+    #' @param password password
     #' @param ... additional arguments
     #' @return The `wbWorkbook` object invisibly
     load = function(
@@ -1498,6 +1499,7 @@ wbWorkbook <- R6::R6Class(
       sheet,
       data_only  = FALSE,
       calc_chain = FALSE,
+      password   = NULL,
       ...
     ) {
       if (missing(file)) file <- substitute()
@@ -1521,8 +1523,9 @@ wbWorkbook <- R6::R6Class(
     #' Save the workbook
     #' @param path The path to save the workbook to
     #' @param overwrite If `FALSE`, will not overwrite when `path` exists
+    #' @param password password
     #' @return The `wbWorkbook` object invisibly
-    save = function(path = self$path, overwrite = TRUE) {
+    save = function(path = self$path, overwrite = TRUE, password = NULL) {
       assert_class(path, "character")
       assert_class(overwrite, "logical")
 
@@ -2204,6 +2207,10 @@ wbWorkbook <- R6::R6Class(
       # Copy file; stop if failed
       if (!file.copy(from = tmpFile, to = path, overwrite = overwrite, copy.mode = FALSE)) {
         stop("Failed to save workbook")
+      }
+
+      if (!is.null(password)) {
+        msoc("enc", inFile = path, outFile = path, pass = password)
       }
 
       # (re)assign file path (if successful)

@@ -31,4 +31,14 @@ test_that("test that encryption works", {
     0
   )
 
+  tmp <- temp_xlsx()
+  wbin <- wb_workbook()$add_worksheet()$
+    add_data(x = head(iris))$save(tmp, password = "openxlsx2")
+
+  wbout <- wb_load(tmp, password = "openxlsx2")
+  exp <- wb_to_df(wbin)
+  got <- wb_to_df(wbout)
+
+  expect_equal(exp, got)
+
 })

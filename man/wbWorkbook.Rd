@@ -914,6 +914,7 @@ load workbook
   sheet,
   data_only = FALSE,
   calc_chain = FALSE,
+  password = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -931,6 +932,8 @@ load workbook
 
 \item{\code{calc_chain}}{calc_chain}
 
+\item{\code{password}}{password}
+
 \item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
@@ -945,7 +948,7 @@ The \code{wbWorkbook} object invisibly
 \subsection{Method \code{save()}}{
 Save the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(path = self$path, overwrite = TRUE, password = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -954,6 +957,8 @@ Save the workbook
 \item{\code{path}}{The path to save the workbook to}
 
 \item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{path} exists}
+
+\item{\code{password}}{password}
 }
 \if{html}{\out{</div>}}
 }

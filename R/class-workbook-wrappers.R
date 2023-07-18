@@ -59,6 +59,10 @@ wb_workbook <- function(
 #' @param wb A `wbWorkbook` object to write to file
 #' @param path A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `path` exists
+#' @param password an optional password to encrypt the input file. The input is
+#' encrypted once the output file is written. The password is expected to be
+#' plain text. If security is of importance, do not use this argument. If the
+#' password is lost, opening the file will be impossible.
 #'
 #' @export
 #' @family workbook wrappers
@@ -74,9 +78,9 @@ wb_workbook <- function(
 #' \donttest{
 #' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
 #' }
-wb_save <- function(wb, path = NULL, overwrite = TRUE) {
+wb_save <- function(wb, path = NULL, overwrite = TRUE, password = NULL) {
   assert_workbook(wb)
-  wb$clone()$save(path = path, overwrite = overwrite)
+  wb$clone()$save(path = path, overwrite = overwrite, password = password)
 }
 
 # add data ----------------------------------------------------------------
