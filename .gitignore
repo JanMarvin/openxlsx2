@@ -4,6 +4,7 @@
 .DS_Store
 .vscode/*
 *.o
+*.a
 src/*.a
 src/*.o
 src/*.so
@@ -30,3 +31,5 @@ inst/doc
 windows/
 tests/testthat/_snaps
 tests/testthat/testfiles
+src/cryptography/*.a
+src/cryptography/msoc/*.o

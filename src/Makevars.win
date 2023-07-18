@@ -1,10 +1,10 @@
 VERSION=1.1.1k
 PKG_CPPFLAGS= -I../windows/openssl-$(VERSION)/include -I. -I../inst/include/pugixml -Icryptography -Icryptography/msoc/include
-PKG_LIBS = -L. -lmsoc -L../windows/openssl-$(VERSION)/lib${R_ARCH}${CRT} -lssl -lcrypto -lws2_32 -lcrypt32
+PKG_LIBS = -Lcryptography -lmsoc -L../windows/openssl-$(VERSION)/lib${R_ARCH}${CRT} -lssl -lcrypto -lws2_32 -lcrypt32
 
 LIBMSOC = cryptography/msoc/msocdll.o
 
-STATLIB = libmsoc.a
+STATLIB = cryptography/libmsoc.a
 
 all: clean winlibs
 

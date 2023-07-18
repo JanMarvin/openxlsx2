@@ -1,17 +1,17 @@
 PKG_CPPFLAGS = @cflags@ -I. -I../inst/include/pugixml -Icryptography -Icryptography/msoc/include
-PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` @libs@
+PKG_LIBS = -Lcryptography -lmsoc @libs@
 
-OBJECTS = cryptography/msoc/msocdll.o \
-          helper_functions.o \
-          load_workbook.o \
-          msoc.o \
-          pugi.o \
-          strings_xml.o \
-          styles_xml.o \
-          write_file.o \
-          RcppExports.o
+LIBMSOC = cryptography/msoc/msocdll.o
+
+STATLIB = cryptography/libmsoc.a
 
 all: clean
 
+all: $(SHLIB)
+$(SHLIB): $(STATLIB)
+
+$(STATLIB): $(LIBMSOC)
+	$(AR) rcs cryptography/libmsoc.a $(LIBMSOC)
+
 clean:
-	rm -f $(OBJECTS) $(SHLIB)
+	rm -f $(OBJECTS) $(SHLIB) $(STATLIB) $(LIBMSOC)
