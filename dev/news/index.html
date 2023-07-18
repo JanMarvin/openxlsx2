@@ -61,8 +61,11 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="api-change-development-version">API Change<a class="anchor" aria-label="anchor" href="#api-change-development-version"></a></h3>
-<ul><li>Function arguments are now defaulting to <code>snake_case</code>. For the time being, both arguments are accepted and <code>camelCase</code> will be switched to <code>snake_case</code> under the hood. Documentation like vignettes and examples are currently still displaying <code>camelCase</code> and maybe some <code>camelCase</code> function slipped through. <a href="https://github.com/JanMarvin/openxlsx2/pull/678" class="external-link">678</a>
-</li>
+<ul><li><p>Function arguments are now defaulting to <code>snake_case</code>. For the time being, both arguments are accepted and <code>camelCase</code> will be switched to <code>snake_case</code> under the hood. Documentation like vignettes and examples are currently still displaying <code>camelCase</code> and maybe some <code>camelCase</code> function slipped through. <a href="https://github.com/JanMarvin/openxlsx2/pull/678" class="external-link">678</a></p></li>
+<li>
+<p><code><a href="../reference/write_formula.html">write_formula()</a></code>, <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code> are no longer recommended,</p>
+<ul><li>Use <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>, <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code> instead</li>
+</ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
@@ -83,14 +86,14 @@
 <code><a href="../reference/convert_to_excel_date.html">convertToExcelDate()</a></code> for <code><a href="../reference/convert_to_excel_date.html">convert_to_excel_date()</a></code>
 </li>
 </ul></li>
-<li><p>make <code>get_cell_refs()</code>, <code>get_date_origin()</code>, <code>guess_col_type()</code>, and <code>write_file()</code> internal functions</p></li>
+<li><p>make <code>get_cell_refs()</code>, <code>get_date_origin()</code>, <code>guess_col_type()</code>, and <code>write_file()</code>, <code><a href="../reference/dataframe_to_dims.html">dataframe_to_dims()</a></code>, <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code> internal functions</p></li>
 <li><p>make classes <code>styles_mgr()</code>, <code>wbSheetData</code>, <code>wbWorksheet</code>, <code>wbChartsheet</code>, <code>wbComment</code>, <code>wbHyperlink</code> internal</p></li>
 </ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>
-<code><a href="../reference/dims_helper.html">wb_dims()</a></code> was added as a more convenient replacement for <code><a href="../reference/dims_helper.html">rowcol_to_dims()</a></code>. The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coerceable to data frame. This allows the following variants:</li>
+<code><a href="../reference/dims_helper.html">wb_dims()</a></code> was added as a more convenient replacement for <code><a href="../reference/dims_helper.html">rowcol_to_dims()</a></code>. The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coercible to data frame. This allows the following variants:</li>
 <li><code>wb_dims(1:5, letters)</code></li>
 <li><code>wb_dims(1:5, 1:26)</code></li>
 <li>
@@ -154,7 +157,7 @@
 <li><p>Add <code>dims</code> argument to <code><a href="../reference/wb_add_image.html">wb_add_image()</a></code> and <code><a href="../reference/wb_add_plot.html">wb_add_plot()</a></code>. This can be used to place images starting at a cell or span a cell range. This deprecates <code>xy</code> in <code><a href="../reference/wb_add_plot.html">wb_add_plot()</a></code>. This adds colOffset and rowOffset to <code><a href="../reference/wb_add_drawing.html">wb_add_drawing()</a></code> and <code><a href="../reference/wb_add_mschart.html">wb_add_mschart()</a></code> and <code><a href="../reference/wb_add_chart_xml.html">wb_add_chart_xml()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/578" class="external-link">578</a></p></li>
 <li><p>Add <code>skipHiddenCols</code> and <code>skipHiddenRows</code> to <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>. In this way, hidden columns and rows are ignored, assuming that the person who has hidden them assumes that they are not important. <a href="https://github.com/JanMarvin/openxlsx2/pull/579" class="external-link">579</a></p></li>
 <li><p>When writing <code>tibble</code> use <code>to.data.frame()</code> just like in the <code>data.table</code> case. <a href="https://github.com/JanMarvin/openxlsx2/pull/582" class="external-link">582</a></p></li>
-<li><p>Add cleanup internal comment code in <code><a href="../reference/comment.html">write_comment()</a></code>. This should not impact the workbook wrapper code in <code><a href="../reference/comment.html">wb_add_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/586" class="external-link">586</a></p></li>
+<li><p>Add cleanup internal comment code in <code><a href="../reference/comment.html">write_comment()</a></code>. This should not impact the workbook wrapper code in <code><a href="../reference/wb_add_comment.html">wb_add_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/586" class="external-link">586</a></p></li>
 <li><p>Added chain functions for <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> and <code><a href="../reference/wb_load.html">wb_load()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/587" class="external-link">587</a></p></li>
 </ul><hr></div>
 </div>
@@ -355,7 +358,7 @@
 <li><p>Removed level4 from XML functions. There was only a single use case for a level4 function that has been solved differently. If level4 is needed, this can be solved using a level3 and additional level2 functions. In addition xml_nodes now return nodes for all reachable nestings, therefore <code>xml_node("&lt;a/&gt;&lt;a/&gt;", "a")</code> will now return a character vector of length two. For <code>xml_node("&lt;a/&gt;&lt;b/&gt;", "a")</code> only a single character vector is returned. <a href="https://github.com/JanMarvin/openxlsx2/issues/280" class="external-link">280</a></p></li>
 <li><p>Changes to various internal pugixml functions, to improve handling of XML strings. <a href="https://github.com/JanMarvin/openxlsx2/issues/279" class="external-link">279</a></p></li>
 <li><p>Provide internal helper <code><a href="../reference/xml_rm_child.html">xml_rm_child()</a></code> to remove children of XML strings. <a href="https://github.com/JanMarvin/openxlsx2/issues/273" class="external-link">273</a></p></li>
-<li><p>Fixes a bug in <code>update_cell()</code> that slowed down writing on worksheets with data. In addition, this function has been cleaned up and further improved. It is no longer exported, as users only need to use <code><a href="../reference/write_data.html">wb_add_data()</a></code> or <code><a href="../reference/write_data.html">write_data()</a></code>, each of which calls <code>update_cell()</code> under the hood. <a href="https://github.com/JanMarvin/openxlsx2/pull/275" class="external-link">275</a> <a href="https://github.com/JanMarvin/openxlsx2/pull/276" class="external-link">276</a></p></li>
+<li><p>Fixes a bug in <code>update_cell()</code> that slowed down writing on worksheets with data. In addition, this function has been cleaned up and further improved. It is no longer exported, as users only need to use <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> or <code><a href="../reference/write_data.html">write_data()</a></code>, each of which calls <code>update_cell()</code> under the hood. <a href="https://github.com/JanMarvin/openxlsx2/pull/275" class="external-link">275</a> <a href="https://github.com/JanMarvin/openxlsx2/pull/276" class="external-link">276</a></p></li>
 <li><p>Various (mostly internal) changes to <code>conditional_formatting</code>. Created <code>style_mgr</code> integration for <code>dxf</code> (cf-styles) and cleaned up internal code. The syntax has changed slightly, see <a href="https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html">conditional formatting vignette</a> for reference. Add <code>whitespace</code> argument to <code><a href="../reference/read_xml.html">read_xml()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/268" class="external-link">268</a></p></li>
 </ul></div>
 <div class="section level3">

@@ -103,8 +103,6 @@ newer spreadsheet software now calls comment is possible via
 <span>  dims <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">wb_add_comment</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">comment</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">wb_remove_comment</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -143,15 +141,15 @@ newer spreadsheet software now calls comment is possible via
 
 
 <dt>col</dt>
-<dd><p>A column to apply the comment</p></dd>
+<dd><p>Column a column number of letter. For <code>remove_comment</code> this can be a range.</p></dd>
 
 
 <dt>row</dt>
-<dd><p>A row to apply the comment</p></dd>
+<dd><p>A row number. For <code>remove_comment</code> this can be a range.</p></dd>
 
 
 <dt>comment</dt>
-<dd><p>A comment to apply to the worksheet</p></dd>
+<dd><p>A Comment object. See <code>create_comment()</code>.</p></dd>
 
 
 <dt>dims</dt>
@@ -172,13 +170,6 @@ will be removed.</p></dd>
     
 
 <p>The <code>wbWorkbook</code> object</p>
-
-
-<p>The <code>wbWorkbook</code> object</p>
-    </div>
-    <div class="section level2">
-    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="wb_add_thread.html">wb_add_thread()</a></code></p></div>
     </div>
 
     <div class="section level2">

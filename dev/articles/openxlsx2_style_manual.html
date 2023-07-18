@@ -124,7 +124,7 @@ The example below, with increased column width.
 <span><span class="co"># prepare workbook with data and formated first row</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_border.html">wb_add_border</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:AB1"</span>,</span>
 <span>    top_color <span class="op">=</span> <span class="va">border_col</span>, top_border <span class="op">=</span> <span class="va">border_sty</span>,</span>
 <span>    bottom_color <span class="op">=</span> <span class="va">border_col</span>, bottom_border <span class="op">=</span> <span class="va">border_sty</span>,</span>
@@ -314,7 +314,7 @@ selected R classes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_set_col_widths.html">wb_set_col_widths</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">cols</span>, widths <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></code></pre></div>
@@ -363,7 +363,7 @@ identical table.</p>
 <span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, col_names <span class="op">=</span> <span class="cn">TRUE</span>, start_col <span class="op">=</span> <span class="fl">2</span>, start_row <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, col_names <span class="op">=</span> <span class="cn">TRUE</span>, start_col <span class="op">=</span> <span class="fl">2</span>, start_row <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="co"># center first row</span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_cell_style.html">wb_add_cell_style</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"B2:C2"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="co"># add border for first row</span></span>
@@ -390,7 +390,7 @@ identical table.</p>
 <span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, startCol <span class="op">=</span> <span class="fl">2</span>, startRow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, startCol <span class="op">=</span> <span class="fl">2</span>, startRow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a border style and assign it to the workbook</span></span>
 <span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span></span>

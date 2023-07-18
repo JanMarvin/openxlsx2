@@ -104,7 +104,7 @@
 
 
 <dt>dims</dt>
-<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
+<dd><p>Spreadsheet dimensions that will determine <code>start_col</code> and <code>start_row</code>: "A1", "A1:B2", "A:B"</p></dd>
 
 
 <dt>start_col</dt>
@@ -116,11 +116,11 @@
 
 
 <dt>col_names</dt>
-<dd><p>If <code>TRUE</code>, column names of x are written.</p></dd>
+<dd><p>If <code>TRUE</code>, column names of <code>x</code> are written.</p></dd>
 
 
 <dt>row_names</dt>
-<dd><p>If <code>TRUE</code>, row names of x are written.</p></dd>
+<dd><p>If <code>TRUE</code>, row names of <code>x</code> are written.</p></dd>
 
 
 <dt>table_style</dt>
@@ -138,8 +138,7 @@ vignette).</p></dd>
 
 <dt>sep</dt>
 <dd><p>Only applies to list columns. The separator used to collapse list
-columns to a character vector e.g. sapply(x$list_column, paste, collapse =
-sep).
+columns to a character vector e.g. <code>sapply(x$list_column, paste, collapse = sep)</code>.
 <br><br><br><strong>The below options correspond to Excel table options:</strong>
 <br><img src="figures/tableoptions.png" width="40%" alt="Figure: table_options.png"></p></dd>
 
@@ -183,7 +182,7 @@ sep).
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>columns of x with class Date/POSIXt, currency, accounting,
+    <p>columns of <code>x</code> with class Date/POSIXt, currency, accounting,
 hyperlink, percentage are automatically styled as dates, currency,
 accounting, hyperlinks, percentages respectively. The string <code>"_openxlsx_NA"</code>
 is reserved for <code>openxlsx2</code>. If the data frame contains this string, the
@@ -193,7 +192,7 @@ output will be broken.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other workbook wrappers: 
 <code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
-<code><a href="write_data.html">wb_add_data</a>()</code>,
+<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
 <code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
 <code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,

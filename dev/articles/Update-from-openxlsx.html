@@ -220,7 +220,7 @@ this:</p>
 <span>  <span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
 <p>The code above uses chaining. If you prefer piping, we provide the
 chained functions with the prefix <code>wb_</code> so
-<code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code>, <code><a href="../reference/write_data.html">wb_add_data()</a></code>,
+<code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code>, <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>,
 <code><a href="../reference/wb_add_border.html">wb_add_border()</a></code> and <code><a href="../reference/wb_set_col_widths.html">wb_set_col_widths()</a></code> would
 be the functions to use with pipes <code>%&gt;%</code> or
 <code>|&gt;</code>.</p>
@@ -230,7 +230,7 @@ be the functions to use with pipes <code>%&gt;%</code> or
 <span><span class="va">border_color</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF4F81BD"</span><span class="op">)</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span>creator <span class="op">=</span> <span class="st">"My name here"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Expenditure"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_border.html">wb_add_border</a></span><span class="op">(</span> <span class="co"># add the outer and inner border</span></span>
 <span>    dims <span class="op">=</span> <span class="st">"A1:F6"</span>,</span>
 <span>    top_border <span class="op">=</span> <span class="st">"thin"</span>, top_color <span class="op">=</span> <span class="va">border_color</span>,</span>
@@ -242,7 +242,7 @@ be the functions to use with pipes <code>%&gt;%</code> or
 <span>    cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,</span>
 <span>    widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># remove the value in A1</span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
 <p>Be aware that chains modify an object in place and pipes do not.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># openxlsx2</span></span>
@@ -250,7 +250,7 @@ be the functions to use with pipes <code>%&gt;%</code> or
 <span><span class="va">wbc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># need to assign wbp</span></span>
-<span><span class="va">wbp</span> <span class="op">&lt;-</span> <span class="va">wbp</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span>
+<span><span class="va">wbp</span> <span class="op">&lt;-</span> <span class="va">wbp</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span>
 <span><span class="va">wbc</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span></code></pre></div>
 <p>You can re-use styles with <code><a href="../reference/cell_style.html">wb_get_cell_style()</a></code> and
 <code><a href="../reference/cell_style.html">wb_set_cell_style()</a></code>. Abandoning <code>stylesObject</code>
@@ -277,7 +277,7 @@ conditional formatting vignette. A minimal example is the following:</p>
 <span><span class="co"># openxlsx2 with pipes</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/write_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:A4"</span>, rule <span class="op">=</span> <span class="st">"&gt;2"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
