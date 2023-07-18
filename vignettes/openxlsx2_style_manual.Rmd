@@ -170,7 +170,7 @@ wb$add_worksheet("S2")
 
 df <- data.frame(
   "Date" = Sys.Date() - 0:19,
-  "T" = TRUE, 
+  "T" = TRUE,
   "F" = FALSE,
   "Time" = Sys.time() - 0:19 * 60 * 60,
   "Cash" = paste("$", 1:20), "Cash2" = 31:50,
@@ -251,7 +251,7 @@ wb <- wb_workbook()
   add_data(x = mtcars)
 wb$add_border(
   dims = "A2:K33", # can use wb_dims(rows = 2:33, cols = ncol(mtcars))
-  inner_hgrid = "thin", 
+  inner_hgrid = "thin",
   inner_hcolor = wb_color(hex = "FF808080"),
   inner_vgrid = "thin",
   inner_vcolor = wb_color(hex = "FF808080")
@@ -261,15 +261,15 @@ wb$add_worksheet("S2", grid_lines = FALSE)$
   add_data(x = mtcars)
 wb$add_border(
   dims = "A2:K33",
-  inner_hgrid = "thin", 
+  inner_hgrid = "thin",
   inner_hcolor = wb_color(hex = "FF808080")
   )
 # only vertical grid
 wb$add_worksheet("S3", grid_lines = FALSE)$
   add_data(x = mtcars)
 wb$add_border(
-  dims = "A2:K33", 
-  inner_vgrid = "thin", 
+  dims = "A2:K33",
+  inner_vgrid = "thin",
   inner_vcolor = wb_color(hex = "FF808080")
   )
 # no inner grid
@@ -322,7 +322,7 @@ colnames(mat) <- make.names(seq_len(ncol(mat)))
 wb <- wb_workbook() %>%
   wb_add_worksheet("test") %>%
   wb_add_data(
-    x = mat, 
+    x = mat,
     dims = wb_dims(start_col = 2, start_row = 2)
     )
 

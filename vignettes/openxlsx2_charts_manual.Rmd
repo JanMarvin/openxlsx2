@@ -75,7 +75,7 @@ library(rvg)
 ## create rvg example
 
 p <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Width)) +
-  geom_point() + 
+  geom_point() +
   labs(title = "With font Bradley Hand") +
   theme_minimal(base_family = "sans", base_size = 18)
 
