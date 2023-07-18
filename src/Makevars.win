@@ -1,21 +1,22 @@
 VERSION=1.1.1k
 PKG_CPPFLAGS= -I../windows/openssl-$(VERSION)/include -I. -I../inst/include/pugixml -Icryptography -Icryptography/msoc/include
-PKG_LIBS = -L../windows/openssl-$(VERSION)/lib${R_ARCH}${CRT} -lcrypto -lws2_32 -lcrypt32 -fPIC
+PKG_LIBS = -L. -lmsoc -L../windows/openssl-$(VERSION)/lib${R_ARCH}${CRT} -lssl -lcrypto -lws2_32 -lcrypt32
 
-OBJECTS = cryptography/msoc/msocdll.o \
-                  helper_functions.o \
-                  load_workbook.o \
-                  msoc.o \
-                  pugi.o \
-                  strings_xml.o \
-                  styles_xml.o \
-                  write_file.o \
-                  RcppExports.o
+LIBMSOC = cryptography/msoc/msocdll.o
+
+STATLIB = libmsoc.a
 
 all: clean winlibs
 
+all: $(SHLIB)
+$(SHLIB): $(STATLIB)
+
+$(STATLIB): $(LIBMSOC)
+
 clean:
-	rm -f $(SHLIB) $(OBJECTS)
+	rm -f $(OBJECTS) $(SHLIB) $(STATLIB) $(LIBMSOC)
 
 winlibs:
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
+
+.PHONY: all clean

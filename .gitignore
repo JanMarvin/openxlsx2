@@ -4,6 +4,7 @@
 .DS_Store
 .vscode/*
 *.o
+src/*.a
 src/*.o
 src/*.so
 src/*.dll
@@ -26,5 +27,6 @@ inst/doc
 /Meta/
 *.Rcheck
 *.tar.gz
+windows/
 tests/testthat/_snaps
 tests/testthat/testfiles

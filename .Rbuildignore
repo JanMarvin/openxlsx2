@@ -24,3 +24,4 @@ cran-comments.md
 ^tests/testthat/_snaps$
 ^tests/testthat/testfiles$
 ^configure.log$
+^windows$
