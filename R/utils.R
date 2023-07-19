@@ -259,18 +259,79 @@ rowcol_to_dim <- function(row, col) {
   # we will always return something like "A1"
   stringi::stri_join(min_col, min_row)
 }
-#' @rdname dims_helper
-#' @param ... construct dims arguments, from rows/cols vectors or objects that can be coerced to data frame
+#' Helper to specify the `dims` argument.
+#'
+#'
+#' @description
+#' `wb_dims()` can be used to help provide the `dims` argument, in the `wb_add_*` functions.
+#' It returns a Excel range (i.e. "A1:B1") or a start like "A2".
+#' It can be very useful as you can specify many parameters that interact together
+#' In general, you must provide named arguments. `wb_dims()` will only accept unnamed arguments
+#' if it is `rows`, `cols`, for example `wb_dims(1:4, 1:2)`, that will return "A1:B4".
+#'
+#' `wb_dims()` can also be used with an object (a `data.frame` or a `matrix` for example.)
+#' All parameters are numeric unless stated otherwise.
+#' # Using `wb_dims()` alone
+#'
+#' * `rows`
+#' * `cols`
+#' * `start_row`
+#' * `start_col`
+#'
+#'
+#' # Using `wb_dims()` with an object
+#'
+#' * `x`
+#' * `start_row` the starting row of `x` (The `dims` returned will be )
+#' * `start_col` the starting column: a single integer, or an Excel column identifier "A", "B" etc.
+#' * `rows` (optional)
+#' * `cols`
+#' * `row_names`  A logical, should include `row_names`
+#' * `col_names` A logical, should include `col_names` (can be useful to style only the data.)
+#' @return A `dims` string
+#' @param ... construct dims arguments, from rows/cols vectors or objects that
+#'   can be coerced to data frame
 #' @examples
-#' # either vectors
+#' # Provide  vectors
+#' wb_dims(1:10, 1:5)
 #' wb_dims(rows = 1:10, cols = 1:10)
+#' # provide `start_col`
+#' wb_dims(rows = 1:10, cols = 1:10, start_row = 2)
 #' # or objects
-#' wb_dims(mtcars)
+#' wb_dims(x = mtcars)
+#' wb_dims()
 #' @export
 wb_dims <- function(...) {
 
   args <- list(...)
   nams <- names(args)
+  lengt <- length(args)
+  object_present <- "x" %in% nams
+  x <- args[["x"]]
+  x_has_names <- inherits(x, "data.frame") | inherits(x, "matrix")
+
+  if (lengt == 0) {
+    return("A1")
+  }
+  if (lengt == 1 && !object_present && is.null(nams)) {
+    stop(
+      "Specifying a single unnamed argument is not handled by `wb_dims()`",
+      "use `x`, `rows`, `cols` and/or `start_row`/ `start_col`. You can also use `dims = NULL`"
+      )
+  }
+
+  if (is.null(nams) && lengt == 2) {
+    if (is.character(args[[2]])) {
+      args[[2]] <- col2int(args[[2]])
+    }
+    if (is.double(args[[1]])) {
+      args[[1]] <- as.integer(args[[1]])
+    }
+    if (is.double(args[[2]])) {
+      args[[2]] <- as.integer(args[[2]])
+    }
+    lapply(args, function(args) assert_class(args, class = "integer", envir = parent.frame(n = 2)))
+  }
 
   col_names <- args$col_names
   row_names <- args$row_names
@@ -284,14 +345,17 @@ wb_dims <- function(...) {
   scol_null <- is.null(scol)
   srow_null <- is.null(srow)
 
+  rows_arg <- args$rows
+  cols_arg <- args$cols
+
+
   if (srow_null) srow <- 0 else srow <- srow - 1L
   if (scol_null) scol <- 0 else scol <- col2int(scol) - 1L
 
-  x <- args[[1]]
-  exp_name <- inherits(x, "data.frame") || inherits(x, "matrix")
+
 
   # wb_dims(rows, cols)
-  if (length(args) >= 2 && !exp_name) {
+  if (length(args) >= 2 && !x_has_names) {
     rows <- 1L
     cols <- 2L
 
@@ -310,7 +374,7 @@ wb_dims <- function(...) {
 
   } else {
 
-    if (cnam_null) col_names <- exp_name
+    if (cnam_null) col_names <- x_has_names
     if (rnam_null) row_names <- FALSE
 
     assert_class(col_names, "logical")
@@ -331,6 +395,9 @@ wb_dims <- function(...) {
     dims <- rowcol_to_dim(rows, cols)
   } else {
     # A1:B2
+    if (length(rows) == 0 && length(cols) == 0) {
+      stop("Bad input in `wb_dims()`.")
+    }
     dims <- rowcol_to_dims(rows, cols)
   }
 

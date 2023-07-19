@@ -46,32 +46,69 @@ test_that("dims to col & row and back", {
 
 })
 
-test_that("wb_dims() works", {
+test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
+  # Acceptable inputs
+  expect_equal(wb_dims(), "A1")
+  expect_equal(wb_dims(1L, 1L), "A1")
+  expect_equal(wb_dims(1:10, 1:26), "A1:Z10")
+  expect_equal(wb_dims(1:10, LETTERS), "A1:Z10")
+  expect_equal(
+    wb_dims(1:10, 1:12, start_row = 2),
+    wb_dims(rows = 1:10, cols = 1:12, start_row = 2)
+  )
 
-  expect_equal(wb_dims(mtcars), "A1:K33")
-  expect_equal(wb_dims(mtcars, col_names = FALSE, row_names = TRUE), "A1:L32")
+  # Ambiguous / input not accepted.
+  # This now fails, as it used not to work. (Use `wb_dims()`, `NULL`, or )
+  expect_error(wb_dims(NULL), "Specifying a single")
+  expect_error(wb_dims(1), "Specifying a single unnamed argument is not handled")
+  # This used to return A1 as well.
+  expect_error(wb_dims(2), "Specifying a single unnamed argument is not handled")
+  expect_error(wb_dims(mtcars), "Specifying a single unnamed argument")
 
-  expect_equal(wb_dims(letters), "A1:A26")
+  skip_on_ci("`wb_dims()` WIP")
+  expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "wb_dims() should only be used for specifying a single continuous range.")
+})
 
-  expect_equal(wb_dims(t(letters)), "A1:Z2")
 
-  expect_equal(wb_dims(1), "A1")
-
+test_that("wb_dims() works when not specifying an object.", {
   expect_equal(wb_dims(rows =  1:10, cols = 5:7), "E1:G10")
-  expect_equal(wb_dims(cols =  1:10, rows = 5:7), "A5:J7")
+  expect_equal(wb_dims(rows = 5:7, cols =  1:10), "A5:J7")
+  expect_equal(wb_dims(rows = 5, cols = 7), "G5")
   expect_error(
     wb_dims(cols =  1:10, col = 5:7),
     "found only one cols/rows argument"
   )
-
-  expect_equal(wb_dims(row = 5, col = 7), "G5")
-
-  expect_equal(wb_dims(1:10, LETTERS), "A1:Z10")
-  expect_equal(wb_dims(1:10, 1:26), "A1:Z10")
-
   expect_equal(wb_dims(1:2, 1:4, start_row = 2, start_col = "B"), "B2:E3")
-  expect_equal(wb_dims(mtcars, start_row = 2, start_col = "B"), "B2:L34")
 
+  skip_on_ci("`wb_dims()` WIP")
+  expect_equal(wb_dims(start_col = 4), "D1")
+  expect_equal(wb_dims(start_row = 4), "A4")
+  expect_equal(wb_dims(start_row = 4, start_col = 3), "C4")
+  expect_equal(wb_dims(4, 3), wb_dims(start_row = 4, start_col = 3))
+
+})
+
+test_that("`wb_dims()` works when specifying an object `x`.",{
+  expect_equal(wb_dims(x = mtcars), "A1:K33")
+  expect_equal(wb_dims(x = mtcars, col_names = FALSE, row_names = TRUE), "A1:L32")
+
+  expect_equal(wb_dims(x = letters), "A1:A26")
+
+  expect_equal(wb_dims(x = t(letters)), "A1:Z2")
+
+  expect_equal(wb_dims(x = mtcars, start_row = 2, start_col = "B"), "B2:L34")
+
+  skip_on_ci("`wb_dims()` WIP")
+  # use `col_names = FALSE` as a way to access the data, when formatting content only
+  # currently
+  # wb_dims(x = mtcars, col_names = FALSE) = "A1:K32"
+  # proposed. TODO
+  expect_equal(wb_dims(x = mtcars, col_names= FALSE), "A2:K33")
+  expect_equal(wb_dims(rows = 1:(nrow(mtcars) + 1), cols = 4), "D1:D33")
+  expect_equal(wb_dims(x = mtcars, cols = 4), "D1:D33")
+  expect_equal(wb_dims(x = mtcars, cols = 4),  "D1:D33")
+
+  expect_equal(wb_dims(x = mtcars, col_names = FALSE, start_col = 2), "B2:L33")
 })
 
 test_that("create_char_dataframe", {
