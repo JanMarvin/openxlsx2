@@ -109,6 +109,12 @@ test_that("`wb_dims()` works when specifying an object `x`.",{
   expect_equal(wb_dims(x = mtcars, cols = 4),  "D1:D33")
 
   expect_equal(wb_dims(x = mtcars, col_names = FALSE, start_col = 2), "B2:L33")
+
+  # use column names works
+
+  expect_error(wb_dims(cols = "hp"), "cols must be a numeric, when provided without `x`")
+  expect_equal(wb_dims(x = mtcars, cols = "hp"), wb_dims(rows = 1:(nrow(mtcars) + 1), cols = 4))
+  expect_error(wb_dims(x = mtcars, cols = c("hp", "vs")), "`wb_dims()` only supports one column at a time.")
 })
 
 test_that("create_char_dataframe", {
