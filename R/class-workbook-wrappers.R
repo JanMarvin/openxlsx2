@@ -1096,17 +1096,20 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 
 # base font ---------------------------------------------------------------
 
-#' @name wb_modify_basefont
-#' @title Modify the default font
-#' @description Modify the default font for this workbook
+#' Get / set the default font in a workbook
+#'
+#' Modify / get the default font for the workbook.
+#'
+#' The font name is not validated in anyway. Excel replaces unknown font names
+#' with Arial. Base font is black, size 11, Calibri.
+#' @family workbook wrappers
 #' @param wb A workbook object
 #' @param font_size font size
 #' @param font_color font color
 #' @param font_name Name of a font
-#' @param ... ...
-#' @details The font name is not validated in anyway.  Excel replaces unknown font names
-#' with Arial. Base font is black, size 11, Calibri.
-#' @export
+#' @param ... additional arguments
+#'
+#' @name wb_base_font
 #' @examples
 #' ## create a workbook
 #' wb <- wb_workbook()
@@ -1116,6 +1119,19 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data("S1", iris)
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
+#'
+#' ## get the base font
+#' ## create a workbook
+#' wb <- wb_workbook()
+#' wb_get_base_font(wb)
+#'
+#' ## modify base font to size 10 Arial Narrow in red
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
+#'
+#' wb_get_base_font(wb)
+NULL
+#' @export
+#' @rdname wb_base_font
 wb_set_base_font <- function(
   wb,
   font_size  = 11,
@@ -1131,25 +1147,8 @@ wb_set_base_font <- function(
     ...         = ...
   )
 }
-
-
-#' Return the workbook default font
-#'
-#' Get the base font used in the workbook.
-#' @param wb A [wbWorkbook] object
-#'
 #' @export
-#' @family workbook wrappers
-#'
-#' @examples
-#' ## create a workbook
-#' wb <- wb_workbook()
-#' wb_get_base_font(wb)
-#'
-#' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
-#'
-#' wb_get_base_font(wb)
+#' @rdname wb_base_font
 wb_get_base_font <- function(wb) {
   # TODO all of these class checks need to be cleaned up
   assert_workbook(wb)
