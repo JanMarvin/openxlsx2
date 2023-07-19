@@ -319,8 +319,8 @@ wb_dims <- function(...) {
   nams <- names(args) %||% rep("", lengt)
   valid_arg_nams <- c("x", "rows", "cols", "start_row", "start_col", "row_names", "col_names")
   any_args_named <- any(nzchar(nams))
-
-  has_some_named_args <- any(!nzchar(nams)) & any(nzchar(nams))
+  # unused, but can be used, if we need to check if any, but not all
+  # has_some_named_args <- any(!nzchar(nams)) & any(nzchar(nams))
   # Check if valid args were provided if any argument is named.
   if (any_args_named) {
     match.arg_wrapper(arg = nams, choices = c(valid_arg_nams, ""), several.ok = TRUE, fn_name = "`wb_dims()`")
@@ -342,23 +342,23 @@ wb_dims <- function(...) {
       "use `x`, `start_row`/ `start_col`. You can also use `dims = NULL`"
     )
   }
-  acceptable_situation_for_unnamed_first_arg <-
+  ok_if_arg1_unnamed <-
     is.atomic(args[[1]]) | any(nams %in% c("rows", "cols"))
 
-  if (nams[1] == "" && !acceptable_situation_for_unnamed_first_arg) {
+  if (nams[1] == "" && !ok_if_arg1_unnamed) {
     stop(
       "The first argument must either be named or be a vector.",
       "Providing a single named argument must either be `start_row`, `start_col` or `x`."
     )
   }
-  if (n_unnamed_args == 1 & lengt > 1 && !"rows" %in% nams) {
+  if (n_unnamed_args == 1 && lengt > 1 && !"rows" %in% nams) {
     message("Assuming the first unnamed argument to be `rows`.")
     nams[which(nams == "")[1]] <- "rows"
     names(args) <- nams
     n_unnamed_args <- length(which(!nzchar(nams)))
     all_args_unnamed <- n_unnamed_args == lengt
   }
-  if (n_unnamed_args == 1 & lengt > 1 && "rows" %in% nams) {
+  if (n_unnamed_args == 1 && lengt > 1 && "rows" %in% nams) {
     message("Assuming the first unnamed argument to be `cols`.")
     nams[which(nams == "")[1]] <- "cols"
     names(args) <- nams
@@ -403,22 +403,6 @@ wb_dims <- function(...) {
       stop("`row_names`, and `col_names` should only be used if `x` is present.")
     }
   }
-  if (FALSE) {
-    if (valid == 2 || (valid == 1 & lengt == 2)) {
-      if (length(cols_pos) == 0) {
-        # assuming first unnamed argument
-        cols_pos <- which(nams == "")[1]
-        warning("Make sure you name `cols` argument.")
-      }
-      if (length(rows_pos) == 0) {
-        # first unnamed argument
-        rows_pos <- which(nams == "")[1]
-        warning("Make sure you name `rows` argument.")
-      }
-    } else if (valid == 1) {
-      stop("found only one cols/rows argument")
-    }
-  }
   rows_arg <- args$rows
   #
   x <- args$x
@@ -439,7 +423,7 @@ wb_dims <- function(...) {
   x <- args$x
   x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
 
-  rows_and_cols_present <- all(c("rows", "cols") %in% nams)
+  # rows_and_cols_present <- all(c("rows", "cols") %in% nams)
 
 
   # Find column location id if `cols` is named.
