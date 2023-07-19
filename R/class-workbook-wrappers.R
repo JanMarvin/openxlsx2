@@ -2929,6 +2929,7 @@ wb_add_dxfs_style <- function(
 #' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @seealso [wb_add_thread()]
+#' @rdname comment
 #' @export
 wb_add_comment <- function(
     wb,
@@ -2950,11 +2951,6 @@ wb_add_comment <- function(
 }
 
 #' Remove comment from worksheet
-#' @param wb A workbook object
-#' @param sheet A worksheet of the workbook
-#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
-#' @param ... additional arguments
-#' @returns The `wbWorkbook` object
 #' @rdname comment
 #' @export
 wb_remove_comment <- function(

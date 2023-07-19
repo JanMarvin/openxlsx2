@@ -2,8 +2,7 @@
 % Please edit documentation in R/class-comment.R, R/class-workbook-wrappers.R
 \name{create_comment}
 \alias{create_comment}
-\alias{write_comment}
-\alias{remove_comment}
+\alias{wb_add_comment}
 \alias{wb_remove_comment}
 \title{Create, write and remove comments}
 \usage{
@@ -16,23 +15,7 @@ create_comment(
   height = 4
 )
 
-write_comment(
-  wb,
-  sheet,
-  col = NULL,
-  row = NULL,
-  comment,
-  dims = rowcol_to_dim(row, col)
-)
-
-remove_comment(
-  wb,
-  sheet,
-  col = NULL,
-  row = NULL,
-  gridExpand = TRUE,
-  dims = NULL
-)
+wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
 
 wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 }
@@ -53,16 +36,9 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 
 \item{sheet}{A worksheet of the workbook}
 
-\item{col}{Column a column number of letter. For \code{remove_comment} this can be a range.}
-
-\item{row}{A row number. For \code{remove_comment} this can be a range.}
-
-\item{comment}{A Comment object. See \code{\link[=create_comment]{create_comment()}}.}
-
 \item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 
-\item{gridExpand}{If \code{TRUE}, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
-will be removed.}
+\item{comment}{A comment to apply to the worksheet}
 
 \item{...}{additional arguments}
 }
@@ -98,4 +74,6 @@ write_comment(wb, 1, col = 6, row = 3, comment = c3)
 # remove the first comment
 remove_comment(wb, 1, col = "B", row = 10)
 }
-\keyword{internal}
+\seealso{
+\code{\link[=wb_add_thread]{wb_add_thread()}}
+}
