@@ -1,6 +1,9 @@
 
 assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL, envir = parent.frame()) {
   sx <- as.character(substitute(x, envir))
+  if (identical(sx, character(0))) {
+    sx <- ""
+  }
 
   ok <- if (all) {
     all(vapply(class, function(i) inherits(x, i), NA))
