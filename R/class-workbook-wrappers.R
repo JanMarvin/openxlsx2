@@ -810,18 +810,17 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 }
 
 
-#' Set worksheet column widths
+#' Modify worksheet column widths
 #'
-#' Set worksheet column widths to specific width or "auto".
-#'
-#' @param wb A [wbWorkbook] object
+#' Remove / set worksheet column widths to specific width or "auto".
+#' @param wb A `wbWorkbook` object
 #' @param sheet A name or index of a worksheet
-#' @param cols Indices of cols to set width
+#' @param cols Indices of cols to set/remove width Indices
 #' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
 #' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
 #' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 #' of the selected width.
-#' @param hidden Logical vector. If TRUE the column is hidden.
+#' @param hidden Logical vector. If `TRUE` the column is hidden.
 #' @details The global min and max column width for "auto" columns is set by (default values show):
 #' \itemize{
 #'   \item{options("openxlsx2.minWidth" = 3)}
@@ -833,9 +832,7 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #'   NOTE: The `hidden` parameter may conflict with the one set in
 #'   [wb_group_cols]; changing one will update the other.
 #'
-#' @export
 #' @family workbook wrappers
-#' @seealso [wb_remove_col_widths()]
 #'
 #' @examples
 #' ## Create a new workbook
@@ -851,6 +848,18 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_data(sheet = 2, x = iris)
 #' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
+#'
+#' ## removing column widths
+#' ## Create a new workbook
+#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+#'
+#' ## remove column widths in columns 1 to 20
+#' wb_remove_col_widths(wb, 1, cols = 1:20)
+#' @name wb_col_widths
+NULL
+
+#' @rdname wb_col_widths
+#' @export
 wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
   wb$clone()$set_col_widths(
@@ -861,29 +870,12 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
     hidden = hidden
   )
 }
-
-#' @name wb_remove_col_widths
-#' @title Remove column widths from a worksheet
-
-#' @description Remove column widths from a worksheet
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols Indices of columns to remove custom width (if any) from.
-#' @seealso [wb_set_col_widths()]
+#' @rdname wb_col_widths
 #' @export
-#' @examples
-#' ## Create a new workbook
-#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
-#'
-#' ## remove column widths in columns 1 to 20
-#' wb_remove_col_widths(wb, 1, cols = 1:20)
 wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
 }
-
-
-
 #' Remove custom row heights from a worksheet
 #'
 #' Remove row heights from a worksheet
