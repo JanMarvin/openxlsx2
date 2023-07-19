@@ -261,7 +261,6 @@ rowcol_to_dim <- function(row, col) {
 }
 #' Helper to specify the `dims` argument.
 #'
-#'
 #' @description
 #' `wb_dims()` can be used to help provide the `dims` argument, in the `wb_add_*` functions.
 #' It returns a Excel range (i.e. "A1:B1") or a start like "A2".
@@ -273,135 +272,334 @@ rowcol_to_dim <- function(row, col) {
 #' All parameters are numeric unless stated otherwise.
 #' # Using `wb_dims()` alone
 #'
-#' * `rows`
-#' * `cols`
+#' * `rows` / `cols` (if you want to specify a single one, use `start_row` / `start_col`)
 #' * `start_row`
 #' * `start_col`
 #'
-#'
 #' # Using `wb_dims()` with an object
 #'
-#' * `x`
+#' * `x` An object (typically a `matrix` or a `data.frame`)
 #' * `start_row` the starting row of `x` (The `dims` returned will be )
 #' * `start_col` the starting column: a single integer, or an Excel column identifier "A", "B" etc.
-#' * `rows` (optional)
-#' * `cols`
-#' * `row_names`  A logical, should include `row_names`
-#' * `col_names` A logical, should include `col_names` (can be useful to style only the data.)
+#' * `rows` (Which rows? (not fully supported yet
+#' * `cols` a range of column, or one of the column names of `x` (length 1 only accepted)
+#' * `row_names` A logical, should include `row_names`
+#' * `col_names` A logical, defaults to `TRUE` is `x` has dimensions.
+#'          Using `FALSE` can be useful to apply a style or a formula to the content of `x`.
 #' @return A `dims` string
 #' @param ... construct dims arguments, from rows/cols vectors or objects that
 #'   can be coerced to data frame
 #' @examples
+#' # Provide coordinates
+#' wb_dims()
+#' wb_dims(1, 4)
+#' wb_dims(rows = 1, cols = 4)
+#' wb_dims(start_row = 4)
+#' wb_dims(start_col = 2)
+#' wb_dims(1:4, 6:9, start_row = 5)
 #' # Provide  vectors
 #' wb_dims(1:10, 1:5)
 #' wb_dims(rows = 1:10, cols = 1:10)
-#' # provide `start_col`
+#' # provide `start_col` / `start_row`
 #' wb_dims(rows = 1:10, cols = 1:10, start_row = 2)
+#' wb_dims(rows = 1:10, cols = 1:10, start_col = 2)
 #' # or objects
 #' wb_dims(x = mtcars)
-#' wb_dims()
+#' # dims of all the data of mtcars.
+#' wb_dims(x = mtcars, col_names = FALSE)
 #' @export
 wb_dims <- function(...) {
-
   args <- list(...)
-  nams <- names(args)
   lengt <- length(args)
-  object_present <- "x" %in% nams
-  x <- args[["x"]]
-  x_has_names <- inherits(x, "data.frame") | inherits(x, "matrix")
-
-  if (lengt == 0) {
+  if (lengt == 0 || (lengt == 1 && is.null(args[[1]]))) {
     return("A1")
   }
-  if (lengt == 1 && !object_present && is.null(nams)) {
+
+  # nams cannot be NULL now
+  nams <- names(args) %||% rep("", lengt)
+  valid_arg_nams <- c("x", "rows", "cols", "start_row", "start_col", "row_names", "col_names")
+  any_args_named <- any(nzchar(nams))
+
+  has_some_named_args <- any(!nzchar(nams)) & any(nzchar(nams))
+  # Check if valid args were provided if any argument is named.
+  if (any_args_named) {
+    match.arg_wrapper(arg = nams, choices = c(valid_arg_nams, ""), several.ok = TRUE, fn_name = "`wb_dims()`")
+  }
+  # After this point, no need to search for invalid arguments!
+
+  n_unnamed_args <- length(which(!nzchar(nams)))
+  all_args_unnamed <- n_unnamed_args == lengt
+  # argument dispatch / creation here.
+  # All names provided, happy :)
+  # Checking if valid names were provided.
+
+  if (n_unnamed_args > 2) {
+    stop("only `rows` and `cols` can be provided without names. You must name all other arguments.")
+  }
+  if (lengt == 1 && all_args_unnamed) {
     stop(
       "Specifying a single unnamed argument is not handled by `wb_dims()`",
-      "use `x`, `rows`, `cols` and/or `start_row`/ `start_col`. You can also use `dims = NULL`"
-      )
+      "use `x`, `start_row`/ `start_col`. You can also use `dims = NULL`"
+    )
+  }
+  acceptable_situation_for_unnamed_first_arg <-
+    is.atomic(args[[1]]) | any(nams %in% c("rows", "cols"))
+
+  if (nams[1] == "" && !acceptable_situation_for_unnamed_first_arg) {
+    stop(
+      "The first argument must either be named or be a vector.",
+      "Providing a single named argument must either be `start_row`, `start_col` or `x`."
+    )
+  }
+  if (n_unnamed_args == 1 & lengt > 1 && !"rows" %in% nams) {
+    message("Assuming the first unnamed argument to be `rows`.")
+    nams[which(nams == "")[1]] <- "rows"
+    names(args) <- nams
+    n_unnamed_args <- length(which(!nzchar(nams)))
+    all_args_unnamed <- n_unnamed_args == lengt
+  }
+  if (n_unnamed_args == 1 & lengt > 1 && "rows" %in% nams) {
+    message("Assuming the first unnamed argument to be `cols`.")
+    nams[which(nams == "")[1]] <- "cols"
+    names(args) <- nams
+    n_unnamed_args <- length(which(!nzchar(nams)))
+    all_args_unnamed <- n_unnamed_args == lengt
   }
 
-  if (is.null(nams) && lengt == 2) {
-    if (is.character(args[[2]])) {
-      args[[2]] <- col2int(args[[2]])
-    }
-    if (is.double(args[[1]])) {
-      args[[1]] <- as.integer(args[[1]])
-    }
-    if (is.double(args[[2]])) {
-      args[[2]] <- as.integer(args[[2]])
-    }
-    lapply(args, function(args) assert_class(args, class = "integer", envir = parent.frame(n = 2)))
+  # if 2 unnamed arguments, will be rows, cols.
+  if (n_unnamed_args == 2) {
+    # message("Assuming the first 2 unnamed arguments to be `rows`, `cols` resp.")
+    rows_pos <- which(nams == "")[1]
+    cols_pos <- which(nams == "")[2]
+    nams[c(rows_pos, cols_pos)] <- c("rows", "cols")
+    names(args) <- nams
+    n_unnamed_args <- length(which(!nzchar(nams)))
+    all_args_unnamed <- n_unnamed_args == lengt
   }
+
+  has_some_unnamed_args <- any(!nzchar(nams))
+  if (has_some_unnamed_args) {
+    stop("Internal error, all arguments should be named after this point.")
+  }
+
+  x_present <- "x" %in% nams
+  cond_acceptable_lengt_1 <- x_present || !is.null(args$start_row) || !is.null(args$start_col)
+
+  if (lengt == 1 && !cond_acceptable_lengt_1) {
+    # Providing a single argument acceptable is only  `x`
+    sentence_unnamed <- ifelse(all_args_unnamed, "unnamed ", " ")
+    stop(
+      "Specifying a single", sentence_unnamed, "argument to `wb_dims()` is not supported.",
+      "\n",
+      "use any of `x`, `start_row` `start_col`. You can also use `rows` and `cols`, You can also use `dims = NULL`"
+    )
+  }
+  cnam_null <- is.null(args$col_names)
+  rnam_null <- is.null(args$row_names)
+
+
+  if (!x_present) {
+    if (!cnam_null || !rnam_null) {
+      stop("`row_names`, and `col_names` should only be used if `x` is present.")
+    }
+  }
+  if (FALSE) {
+    if (valid == 2 || (valid == 1 & lengt == 2)) {
+      if (length(cols_pos) == 0) {
+        # assuming first unnamed argument
+        cols_pos <- which(nams == "")[1]
+        warning("Make sure you name `cols` argument.")
+      }
+      if (length(rows_pos) == 0) {
+        # first unnamed argument
+        rows_pos <- which(nams == "")[1]
+        warning("Make sure you name `rows` argument.")
+      }
+    } else if (valid == 1) {
+      stop("found only one cols/rows argument")
+    }
+  }
+  rows_arg <- args$rows
+  #
+  x <- args$x
+  x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
+  if (x_has_named_dims && !is.null(rows_arg)) {
+    is_rows_a_colname <- rows_arg %in% colnames(x)
+
+    if (any(is_rows_a_colname)) {
+      stop("`rows` is the incorrect argument. Use `cols` instead.")
+    }
+  }
+  if (is.character(rows_arg)) {
+    warning("It's preferable to specify integers indices for `rows`", "See `col2int(rows)` to find the correct index.")
+  }
+
+  rows_arg <- col2int(rows_arg, allow_null = TRUE)
+  cols_arg <- args$cols
+  x <- args$x
+  x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
+
+  rows_and_cols_present <- all(c("rows", "cols") %in% nams)
+
+
+  # Find column location id if `cols` is named.
+  if (x_has_named_dims && !is.null(cols_arg)) {
+    is_cols_a_colname <- cols_arg %in% colnames(x)
+
+    if (any(is_cols_a_colname)) {
+      if (length(is_cols_a_colname) != 1) {
+        stop(
+          "Supplying multiple column names is not supported by the `wb_dims()` helper, use the `cols`  arguments instead.",
+          "\n Use a single `cols` at a time with `wb_dims()`"
+        )
+      }
+      col_name <- cols_arg
+
+      cols_arg <- which(colnames(x) == cols_arg)
+      message("Transforming col name = '", col_name, "' to `cols = ", cols_arg, "`")
+    }
+  }
+
+  if (!is.null(rows_arg)) {
+    assert_class(rows_arg, class = "integer", envir = parent.frame(n = 2), arg_nm = "rows_arg")
+  }
+
+  if (!is.null(cols_arg)) {
+    cols_arg <- col2int(cols_arg)
+    assert_class(cols_arg, class = "integer", envir = parent.frame(n = 2), arg_nm = "cols_arg")
+  }
+
+  srow <- args$start_row %||% 1L
+  srow <- srow - 1L
+  scol <- col2int(args$start_col, allow_null = TRUE) %||% 1L
+  scol <- scol - 1L
+  # after this point, no assertion, assuming all elements to be acceptable
+
+
 
   col_names <- args$col_names
   row_names <- args$row_names
 
-  cnam_null <- is.null(col_names)
-  rnam_null <- is.null(row_names)
+  rows_arg
+  cols_arg
 
-  srow <- args$start_row
-  scol <- args$start_col
-
-  scol_null <- is.null(scol)
-  srow_null <- is.null(srow)
-
-  rows_arg <- args$rows
-  cols_arg <- args$cols
-
-
-  if (srow_null) srow <- 0 else srow <- srow - 1L
-  if (scol_null) scol <- 0 else scol <- col2int(scol) - 1L
-
-
-
-  # wb_dims(rows, cols)
-  if (length(args) >= 2 && !x_has_names) {
-    rows <- 1L
-    cols <- 2L
-
-    # wb_dims(rows = rows, cols = cols)
-    sel <- pmatch(nams, c("rows", "cols"))
-    valid <- length(sel[!is.na(sel)])
-    if (valid == 2) {
-      rows <- sel[rows]
-      cols <- sel[cols]
-    } else if (valid == 1) {
-      stop("found only one cols/rows argument")
-    }
-
-    rows <- as.integer(args[[rows]])
-    cols <- col2int(args[[cols]])
-
-  } else {
-
-    if (cnam_null) col_names <- x_has_names
-    if (rnam_null) row_names <- FALSE
-
-    assert_class(col_names, "logical")
-    assert_class(row_names, "logical")
-
-    # wb_dims(data.frame())
-    x <- as.data.frame(x)
-    rows <- seq_len(nrow(x) + col_names)
-    cols <- seq_len(ncol(x) + row_names)
-
+  if (!all(length(scol) == 1, length(srow) == 1, scol >= 0, srow >= 0)) {
+    stop("Internal error. At this point scol and srow should have length 1.")
   }
 
-  rows <- rows + srow
-  cols <- cols + scol
 
-  if (length(rows) == 1 && length(cols) == 1) {
+  # if `!x` return early
+  if (!x_present) {
+    row_span <- srow + rows_arg %||% 1L
+    col_span <- scol + cols_arg %||% 1L
+    if (length(row_span) == 1 && length(col_span) == 1) {
+      # A1
+      row_start <- row_span
+      col_start <- col_span
+      dims <- rowcol_to_dim(row_start, col_start)
+    } else {
+      # A1:B2
+
+      dims <- rowcol_to_dims(row_span, col_span)
+    }
+    return(dims)
+  }
+  # Making sure that at this point, we only cover the case for `x`
+
+  col_names <- col_names %||% x_has_named_dims
+  row_names <- row_names %||% FALSE
+  if (!col_names && row_names && x_has_named_dims) {
+    warning("The combination of `row_names = TRUE` and `col_names = FALSE` is not recommended.",
+      "`col_names` allows to select the region that contains the data only.",
+      "`row_names` = TRUE adds row numbers if the data doesn't have rownames.",
+      call. = FALSE
+    )
+  }
+  assert_class(col_names, "logical")
+  assert_class(row_names, "logical")
+  x <- as.data.frame(x)
+
+  nrow_to_span <- nrow(x)
+  ncol_to_span <- ncol(x)
+
+  if (col_names && x_has_named_dims) {
+    nrow_to_span <- nrow_to_span + 1
+  }
+  # if without column names and with named dimensions
+  # We will increment the start row by 1.
+  if (!col_names && x_has_named_dims) {
+    srow <- srow + 1
+  }
+
+  # Adding a column when spanning.
+  if (row_names) {
+    ncol_to_span <- ncol_to_span + 1
+  }
+
+  # if (row_names) {
+  #   scol <- scol + 1
+  # }
+
+  if (!all(scol >= 0, srow >= 0)) {
+    stop("Internal error. At this point `start_col` and `start_row` should have length 1.")
+  }
+
+  if (is.null(cols_arg) && is.null(rows_arg)) {
+    # wb_dims(data.frame())
+    row_span <- srow + seq_len(nrow_to_span)
+    col_span <- scol + seq_len(ncol_to_span)
+  } else if (is.null(rows_arg)) {
+    row_span <- srow + seq_len(nrow_to_span)
+    col_span <- scol + cols_arg + row_names
+  } else if (is.null(cols_arg)) {
+    row_span <- srow + rows_arg + col_names
+    col_span <- scol + seq_len(ncol_to_span)
+  } else {
+    "problem"
+  }
+
+  if (length(row_span) == 1 && length(col_span) == 1) {
     # A1
-    dims <- rowcol_to_dim(rows, cols)
+    row_start <- row_span
+    col_start <- col_span
+    dims <- rowcol_to_dim(row_start, col_start)
   } else {
     # A1:B2
-    if (length(rows) == 0 && length(cols) == 0) {
-      stop("Bad input in `wb_dims()`.")
-    }
-    dims <- rowcol_to_dims(rows, cols)
+
+    dims <- rowcol_to_dims(row_span, col_span)
   }
 
   dims
+}
+
+# It is inspired heavily by `rlang::arg_match(multi = TRUE)` and `base::match.arg()`
+match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) {
+  # Check valid argument names
+  # partial matching accepted
+  fn_name <- fn_name %||% "function"
+  # match.arg(arg, choices = choices, several.ok = several.ok)
+  # Using rlang::arg_match() would remove that.
+  if (!several.ok) {
+    if (length(arg) != 1) {
+      stop(
+        "Must provide a single argument found in ", fn_name, ": ", invalid_arg_nams, "\n", "Use one of ", valid_arg_nams,
+        call. = FALSE
+      )
+    }
+  }
+
+  invalid_args <- !arg %in% choices
+  if (any(invalid_args)) {
+    invalid_arg_nams <- paste0("`", arg[invalid_args], "`", collapse = ", ")
+    multi <- length(invalid_arg_nams) > 0
+    plural_sentence <- ifelse(multi, " is an invalid argument for ", " are invalid arguments for ")
+
+    valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
+    stop(
+      invalid_arg_nams, plural_sentence, fn_name, ": ", "\n", "Use any of ", valid_arg_nams,
+      call. = FALSE
+    )
+  }
 }
 
 

@@ -25,8 +25,7 @@ All parameters are numeric unless stated otherwise.
 }
 \section{Using \code{wb_dims()} alone}{
 \itemize{
-\item \code{rows}
-\item \code{cols}
+\item \code{rows} / \code{cols} (if you want to specify a single one, use \code{start_row} / \code{start_col})
 \item \code{start_row}
 \item \code{start_col}
 }
@@ -34,23 +33,33 @@ All parameters are numeric unless stated otherwise.
 
 \section{Using \code{wb_dims()} with an object}{
 \itemize{
-\item \code{x}
+\item \code{x} An object (typically a \code{matrix} or a \code{data.frame})
 \item \code{start_row} the starting row of \code{x} (The \code{dims} returned will be )
 \item \code{start_col} the starting column: a single integer, or an Excel column identifier "A", "B" etc.
-\item \code{rows} (optional)
-\item \code{cols}
-\item \code{row_names}  A logical, should include \code{row_names}
-\item \code{col_names} A logical, should include \code{col_names} (can be useful to style only the data.)
+\item \code{rows} (Which rows? (not fully supported yet
+\item \code{cols} a range of column, or one of the column names of \code{x} (length 1 only accepted)
+\item \code{row_names} A logical, should include \code{row_names}
+\item \code{col_names} A logical, defaults to \code{TRUE} is \code{x} has dimensions.
+Using \code{FALSE} can be useful to apply a style or a formula to the content of \code{x}.
 }
 }
 
 \examples{
+# Provide coordinates
+wb_dims()
+wb_dims(1, 4)
+wb_dims(rows = 1, cols = 4)
+wb_dims(start_row = 4)
+wb_dims(start_col = 2)
+wb_dims(1:4, 6:9, start_row = 5)
 # Provide  vectors
 wb_dims(1:10, 1:5)
 wb_dims(rows = 1:10, cols = 1:10)
-# provide `start_col`
+# provide `start_col` / `start_row`
 wb_dims(rows = 1:10, cols = 1:10, start_row = 2)
+wb_dims(rows = 1:10, cols = 1:10, start_col = 2)
 # or objects
 wb_dims(x = mtcars)
-wb_dims()
+# dims of all the data of mtcars.
+wb_dims(x = mtcars, col_names = FALSE)
 }
