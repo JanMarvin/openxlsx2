@@ -481,9 +481,8 @@ wb_copy_cells <- function(
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param cols,rows Column and row specifications to merge on.  Note: `min()` and
-#'   `max()` of each vector are provided for specs.  Skipping rows or columns is
-#'   not recognized.
+#' @param dims worksheet cells
+#' @param ... additional arguments
 #'
 #' @examples
 #' # Create a new workbook
@@ -517,16 +516,16 @@ NULL
 
 #' @export
 #' @rdname wb_merge_cells
-wb_merge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
+wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
   assert_workbook(wb)
-  wb$clone()$merge_cells(sheet = sheet, rows = rows, cols = cols)
+  wb$clone()$merge_cells(sheet = sheet, dims = dims, ... = ...)
 }
 
 #' @export
 #' @rdname wb_merge_cells
-wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
+wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
   assert_workbook(wb)
-  wb$clone()$unmerge_cells(sheet = sheet, rows = rows, cols = cols)
+  wb$clone()$unmerge_cells(sheet = sheet, dims = dims, ... = ...)
 }
 
 
@@ -3095,8 +3094,6 @@ wb_add_form_control <- function(
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims A cell or cell range like "A1" or "A1:B2"
-#' @param cols Columns to apply conditional formatting to
-#' @param rows Rows to apply conditional formatting to
 #' @param rule The condition under which to apply the formatting. See examples.
 #' @param style A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'
 #' @param type The type of conditional formatting rule to apply.

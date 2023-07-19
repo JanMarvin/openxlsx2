@@ -35,10 +35,6 @@ wb_add_conditional_formatting(
 \item{params}{Additional parameters passed.  See \strong{Details} for more}
 
 \item{...}{additional arguments}
-
-\item{cols}{Columns to apply conditional formatting to}
-
-\item{rows}{Rows to apply conditional formatting to}
 }
 \description{
 Add conditional formatting to cells
