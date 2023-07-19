@@ -79,7 +79,7 @@ df <- data.frame(
 )
 wb$add_data_table(2, x = df)
 wb$add_data_validation(2,
-  col = 1, rows = 2:12, type = "date",
+  cols = 1, rows = 2:12, type = "date",
   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 )
 wb$add_data_validation(2,

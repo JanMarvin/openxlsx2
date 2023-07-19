@@ -1711,8 +1711,8 @@ wb_set_order <- function(wb, sheets) {
 #'   sheet = 1,
 #'   name = "iris",
 #'   dims = wb_dims(
-#'     row = seq_len(nrow(iris) + 1),
-#'     col = seq_along(iris)
+#'     rows = seq_len(nrow(iris) + 1),
+#'     cols = seq_along(iris)
 #'   )
 #' )
 #'
@@ -1905,7 +1905,7 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #' )
 #' wb$add_data_table(2, x = df)
 #' wb$add_data_validation(2,
-#'   col = 1, rows = 2:12, type = "date",
+#'   cols = 1, rows = 2:12, type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
 #' wb$add_data_validation(2,
