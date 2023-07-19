@@ -14,8 +14,8 @@
 #endif
 
 #ifdef __APPLE__
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	// #pragma GCC diagnostic push
+	// #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 #if 0 //#ifdef __APPLE__
 	#define COMMON_DIGEST_FOR_OPENSSL

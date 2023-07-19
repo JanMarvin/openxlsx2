@@ -5,6 +5,7 @@ LIBMSOC = cryptography/msoc/msocdll.o
 
 STATLIB = cryptography/libmsoc.a
 
+# PKG_CXXFLAGS= -Wall -pedantic
 all: clean
 
 all: $(SHLIB)
