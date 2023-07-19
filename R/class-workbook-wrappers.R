@@ -2242,33 +2242,33 @@ wb_get_creators <- function(wb) {
 
 # names -------------------------------------------------------------------
 
-#' Set worksheet names for a workbook
+#' Get / Set worksheet names for a workbook
 #'
-#' Sets the worksheet names for a [wbWorkbook] object.
+#' Gets / Sets the worksheet names for a [wbWorkbook] object.
 #'
-#' @details This only changes the sheet name as shown in spreadsheet software
+#' This only changes the sheet name as shown in spreadsheet software
 #' and will not alter it anywhere else. Not in formulas, chart references,
 #' named regions, pivot tables or anywhere else.
 #'
-#' @param wb A [wbWorkbook] object
+#' @param wb A `wbWorkbook` object
 #' @param old The name (or index) of the old sheet name. If `NULL` will assume
 #'   all worksheets are to be renamed.
 #' @param new The name of the new sheet
-#' @returns The [wbWorkbook] object
+#' @name wb_sheet_names
+#' @returns
+#'   * `set_`: The [wbWorkbook] object.
+#'   * `get_`: A named character vector of sheet names in order. The
+#'   names represent the original value of the worksheet prior to any character
+#'   substitutions.
+#'
+NULL
+#' @rdname wb_sheet_names
 #' @export
 wb_set_sheet_names <- function(wb, old = NULL, new) {
   assert_workbook(wb)
   wb$clone()$set_sheet_names(old = old, new = new)
 }
-
-#' Get worksheet names for a workbook
-#'
-#' Gets the worksheet names for a [wbWorkbook] object
-#'
-#' @param wb A [wbWorkbook] object
-#' @returns A `named` `character` vector of sheet names in their order.  The
-#'   names represent the original value of the worksheet prior to any character
-#'   substitutions.
+#' @rdname wb_sheet_names
 #' @export
 wb_get_sheet_names <- function(wb) {
   assert_workbook(wb)
