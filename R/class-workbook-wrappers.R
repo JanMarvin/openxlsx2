@@ -3101,6 +3101,7 @@ wb_add_form_control <- function(
 #' @param style A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'
 #' @param type The type of conditional formatting rule to apply.
 #' @param params Additional parameters passed.  See **Details** for more
+#' @param ... additional arguments
 #' @details See Examples.
 #'
 #' @details
@@ -3165,8 +3166,6 @@ wb_add_conditional_formatting <- function(
     wb,
     sheet  = current_sheet(),
     dims   = NULL,
-    cols   = NULL,
-    rows   = NULL,
     rule   = NULL,
     style  = NULL,
     type   = c(
@@ -3185,18 +3184,18 @@ wb_add_conditional_formatting <- function(
       border    = TRUE,
       percent   = FALSE,
       rank      = 5L
-    )
+    ),
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_conditional_formatting(
-    sheet = sheet,
-    dims  = dims,
-    cols  = cols,
-    rows  = rows,
-    rule  = rule,
-    style = style,
-    type  = type,
-    params = params
+    sheet  = sheet,
+    dims   = dims,
+    rule   = rule,
+    style  = style,
+    type   = type,
+    params = params,
+    ...    = ...
   )
 }
 

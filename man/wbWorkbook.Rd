@@ -1716,8 +1716,6 @@ Add conditional formatting
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_conditional_formatting(
   sheet = current_sheet(),
   dims = NULL,
-  cols = NULL,
-  rows = NULL,
   rule = NULL,
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
@@ -1725,7 +1723,8 @@ Add conditional formatting
     "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
     "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
-    5L)
+    5L),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1736,10 +1735,6 @@ Add conditional formatting
 
 \item{\code{dims}}{dims}
 
-\item{\code{cols}}{cols}
-
-\item{\code{rows}}{rows}
-
 \item{\code{rule}}{rule}
 
 \item{\code{style}}{style}
@@ -1747,6 +1742,8 @@ Add conditional formatting
 \item{\code{type}}{type}
 
 \item{\code{params}}{Additional parameters}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }

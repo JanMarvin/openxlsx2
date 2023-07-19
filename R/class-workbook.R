@@ -3874,18 +3874,15 @@ wbWorkbook <- R6::R6Class(
     #' @description Add conditional formatting
     #' @param sheet sheet
     #' @param dims dims
-    #' @param cols cols
-    #' @param rows rows
     #' @param rule rule
     #' @param style style
     #' @param type type
     #' @param params Additional parameters
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
         sheet  = current_sheet(),
         dims   = NULL,
-        cols   = NULL,
-        rows   = NULL,
         rule   = NULL,
         style  = NULL,
         # TODO add vector of possible values
@@ -3905,17 +3902,33 @@ wbWorkbook <- R6::R6Class(
           border    = TRUE,
           percent   = FALSE,
           rank      = 5L
-        )
+        ),
+        ...
     ) {
+
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
+
+      if (!is.null(rows) && !is.null(cols)) {
+
+        if (length(cols) > 2 && any(diff(cols) != 1))
+          warning("cols > 2, will create range from min to max.")
+
+        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      ddims <- dims_to_rowcol(dims, as_integer = TRUE)
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
 
       if (!is.null(style)) assert_class(style, "character")
       assert_class(type, "character")
       assert_class(params, "list")
 
       type <- match.arg(type)
-
-      if (length(cols) > 2 && any(diff(cols) != 1))
-        warning("cols > 2, will create range from min to max.")
 
       ## rows and cols
       if (!is.null(cols) && !is.null(rows)) {
