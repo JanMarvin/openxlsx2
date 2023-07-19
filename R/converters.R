@@ -20,18 +20,24 @@ int2col <- function(x) {
 #' @title Convert Excel column to integer
 #' @description Converts an Excel column label to an integer.
 #' @param x A character vector
+#' @param allow_null If `TRUE`, will not warn if `NULL` is encountered.
 #' @export
 #' @examples
 #' col2int(LETTERS)
-col2int <- function(x) {
-
+col2int <- function(x, allow_null = FALSE) {
+  if (is.null(x)) {
+    if (allow_null) {
+      return(NULL)
+    }
+    warning("`NULL` was provided to `col2int()`, may cause problem, check input carefully.")
+  }
   if (is.numeric(x) || is.integer(x) || is.factor(x))
-    return(as.numeric(x))
+    return(as.integer(x))
 
   if (!is.character(x)) {
     stop("x must be character")
 
-    if (any(is.na(x)))
+    if (anyNA(x))
       stop("x must be a valid character")
   }
 

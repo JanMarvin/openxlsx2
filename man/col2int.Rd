@@ -4,10 +4,12 @@
 \alias{col2int}
 \title{Convert Excel column to integer}
 \usage{
-col2int(x)
+col2int(x, allow_null = FALSE)
 }
 \arguments{
 \item{x}{A character vector}
+
+\item{allow_null}{If \code{TRUE}, will not warn if \code{NULL} is encountered.}
 }
 \description{
 Converts an Excel column label to an integer.
