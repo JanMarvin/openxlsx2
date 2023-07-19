@@ -972,9 +972,9 @@ wb_add_plot <- function(
 }
 
 #' add drawings to workbook
-#' @param wb a wbWorkbook
+#' @param wb a `wbWorkbook`
 #' @param sheet a sheet in the workbook
-#' @param dims the dimension where the drawing is added. Can be NULL
+#' @param dims the dimension where the drawing is added. Can be `NULL`
 #' @param xml the drawing xml as character or file
 #' @param col_offset,row_offset offsets for column and row
 #' @param ... additional arguments
@@ -1789,20 +1789,20 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 
 # filters -----------------------------------------------------------------
 
-#' Add column filters
+#' Add/remove column filters in a worksheet
 #'
-#' Add excel column filters to a worksheet
+#' Add or remove excel column filters to a worksheet
 #'
+#' Adds filters to worksheet columns, same as filter parameters in write_data.
+#' [wb_add_data_table()] automatically adds filters to first row of a table.
+#' NOTE Can only have a single filter per worksheet unless using tables.
 #' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
+#' @param sheet
+#'   * In `wb_add_filter()` A single name or index of a worksheet.
+#'   * In `wb_remove_filter()`, a vector of names/indices of worksheet
 #' @param cols columns to add filter to.
 #' @param rows A row number.
-#' @seealso [write_data()]
-#' @details adds filters to worksheet columns, same as filter parameters in write_data.
-#' write_datatable automatically adds filters to first row of a table.
-#' NOTE Can only have a single filter per worksheet unless using tables.
-#' @export
-#' @seealso [wb_add_filter()]
+#' @seealso [write_data()], [write_data_table()]
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
@@ -1817,18 +1817,6 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #'
 #' ## Similarly
 #' wb$add_data_table(3, iris)
-wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
-  assert_workbook(wb)
-  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
-}
-
-#' @name wb_remove_filter
-#' @title Remove a worksheet filter
-#' @description Removes filters from wb_add_filter() and write_data()
-#' @param wb A workbook object
-#' @param sheet A vector of names or indices of worksheets
-#' @export
-#' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
@@ -1846,6 +1834,16 @@ wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
 #' ## remove filters
 #' wb_remove_filter(wb, 1:2) ## remove filters
 #' wb_remove_filter(wb, 3) ## Does not affect tables!
+#' @name wb_filter
+NULL
+#' @rdname wb_filter
+#' @export
+wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
+  assert_workbook(wb)
+  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
+}
+#' @rdname wb_filter
+#' @export
 wb_remove_filter <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
   wb$clone()$remove_filter(sheet = sheet)
