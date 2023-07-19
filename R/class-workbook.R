@@ -3914,7 +3914,7 @@ wbWorkbook <- R6::R6Class(
 
       type <- match.arg(type)
 
-      if (length(cols) > 2)
+      if (length(cols) > 2 && any(diff(cols) != 1))
         warning("cols > 2, will create range from min to max.")
 
       ## rows and cols
