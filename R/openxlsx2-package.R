@@ -20,8 +20,8 @@
 #'
 #' @seealso
 #' * `browseVignettes("openxlsx2")`
-#' * [write_data()]
-#' * [write_datatable()]
+#' * [wb_add_data()]
+#' * [wb_add_data_table()]
 #' * [write_xlsx()]
 #' * [read_xlsx()]
 #' * <https://janmarvin.github.io/openxlsx2>

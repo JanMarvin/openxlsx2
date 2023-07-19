@@ -13,7 +13,6 @@ reference:
   contents:
   - read_xlsx
   - write_xlsx
-  - wbWorkbook
 
 - title: wb functions
   contents:
