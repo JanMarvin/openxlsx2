@@ -293,6 +293,10 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' Helper to specify the `dims` argument.
 #'
 #' @description
+#'
+#' `wb_dims()` is experimental, any use case outside the documented ones may work,
+#' but is likely to fail or change.
+#'
 #' `wb_dims()` can be used to help provide the `dims` argument, in the `wb_add_*` functions.
 #' It returns a Excel range (i.e. "A1:B1") or a start like "A2".
 #' It can be very useful as you can specify many parameters that interact together
@@ -305,11 +309,41 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' # Using `wb_dims()` without an `x` object
 #'
 #' * `rows` / `cols` (if you want to specify a single one, use `from_row` / `from_col`)
-#' * `from_row` / `from_col` the starting position of the `dims`
+#' * `from_row` / `from_col` the starting position of the `dims` (similar to `start_row` / `start_col`, but with a clearer name.)
 #'
 #' # Using `wb_dims()` with an `x` object
 #'
-#' When using `wb_dims()` with an object, the default behavior is to select only the data / row or columns in `x`
+#' `wb_dims()` with an object has 8 use-cases (they work with any position values of `from_row` / `from_col`),
+#' `from_col/from_row` correspond to the coordinates at the top left of `x` including column and row names.
+#' 1. provide the full grid with `wb_dims(x = mtcars, col_names = TRUE)`
+#' 2. provide the data grid `wb_dims(x = mtcars)`
+#' 3. provide the `dims` of column names `wb_dims(x = mtcars, rows = 0)`
+#' 4. provide the `dims` of row names  `wb_dims(x = mtcars, cols = 0, row_names = TRUE)`
+#' 5. provide the `dims` of a row span `wb_dims(x = mtcars, rows = 1:10)` selects the first 10 rows of `mtcars` (ignoring column namws)
+#' 6. provide the `dims` of data in a column span `wb_dims(x = mtcars, cols = 1:5)` select the data first 5 columns of `mtcars`
+#' 7. provide a column span `wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)` select the data columns 4, 5, 6, 7 of `mtcars` + column names
+#' 8. provide a single column by name `wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)`
+#'
+#'
+#' To reuse, a good trick is to create a wrapper function, so that styling can be performed seamlessly.
+#'
+#' ``` r
+#' wb_dims_cars <- function(...) {
+#'   wb_dims(x = mtcars, from_row = 2, from_col = "B", ...)
+#' }
+#' # using this function
+#' wb_dims_cars() # data grid
+#' wb_dims_cars(col_names = TRUE) # data + column names
+#' wb_dims_cars(rows = 0) # select column names
+#' wb_dims_cars(cols = "vs") # select the `vs` column
+#' ```
+#'
+#' It can be very useful to apply many rounds of styling sequentially.
+#'
+#'
+#' @details
+#'
+#' #' When using `wb_dims()` with an object, the default behavior is to select only the data / row or columns in `x`
 #' If you need another behavior, use `wb_dims()` without supplying `x`.
 #'
 #' * `x` An object (typically a `matrix` or a `data.frame`, but a vector is also accepted.)
@@ -318,9 +352,10 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' * `cols` a range of columns id in `x`, or one of the column names of `x` (length 1 only accepted in this case.)
 #' * `row_names` A logical, this is to let `wb_dims()` know that `x` has row names or not. If `row_names = TRUE`, `wb_dims()` will increment `from_col` by 1.
 #' * `col_names` `wb_dims()` assumes that if `x` has column names, then trying to find the `dims`.
-#'   Otherwise, you have to use `from_row = 0`. (not yet fully supported.). You can use `unname(x)` to give better input
 #'
-#' @details
+#'  You can use `unname(x)` to give better input
+#'
+#'
 #' `wb_dims()` tries to support most possible cases with `row_names = TRUE` and `col_names = FALSE`,
 #' but it works best if `x` has named dimensions (`data.frame`, `matrix`), and those parameters are not specified.
 #'  data with column names, and without row names. as the code is more clean.
@@ -329,7 +364,7 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #'
 #'
 #' ```r
-#' dims_row_names <- wb_dims(x = mtcars, row_names = TRUE, col_names = FALSE, cols = 0)
+#' dims_row_names <- wb_dims(x = mtcars, row_names = TRUE, cols = 0)
 #' # add data to an object with row names
 #' wb <- wb_workbook()
 #' wb$add_worksheet("test")
