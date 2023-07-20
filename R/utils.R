@@ -449,7 +449,7 @@ wb_dims <- function(...) {
     warning("It's preferable to specify integers indices for `rows`", "See `col2int(rows)` to find the correct index.")
   }
 
-  rows_arg <- col2int(rows_arg, allow_null = TRUE)
+  rows_arg <- col2int(rows_arg)
   cols_arg <- args$cols
   x <- args$x
   x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
@@ -486,7 +486,7 @@ wb_dims <- function(...) {
 
   srow <- args$start_row %||% 1L
   srow <- srow - 1L
-  scol <- col2int(args$start_col, allow_null = TRUE) %||% 1L
+  scol <- col2int(args$start_col) %||% 1L
   scol <- scol - 1L
   # after this point, no assertion, assuming all elements to be acceptable
 
