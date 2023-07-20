@@ -259,6 +259,37 @@ rowcol_to_dim <- function(row, col) {
   # we will always return something like "A1"
   stringi::stri_join(min_col, min_row)
 }
+
+# It is inspired heavily by `rlang::arg_match(multi = TRUE)` and `base::match.arg()`
+# Does not allow partial matching.
+match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) {
+  # Check valid argument names
+  # partial matching accepted
+  fn_name <- fn_name %||% "function"
+  # match.arg(arg, choices = choices, several.ok = several.ok)
+  # Using rlang::arg_match() would remove that.
+  if (!several.ok) {
+    if (length(arg) != 1) {
+      stop(
+        "Must provide a single argument found in ", fn_name, ": ", invalid_arg_nams, "\n", "Use one of ", valid_arg_nams,
+        call. = FALSE
+      )
+    }
+  }
+
+  invalid_args <- !arg %in% choices
+  if (any(invalid_args)) {
+    invalid_arg_nams <- paste0("`", arg[invalid_args], "`", collapse = ", ")
+    multi <- length(invalid_arg_nams) > 0
+    plural_sentence <- ifelse(multi, " is an invalid argument for ", " are invalid arguments for ")
+
+    valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
+    stop(
+      invalid_arg_nams, plural_sentence, fn_name, ": ", "\n", "Use any of ", valid_arg_nams,
+      call. = FALSE
+    )
+  }
+}
 #' Helper to specify the `dims` argument.
 #'
 #' @description
@@ -555,37 +586,6 @@ wb_dims <- function(...) {
 
   dims
 }
-
-# It is inspired heavily by `rlang::arg_match(multi = TRUE)` and `base::match.arg()`
-match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) {
-  # Check valid argument names
-  # partial matching accepted
-  fn_name <- fn_name %||% "function"
-  # match.arg(arg, choices = choices, several.ok = several.ok)
-  # Using rlang::arg_match() would remove that.
-  if (!several.ok) {
-    if (length(arg) != 1) {
-      stop(
-        "Must provide a single argument found in ", fn_name, ": ", invalid_arg_nams, "\n", "Use one of ", valid_arg_nams,
-        call. = FALSE
-      )
-    }
-  }
-
-  invalid_args <- !arg %in% choices
-  if (any(invalid_args)) {
-    invalid_arg_nams <- paste0("`", arg[invalid_args], "`", collapse = ", ")
-    multi <- length(invalid_arg_nams) > 0
-    plural_sentence <- ifelse(multi, " is an invalid argument for ", " are invalid arguments for ")
-
-    valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
-    stop(
-      invalid_arg_nams, plural_sentence, fn_name, ": ", "\n", "Use any of ", valid_arg_nams,
-      call. = FALSE
-    )
-  }
-}
-
 
 # Relationship helpers --------------------
 #' removes entries from worksheets_rels
