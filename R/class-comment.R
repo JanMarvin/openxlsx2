@@ -171,15 +171,20 @@ create_comment <- function(text,
   invisible(wbComment$new(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1]))
 }
 
+#' Internal comment functions
+#'
+#' Users are advised to use [wb_add_comment()] and [wb_remove_comment()]
+#' @name comment_internal
+NULL
 
-#' @name write_comment
+#' @rdname comment_internal
 #' @param wb A workbook object
 #' @param sheet A vector of names or indices of worksheets
 #' @param col Column a column number of letter. For `remove_comment` this can be a range.
 #' @param row A row number. For `remove_comment` this can be a range.
 #' @param comment A Comment object. See [create_comment()].
 #' @param dims worksheet cell "A1"
-#' @rdname comment
+#' @keywords internal
 #' @export
 write_comment <- function(
     wb,
@@ -335,11 +340,9 @@ write_comment <- function(
   invisible(wb)
 }
 
-
-#' @name remove_comment
+#' @rdname comment_internal
 #' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 #' will be removed.
-#' @rdname comment
 #' @keywords internal
 #' @export
 remove_comment <- function(

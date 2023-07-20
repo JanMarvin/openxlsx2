@@ -33,7 +33,7 @@ wb$worksheets[[1]]$sheet_data$cc$v[3] <- 2
 # we expect a value of 2
 wb_to_df(wb, col_names = FALSE)
 ```
-Now, lets assume we modify the data in cell `A1`.
+Now, lets assume we modify the data in cell `A1` to 2.
 
 ```{r}
 wb$add_data(x = 2)
@@ -89,8 +89,8 @@ m1 <- matrix(1:6, ncol = 2)
 m2 <- matrix(7:12, nrow = 2)
 
 wb <- wb_workbook()$add_worksheet()$
-  add_data(x = m1, startCol = 1)$
-  add_data(x = m2, startCol = 4)$
+  add_data(x = m1)$
+  add_data(x = m2, dims = wb_dims(start_col = 4))$
   add_formula(x = "MMULT(A2:B4, D2:F3)", dims = "H2:J4", array = TRUE)
 # wb$open()
 ```

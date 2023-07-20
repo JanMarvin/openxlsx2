@@ -3536,9 +3536,30 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Set cell merging for a sheet
     #' @param sheet sheet
-    #' @param rows,cols Row and column specifications.
+    #' @param dims worksheet cells
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
+    merge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
+
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
+
+      if (!is.null(rows) && !is.null(cols)) {
+
+        if (length(cols) > 2 && any(diff(cols) != 1))
+          warning("cols > 2, will create range from min to max.")
+
+        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      ddims <- dims_to_rowcol(dims)
+
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
+
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$merge_cells(
         rows   = rows,
@@ -3550,9 +3571,30 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Removes cell merging for a sheet
     #' @param sheet sheet
-    #' @param rows,cols Row and column specifications.
+    #' @param dims worksheet cells
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    unmerge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
+    unmerge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
+
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
+
+      if (!is.null(rows) && !is.null(cols)) {
+
+        if (length(cols) > 2 && any(diff(cols) != 1))
+          warning("cols > 2, will create range from min to max.")
+
+        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      ddims <- dims_to_rowcol(dims)
+
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
+
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$unmerge_cells(
         rows   = rows,
@@ -3874,18 +3916,15 @@ wbWorkbook <- R6::R6Class(
     #' @description Add conditional formatting
     #' @param sheet sheet
     #' @param dims dims
-    #' @param cols cols
-    #' @param rows rows
     #' @param rule rule
     #' @param style style
     #' @param type type
     #' @param params Additional parameters
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
         sheet  = current_sheet(),
         dims   = NULL,
-        cols   = NULL,
-        rows   = NULL,
         rule   = NULL,
         style  = NULL,
         # TODO add vector of possible values
@@ -3905,17 +3944,33 @@ wbWorkbook <- R6::R6Class(
           border    = TRUE,
           percent   = FALSE,
           rank      = 5L
-        )
+        ),
+        ...
     ) {
+
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
+
+      if (!is.null(rows) && !is.null(cols)) {
+
+        if (length(cols) > 2 && any(diff(cols) != 1))
+          warning("cols > 2, will create range from min to max.")
+
+        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      ddims <- dims_to_rowcol(dims, as_integer = TRUE)
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
 
       if (!is.null(style)) assert_class(style, "character")
       assert_class(type, "character")
       assert_class(params, "list")
 
       type <- match.arg(type)
-
-      if (length(cols) > 2)
-        warning("cols > 2, will create range from min to max.")
 
       ## rows and cols
       if (!is.null(cols) && !is.null(rows)) {
