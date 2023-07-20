@@ -632,16 +632,16 @@ wb_dims <- function(...) {
       #        "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`.")
       # args$col_names <- FALSE
     } else if (is.null(rows_arg)) {
-      message(
-        "Use `col_names = TRUE` explicitly to select `x + its column names`",
-        "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`."
-      )
+      # message(
+      #   "Use `col_names = TRUE` explicitly to select `x + its column names`",
+      #   "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`."
+      # )
       args$col_names <- FALSE
     } else {
-      message(
-        "Use `col_names = TRUE` explicitly to select `x + its column names`",
-        "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`."
-      )
+      # message(
+      #   "Use `col_names = TRUE` explicitly to select `x + its column names`",
+      #   "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`."
+      # )
       args$col_names <- FALSE
     }
   }
@@ -656,7 +656,7 @@ wb_dims <- function(...) {
         call. = FALSE
       )
     } else {
-      message("`x` doesn't have col names. assuming there is no name. Supply `col_names = TRUE` only to select rows + column name.")
+      # message("`x` doesn't have col names. assuming there is no name. Supply `col_names = TRUE` only to select rows + column name.")
     }
   }
 
