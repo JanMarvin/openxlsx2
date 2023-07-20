@@ -238,7 +238,6 @@ wb <- wb_workbook()$
     dims = wb_dims_custom(rows = 0),
     color = wb_color("cyan2")
   )
-
 ```
 
 

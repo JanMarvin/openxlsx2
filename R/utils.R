@@ -565,10 +565,9 @@ wb_dims <- function(...) {
           "\n Use a single `cols` at a time with `wb_dims()`"
         )
       }
-      col_name <- cols_arg
-
+      # message("Transforming col name = '", cols_arg, "' to `cols = ", which(colnames(x) == cols_arg), "`")
       cols_arg <- which(colnames(x) == cols_arg)
-      # message("Transforming col name = '", col_name, "' to `cols = ", cols_arg, "`")
+
     }
   }
 

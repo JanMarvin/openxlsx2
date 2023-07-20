@@ -248,7 +248,7 @@ If rule is `NULL`, min and max of cells is used. Rule must be the same length as
 wb$add_conditional_formatting(
   sheet = "colorScale",
   dims = wb_dims(
-    rows = seq_len(nrow(df)), 
+    rows = seq_len(nrow(df)),
     cols = seq_len(ncol(df))
     ),
   # dims = wb_dims(x = unname(df), col_names = FALSE)
