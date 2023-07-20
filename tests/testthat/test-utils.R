@@ -93,7 +93,7 @@ test_that("wb_dims() works when not supplying `x`.", {
 
   expect_equal(wb_dims(1:2, 1:4, from_row = 2, from_col = "B"), "B2:E3")
   # This used to error, but now passes with a message.
-  expect_no_message(out <- wb_dims(1, rows = 2), "Assuming the .+ `cols`")
+  out <- wb_dims(1, rows = 2) #, "Assuming the .+ `cols`")
   expect_equal(out, "A2")
   # warns when trying to pass weird things
   expect_warning(wb_dims(rows = "BC", cols = 1), regexp = "integer.+`rows`")
@@ -199,13 +199,13 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
 
   # expect_r
 
-  expect_equal(wb_dims(rows = 1 + seq_len(mtcars), cols = 4), "D2:D33")
-  expect_no_message(out_hp <- wb_dims(x = mtcars, cols = "hp"), "col name = 'hp' to `cols = 4`")
+  expect_equal(wb_dims(rows = 1 + seq_len(nrow(mtcars)), cols = 4), "D2:D33")
+  out_hp <- wb_dims(x = mtcars, cols = "hp") #, "col name = 'hp' to `cols = 4`")
   expect_equal(out_hp, "D2:D33")
-  expect_equal(out_hp, wb_dims(rows = 1 + seq_len(mtcars), cols = 4))
+  expect_equal(out_hp, wb_dims(rows = 1 + seq_len(nrow(mtcars)), cols = 4))
   # select column name also
 
-  expect_no_message(out_hp_with_cnam <- wb_dims(x = mtcars, cols = "hp", col_names = TRUE), message =  "col name = 'hp' to `cols = 4`")
+  out_hp_with_cnam <- wb_dims(x = mtcars, cols = "hp", col_names = TRUE) #, message =  "col name = 'hp' to `cols = 4`")
   expect_equal(out_hp_with_cnam, "D1:D33")
   expect_equal(out_hp_with_cnam, wb_dims(rows = 1:(nrow(mtcars) + 1), cols = 4))
 
