@@ -185,7 +185,7 @@ In `openxlsx2` functions that interact with worksheet cells are using `dims` as 
 
 ```{r}
 # various options
-wb_dims(4)
+wb_dims(start_row = 4)
 
 wb_dims(rows = 4, cols = 4)
 
@@ -193,14 +193,14 @@ wb_dims(rows = 4:10, cols = 5:9)
 
 wb_dims(rows = 4:10, cols = "A:D")
 
-wb_dims(mtcars)
+wb_dims(x = mtcars)
 
 # in a wb chain
 wb <- wb_workbook()$
   add_worksheet()$
   add_data(x = mtcars)$
   add_fill(
-    dims = wb_dims(mtcars, start_row = 5),
+    dims = wb_dims(x = mtcars, start_row = 5),
     color = wb_color("yellow")
   )
 ```
