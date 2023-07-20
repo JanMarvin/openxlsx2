@@ -10,6 +10,7 @@ test_that("int2col", {
 })
 
 test_that("col2int", {
+  expect_null(col2int(NULL))
 
   expect_equal(1, col2int("a"))
   expect_equal(1, col2int(1))
