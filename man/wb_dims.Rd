@@ -47,6 +47,7 @@ wb$add_font(dims = dims_row_names, bold = TRUE)
 # the following would work too, but `wb_dims()` may be longer to write, but easier to read after, as
 # it can make it clear which object is affected
 wb$add_font(dims = dims_row_names, bold = TRUE)
+
 }\if{html}{\out{</div>}}
 }
 \section{Using \code{wb_dims()} without an \code{x} object}{
@@ -84,33 +85,32 @@ wb_dims(rows = 1:10, cols = 1:10)
 wb_dims(rows = 1:10, cols = c("A", "B", "C"), from_row = 2)
 wb_dims(rows = 1:10, cols = 1:10, from_col = 2)
 # or objects
+
 wb_dims(x = mtcars)
 # column names of an object (with the special `rows = 0`)
 wb_dims(x = mtcars, rows = 0)
 # usually, it's better
 # dims of all the data of mtcars.
 wb_dims(x = mtcars, col_names = FALSE)
+
 # dims of the column names of an object
 wb_dims(x = mtcars, rows = 0, col_names = TRUE)
 
-# add formatting to column names
+## add formatting to column names with the help of `wb_dims()` ====
 wb <- wb_workbook()
 wb$add_worksheet("test")
 wb$add_data(x = mtcars, dims = wb_dims(x = mtcars))
-# Style col names of an object to bold(many options)
-
-dims_col_names <- wb_dims(rows = 1, cols = seq_len(ncol(mtcars)))
+# Style col names of an object to bold (many options)
+\dontrun{
+wb <- wb_workbook()
 # Supplying dims using x
-dims_col_names <- wb_dims(x = mtcars, rows = 0) # or "A1
-wb$add_font(dims = dims_col_names, bold = TRUE)
-# the following would work too, but `wb_dims()` may be longer to write, but easier to read after, as
-# it can make it clear which object is affected
+dims_column_names <- wb_dims(x = mtcars, rows = 0)
 wb$add_font(dims = dims_column_names, bold = TRUE)
 
 # Finally, to add styling to column "cyl" (the 4th column)
 # there are many options, but here is the preferred one
 # if you know the column index, wb_dims(x = mtcars, cols = 4) also works.
 dims_cyl <- wb_dims(x = mtcars, cols = "cyl")
-wb$add_font(dims = dims_cyl, color = wb_color("black"))
-
+wb$add_font(dims = dims_cyl, color = wb_color("red"))
+}
 }

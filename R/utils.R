@@ -309,6 +309,9 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #'
 #' # Using `wb_dims()` with an `x` object
 #'
+#' When using x with an object, the default behavior is to select only the data / row or columns in `x`
+#' If you need another behavior, use `wb_dims()` without supplying `x`.
+#'
 #' * `x` An object (typically a `matrix` or a `data.frame`, but a vector is also accepted.)
 #' * `from_row` / `from_col` the starting position of `x` (The `dims` returned will assume that the top left corner of `x` is at `from_row / from_col`
 #' * `rows` Optional Which row span in `x` should this apply to. if `rows` = 0, only column names will be affected.
@@ -589,6 +592,22 @@ wb_dims <- function(...) {
   # After this point, we only cover the case for `x`
   rows_arg
   cols_arg
+  if (cnam_null && x_has_named_dims) {
+    if (identical(rows_arg, 0L)) {
+      #message("Use `col_names = TRUE` explicitly to select `x + its column names`",
+      #        "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`.")
+      #args$col_names <- FALSE
+    } else if (is.null(rows_arg)) {
+      message("Use `col_names = TRUE` explicitly to select `x + its column names`",
+              "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`.")
+      args$col_names <- FALSE
+    } else {
+      message("Use `col_names = TRUE` explicitly to select `x + its column names`",
+              "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`.")
+      args$col_names <- FALSE
+    }
+  }
+
   col_names <- args$col_names %||% x_has_named_dims
   if (!cnam_null && !x_has_named_dims) {
     stop("Supplying `col_names` when `x` is a vector is not supported.")
@@ -605,7 +624,7 @@ wb_dims <- function(...) {
     )
   }
   if (!frow_null && identical(srow, -1L)) {
-    acceptable_frow_0_provided <- isFALSE(col_names) & x_has_named_dims
+    acceptable_frow_0_provided <- FALSE
     if (!acceptable_frow_0_provided) {
       stop("`from_row = 0` must only be used with `x` with dims and `col_names = FALSE`",
            " Its purpose is to select the dimensions of `x`.", "\n",
@@ -628,25 +647,27 @@ wb_dims <- function(...) {
   nrow_to_span <- nrow(x)
   ncol_to_span <- ncol(x)
 
-  if (x_has_named_dims) {
-
-   # srow <- srow + 1L
+  if (x_has_named_dims && !col_names) {
+    srow <- srow + 1L
   }
-  if (col_names) {
+  if (x_has_named_dims && col_names) {
     nrow_to_span <- nrow_to_span + 1L
   }
-  if (!col_names) {
-    if (x_has_named_dims) {
-      srow <- srow + 1L
-    }
-  }
+  # if (!col_names) {
+  #   if (x_has_named_dims) {
+  #     srow <- srow - 1L
+  #   }
+  # }
 
-  if (row_names) {
-    ncol_to_span <- ncol_to_span + 1L
-    # if (x_has_named_dims) {
-    #   scol <- scol + 1L
-    # }
+  if (row_names && !identical(cols_arg, 0L)) {
+    # Will not interact with row_name, unless `cols = 0`
+    scol <- scol + 1L
   }
+  #   if (!)
+  #     ncol_to_span <- ncol_to_span + 1L
+  #   if (x_has_named_dims) {
+  #   }
+  # }
 
   if (identical(scol, 0L) || identical(srow, 0L)) {
     is_ok_if_from_col_is_zero <- fcol_null | isFALSE(row_names) | x_has_named_dims
@@ -688,7 +709,7 @@ wb_dims <- function(...) {
   if (identical(row_span, 0L) || identical(row_span, srow)) {
     if (x_has_named_dims && col_names) {
       row_span <- 1L
-    } else if (!col_names) {
+    } else if (!col_names && !cnam_null) {
       stop("`rows = 0` tries to read column names.", "\nRemove `col_names = FALSE` as it doesn't make sense.")
     } else {
       stop("Providing `row_names = FALSE` and `cols = 0` doesn't make sense.",

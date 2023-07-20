@@ -117,7 +117,7 @@ test_that("`wb_dims()` can select content in a nice fashion with `x`", {
   wb_dims_cars <-  function(...) {
     wb_dims(x = mtcars, from_row = 2, from_col = "B", ...)
   }
-  full_data_dims <- wb_dims_cars()
+  full_data_dims <- wb_dims_cars(col_names = TRUE)
   expect_equal(full_data_dims, "B2:L34")
 
   # Selecting column names
@@ -129,28 +129,45 @@ test_that("`wb_dims()` can select content in a nice fashion with `x`", {
   )
   # selecting only content (data)
   data_content_dims <- "B3:L34"
-  expect_equal(wb_dims_cars(col_names = FALSE), data_content_dims)
+  expect_equal(wb_dims_cars(), data_content_dims)
 
   # Selecting a column "cyl"
   dims_cyl <- "C3:C34"
-  expect_equal(suppressMessages(wb_dims_cars(cols = "cyl", col_names = FALSE)), dims_cyl)
-  expect_equal(wb_dims_cars(cols = 2, col_names = FALSE), dims_cyl)
+  expect_equal(suppressMessages(wb_dims_cars(cols = "cyl")), dims_cyl)
+  expect_equal(suppressMessages(wb_dims_cars(cols = 2)), dims_cyl)
+
+
+  # Supplying a column range
+  dims_col1_2 <- "B3:C34"
+  expect_equal(suppressMessages(wb_dims_cars(cols = 1:2)), dims_col1_2)
+
+  # Supplying a column range, but select column names too
+  dims_col1_2_with_name <- "B2:C34"
+  expect_equal(wb_dims_cars(cols = 1:2, col_names = TRUE), dims_col1_2_with_name)
+
 
   # Selecting a row range
   dims_row1_to_5 <- "B3:L7"
-  expect_equal(wb_dims_cars(rows = 1:5, col_names = FALSE), dims_row1_to_5)
+  expect_equal(wb_dims_cars(rows = 1:5), dims_row1_to_5)
+
+  # Select a row range with the names of `x`
+  dims_row1_to_5_and_names <- "B2:L7"
+  expect_equal(wb_dims_cars(rows = 0:5), dims_row1_to_5_and_names)
+
 })
 
 test_that("`wb_dims()` works when Supplying an object `x`.", {
-  expect_equal(wb_dims(x = mtcars), "A1:K33")
+  expect_equal(wb_dims(x = mtcars, col_names = TRUE), "A1:K33")
+  expect_equal(wb_dims(x = mtcars), "A2:K33")
+  expect_equal(wb_dims(x = mtcars, col_names = FALSE), "A2:K33")
 
 
   expect_equal(wb_dims(x = letters), "A1:A26")
 
-  expect_equal(wb_dims(x = t(letters)), "A1:Z2")
+  expect_equal(wb_dims(x = t(letters), col_names = TRUE), "A1:Z2")
   expect_equal(wb_dims(x = mtcars, rows = 5, from_col = "C"), "C6:M6")
 
-  expect_equal(wb_dims(x = mtcars, from_row = 2, from_col = "B"), "B2:L34")
+  expect_equal(wb_dims(x = mtcars, from_row = 2, from_col = "B", col_names = TRUE), "B2:L34")
   # use `col_names = FALSE` as a way to access the data, when formatting content only
   # previously
   # wb_dims(x = mtcars, col_names = FALSE) = "A1:K32"
@@ -163,16 +180,24 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   expect_error(wb_dims(x = mtcars, from_row = 0), "Use `rows = 0` to select column names")
   expect_error(wb_dims(x = mtcars, cols = 0, from_col = "C"), "`rows = 0`")
   expect_equal(wb_dims(x = mtcars, rows = 0), "A1:K1")
-  expect_equal(wb_dims(x = mtcars, cols = 0, row_names = TRUE), "A1:A33")
+  expect_equal(wb_dims(x = mtcars, cols = 0, row_names = TRUE, col_names = TRUE), "A1:A33")
   expect_equal(wb_dims(x = mtcars, cols = 0, row_names = TRUE, col_names = FALSE), "A2:A33")
+  expect_equal(wb_dims(x = mtcars, cols = 0, row_names = TRUE), "A2:A33")
+  expect_equal(wb_dims(x = mtcars, rows = 0, row_names = TRUE), "B1:L1")
+
   #expect_r
 
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE), "A1:L33")
-  expect_equal(wb_dims(rows = 1:(nrow(mtcars) + 1), cols = 4), "D1:D33")
+  expect_equal(wb_dims(rows = 1 + 1:nrow(mtcars), cols = 4), "D2:D33")
   expect_message(out_hp <- wb_dims(x = mtcars, cols = "hp"), "col name = 'hp' to `cols = 4`")
-  expect_equal(out_hp, "D1:D33")
-  expect_equal(out_hp, wb_dims(rows = 1:(nrow(mtcars) + 1), cols = 4))
-  expect_equal(wb_dims(x = mtcars, cols = 4), "D1:D33")
+  expect_equal(out_hp, "D2:D33")
+  expect_equal(out_hp, wb_dims(rows = 1 + 1:nrow(mtcars), cols = 4))
+  # select column name also
+
+  expect_message(out_hp_with_cnam <- wb_dims(x = mtcars, cols = "hp", col_names = TRUE), "col name = 'hp' to `cols = 4`")
+  expect_equal(out_hp_with_cnam, "D1:D33")
+  expect_equal(out_hp_with_cnam, wb_dims(rows = 1:(nrow(mtcars) + 1), cols = 4))
+
+  expect_equal(wb_dims(x = mtcars, cols = 4, col_names = TRUE), "D1:D33")
   # matches the old behaviour
   expect_error(wb_dims(x = mtcars, col_names = TRUE, from_row = 0), "Use `rows = 0`")
   expect_error(wb_dims(x = mtcars, from_col = 0))
@@ -196,6 +221,8 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
 
 test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
   skip("selecting only row_names is not well supported")
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE), "A1:L33")
+
   expect_equal(
     wb_dims(x = mtcars, row_names = TRUE, col_names = FALSE, cols = 0),
     wb_dims(x = mtcars, row_names = TRUE, cols = 0)
