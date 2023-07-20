@@ -184,7 +184,7 @@ references</a></p>
 <h3 id="styles">Styles<a class="anchor" aria-label="anchor" href="#styles"></a>
 </h3>
 <p>One of the biggest user facing change was the removal of the
-<code>stylesObject</code>. In the following section we use code from <a href="https://ycphs.github.io/openxlsx/reference/addStyle.html" class="external-link">addStyle</a></p>
+<code>stylesObject</code>. In the following section we use code from <a href="https://ycphs.github.io/openxlsx/reference/addStyle.html" class="external-link"><code>openxlsx::addStyle()</code></a></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># openxlsx</span></span>
 <span><span class="co">## Create a new workbook</span></span>
@@ -265,8 +265,9 @@ vignette.</p>
 <div class="section level3">
 <h3 id="conditional-formatting">Conditional formatting<a class="anchor" aria-label="anchor" href="#conditional-formatting"></a>
 </h3>
-<p>Extended examples for conditional formatting can be found in the
-conditional formatting vignette. A minimal example is the following:</p>
+<p>See <code><a href="../articles/conditional-formatting.html">vignette("conditional-formatting")</a></code> for extended
+examples on formatting.</p>
+<p>Here is a minimal example:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># openxlsx2 with chains</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
@@ -283,7 +284,7 @@ conditional formatting vignette. A minimal example is the following:</p>
 <div class="section level3">
 <h3 id="data-validation">Data validation<a class="anchor" aria-label="anchor" href="#data-validation"></a>
 </h3>
-<p>Similar data validation has been updated and improved. This
+<p>Similarly, data validation has been updated and improved. This
 <code>openxlsx</code> code for data validation</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># openxlsx</span></span>
@@ -301,17 +302,23 @@ conditional formatting vignette. A minimal example is the following:</p>
 <span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 1"</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data_table</span><span class="op">(</span><span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data_validation</span><span class="op">(</span><span class="fl">1</span>,</span>
-<span>    dims <span class="op">=</span> <span class="st">"A2:C31"</span>, type <span class="op">=</span> <span class="st">"whole"</span>,</span>
-<span>    operator <span class="op">=</span> <span class="st">"between"</span>, value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span></span>
+<span>    dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">31</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>,</span>
+<span>    <span class="co"># alternatively, dims can also be "A2:C31" if you know the span in your Excel workbook.</span></span>
+<span>    type <span class="op">=</span> <span class="st">"whole"</span>,</span>
+<span>    operator <span class="op">=</span> <span class="st">"between"</span>,</span>
+<span>    value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># openxlsx2 with pipes</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"Sheet 1"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_data_table.html">wb_add_data_table</a></span><span class="op">(</span><span class="fl">1</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_data_validation.html">wb_add_data_validation</a></span><span class="op">(</span><span class="fl">1</span>,</span>
-<span>    dims <span class="op">=</span> <span class="st">"A2:C31"</span>, type <span class="op">=</span> <span class="st">"whole"</span>,</span>
-<span>    operator <span class="op">=</span> <span class="st">"between"</span>, value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data_validation.html">wb_add_data_validation</a></span><span class="op">(</span></span>
+<span>    sheet <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    dims <span class="op">=</span> <span class="st">"A2:C31"</span>, <span class="co"># alternatively, dims = wb_dims(rows = 2:31, cols = 1:3)</span></span>
+<span>    type <span class="op">=</span> <span class="st">"whole"</span>,</span>
+<span>    operator <span class="op">=</span> <span class="st">"between"</span>,</span>
+<span>    value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">

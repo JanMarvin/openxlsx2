@@ -91,8 +91,8 @@
 <p>Welcome to the styling manual for <code>openxlsx2</code>. In this
 manual you will learn how to use <code>openxlsx2</code> to style your
 worksheets. data from xlsx-files to R as well as how to export data from
-R to xlsx, and how to import and modify these openxml workbooks in
-R.</p>
+R to xlsx, and how to import and modify these <code>openxml</code>
+workbooks in R.</p>
 <div class="section level2">
 <h2 id="styling-showcase">Styling showcase<a class="anchor" aria-label="anchor" href="#styling-showcase"></a>
 </h2>
@@ -121,20 +121,23 @@ The example below, with increased column width.
 <span><span class="va">border_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">border_sty</span> <span class="op">&lt;-</span> <span class="st">"thin"</span></span>
 <span></span>
+<span><span class="co"># using wb_dims() to avoid counting manually which `dims` are spanned.</span></span>
+<span><span class="va">dims_mat_header</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co"># returns "A1:AB1"</span></span>
 <span><span class="co"># prepare workbook with data and formated first row</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_border.html">wb_add_border</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:AB1"</span>,</span>
+<span>  <span class="fu"><a href="../reference/wb_add_border.html">wb_add_border</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>,</span>
 <span>    top_color <span class="op">=</span> <span class="va">border_col</span>, top_border <span class="op">=</span> <span class="va">border_sty</span>,</span>
 <span>    bottom_color <span class="op">=</span> <span class="va">border_col</span>, bottom_border <span class="op">=</span> <span class="va">border_sty</span>,</span>
 <span>    left_color <span class="op">=</span> <span class="va">border_col</span>, left_border <span class="op">=</span> <span class="va">border_sty</span>,</span>
 <span>    right_color <span class="op">=</span> <span class="va">border_col</span>, right_border <span class="op">=</span> <span class="va">border_sty</span>,</span>
 <span>    inner_hcolor <span class="op">=</span> <span class="va">border_col</span>, inner_hgrid <span class="op">=</span> <span class="va">border_sty</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:AB1"</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF334E6F"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_font.html">wb_add_font</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:AB1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFFFF"</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_cell_style.html">wb_add_cell_style</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:AB1"</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, textRotation <span class="op">=</span> <span class="fl">45</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF334E6F"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_font.html">wb_add_font</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"white"</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_cell_style.html">wb_add_cell_style</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, textRotation <span class="op">=</span> <span class="fl">45</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create various number formats</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -161,10 +164,11 @@ The example below, with increased column width.
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">28</span> <span class="op">*</span> <span class="fl">28</span>, mean <span class="op">=</span> <span class="fl">44444</span>, sd <span class="op">=</span> <span class="fl">555</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">28</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, colNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, col_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a border style and assign it to the workbook</span></span>
-<span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span></span>
+<span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span></span>
+<span><span class="co"># same as wb_color("black") or  wb_color(hex = "#FF000000") or wb_color("FF000000")</span></span>
 <span><span class="va">new_border</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_border.html">create_border</a></span><span class="op">(</span></span>
 <span>  bottom <span class="op">=</span> <span class="st">"thin"</span>, bottom_color <span class="op">=</span> <span class="va">black</span>,</span>
 <span>  top <span class="op">=</span> <span class="st">"thin"</span>, top_color <span class="op">=</span> <span class="va">black</span>,</span>
@@ -175,11 +179,11 @@ The example below, with increased column width.
 <span></span>
 <span></span>
 <span><span class="co"># create a fill style and assign it to the workbook</span></span>
-<span><span class="va">new_fill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_fill.html">create_fill</a></span><span class="op">(</span>patternType <span class="op">=</span> <span class="st">"solid"</span>, fgColor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF334E6F"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">new_fill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_fill.html">create_fill</a></span><span class="op">(</span>patternType <span class="op">=</span> <span class="st">"solid"</span>, fgColor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF334E6F"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">new_fill</span>, <span class="st">"new_fill"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a font style and assign it to the workbook</span></span>
-<span><span class="va">new_font</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_font.html">create_font</a></span><span class="op">(</span>sz <span class="op">=</span> <span class="fl">20</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, b <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFFFFFF"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">new_font</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_font.html">create_font</a></span><span class="op">(</span>sz <span class="op">=</span> <span class="fl">20</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, b <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"white"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">new_font</span>, <span class="st">"new_font"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a new cell style, that uses the fill, the font and the border style</span></span>
@@ -195,7 +199,9 @@ The example below, with increased column width.
 <span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">new_cellxfs</span>, <span class="st">"new_styles"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># assign the new cell style to the header row of our data set</span></span>
-<span><span class="va">cell</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"A1:%s1"</span>, <span class="fu"><a href="../reference/int2col.html">int2col</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Achieve the same with `wb_dims()` and sprintf</span></span>
+<span><span class="co"># cell &lt;- sprintf("A1:%s1", int2col(nrow(mat)))</span></span>
+<span><span class="va">cell</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/cell_style.html">wb_set_cell_style</a></span><span class="op">(</span></span>
 <span>  dims <span class="op">=</span> <span class="va">cell</span>,</span>
 <span>  style <span class="op">=</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_xf_id</span><span class="op">(</span><span class="st">"new_styles"</span><span class="op">)</span></span>
@@ -219,7 +225,7 @@ The example below, with increased column width.
 <span><span class="co"># new styles are 1:28</span></span>
 <span><span class="va">new_styles</span> <span class="op">&lt;-</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_xf</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">new_styles</span><span class="op">$</span><span class="va">id</span><span class="op">[</span><span class="va">new_styles</span><span class="op">$</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"new_style"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">cell</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s2:%s29"</span>, <span class="fu"><a href="../reference/int2col.html">int2col</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span>, <span class="fu"><a href="../reference/int2col.html">int2col</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">cell</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span>, cols <span class="op">=</span> <span class="va">i</span>, start_row <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/cell_style.html">wb_set_cell_style</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">cell</span>, style <span class="op">=</span> <span class="va">i</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -228,7 +234,7 @@ The example below, with increased column width.
 <span>  <span class="st">"sheetPr"</span>,</span>
 <span>  xml_children <span class="op">=</span> <span class="fu"><a href="../reference/xml_node_create.html">xml_node_create</a></span><span class="op">(</span></span>
 <span>    <span class="st">"tabColor"</span>,</span>
-<span>    xml_attributes <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span></span>
+<span>    xml_attributes <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF00FF00"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -240,7 +246,7 @@ The example below, with increased column width.
 <div class="section level2">
 <h2 id="working-with-number-formats">Working with number formats<a class="anchor" aria-label="anchor" href="#working-with-number-formats"></a>
 </h2>
-<p>Per default <code>openxlsx2</code> will pick up number formats for
+<p>By default, <code>openxlsx2</code> will pick up number formats for
 selected R classes.</p>
 <div class="section level3">
 <h3 id="numfmts">numfmts<a class="anchor" aria-label="anchor" href="#numfmts"></a>
@@ -253,7 +259,8 @@ selected R classes.</p>
 <span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Date"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0</span><span class="op">:</span><span class="fl">19</span>,</span>
-<span>  <span class="st">"T"</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="st">"F"</span> <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="st">"T"</span> <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="st">"F"</span> <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="st">"Time"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0</span><span class="op">:</span><span class="fl">19</span> <span class="op">*</span> <span class="fl">60</span> <span class="op">*</span> <span class="fl">60</span>,</span>
 <span>  <span class="st">"Cash"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"$"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span>, <span class="st">"Cash2"</span> <span class="op">=</span> <span class="fl">31</span><span class="op">:</span><span class="fl">50</span>,</span>
 <span>  <span class="st">"hLink"</span> <span class="op">=</span> <span class="st">"https://CRAN.R-project.org/"</span>,</span>
@@ -268,8 +275,8 @@ selected R classes.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">Percentage</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">Percentage</span><span class="op">)</span>, <span class="st">"percentage"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span>, <span class="st">"scientific"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, x <span class="op">=</span> <span class="va">df</span>, startRow <span class="op">=</span> <span class="fl">4</span>, rowNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S2"</span>, x <span class="op">=</span> <span class="va">df</span>, startRow <span class="op">=</span> <span class="fl">4</span>, rowNames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, x <span class="op">=</span> <span class="va">df</span>, start_row <span class="op">=</span> <span class="fl">4</span>, row_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S2"</span>, x <span class="op">=</span> <span class="va">df</span>, start_row <span class="op">=</span> <span class="fl">4</span>, row_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="numfmts2">numfmts2<a class="anchor" aria-label="anchor" href="#numfmts2"></a>
@@ -314,7 +321,7 @@ selected R classes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_set_col_widths.html">wb_set_col_widths</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">cols</span>, widths <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></code></pre></div>
@@ -329,21 +336,35 @@ selected R classes.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># full inner grid</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span>  <span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"S1"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span></span>
-<span>  dims <span class="op">=</span> <span class="st">"A2:K33"</span>,</span>
-<span>  inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_hcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span>,</span>
-<span>  inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span></span>
+<span>  dims <span class="op">=</span> <span class="st">"A2:K33"</span>, <span class="co"># can use wb_dims(rows = 2:33, cols = ncol(mtcars))</span></span>
+<span>  inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  inner_hcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span>,</span>
+<span>  inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  inner_vcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># only horizontal grid</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S2"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_hcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S2"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span></span>
+<span>  dims <span class="op">=</span> <span class="st">"A2:K33"</span>,</span>
+<span>  inner_hgrid <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  inner_hcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="co"># only vertical grid</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S3"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A2:K33"</span>, inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>, inner_vcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S3"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span></span>
+<span>  dims <span class="op">=</span> <span class="st">"A2:K33"</span>,</span>
+<span>  inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>,</span>
+<span>  inner_vcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF808080"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="co"># no inner grid</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S4"</span>, gridLines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S4"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S4"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span><span class="st">"S4"</span>, dims <span class="op">=</span> <span class="st">"A2:K33"</span><span class="op">)</span></span>
+<span><span class="co"># wb_open(wb)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="styled-table">styled table<a class="anchor" aria-label="anchor" href="#styled-table"></a>
@@ -390,10 +411,13 @@ identical table.</p>
 <span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, startCol <span class="op">=</span> <span class="fl">2</span>, startRow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">mat</span>,</span>
+<span>    dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>start_col <span class="op">=</span> <span class="fl">2</span>, start_row <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a border style and assign it to the workbook</span></span>
-<span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span></span>
+<span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span></span>
 <span><span class="va">top_border</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_border.html">create_border</a></span><span class="op">(</span></span>
 <span>  top <span class="op">=</span> <span class="st">"double"</span>, top_color <span class="op">=</span> <span class="va">black</span>,</span>
 <span>  bottom <span class="op">=</span> <span class="st">"thin"</span>, bottom_color <span class="op">=</span> <span class="va">black</span></span>
@@ -406,17 +430,17 @@ identical table.</p>
 <span></span>
 <span><span class="co"># create a new cell style, that uses the fill, the font and the border style</span></span>
 <span><span class="va">top_cellxfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_cell_style.html">create_cell_style</a></span><span class="op">(</span></span>
-<span>  numFmtId <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  num_fmt_id <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  horizontal <span class="op">=</span> <span class="st">"center"</span>,</span>
-<span>  borderId <span class="op">=</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_border_id</span><span class="op">(</span><span class="st">"top_border"</span><span class="op">)</span></span>
+<span>  border_id <span class="op">=</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_border_id</span><span class="op">(</span><span class="st">"top_border"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">bottom_cellxfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_cell_style.html">create_cell_style</a></span><span class="op">(</span></span>
-<span>  numFmtId <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  borderId <span class="op">=</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_border_id</span><span class="op">(</span><span class="st">"bottom_border"</span><span class="op">)</span></span>
+<span>  num_fmt_id <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  border_id <span class="op">=</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_border_id</span><span class="op">(</span><span class="st">"bottom_border"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># assign this style to the workbook</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">top_cellxfs</span>, <span class="st">"top_styles"</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">top_cellxfs</span>, style_name <span class="op">=</span> <span class="st">"top_styles"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">bottom_cellxfs</span>, <span class="st">"bottom_styles"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># assign the new cell style to the header row of our data set</span></span>

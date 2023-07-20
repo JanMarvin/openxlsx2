@@ -233,10 +233,21 @@ underlying functions to see what is going on in the sheet. Using
 <p>Sometimes the entire worksheet contains to much data, in such case we
 provide functions to read only a selected dimension range. Such a range
 consists of either a specific cell like “A1” or a cell range in the
-notion used in the openxml standard</p>
+notion used in the <code>openxml</code> standard</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># read dimension withot column names</span></span>
+<code class="sourceCode R"><span><span class="co"># read dimension without column names</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    A    B    C</span></span>
+<span><span class="co">#&gt; 2 NA   NA Var2</span></span>
+<span><span class="co">#&gt; 3 NA TRUE    1</span></span>
+<span><span class="co">#&gt; 4 NA TRUE &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5 NA TRUE    2</span></span></code></pre></div>
+<p>Alternatively, if you don’t know the Excel sheet’s address, you can
+use <code><a href="../reference/dims_helper.html">wb_dims()</a></code> to specify the dimension. See below or
+in<code><a href="../reference/dims_helper.html">?wb_dims</a></code> for more details.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># read dimension without column names with `wb_dims()`</span></span>
+<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    A    B    C</span></span>
 <span><span class="co">#&gt; 2 NA   NA Var2</span></span>
 <span><span class="co">#&gt; 3 NA TRUE    1</span></span>
@@ -250,7 +261,7 @@ notion used in the openxml standard</p>
 <p>If you do not want to read a specific cell, but a cell range you can
 use the column attribute. This attribute takes a numeric vector as
 argument</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read selected cols</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A:B"</span>, <span class="st">"G"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    NA  Var1       Var5</span></span>
@@ -271,7 +282,7 @@ argument</p>
 </h3>
 <p>The same goes with rows. You can select them using numeric
 vectors</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read selected rows</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Var1 Var2 NA  Var3  Var4       Var5 Var6 Var7     Var8</span></span>
@@ -294,7 +305,7 @@ useful in cases where something unexpected happened or the import
 created warnings. In such a case you can look at the raw input data. If
 you want to disable date detection as well, please see the entry
 above.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># convert characters to numerics and date (logical too?)</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Var1 Var2   NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
@@ -322,7 +333,7 @@ mostly for backward comparability, but the default has been changed to
 empty cells were removed prior to the conversion to R data frames, now
 they are removed after the conversion and are removed only if they are
 completely empty</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># erase empty rows from dataset</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, sheet <span class="op">=</span> <span class="fl">1</span>, skip_empty_rows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Var1 Var2 NA Var3  Var4       Var5 Var6 Var7     Var8</span></span>
@@ -338,7 +349,7 @@ completely empty</p>
 <code>skip_empty_cols</code> - remove empty columns<a class="anchor" aria-label="anchor" href="#skip_empty_cols---remove-empty-columns"></a>
 </h3>
 <p>The same for columns</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># erase empty cols from dataset</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, skip_empty_cols <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Var1 Var2  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
@@ -360,7 +371,7 @@ completely empty</p>
 <p>Sometimes the data source might provide rownames as well. In such a
 case you can <code>openxlsx2</code> to treat the first column as
 rowname</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># convert first row to rownames</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, sheet <span class="op">=</span> <span class="fl">2</span>, dims <span class="op">=</span> <span class="st">"C6:G9"</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                mpg cyl disp  hp</span></span>
@@ -376,7 +387,7 @@ rowname</p>
 worksheet, this can be provided via types. This parameter takes a named
 numeric. <code>0</code> is character, <code>1</code> is numeric and
 <code>2</code> is date</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define type of the data.frame</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span>, types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Var1"</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">"Var3"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Var1   Var3</span></span>
@@ -399,7 +410,7 @@ numeric. <code>0</code> is character, <code>1</code> is numeric and
 the data does not begin in the first row, instead it begins somewhere
 else. To define the row where to begin reading, define it via the
 <code>start_row</code> parameter</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># start in row 5</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, start_row <span class="op">=</span> <span class="fl">5</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        B  C  D      E     F          G  H       I        J</span></span>
@@ -420,7 +431,7 @@ else. To define the row where to begin reading, define it via the
 custom missing values and other values we are not interested. Such
 strings can be passed as character vector via
 <code>na.strings</code></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># na strings</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, na.strings <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
@@ -445,7 +456,7 @@ This <code>workbook</code> class is the heart of <code>openxlsx2</code>
 and probably the reason why you are reading this manual in the first
 place.</p>
 <p>Importing a file into a workbook looks like this:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># the file we are going to load</span></span>
 <span><span class="va">xlsx_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
 <span><span class="co"># loading the file into the workbook</span></span>
@@ -475,9 +486,9 @@ options explained in the man pages and the additional style vignette
 </h3>
 <p>If you want to export a data frame from R, you can use
 <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> which will create an xlsx file. This file can
-be tweaked further. The man page provides various options (further
-explanation and examples will follow).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+be tweaked further. See <code><a href="../reference/write_xlsx.html">?write_xlsx</a></code> to see all the options.
+(further explanation and examples will follow).</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_xlsx.html">write_xlsx</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, file <span class="op">=</span> <span class="st">"mtcars.xlsx"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -485,13 +496,13 @@ explanation and examples will follow).</p>
 </h3>
 <p>Imported workbooks can be saved as xlsx or xlsm files with the
 wrapper <code><a href="../reference/wb_save.html">wb_save()</a></code> or with <code>wb$save()</code>. Both
-functions take the filename and an optional <code>Overwrite</code>
+functions take the filename and an optional <code>overwrite</code>
 option. If the latter is set, an optional guard is provided to check if
 the file you want to write already exists. But be careful, this is
 optional. The default is to save the file and replace an existing file.
-Of course, in Windows, files that are locked (for example, if they were
+Of course, on Windows, files that are locked (for example, if they were
 opened by another process) will not be replaced.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># replace the existing file</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="st">"mtcars.xlsx"</span><span class="op">)</span></span>
 <span></span>
@@ -500,8 +511,8 @@ opened by another process) will not be replaced.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="dims">
-<code>dims</code><a class="anchor" aria-label="anchor" href="#dims"></a>
+<h2 id="dims-wb_dims">
+<code>dims</code>/ <code>wb_dims()</code><a class="anchor" aria-label="anchor" href="#dims-wb_dims"></a>
 </h2>
 <p>In <code>openxlsx2</code> functions that interact with worksheet
 cells are using <code>dims</code> as argument and require the users to
@@ -511,18 +522,18 @@ notation. The single argument <code>dims</code> hereby replaces
 and <code>xy</code>. Since A1 notation is rather simple in the first few
 columns it might get confusing after the 26. Therefore we provide a
 wrapper to construct it:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># various options</span></span>
 <span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A1"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">4</span>, col <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span>, cols <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "D4"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, col <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "E4:I10"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, col <span class="op">=</span> <span class="st">"A:D"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="st">"A:D"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A4:D10"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
@@ -543,9 +554,9 @@ wrapper to construct it:</p>
 <p>The current state of <code>openxlsx2</code> is that it is reasonably
 fast. That is, it works well with reasonably large input data when
 reading or writing. It may not work well with data that tests the limits
-of the openxml specification. Things may slow down on the R side of
-things, and performance and usability will depend on the speed and size
-of the local operating system’s CPU and memory.</p>
+of the <code>openxml</code> specification. Things may slow down on the R
+side of things, and performance and usability will depend on the speed
+and size of the local operating system’s CPU and memory.</p>
 <p>Note that there are at least two cases where <code>openxlsx2</code>
 constructs potentially large data frames (i) when loading,
 <code>openxlsx2</code> usually needs to read the entire input file into
