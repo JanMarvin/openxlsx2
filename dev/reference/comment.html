@@ -85,23 +85,7 @@ newer spreadsheet software now calls comment is possible via
 <span>  height <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">write_comment</span><span class="op">(</span></span>
-<span>  <span class="va">wb</span>,</span>
-<span>  <span class="va">sheet</span>,</span>
-<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">comment</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu">rowcol_to_dim</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">remove_comment</span><span class="op">(</span></span>
-<span>  <span class="va">wb</span>,</span>
-<span>  <span class="va">sheet</span>,</span>
-<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  row <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  gridExpand <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  dims <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">wb_add_comment</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">comment</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_remove_comment</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -140,25 +124,12 @@ newer spreadsheet software now calls comment is possible via
 <dd><p>A worksheet of the workbook</p></dd>
 
 
-<dt>col</dt>
-<dd><p>Column a column number of letter. For <code>remove_comment</code> this can be a range.</p></dd>
-
-
-<dt>row</dt>
-<dd><p>A row number. For <code>remove_comment</code> this can be a range.</p></dd>
-
-
-<dt>comment</dt>
-<dd><p>A Comment object. See <code>create_comment()</code>.</p></dd>
-
-
 <dt>dims</dt>
 <dd><p>Optional row and column as spreadsheet dimension, e.g. "A1"</p></dd>
 
 
-<dt>gridExpand</dt>
-<dd><p>If <code>TRUE</code>, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
-will be removed.</p></dd>
+<dt>comment</dt>
+<dd><p>A comment to apply to the worksheet</p></dd>
 
 
 <dt>...</dt>
@@ -171,6 +142,10 @@ will be removed.</p></dd>
 
 <p>The <code>wbWorkbook</code> object</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="wb_add_thread.html">wb_add_thread()</a></code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -179,21 +154,21 @@ will be removed.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># write comment without author</span></span></span>
 <span class="r-in"><span><span class="va">c1</span> <span class="op">&lt;-</span> <span class="fu">create_comment</span><span class="op">(</span>text <span class="op">=</span> <span class="st">"this is a comment"</span>, author <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">write_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"B"</span>, row <span class="op">=</span> <span class="fl">10</span>, comment <span class="op">=</span> <span class="va">c1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="comment_internal.html">write_comment</a></span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"B"</span>, row <span class="op">=</span> <span class="fl">10</span>, comment <span class="op">=</span> <span class="va">c1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Write another comment with author information</span></span></span>
 <span class="r-in"><span><span class="va">c2</span> <span class="op">&lt;-</span> <span class="fu">create_comment</span><span class="op">(</span>text <span class="op">=</span> <span class="st">"this is another comment"</span>, author <span class="op">=</span> <span class="st">"Marco Polo"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">write_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"C"</span>, row <span class="op">=</span> <span class="fl">10</span>, comment <span class="op">=</span> <span class="va">c2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="comment_internal.html">write_comment</a></span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"C"</span>, row <span class="op">=</span> <span class="fl">10</span>, comment <span class="op">=</span> <span class="va">c2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># write a styled comment with system author</span></span></span>
 <span class="r-in"><span><span class="va">s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_font.html">create_font</a></span><span class="op">(</span>b <span class="op">=</span> <span class="st">"true"</span>, color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFFF0000"</span><span class="op">)</span>, sz <span class="op">=</span> <span class="st">"12"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_font.html">create_font</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF000000"</span><span class="op">)</span>, sz <span class="op">=</span> <span class="st">"9"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">c3</span> <span class="op">&lt;-</span> <span class="fu">create_comment</span><span class="op">(</span>text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This Part Bold red\n\n"</span>, <span class="st">"This part black"</span><span class="op">)</span>, style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">s1</span>, <span class="va">s2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">write_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">6</span>, row <span class="op">=</span> <span class="fl">3</span>, comment <span class="op">=</span> <span class="va">c3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="comment_internal.html">write_comment</a></span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">6</span>, row <span class="op">=</span> <span class="fl">3</span>, comment <span class="op">=</span> <span class="va">c3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># remove the first comment</span></span></span>
-<span class="r-in"><span><span class="fu">remove_comment</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"B"</span>, row <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="comment_internal.html">remove_comment</a></span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"B"</span>, row <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

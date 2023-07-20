@@ -2016,7 +2016,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-merge-cells-">Method <code>merge_cells()</code><a class="anchor" aria-label="anchor" href="#method-merge-cells-"></a></h3>
 <p>Set cell merging for a sheet</p><div class="section">
 <h4 id="usage-35">Usage<a class="anchor" aria-label="anchor" href="#usage-35"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">merge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">merge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2025,8 +2025,12 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>rows, cols</code></dt>
-<dd><p>Row and column specifications.</p></dd>
+<dt><code>dims</code></dt>
+<dd><p>worksheet cells</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2040,7 +2044,7 @@ are repeated across length of <code>cols</code></p></dd>
 <h3 id="method-unmerge-cells-">Method <code>unmerge_cells()</code><a class="anchor" aria-label="anchor" href="#method-unmerge-cells-"></a></h3>
 <p>Removes cell merging for a sheet</p><div class="section">
 <h4 id="usage-36">Usage<a class="anchor" aria-label="anchor" href="#usage-36"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">unmerge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, rows <span class="op">=</span> <span class="cn">NULL</span>, cols <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">unmerge_cells</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -2049,8 +2053,12 @@ are repeated across length of <code>cols</code></p></dd>
 <dd><p>sheet</p></dd>
 
 
-<dt><code>rows, cols</code></dt>
-<dd><p>Row and column specifications.</p></dd>
+<dt><code>dims</code></dt>
+<dd><p>worksheet cells</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>
@@ -2136,7 +2144,7 @@ are repeated across length of <code>cols</code></p></dd>
 </div>
 
 </div><p></p><hr><a id="method-wbWorkbook-remove_comment"></a><div class="section">
-<h3 id="method-remove-comment-">Method <code><a href="comment.html">remove_comment()</a></code><a class="anchor" aria-label="anchor" href="#method-remove-comment-"></a></h3>
+<h3 id="method-remove-comment-">Method <code><a href="comment_internal.html">remove_comment()</a></code><a class="anchor" aria-label="anchor" href="#method-remove-comment-"></a></h3>
 <p>Remove comment</p><div class="section">
 <h4 id="usage-39">Usage<a class="anchor" aria-label="anchor" href="#usage-39"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">remove_comment</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
@@ -2209,8 +2217,6 @@ are repeated across length of <code>cols</code></p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rule <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  style <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expression"</span>, <span class="st">"colorScale"</span>, <span class="st">"dataBar"</span>, <span class="st">"iconSet"</span>, <span class="st">"duplicatedValues"</span>,</span>
@@ -2218,7 +2224,8 @@ are repeated across length of <code>cols</code></p></dd>
 <span>    <span class="st">"notContainsBlanks"</span>, <span class="st">"containsText"</span>, <span class="st">"notContainsText"</span>, <span class="st">"beginsWith"</span>, <span class="st">"endsWith"</span>,</span>
 <span>    <span class="st">"between"</span>, <span class="st">"topN"</span>, <span class="st">"bottomN"</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">TRUE</span>, percent <span class="op">=</span> <span class="cn">FALSE</span>, rank <span class="op">=</span></span>
-<span>    <span class="fl">5L</span><span class="op">)</span></span>
+<span>    <span class="fl">5L</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2230,14 +2237,6 @@ are repeated across length of <code>cols</code></p></dd>
 
 <dt><code>dims</code></dt>
 <dd><p>dims</p></dd>
-
-
-<dt><code>cols</code></dt>
-<dd><p>cols</p></dd>
-
-
-<dt><code>rows</code></dt>
-<dd><p>rows</p></dd>
 
 
 <dt><code>rule</code></dt>
@@ -2254,6 +2253,10 @@ are repeated across length of <code>cols</code></p></dd>
 
 <dt><code>params</code></dt>
 <dd><p>Additional parameters</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>additional arguments</p></dd>
 
 
 </dl><p></p></div>

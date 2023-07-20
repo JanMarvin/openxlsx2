@@ -68,8 +68,6 @@
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rule <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  style <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expression"</span>, <span class="st">"colorScale"</span>, <span class="st">"dataBar"</span>, <span class="st">"iconSet"</span>, <span class="st">"duplicatedValues"</span>,</span>
@@ -77,7 +75,8 @@
 <span>    <span class="st">"notContainsBlanks"</span>, <span class="st">"containsText"</span>, <span class="st">"notContainsText"</span>, <span class="st">"beginsWith"</span>, <span class="st">"endsWith"</span>,</span>
 <span>    <span class="st">"between"</span>, <span class="st">"topN"</span>, <span class="st">"bottomN"</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">TRUE</span>, percent <span class="op">=</span> <span class="cn">FALSE</span>, rank <span class="op">=</span></span>
-<span>    <span class="fl">5L</span><span class="op">)</span></span>
+<span>    <span class="fl">5L</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,14 +94,6 @@
 <dd><p>A cell or cell range like "A1" or "A1:B2"</p></dd>
 
 
-<dt>cols</dt>
-<dd><p>Columns to apply conditional formatting to</p></dd>
-
-
-<dt>rows</dt>
-<dd><p>Rows to apply conditional formatting to</p></dd>
-
-
 <dt>rule</dt>
 <dd><p>The condition under which to apply the formatting. See examples.</p></dd>
 
@@ -117,6 +108,10 @@
 
 <dt>params</dt>
 <dd><p>Additional parameters passed.  See <strong>Details</strong> for more</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">
