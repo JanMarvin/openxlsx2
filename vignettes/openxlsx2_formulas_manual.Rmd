@@ -90,7 +90,7 @@ m2 <- matrix(7:12, nrow = 2)
 
 wb <- wb_workbook()$add_worksheet()$
   add_data(x = m1)$
-  add_data(x = m2, dims = wb_dims(start_col = 4))$
+  add_data(x = m2, dims = wb_dims(from_col = 4))$
   add_formula(x = "MMULT(A2:B4, D2:F3)", dims = "H2:J4", array = TRUE)
 # wb$open()
 ```

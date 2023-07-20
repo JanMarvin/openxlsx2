@@ -185,14 +185,28 @@ In `openxlsx2` functions that interact with worksheet cells are using `dims` as 
 
 ```{r}
 # various options
-wb_dims(start_row = 4)
+wb_dims(from_row = 4)
 
 wb_dims(rows = 4, cols = 4)
+wb_dims(rows = 4, cols = "D")
 
 wb_dims(rows = 4:10, cols = 5:9)
 
-wb_dims(rows = 4:10, cols = "A:D")
+wb_dims(rows = 4:10, cols = "A:D") # same as below
+wb_dims(rows = seq_len(7), cols = seq_len(4), from_row = 4)
+# 10 rows and 15 columns from indice B2.
+wb_dims(rows = 1:10, cols = 1:15, from_col = "B", from_row = 2)
 
+# data + col names
+wb_dims(x = mtcars, col_names = TRUE)
+# only data
+wb_dims(x = mtcars)
+
+# The dims of the values of a column in `x`
+wb_dims(x = mtcars, cols = "cyl")
+# a column in `x` with the column name
+wb_dims(x = mtcars, cols = "cyl", col_names = TRUE)
+# rows in `x`
 wb_dims(x = mtcars)
 
 # in a wb chain
@@ -200,9 +214,31 @@ wb <- wb_workbook()$
   add_worksheet()$
   add_data(x = mtcars)$
   add_fill(
-    dims = wb_dims(x = mtcars, start_row = 5),
+    dims = wb_dims(x = mtcars, rows = 1:5), # only 1st 5 rows of x data
     color = wb_color("yellow")
+  )$
+  add_fill(
+    dims = wb_dims(x = mtcars, rows = 0), # only column names
+    color = wb_color("cyan2")
   )
+
+# or if the data's first coord needs to be located in B2.
+
+wb_dims_custom <- function(...) {
+  wb_dims(x = mtcars, from_col = "B", from_row = 2, ...)
+}
+wb <- wb_workbook()$
+  add_worksheet()$
+  add_data(x = mtcars, dims = wb_dims_custom(col_names = TRUE))$
+  add_fill(
+    dims = wb_dims_custom(rows = 1:5),
+    color = wb_color("yellow")
+  )$
+  add_fill(
+    dims = wb_dims_custom(rows = 0),
+    color = wb_color("cyan2")
+  )
+
 ```
 
 

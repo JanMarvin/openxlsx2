@@ -45,6 +45,7 @@ test_that("dims to col & row and back", {
   expect_equal(exp, got)
 
 })
+
 test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
   # Acceptable inputs
   expect_equal(wb_dims(), "A1")

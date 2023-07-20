@@ -171,7 +171,6 @@ wb$add_conditional_formatting(
   type = "containsText",
   rule = "A"
 )
-wb$add_worksheet("notcontainsText")
 ```
 
 ## Cells not containing text
@@ -184,6 +183,7 @@ knitr::include_graphics("img/cf_contains_no_text.jpg")
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 my_dat <- sapply(1:10, fn)
 
+wb$add_worksheet("notcontainsText")
 wb$add_data("notcontainsText", x = my_dat)
 wb$add_conditional_formatting(
   "notcontainsText",
@@ -247,9 +247,11 @@ If rule is `NULL`, min and max of cells is used. Rule must be the same length as
 ```{r}
 wb$add_conditional_formatting(
   sheet = "colorScale",
-  # dims  = wb_dims(x = df, col_names = FALSE),
-  rows = seq_len(nrow(df)),
-  cols = c(1, ncol(df)),
+  dims = wb_dims(
+    rows = seq_len(nrow(df)), 
+    cols = seq_len(ncol(df))
+    ),
+  # dims = wb_dims(x = unname(df), col_names = FALSE)
   style = c("black", "white"),
   rule = c(0, 255),
   type = "colorScale"

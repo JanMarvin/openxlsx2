@@ -290,7 +290,8 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
     )
   }
 }
-#' Helper to specify the `dims` argument.
+
+#' Helper to specify the `dims` argument
 #'
 #' @description
 #'
@@ -298,10 +299,10 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' but is likely to fail or change.
 #'
 #' `wb_dims()` can be used to help provide the `dims` argument, in the `wb_add_*` functions.
-#' It returns a Excel range (i.e. "A1:B1") or a start like "A2".
+#' It returns a A1 spreadsheet range ("A1:B1" or "A2").
 #' It can be very useful as you can specify many parameters that interact together
 #' In general, you must provide named arguments. `wb_dims()` will only accept unnamed arguments
-#' if it is `rows`, `cols`, for example `wb_dims(1:4, 1:2)`, that will return "A1:B4".
+#' if they are `rows`, `cols`, for example `wb_dims(1:4, 1:2)`, that will return "A1:B4".
 #'
 #' `wb_dims()` can also be used with an object (a `data.frame` or a `matrix` for example.)
 #' All parameters are numeric unless stated otherwise.
@@ -567,7 +568,7 @@ wb_dims <- function(...) {
       col_name <- cols_arg
 
       cols_arg <- which(colnames(x) == cols_arg)
-      message("Transforming col name = '", col_name, "' to `cols = ", cols_arg, "`")
+      # message("Transforming col name = '", col_name, "' to `cols = ", cols_arg, "`")
     }
   }
 
