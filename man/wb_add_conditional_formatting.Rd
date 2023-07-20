@@ -8,8 +8,6 @@ wb_add_conditional_formatting(
   wb,
   sheet = current_sheet(),
   dims = NULL,
-  cols = NULL,
-  rows = NULL,
   rule = NULL,
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
@@ -17,7 +15,8 @@ wb_add_conditional_formatting(
     "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
     "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
-    5L)
+    5L),
+  ...
 )
 }
 \arguments{
@@ -27,10 +26,6 @@ wb_add_conditional_formatting(
 
 \item{dims}{A cell or cell range like "A1" or "A1:B2"}
 
-\item{cols}{Columns to apply conditional formatting to}
-
-\item{rows}{Rows to apply conditional formatting to}
-
 \item{rule}{The condition under which to apply the formatting. See examples.}
 
 \item{style}{A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'}
@@ -38,6 +33,8 @@ wb_add_conditional_formatting(
 \item{type}{The type of conditional formatting rule to apply.}
 
 \item{params}{Additional parameters passed.  See \strong{Details} for more}
+
+\item{...}{additional arguments}
 }
 \description{
 Add conditional formatting to cells

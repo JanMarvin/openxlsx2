@@ -1554,7 +1554,7 @@ Adds data validation
 \subsection{Method \code{merge_cells()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet = current_sheet(), rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet = current_sheet(), dims = NULL, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1562,7 +1562,9 @@ Set cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{rows, cols}}{Row and column specifications.}
+\item{\code{dims}}{worksheet cells}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1576,7 +1578,7 @@ The \code{wbWorkbook} object, invisibly
 \subsection{Method \code{unmerge_cells()}}{
 Removes cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$unmerge_cells(sheet = current_sheet(), rows = NULL, cols = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$unmerge_cells(sheet = current_sheet(), dims = NULL, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1584,7 +1586,9 @@ Removes cell merging for a sheet
 \describe{
 \item{\code{sheet}}{sheet}
 
-\item{\code{rows, cols}}{Row and column specifications.}
+\item{\code{dims}}{worksheet cells}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1716,8 +1720,6 @@ Add conditional formatting
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_conditional_formatting(
   sheet = current_sheet(),
   dims = NULL,
-  cols = NULL,
-  rows = NULL,
   rule = NULL,
   style = NULL,
   type = c("expression", "colorScale", "dataBar", "iconSet", "duplicatedValues",
@@ -1725,7 +1727,8 @@ Add conditional formatting
     "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
     "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
-    5L)
+    5L),
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1736,10 +1739,6 @@ Add conditional formatting
 
 \item{\code{dims}}{dims}
 
-\item{\code{cols}}{cols}
-
-\item{\code{rows}}{rows}
-
 \item{\code{rule}}{rule}
 
 \item{\code{style}}{style}
@@ -1747,6 +1746,8 @@ Add conditional formatting
 \item{\code{type}}{type}
 
 \item{\code{params}}{Additional parameters}
+
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
