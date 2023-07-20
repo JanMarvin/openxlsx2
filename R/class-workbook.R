@@ -3594,7 +3594,7 @@ wbWorkbook <- R6::R6Class(
 
       rows <- ddims[[2]]
       cols <- ddims[[1]]
-      
+
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$unmerge_cells(
         rows   = rows,

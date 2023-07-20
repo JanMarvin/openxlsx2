@@ -172,12 +172,11 @@ create_comment <- function(text,
 }
 
 #' Internal comment functions
-#' 
+#'
 #' Users are advised to use [wb_add_comment()] and [wb_remove_comment()]
 #' @name comment_internal
 NULL
 
-#' @name write_comment
 #' @rdname comment_internal
 #' @param wb A workbook object
 #' @param sheet A vector of names or indices of worksheets
@@ -341,8 +340,6 @@ write_comment <- function(
   invisible(wb)
 }
 
-
-#' @name remove_comment
 #' @rdname comment_internal
 #' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 #' will be removed.
