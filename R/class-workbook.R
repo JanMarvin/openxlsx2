@@ -190,6 +190,8 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
+      force(datetime_created)
+
       standardize_case_names(...)
 
       self$app <- genBaseApp()
