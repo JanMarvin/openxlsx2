@@ -58,14 +58,16 @@ wb$add_font(dims = dims_row_names, bold = TRUE)
 }
 
 \section{Using \code{wb_dims()} with an \code{x} object}{
+When using \code{wb_dims()} with an object, the default behavior is to select only the data / row or columns in \code{x}
+If you need another behavior, use \code{wb_dims()} without supplying \code{x}.
 \itemize{
 \item \code{x} An object (typically a \code{matrix} or a \code{data.frame}, but a vector is also accepted.)
 \item \code{from_row} / \code{from_col} the starting position of \code{x} (The \code{dims} returned will assume that the top left corner of \code{x} is at \code{from_row / from_col}
 \item \code{rows} Optional Which row span in \code{x} should this apply to. if \code{rows} = 0, only column names will be affected.
-\item \code{cols} a range of column, or one of the column names of \code{x} (length 1 only accepted in this case.)
-\item \code{row_names} A logical, should include \code{row_names}
-\item \code{col_names} A logical, defaults to \code{TRUE} is \code{x} has dimensions.
-Using \code{FALSE} can be useful to apply a style or a formula to the content of \code{x}.
+\item \code{cols} a range of columns id in \code{x}, or one of the column names of \code{x} (length 1 only accepted in this case.)
+\item \code{row_names} A logical, this is to let \code{wb_dims()} know that \code{x} has row names or not. If \code{row_names = TRUE}, \code{wb_dims()} will increment \code{from_col} by 1.
+\item \code{col_names} \code{wb_dims()} assumes that if \code{x} has column names, then trying to find the \code{dims}.
+Otherwise, you have to use \code{from_row = 0}. (not yet fully supported.). You can use \code{unname(x)} to give better input
 }
 }
 

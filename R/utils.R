@@ -309,16 +309,16 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #'
 #' # Using `wb_dims()` with an `x` object
 #'
-#' When using x with an object, the default behavior is to select only the data / row or columns in `x`
+#' When using `wb_dims()` with an object, the default behavior is to select only the data / row or columns in `x`
 #' If you need another behavior, use `wb_dims()` without supplying `x`.
 #'
 #' * `x` An object (typically a `matrix` or a `data.frame`, but a vector is also accepted.)
 #' * `from_row` / `from_col` the starting position of `x` (The `dims` returned will assume that the top left corner of `x` is at `from_row / from_col`
 #' * `rows` Optional Which row span in `x` should this apply to. if `rows` = 0, only column names will be affected.
-#' * `cols` a range of column, or one of the column names of `x` (length 1 only accepted in this case.)
-#' * `row_names` A logical, should include `row_names`
-#' * `col_names` A logical, defaults to `TRUE` is `x` has dimensions.
-#'          Using `FALSE` can be useful to apply a style or a formula to the content of `x`.
+#' * `cols` a range of columns id in `x`, or one of the column names of `x` (length 1 only accepted in this case.)
+#' * `row_names` A logical, this is to let `wb_dims()` know that `x` has row names or not. If `row_names = TRUE`, `wb_dims()` will increment `from_col` by 1.
+#' * `col_names` `wb_dims()` assumes that if `x` has column names, then trying to find the `dims`.
+#'   Otherwise, you have to use `from_row = 0`. (not yet fully supported.). You can use `unname(x)` to give better input
 #'
 #' @details
 #' `wb_dims()` tries to support most possible cases with `row_names = TRUE` and `col_names = FALSE`,
@@ -499,7 +499,8 @@ wb_dims <- function(...) {
   #
   x <- args$x
   x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
-  if (x_has_named_dims && !is.null(rows_arg)) {
+  x_has_colnames <- !is.null(colnames(x))
+  if (x_has_colnames && !is.null(rows_arg)) {
     # Not checking whether it's a row name, not supported.
     is_rows_a_colname <- rows_arg %in% colnames(x)
 
@@ -514,13 +515,11 @@ wb_dims <- function(...) {
   rows_arg <- col2int(rows_arg)
   cols_arg <- args$cols
   x <- args$x
-  x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
-
   # rows_and_cols_present <- all(c("rows", "cols") %in% nams)
 
 
   # Find column location id if `cols` is named.
-  if (x_has_named_dims && !is.null(cols_arg)) {
+  if (x_has_colnames && !is.null(cols_arg)) {
     is_cols_a_colname <- cols_arg %in% colnames(x)
 
     if (any(is_cols_a_colname)) {
@@ -594,21 +593,38 @@ wb_dims <- function(...) {
   cols_arg
   if (cnam_null && x_has_named_dims) {
     if (identical(rows_arg, 0L)) {
-      #message("Use `col_names = TRUE` explicitly to select `x + its column names`",
+      # message("Use `col_names = TRUE` explicitly to select `x + its column names`",
       #        "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`.")
-      #args$col_names <- FALSE
+      # args$col_names <- FALSE
     } else if (is.null(rows_arg)) {
-      message("Use `col_names = TRUE` explicitly to select `x + its column names`",
-              "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`.")
+      message(
+        "Use `col_names = TRUE` explicitly to select `x + its column names`",
+        "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`."
+      )
       args$col_names <- FALSE
     } else {
-      message("Use `col_names = TRUE` explicitly to select `x + its column names`",
-              "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`.")
+      message(
+        "Use `col_names = TRUE` explicitly to select `x + its column names`",
+        "\nBy default, when `x` is specified, `rows` and `cols` are only related to the content of `x`."
+      )
       args$col_names <- FALSE
     }
   }
 
   col_names <- args$col_names %||% x_has_named_dims
+
+  if (x_present && !col_names && x_has_named_dims && !cnam_null) {
+    if (x_has_colnames) {
+      warning("`x` has column names. Yet, you are asking for `col_names = FALSE`.",
+        "\n ",
+        "\n Consider supplying `x = unname(`input`)`, or use `wb_dims()` without `x` to ensure no errors with `col_names = FALSE`",
+        call. = FALSE
+      )
+    } else {
+      message("`x` doesn't have col names. assuming there is no name. Supply `col_names = TRUE` only to select rows + column name.")
+    }
+  }
+
   if (!cnam_null && !x_has_named_dims) {
     stop("Supplying `col_names` when `x` is a vector is not supported.")
   }
@@ -617,7 +633,7 @@ wb_dims <- function(...) {
   assert_class(row_names, "logical")
   if (!is.null(rows_arg) && !is.null(cols_arg) && !col_names && row_names && x_has_named_dims) {
     warning("The combination of `row_names = TRUE` and `col_names = FALSE` is not recommended.",
-            "unless supplying `cols` and/or `rows`",
+      "unless supplying `cols` and/or `rows`",
       "`col_names` allows to select the region that contains the data only.",
       "`row_names` = TRUE adds row numbers if the data doesn't have rownames.",
       call. = FALSE
@@ -626,19 +642,21 @@ wb_dims <- function(...) {
   if (!frow_null && identical(srow, -1L)) {
     acceptable_frow_0_provided <- FALSE
     if (!acceptable_frow_0_provided) {
-      stop("`from_row = 0` must only be used with `x` with dims and `col_names = FALSE`",
-           " Its purpose is to select the dimensions of `x`.", "\n",
-           "Use `rows = 0` to select column names, or remove the `from_row` argument."
-           )
+      stop(
+        "`from_row = 0` must only be used with `x` with dims and `col_names = FALSE`",
+        " Its purpose is to select the dimensions of `x`.", "\n",
+        "Use `rows = 0` to select column names, or remove the `from_row` argument."
+      )
     }
   }
   if (!fcol_null && identical(scol, -1L)) {
-    # acceptable_fcol_0_provided <- isTRUE(row_names) & x_has_named_dims
-    acceptable_fcol_0_provided <- FALSE
+    acceptable_fcol_0_provided <- isTRUE(row_names) & x_has_named_dims
+    # acceptable_fcol_0_provided <- FALSE
     if (!acceptable_fcol_0_provided) {
-      stop("`from_col = 0` must only be used with `x` with dims and `row_names = TRUE`",
-           " Its purpose is to select the dimensions of `x`.", "\n",
-           "Use `cols = 0` to select row names, or remove the `from_col` argument."
+      stop(
+        "`from_col = 0` must only be used with `x` with dims and `row_names = TRUE`",
+        " Its purpose is to select the dimensions of `x`.", "\n",
+        "Use `cols = 0` to select row names, or remove the `from_col` argument."
       )
     }
   }
@@ -647,27 +665,21 @@ wb_dims <- function(...) {
   nrow_to_span <- nrow(x)
   ncol_to_span <- ncol(x)
 
-  if (x_has_named_dims && !col_names) {
-    srow <- srow + 1L
-  }
   if (x_has_named_dims && col_names) {
     nrow_to_span <- nrow_to_span + 1L
   }
-  # if (!col_names) {
-  #   if (x_has_named_dims) {
-  #     srow <- srow - 1L
-  #   }
-  # }
+
+  if (x_has_colnames && !col_names) {
+    srow <- srow + 1L
+  }
+  if (!x_has_colnames && x_has_named_dims && !col_names && cnam_null) {
+    srow <- srow + 1L
+  }
 
   if (row_names && !identical(cols_arg, 0L)) {
     # Will not interact with row_name, unless `cols = 0`
     scol <- scol + 1L
   }
-  #   if (!)
-  #     ncol_to_span <- ncol_to_span + 1L
-  #   if (x_has_named_dims) {
-  #   }
-  # }
 
   if (identical(scol, 0L) || identical(srow, 0L)) {
     is_ok_if_from_col_is_zero <- fcol_null | isFALSE(row_names) | x_has_named_dims
@@ -693,7 +705,7 @@ wb_dims <- function(...) {
   } else {
     stop("Internal error, this should not happen, report an issue at https://github.com/janmarvin/issues")
   }
-    # A1:B2
+  # A1:B2
   # To be able to select only col_names / row_names
   if (identical(col_span, 0L) || identical(col_span, scol)) {
     if (row_names) {
@@ -712,8 +724,10 @@ wb_dims <- function(...) {
     } else if (!col_names && !cnam_null) {
       stop("`rows = 0` tries to read column names.", "\nRemove `col_names = FALSE` as it doesn't make sense.")
     } else {
-      stop("Providing `row_names = FALSE` and `cols = 0` doesn't make sense.",
-           "\n Use `rows = 1` to select the first row")
+      stop(
+        "Providing `row_names = FALSE` and `cols = 0` doesn't make sense.",
+        "\n Use `rows = 1` to select the first row"
+      )
     }
   }
   dims <- rowcol_to_dims(row_span, col_span)
