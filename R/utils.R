@@ -722,6 +722,9 @@ wb_dims <- function(...) {
   if (!row_names && !is.null(args$rows) && (!fcol_null || cols_range) && !col_names) {
     srow <- srow + 1L
   }
+  if (row_names && (!fcol_null || cols_range) && !col_names) {
+    srow <- srow + 1
+  }
   nrow_to_span <- if (rows_range || identical(rows_arg, 0L)) {
     length(rows_arg)
   } else {

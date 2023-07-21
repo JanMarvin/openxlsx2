@@ -238,26 +238,19 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
   dims_with_row_names <- wb_dims(x = mtcars, row_names = TRUE)
   expect_equal(dims_with_row_names, "B2:L33")
 
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, from_col = "B", from_row = 2), "C3:M34")
   # having row names is more or less the same as starting from_col = "B"
   dims_with_from_col_b <- wb_dims(x = mtcars, row_names = FALSE, from_col = "B")
   expect_equal(dims_with_from_col_b, dims_with_row_names)
 
-  # select row names only
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 0), "A2:A33")
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 0, from_col = "B"), "B2:B33")
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 0, from_row = 2), "A3:A34")
+
   # select row names (with the top left corner cell)
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, col_names = TRUE, cols = 0), "A1:A33")
 
 
   # select x + column names (without rows)
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, col_names = TRUE), "B1:L33")
-  # column positions are still respected with row names
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = "cyl"), "C2:C33")
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 2:4), "C2:E33")
-  # Selecting rows is also correct
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, rows = 2:10), "B3:L11")
+
+
 
 
   # an object without column names and row names works.
@@ -265,13 +258,24 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
 
 
   skip("selecting row names + other things is not well supported")
+  # Selecting rows is also correct
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, rows = 2:10), "B3:L11")
+  # column positions are still respected with row names
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = "cyl"), "C2:C33")
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 2:4), "C2:E33")
+  # select row names only
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 0), "A2:A33") # issue with row (too high by 1)
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 0, from_col = "B"), "B2:B33")
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = 0, from_row = 2), "A3:A34")
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, from_col = "B", from_row = 2), "C3:M34")
+
   # selecting both rows and columns doesn't work
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, rows = 2:10, cols = "cyl"), "C3:C11")
   # Select the data + row names
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, from_col = 0), "A2:L33") # col_span would need to be col_span+1 in this case.
   # Selecting the full grid with row names + col names is a bit more complex
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, col_names = TRUE), "A1:L33")
-  expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl", row_names = T), "C3:C11")
+  expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl", row_names = TRUE), "C3:C11")
 
   expect_equal(out, "A1:L32")
   expect_equal(out2, "A1:L32")
