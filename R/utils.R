@@ -541,7 +541,7 @@ wb_dims <- function(...) {
     is_rows_a_colname <- rows_arg %in% colnames(x)
 
     if (any(is_rows_a_colname)) {
-      stop("`rows` is the incorrect argument. Use `cols` instead.")
+      stop("`rows` is the incorrect argument. Use `cols` instead. Subsetting rows by name is not supported.")
     }
   }
   if (is.character(rows_arg)) {
@@ -666,7 +666,7 @@ wb_dims <- function(...) {
   row_names <- args$row_names %||% FALSE
   assert_class(col_names, "logical")
   assert_class(row_names, "logical")
-  if (!is.null(rows_arg) && !is.null(cols_arg) && !col_names && row_names && x_has_named_dims) {
+  if ((!is.null(rows_arg) && !col_names) && !is.null(cols_arg) && row_names && x_has_named_dims) {
     warning("The combination of `row_names = TRUE` and `col_names = FALSE` is not recommended.",
       "unless supplying `cols` and/or `rows`",
       "`col_names` allows to select the region that contains the data only.",
@@ -675,39 +675,70 @@ wb_dims <- function(...) {
     )
   }
   if (!frow_null && identical(srow, -1L)) {
+    # finally, couldn't find a use case for `from_row = 0`, but leaving this infrastructure here in case it changes
     acceptable_frow_0_provided <- FALSE
     if (!acceptable_frow_0_provided) {
       stop(
-        "`from_row = 0` must only be used with `x` with dims and `col_names = FALSE`",
-        " Its purpose is to select the dimensions of `x`.", "\n",
-        "Use `rows = 0` to select column names, or remove the `from_row` argument."
+        "`from_row = 0` is not an acceptable input. Use `col_names = TRUE` to select the `x` + its column names.",
+        "If you want to work with a data.frame without its column names, consider using a matrix, or have `x = unname(object)`.", "\n",
+        "Use `rows = 0` to select column names, or remove the `from_row` argument.\n",
+        "You can use `from_col = 0` to select column names and `x`"
       )
     }
   }
   if (!fcol_null && identical(scol, -1L)) {
-    acceptable_fcol_0_provided <- isTRUE(row_names) & x_has_named_dims
+    # would bug the `cols_arg`
+    acceptable_fcol_0_provided <- isTRUE(row_names) & x_has_named_dims & is.null(args$cols)
     # acceptable_fcol_0_provided <- FALSE
     if (!acceptable_fcol_0_provided) {
       stop(
         "`from_col = 0` must only be used with `x` with dims and `row_names = TRUE`",
         " Its purpose is to select the dimensions of `x`.", "\n",
+        "It should not be used with `cols` ",
         "Use `cols = 0` to select row names, or remove the `from_col` argument."
       )
     }
   }
   x <- as.data.frame(x)
 
-  nrow_to_span <- nrow(x)
-  ncol_to_span <- ncol(x)
+  rows_range <- !is.null(rows_arg) & length(rows_arg) >= 1
+  if (rows_range) {
+    srow <- srow + min(rows_arg)
+    if (0 %in% rows_arg) {
+      srow <- srow - 1L
+    }
+  }
+  cols_range <- !is.null(cols_arg) & length(cols_arg) >= 1
+  if (cols_range) {
+    scol <- scol + min(cols_arg)
+    if (length(cols_arg) == 1) {
+      scol <- scol - 1L
 
-  if (x_has_named_dims && col_names) {
+    }
+  }
+  nrow_to_span <- if (rows_range) {
+    length(rows_arg)
+  } else {
+    nrow(x)
+  }
+  ncol_to_span <- if (cols_range) {
+    length(cols_arg)
+  } else {
+    ncol(x)
+  }
+
+  if (x_has_named_dims && col_names && !rows_range) {
     nrow_to_span <- nrow_to_span + 1L
   }
+  # Trick to select row names + data.
+  if (row_names && identical(scol, -1L) && !cols_range) {
+    ncol_to_span <- ncol_to_span + 1L
+  }
 
-  if (x_has_colnames && !col_names) {
+  if (x_has_colnames && !col_names && !rows_range) {
     srow <- srow + 1L
   }
-  if (!x_has_colnames && x_has_named_dims && !col_names && cnam_null) {
+  if (!x_has_colnames && x_has_named_dims && !col_names && cnam_null && !cols_range) {
     srow <- srow + 1L
   }
 
@@ -731,11 +762,15 @@ wb_dims <- function(...) {
     # wb_dims(data.frame())
     row_span <- srow + seq_len(nrow_to_span)
     col_span <- scol + seq_len(ncol_to_span)
-  } else if (is.null(rows_arg)) {
+  } else if (identical(cols_arg, 0L)) {
     row_span <- srow + seq_len(nrow_to_span)
     col_span <- scol + cols_arg + row_names
-  } else if (is.null(cols_arg)) {
-    row_span <- srow + rows_arg + col_names
+    } else if (!is.null(cols_arg)) {
+    row_span <- srow + seq_len(nrow_to_span)
+    col_span <- scol + seq_len(ncol_to_span) # fixed earlier
+  } else if (!is.null(rows_arg)) {
+    # row_span <- srow + rows_arg + col_names
+    row_span <- srow + seq_len(nrow_to_span)
     col_span <- scol + seq_len(ncol_to_span)
   } else {
     stop("Internal error, this should not happen, report an issue at https://github.com/janmarvin/issues")
