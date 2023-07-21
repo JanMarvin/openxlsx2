@@ -622,6 +622,15 @@ wb_dims <- function(...) {
     return(dims)
   }
 
+  # Fix an error I created
+  # if (frow_null)  {
+  #   srow <- srow + 1L
+  # }
+  # if (fcol_null) {
+  #   scol <- scol + 1L
+  # }
+
+
 
   # After this point, we only cover the case for `x`
   rows_arg
@@ -666,6 +675,7 @@ wb_dims <- function(...) {
   row_names <- args$row_names %||% FALSE
   assert_class(col_names, "logical")
   assert_class(row_names, "logical")
+
   if ((!is.null(rows_arg) && !col_names) && !is.null(cols_arg) && row_names && x_has_named_dims) {
     warning("The combination of `row_names = TRUE` and `col_names = FALSE` is not recommended.",
       "unless supplying `cols` and/or `rows`",
@@ -701,37 +711,33 @@ wb_dims <- function(...) {
   }
   x <- as.data.frame(x)
 
-  rows_range <- !is.null(rows_arg) & length(rows_arg) >= 1
+  rows_range <- !is.null(rows_arg) & length(rows_arg) >= 1 & !identical(rows_arg, 0L)
   if (rows_range) {
-    srow <- srow + min(rows_arg)
-    if (0 %in% rows_arg) {
-      srow <- srow - 1L
-    }
+    srow <- srow + min(rows_arg) - 1L
   }
-  cols_range <- !is.null(cols_arg) & length(cols_arg) >= 1
+  cols_range <- !is.null(cols_arg) & length(cols_arg) >= 1 & !identical(rows_arg, 0L)
   if (cols_range) {
-    scol <- scol + min(cols_arg)
-    if (length(cols_arg) == 1) {
-      scol <- scol - 1L
-
-    }
+    scol <- scol + min(cols_arg) - 1L
   }
-  nrow_to_span <- if (rows_range) {
+  if (!row_names && !is.null(args$rows) && (!fcol_null || cols_range) && !col_names) {
+    srow <- srow + 1L
+  }
+  nrow_to_span <- if (rows_range || identical(rows_arg, 0L)) {
     length(rows_arg)
   } else {
     nrow(x)
   }
-  ncol_to_span <- if (cols_range) {
+  ncol_to_span <- if (cols_range || identical(cols_arg, 0L)) {
     length(cols_arg)
   } else {
     ncol(x)
   }
 
-  if (x_has_named_dims && col_names && !rows_range) {
+  if (x_has_named_dims && col_names && !rows_range && !identical(rows_arg, 0L)) {
     nrow_to_span <- nrow_to_span + 1L
   }
   # Trick to select row names + data.
-  if (row_names && identical(scol, -1L) && !cols_range) {
+  if (row_names && identical(scol, -1L) && !cols_range && !identical(cols_arg, 0L)) {
     ncol_to_span <- ncol_to_span + 1L
   }
 
