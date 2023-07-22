@@ -80,7 +80,7 @@ test_that("escaping in wbWorkbooks genBaseCore works as expected", {
 
   nms <- xml_node_name(got, "cp:coreProperties")
 
-  for (nm in nms[nms != "cp:lastModifiedBy"]) {
+  for (nm in nms[!nms %in% c("cp:lastModifiedBy", "dcterms:created")]) {
     expect_equal(
       xml_node(got, "cp:coreProperties", nm),
       xml_node(wb$core, "cp:coreProperties", nm)

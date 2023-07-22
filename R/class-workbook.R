@@ -181,14 +181,16 @@ wbWorkbook <- R6::R6Class(
     #' @param ... additional arguments
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator         = NULL,
-      title           = NULL,
-      subject         = NULL,
-      category        = NULL,
+      creator          = NULL,
+      title            = NULL,
+      subject          = NULL,
+      category         = NULL,
       datetime_created = Sys.time(),
-      theme           = NULL,
+      theme            = NULL,
       ...
     ) {
+
+      force(datetime_created)
 
       standardize_case_names(...)
 
@@ -291,11 +293,14 @@ wbWorkbook <- R6::R6Class(
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
-      assert_class(self$creator,     "character")
-      assert_class(title,            "character", or_null = TRUE)
-      assert_class(subject,          "character", or_null = TRUE)
-      assert_class(category,         "character", or_null = TRUE)
-      assert_class(datetime_created, "POSIXt")
+      self$datetimeCreated <- getOption("openxlsx2.datetimeCreated") %||%
+        datetime_created
+
+      assert_class(self$creator,         "character")
+      assert_class(title,                "character", or_null = TRUE)
+      assert_class(subject,              "character", or_null = TRUE)
+      assert_class(category,             "character", or_null = TRUE)
+      assert_class(self$datetimeCreated, "POSIXt")
 
       stopifnot(
         length(title) <= 1L,
@@ -306,7 +311,6 @@ wbWorkbook <- R6::R6Class(
       self$title           <- title
       self$subject         <- subject
       self$category        <- category
-      self$datetimeCreated <- datetime_created
       private$generate_base_core()
       private$current_sheet <- 0L
       invisible(self)
@@ -3857,11 +3861,13 @@ wbWorkbook <- R6::R6Class(
         done <- as_xml_attr(resolve)
         if (reply) done <- NULL
 
+        ts <- getOption("openxlsx2.datetimeCreated") %||% Sys.time()
+
         tc <- xml_node_create(
           "threadedComment",
           xml_attributes = c(
             ref      = dims,
-            dT       = format(as_POSIXct_utc(Sys.time()), "%Y-%m-%dT%H:%M:%SZ"),
+            dT       = format(as_POSIXct_utc(ts), "%Y-%m-%dT%H:%M:%SZ"),
             personId = person_id,
             id       = cmt_id,
             parentId = parentId,
@@ -7159,7 +7165,7 @@ wbWorkbook <- R6::R6Class(
 
     generate_base_core = function() {
       # how do self$datetimeCreated and genBaseCore time differ?
-      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category)
+      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category, datetimeCreated = self$datetimeCreated)
       invisible(self)
     },
 
