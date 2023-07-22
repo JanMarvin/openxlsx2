@@ -2,13 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{wb_dims}
 \alias{wb_dims}
-\title{Helper to specify the \code{dims} argument.}
+\title{Helper to specify the \code{dims} argument}
 \usage{
 wb_dims(...)
 }
 \arguments{
-\item{...}{construct dims arguments, from rows/cols vectors or objects that
-can be coerced to data frame}
+\item{...}{construct \code{dims} arguments, from rows/cols vectors or objects that
+can be coerced to data frame. \code{x}, \code{rows}, \code{cols}, \code{from_row}, \code{from_col},
+\code{row_names}, and \code{col_names} are accepted.}
 }
 \value{
 A \code{dims} string
@@ -18,22 +19,40 @@ A \code{dims} string
 but is likely to fail or change.
 
 \code{wb_dims()} can be used to help provide the \code{dims} argument, in the \verb{wb_add_*} functions.
-It returns a Excel range (i.e. "A1:B1") or a start like "A2".
+It returns a A1 spreadsheet range ("A1:B1" or "A2").
 It can be very useful as you can specify many parameters that interact together
 In general, you must provide named arguments. \code{wb_dims()} will only accept unnamed arguments
-if it is \code{rows}, \code{cols}, for example \code{wb_dims(1:4, 1:2)}, that will return "A1:B4".
+if they are \code{rows}, \code{cols}, for example \code{wb_dims(1:4, 1:2)}, that will return "A1:B4".
 
 \code{wb_dims()} can also be used with an object (a \code{data.frame} or a \code{matrix} for example.)
 All parameters are numeric unless stated otherwise.
 }
 \details{
+#' When using \code{wb_dims()} with an object, the default behavior is
+to select only the data / row or columns in \code{x}
+If you need another behavior, use \code{wb_dims()} without supplying \code{x}.
+\itemize{
+\item \code{x} An object (typically a \code{matrix} or a \code{data.frame}, but a vector is also accepted.)
+\item \code{from_row} / \code{from_col} the starting position of \code{x}
+(The \code{dims} returned will assume that the top left corner of \code{x} is at \code{from_row / from_col}
+\item \code{rows} Optional Which row span in \code{x} should this apply to.
+If \code{rows} = 0, only column names will be affected.
+\item \code{cols} a range of columns id in \code{x}, or one of the column names of \code{x}
+(length 1 only accepted for column names of \code{x}.)
+\item \code{row_names} A logical, this is to let \code{wb_dims()} know that \code{x} has row names or not.
+If \code{row_names = TRUE}, \code{wb_dims()} will increment \code{from_col} by 1.
+\item \code{col_names} \code{wb_dims()} assumes that if \code{x} has column names, then trying to find the \code{dims}.
+}
+
+You can use \code{unname(x)} to give better input
+
 \code{wb_dims()} tries to support most possible cases with \code{row_names = TRUE} and \code{col_names = FALSE},
 but it works best if \code{x} has named dimensions (\code{data.frame}, \code{matrix}), and those parameters are not specified.
 data with column names, and without row names. as the code is more clean.
 
 In the \code{add_data()} / \code{add_font()} example, if writing the data with row names
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{dims_row_names <- wb_dims(x = mtcars, row_names = TRUE, cols = 0)
+\if{html}{\out{<div class="sourceCode R">}}\preformatted{dims_row_names <- wb_dims(x = mtcars, row_names = TRUE, cols = 0)
 # add data to an object with row names
 wb <- wb_workbook()
 wb$add_worksheet("test")
@@ -50,13 +69,13 @@ wb$add_font(dims = dims_row_names, bold = TRUE)
 # the following would work too, but `wb_dims()` may be longer to write, but easier to read after, as
 # it can make it clear which object is affected
 wb$add_font(dims = dims_row_names, bold = TRUE)
-
 }\if{html}{\out{</div>}}
 }
 \section{Using \code{wb_dims()} without an \code{x} object}{
 \itemize{
 \item \code{rows} / \code{cols} (if you want to specify a single one, use \code{from_row} / \code{from_col})
-\item \code{from_row} / \code{from_col} the starting position of the \code{dims} (similar to \code{start_row} / \code{start_col}, but with a clearer name.)
+\item \code{from_row} / \code{from_col} the starting position of the \code{dims}
+(similar to \code{start_row} / \code{start_col}, but with a clearer name.)
 }
 }
 
@@ -68,15 +87,19 @@ wb$add_font(dims = dims_row_names, bold = TRUE)
 \item provide the data grid \code{wb_dims(x = mtcars)}
 \item provide the \code{dims} of column names \code{wb_dims(x = mtcars, rows = 0)}
 \item provide the \code{dims} of row names  \code{wb_dims(x = mtcars, cols = 0, row_names = TRUE)}
-\item provide the \code{dims} of a row span \code{wb_dims(x = mtcars, rows = 1:10)} selects the first 10 rows of \code{mtcars} (ignoring column namws)
-\item provide the \code{dims} of data in a column span \code{wb_dims(x = mtcars, cols = 1:5)} select the data first 5 columns of \code{mtcars}
-\item provide a column span \code{wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)} select the data columns 4, 5, 6, 7 of \code{mtcars} + column names
+\item provide the \code{dims} of a row span \code{wb_dims(x = mtcars, rows = 1:10)} selects
+the first 10 rows of \code{mtcars} (ignoring column namws)
+\item provide the \code{dims} of data in a column span \code{wb_dims(x = mtcars, cols = 1:5)}
+select the data first 5 columns of \code{mtcars}
+\item provide a column span \code{wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)}
+select the data columns 4, 5, 6, 7 of \code{mtcars} + column names
 \item provide a single column by name \code{wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)}
 }
 
-To reuse, a good trick is to create a wrapper function, so that styling can be performed seamlessly.
+To reuse, a good trick is to create a wrapper function, so that styling can be
+performed seamlessly.
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{wb_dims_cars <- function(...) \{
+\if{html}{\out{<div class="sourceCode R">}}\preformatted{wb_dims_cars <- function(...) \{
   wb_dims(x = mtcars, from_row = 2, from_col = "B", ...)
 \}
 # using this function
@@ -87,19 +110,6 @@ wb_dims_cars(cols = "vs") # select the `vs` column
 }\if{html}{\out{</div>}}
 
 It can be very useful to apply many rounds of styling sequentially.
-
-When using \code{wb_dims()} with an object, the default behavior is to select only the data / row or columns in \code{x}
-If you need another behavior, use \code{wb_dims()} without supplying \code{x}.
-\itemize{
-\item \code{x} An object (typically a \code{matrix} or a \code{data.frame}, but a vector is also accepted.)
-\item \code{from_row} / \code{from_col} the starting position of \code{x} (The \code{dims} returned will assume that the top left corner of \code{x} is at \code{from_row / from_col}
-\item \code{rows} Optional Which row span in \code{x} should this apply to. if \code{rows} = 0, only column names will be affected.
-\item \code{cols} a range of columns id in \code{x}, or one of the column names of \code{x} (length 1 only accepted in this case.)
-\item \code{row_names} A logical, this is to let \code{wb_dims()} know that \code{x} has row names or not. If \code{row_names = TRUE}, \code{wb_dims()} will increment \code{from_col} by 1.
-\item \code{col_names} \code{wb_dims()} assumes that if \code{x} has column names, then trying to find the \code{dims}.
-}
-
-You can use \code{unname(x)} to give better input
 }
 
 \examples{
@@ -129,13 +139,11 @@ wb_dims(x = mtcars, col_names = FALSE)
 # dims of the column names of an object
 wb_dims(x = mtcars, rows = 0, col_names = TRUE)
 
-## add formatting to column names with the help of `wb_dims()` ====
+## add formatting to column names with the help of `wb_dims()`----
 wb <- wb_workbook()
 wb$add_worksheet("test")
 wb$add_data(x = mtcars, dims = wb_dims(x = mtcars))
 # Style col names of an object to bold (many options)
-\dontrun{
-wb <- wb_workbook()
 # Supplying dims using x
 dims_column_names <- wb_dims(x = mtcars, rows = 0)
 wb$add_font(dims = dims_column_names, bold = TRUE)
@@ -145,5 +153,4 @@ wb$add_font(dims = dims_column_names, bold = TRUE)
 # if you know the column index, wb_dims(x = mtcars, cols = 4) also works.
 dims_cyl <- wb_dims(x = mtcars, cols = "cyl")
 wb$add_font(dims = dims_cyl, color = wb_color("red"))
-}
 }

@@ -271,7 +271,8 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
   if (!several.ok) {
     if (length(arg) != 1) {
       stop(
-        "Must provide a single argument found in ", fn_name, ": ", invalid_arg_nams, "\n", "Use one of ", valid_arg_nams,
+        "Must provide a single argument found in ", fn_name, ": ",
+        invalid_arg_nams, "\n", "Use one of ", valid_arg_nams,
         call. = FALSE
       )
     }
@@ -310,25 +311,30 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' # Using `wb_dims()` without an `x` object
 #'
 #' * `rows` / `cols` (if you want to specify a single one, use `from_row` / `from_col`)
-#' * `from_row` / `from_col` the starting position of the `dims` (similar to `start_row` / `start_col`, but with a clearer name.)
+#' * `from_row` / `from_col` the starting position of the `dims`
+#'    (similar to `start_row` / `start_col`, but with a clearer name.)
 #'
 #' # Using `wb_dims()` with an `x` object
 #'
 #' `wb_dims()` with an object has 8 use-cases (they work with any position values of `from_row` / `from_col`),
 #' `from_col/from_row` correspond to the coordinates at the top left of `x` including column and row names.
+#'
 #' 1. provide the full grid with `wb_dims(x = mtcars, col_names = TRUE)`
 #' 2. provide the data grid `wb_dims(x = mtcars)`
 #' 3. provide the `dims` of column names `wb_dims(x = mtcars, rows = 0)`
 #' 4. provide the `dims` of row names  `wb_dims(x = mtcars, cols = 0, row_names = TRUE)`
-#' 5. provide the `dims` of a row span `wb_dims(x = mtcars, rows = 1:10)` selects the first 10 rows of `mtcars` (ignoring column namws)
-#' 6. provide the `dims` of data in a column span `wb_dims(x = mtcars, cols = 1:5)` select the data first 5 columns of `mtcars`
-#' 7. provide a column span `wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)` select the data columns 4, 5, 6, 7 of `mtcars` + column names
+#' 5. provide the `dims` of a row span `wb_dims(x = mtcars, rows = 1:10)` selects
+#'    the first 10 rows of `mtcars` (ignoring column namws)
+#' 6. provide the `dims` of data in a column span `wb_dims(x = mtcars, cols = 1:5)`
+#'    select the data first 5 columns of `mtcars`
+#' 7. provide a column span `wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)`
+#'    select the data columns 4, 5, 6, 7 of `mtcars` + column names
 #' 8. provide a single column by name `wb_dims(x = mtcars, cols = 4:7, col_names = TRUE)`
 #'
+#' To reuse, a good trick is to create a wrapper function, so that styling can be
+#' performed seamlessly.
 #'
-#' To reuse, a good trick is to create a wrapper function, so that styling can be performed seamlessly.
-#'
-#' ``` r
+#' ```R
 #' wb_dims_cars <- function(...) {
 #'   wb_dims(x = mtcars, from_row = 2, from_col = "B", ...)
 #' }
@@ -344,14 +350,19 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #'
 #' @details
 #'
-#' #' When using `wb_dims()` with an object, the default behavior is to select only the data / row or columns in `x`
+#' #' When using `wb_dims()` with an object, the default behavior is
+#' to select only the data / row or columns in `x`
 #' If you need another behavior, use `wb_dims()` without supplying `x`.
 #'
 #' * `x` An object (typically a `matrix` or a `data.frame`, but a vector is also accepted.)
-#' * `from_row` / `from_col` the starting position of `x` (The `dims` returned will assume that the top left corner of `x` is at `from_row / from_col`
-#' * `rows` Optional Which row span in `x` should this apply to. if `rows` = 0, only column names will be affected.
-#' * `cols` a range of columns id in `x`, or one of the column names of `x` (length 1 only accepted in this case.)
-#' * `row_names` A logical, this is to let `wb_dims()` know that `x` has row names or not. If `row_names = TRUE`, `wb_dims()` will increment `from_col` by 1.
+#' * `from_row` / `from_col` the starting position of `x`
+#'   (The `dims` returned will assume that the top left corner of `x` is at `from_row / from_col`
+#' * `rows` Optional Which row span in `x` should this apply to.
+#'   If `rows` = 0, only column names will be affected.
+#' * `cols` a range of columns id in `x`, or one of the column names of `x`
+#'   (length 1 only accepted for column names of `x`.)
+#' * `row_names` A logical, this is to let `wb_dims()` know that `x` has row names or not.
+#'   If `row_names = TRUE`, `wb_dims()` will increment `from_col` by 1.
 #' * `col_names` `wb_dims()` assumes that if `x` has column names, then trying to find the `dims`.
 #'
 #'  You can use `unname(x)` to give better input
@@ -364,7 +375,7 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' In the `add_data()` / `add_font()` example, if writing the data with row names
 #'
 #'
-#' ```r
+#' ```R
 #' dims_row_names <- wb_dims(x = mtcars, row_names = TRUE, cols = 0)
 #' # add data to an object with row names
 #' wb <- wb_workbook()
@@ -382,11 +393,11 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' # the following would work too, but `wb_dims()` may be longer to write, but easier to read after, as
 #' # it can make it clear which object is affected
 #' wb$add_font(dims = dims_row_names, bold = TRUE)
-#'
 #' ```
 #'
-#' @param ... construct dims arguments, from rows/cols vectors or objects that
-#'   can be coerced to data frame
+#' @param ... construct `dims` arguments, from rows/cols vectors or objects that
+#'   can be coerced to data frame. `x`, `rows`, `cols`, `from_row`, `from_col`,
+#'   `row_names`, and `col_names` are accepted.
 #' @return A `dims` string
 #' @export
 #' @examples
@@ -416,13 +427,11 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' # dims of the column names of an object
 #' wb_dims(x = mtcars, rows = 0, col_names = TRUE)
 #'
-#' ## add formatting to column names with the help of `wb_dims()` ====
+#' ## add formatting to column names with the help of `wb_dims()`----
 #' wb <- wb_workbook()
 #' wb$add_worksheet("test")
 #' wb$add_data(x = mtcars, dims = wb_dims(x = mtcars))
 #' # Style col names of an object to bold (many options)
-#' \dontrun{
-#' wb <- wb_workbook()
 #' # Supplying dims using x
 #' dims_column_names <- wb_dims(x = mtcars, rows = 0)
 #' wb$add_font(dims = dims_column_names, bold = TRUE)
@@ -432,7 +441,6 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' # if you know the column index, wb_dims(x = mtcars, cols = 4) also works.
 #' dims_cyl <- wb_dims(x = mtcars, cols = "cyl")
 #' wb$add_font(dims = dims_cyl, color = wb_color("red"))
-#' }
 wb_dims <- function(...) {
   args <- list(...)
   lengt <- length(args)
@@ -519,7 +527,7 @@ wb_dims <- function(...) {
     stop(
       "Supplying a single", sentence_unnamed, "argument to `wb_dims()` is not supported.",
       "\n",
-      "use any of `x`, `from_row` `from_col`. You can also use `rows` and `cols`, You can also use `dims = NULL`"
+      "use any of `x`, `from_row` `from_col`. You can also use `rows` and `cols`, or `dims = NULL`"
     )
   }
   cnam_null <- is.null(args$col_names)
@@ -545,7 +553,8 @@ wb_dims <- function(...) {
     }
   }
   if (is.character(rows_arg)) {
-    warning("It's preferable to specify integers indices for `rows`", "See `col2int(rows)` to find the correct index.")
+    warning("It's preferable to specify integers indices for `rows`",
+            "See `col2int(rows)` to find the correct index.")
   }
 
   rows_arg <- col2int(rows_arg)
@@ -561,7 +570,8 @@ wb_dims <- function(...) {
     if (any(is_cols_a_colname)) {
       if (length(is_cols_a_colname) != 1) {
         stop(
-          "Supplying multiple column names is not supported by the `wb_dims()` helper, use the `cols`  arguments instead.",
+          "Supplying multiple column names is not supported by the `wb_dims()` helper, ",
+          "use the `cols`  arguments instead.",
           "\n Use a single `cols` at a time with `wb_dims()`"
         )
       }
@@ -661,11 +671,13 @@ wb_dims <- function(...) {
     if (x_has_colnames) {
       warning("`x` has column names. Yet, you are asking for `col_names = FALSE`.",
         "\n ",
-        "\n Consider supplying `x = unname(`input`)`, or use `wb_dims()` without `x` to ensure no errors with `col_names = FALSE`",
+        "\n Consider supplying `x = unname(`input`)`, or use `wb_dims()` without `x` ",
+        "to ensure no errors with `col_names = FALSE`",
         call. = FALSE
       )
     } else {
-      # message("`x` doesn't have col names. assuming there is no name. Supply `col_names = TRUE` only to select rows + column name.")
+      # message("`x` doesn't have col names. assuming there is no name. ",
+      # "Supply `col_names = TRUE` only to select rows + column name.")
     }
   }
 
@@ -690,7 +702,8 @@ wb_dims <- function(...) {
     if (!acceptable_frow_0_provided) {
       stop(
         "`from_row = 0` is not an acceptable input. Use `col_names = TRUE` to select the `x` + its column names.",
-        "If you want to work with a data.frame without its column names, consider using a matrix, or have `x = unname(object)`.", "\n",
+        "If you want to work with a data.frame without its column names, ",
+        "consider using a matrix, or have `x = unname(object)`.", "\n",
         "Use `rows = 0` to select column names, or remove the `from_row` argument.\n",
         "You can use `from_col = 0` to select column names and `x`"
       )
@@ -763,7 +776,8 @@ wb_dims <- function(...) {
       stop("`from_col` = 0` is only acceptable if `row_names = FALSE` and x has named dimensions.")
     }
     if (identical(srow, 0L) && !is_ok_if_from_row_is_zero) {
-      stop("`from_row` = 0` is only acceptable if `col_names = TRUE` and `x` has named dimensions. to correct for the fact that `x` doesn't have column names.")
+      stop("`from_row` = 0` is only acceptable if `col_names = TRUE` ",
+           "and `x` has named dimensions. to correct for the fact that `x` doesn't have column names.")
     }
   }
 
@@ -801,7 +815,8 @@ wb_dims <- function(...) {
     if (x_has_named_dims && col_names) {
       row_span <- 1L
     } else if (!col_names && !cnam_null) {
-      stop("`rows = 0` tries to read column names.", "\nRemove `col_names = FALSE` as it doesn't make sense.")
+      stop("`rows = 0` tries to read column names.",
+           "\nRemove `col_names = FALSE` as it doesn't make sense.")
     } else {
       stop(
         "Providing `row_names = FALSE` and `cols = 0` doesn't make sense.",
@@ -1006,7 +1021,9 @@ fmt_txt <- function(
 
 #' @method + fmt_txt
 #' @param x,y an openxlsx2 fmt_txt string
-#' @details You can join additional objects into fmt_txt() objects using "+". Though be aware that `fmt_txt("sum:") + (2 + 2)` is different to `fmt_txt("sum:") + 2 + 2`.
+#' @details
+#' You can join additional objects into fmt_txt() objects using "+".
+#' Though be aware that `fmt_txt("sum:") + (2 + 2)` is different to `fmt_txt("sum:") + 2 + 2`.
 #' @examples
 #' fmt_txt("foo ", bold = TRUE) + fmt_txt("bar")
 #' @rdname fmt_txt
