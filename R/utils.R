@@ -592,8 +592,8 @@ wb_dims <- function(...) {
   }
 
   frow_null <- is.null(args$from_row)
-  srow <- args$from_row %||% 1L
-  srow <- as.integer(srow - 1L)
+  frow <- args$from_row %||% 1L
+  frow <- as.integer(frow - 1L)
 
 
   fcol_null <- is.null(args$from_col)
@@ -602,17 +602,17 @@ wb_dims <- function(...) {
   # after this point, no assertion, assuming all elements to be acceptable
 
   # from_row / from_col = 0 only acceptable in certain cases.
-  if (!all(length(scol) == 1, length(srow) == 1)) {
-    stop("Internal error. At this point scol and srow should have length 1.")
+  if (!all(length(scol) == 1, length(frow) == 1)) {
+    stop("Internal error. At this point scol and frow should have length 1.")
   }
-  if (!x_present && (identical(scol, -1L) || identical(srow, -1L))) {
+  if (!x_present && (identical(scol, -1L) || identical(frow, -1L))) {
     stop("`from_row/col` = 0 only makes sense with `x` present")
   }
 
 
   # if `!x` return early
   if (!x_present) {
-    row_span <- srow + rows_arg %||% 1L
+    row_span <- frow + rows_arg %||% 1L
     col_span <- scol + cols_arg %||% 1L
     if (identical(row_span, 0L)) {
       stop("Providing `rows = 0` without an object with dimensions is not supported", "Use `rows = 1`.")
@@ -635,7 +635,7 @@ wb_dims <- function(...) {
 
   # Fix an error I created
   # if (frow_null)  {
-  #   srow <- srow + 1L
+  #   frow <- frow + 1L
   # }
   # if (fcol_null) {
   #   scol <- scol + 1L
@@ -697,7 +697,7 @@ wb_dims <- function(...) {
       call. = FALSE
     )
   }
-  if (!frow_null && identical(srow, -1L)) {
+  if (!frow_null && identical(frow, -1L)) {
     # finally, couldn't find a use case for `from_row = 0`, but leaving this infrastructure here in case it changes
     acceptable_frow_0_provided <- FALSE
     if (!acceptable_frow_0_provided) {
@@ -727,17 +727,17 @@ wb_dims <- function(...) {
 
   rows_range <- !is.null(rows_arg) & length(rows_arg) >= 1 & !identical(rows_arg, 0L)
   if (rows_range) {
-    srow <- srow + min(rows_arg) - 1L
+    frow <- frow + min(rows_arg) - 1L
   }
   cols_range <- !is.null(cols_arg) & length(cols_arg) >= 1 & !identical(rows_arg, 0L)
   if (cols_range) {
     scol <- scol + min(cols_arg) - 1L
   }
   if (!row_names && !is.null(args$rows) && (!fcol_null || cols_range) && !col_names) {
-    srow <- srow + 1L
+    frow <- frow + 1L
   }
   if (row_names && (!fcol_null || cols_range) && !col_names) {
-    srow <- srow + 1
+    frow <- frow + 1
   }
   nrow_to_span <- if (rows_range || identical(rows_arg, 0L)) {
     length(rows_arg)
@@ -759,10 +759,10 @@ wb_dims <- function(...) {
   }
 
   if (x_has_colnames && !col_names && !rows_range) {
-    srow <- srow + 1L
+    frow <- frow + 1L
   }
   if (!x_has_colnames && x_has_named_dims && !col_names && cnam_null && !cols_range) {
-    srow <- srow + 1L
+    frow <- frow + 1L
   }
 
   if (row_names && !identical(cols_arg, 0L)) {
@@ -770,13 +770,13 @@ wb_dims <- function(...) {
     scol <- scol + 1L
   }
 
-  if (identical(scol, 0L) || identical(srow, 0L)) {
+  if (identical(scol, 0L) || identical(frow, 0L)) {
     is_ok_if_from_col_is_zero <- fcol_null | isFALSE(row_names) | x_has_named_dims
     is_ok_if_from_row_is_zero <- frow_null | isFALSE(col_names) | x_has_named_dims
     if (identical(scol, 0L) && !is_ok_if_from_col_is_zero) {
       stop("`from_col` = 0` is only acceptable if `row_names = FALSE` and x has named dimensions.")
     }
-    if (identical(srow, 0L) && !is_ok_if_from_row_is_zero) {
+    if (identical(frow, 0L) && !is_ok_if_from_row_is_zero) {
       stop(
         "`from_row` = 0` is only acceptable if `col_names = TRUE` ",
         "and `x` has named dimensions. to correct for the fact that `x` doesn't have column names."
@@ -786,17 +786,17 @@ wb_dims <- function(...) {
 
   if (is.null(cols_arg) && is.null(rows_arg)) {
     # wb_dims(data.frame())
-    row_span <- srow + seq_len(nrow_to_span)
+    row_span <- frow + seq_len(nrow_to_span)
     col_span <- scol + seq_len(ncol_to_span)
   } else if (identical(cols_arg, 0L)) {
-    row_span <- srow + seq_len(nrow_to_span)
+    row_span <- frow + seq_len(nrow_to_span)
     col_span <- scol + cols_arg + row_names
   } else if (!is.null(cols_arg)) {
-    row_span <- srow + seq_len(nrow_to_span)
+    row_span <- frow + seq_len(nrow_to_span)
     col_span <- scol + seq_len(ncol_to_span) # fixed earlier
   } else if (!is.null(rows_arg)) {
-    # row_span <- srow + rows_arg + col_names
-    row_span <- srow + seq_len(nrow_to_span)
+    # row_span <- frow + rows_arg + col_names
+    row_span <- frow + seq_len(nrow_to_span)
     col_span <- scol + seq_len(ncol_to_span)
   } else {
     stop("Internal error, this should not happen, report an issue at https://github.com/janmarvin/issues")
@@ -814,7 +814,7 @@ wb_dims <- function(...) {
       )
     }
   }
-  if (identical(row_span, 0L) || identical(row_span, srow)) {
+  if (identical(row_span, 0L) || identical(row_span, frow)) {
     if (x_has_named_dims && col_names) {
       row_span <- 1L
     } else if (!col_names && !cnam_null) {
