@@ -400,7 +400,6 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' @return A `dims` string
 #' @export
 #' @examples
-#' wb_dims(x = mtcars, row_names = TRUE, col_names = FALSE, cols = 0)
 #' # Provide coordinates
 #' wb_dims()
 #' wb_dims(1, 4)
@@ -415,8 +414,10 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' # provide `from_col` / `from_row`
 #' wb_dims(rows = 1:10, cols = c("A", "B", "C"), from_row = 2)
 #' wb_dims(rows = 1:10, cols = 1:10, from_col = 2)
-#' # or objects
 #'
+#' # or objects
+#' wb_dims(x = mtcars, col_names = TRUE)
+#' # select all data
 #' wb_dims(x = mtcars)
 #' # column names of an object (with the special `rows = 0`)
 #' wb_dims(x = mtcars, rows = 0)
@@ -429,7 +430,7 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #'
 #' ## add formatting to column names with the help of `wb_dims()`----
 #' wb <- wb_workbook()
-#' wb$add_worksheet("test")
+#' wb$add_worksheet("test wb_dims() with an object")
 #' dims_mtcars_and_col_names <- wb_dims(x = mtcars, col_names = TRUE)
 #' wb$add_data(x = mtcars, dims = dims_mtcars_and_col_names)
 #'
@@ -441,11 +442,16 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' dims_column_names <- wb_dims(x = mtcars, rows = 0)
 #' wb$add_font(dims = dims_column_names, bold = TRUE, size = 13)
 #'
-#' # Finally, to add styling to column "cyl" (the 4th column)
+#' # Finally, to add styling to column "cyl" (the 4th column) (only the data)
 #' # there are many options, but here is the preferred one
 #' # if you know the column index, wb_dims(x = mtcars, cols = 4) also works.
 #' dims_cyl <- wb_dims(x = mtcars, cols = "cyl")
 #' wb$add_fill(dims = dims_cyl, color = wb_color("pink"))
+#'
+#' # Mark a full column as important(with the column name too)
+#' wb_dims_vs <- wb_dims(x = mtcars, cols = "vs", col_names = TRUE)
+#' wb$add_fill(dims = wb_dims_vs, fill = wb_color("yellow"))
+#' wb$add_conditional_formatting(dims = wb_dims(x = mtcars, cols = "mpg"), type = "dataBar")
 #' # wb_open(wb)
 wb_dims <- function(...) {
   args <- list(...)
