@@ -222,7 +222,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
     wb_dims(x = mtcars, cols = c("hp", "vs")),
     regexp = "Supplying multiple column names is not supported"
   )
-  expect_error(wb_dims(x = mtcars, rows = "hp"), "[Uu]se `cols` instead.")
+  expect_error(expect_warning(wb_dims(x = mtcars, rows = "hp")), "[Uu]se `cols` instead.")
   # Access only row / col name
   # dims of the column names of an object
   expect_equal(wb_dims(x = mtcars, rows = 0, col_names = TRUE), "A1:K1")

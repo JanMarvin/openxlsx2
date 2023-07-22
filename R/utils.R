@@ -540,32 +540,33 @@ wb_dims <- function(...) {
     }
   }
   rows_arg <- args$rows
-  #
-  x <- args$x
-  x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
-  x_has_colnames <- !is.null(colnames(x))
-  if (x_has_colnames && !is.null(rows_arg)) {
-    # Not checking whether it's a row name, not supported.
-    is_rows_a_colname <- rows_arg %in% colnames(x)
-
-    if (any(is_rows_a_colname)) {
-      stop("`rows` is the incorrect argument. Use `cols` instead. Subsetting rows by name is not supported.")
-    }
-  }
+  rows_arg_original <- args$rows
   if (is.character(rows_arg)) {
     warning(
       "It's preferable to specify integers indices for `rows`",
       "See `col2int(rows)` to find the correct index."
     )
+    rows_arg <- col2int(rows_arg)
+  }
+  rows_arg <- as.integer(rows_arg)
+  if (identical(rows_arg, integer(0))) rows_arg <- NULL
+  if (!is.null(rows_arg)) {
+    assert_class(rows_arg, class = "integer", arg_nm = "rows")
   }
 
-  rows_arg <- col2int(rows_arg)
   cols_arg <- args$cols
   x <- args$x
-  # rows_and_cols_present <- all(c("rows", "cols") %in% nams)
+  x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
+  x_has_colnames <- !is.null(colnames(x))
+  if (x_has_colnames && !is.null(rows_arg)) {
+    # Not checking whether it's a row name, not supported.
+    is_rows_a_colname <- rows_arg_original %in% colnames(x)
 
-
-  # Find column location id if `cols` is named.
+    if (any(is_rows_a_colname)) {
+      stop("`rows` is the incorrect argument. Use `cols` instead. Subsetting rows by name is not supported.")
+    }
+  }
+  # Find column location id if `cols` is a character and is a colname of x
   if (x_has_colnames && !is.null(cols_arg)) {
     is_cols_a_colname <- cols_arg %in% colnames(x)
 
@@ -581,15 +582,12 @@ wb_dims <- function(...) {
       cols_arg <- which(colnames(x) == cols_arg)
     }
   }
-
-  if (!is.null(rows_arg)) {
-    assert_class(rows_arg, class = "integer", arg_nm = "rows")
-  }
-
   if (!is.null(cols_arg)) {
     cols_arg <- col2int(cols_arg)
     assert_class(cols_arg, class = "integer", arg_nm = "cols")
   }
+
+  # assess from_row / from_col
 
   frow_null <- is.null(args$from_row)
   frow <- args$from_row %||% 1L
@@ -597,15 +595,15 @@ wb_dims <- function(...) {
 
 
   fcol_null <- is.null(args$from_col)
-  scol <- col2int(args$from_col) %||% 1L
-  scol <- scol - 1L
+  fcol <- col2int(args$from_col) %||% 1L
+  fcol <- fcol - 1L
   # after this point, no assertion, assuming all elements to be acceptable
 
   # from_row / from_col = 0 only acceptable in certain cases.
-  if (!all(length(scol) == 1, length(frow) == 1)) {
-    stop("Internal error. At this point scol and frow should have length 1.")
+  if (!all(length(fcol) == 1, length(frow) == 1)) {
+    stop("Internal error. At this point fcol and frow should have length 1.")
   }
-  if (!x_present && (identical(scol, -1L) || identical(frow, -1L))) {
+  if (!x_present && (identical(fcol, -1L) || identical(frow, -1L))) {
     stop("`from_row/col` = 0 only makes sense with `x` present")
   }
 
@@ -613,7 +611,7 @@ wb_dims <- function(...) {
   # if `!x` return early
   if (!x_present) {
     row_span <- frow + rows_arg %||% 1L
-    col_span <- scol + cols_arg %||% 1L
+    col_span <- fcol + cols_arg %||% 1L
     if (identical(row_span, 0L)) {
       stop("Providing `rows = 0` without an object with dimensions is not supported", "Use `rows = 1`.")
     }
@@ -638,7 +636,7 @@ wb_dims <- function(...) {
   #   frow <- frow + 1L
   # }
   # if (fcol_null) {
-  #   scol <- scol + 1L
+  #   fcol <- fcol + 1L
   # }
 
 
@@ -710,9 +708,9 @@ wb_dims <- function(...) {
       )
     }
   }
-  if (!fcol_null && identical(scol, -1L)) {
+  if (!fcol_null && identical(fcol, -1L)) {
     # would bug the `cols_arg`
-    acceptable_fcol_0_provided <- isTRUE(row_names) & x_has_named_dims & is.null(args$cols)
+    acceptable_fcol_0_provided <- isTRUE(row_names) && x_has_named_dims && is.null(args$cols)
     # acceptable_fcol_0_provided <- FALSE
     if (!acceptable_fcol_0_provided) {
       stop(
@@ -725,13 +723,13 @@ wb_dims <- function(...) {
   }
   x <- as.data.frame(x)
 
-  rows_range <- !is.null(rows_arg) & length(rows_arg) >= 1 & !identical(rows_arg, 0L)
+  rows_range <- !is.null(rows_arg) && length(rows_arg) >= 1 && !identical(rows_arg, 0L)
   if (rows_range) {
     frow <- frow + min(rows_arg) - 1L
   }
-  cols_range <- !is.null(cols_arg) & length(cols_arg) >= 1 & !identical(rows_arg, 0L)
+  cols_range <- !is.null(cols_arg) && length(cols_arg) >= 1 && !identical(rows_arg, 0L)
   if (cols_range) {
-    scol <- scol + min(cols_arg) - 1L
+    fcol <- fcol + min(cols_arg) - 1L
   }
   if (!row_names && !is.null(args$rows) && (!fcol_null || cols_range) && !col_names) {
     frow <- frow + 1L
@@ -754,7 +752,7 @@ wb_dims <- function(...) {
     nrow_to_span <- nrow_to_span + 1L
   }
   # Trick to select row names + data.
-  if (row_names && identical(scol, -1L) && !cols_range && !identical(cols_arg, 0L)) {
+  if (row_names && identical(fcol, -1L) && !cols_range && !identical(cols_arg, 0L)) {
     ncol_to_span <- ncol_to_span + 1L
   }
 
@@ -767,13 +765,13 @@ wb_dims <- function(...) {
 
   if (row_names && !identical(cols_arg, 0L)) {
     # Will not interact with row_name, unless `cols = 0`
-    scol <- scol + 1L
+    fcol <- fcol + 1L
   }
 
-  if (identical(scol, 0L) || identical(frow, 0L)) {
-    is_ok_if_from_col_is_zero <- fcol_null | isFALSE(row_names) | x_has_named_dims
-    is_ok_if_from_row_is_zero <- frow_null | isFALSE(col_names) | x_has_named_dims
-    if (identical(scol, 0L) && !is_ok_if_from_col_is_zero) {
+  if (identical(fcol, 0L) || identical(frow, 0L)) {
+    is_ok_if_from_col_is_zero <- fcol_null || isFALSE(row_names) || x_has_named_dims
+    is_ok_if_from_row_is_zero <- frow_null || isFALSE(col_names) || x_has_named_dims
+    if (identical(fcol, 0L) && !is_ok_if_from_col_is_zero) {
       stop("`from_col` = 0` is only acceptable if `row_names = FALSE` and x has named dimensions.")
     }
     if (identical(frow, 0L) && !is_ok_if_from_row_is_zero) {
@@ -787,23 +785,23 @@ wb_dims <- function(...) {
   if (is.null(cols_arg) && is.null(rows_arg)) {
     # wb_dims(data.frame())
     row_span <- frow + seq_len(nrow_to_span)
-    col_span <- scol + seq_len(ncol_to_span)
+    col_span <- fcol + seq_len(ncol_to_span)
   } else if (identical(cols_arg, 0L)) {
     row_span <- frow + seq_len(nrow_to_span)
-    col_span <- scol + cols_arg + row_names
+    col_span <- fcol + cols_arg + row_names
   } else if (!is.null(cols_arg)) {
     row_span <- frow + seq_len(nrow_to_span)
-    col_span <- scol + seq_len(ncol_to_span) # fixed earlier
+    col_span <- fcol + seq_len(ncol_to_span) # fixed earlier
   } else if (!is.null(rows_arg)) {
     # row_span <- frow + rows_arg + col_names
     row_span <- frow + seq_len(nrow_to_span)
-    col_span <- scol + seq_len(ncol_to_span)
+    col_span <- fcol + seq_len(ncol_to_span)
   } else {
     stop("Internal error, this should not happen, report an issue at https://github.com/janmarvin/issues")
   }
   # A1:B2
   # To be able to select only col_names / row_names
-  if (identical(col_span, 0L) || identical(col_span, scol)) {
+  if (identical(col_span, 0L) || identical(col_span, fcol)) {
     if (row_names) {
       col_span <- 1L
     } else {
