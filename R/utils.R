@@ -574,7 +574,7 @@ wb_dims <- function(...) {
       if (length(is_cols_a_colname) != 1) {
         stop(
           "Supplying multiple column names is not supported by the `wb_dims()` helper, ",
-          "use the `cols`  arguments instead.",
+          "use the `cols` with a range instead of `x` column names.",
           "\n Use a single `cols` at a time with `wb_dims()`"
         )
       }
@@ -631,19 +631,8 @@ wb_dims <- function(...) {
     return(dims)
   }
 
-  # Fix an error I created
-  # if (frow_null)  {
-  #   frow <- frow + 1L
-  # }
-  # if (fcol_null) {
-  #   fcol <- fcol + 1L
-  # }
-
-
-
   # After this point, we only cover the case for `x`
-  rows_arg
-  cols_arg
+
   if (cnam_null && x_has_named_dims) {
     if (identical(rows_arg, 0L)) {
       # message("Use `col_names = TRUE` explicitly to select `x + its column names`",
@@ -674,10 +663,10 @@ wb_dims <- function(...) {
         "to ensure no errors with `col_names = FALSE`",
         call. = FALSE
       )
-    } else {
-      # message("`x` doesn't have col names. assuming there is no name. ",
-      # "Supply `col_names = TRUE` only to select rows + column name.")
     }
+    # Else it is assumed that `x` doesn't have col names. assuming there is no name.
+    #  Supply `col_names = TRUE` only to select rows + column name.
+    # }
   }
 
   if (!cnam_null && !x_has_named_dims) {
