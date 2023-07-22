@@ -259,7 +259,6 @@ rowcol_to_dim <- function(row, col) {
   # we will always return something like "A1"
   stringi::stri_join(min_col, min_row)
 }
-
 # It is inspired heavily by `rlang::arg_match(multi = TRUE)` and `base::match.arg()`
 # Does not allow partial matching.
 match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) {
@@ -408,6 +407,7 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' wb_dims(rows = 1, cols = 4)
 #' wb_dims(from_row = 4)
 #' wb_dims(from_col = 2)
+#' wb_dims(from_col = "B")
 #' wb_dims(1:4, 6:9, from_row = 5)
 #' # Provide vectors
 #' wb_dims(1:10, c("A", "B", "C"))
@@ -421,8 +421,8 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' # column names of an object (with the special `rows = 0`)
 #' wb_dims(x = mtcars, rows = 0)
 #' # usually, it's better
-#' # dims of all the data of mtcars.
-#' wb_dims(x = mtcars, col_names = FALSE)
+#' # dims of all the data of mtcars. (when not using name)
+#' wb_dims(x = unname(mtcars), col_names = FALSE)
 #'
 #' # dims of the column names of an object
 #' wb_dims(x = mtcars, rows = 0, col_names = TRUE)
@@ -430,7 +430,7 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' ## add formatting to column names with the help of `wb_dims()`----
 #' wb <- wb_workbook()
 #' wb$add_worksheet("test")
-#' wb$add_data(x = mtcars, dims = wb_dims(x = mtcars))
+#' wb$add_data(x = mtcars, dims = wb_dims(x = mtcars, col_names = TRUE))
 #' # Style col names of an object to bold (many options)
 #' # Supplying dims using x
 #' dims_column_names <- wb_dims(x = mtcars, rows = 0)
@@ -553,8 +553,10 @@ wb_dims <- function(...) {
     }
   }
   if (is.character(rows_arg)) {
-    warning("It's preferable to specify integers indices for `rows`",
-            "See `col2int(rows)` to find the correct index.")
+    warning(
+      "It's preferable to specify integers indices for `rows`",
+      "See `col2int(rows)` to find the correct index."
+    )
   }
 
   rows_arg <- col2int(rows_arg)
@@ -577,7 +579,6 @@ wb_dims <- function(...) {
       }
       # message("Transforming col name = '", cols_arg, "' to `cols = ", which(colnames(x) == cols_arg), "`")
       cols_arg <- which(colnames(x) == cols_arg)
-
     }
   }
 
@@ -776,8 +777,10 @@ wb_dims <- function(...) {
       stop("`from_col` = 0` is only acceptable if `row_names = FALSE` and x has named dimensions.")
     }
     if (identical(srow, 0L) && !is_ok_if_from_row_is_zero) {
-      stop("`from_row` = 0` is only acceptable if `col_names = TRUE` ",
-           "and `x` has named dimensions. to correct for the fact that `x` doesn't have column names.")
+      stop(
+        "`from_row` = 0` is only acceptable if `col_names = TRUE` ",
+        "and `x` has named dimensions. to correct for the fact that `x` doesn't have column names."
+      )
     }
   }
 
@@ -788,7 +791,7 @@ wb_dims <- function(...) {
   } else if (identical(cols_arg, 0L)) {
     row_span <- srow + seq_len(nrow_to_span)
     col_span <- scol + cols_arg + row_names
-    } else if (!is.null(cols_arg)) {
+  } else if (!is.null(cols_arg)) {
     row_span <- srow + seq_len(nrow_to_span)
     col_span <- scol + seq_len(ncol_to_span) # fixed earlier
   } else if (!is.null(rows_arg)) {
@@ -815,8 +818,10 @@ wb_dims <- function(...) {
     if (x_has_named_dims && col_names) {
       row_span <- 1L
     } else if (!col_names && !cnam_null) {
-      stop("`rows = 0` tries to read column names.",
-           "\nRemove `col_names = FALSE` as it doesn't make sense.")
+      stop(
+        "`rows = 0` tries to read column names.",
+        "\nRemove `col_names = FALSE` as it doesn't make sense."
+      )
     } else {
       stop(
         "Providing `row_names = FALSE` and `cols = 0` doesn't make sense.",

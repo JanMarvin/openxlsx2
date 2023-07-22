@@ -120,6 +120,7 @@ wb_dims(1, 4)
 wb_dims(rows = 1, cols = 4)
 wb_dims(from_row = 4)
 wb_dims(from_col = 2)
+wb_dims(from_col = "B")
 wb_dims(1:4, 6:9, from_row = 5)
 # Provide vectors
 wb_dims(1:10, c("A", "B", "C"))
@@ -133,8 +134,8 @@ wb_dims(x = mtcars)
 # column names of an object (with the special `rows = 0`)
 wb_dims(x = mtcars, rows = 0)
 # usually, it's better
-# dims of all the data of mtcars.
-wb_dims(x = mtcars, col_names = FALSE)
+# dims of all the data of mtcars. (when not using name)
+wb_dims(x = unname(mtcars), col_names = FALSE)
 
 # dims of the column names of an object
 wb_dims(x = mtcars, rows = 0, col_names = TRUE)
@@ -142,7 +143,7 @@ wb_dims(x = mtcars, rows = 0, col_names = TRUE)
 ## add formatting to column names with the help of `wb_dims()`----
 wb <- wb_workbook()
 wb$add_worksheet("test")
-wb$add_data(x = mtcars, dims = wb_dims(x = mtcars))
+wb$add_data(x = mtcars, dims = wb_dims(x = mtcars, col_names = TRUE))
 # Style col names of an object to bold (many options)
 # Supplying dims using x
 dims_column_names <- wb_dims(x = mtcars, rows = 0)
