@@ -2,24 +2,62 @@
 
 #include "xlsb.h"
 
+std::string XLWideString(std::istream& sas) {
+  uint32_t len = 0;
+  len = readbin(len, sas, 0);
+  std::string str(len, '\0');
+  return read_xlwidestring(str, sas);
+}
+
+void StrRun(std::istream& sas, uint32_t dwSizeStrRun) {
+
+  uint16_t ich = 0, ifnt = 0;
+
+  // something?
+  for (uint8_t i = 0; i < dwSizeStrRun; ++i) {
+    ich  = readbin(ich, sas, 0);
+    ifnt = readbin(ifnt, sas, 0);
+  }
+}
+
+void PhRun(std::istream& sas, uint32_t dwPhoneticRun) {
+
+  uint16_t ichFirst = 0, ichMom = 0, cchMom = 0, ifnt = 0;
+  uint32_t phrun = 0;
+  for (uint8_t i = 0; i < dwPhoneticRun; ++i) {
+    ichFirst = readbin(ichFirst, sas, 0);
+    ichMom   = readbin(ichMom, sas, 0);
+    cchMom   = readbin(cchMom, sas, 0);
+    ifnt     = readbin(ifnt, sas, 0);
+  }
+}
+
 std::string RichStr(std::istream& sas) {
 
-  uint8_t A, B;
+  uint8_t AB, A, B;
+  AB = readbin(AB, sas, 0);
 
-  // Rcpp::Rcout << sas.tellg() << std::endl;
-  A = readbin(A, sas, 0);
-  B = readbin(B, sas, 0);
+  A = AB & 0x01;
+  B = AB >> 1 & 0x01;
+  // remaining 6 bits are ignored
 
-  // sas.seekg(6, sas.cur); ???
+  std::string str = XLWideString(sas);
 
-  uint32_t len;
-  len = readbin(len, sas, 0);
+  uint32_t dwSizeStrRun = 0, dwPhoneticRun = 0;
 
-  std::string str(len, '\0');
+  if (A) {
+    // number of runs following
+    dwSizeStrRun = readbin(dwSizeStrRun, sas, 0);
+    StrRun(sas, dwSizeStrRun);
+  }
 
-  // Rcpp::Rcout << len << std::endl;
+  if (B) {
+    std::string phoneticStr = XLWideString(sas);
 
-  str = read_xlwidestring(str, sas);
+    // number of runs following
+    dwPhoneticRun = readbin(dwPhoneticRun, sas, 0);
+    PhRun(sas, dwPhoneticRun);
+  }
 
   return(str);
 
@@ -136,6 +174,77 @@ void CellParsedFormula(std::istream& sas) {
   sas.seekg(cb, sas.cur);
 }
 
+
+int32_t RECORD_ID(std::istream& sas) {
+  uint8_t var1 = 0, var2 = 0;
+  var1 = readbin(var1, sas, 0);
+
+  if (var1 & 0x80) {
+
+    var2 = readbin(var2, sas, 0);
+
+    // If the high bit is 1, then it's a two-byte record type
+    int32_t recordType = ((var2 & 0x7F) << 7) | (var1 & 0x7F);
+    if (recordType >= 128 && recordType < 16384) {
+      return recordType;
+    }
+  } else {
+    // If the high bit is not 1, then it's a one-byte record type
+    int32_t recordType = var1;
+    if (recordType >= 0 && recordType < 128) {
+      return recordType;
+    }
+  }
+  return -1;
+}
+
+int32_t RECORD_SIZE(std::istream& sas) {
+  int8_t sar1 = 0, sar2 = 0, sar3 = 0, sar4 = 0;
+
+  sar1 = readbin(sar1, sas, 0);
+  if (sar1 & 0x80) sar2 = readbin(sar2, sas, 0);
+  if (sar2 & 0x80) sar3 = readbin(sar3, sas, 0);
+  if (sar3 & 0x80) sar4 = readbin(sar4, sas, 0);
+
+  // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
+
+
+  if (sar2 != 0 & sar3 != 0 && sar4 != 0) {
+    int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 != 0 & sar3 != 0 && sar4 == 0) {
+    int32_t recordType = ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 != 0 & sar3 == 0 && sar4 == 0) {
+    int32_t recordType = ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 == 0 & sar3 == 0 && sar4 == 0) {
+    // Rcpp::Rcout << "yes" << std::endl;
+    int32_t recordType = sar1;
+    return recordType;
+  }
+
+  // Return -1 if the record type is invalid
+  return -1;
+}
+
+int32_t RECORD(int &rid, int &rsize, std::istream& sas) {
+
+  /* Record ID ---------------------------------------------------------------*/
+  rid = RECORD_ID(sas);
+
+  /* Record Size -------------------------------------------------------------*/
+  rsize = RECORD_SIZE(sas);
+
+  return 0;
+}
+
 // [[Rcpp::export]]
 int sst(std::string filePath, std::string outPath, bool debug) {
 
@@ -147,14 +256,14 @@ int sst(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
 
     while(!bin.eof()) {
-      uint8_t x, unk;
+
+      int32_t x = 0, size = 0;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
-      x = readbin(x, bin, 0);
-      if (x == BrtBeginSst)  {
-        unk = readbin(unk, bin, 0);
-        unk = readbin(unk, bin, 0);
+      RECORD(x, size, bin);
+      // Rcpp::Rcout << x << ": " << size << std::endl;
 
+      if (x == BrtBeginSst)  {
         uint32_t count, uniqueCount;
         count = readbin(count, bin, 0);
         uniqueCount = readbin(uniqueCount, bin, 0);
@@ -165,7 +274,10 @@ int sst(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (x == BrtSSTItem) {
-        out << "<si><t>" << RichStr(bin) <<
+        // Rcpp::Rcout << bin.tellg() << std::endl;
+        std::string val = RichStr(bin);
+        Rcpp::Rcout << val << std::endl;
+        out << "<si><t>" << val <<
           "</t></si>" << std::endl;
       }
 
@@ -243,76 +355,6 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
 }
 
-
-int32_t RECORD_ID(std::istream& sas) {
-  uint8_t var1 = 0, var2 = 0;
-  var1 = readbin(var1, sas, 0);
-
-  if (var1 & 0x80) {
-
-    var2 = readbin(var2, sas, 0);
-
-    // If the high bit is 1, then it's a two-byte record type
-    int32_t recordType = ((var2 & 0x7F) << 7) | (var1 & 0x7F);
-    if (recordType >= 128 && recordType < 16384) {
-      return recordType;
-    }
-  } else {
-    // If the high bit is not 1, then it's a one-byte record type
-    int32_t recordType = var1;
-    if (recordType >= 0 && recordType < 128) {
-      return recordType;
-    }
-  }
-  return -1;
-}
-
-int32_t RECORD_SIZE(std::istream& sas) {
-  int8_t sar1 = 0, sar2 = 0, sar3 = 0, sar4 = 0;
-
-  sar1 = readbin(sar1, sas, 0);
-  if (sar1 & 0x80) sar2 = readbin(sar2, sas, 0);
-  if (sar2 & 0x80) sar3 = readbin(sar3, sas, 0);
-  if (sar3 & 0x80) sar4 = readbin(sar4, sas, 0);
-
-  // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
-
-
-  if (sar2 != 0 & sar3 != 0 && sar4 != 0) {
-    int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
-    return recordType;
-  }
-
-  if (sar2 != 0 & sar3 != 0 && sar4 == 0) {
-    int32_t recordType = ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
-    return recordType;
-  }
-
-  if (sar2 != 0 & sar3 == 0 && sar4 == 0) {
-    int32_t recordType = ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
-    return recordType;
-  }
-
-  if (sar2 == 0 & sar3 == 0 && sar4 == 0) {
-    // Rcpp::Rcout << "yes" << std::endl;
-    int32_t recordType = sar1;
-    return recordType;
-  }
-
-  // Return -1 if the record type is invalid
-  return -1;
-}
-
-int32_t RECORD(int &rid, int &rsize, std::istream& sas) {
-
-  /* Record ID ---------------------------------------------------------------*/
-  rid = RECORD_ID(sas);
-
-  /* Record Size -------------------------------------------------------------*/
-  rsize = RECORD_SIZE(sas);
-
-  return 0;
-}
 
 
 // [[Rcpp::export]]
