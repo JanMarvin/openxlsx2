@@ -114,7 +114,7 @@ package:</p>
 <p>This has changed to this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in openxlsx2</span></span>
-<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span>xlsx_file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/wb_to_df.html">read_xlsx</a></span><span class="op">(</span>xlsx_file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
 <span><span class="co">## 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
 <span><span class="co">## 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
@@ -131,9 +131,9 @@ package:</p>
 the cell row as rowname for the data frame returned.
 <code>openxlsx2</code> should return a data frame of the selected size,
 even if it empty. If you preferred <code>openxlsx::readWorkbook()</code>
-this has become <code><a href="../reference/wb_read.html">wb_read()</a></code>. All of these are wrappers for
+this has become <code><a href="../reference/wb_to_df.html">wb_read()</a></code>. All of these are wrappers for
 the newly introduced function <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> which provides the
-most options. <code><a href="../reference/read_xlsx.html">read_xlsx()</a></code> and <code><a href="../reference/wb_read.html">wb_read()</a></code> were
+most options. <code><a href="../reference/wb_to_df.html">read_xlsx()</a></code> and <code><a href="../reference/wb_to_df.html">wb_read()</a></code> were
 created for backward comparability.</p>
 </div>
 </div>

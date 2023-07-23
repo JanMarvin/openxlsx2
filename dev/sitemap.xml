@@ -133,9 +133,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/read_sheet_names.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/read_xlsx.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/read_xml.html</loc>
   </url>
   <url>
@@ -302,9 +299,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_protect_worksheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_read.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_remove_col_widths.html</loc>
