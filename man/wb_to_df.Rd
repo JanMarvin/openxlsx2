@@ -47,8 +47,6 @@ read_xlsx(
   named_region,
   na.strings = "#N/A",
   na.numbers = NA,
-  check.names = FALSE,
-  sep.names = ".",
   fill_merged_cells = FALSE,
   ...
 )
