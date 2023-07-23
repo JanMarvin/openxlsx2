@@ -9,6 +9,18 @@ std::string XLWideString(std::istream& sas) {
   return read_xlwidestring(str, sas);
 }
 
+// same, but can be NULL
+std::string XLNullableWideString(std::istream& sas) {
+  uint32_t len = 0;
+  len = readbin(len, sas, 0);
+  std::string str(len, '\0');
+  if (len == 0xFFFFFFFF) {
+    return str;
+  }
+
+  return read_xlwidestring(str, sas);
+}
+
 void StrRun(std::istream& sas, uint32_t dwSizeStrRun) {
 
   uint16_t ich = 0, ifnt = 0;
@@ -61,6 +73,18 @@ std::string RichStr(std::istream& sas) {
 
   return(str);
 
+}
+
+void ProductVersion(std::istream& sas) {
+  uint16_t fileVersion = 0, fileProduct = 0;
+  int8_t fileExtension = 0;
+
+  fileVersion = readbin(fileVersion, sas, 0);
+  fileProduct = readbin(fileProduct, sas, 0);
+
+  fileExtension = fileProduct & 0x01;
+  fileProduct   = fileProduct & ~static_cast<uint16_t>(0x01);
+  Rprintf("ProductVersion: %d: %d: %d\n", fileVersion, fileProduct, fileExtension);
 }
 
 std::vector<int> UncheckedRfX(std::istream& sas) {
@@ -313,11 +337,75 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
 
     while(!bin.eof()) {
-      uint8_t x, unk;
+      int32_t x, size;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
-      x = readbin(x, bin, 0);
+      RECORD(x, size, bin);
+
+      if (x == BrtBeginBook) {
+        Rcpp::Rcout << "<workbook>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtFileVersion) {
+        Rcpp::Rcout << "<fileVersion>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtWbProp) {
+        Rcpp::Rcout << "<workbookProperties>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtACBegin) {
+        Rcpp::Rcout << "<BrtACBegin>" << std::endl;
+        // bin.seekg(size, bin.cur);
+
+        uint16_t cver = 0;
+        cver = readbin(cver, bin, 0);
+
+        for (uint16_t i = 0; i < cver; ++i) {
+          ProductVersion(bin);
+        }
+
+      }
+
+      if (x == BrtAbsPath15) {
+        std::string absPath = XLWideString(bin);
+        Rcpp::Rcout << absPath << std::endl;
+      }
+
+      if (x == BrtACEnd) {
+        Rcpp::Rcout << "<BrtACEnd>" << std::endl;
+      }
+
+      if (x == BrtRevisionPtr) {
+        Rcpp::Rcout << "<BrtRevisionPtr>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtUID) {
+        Rcpp::Rcout << "<BrtUID>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtBeginBookViews) {
+        Rcpp::Rcout << "<workbookViews>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtBookView) {
+        Rcpp::Rcout << "<workbookView>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtEndBookViews) {
+        Rcpp::Rcout << "</workbookViews>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
       if (x == BrtBeginBundleShs)  {
+        Rcpp::Rcout << "<sheets>" << std::endl;
         // unk = readbin(unk, bin, 0);
         // unk = readbin(unk, bin, 0);
         // uint32_t count, uniqueCount;
@@ -327,23 +415,88 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (x == BrtBundleSh) {
+        Rcpp::Rcout << "<sheet>" << std::endl;
+
         uint32_t hsState, iTabID; //  strRelID ???
+
         hsState = readbin(hsState, bin, 0);
         iTabID = readbin(iTabID, bin, 0);
-        // Rcpp::Rcout << hsState << " : " << iTabID << std::endl;
-        out << "<sheet r:id=\"" << RichStr(bin) << "\" name=\"";
+        std::string rid = XLNullableWideString(bin);
 
-        uint32_t len;
-        len = readbin(len, bin, 0);
-        std::string sheet_name(len, '\0');
-        out << read_xlwidestring(sheet_name, bin)  <<
-          "\"/>" << std::endl;
+        Rcpp::Rcout << hsState << ": " << iTabID  << ": " << rid << std::endl;
+
+        std::string val = XLWideString(bin);
+
+        out << "<sheet r:id=\"" << rid << "\" name=\"" << val << "\"/>" << std::endl;
       }
 
       if (x == BrtEndBundleShs) {
+        Rcpp::Rcout << "</sheets>" << std::endl;
         out << "</sheets>" << std::endl;
+      }
+
+      if (x == BrtCalcProp) {
+        Rcpp::Rcout << "<calcPr>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtFRTBegin) {
+        Rcpp::Rcout << "<ext>" << std::endl;
+
+        ProductVersion(bin);
+      }
+
+      if (x == BrtWorkBookPr15) {
+        Rcpp::Rcout << "<BrtWorkBookPr15>" << std::endl;
+        bin.seekg(size, bin.cur);
+        // uint8_t fChartTrackingRefBased = 0;
+        // uint32_t FRTHeader = 0;
+        // FRTHeader = readbin(FRTHeader, bin, 0);
+        // fChartTrackingRefBased = readbin(fChartTrackingRefBased, bin, 0) & 0x01;
+      }
+
+      if (x == BrtBeginCalcFeatures) {
+        Rcpp::Rcout << "<calcs>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtCalcFeature) {
+        Rcpp::Rcout << "<calc>" << std::endl;
+        // bin.seekg(size, bin.cur);
+        uint32_t FRTHeader = 0;
+        FRTHeader = readbin(FRTHeader, bin, 0);
+        std::string szName = XLWideString(bin);
+
+        Rcpp::Rcout << FRTHeader << ": " << szName << std::endl;
+      }
+
+      if (x == BrtEndCalcFeatures) {
+        Rcpp::Rcout << "</calcs>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtFRTEnd) {
+        Rcpp::Rcout << "</ext>" << std::endl;
+      }
+
+
+      if (x == BrtWbFactoid) { // ???
+        Rcpp::Rcout << "<BrtWbFactoid>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtFileRecover) {
+        Rcpp::Rcout << "<fileRecovery>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtEndBook) {
+        Rcpp::Rcout << "</workbook>" << std::endl;
+        bin.seekg(size, bin.cur);
         break;
       }
+
+      Rcpp::Rcout << x << ": " << size << ": " << bin.tellg() << std::endl;
     }
 
     out.close();
