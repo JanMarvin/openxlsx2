@@ -100,16 +100,60 @@ std::vector<int> UncheckedRfX(std::istream& sas) {
   return(out);
 }
 
+int UncheckedCol(std::istream& sas) {
+  int32_t col = 0;
+  col = readbin(col, sas, 0);
+  if (col > 0 && col <= 16383)
+    return col;
+  else
+    Rcpp::stop("row size bad: %d", col);
+}
+
+int UncheckedRw(std::istream& sas) {
+  int32_t row = 0;
+  row = readbin(row, sas, 0);
+  if (row > 0 && row <= 1048575)
+    return row;
+  else
+    Rcpp::stop("row size bad: %d", row);
+}
+
+int ColRelShort(std::istream& sas) {
+  uint16_t col = 0;
+  int32_t out = 0;
+  col = readbin(col, sas, 0);
+  int8_t fColRel, fRwRel;
+
+  out = col & 0x3FFF;
+  fColRel = (col >> 14) & 1;
+  fRwRel  = (col >> 15) & 1;
+
+  Rprintf("ColRelShort: %d, %d\n", fColRel, fRwRel);
+
+  return out;
+}
+
+std::vector<int> Loc(std::istream& sas) {
+
+  std::vector<int> out(3);
+  out[0] = UncheckedRw(sas);
+  out[1] = ColRelShort(sas);
+
+  return out;
+}
+
 std::vector<int> Cell(std::istream& sas) {
 
   std::vector<int> out(3);
 
-  int32_t uint;
-  out[0] = readbin(uint, sas, 0);
+  out[0] = UncheckedCol(sas);
+
+  int32_t uint = 0;
   uint = readbin(uint, sas, 0);
 
-  out[1] = uint >> 8;   // iStyleRef
-  out[2] = uint & 0xFF; // unused
+  out[1] = uint & 0xFFFFFF;   // iStyleRef
+  out[2] = (uint & 0x02000000) >> 24; // fPhShow
+  // unused
 
   return(out);
 }
@@ -151,11 +195,31 @@ std::string BErr(std::istream& sas) {
 void CellParsedFormula(std::istream& sas) {
   uint32_t  cce, cb;
 
-  Rcpp::Rcout << sas.tellg() << std::endl;
+  Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
 
   cce = readbin(cce, sas, 0);
+  if (cce > 16385) Rcpp::stop("wrong cce size");
   Rcpp::Rcout << "cce: " << cce << std::endl;
   sas.seekg(cce, sas.cur);
+
+  // uint8_t val = 0;
+  // val = readbin(val, sas, 0);
+  //
+  // Rprintf("Formula: %d\n", val);
+  // if (val == PtgRef2 || val == PtgRef2 || val == PtgRef3) {
+  //   uint8_t ptg8 = 0, ptg = 0, PtgDataType = 0, null = 0;
+  //
+  //   ptg8 = readbin(ptg8, sas, 0);
+  //   ptg = ptg8 & 0x1F;
+  //   PtgDataType = (ptg8 & 0x60) >> 5;
+  //   null = (ptg8 & 0x80) >> 7;
+  //   Rprintf("PtgRef2: %d, %d, %d\n", ptg, PtgDataType, null);
+  //
+  //   std::vector<int> out = Loc(sas);
+  //
+  //   Rf_PrintValue(Rcpp::wrap(out));
+  //
+  // }
 
   // int32_t val = 0;
   // val = readbin((int8_t)val, sas, 0);
@@ -184,11 +248,6 @@ void CellParsedFormula(std::istream& sas) {
   //
   // val = readbin((int8_t)val, sas, 0);
   // Rcpp::Rcout << val << std::endl;
-
-
-  // if (cce != 0) {
-  //   Rcpp::stop("cce != 0");
-  // }
 
   cb = readbin(cb, sas, 0);
   Rcpp::Rcout << "cb: " << cb << std::endl;
