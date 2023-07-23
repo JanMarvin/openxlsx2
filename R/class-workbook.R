@@ -406,8 +406,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       sheet <- as.character(sheet)
+      private$validate_new_sheet(sheet)
       sheet_name <- replace_legal_chars(sheet)
-      private$validate_new_sheet(sheet_name)
 
 
       newSheetIndex <- length(self$worksheets) + 1L
@@ -571,8 +571,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       sheet <- as.character(sheet)
+      private$validate_new_sheet(sheet)
       sheet_name <- replace_legal_chars(sheet)
-      private$validate_new_sheet(sheet_name)
 
       if (!is.logical(grid_lines) | length(grid_lines) > 1) {
         fail <- TRUE
@@ -761,7 +761,10 @@ wbWorkbook <- R6::R6Class(
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
     clone_worksheet = function(old = current_sheet(), new = next_sheet()) {
-      private$validate_new_sheet(new)
+
+      sheet <- new
+      private$validate_new_sheet(sheet)
+      new <- sheet
       old <- private$get_sheet_index(old)
 
       newSheetIndex <- length(self$worksheets) + 1L
@@ -2708,7 +2711,9 @@ wbWorkbook <- R6::R6Class(
 
       # should be able to pull this out into a single private function
       for (i in seq_along(pos)) {
-        private$validate_new_sheet(new_name[i])
+        sheet <- new_name[i]
+        private$validate_new_sheet(sheet)
+        new_name[i] <- sheet
         private$set_single_sheet_name(pos[i], new_name[i], new_raw[i])
         # TODO move this work into private$set_single_sheet_name()
 
@@ -7060,20 +7065,33 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- as.character(sheet)
       if (has_illegal_chars(sheet)) {
-        stop("illegal characters found in sheet. Please remove. See ?openxlsx2::clean_worksheet_name")
+        warning("Fixing: removing illegal characters found in sheet name. See ?openxlsx2::clean_worksheet_name.")
+        sheet <- replace_illegal_chars(sheet)
       }
 
       if (!nzchar(sheet)) {
-        stop("sheet name must contain at least 1 character")
+        warning("Fixing: sheet name must contain at least 1 character.")
+        sheet <- paste("Sheet", length(self$sheet_names) + 1)
       }
 
       if (nchar(sheet) > 31) {
-        stop("sheet names must be <= 31 chars")
+        warning("Fixing: shortening sheet name to 31 characters.")
+        sheet <- stringi::stri_sub(sheet, 1, 31)
+        if (any(duplicated(c(sheet, self$sheet_names))))
+          stop(
+            "Cannot shorten sheet name to a unique string. ",
+            "Please provide a unique sheetname with maximum 31 characters."
+          )
       }
 
       if (tolower(sheet) %in% self$sheet_names) {
-        stop("a sheet with name '", sheet, '"already exists"')
+        warning("Fixing: a sheet with name '", sheet, '"already exists. Creating a unique sheetname"')
+        ## We simply append (1), while spreadsheet software would increase
+        ## the integer as: Sheet, Sheet (1), Sheet (2) etc.
+        sheet <- paste(sheet, "(1)")
       }
+
+      assign("sheet", sheet, parent.frame())
     },
 
     set_current_sheet = function(sheet_index) {
