@@ -205,7 +205,7 @@ wb_dims(x = mtcars)
 # The dims of the values of a column in `x`
 wb_dims(x = mtcars, cols = "cyl")
 # a column in `x` with the column name
-wb_dims(x = mtcars, cols = "cyl", col_names = TRUE)
+wb_dims(x = mtcars, cols = "cyl", select = "x")
 # rows in `x`
 wb_dims(x = mtcars)
 

@@ -643,20 +643,6 @@ wb_dims <- function(..., select = NULL) {
   cnam_null <- is.null(args$col_names)
   col_names <- args$col_names %||% x_has_named_dims
 
-  if (x_present && !col_names && x_has_named_dims && !cnam_null) {
-    # if (x_has_colnames) {
-    #   warning("`x` has column names. Yet, you are asking for `col_names = FALSE`.",
-    #           "\n ",
-    #           "\n Consider supplying `x = unname(`input`)`, or use `wb_dims()` without `x` ",
-    #           "to ensure no errors with `col_names = FALSE`",
-    #           call. = FALSE
-    #   )
-    # }
-    # Else it is assumed that `x` doesn't have col names. assuming there is no name.
-    #  Supply `col_names = TRUE` only to select rows + column name.
-    # }
-  }
-
   if (!cnam_null && !x_has_named_dims) {
     stop("Supplying `col_names` when `x` is a vector is not supported.")
   }
@@ -687,7 +673,7 @@ wb_dims <- function(..., select = NULL) {
     # cols_arg <- seq_len(ncol(args$x))
     cols_arg <- NULL
   } else {
-    cols_arg <- 1L # no more NULL for cols_arg and rows_arg.
+    cols_arg <- 1L # no more NULL for cols_arg and rows_arg if `x` is not supplied
   }
   if (!is.null(cols_arg) && min(cols_arg) < 1L) {
     stop("Problem, you must supply positive values to `cols`")
