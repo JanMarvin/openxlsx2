@@ -1,6 +1,78 @@
-#include <Rcpp/Lightest>
+// #include <Rcpp/Lightest>
 
+#include "openxlsx2.h"
 #include "xlsb.h"
+
+
+int32_t RECORD_ID(std::istream& sas) {
+  uint8_t var1 = 0, var2 = 0;
+  var1 = readbin(var1, sas, 0);
+
+  if (var1 & 0x80) {
+
+    var2 = readbin(var2, sas, 0);
+
+    // If the high bit is 1, then it's a two-byte record type
+    int32_t recordType = ((var2 & 0x7F) << 7) | (var1 & 0x7F);
+    if (recordType >= 128 && recordType < 16384) {
+      return recordType;
+    }
+  } else {
+    // If the high bit is not 1, then it's a one-byte record type
+    int32_t recordType = var1;
+    if (recordType >= 0 && recordType < 128) {
+      return recordType;
+    }
+  }
+  return -1;
+}
+
+int32_t RECORD_SIZE(std::istream& sas) {
+  int8_t sar1 = 0, sar2 = 0, sar3 = 0, sar4 = 0;
+
+  sar1 = readbin(sar1, sas, 0);
+  if (sar1 & 0x80) sar2 = readbin(sar2, sas, 0);
+  if (sar2 & 0x80) sar3 = readbin(sar3, sas, 0);
+  if (sar3 & 0x80) sar4 = readbin(sar4, sas, 0);
+
+  // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
+
+
+  if (sar2 != 0 & sar3 != 0 && sar4 != 0) {
+    int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 != 0 & sar3 != 0 && sar4 == 0) {
+    int32_t recordType = ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 != 0 & sar3 == 0 && sar4 == 0) {
+    int32_t recordType = ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    return recordType;
+  }
+
+  if (sar2 == 0 & sar3 == 0 && sar4 == 0) {
+    // Rcpp::Rcout << "yes" << std::endl;
+    int32_t recordType = sar1;
+    return recordType;
+  }
+
+  // Return -1 if the record type is invalid
+  return -1;
+}
+
+int32_t RECORD(int &rid, int &rsize, std::istream& sas) {
+
+  /* Record ID ---------------------------------------------------------------*/
+  rid = RECORD_ID(sas);
+
+  /* Record Size -------------------------------------------------------------*/
+  rsize = RECORD_SIZE(sas);
+
+  return 0;
+}
 
 std::string XLWideString(std::istream& sas) {
   uint32_t len = 0;
@@ -103,19 +175,19 @@ std::vector<int> UncheckedRfX(std::istream& sas) {
 int UncheckedCol(std::istream& sas) {
   int32_t col = 0;
   col = readbin(col, sas, 0);
-  if (col > 0 && col <= 16383)
+  if (col >= 0 && col <= 16383)
     return col;
   else
-    Rcpp::stop("row size bad: %d", col);
+    Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
 int UncheckedRw(std::istream& sas) {
   int32_t row = 0;
   row = readbin(row, sas, 0);
-  if (row > 0 && row <= 1048575)
+  if (row >= 0 && row <= 1048575)
     return row;
   else
-    Rcpp::stop("row size bad: %d", row);
+    Rcpp::stop("row size bad: %d @ %d", row, sas.tellg());
 }
 
 int ColRelShort(std::istream& sas) {
@@ -135,9 +207,20 @@ int ColRelShort(std::istream& sas) {
 
 std::vector<int> Loc(std::istream& sas) {
 
-  std::vector<int> out(3);
+  std::vector<int> out(2);
   out[0] = UncheckedRw(sas);
   out[1] = ColRelShort(sas);
+
+  return out;
+}
+
+std::vector<int> Area(std::istream& sas) {
+
+  std::vector<int> out(4);
+  out[0] = UncheckedRw(sas); // rowFirst
+  out[1] = UncheckedRw(sas); // rowLast
+  out[2] = ColRelShort(sas); // columnFirst
+  out[3] = ColRelShort(sas); // columnLast
 
   return out;
 }
@@ -156,6 +239,12 @@ std::vector<int> Cell(std::istream& sas) {
   // unused
 
   return(out);
+}
+
+static double Xnum(std::istream& sas) {
+  double out = 0;
+  out = readbin(out, sas, 0);
+  return out;
 }
 
 static double RkNumber(int32_t val) {
@@ -200,26 +289,181 @@ void CellParsedFormula(std::istream& sas) {
   cce = readbin(cce, sas, 0);
   if (cce > 16385) Rcpp::stop("wrong cce size");
   Rcpp::Rcout << "cce: " << cce << std::endl;
-  sas.seekg(cce, sas.cur);
+  size_t pos = sas.tellg();
+  // sas.seekg(cce, sas.cur);
+  pos += cce;
 
-  // uint8_t val = 0;
-  // val = readbin(val, sas, 0);
-  //
-  // Rprintf("Formula: %d\n", val);
-  // if (val == PtgRef2 || val == PtgRef2 || val == PtgRef3) {
-  //   uint8_t ptg8 = 0, ptg = 0, PtgDataType = 0, null = 0;
-  //
-  //   ptg8 = readbin(ptg8, sas, 0);
-  //   ptg = ptg8 & 0x1F;
-  //   PtgDataType = (ptg8 & 0x60) >> 5;
-  //   null = (ptg8 & 0x80) >> 7;
-  //   Rprintf("PtgRef2: %d, %d, %d\n", ptg, PtgDataType, null);
-  //
-  //   std::vector<int> out = Loc(sas);
-  //
-  //   Rf_PrintValue(Rcpp::wrap(out));
-  //
-  // }
+  std::string fml_out;
+  while(sas.tellg() < pos) {
+
+    // 1
+    int8_t val1 = 0, val2 = 0, controlbit = 0;
+    val1 = readbin(val1, sas, 0);
+
+    if (val1 == PtgList_PtgSxName || val1 == PtgAttr) {
+      Rcpp::Rcout << "reading eptg @ " << sas.tellg() << std::endl;
+      val2 = readbin(val2, sas, 0); // full 8 bit forming eptg
+      Rcpp::Rcout << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
+    }
+
+    controlbit = (val1 & 0x80) >> 7;
+    if (controlbit != 0) Rcpp::stop("controlbit unexpectedly not 0");
+    val1 &= 0x7F; // the remaining 7 bits form ptg
+    // for some Ptgs only the first 5 are of interest
+    // and 6 and 7 contain DataType information
+
+    Rprintf("Formula: %d %d\n", val1, val2);
+
+    if (val1 == PtgAdd) {
+      Rcpp::Rcout << "+" <<std::endl;
+      fml_out += "+";
+      fml_out += "\n";
+    }
+    if (val1 == PtgSub) {
+      fml_out += "-";
+      fml_out += "\n";
+    }
+    if (val1 == PtgMul) {
+      fml_out += "*";
+      fml_out += "\n";
+    }
+    if (val1 == PtgDiv) {
+      fml_out +=  "/";
+      fml_out += "\n";
+    }
+    if (val1 == PtgPower) {
+      fml_out += "^";
+      fml_out += "\n";
+    }
+    if (val1 == PtgConcat) {
+      fml_out += "&";
+      fml_out += "\n";
+    }
+    if (val1 == PtgGt) {
+      fml_out += ">";
+      fml_out += "\n";
+    }
+    if (val1 == PtgGe) {
+      fml_out += ">=";
+      fml_out += "\n";
+    }
+    if (val1 == PtgLt) {
+      fml_out += "<";
+      fml_out += "\n";
+    }
+    if (val1 == PtgLe) {
+      fml_out += "<=";
+      fml_out += "\n";
+    }
+
+    if (val2 == PtgAttrSemi) {
+      Rcpp::Rcout << "PtgAttrSemi" << std::endl;
+      // val2[1] == 1
+      // val2[2:8] == 0
+      uint16_t unused = 0;
+      unused = readbin(unused, sas, 0);
+      fml_out += ";";
+      fml_out += "\n";
+    }
+
+    if (val2 == PtgAttrSum) {
+      Rcpp::Rcout << "PtgAttrSum" << std::endl;
+      // val2[1:4] == 0
+      // val2[5]   == 1
+      // val2[6:8] == 0
+      uint16_t unused = 0;
+      unused = readbin(unused, sas, 0);
+      fml_out += "SUM"; // maybe attr because it is a single cell function?
+      fml_out += "\n";
+    }
+
+    if (val1 == PtgInt) {
+      uint16_t integer = 0;
+      integer = readbin(integer, sas, 0);
+      // Rcpp::Rcout << integer << std::endl;
+      fml_out += std::to_string(integer);
+      fml_out += "\n";
+    }
+
+    if (val1 == PtgRef || val1 == PtgRef2 || val1 == PtgRef3) {
+      // uint8_t ptg8 = 0, ptg = 0, PtgDataType = 0, null = 0;
+      //
+      // 2
+      // Rprintf("PtgRef2: %d, %d, %d\n", ptg, PtgDataType, null);
+
+      // val1[6:7] == PtgDataType
+
+      // 6 & 10
+      std::vector<int> out = Loc(sas);
+
+      // A1 notation cell
+      fml_out += int_to_col(out[1] + 1L);
+      fml_out += std::to_string(out[0] + 1L);
+      fml_out += "\n";
+
+      Rf_PrintValue(Rcpp::wrap(out));
+      Rcpp::Rcout << sas.tellg() << std::endl;
+
+    }
+
+    if (val1 == PtgArea || val1 == PtgArea2 || val1 == PtgArea3) {
+
+      std::vector<int> out = Area(sas);
+
+      // A1 notation cell
+      fml_out += int_to_col(out[2] + 1L);
+      fml_out += std::to_string(out[0] + 1L);
+      fml_out += ":";
+      fml_out += int_to_col(out[3] + 1L);
+      fml_out += std::to_string(out[1] + 1L);
+      fml_out += "\n";
+
+      Rf_PrintValue(Rcpp::wrap(out));
+      Rcpp::Rcout << sas.tellg() << std::endl;
+
+    }
+
+    if (val1 == PtgFunc || val1 == PtgFunc2 || val1 == PtgFunc3) {
+
+      uint16_t iftab = 0;
+      iftab = readbin(iftab, sas, 0);
+
+      fml_out += Ftab(iftab);
+      fml_out += "\n";
+    }
+
+    if (val1 == PtgFuncVar || val1 == PtgFuncVar2 || val1 == PtgFuncVar3) {
+      uint8_t cparams = 0, fCeFunc = 0; // number of parameters
+      cparams = readbin(cparams, sas, 0);
+
+      uint16_t tab = 0;
+      tab = readbin(tab, sas, 0);
+
+      fCeFunc = tab & 0x0001;
+      tab &= 0x7FFF;
+      if (fCeFunc) {
+        fml_out += Cetab(tab);
+        fml_out += "\n";
+      } else {
+        fml_out += Ftab(tab);
+        fml_out += "\n";
+      }
+
+      Rprintf("PtgFuncVar: %d %d %d\n", cparams, tab, fCeFunc);
+    }
+
+    // if (val1 == PtgList_PtgSxName)
+
+    // else {
+    //   // rewind and seek forward
+    //   sas.seekg(pos, sas.beg);
+    //   sas.seekg(cce, sas.cur);
+    // }
+  }
+
+  Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
+
+  // Rcpp::stop("ttop");
 
   // int32_t val = 0;
   // val = readbin((int8_t)val, sas, 0);
@@ -258,75 +502,6 @@ void CellParsedFormula(std::istream& sas) {
 }
 
 
-int32_t RECORD_ID(std::istream& sas) {
-  uint8_t var1 = 0, var2 = 0;
-  var1 = readbin(var1, sas, 0);
-
-  if (var1 & 0x80) {
-
-    var2 = readbin(var2, sas, 0);
-
-    // If the high bit is 1, then it's a two-byte record type
-    int32_t recordType = ((var2 & 0x7F) << 7) | (var1 & 0x7F);
-    if (recordType >= 128 && recordType < 16384) {
-      return recordType;
-    }
-  } else {
-    // If the high bit is not 1, then it's a one-byte record type
-    int32_t recordType = var1;
-    if (recordType >= 0 && recordType < 128) {
-      return recordType;
-    }
-  }
-  return -1;
-}
-
-int32_t RECORD_SIZE(std::istream& sas) {
-  int8_t sar1 = 0, sar2 = 0, sar3 = 0, sar4 = 0;
-
-  sar1 = readbin(sar1, sas, 0);
-  if (sar1 & 0x80) sar2 = readbin(sar2, sas, 0);
-  if (sar2 & 0x80) sar3 = readbin(sar3, sas, 0);
-  if (sar3 & 0x80) sar4 = readbin(sar4, sas, 0);
-
-  // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
-
-
-  if (sar2 != 0 & sar3 != 0 && sar4 != 0) {
-    int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
-    return recordType;
-  }
-
-  if (sar2 != 0 & sar3 != 0 && sar4 == 0) {
-    int32_t recordType = ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
-    return recordType;
-  }
-
-  if (sar2 != 0 & sar3 == 0 && sar4 == 0) {
-    int32_t recordType = ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
-    return recordType;
-  }
-
-  if (sar2 == 0 & sar3 == 0 && sar4 == 0) {
-    // Rcpp::Rcout << "yes" << std::endl;
-    int32_t recordType = sar1;
-    return recordType;
-  }
-
-  // Return -1 if the record type is invalid
-  return -1;
-}
-
-int32_t RECORD(int &rid, int &rsize, std::istream& sas) {
-
-  /* Record ID ---------------------------------------------------------------*/
-  rid = RECORD_ID(sas);
-
-  /* Record Size -------------------------------------------------------------*/
-  rsize = RECORD_SIZE(sas);
-
-  return 0;
-}
 
 // [[Rcpp::export]]
 int sst(std::string filePath, std::string outPath, bool debug) {
@@ -496,6 +671,11 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
       if (x == BrtCalcProp) {
         Rcpp::Rcout << "<calcPr>" << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtName) {
+        Rcpp::Rcout << "<BrtName>" << std::endl;
         bin.seekg(size, bin.cur);
       }
 
@@ -862,32 +1042,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         out << "</c>" << std::endl;
       }
 
-      if (x == BrtFmlaError) { // t="e" & <f>
-        Rcpp::Rcout << "BrtFmlaError: " << bin.tellg() << std::endl;
-        // bin.seekg(size, bin.cur);
-        std::vector<int> cell;
-        cell = Cell(bin);
-        Rf_PrintValue(Rcpp::wrap(cell));
-
-        std::string fErr;
-        fErr = BErr(bin);
-        out << "<c>" << std::endl;
-        out << "<v>" << fErr << "</v>" << std::endl;
-        out << "</c>" << std::endl;
-
-        uint16_t frbitfmla = 0;
-        // [0] == 0
-        // [1] == fAlwaysCalc
-        // [2-15] == unused
-        frbitfmla = readbin(frbitfmla, bin, 0);
-
-        // int32_t len = size - 4 * 32 - 2 * 8;
-        // std::string fml(len, '\0');
-
-        CellParsedFormula(bin);
-
-      }
-
 
       if (x == BrtCellReal) {
         Rcpp::Rcout << "BrtCellReal: " << bin.tellg() << std::endl;
@@ -933,8 +1087,82 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       }
 
+      if (x == BrtFmlaBool) {
+        Rcpp::Rcout << "BrtFmlaBool: " << bin.tellg() << std::endl;
+        // bin.seekg(size, bin.cur);
+
+        std::vector<int> cell;
+        cell = Cell(bin);
+        Rf_PrintValue(Rcpp::wrap(cell));
+
+        bool val = 0;
+        val = readbin(val, bin, 0);
+        Rcpp::Rcout << val << std::endl;
+
+        uint16_t grbitFlags = 0;
+        grbitFlags = readbin(grbitFlags, bin, 0);
+
+        CellParsedFormula(bin);
+      }
+
+      if (x == BrtFmlaError) { // t="e" & <f>
+        Rcpp::Rcout << "BrtFmlaError: " << bin.tellg() << std::endl;
+        // bin.seekg(size, bin.cur);
+        std::vector<int> cell;
+        cell = Cell(bin);
+        Rf_PrintValue(Rcpp::wrap(cell));
+
+        std::string fErr;
+        fErr = BErr(bin);
+        out << "<c>" << std::endl;
+        out << "<v>" << fErr << "</v>" << std::endl;
+        out << "</c>" << std::endl;
+
+        uint16_t frbitfmla = 0;
+        // [0] == 0
+        // [1] == fAlwaysCalc
+        // [2-15] == unused
+        frbitfmla = readbin(frbitfmla, bin, 0);
+
+        // int32_t len = size - 4 * 32 - 2 * 8;
+        // std::string fml(len, '\0');
+
+        CellParsedFormula(bin);
+
+      }
+
       if (x == BrtFmlaNum) {
-        bin.seekg(size, bin.cur);
+        Rcpp::Rcout << "BrtFmlaNum: " << bin.tellg() << std::endl;
+        // bin.seekg(size, bin.cur);
+
+        std::vector<int> cell;
+        cell = Cell(bin);
+        Rf_PrintValue(Rcpp::wrap(cell));
+
+        double xnum = Xnum(bin);
+        Rcpp::Rcout << xnum << std::endl;
+
+        uint16_t grbitFlags = 0;
+        grbitFlags = readbin(grbitFlags, bin, 0);
+
+        CellParsedFormula(bin);
+      }
+
+      if (x == BrtFmlaString) {
+        Rcpp::Rcout << "BrtFmlaString: " << bin.tellg() << std::endl;
+        // bin.seekg(size, bin.cur);
+
+        std::vector<int> cell;
+        cell = Cell(bin);
+        Rf_PrintValue(Rcpp::wrap(cell));
+
+        std::string val = XLWideString(bin);
+        Rcpp::Rcout << val << std::endl;
+
+        uint16_t grbitFlags = 0;
+        grbitFlags = readbin(grbitFlags, bin, 0);
+
+        CellParsedFormula(bin);
       }
 
       if (in_sheet_data && x == BrtEndSheetData) {
