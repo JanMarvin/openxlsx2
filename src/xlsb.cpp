@@ -3,6 +3,12 @@
 #include "openxlsx2.h"
 #include "xlsb.h"
 
+// should really add a reliable function to get all these tricky bits
+// bit 1 from uint8_t
+// bit 2 from uint8_t
+// bits 1-n from uint8_t
+// bits 5-7 from uint8_t
+// bit 8 from uint8_t
 
 int32_t RECORD_ID(std::istream& sas) {
   uint8_t var1 = 0, var2 = 0;
@@ -320,22 +326,27 @@ void CellParsedFormula(std::istream& sas) {
       fml_out += "\n";
     }
     if (val1 == PtgSub) {
+      Rcpp::Rcout << "-" <<std::endl;
       fml_out += "-";
       fml_out += "\n";
     }
     if (val1 == PtgMul) {
+      Rcpp::Rcout << "*" <<std::endl;
       fml_out += "*";
       fml_out += "\n";
     }
     if (val1 == PtgDiv) {
+      Rcpp::Rcout << "/" <<std::endl;
       fml_out +=  "/";
       fml_out += "\n";
     }
     if (val1 == PtgPower) {
+      Rcpp::Rcout << "^" <<std::endl;
       fml_out += "^";
       fml_out += "\n";
     }
     if (val1 == PtgConcat) {
+      Rcpp::Rcout << "&" <<std::endl;
       fml_out += "&";
       fml_out += "\n";
     }
@@ -353,6 +364,10 @@ void CellParsedFormula(std::istream& sas) {
     }
     if (val1 == PtgLe) {
       fml_out += "<=";
+      fml_out += "\n";
+    }
+    if (val1 == PtgNe) {
+      fml_out += "<>";
       fml_out += "\n";
     }
 
@@ -438,8 +453,10 @@ void CellParsedFormula(std::istream& sas) {
 
       uint16_t tab = 0;
       tab = readbin(tab, sas, 0);
+      // tab[16] == fCeFunc bool
+      // tab[1:15] == tab
 
-      fCeFunc = tab & 0x0001;
+      fCeFunc = (tab >> 15) & 0x0001;
       tab &= 0x7FFF;
       if (fCeFunc) {
         fml_out += Cetab(tab);
