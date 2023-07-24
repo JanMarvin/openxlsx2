@@ -45,8 +45,8 @@ test_that("dims to col & row and back", {
   expect_equal(exp, got)
 
 })
-
 test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
+
   # Acceptable inputs
   expect_equal(wb_dims(), "A1")
   expect_equal(wb_dims(NULL), "A1") # to help programming with `wb_dims()` maybe?
@@ -57,17 +57,21 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
     wb_dims(1:10, 1:12, from_row = 2),
     wb_dims(rows = 1:10, cols = 1:12, from_row = 2)
   )
-  expect_warning(expect_warning(wb_dims("1", 2)))
+  expect_warning(wb_dims("1", 2))
+  expect_warning(wb_dims(from_row = "C"))
 
   # Ambiguous / input not accepted.
   # This now fails, as it used not to work. (Use `wb_dims()`, `NULL`, or )
   expect_error(wb_dims(1), "Supplying a single unnamed argument.")
+
   # This used to return A1 as well.
   expect_error(wb_dims(2), "Supplying a single unnamed argument is not handled")
   expect_error(wb_dims(mtcars), "Supplying a single unnamed argument")
-  # "`wb_dims()` WIP"
-  skip("lower priority, but giving non-consecutive rows, or cols should error.")
+
+
+  skip("lower priority, but giving non-consecutive rows, or cols should error in `wb_dims()`")
   expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "wb_dims() should only be used for Supplying a single continuous range.")
+
 })
 
 test_that("`wb_dims()` errors when providing unsupported arguments", {
@@ -93,10 +97,10 @@ test_that("wb_dims() works when not supplying `x`.", {
 
   expect_equal(wb_dims(1:2, 1:4, from_row = 2, from_col = "B"), "B2:E3")
   # This used to error, but now passes with a message.
-  out <- wb_dims(1, rows = 2) # , "Assuming the .+ `cols`")
+  expect_message(out <- wb_dims(1, rows = 2), "Assuming the .+ `cols`")
   expect_equal(out, "A2")
   # warns when trying to pass weird things
-  expect_warning(wb_dims(rows = "BC", cols = 1), regexp = "integer.+`rows`")
+  expect_warning(wb_dims(rows = "BC", cols = 1), regexp = "supply an integer")
   # "`wb_dims()` newe
   expect_equal(wb_dims(from_col = 4), "D1")
   expect_equal(wb_dims(from_row = 4), "A4")
@@ -243,7 +247,8 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
   # selecting both rows and columns doesn't work
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, rows = 2:10, cols = "cyl"), "C3:C11")
   # Select the data + row names
-  expect_equal(wb_dims(x = mtcars, row_names = TRUE, select = "x", from_row = "2"), "A2:L34")
+  expect_warning(out <- wb_dims(x = mtcars, row_names = TRUE, select = "x", from_row = "2"), "supply an integer")
+  expect_equal(out, "A2:L34")
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, col_names = FALSE, from_row = 2, select = "x"), "A2:L33") # col_span would need to be col_span+1 in this case.
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, col_names = FALSE, from_row = 2, select = "data"), "B2:L33") # col_span would need to be col_span+1 in this case.
 

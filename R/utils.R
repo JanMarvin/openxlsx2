@@ -278,8 +278,8 @@ check_correct_args <- function(args, select = NULL) {
   }
   cnam_null <- is.null(args$col_names)
   rnam_null <- is.null(args$row_names)
-  if (!is.null(args$rows) && is.character(args$rows)) {
-    warning("`rows` in `wb_dims()` should not be a character. Please supply an integer vector.", call. = FALSE)
+  if (is.character(args$rows) || is.character(args$from_row)) {
+    warning("`rows` and `from_rows` in `wb_dims()` should not be a character. Please supply an integer vector.", call. = FALSE)
   }
   if (is.null(args$x)) {
     if (!cnam_null || !rnam_null) {
@@ -311,10 +311,6 @@ check_correct_args <- function(args, select = NULL) {
 # But this function checks if the input is valid.
 # only check WHICH arguments are provided, mot what was provided.
 determine_select_valid <- function(args, select = NULL) {
-
-  args_provided <- names(args)
-  data_invalid <- FALSE
-
   valid_cases <- list(
     # "x" = !isFALSE(args$col_names),
     "x" = TRUE,
@@ -604,22 +600,14 @@ wb_dims <- function(..., select = NULL) {
   }
   # After this point, all unnamed problems are solved ;)
   x <- args$x
-  x_present <- !is.null(x)
   if (!is.null(select) && is.null(args$x)) {
     stop("`select` should only be provided with `x`.")
   }
   # little helper that streamlines which inputs cannot be
   select <- determine_select_valid(args = args, select = select)
-  if (is.character(args$rows)) {
-    warning(
-      "It's preferable to specify integers indices for `rows`",
-      "See `col2int(rows)` to find the correct index.",
-      call. = FALSE
-    )
-  }
+
   check_correct_args(args, select = select)
   rows_arg <- args$rows
-  rows_arg_original <- args$rows
   rows_arg <- if (is.character(rows_arg)) {
     col2int(rows_arg)
   } else if (!is.null(rows_arg)) {
@@ -669,8 +657,7 @@ wb_dims <- function(..., select = NULL) {
   if (!is.null(cols_arg)) {
     cols_arg <- col2int(cols_arg)
     assert_class(cols_arg, class = "integer", arg_nm = "cols")
-  } else if(!is.null(args$x)) {
-    # cols_arg <- seq_len(ncol(args$x))
+  } else if (!is.null(args$x)) {
     cols_arg <- NULL
   } else {
     cols_arg <- 1L # no more NULL for cols_arg and rows_arg if `x` is not supplied
@@ -682,17 +669,18 @@ wb_dims <- function(..., select = NULL) {
     stop("Problem, you must supply positive values to `rows`")
   }
   # assess from_row / from_col
+  if (is.character(args$from_row)) {
+    frow <- col2int(args$from_row)
+  } else {
+    frow <- args$from_row %||% 1L
+    frow <- as.integer(frow)
+  }
 
-  frow_null <- is.null(args$from_row)
-  frow <- args$from_row %||% 1L
-  frow <- as.integer(frow)
 
   # from_row is a function of col_names, from_rows and cols.
   # cols_seq should start at 1 after this
   # if from_row = 4, rows = 4:7,
   # then frow = 4 + 4 et rows = seq_len(length(rows))
-
-  fcol_null <- is.null(args$from_col)
   fcol <- col2int(args$from_col) %||% 1L
   # after this point, no assertion, assuming all elements to be acceptable
 
@@ -704,27 +692,26 @@ wb_dims <- function(..., select = NULL) {
   if (select == "col_names") {
     ncol_to_span <- ncol(x)
     nrow_to_span <- 1L
-  } else
-    if (select == "row_names") {
-      ncol_to_span <- 1L
-      nrow_to_span <- nrow(x) %||% 1L
-    } else if (select %in%  c("x", "data")) {
-      if (!is.null(cols_arg)) {
-        ncol_to_span <- length(cols_arg)
-      } else {
-        ncol_to_span <- ncol(x) %||% 1L
-      }
-      if (!is.null(rows_arg)) {
-        nrow_to_span <- length(rows_arg)
-      } else {
-        nrow_to_span <- nrow(x) %||% 1L
-      }
-
-      if (select == "x") {
-        nrow_to_span <- nrow_to_span + col_names
-        ncol_to_span <- ncol_to_span + row_names
-      }
+  } else if (select == "row_names") {
+    ncol_to_span <- 1L
+    nrow_to_span <- nrow(x) %||% 1L
+  } else if (select %in% c("x", "data")) {
+    if (!is.null(cols_arg)) {
+      ncol_to_span <- length(cols_arg)
+    } else {
+      ncol_to_span <- ncol(x) %||% 1L
     }
+    if (!is.null(rows_arg)) {
+      nrow_to_span <- length(rows_arg)
+    } else {
+      nrow_to_span <- nrow(x) %||% 1L
+    }
+
+    if (select == "x") {
+      nrow_to_span <- nrow_to_span + col_names
+      ncol_to_span <- ncol_to_span + row_names
+    }
+  }
   # Setting frow / fcol correctly.
 
   if (select == "row_names") {
@@ -739,12 +726,13 @@ wb_dims <- function(..., select = NULL) {
         fcol <- fcol + min(cols_arg) - 1L
       }
     }
+
     if (!is.null(rows_arg)) {
-      if ( min(rows_arg) > 1) {
+      if (min(rows_arg) > 1) {
         frow <- frow + min(rows_arg) - 1L
       }
-
     }
+
     if (select == "data") {
       fcol <- fcol + row_names
       frow <- frow + col_names
@@ -766,7 +754,6 @@ wb_dims <- function(..., select = NULL) {
     dims <- rowcol_to_dims(row_span, col_span)
   }
   return(dims)
-
 }
 
 
