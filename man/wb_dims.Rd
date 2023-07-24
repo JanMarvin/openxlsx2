@@ -11,16 +11,13 @@ wb_dims(..., select = NULL)
 can be coerced to data frame. \code{x}, \code{rows}, \code{cols}, \code{from_row}, \code{from_col},
 \code{row_names}, and \code{col_names} are accepted.}
 
-\item{select}{If \code{x} is supplied, and \code{rows} and \code{cols} are not,
+\item{select}{A string, one of the followings.
 it improves the selection of various parts of \code{x}
-\itemize{
-\item if \code{rows} or \code{cols} are supplied, will default to \code{col_names} i.e.
 One of "x", "data", "col_names", or "row_names".
-"data" will only select the data part, excluding row names and column names  (default if \code{cols} or \code{rows} are specified)
-"x" Includes column and row names if they are present. (default)
-"col_names" will only return column names
-"row_names" Will only return row names.
-}}
+\code{"data"} will only select the data part, excluding row names and column names  (default if \code{cols} or \code{rows} are specified)
+\code{"x"} Includes the data, column and row names if they are present. (default if none of \code{rows} and \code{cols} are provided)
+\code{"col_names"} will only return column names
+\code{"row_names"} Will only return row names.}
 }
 \value{
 A \code{dims} string

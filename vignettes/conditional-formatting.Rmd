@@ -251,7 +251,7 @@ wb$add_conditional_formatting(
     rows = seq_len(nrow(df)),
     cols = seq_len(ncol(df))
     ),
-  # dims = wb_dims(x = unname(df), col_names = FALSE)
+  # dims = wb_dims(x = df, col_names = FALSE, select = "data")
   style = c("black", "white"),
   rule = c(0, 255),
   type = "colorScale"

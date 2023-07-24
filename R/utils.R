@@ -456,14 +456,13 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 #' @param ... construct `dims` arguments, from rows/cols vectors or objects that
 #'   can be coerced to data frame. `x`, `rows`, `cols`, `from_row`, `from_col`,
 #'   `row_names`, and `col_names` are accepted.
-#' @param select If `x` is supplied, and `rows` and `cols` are not,
+#' @param select A string, one of the followings.
 #'    it improves the selection of various parts of `x`
-#'    * if `rows` or `cols` are supplied, will default to `col_names` i.e.
 #'    One of "x", "data", "col_names", or "row_names".
-#'    "data" will only select the data part, excluding row names and column names  (default if `cols` or `rows` are specified)
-#'    "x" Includes column and row names if they are present. (default)
-#'    "col_names" will only return column names
-#'    "row_names" Will only return row names.
+#'    `"data"` will only select the data part, excluding row names and column names  (default if `cols` or `rows` are specified)
+#'    `"x"` Includes the data, column and row names if they are present. (default if none of `rows` and `cols` are provided)
+#'    `"col_names"` will only return column names
+#'    `"row_names"` Will only return row names.
 #'
 #' @return A `dims` string
 #' @export

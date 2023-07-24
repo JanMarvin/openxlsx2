@@ -198,9 +198,9 @@ wb_dims(rows = seq_len(7), cols = seq_len(4), from_row = 4)
 wb_dims(rows = 1:10, cols = 1:15, from_col = "B", from_row = 2)
 
 # data + col names
-wb_dims(x = mtcars, col_names = TRUE)
-# only data
 wb_dims(x = mtcars)
+# only data
+wb_dims(x = mtcars, select = "data")
 
 # The dims of the values of a column in `x`
 wb_dims(x = mtcars, cols = "cyl")
