@@ -218,7 +218,7 @@ wb <- wb_workbook()$
     color = wb_color("yellow")
   )$
   add_fill(
-    dims = wb_dims(x = mtcars, rows = 0), # only column names
+    dims = wb_dims(x = mtcars, select = "col_names"), # only column names
     color = wb_color("cyan2")
   )
 
@@ -229,13 +229,13 @@ wb_dims_custom <- function(...) {
 }
 wb <- wb_workbook()$
   add_worksheet()$
-  add_data(x = mtcars, dims = wb_dims_custom(col_names = TRUE))$
+  add_data(x = mtcars, dims = wb_dims_custom())$
   add_fill(
     dims = wb_dims_custom(rows = 1:5),
     color = wb_color("yellow")
   )$
   add_fill(
-    dims = wb_dims_custom(rows = 0),
+    dims = wb_dims_custom(select = "col_names"),
     color = wb_color("cyan2")
   )
 ```
