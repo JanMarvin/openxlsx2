@@ -627,7 +627,7 @@ wb_dims <- function(..., select = NULL) {
   assert_class(rows_arg, class = "integer", arg_nm = "rows", or_null = TRUE)
   # Checking cols (if it is a column name)
   cols_arg <- args$cols
-  x_has_named_dims <- inherits(x, "data.frame") | inherits(x, "matrix")
+  x_has_named_dims <- inherits(x, "data.frame") || inherits(x, "matrix")
   x_has_colnames <- !is.null(colnames(x))
   if (!is.null(x)) {
     x <- as.data.frame(x)
