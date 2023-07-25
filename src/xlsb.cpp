@@ -287,6 +287,20 @@ std::string BErr(std::istream& sas) {
   return "unknown_ERROR";
 }
 
+void Xti(std::istream& sas) {
+  int32_t firstSheet = 0, lastSheet = 0;
+  uint32_t externalLink = 0;
+  externalLink = readbin(externalLink, sas, 0);
+  // scope
+  // -2 workbook
+  // -1 heet level
+  // >= 0 sheet level
+  firstSheet = readbin(firstSheet, sas, 0);
+  lastSheet = readbin(lastSheet, sas, 0);
+
+  Rprintf("Xti: %d %d %d\n", externalLink, firstSheet, lastSheet);
+}
+
 void CellParsedFormula(std::istream& sas) {
   uint32_t  cce, cb;
 
@@ -419,6 +433,23 @@ void CellParsedFormula(std::istream& sas) {
       Rf_PrintValue(Rcpp::wrap(out));
       Rcpp::Rcout << sas.tellg() << std::endl;
 
+    }
+
+    if (val1 == PtgRef3d || val1 == PtgRef3d2 || val1 == PtgRef3d3) {
+
+      uint16_t ixti = 0;
+      ixti = readbin(ixti, sas, 0); // XtiIndex
+      Rprintf("XtiIndex: %d\n", ixti);
+
+      std::vector<int> out = Loc(sas);
+
+      // A1 notation cell
+      fml_out += int_to_col(out[1] + 1L);
+      fml_out += std::to_string(out[0] + 1L);
+      fml_out += "\n";
+
+      Rf_PrintValue(Rcpp::wrap(out));
+      Rcpp::Rcout << sas.tellg() << std::endl;
     }
 
     if (val1 == PtgArea || val1 == PtgArea2 || val1 == PtgArea3) {
@@ -692,7 +723,116 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (x == BrtName) {
+
+        // bool fHidden = 0, fFunc = 0, fOB = 0, fProc = 0, fCalcExp = 0,
+        //   fBuiltin = 0, fgrp = 0, fPublished = 0, fWorkbookParam = 0,
+        //   fFutureFunction = 0;
+        // uint8_t chKey = 0;
+        // uint16_t A_to_G = 0, H_to_I = 0;
+        // uint32_t itab = 0;
+        // A_to_G = readbin(A_to_G, bin, 0);
+        // // fHidden    - visible
+        // // fFunc      - xml macro
+        // // fOB        - vba macro
+        // // fProc      - represents a macro
+        // // fCalcExp   - rgce returns array
+        // // fBuiltin   - builtin name
+        // // fgrp       - FnGroupID
+        // // fPublished - published name
+        //
+        // H_to_I = readbin(H_to_I, bin, 0);
+        // // fWorkbookParam  - DefinedName is workbook paramenter
+        // // fFutureFunction - future function
+        // // reserved        - 0
+        //
+        // chKey = readbin(chKey, bin, 0);
+        // // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)
+        //
+        // itab = readbin(itab, bin, 0);
+        //
+        // // XLNameWideString: XLWideString <= 255 characters
+        // std::string name = XLWideString(bin);
+        //
+        // CellParsedFormula(bin);
+        //
+        // std::string comment = XLNullableWideString(bin);
+        //
+        // Rcpp::Rcout << name << comment << std::endl;
+        //
+        // if (fProc) {
+        //   // must be NULL
+        //   std::string unusedstring1 = XLNullableWideString(bin);
+        //   // must be < 32768 characters
+        //   std::string description = XLNullableWideString(bin);
+        //   std::string helpTopic = XLNullableWideString(bin);
+        //   // must be NULL
+        //   std::string unusedstring2 = XLNullableWideString(bin);
+        // }
+
         Rcpp::Rcout << "<BrtName>" << std::endl;
+        bin.seekg(size, bin.cur);
+
+
+      }
+
+      if (x == BrtBeginExternals) {
+        Rcpp::Rcout << "<BrtBeginExternals>" << std::endl;
+        // bin.seekg(size, bin.cur);
+      }
+
+      // part of Xti
+      // * BrtSupSelf self reference
+      // * BrtSupSame same sheet
+      // * BrtSupAddin addin XLL
+      // * BrtSupBookSrc external link
+      if (x == BrtSupSelf) {
+        Rprintf("size %d\n", size);
+        Rcpp::Rcout << "BrtSupSelf @"<< bin.tellg() << std::endl;
+        // Rcpp::stop("BrtSupSelf");
+      }
+      if (x == BrtSupSame) {
+        Rprintf("size %d\n", size);
+        Rcpp::Rcout << "BrtSupSame @"<< bin.tellg() << std::endl;
+        // Rcpp::stop("BrtSupSelf");
+      }
+      if (x == BrtSupAddin) {
+        Rprintf("size %d\n", size);
+        Rcpp::Rcout << "BrtSupAddin @"<< bin.tellg() << std::endl;
+        // Rcpp::stop("BrtSupSelf");
+      }
+      if (x == BrtSupBookSrc) {
+        Rprintf("size %d\n", size);
+        Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
+        // Rcpp::stop("BrtSupSelf");
+      }
+
+      if (x == BrtSupTabs) {
+        uint32_t cTab = 0;
+
+        cTab = readbin(cTab, bin, 0);
+        if (cTab > 65535) Rcpp::stop("cTab to large");
+
+        for (uint32_t i = 0; i < cTab; ++i) {
+          std::string sheetName = XLWideString(bin);
+          Rcpp::Rcout << sheetName << std::endl;
+        }
+
+      }
+
+      if (x == BrtExternSheet) {
+        uint32_t cXti = 0;
+
+        cXti = readbin(cXti, bin, 0);
+        if (cXti > 65535) Rcpp::stop("cXti to large");
+
+        std::vector<uint32_t> rgXti(cXti);
+        for (uint32_t i = 0; i < cXti; ++i) {
+          Xti(bin);
+        }
+      }
+
+      if (x == BrtEndExternals) {
+        Rcpp::Rcout << "</BrtEndExternals>" << std::endl;
         bin.seekg(size, bin.cur);
       }
 
