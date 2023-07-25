@@ -48,8 +48,8 @@ test_that("dims to col & row and back", {
 test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
 
   # Acceptable inputs
-  expect_equal(wb_dims(), "A1")
-  expect_equal(wb_dims(NULL), "A1") # to help programming with `wb_dims()` maybe?
+  expect_error(wb_dims())
+  expect_error(wb_dims(NULL))
   expect_equal(wb_dims(1L, 1L), "A1")
   expect_equal(wb_dims(1:10, 1:26), "A1:Z10")
   expect_equal(wb_dims(1:10, LETTERS), "A1:Z10")
@@ -69,8 +69,7 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
   expect_error(wb_dims(mtcars), "Supplying a single unnamed argument")
 
 
-  skip("lower priority, but giving non-consecutive rows, or cols should error in `wb_dims()`")
-  expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "wb_dims() should only be used for Supplying a single continuous range.")
+  expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "You must supply positive, consecutive values to `cols`")
 
 })
 
@@ -186,9 +185,8 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   expect_equal(wb_dims(x = mtcars, rows = 5:10, from_col = "C"), "C6:M11")
   # Write without column names on top
 
-  expect_error(wb_dims(x = mtcars, cols = 0, from_col = "C"), "supply positive values to `cols`")
+  expect_error(wb_dims(x = mtcars, cols = 0, from_col = "C"), "supply positive.+ values to `cols`")
 
-  # expect_r
   # select rows and columns work
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl"), "B3:B11")
 

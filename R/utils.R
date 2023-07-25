@@ -526,6 +526,7 @@ wb_dims <- function(..., select = NULL) {
   len <- length(args)
 
   if (len == 0 || (len == 1 && is.null(args[[1]]))) {
+    stop("`wb_dims()` requires `rows`, `cols`, `from_row`, `from_col`, or `x`.")
     return("A1")
   }
 
@@ -670,12 +671,12 @@ wb_dims <- function(..., select = NULL) {
     cols_arg <- 1L # no more NULL for cols_arg and rows_arg if `x` is not supplied
   }
 
-  if (!is.null(cols_arg) && min(cols_arg) < 1L) {
-    stop("Problem, you must supply positive values to `cols`")
+  if (!is.null(cols_arg) && (min(cols_arg) < 1L || (length(cols_arg) > 1 && any(diff(cols_arg) != 1)))) {
+    stop("You must supply positive, consecutive values to `cols`")
   }
 
-  if (!is.null(rows_arg) && min(rows_arg) < 1L) {
-    stop("Problem, you must supply positive values to `rows`")
+  if (!is.null(rows_arg) && (min(rows_arg) < 1L || (length(rows_arg) > 1 && any(diff(rows_arg) != 1)))) {
+    stop("You must supply positive, consecutive values to `rows`.")
   }
 
   # assess from_row / from_col
