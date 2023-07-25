@@ -243,11 +243,11 @@ notion used in the <code>openxml</code> standard</p>
 <span><span class="co">#&gt; 4 NA TRUE &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 5 NA TRUE    2</span></span></code></pre></div>
 <p>Alternatively, if you don’t know the Excel sheet’s address, you can
-use <code><a href="../reference/dims_helper.html">wb_dims()</a></code> to specify the dimension. See below or
-in<code><a href="../reference/dims_helper.html">?wb_dims</a></code> for more details.</p>
+use <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to specify the dimension. See below or
+in<code><a href="../reference/wb_dims.html">?wb_dims</a></code> for more details.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read dimension without column names with `wb_dims()`</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">xlsx_file</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    A    B    C</span></span>
 <span><span class="co">#&gt; 2 NA   NA Var2</span></span>
 <span><span class="co">#&gt; 3 NA TRUE    1</span></span>
@@ -524,19 +524,40 @@ columns it might get confusing after the 26. Therefore we provide a
 wrapper to construct it:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># various options</span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "A1"</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>from_row <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "A4"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span>, cols <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span>, cols <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "D4"</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span>, cols <span class="op">=</span> <span class="st">"D"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "D4"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "E4:I10"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="st">"A:D"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="st">"A:D"</span><span class="op">)</span> <span class="co"># same as below</span></span>
 <span><span class="co">#&gt; [1] "A4:D10"</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, from_row <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "A4:D10"</span></span>
+<span><span class="co"># 10 rows and 15 columns from indice B2.</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span>, from_col <span class="op">=</span> <span class="st">"B"</span>, from_row <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "B2:P11"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="co"># data + col names</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "A1:K33"</span></span>
+<span><span class="co"># only data</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, select <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "A2:K33"</span></span>
+<span></span>
+<span><span class="co"># The dims of the values of a column in `x`</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, cols <span class="op">=</span> <span class="st">"cyl"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "B2:B33"</span></span>
+<span><span class="co"># a column in `x` with the column name</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, cols <span class="op">=</span> <span class="st">"cyl"</span>, select <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "B1:B33"</span></span>
+<span><span class="co"># rows in `x`</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A1:K33"</span></span>
 <span></span>
 <span><span class="co"># in a wb chain</span></span>
@@ -544,8 +565,29 @@ wrapper to construct it:</p>
 <span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_fill</span><span class="op">(</span></span>
-<span>    dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span><span class="va">mtcars</span>, start_row <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, <span class="co"># only 1st 5 rows of x data</span></span>
 <span>    color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"yellow"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_fill</span><span class="op">(</span></span>
+<span>    dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, select <span class="op">=</span> <span class="st">"col_names"</span><span class="op">)</span>, <span class="co"># only column names</span></span>
+<span>    color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"cyan2"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># or if the data's first coord needs to be located in B2.</span></span>
+<span></span>
+<span><span class="va">wb_dims_custom</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, from_col <span class="op">=</span> <span class="st">"B"</span>, from_row <span class="op">=</span> <span class="fl">2</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, dims <span class="op">=</span> <span class="fu">wb_dims_custom</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_fill</span><span class="op">(</span></span>
+<span>    dims <span class="op">=</span> <span class="fu">wb_dims_custom</span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"yellow"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_fill</span><span class="op">(</span></span>
+<span>    dims <span class="op">=</span> <span class="fu">wb_dims_custom</span><span class="op">(</span>select <span class="op">=</span> <span class="st">"col_names"</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"cyan2"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">

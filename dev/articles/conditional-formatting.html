@@ -222,8 +222,7 @@
 <span>  dims <span class="op">=</span> <span class="st">"A1:A10"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"containsText"</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"A"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"notcontainsText"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="cells-not-containing-text">Cells not containing text<a class="anchor" aria-label="anchor" href="#cells-not-containing-text"></a>
@@ -233,10 +232,11 @@
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">my_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"notcontainsText"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"notcontainsText"</span>, x <span class="op">=</span> <span class="va">my_dat</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"notcontainsText"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">my_dat</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">my_dat</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"notContainsText"</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"A"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -289,9 +289,11 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  sheet <span class="op">=</span> <span class="st">"colorScale"</span>,</span>
-<span>  <span class="co"># dims  = wb_dims(x = df, col_names = FALSE),</span></span>
-<span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span></span>
+<span>    rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>  <span class="co"># dims = wb_dims(x = df, col_names = FALSE, select = "data")</span></span>
 <span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"colorScale"</span></span>
@@ -354,7 +356,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  <span class="st">"databar"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"dataBar"</span>,</span>
 <span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#a6a6a6"</span>, <span class="st">"#a6a6a6"</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -365,7 +367,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting</a></span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  <span class="st">"databar"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">11</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">11</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"dataBar"</span>,</span>
 <span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#a6a6a6"</span>, <span class="st">"#a6a6a6"</span><span class="op">)</span>,</span>
@@ -382,7 +384,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"between"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"between"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"between"</span>,</span>
 <span>  rule <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -398,7 +400,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"topN"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"posStyle"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"topN"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
@@ -407,7 +409,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"topN"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"posStyle"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"topN"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -424,7 +426,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"bottomN"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  style <span class="op">=</span> <span class="st">"negStyle"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"bottomN"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
@@ -450,7 +452,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"logical operators"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_conditional_formatting</span><span class="op">(</span></span>
 <span>  <span class="st">"logical operators"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/dims_helper.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  rule <span class="op">=</span> <span class="st">"OR($A1=1,$A1=3,$A1=5,$A1=7)"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
