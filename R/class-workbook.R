@@ -4278,8 +4278,10 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "start_row", "start_col")
       standardize_case_names(..., arguments = arguments)
 
-      if (exists("start_row") && !is.null(start_row) &&
-          exists("start_col") && !is.null(start_col)) {
+      if ((exists("start_row") && !is.null(start_row)) ||
+          (exists("start_col") && !is.null(start_col))) {
+        if (!exists("start_row") || is.null(start_row)) start_row <- 1
+        if (!exists("start_row") || is.null(start_col)) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
         start_col <- col2int(start_col)
         start_row <- as.integer(start_row)
@@ -4423,12 +4425,15 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      standardize_case_names(...)
+      arguments <- c(ls(), "start_row", "start_col")
+      standardize_case_names(..., arguments = arguments)
 
-      if (exists("start_row") && !is.null(start_row) &&
-          exists("start_col") && !is.null(start_col)) {
+      if ((exists("start_row") && !is.null(start_row)) ||
+          (exists("start_col") && !is.null(start_col))) {
+        if (!exists("start_row") || is.null(start_row)) start_row <- 1
+        if (!exists("start_row") || is.null(start_col)) start_col <- 1
         .Deprecated(old = "start_row/start_col", new = "dims", package = "openxlsx2")
-        dims <- rowcol_to_dims(start_row, start_col)
+        dims <- rowcol_to_dim(start_row, start_col)
       }
 
       if (is.null(dev.list()[[1]])) {
@@ -4674,14 +4679,15 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      args <- list(...)
+      arguments <- c(ls(), "start_row", "start_col")
+      standardize_case_names(..., arguments = arguments)
 
-      standardize_case_names(...)
-
-      if (exists("start_row") && !is.null(start_row) &&
-          exists("start_col") && !is.null(start_col)) {
+      if ((exists("start_row") && !is.null(start_row)) ||
+          (exists("start_col") && !is.null(start_col))) {
+        if (!exists("start_row") || is.null(start_row)) start_row <- 1
+        if (!exists("start_row") || is.null(start_col)) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
-        dims <- rowcol_to_dims(args$start_row, args$start_col)
+        dims <- rowcol_to_dim(start_row, start_col)
       }
 
       sheet <- private$get_sheet_index(sheet)
