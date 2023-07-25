@@ -115,7 +115,7 @@ wb <- wb_add_worksheet(wb, "df")
 
 wb$add_data("df", df, startCol = "C")
 
-write_formula(wb, "df", startCol = "E", startRow = "2",
+write_formula(wb, "df", startCol = "E", startRow = 2,
              x = "SUM(C2:C11*D2:D11)",
              array = TRUE)
 }

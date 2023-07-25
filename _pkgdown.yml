@@ -35,6 +35,7 @@ reference:
 
 - title: wb Misc
   contents:
+  - wb_dims
   - starts_with("wb_protect")
   - wb_hyperlink
   - cleanup

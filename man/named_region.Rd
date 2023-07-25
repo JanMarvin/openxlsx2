@@ -100,8 +100,8 @@ wb$add_named_region(
   sheet = 1,
   name = "iris",
   dims = wb_dims(
-    row = seq_len(nrow(iris) + 1),
-    col = seq_along(iris)
+    rows = seq_len(nrow(iris) + 1),
+    cols = seq_along(iris)
   )
 )
 

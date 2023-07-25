@@ -1,6 +1,9 @@
-
-assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL, envir = parent.frame()) {
+# Use arg_nm to override the default name of the argument in case of an error message.
+assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL, envir = parent.frame(), arg_nm = NULL) {
   sx <- as.character(substitute(x, envir))
+  if (length(sx) == 0 || !is.null(arg_nm)) {
+    sx <- arg_nm %||% "argument"
+  }
 
   ok <- if (all) {
     all(vapply(class, function(i) inherits(x, i), NA))
