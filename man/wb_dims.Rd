@@ -104,7 +104,6 @@ It can be very useful to apply many rounds of styling sequentially.
 
 \examples{
 # Provide coordinates
-wb_dims()
 wb_dims(1, 4)
 wb_dims(rows = 1, cols = 4)
 wb_dims(from_row = 4)
