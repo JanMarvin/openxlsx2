@@ -1,7 +1,7 @@
-# Use arg_nm to override the default
+# Use arg_nm to override the default name of the argument in case of an error message.
 assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL, envir = parent.frame(), arg_nm = NULL) {
   sx <- as.character(substitute(x, envir))
-  if (identical(sx, character(0)) || !is.null(arg_nm)) {
+  if (length(sx) == 0 || !is.null(arg_nm)) {
     sx <- arg_nm %||% "argument"
   }
 
