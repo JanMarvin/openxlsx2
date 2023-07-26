@@ -149,6 +149,7 @@ check_valid_color <- function(color) {
     FALSE
   }
 }
+
 # `col2hex()` ------------------------------------------------------------------
 #' Convert rgb to hex
 #'

@@ -1706,7 +1706,7 @@ add threaded comment to worksheet
 
 \item{\code{reply}}{logical if the comment is a reply}
 
-\item{\code{resolve}}{logical if the comment should be maked as resolved}
+\item{\code{resolve}}{logical if the comment should be marked as resolved}
 }
 \if{html}{\out{</div>}}
 }
@@ -3229,7 +3229,7 @@ The \code{wbWorksheetObject}, invisibly
 \if{html}{\out{<a id="method-wbWorkbook-add_person"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_person}{}}}
 \subsection{Method \code{add_person()}}{
-add person to workook
+add person to workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_person(
   name = NULL,

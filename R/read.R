@@ -674,6 +674,7 @@ wb_read <- function(
   )
 
 }
+
 # `read_sheet_names()` ----------------------------------------------
 #' Get names of worksheets
 #'

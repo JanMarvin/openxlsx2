@@ -78,7 +78,7 @@ df <- data.frame(
   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 )
 wb$add_data_table(2, x = df)
-wb$add_data_validation(2, dims = "B2:B12", type = "date",
+wb$add_data_validation(2, dims = "A2:A12", type = "date",
   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 )
 wb$add_data_validation(2,

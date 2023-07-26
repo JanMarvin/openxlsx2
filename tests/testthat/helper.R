@@ -216,6 +216,7 @@ expect_wrapper <- function(
   testthat::succeed()
   return(invisible())
 }
+
 # `expect_pseudo_wrapper()` -------
 #' A trimmed down pseudo wrapper to check internal wrapped functions.
 #' @rdname expect_wrapper

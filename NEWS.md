@@ -28,15 +28,15 @@
   
 ## New features
 
-* `wb_dims()` was added as a more convenient replacement for `rowcol_to_dims()`. The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coercible to data frame. This allows the following variants:
-* `wb_dims(1:5, letters)`
-* `wb_dims(1:5, 1:26)`
-* `wb_dims(matrix(1, 5, 26))` with an added row for column names
+* `wb_dims()` was added as a more convenient replacement for `rowcol_to_dims()`.([691](https://github.com/JanMarvin/openxlsx2/pull/691) and [702](https://github.com/JanMarvin/openxlsx2/pull/702), @olivroy) The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coercible to data frame. This allows the following variants:
+  * `wb_dims(1:5, letters)`
+  * `wb_dims(1:5, 1:26)`
+  * `wb_dims(x = matrix(1, 5, 26))`
 * Handling of thread comments is not possible via `wb_add_thread()`. This includes options to reply and resolve comments.
-  
+
 ## Refactoring
 
-* Cleanup / revisit documentation and vignettes  ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
+* Cleanup / revisit documentation and vignettes ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
 
 ***************************************************************************
 

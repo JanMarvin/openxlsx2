@@ -654,6 +654,7 @@ write_data2 <- function(
 
   return(wb)
 }
+
 # `write_data_table()` ---------------------------------------------------------
 # `write_data_table()` an internal driver function to `write_data` and `write_data_table` ----
 #' Write to a worksheet as an Excel table

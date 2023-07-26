@@ -169,6 +169,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 
   return(res)
 }
+
 # dims helpers -----------------------------------------------------------------
 #' Helper functions to work with `dims`
 #'
@@ -228,6 +229,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   list(cols_out, rows_out)
 }
+
 #' @rdname dims_helper
 #' @export
 rowcol_to_dims <- function(row, col) {
@@ -247,6 +249,7 @@ rowcol_to_dims <- function(row, col) {
   stringi::stri_join(min_col, min_row, ":", max_col, max_row)
 
 }
+
 #' @rdname dims_helper
 #' @noRd
 rowcol_to_dim <- function(row, col) {
@@ -375,9 +378,6 @@ determine_select_valid <- function(args, select = NULL) {
 #'
 #' @description
 #'
-#' `wb_dims()` is experimental, any use case outside the documented ones may work,
-#' but is likely to fail or change.
-#'
 #' `wb_dims()` can be used to help provide the `dims` argument, in the `wb_add_*` functions.
 #' It returns a A1 spreadsheet range ("A1:B1" or "A2").
 #' It can be very useful as you can specify many parameters that interact together
@@ -432,7 +432,7 @@ determine_select_valid <- function(args, select = NULL) {
 #'
 #' @details
 #'
-#' #' When using `wb_dims()` with an object, the default behavior is
+#' When using `wb_dims()` with an object, the default behavior is
 #' to select only the data / row or columns in `x`
 #' If you need another behavior, use `wb_dims()` without supplying `x`.
 #'
@@ -823,6 +823,7 @@ un_list <- function(x) {
   names(x) <- nams
   x
 }
+
 # `fmt_txt()` ------------------------------------------------------------------
 #' format strings independent of the cell style.
 #'

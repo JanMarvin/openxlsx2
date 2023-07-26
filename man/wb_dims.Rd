@@ -23,9 +23,6 @@ One of "x", "data", "col_names", or "row_names".
 A \code{dims} string
 }
 \description{
-\code{wb_dims()} is experimental, any use case outside the documented ones may work,
-but is likely to fail or change.
-
 \code{wb_dims()} can be used to help provide the \code{dims} argument, in the \verb{wb_add_*} functions.
 It returns a A1 spreadsheet range ("A1:B1" or "A2").
 It can be very useful as you can specify many parameters that interact together
@@ -36,7 +33,7 @@ if they are \code{rows}, \code{cols}, for example \code{wb_dims(1:4, 1:2)}, that
 All parameters are numeric unless stated otherwise.
 }
 \details{
-#' When using \code{wb_dims()} with an object, the default behavior is
+When using \code{wb_dims()} with an object, the default behavior is
 to select only the data / row or columns in \code{x}
 If you need another behavior, use \code{wb_dims()} without supplying \code{x}.
 \itemize{
@@ -93,10 +90,10 @@ performed seamlessly.
   wb_dims(x = mtcars, from_row = 2, from_col = "B", ...)
 \}
 # using this function
-wb_dims_cars() # full grid (data + column names)
-wb_dims_cars(select = "data") # data only
+wb_dims_cars()                     # full grid (data + column names)
+wb_dims_cars(select = "data")      # data only
 wb_dims_cars(select = "col_names") # select column names
-wb_dims_cars(cols = "vs") # select the `vs` column
+wb_dims_cars(cols = "vs")          # select the `vs` column
 }\if{html}{\out{</div>}}
 
 It can be very useful to apply many rounds of styling sequentially.
@@ -119,18 +116,18 @@ wb_dims(rows = 1:10, cols = 1:10, from_col = 2)
 
 # or objects
 wb_dims(x = mtcars, col_names = TRUE)
+
 # select all data
 wb_dims(x = mtcars, select = "data")
+
 # column names of an object (with the special select = "col_names")
 wb_dims(x = mtcars, select = "col_names")
-# usually, it's better
-# dims of all the data of mtcars. (when not using name)
-wb_dims(x = mtcars, col_names = FALSE)
+
 
 # dims of the column names of an object
 wb_dims(x = mtcars, select = "col_names", col_names = TRUE)
 
-## add formatting to column names with the help of `wb_dims()`----
+## add formatting to `mtcars` using `wb_dims()`----
 wb <- wb_workbook()
 wb$add_worksheet("test wb_dims() with an object")
 dims_mtcars_and_col_names <- wb_dims(x = mtcars)

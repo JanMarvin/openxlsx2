@@ -3009,7 +3009,7 @@ wb_get_person <- function(wb, name = NULL) {
 #' @param comment the comment to add
 #' @param person_id the person Id this should be added for
 #' @param reply logical if the comment is a reply
-#' @param resolve logical if the comment should be maked as resolved
+#' @param resolve logical if the comment should be marked as resolved
 #' @seealso [wb_add_comment()]
 #' @name wb_add_thread
 #' @examples

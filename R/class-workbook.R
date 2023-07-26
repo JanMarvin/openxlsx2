@@ -3790,7 +3790,7 @@ wbWorkbook <- R6::R6Class(
     #' @param comment the comment to add
     #' @param person_id the person Id this should be added for
     #' @param reply logical if the comment is a reply
-    #' @param resolve logical if the comment should be maked as resolved
+    #' @param resolve logical if the comment should be marked as resolved
     #' @export
     add_thread = function(
       sheet      = current_sheet(),
@@ -6943,7 +6943,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description add person to workook
+    #' @description add person to workbook
     #' @param name name
     #' @param id id
     #' @param user_id user_id

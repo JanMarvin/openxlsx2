@@ -78,6 +78,7 @@ convert_hms <- function(x) {
   }
   x
 }
+
 # `convert_date()` helpers --------------------
 #' Get the date origin an xlsx file is using
 #'
@@ -130,6 +131,7 @@ parseOffset <- function(tz) {
 
   ifelse(is.na(z), 0, z)
 }
+
 #' @name as_POSIXct_utc
 #' @title Convert to POSIXct with timezone UTC
 #' @param x something as.POSIXct can convert
@@ -139,6 +141,7 @@ as_POSIXct_utc <- function(x) {
   attr(z, "tzone") <- "UTC"
   z
 }
+
 #' helper function to convert hms to posix
 #' @param x a hms object
 #' @noRd
@@ -148,6 +151,7 @@ as_POSIXlt_hms <- function(x) {
   z$sec <- as.numeric(x)
   z
 }
+
 # `convert_to_excel_date()` ---------------------------
 #' convert back to an Excel Date
 #' @param df dataframe
@@ -173,12 +177,14 @@ convert_to_excel_date <- function(df, date1904 = FALSE) {
 
   df
 }
+
 #' @export
 #' @rdname convert_to_excel_date
 convertToExcelDate <- function(df, date1904 = FALSE) {
   .Deprecated(old = "convertToExcelDate", new = "convert_to_excel_date", package = "openxlsx2")
   convert_to_excel_date(df = df, date1904 = date1904)
 }
+
 # `convert_to_excel_date()` helpers -----------------------------------
 #' conversion helper function
 #' @param x a date, posixct or hms object
