@@ -82,13 +82,16 @@ wb_load <- function(
 
   customXmlDir      <- grep_xml("customXml/")
 
+  workbookBIN       <- grep_xml("workbook.bin$")
   workbookXML       <- grep_xml("workbook.xml$")
+  workbookBINRels   <- grep_xml("workbook.bin.rels")
   workbookXMLRels   <- grep_xml("workbook.xml.rels")
 
   drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
   worksheetsXML     <- grep_xml("/worksheets/sheet[0-9]+")
 
   stylesXML         <- grep_xml("styles.xml$")
+  sharedStringsBIN  <- grep_xml("sharedStrings.bin$")
   sharedStringsXML  <- grep_xml("sharedStrings.xml$")
   metadataXML       <- grep_xml("metadata.xml$")
   themeXML          <- grep_xml("theme[0-9]+.xml$")
@@ -150,6 +153,22 @@ wb_load <- function(
     ),
     add = TRUE
   )
+
+  # modifications for xlsb
+  if (length(workbookBIN)) {
+    workbookXML <- gsub(".bin$", ".xml", workbookBIN)
+    print(workbookBIN)
+    print(workbookXML)
+    workbook(workbookBIN, workbookXML, 0)
+
+
+    if (length(sharedStringsBIN)) {
+      sharedStringsXML <- gsub(".bin$", ".xml", sharedStringsBIN)
+      sst(sharedStringsBIN, sharedStringsXML, 0)
+    }
+
+    workbookXMLRels <- workbookBINRels
+  }
 
   ## core
   if (!data_only && length(appXML)) {
@@ -664,6 +683,11 @@ wb_load <- function(
       wb$worksheets[[i]]$picture <- xml_node(chartsheet_xml, "chartsheet", "picture")
       wb$worksheets[[i]]$webPublishItems <- xml_node(chartsheet_xml, "chartsheet", "webPublishItems")
     } else {
+      if (grepl(".bin$", sheets$target[i])) {
+        xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
+        worksheet(sheets$target[i], xml_tmp, 0)
+        sheets$target[i] <- xml_tmp
+      }
       worksheet_xml <- read_xml(sheets$target[i])
       if (!data_only) {
         wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
