@@ -107,6 +107,7 @@ void StrRun(std::istream& sas, uint32_t dwSizeStrRun) {
   for (uint8_t i = 0; i < dwSizeStrRun; ++i) {
     ich  = readbin(ich, sas, 0);
     ifnt = readbin(ifnt, sas, 0);
+    Rprintf("strRun: %d %d\n", ich, ifnt);
   }
 }
 
@@ -567,7 +568,7 @@ int sst(std::string filePath, std::string outPath, bool debug) {
 
       if (debug) Rcpp::Rcout << "." << std::endl;
       RECORD(x, size, bin);
-      // Rcpp::Rcout << x << ": " << size << std::endl;
+      Rcpp::Rcout << x << ": " << size << std::endl;
 
       if (x == BrtBeginSst)  {
         uint32_t count, uniqueCount;
@@ -724,54 +725,65 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
       if (x == BrtName) {
 
-        // bool fHidden = 0, fFunc = 0, fOB = 0, fProc = 0, fCalcExp = 0,
-        //   fBuiltin = 0, fgrp = 0, fPublished = 0, fWorkbookParam = 0,
-        //   fFutureFunction = 0;
-        // uint8_t chKey = 0;
-        // uint16_t A_to_G = 0, H_to_I = 0;
-        // uint32_t itab = 0;
-        // A_to_G = readbin(A_to_G, bin, 0);
-        // // fHidden    - visible
-        // // fFunc      - xml macro
-        // // fOB        - vba macro
-        // // fProc      - represents a macro
-        // // fCalcExp   - rgce returns array
-        // // fBuiltin   - builtin name
-        // // fgrp       - FnGroupID
-        // // fPublished - published name
-        //
-        // H_to_I = readbin(H_to_I, bin, 0);
-        // // fWorkbookParam  - DefinedName is workbook paramenter
-        // // fFutureFunction - future function
-        // // reserved        - 0
-        //
-        // chKey = readbin(chKey, bin, 0);
-        // // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)
-        //
-        // itab = readbin(itab, bin, 0);
-        //
-        // // XLNameWideString: XLWideString <= 255 characters
-        // std::string name = XLWideString(bin);
-        //
-        // CellParsedFormula(bin);
-        //
-        // std::string comment = XLNullableWideString(bin);
-        //
-        // Rcpp::Rcout << name << comment << std::endl;
-        //
-        // if (fProc) {
-        //   // must be NULL
-        //   std::string unusedstring1 = XLNullableWideString(bin);
-        //   // must be < 32768 characters
-        //   std::string description = XLNullableWideString(bin);
-        //   std::string helpTopic = XLNullableWideString(bin);
-        //   // must be NULL
-        //   std::string unusedstring2 = XLNullableWideString(bin);
-        // }
-
         Rcpp::Rcout << "<BrtName>" << std::endl;
-        bin.seekg(size, bin.cur);
+        // bin.seekg(size, bin.cur);
 
+        uint8_t chKey = 0;
+        uint32_t itab = 0, BrtNameUint = 0;
+        BrtNameUint = readbin(BrtNameUint, bin, 0);
+
+        BrtNameFields *fields = (BrtNameFields *)&BrtNameUint;
+
+        // fHidden    - visible
+        // fFunc      - xml macro
+        // fOB        - vba macro
+        // fProc      - represents a macro
+        // fCalcExp   - rgce returns array
+        // fBuiltin   - builtin name
+        // fgrp       - FnGroupID if fProc == 0 then 0
+        // fPublished - published name
+        // fWorkbookParam  - DefinedName is workbook paramenter
+        // fFutureFunction - future function
+        // reserved        - 0
+
+        Rprintf(
+          "%d, %d, %d, %d, %d, %d, %d, %d , %d, %d, %d\n",
+         fields->fHidden,
+         fields->fFunc,
+         fields->fOB,
+         fields->fProc,
+         fields->fCalcExp,
+         fields->fBuiltin,
+         fields->fgrp,
+         fields->fPublished,
+         fields->fWorkbookParam,
+         fields->fFutureFunction,
+         fields->reserved
+        );
+
+        chKey = readbin(chKey, bin, 0);
+        // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)
+
+        itab = readbin(itab, bin, 0);
+
+        // XLNameWideString: XLWideString <= 255 characters
+        std::string name = XLWideString(bin);
+
+        CellParsedFormula(bin);
+
+        std::string comment = XLNullableWideString(bin);
+
+        Rcpp::Rcout << name << comment << std::endl;
+
+        if (fields->fProc) {
+          // must be NULL
+          std::string unusedstring1 = XLNullableWideString(bin);
+          // must be < 32768 characters
+          std::string description = XLNullableWideString(bin);
+          std::string helpTopic = XLNullableWideString(bin);
+          // must be NULL
+          std::string unusedstring2 = XLNullableWideString(bin);
+        }
 
       }
 
@@ -1055,6 +1067,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (x == BrtBeginSheetData)  {
+        Rcpp::Rcout << "<sheetData>" << bin.tellg() << std::endl;
         out << "<sheetData>" << std::endl; //  << bin.tellg()
         in_sheet_data = true;
       } // 2.2.1 Cell Table
@@ -1081,6 +1094,11 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         // }
         //
         // Rf_PrintValue(Rcpp::wrap(versions));
+      }
+
+      if (x == BrtWsFmtInfoEx14) {
+        Rcpp::Rcout << "BrtWsFmtInfoEx14: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
       }
 
       if (x == BrtACEnd) {
@@ -1323,15 +1341,67 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       }
 
       if (in_sheet_data && x == BrtEndSheetData) {
+        Rcpp::Rcout << "</sheetData>" << bin.tellg() << std::endl;
         if (!first_row) {
           out << "</row>" << std::endl;
         }
         out << "</sheetData>" << std::endl;
         in_sheet_data = false;
       // break;
-      // }
-      //
-      // if (x == BrtEndSheet) {
+      }
+
+      if (x == BrtSheetProtection) {
+        Rcpp::Rcout << "BrtSheetProtection: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtBeginMergeCells) {
+        Rcpp::Rcout << "BrtBeginMergeCells: " << bin.tellg() << std::endl;
+        uint32_t cmcs = 0;
+        cmcs = readbin(cmcs, bin, 0);
+        Rcpp::Rcout << "count: " << cmcs << std::endl;
+      }
+
+      if (x == BrtMergeCell) {
+        Rcpp::Rcout << "BrtMergeCell: " << bin.tellg() << std::endl;
+
+        uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
+
+        rwFirst  = UncheckedRw(bin) + 1L;
+        rwLast   = UncheckedRw(bin) + 1L;
+        colFirst = UncheckedCol(bin) + 1L;
+        colLast  = UncheckedCol(bin) + 1L;
+
+        Rprintf("MergeCell: %d %d %d %d\n",
+                rwFirst, rwLast, colFirst, colLast);
+
+        Rcpp::Rcout <<
+          int_to_col(colFirst) << rwFirst << ":" <<
+            int_to_col(colLast) << rwLast <<
+              std::endl;
+      }
+
+      if (x == BrtEndMergeCells) {
+        Rcpp::Rcout << "BrtEndMergeCells: " << bin.tellg() << std::endl;
+      }
+
+      if (x == BrtPrintOptions) {
+        Rcpp::Rcout << "BrtPrintOptions: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtMargins) {
+        Rcpp::Rcout << "BrtMargins: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtUID) {
+        Rcpp::Rcout << "BrtUID: " << bin.tellg() << std::endl;
+        bin.seekg(size, bin.cur);
+      }
+
+      if (x == BrtEndSheet) {
+        Rcpp::Rcout << "</worksheet>" << bin.tellg() << std::endl;
         out << "</worksheet>" << std::endl;
         in_worksheet = false;
         break;

@@ -59,6 +59,20 @@ T swap_endian(T t) {
     return t;
 }
 
+typedef struct {
+  bool fHidden : 1;
+  bool fFunc : 1;
+  bool fOB : 1;
+  bool fProc : 1;
+  bool fCalcExp : 1;
+  bool fBuiltin : 1;
+  uint16_t fgrp : 9;
+  bool fPublished : 1;
+  bool fWorkbookParam : 1;
+  bool fFutureFunction : 1;
+  uint16_t reserved : 14;
+} BrtNameFields;
+
 template <typename T>
 T readbin( T t , std::istream& sas, bool swapit)
 {
