@@ -4,7 +4,7 @@
 #' written down. [read_xlsx()] and [wb_read()] are just internal wrappers for
 #' [wb_to_df()] intended for people coming from other packages.
 #'
-#' @param xlsx_file An xlsx file, Workbook object or URL to xlsx file.
+#' @param file An xlsx file, Workbook object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
 #' @param col_names If TRUE, the first row of data will be used as column names.
 #' @param row_names If TRUE, the first col of data will be used as row names.
@@ -91,7 +91,7 @@
 #'
 #' @export
 wb_to_df <- function(
-    xlsx_file,
+    file,
     sheet,
     start_row         = 1,
     start_col         = NULL,
@@ -116,19 +116,26 @@ wb_to_df <- function(
     ...
 ) {
 
+
+  xlsx_file <- list(...)$xlsx_file
   standardize_case_names(...)
+
+  if (!is.null(xlsx_file)) {
+    .Deprecated(old = "xlsx_file", new = "file", package = "openxlsx2")
+    file <- xlsx_file %||% file
+  }
 
   if (!is.null(cols)) cols <- col2int(cols)
 
-  if (inherits(xlsx_file, "wbWorkbook")) {
-    wb <- xlsx_file
+  if (inherits(file, "wbWorkbook")) {
+    wb <- file
   } else {
     # passes missing further on
     if (missing(sheet))
       sheet <- substitute()
 
     # possible false positive on current lintr runs
-    wb <- wb_load(xlsx_file, sheet = sheet, data_only = TRUE) # nolint
+    wb <- wb_load(file, sheet = sheet, data_only = TRUE) # nolint
   }
 
   if (!missing(named_region)) {
@@ -418,7 +425,7 @@ wb_to_df <- function(
           # TODO there probably is a better way in not reducing cc above, so
           # that we do not have to go through large xlsx files multiple times
           z_fill <- wb_to_df(
-            xlsx_file       = wb,
+            file            = wb,
             sheet           = sheet,
             dims            = filler,
             na.strings      = na.strings,
@@ -574,11 +581,11 @@ wb_to_df <- function(
 #' @examples
 #'   # read_xlsx
 #'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   read_xlsx(xlsxFile = xlsxFile)
+#'   read_xlsx(file = xlsxFile)
 #'
 #' @export
 read_xlsx <- function(
-  xlsx_file,
+  file,
   sheet,
   start_row         = 1,
   start_col         = NULL,
@@ -598,11 +605,14 @@ read_xlsx <- function(
 
   # keep sheet missing // read_xlsx is the function to replace.
   # dont mess with wb_to_df
+  if (missing(file))
+    file <- substitute()
+
   if (missing(sheet))
     sheet <- substitute()
 
   wb_to_df(
-    xlsx_file,
+    file              = file,
     sheet             = sheet,
     start_row         = start_row,
     start_col         = start_col,
@@ -626,14 +636,14 @@ read_xlsx <- function(
 #' @examples
 #'   # wb_read
 #'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1)
+#'   df1 <- wb_read(file = xlsxFile, sheet = 1)
 #'
 #'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
+#'   df1 <- wb_read(file = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 #' @seealso [wb_get_named_regions()]
 #' @export
 wb_read <- function(
-  xlsx_file,
+  file,
   sheet           = 1,
   start_row       = 1,
   start_col       = NULL,
@@ -652,11 +662,14 @@ wb_read <- function(
 
   # keep sheet missing // read_xlsx is the function to replace.
   # dont mess with wb_to_df
+  if (missing(file))
+    file <- substitute()
+
   if (missing(sheet))
     sheet <- substitute()
 
   wb_to_df(
-    xlsx_file       = xlsx_file,
+    file            = file,
     sheet           = sheet,
     start_row       = start_row,
     start_col       = start_col,

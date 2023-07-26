@@ -908,22 +908,13 @@ a data frame
 \subsection{Method \code{load()}}{
 load workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$load(
-  file,
-  xlsx_file = NULL,
-  sheet,
-  data_only = FALSE,
-  calc_chain = FALSE,
-  ...
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$load(file, sheet, data_only = FALSE, calc_chain = FALSE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{file}}{file}
-
-\item{\code{xlsx_file}}{xlsx_file}
 
 \item{\code{sheet}}{sheet}
 

@@ -22,21 +22,21 @@ While previous `openxlsx` functions used the `.` in function calls, as well as c
 The basic read function changed from `read.xlsx` to `read_xlsx`. Using a default xlsx file included in the package:
 
 ```{r read}
-xlsx_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
 
 The old syntax looked like this:
 
 ```{r old_read, eval = FALSE}
 # read in openxlsx
-openxlsx::read.xlsx(xlsxFile = xlsx_file)
+openxlsx::read.xlsx(file = file)
 ```
 
 This has changed to this:
 
 ```{r new_read}
 # read in openxlsx2
-openxlsx2::read_xlsx(xlsx_file = xlsx_file)
+openxlsx2::read_xlsx(file = file)
 ```
 
 
@@ -75,13 +75,13 @@ Workbook functions have been renamed to begin with `wb_` there are plenty of the
 A major feature in `openxlsx` are workbooks. Obviously they remain a central piece in `openxlsx2`. Previous you would load them with:
 
 ```{r old_workbook, eval = FALSE}
-wb <- openxlsx::loadWorkbook(file = xlsx_file)
+wb <- openxlsx::loadWorkbook(file = file)
 ```
 
 In `openxlsx2` loading was changed to:
 
 ```{r workbook}
-wb <- wb_load(file = xlsx_file)
+wb <- wb_load(file = file)
 ```
 
 There are plenty of functions to interact with workbooks and we will not describe every single one here. A detailed list can be found over at [our references](https://janmarvin.github.io/openxlsx2/reference/index.html)

@@ -4,19 +4,10 @@
 \alias{wb_load}
 \title{Load an existing .xlsx file}
 \usage{
-wb_load(
-  file,
-  xlsx_file = NULL,
-  sheet,
-  data_only = FALSE,
-  calc_chain = FALSE,
-  ...
-)
+wb_load(file, sheet, data_only = FALSE, calc_chain = FALSE, ...)
 }
 \arguments{
 \item{file}{A path to an existing .xlsx or .xlsm file}
-
-\item{xlsx_file}{alias for file}
 
 \item{sheet}{optional sheet parameter. if this is applied, only the selected
 sheet will be loaded.}
