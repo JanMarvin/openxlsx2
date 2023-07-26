@@ -1,8 +1,7 @@
 test_that("read_xlsx correct sheet", {
 
   fl <- testfile_path("readTest.xlsx")
-  expect_warning(sheet_names <- read_sheet_names(file = fl),
-                 "'read_sheet_names' is deprecated.")
+  sheet_names <- wb_load(fl)$get_sheet_names() %>% unname()
 
   expected_sheet_names <- c(
     "Sheet1", "Sheet2", "Sheet 3",
