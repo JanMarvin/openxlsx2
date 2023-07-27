@@ -106,15 +106,15 @@ be function arguments that use camelCase).</p>
 <code>read_xlsx</code>. Using a default xlsx file included in the
 package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xlsx_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
 <p>The old syntax looked like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in openxlsx</span></span>
-<span><span class="fu">openxlsx</span><span class="fu">::</span><span class="fu">read.xlsx</span><span class="op">(</span>xlsxFile <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">openxlsx</span><span class="fu">::</span><span class="fu">read.xlsx</span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></code></pre></div>
 <p>This has changed to this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in openxlsx2</span></span>
-<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/wb_to_df.html">read_xlsx</a></span><span class="op">(</span>xlsx_file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="../reference/wb_to_df.html">read_xlsx</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
 <span><span class="co">## 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
 <span><span class="co">## 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
@@ -171,10 +171,10 @@ workbook.</p>
 they remain a central piece in <code>openxlsx2</code>. Previous you
 would load them with:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu">loadWorkbook</span><span class="op">(</span>file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu">loadWorkbook</span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></code></pre></div>
 <p>In <code>openxlsx2</code> loading was changed to:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></code></pre></div>
 <p>There are plenty of functions to interact with workbooks and we will
 not describe every single one here. A detailed list can be found over at
 <a href="https://janmarvin.github.io/openxlsx2/reference/index.html">our
