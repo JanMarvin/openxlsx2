@@ -7,7 +7,7 @@
 \title{Create Dataframe from Workbook}
 \usage{
 wb_to_df(
-  xlsx_file,
+  file,
   sheet,
   start_row = 1,
   start_col = NULL,
@@ -33,7 +33,7 @@ wb_to_df(
 )
 
 read_xlsx(
-  xlsx_file,
+  file,
   sheet,
   start_row = 1,
   start_col = NULL,
@@ -52,7 +52,7 @@ read_xlsx(
 )
 
 wb_read(
-  xlsx_file,
+  file,
   sheet = 1,
   start_row = 1,
   start_col = NULL,
@@ -70,7 +70,7 @@ wb_read(
 )
 }
 \arguments{
-\item{xlsx_file}{An xlsx file, Workbook object or URL to xlsx file.}
+\item{file}{An xlsx file, Workbook object or URL to xlsx file.}
 
 \item{sheet}{Either sheet name or index. When missing the first sheet in the workbook is selected.}
 
@@ -190,14 +190,14 @@ Opening, saving and closing the file with Excel will resolve this.
 
   # read_xlsx
   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  read_xlsx(xlsxFile = xlsxFile)
+  read_xlsx(file = xlsxFile)
 
   # wb_read
   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1)
+  df1 <- wb_read(file = xlsxFile, sheet = 1)
 
   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  df1 <- wb_read(xlsxFile = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
+  df1 <- wb_read(file = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 }
 \seealso{
 \code{\link[=wb_get_named_regions]{wb_get_named_regions()}}

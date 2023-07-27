@@ -1466,7 +1466,7 @@ wbWorkbook <- R6::R6Class(
       standardize_case_names(...)
 
       wb_to_df(
-        xlsx_file         = self,
+        file              = self,
         sheet             = sheet,
         start_row         = start_row,
         start_col         = start_col,
@@ -1493,7 +1493,6 @@ wbWorkbook <- R6::R6Class(
     ### load workbook ----
     #' @description load workbook
     #' @param file file
-    #' @param xlsx_file xlsx_file
     #' @param sheet sheet
     #' @param data_only data_only
     #' @param calc_chain calc_chain
@@ -1501,7 +1500,6 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object invisibly
     load = function(
       file,
-      xlsx_file  = NULL,
       sheet,
       data_only  = FALSE,
       calc_chain = FALSE,
@@ -1511,7 +1509,6 @@ wbWorkbook <- R6::R6Class(
       if (missing(sheet)) sheet <- substitute()
       self <- wb_load(
         file       = file,
-        xlsx_file  = xlsx_file,
         sheet      = sheet,
         data_only  = data_only,
         calc_chain = calc_chain,
