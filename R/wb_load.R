@@ -90,6 +90,7 @@ wb_load <- function(
   drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
   worksheetsXML     <- grep_xml("/worksheets/sheet[0-9]+")
 
+  stylesBIN         <- grep_xml("styles.bin$")
   stylesXML         <- grep_xml("styles.xml$")
   sharedStringsBIN  <- grep_xml("sharedStrings.bin$")
   sharedStringsXML  <- grep_xml("sharedStrings.xml$")
@@ -161,6 +162,11 @@ wb_load <- function(
     print(workbookXML)
     workbook(workbookBIN, workbookXML, 0)
 
+    if (length(stylesBIN)) {
+      stylesXML <- gsub(".bin$", ".xml", stylesBIN)
+      styles(stylesBIN, stylesXML, 0)
+      # system(sprintf("cat %s", stylesXML))
+    }
 
     if (length(sharedStringsBIN)) {
       sharedStringsXML <- gsub(".bin$", ".xml", sharedStringsBIN)
@@ -685,7 +691,10 @@ wb_load <- function(
     } else {
       if (grepl(".bin$", sheets$target[i])) {
         xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
+
         worksheet(sheets$target[i], xml_tmp, 0)
+        # system(sprintf("cat %s", xml_tmp))
+        # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
         sheets$target[i] <- xml_tmp
       }
       worksheet_xml <- read_xml(sheets$target[i])

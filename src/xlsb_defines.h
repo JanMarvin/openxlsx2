@@ -1,63 +1,5 @@
 
-#include <string>
-#include <fstream>
-#include <cstdint>
-#include <typeinfo>
-// for to_utf8
-#include <locale>
-#include <codecvt>
-
-#define GCC_VERSION (__GNUC__ * 10000 \
-+ __GNUC_MINOR__ * 100                \
-+ __GNUC_PATCHLEVEL__)
-
-/* Test for GCC < 4.8.0 */
-#if GCC_VERSION < 40800 & !__clang__
-static inline unsigned short __builtin_bswap16(unsigned short a)
-{
-  return (a<<8)|(a>>8);
-}
-#endif
-
-template <typename T>
-T swap_endian(T t) {
-  if (typeid(T) == typeid(int16_t))
-    return __builtin_bswap16(t);
-  if (typeid(T) == typeid(uint16_t))
-    return __builtin_bswap16(t);
-
-  if (typeid(T)  == typeid(int32_t))
-    return __builtin_bswap32(t);
-  if (typeid(T)  == typeid(uint32_t))
-    return __builtin_bswap32(t);
-
-  if (typeid(T)  == typeid(int64_t))
-    return __builtin_bswap64(t);
-  if (typeid(T)  == typeid(uint64_t))
-    return __builtin_bswap64(t);
-
-  union v {
-    double      d;
-    float       f;
-    uint32_t    i32;
-    uint64_t    i64;
-  } val;
-
-  if (typeid(T) == typeid(float)){
-    val.f = t;
-    val.i32 = __builtin_bswap32(val.i32);
-    return val.f;
-  }
-
-  if (typeid(T) == typeid(double)){
-    val.d = t;
-    val.i64 = __builtin_bswap64(val.i64);
-    return val.d;
-  }
-
-  else
-    return t;
-}
+// defines
 
 typedef struct {
   bool fHidden : 1;
@@ -73,47 +15,33 @@ typedef struct {
   uint16_t reserved : 14;
 } BrtNameFields;
 
-template <typename T>
-T readbin( T t , std::istream& sas, bool swapit)
-{
-  if (!sas.read ((char*)&t, sizeof(t)))
-    Rcpp::stop("readbin: a binary read error occurred");
-  if (swapit==0)
-    return(t);
-  else
-    return(swap_endian(t));
-}
+typedef struct {
+  bool unused1 : 1;
+  bool fItalic : 1;
+  bool unused2 : 1;
+  bool fStrikeout : 1;
+  bool fOutline : 1;
+  bool fShadow : 1;
+  bool fCondense : 1;
+  bool fExtend : 1;
+  uint8_t unused3 : 8;
+} FontFlagsFields;
 
-template <typename T>
-inline std::string readstring(std::string &mystring, T& sas)
-{
-
-  if (!sas.read(&mystring[0], mystring.size()))
-    Rcpp::stop("char: a binary read error occurred");
-
-  return(mystring);
-}
-
-std::string to_utf8(const std::u16string& utf16String)
-{
-  std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-  return converter.to_bytes(utf16String);
-}
-
-std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
-
-  uint8_t size = mystring.size();
-  std::u16string str;
-  str.resize(size * 2);
-
-  if (!sas.read((char*)&str[0], str.size()))
-    Rcpp::stop("char: a binary read error occurred");
-
-  mystring = to_utf8(str);
-  mystring.resize(size);
-
-  return(mystring);
-}
+typedef struct {
+  uint8_t alc : 3;
+  uint16_t alcv : 3;
+  bool fWrap : 1;
+  bool fJustLast : 1;
+  bool fShrinkToFit : 1;
+  bool fMergeCell : 1;
+  uint8_t iReadingOrder : 2;
+  bool fLocked : 1;
+  bool fHidden : 1;
+  bool fSxButton : 1;
+  bool f123Prefix : 1;
+  uint8_t xfGrbitAtr : 6;
+  uint16_t unused : 10;
+} XFFields;
 
 // https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes
