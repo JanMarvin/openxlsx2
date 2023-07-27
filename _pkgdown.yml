@@ -77,7 +77,6 @@ reference:
   - fmt_txt
   - starts_with("convert_")
   - temp_xlsx
-  - read_sheet_names
   - clean_worksheet_name
   - styles_on_sheet
   - waivers

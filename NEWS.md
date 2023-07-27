@@ -19,11 +19,12 @@
   * remove deprecated arguments
     * `xy` argument
     * arguments `col`, `row`, `cols`, `rows`. `start_col`, `start_row` and `gridExpand` were deprecated in favor of `dims`. Row and column vectors can be converted to `dims` using `wb_dims()`.
+    * `xlsx_file` in favor of `file` in `wb_to_df()`
     
   * deprecating function
     * `convertToExcelDate()` for `convert_to_excel_date()`
   
-  * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()` internal functions
+  * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartsheet`, `wbComment`, `wbHyperlink` internal
   
 ## New features
