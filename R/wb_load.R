@@ -171,6 +171,8 @@ wb_load <- function(
     if (length(sharedStringsBIN)) {
       sharedStringsXML <- gsub(".bin$", ".xml", sharedStringsBIN)
       sst(sharedStringsBIN, sharedStringsXML, 0)
+      # system(sprintf("cat %s", sharedStringsXML))
+      # system(sprintf("cp %s /tmp/sst.xml", sharedStringsXML))
     }
 
     workbookXMLRels <- workbookBINRels
@@ -545,6 +547,8 @@ wb_load <- function(
 
   ## xl\styles
   if (length(stylesXML)) {
+    # system(sprintf("cat %s", stylesXML))
+    # system(sprintf("cp %s /tmp/styles.xml", stylesXML))
     styles_xml <- read_xml(stylesXML, pointer = FALSE)
     wb$styles_mgr$styles <- import_styles(styles_xml)
     wb$styles_mgr$initialize(wb)

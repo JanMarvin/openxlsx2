@@ -2,6 +2,30 @@
 // defines
 
 typedef struct {
+  bool fExtraAsc : 1;
+  bool fExtraDsc : 1;
+  uint8_t reserved1 : 6;
+  uint8_t iOutLevel : 3;
+  bool fCollapsed : 1;
+  bool fDyZero : 1;
+  bool fUnsynced : 1;
+  bool fGhostDirty : 1;
+  bool fReserved : 1;
+} BrtRowHdrFields;
+
+typedef struct {
+  bool fHidden : 1;
+  bool fUserSet : 1;
+  bool fBestFit : 1;
+  bool fPhonetic : 1;
+  uint8_t reserved1 : 4;
+  uint8_t iOutLevel : 3;
+  bool unused : 1;
+  bool fCollapsed : 1;
+  uint8_t reserved2 : 3;
+} BrtColInfoFields;
+
+typedef struct {
   bool fHidden : 1;
   bool fFunc : 1;
   bool fOB : 1;

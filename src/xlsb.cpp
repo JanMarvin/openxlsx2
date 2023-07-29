@@ -4,6 +4,8 @@
 #include "xlsb_defines.h"
 #include "xlsb_funs.h"
 
+#include <iomanip>
+
 // [[Rcpp::export]]
 int styles(std::string filePath, std::string outPath, bool debug) {
 
@@ -49,8 +51,8 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 
         std::string stFmtCode = XLWideString(bin);
 
-        out << "numFmtId=\"" << ifmt << "\" formatCode=\"" << stFmtCode;
-        out << " />" << std::endl;
+        out << " numFmtId=\"" << ifmt << "\" formatCode=\"" << stFmtCode;
+        out << "\" />" << std::endl;
         break;
       }
 
@@ -85,6 +87,8 @@ int styles(std::string filePath, std::string outPath, bool debug) {
         FontFlagsFields *fields = (FontFlagsFields *)&grbit;
 
         bls = readbin(bls, bin , 0);
+        // 0x0190 normal
+        // 0x02BC bold
         sss = readbin(sss, bin , 0);
         // 0x0000 None
         // 0x0001 Superscript
@@ -135,14 +139,20 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 
         std::string name = XLWideString(bin);
 
+        if (bls == 0x02BC)  out << "<b/>" << std::endl;
+        if (fields->fItalic) out << "<i/>" << std::endl;
+        if (fields->fStrikeout) out << "<strike/>" << std::endl;
+
         out << "<sz val=\"" << dyHeight << "\" />" << std::endl;
 
         // if (color[0] == 0x01) { // wrong but right?
         //   Rcpp::Rcout << "<color theme=\"" << color[1] << "\" />" << std::endl;
         // }
-        if (color[0] == 0x03) {
-          out << "<color theme=\"" << color[1] << "\" />" << std::endl;
+        if (color[0] == 0x02) {
+          out << "<color rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />" << std::endl;
         }
+
+        if (color[1])
 
         out << "<name val=\"" << name << "\" />" << std::endl;
         if (bFamily > 0)
@@ -154,6 +164,9 @@ int styles(std::string filePath, std::string outPath, bool debug) {
         if (bFontScheme == 2) {
           out << "<scheme val=\"minor\" />" << std::endl;
         }
+
+        if (bCharSet > 0)
+          out << "<charset val=\"" << (uint16_t)bCharSet << "\" />" << std::endl;
 
         out << "</font>" << std::endl;
         break;
@@ -172,21 +185,82 @@ int styles(std::string filePath, std::string outPath, bool debug) {
         // fills
       case BrtBeginFills:
       {
-        Rcpp::Rcout << "<fills>" << std::endl;
+        out << "<fills>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
 
       case BrtFill:
       {
-        Rcpp::Rcout << "<fill>" << std::endl;
-        bin.seekg(size, bin.cur);
+        uint32_t fls = 0, iGradientType = 0, cNumStop = 0;
+        double brtColorFore = 0.0,
+          brtColorBack = 0.0,
+          xnumDegree = 0.0,
+          xnumFillToLeft = 0.0,
+          xnumFillToRight = 0.0,
+          xnumFillToTop = 0.0,
+          xnumFillToBottom = 0.0,
+          aPos = 0.0 // not used
+        ;
+        std::vector<int> aColor; // not used
+
+        fls = readbin(fls, bin, 0);
+        std::vector<int> fgColor = brtColor(bin);
+        std::vector<int> bgColor = brtColor(bin);
+        iGradientType = readbin(iGradientType, bin, 0);
+        xnumDegree = Xnum(bin);
+        xnumFillToLeft = Xnum(bin);
+        xnumFillToRight = Xnum(bin);
+        xnumFillToTop = Xnum(bin);
+        xnumFillToBottom = Xnum(bin);
+        cNumStop = readbin(cNumStop, bin, 0);
+
+        for (uint32_t i = 0; i < cNumStop; ++i) {
+          // gradient fill colors and positions
+          aColor = brtColor(bin);
+          aPos   = Xnum(bin);
+        }
+
+        out << "<fill>" << std::endl;
+
+        if (fls != 0x00000028) {
+          out << "<patternFill";
+          out << " patternType=\"";
+          if (fls == 0) out << "none";
+          if (fls == 1) out << "solid";
+          if (fls == 2) out << "mediumGray";
+          if (fls == 3) out << "darkGray";
+          if (fls == 4) out << "lightGray";
+          if (fls == 5) out << "darkHorizontal";
+          if (fls == 6) out << "darkVertical";
+          if (fls == 7) out << "darkDown";
+          if (fls == 8) out << "darkUp";
+          if (fls == 9) out << "darkGrid";
+          if (fls == 10) out << "darkTrellis";
+          if (fls == 11) out << "lightHorizontal";
+          if (fls == 12) out << "lightVertical";
+          if (fls == 13) out << "lightDown";
+          if (fls == 14) out << "lightUp";
+          if (fls == 15) out << "lightGrid";
+          if (fls == 16) out << "lightTrellis";
+          if (fls == 17) out << "gray125";
+          if (fls == 18) out << "gray0625";
+          out << "\">" << std::endl;
+          // if FF000000 & FFFFFFFF they can be omitted
+          out << "<fgColor rgb=\"" << to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) << std::dec << "\" />" << std::endl;
+          out << "<bgColor rgb=\"" << to_argb(bgColor[6], bgColor[3], bgColor[4], bgColor[5]) << std::dec << "\" />" << std::endl;
+          out << "</patternFill>" << std::endl;
+          out << "</fill>" << std::endl;
+        } else {
+          Rcpp::Rcout << "gradient fill not implemented" << std::endl;
+        }
+
         break;
       }
 
       case BrtEndFills:
       {
-        Rcpp::Rcout << "</fills>" << std::endl;
+        out << "</fills>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
@@ -201,7 +275,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 
       case BrtBorder:
       {
-        Rcpp::Rcout << "<borders>" << std::endl;
+        Rcpp::Rcout << "<border/>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
@@ -278,7 +352,15 @@ int styles(std::string filePath, std::string outPath, bool debug) {
           if (iFill > 0) {
             out << " applyFill=\"1\"";
           }
-          out << " />" << std::endl;
+
+          if (fields->alc > 0 || fields->alcv > 0) {
+            out << " applyAlignment=\"1\">";
+            out << "<alignment" << halign(fields->alc) << valign(fields->alcv) << "/>";
+            out << "</xf>" << std::endl;
+          } else {
+            out << " />" << std::endl;
+          }
+
           // bin.seekg(size, bin.cur);
           break;
       }
@@ -286,6 +368,51 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       case BrtEndCellXFs:
       {
         out << "</cellXfs>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtBeginColorPalette:
+      {
+        out << "<colors>" <<std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtBeginIndexedColors:
+      {
+        out << "<indexedColors>" <<std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtIndexedColor:
+      {
+        uint8_t bRed = 0, bGreen = 0, bBlue = 0, reserved = 0;
+        bRed = readbin(bRed, bin, 0);
+        bGreen = readbin(bGreen, bin, 0);
+        bBlue = readbin(bBlue, bin, 0);
+        reserved = readbin(reserved, bin, 0);
+
+        // std::vector<int> color = brtColor(bin);
+        // if (color[0] == 0x02) {
+        out << "<rgbColor rgb=\"" <<
+          to_argb(reserved, bRed, bGreen, bRed) <<
+            std::dec << "\" />" << std::endl;
+        // }
+        break;
+      }
+
+      case BrtEndIndexedColors:
+      {
+        out << "</indexedColors>" <<std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndColorPalette:
+      {
+        out << "</colors>" <<std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
@@ -359,7 +486,8 @@ int sst(std::string filePath, std::string outPath, bool debug) {
       {
         // Rcpp::Rcout << bin.tellg() << std::endl;
         std::string val = RichStr(bin);
-        if (debug) Rcpp::Rcout << val << std::endl;
+        if (debug)
+          Rcpp::Rcout << val << std::endl;
         out << "<si><t>" << val <<
           "</t></si>" << std::endl;
         break;
@@ -807,9 +935,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
 
-    bool in_worksheet = false;
-    bool in_sheet_data = false;
-
     bool first_row = true;
 
     bool end_of_worksheet = false;
@@ -832,7 +957,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginSheet:
       {
         out << "<worksheet>" << std::endl;
-        in_worksheet = true;
 
         // uint8_t A, B;
         //
@@ -962,11 +1086,61 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         break;
       }
 
+      case BrtBeginColInfos:
+      {
+        Rcpp::Rcout << "<cols ----->" << std::endl;
+        out << "<cols>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtColInfo:
+      {
+        Rcpp::Rcout << "<col ----->" << std::endl;
+        uint16_t colinfo = 0;
+        uint32_t colFirst = 0, colLast = 0, coldx = 0, ixfe = 0;
+
+        colFirst = UncheckedCol(bin) + 1;
+        colLast = UncheckedCol(bin) + 1;
+        coldx = readbin(coldx, bin, 0);
+        ixfe = readbin(ixfe, bin, 0);
+        colinfo = readbin(colinfo, bin, 0);
+
+        BrtColInfoFields *fields = (BrtColInfoFields *)&colinfo;
+
+        out << "<col" << " min=\"" << colFirst << "\" max =\"" << colLast << "\"";
+
+        if (ixfe > 0)
+          out << " s=\"" <<  ixfe << "\"";
+
+        out << " width=\"" <<  (double)coldx/256 << "\"";
+        if (fields->fHidden)
+          out << " hidden=\"" <<  fields->fHidden << "\"";
+        if (fields->fUserSet)
+          out << " customWidth=\"" <<  fields->fHidden << "\"";
+        if (fields->fBestFit)
+          out << " bestFit=\"" <<  fields->fHidden << "\"";
+        if (fields->iOutLevel>0)
+          out << " outlineLevel=\"" <<  fields->iOutLevel << "\"";
+        if (fields->fCollapsed)
+          out << " collapsed=\"" <<  fields->fHidden << "\"";
+
+        out << " />" << std::endl;
+        break;
+      }
+
+      case BrtEndColInfos:
+      {
+        Rcpp::Rcout << "</cols ---->" << std::endl;
+        out << "</cols>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
       case BrtBeginSheetData:
       {
         if (debug) Rcpp::Rcout << "<sheetData>" << bin.tellg() << std::endl;
         out << "<sheetData>" << std::endl; //  << bin.tellg()
-        in_sheet_data = true;
         break;
       }
 
@@ -1039,7 +1213,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
 
 
-      out << "<row r=\""; //  << bin.tellg()
       uint8_t bits1 = 0, bits2 = 0, bits3 = 0, fExtraAsc = 0, fExtraDsc = 0, fCollapsed = 0,
         fDyZero = 0, fUnsynced = 0, fGhostDirty = 0, fReserved = 0, fPhShow = 0;
       uint16_t miyRw = 0;
@@ -1052,12 +1225,14 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       ixfe = readbin(ixfe, bin, 0);
       miyRw = readbin(miyRw, bin, 0);
 
-      bits1 = readbin(bits1, bin, 0);
+      uint16_t rwoheaderfields = 0;
+      rwoheaderfields = readbin(rwoheaderfields, bin, 0);
+
+      BrtRowHdrFields *fields = (BrtRowHdrFields *)&rwoheaderfields;
+
       // fExtraAsc = 1
       // fExtraDsc = 1
       // reserved1 = 6
-
-      bits2 = readbin(bits2, bin, 0);
       // iOutLevel   = 3
       // fCollapsed  = 1
       // fDyZero     = 1
@@ -1075,17 +1250,36 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       colMic = readbin(colMic, bin, 0);
       colLast = readbin(colLast, bin, 0);
 
+      out << "<row r=\""; //  << bin.tellg()
+      out << rw + 1 << "\"";
+
       if (debug) Rcpp::Rcout << ccolspan << std::endl;
 
-      out << rw + 1 << "\">" << std::endl;
+      if (fields->iOutLevel > 0) {
+        out << " outlineLevel=\"" << fields->iOutLevel << "\"";
+      }
+
+      if (fields->fCollapsed) {
+        out << " collapsed=\"" << fields->fCollapsed << "\"";
+      }
+
+      if (fields->fDyZero) {
+        out << " hidden=\"" << fields->fDyZero << "\"";
+      }
+
+      if (ixfe > 0) {
+        out << " s=\"" << ixfe << "\"";
+      }
+
+      out << ">" << std::endl;
 
       row = rw;
 
       if (debug)
         Rcpp::Rcout << (rw) << " : " << ixfe << " : " << miyRw << " : " << (int32_t)fExtraAsc << " : " <<
           (int32_t)fExtraDsc << " : " << unk32 << " : " << (int32_t)fCollapsed << " : " << (int32_t)fDyZero << " : " <<
-            (int32_t)fUnsynced << " : " << (int32_t)fGhostDirty << " : " << (int32_t)fReserved << " : " << (int32_t)fPhShow << " : " <<
-              ccolspan << "; " << bin.tellg() << std::endl;
+            (int32_t)fUnsynced << " : " << (int32_t)fGhostDirty << " : " << (int32_t)fReserved << " : " <<
+              (int32_t)fPhShow << " : " << ccolspan << "; " << bin.tellg() << std::endl;
 
       break;
       }
@@ -1162,8 +1356,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         double dbl = 0.0;
         dbl = readbin(dbl, bin, 0);
         // Rcpp::Rcout << dbl << std::endl;
-
-#include <iomanip>
 
         out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << ">" << std::endl;
         out << "<v>" << std::setprecision(16) << dbl << "</v>" << std::endl; // << std::fixed
@@ -1318,7 +1510,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
           out << "</row>" << std::endl;
         }
         out << "</sheetData>" << std::endl;
-        in_sheet_data = false;
 
         break;
       }
@@ -1396,7 +1587,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug)  Rcpp::Rcout << "</worksheet>" << bin.tellg() << std::endl;
         out << "</worksheet>" << std::endl;
-        in_worksheet = false;
         end_of_worksheet = true;
         break;
       }

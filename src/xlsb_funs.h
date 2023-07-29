@@ -3,9 +3,9 @@
 #include <cstdint>
 #include <typeinfo>
 
-// for to_utf8
-#include <locale>
-#include <codecvt>
+// // for to_utf8
+// #include <locale>
+// #include <codecvt>
 
 #define GCC_VERSION (__GNUC__ * 10000 \
 + __GNUC_MINOR__ * 100                \
@@ -82,9 +82,64 @@ inline std::string readstring(std::string &mystring, T& sas)
 
 std::string to_utf8(const std::u16string& utf16String)
 {
-  std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-  return converter.to_bytes(utf16String);
+
+  std::string utf8str;
+
+  for (char16_t c : utf16String) {
+    if (c <= 0x7F) {
+      // For ASCII characters, simply copy them to the UTF-8 string
+      utf8str.push_back(static_cast<char>(c));
+    } else if (c <= 0x7FF) {
+      // For 2-byte UTF-8 characters
+      utf8str.push_back(static_cast<char>(0xC0 | (c >> 6)));
+      utf8str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
+    } else {
+      // For 3-byte UTF-8 characters (assuming no surrogate pairs in u16str)
+      utf8str.push_back(static_cast<char>(0xE0 | (c >> 12)));
+      utf8str.push_back(static_cast<char>(0x80 | ((c >> 6) & 0x3F)));
+      utf8str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
+    }
+  }
+
+  return utf8str;
 }
+
+std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
+
+  uint8_t size = mystring.size();
+  std::u16string str;
+  str.resize(size * 2);
+
+  if (!sas.read((char*)&str[0], str.size()))
+    Rcpp::stop("char: a binary read error occurred");
+
+  std::string outstr = to_utf8(str);
+  // cannot resize but have to remove '\0' from string
+  // mystring.resize(size);
+  outstr.erase(std::remove(outstr.begin(), outstr.end(), '\0'), outstr.end());
+
+  return(outstr);
+}
+
+std::string XLWideString(std::istream& sas) {
+  uint32_t len = 0;
+  len = readbin(len, sas, 0);
+  std::string str(len, '\0');
+  return read_xlwidestring(str, sas);
+}
+
+// same, but can be NULL
+std::string XLNullableWideString(std::istream& sas) {
+  uint32_t len = 0;
+  len = readbin(len, sas, 0);
+  std::string str(len, '\0');
+  if (len == 0xFFFFFFFF) {
+    return str;
+  }
+
+  return read_xlwidestring(str, sas);
+}
+
 
 // should really add a reliable function to get all these tricky bits
 // bit 1 from uint8_t
@@ -163,21 +218,6 @@ int32_t RECORD(int &rid, int &rsize, std::istream& sas) {
   return 0;
 }
 
-std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
-
-  uint8_t size = mystring.size();
-  std::u16string str;
-  str.resize(size * 2);
-
-  if (!sas.read((char*)&str[0], str.size()))
-    Rcpp::stop("char: a binary read error occurred");
-
-  mystring = to_utf8(str);
-  mystring.resize(size);
-
-  return(mystring);
-}
-
 std::string cell_style(int style) {
   std::string out = "";
   if (style > 0) {
@@ -187,23 +227,37 @@ std::string cell_style(int style) {
 }
 
 
-std::string XLWideString(std::istream& sas) {
-  uint32_t len = 0;
-  len = readbin(len, sas, 0);
-  std::string str(len, '\0');
-  return read_xlwidestring(str, sas);
+std::string halign(int style) {
+  std::string out = "";
+  std::string hali = "";
+  if (style > 0) {
+    if (style == 1) hali = "general"; // default
+    if (style == 1) hali = "left";
+    if (style == 2) hali = "center";
+    if (style == 3) hali = "right";
+    if (style == 4) hali = "fill";
+    if (style == 5) hali = "justify";
+    if (style == 6) hali = "center-across";
+    if (style == 7) hali = "distributed";
+
+    out = out + " horizontal=\"" + hali + "\"";
+  }
+  return out;
 }
 
-// same, but can be NULL
-std::string XLNullableWideString(std::istream& sas) {
-  uint32_t len = 0;
-  len = readbin(len, sas, 0);
-  std::string str(len, '\0');
-  if (len == 0xFFFFFFFF) {
-    return str;
-  }
+std::string valign(int style) {
+  std::string out = "";
+  std::string vali = "";
+  if (style >= 0) {
+    if (style == 0) vali = "top";
+    if (style == 1) vali = "center";
+    if (style == 2) vali = "bottom";
+    if (style == 3) vali = "justify";
+    if (style == 4) vali = "distributed";
 
-  return read_xlwidestring(str, sas);
+    out = out + " vertical=\"" + vali + "\"";
+  }
+  return out;
 }
 
 void StrRun(std::istream& sas, uint32_t dwSizeStrRun) {
@@ -399,6 +453,16 @@ std::vector<int> brtColor(std::istream& sas) {
   return out;
 }
 
+std::string to_argb(int a, int r, int g, int b) {
+  std::stringstream out;
+  out << std::uppercase << std::hex <<
+    std::setw(2) << std::setfill('0') << (int32_t)a <<
+      std::setw(2) << std::setfill('0') << (int32_t)r <<
+        std::setw(2) << std::setfill('0') << (int32_t)g <<
+          std::setw(2) << std::setfill('0') << (int32_t)b;
+  return out.str();
+}
+
 static double Xnum(std::istream& sas) {
   double out = 0;
   out = readbin(out, sas, 0);
@@ -473,7 +537,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
   pos += cce;
 
   std::string fml_out;
-  while(sas.tellg() < pos) {
+  while((size_t)sas.tellg() < pos) {
 
     if (debug) Rcpp::Rcout << ".";
 
