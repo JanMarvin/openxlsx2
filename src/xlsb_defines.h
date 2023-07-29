@@ -1,5 +1,16 @@
 
 // defines
+typedef struct {
+  bool reserved : 1;
+  bool fAlwaysCalc : 1;
+  uint16_t unused : 14;
+} GrbitFmlaFields;
+
+typedef struct {
+  uint16_t col : 14;
+  bool fColRel : 1;
+  bool fRwRel : 1;
+} ColRelShortFields;
 
 typedef struct {
   bool fExtraAsc : 1;

@@ -723,7 +723,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         // XLNameWideString: XLWideString <= 255 characters
         std::string name = XLWideString(bin);
 
-        CellParsedFormula(bin, debug);
+        CellParsedFormula(bin, debug, 0, 0);
 
         std::string comment = XLNullableWideString(bin);
 
@@ -940,6 +940,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
     bool end_of_worksheet = false;
 
     uint64_t row = 0;
+    uint32_t col = 0;
 
     // auto itr = 0;
     while(!end_of_worksheet) {
@@ -1088,7 +1089,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtBeginColInfos:
       {
-        Rcpp::Rcout << "<cols ----->" << std::endl;
         out << "<cols>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
@@ -1096,7 +1096,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtColInfo:
       {
-        Rcpp::Rcout << "<col ----->" << std::endl;
         uint16_t colinfo = 0;
         uint32_t colFirst = 0, colLast = 0, coldx = 0, ixfe = 0;
 
@@ -1131,7 +1130,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtEndColInfos:
       {
-        Rcpp::Rcout << "</cols ---->" << std::endl;
         out << "</cols>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
@@ -1143,16 +1141,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         out << "<sheetData>" << std::endl; //  << bin.tellg()
         break;
       }
-
-        // case BrtRowHdr:
-        // {
-        //   if (debug) Rcpp::Rcout << "BrtRowHdr: " << bin.tellg() << std::endl;
-        //   if (!first_row) {
-        //     out << "</row>" <<std::endl;
-        //   }
-        //   first_row = false;
-        //   break;
-        // }
 
         // prelude to row entry
       case BrtACBegin:
@@ -1370,6 +1358,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "BrtCellBlank: " << bin.tellg() << std::endl;
 
         std::vector<int> blank = Cell(bin);
+        col = blank[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(blank));
 
         out << "<c r=\"" << int_to_col(blank[0] + 1) << row + 1 << "\"" << cell_style(blank[1]) << "/>" << std::endl;
@@ -1403,6 +1392,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         std::vector<int> cell;
         cell = Cell(bin);
+        col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
         bool val = 0;
@@ -1412,7 +1402,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, 0);
 
-        std::string fml = CellParsedFormula(bin, debug);
+        std::string fml = CellParsedFormula(bin, debug, 0, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"b\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -1428,6 +1418,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         // bin.seekg(size, bin.cur);
         std::vector<int> cell;
         cell = Cell(bin);
+        col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
         std::string fErr;
@@ -1442,7 +1433,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
 
-        std::string fml = CellParsedFormula(bin, debug);
+        std::string fml = CellParsedFormula(bin, debug, 0, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"e\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -1459,6 +1450,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         std::vector<int> cell;
         cell = Cell(bin);
+        col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
         double xnum = Xnum(bin);
@@ -1467,7 +1459,14 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, 0);
 
-        std::string fml = CellParsedFormula(bin, debug);
+        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+
+        // Rprintf("%d, %d, %d\n",
+        //         fields->reserved,
+        //         fields->fAlwaysCalc,
+        //         fields->unused);
+
+        std::string fml = CellParsedFormula(bin, debug, 0, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << ">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -1484,6 +1483,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         std::vector<int> cell;
         cell = Cell(bin);
+        col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
         std::string val = XLWideString(bin);
@@ -1492,12 +1492,32 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, 0);
 
-        std::string fml = CellParsedFormula(bin, debug);
+        std::string fml = CellParsedFormula(bin, debug, 0, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"str\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
         out << "<v>" << val << "</v>" << std::endl;
         out << "</c>" << std::endl;
+
+        break;
+      }
+
+      case BrtShrFmla:
+      {
+        uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
+        rwFirst  = UncheckedRw(bin) +1;
+        rwLast   = UncheckedRw(bin) +1;
+        colFirst = UncheckedCol(bin) +1;
+        colLast  = UncheckedCol(bin) +1;
+
+        Rcpp::Rcout << int_to_col(colFirst) << rwFirst << ":" << int_to_col(colLast) << rwLast << std::endl;
+
+        std::string fml = CellParsedFormula(bin, debug, row, col);
+        Rcpp::Rcout << fml << std::endl;
+
+        // out << "<f>" << fml << "</f>" << std::endl;
+        // out << "<v>" << val << "</v>" << std::endl;
+        // out << "</c>" << std::endl;
 
         break;
       }

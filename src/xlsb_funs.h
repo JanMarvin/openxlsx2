@@ -358,17 +358,24 @@ int UncheckedRw(std::istream& sas) {
     Rcpp::stop("row size bad: %d @ %d", row, sas.tellg());
 }
 
-int ColRelShort(std::istream& sas) {
+uint16_t ColShort(std::istream& sas) {
   uint16_t col = 0;
-  int32_t out = 0;
   col = readbin(col, sas, 0);
-  int8_t fColRel= 0, fRwRel= 0;
+  if (col >= 0 && col <= 16383)
+    return col;
+  else
+    Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
+}
 
-  out = col & 0x3FFF;
-  fColRel = (col >> 14) & 1;
-  fRwRel  = (col >> 15) & 1;
+std::vector<int> ColRelShort(std::istream& sas) {
+  uint16_t col = 0;
+  col = readbin(col, sas, 0);
+  ColRelShortFields *fields = (ColRelShortFields *)&col;
 
-  // Rprintf("ColRelShort: %d, %d\n", fColRel, fRwRel);
+  std::vector<int> out(3);
+  out[0] = fields->col;
+  out[1] = fields->fColRel;
+  out[2] = fields->fRwRel;
 
   return out;
 }
@@ -377,7 +384,28 @@ std::vector<int> Loc(std::istream& sas) {
 
   std::vector<int> out(2);
   out[0] = UncheckedRw(sas);
-  out[1] = ColRelShort(sas);
+  out[1] = ColRelShort(sas)[0];
+
+  return out;
+}
+
+// RgceLocRel
+std::vector<int> LocRel(std::istream& sas, bool &fRwRel, bool &fColRel) {
+
+  int32_t row = 0;
+  row = readbin(row, sas, 0);
+  std::vector<int> col = ColRelShort(sas);
+
+  // Rcpp::Rcout << fRwRel << ": " << fColRel << std::endl;
+  fRwRel = col[1];
+  fColRel = col[2];
+  // Rcpp::Rcout << fRwRel << ": " << fColRel << std::endl;
+
+  std::vector<int> out(2);
+  out[0] = row;
+  out[1] = col[0];
+
+  // Rf_PrintValue(Rcpp::wrap(out));
 
   return out;
 }
@@ -387,8 +415,8 @@ std::vector<int> Area(std::istream& sas) {
   std::vector<int> out(4);
   out[0] = UncheckedRw(sas); // rowFirst
   out[1] = UncheckedRw(sas); // rowLast
-  out[2] = ColRelShort(sas); // columnFirst
-  out[3] = ColRelShort(sas); // columnLast
+  out[2] = ColShort(sas); // columnFirst
+  out[3] = ColShort(sas); // columnLast
 
   return out;
 }
@@ -524,7 +552,7 @@ std::vector<int> Xti(std::istream& sas) {
   return out;
 }
 
-std::string CellParsedFormula(std::istream& sas, bool debug) {
+std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
   uint32_t  cce= 0, cb= 0;
 
   if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
@@ -535,6 +563,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
   size_t pos = sas.tellg();
   // sas.seekg(cce, sas.cur);
   pos += cce;
+  int8_t val1 = 0;
 
   std::string fml_out;
   while((size_t)sas.tellg() < pos) {
@@ -542,7 +571,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
     if (debug) Rcpp::Rcout << ".";
 
     // 1
-    int8_t val1 = 0, val2 = 0, controlbit = 0;
+    int8_t val2 = 0, controlbit = 0;
     val1 = readbin(val1, sas, 0);
 
     controlbit = (val1 & 0x80) >> 7;
@@ -561,7 +590,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
       Rcpp::Rcout << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
 
 
-      if (val2 == PtgAttrSemi) {
+      switch(val2) {
+      case PtgAttrSemi:
+      {
         if (debug) Rcpp::Rcout << "PtgAttrSemi" << std::endl;
         // val2[1] == 1
         // val2[2:8] == 0
@@ -569,9 +600,11 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
         unused = readbin(unused, sas, 0);
         fml_out += ";";
         fml_out += "\n";
+        break;
       }
 
-      if (val2 == PtgAttrSum) {
+      case PtgAttrSum:
+      {
         if (debug) Rcpp::Rcout << "PtgAttrSum" << std::endl;
         // val2[1:4] == 0
         // val2[5]   == 1
@@ -580,11 +613,26 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
         unused = readbin(unused, sas, 0);
         fml_out += "SUM"; // maybe attr because it is a single cell function?
         fml_out += "\n";
+        break;
+      }
+
+      default:{
+        Rprintf("Formula_TWO: %d %d\n", val1, val2);
+        break;
+      }
+
       }
 
       break;
     }
 
+    case PtgIsect:
+    {
+      if (debug) Rcpp::Rcout << "," <<std::endl;
+      fml_out += ",";
+      fml_out += "\n";
+      break;
+    }
 
     case PtgAdd:
     {
@@ -614,6 +662,14 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
     {
       if (debug) Rcpp::Rcout << "/" <<std::endl;
       fml_out +=  "/";
+      fml_out += "\n";
+      break;
+    }
+
+    case PtgPercent:
+    {
+      if (debug) Rcpp::Rcout << "/100" <<std::endl;
+      fml_out +=  "/100";
       fml_out += "\n";
       break;
     }
@@ -679,6 +735,14 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
       break;
     }
 
+    case PtgNum:
+    {
+      double value = Xnum(sas);
+      fml_out += std::to_string(value);
+      fml_out += "\n";
+      break;
+    }
+
     case PtgRef:
     case PtgRef2:
     case PtgRef3:
@@ -722,6 +786,51 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
 
       if (debug) Rf_PrintValue(Rcpp::wrap(out));
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+      break;
+    }
+
+    case PtgRefN:
+    case PtgRefN2:
+    case PtgRefN3:
+    {
+
+      bool fColRel = false, fRwRel = false;
+      std::vector<int> out = LocRel(sas, fColRel, fRwRel);
+
+      // Rprintf("%d and %d: %d\n", fColRel, fRwRel, out[0]);
+
+      // if (fRwRel) {
+      //   if (row < 0) {
+      //     row += 0x00100000;
+      //   } else if (row > 0x000FFFFF) {
+      //     row -= 0x00100000;
+      //   }
+      // }
+      //
+      // if (fColRel) {
+      //   if (col < 0) {
+      //     col += 0x4000;
+      //   } else if (col > 0x3FFF) {
+      //     col -= 0x4000;
+      //   }
+      // }
+
+      // if (fRwRel)  out[0] = row + 1048574 - out[0];
+      // if (fColRel) out[1] = col + 16382 - out[1]; // no clue
+
+      if (out[0] != 0) {
+        out[0] -= (1048575 +1);
+      }
+
+      if (out[1] != 0) {
+        out[1] -= (16383 +1);
+      }
+
+      // A1 notation cell
+      fml_out += int_to_col(col + out[1] + 1L);
+      fml_out += std::to_string(row + out[0] + 1L);
+      fml_out += "\n";
 
       break;
     }
@@ -804,11 +913,21 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
       break;
     }
 
+    case PtgExp:
+    {
+      uint32_t row = 0;
+      row = UncheckedRw(sas) + 1;
+
+      fml_out += std::to_string(row);
+      fml_out += "\n";
+      break;
+    }
+
     default:
     {
       // if (debug)
       Rprintf("Formula: %d %d\n", val1, val2);
-
+      break;
     }
     }
 
@@ -818,9 +937,48 @@ std::string CellParsedFormula(std::istream& sas, bool debug) {
 
 
   cb = readbin(cb, sas, 0);
-  if (debug) Rcpp::Rcout << "cb: " << cb << std::endl;
 
-  sas.seekg(cb, sas.cur);
+  if (debug)
+    Rcpp::Rcout << "cb: " << cb << std::endl;
+
+  pos = sas.tellg();
+  // sas.seekg(cce, sas.cur);
+  pos += cb;
+
+  while((size_t)sas.tellg() < pos) {
+
+    switch(val1) {
+    case PtgExp:
+    {
+      int32_t col = UncheckedCol(sas);
+      Rcpp::Rcout << int_to_col(col+1) << std::endl;
+      break;
+    }
+    // case PtgRef3d:
+    // case PtgRefErr3d:
+    // case PtgArea3d:
+    // case PtgAreaErr3d:
+    // {
+    //   std::string book = XLWideString(sas);
+    //   int8_t type = 0;
+    //   int16_t tabid = 0;
+    //   type = readbin(type, sas, 0);
+    //   tabid = readbin(tabid, sas, 0);
+    //   std::string sheet = XLWideString(sas);
+    //   int8_t type1 = 0;
+    //   int16_t tabid1 = 0;
+    //   type1 = readbin(type1, sas, 0);
+    //   tabid1 = readbin(tabid1, sas, 0);
+    //   std::string sheet1 = XLWideString(sas);
+    // }
+    default :
+    {
+      // Rcpp::stop("Skip");
+      sas.seekg(cb, sas.cur);
+      break;
+    }
+    }
+  }
 
   return fml_out;
 }
