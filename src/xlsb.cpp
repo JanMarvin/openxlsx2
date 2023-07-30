@@ -16,7 +16,6 @@ int styles(std::string filePath, std::string outPath, bool debug) {
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_style_sheet = false;
-    bool is_cell_xf = false;
 
     while(!end_of_style_sheet) {
 
@@ -306,7 +305,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 
         // xml requires a different order a certain spreadsheet software
         // is quite picky in this regard
-        out << left << right << top << bottom << diagonal << std::endl;
+        out << left << right << top << bottom << diagonal;
 
         out << "</border>" << std::endl;
         // bin.seekg(size, bin.cur);
@@ -340,7 +339,6 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       {
         out << "<cellXfs>" << std::endl;
         bin.seekg(size, bin.cur);
-        is_cell_xf = true;
         // uint32_t cxfs = 0;
         // cxfs = readbin(cxfs, bin, 0);
         break;
@@ -349,6 +347,8 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       case BrtXF:
       {
         out << "<xf";
+
+        bool is_cell_style_xf = false;
 
         uint8_t trot = 0, indent = 0;
         uint16_t ixfeParent = 0, iFmt = 0, iFont = 0, iFill = 0, ixBorder = 0;
@@ -366,6 +366,12 @@ int styles(std::string filePath, std::string outPath, bool debug) {
           Rcpp::stop("indent to big");
         }
 
+        if (ixfeParent == 0xFFFF) {
+          is_cell_style_xf = true;
+        } else {
+          out << " xfId=\"" << ixfeParent << "\"";
+        }
+
         brtxf = readbin(brtxf, bin, 0);
         XFFields *fields = (XFFields *)&brtxf;
         uint8_t xfgbit = fields->xfGrbitAtr;
@@ -377,11 +383,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
           out << " fillId=\"" << iFill << "\"";
           out << " borderId=\"" << ixBorder << "\"";
 
-          if (ixfeParent) {
-            out << " xfId=\"" << ixfeParent <<"\"";
-          }
-
-          if (is_cell_xf) {
+          if (!is_cell_style_xf) {
 
             // if (iFmt > 0) {
             out << " applyNumberFormat=\""<< !xfGrbitAtr->bit1 <<"\"";
@@ -453,7 +455,6 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       {
         out << "</cellXfs>" << std::endl;
         bin.seekg(size, bin.cur);
-        is_cell_xf = false;
         break;
       }
 
