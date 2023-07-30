@@ -1456,6 +1456,8 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, 0);
 
+        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+
         std::string fml = CellParsedFormula(bin, debug, 0, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"b\">" << std::endl;
@@ -1478,11 +1480,10 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         std::string fErr;
         fErr = BErr(bin);
 
-        uint16_t frbitfmla = 0;
-        // [0] == 0
-        // [1] == fAlwaysCalc
-        // [2-15] == unused
-        frbitfmla = readbin(frbitfmla, bin, 0);
+        uint16_t grbitFlags = 0;
+        grbitFlags = readbin(grbitFlags, bin, 0);
+
+        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');

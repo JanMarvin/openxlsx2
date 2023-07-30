@@ -954,8 +954,11 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     case PtgExp:
     {
       uint32_t row = 0;
+      // this is a reference to the cell that contains the shared formula
       row = UncheckedRw(sas) + 1;
+      Rcpp::Rcout << row << std::endl;
 
+      fml_out += int_to_col(col + 1);
       fml_out += std::to_string(row);
       fml_out += "\n";
       break;

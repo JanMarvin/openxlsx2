@@ -166,6 +166,7 @@ wb_load <- function(
       stylesXML <- gsub(".bin$", ".xml", stylesBIN)
       styles(stylesBIN, stylesXML, 0)
       # system(sprintf("cat %s", stylesXML))
+      # system(sprintf("cp %s /tmp/styles.xml", stylesXML))
     }
 
     if (length(sharedStringsBIN)) {
