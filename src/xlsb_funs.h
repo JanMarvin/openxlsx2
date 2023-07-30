@@ -80,6 +80,36 @@ inline std::string readstring(std::string &mystring, T& sas)
   return(mystring);
 }
 
+std::string escape_xml(const std::string& input) {
+  std::string result;
+  result.reserve(input.length());
+
+  for (char c : input) {
+    switch (c) {
+    case '&':
+      result += "&amp;";
+      break;
+    case '\"':
+      result += "&quot;";
+      break;
+    case '\'':
+      result += "&apos;";
+      break;
+    case '<':
+      result += "&lt;";
+      break;
+    case '>':
+      result += "&gt;";
+      break;
+    default:
+      result += c;
+    break;
+    }
+  }
+
+  return result;
+}
+
 std::string to_utf8(const std::u16string& utf16String)
 {
 

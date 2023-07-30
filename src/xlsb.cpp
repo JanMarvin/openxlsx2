@@ -542,7 +542,7 @@ int sst(std::string filePath, std::string outPath, bool debug) {
         std::string val = RichStr(bin);
         if (debug)
           Rcpp::Rcout << val << std::endl;
-        out << "<si><t>" << val <<
+        out << "<si><t>" << escape_xml(val) <<
           "</t></si>" << std::endl;
         break;
       }
