@@ -97,6 +97,7 @@ wb_load <- function(
   metadataXML       <- grep_xml("metadata.xml$")
   themeXML          <- grep_xml("theme[0-9]+.xml$")
   drawingRelsXML    <- grep_xml("drawing[0-9]+.xml.rels$")
+  sheetRelsBIN      <- grep_xml("sheet[0-9]+.bin.rels$")
   sheetRelsXML      <- grep_xml("sheet[0-9]+.xml.rels$")
   media             <- grep_xml("image[0-9]+.[a-z]+$")
   vmlDrawingXML     <- grep_xml("drawings/vmlDrawing[0-9]+\\.vml$")
@@ -177,6 +178,7 @@ wb_load <- function(
     }
 
     workbookXMLRels <- workbookBINRels
+    sheetRelsXML    <- sheetRelsBIN
   }
 
   ## core
@@ -872,6 +874,7 @@ wb_load <- function(
         # stumble over this non existent reference. In the future we might want
         # to check if the references are valid pre file saving.
         sel_row <- !grepl("printerSettings", basename2(xml_relship$Target))
+        sel_row <- !grepl("binaryIndex", basename2(xml_relship$Target))
         sel_col <- c("Id", "Type", "Target", "TargetMode")
         # return as xml
         xml <- df_to_xml("Relationship", xml_relship[sel_row, sel_col])

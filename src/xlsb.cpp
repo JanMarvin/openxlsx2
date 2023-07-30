@@ -368,9 +368,25 @@ int styles(std::string filePath, std::string outPath, bool debug) {
             out << " applyFill=\"1\"";
           }
 
-          if (fields->alc > 0 && fields->alcv > 0) {
+          if ((fields->alc > 0 && fields->alcv > 0) || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
             out << " applyAlignment=\"1\">";
-            out << "<alignment" << halign(fields->alc) << valign(fields->alcv) << "/>";
+            out << "<alignment";
+            out << halign(fields->alc);
+            out << valign(fields->alcv);
+              if (fields->fWrap)
+                out << " wrapText=\"" << fields->fWrap <<"\"";
+              if (fields->fShrinkToFit)
+                out << " shrinkToFit=\"" << fields->fWrap <<"\"";
+              if (fields->iReadingOrder)
+                out << " readingOrder=\"" << (int32_t)fields->iReadingOrder <<"\"";
+              if (indent)
+                out << " indent=\"" << (int32_t)indent/3 <<"\"";
+              if (fields->fJustLast)
+                out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
+              if (trot)
+                out << " textRotation=\"" << trot <<"\"";
+
+            out << "/>";
             out << "</xf>" << std::endl;
           } else {
             out << " />" << std::endl;
@@ -1655,6 +1671,27 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug)  Rcpp::Rcout << "BrtUID: " << bin.tellg() << std::endl;
         bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtDrawing:
+      {
+        std::string stRelId = XLNullableWideString(bin);
+        out << "<drawing r:id=\"" << stRelId << "\" />" << std::endl;
+        break;
+      }
+
+      case BrtLegacyDrawing:
+      {
+        std::string stRelId = XLNullableWideString(bin);
+        out << "<legacyDrawing r:id=\"" << stRelId << "\" />" << std::endl;
+        break;
+      }
+
+      case BrtLegacyDrawingHF:
+      {
+        std::string stRelId = XLNullableWideString(bin);
+        out << "<legacyDrawingHF r:id=\"" << stRelId << "\" />" << std::endl;
         break;
       }
 
