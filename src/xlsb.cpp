@@ -774,7 +774,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         iTabID = readbin(iTabID, bin, 0);
         std::string rid = XLNullableWideString(bin);
 
-        if (debug) Rcpp::Rcout << hsState << ": " << iTabID  << ": " << rid << std::endl;
+        if (debug) Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID  << ": " << rid << std::endl;
 
         std::string val = XLWideString(bin);
 
@@ -847,7 +847,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
         std::string comment = XLNullableWideString(bin);
 
-        if (debug) Rcpp::Rcout << name << comment << std::endl;
+        // if (debug) Rcpp::Rcout << name << comment << std::endl;
 
         if (fields->fProc) {
           // must be NULL
@@ -904,6 +904,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
       case BrtSupTabs:
       {
+        if (debug) Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
         uint32_t cTab = 0;
 
         cTab = readbin(cTab, bin, 0);
@@ -919,6 +920,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
       case BrtExternSheet:
       {
+        if (debug) Rcpp::Rcout << "<BrtExternSheet>" << std::endl;
         uint32_t cXti = 0;
 
         cXti = readbin(cXti, bin, 0);
@@ -1025,7 +1027,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       }
       }
 
-      if (debug) Rcpp::Rcout << x << ": " << size << ": " << bin.tellg() << std::endl;
+      if (debug) Rcpp::Rcout << "wb-loop: " << x << ": " << size << ": " << bin.tellg() << std::endl;
     }
 
     out.close();

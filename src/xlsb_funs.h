@@ -186,10 +186,10 @@ std::string XLWideString(std::istream& sas) {
 std::string XLNullableWideString(std::istream& sas) {
   uint32_t len = 0;
   len = readbin(len, sas, 0);
-  std::string str(len, '\0');
   if (len == 0xFFFFFFFF) {
-    return str;
+    return "";
   }
+  std::string str(len, '\0');
 
   return read_xlwidestring(str, sas);
 }
@@ -1140,6 +1140,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
   pos += cb;
 
   while((size_t)sas.tellg() < pos) {
+
+    if (debug) Rcpp::Rcout << ".";
+    Rprintf("Formula cb: %d\n", val1);
 
     switch(val1) {
     case PtgExp:
