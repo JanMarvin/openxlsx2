@@ -526,6 +526,7 @@ std::string as_border_style(int style) {
   if (style == 11) return "dashDotDot";
   if (style == 12) return "mediumDashDotDot";
   if (style == 13) return "slantDashDot";
+  return "";
 }
 
 std::string to_argb(int a, int r, int g, int b) {
