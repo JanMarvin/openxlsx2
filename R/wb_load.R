@@ -39,8 +39,11 @@ wb_load <- function(
     ...
 ) {
 
+  debug     <- list(...)$debug
   xlsx_file <- list(...)$xlsx_file
   standardize_case_names(...)
+
+  if (is.null(debug)) debug <- FALSE
 
   if (!is.null(xlsx_file)) {
     .Deprecated(old = "xlsx_file", new = "file", package = "openxlsx2")
@@ -873,8 +876,7 @@ wb_load <- function(
         # we do not ship this binary blob, therefore spreadsheet software may
         # stumble over this non existent reference. In the future we might want
         # to check if the references are valid pre file saving.
-        sel_row <- !grepl("printerSettings", basename2(xml_relship$Target))
-        sel_row <- !grepl("binaryIndex", basename2(xml_relship$Target))
+        sel_row <- !grepl("printerSettings|binaryIndex", basename2(xml_relship$Target))
         sel_col <- c("Id", "Type", "Target", "TargetMode")
         # return as xml
         xml <- df_to_xml("Relationship", xml_relship[sel_row, sel_col])

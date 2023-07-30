@@ -110,24 +110,41 @@ std::string escape_xml(const std::string& input) {
   return result;
 }
 
-std::string to_utf8(const std::u16string& utf16String)
-{
+std::string to_utf8(const std::u16string& u16str) {
 
   std::string utf8str;
+  utf8str.reserve(u16str.length() * 3); // Reserve enough space for UTF-8 characters
 
-  for (char16_t c : utf16String) {
-    if (c <= 0x7F) {
-      // For ASCII characters, simply copy them to the UTF-8 string
-      utf8str.push_back(static_cast<char>(c));
-    } else if (c <= 0x7FF) {
-      // For 2-byte UTF-8 characters
-      utf8str.push_back(static_cast<char>(0xC0 | (c >> 6)));
-      utf8str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
+  for (std::size_t i = 0; i < u16str.length(); ++i) {
+    char16_t u16char = u16str[i];
+
+    if (u16char <= 0x7F) {
+      // Single-byte UTF-8 character (0x00 - 0x7F)
+      utf8str.push_back(static_cast<char>(u16char));
+    } else if (u16char <= 0x7FF) {
+      // Two-byte UTF-8 character (0x80 - 0x07FF)
+      utf8str.push_back(static_cast<char>(0xC0 | (u16char >> 6)));
+      utf8str.push_back(static_cast<char>(0x80 | (u16char & 0x3F)));
     } else {
-      // For 3-byte UTF-8 characters (assuming no surrogate pairs in u16str)
-      utf8str.push_back(static_cast<char>(0xE0 | (c >> 12)));
-      utf8str.push_back(static_cast<char>(0x80 | ((c >> 6) & 0x3F)));
-      utf8str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
+      // Three-byte or four-byte UTF-8 character
+      if (u16char >= 0xD800 && u16char <= 0xDBFF && i + 1 < u16str.length()) {
+        char16_t high_surrogate = u16char;
+        char16_t low_surrogate = u16str[++i];
+
+        // Calculate the code point from the surrogate pair
+        int code_point = ((high_surrogate - 0xD800) << 10) + (low_surrogate - 0xDC00) + 0x10000;
+
+        // Four-byte UTF-8 character (0x10000 - 0x10FFFF)
+        utf8str.push_back(static_cast<char>(0xF0 | (code_point >> 18)));
+        utf8str.push_back(static_cast<char>(0x80 | ((code_point >> 12) & 0x3F)));
+        utf8str.push_back(static_cast<char>(0x80 | ((code_point >> 6) & 0x3F)));
+        utf8str.push_back(static_cast<char>(0x80 | (code_point & 0x3F)));
+      } else {
+        // Three-byte UTF-8 character (0x0800 - 0xFFFF)
+        utf8str.push_back(static_cast<char>(0xE0 | (u16char >> 12)));
+        utf8str.push_back(static_cast<char>(0x80 | ((u16char >> 6) & 0x3F)));
+        utf8str.push_back(static_cast<char>(0x80 | (u16char & 0x3F)));
+      }
     }
   }
 
@@ -149,6 +166,13 @@ std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
   outstr.erase(std::remove(outstr.begin(), outstr.end(), '\0'), outstr.end());
 
   return(outstr);
+}
+
+std::string PtrStr(std::istream& sas) {
+  uint16_t len = 0;
+  len = readbin(len, sas, 0);
+  std::string str(len, '\0');
+  return read_xlwidestring(str, sas);
 }
 
 std::string XLWideString(std::istream& sas) {
@@ -445,8 +469,8 @@ std::vector<int> Area(std::istream& sas) {
   std::vector<int> out(4);
   out[0] = UncheckedRw(sas); // rowFirst
   out[1] = UncheckedRw(sas); // rowLast
-  out[2] = ColShort(sas); // columnFirst
-  out[3] = ColShort(sas); // columnLast
+  out[2] = ColRelShort(sas)[0]; // columnFirst
+  out[3] = ColRelShort(sas)[0]; // columnLast
 
   return out;
 }
@@ -648,6 +672,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     val1 &= 0x7F; // the remaining 7 bits form ptg
     // for some Ptgs only the first 5 are of interest
     // and 6 and 7 contain DataType information
+    Rprintf("Formula: %d %d\n", val1, val2);
 
     switch(val1) {
 
@@ -663,14 +688,24 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       case PtgAttrSemi:
       {
         if (debug) Rcpp::Rcout << "PtgAttrSemi" << std::endl;
+
+        if ((val2  & 1) != 1) Rcpp::stop("wrong value");
         // val2[1] == 1
         // val2[2:8] == 0
-        // uint8_t reserved2 = 0;
-        // reserved2 = readbin(reserved2, sas, 0);
         uint16_t unused = 0;
         unused = readbin(unused, sas, 0);
-        fml_out += ";";
-        fml_out += "\n";
+        break;
+      }
+
+      case PtgAttrSpace:
+      {
+        uint8_t type = 0, cch = 0;
+
+        if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
+
+        type = readbin(type, sas, 0);
+        cch = readbin(cch, sas, 0);
+        Rprintf("AttrSpace: %d %d\n", type, cch);
         break;
       }
 
@@ -691,7 +726,6 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
         Rprintf("Formula_TWO: %d %d\n", val1, val2);
         break;
       }
-
       }
 
       break;
@@ -830,17 +864,19 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
     case PtgStr:
     {
-      uint16_t cch = 0;
-      cch = readbin(cch, sas, 0);
-      if (cch>255) Rcpp::stop("cch to big");
-
-      // rgch
-      for (uint16_t i = 0; i < cch; ++i) {
-        fml_out += XLWideString(sas);
+      fml_out += PtrStr(sas);
       fml_out += "\n";
-      break;
-      }
+      // uint16_t cch = 0;
+      // cch = readbin(cch, sas, 0);
+      // if (cch>255) Rcpp::stop("cch to big");
+      //
+      // // rgch
+      // for (uint16_t i = 0; i < cch; ++i) {
+      //   fml_out += XLWideString(sas);
+      //   fml_out += "\n";
+      // }
 
+      break;
     }
 
 
