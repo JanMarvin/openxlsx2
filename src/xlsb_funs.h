@@ -793,6 +793,20 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       break;
     }
 
+    case PtgUPlus:
+    {
+      fml_out += "+";
+      fml_out += "\n";
+      break;
+    }
+
+    case PtgUMinus:
+    {
+      fml_out += "-";
+      fml_out += "\n";
+      break;
+    }
+
     case PtgInt:
     {
       uint16_t integer = 0;
@@ -810,6 +824,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       fml_out += "\n";
       break;
     }
+
 
     case PtgRef:
     case PtgRef2:

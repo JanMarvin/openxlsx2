@@ -16,6 +16,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_style_sheet = false;
+    bool is_cell_xf = false;
 
     while(!end_of_style_sheet) {
 
@@ -142,14 +143,31 @@ int styles(std::string filePath, std::string outPath, bool debug) {
         if (bls == 0x02BC)  out << "<b/>" << std::endl;
         if (fields->fItalic) out << "<i/>" << std::endl;
         if (fields->fStrikeout) out << "<strike/>" << std::endl;
+        // if (fields->fOutline) out << "<outline/>" << std::endl;
+
+        if (uls > 0) {
+          if (uls == 0x01) out << "<u val=\"single\" />" << std::endl;
+          if (uls == 0x02) out << "<u val=\"double\" />" << std::endl;
+          if (uls == 0x21) out << "<u val=\"singleAccounting\" />" << std::endl;
+          if (uls == 0x22) out << "<u val=\"doubleAccounting\" />" << std::endl;
+        }
 
         out << "<sz val=\"" << dyHeight << "\" />" << std::endl;
 
         // if (color[0] == 0x01) { // wrong but right?
         //   Rcpp::Rcout << "<color theme=\"" << color[1] << "\" />" << std::endl;
         // }
+
+        if (color[0] == 0x01) {
+          out << "<color indexed=\"" << color[1] << "\" />" << std::endl;
+        }
+
         if (color[0] == 0x02) {
           out << "<color rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />" << std::endl;
+        }
+
+        if (color[0] == 0x03) {
+          out << "<color theme=\"" << color[1] << "\" />" << std::endl;
         }
 
         if (color[1])
@@ -322,6 +340,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       {
         out << "<cellXfs>" << std::endl;
         bin.seekg(size, bin.cur);
+        is_cell_xf = true;
         // uint32_t cxfs = 0;
         // cxfs = readbin(cxfs, bin, 0);
         break;
@@ -349,42 +368,76 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 
         brtxf = readbin(brtxf, bin, 0);
         XFFields *fields = (XFFields *)&brtxf;
+        uint8_t xfgbit = fields->xfGrbitAtr;
 
-        out << " numFmtId=\"" << iFmt <<"\"";
-          out << " fontId=\"" << iFont <<"\"";
-          out << " fillId=\"" << iFill <<"\"";
-          out << " borderId=\"" << ixBorder <<"\"";
+        xfGrbitAtrFields *xfGrbitAtr = (xfGrbitAtrFields *)&xfgbit;
 
-          if (iFmt > 0) {
-            out << " applyNumberFormat=\"1\"";
-          }
-          if (iFont > 0) {
-            out << " applyFont=\"1\"";
-          }
-          if (ixBorder > 0) {
-            out << " applyBorder=\"1\"";
-          }
-          if (iFill > 0) {
-            out << " applyFill=\"1\"";
+        out << " numFmtId=\"" << iFmt << "\"";
+          out << " fontId=\"" << iFont << "\"";
+          out << " fillId=\"" << iFill << "\"";
+          out << " borderId=\"" << ixBorder << "\"";
+
+          if (ixfeParent) {
+            out << " xfId=\"" << ixfeParent <<"\"";
           }
 
-          if ((fields->alc > 0 && fields->alcv > 0) || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
-            out << " applyAlignment=\"1\">";
-            out << "<alignment";
+          if (is_cell_xf) {
+
+            // if (iFmt > 0) {
+            out << " applyNumberFormat=\""<< !xfGrbitAtr->bit1 <<"\"";
+            // }
+            // if (iFont > 0) {
+            out << " applyFont=\""<< !xfGrbitAtr->bit2 << "\"";
+            // }
+            // if (ixBorder > 0) {
+            out << " applyBorder=\"" << !xfGrbitAtr->bit4 << "\"";
+            // }
+            // if (iFill > 0) {
+            out << " applyFill=\"" << !xfGrbitAtr->bit5 << "\"";
+            // }
+
+            out << " applyAlignment=\""<< !xfGrbitAtr->bit3 << "\"";
+
+            out << " applyProtection=\""<< !xfGrbitAtr->bit6 << "\"";
+
+          } else {
+
+            // if (iFmt > 0) {
+            out << " applyNumberFormat=\""<< "0" <<"\"";
+            // }
+            // if (iFont > 0) {
+            out << " applyFont=\""<< "0" << "\"";
+            // }
+            // if (ixBorder > 0) {
+            out << " applyBorder=\"" << "0" << "\"";
+            // }
+            // if (iFill > 0) {
+            out << " applyFill=\"" << "0" << "\"";
+            // }
+
+            out << " applyAlignment=\""<< "0" << "\"";
+
+            out << " applyProtection=\""<< "0" << "\"";
+          }
+
+
+          if (fields->alc > 0 || fields->alcv > 0 || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
+            out << "><alignment";
             out << halign(fields->alc);
             out << valign(fields->alcv);
-              if (fields->fWrap)
-                out << " wrapText=\"" << fields->fWrap <<"\"";
-              if (fields->fShrinkToFit)
-                out << " shrinkToFit=\"" << fields->fWrap <<"\"";
-              if (fields->iReadingOrder)
-                out << " readingOrder=\"" << (int32_t)fields->iReadingOrder <<"\"";
-              if (indent)
-                out << " indent=\"" << (int32_t)indent/3 <<"\"";
-              if (fields->fJustLast)
-                out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
-              if (trot)
-                out << " textRotation=\"" << trot <<"\"";
+
+            if (fields->fWrap)
+              out << " wrapText=\"" << fields->fWrap <<"\"";
+            if (fields->fShrinkToFit)
+              out << " shrinkToFit=\"" << fields->fWrap <<"\"";
+            if (fields->iReadingOrder)
+              out << " readingOrder=\"" << (int32_t)fields->iReadingOrder <<"\"";
+            if (indent)
+              out << " indent=\"" << (int32_t)indent/3 <<"\"";
+            if (fields->fJustLast)
+              out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
+            if (trot)
+              out << " textRotation=\"" << trot <<"\"";
 
             out << "/>";
             out << "</xf>" << std::endl;
@@ -400,6 +453,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       {
         out << "</cellXfs>" << std::endl;
         bin.seekg(size, bin.cur);
+        is_cell_xf = false;
         break;
       }
 
@@ -1323,6 +1377,10 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       if (fields->fDyZero) {
         out << " hidden=\"" << fields->fDyZero << "\"";
+      }
+
+      if (fields->fGhostDirty) {
+        out << " customFormat=\"" << fields->fGhostDirty << "\"";
       }
 
       if (ixfe > 0) {

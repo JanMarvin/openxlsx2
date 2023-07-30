@@ -8,6 +8,15 @@ typedef struct {
 } StyleFlagsFields;
 
 typedef struct {
+  bool bit1 : 1;
+  bool bit2 : 1;
+  bool bit3 : 1;
+  bool bit4 : 1;
+  bool bit5 : 1;
+  bool bit6 : 1;
+} xfGrbitAtrFields;
+
+typedef struct {
   bool reserved : 1;
   bool fAlwaysCalc : 1;
   uint16_t unused : 14;
