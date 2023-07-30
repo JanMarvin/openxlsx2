@@ -383,7 +383,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
           out << " fillId=\"" << iFill << "\"";
           out << " borderId=\"" << ixBorder << "\"";
 
-          if (!is_cell_style_xf) {
+          // if (!is_cell_style_xf) {
 
             // if (iFmt > 0) {
             out << " applyNumberFormat=\""<< !xfGrbitAtr->bit1 <<"\"";
@@ -402,25 +402,20 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 
             out << " applyProtection=\""<< !xfGrbitAtr->bit6 << "\"";
 
-          } else {
-
-            // if (iFmt > 0) {
-            out << " applyNumberFormat=\""<< "0" <<"\"";
-            // }
-            // if (iFont > 0) {
-            out << " applyFont=\""<< "0" << "\"";
-            // }
-            // if (ixBorder > 0) {
-            out << " applyBorder=\"" << "0" << "\"";
-            // }
-            // if (iFill > 0) {
-            out << " applyFill=\"" << "0" << "\"";
-            // }
-
-            out << " applyAlignment=\""<< "0" << "\"";
-
-            out << " applyProtection=\""<< "0" << "\"";
-          }
+          // } else {
+          //
+          //   out << " applyNumberFormat=\""<< "0" <<"\"";
+          //
+          //   out << " applyFont=\""<< "0" << "\"";
+          //
+          //   out << " applyBorder=\"" << "0" << "\"";
+          //
+          //   out << " applyFill=\"" << "0" << "\"";
+          //
+          //   out << " applyAlignment=\""<< "0" << "\"";
+          //
+          //   out << " applyProtection=\""<< "0" << "\"";
+          // }
 
 
           if (fields->alc > 0 || fields->alcv > 0 || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
@@ -433,9 +428,9 @@ int styles(std::string filePath, std::string outPath, bool debug) {
             if (fields->fShrinkToFit)
               out << " shrinkToFit=\"" << fields->fWrap <<"\"";
             if (fields->iReadingOrder)
-              out << " readingOrder=\"" << (int32_t)fields->iReadingOrder <<"\"";
+              out << " readingOrder=\"" << (uint32_t)fields->iReadingOrder <<"\"";
             if (indent)
-              out << " indent=\"" << (int32_t)indent/3 <<"\"";
+              out << " indent=\"" << (uint32_t)indent/3 <<"\"";
             if (fields->fJustLast)
               out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
             if (trot)

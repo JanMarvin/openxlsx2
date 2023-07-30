@@ -1,1 +1,1 @@
-PKG_CPPFLAGS = -I. -I../inst/include/pugixml -Wall -pedantic
+PKG_CPPFLAGS = -I. -I../inst/include/pugixml
