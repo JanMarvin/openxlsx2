@@ -51,7 +51,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 
         std::string stFmtCode = XLWideString(bin);
 
-        out << " numFmtId=\"" << ifmt << "\" formatCode=\"" << stFmtCode;
+        out << " numFmtId=\"" << ifmt << "\" formatCode=\"" << escape_xml(stFmtCode);
         out << "\" />" << std::endl;
         break;
       }
