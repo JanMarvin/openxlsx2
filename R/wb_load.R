@@ -161,18 +161,18 @@ wb_load <- function(
     workbookXML <- gsub(".bin$", ".xml", workbookBIN)
     print(workbookBIN)
     print(workbookXML)
-    workbook(workbookBIN, workbookXML, 0)
+    workbook(workbookBIN, workbookXML, debug)
 
     if (length(stylesBIN)) {
       stylesXML <- gsub(".bin$", ".xml", stylesBIN)
-      styles(stylesBIN, stylesXML, 0)
+      styles(stylesBIN, stylesXML, debug)
       # system(sprintf("cat %s", stylesXML))
       # system(sprintf("cp %s /tmp/styles.xml", stylesXML))
     }
 
     if (length(sharedStringsBIN)) {
       sharedStringsXML <- gsub(".bin$", ".xml", sharedStringsBIN)
-      sst(sharedStringsBIN, sharedStringsXML, 0)
+      sst(sharedStringsBIN, sharedStringsXML, debug)
       # system(sprintf("cat %s", sharedStringsXML))
       # system(sprintf("cp %s /tmp/sst.xml", sharedStringsXML))
     }
@@ -699,7 +699,7 @@ wb_load <- function(
       if (grepl(".bin$", sheets$target[i])) {
         xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
 
-        worksheet(sheets$target[i], xml_tmp, 0)
+        worksheet(sheets$target[i], xml_tmp, debug)
         # system(sprintf("cat %s", xml_tmp))
         # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
         sheets$target[i] <- xml_tmp

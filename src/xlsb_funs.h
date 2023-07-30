@@ -656,7 +656,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     {
       if (debug) Rcpp::Rcout << "reading eptg @ " << sas.tellg() << std::endl;
       val2 = readbin(val2, sas, 0); // full 8 bit forming eptg
-      Rcpp::Rcout << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
+      Rcpp::Rcout << "PtgAttr: " << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
 
 
       switch(val2) {
@@ -665,6 +665,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
         if (debug) Rcpp::Rcout << "PtgAttrSemi" << std::endl;
         // val2[1] == 1
         // val2[2:8] == 0
+        // uint8_t reserved2 = 0;
+        // reserved2 = readbin(reserved2, sas, 0);
         uint16_t unused = 0;
         unused = readbin(unused, sas, 0);
         fml_out += ";";
@@ -826,6 +828,21 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       break;
     }
 
+    case PtgStr:
+    {
+      uint16_t cch = 0;
+      cch = readbin(cch, sas, 0);
+      if (cch>255) Rcpp::stop("cch to big");
+
+      // rgch
+      for (uint16_t i = 0; i < cch; ++i) {
+        fml_out += XLWideString(sas);
+      fml_out += "\n";
+      break;
+      }
+
+    }
+
 
     case PtgRef:
     case PtgRef2:
@@ -962,6 +979,34 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
       if (debug) Rf_PrintValue(Rcpp::wrap(out));
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+      break;
+    }
+
+    case PtgRefErr:
+    case PtgRefErr2:
+    case PtgRefErr3:
+    {
+
+      uint16_t unused2 = 0;
+      uint32_t unused1 = 0;
+
+      unused1 = readbin(unused1, sas, 0);
+      unused2 = readbin(unused2, sas, 0);
+
+      break;
+    }
+
+    case PtgRefErr3d:
+    case PtgRefErr3d2:
+    case PtgRefErr3d3:
+    {
+      uint16_t ixti = 0, unused2 = 0;
+      uint32_t unused1 = 0;
+
+      ixti = readbin(ixti, sas, 0);
+      unused1 = readbin(unused1, sas, 0);
+      unused2 = readbin(unused2, sas, 0);
 
       break;
     }
