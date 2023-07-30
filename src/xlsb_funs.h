@@ -924,6 +924,32 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       break;
     }
 
+    case PtgArea3d:
+    case PtgArea3d2:
+    case PtgArea3d3:
+    {
+
+      uint16_t ixti = 0;
+
+      ixti = readbin(ixti, sas, 0);
+      Rprintf("ixti in PtgArea3d: %d\n", ixti);
+
+      std::vector<int> out = Area(sas);
+
+      // A1 notation cell
+      fml_out += int_to_col(out[2] + 1L);
+      fml_out += std::to_string(out[0] + 1L);
+      fml_out += ":";
+      fml_out += int_to_col(out[3] + 1L);
+      fml_out += std::to_string(out[1] + 1L);
+      fml_out += "\n";
+
+      if (debug) Rf_PrintValue(Rcpp::wrap(out));
+      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+      break;
+    }
+
     case PtgFunc:
     case PtgFunc2:
     case PtgFunc3:
