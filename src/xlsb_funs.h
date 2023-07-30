@@ -613,7 +613,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     val1 = readbin(val1, sas, 0);
 
     controlbit = (val1 & 0x80) >> 7;
-    if (controlbit != 0) Rcpp::stop("controlbit unexpectedly not 0");
+    if (controlbit != 0) Rcpp::warning("controlbit unexpectedly not 0");
     val1 &= 0x7F; // the remaining 7 bits form ptg
     // for some Ptgs only the first 5 are of interest
     // and 6 and 7 contain DataType information
