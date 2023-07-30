@@ -1,6 +1,13 @@
 
 // defines
 typedef struct {
+  bool fBuiltIn : 1;
+  bool fHidden : 1;
+  bool fCustom : 1;
+  uint16_t unused : 13;
+} StyleFlagsFields;
+
+typedef struct {
   bool reserved : 1;
   bool fAlwaysCalc : 1;
   uint16_t unused : 14;

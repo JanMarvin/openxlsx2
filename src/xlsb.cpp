@@ -268,21 +268,36 @@ int styles(std::string filePath, std::string outPath, bool debug) {
         // borders
       case BrtBeginBorders:
       {
-        Rcpp::Rcout << "<borders>" << std::endl;
+        out << "<borders>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
 
       case BrtBorder:
       {
-        Rcpp::Rcout << "<border/>" << std::endl;
-        bin.seekg(size, bin.cur);
+        out << "<border>" << std::endl;
+        bool fBdrDiagDown = 0, fBdrDiagUp = 0;
+        uint8_t borderFlags = 0;
+        borderFlags = readbin(borderFlags, bin, 0);
+
+        std::string top      = brtBorder("top", bin);
+        std::string bottom   = brtBorder("bottom", bin);
+        std::string left     = brtBorder("left", bin);
+        std::string right    = brtBorder("right", bin);
+        std::string diagonal = brtBorder("diagonal", bin);
+
+        // xml requires a different order a certain spreadsheet software
+        // is quite picky in this regard
+        out << left << right << top << bottom << diagonal << std::endl;
+
+        out << "</border>" << std::endl;
+        // bin.seekg(size, bin.cur);
         break;
       }
 
       case BrtEndBorders:
       {
-        Rcpp::Rcout << "</borders>" << std::endl;
+        out << "</borders>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
@@ -353,7 +368,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
             out << " applyFill=\"1\"";
           }
 
-          if (fields->alc > 0 || fields->alcv > 0) {
+          if (fields->alc > 0 && fields->alcv > 0) {
             out << " applyAlignment=\"1\">";
             out << "<alignment" << halign(fields->alc) << valign(fields->alcv) << "/>";
             out << "</xf>" << std::endl;
@@ -368,6 +383,45 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       case BrtEndCellXFs:
       {
         out << "</cellXfs>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      // cellStyles
+      case BrtBeginStyles:
+      {
+        out << "<cellStyles>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtStyle:
+      {
+
+        uint8_t iStyBuiltIn = 0, iLevel = 0;
+        uint16_t grbitObj1 = 0;
+        uint32_t ixf = 0;
+        ixf = readbin(ixf, bin, 0);
+        grbitObj1 = readbin(grbitObj1, bin, 0);
+        iStyBuiltIn = readbin(iStyBuiltIn, bin, 0);
+        iLevel = readbin(iLevel, bin, 0);
+        std::string stName = XLWideString(bin);
+
+        StyleFlagsFields *fields = (StyleFlagsFields *)&grbitObj1;
+        out << "<cellStyle";
+        out << " name=\"" << stName << "\"";
+        out << " xfId=\"" << ixf << "\"";
+        out << " builtinId=\"" << (int32_t)iStyBuiltIn << "\"";
+        out << " />" << std::endl;
+
+
+        // bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndStyles:
+      {
+        out << "</cellStyles>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }

@@ -481,6 +481,23 @@ std::vector<int> brtColor(std::istream& sas) {
   return out;
 }
 
+std::string as_border_style(int style) {
+  if (style == 0) return "none";
+  if (style == 1) return "thin";
+  if (style == 2) return "medium";
+  if (style == 3) return "dashed";
+  if (style == 4) return "dotted";
+  if (style == 5) return "thick";
+  if (style == 6) return "double";
+  if (style == 7) return "hair";
+  if (style == 8) return "mediumDashed";
+  if (style == 9) return "dashDot";
+  if (style == 10) return "mediumDashDot";
+  if (style == 11) return "dashDotDot";
+  if (style == 12) return "mediumDashDotDot";
+  if (style == 13) return "slantDashDot";
+}
+
 std::string to_argb(int a, int r, int g, int b) {
   std::stringstream out;
   out << std::uppercase << std::hex <<
@@ -488,6 +505,27 @@ std::string to_argb(int a, int r, int g, int b) {
       std::setw(2) << std::setfill('0') << (int32_t)r <<
         std::setw(2) << std::setfill('0') << (int32_t)g <<
           std::setw(2) << std::setfill('0') << (int32_t)b;
+  return out.str();
+}
+
+std::string brtBorder(std::string type, std::istream& sas) {
+  uint8_t dg = 0, reserved = 0;
+  dg = readbin(dg, sas, 0);
+
+  reserved = readbin(reserved, sas, 0);
+
+  std::vector<int> color = brtColor(sas);
+
+  std::stringstream out;
+
+  out << "<" << type << " style = \"" << as_border_style(dg) << "\"";
+  if (dg > 0) {
+    out << "><color hex=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />";
+        out << "</" << type << ">" << std::endl;
+  } else {
+    out << "/>" << std::endl;
+  }
+
   return out.str();
 }
 
