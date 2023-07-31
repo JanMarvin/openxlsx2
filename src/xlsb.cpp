@@ -427,10 +427,10 @@ int styles(std::string filePath, std::string outPath, bool debug) {
               out << " wrapText=\"" << fields->fWrap <<"\"";
             if (fields->fShrinkToFit)
               out << " shrinkToFit=\"" << fields->fWrap <<"\"";
-            // if (fields->iReadingOrder)
             // something is not quite right here.
             // I have a file which is left to right, but this here returns 2: right to left
-              Rcpp::Rcout << " readingOrder=\"" << (uint16_t)fields->iReadingOrder << std::endl;
+            if (fields->iReadingOrder)
+              out << " readingOrder=\"" << (uint16_t)fields->iReadingOrder << std::endl;
             if (indent)
               out << " indent=\"" << (uint16_t)indent/3 <<"\"";
             if (fields->fJustLast)
@@ -1841,6 +1841,19 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         std::string stRelId = XLNullableWideString(bin);
         out << "<legacyDrawingHF r:id=\"" << stRelId << "\" />" << std::endl;
         break;
+      }
+
+      case BrtHLink:
+      {
+        std::vector<int> rfx = UncheckedRfX(bin);
+        std::string relId = XLNullableWideString(bin);
+        std::string location = XLWideString(bin);
+        std::string tooltip = XLWideString(bin);
+        std::string display = XLWideString(bin);
+
+        std::string ref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0]) + ":" + int_to_col(rfx[3] + 1) + std::to_string(rfx[1]);
+
+        out << "<hyperlink display = \"" <<  display << "\" r:id=\"" << relId << "\" location=\"" << location << "\" ref=\"" << ref << " tooltip=\"" << tooltip << "\" />" << std::endl;
       }
 
       case BrtEndSheet:

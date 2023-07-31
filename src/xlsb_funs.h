@@ -437,15 +437,15 @@ uint16_t ColShort(std::istream& sas) {
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
-std::vector<int> ColRelShort(std::istream& sas) {
+std::vector<uint16_t> ColRelShort(std::istream& sas) {
   uint16_t col = 0;
   col = readbin(col, sas, 0);
   ColRelShortFields *fields = (ColRelShortFields *)&col;
 
-  std::vector<int> out(3);
-  out[0] = (int)fields->col;
-  out[1] = (int)fields->fColRel;
-  out[2] = (int)fields->fRwRel;
+  std::vector<uint16_t> out(3);
+  out[0] = fields->col;
+  out[1] = fields->fColRel;
+  out[2] = fields->fRwRel;
 
   return out;
 }
@@ -464,7 +464,7 @@ std::vector<int> LocRel(std::istream& sas, bool &fRwRel, bool &fColRel) {
 
   int32_t row = 0;
   row = readbin(row, sas, 0);
-  std::vector<int> col = ColRelShort(sas);
+  std::vector<uint16_t> col = ColRelShort(sas);
 
   // Rcpp::Rcout << fRwRel << ": " << fColRel << std::endl;
   fRwRel = col[1];
