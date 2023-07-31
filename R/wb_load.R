@@ -162,8 +162,10 @@ wb_load <- function(
   # modifications for xlsb
   if (length(workbookBIN)) {
     workbookXML <- gsub(".bin$", ".xml", workbookBIN)
-    print(workbookBIN)
-    print(workbookXML)
+    if (debug) {
+      print(workbookBIN)
+      print(workbookXML)
+    }
     workbook(workbookBIN, workbookXML, debug)
 
     if (length(stylesBIN)) {

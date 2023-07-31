@@ -369,7 +369,7 @@ std::string RichStr(std::istream& sas) {
 
 }
 
-void ProductVersion(std::istream& sas) {
+void ProductVersion(std::istream& sas, bool debug) {
   uint16_t fileVersion = 0, fileProduct = 0;
   int8_t fileExtension = 0;
 
@@ -378,7 +378,7 @@ void ProductVersion(std::istream& sas) {
 
   fileExtension = fileProduct & 0x01;
   fileProduct   = fileProduct & ~static_cast<uint16_t>(0x01);
-  Rprintf("ProductVersion: %d: %d: %d\n", fileVersion, fileProduct, fileExtension);
+  if (debug) Rprintf("ProductVersion: %d: %d: %d\n", fileVersion, fileProduct, fileExtension);
 }
 
 std::vector<int> UncheckedRfX(std::istream& sas) {
@@ -672,7 +672,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     val1 &= 0x7F; // the remaining 7 bits form ptg
     // for some Ptgs only the first 5 are of interest
     // and 6 and 7 contain DataType information
-    Rprintf("Formula: %d %d\n", val1, val2);
+    if (debug) Rprintf("Formula: %d %d\n", val1, val2);
 
     switch(val1) {
 
@@ -681,7 +681,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     {
       if (debug) Rcpp::Rcout << "reading eptg @ " << sas.tellg() << std::endl;
       val2 = readbin(val2, sas, 0); // full 8 bit forming eptg
-      Rcpp::Rcout << "PtgAttr: " << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
+      if (debug) Rcpp::Rcout << "PtgAttr: " << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
 
 
       switch(val2) {
@@ -705,7 +705,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
         type = readbin(type, sas, 0);
         cch = readbin(cch, sas, 0);
-        Rprintf("AttrSpace: %d %d\n", type, cch);
+        if (debug) Rprintf("AttrSpace: %d %d\n", type, cch);
         break;
       }
 
@@ -790,42 +790,42 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     case PtgConcat:
     {
       if (debug) Rcpp::Rcout << "&" <<std::endl;
-      fml_out += "&";
+      fml_out += "&amp;";
       fml_out += "\n";
       break;
     }
 
     case PtgGt:
     {
-      fml_out += ">";
+      fml_out += "&gt;";
       fml_out += "\n";
       break;
     }
 
     case PtgGe:
     {
-      fml_out += ">=";
+      fml_out += "&ge;";
       fml_out += "\n";
       break;
     }
 
     case PtgLt:
     {
-      fml_out += "<";
+      fml_out += "&lt;";
       fml_out += "\n";
       break;
     }
 
     case PtgLe:
     {
-      fml_out += "<=";
+      fml_out += "&le;";
       fml_out += "\n";
       break;
     }
 
     case PtgNe:
     {
-      fml_out += "<>";
+      fml_out += "&lt;&gt;";
       fml_out += "\n";
       break;
     }
@@ -1142,7 +1142,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
   while((size_t)sas.tellg() < pos) {
 
     if (debug) Rcpp::Rcout << ".";
-    Rprintf("Formula cb: %d\n", val1);
+    if (debug) Rprintf("Formula cb: %d\n", val1);
 
     switch(val1) {
     case PtgExp:

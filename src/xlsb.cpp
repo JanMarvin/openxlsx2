@@ -698,7 +698,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         cver = readbin(cver, bin, 0);
 
         for (uint16_t i = 0; i < cver; ++i) {
-          ProductVersion(bin);
+          ProductVersion(bin, debug);
         }
         break;
 
@@ -734,6 +734,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginBookViews:
       {
         if (debug) Rcpp::Rcout << "<workbookViews>" << std::endl;
+        out << "<bookViews>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
@@ -741,13 +742,29 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       case BrtBookView:
       {
         if (debug) Rcpp::Rcout << "<workbookView>" << std::endl;
-        bin.seekg(size, bin.cur);
+        // bin.seekg(size, bin.cur);
+        uint8_t flags = 0;
+        int32_t xWn = 0, yWn = 0;
+        uint32_t dxWn = 0, dyWn = 0, iTabRatio = 0, itabFirst= 0, itabCur = 0;
+        xWn       = readbin(xWn, bin, 0);
+        yWn       = readbin(yWn, bin, 0);
+        dxWn      = readbin(dxWn, bin, 0);
+        dyWn      = readbin(dyWn, bin, 0);
+        iTabRatio = readbin(iTabRatio, bin, 0);
+        itabFirst = readbin(itabFirst, bin, 0);
+        itabCur   = readbin(itabCur, bin, 0);
+        flags     = readbin(flags, bin, 0);
+
+        out << "<workbookView xWindow=\"" << xWn << "\" yWindow=\"" << yWn <<
+          "\" windowWidth=\"" << dxWn<<"\" windowHeight=\"" << dyWn <<
+            "\" activeTab=\"" <<  itabCur << "\" />" << std::endl;
         break;
       }
 
       case BrtEndBookViews:
       {
         if (debug) Rcpp::Rcout << "</workbookViews>" << std::endl;
+        out << "</bookViews>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
@@ -847,7 +864,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
         std::string comment = XLNullableWideString(bin);
 
-        // if (debug) Rcpp::Rcout << name << comment << std::endl;
+        if (debug) Rcpp::Rcout << name << comment << std::endl;
 
         if (fields->fProc) {
           // must be NULL
@@ -945,7 +962,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "<ext>" << std::endl;
 
-        ProductVersion(bin);
+        ProductVersion(bin, debug);
         break;
       }
 
@@ -1158,7 +1175,10 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         // 0 index vectors
         // first row, last row, first col, last col
         dims = UncheckedRfX(bin);
-        Rf_PrintValue(Rcpp::wrap(dims));
+        if (debug) {
+          Rcpp::Rcout << "dimension: ";
+          Rf_PrintValue(Rcpp::wrap(dims));
+        }
 
         out << "<dimension ref=\"" <<
           int_to_col(dims[2] + 1) << dims[0] + 1 <<
@@ -1494,7 +1514,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtCellError:
       { // t="e" & <v>#NUM!</v>
-        Rcpp::Rcout << "BrtCellError: " << bin.tellg() << std::endl;
+        if (debug) Rcpp::Rcout << "BrtCellError: " << bin.tellg() << std::endl;
 
         // uint8_t val8= 0;
 
