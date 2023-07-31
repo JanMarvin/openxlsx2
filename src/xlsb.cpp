@@ -1211,17 +1211,17 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         out << " workbookViewId=\"" << iWbkView << "\"";
         if (icvHdr)
           out << " colorId=\"" << (int32_t)icvHdr << "\"";
-        if (fields->fDefaultHdr)
+        if (!fields->fDefaultHdr)
           out << " defaultGridColor=\"" << fields->fDefaultHdr << "\"";
         if (fields->fRightToLeft)
           out << " rightToLeft=\"" << fields->fRightToLeft << "\"";
         if (fields->fDspFmla)
           out << " showFormulas=\"" << fields->fDspFmla << "\"";
-        if (fields->fDspGrid)
+        if (!fields->fDspGrid)
           out << " showGridLines=\"" << fields->fDspGrid << "\"";
-        if (fields->fDspGuts)
+        if (!fields->fDspGuts)
           out << " showOutlineSymbols=\"" << fields->fDspGuts << "\"";
-        if (fields->fDspRwCol)
+        if (!fields->fDspRwCol)
           out << " showRowColHeaders=\"" << fields->fDspRwCol << "\"";
         if (fields->fDspRuler)
           out << " showRuler=\"" << fields->fDspRuler << "\"";
@@ -1237,17 +1237,14 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
           out << " view=\"" << xlView << "\"";
         if (fields->fWnProt)
           out << " windowProtection=\"" << fields->fWnProt << "\"";
-
         if (wScale)
           out << " zoomScale=\"" << wScale << "\"";
-
-            if (wScaleNormal)
-              out << " zoomScaleNormal=\"" << wScaleNormal << "\"";
-
-                if (wScalePLV)
-                  out << " zoomScalePageLayoutView=\"" << wScalePLV<< "\"";
-                if (wScaleSLV)
-                  out << " zoomScaleSheetLayoutView=\"" << wScaleSLV<< "\"";
+        if (wScaleNormal)
+          out << " zoomScaleNormal=\"" << wScaleNormal << "\"";
+        if (wScalePLV)
+          out << " zoomScalePageLayoutView=\"" << wScalePLV<< "\"";
+        if (wScaleSLV)
+          out << " zoomScaleSheetLayoutView=\"" << wScaleSLV<< "\"";
 
         out << ">" << std::endl;
 
