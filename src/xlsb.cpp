@@ -427,10 +427,12 @@ int styles(std::string filePath, std::string outPath, bool debug) {
               out << " wrapText=\"" << fields->fWrap <<"\"";
             if (fields->fShrinkToFit)
               out << " shrinkToFit=\"" << fields->fWrap <<"\"";
-            if (fields->iReadingOrder)
-              out << " readingOrder=\"" << (uint32_t)fields->iReadingOrder <<"\"";
+            // if (fields->iReadingOrder)
+            // something is not quite right here.
+            // I have a file which is left to right, but this here returns 2: right to left
+              Rcpp::Rcout << " readingOrder=\"" << (uint16_t)fields->iReadingOrder << std::endl;
             if (indent)
-              out << " indent=\"" << (uint32_t)indent/3 <<"\"";
+              out << " indent=\"" << (uint16_t)indent/3 <<"\"";
             if (fields->fJustLast)
               out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
             if (trot)
@@ -1213,8 +1215,10 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
           out << " colorId=\"" << (int32_t)icvHdr << "\"";
         if (!fields->fDefaultHdr)
           out << " defaultGridColor=\"" << fields->fDefaultHdr << "\"";
-        if (fields->fRightToLeft)
+        if (fields->fRightToLeft) {
+          Rcpp::Rcout << "rightToLeft=\"" << fields->fRightToLeft << "\"" << std::endl;
           out << " rightToLeft=\"" << fields->fRightToLeft << "\"";
+        }
         if (fields->fDspFmla)
           out << " showFormulas=\"" << fields->fDspFmla << "\"";
         if (!fields->fDspGrid)

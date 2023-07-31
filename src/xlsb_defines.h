@@ -80,7 +80,7 @@ typedef struct {
 
 typedef struct {
   uint8_t alc : 3;
-  uint16_t alcv : 3;
+  uint8_t alcv : 3;
   bool fWrap : 1;
   bool fJustLast : 1;
   bool fShrinkToFit : 1;
