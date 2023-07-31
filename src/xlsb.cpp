@@ -838,21 +838,21 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         // fFutureFunction - future function
         // reserved        - 0
 
-        if (debug)
-          Rprintf(
-            "%d, %d, %d, %d, %d, %d, %d, %d , %d, %d, %d\n",
-            fields->fHidden,
-            fields->fFunc,
-            fields->fOB,
-            fields->fProc,
-            fields->fCalcExp,
-            fields->fBuiltin,
-            fields->fgrp,
-            fields->fPublished,
-            fields->fWorkbookParam,
-            fields->fFutureFunction,
-            fields->reserved
-          );
+        // if (debug)
+        //   Rprintf(
+        //     "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+        //     fields->fHidden,
+        //     fields->fFunc,
+        //     fields->fOB,
+        //     fields->fProc,
+        //     fields->fCalcExp,
+        //     fields->fBuiltin,
+        //     fields->fgrp,
+        //     fields->fPublished,
+        //     fields->fWorkbookParam,
+        //     fields->fFutureFunction,
+        //     fields->reserved
+        //   );
 
         chKey = readbin(chKey, bin, 0);
         // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)

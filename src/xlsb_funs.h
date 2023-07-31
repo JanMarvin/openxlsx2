@@ -443,9 +443,9 @@ std::vector<int> ColRelShort(std::istream& sas) {
   ColRelShortFields *fields = (ColRelShortFields *)&col;
 
   std::vector<int> out(3);
-  out[0] = fields->col;
-  out[1] = fields->fColRel;
-  out[2] = fields->fRwRel;
+  out[0] = (int)fields->col;
+  out[1] = (int)fields->fColRel;
+  out[2] = (int)fields->fRwRel;
 
   return out;
 }
