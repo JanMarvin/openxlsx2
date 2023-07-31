@@ -394,6 +394,22 @@ std::vector<int> UncheckedRfX(std::istream& sas) {
   return(out);
 }
 
+std::vector<int> UncheckedSqRfX(std::istream& sas) {
+
+  std::vector<int> out;
+  int32_t crfx = 0;
+  crfx = readbin(crfx, sas, 0);
+  out.push_back(crfx);
+
+  for (int32_t i = 0; i < crfx; ++i) {
+    std::vector<int> ucrfx = UncheckedRfX(sas);
+    out.insert(out.end(), ucrfx.begin(), ucrfx.end());
+  }
+
+  return out;
+}
+
+
 int UncheckedCol(std::istream& sas) {
   int32_t col = 0;
   col = readbin(col, sas, 0);

@@ -94,6 +94,54 @@ typedef struct {
   uint16_t unused : 10;
 } XFFields;
 
+
+typedef struct {
+  bool fShowAutoBreaks : 1;
+  uint8_t rserved1 : 2;
+  bool fPublish : 1;
+  bool fDialog : 1;
+  bool fApplyStyles : 1;
+  bool fRowSumsBelow : 1;
+  bool fColSumsRight : 1;
+  bool fFitToPage : 1;
+  uint8_t reserved2 : 1;
+  bool fShowOutlineSymbols : 1;
+  uint8_t reserved3 : 1;
+  bool fSyncHoriz : 1;
+  bool fSyncVert : 1;
+  bool fAltExprEval : 1;
+  bool fAltFormulaEntry : 1;
+} BrtWsPropFields1;
+
+typedef struct {
+  bool fFilterMode : 1;
+  bool fCondFmtCalc : 1;
+  uint8_t reserved4 :6;
+} BrtWsPropFields2;
+
+typedef struct {
+  bool fWnProt : 1;
+  bool fDspFmla : 1;
+  bool fDspGrid : 1;
+  bool fDspRwCol : 1;
+  bool fDspZeros : 1;
+  bool fRightToLeft : 1;
+  bool fSelected : 1;
+  bool fDspRuler : 1;
+  bool fDspGuts : 1;
+  bool fDefaultHdr : 1;
+  bool fWhitespaceHidden : 1;
+  uint8_t reserved1 : 5;
+} BrtBeginWsViewFields;
+
+// fFilterMode = readbin(fFilterMode, bin, 0);
+// fCondFmtCalc = readbin(fCondFmtCalc, bin, 0);
+// bin.seekg(6, bin.cur);
+// brtcolorTab = readbin(brtcolorTab, bin, 0);
+// rwSync = readbin(rwSync, bin, 0);
+// colSync = readbin(colSync, bin, 0);
+// strName a code name ...
+
 // https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes
 {

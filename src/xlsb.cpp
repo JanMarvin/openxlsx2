@@ -1098,14 +1098,6 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       {
         out << "<worksheet>" << std::endl;
 
-        // uint8_t A, B;
-        //
-        // B = readbin(B, bin, 0); // len?
-
-        // if (debug) {
-        //   printf("%d : %d\n", A, B);
-        // }
-
         if (debug) Rcpp::Rcout << "Begin of <worksheet>: " << bin.tellg() << std::endl;
         break;
       }
@@ -1114,61 +1106,51 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "WsProp: " << bin.tellg() << std::endl;
 
-        // uint8_t A, B;
-        //
-        // B = readbin(B, bin, 0); // len?
-        //
-        // if (debug) {
-        //   printf("%d : %d\n", A, B);
-        // }
+        // read uint24_t as 16 + 8
+        uint8_t brtwsprop_sec = 0;
+        uint16_t brtwsprop_fst = 0;
+        uint32_t rwSync = 0, colSync = 0;
 
-        // uint8_t fShowAutoBreaks = 0, fPublish = 0, fDialog = 0, fApplyStyles = 0, fRowSumsBelow = 0,
-        // fColSumsBelow = 0, fColSumsRight = 0, fFitToPage = 0, reserved2 = 0,
-        // fShowOutlineSymbols = 0, reserved3 = 0, fSyncHoriz = 0, fSyncVert = 0,
-        // fAltExprEval = 0, fAltFormulaEntry = 0, fFilterMode = 0, fCondFmtCalc = 0;
-        // uint16_t rserved1 = 0;
-        // uint32_t rwSync = 0, colSync = 0;
-        // int64_t brtcolorTab = 0;
+        brtwsprop_fst = readbin(brtwsprop_fst, bin, 0);
+        BrtWsPropFields1 *fields1 = (BrtWsPropFields1 *)&brtwsprop_fst;
+        brtwsprop_sec = readbin(brtwsprop_sec, bin, 0);
+        BrtWsPropFields2 *fields2 = (BrtWsPropFields2 *)&brtwsprop_sec;
 
-        // all these are bit, not byte ...
-        // fShowAutoBreaks = readbin(fShowAutoBreaks, bin, 0);
-        // rserved1 = readbin(rserved1, bin, 0);
-        // fPublish = readbin(fPublish, bin, 0);
-        // fDialog = readbin(fDialog, bin, 0);
-        // fApplyStyles = readbin(fApplyStyles, bin, 0);
-        // fRowSumsBelow = readbin(fRowSumsBelow, bin, 0);
-        // fColSumsRight = readbin(fColSumsRight, bin, 0);
-        // fFitToPage = readbin(fFitToPage, bin, 0);
-        // reserved2 = readbin(reserved2, bin, 0);
-        // fShowOutlineSymbols = readbin(fShowOutlineSymbols, bin, 0);
-        // reserved3 = readbin(reserved3, bin, 0);
-        // fSyncHoriz = readbin(fSyncHoriz, bin, 0);
-        // fSyncVert = readbin(fSyncVert, bin, 0);
-        // fAltExprEval = readbin(fAltExprEval, bin, 0);
-        // fAltFormulaEntry = readbin(fAltFormulaEntry, bin, 0);
-        // fFilterMode = readbin(fFilterMode, bin, 0);
-        // fCondFmtCalc = readbin(fCondFmtCalc, bin, 0);
-        // bin.seekg(6, bin.cur);
-        // brtcolorTab = readbin(brtcolorTab, bin, 0);
-        // rwSync = readbin(rwSync, bin, 0);
-        // colSync = readbin(colSync, bin, 0);
-        // strName a code name ...
+        std::vector<int> color = brtColor(bin);
+        rwSync = readbin(rwSync, bin, 0);
+        colSync = readbin(colSync, bin, 0);
+        std::string strName = XLWideString(bin);
 
-        bin.seekg(size, bin.cur);
+        if (debug) {
+          Rcpp::Rcout << "sheetPr tabColor:" << std::endl;
+          Rf_PrintValue(Rcpp::wrap(color));
+        }
+
+        // for now we only handle color in sheetPR
+        if (color[0] >= 1 && color[0] <= 3) {
+          out << "<sheetPr>" << std::endl;
+
+          if (color[0] == 0x01) {
+            out << "<tabColor indexed=\"" << color[1] << "\" />" << std::endl;
+          }
+
+          if (color[0] == 0x02) {
+            out << "<tabColor rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />" << std::endl;
+          }
+
+          if (color[0] == 0x03) {
+            out << "<tabColor theme=\"" << color[1] << "\" />" << std::endl; //  << "\" tint=\""<< color[2]
+          }
+
+          out << "</sheetPr>" << std::endl;
+        }
+
         break;
       }
 
       case BrtWsDim:
       {
         if (debug) Rcpp::Rcout << "WsDim: " << bin.tellg() << std::endl;
-
-        // uint8_t A, B;
-        //
-        // B = readbin(B, bin, 0); // len?
-        //
-        // if (debug) {
-        //   printf("%d : %d\n", A, B);
-        // }
 
         // 16 bit
         std::vector<int> dims;
@@ -1192,13 +1174,83 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginWsViews:
       {
         if (debug) Rcpp::Rcout << "<sheetViews>: " << bin.tellg() << std::endl;
-        // uint8_t A, B;
-        //
-        // B = readbin(B, bin, 0); // len?
-        //
-        // if (debug) {
-        //   printf("%d : %d\n", A, B);
-        // }
+        out << "<sheetViews>" << std::endl;
+        bin.seekg(size, bin.cur);
+
+        break;
+      }
+
+      case BrtBeginWsView:
+      {
+        if (debug) Rcpp::Rcout << "<sheetView>: " << bin.tellg() << std::endl;
+        // out << "<sheetView>" << std::endl;
+        // bin.seekg(size, bin.cur);
+
+        uint8_t icvHdr = 0, reserved2 = 0;
+        uint16_t flags = 0, reserved3 = 0, wScale = 0, wScaleNormal = 0, wScaleSLV = 0, wScalePLV = 0;
+        uint32_t xlView = 0, rwTop = 0, colLeft = 0, iWbkView = 0;
+
+        flags = readbin(flags, bin, 0);
+        xlView = readbin(xlView, bin, 0);
+        rwTop = UncheckedRw(bin);
+        colLeft = UncheckedCol(bin);
+        icvHdr = readbin(icvHdr, bin, 0);
+        reserved2 = readbin(reserved2, bin, 0);
+        reserved3 = readbin(reserved3, bin, 0);
+        wScale = readbin(wScale, bin, 0);
+        wScaleNormal = readbin(wScaleNormal, bin, 0);
+        wScaleSLV = readbin(wScaleSLV, bin, 0);
+        wScalePLV = readbin(wScalePLV, bin, 0);
+        iWbkView = readbin(iWbkView, bin, 0);
+
+
+        BrtBeginWsViewFields *fields = (BrtBeginWsViewFields *)&flags;
+
+        out << "<sheetView";
+        // careful, without the following nothing goes
+        out << " workbookViewId=\"" << iWbkView << "\"";
+        if (icvHdr)
+          out << " colorId=\"" << (int32_t)icvHdr << "\"";
+        if (fields->fDefaultHdr)
+          out << " defaultGridColor=\"" << fields->fDefaultHdr << "\"";
+        if (fields->fRightToLeft)
+          out << " rightToLeft=\"" << fields->fRightToLeft << "\"";
+        if (fields->fDspFmla)
+          out << " showFormulas=\"" << fields->fDspFmla << "\"";
+        if (fields->fDspGrid)
+          out << " showGridLines=\"" << fields->fDspGrid << "\"";
+        if (fields->fDspGuts)
+          out << " showOutlineSymbols=\"" << fields->fDspGuts << "\"";
+        if (fields->fDspRwCol)
+          out << " showRowColHeaders=\"" << fields->fDspRwCol << "\"";
+        if (fields->fDspRuler)
+          out << " showRuler=\"" << fields->fDspRuler << "\"";
+        if (fields->fWhitespaceHidden)
+          out << " showWhiteSpace=\"" << fields->fWhitespaceHidden << "\"";
+        if (fields->fDspZeros)
+          out << " showZeros=\"" << fields->fDspZeros << "\"";
+        if (fields->fSelected)
+          out << " tabSelected=\"" << fields->fSelected << "\"";
+        if (colLeft > 0 || rwTop > 0)
+          out << " topLeftCell=\"" << int_to_col(colLeft + 1) << std::to_string(rwTop + 1) << "\"";
+        if (xlView)
+          out << " view=\"" << xlView << "\"";
+        if (fields->fWnProt)
+          out << " windowProtection=\"" << fields->fWnProt << "\"";
+
+        if (wScale)
+          out << " zoomScale=\"" << wScale << "\"";
+
+            if (wScaleNormal)
+              out << " zoomScaleNormal=\"" << wScaleNormal << "\"";
+
+                if (wScalePLV)
+                  out << " zoomScalePageLayoutView=\"" << wScalePLV<< "\"";
+                if (wScaleSLV)
+                  out << " zoomScaleSheetLayoutView=\"" << wScaleSLV<< "\"";
+
+        out << ">" << std::endl;
+
         break;
       }
 
@@ -1206,26 +1258,45 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       case BrtSel:
       {
         if (debug) Rcpp::Rcout << "BrtSel: " << bin.tellg() << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        uint32_t pnn = 0, rwAct = 0, colAct = 0, dwRfxAct = 0;
+        std::vector<int> sqrfx;
 
-      case BrtBeginWsView:
-      {
-        if (debug) Rcpp::Rcout << "<sheetView>: " << bin.tellg() << std::endl;
-        bin.seekg(size, bin.cur);
+        pnn = readbin(pnn, bin, 0);
+        rwAct = readbin(rwAct, bin, 0);
+        colAct = readbin(colAct, bin, 0);
+        dwRfxAct = readbin(dwRfxAct, bin, 0);
+
+        // sqrfx[0] is the number of rfx following
+        sqrfx = UncheckedSqRfX(bin);
+
+        std::string ac = int_to_col(colAct + 1) + std::to_string(rwAct + 1);
+        std::string lref = int_to_col(sqrfx[3] + 1) + std::to_string(sqrfx[1] + 1);
+        std::string rref = int_to_col(sqrfx[4] + 1) + std::to_string(sqrfx[2] + 1);
+
+        std::string sqref;
+        if (lref.compare(rref) == 0) {
+          sqref = lref;
+        } else {
+          sqref =  lref + ":" + rref;
+        }
+
+        out << "<selection activeCell=\"" << ac << "\" sqref=\""<< sqref << "\" />" << std::endl;
+
         break;
       }
 
       case BrtEndWsView:
       {
         if (debug) Rcpp::Rcout << "</sheetView>: " << bin.tellg() << std::endl;
+        out << "</sheetView>" << std::endl;
+        bin.seekg(size, bin.cur);
         break;
       }
 
       case BrtEndWsViews:
       {
         if (debug) Rcpp::Rcout << "</sheetViews>: " << bin.tellg() << std::endl;
+        out << "</sheetViews>" << std::endl;
         break;
       }
 
