@@ -430,7 +430,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
             // something is not quite right here.
             // I have a file which is left to right, but this here returns 2: right to left
             if (fields->iReadingOrder)
-              out << " readingOrder=\"" << (uint16_t)fields->iReadingOrder << std::endl;
+              out << " readingOrder=\"" << (uint16_t)fields->iReadingOrder <<"\"";
             if (indent)
               out << " indent=\"" << (uint16_t)indent/3 <<"\"";
             if (fields->fJustLast)
@@ -1082,6 +1082,8 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
     uint64_t row = 0;
     uint32_t col = 0;
+    std::vector<std::string> hlinks;
+    hlinks.push_back("<hyperlinks>");
 
     // auto itr = 0;
     while(!end_of_worksheet) {
@@ -1851,13 +1853,34 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         std::string tooltip = XLWideString(bin);
         std::string display = XLWideString(bin);
 
-        std::string ref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0]) + ":" + int_to_col(rfx[3] + 1) + std::to_string(rfx[1]);
 
-        out << "<hyperlink display = \"" <<  display << "\" r:id=\"" << relId << "\" location=\"" << location << "\" ref=\"" << ref << " tooltip=\"" << tooltip << "\" />" << std::endl;
+        std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
+        std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
+
+        std::string ref;
+        if (lref.compare(rref) == 0) {
+          ref = lref;
+        } else {
+          ref =  lref + ":" + rref;
+        }
+
+        std::string hlink = "<hyperlink display=\"" +  display + "\" r:id=\"" + relId + "\" location=\"" + location + "\" ref=\"" + ref + "\" tooltip=\"" + tooltip + "\" />";
+        hlinks.push_back(hlink);
       }
 
       case BrtEndSheet:
       {
+
+        if (hlinks.size() > 1) {
+        // did not see BrtBeginHL or BrtEndHL, likely I'm just blind
+        hlinks.push_back("</hyperlinks>");
+
+        for (int i = 0; i < hlinks.size(); ++i) {
+          if (debug) Rcpp::Rcout << hlinks[i] << std::endl;
+          out << hlinks[i] << std::endl;
+        }
+      }
+
         if (debug)  Rcpp::Rcout << "</worksheet>" << bin.tellg() << std::endl;
         out << "</worksheet>" << std::endl;
         end_of_worksheet = true;
