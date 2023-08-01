@@ -303,8 +303,10 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
 
   ## If a list is supplied write to individual worksheets using names if available
-  if (!inherits(x, "list"))
+  if (!inherits(x, "list")) {
     x <- list(x)
+    names(x) <- sheetName
+  }
 
   nms <- names(x)
   nSheets <- length(x)
