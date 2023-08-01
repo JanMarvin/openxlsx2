@@ -299,6 +299,35 @@ std::string halign(int style) {
   return out;
 }
 
+std::string to_iconset(int style) {
+  std::string out = "";
+  if (style != 0xFFFFFFFF)
+    if (style == 0) out = "3Arrows";
+    if (style == 1) out = "3ArrowsGray";
+    if (style == 2) out = "3Flags";
+    if (style == 3) out = "3TrafficLights1";
+    if (style == 4) out = "3TrafficLights2";
+    if (style == 5) out = "3Signs";
+    if (style == 6) out = "3Symbols";
+    if (style == 7) out = "3Symbols2";
+    if (style == 8) out = "4Arrows";
+    if (style == 9) out = "4ArrowsGray";
+    if (style == 10) out = "4RedToBlack";
+    if (style == 11) out = "4Rating";
+    if (style == 12) out = "4TrafficLights";
+    if (style == 13) out = "5Arrows";
+    if (style == 14) out = "5ArrowsGray";
+    if (style == 15) out = "5Rating";
+    if (style == 16) out = "5Quarters";
+    // beg iconset 14
+    if (style == 17) out = "3Stars";
+    if (style == 18) out = "3Triangles";
+    if (style == 19) out = "5Boxes";
+    // end iconset 14
+  else out = "";
+  return out;
+}
+
 std::string valign(int style) {
   std::string out = "";
   std::string vali = "";

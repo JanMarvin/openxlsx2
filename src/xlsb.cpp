@@ -793,11 +793,17 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         iTabID = readbin(iTabID, bin, 0);
         std::string rid = XLNullableWideString(bin);
 
-        if (debug) Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID  << ": " << rid << std::endl;
+        if (debug)
+          Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID  << ": " << rid << std::endl;
 
         std::string val = XLWideString(bin);
 
-        out << "<sheet r:id=\"" << rid << "\" sheetId=\""<< iTabID<< "\" name=\"" << val << "\"/>" << std::endl;
+        std::string visible;
+        if (hsState == 0) visible = "visible";
+        if (hsState == 1) visible = "hidden";
+        if (hsState == 2) visible = "veryHidden";
+
+        out << "<sheet r:id=\"" << rid << "\" state=\"" << visible<< "\" sheetId=\"" << iTabID<< "\" name=\"" << val << "\"/>" << std::endl;
         break;
       }
 
@@ -1332,13 +1338,13 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         if (fields->fHidden)
           out << " hidden=\"" <<  fields->fHidden << "\"";
         if (fields->fUserSet)
-          out << " customWidth=\"" <<  fields->fHidden << "\"";
+          out << " customWidth=\"" <<  fields->fUserSet << "\"";
         if (fields->fBestFit)
-          out << " bestFit=\"" <<  fields->fHidden << "\"";
+          out << " bestFit=\"" <<  fields->fBestFit << "\"";
         if (fields->iOutLevel>0)
           out << " outlineLevel=\"" <<  fields->iOutLevel << "\"";
         if (fields->fCollapsed)
-          out << " collapsed=\"" <<  fields->fHidden << "\"";
+          out << " collapsed=\"" <<  fields->fCollapsed << "\"";
 
         out << " />" << std::endl;
         break;
@@ -1866,6 +1872,134 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         std::string hlink = "<hyperlink display=\"" +  display + "\" r:id=\"" + relId + "\" location=\"" + location + "\" ref=\"" + ref + "\" tooltip=\"" + tooltip + "\" />";
         hlinks.push_back(hlink);
+
+        break;
+      }
+
+      case BrtBeginAFilter:
+      {
+        if (debug) Rcpp::Rcout << "<autofilter>" << std::endl;
+        std::vector<int> rfx = UncheckedRfX(bin);
+
+        std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
+        std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
+
+        std::string ref;
+        if (lref.compare(rref) == 0) {
+          ref = lref;
+        } else {
+          ref =  lref + ":" + rref;
+        }
+
+        // ignoring filterColumn for now
+        // autofilter can consist of filterColumn, filters and filter
+        // maybe customFilter, dynamicFilter too
+        out << "<autoFilter ref=\"" << ref << "\">" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginFilterColumn:
+      {
+        if (debug) Rcpp::Rcout << "<filterColumn>" << std::endl;
+
+        uint16_t flags = 0;
+        uint32_t dwCol = 0;
+        dwCol = readbin(dwCol, bin, 0);
+        flags = readbin(flags, bin, 0);
+        // fHideArrow
+        // fNoBtn
+
+        out << "<filterColumn colId=\"" << dwCol <<"\">" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginFilters:
+      {
+        if (debug) Rcpp::Rcout << "<filters>" << std::endl;
+        // bin.seekg(size, bin.cur);
+
+        uint32_t fBlank = 0, unused = 0;
+        fBlank = readbin(fBlank, bin, 0); // a 32bit flag, after all ... why not?
+        unused = readbin(unused, bin, 0); // maybe calendarType?
+        out << "<filters blank=\"" << fBlank <<"\">" << std::endl;
+        break;
+      }
+
+      case BrtFilter:
+      {
+        std::string rgch = XLWideString(bin);
+        out << "<filter val=\"" << rgch << "\" />" << std::endl;
+        // bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndFilters:
+      {
+        if (debug) Rcpp::Rcout << "</filters>" << std::endl;
+        out << "</filters>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtColorFilter:
+      {
+        uint32_t dxfid = 0, fCellColor = 0;
+        dxfid = readbin(dxfid, bin, 0);
+        fCellColor = readbin(fCellColor, bin, 0);
+
+        out << "<colorFilter dxfId=\"" << dxfid << "\" cellColor=\""<< fCellColor<< "\"/>" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginCustomFilters:
+      case BrtBeginCustomFilters14:
+      case BrtBeginCustomRichFilters:
+      {
+        Rcpp::warning("Custom Filter found. This is not handled.");
+        bin.seekg(size, bin.cur);
+
+        break;
+      }
+
+      case BrtDynamicFilter:
+      {
+        Rcpp::warning("Dynamic Filter found. This is not handled.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtIconFilter:
+      case BrtIconFilter14:
+      {
+        uint32_t iIconSet = 0, iIcon = 0;
+        iIconSet = readbin(iIconSet, bin, 0);
+        iIcon = readbin(iIcon, bin, 0);
+
+        std::string iconSet;
+        if (iIconSet) iconSet = to_iconset(iIconSet);
+
+        out << "<iconFilter iconSet=\"" << iconSet << "\" iconId=\""<< iIcon<< "\"/>" << std::endl;
+
+        break;
+      }
+
+      case BrtEndFilterColumn:
+      {
+        if (debug) Rcpp::Rcout << "</filterColumn>" << std::endl;
+        out << "</filterColumn>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndAFilter:
+      {
+        if (debug) Rcpp::Rcout << "</autofilter>" << std::endl;
+        out << "</autoFilter>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
       }
 
       case BrtEndSheet:
