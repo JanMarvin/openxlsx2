@@ -340,6 +340,10 @@ styles <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_styles`, filePath, outPath, debug)
 }
 
+bin_table <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_bin_table`, filePath, outPath, debug)
+}
+
 sst <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_sst`, filePath, outPath, debug)
 }

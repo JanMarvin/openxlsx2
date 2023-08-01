@@ -572,6 +572,313 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
+int bin_table(std::string filePath, std::string outPath, bool debug) {
+
+  std::ofstream out(outPath);
+  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+
+  // auto sas_size = bin.tellg();
+  if (bin) {
+    bin.seekg(0, std::ios_base::beg);
+    bool end_of_table = false;
+
+    while(!end_of_table) {
+
+      int32_t x = 0, size = 0;
+
+      if (debug) Rcpp::Rcout << "." << std::endl;
+      RECORD(x, size, bin);
+      if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
+
+      switch(x) {
+
+      case BrtUID:
+      {
+        if (debug) Rcpp::Rcout << "<xr:uid>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtBeginList:
+      {
+        if (debug) Rcpp::Rcout << "<table>" << std::endl;
+
+        std::vector<int> rfxList = UncheckedRfX(bin);
+        std::string ref = int_to_col(rfxList[2] + 1) + std::to_string(rfxList[0] + 1) + ":" + int_to_col(rfxList[3] + 1) + std::to_string(rfxList[1] + 1);
+
+        Rcpp::Rcout << "table ref: " << ref << std::endl;
+
+        uint32_t lt = 0, idList = 0, crwHeader = 0, crwTotals = 0, flags = 0;
+        lt = readbin(lt, bin, 0);
+        idList = readbin(idList, bin, 0);
+        crwHeader = readbin(crwHeader, bin, 0);
+        crwTotals = readbin(crwTotals, bin, 0);
+        flags = readbin(flags, bin, 0);
+
+        uint32_t nDxfHeader = 0, nDxfData = 0, nDxfAgg = 0, nDxfBorder = 0, nDxfHeaderBorder = 0, nDxfAggBorder = 0, dwConnID = 0;
+
+        nDxfHeader = readbin(nDxfHeader, bin, 0);
+        nDxfData = readbin(nDxfData, bin, 0);
+        nDxfAgg = readbin(nDxfAgg, bin, 0);
+        nDxfBorder = readbin(nDxfBorder, bin, 0);
+        nDxfHeaderBorder = readbin(nDxfHeaderBorder, bin, 0);
+        nDxfAggBorder = readbin(nDxfAggBorder, bin, 0);
+        dwConnID = readbin(dwConnID, bin, 0);
+
+        std::string stName = XLNullableWideString(bin);
+        Rcpp::Rcout << stName << std::endl;
+        std::string stDisplayName = XLNullableWideString(bin);
+        Rcpp::Rcout << stDisplayName << std::endl;
+        std::string stComment = XLNullableWideString(bin);
+        Rcpp::Rcout << stComment << std::endl;
+        std::string stStyleHeader = XLNullableWideString(bin);
+        Rcpp::Rcout << stStyleHeader << std::endl;
+        std::string stStyleData = XLNullableWideString(bin);
+        Rcpp::Rcout << stStyleData << std::endl;
+        std::string stStyleAgg = XLNullableWideString(bin);
+        Rcpp::Rcout << stStyleAgg << std::endl;
+
+        out << "<table xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" mc:Ignorable=\"xr xr3\"" <<
+          " id=\"" << idList <<
+          "\" name=\"" << stName <<
+            "\" displayName=\"" << stDisplayName <<
+              "\" ref=\"" << ref <<
+                "\" totalsRowShown=\"" << crwTotals <<
+              "\">" << std::endl;
+
+        Rcpp::Rcout << bin.tellg() << std::endl;
+        break;
+      }
+
+      // this is used in worksheet as well. move it to function?
+      case BrtBeginAFilter:
+      {
+        if (debug) Rcpp::Rcout << "<autofilter>" << std::endl;
+        std::vector<int> rfx = UncheckedRfX(bin);
+
+        std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
+        std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
+
+        std::string ref;
+        if (lref.compare(rref) == 0) {
+          ref = lref;
+        } else {
+          ref =  lref + ":" + rref;
+        }
+
+        // ignoring filterColumn for now
+        // autofilter can consist of filterColumn, filters and filter
+        // maybe customFilter, dynamicFilter too
+        out << "<autoFilter ref=\"" << ref << "\">" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginFilterColumn:
+      {
+        if (debug) Rcpp::Rcout << "<filterColumn>" << std::endl;
+
+        uint16_t flags = 0;
+        uint32_t dwCol = 0;
+        dwCol = readbin(dwCol, bin, 0);
+        flags = readbin(flags, bin, 0);
+        // fHideArrow
+        // fNoBtn
+
+        out << "<filterColumn colId=\"" << dwCol <<"\">" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginFilters:
+      {
+        if (debug) Rcpp::Rcout << "<filters>" << std::endl;
+        // bin.seekg(size, bin.cur);
+
+        uint32_t fBlank = 0, unused = 0;
+        fBlank = readbin(fBlank, bin, 0); // a 32bit flag, after all ... why not?
+        unused = readbin(unused, bin, 0); // maybe calendarType?
+        out << "<filters blank=\"" << fBlank <<"\">" << std::endl;
+        break;
+      }
+
+      case BrtFilter:
+      {
+        std::string rgch = XLWideString(bin);
+        out << "<filter val=\"" << rgch << "\" />" << std::endl;
+        // bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndFilters:
+      {
+        if (debug) Rcpp::Rcout << "</filters>" << std::endl;
+        out << "</filters>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtColorFilter:
+      {
+        uint32_t dxfid = 0, fCellColor = 0;
+        dxfid = readbin(dxfid, bin, 0);
+        fCellColor = readbin(fCellColor, bin, 0);
+
+        out << "<colorFilter dxfId=\"" << dxfid << "\" cellColor=\""<< fCellColor<< "\"/>" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginCustomFilters:
+      case BrtBeginCustomFilters14:
+      case BrtBeginCustomRichFilters:
+      {
+        Rcpp::warning("Custom Filter found. This is not handled.");
+        bin.seekg(size, bin.cur);
+
+        break;
+      }
+
+      case BrtDynamicFilter:
+      {
+        Rcpp::warning("Dynamic Filter found. This is not handled.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtIconFilter:
+      case BrtIconFilter14:
+      {
+        uint32_t iIconSet = 0, iIcon = 0;
+        iIconSet = readbin(iIconSet, bin, 0);
+        iIcon = readbin(iIcon, bin, 0);
+
+        std::string iconSet;
+        if (iIconSet) iconSet = to_iconset(iIconSet);
+
+        out << "<iconFilter iconSet=\"" << iconSet << "\" iconId=\""<< iIcon<< "\"/>" << std::endl;
+
+        break;
+      }
+
+      case BrtEndFilterColumn:
+      {
+        if (debug) Rcpp::Rcout << "</filterColumn>" << std::endl;
+        out << "</filterColumn>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndAFilter:
+      {
+        if (debug) Rcpp::Rcout << "</autofilter>" << std::endl;
+        out << "</autoFilter>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtBeginListCols:
+      {
+        uint32_t nCols = 0;
+        nCols = readbin(nCols, bin, 0);
+        out << "<tableColumns count=\"" << nCols << "\">" << std::endl;
+        // bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtBeginListCol:
+      {
+        if (debug) Rcpp::Rcout << "<tableColumn>" << std::endl;
+        // bin.seekg(size, bin.cur);
+        // break;
+
+        uint32_t idField = 0, ilta = 0, nDxfHdr = 0, nDxfInsertRow = 0, nDxfAgg = 0, idqsif = 0;
+
+        idField = readbin(idField, bin, 0);
+        ilta = readbin(ilta, bin, 0);
+        nDxfHdr = readbin(nDxfHdr, bin, 0);
+        nDxfInsertRow = readbin(nDxfInsertRow, bin, 0);
+        nDxfAgg = readbin(nDxfAgg, bin, 0);
+        idqsif = readbin(idqsif, bin, 0);
+        std::string stName = XLNullableWideString(bin);
+        std::string stCaption = XLNullableWideString(bin);
+        std::string stTotal = XLNullableWideString(bin);
+        Rcpp::Rcout << stName << ": " << stCaption << ": " << stTotal<< std::endl;
+        std::string stStyleHeader = XLNullableWideString(bin);
+        std::string stStyleInsertRow = XLNullableWideString(bin);
+        std::string stStyleAgg = XLNullableWideString(bin);
+        Rcpp::Rcout << stStyleHeader << ": " << stStyleInsertRow << ": " << stStyleAgg << std::endl;
+
+        out << "<tableColumn id=\"" << idField << "\" name=\"" << stCaption << "\">" << std::endl;
+
+        break;
+      }
+
+      case BrtEndListCol:
+      {
+        out << "</tableColumn>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndListCols:
+      {
+        out << "</tableColumns>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndList:
+      {
+        end_of_table = true;
+        out << "</table>" << std::endl;
+        break;
+      }
+
+      case BrtListCCFmla:
+      {
+        // calculated column formula
+        // uint8_t flags = 0;
+        // std::string fml;
+        // flags = readbin(flags, bin, 0);
+        // fml = CellParsedFormula(bin);
+        Rcpp::warning("Table formulas are not implemented.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtTableStyleClient:
+      {
+        out << "<tableStyleInfo name=\"TableStyleMedium2\" showFirstColumn=\"0\" showLastColumn=\"0\" showRowStripes=\"1\" showColumnStripes=\"0\" />" << std::endl;
+        // no idea yet
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+
+      default:
+      {
+        if (debug) {
+        Rcpp::Rcout << std::to_string(x) <<
+          ": " << std::to_string(size) <<
+            " @ " << bin.tellg() << std::endl;
+      }
+        bin.seekg(size, bin.cur);
+        break;
+      }
+      }
+    }
+
+    out.close();
+    bin.close();
+    return 1;
+  } else {
+    return -1;
+  };
+
+}
+
+// [[Rcpp::export]]
 int sst(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
@@ -1999,6 +2306,30 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "</autofilter>" << std::endl;
         out << "</autoFilter>" << std::endl;
         bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtBeginListParts:
+      {
+        if (debug) Rcpp::Rcout << "<tableParts>" << std::endl;
+        uint32_t cParts = 0;
+        cParts = readbin(cParts, bin, 0);
+        out << "<tableParts count=\"" << cParts << "\">" << std::endl;
+        break;
+      }
+
+      case BrtListPart:
+      {
+        if (debug) Rcpp::Rcout << "<tablePart/>" << std::endl;
+        std::string stRelID = XLNullableWideString(bin);
+        out << "<tablePart r:id=\"" << stRelID << "\" />" << std::endl;
+        break;
+      }
+
+      case BrtEndListParts:
+      {
+        if (debug) Rcpp::Rcout << "</tableParts>" << std::endl;
+        out << "</tableParts>" << std::endl;
         break;
       }
 

@@ -123,6 +123,7 @@ wb_load <- function(
   chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+\\.xml")
 
   # tables
+  tablesBIN         <- grep_xml("tables/table[0-9]+.bin$")
   tablesXML         <- grep_xml("tables/table[0-9]+.xml$")
   tableRelsXML      <- grep_xml("table[0-9]+.xml.rels$")
   queryTablesXML    <- grep_xml("queryTable[0-9]+.xml$")
@@ -180,6 +181,13 @@ wb_load <- function(
       sst(sharedStringsBIN, sharedStringsXML, debug)
       # system(sprintf("cat %s", sharedStringsXML))
       # system(sprintf("cp %s /tmp/sst.xml", sharedStringsXML))
+    }
+
+    if (length(tablesBIN)) {
+      tablesXML <- gsub(".bin$", ".xml", tablesBIN)
+      bin_table(tablesBIN, tablesXML, 1)
+      # system(sprintf("cat %s", tablesXML))
+      # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
     }
 
     workbookXMLRels <- workbookBINRels
@@ -870,8 +878,14 @@ wb_load <- function(
         if (length(xml) == 0) return(character())
 
         xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
-        # xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
-        # xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
+        # print(xml_relship)
+        if (any(basename(xml_relship$Type) == "table")) { #  %% length(tablesBIN)
+          sel <- basename(xml_relship$Type) == "table"
+          # message("table")
+          # print(gsub(".bin", ".xml", xml_relship$Target[sel]))
+          # message("---")
+          xml_relship$Target[sel] <- gsub(".bin", ".xml", xml_relship$Target[sel])
+        }
 
         if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
 
