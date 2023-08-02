@@ -1,3 +1,1 @@
-# gcc 12 generates a false positive warning
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107004
-PKG_CPPFLAGS = -I. -I../inst/include/pugixml -Wno-array-bounds
+PKG_CPPFLAGS = -I. -I../inst/include/pugixml
