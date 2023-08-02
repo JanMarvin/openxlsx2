@@ -471,10 +471,13 @@ std::vector<uint16_t> ColRelShort(std::istream& sas) {
   col = readbin(col, sas, 0);
   ColRelShortFields *fields = (ColRelShortFields *)&col;
 
+  bool fColRel = fields->fColRel;
+  bool fRwRel = fields->fRwRel;
+
   std::vector<uint16_t> out(3);
   out[0] = fields->col;
-  out[1] = fields->fColRel;
-  out[2] = fields->fRwRel;
+  out[1] = fColRel;
+  out[2] = fRwRel;
 
   return out;
 }
