@@ -471,13 +471,10 @@ std::vector<uint16_t> ColRelShort(std::istream& sas) {
   col = readbin(col, sas, 0);
   ColRelShortFields *fields = (ColRelShortFields *)&col;
 
-  bool fColRel = fields->fColRel;
-  bool fRwRel = fields->fRwRel;
-
   std::vector<uint16_t> out(3);
   out[0] = fields->col;
-  out[1] = fColRel;
-  out[2] = fRwRel;
+  out[1] = fields->fColRel;
+  out[2] = fields->fRwRel;
 
   return out;
 }
@@ -780,10 +777,26 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       break;
     }
 
-    case PtgIsect:
+    case PtgRange:
+    {
+      if (debug) Rcpp::Rcout << ":" <<std::endl;
+      fml_out += ":";
+      fml_out += "\n";
+      break;
+    }
+
+    case PtgUnion:
     {
       if (debug) Rcpp::Rcout << "," <<std::endl;
       fml_out += ",";
+      fml_out += "\n";
+      break;
+    }
+
+    case PtgIsect:
+    {
+      if (debug) Rcpp::Rcout << " " <<std::endl;
+      fml_out += " ";
       fml_out += "\n";
       break;
     }
@@ -844,6 +857,13 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       break;
     }
 
+    case PtgEq:
+    {
+      fml_out += "=";
+      fml_out += "\n";
+      break;
+    }
+
     case PtgGt:
     {
       fml_out += "&gt;";
@@ -889,6 +909,14 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     case PtgUMinus:
     {
       fml_out += "-";
+      fml_out += "\n";
+      break;
+    }
+
+    case PtgParen:
+    {
+      if (debug) Rcpp::Rcout << "\"" <<std::endl;
+      fml_out += "\"";
       fml_out += "\n";
       break;
     }
