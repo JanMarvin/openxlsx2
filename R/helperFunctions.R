@@ -510,6 +510,15 @@ create_sparklines <- function(
 
 ### beg pivot table helpers
 
+
+# unique is not enough! gh#713
+distinct <- function(x) {
+  unis <- stringi::stri_unique(x)
+  lwrs <- tolower(unis)
+  dups <- duplicated(lwrs)
+  unis[dups == FALSE]
+}
+
 cacheFields <- function(wbdata, filter, rows, cols, data) {
   sapply(
     names(wbdata),
@@ -529,11 +538,10 @@ cacheFields <- function(wbdata, filter, rows, cols, data) {
       if (is_date) {
         dat <- format(dat, format = "%Y-%m-%dT%H:%M:%S")
       }
-      unis <- stringi::stri_unique(dat)
 
       if (is_vars && !is_data) {
         sharedItem <- vapply(
-          unis,
+          distinct(dat),
           function(uni) {
             if (is.na(uni)) {
               xml_node_create("m")
@@ -658,7 +666,7 @@ pivot_xml_rels <- function(n) sprintf("<Relationships xmlns=\"http://schemas.ope
 get_items <- function(data, x) {
   x <- abs(x)
   item <- sapply(
-    c(order(unique(data[[x]])) - 1L, "default"),
+    c(order(distinct(data[[x]])) - 1L, "default"),
     # # TODO this sets the order of the pivot elements
     # c(seq_along(unique(data[[x]])) - 1L, "default"),
     function(val) {
