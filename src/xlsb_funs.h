@@ -351,7 +351,7 @@ void StrRun(std::istream& sas, uint32_t dwSizeStrRun) {
   for (uint8_t i = 0; i < dwSizeStrRun; ++i) {
     ich  = readbin(ich, sas, 0);
     ifnt = readbin(ifnt, sas, 0);
-    Rprintf("strRun: %d %d\n", ich, ifnt);
+    Rprintf("Styled string will be unstyled - strRun: %d %d\n", ich, ifnt);
   }
 }
 
@@ -691,6 +691,7 @@ std::vector<int> Xti(std::istream& sas) {
 }
 
 std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
+  bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
 
   if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
@@ -920,6 +921,21 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       //   fml_out += XLWideString(sas);
       //   fml_out += "\n";
       // }
+
+      break;
+    }
+
+    case PtgArray:
+    case PtgArray2:
+    case PtgArray3:
+    {
+      ptg_extra_array = true;
+      uint16_t unused2 = 0;
+      uint32_t unused1 = 0, unused3 = 0, unused4 = 0;
+      unused1 = readbin(unused1, sas, 0);
+      unused2 = readbin(unused2, sas, 0);
+      unused3 = readbin(unused3, sas, 0);
+      unused4 = readbin(unused4, sas, 0);
 
       break;
     }
@@ -1174,7 +1190,6 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
   if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
-
   cb = readbin(cb, sas, 0);
 
   if (debug)
@@ -1196,6 +1211,55 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       Rcpp::Rcout << int_to_col(col+1) << std::endl;
       break;
     }
+
+    case PtgArray:
+    case PtgArray2:
+    case PtgArray3:
+    {
+      // PtgExtraArray
+
+      uint32_t rows = 0, cols = 0;
+      rows = readbin(rows, sas, 0);
+      cols = readbin(cols, sas, 0);
+      // blob (it is actually called this way)
+      uint8_t reserved = 0;
+      reserved = readbin(reserved, sas, 0);
+
+      // SerBool
+      if (reserved == 0x02) {
+        uint8_t f = 0;
+        f = readbin(f, sas, 0);
+        Rcpp::Rcout << (bool)f << std::endl;
+      }
+
+      // SerErr
+      if (reserved == 0x04) {
+        uint8_t err = 0, reserved2 = 0;
+        uint16_t reserved3 = 0;
+        std::string strerr = BErr(sas);
+        Rcpp::Rcout << strerr << std::endl;
+        reserved2 = readbin(reserved2, sas, 0);
+        reserved3 = readbin(reserved3, sas, 0);
+      }
+
+      // SerNum
+      if (reserved == 0x00) {
+        double xnum = 0.0;
+        xnum = Xnum(sas);
+        Rcpp::Rcout << xnum << std::endl;
+      }
+
+      // SerStr
+      if (reserved == 0x01) {
+        uint16_t cch = 0;
+        cch = readbin(cch, sas, 0);
+        std::string rgch(cch, '\0');
+        rgch = read_xlwidestring(rgch, sas);
+        Rcpp::Rcout << rgch << std::endl;
+      }
+
+      break;
+    }
     // case PtgRef3d:
     // case PtgRefErr3d:
     // case PtgArea3d:
@@ -1213,6 +1277,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     //   tabid1 = readbin(tabid1, sas, 0);
     //   std::string sheet1 = XLWideString(sas);
     // }
+
     default :
     {
       // Rcpp::stop("Skip");

@@ -18,6 +18,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
     bool end_of_style_sheet = false;
 
     while(!end_of_style_sheet) {
+      Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
 
@@ -583,6 +584,7 @@ int bin_table(std::string filePath, std::string outPath, bool debug) {
     bool end_of_table = false;
 
     while(!end_of_table) {
+      Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
 
@@ -890,6 +892,7 @@ int sst(std::string filePath, std::string outPath, bool debug) {
     bool end_of_shared_strings = false;
 
     while(!end_of_shared_strings) {
+      Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
 
@@ -968,7 +971,12 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_workbook = false;
 
+    std::vector<std::string> defNams;
+    defNams.push_back("<definedNames>");
+
     while(!end_of_workbook) {
+      Rcpp::checkUserInterrupt();
+
       int32_t x = 0, size = 0;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
@@ -1175,11 +1183,12 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         // XLNameWideString: XLWideString <= 255 characters
         std::string name = XLWideString(bin);
 
-        CellParsedFormula(bin, debug, 0, 0);
+        std::string fml = CellParsedFormula(bin, debug, 0, 0);
 
         std::string comment = XLNullableWideString(bin);
 
-        if (debug) Rcpp::Rcout << name << comment << std::endl;
+        // if (debug)
+          Rcpp::Rcout << name << comment << std::endl;
 
         if (fields->fProc) {
           // must be NULL
@@ -1190,6 +1199,22 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
           // must be NULL
           std::string unusedstring2 = XLNullableWideString(bin);
         }
+
+        std::string defNam = "<definedName name=\"" + name;
+
+        if (comment.size() > 0)
+          defNam += "\" comment=\"" + comment;
+
+        if (itab != 0xFFFFFFFF)
+          defNam += "\" localSheetId=\"" + std::to_string(itab);
+
+        if (fields->fHidden)
+          defNam += "\" hidden=\"" + std::to_string(fields->fHidden);
+
+        // lacks the formula for the defined name
+        defNam = defNam + "\">" + "</definedName>";
+
+        defNams.push_back(defNam);
 
         break;
       }
@@ -1341,6 +1366,16 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       case BrtEndBook:
       {
         end_of_workbook = true;
+
+        if (defNams.size() > 1) {
+          defNams.push_back("</definedNames>");
+
+          for (size_t i = 0; i < defNams.size(); ++i) {
+            if (debug) Rcpp::Rcout << defNams[i] << std::endl;
+            // out << defNams[i] << std::endl;
+          }
+        }
+
         if (debug) Rcpp::Rcout << "</workbook>" << std::endl;
         out << "</workbook>" << std::endl;
         bin.seekg(size, bin.cur);
@@ -1400,6 +1435,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
     // auto itr = 0;
     while(!end_of_worksheet) {
+      Rcpp::checkUserInterrupt();
 
       // uint8_t unk = 0, high = 0, low = 0;
       // uint16_t tmp = 0;
@@ -1618,6 +1654,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtBeginColInfos:
       {
+        if (debug) Rcpp::Rcout << "<cols>: " << bin.tellg() << std::endl;
         out << "<cols>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
@@ -1625,6 +1662,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtColInfo:
       {
+        if (debug) Rcpp::Rcout << "<col/>: " << bin.tellg() << std::endl;
         uint16_t colinfo = 0;
         uint32_t colFirst = 0, colLast = 0, coldx = 0, ixfe = 0;
 
@@ -1659,6 +1697,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtEndColInfos:
       {
+        if (debug) Rcpp::Rcout << "</cols>: " << bin.tellg() << std::endl;
         out << "</cols>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
@@ -1714,12 +1753,15 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       case BrtRwDescent:
       {
         if (debug) Rcpp::Rcout << "BrtRwDescent: " << bin.tellg() << std::endl;
-        bin.seekg(size, bin.cur);
+        // bin.seekg(size, bin.cur);
+        uint16_t dyDescent = 0;
+        dyDescent = readbin(dyDescent, bin, 0);
         break;
       }
 
       case BrtRowHdr:
       {
+        if (debug) Rcpp::Rcout << "<row/>: " << bin.tellg() << std::endl;
 
         // close open rows
         if (!first_row) {
@@ -1728,10 +1770,9 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         first_row = false;
       }
 
-
-
-      uint8_t bits1 = 0, bits2 = 0, bits3 = 0, fExtraAsc = 0, fExtraDsc = 0, fCollapsed = 0,
-        fDyZero = 0, fUnsynced = 0, fGhostDirty = 0, fReserved = 0, fPhShow = 0;
+      uint8_t bits1 = 0, bits2 = 0, bits3 = 0, fExtraAsc = 0, fExtraDsc = 0,
+        fCollapsed = 0, fDyZero = 0, fUnsynced = 0, fGhostDirty = 0,
+        fReserved = 0, fPhShow = 0;
       uint16_t miyRw = 0;
 
       // uint24_t;
@@ -1739,8 +1780,14 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       uint32_t ixfe = 0, ccolspan = 0, unk32 = 0, colMic = 0, colLast = 0;
 
       rw = readbin(rw, bin, 0);
+
+      if (rw > 0x00100000 || rw < row)
+        Rcpp::stop("row either decreasing or to large");
+
       ixfe = readbin(ixfe, bin, 0);
       miyRw = readbin(miyRw, bin, 0);
+
+      if (miyRw > 0x2000) Rcpp::stop("miyRw to big");
 
       uint16_t rwoheaderfields = 0;
       rwoheaderfields = readbin(rwoheaderfields, bin, 0);
@@ -1762,15 +1809,27 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       // fReserved = 7
 
       ccolspan = readbin(ccolspan, bin, 0);
-      // rgBrtColspan
-      // not sure if these are alway around. maybe ccolspan is a counter
-      colMic = readbin(colMic, bin, 0);
-      colLast = readbin(colLast, bin, 0);
+      std::string spans;
+      if (ccolspan) {
+        // rgBrtColspan
+        // not sure if these are alway around. maybe ccolspan is a counter
+        colMic = readbin(colMic, bin, 0);
+        colLast = readbin(colLast, bin, 0);
+
+        spans = std::to_string(colMic + 1) + ":" + std::to_string(colLast + 1);
+      }
 
       out << "<row r=\""; //  << bin.tellg()
       out << rw + 1 << "\"";
 
-      if (debug) Rcpp::Rcout << ccolspan << std::endl;
+      if (fields->fUnsynced != 0) {
+        // Rcpp::Rcout << " ht=\"" << miyRw/20 << "\"" << std::endl;
+        out << " ht=\"" << miyRw/20 << "\"";
+        out << " customHeight=\"" << fields->fUnsynced << "\"";
+      }
+
+      if (ccolspan)
+        out << " spans=\"" << spans << "\"";
 
       if (fields->iOutLevel > 0) {
         out << " outlineLevel=\"" << fields->iOutLevel << "\"";
@@ -1858,7 +1917,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         // Rcpp::Rcout << RkNumber(val) << std::endl;
 
         out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << ">" << std::endl;
-        out << "<v>" << RkNumber(val3) << "</v>" << std::endl;
+        out << "<v>" << std::setprecision(16) << RkNumber(val3) << "</v>" << std::endl;
         out << "</c>" << std::endl;
 
         break;
@@ -1920,7 +1979,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtFmlaBool:
       {
-        Rcpp::Rcout << "BrtFmlaBool: " << bin.tellg() << std::endl;
+        if (debug) Rcpp::Rcout << "BrtFmlaBool: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
 
         std::vector<int> cell;
@@ -2038,6 +2097,8 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtShrFmla:
       {
+        if (debug) Rcpp::Rcout << "BrtShrFmla: " << bin.tellg() << std::endl;
+
         uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
         rwFirst  = UncheckedRw(bin) +1;
         rwLast   = UncheckedRw(bin) +1;
@@ -2355,7 +2416,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       default:
       {
         if (debug) {
-        Rcpp::Rcout << std::to_string(x) <<
+        Rcpp::Rcout << "Unhandled: " << std::to_string(x) <<
           ": " << std::to_string(size) <<
             " @ " << bin.tellg() << std::endl;
       }

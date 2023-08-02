@@ -185,7 +185,8 @@ wb_load <- function(
 
     if (length(tablesBIN)) {
       tablesXML <- gsub(".bin$", ".xml", tablesBIN)
-      bin_table(tablesBIN, tablesXML, 1)
+      for (i in seq_along(tablesXML))
+        bin_table(tablesBIN[i], tablesXML[i], 1)
       # system(sprintf("cat %s", tablesXML))
       # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
     }
@@ -712,6 +713,7 @@ wb_load <- function(
       if (grepl(".bin$", sheets$target[i])) {
         xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
 
+        # message(i)
         worksheet(sheets$target[i], xml_tmp, debug)
         # system(sprintf("cat %s", xml_tmp))
         # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
