@@ -395,6 +395,10 @@ test_that("reading xlsb works", {
 
   expect_equal(df_xlsb, df_xlsx)
 
+  df_xlsb <- wb_to_df(wb, show_formula = TRUE)
+  df_xlsx <- wb_to_df(xlsx, show_formula = TRUE)
+  expect_equal(df_xlsb, df_xlsx)
+
   unlink(tmp_dir, recursive = TRUE)
   unlink(tmp_zip)
 

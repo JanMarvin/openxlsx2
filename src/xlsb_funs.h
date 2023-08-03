@@ -466,24 +466,40 @@ uint16_t ColShort(std::istream& sas) {
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
-std::vector<uint16_t> ColRelShort(std::istream& sas) {
-  uint16_t col = 0;
-  col = readbin(col, sas, 0);
-  ColRelShortFields *fields = (ColRelShortFields *)&col;
+std::vector<int> ColRelShort(std::istream& sas) {
+  uint16_t tmp = 0;
+  tmp = readbin(tmp, sas, 0);
 
-  std::vector<uint16_t> out(3);
-  out[0] = fields->col;
-  out[1] = fields->fColRel;
-  out[2] = fields->fRwRel;
+  int16_t col = 0, fColRel = 0, fRwRel = 0;
+  col     = static_cast<int16_t>((tmp & 0x3FFF));
+  fColRel = (tmp >> 14) & 0x0001;
+  fRwRel  = (tmp >> 15) & 0x0001;
+
+  std::vector<int> out(3);
+  out[0] = col;
+  out[1] = fColRel;
+  out[2] = fRwRel;
 
   return out;
 }
 
-std::vector<int> Loc(std::istream& sas) {
+std::string Loc(std::istream& sas) {
 
-  std::vector<int> out(2);
-  out[0] = UncheckedRw(sas);
-  out[1] = ColRelShort(sas)[0];
+  std::vector<int> col;
+  uint32_t row = 0;
+  row = UncheckedRw(sas);
+  col = ColRelShort(sas);
+
+  bool fColRel = col[1];
+  bool fRwRel  = col[2];
+
+  std::string out;
+
+  if (!fColRel) out += "$";
+  out += int_to_col(col[0] + 1);
+
+  if (!fRwRel) out += "$";
+  out += std::to_string(row + 1);
 
   return out;
 }
@@ -493,7 +509,7 @@ std::vector<int> LocRel(std::istream& sas, bool &fRwRel, bool &fColRel) {
 
   int32_t row = 0;
   row = readbin(row, sas, 0);
-  std::vector<uint16_t> col = ColRelShort(sas);
+  std::vector<int> col = ColRelShort(sas);
 
   // Rcpp::Rcout << fRwRel << ": " << fColRel << std::endl;
   fRwRel = col[1];
@@ -669,7 +685,6 @@ std::string BErr(std::istream& sas) {
   return "unknown_ERROR";
 }
 
-
 std::vector<int> Xti(std::istream& sas) {
   int32_t firstSheet = 0, lastSheet = 0;
   uint32_t externalLink = 0;
@@ -689,6 +704,75 @@ std::vector<int> Xti(std::istream& sas) {
 
   return out;
 }
+
+bool isOperator(const std::string& token) {
+  return token == "+" || token == "-" || token == "*" || token == "/" ||
+    token == "^" || token == "%" || token == "="  || token == "&lt;&gt;" ||
+    token == "&lt;" || token == "&gt;" || token == "&le;" || token == "&ge;" ||
+    token == " " || token == "&amp;" || token == ":" || token == "," ||
+    token == "#" || token == "@";
+}
+
+#include <stack>
+
+std::string parseRPN(const std::string& expression) {
+
+  std::istringstream iss(expression);
+  std::string line;
+  std::stack<std::string> formulaStack;
+
+  while (std::getline(iss, line)) {
+    if (line.empty()) {
+      break;  // Stop parsing at the first empty line
+    }
+    std::string token = line;
+
+    if (isOperator(token)) {
+
+      if (formulaStack.size() == 1) {
+        std::string operand1 = formulaStack.top();
+        formulaStack.pop();
+        // uminus & uplus
+        std::string infixExpression = token + operand1;
+        formulaStack.push(infixExpression);
+      } else if (formulaStack.size() == 2) {
+        std::string operand2 = formulaStack.top();
+        formulaStack.pop();
+        std::string operand1 = formulaStack.top();
+        formulaStack.pop();
+        std::string infixExpression = operand1 + token + operand2;
+        formulaStack.push(infixExpression);
+      } else {
+        formulaStack.push("unexpected number of operands");
+      }
+    } else {
+      if (token.find("%s")) {
+        size_t pos = token.rfind("%s");
+        while (pos != std::string::npos && !formulaStack.empty()) {
+          token.replace(pos, 2, formulaStack.top());
+          formulaStack.pop();
+          pos = token.rfind("%s");
+        }
+        formulaStack.push(token);
+      } else {
+        formulaStack.push(token);
+      }
+    }
+  }
+
+  std::string parsedFormula;
+  while (!formulaStack.empty()) {
+    if (parsedFormula.empty()) {
+      parsedFormula = formulaStack.top();
+    } else {
+      parsedFormula = formulaStack.top() + " " + parsedFormula;
+    }
+    formulaStack.pop();
+  }
+
+  return parsedFormula;
+}
+
 
 std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
   bool ptg_extra_array = false;
@@ -733,6 +817,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       switch(val2) {
       case PtgAttrSemi:
       {
+        // function is volatile and has to be calculated every time the
+        // workbook is opened
         if (debug) Rcpp::Rcout << "PtgAttrSemi" << std::endl;
 
         if ((val2  & 1) != 1) Rcpp::stop("wrong value");
@@ -743,6 +829,21 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
         break;
       }
 
+      // case PtgAttrIf:
+      // {
+      //   uint8_t type = 0, cch = 0;
+      //
+      //   if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
+      //
+      //   type = readbin(type, sas, 0);
+      //
+      //   fml_out += "IF(%s)\n";
+      //
+      //   // cch = readbin(cch, sas, 0);
+      //   if (debug) Rprintf("AttrIf: %d %d\n", type, cch);
+      //   break;
+      // }
+
       case PtgAttrSpace:
       {
         uint8_t type = 0, cch = 0;
@@ -750,7 +851,14 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
         if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
 
         type = readbin(type, sas, 0);
+        // 0-6 various different types where to add the whitespace
         cch = readbin(cch, sas, 0);
+
+        // hm, there is also " " as operator. genius move ...
+        for (uint8_t i = 0; i < cch; ++i) {
+          fml_out += " ";
+        }
+
         if (debug) Rprintf("AttrSpace: %d %d\n", type, cch);
         break;
       }
@@ -763,7 +871,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
         // val2[6:8] == 0
         uint16_t unused = 0;
         unused = readbin(unused, sas, 0);
-        fml_out += "SUM"; // maybe attr because it is a single cell function?
+        fml_out += "SUM(%s)"; // maybe attr because it is a single cell function?
         fml_out += "\n";
         break;
       }
@@ -835,8 +943,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
     case PtgPercent:
     {
-      if (debug) Rcpp::Rcout << "/100" <<std::endl;
-      fml_out +=  "/100";
+      if (debug) Rcpp::Rcout << "%" <<std::endl;
+      fml_out +=  "%";
       fml_out += "\n";
       break;
     }
@@ -909,7 +1017,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     case PtgUMinus:
     {
       fml_out += "-";
-      fml_out += "\n";
+      fml_out += "";
       break;
     }
 
@@ -983,15 +1091,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
       // val1[6:7] == PtgDataType
 
-      // 6 & 10
-      std::vector<int> out = Loc(sas);
-
-      // A1 notation cell
-      fml_out += int_to_col(out[1] + 1L);
-      fml_out += std::to_string(out[0] + 1L);
+      fml_out +=  Loc(sas);
       fml_out += "\n";
 
-      if (debug) Rf_PrintValue(Rcpp::wrap(out));
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
 
       break;
@@ -1006,14 +1108,12 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       ixti = readbin(ixti, sas, 0); // XtiIndex
       if (debug) Rprintf("XtiIndex: %d\n", ixti);
 
-      std::vector<int> out = Loc(sas);
 
       // A1 notation cell
-      fml_out += int_to_col(out[1] + 1L);
-      fml_out += std::to_string(out[0] + 1L);
+      fml_out += "openxlsx2xlsb_" + std::to_string(ixti) + "!";
+      fml_out += Loc(sas);
       fml_out += "\n";
 
-      if (debug) Rf_PrintValue(Rcpp::wrap(out));
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
 
       break;
@@ -1148,7 +1248,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       iftab = readbin(iftab, sas, 0);
 
       fml_out += Ftab(iftab);
-      fml_out += "\n";
+      fml_out += "(%s)\n";
 
       break;
     }
@@ -1169,11 +1269,15 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       tab &= 0x7FFF;
       if (fCeFunc) {
         fml_out += Cetab(tab);
-        fml_out += "\n";
       } else {
         fml_out += Ftab(tab);
-        fml_out += "\n";
       }
+
+      fml_out += "(%s";
+      for (uint8_t i = 1; i < cparams; ++i) {
+        fml_out += ",%s";
+      }
+      fml_out += ")\n";
 
       if (debug) Rprintf("PtgFuncVar: %d %d %d\n", cparams, tab, fCeFunc);
 
@@ -1318,5 +1422,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     }
   }
 
-  return fml_out;
+  Rcpp::Rcout << fml_out << std::endl;
+  std::string inflix =  parseRPN(fml_out);
+
+  return inflix;
 }
