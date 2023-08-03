@@ -1212,7 +1212,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
           defNam += "\" hidden=\"" + std::to_string(fields->fHidden);
 
         // lacks the formula for the defined name
-        defNam = defNam + "\">" + "</definedName>";
+        defNam = defNam + "\">" + fml +"</definedName>";
 
         defNams.push_back(defNam);
 
@@ -1371,8 +1371,9 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
           defNams.push_back("</definedNames>");
 
           for (size_t i = 0; i < defNams.size(); ++i) {
-            if (debug) Rcpp::Rcout << defNams[i] << std::endl;
-            // out << defNams[i] << std::endl;
+            // if (debug)
+              Rcpp::Rcout << defNams[i] << std::endl;
+            out << defNams[i] << std::endl;
           }
         }
 

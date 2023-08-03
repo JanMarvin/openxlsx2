@@ -505,33 +505,64 @@ std::string Loc(std::istream& sas) {
 }
 
 // RgceLocRel
-std::vector<int> LocRel(std::istream& sas, bool &fRwRel, bool &fColRel) {
+std::string LocRel(std::istream& sas) {
 
+  std::vector<int> col;
   int32_t row = 0;
   row = readbin(row, sas, 0);
-  std::vector<int> col = ColRelShort(sas);
+  col = ColRelShort(sas);
 
-  // Rcpp::Rcout << fRwRel << ": " << fColRel << std::endl;
-  fRwRel = col[1];
-  fColRel = col[2];
-  // Rcpp::Rcout << fRwRel << ": " << fColRel << std::endl;
+  bool fColRel = col[1];
+  bool fRwRel  = col[2];
 
-  std::vector<int> out(2);
-  out[0] = row;
-  out[1] = col[0];
+  std::string out;
 
-  // Rf_PrintValue(Rcpp::wrap(out));
+  if (row != 0) {
+    row -= (1048575);
+  }
+
+  if (col[0] != 0) {
+    col[0] -= (16383);
+  }
+
+  if (!fColRel) out += "$";
+  out += int_to_col(col[0] + 1);
+
+  if (!fRwRel) out += "$";
+  out += std::to_string(row + 1);
 
   return out;
 }
 
-std::vector<int> Area(std::istream& sas) {
+std::string Area(std::istream& sas) {
 
-  std::vector<int> out(4);
-  out[0] = UncheckedRw(sas); // rowFirst
-  out[1] = UncheckedRw(sas); // rowLast
-  out[2] = ColRelShort(sas)[0]; // columnFirst
-  out[3] = ColRelShort(sas)[0]; // columnLast
+  std::vector<int> col0(3), col1(3);
+  uint32_t row0 = 0, row1 = 0;
+  row0 = UncheckedRw(sas); // rowFirst
+  row1 = UncheckedRw(sas); // rowLast
+  col0 = ColRelShort(sas); // columnFirst
+  col1 = ColRelShort(sas); // columnLast
+
+  bool fColRel0 = col0[1];
+  bool fRwRel0  = col0[2];
+  bool fColRel1 = col1[1];
+  bool fRwRel1  = col1[2];
+
+  std::string out;
+
+  if (!fColRel0) out += "$";
+  out += int_to_col(col0[0] + 1);
+
+  if (!fRwRel0) out += "$";
+  out += std::to_string(row0 + 1);
+
+  out += ":";
+
+  if (!fColRel1) out += "$";
+  out += int_to_col(col1[0] + 1);
+
+  if (!fRwRel1) out += "$";
+  out += std::to_string(row1 + 1);
 
   return out;
 }
@@ -1124,41 +1155,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     case PtgRefN3:
     {
 
-      bool fColRel = false, fRwRel = false;
-      std::vector<int> out = LocRel(sas, fColRel, fRwRel);
-
-      // Rprintf("%d and %d: %d\n", fColRel, fRwRel, out[0]);
-
-      // if (fRwRel) {
-      //   if (row < 0) {
-      //     row += 0x00100000;
-      //   } else if (row > 0x000FFFFF) {
-      //     row -= 0x00100000;
-      //   }
-      // }
-      //
-      // if (fColRel) {
-      //   if (col < 0) {
-      //     col += 0x4000;
-      //   } else if (col > 0x3FFF) {
-      //     col -= 0x4000;
-      //   }
-      // }
-
-      // if (fRwRel)  out[0] = row + 1048574 - out[0];
-      // if (fColRel) out[1] = col + 16382 - out[1]; // no clue
-
-      if (out[0] != 0) {
-        out[0] -= (1048575 +1);
-      }
-
-      if (out[1] != 0) {
-        out[1] -= (16383 +1);
-      }
-
       // A1 notation cell
-      fml_out += int_to_col(col + out[1] + 1L);
-      fml_out += std::to_string(row + out[0] + 1L);
+      fml_out += LocRel(sas);
       fml_out += "\n";
 
       break;
@@ -1169,18 +1167,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     case PtgArea3:
     {
 
-      std::vector<int> out = Area(sas);
-
       // A1 notation cell
-      fml_out += int_to_col(out[2] + 1L);
-      fml_out += std::to_string(out[0] + 1L);
-      fml_out += ":";
-      fml_out += int_to_col(out[3] + 1L);
-      fml_out += std::to_string(out[1] + 1L);
+      fml_out += Area(sas);
       fml_out += "\n";
-
-      if (debug) Rf_PrintValue(Rcpp::wrap(out));
-      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
 
       break;
     }
@@ -1195,17 +1184,11 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       ixti = readbin(ixti, sas, 0);
       Rprintf("ixti in PtgArea3d: %d\n", ixti);
 
-      std::vector<int> out = Area(sas);
-
       // A1 notation cell
-      fml_out += int_to_col(out[2] + 1L);
-      fml_out += std::to_string(out[0] + 1L);
-      fml_out += ":";
-      fml_out += int_to_col(out[3] + 1L);
-      fml_out += std::to_string(out[1] + 1L);
+      fml_out += "openxlsx2xlsb_" + std::to_string(ixti) + "!";
+      fml_out += Area(sas);
       fml_out += "\n";
-
-      if (debug) Rf_PrintValue(Rcpp::wrap(out));
+;
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
 
       break;
