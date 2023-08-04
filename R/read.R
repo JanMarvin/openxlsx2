@@ -376,16 +376,16 @@ wb_to_df <- function(
     }
   }
 
-  if (show_formula) {
-    sel <- cc$f != ""
-    cc$val[sel] <- replaceXMLEntities(cc$f[sel])
-    cc$typ[sel] <- "s"
-  }
-
   # remaining values are numeric?
   if (any(sel <- is.na(cc$typ))) {
     cc$val[sel] <- cc$v[sel]
     cc$typ[sel] <- "n"
+  }
+
+  if (show_formula) {
+    sel <- cc$f != ""
+    cc$val[sel] <- replaceXMLEntities(cc$f[sel])
+    cc$typ[sel] <- "s"
   }
 
   # convert "na_string" to missing
