@@ -35,6 +35,10 @@
   * `wb_dims(x = matrix(1, 5, 26))`
 * Handling of thread comments is not possible via `wb_add_thread()`. This includes options to reply and resolve comments.
 
+## Fixes
+
+* Improve `show_formula`. Previously it was called to early in the function and skipped a few cases. [715](https://github.com/JanMarvin/openxlsx2/pull/715)
+
 ## Refactoring
 
 * Cleanup / revisit documentation and vignettes ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
