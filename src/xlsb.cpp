@@ -1245,6 +1245,13 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         break;
       }
 
+      case BrtPlaceholderName:
+      {
+        std::string name = XLWideString(bin);
+        Rcpp::Rcout << name << std::endl;
+        break;
+      }
+
       case BrtSupAddin:
       {
         if (debug) Rcpp::Rcout << "BrtSupAddin @"<< bin.tellg() << std::endl;
@@ -1256,6 +1263,8 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
         // Rcpp::stop("BrtSupSelf");
+        std::string strRelID = XLNullableWideString(bin);
+        Rcpp::Rcout << strRelID << std::endl;
         break;
       }
 
@@ -1285,7 +1294,8 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
         std::vector<uint32_t> rgXti(cXti);
         for (uint32_t i = 0; i < cXti; ++i) {
-          Xti(bin);
+          std::vector<int> xti = Xti(bin);
+          Rf_PrintValue(Rcpp::wrap(xti));
         }
 
         break;
