@@ -306,11 +306,6 @@ wb_to_df <- function(
     cc$val[sel] <- replaceXMLEntities(cc$v[sel])
     cc$typ[sel] <- "s"
   }
-  if (show_formula) {
-    sel <- cc$f != ""
-    cc$val[sel] <- replaceXMLEntities(cc$f[sel])
-    cc$typ[sel] <- "s"
-  }
   # text in t
   if (any(cc_tab %in% c("inlineStr"))) {
     sel <- cc$c_t %in% c("inlineStr")
@@ -385,6 +380,12 @@ wb_to_df <- function(
   if (any(sel <- is.na(cc$typ))) {
     cc$val[sel] <- cc$v[sel]
     cc$typ[sel] <- "n"
+  }
+
+  if (show_formula) {
+    sel <- cc$f != ""
+    cc$val[sel] <- replaceXMLEntities(cc$f[sel])
+    cc$typ[sel] <- "s"
   }
 
   # convert "na_string" to missing
