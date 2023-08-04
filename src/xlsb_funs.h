@@ -766,22 +766,27 @@ std::string parseRPN(const std::string& expression) {
         // uminus & uplus
         std::string infixExpression = token + operand1;
         formulaStack.push(infixExpression);
-      } else if (formulaStack.size() == 2) {
+      } else if (formulaStack.size() >= 2) {
+        // Rcpp::Rcout << "Formula stacksize is: " << formulaStack.size() << std::endl;
         std::string operand2 = formulaStack.top();
         formulaStack.pop();
         std::string operand1 = formulaStack.top();
         formulaStack.pop();
         std::string infixExpression = operand1 + token + operand2;
         formulaStack.push(infixExpression);
-      } else {
-        formulaStack.push("unexpected number of operands");
       }
     } else {
       if (token.find("%s")) {
         size_t pos = token.rfind("%s");
-        while (pos != std::string::npos && !formulaStack.empty()) {
-          token.replace(pos, 2, formulaStack.top());
-          formulaStack.pop();
+        while (pos != std::string::npos) {
+          if (!formulaStack.empty()) {
+            token.replace(pos, 2, formulaStack.top());
+            formulaStack.pop();
+          } else {
+            // some functions are actually empty like RAND(). Have to check if
+            // argument order is correct in this case
+            token.replace(pos, 2, "");
+          }
           pos = token.rfind("%s");
         }
         formulaStack.push(token);
@@ -805,7 +810,7 @@ std::string parseRPN(const std::string& expression) {
 }
 
 
-std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
+std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
   bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
 
@@ -818,6 +823,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
   // sas.seekg(cce, sas.cur);
   pos += cce;
   int8_t val1 = 0;
+
+  uint32_t row = 0;
 
   std::string fml_out;
   while((size_t)sas.tellg() < pos) {
@@ -1230,8 +1237,18 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
       uint16_t iftab = 0;
       iftab = readbin(iftab, sas, 0);
 
-      fml_out += Ftab(iftab);
-      fml_out += "(%s)\n";
+      std::string fml = Ftab(iftab);
+
+      fml_out += fml;
+      if (fml != "NA" && fml != "PI" && fml != "RAND" && fml != "NOW" &&
+          fml != "STEP" && fml != "CALLER" && fml != "ACTIVE.CELL" &&
+          fml != "TRUE" && fml != "FALSE" && fml != "NOT" && fml != "BREAK" &&
+          fml != "NEXT" && fml != "TODAY" && fml != "ELSE" && fml != "END.IF" &&
+          fml != "GROUP")
+        fml_out += "(%s)";
+      else
+        fml_out += "()";
+      fml_out += "\n";
 
       break;
     }
@@ -1256,7 +1273,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
         fml_out += Ftab(tab);
       }
 
-      fml_out += "(%s";
+      fml_out += "(";
+      if (cparams) fml_out += "%s"; // RAND() needs no argument
       for (uint8_t i = 1; i < cparams; ++i) {
         fml_out += ",%s";
       }
@@ -1285,14 +1303,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
     case PtgExp:
     {
-      uint32_t row = 0;
       // this is a reference to the cell that contains the shared formula
       row = UncheckedRw(sas) + 1;
       Rcpp::Rcout << row << std::endl;
-
-      fml_out += int_to_col(col + 1);
-      fml_out += std::to_string(row);
-      fml_out += "\n";
       break;
     }
 
@@ -1324,9 +1337,13 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
 
     switch(val1) {
     case PtgExp:
-    {
+    { // PtgExtraCol
       int32_t col = UncheckedCol(sas);
       Rcpp::Rcout << int_to_col(col+1) << std::endl;
+
+      fml_out += int_to_col(col + 1);
+      fml_out += std::to_string(row);
+      fml_out += "\n";
       break;
     }
 
@@ -1405,6 +1422,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int row, int col) {
     }
   }
 
+  Rcpp::Rcout << "...fml..." << std::endl;
   Rcpp::Rcout << fml_out << std::endl;
   std::string inflix =  parseRPN(fml_out);
 

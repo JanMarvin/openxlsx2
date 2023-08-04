@@ -1183,7 +1183,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
         // XLNameWideString: XLWideString <= 255 characters
         std::string name = XLWideString(bin);
 
-        std::string fml = CellParsedFormula(bin, debug, 0, 0);
+        std::string fml = CellParsedFormula(bin, debug, 0);
 
         std::string comment = XLNullableWideString(bin);
 
@@ -2007,7 +2007,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
-        std::string fml = CellParsedFormula(bin, debug, 0, 0);
+        std::string fml = CellParsedFormula(bin, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"b\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2037,7 +2037,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
 
-        std::string fml = CellParsedFormula(bin, debug, 0, 0);
+        std::string fml = CellParsedFormula(bin, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"e\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2070,7 +2070,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         //         fields->fAlwaysCalc,
         //         fields->unused);
 
-        std::string fml = CellParsedFormula(bin, debug, 0, 0);
+        std::string fml = CellParsedFormula(bin, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << ">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2096,7 +2096,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, 0);
 
-        std::string fml = CellParsedFormula(bin, debug, 0, 0);
+        std::string fml = CellParsedFormula(bin, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"str\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2118,7 +2118,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
         Rcpp::Rcout << int_to_col(colFirst) << rwFirst << ":" << int_to_col(colLast) << rwLast << std::endl;
 
-        std::string fml = CellParsedFormula(bin, debug, row, col);
+        std::string fml = CellParsedFormula(bin, debug, col);
         Rcpp::Rcout << fml << std::endl;
 
         // out << "<f>" << fml << "</f>" << std::endl;
