@@ -851,9 +851,20 @@ int bin_table(std::string filePath, std::string outPath, bool debug) {
 
       case BrtTableStyleClient:
       {
-        out << "<tableStyleInfo name=\"TableStyleMedium2\" showFirstColumn=\"0\" showLastColumn=\"0\" showRowStripes=\"1\" showColumnStripes=\"0\" />" << std::endl;
-        // no idea yet
-        bin.seekg(size, bin.cur);
+        uint16_t flags = 0;
+        flags = readbin(flags, bin, 0);
+        std::string stStyleName = XLNullableWideString(bin);
+
+        BrtTableStyleClientFields *fields = (BrtTableStyleClientFields*)&flags;
+
+        out << "<tableStyleInfo name=\""<< stStyleName << "\"";
+        out <<" showColHeaders=\"" << fields->fColumnHeaders << "\"";
+        out <<" showFirstColumn=\"" << fields->fFirstColumn << "\"";
+        out <<" showLastColumn=\"" << fields->fLastColumn << "\"";
+        out <<" showRowHeaders=\"" << fields->fRowHeaders << "\"";
+        out <<" showRowStripes=\"" << fields->fRowStripes << "\"";
+        out <<" showColumnStripes=\"" << fields->fColumnStripes << "\"";
+        out << " />" << std::endl;
         break;
       }
 

@@ -871,6 +871,23 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
 
       switch(val2) {
+
+      case PtgList:
+      {
+        if (debug) Rcpp::Rcout << "PtgList " << sas.tellg() << std::endl;
+        uint16_t ixti = 0, flags = 0;
+        uint32_t listIndex = 0;
+        int16_t colFirst = 0, colLast = 0;
+
+        ixti = readbin(ixti, sas, 0);
+        flags = readbin(flags, sas, 0);
+        listIndex = readbin(listIndex, sas, 0);
+        colFirst = ColShort(sas);
+        colLast = ColShort(sas);
+
+        break;
+      }
+
       case PtgAttrSemi:
       {
         // function is volatile and has to be calculated every time the
@@ -886,20 +903,30 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
         break;
       }
 
-      // case PtgAttrIf:
-      // {
-      //   uint8_t type = 0, cch = 0;
-      //
-      //   if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
-      //
-      //   type = readbin(type, sas, 0);
-      //
-      //   fml_out += "IF(%s)\n";
-      //
-      //   // cch = readbin(cch, sas, 0);
-      //   if (debug) Rprintf("AttrIf: %d %d\n", type, cch);
-      //   break;
-      // }
+      // beg control tokens. according to manual they can be ignored
+      case PtgAttrIf:
+      case PtgAttrIfError:
+      case PtgAttrGoTo:
+      {
+        uint16_t offset = 0;
+
+        offset = readbin(offset, sas, 0);
+
+        break;
+      }
+
+      case PtgAttrChoose:
+      {
+        uint16_t cOffset = 0;
+        uint32_t rgOffset0 = 0, rgOffset1 = 0;
+
+        cOffset = readbin(cOffset, sas, 0);
+        rgOffset0 = readbin(rgOffset0, sas, 0);
+        rgOffset1 = readbin(rgOffset1, sas, 0);
+
+        break;
+      }
+      // end control tokens
 
       case PtgAttrSpace:
       {
@@ -1446,10 +1473,10 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     }
   }
 
-  // if (debug) {
+  if (debug) {
     Rcpp::Rcout << "...fml..." << std::endl;
     Rcpp::Rcout << fml_out << std::endl;
-  // }
+  }
   std::string inflix =  parseRPN(fml_out);
 
   return inflix;

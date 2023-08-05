@@ -134,13 +134,15 @@ typedef struct {
   uint8_t reserved1 : 5;
 } BrtBeginWsViewFields;
 
-// fFilterMode = readbin(fFilterMode, bin, 0);
-// fCondFmtCalc = readbin(fCondFmtCalc, bin, 0);
-// bin.seekg(6, bin.cur);
-// brtcolorTab = readbin(brtcolorTab, bin, 0);
-// rwSync = readbin(rwSync, bin, 0);
-// colSync = readbin(colSync, bin, 0);
-// strName a code name ...
+typedef struct {
+  bool fFirstColumn : 1;
+  bool fLastColumn : 1;
+  bool fRowStripes : 1;
+  bool fColumnStripes : 1;
+  bool fRowHeaders : 1;
+  bool fColumnHeaders : 1;
+  uint16_t reserved : 10;
+} BrtTableStyleClientFields;
 
 // https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes

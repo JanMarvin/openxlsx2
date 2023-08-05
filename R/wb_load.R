@@ -186,7 +186,7 @@ wb_load <- function(
     if (length(tablesBIN)) {
       tablesXML <- gsub(".bin$", ".xml", tablesBIN)
       for (i in seq_along(tablesXML))
-        bin_table(tablesBIN[i], tablesXML[i], 1)
+        bin_table(tablesBIN[i], tablesXML[i], debug)
       # system(sprintf("cat %s", tablesXML))
       # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
     }
