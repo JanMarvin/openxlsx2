@@ -22,6 +22,17 @@ test_that("names", {
   expect_error(wb$set_sheet_names(new = "S1"), "does not contain any sheets")
 
   wb$add_worksheet("S1")
-  expect_error(wb$set_sheet_names(new = paste(rep("a", 32), collapse = "")), "31 chars")
+  expect_warning(wb$set_sheet_names(new = paste(rep("a", 32), collapse = "")), "31 characters")
   file.remove(tmp)
+
+  wb <- wb_workbook()
+  expect_warning(wb$add_worksheet(paste(rep("a", 32), collapse = "")), "31 characters")
+  expect_error(
+    expect_warning(
+      wb$add_worksheet(paste(rep("a", 32), collapse = "")),
+      "31 characters"
+    ),
+    "unique string"
+  )
+
 })

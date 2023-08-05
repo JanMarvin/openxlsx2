@@ -1,7 +1,6 @@
 #' @name wb_load
 #' @title Load an existing .xlsx file
 #' @param file A path to an existing .xlsx or .xlsm file
-#' @param xlsx_file alias for file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #' sheet will be loaded.
 #' @param data_only mode to import if only a data frame should be returned. This
@@ -33,16 +32,20 @@
 #' wb$add_worksheet("A new worksheet")
 wb_load <- function(
     file,
-    xlsx_file = NULL,
     sheet,
     data_only = FALSE,
     calc_chain = FALSE,
     ...
 ) {
 
+  xlsx_file <- list(...)$xlsx_file
   standardize_case_names(...)
 
-  file <- xlsx_file %||% file
+  if (!is.null(xlsx_file)) {
+    .Deprecated(old = "xlsx_file", new = "file", package = "openxlsx2")
+    file <- xlsx_file %||% file
+  }
+
   file <- getFile(file)
 
   if (!file.exists(file)) {

@@ -654,6 +654,7 @@ write_data2 <- function(
 
   return(wb)
 }
+
 # `write_data_table()` ---------------------------------------------------------
 # `write_data_table()` an internal driver function to `write_data` and `write_data_table` ----
 #' Write to a worksheet as an Excel table
@@ -1159,7 +1160,7 @@ write_data <- function(
 #'
 #' wb$add_data("df", df, startCol = "C")
 #'
-#' write_formula(wb, "df", startCol = "E", startRow = "2",
+#' write_formula(wb, "df", startCol = "E", startRow = 2,
 #'              x = "SUM(C2:C11*D2:D11)",
 #'              array = TRUE)
 #' @export

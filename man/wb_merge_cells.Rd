@@ -5,18 +5,18 @@
 \alias{wb_unmerge_cells}
 \title{Worksheet cell merging}
 \usage{
-wb_merge_cells(wb, sheet = current_sheet(), rows = NULL, cols = NULL)
+wb_merge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 
-wb_unmerge_cells(wb, sheet = current_sheet(), rows = NULL, cols = NULL)
+wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 }
 \arguments{
 \item{wb}{A workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{cols, rows}{Column and row specifications to merge on.  Note: \code{min()} and
-\code{max()} of each vector are provided for specs.  Skipping rows or columns is
-not recognized.}
+\item{dims}{worksheet cells}
+
+\item{...}{additional arguments}
 }
 \description{
 Merge cells within a worksheet

@@ -16,22 +16,25 @@ int2col <- function(x) {
   sapply(x, int_to_col)
 }
 
-#' @name col2int
-#' @title Convert Excel column to integer
-#' @description Converts an Excel column label to an integer.
+#' Convert Excel column to integer
+#'
+#' Converts an Excel column label to an integer.
+#'
 #' @param x A character vector
+#' @return An integer column label (or `NULL` if `x` is `NULL`)
 #' @export
 #' @examples
 #' col2int(LETTERS)
 col2int <- function(x) {
+  if (is.null(x)) return(NULL)
 
   if (is.numeric(x) || is.integer(x) || is.factor(x))
-    return(as.numeric(x))
+    return(as.integer(x))
 
   if (!is.character(x)) {
     stop("x must be character")
 
-    if (any(is.na(x)))
+    if (anyNA(x))
       stop("x must be a valid character")
   }
 

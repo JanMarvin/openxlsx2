@@ -198,3 +198,13 @@ test_that("add_sparklines", {
   )
 
 })
+
+test_that("distinct() works", {
+
+  x <- c("London", "NYC", "NYC", "Berlin", "Madrid", "London", "BERLIN", "berlin")
+
+  exp <- c("London", "NYC", "Berlin", "Madrid")
+  got <- distinct(x)
+  expect_equal(exp, got)
+
+})

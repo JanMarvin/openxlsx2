@@ -9,6 +9,9 @@ col2int(x)
 \arguments{
 \item{x}{A character vector}
 }
+\value{
+An integer column label (or \code{NULL} if \code{x} is \code{NULL})
+}
 \description{
 Converts an Excel column label to an integer.
 }

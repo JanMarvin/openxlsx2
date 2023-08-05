@@ -481,9 +481,8 @@ wb_copy_cells <- function(
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param cols,rows Column and row specifications to merge on.  Note: `min()` and
-#'   `max()` of each vector are provided for specs.  Skipping rows or columns is
-#'   not recognized.
+#' @param dims worksheet cells
+#' @param ... additional arguments
 #'
 #' @examples
 #' # Create a new workbook
@@ -517,16 +516,16 @@ NULL
 
 #' @export
 #' @rdname wb_merge_cells
-wb_merge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
+wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
   assert_workbook(wb)
-  wb$clone()$merge_cells(sheet = sheet, rows = rows, cols = cols)
+  wb$clone()$merge_cells(sheet = sheet, dims = dims, ... = ...)
 }
 
 #' @export
 #' @rdname wb_merge_cells
-wb_unmerge_cells <- function(wb, sheet = current_sheet(), rows = NULL, cols = NULL) {
+wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
   assert_workbook(wb)
-  wb$clone()$unmerge_cells(sheet = sheet, rows = rows, cols = cols)
+  wb$clone()$unmerge_cells(sheet = sheet, dims = dims, ... = ...)
 }
 
 
@@ -1702,8 +1701,8 @@ wb_set_order <- function(wb, sheets) {
 #'   sheet = 1,
 #'   name = "iris",
 #'   dims = wb_dims(
-#'     row = seq_len(nrow(iris) + 1),
-#'     col = seq_along(iris)
+#'     rows = seq_len(nrow(iris) + 1),
+#'     cols = seq_along(iris)
 #'   )
 #' )
 #'
@@ -1893,8 +1892,7 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 #'   "t" = as.POSIXct("2016-01-01") + -5:5 * 10000
 #' )
 #' wb$add_data_table(2, x = df)
-#' wb$add_data_validation(2,
-#'   col = 1, rows = 2:12, type = "date",
+#' wb$add_data_validation(2, dims = "A2:A12", type = "date",
 #'   operator = "greaterThanOrEqual", value = as.Date("2016-01-01")
 #' )
 #' wb$add_data_validation(2,
@@ -2918,6 +2916,7 @@ wb_add_dxfs_style <- function(
 #' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @seealso [wb_add_thread()]
+#' @rdname comment
 #' @export
 wb_add_comment <- function(
     wb,
@@ -2939,11 +2938,6 @@ wb_add_comment <- function(
 }
 
 #' Remove comment from worksheet
-#' @param wb A workbook object
-#' @param sheet A worksheet of the workbook
-#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
-#' @param ... additional arguments
-#' @returns The `wbWorkbook` object
 #' @rdname comment
 #' @export
 wb_remove_comment <- function(
@@ -3004,7 +2998,7 @@ wb_get_person <- function(wb, name = NULL) {
 #' @param comment the comment to add
 #' @param person_id the person Id this should be added for
 #' @param reply logical if the comment is a reply
-#' @param resolve logical if the comment should be maked as resolved
+#' @param resolve logical if the comment should be marked as resolved
 #' @seealso [wb_add_comment()]
 #' @name wb_add_thread
 #' @examples
@@ -3088,12 +3082,11 @@ wb_add_form_control <- function(
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims A cell or cell range like "A1" or "A1:B2"
-#' @param cols Columns to apply conditional formatting to
-#' @param rows Rows to apply conditional formatting to
 #' @param rule The condition under which to apply the formatting. See examples.
 #' @param style A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'
 #' @param type The type of conditional formatting rule to apply.
 #' @param params Additional parameters passed.  See **Details** for more
+#' @param ... additional arguments
 #' @details See Examples.
 #'
 #' @details
@@ -3158,8 +3151,6 @@ wb_add_conditional_formatting <- function(
     wb,
     sheet  = current_sheet(),
     dims   = NULL,
-    cols   = NULL,
-    rows   = NULL,
     rule   = NULL,
     style  = NULL,
     type   = c(
@@ -3178,18 +3169,18 @@ wb_add_conditional_formatting <- function(
       border    = TRUE,
       percent   = FALSE,
       rank      = 5L
-    )
+    ),
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_conditional_formatting(
-    sheet = sheet,
-    dims  = dims,
-    cols  = cols,
-    rows  = rows,
-    rule  = rule,
-    style = style,
-    type  = type,
-    params = params
+    sheet  = sheet,
+    dims   = dims,
+    rule   = rule,
+    style  = style,
+    type   = type,
+    params = params,
+    ...    = ...
   )
 }
 

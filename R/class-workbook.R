@@ -181,14 +181,16 @@ wbWorkbook <- R6::R6Class(
     #' @param ... additional arguments
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator         = NULL,
-      title           = NULL,
-      subject         = NULL,
-      category        = NULL,
+      creator          = NULL,
+      title            = NULL,
+      subject          = NULL,
+      category         = NULL,
       datetime_created = Sys.time(),
-      theme           = NULL,
+      theme            = NULL,
       ...
     ) {
+
+      force(datetime_created)
 
       standardize_case_names(...)
 
@@ -291,11 +293,14 @@ wbWorkbook <- R6::R6Class(
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
-      assert_class(self$creator,     "character")
-      assert_class(title,            "character", or_null = TRUE)
-      assert_class(subject,          "character", or_null = TRUE)
-      assert_class(category,         "character", or_null = TRUE)
-      assert_class(datetime_created, "POSIXt")
+      self$datetimeCreated <- getOption("openxlsx2.datetimeCreated") %||%
+        datetime_created
+
+      assert_class(self$creator,         "character")
+      assert_class(title,                "character", or_null = TRUE)
+      assert_class(subject,              "character", or_null = TRUE)
+      assert_class(category,             "character", or_null = TRUE)
+      assert_class(self$datetimeCreated, "POSIXt")
 
       stopifnot(
         length(title) <= 1L,
@@ -306,7 +311,6 @@ wbWorkbook <- R6::R6Class(
       self$title           <- title
       self$subject         <- subject
       self$category        <- category
-      self$datetimeCreated <- datetime_created
       private$generate_base_core()
       private$current_sheet <- 0L
       invisible(self)
@@ -402,8 +406,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       sheet <- as.character(sheet)
+      private$validate_new_sheet(sheet)
       sheet_name <- replace_legal_chars(sheet)
-      private$validate_new_sheet(sheet_name)
 
 
       newSheetIndex <- length(self$worksheets) + 1L
@@ -567,8 +571,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       sheet <- as.character(sheet)
+      private$validate_new_sheet(sheet)
       sheet_name <- replace_legal_chars(sheet)
-      private$validate_new_sheet(sheet_name)
 
       if (!is.logical(grid_lines) | length(grid_lines) > 1) {
         fail <- TRUE
@@ -757,7 +761,10 @@ wbWorkbook <- R6::R6Class(
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
     clone_worksheet = function(old = current_sheet(), new = next_sheet()) {
-      private$validate_new_sheet(new)
+
+      sheet <- new
+      private$validate_new_sheet(sheet)
+      new <- sheet
       old <- private$get_sheet_index(old)
 
       newSheetIndex <- length(self$worksheets) + 1L
@@ -1459,7 +1466,7 @@ wbWorkbook <- R6::R6Class(
       standardize_case_names(...)
 
       wb_to_df(
-        xlsx_file         = self,
+        file              = self,
         sheet             = sheet,
         start_row         = start_row,
         start_col         = start_col,
@@ -1486,7 +1493,6 @@ wbWorkbook <- R6::R6Class(
     ### load workbook ----
     #' @description load workbook
     #' @param file file
-    #' @param xlsx_file xlsx_file
     #' @param sheet sheet
     #' @param data_only data_only
     #' @param calc_chain calc_chain
@@ -1494,7 +1500,6 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object invisibly
     load = function(
       file,
-      xlsx_file  = NULL,
       sheet,
       data_only  = FALSE,
       calc_chain = FALSE,
@@ -1504,7 +1509,6 @@ wbWorkbook <- R6::R6Class(
       if (missing(sheet)) sheet <- substitute()
       self <- wb_load(
         file       = file,
-        xlsx_file  = xlsx_file,
         sheet      = sheet,
         data_only  = data_only,
         calc_chain = calc_chain,
@@ -2704,7 +2708,9 @@ wbWorkbook <- R6::R6Class(
 
       # should be able to pull this out into a single private function
       for (i in seq_along(pos)) {
-        private$validate_new_sheet(new_name[i])
+        sheet <- new_name[i]
+        private$validate_new_sheet(sheet)
+        new_name[i] <- sheet
         private$set_single_sheet_name(pos[i], new_name[i], new_raw[i])
         # TODO move this work into private$set_single_sheet_name()
 
@@ -3536,9 +3542,30 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Set cell merging for a sheet
     #' @param sheet sheet
-    #' @param rows,cols Row and column specifications.
+    #' @param dims worksheet cells
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
+    merge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
+
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
+
+      if (!is.null(rows) && !is.null(cols)) {
+
+        if (length(cols) > 2 && any(diff(cols) != 1))
+          warning("cols > 2, will create range from min to max.")
+
+        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      ddims <- dims_to_rowcol(dims)
+
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
+
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$merge_cells(
         rows   = rows,
@@ -3550,9 +3577,30 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Removes cell merging for a sheet
     #' @param sheet sheet
-    #' @param rows,cols Row and column specifications.
+    #' @param dims worksheet cells
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    unmerge_cells = function(sheet = current_sheet(), rows = NULL, cols = NULL) {
+    unmerge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
+
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
+
+      if (!is.null(rows) && !is.null(cols)) {
+
+        if (length(cols) > 2 && any(diff(cols) != 1))
+          warning("cols > 2, will create range from min to max.")
+
+        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      ddims <- dims_to_rowcol(dims)
+
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
+
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$unmerge_cells(
         rows   = rows,
@@ -3739,7 +3787,7 @@ wbWorkbook <- R6::R6Class(
     #' @param comment the comment to add
     #' @param person_id the person Id this should be added for
     #' @param reply logical if the comment is a reply
-    #' @param resolve logical if the comment should be maked as resolved
+    #' @param resolve logical if the comment should be marked as resolved
     #' @export
     add_thread = function(
       sheet      = current_sheet(),
@@ -3815,11 +3863,13 @@ wbWorkbook <- R6::R6Class(
         done <- as_xml_attr(resolve)
         if (reply) done <- NULL
 
+        ts <- getOption("openxlsx2.datetimeCreated") %||% Sys.time()
+
         tc <- xml_node_create(
           "threadedComment",
           xml_attributes = c(
             ref      = dims,
-            dT       = format(as_POSIXct_utc(Sys.time()), "%Y-%m-%dT%H:%M:%SZ"),
+            dT       = format(as_POSIXct_utc(ts), "%Y-%m-%dT%H:%M:%SZ"),
             personId = person_id,
             id       = cmt_id,
             parentId = parentId,
@@ -3874,18 +3924,15 @@ wbWorkbook <- R6::R6Class(
     #' @description Add conditional formatting
     #' @param sheet sheet
     #' @param dims dims
-    #' @param cols cols
-    #' @param rows rows
     #' @param rule rule
     #' @param style style
     #' @param type type
     #' @param params Additional parameters
+    #' @param ... additional arguments
     #' @returns The `wbWorkbook` object
     add_conditional_formatting = function(
         sheet  = current_sheet(),
         dims   = NULL,
-        cols   = NULL,
-        rows   = NULL,
         rule   = NULL,
         style  = NULL,
         # TODO add vector of possible values
@@ -3905,17 +3952,33 @@ wbWorkbook <- R6::R6Class(
           border    = TRUE,
           percent   = FALSE,
           rank      = 5L
-        )
+        ),
+        ...
     ) {
+
+      cols <- list(...)[["cols"]]
+      rows <- list(...)[["rows"]]
+
+      if (!is.null(rows) && !is.null(cols)) {
+
+        if (length(cols) > 2 && any(diff(cols) != 1))
+          warning("cols > 2, will create range from min to max.")
+
+        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
+
+        dims <- rowcol_to_dims(rows, cols)
+      }
+
+      ddims <- dims_to_rowcol(dims, as_integer = TRUE)
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
 
       if (!is.null(style)) assert_class(style, "character")
       assert_class(type, "character")
       assert_class(params, "list")
 
       type <- match.arg(type)
-
-      if (length(cols) > 2)
-        warning("cols > 2, will create range from min to max.")
 
       ## rows and cols
       if (!is.null(cols) && !is.null(rows)) {
@@ -4212,8 +4275,10 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "start_row", "start_col")
       standardize_case_names(..., arguments = arguments)
 
-      if (exists("start_row") && !is.null(start_row) &&
-          exists("start_col") && !is.null(start_col)) {
+      if ((exists("start_row") && !is.null(start_row)) ||
+          (exists("start_col") && !is.null(start_col))) {
+        if (!exists("start_row") || is.null(start_row)) start_row <- 1
+        if (!exists("start_row") || is.null(start_col)) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
         start_col <- col2int(start_col)
         start_row <- as.integer(start_row)
@@ -4357,12 +4422,15 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      standardize_case_names(...)
+      arguments <- c(ls(), "start_row", "start_col")
+      standardize_case_names(..., arguments = arguments)
 
-      if (exists("start_row") && !is.null(start_row) &&
-          exists("start_col") && !is.null(start_col)) {
+      if ((exists("start_row") && !is.null(start_row)) ||
+          (exists("start_col") && !is.null(start_col))) {
+        if (!exists("start_row") || is.null(start_row)) start_row <- 1
+        if (!exists("start_row") || is.null(start_col)) start_col <- 1
         .Deprecated(old = "start_row/start_col", new = "dims", package = "openxlsx2")
-        dims <- rowcol_to_dims(start_row, start_col)
+        dims <- rowcol_to_dim(start_row, start_col)
       }
 
       if (is.null(dev.list()[[1]])) {
@@ -4608,14 +4676,15 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      args <- list(...)
+      arguments <- c(ls(), "start_row", "start_col")
+      standardize_case_names(..., arguments = arguments)
 
-      standardize_case_names(...)
-
-      if (exists("start_row") && !is.null(start_row) &&
-          exists("start_col") && !is.null(start_col)) {
+      if ((exists("start_row") && !is.null(start_row)) ||
+          (exists("start_col") && !is.null(start_col))) {
+        if (!exists("start_row") || is.null(start_row)) start_row <- 1
+        if (!exists("start_row") || is.null(start_col)) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
-        dims <- rowcol_to_dims(args$start_row, args$start_col)
+        dims <- rowcol_to_dim(start_row, start_col)
       }
 
       sheet <- private$get_sheet_index(sheet)
@@ -6871,7 +6940,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description add person to workook
+    #' @description add person to workbook
     #' @param name name
     #' @param id id
     #' @param user_id user_id
@@ -6999,20 +7068,33 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- as.character(sheet)
       if (has_illegal_chars(sheet)) {
-        stop("illegal characters found in sheet. Please remove. See ?openxlsx2::clean_worksheet_name")
+        warning("Fixing: removing illegal characters found in sheet name. See ?openxlsx2::clean_worksheet_name.")
+        sheet <- replace_illegal_chars(sheet)
       }
 
       if (!nzchar(sheet)) {
-        stop("sheet name must contain at least 1 character")
+        warning("Fixing: sheet name must contain at least 1 character.")
+        sheet <- paste("Sheet", length(self$sheet_names) + 1)
       }
 
       if (nchar(sheet) > 31) {
-        stop("sheet names must be <= 31 chars")
+        warning("Fixing: shortening sheet name to 31 characters.")
+        sheet <- stringi::stri_sub(sheet, 1, 31)
+        if (any(duplicated(c(sheet, self$sheet_names))))
+          stop(
+            "Cannot shorten sheet name to a unique string. ",
+            "Please provide a unique sheetname with maximum 31 characters."
+          )
       }
 
       if (tolower(sheet) %in% self$sheet_names) {
-        stop("a sheet with name '", sheet, '"already exists"')
+        warning("Fixing: a sheet with name '", sheet, '"already exists. Creating a unique sheetname"')
+        ## We simply append (1), while spreadsheet software would increase
+        ## the integer as: Sheet, Sheet (1), Sheet (2) etc.
+        sheet <- paste(sheet, "(1)")
       }
+
+      assign("sheet", sheet, parent.frame())
     },
 
     set_current_sheet = function(sheet_index) {
@@ -7104,7 +7186,7 @@ wbWorkbook <- R6::R6Class(
 
     generate_base_core = function() {
       # how do self$datetimeCreated and genBaseCore time differ?
-      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category)
+      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category, datetimeCreated = self$datetimeCreated)
       invisible(self)
     },
 

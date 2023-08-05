@@ -82,7 +82,8 @@ Using \code{fmt_txt(charset = 161)} will give the Greek Character Set\tabular{ll
    255 \tab "OEM_CHARSET" \cr
 }
 
-You can join additional objects into fmt_txt() objects using "+". Though be aware that \code{fmt_txt("sum:") + (2 + 2)} is different to \code{fmt_txt("sum:") + 2 + 2}.
+You can join additional objects into fmt_txt() objects using "+".
+Though be aware that \code{fmt_txt("sum:") + (2 + 2)} is different to \code{fmt_txt("sum:") + 2 + 2}.
 }
 \examples{
 fmt_txt("bar", underline = TRUE)

@@ -348,3 +348,13 @@ test_that("escaping of inlinestrings works", {
   expect_equal(exp, got)
 
 })
+
+test_that("write_xlsx() works", {
+
+  tmp <- temp_xlsx()
+  write_xlsx(mtcars, tmp, sheet_name = "test")
+  exp <- c(test = "test")
+  got <- wb_load(tmp)$get_sheet_names()
+  expect_equal(exp, got)
+
+})

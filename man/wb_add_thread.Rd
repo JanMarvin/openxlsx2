@@ -41,7 +41,7 @@ wb_add_thread(
 
 \item{reply}{logical if the comment is a reply}
 
-\item{resolve}{logical if the comment should be maked as resolved}
+\item{resolve}{logical if the comment should be marked as resolved}
 }
 \description{
 These functions allow adding thread comments to spreadsheets. This is not yet supported by all spreadsheet software.

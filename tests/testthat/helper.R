@@ -216,6 +216,7 @@ expect_wrapper <- function(
   testthat::succeed()
   return(invisible())
 }
+
 # `expect_pseudo_wrapper()` -------
 #' A trimmed down pseudo wrapper to check internal wrapped functions.
 #' @rdname expect_wrapper
@@ -232,7 +233,7 @@ expect_pseudo_wrapper <- function(
   method_args <- names(method_forms)
   fun_args    <- names(fun_forms)
 
-  ignore <- "xlsx_file"
+  ignore <- "file"
 
   # remove ignores from fun
   m <- match(ignore, fun_args, 0L)

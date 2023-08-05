@@ -680,7 +680,7 @@ test_that("containsErrors works", {
   wb$add_data(x = c(1, NaN), colNames = FALSE)
   wb$add_data(x = c(1, NaN), colNames = FALSE, startCol = 2)
   wb$add_conditional_formatting(cols = 1, rows = 1:3, type = "containsErrors")
-  wb$add_conditional_formatting(col = 2, rows = 1:3, type = "notContainsErrors")
+  wb$add_conditional_formatting(cols = 2, rows = 1:3, type = "notContainsErrors")
 
   exp <- c(
     "<cfRule type=\"containsErrors\" dxfId=\"0\" priority=\"2\"><formula>ISERROR(A1:A3)</formula></cfRule>",

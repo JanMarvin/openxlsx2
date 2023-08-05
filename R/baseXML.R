@@ -152,9 +152,10 @@ genBaseApp <- function() {
   )
 }
 
-genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL) {
+genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL, datetimeCreated = NULL) {
 
   if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
+  if (is.null(datetimeCreated)) datetimeCreated <- Sys.time()
 
   dc_creator <- xml_node_create("dc:creator", xml_children = creator)
   cp_lastMod <- xml_node_create("cp:lastModifiedBy", xml_children = creator)
@@ -162,7 +163,7 @@ genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = N
     xml_attributes = c(
       `xsi:type` = "dcterms:W3CDTF"
     ),
-    xml_children = format(as_POSIXct_utc(Sys.time()), "%Y-%m-%dT%H:%M:%SZ")
+    xml_children = format(as_POSIXct_utc(datetimeCreated), "%Y-%m-%dT%H:%M:%SZ")
   )
 
   dc_title <- NULL

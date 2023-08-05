@@ -34,6 +34,7 @@ reference:
 
 - title: wb Misc
   contents:
+  - wb_dims
   - starts_with("wb_protect")
   - wb_hyperlink
   - cleanup
@@ -75,7 +76,6 @@ reference:
   - fmt_txt
   - starts_with("convert_")
   - temp_xlsx
-  - read_sheet_names
   - clean_worksheet_name
   - styles_on_sheet
   - waivers
