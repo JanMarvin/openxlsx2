@@ -80,6 +80,24 @@ inline std::string readstring(std::string &mystring, T& sas)
   return(mystring);
 }
 
+std::string escape_quote(const std::string& input) {
+  std::string result;
+  result.reserve(input.length());
+
+  for (char c : input) {
+    switch (c) {
+    case '\"':
+      result += "\"\"";
+      break;
+    default:
+      result += c;
+    break;
+    }
+  }
+
+  return result;
+}
+
 std::string escape_xml(const std::string& input) {
   std::string result;
   result.reserve(input.length());
@@ -864,6 +882,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
         // val2[2:8] == 0
         uint16_t unused = 0;
         unused = readbin(unused, sas, 0);
+        Rcpp::Rcout << unused << std::endl;
         break;
       }
 
@@ -909,13 +928,14 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
         // val2[6:8] == 0
         uint16_t unused = 0;
         unused = readbin(unused, sas, 0);
+        Rcpp::Rcout << unused << std::endl;
         fml_out += "SUM(%s)"; // maybe attr because it is a single cell function?
         fml_out += "\n";
         break;
       }
 
       default:{
-        Rprintf("Formula_TWO: %d %d\n", val1, val2);
+        Rprintf("Undefined Formula_TWO: %d %d\n", val1, val2);
         break;
       }
       }
@@ -1087,7 +1107,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
     case PtgStr:
     {
-      fml_out += PtrStr(sas);
+
+      fml_out += "\"" + escape_quote(PtrStr(sas)) + "\"";
       fml_out += "\n";
       // uint16_t cch = 0;
       // cch = readbin(cch, sas, 0);
@@ -1240,14 +1261,14 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       std::string fml = Ftab(iftab);
 
       fml_out += fml;
-      if (fml != "NA" && fml != "PI" && fml != "RAND" && fml != "NOW" &&
-          fml != "STEP" && fml != "CALLER" && fml != "ACTIVE.CELL" &&
-          fml != "TRUE" && fml != "FALSE" && fml != "NOT" && fml != "BREAK" &&
-          fml != "NEXT" && fml != "TODAY" && fml != "ELSE" && fml != "END.IF" &&
-          fml != "GROUP")
-        fml_out += "(%s)";
-      else
-        fml_out += "()";
+      // if (fml != "NA" && fml != "PI" && fml != "RAND" && fml != "NOW" &&
+      //     fml != "STEP" && fml != "CALLER" && fml != "ACTIVE.CELL" &&
+      //     fml != "TRUE" && fml != "FALSE" && fml != "NOT" && fml != "BREAK" &&
+      //     fml != "NEXT" && fml != "TODAY" && fml != "ELSE" && fml != "END.IF" &&
+      //     fml != "GROUP")
+      //   fml_out += "(%s)";
+      // else
+      //   fml_out += "()";
       fml_out += "\n";
 
       break;
@@ -1265,6 +1286,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       // tab[16] == fCeFunc bool
       // tab[1:15] == tab
 
+      // TODO add a check that Ftab() returns only functions
+      // with variable number of  arguments
       fCeFunc = (tab >> 15) & 0x0001;
       tab &= 0x7FFF;
       if (fCeFunc) {
@@ -1312,7 +1335,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     default:
     {
       // if (debug)
-      Rprintf("Formula: %d %d\n", val1, val2);
+      Rprintf("Undefined Formula: %d %d\n", val1, val2);
       break;
     }
     }
@@ -1416,14 +1439,17 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     default :
     {
       // Rcpp::stop("Skip");
+      Rcpp::Rcout << "undefined cb: " << cb << std::endl;
       sas.seekg(cb, sas.cur);
       break;
     }
     }
   }
 
-  Rcpp::Rcout << "...fml..." << std::endl;
-  Rcpp::Rcout << fml_out << std::endl;
+  // if (debug) {
+    Rcpp::Rcout << "...fml..." << std::endl;
+    Rcpp::Rcout << fml_out << std::endl;
+  // }
   std::string inflix =  parseRPN(fml_out);
 
   return inflix;
