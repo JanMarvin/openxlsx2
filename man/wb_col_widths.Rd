@@ -21,7 +21,7 @@ wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{cols}{Indices of cols to set/remove width Indices}
+\item{cols}{Indices of cols to set/remove width}
 
 \item{widths}{width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
 recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on

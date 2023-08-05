@@ -11,7 +11,7 @@ development:
 reference:
 - title: Main
   contents:
-  - read_xlsx
+  - wb_to_df
   - write_xlsx
 
 - title: wb functions
@@ -19,8 +19,6 @@ reference:
   - wb_workbook
   - wb_load
   - wb_save
-  - wb_to_df
-  - wb_read
 
 - title: wb add and remove functions
   contents:

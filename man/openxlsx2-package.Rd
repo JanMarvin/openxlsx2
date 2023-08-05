@@ -43,7 +43,7 @@ This package is licensed under the MIT license and is based on \href{https://git
 \item \code{\link[=wb_add_data_table]{wb_add_data_table()}}
 \item \code{\link[=write_xlsx]{write_xlsx()}}
 \item \code{\link[=read_xlsx]{read_xlsx()}}
-\item \url{https://janmarvin.github.io/openxlsx2}
+\item \url{https://janmarvin.github.io/openxlsx2/}
 for examples
 }
 }
