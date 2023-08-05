@@ -51,5 +51,5 @@ x <- 0.50918982
 convert_hms(x)
 }
 \seealso{
-\code{\link[=write_data]{write_data()}}
+\code{\link[=wb_add_data]{wb_add_data()}}
 }

@@ -102,5 +102,5 @@ write_xlsx(l, temp_xlsx(), colWidths = list(100, 200, 300))
 write_xlsx(l, temp_xlsx(), colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
 }
 \seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=write_data]{write_data()}}
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=wb_add_data]{wb_add_data()}}
 }

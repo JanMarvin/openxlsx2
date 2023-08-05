@@ -3,7 +3,7 @@
 #'
 #' Write a data.frame or list of data.frames to an xlsx file
 #'
-#' @seealso [wb_add_worksheet()], [write_data()]
+#' @seealso [wb_add_worksheet()], [wb_add_data()]
 #' @details
 #' Optional parameters are:
 #'

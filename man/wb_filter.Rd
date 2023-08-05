@@ -65,5 +65,5 @@ wb_remove_filter(wb, 1:2) ## remove filters
 wb_remove_filter(wb, 3) ## Does not affect tables!
 }
 \seealso{
-\code{\link[=write_data]{write_data()}}, \code{\link[=write_data_table]{write_data_table()}}
+\code{\link[=wb_add_data]{wb_add_data()}}, \code{\link[=wb_add_data_table]{wb_add_data_table()}}
 }

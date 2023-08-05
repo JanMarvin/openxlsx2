@@ -1800,7 +1800,7 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #'   * In `wb_remove_filter()`, a vector of names/indices of worksheet
 #' @param cols columns to add filter to.
 #' @param rows A row number.
-#' @seealso [write_data()], [write_data_table()]
+#' @seealso [wb_add_data()], [wb_add_data_table()]
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
