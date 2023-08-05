@@ -352,7 +352,7 @@ workbook <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_workbook`, filePath, outPath, debug)
 }
 
-worksheet <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_worksheet`, filePath, outPath, debug)
+worksheet <- function(filePath, chartsheet, outPath, debug) {
+    .Call(`_openxlsx2_worksheet`, filePath, chartsheet, outPath, debug)
 }
 

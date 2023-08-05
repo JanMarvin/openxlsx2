@@ -120,7 +120,7 @@ wb_load <- function(
   chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
   chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+.xml.rels")
   chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+.xml.rels")
-  chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+\\.xml")
+  chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+")
 
   # tables
   tablesBIN         <- grep_xml("tables/table[0-9]+.bin$")
@@ -189,6 +189,10 @@ wb_load <- function(
         bin_table(tablesBIN[i], tablesXML[i], debug)
       # system(sprintf("cat %s", tablesXML))
       # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
+    }
+
+    if (length(chartSheetsXML)) {
+      chartSheetsXML <- gsub(".bin$", ".xml", chartSheetsXML)
     }
 
     workbookXMLRels <- workbookBINRels
@@ -342,6 +346,15 @@ wb_load <- function(
     # TODO only loop over import_sheets
     for (i in seq_len(nrow(sheets))) {
       if (sheets$typ[i] == "chartsheet") {
+        if (grepl(".bin$", sheets$target[i])) {
+          xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
+
+          # message(i)
+          worksheet(sheets$target[i], 1, xml_tmp, debug)
+          # system(sprintf("cat %s", xml_tmp))
+          # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
+          sheets$target[i] <- xml_tmp
+        }
         txt <- read_xml(sheets$target[i], pointer = FALSE)
         wb$add_chartsheet(sheet = sheets$name[i], visible = is_visible[i])
       } else if (sheets$typ[i] == "worksheet") {
@@ -714,7 +727,7 @@ wb_load <- function(
         xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
 
         # message(i)
-        worksheet(sheets$target[i], xml_tmp, debug)
+        worksheet(sheets$target[i], 0, xml_tmp, debug)
         # system(sprintf("cat %s", xml_tmp))
         # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
         sheets$target[i] <- xml_tmp

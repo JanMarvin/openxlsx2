@@ -1431,7 +1431,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
 
 // [[Rcpp::export]]
-int worksheet(std::string filePath, std::string outPath, bool debug) {
+int worksheet(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
 
   // WORKBOOK = BrtBeginBook [BrtFileVersion] [[BrtFileSharingIso] BrtFileSharing] [BrtWbProp]
   // [ACABSPATH] [ACREVISIONPTR] [[BrtBookProtectionIso] BrtBookProtection] [BOOKVIEWS]
@@ -1471,7 +1471,10 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
 
       case BrtBeginSheet:
       {
-        out << "<worksheet>" << std::endl;
+        if (chartsheet)
+          out << "<chartsheet>" << std::endl;
+        else
+          out << "<worksheet>" << std::endl;
 
         if (debug) Rcpp::Rcout << "Begin of <worksheet>: " << bin.tellg() << std::endl;
         break;
@@ -1546,11 +1549,39 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         break;
       }
 
+      case BrtBeginCsViews:
       case BrtBeginWsViews:
       {
         if (debug) Rcpp::Rcout << "<sheetViews>: " << bin.tellg() << std::endl;
         out << "<sheetViews>" << std::endl;
         bin.seekg(size, bin.cur);
+
+        break;
+      }
+
+      case BrtBeginCsView:
+      {
+        if (debug) Rcpp::Rcout << "<sheetView>: " << bin.tellg() << std::endl;
+        bool fSelected = false;
+        uint16_t flags = 0;
+        uint32_t wScale = 0, iWbkView = 0;
+
+        flags = readbin(flags, bin, 0);
+        wScale = readbin(wScale, bin, 0);
+        iWbkView = readbin(iWbkView, bin, 0);
+
+        fSelected = flags & 0x8000;
+
+        out << "<sheetView";
+        // careful, without the following nothing goes
+        out << " workbookViewId=\"" << iWbkView << "\"";
+        if (wScale)
+          out << " zoomScale=\"" << wScale << "\"";
+        if (fSelected)
+          out << " tabSelected=\"" << fSelected << "\"";
+        out << " zoomToFit=\"1\"";
+
+        out << ">" << std::endl;
 
         break;
       }
@@ -1659,6 +1690,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         break;
       }
 
+      case BrtEndCsView:
       case BrtEndWsView:
       {
         if (debug) Rcpp::Rcout << "</sheetView>: " << bin.tellg() << std::endl;
@@ -1667,6 +1699,7 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
         break;
       }
 
+      case BrtEndCsViews:
       case BrtEndWsViews:
       {
         if (debug) Rcpp::Rcout << "</sheetViews>: " << bin.tellg() << std::endl;
@@ -2430,7 +2463,11 @@ int worksheet(std::string filePath, std::string outPath, bool debug) {
       }
 
         if (debug)  Rcpp::Rcout << "</worksheet>" << bin.tellg() << std::endl;
-        out << "</worksheet>" << std::endl;
+
+        if (chartsheet)
+          out << "</chartsheet>" << std::endl;
+        else
+          out << "</worksheet>" << std::endl;
         end_of_worksheet = true;
         break;
       }
