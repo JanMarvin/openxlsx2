@@ -172,11 +172,11 @@ test_that("wb_set_header_footer() is a wrapper", {
 
 })
 
-# wb_set_col_widths(), wb_remove_col_widths() -----------------------------
+# wb_add_col_widths(), wb_remove_col_widths() -----------------------------
 
-test_that("wb_set_col_widths() is a wrapper", {
+test_that("wb_add_col_widths() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
-  expect_wrapper("set_col_widths", wb = wb, params = list(sheet = "a", cols = 1:3))
+  expect_wrapper("add_col_widths", wb = wb, params = list(sheet = "a", cols = 1:3))
   expect_wrapper("remove_col_widths", wb = wb, params = list(sheet = "a", cols = 1:3))
 })
 

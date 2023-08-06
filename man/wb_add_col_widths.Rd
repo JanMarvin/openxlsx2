@@ -49,8 +49,8 @@ wb <- wb_workbook()
 ## Add a worksheet
 wb$add_worksheet("Sheet 1")
 
-## set col widths
-wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+## set column widths
+wb$add_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
 wb$add_worksheet("Sheet 2")

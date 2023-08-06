@@ -120,14 +120,14 @@ wb <- wb_workbook(creator = "My name here")$
     inner_hgrid = "thin", inner_hcolor = border_color,
     left_border = "", right_border = ""
   )$
-  set_col_widths( # set column width
+  add_col_widths( # set column width
     cols = 1:6,
     widths = c(20, rep(10, 5))
   )$ # remove the value in A1
   add_data(dims = "A1", x = "")
 ```
 
-The code above uses chaining. If you prefer piping, we provide the chained functions with the prefix `wb_` so `wb_add_worksheet()`, `wb_add_data()`, `wb_add_border()` and `wb_set_col_widths()` would be the functions to use with pipes `%>%` or `|>`.
+The code above uses chaining. If you prefer piping, we provide the chained functions with the prefix `wb_` so `wb_add_worksheet()`, `wb_add_data()`, `wb_add_border()` and `wb_add_col_widths()` would be the functions to use with pipes `%>%` or `|>`.
 
 With pipes the code from above becomes
 
@@ -144,7 +144,7 @@ wb <- wb_workbook(creator = "My name here") %>%
     inner_hgrid = "thin", inner_hcolor = border_color,
     left_border = "", right_border = ""
   ) %>%
-  wb_set_col_widths( # set column width
+  wb_add_col_widths( # set column width
     cols = 1:6,
     widths = c(20, rep(10, 5))
   ) %>% # remove the value in A1

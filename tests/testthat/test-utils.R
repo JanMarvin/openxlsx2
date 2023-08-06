@@ -353,7 +353,7 @@ test_that("outdec = \",\" works", {
   got <- capture.output(print(1.1))
   expect_equal(exp, got)
 
-  wb <- wb_workbook()$add_worksheet()$set_col_widths(
+  wb <- wb_workbook()$add_worksheet()$add_col_widths(
     cols = c(1, 4, 6, 7, 9),
     widths = c(16, 15, 12, 18, 33)
   )

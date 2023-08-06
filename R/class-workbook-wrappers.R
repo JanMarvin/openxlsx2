@@ -842,8 +842,8 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #' ## Add a worksheet
 #' wb$add_worksheet("Sheet 1")
 #'
-#' ## set col widths
-#' wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+#' ## set column widths
+#' wb$add_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 #'
 #' ## auto columns
 #' wb$add_worksheet("Sheet 2")
@@ -851,7 +851,7 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #' wb$add_col_widths(sheet = 2, cols = 1:5, widths = "auto")
 wb_add_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
-  wb$clone()$set_col_widths(
+  wb$clone()$add_col_widths(
     sheet  = sheet,
     cols   = cols,
     widths = widths,
@@ -867,7 +867,7 @@ wb_add_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
 #' @export
 #' @keywords internal
 wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
-  .Deprecated("wb_add_col_widths")
+  .Deprecated(new = "wb_add_col_widths", package = "openxlsx2")
   wb_add_col_widths(wb = wb, sheet = sheet, cols = cols, widths = widths, hidden = hidden)
 }
 
@@ -878,7 +878,7 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param cols Indices of columns to remove custom width (if any) from.
-#' @seealso [wb_set_col_widths()]
+#' @seealso [wb_add_col_widths()]
 #' @export
 #' @examples
 #' ## Create a new workbook

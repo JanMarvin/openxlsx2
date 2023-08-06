@@ -31,7 +31,7 @@
 #' * **first_row** If `TRUE`, freezes the first row (equivalent to `first_active_row = 2`)
 #' * **first_col** If `TRUE`, freezes the first column (equivalent to `first_active_col = 2`)
 #'
-#' **wb_set_col_widths Parameters**
+#' **wb_add_col_widths Parameters**
 #' * **widths** May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)
 #'
 #'
@@ -393,9 +393,9 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     if (!is.null(colWidths)) {
       cols <- seq_len(NCOL(x[[i]])) + startCol[[i]] - 1L
       if (identical(colWidths[[i]], "auto")) {
-        wb$set_col_widths(sheet = i, cols = cols, widths = "auto")
+        wb$add_col_widths(sheet = i, cols = cols, widths = "auto")
       } else if (!identical(colWidths[[i]], "")) {
-        wb$set_col_widths(sheet = i, cols = cols, widths = colWidths[[i]])
+        wb$add_col_widths(sheet = i, cols = cols, widths = colWidths[[i]])
       }
     }
   }

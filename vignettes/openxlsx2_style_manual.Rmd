@@ -234,14 +234,14 @@ options("openxlsx2.numFmt" = NULL)
 
 # Modifying the column widths
 
-## wb_set_col_widths
+## Set column widths
 ```{r}
 wb <- wb_workbook() %>%
   wb_add_worksheet() %>%
   wb_add_data(x = mtcars, row_names = TRUE)
 
 cols <- 1:12
-wb <- wb %>% wb_set_col_widths(cols = cols, widths = "auto")
+wb <- wb %>% wb_add_col_widths(cols = cols, widths = "auto")
 ```
 
 # Adding borders

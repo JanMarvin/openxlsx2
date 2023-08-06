@@ -7,7 +7,7 @@ test_that("group columns", {
   wb$createCols("Sheet 1", 3)
 
   wb$group_cols("Sheet 1", 2:3)
-  wb$set_col_widths("Sheet 1", 2, widths = "18", hidden = FALSE)
+  wb$add_col_widths("Sheet 1", 2, widths = "18", hidden = FALSE)
 
   exp <- c(
     "<col min=\"1\" max=\"1\" width=\"8.43\"/>",
@@ -24,7 +24,7 @@ test_that("group columns", {
   wb$createCols("Sheet 1", 3)
 
   wb$
-    set_col_widths("Sheet 1", 2:3, widths = "18", hidden = FALSE)$
+    add_col_widths("Sheet 1", 2:3, widths = "18", hidden = FALSE)$
     group_cols("Sheet 1", 1:2, collapsed = TRUE)
 
   exp <- c(
@@ -122,7 +122,7 @@ test_that("ungroup columns", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$createCols("Sheet 1", 3)
-  wb$set_col_widths("Sheet 1", 2, widths = "18", hidden = FALSE)
+  wb$add_col_widths("Sheet 1", 2, widths = "18", hidden = FALSE)
   wb$group_cols("Sheet 1", 1:3)
 
   wb$ungroup_cols("Sheet 1", 1:3)

@@ -63,7 +63,7 @@ or a valid hex color beginning with "#".
 \item \strong{first_col} If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})
 }
 
-\strong{wb_set_col_widths Parameters}
+\strong{wb_add_col_widths Parameters}
 \itemize{
 \item \strong{widths} May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)
 }

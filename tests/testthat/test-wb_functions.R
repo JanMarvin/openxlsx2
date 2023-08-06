@@ -270,7 +270,7 @@ test_that("skip hidden columns and rows works", {
   wb <- wb_workbook()$
     add_worksheet()$
     add_data(x = mtcars)$
-    set_col_widths(cols = c(1, 4, 6, 7, 9), hidden = TRUE)$
+    add_col_widths(cols = c(1, 4, 6, 7, 9), hidden = TRUE)$
     set_row_heights(rows = c(3, 5, 8:30), hidden = TRUE)$
     add_data(dims = "M1", x = iris)
 

@@ -3,32 +3,32 @@ test_that("Workbook class", {
 })
 
 
-test_that("wb_set_col_widths", {
-# TODO use wb$wb_set_col_widths()
+test_that("wb_add_col_widths() works", {
+# TODO use wb$add_col_widths()
 
   wb <- wbWorkbook$new()
   wb$add_worksheet("test")
   wb$add_data("test", mtcars)
 
   # set column width to 12
-  expect_silent(wb$set_col_widths("test", widths = 12L, cols = seq_along(mtcars)))
+  expect_silent(wb$add_col_widths("test", widths = 12L, cols = seq_along(mtcars)))
   expect_equal(
     "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"12.711\"/>",
     wb$worksheets[[1]]$cols_attr
   )
 
   # wrong sheet
-  expect_error(wb$set_col_widths("test2", widths = 12L, cols = seq_along(mtcars)))
+  expect_error(wb$add_col_widths("test2", widths = 12L, cols = seq_along(mtcars)))
 
   # reset the column with, we do not provide an option ot remove the column entry
-  expect_silent(wb$set_col_widths("test", cols = seq_along(mtcars)))
+  expect_silent(wb$add_col_widths("test", cols = seq_along(mtcars)))
   expect_equal(
     "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.141\"/>",
     wb$worksheets[[1]]$cols_attr
   )
 
   # create column width for column 25
-  expect_silent(wb$set_col_widths("test", cols = "Y", widths = 22))
+  expect_silent(wb$add_col_widths("test", cols = "Y", widths = 22))
   expect_equal(
     c("<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.141\"/>",
       "<col min=\"12\" max=\"24\" width=\"8.43\"/>",
@@ -37,16 +37,16 @@ test_that("wb_set_col_widths", {
   )
 
   # a few more errors
-  expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
-  expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
+  expect_error(wb$add_col_widths("test", cols = "Y", width = 1:2))
+  expect_error(wb$add_col_widths("test", cols = "Y", hidden = 1:2))
 
 
 
 
   wb <- wb_workbook()$
     add_worksheet()$
-    set_col_widths(cols = 1:10, width = (8:17) + .5)$
-    add_data(x = rbind(8:17), colNames = FALSE)
+    add_col_widths(cols = 1:10, width = (8:17) + .5)$
+    add_data(x = rbind(8:17), col_names = FALSE)
 
   exp <- c(
     "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.211\"/>",

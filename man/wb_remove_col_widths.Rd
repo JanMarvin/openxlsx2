@@ -24,5 +24,5 @@ wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = 
 wb_remove_col_widths(wb, 1, cols = 1:20)
 }
 \seealso{
-\code{\link[=wb_set_col_widths]{wb_set_col_widths()}}
+\code{\link[=wb_add_col_widths]{wb_add_col_widths()}}
 }
