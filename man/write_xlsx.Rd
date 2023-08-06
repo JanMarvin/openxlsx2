@@ -15,91 +15,90 @@ write_xlsx(x, file, as_table = FALSE, ...)
 
 \item{...}{optional parameters to pass to functions:
 \itemize{
-\item{\code{\link[=wb_workbook]{wb_workbook()}}}
-\item{\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}}
-\item{\code{\link[=wb_add_data]{wb_add_data()}}}
-\item{\link{wb_freeze_pane}}
-\item{\code{\link[=wb_save]{wb_save()}}}
+\item \code{\link[=wb_workbook]{wb_workbook()}}
+\item \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
+\item \code{\link[=wb_add_data]{wb_add_data()}}
+\item \code{\link[=wb_freeze_pane]{wb_freeze_pane()}}
+\item \code{\link[=wb_save]{wb_save()}}
 }
 
-see details.}
+see \strong{Details}.}
 }
 \value{
 A workbook object
 }
 \description{
-Write a data.frame or list of data.frames to an xlsx file
+Write a \code{data.frame} or list of data.frames to an xlsx file
 }
 \details{
 Optional parameters are:
-
 \strong{wb_workbook Parameters}
 \itemize{
-\item{\strong{creator}}{ A string specifying the workbook author}
+\item \strong{creator} A string specifying the workbook author
 }
 
 \strong{wb_add_worksheet() Parameters}
 \itemize{
-\item{\strong{sheetName}}{ Name of the worksheet}
-\item{\strong{gridLines}}{ A logical. If \code{FALSE}, the worksheet grid lines will be hidden.}
-\item{\strong{tabColor}}{ Color of the worksheet tab. A valid color (belonging to colors())
-or a valid hex color beginning with "#".}
-\item{\strong{zoom}}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
+\item \strong{sheet} Name of the worksheet
+\item \strong{grid_lines} A logical. If \code{FALSE}, the worksheet grid lines will be hidden.
+\item \strong{tab_color} Color of the worksheet tab. A valid color (belonging to \code{colors()})
+or a valid hex color beginning with "#".
+\item \strong{zoom} A numeric between 10 and 400. Worksheet zoom level as a percentage.
 }
 
-\strong{write_data/write_datatable Parameters}
+\strong{wb_add_data/wb_add_data_table Parameters}
 \itemize{
-\item{\strong{startCol}}{ A vector specifying the starting column(s) to write df}
-\item{\strong{startRow}}{ A vector specifying the starting row(s) to write df}
-\item{\strong{colNames or col.names}}{ If \code{TRUE}, column names of x are written.}
-\item{\strong{rowNames or row.names}}{ If \code{TRUE}, row names of x are written.}
-\item{\strong{na.strings}} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}
+\item \strong{start_col} A vector specifying the starting column(s) to write df
+\item \strong{start_row} A vector specifying the starting row(s) to write df
+\item \strong{col_names} If \code{TRUE}, column names of \code{x} are written.
+\item \strong{row_names} If \code{TRUE}, row names of \code{x} are written.
+\item \strong{na.strings} If not NULL NA values are converted to this string in Excel. Defaults to \code{NULL}.
 }
 
-\strong{freezePane Parameters}
+\strong{wb_freeze_pane Parameters}
 \itemize{
-\item{\strong{firstActiveRow}} {Top row of active region to freeze pane.}
-\item{\strong{firstActiveCol}} {Furthest left column of active region to freeze pane.}
-\item{\strong{firstRow}} {If \code{TRUE}, freezes the first row (equivalent to firstActiveRow = 2)}
-\item{\strong{firstCol}} {If \code{TRUE}, freezes the first column (equivalent to firstActiveCol = 2)}
+\item \strong{first_active_row} Top row of active region to freeze pane.
+\item \strong{first_active_col} Furthest left column of active region to freeze pane.
+\item \strong{first_row} If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})
+\item \strong{first_col} If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})
 }
 
-\strong{colWidths Parameters}
+\strong{wb_set_col_widths Parameters}
 \itemize{
-\item{\strong{colWidths}} {May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)}
+\item \strong{widths} May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)
 }
 
 \strong{wb_save Parameters}
 \itemize{
-\item{\strong{overwrite}}{ Overwrite existing file (Defaults to TRUE as with write.table)}
+\item \strong{overwrite} Overwrite existing file (Defaults to \code{TRUE} as with \code{wb_add_data()})
 }
 
-columns of x with class Date or POSIXt are automatically
+columns of \code{x} with class \code{Date} or \code{POSIXt} are automatically
 styled as dates and datetimes respectively.
 }
 \examples{
 ## write to working directory
-write_xlsx(iris, file = temp_xlsx(), colNames = TRUE)
+write_xlsx(iris, file = temp_xlsx(), col_names = TRUE)
 
 write_xlsx(iris,
   file = temp_xlsx(),
-  colNames = TRUE
+  col_names = TRUE
 )
 
 ## Lists elements are written to individual worksheets, using list names as sheet names if available
-l <- list("IRIS" = iris, "MTCATS" = mtcars, matrix(runif(1000), ncol = 5))
-write_xlsx(l, temp_xlsx(), colWidths = c(NA, "auto", "auto"))
+l <- list("IRIS" = iris, "MTCARS" = mtcars, matrix(runif(1000), ncol = 5))
+write_xlsx(l, temp_xlsx(), col_widths = c(NA, "auto", "auto"))
 
 ## different sheets can be given different parameters
 write_xlsx(l, temp_xlsx(),
-  startCol = c(1, 2, 3), startRow = 2,
-  asTable = c(TRUE, TRUE, FALSE), withFilter = c(TRUE, FALSE, FALSE)
+  start_col = c(1, 2, 3), start_row = 2,
+  as_table = c(TRUE, TRUE, FALSE), with_filter = c(TRUE, FALSE, FALSE)
 )
 
 # specify column widths for multiple sheets
-write_xlsx(l, temp_xlsx(), colWidths = 20)
-write_xlsx(l, temp_xlsx(), colWidths = list(100, 200, 300))
-write_xlsx(l, temp_xlsx(), colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
+write_xlsx(l, temp_xlsx(), col_widths = 20)
+write_xlsx(l, temp_xlsx(), col_widths = list(100, 200, 300))
+write_xlsx(l, temp_xlsx(), col_widths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=write_data]{write_data()}}

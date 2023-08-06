@@ -1,96 +1,83 @@
 # `write_xlsx()` ---------------------------------------------------------------
 #' Write data to an xlsx file
 #'
-#' Write a data.frame or list of data.frames to an xlsx file
+#' Write a `data.frame` or list of data.frames to an xlsx file
 #'
 #' @seealso [wb_add_worksheet()], [write_data()]
 #' @details
 #' Optional parameters are:
-#'
+# Removed braces as they should be used with \describe{} for example.
+# https://rstudio.github.io/r-manuals/r-exts/Writing-R-documentation-files.html#lists-and-tables
 #' **wb_workbook Parameters**
-#' \itemize{
-#'   \item{**creator**}{ A string specifying the workbook author}
-#' }
+#' * **creator** A string specifying the workbook author
 #'
 #' **wb_add_worksheet() Parameters**
-#' \itemize{
-#'   \item{**sheetName**}{ Name of the worksheet}
-#'   \item{**gridLines**}{ A logical. If `FALSE`, the worksheet grid lines will be hidden.}
-#'   \item{**tabColor**}{ Color of the worksheet tab. A valid color (belonging to colors())
-#'   or a valid hex color beginning with "#".}
-#'   \item{**zoom**}{ A numeric between 10 and 400. Worksheet zoom level as a percentage.}
-#' }
+#' * **sheet** Name of the worksheet
+#' * **grid_lines** A logical. If `FALSE`, the worksheet grid lines will be hidden.
+#' * **tab_color** Color of the worksheet tab. A valid color (belonging to `colors()`)
+#'   or a valid hex color beginning with "#".
+#' * **zoom** A numeric between 10 and 400. Worksheet zoom level as a percentage.
 #'
-#' **write_data/write_datatable Parameters**
-#' \itemize{
-#'   \item{**startCol**}{ A vector specifying the starting column(s) to write df}
-#'   \item{**startRow**}{ A vector specifying the starting row(s) to write df}
-#'   \item{**colNames or col.names**}{ If `TRUE`, column names of x are written.}
-#'   \item{**rowNames or row.names**}{ If `TRUE`, row names of x are written.}
-#'   \item{**na.strings**} {If not NULL NA values are converted to this string in Excel. Defaults to NULL.}
-#' }
+#' **wb_add_data/wb_add_data_table Parameters**
+#' * **start_col** A vector specifying the starting column(s) to write df
+#' * **start_row** A vector specifying the starting row(s) to write df
+#' * **col_names** If `TRUE`, column names of `x` are written.
+#' * **row_names** If `TRUE`, row names of `x` are written.
+#' * **na.strings** If not NULL NA values are converted to this string in Excel. Defaults to `NULL`.
 #'
-#' **freezePane Parameters**
-#' \itemize{
-#'   \item{**firstActiveRow**} {Top row of active region to freeze pane.}
-#'   \item{**firstActiveCol**} {Furthest left column of active region to freeze pane.}
-#'   \item{**firstRow**} {If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)}
-#'   \item{**firstCol**} {If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)}
-#' }
+#' **wb_freeze_pane Parameters**
+#' * **first_active_row** Top row of active region to freeze pane.
+#' * **first_active_col** Furthest left column of active region to freeze pane.
+#' * **first_row** If `TRUE`, freezes the first row (equivalent to `first_active_row = 2`)
+#' * **first_col** If `TRUE`, freezes the first column (equivalent to `first_active_col = 2`)
 #'
-#' **colWidths Parameters**
-#' \itemize{
-#'   \item{**colWidths**} {May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)}
-#' }
+#' **wb_set_col_widths Parameters**
+#' * **widths** May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)
 #'
 #'
 #' **wb_save Parameters**
-#' \itemize{
-#'   \item{**overwrite**}{ Overwrite existing file (Defaults to TRUE as with write.table)}
-#' }
+#' * **overwrite** Overwrite existing file (Defaults to `TRUE` as with `wb_add_data()`)
 #'
 #'
-#' columns of x with class Date or POSIXt are automatically
+#' columns of `x` with class `Date` or `POSIXt` are automatically
 #' styled as dates and datetimes respectively.
 #'
 #' @param x object or a list of objects that can be handled by [write_data()] to write to file
 #' @param file xlsx file name
 #' @param as_table write using write_datatable as opposed to write_data
 #' @param ... optional parameters to pass to functions:
-#' \itemize{
-#'   \item{[wb_workbook()]}
-#'   \item{[wb_add_worksheet()]}
-#'   \item{[wb_add_data()]}
-#'   \item{[wb_freeze_pane]}
-#'   \item{[wb_save()]}
-#' }
+#'   * [wb_workbook()]
+#'   * [wb_add_worksheet()]
+#'   * [wb_add_data()]
+#'   * [wb_freeze_pane()]
+#'   * [wb_save()]
 #'
-#' see details.
+#' see **Details**.
 #'
 #' @return A workbook object
 #' @examples
 #' ## write to working directory
-#' write_xlsx(iris, file = temp_xlsx(), colNames = TRUE)
+#' write_xlsx(iris, file = temp_xlsx(), col_names = TRUE)
 #'
 #' write_xlsx(iris,
 #'   file = temp_xlsx(),
-#'   colNames = TRUE
+#'   col_names = TRUE
 #' )
 #'
 #' ## Lists elements are written to individual worksheets, using list names as sheet names if available
-#' l <- list("IRIS" = iris, "MTCATS" = mtcars, matrix(runif(1000), ncol = 5))
-#' write_xlsx(l, temp_xlsx(), colWidths = c(NA, "auto", "auto"))
+#' l <- list("IRIS" = iris, "MTCARS" = mtcars, matrix(runif(1000), ncol = 5))
+#' write_xlsx(l, temp_xlsx(), col_widths = c(NA, "auto", "auto"))
 #'
 #' ## different sheets can be given different parameters
 #' write_xlsx(l, temp_xlsx(),
-#'   startCol = c(1, 2, 3), startRow = 2,
-#'   asTable = c(TRUE, TRUE, FALSE), withFilter = c(TRUE, FALSE, FALSE)
+#'   start_col = c(1, 2, 3), start_row = 2,
+#'   as_table = c(TRUE, TRUE, FALSE), with_filter = c(TRUE, FALSE, FALSE)
 #' )
 #'
 #' # specify column widths for multiple sheets
-#' write_xlsx(l, temp_xlsx(), colWidths = 20)
-#' write_xlsx(l, temp_xlsx(), colWidths = list(100, 200, 300))
-#' write_xlsx(l, temp_xlsx(), colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
+#' write_xlsx(l, temp_xlsx(), col_widths = 20)
+#' write_xlsx(l, temp_xlsx(), col_widths = list(100, 200, 300))
+#' write_xlsx(l, temp_xlsx(), col_widths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
 #' @export
 write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
