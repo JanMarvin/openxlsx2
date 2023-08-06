@@ -9,16 +9,14 @@ development:
   mode: auto
 
 reference:
-- title: Main
+- title: Main wb functions
   contents:
   - wb_to_df
   - write_xlsx
-
-- title: wb functions
-  contents:
   - wb_workbook
   - wb_load
   - wb_save
+  - wbWorkbook
 
 - title: wb add and remove functions
   contents:
