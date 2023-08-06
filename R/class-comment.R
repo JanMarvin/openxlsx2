@@ -84,17 +84,18 @@ wbComment <- R6::R6Class(
 # TODO write_comment() should leverage wbWorkbook$addComment() more
 # TODO remove_comment() should leverage wbWorkbook$remove_comment() more
 
-#' @name create_comment
-#' @title Create, write and remove comments
-#' @description The comment functions (create, write and remove) allow the
+#' Create, write and remove comments
+#'
+#' The comment functions (create, write and remove) allow the
 #' modification of comments. In newer spreadsheet software they are called
 #' notes, while they are called comments in openxml. Modification of what
 #' newer spreadsheet software now calls comment is possible via
 #' [wb_add_thread()].
+#'
 #' @param text Comment text. Character vector.
-#' @param author Author of comment. Character vector of length 1
+#' @param author Author of comment. A string.
 #' @param style A Style object or list of style objects the same length as comment vector.
-#' @param visible TRUE or FALSE. Is comment visible.
+#' @param visible `TRUE` or `FALSE`. Is comment visible?
 #' @param width Textbox integer width in number of cells
 #' @param height Textbox integer height in number of cells
 #' @export
@@ -105,21 +106,21 @@ wbComment <- R6::R6Class(
 #'
 #' # write comment without author
 #' c1 <- create_comment(text = "this is a comment", author = "")
-#' write_comment(wb, 1, col = "B", row = 10, comment = c1)
+#' wb$add_comment(dims = "B10", comment = c1)
 #'
 #' # Write another comment with author information
 #' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
-#' write_comment(wb, 1, col = "C", row = 10, comment = c2)
+#' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
 #'
 #' # write a styled comment with system author
 #' s1 <- create_font(b = "true", color = wb_color(hex = "FFFF0000"), sz = "12")
 #' s2 <- create_font(color = wb_color(hex = "FF000000"), sz = "9")
 #' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
-#' write_comment(wb, 1, col = 6, row = 3, comment = c3)
+#' wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = c3)
 #'
-#' # remove the first comment
-#' remove_comment(wb, 1, col = "B", row = 10)
+#' # remove the first comment c1
+#' wb$remove_comment(1, dims = "B10")
 create_comment <- function(text,
   author = Sys.info()[["user"]],
   style = NULL,
