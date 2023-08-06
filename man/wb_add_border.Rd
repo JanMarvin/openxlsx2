@@ -32,9 +32,9 @@ wb_add_border(
 
 \item{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}{a color, either something openxml knows or some RGB color}
 
-\item{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}{the border style, if NULL no border is drawn. See create_border for possible border styles}
+\item{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}{the border style, if NULL no border is drawn. See \code{\link[=create_border]{create_border()}} for possible border styles}
 
-\item{...}{...}
+\item{...}{additional arguments}
 }
 \description{
 wb wrapper to create borders for cell region

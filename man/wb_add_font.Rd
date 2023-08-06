@@ -72,7 +72,8 @@ The \code{wbWorksheetObject}, invisibly
 add font for cell region
 }
 \details{
-add_font provides all the options openxml accepts for a font node, not all have to be set. Usually name, size and color should be what the user wants.
+\code{add_font()} provides all the options openxml accepts for a font node,
+not all have to be set. Usually name, size and color should be what the user wants.
 }
 \examples{
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)

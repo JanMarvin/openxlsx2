@@ -38,7 +38,8 @@ wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 
 \item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
 
-\item{name}{Name for region. A character vector of length 1. Note region names musts be case-insensitive unique.}
+\item{name}{Name for region. A character vector of length 1.
+Note region names musts be case-insensitive unique.}
 
 \item{local_sheet}{If \code{TRUE} the named region will be local for this sheet}
 

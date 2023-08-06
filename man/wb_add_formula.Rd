@@ -33,7 +33,8 @@ wb_add_formula(
 
 \item{array}{A bool if the function written is of type array}
 
-\item{cm}{A special kind of array function that hides the curly braces in the cell. Add this, if you see "@" inserted into your formulas}
+\item{cm}{A special kind of array function that hides the curly braces in the cell.
+Add this, if you see "@" inserted into your formulas}
 
 \item{apply_cell_style}{Should we write cell styles to the workbook}
 
@@ -70,9 +71,8 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}

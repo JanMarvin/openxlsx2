@@ -47,7 +47,8 @@ wb_add_data(
 
 \item{name}{If not NULL, a named region is defined.}
 
-\item{sep}{Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).}
+\item{sep}{Only applies to list columns. The separator used to collapse list
+columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse = sep)}.}
 
 \item{apply_cell_style}{Should we write cell styles to the workbook}
 
@@ -67,10 +68,12 @@ A clone of \code{wb}
 Add data to worksheet with optional styling.
 }
 \details{
-Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+Formulae written using write_formula to a Workbook object will not get picked up by \code{read_xlsx()}.
 This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
-The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame contains this string, the output will be broken.
-Many base classes are covered, though not all and far from all third-party classes. When data of an unknown class is written, it is handled with \code{as.character()}.
+The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
+If the data frame contains this string, the output will be broken.
+Many base classes are covered, though not all and far from all third-party classes.
+When data of an unknown class is written, it is handled with \code{as.character()}.
 }
 \examples{
 ## See formatting vignette for further examples.
@@ -139,9 +142,8 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}

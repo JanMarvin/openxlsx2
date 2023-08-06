@@ -21,9 +21,11 @@ wb_set_header_footer(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{header}{document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.}
+\item{header}{document header. Character vector of length 3 corresponding to
+positions left, center, right. Use \code{NA} to skip a position.}
 
-\item{footer}{document footer. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.}
+\item{footer}{document footer. Character vector of length 3 corresponding to
+positions left, center, right. Use \code{NA} to skip a position.}
 
 \item{even_header}{document header for even pages.}
 

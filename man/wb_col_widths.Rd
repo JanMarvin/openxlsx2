@@ -23,10 +23,11 @@ wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 
 \item{cols}{Indices of cols to set/remove width}
 
-\item{widths}{width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
-Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
-of the selected width.}
+\item{widths}{width to set cols to specified in Excel column width units or
+"auto" for automatic sizing. The widths argument is recycled to the length of cols.
+The default width is 8.43. Though there is no specific default width for Excel,
+it depends on Excel version, operating system and DPI settings used.
+Setting it to specific value also is no guarantee that the output will be of the selected width.}
 
 \item{hidden}{Logical vector. If \code{TRUE} the column is hidden.}
 }
@@ -82,9 +83,8 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}

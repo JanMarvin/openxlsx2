@@ -28,7 +28,8 @@ wb_add_conditional_formatting(
 
 \item{rule}{The condition under which to apply the formatting. See examples.}
 
-\item{style}{A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'}
+\item{style}{A style to apply to those cells that satisfy the rule.
+Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'}
 
 \item{type}{The type of conditional formatting rule to apply.}
 

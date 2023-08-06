@@ -29,7 +29,8 @@ wb_add_data_validation(
 
 \item{dims}{A cell dimension ("A1" or "A1:B2")}
 
-\item{type}{One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list' (see examples)}
+\item{type}{One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list'
+(see examples)}
 
 \item{operator}{One of 'between', 'notBetween', 'equal',
 'notEqual', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'}
@@ -42,7 +43,9 @@ wb_add_data_validation(
 
 \item{show_error_msg}{logical}
 
-\item{error_style}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+\item{error_style}{The icon shown and the options how to deal with such inputs.
+Default "stop" (cancel), else "information" (prompt popup) or
+"warning" (prompt accept or change input)}
 
 \item{error_title}{The error title}
 

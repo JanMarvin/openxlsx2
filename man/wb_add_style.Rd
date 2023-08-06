@@ -24,5 +24,12 @@ yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
 wb <- wb_workbook() \%>\% wb_add_style(yellow)
 }
 \seealso{
-\code{\link[=create_border]{create_border()}}, \code{\link[=create_cell_style]{create_cell_style()}}, \code{\link[=create_dxfs_style]{create_dxfs_style()}}, \code{\link[=create_fill]{create_fill()}}, \code{\link[=create_font]{create_font()}}, \code{\link[=create_numfmt]{create_numfmt()}}
+\itemize{
+\item \code{\link[=create_border]{create_border()}}
+\item \code{\link[=create_cell_style]{create_cell_style()}}
+\item \code{\link[=create_dxfs_style]{create_dxfs_style()}}
+\item \code{\link[=create_fill]{create_fill()}}
+\item \code{\link[=create_font]{create_font()}}
+\item \code{\link[=create_numfmt]{create_numfmt()}}
+}
 }
