@@ -61,10 +61,10 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="api-change-development-version">API Change<a class="anchor" aria-label="anchor" href="#api-change-development-version"></a></h3>
-<ul><li><p>Function arguments are now defaulting to <code>snake_case</code>. For the time being, both arguments are accepted and <code>camelCase</code> will be switched to <code>snake_case</code> under the hood. Documentation like vignettes and examples are currently still displaying <code>camelCase</code> and maybe some <code>camelCase</code> function slipped through. <a href="https://github.com/JanMarvin/openxlsx2/pull/678" class="external-link">678</a></p></li>
+<ul><li><p>Function arguments are now defaulting to <code>snake_case</code>. For the time being, both arguments are accepted and <code>camelCase</code> will be switched to <code>snake_case</code> under the hood. Some examples are currently still displaying <code>camelCase</code> and maybe some <code>camelCase</code> function slipped through. <a href="https://github.com/JanMarvin/openxlsx2/pull/678" class="external-link">678</a></p></li>
 <li>
-<p><code><a href="../reference/write_formula.html">write_formula()</a></code>, <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code> are no longer recommended,</p>
-<ul><li>Use <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>, <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code> instead</li>
+<p><code><a href="../reference/write_formula.html">write_formula()</a></code>, <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code>, <code><a href="../reference/comment_internal.html">write_comment()</a></code> are no longer recommended,</p>
+<ul><li>Use <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>, <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>, <code><a href="../reference/comment.html">wb_add_comment()</a></code> instead.</li>
 </ul></li>
 </ul></div>
 <div class="section level3">
@@ -90,7 +90,7 @@
 </li>
 </ul></li>
 <li><p>make <code>get_cell_refs()</code>, <code>get_date_origin()</code>, <code>guess_col_type()</code>, and <code>write_file()</code>, <code><a href="../reference/dataframe_to_dims.html">dataframe_to_dims()</a></code>, <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code>, <code><a href="../reference/wb_get_sheet_name.html">wb_get_sheet_name()</a></code> internal functions</p></li>
-<li><p>make classes <code>styles_mgr()</code>, <code>wbSheetData</code>, <code>wbWorksheet</code>, <code>wbChartsheet</code>, <code>wbComment</code>, <code>wbHyperlink</code> internal</p></li>
+<li><p>make classes <code>styles_mgr()</code>, <code>wbSheetData</code>, <code>wbWorksheet</code>, <code>wbChartSheet</code>, <code>wbComment</code>, <code>wbHyperlink</code> internal</p></li>
 </ul></li>
 </ul></div>
 <div class="section level3">
@@ -100,8 +100,9 @@
 <ul><li><code>wb_dims(1:5, letters)</code></li>
 <li><code>wb_dims(1:5, 1:26)</code></li>
 <li><code>wb_dims(x = matrix(1, 5, 26))</code></li>
+<li><code>wb_dims(x = mtcars, from_col = "C", from_row = 2, row_names = TRUE)</code></li>
 </ul></li>
-<li>Handling of thread comments is not possible via <code><a href="../reference/wb_add_thread.html">wb_add_thread()</a></code>. This includes options to reply and resolve comments.</li>
+<li>Handling of thread comments is now possible via <code><a href="../reference/wb_add_thread.html">wb_add_thread()</a></code>. This includes options to reply and resolve comments.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
@@ -110,7 +111,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="refactoring-development-version">Refactoring<a class="anchor" aria-label="anchor" href="#refactoring-development-version"></a></h3>
-<ul><li>Cleanup / revisit documentation and vignettes (<a href="https://github.com/JanMarvin/openxlsx2/pull/682" class="external-link">682</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</li>
+<ul><li><p>Cleanup / revisit documentation and vignettes (<a href="https://github.com/JanMarvin/openxlsx2/pull/682" class="external-link">682</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
+<li><p>The <a href="https://janmarvin.github.io/openxlsx2/reference">function index</a> has been improved. (<a href="https://github.com/JanMarvin/openxlsx2/pull/717" class="external-link">717</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -203,7 +205,7 @@
 </ul></li>
 <li>deprecating function
 <ul><li>
-<code>get_named_regions()</code> for <code><a href="../reference/named_region.html">wb_get_named_regions()</a></code>
+<code>get_named_regions()</code> for <code><a href="../reference/wb_get_named_regions.html">wb_get_named_regions()</a></code>
 </li>
 </ul></li>
 </ul></li>
@@ -392,9 +394,9 @@
 <p>Several enhancements have been added for checking and validation worksheet names <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a></p>
 <ul><li>When adding a new worksheet via <code>wbWorkbook$add_worksheet()</code> the provided name is checked for illegal characters (see note in <strong>Breaking changes</strong>)</li>
 <li>
-<code>wbWorkbook$get_sheet_names()</code> (<code><a href="../reference/wb_get_sheet_names.html">wb_get_sheet_names()</a></code> wrapper) added. These return both the <em>formatted</em> and original sheet names</li>
+<code>wbWorkbook$get_sheet_names()</code> (<code><a href="../reference/wb_sheet_names.html">wb_get_sheet_names()</a></code> wrapper) added. These return both the <em>formatted</em> and original sheet names</li>
 <li>
-<code>wbWorkbook$set_sheet_names()</code> (<code><a href="../reference/wb_set_sheet_names.html">wb_set_sheet_names()</a></code>) added
+<code>wbWorkbook$set_sheet_names()</code> (<code><a href="../reference/wb_sheet_names.html">wb_set_sheet_names()</a></code>) added
 <ul><li>these make <code>names.wbWorkbook()</code> and <code>names&lt;-.wbWorkbook()</code> deprecated</li>
 <li>
 <code>wbWorkbook$setSheetName()</code> deprecated</li>

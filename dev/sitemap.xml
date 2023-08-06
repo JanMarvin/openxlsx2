@@ -187,9 +187,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_fill.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_filter.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_font.html</loc>
   </url>
   <url>
@@ -235,10 +232,16 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_worksheet.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_base_font.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_clone_sheet_style.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_clone_worksheet.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_col_widths.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.html</loc>
@@ -256,16 +259,16 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_dims.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_filter.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_freeze_pane.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_get_base_font.html</loc>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_get_named_regions.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_get_sheet_name.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_get_sheet_names.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_get_tables.html</loc>
@@ -277,13 +280,13 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_grid_lines.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_grouping.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_merge_cells.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_modify_basefont.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_open.html</loc>
@@ -301,12 +304,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_protect_worksheet.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_remove_col_widths.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_remove_filter.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_remove_row_heights.html</loc>
   </url>
   <url>
@@ -322,9 +319,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_bookview.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_col_widths.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_header_footer.html</loc>
   </url>
   <url>
@@ -334,10 +328,10 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_row_heights.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_sheet_names.html</loc>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_sheetview.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_sheetview.html</loc>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_sheet_names.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.html</loc>
@@ -347,9 +341,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_workbook.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/workbook_grouping.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/write_data.html</loc>

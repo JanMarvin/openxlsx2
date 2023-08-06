@@ -57,7 +57,7 @@
     </div>
 
     <div class="section level2">
-      <h2 id="main">Main<a class="anchor" aria-label="anchor" href="#main"></a></h2>
+      <h2 id="main-wb-functions">Main wb functions<a class="anchor" aria-label="anchor" href="#main-wb-functions"></a></h2>
       
       
 
@@ -82,18 +82,7 @@
           <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
         </dt>
         <dd>R6 class for a Workbook</dd>
-      </dl></div><div class="section level2">
-      <h2 id="wb-functions">wb functions<a class="anchor" aria-label="anchor" href="#wb-functions"></a></h2>
-      
-      
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
+      </dl><dl><dt>
           
           <code><a href="wb_workbook.html">wb_workbook()</a></code> 
         </dt>
@@ -108,11 +97,6 @@
           <code><a href="wb_save.html">wb_save()</a></code> 
         </dt>
         <dd>Save Workbook to file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_to_df.html">wb_to_df()</a></code> <code><a href="wb_to_df.html">read_xlsx()</a></code> <code><a href="wb_to_df.html">wb_read()</a></code> 
-        </dt>
-        <dd>Create Dataframe from Workbook</dd>
       </dl></div><div class="section level2">
       <h2 id="wb-add-and-remove-functions">wb add and remove functions<a class="anchor" aria-label="anchor" href="#wb-add-and-remove-functions"></a></h2>
       
@@ -131,7 +115,7 @@
         <dd>Create, write and remove comments</dd>
       </dl><dl><dt>
           
-          <code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> <code><a href="named_region.html">wb_get_named_regions()</a></code> 
+          <code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> 
         </dt>
         <dd>Create / delete a named region</dd>
       </dl><dl><dt>
@@ -190,11 +174,6 @@ These styles are used with conditional formatting and custom table styles</dd>
           <code><a href="wb_add_fill.html">wb_add_fill()</a></code> 
         </dt>
         <dd>add fill for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_filter.html">wb_add_filter()</a></code> 
-        </dt>
-        <dd>Add column filters</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_font.html">wb_add_font()</a></code> 
@@ -277,14 +256,14 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>Workbook creators</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_remove_col_widths.html">wb_remove_col_widths()</a></code> 
+          <code><a href="wb_filter.html">wb_add_filter()</a></code> <code><a href="wb_filter.html">wb_remove_filter()</a></code> 
         </dt>
-        <dd>Remove column widths from a worksheet</dd>
+        <dd>Add/remove column filters in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_remove_filter.html">wb_remove_filter()</a></code> 
+          <code><a href="wb_col_widths.html">wb_set_col_widths()</a></code> <code><a href="wb_col_widths.html">wb_remove_col_widths()</a></code> 
         </dt>
-        <dd>Remove a worksheet filter</dd>
+        <dd>Modify worksheet column widths</dd>
       </dl><dl><dt>
           
           <code><a href="wb_remove_row_heights.html">wb_remove_row_heights()</a></code> 
@@ -318,11 +297,6 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>get and set cell style</dd>
       </dl><dl><dt>
           
-          <code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> <code><a href="named_region.html">wb_get_named_regions()</a></code> 
-        </dt>
-        <dd>Create / delete a named region</dd>
-      </dl><dl><dt>
-          
           <code><a href="select_active_sheet.html">wb_get_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_set_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_get_selected()</a></code> <code><a href="select_active_sheet.html">wb_set_selected()</a></code> 
         </dt>
         <dd>get and set table of sheets and their state as selected and active</dd>
@@ -338,24 +312,24 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>add threaded comment to worksheet</dd>
       </dl><dl><dt>
           
+          <code><a href="wb_base_font.html">wb_set_base_font()</a></code> <code><a href="wb_base_font.html">wb_get_base_font()</a></code> 
+        </dt>
+        <dd>Get / set the default font in a workbook</dd>
+      </dl><dl><dt>
+          
           <code><a href="wb_creators.html">wb_add_creators()</a></code> <code><a href="wb_creators.html">wb_set_creators()</a></code> <code><a href="wb_creators.html">wb_remove_creators()</a></code> <code><a href="wb_creators.html">wb_get_creators()</a></code> 
         </dt>
         <dd>Workbook creators</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_get_base_font.html">wb_get_base_font()</a></code> 
+          <code><a href="wb_get_named_regions.html">wb_get_named_regions()</a></code> 
         </dt>
-        <dd>Return the workbook default font</dd>
+        <dd>Get create or remove named regions</dd>
       </dl><dl><dt>
           
           <code><a href="wb_get_sheet_name.html">wb_get_sheet_name()</a></code> 
         </dt>
         <dd>Get sheet name</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_get_sheet_names.html">wb_get_sheet_names()</a></code> 
-        </dt>
-        <dd>Get worksheet names for a workbook</dd>
       </dl><dl><dt>
           
           <code><a href="wb_get_tables.html">wb_get_tables()</a></code> 
@@ -373,19 +347,19 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>Order of worksheets in xlsx file</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_modify_basefont.html">wb_set_base_font()</a></code> 
+          <code><a href="wb_sheet_names.html">wb_set_sheet_names()</a></code> <code><a href="wb_sheet_names.html">wb_get_sheet_names()</a></code> 
         </dt>
-        <dd>Modify the default font</dd>
+        <dd>Get / Set worksheet names for a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_col_widths.html">wb_set_col_widths()</a></code> <code><a href="wb_col_widths.html">wb_remove_col_widths()</a></code> 
+        </dt>
+        <dd>Modify worksheet column widths</dd>
       </dl><dl><dt>
           
           <code><a href="wb_set_bookview.html">wb_set_bookview()</a></code> 
         </dt>
         <dd>Set the workbook position, size and filter</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_col_widths.html">wb_set_col_widths()</a></code> 
-        </dt>
-        <dd>Set worksheet column widths</dd>
       </dl><dl><dt>
           
           <code><a href="wb_set_header_footer.html">wb_set_header_footer()</a></code> 
@@ -401,11 +375,6 @@ These styles are used with conditional formatting and custom table styles</dd>
           <code><a href="wb_set_row_heights.html">wb_set_row_heights()</a></code> 
         </dt>
         <dd>Set worksheet row heights</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_sheet_names.html">wb_set_sheet_names()</a></code> 
-        </dt>
-        <dd>Set worksheet names for a workbook</dd>
       </dl><dl><dt>
           
           <code><a href="wb_set_sheetview.html">wb_set_sheetview()</a></code> 
@@ -502,6 +471,11 @@ These styles are used with conditional formatting and custom table styles</dd>
           <code><a href="wb_page_setup.html">wb_page_setup()</a></code> 
         </dt>
         <dd>Set page margins, orientation and print scaling</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_grouping.html">wb_group_cols()</a></code> <code><a href="wb_grouping.html">wb_ungroup_cols()</a></code> <code><a href="wb_grouping.html">wb_group_rows()</a></code> <code><a href="wb_grouping.html">wb_ungroup_rows()</a></code> 
+        </dt>
+        <dd>Group Rows and Columns</dd>
       </dl></div><div class="section level2">
       <h2 id="create-functions">create functions<a class="anchor" aria-label="anchor" href="#create-functions"></a></h2>
       
@@ -611,11 +585,6 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>loads character string to pugixml and returns an externalptr</dd>
       </dl><dl><dt>
           
-          <code><a href="fmt_txt.html">fmt_txt()</a></code> <code><a href="fmt_txt.html">`+`(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">as.character(<i>&lt;fmt_txt&gt;</i>)</a></code> <code><a href="fmt_txt.html">print(<i>&lt;fmt_txt&gt;</i>)</a></code> 
-        </dt>
-        <dd>format strings independent of the cell style.</dd>
-      </dl><dl><dt>
-          
           <code><a href="print.pugi_xml.html">print(<i>&lt;pugi_xml&gt;</i>)</a></code> 
         </dt>
         <dd>print pugi_xml</dd>
@@ -711,11 +680,6 @@ These styles are used with conditional formatting and custom table styles</dd>
           <code><a href="dims_helper.html">dims_to_rowcol()</a></code> <code><a href="dims_helper.html">rowcol_to_dims()</a></code> 
         </dt>
         <dd>Helper functions to work with <code>dims</code></dd>
-      </dl><dl><dt>
-          
-          <code><a href="workbook_grouping.html">wb_group_cols()</a></code> <code><a href="workbook_grouping.html">wb_ungroup_cols()</a></code> <code><a href="workbook_grouping.html">wb_group_rows()</a></code> <code><a href="workbook_grouping.html">wb_ungroup_rows()</a></code> 
-        </dt>
-        <dd>Group Rows and Columns</dd>
       </dl></div><div class="section level2">
       <h2 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h2>
       
