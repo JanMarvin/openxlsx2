@@ -50,6 +50,7 @@ reference:
   - wb_copy_cells
   - wb_merge_cells
   - wb_page_setup
+  - wb_grouping
 
 - title: create functions
   contents:
@@ -82,7 +83,6 @@ reference:
   - waivers
   - xl_open
   - dims_helper
-  - workbook_grouping
 
 - title: Deprecated
   contents:
