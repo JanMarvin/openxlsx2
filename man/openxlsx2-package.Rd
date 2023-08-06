@@ -33,13 +33,16 @@ We will work on problems when we have time or need.
 
 \subsection{License}{
 
-This package is licensed under the MIT license and is based on \href{https://github.com/ycphs/openxlsx}{\code{openxlsx}} (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
+This package is licensed under the MIT license and
+is based on \href{https://github.com/ycphs/openxlsx}{\code{openxlsx}} (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022)
+and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
 }
 }
 \seealso{
 \itemize{
 \item \code{browseVignettes("openxlsx2")}
 \item \code{\link[=wb_add_data]{wb_add_data()}}
+\item \code{\link[=wb_to_df]{wb_to_df()}}
 \item \code{\link[=wb_add_data_table]{wb_add_data_table()}}
 \item \code{\link[=write_xlsx]{write_xlsx()}}
 \item \code{\link[=read_xlsx]{read_xlsx()}}

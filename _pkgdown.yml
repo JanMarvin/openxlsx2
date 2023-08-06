@@ -13,10 +13,10 @@ reference:
   contents:
   - wb_to_df
   - write_xlsx
+  - wbWorkbook
   - wb_workbook
   - wb_load
   - wb_save
-  - wbWorkbook
 
 - title: wb add and remove functions
   contents:
