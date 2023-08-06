@@ -3,75 +3,8 @@
 \name{wbWorkbook}
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
-\value{
-The integer position of the sheet
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-A \code{named} \code{character} vector of sheet names in their order.  The
-names represent the original value of the worksheet prior to any
-character substitutions.
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The sheet tables.  \code{character()} if empty
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-Returns sheet visibility
-
-The \code{wbWorkbook} object
-
-The \code{wbWorkbook} object
-
-a character vector of cell styles
-}
 \description{
-R6 class for a Workbook
-
-R6 class for a Workbook
-}
-\details{
-A Workbook
-
-\code{fun} can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
-STDEVP, SUM, VAR, VARP
-
-minor helper wrapping xl_open which does the entire same thing
+A workbook
 }
 \examples{
 
@@ -432,6 +365,9 @@ validate sheet
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The integer position of the sheet
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_chartsheet"></a>}}
@@ -708,6 +644,9 @@ add a data table
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_pivot_table"></a>}}
@@ -750,6 +689,14 @@ add pivot table
 \item{\code{params}}{a list of parameters to modify pivot table creation}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Details}{
+\code{fun} can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
+STDEVP, SUM, VAR, VARP
+}
+
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -797,6 +744,9 @@ add formula
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_style"></a>}}
@@ -815,6 +765,9 @@ add style
 \item{\code{style_name}}{style_name}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -970,6 +923,10 @@ the value returned from \code{\link[base:interactive]{base::interactive()}}}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Details}{
+minor helper wrapping xl_open which does the entire same thing
+}
+
 \subsection{Returns}{
 The \code{wbWorkbook}, invisibly
 }
@@ -1204,6 +1161,11 @@ Get sheet names
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A \code{named} \code{character} vector of sheet names in their order.  The
+names represent the original value of the worksheet prior to any
+character substitutions.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_sheet_names"></a>}}
@@ -1352,6 +1314,9 @@ ungroup cols
 \item{\code{cols}}{= cols}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -1538,6 +1503,9 @@ Adds data validation
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-merge_cells"></a>}}
@@ -1646,6 +1614,9 @@ Add comment
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-remove_comment"></a>}}
@@ -1666,6 +1637,9 @@ Remove comment
 \item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -1741,6 +1715,9 @@ Add conditional formatting
 \item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -1833,6 +1810,9 @@ Add plot. A wrapper for add_image()
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_drawing"></a>}}
@@ -1864,6 +1844,9 @@ Add xml drawing
 \item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -1900,6 +1883,9 @@ Add xml chart
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_mschart"></a>}}
@@ -1931,6 +1917,9 @@ Add mschart chart to the workbook
 \item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2063,6 +2052,9 @@ or more of the following: \code{"selectLockedCells"},
 \code{"autoFilter"}, \code{"pivotTables"}, \code{"objects"}, \code{"scenarios"}}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2270,6 +2262,9 @@ get tables
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The sheet tables.  \code{character()} if empty
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-remove_tables"></a>}}
@@ -2290,6 +2285,9 @@ remove tables
 \item{\code{remove_data}}{removes the data as well}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2312,6 +2310,9 @@ add filters
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-remove_filter"></a>}}
@@ -2328,6 +2329,9 @@ remove filters
 \item{\code{sheet}}{sheet}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2349,6 +2353,9 @@ grid lines
 \item{\code{print}}{print}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2423,6 +2430,9 @@ add a named region
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-remove_named_region"></a>}}
@@ -2441,6 +2451,9 @@ remove a named region
 \item{\code{name}}{name}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2472,6 +2485,9 @@ Get sheet visibility
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_visibility()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Returns sheet visibility
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_sheet_visibility"></a>}}
@@ -2490,6 +2506,9 @@ Set sheet visibility
 \item{\code{value}}{value}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2511,6 +2530,9 @@ Add a page break
 \item{\code{col}}{col}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
@@ -2932,6 +2954,9 @@ get sheet style
 \item{\code{dims}}{dims}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a character vector of cell styles
 }
 }
 \if{html}{\out{<hr>}}

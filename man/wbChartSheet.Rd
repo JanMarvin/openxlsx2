@@ -7,11 +7,6 @@
 A character vector of xml
 }
 \description{
-R6 class for a Workbook Chart Sheet
-
-R6 class for a Workbook Chart Sheet
-}
-\details{
 A chart sheet
 }
 \section{Public fields}{
