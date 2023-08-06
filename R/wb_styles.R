@@ -652,19 +652,26 @@ get_cell_styles <- function(wb, sheet, cell) {
   out
 }
 
-#' @name create_dxfs_style
-#' @title Create a custom formatting style
-#' @description Create a new style to apply to worksheet cells. Created styles have to be
+#' Create a custom formatting style
+#'
+#' @description
+#' Create a new style to apply to worksheet cells. Created styles have to be
 #' assigned to a workbook to use them
-#' @param font_name A name of a font. Note the font name is not validated. If fontName is NULL,
-#' the workbook base font is used. (Defaults to Calibri)
+#'
+#' @details
+#' It is possible to override border_color and border_style with {left, right, top, bottom}_color, {left, right, top, bottom}_style.
+#'
+#' @seealso [wb_add_style()]
+# TODO maybe font_name,font_size could be documented together.
+#' @param font_name A name of a font. Note the font name is not validated.
+#'   If `font_name` is `NULL`, the workbook `base_font` is used. (Defaults to Calibri), see [wb_get_base_font()]
 #' @param font_color Color of text in cell.  A valid hex color beginning with "#"
-#' or one of colors(). If fontColor is NULL, the workbook base font colors is used.
+#'   or one of colors(). If `font_color` is NULL, the workbook base font colors is used.
 #' (Defaults to black)
 #' @param font_size Font size. A numeric greater than 0.
-#' If fontSize is NULL, the workbook base font size is used. (Defaults to 11)
+#'   By default, the workbook base font size is used. (Defaults to 11)
 #' @param num_fmt Cell formatting. Some custom openxml format
-#' @param border NULL or TRUE
+#' @param border `NULL` or `TRUE`
 #' @param border_color "black"
 #' @param border_style "thin"
 #' @param bg_fill Cell background fill color.
@@ -674,12 +681,10 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' @param text_strike strikeout
 #' @param text_italic italic
 #' @param text_underline underline 1, true, single or double
-#' @param ... ...
-#' @details It is possible to override border_color and border_style with {left, right, top, bottom}_color, {left, right, top, bottom}_style.
+#' @param ... Additional arguments
 #' @return A dxfs style node
-#' @seealso [wb_add_style()]
 #' @examples
-#' # do not apply anthing
+#' # do not apply anything
 #' style1 <- create_dxfs_style()
 #'
 #' # change font color and background color
@@ -795,6 +800,7 @@ create_dxfs_style <- function(
 
 #' create tableStyle
 #'
+#' Create a custom table style.
 #' This function is for expert use only. Use other styling functions instead.
 #'
 #' @param name name
