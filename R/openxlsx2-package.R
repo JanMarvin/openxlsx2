@@ -14,16 +14,20 @@
 #' @import R6
 #' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg png rgb tiff
 #' @importFrom magrittr %>%
-#' @importFrom stringi stri_c stri_encode stri_isempty stri_join stri_match stri_match_all_regex stri_order stri_opts_collator stri_rand_strings stri_read_lines stri_replace_all_fixed stri_split_fixed stri_split_regex stri_sub stri_unescape_unicode stri_unique
+#' @importFrom stringi stri_c stri_encode stri_isempty stri_join stri_match
+#'   stri_match_all_regex stri_order stri_opts_collator stri_rand_strings
+#'   stri_read_lines stri_replace_all_fixed stri_split_fixed stri_split_regex
+#'   stri_sub stri_unescape_unicode stri_unique
 #' @importFrom utils download.file head menu read.csv unzip
 #' @importFrom zip zip
 #'
 #' @seealso
 #' * `browseVignettes("openxlsx2")`
-#' * [write_data()]
-#' * [write_datatable()]
-#' * [write_xlsx()]
+#' * [wb_add_data()]
+#' * [wb_add_data_table()]
+#' * [wb_to_df()]
 #' * [read_xlsx()]
+#' * [write_xlsx()]
 #' * <https://janmarvin.github.io/openxlsx2>
 #' for examples
 #'
@@ -49,7 +53,9 @@
 #'
 #' ## License
 #'
-#' This package is licensed under the MIT license and is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
+#' This package is licensed under the MIT license and
+#' is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022)
+#' and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
 #' @keywords internal
 "_PACKAGE"
 

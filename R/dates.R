@@ -5,7 +5,7 @@
 #'
 #' Excel stores dates as number of days from some origin day
 #'
-#' @seealso [write_data()]
+#' @seealso [wb_add_data()]
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
 #' @inheritDotParams base::as.Date

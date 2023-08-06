@@ -9,19 +9,14 @@ development:
   mode: auto
 
 reference:
-- title: Main
+- title: Main wb functions
   contents:
-  - read_xlsx
+  - wb_to_df
   - write_xlsx
   - wbWorkbook
-
-- title: wb functions
-  contents:
   - wb_workbook
   - wb_load
   - wb_save
-  - wb_to_df
-  - wb_read
 
 - title: wb add and remove functions
   contents:
@@ -50,6 +45,7 @@ reference:
   - wb_copy_cells
   - wb_merge_cells
   - wb_page_setup
+  - wb_grouping
 
 - title: create functions
   contents:
@@ -62,7 +58,7 @@ reference:
   - read_xml
   - starts_with("xml_")
   - as_xml
-  - starts_with("print")
+  - starts_with("print.pugi")
 
 - title: R6 Classes
   contents:
@@ -82,7 +78,6 @@ reference:
   - waivers
   - xl_open
   - dims_helper
-  - workbook_grouping
 
 - title: Deprecated
   contents:

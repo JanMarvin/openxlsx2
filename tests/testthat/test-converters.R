@@ -33,3 +33,17 @@ test_that("get_cell_refs", {
                "cellCoords must only contain integers")
 
 })
+
+test_that("get_cell_refs() works for a single cell.", {
+  expect_equal(get_cell_refs(data.frame(1, 2)), "B1")
+
+  expect_error(get_cell_refs(c(1, 2)))
+
+  expect_error(get_cell_refs(c(1, "a")))
+})
+
+test_that("get_cell_refs() works for multiple cells.", {
+  expect_equal(get_cell_refs(data.frame(1:3, 2:4)), c("B1", "C2", "D3"))
+
+  expect_error(get_cell_refs(c(1:2, c("a", "b"))))
+})

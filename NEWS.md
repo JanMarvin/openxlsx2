@@ -3,10 +3,10 @@
 
 ## API Change
 
-* Function arguments are now defaulting to `snake_case`. For the time being, both arguments are accepted and `camelCase` will be switched to `snake_case` under the hood. Documentation like vignettes and examples are currently still displaying `camelCase` and maybe some `camelCase` function slipped through.  [678](https://github.com/JanMarvin/openxlsx2/pull/678)
+* Function arguments are now defaulting to `snake_case`. For the time being, both arguments are accepted and `camelCase` will be switched to `snake_case` under the hood. Some examples are currently still displaying `camelCase` and maybe some `camelCase` function slipped through. [678](https://github.com/JanMarvin/openxlsx2/pull/678)
 
-* `write_formula()`, `write_data()`, `write_datatable()` are no longer recommended,
-  * Use `wb_add_formula()`, `wb_add_data()`, `wb_add_data_table()` instead
+* `write_formula()`, `write_data()`, `write_datatable()`, `write_comment()` are no longer recommended,
+  * Use `wb_add_formula()`, `wb_add_data()`, `wb_add_data_table()`, `wb_add_comment()` instead.
 
 ## Breaking changes
 
@@ -25,7 +25,7 @@
     * `convertToExcelDate()` for `convert_to_excel_date()`
   
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
-  * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartsheet`, `wbComment`, `wbHyperlink` internal
+  * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartSheet`, `wbComment`, `wbHyperlink` internal
   
 ## New features
 
@@ -33,7 +33,8 @@
   * `wb_dims(1:5, letters)`
   * `wb_dims(1:5, 1:26)`
   * `wb_dims(x = matrix(1, 5, 26))`
-* Handling of thread comments is not possible via `wb_add_thread()`. This includes options to reply and resolve comments.
+  * `wb_dims(x = mtcars, from_col = "C", from_row = 2, row_names = TRUE)`
+* Handling of thread comments is now possible via `wb_add_thread()`. This includes options to reply and resolve comments.
 
 ## Fixes
 
@@ -42,6 +43,8 @@
 ## Refactoring
 
 * Cleanup / revisit documentation and vignettes ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
+
+* The [function index](https://janmarvin.github.io/openxlsx2/reference) has been improved. ([717](https://github.com/JanMarvin/openxlsx2/pull/717), @olivroy)
 
 ***************************************************************************
 

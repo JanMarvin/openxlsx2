@@ -29,7 +29,7 @@ The old syntax looked like this:
 
 ```{r old_read, eval = FALSE}
 # read in openxlsx
-openxlsx::read.xlsx(file = file)
+openxlsx::read.xlsx(xlsxFile = file)
 ```
 
 This has changed to this:
@@ -109,7 +109,7 @@ In `openxlsx2` the same code looks something like this:
 
 ```{r new_style}
 # openxlsx2 chained
-border_color <- wb_color(hex = "FF4F81BD")
+border_color <- wb_color(hex = "#4F81BD")
 wb <- wb_workbook(creator = "My name here")$
   add_worksheet("Expenditure", grid_lines = FALSE)$
   add_data(x = USPersonalExpenditure, row_names = TRUE)$
@@ -133,7 +133,7 @@ With pipes the code from above becomes
 
 ```{r new_style_pipes}
 # openxlsx2 with pipes
-border_color <- wb_color(hex = "FF4F81BD")
+border_color <- wb_color(hex = "4F81BD")
 wb <- wb_workbook(creator = "My name here") %>%
   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
   wb_add_data(x = USPersonalExpenditure, row_names = TRUE) %>%
