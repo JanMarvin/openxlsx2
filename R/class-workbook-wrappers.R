@@ -2121,12 +2121,12 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
-#' @name wb_grouping
+#' @name workbook_grouping
 #' @family workbook wrappers
 NULL
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_cols(
@@ -2138,7 +2138,7 @@ wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
@@ -2146,7 +2146,7 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 #' @examples
 #' ### create grouping levels
 #' grp_rows <- list(
@@ -2181,7 +2181,7 @@ wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
