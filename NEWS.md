@@ -23,6 +23,8 @@
     
   * deprecating function
     * `convertToExcelDate()` for `convert_to_excel_date()`
+    * `wb_set_col_widths()` for `wb_add_col_widths()`
+    * `wb_set_row_heights()` for `wb_add_row_heights()` ([722](https://github.com/JanMarvin/openxlsx2/pull/722), @olivroy)
   
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartSheet`, `wbComment`, `wbHyperlink` internal
