@@ -2995,15 +2995,14 @@ wbWorkbook <- R6::R6Class(
     },
 
     # TODO wb_group_rows() and group_cols() are very similiar.  Can problem turn
-    #' @description
-    #' Group cols
+    #' @description Set a sheet column widths
     #' @param sheet sheet
     #' @param cols cols
     #' @param widths Width of columns
     #' @param hidden A logical vector to determine which cols are hidden; values
     #'   are repeated across length of `cols`
     #' @return The `wbWorkbook` object, invisibly
-    set_col_widths = function(sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
+    add_col_widths = function(sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
       sheet <- private$get_sheet_index(sheet)
 
       # should do nothing if the cols' length is zero
@@ -3077,6 +3076,19 @@ wbWorkbook <- R6::R6Class(
       col_df$bestFit[select] <- bestFit
       col_df$customWidth[select] <- customWidth
       self$worksheets[[sheet]]$fold_cols(col_df)
+      invisible(self)
+    },
+    #' @description
+    #' Deprecated, use `add_col_widths`
+    #' @param sheet sheet
+    #' @param cols cols
+    #' @param widths Width of columns
+    #' @param hidden A logical vector to determine which cols are hidden; values
+    #'   are repeated across length of `cols`
+    #' @return The `wbWorkbook` object, invisibly
+    set_col_widths = function(sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
+      .Deprecated("add_col_widths", old = "set_col_widths")
+      self$add_col_widths(sheet = sheet, cols = cols, widths = widths, hidden = hidden)
       invisible(self)
     },
 

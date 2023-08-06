@@ -819,12 +819,12 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
 #' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 #' of the selected width.
-#' @param hidden Logical vector. If TRUE the column is hidden.
+#' @param hidden A logical vector to determine which cols are hidden; values
+#'   are recycled to the length of `cols`.
 #' @details The global min and max column width for "auto" columns is set by (default values show):
-#' \itemize{
-#'   \item{options("openxlsx2.minWidth" = 3)}
-#'   \item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
-#' }
+#'
+#' * options("openxlsx2.minWidth" = 3)
+#' * options("openxlsx2.maxWidth" = 250) ## Maximum width allowed in Excel
 #'
 #'   NOTE: The calculation of column widths can be slow for large worksheets.
 #'
@@ -848,8 +848,8 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #' ## auto columns
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_data(sheet = 2, x = iris)
-#' wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
-wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
+#' wb$add_col_widths(sheet = 2, cols = 1:5, widths = "auto")
+wb_add_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
   wb$clone()$set_col_widths(
     sheet  = sheet,
@@ -858,6 +858,17 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
     # TODO allow either 1 or length(cols)
     hidden = hidden
   )
+}
+#' Set Worksheet column widths
+#'
+#' This function was renamed to [wb_add_col_widths()], see documentation there.
+#'
+#' @inheritParams wb_add_col_widths
+#' @export
+#' @keywords internal
+wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
+  .Deprecated("wb_add_col_widths")
+  wb_add_col_widths(wb = wb, sheet = sheet, cols = cols, widths = widths, hidden = hidden)
 }
 
 #' @name wb_remove_col_widths

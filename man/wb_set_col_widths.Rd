@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_col_widths}
 \alias{wb_set_col_widths}
-\title{Set worksheet column widths}
+\title{Set Worksheet column widths}
 \usage{
 wb_set_col_widths(
   wb,
@@ -24,58 +24,10 @@ recycled to the length of cols. The default width is 8.43. Though there is no sp
 Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
 of the selected width.}
 
-\item{hidden}{Logical vector. If TRUE the column is hidden.}
+\item{hidden}{A logical vector to determine which cols are hidden; values
+are recycled to the length of \code{cols}.}
 }
 \description{
-Set worksheet column widths to specific width or "auto".
+This function was renamed to \code{\link[=wb_add_col_widths]{wb_add_col_widths()}}, see documentation there.
 }
-\details{
-The global min and max column width for "auto" columns is set by (default values show):
-\itemize{
-\item{options("openxlsx2.minWidth" = 3)}
-\item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
-}
-
-NOTE: The calculation of column widths can be slow for large worksheets.
-
-NOTE: The \code{hidden} parameter may conflict with the one set in
-\link{wb_group_cols}; changing one will update the other.
-}
-\examples{
-## Create a new workbook
-wb <- wb_workbook()
-
-## Add a worksheet
-wb$add_worksheet("Sheet 1")
-
-## set col widths
-wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
-
-## auto columns
-wb$add_worksheet("Sheet 2")
-wb$add_data(sheet = 2, x = iris)
-wb$set_col_widths(sheet = 2, cols = 1:5, widths = "auto")
-}
-\seealso{
-\code{\link[=wb_remove_col_widths]{wb_remove_col_widths()}}
-
-Other workbook wrappers: 
-\code{\link{wb_add_chartsheet}()},
-\code{\link{wb_add_data_table}()},
-\code{\link{wb_add_data}()},
-\code{\link{wb_add_formula}()},
-\code{\link{wb_add_pivot_table}()},
-\code{\link{wb_add_worksheet}()},
-\code{\link{wb_clone_worksheet}()},
-\code{\link{wb_copy_cells}()},
-\code{\link{wb_creators}},
-\code{\link{wb_freeze_pane}()},
-\code{\link{wb_get_base_font}()},
-\code{\link{wb_merge_cells}()},
-\code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
-\code{\link{wb_workbook}()},
-\code{\link{workbook_grouping}}
-}
-\concept{workbook wrappers}
+\keyword{internal}

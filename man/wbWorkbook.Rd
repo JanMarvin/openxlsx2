@@ -214,6 +214,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-group_cols}{\code{wbWorkbook$group_cols()}}
 \item \href{#method-wbWorkbook-ungroup_cols}{\code{wbWorkbook$ungroup_cols()}}
 \item \href{#method-wbWorkbook-remove_col_widths}{\code{wbWorkbook$remove_col_widths()}}
+\item \href{#method-wbWorkbook-add_col_widths}{\code{wbWorkbook$add_col_widths()}}
 \item \href{#method-wbWorkbook-set_col_widths}{\code{wbWorkbook$set_col_widths()}}
 \item \href{#method-wbWorkbook-group_rows}{\code{wbWorkbook$group_rows()}}
 \item \href{#method-wbWorkbook-ungroup_rows}{\code{wbWorkbook$ungroup_rows()}}
@@ -1342,10 +1343,42 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_col_widths"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_col_widths}{}}}
+\subsection{Method \code{add_col_widths()}}{
+Set a sheet column widths
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_col_widths(
+  sheet = current_sheet(),
+  cols,
+  widths = 8.43,
+  hidden = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{cols}}{cols}
+
+\item{\code{widths}}{Width of columns}
+
+\item{\code{hidden}}{A logical vector to determine which cols are hidden; values
+are repeated across length of \code{cols}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_col_widths"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_col_widths}{}}}
 \subsection{Method \code{set_col_widths()}}{
-Group cols
+Deprecated, use \code{add_col_widths}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(
   sheet = current_sheet(),
