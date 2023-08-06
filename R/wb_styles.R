@@ -794,6 +794,9 @@ create_dxfs_style <- function(
 }
 
 #' create tableStyle
+#'
+#' This function is for expert use only. Use other styling functions instead.
+#'
 #' @param name name
 #' @param whole_table wholeTable
 #' @param header_row headerRow
