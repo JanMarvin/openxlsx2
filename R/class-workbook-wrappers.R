@@ -813,7 +813,7 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #'
 #' Remove / set worksheet column widths to specific width or "auto".
 #' @param wb A `wbWorkbook` object
-#' @param sheet A name or index of a worksheet
+#' @param sheet A name or index of a worksheet, a vector in the case of `remove`
 #' @param cols Indices of cols to set/remove width
 #' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
 #' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
@@ -829,7 +829,7 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #'   NOTE: The calculation of column widths can be slow for large worksheets.
 #'
 #'   NOTE: The `hidden` parameter may conflict with the one set in
-#'   [wb_group_cols]; changing one will update the other.
+#'   [wb_group_cols()]; changing one will update the other.
 #'
 #' @family workbook wrappers
 #'

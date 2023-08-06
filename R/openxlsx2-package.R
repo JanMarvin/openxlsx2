@@ -24,7 +24,7 @@
 #' * [wb_add_data_table()]
 #' * [write_xlsx()]
 #' * [read_xlsx()]
-#' * <https://janmarvin.github.io/openxlsx2/>
+#' * <https://janmarvin.github.io/openxlsx2>
 #' for examples
 #'
 #' @details

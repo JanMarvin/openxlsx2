@@ -19,7 +19,7 @@ wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 \arguments{
 \item{wb}{A \code{wbWorkbook} object}
 
-\item{sheet}{A name or index of a worksheet}
+\item{sheet}{A name or index of a worksheet, a vector in the case of \code{remove}}
 
 \item{cols}{Indices of cols to set/remove width}
 
@@ -43,7 +43,7 @@ The global min and max column width for "auto" columns is set by (default values
 NOTE: The calculation of column widths can be slow for large worksheets.
 
 NOTE: The \code{hidden} parameter may conflict with the one set in
-\link{wb_group_cols}; changing one will update the other.
+\code{\link[=wb_group_cols]{wb_group_cols()}}; changing one will update the other.
 }
 \examples{
 ## Create a new workbook
