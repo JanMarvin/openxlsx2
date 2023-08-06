@@ -1,10 +1,11 @@
 
 # columns -----------------------------------------------------------------
 
-#' @name int2col
-#' @title Convert integer to Excel column
-#' @description Converts an integer to an Excel column label.
-#' @param x A numeric vector
+#' Convert integer to Excel column
+#'
+#' Converts an integer to an Excel column label.
+#'
+#' @param x A numeric vector.
 #' @export
 #' @examples
 #' int2col(1:10)
@@ -52,9 +53,8 @@ col2int <- function(x) {
 }
 
 
-#' @name get_cell_refs
-#' @title Return excel cell coordinates from (x,y) coordinates
-#' @description Return excel cell coordinates from (x,y) coordinates
+#' Return Excel cell coordinates from (x,y) coordinates
+#'
 #' @param cellCoords A data.frame with two columns coordinate pairs.
 #' @return Excel alphanumeric cell reference
 #' @examples

@@ -7,7 +7,7 @@
 int2col(x)
 }
 \arguments{
-\item{x}{A numeric vector}
+\item{x}{A numeric vector.}
 }
 \description{
 Converts an integer to an Excel column label.

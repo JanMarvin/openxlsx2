@@ -808,17 +808,18 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 }
 
 
-#' Set worksheet column widths
+#' Modify worksheet column widths
 #'
-#' Set worksheet column widths to specific width or "auto".
+#' Remove / set worksheet column widths to specific width or "auto".
 #'
-#' @param wb A [wbWorkbook] object
-#' @param sheet A name or index of a worksheet
-#' @param cols Indices of cols to set width
-#' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-#' recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
-#' Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
-#' of the selected width.
+#' @param wb A `wbWorkbook` object
+#' @param sheet A name or index of a worksheet, a vector in the case of `remove`
+#' @param cols Indices of cols to set/remove width
+#' @param widths width to set cols to specified in Excel column width units or "auto" for automatic sizing.
+#'   The widths argument is recycled to the length of cols. The default width is 8.43.
+#'   Though there is no specific default width for Excel, it depends on the Excel version,
+#'   operating system and DPI settings used. Setting it to specific value also is
+#'   no guarantee that the output will be of the selected width.
 #' @param hidden A logical vector to determine which cols are hidden; values
 #'   are recycled to the length of `cols`.
 #' @details The global min and max column width for "auto" columns is set by (default values show):
@@ -829,11 +830,9 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #'   NOTE: The calculation of column widths can be slow for large worksheets.
 #'
 #'   NOTE: The `hidden` parameter may conflict with the one set in
-#'   [wb_group_cols]; changing one will update the other.
+#'   [wb_group_cols()]; changing one will update the other.
 #'
-#' @export
 #' @family workbook wrappers
-#' @seealso [wb_remove_col_widths()]
 #'
 #' @examples
 #' ## Create a new workbook
@@ -849,6 +848,18 @@ wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL
 #' wb$add_worksheet("Sheet 2")
 #' wb$add_data(sheet = 2, x = iris)
 #' wb$add_col_widths(sheet = 2, cols = 1:5, widths = "auto")
+#'
+#' ## removing column widths
+#' ## Create a new workbook
+#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+#'
+#' ## remove column widths in columns 1 to 20
+#' wb_remove_col_widths(wb, 1, cols = 1:20)
+#' @name wb_col_widths
+NULL
+
+#' @rdname wb_col_widths
+#' @export
 wb_add_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
   wb$clone()$add_col_widths(
@@ -859,6 +870,7 @@ wb_add_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
     hidden = hidden
   )
 }
+
 #' Set Worksheet column widths
 #'
 #' This function was renamed to [wb_add_col_widths()], see documentation there.
@@ -871,28 +883,12 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
   wb_add_col_widths(wb = wb, sheet = sheet, cols = cols, widths = widths, hidden = hidden)
 }
 
-#' @name wb_remove_col_widths
-#' @title Remove column widths from a worksheet
-
-#' @description Remove column widths from a worksheet
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param cols Indices of columns to remove custom width (if any) from.
-#' @seealso [wb_add_col_widths()]
+#' @rdname wb_col_widths
 #' @export
-#' @examples
-#' ## Create a new workbook
-#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
-#'
-#' ## remove column widths in columns 1 to 20
-#' wb_remove_col_widths(wb, 1, cols = 1:20)
 wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
 }
-
-
-
 #' Remove custom row heights from a worksheet
 #'
 #' Remove row heights from a worksheet
@@ -989,9 +985,9 @@ wb_add_plot <- function(
 }
 
 #' add drawings to workbook
-#' @param wb a wbWorkbook
+#' @param wb a `wbWorkbook`
 #' @param sheet a sheet in the workbook
-#' @param dims the dimension where the drawing is added. Can be NULL
+#' @param dims the dimension where the drawing is added. Can be `NULL`
 #' @param xml the drawing xml as character or file
 #' @param col_offset,row_offset offsets for column and row
 #' @param ... additional arguments
@@ -1113,17 +1109,20 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 
 # base font ---------------------------------------------------------------
 
-#' @name wb_modify_basefont
-#' @title Modify the default font
-#' @description Modify the default font for this workbook
+#' Get / set the default font in a workbook
+#'
+#' Modify / get the default font for the workbook.
+#'
+#' The font name is not validated in anyway. Excel replaces unknown font names
+#' with Arial. Base font is black, size 11, Calibri.
+#' @family workbook wrappers
 #' @param wb A workbook object
 #' @param font_size font size
 #' @param font_color font color
 #' @param font_name Name of a font
-#' @param ... ...
-#' @details The font name is not validated in anyway.  Excel replaces unknown font names
-#' with Arial. Base font is black, size 11, Calibri.
-#' @export
+#' @param ... additional arguments
+#'
+#' @name wb_base_font
 #' @examples
 #' ## create a workbook
 #' wb <- wb_workbook()
@@ -1133,6 +1132,19 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 #' wb$add_data("S1", iris)
 #' wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
+#'
+#' ## get the base font
+#' ## create a workbook
+#' wb <- wb_workbook()
+#' wb_get_base_font(wb)
+#'
+#' ## modify base font to size 10 Arial Narrow in red
+#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
+#'
+#' wb_get_base_font(wb)
+NULL
+#' @export
+#' @rdname wb_base_font
 wb_set_base_font <- function(
   wb,
   font_size  = 11,
@@ -1148,25 +1160,8 @@ wb_set_base_font <- function(
     ...         = ...
   )
 }
-
-
-#' Return the workbook default font
-#'
-#' Get the base font used in the workbook.
-#' @param wb A [wbWorkbook] object
-#'
 #' @export
-#' @family workbook wrappers
-#'
-#' @examples
-#' ## create a workbook
-#' wb <- wb_workbook()
-#' wb_get_base_font(wb)
-#'
-#' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
-#'
-#' wb_get_base_font(wb)
+#' @rdname wb_base_font
 wb_get_base_font <- function(wb) {
   # TODO all of these class checks need to be cleaned up
   assert_workbook(wb)
@@ -1806,20 +1801,21 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 
 # filters -----------------------------------------------------------------
 
-#' Add column filters
+#' Add/remove column filters in a worksheet
 #'
-#' Add excel column filters to a worksheet
+#' Add or remove excel column filters to a worksheet
+#'
+#' Adds filters to worksheet columns, same as `with_filter = TRUE` in [wb_add_data()]
+#' [wb_add_data_table()] automatically adds filters to first row of a table.
+#'
+#' NOTE Can only have a single filter per worksheet unless using tables.
 #'
 #' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
+#' @param sheet A worksheet name or index.
+#'   In `wb_remove_filter()`, you may supply a vector of worksheets.
 #' @param cols columns to add filter to.
 #' @param rows A row number.
-#' @seealso [write_data()]
-#' @details adds filters to worksheet columns, same as filter parameters in write_data.
-#' write_datatable automatically adds filters to first row of a table.
-#' NOTE Can only have a single filter per worksheet unless using tables.
-#' @export
-#' @seealso [wb_add_filter()]
+#' @seealso [wb_add_data()], [wb_add_data_table()]
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
@@ -1834,18 +1830,6 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #'
 #' ## Similarly
 #' wb$add_data_table(3, iris)
-wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
-  assert_workbook(wb)
-  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
-}
-
-#' @name wb_remove_filter
-#' @title Remove a worksheet filter
-#' @description Removes filters from wb_add_filter() and write_data()
-#' @param wb A workbook object
-#' @param sheet A vector of names or indices of worksheets
-#' @export
-#' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
@@ -1863,6 +1847,16 @@ wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
 #' ## remove filters
 #' wb_remove_filter(wb, 1:2) ## remove filters
 #' wb_remove_filter(wb, 3) ## Does not affect tables!
+#' @name wb_filter
+NULL
+#' @rdname wb_filter
+#' @export
+wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
+  assert_workbook(wb)
+  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
+}
+#' @rdname wb_filter
+#' @export
 wb_remove_filter <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
   wb$clone()$remove_filter(sheet = sheet)
@@ -1974,7 +1968,7 @@ wb_add_data_validation <- function(
 
 #' Get/set worksheet visible state
 #'
-#'Get and set worksheet visible state
+#' Get and set worksheet visible state
 #'
 #' @return Character vector of worksheet names.
 #' @return  Vector of "hidden", "visible", "veryHidden"
@@ -2132,12 +2126,12 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
-#' @name workbook_grouping
+#' @name wb_grouping
 #' @family workbook wrappers
 NULL
 
 #' @export
-#' @rdname workbook_grouping
+#' @rdname wb_grouping
 wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_cols(
@@ -2149,7 +2143,7 @@ wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname workbook_grouping
+#' @rdname wb_grouping
 wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
@@ -2157,7 +2151,7 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 
 
 #' @export
-#' @rdname workbook_grouping
+#' @rdname wb_grouping
 #' @examples
 #' ### create grouping levels
 #' grp_rows <- list(
@@ -2192,7 +2186,7 @@ wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname workbook_grouping
+#' @rdname wb_grouping
 wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
@@ -2261,33 +2255,33 @@ wb_get_creators <- function(wb) {
 
 # names -------------------------------------------------------------------
 
-#' Set worksheet names for a workbook
+#' Get / Set worksheet names for a workbook
 #'
-#' Sets the worksheet names for a [wbWorkbook] object.
+#' Gets / Sets the worksheet names for a [wbWorkbook] object.
 #'
-#' @details This only changes the sheet name as shown in spreadsheet software
+#' This only changes the sheet name as shown in spreadsheet software
 #' and will not alter it anywhere else. Not in formulas, chart references,
 #' named regions, pivot tables or anywhere else.
 #'
-#' @param wb A [wbWorkbook] object
+#' @param wb A `wbWorkbook` object
 #' @param old The name (or index) of the old sheet name. If `NULL` will assume
 #'   all worksheets are to be renamed.
 #' @param new The name of the new sheet
-#' @returns The [wbWorkbook] object
+#' @name wb_sheet_names
+#' @returns
+#'   * `set_`: The [wbWorkbook] object.
+#'   * `get_`: A named character vector of sheet names in order. The
+#'   names represent the original value of the worksheet prior to any character
+#'   substitutions.
+#'
+NULL
+#' @rdname wb_sheet_names
 #' @export
 wb_set_sheet_names <- function(wb, old = NULL, new) {
   assert_workbook(wb)
   wb$clone()$set_sheet_names(old = old, new = new)
 }
-
-#' Get worksheet names for a workbook
-#'
-#' Gets the worksheet names for a [wbWorkbook] object
-#'
-#' @param wb A [wbWorkbook] object
-#' @returns A `named` `character` vector of sheet names in their order.  The
-#'   names represent the original value of the worksheet prior to any character
-#'   substitutions.
+#' @rdname wb_sheet_names
 #' @export
 wb_get_sheet_names <- function(wb) {
   assert_workbook(wb)

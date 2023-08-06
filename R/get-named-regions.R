@@ -37,7 +37,7 @@ get_nr_from_definedName <- function(wb) {
 }
 
 #' get named region from ´wb$tables`
-#' @param a workbook
+#' @param wb a workbook
 #' @returns a data frame in named_region format
 #' @noRd
 wb_get_named_regions_tab <- function(wb) {
@@ -54,15 +54,11 @@ wb_get_named_regions_tab <- function(wb) {
   )
 }
 
-#' @title Get create or remove named regions
-#' @description Return a vector of named regions in a xlsx file or
-#' Workbook object
-#' @param x An xlsx file or Workbook object
-#' @param tables add tables too
-#' @name named_region
-NULL
-
-#' @rdname named_region
+#' Get create or remove named regions
+#'
+#' Return a vector of named regions in a xlsx file or `wbWorkbook` object
+#' @param x An xlsx file or `wbWorkbook` object
+#' @param tables add tables too if `TRUE`
 #' @export
 wb_get_named_regions <- function(x, tables = FALSE) {
   if (inherits(x, "wbWorkbook")) {
