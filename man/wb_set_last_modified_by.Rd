@@ -14,30 +14,9 @@ wb_set_last_modified_by(wb, name, ...)
 \item{...}{additional arguments}
 }
 \description{
-Just a wrapper of wb$set_last_modified_by()
+Just a wrapper of \code{wb$set_last_modified_by()}
 }
 \examples{
 wb <- wb_workbook()
 wb_set_last_modified_by(wb, "test")
 }
-\seealso{
-Other workbook wrappers: 
-\code{\link{wb_add_chartsheet}()},
-\code{\link{wb_add_data_table}()},
-\code{\link{wb_add_data}()},
-\code{\link{wb_add_formula}()},
-\code{\link{wb_add_pivot_table}()},
-\code{\link{wb_add_worksheet}()},
-\code{\link{wb_base_font}},
-\code{\link{wb_clone_worksheet}()},
-\code{\link{wb_col_widths}},
-\code{\link{wb_copy_cells}()},
-\code{\link{wb_creators}},
-\code{\link{wb_freeze_pane}()},
-\code{\link{wb_grouping}},
-\code{\link{wb_merge_cells}()},
-\code{\link{wb_save}()},
-\code{\link{wb_set_row_heights}()},
-\code{\link{wb_workbook}()}
-}
-\concept{workbook wrappers}

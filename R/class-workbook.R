@@ -2755,7 +2755,7 @@ wbWorkbook <- R6::R6Class(
     #' @param heights heights
     #' @param hidden hidden
     #' @return The `wbWorkbook` object, invisibly
-    set_row_heights = function(sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
+    add_row_heights = function(sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
       sheet <- private$get_sheet_index(sheet)
 
       # TODO move to wbWorksheet method
@@ -2797,6 +2797,18 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$sheet_data$row_attr <- row_attr
 
+      invisible(self)
+    },
+    #' @description
+    #' Sets a row height for a sheet, deprecated in favour of `add_row_heights()`
+    #' @param sheet sheet
+    #' @param rows rows
+    #' @param heights heights
+    #' @param hidden hidden
+    #' @return The `wbWorkbook` object, invisibly
+    set_row_heights = function(sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
+      .Deprecated("add_row_heights", old = "set_row_heights")
+      self$add_row_heights(sheet = sheet, rows = rows, heights = heights, hidden = hidden)
       invisible(self)
     },
 

@@ -384,7 +384,7 @@ test_that("set and remove row heights work", {
   ## add row heights
   wb <- wb_workbook()$
     add_worksheet()$
-    set_row_heights(
+    add_row_heights(
       rows = c(1, 4, 22, 2, 19),
       heights = c(24, 28, 32, 42, 33)
     )
@@ -423,7 +423,7 @@ test_that("set and remove row heights work", {
   wb <- wb_workbook()$
     add_worksheet()$
     add_data(x = mtcars)$
-    set_row_heights(rows = 5:15, hidden = TRUE)
+    add_row_heights(rows = 5:15, hidden = TRUE)
 
   exp <- structure(
     c(22L, `1` = 11L),

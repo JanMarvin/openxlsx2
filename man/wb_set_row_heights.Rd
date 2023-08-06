@@ -24,45 +24,6 @@ wb_set_row_heights(
 \item{hidden}{Option to hide rows.}
 }
 \description{
-Set worksheet row heights
+This function was deprecated in favour of \code{\link[=wb_add_row_heights]{wb_add_row_heights()}}
 }
-\examples{
-## Create a new workbook
-wb <- wb_workbook()
-
-## Add a worksheet
-wb$add_worksheet("Sheet 1")
-
-## set row heights
-wb <- wb_set_row_heights(
-  wb, 1,
-  rows = c(1, 4, 22, 2, 19),
-  heights = c(24, 28, 32, 42, 33)
-)
-
-## overwrite row 1 height
-wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
-}
-\seealso{
-\code{\link[=wb_remove_row_heights]{wb_remove_row_heights()}}
-
-Other workbook wrappers: 
-\code{\link{wb_add_chartsheet}()},
-\code{\link{wb_add_data_table}()},
-\code{\link{wb_add_data}()},
-\code{\link{wb_add_formula}()},
-\code{\link{wb_add_pivot_table}()},
-\code{\link{wb_add_worksheet}()},
-\code{\link{wb_base_font}},
-\code{\link{wb_clone_worksheet}()},
-\code{\link{wb_col_widths}},
-\code{\link{wb_copy_cells}()},
-\code{\link{wb_creators}},
-\code{\link{wb_freeze_pane}()},
-\code{\link{wb_grouping}},
-\code{\link{wb_merge_cells}()},
-\code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_workbook}()}
-}
-\concept{workbook wrappers}
+\keyword{internal}

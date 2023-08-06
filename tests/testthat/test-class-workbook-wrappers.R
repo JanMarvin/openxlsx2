@@ -85,19 +85,19 @@ test_that("wb_freeze_pane() is a wrapper", {
   expect_wrapper("freeze_pane", wb = wb, params = list(sheet = "sheet"))
 })
 
-# wb_set_row_heights() --------------------------------------------------------
+# wb_add_row_heights() --------------------------------------------------------
 
-test_that("wb_set_row_heights() is a wrapper", {
+test_that("wb_add_row_heights() is a wrapper", {
   wb <- wbWorkbook$new()$add_worksheet("sheet")
   params <- list(sheet = "sheet", rows = 1, heights = 5)
-  expect_wrapper("set_row_heights", wb = wb, params = params)
+  expect_wrapper("add_row_heights", wb = wb, params = params)
 })
 
 # wb_remove_row_heights() -----------------------------------------------------
 
 test_that("wb_remove_row_heights() is a wrapper", {
   wb <- wbWorkbook$new()$add_worksheet("a")
-  wb$set_row_heights("a", 1:3, 20)
+  wb$add_row_heights("a", 1:3, 20)
   params <- list(sheet = "a", rows = 2)
   expect_wrapper("remove_row_heights", wb = wb, params = params)
 })

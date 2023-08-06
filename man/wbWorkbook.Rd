@@ -208,6 +208,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_bookview}{\code{wbWorkbook$set_bookview()}}
 \item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
 \item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
+\item \href{#method-wbWorkbook-add_row_heights}{\code{wbWorkbook$add_row_heights()}}
 \item \href{#method-wbWorkbook-set_row_heights}{\code{wbWorkbook$set_row_heights()}}
 \item \href{#method-wbWorkbook-remove_row_heights}{\code{wbWorkbook$remove_row_heights()}}
 \item \href{#method-wbWorkbook-createCols}{\code{wbWorkbook$createCols()}}
@@ -1191,10 +1192,41 @@ The \code{wbWorkbook} object, invisibly
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_row_heights"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_row_heights}{}}}
+\subsection{Method \code{add_row_heights()}}{
+Sets a row height for a sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_row_heights(
+  sheet = current_sheet(),
+  rows,
+  heights = NULL,
+  hidden = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{rows}}{rows}
+
+\item{\code{heights}}{heights}
+
+\item{\code{hidden}}{hidden}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object, invisibly
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_row_heights"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_row_heights}{}}}
 \subsection{Method \code{set_row_heights()}}{
-Sets a row height for a sheet
+Sets a row height for a sheet, deprecated in favour of \code{add_row_heights()}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_row_heights(
   sheet = current_sheet(),

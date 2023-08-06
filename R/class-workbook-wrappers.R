@@ -768,9 +768,7 @@ wb_freeze_pane <- function(
 }
 
 
-# heights and columns -----------------------------------------------------
-
-# TODO order these...
+# Row heights ------------------------------------------------------------------
 
 #' Set worksheet row heights
 #'
@@ -794,19 +792,50 @@ wb_freeze_pane <- function(
 #' wb$add_worksheet("Sheet 1")
 #'
 #' ## set row heights
-#' wb <- wb_set_row_heights(
+#' wb <- wb_add_row_heights(
 #'   wb, 1,
 #'   rows = c(1, 4, 22, 2, 19),
 #'   heights = c(24, 28, 32, 42, 33)
 #' )
 #'
 #' ## overwrite row 1 height
-#' wb <- wb_set_row_heights(wb, 1, rows = 1, heights = 40)
-wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
+#' wb <- wb_add_row_heights(wb, 1, rows = 1, heights = 40)
+wb_add_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
   assert_workbook(wb)
-  wb$clone()$set_row_heights(sheet = sheet, rows, heights, hidden)
+  wb$clone()$add_row_heights(sheet = sheet, rows, heights, hidden)
+}
+#' Remove custom row heights from a worksheet
+#'
+#' Remove row heights from a worksheet
+#'
+#' @param wb A workbook object
+#' @param sheet A name or index of a worksheet
+#' @param rows Indices of rows to remove custom height (if any) from.
+#' @seealso [wb_add_row_heights()]
+#' @export
+#' @examples
+#' ## Create a new workbook
+#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+#'
+#' ## remove any custom row heights in rows 1 to 10
+#' wb$remove_row_heights(1, rows = 1:10)
+wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
+  assert_workbook(wb)
+  wb$clone()$remove_row_heights(sheet = sheet, rows = rows)
 }
 
+#' Set worksheet row heights
+#'
+#' This function was deprecated in favour of [wb_add_row_heights()]
+#' @inheritParams wb_add_row_heights
+#' @export
+#' @keywords internal
+wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
+  .Deprecated("wb_add_row_heights")
+  wb_add_row_heights(wb = wb, sheet = sheet, rows = rows, heights = heights, hidden = hidden)
+}
+
+# Column widths ----------------------------------------------------------------
 
 #' Modify worksheet column widths
 #'
@@ -870,6 +899,12 @@ wb_add_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
     hidden = hidden
   )
 }
+#' @rdname wb_col_widths
+#' @export
+wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
+  assert_workbook(wb)
+  wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
+}
 
 #' Set Worksheet column widths
 #'
@@ -883,31 +918,6 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
   wb_add_col_widths(wb = wb, sheet = sheet, cols = cols, widths = widths, hidden = hidden)
 }
 
-#' @rdname wb_col_widths
-#' @export
-wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
-  assert_workbook(wb)
-  wb$clone()$remove_col_widths(sheet = sheet, cols = cols)
-}
-#' Remove custom row heights from a worksheet
-#'
-#' Remove row heights from a worksheet
-#'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param rows Indices of rows to remove custom height (if any) from.
-#' @seealso [wb_set_row_heights()]
-#' @export
-#' @examples
-#' ## Create a new workbook
-#' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
-#'
-#' ## remove any custom row heights in rows 1 to 10
-#' wb$remove_row_heights(1, rows = 1:10)
-wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
-  assert_workbook(wb)
-  wb$clone()$remove_row_heights(sheet = sheet, rows = rows)
-}
 
 
 # images ------------------------------------------------------------------
@@ -2292,14 +2302,13 @@ wb_get_sheet_names <- function(wb) {
 
 #' Add another author to the meta data of the file.
 #'
-#' Just a wrapper of wb$set_last_modified_by()
+#' Just a wrapper of `wb$set_last_modified_by()`
 #'
 #' @param wb A workbook object
 #' @param name A string object with the name of the LastModifiedBy-User
 #' @param ... additional arguments
 #'
 #' @export
-#' @family workbook wrappers
 #'
 #' @examples
 #' wb <- wb_workbook()

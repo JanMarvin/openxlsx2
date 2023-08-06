@@ -270,7 +270,7 @@ test_that("type = 'colorScale' works", {
     type = "colorScale"
   )
   wb$add_col_widths("colourScale", cols = seq_along(df), widths = 1.07)
-  wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
+  wb <- wb_add_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
   exp <- c(`A1:E5` = '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="num" val="0"/><cfvo type="num" val="255"/><color rgb="FF000000"/><color rgb="FFFFFFFF"/></colorScale></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -412,7 +412,7 @@ test_that("colorScale", {
     type = "colorScale"
   )
   wb$add_col_widths("colourScale1", cols = seq_along(df), widths = 2)
-  wb <- wb_set_row_heights(wb, "colourScale1", rows = seq_len(nrow(df)), heights = 7.5)
+  wb <- wb_add_row_heights(wb, "colourScale1", rows = seq_len(nrow(df)), heights = 7.5)
 
   exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF000000\"/><color rgb=\"FFFFFFFF\"/></colorScale></cfRule>")
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -431,7 +431,7 @@ test_that("colorScale", {
     type = "colorScale"
   )
   wb$add_col_widths("colourScale2", cols = seq_along(df), widths = 2)
-  wb <- wb_set_row_heights(wb, "colourScale2", rows = seq_len(nrow(df)), heights = 7.5)
+  wb <- wb_add_row_heights(wb, "colourScale2", rows = seq_len(nrow(df)), heights = 7.5)
 
   exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"num\" val=\"1\"/><cfvo type=\"num\" val=\"255\"/><color rgb=\"FF0000FF\"/><color rgb=\"FFFF0000\"/></colorScale></cfRule>")
   expect_identical(exp, wb$worksheets[[2]]$conditionalFormatting)
@@ -449,13 +449,13 @@ test_that("colorScale", {
     type = "colorScale"
   )
   wb$add_col_widths("colourScale3", cols = seq_along(df), widths = 2)
-  wb <- wb_set_row_heights(wb, "colourScale3", rows = seq_len(nrow(df)), heights = 7.5)
+  wb <- wb_add_row_heights(wb, "colourScale3", rows = seq_len(nrow(df)), heights = 7.5)
 
   exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"min\"/><cfvo type=\"percentile\" val=\"50\"/><cfvo type=\"max\"/><color rgb=\"FFFF0000\"/><color rgb=\"FF00FF00\"/><color rgb=\"FF0000FF\"/></colorScale></cfRule>")
   expect_identical(exp, wb$worksheets[[3]]$conditionalFormatting)
 
   wb$add_col_widths("colourScale3", cols = seq_along(df), widths = 2)
-  wb <- wb_set_row_heights(wb, "colourScale3", rows = seq_len(nrow(df)), heights = 7.5)
+  wb <- wb_add_row_heights(wb, "colourScale3", rows = seq_len(nrow(df)), heights = 7.5)
 
   ### three colors and rule
   wb$add_worksheet("colourScale4", zoom = 30)
@@ -471,7 +471,7 @@ test_that("colorScale", {
     type = "colorScale"
   )
   wb$add_col_widths("colourScale4", cols = seq_along(df), widths = 2)
-  wb <- wb_set_row_heights(wb, "colourScale4", rows = seq_len(nrow(df)), heights = 7.5)
+  wb <- wb_add_row_heights(wb, "colourScale4", rows = seq_len(nrow(df)), heights = 7.5)
 
   exp <- c(`A1:KK271` = "<cfRule type=\"colorScale\" priority=\"1\"><colorScale><cfvo type=\"num\" val=\"1\"/><cfvo type=\"num\" val=\"155\"/><cfvo type=\"num\" val=\"255\"/><color rgb=\"FFFF0000\"/><color rgb=\"FF00FF00\"/><color rgb=\"FF0000FF\"/></colorScale></cfRule>")
   expect_identical(exp, wb$worksheets[[4]]$conditionalFormatting)

@@ -257,7 +257,7 @@ wb$add_conditional_formatting(
   type = "colorScale"
 )
 wb$add_col_widths("colorScale", cols = seq_along(df), widths = 1.07)
-wb$set_row_heights("colorScale", rows = seq_len(nrow(df)), heights = 7.5)
+wb$add_row_heights("colorScale", rows = seq_len(nrow(df)), heights = 7.5)
 ```
 
 

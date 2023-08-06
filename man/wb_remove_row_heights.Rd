@@ -24,5 +24,5 @@ wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = 
 wb$remove_row_heights(1, rows = 1:10)
 }
 \seealso{
-\code{\link[=wb_set_row_heights]{wb_set_row_heights()}}
+\code{\link[=wb_add_row_heights]{wb_add_row_heights()}}
 }
