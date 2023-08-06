@@ -3,24 +3,23 @@
 #'
 #' Create a new Workbook object
 #'
-#' @param creator Creator of the workbook (your name). Defaults to login username
-#' @param title Workbook properties title
-#' @param subject Workbook properties subject
-#' @param category Workbook properties category
-#' @param datetime_created The time of the workbook is created
-#' @param theme Optional theme identified by string or number
-#' @param ... additional arguments
-#' @return A [wbWorkbook] object
-#'
-#' @export
-#' @family workbook wrappers
-#'
-#' @details
+#' `theme` can be one of
 #' "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 #' "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
 #' "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
 #' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
 #' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
+#'
+#' @param creator Creator of the workbook (your name). Defaults to login username
+#' @param title,subject,category Workbook property, a string.
+#' @param datetime_created The time of the workbook is created
+#' @param theme Optional theme identified by string or number.
+#'   See **Details** for options.
+#' @param ... additional arguments
+#' @return A [wbWorkbook] object
+#'
+#' @export
+#' @family workbook wrappers
 #'
 #' @examples
 #' ## Create a new workbook
