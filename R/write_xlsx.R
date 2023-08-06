@@ -445,6 +445,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
   if (freeze_pane) {
     for (i in seq_len(nSheets)) {
+      # TODO replace with snake case arguments
       wb <- wb_freeze_pane(
         wb = wb,
         sheet = i,
