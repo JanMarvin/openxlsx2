@@ -42,10 +42,10 @@ and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine
 \itemize{
 \item \code{browseVignettes("openxlsx2")}
 \item \code{\link[=wb_add_data]{wb_add_data()}}
-\item \code{\link[=wb_to_df]{wb_to_df()}}
 \item \code{\link[=wb_add_data_table]{wb_add_data_table()}}
-\item \code{\link[=write_xlsx]{write_xlsx()}}
+\item \code{\link[=wb_to_df]{wb_to_df()}}
 \item \code{\link[=read_xlsx]{read_xlsx()}}
+\item \code{\link[=write_xlsx]{write_xlsx()}}
 \item \url{https://janmarvin.github.io/openxlsx2}
 for examples
 }

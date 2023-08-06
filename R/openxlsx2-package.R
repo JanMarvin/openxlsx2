@@ -24,10 +24,10 @@
 #' @seealso
 #' * `browseVignettes("openxlsx2")`
 #' * [wb_add_data()]
-#' * [wb_to_df()]
 #' * [wb_add_data_table()]
-#' * [write_xlsx()]
+#' * [wb_to_df()]
 #' * [read_xlsx()]
+#' * [write_xlsx()]
 #' * <https://janmarvin.github.io/openxlsx2>
 #' for examples
 #'
