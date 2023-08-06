@@ -94,10 +94,12 @@ standardize_case_names <- function(..., return = FALSE, arguments = NULL) {
 #' @param ... ...
 #' @returns void. assigns an object in the parent frame
 #' @noRd
-standardize <- function(...) {
+standardize <- function(..., arguments) {
 
   nms <- list(...)
-  arguments <- ls(envir = parent.frame())
+  if (missing(arguments)) {
+    arguments <- ls(envir = parent.frame())
+  }
 
   rtns <- standardize_color_names(nms, return = TRUE)
   rtns <- standardize_case_names(rtns, return = TRUE, arguments = arguments)
