@@ -277,9 +277,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_grid_lines.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_grouping.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.html</loc>
   </url>
   <url>
@@ -350,6 +347,9 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_workbook.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/workbook_grouping.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/write_data.html</loc>

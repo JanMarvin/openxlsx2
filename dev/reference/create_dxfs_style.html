@@ -89,18 +89,18 @@ assigned to a workbook to use them</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>font_name</dt>
-<dd><p>A name of a font. Note the font name is not validated. If fontName is NULL,
-the workbook base font is used. (Defaults to Calibri)</p></dd>
+<dd><p>A name of a font. Note the font name is not validated.
+If <code>font_name</code> is <code>NULL</code>, the workbook <code>base_font</code> is used. (Defaults to Calibri), see <code><a href="wb_get_base_font.html">wb_get_base_font()</a></code></p></dd>
 
 
 <dt>font_size</dt>
 <dd><p>Font size. A numeric greater than 0.
-If fontSize is NULL, the workbook base font size is used. (Defaults to 11)</p></dd>
+By default, the workbook base font size is used. (Defaults to 11)</p></dd>
 
 
 <dt>font_color</dt>
 <dd><p>Color of text in cell.  A valid hex color beginning with "#"
-or one of colors(). If fontColor is NULL, the workbook base font colors is used.
+or one of colors(). If <code>font_color</code> is NULL, the workbook base font colors is used.
 (Defaults to black)</p></dd>
 
 
@@ -109,7 +109,7 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 
 
 <dt>border</dt>
-<dd><p>NULL or TRUE</p></dd>
+<dd><p><code>NULL</code> or <code>TRUE</code></p></dd>
 
 
 <dt>border_color</dt>
@@ -149,7 +149,7 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 
 
 <dt>...</dt>
-<dd><p>...</p></dd>
+<dd><p>Additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -169,7 +169,7 @@ or one of colors(). If fontColor is NULL, the workbook base font colors is used.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># do not apply anthing</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># do not apply anything</span></span></span>
 <span class="r-in"><span><span class="va">style1</span> <span class="op">&lt;-</span> <span class="fu">create_dxfs_style</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># change font color and background color</span></span></span>

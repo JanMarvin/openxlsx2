@@ -59,7 +59,7 @@
     </div>
 
     <div class="ref-description section level2">
-    <p>Write a data.frame or list of data.frames to an xlsx file</p>
+    <p>Write a <code>data.frame</code> or list of data.frames to an xlsx file</p>
     </div>
 
     <div class="section level2">
@@ -85,9 +85,9 @@
 <dd><p>optional parameters to pass to functions:</p><ul><li><p><code><a href="wb_workbook.html">wb_workbook()</a></code></p></li>
 <li><p><code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code></p></li>
 <li><p><code><a href="wb_add_data.html">wb_add_data()</a></code></p></li>
-<li><p><a href="wb_freeze_pane.html">wb_freeze_pane</a></p></li>
+<li><p><code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code></p></li>
 <li><p><code><a href="wb_save.html">wb_save()</a></code></p></li>
-</ul><p>see details.</p></dd>
+</ul><p>see <strong>Details</strong>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -98,25 +98,25 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Optional parameters are:</p>
-<p><strong>wb_workbook Parameters</strong></p><ul><li><p><strong>creator</strong> A string specifying the workbook author</p></li>
-</ul><p><strong>wb_add_worksheet() Parameters</strong></p><ul><li><p><strong>sheetName</strong> Name of the worksheet</p></li>
-<li><p><strong>gridLines</strong> A logical. If <code>FALSE</code>, the worksheet grid lines will be hidden.</p></li>
-<li><p><strong>tabColor</strong> Color of the worksheet tab. A valid color (belonging to colors())
+    <p>Optional parameters are:
+<strong>wb_workbook Parameters</strong></p><ul><li><p><strong>creator</strong> A string specifying the workbook author</p></li>
+</ul><p><strong>wb_add_worksheet() Parameters</strong></p><ul><li><p><strong>sheet</strong> Name of the worksheet</p></li>
+<li><p><strong>grid_lines</strong> A logical. If <code>FALSE</code>, the worksheet grid lines will be hidden.</p></li>
+<li><p><strong>tab_color</strong> Color of the worksheet tab. A valid color (belonging to <code><a href="https://rdrr.io/r/grDevices/colors.html" class="external-link">colors()</a></code>)
 or a valid hex color beginning with "#".</p></li>
 <li><p><strong>zoom</strong> A numeric between 10 and 400. Worksheet zoom level as a percentage.</p></li>
-</ul><p><strong>write_data/write_datatable Parameters</strong></p><ul><li><p><strong>startCol</strong> A vector specifying the starting column(s) to write df</p></li>
-<li><p><strong>startRow</strong> A vector specifying the starting row(s) to write df</p></li>
-<li><p><strong>colNames or col.names</strong> If <code>TRUE</code>, column names of x are written.</p></li>
-<li><p><strong>rowNames or row.names</strong> If <code>TRUE</code>, row names of x are written.</p></li>
-<li><p><strong>na.strings</strong> If not NULL NA values are converted to this string in Excel. Defaults to NULL.</p></li>
-</ul><p><strong>freezePane Parameters</strong></p><ul><li><p><strong>firstActiveRow</strong> Top row of active region to freeze pane.</p></li>
-<li><p><strong>firstActiveCol</strong> Furthest left column of active region to freeze pane.</p></li>
-<li><p><strong>firstRow</strong> If <code>TRUE</code>, freezes the first row (equivalent to firstActiveRow = 2)</p></li>
-<li><p><strong>firstCol</strong> If <code>TRUE</code>, freezes the first column (equivalent to firstActiveCol = 2)</p></li>
-</ul><p><strong>colWidths Parameters</strong></p><ul><li><p><strong>colWidths</strong> May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)</p></li>
-</ul><p><strong>wb_save Parameters</strong></p><ul><li><p><strong>overwrite</strong> Overwrite existing file (Defaults to TRUE as with write.table)</p></li>
-</ul><p>columns of x with class Date or POSIXt are automatically
+</ul><p><strong>wb_add_data/wb_add_data_table Parameters</strong></p><ul><li><p><strong>start_col</strong> A vector specifying the starting column(s) to write df</p></li>
+<li><p><strong>start_row</strong> A vector specifying the starting row(s) to write df</p></li>
+<li><p><strong>col_names</strong> If <code>TRUE</code>, column names of <code>x</code> are written.</p></li>
+<li><p><strong>row_names</strong> If <code>TRUE</code>, row names of <code>x</code> are written.</p></li>
+<li><p><strong>na.strings</strong> If not NULL NA values are converted to this string in Excel. Defaults to <code>NULL</code>.</p></li>
+</ul><p><strong>wb_freeze_pane Parameters</strong></p><ul><li><p><strong>first_active_row</strong> Top row of active region to freeze pane.</p></li>
+<li><p><strong>first_active_col</strong> Furthest left column of active region to freeze pane.</p></li>
+<li><p><strong>first_row</strong> If <code>TRUE</code>, freezes the first row (equivalent to <code>first_active_row = 2</code>)</p></li>
+<li><p><strong>first_col</strong> If <code>TRUE</code>, freezes the first column (equivalent to <code>first_active_col = 2</code>)</p></li>
+</ul><p><strong>wb_set_col_widths Parameters</strong></p><ul><li><p><strong>widths</strong> May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)</p></li>
+</ul><p><strong>wb_save Parameters</strong></p><ul><li><p><strong>overwrite</strong> Overwrite existing file (Defaults to <code>TRUE</code> as with <code><a href="wb_add_data.html">wb_add_data()</a></code>)</p></li>
+</ul><p>columns of <code>x</code> with class <code>Date</code> or <code>POSIXt</code> are automatically
 styled as dates and datetimes respectively.</p>
     </div>
     <div class="section level2">
@@ -127,27 +127,27 @@ styled as dates and datetimes respectively.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## write to working directory</span></span></span>
-<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">iris</span>, file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, colNames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">iris</span>, file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">iris</span>,</span></span>
 <span class="r-in"><span>  file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  colNames <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>  col_names <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Lists elements are written to individual worksheets, using list names as sheet names if available</span></span></span>
-<span class="r-in"><span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"IRIS"</span> <span class="op">=</span> <span class="va">iris</span>, <span class="st">"MTCATS"</span> <span class="op">=</span> <span class="va">mtcars</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, colWidths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"auto"</span>, <span class="st">"auto"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"IRIS"</span> <span class="op">=</span> <span class="va">iris</span>, <span class="st">"MTCARS"</span> <span class="op">=</span> <span class="va">mtcars</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"auto"</span>, <span class="st">"auto"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## different sheets can be given different parameters</span></span></span>
 <span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  startCol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, startRow <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>  asTable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, withFilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  start_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, start_row <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  as_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, with_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># specify column widths for multiple sheets</span></span></span>
-<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, colWidths <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, colWidths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">300</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, colWidths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_widths <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">300</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
