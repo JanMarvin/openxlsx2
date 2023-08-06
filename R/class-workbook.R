@@ -1,10 +1,11 @@
 
 
 # R6 class ----------------------------------------------------------------
-
+# Lines 7 and 8 are needed until r-lib/roxygen2#1504 is fixed
 #' R6 class for a Workbook
 #'
-#' A Workbook
+#' @description
+#' R6 class for a Workbook
 #'
 #' @export
 wbWorkbook <- R6::R6Class(

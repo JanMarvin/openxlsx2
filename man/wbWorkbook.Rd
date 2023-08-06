@@ -62,16 +62,6 @@ a character vector of cell styles
 }
 \description{
 R6 class for a Workbook
-
-R6 class for a Workbook
-}
-\details{
-A Workbook
-
-\code{fun} can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
-STDEVP, SUM, VAR, VARP
-
-minor helper wrapping xl_open which does the entire same thing
 }
 \examples{
 
@@ -751,6 +741,11 @@ add pivot table
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Details}{
+\code{fun} can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
+STDEVP, SUM, VAR, VARP
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_formula"></a>}}
@@ -970,6 +965,10 @@ the value returned from \code{\link[base:interactive]{base::interactive()}}}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Details}{
+minor helper wrapping xl_open which does the entire same thing
+}
+
 \subsection{Returns}{
 The \code{wbWorkbook}, invisibly
 }
