@@ -13,12 +13,8 @@ wb_remove_filter(wb, sheet = current_sheet())
 \arguments{
 \item{wb}{A workbook object}
 
-\item{sheet}{\itemize{
-\item In \code{wb_add_filter()} A single name or index of a worksheet.
-\itemize{
-\item In \code{wb_remove_filter()}, a vector of names/indices of worksheet
-}
-}}
+\item{sheet}{A worksheet name or index.
+In \code{wb_remove_filter()}, you may supply a vector of worksheets.}
 
 \item{rows}{A row number.}
 
@@ -28,8 +24,9 @@ wb_remove_filter(wb, sheet = current_sheet())
 Add or remove excel column filters to a worksheet
 }
 \details{
-Adds filters to worksheet columns, same as filter parameters in write_data.
+Adds filters to worksheet columns, same as \code{with_filter = TRUE} in \code{\link[=wb_add_data]{wb_add_data()}}
 \code{\link[=wb_add_data_table]{wb_add_data_table()}} automatically adds filters to first row of a table.
+
 NOTE Can only have a single filter per worksheet unless using tables.
 }
 \examples{

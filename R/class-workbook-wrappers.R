@@ -1791,13 +1791,14 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #'
 #' Add or remove excel column filters to a worksheet
 #'
-#' Adds filters to worksheet columns, same as filter parameters in write_data.
+#' Adds filters to worksheet columns, same as `with_filter = TRUE` in [wb_add_data()]
 #' [wb_add_data_table()] automatically adds filters to first row of a table.
+#'
 #' NOTE Can only have a single filter per worksheet unless using tables.
+#'
 #' @param wb A workbook object
-#' @param sheet
-#'   * In `wb_add_filter()` A single name or index of a worksheet.
-#'   * In `wb_remove_filter()`, a vector of names/indices of worksheet
+#' @param sheet A worksheet name or index.
+#'   In `wb_remove_filter()`, you may supply a vector of worksheets.
 #' @param cols columns to add filter to.
 #' @param rows A row number.
 #' @seealso [wb_add_data()], [wb_add_data_table()]
@@ -1953,7 +1954,7 @@ wb_add_data_validation <- function(
 
 #' Get/set worksheet visible state
 #'
-#'Get and set worksheet visible state
+#' Get and set worksheet visible state
 #'
 #' @return Character vector of worksheet names.
 #' @return  Vector of "hidden", "visible", "veryHidden"
