@@ -54,5 +54,6 @@ create_tablestyle(
 \item{...}{additional arguments}
 }
 \description{
-create tableStyle
+Create a custom table style.
+This function is for expert use only. Use other styling functions instead.
 }

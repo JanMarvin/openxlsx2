@@ -3,24 +3,23 @@
 #'
 #' Create a new Workbook object
 #'
-#' @param creator Creator of the workbook (your name). Defaults to login username
-#' @param title Workbook properties title
-#' @param subject Workbook properties subject
-#' @param category Workbook properties category
-#' @param datetime_created The time of the workbook is created
-#' @param theme Optional theme identified by string or number
-#' @param ... additional arguments
-#' @return A [wbWorkbook] object
-#'
-#' @export
-#' @family workbook wrappers
-#'
-#' @details
+#' `theme` can be one of
 #' "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 #' "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
 #' "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
 #' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
 #' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
+#'
+#' @param creator Creator of the workbook (your name). Defaults to login username
+#' @param title,subject,category Workbook property, a string.
+#' @param datetime_created The time of the workbook is created
+#' @param theme Optional theme identified by string or number.
+#'   See **Details** for options.
+#' @param ... additional arguments
+#' @return A [wbWorkbook] object
+#'
+#' @export
+#' @family workbook wrappers
 #'
 #' @examples
 #' ## Create a new workbook
@@ -916,9 +915,9 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @param row_offset,col_offset offset for column and row
-#' @param width Width of figure. Defaults to `6`in.
-#' @param height Height of figure . Defaults to `4`in.
+#' @param row_offset,col_offset Offset for column and row
+#' @param width Width of figure. Defaults to `6` in.
+#' @param height Height of figure . Defaults to `4` in.
 #' @param file_type File type of image
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution
@@ -931,7 +930,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' wb <- wb_workbook()
 #'
 #' ## Add a worksheet
-#' wb$add_worksheet("Sheet 1", gridLines = FALSE)
+#' wb$add_worksheet("Sheet 1", grid_lines = FALSE)
 #'
 #' ## create plot objects
 #' require(ggplot2)
@@ -943,11 +942,11 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' ## Insert currently displayed plot to sheet 1, row 1, column 1
 #' print(p1) # plot needs to be showing
-#' wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
+#' wb$add_plot(1, width = 5, height = 3.5, file_type = "png", units = "in")
 #'
 #' ## Insert plot 2
 #' print(p2)
-#' wb$add_plot(1, dims = "J2", width = 16, height = 10, fileType = "png", units = "cm")
+#' wb$add_plot(1, dims = "J2", width = 16, height = 10, file_type = "png", units = "cm")
 #'
 #' }
 wb_add_plot <- function(
@@ -2122,12 +2121,12 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
-#' @name wb_grouping
+#' @name workbook_grouping
 #' @family workbook wrappers
 NULL
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_cols(
@@ -2139,7 +2138,7 @@ wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
@@ -2147,7 +2146,7 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 #' @examples
 #' ### create grouping levels
 #' grp_rows <- list(
@@ -2182,7 +2181,7 @@ wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname workbook_grouping
 wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
