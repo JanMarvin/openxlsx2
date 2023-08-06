@@ -4,7 +4,7 @@
 \alias{wbWorkbook}
 \title{R6 class for a Workbook}
 \description{
-R6 class for a Workbook
+A workbook
 }
 \examples{
 

@@ -5,7 +5,7 @@
 #' R6 class for a Workbook
 #'
 #' @description
-#' R6 class for a Workbook
+#' A workbook
 #'
 #' @export
 wbWorkbook <- R6::R6Class(
