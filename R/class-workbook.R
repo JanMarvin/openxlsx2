@@ -336,7 +336,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description validate sheet
     #' @param sheet A character sheet name or integer location
-    #' @returns The integer position of the sheet
+    #' @return The integer position of the sheet
     validate_sheet = function(sheet) {
 
       # workbook has no sheets
@@ -1147,7 +1147,7 @@ wbWorkbook <- R6::R6Class(
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_data_table = function(
         sheet             = current_sheet(),
         x,
@@ -1212,7 +1212,7 @@ wbWorkbook <- R6::R6Class(
     #' @details
     #' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
     #' STDEVP, SUM, VAR, VARP
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_pivot_table = function(
       x,
       sheet = next_sheet(),
@@ -1357,7 +1357,7 @@ wbWorkbook <- R6::R6Class(
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
         x,
@@ -1390,7 +1390,7 @@ wbWorkbook <- R6::R6Class(
     #' @description add style
     #' @param style style
     #' @param style_name style_name
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_style = function(style = NULL, style_name = NULL) {
 
       assert_class(style, "character")
@@ -2663,7 +2663,7 @@ wbWorkbook <- R6::R6Class(
     ### sheet names ----
 
     #' @description Get sheet names
-    #' @returns A `named` `character` vector of sheet names in their order.  The
+    #' @return A `named` `character` vector of sheet names in their order.  The
     #'   names represent the original value of the worksheet prior to any
     #'   character substitutions.
     get_sheet_names = function() {
@@ -2934,7 +2934,7 @@ wbWorkbook <- R6::R6Class(
     #' @description ungroup cols
     #' @param sheet sheet
     #' @param cols = cols
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     ungroup_cols = function(sheet = current_sheet(), cols) {
       sheet <- private$get_sheet_index(sheet)
 
@@ -3422,7 +3422,7 @@ wbWorkbook <- R6::R6Class(
     #' @param prompt_title The prompt title
     #' @param prompt The prompt text
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_data_validation = function(
       sheet          = current_sheet(),
       dims           = "A1",
@@ -3717,7 +3717,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dims row and column as spreadsheet dimension, e.g. "A1"
     #' @param comment a comment to apply to the worksheet
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_comment = function(
         sheet   = current_sheet(),
         dims    = "A1",
@@ -3747,7 +3747,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param dims row and column as spreadsheet dimension, e.g. "A1"
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     remove_comment = function(
       sheet      = current_sheet(),
       dims       = "A1",
@@ -3930,7 +3930,7 @@ wbWorkbook <- R6::R6Class(
     #' @param type type
     #' @param params Additional parameters
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_conditional_formatting = function(
         sheet  = current_sheet(),
         dims   = NULL,
@@ -4409,7 +4409,7 @@ wbWorkbook <- R6::R6Class(
     #' @param units units
     #' @param dpi dpi
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_plot = function(
       sheet      = current_sheet(),
       dims       = "A1",
@@ -4497,7 +4497,7 @@ wbWorkbook <- R6::R6Class(
     #' @param xml xml
     #' @param col_offset,row_offset offsets for column and row
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_drawing = function(
       sheet      = current_sheet(),
       dims       = "A1",
@@ -4667,7 +4667,7 @@ wbWorkbook <- R6::R6Class(
     #' @param xml xml
     #' @param col_offset,row_offset positioning parameters
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_chart_xml = function(
       sheet      = current_sheet(),
       dims       = NULL,
@@ -4737,7 +4737,7 @@ wbWorkbook <- R6::R6Class(
     #' @param graph mschart graph
     #' @param col_offset,row_offset offsets for column and row
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_mschart = function(
       sheet      = current_sheet(),
       dims       = NULL,
@@ -5096,7 +5096,7 @@ wbWorkbook <- R6::R6Class(
     #'   `"formatRows"`, `"insertColumns"`, `"insertRows"`,
     #'   `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`, `"sort"`,
     #'   `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     protect_worksheet = function(
         sheet = current_sheet(),
         protect    = TRUE,
@@ -5446,7 +5446,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description get tables
     #' @param sheet sheet
-    #' @returns The sheet tables.  `character()` if empty
+    #' @return The sheet tables.  `character()` if empty
     get_tables = function(sheet = current_sheet()) {
       if (length(sheet) != 1) {
         stop("sheet argument must be length 1")
@@ -5468,7 +5468,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param table table
     #' @param remove_data removes the data as well
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     remove_tables = function(sheet = current_sheet(), table, remove_data = TRUE) {
       if (length(table) != 1) {
         stop("table argument must be length 1")
@@ -5517,7 +5517,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param rows rows
     #' @param cols cols
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_filter = function(sheet = current_sheet(), rows, cols) {
       sheet <- private$get_sheet_index(sheet)
 
@@ -5539,7 +5539,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description remove filters
     #' @param sheet sheet
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     remove_filter = function(sheet = current_sheet()) {
       for (s in private$get_sheet_index(sheet)) {
         self$worksheets[[s]]$autoFilter <- character()
@@ -5552,7 +5552,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param show show
     #' @param print print
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     grid_lines = function(sheet = current_sheet(), show = FALSE, print = show) {
       sheet <- private$get_sheet_index(sheet)
 
@@ -5593,7 +5593,7 @@ wbWorkbook <- R6::R6Class(
     #' @param workbook_parameter workbookParameter
     #' @param xml xml
     #' @param ... additional arguments
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_named_region = function(
       sheet = current_sheet(),
       dims = "A1",
@@ -5696,7 +5696,7 @@ wbWorkbook <- R6::R6Class(
     #' @description remove a named region
     #' @param sheet sheet
     #' @param name name
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     remove_named_region = function(sheet = current_sheet(), name = NULL) {
       # get all nown defined names
       dn <- wb_get_named_regions(self)
@@ -5750,7 +5750,7 @@ wbWorkbook <- R6::R6Class(
     ## sheet visibility ----
 
     #' @description Get sheet visibility
-    #' @returns Returns sheet visibility
+    #' @return Returns sheet visibility
     get_sheet_visibility = function() {
       state <- rep("visible", length(self$workbook$sheets))
       state[grepl("hidden", self$workbook$sheets)] <- "hidden"
@@ -5761,7 +5761,7 @@ wbWorkbook <- R6::R6Class(
     #' @description Set sheet visibility
     #' @param value value
     #' @param sheet sheet
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     set_sheet_visibility = function(sheet = current_sheet(), value) {
       if (length(value) != length(sheet)) {
         stop("`value` and `sheet` must be the same length")
@@ -5806,7 +5806,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheet sheet
     #' @param row row
     #' @param col col
-    #' @returns The `wbWorkbook` object
+    #' @return The `wbWorkbook` object
     add_page_break = function(sheet = current_sheet(), row = NULL, col = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$add_page_break(row = row, col = col)
@@ -6605,7 +6605,7 @@ wbWorkbook <- R6::R6Class(
     #' @description get sheet style
     #' @param sheet sheet
     #' @param dims dims
-    #' @returns a character vector of cell styles
+    #' @return a character vector of cell styles
     get_cell_style = function(sheet = current_sheet(), dims) {
 
       if (length(dims) == 1 && grepl(":", dims))
