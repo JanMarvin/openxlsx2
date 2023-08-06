@@ -2907,16 +2907,41 @@ wb_add_dxfs_style <- function(
 
 }
 
-#' Add comment to worksheet
+#' Add / remove comment in worksheet
+#'
+#' @description
+#' The comment functions (add and remove) allow the modification of comments.
+#' In newer spreadsheet software they are called notes, while they are called
+#' comments in openxml. Modification of what newer spreadsheet software now calls
+#' comment is possible via [wb_add_thread()].
+#'
+#' `comment` can be created with [create_comment()] to add styling.
+#'
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
+#' @param dims Row and column as spreadsheet dimension, e.g. "A1"
 #' @param comment A comment to apply to the worksheet
-# To fit, maybe comment, can be `x`
+# TODO To fit, maybe comment, can be `x`
 #' @param ... additional arguments
 #' @returns The `wbWorkbook` object
-#' @seealso [wb_add_thread()]
-#' @rdname comment
+#' @seealso [create_comment()], [wb_add_thread()]
+#' @name wb_comment
+#' @examples
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#' # Add comment without styling
+#' wb$add_comment(dims = "A1", "Top-left corner of the spreadsheet.")
+#' # Remove comment
+#' wb$remove_comment(sheet = "Sheet 1", dims = "A1")
+#' # add a comment without author
+#' c1 <- create_comment(text = "this is a comment", author = "")
+#' wb$add_comment(dims = "B10", comment = c1)
+#'
+#' # Write another comment with author information
+#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+#' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
+NULL
+#' @rdname wb_comment
 #' @export
 wb_add_comment <- function(
     wb,
@@ -2937,8 +2962,7 @@ wb_add_comment <- function(
   )
 }
 
-#' Remove comment from worksheet
-#' @rdname comment
+#' @rdname wb_comment
 #' @export
 wb_remove_comment <- function(
     wb,
