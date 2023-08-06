@@ -25,11 +25,11 @@ wb_add_plot(
 
 \item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
 
-\item{width}{Width of figure. Defaults to \code{6}in.}
+\item{width}{Width of figure. Defaults to \code{6} in.}
 
-\item{height}{Height of figure . Defaults to \code{4}in.}
+\item{height}{Height of figure . Defaults to \code{4} in.}
 
-\item{row_offset, col_offset}{offset for column and row}
+\item{row_offset, col_offset}{Offset for column and row}
 
 \item{file_type}{File type of image}
 
@@ -50,7 +50,7 @@ if (requireNamespace("ggplot2") && interactive()) {
 wb <- wb_workbook()
 
 ## Add a worksheet
-wb$add_worksheet("Sheet 1", gridLines = FALSE)
+wb$add_worksheet("Sheet 1", grid_lines = FALSE)
 
 ## create plot objects
 require(ggplot2)
@@ -62,11 +62,11 @@ p2 <- ggplot(Orange, aes(x = age, y = circumference, color = Tree)) +
 
 ## Insert currently displayed plot to sheet 1, row 1, column 1
 print(p1) # plot needs to be showing
-wb$add_plot(1, width = 5, height = 3.5, fileType = "png", units = "in")
+wb$add_plot(1, width = 5, height = 3.5, file_type = "png", units = "in")
 
 ## Insert plot 2
 print(p2)
-wb$add_plot(1, dims = "J2", width = 16, height = 10, fileType = "png", units = "cm")
+wb$add_plot(1, dims = "J2", width = 16, height = 10, file_type = "png", units = "cm")
 
 }
 }
