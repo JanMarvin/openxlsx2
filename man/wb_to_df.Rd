@@ -78,126 +78,137 @@ wb_read(
 
 \item{start_col}{first column to begin looking for data.}
 
-\item{row_names}{If TRUE, the first col of data will be used as row names.}
+\item{row_names}{If \code{TRUE}, the first col of data will be used as row names.}
 
-\item{col_names}{If TRUE, the first row of data will be used as column names.}
+\item{col_names}{If \code{TRUE}, the first row of data will be used as column names.}
 
-\item{skip_empty_rows}{If TRUE, empty rows are skipped.}
+\item{skip_empty_rows}{If \code{TRUE}, empty rows are skipped.}
 
-\item{skip_empty_cols}{If TRUE, empty columns are skipped.}
+\item{skip_empty_cols}{If \code{TRUE}, empty columns are skipped.}
 
-\item{skip_hidden_rows}{If TRUE, hidden rows are skipped.}
+\item{skip_hidden_rows}{If \code{TRUE}, hidden rows are skipped.}
 
-\item{skip_hidden_cols}{If TRUE, hidden columns are skipped.}
+\item{skip_hidden_cols}{If \code{TRUE}, hidden columns are skipped.}
 
-\item{rows}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
+\item{rows}{A numeric vector specifying which rows in the Excel file to read.
+If \code{NULL}, all rows are read.}
 
-\item{cols}{A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.}
+\item{cols}{A numeric vector specifying which columns in the Excel file to read.
+If \code{NULL}, all columns are read.}
 
-\item{detect_dates}{If TRUE, attempt to recognize dates and perform conversion.}
+\item{detect_dates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
 
-\item{na.strings}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
+\item{na.strings}{A character vector of strings which are to be interpreted as \code{NA}.
+Blank cells will be returned as \code{NA}.}
 
-\item{na.numbers}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
+\item{na.numbers}{A numeric vector of digits which are to be interpreted as \code{NA}.
+Blank cells will be returned as \code{NA}.}
 
-\item{fill_merged_cells}{If TRUE, the value in a merged cell is given to all cells within the merge.}
+\item{fill_merged_cells}{If \code{TRUE}, the value in a merged cell is given to all cells within the merge.}
 
 \item{dims}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
-\item{show_formula}{If TRUE, the underlying Excel formulas are shown.}
+\item{show_formula}{If \code{TRUE}, the underlying Excel formulas are shown.}
 
-\item{convert}{If TRUE, a conversion to dates and numerics is attempted.}
+\item{convert}{If \code{TRUE}, a conversion to dates and numerics is attempted.}
 
-\item{types}{A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data}
+\item{types}{A named numeric indicating, the type of the data.
+Names must match the returned data. See \strong{Details} for more.}
 
-\item{named_region}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
+\item{named_region}{Character string with a \code{named_region} (defined name or table).
+If no sheet is selected, the first appearance will be selected.}
 
-\item{keep_attributes}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
+\item{keep_attributes}{If \code{TRUE} additional attributes are returned.
+(These are used internally to define a cell type.)}
 
 \item{...}{additional arguments}
 }
 \description{
-Simple function to create a dataframe from a workbook. Simple as in simply
+Simple function to create a \code{data.frame} from a workbook. Simple as in simply
 written down. \code{\link[=read_xlsx]{read_xlsx()}} and \code{\link[=wb_read]{wb_read()}} are just internal wrappers for
 \code{\link[=wb_to_df]{wb_to_df()}} intended for people coming from other packages.
 }
 \details{
-Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns \code{hms} variables or string variables in the \code{hh:mm:ss} format.
+Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns
+\code{hms} variables or string variables in the \code{hh:mm:ss} format.
 
-Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+The \code{types} argument must be a named numeric.
+\itemize{
+\item 0: character
+\item 1: numeric
+\item 2: date
+\item 3: posixt
+\item 4: logical
+}
+
+Formulae written using write_formula to a Workbook object will not get picked up by \code{read_xlsx()}.
 This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 Opening, saving and closing the file with Excel will resolve this.
 }
 \examples{
+###########################################################################
+# numerics, dates, missings, bool and string
+example_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+wb1 <- wb_load(example_file)
 
-  ###########################################################################
-  # numerics, dates, missings, bool and string
-  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  wb1 <- wb_load(xlsxFile)
+# import workbook
+wb_to_df(wb1)
 
-  # import workbook
-  wb_to_df(wb1)
+# do not convert first row to column names
+wb_to_df(wb1, col_names = FALSE)
 
-  # do not convert first row to colNames
-  wb_to_df(wb1, colNames = FALSE)
+# do not try to identify dates in the data
+wb_to_df(wb1, detect_dates = FALSE)
 
-  # do not try to identify dates in the data
-  wb_to_df(wb1, detectDates = FALSE)
+# return the underlying Excel formula instead of their values
+wb_to_df(wb1, show_formula = TRUE)
 
-  # return the underlying Excel formula instead of their values
-  wb_to_df(wb1, showFormula = TRUE)
+# read dimension without colNames
+wb_to_df(wb1, dims = "A2:C5", col_names = FALSE)
 
-  # read dimension without colNames
-  wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
+# read selected cols
+wb_to_df(wb1, cols = c("A:B", "G"))
 
-  # read selected cols
-  wb_to_df(wb1, cols = c("A:B", "G"))
+# read selected rows
+wb_to_df(wb1, rows = c(2, 4, 6))
 
-  # read selected rows
-  wb_to_df(wb1, rows = c(2, 4, 6))
+# convert characters to numerics and date (logical too?)
+wb_to_df(wb1, convert = FALSE)
 
-  # convert characters to numerics and date (logical too?)
-  wb_to_df(wb1, convert = FALSE)
+# erase empty rows from dataset
+wb_to_df(wb1, skip_empty_rows = TRUE)
 
-  # erase empty rows from dataset
-  wb_to_df(wb1, skipEmptyRows = TRUE)
+# erase empty columns from dataset
+wb_to_df(wb1, skip_empty_cols = TRUE)
 
-  # erase empty columns from dataset
-  wb_to_df(wb1, skipEmptyCols = TRUE)
+# convert first row to rownames
+wb_to_df(wb1, sheet = 2, dims = "C6:G9", row_names = TRUE)
 
-  # convert first row to rownames
-  wb_to_df(wb1, sheet = 2, dims = "C6:G9", rowNames = TRUE)
+# define type of the data.frame
+wb_to_df(wb1, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
 
-  # define type of the data.frame
-  wb_to_df(wb1, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
+# start in row 5
+wb_to_df(wb1, start_row = 5, col_names = FALSE)
 
-  # start in row 5
-  wb_to_df(wb1, startRow = 5, colNames = FALSE)
+# na string
+wb_to_df(wb1, na.strings = "a")
 
-  # na string
-  wb_to_df(wb1, na.strings = "a")
+###########################################################################
+# named_region // namedRegion
+file_named_region <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
+wb2 <- wb_load(file_named_region)
 
-  ###########################################################################
-  # named_region // namedRegion
-  xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
-  wb2 <- wb_load(xlsxFile)
+# read dataset with named_region (returns global first)
+wb_to_df(wb2, named_region = "MyRange", col_names = FALSE)
 
-  # read dataset with named_region (returns global first)
-  wb_to_df(wb2, named_region = "MyRange", colNames = FALSE)
+# read named_region from sheet
+wb_to_df(wb2, named_region = "MyRange", sheet = 4, col_names = FALSE)
 
-  # read named_region from sheet
-  wb_to_df(wb2, named_region = "MyRange", sheet = 4, colNames = FALSE)
-
-  # read_xlsx
-  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  read_xlsx(file = xlsxFile)
-
-  # wb_read
-  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  df1 <- wb_read(file = xlsxFile, sheet = 1)
-
-  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  df1 <- wb_read(file = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
+# read_xlsx() and wb_read()
+example_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+read_xlsx(file = example_file)
+df1 <- wb_read(file = example_file, sheet = 1)
+df2 <- wb_read(file = example_file, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 }
 \seealso{
 \code{\link[=wb_get_named_regions]{wb_get_named_regions()}}
