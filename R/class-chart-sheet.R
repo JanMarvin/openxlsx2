@@ -1,6 +1,7 @@
 
 #' R6 class for a Workbook Chart Sheet
 #'
+#' @description
 #' A chart sheet
 #'
 #' @export

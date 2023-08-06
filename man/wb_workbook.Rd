@@ -17,15 +17,12 @@ wb_workbook(
 \arguments{
 \item{creator}{Creator of the workbook (your name). Defaults to login username}
 
-\item{title}{Workbook properties title}
-
-\item{subject}{Workbook properties subject}
-
-\item{category}{Workbook properties category}
+\item{title, subject, category}{Workbook property, a string.}
 
 \item{datetime_created}{The time of the workbook is created}
 
-\item{theme}{Optional theme identified by string or number}
+\item{theme}{Optional theme identified by string or number.
+See \strong{Details} for options.}
 
 \item{...}{additional arguments}
 }
@@ -36,6 +33,7 @@ A \link{wbWorkbook} object
 Create a new Workbook object
 }
 \details{
+\code{theme} can be one of
 "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
 "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",

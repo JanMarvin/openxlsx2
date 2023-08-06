@@ -1,94 +1,117 @@
+# `wb_to_df()` ----------------------------------------
 #' Create Dataframe from Workbook
 #'
-#' Simple function to create a dataframe from a workbook. Simple as in simply
+#' Simple function to create a `data.frame` from a workbook. Simple as in simply
 #' written down. [read_xlsx()] and [wb_read()] are just internal wrappers for
 #' [wb_to_df()] intended for people coming from other packages.
 #'
+#' @details
+#' Depending if the R package `hms` is loaded, `wb_to_df()` returns
+#' `hms` variables or string variables in the `hh:mm:ss` format.
+#'
+#' The `types` argument must be a named numeric.
+#' * 0: character
+#' * 1: numeric
+#' * 2: date
+#' * 3: posixt
+#' * 4: logical
+#' @seealso [wb_get_named_regions()]
+#'
 #' @param file An xlsx file, Workbook object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
-#' @param col_names If TRUE, the first row of data will be used as column names.
-#' @param row_names If TRUE, the first col of data will be used as row names.
+#' @param col_names If `TRUE`, the first row of data will be used as column names.
+#' @param row_names If `TRUE`, the first col of data will be used as row names.
 #' @param dims Character string of type "A1:B2" as optional dimensions to be imported.
-#' @param detect_dates If TRUE, attempt to recognize dates and perform conversion.
-#' @param show_formula If TRUE, the underlying Excel formulas are shown.
-#' @param convert If TRUE, a conversion to dates and numerics is attempted.
-#' @param skip_empty_cols If TRUE, empty columns are skipped.
-#' @param skip_empty_rows If TRUE, empty rows are skipped.
-#' @param skip_hidden_cols If TRUE, hidden columns are skipped.
-#' @param skip_hidden_rows If TRUE, hidden rows are skipped.
+#' @param detect_dates If `TRUE`, attempt to recognize dates and perform conversion.
+#' @param show_formula If `TRUE`, the underlying Excel formulas are shown.
+#' @param convert If `TRUE`, a conversion to dates and numerics is attempted.
+#' @param skip_empty_cols If `TRUE`, empty columns are skipped.
+#' @param skip_empty_rows If `TRUE`, empty rows are skipped.
+#' @param skip_hidden_cols If `TRUE`, hidden columns are skipped.
+#' @param skip_hidden_rows If `TRUE`, hidden rows are skipped.
 #' @param start_row first row to begin looking for data.
 #' @param start_col first column to begin looking for data.
-#' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
-#' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
-#' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
-#' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
-#' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
-#' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
-#' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
-#' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
+#' @param rows A numeric vector specifying which rows in the Excel file to read.
+#'   If `NULL`, all rows are read.
+#' @param cols A numeric vector specifying which columns in the Excel file to read.
+#'   If `NULL`, all columns are read.
+#' @param named_region Character string with a `named_region` (defined name or table).
+#'   If no sheet is selected, the first appearance will be selected.
+#' @param types A named numeric indicating, the type of the data.
+#'   Names must match the returned data. See **Details** for more.
+#' @param na.strings A character vector of strings which are to be interpreted as `NA`.
+#'   Blank cells will be returned as `NA`.
+#' @param na.numbers A numeric vector of digits which are to be interpreted as `NA`.
+#'   Blank cells will be returned as `NA`.
+#' @param fill_merged_cells If `TRUE`, the value in a merged cell is given to all cells within the merge.
+#' @param keep_attributes If `TRUE` additional attributes are returned.
+#'   (These are used internally to define a cell type.)
 #' @param ... additional arguments
-#' @details
-#' Depending if the R package `hms` is loaded, `wb_to_df()` returns `hms` variables or string variables in the `hh:mm:ss` format.
+#'
 #' @examples
+#' ###########################################################################
+#' # numerics, dates, missings, bool and string
+#' example_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' wb1 <- wb_load(example_file)
 #'
-#'   ###########################################################################
-#'   # numerics, dates, missings, bool and string
-#'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   wb1 <- wb_load(xlsxFile)
+#' # import workbook
+#' wb_to_df(wb1)
 #'
-#'   # import workbook
-#'   wb_to_df(wb1)
+#' # do not convert first row to column names
+#' wb_to_df(wb1, col_names = FALSE)
 #'
-#'   # do not convert first row to colNames
-#'   wb_to_df(wb1, colNames = FALSE)
+#' # do not try to identify dates in the data
+#' wb_to_df(wb1, detect_dates = FALSE)
 #'
-#'   # do not try to identify dates in the data
-#'   wb_to_df(wb1, detectDates = FALSE)
+#' # return the underlying Excel formula instead of their values
+#' wb_to_df(wb1, show_formula = TRUE)
 #'
-#'   # return the underlying Excel formula instead of their values
-#'   wb_to_df(wb1, showFormula = TRUE)
+#' # read dimension without colNames
+#' wb_to_df(wb1, dims = "A2:C5", col_names = FALSE)
 #'
-#'   # read dimension without colNames
-#'   wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
+#' # read selected cols
+#' wb_to_df(wb1, cols = c("A:B", "G"))
 #'
-#'   # read selected cols
-#'   wb_to_df(wb1, cols = c("A:B", "G"))
+#' # read selected rows
+#' wb_to_df(wb1, rows = c(2, 4, 6))
 #'
-#'   # read selected rows
-#'   wb_to_df(wb1, rows = c(2, 4, 6))
+#' # convert characters to numerics and date (logical too?)
+#' wb_to_df(wb1, convert = FALSE)
 #'
-#'   # convert characters to numerics and date (logical too?)
-#'   wb_to_df(wb1, convert = FALSE)
+#' # erase empty rows from dataset
+#' wb_to_df(wb1, skip_empty_rows = TRUE)
 #'
-#'   # erase empty rows from dataset
-#'   wb_to_df(wb1, skipEmptyRows = TRUE)
+#' # erase empty columns from dataset
+#' wb_to_df(wb1, skip_empty_cols = TRUE)
 #'
-#'   # erase empty columns from dataset
-#'   wb_to_df(wb1, skipEmptyCols = TRUE)
+#' # convert first row to rownames
+#' wb_to_df(wb1, sheet = 2, dims = "C6:G9", row_names = TRUE)
 #'
-#'   # convert first row to rownames
-#'   wb_to_df(wb1, sheet = 2, dims = "C6:G9", rowNames = TRUE)
+#' # define type of the data.frame
+#' wb_to_df(wb1, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
 #'
-#'   # define type of the data.frame
-#'   wb_to_df(wb1, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
+#' # start in row 5
+#' wb_to_df(wb1, start_row = 5, col_names = FALSE)
 #'
-#'   # start in row 5
-#'   wb_to_df(wb1, startRow = 5, colNames = FALSE)
+#' # na string
+#' wb_to_df(wb1, na.strings = "a")
 #'
-#'   # na string
-#'   wb_to_df(wb1, na.strings = "a")
+#' ###########################################################################
+#' # named_region // namedRegion
+#' file_named_region <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
+#' wb2 <- wb_load(file_named_region)
 #'
-#'   ###########################################################################
-#'   # named_region // namedRegion
-#'   xlsxFile <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
-#'   wb2 <- wb_load(xlsxFile)
+#' # read dataset with named_region (returns global first)
+#' wb_to_df(wb2, named_region = "MyRange", col_names = FALSE)
 #'
-#'   # read dataset with named_region (returns global first)
-#'   wb_to_df(wb2, named_region = "MyRange", colNames = FALSE)
+#' # read named_region from sheet
+#' wb_to_df(wb2, named_region = "MyRange", sheet = 4, col_names = FALSE)
 #'
-#'   # read named_region from sheet
-#'   wb_to_df(wb2, named_region = "MyRange", sheet = 4, colNames = FALSE)
-#'
+#' # read_xlsx() and wb_read()
+#' example_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' read_xlsx(file = example_file)
+#' df1 <- wb_read(file = example_file, sheet = 1)
+#' df2 <- wb_read(file = example_file, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 #' @export
 wb_to_df <- function(
     file,
@@ -571,19 +594,14 @@ wb_to_df <- function(
 }
 
 # `read_xlsx()` -----------------------------------------------------------------
-#' Read from an Excel file or Workbook object
+# Ignored by roxygen2 when combining documentation
+# #' Read from an Excel file or Workbook object
 #'
 #' @details
-#' Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+#' Formulae written using write_formula to a Workbook object will not get picked up by `read_xlsx()`.
 #' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
 #' Opening, saving and closing the file with Excel will resolve this.
 #' @rdname wb_to_df
-#'
-#' @examples
-#'   # read_xlsx
-#'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   read_xlsx(file = xlsxFile)
-#'
 #' @export
 read_xlsx <- function(
   file,
@@ -634,14 +652,6 @@ read_xlsx <- function(
 
 # `wb_read()` ------------------------------------------------------------------
 #' @rdname wb_to_df
-#' @examples
-#'   # wb_read
-#'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   df1 <- wb_read(file = xlsxFile, sheet = 1)
-#'
-#'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   df1 <- wb_read(file = xlsxFile, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
-#' @seealso [wb_get_named_regions()]
 #' @export
 wb_read <- function(
   file,
