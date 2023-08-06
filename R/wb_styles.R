@@ -722,10 +722,11 @@ create_dxfs_style <- function(
     ...
 ) {
 
-  standardize(...)
-
-  args <- list(...)
-  nams <- names(args)
+  arguments <- c(..., ls(),
+                 "left_color", "left_style", "right_color", "right_style",
+                 "top_color", "top_style", "bottom_color", "bottom_style"
+  )
+  standardize(..., arguments = arguments)
 
   if (is.null(font_color)) font_color <- ""
   if (is.null(font_size)) font_size <- ""
@@ -746,7 +747,7 @@ create_dxfs_style <- function(
   )
 
   if (exists("pattern_type")) {
-    pattern_type <- args$patternType
+    pattern_type <- pattern_type
   } else {
     pattern_type <- "solid"
   }
@@ -765,14 +766,14 @@ create_dxfs_style <- function(
 
   # untested
   if (!is.null(border)) {
-    left_color   <- if ("left_color" %in% nams) args$left_color else border_color
-    left_style   <- if ("left_style" %in% nams) args$left_style else border_style
-    right_color  <- if ("right_color" %in% nams) args$right_color else border_color
-    right_style  <- if ("right_style" %in% nams) args$right_style else border_style
-    top_color    <- if ("top_color" %in% nams) args$top_color else border_color
-    top_style    <- if ("top_style" %in% nams) args$top_style else border_style
-    bottom_color <- if ("bottom_color" %in% nams) args$bottom_color else border_color
-    bottom_style <- if ("bottom_style" %in% nams) args$bottom_style else border_style
+    left_color   <- if (exists("left_color"))   left_color   else border_color
+    left_style   <- if (exists("left_style"))   left_style   else border_style
+    right_color  <- if (exists("right_color"))  right_color  else border_color
+    right_style  <- if (exists("right_style"))  right_style  else border_style
+    top_color    <- if (exists("top_color"))    top_color    else border_color
+    top_style    <- if (exists("top_style"))    top_style    else border_style
+    bottom_color <- if (exists("bottom_color")) bottom_color else border_color
+    bottom_style <- if (exists("bottom_style")) bottom_style else border_style
 
     border <- create_border(
       left         = left_style,
