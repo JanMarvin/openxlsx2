@@ -457,6 +457,6 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     }
   }
 
-  wb_save(wb, path = file, overwrite = overwrite)
+  wb_save(wb, file = file, overwrite = overwrite)
   invisible(wb)
 }

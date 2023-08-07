@@ -28,7 +28,7 @@
 #' * [wb_to_df()]
 #' * [read_xlsx()]
 #' * [write_xlsx()]
-#' * <https://janmarvin.github.io/openxlsx2>
+#' * <https://janmarvin.github.io/openxlsx2/>
 #' for examples
 #'
 #' @details
@@ -100,6 +100,7 @@ openxlsx2_celltype <- c(
 #' These functions are provided for compatibility with older versions of `openxlsx2`, and may be defunct as soon as the next release.
 #' @details
 #' * [convertToExcelDate()] -> [convert_to_excel_date()]
+#' * [wb_grid_lines()] -> [wb_set_grid_lines()]
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
 NULL

@@ -56,8 +56,9 @@ wb_workbook <- function(
 #' Save Workbook to file
 #'
 #' @param wb A `wbWorkbook` object to write to file
-#' @param path A path to save the workbook to
+#' @param file A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `path` exists
+#' @param path Deprecated argument previously used for file. Please use file in new code.
 #'
 #' @export
 #' @family workbook wrappers
@@ -71,11 +72,11 @@ wb_workbook <- function(
 #'
 #' ## Save workbook to working directory
 #' \donttest{
-#' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
+#' wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
 #' }
-wb_save <- function(wb, path = NULL, overwrite = TRUE) {
+wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
   assert_workbook(wb)
-  wb$clone()$save(path = path, overwrite = overwrite)
+  wb$clone()$save(file = file, overwrite = overwrite, path = path)
 }
 
 # add data ----------------------------------------------------------------
@@ -1606,11 +1607,19 @@ wb_protect <- function(
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()$add_worksheet()
 #' wb$get_sheet_names() ## list worksheets in workbook
-#' wb$grid_lines(1, show = FALSE)
-#' wb$grid_lines("Sheet 2", show = FALSE)
+#' wb$set_grid_lines(1, show = FALSE)
+#' wb$set_grid_lines("Sheet 2", show = FALSE)
+wb_set_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
+  assert_workbook(wb)
+  wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
+}
+
+#' @rdname wb_set_grid_lines
+#' @export
 wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
   assert_workbook(wb)
-  wb$clone()$grid_lines(sheet = sheet, show = show, print = print)
+  .Deprecated(old = "wb_grid_lines", new = "wb_set_grid_lines", package = "openxlsx2")
+  wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
 }
 
 # TODO hide gridlines?

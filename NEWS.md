@@ -1,5 +1,4 @@
-# openxlsx2 (development version)
-
+# openxlsx2 0.8
 
 ## API Change
 
@@ -22,8 +21,9 @@
     * `xlsx_file` in favor of `file` in `wb_to_df()`
     
   * deprecating function
-    * `convertToExcelDate()` for `convert_to_excel_date()`
-  
+    * `convertToExcelDate()` for `convert_to_excel_date()`  
+    * `wb_grid_lines()` for `wb_set_grid_lines()`
+
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartSheet`, `wbComment`, `wbHyperlink` internal
   
@@ -44,7 +44,8 @@
 
 * Cleanup / revisit documentation and vignettes ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
 
-* The [function index](https://janmarvin.github.io/openxlsx2/reference) has been improved. ([717](https://github.com/JanMarvin/openxlsx2/pull/717), @olivroy)
+* The [function index](https://janmarvin.github.io/openxlsx2/reference/) has been improved. ([717](https://github.com/JanMarvin/openxlsx2/pull/717), @olivroy)
+
 
 ***************************************************************************
 

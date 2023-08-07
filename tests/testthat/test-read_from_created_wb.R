@@ -71,7 +71,7 @@ test_that("Reading NAs and NaN values", {
   wb$add_worksheet("Sheet 3")$add_data(3, C)
 
   # write file
-  wb_save(wb, path = fileName, overwrite = TRUE)
+  wb_save(wb, file = fileName, overwrite = TRUE)
 
   exp <- data.frame(
     X  = c("#NUM!", NA, "#VALUE!"),
