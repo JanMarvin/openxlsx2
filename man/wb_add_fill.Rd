@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_fill}
 \alias{wb_add_fill}
-\title{add fill for cell region}
+\title{Add fill for cell region}
 \usage{
 wb_add_fill(
   wb,
@@ -40,10 +40,10 @@ wb_add_fill(
 \item{...}{...}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorksheet} Object, invisibly
 }
 \description{
-wb wrapper to create fill for cell region
+Add fill to a cell region.
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)

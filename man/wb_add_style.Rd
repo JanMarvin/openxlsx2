@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_style}
 \alias{wb_add_style}
-\title{add style to workbook}
+\title{Add style to workbook}
 \usage{
 wb_add_style(wb, style = NULL, style_name = NULL)
 }

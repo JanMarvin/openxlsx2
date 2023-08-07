@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_font}
 \alias{wb_add_font}
-\title{add font for cell region}
+\title{Add font for cell region}
 \usage{
 wb_add_font(
   wb,
@@ -69,10 +69,10 @@ wb_add_font(
 The \code{wbWorksheetObject}, invisibly
 }
 \description{
-add font for cell region
+Add font for cell region
 }
 \details{
-\code{add_font()} provides all the options openxml accepts for a font node,
+\code{wb_add_font()} provides all the options openxml accepts for a font node,
 not all have to be set. Usually name, size and color should be what the user wants.
 }
 \examples{

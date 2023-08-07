@@ -4,7 +4,7 @@
 \alias{cleanup}
 \alias{wb_clean_sheet}
 \alias{delete_data}
-\title{clean sheet (remove all values)}
+\title{Remove all values in a worksheet}
 \usage{
 wb_clean_sheet(
   wb,
@@ -38,5 +38,5 @@ delete_data(wb, sheet, cols, rows)
 \item{rows}{numeric row vector}
 }
 \description{
-clean sheet (remove all values)
+Remove all values in a worksheet
 }

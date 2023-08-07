@@ -16,38 +16,88 @@ reference:
   - wbWorkbook
   - wb_workbook
   - wb_load
+  - wb_open
   - wb_save
 
-- title: wb add and remove functions
+- title: Interact with a workbook
+- subtitle: Add content to a worksheet
+  desc: >
+    These functions help you write in worksheets. They invisibly return the
+    `wbWorkbook` object.
   contents:
-  - starts_with("wb_add_")
-  - starts_with("wb_remove_")
+  - wb_add_worksheet
+  - wb_remove_worksheet
+  - wb_add_data
+  - wb_add_data_table
+  - wb_col_widths
+  - wb_row_heights
+  - wb_comment
+  - wb_filter
+  - wb_freeze_pane
+  - wb_add_formula
+  - wb_add_conditional_formatting
+  - wb_add_pivot_table
 
-- title: wb get and set functions
+- subtitle: Add styling to a workseet
+  desc: >
+    These functions are related to styling of a region or cells.
   contents:
-  - starts_with("wb_get_")
-  - starts_with("wb_set_")
+  - has_concept("styles")
+  - wb_add_border
+  - wb_add_font
+  - wb_add_fill
+  - wb_add_dxfs_style
+  - wb_add_numfmt
+  - cell_style
+
+- subtitle: Interact with the workbook metadata
+  desc: >
+    These functions are used to modify the workbook as a whole
+  contents:
+  - wb_set_last_modified_by
+  - wb_base_font
+  - wb_get_tables
+  - wb_add_style
+  - wb_remove_tables
+  - wb_creators
+  - starts_with("wb_protect")
+  - wb_sheet_names
+  - sheet_visibility
+
+- subtitle: Add content to a chartsheet
+  desc: >
+    These functions help you interact with chartsheets. They invisibly return the
+    `wbWorkbook` object
+  contents:
+  - wb_add_chartsheet
+
+- subtitle: Interact with mschart
+  desc: >
+    Interact with the mschart package
+  contents:
+  - wb_add_mschart
+  - wb_data
 
 - title: wb Misc
   contents:
   - wb_dims
-  - starts_with("wb_protect")
+  - wb_color
   - wb_hyperlink
   - cleanup
-  - wb_freeze_pane
-  - wb_open
   - starts_with("wb_clone")
   - starts_with("wb_copy")
-  - wb_color
-  - wb_data
+  - wb_merge_cells
   - wb_grid_lines
   - wb_update_table
-  - wb_copy_cells
-  - wb_merge_cells
+  - wb_get_sheet_name
+  - wb_get_worksheet
   - wb_page_setup
   - wb_grouping
 
 - title: create functions
+  desc: >
+    These functions are helpers to create an intermediate R6 class object to use
+    with `wb_*` functions.
   contents:
   - starts_with("create_")
 

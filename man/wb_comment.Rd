@@ -4,7 +4,7 @@
 \alias{wb_comment}
 \alias{wb_add_comment}
 \alias{wb_remove_comment}
-\title{Add / remove comment in worksheet}
+\title{Add / remove comment in a worksheet}
 \usage{
 wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
 

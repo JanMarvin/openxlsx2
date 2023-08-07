@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_border}
 \alias{wb_add_border}
-\title{add border for cell region}
+\title{Add border for cell region}
 \usage{
 wb_add_border(
   wb,
@@ -24,20 +24,21 @@ wb_add_border(
 )
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A \code{wbWorkbook}}
 
-\item{sheet}{a worksheet}
+\item{sheet}{A worksheet}
 
 \item{dims}{dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"}
 
 \item{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}{a color, either something openxml knows or some RGB color}
 
-\item{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}{the border style, if NULL no border is drawn. See \code{\link[=create_border]{create_border()}} for possible border styles}
+\item{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}{the border style, if \code{NULL} no border is drawn.
+See \code{\link[=create_border]{create_border()}} for possible border styles}
 
 \item{...}{additional arguments}
 }
 \description{
-wb wrapper to create borders for cell region
+wb wrapper to create borders for cell region.
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\%  wb_add_data("S1", mtcars)

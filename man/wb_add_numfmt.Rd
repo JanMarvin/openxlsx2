@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_numfmt}
 \alias{wb_add_numfmt}
-\title{add numfmt for cell region}
+\title{Add numfmt for a Cell Region}
 \usage{
 wb_add_numfmt(wb, sheet = current_sheet(), dims = "A1", numfmt)
 }
@@ -16,10 +16,10 @@ wb_add_numfmt(wb, sheet = current_sheet(), dims = "A1", numfmt)
 \item{numfmt}{either an id or a character}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorksheet} Object, invisibly
 }
 \description{
-add numfmt for cell region
+Add numfmt for a Cell Region
 }
 \examples{
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)

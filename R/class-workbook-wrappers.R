@@ -2042,7 +2042,7 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 
 #' Remove an Excel table in a workbook
 #'
-#' List Excel tables in a workbook
+#' Remove Excel tables in a workbook using its name.
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
@@ -2299,8 +2299,6 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 
 #' Insert an image into a worksheet
 #'
-#' Insert an image into a worksheet
-#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims Dimensions where to plot. Default absolute anchor, single cell (eg. "A1")
@@ -2354,7 +2352,8 @@ wb_add_image <- function(
 }
 
 
-#' add a chart xml to a workbook
+#' Add a chart XML to a workbook
+#'
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear
@@ -2384,7 +2383,7 @@ wb_add_chart_xml <- function(
 }
 
 
-#' clean sheet (remove all values)
+#' Remove all values in a worksheet
 #'
 #' @param wb workbook
 #' @param sheet sheet to clean
@@ -2415,7 +2414,8 @@ wb_clean_sheet <- function(
   )
 }
 
-#' little worksheet opener
+#' Open a workbook in a spreadsheet software
+#'
 #' @param wb a workbook
 #' @export
 wb_open <- function(wb) {
@@ -2423,7 +2423,7 @@ wb_open <- function(wb) {
   wb$open()
 }
 
-#' add style to workbook
+#' Add style to workbook
 #'
 #' @description wb wrapper to add style to workbook
 #' @param wb workbook
@@ -2451,7 +2451,8 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   wb$clone()$add_style(style, style_name)
 }
 
-#' get and set cell style
+#' Get and Set cell style
+#'
 #' @name cell_style
 #' @param wb wb
 #' @param sheet sheet
@@ -2475,7 +2476,7 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
 
 #' @rdname cell_style
 #' @param style style
-#' @return wb_set_cell_style returns the workbook invisible
+#' @return wb_set_cell_style returns the workbook invisibly.
 #' @export
 wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   assert_workbook(wb)
@@ -2483,16 +2484,17 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
 }
 
-#' add border for cell region
+#' Add border for cell region
 #'
-#' @description wb wrapper to create borders for cell region
-#' @param wb workbook
-#' @param sheet a worksheet
+#' wb wrapper to create borders for cell region.
+#' @param wb A `wbWorkbook`
+#' @param sheet A worksheet
 #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
 #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor
 #'   a color, either something openxml knows or some RGB color
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid
-#'   the border style, if NULL no border is drawn. See [create_border()] for possible border styles
+#'   the border style, if `NULL` no border is drawn.
+#'   See [create_border()] for possible border styles
 #' @param ... additional arguments
 #' @seealso [create_border()]
 #' @examples
@@ -2554,9 +2556,10 @@ wb_add_border <- function(
 
 }
 
-#' add fill for cell region
+#' Add fill for cell region
 #'
-#' @description wb wrapper to create fill for cell region
+#' Add fill to a cell region.
+#'
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
@@ -2588,7 +2591,7 @@ wb_add_border <- function(
 #' <stop position="1"><color theme="4"/></stop>
 #' </gradientFill>'
 #' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
-#' @return The `wbWorksheetObject`, invisibly
+#' @return The `wbWorksheet` Object, invisibly
 #' @family styles
 #' @export
 wb_add_fill <- function(
@@ -2615,8 +2618,8 @@ wb_add_fill <- function(
   )
 }
 
-#' add font for cell region
-#' @details `add_font()` provides all the options openxml accepts for a font node,
+#' Add font for cell region
+#' @details `wb_add_font()` provides all the options openxml accepts for a font node,
 #'  not all have to be set. Usually name, size and color should be what the user wants.
 #' @param wb a workbook
 #' @param sheet the worksheet
@@ -2689,7 +2692,7 @@ wb_add_font <- function(
   )
 }
 
-#' add numfmt for cell region
+#' Add numfmt for a Cell Region
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
@@ -2697,7 +2700,7 @@ wb_add_font <- function(
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
-#' @return The `wbWorksheetObject`, invisibly
+#' @return The `wbWorksheet` Object, invisibly
 #' @family styles
 #' @export
 wb_add_numfmt <- function(
@@ -2714,7 +2717,8 @@ wb_add_numfmt <- function(
   )
 }
 
-#' add cell style for cell region
+#' Add cell style for cell region
+#'
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
@@ -2732,14 +2736,14 @@ wb_add_numfmt <- function(
 #' @param text_rotation degrees of text rotation
 #' @param vertical vertical alignment of content ('top', 'center', 'bottom')
 #' @param wrap_text wrap text in cell
-# alignments
+## alignments
 #' @param apply_alignment logical apply alignment
 #' @param apply_border logical apply border
 #' @param apply_fill logical apply fill
 #' @param apply_font logical apply font
 #' @param apply_number_format logical apply number format
 #' @param apply_protection logical apply protection
-# ids
+## ids
 #' @param border_id border ID to apply
 #' @param fill_id fill ID to apply
 #' @param font_id font ID to apply
@@ -2750,18 +2754,18 @@ wb_add_numfmt <- function(
 #'  wb <-
 #'    wb_workbook() %>%
 #'    wb_add_worksheet("S1") %>%
-#'    wb_add_data("S1", mtcars)
+#'    wb_add_data("S1", x = mtcars)
 #'
 #'  wb %>%
 #'    wb_add_cell_style(
 #'      "S1",
-#'      "A1:K1",
-#'      textRotation = "45",
+#'      dims = "A1:K1",
+#'      text_rotation = "45",
 #'      horizontal = "center",
 #'      vertical = "center",
-#'      wrapText = "1"
+#'      wrap_text = "1"
 #'    )
-#' @return The `wbWorksheetObject`, invisibly
+#' @return The `wbWorksheet` Object, invisibly
 #' @family styles
 #' @export
 wb_add_cell_style <- function(
@@ -2920,7 +2924,7 @@ wb_add_dxfs_style <- function(
 
 }
 
-#' Add / remove comment in worksheet
+#' Add / remove comment in a worksheet
 #'
 #' @description
 #' The comment functions (add and remove) allow the modification of comments.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_open}
 \alias{wb_open}
-\title{little worksheet opener}
+\title{Open a workbook in a spreadsheet software}
 \usage{
 wb_open(wb)
 }
@@ -10,5 +10,5 @@ wb_open(wb)
 \item{wb}{a workbook}
 }
 \description{
-little worksheet opener
+Open a workbook in a spreadsheet software
 }

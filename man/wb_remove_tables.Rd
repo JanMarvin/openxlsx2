@@ -19,7 +19,7 @@ wb_remove_tables(wb, sheet = current_sheet(), table, remove_data = TRUE)
 character vector of table names on the specified sheet
 }
 \description{
-List Excel tables in a workbook
+Remove Excel tables in a workbook using its name.
 }
 \examples{
 

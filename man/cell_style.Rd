@@ -4,7 +4,7 @@
 \alias{cell_style}
 \alias{wb_get_cell_style}
 \alias{wb_set_cell_style}
-\title{get and set cell style}
+\title{Get and Set cell style}
 \usage{
 wb_get_cell_style(wb, sheet = current_sheet(), dims)
 
@@ -22,10 +22,10 @@ wb_set_cell_style(wb, sheet = current_sheet(), dims, style)
 \value{
 wb_get_cell_style returns the style id as character
 
-wb_set_cell_style returns the workbook invisible
+wb_set_cell_style returns the workbook invisibly.
 }
 \description{
-get and set cell style
+Get and Set cell style
 }
 \examples{
 # set a style in b1
