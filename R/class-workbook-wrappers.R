@@ -1608,11 +1608,19 @@ wb_protect <- function(
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()$add_worksheet()
 #' wb$get_sheet_names() ## list worksheets in workbook
-#' wb$grid_lines(1, show = FALSE)
-#' wb$grid_lines("Sheet 2", show = FALSE)
+#' wb$set_grid_lines(1, show = FALSE)
+#' wb$set_grid_lines("Sheet 2", show = FALSE)
+wb_set_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
+  assert_workbook(wb)
+  wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
+}
+
+#' @rdname wb_set_grid_lines
+#' @export
 wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
   assert_workbook(wb)
-  wb$clone()$grid_lines(sheet = sheet, show = show, print = print)
+  .Deprecated(old = "wb_grid_lines", new = "wb_set_grid_lines", package = "openxlsx2")
+  wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
 }
 
 # TODO hide gridlines?

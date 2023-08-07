@@ -245,6 +245,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-remove_tables}{\code{wbWorkbook$remove_tables()}}
 \item \href{#method-wbWorkbook-add_filter}{\code{wbWorkbook$add_filter()}}
 \item \href{#method-wbWorkbook-remove_filter}{\code{wbWorkbook$remove_filter()}}
+\item \href{#method-wbWorkbook-set_grid_lines}{\code{wbWorkbook$set_grid_lines()}}
 \item \href{#method-wbWorkbook-grid_lines}{\code{wbWorkbook$grid_lines()}}
 \item \href{#method-wbWorkbook-add_named_region}{\code{wbWorkbook$add_named_region()}}
 \item \href{#method-wbWorkbook-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
@@ -2329,6 +2330,30 @@ remove filters
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{sheet}}{sheet}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_grid_lines"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_grid_lines}{}}}
+\subsection{Method \code{set_grid_lines()}}{
+grid lines
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_grid_lines(sheet = current_sheet(), show = FALSE, print = show)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{show}}{show}
+
+\item{\code{print}}{print}
 }
 \if{html}{\out{</div>}}
 }

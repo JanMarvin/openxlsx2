@@ -22,8 +22,9 @@
     * `xlsx_file` in favor of `file` in `wb_to_df()`
     
   * deprecating function
-    * `convertToExcelDate()` for `convert_to_excel_date()`
-  
+    * `convertToExcelDate()` for `convert_to_excel_date()`  
+    * `wb_grid_lines()` for `wb_set_grid_lines()`
+
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartSheet`, `wbComment`, `wbHyperlink` internal
   
