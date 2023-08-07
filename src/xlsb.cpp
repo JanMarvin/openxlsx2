@@ -540,6 +540,33 @@ int styles(std::string filePath, std::string outPath, bool debug) {
         break;
       }
 
+      case BrtBeginDXFs:
+      {
+        uint32_t cdxfs = 0;
+        cdxfs = readbin(cdxfs, bin, 0);
+
+        out << "<dxfs>" << std::endl;
+        break;
+      }
+
+        // This is a todo. the xfPropDataBlob is almost the entire styles part again
+        // case BrtDXF:
+        // {
+        //   uint16_t flags = 0, reserved = 0, cprops = 0;
+        //   flags = readbin(flags, bin, 0);
+        //   reserved = readbin(reserved, bin, 0);
+        //   cprops = readbin(cprops, bin, 0);
+        //
+        //   out << "<dxfs>" << std::endl;
+        //  break;
+        // }
+
+      case BrtEndDXFs:
+      {
+        out << "</dxfs>" << std::endl;
+        break;
+      }
+
       case BrtEndStyleSheet:
       {
         end_of_style_sheet = true;
@@ -551,7 +578,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
       default:
       {
         if (debug) {
-        Rcpp::Rcout << std::to_string(x) <<
+        Rcpp::Rcout << "Unhandled Style: " << std::to_string(x) <<
           ": " << std::to_string(size) <<
             " @ " << bin.tellg() << std::endl;
       }
@@ -867,7 +894,6 @@ int bin_table(std::string filePath, std::string outPath, bool debug) {
         out << " />" << std::endl;
         break;
       }
-
 
       default:
       {
@@ -2446,6 +2472,119 @@ int worksheet(std::string filePath, bool chartsheet, std::string outPath, bool d
       {
         if (debug) Rcpp::Rcout << "</tableParts>" << std::endl;
         out << "</tableParts>" << std::endl;
+        break;
+      }
+
+      case BrtBeginConditionalFormatting:
+      {
+
+        Rcpp::warning("Worksheet contains unhandled conditional formatting.");
+
+        if (debug) Rcpp::Rcout << "<conditionalFormatting>" << std::endl;
+
+        uint32_t ccf = 0, fPivot = 0;
+        std::vector<int> sqrfx;
+
+        ccf = readbin(ccf, bin, 0); // not needed?
+        fPivot = readbin(fPivot, bin, 0);
+
+        sqrfx = UncheckedSqRfX(bin);
+        std::string lref = int_to_col(sqrfx[3] + 1) + std::to_string(sqrfx[1] + 1);
+        std::string rref = int_to_col(sqrfx[4] + 1) + std::to_string(sqrfx[2] + 1);
+
+        std::string sqref;
+        if (lref.compare(rref) == 0) {
+          sqref = lref;
+        } else {
+          sqref =  lref + ":" + rref;
+        }
+
+        out << "<conditionalFormatting";
+        if (fPivot) out << " pivot=\"" << fPivot << "\"";
+        out << " sqref=\"" << sqref << "\"";
+        out << ">" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginCFRule:
+      {
+        if (debug) Rcpp::Rcout << "<cfRule>" << std::endl;
+
+        uint16_t flags = 0;
+        uint32_t iType = 0, iTemplate = 0, dxfId = 0, iPri = 0, iParam = 0, reserved1 = 0, reserved2 = 0;
+        uint32_t cbFmla1 = 0, cbFmla2 = 0, cbFmla3 = 0;
+
+        iType = readbin(iType, bin, 0);
+        iTemplate = readbin(iTemplate, bin, 0);
+        dxfId = readbin(dxfId, bin, 0);
+        iPri = readbin(iPri, bin, 0);
+        iParam = readbin(iParam, bin, 0);
+        reserved1 = readbin(reserved1, bin, 0);
+        reserved2 = readbin(reserved2, bin, 0);
+        flags = readbin(flags, bin, 0);
+        cbFmla1 = readbin(cbFmla1, bin, 0);
+        cbFmla2 = readbin(cbFmla2, bin, 0);
+        cbFmla3 = readbin(cbFmla3, bin, 0);
+
+        std::string strParam = XLNullableWideString(bin);
+
+        std::string rgce1, rgce2, rgce3;
+        if (cbFmla1 != 0x00000000) {
+          rgce1 = CellParsedFormula(bin, debug, 0);
+        }
+        if (cbFmla2 != 0x00000000) {
+          rgce2 = CellParsedFormula(bin, debug, 0);
+        }
+        if (cbFmla3 != 0x00000000) {
+          rgce3 = CellParsedFormula(bin, debug, 0);
+        }
+
+        BrtBeginCFRuleFields *fields = (BrtBeginCFRuleFields *)&flags;
+
+        Rcpp::Rcout << "<cfRule";
+        // the type is defined by iType and iTemplate eg:
+        // CF_TYPE_EXPRIS & CF_TEMPLATE_CONTAINSNOBLANKS
+        // (but then again, not sure why iType is needed)
+        Rcpp::Rcout << " type=\"" << iType << "/" << iTemplate << "\"";
+        Rcpp::Rcout << " dxfId=\"" << dxfId << "\"";
+        Rcpp::Rcout << " priority=\"" << iPri << "\"";
+        Rcpp::Rcout << " operator=\"" << iParam << "\"";
+        Rcpp::Rcout << " stopIfTrue=\"" << fields->fStopTrue << "\"";
+        Rcpp::Rcout << " percent=\"" << fields->fPercent << "\"";
+        Rcpp::Rcout << " aboveAverage=\"" << fields->fAbove << "\"";
+        Rcpp::Rcout << " bottom=\"" << fields->fBottom << "\"";
+        // rank="" ???
+        // stdDev="" ??
+        // timePeriod="" ??
+        Rcpp::Rcout << " text=\"" << strParam << "\"";
+        Rcpp::Rcout << " >" << std::endl;
+
+        if (debug) {
+          Rcpp::Rcout << rgce1 << std::endl;
+          Rcpp::Rcout << rgce2 << std::endl;
+          Rcpp::Rcout << rgce3 << std::endl;
+        }
+
+
+        break;
+      }
+
+      case BrtEndCFRule:
+      {
+
+        if (debug) Rcpp::Rcout << "</cfRule>" << std::endl;
+        Rcpp::Rcout << "</cfRule>" << std::endl;
+
+        break;
+      }
+
+      case BrtEndConditionalFormatting:
+      {
+
+        if (debug) Rcpp::Rcout << "</conditionalFormatting>" << std::endl;
+        out << "</conditionalFormatting>" << std::endl;
+
         break;
       }
 

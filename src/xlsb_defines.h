@@ -144,6 +144,15 @@ typedef struct {
   uint16_t reserved : 10;
 } BrtTableStyleClientFields;
 
+typedef struct {
+  bool reserved3 : 1;
+  bool fStopTrue : 1;
+  bool fAbove : 1;
+  bool fBottom : 1;
+  bool fPercent : 1;
+  uint16_t reserved4 : 11;
+} BrtBeginCFRuleFields;
+
 // https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes
 {
