@@ -56,8 +56,9 @@ wb_workbook <- function(
 #' Save Workbook to file
 #'
 #' @param wb A `wbWorkbook` object to write to file
-#' @param path A path to save the workbook to
+#' @param file A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `path` exists
+#' @param path Deprecated argument previously used for file. Please use file in new code.
 #'
 #' @export
 #' @family workbook wrappers
@@ -71,11 +72,11 @@ wb_workbook <- function(
 #'
 #' ## Save workbook to working directory
 #' \donttest{
-#' wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
+#' wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
 #' }
-wb_save <- function(wb, path = NULL, overwrite = TRUE) {
+wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
   assert_workbook(wb)
-  wb$clone()$save(path = path, overwrite = overwrite)
+  wb$clone()$save(file = file, overwrite = overwrite, path = path)
 }
 
 # add data ----------------------------------------------------------------

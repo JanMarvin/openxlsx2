@@ -52,7 +52,7 @@ test_that("wb_load() is a wrapper", {
 
 test_that("wb_save() is a wrapper", {
   # returns the file path instead
-  expect_wrapper("save", params = NULL, ignore = "path")
+  expect_wrapper("save", params = NULL, ignore = c("file", "path"))
 })
 
 # wb_merge_cells(), wb_unmerge_cells() ------------------------------------
