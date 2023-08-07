@@ -716,7 +716,7 @@ wb_read <- function(
 wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   assert_workbook(wb)
   sheetno <- wb_validate_sheet(wb, sheet)
-  sheetname <- wb$get_sheet_names()[[sheetno]]
+  sheetname <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
 
   if (missing(dims)) {
     dims <- unname(unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension")))

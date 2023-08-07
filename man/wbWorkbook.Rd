@@ -1161,9 +1161,16 @@ The \code{wbWorkbook} object
 \subsection{Method \code{get_sheet_names()}}{
 Get sheet names
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names(escape = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{escape}}{Logical if the xml special characters are escaped}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 A \code{named} \code{character} vector of sheet names in their order.  The
 names represent the original value of the worksheet prior to any

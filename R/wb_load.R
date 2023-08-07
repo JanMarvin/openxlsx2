@@ -649,7 +649,7 @@ wb_load <- function(
     sheet <- import_sheets
     if (is.na(sheet)) {
       stop("No such sheet in the workbook. Workbook contains:\n",
-           paste(names(wb$get_sheet_names()), collapse = "\n"))
+           paste(names(wb$get_sheet_names(escape = TRUE)), collapse = "\n"))
     }
   }
 

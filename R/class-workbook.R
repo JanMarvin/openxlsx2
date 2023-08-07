@@ -2524,7 +2524,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       if (as_ref) {
-        from_sheet_name <- self$get_sheet_names()[[from_sheet]]
+        from_sheet_name <- self$get_sheet_names(escape = TRUE)[[from_sheet]]
         to_cc[c("c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
         to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_cells)
       }
@@ -2670,11 +2670,13 @@ wbWorkbook <- R6::R6Class(
     ### sheet names ----
 
     #' @description Get sheet names
+    #' @param escape Logical if the xml special characters are escaped
     #' @return A `named` `character` vector of sheet names in their order.  The
     #'   names represent the original value of the worksheet prior to any
     #'   character substitutions.
-    get_sheet_names = function() {
-      res <- self$sheet_names
+    get_sheet_names = function(escape = FALSE) {
+      res <- private$original_sheet_names
+      if (escape) res <- self$sheet_names
       names(res) <- private$original_sheet_names
       res[self$sheetOrder]
     },
@@ -5001,7 +5003,7 @@ wbWorkbook <- R6::R6Class(
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
-      exSheets <- self$get_sheet_names()
+      exSheets <- self$get_sheet_names(escape = TRUE)
       nSheets <- length(exSheets)
       nImages <- length(self$media)
       nCharts <- length(self$charts)
@@ -5332,7 +5334,7 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", min(print_title_rows)),
           ref2 = paste0("$", max(print_title_rows)),
           name = "_xlnm.Print_Titles",
-          sheet = self$get_sheet_names()[[sheet]],
+          sheet = self$get_sheet_names(escape = TRUE)[[sheet]],
           localSheetId = sheet - 1L
         )
       } else if (!is.null(print_title_cols) && is.null(print_title_rows)) {
@@ -5345,7 +5347,7 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
           name = "_xlnm.Print_Titles",
-          sheet = self$get_sheet_names()[[sheet]],
+          sheet = self$get_sheet_names(escape = TRUE)[[sheet]],
           localSheetId = sheet - 1L
         )
       } else if (!is.null(print_title_cols) && !is.null(print_title_rows)) {
@@ -5363,7 +5365,7 @@ wbWorkbook <- R6::R6Class(
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
         localSheetId <- sheet - 1L
-        sheet <- self$get_sheet_names()[[sheet]]
+        sheet <- self$get_sheet_names(escape = TRUE)[[sheet]]
 
         self$workbook$definedNames <- c(
           self$workbook$definedNames,
