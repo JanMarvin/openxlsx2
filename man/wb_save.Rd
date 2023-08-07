@@ -9,6 +9,8 @@ wb_save(wb, file = NULL, overwrite = TRUE, path = NULL)
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
 
+\item{file}{A path to save the workbook to}
+
 \item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
 
 \item{path}{Deprecated argument previously used for file. Please use file in new code.}
@@ -26,7 +28,7 @@ wb$add_worksheet(sheet = "My first worksheet")
 
 ## Save workbook to working directory
 \donttest{
-wb_save(wb, path = temp_xlsx(), overwrite = TRUE)
+wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
 }
 }
 \seealso{
