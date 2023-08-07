@@ -45,7 +45,7 @@
 
 * Cleanup / revisit documentation and vignettes ([682](https://github.com/JanMarvin/openxlsx2/pull/682), @olivroy)
 
-* The [function index](https://janmarvin.github.io/openxlsx2/reference) has been improved. ([717](https://github.com/JanMarvin/openxlsx2/pull/717), @olivroy)
+* The [function index](https://janmarvin.github.io/openxlsx2/reference/) has been improved. ([717](https://github.com/JanMarvin/openxlsx2/pull/717), @olivroy)
 
 ***************************************************************************
 

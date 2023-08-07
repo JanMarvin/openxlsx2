@@ -28,7 +28,7 @@
 #' * [wb_to_df()]
 #' * [read_xlsx()]
 #' * [write_xlsx()]
-#' * <https://janmarvin.github.io/openxlsx2>
+#' * <https://janmarvin.github.io/openxlsx2/>
 #' for examples
 #'
 #' @details
