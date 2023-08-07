@@ -1192,17 +1192,21 @@ STDEVP, SUM, VAR, VARP</p>
 <h3 id="method-save-">Method <code><a href="https://rdrr.io/r/base/save.html" class="external-link">save()</a></code><a class="anchor" aria-label="anchor" href="#method-save-"></a></h3>
 <p>Save the workbook</p><div class="section">
 <h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>path <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>file <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>path</code></dt>
+<p></p><div class="arguments"><dl><dt><code>file</code></dt>
 <dd><p>The path to save the workbook to</p></dd>
 
 
 <dt><code>overwrite</code></dt>
 <dd><p>If <code>FALSE</code>, will not overwrite when <code>path</code> exists</p></dd>
+
+
+<dt><code>path</code></dt>
+<dd><p>Deprecated argument previously used for file. Please use file in new code.</p></dd>
 
 
 </dl><p></p></div>
