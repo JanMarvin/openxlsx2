@@ -5560,7 +5560,7 @@ wbWorkbook <- R6::R6Class(
     #' @param show show
     #' @param print print
     #' @return The `wbWorkbook` object
-    grid_lines = function(sheet = current_sheet(), show = FALSE, print = show) {
+    set_grid_lines = function(sheet = current_sheet(), show = FALSE, print = show) {
       sheet <- private$get_sheet_index(sheet)
 
       assert_class(show, "logical")
@@ -5576,6 +5576,16 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$set_print_options(gridLines = print, gridLinesSet = print)
 
       invisible(self)
+    },
+
+    #' @description grid lines
+    #' @param sheet sheet
+    #' @param show show
+    #' @param print print
+    #' @return The `wbWorkbook` object
+    grid_lines = function(sheet = current_sheet(), show = FALSE, print = show) {
+      .Deprecated(old = "grid_lines", new = "set_grid_lines", package = "openxlsx2")
+      self$set_grid_lines(sheet = sheet, show = show, print = print)
     },
 
     ### named region ----
