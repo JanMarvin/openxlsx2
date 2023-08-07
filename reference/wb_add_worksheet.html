@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -65,21 +67,21 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_add_worksheet</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">next_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  gridLines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowColHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tabColor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  grid_lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_col_headers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  tab_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  header <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  oddHeader <span class="op">=</span> <span class="va">header</span>,</span>
-<span>  oddFooter <span class="op">=</span> <span class="va">footer</span>,</span>
-<span>  evenHeader <span class="op">=</span> <span class="va">header</span>,</span>
-<span>  evenFooter <span class="op">=</span> <span class="va">footer</span>,</span>
-<span>  firstHeader <span class="op">=</span> <span class="va">header</span>,</span>
-<span>  firstFooter <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  odd_header <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  odd_footer <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  even_header <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  even_footer <span class="op">=</span> <span class="va">footer</span>,</span>
+<span>  first_header <span class="op">=</span> <span class="va">header</span>,</span>
+<span>  first_footer <span class="op">=</span> <span class="va">footer</span>,</span>
 <span>  visible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"true"</span>, <span class="st">"false"</span>, <span class="st">"hidden"</span>, <span class="st">"visible"</span>, <span class="st">"veryhidden"</span><span class="op">)</span>,</span>
-<span>  hasDrawing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  paperSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.paperSize"</span>, default <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
+<span>  has_drawing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  paper_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.paperSize"</span>, default <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.orientation"</span>, default <span class="op">=</span> <span class="st">"portrait"</span><span class="op">)</span>,</span>
 <span>  hdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.hdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  vdpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.vdpi"</span>, default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.dpi"</span>, default <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -97,17 +99,17 @@
 <dd><p>A name for the new worksheet</p></dd>
 
 
-<dt>gridLines</dt>
+<dt>grid_lines</dt>
 <dd><p>A logical. If <code>FALSE</code>, the worksheet grid lines will be
 hidden.</p></dd>
 
 
-<dt>rowColHeaders</dt>
+<dt>row_col_headers</dt>
 <dd><p>A logical. If <code>FALSE</code>, the worksheet colname and rowname will be
 hidden.</p></dd>
 
 
-<dt>tabColor</dt>
+<dt>tab_color</dt>
 <dd><p>Color of the worksheet tab. A valid color (belonging to
 colors()) or a valid hex color beginning with "#"</p></dd>
 
@@ -117,7 +119,7 @@ colors()) or a valid hex color beginning with "#"</p></dd>
 percentage.</p></dd>
 
 
-<dt>header, oddHeader, evenHeader, firstHeader, footer, oddFooter, evenFooter, firstFooter</dt>
+<dt>header, odd_header, even_header, first_header, footer, odd_footer, even_footer, first_footer</dt>
 <dd><p>Character vector of length 3 corresponding to positions left, center,
 right.  <code>header</code> and <code>footer</code> are used to default additional arguments.
 Setting <code>even</code>, <code>odd</code>, or <code>first</code>, overrides <code>header</code>/<code>footer</code>. Use <code>NA</code> to
@@ -128,12 +130,12 @@ skip a position.</p></dd>
 <dd><p>If FALSE, sheet is hidden else visible.</p></dd>
 
 
-<dt>hasDrawing</dt>
+<dt>has_drawing</dt>
 <dd><p>If TRUE prepare a drawing output (TODO does this work?)</p></dd>
 
 
-<dt>paperSize</dt>
-<dd><p>An integer corresponding to a paper size. See ?ws_page_setup for
+<dt>paper_size</dt>
+<dd><p>An integer corresponding to a paper size. See <code><a href="wb_page_setup.html">wb_page_setup()</a></code> for
 details.</p></dd>
 
 
@@ -178,21 +180,21 @@ options("openxlsx2.vdpi" = X)</p></dd>
     <div class="dont-index"><p>Other workbook wrappers: 
 <code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
 <code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="write_data.html">wb_add_data</a>()</code>,
+<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
 <code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
+<code><a href="wb_base_font.html">wb_base_font</a></code>,
 <code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
+<code><a href="wb_col_widths.html">wb_col_widths</a></code>,
 <code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
 <code><a href="wb_creators.html">wb_creators</a></code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_get_base_font.html">wb_get_base_font</a>()</code>,
+<code><a href="wb_grouping.html">wb_grouping</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
 <code><a href="wb_save.html">wb_save</a>()</code>,
-<code><a href="wb_set_col_widths.html">wb_set_col_widths</a>()</code>,
 <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
 <code><a href="wb_set_row_heights.html">wb_set_row_heights</a>()</code>,
-<code><a href="wb_workbook.html">wb_workbook</a>()</code>,
-<code><a href="workbook_grouping.html">workbook_grouping</a></code>,
-<code><a href="ws_cell_merge.html">ws_cell_merge</a></code></p></div>
+<code><a href="wb_workbook.html">wb_workbook</a>()</code></p></div>
     </div>
 
     <div class="section level2">

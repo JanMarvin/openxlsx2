@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -66,23 +68,24 @@
 <span>  <span class="va">wb</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">x</span>,</span>
-<span>  startCol <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fu"><a href="dims_helper.html">rowcol_to_dims</a></span><span class="op">(</span><span class="va">startRow</span>, <span class="va">startCol</span><span class="op">)</span>,</span>
-<span>  colNames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rowNames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tableStyle <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,</span>
-<span>  tableName <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  withFilter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  dims <span class="op">=</span> <span class="fu"><a href="wb_dims.html">wb_dims</a></span><span class="op">(</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">)</span>,</span>
+<span>  start_col <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  table_style <span class="op">=</span> <span class="st">"TableStyleLight9"</span>,</span>
+<span>  table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  with_filter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
-<span>  firstColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  lastColumn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bandedCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  applyCellStyle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  removeCellStyle <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  first_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  last_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  banded_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  banded_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,68 +103,67 @@
 <dd><p>A dataframe.</p></dd>
 
 
-<dt>startCol</dt>
+<dt>dims</dt>
+<dd><p>Spreadsheet dimensions that will determine <code>start_col</code> and <code>start_row</code>: "A1", "A1:B2", "A:B"</p></dd>
+
+
+<dt>start_col</dt>
 <dd><p>A vector specifying the starting column to write df</p></dd>
 
 
-<dt>startRow</dt>
+<dt>start_row</dt>
 <dd><p>A vector specifying the starting row to write df</p></dd>
 
 
-<dt>dims</dt>
-<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
+<dt>col_names</dt>
+<dd><p>If <code>TRUE</code>, column names of <code>x</code> are written.</p></dd>
 
 
-<dt>colNames</dt>
-<dd><p>If <code>TRUE</code>, column names of x are written.</p></dd>
+<dt>row_names</dt>
+<dd><p>If <code>TRUE</code>, row names of <code>x</code> are written.</p></dd>
 
 
-<dt>rowNames</dt>
-<dd><p>If <code>TRUE</code>, row names of x are written.</p></dd>
-
-
-<dt>tableStyle</dt>
+<dt>table_style</dt>
 <dd><p>Any excel table style name or "none" (see "formatting"
 vignette).</p></dd>
 
 
-<dt>tableName</dt>
+<dt>table_name</dt>
 <dd><p>name of table in workbook. The table name must be unique.</p></dd>
 
 
-<dt>withFilter</dt>
+<dt>with_filter</dt>
 <dd><p>If <code>TRUE</code>, columns with have filters in the first row.</p></dd>
 
 
 <dt>sep</dt>
 <dd><p>Only applies to list columns. The separator used to collapse list
-columns to a character vector e.g. sapply(x$list_column, paste, collapse =
-sep).
+columns to a character vector e.g. <code>sapply(x$list_column, paste, collapse = sep)</code>.
 <br><br><br><strong>The below options correspond to Excel table options:</strong>
 <br><img src="figures/tableoptions.png" width="40%" alt="Figure: table_options.png"></p></dd>
 
 
-<dt>firstColumn</dt>
+<dt>first_column</dt>
 <dd><p>logical. If TRUE, the first column is bold</p></dd>
 
 
-<dt>lastColumn</dt>
+<dt>last_column</dt>
 <dd><p>logical. If TRUE, the last column is bold</p></dd>
 
 
-<dt>bandedRows</dt>
+<dt>banded_rows</dt>
 <dd><p>logical. If TRUE, rows are color banded</p></dd>
 
 
-<dt>bandedCols</dt>
+<dt>banded_cols</dt>
 <dd><p>logical. If TRUE, the columns are color banded</p></dd>
 
 
-<dt>applyCellStyle</dt>
+<dt>apply_cell_style</dt>
 <dd><p>Should we write cell styles to the workbook</p></dd>
 
 
-<dt>removeCellStyle</dt>
+<dt>remove_cell_style</dt>
 <dd><p>keep the cell style?</p></dd>
 
 
@@ -173,10 +175,14 @@ sep).
 <dt>inline_strings</dt>
 <dd><p>write characters as inline strings</p></dd>
 
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>columns of x with class Date/POSIXt, currency, accounting,
+    <p>columns of <code>x</code> with class Date/POSIXt, currency, accounting,
 hyperlink, percentage are automatically styled as dates, currency,
 accounting, hyperlinks, percentages respectively. The string <code>"_openxlsx_NA"</code>
 is reserved for <code>openxlsx2</code>. If the data frame contains this string, the
@@ -186,22 +192,22 @@ output will be broken.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other workbook wrappers: 
 <code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
-<code><a href="write_data.html">wb_add_data</a>()</code>,
+<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
 <code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
 <code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
+<code><a href="wb_base_font.html">wb_base_font</a></code>,
 <code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
+<code><a href="wb_col_widths.html">wb_col_widths</a></code>,
 <code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
 <code><a href="wb_creators.html">wb_creators</a></code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_get_base_font.html">wb_get_base_font</a>()</code>,
+<code><a href="wb_grouping.html">wb_grouping</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
 <code><a href="wb_save.html">wb_save</a>()</code>,
-<code><a href="wb_set_col_widths.html">wb_set_col_widths</a>()</code>,
 <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
 <code><a href="wb_set_row_heights.html">wb_set_row_heights</a>()</code>,
-<code><a href="wb_workbook.html">wb_workbook</a>()</code>,
-<code><a href="workbook_grouping.html">workbook_grouping</a></code>,
-<code><a href="ws_cell_merge.html">ws_cell_merge</a></code></p></div>
+<code><a href="wb_workbook.html">wb_workbook</a>()</code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

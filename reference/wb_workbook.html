@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -67,8 +69,9 @@
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  datetimeCreated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  theme <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  datetime_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,24 +81,21 @@
 <dd><p>Creator of the workbook (your name). Defaults to login username</p></dd>
 
 
-<dt>title</dt>
-<dd><p>Workbook properties title</p></dd>
+<dt>title, subject, category</dt>
+<dd><p>Workbook property, a string.</p></dd>
 
 
-<dt>subject</dt>
-<dd><p>Workbook properties subject</p></dd>
-
-
-<dt>category</dt>
-<dd><p>Workbook properties category</p></dd>
-
-
-<dt>datetimeCreated</dt>
+<dt>datetime_created</dt>
 <dd><p>The time of the workbook is created</p></dd>
 
 
 <dt>theme</dt>
-<dd><p>Optional theme identified by string or number</p></dd>
+<dd><p>Optional theme identified by string or number.
+See <strong>Details</strong> for options.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -106,7 +106,8 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>"Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
+    <p><code>theme</code> can be one of
+"Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
 "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
 "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
@@ -117,21 +118,21 @@
     <div class="dont-index"><p>Other workbook wrappers: 
 <code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
 <code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="write_data.html">wb_add_data</a>()</code>,
+<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
 <code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
 <code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
+<code><a href="wb_base_font.html">wb_base_font</a></code>,
 <code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
+<code><a href="wb_col_widths.html">wb_col_widths</a></code>,
 <code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
 <code><a href="wb_creators.html">wb_creators</a></code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_get_base_font.html">wb_get_base_font</a>()</code>,
+<code><a href="wb_grouping.html">wb_grouping</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
 <code><a href="wb_save.html">wb_save</a>()</code>,
-<code><a href="wb_set_col_widths.html">wb_set_col_widths</a>()</code>,
 <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
-<code><a href="wb_set_row_heights.html">wb_set_row_heights</a>()</code>,
-<code><a href="workbook_grouping.html">workbook_grouping</a></code>,
-<code><a href="ws_cell_merge.html">ws_cell_merge</a></code></p></div>
+<code><a href="wb_set_row_heights.html">wb_set_row_heights</a>()</code></p></div>
     </div>
 
     <div class="section level2">

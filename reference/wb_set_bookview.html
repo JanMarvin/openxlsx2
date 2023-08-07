@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -64,19 +66,20 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_set_bookview</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
-<span>  activeTab <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  autoFilterDateGrouping <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  firstSheet <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  active_tab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  auto_filter_date_grouping <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first_sheet <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  minimized <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showHorizontalScroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showSheetTabs <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  showVerticalScroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tabRatio <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_horizontal_scroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_sheet_tabs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_vertical_scroll <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tab_ratio <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  visibility <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  windowHeight <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  windowWidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xWindow <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  yWindow <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  window_height <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window_width <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  y_window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,15 +89,15 @@
 <dd><p>A <a href="wbWorkbook.html">wbWorkbook</a> object</p></dd>
 
 
-<dt>activeTab</dt>
+<dt>active_tab</dt>
 <dd><p>activeTab</p></dd>
 
 
-<dt>autoFilterDateGrouping</dt>
+<dt>auto_filter_date_grouping</dt>
 <dd><p>autoFilterDateGrouping</p></dd>
 
 
-<dt>firstSheet</dt>
+<dt>first_sheet</dt>
 <dd><p>firstSheet</p></dd>
 
 
@@ -102,19 +105,19 @@
 <dd><p>minimized</p></dd>
 
 
-<dt>showHorizontalScroll</dt>
+<dt>show_horizontal_scroll</dt>
 <dd><p>showHorizontalScroll</p></dd>
 
 
-<dt>showSheetTabs</dt>
+<dt>show_sheet_tabs</dt>
 <dd><p>showSheetTabs</p></dd>
 
 
-<dt>showVerticalScroll</dt>
+<dt>show_vertical_scroll</dt>
 <dd><p>showVerticalScroll</p></dd>
 
 
-<dt>tabRatio</dt>
+<dt>tab_ratio</dt>
 <dd><p>tabRatio</p></dd>
 
 
@@ -122,20 +125,24 @@
 <dd><p>visibility</p></dd>
 
 
-<dt>windowHeight</dt>
+<dt>window_height</dt>
 <dd><p>windowHeight</p></dd>
 
 
-<dt>windowWidth</dt>
+<dt>window_width</dt>
 <dd><p>windowWidth</p></dd>
 
 
-<dt>xWindow</dt>
+<dt>x_window</dt>
 <dd><p>xWindow</p></dd>
 
 
-<dt>yWindow</dt>
+<dt>y_window</dt>
 <dd><p>yWindow</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">

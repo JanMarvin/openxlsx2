@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -52,7 +54,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>create sparklines used in <code>add_sparline()</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/helperFunctions.R" class="external-link"><code>R/helperFunctions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/helper-functions.R" class="external-link"><code>R/helper-functions.R</code></a></small>
       <div class="d-none name"><code>create_sparklines.Rd</code></div>
     </div>
 
@@ -74,14 +76,14 @@
 <span>  low <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  first <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  last <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colorSeries <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF376092"</span><span class="op">)</span>,</span>
-<span>  colorNegative <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorAxis <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorMarkers <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorFirst <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorLast <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorHigh <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorLow <span class="op">=</span> <span class="fu"><a href="wbColour.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span></span>
+<span>  colorSeries <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF376092"</span><span class="op">)</span>,</span>
+<span>  colorNegative <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  colorAxis <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  colorMarkers <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  colorFirst <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  colorLast <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  colorHigh <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  colorLow <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 

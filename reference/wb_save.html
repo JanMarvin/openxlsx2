@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/openxlsx2.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,7 +29,6 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_basic_manual.html">openxlsx2 basic manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
@@ -62,7 +64,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, path <span class="op">=</span> <span class="cn">NULL</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="cn">NULL</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -71,12 +73,16 @@
 <dd><p>A <code>wbWorkbook</code> object to write to file</p></dd>
 
 
-<dt>path</dt>
+<dt>file</dt>
 <dd><p>A path to save the workbook to</p></dd>
 
 
 <dt>overwrite</dt>
 <dd><p>If <code>FALSE</code>, will not overwrite when <code>path</code> exists</p></dd>
+
+
+<dt>path</dt>
+<dd><p>Deprecated argument previously used for file. Please use file in new code.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -90,21 +96,21 @@
     <div class="dont-index"><p>Other workbook wrappers: 
 <code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
 <code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="write_data.html">wb_add_data</a>()</code>,
+<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
 <code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
 <code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
+<code><a href="wb_base_font.html">wb_base_font</a></code>,
 <code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
+<code><a href="wb_col_widths.html">wb_col_widths</a></code>,
 <code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
 <code><a href="wb_creators.html">wb_creators</a></code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_get_base_font.html">wb_get_base_font</a>()</code>,
-<code><a href="wb_set_col_widths.html">wb_set_col_widths</a>()</code>,
+<code><a href="wb_grouping.html">wb_grouping</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
 <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
 <code><a href="wb_set_row_heights.html">wb_set_row_heights</a>()</code>,
-<code><a href="wb_workbook.html">wb_workbook</a>()</code>,
-<code><a href="workbook_grouping.html">workbook_grouping</a></code>,
-<code><a href="ws_cell_merge.html">ws_cell_merge</a></code></p></div>
+<code><a href="wb_workbook.html">wb_workbook</a>()</code></p></div>
     </div>
 
     <div class="section level2">
@@ -115,7 +121,7 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Save workbook to working directory</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, path <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
