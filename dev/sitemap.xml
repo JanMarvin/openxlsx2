@@ -277,9 +277,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_get_worksheet.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_grid_lines.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_grouping.html</loc>
   </url>
   <url>
@@ -317,6 +314,9 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_bookview.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_grid_lines.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_header_footer.html</loc>
