@@ -1524,14 +1524,21 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Save the workbook
-    #' @param path The path to save the workbook to
+    #' @param file The path to save the workbook to
     #' @param overwrite If `FALSE`, will not overwrite when `path` exists
+    #' @param path Deprecated argument previously used for file. Please use file in new code.
     #' @return The `wbWorkbook` object invisibly
-    save = function(path = self$path, overwrite = TRUE) {
-      assert_class(path, "character")
+    save = function(file = self$path, overwrite = TRUE, path = NULL) {
+
+      if (!is.null(path)) {
+        .Deprecated(old = "wb_save(path)", new = "wb_save(file)", package = "openxlsx2")
+        file <- path
+      }
+
+      assert_class(file, "character")
       assert_class(overwrite, "logical")
 
-      if (file.exists(path) & !overwrite) {
+      if (file.exists(file) & !overwrite) {
         stop("File already exists!")
       }
 
@@ -2207,12 +2214,12 @@ wbWorkbook <- R6::R6Class(
       )
 
       # Copy file; stop if failed
-      if (!file.copy(from = tmpFile, to = path, overwrite = overwrite, copy.mode = FALSE)) {
+      if (!file.copy(from = tmpFile, to = file, overwrite = overwrite, copy.mode = FALSE)) {
         stop("Failed to save workbook")
       }
 
       # (re)assign file path (if successful)
-      self$path <- path
+      self$path <- file
       invisible(self)
     },
 

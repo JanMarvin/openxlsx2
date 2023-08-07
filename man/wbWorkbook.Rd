@@ -889,15 +889,17 @@ The \code{wbWorkbook} object invisibly
 \subsection{Method \code{save()}}{
 Save the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(path = self$path, overwrite = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(file = self$path, overwrite = TRUE, path = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{path}}{The path to save the workbook to}
+\item{\code{file}}{The path to save the workbook to}
 
 \item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{path} exists}
+
+\item{\code{path}}{Deprecated argument previously used for file. Please use file in new code.}
 }
 \if{html}{\out{</div>}}
 }

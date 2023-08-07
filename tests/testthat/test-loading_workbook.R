@@ -47,7 +47,7 @@ test_that("Load and saving a file with Threaded Comments works", {
   expect_equal(exp, got)
 
   # Check that wb can be saved without error
-  expect_silent(wb_save(wb, path = tmp))
+  expect_silent(wb_save(wb, file = tmp))
   wb <- wb_load(tmp)
 
   got <- substr(wb$comments[[1]][[1]]$comment, 1, 25)
@@ -86,7 +86,7 @@ test_that("Read and save file with inlineStr", {
 
   tmp_xlsx <- temp_xlsx()
   # Check that wb can be saved without error and reimported
-  expect_identical(tmp_xlsx, wb_save(wb, path = tmp_xlsx)$path)
+  expect_identical(tmp_xlsx, wb_save(wb, file = tmp_xlsx)$path)
   wb_df_re <- wb_read(wb_load(tmp_xlsx))
   attr(wb_df_re, "tt") <- NULL
   attr(wb_df_re, "types") <- NULL
