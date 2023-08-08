@@ -2276,10 +2276,11 @@ wb_set_sheet_names <- function(wb, old = NULL, new) {
   wb$clone()$set_sheet_names(old = old, new = new)
 }
 #' @rdname wb_sheet_names
+#' @param escape Logical if the xml special characters are escaped
 #' @export
-wb_get_sheet_names <- function(wb) {
+wb_get_sheet_names <- function(wb, escape = FALSE) {
   assert_workbook(wb)
-  wb$get_sheet_names()
+  wb$get_sheet_names(escape = escape)
 }
 
 # others? -----------------------------------------------------------------

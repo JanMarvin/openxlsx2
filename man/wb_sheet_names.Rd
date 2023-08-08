@@ -8,7 +8,7 @@
 \usage{
 wb_set_sheet_names(wb, old = NULL, new)
 
-wb_get_sheet_names(wb)
+wb_get_sheet_names(wb, escape = FALSE)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object}
@@ -17,6 +17,8 @@ wb_get_sheet_names(wb)
 all worksheets are to be renamed.}
 
 \item{new}{The name of the new sheet}
+
+\item{escape}{Logical if the xml special characters are escaped}
 }
 \value{
 \itemize{
