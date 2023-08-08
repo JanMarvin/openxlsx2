@@ -135,7 +135,7 @@ The example below, with increased column width.
 <span>    right_color <span class="op">=</span> <span class="va">border_col</span>, right_border <span class="op">=</span> <span class="va">border_sty</span>,</span>
 <span>    inner_hcolor <span class="op">=</span> <span class="va">border_col</span>, inner_hgrid <span class="op">=</span> <span class="va">border_sty</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF334E6F"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF334E6F"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_font.html">wb_add_font</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"white"</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_cell_style.html">wb_add_cell_style</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="va">dims_mat_header</span>, horizontal <span class="op">=</span> <span class="st">"center"</span>, textRotation <span class="op">=</span> <span class="fl">45</span><span class="op">)</span></span>
 <span></span>
@@ -168,7 +168,7 @@ The example below, with increased column width.
 <span></span>
 <span><span class="co"># create a border style and assign it to the workbook</span></span>
 <span><span class="va">black</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span></span>
-<span><span class="co"># same as wb_color("black") or  wb_color(hex = "#FF000000") or wb_color("FF000000")</span></span>
+<span><span class="co"># same as wb_color("black") or  wb_color(hex = "FF000000") or wb_color("FF000000")</span></span>
 <span><span class="va">new_border</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_border.html">create_border</a></span><span class="op">(</span></span>
 <span>  bottom <span class="op">=</span> <span class="st">"thin"</span>, bottom_color <span class="op">=</span> <span class="va">black</span>,</span>
 <span>  top <span class="op">=</span> <span class="st">"thin"</span>, top_color <span class="op">=</span> <span class="va">black</span>,</span>
@@ -179,7 +179,7 @@ The example below, with increased column width.
 <span></span>
 <span></span>
 <span><span class="co"># create a fill style and assign it to the workbook</span></span>
-<span><span class="va">new_fill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_fill.html">create_fill</a></span><span class="op">(</span>patternType <span class="op">=</span> <span class="st">"solid"</span>, fgColor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF334E6F"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">new_fill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_fill.html">create_fill</a></span><span class="op">(</span>patternType <span class="op">=</span> <span class="st">"solid"</span>, fgColor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF334E6F"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">new_fill</span>, <span class="st">"new_fill"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a font style and assign it to the workbook</span></span>
@@ -234,7 +234,7 @@ The example below, with increased column width.
 <span>  <span class="st">"sheetPr"</span>,</span>
 <span>  xml_children <span class="op">=</span> <span class="fu"><a href="../reference/xml_node_create.html">xml_node_create</a></span><span class="op">(</span></span>
 <span>    <span class="st">"tabColor"</span>,</span>
-<span>    xml_attributes <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF00FF00"</span><span class="op">)</span></span>
+<span>    xml_attributes <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF00FF00"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -359,7 +359,7 @@ selected R classes.</p>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_border</span><span class="op">(</span></span>
 <span>  dims <span class="op">=</span> <span class="st">"A2:K33"</span>,</span>
 <span>  inner_vgrid <span class="op">=</span> <span class="st">"thin"</span>,</span>
-<span>  inner_vcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"#FF808080"</span><span class="op">)</span></span>
+<span>  inner_vcolor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF808080"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co"># no inner grid</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S4"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
