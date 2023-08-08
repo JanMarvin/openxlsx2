@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.8.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,8 +59,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8" id="openxlsx2-08">openxlsx2 0.8<a class="anchor" aria-label="anchor" href="#openxlsx2-08"></a></h2><p class="text-muted">CRAN release: 2023-08-07</p>
 <div class="section level3">
-<h3 id="api-change-development-version">API Change<a class="anchor" aria-label="anchor" href="#api-change-development-version"></a></h3>
+<h3 id="api-change-0-8">API Change<a class="anchor" aria-label="anchor" href="#api-change-0-8"></a></h3>
 <ul><li><p>Function arguments are now defaulting to <code>snake_case</code>. For the time being, both arguments are accepted and <code>camelCase</code> will be switched to <code>snake_case</code> under the hood. Some examples are currently still displaying <code>camelCase</code> and maybe some <code>camelCase</code> function slipped through. <a href="https://github.com/JanMarvin/openxlsx2/pull/678" class="external-link">678</a></p></li>
 <li>
 <p><code><a href="../reference/write_formula.html">write_formula()</a></code>, <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code>, <code><a href="../reference/comment_internal.html">write_comment()</a></code> are no longer recommended,</p>
@@ -68,7 +71,7 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-0-8">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-8"></a></h3>
 <ul><li><p>Order of arguments in <code><a href="../reference/named_region.html">wb_add_named_region()</a></code> changed, because previously overlooked <code>dims</code> argument was added.</p></li>
 <li><p>In various functions the order of <code>dims</code> was changed, to highlight it’s importance</p></li>
 <li>
@@ -96,7 +99,7 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-0-8">New features<a class="anchor" aria-label="anchor" href="#new-features-0-8"></a></h3>
 <ul><li>
 <code><a href="../reference/wb_dims.html">wb_dims()</a></code> was added as a more convenient replacement for <code><a href="../reference/dims_helper.html">rowcol_to_dims()</a></code>.(<a href="https://github.com/JanMarvin/openxlsx2/pull/691" class="external-link">691</a> and <a href="https://github.com/JanMarvin/openxlsx2/pull/702" class="external-link">702</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>) The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coercible to data frame. This allows the following variants:
 <ul><li><code>wb_dims(1:5, letters)</code></li>
@@ -107,12 +110,12 @@
 <li>Handling of thread comments is now possible via <code><a href="../reference/wb_add_thread.html">wb_add_thread()</a></code>. This includes options to reply and resolve comments.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-0-8">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-8"></a></h3>
 <ul><li>Improve <code>show_formula</code>. Previously it was called to early in the function and skipped a few cases. <a href="https://github.com/JanMarvin/openxlsx2/pull/715" class="external-link">715</a>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="refactoring-development-version">Refactoring<a class="anchor" aria-label="anchor" href="#refactoring-development-version"></a></h3>
+<h3 id="refactoring-0-8">Refactoring<a class="anchor" aria-label="anchor" href="#refactoring-0-8"></a></h3>
 <ul><li><p>Cleanup / revisit documentation and vignettes (<a href="https://github.com/JanMarvin/openxlsx2/pull/682" class="external-link">682</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
 <li><p>The <a href="https://janmarvin.github.io/openxlsx2/reference/">function index</a> has been improved. (<a href="https://github.com/JanMarvin/openxlsx2/pull/717" class="external-link">717</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
 </ul><hr></div>
