@@ -114,43 +114,7 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
 
 getId <- function(x) reg_match0(x, '(?<= Id=")[0-9A-Za-z]+')
 
-# `validateColor()` ------------------------------------------------------------
-#' Validate the color input
-#'
-#' @param color color
-#' @param errorMsg Error message
-#' @noRd
-validateColor <- function(color, errorMsg = "Invalid color!") {
-  color <- check_valid_color(color)
-
-  if (isFALSE(color)) {
-    stop(errorMsg)
-  }
-
-  color
-}
-
-check_valid_color <- function(color) {
-  # Not proud of this.  Returns FALSE if not a vaild, otherwise  cleans up.
-  # Probably not the best, but working within the functions we alreayd have.
-  if (is.null(color)) {
-    color <- "black"
-  }
-
-  validColors <- colors()
-
-  if (any(color %in% validColors)) {
-    color[color %in% validColors] <- col2hex(color[color %in% validColors])
-  }
-
-  if (all(grepl("^#[A-Fa-f0-9]{6}$", color))) {
-    gsub("^#", "FF", toupper(color))
-  } else {
-    FALSE
-  }
-}
-
-# `col2hex()` ------------------------------------------------------------------
+# `col2hex()` -----------------------------------------------------------------
 #' Convert rgb to hex
 #'
 #' @param my.col my.col
@@ -159,6 +123,43 @@ col2hex <- function(my.col) {
   rgb(t(col2rgb(my.col)), maxColorValue = 255)
 }
 
+# validate color --------------------------------------------------------------
+#' Validate and convert color. Returns ARGB string
+#' @param color input string (something like color(), "00000", "#000000", "00000000" or "#00000000")
+#' @param or_null logical for use in assert
+#' @param envir parent frame for use in assert
+#' @param msg return message
+#' @noRd
+validate_color <- function(color = NULL, or_null = FALSE, envir = parent.frame(), msg = NULL) {
+  sx <- as.character(substitute(color, envir))
+
+  if (identical(color, "none") && or_null) {
+    return(NULL)
+  }
+
+  # returns black
+  if (is.null(color)) {
+    if (or_null) return(NULL)
+    return("FF000000")
+  }
+
+  if (ind <- any(color %in% grDevices::colors())) {
+    color[ind] <- col2hex(color[ind])
+  }
+
+  # remove any # from color strings
+  color <- gsub("^#", "", toupper(color))
+
+  ## create a total size of 8 in ARGB format
+  color <- stringi::stri_pad_left(str = color, width = 8, pad = "F")
+
+  if (any(!grepl("[A-F0-9]{8}$", color))) {
+    if (is.null(msg)) msg <- sprintf("`%s` ['%s'] is not a valid color", sx, color)
+    stop(simpleError(msg))
+  }
+
+  color
+}
 
 ## header and footer replacements ----------------------------------------------
 headerFooterSub <- function(x) {

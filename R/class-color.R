@@ -17,6 +17,7 @@ wb_color <- function(
   ) {
 
   if (!is.null(name)) hex <-  validate_color(name)
+  if (!is.null(hex))  hex <-  validate_color(hex)
 
   z <- c(
     auto    = as_xml_attr(auto),
