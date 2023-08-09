@@ -1,5 +1,12 @@
 # openxlsx2 (development version)
 
+## Fixes
+
+* corrections in vignettes
+
+
+***************************************************************************
+
 
 # openxlsx2 0.8
 

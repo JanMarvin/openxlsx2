@@ -235,16 +235,18 @@ For completion, the formula as we wrote it appears as;
 wb$add_worksheet("sum_examples")
 
 ### Note: dataTable formula do not need to be used inside of dataTables. dataTable formula are for referencing the data within the dataTable.
+
+### Note: dataTable formula do not need to be used inside of dataTables. dataTable formula are for referencing the data within the dataTable.
 sum_examples <- data.frame(
-    description = c("sum_sales_price", "sum_product_Price_Quantity"),
-    formula = c(
-      "sum(daily_sales[[#Data],[sales_price]])",
-      "sum(daily_sales[[#Data],[sales_price]] * daily_sales[[#Data],[sales_quantity]])"
-    )
-  )
-class(sum_examples$formula) <- c(class(sum_examples$formula), "formula")
+  description = c("sum_sales_price", "sum_product_Price_Quantity"),
+  formula = c("", "")
+)
 
 wb$add_data(x = sum_examples)
+
+# add formulas
+wb$add_formula(x = "sum(daily_sales[[#Data],[sales_price]])", dims = "B2")
+wb$add_formula(x = "sum(daily_sales[[#Data],[sales_price]] * daily_sales[[#Data],[sales_quantity]])", dims = "B3", array = TRUE)
 
 #### dataTable referencing
 wb$add_worksheet("dt_references")
@@ -252,12 +254,16 @@ wb$add_worksheet("dt_references")
 ### Adding the headers by themselves.
 wb$add_formula(
   x = "daily_sales[[#Headers],[sales_price]:[total_gross_profit]]",
+  dims = "A1:G1",
+  array = TRUE
 )
 
 ### Adding the raw data by reference and selecting them directly.
 wb$add_formula(
   x = "daily_sales[[#Data],[sales_price]:[total_gross_profit]]",
-  start_row = 2
+  start_row = 2,
+  dims = "A2:G4",
+  array = TRUE
 )
 # wb$open()
 ```
