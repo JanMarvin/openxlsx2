@@ -3,9 +3,13 @@
 #include <cstdint>
 #include <typeinfo>
 
-// // for to_utf8
-// #include <locale>
-// #include <codecvt>
+// detect if we need to swap. assuming that there is no big endian xlsb format,
+// we only need to swap little endian xlsb files on big endian systems
+bool is_big_endian() {
+  uint32_t num = 1;
+  uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&num);
+  return bytePtr[0] == 0;
+}
 
 #define GCC_VERSION (__GNUC__ * 10000 \
 + __GNUC_MINOR__ * 100                \
@@ -186,24 +190,24 @@ std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
   return(outstr);
 }
 
-std::string PtrStr(std::istream& sas) {
+std::string PtrStr(std::istream& sas, bool swapit) {
   uint16_t len = 0;
-  len = readbin(len, sas, 0);
+  len = readbin(len, sas, swapit);
   std::string str(len, '\0');
   return read_xlwidestring(str, sas);
 }
 
-std::string XLWideString(std::istream& sas) {
+std::string XLWideString(std::istream& sas, bool swapit) {
   uint32_t len = 0;
-  len = readbin(len, sas, 0);
+  len = readbin(len, sas, swapit);
   std::string str(len, '\0');
   return read_xlwidestring(str, sas);
 }
 
 // same, but can be NULL
-std::string XLNullableWideString(std::istream& sas) {
+std::string XLNullableWideString(std::istream& sas, bool swapit) {
   uint32_t len = 0;
-  len = readbin(len, sas, 0);
+  len = readbin(len, sas, swapit);
   if (len == 0xFFFFFFFF) {
     return "";
   }
@@ -220,13 +224,13 @@ std::string XLNullableWideString(std::istream& sas) {
 // bits 5-7 from uint8_t
 // bit 8 from uint8_t
 
-int32_t RECORD_ID(std::istream& sas) {
+int32_t RECORD_ID(std::istream& sas, bool swapit) {
   uint8_t var1 = 0, var2 = 0;
-  var1 = readbin(var1, sas, 0);
+  var1 = readbin(var1, sas, swapit);
 
   if (var1 & 0x80) {
 
-    var2 = readbin(var2, sas, 0);
+    var2 = readbin(var2, sas, swapit);
 
     // If the high bit is 1, then it's a two-byte record type
     int32_t recordType = ((var2 & 0x7F) << 7) | (var1 & 0x7F);
@@ -243,13 +247,13 @@ int32_t RECORD_ID(std::istream& sas) {
   return -1;
 }
 
-int32_t RECORD_SIZE(std::istream& sas) {
+int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
   int8_t sar1 = 0, sar2 = 0, sar3 = 0, sar4 = 0;
 
-  sar1 = readbin(sar1, sas, 0);
-  if (sar1 & 0x80) sar2 = readbin(sar2, sas, 0);
-  if (sar2 & 0x80) sar3 = readbin(sar3, sas, 0);
-  if (sar3 & 0x80) sar4 = readbin(sar4, sas, 0);
+  sar1 = readbin(sar1, sas, swapit);
+  if (sar1 & 0x80) sar2 = readbin(sar2, sas, swapit);
+  if (sar2 & 0x80) sar3 = readbin(sar3, sas, swapit);
+  if (sar3 & 0x80) sar4 = readbin(sar4, sas, swapit);
 
   // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
 
@@ -279,13 +283,13 @@ int32_t RECORD_SIZE(std::istream& sas) {
   return -1;
 }
 
-int32_t RECORD(int &rid, int &rsize, std::istream& sas) {
+int32_t RECORD(int &rid, int &rsize, std::istream& sas, bool swapit) {
 
   /* Record ID ---------------------------------------------------------------*/
-  rid = RECORD_ID(sas);
+  rid = RECORD_ID(sas, swapit);
 
   /* Record Size -------------------------------------------------------------*/
-  rsize = RECORD_SIZE(sas);
+  rsize = RECORD_SIZE(sas, swapit);
 
   return 0;
 }
@@ -361,95 +365,95 @@ std::string valign(int style) {
   return out;
 }
 
-void StrRun(std::istream& sas, uint32_t dwSizeStrRun) {
+void StrRun(std::istream& sas, uint32_t dwSizeStrRun, bool swapit) {
 
   uint16_t ich = 0, ifnt = 0;
 
   // something?
   for (uint8_t i = 0; i < dwSizeStrRun; ++i) {
-    ich  = readbin(ich, sas, 0);
-    ifnt = readbin(ifnt, sas, 0);
+    ich  = readbin(ich, sas, swapit);
+    ifnt = readbin(ifnt, sas, swapit);
     Rprintf("Styled string will be unstyled - strRun: %d %d\n", ich, ifnt);
   }
 }
 
-void PhRun(std::istream& sas, uint32_t dwPhoneticRun) {
+void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
 
   uint16_t ichFirst = 0, ichMom = 0, cchMom = 0, ifnt = 0;
   // uint32_t phrun = 0;
   for (uint8_t i = 0; i < dwPhoneticRun; ++i) {
-    ichFirst = readbin(ichFirst, sas, 0);
-    ichMom   = readbin(ichMom, sas, 0);
-    cchMom   = readbin(cchMom, sas, 0);
-    ifnt     = readbin(ifnt, sas, 0);
+    ichFirst = readbin(ichFirst, sas, swapit);
+    ichMom   = readbin(ichMom, sas, swapit);
+    cchMom   = readbin(cchMom, sas, swapit);
+    ifnt     = readbin(ifnt, sas, swapit);
   }
 }
 
-std::string RichStr(std::istream& sas) {
+std::string RichStr(std::istream& sas, bool swapit) {
 
   uint8_t AB= 0, A= 0, B= 0;
-  AB = readbin(AB, sas, 0);
+  AB = readbin(AB, sas, swapit);
 
   A = AB & 0x01;
   B = AB >> 1 & 0x01;
   // remaining 6 bits are ignored
 
-  std::string str = XLWideString(sas);
+  std::string str = XLWideString(sas, swapit);
 
   uint32_t dwSizeStrRun = 0, dwPhoneticRun = 0;
 
   if (A) {
     // number of runs following
-    dwSizeStrRun = readbin(dwSizeStrRun, sas, 0);
-    StrRun(sas, dwSizeStrRun);
+    dwSizeStrRun = readbin(dwSizeStrRun, sas, swapit);
+    StrRun(sas, dwSizeStrRun, swapit);
   }
 
   if (B) {
-    std::string phoneticStr = XLWideString(sas);
+    std::string phoneticStr = XLWideString(sas, swapit);
 
     // number of runs following
-    dwPhoneticRun = readbin(dwPhoneticRun, sas, 0);
-    PhRun(sas, dwPhoneticRun);
+    dwPhoneticRun = readbin(dwPhoneticRun, sas, swapit);
+    PhRun(sas, dwPhoneticRun, swapit);
   }
 
   return(str);
 
 }
 
-void ProductVersion(std::istream& sas, bool debug) {
+void ProductVersion(std::istream& sas, bool swapit, bool debug) {
   uint16_t fileVersion = 0, fileProduct = 0;
   int8_t fileExtension = 0;
 
-  fileVersion = readbin(fileVersion, sas, 0);
-  fileProduct = readbin(fileProduct, sas, 0);
+  fileVersion = readbin(fileVersion, sas, swapit);
+  fileProduct = readbin(fileProduct, sas, swapit);
 
   fileExtension = fileProduct & 0x01;
   fileProduct   = fileProduct & ~static_cast<uint16_t>(0x01);
   if (debug) Rprintf("ProductVersion: %d: %d: %d\n", fileVersion, fileProduct, fileExtension);
 }
 
-std::vector<int> UncheckedRfX(std::istream& sas) {
+std::vector<int> UncheckedRfX(std::istream& sas, bool swapit) {
 
   std::vector<int> out;
   int32_t rwFirst= 0, rwLast= 0, colFirst= 0, colLast= 0;
 
-  out.push_back(readbin(rwFirst, sas, 0));
-  out.push_back(readbin(rwLast, sas, 0));
-  out.push_back(readbin(colFirst, sas, 0));
-  out.push_back(readbin(colLast, sas, 0));
+  out.push_back(readbin(rwFirst, sas, swapit));
+  out.push_back(readbin(rwLast, sas, swapit));
+  out.push_back(readbin(colFirst, sas, swapit));
+  out.push_back(readbin(colLast, sas, swapit));
 
   return(out);
 }
 
-std::vector<int> UncheckedSqRfX(std::istream& sas) {
+std::vector<int> UncheckedSqRfX(std::istream& sas, bool swapit) {
 
   std::vector<int> out;
   int32_t crfx = 0;
-  crfx = readbin(crfx, sas, 0);
+  crfx = readbin(crfx, sas, swapit);
   out.push_back(crfx);
 
   for (int32_t i = 0; i < crfx; ++i) {
-    std::vector<int> ucrfx = UncheckedRfX(sas);
+    std::vector<int> ucrfx = UncheckedRfX(sas, swapit);
     out.insert(out.end(), ucrfx.begin(), ucrfx.end());
   }
 
@@ -457,36 +461,36 @@ std::vector<int> UncheckedSqRfX(std::istream& sas) {
 }
 
 
-int UncheckedCol(std::istream& sas) {
+int UncheckedCol(std::istream& sas, bool swapit) {
   int32_t col = 0;
-  col = readbin(col, sas, 0);
+  col = readbin(col, sas, swapit);
   if (col >= 0 && col <= 16383)
     return col;
   else
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
-int UncheckedRw(std::istream& sas) {
+int UncheckedRw(std::istream& sas, bool swapit) {
   int32_t row = 0;
-  row = readbin(row, sas, 0);
+  row = readbin(row, sas, swapit);
   if (row >= 0 && row <= 1048575)
     return row;
   else
     Rcpp::stop("row size bad: %d @ %d", row, sas.tellg());
 }
 
-uint16_t ColShort(std::istream& sas) {
+uint16_t ColShort(std::istream& sas, bool swapit) {
   uint16_t col = 0;
-  col = readbin(col, sas, 0);
+  col = readbin(col, sas, swapit);
   if (col >= 0 && col <= 16383)
     return col;
   else
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
-std::vector<int> ColRelShort(std::istream& sas) {
+std::vector<int> ColRelShort(std::istream& sas, bool swapit) {
   uint16_t tmp = 0;
-  tmp = readbin(tmp, sas, 0);
+  tmp = readbin(tmp, sas, swapit);
 
   int16_t col = 0, fColRel = 0, fRwRel = 0;
   col     = static_cast<int16_t>((tmp & 0x3FFF));
@@ -501,12 +505,12 @@ std::vector<int> ColRelShort(std::istream& sas) {
   return out;
 }
 
-std::string Loc(std::istream& sas) {
+std::string Loc(std::istream& sas, bool swapit) {
 
   std::vector<int> col;
   uint32_t row = 0;
-  row = UncheckedRw(sas);
-  col = ColRelShort(sas);
+  row = UncheckedRw(sas, swapit);
+  col = ColRelShort(sas, swapit);
 
   bool fColRel = col[1];
   bool fRwRel  = col[2];
@@ -523,12 +527,12 @@ std::string Loc(std::istream& sas) {
 }
 
 // RgceLocRel
-std::string LocRel(std::istream& sas) {
+std::string LocRel(std::istream& sas, bool swapit) {
 
   std::vector<int> col;
   int32_t row = 0;
-  row = readbin(row, sas, 0);
-  col = ColRelShort(sas);
+  row = readbin(row, sas, swapit);
+  col = ColRelShort(sas, swapit);
 
   bool fColRel = col[1];
   bool fRwRel  = col[2];
@@ -552,14 +556,14 @@ std::string LocRel(std::istream& sas) {
   return out;
 }
 
-std::string Area(std::istream& sas) {
+std::string Area(std::istream& sas, bool swapit) {
 
   std::vector<int> col0(3), col1(3);
   uint32_t row0 = 0, row1 = 0;
-  row0 = UncheckedRw(sas); // rowFirst
-  row1 = UncheckedRw(sas); // rowLast
-  col0 = ColRelShort(sas); // columnFirst
-  col1 = ColRelShort(sas); // columnLast
+  row0 = UncheckedRw(sas, swapit); // rowFirst
+  row1 = UncheckedRw(sas, swapit); // rowLast
+  col0 = ColRelShort(sas, swapit); // columnFirst
+  col1 = ColRelShort(sas, swapit); // columnLast
 
   bool fColRel0 = col0[1];
   bool fRwRel0  = col0[2];
@@ -585,14 +589,14 @@ std::string Area(std::istream& sas) {
   return out;
 }
 
-std::vector<int> Cell(std::istream& sas) {
+std::vector<int> Cell(std::istream& sas, bool swapit) {
 
   std::vector<int> out(3);
 
-  out[0] = UncheckedCol(sas);
+  out[0] = UncheckedCol(sas, swapit);
 
   int32_t uint = 0;
-  uint = readbin(uint, sas, 0);
+  uint = readbin(uint, sas, swapit);
 
   out[1] = uint & 0xFFFFFF;   // iStyleRef
   out[2] = (uint & 0x02000000) >> 24; // fPhShow
@@ -601,14 +605,14 @@ std::vector<int> Cell(std::istream& sas) {
   return(out);
 }
 
-std::vector<int> brtColor(std::istream& sas) {
+std::vector<int> brtColor(std::istream& sas, bool swapit) {
 
   bool fValidRGB = 0;
   uint8_t AB = 0, xColorType = 0, index = 0,
     bRed = 0, bGreen = 0, bBlue = 0, bAlpha = 0;
   int16_t nTintAndShade = 0;
 
-  AB = readbin(AB, sas, 0);
+  AB = readbin(AB, sas, swapit);
   fValidRGB = AB & 0x01;
   xColorType = AB >> 1;
   // 0x00 picked by application
@@ -616,18 +620,18 @@ std::vector<int> brtColor(std::istream& sas) {
   // 0x02 argb color
   // 0x03 theme color
 
-  index = readbin(index, sas, 0);
+  index = readbin(index, sas, swapit);
   // 0x00 Undefined
   // 0x01 Icv() ...
   // 0x02 Undefined
   // 0x03 clrScheme subelement
 
-  nTintAndShade = readbin(nTintAndShade, sas, 0);
+  nTintAndShade = readbin(nTintAndShade, sas, swapit);
 
-  bRed   = readbin(bRed, sas, 0);
-  bGreen = readbin(bGreen, sas, 0);
-  bBlue  = readbin(bBlue, sas, 0);
-  bAlpha = readbin(bAlpha, sas, 0);
+  bRed   = readbin(bRed, sas, swapit);
+  bGreen = readbin(bGreen, sas, swapit);
+  bBlue  = readbin(bBlue, sas, swapit);
+  bAlpha = readbin(bAlpha, sas, swapit);
 
   if (bRed > 255 || bGreen > 255 || bBlue > 255 || bAlpha > 255) {
     Rcpp::stop("invalid color");
@@ -673,13 +677,13 @@ std::string to_argb(int a, int r, int g, int b) {
   return out.str();
 }
 
-std::string brtBorder(std::string type, std::istream& sas) {
+std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
   uint8_t dg = 0, reserved = 0;
-  dg = readbin(dg, sas, 0);
 
-  reserved = readbin(reserved, sas, 0);
+  dg = readbin(dg, sas, swapit);
+  reserved = readbin(reserved, sas, swapit);
 
-  std::vector<int> color = brtColor(sas);
+  std::vector<int> color = brtColor(sas, swapit);
 
   std::stringstream out;
 
@@ -694,9 +698,9 @@ std::string brtBorder(std::string type, std::istream& sas) {
   return out.str();
 }
 
-static double Xnum(std::istream& sas) {
+static double Xnum(std::istream& sas, bool swapit) {
   double out = 0;
-  out = readbin(out, sas, 0);
+  out = readbin(out, sas, swapit);
   return out;
 }
 
@@ -718,9 +722,9 @@ static double RkNumber(int32_t val) {
   return out;
 }
 
-std::string BErr(std::istream& sas) {
+std::string BErr(std::istream& sas, bool swapit) {
   uint8_t error = 0;
-  error = readbin(error, sas, 0);
+  error = readbin(error, sas, swapit);
 
   if (error == 0x00) return "#NULL!";
   if (error == 0x07) return "#DIV/0!";
@@ -734,16 +738,16 @@ std::string BErr(std::istream& sas) {
   return "unknown_ERROR";
 }
 
-std::vector<int> Xti(std::istream& sas) {
+std::vector<int> Xti(std::istream& sas, bool swapit) {
   int32_t firstSheet = 0, lastSheet = 0;
   uint32_t externalLink = 0;
-  externalLink = readbin(externalLink, sas, 0);
+  externalLink = readbin(externalLink, sas, swapit);
   // scope
   // -2 workbook
   // -1 heet level
   // >= 0 sheet level
-  firstSheet = readbin(firstSheet, sas, 0);
-  lastSheet = readbin(lastSheet, sas, 0);
+  firstSheet = readbin(firstSheet, sas, swapit);
+  lastSheet = readbin(lastSheet, sas, swapit);
 
   // Rprintf("Xti: %d %d %d\n", externalLink, firstSheet, lastSheet);
   std::vector<int> out(3);
@@ -828,13 +832,13 @@ std::string parseRPN(const std::string& expression) {
 }
 
 
-std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
+std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col) {
   bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
 
   if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
 
-  cce = readbin(cce, sas, 0);
+  cce = readbin(cce, sas, swapit);
   if (cce > 16385) Rcpp::stop("wrong cce size");
   if (debug) Rcpp::Rcout << "cce: " << cce << std::endl;
   size_t pos = sas.tellg();
@@ -851,7 +855,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
     // 1
     int8_t val2 = 0, controlbit = 0;
-    val1 = readbin(val1, sas, 0);
+    val1 = readbin(val1, sas, swapit);
 
     controlbit = (val1 & 0x80) >> 7;
     if (controlbit != 0) Rcpp::warning("controlbit unexpectedly not 0");
@@ -866,7 +870,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     case PtgAttr:
     {
       if (debug) Rcpp::Rcout << "reading eptg @ " << sas.tellg() << std::endl;
-      val2 = readbin(val2, sas, 0); // full 8 bit forming eptg
+      val2 = readbin(val2, sas, swapit); // full 8 bit forming eptg
       if (debug) Rcpp::Rcout << "PtgAttr: " << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
 
 
@@ -879,11 +883,11 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
         uint32_t listIndex = 0;
         int16_t colFirst = 0, colLast = 0;
 
-        ixti = readbin(ixti, sas, 0);
-        flags = readbin(flags, sas, 0);
-        listIndex = readbin(listIndex, sas, 0);
-        colFirst = ColShort(sas);
-        colLast = ColShort(sas);
+        ixti = readbin(ixti, sas, swapit);
+        flags = readbin(flags, sas, swapit);
+        listIndex = readbin(listIndex, sas, swapit);
+        colFirst = ColShort(sas, swapit);
+        colLast = ColShort(sas, swapit);
 
         break;
       }
@@ -898,7 +902,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
         // val2[1] == 1
         // val2[2:8] == 0
         uint16_t unused = 0;
-        unused = readbin(unused, sas, 0);
+        unused = readbin(unused, sas, swapit);
         Rcpp::Rcout << unused << std::endl;
         break;
       }
@@ -910,7 +914,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       {
         uint16_t offset = 0;
 
-        offset = readbin(offset, sas, 0);
+        offset = readbin(offset, sas, swapit);
 
         break;
       }
@@ -920,9 +924,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
         uint16_t cOffset = 0;
         uint32_t rgOffset0 = 0, rgOffset1 = 0;
 
-        cOffset = readbin(cOffset, sas, 0);
-        rgOffset0 = readbin(rgOffset0, sas, 0);
-        rgOffset1 = readbin(rgOffset1, sas, 0);
+        cOffset = readbin(cOffset, sas, swapit);
+        rgOffset0 = readbin(rgOffset0, sas, swapit);
+        rgOffset1 = readbin(rgOffset1, sas, swapit);
 
         break;
       }
@@ -934,9 +938,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
         if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
 
-        type = readbin(type, sas, 0);
+        type = readbin(type, sas, swapit);
         // 0-6 various different types where to add the whitespace
-        cch = readbin(cch, sas, 0);
+        cch = readbin(cch, sas, swapit);
 
         // hm, there is also " " as operator. genius move ...
         for (uint8_t i = 0; i < cch; ++i) {
@@ -954,7 +958,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
         // val2[5]   == 1
         // val2[6:8] == 0
         uint16_t unused = 0;
-        unused = readbin(unused, sas, 0);
+        unused = readbin(unused, sas, swapit);
         Rcpp::Rcout << unused << std::endl;
         fml_out += "SUM(%s)"; // maybe attr because it is a single cell function?
         fml_out += "\n";
@@ -1117,7 +1121,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     case PtgInt:
     {
       uint16_t integer = 0;
-      integer = readbin(integer, sas, 0);
+      integer = readbin(integer, sas, swapit);
       // Rcpp::Rcout << integer << std::endl;
       fml_out += std::to_string(integer);
       fml_out += "\n";
@@ -1126,7 +1130,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
     case PtgNum:
     {
-      double value = Xnum(sas);
+      double value = Xnum(sas, swapit);
       fml_out += std::to_string(value);
       fml_out += "\n";
       break;
@@ -1135,10 +1139,10 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     case PtgStr:
     {
 
-      fml_out += "\"" + escape_quote(PtrStr(sas)) + "\"";
+      fml_out += "\"" + escape_quote(PtrStr(sas, swapit)) + "\"";
       fml_out += "\n";
       // uint16_t cch = 0;
-      // cch = readbin(cch, sas, 0);
+      // cch = readbin(cch, sas, swapit);
       // if (cch>255) Rcpp::stop("cch to big");
       //
       // // rgch
@@ -1157,10 +1161,10 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       ptg_extra_array = true;
       uint16_t unused2 = 0;
       uint32_t unused1 = 0, unused3 = 0, unused4 = 0;
-      unused1 = readbin(unused1, sas, 0);
-      unused2 = readbin(unused2, sas, 0);
-      unused3 = readbin(unused3, sas, 0);
-      unused4 = readbin(unused4, sas, 0);
+      unused1 = readbin(unused1, sas, swapit);
+      unused2 = readbin(unused2, sas, swapit);
+      unused3 = readbin(unused3, sas, swapit);
+      unused4 = readbin(unused4, sas, swapit);
 
       break;
     }
@@ -1177,7 +1181,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
       // val1[6:7] == PtgDataType
 
-      fml_out +=  Loc(sas);
+      fml_out +=  Loc(sas, swapit);
       fml_out += "\n";
 
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
@@ -1191,13 +1195,13 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     {
 
       uint16_t ixti = 0;
-      ixti = readbin(ixti, sas, 0); // XtiIndex
+      ixti = readbin(ixti, sas, swapit); // XtiIndex
       if (debug) Rprintf("XtiIndex: %d\n", ixti);
 
 
       // A1 notation cell
       fml_out += "openxlsx2xlsb_" + std::to_string(ixti) + "!";
-      fml_out += Loc(sas);
+      fml_out += Loc(sas, swapit);
       fml_out += "\n";
 
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
@@ -1211,7 +1215,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     {
 
       // A1 notation cell
-      fml_out += LocRel(sas);
+      fml_out += LocRel(sas, swapit);
       fml_out += "\n";
 
       break;
@@ -1223,7 +1227,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     {
 
       // A1 notation cell
-      fml_out += Area(sas);
+      fml_out += Area(sas, swapit);
       fml_out += "\n";
 
       break;
@@ -1236,12 +1240,12 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
       uint16_t ixti = 0;
 
-      ixti = readbin(ixti, sas, 0);
+      ixti = readbin(ixti, sas, swapit);
       Rprintf("ixti in PtgArea3d: %d\n", ixti);
 
       // A1 notation cell
       fml_out += "openxlsx2xlsb_" + std::to_string(ixti) + "!";
-      fml_out += Area(sas);
+      fml_out += Area(sas, swapit);
       fml_out += "\n";
 ;
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
@@ -1257,8 +1261,8 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       uint16_t unused2 = 0;
       uint32_t unused1 = 0;
 
-      unused1 = readbin(unused1, sas, 0);
-      unused2 = readbin(unused2, sas, 0);
+      unused1 = readbin(unused1, sas, swapit);
+      unused2 = readbin(unused2, sas, swapit);
 
       break;
     }
@@ -1270,9 +1274,9 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       uint16_t ixti = 0, unused2 = 0;
       uint32_t unused1 = 0;
 
-      ixti = readbin(ixti, sas, 0);
-      unused1 = readbin(unused1, sas, 0);
-      unused2 = readbin(unused2, sas, 0);
+      ixti = readbin(ixti, sas, swapit);
+      unused1 = readbin(unused1, sas, swapit);
+      unused2 = readbin(unused2, sas, swapit);
 
       break;
     }
@@ -1283,19 +1287,11 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     {
 
       uint16_t iftab = 0;
-      iftab = readbin(iftab, sas, 0);
+      iftab = readbin(iftab, sas, swapit);
 
       std::string fml = Ftab(iftab);
 
       fml_out += fml;
-      // if (fml != "NA" && fml != "PI" && fml != "RAND" && fml != "NOW" &&
-      //     fml != "STEP" && fml != "CALLER" && fml != "ACTIVE.CELL" &&
-      //     fml != "TRUE" && fml != "FALSE" && fml != "NOT" && fml != "BREAK" &&
-      //     fml != "NEXT" && fml != "TODAY" && fml != "ELSE" && fml != "END.IF" &&
-      //     fml != "GROUP")
-      //   fml_out += "(%s)";
-      // else
-      //   fml_out += "()";
       fml_out += "\n";
 
       break;
@@ -1306,10 +1302,10 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     case PtgFuncVar3:
     {
       uint8_t cparams = 0, fCeFunc = 0; // number of parameters
-      cparams = readbin(cparams, sas, 0);
+      cparams = readbin(cparams, sas, swapit);
 
       uint16_t tab = 0;
-      tab = readbin(tab, sas, 0);
+      tab = readbin(tab, sas, swapit);
       // tab[16] == fCeFunc bool
       // tab[1:15] == tab
 
@@ -1337,7 +1333,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
     case PtgErr:
     {
-      fml_out += BErr(sas);
+      fml_out += BErr(sas, swapit);
       fml_out += "\n";
       break;
     }
@@ -1345,7 +1341,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     case PtgBool:
     {
       int8_t boolean = 0;
-      boolean = readbin(boolean, sas, 0);
+      boolean = readbin(boolean, sas, swapit);
       fml_out += std::to_string(boolean);
       fml_out += "\n";
       break;
@@ -1354,7 +1350,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     case PtgExp:
     {
       // this is a reference to the cell that contains the shared formula
-      row = UncheckedRw(sas) + 1;
+      row = UncheckedRw(sas, swapit) + 1;
       Rcpp::Rcout << row << std::endl;
       break;
     }
@@ -1371,7 +1367,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
 
   if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
-  cb = readbin(cb, sas, 0);
+  cb = readbin(cb, sas, swapit);
 
   if (debug)
     Rcpp::Rcout << "cb: " << cb << std::endl;
@@ -1388,7 +1384,7 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     switch(val1) {
     case PtgExp:
     { // PtgExtraCol
-      int32_t col = UncheckedCol(sas);
+      int32_t col = UncheckedCol(sas, swapit);
       Rcpp::Rcout << int_to_col(col+1) << std::endl;
 
       fml_out += int_to_col(col + 1);
@@ -1404,16 +1400,16 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       // PtgExtraArray
 
       uint32_t rows = 0, cols = 0;
-      rows = readbin(rows, sas, 0);
-      cols = readbin(cols, sas, 0);
+      rows = readbin(rows, sas, swapit);
+      cols = readbin(cols, sas, swapit);
       // blob (it is actually called this way)
       uint8_t reserved = 0;
-      reserved = readbin(reserved, sas, 0);
+      reserved = readbin(reserved, sas, swapit);
 
       // SerBool
       if (reserved == 0x02) {
         uint8_t f = 0;
-        f = readbin(f, sas, 0);
+        f = readbin(f, sas, swapit);
         Rcpp::Rcout << (bool)f << std::endl;
       }
 
@@ -1421,23 +1417,23 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
       if (reserved == 0x04) {
         uint8_t err = 0, reserved2 = 0;
         uint16_t reserved3 = 0;
-        std::string strerr = BErr(sas);
+        std::string strerr = BErr(sas, swapit);
         Rcpp::Rcout << strerr << std::endl;
-        reserved2 = readbin(reserved2, sas, 0);
-        reserved3 = readbin(reserved3, sas, 0);
+        reserved2 = readbin(reserved2, sas, swapit);
+        reserved3 = readbin(reserved3, sas, swapit);
       }
 
       // SerNum
       if (reserved == 0x00) {
         double xnum = 0.0;
-        xnum = Xnum(sas);
+        xnum = Xnum(sas, swapit);
         Rcpp::Rcout << xnum << std::endl;
       }
 
       // SerStr
       if (reserved == 0x01) {
         uint16_t cch = 0;
-        cch = readbin(cch, sas, 0);
+        cch = readbin(cch, sas, swapit);
         std::string rgch(cch, '\0');
         rgch = read_xlwidestring(rgch, sas);
         Rcpp::Rcout << rgch << std::endl;
@@ -1453,13 +1449,13 @@ std::string CellParsedFormula(std::istream& sas, bool debug, int col) {
     //   std::string book = XLWideString(sas);
     //   int8_t type = 0;
     //   int16_t tabid = 0;
-    //   type = readbin(type, sas, 0);
-    //   tabid = readbin(tabid, sas, 0);
+    //   type = readbin(type, sas, swapit);
+    //   tabid = readbin(tabid, sas, swapit);
     //   std::string sheet = XLWideString(sas);
     //   int8_t type1 = 0;
     //   int16_t tabid1 = 0;
-    //   type1 = readbin(type1, sas, 0);
-    //   tabid1 = readbin(tabid1, sas, 0);
+    //   type1 = readbin(type1, sas, swapit);
+    //   tabid1 = readbin(tabid1, sas, swapit);
     //   std::string sheet1 = XLWideString(sas);
     // }
 

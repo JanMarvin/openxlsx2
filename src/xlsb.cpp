@@ -12,6 +12,8 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
+  bool swapit = is_big_endian();
+
   // auto sas_size = bin.tellg();
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
@@ -23,7 +25,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
       int32_t x = 0, size = 0;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
-      RECORD(x, size, bin);
+      RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
       switch(x) {
@@ -48,9 +50,9 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         out << "<numFmt";
         // bin.seekg(size, bin.cur);
         uint16_t ifmt = 0;
-        ifmt = readbin(ifmt, bin, 0);
+        ifmt = readbin(ifmt, bin, swapit);
 
-        std::string stFmtCode = XLWideString(bin);
+        std::string stFmtCode = XLWideString(bin, swapit);
 
         out << " numFmtId=\"" << ifmt << "\" formatCode=\"" << escape_xml(stFmtCode);
         out << "\" />" << std::endl;
@@ -69,7 +71,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "<fonts>" << std::endl;
         // bin.seekg(size, bin.cur);
         uint32_t cfonts = 0;
-        cfonts = readbin(cfonts, bin, 0);
+        cfonts = readbin(cfonts, bin, swapit);
 
         out << "<fonts " <<
           "count=\"" << cfonts <<
@@ -83,31 +85,31 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         uint8_t uls = 0, bFamily = 0, bCharSet = 0, unused = 0, bFontScheme = 0;
         uint16_t dyHeight = 0, grbit = 0, bls = 0, sss = 0;
 
-        dyHeight = readbin(dyHeight, bin , 0) / 20; // twip
-        grbit = readbin(grbit, bin , 0);
+        dyHeight = readbin(dyHeight, bin , swapit) / 20; // twip
+        grbit = readbin(grbit, bin , swapit);
         FontFlagsFields *fields = (FontFlagsFields *)&grbit;
 
-        bls = readbin(bls, bin , 0);
+        bls = readbin(bls, bin , swapit);
         // 0x0190 normal
         // 0x02BC bold
-        sss = readbin(sss, bin , 0);
+        sss = readbin(sss, bin , swapit);
         // 0x0000 None
         // 0x0001 Superscript
         // 0x0002 Subscript
-        uls = readbin(uls, bin , 0);
+        uls = readbin(uls, bin , swapit);
         // 0x00 None
         // 0x01 Single
         // 0x02 Double
         // 0x21 Single accounting
         // 0x22 Double accounting
-        bFamily = readbin(bFamily, bin , 0);
+        bFamily = readbin(bFamily, bin , swapit);
         // 0x00 Not applicable
         // 0x01 Roman
         // 0x02 Swiss
         // 0x03 Modern
         // 0x04 Script
         // 0x05 Decorative
-        bCharSet = readbin(bCharSet, bin , 0);
+        bCharSet = readbin(bCharSet, bin , swapit);
         // 0x00 ANSI_CHARSET English
         // 0x01 DEFAULT_CHARSET System locale based
         // 0x02 SYMBOL_CHARSET Symbol
@@ -127,18 +129,18 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         // 0xDE THAI_CHARSET Thai
         // 0xEE EASTEUROPE_CHARSET Eastern European
         // 0xFF OEM_CHARSET OEM code page (based on system locale)
-        unused = readbin(unused, bin , 0);
+        unused = readbin(unused, bin , swapit);
 
-        std::vector<int> color = brtColor(bin);
+        std::vector<int> color = brtColor(bin, swapit);
         // needs handling for rgb/hex colors
         if (debug) Rf_PrintValue(Rcpp::wrap(color));
 
-        bFontScheme = readbin(bFontScheme, bin , 0);
+        bFontScheme = readbin(bFontScheme, bin , swapit);
         // 0x00 None
         // 0x01 Major font scheme
         // 0x02 Minor font scheme
 
-        std::string name = XLWideString(bin);
+        std::string name = XLWideString(bin, swapit);
 
         if (bls == 0x02BC)  out << "<b/>" << std::endl;
         if (fields->fItalic) out << "<i/>" << std::endl;
@@ -222,21 +224,21 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         ;
         std::vector<int> aColor; // not used
 
-        fls = readbin(fls, bin, 0);
-        std::vector<int> fgColor = brtColor(bin);
-        std::vector<int> bgColor = brtColor(bin);
-        iGradientType = readbin(iGradientType, bin, 0);
-        xnumDegree = Xnum(bin);
-        xnumFillToLeft = Xnum(bin);
-        xnumFillToRight = Xnum(bin);
-        xnumFillToTop = Xnum(bin);
-        xnumFillToBottom = Xnum(bin);
-        cNumStop = readbin(cNumStop, bin, 0);
+        fls = readbin(fls, bin, swapit);
+        std::vector<int> fgColor = brtColor(bin, swapit);
+        std::vector<int> bgColor = brtColor(bin, swapit);
+        iGradientType = readbin(iGradientType, bin, swapit);
+        xnumDegree = Xnum(bin, swapit);
+        xnumFillToLeft = Xnum(bin, swapit);
+        xnumFillToRight = Xnum(bin, swapit);
+        xnumFillToTop = Xnum(bin, swapit);
+        xnumFillToBottom = Xnum(bin, swapit);
+        cNumStop = readbin(cNumStop, bin, swapit);
 
         for (uint32_t i = 0; i < cNumStop; ++i) {
           // gradient fill colors and positions
-          aColor = brtColor(bin);
-          aPos   = Xnum(bin);
+          aColor = brtColor(bin, swapit);
+          aPos   = Xnum(bin, swapit);
         }
 
         out << "<fill>" << std::endl;
@@ -296,13 +298,13 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         out << "<border>" << std::endl;
         bool fBdrDiagDown = 0, fBdrDiagUp = 0;
         uint8_t borderFlags = 0;
-        borderFlags = readbin(borderFlags, bin, 0);
+        borderFlags = readbin(borderFlags, bin, swapit);
 
-        std::string top      = brtBorder("top", bin);
-        std::string bottom   = brtBorder("bottom", bin);
-        std::string left     = brtBorder("left", bin);
-        std::string right    = brtBorder("right", bin);
-        std::string diagonal = brtBorder("diagonal", bin);
+        std::string top      = brtBorder("top", bin, swapit);
+        std::string bottom   = brtBorder("bottom", bin, swapit);
+        std::string left     = brtBorder("left", bin, swapit);
+        std::string right    = brtBorder("right", bin, swapit);
+        std::string diagonal = brtBorder("diagonal", bin, swapit);
 
         // xml requires a different order a certain spreadsheet software
         // is quite picky in this regard
@@ -341,7 +343,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         out << "<cellXfs>" << std::endl;
         bin.seekg(size, bin.cur);
         // uint32_t cxfs = 0;
-        // cxfs = readbin(cxfs, bin, 0);
+        // cxfs = readbin(cxfs, bin, swapit);
         break;
       }
 
@@ -355,13 +357,13 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         uint16_t ixfeParent = 0, iFmt = 0, iFont = 0, iFill = 0, ixBorder = 0;
         uint32_t brtxf = 0;
 
-        ixfeParent = readbin(ixfeParent, bin, 0);
-        iFmt = readbin(iFmt, bin, 0);
-        iFont = readbin(iFont, bin, 0);
-        iFill = readbin(iFill, bin, 0);
-        ixBorder = readbin(ixBorder, bin, 0);
-        trot = readbin(trot, bin, 0);
-        indent = readbin(indent, bin, 0);
+        ixfeParent = readbin(ixfeParent, bin, swapit);
+        iFmt = readbin(iFmt, bin, swapit);
+        iFont = readbin(iFont, bin, swapit);
+        iFill = readbin(iFill, bin, swapit);
+        ixBorder = readbin(ixBorder, bin, swapit);
+        trot = readbin(trot, bin, swapit);
+        indent = readbin(indent, bin, swapit);
 
         if (indent > 250) {
           Rcpp::stop("indent to big");
@@ -373,7 +375,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
           out << " xfId=\"" << ixfeParent << "\"";
         }
 
-        brtxf = readbin(brtxf, bin, 0);
+        brtxf = readbin(brtxf, bin, swapit);
         XFFields *fields = (XFFields *)&brtxf;
         uint8_t xfgbit = fields->xfGrbitAtr;
 
@@ -470,11 +472,11 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         uint8_t iStyBuiltIn = 0, iLevel = 0;
         uint16_t grbitObj1 = 0;
         uint32_t ixf = 0;
-        ixf = readbin(ixf, bin, 0);
-        grbitObj1 = readbin(grbitObj1, bin, 0);
-        iStyBuiltIn = readbin(iStyBuiltIn, bin, 0);
-        iLevel = readbin(iLevel, bin, 0);
-        std::string stName = XLWideString(bin);
+        ixf = readbin(ixf, bin, swapit);
+        grbitObj1 = readbin(grbitObj1, bin, swapit);
+        iStyBuiltIn = readbin(iStyBuiltIn, bin, swapit);
+        iLevel = readbin(iLevel, bin, swapit);
+        std::string stName = XLWideString(bin, swapit);
 
         StyleFlagsFields *fields = (StyleFlagsFields *)&grbitObj1;
         out << "<cellStyle";
@@ -512,10 +514,10 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtIndexedColor:
       {
         uint8_t bRed = 0, bGreen = 0, bBlue = 0, reserved = 0;
-        bRed = readbin(bRed, bin, 0);
-        bGreen = readbin(bGreen, bin, 0);
-        bBlue = readbin(bBlue, bin, 0);
-        reserved = readbin(reserved, bin, 0);
+        bRed = readbin(bRed, bin, swapit);
+        bGreen = readbin(bGreen, bin, swapit);
+        bBlue = readbin(bBlue, bin, swapit);
+        reserved = readbin(reserved, bin, swapit);
 
         // std::vector<int> color = brtColor(bin);
         // if (color[0] == 0x02) {
@@ -543,7 +545,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginDXFs:
       {
         uint32_t cdxfs = 0;
-        cdxfs = readbin(cdxfs, bin, 0);
+        cdxfs = readbin(cdxfs, bin, swapit);
 
         out << "<dxfs>" << std::endl;
         break;
@@ -553,9 +555,9 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         // case BrtDXF:
         // {
         //   uint16_t flags = 0, reserved = 0, cprops = 0;
-        //   flags = readbin(flags, bin, 0);
-        //   reserved = readbin(reserved, bin, 0);
-        //   cprops = readbin(cprops, bin, 0);
+        //   flags = readbin(flags, bin, swapit);
+        //   reserved = readbin(reserved, bin, swapit);
+        //   cprops = readbin(cprops, bin, swapit);
         //
         //   out << "<dxfs>" << std::endl;
         //  break;
@@ -605,6 +607,8 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
+  bool swapit = is_big_endian();
+
   // auto sas_size = bin.tellg();
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
@@ -616,7 +620,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       int32_t x = 0, size = 0;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
-      RECORD(x, size, bin);
+      RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
       switch(x) {
@@ -632,39 +636,39 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "<table>" << std::endl;
 
-        std::vector<int> rfxList = UncheckedRfX(bin);
+        std::vector<int> rfxList = UncheckedRfX(bin, swapit);
         std::string ref = int_to_col(rfxList[2] + 1) + std::to_string(rfxList[0] + 1) + ":" + int_to_col(rfxList[3] + 1) + std::to_string(rfxList[1] + 1);
 
         Rcpp::Rcout << "table ref: " << ref << std::endl;
 
         uint32_t lt = 0, idList = 0, crwHeader = 0, crwTotals = 0, flags = 0;
-        lt = readbin(lt, bin, 0);
-        idList = readbin(idList, bin, 0);
-        crwHeader = readbin(crwHeader, bin, 0);
-        crwTotals = readbin(crwTotals, bin, 0);
-        flags = readbin(flags, bin, 0);
+        lt = readbin(lt, bin, swapit);
+        idList = readbin(idList, bin, swapit);
+        crwHeader = readbin(crwHeader, bin, swapit);
+        crwTotals = readbin(crwTotals, bin, swapit);
+        flags = readbin(flags, bin, swapit);
 
         uint32_t nDxfHeader = 0, nDxfData = 0, nDxfAgg = 0, nDxfBorder = 0, nDxfHeaderBorder = 0, nDxfAggBorder = 0, dwConnID = 0;
 
-        nDxfHeader = readbin(nDxfHeader, bin, 0);
-        nDxfData = readbin(nDxfData, bin, 0);
-        nDxfAgg = readbin(nDxfAgg, bin, 0);
-        nDxfBorder = readbin(nDxfBorder, bin, 0);
-        nDxfHeaderBorder = readbin(nDxfHeaderBorder, bin, 0);
-        nDxfAggBorder = readbin(nDxfAggBorder, bin, 0);
-        dwConnID = readbin(dwConnID, bin, 0);
+        nDxfHeader = readbin(nDxfHeader, bin, swapit);
+        nDxfData = readbin(nDxfData, bin, swapit);
+        nDxfAgg = readbin(nDxfAgg, bin, swapit);
+        nDxfBorder = readbin(nDxfBorder, bin, swapit);
+        nDxfHeaderBorder = readbin(nDxfHeaderBorder, bin, swapit);
+        nDxfAggBorder = readbin(nDxfAggBorder, bin, swapit);
+        dwConnID = readbin(dwConnID, bin, swapit);
 
-        std::string stName = XLNullableWideString(bin);
+        std::string stName = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stName << std::endl;
-        std::string stDisplayName = XLNullableWideString(bin);
+        std::string stDisplayName = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stDisplayName << std::endl;
-        std::string stComment = XLNullableWideString(bin);
+        std::string stComment = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stComment << std::endl;
-        std::string stStyleHeader = XLNullableWideString(bin);
+        std::string stStyleHeader = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stStyleHeader << std::endl;
-        std::string stStyleData = XLNullableWideString(bin);
+        std::string stStyleData = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stStyleData << std::endl;
-        std::string stStyleAgg = XLNullableWideString(bin);
+        std::string stStyleAgg = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stStyleAgg << std::endl;
 
         out << "<table xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" mc:Ignorable=\"xr xr3\"" <<
@@ -683,7 +687,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginAFilter:
       {
         if (debug) Rcpp::Rcout << "<autofilter>" << std::endl;
-        std::vector<int> rfx = UncheckedRfX(bin);
+        std::vector<int> rfx = UncheckedRfX(bin, swapit);
 
         std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
         std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
@@ -709,8 +713,8 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
 
         uint16_t flags = 0;
         uint32_t dwCol = 0;
-        dwCol = readbin(dwCol, bin, 0);
-        flags = readbin(flags, bin, 0);
+        dwCol = readbin(dwCol, bin, swapit);
+        flags = readbin(flags, bin, swapit);
         // fHideArrow
         // fNoBtn
 
@@ -725,15 +729,15 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         // bin.seekg(size, bin.cur);
 
         uint32_t fBlank = 0, unused = 0;
-        fBlank = readbin(fBlank, bin, 0); // a 32bit flag, after all ... why not?
-        unused = readbin(unused, bin, 0); // maybe calendarType?
+        fBlank = readbin(fBlank, bin, swapit); // a 32bit flag, after all ... why not?
+        unused = readbin(unused, bin, swapit); // maybe calendarType?
         out << "<filters blank=\"" << fBlank <<"\">" << std::endl;
         break;
       }
 
       case BrtFilter:
       {
-        std::string rgch = XLWideString(bin);
+        std::string rgch = XLWideString(bin, swapit);
         out << "<filter val=\"" << rgch << "\" />" << std::endl;
         // bin.seekg(size, bin.cur);
         break;
@@ -750,8 +754,8 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtColorFilter:
       {
         uint32_t dxfid = 0, fCellColor = 0;
-        dxfid = readbin(dxfid, bin, 0);
-        fCellColor = readbin(fCellColor, bin, 0);
+        dxfid = readbin(dxfid, bin, swapit);
+        fCellColor = readbin(fCellColor, bin, swapit);
 
         out << "<colorFilter dxfId=\"" << dxfid << "\" cellColor=\""<< fCellColor<< "\"/>" << std::endl;
 
@@ -779,8 +783,8 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtIconFilter14:
       {
         uint32_t iIconSet = 0, iIcon = 0;
-        iIconSet = readbin(iIconSet, bin, 0);
-        iIcon = readbin(iIcon, bin, 0);
+        iIconSet = readbin(iIconSet, bin, swapit);
+        iIcon = readbin(iIcon, bin, swapit);
 
         std::string iconSet;
         if (iIconSet) iconSet = to_iconset(iIconSet);
@@ -809,7 +813,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginListCols:
       {
         uint32_t nCols = 0;
-        nCols = readbin(nCols, bin, 0);
+        nCols = readbin(nCols, bin, swapit);
         out << "<tableColumns count=\"" << nCols << "\">" << std::endl;
         // bin.seekg(size, bin.cur);
         break;
@@ -823,19 +827,19 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
 
         uint32_t idField = 0, ilta = 0, nDxfHdr = 0, nDxfInsertRow = 0, nDxfAgg = 0, idqsif = 0;
 
-        idField = readbin(idField, bin, 0);
-        ilta = readbin(ilta, bin, 0);
-        nDxfHdr = readbin(nDxfHdr, bin, 0);
-        nDxfInsertRow = readbin(nDxfInsertRow, bin, 0);
-        nDxfAgg = readbin(nDxfAgg, bin, 0);
-        idqsif = readbin(idqsif, bin, 0);
-        std::string stName = XLNullableWideString(bin);
-        std::string stCaption = XLNullableWideString(bin);
-        std::string stTotal = XLNullableWideString(bin);
+        idField = readbin(idField, bin, swapit);
+        ilta = readbin(ilta, bin, swapit);
+        nDxfHdr = readbin(nDxfHdr, bin, swapit);
+        nDxfInsertRow = readbin(nDxfInsertRow, bin, swapit);
+        nDxfAgg = readbin(nDxfAgg, bin, swapit);
+        idqsif = readbin(idqsif, bin, swapit);
+        std::string stName = XLNullableWideString(bin, swapit);
+        std::string stCaption = XLNullableWideString(bin, swapit);
+        std::string stTotal = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stName << ": " << stCaption << ": " << stTotal<< std::endl;
-        std::string stStyleHeader = XLNullableWideString(bin);
-        std::string stStyleInsertRow = XLNullableWideString(bin);
-        std::string stStyleAgg = XLNullableWideString(bin);
+        std::string stStyleHeader = XLNullableWideString(bin, swapit);
+        std::string stStyleInsertRow = XLNullableWideString(bin, swapit);
+        std::string stStyleAgg = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << stStyleHeader << ": " << stStyleInsertRow << ": " << stStyleAgg << std::endl;
 
         out << "<tableColumn id=\"" << idField << "\" name=\"" << stCaption << "\">" << std::endl;
@@ -869,7 +873,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         // calculated column formula
         // uint8_t flags = 0;
         // std::string fml;
-        // flags = readbin(flags, bin, 0);
+        // flags = readbin(flags, bin, swapit);
         // fml = CellParsedFormula(bin);
         Rcpp::warning("Table formulas are not implemented.");
         bin.seekg(size, bin.cur);
@@ -879,8 +883,8 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtTableStyleClient:
       {
         uint16_t flags = 0;
-        flags = readbin(flags, bin, 0);
-        std::string stStyleName = XLNullableWideString(bin);
+        flags = readbin(flags, bin, swapit);
+        std::string stStyleName = XLNullableWideString(bin, swapit);
 
         BrtTableStyleClientFields *fields = (BrtTableStyleClientFields*)&flags;
 
@@ -917,11 +921,149 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
 
 }
 
+
+// [[Rcpp::export]]
+int comments_bin(std::string filePath, std::string outPath, bool debug) {
+
+  std::ofstream out(outPath);
+  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+
+  bool swapit = is_big_endian();
+
+  // auto sas_size = bin.tellg();
+  if (bin) {
+    bin.seekg(0, std::ios_base::beg);
+    bool end_of_comments = false;
+
+    while(!end_of_comments) {
+      Rcpp::checkUserInterrupt();
+
+      int32_t x = 0, size = 0;
+
+      if (debug) Rcpp::Rcout << "." << std::endl;
+      RECORD(x, size, bin, swapit);
+      if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
+
+      switch(x) {
+
+      case BrtBeginComments:
+      {
+        out << "<comments xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" mc:Ignorable=\"xr\">" << std::endl;
+        break;
+      }
+
+      case BrtBeginCommentAuthors:
+      {
+        out << "<authors>" << std::endl;
+        break;
+      }
+
+      case BrtCommentAuthor:
+      {
+        std::string author = XLWideString(bin, swapit);
+        out << "<author>" << author << "</author>" << std::endl;
+        break;
+      }
+
+      case BrtEndCommentAuthors:
+      {
+        out << "</authors>" << std::endl;
+        break;
+      }
+
+      case BrtBeginCommentList:
+      {
+        out << "<commentList>" << std::endl;
+        break;
+      }
+
+      case BrtBeginComment:
+      {
+        uint32_t iauthor = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0;
+        iauthor = readbin(iauthor, bin, swapit);
+        std::vector<int> rfx = UncheckedRfX(bin, swapit);
+
+        std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
+        std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
+
+        std::string ref;
+        if (lref.compare(rref) == 0) {
+          ref = lref;
+        } else {
+          ref =  lref + ":" + rref;
+        }
+
+        guid0 = readbin(guid0, bin, swapit);
+        guid1 = readbin(guid1, bin, swapit);
+        guid2 = readbin(guid2, bin, swapit);
+        guid3 = readbin(guid3, bin, swapit);
+        out << "<comment";
+        out << " ref=\"" << ref << "\"";
+        out << " authorId=\"" << iauthor << "\"";
+        out << " shapeId=\"0\""; // always?
+        out << " >" << std::endl;
+
+        break;
+      }
+
+      case BrtEndComment:
+      {
+        out << "</comment>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtEndCommentList:
+      {
+        out << "</commentList>" << std::endl;
+        break;
+      }
+
+      case BrtCommentText:
+      {
+        // we do not handle RichStr correctly. Ignore all formatting
+        std::string commentText = RichStr(bin, swapit);
+        out << "<text><r><rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr><t>" << commentText << "</t></r></text>" << std::endl;
+        break;
+      }
+
+      case BrtEndComments:
+      {
+        end_of_comments = true;
+        out << "</comments>" << std::endl;
+        break;
+      }
+
+      default:
+      {
+        if (debug) {
+        Rcpp::Rcout << std::to_string(x) <<
+          ": " << std::to_string(size) <<
+            " @ " << bin.tellg() << std::endl;
+      }
+        bin.seekg(size, bin.cur);
+        break;
+      }
+      }
+    }
+
+    out.close();
+    bin.close();
+    return 1;
+  } else {
+    return -1;
+  };
+
+}
+
+
 // [[Rcpp::export]]
 int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+
+  bool swapit = is_big_endian();
 
   // auto sas_size = bin.tellg();
   if (bin) {
@@ -934,7 +1076,7 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
       int32_t x = 0, size = 0;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
-      RECORD(x, size, bin);
+      RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
       switch(x) {
@@ -942,8 +1084,8 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginSst:
       {
         uint32_t count= 0, uniqueCount= 0;
-        count = readbin(count, bin, 0);
-        uniqueCount = readbin(uniqueCount, bin, 0);
+        count = readbin(count, bin, swapit);
+        uniqueCount = readbin(uniqueCount, bin, swapit);
         out << "<sst " <<
           "count=\"" << count <<
             "\" uniqueCount=\"" << uniqueCount <<
@@ -954,7 +1096,7 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtSSTItem:
       {
         // Rcpp::Rcout << bin.tellg() << std::endl;
-        std::string val = RichStr(bin);
+        std::string val = RichStr(bin, swapit);
         if (debug)
           Rcpp::Rcout << val << std::endl;
         out << "<si><t>" << escape_xml(val) <<
@@ -994,14 +1136,10 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
 // [[Rcpp::export]]
 int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
-  // WORKBOOK = BrtBeginBook [BrtFileVersion] [[BrtFileSharingIso] BrtFileSharing] [BrtWbProp]
-  // [ACABSPATH] [ACREVISIONPTR] [[BrtBookProtectionIso] BrtBookProtection] [BOOKVIEWS]
-  // BUNDLESHS [FNGROUP] [EXTERNALS] *BrtName [BrtCalcProp] [BrtOleSize] *(BrtUserBookView
-  // *FRT) [PIVOTCACHEIDS] [BrtWbFactoid] [SMARTTAGTYPES] [BrtWebOpt] *BrtFileRecover
-  // [WEBPUBITEMS] [CRERRS] FRTWORKBOOK BrtEndBook
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+
+  bool swapit = is_big_endian();
 
   // auto sas_size = bin.tellg();
   if (bin) {
@@ -1017,7 +1155,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       int32_t x = 0, size = 0;
 
       if (debug) Rcpp::Rcout << "." << std::endl;
-      RECORD(x, size, bin);
+      RECORD(x, size, bin, swapit);
 
       switch(x) {
 
@@ -1049,10 +1187,10 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // bin.seekg(size, bin.cur);
 
         uint16_t cver = 0;
-        cver = readbin(cver, bin, 0);
+        cver = readbin(cver, bin, swapit);
 
         for (uint16_t i = 0; i < cver; ++i) {
-          ProductVersion(bin, debug);
+          ProductVersion(bin, swapit, debug);
         }
         break;
 
@@ -1060,7 +1198,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtAbsPath15:
       {
-        std::string absPath = XLWideString(bin);
+        std::string absPath = XLWideString(bin, swapit);
         if (debug) Rcpp::Rcout << absPath << std::endl;
         break;
       }
@@ -1100,14 +1238,14 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         uint8_t flags = 0;
         int32_t xWn = 0, yWn = 0;
         uint32_t dxWn = 0, dyWn = 0, iTabRatio = 0, itabFirst= 0, itabCur = 0;
-        xWn       = readbin(xWn, bin, 0);
-        yWn       = readbin(yWn, bin, 0);
-        dxWn      = readbin(dxWn, bin, 0);
-        dyWn      = readbin(dyWn, bin, 0);
-        iTabRatio = readbin(iTabRatio, bin, 0);
-        itabFirst = readbin(itabFirst, bin, 0);
-        itabCur   = readbin(itabCur, bin, 0);
-        flags     = readbin(flags, bin, 0);
+        xWn       = readbin(xWn, bin, swapit);
+        yWn       = readbin(yWn, bin, swapit);
+        dxWn      = readbin(dxWn, bin, swapit);
+        dyWn      = readbin(dyWn, bin, swapit);
+        iTabRatio = readbin(iTabRatio, bin, swapit);
+        itabFirst = readbin(itabFirst, bin, swapit);
+        itabCur   = readbin(itabCur, bin, swapit);
+        flags     = readbin(flags, bin, swapit);
 
         out << "<workbookView xWindow=\"" << xWn << "\" yWindow=\"" << yWn <<
           "\" windowWidth=\"" << dxWn<<"\" windowHeight=\"" << dyWn <<
@@ -1126,11 +1264,11 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginBundleShs:
       {
         if (debug) Rcpp::Rcout << "<sheets>" << std::endl;
-        // unk = readbin(unk, bin, 0);
-        // unk = readbin(unk, bin, 0);
+        // unk = readbin(unk, bin, swapit);
+        // unk = readbin(unk, bin, swapit);
         // uint32_t count, uniqueCount;
-        // count = readbin(count, bin, 0);
-        // uniqueCount = readbin(uniqueCount, bin, 0);
+        // count = readbin(count, bin, swapit);
+        // uniqueCount = readbin(uniqueCount, bin, swapit);
         out << "<sheets>" << std::endl;
         break;
       }
@@ -1141,14 +1279,14 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
         uint32_t hsState = 0, iTabID = 0; //  strRelID ???
 
-        hsState = readbin(hsState, bin, 0);
-        iTabID = readbin(iTabID, bin, 0);
-        std::string rid = XLNullableWideString(bin);
+        hsState = readbin(hsState, bin, swapit);
+        iTabID = readbin(iTabID, bin, swapit);
+        std::string rid = XLNullableWideString(bin, swapit);
 
         if (debug)
           Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID  << ": " << rid << std::endl;
 
-        std::string val = XLWideString(bin);
+        std::string val = XLWideString(bin, swapit);
 
         std::string visible;
         if (hsState == 0) visible = "visible";
@@ -1180,7 +1318,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
         uint8_t chKey = 0;
         uint32_t itab = 0, BrtNameUint = 0;
-        BrtNameUint = readbin(BrtNameUint, bin, 0);
+        BrtNameUint = readbin(BrtNameUint, bin, swapit);
 
         BrtNameFields *fields = (BrtNameFields *)&BrtNameUint;
 
@@ -1212,29 +1350,29 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         //     fields->reserved
         //   );
 
-        chKey = readbin(chKey, bin, 0);
+        chKey = readbin(chKey, bin, swapit);
         // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)
 
-        itab = readbin(itab, bin, 0);
+        itab = readbin(itab, bin, swapit);
 
         // XLNameWideString: XLWideString <= 255 characters
-        std::string name = XLWideString(bin);
+        std::string name = XLWideString(bin, swapit);
 
-        std::string fml = CellParsedFormula(bin, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
 
-        std::string comment = XLNullableWideString(bin);
+        std::string comment = XLNullableWideString(bin, swapit);
 
         // if (debug)
           Rcpp::Rcout << name << comment << std::endl;
 
         if (fields->fProc) {
           // must be NULL
-          std::string unusedstring1 = XLNullableWideString(bin);
+          std::string unusedstring1 = XLNullableWideString(bin, swapit);
           // must be < 32768 characters
-          std::string description = XLNullableWideString(bin);
-          std::string helpTopic = XLNullableWideString(bin);
+          std::string description = XLNullableWideString(bin, swapit);
+          std::string helpTopic = XLNullableWideString(bin, swapit);
           // must be NULL
-          std::string unusedstring2 = XLNullableWideString(bin);
+          std::string unusedstring2 = XLNullableWideString(bin, swapit);
         }
 
         std::string defNam = "<definedName name=\"" + name;
@@ -1284,7 +1422,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtPlaceholderName:
       {
-        std::string name = XLWideString(bin);
+        std::string name = XLWideString(bin, swapit);
         Rcpp::Rcout << name << std::endl;
         break;
       }
@@ -1300,7 +1438,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
         // Rcpp::stop("BrtSupSelf");
-        std::string strRelID = XLNullableWideString(bin);
+        std::string strRelID = XLNullableWideString(bin, swapit);
         Rcpp::Rcout << strRelID << std::endl;
         break;
       }
@@ -1310,11 +1448,11 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
         uint32_t cTab = 0;
 
-        cTab = readbin(cTab, bin, 0);
+        cTab = readbin(cTab, bin, swapit);
         if (cTab > 65535) Rcpp::stop("cTab to large");
 
         for (uint32_t i = 0; i < cTab; ++i) {
-          std::string sheetName = XLWideString(bin);
+          std::string sheetName = XLWideString(bin, swapit);
           Rcpp::Rcout << sheetName << std::endl;
         }
 
@@ -1326,12 +1464,12 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "<BrtExternSheet>" << std::endl;
         uint32_t cXti = 0;
 
-        cXti = readbin(cXti, bin, 0);
+        cXti = readbin(cXti, bin, swapit);
         if (cXti > 65535) Rcpp::stop("cXti to large");
 
         std::vector<uint32_t> rgXti(cXti);
         for (uint32_t i = 0; i < cXti; ++i) {
-          std::vector<int> xti = Xti(bin);
+          std::vector<int> xti = Xti(bin, swapit);
           Rf_PrintValue(Rcpp::wrap(xti));
         }
 
@@ -1349,7 +1487,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "<ext>" << std::endl;
 
-        ProductVersion(bin, debug);
+        ProductVersion(bin, swapit, debug);
         break;
       }
 
@@ -1359,7 +1497,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         bin.seekg(size, bin.cur);
         // uint8_t fChartTrackingRefBased = 0;
         // uint32_t FRTHeader = 0;
-        // FRTHeader = readbin(FRTHeader, bin, 0);
+        // FRTHeader = readbin(FRTHeader, bin, swapit);
         // fChartTrackingRefBased = readbin(fChartTrackingRefBased, bin, 0) & 0x01;
         break;
       }
@@ -1376,8 +1514,8 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "<calc>" << std::endl;
         // bin.seekg(size, bin.cur);
         uint32_t FRTHeader = 0;
-        FRTHeader = readbin(FRTHeader, bin, 0);
-        std::string szName = XLWideString(bin);
+        FRTHeader = readbin(FRTHeader, bin, swapit);
+        std::string szName = XLWideString(bin, swapit);
 
         if (debug) Rcpp::Rcout << FRTHeader << ": " << szName << std::endl;
         break;
@@ -1459,14 +1597,10 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 // [[Rcpp::export]]
 int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
 
-  // WORKBOOK = BrtBeginBook [BrtFileVersion] [[BrtFileSharingIso] BrtFileSharing] [BrtWbProp]
-  // [ACABSPATH] [ACREVISIONPTR] [[BrtBookProtectionIso] BrtBookProtection] [BOOKVIEWS]
-  // BUNDLESHS [FNGROUP] [EXTERNALS] *BrtName [BrtCalcProp] [BrtOleSize] *(BrtUserBookView
-  // *FRT) [PIVOTCACHEIDS] [BrtWbFactoid] [SMARTTAGTYPES] [BrtWebOpt] *BrtFileRecover
-  // [WEBPUBITEMS] [CRERRS] FRTWORKBOOK BrtEndBook
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+
+  bool swapit = is_big_endian();
 
   // auto sas_size = bin.tellg();
   if (bin) {
@@ -1491,7 +1625,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       if (debug) Rcpp::Rcout << "." << std::endl;
 
-      RECORD(x, size, bin);
+      RECORD(x, size, bin, swapit);
 
       switch(x) {
 
@@ -1515,15 +1649,15 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t brtwsprop_fst = 0;
         uint32_t rwSync = 0, colSync = 0;
 
-        brtwsprop_fst = readbin(brtwsprop_fst, bin, 0);
+        brtwsprop_fst = readbin(brtwsprop_fst, bin, swapit);
         BrtWsPropFields1 *fields1 = (BrtWsPropFields1 *)&brtwsprop_fst;
-        brtwsprop_sec = readbin(brtwsprop_sec, bin, 0);
+        brtwsprop_sec = readbin(brtwsprop_sec, bin, swapit);
         BrtWsPropFields2 *fields2 = (BrtWsPropFields2 *)&brtwsprop_sec;
 
-        std::vector<int> color = brtColor(bin);
-        rwSync = readbin(rwSync, bin, 0);
-        colSync = readbin(colSync, bin, 0);
-        std::string strName = XLWideString(bin);
+        std::vector<int> color = brtColor(bin, swapit);
+        rwSync = readbin(rwSync, bin, swapit);
+        colSync = readbin(colSync, bin, swapit);
+        std::string strName = XLWideString(bin, swapit);
 
         if (debug) {
           Rcpp::Rcout << "sheetPr tabColor:" << std::endl;
@@ -1560,7 +1694,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         std::vector<int> dims;
         // 0 index vectors
         // first row, last row, first col, last col
-        dims = UncheckedRfX(bin);
+        dims = UncheckedRfX(bin, swapit);
         if (debug) {
           Rcpp::Rcout << "dimension: ";
           Rf_PrintValue(Rcpp::wrap(dims));
@@ -1592,9 +1726,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t flags = 0;
         uint32_t wScale = 0, iWbkView = 0;
 
-        flags = readbin(flags, bin, 0);
-        wScale = readbin(wScale, bin, 0);
-        iWbkView = readbin(iWbkView, bin, 0);
+        flags = readbin(flags, bin, swapit);
+        wScale = readbin(wScale, bin, swapit);
+        iWbkView = readbin(iWbkView, bin, swapit);
 
         fSelected = flags & 0x8000;
 
@@ -1622,18 +1756,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t flags = 0, reserved3 = 0, wScale = 0, wScaleNormal = 0, wScaleSLV = 0, wScalePLV = 0;
         uint32_t xlView = 0, rwTop = 0, colLeft = 0, iWbkView = 0;
 
-        flags = readbin(flags, bin, 0);
-        xlView = readbin(xlView, bin, 0);
-        rwTop = UncheckedRw(bin);
-        colLeft = UncheckedCol(bin);
-        icvHdr = readbin(icvHdr, bin, 0);
-        reserved2 = readbin(reserved2, bin, 0);
-        reserved3 = readbin(reserved3, bin, 0);
-        wScale = readbin(wScale, bin, 0);
-        wScaleNormal = readbin(wScaleNormal, bin, 0);
-        wScaleSLV = readbin(wScaleSLV, bin, 0);
-        wScalePLV = readbin(wScalePLV, bin, 0);
-        iWbkView = readbin(iWbkView, bin, 0);
+        flags = readbin(flags, bin, swapit);
+        xlView = readbin(xlView, bin, swapit);
+        rwTop = UncheckedRw(bin, swapit);
+        colLeft = UncheckedCol(bin, swapit);
+        icvHdr = readbin(icvHdr, bin, swapit);
+        reserved2 = readbin(reserved2, bin, swapit);
+        reserved3 = readbin(reserved3, bin, swapit);
+        wScale = readbin(wScale, bin, swapit);
+        wScaleNormal = readbin(wScaleNormal, bin, swapit);
+        wScaleSLV = readbin(wScaleSLV, bin, swapit);
+        wScalePLV = readbin(wScalePLV, bin, swapit);
+        iWbkView = readbin(iWbkView, bin, swapit);
 
 
         BrtBeginWsViewFields *fields = (BrtBeginWsViewFields *)&flags;
@@ -1692,13 +1826,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint32_t pnn = 0, rwAct = 0, colAct = 0, dwRfxAct = 0;
         std::vector<int> sqrfx;
 
-        pnn = readbin(pnn, bin, 0);
-        rwAct = readbin(rwAct, bin, 0);
-        colAct = readbin(colAct, bin, 0);
-        dwRfxAct = readbin(dwRfxAct, bin, 0);
+        pnn = readbin(pnn, bin, swapit);
+        rwAct = readbin(rwAct, bin, swapit);
+        colAct = readbin(colAct, bin, swapit);
+        dwRfxAct = readbin(dwRfxAct, bin, swapit);
 
         // sqrfx[0] is the number of rfx following
-        sqrfx = UncheckedSqRfX(bin);
+        sqrfx = UncheckedSqRfX(bin, swapit);
 
         std::string ac = int_to_col(colAct + 1) + std::to_string(rwAct + 1);
         std::string lref = int_to_col(sqrfx[3] + 1) + std::to_string(sqrfx[1] + 1);
@@ -1747,11 +1881,11 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t colinfo = 0;
         uint32_t colFirst = 0, colLast = 0, coldx = 0, ixfe = 0;
 
-        colFirst = UncheckedCol(bin) + 1;
-        colLast = UncheckedCol(bin) + 1;
-        coldx = readbin(coldx, bin, 0);
-        ixfe = readbin(ixfe, bin, 0);
-        colinfo = readbin(colinfo, bin, 0);
+        colFirst = UncheckedCol(bin, swapit) + 1;
+        colLast = UncheckedCol(bin, swapit) + 1;
+        coldx = readbin(coldx, bin, swapit);
+        ixfe = readbin(ixfe, bin, swapit);
+        colinfo = readbin(colinfo, bin, swapit);
 
         BrtColInfoFields *fields = (BrtColInfoFields *)&colinfo;
 
@@ -1797,11 +1931,11 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtACBegin: " << bin.tellg() << std::endl;
         bin.seekg(size, bin.cur);
         // int16_t nversions, version;
-        // nversions = readbin(nversions, bin , 0);
+        // nversions = readbin(nversions, bin , swapit);
         // std::vector<int> versions;
         //
         // for (int i = 0; i < nversions; ++i) {
-        //   version = readbin(version, bin, 0);
+        //   version = readbin(version, bin, swapit);
         //   versions.push_back(version);
         // }
         //
@@ -1836,7 +1970,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtRwDescent: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
         uint16_t dyDescent = 0;
-        dyDescent = readbin(dyDescent, bin, 0);
+        dyDescent = readbin(dyDescent, bin, swapit);
         break;
       }
 
@@ -1860,18 +1994,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       int32_t rw = 0;
       uint32_t ixfe = 0, ccolspan = 0, unk32 = 0, colMic = 0, colLast = 0;
 
-      rw = readbin(rw, bin, 0);
+      rw = readbin(rw, bin, swapit);
 
       if (rw > 0x00100000 || rw < row)
         Rcpp::stop("row either decreasing or to large");
 
-      ixfe = readbin(ixfe, bin, 0);
-      miyRw = readbin(miyRw, bin, 0);
+      ixfe = readbin(ixfe, bin, swapit);
+      miyRw = readbin(miyRw, bin, swapit);
 
       if (miyRw > 0x2000) Rcpp::stop("miyRw to big");
 
       uint16_t rwoheaderfields = 0;
-      rwoheaderfields = readbin(rwoheaderfields, bin, 0);
+      rwoheaderfields = readbin(rwoheaderfields, bin, swapit);
 
       BrtRowHdrFields *fields = (BrtRowHdrFields *)&rwoheaderfields;
 
@@ -1885,17 +2019,17 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       // fGhostDirty = 1
       // fReserved   = 1
 
-      bits3 = readbin(bits3, bin, 0);
+      bits3 = readbin(bits3, bin, swapit);
       // fPhShow   = 1
       // fReserved = 7
 
-      ccolspan = readbin(ccolspan, bin, 0);
+      ccolspan = readbin(ccolspan, bin, swapit);
       std::string spans;
       if (ccolspan) {
         // rgBrtColspan
         // not sure if these are alway around. maybe ccolspan is a counter
-        colMic = readbin(colMic, bin, 0);
-        colLast = readbin(colLast, bin, 0);
+        colMic = readbin(colMic, bin, swapit);
+        colLast = readbin(colLast, bin, swapit);
 
         spans = std::to_string(colMic + 1) + ":" + std::to_string(colLast + 1);
       }
@@ -1950,11 +2084,11 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtCellIsst: " << bin.tellg() << std::endl;
 
         int32_t val1 = 0, val2 = 0, val3 = 0;
-        val1 = readbin(val1, bin, 0);
+        val1 = readbin(val1, bin, swapit);
         if (debug) Rcpp::Rcout << val1 << std::endl;
-        val2 = readbin(val2, bin, 0);
+        val2 = readbin(val2, bin, swapit);
         if (debug) Rcpp::Rcout << val2 << std::endl;
-        val3 = readbin(val3, bin, 0);
+        val3 = readbin(val3, bin, swapit);
         if (debug) Rcpp::Rcout << val3 << std::endl;
 
         out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << " t=\"s\">" << std::endl;
@@ -1970,11 +2104,11 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         int32_t val1 = 0, val2 = 0;
         uint8_t val3 = 0;
-        val1 = readbin(val1, bin, 0);
+        val1 = readbin(val1, bin, swapit);
         // out << val1 << std::endl;
-        val2 = readbin(val2, bin, 0);
+        val2 = readbin(val2, bin, swapit);
         // out << val2 << std::endl;
-        val3 = readbin(val3, bin, 0);
+        val3 = readbin(val3, bin, swapit);
         // out << val3 << std::endl;
 
         out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << " t=\"b\">" << std::endl;
@@ -1989,12 +2123,12 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtCellRk: " << bin.tellg() << std::endl;
 
         int32_t val1 = 0, val2= 0, val3= 0;
-        val1 = readbin(val1, bin, 0);
+        val1 = readbin(val1, bin, swapit);
         // Rcpp::Rcout << val << std::endl;
-        val2 = readbin(val2, bin, 0);
+        val2 = readbin(val2, bin, swapit);
         // Rcpp::Rcout << val << std::endl;
         // wrong?
-        val3 = readbin(val3, bin, 0);
+        val3 = readbin(val3, bin, swapit);
         // Rcpp::Rcout << RkNumber(val) << std::endl;
 
         out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << ">" << std::endl;
@@ -2009,13 +2143,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtCellReal: " << bin.tellg() << std::endl;
         int32_t val1= 0, val2= 0;
-        val1 = readbin(val1, bin, 0);
+        val1 = readbin(val1, bin, swapit);
         // Rcpp::Rcout << val << std::endl;
-        val2 = readbin(val2, bin, 0);
+        val2 = readbin(val2, bin, swapit);
         // Rcpp::Rcout << val << std::endl;
 
         double dbl = 0.0;
-        dbl = readbin(dbl, bin, 0);
+        dbl = readbin(dbl, bin, swapit);
         // Rcpp::Rcout << dbl << std::endl;
 
         out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << ">" << std::endl;
@@ -2030,7 +2164,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtCellBlank: " << bin.tellg() << std::endl;
 
-        std::vector<int> blank = Cell(bin);
+        std::vector<int> blank = Cell(bin, swapit);
         col = blank[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(blank));
 
@@ -2046,13 +2180,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // uint8_t val8= 0;
 
         int32_t val1= 0, val2= 0;
-        val1 = readbin(val1, bin, 0);
+        val1 = readbin(val1, bin, swapit);
         // out << val << std::endl;
-        val2 = readbin(val2, bin, 0);
+        val2 = readbin(val2, bin, swapit);
         // out << val << std::endl;
 
         out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << " t=\"e\">" << std::endl;
-        out << "<v>" << BErr(bin) << "</v>" << std::endl;
+        out << "<v>" << BErr(bin, swapit) << "</v>" << std::endl;
         out << "</c>" << std::endl;
 
         break;
@@ -2064,20 +2198,20 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // bin.seekg(size, bin.cur);
 
         std::vector<int> cell;
-        cell = Cell(bin);
+        cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
         bool val = 0;
-        val = readbin(val, bin, 0);
+        val = readbin(val, bin, swapit);
         if (debug) Rcpp::Rcout << val << std::endl;
 
         uint16_t grbitFlags = 0;
-        grbitFlags = readbin(grbitFlags, bin, 0);
+        grbitFlags = readbin(grbitFlags, bin, swapit);
 
         GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
-        std::string fml = CellParsedFormula(bin, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"b\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2092,22 +2226,22 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtFmlaError: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
         std::vector<int> cell;
-        cell = Cell(bin);
+        cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
         std::string fErr;
-        fErr = BErr(bin);
+        fErr = BErr(bin, swapit);
 
         uint16_t grbitFlags = 0;
-        grbitFlags = readbin(grbitFlags, bin, 0);
+        grbitFlags = readbin(grbitFlags, bin, swapit);
 
         GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
 
-        std::string fml = CellParsedFormula(bin, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"e\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2123,15 +2257,15 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // bin.seekg(size, bin.cur);
 
         std::vector<int> cell;
-        cell = Cell(bin);
+        cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
-        double xnum = Xnum(bin);
+        double xnum = Xnum(bin, swapit);
         if (debug) Rcpp::Rcout << xnum << std::endl;
 
         uint16_t grbitFlags = 0;
-        grbitFlags = readbin(grbitFlags, bin, 0);
+        grbitFlags = readbin(grbitFlags, bin, swapit);
 
         GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
@@ -2140,7 +2274,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         //         fields->fAlwaysCalc,
         //         fields->unused);
 
-        std::string fml = CellParsedFormula(bin, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << ">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2156,17 +2290,17 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // bin.seekg(size, bin.cur);
 
         std::vector<int> cell;
-        cell = Cell(bin);
+        cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
-        std::string val = XLWideString(bin);
+        std::string val = XLWideString(bin, swapit);
         if (debug) Rcpp::Rcout << val << std::endl;
 
         uint16_t grbitFlags = 0;
-        grbitFlags = readbin(grbitFlags, bin, 0);
+        grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        std::string fml = CellParsedFormula(bin, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"str\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2181,14 +2315,14 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtShrFmla: " << bin.tellg() << std::endl;
 
         uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
-        rwFirst  = UncheckedRw(bin) +1;
-        rwLast   = UncheckedRw(bin) +1;
-        colFirst = UncheckedCol(bin) +1;
-        colLast  = UncheckedCol(bin) +1;
+        rwFirst  = UncheckedRw(bin, swapit) +1;
+        rwLast   = UncheckedRw(bin, swapit) +1;
+        colFirst = UncheckedCol(bin, swapit) +1;
+        colLast  = UncheckedCol(bin, swapit) +1;
 
         Rcpp::Rcout << int_to_col(colFirst) << rwFirst << ":" << int_to_col(colLast) << rwLast << std::endl;
 
-        std::string fml = CellParsedFormula(bin, debug, col);
+        std::string fml = CellParsedFormula(bin, swapit, debug, col);
         Rcpp::Rcout << fml << std::endl;
 
         // out << "<f>" << fml << "</f>" << std::endl;
@@ -2221,7 +2355,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtBeginMergeCells: " << bin.tellg() << std::endl;
         uint32_t cmcs = 0;
-        cmcs = readbin(cmcs, bin, 0);
+        cmcs = readbin(cmcs, bin, swapit);
         if (debug) Rcpp::Rcout << "count: " << cmcs << std::endl;
 
         out << "<mergeCells count=\"" << cmcs << "\">"<< std::endl;
@@ -2234,10 +2368,10 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
 
-        rwFirst  = UncheckedRw(bin) + 1L;
-        rwLast   = UncheckedRw(bin) + 1L;
-        colFirst = UncheckedCol(bin) + 1L;
-        colLast  = UncheckedCol(bin) + 1L;
+        rwFirst  = UncheckedRw(bin, swapit) + 1L;
+        rwLast   = UncheckedRw(bin, swapit) + 1L;
+        colFirst = UncheckedCol(bin, swapit) + 1L;
+        colLast  = UncheckedCol(bin, swapit) + 1L;
 
         if (debug)
           Rprintf("MergeCell: %d %d %d %d\n",
@@ -2281,32 +2415,33 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       case BrtDrawing:
       {
-        std::string stRelId = XLNullableWideString(bin);
+        std::string stRelId = XLNullableWideString(bin, swapit);
         out << "<drawing r:id=\"" << stRelId << "\" />" << std::endl;
         break;
       }
 
       case BrtLegacyDrawing:
       {
-        std::string stRelId = XLNullableWideString(bin);
+        if (debug) Rcpp::Rcout << "<legacyDrawing>" << std::endl;
+        std::string stRelId = XLNullableWideString(bin, swapit);
         out << "<legacyDrawing r:id=\"" << stRelId << "\" />" << std::endl;
         break;
       }
 
       case BrtLegacyDrawingHF:
       {
-        std::string stRelId = XLNullableWideString(bin);
+        std::string stRelId = XLNullableWideString(bin, swapit);
         out << "<legacyDrawingHF r:id=\"" << stRelId << "\" />" << std::endl;
         break;
       }
 
       case BrtHLink:
       {
-        std::vector<int> rfx = UncheckedRfX(bin);
-        std::string relId = XLNullableWideString(bin);
-        std::string location = XLWideString(bin);
-        std::string tooltip = XLWideString(bin);
-        std::string display = XLWideString(bin);
+        std::vector<int> rfx = UncheckedRfX(bin, swapit);
+        std::string relId = XLNullableWideString(bin, swapit);
+        std::string location = XLWideString(bin, swapit);
+        std::string tooltip = XLWideString(bin, swapit);
+        std::string display = XLWideString(bin, swapit);
 
 
         std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
@@ -2328,7 +2463,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtBeginAFilter:
       {
         if (debug) Rcpp::Rcout << "<autofilter>" << std::endl;
-        std::vector<int> rfx = UncheckedRfX(bin);
+        std::vector<int> rfx = UncheckedRfX(bin, swapit);
 
         std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
         std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
@@ -2354,8 +2489,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         uint16_t flags = 0;
         uint32_t dwCol = 0;
-        dwCol = readbin(dwCol, bin, 0);
-        flags = readbin(flags, bin, 0);
+        dwCol = readbin(dwCol, bin, swapit);
+        flags = readbin(flags, bin, swapit);
         // fHideArrow
         // fNoBtn
 
@@ -2370,15 +2505,15 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // bin.seekg(size, bin.cur);
 
         uint32_t fBlank = 0, unused = 0;
-        fBlank = readbin(fBlank, bin, 0); // a 32bit flag, after all ... why not?
-        unused = readbin(unused, bin, 0); // maybe calendarType?
+        fBlank = readbin(fBlank, bin, swapit); // a 32bit flag, after all ... why not?
+        unused = readbin(unused, bin, swapit); // maybe calendarType?
         out << "<filters blank=\"" << fBlank <<"\">" << std::endl;
         break;
       }
 
       case BrtFilter:
       {
-        std::string rgch = XLWideString(bin);
+        std::string rgch = XLWideString(bin, swapit);
         out << "<filter val=\"" << rgch << "\" />" << std::endl;
         // bin.seekg(size, bin.cur);
         break;
@@ -2395,8 +2530,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtColorFilter:
       {
         uint32_t dxfid = 0, fCellColor = 0;
-        dxfid = readbin(dxfid, bin, 0);
-        fCellColor = readbin(fCellColor, bin, 0);
+        dxfid = readbin(dxfid, bin, swapit);
+        fCellColor = readbin(fCellColor, bin, swapit);
 
         out << "<colorFilter dxfId=\"" << dxfid << "\" cellColor=\""<< fCellColor<< "\"/>" << std::endl;
 
@@ -2424,8 +2559,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtIconFilter14:
       {
         uint32_t iIconSet = 0, iIcon = 0;
-        iIconSet = readbin(iIconSet, bin, 0);
-        iIcon = readbin(iIcon, bin, 0);
+        iIconSet = readbin(iIconSet, bin, swapit);
+        iIcon = readbin(iIcon, bin, swapit);
 
         std::string iconSet;
         if (iIconSet) iconSet = to_iconset(iIconSet);
@@ -2455,7 +2590,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "<tableParts>" << std::endl;
         uint32_t cParts = 0;
-        cParts = readbin(cParts, bin, 0);
+        cParts = readbin(cParts, bin, swapit);
         out << "<tableParts count=\"" << cParts << "\">" << std::endl;
         break;
       }
@@ -2463,7 +2598,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtListPart:
       {
         if (debug) Rcpp::Rcout << "<tablePart/>" << std::endl;
-        std::string stRelID = XLNullableWideString(bin);
+        std::string stRelID = XLNullableWideString(bin, swapit);
         out << "<tablePart r:id=\"" << stRelID << "\" />" << std::endl;
         break;
       }
@@ -2485,10 +2620,10 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint32_t ccf = 0, fPivot = 0;
         std::vector<int> sqrfx;
 
-        ccf = readbin(ccf, bin, 0); // not needed?
-        fPivot = readbin(fPivot, bin, 0);
+        ccf = readbin(ccf, bin, swapit); // not needed?
+        fPivot = readbin(fPivot, bin, swapit);
 
-        sqrfx = UncheckedSqRfX(bin);
+        sqrfx = UncheckedSqRfX(bin, swapit);
         std::string lref = int_to_col(sqrfx[3] + 1) + std::to_string(sqrfx[1] + 1);
         std::string rref = int_to_col(sqrfx[4] + 1) + std::to_string(sqrfx[2] + 1);
 
@@ -2515,29 +2650,29 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint32_t iType = 0, iTemplate = 0, dxfId = 0, iPri = 0, iParam = 0, reserved1 = 0, reserved2 = 0;
         uint32_t cbFmla1 = 0, cbFmla2 = 0, cbFmla3 = 0;
 
-        iType = readbin(iType, bin, 0);
-        iTemplate = readbin(iTemplate, bin, 0);
-        dxfId = readbin(dxfId, bin, 0);
-        iPri = readbin(iPri, bin, 0);
-        iParam = readbin(iParam, bin, 0);
-        reserved1 = readbin(reserved1, bin, 0);
-        reserved2 = readbin(reserved2, bin, 0);
-        flags = readbin(flags, bin, 0);
-        cbFmla1 = readbin(cbFmla1, bin, 0);
-        cbFmla2 = readbin(cbFmla2, bin, 0);
-        cbFmla3 = readbin(cbFmla3, bin, 0);
+        iType = readbin(iType, bin, swapit);
+        iTemplate = readbin(iTemplate, bin, swapit);
+        dxfId = readbin(dxfId, bin, swapit);
+        iPri = readbin(iPri, bin, swapit);
+        iParam = readbin(iParam, bin, swapit);
+        reserved1 = readbin(reserved1, bin, swapit);
+        reserved2 = readbin(reserved2, bin, swapit);
+        flags = readbin(flags, bin, swapit);
+        cbFmla1 = readbin(cbFmla1, bin, swapit);
+        cbFmla2 = readbin(cbFmla2, bin, swapit);
+        cbFmla3 = readbin(cbFmla3, bin, swapit);
 
-        std::string strParam = XLNullableWideString(bin);
+        std::string strParam = XLNullableWideString(bin, swapit);
 
         std::string rgce1, rgce2, rgce3;
         if (cbFmla1 != 0x00000000) {
-          rgce1 = CellParsedFormula(bin, debug, 0);
+          rgce1 = CellParsedFormula(bin, swapit, debug, 0);
         }
         if (cbFmla2 != 0x00000000) {
-          rgce2 = CellParsedFormula(bin, debug, 0);
+          rgce2 = CellParsedFormula(bin, swapit, debug, 0);
         }
         if (cbFmla3 != 0x00000000) {
-          rgce3 = CellParsedFormula(bin, debug, 0);
+          rgce3 = CellParsedFormula(bin, swapit, debug, 0);
         }
 
         BrtBeginCFRuleFields *fields = (BrtBeginCFRuleFields *)&flags;

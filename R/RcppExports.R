@@ -344,6 +344,10 @@ table_bin <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_table_bin`, filePath, outPath, debug)
 }
 
+comments_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_comments_bin`, filePath, outPath, debug)
+}
+
 sharedstrings_bin <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_sharedstrings_bin`, filePath, outPath, debug)
 }

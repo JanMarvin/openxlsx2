@@ -109,6 +109,7 @@ wb_load <- function(
   embeddings        <- grep_xml("xl/embeddings")
 
   # comments
+  commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
   commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
   personXML         <- grep_xml("xl/persons/person.xml$")
   threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
@@ -193,6 +194,15 @@ wb_load <- function(
 
     if (length(chartSheetsXML)) {
       chartSheetsXML <- gsub(".bin$", ".xml", chartSheetsXML)
+    }
+
+    if (length(commentsBIN)) {
+      commentsXML <- gsub(".bin$", ".xml", commentsBIN)
+      for (i in seq_along(commentsBIN)) {
+        comments_bin(commentsBIN[i], commentsXML[i], debug)
+        # system(sprintf("cat %s", commentsXML[i]))
+        # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
+      }
     }
 
     workbookXMLRels <- workbookBINRels
@@ -894,8 +904,8 @@ wb_load <- function(
 
         xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
         # print(xml_relship)
-        if (any(basename(xml_relship$Type) == "table")) { #  %% length(tablesBIN)
-          sel <- basename(xml_relship$Type) == "table"
+        if (any(basename(xml_relship$Type) %in% c("comments", "table"))) { #  %% length(tablesBIN)
+          sel <- basename(xml_relship$Type) %in% c("comments", "table")
           # message("table")
           # print(gsub(".bin", ".xml", xml_relship$Target[sel]))
           # message("---")
