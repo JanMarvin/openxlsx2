@@ -239,7 +239,7 @@ wb$add_worksheet("sum_examples")
 ### Note: dataTable formula do not need to be used inside of dataTables. dataTable formula are for referencing the data within the dataTable.
 sum_examples <- data.frame(
   description = c("sum_sales_price", "sum_product_Price_Quantity"),
-  formula = c( "", "")
+  formula = c("", "")
 )
 
 wb$add_data(x = sum_examples)
