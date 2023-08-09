@@ -251,9 +251,9 @@ test_that("wb_add_filter(), wb_remove_filter() is a wrapper", {
 
 # wb_grid_lines() ---------------------------------------------------------
 
-test_that("wb_grid_lines() is a wrapper", {
+test_that("wb_set_grid_lines() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
-  expect_wrapper("grid_lines", wb = wb, params = list(sheet = 1, show = TRUE))
+  expect_wrapper("set_grid_lines", wb = wb, params = list(sheet = 1, show = TRUE))
 })
 
 # wb_add_named_region(), wb_remove_named_region() -------------------------
