@@ -431,7 +431,7 @@ wbWorkbook <- R6::R6Class(
         if (is_wbColour(tab_color)) {
           tab_color <- as.character(tab_color)
         } else {
-          tab_color <- validateColor(tab_color, "Invalid tab_color in add_chartsheet.")
+          tab_color <- validate_color(tab_color, msg = "Invalid tab_color in add_chartsheet.")
         }
       }
 
@@ -584,7 +584,7 @@ wbWorkbook <- R6::R6Class(
         if (is_wbColour(tab_color)) {
           tabColor <- as.character(tab_color)
         } else {
-          tabColor <- validateColor(tab_color, "Invalid tab_color in add_worksheet.")
+          tabColor <- validate_color(tab_color, msg = "Invalid tab_color in add_worksheet.")
         }
       }
 
@@ -4063,7 +4063,7 @@ wbWorkbook <- R6::R6Class(
             }
           }
 
-          style <- check_valid_color(style)
+          style <- validate_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
@@ -4096,7 +4096,7 @@ wbWorkbook <- R6::R6Class(
 
           ## Additional parameters passed by ...
           # showValue, gradient, border
-          style <- check_valid_color(style)
+          style <- validate_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")

@@ -53,28 +53,3 @@ match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.f
 
   y[m]
 }
-
-validate_color <- function(color = NULL, or_null = FALSE, envir = parent.frame()) {
-  sx <- as.character(substitute(color, envir))
-
-  if (identical(color, "none") && or_null) {
-    return(NULL)
-  }
-
-  # returns black
-  if (is.null(color)) {
-    if (or_null) return(NULL)
-    return("FF000000")
-  }
-
-  if (ind <- any(color %in% grDevices::colors())) {
-    color[ind] <- col2hex(color[ind])
-  }
-
-  if (any(!grepl("^#[A-Fa-f0-9]{6}$", color))) {
-    msg <- sprintf("`%s` ['%s'] is not a valid color", sx, color)
-    stop(simpleError(msg))
-  }
-
-  gsub("^#", "FF", toupper(color))
-}
