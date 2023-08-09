@@ -143,7 +143,7 @@ validate_color <- function(color = NULL, or_null = FALSE, envir = parent.frame()
     return("FF000000")
   }
 
-  if (ind <- any(color %in% grDevices::colors())) {
+  if (any(ind <- color %in% grDevices::colors())) {
     color[ind] <- col2hex(color[ind])
   }
 

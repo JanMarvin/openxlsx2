@@ -208,3 +208,13 @@ test_that("distinct() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("validate_colors() works", {
+
+  col <- c("FF0000FF", "#0000FF", "000FF", "#FF000FF", "blue")
+
+  exp <- c("FF0000FF", "FF0000FF", "FFF000FF", "FFF000FF", "FF0000FF")
+  got <- validate_color(col)
+  expect_equal(exp, got)
+
+})
