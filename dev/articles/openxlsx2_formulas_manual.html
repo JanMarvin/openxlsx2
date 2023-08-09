@@ -525,16 +525,18 @@ Row],[total_COGS]]</td>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"sum_examples"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">### Note: dataTable formula do not need to be used inside of dataTables. dataTable formula are for referencing the data within the dataTable.</span></span>
+<span></span>
+<span><span class="co">### Note: dataTable formula do not need to be used inside of dataTables. dataTable formula are for referencing the data within the dataTable.</span></span>
 <span><span class="va">sum_examples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>    description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum_sales_price"</span>, <span class="st">"sum_product_Price_Quantity"</span><span class="op">)</span>,</span>
-<span>    formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>      <span class="st">"sum(daily_sales[[#Data],[sales_price]])"</span>,</span>
-<span>      <span class="st">"sum(daily_sales[[#Data],[sales_price]] * daily_sales[[#Data],[sales_quantity]])"</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">sum_examples</span><span class="op">$</span><span class="va">formula</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">sum_examples</span><span class="op">$</span><span class="va">formula</span><span class="op">)</span>, <span class="st">"formula"</span><span class="op">)</span></span>
+<span>  description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sum_sales_price"</span>, <span class="st">"sum_product_Price_Quantity"</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="st">""</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">sum_examples</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># add formulas</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"sum(daily_sales[[#Data],[sales_price]])"</span>, dims <span class="op">=</span> <span class="st">"B2"</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"sum(daily_sales[[#Data],[sales_price]] * daily_sales[[#Data],[sales_quantity]])"</span>, dims <span class="op">=</span> <span class="st">"B3"</span>, array <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#### dataTable referencing</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"dt_references"</span><span class="op">)</span></span>
@@ -542,12 +544,16 @@ Row],[total_COGS]]</td>
 <span><span class="co">### Adding the headers by themselves.</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="st">"daily_sales[[#Headers],[sales_price]:[total_gross_profit]]"</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1:G1"</span>,</span>
+<span>  array <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">### Adding the raw data by reference and selecting them directly.</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="st">"daily_sales[[#Data],[sales_price]:[total_gross_profit]]"</span>,</span>
-<span>  start_row <span class="op">=</span> <span class="fl">2</span></span>
+<span>  start_row <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A2:G4"</span>,</span>
+<span>  array <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># wb$open()</span></span></code></pre></div>
 </div>
