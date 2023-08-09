@@ -7,7 +7,7 @@
 #include <iomanip>
 
 // [[Rcpp::export]]
-int styles(std::string filePath, std::string outPath, bool debug) {
+int styles_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -600,7 +600,7 @@ int styles(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int bin_table(std::string filePath, std::string outPath, bool debug) {
+int table_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -918,7 +918,7 @@ int bin_table(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int sst(std::string filePath, std::string outPath, bool debug) {
+int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -992,7 +992,7 @@ int sst(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int workbook(std::string filePath, std::string outPath, bool debug) {
+int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
   // WORKBOOK = BrtBeginBook [BrtFileVersion] [[BrtFileSharingIso] BrtFileSharing] [BrtWbProp]
   // [ACABSPATH] [ACREVISIONPTR] [[BrtBookProtectionIso] BrtBookProtection] [BOOKVIEWS]
@@ -1457,7 +1457,7 @@ int workbook(std::string filePath, std::string outPath, bool debug) {
 
 
 // [[Rcpp::export]]
-int worksheet(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
+int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
 
   // WORKBOOK = BrtBeginBook [BrtFileVersion] [[BrtFileSharingIso] BrtFileSharing] [BrtWbProp]
   // [ACABSPATH] [ACREVISIONPTR] [[BrtBookProtectionIso] BrtBookProtection] [BOOKVIEWS]

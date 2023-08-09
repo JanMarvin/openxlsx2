@@ -840,61 +840,61 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// styles
-int styles(std::string filePath, std::string outPath, bool debug);
-RcppExport SEXP _openxlsx2_styles(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
+// styles_bin
+int styles_bin(std::string filePath, std::string outPath, bool debug);
+RcppExport SEXP _openxlsx2_styles_bin(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< std::string >::type outPath(outPathSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(styles(filePath, outPath, debug));
+    rcpp_result_gen = Rcpp::wrap(styles_bin(filePath, outPath, debug));
     return rcpp_result_gen;
 END_RCPP
 }
-// bin_table
-int bin_table(std::string filePath, std::string outPath, bool debug);
-RcppExport SEXP _openxlsx2_bin_table(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
+// table_bin
+int table_bin(std::string filePath, std::string outPath, bool debug);
+RcppExport SEXP _openxlsx2_table_bin(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< std::string >::type outPath(outPathSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(bin_table(filePath, outPath, debug));
+    rcpp_result_gen = Rcpp::wrap(table_bin(filePath, outPath, debug));
     return rcpp_result_gen;
 END_RCPP
 }
-// sst
-int sst(std::string filePath, std::string outPath, bool debug);
-RcppExport SEXP _openxlsx2_sst(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
+// sharedstrings_bin
+int sharedstrings_bin(std::string filePath, std::string outPath, bool debug);
+RcppExport SEXP _openxlsx2_sharedstrings_bin(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< std::string >::type outPath(outPathSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(sst(filePath, outPath, debug));
+    rcpp_result_gen = Rcpp::wrap(sharedstrings_bin(filePath, outPath, debug));
     return rcpp_result_gen;
 END_RCPP
 }
-// workbook
-int workbook(std::string filePath, std::string outPath, bool debug);
-RcppExport SEXP _openxlsx2_workbook(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
+// workbook_bin
+int workbook_bin(std::string filePath, std::string outPath, bool debug);
+RcppExport SEXP _openxlsx2_workbook_bin(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< std::string >::type outPath(outPathSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(workbook(filePath, outPath, debug));
+    rcpp_result_gen = Rcpp::wrap(workbook_bin(filePath, outPath, debug));
     return rcpp_result_gen;
 END_RCPP
 }
-// worksheet
-int worksheet(std::string filePath, bool chartsheet, std::string outPath, bool debug);
-RcppExport SEXP _openxlsx2_worksheet(SEXP filePathSEXP, SEXP chartsheetSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
+// worksheet_bin
+int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bool debug);
+RcppExport SEXP _openxlsx2_worksheet_bin(SEXP filePathSEXP, SEXP chartsheetSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -902,7 +902,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type chartsheet(chartsheetSEXP);
     Rcpp::traits::input_parameter< std::string >::type outPath(outPathSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(worksheet(filePath, chartsheet, outPath, debug));
+    rcpp_result_gen = Rcpp::wrap(worksheet_bin(filePath, chartsheet, outPath, debug));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -975,11 +975,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
     {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
     {"_openxlsx2_write_xmlPtr", (DL_FUNC) &_openxlsx2_write_xmlPtr, 2},
-    {"_openxlsx2_styles", (DL_FUNC) &_openxlsx2_styles, 3},
-    {"_openxlsx2_bin_table", (DL_FUNC) &_openxlsx2_bin_table, 3},
-    {"_openxlsx2_sst", (DL_FUNC) &_openxlsx2_sst, 3},
-    {"_openxlsx2_workbook", (DL_FUNC) &_openxlsx2_workbook, 3},
-    {"_openxlsx2_worksheet", (DL_FUNC) &_openxlsx2_worksheet, 4},
+    {"_openxlsx2_styles_bin", (DL_FUNC) &_openxlsx2_styles_bin, 3},
+    {"_openxlsx2_table_bin", (DL_FUNC) &_openxlsx2_table_bin, 3},
+    {"_openxlsx2_sharedstrings_bin", (DL_FUNC) &_openxlsx2_sharedstrings_bin, 3},
+    {"_openxlsx2_workbook_bin", (DL_FUNC) &_openxlsx2_workbook_bin, 3},
+    {"_openxlsx2_worksheet_bin", (DL_FUNC) &_openxlsx2_worksheet_bin, 4},
     {NULL, NULL, 0}
 };
 

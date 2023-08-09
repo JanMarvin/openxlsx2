@@ -336,23 +336,23 @@ write_xmlPtr <- function(doc, fl) {
     invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
 }
 
-styles <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_styles`, filePath, outPath, debug)
+styles_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_styles_bin`, filePath, outPath, debug)
 }
 
-bin_table <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_bin_table`, filePath, outPath, debug)
+table_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_table_bin`, filePath, outPath, debug)
 }
 
-sst <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_sst`, filePath, outPath, debug)
+sharedstrings_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_sharedstrings_bin`, filePath, outPath, debug)
 }
 
-workbook <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_workbook`, filePath, outPath, debug)
+workbook_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_workbook_bin`, filePath, outPath, debug)
 }
 
-worksheet <- function(filePath, chartsheet, outPath, debug) {
-    .Call(`_openxlsx2_worksheet`, filePath, chartsheet, outPath, debug)
+worksheet_bin <- function(filePath, chartsheet, outPath, debug) {
+    .Call(`_openxlsx2_worksheet_bin`, filePath, chartsheet, outPath, debug)
 }
 

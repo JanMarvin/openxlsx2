@@ -167,18 +167,18 @@ wb_load <- function(
       print(workbookBIN)
       print(workbookXML)
     }
-    workbook(workbookBIN, workbookXML, debug)
+    workbook_bin(workbookBIN, workbookXML, debug)
 
     if (length(stylesBIN)) {
       stylesXML <- gsub(".bin$", ".xml", stylesBIN)
-      styles(stylesBIN, stylesXML, debug)
+      styles_bin(stylesBIN, stylesXML, debug)
       # system(sprintf("cat %s", stylesXML))
       # system(sprintf("cp %s /tmp/styles.xml", stylesXML))
     }
 
     if (length(sharedStringsBIN)) {
       sharedStringsXML <- gsub(".bin$", ".xml", sharedStringsBIN)
-      sst(sharedStringsBIN, sharedStringsXML, debug)
+      sharedstrings_bin(sharedStringsBIN, sharedStringsXML, debug)
       # system(sprintf("cat %s", sharedStringsXML))
       # system(sprintf("cp %s /tmp/sst.xml", sharedStringsXML))
     }
@@ -186,7 +186,7 @@ wb_load <- function(
     if (length(tablesBIN)) {
       tablesXML <- gsub(".bin$", ".xml", tablesBIN)
       for (i in seq_along(tablesXML))
-        bin_table(tablesBIN[i], tablesXML[i], debug)
+        table_bin(tablesBIN[i], tablesXML[i], debug)
       # system(sprintf("cat %s", tablesXML))
       # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
     }
@@ -350,7 +350,7 @@ wb_load <- function(
           xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
 
           # message(i)
-          worksheet(sheets$target[i], 1, xml_tmp, debug)
+          worksheet_bin(sheets$target[i], 1, xml_tmp, debug)
           # system(sprintf("cat %s", xml_tmp))
           # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
           sheets$target[i] <- xml_tmp
@@ -727,7 +727,7 @@ wb_load <- function(
         xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
 
         # message(i)
-        worksheet(sheets$target[i], 0, xml_tmp, debug)
+        worksheet_bin(sheets$target[i], 0, xml_tmp, debug)
         # system(sprintf("cat %s", xml_tmp))
         # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
         sheets$target[i] <- xml_tmp
