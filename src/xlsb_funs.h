@@ -862,7 +862,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     if (debug) Rcpp::Rcout << ".";
 
     // 1
-    int8_t val2 = 0, controlbit = 0;
+    uint8_t val2 = 0, controlbit = 0;
     val1 = readbin(val1, sas, swapit);
 
     controlbit = (val1 & 0x80) >> 7;
