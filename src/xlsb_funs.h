@@ -140,17 +140,25 @@ std::string to_utf8(const std::u16string& u16str) {
   for (std::size_t i = 0; i < u16str.length(); ++i) {
     char16_t u16char = u16str[i];
 
-    if (u16char <= 0x7F) {
+    // Determine the endianness of the system
+    bool isLittleEndian = is_big_endian();
+    char16_t networkOrderChar = u16char;
+    if (isLittleEndian) {
+      networkOrderChar = (u16char << 8) | (u16char >> 8);
+    }
+
+    if (networkOrderChar <= 0x7F) {
       // Single-byte UTF-8 character (0x00 - 0x7F)
-      utf8str.push_back(static_cast<char>(u16char));
-    } else if (u16char <= 0x7FF) {
+      utf8str.push_back(static_cast<char>(networkOrderChar));
+    } else if (networkOrderChar <= 0x7FF) {
       // Two-byte UTF-8 character (0x80 - 0x07FF)
-      utf8str.push_back(static_cast<char>(0xC0 | (u16char >> 6)));
-      utf8str.push_back(static_cast<char>(0x80 | (u16char & 0x3F)));
+      utf8str.push_back(static_cast<char>(0xC0 | (networkOrderChar >> 6)));
+      utf8str.push_back(static_cast<char>(0x80 | (networkOrderChar & 0x3F)));
     } else {
       // Three-byte or four-byte UTF-8 character
-      if (u16char >= 0xD800 && u16char <= 0xDBFF && i + 1 < u16str.length()) {
-        char16_t high_surrogate = u16char;
+      if (networkOrderChar >= 0xD800 && networkOrderChar <= 0xDBFF &&
+          i + 1 < u16str.length()) {
+        char16_t high_surrogate = networkOrderChar;
         char16_t low_surrogate = u16str[++i];
 
         // Calculate the code point from the surrogate pair
@@ -163,9 +171,9 @@ std::string to_utf8(const std::u16string& u16str) {
         utf8str.push_back(static_cast<char>(0x80 | (code_point & 0x3F)));
       } else {
         // Three-byte UTF-8 character (0x0800 - 0xFFFF)
-        utf8str.push_back(static_cast<char>(0xE0 | (u16char >> 12)));
-        utf8str.push_back(static_cast<char>(0x80 | ((u16char >> 6) & 0x3F)));
-        utf8str.push_back(static_cast<char>(0x80 | (u16char & 0x3F)));
+        utf8str.push_back(static_cast<char>(0xE0 | (networkOrderChar >> 12)));
+        utf8str.push_back(static_cast<char>(0x80 | ((networkOrderChar >> 6) & 0x3F)));
+        utf8str.push_back(static_cast<char>(0x80 | (networkOrderChar & 0x3F)));
       }
     }
   }
