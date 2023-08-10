@@ -2402,7 +2402,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtPrintOptions:
       {
         if (debug) Rcpp::Rcout << "BrtPrintOptions: " << bin.tellg() << std::endl;
-        bin.seekg(size, bin.cur);
+        uint16_t flags = 0;
+        flags = readbin(flags, bin, swapit);
         break;
       }
 
@@ -2754,20 +2755,11 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         break;
       }
 
+      // TODO it is not correct to stop here for future records, but we ignore
+      // this <ext/> segments currently. Otherwise the calendar_stress.xlsb
+      // file breaks. Somehow there are new blank cell and row header entries.
       case BrtFRTBegin:
-      {
-        if (debug) Rcpp::Rcout << "<ext>" << std::endl;
-
-        ProductVersion(bin, swapit, 1);
-        break;
-      }
-
       case BrtFRTEnd:
-      {
-        if (debug) Rcpp::Rcout << "</ext>" << std::endl;
-        break;
-      }
-
       case BrtEndSheet:
       {
 
