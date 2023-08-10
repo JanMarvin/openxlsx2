@@ -1,3 +1,5 @@
+#ifndef XLSB_DEFINES_H
+#define XLSB_DEFINES_H
 
 // defines
 typedef struct {
@@ -1996,3 +1998,5 @@ std::string Ftab(const uint16_t val) {
   }
   return "";
 }
+
+#endif

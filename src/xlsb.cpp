@@ -1607,7 +1607,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
     bin.seekg(0, std::ios_base::beg);
 
     bool first_row = true;
-
+    bool in_sheet_data = false;
     bool end_of_worksheet = false;
 
     uint64_t row = 0;
@@ -1922,6 +1922,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "<sheetData>" << bin.tellg() << std::endl;
         out << "<sheetData>" << std::endl; //  << bin.tellg()
+        in_sheet_data = true;
         break;
       }
 
@@ -1978,6 +1979,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "<row/>: " << bin.tellg() << std::endl;
 
+        if (!in_sheet_data) bin.seekg(size, bin.cur);
+
         // close open rows
         if (!first_row) {
         out << "</row>" <<std::endl;
@@ -1996,8 +1999,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       rw = readbin(rw, bin, swapit);
 
-      if (rw > 0x00100000 || rw < row)
+      if (rw > 0x00100000 || rw < row) {
         Rcpp::stop("row either decreasing or to large");
+      }
 
       ixfe = readbin(ixfe, bin, swapit);
       miyRw = readbin(miyRw, bin, swapit);
@@ -2024,6 +2028,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       // fReserved = 7
 
       ccolspan = readbin(ccolspan, bin, swapit);
+      if (ccolspan >= 16) Rcpp::stop("ccolspan to large");
       std::string spans;
       if (ccolspan) {
         // rgBrtColspan
@@ -2341,6 +2346,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         }
         out << "</sheetData>" << std::endl;
 
+        in_sheet_data = false;
+
         break;
       }
 
@@ -2402,7 +2409,24 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtMargins:
       {
         if (debug)  Rcpp::Rcout << "BrtMargins: " << bin.tellg() << std::endl;
-        bin.seekg(size, bin.cur);
+
+        double xnumLeft = 0, xnumRight = 0, xnumTop = 0, xnumBottom = 0, xnumHeader = 0, xnumFooter = 0;
+        xnumLeft   = Xnum(bin, swapit);
+        xnumRight  = Xnum(bin, swapit);
+        xnumTop    = Xnum(bin, swapit);
+        xnumBottom = Xnum(bin, swapit);
+        xnumHeader = Xnum(bin, swapit);
+        xnumFooter = Xnum(bin, swapit);
+
+        out << "<pageMargins";
+        out << " left=\"" << xnumLeft << "\"";
+        out << " right=\"" << xnumRight << "\"";
+        out << " top=\"" << xnumTop << "\"";
+        out << " bottom=\"" << xnumBottom << "\"";
+        out << " header=\"" << xnumHeader << "\"";
+        out << " footer=\"" << xnumFooter << "\"";
+        out << " />" << std::endl;
+
         break;
       }
 
@@ -2415,6 +2439,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       case BrtDrawing:
       {
+        if (debug) Rcpp::Rcout << "<drawing>" << std::endl;
         std::string stRelId = XLNullableWideString(bin, swapit);
         out << "<drawing r:id=\"" << stRelId << "\" />" << std::endl;
         break;
@@ -2430,6 +2455,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       case BrtLegacyDrawingHF:
       {
+        if (debug) Rcpp::Rcout << "<BrtLegacyDrawingHF>" << std::endl;
         std::string stRelId = XLNullableWideString(bin, swapit);
         out << "<legacyDrawingHF r:id=\"" << stRelId << "\" />" << std::endl;
         break;
@@ -2437,6 +2463,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       case BrtHLink:
       {
+        if (debug) Rcpp::Rcout << "<BrtHLink>" << std::endl;
+
         std::vector<int> rfx = UncheckedRfX(bin, swapit);
         std::string relId = XLNullableWideString(bin, swapit);
         std::string location = XLWideString(bin, swapit);
@@ -2454,7 +2482,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           ref =  lref + ":" + rref;
         }
 
-        std::string hlink = "<hyperlink display=\"" +  display + "\" r:id=\"" + relId + "\" location=\"" + location + "\" ref=\"" + ref + "\" tooltip=\"" + tooltip + "\" />";
+        std::string hlink = "<hyperlink display=\"" +  escape_xml(display) + "\" r:id=\"" + relId + "\" location=\"" + escape_xml(location) + "\" ref=\"" + ref + "\" tooltip=\"" + escape_xml(tooltip) + "\" />";
         hlinks.push_back(hlink);
 
         break;
@@ -2513,6 +2541,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       case BrtFilter:
       {
+        if (debug) Rcpp::Rcout << "<BrtFilter>" << std::endl;
         std::string rgch = XLWideString(bin, swapit);
         out << "<filter val=\"" << rgch << "\" />" << std::endl;
         // bin.seekg(size, bin.cur);
@@ -2529,6 +2558,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       case BrtColorFilter:
       {
+        if (debug) Rcpp::Rcout << "<BrtColorFilter>" << std::endl;
         uint32_t dxfid = 0, fCellColor = 0;
         dxfid = readbin(dxfid, bin, swapit);
         fCellColor = readbin(fCellColor, bin, swapit);
@@ -2558,6 +2588,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtIconFilter:
       case BrtIconFilter14:
       {
+        if (debug) Rcpp::Rcout << "<BrtIconFilter>" << std::endl;
         uint32_t iIconSet = 0, iIcon = 0;
         iIconSet = readbin(iIconSet, bin, swapit);
         iIcon = readbin(iIcon, bin, swapit);
@@ -2723,18 +2754,32 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         break;
       }
 
+      case BrtFRTBegin:
+      {
+        if (debug) Rcpp::Rcout << "<ext>" << std::endl;
+
+        ProductVersion(bin, swapit, 1);
+        break;
+      }
+
+      case BrtFRTEnd:
+      {
+        if (debug) Rcpp::Rcout << "</ext>" << std::endl;
+        break;
+      }
+
       case BrtEndSheet:
       {
 
         if (hlinks.size() > 1) {
-        // did not see BrtBeginHL or BrtEndHL, likely I'm just blind
-        hlinks.push_back("</hyperlinks>");
+          // did not see BrtBeginHL or BrtEndHL, likely I'm just blind
+          hlinks.push_back("</hyperlinks>");
 
-        for (int i = 0; i < hlinks.size(); ++i) {
-          if (debug) Rcpp::Rcout << hlinks[i] << std::endl;
-          out << hlinks[i] << std::endl;
+          for (int i = 0; i < hlinks.size(); ++i) {
+            if (debug) Rcpp::Rcout << hlinks[i] << std::endl;
+            out << hlinks[i] << std::endl;
+          }
         }
-      }
 
         if (debug)  Rcpp::Rcout << "</worksheet>" << bin.tellg() << std::endl;
 
@@ -2743,16 +2788,17 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         else
           out << "</worksheet>" << std::endl;
         end_of_worksheet = true;
+        row = 0;
         break;
       }
 
       default:
       {
-        if (debug) {
-        Rcpp::Rcout << "Unhandled: " << std::to_string(x) <<
-          ": " << std::to_string(size) <<
-            " @ " << bin.tellg() << std::endl;
-      }
+        // if (debug) {
+          Rcpp::Rcout << "Unhandled: " << std::to_string(x) <<
+            ": " << std::to_string(size) <<
+              " @ " << bin.tellg() << std::endl;
+        // }
         bin.seekg(size, bin.cur);
         break;
       }

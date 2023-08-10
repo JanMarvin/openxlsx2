@@ -1,3 +1,6 @@
+#ifndef XLSB_FUNS_H
+#define XLSB_FUNS_H
+
 #include <string>
 #include <fstream>
 #include <cstdint>
@@ -381,7 +384,7 @@ void StrRun(std::istream& sas, uint32_t dwSizeStrRun, bool swapit) {
   for (uint8_t i = 0; i < dwSizeStrRun; ++i) {
     ich  = readbin(ich, sas, swapit);
     ifnt = readbin(ifnt, sas, swapit);
-    Rprintf("Styled string will be unstyled - strRun: %d %d\n", ich, ifnt);
+    // Rprintf("Styled string will be unstyled - strRun: %d %d\n", ich, ifnt);
   }
 }
 
@@ -399,20 +402,22 @@ void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
 
 std::string RichStr(std::istream& sas, bool swapit) {
 
-  uint8_t AB= 0, A= 0, B= 0;
+  uint8_t AB = 0, A = 0, B = 0;
   AB = readbin(AB, sas, swapit);
 
-  A = AB & 0x01;
-  B = AB >> 1 & 0x01;
+  A = (AB & 0b10000000) != 0;
+  B = (AB & 0b01000000) != 0;
   // remaining 6 bits are ignored
 
   std::string str = XLWideString(sas, swapit);
+  // Rcpp::Rcout << str << std::endl;
 
   uint32_t dwSizeStrRun = 0, dwPhoneticRun = 0;
 
   if (A) {
     // number of runs following
     dwSizeStrRun = readbin(dwSizeStrRun, sas, swapit);
+    if (dwSizeStrRun > 0x7FFF) Rcpp::stop("dwSizeStrRun to large");
     StrRun(sas, dwSizeStrRun, swapit);
   }
 
@@ -421,6 +426,7 @@ std::string RichStr(std::istream& sas, bool swapit) {
 
     // number of runs following
     dwPhoneticRun = readbin(dwPhoneticRun, sas, swapit);
+    if (dwPhoneticRun > 0x7FFF) Rcpp::stop("dwPhoneticRun to large");
     PhRun(sas, dwPhoneticRun, swapit);
   }
 
@@ -579,6 +585,55 @@ std::string Area(std::istream& sas, bool swapit) {
   bool fRwRel1  = col1[2];
 
   std::string out;
+
+  if (!fColRel0) out += "$";
+  out += int_to_col(col0[0] + 1);
+
+  if (!fRwRel0) out += "$";
+  out += std::to_string(row0 + 1);
+
+  out += ":";
+
+  if (!fColRel1) out += "$";
+  out += int_to_col(col1[0] + 1);
+
+  if (!fRwRel1) out += "$";
+  out += std::to_string(row1 + 1);
+
+  return out;
+}
+
+std::string AreaRel(std::istream& sas, bool swapit) {
+
+  std::vector<int> col0(3), col1(3);
+  uint32_t row0 = 0, row1 = 0;
+  row0 = UncheckedRw(sas, swapit); // rowFirst
+  row1 = UncheckedRw(sas, swapit); // rowLast
+  col0 = ColRelShort(sas, swapit); // columnFirst
+  col1 = ColRelShort(sas, swapit); // columnLast
+
+  bool fColRel0 = col0[1];
+  bool fRwRel0  = col0[2];
+  bool fColRel1 = col1[1];
+  bool fRwRel1  = col1[2];
+
+  std::string out;
+
+  if (row0 != 0) {
+    row0 -= (1048575);
+  }
+
+  if (col0[0] != 0) {
+    col0[0] -= (16383);
+  }
+
+  if (row1 != 0) {
+    row1 -= (1048575);
+  }
+
+  if (col1[0] != 0) {
+    col1[0] -= (16383);
+  }
 
   if (!fColRel0) out += "$";
   out += int_to_col(col0[0] + 1);
@@ -1126,6 +1181,12 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       break;
     }
 
+    case PtgMissArg:
+    {
+      fml_out += "";
+      break;
+    }
+
     case PtgInt:
     {
       uint16_t integer = 0;
@@ -1149,15 +1210,6 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       fml_out += "\"" + escape_quote(PtrStr(sas, swapit)) + "\"";
       fml_out += "\n";
-      // uint16_t cch = 0;
-      // cch = readbin(cch, sas, swapit);
-      // if (cch>255) Rcpp::stop("cch to big");
-      //
-      // // rgch
-      // for (uint16_t i = 0; i < cch; ++i) {
-      //   fml_out += XLWideString(sas);
-      //   fml_out += "\n";
-      // }
 
       break;
     }
@@ -1257,6 +1309,18 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       fml_out += "\n";
 ;
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+      break;
+    }
+
+    case PtgAreaN:
+    case PtgAreaN2:
+    case PtgAreaN3:
+    {
+
+      // A1 notation cell
+      fml_out += AreaRel(sas, swapit);
+      fml_out += "\n";
 
       break;
     }
@@ -1366,7 +1430,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     default:
     {
       // if (debug)
-      Rprintf("Undefined Formula: %d %d\n", val1, val2);
+      Rcpp::warning("Undefined Formula: %d %d\n", val1, val2);
       break;
     }
     }
@@ -1485,3 +1549,5 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
   return inflix;
 }
+
+#endif
