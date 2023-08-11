@@ -10,7 +10,7 @@
 #' file is loaded into a workbook. Removal is generally expected to be safe,
 #' but the feature is still experimental.
 #'
-#' @param file A path to an existing .xlsx or .xlsm file
+#' @param file A path to an existing .xlsx, .xlsm or .xlsb file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #'   sheet will be loaded.
 #' @param data_only mode to import if only a data frame should be returned. This
