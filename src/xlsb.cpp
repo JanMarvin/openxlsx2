@@ -213,8 +213,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtFill:
       {
         uint32_t fls = 0, iGradientType = 0, cNumStop = 0;
-        double brtColorFore = 0.0,
-          brtColorBack = 0.0,
+        double
           xnumDegree = 0.0,
           xnumFillToLeft = 0.0,
           xnumFillToRight = 0.0,
@@ -235,10 +234,22 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         xnumFillToBottom = Xnum(bin, swapit);
         cNumStop = readbin(cNumStop, bin, swapit);
 
+        if (debug) {
+          Rcpp::Rcout << "unused gradinet filll colors" <<
+            xnumDegree << ": " << xnumFillToLeft << ": " << ": " <<
+            xnumFillToRight << ": " << xnumFillToTop << "; " <<
+            xnumFillToBottom << std::endl;
+        }
+
         for (uint32_t i = 0; i < cNumStop; ++i) {
           // gradient fill colors and positions
           aColor = brtColor(bin, swapit);
           aPos   = Xnum(bin, swapit);
+          if (debug) {
+            Rcpp::Rcout << "unused gradient Colors: " <<
+              to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) <<
+                ": " << aPos << std::endl;
+          }
         }
 
         out << "<fill>" << std::endl;
@@ -296,7 +307,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBorder:
       {
         out << "<border>" << std::endl;
-        bool fBdrDiagDown = 0, fBdrDiagUp = 0;
+        // bool fBdrDiagDown = 0, fBdrDiagUp = 0;
         uint8_t borderFlags = 0;
         borderFlags = readbin(borderFlags, bin, swapit);
 
@@ -351,7 +362,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
       {
         out << "<xf";
 
-        bool is_cell_style_xf = false;
+        // bool is_cell_style_xf = false;
 
         uint8_t trot = 0, indent = 0;
         uint16_t ixfeParent = 0, iFmt = 0, iFont = 0, iFill = 0, ixBorder = 0;
@@ -370,7 +381,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         }
 
         if (ixfeParent == 0xFFFF) {
-          is_cell_style_xf = true;
+          // is_cell_style_xf = true;
         } else {
           out << " xfId=\"" << ixfeParent << "\"";
         }
@@ -382,73 +393,45 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         xfGrbitAtrFields *xfGrbitAtr = (xfGrbitAtrFields *)&xfgbit;
 
         out << " numFmtId=\"" << iFmt << "\"";
-          out << " fontId=\"" << iFont << "\"";
-          out << " fillId=\"" << iFill << "\"";
-          out << " borderId=\"" << ixBorder << "\"";
-
-          // if (!is_cell_style_xf) {
-
-            // if (iFmt > 0) {
-            out << " applyNumberFormat=\""<< !xfGrbitAtr->bit1 <<"\"";
-            // }
-            // if (iFont > 0) {
-            out << " applyFont=\""<< !xfGrbitAtr->bit2 << "\"";
-            // }
-            // if (ixBorder > 0) {
-            out << " applyBorder=\"" << !xfGrbitAtr->bit4 << "\"";
-            // }
-            // if (iFill > 0) {
-            out << " applyFill=\"" << !xfGrbitAtr->bit5 << "\"";
-            // }
-
-            out << " applyAlignment=\""<< !xfGrbitAtr->bit3 << "\"";
-
-            out << " applyProtection=\""<< !xfGrbitAtr->bit6 << "\"";
-
-          // } else {
-          //
-          //   out << " applyNumberFormat=\""<< "0" <<"\"";
-          //
-          //   out << " applyFont=\""<< "0" << "\"";
-          //
-          //   out << " applyBorder=\"" << "0" << "\"";
-          //
-          //   out << " applyFill=\"" << "0" << "\"";
-          //
-          //   out << " applyAlignment=\""<< "0" << "\"";
-          //
-          //   out << " applyProtection=\""<< "0" << "\"";
-          // }
+        out << " fontId=\"" << iFont << "\"";
+        out << " fillId=\"" << iFill << "\"";
+        out << " borderId=\"" << ixBorder << "\"";
+        out << " applyNumberFormat=\""<< !xfGrbitAtr->bit1 <<"\"";
+        out << " applyFont=\""<< !xfGrbitAtr->bit2 << "\"";
+        out << " applyBorder=\"" << !xfGrbitAtr->bit4 << "\"";
+        out << " applyFill=\"" << !xfGrbitAtr->bit5 << "\"";
+        out << " applyAlignment=\""<< !xfGrbitAtr->bit3 << "\"";
+        out << " applyProtection=\""<< !xfGrbitAtr->bit6 << "\"";
 
 
-          if (fields->alc > 0 || fields->alcv > 0 || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
-            out << "><alignment";
-            out << halign(fields->alc);
-            out << valign(fields->alcv);
+        if (fields->alc > 0 || fields->alcv > 0 || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
+          out << "><alignment";
+          out << halign(fields->alc);
+          out << valign(fields->alcv);
 
-            if (fields->fWrap)
-              out << " wrapText=\"" << fields->fWrap <<"\"";
-            if (fields->fShrinkToFit)
-              out << " shrinkToFit=\"" << fields->fWrap <<"\"";
-            // something is not quite right here.
-            // I have a file which is left to right, but this here returns 2: right to left
-            if (fields->iReadingOrder)
-              out << " readingOrder=\"" << (uint16_t)fields->iReadingOrder <<"\"";
-            if (indent)
-              out << " indent=\"" << (uint16_t)indent/3 <<"\"";
-            if (fields->fJustLast)
-              out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
-            if (trot)
-              out << " textRotation=\"" << trot <<"\"";
+          if (fields->fWrap)
+            out << " wrapText=\"" << fields->fWrap <<"\"";
+          if (fields->fShrinkToFit)
+            out << " shrinkToFit=\"" << fields->fWrap <<"\"";
+          // something is not quite right here.
+          // I have a file which is left to right, but this here returns 2: right to left
+          if (fields->iReadingOrder)
+            out << " readingOrder=\"" << (uint16_t)fields->iReadingOrder <<"\"";
+          if (indent)
+            out << " indent=\"" << (uint16_t)indent/3 <<"\"";
+          if (fields->fJustLast)
+            out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
+          if (trot)
+            out << " textRotation=\"" << trot <<"\"";
 
-            out << "/>";
-            out << "</xf>" << std::endl;
-          } else {
-            out << " />" << std::endl;
-          }
+          out << "/>";
+          out << "</xf>" << std::endl;
+        } else {
+          out << " />" << std::endl;
+        }
 
-          // bin.seekg(size, bin.cur);
-          break;
+        // bin.seekg(size, bin.cur);
+        break;
       }
 
       case BrtEndCellXFs:
@@ -478,7 +461,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         iLevel = readbin(iLevel, bin, swapit);
         std::string stName = XLWideString(bin, swapit);
 
-        StyleFlagsFields *fields = (StyleFlagsFields *)&grbitObj1;
+        // StyleFlagsFields *fields = (StyleFlagsFields *)&grbitObj1;
         out << "<cellStyle";
         out << " name=\"" << stName << "\"";
         out << " xfId=\"" << ixf << "\"";
@@ -1610,7 +1593,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
     bool in_sheet_data = false;
     bool end_of_worksheet = false;
 
-    uint64_t row = 0;
+    uint32_t row = 0;
     uint32_t col = 0;
     std::vector<std::string> hlinks;
     hlinks.push_back("<hyperlinks>");
@@ -1650,9 +1633,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint32_t rwSync = 0, colSync = 0;
 
         brtwsprop_fst = readbin(brtwsprop_fst, bin, swapit);
-        BrtWsPropFields1 *fields1 = (BrtWsPropFields1 *)&brtwsprop_fst;
+        // BrtWsPropFields1 *fields1 = (BrtWsPropFields1 *)&brtwsprop_fst;
         brtwsprop_sec = readbin(brtwsprop_sec, bin, swapit);
-        BrtWsPropFields2 *fields2 = (BrtWsPropFields2 *)&brtwsprop_sec;
+        // BrtWsPropFields2 *fields2 = (BrtWsPropFields2 *)&brtwsprop_sec;
 
         std::vector<int> color = brtColor(bin, swapit);
         rwSync = readbin(rwSync, bin, swapit);
@@ -1988,13 +1971,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         first_row = false;
       }
 
-      uint8_t bits1 = 0, bits2 = 0, bits3 = 0, fExtraAsc = 0, fExtraDsc = 0,
+      uint8_t bits3 = 0, fExtraAsc = 0, fExtraDsc = 0,
         fCollapsed = 0, fDyZero = 0, fUnsynced = 0, fGhostDirty = 0,
         fReserved = 0, fPhShow = 0;
       uint16_t miyRw = 0;
 
       // uint24_t;
-      int32_t rw = 0;
+      uint32_t rw = 0;
       uint32_t ixfe = 0, ccolspan = 0, unk32 = 0, colMic = 0, colLast = 0;
 
       rw = readbin(rw, bin, swapit);
@@ -2214,7 +2197,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+        // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         std::string fml = CellParsedFormula(bin, swapit, debug, 0);
 
@@ -2241,7 +2224,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+        // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
@@ -2272,7 +2255,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+        // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         // Rprintf("%d, %d, %d\n",
         //         fields->reserved,
@@ -2767,7 +2750,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           // did not see BrtBeginHL or BrtEndHL, likely I'm just blind
           hlinks.push_back("</hyperlinks>");
 
-          for (int i = 0; i < hlinks.size(); ++i) {
+          for (size_t i = 0; i < hlinks.size(); ++i) {
             if (debug) Rcpp::Rcout << hlinks[i] << std::endl;
             out << hlinks[i] << std::endl;
           }

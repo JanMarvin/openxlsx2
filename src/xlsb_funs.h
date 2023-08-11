@@ -332,9 +332,9 @@ std::string halign(int style) {
   return out;
 }
 
-std::string to_iconset(int style) {
+std::string to_iconset(uint style) {
   std::string out = "";
-  if (style != 0xFFFFFFFF)
+  if (style != 0xFFFFFFFF) {
     if (style == 0) out = "3Arrows";
     if (style == 1) out = "3ArrowsGray";
     if (style == 2) out = "3Flags";
@@ -357,7 +357,10 @@ std::string to_iconset(int style) {
     if (style == 18) out = "3Triangles";
     if (style == 19) out = "5Boxes";
     // end iconset 14
-  else out = "";
+  } else {
+    out = "";
+  }
+
   return out;
 }
 
@@ -670,13 +673,13 @@ std::vector<int> Cell(std::istream& sas, bool swapit) {
 
 std::vector<int> brtColor(std::istream& sas, bool swapit) {
 
-  bool fValidRGB = 0;
   uint8_t AB = 0, xColorType = 0, index = 0,
     bRed = 0, bGreen = 0, bBlue = 0, bAlpha = 0;
   int16_t nTintAndShade = 0;
 
   AB = readbin(AB, sas, swapit);
-  fValidRGB = AB & 0x01;
+  // bool fValidRGB = AB & 0x01;
+  // Rprintf("valid RGB color: %d", fValidRGB);
   xColorType = AB >> 1;
   // 0x00 picked by application
   // 0x01 color index value
@@ -896,7 +899,7 @@ std::string parseRPN(const std::string& expression) {
 
 
 std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col) {
-  bool ptg_extra_array = false;
+  // bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
 
   if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
@@ -951,6 +954,10 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         listIndex = readbin(listIndex, sas, swapit);
         colFirst = ColShort(sas, swapit);
         colLast = ColShort(sas, swapit);
+
+        // Do something with this, just ... what?
+        if (debug) Rprintf("PtgList: %d, %d, %d, %d",
+            ixti, listIndex, colFirst, colLast);
 
         break;
       }
@@ -1218,7 +1225,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgArray2:
     case PtgArray3:
     {
-      ptg_extra_array = true;
+      // ptg_extra_array = true;
       uint16_t unused2 = 0;
       uint32_t unused1 = 0, unused3 = 0, unused4 = 0;
       unused1 = readbin(unused1, sas, swapit);
@@ -1487,7 +1494,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // SerErr
       if (reserved == 0x04) {
-        uint8_t err = 0, reserved2 = 0;
+        uint8_t reserved2 = 0;
         uint16_t reserved3 = 0;
         std::string strerr = BErr(sas, swapit);
         Rcpp::Rcout << strerr << std::endl;
