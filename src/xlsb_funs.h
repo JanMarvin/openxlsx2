@@ -332,7 +332,7 @@ std::string halign(int style) {
   return out;
 }
 
-std::string to_iconset(uint style) {
+std::string to_iconset(uint32_t style) {
   std::string out = "";
   if (style != 0xFFFFFFFF) {
     if (style == 0) out = "3Arrows";
