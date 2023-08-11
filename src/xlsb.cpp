@@ -1683,11 +1683,17 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           Rf_PrintValue(Rcpp::wrap(dims));
         }
 
-        out << "<dimension ref=\"" <<
-          int_to_col(dims[2] + 1) << dims[0] + 1 <<
-            ":" <<
-              int_to_col(dims[3] + 1) << dims[1] + 1 <<
-                "\"/>" << std::endl;
+        std::string lref = int_to_col(dims[2] + 1) + std::to_string(dims[0] + 1);
+        std::string rref = int_to_col(dims[3] + 1) + std::to_string(dims[1] + 1);
+
+        std::string ref;
+        if (lref.compare(rref) == 0) {
+          ref = lref;
+        } else {
+          ref =  lref + ":" + rref;
+        }
+
+        out << "<dimension ref=\"" << ref << "\"/>" << std::endl;
 
         break;
       }
@@ -2622,6 +2628,41 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "</tableParts>" << std::endl;
         out << "</tableParts>" << std::endl;
+        break;
+      }
+
+      case BrtBeginOleObjects:
+      {
+        if (debug) Rcpp::Rcout << "<oleObjects>" << std::endl;
+        out << "<oleObjects>" << std::endl;
+        break;
+      }
+
+      case BrtOleObject:
+      {
+        if (debug) Rcpp::Rcout << "<oleObject/>" << std::endl;
+
+        uint16_t flags = 0;
+        uint32_t dwAspect = 0, dwOleUpdate = 0, shapeId = 0;
+        dwAspect = readbin(dwAspect, bin, swapit);
+        dwOleUpdate = readbin(dwOleUpdate, bin, swapit);
+        shapeId = readbin(shapeId, bin, swapit);
+        flags = readbin(flags, bin, swapit);
+        bool fLinked = (flags & 0x8000) != 0;
+
+        std::string strProgID = XLNullableWideString(bin, swapit);
+        if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0);
+
+        std::string stRelID = XLNullableWideString(bin, swapit);
+        out << "<oleObject progId=\"" << strProgID << "\" shapeId=\"" << shapeId << "\" r:id=\"" << stRelID << "\" />" << std::endl;
+        break;
+      }
+
+      case BrtEndOleObjects:
+      {
+        if (debug) Rcpp::Rcout << "</oleObjects>" << std::endl;
+
+        out << "</oleObjects>" << std::endl;
         break;
       }
 
