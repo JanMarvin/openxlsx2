@@ -116,7 +116,8 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   }
 
   // Assign and return a dataframe
-  return Rcpp::wrap(Rcpp::DataFrame::create(
+  return Rcpp::wrap(
+    Rcpp::DataFrame::create(
       Rcpp::Named("r")     = r,
       Rcpp::Named("row_r") = row_r,
       Rcpp::Named("c_r")   = c_r,
@@ -131,8 +132,9 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
       Rcpp::Named("f_ref") = f_ref,
       Rcpp::Named("f_ca")  = f_ca,
       Rcpp::Named("f_si")  = f_si,
-      Rcpp::Named("is")    = is
-  )
+      Rcpp::Named("is")    = is,
+      Rcpp::Named("stringsAsFactors") = false
+    )
   );
 }
 
