@@ -487,7 +487,7 @@ wb_load <- function(
 
 
     ## xti
-    length(workbookBIN)
+    if (length(workbookBIN))
       wb$workbook$xti <-  xml_node(workbook_xml, "workbook", "xtis", "xti")
 
   }
@@ -1457,9 +1457,11 @@ wb_load <- function(
       }
     }
 
-    wb$workbook$xti <- NULL
-
   }
+
+  # final cleanup
+  if (length(workbookBIN))
+    wb$workbook$xti <- NULL
 
   return(wb)
 }
