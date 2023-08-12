@@ -1308,7 +1308,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       uint16_t ixti = 0;
 
       ixti = readbin(ixti, sas, swapit);
-      Rprintf("ixti in PtgArea3d: %d\n", ixti);
+      if (debug) Rprintf("ixti in PtgArea3d: %d\n", ixti);
 
       // A1 notation cell
       fml_out += "openxlsx2xlsb_" + std::to_string(ixti) + "!";
@@ -1499,7 +1499,10 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       if (reserved == 0x02) {
         uint8_t f = 0;
         f = readbin(f, sas, swapit);
-        Rcpp::Rcout << (bool)f << std::endl;
+        if (debug) Rcpp::Rcout << (int32_t)f << std::endl;
+
+        fml_out += "{" + std::to_string((int32_t)f) + "}";
+        fml_out += "\n";
       }
 
       // SerErr
@@ -1507,16 +1510,21 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         uint8_t reserved2 = 0;
         uint16_t reserved3 = 0;
         std::string strerr = BErr(sas, swapit);
-        Rcpp::Rcout << strerr << std::endl;
+        if (debug) Rcpp::Rcout << strerr << std::endl;
         reserved2 = readbin(reserved2, sas, swapit);
         reserved3 = readbin(reserved3, sas, swapit);
+
+        fml_out += "{" + strerr + "}";
+        fml_out += "\n";
       }
 
       // SerNum
       if (reserved == 0x00) {
         double xnum = 0.0;
         xnum = Xnum(sas, swapit);
-        Rcpp::Rcout << xnum << std::endl;
+        if (debug) Rcpp::Rcout << xnum << std::endl;
+        fml_out += "{" + std::to_string(xnum) + "}"; // precision?
+        fml_out += "\n";
       }
 
       // SerStr
@@ -1525,7 +1533,10 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         cch = readbin(cch, sas, swapit);
         std::string rgch(cch, '\0');
         rgch = read_xlwidestring(rgch, sas);
-        Rcpp::Rcout << rgch << std::endl;
+        if (debug) Rcpp::Rcout << rgch << std::endl;
+
+        fml_out += "{\"" + rgch + "\"}";
+        fml_out += "\n";
       }
 
       break;

@@ -487,7 +487,8 @@ wb_load <- function(
 
 
     ## xti
-    wb$workbook$xti <-  xml_node(workbook_xml, "workbook", "xtis", "xti")
+    length(workbookBIN)
+      wb$workbook$xti <-  xml_node(workbook_xml, "workbook", "xtis", "xti")
 
   }
 
@@ -1347,7 +1348,7 @@ wb_load <- function(
   # index position with "openxlsx2xlsb_" + indexpos. We have exported the xti
   # references as custom xml node in the workbook. Now we have to create the
   # correct sheet references and replace our replacement with it.
-  if (length(workbookBIN)) {
+  if (!data_only && length(workbookBIN)) {
 
     if (length(wb$workbook$xti)) {
       # create data frame containing sheet names for Xti entries
@@ -1360,18 +1361,30 @@ wb_load <- function(
       if (any(sel <- grepl("\\s", sheets)))
         sheets[sel] <- shQuote(sheets[sel], type = "sh")
 
-      xti$sheets <- "" #NA_character_ (otherwise in missing cases: all is <NA>)
+      xti$sheets <- NA_character_ #(otherwise in missing cases: all is <NA>)
       # all id == 0 are local references, otherwise external references
       # external references are written as "[0]sheetname!A1". Require
       # handling of externalReferences.bin
-      sel <- xti$id == 0 & xti$firstSheet >= 0 & xti$firstSheet == xti$lastSheet
-      # xti <- xti[sel, ]
+      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 0 #& xti$firstSheet == xti$lastSheet
 
-      xti$sheets[sel] <- vapply(
-        xti$firstSheet[sel],
-        function(x) sheets[x],
-        FUN.VALUE = ""
-      )
+      if (any(sel)) {
+
+        # if (xti$firstSheet[sel] == xti$firstSheet[sel]) {
+        # TODO add firstSheet != lastSheet
+          xti$sheets[sel] <- vapply(
+            xti$firstSheet[sel],
+            function(x) sheets[x],
+            FUN.VALUE = ""
+          )
+        # } else {
+        #   xti$sheets[sel] <- vapply(
+        #     xti$firstSheet[sel],
+        #     function(x) sheets[x],
+        #     FUN.VALUE = ""
+        #   )
+        # }
+
+      }
 
       ### for external references we need to get the required sheet names first
       # For now this is all a little guess work
@@ -1380,43 +1393,67 @@ wb_load <- function(
       extSheets <- lapply(wb$externalLinks, function(x) {
         sheetNames <- xml_node(x, "externalLink", "externalBook", "sheetNames")
         # assuming that all external links have some kind of vals
-        rbindlist(xml_attr(sheetNames, "sheetNames", "sheetName"))$vals
+        rbindlist(xml_attr(sheetNames, "sheetNames", "sheetName"))[["val"]]
       })
 
       # TODO: How are references to the same external link,
       # but different sheet handled?
-      sel <- xti$id == 1 & xti$firstSheet >= 0 & xti$firstSheet == xti$lastSheet
-      sheet <- xti$firstSheet[sel]
+      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 0 # & xti$firstSheet == xti$lastSheet
 
-      # loop over it and create external link
-      for (i in seq_along(sheet)) {
-        want <- sheet[i]
-        sheetName <- extSheets[[i]][[want]]
-        # should be a single reference now
-        if (any(grepl("\\s", sheetName))) sheetName <- shQuote(sheetName, type = "sh")
-        xti$sheets[sel] <- sprintf("[%s]%s", i, sheetName)
+      if (any(sel)) {
+
+        xti$ext_id <- NA_integer_
+        xti$ext_id[sel] <- as.integer(as.factor(as.integer(gsub("\\D+", "", xti$type[sel]))))
+
+        # loop over it and create external link
+        for (i in seq_len(nrow(xti[sel, ]))) {
+          want <- xti$firstSheet[sel][i]
+          ref  <- xti$ext_id[sel][i]
+
+          sheetName <- extSheets[[ref]][[want]]
+          if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
+            want <- xti$lastSheet[sel][i]
+            sheetName <- paste0(sheetName, ":", extSheets[[ref]][[want]])
+          }
+          # should be a single reference now
+
+          val <- sprintf("[%s]%s", xti$ext_id[sel][i], sheetName)
+
+
+          if (any(sel2 <- grepl("\\s", val)))
+            val[sel2] <- shQuote(val[sel2], type = "sh")
+          # val <- shQuote(val, type = "sh")
+
+          if (length(val)) xti$sheets[sel][i] <- val
+        }
       }
 
-      if (length(wb$workbook$definedNames)) {
-        wb$workbook$definedNames <-
-          stringi::stri_replace_all_fixed(
-            wb$workbook$definedNames,
-            xti$name_id,
-            xti$sheets,
-            vectorize_all = FALSE
-          )
-      }
+      if (debug)
+        print(xti)
 
-      # this might be terribly slow!
-      for (j in seq_along(wb$worksheets)) {
-        if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != ""))
-        wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
-          stringi::stri_replace_all_fixed(
-            wb$worksheets[[j]]$sheet_data$cc$f[sel],
-            xti$name_id,
-            xti$sheets,
-            vectorize_all = FALSE
-          )
+      if (nrow(xti)) {
+
+        if (length(wb$workbook$definedNames)) {
+          wb$workbook$definedNames <-
+            stringi::stri_replace_all_fixed(
+              wb$workbook$definedNames,
+              xti$name_id,
+              xti$sheets,
+              vectorize_all = FALSE
+            )
+        }
+
+        # this might be terribly slow!
+        for (j in seq_along(wb$worksheets)) {
+          if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != ""))
+            wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
+              stringi::stri_replace_all_fixed(
+                wb$worksheets[[j]]$sheet_data$cc$f[sel],
+                xti$name_id,
+                xti$sheets,
+                vectorize_all = FALSE
+              )
+        }
       }
     }
 

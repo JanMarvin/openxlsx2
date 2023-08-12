@@ -622,7 +622,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         std::vector<int> rfxList = UncheckedRfX(bin, swapit);
         std::string ref = int_to_col(rfxList[2] + 1) + std::to_string(rfxList[0] + 1) + ":" + int_to_col(rfxList[3] + 1) + std::to_string(rfxList[1] + 1);
 
-        Rcpp::Rcout << "table ref: " << ref << std::endl;
+        if (debug) Rcpp::Rcout << "table ref: " << ref << std::endl;
 
         uint32_t lt = 0, idList = 0, crwHeader = 0, crwTotals = 0, flags = 0;
         lt = readbin(lt, bin, swapit);
@@ -642,17 +642,20 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         dwConnID = readbin(dwConnID, bin, swapit);
 
         std::string stName = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stName << std::endl;
         std::string stDisplayName = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stDisplayName << std::endl;
         std::string stComment = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stComment << std::endl;
         std::string stStyleHeader = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stStyleHeader << std::endl;
         std::string stStyleData = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stStyleData << std::endl;
         std::string stStyleAgg = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stStyleAgg << std::endl;
+        if (debug) {
+          Rcpp::Rcout << "table:" << std::endl;
+          Rcpp::Rcout << stName << std::endl;
+          Rcpp::Rcout << stDisplayName << std::endl;
+          Rcpp::Rcout << stComment << std::endl;
+          Rcpp::Rcout << stStyleHeader << std::endl;
+          Rcpp::Rcout << stStyleData << std::endl;
+          Rcpp::Rcout << stStyleAgg << std::endl;
+        }
 
         out << "<table xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" mc:Ignorable=\"xr xr3\"" <<
           " id=\"" << idList <<
@@ -662,7 +665,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
                 "\" totalsRowShown=\"" << crwTotals <<
               "\">" << std::endl;
 
-        Rcpp::Rcout << bin.tellg() << std::endl;
+        // if (debug) Rcpp::Rcout << bin.tellg() << std::endl;
         break;
       }
 
@@ -819,11 +822,11 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         std::string stName = XLNullableWideString(bin, swapit);
         std::string stCaption = XLNullableWideString(bin, swapit);
         std::string stTotal = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stName << ": " << stCaption << ": " << stTotal<< std::endl;
+        if (debug) Rcpp::Rcout << stName << ": " << stCaption << ": " << stTotal<< std::endl;
         std::string stStyleHeader = XLNullableWideString(bin, swapit);
         std::string stStyleInsertRow = XLNullableWideString(bin, swapit);
         std::string stStyleAgg = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << stStyleHeader << ": " << stStyleInsertRow << ": " << stStyleAgg << std::endl;
+        if (debug) Rcpp::Rcout << stStyleHeader << ": " << stStyleInsertRow << ": " << stStyleAgg << std::endl;
 
         out << "<tableColumn id=\"" << idField << "\" name=\"" << stCaption << "\">" << std::endl;
 
@@ -1234,11 +1237,12 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
 
       default:
       {
-        if (debug) {
-        Rcpp::Rcout << std::to_string(x) <<
+        // if (debug) {
+
+        Rcpp::Rcout << "Unhandled ER: " << std::to_string(x) <<
           ": " << std::to_string(size) <<
             " @ " << bin.tellg() << std::endl;
-      }
+      // }
         bin.seekg(size, bin.cur);
         break;
       }
@@ -1344,11 +1348,9 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_workbook = false;
 
-    std::vector<std::string> defNams, xtis;
+    std::vector<std::string> defNams, xtis, reference_type;
     defNams.push_back("<definedNames>");
     xtis.push_back("<xtis>");
-
-    std::string reference_type;
 
     while(!end_of_workbook) {
       Rcpp::checkUserInterrupt();
@@ -1563,8 +1565,8 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
         std::string comment = XLNullableWideString(bin, swapit);
 
-        // if (debug)
-          Rcpp::Rcout << name << comment << std::endl;
+        if (debug)
+          Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
 
         if (fields->fProc) {
           // must be NULL
@@ -1610,48 +1612,55 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // * BrtSupBookSrc external link
       case BrtSupSelf:
       {
-        if (debug) Rcpp::Rcout << "BrtSupSelf @"<< bin.tellg() << std::endl;
-        Rcpp::Rcout << "<internalReference type=\"0\"/>" << std::endl;
-        reference_type = "0";
+        // if (debug)
+          Rcpp::Rcout << "BrtSupSelf @"<< bin.tellg() << std::endl;
+        // Rcpp::Rcout << "<internalReference type=\"0\"/>" << std::endl;
+        reference_type.push_back("0");
         break;
       }
 
       case BrtSupSame:
       {
-        if (debug) Rcpp::Rcout << "BrtSupSame @"<< bin.tellg() << std::endl;
-        Rcpp::Rcout << "<internalReference type=\"1\"/>" << std::endl;
-        reference_type = "1";
+        // if (debug)
+          Rcpp::Rcout << "BrtSupSame @"<< bin.tellg() << std::endl;
+        // Rcpp::Rcout << "<internalReference type=\"1\"/>" << std::endl;
+        reference_type.push_back("1");
         break;
       }
 
       case BrtPlaceholderName:
       {
+        // if (debug)
+        Rcpp::Rcout << "BrtPlaceholderName @"<< bin.tellg() << std::endl;
         std::string name = XLWideString(bin, swapit);
-        Rcpp::Rcout << "<internalReference name=\""<< name << "\"/>" << std::endl;
-        reference_type = "name";
+        // Rcpp::Rcout << "<internalReference name=\""<< name << "\"/>" << std::endl;
         break;
       }
 
       case BrtSupAddin:
       {
-        if (debug) Rcpp::Rcout << "BrtSupAddin @"<< bin.tellg() << std::endl;
-        Rcpp::Rcout << "<internalReference type=\"2\"/>" << std::endl;
-        reference_type = "2";
+        // if (debug)
+          Rcpp::Rcout << "BrtSupAddin @"<< bin.tellg() << std::endl;
+        // Rcpp::Rcout << "<internalReference type=\"2\"/>" << std::endl;
+        reference_type.push_back("2");
         break;
       }
 
       case BrtSupBookSrc:
       {
-        if (debug) Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
+        // if (debug)
+          Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
         // Rcpp::stop("BrtSupSelf");
         std::string strRelID = XLNullableWideString(bin, swapit);
         out << "<externalReference r:id=\""<< strRelID << "\"/>" << std::endl;
+        reference_type.push_back(strRelID);
         break;
       }
 
       case BrtSupTabs:
       {
-        if (debug) Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
+        // if (debug)
+          Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
         uint32_t cTab = 0;
 
         cTab = readbin(cTab, bin, swapit);
@@ -1674,12 +1683,15 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (cXti > 65535) Rcpp::stop("cXti to large");
 
         std::vector<uint32_t> rgXti(cXti);
+        Rcpp::Rcout << "reference_type: " << reference_type.size() << std::endl;
+        Rcpp::Rcout << "reference_type: " << cXti << std::endl;
         for (uint32_t i = 0; i < cXti; ++i) {
           std::vector<int> xti = Xti(bin, swapit);
+          if (xti[0] > reference_type.size()) Rcpp::stop("references do not match");
           std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
             "\" firstSheet=\"" + std::to_string(xti[1]) +
             "\" lastSheet=\"" +  std::to_string(xti[2]) +
-            "\" type=\"" +  reference_type +
+            "\" type=\"" +  reference_type[xti[0]] +
             "\" />";
           xtis.push_back(tmp);
         }
@@ -1793,10 +1805,10 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       default:
       {
         if (debug) {
-        Rcpp::Rcout << std::to_string(x) <<
-          ": " << std::to_string(size) <<
+          Rcpp::Rcout << std::to_string(x) <<
+            ": " << std::to_string(size) <<
             " @ " << bin.tellg() << std::endl;
-      }
+        }
         bin.seekg(size, bin.cur);
         break;
       }
@@ -1970,6 +1982,49 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         out << " zoomToFit=\"1\"";
 
         out << ">" << std::endl;
+
+        break;
+      }
+
+      case BrtPane:
+      {
+        uint8_t flags = 0;
+        uint32_t rwTop = 0, colLeft = 0, pnnAct = 0;
+        double xnumXSplit = 0.0, xnumYSplit = 0.0;
+
+        xnumXSplit = Xnum(bin, swapit);
+        xnumYSplit = Xnum(bin, swapit);
+        rwTop = readbin(rwTop, bin, swapit);
+        colLeft = readbin(colLeft, bin, swapit);
+        pnnAct = readbin(pnnAct, bin, swapit);
+        flags = readbin(flags, bin, swapit);
+
+        std::string topLeft = int_to_col(colLeft + 1) + std::to_string(rwTop + 1);
+
+        std::string pnn;
+        if (pnnAct == 0x00000000) pnn = "bottomRight";
+        if (pnnAct == 0x00000001) pnn = "topRight";
+        if (pnnAct == 0x00000002) pnn = "bottomLeft";
+        if (pnnAct == 0x00000003) pnn = "topLeft";
+
+        bool fFrozen = (flags & 0x80) != 0;
+        bool fFrozenNoSplit = (flags & 0x40) != 0;
+
+        std::string state;
+        if (fFrozen & fFrozenNoSplit)
+          state = "frozen";
+        if (fFrozen & !fFrozenNoSplit)
+          state = "frozenSplit";
+        if (!fFrozen & !fFrozenNoSplit)
+          state = "split";
+
+        out << "<pane";
+        out << " activePane=\"" << pnn << "\"";
+        out << " state=\"" << state << "\"";
+        out << " xSplit=\"" << xnumXSplit << "\"";
+        out << " ySplit=\"" << xnumYSplit << "\"";
+        out << " topLeftCell=\"" << topLeft << "\"";
+        out << " />" << std::endl;
 
         break;
       }
