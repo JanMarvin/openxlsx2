@@ -1352,7 +1352,7 @@ wb_load <- function(
     if (length(wb$workbook$xti)) {
       # create data frame containing sheet names for Xti entries
       xti <- rbindlist(xml_attr(wb$workbook$xti, "xti"))
-      xti$name_id <- paste0("openxlsx2xlsb_", as.integer(rownames(xti)) -1L)
+      xti$name_id <- paste0("openxlsx2xlsb_", as.integer(rownames(xti)) - 1L)
       xti$firstSheet <- as.integer(xti$firstSheet) + 1L
       xti$lastSheet <- as.integer(xti$lastSheet) + 1L
 
@@ -1360,7 +1360,7 @@ wb_load <- function(
       if (any(sel <- grepl("\\s", sheets)))
         sheets[sel] <- shQuote(sheets[sel], type = "sh")
 
-      xti$sheets <- NA_character_
+      xti$sheets <- "" #NA_character_ (otherwise in missing cases: all is <NA>)
       # all id == 0 are local references, otherwise external references
       # external references are written as "[0]sheetname!A1". Require
       # handling of externalReferences.bin
@@ -1379,7 +1379,8 @@ wb_load <- function(
       # This will return all sheets of the external reference.
       extSheets <- lapply(wb$externalLinks, function(x) {
         sheetNames <- xml_node(x, "externalLink", "externalBook", "sheetNames")
-        vals <- rbindlist(xml_attr(sheetNames, "sheetNames", "sheetName"))
+        # assuming that all external links have some kind of vals
+        rbindlist(xml_attr(sheetNames, "sheetNames", "sheetName"))$vals
       })
 
       # TODO: How are references to the same external link,
@@ -1390,7 +1391,7 @@ wb_load <- function(
       # loop over it and create external link
       for (i in seq_along(sheet)) {
         want <- sheet[i]
-        sheetName <- extSheets[[i]]$val[[want]]
+        sheetName <- extSheets[[i]][[want]]
         # should be a single reference now
         if (any(grepl("\\s", sheetName))) sheetName <- shQuote(sheetName, type = "sh")
         xti$sheets[sel] <- sprintf("[%s]%s", i, sheetName)
@@ -1417,9 +1418,9 @@ wb_load <- function(
             vectorize_all = FALSE
           )
       }
-
-      wb$workbook$xti <- NULL
     }
+
+    wb$workbook$xti <- NULL
 
   }
 
