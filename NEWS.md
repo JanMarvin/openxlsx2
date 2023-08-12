@@ -3,6 +3,8 @@
 ## Fixes
 
 * corrections in vignettes
+* fixes for loading workbooks with threaded comments
+* fixes for loading workbooks with embeddings other than docx
 
 
 ***************************************************************************
@@ -24,19 +26,19 @@
 
 * Cleanups
   * remove deprecated functions
-  
+
   * remove deprecated arguments
     * `xy` argument
     * arguments `col`, `row`, `cols`, `rows`. `start_col`, `start_row` and `gridExpand` were deprecated in favor of `dims`. Row and column vectors can be converted to `dims` using `wb_dims()`.
     * `xlsx_file` in favor of `file` in `wb_to_df()`
-    
+
   * deprecating function
-    * `convertToExcelDate()` for `convert_to_excel_date()`  
+    * `convertToExcelDate()` for `convert_to_excel_date()`
     * `wb_grid_lines()` for `wb_set_grid_lines()`
 
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartSheet`, `wbComment`, `wbHyperlink` internal
-  
+
 ## New features
 
 * `wb_dims()` was added as a more convenient replacement for `rowcol_to_dims()`.([691](https://github.com/JanMarvin/openxlsx2/pull/691) and [702](https://github.com/JanMarvin/openxlsx2/pull/702), @olivroy) The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coercible to data frame. This allows the following variants:

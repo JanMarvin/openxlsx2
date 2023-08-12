@@ -1630,7 +1630,7 @@ wbWorkbook <- R6::R6Class(
       if (nThreadComments > 0) {
         xlThreadComments <- dir_create(tmpDir, "xl", "threadedComments")
 
-        for (i in seq_len(nSheets)) {
+        for (i in seq_along(self$threadComments)) {
           if (length(self$threadComments[[i]])) {
             write_file(
               head = "<ThreadedComments xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments\" xmlns:x=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">",
