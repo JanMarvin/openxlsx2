@@ -1347,6 +1347,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_workbook = false;
+    bool first_extern_sheet = true;
 
     std::vector<std::string> defNams, xtis, reference_type;
     defNams.push_back("<definedNames>");
@@ -1601,7 +1602,6 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "<BrtBeginExternals>" << std::endl;
         // bin.seekg(size, bin.cur);
-        out << "<externalReferences>" << std::endl;
         break;
       }
 
@@ -1612,7 +1612,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // * BrtSupBookSrc external link
       case BrtSupSelf:
       {
-        // if (debug)
+        if (debug)
           Rcpp::Rcout << "BrtSupSelf @"<< bin.tellg() << std::endl;
         // Rcpp::Rcout << "<internalReference type=\"0\"/>" << std::endl;
         reference_type.push_back("0");
@@ -1621,7 +1621,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtSupSame:
       {
-        // if (debug)
+        if (debug)
           Rcpp::Rcout << "BrtSupSame @"<< bin.tellg() << std::endl;
         // Rcpp::Rcout << "<internalReference type=\"1\"/>" << std::endl;
         reference_type.push_back("1");
@@ -1630,8 +1630,8 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtPlaceholderName:
       {
-        // if (debug)
-        Rcpp::Rcout << "BrtPlaceholderName @"<< bin.tellg() << std::endl;
+        if (debug)
+          Rcpp::Rcout << "BrtPlaceholderName @"<< bin.tellg() << std::endl;
         std::string name = XLWideString(bin, swapit);
         // Rcpp::Rcout << "<internalReference name=\""<< name << "\"/>" << std::endl;
         break;
@@ -1639,7 +1639,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtSupAddin:
       {
-        // if (debug)
+        if (debug)
           Rcpp::Rcout << "BrtSupAddin @"<< bin.tellg() << std::endl;
         // Rcpp::Rcout << "<internalReference type=\"2\"/>" << std::endl;
         reference_type.push_back("2");
@@ -1648,7 +1648,12 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtSupBookSrc:
       {
-        // if (debug)
+        if (first_extern_sheet) {
+          out << "<externalReferences>" << std::endl;
+          first_extern_sheet = false;
+        }
+
+        if (debug)
           Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
         // Rcpp::stop("BrtSupSelf");
         std::string strRelID = XLNullableWideString(bin, swapit);
@@ -1659,7 +1664,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtSupTabs:
       {
-        // if (debug)
+        if (debug)
           Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
         uint32_t cTab = 0;
 
@@ -1676,6 +1681,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtExternSheet:
       {
+
         if (debug) Rcpp::Rcout << "<BrtExternSheet>" << std::endl;
         uint32_t cXti = 0;
 
@@ -1702,7 +1708,8 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtEndExternals:
       {
         if (debug) Rcpp::Rcout << "</BrtEndExternals>" << std::endl;
-        out << "</externalReferences>" << std::endl;
+        if (!first_extern_sheet)
+          out << "</externalReferences>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
