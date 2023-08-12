@@ -216,12 +216,8 @@ wb_load <- function(
   }
 
   ##
-  chartSheetRIds <- NULL
   if (!data_only && length(chartSheetsXML)) {
     workbookRelsXML <- grep("chartsheets/sheet", workbookRelsXML, fixed = TRUE, value = TRUE)
-
-    chartSheetRIds <- unlist(getId(workbookRelsXML))
-    chartsheet_rId_mapping <- unlist(regmatches(workbookRelsXML, gregexpr("sheet[0-9]+\\.xml", workbookRelsXML, perl = TRUE, ignore.case = TRUE)))
 
     sheetNo <- as.integer(regmatches(chartSheetsXML, regexpr("(?<=sheet)[0-9]+(?=\\.xml)", chartSheetsXML, perl = TRUE)))
     chartSheetsXML <- chartSheetsXML[order(sheetNo)]
@@ -229,10 +225,7 @@ wb_load <- function(
     chartSheetsRelsXML <- grep_xml("xl/chartsheets/_rels")
     sheetNo2 <- as.integer(regmatches(chartSheetsRelsXML, regexpr("(?<=sheet)[0-9]+(?=\\.xml\\.rels)", chartSheetsRelsXML, perl = TRUE)))
     chartSheetsRelsXML <- chartSheetsRelsXML[order(sheetNo2)]
-
-    chartSheetsRelsDir <- dirname(chartSheetsRelsXML[1])
   }
-
 
   ## xl\
   ## xl\workbook
@@ -308,7 +301,7 @@ wb_load <- function(
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
-        overrideAttr <- as.data.frame(do.call("rbind", override))
+        overrideAttr <- as.data.frame(do.call("rbind", override), stringsAsFactors = FALSE)
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
         wb$add_worksheet(sheets$name[i], visible = is_visible[i], has_drawing = !is.na(drawings[i]))
@@ -810,10 +803,8 @@ wb_load <- function(
 
       for (i in seq_len(nSheets)) {
         if (sheets$typ[i] == "chartsheet") {
-          ind <- which(chartSheetRIds == sheets$`r:id`[i])
-          rels_file <- file.path(chartSheetsRelsDir, paste0(chartsheet_rId_mapping[ind], ".rels"))
+          rels_file <- file.path(xmlDir, "xl", "chartsheets", "_rels", paste0(file_names[i], ".rels"))
         } else {
-          ind <- sheets$`r:id`[i]
           rels_file <- file.path(xmlDir, "xl", "worksheets", "_rels", paste0(file_names[i], ".rels"))
         }
         if (file.exists(rels_file)) {
@@ -851,15 +842,6 @@ wb_load <- function(
     })
 
     wb$worksheets_rels <- xml
-
-    xml <- lapply(seq_along(allRels), function(i) {
-      if (haveRels[i]) {
-        xml <- xml_node(allRels[[i]], "Relationships", "Relationship")
-      } else {
-        xml <- character()
-      }
-      return(xml)
-    })
 
     for (ws in seq_along(wb$worksheets)) {
 
@@ -955,13 +937,6 @@ wb_load <- function(
       tables_xml <- vapply(tablesXML, FUN = read_xml, pointer = FALSE, FUN.VALUE = NA_character_)
       tabs <- rbindlist(xml_attr(tables_xml, "table"))
 
-      wb$append("Content_Types", sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', nrow(wb$tables)))
-
-      # # TODO When does this happen?
-      # if (length(tabs["displayName"]) != length(tablesXML)) {
-      #   tabs[["displayName"]] <- paste0("Table", seq_along(tablesXML))
-      # }
-
       wb$tables <- data.frame(
         tab_name = tabs[["displayName"]],
         tab_sheet = tableSheets,
@@ -971,10 +946,7 @@ wb_load <- function(
         stringsAsFactors = FALSE
       )
 
-      # ## relabel ids
-      # for (i in seq_len(nrow(wb$tables))) {
-      #   wb$tables$tab_xml[i] <- xml_attr_mod(wb$tables$tab_xml[i], xml_attributes = c(id = as.character(i + 2)))
-      # }
+      wb$append("Content_Types", sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', nrow(wb$tables)))
 
       ## every worksheet containing a table, has a table part. this references
       ## the display name, so that we know which tables are still around.
@@ -1124,10 +1096,10 @@ wb_load <- function(
     }
 
     ## Threaded comments
-    if (length(threadCommentsXML) > 0) {
+    if (any(length(threadCommentsXML) > 0)) {
 
-      if (lengths(threadCommentsXML)) {
-        wb$threadComments <- lapply(threadCommentsXML, read_xml, pointer = FALSE)
+      if (any(lengths(threadCommentsXML))) {
+        wb$threadComments <- lapply(threadCommentsXML, function(x) xml_node(x, "ThreadedComments", "threadedComment"))
       }
 
       wb$append(
@@ -1152,8 +1124,20 @@ wb_load <- function(
 
     ## Embedded docx
     if (length(embeddings) > 0) {
-      # TODO only valid for docx. need to check xls and doc?
-      wb$append("Content_Types", '<Default Extension="docx" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>')
+
+      # get the embedded files extensions
+      files <- unique(gsub(".+\\.(\\w+)$", "\\1", embeddings))
+
+      # get the required ContentTypes
+      content_type <- read_xml(ContentTypesXML)
+      extensions <- rbindlist(xml_attr(content_type, "Types", "Default"))
+      extensions <- extensions[extensions$Extension %in% files, ]
+
+      # append the content types
+      default <- sprintf('<Default Extension="%s" ContentType="%s"/>',
+                         extensions$Extension, extensions$ContentType)
+      wb$append("Content_Types", default)
+
       wb$embeddings <- embeddings
     }
 
