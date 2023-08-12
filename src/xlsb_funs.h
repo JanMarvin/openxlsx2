@@ -1343,6 +1343,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       unused1 = readbin(unused1, sas, swapit);
       unused2 = readbin(unused2, sas, swapit);
 
+      fml_out += "#REF!";
+      fml_out += "\n";
+
       break;
     }
 
@@ -1356,6 +1359,13 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       ixti = readbin(ixti, sas, swapit);
       unused1 = readbin(unused1, sas, swapit);
       unused2 = readbin(unused2, sas, swapit);
+
+      // A1 notation cell
+      fml_out += "openxlsx2xlsb_" + std::to_string(ixti) + "!";
+      fml_out += "#REF!";
+      fml_out += "\n";
+
+      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
 
       break;
     }

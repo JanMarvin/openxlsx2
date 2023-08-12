@@ -131,7 +131,9 @@ wb_load <- function(
 
   # connections
   connectionsXML    <- grep_xml("connections.xml$")
+  extLinksBIN       <- grep_xml("externalLink[0-9]+.bin$")
   extLinksXML       <- grep_xml("externalLink[0-9]+.xml$")
+  extLinksRelsBIN   <- grep_xml("externalLink[0-9]+.bin.rels$")
   extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
 
   # form control
@@ -184,7 +186,7 @@ wb_load <- function(
       # system(sprintf("cp %s /tmp/sst.xml", sharedStringsXML))
     }
 
-    if (length(tablesBIN)) {
+    if (!data_only && length(tablesBIN)) {
       tablesXML <- gsub(".bin$", ".xml", tablesBIN)
       for (i in seq_along(tablesXML))
         table_bin(tablesBIN[i], tablesXML[i], debug)
@@ -192,17 +194,28 @@ wb_load <- function(
       # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
     }
 
-    if (length(chartSheetsXML)) {
+    if (!data_only && length(chartSheetsXML)) {
       chartSheetsXML <- gsub(".bin$", ".xml", chartSheetsXML)
     }
 
-    if (length(commentsBIN)) {
+    if (!data_only && length(commentsBIN)) {
       commentsXML <- gsub(".bin$", ".xml", commentsBIN)
       for (i in seq_along(commentsBIN)) {
         comments_bin(commentsBIN[i], commentsXML[i], debug)
         # system(sprintf("cat %s", commentsXML[i]))
         # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
       }
+    }
+
+    if (!data_only && length(extLinksBIN)) {
+      extLinksXML <- gsub(".bin$", ".xml", extLinksBIN)
+      for (i in seq_along(extLinksBIN)) {
+        externalreferences_bin(extLinksBIN[i], extLinksXML[i], debug)
+        # system(sprintf("cat %s", commentsXML[i]))
+        # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
+      }
+
+      extLinksRelsXML <- extLinksRelsBIN
     }
 
     workbookXMLRels <- workbookBINRels
@@ -471,6 +484,10 @@ wb_load <- function(
 
     ## defined Names
     wb$workbook$definedNames <-  xml_node(workbook_xml, "workbook", "definedNames", "definedName")
+
+
+    ## xti
+    wb$workbook$xti <-  xml_node(workbook_xml, "workbook", "xtis", "xti")
 
   }
 
@@ -1324,6 +1341,86 @@ wb_load <- function(
     wb$tables.xml.rels[hasRels] <- xml
   } else if (length(tablesXML) > 0) {
     wb$tables.xml.rels <- rep("", length(tablesXML))
+  }
+
+  # xlsb files have references as index position stored. we have replaced the
+  # index position with "openxlsx2xlsb_" + indexpos. We have exported the xti
+  # references as custom xml node in the workbook. Now we have to create the
+  # correct sheet references and replace our replacement with it.
+  if (length(workbookBIN)) {
+
+    if (length(wb$workbook$xti)) {
+      # create data frame containing sheet names for Xti entries
+      xti <- rbindlist(xml_attr(wb$workbook$xti, "xti"))
+      xti$name_id <- paste0("openxlsx2xlsb_", as.integer(rownames(xti)) -1L)
+      xti$firstSheet <- as.integer(xti$firstSheet) + 1L
+      xti$lastSheet <- as.integer(xti$lastSheet) + 1L
+
+      sheets <- wb$get_sheet_names(escape = TRUE)
+      if (any(sel <- grepl("\\s", sheets)))
+        sheets[sel] <- shQuote(sheets[sel], type = "sh")
+
+      xti$sheets <- NA_character_
+      # all id == 0 are local references, otherwise external references
+      # external references are written as "[0]sheetname!A1". Require
+      # handling of externalReferences.bin
+      sel <- xti$id == 0 & xti$firstSheet >= 0 & xti$firstSheet == xti$lastSheet
+      # xti <- xti[sel, ]
+
+      xti$sheets[sel] <- vapply(
+        xti$firstSheet[sel],
+        function(x) sheets[x],
+        FUN.VALUE = ""
+      )
+
+      ### for external references we need to get the required sheet names first
+      # For now this is all a little guess work
+
+      # This will return all sheets of the external reference.
+      extSheets <- lapply(wb$externalLinks, function(x) {
+        sheetNames <- xml_node(x, "externalLink", "externalBook", "sheetNames")
+        vals <- rbindlist(xml_attr(sheetNames, "sheetNames", "sheetName"))
+      })
+
+      # TODO: How are references to the same external link,
+      # but different sheet handled?
+      sel <- xti$id == 1 & xti$firstSheet >= 0 & xti$firstSheet == xti$lastSheet
+      sheet <- xti$firstSheet[sel]
+
+      # loop over it and create external link
+      for (i in seq_along(sheet)) {
+        want <- sheet[i]
+        sheetName <- extSheets[[i]]$val[[want]]
+        # should be a single reference now
+        if (any(grepl("\\s", sheetName))) sheetName <- shQuote(sheetName, type = "sh")
+        xti$sheets[sel] <- sprintf("[%s]%s", i, sheetName)
+      }
+
+      if (length(wb$workbook$definedNames)) {
+        wb$workbook$definedNames <-
+          stringi::stri_replace_all_fixed(
+            wb$workbook$definedNames,
+            xti$name_id,
+            xti$sheets,
+            vectorize_all = FALSE
+          )
+      }
+
+      # this might be terribly slow!
+      for (j in seq_along(wb$worksheets)) {
+        if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != ""))
+        wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
+          stringi::stri_replace_all_fixed(
+            wb$worksheets[[j]]$sheet_data$cc$f[sel],
+            xti$name_id,
+            xti$sheets,
+            vectorize_all = FALSE
+          )
+      }
+
+      wb$workbook$xti <- NULL
+    }
+
   }
 
   return(wb)

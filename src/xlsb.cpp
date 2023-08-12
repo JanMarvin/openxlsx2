@@ -1006,7 +1006,7 @@ int comments_bin(std::string filePath, std::string outPath, bool debug) {
       {
         // we do not handle RichStr correctly. Ignore all formatting
         std::string commentText = RichStr(bin, swapit);
-        out << "<text><r><rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr><t>" << commentText << "</t></r></text>" << std::endl;
+        out << "<text><r><rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr><t>" << escape_xml(commentText) << "</t></r></text>" << std::endl;
         break;
       }
 
@@ -1014,6 +1014,221 @@ int comments_bin(std::string filePath, std::string outPath, bool debug) {
       {
         end_of_comments = true;
         out << "</comments>" << std::endl;
+        break;
+      }
+
+      default:
+      {
+        if (debug) {
+        Rcpp::Rcout << std::to_string(x) <<
+          ": " << std::to_string(size) <<
+            " @ " << bin.tellg() << std::endl;
+      }
+        bin.seekg(size, bin.cur);
+        break;
+      }
+      }
+    }
+
+    out.close();
+    bin.close();
+    return 1;
+  } else {
+    return -1;
+  };
+
+}
+// [[Rcpp::export]]
+int externalreferences_bin(std::string filePath, std::string outPath, bool debug) {
+
+  std::ofstream out(outPath);
+  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+
+  bool swapit = is_big_endian();
+
+  // auto sas_size = bin.tellg();
+  if (bin) {
+    bin.seekg(0, std::ios_base::beg);
+    bool first_row = true;
+    uint32_t row = 0;
+    bool end_of_external_reference = false;
+
+    while(!end_of_external_reference) {
+      Rcpp::checkUserInterrupt();
+
+      int32_t x = 0, size = 0;
+
+      if (debug) Rcpp::Rcout << "." << std::endl;
+      RECORD(x, size, bin, swapit);
+      if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
+
+      switch(x) {
+
+      case BrtBeginSupBook:
+      {
+        uint16_t sbt = 0;
+        sbt = readbin(sbt, bin, swapit);
+        // wb. 0x0000
+        // dde 0x0001
+        // ole 0x0002
+
+        std::string string1, string2;
+        string1 = XLWideString(bin, swapit);
+
+        if (sbt == 0x0000)
+          string2 = XLNullableWideString(bin, swapit);
+        else
+          string2 = XLWideString(bin, swapit);
+
+        Rcpp::Rcout << string1 << ": " << string2 << std::endl;
+
+        // no begin externalSheet?
+        out << "<externalLink xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" xmlns:xxl21=\"http://schemas.microsoft.com/office/spreadsheetml/2021/extlinks2021\" mc:Ignorable=\"x14 xxl21\">" << std::endl;
+
+        // assume for now all external references are workbooks
+        out << "<externalBook xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" << string1 << "\">" << std::endl;
+
+        break;
+      }
+
+      // looks like this file has case 5108:
+      // xxl21:absoluteUrl
+
+      case BrtSupTabs:
+      {
+        if (debug) Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
+        uint32_t cTab = 0;
+
+        cTab = readbin(cTab, bin, swapit);
+        if (cTab > 65535) Rcpp::stop("cTab to large");
+
+        out << "<sheetNames>" << std::endl;
+
+        for (uint32_t i = 0; i < cTab; ++i) {
+          std::string sheetName = XLWideString(bin, swapit);
+          out << "<sheetName val=\"" << escape_xml(sheetName) << "\" />" << std::endl;
+        }
+
+        out << "</sheetNames>" << std::endl;
+
+        // just guessing
+        out << "<sheetDataSet>" << std::endl;
+
+        break;
+      }
+
+      case BrtExternTableStart:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternTableStart>" << std::endl;
+        uint8_t flags = 0;
+        uint32_t iTab = 0;
+        iTab = readbin(iTab, bin, debug);
+        flags = readbin(flags, bin, debug);
+
+        first_row = true;
+        out << "<sheetData sheetId=\"" << iTab << "\">" << std::endl;
+
+        break;
+      }
+
+      case BrtExternRowHdr:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternRowHdr>" << std::endl;
+
+        row = UncheckedRw(bin, swapit);
+
+        // close open rows
+        if (!first_row) {
+          out << "</row>" <<std::endl;
+        } else {
+          first_row = false;
+        }
+        out << "<row r=\"" << row + 1 << "\">" << std::endl;
+
+        break;
+      }
+
+      case BrtExternCellBlank:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternCellBlank>" << std::endl;
+
+        uint32_t col = UncheckedCol(bin, swapit);
+        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" />" << std::endl;
+
+        break;
+      }
+
+      case BrtExternCellBool:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternCellBool>" << std::endl;
+
+        uint8_t value = 0;
+        uint32_t col = UncheckedCol(bin, swapit);
+        value = readbin(value, bin, swapit);
+        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"b\">" << std::endl;
+        out << "<v>" << value << "</v>" << std::endl;
+        out << "</cell>" << std::endl;
+
+        break;
+      }
+
+      case BrtExternCellError:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternCellError>" << std::endl;
+
+        std::string value;
+        uint32_t col = UncheckedCol(bin, swapit);
+        value = BErr(bin, swapit);
+        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"e\">" << std::endl;
+        out << "<v>" << value << "</v>" << std::endl;
+        out << "</cell>" << std::endl;
+
+        break;
+      }
+
+      case BrtExternCellReal:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternCellReal>" << std::endl;
+
+        double value = 0;
+        uint32_t col = UncheckedCol(bin, swapit);
+        value = Xnum(bin, swapit);
+        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\">" << std::endl;
+        out << "<v>" << value << "</v>" << std::endl;
+        out << "</cell>" << std::endl;
+
+        break;
+      }
+
+      case BrtExternCellString:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternCellString>" << std::endl;
+
+        uint32_t col = UncheckedCol(bin, swapit);
+        std::string value = XLWideString(bin, swapit);
+        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"str\">" << std::endl;
+        out << "<v>" << value << "</v>" << std::endl;
+        out << "</cell>" << std::endl;
+
+        break;
+      }
+
+      case BrtExternTableEnd:
+      {
+        if (debug) Rcpp::Rcout << "<BrtExternTableEnd>" << std::endl;
+
+        if (!first_row) out << "</row>" << std::endl;
+        out << "</sheetData>" << std::endl;
+
+        break;
+      }
+
+      case BrtEndSupBook:
+      {
+        end_of_external_reference = true;
+        out << "</sheetDataSet>" << std::endl;
+        out << "</externalBook>" << std::endl;
+        out << "</externalLink>" << std::endl;
         break;
       }
 
@@ -1129,8 +1344,11 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_workbook = false;
 
-    std::vector<std::string> defNams;
+    std::vector<std::string> defNams, xtis;
     defNams.push_back("<definedNames>");
+    xtis.push_back("<xtis>");
+
+    std::string reference_type;
 
     while(!end_of_workbook) {
       Rcpp::checkUserInterrupt();
@@ -1381,6 +1599,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "<BrtBeginExternals>" << std::endl;
         // bin.seekg(size, bin.cur);
+        out << "<externalReferences>" << std::endl;
         break;
       }
 
@@ -1392,28 +1611,32 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtSupSelf:
       {
         if (debug) Rcpp::Rcout << "BrtSupSelf @"<< bin.tellg() << std::endl;
-        // Rcpp::stop("BrtSupSelf");
+        Rcpp::Rcout << "<internalReference type=\"0\"/>" << std::endl;
+        reference_type = "0";
         break;
       }
 
       case BrtSupSame:
       {
         if (debug) Rcpp::Rcout << "BrtSupSame @"<< bin.tellg() << std::endl;
-        // Rcpp::stop("BrtSupSelf");
+        Rcpp::Rcout << "<internalReference type=\"1\"/>" << std::endl;
+        reference_type = "1";
         break;
       }
 
       case BrtPlaceholderName:
       {
         std::string name = XLWideString(bin, swapit);
-        Rcpp::Rcout << name << std::endl;
+        Rcpp::Rcout << "<internalReference name=\""<< name << "\"/>" << std::endl;
+        reference_type = "name";
         break;
       }
 
       case BrtSupAddin:
       {
         if (debug) Rcpp::Rcout << "BrtSupAddin @"<< bin.tellg() << std::endl;
-        // Rcpp::stop("BrtSupSelf");
+        Rcpp::Rcout << "<internalReference type=\"2\"/>" << std::endl;
+        reference_type = "2";
         break;
       }
 
@@ -1422,7 +1645,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
         // Rcpp::stop("BrtSupSelf");
         std::string strRelID = XLNullableWideString(bin, swapit);
-        Rcpp::Rcout << strRelID << std::endl;
+        out << "<externalReference r:id=\""<< strRelID << "\"/>" << std::endl;
         break;
       }
 
@@ -1436,7 +1659,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
         for (uint32_t i = 0; i < cTab; ++i) {
           std::string sheetName = XLWideString(bin, swapit);
-          Rcpp::Rcout << sheetName << std::endl;
+          Rcpp::Rcout << "BrtSupTabs: "<< sheetName << std::endl;
         }
 
         break;
@@ -1453,7 +1676,12 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         std::vector<uint32_t> rgXti(cXti);
         for (uint32_t i = 0; i < cXti; ++i) {
           std::vector<int> xti = Xti(bin, swapit);
-          Rf_PrintValue(Rcpp::wrap(xti));
+          std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
+            "\" firstSheet=\"" + std::to_string(xti[1]) +
+            "\" lastSheet=\"" +  std::to_string(xti[2]) +
+            "\" type=\"" +  reference_type +
+            "\" />";
+          xtis.push_back(tmp);
         }
 
         break;
@@ -1462,6 +1690,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtEndExternals:
       {
         if (debug) Rcpp::Rcout << "</BrtEndExternals>" << std::endl;
+        out << "</externalReferences>" << std::endl;
         bin.seekg(size, bin.cur);
         break;
       }
@@ -1542,6 +1771,16 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
             // if (debug)
               Rcpp::Rcout << defNams[i] << std::endl;
             out << defNams[i] << std::endl;
+          }
+        }
+
+        // custom xti output
+        if (xtis.size() > 1) {
+          xtis.push_back("</xtis>");
+
+          for (size_t i = 0; i < xtis.size(); ++i) {
+            if (debug) Rcpp::Rcout << xtis[i] << std::endl;
+            out << xtis[i] << std::endl;
           }
         }
 
