@@ -349,10 +349,13 @@ void wide_to_long(
   Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
   for (auto i = 0; i < m; ++i) {
+    Rcpp::checkUserInterrupt();
+
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
 
     auto startrow = start_row;
     for (auto j = 0; j < n; ++j) {
+      Rcpp::checkUserInterrupt();
 
       int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
