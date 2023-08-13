@@ -1353,21 +1353,25 @@ wb_load <- function(
     # we have to fix shared formulas
     for (i in seq_along(wb$worksheets)) {
 
-      cc <- wb$worksheets[[i]]$sheet_data$cc
+      if (!wb$is_chartsheet[i]) {
 
-      tab <- as.data.frame(table(cc$c_r, cc$f_si))
-      tab$Var1 <- as.character(tab$Var1)
-      tab$Var2 <- as.character(tab$Var2)
-      tab$Var2[tab$Var2 == ""] <- NA_character_
-      tab <- tab[complete.cases(tab), ]
-      tab <- tab[tab$Freq > 0, ]
-      tab$new <- as.character(seq_len(nrow(tab)) - 1L)
+        cc <- wb$worksheets[[i]]$sheet_data$cc
 
-      for (tabi in seq_len(nrow(tab))) {
-        cc$f_si[cc$c_r == tab$Var1[tabi] & cc$f_si == tab$Var2[tabi]] <- tab$new[tabi]
+        tab <- as.data.frame(table(cc$c_r, cc$f_si))
+        tab$Var1 <- as.character(tab$Var1)
+        tab$Var2 <- as.character(tab$Var2)
+        tab$Var2[tab$Var2 == ""] <- NA_character_
+        tab <- tab[complete.cases(tab), ]
+        tab <- tab[tab$Freq > 0, ]
+        tab$new <- as.character(seq_len(nrow(tab)) - 1L)
+
+        for (tabi in seq_len(nrow(tab))) {
+          cc$f_si[cc$c_r == tab$Var1[tabi] & cc$f_si == tab$Var2[tabi]] <- tab$new[tabi]
+        }
+
+        wb$worksheets[[i]]$sheet_data$cc <- cc
+
       }
-
-      wb$worksheets[[i]]$sheet_data$cc <- cc
 
     }
 
