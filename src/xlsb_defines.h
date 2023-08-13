@@ -1766,7 +1766,7 @@ std::string Ftab(const uint16_t val) {
   case	0x00FC:	return "FREQUENCY";
   case	0x00FD:	return "ADD.TOOLBAR";
   case	0x00FE:	return "DELETE.TOOLBAR(%s)";
-  case	0x00FF:	return "User Defined Function";
+  case	0x00FF:	return "User_Defined_Function";
   case	0x0100:	return "RESET.TOOLBAR(%s)";
   case	0x0101:	return "EVALUATE(%s)";
   case	0x0102:	return "GET.TOOLBAR";

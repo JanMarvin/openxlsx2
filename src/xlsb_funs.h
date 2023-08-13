@@ -854,13 +854,13 @@ std::vector<int> Xti(std::istream& sas, bool swapit) {
   return out;
 }
 
-bool isOperator(const std::string& token) {
-  return token == "+" || token == "-" || token == "*" || token == "/" ||
-    token == "^" || token == "%" || token == "="  || token == "&lt;&gt;" ||
-    token == "&lt;" || token == "&gt;" || token == "&le;" || token == "&ge;" ||
-    token == " " || token == "&amp;" || token == ":" || token == "," ||
-    token == "#" || token == "@";
-}
+// bool isOperator(const std::string& token) {
+//   return token == "+" || token == "-" || token == "*" || token == "/" ||
+//     token == "^" || token == "%" || token == "="  || token == "&lt;&gt;" ||
+//     token == "&lt;" || token == "&gt;" || token == "&le;" || token == "&ge;" ||
+//     token == " " || token == "&amp;" || token == ":" || token == "," ||
+//     token == "#" || token == "@";
+// }
 
 #include <stack>
 
@@ -875,26 +875,27 @@ std::string parseRPN(const std::string& expression) {
       break;  // Stop parsing at the first empty line
     }
     std::string token = line;
+    // Rcpp::Rcout << token << std::endl;
 
-    if (isOperator(token)) {
-
-      if (formulaStack.size() == 1) {
-        std::string operand1 = formulaStack.top();
-        formulaStack.pop();
-        // uminus & uplus
-        std::string infixExpression = token + operand1;
-        formulaStack.push(infixExpression);
-      } else if (formulaStack.size() >= 2) {
-        // Rcpp::Rcout << "Formula stacksize is: " << formulaStack.size() << std::endl;
-        std::string operand2 = formulaStack.top();
-        formulaStack.pop();
-        std::string operand1 = formulaStack.top();
-        formulaStack.pop();
-        std::string infixExpression = operand1 + token + operand2;
-        formulaStack.push(infixExpression);
-      }
-    } else {
-      if (token.find("%s")) {
+    // if (isOperator(token)) {
+    //
+    //   if (formulaStack.size() == 1) {
+    //     std::string operand1 = formulaStack.top();
+    //     formulaStack.pop();
+    //     // uminus & uplus
+    //     std::string infixExpression = token + operand1;
+    //     formulaStack.push(infixExpression);
+    //   } else if (formulaStack.size() >= 2) {
+    //     // Rcpp::Rcout << "Formula stacksize is: " << formulaStack.size() << std::endl;
+    //     std::string operand2 = formulaStack.top();
+    //     formulaStack.pop();
+    //     std::string operand1 = formulaStack.top();
+    //     formulaStack.pop();
+    //     std::string infixExpression = operand1 + token + operand2;
+    //     formulaStack.push(infixExpression);
+    //   }
+    // } else {
+      if (token.find("%s") != std::string::npos) {
         size_t pos = token.rfind("%s");
         while (pos != std::string::npos) {
           if (!formulaStack.empty()) {
@@ -909,9 +910,10 @@ std::string parseRPN(const std::string& expression) {
         }
         formulaStack.push(token);
       } else {
+        // Rcpp::Rcout << "push to stack: " << token << std::endl;
         formulaStack.push(token);
       }
-    }
+    // }
   }
 
   std::string parsedFormula;
@@ -1043,9 +1045,12 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         cch = readbin(cch, sas, swapit);
 
         // hm, there is also " " as operator. genius move ...
+        // fml_out += "%s";
         for (uint8_t i = 0; i < cch; ++i) {
           fml_out += " ";
         }
+        // fml_out += "%s";
+        // fml_out += "\n";
 
         if (debug) Rprintf("AttrSpace: %d %d\n", type, cch);
         break;
@@ -1077,7 +1082,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgRange:
     {
       if (debug) Rcpp::Rcout << ":" <<std::endl;
-      fml_out += ":";
+      fml_out += "%s:%s";
       fml_out += "\n";
       break;
     }
@@ -1085,7 +1090,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgUnion:
     {
       if (debug) Rcpp::Rcout << "," <<std::endl;
-      fml_out += ",";
+      fml_out += "%s,%s";
       fml_out += "\n";
       break;
     }
@@ -1093,7 +1098,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgIsect:
     {
       if (debug) Rcpp::Rcout << " " <<std::endl;
-      fml_out += " ";
+      fml_out += "%s %s";
       fml_out += "\n";
       break;
     }
@@ -1101,7 +1106,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgAdd:
     {
       if (debug) Rcpp::Rcout << "+" <<std::endl;
-      fml_out += "+";
+      fml_out += "%s+%s";
       fml_out += "\n";
       break;
     }
@@ -1109,7 +1114,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgSub:
     {
       if (debug) Rcpp::Rcout << "-" <<std::endl;
-      fml_out += "-";
+      fml_out += "%s-%s";
       fml_out += "\n";
       break;
     }
@@ -1117,7 +1122,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgMul:
     {
       if (debug) Rcpp::Rcout << "*" <<std::endl;
-      fml_out += "*";
+      fml_out += "%s*%s";
       fml_out += "\n";
       break;
     }
@@ -1125,7 +1130,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgDiv:
     {
       if (debug) Rcpp::Rcout << "/" <<std::endl;
-      fml_out +=  "/";
+      fml_out +=  "%s/%s";
       fml_out += "\n";
       break;
     }
@@ -1133,7 +1138,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgPercent:
     {
       if (debug) Rcpp::Rcout << "%" <<std::endl;
-      fml_out +=  "%";
+      fml_out +=  "%s%";
       fml_out += "\n";
       break;
     }
@@ -1141,7 +1146,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgPower:
     {
       if (debug) Rcpp::Rcout << "^" <<std::endl;
-      fml_out += "^";
+      fml_out += "%s^%s";
       fml_out += "\n";
       break;
     }
@@ -1149,83 +1154,93 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgConcat:
     {
       if (debug) Rcpp::Rcout << "&" <<std::endl;
-      fml_out += "&amp;";
+      fml_out += "%s&amp;%s";
       fml_out += "\n";
       break;
     }
 
     case PtgEq:
     {
-      fml_out += "=";
+      if (debug) Rcpp::Rcout << "=" <<std::endl;
+      fml_out += "%s=%s";
       fml_out += "\n";
       break;
     }
 
     case PtgGt:
     {
-      fml_out += "&gt;";
+      if (debug) Rcpp::Rcout << ">" <<std::endl;
+      fml_out += "%s&gt;%s";
       fml_out += "\n";
       break;
     }
 
     case PtgGe:
     {
-      fml_out += "&ge;";
+      if (debug) Rcpp::Rcout << ">=" <<std::endl;
+      fml_out += "%s&gt;=%s";
       fml_out += "\n";
       break;
     }
 
     case PtgLt:
     {
-      fml_out += "&lt;";
+      if (debug) Rcpp::Rcout << "<" <<std::endl;
+      fml_out += "%s&lt;%s";
       fml_out += "\n";
       break;
     }
 
     case PtgLe:
     {
-      fml_out += "&le;";
+      if (debug) Rcpp::Rcout << "<=" <<std::endl;
+      fml_out += "%s&lt;=%s";
       fml_out += "\n";
       break;
     }
 
     case PtgNe:
     {
-      fml_out += "&lt;&gt;";
+      if (debug) Rcpp::Rcout << "!=" <<std::endl;
+      fml_out += "%s&lt;&gt;%s";
       fml_out += "\n";
       break;
     }
 
     case PtgUPlus:
     {
-      fml_out += "+";
+      if (debug) Rcpp::Rcout << "+val" <<std::endl;
+      fml_out += "+%s";
       fml_out += "\n";
       break;
     }
 
     case PtgUMinus:
     {
-      fml_out += "-";
-      fml_out += "";
+      if (debug) Rcpp::Rcout << "-val" <<std::endl;
+      fml_out += "-%s";
+      fml_out += "\n";
       break;
     }
 
     case PtgParen:
     {
-      if (debug) Rcpp::Rcout << "\"" <<std::endl;
-      fml_out += "\"";
+      if (debug) Rcpp::Rcout << "()" <<std::endl;
+      fml_out += "(%s)";
       fml_out += "\n";
       break;
     }
 
     case PtgMissArg:
     {
+      if (debug) Rcpp::Rcout << "MISSING()" <<std::endl;
       fml_out += "";
       break;
     }
 
     case PtgInt:
     {
+      if (debug) Rcpp::Rcout << "PtgInt" <<std::endl;
       uint16_t integer = 0;
       integer = readbin(integer, sas, swapit);
       // Rcpp::Rcout << integer << std::endl;
@@ -1236,6 +1251,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
     case PtgNum:
     {
+      if (debug) Rcpp::Rcout << "PtgNum" <<std::endl;
       double value = Xnum(sas, swapit);
       fml_out += std::to_string(value);
       fml_out += "\n";
@@ -1244,6 +1260,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
     case PtgStr:
     {
+      if (debug) Rcpp::Rcout << "PtgStr" <<std::endl;
 
       fml_out += "\"" + escape_quote(PtrStr(sas, swapit)) + "\"";
       fml_out += "\n";
@@ -1357,6 +1374,49 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // A1 notation cell
       fml_out += AreaRel(sas, swapit, col, row);
+      fml_out += "\n";
+
+      break;
+    }
+
+    case PtgMemArea:
+    case PtgMemArea2:
+    case PtgMemArea3:
+    {
+      uint16_t cce = 0;
+      uint32_t unused = 0;
+      unused = readbin(unused, sas, swapit);
+      cce = readbin(cce, sas, swapit);
+      // number of bytes for PtgExtraMem section?
+
+      break;
+    }
+
+    case PtgName:
+    case PtgName2:
+    case PtgName3:
+    {
+      uint32_t nameindex = 0;
+      nameindex = readbin(nameindex, sas, swapit);
+      // Rcpp::Rcout << nameindex << std::endl;
+      fml_out += std::to_string(nameindex);
+      fml_out += "\n";
+
+      break;
+    }
+
+    case PtgNameX:
+    case PtgNameX2:
+    case PtgNameX3:
+    {
+      // not yet found
+      uint16_t ixti = 0;
+      uint32_t nameindex = 0;
+      ixti = readbin(ixti, sas, swapit);
+      nameindex = readbin(nameindex, sas, swapit);
+      // Rcpp::Rcout << nameindex << std::endl;
+      // fml_out += std::to_string(ixti);
+      fml_out += std::to_string(nameindex);
       fml_out += "\n";
 
       break;
@@ -1494,7 +1554,11 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
   pos = sas.tellg();
   // sas.seekg(cce, sas.cur);
+
+  // Rcpp::Rcout << "pre " << pos << std::endl;
   pos += cb;
+  // Rcpp::Rcout << "post " << pos << std::endl;
+
 
   while((size_t)sas.tellg() < pos) {
 
@@ -1504,6 +1568,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     switch(val1) {
     case PtgExp:
     { // PtgExtraCol
+      if (debug) Rcpp::Rcout << "PtgExtraCol" << std::endl;
       int32_t col = UncheckedCol(sas, swapit);
       if (debug) Rcpp::Rcout << "cb PtgExp: " << int_to_col(col+1) << std::endl;
 
@@ -1517,6 +1582,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgArray2:
     case PtgArray3:
     {
+      if (debug) Rcpp::Rcout << "PtgExtraArray" << std::endl;
       // PtgExtraArray
 
       uint32_t rows = 0, cols = 0;
@@ -1526,8 +1592,11 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       uint8_t reserved = 0;
       reserved = readbin(reserved, sas, swapit);
 
+      if (debug) Rcpp::Rcout << (int32_t)reserved << std::endl;
+
       // SerBool
       if (reserved == 0x02) {
+        if (debug) Rcpp::Rcout << "SerBool" << std::endl;
         uint8_t f = 0;
         f = readbin(f, sas, swapit);
         if (debug) Rcpp::Rcout << (int32_t)f << std::endl;
@@ -1538,6 +1607,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // SerErr
       if (reserved == 0x04) {
+        if (debug) Rcpp::Rcout << "SerErr" << std::endl;
         uint8_t reserved2 = 0;
         uint16_t reserved3 = 0;
         std::string strerr = BErr(sas, swapit);
@@ -1551,15 +1621,21 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // SerNum
       if (reserved == 0x00) {
+        if (debug) Rcpp::Rcout << "SerNum" << std::endl;
         double xnum = 0.0;
         xnum = Xnum(sas, swapit);
+
+        std::stringstream stream;
+        stream << std::setprecision(16) << xnum;
+
         if (debug) Rcpp::Rcout << xnum << std::endl;
-        fml_out += "{" + std::to_string(xnum) + "}"; // precision?
+        fml_out += "{" + stream.str() + "}";
         fml_out += "\n";
       }
 
       // SerStr
       if (reserved == 0x01) {
+        if (debug) Rcpp::Rcout << "SerStr" << std::endl;
         uint16_t cch = 0;
         cch = readbin(cch, sas, swapit);
         std::string rgch(cch, '\0');
@@ -1572,23 +1648,6 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       break;
     }
-    // case PtgRef3d:
-    // case PtgRefErr3d:
-    // case PtgArea3d:
-    // case PtgAreaErr3d:
-    // {
-    //   std::string book = XLWideString(sas);
-    //   int8_t type = 0;
-    //   int16_t tabid = 0;
-    //   type = readbin(type, sas, swapit);
-    //   tabid = readbin(tabid, sas, swapit);
-    //   std::string sheet = XLWideString(sas);
-    //   int8_t type1 = 0;
-    //   int16_t tabid1 = 0;
-    //   type1 = readbin(type1, sas, swapit);
-    //   tabid1 = readbin(tabid1, sas, swapit);
-    //   std::string sheet1 = XLWideString(sas);
-    // }
 
     default :
     {

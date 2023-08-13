@@ -1690,8 +1690,8 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (cXti > 65535) Rcpp::stop("cXti to large");
 
         std::vector<uint32_t> rgXti(cXti);
-        Rcpp::Rcout << "reference_type: " << reference_type.size() << std::endl;
-        Rcpp::Rcout << "reference_type: " << cXti << std::endl;
+        // Rcpp::Rcout << "reference_type: " << reference_type.size() << std::endl;
+        // Rcpp::Rcout << "reference_type: " << cXti << std::endl;
         for (uint32_t i = 0; i < cXti; ++i) {
           std::vector<int> xti = Xti(bin, swapit);
           if (xti[0] > reference_type.size()) Rcpp::stop("references do not match");
@@ -1788,7 +1788,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
           defNams.push_back("</definedNames>");
 
           for (size_t i = 0; i < defNams.size(); ++i) {
-            // if (debug)
+            if (debug)
               Rcpp::Rcout << defNams[i] << std::endl;
             out << defNams[i] << std::endl;
           }
@@ -1851,6 +1851,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
     bool first_row = true;
     bool in_sheet_data = false;
     bool end_of_worksheet = false;
+    std::string fml_type;
 
     uint32_t row = 0;
     uint32_t col = 0;
@@ -2112,6 +2113,97 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         out << ">" << std::endl;
 
+        break;
+      }
+
+      case BrtPageSetup:
+      {
+        uint16_t flags = 0;
+        uint32_t iPaperSize = 0, iScale = 0, iRes = 0, iVRes = 0, iCopies = 0, iPageStart = 0, iFitWidth = 0, iFitHeight = 0;
+
+        iPaperSize = readbin(iPaperSize, bin, swapit);
+        iScale = readbin(iScale, bin, swapit);
+        iRes = readbin(iRes, bin, swapit);
+        iVRes = readbin(iVRes, bin, swapit);
+        iCopies = readbin(iCopies, bin, swapit);
+        iPageStart = readbin(iPageStart, bin, swapit);
+        iFitWidth = readbin(iFitWidth, bin, swapit);
+        iFitHeight = readbin(iFitHeight, bin, swapit);
+        flags = readbin(flags, bin, swapit);
+
+        std::string szRelId = XLNullableWideString(bin, swapit);
+
+        out << "<pageSetup" <<
+          // "\" blackAndWhite=\"" << <<
+          // "\" draft=\""<< <<
+          // "\" cellComments=\""<< <<
+          " copies=\""<<  iCopies <<
+          // "\" errors=\""<<  <<
+          "\" firstPageNumber=\""<< iPageStart <<
+          "\" fitToHeight=\""<< iFitHeight <<
+          "\" fitToWidth=\""<< iFitWidth <<
+          "\" horizontalDpi=\""<< iRes <<
+          // "\" orientation=\""<<  <<
+          // "\" pageOrder=\""<<  <<
+          // "\" paperHeight=\""<<  <<
+          "\" paperSize=\""<< iPaperSize <<
+          // "\" paperWidth=\""<<  <<
+          "\" scale=\""<< iScale <<
+          // "\" useFirstPageNumber=\""<<  <<
+          // "\" usePrinterDefaults=\""<<  <<
+          "\" verticalDpi=\"" << iVRes <<
+          "\" />" << std::endl;
+
+        break;
+      }
+
+      case BrtPhoneticInfo:
+      {
+        uint16_t iFnt = 0;
+        uint32_t phType = 0, phAll = 0;
+        iFnt = readbin(iFnt, bin, swapit);
+        phType = readbin(phType, bin, swapit);
+        phAll = readbin(phAll, bin, swapit);
+
+        if (debug)
+          Rprintf("phnetic: %d, %d, %d", iFnt, phType, phAll);
+
+        break;
+      }
+
+      case BrtBeginHeaderFooter:
+      {
+        uint16_t flags = 0;
+        flags = readbin(flags, bin, swapit); // unused
+
+        std::string stHeader = XLNullableWideString(bin, swapit);
+        std::string stFooter = XLNullableWideString(bin, swapit);
+        std::string stHeaderEven = XLNullableWideString(bin, swapit);
+        std::string stFooterEven = XLNullableWideString(bin, swapit);
+        std::string stHeaderFirst = XLNullableWideString(bin, swapit);
+        std::string stFooterFirst = XLNullableWideString(bin, swapit);
+
+        if (debug)
+        Rcpp::Rcout << stHeader<< ": " << stFooter << ": " <<
+          stHeaderEven << ": " << stFooterEven << ": " <<
+            stHeaderFirst << ": " << stFooterFirst << std::endl;
+
+        out << "<headerFooter>" <<
+          "<oddHeader>" << stHeaderEven <<"</oddHeader>" <<
+          "<oddFooter>" << stFooterEven <<"</oddFooter>" <<
+          "<firstHeader>" << stHeaderFirst <<"</firstHeader>" <<
+          "<firstFooter>" << stFooterFirst <<"</firstFooter>" <<
+          "<evenHeader>" << stHeaderEven <<"</evenHeader>" <<
+          "<evenFooter>" << stHeaderEven <<"</evenFooter>" <<
+            // "<drawingHF>" <<  <<"</drawingHF>" <<
+        "</headerFooter>" << std::endl;
+
+        break;
+      }
+
+      case BrtEndHeaderFooter:
+      {
+        bin.seekg(size, bin.cur);
         break;
       }
 
@@ -2405,7 +2497,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         xml_col column;
         column.v = std::to_string(val3);
         column.c_t = "s";
-        column.c_s = std::to_string(val2);
+        if (val2) column.c_s = std::to_string(val2);
         column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
         colvec.push_back(column);
 
@@ -2433,7 +2525,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         xml_col column;
         column.v = std::to_string((int32_t)val3);
         column.c_t = "b";
-        column.c_s = std::to_string(val2);
+        if (val2) column.c_s = std::to_string(val2);
         column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
         colvec.push_back(column);
 
@@ -2462,7 +2554,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         column.v = stream.str();
-        column.c_s = std::to_string(val2);
+        if (val2) column.c_s = std::to_string(val2);
         column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
         colvec.push_back(column);
 
@@ -2492,7 +2584,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         column.v = stream.str();
-        column.c_s = std::to_string(val2);
+        if (val2) column.c_s = std::to_string(val2);
         column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
         colvec.push_back(column);
 
@@ -2514,7 +2606,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
 
         xml_col column;
-        column.c_s = std::to_string(blank[1]);
+        if (blank[1]) column.c_s = std::to_string(blank[1]);
         column.c_r = int_to_col(blank[0] + 1) + std::to_string(row + 1);
         colvec.push_back(column);
 
@@ -2537,7 +2629,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         column.v = BErr(bin, swapit);
-        column.c_s = std::to_string(val2);
+        if (val2) column.c_s = std::to_string(val2);
         column.c_t = "e";
         column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
         colvec.push_back(column);
@@ -2575,12 +2667,12 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         xml_col column;
         column.v = std::to_string((int32_t)val);
         if (is_shared_formula) {
-          column.f_t = "shared";
+          column.f_t = fml_type;
           column.f_si = std::to_string(is_shared_formula);
         } else {
           column.f = fml;
         }
-        column.c_s = std::to_string(cell[1]);
+        if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "b";
         column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
         colvec.push_back(column);
@@ -2615,12 +2707,12 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         xml_col column;
         column.v = fErr;
         if (is_shared_formula) {
-          column.f_t = "shared";
+          column.f_t = fml_type;
           column.f_si = std::to_string(is_shared_formula);
         } else {
           column.f = fml;
         }
-        column.c_s = std::to_string(cell[1]);
+        if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "e";
         column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
         colvec.push_back(column);
@@ -2660,12 +2752,12 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         xml_col column;
         column.v = stream.str();
         if (is_shared_formula) {
-          column.f_t = "shared";
+          column.f_t = fml_type;
           column.f_si = std::to_string(is_shared_formula);
         } else {
           column.f = fml;
         }
-        column.c_s = std::to_string(cell[1]);
+        if (cell[1]) column.c_s = std::to_string(cell[1]);
         // column.c_t = "e";
         column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
         colvec.push_back(column);
@@ -2699,21 +2791,54 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         if (is_shared_formula) {
-          column.f_t = "shared";
+          column.f_t = fml_type;
           column.f_si = std::to_string(is_shared_formula);
         } else {
           column.f = fml;
         }
         column.v = val;
-        column.c_s = std::to_string(cell[1]);
+        if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "str";
         column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
         colvec.push_back(column);
 
-        // out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"str\">" << std::endl;
-        // out << "<f>" << fml << "</f>" << std::endl;
-        // out << "<v>" << val << "</v>" << std::endl;
-        // out << "</c>" << std::endl;
+        break;
+      }
+
+      case BrtArrFmla:
+      {
+        int is_shared_formula = false;
+
+        uint8_t flags = 0;
+        uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
+        rwFirst  = UncheckedRw(bin, swapit) +1;
+        rwLast   = UncheckedRw(bin, swapit) +1;
+        colFirst = UncheckedCol(bin, swapit) +1;
+        colLast  = UncheckedCol(bin, swapit) +1;
+
+        std::string lref = int_to_col(colFirst) + std::to_string(rwFirst);
+        std::string rref = int_to_col(colLast) + std::to_string(rwLast);
+
+        std::string ref;
+        if (lref.compare(rref) == 0) {
+          ref = lref;
+        } else {
+          ref =  lref + ":" + rref;
+        }
+
+        if (debug) Rcpp::Rcout << "ref: " << ref << std::endl;
+
+        flags = readbin(flags, bin, 0);
+
+        std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula);
+        if (debug) Rcpp::Rcout << "BrtArrFmla: " << fml << std::endl;
+
+        // add to the last colvec element
+        auto last = colvec.size() - 1L;
+        colvec[last].f = fml;
+        colvec[last].f_t = "array";
+        colvec[last].f_ref = ref;
+        colvec[last].f_si = "";
 
         break;
       }
@@ -2729,24 +2854,28 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         colFirst = UncheckedCol(bin, swapit) +1;
         colLast  = UncheckedCol(bin, swapit) +1;
 
-        std::string ref = int_to_col(colFirst) + std::to_string(rwFirst) + ":" + int_to_col(colLast) + std::to_string(rwLast);
+        std::string lref = int_to_col(colFirst) + std::to_string(rwFirst);
+        std::string rref = int_to_col(colLast) + std::to_string(rwLast);
 
-        Rcpp::Rcout << "ref: " << ref << std::endl;
+        std::string ref;
+        if (lref.compare(rref) == 0) {
+          ref = lref;
+        } else {
+          ref =  lref + ":" + rref;
+        }
+
+        if (debug) Rcpp::Rcout << "ref: " << ref << std::endl;
 
         std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula);
-        Rcpp::Rcout << "BrtShrFmla: " << fml << std::endl;
+        if (debug) Rcpp::Rcout << "BrtShrFmla: " << fml << std::endl;
 
+        fml_type = "shared";
 
         // add to the last colvec element
         auto last = colvec.size() - 1L;
         colvec[last].f = fml;
+        colvec[last].f_t = fml_type; // not sure how many cells share array type
         colvec[last].f_ref = ref;
-
-        // // finish cells
-        // // out << "<c> << std::endl;
-        // // out << "<v>" << val << "</v>" << std::endl;
-        // out << "<f si=\"" << fml << "\" ref=\""<< ref << "\">" << fml << "</f>" << std::endl;
-        // out << "</c>" << std::endl;
 
         break;
       }
