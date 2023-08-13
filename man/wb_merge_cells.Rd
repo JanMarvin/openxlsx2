@@ -42,7 +42,7 @@ wb$add_worksheet()
 ## Intersecting merges
 wb <- wb_merge_cells(wb, dims = wb_dims(cols = 1:10, rows = 1))
 wb <- wb_merge_cells(wb, dims = wb_dims(cols = 5:10, rows = 2))
-wb <- wb_merge_cells(wb, dims = wb_dims(cols = c(1, 10), rows = 12))
+wb <- wb_merge_cells(wb, dims = wb_dims(cols = 1:10, rows = 12))
 try(wb_merge_cells(wb, dims = "A1:A10"))
 
 ## remove merged cells
