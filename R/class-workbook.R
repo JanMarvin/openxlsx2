@@ -747,7 +747,7 @@ wbWorkbook <- R6::R6Class(
       # self$vml[[newSheetIndex]]              <- list()
       self$is_chartsheet[[newSheetIndex]]    <- FALSE
       # self$comments[[newSheetIndex]]         <- list()
-      self$threadComments[[newSheetIndex]]   <- list()
+      # self$threadComments[[newSheetIndex]]   <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
@@ -952,6 +952,7 @@ wbWorkbook <- R6::R6Class(
       # cloned sheet the same IDs can be used => no need to modify drawings
       vml_id <- self$worksheets[[old]]$relships$vml
       cmt_id <- self$worksheets[[old]]$relships$comments
+      trd_id <- self$worksheets[[old]]$relships$threadedComment
 
       if (length(vml_id)) {
         self$append("vml",      self$vml[[vml_id]])
@@ -964,8 +965,12 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[old]]$relships$comments <- length(self$comments)
       }
 
+      if (length(trd_id)) {
+        self$append("threadComments", self$threadComments[cmt_id])
+        self$worksheets[[old]]$relships$threadedComment <- length(self$threadComments)
+      }
+
       self$is_chartsheet[[newSheetIndex]]  <- self$is_chartsheet[[old]]
-      self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
@@ -3822,27 +3827,32 @@ wbWorkbook <- R6::R6Class(
         cmt <- create_comment(text = comment, author = "")
         self$add_comment(sheet = sheet, dims = dims, comment = cmt)
       }
+      wb_cmt <- wb_get_comment(self, sheet, dims)
 
       if (!length(self$worksheets[[sheet]]$relships$threadedComment)) {
 
+        thread_id <- length(self$threadComments) + 1L
+
         # TODO the sheet id is correct ... ?
-        self$worksheets[[sheet]]$relships$threadedComment <- sheet
+        self$worksheets[[sheet]]$relships$threadedComment <- thread_id
 
         self$append(
           "Content_Types",
-          sprintf("<Override PartName=\"/xl/threadedComments/threadedComment%s.xml\" ContentType=\"application/vnd.ms-excel.threadedcomments+xml\"/>", sheet)
+          sprintf("<Override PartName=\"/xl/threadedComments/threadedComment%s.xml\" ContentType=\"application/vnd.ms-excel.threadedcomments+xml\"/>", thread_id)
         )
 
         self$worksheets_rels[[sheet]] <- append(
           self$worksheets_rels[[sheet]],
-          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/threadedComment\" Target=\"../threadedComments/threadedComment%s.xml\"/>", length(self$worksheets_rels[[sheet]]) + 1L, sheet)
+          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/threadedComment\" Target=\"../threadedComments/threadedComment%s.xml\"/>", length(self$worksheets_rels[[sheet]]) + 1L, thread_id)
         )
 
-        self$threadComments[[sheet]] <- character()
+        self$threadComments[[thread_id]] <- character()
       }
 
+      thread_id <- self$worksheets[[sheet]]$relships$threadedComment
+
       parentId <- NULL
-      tcs <- rbindlist(xml_attr(self$threadComments[[sheet]], "threadedComment"))
+      tcs <- rbindlist(xml_attr(self$threadComments[[thread_id]], "threadedComment"))
       sel <- which(tcs$ref == dims)
 
       if (reply && nrow(tcs)) {
@@ -3856,12 +3866,12 @@ wbWorkbook <- R6::R6Class(
       # update or remove any previous thread from the dims
       if (length(sel)) {
         if (resolve) {
-          self$threadComments[[sheet]][sel[1]] <- xml_attr_mod(
-            self$threadComments[[sheet]][sel[1]],
+          self$threadComments[[thread_id]][sel[1]] <- xml_attr_mod(
+            self$threadComments[[thread_id]][sel[1]],
             xml_attributes = c(done = as_xml_attr(resolve))
           )
         } else if (!reply) {
-          self$threadComments[[sheet]] <- self$threadComments[[sheet]][-(sel)]
+          self$threadComments[[thread_id]] <- self$threadComments[[thread_id]][-(sel)]
         }
       }
 
@@ -3888,20 +3898,20 @@ wbWorkbook <- R6::R6Class(
           xml_children = xml_node_create("text", xml_children = comment)
         )
 
-        self$threadComments[[sheet]] <- append(
-          self$threadComments[[sheet]],
+        self$threadComments[[thread_id]] <- append(
+          self$threadComments[[thread_id]],
           tc
         )
 
         if (reply) cmt_id <- parentId
 
         wb_cmt <- wb_get_comment(self, sheet, dims)
-        sId <- wb_cmt$sheet_id
+        sId <- wb_cmt$cmmt_id
         cId <- as.integer(rownames(wb_cmt))
 
         tc <- cbind(
-          rbindlist(xml_attr(self$threadComments[[sheet]], "threadedComment")),
-          text = xml_value(self$threadComments[[sheet]], "threadedComment", "text")
+          rbindlist(xml_attr(self$threadComments[[thread_id]], "threadedComment")),
+          text = xml_value(self$threadComments[[thread_id]], "threadedComment", "text")
         )
 
         # probably correclty ordered, but we could order these by date?
