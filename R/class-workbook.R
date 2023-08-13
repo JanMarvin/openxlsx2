@@ -3558,9 +3558,10 @@ wbWorkbook <- R6::R6Class(
     #' Set cell merging for a sheet
     #' @param sheet sheet
     #' @param dims worksheet cells
+    #' @param solve logical if intersecting cells should be solved
     #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
+    merge_cells = function(sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
 
       cols <- list(...)[["cols"]]
       rows <- list(...)[["rows"]]
@@ -3584,7 +3585,8 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$merge_cells(
         rows   = rows,
-        cols   = cols
+        cols   = cols,
+        solve  = solve
       )
       invisible(self)
     },

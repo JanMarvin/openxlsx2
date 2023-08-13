@@ -6,6 +6,10 @@
 * fixes for loading workbooks with threaded comments
 * fixes for loading workbooks with embeddings other than docx
 
+## New features
+
+* provide solve argument for `wb_merge_cells()`. This allows to solve cell intersecting regions. [733](https://github.com/JanMarvin/openxlsx2/pull/733)
+
 
 ***************************************************************************
 
