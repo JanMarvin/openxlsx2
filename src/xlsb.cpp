@@ -1562,7 +1562,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // XLNameWideString: XLWideString <= 255 characters
         std::string name = XLWideString(bin, swapit);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, 0);
 
         std::string comment = XLNullableWideString(bin, swapit);
 
@@ -2506,7 +2506,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"b\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2536,7 +2536,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"e\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2569,7 +2569,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         //         fields->fAlwaysCalc,
         //         fields->unused);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << ">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2595,7 +2595,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
 
         out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"str\">" << std::endl;
         out << "<f>" << fml << "</f>" << std::endl;
@@ -2615,10 +2615,10 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         colFirst = UncheckedCol(bin, swapit) +1;
         colLast  = UncheckedCol(bin, swapit) +1;
 
-        Rcpp::Rcout << int_to_col(colFirst) << rwFirst << ":" << int_to_col(colLast) << rwLast << std::endl;
+        Rcpp::Rcout << "ref: " << int_to_col(colFirst) << rwFirst << ":" << int_to_col(colLast) << rwLast << std::endl;
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, col);
-        Rcpp::Rcout << fml << std::endl;
+        std::string fml = CellParsedFormula(bin, swapit, debug, col, row);
+        Rcpp::Rcout << "BrtShrFmla: " << fml << std::endl;
 
         // out << "<f>" << fml << "</f>" << std::endl;
         // out << "<v>" << val << "</v>" << std::endl;
@@ -2952,7 +2952,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         bool fLinked = (flags & 0x8000) != 0;
 
         std::string strProgID = XLNullableWideString(bin, swapit);
-        if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0);
+        if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0);
 
         std::string stRelID = XLNullableWideString(bin, swapit);
         out << "<oleObject progId=\"" << strProgID << "\" shapeId=\"" << shapeId << "\" r:id=\"" << stRelID << "\" />" << std::endl;
@@ -3023,13 +3023,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         std::string rgce1, rgce2, rgce3;
         if (cbFmla1 != 0x00000000) {
-          rgce1 = CellParsedFormula(bin, swapit, debug, 0);
+          rgce1 = CellParsedFormula(bin, swapit, debug, 0, 0);
         }
         if (cbFmla2 != 0x00000000) {
-          rgce2 = CellParsedFormula(bin, swapit, debug, 0);
+          rgce2 = CellParsedFormula(bin, swapit, debug, 0, 0);
         }
         if (cbFmla3 != 0x00000000) {
-          rgce3 = CellParsedFormula(bin, swapit, debug, 0);
+          rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0);
         }
 
         BrtBeginCFRuleFields *fields = (BrtBeginCFRuleFields *)&flags;

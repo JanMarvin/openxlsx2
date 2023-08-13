@@ -544,31 +544,41 @@ std::string Loc(std::istream& sas, bool swapit) {
 }
 
 // RgceLocRel
-std::string LocRel(std::istream& sas, bool swapit) {
+std::string LocRel(std::istream& sas, bool swapit, int col, int row) {
 
-  std::vector<int> col;
-  int32_t row = 0;
-  row = readbin(row, sas, swapit);
-  col = ColRelShort(sas, swapit);
+  std::vector<int> col_rel;
+  int32_t row_rel = 0;
+  row_rel = readbin(row_rel, sas, swapit);
+  col_rel = ColRelShort(sas, swapit);
 
-  bool fColRel = col[1];
-  bool fRwRel  = col[2];
+  bool fColRel = col_rel[1];
+  bool fRwRel  = col_rel[2];
 
   std::string out;
 
-  if (row != 0) {
-    row -= (1048575);
+  if (fRwRel) {
+    row_rel += row;
+
+    if (row_rel < 0x00000000)
+      row_rel += 0x00100000;
+    else if (row_rel > 0x000FFFFF)
+      row_rel -= 0x00100000;
   }
 
-  if (col[0] != 0) {
-    col[0] -= (16383);
+  if (fColRel) {
+    col_rel[0] += col;
+
+    if (col_rel[0] < 0x0000)
+      col_rel[0] += 0x4000;
+    else if (col_rel[0] > 0x3FFF)
+      col_rel[0] -= 0x4000;
   }
 
-  if (!fColRel) out += "$";
-  out += int_to_col(col[0] + 1);
+  // if (!fColRel) out += "$";
+  out += int_to_col(col_rel[0] + 1);
 
-  if (!fRwRel) out += "$";
-  out += std::to_string(row + 1);
+  // if (!fRwRel) out += "$";
+  out += std::to_string(row_rel + 1);
 
   return out;
 }
@@ -606,51 +616,71 @@ std::string Area(std::istream& sas, bool swapit) {
   return out;
 }
 
-std::string AreaRel(std::istream& sas, bool swapit) {
+std::string AreaRel(std::istream& sas, bool swapit, int col, int row) {
 
-  std::vector<int> col0(3), col1(3);
-  uint32_t row0 = 0, row1 = 0;
-  row0 = UncheckedRw(sas, swapit); // rowFirst
-  row1 = UncheckedRw(sas, swapit); // rowLast
-  col0 = ColRelShort(sas, swapit); // columnFirst
-  col1 = ColRelShort(sas, swapit); // columnLast
+  std::vector<int> col_rel0(3), col_rel1(3);
+  int32_t row_rel0 = 0, row_rel1 = 0;
+  row_rel0 = UncheckedRw(sas, swapit); // rowFirst
+  row_rel1 = UncheckedRw(sas, swapit); // rowLast
+  col_rel0 = ColRelShort(sas, swapit); // columnFirst
+  col_rel1 = ColRelShort(sas, swapit); // columnLast
 
-  bool fColRel0 = col0[1];
-  bool fRwRel0  = col0[2];
-  bool fColRel1 = col1[1];
-  bool fRwRel1  = col1[2];
+  bool fColRel0 = col_rel0[1];
+  bool fRwRel0  = col_rel0[2];
+  bool fColRel1 = col_rel1[1];
+  bool fRwRel1  = col_rel1[2];
 
   std::string out;
 
-  if (row0 != 0) {
-    row0 -= (1048575);
+  if (fRwRel0) {
+    row_rel0 += row;
+
+    if (row_rel0 < 0x00000000)
+      row_rel0 += 0x00100000;
+    else if (row_rel0 > 0x000FFFFF)
+      row_rel0 -= 0x00100000;
   }
 
-  if (col0[0] != 0) {
-    col0[0] -= (16383);
+  if (fColRel0) {
+    col_rel0[0] += col;
+
+    if (col_rel0[0] < 0x0000)
+      col_rel0[0] += 0x4000;
+    else if (col_rel0[0] > 0x3FFF)
+      col_rel0[0] -= 0x4000;
   }
 
-  if (row1 != 0) {
-    row1 -= (1048575);
+  if (fRwRel1) {
+    row_rel1 += row;
+
+    if (row_rel1 < 0x00000000)
+      row_rel1 += 0x00100000;
+    else if (row_rel1 > 0x000FFFFF)
+      row_rel1 -= 0x00100000;
   }
 
-  if (col1[0] != 0) {
-    col1[0] -= (16383);
+  if (fColRel1) {
+    col_rel1[0] += col;
+
+    if (col_rel1[0] < 0x0000)
+      col_rel1[0] += 0x4000;
+    else if (col_rel1[0] > 0x3FFF)
+      col_rel1[0] -= 0x4000;
   }
 
-  if (!fColRel0) out += "$";
-  out += int_to_col(col0[0] + 1);
+  // if (!fColRel0) out += "$";
+  out += int_to_col(col_rel0[0] + 1);
 
-  if (!fRwRel0) out += "$";
-  out += std::to_string(row0 + 1);
+  // if (!fRwRel0) out += "$";
+  out += std::to_string(row_rel0 + 1);
 
   out += ":";
 
-  if (!fColRel1) out += "$";
-  out += int_to_col(col1[0] + 1);
+  // if (!fColRel1) out += "$";
+  out += int_to_col(col_rel1[0] + 1);
 
-  if (!fRwRel1) out += "$";
-  out += std::to_string(row1 + 1);
+  // if (!fRwRel1) out += "$";
+  out += std::to_string(row_rel1 + 1);
 
   return out;
 }
@@ -898,7 +928,7 @@ std::string parseRPN(const std::string& expression) {
 }
 
 
-std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col) {
+std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row) {
   // bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
 
@@ -912,7 +942,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
   pos += cce;
   int8_t val1 = 0;
 
-  uint32_t row = 0;
+  // row = 0;
 
   std::string fml_out;
   while((size_t)sas.tellg() < pos) {
@@ -973,7 +1003,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         // val2[2:8] == 0
         uint16_t unused = 0;
         unused = readbin(unused, sas, swapit);
-        Rcpp::Rcout << unused << std::endl;
+        // Rcpp::Rcout << unused << std::endl;
         break;
       }
 
@@ -1029,7 +1059,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         // val2[6:8] == 0
         uint16_t unused = 0;
         unused = readbin(unused, sas, swapit);
-        Rcpp::Rcout << unused << std::endl;
+        // Rcpp::Rcout << unused << std::endl;
         fml_out += "SUM(%s)"; // maybe attr because it is a single cell function?
         fml_out += "\n";
         break;
@@ -1282,7 +1312,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     {
 
       // A1 notation cell
-      fml_out += LocRel(sas, swapit);
+      fml_out += LocRel(sas, swapit, col, row);
       fml_out += "\n";
 
       break;
@@ -1326,7 +1356,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     {
 
       // A1 notation cell
-      fml_out += AreaRel(sas, swapit);
+      fml_out += AreaRel(sas, swapit, col, row);
       fml_out += "\n";
 
       break;
@@ -1439,8 +1469,8 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgExp:
     {
       // this is a reference to the cell that contains the shared formula
-      row = UncheckedRw(sas, swapit) + 1;
-      Rcpp::Rcout << row << std::endl;
+      uint32_t row = UncheckedRw(sas, swapit) + 1;
+      if (debug) Rcpp::Rcout << "PtgExp: " << row << std::endl;
       break;
     }
 
@@ -1474,7 +1504,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgExp:
     { // PtgExtraCol
       int32_t col = UncheckedCol(sas, swapit);
-      Rcpp::Rcout << int_to_col(col+1) << std::endl;
+      if (debug) Rcpp::Rcout << "cb PtgExp: " << int_to_col(col+1) << std::endl;
 
       fml_out += int_to_col(col + 1);
       fml_out += std::to_string(row);
