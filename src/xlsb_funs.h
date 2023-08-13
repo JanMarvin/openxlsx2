@@ -928,7 +928,7 @@ std::string parseRPN(const std::string& expression) {
 }
 
 
-std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row) {
+std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml) {
   // bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
 
@@ -1471,6 +1471,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       // this is a reference to the cell that contains the shared formula
       uint32_t row = UncheckedRw(sas, swapit) + 1;
       if (debug) Rcpp::Rcout << "PtgExp: " << row << std::endl;
+      sharedFml = row;
       break;
     }
 

@@ -1562,7 +1562,8 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // XLNameWideString: XLWideString <= 255 characters
         std::string name = XLWideString(bin, swapit);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, 0);
+        int sharedFormula = false;
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
 
         std::string comment = XLNullableWideString(bin, swapit);
 
@@ -1855,6 +1856,11 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
     uint32_t col = 0;
     std::vector<std::string> hlinks;
     hlinks.push_back("<hyperlinks>");
+
+    // its a bit funny that this is the structure we now use to read from the
+    // xlsb file and save this as xml only to read it back into this structure
+    // with the xlsx reader :)
+    std::vector<xml_col> colvec;
 
     // auto itr = 0;
     while(!end_of_worksheet) {
@@ -2273,25 +2279,35 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         // close open rows
         if (!first_row) {
-        out << "</row>" <<std::endl;
-      } else {
-        first_row = false;
-      }
 
-      uint8_t bits3 = 0, fExtraAsc = 0, fExtraDsc = 0,
-        fCollapsed = 0, fDyZero = 0, fUnsynced = 0, fGhostDirty = 0,
-        fReserved = 0, fPhShow = 0;
-      uint16_t miyRw = 0;
+          for (size_t i = 0; i < colvec.size(); ++i) {
+            out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
+            out << "<v>" << colvec[i].v << "</v>" << std::endl;
+            out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
+            out << "</c>" << std::endl;
+          }
 
-      // uint24_t;
-      uint32_t rw = 0;
-      uint32_t ixfe = 0, ccolspan = 0, unk32 = 0, colMic = 0, colLast = 0;
+          colvec.clear();
 
-      rw = readbin(rw, bin, swapit);
+          out << "</row>" <<std::endl;
+        } else {
+          first_row = false;
+        }
 
-      if (rw > 0x00100000 || rw < row) {
-        Rcpp::stop("row either decreasing or to large");
-      }
+        uint8_t bits3 = 0, fExtraAsc = 0, fExtraDsc = 0,
+          fCollapsed = 0, fDyZero = 0, fUnsynced = 0, fGhostDirty = 0,
+          fReserved = 0, fPhShow = 0;
+        uint16_t miyRw = 0;
+
+        // uint24_t;
+        uint32_t rw = 0;
+        uint32_t ixfe = 0, ccolspan = 0, unk32 = 0, colMic = 0, colLast = 0;
+
+        rw = readbin(rw, bin, swapit);
+
+        if (rw > 0x00100000 || rw < row) {
+          Rcpp::stop("row either decreasing or to large");
+        }
 
       ixfe = readbin(ixfe, bin, swapit);
       miyRw = readbin(miyRw, bin, swapit);
@@ -2386,9 +2402,16 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         val3 = readbin(val3, bin, swapit);
         if (debug) Rcpp::Rcout << val3 << std::endl;
 
-        out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << " t=\"s\">" << std::endl;
-        out << "<v>" << val3 << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+        xml_col column;
+        column.v = std::to_string(val3);
+        column.c_t = "s";
+        column.c_s = std::to_string(val2);
+        column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
+
+        // out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << " t=\"s\">" << std::endl;
+        // out << "<v>" << val3 << "</v>" << std::endl;
+        // out << "</c>" << std::endl;
 
         break;
       }
@@ -2406,9 +2429,17 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         val3 = readbin(val3, bin, swapit);
         // out << val3 << std::endl;
 
-        out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << " t=\"b\">" << std::endl;
-        out << "<v>" << (int32_t)val3 << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+
+        xml_col column;
+        column.v = std::to_string((int32_t)val3);
+        column.c_t = "b";
+        column.c_s = std::to_string(val2);
+        column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
+
+        // out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << " t=\"b\">" << std::endl;
+        // out << "<v>" << (int32_t)val3 << "</v>" << std::endl;
+        // out << "</c>" << std::endl;
 
         break;
       }
@@ -2426,9 +2457,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         val3 = readbin(val3, bin, swapit);
         // Rcpp::Rcout << RkNumber(val) << std::endl;
 
-        out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << ">" << std::endl;
-        out << "<v>" << std::setprecision(16) << RkNumber(val3) << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+        std::stringstream stream;
+        stream << std::setprecision(16) << RkNumber(val3);
+
+        xml_col column;
+        column.v = stream.str();
+        column.c_s = std::to_string(val2);
+        column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
+
+        // out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << ">" << std::endl;
+        // out << "<v>" << std::setprecision(16) << RkNumber(val3) << "</v>" << std::endl;
+        // out << "</c>" << std::endl;
 
         break;
       }
@@ -2447,9 +2487,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         dbl = readbin(dbl, bin, swapit);
         // Rcpp::Rcout << dbl << std::endl;
 
-        out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << ">" << std::endl;
-        out << "<v>" << std::setprecision(16) << dbl << "</v>" << std::endl; // << std::fixed
-        out << "</c>" << std::endl;
+        std::stringstream stream;
+        stream << std::setprecision(16) << dbl;
+
+        xml_col column;
+        column.v = stream.str();
+        column.c_s = std::to_string(val2);
+        column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
+
+        // out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << ">" << std::endl;
+        // out << "<v>" << std::setprecision(16) << dbl << "</v>" << std::endl; // << std::fixed
+        // out << "</c>" << std::endl;
 
         break;
       }
@@ -2463,7 +2512,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         col = blank[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(blank));
 
-        out << "<c r=\"" << int_to_col(blank[0] + 1) << row + 1 << "\"" << cell_style(blank[1]) << "/>" << std::endl;
+
+        xml_col column;
+        column.c_s = std::to_string(blank[1]);
+        column.c_r = int_to_col(blank[0] + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
+
+        // out << "<c r=\"" << int_to_col(blank[0] + 1) << row + 1 << "\"" << cell_style(blank[1]) << "/>" << std::endl;
 
         break;
       }
@@ -2480,9 +2535,16 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         val2 = readbin(val2, bin, swapit);
         // out << val << std::endl;
 
-        out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << " t=\"e\">" << std::endl;
-        out << "<v>" << BErr(bin, swapit) << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+        xml_col column;
+        column.v = BErr(bin, swapit);
+        column.c_s = std::to_string(val2);
+        column.c_t = "e";
+        column.c_r = int_to_col(val1 + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
+
+        // out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << " t=\"e\">" << std::endl;
+        // out << "<v>" << BErr(bin, swapit) << "</v>" << std::endl;
+        // out << "</c>" << std::endl;
 
         break;
       }
@@ -2491,6 +2553,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtFmlaBool: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
+        int is_shared_formula = false;
 
         std::vector<int> cell;
         cell = Cell(bin, swapit);
@@ -2505,13 +2568,22 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
         // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
 
-        out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"b\">" << std::endl;
-        out << "<f>" << fml << "</f>" << std::endl;
-        out << "<v>" << val << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+
+        xml_col column;
+        column.v = std::to_string((int32_t)val);
+        if (is_shared_formula) {
+          column.f_t = "shared";
+          column.f_si = std::to_string(is_shared_formula);
+        } else {
+          column.f = fml;
+        }
+        column.c_s = std::to_string(cell[1]);
+        column.c_t = "b";
+        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
 
         break;
       }
@@ -2520,6 +2592,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       { // t="e" & <f>
         if (debug) Rcpp::Rcout << "BrtFmlaError: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
+        int is_shared_formula = false;
+
         std::vector<int> cell;
         cell = Cell(bin, swapit);
         col = cell[0];
@@ -2536,12 +2610,20 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
 
-        out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"e\">" << std::endl;
-        out << "<f>" << fml << "</f>" << std::endl;
-        out << "<v>" << fErr << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+        xml_col column;
+        column.v = fErr;
+        if (is_shared_formula) {
+          column.f_t = "shared";
+          column.f_si = std::to_string(is_shared_formula);
+        } else {
+          column.f = fml;
+        }
+        column.c_s = std::to_string(cell[1]);
+        column.c_t = "e";
+        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
 
         break;
       }
@@ -2550,6 +2632,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtFmlaNum: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
+        int is_shared_formula = false;
 
         std::vector<int> cell;
         cell = Cell(bin, swapit);
@@ -2569,12 +2652,23 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         //         fields->fAlwaysCalc,
         //         fields->unused);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
 
-        out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << ">" << std::endl;
-        out << "<f>" << fml << "</f>" << std::endl;
-        out << "<v>" << xnum << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+        std::stringstream stream;
+        stream << std::setprecision(16) << xnum;
+
+        xml_col column;
+        column.v = stream.str();
+        if (is_shared_formula) {
+          column.f_t = "shared";
+          column.f_si = std::to_string(is_shared_formula);
+        } else {
+          column.f = fml;
+        }
+        column.c_s = std::to_string(cell[1]);
+        // column.c_t = "e";
+        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
 
         break;
       }
@@ -2583,6 +2677,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtFmlaString: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
+        int is_shared_formula = false;
 
         std::vector<int> cell;
         cell = Cell(bin, swapit);
@@ -2595,12 +2690,30 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row);
 
-        out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"str\">" << std::endl;
-        out << "<f>" << fml << "</f>" << std::endl;
-        out << "<v>" << val << "</v>" << std::endl;
-        out << "</c>" << std::endl;
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
+
+        // if (is_shared_formula) {
+        //   Rcpp::Rcout << fml << std::endl;
+        // }
+
+        xml_col column;
+        if (is_shared_formula) {
+          column.f_t = "shared";
+          column.f_si = std::to_string(is_shared_formula);
+        } else {
+          column.f = fml;
+        }
+        column.v = val;
+        column.c_s = std::to_string(cell[1]);
+        column.c_t = "str";
+        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        colvec.push_back(column);
+
+        // out << "<c r=\"" << int_to_col(cell[0] + 1) << row + 1 << "\"" << cell_style(cell[1]) << " t=\"str\">" << std::endl;
+        // out << "<f>" << fml << "</f>" << std::endl;
+        // out << "<v>" << val << "</v>" << std::endl;
+        // out << "</c>" << std::endl;
 
         break;
       }
@@ -2608,6 +2721,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtShrFmla:
       {
         if (debug) Rcpp::Rcout << "BrtShrFmla: " << bin.tellg() << std::endl;
+        int is_shared_formula = false;
 
         uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
         rwFirst  = UncheckedRw(bin, swapit) +1;
@@ -2615,13 +2729,23 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         colFirst = UncheckedCol(bin, swapit) +1;
         colLast  = UncheckedCol(bin, swapit) +1;
 
-        Rcpp::Rcout << "ref: " << int_to_col(colFirst) << rwFirst << ":" << int_to_col(colLast) << rwLast << std::endl;
+        std::string ref = int_to_col(colFirst) + std::to_string(rwFirst) + ":" + int_to_col(colLast) + std::to_string(rwLast);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, col, row);
+        Rcpp::Rcout << "ref: " << ref << std::endl;
+
+        std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula);
         Rcpp::Rcout << "BrtShrFmla: " << fml << std::endl;
 
-        // out << "<f>" << fml << "</f>" << std::endl;
-        // out << "<v>" << val << "</v>" << std::endl;
+
+        // add to the last colvec element
+        auto last = colvec.size() - 1L;
+        colvec[last].f = fml;
+        colvec[last].f_ref = ref;
+
+        // // finish cells
+        // // out << "<c> << std::endl;
+        // // out << "<v>" << val << "</v>" << std::endl;
+        // out << "<f si=\"" << fml << "\" ref=\""<< ref << "\">" << fml << "</f>" << std::endl;
         // out << "</c>" << std::endl;
 
         break;
@@ -2632,11 +2756,25 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "</sheetData>" << bin.tellg() << std::endl;
 
         if (!first_row) {
+
+          // should be the last row
+          for (size_t i = 0; i < colvec.size(); ++i) {
+            out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
+            out << "<v>" << colvec[i].v << "</v>" << std::endl;
+            out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
+            out << "</c>" << std::endl;
+          }
+
+          colvec.clear();
           out << "</row>" << std::endl;
         }
         out << "</sheetData>" << std::endl;
 
         in_sheet_data = false;
+
+        if (colvec.size() > 0) {
+          Rcpp::warning("colved not zero");
+        }
 
         break;
       }
@@ -2952,7 +3090,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         bool fLinked = (flags & 0x8000) != 0;
 
         std::string strProgID = XLNullableWideString(bin, swapit);
-        if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0);
+
+        int sharedFormula = false;
+        if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
 
         std::string stRelID = XLNullableWideString(bin, swapit);
         out << "<oleObject progId=\"" << strProgID << "\" shapeId=\"" << shapeId << "\" r:id=\"" << stRelID << "\" />" << std::endl;
@@ -3021,15 +3161,16 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         std::string strParam = XLNullableWideString(bin, swapit);
 
+        int sharedFormula = false;
         std::string rgce1, rgce2, rgce3;
         if (cbFmla1 != 0x00000000) {
-          rgce1 = CellParsedFormula(bin, swapit, debug, 0, 0);
+          rgce1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
         }
         if (cbFmla2 != 0x00000000) {
-          rgce2 = CellParsedFormula(bin, swapit, debug, 0, 0);
+          rgce2 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
         }
         if (cbFmla3 != 0x00000000) {
-          rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0);
+          rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
         }
 
         BrtBeginCFRuleFields *fields = (BrtBeginCFRuleFields *)&flags;
