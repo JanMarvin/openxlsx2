@@ -5,7 +5,7 @@
 \alias{wb_unmerge_cells}
 \title{Worksheet cell merging}
 \usage{
-wb_merge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
+wb_merge_cells(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...)
 
 wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 }
@@ -15,6 +15,8 @@ wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 \item{sheet}{A name or index of a worksheet}
 
 \item{dims}{worksheet cells}
+
+\item{solve}{logical if intersecting merges should be solved}
 
 \item{...}{additional arguments}
 }
@@ -47,6 +49,9 @@ try(wb_merge_cells(wb, dims = "A1:A10"))
 # removes any intersecting merges
 wb <- wb_unmerge_cells(wb, dims = wb_dims(cols = 1, rows = 1))
 wb <- wb_merge_cells(wb, dims = "A1:A10")
+
+# or let us decide how to solve this
+wb <- wb_merge_cells(wb, dims = "A1:A10", solve = TRUE)
 
 }
 \seealso{

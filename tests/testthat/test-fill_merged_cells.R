@@ -68,3 +68,42 @@ test_that("fill merged NA cells", {
                r1,
                ignore_attr = TRUE)
 })
+
+test_that("solving merge conflicts works", {
+  wb <- wb_workbook()$add_worksheet()
+  wb$merge_cells(dims = "A1:B2")
+  wb$merge_cells(dims = "G1:K2")
+
+  # first solve replacing A1:B2
+  wb$merge_cells(dims = "A1:C3", solve = TRUE)
+
+  exp <- c("<mergeCell ref=\"G1:K2\"/>", "<mergeCell ref=\"A1:C3\"/>")
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(exp, got)
+
+  # second solve replace A1:C3 and parts of G1:K2
+  wb$merge_cells(dims = "A1:J7", solve = TRUE)
+
+  exp <- c("<mergeCell ref=\"K1:K2\"/>", "<mergeCell ref=\"A1:J7\"/>")
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(exp, got)
+
+  # third solve replace both parts with single merge
+  wb$merge_cells(dims = "A1:Z8", solve = TRUE)
+
+  exp <- "<mergeCell ref=\"A1:Z8\"/>"
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(exp, got)
+
+  # fourth solve insert into merged cell region
+  wb$merge_cells(dims = "B2:D4", solve = TRUE)
+
+  exp <- c(
+    "<mergeCell ref=\"A1:A8\"/>", "<mergeCell ref=\"E1:Z8\"/>",
+    "<mergeCell ref=\"B1:D1\"/>", "<mergeCell ref=\"B5:D8\"/>",
+    "<mergeCell ref=\"B2:D4\"/>"
+  )
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(exp, got)
+
+})

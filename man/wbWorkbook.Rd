@@ -1523,7 +1523,12 @@ The \code{wbWorkbook} object
 \subsection{Method \code{merge_cells()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet = current_sheet(), dims = NULL, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(
+  sheet = current_sheet(),
+  dims = NULL,
+  solve = FALSE,
+  ...
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1532,6 +1537,8 @@ Set cell merging for a sheet
 \item{\code{sheet}}{sheet}
 
 \item{\code{dims}}{worksheet cells}
+
+\item{\code{solve}}{logical if intersecting cells should be solved}
 
 \item{\code{...}}{additional arguments}
 }

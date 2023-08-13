@@ -482,6 +482,7 @@ wb_copy_cells <- function(
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims worksheet cells
+#' @param solve logical if intersecting merges should be solved
 #' @param ... additional arguments
 #'
 #' @examples
@@ -507,17 +508,18 @@ wb_copy_cells <- function(
 #' wb <- wb_unmerge_cells(wb, dims = wb_dims(cols = 1, rows = 1))
 #' wb <- wb_merge_cells(wb, dims = "A1:A10")
 #'
+#' # or let us decide how to solve this
+#' wb <- wb_merge_cells(wb, dims = "A1:A10", solve = TRUE)
+#'
 #' @name wb_merge_cells
 #' @family workbook wrappers
 NULL
 
-
-
 #' @export
 #' @rdname wb_merge_cells
-wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
+wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
   assert_workbook(wb)
-  wb$clone()$merge_cells(sheet = sheet, dims = dims, ... = ...)
+  wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, ... = ...)
 }
 
 #' @export
