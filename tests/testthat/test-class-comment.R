@@ -53,6 +53,17 @@ test_that("comments", {
 
   expect_silent(wb_save(wb, tmp))
 
+  # write on second sheet
+  tmp <- temp_xlsx()
+  wb <- wb_workbook()
+  wb$add_worksheet()
+  wb$add_worksheet()
+
+  # write comment without author
+  c1 <- create_comment(text = "this is a comment", author = "")
+  wb$add_comment(dims = "B10", comment = c1)
+
+  expect_silent(wb$save(tmp))
 })
 
 

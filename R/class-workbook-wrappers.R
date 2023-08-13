@@ -3015,7 +3015,7 @@ wb_get_person <- function(wb, name = NULL) {
 #' wb <- wb_workbook()$add_worksheet()$
 #' add_person(name = "openxlsx2")
 #'
-#' pid <- wb$get_person(name = "openxlsx")$id
+#' pid <- wb$get_person(name = "openxlsx2")$id
 #'
 #' # write a comment to a thread, reply to one and solve some
 #' wb <- wb %>%
