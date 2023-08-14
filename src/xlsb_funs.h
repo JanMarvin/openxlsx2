@@ -406,21 +406,21 @@ void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
 
 std::string RichStr(std::istream& sas, bool swapit) {
 
-  uint8_t AB = 0, unk = 0;
+  uint8_t AB = 0; // , unk = 0
   bool A = 0, B = 0;
   AB = readbin(AB, sas, swapit);
 
-  A = (AB >> 7) & 1;
-  B = (AB >> 6) & 1;
-  unk = AB & 0x3F; // if != 0 some kind of padding is pending
+  A = AB & 0x01;
+  B = (AB >> 1) & 0x01;
   // remaining 6 bits are ignored
+  // unk = AB & 0x3F;
   // if (debug) if (unk) Rcpp::Rcout << std::to_string(unk) << std::endl;
 
   std::string str = XLWideString(sas, swapit);
 
   uint32_t dwSizeStrRun = 0, dwPhoneticRun = 0;
 
-  if (A || unk) {
+  if (A) { //  || unk
     // Rcpp::Rcout << "a" << std::endl;
     // number of runs following
     dwSizeStrRun = readbin(dwSizeStrRun, sas, swapit);

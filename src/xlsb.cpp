@@ -2021,8 +2021,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xnumXSplit = Xnum(bin, swapit);
         xnumYSplit = Xnum(bin, swapit);
-        rwTop = readbin(rwTop, bin, swapit);
-        colLeft = readbin(colLeft, bin, swapit);
+        rwTop = UncheckedRw(bin, swapit);
+        colLeft = UncheckedCol(bin, swapit);
         pnnAct = readbin(pnnAct, bin, swapit);
         flags = readbin(flags, bin, swapit);
 
@@ -2034,15 +2034,17 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (pnnAct == 0x00000002) pnn = "bottomLeft";
         if (pnnAct == 0x00000003) pnn = "topLeft";
 
-        bool fFrozen = (flags & 0x80) != 0;
-        bool fFrozenNoSplit = (flags & 0x40) != 0;
+        bool fFrozen = flags & 0x01;
+        bool fFrozenNoSplit = (flags >> 1) & 0x01;
+
+        // Rprintf("Frozen: %d / %d / %d\n", fFrozen, fFrozenNoSplit, flags);
 
         std::string state;
-        if (fFrozen & fFrozenNoSplit)
+        if (fFrozen && fFrozenNoSplit)
           state = "frozen";
-        if (fFrozen & !fFrozenNoSplit)
+        else if (fFrozen && !fFrozenNoSplit)
           state = "frozenSplit";
-        if (!fFrozen & !fFrozenNoSplit)
+        else if (!fFrozen && !fFrozenNoSplit)
           state = "split";
 
         out << "<pane";
@@ -2246,7 +2248,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           sqref =  lref + ":" + rref;
         }
 
-        out << "<selection activeCell=\"" << ac << "\" sqref=\""<< sqref << "\" />" << std::endl;
+        std::string spnn;
+        if (pnn == 0x00000000) spnn = "bottomRight";
+        if (pnn == 0x00000001) spnn = "topRight";
+        if (pnn == 0x00000002) spnn = "bottomLeft";
+        if (pnn == 0x00000003) spnn = "topLeft";
+
+        out << "<selection pane=\"" << spnn << "\" activeCell=\"" << ac << "\" sqref=\""<< sqref << "\" />" << std::endl;
 
         break;
       }
