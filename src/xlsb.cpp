@@ -1862,6 +1862,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
     // xlsb file and save this as xml only to read it back into this structure
     // with the xlsx reader :)
     std::vector<xml_col> colvec;
+    std::unordered_map<std::string, int> shared_cells;
+    int32_t shared_cell_cntr = 0;
 
     // auto itr = 0;
     while(!end_of_worksheet) {
@@ -2666,15 +2668,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         column.v = std::to_string((int32_t)val);
-        if (is_shared_formula) {
+        std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+
+        auto sfml = shared_cells.find(a1);
+        if (sfml != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(is_shared_formula);
+          column.f_si = std::to_string(sfml->second);
         } else {
           column.f = fml;
         }
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "b";
-        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        column.c_r = a1;
         colvec.push_back(column);
 
         break;
@@ -2706,15 +2711,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         column.v = fErr;
-        if (is_shared_formula) {
+        std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+
+        auto sfml = shared_cells.find(a1);
+        if (sfml != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(is_shared_formula);
+          column.f_si = std::to_string(sfml->second);
         } else {
           column.f = fml;
         }
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "e";
-        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        column.c_r = a1;
         colvec.push_back(column);
 
         break;
@@ -2748,18 +2756,21 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         std::stringstream stream;
         stream << std::setprecision(16) << xnum;
+        std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
 
         xml_col column;
         column.v = stream.str();
-        if (is_shared_formula) {
+
+        auto sfml = shared_cells.find(a1);
+        if (sfml != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(is_shared_formula);
+          column.f_si = std::to_string(sfml->second);
         } else {
           column.f = fml;
         }
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         // column.c_t = "e";
-        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        column.c_r = a1;
         colvec.push_back(column);
 
         break;
@@ -2789,17 +2800,21 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         //   Rcpp::Rcout << fml << std::endl;
         // }
 
+        std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+
+        auto sfml = shared_cells.find(a1);
+
         xml_col column;
-        if (is_shared_formula) {
+        if (sfml != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(is_shared_formula);
+          column.f_si = std::to_string(sfml->second);
         } else {
           column.f = fml;
         }
         column.v = val;
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "str";
-        column.c_r = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+        column.c_r = a1;
         colvec.push_back(column);
 
         break;
@@ -2854,6 +2869,14 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         colFirst = UncheckedCol(bin, swapit) +1;
         colLast  = UncheckedCol(bin, swapit) +1;
 
+        std::vector<std::string> cells = dims_to_cells(rwFirst, rwLast, colFirst, colLast);
+
+        // fill the unordered map
+        for (size_t i = 0; i < cells.size(); ++i) {
+          // Rcpp::Rcout << cells[i] << "\n";
+          shared_cells[cells[i]] = shared_cell_cntr;
+        }
+
         std::string lref = int_to_col(colFirst) + std::to_string(rwFirst);
         std::string rref = int_to_col(colLast) + std::to_string(rwLast);
 
@@ -2876,6 +2899,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         colvec[last].f = fml;
         colvec[last].f_t = fml_type; // not sure how many cells share array type
         colvec[last].f_ref = ref;
+        colvec[last].f_si = std::to_string(shared_cell_cntr);
+
+        ++shared_cell_cntr;
 
         break;
       }

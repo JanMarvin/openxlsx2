@@ -701,6 +701,27 @@ std::vector<int> Cell(std::istream& sas, bool swapit) {
   return(out);
 }
 
+std::vector<std::string> dims_to_cells(int firstRow, int lastRow, int firstCol, int lastCol) {
+
+  std::vector<int> cols, rows;
+  for (int32_t i = firstCol; i <= lastCol; ++i) {
+    cols.push_back(i);
+  }
+
+  for (int32_t i = firstRow; i <= lastRow; ++i) {
+    rows.push_back(i);
+  }
+
+  std::vector<std::string> cells;
+  for (int32_t col : cols) {
+    for (int32_t row : rows) {
+      cells.push_back(int_to_col(col) + std::to_string(row));
+    }
+  }
+
+  return cells;
+}
+
 std::vector<int> brtColor(std::istream& sas, bool swapit) {
 
   uint8_t AB = 0, xColorType = 0, index = 0,
