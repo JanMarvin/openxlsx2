@@ -1083,7 +1083,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
         else
           string2 = XLWideString(bin, swapit);
 
-        Rcpp::Rcout << string1 << ": " << string2 << std::endl;
+        if (debug) Rcpp::Rcout << string1 << ": " << string2 << std::endl;
 
         // no begin externalSheet?
         out << "<externalLink xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" xmlns:xxl21=\"http://schemas.microsoft.com/office/spreadsheetml/2021/extlinks2021\" mc:Ignorable=\"x14 xxl21\">" << std::endl;
@@ -1297,10 +1297,20 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtSSTItem:
       {
-        // Rcpp::Rcout << bin.tellg() << std::endl;
-        std::string val = RichStr(bin, swapit);
-        if (debug)
-          Rcpp::Rcout << val << std::endl;
+        std::string val;
+        size_t pos = bin.tellg();
+        pos += size;
+        val += RichStr(bin, swapit);
+        if((size_t)bin.tellg() < pos) {
+          // if (debug) {
+            // some RichStr() behave different to what is documented. Not sure
+            // if this is padding or something else. 12 bytes seems common
+            size_t missing = pos - (size_t)bin.tellg();
+            Rcpp::Rcout << "BrtSSTItem skipping ahead (bytes): " << missing  << std::endl;
+          // }
+          bin.seekg(pos, bin.beg);
+        }
+        // if (debug)
         out << "<si><t>" << escape_xml(val) <<
           "</t></si>" << std::endl;
         break;
@@ -1315,11 +1325,12 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
 
       default:
       {
-        if (debug) {
+        // if (debug) {
         Rcpp::Rcout << std::to_string(x) <<
           ": " << std::to_string(size) <<
             " @ " << bin.tellg() << std::endl;
-      }
+      // }
+      Rcpp::stop("nonsense");
         bin.seekg(size, bin.cur);
         break;
       }
@@ -2639,6 +2650,19 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // out << "<c r=\"" << int_to_col(val1 + 1) << row + 1<< "\"" << cell_style(val2) << " t=\"e\">" << std::endl;
         // out << "<v>" << BErr(bin, swapit) << "</v>" << std::endl;
         // out << "</c>" << std::endl;
+
+        break;
+      }
+
+      case BrtCellMeta:
+      {
+        if (debug) Rcpp::Rcout << "BrtCellMeta: " << bin.tellg() << std::endl;
+        uint32_t icmb = 0;
+        icmb = readbin(icmb, bin, swapit);
+
+        if (debug)
+          Rcpp::Rcout << "cell contains unhandled cell metadata entry" <<
+            icmb << std::endl;
 
         break;
       }

@@ -63,6 +63,7 @@ wb_load <- function(
   # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   ## Unzip files to temp directory
+
   xmlFiles <- unzip(file, exdir = xmlDir)
   # we need to read the files in human order: 1, 2, 10 and not 1, 10, 2.
   ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))
@@ -165,6 +166,11 @@ wb_load <- function(
 
   # modifications for xlsb
   if (length(workbookBIN)) {
+
+    if (file.info(file)$size > 100000) {
+      message("importing larger workbook. please wait a moment")
+    }
+
     workbookXML <- gsub(".bin$", ".xml", workbookBIN)
     if (debug) {
       print(workbookBIN)
@@ -371,8 +377,6 @@ wb_load <- function(
       if (sheets$typ[i] == "chartsheet") {
         if (grepl(".bin$", sheets$target[i])) {
           xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
-
-          # message(i)
           worksheet_bin(sheets$target[i], 1, xml_tmp, debug)
           # system(sprintf("cat %s", xml_tmp))
           # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
@@ -1350,35 +1354,10 @@ wb_load <- function(
   # correct sheet references and replace our replacement with it.
   if (!data_only && length(workbookBIN)) {
 
-    # we have to fix shared formulas
-    for (i in seq_along(wb$worksheets)) {
-
-      # if (!wb$is_chartsheet[i]) {
-      #
-      #   cc <- wb$worksheets[[i]]$sheet_data$cc
-      #
-      #   tab <- as.data.frame(table(cc$c_r, cc$f_si))
-      #   tab$Var1 <- as.character(tab$Var1)
-      #   tab$Var2 <- as.character(tab$Var2)
-      #   tab$Var2[tab$Var2 == ""] <- NA_character_
-      #   tab <- tab[complete.cases(tab), ]
-      #   tab <- tab[tab$Freq > 0, ]
-      #   tab$new <- as.character(seq_len(nrow(tab)) - 1L)
-      #
-      #   for (tabi in seq_len(nrow(tab))) {
-      #     cc$f_si[cc$c_r == tab$Var1[tabi] & cc$f_si == tab$Var2[tabi]] <- tab$new[tabi]
-      #   }
-      #
-      #   wb$worksheets[[i]]$sheet_data$cc <- cc
-      #
-      # }
-
-    }
-
     if (length(wb$workbook$xti)) {
       # create data frame containing sheet names for Xti entries
       xti <- rbindlist(xml_attr(wb$workbook$xti, "xti"))
-      xti$name_id <- paste0("openxlsx2xlsb_", as.integer(rownames(xti)) - 1L)
+      xti$name_id <- paste0("openxlsx2xlsb_", sprintf("%012d", as.integer(rownames(xti)) - 1L))
       xti$firstSheet <- as.integer(xti$firstSheet) + 1L
       xti$lastSheet <- as.integer(xti$lastSheet) + 1L
 

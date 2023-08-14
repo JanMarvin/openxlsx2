@@ -155,6 +155,17 @@ typedef struct {
   uint16_t reserved4 : 11;
 } BrtBeginCFRuleFields;
 
+enum RgbExtra
+{
+  PtgExtraArray = 0,
+  PtgExtraMem = 1,
+  PtgExtraCol = 2,
+  PtgExtraList = 3,
+  RevNameTabid = 4,
+  RevName = 5,
+  RevExtern = 6
+};
+
 // https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes
 {
