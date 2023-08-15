@@ -341,7 +341,7 @@ wb_load <- function(
     }
 
     workbookPr <- xml_node(workbook_xml, "workbook", "workbookPr")
-    if (!data_only && length(workbookPr)) {
+    if (length(workbookPr)) { # needed for date1904 detection
       wb$workbook$workbookPr <- workbookPr
     }
 

@@ -98,3 +98,29 @@ test_that("custom classes are treated independently", {
   expect_equal(exp, got)
 
 })
+
+test_that("date 1904 workbooks to df work", {
+
+  DATE  <- as.Date("2015-02-07") + -10:10
+  POSIX <- as.POSIXct("2022-03-02 19:27:35") + -10:10
+  time <- data.frame(DATE, POSIX)
+
+  wb <- wb_workbook()
+  wb$add_worksheet()$add_data(x = time)
+  exp <- wb_to_df(wb)
+
+  wb <- wb_workbook()
+  wb$workbook$workbookPr <- '<workbookPr date1904="true"/>'
+  wb$add_worksheet()$add_data(x = time)
+  got <- wb_to_df(wb)
+
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()
+  wb$workbook$workbookPr <- '<workbookPr date1904="1"/>'
+  wb$add_worksheet()$add_data(x = time)
+  got <- wb_to_df(wb)
+
+  expect_equal(exp, got)
+
+})
