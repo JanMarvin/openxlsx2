@@ -3359,3 +3359,49 @@ wb_set_sheetview <- function(
     ...                          = ...
   )
 }
+
+#' get and set table of sheets and their state as selected and active
+#' @description Multiple sheets can be selected, but only a single one can be
+#' active (visible). The visible sheet, must not necessarily be a selected
+#' sheet.
+#' @param wb a workbook
+#' @returns a data frame with tabSelected and names
+#' @export
+#' @examples
+#'   wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+#'   # testing is the selected sheet
+#'   wb_get_selected(wb)
+#'   # change the selected sheet to Sheet2
+#'   wb <- wb_set_selected(wb, "Sheet2")
+#'   # get the active sheet
+#'   wb_get_active_sheet(wb)
+#'   # change the selected sheet to Sheet2
+#'   wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
+#' @name select_active_sheet
+wb_get_active_sheet <- function(wb) {
+  assert_workbook(wb)
+  wb$get_active_sheet()
+}
+
+#' @rdname select_active_sheet
+#' @param sheet a sheet name of the workbook
+#' @export
+wb_set_active_sheet <- function(wb, sheet) {
+  # active tab requires a c index
+  assert_workbook(wb)
+  wb$clone()$set_active_sheet(sheet = sheet)
+}
+
+#' @name select_active_sheet
+#' @export
+wb_get_selected <- function(wb) {
+  assert_workbook(wb)
+  wb$get_selected()
+}
+
+#' @name select_active_sheet
+#' @export
+wb_set_selected <- function(wb, sheet) {
+  assert_workbook(wb)
+  wb$clone()$set_selected(sheet = sheet)
+}

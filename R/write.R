@@ -310,8 +310,8 @@ write_data2 <- function(
       stop("name cannot look like a cell reference.")
     }
 
-    sheet_name <- wb$sheet_names[[sheetno]]
-    if (grepl(" ", sheet_name)) sheet_name <- shQuote(sheet_name, "sh")
+    sheet_name <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
+    if (grepl("[^A-Za-z0-9]", sheet_name)) sheet_name <- shQuote(sheet_name, "sh")
 
     sheet_dim <- paste0(sheet_name, "!", dims)
 

@@ -4,8 +4,8 @@
 #' @param fill If `TRUE`, fills the dataframe with variables
 #' @examples
 #' dims_to_dataframe("A1:B2")
-#' @export
 #' @keywords internal
+#' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
 
   if (grepl(";", dims)) {
@@ -55,8 +55,8 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 #' @examples
 #'  df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
 #'  dataframe_to_dims(df)
-#' @export
 #' @keywords internal
+#' @export
 dataframe_to_dims <- function(df) {
 
   # get continuous sequences of columns and rows in df
@@ -270,6 +270,8 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 #' @export
 delete_data <- function(wb, sheet, cols, rows) {
 
+  .Deprecated(old = "delete_data", new = "wb_clean_sheet", package = "openxlsx2")
+
   sheet_id <- wb_validate_sheet(wb, sheet)
 
   cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
@@ -286,89 +288,4 @@ delete_data <- function(wb, sheet, cols, rows) {
 
   wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
 
-}
-
-
-#' Get a worksheet from a `wbWorkbook` object
-#'
-#' @param wb a [wbWorkbook] object
-#' @param sheet A sheet name or index
-#' @returns A `wbWorksheet` object
-#' @export
-wb_get_worksheet <- function(wb, sheet) {
-  assert_workbook(wb)
-  wb$get_worksheet(sheet)
-}
-
-#' @rdname wb_get_worksheet
-#' @export
-wb_ws <- wb_get_worksheet
-
-#' get and set table of sheets and their state as selected and active
-#' @description Multiple sheets can be selected, but only a single one can be
-#' active (visible). The visible sheet, must not necessarily be a selected
-#' sheet.
-#' @param wb a workbook
-#' @returns a data frame with tabSelected and names
-#' @export
-#' @examples
-#'   wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
-#'   # testing is the selected sheet
-#'   wb_get_selected(wb)
-#'   # change the selected sheet to Sheet2
-#'   wb <- wb_set_selected(wb, "Sheet2")
-#'   # get the active sheet
-#'   wb_get_active_sheet(wb)
-#'   # change the selected sheet to Sheet2
-#'   wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
-#' @name select_active_sheet
-wb_get_active_sheet <- function(wb) {
-  assert_workbook(wb)
-  at <- rbindlist(xml_attr(wb$workbook$bookViews, "bookViews", "workbookView"))$activeTab
-  # return c index as R index
-  as.numeric(at) + 1
-}
-
-#' @rdname select_active_sheet
-#' @param sheet a sheet name of the workbook
-#' @export
-wb_set_active_sheet <- function(wb, sheet) {
-  # active tab requires a c index
-  assert_workbook(wb)
-  sheet <- wb_validate_sheet(wb, sheet)
-  wb$clone()$set_bookview(active_tab = sheet - 1L)
-}
-
-#' @name select_active_sheet
-#' @export
-wb_get_selected <- function(wb) {
-
-  assert_workbook(wb)
-
-  len <- length(wb$sheet_names)
-  sv <- vector("list", length = len)
-
-  for (i in seq_len(len)) {
-    sv[[i]] <- xml_node(wb$worksheets[[i]]$sheetViews, "sheetViews", "sheetView")
-  }
-
-  # print(sv)
-  z <- rbindlist(xml_attr(sv, "sheetView"))
-  z$names <- wb$get_sheet_names(escape = TRUE)
-
-  z
-}
-
-#' @name select_active_sheet
-#' @export
-wb_set_selected <- function(wb, sheet) {
-
-  sheet <- wb_validate_sheet(wb, sheet)
-
-  for (i in seq_along(wb$sheet_names)) {
-    xml_attr <- ifelse(i == sheet, TRUE, FALSE)
-    wb$worksheets[[i]]$set_sheetview(tabSelected = xml_attr)
-  }
-
-  wb
 }
