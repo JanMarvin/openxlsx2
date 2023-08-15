@@ -361,6 +361,10 @@ is created, not when the Excel files are saved.</p></dd>
 <li><p><a href="#method-wbWorkbook-set_sheetview"><code>wbWorkbook$set_sheetview()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-add_person"><code>wbWorkbook$add_person()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-get_person"><code>wbWorkbook$get_person()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-get_active_sheet"><code>wbWorkbook$get_active_sheet()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-set_active_sheet"><code>wbWorkbook$set_active_sheet()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-get_selected"><code>wbWorkbook$get_selected()</code></a></p></li>
+<li><p><a href="#method-wbWorkbook-set_selected"><code>wbWorkbook$set_selected()</code></a></p></li>
 <li><p><a href="#method-wbWorkbook-clone"><code>wbWorkbook$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-wbWorkbook-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -4198,8 +4202,7 @@ These styles are used with conditional formatting and custom table styles</p><di
 
 
 <dt><code>provider_id</code></dt>
-<dd><p>provider_id
-description get person</p></dd>
+<dd><p>provider_id</p></dd>
 
 
 </dl><p></p></div>
@@ -4207,8 +4210,7 @@ description get person</p></dd>
 
 </div><p></p><hr><a id="method-wbWorkbook-get_person"></a><div class="section">
 <h3 id="method-get-person-">Method <code>get_person()</code><a class="anchor" aria-label="anchor" href="#method-get-person-"></a></h3>
-
-<div class="section">
+<p>description get person</p><div class="section">
 <h4 id="usage-84">Usage<a class="anchor" aria-label="anchor" href="#usage-84"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_person</span><span class="op">(</span>name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -4222,15 +4224,65 @@ description get person</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-wbWorkbook-get_active_sheet"></a><div class="section">
+<h3 id="method-get-active-sheet-">Method <code>get_active_sheet()</code><a class="anchor" aria-label="anchor" href="#method-get-active-sheet-"></a></h3>
+<p>description get active sheet</p><div class="section">
 <h4 id="usage-85">Usage<a class="anchor" aria-label="anchor" href="#usage-85"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_active_sheet</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-wbWorkbook-set_active_sheet"></a><div class="section">
+<h3 id="method-set-active-sheet-">Method <code>set_active_sheet()</code><a class="anchor" aria-label="anchor" href="#method-set-active-sheet-"></a></h3>
+<p>description set active sheet</p><div class="section">
+<h4 id="usage-86">Usage<a class="anchor" aria-label="anchor" href="#usage-86"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_active_sheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-82">Arguments<a class="anchor" aria-label="anchor" href="#arguments-82"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>a worksheet</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-wbWorkbook-get_selected"></a><div class="section">
+<h3 id="method-get-selected-">Method <code>get_selected()</code><a class="anchor" aria-label="anchor" href="#method-get-selected-"></a></h3>
+<p>description get selected sheets
+description set selected sheet</p><div class="section">
+<h4 id="usage-87">Usage<a class="anchor" aria-label="anchor" href="#usage-87"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">get_selected</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-wbWorkbook-set_selected"></a><div class="section">
+<h3 id="method-set-selected-">Method <code>set_selected()</code><a class="anchor" aria-label="anchor" href="#method-set-selected-"></a></h3>
+
+<div class="section">
+<h4 id="usage-88">Usage<a class="anchor" aria-label="anchor" href="#usage-88"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">set_selected</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-83">Arguments<a class="anchor" aria-label="anchor" href="#arguments-83"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>sheet</code></dt>
+<dd><p>a worksheet</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-wbWorkbook-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-89">Usage<a class="anchor" aria-label="anchor" href="#usage-89"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-84">Arguments<a class="anchor" aria-label="anchor" href="#arguments-84"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 

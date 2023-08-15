@@ -69,6 +69,19 @@
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>provide solve argument for <code><a href="../reference/wb_merge_cells.html">wb_merge_cells()</a></code>. This allows to solve cell intersecting regions. <a href="https://github.com/JanMarvin/openxlsx2/pull/733" class="external-link">733</a>
 </li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>no longer exporting <code>wb_get_sheet_name()</code>
+</li>
+<li>deprecating <code><a href="../reference/cleanup.html">delete_data()</a></code> and minor improvements to <code><a href="../reference/cleanup.html">wb_clean_sheet()</a></code>
+</li>
+<li>removing <code>wb_get_worksheet()</code>, <code>wb_ws()</code>. These never worked as expected.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/select_active_sheet.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/select_active_sheet.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/select_active_sheet.html">wb_get_selected()</a></code> and <code><a href="../reference/select_active_sheet.html">wb_set_selected()</a></code> are now wrapper functions.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -106,7 +119,7 @@
 <code><a href="../reference/wb_set_grid_lines.html">wb_grid_lines()</a></code> for <code><a href="../reference/wb_set_grid_lines.html">wb_set_grid_lines()</a></code>
 </li>
 </ul></li>
-<li><p>make <code>get_cell_refs()</code>, <code>get_date_origin()</code>, <code>guess_col_type()</code>, and <code>write_file()</code>, <code><a href="../reference/dataframe_to_dims.html">dataframe_to_dims()</a></code>, <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code>, <code><a href="../reference/wb_get_sheet_name.html">wb_get_sheet_name()</a></code> internal functions</p></li>
+<li><p>make <code>get_cell_refs()</code>, <code>get_date_origin()</code>, <code>guess_col_type()</code>, and <code>write_file()</code>, <code><a href="../reference/dataframe_to_dims.html">dataframe_to_dims()</a></code>, <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code>, <code>wb_get_sheet_name()</code> internal functions</p></li>
 <li><p>make classes <code>styles_mgr()</code>, <code>wbSheetData</code>, <code>wbWorksheet</code>, <code>wbChartSheet</code>, <code>wbComment</code>, <code>wbHyperlink</code> internal</p></li>
 </ul></li>
 </ul></div>
