@@ -811,8 +811,23 @@ std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
 
   out << "<" << type << " style = \"" << as_border_style(dg) << "\"";
   if (dg > 0) {
-    out << "><color hex=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />";
-        out << "</" << type << ">" << std::endl;
+
+    double tint = 0.0;
+    if (color[2] != 0) tint = (double)color[2]/32767;
+
+    std::stringstream stream;
+    stream << std::setprecision(16) << tint;
+
+    if (color[0] == 0x00)
+      out << "><color auto=\"1\" />" << std::endl;
+    if (color[0] == 0x01)
+      out << "><color indexed=\"" << color[1] << "\" />";
+    if (color[0] == 0x02)
+      out << "><color hex=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />";
+    if (color[0] == 0x03)
+      out << "><color theme=\"" << color[1] << "\" tint=\"" << stream.str() << "\" />";
+
+    out << "</" << type << ">" << std::endl;
   } else {
     out << "/>" << std::endl;
   }

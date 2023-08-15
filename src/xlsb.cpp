@@ -169,7 +169,14 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         }
 
         if (color[0] == 0x03) {
-          out << "<color theme=\"" << color[1] << "\" />" << std::endl;
+
+          double tint = 0.0;
+          if (color[2] != 0) tint = (double)color[2]/32767;
+
+          std::stringstream stream;
+          stream << std::setprecision(16) << tint;
+
+          out << "<color theme=\"" << color[1] << "\" tint=\"" << stream.str() << "\" />";
         }
 
         if (color[1])
@@ -278,8 +285,33 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
           if (fls == 18) out << "gray0625";
           out << "\">" << std::endl;
           // if FF000000 & FFFFFFFF they can be omitted
-          out << "<fgColor rgb=\"" << to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) << std::dec << "\" />" << std::endl;
-          out << "<bgColor rgb=\"" << to_argb(bgColor[6], bgColor[3], bgColor[4], bgColor[5]) << std::dec << "\" />" << std::endl;
+
+          double bgtint = 0.0, fgtint = 0.0;
+          if (bgColor[2] != 0) bgtint = (double)bgColor[2]/32767;
+          if (fgColor[2] != 0) fgtint = (double)fgColor[2]/32767;
+
+          std::stringstream bgstream, fgstream;
+          bgstream << std::setprecision(16) << bgtint;
+          fgstream << std::setprecision(16) << fgtint;
+
+          if (fgColor[0] == 0x00)
+            out << "<fgColor auto=\"1\" />" << std::endl;
+          if (fgColor[0] == 0x01)
+            out << "<fgColor indexed=\"" << fgColor[1] << "\" />";
+          if (fgColor[0] == 0x02)
+            out << "<fgColor rgb=\"" << to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) << "\" />";
+          if (fgColor[0] == 0x03)
+            out << "<fgColor theme=\"" << fgColor[1] << "\" tint=\"" << fgstream.str() << "\" />";
+
+          if (bgColor[0] == 0x00)
+            out << "<bgColor auto=\"1\" />" << std::endl;
+          if (bgColor[0] == 0x01)
+            out << "<bgColor indexed=\"" << bgColor[1] << "\" />";
+          if (bgColor[0] == 0x02)
+            out << "<bgColor rgb=\"" << to_argb(bgColor[6], bgColor[3], bgColor[4], bgColor[5]) << "\" />";
+          if (bgColor[0] == 0x03)
+            out << "<bgColor theme=\"" << bgColor[1] << "\" tint=\"" << fgstream.str() << "\" />";
+
           out << "</patternFill>" << std::endl;
           out << "</fill>" << std::endl;
         } else {
@@ -2307,7 +2339,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         out << "<col" << " min=\"" << colFirst << "\" max =\"" << colLast << "\"";
 
         if (ixfe > 0)
-          out << " s=\"" <<  ixfe << "\"";
+          out << " style=\"" <<  ixfe << "\"";
 
         out << " width=\"" <<  (double)coldx/256 << "\"";
         if (fields->fHidden)
