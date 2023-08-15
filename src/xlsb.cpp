@@ -1591,6 +1591,12 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
           std::string unusedstring2 = XLNullableWideString(bin, swapit);
         }
 
+        if (fields->fBuiltin) {
+          // add the builtin xl name namespace
+          if (name.find("_xlnm.") == -1)
+            name = "_xlnm." + name;
+        }
+
         std::string defNam = "<definedName name=\"" + name;
 
         if (comment.size() > 0)

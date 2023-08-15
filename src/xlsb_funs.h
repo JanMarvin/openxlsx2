@@ -1302,12 +1302,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgArray2:
     case PtgArray3:
     {
-      int pre = ptgextra.size();
       RgbExtra typ = PtgExtraArray;
       ptgextra.push_back(typ);
-      if (ptgextra.size() <= pre) {
-        Rcpp::stop("hmm");
-      }
+
       // ptg_extra_array = true;
       uint16_t unused2 = 0;
       uint32_t unused1 = 0, unused3 = 0, unused4 = 0;

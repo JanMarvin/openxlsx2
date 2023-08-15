@@ -1423,10 +1423,9 @@ wb_load <- function(
 
           val <- sprintf("[%s]%s", xti$ext_id[sel][i], sheetName)
 
-
-          if (any(sel2 <- grepl("\\s", val)))
+          # non ascii or whitespace
+          if (any(sel2 <- grepl("[^A-Za-z0-9]", val)))
             val[sel2] <- shQuote(val[sel2], type = "sh")
-          # val <- shQuote(val, type = "sh")
 
           if (length(val)) xti$sheets[sel][i] <- val
         }
@@ -1438,6 +1437,7 @@ wb_load <- function(
       if (nrow(xti)) {
 
         if (length(wb$workbook$definedNames)) {
+
           wb$workbook$definedNames <-
             stringi::stri_replace_all_fixed(
               wb$workbook$definedNames,
