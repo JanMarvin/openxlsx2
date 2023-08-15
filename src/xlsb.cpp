@@ -1593,7 +1593,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
         if (fields->fBuiltin) {
           // add the builtin xl name namespace
-          if (name.find("_xlnm.") == -1)
+          if (name.find("_xlnm.") == std::string::npos)
             name = "_xlnm." + name;
         }
 
@@ -1711,7 +1711,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // Rcpp::Rcout << "reference_type: " << cXti << std::endl;
         for (uint32_t i = 0; i < cXti; ++i) {
           std::vector<int> xti = Xti(bin, swapit);
-          if (xti[0] > reference_type.size()) Rcpp::stop("references do not match");
+          if ((size_t)xti[0] > reference_type.size()) Rcpp::stop("references do not match");
           std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
             "\" firstSheet=\"" + std::to_string(xti[1]) +
             "\" lastSheet=\"" +  std::to_string(xti[2]) +

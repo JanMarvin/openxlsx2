@@ -1362,32 +1362,32 @@ wb_load <- function(
       xti$lastSheet <- as.integer(xti$lastSheet) + 1L
 
       sheets <- wb$get_sheet_names(escape = TRUE)
-      if (any(sel <- grepl("\\s", sheets)))
-        sheets[sel] <- shQuote(sheets[sel], type = "sh")
 
       xti$sheets <- NA_character_ #(otherwise in missing cases: all is <NA>)
       # all id == 0 are local references, otherwise external references
       # external references are written as "[0]sheetname!A1". Require
       # handling of externalReferences.bin
-      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 0 #& xti$firstSheet == xti$lastSheet
+      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 0
 
       if (any(sel)) {
 
-        # if (xti$firstSheet[sel] == xti$firstSheet[sel]) {
-        # TODO add firstSheet != lastSheet
-          xti$sheets[sel] <- vapply(
-            xti$firstSheet[sel],
-            function(x) sheets[x],
-            FUN.VALUE = ""
-          )
-        # } else {
-        #   xti$sheets[sel] <- vapply(
-        #     xti$firstSheet[sel],
-        #     function(x) sheets[x],
-        #     FUN.VALUE = ""
-        #   )
-        # }
+          for (i in seq_len(nrow(xti[sel, ]))) {
+            want <- xti$firstSheet[sel][i]
 
+            sheetName <- sheets[[want]]
+            if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
+              want <- xti$lastSheet[sel][i]
+              sheetName <- paste0(sheetName, ":", sheets[[want]])
+            }
+
+            # should be a single reference now
+            val <- sheetName
+
+            if (grepl("[^A-Za-z0-9]", val))
+              val <- shQuote(val, type = "sh")
+
+            if (length(val)) xti$sheets[sel][i] <- val
+          }
       }
 
       ### for external references we need to get the required sheet names first
@@ -1402,7 +1402,7 @@ wb_load <- function(
 
       # TODO: How are references to the same external link,
       # but different sheet handled?
-      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 0 # & xti$firstSheet == xti$lastSheet
+      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 0
 
       if (any(sel)) {
 
@@ -1424,8 +1424,8 @@ wb_load <- function(
           val <- sprintf("[%s]%s", xti$ext_id[sel][i], sheetName)
 
           # non ascii or whitespace
-          if (any(sel2 <- grepl("[^A-Za-z0-9]", val)))
-            val[sel2] <- shQuote(val[sel2], type = "sh")
+          if (grepl("[^A-Za-z0-9]", val))
+            val <- shQuote(val, type = "sh")
 
           if (length(val)) xti$sheets[sel][i] <- val
         }
