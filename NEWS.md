@@ -2,6 +2,7 @@
 
 ## Fixes
 
+* fix date1904 detection in `wb_to_df()`. Previous results from this somewhat rare file type were using a wrong timezone origin.
 * corrections in vignettes
 * fixes for loading workbooks with threaded comments
 * fixes for loading workbooks with embeddings other than docx
