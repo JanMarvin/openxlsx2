@@ -1424,7 +1424,36 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtWbProp:
       {
         if (debug) Rcpp::Rcout << "<workbookProperties>" << std::endl;
-        bin.seekg(size, bin.cur);
+        uint32_t flags = 0, dwThemeVersion = 0;
+
+        flags = readbin(flags, bin, swapit);
+        dwThemeVersion = readbin(dwThemeVersion, bin, swapit);
+        std::string strName = XLWideString(bin, swapit);
+
+        BrtWbPropFields *fields = (BrtWbPropFields *)&flags;
+
+        out <<
+          "<workbookPr" <<
+          // " allowRefreshQuery=\"" <<  << "\" " <<
+          " autoCompressPictures=\"" << fields->fAutoCompressPictures << "\" " <<
+          " backupFile=\"" << fields->fBackup << "\" " <<
+          " checkCompatibility=\"" << fields->fCheckCompat << "\" " <<
+          " codeName=\"" << strName << "\" " <<
+          " date1904=\"" << fields->f1904 << "\" " <<
+          " defaultThemeVersion=\"" << dwThemeVersion << "\" " <<
+          " filterPrivacy=\"" << fields->fFilterPrivacy << "\" " <<
+          " hidePivotFieldList=\"" << fields->fHidePivotTableFList << "\" " <<
+          " promptedSolutions=\"" << fields->fBuggedUserAboutSolution << "\" " <<
+          " publishItems=\"" << fields->fPublishedBookItems << "\" " <<
+          " refreshAllConnections=\"" << fields->fRefreshAll << "\" " <<
+          " saveExternalLinkValues=\"" << fields->fNoSaveSup << "\" " <<
+          // " showBorderUnselectedTables=\"" <<  << "\" " <<
+          " showInkAnnotation=\"" << fields->fShowInkAnnotation << "\" " <<
+          " showObjects=\"" << (uint32_t)fields->mdDspObj << "\" " <<
+          " showPivotChartFilter=\"" << fields->fShowPivotChartFilter << "\" " <<
+          " updateLinks=\"" << (uint32_t)fields->grbitUpdateLinks << "\" " <<
+          "/>" << std::endl;
+
         break;
       }
 

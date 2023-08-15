@@ -155,6 +155,27 @@ typedef struct {
   uint16_t reserved4 : 11;
 } BrtBeginCFRuleFields;
 
+typedef struct {
+  bool f1904 : 1;
+  bool reserved1 : 1;
+  bool fHideBorderUnselLists : 1;
+  bool fFilterPrivacy : 1;
+  bool fBuggedUserAboutSolution : 1;
+  bool fShowInkAnnotation : 1;
+  bool fBackup : 1;
+  bool fNoSaveSup : 1;
+  uint8_t grbitUpdateLinks : 2;
+  bool fHidePivotTableFList : 1;
+  bool fPublishedBookItems : 1;
+  bool fCheckCompat : 1;
+  uint8_t mdDspObj : 2;
+  bool fShowPivotChartFilter : 1;
+  bool fAutoCompressPictures : 1;
+  bool reserved2 : 1;
+  bool fRefreshAll : 1;
+  uint16_t unused : 13;
+} BrtWbPropFields;
+
 enum RgbExtra
 {
   PtgExtraArray = 0,
@@ -165,6 +186,9 @@ enum RgbExtra
   RevName = 5,
   RevExtern = 6
 };
+
+
+
 
 // https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes
