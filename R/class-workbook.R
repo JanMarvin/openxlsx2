@@ -7025,12 +7025,55 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' description get person
+    #' @description description get person
     #' @param name name
     get_person = function(name = NULL) {
       persons <- rbindlist(xml_attr(self$persons, "personList", "person"))
       if (!is.null(name)) persons <- persons[persons$displayName == name, ]
       persons
+    },
+
+    #' @description description get active sheet
+    get_active_sheet = function() {
+      at <- rbindlist(xml_attr(self$workbook$bookViews, "bookViews", "workbookView"))$activeTab
+      # return c index as R index
+      as.numeric(at) + 1
+    },
+
+    #' @description description set active sheet
+    #' @param sheet a worksheet
+    set_active_sheet = function(sheet = current_sheet()) {
+      sheet <- self$validate_sheet(sheet)
+      self$set_bookview(active_tab = sheet - 1L)
+    },
+
+    #' @description description get selected sheets
+    get_selected = function() {
+      len <- length(self$sheet_names)
+      sv <- vector("list", length = len)
+
+      for (i in seq_len(len)) {
+        sv[[i]] <- xml_node(self$worksheets[[i]]$sheetViews, "sheetViews", "sheetView")
+      }
+
+      # print(sv)
+      z <- rbindlist(xml_attr(sv, "sheetView"))
+      z$names <- self$get_sheet_names(escape = TRUE)
+      z
+    },
+
+    #' description set selected sheet
+    #' @param sheet a worksheet
+    set_selected = function(sheet = current_sheet()) {
+
+      sheet <- self$validate_sheet(sheet)
+
+      for (i in seq_along(self$sheet_names)) {
+        xml_attr <- ifelse(i == sheet, TRUE, FALSE)
+        self$worksheets[[i]]$set_sheetview(tabSelected = xml_attr)
+      }
+
+      invisible(self)
     }
 
   ),
@@ -7257,10 +7300,6 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(rlshp)
-    },
-
-    get_worksheet = function(sheet) {
-      self$worksheets[[private$get_sheet_index(sheet)]]
     },
 
     # this may ahve been removes
@@ -7931,7 +7970,8 @@ lcr <- function(var) {
 #' @param wb a [wbWorkbook] object
 #' @param index Sheet name index
 #' @return The sheet index
-#' @export
+#' @keywords internal
+#' @noRd
 wb_get_sheet_name <- function(wb, index = NULL) {
   index <- index %||% seq_along(wb$sheet_names)
 

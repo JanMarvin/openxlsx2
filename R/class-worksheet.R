@@ -597,16 +597,22 @@ wbWorksheet <- R6::R6Class(
         sel <- cc$r %in% dims
       }
 
+      # TODO remaining things
+      # (pivot) tables that are no longer needed?
+      # (threaded) comments in that area?
+      # data validation / conditional formatting?
+      # other worksheet or otherwise related things?
+
       if (numbers)
-        cc[sel & cc$c_t %in% c("n", ""),
+        cc[sel & cc$c_t %in% c("b", "e", "n", ""),
           c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (characters)
-        cc[sel & cc$c_t %in% c("inlineStr", "s"),
-          c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+        cc[sel & cc$c_t %in% c("inlineStr", "s", "str"),
+          c("c_t", "c_ph", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (styles)
-        cc[sel, c("c_s")] <- ""
+        cc[sel, c("c_s", "c_cm", "c_vm")] <- ""
 
       self$sheet_data$cc <- cc
 

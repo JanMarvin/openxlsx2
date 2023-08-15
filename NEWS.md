@@ -10,6 +10,16 @@
 
 * provide solve argument for `wb_merge_cells()`. This allows to solve cell intersecting regions. [733](https://github.com/JanMarvin/openxlsx2/pull/733)
 
+## Breaking changes
+
+* no longer exporting `wb_get_sheet_name()`
+* deprecating `delete_data()` and minor improvements to `wb_clean_sheet()`
+* removing `wb_get_worksheet()`, `wb_ws()`. These never worked as expected.
+
+## Internal changes
+
+* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()` are now wrapper functions.
+
 
 ***************************************************************************
 

@@ -102,6 +102,7 @@ openxlsx2_celltype <- c(
 #' @details
 #' * [convertToExcelDate()] -> [convert_to_excel_date()]
 #' * [wb_grid_lines()] -> [wb_set_grid_lines()]
+#' * [delete_data()] -> [wb_clean_sheet()]
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
 NULL
