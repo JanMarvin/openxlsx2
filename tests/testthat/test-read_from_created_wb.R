@@ -173,3 +173,17 @@ test_that("reading with pre defined types works", {
   expect_equal(got, dat, ignore_attr = TRUE)
 
 })
+
+test_that("wb_load contains path", {
+
+  tmp <- temp_xlsx()
+  wb_workbook()$add_worksheet()$add_worksheet()$save(tmp)
+  wb_load(tmp)$remove_worksheet()$save()
+
+  wb <- wb_load(tmp)
+
+  exp <- c(`Sheet 1` = "Sheet 1")
+  got <- wb$get_sheet_names()
+  expect_equal(exp, got)
+
+})

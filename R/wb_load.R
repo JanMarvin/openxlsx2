@@ -65,6 +65,7 @@ wb_load <- function(
   xmlFiles <- xmlFiles[ordr]
 
   wb <- wb_workbook()
+  wb$path <- file
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
     # targets xmlFiles; has presents
