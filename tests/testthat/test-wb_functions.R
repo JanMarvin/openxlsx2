@@ -304,3 +304,14 @@ test_that("cols return order is correct", {
   expect_equal(exp, got)
 
 })
+
+test_that("missings cells are returned", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = "a", dims = "Z100")
+
+  expect_silent(got <- wb_to_df(wb, col_names = FALSE, rows = 1, cols = 1))
+  expect_silent(got <- wb_to_df(wb, col_names = FALSE, rows = c(1, 4, 10), cols = c(2, 5, 10)))
+
+  expect_silent(got <- wb_to_df(wb, col_names = FALSE, rows = c(101), cols = c(27)))
+
+})
