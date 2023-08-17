@@ -309,7 +309,7 @@ wb_to_df <- function(
   keep_rows <- keep_rows[keep_rows %in% rnams]
 
   # reduce data to selected cases only
-  if (!is.null(cols) && !is.null(rows) && !missing(dims))
+  if (length(keep_rows) && length(keep_cols))
     cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
 
   cc$val <- NA_character_
