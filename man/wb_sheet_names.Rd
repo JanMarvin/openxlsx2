@@ -11,18 +11,18 @@ wb_set_sheet_names(wb, old = NULL, new)
 wb_get_sheet_names(wb, escape = FALSE)
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook} object}
+\item{wb}{A \link{wbWorkbook} object}
 
 \item{old}{The name (or index) of the old sheet name. If \code{NULL} will assume
 all worksheets are to be renamed.}
 
 \item{new}{The name of the new sheet}
 
-\item{escape}{Logical if the xml special characters are escaped}
+\item{escape}{Should the xml special characters be escaped?}
 }
 \value{
 \itemize{
-\item \code{set_}: The \link{wbWorkbook} object.
+\item \code{set_}: The \code{wbWorkbook} object.
 \item \code{get_}: A named character vector of sheet names in order. The
 names represent the original value of the worksheet prior to any character
 substitutions.
@@ -33,6 +33,6 @@ Gets / Sets the worksheet names for a \link{wbWorkbook} object.
 }
 \details{
 This only changes the sheet name as shown in spreadsheet software
-and will not alter it anywhere else. Not in formulas, chart references,
+and will not alter it elsewhere. Not in formulas, chart references,
 named regions, pivot tables or anywhere else.
 }

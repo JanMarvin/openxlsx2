@@ -17,9 +17,9 @@ wb_set_col_widths(
 wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook} object}
+\item{wb}{A \code{wbWorkbook} object.}
 
-\item{sheet}{A name or index of a worksheet, a vector in the case of \code{remove}}
+\item{sheet}{A name or index of a worksheet, a vector in the case of \code{remove_}}
 
 \item{cols}{Indices of cols to set/remove width}
 
@@ -32,19 +32,19 @@ Setting it to specific value also is no guarantee that the output will be of the
 \item{hidden}{Logical vector. If \code{TRUE} the column is hidden.}
 }
 \description{
-Remove / set worksheet column widths to specific width or "auto".
+Remove / set worksheet column widths to specified width or "auto".
 }
 \details{
 The global min and max column width for "auto" columns is set by (default values show):
 \itemize{
-\item{options("openxlsx2.minWidth" = 3)}
-\item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
+\item \code{options("openxlsx2.minWidth" = 3)}
+\item \code{options("openxlsx2.maxWidth" = 250)} Maximum width allowed in Excel
 }
 
 NOTE: The calculation of column widths can be slow for large worksheets.
 
-NOTE: The \code{hidden} parameter may conflict with the one set in
-\code{\link[=wb_group_cols]{wb_group_cols()}}; changing one will update the other.
+NOTE: The \code{hidden} parameter may conflict with the one set in \code{\link[=wb_group_cols]{wb_group_cols()}};
+changing one will update the other.
 }
 \examples{
 ## Create a new workbook

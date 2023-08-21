@@ -23,14 +23,14 @@ wb_freeze_pane(
 
 \item{first_active_col}{Furthest left column of active region}
 
-\item{first_row}{If \code{TRUE}, freezes the first row (equivalent to firstActiveRow = 2)}
+\item{first_row}{If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})}
 
-\item{first_col}{If \code{TRUE}, freezes the first column (equivalent to firstActiveCol = 2)}
+\item{first_col}{If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})}
 
 \item{...}{additional arguments}
 }
 \description{
-Freeze a worksheet pane
+Add a Freeze pane in a worksheet.
 }
 \examples{
 ## Create a new workbook

@@ -1,5 +1,5 @@
 # `wb_to_df()` ----------------------------------------
-#' Create Dataframe from Workbook
+#' Create a data frame from Workbook
 #'
 #' Simple function to create a `data.frame` from a workbook. Simple as in simply
 #' written down. [read_xlsx()] and [wb_read()] are just internal wrappers for
@@ -13,11 +13,11 @@
 #' * 0: character
 #' * 1: numeric
 #' * 2: date
-#' * 3: posixt
+#' * 3: posixt (datetime)
 #' * 4: logical
 #' @seealso [wb_get_named_regions()]
 #'
-#' @param file An xlsx file, Workbook object or URL to xlsx file.
+#' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
 #' @param col_names If `TRUE`, the first row of data will be used as column names.
 #' @param row_names If `TRUE`, the first col of data will be used as row names.
@@ -31,12 +31,12 @@
 #' @param skip_hidden_rows If `TRUE`, hidden rows are skipped.
 #' @param start_row first row to begin looking for data.
 #' @param start_col first column to begin looking for data.
-#' @param rows A numeric vector specifying which rows in the Excel file to read.
+#' @param rows A numeric vector specifying which rows in the xlsx file to read.
 #'   If `NULL`, all rows are read.
-#' @param cols A numeric vector specifying which columns in the Excel file to read.
+#' @param cols A numeric vector specifying which columns in the xlsx file to read.
 #'   If `NULL`, all columns are read.
 #' @param named_region Character string with a `named_region` (defined name or table).
-#'   If no sheet is selected, the first appearance will be selected.
+#'   If no sheet is selected, the first appearance will be selected. See [wb_get_named_regions()]
 #' @param types A named numeric indicating, the type of the data.
 #'   Names must match the returned data. See **Details** for more.
 #' @param na.strings A character vector of strings which are to be interpreted as `NA`.
@@ -97,7 +97,7 @@
 #' wb_to_df(wb1, na.strings = "a")
 #'
 #' ###########################################################################
-#' # named_region // namedRegion
+#' # Named regions
 #' file_named_region <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 #' wb2 <- wb_load(file_named_region)
 #'

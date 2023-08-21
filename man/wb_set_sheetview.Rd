@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_sheetview}
 \alias{wb_set_sheetview}
-\title{add sheetview}
+\title{Modify a worksheet default view}
 \usage{
 wb_set_sheetview(
   wb,
@@ -30,7 +30,7 @@ wb_set_sheetview(
 )
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
 \item{sheet}{sheet}
 
@@ -58,7 +58,7 @@ wb_set_sheetview(
 
 \item{view}{View: "normal", "pageBreakPreview" or "pageLayout"}
 
-\item{window_protection}{Logical: if TRUE the panes are protected}
+\item{window_protection}{Logical: if \code{TRUE} the panes are protected}
 
 \item{workbook_view_id}{integer: Pointing to some other view inside the workbook}
 
@@ -67,26 +67,26 @@ wb_set_sheetview(
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook} object, invisibly
 }
 \description{
-add sheetview
+This helps set a worksheet's appearance, such as the zoom, whether to show grid lines
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
 
 wb$set_sheetview(
-  zoomScale = 75,
-  rightToLeft = FALSE,
-  showFormulas = TRUE,
-  showGridLines = TRUE,
-  showOutlineSymbols = FALSE,
-  showRowColHeaders = TRUE,
-  showRuler = TRUE,
-  showWhiteSpace = FALSE,
-  tabSelected = 1,
-  topLeftCell = "B1",
+  zoom_scale = 75,
+  right_to_left = FALSE,
+  show_formulas = TRUE,
+  show_grid_lines = TRUE,
+  show_outline_symbols = FALSE,
+  show_row_col_headers = TRUE,
+  show_ruler = TRUE,
+  show_white_space = FALSE,
+  tab_selected = 1,
+  top_left_cell = "B1",
   view = "normal",
-  windowProtection = TRUE
+  window_protection = TRUE
 )
 }

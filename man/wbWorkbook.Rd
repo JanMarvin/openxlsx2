@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook.R
 \name{wbWorkbook}
 \alias{wbWorkbook}
-\title{R6 class for a Workbook}
+\title{R6 class for a workbook}
 \description{
 A workbook
 }

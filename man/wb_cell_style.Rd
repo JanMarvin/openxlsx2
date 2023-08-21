@@ -4,7 +4,7 @@
 \alias{wb_cell_style}
 \alias{wb_get_cell_style}
 \alias{wb_set_cell_style}
-\title{Get and Set cell style}
+\title{Apply styling to a cell region}
 \usage{
 wb_get_cell_style(wb, sheet = current_sheet(), dims)
 
@@ -17,7 +17,7 @@ wb_set_cell_style(wb, sheet = current_sheet(), dims, style)
 
 \item{dims}{A cell range in the worksheet}
 
-\item{style}{style}
+\item{style}{A style}
 }
 \value{
 wb_get_cell_style returns the style id as character
@@ -25,7 +25,7 @@ wb_get_cell_style returns the style id as character
 wb_set_cell_style returns the workbook invisibly.
 }
 \description{
-Get and Set cell style
+Apply styling to a cell region
 }
 \examples{
 # set a style in b1

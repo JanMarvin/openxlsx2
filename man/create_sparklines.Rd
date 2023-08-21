@@ -29,9 +29,9 @@ create_sparklines(
 \arguments{
 \item{sheet}{sheet}
 
-\item{dims}{dims}
+\item{dims}{Cell range of cells used to create the sparklines}
 
-\item{sqref}{sqref}
+\item{sqref}{Cell range of the destination of the sparklines.}
 
 \item{type}{type}
 
@@ -72,7 +72,7 @@ A string containing XML code
 Create a sparkline to be added a workbook with \code{\link[=wb_add_sparklines]{wb_add_sparklines()}}
 }
 \details{
-the colors are all predefined to be rgb. Maybe theme colors can be
+Colors are all predefined to be rgb. Maybe theme colors can be
 used too.
 }
 \examples{

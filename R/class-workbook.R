@@ -2,7 +2,7 @@
 
 # R6 class ----------------------------------------------------------------
 # Lines 7 and 8 are needed until r-lib/roxygen2#1504 is fixed
-#' R6 class for a Workbook
+#' R6 class for a workbook
 #'
 #' @description
 #' A workbook

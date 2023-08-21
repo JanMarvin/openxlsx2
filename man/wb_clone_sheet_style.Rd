@@ -7,12 +7,13 @@
 wb_clone_sheet_style(wb, from = current_sheet(), to)
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
 \item{from}{sheet we select the style from}
 
 \item{to}{sheet we apply the style from}
 }
 \description{
-clone sheets style
+This function can be used to apply styling from a cell range, and apply it
+to another cell range.
 }

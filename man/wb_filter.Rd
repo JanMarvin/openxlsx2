@@ -52,7 +52,7 @@ wb$add_data(1, iris)
 wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
 
 ## Equivalently
-wb$add_data(2, x = iris, withFilter = TRUE)
+wb$add_data(2, x = iris, with_filter = TRUE)
 
 ## Similarly
 wb$add_data_table(3, iris)

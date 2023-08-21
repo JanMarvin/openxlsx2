@@ -574,66 +574,76 @@ wb_add_chartsheet <- function(
 
 #' Add a worksheet to a workbook
 #'
-#' @param wb A Workbook object to attach the new worksheet
+#' Add a worksheet to a [wbWorkbook] is the first step to build a workbook.
+#' With the function, you can also set the sheet view with `zoom`, set headers
+#' and footers as well as other features. See the function arguments.
+#'
+#' @details
+#' Headers and footers can contain special tags
+#' * **&\[Page\]** Page number
+#' * **&\[Pages\]** Number of pages
+#' * **&\[Date\]** Current date
+#' * **&\[Time\]** Current time
+#' * **&\[Path\]** File path
+#' * **&\[File\]** File name
+#' * **&\[Tab\]** Worksheet name
+#'
+#' @param wb A `wbWorkbook` object to attach the new worksheet
 #' @param sheet A name for the new worksheet
 #' @param grid_lines A logical. If `FALSE`, the worksheet grid lines will be
 #'   hidden.
 #' @param row_col_headers A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
 #' @param tab_color Color of the worksheet tab. A valid color (belonging to
-#'   colors()) or a valid hex color beginning with "#"
-#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
-#'   percentage.
+#'   `grDevices::colors()`), a valid hex color beginning with "#" or [wb_color()]
+#' @param zoom The worksheet zoom level, a numeric between 10 and 400 as a
+#'   percentage. (A zoom value smaller than 10 will default to 10.)
 #' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
 #'   Character vector of length 3 corresponding to positions left, center,
 #'   right.  `header` and `footer` are used to default additional arguments.
 #'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
 #'   skip a position.
-#' @param visible If FALSE, sheet is hidden else visible.
-#' @param has_drawing If TRUE prepare a drawing output (TODO does this work?)
+#' @param visible If `FALSE`, sheet is hidden else visible.
+#' @param has_drawing If `TRUE` prepare a drawing output (TODO does this work?)
 #' @param paper_size An integer corresponding to a paper size. See [wb_page_setup()] for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
-#' @param hdpi Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
-#'   options("openxlsx2.hdpi" = X)
-#' @param vdpi Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
-#'   options("openxlsx2.vdpi" = X)
-#' @param ... ...
-#' @details Headers and footers can contain special tags \itemize{
-#'   \item{**&\[Page\]**}{ Page number} \item{**&\[Pages\]**}{ Number of pages}
-#'   \item{**&\[Date\]**}{ Current date} \item{**&\[Time\]**}{ Current time}
-#'   \item{**&\[Path\]**}{ File path} \item{**&\[File\]**}{ File name}
-#'   \item{**&\[Tab\]**}{ Worksheet name} }
-#' @return The [wbWorkbook] object `wb`
+#' @param hdpi,vdpi Horizontal and vertical DPI. Can be set with `options("openxlsx2.dpi" = X)`,
+#'   `options("openxlsx2.hdpi" = X)` or `options("openxlsx2.vdpi" = X)`
+#' @param ... Additional arguments
+#' @return The `wbWorkbook` object, invisibly.
 #'
 #' @export
 #' @family workbook wrappers
 #'
 #' @examples
 #' ## Create a new workbook
-#' wb <- wb_workbook("Fred")
+#' wb <- wb_workbook()
 #'
-#' ## Add 3 worksheets
+#' ## Add a worksheet
 #' wb$add_worksheet("Sheet 1")
-#' wb$add_worksheet("Sheet 2", gridLines = FALSE)
-#' wb$add_worksheet("Sheet 3", tabColor = "red")
-#' wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColor = "#4F81BD")
+#' ## No grid lines
+#' wb$add_worksheet("Sheet 2", grid_lines = FALSE)
+#' ## A red tab color
+#' wb$add_worksheet("Sheet 3", tab_color = "red")
+#' ## All options combined with a zoom of 40%
+#' wb$add_worksheet("Sheet 4", grid_lines = FALSE, tab_color = "#4F81BD", zoom = 40)
 #'
 #' ## Headers and Footers
 #' wb$add_worksheet("Sheet 5",
 #'   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
 #'   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
-#'   evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
-#'   evenFooter = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
-#'   firstHeader = c("TOP", "OF FIRST", "PAGE"),
-#'   firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
+#'   even_header = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
+#'   even_footer = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
+#'   first_header = c("TOP", "OF FIRST", "PAGE"),
+#'   first_footer = c("BOTTOM", "OF FIRST", "PAGE")
 #' )
 #'
 #' wb$add_worksheet("Sheet 6",
 #'   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
 #'   footer = c("&[Path]&[File]", NA, "&[Tab]"),
-#'   firstHeader = c(NA, "Center Header of First Page", NA),
-#'   firstFooter = c(NA, "Center Footer of First Page", NA)
+#'   first_header = c(NA, "Center Header of First Page", NA),
+#'   first_footer = c(NA, "Center Footer of First Page", NA)
 #' )
 #'
 #' wb$add_worksheet("Sheet 7",
@@ -642,8 +652,8 @@ wb_add_chartsheet <- function(
 #' )
 #'
 #' wb$add_worksheet("Sheet 8",
-#'   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
-#'   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
+#'   first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+#'   first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
 #' )
 #'
 #' ## Need data on worksheet to see all headers and footers
@@ -697,30 +707,32 @@ wb_add_worksheet <- function(
 }
 
 
-#' Clone a worksheet to a workbook
+#' Clone a worksheet in a workbook
 #'
-#' Clone a worksheet to a Workbook object
+#' @description
+#' Create a copy of a worksheet in the same `wbWorkbook` object.
 #'
-#' @details
 #' Cloning is possible only to a limited extent. References to sheet names in
 #' formulas, charts, pivot tables, etc. may not be updated. Some elements like
 #' named ranges and slicers cannot be cloned yet.
 #'
-#' @param wb A [wbWorkbook] object
+#' @param wb A `wbWorkbook` object
 #' @param old Name of existing worksheet to copy
 #' @param new Name of New worksheet to create
-#' @return The `wb` object
+#' @return The `wbWorkbook` object, invisibly.
 #'
 #' @export
 #' @family workbook wrappers
 #'
 #' @examples
 #' # Create a new workbook
-#' wb <- wb_workbook("Fred")
+#' wb <- wb_workbook()
 #'
 #' # Add worksheets
 #' wb$add_worksheet("Sheet 1")
-#' wb$clone_worksheet("Sheet 1", "Sheet 2")
+#' wb$clone_worksheet("Sheet 1", new = "Sheet 2")
+#' # Take advantage of waiver functions
+#' wb$clone_worksheet(old = "Sheet 1")
 wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
   assert_workbook(wb)
   wb$clone()$clone_worksheet(old = old, new = new)
@@ -728,15 +740,16 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 
 # worksheets --------------------------------------------------------------
 
-#' @name wb_freeze_pane
-#' @title Freeze a worksheet pane
-#' @description Freeze a worksheet pane
+#' Freeze a worksheet pane
+#'
+#' Add a Freeze pane in a worksheet.
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param first_active_row Top row of active region
 #' @param first_active_col Furthest left column of active region
-#' @param first_row If `TRUE`, freezes the first row (equivalent to firstActiveRow = 2)
-#' @param first_col If `TRUE`, freezes the first column (equivalent to firstActiveCol = 2)
+#' @param first_row If `TRUE`, freezes the first row (equivalent to `first_active_row = 2`)
+#' @param first_col If `TRUE`, freezes the first column (equivalent to `first_active_col = 2`)
 #' @param ... additional arguments
 #'
 #' @export
@@ -753,10 +766,10 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' wb$add_worksheet("Sheet 4")
 #'
 #' ## Freeze Panes
-#' wb$freeze_pane("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-#' wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-#' wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-#' wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
+#' wb$freeze_pane("Sheet 1", first_active_row = 5, first_active_col = 3)
+#' wb$freeze_pane("Sheet 2", first_col = TRUE) ## shortcut to first_active_col = 2
+#' wb$freeze_pane(3, first_row = TRUE) ## shortcut to first_active_row = 2
+#' wb$freeze_pane(4, first_active_row = 1, first_active_col = "D")
 wb_freeze_pane <- function(
   wb,
   sheet            = current_sheet(),
@@ -826,10 +839,20 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 
 #' Modify worksheet column widths
 #'
-#' Remove / set worksheet column widths to specific width or "auto".
+#' Remove / set worksheet column widths to specified width or "auto".
 #'
-#' @param wb A `wbWorkbook` object
-#' @param sheet A name or index of a worksheet, a vector in the case of `remove`
+#' @details
+#' The global min and max column width for "auto" columns is set by (default values show):
+#' * `options("openxlsx2.minWidth" = 3)`
+#' * `options("openxlsx2.maxWidth" = 250)` Maximum width allowed in Excel
+#'
+#' NOTE: The calculation of column widths can be slow for large worksheets.
+#'
+#' NOTE: The `hidden` parameter may conflict with the one set in [wb_group_cols()];
+#' changing one will update the other.
+#'
+#' @param wb A `wbWorkbook` object.
+#' @param sheet A name or index of a worksheet, a vector in the case of `remove_`
 #' @param cols Indices of cols to set/remove width
 #' @param widths width to set cols to specified in Excel column width units or
 #'   "auto" for automatic sizing. The widths argument is recycled to the length of cols.
@@ -837,16 +860,6 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'   it depends on Excel version, operating system and DPI settings used.
 #'   Setting it to specific value also is no guarantee that the output will be of the selected width.
 #' @param hidden Logical vector. If `TRUE` the column is hidden.
-#' @details The global min and max column width for "auto" columns is set by (default values show):
-#' \itemize{
-#'   \item{options("openxlsx2.minWidth" = 3)}
-#'   \item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
-#' }
-#'
-#'   NOTE: The calculation of column widths can be slow for large worksheets.
-#'
-#'   NOTE: The `hidden` parameter may conflict with the one set in
-#'   [wb_group_cols()]; changing one will update the other.
 #'
 #' @family workbook wrappers
 #'
@@ -1073,7 +1086,10 @@ wb_add_mschart <- function(
   )
 }
 
-#' @rdname wb_add_worksheet
+#' Remove a worksheet from a workbook
+#' @param wb A wbWorkbook object
+#' @param sheet The sheet name or index to remove
+#' @returns The `wbWorkbook` object, invisibly.
 #' @export
 #' @examples
 #' ## load a workbook
@@ -1205,45 +1221,33 @@ wb_set_bookview <- function(
   )
 }
 
-#' Set document headers and footers
+#' Set headers and footers of a worksheet
 #'
-#' Set document headers and footers
+#' Set document headers and footers. You can also do this when adding a worksheet
+#' with [wb_add_worksheet()] with the `header`, `footer` arguments and friends.
+#'
+#' Headers and footers can contain special tags
+#' * **&\[Page\]** Page number
+#' * **&\[Pages\]** Number of pages
+#' * **&\[Date\]** Current date
+#' * **&\[Time\]** Current time
+#' * **&\[Path\]** File path
+#' * **&\[File\]** File name
+#' * **&\[Tab\]** Worksheet name
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @param header document header. Character vector of length 3 corresponding to
-#'   positions left, center, right. Use `NA` to skip a position.
-#' @param footer document footer. Character vector of length 3 corresponding to
-#'   positions left, center, right. Use `NA` to skip a position.
-#' @param even_header document header for even pages.
-#' @param even_footer document footer for even pages.
-#' @param first_header document header for first page only.
-#' @param first_footer document footer for first page only.
+#' @inheritParams wb_add_worksheet
 #' @param ... additional arguments
-#' @details Headers and footers can contain special tags
-#' \itemize{
-#'   \item{**&\[Page\]**}{ Page number}
-#'   \item{**&\[Pages\]**}{ Number of pages}
-#'   \item{**&\[Date\]**}{ Current date}
-#'   \item{**&\[Time\]**}{ Current time}
-#'   \item{**&\[Path\]**}{ File path}
-#'   \item{**&\[File\]**}{ File name}
-#'   \item{**&\[Tab\]**}{ Worksheet name}
-#' }
 #' @export
-#' @seealso [wb_add_worksheet()] to set headers and footers when adding a worksheet
 #' @examples
 #' wb <- wb_workbook()
 #'
-#' wb$add_worksheet("S1")
-#' wb$add_worksheet("S2")
-#' wb$add_worksheet("S3")
-#' wb$add_worksheet("S4")
-#'
-#' wb$add_data(1, 1:400)
-#' wb$add_data(2, 1:400)
-#' wb$add_data(3, 3:400)
-#' wb$add_data(4, 3:400)
+#' # Add example data
+#' wb$add_worksheet("S1")$add_data(x = 1:400)
+#' wb$add_worksheet("S2")$add_data(x = 1:400)
+#' wb$add_worksheet("S3")$add_data(x = 3:400)
+#' wb$add_worksheet("S4")$add_data(x = 3:400)
 #'
 #' wb$set_header_footer(
 #'   sheet = "S1",
@@ -1595,6 +1599,8 @@ wb_protect <- function(
 #' Set worksheet gridlines to show or hide.
 #'
 #' Set worksheet gridlines to show or hide.
+#' You can also add / remove grid lines when creating a worksheeet with
+#' [`wb_add_worksheet(grid_lines = FALSE)`][wb_add_worksheet()]
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
@@ -1623,7 +1629,7 @@ wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = sho
 
 # worksheet order ---------------------------------------------------------
 
-#' Order of worksheets in xlsx file
+#' Order worksheets in a workbook
 #'
 #' Get/set order of worksheets in a Workbook object
 #'
@@ -1673,6 +1679,8 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' Create / delete a named region
 #'
+#' Region is given by: min(cols):max(cols) X min(rows):max(rows)
+#' You can also use [wb_dims()] to specify the cell range.
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
@@ -1694,44 +1702,30 @@ wb_set_order <- function(wb, sheets) {
 #' @param workbook_parameter workbookParameter (unknown xml feature)
 #' @param xml xml (unknown xml feature)
 #' @param ... additional arguments
-#' @details Region is given by: min(cols):max(cols) X min(rows):max(rows)
+#' @seealso [wb_get_named_regions()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #'
 #' ## specify region
-#' wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
+#' wb$add_data(x = iris, start_col = 1, start_row = 1)
 #' wb$add_named_region(
-#'   sheet = 1,
 #'   name = "iris",
-#'   dims = wb_dims(
-#'     rows = seq_len(nrow(iris) + 1),
-#'     cols = seq_along(iris)
-#'   )
+#'   dims = wb_dims(x = iris)
 #' )
 #'
-#'
-#' ## using write_data 'name' argument
-#' wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
-#'
-#' out_file <- temp_xlsx()
-#' wb_save(wb, out_file, overwrite = TRUE)
-#'
-#' ## see named regions
-#' wb_get_named_regions(wb) ## From Workbook object
-#' wb_get_named_regions(out_file) ## From xlsx file
+#' ## using add_data 'name' argument
+#' wb$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
 #'
 #' ## delete one
 #' wb$remove_named_region(name = "iris2")
 #' wb_get_named_regions(wb)
 #'
 #' ## read named regions
-#' df <- read_xlsx(wb, namedRegion = "iris")
+#' df <- wb_to_df(wb, named_region = "iris")
 #' head(df)
 #'
-#' df <- read_xlsx(out_file, namedRegion = "iris2")
-#' head(df)
 #' @name wb_named_region
 NULL
 
@@ -1830,7 +1824,7 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #' wb_add_filter(wb, 1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' wb$add_data(2, x = iris, withFilter = TRUE)
+#' wb$add_data(2, x = iris, with_filter = TRUE)
 #'
 #' ## Similarly
 #' wb$add_data_table(3, iris)
@@ -1962,10 +1956,10 @@ wb_add_data_validation <- function(
 
 #' Get/set worksheet visible state
 #'
-#' Get and set worksheet visible state
+#' Get and set worksheet visible state. This allows to hide worksheets from the workbook.
 #'
-#' @return Character vector of worksheet names.
-#' @return  Vector of "hidden", "visible", "veryHidden"
+#' @return A named haracter vector of worksheet names with their visibility value
+#'   of "hidden", "visible", "veryHidden" (`get`). or the `wbWorkbook`, invisibly (`set`)
 #' @examples
 #'
 #' wb <- wb_workbook()
@@ -1978,10 +1972,10 @@ wb_add_data_validation <- function(
 #' wb$set_sheet_visibility(2, FALSE)        ## hide sheet 2
 #' wb$set_sheet_visibility(3, "hidden")     ## hide sheet 3
 #' wb$set_sheet_visibility(3, "veryHidden") ## hide sheet 3 from UI
-#' @name sheet_visibility
+#' @name wb_sheet_visibility
 NULL
 
-#' @rdname sheet_visibility
+#' @rdname wb_sheet_visibility
 #' @param wb A `wbWorkbook` object
 #' @export
 wb_get_sheet_visibility <- function(wb) {
@@ -1989,9 +1983,10 @@ wb_get_sheet_visibility <- function(wb) {
   wb$get_sheet_visibility()
 }
 
-#' @rdname sheet_visibility
+#' @rdname wb_sheet_visibility
 #' @param sheet Worksheet identifier
-#' @param value a logical/character vector the same length as sheet
+#' @param value a logical/character vector the same length as sheet,
+#'   if provding a character vector, you can provide any of "hidden", "visible", or "veryHidden"
 #' @export
 wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
   assert_workbook(wb)
@@ -2024,9 +2019,8 @@ wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NUL
 }
 
 
-#' @name wb_get_tables
-#' @title List Excel tables in a workbook
-#' @description List Excel tables in a workbook
+#' List Excel tables in a workbook
+#'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @return character vector of table names on the specified sheet
@@ -2034,12 +2028,13 @@ wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NUL
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet(sheet = "Sheet 1")
-#' wb$add_data_table(sheet = "Sheet 1", x = iris)
-#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb$add_data_table(x = iris)
+#' wb$add_data_table(x = mtcars, table_name = "mtcars", start_col = 10)
 #'
 #' wb$get_tables(sheet = "Sheet 1")
 #' @export
 wb_get_tables <- function(wb, sheet = current_sheet()) {
+  # TODO check if wb_get_named_regions behaviour could be integrated with this one
   assert_workbook(wb)
   wb$clone()$get_tables(sheet = sheet)
 }
@@ -2255,16 +2250,16 @@ wb_get_creators <- function(wb) {
 #' Gets / Sets the worksheet names for a [wbWorkbook] object.
 #'
 #' This only changes the sheet name as shown in spreadsheet software
-#' and will not alter it anywhere else. Not in formulas, chart references,
+#' and will not alter it elsewhere. Not in formulas, chart references,
 #' named regions, pivot tables or anywhere else.
 #'
-#' @param wb A `wbWorkbook` object
+#' @param wb A [wbWorkbook] object
 #' @param old The name (or index) of the old sheet name. If `NULL` will assume
 #'   all worksheets are to be renamed.
 #' @param new The name of the new sheet
 #' @name wb_sheet_names
 #' @returns
-#'   * `set_`: The [wbWorkbook] object.
+#'   * `set_`: The `wbWorkbook` object.
 #'   * `get_`: A named character vector of sheet names in order. The
 #'   names represent the original value of the worksheet prior to any character
 #'   substitutions.
@@ -2277,7 +2272,7 @@ wb_set_sheet_names <- function(wb, old = NULL, new) {
   wb$clone()$set_sheet_names(old = old, new = new)
 }
 #' @rdname wb_sheet_names
-#' @param escape Logical if the xml special characters are escaped
+#' @param escape Should the xml special characters be escaped?
 #' @export
 wb_get_sheet_names <- function(wb, escape = FALSE) {
   assert_workbook(wb)
@@ -2460,7 +2455,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   wb$clone()$add_style(style, style_name)
 }
 
-#' Get and Set cell style
+#' Apply styling to a cell region
 #'
 #' @name wb_cell_style
 #' @param wb A `wbWorkbook` object
@@ -2484,7 +2479,7 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
 }
 
 #' @rdname wb_cell_style
-#' @param style style
+#' @param style A style
 #' @return wb_set_cell_style returns the workbook invisibly.
 #' @export
 wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
@@ -3245,7 +3240,9 @@ wb_add_conditional_formatting <- function(
 
 #' clone sheets style
 #'
-#' @param wb workbook
+#' This function can be used to apply styling from a cell range, and apply it
+#' to another cell range.
+#' @param wb A workbook
 #' @param from sheet we select the style from
 #' @param to sheet we apply the style from
 #' @export
@@ -3254,14 +3251,14 @@ wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
   wb$clone()$clone_sheet_style(from, to)
 }
 
-#' Add sparklines to workbook
+#' Add sparklines to a worksheet
 #'
 #' @param wb A `wbWorkbook`
 #' @param sheet sheet to add the sparklines to
 #' @param sparklines sparklines object created with [create_sparklines()]
 #' @seealso [create_sparklines()]
 #' @examples
-#'  sl <- create_sparklines("Sheet 1", "A3:K3", "L3")
+#'  sl <- create_sparklines("Sheet 1", dims = "A3:K3", sqref = "L3")
 #'  wb <- wb_workbook() %>%
 #'    wb_add_worksheet() %>%
 #'    wb_add_data(x = mtcars) %>%
@@ -3272,21 +3269,23 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }
 
-#' Ignore error on worksheet
+#' Ignore error types on worksheet
 #'
-#' @param wb workbook
-#' @param sheet sheet
-#' @param dims dims
+#' This function allows to hide / ignore certain types of errors shown in a worksheet.
+#' @param wb A workbook
+#' @param sheet A sheet name or index.
+#' @param dims Cell range to ignore the error
 #' @param calculated_column calculatedColumn
 #' @param empty_cell_reference emptyCellReference
 #' @param eval_error evalError
 #' @param formula formula
 #' @param formula_range formulaRange
 #' @param list_data_validation listDataValidation
-#' @param number_stored_as_text numberStoredAsText
+#' @param number_stored_as_text If `TRUE`, will not display the error if numbers are stored as text.
 #' @param two_digit_text_year twoDigitTextYear
 #' @param unlocked_formula unlockedFormula
 #' @param ... additional arguments
+#' @return The `wbWorkbook` object, invisibly.
 wb_add_ignore_error <- function(
     wb,
     sheet                 = current_sheet(),
@@ -3319,8 +3318,11 @@ wb_add_ignore_error <- function(
     )
 }
 
-#' add sheetview
-#' @param wb workbook
+#' Modify a worksheet default view
+#'
+#' This helps set a worksheet's appearance, such as the zoom, whether to show grid lines
+#'
+#' @param wb A workbook
 #' @param sheet sheet
 #' @param color_id,default_grid_color Integer: A color, default is 64
 #' @param right_to_left Logical: if TRUE column ordering is right  to left
@@ -3334,7 +3336,7 @@ wb_add_ignore_error <- function(
 #' @param tab_selected Integer: zero vector indicating the selected tab
 #' @param top_left_cell Cell: the cell shown in the top left corner / or top right with rightToLeft
 #' @param view View: "normal", "pageBreakPreview" or "pageLayout"
-#' @param window_protection Logical: if TRUE the panes are protected
+#' @param window_protection Logical: if `TRUE` the panes are protected
 #' @param workbook_view_id integer: Pointing to some other view inside the workbook
 #' @param zoom_scale,zoom_scale_normal,zoom_scale_page_layout_view,zoom_scale_sheet_layout_view
 #'   Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
@@ -3343,20 +3345,20 @@ wb_add_ignore_error <- function(
 #' wb <- wb_workbook()$add_worksheet()
 #'
 #' wb$set_sheetview(
-#'   zoomScale = 75,
-#'   rightToLeft = FALSE,
-#'   showFormulas = TRUE,
-#'   showGridLines = TRUE,
-#'   showOutlineSymbols = FALSE,
-#'   showRowColHeaders = TRUE,
-#'   showRuler = TRUE,
-#'   showWhiteSpace = FALSE,
-#'   tabSelected = 1,
-#'   topLeftCell = "B1",
+#'   zoom_scale = 75,
+#'   right_to_left = FALSE,
+#'   show_formulas = TRUE,
+#'   show_grid_lines = TRUE,
+#'   show_outline_symbols = FALSE,
+#'   show_row_col_headers = TRUE,
+#'   show_ruler = TRUE,
+#'   show_white_space = FALSE,
+#'   tab_selected = 1,
+#'   top_left_cell = "B1",
 #'   view = "normal",
-#'   windowProtection = TRUE
+#'   window_protection = TRUE
 #' )
-#' @return The `wbWorksheetObject`, invisibly
+#' @return The `wbWorkbook` object, invisibly
 #' @export
 wb_set_sheetview <- function(
     wb,
@@ -3408,10 +3410,12 @@ wb_set_sheetview <- function(
   )
 }
 
-#' get and set table of sheets and their state as selected and active
-#' @description Multiple sheets can be selected, but only a single one can be
-#' active (visible). The visible sheet, must not necessarily be a selected
-#' sheet.
+#' Get and set table of sheets and their state as selected and active
+#'
+#' @description
+#' Multiple sheets can be selected, but only a single one can be active (visible).
+#' The visible sheet, must not necessarily be a selected sheet.
+#'
 #' @param wb a workbook
 #' @returns a data frame with tabSelected and names
 #' @export
@@ -3425,13 +3429,13 @@ wb_set_sheetview <- function(
 #'   wb_get_active_sheet(wb)
 #'   # change the selected sheet to Sheet2
 #'   wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
-#' @name select_active_sheet
+#' @name wb_active_sheet
 wb_get_active_sheet <- function(wb) {
   assert_workbook(wb)
   wb$get_active_sheet()
 }
 
-#' @rdname select_active_sheet
+#' @rdname wb_active_sheet
 #' @param sheet a sheet name of the workbook
 #' @export
 wb_set_active_sheet <- function(wb, sheet) {
@@ -3440,14 +3444,14 @@ wb_set_active_sheet <- function(wb, sheet) {
   wb$clone()$set_active_sheet(sheet = sheet)
 }
 
-#' @name select_active_sheet
+#' @rdname wb_active_sheet
 #' @export
 wb_get_selected <- function(wb) {
   assert_workbook(wb)
   wb$get_selected()
 }
 
-#' @name select_active_sheet
+#' @rdname wb_active_sheet
 #' @export
 wb_set_selected <- function(wb, sheet) {
   assert_workbook(wb)

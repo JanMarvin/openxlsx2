@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_header_footer}
 \alias{wb_set_header_footer}
-\title{Set document headers and footers}
+\title{Set headers and footers of a worksheet}
 \usage{
 wb_set_header_footer(
   wb,
@@ -21,49 +21,32 @@ wb_set_header_footer(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{header}{document header. Character vector of length 3 corresponding to
-positions left, center, right. Use \code{NA} to skip a position.}
-
-\item{footer}{document footer. Character vector of length 3 corresponding to
-positions left, center, right. Use \code{NA} to skip a position.}
-
-\item{even_header}{document header for even pages.}
-
-\item{even_footer}{document footer for even pages.}
-
-\item{first_header}{document header for first page only.}
-
-\item{first_footer}{document footer for first page only.}
-
 \item{...}{additional arguments}
 }
 \description{
-Set document headers and footers
+Set document headers and footers. You can also do this when adding a worksheet
+with \code{\link[=wb_add_worksheet]{wb_add_worksheet()}} with the \code{header}, \code{footer} arguments and friends.
 }
 \details{
 Headers and footers can contain special tags
 \itemize{
-\item{\strong{&[Page]}}{ Page number}
-\item{\strong{&[Pages]}}{ Number of pages}
-\item{\strong{&[Date]}}{ Current date}
-\item{\strong{&[Time]}}{ Current time}
-\item{\strong{&[Path]}}{ File path}
-\item{\strong{&[File]}}{ File name}
-\item{\strong{&[Tab]}}{ Worksheet name}
+\item \strong{&[Page]} Page number
+\item \strong{&[Pages]} Number of pages
+\item \strong{&[Date]} Current date
+\item \strong{&[Time]} Current time
+\item \strong{&[Path]} File path
+\item \strong{&[File]} File name
+\item \strong{&[Tab]} Worksheet name
 }
 }
 \examples{
 wb <- wb_workbook()
 
-wb$add_worksheet("S1")
-wb$add_worksheet("S2")
-wb$add_worksheet("S3")
-wb$add_worksheet("S4")
-
-wb$add_data(1, 1:400)
-wb$add_data(2, 1:400)
-wb$add_data(3, 3:400)
-wb$add_data(4, 3:400)
+# Add example data
+wb$add_worksheet("S1")$add_data(x = 1:400)
+wb$add_worksheet("S2")$add_data(x = 1:400)
+wb$add_worksheet("S3")$add_data(x = 3:400)
+wb$add_worksheet("S4")$add_data(x = 3:400)
 
 wb$set_header_footer(
   sheet = "S1",
@@ -94,7 +77,4 @@ wb$set_header_footer(
   firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
   firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
-}
-\seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}} to set headers and footers when adding a worksheet
 }

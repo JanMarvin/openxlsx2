@@ -2,7 +2,6 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_worksheet}
 \alias{wb_add_worksheet}
-\alias{wb_remove_worksheet}
 \title{Add a worksheet to a workbook}
 \usage{
 wb_add_worksheet(
@@ -28,11 +27,9 @@ wb_add_worksheet(
   vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
   ...
 )
-
-wb_remove_worksheet(wb, sheet = current_sheet())
 }
 \arguments{
-\item{wb}{A Workbook object to attach the new worksheet}
+\item{wb}{A \code{wbWorkbook} object to attach the new worksheet}
 
 \item{sheet}{A name for the new worksheet}
 
@@ -43,71 +40,78 @@ hidden.}
 hidden.}
 
 \item{tab_color}{Color of the worksheet tab. A valid color (belonging to
-colors()) or a valid hex color beginning with "#"}
+\code{grDevices::colors()}), a valid hex color beginning with "#" or \code{\link[=wb_color]{wb_color()}}}
 
-\item{zoom}{A numeric between 10 and 400. Worksheet zoom level as a
-percentage.}
+\item{zoom}{The worksheet zoom level, a numeric between 10 and 400 as a
+percentage. (A zoom value smaller than 10 will default to 10.)}
 
 \item{header, odd_header, even_header, first_header, footer, odd_footer, even_footer, first_footer}{Character vector of length 3 corresponding to positions left, center,
 right.  \code{header} and \code{footer} are used to default additional arguments.
 Setting \code{even}, \code{odd}, or \code{first}, overrides \code{header}/\code{footer}. Use \code{NA} to
 skip a position.}
 
-\item{visible}{If FALSE, sheet is hidden else visible.}
+\item{visible}{If \code{FALSE}, sheet is hidden else visible.}
 
-\item{has_drawing}{If TRUE prepare a drawing output (TODO does this work?)}
+\item{has_drawing}{If \code{TRUE} prepare a drawing output (TODO does this work?)}
 
 \item{paper_size}{An integer corresponding to a paper size. See \code{\link[=wb_page_setup]{wb_page_setup()}} for
 details.}
 
 \item{orientation}{One of "portrait" or "landscape"}
 
-\item{hdpi}{Horizontal DPI. Can be set with options("openxlsx2.dpi" = X) or
-options("openxlsx2.hdpi" = X)}
+\item{hdpi, vdpi}{Horizontal and vertical DPI. Can be set with \code{options("openxlsx2.dpi" = X)},
+\code{options("openxlsx2.hdpi" = X)} or \code{options("openxlsx2.vdpi" = X)}}
 
-\item{vdpi}{Vertical DPI. Can be set with options("openxlsx2.dpi" = X) or
-options("openxlsx2.vdpi" = X)}
-
-\item{...}{...}
+\item{...}{Additional arguments}
 }
 \value{
-The \link{wbWorkbook} object \code{wb}
+The \code{wbWorkbook} object, invisibly.
 }
 \description{
-Add a worksheet to a workbook
+Add a worksheet to a \link{wbWorkbook} is the first step to build a workbook.
+With the function, you can also set the sheet view with \code{zoom}, set headers
+and footers as well as other features. See the function arguments.
 }
 \details{
-Headers and footers can contain special tags \itemize{
-\item{\strong{&[Page]}}{ Page number} \item{\strong{&[Pages]}}{ Number of pages}
-\item{\strong{&[Date]}}{ Current date} \item{\strong{&[Time]}}{ Current time}
-\item{\strong{&[Path]}}{ File path} \item{\strong{&[File]}}{ File name}
-\item{\strong{&[Tab]}}{ Worksheet name} }
+Headers and footers can contain special tags
+\itemize{
+\item \strong{&[Page]} Page number
+\item \strong{&[Pages]} Number of pages
+\item \strong{&[Date]} Current date
+\item \strong{&[Time]} Current time
+\item \strong{&[Path]} File path
+\item \strong{&[File]} File name
+\item \strong{&[Tab]} Worksheet name
+}
 }
 \examples{
 ## Create a new workbook
-wb <- wb_workbook("Fred")
+wb <- wb_workbook()
 
-## Add 3 worksheets
+## Add a worksheet
 wb$add_worksheet("Sheet 1")
-wb$add_worksheet("Sheet 2", gridLines = FALSE)
-wb$add_worksheet("Sheet 3", tabColor = "red")
-wb$add_worksheet("Sheet 4", gridLines = FALSE, tabColor = "#4F81BD")
+## No grid lines
+wb$add_worksheet("Sheet 2", grid_lines = FALSE)
+## A red tab color
+wb$add_worksheet("Sheet 3", tab_color = "red")
+## All options combined with a zoom of 40\%
+wb$add_worksheet("Sheet 4", grid_lines = FALSE, tab_color = "#4F81BD", zoom = 40)
 
 ## Headers and Footers
 wb$add_worksheet("Sheet 5",
   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
-  evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
-  evenFooter = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
-  firstHeader = c("TOP", "OF FIRST", "PAGE"),
-  firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
+  even_header = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
+  even_footer = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
+  first_header = c("TOP", "OF FIRST", "PAGE"),
+  first_footer = c("BOTTOM", "OF FIRST", "PAGE")
 )
 
 wb$add_worksheet("Sheet 6",
   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
   footer = c("&[Path]&[File]", NA, "&[Tab]"),
-  firstHeader = c(NA, "Center Header of First Page", NA),
-  firstFooter = c(NA, "Center Footer of First Page", NA)
+  first_header = c(NA, "Center Header of First Page", NA),
+  first_footer = c(NA, "Center Footer of First Page", NA)
 )
 
 wb$add_worksheet("Sheet 7",
@@ -116,8 +120,8 @@ wb$add_worksheet("Sheet 7",
 )
 
 wb$add_worksheet("Sheet 8",
-  firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
-  firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
+  first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+  first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
 
 ## Need data on worksheet to see all headers and footers
@@ -125,11 +129,6 @@ wb$add_data(sheet = 5, 1:400)
 wb$add_data(sheet = 6, 1:400)
 wb$add_data(sheet = 7, 1:400)
 wb$add_data(sheet = 8, 1:400)
-## load a workbook
-wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
-
-## Remove sheet 2
-wb <- wb_remove_worksheet(wb, 2)
 }
 \seealso{
 Other workbook wrappers: 

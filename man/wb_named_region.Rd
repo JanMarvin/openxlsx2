@@ -78,6 +78,7 @@ Create / delete a named region
 }
 \details{
 Region is given by: min(cols):max(cols) X min(rows):max(rows)
+You can also use \code{\link[=wb_dims]{wb_dims()}} to specify the cell range.
 }
 \examples{
 ## create named regions
@@ -85,35 +86,24 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 
 ## specify region
-wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
+wb$add_data(x = iris, start_col = 1, start_row = 1)
 wb$add_named_region(
-  sheet = 1,
   name = "iris",
-  dims = wb_dims(
-    rows = seq_len(nrow(iris) + 1),
-    cols = seq_along(iris)
-  )
+  dims = wb_dims(x = iris)
 )
 
-
-## using write_data 'name' argument
-wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
-
-out_file <- temp_xlsx()
-wb_save(wb, out_file, overwrite = TRUE)
-
-## see named regions
-wb_get_named_regions(wb) ## From Workbook object
-wb_get_named_regions(out_file) ## From xlsx file
+## using add_data 'name' argument
+wb$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
 
 ## delete one
 wb$remove_named_region(name = "iris2")
 wb_get_named_regions(wb)
 
 ## read named regions
-df <- read_xlsx(wb, namedRegion = "iris")
+df <- wb_to_df(wb, named_region = "iris")
 head(df)
 
-df <- read_xlsx(out_file, namedRegion = "iris2")
-head(df)
+}
+\seealso{
+\code{\link[=wb_get_named_regions]{wb_get_named_regions()}}
 }

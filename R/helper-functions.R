@@ -394,11 +394,12 @@ hashPassword <- function(password) {
 #' Create sparklines object
 #'
 #' Create a sparkline to be added a workbook with [wb_add_sparklines()]
-#' @details the colors are all predefined to be rgb. Maybe theme colors can be
+#'
+#' Colors are all predefined to be rgb. Maybe theme colors can be
 #' used too.
 #' @param sheet sheet
-#' @param dims dims
-#' @param sqref sqref
+#' @param dims Cell range of cells used to create the sparklines
+#' @param sqref Cell range of the destination of the sparklines.
 #' @param type type
 #' @param negative negative
 #' @param displayEmptyCellsAs displayEmptyCellsAs
@@ -455,6 +456,7 @@ create_sparklines <- function(
     colorHigh = wb_color(hex = "FFD00000"),
     colorLow = wb_color(hex = "FFD00000")
 ) {
+  # TODO change arguments to snake case?
 
   assert_class(dims, "character")
   assert_class(sqref, "character")
