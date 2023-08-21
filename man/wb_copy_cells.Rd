@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_copy_cells}
 \alias{wb_copy_cells}
-\title{copy cells around}
+\title{Copy cells around within a worksheet}
 \usage{
 wb_copy_cells(
   wb,
@@ -15,25 +15,25 @@ wb_copy_cells(
 )
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
 \item{sheet}{a worksheet}
 
 \item{dims}{cell used as start}
 
-\item{data}{a wb_data object}
+\item{data}{a \code{\link[=wb_data]{wb_data}} object}
 
-\item{as_value}{should a copy of the value be written}
+\item{as_value}{Should a copy of the value be written?}
 
-\item{as_ref}{should references to the cell be written}
+\item{as_ref}{Should references to the cell be written?}
 
-\item{transpose}{should the data be written transposed}
+\item{transpose}{Should the data be written transposed?}
 }
 \value{
-the wbWorkbook invisibly
+the \code{wbWorkbook} invisibly
 }
 \description{
-copy cells around
+Copy cells around within a worksheet
 }
 \examples{
 wb <- wb_workbook()$
@@ -49,6 +49,8 @@ wb$
   copy_cells(data = dat, dims = "M2")
 }
 \seealso{
+\code{\link[=wb_data]{wb_data()}}
+
 Other workbook wrappers: 
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},

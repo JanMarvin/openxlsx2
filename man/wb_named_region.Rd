@@ -4,7 +4,7 @@
 \alias{wb_named_region}
 \alias{wb_add_named_region}
 \alias{wb_remove_named_region}
-\title{Create / delete a named region}
+\title{Modify named regions in a worksheet}
 \usage{
 wb_add_named_region(
   wb,
@@ -14,12 +14,12 @@ wb_add_named_region(
   local_sheet = FALSE,
   overwrite = FALSE,
   comment = NULL,
+  hidden = NULL,
   custom_menu = NULL,
   description = NULL,
   is_function = NULL,
   function_group_id = NULL,
   help = NULL,
-  hidden = NULL,
   local_name = NULL,
   publish_to_server = NULL,
   status_bar = NULL,
@@ -32,7 +32,7 @@ wb_add_named_region(
 wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 
@@ -43,42 +43,24 @@ Note region names musts be case-insensitive unique.}
 
 \item{local_sheet}{If \code{TRUE} the named region will be local for this sheet}
 
-\item{overwrite}{Boolean. Overwrite if exists? Default to FALSE}
+\item{overwrite}{Boolean. Overwrite if exists? Default to \code{FALSE}}
 
 \item{comment}{description text for named region}
 
-\item{custom_menu}{customMenu (unknown xml feature)}
+\item{hidden}{Should the named region be hidden?}
 
-\item{description}{description (unknown xml feature)}
-
-\item{is_function}{function (unknown xml feature)}
-
-\item{function_group_id}{function group id (unknown xml feature)}
-
-\item{help}{help (unknown xml feature)}
-
-\item{hidden}{hidden if the named region should be hidden}
-
-\item{local_name}{localName (unknown xml feature)}
-
-\item{publish_to_server}{publish to server (unknown xml feature)}
-
-\item{status_bar}{status bar (unknown xml feature)}
-
-\item{vb_procedure}{wbProcedure (unknown xml feature)}
-
-\item{workbook_parameter}{workbookParameter (unknown xml feature)}
-
-\item{xml}{xml (unknown xml feature)}
+\item{custom_menu, description, is_function, function_group_id, help, local_name, publish_to_server, status_bar, vb_procedure, workbook_parameter, xml}{Unknown XML feature}
 
 \item{...}{additional arguments}
 }
 \description{
-Create / delete a named region
+Create / delete a named region. You can also specify a named region by using
+the \code{name} argument in \code{wb_add_data(x = iris, name = "my-region")}.
+It is important to note that named regions are not case-sensitive and must be unique.
 }
 \details{
-Region is given by: min(cols):max(cols) X min(rows):max(rows)
-You can also use \code{\link[=wb_dims]{wb_dims()}} to specify the cell range.
+You can use \code{\link[=wb_dims]{wb_dims()}} to specify the cell range of the named region
+Region is given by: \code{min(cols):max(cols)} X \code{min(rows):max(rows)}
 }
 \examples{
 ## create named regions

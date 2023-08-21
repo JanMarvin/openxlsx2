@@ -23,7 +23,7 @@ wb_add_dxfs_style(
 )
 }
 \arguments{
-\item{wb}{wbWorkbook}
+\item{wb}{A \code{wbWorkbook} object.}
 
 \item{name}{the style name}
 
@@ -57,7 +57,7 @@ wb_add_dxfs_style(
 The \code{wbWorkbook} object, invisibly
 }
 \description{
-These styles are used with conditional formatting and custom table styles
+These styles are used with conditional formatting and custom table styles.
 }
 \examples{
 wb <- wb_workbook() \%>\%
@@ -65,6 +65,6 @@ wb <- wb_workbook() \%>\%
   wb_add_dxfs_style(
    name = "nay",
    font_color = wb_color(hex = "FF9C0006"),
-   bgFill = wb_color(hex = "FFFFC7CE")
+   bg_fill = wb_color(hex = "FFFFC7CE")
   )
 }

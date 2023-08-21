@@ -1952,7 +1952,7 @@ add form control to workbook
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(
   sheet = current_sheet(),
   dims = "A1",
-  type = NULL,
+  type = c("Checkbox", "Radio", "Drop"),
   text = NULL,
   link = NULL,
   range = NULL,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_formula}
 \alias{wb_add_formula}
-\title{Add a character vector as an Excel Formula}
+\title{Add a formula to a cell range in a worksheet}
 \usage{
 wb_add_formula(
   wb,
@@ -19,13 +19,13 @@ wb_add_formula(
 )
 }
 \arguments{
-\item{wb}{A Workbook object containing a worksheet.}
+\item{wb}{A \code{wbWorkbook} containing a worksheet.}
 
-\item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
+\item{sheet}{The worksheet to write to. (either as index or name)}
 
-\item{x}{A character vector.}
+\item{x}{A formula as character vector.}
 
-\item{dims}{Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"}
+\item{dims}{Spreadsheet dimensions that will determine where \code{x} spans: "A1", "A1:B2", "A:B"}
 
 \item{start_col}{A vector specifying the starting column to write to.}
 
@@ -36,14 +36,18 @@ wb_add_formula(
 \item{cm}{A special kind of array function that hides the curly braces in the cell.
 Add this, if you see "@" inserted into your formulas}
 
-\item{apply_cell_style}{Should we write cell styles to the workbook}
+\item{apply_cell_style}{Should we write cell styles to the workbook?}
 
-\item{remove_cell_style}{keep the cell style?,}
+\item{remove_cell_style}{Should we keep the cell style?}
 
 \item{...}{additional arguments}
 }
+\value{
+The workbook, invisibly.
+}
 \description{
-Add a character vector containing Excel formula to a worksheet.
+This function can be used to provide a character vector containing Excel formula to a worksheet.
+Add a character vector as an Excel Formula
 }
 \details{
 Currently only the English version of functions are supported. Please don't use the local translation.
@@ -55,6 +59,14 @@ The examples below show a small list of possible formulas:
 \item MAX(B2:B4)
 \item ...
 }
+}
+\examples{
+wb <- wb_workbook()$add_worksheet()
+wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = t(c(4, 5, 8)), col_names = FALSE)
+
+# calculate the sum of elements.
+wb$add_formula(dims = "D1", x = "SUM(A1:C1)")
+
 }
 \seealso{
 Other workbook wrappers: 

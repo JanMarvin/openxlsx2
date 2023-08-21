@@ -39,8 +39,8 @@ hidden.}
 \item{row_col_headers}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
 hidden.}
 
-\item{tab_color}{Color of the worksheet tab. A valid color (belonging to
-\code{grDevices::colors()}), a valid hex color beginning with "#" or \code{\link[=wb_color]{wb_color()}}}
+\item{tab_color}{Color of the worksheet tab. A  \code{\link[=wb_color]{wb_color()}},  a valid color (belonging to
+\code{grDevices::colors()}) or a valid hex color beginning with "#".}
 
 \item{zoom}{The worksheet zoom level, a numeric between 10 and 400 as a
 percentage. (A zoom value smaller than 10 will default to 10.)}
@@ -93,9 +93,9 @@ wb$add_worksheet("Sheet 1")
 ## No grid lines
 wb$add_worksheet("Sheet 2", grid_lines = FALSE)
 ## A red tab color
-wb$add_worksheet("Sheet 3", tab_color = "red")
+wb$add_worksheet("Sheet 3", tab_color = wb_color("red"))
 ## All options combined with a zoom of 40\%
-wb$add_worksheet("Sheet 4", grid_lines = FALSE, tab_color = "#4F81BD", zoom = 40)
+wb$add_worksheet("Sheet 4", grid_lines = FALSE, tab_color = wb_color(hex = "#4F81BD"), zoom = 40)
 
 ## Headers and Footers
 wb$add_worksheet("Sheet 5",

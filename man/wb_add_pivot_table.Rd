@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_pivot_table}
 \alias{wb_add_pivot_table}
-\title{Add pivot table to a worksheet}
+\title{Add a pivot table to a worksheet}
 \usage{
 wb_add_pivot_table(
   wb,
@@ -20,29 +20,30 @@ wb_add_pivot_table(
 \arguments{
 \item{wb}{A Workbook object containing a #' worksheet.}
 
-\item{x}{a \code{wb_data} object}
+\item{x}{A \code{data.frame} that inherits the \code{\link[=wb_data]{wb_data}} class.}
 
-\item{sheet}{a worksheet}
+\item{sheet}{A worksheet containing a #'}
 
-\item{dims}{the worksheet cell where the pivot table is placed}
+\item{dims}{The worksheet cell where the pivot table is placed}
 
-\item{filter}{a character object with names used to filter}
+\item{filter}{The column name(s) of \code{x} used for filter.}
 
-\item{rows}{a character object with names used as rows}
+\item{rows}{The column name(s) of \code{x} used as rows}
 
-\item{cols}{a character object with names used as cols}
+\item{cols}{The column names(s) of \code{x} used as cols}
 
-\item{data}{a character object with names used as data}
+\item{data}{The column name(s) of \code{x} used as data}
 
-\item{fun}{a character object of functions to be used with the data}
+\item{fun}{A vector of functions to be used with \code{data}}
 
-\item{params}{a list of parameters to modify pivot table creation}
+\item{params}{A list of parameters to modify pivot table creation.}
 }
 \description{
-add pivot table
+Add a pivot table to a worksheet. The data must be specified using \code{\link[=wb_data]{wb_data()}}
+to ensure the function works.
 }
 \details{
-\code{fun} can be either of \code{AVERAGE}, \code{COUNT}, \code{COUNTA}, \code{MAX}, \code{MIN},
+\code{fun} can be any of \code{AVERAGE}, \code{COUNT}, \code{COUNTA}, \code{MAX}, \code{MIN},
 \code{PRODUCT}, \code{STDEV}, \code{STDEVP}, \code{SUM}, \code{VAR}, \code{VARP}.
 
 The sheet will be empty unless it is opened in spreadsheet software.
@@ -50,13 +51,15 @@ The sheet will be empty unless it is opened in spreadsheet software.
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\% wb_add_data(x = mtcars)
 
-df <- wb_data(wb)
+df <- wb_data(wb, sheet = 1)
 
 wb <- wb \%>\%
 wb_add_pivot_table(df, dims = "A3",
   filter = "am", rows = "cyl", cols = "gear", data = "disp")
 }
 \seealso{
+\code{\link[=wb_data]{wb_data()}}
+
 Other workbook wrappers: 
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},

@@ -4,7 +4,7 @@
 \alias{wb_base_font}
 \alias{wb_set_base_font}
 \alias{wb_get_base_font}
-\title{Get / set the default font in a workbook}
+\title{Set the default font in a workbook}
 \usage{
 wb_set_base_font(
   wb,
@@ -41,8 +41,8 @@ wb$add_worksheet("S1")
 ## modify base font to size 10 Arial Narrow in red
 wb$set_base_font(font_size = 10, font_color = "#FF0000", font_name = "Arial Narrow")
 
-wb$add_data("S1", iris)
-wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
+wb$add_data(x = iris)
+wb$add_data_table(x = iris, dims = wb_dims(from_col = 10)) ## font color does not affect tables
 
 ## get the base font
 ## create a workbook
@@ -50,7 +50,7 @@ wb <- wb_workbook()
 wb_get_base_font(wb)
 
 ## modify base font to size 10 Arial Narrow in red
-wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
+wb$set_base_font(font_size = 10, font_color = "#FF0000", font_name = "Arial Narrow")
 
 wb_get_base_font(wb)
 }

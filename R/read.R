@@ -702,13 +702,17 @@ wb_read <- function(
 
 }
 
+#' Add the `wb_data` attribute to a data frame in a worksheet
+#'
 #' provide wb_data object as mschart input
+#'
 #' @param wb a workbook
 #' @param sheet a sheet in the workbook either name or index
 #' @param dims the dimensions
-#' @param ... additional arguments for wb_to_df. Be aware that not every
+#' @param ... additional arguments for `wb_to_df()`. Be aware that not every
 #' argument is valid.
-#' @seealso [wb_to_df()] [wb_add_mschart()]
+#' @returns A data frame of class `wb_data`.
+#' @seealso [wb_to_df()] [wb_add_mschart()], [wb_add_pivot_table()]
 #' @examples
 #'  wb <- wb_workbook() %>%
 #'    wb_add_worksheet() %>%

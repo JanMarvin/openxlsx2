@@ -3,14 +3,14 @@
 \name{wb_merge_cells}
 \alias{wb_merge_cells}
 \alias{wb_unmerge_cells}
-\title{Worksheet cell merging}
+\title{Merge cells within a worksheet}
 \usage{
 wb_merge_cells(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...)
 
 wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 
@@ -21,11 +21,11 @@ wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 \item{...}{additional arguments}
 }
 \description{
-Merge cells within a worksheet
+Worksheet cell merging
 }
 \details{
-As merged region must be rectangular, only min and max of cols and
-rows are used.
+If using the deprecated \code{rows} and \code{cols} arguments with a merged region must be rectangular,
+only min and max of \code{cols} and \code{rows} are used.
 }
 \examples{
 # Create a new workbook

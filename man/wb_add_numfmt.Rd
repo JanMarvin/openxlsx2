@@ -2,12 +2,12 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_numfmt}
 \alias{wb_add_numfmt}
-\title{Add number formatting to a cell region}
+\title{Modify number formatting in a cell region}
 \usage{
 wb_add_numfmt(wb, sheet = current_sheet(), dims = "A1", numfmt)
 }
 \arguments{
-\item{wb}{a workbook}
+\item{wb}{A Workbook}
 
 \item{sheet}{the worksheet}
 
@@ -16,10 +16,11 @@ wb_add_numfmt(wb, sheet = current_sheet(), dims = "A1", numfmt)
 \item{numfmt}{either an id or a character}
 }
 \value{
-The \code{wbWorksheet} Object, invisibly
+The \code{wbWorkbook} object, invisibly.
 }
 \description{
-Add number formatting to a cell region
+Add number formatting to a cell region. You can use a number format created
+by \code{\link[=create_numfmt]{create_numfmt()}}.
 }
 \examples{
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)

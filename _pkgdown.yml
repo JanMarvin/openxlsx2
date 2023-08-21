@@ -38,23 +38,18 @@ reference:
   - wb_add_formula
   - wb_add_conditional_formatting
   - wb_add_pivot_table
-  - wb_named_region
   - wb_add_data_validation
   - wb_add_form_control
-  - wb_add_ignore_error
   - wb_add_page_break
 
-- subtitle: Add styling to a worksheet
+- subtitle: Add styling to a worksheet region
   desc: >
     These functions are related to styling of a region or cells.
   contents:
   - has_concept("styles")
-  - wb_add_border
-  - wb_add_font
-  - wb_add_fill
-  - wb_add_named_style
-  - wb_add_numfmt
   - wb_cell_style
+  - wb_add_named_style
+
 
 - subtitle: Add styling to the workbook
   desc: >
@@ -75,9 +70,8 @@ reference:
   - wb_active_sheet
   - wb_sheet_visibility
   - wb_set_bookview
-  - starts_with("wb_protect")
+  - wb_protect
   - wb_sheet_names
-  - wb_set_header_footer
   - wb_get_tables
   - wb_remove_tables
   - wb_get_named_regions
@@ -88,9 +82,9 @@ reference:
     wbWorkbook object.  They help interact with the mschart package.
   contents:
   - wbChartSheet
+  - wb_data
   - wb_add_chartsheet
   - wb_add_mschart
-  - wb_data
   - wb_add_drawing
   - wb_add_plot
   - wb_add_image
@@ -104,10 +98,14 @@ reference:
   - starts_with("wb_copy")
   - wb_set_sheetview
   - wb_merge_cells
+  - wb_grouping
+  - wb_add_ignore_error
+  - wb_set_header_footer
   - wb_grid_lines
   - wb_update_table
+  - wb_named_region
+  - wb_protect_worksheet
   - wb_page_setup
-  - wb_grouping
 
 - title: Helpers to create argument values used in `wb_*` functions
   desc: >

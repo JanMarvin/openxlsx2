@@ -4,7 +4,7 @@
 \alias{wb_col_widths}
 \alias{wb_set_col_widths}
 \alias{wb_remove_col_widths}
-\title{Modify worksheet column widths}
+\title{Modify column widths of a worksheet}
 \usage{
 wb_set_col_widths(
   wb,
@@ -54,7 +54,7 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 
 ## set col widths
-wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+wb$set_col_widths(cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
 wb$add_worksheet("Sheet 2")

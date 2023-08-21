@@ -41,11 +41,12 @@ wb_add_data(
 
 \item{col_names}{If \code{TRUE}, column names of \code{x} are written.}
 
-\item{row_names}{If \code{TRUE}, data.frame row names of \code{x} are written.}
+\item{row_names}{If \code{TRUE}, the row names of \code{x} are written.}
 
-\item{with_filter}{If \code{TRUE}, add filters to the column name row. NOTE can only have one filter per worksheet.}
+\item{with_filter}{If \code{TRUE}, add filters to the column name row.
+NOTE: can only have one filter per worksheet.}
 
-\item{name}{If not NULL, a named region is defined.}
+\item{name}{The name of a named region if specified.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list
 columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse = sep)}.}
@@ -55,14 +56,14 @@ columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse =
 \item{remove_cell_style}{keep the cell style?}
 
 \item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
-\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
+\code{\link[=na_strings]{na_strings()}} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
 
 \item{...}{additional arguments}
 }
 \value{
-A clone of \code{wb}
+A \code{wbWorkbook}, invisibly.
 }
 \description{
 Add data to worksheet with optional styling.
@@ -101,7 +102,7 @@ wb$add_data("Cars", x, start_col = 2, start_row = 3, row_names = TRUE)
 v <- rep("https://CRAN.R-project.org/", 4)
 names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
 class(v) <- "hyperlink"
-wb$add_data("Cars", x = v, dims = c("B32"))
+wb$add_data("Cars", x = v, dims = "B32")
 
 #############################################################################
 ## Formulas

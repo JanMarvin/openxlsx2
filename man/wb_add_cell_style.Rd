@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_cell_style}
 \alias{wb_add_cell_style}
-\title{Add cell style for cell region}
+\title{Modify the style in a cell region}
 \usage{
 wb_add_cell_style(
   wb,
@@ -99,7 +99,7 @@ wb_add_cell_style(
 The \code{wbWorksheet} Object, invisibly
 }
 \description{
-Add cell style for cell region
+Add cell style to a cell region
 }
 \examples{
  wb <-

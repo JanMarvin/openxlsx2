@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_sheetview}
 \alias{wb_set_sheetview}
-\title{Modify a worksheet default view}
+\title{Modify the default view of a worksheet}
 \usage{
 wb_set_sheetview(
   wb,
@@ -30,27 +30,27 @@ wb_set_sheetview(
 )
 }
 \arguments{
-\item{wb}{A workbook}
+\item{wb}{A Workbook object}
 
 \item{sheet}{sheet}
 
 \item{color_id, default_grid_color}{Integer: A color, default is 64}
 
-\item{right_to_left}{Logical: if TRUE column ordering is right  to left}
+\item{right_to_left}{Logical: if \code{TRUE} column ordering is right  to left}
 
-\item{show_formulas}{Logical: if TRUE cell formulas are shown}
+\item{show_formulas}{Logical: if \code{TRUE} cell formulas are shown}
 
-\item{show_grid_lines}{Logical: if TRUE the worksheet grid is shown}
+\item{show_grid_lines}{Logical: if \code{TRUE} the worksheet grid is shown}
 
-\item{show_outline_symbols}{Logical: if TRUE outline symbols are shown}
+\item{show_outline_symbols}{Logical: if \code{TRUE} outline symbols are shown}
 
-\item{show_row_col_headers}{Logical: if TRUE row and column headers are shown}
+\item{show_row_col_headers}{Logical: if \code{TRUE} row and column headers are shown}
 
-\item{show_ruler}{Logical: if TRUE a ruler is shown in page layout view}
+\item{show_ruler}{Logical: if \code{TRUE} a ruler is shown in page layout view}
 
-\item{show_white_space}{Logical: if TRUE margins are shown in page layout view}
+\item{show_white_space}{Logical: if \code{TRUE} margins are shown in page layout view}
 
-\item{show_zeros}{Logical: if FALSE cells containing zero are shown blank if !showFormulas}
+\item{show_zeros}{Logical: if \code{FALSE} cells containing zero are shown blank if \code{show_formulas = FALSE}}
 
 \item{tab_selected}{Integer: zero vector indicating the selected tab}
 

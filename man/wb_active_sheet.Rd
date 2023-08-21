@@ -6,7 +6,7 @@
 \alias{wb_set_active_sheet}
 \alias{wb_get_selected}
 \alias{wb_set_selected}
-\title{Get and set table of sheets and their state as selected and active}
+\title{Modify the state of active and selected sheets in a workbook}
 \usage{
 wb_get_active_sheet(wb)
 
@@ -25,17 +25,19 @@ wb_set_selected(wb, sheet)
 a data frame with tabSelected and names
 }
 \description{
+Get and set table of sheets and their state as selected and active in a workbook
+
 Multiple sheets can be selected, but only a single one can be active (visible).
 The visible sheet, must not necessarily be a selected sheet.
 }
 \examples{
-  wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
-  # testing is the selected sheet
-  wb_get_selected(wb)
-  # change the selected sheet to Sheet2
-  wb <- wb_set_selected(wb, "Sheet2")
-  # get the active sheet
-  wb_get_active_sheet(wb)
-  # change the selected sheet to Sheet2
-  wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
+wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+# testing is the selected sheet
+wb_get_selected(wb)
+# change the selected sheet to Sheet2
+wb <- wb_set_selected(wb, "Sheet2")
+# get the active sheet
+wb_get_active_sheet(wb)
+# change the selected sheet to Sheet2
+wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
 }

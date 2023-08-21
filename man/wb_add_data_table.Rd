@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_data_table}
 \alias{wb_add_data_table}
-\title{Add data to a worksheet as an Excel table}
+\title{Add an Excel data table to a worksheet}
 \usage{
 wb_add_data_table(
   wb,
@@ -29,17 +29,17 @@ wb_add_data_table(
 )
 }
 \arguments{
-\item{wb}{A Workbook object containing a #' worksheet.}
+\item{wb}{A \code{wbWorkbook} object containing a worksheet.}
 
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
 
-\item{x}{A dataframe.}
+\item{x}{A data frame.}
 
-\item{dims}{Spreadsheet dimensions that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
+\item{dims}{A spreadsheet cell range that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
 
-\item{start_col}{A vector specifying the starting column to write df}
+\item{start_col}{A vector specifying the starting column to write \code{x}}
 
-\item{start_row}{A vector specifying the starting row to write df}
+\item{start_row}{A vector specifying the starting row to write \code{x}}
 
 \item{col_names}{If \code{TRUE}, column names of \code{x} are written.}
 
@@ -53,41 +53,43 @@ vignette).}
 \item{with_filter}{If \code{TRUE}, columns with have filters in the first row.}
 
 \item{sep}{Only applies to list columns. The separator used to collapse list
-columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse = sep)}.
+columns to a character vector e.g.
+\code{sapply(x$list_column, paste, collapse = sep)}.
 \cr\cr
 \cr\strong{The below options correspond to Excel table options:}
 \cr
 \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}}
 
-\item{first_column}{logical. If TRUE, the first column is bold}
+\item{first_column}{logical. If \code{TRUE}, the first column is bold}
 
-\item{last_column}{logical. If TRUE, the last column is bold}
+\item{last_column}{logical. If \code{TRUE}, the last column is bold}
 
-\item{banded_rows}{logical. If TRUE, rows are color banded}
+\item{banded_rows}{logical. If \code{TRUE}, rows are color banded}
 
-\item{banded_cols}{logical. If TRUE, the columns are color banded}
+\item{banded_cols}{logical. If \code{TRUE}, the columns are color banded}
 
 \item{apply_cell_style}{Should we write cell styles to the workbook}
 
 \item{remove_cell_style}{keep the cell style?}
 
 \item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
-\code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
+\code{\link[=na_strings]{na_strings()}} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
 
 \item{...}{additional arguments}
 }
 \description{
-Add data to a worksheet and format as an Excel table
+Add data to a worksheet and format as an Excel table.
 }
 \details{
-columns of \code{x} with class Date/POSIXt, currency, accounting,
-hyperlink, percentage are automatically styled as dates, currency,
-accounting, hyperlinks, percentages respectively. The string \code{"_openxlsx_NA"}
-is reserved for \code{openxlsx2}. If the data frame contains this string, the
-output will be broken.
+The columns of \code{x} with class Date/POSIXt, currency, accounting, hyperlink,
+percentage are automatically styled as dates, currency, accounting, hyperlinks,
+percentages respectively.
+
+The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If \code{x} contains this
+string, the output will be broken.
 }
 \seealso{
 Other workbook wrappers: 

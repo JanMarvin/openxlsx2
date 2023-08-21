@@ -11,7 +11,7 @@ wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
 wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Wrkbook object}
 
 \item{sheet}{A worksheet of the workbook}
 
@@ -22,11 +22,11 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorkbook} object
+The \code{wbWorkbook} object, invisibly.
 }
 \description{
 The comment functions (add and remove) allow the modification of comments.
-In newer spreadsheet software they are called notes, while they are called
+In more recent spreadsheet software they are called notes, while they are called
 comments in openxml. Modification of what newer spreadsheet software now calls
 comment is possible via \code{\link[=wb_add_thread]{wb_add_thread()}}.
 
@@ -50,3 +50,4 @@ wb$add_comment(sheet = 1, dims = "C10", comment = c2)
 \seealso{
 \code{\link[=create_comment]{create_comment()}}, \code{\link[=wb_add_thread]{wb_add_thread()}}
 }
+\keyword{comments}

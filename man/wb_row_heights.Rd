@@ -4,7 +4,7 @@
 \alias{wb_row_heights}
 \alias{wb_set_row_heights}
 \alias{wb_remove_row_heights}
-\title{Modify worksheet row heights}
+\title{Modify row heights of a worksheet}
 \usage{
 wb_set_row_heights(
   wb,

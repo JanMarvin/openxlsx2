@@ -4823,12 +4823,14 @@ wbWorkbook <- R6::R6Class(
     add_form_control = function(
       sheet   = current_sheet(),
       dims    = "A1",
-      type    = NULL,
+      type    = c("Checkbox", "Radio", "Drop"),
       text    = NULL,
       link    = NULL,
       range   = NULL,
       checked = FALSE
     ) {
+      # FIXME The radio button can't be unchecked. (the checkbox works)
+      # TODO add button to many cells? (i.e. dims is larger than 1.)
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -4851,13 +4853,10 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      if (is.null(text)) {
-        text <- ""
-      }
+      text <- text %||% ""
 
-      if (is.null(type)) {
-        type <- "Checkbox"
-      }
+      type <- match.arg(type)
+
 
       clientData <- genClientDataFC(left, top, right, bottom, link, range, type, checked)
 
@@ -5015,6 +5014,7 @@ wbWorkbook <- R6::R6Class(
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
+      # TODO maybe print more information here?
       exSheets <- self$get_sheet_names(escape = TRUE)
       nSheets <- length(exSheets)
       nImages <- length(self$media)

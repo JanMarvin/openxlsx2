@@ -11,7 +11,7 @@ wb_clone_worksheet(wb, old = current_sheet(), new = next_sheet())
 
 \item{old}{Name of existing worksheet to copy}
 
-\item{new}{Name of New worksheet to create}
+\item{new}{Name of the new worksheet to create}
 }
 \value{
 The \code{wbWorkbook} object, invisibly.
@@ -29,7 +29,9 @@ wb <- wb_workbook()
 
 # Add worksheets
 wb$add_worksheet("Sheet 1")
-wb$clone_worksheet("Sheet 1", "Sheet 2")
+wb$clone_worksheet("Sheet 1", new = "Sheet 2")
+# Take advantage of waiver functions
+wb$clone_worksheet(old = "Sheet 1")
 }
 \seealso{
 Other workbook wrappers: 

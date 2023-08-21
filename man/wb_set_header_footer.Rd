@@ -26,6 +26,7 @@ wb_set_header_footer(
 \description{
 Set document headers and footers. You can also do this when adding a worksheet
 with \code{\link[=wb_add_worksheet]{wb_add_worksheet()}} with the \code{header}, \code{footer} arguments and friends.
+These will show up when printing an xlsx file.
 }
 \details{
 Headers and footers can contain special tags
@@ -52,18 +53,18 @@ wb$set_header_footer(
   sheet = "S1",
   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
-  evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
-  evenFooter = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
-  firstHeader = c("TOP", "OF FIRST", "PAGE"),
-  firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
+  even_header = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
+  even_footer = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
+  first_header = c("TOP", "OF FIRST", "PAGE"),
+  first_footer = c("BOTTOM", "OF FIRST", "PAGE")
 )
 
 wb$set_header_footer(
   sheet = 2,
   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
   footer = c("&[Path]&[File]", NA, "&[Tab]"),
-  firstHeader = c(NA, "Center Header of First Page", NA),
-  firstFooter = c(NA, "Center Footer of First Page", NA)
+  first_header = c(NA, "Center Header of First Page", NA),
+  first_footer = c(NA, "Center Footer of First Page", NA)
 )
 
 wb$set_header_footer(
@@ -74,7 +75,7 @@ wb$set_header_footer(
 
 wb$set_header_footer(
   sheet = 4,
-  firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
-  firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
+  first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+  first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
 }

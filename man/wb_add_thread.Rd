@@ -23,7 +23,7 @@ wb_add_thread(
 \arguments{
 \item{wb}{a workbook}
 
-\item{name}{the name to display}
+\item{name}{the name of the person to display.}
 
 \item{id}{(optional) the display id}
 
