@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_border}
 \alias{wb_add_border}
-\title{Add border for cell region}
+\title{Add border to a cell region}
 \usage{
 wb_add_border(
   wb,
@@ -28,7 +28,7 @@ wb_add_border(
 
 \item{sheet}{A worksheet}
 
-\item{dims}{dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"}
+\item{dims}{Cell range in the worksheet e.g. "A1", "A1:A5", "A1:H5"}
 
 \item{bottom_color, left_color, right_color, top_color, inner_hcolor, inner_vcolor}{a color, either something openxml knows or some RGB color}
 
@@ -38,7 +38,7 @@ See \code{\link[=create_border]{create_border()}} for possible border styles}
 \item{...}{additional arguments}
 }
 \description{
-wb wrapper to create borders for cell region.
+wb wrapper to create borders for cell regions.
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\%  wb_add_data("S1", mtcars)
@@ -50,6 +50,7 @@ wb <- wb_add_border(wb, 1, dims = "A5",
  top_border = "hair", bottom_border = "thick")
 wb <- wb_add_border(wb, 1, dims = "C2:C5")
 wb <- wb_add_border(wb, 1, dims = "G2:H3")
+
 wb <- wb_add_border(wb, 1, dims = "G12:H13",
  left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
  top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
@@ -66,7 +67,6 @@ Other styles:
 \code{\link{wb_add_cell_style}()},
 \code{\link{wb_add_fill}()},
 \code{\link{wb_add_font}()},
-\code{\link{wb_add_numfmt}()},
-\code{\link{wb_clone_sheet_style}()}
+\code{\link{wb_add_numfmt}()}
 }
 \concept{styles}

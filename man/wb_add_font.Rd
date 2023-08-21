@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_font}
 \alias{wb_add_font}
-\title{Add font for cell region}
+\title{Modify font in a cell region}
 \usage{
 wb_add_font(
   wb,
@@ -35,7 +35,7 @@ wb_add_font(
 
 \item{name}{font name: default "Calibri"}
 
-\item{color}{rgb color: default "FF000000"}
+\item{color}{rgb color: default "FF000000", or an object created by \code{\link[=wb_color]{wb_color()}}}
 
 \item{size}{font size: default "11",}
 
@@ -66,10 +66,10 @@ wb_add_font(
 \item{...}{...}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook}, invisibly
 }
 \description{
-Add font for cell region
+Modify font in a cell region
 }
 \details{
 \code{wb_add_font()} provides all the options openxml accepts for a font node,
@@ -84,7 +84,6 @@ Other styles:
 \code{\link{wb_add_border}()},
 \code{\link{wb_add_cell_style}()},
 \code{\link{wb_add_fill}()},
-\code{\link{wb_add_numfmt}()},
-\code{\link{wb_clone_sheet_style}()}
+\code{\link{wb_add_numfmt}()}
 }
 \concept{styles}

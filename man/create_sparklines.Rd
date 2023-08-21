@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper-functions.R
 \name{create_sparklines}
 \alias{create_sparklines}
-\title{create sparklines used in \code{add_sparline()}}
+\title{Create sparklines object}
 \usage{
 create_sparklines(
   sheet = current_sheet(),
@@ -65,8 +65,11 @@ create_sparklines(
 
 \item{colorLow}{colorLow}
 }
+\value{
+A string containing XML code
+}
 \description{
-create sparklines used in \code{add_sparline()}
+Create a sparkline to be added a workbook with \code{\link[=wb_add_sparklines]{wb_add_sparklines()}}
 }
 \details{
 the colors are all predefined to be rgb. Maybe theme colors can be

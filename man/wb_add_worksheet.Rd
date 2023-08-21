@@ -2,6 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_worksheet}
 \alias{wb_add_worksheet}
+\alias{wb_remove_worksheet}
 \title{Add a worksheet to a workbook}
 \usage{
 wb_add_worksheet(
@@ -27,6 +28,8 @@ wb_add_worksheet(
   vdpi = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
   ...
 )
+
+wb_remove_worksheet(wb, sheet = current_sheet())
 }
 \arguments{
 \item{wb}{A Workbook object to attach the new worksheet}
@@ -122,6 +125,11 @@ wb$add_data(sheet = 5, 1:400)
 wb$add_data(sheet = 6, 1:400)
 wb$add_data(sheet = 7, 1:400)
 wb$add_data(sheet = 8, 1:400)
+## load a workbook
+wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+
+## Remove sheet 2
+wb <- wb_remove_worksheet(wb, 2)
 }
 \seealso{
 Other workbook wrappers: 

@@ -73,7 +73,7 @@ wbWorkbook <- R6::R6Class(
     #' @field media media
     media = NULL,
 
-    #' @field metadata metadata
+    #' @field metadata contains cell/value metadata imported on load from xl/metadata.xml
     metadata = NULL,
 
     #' @field persons persons

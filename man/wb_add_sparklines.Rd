@@ -2,19 +2,19 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_sparklines}
 \alias{wb_add_sparklines}
-\title{add sparklines to workbook}
+\title{Add sparklines to workbook}
 \usage{
 wb_add_sparklines(wb, sheet = current_sheet(), sparklines)
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A \code{wbWorkbook}}
 
 \item{sheet}{sheet to add the sparklines to}
 
-\item{sparklines}{sparklines object created with \code{create_sparklines()}}
+\item{sparklines}{sparklines object created with \code{\link[=create_sparklines]{create_sparklines()}}}
 }
 \description{
-add sparklines to workbook
+Add sparklines to workbook
 }
 \examples{
  sl <- create_sparklines("Sheet 1", "A3:K3", "L3")

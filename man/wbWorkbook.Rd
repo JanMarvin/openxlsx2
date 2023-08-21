@@ -114,7 +114,7 @@ create_border
 
 \item{\code{media}}{media}
 
-\item{\code{metadata}}{metadata}
+\item{\code{metadata}}{contains cell/value metadata imported on load from xl/metadata.xml}
 
 \item{\code{persons}}{persons}
 

@@ -2,8 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_dxfs_style}
 \alias{wb_add_dxfs_style}
-\title{add dxfs style
-These styles are used with conditional formatting and custom table styles}
+\title{Set a dxfs styling for the workbook}
 \usage{
 wb_add_dxfs_style(
   wb,
@@ -52,13 +51,12 @@ wb_add_dxfs_style(
 
 \item{text_underline}{logical if text is underlined}
 
-\item{...}{additional arguments passed to \code{create_dxfs_style()}}
+\item{...}{additional arguments passed to \code{\link[=create_dxfs_style]{create_dxfs_style()}}}
 }
 \value{
-The \code{wbWorkbookObject}, invisibly
+The \code{wbWorkbook} object, invisibly
 }
 \description{
-add dxfs style
 These styles are used with conditional formatting and custom table styles
 }
 \examples{

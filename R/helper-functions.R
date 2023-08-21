@@ -391,7 +391,9 @@ hashPassword <- function(password) {
   format(as.hexmode(hash), upper.case = TRUE)
 }
 
-#' create sparklines used in `add_sparline()`
+#' Create sparklines object
+#'
+#' Create a sparkline to be added a workbook with [wb_add_sparklines()]
 #' @details the colors are all predefined to be rgb. Maybe theme colors can be
 #' used too.
 #' @param sheet sheet
@@ -413,6 +415,7 @@ hashPassword <- function(password) {
 #' @param colorLast colorLast
 #' @param colorHigh colorHigh
 #' @param colorLow colorLow
+#' @return A string containing XML code
 #' @examples
 #' # create sparklineGroup
 #' sparklines <- c(

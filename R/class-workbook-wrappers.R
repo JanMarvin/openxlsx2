@@ -1073,11 +1073,7 @@ wb_add_mschart <- function(
   )
 }
 
-#' @title Remove a worksheet from a workbook
-#' @description Remove a worksheet from a Workbook object
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @description Remove a worksheet from a workbook
+#' @rdname wb_add_worksheet
 #' @export
 #' @examples
 #' ## load a workbook
@@ -1736,10 +1732,10 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' df <- read_xlsx(out_file, namedRegion = "iris2")
 #' head(df)
-#' @name named_region
+#' @name wb_named_region
 NULL
 
-#' @rdname named_region
+#' @rdname wb_named_region
 #' @export
 wb_add_named_region <- function(
   wb,
@@ -1787,7 +1783,7 @@ wb_add_named_region <- function(
   )
 }
 
-#' @rdname named_region
+#' @rdname wb_named_region
 #' @export
 wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
   assert_workbook(wb)
@@ -2434,12 +2430,14 @@ wb_open <- function(wb) {
   wb$open()
 }
 
-#' Add style to workbook
+#' Set the workbook style
 #'
-#' @description wb wrapper to add style to workbook
-#' @param wb workbook
-#' @param style style xml character
+#' wb wrapper to add style to workbook
+#'
+#' @param wb A workbook
+#' @param style style xml character, created by a `create_*()` function.
 #' @param style_name style name used optional argument
+#' @return The `wbWorkbook` object, invisibly.
 #' @seealso
 #' * [create_border()]
 #' * [create_cell_style()]
@@ -2452,7 +2450,7 @@ wb_open <- function(wb) {
 #' yellow_f <- wb_color(hex = "FF9C6500")
 #' yellow_b <- wb_color(hex = "FFFFEB9C")
 #'
-#' yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
+#' yellow <- create_dxfs_style(font_color = yellow_f, bg_fill = yellow_b)
 #' wb <- wb_workbook() %>% wb_add_style(yellow)
 #' @export
 wb_add_style <- function(wb, style = NULL, style_name = NULL) {
@@ -2464,10 +2462,10 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 
 #' Get and Set cell style
 #'
-#' @name cell_style
-#' @param wb wb
+#' @name wb_cell_style
+#' @param wb A `wbWorkbook` object
 #' @param sheet sheet
-#' @param dims dims
+#' @param dims A cell range in the worksheet
 #' @examples
 #' # set a style in b1
 #' wb <- wb_workbook()$add_worksheet()$
@@ -2485,7 +2483,7 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
   wb$clone()$get_cell_style(sheet, dims)
 }
 
-#' @rdname cell_style
+#' @rdname wb_cell_style
 #' @param style style
 #' @return wb_set_cell_style returns the workbook invisibly.
 #' @export
@@ -2495,12 +2493,12 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
 }
 
-#' Add border for cell region
+#' Add border to a cell region
 #'
-#' wb wrapper to create borders for cell region.
+#' wb wrapper to create borders for cell regions.
 #' @param wb A `wbWorkbook`
 #' @param sheet A worksheet
-#' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
+#' @param dims Cell range in the worksheet e.g. "A1", "A1:A5", "A1:H5"
 #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor
 #'   a color, either something openxml knows or some RGB color
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid
@@ -2518,6 +2516,7 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #'  top_border = "hair", bottom_border = "thick")
 #' wb <- wb_add_border(wb, 1, dims = "C2:C5")
 #' wb <- wb_add_border(wb, 1, dims = "G2:H3")
+#'
 #' wb <- wb_add_border(wb, 1, dims = "G12:H13",
 #'  left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
 #'  top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
@@ -2567,7 +2566,7 @@ wb_add_border <- function(
 
 }
 
-#' Add fill for cell region
+#' Modify the background fill color in a cell region
 #'
 #' Add fill to a cell region.
 #'
@@ -2602,7 +2601,7 @@ wb_add_border <- function(
 #' <stop position="1"><color theme="4"/></stop>
 #' </gradientFill>'
 #' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
-#' @return The `wbWorksheet` Object, invisibly
+#' @return The `wbWorkbook` object, invisibly
 #' @family styles
 #' @export
 wb_add_fill <- function(
@@ -2629,14 +2628,14 @@ wb_add_fill <- function(
   )
 }
 
-#' Add font for cell region
+#' Modify font in a cell region
 #' @details `wb_add_font()` provides all the options openxml accepts for a font node,
 #'  not all have to be set. Usually name, size and color should be what the user wants.
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
 #' @param name font name: default "Calibri"
-#' @param color rgb color: default "FF000000"
+#' @param color rgb color: default "FF000000", or an object created by [wb_color()]
 #' @param size font size: default "11",
 #' @param bold bold, "single" or "double", default: ""
 #' @param italic italic
@@ -2654,7 +2653,7 @@ wb_add_fill <- function(
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
-#' @return The `wbWorksheetObject`, invisibly
+#' @return The `wbWorkbook`, invisibly
 #' @family styles
 #' @export
 wb_add_font <- function(
@@ -2703,7 +2702,8 @@ wb_add_font <- function(
   )
 }
 
-#' Add numfmt for a Cell Region
+#' Add number formatting to a cell region
+#'
 #' @param wb a workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
@@ -2712,6 +2712,7 @@ wb_add_font <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
 #' @return The `wbWorksheet` Object, invisibly
+#' @seealso [create_numfmt()]
 #' @family styles
 #' @export
 wb_add_numfmt <- function(
@@ -2870,7 +2871,8 @@ wb_add_named_style <- function(
   )
 }
 
-#' add dxfs style
+#' Set a dxfs styling for the workbook
+#'
 #' These styles are used with conditional formatting and custom table styles
 #' @param wb wbWorkbook
 #' @param name the style name
@@ -2886,8 +2888,8 @@ wb_add_named_style <- function(
 #' @param text_bold logical if text is bold
 #' @param text_italic logical if text is italic
 #' @param text_underline logical if text is underlined
-#' @param ... additional arguments passed to `create_dxfs_style()`
-#' @return The `wbWorkbookObject`, invisibly
+#' @param ... additional arguments passed to [create_dxfs_style()]
+#' @return The `wbWorkbook` object, invisibly
 #' @examples
 #' wb <- wb_workbook() %>%
 #'   wb_add_worksheet() %>%
@@ -3057,7 +3059,6 @@ wb_get_person <- function(wb, name = NULL) {
 #' @param reply logical if the comment is a reply
 #' @param resolve logical if the comment should be marked as resolved
 #' @seealso [wb_add_comment()]
-#' @name wb_add_thread
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()$
 #' add_person(name = "openxlsx2")
@@ -3247,18 +3248,17 @@ wb_add_conditional_formatting <- function(
 #' @param wb workbook
 #' @param from sheet we select the style from
 #' @param to sheet we apply the style from
-#' @family styles
 #' @export
 wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
   assert_workbook(wb)
   wb$clone()$clone_sheet_style(from, to)
 }
 
-#' add sparklines to workbook
+#' Add sparklines to workbook
 #'
-#' @param wb workbook
+#' @param wb A `wbWorkbook`
 #' @param sheet sheet to add the sparklines to
-#' @param sparklines sparklines object created with `create_sparklines()`
+#' @param sparklines sparklines object created with [create_sparklines()]
 #' @seealso [create_sparklines()]
 #' @examples
 #'  sl <- create_sparklines("Sheet 1", "A3:K3", "L3")
