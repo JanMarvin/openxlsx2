@@ -5449,10 +5449,10 @@ wbWorkbook <- R6::R6Class(
       firstFooter <- headerFooterSub(first_footer)
 
       hf <- list(
-        oddHeader = naToNULLList(oddHeader),
-        oddFooter = naToNULLList(oddFooter),
-        evenHeader = naToNULLList(evenHeader),
-        evenFooter = naToNULLList(evenFooter),
+        oddHeader   = naToNULLList(oddHeader),
+        oddFooter   = naToNULLList(oddFooter),
+        evenHeader  = naToNULLList(evenHeader),
+        evenFooter  = naToNULLList(evenFooter),
         firstHeader = naToNULLList(firstHeader),
         firstFooter = naToNULLList(firstFooter)
       )

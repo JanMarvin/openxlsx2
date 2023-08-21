@@ -164,7 +164,7 @@ validate_color <- function(color = NULL, or_null = FALSE, envir = parent.frame()
 ## header and footer replacements ----------------------------------------------
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
-    x <- replace_illegal_chars(x)
+    x <- replace_legal_chars(x)
     x <- gsub("\\[Page\\]", "P", x)
     x <- gsub("\\[Pages\\]", "N", x)
     x <- gsub("\\[Date\\]", "D", x)
@@ -174,7 +174,7 @@ headerFooterSub <- function(x) {
     x <- gsub("\\[Tab\\]", "A", x)
   }
 
-  return(x)
+  x
 }
 
 
