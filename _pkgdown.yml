@@ -94,12 +94,14 @@ reference:
   - wb_page_setup
   - wb_grouping
 
-- title: create functions
+- title: Helpers to create argument values used in `wb_*` functions
   desc: >
     These functions are helpers to create an intermediate R6 class object to use
     with `wb_*` functions.
   contents:
   - starts_with("create_")
+  - wb_dims
+  - wb_color
 
 - title: XML functions
   desc: >
