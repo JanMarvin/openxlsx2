@@ -489,43 +489,44 @@ wb_copy_cells <- function(
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims worksheet cells
+#' @param solve logical if intersecting merges should be solved
 #' @param ... additional arguments
 #'
 #' @examples
 #' # Create a new workbook
-#' wb <- wb_workbook()
-#'
-#' # Add a worksheets
-#' wb$add_worksheet("Sheet 1")
-#' wb$add_worksheet("Sheet 2")
+#' wb <- wb_workbook()$add_worksheet()
 #'
 #' # Merge cells: Row 2 column C to F (3:6)
-#' wb <- wb_merge_cells(wb, "Sheet 1", cols = 2, rows = 3:6)
+#' wb <- wb_merge_cells(wb, dims = "C3:F6")
 #'
 #' # Merge cells:Rows 10 to 20 columns A to J (1:10)
-#' wb <- wb_merge_cells(wb, 1, cols = 1:10, rows = 10:20)
+#' wb <- wb_merge_cells(wb, dims = wb_dims(rows = 10:20, cols = 1:10))
 #'
-#' # Intersecting merges
-#' wb <- wb_merge_cells(wb, 2, cols = 1:10, rows = 1)
-#' wb <- wb_merge_cells(wb, 2, cols = 5:10, rows = 2)
-#' wb <- wb_merge_cells(wb, 2, cols = c(1, 10), rows = 12) # equivalent to 1:10
-#' try(wb_merge_cells(wb, 2, cols = 1, rows = c(1,10)))    # intersects existing merge
+#' wb$add_worksheet()
 #'
-#' # remove merged cells
-#' wb <- wb_unmerge_cells(wb, 2, cols = 1, rows = 1)  # removes any intersecting merges
-#' wb <- wb_merge_cells(wb, 2, cols = 1, rows = 1:10) # Now this works
+#' ## Intersecting merges
+#' wb <- wb_merge_cells(wb, dims = wb_dims(cols = 1:10, rows = 1))
+#' wb <- wb_merge_cells(wb, dims = wb_dims(cols = 5:10, rows = 2))
+#' wb <- wb_merge_cells(wb, dims = wb_dims(cols = 1:10, rows = 12))
+#' try(wb_merge_cells(wb, dims = "A1:A10"))
+#'
+#' ## remove merged cells
+#' # removes any intersecting merges
+#' wb <- wb_unmerge_cells(wb, dims = wb_dims(cols = 1, rows = 1))
+#' wb <- wb_merge_cells(wb, dims = "A1:A10")
+#'
+#' # or let us decide how to solve this
+#' wb <- wb_merge_cells(wb, dims = "A1:A10", solve = TRUE)
 #'
 #' @name wb_merge_cells
 #' @family workbook wrappers
 NULL
 
-
-
 #' @export
 #' @rdname wb_merge_cells
-wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
+wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
   assert_workbook(wb)
-  wb$clone()$merge_cells(sheet = sheet, dims = dims, ... = ...)
+  wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, ... = ...)
 }
 
 #' @export
@@ -2280,10 +2281,11 @@ wb_set_sheet_names <- function(wb, old = NULL, new) {
   wb$clone()$set_sheet_names(old = old, new = new)
 }
 #' @rdname wb_sheet_names
+#' @param escape Logical if the xml special characters are escaped
 #' @export
-wb_get_sheet_names <- function(wb) {
+wb_get_sheet_names <- function(wb, escape = FALSE) {
   assert_workbook(wb)
-  wb$get_sheet_names()
+  wb$get_sheet_names(escape = escape)
 }
 
 # others? -----------------------------------------------------------------
@@ -3060,7 +3062,7 @@ wb_get_person <- function(wb, name = NULL) {
 #' wb <- wb_workbook()$add_worksheet()$
 #' add_person(name = "openxlsx2")
 #'
-#' pid <- wb$get_person(name = "openxlsx")$id
+#' pid <- wb$get_person(name = "openxlsx2")$id
 #'
 #' # write a comment to a thread, reply to one and solve some
 #' wb <- wb %>%
@@ -3404,4 +3406,50 @@ wb_set_sheetview <- function(
     zoom_scale_sheet_layout_view = zoom_scale_sheet_layout_view,
     ...                          = ...
   )
+}
+
+#' get and set table of sheets and their state as selected and active
+#' @description Multiple sheets can be selected, but only a single one can be
+#' active (visible). The visible sheet, must not necessarily be a selected
+#' sheet.
+#' @param wb a workbook
+#' @returns a data frame with tabSelected and names
+#' @export
+#' @examples
+#'   wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+#'   # testing is the selected sheet
+#'   wb_get_selected(wb)
+#'   # change the selected sheet to Sheet2
+#'   wb <- wb_set_selected(wb, "Sheet2")
+#'   # get the active sheet
+#'   wb_get_active_sheet(wb)
+#'   # change the selected sheet to Sheet2
+#'   wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
+#' @name select_active_sheet
+wb_get_active_sheet <- function(wb) {
+  assert_workbook(wb)
+  wb$get_active_sheet()
+}
+
+#' @rdname select_active_sheet
+#' @param sheet a sheet name of the workbook
+#' @export
+wb_set_active_sheet <- function(wb, sheet) {
+  # active tab requires a c index
+  assert_workbook(wb)
+  wb$clone()$set_active_sheet(sheet = sheet)
+}
+
+#' @name select_active_sheet
+#' @export
+wb_get_selected <- function(wb) {
+  assert_workbook(wb)
+  wb$get_selected()
+}
+
+#' @name select_active_sheet
+#' @export
+wb_set_selected <- function(wb, sheet) {
+  assert_workbook(wb)
+  wb$clone()$set_selected(sheet = sheet)
 }

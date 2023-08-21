@@ -276,7 +276,7 @@ write_comment <- function(
         sprintf(
           '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing" Target="../drawings/vmlDrawing%s.vml"/>',
           next_rid,
-          sheet
+          next_id
         )
       )
 
@@ -396,16 +396,19 @@ as_fmt_txt <- function(x) {
 }
 
 wb_get_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
+
   sheet_id <- wb$validate_sheet(sheet)
+  cmmt <- wb$worksheets[[sheet_id]]$relships$comments
+
   cmts <- list()
-  if (length(wb$comments) >= sheet_id) {
-    cmts <- as.data.frame(do.call("rbind", wb$comments[[sheet_id]]))
+  if (length(cmmt) && length(wb$comments) <= cmmt) {
+    cmts <- as.data.frame(do.call("rbind", wb$comments[[cmmt]]))
     if (!is.null(dims)) cmts <- cmts[cmts$ref == dims, ]
     # print(cmts)
     cmts <- cmts[c("ref", "author", "comment")]
     if (nrow(cmts)) {
       cmts$comment <- as_fmt_txt(cmts$comment)
-      cmts$sheet_id <- sheet_id
+      cmts$cmmt_id <- cmmt
     }
   }
   cmts
@@ -414,10 +417,11 @@ wb_get_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
 wb_get_thread <- function(wb, sheet = current_sheet(), dims = "A1") {
 
   sheet <- wb$validate_sheet(sheet)
+  thrd <- wb$worksheets[[sheet]]$relships$threadedComment
 
   tc <- cbind(
-    rbindlist(xml_attr(wb$threadComments[[sheet]], "threadedComment")),
-    text = xml_value(wb$threadComments[[sheet]], "threadedComment", "text")
+    rbindlist(xml_attr(wb$threadComments[[thrd]], "threadedComment")),
+    text = xml_value(wb$threadComments[[thrd]], "threadedComment", "text")
   )
 
   if (!is.null(dims)) {

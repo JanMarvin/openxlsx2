@@ -431,7 +431,7 @@ wbWorkbook <- R6::R6Class(
         if (is_wbColour(tab_color)) {
           tab_color <- as.character(tab_color)
         } else {
-          tab_color <- validateColor(tab_color, "Invalid tab_color in add_chartsheet.")
+          tab_color <- validate_color(tab_color, msg = "Invalid tab_color in add_chartsheet.")
         }
       }
 
@@ -584,7 +584,7 @@ wbWorkbook <- R6::R6Class(
         if (is_wbColour(tab_color)) {
           tabColor <- as.character(tab_color)
         } else {
-          tabColor <- validateColor(tab_color, "Invalid tab_color in add_worksheet.")
+          tabColor <- validate_color(tab_color, msg = "Invalid tab_color in add_worksheet.")
         }
       }
 
@@ -747,7 +747,7 @@ wbWorkbook <- R6::R6Class(
       # self$vml[[newSheetIndex]]              <- list()
       self$is_chartsheet[[newSheetIndex]]    <- FALSE
       # self$comments[[newSheetIndex]]         <- list()
-      self$threadComments[[newSheetIndex]]   <- list()
+      # self$threadComments[[newSheetIndex]]   <- list()
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       private$set_single_sheet_name(newSheetIndex, sheet_name, sheet)
@@ -952,6 +952,7 @@ wbWorkbook <- R6::R6Class(
       # cloned sheet the same IDs can be used => no need to modify drawings
       vml_id <- self$worksheets[[old]]$relships$vml
       cmt_id <- self$worksheets[[old]]$relships$comments
+      trd_id <- self$worksheets[[old]]$relships$threadedComment
 
       if (length(vml_id)) {
         self$append("vml",      self$vml[[vml_id]])
@@ -964,8 +965,12 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[old]]$relships$comments <- length(self$comments)
       }
 
+      if (length(trd_id)) {
+        self$append("threadComments", self$threadComments[cmt_id])
+        self$worksheets[[old]]$relships$threadedComment <- length(self$threadComments)
+      }
+
       self$is_chartsheet[[newSheetIndex]]  <- self$is_chartsheet[[old]]
-      self$threadComments[[newSheetIndex]] <- self$threadComments[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
@@ -1630,7 +1635,7 @@ wbWorkbook <- R6::R6Class(
       if (nThreadComments > 0) {
         xlThreadComments <- dir_create(tmpDir, "xl", "threadedComments")
 
-        for (i in seq_len(nSheets)) {
+        for (i in seq_along(self$threadComments)) {
           if (length(self$threadComments[[i]])) {
             write_file(
               head = "<ThreadedComments xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments\" xmlns:x=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">",
@@ -2524,7 +2529,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       if (as_ref) {
-        from_sheet_name <- self$get_sheet_names()[[from_sheet]]
+        from_sheet_name <- self$get_sheet_names(escape = TRUE)[[from_sheet]]
         to_cc[c("c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
         to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_cells)
       }
@@ -2670,11 +2675,13 @@ wbWorkbook <- R6::R6Class(
     ### sheet names ----
 
     #' @description Get sheet names
+    #' @param escape Logical if the xml special characters are escaped
     #' @return A `named` `character` vector of sheet names in their order.  The
     #'   names represent the original value of the worksheet prior to any
     #'   character substitutions.
-    get_sheet_names = function() {
-      res <- self$sheet_names
+    get_sheet_names = function(escape = FALSE) {
+      res <- private$original_sheet_names
+      if (escape) res <- self$sheet_names
       names(res) <- private$original_sheet_names
       res[self$sheetOrder]
     },
@@ -3551,9 +3558,10 @@ wbWorkbook <- R6::R6Class(
     #' Set cell merging for a sheet
     #' @param sheet sheet
     #' @param dims worksheet cells
+    #' @param solve logical if intersecting cells should be solved
     #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
+    merge_cells = function(sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
 
       cols <- list(...)[["cols"]]
       rows <- list(...)[["rows"]]
@@ -3577,7 +3585,8 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$merge_cells(
         rows   = rows,
-        cols   = cols
+        cols   = cols,
+        solve  = solve
       )
       invisible(self)
     },
@@ -3820,27 +3829,32 @@ wbWorkbook <- R6::R6Class(
         cmt <- create_comment(text = comment, author = "")
         self$add_comment(sheet = sheet, dims = dims, comment = cmt)
       }
+      wb_cmt <- wb_get_comment(self, sheet, dims)
 
       if (!length(self$worksheets[[sheet]]$relships$threadedComment)) {
 
+        thread_id <- length(self$threadComments) + 1L
+
         # TODO the sheet id is correct ... ?
-        self$worksheets[[sheet]]$relships$threadedComment <- sheet
+        self$worksheets[[sheet]]$relships$threadedComment <- thread_id
 
         self$append(
           "Content_Types",
-          sprintf("<Override PartName=\"/xl/threadedComments/threadedComment%s.xml\" ContentType=\"application/vnd.ms-excel.threadedcomments+xml\"/>", sheet)
+          sprintf("<Override PartName=\"/xl/threadedComments/threadedComment%s.xml\" ContentType=\"application/vnd.ms-excel.threadedcomments+xml\"/>", thread_id)
         )
 
         self$worksheets_rels[[sheet]] <- append(
           self$worksheets_rels[[sheet]],
-          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/threadedComment\" Target=\"../threadedComments/threadedComment%s.xml\"/>", length(self$worksheets_rels[[sheet]]) + 1L, sheet)
+          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/threadedComment\" Target=\"../threadedComments/threadedComment%s.xml\"/>", length(self$worksheets_rels[[sheet]]) + 1L, thread_id)
         )
 
-        self$threadComments[[sheet]] <- character()
+        self$threadComments[[thread_id]] <- character()
       }
 
+      thread_id <- self$worksheets[[sheet]]$relships$threadedComment
+
       parentId <- NULL
-      tcs <- rbindlist(xml_attr(self$threadComments[[sheet]], "threadedComment"))
+      tcs <- rbindlist(xml_attr(self$threadComments[[thread_id]], "threadedComment"))
       sel <- which(tcs$ref == dims)
 
       if (reply && nrow(tcs)) {
@@ -3854,12 +3868,12 @@ wbWorkbook <- R6::R6Class(
       # update or remove any previous thread from the dims
       if (length(sel)) {
         if (resolve) {
-          self$threadComments[[sheet]][sel[1]] <- xml_attr_mod(
-            self$threadComments[[sheet]][sel[1]],
+          self$threadComments[[thread_id]][sel[1]] <- xml_attr_mod(
+            self$threadComments[[thread_id]][sel[1]],
             xml_attributes = c(done = as_xml_attr(resolve))
           )
         } else if (!reply) {
-          self$threadComments[[sheet]] <- self$threadComments[[sheet]][-(sel)]
+          self$threadComments[[thread_id]] <- self$threadComments[[thread_id]][-(sel)]
         }
       }
 
@@ -3886,20 +3900,20 @@ wbWorkbook <- R6::R6Class(
           xml_children = xml_node_create("text", xml_children = comment)
         )
 
-        self$threadComments[[sheet]] <- append(
-          self$threadComments[[sheet]],
+        self$threadComments[[thread_id]] <- append(
+          self$threadComments[[thread_id]],
           tc
         )
 
         if (reply) cmt_id <- parentId
 
         wb_cmt <- wb_get_comment(self, sheet, dims)
-        sId <- wb_cmt$sheet_id
+        sId <- wb_cmt$cmmt_id
         cId <- as.integer(rownames(wb_cmt))
 
         tc <- cbind(
-          rbindlist(xml_attr(self$threadComments[[sheet]], "threadedComment")),
-          text = xml_value(self$threadComments[[sheet]], "threadedComment", "text")
+          rbindlist(xml_attr(self$threadComments[[thread_id]], "threadedComment")),
+          text = xml_value(self$threadComments[[thread_id]], "threadedComment", "text")
         )
 
         # probably correclty ordered, but we could order these by date?
@@ -4061,7 +4075,7 @@ wbWorkbook <- R6::R6Class(
             }
           }
 
-          style <- check_valid_color(style)
+          style <- validate_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
@@ -4094,7 +4108,7 @@ wbWorkbook <- R6::R6Class(
 
           ## Additional parameters passed by ...
           # showValue, gradient, border
-          style <- check_valid_color(style)
+          style <- validate_color(style)
 
           if (isFALSE(style)) {
             stop(msg, "style must be valid colors")
@@ -5001,7 +5015,7 @@ wbWorkbook <- R6::R6Class(
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
-      exSheets <- self$get_sheet_names()
+      exSheets <- self$get_sheet_names(escape = TRUE)
       nSheets <- length(exSheets)
       nImages <- length(self$media)
       nCharts <- length(self$charts)
@@ -5332,7 +5346,7 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", min(print_title_rows)),
           ref2 = paste0("$", max(print_title_rows)),
           name = "_xlnm.Print_Titles",
-          sheet = self$get_sheet_names()[[sheet]],
+          sheet = self$get_sheet_names(escape = TRUE)[[sheet]],
           localSheetId = sheet - 1L
         )
       } else if (!is.null(print_title_cols) && is.null(print_title_rows)) {
@@ -5345,7 +5359,7 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
           name = "_xlnm.Print_Titles",
-          sheet = self$get_sheet_names()[[sheet]],
+          sheet = self$get_sheet_names(escape = TRUE)[[sheet]],
           localSheetId = sheet - 1L
         )
       } else if (!is.null(print_title_cols) && !is.null(print_title_rows)) {
@@ -5363,7 +5377,7 @@ wbWorkbook <- R6::R6Class(
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
         localSheetId <- sheet - 1L
-        sheet <- self$get_sheet_names()[[sheet]]
+        sheet <- self$get_sheet_names(escape = TRUE)[[sheet]]
 
         self$workbook$definedNames <- c(
           self$workbook$definedNames,
@@ -7011,12 +7025,55 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' description get person
+    #' @description description get person
     #' @param name name
     get_person = function(name = NULL) {
       persons <- rbindlist(xml_attr(self$persons, "personList", "person"))
       if (!is.null(name)) persons <- persons[persons$displayName == name, ]
       persons
+    },
+
+    #' @description description get active sheet
+    get_active_sheet = function() {
+      at <- rbindlist(xml_attr(self$workbook$bookViews, "bookViews", "workbookView"))$activeTab
+      # return c index as R index
+      as.numeric(at) + 1
+    },
+
+    #' @description description set active sheet
+    #' @param sheet a worksheet
+    set_active_sheet = function(sheet = current_sheet()) {
+      sheet <- self$validate_sheet(sheet)
+      self$set_bookview(active_tab = sheet - 1L)
+    },
+
+    #' @description description get selected sheets
+    get_selected = function() {
+      len <- length(self$sheet_names)
+      sv <- vector("list", length = len)
+
+      for (i in seq_len(len)) {
+        sv[[i]] <- xml_node(self$worksheets[[i]]$sheetViews, "sheetViews", "sheetView")
+      }
+
+      # print(sv)
+      z <- rbindlist(xml_attr(sv, "sheetView"))
+      z$names <- self$get_sheet_names(escape = TRUE)
+      z
+    },
+
+    #' description set selected sheet
+    #' @param sheet a worksheet
+    set_selected = function(sheet = current_sheet()) {
+
+      sheet <- self$validate_sheet(sheet)
+
+      for (i in seq_along(self$sheet_names)) {
+        xml_attr <- ifelse(i == sheet, TRUE, FALSE)
+        self$worksheets[[i]]$set_sheetview(tabSelected = xml_attr)
+      }
+
+      invisible(self)
     }
 
   ),
@@ -7243,10 +7300,6 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(rlshp)
-    },
-
-    get_worksheet = function(sheet) {
-      self$worksheets[[private$get_sheet_index(sheet)]]
     },
 
     # this may ahve been removes
@@ -7917,7 +7970,8 @@ lcr <- function(var) {
 #' @param wb a [wbWorkbook] object
 #' @param index Sheet name index
 #' @return The sheet index
-#' @export
+#' @keywords internal
+#' @noRd
 wb_get_sheet_name <- function(wb, index = NULL) {
   index <- index %||% seq_along(wb$sheet_names)
 

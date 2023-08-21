@@ -498,8 +498,9 @@ wbWorksheet <- R6::R6Class(
     #' @description
     #' Set cell merging for a sheet
     #' @param rows,cols Row and column specifications.
+    #' @param solve logical if intersects should be solved
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(rows = NULL, cols = NULL) {
+    merge_cells = function(rows = NULL, cols = NULL, solve = FALSE) {
 
       rows <- range(as.integer(rows))
       cols <- range(col2int(cols))
@@ -518,17 +519,28 @@ wbWorksheet <- R6::R6Class(
 
         # Error if merge intersects
         if (any(intersects)) {
-          msg <- sprintf(
-            "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
-            stri_join(current[intersects], collapse = "\n\t\t")
-          )
-          stop(msg, call. = FALSE)
+          if (solve) {
+            refs <- NULL
+            for (i in current) {
+              got <- solve_merge(i, sqref)
+              refs <- c(refs, got)
+            }
+            # replace all merged Cells
+            if (all(is.na(refs))) {
+              self$mergeCells <- character()
+            } else {
+              self$mergeCells <- sprintf('<mergeCell ref="%s"/>', refs[!is.na(refs)])
+            }
+          } else {
+            msg <- sprintf(
+              "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
+              stri_join(current[intersects], collapse = "\n\t\t")
+            )
+            stop(msg, call. = FALSE)
+          }
         }
       }
 
-      # TODO does this have to be xml?  Can we just save the data.frame or
-      # matrix and then check that?  This would also simplify removing the
-      # merge specifications
       self$append("mergeCells", sprintf('<mergeCell ref="%s"/>', sqref))
 
       invisible(self)
@@ -585,16 +597,22 @@ wbWorksheet <- R6::R6Class(
         sel <- cc$r %in% dims
       }
 
+      # TODO remaining things
+      # (pivot) tables that are no longer needed?
+      # (threaded) comments in that area?
+      # data validation / conditional formatting?
+      # other worksheet or otherwise related things?
+
       if (numbers)
-        cc[sel & cc$c_t %in% c("n", ""),
+        cc[sel & cc$c_t %in% c("b", "e", "n", ""),
           c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (characters)
-        cc[sel & cc$c_t %in% c("inlineStr", "s"),
-          c("v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+        cc[sel & cc$c_t %in% c("inlineStr", "s", "str"),
+          c("c_t", "c_ph", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
 
       if (styles)
-        cc[sel, c("c_s")] <- ""
+        cc[sel, c("c_s", "c_cm", "c_vm")] <- ""
 
       self$sheet_data$cc <- cc
 

@@ -81,6 +81,8 @@ xl_open.default <- function(x, interactive = NA) {
       shell.exec(file) # nolint
     },
     Darwin = {
+      # system2('/Applications/LibreOffice.app/Contents/MacOS/soffice', shQuote(file), wait = FALSE)
+      # system2('open', paste0("-a numbers", shQuote(file)))
       system2('open', shQuote(file))
     },
     stop("Operating system not handled: ", toString(userSystem))

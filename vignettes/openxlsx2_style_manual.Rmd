@@ -53,7 +53,7 @@ wb <- wb_workbook() %>%
     right_color = border_col, right_border = border_sty,
     inner_hcolor = border_col, inner_hgrid = border_sty
   ) %>%
-  wb_add_fill(dims = dims_mat_header, color = wb_color(hex = "#FF334E6F")) %>%
+  wb_add_fill(dims = dims_mat_header, color = wb_color(hex = "FF334E6F")) %>%
   wb_add_font(dims = dims_mat_header, name = "Arial", bold = TRUE, color = wb_color("white"), size = 20) %>%
   wb_add_cell_style(dims = dims_mat_header, horizontal = "center", textRotation = 45)
 
@@ -86,7 +86,7 @@ wb$add_data(x = mat, col_names = TRUE)
 
 # create a border style and assign it to the workbook
 black <- wb_color("black")
-# same as wb_color("black") or  wb_color(hex = "#FF000000") or wb_color("FF000000")
+# same as wb_color("black") or  wb_color(hex = "FF000000") or wb_color("FF000000")
 new_border <- create_border(
   bottom = "thin", bottom_color = black,
   top = "thin", top_color = black,
@@ -97,7 +97,7 @@ wb$styles_mgr$add(new_border, "new_border")
 
 
 # create a fill style and assign it to the workbook
-new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "#FF334E6F"))
+new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FF334E6F"))
 wb$styles_mgr$add(new_fill, "new_fill")
 
 # create a font style and assign it to the workbook
@@ -152,7 +152,7 @@ wb$worksheets[[1]]$sheetPr <- xml_node_create(
   "sheetPr",
   xml_children = xml_node_create(
     "tabColor",
-    xml_attributes = wb_color(hex = "#FF00FF00")
+    xml_attributes = wb_color(hex = "FF00FF00")
   )
 )
 
@@ -273,7 +273,7 @@ wb$add_worksheet("S3", grid_lines = FALSE)$
 wb$add_border(
   dims = "A2:K33",
   inner_vgrid = "thin",
-  inner_vcolor = wb_color(hex = "#FF808080")
+  inner_vcolor = wb_color(hex = "FF808080")
   )
 # no inner grid
 wb$add_worksheet("S4", grid_lines = FALSE)$add_data(x = mtcars)

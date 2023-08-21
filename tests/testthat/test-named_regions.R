@@ -145,7 +145,11 @@ test_that("Missing rows in named regions", {
 
   ## create region
   wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
-  delete_data(wb, sheet = 1, cols = 1:2, rows = c(6, 6))
+  expect_warning(
+    delete_data(wb, sheet = 1, cols = 1:2, rows = c(6, 6)),
+    "'delete_data' is deprecated."
+  )
+
 
   expect_warning(
     wb$add_named_region(
@@ -224,7 +228,10 @@ test_that("Missing columns in named regions", {
 
   ## create region
   wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
-  delete_data(wb, sheet = 1, cols = 2, rows = 1:12)
+  expect_warning(
+    delete_data(wb, sheet = 1, cols = 2, rows = 1:12),
+    "'delete_data' is deprecated."
+  )
 
   wb$add_named_region(
     sheet = 1,

@@ -309,7 +309,7 @@ wb_to_df <- function(
   keep_rows <- keep_rows[keep_rows %in% rnams]
 
   # reduce data to selected cases only
-  if (!is.null(cols) && !is.null(rows) && !missing(dims))
+  if (length(keep_rows) && length(keep_cols))
     cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
 
   cc$val <- NA_character_
@@ -366,8 +366,11 @@ wb_to_df <- function(
     }
   }
 
+  origin <- get_date_origin(wb)
+
   # dates
   if (!is.null(cc$c_s)) {
+
     # if a cell is t="s" the content is a sst and not da date
     if (detect_dates && missing(types)) {
       cc$is_string <- FALSE
@@ -376,7 +379,7 @@ wb_to_df <- function(
 
       if (any(sel <- cc$c_s %in% xlsx_date_style)) {
         sel <- sel & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel])))
+        cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel], origin = origin)))
         cc$typ[sel]  <- "d"
       }
 
@@ -393,7 +396,7 @@ wb_to_df <- function(
 
       if (any(sel <- cc$c_s %in% xlsx_posix_style)) {
         sel <- sel & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel])))
+        cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel], origin = origin)))
         cc$typ[sel]  <- "p"
       }
     }
@@ -570,8 +573,8 @@ wb_to_df <- function(
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
+      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv, origin = origin)
+      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv, origin = origin)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
       if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
     } else {
@@ -716,7 +719,7 @@ wb_read <- function(
 wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   assert_workbook(wb)
   sheetno <- wb_validate_sheet(wb, sheet)
-  sheetname <- wb$get_sheet_names()[[sheetno]]
+  sheetname <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
 
   if (missing(dims)) {
     dims <- unname(unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension")))

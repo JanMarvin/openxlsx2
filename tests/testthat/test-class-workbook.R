@@ -95,6 +95,11 @@ test_that("$set_sheet_names() and $get_sheet_names() work", {
 
   # return a names character vector
   res <- wb$get_sheet_names()
+  exp <- c(a = "a", "b & c" = "b & c")
+  expect_identical(res, exp)
+
+  # return a names character vector
+  res <- wb$get_sheet_names(escape = TRUE)
   exp <- c(a = "a", "b & c" = replace_legal_chars("b & c"))
   expect_identical(res, exp)
 

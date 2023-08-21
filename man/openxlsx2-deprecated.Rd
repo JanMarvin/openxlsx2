@@ -10,6 +10,7 @@ These functions are provided for compatibility with older versions of \code{open
 \itemize{
 \item \code{\link[=convertToExcelDate]{convertToExcelDate()}} -> \code{\link[=convert_to_excel_date]{convert_to_excel_date()}}
 \item \code{\link[=wb_grid_lines]{wb_grid_lines()}} -> \code{\link[=wb_set_grid_lines]{wb_set_grid_lines()}}
+\item \code{\link[=delete_data]{delete_data()}} -> \code{\link[=wb_clean_sheet]{wb_clean_sheet()}}
 }
 }
 \seealso{

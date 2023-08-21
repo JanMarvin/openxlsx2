@@ -310,8 +310,8 @@ write_data2 <- function(
       stop("name cannot look like a cell reference.")
     }
 
-    sheet_name <- wb$sheet_names[[sheetno]]
-    if (grepl(" ", sheet_name)) sheet_name <- shQuote(sheet_name, "sh")
+    sheet_name <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
+    if (grepl("[^A-Za-z0-9]", sheet_name)) sheet_name <- shQuote(sheet_name, "sh")
 
     sheet_dim <- paste0(sheet_name, "!", dims)
 
@@ -827,7 +827,7 @@ write_data_table <- function(
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
       l <- int2col(unlist(coords[, 2]))
-      dfn <- sprintf("'%s'!%s", wb$get_sheet_names()[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
+      dfn <- sprintf("'%s'!%s", wb$get_sheet_names(escape = TRUE)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
       dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
 

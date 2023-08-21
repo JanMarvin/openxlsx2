@@ -1,3 +1,30 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* fix date1904 detection in `wb_to_df()`. Previous results from this somewhat rare file type were using a wrong timezone origin.
+* corrections in vignettes
+* fixes for loading workbooks with threaded comments
+* fixes for loading workbooks with embeddings other than docx
+
+## New features
+
+* provide solve argument for `wb_merge_cells()`. This allows to solve cell intersecting regions. [733](https://github.com/JanMarvin/openxlsx2/pull/733)
+
+## Breaking changes
+
+* no longer exporting `wb_get_sheet_name()`
+* deprecating `delete_data()` and minor improvements to `wb_clean_sheet()`
+* removing `wb_get_worksheet()`, `wb_ws()`. These never worked as expected.
+
+## Internal changes
+
+* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()` are now wrapper functions.
+
+
+***************************************************************************
+
+
 # openxlsx2 0.8
 
 ## API Change
@@ -14,19 +41,19 @@
 
 * Cleanups
   * remove deprecated functions
-  
+
   * remove deprecated arguments
     * `xy` argument
     * arguments `col`, `row`, `cols`, `rows`. `start_col`, `start_row` and `gridExpand` were deprecated in favor of `dims`. Row and column vectors can be converted to `dims` using `wb_dims()`.
     * `xlsx_file` in favor of `file` in `wb_to_df()`
-    
+
   * deprecating function
-    * `convertToExcelDate()` for `convert_to_excel_date()`  
+    * `convertToExcelDate()` for `convert_to_excel_date()`
     * `wb_grid_lines()` for `wb_set_grid_lines()`
 
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
   * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartSheet`, `wbComment`, `wbHyperlink` internal
-  
+
 ## New features
 
 * `wb_dims()` was added as a more convenient replacement for `rowcol_to_dims()`.([691](https://github.com/JanMarvin/openxlsx2/pull/691) and [702](https://github.com/JanMarvin/openxlsx2/pull/702), @olivroy) The new function can take either numeric (for rows or columns) or character (column) vectors, in addition it is able to create dimensions for R objects that are coercible to data frame. This allows the following variants:

@@ -269,6 +269,10 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_sheetview}{\code{wbWorkbook$set_sheetview()}}
 \item \href{#method-wbWorkbook-add_person}{\code{wbWorkbook$add_person()}}
 \item \href{#method-wbWorkbook-get_person}{\code{wbWorkbook$get_person()}}
+\item \href{#method-wbWorkbook-get_active_sheet}{\code{wbWorkbook$get_active_sheet()}}
+\item \href{#method-wbWorkbook-set_active_sheet}{\code{wbWorkbook$set_active_sheet()}}
+\item \href{#method-wbWorkbook-get_selected}{\code{wbWorkbook$get_selected()}}
+\item \href{#method-wbWorkbook-set_selected}{\code{wbWorkbook$set_selected()}}
 \item \href{#method-wbWorkbook-clone}{\code{wbWorkbook$clone()}}
 }
 }
@@ -1161,9 +1165,16 @@ The \code{wbWorkbook} object
 \subsection{Method \code{get_sheet_names()}}{
 Get sheet names
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_sheet_names(escape = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{escape}}{Logical if the xml special characters are escaped}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 A \code{named} \code{character} vector of sheet names in their order.  The
 names represent the original value of the worksheet prior to any
@@ -1516,7 +1527,12 @@ The \code{wbWorkbook} object
 \subsection{Method \code{merge_cells()}}{
 Set cell merging for a sheet
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(sheet = current_sheet(), dims = NULL, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$merge_cells(
+  sheet = current_sheet(),
+  dims = NULL,
+  solve = FALSE,
+  ...
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1525,6 +1541,8 @@ Set cell merging for a sheet
 \item{\code{sheet}}{sheet}
 
 \item{\code{dims}}{worksheet cells}
+
+\item{\code{solve}}{logical if intersecting cells should be solved}
 
 \item{\code{...}}{additional arguments}
 }
@@ -3291,8 +3309,7 @@ add person to workbook
 
 \item{\code{user_id}}{user_id}
 
-\item{\code{provider_id}}{provider_id
-description get person}
+\item{\code{provider_id}}{provider_id}
 }
 \if{html}{\out{</div>}}
 }
@@ -3301,6 +3318,7 @@ description get person}
 \if{html}{\out{<a id="method-wbWorkbook-get_person"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-get_person}{}}}
 \subsection{Method \code{get_person()}}{
+description get person
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_person(name = NULL)}\if{html}{\out{</div>}}
 }
@@ -3309,6 +3327,60 @@ description get person}
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_active_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_active_sheet}{}}}
+\subsection{Method \code{get_active_sheet()}}{
+description get active sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_active_sheet()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_active_sheet"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_active_sheet}{}}}
+\subsection{Method \code{set_active_sheet()}}{
+description set active sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_active_sheet(sheet = current_sheet())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_selected"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_selected}{}}}
+\subsection{Method \code{get_selected()}}{
+description get selected sheets
+description set selected sheet
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_selected()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_selected"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_selected}{}}}
+\subsection{Method \code{set_selected()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_selected(sheet = current_sheet())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
 }
 \if{html}{\out{</div>}}
 }

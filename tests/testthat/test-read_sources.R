@@ -37,7 +37,7 @@ test_that("wb_load from different sources", {
   wb_file <- wb_load(xlsxFile)
 
   # Loading from URL vs local not equal
-  expect_equal_workbooks(wb_url, wb_file, ignore_fields = "datetimeCreated")
+  expect_equal_workbooks(wb_url, wb_file, ignore_fields = c("datetimeCreated", "path"))
 })
 
 
