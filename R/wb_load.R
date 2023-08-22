@@ -169,8 +169,17 @@ wb_load <- function(
 
     wb$subject <- xml_value(wb$core, "cp:coreProperties", "dc:subject")
     if (length(wb$subject) == 0) wb$subject <- NULL
-    wb$category <- xml_value(wb$core, "cp:coreProperties", "dc:category")
+    wb$category <- xml_value(wb$core, "cp:coreProperties", "cp:category")
     if (length(wb$category) == 0) wb$category <- NULL
+
+    wb$creator <- xml_value(wb$core, "cp:coreProperties", "dc:creator")
+    if (length(wb$creator) == 0) wb$creator <- NULL
+    wb$creator <- wb$creator %||%
+      getOption("openxlsx2.creator") %||%
+      # USERNAME may only be present for windows
+      Sys.getenv("USERNAME", Sys.getenv("USER"))
+
+
   }
 
   if (!data_only && length(customXML)) {

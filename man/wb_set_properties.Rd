@@ -9,6 +9,20 @@ wb_set_properties(wb, title = NULL, subject = NULL, category = NULL)
 \arguments{
 \item{title, subject, category}{Workbook property, a string.}
 }
+\value{
+A wbWorkbook object, invisibly.
+}
 \description{
-Modify workbook properties
+This function is useful for workbooks that are loeaded
+}
+\examples{
+file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+wb <- wb_load(file)
+wb$title
+
+# Add a title to properties
+wb$set_properties(title = "my title")
+
+wb$title
+
 }
