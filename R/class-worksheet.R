@@ -173,7 +173,8 @@ wbWorksheet <- R6::R6Class(
       standardize_case_names(...)
 
       if (!is.null(tab_color)) {
-        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tab_color)
+        tab_color <- xml_node_create("tabColor", xml_attributes = tab_color)
+        tabColor <- sprintf('<sheetPr>%s</sheetPr>', tab_color)
       } else {
         tabColor <- character()
       }

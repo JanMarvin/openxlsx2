@@ -427,12 +427,11 @@ wbWorkbook <- R6::R6Class(
 
       standardize(...)
 
-      if (!is.null(tab_color)) {
-        if (is_wbColour(tab_color)) {
-          tab_color <- as.character(tab_color)
-        } else {
-          tab_color <- validate_color(tab_color, msg = "Invalid tab_color in add_chartsheet.")
-        }
+      if (!is.null(tab_color) && !is_wbColour(tab_color)) {
+        validate_color(tab_color, msg = "Invalid tab_color in add_chartsheet.")
+        tabColor <- wb_color(tab_color)
+      } else {
+        tabColor <- tab_color
       }
 
       if (!is.numeric(zoom)) {
@@ -450,7 +449,7 @@ wbWorkbook <- R6::R6Class(
 
       self$append("worksheets",
         wbChartSheet$new(
-          tabColor = tab_color
+          tab_color = tabColor
         )
       )
 
@@ -580,12 +579,11 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "grid_lines must be a logical of length 1.")
       }
 
-      if (!is.null(tab_color)) {
-        if (is_wbColour(tab_color)) {
-          tabColor <- as.character(tab_color)
-        } else {
-          tabColor <- validate_color(tab_color, msg = "Invalid tab_color in add_worksheet.")
-        }
+      if (!is.null(tab_color) && !is_wbColour(tab_color)) {
+        validate_color(tab_color, msg = "Invalid tab_color in add_worksheet.")
+        tabColor <- wb_color(tab_color)
+      } else {
+        tabColor <- tab_color
       }
 
       if (!is.numeric(zoom)) {
@@ -684,7 +682,7 @@ wbWorkbook <- R6::R6Class(
       ## append to worksheets list
       self$append("worksheets",
         wbWorksheet$new(
-          tab_color    = tab_color,
+          tab_color    = tabColor,
           odd_header   = odd_header,
           odd_footer   = odd_footer,
           even_header  = even_header,

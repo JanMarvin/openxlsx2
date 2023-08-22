@@ -130,3 +130,49 @@ test_that("ignore_error works", {
   expect_equal(exp, got)
 
 })
+
+test_that("tab_color works", {
+
+  # worksheet
+  wb <- wb_workbook()$
+    add_worksheet(tab_color = "red")$
+    add_worksheet(tab_color = wb_color("red"))
+
+  expect_equal(
+    wb$worksheets[[1]]$sheetPr,
+    wb$worksheets[[2]]$sheetPr
+  )
+
+  # chartsheet
+  wb <- wb_workbook()$
+    add_chartsheet(tab_color = "red")$
+    add_chartsheet(tab_color = wb_color("red"))
+
+  expect_equal(
+    wb$worksheets[[1]]$sheetPr,
+    wb$worksheets[[2]]$sheetPr
+  )
+
+  # use color theme
+  wb <- wb_workbook()$
+    add_worksheet(tab_color = wb_color(theme = 4))$
+    add_chartsheet(tab_color = wb_color(theme = 4))
+
+  expect_equal(
+    wb$worksheets[[1]]$sheetPr,
+    wb$worksheets[[2]]$sheetPr
+  )
+
+  # error with invalid tab_color. blau is German for blue.
+  expect_error(
+    wb <- wb_workbook()$
+      add_worksheet(tab_color = "blau"),
+    "Invalid tab_color in add_worksheet"
+  )
+  expect_error(
+    wb <- wb_workbook()$
+      add_chartsheet(tab_color = "blau"),
+    "Invalid tab_color in add_chartsheet"
+  )
+
+})
