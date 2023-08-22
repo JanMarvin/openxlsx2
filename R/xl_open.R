@@ -61,7 +61,7 @@ xl_open.default <- function(x, interactive = NA) {
   # nocov end
 
   if (!isTRUE(interactive)) {
-    warning("will not open file when not interactive")
+    warning("will not open file when not interactive", call. = FALSE)
     return()
   }
 
