@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_clone_worksheet}
 \alias{wb_clone_worksheet}
-\title{Clone a worksheet in a workbook}
+\title{Create copies of a worksheet within a workbook}
 \usage{
 wb_clone_worksheet(wb, old = current_sheet(), new = next_sheet())
 }

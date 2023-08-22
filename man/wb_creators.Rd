@@ -6,7 +6,7 @@
 \alias{wb_set_creators}
 \alias{wb_remove_creators}
 \alias{wb_get_creators}
-\title{Workbook creators}
+\title{Modify creators of a workbook}
 \usage{
 wb_add_creators(wb, creators)
 

@@ -419,13 +419,13 @@ wb_add_formula <- function(
   )
 }
 
-#' Update a data table
+#' Update a data table position in a worksheet
 #'
 #' Update the position of a data table, possibly written using [wb_add_data_table()]
-#' @param wb workbook
-#' @param sheet a worksheet
-#' @param dims cell range used for new data table.
-#' @param tabname a tablename
+#' @param wb A workbook
+#' @param sheet A worksheet
+#' @param dims Cell range used for new data table.
+#' @param tabname A table name
 #'
 #' @details
 #' Be aware that this function does not alter any filter.
@@ -722,7 +722,7 @@ wb_add_worksheet <- function(
 }
 
 
-#' Clone a worksheet in a workbook
+#' Create copies of a worksheet within a workbook
 #'
 #' @description
 #' Create a copy of a worksheet in the same `wbWorkbook` object.
@@ -1325,7 +1325,7 @@ wb_set_header_footer <- function(
 
 
 
-#' Set page margins, orientation and print scaling
+#' Set page margins, orientation and print scaling of a worksheet
 #'
 #' Set page margins, orientation and print scaling.
 #' @param wb A workbook object
@@ -1611,9 +1611,9 @@ wb_protect <- function(
 
 # grid lines --------------------------------------------------------------
 
-#' Set worksheet gridlines to show or hide.
+#' Modify grid lines visibility in a worksheet
 #'
-#' Set worksheet gridlines to show or hide.
+#' Set worksheet grid lines to show or hide.
 #' You can also add / remove grid lines when creating a worksheeet with
 #' [`wb_add_worksheet(grid_lines = FALSE)`][wb_add_worksheet()]
 #'
@@ -1962,7 +1962,7 @@ wb_add_data_validation <- function(
 
 # visibility --------------------------------------------------------------
 
-#' Get/set worksheet visible state
+#' Get/set worksheet visible state in a workbook
 #'
 #' Get and set worksheet visible state. This allows to hide worksheets from the workbook.
 #'
@@ -2089,13 +2089,13 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 
 # grouping ----------------------------------------------------------------
 
-#' Group Rows and Columns
+#' Group rows and columns in a worksheet
 #'
 #' Group a selection of rows or cols
 #'
-#' @details If row was previously hidden, it will now be shown
+#' @details If row was previously hidden, it will now be shown.
 #'
-#' @param wb A [wbWorkbook] object
+#' @param wb A `wbWorkbook` object
 #' @param sheet A name or index of a worksheet
 #' @param rows,cols Indices of rows and columns to group
 #' @param collapsed If `TRUE` the grouped columns are collapsed
@@ -2192,7 +2192,7 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 
 # creators ----------------------------------------------------------------
 
-#' Workbook creators
+#' Modify creators of a workbook
 #'
 #' Modify and get workbook creators
 #'
@@ -2289,7 +2289,7 @@ wb_get_sheet_names <- function(wb, escape = FALSE) {
 
 # others? -----------------------------------------------------------------
 
-#' Add another author to the meta data of the file.
+#' Modify author in the metadata of a workbook
 #'
 #' Just a wrapper of `wb$set_last_modified_by()`
 #'
@@ -2362,7 +2362,7 @@ wb_add_image <- function(
 }
 
 
-#' Add a chart XML to a workbook
+#' Add a chart XML to a worksheet
 #'
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
@@ -3272,13 +3272,13 @@ wb_add_conditional_formatting <- function(
   )
 }
 
-#' clone sheets style
+#' Apply styling from a sheet to another within a workbook
 #'
 #' This function can be used to apply styling from a cell range, and apply it
 #' to another cell range.
 #' @param wb A workbook
 #' @param from sheet we select the style from
-#' @param to sheet we apply the style from
+#' @param to sheet to apply the style to
 #' @export
 wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
   assert_workbook(wb)

@@ -4,7 +4,7 @@
 \alias{wb_sheet_visibility}
 \alias{wb_get_sheet_visibility}
 \alias{wb_set_sheet_visibility}
-\title{Get/set worksheet visible state}
+\title{Get/set worksheet visible state in a workbook}
 \usage{
 wb_get_sheet_visibility(wb)
 

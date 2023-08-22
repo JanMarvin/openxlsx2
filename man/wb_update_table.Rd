@@ -2,18 +2,18 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_update_table}
 \alias{wb_update_table}
-\title{Update a data table}
+\title{Update a data table position in a worksheet}
 \usage{
 wb_update_table(wb, sheet = current_sheet(), dims = "A1", tabname)
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
-\item{sheet}{a worksheet}
+\item{sheet}{A worksheet}
 
-\item{dims}{cell range used for new data table.}
+\item{dims}{Cell range used for new data table.}
 
-\item{tabname}{a tablename}
+\item{tabname}{A table name}
 }
 \description{
 Update the position of a data table, possibly written using \code{\link[=wb_add_data_table]{wb_add_data_table()}}

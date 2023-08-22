@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_page_setup}
 \alias{wb_page_setup}
-\title{Set page margins, orientation and print scaling}
+\title{Set page margins, orientation and print scaling of a worksheet}
 \usage{
 wb_page_setup(
   wb,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_last_modified_by}
 \alias{wb_set_last_modified_by}
-\title{Add another author to the meta data of the file.}
+\title{Modify author in the metadata of a workbook}
 \usage{
 wb_set_last_modified_by(wb, name, ...)
 }

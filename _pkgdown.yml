@@ -60,12 +60,12 @@ reference:
   - wb_set_last_modified_by
   - wb_creators
   - wb_order
+  - wb_sheet_names
   - wb_remove_worksheet
   - wb_active_sheet
   - wb_sheet_visibility
   - wb_set_bookview
   - wb_protect
-  - wb_sheet_names
   - wb_get_tables
   - wb_remove_tables
   - wb_get_named_regions
