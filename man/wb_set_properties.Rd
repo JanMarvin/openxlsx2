@@ -7,13 +7,17 @@
 wb_set_properties(wb, title = NULL, subject = NULL, category = NULL)
 }
 \arguments{
+\item{wb}{A Workbook object}
+
 \item{title, subject, category}{Workbook property, a string.}
 }
 \value{
 A wbWorkbook object, invisibly.
 }
 \description{
-This function is useful for workbooks that are loeaded
+This function is useful for workbooks that are loeaded. It can be used to set the
+workbook \code{title}, \code{subject} and \code{category} field. Use \code{\link[=wb_workbook]{wb_workbook()}}
+to easily set these properties with a new workbook.
 }
 \examples{
 file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
@@ -25,4 +29,7 @@ wb$set_properties(title = "my title")
 
 wb$title
 
+}
+\seealso{
+\code{\link[=wb_workbook]{wb_workbook()}}
 }

@@ -2248,7 +2248,12 @@ wb_get_creators <- function(wb) {
 
 #' Modify workbook properties
 #'
-#' This function is useful for workbooks that are loeaded
+#' This function is useful for workbooks that are loeaded. It can be used to set the
+#' workbook `title`, `subject` and `category` field. Use [wb_workbook()]
+#' to easily set these properties with a new workbook.
+#'
+#' @param wb A Workbook object
+#' @seealso [wb_workbook()]
 #' @inheritParams wb_workbook
 #' @return A wbWorkbook object, invisibly.
 #' @export
