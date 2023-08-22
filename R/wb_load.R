@@ -166,6 +166,13 @@ wb_load <- function(
 
   if (!data_only && length(coreXML) == 1) {
     wb$core <- read_xml(coreXML, pointer = FALSE)
+    wb$title <- xml_value(wb$core, "cp:coreProperties", "dc:title")
+    if (length(wb$title) == 0) wb$title <- NULL
+
+    wb$subject <- xml_value(wb$core, "cp:coreProperties", "dc:subject")
+    if (length(wb$subject) == 0) wb$subject <- NULL
+    wb$category <- xml_value(wb$core, "cp:coreProperties", "dc:category")
+    if (length(wb$category) == 0) wb$category <- NULL
   }
 
   if (!data_only && length(customXML)) {
