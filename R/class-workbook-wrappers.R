@@ -2296,7 +2296,7 @@ wb_get_sheet_names <- function(wb, escape = FALSE) {
 #' @param wb A workbook object
 #' @param name A string object with the name of the LastModifiedBy-User
 #' @param ... additional arguments
-#'
+#' @family workbook wrappers
 #' @export
 #' @examples
 #' wb <- wb_workbook()

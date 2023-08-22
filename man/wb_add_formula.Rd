@@ -85,6 +85,7 @@ Other workbook wrappers:
 \code{\link{wb_merge_cells}()},
 \code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
+\code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}
