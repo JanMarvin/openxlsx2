@@ -3018,7 +3018,7 @@ wb_add_dxfs_style <- function(
 NULL
 #' @rdname wb_comment
 #' @export
-  wb_add_comment <- function(
+wb_add_comment <- function(
     wb,
     sheet   = current_sheet(),
     dims    = "A1",
