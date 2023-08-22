@@ -51,11 +51,13 @@ wbChartSheet <- R6::R6Class(
 
     #' @description
     #' Create a new workbook chart sheet object
-    #' @param tabColor `character` a tab color to set
+    #' @param tab_color tabColor
     #' @return The `wbChartSheet` object
-    initialize = function(tabColor = tabColor) {
-      if (length(tabColor)) {
-        tabColor <- sprintf('<sheetPr><tabColor rgb="%s"/></sheetPr>', tabColor)
+    initialize = function(tab_color = NULL) {
+
+      if (!is.null(tab_color)) {
+        tab_color <- xml_node_create("tabColor", xml_attributes = tab_color)
+        tabColor <- sprintf('<sheetPr>%s</sheetPr>', tab_color)
       } else {
         tabColor <- character()
       }
