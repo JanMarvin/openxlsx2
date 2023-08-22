@@ -31,11 +31,11 @@ write_data(
 
 \item{x}{Object to be written. For classes supported look at the examples.}
 
-\item{dims}{Spreadsheet dimensions that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
+\item{dims}{Spreadsheet cell range that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
 
-\item{start_col}{A vector specifying the starting column to write to.}
+\item{start_col}{A vector specifying the starting column to write \code{x} to.}
 
-\item{start_row}{A vector specifying the starting row to write to.}
+\item{start_row}{A vector specifying the starting row to write \code{x} to.}
 
 \item{array}{A bool if the function written is of type array}
 

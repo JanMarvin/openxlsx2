@@ -11,9 +11,9 @@ wb_save(wb, file = NULL, overwrite = TRUE, path = NULL)
 
 \item{file}{A path to save the workbook to}
 
-\item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
+\item{overwrite}{If \code{FALSE}, will not overwrite when \code{file} already exists.}
 
-\item{path}{Deprecated argument previously used for \code{file}. Please use \code{file} in new code.}
+\item{path}{Deprecated argument. Please use \code{file} in new code.}
 }
 \value{
 the \code{wbWorkbook} object, invisibly

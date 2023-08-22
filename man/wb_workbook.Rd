@@ -27,10 +27,10 @@ See \strong{Details} for options.}
 \item{...}{additional arguments}
 }
 \value{
-A \link{wbWorkbook} object
+A \code{wbWorkbook} object
 }
 \description{
-Create a new Workbook object
+Initialize a \link{wbWorkbook} object. You can set workbook properties as well.
 }
 \details{
 \code{theme} can be one of

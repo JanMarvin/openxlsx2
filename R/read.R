@@ -15,6 +15,12 @@
 #' * 2: date
 #' * 3: posixt (datetime)
 #' * 4: logical
+#'
+#' `read_xlsx()` will not pick up formulas added to a Workbook object
+#' via [wb_add_formula()]. This is because only the formula is written and left
+#' to be evaluated when the file is opened in a spreadsheet software.
+#' Opening, saving and closing the file with Excel will resolve this.
+#'
 #' @seealso [wb_get_named_regions()]
 #'
 #' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.

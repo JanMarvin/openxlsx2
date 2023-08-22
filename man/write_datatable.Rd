@@ -35,11 +35,11 @@ write_datatable(
 
 \item{x}{A data frame}
 
-\item{dims}{Spreadsheet dimensions that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
+\item{dims}{Spreadsheet cell range that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
 
-\item{start_col}{A vector specifying the starting column to write to.}
+\item{start_col}{A vector specifying the starting column to write \code{x} to.}
 
-\item{start_row}{A vector specifying the starting row to write to.}
+\item{start_row}{A vector specifying the starting row to write \code{x} to.}
 
 \item{col_names}{If \code{TRUE}, column names of \code{x} are written.}
 

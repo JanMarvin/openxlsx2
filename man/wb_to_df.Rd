@@ -140,6 +140,11 @@ The \code{types} argument must be a named numeric.
 \item 3: posixt (datetime)
 \item 4: logical
 }
+
+\code{read_xlsx()} will not pick up formulas added to a Workbook object
+via \code{\link[=wb_add_formula]{wb_add_formula()}}. This is because only the formula is written and left
+to be evaluated when the file is opened in a spreadsheet software.
+Opening, saving and closing the file with Excel will resolve this.
 }
 \examples{
 ###########################################################################

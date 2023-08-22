@@ -1,7 +1,7 @@
 
 #' Create a new Workbook object
 #'
-#' Create a new Workbook object
+#' Initialize a [wbWorkbook] object. You can set workbook properties as well.
 #'
 #' `theme` can be one of
 #' "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
@@ -16,7 +16,7 @@
 #' @param theme Optional theme identified by string or number.
 #'   See **Details** for options.
 #' @param ... additional arguments
-#' @return A [wbWorkbook] object
+#' @return A `wbWorkbook` object
 #'
 #' @export
 #' @family workbook wrappers
@@ -57,8 +57,8 @@ wb_workbook <- function(
 #'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param file A path to save the workbook to
-#' @param overwrite If `FALSE`, will not overwrite when `path` exists
-#' @param path Deprecated argument previously used for `file`. Please use `file` in new code.
+#' @param overwrite If `FALSE`, will not overwrite when `file` already exists.
+#' @param path Deprecated argument. Please use `file` in new code.
 #'
 #' @export
 #' @family workbook wrappers
@@ -89,9 +89,9 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param x Object to be written. For classes supported look at the examples.
-#' @param dims Spreadsheet dimensions that will determine `start_col` and `start_row`: "A1", "A1:B2", "A:B"
-#' @param start_col A vector specifying the starting column to write to.
-#' @param start_row A vector specifying the starting row to write to.
+#' @param dims Spreadsheet cell range that will determine `start_col` and `start_row`: "A1", "A1:B2", "A:B"
+#' @param start_col A vector specifying the starting column to write `x` to.
+#' @param start_row A vector specifying the starting row to write `x` to.
 #' @param array A bool if the function written is of type array
 #' @param col_names If `TRUE`, column names of `x` are written.
 #' @param row_names If `TRUE`, the row names of `x` are written.
