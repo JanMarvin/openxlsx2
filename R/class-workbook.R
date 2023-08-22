@@ -5194,6 +5194,11 @@ wbWorkbook <- R6::R6Class(
     #' @param title,subject,category A workbook property to set
     set_properties = function(title = NULL, subject = NULL, category = NULL) {
       private$generate_base_core()
+
+      if (is.null(title) && is.null(subject) && is.null(category)) {
+        return(invisible(self))
+      }
+
       if (!is.null(title)) {
         private$modify_property("set", value = title, property = "title")
       }
@@ -5205,6 +5210,7 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(category)) {
         private$modify_property("set", value = category, "category")
       }
+
     },
 
 
