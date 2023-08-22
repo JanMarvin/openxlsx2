@@ -1264,7 +1264,7 @@ wb_set_bookview <- function(
 #'
 #' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
-#' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
+#' @param header,even_header,first_header,footer,even_footer,first_footer
 #'   Character vector of length 3 corresponding to positions left, center,
 #'   right.  `header` and `footer` are used to default additional arguments.
 #'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
@@ -1336,30 +1336,24 @@ wb_set_header_footer <- function(
 
 
 
-#' @name wb_page_setup
-#' @title Set page margins, orientation and print scaling
-#' @description Set page margins, orientation and print scaling
+#' Set page margins, orientation and print scaling
+#'
+#' Set page margins, orientation and print scaling.
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
 #' @param orientation Page orientation. One of "portrait" or "landscape"
 #' @param scale Print scaling. Numeric value between 10 and 400
-#' @param left left page margin in inches
-#' @param right right page margin in inches
-#' @param top top page margin in inches
-#' @param bottom bottom page margin in inches
-#' @param header header margin in inches
-#' @param footer footer margin in inches
-#' @param fit_to_width If `TRUE`, worksheet is scaled to fit to page width on printing.
-#' @param fit_to_height If `TRUE`, worksheet is scaled to fit to page height on printing.
+#' @param left,right,top,bottom  Page margin in inches
+#' @param header,footer  Margin in inches
+#' @param fit_to_width,fit_to_height If `TRUE`, worksheet is scaled to fit to page width /height on printing.
 #' @param paper_size See details. Default value is 9 (A4 paper).
-#' @param print_title_rows Rows to repeat at top of page when printing. Integer vector.
-#' @param print_title_cols Columns to repeat at left when printing. Integer vector.
+#' @param print_title_rows,print_title_cols Rows / columns to repeat at top of page when printing. Integer vector.
 #' @param summary_row Location of summary rows in groupings. One of "Above" or "Below".
 #' @param summary_col Location of summary columns in groupings. One of "Right" or "Left".
 #' @param ... additional arguments
 #' @export
 #' @details
-#' paperSize is an integer corresponding to:
+#' `paper_size` is an integer corresponding to:
 #' \itemize{
 #' \item{**1**}{ Letter paper (8.5 in. by 11 in.)}
 #' \item{**2**}{ Letter small paper (8.5 in. by 11 in.)}
@@ -2999,24 +2993,21 @@ wb_add_dxfs_style <- function(
 #' @param ... additional arguments
 #' @returns The Workbook object, invisibly.
 #' @seealso [create_comment()], [wb_add_thread()]
-#' @name wb_comment
+#' @name wb_add_comment
 #' @keywords comments
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
-#' # Add comment without styling
-#' wb$add_comment(dims = "A1", comment = "Top-left corner of the spreadsheet.")
-#' # Remove comment
-#' wb$remove_comment(sheet = "Sheet 1", dims = "A1")
 #' # add a comment without author
 #' c1 <- create_comment(text = "this is a comment", author = "")
 #' wb$add_comment(dims = "B10", comment = c1)
-#'
+#' #' # Remove comment
+#' wb$remove_comment(sheet = "Sheet 1", dims = "B10")
 #' # Write another comment with author information
 #' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
 #' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
 NULL
-#' @rdname wb_comment
+#' @rdname wb_add_comment
 #' @export
 wb_add_comment <- function(
     wb,
@@ -3037,7 +3028,7 @@ wb_add_comment <- function(
   )
 }
 
-#' @rdname wb_comment
+#' @rdname wb_add_comment
 #' @export
 wb_remove_comment <- function(
     wb,

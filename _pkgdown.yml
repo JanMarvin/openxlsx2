@@ -31,7 +31,7 @@ reference:
   - wb_add_data_table
   - wb_col_widths
   - wb_row_heights
-  - wb_comment
+  - wb_add_comment
   - wb_add_thread
   - wb_filter
   - wb_freeze_pane

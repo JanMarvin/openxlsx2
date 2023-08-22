@@ -21,7 +21,7 @@ wb_set_header_footer(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{header, odd_header, even_header, first_header, footer, odd_footer, even_footer, first_footer}{Character vector of length 3 corresponding to positions left, center,
+\item{header, even_header, first_header, footer, even_footer, first_footer}{Character vector of length 3 corresponding to positions left, center,
 right.  \code{header} and \code{footer} are used to default additional arguments.
 Setting \code{even}, \code{odd}, or \code{first}, overrides \code{header}/\code{footer}. Use \code{NA} to
 skip a position.}
