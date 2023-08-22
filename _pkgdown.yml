@@ -19,7 +19,7 @@ reference:
   - wb_open
   - wb_save
 
-- title: Interact with the content in worksheets
+- title: Main functions to interact with the contents of a Workbook object
 - subtitle: Add content to a worksheet
   desc: >
     These functions help you write in worksheets. They invisibly return the
@@ -53,9 +53,9 @@ reference:
   contents:
   - has_concept("workbook styling functions")
 
-- subtitle: Interact with the workbook metadata
+- subtitle: Interact with the workbook
   desc: >
-    These functions are used to modify the workbook as a whole
+    These functions are used to modify the workbook as a whole.
   contents:
   - wb_set_last_modified_by
   - wb_creators
@@ -85,24 +85,7 @@ reference:
   - wb_add_sparklines
   - wb_add_chart_xml
 
-- title: Other tools to interact with worksheets
-  contents:
-  - starts_with("wb_clone")
-  - starts_with("wb_copy")
-  - wb_set_sheetview
-  - wb_merge_cells
-  - wb_grouping
-  - wb_add_form_control
-  - wb_add_ignore_error
-  - wb_set_header_footer
-  - wb_grid_lines
-  - wb_update_table
-  - wb_named_region
-  - wb_clean_sheet
-  - wb_add_form_control
-  - wb_page_setup
-
-- title: Helpers to create argument values used in `wb_*` functions
+- title: Helpers to specify wb function arguments
   desc: >
     These functions are helpers to create an intermediate R6 class object to use
     with `wb_*` functions.
@@ -112,7 +95,30 @@ reference:
   - wb_hyperlink
   - starts_with("create_")
 
-- title: XML functions
+
+- title: Other functions
+  desc: >
+    These functions can be used to achieve more specialized operations.
+
+- subtitle: Other tools to interact with worksheets
+  contents:
+  - starts_with("wb_clone")
+  - starts_with("wb_copy")
+  - wb_set_sheetview
+  - wb_merge_cells
+  - wb_grouping
+  - wb_add_form_control
+  - wb_add_ignore_error
+  - wb_set_header_footer
+  - wb_set_grid_lines
+  - wb_update_table
+  - wb_named_region
+  - wb_protect_worksheet
+  - wb_clean_sheet
+  - wb_add_form_control
+  - wb_page_setup
+
+- subtitle: XML functions
   desc: >
     A curated list of XML functions used in openxlsx2.
   contents:
@@ -121,7 +127,7 @@ reference:
   - as_xml
   - starts_with("print.pugi")
 
-- title: Misc and helpers
+- subtitle: Misc and helpers
   contents:
   - openxlsx2_options
   - int2col
@@ -135,7 +141,7 @@ reference:
   - clean_worksheet_name
   - styles_on_sheet
 
-- title: Deprecated
+- subtitle: Deprecated
   contents:
   - openxlsx2-deprecated
 

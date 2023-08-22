@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-comment.R
 \name{create_comment}
 \alias{create_comment}
-\title{Create a \code{comment}}
+\title{Create a comment}
 \usage{
 create_comment(
   text,

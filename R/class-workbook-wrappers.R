@@ -3461,7 +3461,6 @@ wb_set_sheetview <- function(
 
 #' Modify the state of active and selected sheets in a workbook
 #'
-#'
 #' @description
 #' Get and set table of sheets and their state as selected and active in a workbook
 #'
