@@ -38,3 +38,13 @@ numfmt <- wb$get_cell_style(dims = "B1")
 # assign style to a1
 wb$set_cell_style(dims = "A1", style = numfmt)
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_named_style}()},
+\code{\link{wb_add_numfmt}()}
+}
+\concept{styles}

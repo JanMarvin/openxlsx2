@@ -32,3 +32,13 @@ Set the styling to a named style for a cell region. Use \code{\link[=wb_add_cell
 to style a cell region with custom parameters.
 A named style is the one in spreadsheet software, like "Normal", "Warning".
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_numfmt}()},
+\code{\link{wb_cell_style}}
+}
+\concept{styles}

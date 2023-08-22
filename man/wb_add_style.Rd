@@ -35,4 +35,9 @@ wb <- wb_workbook() \%>\% wb_add_style(yellow)
 \item \code{\link[=create_font]{create_font()}}
 \item \code{\link[=create_numfmt]{create_numfmt()}}
 }
+
+Other workbook styling functions: 
+\code{\link{wb_add_dxfs_style}()},
+\code{\link{wb_base_font}}
 }
+\concept{workbook styling functions}

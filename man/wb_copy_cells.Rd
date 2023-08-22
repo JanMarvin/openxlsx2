@@ -41,10 +41,9 @@ add_worksheet()$
   add_data(x = mtcars)$
   add_fill(dims = "A1:F1", color = wb_color("yellow"))
 
-dat <- wb_data(wb, dims = "A1:D4", colNames = FALSE)
-
+dat <- wb_data(wb, dims = "A1:D4", col_names = FALSE)
+# 1:1 copy to M2
 wb$
-  # 1:1 copy to M2
   clone_worksheet(old = 1, new = "Clone1")$
   copy_cells(data = dat, dims = "M2")
 }

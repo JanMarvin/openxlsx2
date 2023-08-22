@@ -96,7 +96,7 @@ wb_add_cell_style(
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorksheet} Object, invisibly
+The \code{wbWorkbook} object, invisibly
 }
 \description{
 Add cell style to a cell region
@@ -122,6 +122,8 @@ Other styles:
 \code{\link{wb_add_border}()},
 \code{\link{wb_add_fill}()},
 \code{\link{wb_add_font}()},
-\code{\link{wb_add_numfmt}()}
+\code{\link{wb_add_named_style}()},
+\code{\link{wb_add_numfmt}()},
+\code{\link{wb_cell_style}}
 }
 \concept{styles}

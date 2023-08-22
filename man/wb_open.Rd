@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_open}
 \alias{wb_open}
-\title{Open a workbook in a spreadsheet software}
+\title{Preview a workbook in a spreadsheet software}
 \usage{
 wb_open(wb)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_save}
 \alias{wb_save}
-\title{Save Workbook to file}
+\title{Save a workbook to file}
 \usage{
 wb_save(wb, file = NULL, overwrite = TRUE, path = NULL)
 }
@@ -13,13 +13,13 @@ wb_save(wb, file = NULL, overwrite = TRUE, path = NULL)
 
 \item{overwrite}{If \code{FALSE}, will not overwrite when \code{path} exists}
 
-\item{path}{Deprecated argument previously used for file. Please use file in new code.}
+\item{path}{Deprecated argument previously used for \code{file}. Please use \code{file} in new code.}
 }
 \value{
 the \code{wbWorkbook} object, invisibly
 }
 \description{
-Save Workbook to file
+Save a workbook to file
 }
 \examples{
 ## Create a new workbook and add a worksheet

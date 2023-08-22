@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_update_table}
 \alias{wb_update_table}
-\title{update a data_table}
+\title{Update a data table}
 \usage{
 wb_update_table(wb, sheet = current_sheet(), dims = "A1", tabname)
 }
@@ -11,12 +11,12 @@ wb_update_table(wb, sheet = current_sheet(), dims = "A1", tabname)
 
 \item{sheet}{a worksheet}
 
-\item{dims}{cell used as start}
+\item{dims}{cell range used for new data table.}
 
 \item{tabname}{a tablename}
 }
 \description{
-update a data_table
+Update the position of a data table, possibly written using \code{\link[=wb_add_data_table]{wb_add_data_table()}}
 }
 \details{
 Be aware that this function does not alter any filter.

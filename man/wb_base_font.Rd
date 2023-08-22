@@ -55,6 +55,10 @@ wb$set_base_font(font_size = 10, font_color = "#FF0000", font_name = "Arial Narr
 wb_get_base_font(wb)
 }
 \seealso{
+Other workbook styling functions: 
+\code{\link{wb_add_dxfs_style}()},
+\code{\link{wb_add_style}()}
+
 Other workbook wrappers: 
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
@@ -73,4 +77,5 @@ Other workbook wrappers:
 \code{\link{wb_save}()},
 \code{\link{wb_workbook}()}
 }
+\concept{workbook styling functions}
 \concept{workbook wrappers}

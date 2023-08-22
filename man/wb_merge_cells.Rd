@@ -24,7 +24,7 @@ wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 Worksheet cell merging
 }
 \details{
-If using the deprecated \code{rows} and \code{cols} arguments with a merged region must be rectangular,
+If using the deprecated arguments \code{rows} and \code{cols} with a merged region must be rectangular,
 only min and max of \code{cols} and \code{rows} are used.
 }
 \examples{

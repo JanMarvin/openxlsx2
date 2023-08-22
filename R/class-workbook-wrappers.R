@@ -53,12 +53,12 @@ wb_workbook <- function(
 }
 
 
-#' Save Workbook to file
+#' Save a workbook to file
 #'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param file A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `path` exists
-#' @param path Deprecated argument previously used for file. Please use file in new code.
+#' @param path Deprecated argument previously used for `file`. Please use `file` in new code.
 #'
 #' @export
 #' @family workbook wrappers
@@ -430,10 +430,12 @@ wb_add_formula <- function(
   )
 }
 
-#' update a data_table
+#' Update a data table
+#'
+#' Update the position of a data table, possibly written using [wb_add_data_table()]
 #' @param wb workbook
 #' @param sheet a worksheet
-#' @param dims cell used as start
+#' @param dims cell range used for new data table.
 #' @param tabname a tablename
 #'
 #' @details
@@ -463,10 +465,9 @@ wb_update_table <- function(wb, sheet = current_sheet(), dims = "A1", tabname) {
 #'   add_data(x = mtcars)$
 #'   add_fill(dims = "A1:F1", color = wb_color("yellow"))
 #'
-#' dat <- wb_data(wb, dims = "A1:D4", colNames = FALSE)
-#'
+#' dat <- wb_data(wb, dims = "A1:D4", col_names = FALSE)
+#' # 1:1 copy to M2
 #' wb$
-#'   # 1:1 copy to M2
 #'   clone_worksheet(old = 1, new = "Clone1")$
 #'   copy_cells(data = dat, dims = "M2")
 #' @family workbook wrappers
@@ -504,7 +505,7 @@ wb_copy_cells <- function(
 #' Worksheet cell merging
 #'
 #' @details
-#' If using the deprecated `rows` and `cols` arguments with a merged region must be rectangular,
+#' If using the deprecated arguments `rows` and `cols` with a merged region must be rectangular,
 #' only min and max of `cols` and `rows` are used.
 #'
 #' @param wb A Workbook object
@@ -562,18 +563,18 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
 
 #' Add a chartsheet to a workbook
 #'
-#' @param wb A Workbook object to attach the new worksheet
-#' @param sheet A name for the new worksheet
-#' @param tab_color Color of the worksheet tab. A valid color (belonging to
-#'   colors()) or a valid hex color beginning with "#"
+#' @param wb A Workbook object to attach the new chartsheet
+#' @param sheet A name for the new chartsheet
+#' @param tab_color Color of the chartsheet tab. A valid color (belonging to
+#'   `colors()`) or a valid hex color beginning with "#"
 #' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
 #'   percentage.
-#' @param visible If FALSE, sheet is hidden else visible.
+#' @param visible If `FALSE`, sheet is hidden else visible.
 #' @param ... ...
 #' @details After chartsheet creation a chart must be added to the sheet.
 #' Otherwise the chartsheet will break the workbook.
 #' @family workbook wrappers
-#' @seealso [wb_add_mschart()]
+#' @seealso [wb_add_mschart()] [wbChartSheet]
 #' @export
 wb_add_chartsheet <- function(
   wb,
@@ -1136,13 +1137,13 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 #' The font name is not validated in anyway. Excel replaces unknown font names
 #' with Arial. Base font is black, size 11, Calibri.
-#' @family workbook wrappers
 #' @param wb A workbook object
 #' @param font_size font size
 #' @param font_color font color
 #' @param font_name Name of a font
 #' @param ... additional arguments
-#'
+#' @family workbook styling functions
+#' @family workbook wrappers
 #' @name wb_base_font
 #' @examples
 #' ## create a workbook
@@ -2437,7 +2438,7 @@ wb_clean_sheet <- function(
   )
 }
 
-#' Open a workbook in a spreadsheet software
+#' Preview a workbook in a spreadsheet software
 #'
 #' You can also use the shorter `wb$open()` as a replacement.
 #' To open xlsx files, see [xl_open()].
@@ -2464,7 +2465,7 @@ wb_open <- function(wb) {
 #' * [create_fill()]
 #' * [create_font()]
 #' * [create_numfmt()]
-#'
+#' @family workbook styling functions
 #' @examples
 #' yellow_f <- wb_color(hex = "FF9C6500")
 #' yellow_b <- wb_color(hex = "FFFFEB9C")
@@ -2486,6 +2487,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #' @param wb A `wbWorkbook` object
 #' @param sheet sheet
 #' @param dims A cell range in the worksheet
+#' @family styles
 #' @examples
 #' # set a style in b1
 #' wb <- wb_workbook()$add_worksheet()$
@@ -2807,7 +2809,7 @@ wb_add_numfmt <- function(
 #'      vertical = "center",
 #'      wrap_text = "1"
 #'    )
-#' @return The `wbWorksheet` Object, invisibly
+#' @return The `wbWorkbook` object, invisibly
 #' @family styles
 #' @export
 wb_add_cell_style <- function(
@@ -2883,6 +2885,7 @@ wb_add_cell_style <- function(
 #' @param sheet A worksheet
 #' @param dims A cell range
 #' @param name The named style name.
+#' @family styles
 #' @param font_name,font_size optional else the default of the theme
 #' @return The `wbWorkbook`, invisibly
 #' @export
@@ -2909,7 +2912,7 @@ wb_add_named_style <- function(
 #'
 #' These styles are used with conditional formatting and custom table styles.
 #'
-#' @param wb A `wbWorkbook` object.
+#' @param wb A Workbook object.
 #' @param name the style name
 #' @param font_name the font name
 #' @param font_size the font size
@@ -2924,7 +2927,8 @@ wb_add_named_style <- function(
 #' @param text_italic logical if text is italic
 #' @param text_underline logical if text is underlined
 #' @param ... additional arguments passed to [create_dxfs_style()]
-#' @return The `wbWorkbook` object, invisibly
+#' @family workbook styling functions
+#' @return The Workbook object, invisibly
 #' @examples
 #' wb <- wb_workbook() %>%
 #'   wb_add_worksheet() %>%
@@ -2972,7 +2976,7 @@ wb_add_dxfs_style <- function(
 
 }
 
-#' Add / remove comment or note in a worksheet
+#' Add / remove comment in a worksheet
 #'
 #' @description
 #' The comment functions (add and remove) allow the modification of comments.

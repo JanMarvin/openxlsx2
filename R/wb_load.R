@@ -1,26 +1,28 @@
-#' @name wb_load
-#' @title Load an existing .xlsx file
+#' Load an existing .xlsx file
+#'
+#' `wb_load()` returns a workbook object conserving styles and
+#' formatting of the original .xlsx file.
+#'
+#' A warning is displayed if an xml namespace for main is found in the xlsx file.
+#' Certain xlsx files created by third-party applications contain a namespace
+#' (usually `x`). This namespace is not required for the file to work in spreadsheet
+#' software and is not expected by `openxlsx2`. Therefore it is removed when the
+#' file is loaded into a workbook. Removal is generally expected to be safe,
+#' but the feature is still experimental.
+#'
 #' @param file A path to an existing .xlsx or .xlsm file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
-#' sheet will be loaded.
+#'   sheet will be loaded.
 #' @param data_only mode to import if only a data frame should be returned. This
-#' strips the wbWorkbook to a bare minimum.
+#'   strips the `wbWorkbook` to a bare minimum.
 #' @param calc_chain optionally you can keep the calculation chain intact. This
-#' is used by spreadsheet software to identify the order in which formulas are
-#' evaluated. Removing the calculation chain is considered harmless. The calc
-#' chain will be created upon the next time the worksheet is loaded in
-#' spreadsheet software. Keeping it, might only speed loading time in said
-#' software.
+#'   is used by spreadsheet software to identify the order in which formulas are
+#'   evaluated. Removing the calculation chain is considered harmless. The calc
+#'   chain will be created upon the next time the worksheet is loaded in
+#'   spreadsheet software. Keeping it, might only speed loading time in said
+#'   software.
 #' @param ... additional arguments
-#' @description  wb_load returns a workbook object conserving styles and
-#' formatting of the original .xlsx file.
-#' @details A warning is displayed if an xml namespace for main is found in the
-#' xlsx file. Certain xlsx files created by third-party applications contain a
-#' namespace (usually `x`). This namespace is not required for the file to work
-#' in spreadsheet software and is not expected by `openxlsx2`. Therefore it is
-#' removed when the file is loaded into a workbook. Removal is generally
-#' expected to be safe, but the feature is still experimental.
-#' @return Workbook object.
+#' @return A Workbook object.
 #' @export
 #' @seealso [wb_remove_worksheet()]
 #' @examples

@@ -13,7 +13,7 @@ wb_load(file, sheet, data_only = FALSE, calc_chain = FALSE, ...)
 sheet will be loaded.}
 
 \item{data_only}{mode to import if only a data frame should be returned. This
-strips the wbWorkbook to a bare minimum.}
+strips the \code{wbWorkbook} to a bare minimum.}
 
 \item{calc_chain}{optionally you can keep the calculation chain intact. This
 is used by spreadsheet software to identify the order in which formulas are
@@ -25,19 +25,19 @@ software.}
 \item{...}{additional arguments}
 }
 \value{
-Workbook object.
+A Workbook object.
 }
 \description{
-wb_load returns a workbook object conserving styles and
+\code{wb_load()} returns a workbook object conserving styles and
 formatting of the original .xlsx file.
 }
 \details{
-A warning is displayed if an xml namespace for main is found in the
-xlsx file. Certain xlsx files created by third-party applications contain a
-namespace (usually \code{x}). This namespace is not required for the file to work
-in spreadsheet software and is not expected by \code{openxlsx2}. Therefore it is
-removed when the file is loaded into a workbook. Removal is generally
-expected to be safe, but the feature is still experimental.
+A warning is displayed if an xml namespace for main is found in the xlsx file.
+Certain xlsx files created by third-party applications contain a namespace
+(usually \code{x}). This namespace is not required for the file to work in spreadsheet
+software and is not expected by \code{openxlsx2}. Therefore it is removed when the
+file is loaded into a workbook. Removal is generally expected to be safe,
+but the feature is still experimental.
 }
 \examples{
 ## load existing workbook from package folder

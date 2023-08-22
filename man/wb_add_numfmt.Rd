@@ -33,6 +33,8 @@ Other styles:
 \code{\link{wb_add_border}()},
 \code{\link{wb_add_cell_style}()},
 \code{\link{wb_add_fill}()},
-\code{\link{wb_add_font}()}
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_named_style}()},
+\code{\link{wb_cell_style}}
 }
 \concept{styles}

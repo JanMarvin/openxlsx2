@@ -1270,39 +1270,8 @@ write_formula <- function(
 #'
 #' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
 #'
-#' @param wb A Workbook object containing a worksheet.
-#' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param x A data frame.
-#' @param start_col A vector specifying the starting column to write df
-#' @param start_row A vector specifying the starting row to write df
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, row names of x are written.
-#' @param table_style Any excel table style name or "none" (see "formatting" vignette).
-#' @param table_name name of table in workbook. The table name must be unique.
-#' @param with_filter If `TRUE`, columns with have filters in the first row.
-#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' \cr\cr
-#' \cr**The below options correspond to Excel table options:**
-#' \cr
-#' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
-#' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
-#'
-#' @param first_column logical. If TRUE, the first column is bold
-#' @param last_column logical. If TRUE, the last column is bold
-#' @param banded_rows logical. If TRUE, rows are color banded
-#' @param banded_cols logical. If TRUE, the columns are color banded
-#' @param apply_cell_style apply styles when writing on the sheet
-#' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.
-#' @param inline_strings write characters as inline strings
-#' @param ... additional arguments
-#' @details columns of x with class Date/POSIXt, currency, accounting,
-#' hyperlink, percentage are automatically styled as dates, currency, accounting,
-#' hyperlinks, percentages respectively.
-#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
-#' contains this string, the output will be broken.
+#' @inheritParams wb_add_data_table
+#' @inherit wb_add_data_table details
 #' @seealso
 #'   [wb_add_worksheet()]
 #'   [wb_add_data_table()]
@@ -1325,8 +1294,8 @@ write_formula <- function(
 #' wb$add_data_table("S1", x = iris)
 #'
 #' wb$add_data_table("S2",
-#'   x = mtcars, dims = c("B3"), rowNames = TRUE,
-#'   tableStyle = "TableStyleLight9"
+#'   x = mtcars, dims = c("B3"), row_names = TRUE,
+#'   table_style = "TableStyleLight9"
 #' )
 #'
 #' df <- data.frame(
@@ -1346,7 +1315,7 @@ write_formula <- function(
 #' class(df$Percentage) <- c(class(df$Percentage), "percentage")
 #' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 #'
-#' wb$add_data_table("S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+#' wb$add_data_table("S3", x = df, start_row = 4, row_names = TRUE, table_style = "TableStyleMedium9")
 #'
 #' #####################################################################################
 #' ## Additional Header Styling and remove column filters
@@ -1354,12 +1323,12 @@ write_formula <- function(
 #' write_datatable(wb,
 #'   sheet = 1,
 #'   x = iris,
-#'   startCol = 7,
-#'   withFilter = FALSE,
-#'   firstColumn = TRUE,
-#'   lastColumn	= TRUE,
-#'   bandedRows = TRUE,
-#'   bandedCols = TRUE
+#'   start_col = 7,
+#'   with_filter = FALSE,
+#'   first_column = TRUE,
+#'   last_column	= TRUE,
+#'   banded_rows = TRUE,
+#'   banded_cols = TRUE
 #' )
 #'
 #' #####################################################################################
@@ -1371,7 +1340,7 @@ write_formula <- function(
 #'   style <- paste0("TableStyleLight", i)
 #'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
-#'     tableStyle = style, startRow = 1, startCol = i * 3 - 2
+#'     table_style = style, start_row = 1, start_col = i * 3 - 2
 #'   )
 #' }
 #'
@@ -1379,7 +1348,7 @@ write_formula <- function(
 #'   style <- paste0("TableStyleMedium", i)
 #'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
-#'     tableStyle = style, startRow = 4, startCol = i * 3 - 2
+#'     table_style = style, start_row = 4, start_col = i * 3 - 2
 #'   )
 #' }
 #'
@@ -1387,7 +1356,7 @@ write_formula <- function(
 #'   style <- paste0("TableStyleDark", i)
 #'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
-#'     tableStyle = style, startRow = 7, startCol = i * 3 - 2
+#'     table_style = style, start_row = 7, start_col = i * 3 - 2
 #'   )
 #' }
 #' @export
