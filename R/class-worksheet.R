@@ -179,17 +179,25 @@ wbWorksheet <- R6::R6Class(
         tabColor <- character()
       }
 
+      # TODO this could probably be moved to the hf assignment
+      oddHeader   <- headerFooterSub(odd_header)
+      oddFooter   <- headerFooterSub(odd_footer)
+      evenHeader  <- headerFooterSub(even_header)
+      evenFooter  <- headerFooterSub(even_footer)
+      firstHeader <- headerFooterSub(first_header)
+      firstFooter <- headerFooterSub(first_footer)
+
       hf <- list(
-        oddHeader   = na_to_null(odd_header),
-        oddFooter   = na_to_null(odd_footer),
-        evenHeader  = na_to_null(even_header),
-        evenFooter  = na_to_null(even_footer),
-        firstHeader = na_to_null(first_header),
-        firstFooter = na_to_null(first_footer)
+        oddHeader   = naToNULLList(oddHeader),
+        oddFooter   = naToNULLList(oddFooter),
+        evenHeader  = naToNULLList(evenHeader),
+        evenFooter  = naToNULLList(evenFooter),
+        firstHeader = naToNULLList(firstHeader),
+        firstFooter = naToNULLList(firstFooter)
       )
 
       if (all(lengths(hf) == 0)) {
-        hf <- list()
+        hf <- NULL
       }
 
       # only add if printGridLines not TRUE. The openxml default is TRUE
