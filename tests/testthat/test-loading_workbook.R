@@ -258,10 +258,10 @@ test_that("test headerFooter", {
   # Load workbook and save again
   wb2 <- wb_load(tmp1)
 
-  expect_equal(wb$worksheets[[1]]$headerFooter,
+  expect_equal(lapply(wb$worksheets[[1]]$headerFooter, unlist),
                wb2$worksheets[[1]]$headerFooter)
 
-  expect_equal(wb$worksheets[[2]]$headerFooter,
+  expect_equal(lapply(wb$worksheets[[2]]$headerFooter, unlist),
                wb2$worksheets[[2]]$headerFooter)
 
 })
