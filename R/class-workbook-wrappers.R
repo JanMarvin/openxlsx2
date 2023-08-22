@@ -380,7 +380,7 @@ wb_add_pivot_table <- function(
 #' * MAX(B2:B4)
 #' * ...
 #'
-#' @param wb A `wbWorkbook` containing a worksheet.
+#' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. (either as index or name)
 #' @param x A formula as character vector.
 #' @param dims Spreadsheet dimensions that will determine where `x` spans: "A1", "A1:B2", "A:B"
@@ -1261,7 +1261,7 @@ wb_set_bookview <- function(
 #' * **&\[File\]** File name
 #' * **&\[Tab\]** Worksheet name
 #'
-#' @param wb A workbook object
+#' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
 #' @inheritParams wb_add_worksheet
 #' @param ... additional arguments
@@ -1869,11 +1869,11 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 
 # validations ------------------------------------------------------------------
 
-#' Add data validation to cells
+#' Add data validation to cells in a worksheet
 #'
 #' Add Excel data validation to cells
 #'
-#' @param wb A workbook object
+#' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims A cell dimension ("A1" or "A1:B2")
 #' @param type One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list'
@@ -2406,14 +2406,16 @@ wb_add_chart_xml <- function(
 
 #' Remove all values in a worksheet
 #'
-#' @param wb workbook
+#' Remove content of a worksheet completely, or a region if specifying `dims`.
+#'
+#' @param wb A Workbook object
 #' @param sheet sheet to clean
 #' @param dims spreadsheet dimensions (optional)
 #' @param numbers remove all numbers
 #' @param characters remove all characters
 #' @param styles remove all styles
 #' @param merged_cells remove all merged_cells
-#' @name cleanup
+#' @return A Workbook object
 #' @export
 wb_clean_sheet <- function(
     wb,
@@ -2437,7 +2439,10 @@ wb_clean_sheet <- function(
 
 #' Open a workbook in a spreadsheet software
 #'
-#' @param wb a workbook
+#' You can also use the shorter `wb$open()` as a replacement.
+#' To open xlsx files, see [xl_open()].
+#'
+#' @param wb a [wbWorkbook] object
 #' @export
 wb_open <- function(wb) {
   assert_workbook(wb)
@@ -2967,7 +2972,7 @@ wb_add_dxfs_style <- function(
 
 }
 
-#' Add / remove comment in a worksheet
+#' Add / remove comment or note in a worksheet
 #'
 #' @description
 #' The comment functions (add and remove) allow the modification of comments.
@@ -2977,13 +2982,13 @@ wb_add_dxfs_style <- function(
 #'
 #' `comment` can be created with [create_comment()] to add styling.
 #'
-#' @param wb A Wrkbook object
+#' @param wb A Workbook object
 #' @param sheet A worksheet of the workbook
 #' @param dims Row and column as spreadsheet dimension, e.g. "A1"
 #' @param comment A comment to apply to the worksheet
 # TODO To fit, maybe comment, can be `x`
 #' @param ... additional arguments
-#' @returns The `wbWorkbook` object, invisibly.
+#' @returns The Workbook object, invisibly.
 #' @seealso [create_comment()], [wb_add_thread()]
 #' @name wb_comment
 #' @keywords comments

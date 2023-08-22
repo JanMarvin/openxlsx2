@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_data_validation}
 \alias{wb_add_data_validation}
-\title{Add data validation to cells}
+\title{Add data validation to cells in a worksheet}
 \usage{
 wb_add_data_validation(
   wb,
@@ -23,7 +23,7 @@ wb_add_data_validation(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 

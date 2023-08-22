@@ -31,5 +31,9 @@ vector. Exported for user convenience.
 }
 \examples{
 dims_to_rowcol("A1:J10")
-rowcol_to_dims(1:10, 1:10)
+wb_dims(1:10, 1:10)
+
+}
+\seealso{
+\code{\link[=wb_dims]{wb_dims()}}
 }

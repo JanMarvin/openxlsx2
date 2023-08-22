@@ -7,8 +7,9 @@
 wb_open(wb)
 }
 \arguments{
-\item{wb}{a workbook}
+\item{wb}{a \link{wbWorkbook} object}
 }
 \description{
-Open a workbook in a spreadsheet software
+You can also use the shorter \code{wb$open()} as a replacement.
+To open xlsx files, see \code{\link[=xl_open]{xl_open()}}.
 }

@@ -19,7 +19,7 @@ wb_add_formula(
 )
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook} containing a worksheet.}
+\item{wb}{A Workbook object containing a worksheet.}
 
 \item{sheet}{The worksheet to write to. (either as index or name)}
 

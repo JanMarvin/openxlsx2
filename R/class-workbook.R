@@ -5632,12 +5632,12 @@ wbWorkbook <- R6::R6Class(
       local_sheet        = FALSE,
       overwrite          = FALSE,
       comment            = NULL,
+      hidden             = NULL,
       custom_menu        = NULL,
       description        = NULL,
       is_function        = NULL,
       function_group_id  = NULL,
       help               = NULL,
-      hidden             = NULL,
       local_name         = NULL,
       publish_to_server  = NULL,
       status_bar         = NULL,
@@ -7163,7 +7163,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (tolower(sheet) %in% self$sheet_names) {
-        warning("Fixing: a sheet with name '", sheet, '"already exists. Creating a unique sheetname"')
+        warning('Attempted to add a worksheet that is invalid or already exists.\n',
+                'Fixing: a sheet with name "', sheet, '" already exists. Creating a unique sheetname"', call. = FALSE)
         ## We simply append (1), while spreadsheet software would increase
         ## the integer as: Sheet, Sheet (1), Sheet (2) etc.
         sheet <- paste(sheet, "(1)")

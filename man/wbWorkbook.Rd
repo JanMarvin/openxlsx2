@@ -2416,12 +2416,12 @@ add a named region
   local_sheet = FALSE,
   overwrite = FALSE,
   comment = NULL,
+  hidden = NULL,
   custom_menu = NULL,
   description = NULL,
   is_function = NULL,
   function_group_id = NULL,
   help = NULL,
-  hidden = NULL,
   local_name = NULL,
   publish_to_server = NULL,
   status_bar = NULL,
@@ -2447,6 +2447,8 @@ add a named region
 
 \item{\code{comment}}{comment}
 
+\item{\code{hidden}}{hidden}
+
 \item{\code{custom_menu}}{custom_menu}
 
 \item{\code{description}}{description}
@@ -2456,8 +2458,6 @@ add a named region
 \item{\code{function_group_id}}{function group id}
 
 \item{\code{help}}{help}
-
-\item{\code{hidden}}{hidden}
 
 \item{\code{local_name}}{localName}
 

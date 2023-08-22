@@ -4,14 +4,14 @@
 \alias{wb_comment}
 \alias{wb_add_comment}
 \alias{wb_remove_comment}
-\title{Add / remove comment in a worksheet}
+\title{Add / remove comment or note in a worksheet}
 \usage{
 wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
 
 wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 }
 \arguments{
-\item{wb}{A Wrkbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A worksheet of the workbook}
 
@@ -22,7 +22,7 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorkbook} object, invisibly.
+The Workbook object, invisibly.
 }
 \description{
 The comment functions (add and remove) allow the modification of comments.

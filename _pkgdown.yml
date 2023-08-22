@@ -42,9 +42,9 @@ reference:
   - wb_add_form_control
   - wb_add_page_break
 
-- subtitle: Add styling to a worksheet region
+- subtitle: Add styling to a cell region in a worksheet
   desc: >
-    These functions are related to styling of a region or cells.
+    These functions are related to styling of a region or cells of a worksheet.
   contents:
   - has_concept("styles")
   - wb_cell_style
@@ -93,7 +93,6 @@ reference:
 
 - title: Other tools to interact with worksheets
   contents:
-  - cleanup
   - starts_with("wb_clone")
   - starts_with("wb_copy")
   - wb_set_sheetview
@@ -104,6 +103,7 @@ reference:
   - wb_grid_lines
   - wb_update_table
   - wb_named_region
+  - wb_clean_sheet
   - wb_protect_worksheet
   - wb_page_setup
 
