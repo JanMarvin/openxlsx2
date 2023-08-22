@@ -2246,6 +2246,27 @@ wb_get_creators <- function(wb) {
   wb[["creator"]]
 }
 
+#' Modify workbook properties
+#'
+#' This function is useful for workbooks that are loeaded
+#' @inheritParams wb_workbook
+#' @return A wbWorkbook object, invisibly.
+#' @export
+#'
+#' @examples
+#' file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' wb <- wb_load(file)
+#' wb$title
+#'
+#' # Add a title to properties
+#' wb$set_properties(title = "my title")
+#'
+#' wb$title
+#'
+wb_set_properties <- function(wb, title = NULL, subject = NULL, category = NULL) {
+  assert_workbook(wb)
+  wb$clone()$set_properties(title = title, subject = subject, category = category)
+}
 
 
 # names -------------------------------------------------------------------
