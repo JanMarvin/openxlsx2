@@ -125,8 +125,8 @@ If no sheet is selected, the first appearance will be selected. See \code{\link[
 }
 \description{
 Simple function to create a \code{data.frame} from a workbook. Simple as in simply
-written down. \code{\link[=read_xlsx]{read_xlsx()}} and \code{\link[=wb_read]{wb_read()}} are just internal wrappers for
-\code{\link[=wb_to_df]{wb_to_df()}} intended for people coming from other packages.
+written down. \code{read_xlsx()} and \code{wb_read()} are just internal wrappers of
+\code{wb_to_df()} intended for people coming from other packages.
 }
 \details{
 Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns
@@ -140,10 +140,6 @@ The \code{types} argument must be a named numeric.
 \item 3: posixt (datetime)
 \item 4: logical
 }
-
-Formulae written using write_formula to a Workbook object will not get picked up by \code{read_xlsx()}.
-This is because only the formula is written and left to be evaluated when the file is opened in Excel.
-Opening, saving and closing the file with Excel will resolve this.
 }
 \examples{
 ###########################################################################

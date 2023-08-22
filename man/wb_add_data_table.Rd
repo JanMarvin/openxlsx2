@@ -29,24 +29,23 @@ wb_add_data_table(
 )
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook} object containing a worksheet.}
+\item{wb}{A Workbook object containing a worksheet.}
 
 \item{sheet}{The worksheet to write to. Can be the worksheet index or name.}
 
-\item{x}{A data frame.}
+\item{x}{A data frame}
 
-\item{dims}{A spreadsheet cell range that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
+\item{dims}{Spreadsheet dimensions that will determine \code{start_col} and \code{start_row}: "A1", "A1:B2", "A:B"}
 
-\item{start_col}{A vector specifying the starting column to write \code{x}}
+\item{start_col}{A vector specifying the starting column to write to.}
 
-\item{start_row}{A vector specifying the starting row to write \code{x}}
+\item{start_row}{A vector specifying the starting row to write to.}
 
 \item{col_names}{If \code{TRUE}, column names of \code{x} are written.}
 
-\item{row_names}{If \code{TRUE}, row names of \code{x} are written.}
+\item{row_names}{If \code{TRUE}, the row names of \code{x} are written.}
 
-\item{table_style}{Any excel table style name or "none" (see "formatting"
-vignette).}
+\item{table_style}{Any excel table style name or "none" (see \code{vignette("openxlsx2_style_manual")})}
 
 \item{table_name}{name of table in workbook. The table name must be unique.}
 
@@ -61,13 +60,13 @@ columns to a character vector e.g.
 \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}}
 
-\item{first_column}{logical. If \code{TRUE}, the first column is bold}
+\item{first_column}{logical. If \code{TRUE}, the first column is bold.}
 
-\item{last_column}{logical. If \code{TRUE}, the last column is bold}
+\item{last_column}{logical. If \code{TRUE}, the last column is bold.}
 
-\item{banded_rows}{logical. If \code{TRUE}, rows are color banded}
+\item{banded_rows}{logical. If \code{TRUE}, rows are color banded.}
 
-\item{banded_cols}{logical. If \code{TRUE}, the columns are color banded}
+\item{banded_cols}{logical. If \code{TRUE}, the columns are color banded.}
 
 \item{apply_cell_style}{Should we write cell styles to the workbook}
 

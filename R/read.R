@@ -2,8 +2,8 @@
 #' Create a data frame from Workbook
 #'
 #' Simple function to create a `data.frame` from a workbook. Simple as in simply
-#' written down. [read_xlsx()] and [wb_read()] are just internal wrappers for
-#' [wb_to_df()] intended for people coming from other packages.
+#' written down. `read_xlsx()` and `wb_read()` are just internal wrappers of
+#' `wb_to_df()` intended for people coming from other packages.
 #'
 #' @details
 #' Depending if the R package `hms` is loaded, `wb_to_df()` returns
@@ -599,11 +599,6 @@ wb_to_df <- function(
 # `read_xlsx()` -----------------------------------------------------------------
 # Ignored by roxygen2 when combining documentation
 # #' Read from an Excel file or Workbook object
-#'
-#' @details
-#' Formulae written using write_formula to a Workbook object will not get picked up by `read_xlsx()`.
-#' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
-#' Opening, saving and closing the file with Excel will resolve this.
 #' @rdname wb_to_df
 #' @export
 read_xlsx <- function(

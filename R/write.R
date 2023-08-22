@@ -946,83 +946,23 @@ write_data_table <- function(
 # `write_data()` ---------------------------------------------------------------
 #' Write an object to a worksheet
 #'
-#' Write an object to worksheet with optional styling. Use [wb_add_data()] in new code.
+#' Write an object to worksheet with optional styling. Use [wb_add_data()] or [write_xlsx()] in new code.
 #'
-#' Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+#' Formulae written using [wb_add_formula()] to a Workbook object will not get picked up by `read_xlsx()`.
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
 #'
-#' @param wb A Workbook object containing a worksheet.
-#' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param x Object to be written. For classes supported look at the examples.
-#' @param start_col A vector specifying the starting column to write to.
-#' @param start_row A vector specifying the starting row to write to.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param array A bool if the function written is of type array
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, data.frame row names of x are written.
-#' @param with_filter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
-#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' @param name If not NULL, a named region is defined.
-#' @param apply_cell_style apply styles when writing on the sheet
-#' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.
-#' @param inline_strings write characters as inline strings
-#' @param ... additional arguments
-#' @seealso [wb_add_data()], [wb_add_data_table()]
+#' @inheritParams wb_add_data
+#' @seealso [wb_add_data()], [write_xlsx()]
 #' @return invisible(0)
-# TODO examples them from here, as docs of `wb_add_data()` and `write_data()` are now separated.
 #' @examples
-#' ## See formatting vignette for further examples.
-#'
-#' ## Options for default styling (These are the defaults)
-#' options("openxlsx2.dateFormat" = "mm/dd/yyyy")
-#' options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
-#' options("openxlsx2.numFmt" = NULL)
-#'
-#' #############################################################################
-#' ## Create Workbook object and add worksheets
-#' wb <- wb_workbook()
-#'
-#' ## Add worksheets
-#' wb$add_worksheet("Cars")
-#' wb$add_worksheet("Formula")
-#'
-#' x <- mtcars[1:6, ]
-#' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
-#'
-#' #############################################################################
-#' ## Hyperlinks
-#' ## - vectors/columns with class 'hyperlink' are written as hyperlinks'
-#'
-#' v <- rep("https://CRAN.R-project.org/", 4)
-#' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
-#' class(v) <- "hyperlink"
-#' wb$add_data("Cars", x = v, dims = c("B32"))
-#'
-#' #############################################################################
-#' ## Formulas
-#' ## - vectors/columns with class 'formula' are written as formulas'
-#'
-#' df <- data.frame(
-#'   x = 1:3, y = 1:3,
-#'   z = paste(paste0("A", 1:3 + 1L), paste0("B", 1:3 + 1L), sep = "+"),
-#'   stringsAsFactors = FALSE
-#' )
-#'
-#' class(df$z) <- c(class(df$z), "formula")
-#'
-#' wb$add_data(sheet = "Formula", x = df)
-#'
-#' #############################################################################
 #' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #' wb2 <- wb_load(xlsxFile)
 #'
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)
-#' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
+#' write_data(wb2, 1, mtcars, start_col = 4, start_row = 4)
 #' wb_to_df(wb2)
 #' @export
 #' @keywords internal

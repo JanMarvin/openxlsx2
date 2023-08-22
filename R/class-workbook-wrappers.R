@@ -107,9 +107,11 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' @param inline_strings write characters as inline strings
 #' @param ... additional arguments
 #' @export
-#' @details Formulae written using write_formula to a Workbook object will not get picked up by `read_xlsx()`.
-#' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
+#' @details Formulae written using [wb_add_formula()] to a Workbook object will
+#' not get picked up by `read_xlsx()`. This is because only the formula is written
+#' and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`.
+#'
 #' If the data frame contains this string, the output will be broken.
 #' Many base classes are covered, though not all and far from all third-party classes.
 #' When data of an unknown class is written, it is handled with `as.character()`.
@@ -217,16 +219,9 @@ wb_add_data <- function(
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If `x` contains this
 #' string, the output will be broken.
 #'
-#' @param wb A `wbWorkbook` object containing a worksheet.
-#' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param x A data frame.
-#' @param dims A spreadsheet cell range that will determine `start_col` and `start_row`: "A1", "A1:B2", "A:B"
-#' @param start_col A vector specifying the starting column to write `x`
-#' @param start_row A vector specifying the starting row to write `x`
-#' @param col_names If `TRUE`, column names of `x` are written.
-#' @param row_names If `TRUE`, row names of `x` are written.
-#' @param table_style Any excel table style name or "none" (see "formatting"
-#'   vignette).
+#' @inheritParams wb_add_data
+#' @param x A data frame
+#' @param table_style Any excel table style name or "none" (see `vignette("openxlsx2_style_manual")`)
 #' @param table_name name of table in workbook. The table name must be unique.
 #' @param with_filter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list
@@ -237,16 +232,10 @@ wb_add_data <- function(
 #' \cr
 #' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
 #' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
-#'
-#' @param first_column logical. If `TRUE`, the first column is bold
-#' @param last_column logical. If `TRUE`, the last column is bold
-#' @param banded_rows logical. If `TRUE`, rows are color banded
-#' @param banded_cols logical. If `TRUE`, the columns are color banded
-#' @param apply_cell_style Should we write cell styles to the workbook
-#' @param remove_cell_style keep the cell style?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   [na_strings()] uses the special `#N/A` value within the workbook.
-#' @param inline_strings write characters as inline strings
+#' @param first_column logical. If `TRUE`, the first column is bold.
+#' @param last_column logical. If `TRUE`, the last column is bold.
+#' @param banded_rows logical. If `TRUE`, rows are color banded.
+#' @param banded_cols logical. If `TRUE`, the columns are color banded.
 #' @param ... additional arguments
 #'
 #' @family workbook wrappers
