@@ -1264,7 +1264,12 @@ wb_set_bookview <- function(
 #'
 #' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
-#' @inheritParams wb_add_worksheet
+#' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
+#'   Character vector of length 3 corresponding to positions left, center,
+#'   right.  `header` and `footer` are used to default additional arguments.
+#'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
+#'   skip a position.
+# #' @inheritParams wb_add_worksheet
 #' @param ... additional arguments
 #' @export
 #' @examples
@@ -3000,7 +3005,7 @@ wb_add_dxfs_style <- function(
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #' # Add comment without styling
-#' wb$add_comment(dims = "A1", "Top-left corner of the spreadsheet.")
+#' wb$add_comment(dims = "A1", comment = "Top-left corner of the spreadsheet.")
 #' # Remove comment
 #' wb$remove_comment(sheet = "Sheet 1", dims = "A1")
 #' # add a comment without author
@@ -3013,7 +3018,7 @@ wb_add_dxfs_style <- function(
 NULL
 #' @rdname wb_comment
 #' @export
-wb_add_comment <- function(
+  wb_add_comment <- function(
     wb,
     sheet   = current_sheet(),
     dims    = "A1",

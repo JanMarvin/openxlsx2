@@ -36,7 +36,7 @@ comment is possible via \code{\link[=wb_add_thread]{wb_add_thread()}}.
 wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 # Add comment without styling
-wb$add_comment(dims = "A1", "Top-left corner of the spreadsheet.")
+wb$add_comment(dims = "A1", comment = "Top-left corner of the spreadsheet.")
 # Remove comment
 wb$remove_comment(sheet = "Sheet 1", dims = "A1")
 # add a comment without author
