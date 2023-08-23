@@ -91,6 +91,24 @@ wbComment <- R6::R6Class(
 #'
 #' @return A `wbComment` object
 #' @export
+#' @examples
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#'
+#' # write comment without author
+#' c1 <- create_comment(text = "this is a comment", author = "")
+#' wb$add_comment(dims = "B10", comment = c1)
+#'
+#' # Write another comment with author information
+#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+#' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
+#'
+#' # write a styled comment with system author
+#' s1 <- create_font(b = "true", color = wb_color(hex = "FFFF0000"), sz = "12")
+#' s2 <- create_font(color = wb_color(hex = "FF000000"), sz = "9")
+#' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
+#'
+#' wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = c3)
 wb_comment <- function(text = NULL,
                        style = NULL,
                        visible = FALSE,
@@ -158,26 +176,7 @@ wb_comment <- function(text = NULL,
 #' @param visible Default: `TRUE`. Is the comment visible by default?
 #' @keywords internal
 #' @returns a `wbComment` object
-#' @seealso [wb_add_comment()]
 #' @export
-#' @examples
-#' wb <- wb_workbook()
-#' wb$add_worksheet("Sheet 1")
-#'
-#' # write comment without author
-#' c1 <- create_comment(text = "this is a comment", author = "")
-#' wb$add_comment(dims = "B10", comment = c1)
-#'
-#' # Write another comment with author information
-#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
-#' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
-#'
-#' # write a styled comment with system author
-#' s1 <- create_font(b = "true", color = wb_color(hex = "FFFF0000"), sz = "12")
-#' s2 <- create_font(color = wb_color(hex = "FF000000"), sz = "9")
-#' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
-#'
-#' wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = c3)
 create_comment <- function(text,
   author = Sys.info()[["user"]],
   style = NULL,
