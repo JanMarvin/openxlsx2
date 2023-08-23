@@ -75,14 +75,14 @@
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
 <ul><li>no longer exporting <code>wb_get_sheet_name()</code>
 </li>
-<li>deprecating <code><a href="../reference/cleanup.html">delete_data()</a></code> and minor improvements to <code><a href="../reference/cleanup.html">wb_clean_sheet()</a></code>
+<li>deprecating <code><a href="../reference/delete_data.html">delete_data()</a></code> and minor improvements to <code><a href="../reference/wb_clean_sheet.html">wb_clean_sheet()</a></code>
 </li>
 <li>removing <code>wb_get_worksheet()</code>, <code>wb_ws()</code>. These never worked as expected.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
 <ul><li>
-<code><a href="../reference/select_active_sheet.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/select_active_sheet.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/select_active_sheet.html">wb_get_selected()</a></code> and <code><a href="../reference/select_active_sheet.html">wb_set_selected()</a></code> are now wrapper functions.</li>
+<code><a href="../reference/wb_active_sheet.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/wb_active_sheet.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/wb_active_sheet.html">wb_get_selected()</a></code> and <code><a href="../reference/wb_active_sheet.html">wb_set_selected()</a></code> are now wrapper functions.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -92,12 +92,12 @@
 <ul><li><p>Function arguments are now defaulting to <code>snake_case</code>. For the time being, both arguments are accepted and <code>camelCase</code> will be switched to <code>snake_case</code> under the hood. Some examples are currently still displaying <code>camelCase</code> and maybe some <code>camelCase</code> function slipped through. <a href="https://github.com/JanMarvin/openxlsx2/pull/678" class="external-link">678</a></p></li>
 <li>
 <p><code><a href="../reference/write_formula.html">write_formula()</a></code>, <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code>, <code><a href="../reference/comment_internal.html">write_comment()</a></code> are no longer recommended,</p>
-<ul><li>Use <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>, <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>, <code><a href="../reference/comment.html">wb_add_comment()</a></code> instead.</li>
+<ul><li>Use <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>, <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>, <code><a href="../reference/wb_add_comment.html">wb_add_comment()</a></code> instead.</li>
 </ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-0-8">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-8"></a></h3>
-<ul><li><p>Order of arguments in <code><a href="../reference/named_region.html">wb_add_named_region()</a></code> changed, because previously overlooked <code>dims</code> argument was added.</p></li>
+<ul><li><p>Order of arguments in <code><a href="../reference/wb_named_region.html">wb_add_named_region()</a></code> changed, because previously overlooked <code>dims</code> argument was added.</p></li>
 <li><p>In various functions the order of <code>dims</code> was changed, to highlight it’s importance</p></li>
 <li>
 <p>Cleanups</p>
@@ -152,7 +152,7 @@
 <h3 id="new-features-0-7-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-7-1"></a></h3>
 <ul><li><p>It is now possible to apply a specific theme to a workbook. <a href="https://github.com/JanMarvin/openxlsx2/pull/630" class="external-link">630</a></p></li>
 <li><p>Removed a few of the former example files and updated the code to use a new default example. This changes internal testing to only run locally if online and external files are required. This reduces the package footprint a little, because 1MB of xlsx files are now excluded. <a href="https://github.com/JanMarvin/openxlsx2/pull/632" class="external-link">632</a></p></li>
-<li><p>The handling of <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code> objects has been improved. It now creates objects of class <code>fmt_txt</code> with their own <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code>+</code>, and <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code> methods. Such objects can now also be used as <code>text</code> in <code><a href="../reference/comment.html">create_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/636" class="external-link">636</a></p></li>
+<li><p>The handling of <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code> objects has been improved. It now creates objects of class <code>fmt_txt</code> with their own <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code>+</code>, and <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code> methods. Such objects can now also be used as <code>text</code> in <code><a href="../reference/create_comment.html">create_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/636" class="external-link">636</a></p></li>
 <li><p>Improve support for inputs with <code>labels</code> attribute. If e.g. a <code>factor</code> label is numeric, we now try to write the label as number. This should impact the way other partially labeled variables are written. <a href="https://github.com/JanMarvin/openxlsx2/pull/639" class="external-link">639</a></p></li>
 <li><p>Added new wrapper function <code><a href="../reference/wb_add_named_style.html">wb_add_named_style()</a></code> this supports pre-defined theme aware cell styles like <code>Title</code> or <code>Note</code>. In addition loading of cell styles was improved and additional custom cell styles should be available as well. <a href="https://github.com/JanMarvin/openxlsx2/pull/628" class="external-link">628</a></p></li>
 <li><p>Provide additional options to write special characters in non-unicode environments. <a href="https://github.com/JanMarvin/openxlsx2/pull/641" class="external-link">641</a></p></li>
@@ -198,7 +198,7 @@
 <li><p>Add <code>dims</code> argument to <code><a href="../reference/wb_add_image.html">wb_add_image()</a></code> and <code><a href="../reference/wb_add_plot.html">wb_add_plot()</a></code>. This can be used to place images starting at a cell or span a cell range. This deprecates <code>xy</code> in <code><a href="../reference/wb_add_plot.html">wb_add_plot()</a></code>. This adds colOffset and rowOffset to <code><a href="../reference/wb_add_drawing.html">wb_add_drawing()</a></code> and <code><a href="../reference/wb_add_mschart.html">wb_add_mschart()</a></code> and <code><a href="../reference/wb_add_chart_xml.html">wb_add_chart_xml()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/578" class="external-link">578</a></p></li>
 <li><p>Add <code>skipHiddenCols</code> and <code>skipHiddenRows</code> to <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>. In this way, hidden columns and rows are ignored, assuming that the person who has hidden them assumes that they are not important. <a href="https://github.com/JanMarvin/openxlsx2/pull/579" class="external-link">579</a></p></li>
 <li><p>When writing <code>tibble</code> use <code>to.data.frame()</code> just like in the <code>data.table</code> case. <a href="https://github.com/JanMarvin/openxlsx2/pull/582" class="external-link">582</a></p></li>
-<li><p>Add cleanup internal comment code in <code><a href="../reference/comment_internal.html">write_comment()</a></code>. This should not impact the workbook wrapper code in <code><a href="../reference/comment.html">wb_add_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/586" class="external-link">586</a></p></li>
+<li><p>Add cleanup internal comment code in <code><a href="../reference/comment_internal.html">write_comment()</a></code>. This should not impact the workbook wrapper code in <code><a href="../reference/wb_add_comment.html">wb_add_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/586" class="external-link">586</a></p></li>
 <li><p>Added chain functions for <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> and <code><a href="../reference/wb_load.html">wb_load()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/587" class="external-link">587</a></p></li>
 </ul><hr></div>
 </div>
@@ -207,7 +207,7 @@
 <div class="section level3">
 <h3 id="new-features-0-6">New features<a class="anchor" aria-label="anchor" href="#new-features-0-6"></a></h3>
 <ul><li><p>Styles arguments now accept logical and numeric arguments where applicable. <a href="https://github.com/JanMarvin/openxlsx2/pull/558" class="external-link">558</a></p></li>
-<li><p>Adding <code>dims</code> argument to <code><a href="../reference/cleanup.html">wb_clean_sheet()</a></code>. This allows to clean only a selected range. <a href="https://github.com/JanMarvin/openxlsx2/pull/563" class="external-link">563</a></p></li>
+<li><p>Adding <code>dims</code> argument to <code><a href="../reference/wb_clean_sheet.html">wb_clean_sheet()</a></code>. This allows to clean only a selected range. <a href="https://github.com/JanMarvin/openxlsx2/pull/563" class="external-link">563</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-0-6">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-6"></a></h3>
@@ -381,7 +381,7 @@
 <h3 id="new-features-0-3">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3"></a></h3>
 <ul><li><p>New argument <code>startCol</code> in read to data frame functions <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, <code><a href="../reference/wb_to_df.html">wb_read()</a></code> and <code><a href="../reference/wb_to_df.html">read_xlsx()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/330" class="external-link">330</a></p></li>
 <li><p>New function <code><a href="../reference/wb_color.html">wb_colour()</a></code> to ease working with color vectors used in <code>openxlsx2</code> styles. <a href="https://github.com/JanMarvin/openxlsx2/issues/292" class="external-link">292</a></p></li>
-<li><p>Deprecated <code>get_cell_style()</code> and <code>set_cell_style()</code> in favor of newly introduced wrapper functions <code><a href="../reference/cell_style.html">wb_get_cell_style()</a></code> and <code><a href="../reference/cell_style.html">wb_set_cell_style()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/306" class="external-link">306</a></p></li>
+<li><p>Deprecated <code>get_cell_style()</code> and <code>set_cell_style()</code> in favor of newly introduced wrapper functions <code><a href="../reference/wb_cell_style.html">wb_get_cell_style()</a></code> and <code><a href="../reference/wb_cell_style.html">wb_set_cell_style()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/306" class="external-link">306</a></p></li>
 <li><p>Improvements to <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code>. Cloning of chartsheets as well as worksheets containing charts, pivot tables, drawings and tables is now possible or tweaked. Slicers are removed from the cloned worksheet. <a href="https://github.com/JanMarvin/openxlsx2/issues/305" class="external-link">305</a></p></li>
 <li><p>Allow writing class <code>data.table</code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/313" class="external-link">313</a></p></li>
 <li><p>Provide <code>na.numbers</code> for reading functions, that convert numbers to <code>NA</code> in R output. Handle <code>na.strings</code> in <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/301" class="external-link">301</a></p></li>

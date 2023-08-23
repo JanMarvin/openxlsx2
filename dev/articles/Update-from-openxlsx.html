@@ -252,8 +252,8 @@ be the functions to use with pipes <code>%&gt;%</code> or
 <span><span class="co"># need to assign wbp</span></span>
 <span><span class="va">wbp</span> <span class="op">&lt;-</span> <span class="va">wbp</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span>
 <span><span class="va">wbc</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span></code></pre></div>
-<p>You can re-use styles with <code><a href="../reference/cell_style.html">wb_get_cell_style()</a></code> and
-<code><a href="../reference/cell_style.html">wb_set_cell_style()</a></code>. Abandoning <code>stylesObject</code>
+<p>You can re-use styles with <code><a href="../reference/wb_cell_style.html">wb_get_cell_style()</a></code> and
+<code><a href="../reference/wb_cell_style.html">wb_set_cell_style()</a></code>. Abandoning <code>stylesObject</code>
 in <code>openxlsx2</code> has the huge benefit that we can import and
 export a spreadsheet without changing any cell style. It is still
 possible to modify a cell style with <code><a href="../reference/wb_add_border.html">wb_add_border()</a></code>,

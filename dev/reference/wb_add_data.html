@@ -100,15 +100,15 @@
 
 
 <dt>dims</dt>
-<dd><p>Spreadsheet dimensions that will determine <code>start_col</code> and <code>start_row</code>: "A1", "A1:B2", "A:B"</p></dd>
+<dd><p>Spreadsheet cell range that will determine <code>start_col</code> and <code>start_row</code>: "A1", "A1:B2", "A:B"</p></dd>
 
 
 <dt>start_col</dt>
-<dd><p>A vector specifying the starting column to write to.</p></dd>
+<dd><p>A vector specifying the starting column to write <code>x</code> to.</p></dd>
 
 
 <dt>start_row</dt>
-<dd><p>A vector specifying the starting row to write to.</p></dd>
+<dd><p>A vector specifying the starting row to write <code>x</code> to.</p></dd>
 
 
 <dt>array</dt>
@@ -120,19 +120,21 @@
 
 
 <dt>row_names</dt>
-<dd><p>If <code>TRUE</code>, data.frame row names of <code>x</code> are written.</p></dd>
+<dd><p>If <code>TRUE</code>, the row names of <code>x</code> are written.</p></dd>
 
 
 <dt>with_filter</dt>
-<dd><p>If <code>TRUE</code>, add filters to the column name row. NOTE can only have one filter per worksheet.</p></dd>
+<dd><p>If <code>TRUE</code>, add filters to the column name row.
+NOTE: can only have one filter per worksheet.</p></dd>
 
 
 <dt>name</dt>
-<dd><p>If not NULL, a named region is defined.</p></dd>
+<dd><p>The name of a named region if specified.</p></dd>
 
 
 <dt>sep</dt>
-<dd><p>Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).</p></dd>
+<dd><p>Only applies to list columns. The separator used to collapse list
+columns to a character vector e.g. <code>sapply(x$list_column, paste, collapse = sep)</code>.</p></dd>
 
 
 <dt>apply_cell_style</dt>
@@ -160,16 +162,17 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A clone of <code>wb</code></p>
-
-
+<p>A <code>wbWorkbook</code>, invisibly.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
-This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
-The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. If the data frame contains this string, the output will be broken.
-Many base classes are covered, though not all and far from all third-party classes. When data of an unknown class is written, it is handled with <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code>.</p>
+    <p>Formulae written using <code><a href="wb_add_formula.html">wb_add_formula()</a></code> to a Workbook object will
+not get picked up by <code><a href="wb_to_df.html">read_xlsx()</a></code>. This is because only the formula is written
+and left to Excel to evaluate the formula when the file is opened in Excel.
+The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>.
+If the data frame contains this string, the output will be broken.
+Many base classes are covered, though not all and far from all third-party classes.
+When data of an unknown class is written, it is handled with <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -187,9 +190,9 @@ Many base classes are covered, though not all and far from all third-party class
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
 <code><a href="wb_grouping.html">wb_grouping</a></code>,
 <code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
+<code><a href="wb_row_heights.html">wb_row_heights</a></code>,
 <code><a href="wb_save.html">wb_save</a>()</code>,
 <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
-<code><a href="wb_set_row_heights.html">wb_set_row_heights</a>()</code>,
 <code><a href="wb_workbook.html">wb_workbook</a>()</code></p></div>
     </div>
 
@@ -220,7 +223,7 @@ Many base classes are covered, though not all and far from all third-party class
 <span class="r-in"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"https://CRAN.R-project.org/"</span>, <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Hyperlink"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="co"># Optional: names will be used as display text</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"hyperlink"</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Cars"</span>, x <span class="op">=</span> <span class="va">v</span>, dims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B32"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Cars"</span>, x <span class="op">=</span> <span class="va">v</span>, dims <span class="op">=</span> <span class="st">"B32"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#############################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Formulas</span></span></span>

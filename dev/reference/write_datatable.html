@@ -100,35 +100,35 @@
 
 
 <dt>x</dt>
-<dd><p>A data frame.</p></dd>
+<dd><p>A data frame</p></dd>
 
 
 <dt>dims</dt>
-<dd><p>Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"</p></dd>
+<dd><p>Spreadsheet cell range that will determine <code>start_col</code> and <code>start_row</code>: "A1", "A1:B2", "A:B"</p></dd>
 
 
 <dt>start_col</dt>
-<dd><p>A vector specifying the starting column to write df</p></dd>
+<dd><p>A vector specifying the starting column to write <code>x</code> to.</p></dd>
 
 
 <dt>start_row</dt>
-<dd><p>A vector specifying the starting row to write df</p></dd>
+<dd><p>A vector specifying the starting row to write <code>x</code> to.</p></dd>
 
 
 <dt>col_names</dt>
-<dd><p>If <code>TRUE</code>, column names of x are written.</p></dd>
+<dd><p>If <code>TRUE</code>, column names of <code>x</code> are written.</p></dd>
 
 
 <dt>row_names</dt>
-<dd><p>If <code>TRUE</code>, row names of x are written.</p></dd>
+<dd><p>If <code>TRUE</code>, the row names of <code>x</code> are written.</p></dd>
 
 
 <dt>table_style</dt>
-<dd><p>Any excel table style name or "none" (see "formatting" vignette).</p></dd>
+<dd><p>Any table style name or "none" (see <code><a href="../articles/openxlsx2_style_manual.html">vignette("openxlsx2_style_manual")</a></code>)</p></dd>
 
 
 <dt>table_name</dt>
-<dd><p>name of table in workbook. The table name must be unique.</p></dd>
+<dd><p>Name of table in workbook. The table name must be unique.</p></dd>
 
 
 <dt>with_filter</dt>
@@ -136,33 +136,35 @@
 
 
 <dt>sep</dt>
-<dd><p>Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
+<dd><p>Only applies to list columns. The separator used to collapse list
+columns to a character vector e.g.
+<code>sapply(x$list_column, paste, collapse = sep)</code>.
 <br><br><br><strong>The below options correspond to Excel table options:</strong>
 <br><img src="figures/tableoptions.png" width="40%" alt="Figure: table_options.png"></p></dd>
 
 
 <dt>first_column</dt>
-<dd><p>logical. If TRUE, the first column is bold</p></dd>
+<dd><p>logical. If <code>TRUE</code>, the first column is bold.</p></dd>
 
 
 <dt>last_column</dt>
-<dd><p>logical. If TRUE, the last column is bold</p></dd>
+<dd><p>logical. If <code>TRUE</code>, the last column is bold.</p></dd>
 
 
 <dt>banded_rows</dt>
-<dd><p>logical. If TRUE, rows are color banded</p></dd>
+<dd><p>logical. If <code>TRUE</code>, rows are color banded.</p></dd>
 
 
 <dt>banded_cols</dt>
-<dd><p>logical. If TRUE, the columns are color banded</p></dd>
+<dd><p>logical. If <code>TRUE</code>, the columns are color banded.</p></dd>
 
 
 <dt>apply_cell_style</dt>
-<dd><p>apply styles when writing on the sheet</p></dd>
+<dd><p>Should we write cell styles to the workbook</p></dd>
 
 
 <dt>remove_cell_style</dt>
-<dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
+<dd><p>keep the cell style?</p></dd>
 
 
 <dt>na.strings</dt>
@@ -180,11 +182,11 @@
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>columns of x with class Date/POSIXt, currency, accounting,
-hyperlink, percentage are automatically styled as dates, currency, accounting,
-hyperlinks, percentages respectively.
-The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. If the data frame
-contains this string, the output will be broken.</p>
+    <p>The columns of <code>x</code> with class Date/POSIXt, currency, accounting, hyperlink,
+percentage are automatically styled as dates, currency, accounting, hyperlinks,
+percentages respectively.</p>
+<p>The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. If <code>x</code> contains this
+string, the output will be broken.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -212,8 +214,8 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S1"</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S2"</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="va">mtcars</span>, dims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B3"</span><span class="op">)</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  tableStyle <span class="op">=</span> <span class="st">"TableStyleLight9"</span></span></span>
+<span class="r-in"><span>  x <span class="op">=</span> <span class="va">mtcars</span>, dims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B3"</span><span class="op">)</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  table_style <span class="op">=</span> <span class="st">"TableStyleLight9"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
@@ -233,7 +235,7 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">Percentage</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">Percentage</span><span class="op">)</span>, <span class="st">"percentage"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">TinyNumbers</span><span class="op">)</span>, <span class="st">"scientific"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S3"</span>, x <span class="op">=</span> <span class="va">df</span>, startRow <span class="op">=</span> <span class="fl">4</span>, rowNames <span class="op">=</span> <span class="cn">TRUE</span>, tableStyle <span class="op">=</span> <span class="st">"TableStyleMedium9"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data_table</span><span class="op">(</span><span class="st">"S3"</span>, x <span class="op">=</span> <span class="va">df</span>, start_row <span class="op">=</span> <span class="fl">4</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span>, table_style <span class="op">=</span> <span class="st">"TableStyleMedium9"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#####################################################################################</span></span></span>
 <span class="r-in"><span><span class="co">## Additional Header Styling and remove column filters</span></span></span>
@@ -241,12 +243,12 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span><span class="fu">write_datatable</span><span class="op">(</span><span class="va">wb</span>,</span></span>
 <span class="r-in"><span>  sheet <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  x <span class="op">=</span> <span class="va">iris</span>,</span></span>
-<span class="r-in"><span>  startCol <span class="op">=</span> <span class="fl">7</span>,</span></span>
-<span class="r-in"><span>  withFilter <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  firstColumn <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  lastColumn  <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  bandedRows <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  bandedCols <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>  start_col <span class="op">=</span> <span class="fl">7</span>,</span></span>
+<span class="r-in"><span>  with_filter <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  first_column <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  last_column  <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  banded_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  banded_cols <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
@@ -263,7 +265,7 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span>  <span class="va">style</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TableStyleLight"</span>, <span class="va">i</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">write_datatable</span><span class="op">(</span><span class="va">wb</span>,</span></span>
 <span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">style</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>    tableStyle <span class="op">=</span> <span class="va">style</span>, startRow <span class="op">=</span> <span class="fl">1</span>, startCol <span class="op">=</span> <span class="va">i</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span>    table_style <span class="op">=</span> <span class="va">style</span>, start_row <span class="op">=</span> <span class="fl">1</span>, start_col <span class="op">=</span> <span class="va">i</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">-</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
@@ -271,7 +273,7 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span>  <span class="va">style</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TableStyleMedium"</span>, <span class="va">i</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">write_datatable</span><span class="op">(</span><span class="va">wb</span>,</span></span>
 <span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">style</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>    tableStyle <span class="op">=</span> <span class="va">style</span>, startRow <span class="op">=</span> <span class="fl">4</span>, startCol <span class="op">=</span> <span class="va">i</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span>    table_style <span class="op">=</span> <span class="va">style</span>, start_row <span class="op">=</span> <span class="fl">4</span>, start_col <span class="op">=</span> <span class="va">i</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">-</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
@@ -279,7 +281,7 @@ contains this string, the output will be broken.</p>
 <span class="r-in"><span>  <span class="va">style</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"TableStyleDark"</span>, <span class="va">i</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">write_datatable</span><span class="op">(</span><span class="va">wb</span>,</span></span>
 <span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">style</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>    tableStyle <span class="op">=</span> <span class="va">style</span>, startRow <span class="op">=</span> <span class="fl">7</span>, startCol <span class="op">=</span> <span class="va">i</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span>    table_style <span class="op">=</span> <span class="va">style</span>, start_row <span class="op">=</span> <span class="fl">7</span>, start_col <span class="op">=</span> <span class="va">i</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">-</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>

@@ -40,19 +40,10 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/as_xml.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/cell_style.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/clean_worksheet_name.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/cleanup.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/col2int.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/comment.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/comment_internal.html</loc>
@@ -68,6 +59,9 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/create_cell_style.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/create_comment.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/create_dxfs_style.html</loc>
@@ -94,6 +88,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/dataframe_to_dims.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/delete_data.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/dims_helper.html</loc>
   </url>
   <url>
@@ -107,9 +104,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/int2col.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/named_region.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/openxlsx2-deprecated.html</loc>
@@ -133,12 +127,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/read_xml.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/select_active_sheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/sheet_visibility.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/styles_on_sheet.html</loc>
   </url>
   <url>
@@ -154,6 +142,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_active_sheet.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_border.html</loc>
   </url>
   <url>
@@ -164,6 +155,9 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_chartsheet.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_comment.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_conditional_formatting.html</loc>
@@ -235,6 +229,12 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_base_font.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_cell_style.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_clean_sheet.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_clone_sheet_style.html</loc>
   </url>
   <url>
@@ -280,6 +280,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_merge_cells.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_named_region.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_open.html</loc>
   </url>
   <url>
@@ -295,13 +298,13 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_protect_worksheet.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_remove_row_heights.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_remove_tables.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_remove_worksheet.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_row_heights.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_save.html</loc>
@@ -319,13 +322,13 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_last_modified_by.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_row_heights.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_set_sheetview.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_sheet_names.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_sheet_visibility.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.html</loc>
