@@ -1,7 +1,7 @@
 #' Load an existing .xlsx file
 #'
-#' `wb_load()` returns a workbook object conserving styles and
-#' formatting of the original .xlsx file.
+#' `wb_load()` returns a [wbWorkbook] object conserving styles and
+#' formatting of the original input file.
 #'
 #' A warning is displayed if an xml namespace for main is found in the xlsx file.
 #' Certain xlsx files created by third-party applications contain a namespace

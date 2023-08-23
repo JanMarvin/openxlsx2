@@ -42,6 +42,8 @@ Add conditional formatting to cells.
 You can find more details in \code{vignette("conditional-formatting")}.
 }
 \details{
+openxml uses the alpha channel first then RGB, whereas the usual default is RGBA.
+
 Conditional formatting \code{type} accept different parameters. Unless noted,
 unlisted parameters are ignored.
 \describe{

@@ -73,7 +73,6 @@ Formulae written using \code{\link[=wb_add_formula]{wb_add_formula()}} to a Work
 not get picked up by \code{read_xlsx()}. This is because only the formula is written
 and left to Excel to evaluate the formula when the file is opened in Excel.
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
-
 If the data frame contains this string, the output will be broken.
 Many base classes are covered, though not all and far from all third-party classes.
 When data of an unknown class is written, it is handled with \code{as.character()}.

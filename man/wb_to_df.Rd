@@ -4,7 +4,7 @@
 \alias{wb_to_df}
 \alias{read_xlsx}
 \alias{wb_read}
-\title{Create a data frame from Workbook}
+\title{Create a data frame from a Workbook}
 \usage{
 wb_to_df(
   file,
@@ -144,7 +144,7 @@ The \code{types} argument must be a named numeric.
 \code{read_xlsx()} will not pick up formulas added to a Workbook object
 via \code{\link[=wb_add_formula]{wb_add_formula()}}. This is because only the formula is written and left
 to be evaluated when the file is opened in a spreadsheet software.
-Opening, saving and closing the file with Excel will resolve this.
+Opening, saving and closing the file in a spreadsheet software will resolve this.
 }
 \examples{
 ###########################################################################

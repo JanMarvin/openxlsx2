@@ -111,7 +111,6 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' not get picked up by `read_xlsx()`. This is because only the formula is written
 #' and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`.
-#'
 #' If the data frame contains this string, the output will be broken.
 #' Many base classes are covered, though not all and far from all third-party classes.
 #' When data of an unknown class is written, it is handled with `as.character()`.
@@ -208,7 +207,7 @@ wb_add_data <- function(
   )
 }
 
-#' Add an Excel data table to a worksheet
+#' Add a data table to a worksheet
 #'
 #' Add data to a worksheet and format as an Excel table.
 #'
@@ -221,8 +220,8 @@ wb_add_data <- function(
 #'
 #' @inheritParams wb_add_data
 #' @param x A data frame
-#' @param table_style Any excel table style name or "none" (see `vignette("openxlsx2_style_manual")`)
-#' @param table_name name of table in workbook. The table name must be unique.
+#' @param table_style Any table style name or "none" (see `vignette("openxlsx2_style_manual")`)
+#' @param table_name Name of table in workbook. The table name must be unique.
 #' @param with_filter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list
 #'   columns to a character vector e.g.
@@ -315,8 +314,9 @@ wb_add_data_table <- function(
 #' df <- wb_data(wb, sheet = 1)
 #'
 #' wb <- wb %>%
-#' wb_add_pivot_table(df, dims = "A3",
-#'   filter = "am", rows = "cyl", cols = "gear", data = "disp")
+#'   wb_add_pivot_table(df, dims = "A3",
+#'   filter = "am", rows = "cyl", cols = "gear", data = "disp"
+#'   )
 #' @family workbook wrappers
 #' @export
 wb_add_pivot_table <- function(
@@ -356,11 +356,13 @@ wb_add_pivot_table <- function(
 
 #' Add a formula to a cell range in a worksheet
 #'
-#' This function can be used to provide a character vector containing Excel formula to a worksheet.
-#' Add a character vector as an Excel Formula
+#' This function can be used to add a formula to a worksheet.
+#' In `wb_add_formula()`, you can provide the formula as a character vector.
 #'
 #' @details
-#' Currently only the English version of functions are supported. Please don't use the local translation.
+#' Currently, the local translations of formulas are not supported.
+#' Only the English functions work.
+#'
 #' The examples below show a small list of possible formulas:
 #'
 #' * SUM(B2:B4)
@@ -368,6 +370,8 @@ wb_add_pivot_table <- function(
 #' * MIN(B2:B4)
 #' * MAX(B2:B4)
 #' * ...
+#'
+#' Currently, the `cm` parameter only has an effect in Microsoft 365.
 #'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. (either as index or name)
@@ -377,7 +381,7 @@ wb_add_pivot_table <- function(
 #' @param start_row A vector specifying the starting row to write to.
 #' @param array A bool if the function written is of type array
 #' @param cm A special kind of array function that hides the curly braces in the cell.
-#'   Add this, if you see "@" inserted into your formulas
+#'   Add this, if you see "@" inserted into your formulas.
 #' @param apply_cell_style Should we write cell styles to the workbook?
 #' @param remove_cell_style Should we keep the cell style?
 #' @param ... additional arguments
@@ -443,8 +447,8 @@ wb_update_table <- function(wb, sheet = current_sheet(), dims = "A1", tabname) {
 #'
 #' @param wb A workbook
 #' @param sheet a worksheet
-#' @param dims cell used as start
-#' @param data a [`wb_data`][wb_data()] object
+#' @param dims A cell where to place the copy
+#' @param data A [`wb_data`][wb_data()] object containing cells to copy
 #' @param as_value Should a copy of the value be written?
 #' @param as_ref Should references to the cell be written?
 #' @param transpose Should the data be written transposed?
@@ -472,7 +476,6 @@ wb_copy_cells <- function(
     as_ref    = FALSE,
     transpose = FALSE
 ) {
-  # TODO maybe consider copying cells with dims? instead of relying on `wb_data`
   assert_workbook(wb)
   wb$
     clone(deep = TRUE)$
@@ -696,8 +699,6 @@ wb_add_worksheet <- function(
   vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
   ...
 ) {
-  # FIXME specifying tab_color as just "red" (without wb_color()) errors silently on Windows + Excel.
-  # using wb_color() fixes the issue.
 
   assert_workbook(wb)
   wb$clone()$add_worksheet(
@@ -866,15 +867,19 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' NOTE: The `hidden` parameter may conflict with the one set in [wb_group_cols()];
 #' changing one will update the other.
 #'
+#' NOTE: The default column width varies by spreadsheet software, operating system,
+#' and DPI settings used. Setting `widths` to specific value also is no guarantee
+#' that the output will have consistent column widths.
+#'
 #' @param wb A `wbWorkbook` object.
 #' @param sheet A name or index of a worksheet, a vector in the case of `remove_`
-#' @param cols Indices of cols to set/remove width
-#' @param widths width to set cols to specified in Excel column width units or
-#'   "auto" for automatic sizing. The widths argument is recycled to the length of cols.
-#'   The default width is 8.43. Though there is no specific default width for Excel,
-#'   it depends on Excel version, operating system and DPI settings used.
-#'   Setting it to specific value also is no guarantee that the output will be of the selected width.
-#' @param hidden Logical vector. If `TRUE` the column is hidden.
+#' @param cols Indices of cols to set/remove column widths.
+#' @param widths Width to set `cols` to specified column width or `"auto"` for
+#'   automatic sizing. `widths` is recycled to the length of `cols`. openxlsx2
+#'   sets the default width is 8.43, as this is the standard in some spreadsheet
+#'   software. See **Details** for general information on column widths.
+#' @param hidden Logical vector recycled to the length of `cols`.
+#'   If `TRUE`, the columns are hidden.
 #'
 #' @family workbook wrappers
 #'
@@ -997,9 +1002,9 @@ wb_add_plot <- function(
 }
 
 #' add drawings to workbook
-#' @param wb a `wbWorkbook`
-#' @param sheet a sheet in the workbook
-#' @param dims the dimension where the drawing is added. Can be `NULL`
+#' @param wb A `wbWorkbook`
+#' @param sheet A sheet in the workbook
+#' @param dims The dimension where the drawing is added.
 #' @param xml the drawing xml as character or file
 #' @param col_offset,row_offset offsets for column and row
 #' @param ... additional arguments
@@ -1122,15 +1127,17 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 
 #' Set the default font in a workbook
 #'
-#' Modify / get the default font for the workbook.
+#' Modify / get the default font for the workbook. The base font in a workbook
+#' does not affect the font in data tables.
 #'
 #' The font name is not validated in anyway. Excel replaces unknown font names
-#' with Arial. Base font is black, size 11, Calibri.
+#' with Arial. The default base font is Calibri, black, size 11.
+#'
 #' @param wb A workbook object
-#' @param font_size font size
-#' @param font_color font color
+#' @param font_size Font size
+#' @param font_color Font color
 #' @param font_name Name of a font
-#' @param ... additional arguments
+#' @param ... Additional arguments
 #' @family workbook styling functions
 #' @family workbook wrappers
 #' @name wb_base_font
@@ -1139,20 +1146,16 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(font_size = 10, font_color = "#FF0000", font_name = "Arial Narrow")
+#' wb$set_base_font(font_size = 10, font_color = wb_color("red"), font_name = "Arial Narrow")
 #'
 #' wb$add_data(x = iris)
-#' wb$add_data_table(x = iris, dims = wb_dims(from_col = 10)) ## font color does not affect tables
+#'
+#' ## font color does not affect tables
+#' wb$add_data_table(x = iris, dims = wb_dims(from_col = 10))
 #'
 #' ## get the base font
-#' ## create a workbook
-#' wb <- wb_workbook()
 #' wb_get_base_font(wb)
 #'
-#' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(font_size = 10, font_color = "#FF0000", font_name = "Arial Narrow")
-#'
-#' wb_get_base_font(wb)
 NULL
 #' @export
 #' @rdname wb_base_font
@@ -1182,11 +1185,10 @@ wb_get_base_font <- function(wb) {
 
 #' Set the workbook position, size and filter
 #'
-#' Get the base font used in the workbook.
 #' @param wb A [wbWorkbook] object
 #' @param active_tab activeTab
 #' @param auto_filter_date_grouping autoFilterDateGrouping
-#' @param first_sheet firstSheet
+#' @param first_sheet The first sheet to be displayed
 #' @param minimized minimized
 #' @param show_horizontal_scroll showHorizontalScroll
 #' @param show_sheet_tabs showSheetTabs
@@ -1198,7 +1200,7 @@ wb_get_base_font <- function(wb) {
 #' @param x_window xWindow
 #' @param y_window yWindow
 #' @param ... additional arguments
-#' @return The `wbWorkbook` object
+#' @return The Workbook object
 #' @export
 wb_set_bookview <- function(
     wb,
@@ -1538,8 +1540,8 @@ wb_protect_worksheet <- function(
 #' Protect or unprotect a workbook from modifications by the user in the
 #' graphical user interface. Replaces an existing protection.
 #'
-#' @param wb A workbook object
-#' @param protect Whether to protect or unprotect the sheet (default=TRUE)
+#' @param wb A Workbook object
+#' @param protect Whether to protect or unprotect the sheet (default `TRUE`)
 #' @param password (optional) password required to unprotect the workbook
 #' @param lock_structure Whether the workbook structure should be locked
 #' @param lock_windows Whether the window position of the spreadsheet should be
@@ -1547,9 +1549,9 @@ wb_protect_worksheet <- function(
 #' @param type Lock type (see details)
 #' @param file_sharing Whether to enable a popup requesting the unlock password
 #'   is prompted
-#' @param username The username for the `fileSharing` popup
+#' @param username The username for the `file_sharing` popup
 #' @param read_only_recommended Whether or not a post unlock message appears
-#'   stating that the workbook is recommended to be opened in readonly mode.
+#'   stating that the workbook is recommended to be opened in read-only mode.
 #' @param ... additional arguments
 #'
 #' @details
@@ -1566,7 +1568,7 @@ wb_protect_worksheet <- function(
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
-#' wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
+#' wb_protect(wb, protect = TRUE, password = "Password", lock_structure = TRUE)
 #'
 #' # Remove the protection
 #' wb_protect(wb, protect = FALSE)
@@ -1575,11 +1577,11 @@ wb_protect_worksheet <- function(
 #'   wb,
 #'   protect = TRUE,
 #'   password = "Password",
-#'   lockStructure = TRUE,
+#'   lock_structure = TRUE,
 #'   type = 2L,
-#'   fileSharing = TRUE,
+#'   file_sharing = TRUE,
 #'   username = "Test",
-#'   readOnlyRecommended = TRUE
+#'   read_only_recommended = TRUE
 #' )
 #'
 wb_protect <- function(
@@ -1696,15 +1698,14 @@ wb_set_order <- function(wb, sheets) {
 #' the `name` argument in `wb_add_data(x = iris, name = "my-region")`.
 #' It is important to note that named regions are not case-sensitive and must be unique.
 #'
-#' You can use [wb_dims()] to specify the cell range of the named region
-#' Region is given by: `min(cols):max(cols)` X `min(rows):max(rows)`
+#' You can use the [wb_dims()] helper to specify the cell range of the named region
 #'
 #' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
-#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @param name Name for region. A character vector of length 1.
-#'   Note region names musts be case-insensitive unique.
-#' @param overwrite Boolean. Overwrite if exists? Default to `FALSE`
+#' @param dims Worksheet cell range of the region ("A1:D4").
+#' @param name Name for region. A character vector of length 1. Note that region
+#'   names musts be case-insensitive unique.
+#' @param overwrite Boolean. Overwrite if exists? Default to `FALSE`.
 #' @param local_sheet If `TRUE` the named region will be local for this sheet
 #' @param comment description text for named region
 #' @param hidden Should the named region be hidden?
@@ -1965,9 +1966,12 @@ wb_add_data_validation <- function(
 #' Get/set worksheet visible state in a workbook
 #'
 #' Get and set worksheet visible state. This allows to hide worksheets from the workbook.
+#' The visibility of a worksheet can either be  "visible", "hidden", or "veryHidden".
+#' You can set this when creating a worksheet with `wb_add_worksheet(visible = FALSE)`
 #'
-#' @return A named haracter vector of worksheet names with their visibility value
-#'   of "hidden", "visible", "veryHidden" (`get`). or the `wbWorkbook`, invisibly (`set`)
+#' @return
+#' * `wb_set_sheet_visibility`: The Worbook object, invisibly.
+#' * `wb_get_sheet_visibility()`: A character vector of the worksheet visibility value
 #' @examples
 #'
 #' wb <- wb_workbook()
@@ -2027,11 +2031,11 @@ wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NUL
 }
 
 
-#' List Excel tables in a workbook
+#' List Excel tables in a worksheet
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
-#' @return character vector of table names on the specified sheet
+#' @return A character vector of table names on the specified sheet
 #' @examples
 #'
 #' wb <- wb_workbook()
@@ -2042,44 +2046,43 @@ wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NUL
 #' wb$get_tables(sheet = "Sheet 1")
 #' @export
 wb_get_tables <- function(wb, sheet = current_sheet()) {
-  # TODO check if wb_get_named_regions behaviour could be integrated with this one
   assert_workbook(wb)
   wb$clone()$get_tables(sheet = sheet)
 }
 
 
 
-#' Remove an Excel table in a workbook
+#' Remove a data table from a worksheet
 #'
 #' Remove Excel tables in a workbook using its name.
 #'
-#' @param wb A workbook object
+#' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
-#' @param table Name of table to remove. See [wb_get_tables()]
-#' @param remove_data Removes the data as well
-#' @return character vector of table names on the specified sheet
+#' @param table Name of table to remove. Use [wb_get_tables()] to view the
+#'   tables present in the worksheet.
+#' @param remove_data Default `TRUE`. If `FALSE`, will only remove the data table attributes
+#'   but will keep the data in the worksheet.
+#' @return The `wbWorkbook`, invisibly
 #' @examples
-#'
 #' wb <- wb_workbook()
 #' wb$add_worksheet(sheet = "Sheet 1")
 #' wb$add_worksheet(sheet = "Sheet 2")
-#' wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
-#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb$add_data_table(sheet = "Sheet 1", x = iris, table_name = "iris")
+#' wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 #'
+#' ## delete worksheet removes table objects
+#' wb <- wb_remove_worksheet(wb, sheet = 1)
 #'
-#' wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
-#'
-#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris")
-#' wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+#' wb$add_data_table(sheet = 1, x = iris, table_name = "iris")
+#' wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 #'
 #' ## wb_remove_tables() deletes table object and all data
 #' wb_get_tables(wb, sheet = 1)
 #' wb$remove_tables(sheet = 1, table = "iris")
-#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
+#' wb$add_data_table(sheet = 1, x = iris, table_name = "iris")
 #'
 #' wb_get_tables(wb, sheet = 1)
 #' wb$remove_tables(sheet = 1, table = "iris")
-#' wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 #' @export
 wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = TRUE) {
   assert_workbook(wb)
@@ -2462,7 +2465,6 @@ wb_open <- function(wb) {
 #' wb <- wb_workbook() %>% wb_add_style(yellow)
 #' @export
 wb_add_style <- function(wb, style = NULL, style_name = NULL) {
-  # Maybe review name, as it may be confusing with wb_add_named_style()
   assert_workbook(wb)
   # deparse this name, otherwise it will remain "style"
   if (is.null(style_name)) style_name <- deparse(substitute(style))
@@ -3169,6 +3171,7 @@ wb_add_form_control <- function(
 #' Add conditional formatting to cells.
 #' You can find more details in `vignette("conditional-formatting")`.
 #'
+#' openxml uses the alpha channel first then RGB, whereas the usual default is RGBA.
 #' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
 #' @param dims A cell or cell range like "A1" or "A1:B2"

@@ -1,5 +1,5 @@
 # `wb_to_df()` ----------------------------------------
-#' Create a data frame from Workbook
+#' Create a data frame from a Workbook
 #'
 #' Simple function to create a `data.frame` from a workbook. Simple as in simply
 #' written down. `read_xlsx()` and `wb_read()` are just internal wrappers of
@@ -19,7 +19,7 @@
 #' `read_xlsx()` will not pick up formulas added to a Workbook object
 #' via [wb_add_formula()]. This is because only the formula is written and left
 #' to be evaluated when the file is opened in a spreadsheet software.
-#' Opening, saving and closing the file with Excel will resolve this.
+#' Opening, saving and closing the file in a spreadsheet software will resolve this.
 #'
 #' @seealso [wb_get_named_regions()]
 #'

@@ -34,7 +34,7 @@ wb_add_formula(
 \item{array}{A bool if the function written is of type array}
 
 \item{cm}{A special kind of array function that hides the curly braces in the cell.
-Add this, if you see "@" inserted into your formulas}
+Add this, if you see "@" inserted into your formulas.}
 
 \item{apply_cell_style}{Should we write cell styles to the workbook?}
 
@@ -46,11 +46,13 @@ Add this, if you see "@" inserted into your formulas}
 The workbook, invisibly.
 }
 \description{
-This function can be used to provide a character vector containing Excel formula to a worksheet.
-Add a character vector as an Excel Formula
+This function can be used to add a formula to a worksheet.
+In \code{wb_add_formula()}, you can provide the formula as a character vector.
 }
 \details{
-Currently only the English version of functions are supported. Please don't use the local translation.
+Currently, the local translations of formulas are not supported.
+Only the English functions work.
+
 The examples below show a small list of possible formulas:
 \itemize{
 \item SUM(B2:B4)
@@ -59,6 +61,8 @@ The examples below show a small list of possible formulas:
 \item MAX(B2:B4)
 \item ...
 }
+
+Currently, the \code{cm} parameter only has an effect in Microsoft 365.
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()

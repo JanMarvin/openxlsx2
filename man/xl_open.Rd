@@ -26,7 +26,7 @@ an \link{wbWorkbook} with the proper application, in a portable manner.
 On Windows it uses \code{base::shell.exec()} (Windows only function) to
 determine the appropriate program.
 
-On macOS, (c) it uses system default handlers, given the file type.
+On Mac, (c) it uses system default handlers, given the file type.
 
 On Linux, it searches (via \code{which}) for available xls/xlsx reader
 applications (unless \code{options('openxlsx2.excelApp')} is set to the app bin

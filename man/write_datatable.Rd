@@ -45,9 +45,9 @@ write_datatable(
 
 \item{row_names}{If \code{TRUE}, the row names of \code{x} are written.}
 
-\item{table_style}{Any excel table style name or "none" (see \code{vignette("openxlsx2_style_manual")})}
+\item{table_style}{Any table style name or "none" (see \code{vignette("openxlsx2_style_manual")})}
 
-\item{table_name}{name of table in workbook. The table name must be unique.}
+\item{table_name}{Name of table in workbook. The table name must be unique.}
 
 \item{with_filter}{If \code{TRUE}, columns with have filters in the first row.}
 

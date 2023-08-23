@@ -21,15 +21,15 @@ wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 
 \item{sheet}{A name or index of a worksheet, a vector in the case of \code{remove_}}
 
-\item{cols}{Indices of cols to set/remove width}
+\item{cols}{Indices of cols to set/remove column widths.}
 
-\item{widths}{width to set cols to specified in Excel column width units or
-"auto" for automatic sizing. The widths argument is recycled to the length of cols.
-The default width is 8.43. Though there is no specific default width for Excel,
-it depends on Excel version, operating system and DPI settings used.
-Setting it to specific value also is no guarantee that the output will be of the selected width.}
+\item{widths}{Width to set \code{cols} to specified column width or \code{"auto"} for
+automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxlsx2
+sets the default width is 8.43, as this is the standard in some spreadsheet
+software. See \strong{Details} for general information on column widths.}
 
-\item{hidden}{Logical vector. If \code{TRUE} the column is hidden.}
+\item{hidden}{Logical vector recycled to the length of \code{cols}.
+If \code{TRUE}, the columns are hidden.}
 }
 \description{
 Remove / set worksheet column widths to specified width or "auto".
@@ -45,6 +45,10 @@ NOTE: The calculation of column widths can be slow for large worksheets.
 
 NOTE: The \code{hidden} parameter may conflict with the one set in \code{\link[=wb_group_cols]{wb_group_cols()}};
 changing one will update the other.
+
+NOTE: The default column width varies by spreadsheet software, operating system,
+and DPI settings used. Setting \code{widths} to specific value also is no guarantee
+that the output will have consistent column widths.
 }
 \examples{
 ## Create a new workbook
