@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook.R
 \name{wbWorkbook}
 \alias{wbWorkbook}
-\title{R6 class for a Workbook}
+\title{R6 class for a workbook}
 \description{
 A workbook
 }
@@ -114,7 +114,7 @@ create_border
 
 \item{\code{media}}{media}
 
-\item{\code{metadata}}{metadata}
+\item{\code{metadata}}{contains cell/value metadata imported on load from xl/metadata.xml}
 
 \item{\code{persons}}{persons}
 
@@ -1952,7 +1952,7 @@ add form control to workbook
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(
   sheet = current_sheet(),
   dims = "A1",
-  type = NULL,
+  type = c("Checkbox", "Radio", "Drop"),
   text = NULL,
   link = NULL,
   range = NULL,
@@ -2416,12 +2416,12 @@ add a named region
   local_sheet = FALSE,
   overwrite = FALSE,
   comment = NULL,
+  hidden = NULL,
   custom_menu = NULL,
   description = NULL,
   is_function = NULL,
   function_group_id = NULL,
   help = NULL,
-  hidden = NULL,
   local_name = NULL,
   publish_to_server = NULL,
   status_bar = NULL,
@@ -2447,6 +2447,8 @@ add a named region
 
 \item{\code{comment}}{comment}
 
+\item{\code{hidden}}{hidden}
+
 \item{\code{custom_menu}}{custom_menu}
 
 \item{\code{description}}{description}
@@ -2456,8 +2458,6 @@ add a named region
 \item{\code{function_group_id}}{function group id}
 
 \item{\code{help}}{help}
-
-\item{\code{hidden}}{hidden}
 
 \item{\code{local_name}}{localName}
 

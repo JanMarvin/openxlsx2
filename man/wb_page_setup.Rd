@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_page_setup}
 \alias{wb_page_setup}
-\title{Set page margins, orientation and print scaling}
+\title{Set page margins, orientation and print scaling of a worksheet}
 \usage{
 wb_page_setup(
   wb,
@@ -34,27 +34,15 @@ wb_page_setup(
 
 \item{scale}{Print scaling. Numeric value between 10 and 400}
 
-\item{left}{left page margin in inches}
+\item{left, right, top, bottom}{Page margin in inches}
 
-\item{right}{right page margin in inches}
+\item{header, footer}{Margin in inches}
 
-\item{top}{top page margin in inches}
-
-\item{bottom}{bottom page margin in inches}
-
-\item{header}{header margin in inches}
-
-\item{footer}{footer margin in inches}
-
-\item{fit_to_width}{If \code{TRUE}, worksheet is scaled to fit to page width on printing.}
-
-\item{fit_to_height}{If \code{TRUE}, worksheet is scaled to fit to page height on printing.}
+\item{fit_to_width, fit_to_height}{If \code{TRUE}, worksheet is scaled to fit to page width /height on printing.}
 
 \item{paper_size}{See details. Default value is 9 (A4 paper).}
 
-\item{print_title_rows}{Rows to repeat at top of page when printing. Integer vector.}
-
-\item{print_title_cols}{Columns to repeat at left when printing. Integer vector.}
+\item{print_title_rows, print_title_cols}{Rows / columns to repeat at top of page when printing. Integer vector.}
 
 \item{summary_row}{Location of summary rows in groupings. One of "Above" or "Below".}
 
@@ -63,10 +51,10 @@ wb_page_setup(
 \item{...}{additional arguments}
 }
 \description{
-Set page margins, orientation and print scaling
+Set page margins, orientation and print scaling.
 }
 \details{
-paperSize is an integer corresponding to:
+\code{paper_size} is an integer corresponding to:
 \itemize{
 \item{\strong{1}}{ Letter paper (8.5 in. by 11 in.)}
 \item{\strong{2}}{ Letter small paper (8.5 in. by 11 in.)}

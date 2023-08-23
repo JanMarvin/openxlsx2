@@ -18,9 +18,9 @@ wb_protect(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
-\item{protect}{Whether to protect or unprotect the sheet (default=TRUE)}
+\item{protect}{Whether to protect or unprotect the sheet (default \code{TRUE})}
 
 \item{password}{(optional) password required to unprotect the workbook}
 
@@ -34,10 +34,10 @@ locked}
 \item{file_sharing}{Whether to enable a popup requesting the unlock password
 is prompted}
 
-\item{username}{The username for the \code{fileSharing} popup}
+\item{username}{The username for the \code{file_sharing} popup}
 
 \item{read_only_recommended}{Whether or not a post unlock message appears
-stating that the workbook is recommended to be opened in readonly mode.}
+stating that the workbook is recommended to be opened in read-only mode.}
 
 \item{...}{additional arguments}
 }
@@ -58,7 +58,7 @@ Lock types:
 \examples{
 wb <- wb_workbook()
 wb$add_worksheet("S1")
-wb_protect(wb, protect = TRUE, password = "Password", lockStructure = TRUE)
+wb_protect(wb, protect = TRUE, password = "Password", lock_structure = TRUE)
 
 # Remove the protection
 wb_protect(wb, protect = FALSE)
@@ -67,11 +67,11 @@ wb <- wb_protect(
   wb,
   protect = TRUE,
   password = "Password",
-  lockStructure = TRUE,
+  lock_structure = TRUE,
   type = 2L,
-  fileSharing = TRUE,
+  file_sharing = TRUE,
   username = "Test",
-  readOnlyRecommended = TRUE
+  read_only_recommended = TRUE
 )
 
 }

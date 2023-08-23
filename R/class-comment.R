@@ -79,6 +79,8 @@ wbComment <- R6::R6Class(
 
 #' Create a comment object
 #'
+#' Creates a `wbComment` object. Use with [wb_add_comment()] to add to a worksheet location.
+#'
 #' @param text Comment text. Character vector.
 #' @param author Author of comment. A string. By default, will look at `options("openxlsx2.creator")`.
 #'   Otherwise, will check the system username.
@@ -147,22 +149,17 @@ wb_comment <- function(text = NULL,
 # TODO write_comment() should leverage wbWorkbook$addComment() more
 # TODO remove_comment() should leverage wbWorkbook$remove_comment() more
 
-#' Create, write and remove comments
+#' Create a comment
 #'
-#' The comment functions (create, write and remove) allow the
-#' modification of comments. In newer spreadsheet software they are called
-#' notes, while they are called comments in openxml. Modification of what
-#' newer spreadsheet software now calls comment is possible via
-#' [wb_add_thread()].
-#'
-#' Use [wb_comment()] in new code
+#' Use [wb_comment()] in new code.
 #'
 #' @inheritParams wb_comment
 #' @param author A string, by default, will use "user"
 #' @param visible Default: `TRUE`. Is the comment visible by default?
 #' @keywords internal
+#' @returns a `wbComment` object
+#' @seealso [wb_add_comment()]
 #' @export
-#' @rdname comment
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
@@ -181,9 +178,6 @@ wb_comment <- function(text = NULL,
 #' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
 #' wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = c3)
-#'
-#' # remove the first comment c1
-#' wb$remove_comment(1, dims = "B10")
 create_comment <- function(text,
   author = Sys.info()[["user"]],
   style = NULL,

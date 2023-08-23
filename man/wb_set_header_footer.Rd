@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_header_footer}
 \alias{wb_set_header_footer}
-\title{Set document headers and footers}
+\title{Set headers and footers of a worksheet}
 \usage{
 wb_set_header_footer(
   wb,
@@ -17,68 +17,59 @@ wb_set_header_footer(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{header}{document header. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.}
-
-\item{footer}{document footer. Character vector of length 3 corresponding to positions left, center, right. Use NA to skip a position.}
-
-\item{even_header}{document header for even pages.}
-
-\item{even_footer}{document footer for even pages.}
-
-\item{first_header}{document header for first page only.}
-
-\item{first_footer}{document footer for first page only.}
+\item{header, even_header, first_header, footer, even_footer, first_footer}{Character vector of length 3 corresponding to positions left, center,
+right.  \code{header} and \code{footer} are used to default additional arguments.
+Setting \code{even}, \code{odd}, or \code{first}, overrides \code{header}/\code{footer}. Use \code{NA} to
+skip a position.}
 
 \item{...}{additional arguments}
 }
 \description{
-Set document headers and footers
+Set document headers and footers. You can also do this when adding a worksheet
+with \code{\link[=wb_add_worksheet]{wb_add_worksheet()}} with the \code{header}, \code{footer} arguments and friends.
+These will show up when printing an xlsx file.
 }
 \details{
 Headers and footers can contain special tags
 \itemize{
-\item{\strong{&[Page]}}{ Page number}
-\item{\strong{&[Pages]}}{ Number of pages}
-\item{\strong{&[Date]}}{ Current date}
-\item{\strong{&[Time]}}{ Current time}
-\item{\strong{&[Path]}}{ File path}
-\item{\strong{&[File]}}{ File name}
-\item{\strong{&[Tab]}}{ Worksheet name}
+\item \strong{&[Page]} Page number
+\item \strong{&[Pages]} Number of pages
+\item \strong{&[Date]} Current date
+\item \strong{&[Time]} Current time
+\item \strong{&[Path]} File path
+\item \strong{&[File]} File name
+\item \strong{&[Tab]} Worksheet name
 }
 }
 \examples{
 wb <- wb_workbook()
 
-wb$add_worksheet("S1")
-wb$add_worksheet("S2")
-wb$add_worksheet("S3")
-wb$add_worksheet("S4")
-
-wb$add_data(1, 1:400)
-wb$add_data(2, 1:400)
-wb$add_data(3, 3:400)
-wb$add_data(4, 3:400)
+# Add example data
+wb$add_worksheet("S1")$add_data(x = 1:400)
+wb$add_worksheet("S2")$add_data(x = 1:400)
+wb$add_worksheet("S3")$add_data(x = 3:400)
+wb$add_worksheet("S4")$add_data(x = 3:400)
 
 wb$set_header_footer(
   sheet = "S1",
   header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
   footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
-  evenHeader = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
-  evenFooter = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
-  firstHeader = c("TOP", "OF FIRST", "PAGE"),
-  firstFooter = c("BOTTOM", "OF FIRST", "PAGE")
+  even_header = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
+  even_footer = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
+  first_header = c("TOP", "OF FIRST", "PAGE"),
+  first_footer = c("BOTTOM", "OF FIRST", "PAGE")
 )
 
 wb$set_header_footer(
   sheet = 2,
   header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
   footer = c("&[Path]&[File]", NA, "&[Tab]"),
-  firstHeader = c(NA, "Center Header of First Page", NA),
-  firstFooter = c(NA, "Center Footer of First Page", NA)
+  first_header = c(NA, "Center Header of First Page", NA),
+  first_footer = c(NA, "Center Footer of First Page", NA)
 )
 
 wb$set_header_footer(
@@ -89,10 +80,7 @@ wb$set_header_footer(
 
 wb$set_header_footer(
   sheet = 4,
-  firstHeader = c("FIRST ONLY L", NA, "FIRST ONLY R"),
-  firstFooter = c("FIRST ONLY L", NA, "FIRST ONLY R")
+  first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+  first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
-}
-\seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}} to set headers and footers when adding a worksheet
 }

@@ -4,7 +4,7 @@
 \alias{wb_col_widths}
 \alias{wb_set_col_widths}
 \alias{wb_remove_col_widths}
-\title{Modify worksheet column widths}
+\title{Modify column widths of a worksheet}
 \usage{
 wb_set_col_widths(
   wb,
@@ -17,33 +17,38 @@ wb_set_col_widths(
 wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook} object}
+\item{wb}{A \code{wbWorkbook} object.}
 
-\item{sheet}{A name or index of a worksheet, a vector in the case of \code{remove}}
+\item{sheet}{A name or index of a worksheet, a vector in the case of \code{remove_}}
 
-\item{cols}{Indices of cols to set/remove width}
+\item{cols}{Indices of cols to set/remove column widths.}
 
-\item{widths}{width to set cols to specified in Excel column width units or "auto" for automatic sizing. The widths argument is
-recycled to the length of cols. The default width is 8.43. Though there is no specific default width for Excel, it depends on
-Excel version, operating system and DPI settings used. Setting it to specific value also is no guarantee that the output will be
-of the selected width.}
+\item{widths}{Width to set \code{cols} to specified column width or \code{"auto"} for
+automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxlsx2
+sets the default width is 8.43, as this is the standard in some spreadsheet
+software. See \strong{Details} for general information on column widths.}
 
-\item{hidden}{Logical vector. If \code{TRUE} the column is hidden.}
+\item{hidden}{Logical vector recycled to the length of \code{cols}.
+If \code{TRUE}, the columns are hidden.}
 }
 \description{
-Remove / set worksheet column widths to specific width or "auto".
+Remove / set worksheet column widths to specified width or "auto".
 }
 \details{
 The global min and max column width for "auto" columns is set by (default values show):
 \itemize{
-\item{options("openxlsx2.minWidth" = 3)}
-\item{options("openxlsx2.maxWidth" = 250)} ## This is the maximum width allowed in Excel
+\item \code{options("openxlsx2.minWidth" = 3)}
+\item \code{options("openxlsx2.maxWidth" = 250)} Maximum width allowed in Excel
 }
 
 NOTE: The calculation of column widths can be slow for large worksheets.
 
-NOTE: The \code{hidden} parameter may conflict with the one set in
-\code{\link[=wb_group_cols]{wb_group_cols()}}; changing one will update the other.
+NOTE: The \code{hidden} parameter may conflict with the one set in \code{\link[=wb_group_cols]{wb_group_cols()}};
+changing one will update the other.
+
+NOTE: The default column width varies by spreadsheet software, operating system,
+and DPI settings used. Setting \code{widths} to specific value also is no guarantee
+that the output will have consistent column widths.
 }
 \examples{
 ## Create a new workbook
@@ -53,7 +58,7 @@ wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 
 ## set col widths
-wb$set_col_widths(1, cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
+wb$set_col_widths(cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33))
 
 ## auto columns
 wb$add_worksheet("Sheet 2")
@@ -82,9 +87,9 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}

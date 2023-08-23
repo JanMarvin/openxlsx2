@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_sheetview}
 \alias{wb_set_sheetview}
-\title{add sheetview}
+\title{Modify the default view of a worksheet}
 \usage{
 wb_set_sheetview(
   wb,
@@ -30,27 +30,27 @@ wb_set_sheetview(
 )
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A Workbook object}
 
 \item{sheet}{sheet}
 
 \item{color_id, default_grid_color}{Integer: A color, default is 64}
 
-\item{right_to_left}{Logical: if TRUE column ordering is right  to left}
+\item{right_to_left}{Logical: if \code{TRUE} column ordering is right  to left}
 
-\item{show_formulas}{Logical: if TRUE cell formulas are shown}
+\item{show_formulas}{Logical: if \code{TRUE} cell formulas are shown}
 
-\item{show_grid_lines}{Logical: if TRUE the worksheet grid is shown}
+\item{show_grid_lines}{Logical: if \code{TRUE} the worksheet grid is shown}
 
-\item{show_outline_symbols}{Logical: if TRUE outline symbols are shown}
+\item{show_outline_symbols}{Logical: if \code{TRUE} outline symbols are shown}
 
-\item{show_row_col_headers}{Logical: if TRUE row and column headers are shown}
+\item{show_row_col_headers}{Logical: if \code{TRUE} row and column headers are shown}
 
-\item{show_ruler}{Logical: if TRUE a ruler is shown in page layout view}
+\item{show_ruler}{Logical: if \code{TRUE} a ruler is shown in page layout view}
 
-\item{show_white_space}{Logical: if TRUE margins are shown in page layout view}
+\item{show_white_space}{Logical: if \code{TRUE} margins are shown in page layout view}
 
-\item{show_zeros}{Logical: if FALSE cells containing zero are shown blank if !showFormulas}
+\item{show_zeros}{Logical: if \code{FALSE} cells containing zero are shown blank if \code{show_formulas = FALSE}}
 
 \item{tab_selected}{Integer: zero vector indicating the selected tab}
 
@@ -58,7 +58,7 @@ wb_set_sheetview(
 
 \item{view}{View: "normal", "pageBreakPreview" or "pageLayout"}
 
-\item{window_protection}{Logical: if TRUE the panes are protected}
+\item{window_protection}{Logical: if \code{TRUE} the panes are protected}
 
 \item{workbook_view_id}{integer: Pointing to some other view inside the workbook}
 
@@ -67,26 +67,26 @@ wb_set_sheetview(
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook} object, invisibly
 }
 \description{
-add sheetview
+This helps set a worksheet's appearance, such as the zoom, whether to show grid lines
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
 
 wb$set_sheetview(
-  zoomScale = 75,
-  rightToLeft = FALSE,
-  showFormulas = TRUE,
-  showGridLines = TRUE,
-  showOutlineSymbols = FALSE,
-  showRowColHeaders = TRUE,
-  showRuler = TRUE,
-  showWhiteSpace = FALSE,
-  tabSelected = 1,
-  topLeftCell = "B1",
+  zoom_scale = 75,
+  right_to_left = FALSE,
+  show_formulas = TRUE,
+  show_grid_lines = TRUE,
+  show_outline_symbols = FALSE,
+  show_row_col_headers = TRUE,
+  show_ruler = TRUE,
+  show_white_space = FALSE,
+  tab_selected = 1,
+  top_left_cell = "B1",
   view = "normal",
-  windowProtection = TRUE
+  window_protection = TRUE
 )
 }

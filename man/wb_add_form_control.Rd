@@ -2,13 +2,13 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_form_control}
 \alias{wb_add_form_control}
-\title{Add form control Checkbox, Radiobuttons or Dropmenu}
+\title{Add a checkbox, radio button or drop menu to a cell in a worksheet}
 \usage{
 wb_add_form_control(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  type = NULL,
+  type = c("Checkbox", "Radio", "Drop"),
   text = NULL,
   link = NULL,
   range = NULL,
@@ -16,29 +16,32 @@ wb_add_form_control(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A worksheet of the workbook}
 
-\item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
+\item{dims}{A single cell as spreadsheet dimension, e.g. "A1".}
 
 \item{type}{A type "Checkbox" (the default), "Radio" a radio button or "Drop" a drop down menu}
 
-\item{text}{A text to be shown next to the Checkbox or radio button}
+\item{text}{A text to be shown next to the Checkbox or radio button (optional)}
 
 \item{link}{A cell range to link to}
 
 \item{range}{A cell range used as input}
 
-\item{checked}{A logical indicating if the Checkbox or radio button is checked}
+\item{checked}{A logical indicating if the Checkbox or Radio button is checked}
 }
 \value{
-The \code{wbWorkbook} object
+The \code{wbWorkbook} object, invisibly.
 }
 \description{
-Add form control Checkbox, Radiobuttons or Dropmenu
+You can add Form Control to a cell. The three supported types are a Checkbox,
+a Radio button, or a Drop menu.
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\%
   wb_add_form_control()
+# Add
+wb$add_form_control(dims = "C5", type = "Radio", checked = TRUE)
 }

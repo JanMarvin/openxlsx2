@@ -2,16 +2,19 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_style}
 \alias{wb_add_style}
-\title{add style to workbook}
+\title{Set the default style in a workbook}
 \usage{
 wb_add_style(wb, style = NULL, style_name = NULL)
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
-\item{style}{style xml character}
+\item{style}{style xml character, created by a \verb{create_*()} function.}
 
 \item{style_name}{style name used optional argument}
+}
+\value{
+The \code{wbWorkbook} object, invisibly.
 }
 \description{
 wb wrapper to add style to workbook
@@ -20,9 +23,21 @@ wb wrapper to add style to workbook
 yellow_f <- wb_color(hex = "FF9C6500")
 yellow_b <- wb_color(hex = "FFFFEB9C")
 
-yellow <- create_dxfs_style(font_color = yellow_f, bgFill = yellow_b)
+yellow <- create_dxfs_style(font_color = yellow_f, bg_fill = yellow_b)
 wb <- wb_workbook() \%>\% wb_add_style(yellow)
 }
 \seealso{
-\code{\link[=create_border]{create_border()}}, \code{\link[=create_cell_style]{create_cell_style()}}, \code{\link[=create_dxfs_style]{create_dxfs_style()}}, \code{\link[=create_fill]{create_fill()}}, \code{\link[=create_font]{create_font()}}, \code{\link[=create_numfmt]{create_numfmt()}}
+\itemize{
+\item \code{\link[=create_border]{create_border()}}
+\item \code{\link[=create_cell_style]{create_cell_style()}}
+\item \code{\link[=create_dxfs_style]{create_dxfs_style()}}
+\item \code{\link[=create_fill]{create_fill()}}
+\item \code{\link[=create_font]{create_font()}}
+\item \code{\link[=create_numfmt]{create_numfmt()}}
 }
+
+Other workbook styling functions: 
+\code{\link{wb_add_dxfs_style}()},
+\code{\link{wb_base_font}}
+}
+\concept{workbook styling functions}

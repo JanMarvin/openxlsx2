@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_conditional_formatting}
 \alias{wb_add_conditional_formatting}
-\title{Add conditional formatting to cells}
+\title{Add conditional formatting to cells in a worksheet}
 \usage{
 wb_add_conditional_formatting(
   wb,
@@ -20,72 +20,73 @@ wb_add_conditional_formatting(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 
 \item{dims}{A cell or cell range like "A1" or "A1:B2"}
 
-\item{rule}{The condition under which to apply the formatting. See examples.}
+\item{rule}{The condition under which to apply the formatting. See \strong{Examples}.}
 
-\item{style}{A style to apply to those cells that satisfy the rule. Default is 'font_color = "FF9C0006"' and 'bgFill = "FFFFC7CE"'}
+\item{style}{A style to apply to those cells that satisfy the rule.
+Default is \code{font_color = "FF9C0006"} and \code{bg_fill = "FFFFC7CE"}}
 
-\item{type}{The type of conditional formatting rule to apply.}
+\item{type}{The type of conditional formatting rule to apply. One of \code{"expression"}, \code{"colorScale"} or others mentioned in \strong{Details}.}
 
-\item{params}{Additional parameters passed.  See \strong{Details} for more}
+\item{params}{A list of additional parameters passed.  See \strong{Details} for more.}
 
 \item{...}{additional arguments}
 }
 \description{
-Add conditional formatting to cells
+Add conditional formatting to cells.
+You can find more details in \code{vignette("conditional-formatting")}.
 }
 \details{
-See Examples.
+openxml uses the alpha channel first then RGB, whereas the usual default is RGBA.
 
-Conditional formatting types accept different parameters.  Unless noted,
+Conditional formatting \code{type} accept different parameters. Unless noted,
 unlisted parameters are ignored.
-
 \describe{
 \item{\code{expression}}{
 \verb{[style]}\cr A \code{Style} object\cr\cr
 \verb{[rule]}\cr An Excel expression (as a character). Valid operators are: \code{<}, \code{<=}, \code{>}, \code{>=}, \code{==}, \code{!=}
 }
-\item{colorScale}{
+\item{\code{colorScale}}{
 \verb{[style]}\cr A \code{character} vector of valid colors with length \code{2} or \code{3}\cr\cr
 \verb{[rule]}\cr \code{NULL} or a \code{character} vector of valid colors of equal length to \code{styles}
 }
-\item{dataBar}{
+\item{\code{dataBar}}{
 \verb{[style]}\cr A \code{character} vector of valid colors with length \code{2} or \code{3}\cr\cr
 \verb{[rule]}\cr A \code{numeric} vector specifying the range of the databar colors. Must be equal length to \code{style}\cr\cr
 \verb{[params$showValue]}\cr If \code{FALSE} the cell value is hidden. Default \code{TRUE}\cr\cr
 \verb{[params$gradient]}\cr If \code{FALSE} color gradient is removed. Default \code{TRUE}\cr\cr
 \verb{[params$border]}\cr If \code{FALSE} the border around the database is hidden. Default \code{TRUE}
 }
-\item{duplicatedValues/uniqueValues/containsErrors}{
+\item{\code{duplicatedValues} / \code{uniqueValues} / \code{containsErrors}}{
 \verb{[style]}\cr A \code{Style} object
 }
-\item{contains}{
+\item{\code{contains}}{
 \verb{[style]}\cr A \code{Style} object\cr\cr
 \verb{[rule]}\cr The text to look for within cells
 }
-\item{between}{
-\verb{[style]}\cr A Style object.\cr\cr
+\item{\code{between}}{
+\verb{[style]}\cr A \code{Style} object.\cr\cr
 \verb{[rule]}\cr A \code{numeric} vector of length \code{2} specifying lower and upper bound (Inclusive)
 }
-\item{topN}{
+\item{\code{topN}}{
 \verb{[style]}\cr A \code{Style} object\cr\cr
 \verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of highest values. Default \code{5L}\cr\cr
-\verb{[params$percent]} If \code{TRUE} uses percentage
+\verb{[params$percent]} If \code{TRUE}, uses percentage
 }
-\item{bottomN}{
+\item{\code{bottomN}}{
 \verb{[style]}\cr A \code{Style} object\cr\cr
 \verb{[params$rank]}\cr A \code{numeric} vector of length \code{1} indicating number of lowest values. Default \code{5L}\cr\cr
-\verb{[params$percent]}\cr If \code{TRUE} uses percentage
+\verb{[params$percent]}\cr If \code{TRUE}, uses percentage
 }
-\item{iconSet}{
-\verb{[params$showValue]}\cr If \code{FALSE} the cell value is hidden. Default \code{TRUE}\cr\cr
-\verb{[params$reverse]}\cr If \code{TRUE} the order is reversed. Default \code{FALSE}\cr\cr
-\verb{[params$percent]}\cr If \code{TRUE} uses percentage\cr\cr
+\item{\code{iconSet}}{
+\verb{[params$showValue]}\cr If \code{FALSE}, the cell value is hidden. Default \code{TRUE}\cr\cr
+\verb{[params$reverse]}\cr If \code{TRUE}, the order is reversed. Default \code{FALSE}\cr\cr
+\verb{[params$percent]}\cr If \code{TRUE}, uses percentage\cr\cr
 \verb{[params$iconSet]}\cr Uses one of the implemented icon sets. Values must match the length of the icons
 in the set 3Arrows, 3ArrowsGray, 3Flags, 3Signs, 3Symbols, 3Symbols2, 3TrafficLights1, 3TrafficLights2,
 4Arrows, 4ArrowsGray, 4Rating, 4RedToBlack, 4TrafficLights, 5Arrows, 5ArrowsGray, 5Quarters, 5Rating. The
@@ -96,6 +97,6 @@ default is 3TrafficLights1.
 \examples{
 wb <- wb_workbook()
 wb$add_worksheet("a")
-wb$add_data("a", 1:4, colNames = FALSE)
-wb$add_conditional_formatting("a", cols = 1, rows = 1:4, rule = ">2")
+wb$add_data(x = 1:4, col_names = FALSE)
+wb$add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:4), rule = ">2")
 }

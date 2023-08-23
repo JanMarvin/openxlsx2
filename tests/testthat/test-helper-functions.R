@@ -218,3 +218,21 @@ test_that("validate_colors() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("basename2() works", {
+
+  long_path <- paste0(
+    paste0(rep("foldername/", 40), collapse = ""),
+    paste0(rep("filename", 40), collapse = ""),
+    ".txt"
+  )
+
+  # # maybe only broken on old Windows. Errors in 4.1 not in 4.3.1
+  # if (to_long(long_path))
+  #   expect_error(basename(long_path))
+
+  exp <- "filenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilename.txt"
+  got <- basename2(long_path)
+  expect_equal(exp, got)
+
+})

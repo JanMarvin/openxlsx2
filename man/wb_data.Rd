@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.R
 \name{wb_data}
 \alias{wb_data}
-\title{provide wb_data object as mschart input}
+\title{Add the \code{wb_data} attribute to a data frame in a worksheet}
 \usage{
 wb_data(wb, sheet = current_sheet(), dims, ...)
 }
@@ -13,8 +13,11 @@ wb_data(wb, sheet = current_sheet(), dims, ...)
 
 \item{dims}{the dimensions}
 
-\item{...}{additional arguments for wb_to_df. Be aware that not every
+\item{...}{additional arguments for \code{wb_to_df()}. Be aware that not every
 argument is valid.}
+}
+\value{
+A data frame of class \code{wb_data}.
 }
 \description{
 provide wb_data object as mschart input
@@ -27,5 +30,5 @@ provide wb_data object as mschart input
  wb_data(wb, 1, dims = "B2:E6")
 }
 \seealso{
-\code{\link[=wb_to_df]{wb_to_df()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}}
+\code{\link[=wb_to_df]{wb_to_df()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}}, \code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}}
 }

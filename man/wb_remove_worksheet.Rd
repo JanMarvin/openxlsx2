@@ -7,13 +7,14 @@
 wb_remove_worksheet(wb, sheet = current_sheet())
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A wbWorkbook object}
 
-\item{sheet}{A name or index of a worksheet}
+\item{sheet}{The sheet name or index to remove}
+}
+\value{
+The \code{wbWorkbook} object, invisibly.
 }
 \description{
-Remove a worksheet from a Workbook object
-
 Remove a worksheet from a workbook
 }
 \examples{

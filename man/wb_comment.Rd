@@ -31,5 +31,5 @@ Otherwise, will check the system username.}
 A \code{wbComment} object
 }
 \description{
-Create a comment object
+Creates a \code{wbComment} object. Use with \code{\link[=wb_add_comment]{wb_add_comment()}} to add to a worksheet location.
 }

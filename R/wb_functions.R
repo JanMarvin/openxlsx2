@@ -262,12 +262,15 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 }
 
 
-#' @rdname cleanup
+#' Delete data
+#'
+#' This function is deprecated. Use [wb_clean_sheet()].
 #' @param wb workbook
 #' @param sheet sheet to clean
 #' @param cols numeric column vector
 #' @param rows numeric row vector
 #' @export
+#' @keywords internal
 delete_data <- function(wb, sheet, cols, rows) {
 
   .Deprecated(old = "delete_data", new = "wb_clean_sheet", package = "openxlsx2")

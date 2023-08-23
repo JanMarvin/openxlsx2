@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_freeze_pane}
 \alias{wb_freeze_pane}
-\title{Freeze a worksheet pane}
+\title{Freeze pane of a worksheet}
 \usage{
 wb_freeze_pane(
   wb,
@@ -23,14 +23,14 @@ wb_freeze_pane(
 
 \item{first_active_col}{Furthest left column of active region}
 
-\item{first_row}{If \code{TRUE}, freezes the first row (equivalent to firstActiveRow = 2)}
+\item{first_row}{If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})}
 
-\item{first_col}{If \code{TRUE}, freezes the first column (equivalent to firstActiveCol = 2)}
+\item{first_col}{If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})}
 
 \item{...}{additional arguments}
 }
 \description{
-Freeze a worksheet pane
+Add a Freeze pane in a worksheet.
 }
 \examples{
 ## Create a new workbook
@@ -43,10 +43,10 @@ wb$add_worksheet("Sheet 3")
 wb$add_worksheet("Sheet 4")
 
 ## Freeze Panes
-wb$freeze_pane("Sheet 1", firstActiveRow = 5, firstActiveCol = 3)
-wb$freeze_pane("Sheet 2", firstCol = TRUE) ## shortcut to firstActiveCol = 2
-wb$freeze_pane(3, firstRow = TRUE) ## shortcut to firstActiveRow = 2
-wb$freeze_pane(4, firstActiveRow = 1, firstActiveCol = "D")
+wb$freeze_pane("Sheet 1", first_active_row = 5, first_active_col = 3)
+wb$freeze_pane("Sheet 2", first_col = TRUE) ## shortcut to first_active_col = 2
+wb$freeze_pane(3, first_row = TRUE) ## shortcut to first_active_row = 2
+wb$freeze_pane(4, first_active_row = 1, first_active_col = "D")
 }
 \seealso{
 Other workbook wrappers: 
@@ -63,9 +63,9 @@ Other workbook wrappers:
 \code{\link{wb_creators}},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}
