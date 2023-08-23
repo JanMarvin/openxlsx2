@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_data_table}
 \alias{wb_add_data_table}
-\title{Add an Excel data table to a worksheet}
+\title{Add a data table to a worksheet}
 \usage{
 wb_add_data_table(
   wb,
@@ -45,9 +45,9 @@ wb_add_data_table(
 
 \item{row_names}{If \code{TRUE}, the row names of \code{x} are written.}
 
-\item{table_style}{Any excel table style name or "none" (see \code{vignette("openxlsx2_style_manual")})}
+\item{table_style}{Any table style name or "none" (see \code{vignette("openxlsx2_style_manual")})}
 
-\item{table_name}{name of table in workbook. The table name must be unique.}
+\item{table_name}{Name of table in workbook. The table name must be unique.}
 
 \item{with_filter}{If \code{TRUE}, columns with have filters in the first row.}
 

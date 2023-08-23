@@ -29,7 +29,7 @@ wb_set_bookview(
 
 \item{auto_filter_date_grouping}{autoFilterDateGrouping}
 
-\item{first_sheet}{firstSheet}
+\item{first_sheet}{The first sheet to be displayed}
 
 \item{minimized}{minimized}
 
@@ -54,8 +54,8 @@ wb_set_bookview(
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorkbook} object
+The Workbook object
 }
 \description{
-Get the base font used in the workbook.
+Set the workbook position, size and filter
 }

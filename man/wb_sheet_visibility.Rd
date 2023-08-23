@@ -19,11 +19,15 @@ wb_set_sheet_visibility(wb, sheet = current_sheet(), value)
 if provding a character vector, you can provide any of "hidden", "visible", or "veryHidden"}
 }
 \value{
-A named haracter vector of worksheet names with their visibility value
-of "hidden", "visible", "veryHidden" (\code{get}). or the \code{wbWorkbook}, invisibly (\code{set})
+\itemize{
+\item \code{wb_set_sheet_visibility}: The Worbook object, invisibly.
+\item \code{wb_get_sheet_visibility()}: A character vector of the worksheet visibility value
+}
 }
 \description{
 Get and set worksheet visible state. This allows to hide worksheets from the workbook.
+The visibility of a worksheet can either be  "visible", "hidden", or "veryHidden".
+You can set this when creating a worksheet with \code{wb_add_worksheet(visible = FALSE)}
 }
 \examples{
 

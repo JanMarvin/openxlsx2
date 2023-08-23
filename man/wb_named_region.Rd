@@ -36,14 +36,14 @@ wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
+\item{dims}{Worksheet cell range of the region ("A1:D4").}
 
-\item{name}{Name for region. A character vector of length 1.
-Note region names musts be case-insensitive unique.}
+\item{name}{Name for region. A character vector of length 1. Note that region
+names musts be case-insensitive unique.}
 
 \item{local_sheet}{If \code{TRUE} the named region will be local for this sheet}
 
-\item{overwrite}{Boolean. Overwrite if exists? Default to \code{FALSE}}
+\item{overwrite}{Boolean. Overwrite if exists? Default to \code{FALSE}.}
 
 \item{comment}{description text for named region}
 
@@ -59,8 +59,7 @@ the \code{name} argument in \code{wb_add_data(x = iris, name = "my-region")}.
 It is important to note that named regions are not case-sensitive and must be unique.
 }
 \details{
-You can use \code{\link[=wb_dims]{wb_dims()}} to specify the cell range of the named region
-Region is given by: \code{min(cols):max(cols)} X \code{min(rows):max(rows)}
+You can use the \code{\link[=wb_dims]{wb_dims()}} helper to specify the cell range of the named region
 }
 \examples{
 ## create named regions

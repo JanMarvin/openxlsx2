@@ -7,7 +7,7 @@
 #' On Windows it uses `base::shell.exec()` (Windows only function) to
 #' determine the appropriate program.
 #'
-#' On macOS, (c) it uses system default handlers, given the file type.
+#' On Mac, (c) it uses system default handlers, given the file type.
 #'
 #' On Linux, it searches (via `which`) for available xls/xlsx reader
 #' applications (unless `options('openxlsx2.excelApp')` is set to the app bin

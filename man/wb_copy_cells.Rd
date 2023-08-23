@@ -19,9 +19,9 @@ wb_copy_cells(
 
 \item{sheet}{a worksheet}
 
-\item{dims}{cell used as start}
+\item{dims}{A cell where to place the copy}
 
-\item{data}{a \code{\link[=wb_data]{wb_data}} object}
+\item{data}{A \code{\link[=wb_data]{wb_data}} object containing cells to copy}
 
 \item{as_value}{Should a copy of the value be written?}
 

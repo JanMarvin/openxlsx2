@@ -45,7 +45,6 @@ wb_get_named_regions_tab <- function(wb) {
     #localSheetId is not always available
     name = wb$tables$tab_nam,
     value = "table",
-    # TODO Maybe remove this, and change it for another function?
     sheets = wb_get_sheet_name(wb, wb$tables$tab_sheet),
     coords = wb$tables$tab_ref,
     id = NA_integer_,
@@ -83,10 +82,6 @@ wb_get_named_regions_tab <- function(wb) {
 #' df <- read_xlsx(out_file, named_region = "iris2")
 #' head(df)
 wb_get_named_regions <- function(x, tables = FALSE) {
-  # TODO possibly deprecate using wb_get_named_regions() with an xlsx file? and change x for `wb`.
-  # This way, it would make sense to document get_named_regions along the other
-  # named_region functions,
-  # It would also be more consistent with `wb_get_tables()`
   if (inherits(x, "wbWorkbook")) {
     wb <- x
   } else {

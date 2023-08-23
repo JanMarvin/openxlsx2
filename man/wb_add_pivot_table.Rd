@@ -54,8 +54,9 @@ wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\% wb_add_data(x = mtcars)
 df <- wb_data(wb, sheet = 1)
 
 wb <- wb \%>\%
-wb_add_pivot_table(df, dims = "A3",
-  filter = "am", rows = "cyl", cols = "gear", data = "disp")
+  wb_add_pivot_table(df, dims = "A3",
+  filter = "am", rows = "cyl", cols = "gear", data = "disp"
+  )
 }
 \seealso{
 \code{\link[=wb_data]{wb_data()}}

@@ -28,8 +28,8 @@ software.}
 A Workbook object.
 }
 \description{
-\code{wb_load()} returns a workbook object conserving styles and
-formatting of the original .xlsx file.
+\code{wb_load()} returns a \link{wbWorkbook} object conserving styles and
+formatting of the original input file.
 }
 \details{
 A warning is displayed if an xml namespace for main is found in the xlsx file.
