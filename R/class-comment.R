@@ -35,8 +35,7 @@ wbComment <- R6::R6Class(
     #' @param width Width of the comment in ... units
     #' @param height Height of comment in ... units
     #' @return a `wbComment` object
-    initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
-      # TODO this needs the validations that the comment wrappers have
+    initialize = function(text, author, style, visible, width, height) {
       self$text <- text
       self$author <- author
       self$style <- style
@@ -76,63 +75,63 @@ wbComment <- R6::R6Class(
     }
   )
 )
-
-
-# wrappers ----------------------------------------------------------------
+# Comment creation wrappers ----------------------------------------------------------------
 
 # TODO create_comment() should leverage wbComment$new() more
 # TODO write_comment() should leverage wbWorkbook$addComment() more
 # TODO remove_comment() should leverage wbWorkbook$remove_comment() more
 
-#' Create a comment
+#' Create a comment object
 #'
 #' Creates a `wbComment` object. Use with [wb_add_comment()] to add to a worksheet location.
 #'
-#' @param text Comment text. Character vector.
-#' @param author Author of comment. A string.
+#' @param text Comment text. Character vector. or a [fmt_txt()] string.
+#' @param author Author of comment. A string. By default, will look at `options("openxlsx2.creator")`.
+#'   Otherwise, will check the system username.
 #' @param style A Style object or list of style objects the same length as comment vector.
-#' @param visible `TRUE` or `FALSE`. Is comment visible?
+#' @param visible Is comment visible? Default: `FALSE`.
 #' @param width Textbox integer width in number of cells
 #' @param height Textbox integer height in number of cells
-#' @returns a `wbComment` object
-#' @seealso [wb_add_comment()]
+#'
+#' @return A `wbComment` object
 #' @export
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #'
 #' # write comment without author
-#' c1 <- create_comment(text = "this is a comment", author = "")
+#' c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
 #' wb$add_comment(dims = "B10", comment = c1)
 #'
 #' # Write another comment with author information
-#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+#' c2 <- wb_comment(text = "this is another comment", author = "Marco Polo")
 #' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
 #'
 #' # write a styled comment with system author
 #' s1 <- create_font(b = "true", color = wb_color(hex = "FFFF0000"), sz = "12")
 #' s2 <- create_font(color = wb_color(hex = "FF000000"), sz = "9")
-#' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
+#' c3 <- wb_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
 #' wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = c3)
-create_comment <- function(text,
-  author = Sys.info()[["user"]],
-  style = NULL,
-  visible = TRUE,
-  width = 2,
-  height = 4) {
-
-  # TODO move this to wbComment$new(); this could then be replaced with
-  # wb_comment()
-
+wb_comment <- function(text = NULL,
+                       style = NULL,
+                       visible = FALSE,
+                       author = getOption("openxlsx2.creator"),
+                       width = 2,
+                       height = 4) {
+  # Code copied from the wbWorkbook
+  author <- author %||% Sys.getenv("USERNAME")
+  text <- text %||% ""
   assert_class(author, "character")
   assert_class(text, "character")
-  assert_class(width, "numeric")
-  assert_class(height, "numeric")
+  assert_class(width, c("numeric", "integer"))
+  assert_class(height, c("numeric", "integer"))
   assert_class(visible, "logical")
 
   if (length(visible) > 1) stop("visible must be a single logical")
   if (length(author) > 1) stop("author) must be a single character")
+  if (length(width) > 1) stop("width must be a single integer")
+  if (length(height) > 1) stop("height must be a single integer")
 
   width <- round(width)
   height <- round(height)
@@ -163,7 +162,30 @@ create_comment <- function(text,
     )
   }
 
-  invisible(wbComment$new(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1]))
+  invisible(wbComment$new(text = text, author = author, style = style, width = width, height = height, visible = visible))
+}
+
+#' Create a comment
+#'
+#' Use [wb_comment()] in new code.
+#'
+#' @inheritParams wb_comment
+#' @param author A string, by default, will use "user"
+#' @param visible Default: `TRUE`. Is the comment visible by default?
+#' @keywords internal
+#' @returns a `wbComment` object
+#' @export
+create_comment <- function(text,
+  author = Sys.info()[["user"]],
+  style = NULL,
+  visible = TRUE,
+  width = 2,
+  height = 4) {
+  #
+  if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
+    .Deprecated("wb_comment()")
+  }
+  wb_comment(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1])
 }
 
 #' Internal comment functions
@@ -383,9 +405,7 @@ remove_comment <- function(
 
 }
 
-wb_comment <- function(text = character(), author = character(), style = character()) {
-  wbComment$new(text = text, author = author, style = style)
-}
+
 
 as_fmt_txt <- function(x) {
   vapply(x, function(y) {

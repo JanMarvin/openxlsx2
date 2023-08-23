@@ -3747,6 +3747,10 @@ wbWorkbook <- R6::R6Class(
         dims <- rowcol_to_dim(row, col)
       }
 
+      if (is.character(comment)) {
+        comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))
+      }
+
       write_comment(
         wb      = self,
         sheet   = sheet,

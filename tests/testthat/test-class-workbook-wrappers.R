@@ -375,7 +375,16 @@ test_that("wb_add_comment() is a wrapper", {
     wb = wb,
     params = list(comment = c1, dims = "A1")
   )
+  opt <- getOption("openxlsx2.creator")
+  options("openxlsx2.creator" = "user")
+  wb <- wb_workbook()$add_worksheet()
 
+  expect_wrapper(
+    "add_comment",
+    wb = wb,
+    params = list(comment = "a new comment", dims = "A1")
+  )
+  options("openxlsx2.creator" = opt)
 })
 
 # wb_remove_comment() -----------------------------------------------------

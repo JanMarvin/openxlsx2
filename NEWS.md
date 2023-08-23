@@ -11,11 +11,19 @@
 
 * provide solve argument for `wb_merge_cells()`. This allows to solve cell intersecting regions. [733](https://github.com/JanMarvin/openxlsx2/pull/733)
 
+* `wb_add_comment(comment = "x")` no longer errors when a comment as a character vector no longer fails [758, @olivroy](https://github.com/JanMarvin/openxlsx2/pull/758)
+
 ## Breaking changes
 
 * no longer exporting `wb_get_sheet_name()`
 * deprecating `delete_data()` and minor improvements to `wb_clean_sheet()`
 * removing `wb_get_worksheet()`, `wb_ws()`. These never worked as expected.
+* `create_comment()` has been renamed `wb_comment()`.  [758, @olivroy](https://github.com/JanMarvin/openxlsx2/pull/758) The default arguments however are changed:
+
+  * `author` looks at `options("openxlsx2.creator")` in `wb_comment()` compared to only `sys.getenv("user")` in `create_comment()`
+  * `visible` defaults to `FALSE` in `wb_comment()` to account for modern spreadsheet software behaviour.
+  In `create_comment()`, it is `TRUE`.
+  * `width` and `height` must now be of length 1. (In `create_comment()`, the first element is taken, other are ignored.)
 
 ## Internal changes
 

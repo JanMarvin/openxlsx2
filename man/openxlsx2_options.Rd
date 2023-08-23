@@ -17,5 +17,7 @@ The openxlsx2 package uses global options to simplify formatting:
 \item \code{options("openxlsx2.orientation" = "portrait")} ## page orientation
 \item \code{options("openxlsx2.sheet.default_name" = "Sheet")}
 \item \code{options("openxlsx2.rightToLeft" = NULL)}
+\item \code{options("openxlsx2.soon_deprecated" = FALSE)} ## warn if using camelCase
+\item \code{options("openxlsx2.creator")} ## Default is Windows Username
 }
 }

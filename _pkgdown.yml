@@ -92,6 +92,7 @@ reference:
   contents:
   - wb_dims
   - wb_color
+  - wb_comment
   - wb_hyperlink
   - starts_with("create_")
 

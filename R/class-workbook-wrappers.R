@@ -10,7 +10,7 @@
 #' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
 #' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 #'
-#' @param creator Creator of the workbook (your name). Defaults to login username
+#' @param creator Creator of the workbook (your name). Defaults to login username or `options("openxlsx2.creator")` if set.
 #' @param title,subject,category Workbook property, a string.
 #' @param datetime_created The time of the workbook is created
 #' @param theme Optional theme identified by string or number.
@@ -2965,37 +2965,34 @@ wb_add_dxfs_style <- function(
 
 }
 
-#' Add / remove comment in a worksheet
+#' Add comment to worksheet
 #'
-#' @description
-#' The comment functions (add and remove) allow the modification of comments.
-#' In more recent spreadsheet software they are called notes, while they are called
-#' comments in openxml. Modification of what newer spreadsheet software now calls
-#' comment is possible via [wb_add_thread()].
+#' @details
+#' If applying a `comment` with a string, it will use [wb_comment()] default values.
 #'
-#' `comment` can be created with [create_comment()] to add styling.
-#'
-#' @param wb A Workbook object
+#' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param dims Row and column as spreadsheet dimension, e.g. "A1"
-#' @param comment A comment to apply to the worksheet
-# TODO To fit, maybe comment, can be `x`
+#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
+#' @param comment A comment to apply to `dims` created by [wb_comment()], a string or a [fmt_txt()] object
 #' @param ... additional arguments
 #' @returns The Workbook object, invisibly.
-#' @seealso [create_comment()], [wb_add_thread()]
+#' @seealso [wb_comment()], [wb_add_thread()]
 #' @name wb_add_comment
 #' @keywords comments
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #' # add a comment without author
-#' c1 <- create_comment(text = "this is a comment", author = "")
+#' c1 <- wb_comment(text = "this is a comment", author = "")
 #' wb$add_comment(dims = "B10", comment = c1)
 #' #' # Remove comment
 #' wb$remove_comment(sheet = "Sheet 1", dims = "B10")
 #' # Write another comment with author information
-#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+#' c2 <- wb_comment(text = "this is another comment", author = "Marco Polo", visible = TRUE)
 #' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
+#' # Works with formatted text also.
+#' formatted_text <- fmt_txt("bar", underline = TRUE)
+#' wb$add_comment(dims = "B5", comment = formatted_text)
 NULL
 #' @rdname wb_add_comment
 #' @export
@@ -3008,6 +3005,11 @@ wb_add_comment <- function(
   ) {
 
   assert_workbook(wb)
+
+  if (is.character(comment)) {
+    comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))
+  }
+
   assert_comment(comment)
 
   wb$clone()$add_comment(
