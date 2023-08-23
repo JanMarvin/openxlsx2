@@ -61,7 +61,6 @@ The examples below show a small list of possible formulas:
 \item MAX(B2:B4)
 \item ...
 }
-
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
