@@ -3,7 +3,7 @@
 #'
 #' @description
 #' A chart sheet
-#'
+#' @noRd
 wbChartSheet <- R6::R6Class(
   "wbChartSheet",
 
