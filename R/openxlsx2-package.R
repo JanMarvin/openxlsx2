@@ -73,8 +73,8 @@
 #' * `options("openxlsx2.orientation" = "portrait")` ## page orientation
 #' * `options("openxlsx2.sheet.default_name" = "Sheet")`
 #' * `options("openxlsx2.rightToLeft" = NULL)`
-#' * `options("openxlsx2.soon_deprecated" = FALSE)` ## warn if using camelCase
-#' * `options("openxlsx2.creator")` ## Default is Windows Username
+#' * `options("openxlsx2.soon_deprecated" = FALSE)` ## Set to `TRUE` if you want a warning if using some functions deprecated recently in openxlsx2
+#' * `options("openxlsx2.creator")` ## A default name for the creator of comments or new `wbWorkbook` objects.
 #'
 #' @name openxlsx2_options
 NULL
