@@ -62,7 +62,6 @@ The examples below show a small list of possible formulas:
 \item ...
 }
 
-Currently, the \code{cm} parameter only has an effect in Microsoft 365.
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
