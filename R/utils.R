@@ -930,7 +930,7 @@ fmt_txt <- function(
   }
 
   xml_t_attr <- if (grepl("(^\\s+)|(\\s+$)", x)) c("xml:space" = "preserve") else NULL
-  xml_t <- xml_node_create("t", xml_children = x, xml_attributes = xml_t_attr)
+  xml_t <- xml_node_create("t", xml_children = replace_legal_chars(x), xml_attributes = xml_t_attr)
 
   xml_rpr <- xml_node_create(
     "rPr",
