@@ -66,7 +66,7 @@ test_that("comments", {
   wb$add_worksheet()
 
   # write comment without author
-  c1 <- create_comment(text = "this is a comment", author = "", visible = F)
+  c1 <- create_comment(text = "this is a comment", author = "", visible = FALSE)
   wb$add_comment(dims = "B10", comment = c1)
 
   expect_silent(wb$save(tmp))
