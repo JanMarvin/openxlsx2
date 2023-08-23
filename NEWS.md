@@ -18,8 +18,11 @@
 * no longer exporting `wb_get_sheet_name()`
 * deprecating `delete_data()` and minor improvements to `wb_clean_sheet()`
 * removing `wb_get_worksheet()`, `wb_ws()`. These never worked as expected.
-* `create_comment()` has been renamed `wb_comment()`. The default for `author` in `wb_comment()` is a bit different from `create_comment()` at it looks in `options("openxlsx2.creator")` if not specified.
-  Use `wb_comment()` in new code. [758, @olivroy](https://github.com/JanMarvin/openxlsx2/pull/758)
+* `create_comment()` has been renamed `wb_comment()`.  [758, @olivroy](https://github.com/JanMarvin/openxlsx2/pull/758) The default arguments however are changed:
+
+  * `author` looks at `options("openxlsx2.creator")` in `wb_comment()` compared to only `sys.getenv("user")` in `create_comment()`
+  * `visible` defaults to `FALSE` in `wb_comment()` to account for modern spreadsheet software behaviour.
+  In `create_comment()`, it is `TRUE`.
 
 ## Internal changes
 

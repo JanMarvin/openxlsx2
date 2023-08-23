@@ -3,6 +3,12 @@ test_that("class wbComment works", {
   expect_null(assert_comment(wb_comment()))
 })
 
+test_that("wb_comment and create_comment are the same except for the different defaults", {
+  c1 <- create_comment("x1", author = "")
+  c1_wb <- wb_comment("x1", visible = TRUE, author = "")
+  expect_equal(c1, c1_wb)
+})
+
 test_that("create_comment() works", {
   # error checking
   expect_silent(create_comment("hi", width = 1))
@@ -19,7 +25,7 @@ test_that("create_comment() works", {
   expect_error(create_comment("hi", author = 1))
   expect_error(create_comment("hi", author = c("a", "a")))
 
-  expect_true(inherits(create_comment("Hello"), "wbComment"))
+  expect_s3_class(create_comment("Hello"), "wbComment")
 })
 
 
@@ -60,7 +66,7 @@ test_that("comments", {
   wb$add_worksheet()
 
   # write comment without author
-  c1 <- create_comment(text = "this is a comment", author = "")
+  c1 <- create_comment(text = "this is a comment", author = "", visible = F)
   wb$add_comment(dims = "B10", comment = c1)
 
   expect_silent(wb$save(tmp))

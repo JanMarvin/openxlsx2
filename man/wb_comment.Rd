@@ -7,7 +7,7 @@
 wb_comment(
   text = NULL,
   style = NULL,
-  visible = TRUE,
+  visible = FALSE,
   author = getOption("openxlsx2.creator"),
   width = 2,
   height = 4
@@ -18,7 +18,7 @@ wb_comment(
 
 \item{style}{A Style object or list of style objects the same length as comment vector.}
 
-\item{visible}{\code{TRUE} or \code{FALSE}. Is comment visible?}
+\item{visible}{Is comment visible? Default: \code{FALSE}.}
 
 \item{author}{Author of comment. A string. By default, will look at \code{options("openxlsx2.creator")}.
 Otherwise, will check the system username.}

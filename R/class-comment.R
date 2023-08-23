@@ -35,7 +35,7 @@ wbComment <- R6::R6Class(
     #' @param width Width of the comment in ... units
     #' @param height Height of comment in ... units
     #' @return a `wbComment` object
-    initialize = function(text, author, style, visible = TRUE, width = 2, height = 4) {
+    initialize = function(text, author, style, visible, width, height) {
       self$text <- text
       self$author <- author
       self$style <- style
@@ -83,7 +83,7 @@ wbComment <- R6::R6Class(
 #' @param author Author of comment. A string. By default, will look at `options("openxlsx2.creator")`.
 #'   Otherwise, will check the system username.
 #' @param style A Style object or list of style objects the same length as comment vector.
-#' @param visible `TRUE` or `FALSE`. Is comment visible?
+#' @param visible Is comment visible? Default: `FALSE`.
 #' @param width Textbox integer width in number of cells
 #' @param height Textbox integer height in number of cells
 #'
@@ -91,7 +91,7 @@ wbComment <- R6::R6Class(
 #' @export
 wb_comment <- function(text = NULL,
                        style = NULL,
-                       visible = TRUE,
+                       visible = FALSE,
                        author = getOption("openxlsx2.creator"),
                        width = 2,
                        height = 4) {
@@ -136,7 +136,7 @@ wb_comment <- function(text = NULL,
     )
   }
 
-  invisible(wbComment$new(text = text, author = author, style = style, width = width, height = height))
+  invisible(wbComment$new(text = text, author = author, style = style, width = width, height = height, visible = visible))
 }
 
 # wrappers ----------------------------------------------------------------
@@ -156,7 +156,8 @@ wb_comment <- function(text = NULL,
 #' Use [wb_comment()] in new code
 #'
 #' @inheritParams wb_comment
-#' @author A string, by default, will use "user"
+#' @param author A string, by default, will use "user"
+#' @param visible Default: `TRUE`. Is the comment visible by default?
 #' @keywords internal
 #' @export
 #' @rdname comment

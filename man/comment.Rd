@@ -22,12 +22,11 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 \arguments{
 \item{text}{Comment text. Character vector.}
 
-\item{author}{Author of comment. A string. By default, will look at \code{options("openxlsx2.creator")}.
-Otherwise, will check the system username.}
+\item{author}{A string, by default, will use "user"}
 
 \item{style}{A Style object or list of style objects the same length as comment vector.}
 
-\item{visible}{\code{TRUE} or \code{FALSE}. Is comment visible?}
+\item{visible}{Default: \code{TRUE}. Is the comment visible by default?}
 
 \item{width}{Textbox integer width in number of cells}
 
@@ -82,8 +81,5 @@ wb$remove_comment(1, dims = "B10")
 }
 \seealso{
 \code{\link[=wb_add_thread]{wb_add_thread()}}
-}
-\author{
-A string, by default, will use "user"
 }
 \keyword{internal}
