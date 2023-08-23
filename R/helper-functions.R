@@ -1336,3 +1336,18 @@ solve_merge <- function(have, want) {
 
   vapply(pieces, dataframe_to_dims, NA_character_)
 }
+
+#' get the basename
+#' on windows [basename()] only handles strings up to 255 characters, but we
+#' can have longer strings when loading file systems
+#' @param path a character string
+#' @keywords internal
+#' @noRd
+basename2 <- function(path) {
+  is_to_long <- vapply(path, to_long, NA)
+  if (any(is_to_long)) {
+    return(gsub(".*[\\/]", "", path))
+  } else {
+    return(basename(path))
+  }
+}
