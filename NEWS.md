@@ -15,7 +15,7 @@
 
 ## Breaking changes
 
-* no longer exporting `wb_get_sheet_name()`, `wbChartSheet` and `wb_hyperlink()`
+* no longer exporting `wb_get_sheet_name()`
 * deprecating `delete_data()` and minor improvements to `wb_clean_sheet()`
 * removing `wb_get_worksheet()`, `wb_ws()`. These never worked as expected.
 * `create_comment()` has been renamed `wb_comment()`.  [758, @olivroy](https://github.com/JanMarvin/openxlsx2/pull/758) The default arguments however are changed:
