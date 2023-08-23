@@ -20,7 +20,7 @@ wb_grid_lines(wb, sheet = current_sheet(), show = FALSE, print = show)
 }
 \description{
 Set worksheet grid lines to show or hide.
-You can also add / remove grid lines when creating a worksheeet with
+You can also add / remove grid lines when creating a worksheet with
 \code{\link[=wb_add_worksheet]{wb_add_worksheet(grid_lines = FALSE)}}
 }
 \examples{
