@@ -2,6 +2,7 @@
 test_that("assert_class() works", {
   expect_null(assert_class(2L, "integer"))
   expect_null(assert_class(2, "numeric"))
+  expect_error(assert_class(2, "integer"))
   expect_null(assert_class(2, c("numeric", "integer")))
   expect_null(assert_class("2", "character"))
   expect_null(assert_class(Sys.Date(), "Date"))

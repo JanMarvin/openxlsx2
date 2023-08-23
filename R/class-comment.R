@@ -100,12 +100,14 @@ wb_comment <- function(text = NULL,
   text <- text %||% ""
   assert_class(author, "character")
   assert_class(text, "character")
-  assert_class(width, "numeric")
-  assert_class(height, "numeric")
+  assert_class(width, c("numeric", "integer"))
+  assert_class(height, c("numeric", "integer"))
   assert_class(visible, "logical")
 
   if (length(visible) > 1) stop("visible must be a single logical")
   if (length(author) > 1) stop("author) must be a single character")
+  if (length(width) > 1) stop("width must be a single integer")
+  if (length(height) > 1) stop("height must be a single integer")
 
   width <- round(width)
   height <- round(height)
@@ -189,7 +191,7 @@ create_comment <- function(text,
   width = 2,
   height = 4) {
   # .Deprecated("wb_comment()")
-  wb_comment(text = text, author = author, style = style, visible = visible, width = width, height = height)
+  wb_comment(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1])
 }
 
 #' Internal comment functions

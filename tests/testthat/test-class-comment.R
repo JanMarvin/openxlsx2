@@ -7,18 +7,25 @@ test_that("wb_comment and create_comment are the same except for the different d
   c1 <- create_comment("x1", author = "")
   c1_wb <- wb_comment("x1", visible = TRUE, author = "")
   expect_equal(c1, c1_wb)
+  # create_comment drops multiple widths and heights silently.
+  # wb_comment errors in this case
+  expect_silent(create_comment(text = "x", author = "", width = c(1, 2)))
+  expect_error(wb_comment(text = "x", author = "", width = c(1, 2)), "width must be a single")
+
 })
 
 test_that("create_comment() works", {
   # error checking
   expect_silent(create_comment("hi", width = 1))
-  expect_error(create_comment("hi", width = 1L))
-  expect_error(create_comment("hi", width = 1:2))
+  expect_silent(create_comment("hi", width = 1L))
+  expect_silent(create_comment("hi", width = c(1, 2)))
+  expect_silent(create_comment("hi", width = 1:2))
+  expect_error(wb_comment("hi", width = 1:2), regexp = "width must be a")
 
   expect_silent(create_comment("hi", height = 1))
-  expect_error(create_comment("hi", height = 1L))
-  expect_error(create_comment("hi", height = 1:2))
-
+  expect_silent(create_comment("hi", height = 1L))
+  expect_silent(create_comment("hi", height = 1:2))
+  expect_error(wb_comment("hi", height = 1:2))
   expect_error(create_comment("hi", visible = NULL))
   expect_error(create_comment("hi", visible = c(TRUE, FALSE)))
 
