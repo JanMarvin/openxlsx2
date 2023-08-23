@@ -75,13 +75,17 @@ wbComment <- R6::R6Class(
     }
   )
 )
-# Comment creation ------------------------------------------------------
+# Comment creation wrappers ----------------------------------------------------------------
+
+# TODO create_comment() should leverage wbComment$new() more
+# TODO write_comment() should leverage wbWorkbook$addComment() more
+# TODO remove_comment() should leverage wbWorkbook$remove_comment() more
 
 #' Create a comment object
 #'
 #' Creates a `wbComment` object. Use with [wb_add_comment()] to add to a worksheet location.
 #'
-#' @param text Comment text. Character vector.
+#' @param text Comment text. Character vector. or a [fmt_txt()] string.
 #' @param author Author of comment. A string. By default, will look at `options("openxlsx2.creator")`.
 #'   Otherwise, will check the system username.
 #' @param style A Style object or list of style objects the same length as comment vector.
@@ -96,17 +100,17 @@ wbComment <- R6::R6Class(
 #' wb$add_worksheet("Sheet 1")
 #'
 #' # write comment without author
-#' c1 <- create_comment(text = "this is a comment", author = "")
+#' c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
 #' wb$add_comment(dims = "B10", comment = c1)
 #'
 #' # Write another comment with author information
-#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+#' c2 <- wb_comment(text = "this is another comment", author = "Marco Polo")
 #' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
 #'
 #' # write a styled comment with system author
 #' s1 <- create_font(b = "true", color = wb_color(hex = "FFFF0000"), sz = "12")
 #' s2 <- create_font(color = wb_color(hex = "FF000000"), sz = "9")
-#' c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
+#' c3 <- wb_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
 #' wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = c3)
 wb_comment <- function(text = NULL,
@@ -161,12 +165,6 @@ wb_comment <- function(text = NULL,
   invisible(wbComment$new(text = text, author = author, style = style, width = width, height = height, visible = visible))
 }
 
-# wrappers ----------------------------------------------------------------
-
-# TODO create_comment() should leverage wbComment$new() more
-# TODO write_comment() should leverage wbWorkbook$addComment() more
-# TODO remove_comment() should leverage wbWorkbook$remove_comment() more
-
 #' Create a comment
 #'
 #' Use [wb_comment()] in new code.
@@ -183,7 +181,10 @@ create_comment <- function(text,
   visible = TRUE,
   width = 2,
   height = 4) {
-  # .Deprecated("wb_comment()")
+  #
+  if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
+    .Deprecated("wb_comment()")
+  }
   wb_comment(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1])
 }
 
