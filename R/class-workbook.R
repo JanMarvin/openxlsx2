@@ -5190,24 +5190,6 @@ wbWorkbook <- R6::R6Class(
     },
 
 
-    #' @description Set a property of a workbook
-    #' @param title,subject,category A workbook property to set
-    set_properties = function(title = NULL, subject = NULL, category = NULL) {
-      private$generate_base_core()
-      if (!is.null(title)) {
-        private$modify_property("set", value = title, property = "title")
-      }
-
-      if (!is.null(subject)) {
-        private$modify_property("set", value = subject, "subject")
-      }
-
-      if (!is.null(category)) {
-        private$modify_property("set", value = category, "category")
-      }
-    },
-
-
     #' @description
     #' Change the last modified by
     #' @param name A new value
@@ -7298,28 +7280,6 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$creator <- value
-      # core is made on initialization
-      private$generate_base_core()
-      invisible(self)
-    },
-
-    modify_property = function(method = c("set", "remove"), value, property) {
-      method <- match.arg(method)
-
-     assert_class(value, "character", arg_nm = property)
-    # stopifnot(length(value) == 1)
-
-      if (any(!has_chr(value))) {
-        stop(property, " must be a string without NAs", call. = FALSE)
-      }
-
-      value <- switch(
-        method,
-        set    = unique(value),
-        remove = setdiff(self[[property]], value)
-      )
-
-      self[[property]] <- value
       # core is made on initialization
       private$generate_base_core()
       invisible(self)
