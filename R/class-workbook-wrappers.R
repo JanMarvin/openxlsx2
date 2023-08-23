@@ -315,7 +315,7 @@ wb_add_data_table <- function(
 #'
 #' wb <- wb %>%
 #'   wb_add_pivot_table(df, dims = "A3",
-#'   filter = "am", rows = "cyl", cols = "gear", data = "disp"
+#'     filter = "am", rows = "cyl", cols = "gear", data = "disp"
 #'   )
 #' @family workbook wrappers
 #' @export
