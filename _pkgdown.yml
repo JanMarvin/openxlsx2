@@ -29,11 +29,11 @@ reference:
   - wb_add_worksheet
   - wb_add_data
   - wb_add_data_table
-  - wb_col_widths
-  - wb_row_heights
+  - col_widths-wb
+  - row_heights-wb
   - wb_add_comment
   - wb_add_thread
-  - wb_filter
+  - filter-wb
   - wb_freeze_pane
   - wb_add_formula
   - wb_add_conditional_formatting
@@ -58,22 +58,22 @@ reference:
     These functions are used to modify the workbook as a whole.
   contents:
   - wb_set_last_modified_by
-  - wb_creators
+  - creators-wb
   - wb_order
-  - wb_sheet_names
+  - sheet_names-wb
   - wb_remove_worksheet
-  - wb_active_sheet
-  - wb_sheet_visibility
+  - active_sheet-wb
+  - sheet_visibility-wb
   - wb_set_bookview
   - wb_protect
   - wb_get_tables
   - wb_remove_tables
   - wb_get_named_regions
 
-- subtitle: Add content to a chartsheet Interact with mschart and images
+- subtitle: Add content to a chartsheet and interact with mschart and images
   desc: >
     These functions help you interact with chartsheets. They invisibly return the
-    wbWorkbook object.  They help interact with the mschart package.
+    wbWorkbook object. They help interact with the mschart package.
   contents:
   - wbChartSheet
   - wb_data
@@ -107,13 +107,13 @@ reference:
   - starts_with("wb_copy")
   - wb_set_sheetview
   - wb_merge_cells
-  - wb_grouping
+  - group_cols-wb
   - wb_add_form_control
   - wb_add_ignore_error
   - wb_set_header_footer
   - wb_set_grid_lines
   - wb_update_table
-  - wb_named_region
+  - named_region-wb
   - wb_protect_worksheet
   - wb_clean_sheet
   - wb_add_form_control
@@ -130,7 +130,7 @@ reference:
 
 - subtitle: Misc and helpers
   contents:
-  - openxlsx2_options
+  - openxlsx2-options
   - int2col
   - col2int
   - fmt_txt

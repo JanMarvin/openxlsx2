@@ -76,7 +76,7 @@
 #' * `options("openxlsx2.soon_deprecated" = FALSE)` ## warn if using camelCase
 #' * `options("openxlsx2.creator")` ## Default is Windows Username
 #'
-#' @name openxlsx2_options
+#' @name openxlsx2-options
 NULL
 # matches enum celltype
 openxlsx2_celltype <- c(
