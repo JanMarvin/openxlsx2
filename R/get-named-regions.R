@@ -54,12 +54,33 @@ wb_get_named_regions_tab <- function(wb) {
   )
 }
 
-#' Get create or remove named regions
+#' Get named regions in a workbook or an xlsx file
 #'
-#' Return a vector of named regions in a xlsx file or `wbWorkbook` object
-#' @param x An xlsx file or `wbWorkbook` object
-#' @param tables add tables too if `TRUE`
+#' @returns A vector of named regions in `x`.
+#' @param x An xlsx file or a`wbWorkbook` object
+#' @param tables Should data tables be included in the result?
+#' @seealso [wb_add_named_region()], [wb_get_tables()]
 #' @export
+#' @examples
+#' wb <- wb_workbook()
+#' wb$add_worksheet("Sheet 1")
+#'
+#' ## specify region
+#' wb$add_data(x = iris, start_col = 1, start_row = 1)
+#' wb$add_named_region(
+#'   name = "iris",
+#'   dims = wb_dims(x = iris)
+#' )$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
+#'
+#' out_file <- temp_xlsx()
+#' wb_save(wb, out_file, overwrite = TRUE)
+#'
+#' ## see named regions
+#' wb_get_named_regions(wb) ## From Workbook object
+#' wb_get_named_regions(out_file) ## From xlsx file
+#'
+#' df <- read_xlsx(out_file, named_region = "iris2")
+#' head(df)
 wb_get_named_regions <- function(x, tables = FALSE) {
   if (inherits(x, "wbWorkbook")) {
     wb <- x

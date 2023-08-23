@@ -27,10 +27,10 @@ See \strong{Details} for options.}
 \item{...}{additional arguments}
 }
 \value{
-A \link{wbWorkbook} object
+A \code{wbWorkbook} object
 }
 \description{
-Create a new Workbook object
+Initialize a \link{wbWorkbook} object. You can set workbook properties as well.
 }
 \details{
 \code{theme} can be one of
@@ -68,8 +68,8 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()}
+\code{\link{wb_set_last_modified_by}()}
 }
 \concept{workbook wrappers}

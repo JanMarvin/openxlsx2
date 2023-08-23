@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_ignore_error}
 \alias{wb_add_ignore_error}
-\title{Ignore error on worksheet}
+\title{Ignore error types on worksheet}
 \usage{
 wb_add_ignore_error(
   wb,
@@ -21,11 +21,11 @@ wb_add_ignore_error(
 )
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
-\item{sheet}{sheet}
+\item{sheet}{A sheet name or index.}
 
-\item{dims}{dims}
+\item{dims}{Cell range to ignore the error}
 
 \item{calculated_column}{calculatedColumn}
 
@@ -39,7 +39,7 @@ wb_add_ignore_error(
 
 \item{list_data_validation}{listDataValidation}
 
-\item{number_stored_as_text}{numberStoredAsText}
+\item{number_stored_as_text}{If \code{TRUE}, will not display the error if numbers are stored as text.}
 
 \item{two_digit_text_year}{twoDigitTextYear}
 
@@ -47,6 +47,9 @@ wb_add_ignore_error(
 
 \item{...}{additional arguments}
 }
+\value{
+The \code{wbWorkbook} object, invisibly.
+}
 \description{
-Ignore error on worksheet
+This function allows to hide / ignore certain types of errors shown in a worksheet.
 }

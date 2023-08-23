@@ -4,7 +4,7 @@
 \alias{wb_order}
 \alias{wb_get_order}
 \alias{wb_set_order}
-\title{Order of worksheets in xlsx file}
+\title{Order worksheets in a workbook}
 \usage{
 wb_get_order(wb)
 

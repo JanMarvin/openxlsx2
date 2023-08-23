@@ -6,7 +6,7 @@
 \alias{wb_set_creators}
 \alias{wb_remove_creators}
 \alias{wb_get_creators}
-\title{Workbook creators}
+\title{Modify creators of a workbook}
 \usage{
 wb_add_creators(wb, creators)
 
@@ -23,7 +23,8 @@ wb_get_creators(wb)
 }
 \value{
 \itemize{
-\item \code{wb_set_creators()}, \code{wb_add_creators()}, and \code{wb_remove_creators()} return the \code{wbWorkbook} object
+\item \code{wb_set_creators()}, \code{wb_add_creators()}, and \code{wb_remove_creators()} return
+the \code{wbWorkbook} object
 \item \code{wb_get_creators()} returns a \code{character} vector of creators
 }
 }
@@ -60,9 +61,9 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}

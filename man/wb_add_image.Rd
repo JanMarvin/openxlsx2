@@ -23,7 +23,8 @@ wb_add_image(
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{dims}{Dimensions where to plot. Default absolute anchor, single cell (eg. "A1") oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor}
+\item{dims}{Dimensions where to plot. Default absolute anchor, single cell (eg. "A1")
+oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor}
 
 \item{file}{An image file. Valid file types are:\code{ "jpeg"}, \code{"png"}, \code{"bmp"}}
 

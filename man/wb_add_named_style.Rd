@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_named_style}
 \alias{wb_add_named_style}
-\title{add named style for cell region}
+\title{Apply styling to a cell region with a named style}
 \usage{
 wb_add_named_style(
   wb,
@@ -14,13 +14,13 @@ wb_add_named_style(
 )
 }
 \arguments{
-\item{wb}{wbWorkbook}
+\item{wb}{A \code{wbWorkbook} object}
 
-\item{sheet}{sheet}
+\item{sheet}{A worksheet}
 
-\item{dims}{dims}
+\item{dims}{A cell range}
 
-\item{name}{name}
+\item{name}{The named style name.}
 
 \item{font_name, font_size}{optional else the default of the theme}
 }
@@ -28,5 +28,17 @@ wb_add_named_style(
 The \code{wbWorkbook}, invisibly
 }
 \description{
-add named style for cell region
+Set the styling to a named style for a cell region. Use \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
+to style a cell region with custom parameters.
+A named style is the one in spreadsheet software, like "Normal", "Warning".
 }
+\seealso{
+Other styles: 
+\code{\link{wb_add_border}()},
+\code{\link{wb_add_cell_style}()},
+\code{\link{wb_add_fill}()},
+\code{\link{wb_add_font}()},
+\code{\link{wb_add_numfmt}()},
+\code{\link{wb_cell_style}}
+}
+\concept{styles}

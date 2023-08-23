@@ -2,26 +2,18 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_clone_sheet_style}
 \alias{wb_clone_sheet_style}
-\title{clone sheets style}
+\title{Apply styling from a sheet to another within a workbook}
 \usage{
 wb_clone_sheet_style(wb, from = current_sheet(), to)
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
 \item{from}{sheet we select the style from}
 
-\item{to}{sheet we apply the style from}
+\item{to}{sheet to apply the style to}
 }
 \description{
-clone sheets style
+This function can be used to apply styling from a cell range, and apply it
+to another cell range.
 }
-\seealso{
-Other styles: 
-\code{\link{wb_add_border}()},
-\code{\link{wb_add_cell_style}()},
-\code{\link{wb_add_fill}()},
-\code{\link{wb_add_font}()},
-\code{\link{wb_add_numfmt}()}
-}
-\concept{styles}

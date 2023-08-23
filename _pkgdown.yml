@@ -13,45 +13,112 @@ reference:
   contents:
   - wb_to_df
   - write_xlsx
-  - wbWorkbook
   - wb_workbook
   - wb_load
+  - wbWorkbook
+  - wb_open
   - wb_save
 
-- title: wb add and remove functions
+- title: Main functions to interact with the contents of a Workbook object
+- subtitle: Add content to a worksheet
+  desc: >
+    These functions help you write in worksheets. They invisibly return the
+    `wbWorkbook` object, except for `get_` functions, who return a character vector,
+    unless specified otherwise.
   contents:
-  - starts_with("wb_add_")
-  - starts_with("wb_remove_")
+  - wb_add_worksheet
+  - wb_add_data
+  - wb_add_data_table
+  - wb_col_widths
+  - wb_row_heights
+  - wb_add_comment
+  - wb_add_thread
+  - wb_filter
+  - wb_freeze_pane
+  - wb_add_formula
+  - wb_add_conditional_formatting
+  - wb_add_pivot_table
+  - wb_add_data_validation
+  - wb_add_page_break
 
-- title: wb get and set functions
+- subtitle: Add styling to a cell region in a worksheet
+  desc: >
+    These functions are related to styling of a region or cells of a worksheet.
   contents:
-  - starts_with("wb_get_")
-  - starts_with("wb_set_")
+  - has_concept("styles")
 
-- title: wb Misc
+- subtitle: Add styling to the workbook
+  desc: >
+    These styling functions apply formatting to the workbook globally.
+  contents:
+  - has_concept("workbook styling functions")
+
+- subtitle: Interact with the workbook
+  desc: >
+    These functions are used to modify the workbook as a whole.
+  contents:
+  - wb_set_last_modified_by
+  - wb_creators
+  - wb_order
+  - wb_sheet_names
+  - wb_remove_worksheet
+  - wb_active_sheet
+  - wb_sheet_visibility
+  - wb_set_bookview
+  - wb_protect
+  - wb_get_tables
+  - wb_remove_tables
+  - wb_get_named_regions
+
+- subtitle: Add content to a chartsheet Interact with mschart and images
+  desc: >
+    These functions help you interact with chartsheets. They invisibly return the
+    wbWorkbook object.  They help interact with the mschart package.
+  contents:
+  - wbChartSheet
+  - wb_data
+  - wb_add_chartsheet
+  - wb_add_mschart
+  - wb_add_drawing
+  - wb_add_plot
+  - wb_add_image
+  - wb_add_sparklines
+  - wb_add_chart_xml
+
+- title: Helpers to specify wb function arguments
+  desc: >
+    These functions are helpers to create an intermediate R6 class object to use
+    with `wb_*` functions.
   contents:
   - wb_dims
-  - starts_with("wb_protect")
-  - wb_hyperlink
-  - cleanup
-  - wb_freeze_pane
-  - wb_open
-  - starts_with("wb_clone")
-  - starts_with("wb_copy")
   - wb_color
-  - wb_data
-  - wb_grid_lines
-  - wb_update_table
-  - wb_copy_cells
-  - wb_merge_cells
-  - wb_page_setup
-  - wb_grouping
-
-- title: create functions
-  contents:
+  - wb_hyperlink
   - starts_with("create_")
 
-- title: XML functions
+
+- title: Other functions
+  desc: >
+    These functions can be used to achieve more specialized operations.
+
+- subtitle: Other tools to interact with worksheets
+  contents:
+  - starts_with("wb_clone")
+  - starts_with("wb_copy")
+  - wb_set_sheetview
+  - wb_merge_cells
+  - wb_grouping
+  - wb_add_form_control
+  - wb_add_ignore_error
+  - wb_set_header_footer
+  - wb_set_grid_lines
+  - wb_update_table
+  - wb_named_region
+  - wb_protect_worksheet
+  - wb_clean_sheet
+  - wb_add_form_control
+  - wb_page_setup
+
+- subtitle: XML functions
   desc: >
     A curated list of XML functions used in openxlsx2.
   contents:
@@ -60,26 +127,21 @@ reference:
   - as_xml
   - starts_with("print.pugi")
 
-- title: R6 Classes
-  contents:
-  - wbWorkbook
-  - wbChartSheet
-
-- title: Misc and helpers
+- subtitle: Misc and helpers
   contents:
   - openxlsx2_options
   - int2col
   - col2int
   - fmt_txt
   - starts_with("convert_")
+  - xl_open
   - temp_xlsx
+  - waivers
+  - dims_helper
   - clean_worksheet_name
   - styles_on_sheet
-  - waivers
-  - xl_open
-  - dims_helper
 
-- title: Deprecated
+- subtitle: Deprecated
   contents:
   - openxlsx2-deprecated
 
