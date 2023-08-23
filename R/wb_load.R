@@ -834,7 +834,7 @@ wb_load <- function(
         # we do not ship this binary blob, therefore spreadsheet software may
         # stumble over this non existent reference. In the future we might want
         # to check if the references are valid pre file saving.
-        sel_row <- !grepl("printerSettings", basename(xml_relship$Target))
+        sel_row <- !grepl("printerSettings", basename2(xml_relship$Target))
         sel_col <- c("Id", "Type", "Target", "TargetMode")
         # return as xml
         xml <- df_to_xml("Relationship", xml_relship[sel_row, sel_col])
@@ -861,7 +861,7 @@ wb_load <- function(
 
       if (ncol(wb_rels)) {
         # since target can be any hyperlink, we have to expect various things here like uint64
-        wb_rels$tid <- suppressWarnings(as.integer(gsub("\\D+", "", basename(wb_rels$Target))))
+        wb_rels$tid <- suppressWarnings(as.integer(gsub("\\D+", "", basename2(wb_rels$Target))))
         wb_rels$typ <- basename(wb_rels$Type)
 
         cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
