@@ -1945,6 +1945,7 @@ wb_add_data_validation <- function(
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_data_validation(
     sheet          = sheet,
+    dims           = dims,
     type           = type,
     operator       = operator,
     value          = value,
