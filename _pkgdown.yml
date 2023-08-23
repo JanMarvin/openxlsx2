@@ -59,6 +59,7 @@ reference:
   contents:
   - wb_set_last_modified_by
   - wb_creators
+  - wb_set_properties
   - wb_order
   - wb_sheet_names
   - wb_remove_worksheet
