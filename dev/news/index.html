@@ -68,16 +68,24 @@
 </ul></div>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>provide solve argument for <code><a href="../reference/wb_merge_cells.html">wb_merge_cells()</a></code>. This allows to solve cell intersecting regions. <a href="https://github.com/JanMarvin/openxlsx2/pull/733" class="external-link">733</a>
-</li>
+<ul><li><p>provide solve argument for <code><a href="../reference/wb_merge_cells.html">wb_merge_cells()</a></code>. This allows to solve cell intersecting regions. <a href="https://github.com/JanMarvin/openxlsx2/pull/733" class="external-link">733</a></p></li>
+<li><p><code>wb_add_comment(comment = "x")</code> no longer errors when a comment as a character vector no longer fails <a href="https://github.com/JanMarvin/openxlsx2/pull/758" class="external-link">758, </a><a href="https://github.com/olivroy" class="external-link">@olivroy</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>no longer exporting <code>wb_get_sheet_name()</code>
+<ul><li><p>no longer exporting <code>wb_get_sheet_name()</code></p></li>
+<li><p>deprecating <code><a href="../reference/delete_data.html">delete_data()</a></code> and minor improvements to <code><a href="../reference/wb_clean_sheet.html">wb_clean_sheet()</a></code></p></li>
+<li><p>removing <code>wb_get_worksheet()</code>, <code>wb_ws()</code>. These never worked as expected.</p></li>
+<li>
+<p><code><a href="../reference/create_comment.html">create_comment()</a></code> has been renamed <code><a href="../reference/wb_comment.html">wb_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/758" class="external-link">758, </a><a href="https://github.com/olivroy" class="external-link">@olivroy</a> The default arguments however are changed:</p>
+<ul><li>
+<code>author</code> looks at <code>options("openxlsx2.creator")</code> in <code><a href="../reference/wb_comment.html">wb_comment()</a></code> compared to only <code>sys.getenv("user")</code> in <code><a href="../reference/create_comment.html">create_comment()</a></code>
 </li>
-<li>deprecating <code><a href="../reference/delete_data.html">delete_data()</a></code> and minor improvements to <code><a href="../reference/wb_clean_sheet.html">wb_clean_sheet()</a></code>
-</li>
-<li>removing <code>wb_get_worksheet()</code>, <code>wb_ws()</code>. These never worked as expected.</li>
+<li>
+<code>visible</code> defaults to <code>FALSE</code> in <code><a href="../reference/wb_comment.html">wb_comment()</a></code> to account for modern spreadsheet software behaviour. In <code><a href="../reference/create_comment.html">create_comment()</a></code>, it is <code>TRUE</code>.</li>
+<li>
+<code>width</code> and <code>height</code> must now be of length 1. (In <code><a href="../reference/create_comment.html">create_comment()</a></code>, the first element is taken, other are ignored.)</li>
+</ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
