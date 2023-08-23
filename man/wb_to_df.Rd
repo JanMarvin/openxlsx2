@@ -4,7 +4,7 @@
 \alias{wb_to_df}
 \alias{read_xlsx}
 \alias{wb_read}
-\title{Create Dataframe from Workbook}
+\title{Create a data frame from a Workbook}
 \usage{
 wb_to_df(
   file,
@@ -70,7 +70,7 @@ wb_read(
 )
 }
 \arguments{
-\item{file}{An xlsx file, Workbook object or URL to xlsx file.}
+\item{file}{An xlsx file, \link{wbWorkbook} object or URL to xlsx file.}
 
 \item{sheet}{Either sheet name or index. When missing the first sheet in the workbook is selected.}
 
@@ -90,10 +90,10 @@ wb_read(
 
 \item{skip_hidden_cols}{If \code{TRUE}, hidden columns are skipped.}
 
-\item{rows}{A numeric vector specifying which rows in the Excel file to read.
+\item{rows}{A numeric vector specifying which rows in the xlsx file to read.
 If \code{NULL}, all rows are read.}
 
-\item{cols}{A numeric vector specifying which columns in the Excel file to read.
+\item{cols}{A numeric vector specifying which columns in the xlsx file to read.
 If \code{NULL}, all columns are read.}
 
 \item{detect_dates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
@@ -116,7 +116,7 @@ Blank cells will be returned as \code{NA}.}
 Names must match the returned data. See \strong{Details} for more.}
 
 \item{named_region}{Character string with a \code{named_region} (defined name or table).
-If no sheet is selected, the first appearance will be selected.}
+If no sheet is selected, the first appearance will be selected. See \code{\link[=wb_get_named_regions]{wb_get_named_regions()}}}
 
 \item{keep_attributes}{If \code{TRUE} additional attributes are returned.
 (These are used internally to define a cell type.)}
@@ -125,8 +125,8 @@ If no sheet is selected, the first appearance will be selected.}
 }
 \description{
 Simple function to create a \code{data.frame} from a workbook. Simple as in simply
-written down. \code{\link[=read_xlsx]{read_xlsx()}} and \code{\link[=wb_read]{wb_read()}} are just internal wrappers for
-\code{\link[=wb_to_df]{wb_to_df()}} intended for people coming from other packages.
+written down. \code{read_xlsx()} and \code{wb_read()} are just internal wrappers of
+\code{wb_to_df()} intended for people coming from other packages.
 }
 \details{
 Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns
@@ -137,13 +137,14 @@ The \code{types} argument must be a named numeric.
 \item 0: character
 \item 1: numeric
 \item 2: date
-\item 3: posixt
+\item 3: posixt (datetime)
 \item 4: logical
 }
 
-Formulae written using write_formula to a Workbook object will not get picked up by \code{read_xlsx()}.
-This is because only the formula is written and left to be evaluated when the file is opened in Excel.
-Opening, saving and closing the file with Excel will resolve this.
+\code{read_xlsx()} will not pick up formulas added to a Workbook object
+via \code{\link[=wb_add_formula]{wb_add_formula()}}. This is because only the formula is written and left
+to be evaluated when the file is opened in a spreadsheet software.
+Opening, saving and closing the file in a spreadsheet software will resolve this.
 }
 \examples{
 ###########################################################################
@@ -194,7 +195,7 @@ wb_to_df(wb1, start_row = 5, col_names = FALSE)
 wb_to_df(wb1, na.strings = "a")
 
 ###########################################################################
-# named_region // namedRegion
+# Named regions
 file_named_region <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 wb2 <- wb_load(file_named_region)
 

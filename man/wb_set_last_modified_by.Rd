@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_set_last_modified_by}
 \alias{wb_set_last_modified_by}
-\title{Add another author to the meta data of the file.}
+\title{Modify author in the metadata of a workbook}
 \usage{
 wb_set_last_modified_by(wb, name, ...)
 }
@@ -14,7 +14,7 @@ wb_set_last_modified_by(wb, name, ...)
 \item{...}{additional arguments}
 }
 \description{
-Just a wrapper of wb$set_last_modified_by()
+Just a wrapper of \code{wb$set_last_modified_by()}
 }
 \examples{
 wb <- wb_workbook()
@@ -36,8 +36,8 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}

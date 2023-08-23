@@ -3,7 +3,7 @@
 \name{wb_set_grid_lines}
 \alias{wb_set_grid_lines}
 \alias{wb_grid_lines}
-\title{Set worksheet gridlines to show or hide.}
+\title{Modify grid lines visibility in a worksheet}
 \usage{
 wb_set_grid_lines(wb, sheet = current_sheet(), show = FALSE, print = show)
 
@@ -19,7 +19,9 @@ wb_grid_lines(wb, sheet = current_sheet(), show = FALSE, print = show)
 \item{print}{A logical. If \code{FALSE}, grid lines are not printed.}
 }
 \description{
-Set worksheet gridlines to show or hide.
+Set worksheet grid lines to show or hide.
+You can also add / remove grid lines when creating a worksheeet with
+\code{\link[=wb_add_worksheet]{wb_add_worksheet(grid_lines = FALSE)}}
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()$add_worksheet()

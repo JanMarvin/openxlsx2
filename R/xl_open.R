@@ -1,15 +1,15 @@
-#' Open a Microsoft Excel file (xls/xlsx) or an openxlsx2 wbWorkbook
+#' Open an xlsx file or a `wbWorkbook` object
 #'
 #' @description
 #' This function tries to open a Microsoft Excel (xls/xlsx) file or,
-#' an openxlsx2 wbWorkbook with the proper application, in a portable manner.
+#' an [openxlsx2::wbWorkbook] with the proper application, in a portable manner.
 #'
 #' On Windows it uses `base::shell.exec()` (Windows only function) to
 #' determine the appropriate program.
 #'
-#' In Mac (c) it uses system default handlers, given the file type.
+#' On Mac, (c) it uses system default handlers, given the file type.
 #'
-#' In Linux it searches (via `which`) for available xls/xlsx reader
+#' On Linux, it searches (via `which`) for available xls/xlsx reader
 #' applications (unless `options('openxlsx2.excelApp')` is set to the app bin
 #' path), and if it finds anything, sets `options('openxlsx2.excelApp')` to the
 #' program chosen by the user via a menu (if many are present, otherwise it
@@ -17,26 +17,27 @@
 #' Libreoffice/Openoffice (`soffice` bin), Gnumeric (`gnumeric`) and Calligra
 #' Sheets (`calligrasheets`).
 #'
-#' @param x A path to the Excel (xls/xlsx) file or Workbook object.
+#' @param x A path to the Excel (xls/xlsx) file or wbWorkbook object.
 #' @param interactive If `FALSE` will throw a warning and not open the path.
 #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses the
 #'   value returned from [base::interactive()]
 #' @examples
 #' \donttest{
 #' if (interactive()) {
-#'   xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   xl_open(xlsxFile)
+#'   xlsx_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#'   xl_open(xlsx_file)
 #'
 #'   # (not yet saved) Workbook example
 #'   wb <- wb_workbook()
 #'   x <- mtcars[1:6, ]
 #'   wb$add_worksheet("Cars")
-#'   wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
+#'   wb$add_data("Cars", x, start_col = 2, start_row = 3, row_names = TRUE)
 #'   xl_open(wb)
 #' }
 #' }
 #' @export
 xl_open <- function(x, interactive = NA) {
+  # one of the only functions like wb_get_named_regions() to accept a wbWorkbook or a file
   UseMethod("xl_open")
 }
 
@@ -60,7 +61,7 @@ xl_open.default <- function(x, interactive = NA) {
   # nocov end
 
   if (!isTRUE(interactive)) {
-    warning("will not open file when not interactive")
+    warning("will not open file when not interactive", call. = FALSE)
     return()
   }
 

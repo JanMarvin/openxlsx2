@@ -2,15 +2,42 @@
 % Please edit documentation in R/get-named-regions.R
 \name{wb_get_named_regions}
 \alias{wb_get_named_regions}
-\title{Get create or remove named regions}
+\title{Get named regions in a workbook or an xlsx file}
 \usage{
 wb_get_named_regions(x, tables = FALSE)
 }
 \arguments{
-\item{x}{An xlsx file or \code{wbWorkbook} object}
+\item{x}{An xlsx file or a\code{wbWorkbook} object}
 
-\item{tables}{add tables too if \code{TRUE}}
+\item{tables}{Should data tables be included in the result?}
+}
+\value{
+A vector of named regions in \code{x}.
 }
 \description{
-Return a vector of named regions in a xlsx file or \code{wbWorkbook} object
+Get named regions in a workbook or an xlsx file
+}
+\examples{
+wb <- wb_workbook()
+wb$add_worksheet("Sheet 1")
+
+## specify region
+wb$add_data(x = iris, start_col = 1, start_row = 1)
+wb$add_named_region(
+  name = "iris",
+  dims = wb_dims(x = iris)
+)$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
+
+out_file <- temp_xlsx()
+wb_save(wb, out_file, overwrite = TRUE)
+
+## see named regions
+wb_get_named_regions(wb) ## From Workbook object
+wb_get_named_regions(out_file) ## From xlsx file
+
+df <- read_xlsx(out_file, named_region = "iris2")
+head(df)
+}
+\seealso{
+\code{\link[=wb_add_named_region]{wb_add_named_region()}}, \code{\link[=wb_get_tables]{wb_get_tables()}}
 }

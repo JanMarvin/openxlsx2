@@ -15,11 +15,11 @@ wb_add_drawing(
 )
 }
 \arguments{
-\item{wb}{a \code{wbWorkbook}}
+\item{wb}{A \code{wbWorkbook}}
 
-\item{sheet}{a sheet in the workbook}
+\item{sheet}{A sheet in the workbook}
 
-\item{dims}{the dimension where the drawing is added. Can be \code{NULL}}
+\item{dims}{The dimension where the drawing is added.}
 
 \item{xml}{the drawing xml as character or file}
 

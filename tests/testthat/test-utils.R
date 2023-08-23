@@ -399,4 +399,13 @@ test_that("fmt_txt works", {
   got <- as.character(txt)
   expect_equal(exp, got)
 
+  txt <- fmt_txt("0 < 1", bold = TRUE)
+  exp <- "0 < 1"
+  got <- as.character(txt)
+  expect_equal(exp, got)
+
+  exp <- "<r><rPr><b/></rPr><t>0 &lt; 1</t></r>"
+  got <- unclass(txt)
+  expect_equal(exp, got)
+
 })

@@ -2,45 +2,45 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_remove_tables}
 \alias{wb_remove_tables}
-\title{Remove an Excel table in a workbook}
+\title{Remove a data table from a worksheet}
 \usage{
 wb_remove_tables(wb, sheet = current_sheet(), table, remove_data = TRUE)
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 
-\item{table}{Name of table to remove. See \code{\link[=wb_get_tables]{wb_get_tables()}}}
+\item{table}{Name of table to remove. Use \code{\link[=wb_get_tables]{wb_get_tables()}} to view the
+tables present in the worksheet.}
 
-\item{remove_data}{Removes the data as well}
+\item{remove_data}{Default \code{TRUE}. If \code{FALSE}, will only remove the data table attributes
+but will keep the data in the worksheet.}
 }
 \value{
-character vector of table names on the specified sheet
+The \code{wbWorkbook}, invisibly
 }
 \description{
-List Excel tables in a workbook
+Remove Excel tables in a workbook using its name.
 }
 \examples{
-
 wb <- wb_workbook()
 wb$add_worksheet(sheet = "Sheet 1")
 wb$add_worksheet(sheet = "Sheet 2")
-wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
-wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+wb$add_data_table(sheet = "Sheet 1", x = iris, table_name = "iris")
+wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 
+## delete worksheet removes table objects
+wb <- wb_remove_worksheet(wb, sheet = 1)
 
-wb <- wb_remove_worksheet(wb, sheet = 1) ## delete worksheet removes table objects
-
-wb$add_data_table(sheet = 1, x = iris, tableName = "iris")
-wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+wb$add_data_table(sheet = 1, x = iris, table_name = "iris")
+wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 
 ## wb_remove_tables() deletes table object and all data
 wb_get_tables(wb, sheet = 1)
 wb$remove_tables(sheet = 1, table = "iris")
-wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
+wb$add_data_table(sheet = 1, x = iris, table_name = "iris")
 
 wb_get_tables(wb, sheet = 1)
 wb$remove_tables(sheet = 1, table = "iris")
-wb$add_data_table(sheet = 1, x = iris, tableName = "iris", startCol = 1)
 }

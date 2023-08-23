@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_chart_xml}
 \alias{wb_add_chart_xml}
-\title{add a chart xml to a workbook}
+\title{Add a chart XML to a worksheet}
 \usage{
 wb_add_chart_xml(
   wb,
@@ -28,7 +28,7 @@ wb_add_chart_xml(
 \item{...}{additional arguments}
 }
 \description{
-add a chart xml to a workbook
+Add a chart XML to a worksheet
 }
 \seealso{
 \code{\link[=wb_add_drawing]{wb_add_drawing()}} \code{\link[=wb_add_image]{wb_add_image()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}} \code{\link[=wb_add_plot]{wb_add_plot()}}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_font}
 \alias{wb_add_font}
-\title{add font for cell region}
+\title{Modify font in a cell region}
 \usage{
 wb_add_font(
   wb,
@@ -27,17 +27,17 @@ wb_add_font(
 )
 }
 \arguments{
-\item{wb}{a workbook}
+\item{wb}{A Workbook object}
 
 \item{sheet}{the worksheet}
 
 \item{dims}{the cell range}
 
-\item{name}{font name: default "Calibri"}
+\item{name}{Font name: default "Calibri"}
 
-\item{color}{rgb color: default "FF000000"}
+\item{color}{An object created by \code{\link[=wb_color]{wb_color()}}}
 
-\item{size}{font size: default "11",}
+\item{size}{Font size: default "11",}
 
 \item{bold}{bold, "single" or "double", default: ""}
 
@@ -66,13 +66,16 @@ wb_add_font(
 \item{...}{...}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+A \code{wbWorkbook}, invisibly
 }
 \description{
-add font for cell region
+Modify the font in a cell region with more precision
+You can specify the font in a cell with other cell styling functions,
+but \code{wb_add_font()} gives you more control.
 }
 \details{
-add_font provides all the options openxml accepts for a font node, not all have to be set. Usually name, size and color should be what the user wants.
+\code{wb_add_font()} provides all the options openxml accepts for a font node,
+not all have to be set. Usually \code{name}, \code{size} and \code{color} should be what the user wants.
 }
 \examples{
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
@@ -83,7 +86,8 @@ Other styles:
 \code{\link{wb_add_border}()},
 \code{\link{wb_add_cell_style}()},
 \code{\link{wb_add_fill}()},
+\code{\link{wb_add_named_style}()},
 \code{\link{wb_add_numfmt}()},
-\code{\link{wb_clone_sheet_style}()}
+\code{\link{wb_cell_style}}
 }
 \concept{styles}

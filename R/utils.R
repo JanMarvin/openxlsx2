@@ -185,8 +185,10 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #'   * A list of rows and columns for `to_rowcol`
 #' @examples
 #' dims_to_rowcol("A1:J10")
-#' rowcol_to_dims(1:10, 1:10)
+#' wb_dims(1:10, 1:10)
+#'
 #' @name dims_helper
+#' @seealso [wb_dims()]
 NULL
 #' @rdname dims_helper
 #' @export
@@ -928,7 +930,7 @@ fmt_txt <- function(
   }
 
   xml_t_attr <- if (grepl("(^\\s+)|(\\s+$)", x)) c("xml:space" = "preserve") else NULL
-  xml_t <- xml_node_create("t", xml_children = x, xml_attributes = xml_t_attr)
+  xml_t <- xml_node_create("t", xml_children = replace_legal_chars(x), xml_attributes = xml_t_attr)
 
   xml_rpr <- xml_node_create(
     "rPr",

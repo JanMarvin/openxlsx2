@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_fill}
 \alias{wb_add_fill}
-\title{add fill for cell region}
+\title{Modify the background fill color in a cell region}
 \usage{
 wb_add_fill(
   wb,
@@ -40,10 +40,10 @@ wb_add_fill(
 \item{...}{...}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook} object, invisibly
 }
 \description{
-wb wrapper to create fill for cell region
+Add fill to a cell region.
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
@@ -69,7 +69,8 @@ Other styles:
 \code{\link{wb_add_border}()},
 \code{\link{wb_add_cell_style}()},
 \code{\link{wb_add_font}()},
+\code{\link{wb_add_named_style}()},
 \code{\link{wb_add_numfmt}()},
-\code{\link{wb_clone_sheet_style}()}
+\code{\link{wb_cell_style}}
 }
 \concept{styles}

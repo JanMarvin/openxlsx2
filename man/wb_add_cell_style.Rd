@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_cell_style}
 \alias{wb_add_cell_style}
-\title{add cell style for cell region}
+\title{Modify the style in a cell region}
 \usage{
 wb_add_cell_style(
   wb,
@@ -96,25 +96,25 @@ wb_add_cell_style(
 \item{...}{additional arguments}
 }
 \value{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook} object, invisibly
 }
 \description{
-add cell style for cell region
+Add cell style to a cell region
 }
 \examples{
  wb <-
    wb_workbook() \%>\%
    wb_add_worksheet("S1") \%>\%
-   wb_add_data("S1", mtcars)
+   wb_add_data("S1", x = mtcars)
 
  wb \%>\%
    wb_add_cell_style(
      "S1",
-     "A1:K1",
-     textRotation = "45",
+     dims = "A1:K1",
+     text_rotation = "45",
      horizontal = "center",
      vertical = "center",
-     wrapText = "1"
+     wrap_text = "1"
    )
 }
 \seealso{
@@ -122,7 +122,8 @@ Other styles:
 \code{\link{wb_add_border}()},
 \code{\link{wb_add_fill}()},
 \code{\link{wb_add_font}()},
+\code{\link{wb_add_named_style}()},
 \code{\link{wb_add_numfmt}()},
-\code{\link{wb_clone_sheet_style}()}
+\code{\link{wb_cell_style}}
 }
 \concept{styles}
