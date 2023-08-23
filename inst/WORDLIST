@@ -10,9 +10,7 @@ Calligra
 Colorscale
 DL
 Databars
-Dropmenu
 EASTEUROPE
-FFFFC
 FFFFFF
 Github
 Gnumeric
@@ -26,7 +24,7 @@ Openoffice
 POSIXct
 POSIXt
 Philipp
-Radiobuttons
+RGBA
 RedToBlack
 SHIFTJIS
 STDEV
@@ -46,7 +44,6 @@ autoFilterDateGrouping
 autocompletion
 bandedCols
 bandedRows
-bgFill
 bool
 calc
 calcChain
@@ -72,7 +69,6 @@ colorNegative
 colorSeries
 colour
 ctrlProps
-customMenu
 customSheetViews
 customXml
 darkDown
@@ -91,6 +87,7 @@ datetimes
 de
 df
 displayEmptyCellsAs
+docx
 drawingHF
 dxf
 dxfs
@@ -106,8 +103,6 @@ externalLinksRels
 externalptr
 fanfold
 fileType
-firstActiveCol
-firstActiveRow
 firstColumn
 firstColumnStripe
 firstFooter
@@ -127,7 +122,6 @@ greaterThan
 greaterThanOrEqual
 greatful
 gridLines
-gridlines
 hasDrawing
 hdpi
 headFoot
@@ -149,11 +143,9 @@ lightVertical
 listDataValidation
 localName
 magrittr
-maxWidth
 mediumDashDot
 mediumDashed
 mediumGray
-minWidth
 mmm
 mmss
 mschart
@@ -163,7 +155,6 @@ notBetween
 notEqual
 numFmt
 numberStoredAsText
-numfmt
 numfmts
 oddFooter
 oddHeader
@@ -190,7 +181,6 @@ printTitleRows
 pugi
 pugixml
 queryTables
-readonly
 reimported
 rels
 relships
@@ -200,7 +190,6 @@ rowColHeaders
 rowNames
 rowOffset
 rowname
-sapply
 secondColumnStripe
 secondRowStripe
 sep
@@ -223,7 +212,6 @@ slantDashDot
 slicerCaches
 sparkline
 sparklines
-sqref
 ss
 startCol
 startRow
@@ -256,7 +244,6 @@ vml
 wb
 wbColor
 wbColour
-wbProcedure
 wbWorkbook
 webPublishItems
 wholeTable

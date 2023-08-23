@@ -815,7 +815,7 @@ wb_freeze_pane <- function(
 #' @param sheet A name or index of a worksheet. (A vector is accepted for `remove_row_heights()`)
 #' @param rows Indices of rows to set / remove (if any) custom height.
 #' @param heights Heights to set `rows` to specified in a spreadsheet column height units.
-#' @param hidden Option to hide rows. A logical vector of length 1 or lengt of `rows`
+#' @param hidden Option to hide rows. A logical vector of length 1 or length of `rows`
 #' @name wb_row_heights
 #' @family workbook wrappers
 #'
@@ -1614,7 +1614,7 @@ wb_protect <- function(
 #' Modify grid lines visibility in a worksheet
 #'
 #' Set worksheet grid lines to show or hide.
-#' You can also add / remove grid lines when creating a worksheeet with
+#' You can also add / remove grid lines when creating a worksheet with
 #' [`wb_add_worksheet(grid_lines = FALSE)`][wb_add_worksheet()]
 #'
 #' @param wb A workbook object
@@ -1969,7 +1969,7 @@ wb_add_data_validation <- function(
 #' You can set this when creating a worksheet with `wb_add_worksheet(visible = FALSE)`
 #'
 #' @return
-#' * `wb_set_sheet_visibility`: The Worbook object, invisibly.
+#' * `wb_set_sheet_visibility`: The Workbook object, invisibly.
 #' * `wb_get_sheet_visibility()`: A character vector of the worksheet visibility value
 #' @examples
 #'
@@ -1997,7 +1997,7 @@ wb_get_sheet_visibility <- function(wb) {
 #' @rdname wb_sheet_visibility
 #' @param sheet Worksheet identifier
 #' @param value a logical/character vector the same length as sheet,
-#'   if provding a character vector, you can provide any of "hidden", "visible", or "veryHidden"
+#'   if providing a character vector, you can provide any of "hidden", "visible", or "veryHidden"
 #' @export
 wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
   assert_workbook(wb)

@@ -232,7 +232,7 @@ wb <- wb_workbook() %>%
 
 ### Saving
 
-Saving has been switched from `saveWorbook()` to `wb_save()` and opening a workbook has been switched from `openXL()` to `wb_open()`.
+Saving has been switched from `saveWorkbook()` to `wb_save()` and opening a workbook has been switched from `openXL()` to `wb_open()`.
 
 ## Invitation to contribute
 

@@ -21,7 +21,7 @@
 * `create_comment()` has been renamed `wb_comment()`.  [758, @olivroy](https://github.com/JanMarvin/openxlsx2/pull/758) The default arguments however are changed:
 
   * `author` looks at `options("openxlsx2.creator")` in `wb_comment()` compared to only `sys.getenv("user")` in `create_comment()`
-  * `visible` defaults to `FALSE` in `wb_comment()` to account for modern spreadsheet software behaviour.
+  * `visible` defaults to `FALSE` in `wb_comment()` to account for modern spreadsheet software behavior.
   In `create_comment()`, it is `TRUE`.
   * `width` and `height` must now be of length 1. (In `create_comment()`, the first element is taken, other are ignored.)
 
