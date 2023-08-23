@@ -10,7 +10,7 @@
 #' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
 #' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 #'
-#' @param creator Creator of the workbook (your name). Defaults to login username
+#' @param creator Creator of the workbook (your name). Defaults to login username or `options("openxlsx2.creator")` if set.
 #' @param title,subject,category Workbook property, a string.
 #' @param datetime_created The time of the workbook is created
 #' @param theme Optional theme identified by string or number.
@@ -2920,11 +2920,14 @@ wb_add_dxfs_style <- function(
 }
 
 #' Add comment to worksheet
+#'
+#' @details
+#' If applying a `comment` with a string, it will use [wb_comment()] default values.
+#'
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
 #' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
-#' @param comment A comment to apply to the worksheet
-# To fit, maybe comment, can be `x`
+#' @param comment A comment to apply to `dims` created by [wb_comment()] or a string.
 #' @param ... additional arguments
 #' @returns The `wbWorkbook` object
 #' @seealso [wb_add_thread()]
@@ -2939,6 +2942,11 @@ wb_add_comment <- function(
   ) {
 
   assert_workbook(wb)
+
+  if (is.character(comment)) {
+    comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))
+  }
+
   assert_comment(comment)
 
   wb$clone()$add_comment(

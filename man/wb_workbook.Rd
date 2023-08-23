@@ -15,7 +15,7 @@ wb_workbook(
 )
 }
 \arguments{
-\item{creator}{Creator of the workbook (your name). Defaults to login username}
+\item{creator}{Creator of the workbook (your name). Defaults to login username or \code{options("openxlsx2.creator")} if set.}
 
 \item{title, subject, category}{Workbook property, a string.}
 

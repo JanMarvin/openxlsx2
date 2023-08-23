@@ -22,7 +22,8 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 \arguments{
 \item{text}{Comment text. Character vector.}
 
-\item{author}{Author of comment. A string.}
+\item{author}{Author of comment. A string. By default, will look at \code{options("openxlsx2.creator")}.
+Otherwise, will check the system username.}
 
 \item{style}{A Style object or list of style objects the same length as comment vector.}
 
@@ -38,7 +39,7 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 
 \item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 
-\item{comment}{A comment to apply to the worksheet}
+\item{comment}{A comment to apply to \code{dims} created by \code{\link[=wb_comment]{wb_comment()}} or a string.}
 
 \item{...}{additional arguments}
 }
@@ -51,6 +52,11 @@ modification of comments. In newer spreadsheet software they are called
 notes, while they are called comments in openxml. Modification of what
 newer spreadsheet software now calls comment is possible via
 \code{\link[=wb_add_thread]{wb_add_thread()}}.
+}
+\details{
+Use \code{\link[=wb_comment]{wb_comment()}} in new code
+
+If applying a \code{comment} with a string, it will use \code{\link[=wb_comment]{wb_comment()}} default values.
 }
 \examples{
 wb <- wb_workbook()
@@ -77,3 +83,7 @@ wb$remove_comment(1, dims = "B10")
 \seealso{
 \code{\link[=wb_add_thread]{wb_add_thread()}}
 }
+\author{
+A string, by default, will use "user"
+}
+\keyword{internal}

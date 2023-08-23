@@ -114,8 +114,29 @@ test_that("wb_add_comment", {
     wb_workbook()$add_worksheet()$add_comment(dims = "A1"),
     'argument "comment" is missing, with no default'
   )
-
 })
+
+test_that("wb_add_comment() works without supplying a wbComment object.", {
+  # Do not alter the workspace
+  opt <- getOption("openxlsx2.creator")
+  options("openxlsx2.creator" = "user")
+  # Using the new default values of wb_comment() (options("openxlsx2.creators))
+  wb <- wb_workbook()$add_worksheet()$add_comment(comment = "this is a comment", dims = "A1")
+
+  c2 <- wb_comment(text = "this is a comment")
+  wb2 <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_comment(dims = "A1", comment =  c2)
+  # wb_comment() defaults and comment = "text" defaults are the same.
+  expect_equal(wb$comments, wb2$comments)
+
+  # The wrapper behaves the same
+  wb3 <- wb_workbook()$add_worksheet()$add_comment(comment = "this is a comment")
+  expect_equal(wb$comments, wb3$comments)
+
+  options("openxlsx2.creator" = opt)
+})
+
 
 test_that("wb_remove_comment", {
 
