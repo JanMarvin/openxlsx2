@@ -371,8 +371,6 @@ wb_add_pivot_table <- function(
 #' * MAX(B2:B4)
 #' * ...
 #'
-#' Currently, the `cm` parameter only has an effect in Microsoft 365.
-#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. (either as index or name)
 #' @param x A formula as character vector.
