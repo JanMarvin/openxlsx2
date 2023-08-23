@@ -1,9 +1,9 @@
 # `wb_to_df()` ----------------------------------------
-#' Create Dataframe from Workbook
+#' Create a data frame from a Workbook
 #'
 #' Simple function to create a `data.frame` from a workbook. Simple as in simply
-#' written down. [read_xlsx()] and [wb_read()] are just internal wrappers for
-#' [wb_to_df()] intended for people coming from other packages.
+#' written down. `read_xlsx()` and `wb_read()` are just internal wrappers of
+#' `wb_to_df()` intended for people coming from other packages.
 #'
 #' @details
 #' Depending if the R package `hms` is loaded, `wb_to_df()` returns
@@ -13,11 +13,17 @@
 #' * 0: character
 #' * 1: numeric
 #' * 2: date
-#' * 3: posixt
+#' * 3: posixt (datetime)
 #' * 4: logical
+#'
+#' `read_xlsx()` will not pick up formulas added to a Workbook object
+#' via [wb_add_formula()]. This is because only the formula is written and left
+#' to be evaluated when the file is opened in a spreadsheet software.
+#' Opening, saving and closing the file in a spreadsheet software will resolve this.
+#'
 #' @seealso [wb_get_named_regions()]
 #'
-#' @param file An xlsx file, Workbook object or URL to xlsx file.
+#' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.
 #' @param col_names If `TRUE`, the first row of data will be used as column names.
 #' @param row_names If `TRUE`, the first col of data will be used as row names.
@@ -31,12 +37,12 @@
 #' @param skip_hidden_rows If `TRUE`, hidden rows are skipped.
 #' @param start_row first row to begin looking for data.
 #' @param start_col first column to begin looking for data.
-#' @param rows A numeric vector specifying which rows in the Excel file to read.
+#' @param rows A numeric vector specifying which rows in the xlsx file to read.
 #'   If `NULL`, all rows are read.
-#' @param cols A numeric vector specifying which columns in the Excel file to read.
+#' @param cols A numeric vector specifying which columns in the xlsx file to read.
 #'   If `NULL`, all columns are read.
 #' @param named_region Character string with a `named_region` (defined name or table).
-#'   If no sheet is selected, the first appearance will be selected.
+#'   If no sheet is selected, the first appearance will be selected. See [wb_get_named_regions()]
 #' @param types A named numeric indicating, the type of the data.
 #'   Names must match the returned data. See **Details** for more.
 #' @param na.strings A character vector of strings which are to be interpreted as `NA`.
@@ -97,7 +103,7 @@
 #' wb_to_df(wb1, na.strings = "a")
 #'
 #' ###########################################################################
-#' # named_region // namedRegion
+#' # Named regions
 #' file_named_region <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 #' wb2 <- wb_load(file_named_region)
 #'
@@ -599,11 +605,6 @@ wb_to_df <- function(
 # `read_xlsx()` -----------------------------------------------------------------
 # Ignored by roxygen2 when combining documentation
 # #' Read from an Excel file or Workbook object
-#'
-#' @details
-#' Formulae written using write_formula to a Workbook object will not get picked up by `read_xlsx()`.
-#' This is because only the formula is written and left to be evaluated when the file is opened in Excel.
-#' Opening, saving and closing the file with Excel will resolve this.
 #' @rdname wb_to_df
 #' @export
 read_xlsx <- function(
@@ -702,13 +703,17 @@ wb_read <- function(
 
 }
 
+#' Add the `wb_data` attribute to a data frame in a worksheet
+#'
 #' provide wb_data object as mschart input
+#'
 #' @param wb a workbook
 #' @param sheet a sheet in the workbook either name or index
 #' @param dims the dimensions
-#' @param ... additional arguments for wb_to_df. Be aware that not every
+#' @param ... additional arguments for `wb_to_df()`. Be aware that not every
 #' argument is valid.
-#' @seealso [wb_to_df()] [wb_add_mschart()]
+#' @returns A data frame of class `wb_data`.
+#' @seealso [wb_to_df()] [wb_add_mschart()], [wb_add_pivot_table()]
 #' @examples
 #'  wb <- wb_workbook() %>%
 #'    wb_add_worksheet() %>%

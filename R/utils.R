@@ -185,8 +185,10 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #'   * A list of rows and columns for `to_rowcol`
 #' @examples
 #' dims_to_rowcol("A1:J10")
-#' rowcol_to_dims(1:10, 1:10)
+#' wb_dims(1:10, 1:10)
+#'
 #' @name dims_helper
+#' @seealso [wb_dims()]
 NULL
 #' @rdname dims_helper
 #' @export

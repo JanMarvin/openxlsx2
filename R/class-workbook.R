@@ -2,7 +2,7 @@
 
 # R6 class ----------------------------------------------------------------
 # Lines 7 and 8 are needed until r-lib/roxygen2#1504 is fixed
-#' R6 class for a Workbook
+#' R6 class for a workbook
 #'
 #' @description
 #' A workbook
@@ -73,7 +73,7 @@ wbWorkbook <- R6::R6Class(
     #' @field media media
     media = NULL,
 
-    #' @field metadata metadata
+    #' @field metadata contains cell/value metadata imported on load from xl/metadata.xml
     metadata = NULL,
 
     #' @field persons persons
@@ -4821,13 +4821,12 @@ wbWorkbook <- R6::R6Class(
     add_form_control = function(
       sheet   = current_sheet(),
       dims    = "A1",
-      type    = NULL,
+      type    = c("Checkbox", "Radio", "Drop"),
       text    = NULL,
       link    = NULL,
       range   = NULL,
       checked = FALSE
     ) {
-
       sheet <- private$get_sheet_index(sheet)
 
       if (!is.null(dims)) {
@@ -4849,13 +4848,10 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      if (is.null(text)) {
-        text <- ""
-      }
+      text <- text %||% ""
 
-      if (is.null(type)) {
-        type <- "Checkbox"
-      }
+      type <- match.arg(type)
+
 
       clientData <- genClientDataFC(left, top, right, bottom, link, range, type, checked)
 
@@ -5630,12 +5626,12 @@ wbWorkbook <- R6::R6Class(
       local_sheet        = FALSE,
       overwrite          = FALSE,
       comment            = NULL,
+      hidden             = NULL,
       custom_menu        = NULL,
       description        = NULL,
       is_function        = NULL,
       function_group_id  = NULL,
       help               = NULL,
-      hidden             = NULL,
       local_name         = NULL,
       publish_to_server  = NULL,
       status_bar         = NULL,
@@ -7161,7 +7157,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (tolower(sheet) %in% self$sheet_names) {
-        warning("Fixing: a sheet with name '", sheet, '"already exists. Creating a unique sheetname"')
+        warning('Attempted to add a worksheet that is invalid or already exists.\n',
+                'Fixing: a sheet with name "', sheet, '" already exists. Creating a unique sheetname"', call. = FALSE)
         ## We simply append (1), while spreadsheet software would increase
         ## the integer as: Sheet, Sheet (1), Sheet (2) etc.
         sheet <- paste(sheet, "(1)")

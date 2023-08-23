@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_copy_cells}
 \alias{wb_copy_cells}
-\title{copy cells around}
+\title{Copy cells around within a worksheet}
 \usage{
 wb_copy_cells(
   wb,
@@ -15,25 +15,25 @@ wb_copy_cells(
 )
 }
 \arguments{
-\item{wb}{workbook}
+\item{wb}{A workbook}
 
 \item{sheet}{a worksheet}
 
-\item{dims}{cell used as start}
+\item{dims}{A cell where to place the copy}
 
-\item{data}{a wb_data object}
+\item{data}{A \code{\link[=wb_data]{wb_data}} object containing cells to copy}
 
-\item{as_value}{should a copy of the value be written}
+\item{as_value}{Should a copy of the value be written?}
 
-\item{as_ref}{should references to the cell be written}
+\item{as_ref}{Should references to the cell be written?}
 
-\item{transpose}{should the data be written transposed}
+\item{transpose}{Should the data be written transposed?}
 }
 \value{
-the wbWorkbook invisibly
+the \code{wbWorkbook} invisibly
 }
 \description{
-copy cells around
+Copy cells around within a worksheet
 }
 \examples{
 wb <- wb_workbook()$
@@ -41,14 +41,15 @@ add_worksheet()$
   add_data(x = mtcars)$
   add_fill(dims = "A1:F1", color = wb_color("yellow"))
 
-dat <- wb_data(wb, dims = "A1:D4", colNames = FALSE)
-
+dat <- wb_data(wb, dims = "A1:D4", col_names = FALSE)
+# 1:1 copy to M2
 wb$
-  # 1:1 copy to M2
   clone_worksheet(old = 1, new = "Clone1")$
   copy_cells(data = dat, dims = "M2")
 }
 \seealso{
+\code{\link[=wb_data]{wb_data()}}
+
 Other workbook wrappers: 
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
@@ -63,9 +64,9 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}

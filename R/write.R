@@ -946,83 +946,23 @@ write_data_table <- function(
 # `write_data()` ---------------------------------------------------------------
 #' Write an object to a worksheet
 #'
-#' Write an object to worksheet with optional styling. Use [wb_add_data()] in new code.
+#' Write an object to worksheet with optional styling. Use [wb_add_data()] or [write_xlsx()] in new code.
 #'
-#' Formulae written using write_formula to a Workbook object will not get picked up by read_xlsx().
+#' Formulae written using [wb_add_formula()] to a Workbook object will not get picked up by `read_xlsx()`.
 #' This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame contains this string, the output will be broken.
 #'
-#' @param wb A Workbook object containing a worksheet.
-#' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param x Object to be written. For classes supported look at the examples.
-#' @param start_col A vector specifying the starting column to write to.
-#' @param start_row A vector specifying the starting row to write to.
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param array A bool if the function written is of type array
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, data.frame row names of x are written.
-#' @param with_filter If `TRUE`, add filters to the column name row. NOTE can only have one filter per worksheet.
-#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' @param name If not NULL, a named region is defined.
-#' @param apply_cell_style apply styles when writing on the sheet
-#' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.
-#' @param inline_strings write characters as inline strings
-#' @param ... additional arguments
-#' @seealso [wb_add_data()], [wb_add_data_table()]
+#' @inheritParams wb_add_data
+#' @seealso [wb_add_data()], [write_xlsx()]
 #' @return invisible(0)
-# TODO examples them from here, as docs of `wb_add_data()` and `write_data()` are now separated.
 #' @examples
-#' ## See formatting vignette for further examples.
-#'
-#' ## Options for default styling (These are the defaults)
-#' options("openxlsx2.dateFormat" = "mm/dd/yyyy")
-#' options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
-#' options("openxlsx2.numFmt" = NULL)
-#'
-#' #############################################################################
-#' ## Create Workbook object and add worksheets
-#' wb <- wb_workbook()
-#'
-#' ## Add worksheets
-#' wb$add_worksheet("Cars")
-#' wb$add_worksheet("Formula")
-#'
-#' x <- mtcars[1:6, ]
-#' wb$add_data("Cars", x, startCol = 2, startRow = 3, rowNames = TRUE)
-#'
-#' #############################################################################
-#' ## Hyperlinks
-#' ## - vectors/columns with class 'hyperlink' are written as hyperlinks'
-#'
-#' v <- rep("https://CRAN.R-project.org/", 4)
-#' names(v) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
-#' class(v) <- "hyperlink"
-#' wb$add_data("Cars", x = v, dims = c("B32"))
-#'
-#' #############################################################################
-#' ## Formulas
-#' ## - vectors/columns with class 'formula' are written as formulas'
-#'
-#' df <- data.frame(
-#'   x = 1:3, y = 1:3,
-#'   z = paste(paste0("A", 1:3 + 1L), paste0("B", 1:3 + 1L), sep = "+"),
-#'   stringsAsFactors = FALSE
-#' )
-#'
-#' class(df$z) <- c(class(df$z), "formula")
-#'
-#' wb$add_data(sheet = "Formula", x = df)
-#'
-#' #############################################################################
 #' # update cell range and add mtcars
 #' xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 #' wb2 <- wb_load(xlsxFile)
 #'
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)
-#' write_data(wb2, 1, mtcars, startCol = 4, startRow = 4)
+#' write_data(wb2, 1, mtcars, start_col = 4, start_row = 4)
 #' wb_to_df(wb2)
 #' @export
 #' @keywords internal
@@ -1270,39 +1210,8 @@ write_formula <- function(
 #'
 #' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
 #'
-#' @param wb A Workbook object containing a worksheet.
-#' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param x A data frame.
-#' @param start_col A vector specifying the starting column to write df
-#' @param start_row A vector specifying the starting row to write df
-#' @param dims Spreadsheet dimensions that will determine startCol and startRow: "A1", "A1:B2", "A:B"
-#' @param col_names If `TRUE`, column names of x are written.
-#' @param row_names If `TRUE`, row names of x are written.
-#' @param table_style Any excel table style name or "none" (see "formatting" vignette).
-#' @param table_name name of table in workbook. The table name must be unique.
-#' @param with_filter If `TRUE`, columns with have filters in the first row.
-#' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).
-#' \cr\cr
-#' \cr**The below options correspond to Excel table options:**
-#' \cr
-#' \if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
-#' \if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}
-#'
-#' @param first_column logical. If TRUE, the first column is bold
-#' @param last_column logical. If TRUE, the last column is bold
-#' @param banded_rows logical. If TRUE, rows are color banded
-#' @param banded_cols logical. If TRUE, the columns are color banded
-#' @param apply_cell_style apply styles when writing on the sheet
-#' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.
-#' @param inline_strings write characters as inline strings
-#' @param ... additional arguments
-#' @details columns of x with class Date/POSIXt, currency, accounting,
-#' hyperlink, percentage are automatically styled as dates, currency, accounting,
-#' hyperlinks, percentages respectively.
-#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
-#' contains this string, the output will be broken.
+#' @inheritParams wb_add_data_table
+#' @inherit wb_add_data_table details
 #' @seealso
 #'   [wb_add_worksheet()]
 #'   [wb_add_data_table()]
@@ -1325,8 +1234,8 @@ write_formula <- function(
 #' wb$add_data_table("S1", x = iris)
 #'
 #' wb$add_data_table("S2",
-#'   x = mtcars, dims = c("B3"), rowNames = TRUE,
-#'   tableStyle = "TableStyleLight9"
+#'   x = mtcars, dims = c("B3"), row_names = TRUE,
+#'   table_style = "TableStyleLight9"
 #' )
 #'
 #' df <- data.frame(
@@ -1346,7 +1255,7 @@ write_formula <- function(
 #' class(df$Percentage) <- c(class(df$Percentage), "percentage")
 #' class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
 #'
-#' wb$add_data_table("S3", x = df, startRow = 4, rowNames = TRUE, tableStyle = "TableStyleMedium9")
+#' wb$add_data_table("S3", x = df, start_row = 4, row_names = TRUE, table_style = "TableStyleMedium9")
 #'
 #' #####################################################################################
 #' ## Additional Header Styling and remove column filters
@@ -1354,12 +1263,12 @@ write_formula <- function(
 #' write_datatable(wb,
 #'   sheet = 1,
 #'   x = iris,
-#'   startCol = 7,
-#'   withFilter = FALSE,
-#'   firstColumn = TRUE,
-#'   lastColumn	= TRUE,
-#'   bandedRows = TRUE,
-#'   bandedCols = TRUE
+#'   start_col = 7,
+#'   with_filter = FALSE,
+#'   first_column = TRUE,
+#'   last_column	= TRUE,
+#'   banded_rows = TRUE,
+#'   banded_cols = TRUE
 #' )
 #'
 #' #####################################################################################
@@ -1371,7 +1280,7 @@ write_formula <- function(
 #'   style <- paste0("TableStyleLight", i)
 #'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
-#'     tableStyle = style, startRow = 1, startCol = i * 3 - 2
+#'     table_style = style, start_row = 1, start_col = i * 3 - 2
 #'   )
 #' }
 #'
@@ -1379,7 +1288,7 @@ write_formula <- function(
 #'   style <- paste0("TableStyleMedium", i)
 #'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
-#'     tableStyle = style, startRow = 4, startCol = i * 3 - 2
+#'     table_style = style, start_row = 4, start_col = i * 3 - 2
 #'   )
 #' }
 #'
@@ -1387,7 +1296,7 @@ write_formula <- function(
 #'   style <- paste0("TableStyleDark", i)
 #'   write_datatable(wb,
 #'     x = data.frame(style), sheet = 1,
-#'     tableStyle = style, startRow = 7, startCol = i * 3 - 2
+#'     table_style = style, start_row = 7, start_col = i * 3 - 2
 #'   )
 #' }
 #' @export

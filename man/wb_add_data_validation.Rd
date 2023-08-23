@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_data_validation}
 \alias{wb_add_data_validation}
-\title{Add data validation to cells}
+\title{Add data validation to cells in a worksheet}
 \usage{
 wb_add_data_validation(
   wb,
@@ -23,13 +23,14 @@ wb_add_data_validation(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A Workbook object}
 
 \item{sheet}{A name or index of a worksheet}
 
 \item{dims}{A cell dimension ("A1" or "A1:B2")}
 
-\item{type}{One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list' (see examples)}
+\item{type}{One of 'whole', 'decimal', 'date', 'time', 'textLength', 'list'
+(see examples)}
 
 \item{operator}{One of 'between', 'notBetween', 'equal',
 'notEqual', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'}
@@ -42,7 +43,9 @@ wb_add_data_validation(
 
 \item{show_error_msg}{logical}
 
-\item{error_style}{The icon shown and the options how to deal with such inputs. Default "stop" (cancel), else "information" (prompt popup) or "warning" (prompt accept or change input)}
+\item{error_style}{The icon shown and the options how to deal with such inputs.
+Default "stop" (cancel), else "information" (prompt popup) or
+"warning" (prompt accept or change input)}
 
 \item{error_title}{The error title}
 

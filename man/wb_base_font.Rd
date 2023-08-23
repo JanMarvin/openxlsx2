@@ -4,7 +4,7 @@
 \alias{wb_base_font}
 \alias{wb_set_base_font}
 \alias{wb_get_base_font}
-\title{Get / set the default font in a workbook}
+\title{Set the default font in a workbook}
 \usage{
 wb_set_base_font(
   wb,
@@ -19,42 +19,43 @@ wb_get_base_font(wb)
 \arguments{
 \item{wb}{A workbook object}
 
-\item{font_size}{font size}
+\item{font_size}{Font size}
 
-\item{font_color}{font color}
+\item{font_color}{Font color}
 
 \item{font_name}{Name of a font}
 
-\item{...}{additional arguments}
+\item{...}{Additional arguments}
 }
 \description{
-Modify / get the default font for the workbook.
+Modify / get the default font for the workbook. The base font in a workbook
+does not affect the font in data tables.
 }
 \details{
 The font name is not validated in anyway. Excel replaces unknown font names
-with Arial. Base font is black, size 11, Calibri.
+with Arial. The default base font is Calibri, black, size 11.
 }
 \examples{
 ## create a workbook
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 ## modify base font to size 10 Arial Narrow in red
-wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
+wb$set_base_font(font_size = 10, font_color = wb_color("red"), font_name = "Arial Narrow")
 
-wb$add_data("S1", iris)
-wb$add_data_table("S1", x = iris, startCol = 10) ## font color does not affect tables
+wb$add_data(x = iris)
+
+## font color does not affect tables
+wb$add_data_table(x = iris, dims = wb_dims(from_col = 10))
 
 ## get the base font
-## create a workbook
-wb <- wb_workbook()
 wb_get_base_font(wb)
 
-## modify base font to size 10 Arial Narrow in red
-wb$set_base_font(fontSize = 10, fontColor = "#FF0000", fontName = "Arial Narrow")
-
-wb_get_base_font(wb)
 }
 \seealso{
+Other workbook styling functions: 
+\code{\link{wb_add_dxfs_style}()},
+\code{\link{wb_add_style}()}
+
 Other workbook wrappers: 
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
@@ -69,9 +70,10 @@ Other workbook wrappers:
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_grouping}},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
+\concept{workbook styling functions}
 \concept{workbook wrappers}

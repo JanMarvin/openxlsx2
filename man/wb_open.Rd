@@ -2,13 +2,14 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_open}
 \alias{wb_open}
-\title{little worksheet opener}
+\title{Preview a workbook in a spreadsheet software}
 \usage{
 wb_open(wb)
 }
 \arguments{
-\item{wb}{a workbook}
+\item{wb}{a \link{wbWorkbook} object}
 }
 \description{
-little worksheet opener
+You can also use the shorter \code{wb$open()} as a replacement.
+To open xlsx files, see \code{\link[=xl_open]{xl_open()}}.
 }

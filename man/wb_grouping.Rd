@@ -6,7 +6,7 @@
 \alias{wb_ungroup_cols}
 \alias{wb_group_rows}
 \alias{wb_ungroup_rows}
-\title{Group Rows and Columns}
+\title{Group rows and columns in a worksheet}
 \usage{
 wb_group_cols(
   wb,
@@ -29,7 +29,7 @@ wb_group_rows(
 wb_ungroup_rows(wb, sheet = current_sheet(), rows)
 }
 \arguments{
-\item{wb}{A \link{wbWorkbook} object}
+\item{wb}{A \code{wbWorkbook} object}
 
 \item{sheet}{A name or index of a worksheet}
 
@@ -43,7 +43,7 @@ wb_ungroup_rows(wb, sheet = current_sheet(), rows)
 Group a selection of rows or cols
 }
 \details{
-If row was previously hidden, it will now be shown
+If row was previously hidden, it will now be shown.
 }
 \examples{
 # create matrix
@@ -105,9 +105,9 @@ Other workbook wrappers:
 \code{\link{wb_creators}},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_merge_cells}()},
+\code{\link{wb_row_heights}},
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_set_row_heights}()},
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}
