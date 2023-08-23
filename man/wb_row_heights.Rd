@@ -25,7 +25,7 @@ wb_remove_row_heights(wb, sheet = current_sheet(), rows)
 
 \item{heights}{Heights to set \code{rows} to specified in a spreadsheet column height units.}
 
-\item{hidden}{Option to hide rows. A logical vector of length 1 or lengt of \code{rows}}
+\item{hidden}{Option to hide rows. A logical vector of length 1 or length of \code{rows}}
 }
 \description{
 Set / remove custom worksheet row heights

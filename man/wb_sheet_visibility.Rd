@@ -16,11 +16,11 @@ wb_set_sheet_visibility(wb, sheet = current_sheet(), value)
 \item{sheet}{Worksheet identifier}
 
 \item{value}{a logical/character vector the same length as sheet,
-if provding a character vector, you can provide any of "hidden", "visible", or "veryHidden"}
+if providing a character vector, you can provide any of "hidden", "visible", or "veryHidden"}
 }
 \value{
 \itemize{
-\item \code{wb_set_sheet_visibility}: The Worbook object, invisibly.
+\item \code{wb_set_sheet_visibility}: The Workbook object, invisibly.
 \item \code{wb_get_sheet_visibility()}: A character vector of the worksheet visibility value
 }
 }
