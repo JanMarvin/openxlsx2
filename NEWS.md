@@ -38,7 +38,7 @@ They will continue to work for some time, but changing to newer functions is rec
 
 ## Fixes
 
-* `wb_to_df()` now handles `date1904` detection in . Previous results from this somewhat rare file type were using a wrong timezone origin.
+* `wb_to_df()` now handles `date1904` detection. Previous results from this somewhat rare file type were using the default timezone origin of 1900-01-01. [737](https://github.com/JanMarvin/openxlsx2/pull/737)
 * `wb_load()` handles more cases.
   * With workbooks with threaded comments [731](https://github.com/JanMarvin/openxlsx2/issues/731)
   * With workbooks with embeddings other than docx [732](https://github.com/JanMarvin/openxlsx2/pulls/732)
