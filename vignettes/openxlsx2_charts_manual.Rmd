@@ -1,8 +1,8 @@
 ---
-title: "openxlsx2 charts manual"
+title: "Add charts to a workbook"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{openxlsx2 charts manual}
+  %\VignetteIndexEntry{Add charts to a workbook}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

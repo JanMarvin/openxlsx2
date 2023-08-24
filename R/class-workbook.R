@@ -2740,7 +2740,7 @@ wbWorkbook <- R6::R6Class(
 
         ## rename defined names
         if (length(self$workbook$definedNames)) {
-          ind <- wb_get_named_regions(self)
+          ind <- self$get_named_regions()
           # TODO why is the order switched?
           ind <- ind[order(as.integer(rownames(ind))), ]
           ind <- ind$sheets == old
@@ -5722,6 +5722,33 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description get named regions in a workbook
+    #' @param tables Return tables as well?
+    #' @param x Not used.
+    #' @return A `data.frame` of named regions
+    get_named_regions = function(tables = FALSE, x = NULL) {
+      if (!is.null(x)) {
+        stop("x should not be provided to get_named_regions.", call. = FALSE)
+      }
+      z <- NULL
+
+      if (length(self$workbook$definedNames)) {
+        z <- get_nr_from_definedName(self)
+      }
+
+      if (tables && !is.null(self$tables)) {
+        tb <- get_named_regions_tab(self)
+
+        if (is.null(z)) {
+          z <- tb
+        } else {
+          z <- merge(z, tb, all = TRUE, sort = FALSE)
+        }
+
+      }
+
+      z
+    },
     #' @description remove a named region
     #' @param sheet sheet
     #' @param name name

@@ -115,6 +115,7 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' Many base classes are covered, though not all and far from all third-party classes.
 #' When data of an unknown class is written, it is handled with `as.character()`.
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @return A `wbWorkbook`, invisibly.
 #' @examples
 #' ## See formatting vignette for further examples.
@@ -237,6 +238,7 @@ wb_add_data <- function(
 #' @param banded_cols logical. If `TRUE`, the columns are color banded.
 #' @param ... additional arguments
 #'
+#' @family worksheet content functions
 #' @family workbook wrappers
 #' @export
 wb_add_data_table <- function(
@@ -315,9 +317,10 @@ wb_add_data_table <- function(
 #'
 #' wb <- wb %>%
 #'   wb_add_pivot_table(df, dims = "A3",
-#'   filter = "am", rows = "cyl", cols = "gear", data = "disp"
+#'     filter = "am", rows = "cyl", cols = "gear", data = "disp"
 #'   )
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @export
 wb_add_pivot_table <- function(
     wb,
@@ -385,6 +388,7 @@ wb_add_pivot_table <- function(
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @export
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()
@@ -530,12 +534,9 @@ wb_copy_cells <- function(
 #' # or let us decide how to solve this
 #' wb <- wb_merge_cells(wb, dims = "A1:A10", solve = TRUE)
 #'
-#' @name wb_merge_cells
 #' @family workbook wrappers
-NULL
-
+#' @family worksheet content functions
 #' @export
-#' @rdname wb_merge_cells
 wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, ... = ...)
@@ -553,26 +554,22 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
 
 #' Add a chartsheet to a workbook
 #'
+#' A chartsheet is a special type of sheet that handles charts output. You must
+#' add a chart to the sheet. Otherwise, this will break the workbook.
+#'
 #' @param wb A Workbook object to attach the new chartsheet
 #' @param sheet A name for the new chartsheet
-#' @param tab_color Color of the chartsheet tab. A valid color (belonging to
-#'   `colors()`) or a valid hex color beginning with "#"
-#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
-#'   percentage.
-#' @param visible If `FALSE`, sheet is hidden else visible.
-#' @param ... ...
-#' @details After chartsheet creation a chart must be added to the sheet.
-#' Otherwise the chartsheet will break the workbook.
+#' @inheritParams wb_add_worksheet
 #' @family workbook wrappers
-#' @seealso [wb_add_mschart()] [wbChartSheet]
+#' @seealso [wb_add_mschart()]
 #' @export
 wb_add_chartsheet <- function(
-  wb,
-  sheet     = next_sheet(),
-  tab_color = NULL,
-  zoom      = 100,
-  visible   = c("true", "false", "hidden", "visible", "veryhidden"),
-  ...
+    wb,
+    sheet     = next_sheet(),
+    tab_color = NULL,
+    zoom      = 100,
+    visible   = c("true", "false", "hidden", "visible", "veryhidden"),
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
@@ -606,9 +603,9 @@ wb_add_chartsheet <- function(
 #'   hidden.
 #' @param row_col_headers A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tab_color Color of the worksheet tab. A  [wb_color()],  a valid color (belonging to
+#' @param tab_color Color of the sheet tab. A  [wb_color()],  a valid color (belonging to
 #'   `grDevices::colors()`) or a valid hex color beginning with "#".
-#' @param zoom The worksheet zoom level, a numeric between 10 and 400 as a
+#' @param zoom The sheet zoom level, a numeric between 10 and 400 as a
 #'   percentage. (A zoom value smaller than 10 will default to 10.)
 #' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
 #'   Character vector of length 3 corresponding to positions left, center,
@@ -627,7 +624,6 @@ wb_add_chartsheet <- function(
 #'
 #' @export
 #' @family workbook wrappers
-#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
@@ -675,27 +671,27 @@ wb_add_chartsheet <- function(
 #' wb$add_data(sheet = 7, 1:400)
 #' wb$add_data(sheet = 8, 1:400)
 wb_add_worksheet <- function(
-  wb,
-  sheet           = next_sheet(),
-  grid_lines      = TRUE,
-  row_col_headers = TRUE,
-  tab_color       = NULL,
-  zoom            = 100,
-  header          = NULL,
-  footer          = NULL,
-  odd_header      = header,
-  odd_footer      = footer,
-  even_header     = header,
-  even_footer     = footer,
-  first_header    = header,
-  first_footer    = footer,
-  visible         = c("true", "false", "hidden", "visible", "veryhidden"),
-  has_drawing     = FALSE,
-  paper_size      = getOption("openxlsx2.paperSize", default = 9),
-  orientation     = getOption("openxlsx2.orientation", default = "portrait"),
-  hdpi            = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
-  ...
+    wb,
+    sheet           = next_sheet(),
+    grid_lines      = TRUE,
+    row_col_headers = TRUE,
+    tab_color       = NULL,
+    zoom            = 100,
+    header          = NULL,
+    footer          = NULL,
+    odd_header      = header,
+    odd_footer      = footer,
+    even_header     = header,
+    even_footer     = footer,
+    first_header    = header,
+    first_footer    = footer,
+    visible         = c("true", "false", "hidden", "visible", "veryhidden"),
+    has_drawing     = FALSE,
+    paper_size      = getOption("openxlsx2.paperSize", default = 9),
+    orientation     = getOption("openxlsx2.orientation", default = "portrait"),
+    hdpi            = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+    vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+    ...
 ) {
 
   assert_workbook(wb)
@@ -768,7 +764,7 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #'
 #' @export
 #' @family workbook wrappers
-#'
+#' @family worksheet content functions
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook("Kenshin")
@@ -785,13 +781,13 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' wb$freeze_pane(3, first_row = TRUE) ## shortcut to first_active_row = 2
 #' wb$freeze_pane(4, first_active_row = 1, first_active_col = "D")
 wb_freeze_pane <- function(
-  wb,
-  sheet            = current_sheet(),
-  first_active_row = NULL,
-  first_active_col = NULL,
-  first_row        = FALSE,
-  first_col        = FALSE,
-  ...
+    wb,
+    sheet            = current_sheet(),
+    first_active_row = NULL,
+    first_active_col = NULL,
+    first_row        = FALSE,
+    first_col        = FALSE,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$freeze_pane(
@@ -818,6 +814,7 @@ wb_freeze_pane <- function(
 #' @param hidden Option to hide rows. A logical vector of length 1 or length of `rows`
 #' @name row_heights-wb
 #' @family workbook wrappers
+#' @family worksheet content functions
 #'
 #' @examples
 #' ## Create a new workbook
@@ -880,6 +877,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'   If `TRUE`, the columns are hidden.
 #'
 #' @family workbook wrappers
+#' @family worksheet content functions
 #'
 #' @examples
 #' ## Create a new workbook
@@ -1024,13 +1022,13 @@ wb_add_plot <- function(
 #' @seealso [wb_add_chart_xml()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 wb_add_drawing <- function(
-  wb,
-  sheet      = current_sheet(),
-  dims       = "A1",
-  xml,
-  col_offset = 0,
-  row_offset = 0,
-  ...
+    wb,
+    sheet      = current_sheet(),
+    dims       = "A1",
+    xml,
+    col_offset = 0,
+    row_offset = 0,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_drawing(
@@ -1158,11 +1156,11 @@ NULL
 #' @export
 #' @rdname base_font-wb
 wb_set_base_font <- function(
-  wb,
-  font_size  = 11,
-  font_color = wb_color(theme = "1"),
-  font_name  = "Calibri",
-  ...
+    wb,
+    font_size  = 11,
+    font_color = wb_color(theme = "1"),
+    font_name  = "Calibri",
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
@@ -1709,6 +1707,7 @@ wb_set_order <- function(wb, sheets) {
 #' @param hidden Should the named region be hidden?
 #' @param custom_menu,description,is_function,function_group_id,help,local_name,publish_to_server,status_bar,vb_procedure,workbook_parameter,xml Unknown XML feature
 #' @param ... additional arguments
+#' @family worksheet content functions
 #' @seealso [wb_get_named_regions()]
 #' @examples
 #' ## create named regions
@@ -1727,8 +1726,7 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' ## delete one
 #' wb$remove_named_region(name = "iris2")
-#' wb_get_named_regions(wb)
-#'
+#' wb$get_named_regions()
 #' ## read named regions
 #' df <- wb_to_df(wb, named_region = "iris")
 #' head(df)
@@ -1739,26 +1737,26 @@ NULL
 #' @rdname named_region-wb
 #' @export
 wb_add_named_region <- function(
-  wb,
-  sheet             = current_sheet(),
-  dims              = "A1",
-  name,
-  local_sheet        = FALSE,
-  overwrite          = FALSE,
-  comment            = NULL,
-  hidden             = NULL,
-  custom_menu        = NULL,
-  description        = NULL,
-  is_function        = NULL,
-  function_group_id  = NULL,
-  help               = NULL,
-  local_name         = NULL,
-  publish_to_server  = NULL,
-  status_bar         = NULL,
-  vb_procedure       = NULL,
-  workbook_parameter = NULL,
-  xml                = NULL,
-  ...
+    wb,
+    sheet             = current_sheet(),
+    dims              = "A1",
+    name,
+    local_sheet        = FALSE,
+    overwrite          = FALSE,
+    comment            = NULL,
+    hidden             = NULL,
+    custom_menu        = NULL,
+    description        = NULL,
+    is_function        = NULL,
+    function_group_id  = NULL,
+    help               = NULL,
+    local_name         = NULL,
+    publish_to_server  = NULL,
+    status_bar         = NULL,
+    vb_procedure       = NULL,
+    workbook_parameter = NULL,
+    xml                = NULL,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_named_region(
@@ -1840,6 +1838,7 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #' wb_remove_filter(wb, 1:2) ## remove filters
 #' wb_remove_filter(wb, 3) ## Does not affect tables!
 #' @name filter-wb
+#' @family worksheet content functions
 NULL
 #' @rdname filter-wb
 #' @export
@@ -2102,7 +2101,8 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' @param rows,cols Indices of rows and columns to group
 #' @param collapsed If `TRUE` the grouped columns are collapsed
 #' @param levels levels
-#'
+#' @family workbook wrappers
+#' @family worksheet content functions
 #' @examples
 #' # create matrix
 #' t1 <- AirPassengers
@@ -2125,12 +2125,12 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
-#' @name group_cols-wb
+#' @name grouping-wb
 #' @family workbook wrappers
 NULL
 
 #' @export
-#' @rdname group_cols-wb
+#' @rdname grouping-wb
 wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_cols(
@@ -2142,7 +2142,7 @@ wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname group_cols-wb
+#' @rdname grouping-wb
 wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
@@ -2150,7 +2150,7 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 
 
 #' @export
-#' @rdname group_cols-wb
+#' @rdname grouping-wb
 #' @examples
 #' ### create grouping levels
 #' grp_rows <- list(
@@ -2185,7 +2185,7 @@ wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname group_cols-wb
+#' @rdname grouping-wb
 wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
@@ -2336,17 +2336,17 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 #'   add_worksheet()$
 #'   add_image(dims = "G3", file = img, width = 15, height = 12, units = "cm")
 wb_add_image <- function(
-  wb,
-  sheet      = current_sheet(),
-  dims       = "A1",
-  file,
-  width      = 6,
-  height     = 3,
-  row_offset = 0,
-  col_offset = 0,
-  units      = "in",
-  dpi        = 300,
-  ...
+    wb,
+    sheet      = current_sheet(),
+    dims       = "A1",
+    file,
+    width      = 6,
+    height     = 3,
+    row_offset = 0,
+    col_offset = 0,
+    units      = "in",
+    dpi        = 300,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_image(
@@ -2375,13 +2375,13 @@ wb_add_image <- function(
 #' @seealso [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 wb_add_chart_xml <- function(
-  wb,
-  sheet      = current_sheet(),
-  dims       = NULL,
-  xml,
-  col_offset = 0,
-  row_offset = 0,
-  ...
+    wb,
+    sheet      = current_sheet(),
+    dims       = NULL,
+    xml,
+    col_offset = 0,
+    row_offset = 0,
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chart_xml(
@@ -2673,26 +2673,26 @@ wb_add_fill <- function(
 #' @family styles
 #' @export
 wb_add_font <- function(
-      wb,
-      sheet      = current_sheet(),
-      dims       = "A1",
-      name       = "Calibri",
-      color      = wb_color(hex = "FF000000"),
-      size       = "11",
-      bold       = "",
-      italic     = "",
-      outline    = "",
-      strike     = "",
-      underline  = "",
-      # fine tuning
-      charset    = "",
-      condense   = "",
-      extend     = "",
-      family     = "",
-      scheme     = "",
-      shadow     = "",
-      vert_align = "",
-      ...
+    wb,
+    sheet      = current_sheet(),
+    dims       = "A1",
+    name       = "Calibri",
+    color      = wb_color(hex = "FF000000"),
+    size       = "11",
+    bold       = "",
+    italic     = "",
+    outline    = "",
+    strike     = "",
+    underline  = "",
+    # fine tuning
+    charset    = "",
+    condense   = "",
+    extend     = "",
+    family     = "",
+    scheme     = "",
+    shadow     = "",
+    vert_align = "",
+    ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
@@ -2928,21 +2928,21 @@ wb_add_named_style <- function(
 #'   )
 #' @export
 wb_add_dxfs_style <- function(
-  wb,
-  name,
-  font_name      = NULL,
-  font_size      = NULL,
-  font_color     = NULL,
-  num_fmt        = NULL,
-  border         = NULL,
-  border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
-  border_style   = getOption("openxlsx2.borderStyle", "thin"),
-  bg_fill        = NULL,
-  gradient_fill  = NULL,
-  text_bold      = NULL,
-  text_italic    = NULL,
-  text_underline = NULL,
-  ...
+    wb,
+    name,
+    font_name      = NULL,
+    font_size      = NULL,
+    font_color     = NULL,
+    num_fmt        = NULL,
+    border         = NULL,
+    border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
+    border_style   = getOption("openxlsx2.borderStyle", "thin"),
+    bg_fill        = NULL,
+    gradient_fill  = NULL,
+    text_bold      = NULL,
+    text_italic    = NULL,
+    text_underline = NULL,
+    ...
 ) {
 
   assert_workbook(wb)
@@ -2999,7 +2999,7 @@ wb_add_comment <- function(
     dims    = "A1",
     comment,
     ...
-  ) {
+) {
 
   assert_workbook(wb)
 
@@ -3024,7 +3024,7 @@ wb_remove_comment <- function(
     sheet      = current_sheet(),
     dims       = "A1",
     ...
-  ) {
+) {
 
   assert_workbook(wb)
 
@@ -3035,18 +3035,18 @@ wb_remove_comment <- function(
   )
 }
 
-#' @rdname wb_add_thread
-#' @details
-#' If a threaded comment is added, it needs a person attached with it.
-#' The default is to create a person with provider id `"None"`.
-#' Other providers are possible with specific values for `id` and `user_id`.
-#' If you require the following, create a workbook via spreadsheet software load
-#' it and get the values with [wb_get_person()]
+#' Helper for adding threaded comments
+#'
+#' Adds a person to a workbook, so that they can be the author of threaded
+#' comments in a workbook with [wb_add_thread()]
+#'
+#' @name wb_person
 #' @param wb a Workbook
 #' @param name the name of the person to display.
 #' @param id (optional) the display id
 #' @param user_id (optional) the user id
 #' @param provider_id (optional) the provider id
+#' @seealso [wb_add_thread()]
 #' @keywords comments
 #' @export
 wb_add_person <- function(
@@ -3065,30 +3065,41 @@ wb_add_person <- function(
   )
 }
 
-#' @rdname wb_add_thread
+#' @rdname wb_person
 #' @export
 wb_get_person <- function(wb, name = NULL) {
   assert_workbook(wb)
   wb$get_person(name)
 }
 
-#' add threaded comment to worksheet
+#' Add threaded comments to a cell in a worksheet
 #'
 #' These functions allow adding thread comments to spreadsheets.
-#' This is not yet supported by all spreadsheet software.
-#' @param wb a workbook
-#' @param sheet a worksheet
-#' @param dims a cell
-#' @param comment the comment to add
-#' @param person_id the person Id this should be added for
-#' @param reply logical if the comment is a reply
-#' @param resolve logical if the comment should be marked as resolved
-#' @seealso [wb_add_comment()]
-#' @examples
-#' wb <- wb_workbook()$add_worksheet()$
-#' add_person(name = "openxlsx2")
+#' This is not yet supported by all spreadsheet software. A threaded comment must
+#' be tied to a person created by [wb_add_person()].
 #'
-#' pid <- wb$get_person(name = "openxlsx2")$id
+#' If a threaded comment is added, it needs a person attached to it.
+#' The default is to create a person with provider id `"None"`.
+#' Other providers are possible with specific values for `id` and `user_id`.
+#' If you require the following, create a workbook via spreadsheet software load
+#' it and get the values with [wb_get_person()]
+#'
+#' @param wb A workbook
+#' @param sheet A worksheet
+#' @param dims A cell
+#' @param comment The text to add, a character vector.
+#' @param person_id the person Id this should be added. The default is
+#'   `getOption("openxlsx2.thread_id")` if set.
+#' @param reply Is the comment a reply? (default `FALSE`)
+#' @param resolve Should the comment be resolved? (default `FALSE`)
+#' @seealso [wb_add_comment()] [wb_person]
+#' @family worksheet content functions
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()
+#' # Add a person to the workbook.
+#' wb$add_person(name = "someone who likes to edit workbooks")
+#'
+#' pid <- wb$get_person(name = "someone who likes to edit workbooks")$id
 #'
 #' # write a comment to a thread, reply to one and solve some
 #' wb <- wb %>%
@@ -3153,13 +3164,13 @@ wb_add_form_control <- function(
 ) {
   assert_workbook(wb)
   wb$clone()$add_form_control(
-      sheet   = sheet,
-      dims    = dims,
-      type    = type,
-      text    = text,
-      link    = link,
-      range   = range,
-      checked = checked
+    sheet   = sheet,
+    dims    = dims,
+    type    = type,
+    text    = text,
+    link    = link,
+    range   = range,
+    checked = checked
   )
 
 }
@@ -3179,6 +3190,7 @@ wb_add_form_control <- function(
 #' @param type The type of conditional formatting rule to apply. One of `"expression"`, `"colorScale"` or others mentioned in **Details**.
 #' @param params A list of additional parameters passed.  See **Details** for more.
 #' @param ... additional arguments
+#' @family worksheet content functions
 #' @details
 #' Conditional formatting `type` accept different parameters. Unless noted,
 #' unlisted parameters are ignored.
@@ -3350,7 +3362,7 @@ wb_add_ignore_error <- function(
     two_digit_text_year   = two_digit_text_year,
     unlocked_formula      = unlocked_formula,
     ...                   = ...
-    )
+  )
 }
 
 #' Modify the default view of a worksheet

@@ -50,7 +50,7 @@ wb_get_creators(wb)
 Other workbook wrappers: 
 \code{\link{base_font-wb}},
 \code{\link{col_widths-wb}},
-\code{\link{group_cols-wb}},
+\code{\link{grouping-wb}},
 \code{\link{row_heights-wb}},
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},

@@ -72,7 +72,7 @@ wbHyperlink <- R6::R6Class(
 )
 
 #' Create a new hyperlink object
-#' @rdname Hyperlink
+#' @noRd
 wb_hyperlink <- function() {
   wbHyperlink$new(ref = character(), target = character(), location = character())
 }

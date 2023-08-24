@@ -91,11 +91,25 @@ The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If \code{x} c
 string, the output will be broken.
 }
 \seealso{
+Other worksheet content functions: 
+\code{\link{col_widths-wb}},
+\code{\link{filter-wb}},
+\code{\link{grouping-wb}},
+\code{\link{named_region-wb}},
+\code{\link{row_heights-wb}},
+\code{\link{wb_add_conditional_formatting}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_formula}()},
+\code{\link{wb_add_pivot_table}()},
+\code{\link{wb_add_thread}()},
+\code{\link{wb_freeze_pane}()},
+\code{\link{wb_merge_cells}()}
+
 Other workbook wrappers: 
 \code{\link{base_font-wb}},
 \code{\link{col_widths-wb}},
 \code{\link{creators-wb}},
-\code{\link{group_cols-wb}},
+\code{\link{grouping-wb}},
 \code{\link{row_heights-wb}},
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data}()},
@@ -111,3 +125,4 @@ Other workbook wrappers:
 \code{\link{wb_workbook}()}
 }
 \concept{workbook wrappers}
+\concept{worksheet content functions}

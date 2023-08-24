@@ -37,14 +37,14 @@
 #' }
 #' @export
 xl_open <- function(x, interactive = NA) {
-  # one of the only functions like wb_get_named_regions() to accept a wbWorkbook or a file
+  # The only function to accept a workbook or a file.
   UseMethod("xl_open")
 }
 
 #' @rdname xl_open
 #' @export
 xl_open.wbWorkbook <- function(x, interactive = NA) {
-  stopifnot(R6::is.R6(x))
+  assert_workbook(x)
   has_macros <- isTRUE(length(x$vbaProject) > 0)
   xl_open(x$clone()$save(temp_xlsx(macros = has_macros))$path, interactive = interactive)
 }

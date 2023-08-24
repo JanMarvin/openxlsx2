@@ -78,8 +78,7 @@ wb$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
 
 ## delete one
 wb$remove_named_region(name = "iris2")
-wb_get_named_regions(wb)
-
+wb$get_named_regions()
 ## read named regions
 df <- wb_to_df(wb, named_region = "iris")
 head(df)
@@ -87,4 +86,19 @@ head(df)
 }
 \seealso{
 \code{\link[=wb_get_named_regions]{wb_get_named_regions()}}
+
+Other worksheet content functions: 
+\code{\link{col_widths-wb}},
+\code{\link{filter-wb}},
+\code{\link{grouping-wb}},
+\code{\link{row_heights-wb}},
+\code{\link{wb_add_conditional_formatting}()},
+\code{\link{wb_add_data_table}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_formula}()},
+\code{\link{wb_add_pivot_table}()},
+\code{\link{wb_add_thread}()},
+\code{\link{wb_freeze_pane}()},
+\code{\link{wb_merge_cells}()}
 }
+\concept{worksheet content functions}

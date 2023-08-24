@@ -75,7 +75,7 @@ Other workbook wrappers:
 \code{\link{base_font-wb}},
 \code{\link{col_widths-wb}},
 \code{\link{creators-wb}},
-\code{\link{group_cols-wb}},
+\code{\link{grouping-wb}},
 \code{\link{row_heights-wb}},
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
@@ -89,5 +89,20 @@ Other workbook wrappers:
 \code{\link{wb_save}()},
 \code{\link{wb_set_last_modified_by}()},
 \code{\link{wb_workbook}()}
+
+Other worksheet content functions: 
+\code{\link{col_widths-wb}},
+\code{\link{filter-wb}},
+\code{\link{grouping-wb}},
+\code{\link{named_region-wb}},
+\code{\link{row_heights-wb}},
+\code{\link{wb_add_conditional_formatting}()},
+\code{\link{wb_add_data_table}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_pivot_table}()},
+\code{\link{wb_add_thread}()},
+\code{\link{wb_freeze_pane}()},
+\code{\link{wb_merge_cells}()}
 }
 \concept{workbook wrappers}
+\concept{worksheet content functions}

@@ -3,8 +3,7 @@
 #'
 #' @description
 #' A chart sheet
-#'
-#' @export
+#' @noRd
 wbChartSheet <- R6::R6Class(
   "wbChartSheet",
 

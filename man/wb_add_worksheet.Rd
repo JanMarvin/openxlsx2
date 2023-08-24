@@ -39,10 +39,10 @@ hidden.}
 \item{row_col_headers}{A logical. If \code{FALSE}, the worksheet colname and rowname will be
 hidden.}
 
-\item{tab_color}{Color of the worksheet tab. A  \code{\link[=wb_color]{wb_color()}},  a valid color (belonging to
+\item{tab_color}{Color of the sheet tab. A  \code{\link[=wb_color]{wb_color()}},  a valid color (belonging to
 \code{grDevices::colors()}) or a valid hex color beginning with "#".}
 
-\item{zoom}{The worksheet zoom level, a numeric between 10 and 400 as a
+\item{zoom}{The sheet zoom level, a numeric between 10 and 400 as a
 percentage. (A zoom value smaller than 10 will default to 10.)}
 
 \item{header, odd_header, even_header, first_header, footer, odd_footer, even_footer, first_footer}{Character vector of length 3 corresponding to positions left, center,
@@ -135,7 +135,7 @@ Other workbook wrappers:
 \code{\link{base_font-wb}},
 \code{\link{col_widths-wb}},
 \code{\link{creators-wb}},
-\code{\link{group_cols-wb}},
+\code{\link{grouping-wb}},
 \code{\link{row_heights-wb}},
 \code{\link{wb_add_chartsheet}()},
 \code{\link{wb_add_data_table}()},
