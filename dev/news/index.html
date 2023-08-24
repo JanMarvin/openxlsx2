@@ -100,7 +100,8 @@
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>
-<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> now handles <code>date1904</code> detection in . Previous results from this somewhat rare file type were using a wrong timezone origin.</li>
+<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> now handles <code>date1904</code> detection. Previous results from this somewhat rare file type were using the default timezone origin of 1900-01-01. <a href="https://github.com/JanMarvin/openxlsx2/pull/737" class="external-link">737</a>
+</li>
 <li>
 <code><a href="../reference/wb_load.html">wb_load()</a></code> handles more cases.
 <ul><li>With workbooks with threaded comments <a href="https://github.com/JanMarvin/openxlsx2/issues/731" class="external-link">731</a>
