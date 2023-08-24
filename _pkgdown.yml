@@ -104,7 +104,6 @@ reference:
   - wb_comment
   - wb_data
   - wb_dims
-  - wb_hyperlink
   - starts_with("create_")
 
 
