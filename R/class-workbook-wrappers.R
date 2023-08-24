@@ -669,8 +669,8 @@ wb_add_chartsheet <- function(
 #' wb$add_data(sheet = 5, 1:400)
 #' wb$add_data(sheet = 6, 1:400)
 #' wb$add_data(sheet = 7, 1:400)
-#'b$add_data(sheet = 8, 1:400)
-wbdd_worksheet <- function(
+#' wb$add_data(sheet = 8, 1:400)
+wb_add_worksheet <- function(
   wb,
   sheet           = next_sheet(),
   grid_lines      = TRUE,
@@ -781,13 +781,13 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #' wb$freeze_pane(3, first_row = TRUE) ## shortcut to first_active_row = 2
 #' wb$freeze_pane(4, first_active_row = 1, first_active_col = "D")
 wb_freeze_pane <- function(
-    wb,
-    sheet            = current_sheet(),
-    first_active_row = NULL,
-    first_active_col = NULL,
-    first_row        = FALSE,
-    first_col        = FALSE,
-    ...
+  wb,
+  sheet            = current_sheet(),
+  first_active_row = NULL,
+  first_active_col = NULL,
+  first_row        = FALSE,
+  first_col        = FALSE,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$freeze_pane(
@@ -1022,13 +1022,13 @@ wb_add_plot <- function(
 #' @seealso [wb_add_chart_xml()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 wb_add_drawing <- function(
-    wb,
-    sheet      = current_sheet(),
-    dims       = "A1",
-    xml,
-    col_offset = 0,
-    row_offset = 0,
-    ...
+  wb,
+  sheet      = current_sheet(),
+  dims       = "A1",
+  xml,
+  col_offset = 0,
+  row_offset = 0,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_drawing(
@@ -1156,11 +1156,11 @@ NULL
 #' @export
 #' @rdname base_font-wb
 wb_set_base_font <- function(
-    wb,
-    font_size  = 11,
-    font_color = wb_color(theme = "1"),
-    font_name  = "Calibri",
-    ...
+  wb,
+  font_size  = 11,
+  font_color = wb_color(theme = "1"),
+  font_name  = "Calibri",
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_base_font(
@@ -1737,26 +1737,26 @@ NULL
 #' @rdname named_region-wb
 #' @export
 wb_add_named_region <- function(
-    wb,
-    sheet             = current_sheet(),
-    dims              = "A1",
-    name,
-    local_sheet        = FALSE,
-    overwrite          = FALSE,
-    comment            = NULL,
-    hidden             = NULL,
-    custom_menu        = NULL,
-    description        = NULL,
-    is_function        = NULL,
-    function_group_id  = NULL,
-    help               = NULL,
-    local_name         = NULL,
-    publish_to_server  = NULL,
-    status_bar         = NULL,
-    vb_procedure       = NULL,
-    workbook_parameter = NULL,
-    xml                = NULL,
-    ...
+  wb,
+  sheet             = current_sheet(),
+  dims              = "A1",
+  name,
+  local_sheet        = FALSE,
+  overwrite          = FALSE,
+  comment            = NULL,
+  hidden             = NULL,
+  custom_menu        = NULL,
+  description        = NULL,
+  is_function        = NULL,
+  function_group_id  = NULL,
+  help               = NULL,
+  local_name         = NULL,
+  publish_to_server  = NULL,
+  status_bar         = NULL,
+  vb_procedure       = NULL,
+  workbook_parameter = NULL,
+  xml                = NULL,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_named_region(
@@ -2336,17 +2336,17 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 #'   add_worksheet()$
 #'   add_image(dims = "G3", file = img, width = 15, height = 12, units = "cm")
 wb_add_image <- function(
-    wb,
-    sheet      = current_sheet(),
-    dims       = "A1",
-    file,
-    width      = 6,
-    height     = 3,
-    row_offset = 0,
-    col_offset = 0,
-    units      = "in",
-    dpi        = 300,
-    ...
+  wb,
+  sheet      = current_sheet(),
+  dims       = "A1",
+  file,
+  width      = 6,
+  height     = 3,
+  row_offset = 0,
+  col_offset = 0,
+  units      = "in",
+  dpi        = 300,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_image(
@@ -2375,13 +2375,13 @@ wb_add_image <- function(
 #' @seealso [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
 wb_add_chart_xml <- function(
-    wb,
-    sheet      = current_sheet(),
-    dims       = NULL,
-    xml,
-    col_offset = 0,
-    row_offset = 0,
-    ...
+  wb,
+  sheet      = current_sheet(),
+  dims       = NULL,
+  xml,
+  col_offset = 0,
+  row_offset = 0,
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chart_xml(
