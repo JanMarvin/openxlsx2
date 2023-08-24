@@ -3,20 +3,20 @@
 \name{wb_add_comment}
 \alias{wb_add_comment}
 \alias{wb_remove_comment}
-\title{Add / remove comment in a worksheet}
+\title{Add comment to worksheet}
 \usage{
 wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
 
 wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 }
 \arguments{
-\item{wb}{A Workbook object}
+\item{wb}{A workbook object}
 
 \item{sheet}{A worksheet of the workbook}
 
-\item{dims}{Row and column as spreadsheet dimension, e.g. "A1"}
+\item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 
-\item{comment}{A comment to apply to the worksheet}
+\item{comment}{A comment to apply to \code{dims} created by \code{\link[=wb_comment]{wb_comment()}}, a string or a \code{\link[=fmt_txt]{fmt_txt()}} object}
 
 \item{...}{additional arguments}
 }
@@ -24,26 +24,27 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 The Workbook object, invisibly.
 }
 \description{
-The comment functions (add and remove) allow the modification of comments.
-In more recent spreadsheet software they are called notes, while they are called
-comments in openxml. Modification of what newer spreadsheet software now calls
-comment is possible via \code{\link[=wb_add_thread]{wb_add_thread()}}.
-
-\code{comment} can be created with \code{\link[=create_comment]{create_comment()}} to add styling.
+Add comment to worksheet
+}
+\details{
+If applying a \code{comment} with a string, it will use \code{\link[=wb_comment]{wb_comment()}} default values.
 }
 \examples{
 wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
 # add a comment without author
-c1 <- create_comment(text = "this is a comment", author = "")
+c1 <- wb_comment(text = "this is a comment", author = "")
 wb$add_comment(dims = "B10", comment = c1)
 #' # Remove comment
 wb$remove_comment(sheet = "Sheet 1", dims = "B10")
 # Write another comment with author information
-c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+c2 <- wb_comment(text = "this is another comment", author = "Marco Polo", visible = TRUE)
 wb$add_comment(sheet = 1, dims = "C10", comment = c2)
+# Works with formatted text also.
+formatted_text <- fmt_txt("bar", underline = TRUE)
+wb$add_comment(dims = "B5", comment = formatted_text)
 }
 \seealso{
-\code{\link[=create_comment]{create_comment()}}, \code{\link[=wb_add_thread]{wb_add_thread()}}
+\code{\link[=wb_comment]{wb_comment()}}, \code{\link[=wb_add_thread]{wb_add_thread()}}
 }
 \keyword{comments}

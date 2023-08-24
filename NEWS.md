@@ -1,25 +1,55 @@
 # openxlsx2 (development version)
 
-## Fixes
+## Breaking changes
 
-* fix date1904 detection in `wb_to_df()`. Previous results from this somewhat rare file type were using a wrong timezone origin.
-* corrections in vignettes
-* fixes for loading workbooks with threaded comments
-* fixes for loading workbooks with embeddings other than docx
+* `wb_get_worksheet()`, `wb_ws()`, `wb_get_sheet_name()` are no longer exported. [735](https://github.com/JanMarvin/openxlsx2/pull/735) They never worked as expected.
+  * Use `wb_get_sheet_names()`, `wb_get_active_sheet()`, `wb_get_selected()` instead.
+ 
+* `wbChartSheet` is now internal ([760](https://github.com/JanMarvin/openxlsx2/pull/760), @olivroy)
+
+## Deprecated functions
+
+These functions are no longer recommended.
+They will continue to work for some time, but changing to newer functions is recommended.
+
+* `delete_data()` is deprecated in favour of `wb_remove_tables()` or `wb_clean_sheet()`
+* `create_comment()` is deprecated in favour of `wb_comment()`. Note that while `wb_comment()` has some new defaults, the behavior of `create_comment()` has not changed. ([758](https://github.com/JanMarvin/openxlsx2/pull/758), @olivroy)
 
 ## New features
 
-* provide solve argument for `wb_merge_cells()`. This allows to solve cell intersecting regions. [733](https://github.com/JanMarvin/openxlsx2/pull/733)
+* `wb_comment()` is a new helper function to help create `wbComment` objects
+  It is very similar to `create_comment()`, with the following differences:
+  * `author` looks at `options("openxlsx2.creator")`; (`create_comment()` only used `sys.getenv("user")`)
+  * `visible` defaults to `FALSE` to account for modern spreadsheet software behavior. (`create_comment()`, it is `TRUE`).
+  * `width` and `height` must now be of length 1. (In `create_comment()`, the first element is taken, other are ignored.)
 
-## Breaking changes
+* `wb_get_sheet_names()` gains a `escape` argument to allow special XML characters to be escaped. [252](https://github.com/JanMarvin/openxlsx2/issues/252)
 
-* no longer exporting `wb_get_sheet_name()`
-* deprecating `delete_data()` and minor improvements to `wb_clean_sheet()`
-* removing `wb_get_worksheet()`, `wb_ws()`. These never worked as expected.
+* `wb_color()` now accepts hex colors with leading sharp (e.g. "#FFFFF") [728](https://github.com/JanMarvin/openxlsx2/pull/728).
+
+* `wb_merge_cells()` gains a `solve` argument. This allows to solve cell intersecting regions. [733](https://github.com/JanMarvin/openxlsx2/pull/733)
+
+* `wb_add_comment(comment = "x")` no longer errors when a comment as a character vector no longer fails ([758](https://github.com/JanMarvin/openxlsx2/pull/758), @olivroy)
+
+
+## Documentation improvement
+
+* Tweaks to documentation and vignettes to make them more consistent.
+
+## Fixes
+
+* `wb_to_df()` now handles `date1904` detection in . Previous results from this somewhat rare file type were using a wrong timezone origin.
+* `wb_load()` handles more cases.
+  * With workbooks with threaded comments [731](https://github.com/JanMarvin/openxlsx2/issues/731)
+  * With workbooks with embeddings other than docx [732](https://github.com/JanMarvin/openxlsx2/pulls/732)
+  * with workbooks with long hyperlinks [753](https://github.com/JanMarvin/openxlsx2/issues/753)
+
+* `wb_load()` adds the `path` to the `wbWorkbook` object. [741](https://github.com/JanMarvin/openxlsx2/issues/741)
+* `wb_set_header_footer()` now works with special characters [747](https://github.com/JanMarvin/openxlsx2/issues/747)
 
 ## Internal changes
 
-* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()` are now wrapper functions.
+* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()`, `wb_get_named_regions()` are now wrapper functions. [735](https://github.com/JanMarvin/openxlsx2/pull/735)
 
 
 ***************************************************************************
@@ -52,7 +82,7 @@
     * `wb_grid_lines()` for `wb_set_grid_lines()`
 
   * make `get_cell_refs()`, `get_date_origin()`, `guess_col_type()`, and `write_file()`, `dataframe_to_dims()`, `dims_to_dataframe()`, `wb_get_sheet_name()` internal functions
-  * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbChartSheet`, `wbComment`, `wbHyperlink` internal
+  * make classes `styles_mgr()`, `wbSheetData`, `wbWorksheet`, `wbComment`, `wbHyperlink` internal
 
 ## New features
 

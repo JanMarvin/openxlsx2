@@ -73,6 +73,8 @@
 #' * `options("openxlsx2.orientation" = "portrait")` ## page orientation
 #' * `options("openxlsx2.sheet.default_name" = "Sheet")`
 #' * `options("openxlsx2.rightToLeft" = NULL)`
+#' * `options("openxlsx2.soon_deprecated" = FALSE)` ## Set to `TRUE` if you want a warning if using some functions deprecated recently in openxlsx2
+#' * `options("openxlsx2.creator")` ## A default name for the creator of comments or new `wbWorkbook` objects.
 #'
 #' @name openxlsx2_options
 NULL
@@ -103,6 +105,7 @@ openxlsx2_celltype <- c(
 #' * [convertToExcelDate()] -> [convert_to_excel_date()]
 #' * [wb_grid_lines()] -> [wb_set_grid_lines()]
 #' * [delete_data()] -> [wb_clean_sheet()]
+#' * [create_comment()] -> [wb_comment()]
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
 NULL

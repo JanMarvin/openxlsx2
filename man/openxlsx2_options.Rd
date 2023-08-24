@@ -17,5 +17,7 @@ The openxlsx2 package uses global options to simplify formatting:
 \item \code{options("openxlsx2.orientation" = "portrait")} ## page orientation
 \item \code{options("openxlsx2.sheet.default_name" = "Sheet")}
 \item \code{options("openxlsx2.rightToLeft" = NULL)}
+\item \code{options("openxlsx2.soon_deprecated" = FALSE)} ## Set to \code{TRUE} if you want a warning if using some functions deprecated recently in openxlsx2
+\item \code{options("openxlsx2.creator")} ## A default name for the creator of comments or new \code{wbWorkbook} objects.
 }
 }

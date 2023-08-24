@@ -10,7 +10,7 @@
 #' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
 #' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 #'
-#' @param creator Creator of the workbook (your name). Defaults to login username
+#' @param creator Creator of the workbook (your name). Defaults to login username or `options("openxlsx2.creator")` if set.
 #' @param title,subject,category Workbook property, a string.
 #' @param datetime_created The time of the workbook is created
 #' @param theme Optional theme identified by string or number.
@@ -115,6 +115,7 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' Many base classes are covered, though not all and far from all third-party classes.
 #' When data of an unknown class is written, it is handled with `as.character()`.
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @return A `wbWorkbook`, invisibly.
 #' @examples
 #' ## See formatting vignette for further examples.
@@ -237,6 +238,7 @@ wb_add_data <- function(
 #' @param banded_cols logical. If `TRUE`, the columns are color banded.
 #' @param ... additional arguments
 #'
+#' @family worksheet content functions
 #' @family workbook wrappers
 #' @export
 wb_add_data_table <- function(
@@ -315,9 +317,10 @@ wb_add_data_table <- function(
 #'
 #' wb <- wb %>%
 #'   wb_add_pivot_table(df, dims = "A3",
-#'   filter = "am", rows = "cyl", cols = "gear", data = "disp"
+#'     filter = "am", rows = "cyl", cols = "gear", data = "disp"
 #'   )
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @export
 wb_add_pivot_table <- function(
     wb,
@@ -385,6 +388,7 @@ wb_add_pivot_table <- function(
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @export
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()
@@ -530,12 +534,9 @@ wb_copy_cells <- function(
 #' # or let us decide how to solve this
 #' wb <- wb_merge_cells(wb, dims = "A1:A10", solve = TRUE)
 #'
-#' @name wb_merge_cells
 #' @family workbook wrappers
-NULL
-
+#' @family worksheet content functions
 #' @export
-#' @rdname wb_merge_cells
 wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, ... = ...)
@@ -553,18 +554,14 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
 
 #' Add a chartsheet to a workbook
 #'
+#' A chartsheet is a special type of sheet that handles charts output. You must
+#' add a chart to the sheet. Otherwise, this will break the workbook.
+#'
 #' @param wb A Workbook object to attach the new chartsheet
 #' @param sheet A name for the new chartsheet
-#' @param tab_color Color of the chartsheet tab. A valid color (belonging to
-#'   `colors()`) or a valid hex color beginning with "#"
-#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
-#'   percentage.
-#' @param visible If `FALSE`, sheet is hidden else visible.
-#' @param ... ...
-#' @details After chartsheet creation a chart must be added to the sheet.
-#' Otherwise the chartsheet will break the workbook.
+#' @inheritParams wb_add_worksheet
 #' @family workbook wrappers
-#' @seealso [wb_add_mschart()] [wbChartSheet]
+#' @seealso [wb_add_mschart()]
 #' @export
 wb_add_chartsheet <- function(
   wb,
@@ -606,9 +603,9 @@ wb_add_chartsheet <- function(
 #'   hidden.
 #' @param row_col_headers A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tab_color Color of the worksheet tab. A  [wb_color()],  a valid color (belonging to
+#' @param tab_color Color of the sheet tab. A  [wb_color()],  a valid color (belonging to
 #'   `grDevices::colors()`) or a valid hex color beginning with "#".
-#' @param zoom The worksheet zoom level, a numeric between 10 and 400 as a
+#' @param zoom The sheet zoom level, a numeric between 10 and 400 as a
 #'   percentage. (A zoom value smaller than 10 will default to 10.)
 #' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
 #'   Character vector of length 3 corresponding to positions left, center,
@@ -627,7 +624,6 @@ wb_add_chartsheet <- function(
 #'
 #' @export
 #' @family workbook wrappers
-#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
@@ -768,7 +764,7 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #'
 #' @export
 #' @family workbook wrappers
-#'
+#' @family worksheet content functions
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook("Kenshin")
@@ -815,9 +811,10 @@ wb_freeze_pane <- function(
 #' @param sheet A name or index of a worksheet. (A vector is accepted for `remove_row_heights()`)
 #' @param rows Indices of rows to set / remove (if any) custom height.
 #' @param heights Heights to set `rows` to specified in a spreadsheet column height units.
-#' @param hidden Option to hide rows. A logical vector of length 1 or lengt of `rows`
+#' @param hidden Option to hide rows. A logical vector of length 1 or length of `rows`
 #' @name wb_row_heights
 #' @family workbook wrappers
+#' @family worksheet content functions
 #'
 #' @examples
 #' ## Create a new workbook
@@ -880,6 +877,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'   If `TRUE`, the columns are hidden.
 #'
 #' @family workbook wrappers
+#' @family worksheet content functions
 #'
 #' @examples
 #' ## Create a new workbook
@@ -1614,7 +1612,7 @@ wb_protect <- function(
 #' Modify grid lines visibility in a worksheet
 #'
 #' Set worksheet grid lines to show or hide.
-#' You can also add / remove grid lines when creating a worksheeet with
+#' You can also add / remove grid lines when creating a worksheet with
 #' [`wb_add_worksheet(grid_lines = FALSE)`][wb_add_worksheet()]
 #'
 #' @param wb A workbook object
@@ -1709,6 +1707,7 @@ wb_set_order <- function(wb, sheets) {
 #' @param hidden Should the named region be hidden?
 #' @param custom_menu,description,is_function,function_group_id,help,local_name,publish_to_server,status_bar,vb_procedure,workbook_parameter,xml Unknown XML feature
 #' @param ... additional arguments
+#' @family worksheet content functions
 #' @seealso [wb_get_named_regions()]
 #' @examples
 #' ## create named regions
@@ -1727,8 +1726,7 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' ## delete one
 #' wb$remove_named_region(name = "iris2")
-#' wb_get_named_regions(wb)
-#'
+#' wb$get_named_regions()
 #' ## read named regions
 #' df <- wb_to_df(wb, named_region = "iris")
 #' head(df)
@@ -1840,6 +1838,7 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #' wb_remove_filter(wb, 1:2) ## remove filters
 #' wb_remove_filter(wb, 3) ## Does not affect tables!
 #' @name wb_filter
+#' @family worksheet content functions
 NULL
 #' @rdname wb_filter
 #' @export
@@ -1969,7 +1968,7 @@ wb_add_data_validation <- function(
 #' You can set this when creating a worksheet with `wb_add_worksheet(visible = FALSE)`
 #'
 #' @return
-#' * `wb_set_sheet_visibility`: The Worbook object, invisibly.
+#' * `wb_set_sheet_visibility`: The Workbook object, invisibly.
 #' * `wb_get_sheet_visibility()`: A character vector of the worksheet visibility value
 #' @examples
 #'
@@ -1997,7 +1996,7 @@ wb_get_sheet_visibility <- function(wb) {
 #' @rdname wb_sheet_visibility
 #' @param sheet Worksheet identifier
 #' @param value a logical/character vector the same length as sheet,
-#'   if provding a character vector, you can provide any of "hidden", "visible", or "veryHidden"
+#'   if providing a character vector, you can provide any of "hidden", "visible", or "veryHidden"
 #' @export
 wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
   assert_workbook(wb)
@@ -2102,7 +2101,8 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' @param rows,cols Indices of rows and columns to group
 #' @param collapsed If `TRUE` the grouped columns are collapsed
 #' @param levels levels
-#'
+#' @family workbook wrappers
+#' @family worksheet content functions
 #' @examples
 #' # create matrix
 #' t1 <- AirPassengers
@@ -2126,7 +2126,6 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
 #' @name wb_grouping
-#' @family workbook wrappers
 NULL
 
 #' @export
@@ -2991,37 +2990,34 @@ wb_add_dxfs_style <- function(
 
 }
 
-#' Add / remove comment in a worksheet
+#' Add comment to worksheet
 #'
-#' @description
-#' The comment functions (add and remove) allow the modification of comments.
-#' In more recent spreadsheet software they are called notes, while they are called
-#' comments in openxml. Modification of what newer spreadsheet software now calls
-#' comment is possible via [wb_add_thread()].
+#' @details
+#' If applying a `comment` with a string, it will use [wb_comment()] default values.
 #'
-#' `comment` can be created with [create_comment()] to add styling.
-#'
-#' @param wb A Workbook object
+#' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param dims Row and column as spreadsheet dimension, e.g. "A1"
-#' @param comment A comment to apply to the worksheet
-# TODO To fit, maybe comment, can be `x`
+#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
+#' @param comment A comment to apply to `dims` created by [wb_comment()], a string or a [fmt_txt()] object
 #' @param ... additional arguments
 #' @returns The Workbook object, invisibly.
-#' @seealso [create_comment()], [wb_add_thread()]
+#' @seealso [wb_comment()], [wb_add_thread()]
 #' @name wb_add_comment
 #' @keywords comments
 #' @examples
 #' wb <- wb_workbook()
 #' wb$add_worksheet("Sheet 1")
 #' # add a comment without author
-#' c1 <- create_comment(text = "this is a comment", author = "")
+#' c1 <- wb_comment(text = "this is a comment", author = "")
 #' wb$add_comment(dims = "B10", comment = c1)
 #' #' # Remove comment
 #' wb$remove_comment(sheet = "Sheet 1", dims = "B10")
 #' # Write another comment with author information
-#' c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+#' c2 <- wb_comment(text = "this is another comment", author = "Marco Polo", visible = TRUE)
 #' wb$add_comment(sheet = 1, dims = "C10", comment = c2)
+#' # Works with formatted text also.
+#' formatted_text <- fmt_txt("bar", underline = TRUE)
+#' wb$add_comment(dims = "B5", comment = formatted_text)
 NULL
 #' @rdname wb_add_comment
 #' @export
@@ -3034,6 +3030,11 @@ wb_add_comment <- function(
   ) {
 
   assert_workbook(wb)
+
+  if (is.character(comment)) {
+    comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))
+  }
+
   assert_comment(comment)
 
   wb$clone()$add_comment(
@@ -3111,6 +3112,7 @@ wb_get_person <- function(wb, name = NULL) {
 #' @param reply logical if the comment is a reply
 #' @param resolve logical if the comment should be marked as resolved
 #' @seealso [wb_add_comment()]
+#' @family worksheet content functions
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()$
 #' add_person(name = "openxlsx2")
@@ -3206,6 +3208,7 @@ wb_add_form_control <- function(
 #' @param type The type of conditional formatting rule to apply. One of `"expression"`, `"colorScale"` or others mentioned in **Details**.
 #' @param params A list of additional parameters passed.  See **Details** for more.
 #' @param ... additional arguments
+#' @family worksheet content functions
 #' @details
 #' Conditional formatting `type` accept different parameters. Unless noted,
 #' unlisted parameters are ignored.

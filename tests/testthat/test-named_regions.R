@@ -27,7 +27,10 @@ test_that("Maintaining Named Regions on Load", {
   out_file <- temp_xlsx()
   wb_save(wb, out_file, overwrite = TRUE)
 
-  expect_equal(object = wb_get_named_regions(wb), expected = wb_get_named_regions(out_file))
+  expect_equal(
+    object = wb_get_named_regions(wb),
+    expected = wb_get_named_regions(wb_load(out_file))
+    )
 
   df1 <- read_xlsx(wb, namedRegion = "iris")
   df2 <- read_xlsx(out_file, namedRegion = "iris")
@@ -132,7 +135,7 @@ test_that("Load names from an Excel file with funky non-region names", {
   )
   expect_equal(dn$coords, c(rep("", 26), "B3", "B4", "B4", "B3"))
 
-  dn2 <- wb_get_named_regions(filename)
+  dn2 <- wb_get_named_regions(wb_load(filename))
   expect_equal(dn, dn2)
 })
 
@@ -324,7 +327,8 @@ test_that("Matching Substrings breaks reading named regions", {
   expect_equal(r1$coords, c("C12:G18", "I3:M6", "E24:P30", "O12:Z15"))
   expect_equal(r1$name, c("t", "t1", "t2", "t22"))
 
-  r2 <- wb_get_named_regions(temp_file)
+  wb2 <- wb_load(temp_file)
+  r2 <- wb_get_named_regions(wb2)
   expect_equal(r2$sheets, c("table", "table", "table2", "table2"))
   expect_equal(r1$coords, c("C12:G18", "I3:M6", "E24:P30", "O12:Z15"))
   expect_equal(r2$name, c("t", "t1", "t2", "t22"))
@@ -450,7 +454,29 @@ test_that("load table", {
 
 })
 
-test_that("get_named_regions is deprecated", {
+test_that("wb_named_regions() is not too noisy in its deprecation. (#764)", {
+  wb <- wb_workbook()$add_worksheet()
+  temp_file <- temp_xlsx()
+  wb$save(temp_file)
+  # unacceptable input only possible after 1.0
+  expect_error(expect_warning(wb_get_named_regions(temp_file, x = 1)))
+
+  opt_deprecation <- getOption("openxlsx2.soon_deprecated")
+  options("openxlsx2.soon_deprecated" = FALSE)
+  wb <- wb_workbook()$add_worksheet()
+  temp_file <- temp_xlsx()
+  wb$save(temp_file)
+  expect_no_warning(wb_get_named_regions(temp_file))
+  expect_warning(wb_get_named_regions(x = temp_file))
+
+  options("openxlsx2.soon_deprecated" = TRUE)
+  expect_warning(wb_get_named_regions(temp_file))
+  expect_warning(expect_warning(wb_get_named_regions(x = temp_file)))
+
+  options("openxlsx2.soon_deprecated" = opt_deprecation)
+})
+
+test_that("named regions work.", {
 
   wb <- wb_workbook()$add_worksheet()$add_named_region(
     name = "named_region",

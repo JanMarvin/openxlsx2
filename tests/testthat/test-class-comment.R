@@ -3,23 +3,36 @@ test_that("class wbComment works", {
   expect_null(assert_comment(wb_comment()))
 })
 
+test_that("wb_comment and create_comment are the same except for the different defaults", {
+  c1 <- create_comment("x1", author = "")
+  c1_wb <- wb_comment("x1", visible = TRUE, author = "")
+  expect_equal(c1, c1_wb)
+  # create_comment drops multiple widths and heights silently.
+  # wb_comment errors in this case
+  expect_silent(create_comment(text = "x", author = "", width = c(1, 2)))
+  expect_error(wb_comment(text = "x", author = "", width = c(1, 2)), "width must be a single")
+
+})
+
 test_that("create_comment() works", {
   # error checking
   expect_silent(create_comment("hi", width = 1))
-  expect_error(create_comment("hi", width = 1L))
-  expect_error(create_comment("hi", width = 1:2))
+  expect_silent(create_comment("hi", width = 1L))
+  expect_silent(create_comment("hi", width = c(1, 2)))
+  expect_silent(create_comment("hi", width = 1:2))
+  expect_error(wb_comment("hi", width = 1:2), regexp = "width must be a")
 
   expect_silent(create_comment("hi", height = 1))
-  expect_error(create_comment("hi", height = 1L))
-  expect_error(create_comment("hi", height = 1:2))
-
+  expect_silent(create_comment("hi", height = 1L))
+  expect_silent(create_comment("hi", height = 1:2))
+  expect_error(wb_comment("hi", height = 1:2))
   expect_error(create_comment("hi", visible = NULL))
   expect_error(create_comment("hi", visible = c(TRUE, FALSE)))
 
   expect_error(create_comment("hi", author = 1))
   expect_error(create_comment("hi", author = c("a", "a")))
 
-  expect_true(inherits(create_comment("Hello"), "wbComment"))
+  expect_s3_class(create_comment("Hello"), "wbComment")
 })
 
 
@@ -60,7 +73,7 @@ test_that("comments", {
   wb$add_worksheet()
 
   # write comment without author
-  c1 <- create_comment(text = "this is a comment", author = "")
+  c1 <- create_comment(text = "this is a comment", author = "", visible = FALSE)
   wb$add_comment(dims = "B10", comment = c1)
 
   expect_silent(wb$save(tmp))
@@ -114,8 +127,29 @@ test_that("wb_add_comment", {
     wb_workbook()$add_worksheet()$add_comment(dims = "A1"),
     'argument "comment" is missing, with no default'
   )
-
 })
+
+test_that("wb_add_comment() works without supplying a wbComment object.", {
+  # Do not alter the workspace
+  opt <- getOption("openxlsx2.creator")
+  options("openxlsx2.creator" = "user")
+  # Using the new default values of wb_comment() (options("openxlsx2.creators))
+  wb <- wb_workbook()$add_worksheet()$add_comment(comment = "this is a comment", dims = "A1")
+
+  c2 <- wb_comment(text = "this is a comment")
+  wb2 <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_comment(dims = "A1", comment =  c2)
+  # wb_comment() defaults and comment = "text" defaults are the same.
+  expect_equal(wb$comments, wb2$comments)
+
+  # The wrapper behaves the same
+  wb3 <- wb_workbook()$add_worksheet()$add_comment(comment = "this is a comment")
+  expect_equal(wb$comments, wb3$comments)
+
+  options("openxlsx2.creator" = opt)
+})
+
 
 test_that("wb_remove_comment", {
 

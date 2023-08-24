@@ -10,77 +10,40 @@
 #' @param text display text
 #' @param file Excel file name to point to. If NULL hyperlink is internal.
 #' @examples
-#'
-#' ## Writing internal hyperlinks
-#' wb <- wb_workbook()
-#' wb$add_worksheet("Sheet1")
-#' wb$add_worksheet("Sheet2")
-#' wb$add_worksheet("Sheet 3")
-#' wb$add_data(sheet = 3, x = iris)
-#'
-#' ## External Hyperlink
-#' x <- c("https://www.google.com", "https://www.google.com.au")
-#' names(x) <- c("google", "google Aus")
-#' class(x) <- "hyperlink"
-#'
-#' wb$add_data(sheet = 1, x = x, startCol = 10)
-#'
+#' wb <- wb_workbook()$
+#'   add_worksheet("Sheet1")$add_worksheet("Sheet2")$add_worksheet("Sheet3")
 #'
 #' ## Internal Hyperlink - create hyperlink formula manually
-#' write_formula(
-#'   wb, "Sheet1",
-#'   x = '=HYPERLINK(\"#Sheet2!B3\", "Text to Display - Link to Sheet2")',
-#'   startCol = 3
-#' )
+#' x <- '=HYPERLINK(\"#Sheet2!B3\", "Text to Display - Link to Sheet2")'
+#' wb$add_formula(sheet = "Sheet1", x = x, dims = "A1")
 #'
 #' ## Internal - No text to display using create_hyperlink() function
-#' write_formula(
-#'   wb, "Sheet1",
-#'   startRow = 1,
-#'   x = create_hyperlink(sheet = "Sheet 3", row = 1, col = 2)
-#' )
+#' x <- create_hyperlink(sheet = "Sheet3", row = 1, col = 2)
+#' wb$add_formula(sheet = "Sheet1", x = x, dims = "A2")
 #'
 #' ## Internal - Text to display
-#' write_formula(
-#'   wb, "Sheet1",
-#'   startRow = 2,
-#'   x = create_hyperlink(
-#'     sheet = "Sheet 3", row = 1, col = 2,
-#'     text = "Link to Sheet 3"
-#'   )
-#' )
+#' x <- create_hyperlink(sheet = "Sheet3", row = 1, col = 2,text = "Link to Sheet 3")
+#' wb$add_formula(sheet = "Sheet1", x = x, dims = "A3")
 #'
 #' ## Link to file - No text to display
-#' write_formula(
-#'   wb, "Sheet1",
-#'   startRow = 4,
-#'   x = create_hyperlink(
-#'     sheet = "testing", row = 3, col = 10,
-#'     file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'   )
-#' )
+#' fl <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' x <- create_hyperlink(sheet = "Sheet1", row = 3, col = 10, file = fl)
+#' wb$add_formula(sheet = "Sheet1", x = x, dims = "A4")
 #'
 #' ## Link to file - Text to display
-#' write_formula(
-#'   wb, "Sheet1",
-#'   startRow = 3,
-#'   x = create_hyperlink(
-#'     sheet = "testing", row = 3, col = 10,
-#'     file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"),
-#'     text = "Link to File."
-#'   )
-#' )
+#' fl <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' x <- create_hyperlink(sheet = "Sheet2", row = 3, col = 10, file = fl, text = "Link to File.")
+#' wb$add_formula(sheet = "Sheet1", x = x, dims = "A5")
 #'
 #' ## Link to external file - Text to display
-#' write_formula(
-#'   wb, "Sheet1",
-#'   startRow = 10, startCol = 1,
-#'   x = '=HYPERLINK("[C:/Users]", "Link to an external file")'
-#' )
+#' x <- '=HYPERLINK("[C:/Users]", "Link to an external file")'
+#' wb$add_formula(sheet = "Sheet1", x = x, dims = "A6")
 #'
-#' ## Link to internal file
-#' x = create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
-#' write_formula(wb, "Sheet1", startRow = 11, startCol = 1, x = x)
+#' x <- create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
+#' wb$add_formula(x = x, dims = "A7")
+#'
+#' if (interactive()) wb$open()
+#'
 #' @export
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   if (missing(sheet)) {

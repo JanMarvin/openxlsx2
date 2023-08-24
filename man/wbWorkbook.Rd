@@ -249,6 +249,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_grid_lines}{\code{wbWorkbook$set_grid_lines()}}
 \item \href{#method-wbWorkbook-grid_lines}{\code{wbWorkbook$grid_lines()}}
 \item \href{#method-wbWorkbook-add_named_region}{\code{wbWorkbook$add_named_region()}}
+\item \href{#method-wbWorkbook-get_named_regions}{\code{wbWorkbook$get_named_regions()}}
 \item \href{#method-wbWorkbook-remove_named_region}{\code{wbWorkbook$remove_named_region()}}
 \item \href{#method-wbWorkbook-set_order}{\code{wbWorkbook$set_order()}}
 \item \href{#method-wbWorkbook-get_sheet_visibility}{\code{wbWorkbook$get_sheet_visibility()}}
@@ -2495,6 +2496,28 @@ add a named region
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_named_regions"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_named_regions}{}}}
+\subsection{Method \code{get_named_regions()}}{
+get named regions in a workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_named_regions(tables = FALSE, x = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{tables}}{Return tables as well?}
+
+\item{\code{x}}{Not used.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{data.frame} of named regions
 }
 }
 \if{html}{\out{<hr>}}
