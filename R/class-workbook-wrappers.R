@@ -1740,7 +1740,6 @@ wb_set_order <- function(wb, sheets) {
 NULL
 
 #' @rdname wb_named_region
-#' @usage wb_add_named_region(wb, sheet = current_sheet(), dims = "A1", name, local_sheet = FALSE, overwrite = FALSE, comment = NULL, hidden = NULL, ...)
 #' @export
 wb_add_named_region <- function(
   wb,

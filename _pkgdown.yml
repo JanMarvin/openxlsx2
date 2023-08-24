@@ -19,7 +19,6 @@ reference:
   contents:
   - wb_save
   - write_xlsx
-  - temp_xlsx
 
 - title: View a workbook
   desc: >
@@ -148,6 +147,7 @@ reference:
   - col2int
   - fmt_txt
   - starts_with("convert_")
+  - temp_xlsx
   - waivers
   - dims_helper
   - clean_worksheet_name

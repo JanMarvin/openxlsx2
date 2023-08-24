@@ -6,7 +6,28 @@
 \alias{wb_remove_named_region}
 \title{Modify named regions in a worksheet}
 \usage{
-wb_add_named_region(wb, sheet = current_sheet(), dims = "A1", name, local_sheet = FALSE, overwrite = FALSE, comment = NULL, hidden = NULL, ...)
+wb_add_named_region(
+  wb,
+  sheet = current_sheet(),
+  dims = "A1",
+  name,
+  local_sheet = FALSE,
+  overwrite = FALSE,
+  comment = NULL,
+  hidden = NULL,
+  custom_menu = NULL,
+  description = NULL,
+  is_function = NULL,
+  function_group_id = NULL,
+  help = NULL,
+  local_name = NULL,
+  publish_to_server = NULL,
+  status_bar = NULL,
+  vb_procedure = NULL,
+  workbook_parameter = NULL,
+  xml = NULL,
+  ...
+)
 
 wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 }
