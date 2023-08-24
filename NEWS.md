@@ -27,7 +27,7 @@
 
 ## Internal changes
 
-* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()` are now wrapper functions.
+* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()`, `wb_get_named_regions()` are now wrapper functions.
 
 
 ***************************************************************************

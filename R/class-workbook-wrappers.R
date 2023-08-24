@@ -1727,8 +1727,7 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' ## delete one
 #' wb$remove_named_region(name = "iris2")
-#' wb_get_named_regions(wb)
-#'
+#' wb$get_named_regions()
 #' ## read named regions
 #' df <- wb_to_df(wb, named_region = "iris")
 #' head(df)
