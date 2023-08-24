@@ -34,9 +34,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/news/index.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/Hyperlink.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/as_xml.html</loc>
   </url>
   <url>
@@ -47,6 +44,9 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/comment_internal.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/convertToExcelDate.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/convert_date.html</loc>
@@ -134,9 +134,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/waivers.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wbChartSheet.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.html</loc>
