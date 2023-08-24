@@ -6,8 +6,6 @@
 #' Based on a powerful XML library and focusing on modern programming flows in pipes
 #' or chains, `openxlsx2` allows to break many new ground.
 #'
-#' @name openxlsx2-package
-#' @docType package
 #' @useDynLib openxlsx2, .registration=TRUE
 #'
 #' @import Rcpp
