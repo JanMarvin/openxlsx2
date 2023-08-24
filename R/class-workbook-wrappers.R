@@ -564,12 +564,12 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
 #' @seealso [wb_add_mschart()]
 #' @export
 wb_add_chartsheet <- function(
-    wb,
-    sheet     = next_sheet(),
-    tab_color = NULL,
-    zoom      = 100,
-    visible   = c("true", "false", "hidden", "visible", "veryhidden"),
-    ...
+  wb,
+  sheet     = next_sheet(),
+  tab_color = NULL,
+  zoom      = 100,
+  visible   = c("true", "false", "hidden", "visible", "veryhidden"),
+  ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_chartsheet(
@@ -669,29 +669,29 @@ wb_add_chartsheet <- function(
 #' wb$add_data(sheet = 5, 1:400)
 #' wb$add_data(sheet = 6, 1:400)
 #' wb$add_data(sheet = 7, 1:400)
-#' wb$add_data(sheet = 8, 1:400)
-wb_add_worksheet <- function(
-    wb,
-    sheet           = next_sheet(),
-    grid_lines      = TRUE,
-    row_col_headers = TRUE,
-    tab_color       = NULL,
-    zoom            = 100,
-    header          = NULL,
-    footer          = NULL,
-    odd_header      = header,
-    odd_footer      = footer,
-    even_header     = header,
-    even_footer     = footer,
-    first_header    = header,
-    first_footer    = footer,
-    visible         = c("true", "false", "hidden", "visible", "veryhidden"),
-    has_drawing     = FALSE,
-    paper_size      = getOption("openxlsx2.paperSize", default = 9),
-    orientation     = getOption("openxlsx2.orientation", default = "portrait"),
-    hdpi            = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
-    vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
-    ...
+#'b$add_data(sheet = 8, 1:400)
+wbdd_worksheet <- function(
+  wb,
+  sheet           = next_sheet(),
+  grid_lines      = TRUE,
+  row_col_headers = TRUE,
+  tab_color       = NULL,
+  zoom            = 100,
+  header          = NULL,
+  footer          = NULL,
+  odd_header      = header,
+  odd_footer      = footer,
+  even_header     = header,
+  even_footer     = footer,
+  first_header    = header,
+  first_footer    = footer,
+  visible         = c("true", "false", "hidden", "visible", "veryhidden"),
+  has_drawing     = FALSE,
+  paper_size      = getOption("openxlsx2.paperSize", default = 9),
+  orientation     = getOption("openxlsx2.orientation", default = "portrait"),
+  hdpi            = getOption("openxlsx2.hdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  vdpi            = getOption("openxlsx2.vdpi", default = getOption("openxlsx2.dpi", default = 300)),
+  ...
 ) {
 
   assert_workbook(wb)
