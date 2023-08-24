@@ -79,7 +79,7 @@ wbComment <- R6::R6Class(
 
 # TODO wb_comment() should leverage wbComment$new() more
 
-#' Create a comment object
+#' Helper to create a comment object
 #'
 #' Creates a `wbComment` object. Use with [wb_add_comment()] to add to a worksheet location.
 #'

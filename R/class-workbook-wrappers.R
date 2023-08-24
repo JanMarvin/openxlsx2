@@ -997,7 +997,9 @@ wb_add_plot <- function(
   )
 }
 
-#' add drawings to workbook
+#' Add drawings to a worksheet
+#'
+#' Add drawings to a worksheet. This requires the `rvg` package.
 #' @param wb A `wbWorkbook`
 #' @param sheet A sheet in the workbook
 #' @param dims The dimension where the drawing is added.
@@ -1041,7 +1043,8 @@ wb_add_drawing <- function(
   )
 }
 
-#' Add mschart object to an existing workbook
+#' Add mschart object to a worksheet
+#'
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear

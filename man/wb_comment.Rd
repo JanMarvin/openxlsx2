@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-comment.R
 \name{wb_comment}
 \alias{wb_comment}
-\title{Create a comment object}
+\title{Helper to create a comment object}
 \usage{
 wb_comment(
   text = NULL,

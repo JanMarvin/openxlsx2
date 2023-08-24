@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_drawing}
 \alias{wb_add_drawing}
-\title{add drawings to workbook}
+\title{Add drawings to a worksheet}
 \usage{
 wb_add_drawing(
   wb,
@@ -28,7 +28,7 @@ wb_add_drawing(
 \item{...}{additional arguments}
 }
 \description{
-add drawings to workbook
+Add drawings to a worksheet. This requires the \code{rvg} package.
 }
 \examples{
 if (requireNamespace("rvg") && interactive()) {

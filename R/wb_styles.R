@@ -75,7 +75,7 @@ import_styles <- function(x) {
 }
 
 # TODO guessing here
-#' create border
+#' Helper to create a border
 #' @description
 #' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
 #' Border colors are of the following type: c(rgb="FF000000")
@@ -369,7 +369,9 @@ create_fill <- function(
 }
 
 # TODO can be further generalized with additional xf attributes and children
-#' create_cell_style
+#' Helper to create a cell style
+#'
+#' create_cell_style with [wb_add_cell_style()]
 #' @param border_id dummy
 #' @param fill_id dummy
 #' @param font_id dummy

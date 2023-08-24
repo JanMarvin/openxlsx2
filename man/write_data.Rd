@@ -66,24 +66,6 @@ columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse =
 invisible(0)
 }
 \description{
-Write an object to worksheet with optional styling. Use \code{\link[=wb_add_data]{wb_add_data()}} or \code{\link[=write_xlsx]{write_xlsx()}} in new code.
-}
-\details{
-Formulae written using \code{\link[=wb_add_formula]{wb_add_formula()}} to a Workbook object will not get picked up by \code{read_xlsx()}.
-This is because only the formula is written and left to Excel to evaluate the formula when the file is opened in Excel.
-The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If the data frame contains this string, the output will be broken.
-}
-\examples{
-# update cell range and add mtcars
-xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-wb2 <- wb_load(xlsxFile)
-
-# read dataset with inlinestr
-wb_to_df(wb2)
-write_data(wb2, 1, mtcars, start_col = 4, start_row = 4)
-wb_to_df(wb2)
-}
-\seealso{
-\code{\link[=wb_add_data]{wb_add_data()}}, \code{\link[=write_xlsx]{write_xlsx()}}
+Use \code{\link[=wb_add_data]{wb_add_data()}} or \code{\link[=write_xlsx]{write_xlsx()}} in new code.
 }
 \keyword{internal}

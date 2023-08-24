@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_border}
 \alias{create_border}
-\title{create border}
+\title{Helper to create a border}
 \usage{
 create_border(
   diagonal_down = "",
