@@ -9,51 +9,55 @@ development:
   mode: auto
 
 reference:
-- title: Main wb functions
+- title: Read content into R
+  desc: >
+   Read content of a workbook or an xlsx file into R as a data frame
   contents:
   - wb_to_df
+
+- title: Save content to xlsx
+  contents:
+  - wb_save
   - write_xlsx
-  - wb_workbook
+
+- title: View a workbook
+  desc: >
+    Visualize the content of a workbook in a
+    spreadsheet software
+  contents:
+  - wb_open
+  - xl_open
+
+- title: Load a workbook
+  desc: >
+     Load a workbook and interact with the object
+  contents:
   - wb_load
   - wbWorkbook
-  - wb_open
-  - wb_save
 
-- title: Main functions to interact with the contents of a Workbook object
-- subtitle: Add content to a worksheet
+- title: Create a workbook
+  subtitle: Initialize content in a workbook
+  desc: >
+    Add content to a help you interact with in a wbWorkbook
+  contents:
+  - wb_workbook
+  - wb_add_worksheet
+
+- subtitle: Worksheet content
   desc: >
     These functions help you write in worksheets. They invisibly return the
     `wbWorkbook` object, except for `get_` functions, who return a character vector,
     unless specified otherwise.
   contents:
-  - wb_add_worksheet
-  - wb_add_data
-  - wb_add_data_table
-  - wb_col_widths
-  - wb_row_heights
-  - wb_add_comment
-  - wb_add_thread
-  - wb_filter
-  - wb_freeze_pane
-  - wb_add_formula
-  - wb_add_conditional_formatting
-  - wb_add_pivot_table
-  - wb_add_data_validation
-  - wb_add_page_break
+  - has_concept("worksheet content functions")
 
-- subtitle: Add styling to a cell region in a worksheet
+- subtitle: Worksheet styling
   desc: >
-    These functions are related to styling of a region or cells of a worksheet.
+    Add styling to a cell region in a worksheet
   contents:
   - has_concept("styles")
 
-- subtitle: Add styling to the workbook
-  desc: >
-    These styling functions apply formatting to the workbook globally.
-  contents:
-  - has_concept("workbook styling functions")
-
-- subtitle: Interact with the workbook
+- subtitle: Workbook configuration
   desc: >
     These functions are used to modify the workbook as a whole.
   contents:
@@ -70,28 +74,36 @@ reference:
   - wb_remove_tables
   - wb_get_named_regions
 
-- subtitle: Add content to a chartsheet Interact with mschart and images
+
+- subtitle: Workbook styling
+  desc: >
+    These styling functions apply formatting to the workbook globally.
+  contents:
+  - has_concept("workbook styling functions")
+
+- subtitle: Chartsheet content
   desc: >
     These functions help you interact with chartsheets. They invisibly return the
     wbWorkbook object.  They help interact with the mschart package.
   contents:
-  - wb_data
-  - wb_add_chartsheet
-  - wb_add_mschart
-  - wb_add_drawing
-  - wb_add_plot
-  - wb_add_image
-  - wb_add_sparklines
   - wb_add_chart_xml
+  - wb_add_chartsheet
+  - wb_add_drawing
+  - wb_add_image
+  - wb_add_mschart
+  - wb_add_plot
+  - wb_add_sparklines
 
-- title: Helpers to specify wb function arguments
+
+- subtitle: Argument helpers
   desc: >
     These functions are helpers to create an intermediate R6 class object to use
     with `wb_*` functions.
   contents:
-  - wb_dims
   - wb_color
   - wb_comment
+  - wb_data
+  - wb_dims
   - starts_with("create_")
 
 
@@ -101,21 +113,21 @@ reference:
 
 - subtitle: Other tools to interact with worksheets
   contents:
-  - starts_with("wb_clone")
-  - starts_with("wb_copy")
-  - wb_set_sheetview
-  - wb_merge_cells
-  - wb_grouping
+  - wb_add_comment
+  - wb_add_data_validation
   - wb_add_form_control
   - wb_add_ignore_error
-  - wb_set_header_footer
-  - wb_set_grid_lines
-  - wb_update_table
-  - wb_named_region
-  - wb_protect_worksheet
+  - wb_add_page_break
   - wb_clean_sheet
-  - wb_add_form_control
+  - starts_with("wb_clone")
+  - starts_with("wb_copy")
   - wb_page_setup
+  - wb_protect_worksheet
+  - wb_set_grid_lines
+  - wb_set_header_footer
+  - wb_set_sheetview
+  - wb_update_table
+
 
 - subtitle: XML functions
   desc: >
@@ -133,7 +145,6 @@ reference:
   - col2int
   - fmt_txt
   - starts_with("convert_")
-  - xl_open
   - temp_xlsx
   - waivers
   - dims_helper

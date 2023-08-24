@@ -63,4 +63,19 @@ wb_remove_filter(wb, 3) ## Does not affect tables!
 }
 \seealso{
 \code{\link[=wb_add_data]{wb_add_data()}}, \code{\link[=wb_add_data_table]{wb_add_data_table()}}
+
+Other worksheet content functions: 
+\code{\link{wb_add_conditional_formatting}()},
+\code{\link{wb_add_data_table}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_formula}()},
+\code{\link{wb_add_person}()},
+\code{\link{wb_add_pivot_table}()},
+\code{\link{wb_col_widths}},
+\code{\link{wb_freeze_pane}()},
+\code{\link{wb_grouping}},
+\code{\link{wb_merge_cells}()},
+\code{\link{wb_named_region}},
+\code{\link{wb_row_heights}}
 }
+\concept{worksheet content functions}
