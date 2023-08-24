@@ -3037,18 +3037,18 @@ wb_remove_comment <- function(
   )
 }
 
-#' @rdname wb_add_thread
-#' @details
-#' If a threaded comment is added, it needs a person attached with it.
-#' The default is to create a person with provider id `"None"`.
-#' Other providers are possible with specific values for `id` and `user_id`.
-#' If you require the following, create a workbook via spreadsheet software load
-#' it and get the values with [wb_get_person()]
+#' Helper for adding threaded comments
+#'
+#' Adds a person to a workbook, so that they can be the author of threaded
+#' comments in a workbook with [wb_add_thread()]
+#'
+#' @name wb_person
 #' @param wb a Workbook
 #' @param name the name of the person to display.
 #' @param id (optional) the display id
 #' @param user_id (optional) the user id
 #' @param provider_id (optional) the provider id
+#' @seealso [wb_add_thread()]
 #' @keywords comments
 #' @export
 wb_add_person <- function(
@@ -3067,31 +3067,41 @@ wb_add_person <- function(
   )
 }
 
-#' @rdname wb_add_thread
+#' @rdname wb_person
 #' @export
 wb_get_person <- function(wb, name = NULL) {
   assert_workbook(wb)
   wb$get_person(name)
 }
 
-#' add threaded comment to worksheet
+#' Add threaded comments to a cell in a worksheet
 #'
 #' These functions allow adding thread comments to spreadsheets.
-#' This is not yet supported by all spreadsheet software.
-#' @param wb a workbook
-#' @param sheet a worksheet
-#' @param dims a cell
-#' @param comment the comment to add
-#' @param person_id the person Id this should be added for
-#' @param reply logical if the comment is a reply
-#' @param resolve logical if the comment should be marked as resolved
-#' @seealso [wb_add_comment()]
+#' This is not yet supported by all spreadsheet software. A threaded comment must
+#' be tied to a person created by [wb_add_person()].
+#'
+#' If a threaded comment is added, it needs a person attached to it.
+#' The default is to create a person with provider id `"None"`.
+#' Other providers are possible with specific values for `id` and `user_id`.
+#' If you require the following, create a workbook via spreadsheet software load
+#' it and get the values with [wb_get_person()]
+#'
+#' @param wb A workbook
+#' @param sheet A worksheet
+#' @param dims A cell
+#' @param comment The text to add, a character vector.
+#' @param person_id the person Id this should be added. The default is
+#'   `getOption("openxlsx2.thread_id")` if set.
+#' @param reply Is the comment a reply? (default `FALSE`)
+#' @param resolve Should the comment be resolved? (default `FALSE`)
+#' @seealso [wb_add_comment()] [wb_person]
 #' @family worksheet content functions
 #' @examples
-#' wb <- wb_workbook()$add_worksheet()$
-#' add_person(name = "openxlsx2")
+#' wb <- wb_workbook()$add_worksheet()
+#' # Add a person to the workbook.
+#' wb$add_person(name = "someone who likes to edit workbooks")
 #'
-#' pid <- wb$get_person(name = "openxlsx2")$id
+#' pid <- wb$get_person(name = "someone who likes to edit workbooks")$id
 #'
 #' # write a comment to a thread, reply to one and solve some
 #' wb <- wb %>%

@@ -69,10 +69,12 @@ reference:
   - wb_active_sheet
   - wb_sheet_visibility
   - wb_set_bookview
+  - wb_person
   - wb_protect
   - wb_get_tables
   - wb_remove_tables
   - wb_get_named_regions
+
 
 
 - subtitle: Workbook styling
@@ -95,10 +97,10 @@ reference:
   - wb_add_sparklines
 
 
-- subtitle: Argument helpers
+- subtitle: Workbook editing helpers
   desc: >
-    These functions are helpers to create an intermediate R6 class object to use
-    with `wb_*` functions.
+    These functions are helpers that create an intermediate object.
+    They are helpful with editing a workbook.
   contents:
   - wb_color
   - wb_comment
