@@ -24,7 +24,6 @@
 #' @param ... additional arguments
 #' @return A Workbook object.
 #' @export
-#' @seealso [wb_remove_worksheet()]
 #' @examples
 #' ## load existing workbook from package folder
 #' wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))

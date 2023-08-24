@@ -1,4 +1,6 @@
-#' Create a new wbColour object
+#' Helper to create a color
+#'
+#' Creates a `wbColour` object.
 #' @param name A name of a color known to R
 #' @param auto A boolean.
 #' @param indexed An indexed color values.

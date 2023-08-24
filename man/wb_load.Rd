@@ -47,6 +47,3 @@ wb ## view object
 ## Add a worksheet
 wb$add_worksheet("A new worksheet")
 }
-\seealso{
-\code{\link[=wb_remove_worksheet]{wb_remove_worksheet()}}
-}

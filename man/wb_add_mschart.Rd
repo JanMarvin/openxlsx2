@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_mschart}
 \alias{wb_add_mschart}
-\title{Add mschart object to an existing workbook}
+\title{Add mschart object to a worksheet}
 \usage{
 wb_add_mschart(
   wb,
@@ -28,7 +28,7 @@ wb_add_mschart(
 \item{...}{additional arguments}
 }
 \description{
-Add mschart object to an existing workbook
+Add mschart object to a worksheet
 }
 \examples{
 if (requireNamespace("mschart")) {

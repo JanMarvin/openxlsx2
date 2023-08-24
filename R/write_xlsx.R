@@ -1,59 +1,21 @@
 # `write_xlsx()` ---------------------------------------------------------------
 #' Write data to an xlsx file
 #'
-#' Write a `data.frame` or list of data.frames to an xlsx file
-#'
-#' @seealso [wb_add_worksheet()], [wb_add_data()]
-#' @details
-#' Optional parameters are:
-# Removed braces as they should be used with \describe{} for example.
-# https://rstudio.github.io/r-manuals/r-exts/Writing-R-documentation-files.html#lists-and-tables
-#' **wb_workbook Parameters**
-#' * **creator** A string specifying the workbook author
-#'
-#' **wb_add_worksheet() Parameters**
-#' * **sheet** Name of the worksheet
-#' * **grid_lines** A logical. If `FALSE`, the worksheet grid lines will be hidden.
-#' * **tab_color** Color of the worksheet tab. A valid color (belonging to `colors()`)
-#'   or a valid hex color beginning with "#".
-#' * **zoom** A numeric between 10 and 400. Worksheet zoom level as a percentage.
-#'
-#' **wb_add_data/wb_add_data_table Parameters**
-#' * **start_col** A vector specifying the starting column(s) to write df
-#' * **start_row** A vector specifying the starting row(s) to write df
-#' * **col_names** If `TRUE`, column names of `x` are written.
-#' * **row_names** If `TRUE`, row names of `x` are written.
-#' * **na.strings** If not NULL NA values are converted to this string in Excel. Defaults to `NULL`.
-#'
-#' **wb_freeze_pane Parameters**
-#' * **first_active_row** Top row of active region to freeze pane.
-#' * **first_active_col** Furthest left column of active region to freeze pane.
-#' * **first_row** If `TRUE`, freezes the first row (equivalent to `first_active_row = 2`)
-#' * **first_col** If `TRUE`, freezes the first column (equivalent to `first_active_col = 2`)
-#'
-#' **wb_set_col_widths Parameters**
-#' * **widths** May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)
-#'
-#'
-#' **wb_save Parameters**
-#' * **overwrite** Overwrite existing file (Defaults to `TRUE` as with `wb_add_data()`)
-#'
+#' Write a data frame or list of data frames to an xlsx file.
 #'
 #' columns of `x` with class `Date` or `POSIXt` are automatically
 #' styled as dates and datetimes respectively.
 #'
-#' @param x object or a list of objects that can be handled by [write_data()] to write to file
-#' @param file xlsx file name
-#' @param as_table write using write_datatable as opposed to write_data
-#' @param ... optional parameters to pass to functions:
-#'   * [wb_workbook()]
-#'   * [wb_add_worksheet()]
-#'   * [wb_add_data()]
-#'   * [wb_freeze_pane()]
-#'   * [wb_save()]
-#'
-#' see **Details**.
-#'
+#' @param x An object or a list of objects that can be handled by [wb_add_data()] to write to file
+#' @param file An xlsx file name
+#' @param as_table If `TRUE`, will write as a data table, instead of data.
+#' @inheritDotParams wb_workbook creator
+#' @inheritDotParams wb_add_worksheet sheet grid_lines tab_color zoom
+#' @inheritDotParams wb_add_data_table start_col start_row col_names row_names na.strings
+#' @inheritDotParams wb_add_data start_col start_row col_names row_names na.strings
+#' @inheritDotParams wb_freeze_pane first_active_row first_active_col first_row first_col
+#' @inheritDotParams wb_set_col_widths widths
+#' @inheritDotParams wb_save overwrite
 #' @return A workbook object
 #' @examples
 #' ## write to working directory

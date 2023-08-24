@@ -81,6 +81,7 @@ columns to a character vector e.g.
 }
 \description{
 Write to a worksheet and format as an Excel table. Use \code{\link[=wb_add_data_table]{wb_add_data_table()}} in new code.
+This function may not be exported
 }
 \details{
 The columns of \code{x} with class Date/POSIXt, currency, accounting, hyperlink,
@@ -89,94 +90,5 @@ percentages respectively.
 
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If \code{x} contains this
 string, the output will be broken.
-}
-\examples{
-## see package vignettes for further examples.
-
-#####################################################################################
-## Create Workbook object and add worksheets
-wb <- wb_workbook()
-wb$add_worksheet("S1")
-wb$add_worksheet("S2")
-wb$add_worksheet("S3")
-
-#####################################################################################
-## -- write data.frame as an Excel table with column filters
-## -- default table style is "TableStyleMedium2"
-
-wb$add_data_table("S1", x = iris)
-
-wb$add_data_table("S2",
-  x = mtcars, dims = c("B3"), row_names = TRUE,
-  table_style = "TableStyleLight9"
-)
-
-df <- data.frame(
-  "Date" = Sys.Date() - 0:19,
-  "T" = TRUE, "F" = FALSE,
-  "Time" = Sys.time() - 0:19 * 60 * 60,
-  "Cash" = paste("$", 1:20), "Cash2" = 31:50,
-  "hLink" = "https://CRAN.R-project.org/",
-  "Percentage" = seq(0, 1, length.out = 20),
-  "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE
-)
-
-## openxlsx will apply default Excel styling for these classes
-class(df$Cash) <- c(class(df$Cash), "currency")
-class(df$Cash2) <- c(class(df$Cash2), "accounting")
-class(df$hLink) <- "hyperlink"
-class(df$Percentage) <- c(class(df$Percentage), "percentage")
-class(df$TinyNumbers) <- c(class(df$TinyNumbers), "scientific")
-
-wb$add_data_table("S3", x = df, start_row = 4, row_names = TRUE, table_style = "TableStyleMedium9")
-
-#####################################################################################
-## Additional Header Styling and remove column filters
-
-write_datatable(wb,
-  sheet = 1,
-  x = iris,
-  start_col = 7,
-  with_filter = FALSE,
-  first_column = TRUE,
-  last_column	= TRUE,
-  banded_rows = TRUE,
-  banded_cols = TRUE
-)
-
-#####################################################################################
-## Pre-defined table styles gallery
-
-wb <- wb_workbook(paste0("tableStylesGallery.xlsx"))
-wb$add_worksheet("Style Samples")
-for (i in 1:21) {
-  style <- paste0("TableStyleLight", i)
-  write_datatable(wb,
-    x = data.frame(style), sheet = 1,
-    table_style = style, start_row = 1, start_col = i * 3 - 2
-  )
-}
-
-for (i in 1:28) {
-  style <- paste0("TableStyleMedium", i)
-  write_datatable(wb,
-    x = data.frame(style), sheet = 1,
-    table_style = style, start_row = 4, start_col = i * 3 - 2
-  )
-}
-
-for (i in 1:11) {
-  style <- paste0("TableStyleDark", i)
-  write_datatable(wb,
-    x = data.frame(style), sheet = 1,
-    table_style = style, start_row = 7, start_col = i * 3 - 2
-  )
-}
-}
-\seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
-\code{\link[=wb_add_data_table]{wb_add_data_table()}}
-\code{\link[=wb_remove_tables]{wb_remove_tables()}}
-\code{\link[=wb_get_tables]{wb_get_tables()}}
 }
 \keyword{internal}

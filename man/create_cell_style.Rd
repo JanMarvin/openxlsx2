@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_cell_style}
 \alias{create_cell_style}
-\title{create_cell_style}
+\title{Helper to create a cell style}
 \usage{
 create_cell_style(
   border_id = "",
@@ -69,7 +69,7 @@ create_cell_style(
 \item{...}{reserved for additional arguments}
 }
 \description{
-create_cell_style
+create_cell_style with \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
 }
 \details{
 \tabular{ll}{

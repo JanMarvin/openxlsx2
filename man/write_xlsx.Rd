@@ -7,72 +7,47 @@
 write_xlsx(x, file, as_table = FALSE, ...)
 }
 \arguments{
-\item{x}{object or a list of objects that can be handled by \code{\link[=write_data]{write_data()}} to write to file}
+\item{x}{An object or a list of objects that can be handled by \code{\link[=wb_add_data]{wb_add_data()}} to write to file}
 
-\item{file}{xlsx file name}
+\item{file}{An xlsx file name}
 
-\item{as_table}{write using write_datatable as opposed to write_data}
+\item{as_table}{If \code{TRUE}, will write as a data table, instead of data.}
 
-\item{...}{optional parameters to pass to functions:
-\itemize{
-\item \code{\link[=wb_workbook]{wb_workbook()}}
-\item \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}
-\item \code{\link[=wb_add_data]{wb_add_data()}}
-\item \code{\link[=wb_freeze_pane]{wb_freeze_pane()}}
-\item \code{\link[=wb_save]{wb_save()}}
-}
-
-see \strong{Details}.}
+\item{...}{
+  Arguments passed on to \code{\link[=wb_workbook]{wb_workbook}}, \code{\link[=wb_add_worksheet]{wb_add_worksheet}}, \code{\link[=wb_add_data_table]{wb_add_data_table}}, \code{\link[=wb_add_data]{wb_add_data}}, \code{\link[=wb_freeze_pane]{wb_freeze_pane}}, \code{\link[=wb_set_col_widths]{wb_set_col_widths}}, \code{\link[=wb_save]{wb_save}}
+  \describe{
+    \item{\code{creator}}{Creator of the workbook (your name). Defaults to login username or \code{options("openxlsx2.creator")} if set.}
+    \item{\code{sheet}}{A name for the new worksheet}
+    \item{\code{grid_lines}}{A logical. If \code{FALSE}, the worksheet grid lines will be
+hidden.}
+    \item{\code{tab_color}}{Color of the sheet tab. A  \code{\link[=wb_color]{wb_color()}},  a valid color (belonging to
+\code{grDevices::colors()}) or a valid hex color beginning with "#".}
+    \item{\code{zoom}}{The sheet zoom level, a numeric between 10 and 400 as a
+percentage. (A zoom value smaller than 10 will default to 10.)}
+    \item{\code{start_col}}{A vector specifying the starting column to write \code{x} to.}
+    \item{\code{start_row}}{A vector specifying the starting row to write \code{x} to.}
+    \item{\code{col_names}}{If \code{TRUE}, column names of \code{x} are written.}
+    \item{\code{row_names}}{If \code{TRUE}, the row names of \code{x} are written.}
+    \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
+\code{\link[=na_strings]{na_strings()}} uses the special \verb{#N/A} value within the workbook.}
+    \item{\code{first_active_row}}{Top row of active region}
+    \item{\code{first_active_col}}{Furthest left column of active region}
+    \item{\code{first_row}}{If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})}
+    \item{\code{first_col}}{If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})}
+    \item{\code{widths}}{Width to set \code{cols} to specified column width or \code{"auto"} for
+automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxlsx2
+sets the default width is 8.43, as this is the standard in some spreadsheet
+software. See \strong{Details} for general information on column widths.}
+    \item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{file} already exists.}
+  }}
 }
 \value{
 A workbook object
 }
 \description{
-Write a \code{data.frame} or list of data.frames to an xlsx file
+Write a data frame or list of data frames to an xlsx file.
 }
 \details{
-Optional parameters are:
-\strong{wb_workbook Parameters}
-\itemize{
-\item \strong{creator} A string specifying the workbook author
-}
-
-\strong{wb_add_worksheet() Parameters}
-\itemize{
-\item \strong{sheet} Name of the worksheet
-\item \strong{grid_lines} A logical. If \code{FALSE}, the worksheet grid lines will be hidden.
-\item \strong{tab_color} Color of the worksheet tab. A valid color (belonging to \code{colors()})
-or a valid hex color beginning with "#".
-\item \strong{zoom} A numeric between 10 and 400. Worksheet zoom level as a percentage.
-}
-
-\strong{wb_add_data/wb_add_data_table Parameters}
-\itemize{
-\item \strong{start_col} A vector specifying the starting column(s) to write df
-\item \strong{start_row} A vector specifying the starting row(s) to write df
-\item \strong{col_names} If \code{TRUE}, column names of \code{x} are written.
-\item \strong{row_names} If \code{TRUE}, row names of \code{x} are written.
-\item \strong{na.strings} If not NULL NA values are converted to this string in Excel. Defaults to \code{NULL}.
-}
-
-\strong{wb_freeze_pane Parameters}
-\itemize{
-\item \strong{first_active_row} Top row of active region to freeze pane.
-\item \strong{first_active_col} Furthest left column of active region to freeze pane.
-\item \strong{first_row} If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})
-\item \strong{first_col} If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})
-}
-
-\strong{wb_set_col_widths Parameters}
-\itemize{
-\item \strong{widths} May be a single value for all columns (or "auto"), or a list of vectors that will be recycled for each sheet (see examples)
-}
-
-\strong{wb_save Parameters}
-\itemize{
-\item \strong{overwrite} Overwrite existing file (Defaults to \code{TRUE} as with \code{wb_add_data()})
-}
-
 columns of \code{x} with class \code{Date} or \code{POSIXt} are automatically
 styled as dates and datetimes respectively.
 }
@@ -99,7 +74,4 @@ write_xlsx(l, temp_xlsx(),
 write_xlsx(l, temp_xlsx(), col_widths = 20)
 write_xlsx(l, temp_xlsx(), col_widths = list(100, 200, 300))
 write_xlsx(l, temp_xlsx(), col_widths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
-}
-\seealso{
-\code{\link[=wb_add_worksheet]{wb_add_worksheet()}}, \code{\link[=wb_add_data]{wb_add_data()}}
 }
