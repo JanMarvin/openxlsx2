@@ -2999,7 +2999,7 @@ wb_add_comment <- function(
     dims    = "A1",
     comment,
     ...
-) {
+  ) {
 
   assert_workbook(wb)
 
@@ -3024,7 +3024,7 @@ wb_remove_comment <- function(
     sheet      = current_sheet(),
     dims       = "A1",
     ...
-) {
+  ) {
 
   assert_workbook(wb)
 
@@ -3362,7 +3362,7 @@ wb_add_ignore_error <- function(
     two_digit_text_year   = two_digit_text_year,
     unlocked_formula      = unlocked_formula,
     ...                   = ...
-  )
+    )
 }
 
 #' Modify the default view of a worksheet
