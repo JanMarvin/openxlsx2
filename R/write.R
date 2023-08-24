@@ -728,7 +728,7 @@ write_data_table <- function(
   # force with globalenv() options
   x <- force(x)
 
-  op <- openxlsx2_options()
+  op <- default_save_opt()
   on.exit(options(op), add = TRUE)
 
   if (!is.null(dims)) {

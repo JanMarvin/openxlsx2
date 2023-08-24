@@ -70,7 +70,7 @@ temp_dir <- function(pattern = "file") {
   tmpDir
 }
 
-openxlsx2_options <- function() {
+default_save_opt <- function() {
   options(
     # increase scipen to avoid writing in scientific
     scipen = 200,
