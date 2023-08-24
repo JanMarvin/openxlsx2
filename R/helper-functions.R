@@ -42,7 +42,7 @@
 #' x <- create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
 #' wb$add_formula(x = x, dims = "A7")
 #'
-#' if (interactive()) wb$open()
+#' # if (interactive()) wb$open()
 #'
 #' @export
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
