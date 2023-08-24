@@ -30,6 +30,6 @@ create_comment(
 a \code{wbComment} object
 }
 \description{
-Use \code{\link[=wb_comment]{wb_comment()}} in new code.
+Use \code{\link[=wb_comment]{wb_comment()}} in new code. See \link{openxlsx2-deprecated}
 }
 \keyword{internal}

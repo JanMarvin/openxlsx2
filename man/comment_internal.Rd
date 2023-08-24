@@ -27,20 +27,35 @@ remove_comment(
 \arguments{
 \item{wb}{A workbook object}
 
-\item{sheet}{A vector of names or indices of worksheets}
+\item{sheet}{A worksheet of the workbook}
 
-\item{col}{Column a column number of letter. For \code{remove_comment} this can be a range.}
+\item{row, col}{Row and column of the cell}
 
-\item{row}{A row number. For \code{remove_comment} this can be a range.}
+\item{comment}{An object created by \code{\link[=create_comment]{create_comment()}}}
 
-\item{comment}{A Comment object. See \code{\link[=create_comment]{create_comment()}}.}
-
-\item{dims}{worksheet cell "A1"}
+\item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
 
 \item{gridExpand}{If \code{TRUE}, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 will be removed.}
 }
 \description{
-Users are advised to use \code{\link[=wb_add_comment]{wb_add_comment()}} and \code{\link[=wb_remove_comment]{wb_remove_comment()}}
+Users are advised to use \code{\link[=wb_add_comment]{wb_add_comment()}} and \code{\link[=wb_remove_comment]{wb_remove_comment()}}.
+This function is used internally by openxlsx2. It will stop exporting it at
+some point in the future. Use the replacement function at your earliest convenience.
+}
+\examples{
+wb <- wb_workbook()
+wb$add_worksheet("Sheet 1")
+# add a comment without author
+c1 <- wb_comment(text = "this is a comment", author = "")
+wb$add_comment(dims = "B10", comment = c1)
+#' # Remove comment
+wb$remove_comment(sheet = "Sheet 1", dims = "B10")
+# Write another comment with author information
+c2 <- wb_comment(text = "this is another comment", author = "Marco Polo", visible = TRUE)
+wb$add_comment(sheet = 1, dims = "C10", comment = c2)
+# Works with formatted text also.
+formatted_text <- fmt_txt("bar", underline = TRUE)
+wb$add_comment(dims = "B5", comment = formatted_text)
 }
 \keyword{internal}

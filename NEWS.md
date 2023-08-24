@@ -9,7 +9,7 @@
 
 ## Deprecated functions
 
-These functions are no longer recommended.
+These functions are no longer recommended. A [guide](https://janmarvin.github.io/openxlsx2/dev/reference/openxlsx2-deprecated.html) was created to help users 
 They will continue to work for some time, but changing to newer functions is recommended.
 
 * `delete_data()` is deprecated in favour of `wb_remove_tables()` or `wb_clean_sheet()`
