@@ -38,11 +38,13 @@ x <- create_hyperlink(sheet = "Sheet3", row = 1, col = 2,text = "Link to Sheet 3
 wb$add_formula(sheet = "Sheet1", x = x, dims = "A3")
 
 ## Link to file - No text to display
-x <- create_hyperlink(sheet = "Sheet1", row = 3, col = 10, file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))
+fl <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+x <- create_hyperlink(sheet = "Sheet1", row = 3, col = 10, file = fl)
 wb$add_formula(sheet = "Sheet1", x = x, dims = "A4")
 
 ## Link to file - Text to display
-x <- create_hyperlink(sheet = "Sheet2", row = 3, col = 10, file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"), text = "Link to File.")
+fl <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+x <- create_hyperlink(sheet = "Sheet2", row = 3, col = 10, file = fl, text = "Link to File.")
 wb$add_formula(sheet = "Sheet1", x = x, dims = "A5")
 
 ## Link to external file - Text to display
