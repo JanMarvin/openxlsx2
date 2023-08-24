@@ -2676,7 +2676,7 @@ wb_add_font <- function(
     wb,
     sheet      = current_sheet(),
     dims       = "A1",
-    name       = "Calibri",
+    name       = "Calibr  i",
     color      = wb_color(hex = "FF000000"),
     size       = "11",
     bold       = "",
@@ -2696,25 +2696,25 @@ wb_add_font <- function(
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
-    sheet      = sheet,
-    dims       = dims,
-    name       = name,
-    color      = color,
-    size       = size,
-    bold       = bold,
-    italic     = italic,
-    outline    = outline,
-    strike     = strike,
-    underline  = underline,
-    # fine tuning
-    charset    = charset,
-    condense   = condense,
-    extend     = extend,
-    family     = family,
-    scheme     = scheme,
-    shadow     = shadow,
-    vert_align = vert_align,
-    ...        = ...
+      sheet      = sheet,
+      dims       = dims,
+      name       = name,
+      color      = color,
+      size       = size,
+      bold       = bold,
+      italic     = italic,
+      outline    = outline,
+      strike     = strike,
+      underline  = underline,
+      # fine tuning
+      charset    = charset,
+      condense   = condense,
+      extend     = extend,
+      family     = family,
+      scheme     = scheme,
+      shadow     = shadow,
+      vert_align = vert_align,
+      ...        = ...
   )
 }
 
@@ -2928,21 +2928,21 @@ wb_add_named_style <- function(
 #'   )
 #' @export
 wb_add_dxfs_style <- function(
-    wb,
-    name,
-    font_name      = NULL,
-    font_size      = NULL,
-    font_color     = NULL,
-    num_fmt        = NULL,
-    border         = NULL,
-    border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
-    border_style   = getOption("openxlsx2.borderStyle", "thin"),
-    bg_fill        = NULL,
-    gradient_fill  = NULL,
-    text_bold      = NULL,
-    text_italic    = NULL,
-    text_underline = NULL,
-    ...
+  wb,
+  name,
+  font_name      = NULL,
+  font_size      = NULL,
+  font_color     = NULL,
+  num_fmt        = NULL,
+  border         = NULL,
+  border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
+  border_style   = getOption("openxlsx2.borderStyle", "thin"),
+  bg_fill        = NULL,
+  gradient_fill  = NULL,
+  text_bold      = NULL,
+  text_italic    = NULL,
+  text_underline = NULL,
+  ...
 ) {
 
   assert_workbook(wb)
@@ -3164,13 +3164,13 @@ wb_add_form_control <- function(
 ) {
   assert_workbook(wb)
   wb$clone()$add_form_control(
-    sheet   = sheet,
-    dims    = dims,
-    type    = type,
-    text    = text,
-    link    = link,
-    range   = range,
-    checked = checked
+      sheet   = sheet,
+      dims    = dims,
+      type    = type,
+      text    = text,
+      link    = link,
+      range   = range,
+      checked = checked
   )
 
 }
