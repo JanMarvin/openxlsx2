@@ -3828,7 +3828,7 @@ wbWorkbook <- R6::R6Class(
       if (length(cmt <- wb_cmt$comment)) {
         # TODO not sure yet what to do
       } else {
-        cmt <- create_comment(text = comment, author = "")
+        cmt <- wb_comment(text = comment, author = "")
         self$add_comment(sheet = sheet, dims = dims, comment = cmt)
       }
       wb_cmt <- wb_get_comment(self, sheet, dims)
