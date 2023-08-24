@@ -60,21 +60,29 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' openxlsx2 Options
+#' Options consulted by openxlsx2
 #'
-#' The openxlsx2 package uses global options to simplify formatting:
+#' @description
+#' The openxlsx2 package allows the user to set global options to simplify formatting:
+#'
+#' If the built-in defaults don't suit you, set one or more of these options.
+#' Typically, this is done in the `.Rprofile` startup file
 #'
 #' * `options("openxlsx2.borderColor" = "black")`
 #' * `options("openxlsx2.borderStyle" = "thin")`
 #' * `options("openxlsx2.dateFormat" = "mm/dd/yyyy")`
 #' * `options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`
 #' * `options("openxlsx2.numFmt" = NULL)`
-#' * `options("openxlsx2.paperSize" = 9)` ## A4
-#' * `options("openxlsx2.orientation" = "portrait")` ## page orientation
+#' * `options("openxlsx2.paperSize" = 9)` corresponds to a A4 paper size
+#' * `options("openxlsx2.orientation" = "portrait")` page orientation
 #' * `options("openxlsx2.sheet.default_name" = "Sheet")`
 #' * `options("openxlsx2.rightToLeft" = NULL)`
-#' * `options("openxlsx2.soon_deprecated" = FALSE)` ## Set to `TRUE` if you want a warning if using some functions deprecated recently in openxlsx2
-#' * `options("openxlsx2.creator")` ## A default name for the creator of comments or new `wbWorkbook` objects.
+#' * `options("openxlsx2.soon_deprecated" = FALSE)` Set to `TRUE` if you want a
+#'    warning if using some functions deprecated recently in openxlsx2
+#' * `options("openxlsx2.creator")` A default name for the creator of new
+#'   `wbWorkbook` object with [wb_workbook()] or new comments with [wb_add_comment()]
+#' * `options("openxlsx2.thread_id")` the default person id when adding a threaded comment
+#'   to a cell with [wb_add_thread()]
 #'
 #' @name openxlsx2_options
 NULL
