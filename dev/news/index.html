@@ -63,7 +63,7 @@
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
 <ul><li>
 <code>wb_get_worksheet()</code>, <code>wb_ws()</code>, <code>wb_get_sheet_name()</code> are no longer exported. <a href="https://github.com/JanMarvin/openxlsx2/pull/735" class="external-link">735</a> They never worked as expected.
-<ul><li>Use <code><a href="../reference/wb_sheet_names.html">wb_get_sheet_names()</a></code>, <code><a href="../reference/wb_active_sheet.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/wb_active_sheet.html">wb_get_selected()</a></code> instead.</li>
+<ul><li>Use <code><a href="../reference/sheet_names-wb.html">wb_get_sheet_names()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_selected()</a></code> instead.</li>
 </ul></li>
 <li>
 <code>wbChartSheet</code> is now internal (<a href="https://github.com/JanMarvin/openxlsx2/pull/760" class="external-link">760</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</li>
@@ -88,7 +88,7 @@
 <li>
 <code>width</code> and <code>height</code> must now be of length 1. (In <code><a href="../reference/create_comment.html">create_comment()</a></code>, the first element is taken, other are ignored.)</li>
 </ul></li>
-<li><p><code><a href="../reference/wb_sheet_names.html">wb_get_sheet_names()</a></code> gains a <code>escape</code> argument to allow special XML characters to be escaped. <a href="https://github.com/JanMarvin/openxlsx2/issues/252" class="external-link">252</a></p></li>
+<li><p><code><a href="../reference/sheet_names-wb.html">wb_get_sheet_names()</a></code> gains a <code>escape</code> argument to allow special XML characters to be escaped. <a href="https://github.com/JanMarvin/openxlsx2/issues/252" class="external-link">252</a></p></li>
 <li><p><code><a href="../reference/wb_color.html">wb_color()</a></code> now accepts hex colors with leading sharp (e.g. “#FFFFF”) <a href="https://github.com/JanMarvin/openxlsx2/pull/728" class="external-link">728</a>.</p></li>
 <li><p><code><a href="../reference/wb_merge_cells.html">wb_merge_cells()</a></code> gains a <code>solve</code> argument. This allows to solve cell intersecting regions. <a href="https://github.com/JanMarvin/openxlsx2/pull/733" class="external-link">733</a></p></li>
 <li><p><code>wb_add_comment(comment = "x")</code> no longer errors when a comment as a character vector no longer fails (<a href="https://github.com/JanMarvin/openxlsx2/pull/758" class="external-link">758</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
@@ -120,7 +120,7 @@
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
 <ul><li>
-<code><a href="../reference/wb_active_sheet.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/wb_active_sheet.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/wb_active_sheet.html">wb_get_selected()</a></code> and <code><a href="../reference/wb_active_sheet.html">wb_set_selected()</a></code>, <code><a href="../reference/wb_get_named_regions.html">wb_get_named_regions()</a></code> are now wrapper functions. <a href="https://github.com/JanMarvin/openxlsx2/pull/735" class="external-link">735</a>
+<code><a href="../reference/active_sheet-wb.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_selected()</a></code> and <code><a href="../reference/active_sheet-wb.html">wb_set_selected()</a></code>, <code><a href="../reference/wb_get_named_regions.html">wb_get_named_regions()</a></code> are now wrapper functions. <a href="https://github.com/JanMarvin/openxlsx2/pull/735" class="external-link">735</a>
 </li>
 </ul><hr></div>
 </div>
@@ -136,7 +136,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-0-8">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-8"></a></h3>
-<ul><li><p>Order of arguments in <code><a href="../reference/wb_named_region.html">wb_add_named_region()</a></code> changed, because previously overlooked <code>dims</code> argument was added.</p></li>
+<ul><li><p>Order of arguments in <code><a href="../reference/named_region-wb.html">wb_add_named_region()</a></code> changed, because previously overlooked <code>dims</code> argument was added.</p></li>
 <li><p>In various functions the order of <code>dims</code> was changed, to highlight it’s importance</p></li>
 <li>
 <p>Cleanups</p>
@@ -464,9 +464,9 @@
 <p>Several enhancements have been added for checking and validation worksheet names <a href="https://github.com/JanMarvin/openxlsx2/issues/165" class="external-link">165</a></p>
 <ul><li>When adding a new worksheet via <code>wbWorkbook$add_worksheet()</code> the provided name is checked for illegal characters (see note in <strong>Breaking changes</strong>)</li>
 <li>
-<code>wbWorkbook$get_sheet_names()</code> (<code><a href="../reference/wb_sheet_names.html">wb_get_sheet_names()</a></code> wrapper) added. These return both the <em>formatted</em> and original sheet names</li>
+<code>wbWorkbook$get_sheet_names()</code> (<code><a href="../reference/sheet_names-wb.html">wb_get_sheet_names()</a></code> wrapper) added. These return both the <em>formatted</em> and original sheet names</li>
 <li>
-<code>wbWorkbook$set_sheet_names()</code> (<code><a href="../reference/wb_sheet_names.html">wb_set_sheet_names()</a></code>) added
+<code>wbWorkbook$set_sheet_names()</code> (<code><a href="../reference/sheet_names-wb.html">wb_set_sheet_names()</a></code>) added
 <ul><li>these make <code>names.wbWorkbook()</code> and <code>names&lt;-.wbWorkbook()</code> deprecated</li>
 <li>
 <code>wbWorkbook$setSheetName()</code> deprecated</li>

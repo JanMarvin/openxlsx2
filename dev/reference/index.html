@@ -57,9 +57,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="read-content-into-r">Read content into R<a class="anchor" aria-label="anchor" href="#read-content-into-r"></a></h2>
+      <h2 id="read-tabular-data">Read tabular data<a class="anchor" aria-label="anchor" href="#read-tabular-data"></a></h2>
       
-      <p class="section-desc"></p><p>Read content of a workbook or an xlsx file into R as a data frame</p>
+      <p class="section-desc"></p><p>Read data out of an xlsx file as an R object</p>
 
       
     </div><div id="" class="section level2">
@@ -73,9 +73,9 @@
         </dt>
         <dd>Create a data frame from a Workbook</dd>
       </dl></div><div class="section level2">
-      <h2 id="save-content-to-xlsx">Save content to xlsx<a class="anchor" aria-label="anchor" href="#save-content-to-xlsx"></a></h2>
+      <h2 id="write-tabular-data">Write tabular data<a class="anchor" aria-label="anchor" href="#write-tabular-data"></a></h2>
       
-      
+      <p class="section-desc"></p><p>Write tabular data frame(s) to file with options</p>
 
       
     </div><div id="" class="section level2">
@@ -84,40 +84,14 @@
       
 
       <dl><dt>
-          
-          <code><a href="wb_save.html">wb_save()</a></code> 
-        </dt>
-        <dd>Save a workbook to file</dd>
-      </dl><dl><dt>
           
           <code><a href="write_xlsx.html">write_xlsx()</a></code> 
         </dt>
         <dd>Write data to an xlsx file</dd>
       </dl></div><div class="section level2">
-      <h2 id="view-a-workbook">View a workbook<a class="anchor" aria-label="anchor" href="#view-a-workbook"></a></h2>
-      
-      <p class="section-desc"></p><p>Visualize the content of a workbook in a spreadsheet software</p>
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
-          
-          <code><a href="wb_open.html">wb_open()</a></code> 
-        </dt>
-        <dd>Preview a workbook in a spreadsheet software</dd>
-      </dl><dl><dt>
-          
-          <code><a href="xl_open.html">xl_open()</a></code> 
-        </dt>
-        <dd>Open an xlsx file or a <code>wbWorkbook</code> object</dd>
-      </dl></div><div class="section level2">
       <h2 id="load-a-workbook">Load a workbook<a class="anchor" aria-label="anchor" href="#load-a-workbook"></a></h2>
       
-      <p class="section-desc"></p><p>Load a workbook and interact with the object</p>
+      <p class="section-desc"></p><p>Load and interact with an existing workbook</p>
 
       
     </div><div id="" class="section level2">
@@ -138,13 +112,7 @@
       </dl></div><div class="section level2">
       <h2 id="create-a-workbook">Create a workbook<a class="anchor" aria-label="anchor" href="#create-a-workbook"></a></h2>
       
-      <p class="section-desc"></p><p>Add content to a help you interact with in a wbWorkbook</p>
-
-      
-    </div><div class="section level2">
-      
-      <h3 id="initialize-content-in-a-workbook">Initialize content in a workbook<a class="anchor" aria-label="anchor" href="#initialize-content-in-a-workbook"></a></h3>
-      <p class="section-desc"></p><p>Add content to a help you interact with in a wbWorkbook</p>
+      <p class="section-desc"></p><p>Add content to a help you interact to a new or existing workbook.</p>
 
       
     </div><div id="" class="section level2">
@@ -157,14 +125,31 @@
           <code><a href="wb_workbook.html">wb_workbook()</a></code> 
         </dt>
         <dd>Create a new Workbook object</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="add-content-to-a-workbook">Add content to a workbook<a class="anchor" aria-label="anchor" href="#add-content-to-a-workbook"></a></h2>
+      
+      <p class="section-desc"></p><p>Add data or images to a new or existing workbook</p>
+
+      
+    </div><div class="section level2">
+      
+      <h3 id="add-a-sheet-to-a-workbook">Add a sheet to a workbook<a class="anchor" aria-label="anchor" href="#add-a-sheet-to-a-workbook"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code> 
         </dt>
         <dd>Add a worksheet to a workbook</dd>
       </dl></div><div class="section level2">
       
-      <h3 id="worksheet-content">Worksheet content<a class="anchor" aria-label="anchor" href="#worksheet-content"></a></h3>
+      <h3 id="add-to-a-worksheet">Add to a worksheet<a class="anchor" aria-label="anchor" href="#add-to-a-worksheet"></a></h3>
       <p class="section-desc"></p><p>These functions help you write in worksheets. They invisibly return the <code>wbWorkbook</code> object, except for <code>get_</code> functions, who return a character vector, unless specified otherwise.</p>
 
       
@@ -174,6 +159,31 @@
       
 
       <dl><dt>
+          
+          <code><a href="col_widths-wb.html">wb_set_col_widths()</a></code> <code><a href="col_widths-wb.html">wb_remove_col_widths()</a></code> 
+        </dt>
+        <dd>Modify column widths of a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="filter-wb.html">wb_add_filter()</a></code> <code><a href="filter-wb.html">wb_remove_filter()</a></code> 
+        </dt>
+        <dd>Add/remove column filters in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="grouping-wb.html">wb_group_cols()</a></code> <code><a href="grouping-wb.html">wb_ungroup_cols()</a></code> <code><a href="grouping-wb.html">wb_group_rows()</a></code> <code><a href="grouping-wb.html">wb_ungroup_rows()</a></code> 
+        </dt>
+        <dd>Group rows and columns in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="named_region-wb.html">wb_add_named_region()</a></code> <code><a href="named_region-wb.html">wb_remove_named_region()</a></code> 
+        </dt>
+        <dd>Modify named regions in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="row_heights-wb.html">wb_set_row_heights()</a></code> <code><a href="row_heights-wb.html">wb_remove_row_heights()</a></code> 
+        </dt>
+        <dd>Modify row heights of a worksheet</dd>
+      </dl><dl><dt>
           
           <code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> 
         </dt>
@@ -205,40 +215,63 @@
         <dd>Add threaded comments to a cell in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_col_widths.html">wb_set_col_widths()</a></code> <code><a href="wb_col_widths.html">wb_remove_col_widths()</a></code> 
-        </dt>
-        <dd>Modify column widths of a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_filter.html">wb_add_filter()</a></code> <code><a href="wb_filter.html">wb_remove_filter()</a></code> 
-        </dt>
-        <dd>Add/remove column filters in a worksheet</dd>
-      </dl><dl><dt>
-          
           <code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code> 
         </dt>
         <dd>Freeze pane of a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_grouping.html">wb_group_cols()</a></code> <code><a href="wb_grouping.html">wb_ungroup_cols()</a></code> <code><a href="wb_grouping.html">wb_group_rows()</a></code> <code><a href="wb_grouping.html">wb_ungroup_rows()</a></code> 
-        </dt>
-        <dd>Group rows and columns in a worksheet</dd>
-      </dl><dl><dt>
-          
           <code><a href="wb_merge_cells.html">wb_merge_cells()</a></code> <code><a href="wb_merge_cells.html">wb_unmerge_cells()</a></code> 
         </dt>
         <dd>Merge cells within a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_named_region.html">wb_add_named_region()</a></code> <code><a href="wb_named_region.html">wb_remove_named_region()</a></code> 
-        </dt>
-        <dd>Modify named regions in a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_row_heights.html">wb_set_row_heights()</a></code> <code><a href="wb_row_heights.html">wb_remove_row_heights()</a></code> 
-        </dt>
-        <dd>Modify row heights of a worksheet</dd>
       </dl></div><div class="section level2">
+      
+      <h3 id="add-images-to-a-worksheet">Add images to a worksheet<a class="anchor" aria-label="anchor" href="#add-images-to-a-worksheet"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_add_image.html">wb_add_image()</a></code> 
+        </dt>
+        <dd>Insert an image into a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_plot.html">wb_add_plot()</a></code> 
+        </dt>
+        <dd>Insert the current plot into a worksheet</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="add-charts-to-worksheets">Add charts to worksheets<a class="anchor" aria-label="anchor" href="#add-charts-to-worksheets"></a></h3>
+      <p class="section-desc"></p><p>Add Excel charts to a worksheet with the mschart package.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code> 
+        </dt>
+        <dd>Add a chartsheet to a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_mschart.html">wb_add_mschart()</a></code> 
+        </dt>
+        <dd>Add mschart object to an existing workbook</dd>
+      </dl></div><div class="section level2">
+      <h2 id="style-a-workbook">Style a workbook<a class="anchor" aria-label="anchor" href="#style-a-workbook"></a></h2>
+      
+      <p class="section-desc"></p><p>Style a cell region, a worksheet or the entire workbook</p>
+
+      
+    </div><div class="section level2">
       
       <h3 id="worksheet-styling">Worksheet styling<a class="anchor" aria-label="anchor" href="#worksheet-styling"></a></h3>
       <p class="section-desc"></p><p>Add styling to a cell region in a worksheet</p>
@@ -286,8 +319,60 @@
         <dd>Apply styling to a cell region</dd>
       </dl></div><div class="section level2">
       
-      <h3 id="workbook-configuration">Workbook configuration<a class="anchor" aria-label="anchor" href="#workbook-configuration"></a></h3>
-      <p class="section-desc"></p><p>These functions are used to modify the workbook as a whole.</p>
+      <h3 id="workbook-styling">Workbook styling<a class="anchor" aria-label="anchor" href="#workbook-styling"></a></h3>
+      <p class="section-desc"></p><p>These styling functions apply formatting to the workbook globally.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="base_font-wb.html">wb_set_base_font()</a></code> <code><a href="base_font-wb.html">wb_get_base_font()</a></code> 
+        </dt>
+        <dd>Set the default font in a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> 
+        </dt>
+        <dd>Set a dxfs styling for the workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_style.html">wb_add_style()</a></code> 
+        </dt>
+        <dd>Set the default style in a workbook</dd>
+      </dl></div><div class="section level2">
+      <h2 id="view-and-save-a-workbook">View and save a workbook<a class="anchor" aria-label="anchor" href="#view-and-save-a-workbook"></a></h2>
+      
+      <p class="section-desc"></p><p>Visualize the content of a workbook in a spreadsheet software and save it</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_open.html">wb_open()</a></code> 
+        </dt>
+        <dd>Preview a workbook in a spreadsheet software</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_save.html">wb_save()</a></code> 
+        </dt>
+        <dd>Save a workbook to file</dd>
+      </dl><dl><dt>
+          
+          <code><a href="xl_open.html">xl_open()</a></code> 
+        </dt>
+        <dd>Open an xlsx file or a <code>wbWorkbook</code> object</dd>
+      </dl></div><div class="section level2">
+      <h2 id="edit-workbook-defaults">Edit workbook defaults<a class="anchor" aria-label="anchor" href="#edit-workbook-defaults"></a></h2>
+      
+      <p class="section-desc"></p><p>These functions are used to modify setting of a workbook as a whole.</p>
 
       
     </div><div id="" class="section level2">
@@ -302,7 +387,7 @@
         <dd>Modify author in the metadata of a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_creators.html">wb_add_creators()</a></code> <code><a href="wb_creators.html">wb_set_creators()</a></code> <code><a href="wb_creators.html">wb_remove_creators()</a></code> <code><a href="wb_creators.html">wb_get_creators()</a></code> 
+          <code><a href="creators-wb.html">wb_add_creators()</a></code> <code><a href="creators-wb.html">wb_set_creators()</a></code> <code><a href="creators-wb.html">wb_remove_creators()</a></code> <code><a href="creators-wb.html">wb_get_creators()</a></code> 
         </dt>
         <dd>Modify creators of a workbook</dd>
       </dl><dl><dt>
@@ -312,7 +397,7 @@
         <dd>Order worksheets in a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_sheet_names.html">wb_set_sheet_names()</a></code> <code><a href="wb_sheet_names.html">wb_get_sheet_names()</a></code> 
+          <code><a href="sheet_names-wb.html">wb_set_sheet_names()</a></code> <code><a href="sheet_names-wb.html">wb_get_sheet_names()</a></code> 
         </dt>
         <dd>Get / Set worksheet names for a workbook</dd>
       </dl><dl><dt>
@@ -322,12 +407,12 @@
         <dd>Remove a worksheet from a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_active_sheet.html">wb_get_active_sheet()</a></code> <code><a href="wb_active_sheet.html">wb_set_active_sheet()</a></code> <code><a href="wb_active_sheet.html">wb_get_selected()</a></code> <code><a href="wb_active_sheet.html">wb_set_selected()</a></code> 
+          <code><a href="active_sheet-wb.html">wb_get_active_sheet()</a></code> <code><a href="active_sheet-wb.html">wb_set_active_sheet()</a></code> <code><a href="active_sheet-wb.html">wb_get_selected()</a></code> <code><a href="active_sheet-wb.html">wb_set_selected()</a></code> 
         </dt>
         <dd>Modify the state of active and selected sheets in a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_sheet_visibility.html">wb_get_sheet_visibility()</a></code> <code><a href="wb_sheet_visibility.html">wb_set_sheet_visibility()</a></code> 
+          <code><a href="sheet_visibility-wb.html">wb_get_sheet_visibility()</a></code> <code><a href="sheet_visibility-wb.html">wb_set_sheet_visibility()</a></code> 
         </dt>
         <dd>Get/set worksheet visible state in a workbook</dd>
       </dl><dl><dt>
@@ -361,81 +446,9 @@
         </dt>
         <dd>Get named regions in a workbook</dd>
       </dl></div><div class="section level2">
+      <h2 id="workbook-editing-helpers">Workbook editing helpers<a class="anchor" aria-label="anchor" href="#workbook-editing-helpers"></a></h2>
       
-      <h3 id="workbook-styling">Workbook styling<a class="anchor" aria-label="anchor" href="#workbook-styling"></a></h3>
-      <p class="section-desc"></p><p>These styling functions apply formatting to the workbook globally.</p>
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
-          
-          <code><a href="wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> 
-        </dt>
-        <dd>Set a dxfs styling for the workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_style.html">wb_add_style()</a></code> 
-        </dt>
-        <dd>Set the default style in a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_base_font.html">wb_set_base_font()</a></code> <code><a href="wb_base_font.html">wb_get_base_font()</a></code> 
-        </dt>
-        <dd>Set the default font in a workbook</dd>
-      </dl></div><div class="section level2">
-      
-      <h3 id="chartsheet-content">Chartsheet content<a class="anchor" aria-label="anchor" href="#chartsheet-content"></a></h3>
-      <p class="section-desc"></p><p>These functions help you interact with chartsheets. They invisibly return the wbWorkbook object. They help interact with the mschart package.</p>
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
-          
-          <code><a href="wb_add_chart_xml.html">wb_add_chart_xml()</a></code> 
-        </dt>
-        <dd>Add a chart XML to a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code> 
-        </dt>
-        <dd>Add a chartsheet to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_drawing.html">wb_add_drawing()</a></code> 
-        </dt>
-        <dd>add drawings to workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_image.html">wb_add_image()</a></code> 
-        </dt>
-        <dd>Insert an image into a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_mschart.html">wb_add_mschart()</a></code> 
-        </dt>
-        <dd>Add mschart object to an existing workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_plot.html">wb_add_plot()</a></code> 
-        </dt>
-        <dd>Insert the current plot into a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_sparklines.html">wb_add_sparklines()</a></code> 
-        </dt>
-        <dd>Add sparklines to a worksheet</dd>
-      </dl></div><div class="section level2">
-      
-      <h3 id="workbook-editing-helpers">Workbook editing helpers<a class="anchor" aria-label="anchor" href="#workbook-editing-helpers"></a></h3>
-      <p class="section-desc"></p><p>These functions are helpers that create an intermediate object. They are helpful with editing a workbook.</p>
+      <p class="section-desc"></p><p>These functions are helpers that create an intermediate object. They are helpful with editing a workbook. They are useful when you add content, styling or you want to modify certain elements.</p>
 
       
     </div><div id="" class="section level2">
@@ -530,6 +543,21 @@
           <code><a href="wb_add_comment.html">wb_add_comment()</a></code> <code><a href="wb_add_comment.html">wb_remove_comment()</a></code> 
         </dt>
         <dd>Add comment to worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_sparklines.html">wb_add_sparklines()</a></code> 
+        </dt>
+        <dd>Add sparklines to a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_chart_xml.html">wb_add_chart_xml()</a></code> 
+        </dt>
+        <dd>Add a chart XML to a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_drawing.html">wb_add_drawing()</a></code> 
+        </dt>
+        <dd>add drawings to workbook</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_data_validation.html">wb_add_data_validation()</a></code> 
@@ -653,7 +681,7 @@
         <dd>print pugi_xml</dd>
       </dl></div><div class="section level2">
       
-      <h3 id="misc-and-helpers">Misc and helpers<a class="anchor" aria-label="anchor" href="#misc-and-helpers"></a></h3>
+      <h3 id="other-helpers">Other helpers<a class="anchor" aria-label="anchor" href="#other-helpers"></a></h3>
       
 
       
@@ -663,11 +691,6 @@
       
 
       <dl><dt>
-          
-          <code><a href="openxlsx2_options.html">openxlsx2_options</a></code> 
-        </dt>
-        <dd>Options consulted by openxlsx2</dd>
-      </dl><dl><dt>
           
           <code><a href="int2col.html">int2col()</a></code> 
         </dt>
@@ -718,8 +741,24 @@
         </dt>
         <dd>get all styles on a sheet</dd>
       </dl></div><div class="section level2">
+      <h2 id="package-options">Package options<a class="anchor" aria-label="anchor" href="#package-options"></a></h2>
       
-      <h3 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="openxlsx2_options.html">openxlsx2_options</a></code> 
+        </dt>
+        <dd>Options consulted by openxlsx2</dd>
+      </dl></div><div class="section level2">
+      <h2 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h2>
+      
       
 
       
