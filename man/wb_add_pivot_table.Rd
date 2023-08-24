@@ -55,7 +55,7 @@ df <- wb_data(wb, sheet = 1)
 
 wb <- wb \%>\%
   wb_add_pivot_table(df, dims = "A3",
-  filter = "am", rows = "cyl", cols = "gear", data = "disp"
+    filter = "am", rows = "cyl", cols = "gear", data = "disp"
   )
 }
 \seealso{

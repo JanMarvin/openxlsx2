@@ -40,7 +40,7 @@ get_nr_from_definedName <- function(wb) {
 #' @param wb a workbook
 #' @returns a data frame in named_region format
 #' @noRd
-wb_get_named_regions_tab <- function(wb) {
+get_named_regions_tab <- function(wb) {
   data.frame(
     #localSheetId is not always available
     name = wb$tables$tab_nam,
@@ -54,12 +54,15 @@ wb_get_named_regions_tab <- function(wb) {
   )
 }
 
-#' Get named regions in a workbook or an xlsx file
+#' Get named regions in a workbook
 #'
 #' @returns A vector of named regions in `x`.
-#' @param x An xlsx file or a`wbWorkbook` object
+#' @param wb A `wbWorkbook` object
 #' @param tables Should data tables be included in the result?
+#' @param x deprecated. Use `wb`. For Excel input use [wb_load()] to first load
+#'   the xlsx file as a workbook.
 #' @seealso [wb_add_named_region()], [wb_get_tables()]
+#' @returns A data frame with the all named regions in `wb`. Or `NULL`, if none are found.
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -71,39 +74,50 @@ wb_get_named_regions_tab <- function(wb) {
 #'   name = "iris",
 #'   dims = wb_dims(x = iris)
 #' )$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
+#' ## From Workbook object
+#' wb_get_named_regions(wb)
+#' # Use this info to extract the data frame
+#' df <- wb$to_df(named_region = "iris2")
+#' head(df)
 #'
+#' # Extract tables and named regions
+#' wb$add_worksheet()$add_data_table(x = iris)
+#'
+#' wb$get_named_regions(tables = TRUE)
+#'
+#' # Extract named regions from a file
 #' out_file <- temp_xlsx()
 #' wb_save(wb, out_file, overwrite = TRUE)
 #'
-#' ## see named regions
-#' wb_get_named_regions(wb) ## From Workbook object
-#' wb_get_named_regions(out_file) ## From xlsx file
+#' # Load the file as a workbook first, then get named regions.
+#' wb1 <- wb_load(out_file)
+#' wb1$get_named_regions()
 #'
-#' df <- read_xlsx(out_file, named_region = "iris2")
-#' head(df)
-wb_get_named_regions <- function(x, tables = FALSE) {
-  if (inherits(x, "wbWorkbook")) {
-    wb <- x
-  } else {
-    wb <- wb_load(x)
-  }
+wb_get_named_regions <- function(wb, tables = FALSE, x = NULL) {
+  # TODO merge this doc with wb_add_named_region
+  if (!is.null(x)) {
+    # Will only show up if the user named `x`
+    .Deprecated("wb", old = "x", msg = "Use `wb` instead in `wb_get_named_regions()`")
 
-  z <- NULL
-
-  if (length(wb$workbook$definedNames)) {
-    z <- get_nr_from_definedName(wb)
-  }
-
-  if (tables && !is.null(wb$tables)) {
-    tb <- wb_get_named_regions_tab(wb)
-
-    if (is.null(z)) {
-      z <- tb
-    } else {
-      z <- merge(z, tb, all = TRUE, sort = FALSE)
+    if (!missing(wb)) {
+      # if a user tries to provide both x and wb.
+      stop("x is a deprecated argument. Use wb instead. can't be supplied. Use `wb` only.")
     }
 
+    wb <- x
   }
 
-  z
+  if (!inherits(wb, "wbWorkbook")) {
+    if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
+      warning(
+        "Using `wb_get_named_regions()` on an xlsx file is deprecated.\n",
+        "Use `wb_load(file)$get_named_regions()` instead.",
+        call. = FALSE
+        )
+    }
+    wb <- wb_load(wb)
+  }
+
+  assert_workbook(wb)
+  wb$get_named_regions(tables = tables)
 }

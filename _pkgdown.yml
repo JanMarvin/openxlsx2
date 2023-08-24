@@ -86,7 +86,6 @@ reference:
     These functions help you interact with chartsheets. They invisibly return the
     wbWorkbook object.  They help interact with the mschart package.
   contents:
-  - wbChartSheet
   - wb_add_chart_xml
   - wb_add_chartsheet
   - wb_add_drawing

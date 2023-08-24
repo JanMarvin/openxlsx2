@@ -317,7 +317,7 @@ wb_add_data_table <- function(
 #'
 #' wb <- wb %>%
 #'   wb_add_pivot_table(df, dims = "A3",
-#'   filter = "am", rows = "cyl", cols = "gear", data = "disp"
+#'     filter = "am", rows = "cyl", cols = "gear", data = "disp"
 #'   )
 #' @family workbook wrappers
 #' @family worksheet content functions
@@ -554,18 +554,14 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
 
 #' Add a chartsheet to a workbook
 #'
+#' A chartsheet is a special type of sheet that handles charts output. You must
+#' add a chart to the sheet. Otherwise, this will break the workbook.
+#'
 #' @param wb A Workbook object to attach the new chartsheet
 #' @param sheet A name for the new chartsheet
-#' @param tab_color Color of the chartsheet tab. A valid color (belonging to
-#'   `colors()`) or a valid hex color beginning with "#"
-#' @param zoom A numeric between 10 and 400. Worksheet zoom level as a
-#'   percentage.
-#' @param visible If `FALSE`, sheet is hidden else visible.
-#' @param ... ...
-#' @details After chartsheet creation a chart must be added to the sheet.
-#' Otherwise the chartsheet will break the workbook.
+#' @inheritParams wb_add_worksheet
 #' @family workbook wrappers
-#' @seealso [wb_add_mschart()] [wbChartSheet]
+#' @seealso [wb_add_mschart()]
 #' @export
 wb_add_chartsheet <- function(
   wb,
@@ -607,9 +603,9 @@ wb_add_chartsheet <- function(
 #'   hidden.
 #' @param row_col_headers A logical. If `FALSE`, the worksheet colname and rowname will be
 #'   hidden.
-#' @param tab_color Color of the worksheet tab. A  [wb_color()],  a valid color (belonging to
+#' @param tab_color Color of the sheet tab. A  [wb_color()],  a valid color (belonging to
 #'   `grDevices::colors()`) or a valid hex color beginning with "#".
-#' @param zoom The worksheet zoom level, a numeric between 10 and 400 as a
+#' @param zoom The sheet zoom level, a numeric between 10 and 400 as a
 #'   percentage. (A zoom value smaller than 10 will default to 10.)
 #' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
 #'   Character vector of length 3 corresponding to positions left, center,
@@ -1730,8 +1726,7 @@ wb_set_order <- function(wb, sheets) {
 #'
 #' ## delete one
 #' wb$remove_named_region(name = "iris2")
-#' wb_get_named_regions(wb)
-#'
+#' wb$get_named_regions()
 #' ## read named regions
 #' df <- wb_to_df(wb, named_region = "iris")
 #' head(df)
