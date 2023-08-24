@@ -2,12 +2,9 @@
 % Please edit documentation in R/dates.R
 \name{convert_to_excel_date}
 \alias{convert_to_excel_date}
-\alias{convertToExcelDate}
 \title{convert back to an Excel Date}
 \usage{
 convert_to_excel_date(df, date1904 = FALSE)
-
-convertToExcelDate(df, date1904 = FALSE)
 }
 \arguments{
 \item{df}{dataframe}
