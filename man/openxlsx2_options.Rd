@@ -2,22 +2,27 @@
 % Please edit documentation in R/openxlsx2-package.R
 \name{openxlsx2_options}
 \alias{openxlsx2_options}
-\title{openxlsx2 Options}
+\title{Options consulted by openxlsx2}
 \description{
-The openxlsx2 package uses global options to simplify formatting:
-}
-\details{
+The openxlsx2 package allows the user to set global options to simplify formatting:
+
+If the built-in defaults don't suit you, set one or more of these options.
+Typically, this is done in the \code{.Rprofile} startup file
 \itemize{
 \item \code{options("openxlsx2.borderColor" = "black")}
 \item \code{options("openxlsx2.borderStyle" = "thin")}
 \item \code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}
 \item \code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}
 \item \code{options("openxlsx2.numFmt" = NULL)}
-\item \code{options("openxlsx2.paperSize" = 9)} ## A4
-\item \code{options("openxlsx2.orientation" = "portrait")} ## page orientation
+\item \code{options("openxlsx2.paperSize" = 9)} corresponds to a A4 paper size
+\item \code{options("openxlsx2.orientation" = "portrait")} page orientation
 \item \code{options("openxlsx2.sheet.default_name" = "Sheet")}
 \item \code{options("openxlsx2.rightToLeft" = NULL)}
-\item \code{options("openxlsx2.soon_deprecated" = FALSE)} ## Set to \code{TRUE} if you want a warning if using some functions deprecated recently in openxlsx2
-\item \code{options("openxlsx2.creator")} ## A default name for the creator of comments or new \code{wbWorkbook} objects.
+\item \code{options("openxlsx2.soon_deprecated" = FALSE)} Set to \code{TRUE} if you want a
+warning if using some functions deprecated recently in openxlsx2
+\item \code{options("openxlsx2.creator")} A default name for the creator of new
+\code{wbWorkbook} object with \code{\link[=wb_workbook]{wb_workbook()}} or new comments with \code{\link[=wb_add_comment]{wb_add_comment()}}
+\item \code{options("openxlsx2.thread_id")} the default person id when adding a threaded comment
+to a cell with \code{\link[=wb_add_thread]{wb_add_thread()}}
 }
 }
