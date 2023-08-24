@@ -100,3 +100,19 @@ wb$add_worksheet("a")
 wb$add_data(x = 1:4, col_names = FALSE)
 wb$add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:4), rule = ">2")
 }
+\seealso{
+Other worksheet content functions: 
+\code{\link{wb_add_data_table}()},
+\code{\link{wb_add_data}()},
+\code{\link{wb_add_formula}()},
+\code{\link{wb_add_person}()},
+\code{\link{wb_add_pivot_table}()},
+\code{\link{wb_col_widths}},
+\code{\link{wb_filter}},
+\code{\link{wb_freeze_pane}()},
+\code{\link{wb_grouping}},
+\code{\link{wb_merge_cells}()},
+\code{\link{wb_named_region}},
+\code{\link{wb_row_heights}}
+}
+\concept{worksheet content functions}

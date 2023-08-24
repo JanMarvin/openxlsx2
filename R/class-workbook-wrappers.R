@@ -115,6 +115,7 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' Many base classes are covered, though not all and far from all third-party classes.
 #' When data of an unknown class is written, it is handled with `as.character()`.
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @return A `wbWorkbook`, invisibly.
 #' @examples
 #' ## See formatting vignette for further examples.
@@ -237,6 +238,7 @@ wb_add_data <- function(
 #' @param banded_cols logical. If `TRUE`, the columns are color banded.
 #' @param ... additional arguments
 #'
+#' @family worksheet content functions
 #' @family workbook wrappers
 #' @export
 wb_add_data_table <- function(
@@ -318,6 +320,7 @@ wb_add_data_table <- function(
 #'   filter = "am", rows = "cyl", cols = "gear", data = "disp"
 #'   )
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @export
 wb_add_pivot_table <- function(
     wb,
@@ -385,6 +388,7 @@ wb_add_pivot_table <- function(
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
+#' @family worksheet content functions
 #' @export
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()
@@ -530,12 +534,8 @@ wb_copy_cells <- function(
 #' # or let us decide how to solve this
 #' wb <- wb_merge_cells(wb, dims = "A1:A10", solve = TRUE)
 #'
-#' @name wb_merge_cells
 #' @family workbook wrappers
-NULL
-
-#' @export
-#' @rdname wb_merge_cells
+#' @family worksheet content functions
 wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, ... = ...)
@@ -627,7 +627,6 @@ wb_add_chartsheet <- function(
 #'
 #' @export
 #' @family workbook wrappers
-#'
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook()
@@ -768,7 +767,7 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
 #'
 #' @export
 #' @family workbook wrappers
-#'
+#' @family worksheet content functions
 #' @examples
 #' ## Create a new workbook
 #' wb <- wb_workbook("Kenshin")
@@ -818,6 +817,7 @@ wb_freeze_pane <- function(
 #' @param hidden Option to hide rows. A logical vector of length 1 or length of `rows`
 #' @name wb_row_heights
 #' @family workbook wrappers
+#' @family worksheet content functions
 #'
 #' @examples
 #' ## Create a new workbook
@@ -880,6 +880,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'   If `TRUE`, the columns are hidden.
 #'
 #' @family workbook wrappers
+#' @family worksheet content functions
 #'
 #' @examples
 #' ## Create a new workbook
@@ -1709,6 +1710,7 @@ wb_set_order <- function(wb, sheets) {
 #' @param hidden Should the named region be hidden?
 #' @param custom_menu,description,is_function,function_group_id,help,local_name,publish_to_server,status_bar,vb_procedure,workbook_parameter,xml Unknown XML feature
 #' @param ... additional arguments
+#' @family worksheet content functions
 #' @seealso [wb_get_named_regions()]
 #' @examples
 #' ## create named regions
@@ -1737,6 +1739,7 @@ wb_set_order <- function(wb, sheets) {
 NULL
 
 #' @rdname wb_named_region
+#' @usage wb_add_named_region(wb, sheet = current_sheet(), dims = "A1", name, local_sheet = FALSE, overwrite = FALSE, comment = NULL, hidden = NULL, ...)
 #' @export
 wb_add_named_region <- function(
   wb,
@@ -1840,6 +1843,7 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #' wb_remove_filter(wb, 1:2) ## remove filters
 #' wb_remove_filter(wb, 3) ## Does not affect tables!
 #' @name wb_filter
+#' @family worksheet content functions
 NULL
 #' @rdname wb_filter
 #' @export
@@ -2102,7 +2106,8 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' @param rows,cols Indices of rows and columns to group
 #' @param collapsed If `TRUE` the grouped columns are collapsed
 #' @param levels levels
-#'
+#' @family workbook wrappers
+#' @family worksheet content functions
 #' @examples
 #' # create matrix
 #' t1 <- AirPassengers
@@ -2126,7 +2131,6 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
 #' @name wb_grouping
-#' @family workbook wrappers
 NULL
 
 #' @export
@@ -3087,6 +3091,7 @@ wb_get_person <- function(wb, name = NULL) {
 #' @param reply logical if the comment is a reply
 #' @param resolve logical if the comment should be marked as resolved
 #' @seealso [wb_add_comment()]
+#' @family worksheet content functions
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()$
 #' add_person(name = "openxlsx2")
@@ -3182,6 +3187,7 @@ wb_add_form_control <- function(
 #' @param type The type of conditional formatting rule to apply. One of `"expression"`, `"colorScale"` or others mentioned in **Details**.
 #' @param params A list of additional parameters passed.  See **Details** for more.
 #' @param ... additional arguments
+#' @family worksheet content functions
 #' @details
 #' Conditional formatting `type` accept different parameters. Unless noted,
 #' unlisted parameters are ignored.
