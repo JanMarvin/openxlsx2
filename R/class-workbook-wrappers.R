@@ -2676,7 +2676,7 @@ wb_add_font <- function(
     wb,
     sheet      = current_sheet(),
     dims       = "A1",
-    name       = "Calibr  i",
+    name       = "Calibri",
     color      = wb_color(hex = "FF000000"),
     size       = "11",
     bold       = "",
@@ -2696,25 +2696,25 @@ wb_add_font <- function(
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
-      sheet      = sheet,
-      dims       = dims,
-      name       = name,
-      color      = color,
-      size       = size,
-      bold       = bold,
-      italic     = italic,
-      outline    = outline,
-      strike     = strike,
-      underline  = underline,
-      # fine tuning
-      charset    = charset,
-      condense   = condense,
-      extend     = extend,
-      family     = family,
-      scheme     = scheme,
-      shadow     = shadow,
-      vert_align = vert_align,
-      ...        = ...
+    sheet      = sheet,
+    dims       = dims,
+    name       = name,
+    color      = color,
+    size       = size,
+    bold       = bold,
+    italic     = italic,
+    outline    = outline,
+    strike     = strike,
+    underline  = underline,
+    # fine tuning
+    charset    = charset,
+    condense   = condense,
+    extend     = extend,
+    family     = family,
+    scheme     = scheme,
+    shadow     = shadow,
+    vert_align = vert_align,
+    ...        = ...
   )
 }
 
