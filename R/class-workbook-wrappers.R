@@ -2673,26 +2673,26 @@ wb_add_fill <- function(
 #' @family styles
 #' @export
 wb_add_font <- function(
-    wb,
-    sheet      = current_sheet(),
-    dims       = "A1",
-    name       = "Calibri",
-    color      = wb_color(hex = "FF000000"),
-    size       = "11",
-    bold       = "",
-    italic     = "",
-    outline    = "",
-    strike     = "",
-    underline  = "",
-    # fine tuning
-    charset    = "",
-    condense   = "",
-    extend     = "",
-    family     = "",
-    scheme     = "",
-    shadow     = "",
-    vert_align = "",
-    ...
+      wb,
+      sheet      = current_sheet(),
+      dims       = "A1",
+      name       = "Calibri",
+      color      = wb_color(hex = "FF000000"),
+      size       = "11",
+      bold       = "",
+      italic     = "",
+      outline    = "",
+      strike     = "",
+      underline  = "",
+      # fine tuning
+      charset    = "",
+      condense   = "",
+      extend     = "",
+      family     = "",
+      scheme     = "",
+      shadow     = "",
+      vert_align = "",
+      ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_font(
