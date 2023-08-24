@@ -536,6 +536,7 @@ wb_copy_cells <- function(
 #'
 #' @family workbook wrappers
 #' @family worksheet content functions
+#' @export
 wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, ... = ...)
