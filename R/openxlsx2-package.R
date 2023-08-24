@@ -106,14 +106,67 @@ openxlsx2_celltype <- c(
   hms_time       = 15
 )
 
-#' Deprecated Functions in Package *openxlsx2*
+#' Deprecated functions in package *openxlsx2*
 #'
-#' These functions are provided for compatibility with older versions of `openxlsx2`, and may be defunct as soon as the next release.
-#' @details
+#' @description
+#' These functions are provided for compatibility with older versions of `openxlsx2`,
+#' and may be defunct as soon as the next release. This guide helps you update your
+#' code to the latest standards.
+#'
+#' As of openxlsx2 v1.0, API change should be minimal.
+#'
+#' # Internal functions
+#'
+#' These functions are used internally by openxlsx2. It is no longer advertised
+#' to use them in scripts. They originate from openxlsx, but do not fit openxlsx2's API.
+#'
+#' You should be able to modify
+#' * [delete_data()] -> [wb_clean_sheet()]
+#' * [write_comment()] -> [wb_add_comment()]
+#' * [remove_comment()] -> [wb_remove_comment()]
+#' * [write_formula()] -> [wb_add_formula()]
+#'
+#' You should be able to change those with minimal changes
+#'
+#' # Deprecated functions
+#'
+#' First of all, you can set an option that will add warnings when using deprecated
+#' functions.
+#'
+#' ```
+#' options("openxlsx2.soon_deprecated" = TRUE)
+#' ```
+#'
+#' # Argument changes
+#'
+#' For consistency, arguments were renamed to snake_case for the 0.8 release.
+#' It is now recommended to use `dims` (the cell range) in favour of `row`, `col`, `start_row`, `start_col`
+#'
+#' See [wb_dims()] as it provides many options on how to provide cell range
+#'
+#' # Functions with a new name
+#'
+#' These functions were renamed for consistency.
 #' * [convertToExcelDate()] -> [convert_to_excel_date()]
 #' * [wb_grid_lines()] -> [wb_set_grid_lines()]
-#' * [delete_data()] -> [wb_clean_sheet()]
 #' * [create_comment()] -> [wb_comment()]
+#'
+#'
+#' # Deprecated usage
+#'
+#' * `wb_get_named_regions()` will no longer allow providing a file.
+#'
+#' ```
+#' ## Before
+#' wb_get_named_regions(file)
+#'
+#' ## Now
+#' wb <- wb_load(file)
+#' wb_get_named_regions(wb)
+#' # also possible
+#' wb_load(file)$get_named_regions()`
+#' ```
+#'
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
 NULL

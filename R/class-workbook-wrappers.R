@@ -3118,7 +3118,8 @@ wb_add_thread <- function(
     reply     = FALSE,
     resolve   = FALSE
 ) {
-
+  # wb_add_thread now uses wb_comment internally. No change detected.
+  # means that add_thread does not look at visibility. (I think it's fine.)
   if (missing(person_id)) {
     person_id <- substitute()
   }
