@@ -49,8 +49,7 @@ They will continue to work for some time, but changing to newer functions is rec
 
 ## Internal changes
 
-* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()` are now wrapper functions. [735](https://github.com/JanMarvin/openxlsx2/pull/735)
-
+* `wb_get_active_sheet()`, `wb_set_active_sheet()`, `wb_get_selected()` and `wb_set_selected()`, `wb_get_named_regions()` are now wrapper functions. [735](https://github.com/JanMarvin/openxlsx2/pull/735)
 
 
 ***************************************************************************
