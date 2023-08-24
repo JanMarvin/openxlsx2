@@ -138,7 +138,7 @@ openxlsx2_celltype <- c(
 #' # Argument changes
 #'
 #' For consistency, arguments were renamed to snake_case for the 0.8 release.
-#' It is now recommended to use `dims` (the cell range) in favour of `row`, `col`, `start_row`, `start_col`
+#' It is now recommended to use `dims` (the cell range) in favor of `row`, `col`, `start_row`, `start_col`
 #'
 #' See [wb_dims()] as it provides many options on how to provide cell range
 #'

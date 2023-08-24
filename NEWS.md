@@ -4,16 +4,16 @@
 
 * `wb_get_worksheet()`, `wb_ws()`, `wb_get_sheet_name()` are no longer exported. [735](https://github.com/JanMarvin/openxlsx2/pull/735) They never worked as expected.
   * Use `wb_get_sheet_names()`, `wb_get_active_sheet()`, `wb_get_selected()` instead.
- 
+
 * `wbChartSheet` is now internal ([760](https://github.com/JanMarvin/openxlsx2/pull/760), @olivroy)
 
 ## Deprecated functions
 
-These functions are no longer recommended. A [guide](https://janmarvin.github.io/openxlsx2/dev/reference/openxlsx2-deprecated.html) was created to help users 
+These functions are no longer recommended. A [guide](https://janmarvin.github.io/openxlsx2/dev/reference/openxlsx2-deprecated.html) was created to help users
 They will continue to work for some time, but changing to newer functions is recommended.
 
-* `delete_data()` is deprecated in favour of `wb_remove_tables()` or `wb_clean_sheet()`
-* `create_comment()` is deprecated in favour of `wb_comment()`. Note that while `wb_comment()` has some new defaults, the behavior of `create_comment()` has not changed. ([758](https://github.com/JanMarvin/openxlsx2/pull/758), @olivroy)
+* `delete_data()` is deprecated in favor of `wb_remove_tables()` or `wb_clean_sheet()`
+* `create_comment()` is deprecated in favor of `wb_comment()`. Note that while `wb_comment()` has some new defaults, the behavior of `create_comment()` has not changed. ([758](https://github.com/JanMarvin/openxlsx2/pull/758), @olivroy)
 
 ## New features
 
