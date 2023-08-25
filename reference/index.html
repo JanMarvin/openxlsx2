@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,10 +28,10 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
-    <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
+    <a class="dropdown-item" href="../articles/conditional-formatting.html">Add conditional formatting to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">Add charts to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">Add formulas to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">Add styling to a workbook</a>
   </div>
 </li>
 <li class="nav-item">
@@ -57,9 +57,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="main-wb-functions">Main wb functions<a class="anchor" aria-label="anchor" href="#main-wb-functions"></a></h2>
+      <h2 id="read-tabular-data">Read tabular data<a class="anchor" aria-label="anchor" href="#read-tabular-data"></a></h2>
       
-      
+      <p class="section-desc"></p><p>Read data out of an xlsx file as an R object</p>
 
       
     </div><div id="" class="section level2">
@@ -71,35 +71,69 @@
           
           <code><a href="wb_to_df.html">wb_to_df()</a></code> <code><a href="wb_to_df.html">read_xlsx()</a></code> <code><a href="wb_to_df.html">wb_read()</a></code> 
         </dt>
-        <dd>Create Dataframe from Workbook</dd>
-      </dl><dl><dt>
+        <dd>Create a data frame from a Workbook</dd>
+      </dl></div><div class="section level2">
+      <h2 id="write-tabular-data">Write tabular data<a class="anchor" aria-label="anchor" href="#write-tabular-data"></a></h2>
+      
+      <p class="section-desc"></p><p>Write tabular data frame(s) to file with options</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="write_xlsx.html">write_xlsx()</a></code> 
         </dt>
         <dd>Write data to an xlsx file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
-        </dt>
-        <dd>R6 class for a Workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_workbook.html">wb_workbook()</a></code> 
-        </dt>
-        <dd>Create a new Workbook object</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="load-a-workbook">Load a workbook<a class="anchor" aria-label="anchor" href="#load-a-workbook"></a></h2>
+      
+      <p class="section-desc"></p><p>Load and interact with an existing workbook</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="wb_load.html">wb_load()</a></code> 
         </dt>
         <dd>Load an existing .xlsx file</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_save.html">wb_save()</a></code> 
+          <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
         </dt>
-        <dd>Save Workbook to file</dd>
+        <dd>R6 class for a workbook</dd>
       </dl></div><div class="section level2">
-      <h2 id="wb-add-and-remove-functions">wb add and remove functions<a class="anchor" aria-label="anchor" href="#wb-add-and-remove-functions"></a></h2>
+      <h2 id="create-a-workbook">Create a workbook<a class="anchor" aria-label="anchor" href="#create-a-workbook"></a></h2>
       
+      <p class="section-desc"></p><p>Add content to a help you interact to a new or existing workbook.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_workbook.html">wb_workbook()</a></code> 
+        </dt>
+        <dd>Create a new Workbook object</dd>
+      </dl></div><div class="section level2">
+      <h2 id="add-content-to-a-workbook">Add content to a workbook<a class="anchor" aria-label="anchor" href="#add-content-to-a-workbook"></a></h2>
+      
+      <p class="section-desc"></p><p>Add data or images to a new or existing workbook</p>
+
+      
+    </div><div class="section level2">
+      
+      <h3 id="add-a-sheet-to-a-workbook">Add a sheet to a workbook<a class="anchor" aria-label="anchor" href="#add-a-sheet-to-a-workbook"></a></h3>
       
 
       
@@ -110,39 +144,50 @@
 
       <dl><dt>
           
-          <code><a href="comment.html">create_comment()</a></code> <code><a href="comment.html">wb_add_comment()</a></code> <code><a href="comment.html">wb_remove_comment()</a></code> 
+          <code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code> 
         </dt>
-        <dd>Create, write and remove comments</dd>
+        <dd>Add a worksheet to a workbook</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="add-to-a-worksheet">Add to a worksheet<a class="anchor" aria-label="anchor" href="#add-to-a-worksheet"></a></h3>
+      <p class="section-desc"></p><p>These functions help you write in worksheets. They invisibly return the <code>wbWorkbook</code> object, except for <code>get_</code> functions, who return a character vector, unless specified otherwise.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="col_widths-wb.html">wb_set_col_widths()</a></code> <code><a href="col_widths-wb.html">wb_remove_col_widths()</a></code> 
+        </dt>
+        <dd>Modify column widths of a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="named_region.html">wb_add_named_region()</a></code> <code><a href="named_region.html">wb_remove_named_region()</a></code> 
+          <code><a href="filter-wb.html">wb_add_filter()</a></code> <code><a href="filter-wb.html">wb_remove_filter()</a></code> 
         </dt>
-        <dd>Create / delete a named region</dd>
+        <dd>Add/remove column filters in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_border.html">wb_add_border()</a></code> 
+          <code><a href="grouping-wb.html">wb_group_cols()</a></code> <code><a href="grouping-wb.html">wb_ungroup_cols()</a></code> <code><a href="grouping-wb.html">wb_group_rows()</a></code> <code><a href="grouping-wb.html">wb_ungroup_rows()</a></code> 
         </dt>
-        <dd>add border for cell region</dd>
+        <dd>Group rows and columns in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_cell_style.html">wb_add_cell_style()</a></code> 
+          <code><a href="named_region-wb.html">wb_add_named_region()</a></code> <code><a href="named_region-wb.html">wb_remove_named_region()</a></code> 
         </dt>
-        <dd>add cell style for cell region</dd>
+        <dd>Modify named regions in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_chart_xml.html">wb_add_chart_xml()</a></code> 
+          <code><a href="row_heights-wb.html">wb_set_row_heights()</a></code> <code><a href="row_heights-wb.html">wb_remove_row_heights()</a></code> 
         </dt>
-        <dd>add a chart xml to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code> 
-        </dt>
-        <dd>Add a chartsheet to a workbook</dd>
+        <dd>Modify row heights of a worksheet</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> 
         </dt>
-        <dd>Add conditional formatting to cells</dd>
+        <dd>Add conditional formatting to cells in a worksheet</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_data.html">wb_add_data()</a></code> 
@@ -152,136 +197,35 @@
           
           <code><a href="wb_add_data_table.html">wb_add_data_table()</a></code> 
         </dt>
-        <dd>Add data to a worksheet as an Excel table</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_data_validation.html">wb_add_data_validation()</a></code> 
-        </dt>
-        <dd>Add data validation to cells</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_drawing.html">wb_add_drawing()</a></code> 
-        </dt>
-        <dd>add drawings to workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> 
-        </dt>
-        <dd>add dxfs style
-These styles are used with conditional formatting and custom table styles</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_fill.html">wb_add_fill()</a></code> 
-        </dt>
-        <dd>add fill for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_font.html">wb_add_font()</a></code> 
-        </dt>
-        <dd>add font for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_form_control.html">wb_add_form_control()</a></code> 
-        </dt>
-        <dd>Add form control Checkbox, Radiobuttons or Dropmenu</dd>
+        <dd>Add a data table to a worksheet</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_formula.html">wb_add_formula()</a></code> 
         </dt>
-        <dd>Add a character vector as an Excel Formula</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_ignore_error.html">wb_add_ignore_error()</a></code> 
-        </dt>
-        <dd>Ignore error on worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_image.html">wb_add_image()</a></code> 
-        </dt>
-        <dd>Insert an image into a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_mschart.html">wb_add_mschart()</a></code> 
-        </dt>
-        <dd>Add mschart object to an existing workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_named_style.html">wb_add_named_style()</a></code> 
-        </dt>
-        <dd>add named style for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_numfmt.html">wb_add_numfmt()</a></code> 
-        </dt>
-        <dd>add numfmt for cell region</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_page_break.html">wb_add_page_break()</a></code> 
-        </dt>
-        <dd>Add a page break to a worksheet</dd>
+        <dd>Add a formula to a cell range in a worksheet</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code> 
         </dt>
-        <dd>Add pivot table to a worksheet</dd>
+        <dd>Add a pivot table to a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_plot.html">wb_add_plot()</a></code> 
+          <code><a href="wb_add_thread.html">wb_add_thread()</a></code> 
         </dt>
-        <dd>Insert the current plot into a worksheet</dd>
+        <dd>Add threaded comments to a cell in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_sparklines.html">wb_add_sparklines()</a></code> 
+          <code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code> 
         </dt>
-        <dd>add sparklines to workbook</dd>
+        <dd>Freeze pane of a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_style.html">wb_add_style()</a></code> 
+          <code><a href="wb_merge_cells.html">wb_merge_cells()</a></code> <code><a href="wb_merge_cells.html">wb_unmerge_cells()</a></code> 
         </dt>
-        <dd>add style to workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_thread.html">wb_add_person()</a></code> <code><a href="wb_add_thread.html">wb_get_person()</a></code> <code><a href="wb_add_thread.html">wb_add_thread()</a></code> 
-        </dt>
-        <dd>add threaded comment to worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code> 
-        </dt>
-        <dd>Add a worksheet to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_creators.html">wb_add_creators()</a></code> <code><a href="wb_creators.html">wb_set_creators()</a></code> <code><a href="wb_creators.html">wb_remove_creators()</a></code> <code><a href="wb_creators.html">wb_get_creators()</a></code> 
-        </dt>
-        <dd>Workbook creators</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_filter.html">wb_add_filter()</a></code> <code><a href="wb_filter.html">wb_remove_filter()</a></code> 
-        </dt>
-        <dd>Add/remove column filters in a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_col_widths.html">wb_set_col_widths()</a></code> <code><a href="wb_col_widths.html">wb_remove_col_widths()</a></code> 
-        </dt>
-        <dd>Modify worksheet column widths</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_row_heights.html">wb_remove_row_heights()</a></code> 
-        </dt>
-        <dd>Remove custom row heights from a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_tables.html">wb_remove_tables()</a></code> 
-        </dt>
-        <dd>Remove an Excel table in a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_remove_worksheet.html">wb_remove_worksheet()</a></code> 
-        </dt>
-        <dd>Remove a worksheet from a workbook</dd>
+        <dd>Merge cells within a worksheet</dd>
       </dl></div><div class="section level2">
-      <h2 id="wb-get-and-set-functions">wb get and set functions<a class="anchor" aria-label="anchor" href="#wb-get-and-set-functions"></a></h2>
       
+      <h3 id="add-images-to-a-worksheet">Add images to a worksheet<a class="anchor" aria-label="anchor" href="#add-images-to-a-worksheet"></a></h3>
       
 
       
@@ -292,69 +236,185 @@ These styles are used with conditional formatting and custom table styles</dd>
 
       <dl><dt>
           
-          <code><a href="cell_style.html">wb_get_cell_style()</a></code> <code><a href="cell_style.html">wb_set_cell_style()</a></code> 
+          <code><a href="wb_add_image.html">wb_add_image()</a></code> 
         </dt>
-        <dd>get and set cell style</dd>
+        <dd>Insert an image into a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="select_active_sheet.html">wb_get_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_set_active_sheet()</a></code> <code><a href="select_active_sheet.html">wb_get_selected()</a></code> <code><a href="select_active_sheet.html">wb_set_selected()</a></code> 
+          <code><a href="wb_add_plot.html">wb_add_plot()</a></code> 
         </dt>
-        <dd>get and set table of sheets and their state as selected and active</dd>
+        <dd>Insert the current plot into a worksheet</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="add-charts-to-worksheets">Add charts to worksheets<a class="anchor" aria-label="anchor" href="#add-charts-to-worksheets"></a></h3>
+      <p class="section-desc"></p><p>Add Excel charts to a worksheet with the mschart package.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code> 
+        </dt>
+        <dd>Add a chartsheet to a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="sheet_visibility.html">wb_get_sheet_visibility()</a></code> <code><a href="sheet_visibility.html">wb_set_sheet_visibility()</a></code> 
+          <code><a href="wb_add_mschart.html">wb_add_mschart()</a></code> 
         </dt>
-        <dd>Get/set worksheet visible state</dd>
+        <dd>Add mschart object to a worksheet</dd>
+      </dl></div><div class="section level2">
+      <h2 id="style-a-workbook">Style a workbook<a class="anchor" aria-label="anchor" href="#style-a-workbook"></a></h2>
+      
+      <p class="section-desc"></p><p>Style a cell region, a worksheet or the entire workbook</p>
+
+      
+    </div><div class="section level2">
+      
+      <h3 id="worksheet-styling">Worksheet styling<a class="anchor" aria-label="anchor" href="#worksheet-styling"></a></h3>
+      <p class="section-desc"></p><p>Add styling to a cell region in a worksheet</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_add_border.html">wb_add_border()</a></code> 
+        </dt>
+        <dd>Modify borders in a cell region</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_add_thread.html">wb_add_person()</a></code> <code><a href="wb_add_thread.html">wb_get_person()</a></code> <code><a href="wb_add_thread.html">wb_add_thread()</a></code> 
+          <code><a href="wb_add_cell_style.html">wb_add_cell_style()</a></code> 
         </dt>
-        <dd>add threaded comment to worksheet</dd>
+        <dd>Modify the style in a cell region</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_base_font.html">wb_set_base_font()</a></code> <code><a href="wb_base_font.html">wb_get_base_font()</a></code> 
+          <code><a href="wb_add_fill.html">wb_add_fill()</a></code> 
         </dt>
-        <dd>Get / set the default font in a workbook</dd>
+        <dd>Modify the background fill color in a cell region</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_creators.html">wb_add_creators()</a></code> <code><a href="wb_creators.html">wb_set_creators()</a></code> <code><a href="wb_creators.html">wb_remove_creators()</a></code> <code><a href="wb_creators.html">wb_get_creators()</a></code> 
+          <code><a href="wb_add_font.html">wb_add_font()</a></code> 
         </dt>
-        <dd>Workbook creators</dd>
+        <dd>Modify font in a cell region</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_get_named_regions.html">wb_get_named_regions()</a></code> 
+          <code><a href="wb_add_named_style.html">wb_add_named_style()</a></code> 
         </dt>
-        <dd>Get create or remove named regions</dd>
+        <dd>Apply styling to a cell region with a named style</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_get_sheet_name.html">wb_get_sheet_name()</a></code> 
+          <code><a href="wb_add_numfmt.html">wb_add_numfmt()</a></code> 
         </dt>
-        <dd>Get sheet name</dd>
+        <dd>Modify number formatting in a cell region</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_get_tables.html">wb_get_tables()</a></code> 
+          <code><a href="wb_cell_style.html">wb_get_cell_style()</a></code> <code><a href="wb_cell_style.html">wb_set_cell_style()</a></code> 
         </dt>
-        <dd>List Excel tables in a workbook</dd>
+        <dd>Apply styling to a cell region</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="workbook-styling">Workbook styling<a class="anchor" aria-label="anchor" href="#workbook-styling"></a></h3>
+      <p class="section-desc"></p><p>These styling functions apply formatting to the workbook globally.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="base_font-wb.html">wb_set_base_font()</a></code> <code><a href="base_font-wb.html">wb_get_base_font()</a></code> 
+        </dt>
+        <dd>Set the default font in a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_get_worksheet.html">wb_get_worksheet()</a></code> <code><a href="wb_get_worksheet.html">wb_ws()</a></code> 
+          <code><a href="wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> 
         </dt>
-        <dd>Get a worksheet from a <code>wbWorkbook</code> object</dd>
+        <dd>Set a dxfs styling for the workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_style.html">wb_add_style()</a></code> 
+        </dt>
+        <dd>Set the default style in a workbook</dd>
+      </dl></div><div class="section level2">
+      <h2 id="view-and-save-a-workbook">View and save a workbook<a class="anchor" aria-label="anchor" href="#view-and-save-a-workbook"></a></h2>
+      
+      <p class="section-desc"></p><p>Visualize the content of a workbook in a spreadsheet software and save it</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_open.html">wb_open()</a></code> 
+        </dt>
+        <dd>Preview a workbook in a spreadsheet software</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_save.html">wb_save()</a></code> 
+        </dt>
+        <dd>Save a workbook to file</dd>
+      </dl><dl><dt>
+          
+          <code><a href="xl_open.html">xl_open()</a></code> 
+        </dt>
+        <dd>Open an xlsx file or a <code>wbWorkbook</code> object</dd>
+      </dl></div><div class="section level2">
+      <h2 id="edit-workbook-defaults">Edit workbook defaults<a class="anchor" aria-label="anchor" href="#edit-workbook-defaults"></a></h2>
+      
+      <p class="section-desc"></p><p>These functions are used to modify setting of a workbook as a whole.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by()</a></code> 
+        </dt>
+        <dd>Modify author in the metadata of a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="creators-wb.html">wb_add_creators()</a></code> <code><a href="creators-wb.html">wb_set_creators()</a></code> <code><a href="creators-wb.html">wb_remove_creators()</a></code> <code><a href="creators-wb.html">wb_get_creators()</a></code> 
+        </dt>
+        <dd>Modify creators of a workbook</dd>
       </dl><dl><dt>
           
           <code><a href="wb_order.html">wb_get_order()</a></code> <code><a href="wb_order.html">wb_set_order()</a></code> 
         </dt>
-        <dd>Order of worksheets in xlsx file</dd>
+        <dd>Order worksheets in a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_sheet_names.html">wb_set_sheet_names()</a></code> <code><a href="wb_sheet_names.html">wb_get_sheet_names()</a></code> 
+          <code><a href="sheet_names-wb.html">wb_set_sheet_names()</a></code> <code><a href="sheet_names-wb.html">wb_get_sheet_names()</a></code> 
         </dt>
         <dd>Get / Set worksheet names for a workbook</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_col_widths.html">wb_set_col_widths()</a></code> <code><a href="wb_col_widths.html">wb_remove_col_widths()</a></code> 
+          <code><a href="wb_remove_worksheet.html">wb_remove_worksheet()</a></code> 
         </dt>
-        <dd>Modify worksheet column widths</dd>
+        <dd>Remove a worksheet from a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="active_sheet-wb.html">wb_get_active_sheet()</a></code> <code><a href="active_sheet-wb.html">wb_set_active_sheet()</a></code> <code><a href="active_sheet-wb.html">wb_get_selected()</a></code> <code><a href="active_sheet-wb.html">wb_set_selected()</a></code> 
+        </dt>
+        <dd>Modify the state of active and selected sheets in a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="sheet_visibility-wb.html">wb_get_sheet_visibility()</a></code> <code><a href="sheet_visibility-wb.html">wb_set_sheet_visibility()</a></code> 
+        </dt>
+        <dd>Get/set worksheet visible state in a workbook</dd>
       </dl><dl><dt>
           
           <code><a href="wb_set_bookview.html">wb_set_bookview()</a></code> 
@@ -362,45 +422,9 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>Set the workbook position, size and filter</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_set_grid_lines.html">wb_set_grid_lines()</a></code> <code><a href="wb_set_grid_lines.html">wb_grid_lines()</a></code> 
+          <code><a href="wb_person.html">wb_add_person()</a></code> <code><a href="wb_person.html">wb_get_person()</a></code> 
         </dt>
-        <dd>Set worksheet gridlines to show or hide.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_header_footer.html">wb_set_header_footer()</a></code> 
-        </dt>
-        <dd>Set document headers and footers</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by()</a></code> 
-        </dt>
-        <dd>Add another author to the meta data of the file.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_row_heights.html">wb_set_row_heights()</a></code> 
-        </dt>
-        <dd>Set worksheet row heights</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_sheetview.html">wb_set_sheetview()</a></code> 
-        </dt>
-        <dd>add sheetview</dd>
-      </dl></div><div class="section level2">
-      <h2 id="wb-misc">wb Misc<a class="anchor" aria-label="anchor" href="#wb-misc"></a></h2>
-      
-      
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
-          
-          <code><a href="wb_dims.html">wb_dims()</a></code> 
-        </dt>
-        <dd>Helper to specify the <code>dims</code> argument</dd>
+        <dd>Helper for adding threaded comments</dd>
       </dl><dl><dt>
           
           <code><a href="wb_protect.html">wb_protect()</a></code> 
@@ -408,83 +432,23 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>Protect a workbook from modifications</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_protect_worksheet.html">wb_protect_worksheet()</a></code> 
+          <code><a href="wb_get_tables.html">wb_get_tables()</a></code> 
         </dt>
-        <dd>Protect a worksheet from modifications</dd>
+        <dd>List Excel tables in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="Hyperlink.html">wb_hyperlink()</a></code> 
+          <code><a href="wb_remove_tables.html">wb_remove_tables()</a></code> 
         </dt>
-        <dd>Create a new hyperlink object</dd>
+        <dd>Remove a data table from a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="cleanup.html">wb_clean_sheet()</a></code> <code><a href="cleanup.html">delete_data()</a></code> 
+          <code><a href="wb_get_named_regions.html">wb_get_named_regions()</a></code> 
         </dt>
-        <dd>clean sheet (remove all values)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code> 
-        </dt>
-        <dd>Freeze a worksheet pane</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_open.html">wb_open()</a></code> 
-        </dt>
-        <dd>little worksheet opener</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_clone_sheet_style.html">wb_clone_sheet_style()</a></code> 
-        </dt>
-        <dd>clone sheets style</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_clone_worksheet.html">wb_clone_worksheet()</a></code> 
-        </dt>
-        <dd>Clone a worksheet to a workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_copy_cells.html">wb_copy_cells()</a></code> 
-        </dt>
-        <dd>copy cells around</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_color.html">wb_color()</a></code> 
-        </dt>
-        <dd>Create a new wbColour object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_data.html">wb_data()</a></code> 
-        </dt>
-        <dd>provide wb_data object as mschart input</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_set_grid_lines.html">wb_set_grid_lines()</a></code> <code><a href="wb_set_grid_lines.html">wb_grid_lines()</a></code> 
-        </dt>
-        <dd>Set worksheet gridlines to show or hide.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_update_table.html">wb_update_table()</a></code> 
-        </dt>
-        <dd>update a data_table</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_merge_cells.html">wb_merge_cells()</a></code> <code><a href="wb_merge_cells.html">wb_unmerge_cells()</a></code> 
-        </dt>
-        <dd>Worksheet cell merging</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_page_setup.html">wb_page_setup()</a></code> 
-        </dt>
-        <dd>Set page margins, orientation and print scaling</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_grouping.html">wb_group_cols()</a></code> <code><a href="wb_grouping.html">wb_ungroup_cols()</a></code> <code><a href="wb_grouping.html">wb_group_rows()</a></code> <code><a href="wb_grouping.html">wb_ungroup_rows()</a></code> 
-        </dt>
-        <dd>Group Rows and Columns</dd>
+        <dd>Get named regions in a workbook</dd>
       </dl></div><div class="section level2">
-      <h2 id="create-functions">create functions<a class="anchor" aria-label="anchor" href="#create-functions"></a></h2>
+      <h2 id="workbook-editing-helpers">Workbook editing helpers<a class="anchor" aria-label="anchor" href="#workbook-editing-helpers"></a></h2>
       
-      
+      <p class="section-desc"></p><p>These functions are helpers that create an intermediate object. They are helpful with editing a workbook. They are useful when you add content, styling or you want to modify certain elements.</p>
 
       
     </div><div id="" class="section level2">
@@ -494,19 +458,34 @@ These styles are used with conditional formatting and custom table styles</dd>
 
       <dl><dt>
           
-          <code><a href="comment.html">create_comment()</a></code> <code><a href="comment.html">wb_add_comment()</a></code> <code><a href="comment.html">wb_remove_comment()</a></code> 
+          <code><a href="wb_color.html">wb_color()</a></code> 
         </dt>
-        <dd>Create, write and remove comments</dd>
+        <dd>Helper to create a color</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_comment.html">wb_comment()</a></code> 
+        </dt>
+        <dd>Helper to create a comment object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_data.html">wb_data()</a></code> 
+        </dt>
+        <dd>Add the <code>wb_data</code> attribute to a data frame in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_dims.html">wb_dims()</a></code> 
+        </dt>
+        <dd>Helper to specify the <code>dims</code> argument</dd>
       </dl><dl><dt>
           
           <code><a href="create_border.html">create_border()</a></code> 
         </dt>
-        <dd>create border</dd>
+        <dd>Helper to create a border</dd>
       </dl><dl><dt>
           
           <code><a href="create_cell_style.html">create_cell_style()</a></code> 
         </dt>
-        <dd>create_cell_style</dd>
+        <dd>Helper to create a cell style</dd>
       </dl><dl><dt>
           
           <code><a href="create_dxfs_style.html">create_dxfs_style()</a></code> 
@@ -536,15 +515,122 @@ These styles are used with conditional formatting and custom table styles</dd>
           
           <code><a href="create_sparklines.html">create_sparklines()</a></code> 
         </dt>
-        <dd>create sparklines used in <code>add_sparline()</code></dd>
+        <dd>Create sparklines object</dd>
       </dl><dl><dt>
           
           <code><a href="create_tablestyle.html">create_tablestyle()</a></code> 
         </dt>
         <dd>create tableStyle</dd>
       </dl></div><div class="section level2">
-      <h2 id="xml-functions">XML functions<a class="anchor" aria-label="anchor" href="#xml-functions"></a></h2>
+      <h2 id="other-functions">Other functions<a class="anchor" aria-label="anchor" href="#other-functions"></a></h2>
       
+      <p class="section-desc"></p><p>These functions can be used to achieve more specialized operations.</p>
+
+      
+    </div><div class="section level2">
+      
+      <h3 id="other-tools-to-interact-with-worksheets">Other tools to interact with worksheets<a class="anchor" aria-label="anchor" href="#other-tools-to-interact-with-worksheets"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="wb_add_comment.html">wb_add_comment()</a></code> <code><a href="wb_add_comment.html">wb_remove_comment()</a></code> 
+        </dt>
+        <dd>Add comment to worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_sparklines.html">wb_add_sparklines()</a></code> 
+        </dt>
+        <dd>Add sparklines to a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_chart_xml.html">wb_add_chart_xml()</a></code> 
+        </dt>
+        <dd>Add a chart XML to a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_drawing.html">wb_add_drawing()</a></code> 
+        </dt>
+        <dd>Add drawings to a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_data_validation.html">wb_add_data_validation()</a></code> 
+        </dt>
+        <dd>Add data validation to cells in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_form_control.html">wb_add_form_control()</a></code> 
+        </dt>
+        <dd>Add a checkbox, radio button or drop menu to a cell in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_ignore_error.html">wb_add_ignore_error()</a></code> 
+        </dt>
+        <dd>Ignore error types on worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_page_break.html">wb_add_page_break()</a></code> 
+        </dt>
+        <dd>Add a page break to a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_clean_sheet.html">wb_clean_sheet()</a></code> 
+        </dt>
+        <dd>Remove all values in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_clone_sheet_style.html">wb_clone_sheet_style()</a></code> 
+        </dt>
+        <dd>Apply styling from a sheet to another within a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_clone_worksheet.html">wb_clone_worksheet()</a></code> 
+        </dt>
+        <dd>Create copies of a worksheet within a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_copy_cells.html">wb_copy_cells()</a></code> 
+        </dt>
+        <dd>Copy cells around within a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_page_setup.html">wb_page_setup()</a></code> 
+        </dt>
+        <dd>Set page margins, orientation and print scaling of a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_protect_worksheet.html">wb_protect_worksheet()</a></code> 
+        </dt>
+        <dd>Protect a worksheet from modifications</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_set_grid_lines.html">wb_set_grid_lines()</a></code> <code><a href="wb_set_grid_lines.html">wb_grid_lines()</a></code> 
+        </dt>
+        <dd>Modify grid lines visibility in a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_set_header_footer.html">wb_set_header_footer()</a></code> 
+        </dt>
+        <dd>Set headers and footers of a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_set_sheetview.html">wb_set_sheetview()</a></code> 
+        </dt>
+        <dd>Modify the default view of a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_update_table.html">wb_update_table()</a></code> 
+        </dt>
+        <dd>Update a data table position in a worksheet</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="xml-functions">XML functions<a class="anchor" aria-label="anchor" href="#xml-functions"></a></h3>
       <p class="section-desc"></p><p>A curated list of XML functions used in openxlsx2.</p>
 
       
@@ -594,29 +680,8 @@ These styles are used with conditional formatting and custom table styles</dd>
         </dt>
         <dd>print pugi_xml</dd>
       </dl></div><div class="section level2">
-      <h2 id="r-classes">R6 Classes<a class="anchor" aria-label="anchor" href="#r-classes"></a></h2>
       
-      
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
-          
-          <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
-        </dt>
-        <dd>R6 class for a Workbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wbChartSheet.html">wbChartSheet</a></code> 
-        </dt>
-        <dd>R6 class for a Workbook Chart Sheet</dd>
-      </dl></div><div class="section level2">
-      <h2 id="misc-and-helpers">Misc and helpers<a class="anchor" aria-label="anchor" href="#misc-and-helpers"></a></h2>
-      
+      <h3 id="other-helpers">Other helpers<a class="anchor" aria-label="anchor" href="#other-helpers"></a></h3>
       
 
       
@@ -626,11 +691,6 @@ These styles are used with conditional formatting and custom table styles</dd>
       
 
       <dl><dt>
-          
-          <code><a href="openxlsx2_options.html">openxlsx2_options</a></code> 
-        </dt>
-        <dd>openxlsx2 Options</dd>
-      </dl><dl><dt>
           
           <code><a href="int2col.html">int2col()</a></code> 
         </dt>
@@ -652,7 +712,7 @@ These styles are used with conditional formatting and custom table styles</dd>
         <dd>Convert from Excel date, datetime or hms number to R Date type</dd>
       </dl><dl><dt>
           
-          <code><a href="convert_to_excel_date.html">convert_to_excel_date()</a></code> <code><a href="convert_to_excel_date.html">convertToExcelDate()</a></code> 
+          <code><a href="convert_to_excel_date.html">convert_to_excel_date()</a></code> 
         </dt>
         <dd>convert back to an Excel Date</dd>
       </dl><dl><dt>
@@ -660,6 +720,16 @@ These styles are used with conditional formatting and custom table styles</dd>
           <code><a href="temp_xlsx.html">temp_xlsx()</a></code> 
         </dt>
         <dd>helper function to create temporary directory for testing purpose</dd>
+      </dl><dl><dt>
+          
+          <code><a href="waivers.html">current_sheet()</a></code> <code><a href="waivers.html">next_sheet()</a></code> <code><a href="waivers.html">na_strings()</a></code> 
+        </dt>
+        <dd><code>openxlsx2</code> waivers</dd>
+      </dl><dl><dt>
+          
+          <code><a href="dims_helper.html">dims_to_rowcol()</a></code> <code><a href="dims_helper.html">rowcol_to_dims()</a></code> 
+        </dt>
+        <dd>Helper functions to work with <code>dims</code></dd>
       </dl><dl><dt>
           
           <code><a href="clean_worksheet_name.html">clean_worksheet_name()</a></code> 
@@ -670,21 +740,22 @@ These styles are used with conditional formatting and custom table styles</dd>
           <code><a href="styles_on_sheet.html">styles_on_sheet()</a></code> 
         </dt>
         <dd>get all styles on a sheet</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="package-options">Package options<a class="anchor" aria-label="anchor" href="#package-options"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
-          <code><a href="waivers.html">current_sheet()</a></code> <code><a href="waivers.html">next_sheet()</a></code> <code><a href="waivers.html">na_strings()</a></code> 
+          <code><a href="openxlsx2_options.html">openxlsx2_options</a></code> 
         </dt>
-        <dd><code>openxlsx2</code> waivers</dd>
-      </dl><dl><dt>
-          
-          <code><a href="xl_open.html">xl_open()</a></code> 
-        </dt>
-        <dd>Open a Microsoft Excel file (xls/xlsx) or an openxlsx2 wbWorkbook</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dims_helper.html">dims_to_rowcol()</a></code> <code><a href="dims_helper.html">rowcol_to_dims()</a></code> 
-        </dt>
-        <dd>Helper functions to work with <code>dims</code></dd>
+        <dd>Options consulted by openxlsx2</dd>
       </dl></div><div class="section level2">
       <h2 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h2>
       
@@ -700,7 +771,7 @@ These styles are used with conditional formatting and custom table styles</dd>
           
           <code><a href="openxlsx2-deprecated.html">openxlsx2-deprecated</a></code> 
         </dt>
-        <dd>Deprecated Functions in Package <em>openxlsx2</em></dd>
+        <dd>Deprecated functions in package <em>openxlsx2</em></dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

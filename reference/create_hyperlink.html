@@ -12,7 +12,7 @@ Either link to external URLs or local files or straight to cells of local Excel 
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,10 +30,10 @@ Either link to external URLs or local files or straight to cells of local Excel 
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
-    <a class="dropdown-item" href="../articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
-    <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
+    <a class="dropdown-item" href="../articles/conditional-formatting.html">Add conditional formatting to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">Add charts to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">Add formulas to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">Add styling to a workbook</a>
   </div>
 </li>
 <li class="nav-item">
@@ -95,112 +95,40 @@ Either link to external URLs or local files or straight to cells of local Excel 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Writing internal hyperlinks</span></span></span>
-<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet1"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet2"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet 3"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">3</span>, x <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## External Hyperlink</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://www.google.com"</span>, <span class="st">"https://www.google.com.au"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"google"</span>, <span class="st">"google Aus"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"hyperlink"</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">1</span>, x <span class="op">=</span> <span class="va">x</span>, startCol <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span></span>
+<span class="r-in"><span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet2"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Sheet3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Internal Hyperlink - create hyperlink formula manually</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="write_formula.html">write_formula</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">wb</span>, <span class="st">"Sheet1"</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="st">'=HYPERLINK(\"#Sheet2!B3\", "Text to Display - Link to Sheet2")'</span>,</span></span>
-<span class="r-in"><span>  startCol <span class="op">=</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 Sheet 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2, 3</span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="st">'=HYPERLINK(\"#Sheet2!B3\", "Text to Display - Link to Sheet2")'</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, x <span class="op">=</span> <span class="va">x</span>, dims <span class="op">=</span> <span class="st">"A1"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Internal - No text to display using create_hyperlink() function</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="write_formula.html">write_formula</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">wb</span>, <span class="st">"Sheet1"</span>,</span></span>
-<span class="r-in"><span>  startRow <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fu">create_hyperlink</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet 3"</span>, row <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 Sheet 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2, 3</span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">create_hyperlink</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet3"</span>, row <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, x <span class="op">=</span> <span class="va">x</span>, dims <span class="op">=</span> <span class="st">"A2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Internal - Text to display</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="write_formula.html">write_formula</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">wb</span>, <span class="st">"Sheet1"</span>,</span></span>
-<span class="r-in"><span>  startRow <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fu">create_hyperlink</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    sheet <span class="op">=</span> <span class="st">"Sheet 3"</span>, row <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>    text <span class="op">=</span> <span class="st">"Link to Sheet 3"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 Sheet 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2, 3</span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">create_hyperlink</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet3"</span>, row <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">2</span>,text <span class="op">=</span> <span class="st">"Link to Sheet 3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, x <span class="op">=</span> <span class="va">x</span>, dims <span class="op">=</span> <span class="st">"A3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Link to file - No text to display</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="write_formula.html">write_formula</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">wb</span>, <span class="st">"Sheet1"</span>,</span></span>
-<span class="r-in"><span>  startRow <span class="op">=</span> <span class="fl">4</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fu">create_hyperlink</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    sheet <span class="op">=</span> <span class="st">"testing"</span>, row <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>    file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 Sheet 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2, 3</span>
+<span class="r-in"><span><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">create_hyperlink</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, row <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="fl">10</span>, file <span class="op">=</span> <span class="va">fl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, x <span class="op">=</span> <span class="va">x</span>, dims <span class="op">=</span> <span class="st">"A4"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Link to file - Text to display</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="write_formula.html">write_formula</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">wb</span>, <span class="st">"Sheet1"</span>,</span></span>
-<span class="r-in"><span>  startRow <span class="op">=</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fu">create_hyperlink</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    sheet <span class="op">=</span> <span class="st">"testing"</span>, row <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>    file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    text <span class="op">=</span> <span class="st">"Link to File."</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 Sheet 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2, 3</span>
+<span class="r-in"><span><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">create_hyperlink</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet2"</span>, row <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="fl">10</span>, file <span class="op">=</span> <span class="va">fl</span>, text <span class="op">=</span> <span class="st">"Link to File."</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, x <span class="op">=</span> <span class="va">x</span>, dims <span class="op">=</span> <span class="st">"A5"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Link to external file - Text to display</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="write_formula.html">write_formula</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">wb</span>, <span class="st">"Sheet1"</span>,</span></span>
-<span class="r-in"><span>  startRow <span class="op">=</span> <span class="fl">10</span>, startCol <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="st">'=HYPERLINK("[C:/Users]", "Link to an external file")'</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 Sheet 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2, 3</span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="st">'=HYPERLINK("[C:/Users]", "Link to an external file")'</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, x <span class="op">=</span> <span class="va">x</span>, dims <span class="op">=</span> <span class="st">"A6"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Link to internal file</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">=</span> <span class="fu">create_hyperlink</span><span class="op">(</span>text <span class="op">=</span> <span class="st">"test.png"</span>, file <span class="op">=</span> <span class="st">"D:/somepath/somepicture.png"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="write_formula.html">write_formula</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"Sheet1"</span>, startRow <span class="op">=</span> <span class="fl">11</span>, startCol <span class="op">=</span> <span class="fl">1</span>, x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 Sheet 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2, 3</span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">create_hyperlink</span><span class="op">(</span>text <span class="op">=</span> <span class="st">"test.png"</span>, file <span class="op">=</span> <span class="st">"D:/somepath/somepicture.png"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_formula</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, dims <span class="op">=</span> <span class="st">"A7"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># if (interactive()) wb$open()</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

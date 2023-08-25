@@ -30,7 +30,7 @@
     
     <a class="navbar-brand me-2" href="index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,10 +49,10 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
-    <a class="dropdown-item" href="articles/conditional-formatting.html">Conditional Formatting</a>
-    <a class="dropdown-item" href="articles/openxlsx2_charts_manual.html">openxlsx2 charts manual</a>
-    <a class="dropdown-item" href="articles/openxlsx2_formulas_manual.html">openxlsx2 formulas manual</a>
-    <a class="dropdown-item" href="articles/openxlsx2_style_manual.html">openxlsx2 style manual</a>
+    <a class="dropdown-item" href="articles/conditional-formatting.html">Add conditional formatting to a workbook</a>
+    <a class="dropdown-item" href="articles/openxlsx2_charts_manual.html">Add charts to a workbook</a>
+    <a class="dropdown-item" href="articles/openxlsx2_formulas_manual.html">Add formulas to a workbook</a>
+    <a class="dropdown-item" href="articles/openxlsx2_style_manual.html">Add styling to a workbook</a>
   </div>
 </li>
 <li class="nav-item">
@@ -83,7 +83,6 @@
 <!-- badges: start -->
 
 <p>This R package is a modern reinterpretation of the widely used popular <code>openxlsx</code> package. Similar to its predecessor, it simplifies the creation of xlsx files by providing a clean interface for writing, designing and editing worksheets. Based on a powerful XML library and focusing on modern programming flows in pipes or chains, <code>openxlsx2</code> allows to break many new ground.</p>
-<p>Even though the project is already well progressed and supports most of the features known and appreciated from the predecessor, there may still be open gaps in one or the other place. A quick warning: Until the stable version 1.0 there <del>may</del> will still be some changes to the API.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -93,7 +92,7 @@
 <p>You can install the development version of <code>openxlsx2</code> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"JanMarvin/openxlsx2"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"JanMarvin/openxlsx2"</span><span class="op">)</span></span></code></pre></div>
 <p>Or from <a href="https://r-universe.dev/" class="external-link">r-universe</a> with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Enable repository from janmarvin</span></span>
