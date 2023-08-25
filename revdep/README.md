@@ -10,17 +10,17 @@
 |collate  |C.UTF-8                      |
 |ctype    |C.UTF-8                      |
 |tz       |UTC                          |
-|date     |2023-06-30                   |
+|date     |2023-08-25                   |
 |pandoc   |2.19.2 @ /usr/bin/pandoc     |
 
 # Dependencies
 
 |package   |old    |new    |Δ  |
 |:---------|:------|:------|:--|
-|openxlsx2 |0.7    |0.7.1  |*  |
+|openxlsx2 |0.8    |1.0    |*  |
 |magrittr  |2.0.3  |2.0.3  |   |
 |R6        |2.5.1  |2.5.1  |   |
-|Rcpp      |1.0.10 |1.0.10 |   |
+|Rcpp      |1.0.11 |1.0.11 |   |
 |stringi   |1.7.12 |1.7.12 |   |
 |zip       |2.3.0  |2.3.0  |   |
 
