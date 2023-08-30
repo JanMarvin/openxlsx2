@@ -3828,7 +3828,7 @@ wbWorkbook <- R6::R6Class(
       if (length(cmt <- wb_cmt$comment)) {
         # TODO not sure yet what to do
       } else {
-        cmt <- create_comment(text = comment, author = "")
+        cmt <- wb_comment(text = comment, author = "")
         self$add_comment(sheet = sheet, dims = dims, comment = cmt)
       }
       wb_cmt <- wb_get_comment(self, sheet, dims)
@@ -5926,7 +5926,6 @@ wbWorkbook <- R6::R6Class(
     #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
     #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
     #' @param ... ...
-    #' @seealso create_border
     #' @examples
     #'
     #' wb <- wb_workbook()

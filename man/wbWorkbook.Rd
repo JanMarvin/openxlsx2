@@ -72,9 +72,6 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
                    vertical = "center",
                    wrapText = "1")
 }
-\seealso{
-create_border
-}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{

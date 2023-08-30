@@ -3,7 +3,7 @@
 \name{wb_color}
 \alias{wb_color}
 \alias{wb_colour}
-\title{Create a new wbColour object}
+\title{Helper to create a color}
 \usage{
 wb_color(
   name = NULL,
@@ -31,5 +31,5 @@ wb_color(
 a \code{wbColour} object
 }
 \description{
-Create a new wbColour object
+Creates a \code{wbColour} object.
 }

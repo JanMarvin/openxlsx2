@@ -2,18 +2,69 @@
 % Please edit documentation in R/openxlsx2-package.R
 \name{openxlsx2-deprecated}
 \alias{openxlsx2-deprecated}
-\title{Deprecated Functions in Package \emph{openxlsx2}}
+\title{Deprecated functions in package \emph{openxlsx2}}
 \description{
-These functions are provided for compatibility with older versions of \code{openxlsx2}, and may be defunct as soon as the next release.
+These functions are provided for compatibility with older versions of \code{openxlsx2},
+and may be defunct as soon as the next release. This guide helps you update your
+code to the latest standards.
+
+As of openxlsx2 v1.0, API change should be minimal.
 }
-\details{
+\section{Internal functions}{
+These functions are used internally by openxlsx2. It is no longer advertised
+to use them in scripts. They originate from openxlsx, but do not fit openxlsx2's API.
+
+You should be able to modify
+\itemize{
+\item \code{\link[=delete_data]{delete_data()}} -> \code{\link[=wb_clean_sheet]{wb_clean_sheet()}}
+\item \code{\link[=write_comment]{write_comment()}} -> \code{\link[=wb_add_comment]{wb_add_comment()}}
+\item \code{\link[=remove_comment]{remove_comment()}} -> \code{\link[=wb_remove_comment]{wb_remove_comment()}}
+\item \code{\link[=write_formula]{write_formula()}} -> \code{\link[=wb_add_formula]{wb_add_formula()}}
+}
+
+You should be able to change those with minimal changes
+}
+
+\section{Deprecated functions}{
+First of all, you can set an option that will add warnings when using deprecated
+functions.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{options("openxlsx2.soon_deprecated" = TRUE)
+}\if{html}{\out{</div>}}
+}
+
+\section{Argument changes}{
+For consistency, arguments were renamed to snake_case for the 0.8 release.
+It is now recommended to use \code{dims} (the cell range) in favor of \code{row}, \code{col}, \code{start_row}, \code{start_col}
+
+See \code{\link[=wb_dims]{wb_dims()}} as it provides many options on how to provide cell range
+}
+
+\section{Functions with a new name}{
+These functions were renamed for consistency.
 \itemize{
 \item \code{\link[=convertToExcelDate]{convertToExcelDate()}} -> \code{\link[=convert_to_excel_date]{convert_to_excel_date()}}
 \item \code{\link[=wb_grid_lines]{wb_grid_lines()}} -> \code{\link[=wb_set_grid_lines]{wb_set_grid_lines()}}
-\item \code{\link[=delete_data]{delete_data()}} -> \code{\link[=wb_clean_sheet]{wb_clean_sheet()}}
 \item \code{\link[=create_comment]{create_comment()}} -> \code{\link[=wb_comment]{wb_comment()}}
 }
 }
+
+\section{Deprecated usage}{
+\itemize{
+\item \code{wb_get_named_regions()} will no longer allow providing a file.
+}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Before
+wb_get_named_regions(file)
+
+## Now
+wb <- wb_load(file)
+wb_get_named_regions(wb)
+# also possible
+wb_load(file)$get_named_regions()`
+}\if{html}{\out{</div>}}
+}
+
 \seealso{
 \link{.Deprecated}
 }

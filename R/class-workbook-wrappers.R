@@ -812,7 +812,7 @@ wb_freeze_pane <- function(
 #' @param rows Indices of rows to set / remove (if any) custom height.
 #' @param heights Heights to set `rows` to specified in a spreadsheet column height units.
 #' @param hidden Option to hide rows. A logical vector of length 1 or length of `rows`
-#' @name wb_row_heights
+#' @name row_heights-wb
 #' @family workbook wrappers
 #' @family worksheet content functions
 #'
@@ -835,13 +835,13 @@ wb_freeze_pane <- function(
 #' ## remove any custom row heights in row 1
 #' wb$remove_row_heights(sheet = 1, rows = 1)
 NULL
-#' @rdname wb_row_heights
+#' @rdname row_heights-wb
 #' @export
 wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
   assert_workbook(wb)
   wb$clone()$set_row_heights(sheet = sheet, rows, heights, hidden)
 }
-#' @rdname wb_row_heights
+#' @rdname row_heights-wb
 #' @export
 wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
@@ -900,10 +900,10 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' ## remove column widths in columns 1 to 20
 #' wb_remove_col_widths(wb, 1, cols = 1:20)
-#' @name wb_col_widths
+#' @name col_widths-wb
 NULL
 
-#' @rdname wb_col_widths
+#' @rdname col_widths-wb
 #' @export
 wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
@@ -915,7 +915,7 @@ wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, 
     hidden = hidden
   )
 }
-#' @rdname wb_col_widths
+#' @rdname col_widths-wb
 #' @export
 wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
@@ -997,7 +997,9 @@ wb_add_plot <- function(
   )
 }
 
-#' add drawings to workbook
+#' Add drawings to a worksheet
+#'
+#' Add drawings to a worksheet. This requires the `rvg` package.
 #' @param wb A `wbWorkbook`
 #' @param sheet A sheet in the workbook
 #' @param dims The dimension where the drawing is added.
@@ -1041,7 +1043,8 @@ wb_add_drawing <- function(
   )
 }
 
-#' Add mschart object to an existing workbook
+#' Add mschart object to a worksheet
+#'
 #' @param wb a workbook
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear
@@ -1136,7 +1139,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @param ... Additional arguments
 #' @family workbook styling functions
 #' @family workbook wrappers
-#' @name wb_base_font
+#' @name base_font-wb
 #' @examples
 #' ## create a workbook
 #' wb <- wb_workbook()
@@ -1154,7 +1157,7 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #'
 NULL
 #' @export
-#' @rdname wb_base_font
+#' @rdname base_font-wb
 wb_set_base_font <- function(
   wb,
   font_size  = 11,
@@ -1171,7 +1174,7 @@ wb_set_base_font <- function(
   )
 }
 #' @export
-#' @rdname wb_base_font
+#' @rdname base_font-wb
 wb_get_base_font <- function(wb) {
   # TODO all of these class checks need to be cleaned up
   assert_workbook(wb)
@@ -1731,10 +1734,10 @@ wb_set_order <- function(wb, sheets) {
 #' df <- wb_to_df(wb, named_region = "iris")
 #' head(df)
 #'
-#' @name wb_named_region
+#' @name named_region-wb
 NULL
 
-#' @rdname wb_named_region
+#' @rdname named_region-wb
 #' @export
 wb_add_named_region <- function(
   wb,
@@ -1782,7 +1785,7 @@ wb_add_named_region <- function(
   )
 }
 
-#' @rdname wb_named_region
+#' @rdname named_region-wb
 #' @export
 wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
   assert_workbook(wb)
@@ -1837,16 +1840,16 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #' ## remove filters
 #' wb_remove_filter(wb, 1:2) ## remove filters
 #' wb_remove_filter(wb, 3) ## Does not affect tables!
-#' @name wb_filter
+#' @name filter-wb
 #' @family worksheet content functions
 NULL
-#' @rdname wb_filter
+#' @rdname filter-wb
 #' @export
 wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
   assert_workbook(wb)
   wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
 }
-#' @rdname wb_filter
+#' @rdname filter-wb
 #' @export
 wb_remove_filter <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
@@ -1982,10 +1985,10 @@ wb_add_data_validation <- function(
 #' wb$set_sheet_visibility(2, FALSE)        ## hide sheet 2
 #' wb$set_sheet_visibility(3, "hidden")     ## hide sheet 3
 #' wb$set_sheet_visibility(3, "veryHidden") ## hide sheet 3 from UI
-#' @name wb_sheet_visibility
+#' @name sheet_visibility-wb
 NULL
 
-#' @rdname wb_sheet_visibility
+#' @rdname sheet_visibility-wb
 #' @param wb A `wbWorkbook` object
 #' @export
 wb_get_sheet_visibility <- function(wb) {
@@ -1993,7 +1996,7 @@ wb_get_sheet_visibility <- function(wb) {
   wb$get_sheet_visibility()
 }
 
-#' @rdname wb_sheet_visibility
+#' @rdname sheet_visibility-wb
 #' @param sheet Worksheet identifier
 #' @param value a logical/character vector the same length as sheet,
 #'   if providing a character vector, you can provide any of "hidden", "visible", or "veryHidden"
@@ -2125,11 +2128,12 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 11:13)
 #'
-#' @name wb_grouping
+#' @name grouping-wb
+#' @family workbook wrappers
 NULL
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname grouping-wb
 wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
   wb$clone()$group_cols(
@@ -2141,7 +2145,7 @@ wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname grouping-wb
 wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
   wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
@@ -2149,7 +2153,7 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname grouping-wb
 #' @examples
 #' ### create grouping levels
 #' grp_rows <- list(
@@ -2184,7 +2188,7 @@ wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, 
 }
 
 #' @export
-#' @rdname wb_grouping
+#' @rdname grouping-wb
 wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
   wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
@@ -2217,11 +2221,11 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 #'    the `wbWorkbook` object
 #' * `wb_get_creators()` returns a `character` vector of creators
 #'
-#' @name wb_creators
+#' @name creators-wb
 #' @family workbook wrappers
 NULL
 
-#' @rdname wb_creators
+#' @rdname creators-wb
 #' @export
 #' @param creators A character vector of names
 wb_add_creators <- function(wb, creators) {
@@ -2229,21 +2233,21 @@ wb_add_creators <- function(wb, creators) {
   wb$clone()$add_creators(creators)
 }
 
-#' @rdname wb_creators
+#' @rdname creators-wb
 #' @export
 wb_set_creators <- function(wb, creators) {
   assert_workbook(wb)
   wb$clone()$set_creators(creators)
 }
 
-#' @rdname wb_creators
+#' @rdname creators-wb
 #' @export
 wb_remove_creators <- function(wb, creators) {
   assert_workbook(wb)
   wb$clone()$remove_creators(creators)
 }
 
-#' @rdname wb_creators
+#' @rdname creators-wb
 #' @export
 wb_get_creators <- function(wb) {
   assert_workbook(wb)
@@ -2292,7 +2296,7 @@ wb_set_properties <- function(wb, title = NULL, subject = NULL, category = NULL)
 #' @param old The name (or index) of the old sheet name. If `NULL` will assume
 #'   all worksheets are to be renamed.
 #' @param new The name of the new sheet
-#' @name wb_sheet_names
+#' @name sheet_names-wb
 #' @returns
 #'   * `set_`: The `wbWorkbook` object.
 #'   * `get_`: A named character vector of sheet names in order. The
@@ -2300,13 +2304,13 @@ wb_set_properties <- function(wb, title = NULL, subject = NULL, category = NULL)
 #'   substitutions.
 #'
 NULL
-#' @rdname wb_sheet_names
+#' @rdname sheet_names-wb
 #' @export
 wb_set_sheet_names <- function(wb, old = NULL, new) {
   assert_workbook(wb)
   wb$clone()$set_sheet_names(old = old, new = new)
 }
-#' @rdname wb_sheet_names
+#' @rdname sheet_names-wb
 #' @param escape Should the xml special characters be escaped?
 #' @export
 wb_get_sheet_names <- function(wb, escape = FALSE) {
@@ -3002,7 +3006,6 @@ wb_add_dxfs_style <- function(
 #' @param ... additional arguments
 #' @returns The Workbook object, invisibly.
 #' @seealso [wb_comment()], [wb_add_thread()]
-#' @name wb_add_comment
 #' @keywords comments
 #' @examples
 #' wb <- wb_workbook()
@@ -3018,8 +3021,6 @@ wb_add_dxfs_style <- function(
 #' # Works with formatted text also.
 #' formatted_text <- fmt_txt("bar", underline = TRUE)
 #' wb$add_comment(dims = "B5", comment = formatted_text)
-NULL
-#' @rdname wb_add_comment
 #' @export
 wb_add_comment <- function(
     wb,
@@ -3063,18 +3064,18 @@ wb_remove_comment <- function(
   )
 }
 
-#' @rdname wb_add_thread
-#' @details
-#' If a threaded comment is added, it needs a person attached with it.
-#' The default is to create a person with provider id `"None"`.
-#' Other providers are possible with specific values for `id` and `user_id`.
-#' If you require the following, create a workbook via spreadsheet software load
-#' it and get the values with [wb_get_person()]
+#' Helper for adding threaded comments
+#'
+#' Adds a person to a workbook, so that they can be the author of threaded
+#' comments in a workbook with [wb_add_thread()]
+#'
+#' @name wb_person
 #' @param wb a Workbook
 #' @param name the name of the person to display.
 #' @param id (optional) the display id
 #' @param user_id (optional) the user id
 #' @param provider_id (optional) the provider id
+#' @seealso [wb_add_thread()]
 #' @keywords comments
 #' @export
 wb_add_person <- function(
@@ -3093,31 +3094,41 @@ wb_add_person <- function(
   )
 }
 
-#' @rdname wb_add_thread
+#' @rdname wb_person
 #' @export
 wb_get_person <- function(wb, name = NULL) {
   assert_workbook(wb)
   wb$get_person(name)
 }
 
-#' add threaded comment to worksheet
+#' Add threaded comments to a cell in a worksheet
 #'
 #' These functions allow adding thread comments to spreadsheets.
-#' This is not yet supported by all spreadsheet software.
-#' @param wb a workbook
-#' @param sheet a worksheet
-#' @param dims a cell
-#' @param comment the comment to add
-#' @param person_id the person Id this should be added for
-#' @param reply logical if the comment is a reply
-#' @param resolve logical if the comment should be marked as resolved
-#' @seealso [wb_add_comment()]
+#' This is not yet supported by all spreadsheet software. A threaded comment must
+#' be tied to a person created by [wb_add_person()].
+#'
+#' If a threaded comment is added, it needs a person attached to it.
+#' The default is to create a person with provider id `"None"`.
+#' Other providers are possible with specific values for `id` and `user_id`.
+#' If you require the following, create a workbook via spreadsheet software load
+#' it and get the values with [wb_get_person()]
+#'
+#' @param wb A workbook
+#' @param sheet A worksheet
+#' @param dims A cell
+#' @param comment The text to add, a character vector.
+#' @param person_id the person Id this should be added. The default is
+#'   `getOption("openxlsx2.thread_id")` if set.
+#' @param reply Is the comment a reply? (default `FALSE`)
+#' @param resolve Should the comment be resolved? (default `FALSE`)
+#' @seealso [wb_add_comment()] [wb_person]
 #' @family worksheet content functions
 #' @examples
-#' wb <- wb_workbook()$add_worksheet()$
-#' add_person(name = "openxlsx2")
+#' wb <- wb_workbook()$add_worksheet()
+#' # Add a person to the workbook.
+#' wb$add_person(name = "someone who likes to edit workbooks")
 #'
-#' pid <- wb$get_person(name = "openxlsx2")$id
+#' pid <- wb$get_person(name = "someone who likes to edit workbooks")$id
 #'
 #' # write a comment to a thread, reply to one and solve some
 #' wb <- wb %>%
@@ -3134,7 +3145,8 @@ wb_add_thread <- function(
     reply     = FALSE,
     resolve   = FALSE
 ) {
-
+  # wb_add_thread now uses wb_comment internally. No change detected.
+  # means that add_thread does not look at visibility. (I think it's fine.)
   if (missing(person_id)) {
     person_id <- substitute()
   }
@@ -3496,13 +3508,13 @@ wb_set_sheetview <- function(
 #' wb_get_active_sheet(wb)
 #' # change the selected sheet to Sheet2
 #' wb <- wb_set_active_sheet(wb, sheet = "Sheet2")
-#' @name wb_active_sheet
+#' @name active_sheet-wb
 wb_get_active_sheet <- function(wb) {
   assert_workbook(wb)
   wb$get_active_sheet()
 }
 
-#' @rdname wb_active_sheet
+#' @rdname active_sheet-wb
 #' @param sheet a sheet name of the workbook
 #' @export
 wb_set_active_sheet <- function(wb, sheet) {
@@ -3511,14 +3523,14 @@ wb_set_active_sheet <- function(wb, sheet) {
   wb$clone()$set_active_sheet(sheet = sheet)
 }
 
-#' @rdname wb_active_sheet
+#' @rdname active_sheet-wb
 #' @export
 wb_get_selected <- function(wb) {
   assert_workbook(wb)
   wb$get_selected()
 }
 
-#' @rdname wb_active_sheet
+#' @rdname active_sheet-wb
 #' @export
 wb_set_selected <- function(wb, sheet) {
   assert_workbook(wb)

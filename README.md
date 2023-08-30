@@ -19,11 +19,6 @@ designing and editing worksheets. Based on a powerful XML library and
 focusing on modern programming flows in pipes or chains, `openxlsx2`
 allows to break many new ground.
 
-Even though the project is already well progressed and supports most of
-the features known and appreciated from the predecessor, there may still
-be open gaps in one or the other place. A quick warning: Until the
-stable version 1.0 there ~~may~~ will still be some changes to the API.
-
 ## Installation
 
 You can install the stable version of `openxlsx2` with:

@@ -6,8 +6,6 @@
 #' Based on a powerful XML library and focusing on modern programming flows in pipes
 #' or chains, `openxlsx2` allows to break many new ground.
 #'
-#' @name openxlsx2-package
-#' @docType package
 #' @useDynLib openxlsx2, .registration=TRUE
 #'
 #' @import Rcpp
@@ -60,21 +58,29 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' openxlsx2 Options
+#' Options consulted by openxlsx2
 #'
-#' The openxlsx2 package uses global options to simplify formatting:
+#' @description
+#' The openxlsx2 package allows the user to set global options to simplify formatting:
+#'
+#' If the built-in defaults don't suit you, set one or more of these options.
+#' Typically, this is done in the `.Rprofile` startup file
 #'
 #' * `options("openxlsx2.borderColor" = "black")`
 #' * `options("openxlsx2.borderStyle" = "thin")`
 #' * `options("openxlsx2.dateFormat" = "mm/dd/yyyy")`
 #' * `options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`
 #' * `options("openxlsx2.numFmt" = NULL)`
-#' * `options("openxlsx2.paperSize" = 9)` ## A4
-#' * `options("openxlsx2.orientation" = "portrait")` ## page orientation
+#' * `options("openxlsx2.paperSize" = 9)` corresponds to a A4 paper size
+#' * `options("openxlsx2.orientation" = "portrait")` page orientation
 #' * `options("openxlsx2.sheet.default_name" = "Sheet")`
 #' * `options("openxlsx2.rightToLeft" = NULL)`
-#' * `options("openxlsx2.soon_deprecated" = FALSE)` ## Set to `TRUE` if you want a warning if using some functions deprecated recently in openxlsx2
-#' * `options("openxlsx2.creator")` ## A default name for the creator of comments or new `wbWorkbook` objects.
+#' * `options("openxlsx2.soon_deprecated" = FALSE)` Set to `TRUE` if you want a
+#'    warning if using some functions deprecated recently in openxlsx2
+#' * `options("openxlsx2.creator")` A default name for the creator of new
+#'   `wbWorkbook` object with [wb_workbook()] or new comments with [wb_add_comment()]
+#' * `options("openxlsx2.thread_id")` the default person id when adding a threaded comment
+#'   to a cell with [wb_add_thread()]
 #'
 #' @name openxlsx2_options
 NULL
@@ -98,14 +104,67 @@ openxlsx2_celltype <- c(
   hms_time       = 15
 )
 
-#' Deprecated Functions in Package *openxlsx2*
+#' Deprecated functions in package *openxlsx2*
 #'
-#' These functions are provided for compatibility with older versions of `openxlsx2`, and may be defunct as soon as the next release.
-#' @details
+#' @description
+#' These functions are provided for compatibility with older versions of `openxlsx2`,
+#' and may be defunct as soon as the next release. This guide helps you update your
+#' code to the latest standards.
+#'
+#' As of openxlsx2 v1.0, API change should be minimal.
+#'
+#' # Internal functions
+#'
+#' These functions are used internally by openxlsx2. It is no longer advertised
+#' to use them in scripts. They originate from openxlsx, but do not fit openxlsx2's API.
+#'
+#' You should be able to modify
+#' * [delete_data()] -> [wb_clean_sheet()]
+#' * [write_comment()] -> [wb_add_comment()]
+#' * [remove_comment()] -> [wb_remove_comment()]
+#' * [write_formula()] -> [wb_add_formula()]
+#'
+#' You should be able to change those with minimal changes
+#'
+#' # Deprecated functions
+#'
+#' First of all, you can set an option that will add warnings when using deprecated
+#' functions.
+#'
+#' ```
+#' options("openxlsx2.soon_deprecated" = TRUE)
+#' ```
+#'
+#' # Argument changes
+#'
+#' For consistency, arguments were renamed to snake_case for the 0.8 release.
+#' It is now recommended to use `dims` (the cell range) in favor of `row`, `col`, `start_row`, `start_col`
+#'
+#' See [wb_dims()] as it provides many options on how to provide cell range
+#'
+#' # Functions with a new name
+#'
+#' These functions were renamed for consistency.
 #' * [convertToExcelDate()] -> [convert_to_excel_date()]
 #' * [wb_grid_lines()] -> [wb_set_grid_lines()]
-#' * [delete_data()] -> [wb_clean_sheet()]
 #' * [create_comment()] -> [wb_comment()]
+#'
+#'
+#' # Deprecated usage
+#'
+#' * `wb_get_named_regions()` will no longer allow providing a file.
+#'
+#' ```
+#' ## Before
+#' wb_get_named_regions(file)
+#'
+#' ## Now
+#' wb <- wb_load(file)
+#' wb_get_named_regions(wb)
+#' # also possible
+#' wb_load(file)$get_named_regions()`
+#' ```
+#'
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
 NULL

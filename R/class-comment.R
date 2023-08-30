@@ -77,11 +77,9 @@ wbComment <- R6::R6Class(
 )
 # Comment creation wrappers ----------------------------------------------------------------
 
-# TODO create_comment() should leverage wbComment$new() more
-# TODO write_comment() should leverage wbWorkbook$addComment() more
-# TODO remove_comment() should leverage wbWorkbook$remove_comment() more
+# TODO wb_comment() should leverage wbComment$new() more
 
-#' Create a comment object
+#' Helper to create a comment object
 #'
 #' Creates a `wbComment` object. Use with [wb_add_comment()] to add to a worksheet location.
 #'
@@ -167,7 +165,7 @@ wb_comment <- function(text = NULL,
 
 #' Create a comment
 #'
-#' Use [wb_comment()] in new code.
+#' Use [wb_comment()] in new code. See [openxlsx2-deprecated]
 #'
 #' @inheritParams wb_comment
 #' @param author A string, by default, will use "user"
@@ -183,26 +181,26 @@ create_comment <- function(text,
   height = 4) {
   #
   if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
-    .Deprecated("wb_comment()")
+    .Deprecated("wb_comment()", old = "create_comment()")
   }
   wb_comment(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1])
 }
 
 #' Internal comment functions
 #'
-#' Users are advised to use [wb_add_comment()] and [wb_remove_comment()]
+#' Users are advised to use [wb_add_comment()] and [wb_remove_comment()].
+#' This function is used internally by openxlsx2. It will stop exporting it at
+#' some point in the future. Use the replacement function at your earliest convenience.
 #' @name comment_internal
 NULL
 
 #' @rdname comment_internal
-#' @param wb A workbook object
-#' @param sheet A vector of names or indices of worksheets
-#' @param col Column a column number of letter. For `remove_comment` this can be a range.
-#' @param row A row number. For `remove_comment` this can be a range.
-#' @param comment A Comment object. See [create_comment()].
-#' @param dims worksheet cell "A1"
+#' @inheritParams wb_add_comment
+#' @param comment An object created by [create_comment()]
+#' @param row,col Row and column of the cell
 #' @keywords internal
 #' @export
+#' @inherit wb_add_comment examples
 write_comment <- function(
     wb,
     sheet,
