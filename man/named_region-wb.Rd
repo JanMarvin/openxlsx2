@@ -43,7 +43,7 @@ wb_get_named_regions(wb, tables = FALSE, x = NULL)
 \item{dims}{Worksheet cell range of the region ("A1:D4").}
 
 \item{name}{Name for region. A character vector of length 1. Note that region
-names musts be case-insensitive unique.}
+names must be case-insensitive unique.}
 
 \item{local_sheet}{If \code{TRUE} the named region will be local for this sheet}
 
