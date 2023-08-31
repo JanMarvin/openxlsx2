@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* It is no longer needed to manually create columns for `wb_group_cols()`. [781](https://github.com/JanMarvin/openxlsx2/pull/781)
+
 
 ***************************************************************************
 
