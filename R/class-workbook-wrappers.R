@@ -1704,15 +1704,15 @@ wb_set_order <- function(wb, sheets) {
 #' @param sheet A name or index of a worksheet
 #' @param dims Worksheet cell range of the region ("A1:D4").
 #' @param name Name for region. A character vector of length 1. Note that region
-#'   names musts be case-insensitive unique.
+#'   names must be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to `FALSE`.
 #' @param local_sheet If `TRUE` the named region will be local for this sheet
 #' @param comment description text for named region
 #' @param hidden Should the named region be hidden?
 #' @param custom_menu,description,is_function,function_group_id,help,local_name,publish_to_server,status_bar,vb_procedure,workbook_parameter,xml Unknown XML feature
 #' @param ... additional arguments
+#' @returns A workbook, invisibly.
 #' @family worksheet content functions
-#' @seealso [wb_get_named_regions()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
