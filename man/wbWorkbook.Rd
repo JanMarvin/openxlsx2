@@ -235,6 +235,7 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-set_creators}{\code{wbWorkbook$set_creators()}}
 \item \href{#method-wbWorkbook-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-wbWorkbook-remove_creators}{\code{wbWorkbook$remove_creators()}}
+\item \href{#method-wbWorkbook-get_propteries}{\code{wbWorkbook$get_propteries()}}
 \item \href{#method-wbWorkbook-set_properties}{\code{wbWorkbook$set_properties()}}
 \item \href{#method-wbWorkbook-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
 \item \href{#method-wbWorkbook-page_setup}{\code{wbWorkbook$page_setup()}}
@@ -2132,18 +2133,34 @@ are removed.}
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_propteries"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_propteries}{}}}
+\subsection{Method \code{get_propteries()}}{
+Get properties of a workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_propteries()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_properties"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_properties}{}}}
 \subsection{Method \code{set_properties()}}{
 Set a property of a workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_properties(title = NULL, subject = NULL, category = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_properties(
+  creator = NULL,
+  title = NULL,
+  subject = NULL,
+  category = NULL,
+  date_time_created = Sys.time()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{title, subject, category}}{A workbook property to set}
+\item{\code{creator, title, subject, category, date_time_created}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }

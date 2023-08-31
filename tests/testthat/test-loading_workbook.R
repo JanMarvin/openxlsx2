@@ -405,7 +405,7 @@ test_that("Loading a workbook with property preserves it.", {
   wb$save(file = tmp)
 
   wb2 <- wb_load(tmp)
-  expect_equal(wb2$title, "x")
+  expect_equal(wb2$get_propteries()[["dc:title"]], "x")
   wb2$set_properties(title = "xyz")
-  expect_equal(wb2$title, "xyz")
+  expect_equal(wb2$get_propteries()[["dc:title"]], "xyz")
 })

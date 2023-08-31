@@ -201,13 +201,12 @@ wbWorkbook <- R6::R6Class(
 
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
-      self$core <-
-        genBaseCore(
-          creator = creator,
-          title = title,
-          subject = subject,
-          category = category
-        )
+      self$set_properties(
+        creator  = creator,
+        title    = title,
+        subject  = subject,
+        category = category
+      )
       self$comments <- list()
       self$threadComments <- list()
 
@@ -312,7 +311,6 @@ wbWorkbook <- R6::R6Class(
       self$title           <- title
       self$subject         <- subject
       self$category        <- category
-      private$generate_base_core()
       private$current_sheet <- 0L
       invisible(self)
     },
@@ -5160,27 +5158,69 @@ wbWorkbook <- R6::R6Class(
       private$modify_creators("remove", creators)
     },
 
+    #' @description Get properties of a workbook
+    get_propteries = function() {
+      nams <- xml_node_name(self$core, "cp:coreProperties")
+      vapply(nams, function(x)
+        xml_value(self$core, "cp:coreProperties", x), FUN.VALUE = NA_character_)
+    },
 
     #' @description Set a property of a workbook
-    #' @param title,subject,category A workbook property to set
-    set_properties = function(title = NULL, subject = NULL, category = NULL) {
-      private$generate_base_core()
-
-      if (is.null(title) && is.null(subject) && is.null(category)) {
-        return(invisible(self))
+    #' @param creator,title,subject,category,date_time_created A workbook property to set
+    set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time()) {
+      # get an xml output or create one
+      if (!is.null(self$core)) {
+        nams <- xml_node_name(self$core, "cp:coreProperties")
+        xml_properties <- vapply(nams, function(x) {
+          xml_node(self$core, "cp:coreProperties", x)
+        }, FUN.VALUE = NA_character_)
+      } else {
+        xml_properties <- c(
+          "dc:creator" = "",
+          "cp:lastModifiedBy" = "",
+          "dcterms:created" = "",
+          "dcterms:modified" = "",
+          "dc:title" = "",
+          "dc:subject" = "",
+          "cp:category" = ""
+        )
       }
 
+      # update values where needed
+      if (!is.null(creator)) {
+        if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
+        xml_properties["dc:creator"] <- xml_node_create("dc:creator", xml_children = creator)
+        xml_properties["cp:lastModifiedBy"] <- xml_node_create("cp:lastModifiedBy", xml_children = creator)
+      }
       if (!is.null(title)) {
-        private$modify_property("set", value = title, property = "title")
+        xml_properties["dc:title"] <- xml_node_create("dc:title", xml_children = title)
       }
-
       if (!is.null(subject)) {
-        private$modify_property("set", value = subject, "subject")
+        xml_properties["dc:subject"] <- xml_node_create("dc:subject", xml_children = subject)
       }
+      if (!is.null(subject)) {
+        xml_properties["cp:category"] <- xml_node_create("cp:category", xml_children = category)
+      }
+      xml_properties["dcterms:created"] <- xml_node_create("dcterms:created",
+        xml_attributes = c(
+          `xsi:type` = "dcterms:W3CDTF"
+        ),
+        xml_children = format(as_POSIXct_utc(date_time_created), "%Y-%m-%dT%H:%M:%SZ")
+      )
 
-      if (!is.null(category)) {
-        private$modify_property("set", value = category, "category")
-      }
+      # return xml core output
+      self$core <- xml_node_create(
+        "cp:coreProperties",
+        xml_attributes = c(
+          `xmlns:cp`       = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+          `xmlns:dc`       = "http://purl.org/dc/elements/1.1/",
+          `xmlns:dcterms`  = "http://purl.org/dc/terms/",
+          `xmlns:dcmitype` = "http://purl.org/dc/dcmitype/",
+          `xmlns:xsi`      = "http://www.w3.org/2001/XMLSchema-instance"
+        ),
+        xml_children = xml_properties,
+        escapes = TRUE
+      )
 
     },
 
@@ -7276,12 +7316,6 @@ wbWorkbook <- R6::R6Class(
     append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
-      invisible(self)
-    },
-
-    generate_base_core = function() {
-      # how do self$datetimeCreated and genBaseCore time differ?
-      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category, datetimeCreated = self$datetimeCreated)
       invisible(self)
     },
 
