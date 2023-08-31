@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.8.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,8 +59,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+<hr></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0" id="openxlsx2-10">openxlsx2 1.0<a class="anchor" aria-label="anchor" href="#openxlsx2-10"></a></h2><p class="text-muted">CRAN release: 2023-08-25</p>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-1-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-0"></a></h3>
 <ul><li>
 <code>wb_get_worksheet()</code>, <code>wb_ws()</code>, <code>wb_get_sheet_name()</code> are no longer exported. <a href="https://github.com/JanMarvin/openxlsx2/pull/735" class="external-link">735</a> They never worked as expected.
 <ul><li>Use <code><a href="../reference/sheet_names-wb.html">wb_get_sheet_names()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_selected()</a></code> instead.</li>
@@ -69,7 +72,7 @@
 <code>wbChartSheet</code> is now internal (<a href="https://github.com/JanMarvin/openxlsx2/pull/760" class="external-link">760</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="deprecated-functions-development-version">Deprecated functions<a class="anchor" aria-label="anchor" href="#deprecated-functions-development-version"></a></h3>
+<h3 id="deprecated-functions-1-0">Deprecated functions<a class="anchor" aria-label="anchor" href="#deprecated-functions-1-0"></a></h3>
 <p>These functions are no longer recommended. A <a href="https://janmarvin.github.io/openxlsx2/dev/reference/openxlsx2-deprecated.html">guide</a> was created to help users They will continue to work for some time, but changing to newer functions is recommended.</p>
 <ul><li>
 <code><a href="../reference/delete_data.html">delete_data()</a></code> is deprecated in favor of <code><a href="../reference/wb_remove_tables.html">wb_remove_tables()</a></code> or <code><a href="../reference/wb_clean_sheet.html">wb_clean_sheet()</a></code>
@@ -78,7 +81,7 @@
 <code><a href="../reference/create_comment.html">create_comment()</a></code> is deprecated in favor of <code><a href="../reference/wb_comment.html">wb_comment()</a></code>. Note that while <code><a href="../reference/wb_comment.html">wb_comment()</a></code> has some new defaults, the behavior of <code><a href="../reference/create_comment.html">create_comment()</a></code> has not changed. (<a href="https://github.com/JanMarvin/openxlsx2/pull/758" class="external-link">758</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-0"></a></h3>
 <ul><li>
 <p><code><a href="../reference/wb_comment.html">wb_comment()</a></code> is a new helper function to help create <code>wbComment</code> objects It is very similar to <code><a href="../reference/create_comment.html">create_comment()</a></code>, with the following differences:</p>
 <ul><li>
@@ -94,11 +97,11 @@
 <li><p><code>wb_add_comment(comment = "x")</code> no longer errors when a comment as a character vector no longer fails (<a href="https://github.com/JanMarvin/openxlsx2/pull/758" class="external-link">758</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="documentation-improvement-development-version">Documentation improvement<a class="anchor" aria-label="anchor" href="#documentation-improvement-development-version"></a></h3>
+<h3 id="documentation-improvement-1-0">Documentation improvement<a class="anchor" aria-label="anchor" href="#documentation-improvement-1-0"></a></h3>
 <ul><li>Tweaks to documentation and vignettes to make them more consistent.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-0">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-0"></a></h3>
 <ul><li>
 <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> now handles <code>date1904</code> detection. Previous results from this somewhat rare file type were using the default timezone origin of 1900-01-01. <a href="https://github.com/JanMarvin/openxlsx2/pull/737" class="external-link">737</a>
 </li>
@@ -119,7 +122,7 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<h3 id="internal-changes-1-0">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-0"></a></h3>
 <ul><li>
 <code><a href="../reference/active_sheet-wb.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_selected()</a></code> and <code><a href="../reference/active_sheet-wb.html">wb_set_selected()</a></code>, <code><a href="../reference/wb_get_named_regions.html">wb_get_named_regions()</a></code> are now wrapper functions. <a href="https://github.com/JanMarvin/openxlsx2/pull/735" class="external-link">735</a>
 </li>
