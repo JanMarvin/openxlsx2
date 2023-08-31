@@ -2122,8 +2122,6 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_rows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
 #' wb <- wb_group_rows(wb, "AirPass", 9:13)                  # group years 1956-1960
 #'
-#' wb$createCols("AirPass", 13)
-#'
 #' wb <- wb_group_cols(wb, "AirPass", 2:4, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
@@ -2173,8 +2171,6 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 #' wb <- wb_workbook()
 #' wb$add_worksheet("AirPass")
 #' wb$add_data("AirPass", t2, rowNames = TRUE)
-#'
-#' wb$createCols("AirPass", 13)
 #'
 #' wb$group_cols("AirPass", cols = grp_cols)
 #' wb$group_rows("AirPass", rows = grp_rows)

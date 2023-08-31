@@ -2911,13 +2911,8 @@ wbWorkbook <- R6::R6Class(
       levels    <- levels[ok]
       cols      <- cols[ok]
 
-      # fetch the row_attr data.frame
-      col_attr <- self$worksheets[[sheet]]$unfold_cols()
-
-      if (NROW(col_attr) == 0) {
-        # TODO should this be a warning?  Or an error?
-        message("worksheet has no columns. please create some with createCols")
-      }
+      # create empty cols
+      col_attr <- wb_create_columns(self, sheet, cols)
 
       # get the selection based on the col_attr frame.
 
@@ -3053,7 +3048,6 @@ wbWorkbook <- R6::R6Class(
       hidden <- hidden[ok]
       cols <- cols[ok]
 
-      col_df <- self$worksheets[[sheet]]$unfold_cols()
       base_font <- wb_get_base_font(self)
 
       if (any(widths == "auto")) {
@@ -3067,22 +3061,7 @@ wbWorkbook <- R6::R6Class(
       widths <- calc_col_width(base_font = base_font, col_width = col_width)
 
       # create empty cols
-      if (NROW(col_df) == 0)
-        col_df <- col_to_df(read_xml(self$createCols(sheet, n = max(cols))))
-
-      # found a few cols, but not all required cols. create the missing columns
-      if (any(!cols %in% as.numeric(col_df$min))) {
-        beg <- max(as.numeric(col_df$min)) + 1
-        end <- max(cols)
-
-        # new columns
-        new_cols <- col_to_df(read_xml(self$createCols(sheet, beg = beg, end = end)))
-
-        # rbind only the missing columns. avoiding dups
-        sel <- !new_cols$min %in% col_df$min
-        col_df <- rbind(col_df, new_cols[sel, ])
-        col_df <- col_df[order(as.numeric(col_df[, "min"])), ]
-      }
+      col_df <- wb_create_columns(self, sheet, cols)
 
       select <- as.numeric(col_df$min) %in% cols
       col_df$width[select] <- as_xml_attr(widths)
