@@ -2288,7 +2288,7 @@ wb_set_sheet_names <- function(wb, old = NULL, new) {
 #' @param escape Should the xml special characters be escaped?
 #' @export
 wb_get_sheet_names <- function(wb, escape = FALSE) {
-  assert_workbook(wb)
+  wb <- assert_workbook(wb)
   wb$get_sheet_names(escape = escape)
 }
 

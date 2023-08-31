@@ -50,6 +50,21 @@ test_that("get_date_origin from different sources", {
 })
 
 
+test_that("assert_workbook() is working", {
+  xlsxFile <- testfile_path("readTest.xlsx")
+
+  wb <- wb_load(example_file, sheet = NULL)
+  exp <- wb$get_sheet_names()
+
+  got <- wb_get_sheet_names(wb)
+  expect_equal(exp, got)
+
+  got <- wb_get_sheet_names(example_file)
+  expect_equal(exp, got)
+
+})
+
+
 test_that("read html source without r attribute on cell", {
 
   # sheet without row attribute

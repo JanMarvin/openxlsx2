@@ -8037,3 +8037,5 @@ worksheet_lock_properties <- function() {
     NULL
   )
 }
+
+is_wbWorkbook <- function(x) inherits(x, c("wbWorkbook",   "R6"))

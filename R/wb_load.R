@@ -640,7 +640,12 @@ wb_load <- function(
 
   import_sheets <- seq_len(nrow(sheets))
   if (!missing(sheet)) {
-    import_sheets <- wb_validate_sheet(wb, sheet)
+    if (is.null(sheet)) {
+      import_sheets <- NULL
+    } else {
+      import_sheets <- wb_validate_sheet(wb, sheet)
+    }
+
     sheet <- import_sheets
     if (is.na(sheet)) {
       stop("No such sheet in the workbook. Workbook contains:\n",
