@@ -839,6 +839,7 @@ NULL
 #' @export
 wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
   assert_workbook(wb)
+  assert_class(heights, c("numeric", "integer"), or_null = TRUE, arg_nm = "heights")
   wb$clone()$set_row_heights(sheet = sheet, rows, heights, hidden)
 }
 #' @rdname row_heights-wb
@@ -2507,7 +2508,7 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
 }
 
-#' Modify borders in a cell region
+#' Modify borders in a cell region of a worksheet
 #'
 #' wb wrapper to create borders for cell regions.
 #' @param wb A `wbWorkbook`
@@ -2726,6 +2727,7 @@ wb_add_font <- function(
 #' Add number formatting to a cell region. You can use a number format created
 #' by [create_numfmt()].
 #'
+#' The list of number formats ID is located in the **Details** section of [create_cell_style()].
 #' @param wb A Workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
@@ -2734,7 +2736,6 @@ wb_add_font <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
 #' @return The `wbWorkbook` object, invisibly.
-#' @seealso [create_numfmt()]
 #' @family styles
 #' @export
 

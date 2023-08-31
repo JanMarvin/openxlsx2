@@ -66,3 +66,6 @@ create_border(
 Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
 Border colors are of the following type: c(rgb="FF000000")
 }
+\seealso{
+\code{\link[=wb_add_border]{wb_add_border()}}
+}

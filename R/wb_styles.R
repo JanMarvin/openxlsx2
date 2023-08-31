@@ -79,6 +79,7 @@ import_styles <- function(x) {
 #' @description
 #' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
 #' Border colors are of the following type: c(rgb="FF000000")
+#' @seealso [wb_add_border()]
 #' @param diagonal_down x
 #' @param diagonal_up x
 #' @param outline x
@@ -168,8 +169,9 @@ create_border <- function(
 }
 
 #' create number format
-#' @param numFmtId an id
+#' @param numFmtId an id, the list can be found in the **Details** of [create_cell_style()]
 #' @param formatCode a format code
+#' @seealso [wb_add_numfmt()]
 #' @export
 create_numfmt <- function(numFmtId, formatCode) {
 
@@ -200,6 +202,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' @param u underline
 #' @param vert_align vertical alignment
 #' @param ... ...
+#' @seealso [wb_add_font()]
 #' @examples
 #' font <- create_font()
 #' # openxml has the alpha value leading
@@ -327,6 +330,7 @@ create_font <- function(
 #' @param bgColor hex8 color with alpha, red, green, blue only for patternFill
 #' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
 #' @param ... ...
+#' @seealso [wb_add_fill()]
 #'
 #' @export
 create_fill <- function(
@@ -371,7 +375,7 @@ create_fill <- function(
 # TODO can be further generalized with additional xf attributes and children
 #' Helper to create a cell style
 #'
-#' create_cell_style with [wb_add_cell_style()]
+#' Create_cell_style with [wb_add_cell_style()]
 #' @param border_id dummy
 #' @param fill_id dummy
 #' @param font_id dummy

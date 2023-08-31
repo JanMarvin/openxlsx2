@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_border}
 \alias{wb_add_border}
-\title{Modify borders in a cell region}
+\title{Modify borders in a cell region of a worksheet}
 \usage{
 wb_add_border(
   wb,

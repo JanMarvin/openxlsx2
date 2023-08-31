@@ -2769,6 +2769,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     set_row_heights = function(sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
       sheet <- private$get_sheet_index(sheet)
+      assert_class(heights, c("numeric", "integer"), or_null = TRUE, arg_nm = "heights")
 
       # TODO move to wbWorksheet method
 

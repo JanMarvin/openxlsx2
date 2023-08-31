@@ -152,7 +152,11 @@ validate_cf_params <- function(params) {
 
 #' `openxlsx2` waivers
 #'
-#' Waiver functions for `openxlsx2` functions
+#' Waiver functions for `openxlsx2` functions.
+#' * `current_sheet()` uses [wb_get_active_sheet()] by default if performing
+#'   actions on a worksheet, for example when you add data.
+#' * `next_sheet()` is used when you add a new worksheet, a new chartsheet or
+#'   when you add a pivot table
 #'
 #' @name waivers
 #' @returns An object of class `openxlsx2_waiver`
