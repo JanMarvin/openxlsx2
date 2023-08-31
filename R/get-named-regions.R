@@ -54,36 +54,14 @@ get_named_regions_tab <- function(wb) {
   )
 }
 
-#' Get named regions in a workbook
-#'
-#' @returns A vector of named regions in `x`.
-#' @param wb A `wbWorkbook` object
-#' @param tables Should data tables be included in the result?
-#' @param x deprecated. Use `wb`. For Excel input use [wb_load()] to first load
+#' @rdname named_region-wb
+#' @param tables Should included both data tables and named regions in the result?
+#' @param x Deprecated. Use `wb`. For Excel input use [wb_load()] to first load
 #'   the xlsx file as a workbook.
-#' @seealso [wb_add_named_region()], [wb_get_tables()]
+#' @seealso [wb_get_tables()]
 #' @returns A data frame with the all named regions in `wb`. Or `NULL`, if none are found.
 #' @export
 #' @examples
-#' wb <- wb_workbook()
-#' wb$add_worksheet("Sheet 1")
-#'
-#' ## specify region
-#' wb$add_data(x = iris, start_col = 1, start_row = 1)
-#' wb$add_named_region(
-#'   name = "iris",
-#'   dims = wb_dims(x = iris)
-#' )$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
-#' ## From Workbook object
-#' wb_get_named_regions(wb)
-#' # Use this info to extract the data frame
-#' df <- wb$to_df(named_region = "iris2")
-#' head(df)
-#'
-#' # Extract tables and named regions
-#' wb$add_worksheet()$add_data_table(x = iris)
-#'
-#' wb$get_named_regions(tables = TRUE)
 #'
 #' # Extract named regions from a file
 #' out_file <- temp_xlsx()
