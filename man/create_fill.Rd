@@ -26,3 +26,6 @@ create_fill(
 \description{
 create fill
 }
+\seealso{
+\code{\link[=wb_add_fill]{wb_add_fill()}}
+}

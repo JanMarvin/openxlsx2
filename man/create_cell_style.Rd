@@ -69,7 +69,7 @@ create_cell_style(
 \item{...}{reserved for additional arguments}
 }
 \description{
-create_cell_style with \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
+Create_cell_style with \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
 }
 \details{
 \tabular{ll}{

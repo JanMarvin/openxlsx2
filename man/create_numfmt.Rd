@@ -7,10 +7,13 @@
 create_numfmt(numFmtId, formatCode)
 }
 \arguments{
-\item{numFmtId}{an id}
+\item{numFmtId}{an id, the list can be found in the \strong{Details} of \code{\link[=create_cell_style]{create_cell_style()}}}
 
 \item{formatCode}{a format code}
 }
 \description{
 create number format
+}
+\seealso{
+\code{\link[=wb_add_numfmt]{wb_add_numfmt()}}
 }

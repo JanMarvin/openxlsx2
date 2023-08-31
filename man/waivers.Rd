@@ -17,5 +17,11 @@ na_strings()
 An object of class \code{openxlsx2_waiver}
 }
 \description{
-Waiver functions for \code{openxlsx2} functions
+Waiver functions for \code{openxlsx2} functions.
+\itemize{
+\item \code{current_sheet()} uses \code{\link[=wb_get_active_sheet]{wb_get_active_sheet()}} by default if performing
+actions on a worksheet, for example when you add data.
+\item \code{next_sheet()} is used when you add a new worksheet, a new chartsheet or
+when you add a pivot table
+}
 }

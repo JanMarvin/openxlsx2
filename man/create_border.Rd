@@ -34,11 +34,9 @@ create_border(
 
 \item{bottom}{X}
 
-\item{bottom_color}{X}
+\item{bottom_color, diagonal_color, left_color, right_color, top_color}{a color created with \code{\link[=wb_color]{wb_color()}}}
 
 \item{diagonal}{X}
-
-\item{diagonal_color}{X,}
 
 \item{end}{x,}
 
@@ -46,17 +44,11 @@ create_border(
 
 \item{left}{x}
 
-\item{left_color}{x}
-
 \item{right}{x}
-
-\item{right_color}{x}
 
 \item{start}{x}
 
 \item{top}{x}
-
-\item{top_color}{x}
 
 \item{vertical}{x}
 
@@ -64,5 +56,8 @@ create_border(
 }
 \description{
 Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
-Border colors are of the following type: c(rgb="FF000000")
+Border colors can be created with \code{\link[=wb_color]{wb_color()}}
+}
+\seealso{
+\code{\link[=wb_add_border]{wb_add_border()}}
 }
