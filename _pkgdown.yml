@@ -102,7 +102,6 @@ reference:
   - wb_protect
   - wb_get_tables
   - wb_remove_tables
-  - wb_get_named_regions
 
 - title: Workbook editing helpers
   desc: >
