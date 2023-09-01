@@ -4540,9 +4540,10 @@ wbWorkbook <- R6::R6Class(
       xml <- read_xml(xml, pointer = FALSE)
 
       if (!(xml_node_name(xml) == "xdr:wsDr")) {
-        error("xml needs to be a drawing.")
+        stop("xml needs to be a drawing.")
       }
 
+      altc  <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "mc:AlternateContent")
       ext   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:ext")
       pic   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:pic")
       grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
@@ -4608,6 +4609,7 @@ wbWorkbook <- R6::R6Class(
           xdr_typ,
           xml_children = c(
             anchor,
+            altc,
             ext,
             pic,
             grpSp,
