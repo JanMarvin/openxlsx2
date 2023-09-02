@@ -61,8 +61,13 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>It is no longer needed to manually create columns for <code><a href="../reference/grouping-wb.html">wb_group_cols()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/781" class="external-link">781</a>
-</li>
+<ul><li><p>It is no longer needed to manually create columns for <code><a href="../reference/grouping-wb.html">wb_group_cols()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/781" class="external-link">781</a></p></li>
+<li>
+<p>Basic support for the <code>xlsb</code> file format. We parse the binary file format into pseudo-openxml files that we can import. Therefore, after importing, it is possible to interact with the file as if it had been provided as <code>xlsx</code> in the first place. This is of course slower than reading directly from the binary file. Our implementation is also still missing some features: some array formulas are still broken, conditional formatting and data validation are not implemented, nor are pivot tables and slicers. <a href="https://github.com/JanMarvin/openxlsx2/pull/688" class="external-link">688</a></p>
+<ul><li>Please note that <code>openxlsx2</code> is not a security tool and the <code>xlsb</code> parser was written with the intention of reading valid <code>xlsb</code> files on little endian systems.</li>
+<li>Please do not raise issues about <code>xlsb</code> in terms of speed or completeness of features of the openxml standard. If you have access to other file conversion tools, such as spreadsheet software, they may provide a better solution for your needs.</li>
+<li>Writing <code>xlsb</code> files is outside the scope of this project.</li>
+</ul></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
