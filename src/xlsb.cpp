@@ -889,12 +889,16 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtListCCFmla:
       {
         // calculated column formula
-        // uint8_t flags = 0;
-        // std::string fml;
-        // flags = readbin(flags, bin, swapit);
-        // fml = CellParsedFormula(bin);
+        uint8_t flags = 0;
+        std::string fml;
+        flags = readbin(flags, bin, swapit);
+        int sharedFormula = false;
+        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+
+        // need to write this formula somehwere
+        if (debug )Rcpp::Rcout << fml << std::endl;
         Rcpp::warning("Table formulas are not implemented.");
-        bin.seekg(size, bin.cur);
+
         break;
       }
 
@@ -2462,7 +2466,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
           for (size_t i = 0; i < colvec.size(); ++i) {
             out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
-            out << "<v>" << colvec[i].v << "</v>" << std::endl;
+            out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
             out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
             out << "</c>" << std::endl;
           }
@@ -3014,7 +3018,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           // should be the last row
           for (size_t i = 0; i < colvec.size(); ++i) {
             out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
-            out << "<v>" << colvec[i].v << "</v>" << std::endl;
+            out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
             out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
             out << "</c>" << std::endl;
           }
@@ -3360,6 +3364,27 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         out << "</oleObjects>" << std::endl;
         break;
       }
+
+      case BrtBeginDVals:
+      case BrtBeginDVals14:
+      {
+        Rcpp::warning("Worksheet contains unhandled data validation.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtDVal:
+      case BrtDVal14:
+      case BrtDValList:
+      case BrtBeginDCon:
+      case BrtEndDCon:
+      case BrtEndDVals:
+      case BrtEndDVals14:
+      {
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
 
       case BrtBeginConditionalFormatting:
       {
