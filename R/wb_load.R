@@ -1361,6 +1361,8 @@ wb_load <- function(
       # all id == 0 are local references, otherwise external references
       # external references are written as "[0]sheetname!A1". Require
       # handling of externalReferences.bin
+      if (debug) print(xti)
+
       sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 0
 
       if (any(sel)) {
@@ -1451,7 +1453,7 @@ wb_load <- function(
 
         # this might be terribly slow!
         for (j in seq_along(wb$worksheets)) {
-          if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != ""))
+          if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != "")) {
             wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
               stringi::stri_replace_all_fixed(
                 wb$worksheets[[j]]$sheet_data$cc$f[sel],
@@ -1459,6 +1461,7 @@ wb_load <- function(
                 xti$sheets,
                 vectorize_all = FALSE
               )
+          }
         }
       }
     }
@@ -1466,8 +1469,10 @@ wb_load <- function(
   }
 
   # final cleanup
-  if (length(workbookBIN))
+  if (length(workbookBIN)) {
     wb$workbook$xti <- NULL
+  }
+
 
   return(wb)
 }

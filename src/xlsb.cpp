@@ -889,12 +889,16 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtListCCFmla:
       {
         // calculated column formula
-        // uint8_t flags = 0;
-        // std::string fml;
-        // flags = readbin(flags, bin, swapit);
-        // fml = CellParsedFormula(bin);
+        uint8_t flags = 0;
+        std::string fml;
+        flags = readbin(flags, bin, swapit);
+        int sharedFormula = false;
+        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+
+        // need to write this formula somehwere
+        if (debug )Rcpp::Rcout << fml << std::endl;
         Rcpp::warning("Table formulas are not implemented.");
-        bin.seekg(size, bin.cur);
+
         break;
       }
 
@@ -1592,11 +1596,17 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug)  Rcpp::Rcout << "<BrtName>" << std::endl;
         // bin.seekg(size, bin.cur);
 
+        size_t end_pos = (size_t)bin.tellg() + (size_t)size;
+        if (debug) Rcpp::Rcout << "BrtName endpos: "<< end_pos << std::endl;
+
         uint8_t chKey = 0;
-        uint32_t itab = 0, BrtNameUint = 0;
+        uint16_t BrtNameUint = 0, BrtNameUint2 = 0;
+        uint32_t itab = 0;
         BrtNameUint = readbin(BrtNameUint, bin, swapit);
+        BrtNameUint2 = readbin(BrtNameUint2, bin, swapit);
 
         BrtNameFields *fields = (BrtNameFields *)&BrtNameUint;
+        BrtNameFields2 *fields2 = (BrtNameFields2 *)&BrtNameUint2;
 
         // fHidden    - visible
         // fFunc      - xml macro
@@ -1610,6 +1620,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // fFutureFunction - future function
         // reserved        - 0
 
+        /* commented due to gcc 12 false positive warning */
         // if (debug)
         //   Rprintf(
         //     "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
@@ -1621,9 +1632,9 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         //     fields->fBuiltin,
         //     fields->fgrp,
         //     fields->fPublished,
-        //     fields->fWorkbookParam,
-        //     fields->fFutureFunction,
-        //     fields->reserved
+        //     fields2->fWorkbookParam,
+        //     fields2->fFutureFunction,
+        //     fields2->reserved
         //   );
 
         chKey = readbin(chKey, bin, swapit);
@@ -1642,14 +1653,23 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug)
           Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
 
-        if (fields->fProc) {
-          // must be NULL
-          std::string unusedstring1 = XLNullableWideString(bin, swapit);
-          // must be < 32768 characters
-          std::string description = XLNullableWideString(bin, swapit);
-          std::string helpTopic = XLNullableWideString(bin, swapit);
-          // must be NULL
-          std::string unusedstring2 = XLNullableWideString(bin, swapit);
+        if (fields->fOB ||fields->fFunc || fields->fProc) {
+          bin.seekg(end_pos, bin.beg);
+
+          /* -- something is wrong. error with some nhs macro xlsb file -- */
+          // // must be NULL
+          // Rcpp::Rcout << 1 << std::endl;
+          // std::string unusedstring1 = XLNullableWideString(bin, swapit);
+          //
+          // // must be < 32768 characters
+          // Rcpp::Rcout << 2 << std::endl;
+          // std::string description = XLNullableWideString(bin, swapit);
+          // Rcpp::Rcout << 3 << std::endl;
+          // std::string helpTopic = XLNullableWideString(bin, swapit);
+          //
+          // // must be NULL
+          // Rcpp::Rcout << 4 << std::endl;
+          // std::string unusedstring2 = XLNullableWideString(bin, swapit);
         }
 
         if (fields->fBuiltin) {
@@ -2462,7 +2482,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
           for (size_t i = 0; i < colvec.size(); ++i) {
             out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
-            out << "<v>" << colvec[i].v << "</v>" << std::endl;
+            out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
             out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
             out << "</c>" << std::endl;
           }
@@ -3014,7 +3034,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           // should be the last row
           for (size_t i = 0; i < colvec.size(); ++i) {
             out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
-            out << "<v>" << colvec[i].v << "</v>" << std::endl;
+            out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
             out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
             out << "</c>" << std::endl;
           }
@@ -3360,6 +3380,27 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         out << "</oleObjects>" << std::endl;
         break;
       }
+
+      case BrtBeginDVals:
+      case BrtBeginDVals14:
+      {
+        Rcpp::warning("Worksheet contains unhandled data validation.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtDVal:
+      case BrtDVal14:
+      case BrtDValList:
+      case BrtBeginDCon:
+      case BrtEndDCon:
+      case BrtEndDVals:
+      case BrtEndDVals14:
+      {
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
 
       case BrtBeginConditionalFormatting:
       {
