@@ -1001,9 +1001,13 @@ testfile_path <- function(x, replace = FALSE) {
 
   fl <- testthat::test_path("testfiles", x)
 
+  if (Sys.getenv("openxlsx2_testthat_fullrun") == "") {
+    if (isTRUE(as.logical(Sys.getenv("CI", "false")))) # on_ci()
+      return(testthat::skip("Skip on CI"))
+  }
+
   # try to download
   if (!file.exists(fl) || replace) {
-    # relies on libcurl and was optional in R < 4.2.0 on Windows
     out <- paste0(test_path, "/", x)
     url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", x)
     try({
