@@ -375,14 +375,6 @@ wb_load <- function(
     # TODO only loop over import_sheets
     for (i in seq_len(nrow(sheets))) {
       if (sheets$typ[i] == "chartsheet") {
-        if (grepl(".bin$", sheets$target[i])) {
-          xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
-          worksheet_bin(sheets$target[i], 1, xml_tmp, debug)
-          # system(sprintf("cat %s", xml_tmp))
-          # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
-          sheets$target[i] <- xml_tmp
-        }
-        txt <- read_xml(sheets$target[i], pointer = FALSE)
         wb$add_chartsheet(sheet = sheets$name[i], visible = is_visible[i])
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
@@ -740,6 +732,17 @@ wb_load <- function(
   }
 
   for (i in import_sheets) {
+
+    if (grepl(".bin$", sheets$target[i])) {
+      xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
+
+      # message(sheets$target[i])
+      worksheet_bin(sheets$target[i], wb$is_chartsheet[i], xml_tmp, debug)
+      # system(sprintf("cat %s", xml_tmp))
+      # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
+      sheets$target[i] <- xml_tmp
+    }
+
     if (sheets$typ[i] == "chartsheet") {
       if (data_only) stop("Requested sheet is a chartsheet. No data to return")
       chartsheet_xml <- read_xml(sheets$target[i])
@@ -755,15 +758,6 @@ wb_load <- function(
       wb$worksheets[[i]]$picture <- xml_node(chartsheet_xml, "chartsheet", "picture")
       wb$worksheets[[i]]$webPublishItems <- xml_node(chartsheet_xml, "chartsheet", "webPublishItems")
     } else {
-      if (grepl(".bin$", sheets$target[i])) {
-        xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
-
-        # message(i)
-        worksheet_bin(sheets$target[i], 0, xml_tmp, debug)
-        # system(sprintf("cat %s", xml_tmp))
-        # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
-        sheets$target[i] <- xml_tmp
-      }
       worksheet_xml <- read_xml(sheets$target[i])
       if (!data_only) {
         wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
