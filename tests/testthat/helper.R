@@ -989,72 +989,28 @@ expected_shared_strings <- function() {
 }
 
 
-#' initiates testfiles in local testthat folder
-download_testfiles <- function() {
-
-  fls <- c(
-    "charts.xlsx",
-    "cloneEmptyWorksheetExample.xlsx",
-    "cloneWorksheetExample.xlsx",
-    "ColorTabs3.xlsx",
-    "connection.xlsx",
-    "eurosymbol.xlsx",
-    "fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx",
-    "form_control.xlsx",
-    "formula.xlsx",
-    "gh_issue_416.xlsm",
-    "gh_issue_504.xlsx",
-    "hyperlink.xlsb",
-    "inline_str.xlsx",
-    "inlineStr.xlsx",
-    "loadExample.xlsx",
-    "loadPivotTables.xlsx",
-    "loadThreadComment.xlsx",
-    "macro2.xlsm",
-    "mtcars_chart.xlsx",
-    "namedRegions.xlsx",
-    "namedRegions2.xlsx",
-    "nhs-core-standards-for-eprr-v6.1.xlsb",
-    "openxlsx2_example.xlsb",
-    "overwrite_formula.xlsx",
-    "oxlsx2_sheet.xlsx",
-    "pivot_notes.xlsx",
-    "readTest.xlsx",
-    "Single_hyperlink.xlsx",
-    "tableStyles.xlsx",
-    "umlauts.xlsx",
-    "unemployment-nrw202208.xlsx",
-    "update_test.xlsx",
-    "vml_numbering.xlsx"
-  )
+#' provides testfile path for testthat
+#' @param x a file assumed in testfiles folder
+testfile_path <- function(x, replace = FALSE) {
 
   test_path <- testthat::test_path("testfiles")
 
-  if (dir.exists(test_path))  {
-    if (all(file.exists(testthat::test_path("testfiles", fls)))) {
-      return(TRUE)
-    }
-
-    unlink(test_path, recursive = TRUE)
+  if (!dir.exists(test_path))  {
+    dir.create(test_path)
   }
 
-  dir.create(test_path)
-
-  # relies on libcurl and was optional in R < 4.2.0 on Windows
-  out <- paste0(test_path, "/", fls)
-  url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", fls)
-  try({
-    download.file(url, destfile = out, quiet = TRUE, method = "libcurl")
-  })
-
-  return(TRUE)
-}
-
-#' provides testfile path for testthat
-#' @param x a file assumed in testfiles folder
-testfile_path <- function(x) {
-  # apparently this runs in a different folder
   fl <- testthat::test_path("testfiles", x)
+
+  # try to download
+  if (!file.exists(fl) || replace) {
+    # relies on libcurl and was optional in R < 4.2.0 on Windows
+    out <- paste0(test_path, "/", x)
+    url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", x)
+    try({
+      download.file(url, destfile = out, quiet = TRUE)
+    })
+  }
+
   if (!file.exists(fl)) {
     return(testthat::skip("Testfile does not exist"))
   } else {
