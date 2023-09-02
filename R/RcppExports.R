@@ -336,3 +336,31 @@ write_xmlPtr <- function(doc, fl) {
     invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
 }
 
+styles_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_styles_bin`, filePath, outPath, debug)
+}
+
+table_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_table_bin`, filePath, outPath, debug)
+}
+
+comments_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_comments_bin`, filePath, outPath, debug)
+}
+
+externalreferences_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_externalreferences_bin`, filePath, outPath, debug)
+}
+
+sharedstrings_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_sharedstrings_bin`, filePath, outPath, debug)
+}
+
+workbook_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_workbook_bin`, filePath, outPath, debug)
+}
+
+worksheet_bin <- function(filePath, chartsheet, outPath, debug) {
+    .Call(`_openxlsx2_worksheet_bin`, filePath, chartsheet, outPath, debug)
+}
+

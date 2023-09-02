@@ -7,7 +7,7 @@
 wb_load(file, sheet, data_only = FALSE, calc_chain = FALSE, ...)
 }
 \arguments{
-\item{file}{A path to an existing .xlsx or .xlsm file}
+\item{file}{A path to an existing .xlsx, .xlsm or .xlsb file}
 
 \item{sheet}{optional sheet parameter. if this is applied, only the selected
 sheet will be loaded.}
