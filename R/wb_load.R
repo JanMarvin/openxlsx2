@@ -1368,19 +1368,23 @@ wb_load <- function(
           for (i in seq_len(nrow(xti[sel, ]))) {
             want <- xti$firstSheet[sel][i]
 
-            sheetName <- sheets[[want]]
-            if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
-              want <- xti$lastSheet[sel][i]
-              sheetName <- paste0(sheetName, ":", sheets[[want]])
+            # want can be zero
+            if (want %in% seq_along(sheets)) {
+
+              sheetName <- sheets[[want]]
+              if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
+                want <- xti$lastSheet[sel][i]
+                sheetName <- paste0(sheetName, ":", sheets[[want]])
+              }
+
+              # should be a single reference now
+              val <- sheetName
+
+              if (grepl("[^A-Za-z0-9]", val))
+                val <- shQuote(val, type = "sh")
+
+              if (length(val)) xti$sheets[sel][i] <- val
             }
-
-            # should be a single reference now
-            val <- sheetName
-
-            if (grepl("[^A-Za-z0-9]", val))
-              val <- shQuote(val, type = "sh")
-
-            if (length(val)) xti$sheets[sel][i] <- val
           }
       }
 
@@ -1408,20 +1412,24 @@ wb_load <- function(
           want <- xti$firstSheet[sel][i]
           ref  <- xti$ext_id[sel][i]
 
-          sheetName <- extSheets[[ref]][[want]]
-          if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
-            want <- xti$lastSheet[sel][i]
-            sheetName <- paste0(sheetName, ":", extSheets[[ref]][[want]])
+          # want can be zero
+          if (want %in% seq_along(extSheets)) {
+
+            sheetName <- extSheets[[ref]][[want]]
+            if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
+              want <- xti$lastSheet[sel][i]
+              sheetName <- paste0(sheetName, ":", extSheets[[ref]][[want]])
+            }
+            # should be a single reference now
+
+            val <- sprintf("[%s]%s", xti$ext_id[sel][i], sheetName)
+
+            # non ascii or whitespace
+            if (grepl("[^A-Za-z0-9]", val))
+              val <- shQuote(val, type = "sh")
+
+            if (length(val)) xti$sheets[sel][i] <- val
           }
-          # should be a single reference now
-
-          val <- sprintf("[%s]%s", xti$ext_id[sel][i], sheetName)
-
-          # non ascii or whitespace
-          if (grepl("[^A-Za-z0-9]", val))
-            val <- shQuote(val, type = "sh")
-
-          if (length(val)) xti$sheets[sel][i] <- val
         }
       }
 

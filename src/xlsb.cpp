@@ -495,7 +495,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
 
         // StyleFlagsFields *fields = (StyleFlagsFields *)&grbitObj1;
         out << "<cellStyle";
-        out << " name=\"" << stName << "\"";
+        out << " name=\"" << escape_xml(stName) << "\"";
         out << " xfId=\"" << ixf << "\"";
         out << " builtinId=\"" << (int32_t)iStyBuiltIn << "\"";
         out << " />" << std::endl;
@@ -3474,6 +3474,46 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         break;
       }
+
+      // unhandled page breaks. differentiates in column and row breaks
+      case BrtBeginColBrk:
+      case BrtBeginRwBrk:
+      {
+
+        if (debug) Rcpp::Rcout << "<BrtBegin..Brk>" << std::endl;
+
+        uint32_t ibrkMac = 0, ibrkManMac = 0;
+        ibrkMac = readbin(ibrkMac, bin, swapit);
+        if (ibrkMac > 1024) Rcpp::stop("ibrkMac to big");
+        ibrkManMac = readbin(ibrkManMac, bin, swapit);
+
+        break;
+      }
+
+      case BrtBrk:
+      {
+        if (debug) Rcpp::Rcout << "<BrtBrk>" << std::endl;
+
+        uint32_t unRwCol = 0, unColRwStrt = 0, unColRwEnd = 0, fMan = 0, fPivot = 0;
+
+        unRwCol     = readbin(unRwCol, bin, swapit); // row or column
+        unColRwStrt = readbin(unColRwStrt, bin, swapit);
+        unColRwEnd  = readbin(unColRwEnd, bin, swapit);
+        fMan        = readbin(fMan, bin, swapit);
+        fPivot      = readbin(fPivot, bin, swapit);
+
+        break;
+      }
+
+      case BrtEndColBrk:
+      case BrtEndRwBrk:
+      {
+
+        if (debug) Rcpp::Rcout << "<BrtEnd..Brk>" << std::endl;
+
+        break;
+      }
+      // end unhandled page breaks
 
       // TODO it is not correct to stop here for future records, but we ignore
       // this <ext/> segments currently. Otherwise the calendar_stress.xlsb

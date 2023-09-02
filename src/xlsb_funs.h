@@ -1650,6 +1650,15 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       break;
     }
 
+    case PtgMemFunc:
+    case PtgMemFunc2:
+    case PtgMemFunc3:
+    {
+      uint16_t cce = 0;
+      cce = readbin(cce, sas, swapit);
+      break;
+    }
+
     default:
     {
       // if (debug)
