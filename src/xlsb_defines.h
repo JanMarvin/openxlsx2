@@ -187,10 +187,6 @@ enum RgbExtra
   RevExtern = 6
 };
 
-
-
-
-// https://github.com/DidierStevens/Beta/blob/master/xlsbdump.py
 enum RecordTypes
 {
   BrtRowHdr = 0,
@@ -1146,6 +1142,7 @@ enum PtgStructure2
   PtgAttrIfError = 0x80
 };
 
+// #nocov start
 // copied from the website
 std::string Cetab(const uint16_t val) {
   switch(val) {
@@ -2033,5 +2030,6 @@ std::string Ftab(const uint16_t val) {
   }
   return "";
 }
+// #nocov end
 
 #endif
