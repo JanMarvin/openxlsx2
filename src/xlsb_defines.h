@@ -63,10 +63,13 @@ typedef struct {
   bool fBuiltin : 1;
   uint16_t fgrp : 9;
   bool fPublished : 1;
+} BrtNameFields;
+
+typedef struct {
   bool fWorkbookParam : 1;
   bool fFutureFunction : 1;
   uint16_t reserved : 14;
-} BrtNameFields;
+} BrtNameFields2;
 
 typedef struct {
   bool unused1 : 1;

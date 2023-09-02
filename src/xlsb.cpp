@@ -1596,11 +1596,17 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug)  Rcpp::Rcout << "<BrtName>" << std::endl;
         // bin.seekg(size, bin.cur);
 
+        size_t end_pos = (size_t)bin.tellg() + (size_t)size;
+        if (debug) Rcpp::Rcout << "BrtName endpos: "<< end_pos << std::endl;
+
         uint8_t chKey = 0;
-        uint32_t itab = 0, BrtNameUint = 0;
+        uint16_t BrtNameUint = 0, BrtNameUint2 = 0;
+        uint32_t itab = 0;
         BrtNameUint = readbin(BrtNameUint, bin, swapit);
+        BrtNameUint2 = readbin(BrtNameUint2, bin, swapit);
 
         BrtNameFields *fields = (BrtNameFields *)&BrtNameUint;
+        BrtNameFields2 *fields2 = (BrtNameFields2 *)&BrtNameUint2;
 
         // fHidden    - visible
         // fFunc      - xml macro
@@ -1614,6 +1620,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // fFutureFunction - future function
         // reserved        - 0
 
+        /* commented due to gcc 12 false positive warning */
         // if (debug)
         //   Rprintf(
         //     "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
@@ -1625,9 +1632,9 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         //     fields->fBuiltin,
         //     fields->fgrp,
         //     fields->fPublished,
-        //     fields->fWorkbookParam,
-        //     fields->fFutureFunction,
-        //     fields->reserved
+        //     fields2->fWorkbookParam,
+        //     fields2->fFutureFunction,
+        //     fields2->reserved
         //   );
 
         chKey = readbin(chKey, bin, swapit);
@@ -1646,14 +1653,23 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug)
           Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
 
-        if (fields->fProc) {
-          // must be NULL
-          std::string unusedstring1 = XLNullableWideString(bin, swapit);
-          // must be < 32768 characters
-          std::string description = XLNullableWideString(bin, swapit);
-          std::string helpTopic = XLNullableWideString(bin, swapit);
-          // must be NULL
-          std::string unusedstring2 = XLNullableWideString(bin, swapit);
+        if (fields->fOB ||fields->fFunc || fields->fProc) {
+          bin.seekg(end_pos, bin.beg);
+
+          /* -- something is wrong. error with some nhs macro xlsb file -- */
+          // // must be NULL
+          // Rcpp::Rcout << 1 << std::endl;
+          // std::string unusedstring1 = XLNullableWideString(bin, swapit);
+          //
+          // // must be < 32768 characters
+          // Rcpp::Rcout << 2 << std::endl;
+          // std::string description = XLNullableWideString(bin, swapit);
+          // Rcpp::Rcout << 3 << std::endl;
+          // std::string helpTopic = XLNullableWideString(bin, swapit);
+          //
+          // // must be NULL
+          // Rcpp::Rcout << 4 << std::endl;
+          // std::string unusedstring2 = XLNullableWideString(bin, swapit);
         }
 
         if (fields->fBuiltin) {

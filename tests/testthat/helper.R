@@ -1014,6 +1014,7 @@ download_testfiles <- function() {
     "mtcars_chart.xlsx",
     "namedRegions.xlsx",
     "namedRegions2.xlsx",
+    "nhs-core-standards-for-eprr-v6.1.xlsb",
     "openxlsx2_example.xlsb",
     "overwrite_formula.xlsx",
     "oxlsx2_sheet.xlsx",

@@ -1026,15 +1026,27 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         uint32_t listIndex = 0;
         int16_t colFirst = 0, colLast = 0;
 
+        // this is a reference to a table column something like "tab[col]"
         ixti = readbin(ixti, sas, swapit);
         flags = readbin(flags, sas, swapit);
         listIndex = readbin(listIndex, sas, swapit);
         colFirst = ColShort(sas, swapit);
         colLast = ColShort(sas, swapit);
 
+        std::stringstream paddedStr;
+        paddedStr << std::setw(12) << std::setfill('0') << ixti;
+
+        // A1 notation cell
+        fml_out += "openxlsx2xlsb_" + paddedStr.str();
+        // maybe [ ]
+        // fml_out += "#REF!";
+        fml_out += "\n";
+
         // Do something with this, just ... what?
-        if (debug) Rprintf("PtgList: %d, %d, %d, %d",
+        if (debug) Rprintf("PtgList: %d, %d, %d, %d\n",
             ixti, listIndex, colFirst, colLast);
+
+        Rcpp::warning("formulas with table references are not implemented.");
 
         break;
       }
@@ -1429,7 +1441,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
       fml_out += Area(sas, swapit);
       fml_out += "\n";
-;
+
       if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
 
       break;
