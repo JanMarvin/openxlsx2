@@ -3429,30 +3429,31 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         BrtBeginCFRuleFields *fields = (BrtBeginCFRuleFields *)&flags;
 
-        Rcpp::Rcout << "<cfRule";
+        std::stringstream cfRule;
+        cfRule << "<cfRule";
         // the type is defined by iType and iTemplate eg:
         // CF_TYPE_EXPRIS & CF_TEMPLATE_CONTAINSNOBLANKS
         // (but then again, not sure why iType is needed)
-        Rcpp::Rcout << " type=\"" << iType << "/" << iTemplate << "\"";
-        Rcpp::Rcout << " dxfId=\"" << dxfId << "\"";
-        Rcpp::Rcout << " priority=\"" << iPri << "\"";
-        Rcpp::Rcout << " operator=\"" << iParam << "\"";
-        Rcpp::Rcout << " stopIfTrue=\"" << fields->fStopTrue << "\"";
-        Rcpp::Rcout << " percent=\"" << fields->fPercent << "\"";
-        Rcpp::Rcout << " aboveAverage=\"" << fields->fAbove << "\"";
-        Rcpp::Rcout << " bottom=\"" << fields->fBottom << "\"";
+        cfRule << " type=\"" << iType << "/" << iTemplate << "\"";
+        cfRule << " dxfId=\"" << dxfId << "\"";
+        cfRule << " priority=\"" << iPri << "\"";
+        cfRule << " operator=\"" << iParam << "\"";
+        cfRule << " stopIfTrue=\"" << fields->fStopTrue << "\"";
+        cfRule << " percent=\"" << fields->fPercent << "\"";
+        cfRule << " aboveAverage=\"" << fields->fAbove << "\"";
+        cfRule << " bottom=\"" << fields->fBottom << "\"";
         // rank="" ???
         // stdDev="" ??
         // timePeriod="" ??
-        Rcpp::Rcout << " text=\"" << strParam << "\"";
-        Rcpp::Rcout << " >" << std::endl;
+        cfRule << " text=\"" << strParam << "\"";
+        cfRule << " >" << std::endl;
 
         if (debug) {
+          Rcpp::Rcout << cfRule.str() << std::endl;
           Rcpp::Rcout << rgce1 << std::endl;
           Rcpp::Rcout << rgce2 << std::endl;
           Rcpp::Rcout << rgce3 << std::endl;
         }
-
 
         break;
       }
@@ -3461,7 +3462,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
 
         if (debug) Rcpp::Rcout << "</cfRule>" << std::endl;
-        Rcpp::Rcout << "</cfRule>" << std::endl;
+        // Rcpp::Rcout << "</cfRule>" << std::endl;
 
         break;
       }
