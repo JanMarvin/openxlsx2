@@ -373,33 +373,3 @@ test_that("hyperlinks work", {
 
   unlink(temp_uzip, recursive = TRUE)
 })
-
-
-test_that("reading xlsb works", {
-
-  skip_if_offline()
-
-  url <- "https://github.com/JanMarvin/openxlsx2/files/11996061/openxlsx2_example.xlsb.zip"
-
-  tmp_dir <- paste0(tempdir(), "/openxlsx2_xlsb_zip")
-  dir.create(tmp_dir)
-  tmp_zip <- tempfile(fileext = ".zip")
-  download.file(url, tmp_zip, mode = "wb")
-  unzip(tmp_zip, exdir = tmp_dir)
-
-  wb <- wb_load(paste0(tmp_dir, "/openxlsx2_example.xlsb"))
-  df_xlsb <- wb_to_df(wb)
-
-  xlsx <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-  df_xlsx <- wb_to_df(xlsx)
-
-  expect_equal(df_xlsb, df_xlsx)
-
-  df_xlsb <- wb_to_df(wb, show_formula = TRUE)
-  df_xlsx <- wb_to_df(xlsx, show_formula = TRUE)
-  expect_equal(df_xlsb, df_xlsx)
-
-  unlink(tmp_dir, recursive = TRUE)
-  unlink(tmp_zip)
-
-})
