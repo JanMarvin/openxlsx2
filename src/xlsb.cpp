@@ -1594,9 +1594,9 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtName:
       {
         if (debug)  Rcpp::Rcout << "<BrtName>" << std::endl;
-        // bin.seekg(size, bin.cur);
+        size_t end_pos = bin.tellg();
+        end_pos += size;
 
-        size_t end_pos = (size_t)bin.tellg() + (size_t)size;
         if (debug) Rcpp::Rcout << "BrtName endpos: "<< end_pos << std::endl;
 
         uint8_t chKey = 0;
@@ -1645,31 +1645,43 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // XLNameWideString: XLWideString <= 255 characters
         std::string name = XLWideString(bin, swapit);
 
-        int sharedFormula = false;
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+        // if ((size_t)bin.tellg() < end_pos) {
+        //   Rcpp::Rcout << "repositioning" << std::endl;
+        //   Rcpp::Rcout << end_pos << std::endl;
+        //   bin.seekg(end_pos, bin.beg);
+        // }
 
-        std::string comment = XLNullableWideString(bin, swapit);
+        std::string fml = "", comment = "";
+
+        int sharedFormula = false;
+        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+
+        comment = XLNullableWideString(bin, swapit);
 
         if (debug)
           Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
 
-        if (fields->fOB ||fields->fFunc || fields->fProc) {
-          bin.seekg(end_pos, bin.beg);
+        if (fields->fProc && fml.compare("") != 0) {
 
           /* -- something is wrong. error with some nhs macro xlsb file -- */
-          // // must be NULL
-          // Rcpp::Rcout << 1 << std::endl;
-          // std::string unusedstring1 = XLNullableWideString(bin, swapit);
-          //
-          // // must be < 32768 characters
-          // Rcpp::Rcout << 2 << std::endl;
-          // std::string description = XLNullableWideString(bin, swapit);
-          // Rcpp::Rcout << 3 << std::endl;
-          // std::string helpTopic = XLNullableWideString(bin, swapit);
-          //
-          // // must be NULL
-          // Rcpp::Rcout << 4 << std::endl;
-          // std::string unusedstring2 = XLNullableWideString(bin, swapit);
+          // must be NULL
+          if (debug) Rcpp::Rcout << 1 << std::endl;
+          std::string unusedstring1 = XLNullableWideString(bin, swapit);
+
+          // must be < 32768 characters
+          if (debug) Rcpp::Rcout << 2 << std::endl;
+          std::string description = XLNullableWideString(bin, swapit);
+          if (debug) Rcpp::Rcout << 3 << std::endl;
+          std::string helpTopic = XLNullableWideString(bin, swapit);
+
+          // must be NULL
+          if (debug) Rcpp::Rcout << 4 << std::endl;
+          std::string unusedstring2 = XLNullableWideString(bin, swapit);
+        }
+
+        if ((size_t)bin.tellg() != end_pos) {
+          Rprintf("%d: %d", (size_t)bin.tellg(), end_pos);
+          Rcpp::stop("repositioning");
         }
 
         if (fields->fBuiltin) {
