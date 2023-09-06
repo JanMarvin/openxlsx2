@@ -8,7 +8,7 @@ linters: linters_with_defaults(
   )
 exclusions: list(
   # otherwise they will throw locally
-  "vignettes/conditional-formatting.R",
+  "vignettes/articles/conditional-formatting.R",
   "vignettes/openxlsx2.R",
   "vignettes/openxlsx2_basic_manual.R",
   "vignettes/openxlsx2_charts_manual.R",

@@ -39,7 +39,7 @@ Default is \code{font_color = "FF9C0006"} and \code{bg_fill = "FFFFC7CE"}}
 }
 \description{
 Add conditional formatting to cells.
-You can find more details in \code{vignette("conditional-formatting")}.
+You can find more details in the \href{https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html}{conditional formatting vignette}.
 }
 \details{
 openxml uses the alpha channel first then RGB, whereas the usual default is RGBA.
