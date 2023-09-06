@@ -1,10 +1,5 @@
 ---
 title: "Add conditional formatting to a workbook"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Add conditional formatting to a workbook}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -12,12 +7,12 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-set.seed(123)
 ```
 
 ```{r setup}
 library(openxlsx2)
 ```
+
 
 ```{r}
 wb <- wb_workbook()
