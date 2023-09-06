@@ -9,6 +9,9 @@
   * Please do not raise issues about `xlsb` in terms of speed or completeness of features of the openxml standard. If you have access to other file conversion tools, such as spreadsheet software, they may provide a better solution for your needs.
   * Writing `xlsb` files is outside the scope of this project.
 
+## Refactoring
+
+In order to reduce install size, the [conditional formatting vignette](https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html) is now only available on the package website ([786](https://github.com/JanMarvin/openxlsx2/issues/786)).
 
 ***************************************************************************
 
