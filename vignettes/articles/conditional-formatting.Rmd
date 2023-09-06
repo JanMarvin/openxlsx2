@@ -7,12 +7,12 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+set.seed(123)
 ```
 
 ```{r setup}
 library(openxlsx2)
 ```
-
 
 ```{r}
 wb <- wb_workbook()
