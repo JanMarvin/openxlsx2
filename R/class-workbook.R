@@ -3357,24 +3357,6 @@ wbWorkbook <- R6::R6Class(
         self$tables$tab_act[sel] <- 0
       }
 
-      # ## drawing will always be the first relationship
-      # if (nSheets > 1) {
-      #   for (i in seq_len(nSheets - 1L)) {
-      #     # did this get updated from length of 3 to 2?
-      #     #self$worksheets_rels[[i]][1:2] <- genBaseSheetRels(i)
-      #     rel <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
-      #     if (nrow(rel) && ncol(rel)) {
-      #       if (any(basename(rel$Type) == "drawing")) {
-      #         rel$Target[basename(rel$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
-      #       }
-      #       if (is.null(rel$TargetMode)) rel$TargetMode <- ""
-      #       self$worksheets_rels[[i]] <- df_to_xml("Relationship", rel[c("Id", "Type", "Target", "TargetMode")])
-      #     }
-      #   }
-      # } else {
-      #   self$worksheets_rels <- list()
-      # }
-
       ## remove sheet
       sn <- apply_reg_match0(self$workbook$sheets, pat = '(?<= name=")[^"]+')
       self$workbook$sheets <- self$workbook$sheets[!sn %in% sheet_names]
