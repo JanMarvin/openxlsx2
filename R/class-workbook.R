@@ -3388,6 +3388,13 @@ wbWorkbook <- R6::R6Class(
             self$workbook$sheets,
             fixed = TRUE
           )
+          # these are zero indexed
+          self$workbook$bookViews <- gsub(
+            stri_join("activeTab=\"", i - 1L, "\""),
+            stri_join("activeTab=\"", i - 2L, "\""),
+            self$workbook$bookViews,
+            fixed = TRUE
+          )
         }
       } else {
         self$workbook$sheets <- NULL

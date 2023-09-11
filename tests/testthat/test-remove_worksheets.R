@@ -132,3 +132,21 @@ test_that("removing leading chartsheets works", {
   unlink(tmp_dir, recursive = TRUE)
 
 })
+
+test_that("bookViews activeTab attribute is updated", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_worksheet()
+
+  wb$set_active_sheet(2)
+  exp <- "<bookViews><workbookView activeTab=\"1\"/></bookViews>"
+  got <- wb$workbook$bookViews
+  expect_equal(exp, got)
+
+  wb$remove_worksheet(1)
+  exp <- "<bookViews><workbookView activeTab=\"0\"/></bookViews>"
+  got <- wb$workbook$bookViews
+  expect_equal(exp, got)
+
+})
