@@ -736,6 +736,11 @@ write_data_table <- function(
     startRow <- min(dims[[2]])
   }
 
+  # avoid stoi error with NULL
+  if (is.null(x)) {
+    return(wb)
+  }
+
   if (data_table && nrow(x) < 1) {
     warning("Found data table with zero rows, adding one.",
             " Modify na with na.strings")
