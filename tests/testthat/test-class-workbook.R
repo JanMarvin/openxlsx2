@@ -851,3 +851,26 @@ test_that("numfmt in pivot tables works", {
   expect_equal(exp, got)
 
 })
+
+test_that("sort_item with pivot tables works", {
+
+wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
+
+df <- wb_data(wb, sheet = 1)
+
+expect_silent(
+  wb_add_pivot_table(wb, df, dims = "A3",
+                     filter = "am", rows = "cyl", cols = "gear", data = "disp",
+                     params = list(sort_item = list(gear = c(3, 2, 1)))
+  )
+)
+
+expect_warning(
+  wb_add_pivot_table(wb, df, dims = "A3",
+                     filter = "am", rows = "cyl", cols = "gear", data = "disp",
+                     params = list(sort_item = list(gear = c(1)))
+  ),
+  "Length of sort order for 'gear' does not match required length. Is 1, needs 3."
+)
+
+})
