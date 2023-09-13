@@ -632,10 +632,25 @@ pivot_def_rel <- function(n) sprintf("<Relationships xmlns=\"http://schemas.open
 
 pivot_xml_rels <- function(n) sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"../pivotCache/pivotCacheDefinition%s.xml\"/></Relationships>", n)
 
-get_items <- function(data, x) {
+get_items <- function(data, x, item_order) {
   x <- abs(x)
+
+  # check length, otherwise a certain spreadsheet software simply dies
+  if (!is.null(item_order) && (length(item_order) != length(distinct(data[[x]])))) {
+    msg <- sprintf(
+      "Length of sort order for '%s' does not match required length. Is %s, needs %s.\nCheck `openxlsx2:::distinct()` for the correct length. Resetting.",
+      names(data[x]), length(item_order), length(distinct(data[[x]]))
+    )
+    warning(msg)
+    item_order <- NULL
+  }
+
+  item_order <- if (is.null(item_order)) {
+    order(distinct(data[[x]]))
+  }
+
   item <- sapply(
-    c(order(distinct(data[[x]])) - 1L, "default"),
+    c(item_order - 1L, "default"),
     # # TODO this sets the order of the pivot elements
     # c(seq_along(unique(data[[x]])) - 1L, "default"),
     function(val) {
@@ -788,11 +803,15 @@ create_pivot_table <- function(
       "pivotField",
       xml_attributes = attrs)
 
+    sort_item <- params$sort_item
+
     if (i %in% c(filter_pos, rows_pos, cols_pos)) {
+      nms <- names(x[i])
+      sort_itm <- sort_item[[nms]]
       tmp <- xml_node_create(
         "pivotField",
         xml_attributes = attrs,
-        xml_children = paste0(paste0(get_items(x, i), collapse = ""), autoSortScope))
+        xml_children = paste0(paste0(get_items(x, i, sort_itm), collapse = ""), autoSortScope))
     }
 
     pivotField <- c(pivotField, tmp)
