@@ -1,10 +1,5 @@
 ---
 title: "Add conditional formatting to a workbook"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Add conditional formatting to a workbook}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

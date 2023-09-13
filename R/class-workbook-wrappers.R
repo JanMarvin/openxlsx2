@@ -3179,7 +3179,7 @@ wb_add_form_control <- function(
 #' Add conditional formatting to cells in a worksheet
 #'
 #' Add conditional formatting to cells.
-#' You can find more details in `vignette("conditional-formatting")`.
+#' You can find more details in the [conditional formatting vignette](https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html).
 #'
 #' openxml uses the alpha channel first then RGB, whereas the usual default is RGBA.
 #' @param wb A Workbook object

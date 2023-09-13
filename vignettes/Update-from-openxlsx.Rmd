@@ -169,7 +169,7 @@ Additional examples regarding styles can be found in the styles vignette.
 
 ### Conditional formatting
 
-See `vignette("conditional-formatting")` for extended examples on formatting.
+See the [conditional formatting vignette](https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html) for extended examples on formatting.
 
 Here is a minimal example:
 
