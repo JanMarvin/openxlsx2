@@ -398,14 +398,13 @@ test_that("sheetView is not switched", {
 
 })
 
-
 test_that("Loading a workbook with property preserves it.", {
   wb <- wb_workbook(title = "x")$add_worksheet()
   tmp <- temp_xlsx()
   wb$save(file = tmp)
 
   wb2 <- wb_load(tmp)
-  expect_equal(wb2$get_propteries()[["dc:title"]], "x")
+  expect_equal(wb2$get_properties()[["dc:title"]], "x")
   wb2$set_properties(title = "xyz")
-  expect_equal(wb2$get_propteries()[["dc:title"]], "xyz")
+  expect_equal(wb2$get_properties()[["dc:title"]], "xyz")
 })

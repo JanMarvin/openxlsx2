@@ -152,23 +152,6 @@ wbWorkbook <- R6::R6Class(
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
 
-    #' @field creator A character vector of creators
-    creator = character(),
-
-    #' @field title title
-    title = NULL,
-
-    #' @field subject subject
-    subject = NULL,
-
-    #' @field category category
-    category = NULL,
-
-    #' @field datetimeCreated The datetime (as `POSIXt`) the workbook is
-    #'   created.  Defaults to the current `Sys.time()` when the workbook object
-    #'   is created, not when the Excel files are saved.
-    datetimeCreated = Sys.time(),
-
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator character vector of creators.  Duplicated are ignored.
@@ -201,6 +184,12 @@ wbWorkbook <- R6::R6Class(
 
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
+
+      creator <- creator %||%
+        getOption("openxlsx2.creator") %||%
+        # USERNAME may only be present for windows
+        Sys.getenv("USERNAME", Sys.getenv("USER"))
+
       self$set_properties(
         creator  = creator,
         title    = title,
@@ -287,20 +276,9 @@ wbWorkbook <- R6::R6Class(
       self$vml <- NULL
       self$vml_rels <- NULL
 
-      self$creator <-
-        creator %||%
-        getOption("openxlsx2.creator") %||%
-        # USERNAME may only be present for windows
-        Sys.getenv("USERNAME", Sys.getenv("USER"))
-
-      self$datetimeCreated <- getOption("openxlsx2.datetimeCreated") %||%
-        datetime_created
-
-      assert_class(self$creator,         "character")
       assert_class(title,                "character", or_null = TRUE)
       assert_class(subject,              "character", or_null = TRUE)
       assert_class(category,             "character", or_null = TRUE)
-      assert_class(self$datetimeCreated, "POSIXt")
 
       stopifnot(
         length(title) <= 1L,
@@ -308,9 +286,6 @@ wbWorkbook <- R6::R6Class(
         length(datetime_created) == 1L
       )
 
-      self$title           <- title
-      self$subject         <- subject
-      self$category        <- category
       private$current_sheet <- 0L
       invisible(self)
     },
@@ -5135,34 +5110,14 @@ wbWorkbook <- R6::R6Class(
 
     ### creators --------------------------------------------------------------
 
-    #' @description Set creator(s)
-    #' @param creators A character vector of creators to set.  Duplicates are
-    #'   ignored.
-    set_creators = function(creators) {
-      private$modify_creators("set", creators)
-    },
-
-
-    #' @description Add creator(s)
-    #' @param creators A character vector of creators to add.  Duplicates are
-    #'   ignored.
-    add_creators = function(creators) {
-      private$modify_creators("add", creators)
-    },
-
-
-    #' @description Remove creator(s)
-    #' @param creators A character vector of creators to remove.  All duplicated
-    #'   are removed.
-    remove_creators = function(creators) {
-      private$modify_creators("remove", creators)
-    },
-
     #' @description Get properties of a workbook
-    get_propteries = function() {
+    #' @param escape escape xml strings
+    get_properties = function() {
       nams <- xml_node_name(self$core, "cp:coreProperties")
-      vapply(nams, function(x)
-        xml_value(self$core, "cp:coreProperties", x), FUN.VALUE = NA_character_)
+      vapply(nams, function(x) {
+        xml_value(self$core, "cp:coreProperties", x, escapes = TRUE)
+      },
+      FUN.VALUE = NA_character_)
     },
 
     #' @description Set a property of a workbook
@@ -5172,17 +5127,17 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(self$core)) {
         nams <- xml_node_name(self$core, "cp:coreProperties")
         xml_properties <- vapply(nams, function(x) {
-          xml_node(self$core, "cp:coreProperties", x)
+          xml_node(self$core, "cp:coreProperties", x, escapes = TRUE)
         }, FUN.VALUE = NA_character_)
       } else {
         xml_properties <- c(
-          "dc:creator" = "",
+          "dc:creator"        = "",
           "cp:lastModifiedBy" = "",
-          "dcterms:created" = "",
-          "dcterms:modified" = "",
-          "dc:title" = "",
-          "dc:subject" = "",
-          "cp:category" = ""
+          "dcterms:created"   = "",
+          "dcterms:modified"  = "",
+          "dc:title"          = "",
+          "dc:subject"        = "",
+          "cp:category"       = ""
         )
       }
 
@@ -5222,8 +5177,33 @@ wbWorkbook <- R6::R6Class(
         escapes = TRUE
       )
 
+      invisible(self)
+
     },
 
+    #' @description Set creator(s)
+    #' @param creators A character vector of creators to set.  Duplicates are
+    #'   ignored.
+    set_creators = function(creators) {
+      self$set_properties(creator = creators)
+    },
+
+    #' @description Add creator(s)
+    #' @param creators A character vector of creators to add.  Duplicates are
+    #'   ignored.
+    add_creators = function(creators) {
+      creators <- paste0(self$get_properties()[["dc:creator"]], ";", creators)
+      self$set_properties(creator = creators)
+    },
+
+    #' @description Remove creator(s)
+    #' @param creators A character vector of creators to remove.  All duplicated
+    #'   are removed.
+    remove_creators = function(creators) {
+      old <- strsplit(self$get_properties()[["dc:creator"]], ";")[[1]]
+      old <- old[which(!old %in% creators)]
+      self$set_properties(creator = old)
+    },
 
     #' @description
     #' Change the last modified by
@@ -7316,49 +7296,6 @@ wbWorkbook <- R6::R6Class(
     append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
-      invisible(self)
-    },
-
-    modify_creators = function(method = c("add", "set", "remove"), value) {
-      method <- match.arg(method)
-      assert_class(value, "character")
-
-      if (any(!has_chr(value))) {
-        stop("all creators must contain characters without NAs", call. = FALSE)
-      }
-
-      value <- switch(
-        method,
-        add    = unique(c(self$creator, value)),
-        set    = unique(value),
-        remove = setdiff(self$creator, value)
-      )
-
-      self$creator <- value
-      # core is made on initialization
-      private$generate_base_core()
-      invisible(self)
-    },
-
-    modify_property = function(method = c("set", "remove"), value, property) {
-      method <- match.arg(method)
-
-     assert_class(value, "character", arg_nm = property)
-    # stopifnot(length(value) == 1)
-
-      if (any(!has_chr(value))) {
-        stop(property, " must be a string without NAs", call. = FALSE)
-      }
-
-      value <- switch(
-        method,
-        set    = unique(value),
-        remove = setdiff(self[[property]], value)
-      )
-
-      self[[property]] <- value
-      # core is made on initialization
-      private$generate_base_core()
       invisible(self)
     },
 

@@ -163,18 +163,6 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 worksheet names.}
 
 \item{\code{path}}{path}
-
-\item{\code{creator}}{A character vector of creators}
-
-\item{\code{title}}{title}
-
-\item{\code{subject}}{subject}
-
-\item{\code{category}}{category}
-
-\item{\code{datetimeCreated}}{The datetime (as \code{POSIXt}) the workbook is
-created.  Defaults to the current \code{Sys.time()} when the workbook object
-is created, not when the Excel files are saved.}
 }
 \if{html}{\out{</div>}}
 }
@@ -232,11 +220,11 @@ is created, not when the Excel files are saved.}
 \item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
 \item \href{#method-wbWorkbook-protect}{\code{wbWorkbook$protect()}}
 \item \href{#method-wbWorkbook-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
+\item \href{#method-wbWorkbook-get_properties}{\code{wbWorkbook$get_properties()}}
+\item \href{#method-wbWorkbook-set_properties}{\code{wbWorkbook$set_properties()}}
 \item \href{#method-wbWorkbook-set_creators}{\code{wbWorkbook$set_creators()}}
 \item \href{#method-wbWorkbook-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-wbWorkbook-remove_creators}{\code{wbWorkbook$remove_creators()}}
-\item \href{#method-wbWorkbook-get_propteries}{\code{wbWorkbook$get_propteries()}}
-\item \href{#method-wbWorkbook-set_properties}{\code{wbWorkbook$set_properties()}}
 \item \href{#method-wbWorkbook-set_last_modified_by}{\code{wbWorkbook$set_last_modified_by()}}
 \item \href{#method-wbWorkbook-page_setup}{\code{wbWorkbook$page_setup()}}
 \item \href{#method-wbWorkbook-set_header_footer}{\code{wbWorkbook$set_header_footer()}}
@@ -2079,6 +2067,46 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_properties"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_properties}{}}}
+\subsection{Method \code{get_properties()}}{
+Get properties of a workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_properties()}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{escape}}{escape xml strings}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_properties"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_properties}{}}}
+\subsection{Method \code{set_properties()}}{
+Set a property of a workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_properties(
+  creator = NULL,
+  title = NULL,
+  subject = NULL,
+  category = NULL,
+  date_time_created = Sys.time()
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{creator, title, subject, category, date_time_created}}{A workbook property to set}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_creators"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_creators}{}}}
 \subsection{Method \code{set_creators()}}{
@@ -2128,39 +2156,6 @@ Remove creator(s)
 \describe{
 \item{\code{creators}}{A character vector of creators to remove.  All duplicated
 are removed.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-get_propteries"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-get_propteries}{}}}
-\subsection{Method \code{get_propteries()}}{
-Get properties of a workbook
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_propteries()}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-set_properties"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-set_properties}{}}}
-\subsection{Method \code{set_properties()}}{
-Set a property of a workbook
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_properties(
-  creator = NULL,
-  title = NULL,
-  subject = NULL,
-  category = NULL,
-  date_time_created = Sys.time()
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{creator, title, subject, category, date_time_created}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }
