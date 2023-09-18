@@ -10,24 +10,24 @@ wb_get_properties(wb)
 
 wb_set_properties(
   wb,
-  creator = NULL,
+  creators = NULL,
   title = NULL,
   subject = NULL,
   category = NULL,
   date_time_created = Sys.time(),
-  modified = NULL
+  modifiers = NULL
 )
 }
 \arguments{
 \item{wb}{A Workbook object}
 
-\item{creator}{Creator of the workbook (your name). Defaults to login username or \code{options("openxlsx2.creator")} if set.}
+\item{creators}{A character string indicating who has created the workbook}
 
 \item{title, subject, category}{Workbook property, a string.}
 
 \item{date_time_created}{datetime created}
 
-\item{modified}{A character string indicating who was the last person to modify the workbook}
+\item{modifiers}{A character string indicating who was the last person to modify the workbook}
 }
 \value{
 A wbWorkbook object, invisibly.

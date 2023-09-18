@@ -2090,19 +2090,19 @@ Get properties of a workbook
 Set a property of a workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_properties(
-  creator = NULL,
+  creators = NULL,
   title = NULL,
   subject = NULL,
   category = NULL,
   date_time_created = Sys.time(),
-  modified = NULL
+  modifiers = NULL
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator, title, subject, category, date_time_created, modified}}{A workbook property to set}
+\item{\code{creators, title, subject, category, date_time_created, modifiers}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }
