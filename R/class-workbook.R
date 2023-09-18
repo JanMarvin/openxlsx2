@@ -193,6 +193,18 @@ wbWorkbook <- R6::R6Class(
       datetime_created <- getOption("openxlsx2.datetimeCreated") %||%
         datetime_created
 
+      assert_class(creator,          "character")
+      assert_class(title,            "character", or_null = TRUE)
+      assert_class(subject,          "character", or_null = TRUE)
+      assert_class(category,         "character", or_null = TRUE)
+      assert_class(datetime_created, "POSIXt")
+
+      stopifnot(
+        length(title) <= 1L,
+        length(category) <= 1L,
+        length(datetime_created) == 1L
+      )
+
       self$set_properties(
         creator           = creator,
         title             = title,
@@ -279,16 +291,6 @@ wbWorkbook <- R6::R6Class(
       self$vbaProject <- NULL
       self$vml <- NULL
       self$vml_rels <- NULL
-
-      assert_class(title,                "character", or_null = TRUE)
-      assert_class(subject,              "character", or_null = TRUE)
-      assert_class(category,             "character", or_null = TRUE)
-
-      stopifnot(
-        length(title) <= 1L,
-        length(category) <= 1L,
-        length(datetime_created) == 1L
-      )
 
       private$current_sheet <- 0L
       invisible(self)
