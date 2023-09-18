@@ -14,7 +14,8 @@ wb_set_properties(
   title = NULL,
   subject = NULL,
   category = NULL,
-  date_time_created = Sys.time()
+  date_time_created = Sys.time(),
+  modified = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ wb_set_properties(
 \item{title, subject, category}{Workbook property, a string.}
 
 \item{date_time_created}{datetime created}
+
+\item{modified}{A character string indicating who was the last person to modify the workbook}
 }
 \value{
 A wbWorkbook object, invisibly.

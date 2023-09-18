@@ -190,11 +190,15 @@ wbWorkbook <- R6::R6Class(
         # USERNAME may only be present for windows
         Sys.getenv("USERNAME", Sys.getenv("USER"))
 
+      datetime_created <- getOption("openxlsx2.datetimeCreated") %||%
+        datetime_created
+
       self$set_properties(
-        creator  = creator,
-        title    = title,
-        subject  = subject,
-        category = category
+        creator           = creator,
+        title             = title,
+        subject           = subject,
+        category          = category,
+        date_time_created = datetime_created
       )
       self$comments <- list()
       self$threadComments <- list()
@@ -5121,9 +5125,18 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param creator,title,subject,category,date_time_created A workbook property to set
-    set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time()) {
+    #' @param creator,title,subject,category,date_time_created,modified A workbook property to set
+    set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modified = NULL) {
       # get an xml output or create one
+
+      core_creator <- "dc:creator"
+      core_lastmod <- "cp:lastModifiedBy"
+      core_created <- "dcterms:created"
+      core_modifid <- "dcterms:modified"
+      core_dctitle <- "dc:title"
+      core_subject <- "dc:subject"
+      core_categor <- "cp:category"
+
       if (!is.null(self$core)) {
         nams <- xml_node_name(self$core, "cp:coreProperties")
         xml_properties <- vapply(nams, function(x) {
@@ -5131,32 +5144,40 @@ wbWorkbook <- R6::R6Class(
         }, FUN.VALUE = NA_character_)
       } else {
         xml_properties <- c(
-          "dc:creator"        = "",
-          "cp:lastModifiedBy" = "",
-          "dcterms:created"   = "",
-          "dcterms:modified"  = "",
-          "dc:title"          = "",
-          "dc:subject"        = "",
-          "cp:category"       = ""
+          core_creator = "",
+          core_lastmod = "",
+          core_created = "",
+          core_modifid = "",
+          core_dctitle = "",
+          core_subject = "",
+          core_categor = ""
         )
       }
 
       # update values where needed
       if (!is.null(creator)) {
         if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
-        xml_properties["dc:creator"] <- xml_node_create("dc:creator", xml_children = creator)
-        xml_properties["cp:lastModifiedBy"] <- xml_node_create("cp:lastModifiedBy", xml_children = creator)
+        xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creator)
+        modified <- creator
       }
+
+      if (!is.null(modified)) {
+        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modified)
+      }
+
       if (!is.null(title)) {
-        xml_properties["dc:title"] <- xml_node_create("dc:title", xml_children = title)
+        xml_properties[core_dctitle] <- xml_node_create(core_dctitle, xml_children = title)
       }
+
       if (!is.null(subject)) {
-        xml_properties["dc:subject"] <- xml_node_create("dc:subject", xml_children = subject)
+        xml_properties[core_subject] <- xml_node_create(core_subject, xml_children = subject)
       }
+
       if (!is.null(subject)) {
-        xml_properties["cp:category"] <- xml_node_create("cp:category", xml_children = category)
+        xml_properties[core_categor] <- xml_node_create(core_categor, xml_children = category)
       }
-      xml_properties["dcterms:created"] <- xml_node_create("dcterms:created",
+
+      xml_properties[core_created] <- xml_node_create(core_created,
         xml_attributes = c(
           `xsi:type` = "dcterms:W3CDTF"
         ),
@@ -5215,19 +5236,7 @@ wbWorkbook <- R6::R6Class(
         .Deprecated(old = "LastModifiedBy", new = "name", package = "openxlsx2")
         name <- list(...)$LastModifiedBy
       }
-      # TODO rename to wb_set_last_modified_by() ?
-      if (!is.null(name)) {
-        current_LastModifiedBy <-
-          stri_match(self$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
-        self$core <-
-          stri_replace_all_fixed(
-            self$core,
-            pattern = current_LastModifiedBy,
-            replacement = name
-          )
-      }
-
-      invisible(self)
+      self$set_properties(modified = name)
     },
 
     #' @description page_setup()
