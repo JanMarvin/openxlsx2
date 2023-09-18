@@ -33,7 +33,7 @@ wb_set_properties(
 A wbWorkbook object, invisibly.
 }
 \description{
-This function is useful for workbooks that are loeaded. It can be used to set the
+This function is useful for workbooks that are loaded. It can be used to set the
 workbook \code{title}, \code{subject} and \code{category} field. Use \code{\link[=wb_workbook]{wb_workbook()}}
 to easily set these properties with a new workbook.
 }

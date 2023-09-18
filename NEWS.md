@@ -9,6 +9,8 @@
   * Please do not raise issues about `xlsb` in terms of speed or completeness of features of the openxml standard. If you have access to other file conversion tools, such as spreadsheet software, they may provide a better solution for your needs.
   * Writing `xlsb` files is outside the scope of this project.
 
+* New set of function `wb_get_properties()`/`wb_set_properties()` to view and modify workbook properties. [782](https://github.com/JanMarvin/openxlsx2/pull/782)
+
 
 ***************************************************************************
 

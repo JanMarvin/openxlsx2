@@ -2196,7 +2196,7 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 
 #' Modify workbook properties
 #'
-#' This function is useful for workbooks that are loeaded. It can be used to set the
+#' This function is useful for workbooks that are loaded. It can be used to set the
 #' workbook `title`, `subject` and `category` field. Use [wb_workbook()]
 #' to easily set these properties with a new workbook.
 #'
