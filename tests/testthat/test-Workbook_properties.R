@@ -64,12 +64,7 @@ test_that("Workbook properties", {
 
 test_that("escaping in wbWorkbooks genBaseCore works as expected", {
 
-  got <- genBaseCore(
-    creator = "crea & tor",
-    title = "ti & tle",
-    subject = "sub & ject",
-    category = "cate & gory"
-  )
+  got <- "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><dc:creator>crea &amp; tor</dc:creator><cp:lastModifiedBy>crea &amp; tor</cp:lastModifiedBy><dcterms:created xsi:type=\"dcterms:W3CDTF\">2023-08-31T23:13:43Z</dcterms:created><dc:title>ti &amp; tle</dc:title><dc:subject>sub &amp; ject</dc:subject><cp:category>cate &amp; gory</cp:category></cp:coreProperties>"
 
   wb <- wb_workbook(
     creator = "crea & tor",

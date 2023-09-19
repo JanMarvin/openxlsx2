@@ -2194,6 +2194,49 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 
 # creators ----------------------------------------------------------------
 
+#' Modify workbook properties
+#'
+#' This function is useful for workbooks that are loaded. It can be used to set the
+#' workbook `title`, `subject` and `category` field. Use [wb_workbook()]
+#' to easily set these properties with a new workbook.
+#'
+#' @name properties
+#' @param wb A Workbook object
+#' @param creators A character string indicating who has created the workbook
+#' @param date_time_created datetime created
+#' @param modifiers A character string indicating who was the last person to modify the workbook
+#' @seealso [wb_workbook()]
+#' @inheritParams wb_workbook
+#' @return A wbWorkbook object, invisibly.
+#' @export
+#'
+#' @examples
+#' file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' wb <- wb_load(file)
+#' wb$get_properties()
+#'
+#' # Add a title to properties
+#' wb$set_properties(title = "my title")
+#' wb$get_properties()
+wb_get_properties <- function(wb) {
+  assert_workbook(wb)
+  wb$get_properties()
+}
+
+#' @rdname properties
+#' @export
+wb_set_properties <- function(wb, creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL) {
+  assert_workbook(wb)
+  wb$clone()$set_properties(
+    creators          = creators,
+    title             = title,
+    subject           = subject,
+    category          = category,
+    date_time_created = date_time_created,
+    modifiers         = modifiers
+  )
+}
+
 #' Modify creators of a workbook
 #'
 #' Modify and get workbook creators
@@ -2248,9 +2291,8 @@ wb_remove_creators <- function(wb, creators) {
 #' @export
 wb_get_creators <- function(wb) {
   assert_workbook(wb)
-  wb[["creator"]]
+  strsplit(wb$get_properties()[["dc:creator"]], ";")[[1]]
 }
-
 
 
 # names -------------------------------------------------------------------

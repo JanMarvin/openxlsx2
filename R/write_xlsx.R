@@ -68,6 +68,30 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
   #---wb_workbook---#
   ## creator
+  creator <- NULL
+  if ("creator" %in% names(params)) {
+    creator <- params$creator
+  }
+
+  title <- NULL
+  if ("subject" %in% names(params)) {
+    title <- params$title
+  }
+
+  subject <- NULL
+  if ("subject" %in% names(params)) {
+    subject <- params$subject
+  }
+
+  category <- NULL
+  if ("category" %in% names(params)) {
+    category <- params$category
+  }
+
+  creator <- creator %||%
+    getOption("openxlsx2.creator") %||%
+    # USERNAME may only be present for windows
+    Sys.getenv("USERNAME", Sys.getenv("USER"))
 
   #---add_worksheet---#
   ## sheetName
@@ -110,11 +134,6 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   if (!is.logical(as_table)) {
     stop("as_table must be a logical.")
   }
-
-  creator <- if ("creator" %in% names(params)) params$creator else ""
-  title <- params$title ### will return NULL of not exist
-  subject <- params$subject ### will return NULL of not exist
-  category <- params$category ### will return NULL of not exist
 
 
   sheetName <- "Sheet 1"

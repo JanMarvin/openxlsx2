@@ -152,23 +152,6 @@ wbWorkbook <- R6::R6Class(
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
 
-    #' @field creator A character vector of creators
-    creator = character(),
-
-    #' @field title title
-    title = NULL,
-
-    #' @field subject subject
-    subject = NULL,
-
-    #' @field category category
-    category = NULL,
-
-    #' @field datetimeCreated The datetime (as `POSIXt`) the workbook is
-    #'   created.  Defaults to the current `Sys.time()` when the workbook object
-    #'   is created, not when the Excel files are saved.
-    datetimeCreated = Sys.time(),
-
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator character vector of creators.  Duplicated are ignored.
@@ -201,13 +184,34 @@ wbWorkbook <- R6::R6Class(
 
       self$connections <- NULL
       self$Content_Types <- genBaseContent_Type()
-      self$core <-
-        genBaseCore(
-          creator = creator,
-          title = title,
-          subject = subject,
-          category = category
-        )
+
+      creator <- creator %||%
+        getOption("openxlsx2.creator") %||%
+        # USERNAME may only be present for windows
+        Sys.getenv("USERNAME", Sys.getenv("USER"))
+
+      datetime_created <- getOption("openxlsx2.datetimeCreated") %||%
+        datetime_created
+
+      assert_class(creator,          "character")
+      assert_class(title,            "character", or_null = TRUE)
+      assert_class(subject,          "character", or_null = TRUE)
+      assert_class(category,         "character", or_null = TRUE)
+      assert_class(datetime_created, "POSIXt")
+
+      stopifnot(
+        length(title) <= 1L,
+        length(category) <= 1L,
+        length(datetime_created) == 1L
+      )
+
+      self$set_properties(
+        creators          = creator,
+        title             = title,
+        subject           = subject,
+        category          = category,
+        date_time_created = datetime_created
+      )
       self$comments <- list()
       self$threadComments <- list()
 
@@ -288,31 +292,6 @@ wbWorkbook <- R6::R6Class(
       self$vml <- NULL
       self$vml_rels <- NULL
 
-      self$creator <-
-        creator %||%
-        getOption("openxlsx2.creator") %||%
-        # USERNAME may only be present for windows
-        Sys.getenv("USERNAME", Sys.getenv("USER"))
-
-      self$datetimeCreated <- getOption("openxlsx2.datetimeCreated") %||%
-        datetime_created
-
-      assert_class(self$creator,         "character")
-      assert_class(title,                "character", or_null = TRUE)
-      assert_class(subject,              "character", or_null = TRUE)
-      assert_class(category,             "character", or_null = TRUE)
-      assert_class(self$datetimeCreated, "POSIXt")
-
-      stopifnot(
-        length(title) <= 1L,
-        length(category) <= 1L,
-        length(datetime_created) == 1L
-      )
-
-      self$title           <- title
-      self$subject         <- subject
-      self$category        <- category
-      private$generate_base_core()
       private$current_sheet <- 0L
       invisible(self)
     },
@@ -5137,29 +5116,117 @@ wbWorkbook <- R6::R6Class(
 
     ### creators --------------------------------------------------------------
 
+    #' @description Get properties of a workbook
+    #' @param escape escape xml strings
+    get_properties = function() {
+      nams <- xml_node_name(self$core, "cp:coreProperties")
+      vapply(nams, function(x) {
+        xml_value(self$core, "cp:coreProperties", x, escapes = TRUE)
+      },
+      FUN.VALUE = NA_character_)
+    },
+
+    #' @description Set a property of a workbook
+    #' @param creators,title,subject,category,date_time_created,modifiers A workbook property to set
+    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL) {
+      # get an xml output or create one
+
+      core_creator <- "dc:creator"
+      core_lastmod <- "cp:lastModifiedBy"
+      core_created <- "dcterms:created"
+      core_modifid <- "dcterms:modified"
+      core_dctitle <- "dc:title"
+      core_subject <- "dc:subject"
+      core_categor <- "cp:category"
+
+      if (!is.null(self$core)) {
+        nams <- xml_node_name(self$core, "cp:coreProperties")
+        xml_properties <- vapply(nams, function(x) {
+          xml_node(self$core, "cp:coreProperties", x, escapes = TRUE)
+        }, FUN.VALUE = NA_character_)
+      } else {
+        xml_properties <- c(
+          core_creator = "",
+          core_lastmod = "",
+          core_created = "",
+          core_modifid = "",
+          core_dctitle = "",
+          core_subject = "",
+          core_categor = ""
+        )
+      }
+
+      # update values where needed
+      if (!is.null(creators)) {
+        if (length(creators) > 1) creators <- paste0(creators, collapse = ";")
+        xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creators)
+        modifiers <- creators
+      }
+
+      if (!is.null(modifiers)) {
+        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifiers)
+      }
+
+      if (!is.null(title)) {
+        xml_properties[core_dctitle] <- xml_node_create(core_dctitle, xml_children = title)
+      }
+
+      if (!is.null(subject)) {
+        xml_properties[core_subject] <- xml_node_create(core_subject, xml_children = subject)
+      }
+
+      if (!is.null(subject)) {
+        xml_properties[core_categor] <- xml_node_create(core_categor, xml_children = category)
+      }
+
+      xml_properties[core_created] <- xml_node_create(core_created,
+        xml_attributes = c(
+          `xsi:type` = "dcterms:W3CDTF"
+        ),
+        xml_children = format(as_POSIXct_utc(date_time_created), "%Y-%m-%dT%H:%M:%SZ")
+      )
+
+      # return xml core output
+      self$core <- xml_node_create(
+        "cp:coreProperties",
+        xml_attributes = c(
+          `xmlns:cp`       = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+          `xmlns:dc`       = "http://purl.org/dc/elements/1.1/",
+          `xmlns:dcterms`  = "http://purl.org/dc/terms/",
+          `xmlns:dcmitype` = "http://purl.org/dc/dcmitype/",
+          `xmlns:xsi`      = "http://www.w3.org/2001/XMLSchema-instance"
+        ),
+        xml_children = xml_properties,
+        escapes = TRUE
+      )
+
+      invisible(self)
+
+    },
+
     #' @description Set creator(s)
     #' @param creators A character vector of creators to set.  Duplicates are
     #'   ignored.
     set_creators = function(creators) {
-      private$modify_creators("set", creators)
+      self$set_properties(creators = creators)
     },
-
 
     #' @description Add creator(s)
     #' @param creators A character vector of creators to add.  Duplicates are
     #'   ignored.
     add_creators = function(creators) {
-      private$modify_creators("add", creators)
+      creators <- paste0(self$get_properties()[["dc:creator"]], ";", creators)
+      self$set_properties(creators = creators)
     },
-
 
     #' @description Remove creator(s)
     #' @param creators A character vector of creators to remove.  All duplicated
     #'   are removed.
     remove_creators = function(creators) {
-      private$modify_creators("remove", creators)
+      old <- strsplit(self$get_properties()[["dc:creator"]], ";")[[1]]
+      old <- old[which(!old %in% creators)]
+      self$set_properties(creators = old)
     },
-
 
     #' @description
     #' Change the last modified by
@@ -5171,19 +5238,7 @@ wbWorkbook <- R6::R6Class(
         .Deprecated(old = "LastModifiedBy", new = "name", package = "openxlsx2")
         name <- list(...)$LastModifiedBy
       }
-      # TODO rename to wb_set_last_modified_by() ?
-      if (!is.null(name)) {
-        current_LastModifiedBy <-
-          stri_match(self$core, regex = "<cp:lastModifiedBy>(.*?)</cp:lastModifiedBy>")[1, 2]
-        self$core <-
-          stri_replace_all_fixed(
-            self$core,
-            pattern = current_LastModifiedBy,
-            replacement = name
-          )
-      }
-
-      invisible(self)
+      self$set_properties(modifiers = name)
     },
 
     #' @description page_setup()
@@ -7252,33 +7307,6 @@ wbWorkbook <- R6::R6Class(
     append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
-      invisible(self)
-    },
-
-    generate_base_core = function() {
-      # how do self$datetimeCreated and genBaseCore time differ?
-      self$core <- genBaseCore(creator = self$creator, title = self$title, subject = self$subject, category = self$category, datetimeCreated = self$datetimeCreated)
-      invisible(self)
-    },
-
-    modify_creators = function(method = c("add", "set", "remove"), value) {
-      method <- match.arg(method)
-      assert_class(value, "character")
-
-      if (any(!has_chr(value))) {
-        stop("all creators must contain characters without NAs", call. = FALSE)
-      }
-
-      value <- switch(
-        method,
-        add    = unique(c(self$creator, value)),
-        set    = unique(value),
-        remove = setdiff(self$creator, value)
-      )
-
-      self$creator <- value
-      # core is made on initialization
-      private$generate_base_core()
       invisible(self)
     },
 
