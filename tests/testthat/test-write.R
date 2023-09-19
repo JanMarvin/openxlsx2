@@ -628,3 +628,18 @@ test_that("writing in specific encoding works", {
   Sys.setlocale("LC_CTYPE", loc)
 
 })
+
+test_that("writing NULL works silently", {
+
+  tmp <- temp_xlsx()
+  x <- NULL
+
+  expect_silent(write_xlsx(x, tmp))
+
+  expect_silent(wb_workbook()$add_worksheet()$add_data(x = x))
+
+  wb <- wb_workbook()$add_worksheet()
+  wb2 <- wb_add_data(wb, x = x)
+  expect_equal(wb, wb2)
+
+})

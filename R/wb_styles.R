@@ -78,23 +78,20 @@ import_styles <- function(x) {
 #' Helper to create a border
 #' @description
 #' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
-#' Border colors are of the following type: c(rgb="FF000000")
+#' Border colors can be created with [wb_color()]
+#' @seealso [wb_add_border()]
 #' @param diagonal_down x
 #' @param diagonal_up x
 #' @param outline x
 #' @param bottom X
-#' @param bottom_color X
+#' @param bottom_color,diagonal_color,left_color,right_color,top_color a color created with [wb_color()]
 #' @param diagonal X
-#' @param diagonal_color X,
 #' @param end x,
 #' @param horizontal x
 #' @param left x
-#' @param left_color x
 #' @param right x
-#' @param right_color x
 #' @param start x
 #' @param top x
-#' @param top_color x
 #' @param vertical x
 #' @param ... x
 #'
@@ -168,8 +165,9 @@ create_border <- function(
 }
 
 #' create number format
-#' @param numFmtId an id
+#' @param numFmtId an id, the list can be found in the **Details** of [create_cell_style()]
 #' @param formatCode a format code
+#' @seealso [wb_add_numfmt()]
 #' @export
 create_numfmt <- function(numFmtId, formatCode) {
 
@@ -200,6 +198,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' @param u underline
 #' @param vert_align vertical alignment
 #' @param ... ...
+#' @seealso [wb_add_font()]
 #' @examples
 #' font <- create_font()
 #' # openxml has the alpha value leading
@@ -327,6 +326,7 @@ create_font <- function(
 #' @param bgColor hex8 color with alpha, red, green, blue only for patternFill
 #' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
 #' @param ... ...
+#' @seealso [wb_add_fill()]
 #'
 #' @export
 create_fill <- function(
@@ -371,7 +371,7 @@ create_fill <- function(
 # TODO can be further generalized with additional xf attributes and children
 #' Helper to create a cell style
 #'
-#' create_cell_style with [wb_add_cell_style()]
+#' Create_cell_style with [wb_add_cell_style()]
 #' @param border_id dummy
 #' @param fill_id dummy
 #' @param font_id dummy

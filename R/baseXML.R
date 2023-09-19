@@ -152,55 +152,6 @@ genBaseApp <- function() {
   )
 }
 
-genBaseCore <- function(creator = "", title = NULL, subject = NULL, category = NULL, datetimeCreated = NULL) {
-
-  if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
-  if (is.null(datetimeCreated)) datetimeCreated <- Sys.time()
-
-  dc_creator <- xml_node_create("dc:creator", xml_children = creator)
-  cp_lastMod <- xml_node_create("cp:lastModifiedBy", xml_children = creator)
-  dc_terms   <- xml_node_create("dcterms:created",
-    xml_attributes = c(
-      `xsi:type` = "dcterms:W3CDTF"
-    ),
-    xml_children = format(as_POSIXct_utc(datetimeCreated), "%Y-%m-%dT%H:%M:%SZ")
-  )
-
-  dc_title <- NULL
-  if (!is.null(title)) {
-    dc_title <- xml_node_create("dc:title", xml_children = title)
-  }
-
-  dc_subject <- NULL
-  if (!is.null(subject)) {
-    dc_subject <- xml_node_create("dc:subject", xml_children = subject)
-  }
-
-  cp_category <- NULL
-  if (!is.null(category)) {
-    cp_category <- xml_node_create("cp:category", xml_children = category)
-  }
-
-  xml_node_create("cp:coreProperties",
-    xml_attributes = c(
-      `xmlns:cp`       = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
-      `xmlns:dc`       = "http://purl.org/dc/elements/1.1/",
-      `xmlns:dcterms`  = "http://purl.org/dc/terms/",
-      `xmlns:dcmitype` = "http://purl.org/dc/dcmitype/",
-      `xmlns:xsi`      = "http://www.w3.org/2001/XMLSchema-instance"
-    ),
-    xml_children = c(
-      dc_creator,
-      cp_lastMod,
-      dc_terms,
-      dc_title,
-      dc_subject,
-      cp_category
-    ),
-    escapes = TRUE
-  )
-}
-
 # All relationships here must be matched with files inside of the xlsx files.
 # Otherwise certain third party tools might not accept the file as valid xlsx file.
 genBaseWorkbook.xml.rels <- function() {

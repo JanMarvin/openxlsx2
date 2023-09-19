@@ -1,3 +1,20 @@
+# openxlsx2 (development version)
+
+## New features
+
+* It is no longer needed to manually create columns for `wb_group_cols()`. [781](https://github.com/JanMarvin/openxlsx2/pull/781)
+
+* Basic support for the `xlsb` file format. We parse the binary file format into pseudo-openxml files that we can import. Therefore, after importing, it is possible to interact with the file as if it had been provided as `xlsx` in the first place. This is of course slower than reading directly from the binary file. Our implementation is also still missing some features: some array formulas are still broken, conditional formatting and data validation are not implemented, nor are pivot tables and slicers. [688](https://github.com/JanMarvin/openxlsx2/pull/688)
+  * Please note that `openxlsx2` is not a security tool and the `xlsb` parser was written with the intention of reading valid `xlsb` files on little endian systems.
+  * Please do not raise issues about `xlsb` in terms of speed or completeness of features of the openxml standard. If you have access to other file conversion tools, such as spreadsheet software, they may provide a better solution for your needs.
+  * Writing `xlsb` files is outside the scope of this project.
+
+* New set of function `wb_get_properties()`/`wb_set_properties()` to view and modify workbook properties. [782](https://github.com/JanMarvin/openxlsx2/pull/782)
+
+
+***************************************************************************
+
+
 # openxlsx2 1.0
 
 ## Breaking changes

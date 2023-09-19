@@ -69,3 +69,6 @@ hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1, 2))
 # col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
 # cat(col("Test"))
 }
+\seealso{
+\code{\link[=wb_add_font]{wb_add_font()}}
+}

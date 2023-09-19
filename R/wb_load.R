@@ -10,7 +10,7 @@
 #' file is loaded into a workbook. Removal is generally expected to be safe,
 #' but the feature is still experimental.
 #'
-#' @param file A path to an existing .xlsx or .xlsm file
+#' @param file A path to an existing .xlsx, .xlsm or .xlsb file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #'   sheet will be loaded.
 #' @param data_only mode to import if only a data frame should be returned. This
@@ -39,8 +39,11 @@ wb_load <- function(
     ...
 ) {
 
+  debug     <- list(...)$debug
   xlsx_file <- list(...)$xlsx_file
   standardize_case_names(...)
+
+  if (is.null(debug)) debug <- FALSE
 
   if (!is.null(xlsx_file)) {
     .Deprecated(old = "xlsx_file", new = "file", package = "openxlsx2")
@@ -60,6 +63,7 @@ wb_load <- function(
   # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   ## Unzip files to temp directory
+
   xmlFiles <- unzip(file, exdir = xmlDir)
   # we need to read the files in human order: 1, 2, 10 and not 1, 10, 2.
   ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))
@@ -82,17 +86,22 @@ wb_load <- function(
 
   customXmlDir      <- grep_xml("customXml/")
 
+  workbookBIN       <- grep_xml("workbook.bin$")
   workbookXML       <- grep_xml("workbook.xml$")
+  workbookBINRels   <- grep_xml("workbook.bin.rels")
   workbookXMLRels   <- grep_xml("workbook.xml.rels")
 
   drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
   worksheetsXML     <- grep_xml("/worksheets/sheet[0-9]+")
 
+  stylesBIN         <- grep_xml("styles.bin$")
   stylesXML         <- grep_xml("styles.xml$")
+  sharedStringsBIN  <- grep_xml("sharedStrings.bin$")
   sharedStringsXML  <- grep_xml("sharedStrings.xml$")
   metadataXML       <- grep_xml("metadata.xml$")
   themeXML          <- grep_xml("theme[0-9]+.xml$")
   drawingRelsXML    <- grep_xml("drawing[0-9]+.xml.rels$")
+  sheetRelsBIN      <- grep_xml("sheet[0-9]+.bin.rels$")
   sheetRelsXML      <- grep_xml("sheet[0-9]+.xml.rels$")
   media             <- grep_xml("image[0-9]+.[a-z]+$")
   vmlDrawingXML     <- grep_xml("drawings/vmlDrawing[0-9]+\\.vml$")
@@ -101,6 +110,7 @@ wb_load <- function(
   embeddings        <- grep_xml("xl/embeddings")
 
   # comments
+  commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
   commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
   personXML         <- grep_xml("xl/persons/person.xml$")
   threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
@@ -112,16 +122,19 @@ wb_load <- function(
   chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
   chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+.xml.rels")
   chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+.xml.rels")
-  chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+\\.xml")
+  chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+")
 
   # tables
+  tablesBIN         <- grep_xml("tables/table[0-9]+.bin$")
   tablesXML         <- grep_xml("tables/table[0-9]+.xml$")
   tableRelsXML      <- grep_xml("table[0-9]+.xml.rels$")
   queryTablesXML    <- grep_xml("queryTable[0-9]+.xml$")
 
   # connections
   connectionsXML    <- grep_xml("connections.xml$")
+  extLinksBIN       <- grep_xml("externalLink[0-9]+.bin$")
   extLinksXML       <- grep_xml("externalLink[0-9]+.xml$")
+  extLinksRelsBIN   <- grep_xml("externalLink[0-9]+.bin.rels$")
   extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
 
   # form control
@@ -150,6 +163,70 @@ wb_load <- function(
     ),
     add = TRUE
   )
+
+  # modifications for xlsb
+  if (length(workbookBIN)) {
+
+    if (file.info(file)$size > 100000) {
+      message("importing larger workbook. please wait a moment")
+    }
+
+    workbookXML <- gsub(".bin$", ".xml", workbookBIN)
+    if (debug) {
+      print(workbookBIN)
+      print(workbookXML)
+    }
+    workbook_bin(workbookBIN, workbookXML, debug)
+
+    if (length(stylesBIN)) {
+      stylesXML <- gsub(".bin$", ".xml", stylesBIN)
+      styles_bin(stylesBIN, stylesXML, debug)
+      # system(sprintf("cat %s", stylesXML))
+      # system(sprintf("cp %s /tmp/styles.xml", stylesXML))
+    }
+
+    if (length(sharedStringsBIN)) {
+      sharedStringsXML <- gsub(".bin$", ".xml", sharedStringsBIN)
+      sharedstrings_bin(sharedStringsBIN, sharedStringsXML, debug)
+      # system(sprintf("cat %s", sharedStringsXML))
+      # system(sprintf("cp %s /tmp/sst.xml", sharedStringsXML))
+    }
+
+    if (!data_only && length(tablesBIN)) {
+      tablesXML <- gsub(".bin$", ".xml", tablesBIN)
+      for (i in seq_along(tablesXML))
+        table_bin(tablesBIN[i], tablesXML[i], debug)
+      # system(sprintf("cat %s", tablesXML))
+      # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
+    }
+
+    if (!data_only && length(chartSheetsXML)) {
+      chartSheetsXML <- gsub(".bin$", ".xml", chartSheetsXML)
+    }
+
+    if (!data_only && length(commentsBIN)) {
+      commentsXML <- gsub(".bin$", ".xml", commentsBIN)
+      for (i in seq_along(commentsBIN)) {
+        comments_bin(commentsBIN[i], commentsXML[i], debug)
+        # system(sprintf("cat %s", commentsXML[i]))
+        # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
+      }
+    }
+
+    if (!data_only && length(extLinksBIN)) {
+      extLinksXML <- gsub(".bin$", ".xml", extLinksBIN)
+      for (i in seq_along(extLinksBIN)) {
+        externalreferences_bin(extLinksBIN[i], extLinksXML[i], debug)
+        # system(sprintf("cat %s", commentsXML[i]))
+        # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
+      }
+
+      extLinksRelsXML <- extLinksRelsBIN
+    }
+
+    workbookXMLRels <- workbookBINRels
+    sheetRelsXML    <- sheetRelsBIN
+  }
 
   ## core
   if (!data_only && length(appXML)) {
@@ -298,7 +375,6 @@ wb_load <- function(
     # TODO only loop over import_sheets
     for (i in seq_len(nrow(sheets))) {
       if (sheets$typ[i] == "chartsheet") {
-        txt <- read_xml(sheets$target[i], pointer = FALSE)
         wb$add_chartsheet(sheet = sheets$name[i], visible = is_visible[i])
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
@@ -404,6 +480,11 @@ wb_load <- function(
 
     ## defined Names
     wb$workbook$definedNames <-  xml_node(workbook_xml, "workbook", "definedNames", "definedName")
+
+
+    ## xti
+    if (length(workbookBIN))
+      wb$workbook$xti <-  xml_node(workbook_xml, "workbook", "xtis", "xti")
 
   }
 
@@ -520,6 +601,8 @@ wb_load <- function(
 
   ## xl\styles
   if (length(stylesXML)) {
+    # system(sprintf("cat %s", stylesXML))
+    # system(sprintf("cp %s /tmp/styles.xml", stylesXML))
     styles_xml <- read_xml(stylesXML, pointer = FALSE)
     wb$styles_mgr$styles <- import_styles(styles_xml)
     wb$styles_mgr$initialize(wb)
@@ -649,6 +732,17 @@ wb_load <- function(
   }
 
   for (i in import_sheets) {
+
+    if (grepl(".bin$", sheets$target[i])) {
+      xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
+
+      # message(sheets$target[i])
+      worksheet_bin(sheets$target[i], wb$is_chartsheet[i], xml_tmp, debug)
+      # system(sprintf("cat %s", xml_tmp))
+      # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
+      sheets$target[i] <- xml_tmp
+    }
+
     if (sheets$typ[i] == "chartsheet") {
       if (data_only) stop("Requested sheet is a chartsheet. No data to return")
       chartsheet_xml <- read_xml(sheets$target[i])
@@ -825,15 +919,21 @@ wb_load <- function(
         if (length(xml) == 0) return(character())
 
         xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
-        # xml_relship$Target[basename(xml_relship$Type) == "drawing"] <- sprintf("../drawings/drawing%s.xml", i)
-        # xml_relship$Target[basename(xml_relship$Type) == "vmlDrawing"] <- sprintf("../drawings/vmlDrawing%s.vml", i)
+        # print(xml_relship)
+        if (any(basename(xml_relship$Type) %in% c("comments", "table"))) { #  %% length(tablesBIN)
+          sel <- basename(xml_relship$Type) %in% c("comments", "table")
+          # message("table")
+          # print(gsub(".bin", ".xml", xml_relship$Target[sel]))
+          # message("---")
+          xml_relship$Target[sel] <- gsub(".bin", ".xml", xml_relship$Target[sel])
+        }
 
         if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
 
         # we do not ship this binary blob, therefore spreadsheet software may
         # stumble over this non existent reference. In the future we might want
         # to check if the references are valid pre file saving.
-        sel_row <- !grepl("printerSettings", basename2(xml_relship$Target))
+        sel_row <- !grepl("printerSettings|binaryIndex", basename2(xml_relship$Target))
         sel_col <- c("Id", "Type", "Target", "TargetMode")
         # return as xml
         xml <- df_to_xml("Relationship", xml_relship[sel_row, sel_col])
@@ -1241,6 +1341,138 @@ wb_load <- function(
   } else if (length(tablesXML) > 0) {
     wb$tables.xml.rels <- rep("", length(tablesXML))
   }
+
+  # xlsb files have references as index position stored. we have replaced the
+  # index position with "openxlsx2xlsb_" + indexpos. We have exported the xti
+  # references as custom xml node in the workbook. Now we have to create the
+  # correct sheet references and replace our replacement with it.
+  if (!data_only && length(workbookBIN)) {
+
+    if (length(wb$workbook$xti)) {
+      # create data frame containing sheet names for Xti entries
+      xti <- rbindlist(xml_attr(wb$workbook$xti, "xti"))
+      xti$name_id <- paste0("openxlsx2xlsb_", sprintf("%012d", as.integer(rownames(xti)) - 1L))
+      xti$firstSheet <- as.integer(xti$firstSheet) + 1L
+      xti$lastSheet <- as.integer(xti$lastSheet) + 1L
+
+      sheets <- wb$get_sheet_names(escape = TRUE)
+
+      xti$sheets <- NA_character_ #(otherwise in missing cases: all is <NA>)
+      # all id == 0 are local references, otherwise external references
+      # external references are written as "[0]sheetname!A1". Require
+      # handling of externalReferences.bin
+      if (debug) print(xti)
+
+      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 0
+
+      if (any(sel)) {
+
+          for (i in seq_len(nrow(xti[sel, ]))) {
+            want <- xti$firstSheet[sel][i]
+
+            # want can be zero
+            if (want %in% seq_along(sheets)) {
+
+              sheetName <- sheets[[want]]
+              if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
+                want <- xti$lastSheet[sel][i]
+                sheetName <- paste0(sheetName, ":", sheets[[want]])
+              }
+
+              # should be a single reference now
+              val <- sheetName
+
+              if (grepl("[^A-Za-z0-9]", val))
+                val <- shQuote(val, type = "sh")
+
+              if (length(val)) xti$sheets[sel][i] <- val
+            }
+          }
+      }
+
+      ### for external references we need to get the required sheet names first
+      # For now this is all a little guess work
+
+      # This will return all sheets of the external reference.
+      extSheets <- lapply(wb$externalLinks, function(x) {
+        sheetNames <- xml_node(x, "externalLink", "externalBook", "sheetNames")
+        # assuming that all external links have some kind of vals
+        rbindlist(xml_attr(sheetNames, "sheetNames", "sheetName"))[["val"]]
+      })
+
+      # TODO: How are references to the same external link,
+      # but different sheet handled?
+      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 0
+
+      if (any(sel)) {
+
+        xti$ext_id <- NA_integer_
+        xti$ext_id[sel] <- as.integer(as.factor(as.integer(gsub("\\D+", "", xti$type[sel]))))
+
+        # loop over it and create external link
+        for (i in seq_len(nrow(xti[sel, ]))) {
+          want <- xti$firstSheet[sel][i]
+          ref  <- xti$ext_id[sel][i]
+
+          # want can be zero
+          if (want %in% seq_along(extSheets)) {
+
+            sheetName <- extSheets[[ref]][[want]]
+            if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
+              want <- xti$lastSheet[sel][i]
+              sheetName <- paste0(sheetName, ":", extSheets[[ref]][[want]])
+            }
+            # should be a single reference now
+
+            val <- sprintf("[%s]%s", xti$ext_id[sel][i], sheetName)
+
+            # non ascii or whitespace
+            if (grepl("[^A-Za-z0-9]", val))
+              val <- shQuote(val, type = "sh")
+
+            if (length(val)) xti$sheets[sel][i] <- val
+          }
+        }
+      }
+
+      if (debug)
+        print(xti)
+
+      if (nrow(xti)) {
+
+        if (length(wb$workbook$definedNames)) {
+
+          wb$workbook$definedNames <-
+            stringi::stri_replace_all_fixed(
+              wb$workbook$definedNames,
+              xti$name_id,
+              xti$sheets,
+              vectorize_all = FALSE
+            )
+        }
+
+        # this might be terribly slow!
+        for (j in seq_along(wb$worksheets)) {
+          if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != "")) {
+            wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
+              stringi::stri_replace_all_fixed(
+                wb$worksheets[[j]]$sheet_data$cc$f[sel],
+                xti$name_id,
+                xti$sheets,
+                vectorize_all = FALSE
+              )
+          }
+        }
+      }
+    }
+
+  }
+
+  # final cleanup
+  if (length(workbookBIN)) {
+    wb$workbook$xti <- NULL
+  }
+
 
   return(wb)
 }

@@ -44,8 +44,7 @@ test_that("wb_to_df() is a wrapper", {
 test_that("wb_load() is a wrapper", {
   tmp_xlsx <- temp_xlsx()
   wb_workbook()$add_worksheet()$add_data(x = iris)$save(tmp_xlsx)
-  expect_wrapper("load", params = list(file = tmp_xlsx), ignore_wb = TRUE,
-                 ignore_fields = "datetimeCreated")
+  expect_wrapper("load", params = list(file = tmp_xlsx), ignore_wb = TRUE)
 })
 
 # wb_save() ---------------------------------------------------------------
@@ -123,17 +122,31 @@ test_that("wb_group_cols(), wb_ungroup_cols() are wrapper", {
   expect_wrapper("ungroup_cols", wb = wb, params = params)
 })
 
-# wb_set_creators() -----------------------------------------------------------
+# wb_set_creators() ------------------------------------------------------------
 
 test_that("wb_set_creators() is a wrapper", {
   expect_wrapper("set_creators", params = list(creators = "myself"))
 })
 
-# wb_remove_creators() --------------------------------------------------------
+# wb_remove_creators() ---------------------------------------------------------
 
 test_that("wb_remove_creators() is a wrapper", {
-  wb <- wb_workbook(creator = "myself")
+  wb <- wb_workbook(creators = "myself")
   expect_wrapper("remove_creators", wb = wb, params = list(creators = "myself"))
+})
+
+# wb_set_properties() ----------------------------------------------------------
+
+test_that("wb_set_properties() is a wrapper", {
+  wb <- wb_workbook(subject = "xyz")
+  expect_wrapper("set_properties", wb = wb, params = list(subject = "a new subject"))
+})
+
+# wb_set_properties() ---------------------------------------------------------
+
+test_that("wb_get_properties() is a wrapper", {
+  wb <- wb_workbook(subject = "xyz")
+  expect_wrapper("get_properties", wb = wb)
 })
 
 # wb_set_last_modified_by() ---------------------------------------------------
@@ -167,9 +180,8 @@ test_that("wb_set_bookview() is a wrapper", {
 # wb_set_header_footer() ------------------------------------------------------
 
 test_that("wb_set_header_footer() is a wrapper", {
-  wb <- wb_workbook(creator = "myself")$add_worksheet("a")
+  wb <- wb_workbook(creators = "myself")$add_worksheet("a")
   expect_wrapper("set_header_footer", wb = wb, params = list(sheet = "a"))
-
 })
 
 # wb_set_col_widths(), wb_remove_col_widths() -----------------------------

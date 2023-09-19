@@ -839,6 +839,7 @@ NULL
 #' @export
 wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
   assert_workbook(wb)
+  assert_class(heights, c("numeric", "integer"), or_null = TRUE, arg_nm = "heights")
   wb$clone()$set_row_heights(sheet = sheet, rows, heights, hidden)
 }
 #' @rdname row_heights-wb
@@ -1703,15 +1704,15 @@ wb_set_order <- function(wb, sheets) {
 #' @param sheet A name or index of a worksheet
 #' @param dims Worksheet cell range of the region ("A1:D4").
 #' @param name Name for region. A character vector of length 1. Note that region
-#'   names musts be case-insensitive unique.
+#'   names must be case-insensitive unique.
 #' @param overwrite Boolean. Overwrite if exists? Default to `FALSE`.
 #' @param local_sheet If `TRUE` the named region will be local for this sheet
 #' @param comment description text for named region
 #' @param hidden Should the named region be hidden?
 #' @param custom_menu,description,is_function,function_group_id,help,local_name,publish_to_server,status_bar,vb_procedure,workbook_parameter,xml Unknown XML feature
 #' @param ... additional arguments
+#' @returns A workbook, invisibly.
 #' @family worksheet content functions
-#' @seealso [wb_get_named_regions()]
 #' @examples
 #' ## create named regions
 #' wb <- wb_workbook()
@@ -2121,8 +2122,6 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #' wb <- wb_group_rows(wb, "AirPass", 4:8, collapsed = TRUE) # group years 1951-1955
 #' wb <- wb_group_rows(wb, "AirPass", 9:13)                  # group years 1956-1960
 #'
-#' wb$createCols("AirPass", 13)
-#'
 #' wb <- wb_group_cols(wb, "AirPass", 2:4, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 5:7, collapsed = TRUE)
 #' wb <- wb_group_cols(wb, "AirPass", 8:10, collapsed = TRUE)
@@ -2173,8 +2172,6 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 #' wb$add_worksheet("AirPass")
 #' wb$add_data("AirPass", t2, rowNames = TRUE)
 #'
-#' wb$createCols("AirPass", 13)
-#'
 #' wb$group_cols("AirPass", cols = grp_cols)
 #' wb$group_rows("AirPass", rows = grp_rows)
 wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
@@ -2196,6 +2193,49 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 
 
 # creators ----------------------------------------------------------------
+
+#' Modify workbook properties
+#'
+#' This function is useful for workbooks that are loaded. It can be used to set the
+#' workbook `title`, `subject` and `category` field. Use [wb_workbook()]
+#' to easily set these properties with a new workbook.
+#'
+#' @name properties
+#' @param wb A Workbook object
+#' @param creators A character string indicating who has created the workbook
+#' @param date_time_created datetime created
+#' @param modifiers A character string indicating who was the last person to modify the workbook
+#' @seealso [wb_workbook()]
+#' @inheritParams wb_workbook
+#' @return A wbWorkbook object, invisibly.
+#' @export
+#'
+#' @examples
+#' file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#' wb <- wb_load(file)
+#' wb$get_properties()
+#'
+#' # Add a title to properties
+#' wb$set_properties(title = "my title")
+#' wb$get_properties()
+wb_get_properties <- function(wb) {
+  assert_workbook(wb)
+  wb$get_properties()
+}
+
+#' @rdname properties
+#' @export
+wb_set_properties <- function(wb, creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL) {
+  assert_workbook(wb)
+  wb$clone()$set_properties(
+    creators          = creators,
+    title             = title,
+    subject           = subject,
+    category          = category,
+    date_time_created = date_time_created,
+    modifiers         = modifiers
+  )
+}
 
 #' Modify creators of a workbook
 #'
@@ -2251,9 +2291,8 @@ wb_remove_creators <- function(wb, creators) {
 #' @export
 wb_get_creators <- function(wb) {
   assert_workbook(wb)
-  wb[["creator"]]
+  strsplit(wb$get_properties()[["dc:creator"]], ";")[[1]]
 }
-
 
 
 # names -------------------------------------------------------------------
@@ -2507,7 +2546,7 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
 }
 
-#' Modify borders in a cell region
+#' Modify borders in a cell region of a worksheet
 #'
 #' wb wrapper to create borders for cell regions.
 #' @param wb A `wbWorkbook`
@@ -2726,6 +2765,7 @@ wb_add_font <- function(
 #' Add number formatting to a cell region. You can use a number format created
 #' by [create_numfmt()].
 #'
+#' The list of number formats ID is located in the **Details** section of [create_cell_style()].
 #' @param wb A Workbook
 #' @param sheet the worksheet
 #' @param dims the cell range
@@ -2734,7 +2774,6 @@ wb_add_font <- function(
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
 #' @return The `wbWorkbook` object, invisibly.
-#' @seealso [create_numfmt()]
 #' @family styles
 #' @export
 
