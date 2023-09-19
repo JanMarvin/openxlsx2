@@ -20,6 +20,17 @@ test_that("class assertions work", {
   # nolint end
 })
 
+test_that("missing check works", {
+  wb <- wb_workbook()
+  expect_silent(assert_workbook(wb))
+
+  wb <- substitute()
+  expect_error(assert_workbook(wb), "input wb is missing")
+
+  wb <- "Not_a_workbook"
+  expect_error(assert_workbook(wb), "wb must be class wbWorkbook or R6")
+})
+
 test_that("match_oneof() works", {
   expect_identical(match_oneof(1:4, 3:4), 3L)
   expect_identical(match_oneof(1:4, 3:4, several = TRUE), 3:4)
