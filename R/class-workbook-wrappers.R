@@ -11,7 +11,7 @@
 #' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 #'
 #' @param creator Creator of the workbook (your name). Defaults to login username or `options("openxlsx2.creator")` if set.
-#' @param title,subject,category Workbook property, a string.
+#' @param title,subject,category,keywords,comments Workbook property, a string.
 #' @param datetime_created The time of the workbook is created
 #' @param theme Optional theme identified by string or number.
 #'   See **Details** for options.
@@ -39,6 +39,8 @@ wb_workbook <- function(
   category         = NULL,
   datetime_created = Sys.time(),
   theme            = NULL,
+  keywords         = NULL,
+  comments         = NULL,
   ...
 ) {
   wbWorkbook$new(
@@ -48,6 +50,8 @@ wb_workbook <- function(
     category         = category,
     datetime_created = datetime_created,
     theme            = theme,
+    keywords         = keywords,
+    comments         = comments,
     ...              = ...
   )
 }
@@ -2225,7 +2229,7 @@ wb_get_properties <- function(wb) {
 
 #' @rdname properties
 #' @export
-wb_set_properties <- function(wb, creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL) {
+wb_set_properties <- function(wb, creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL) {
   assert_workbook(wb)
   wb$clone()$set_properties(
     creators          = creators,
@@ -2233,7 +2237,9 @@ wb_set_properties <- function(wb, creators = NULL, title = NULL, subject = NULL,
     subject           = subject,
     category          = category,
     date_time_created = date_time_created,
-    modifiers         = modifiers
+    modifiers         = modifiers,
+    keywords          = keywords,
+    comments          = comments
   )
 }
 

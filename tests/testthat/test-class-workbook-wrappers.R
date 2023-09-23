@@ -131,7 +131,7 @@ test_that("wb_set_creators() is a wrapper", {
 # wb_remove_creators() ---------------------------------------------------------
 
 test_that("wb_remove_creators() is a wrapper", {
-  wb <- wb_workbook(creators = "myself")
+  wb <- wb_workbook(creator = "myself")
   expect_wrapper("remove_creators", wb = wb, params = list(creators = "myself"))
 })
 
@@ -180,7 +180,7 @@ test_that("wb_set_bookview() is a wrapper", {
 # wb_set_header_footer() ------------------------------------------------------
 
 test_that("wb_set_header_footer() is a wrapper", {
-  wb <- wb_workbook(creators = "myself")$add_worksheet("a")
+  wb <- wb_workbook(creator = "myself")$add_worksheet("a")
   expect_wrapper("set_header_footer", wb = wb, params = list(sheet = "a"))
 })
 

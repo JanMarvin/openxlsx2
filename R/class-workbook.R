@@ -155,9 +155,7 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator character vector of creators.  Duplicated are ignored.
-    #' @param title title
-    #' @param subject subject
-    #' @param category category
+    #' @param title,subject,category,keywords,comments workbook properties
     #' @param datetime_created The datetime (as `POSIXt`) the workbook is
     #'   created.  Defaults to the current `Sys.time()` when the workbook object
     #'   is created, not when the Excel files are saved.
@@ -171,6 +169,8 @@ wbWorkbook <- R6::R6Class(
       category         = NULL,
       datetime_created = Sys.time(),
       theme            = NULL,
+      keywords         = NULL,
+      comments         = NULL,
       ...
     ) {
 
@@ -197,6 +197,8 @@ wbWorkbook <- R6::R6Class(
       assert_class(title,            "character", or_null = TRUE)
       assert_class(subject,          "character", or_null = TRUE)
       assert_class(category,         "character", or_null = TRUE)
+      assert_class(keywords,         "character", or_null = TRUE)
+      assert_class(comments,         "character", or_null = TRUE)
       assert_class(datetime_created, "POSIXt")
 
       stopifnot(
@@ -210,7 +212,9 @@ wbWorkbook <- R6::R6Class(
         title             = title,
         subject           = subject,
         category          = category,
-        date_time_created = datetime_created
+        date_time_created = datetime_created,
+        keywords          = keywords,
+        comments          = comments
       )
       self$comments <- list()
       self$threadComments <- list()
@@ -5127,16 +5131,18 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param creators,title,subject,category,date_time_created,modifiers A workbook property to set
-    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL) {
+    #' @param creators,title,subject,category,date_time_created,modifiers,keywords,comments A workbook property to set
+    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL) {
       # get an xml output or create one
 
+      core_dctitle <- "dc:title"
+      core_subject <- "dc:subject"
       core_creator <- "dc:creator"
+      core_keyword <- "cp:keywords"
+      core_describ <- "dc:description"
       core_lastmod <- "cp:lastModifiedBy"
       core_created <- "dcterms:created"
       core_modifid <- "dcterms:modified"
-      core_dctitle <- "dc:title"
-      core_subject <- "dc:subject"
       core_categor <- "cp:category"
 
       if (!is.null(self$core)) {
@@ -5146,25 +5152,16 @@ wbWorkbook <- R6::R6Class(
         }, FUN.VALUE = NA_character_)
       } else {
         xml_properties <- c(
+          core_dctitle = "",
+          core_subject = "",
           core_creator = "",
+          core_keyword = "",
+          core_describ = "",
           core_lastmod = "",
           core_created = "",
           core_modifid = "",
-          core_dctitle = "",
-          core_subject = "",
           core_categor = ""
         )
-      }
-
-      # update values where needed
-      if (!is.null(creators)) {
-        if (length(creators) > 1) creators <- paste0(creators, collapse = ";")
-        xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creators)
-        modifiers <- creators
-      }
-
-      if (!is.null(modifiers)) {
-        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifiers)
       }
 
       if (!is.null(title)) {
@@ -5175,8 +5172,19 @@ wbWorkbook <- R6::R6Class(
         xml_properties[core_subject] <- xml_node_create(core_subject, xml_children = subject)
       }
 
-      if (!is.null(subject)) {
-        xml_properties[core_categor] <- xml_node_create(core_categor, xml_children = category)
+      # update values where needed
+      if (!is.null(creators)) {
+        if (length(creators) > 1) creators <- paste0(creators, collapse = ";")
+        xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creators)
+        modifiers <- creators
+      }
+
+      if (!is.null(keywords)) {
+        xml_properties[core_keyword] <- xml_node_create(core_keyword, xml_children = keywords)
+      }
+
+      if (!is.null(comments)) {
+        xml_properties[core_describ] <- xml_node_create(core_describ, xml_children = comments)
       }
 
       xml_properties[core_created] <- xml_node_create(core_created,
@@ -5185,6 +5193,14 @@ wbWorkbook <- R6::R6Class(
         ),
         xml_children = format(as_POSIXct_utc(date_time_created), "%Y-%m-%dT%H:%M:%SZ")
       )
+
+      if (!is.null(modifiers)) {
+        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifiers)
+      }
+
+      if (!is.null(category)) {
+        xml_properties[core_categor] <- xml_node_create(core_categor, xml_children = category)
+      }
 
       # return xml core output
       self$core <- xml_node_create(

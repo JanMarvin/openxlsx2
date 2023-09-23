@@ -399,12 +399,36 @@ test_that("sheetView is not switched", {
 })
 
 test_that("Loading a workbook with property preserves it.", {
-  wb <- wb_workbook(title = "x")$add_worksheet()
+  wb <- wb_workbook(title = "x", creator = "y", subject = "z", category = "aa", keywords = "ab", comments = "ac")$add_worksheet()
   tmp <- temp_xlsx()
   wb$save(file = tmp)
 
   wb2 <- wb_load(tmp)
-  expect_equal(wb2$get_properties()[["dc:title"]], "x")
+  exp <- c(
+    `dc:title` = "x", `dc:subject` = "z", `dc:creator` = "y", `cp:keywords` = "ab",
+    `dc:description` = "ac",
+    `cp:lastModifiedBy` = "y", `cp:category` = "aa"
+  )
+  sel <- names(exp) # ignore creation date
+  got <- wb2$get_properties()
+  expect_equal(exp, got[sel])
+
   wb2$set_properties(title = "xyz")
   expect_equal(wb2$get_properties()[["dc:title"]], "xyz")
+
+  wb2$set_properties(subject = "aaa")
+  expect_equal(wb2$get_properties()[["dc:subject"]], "aaa")
+
+  wb2$set_properties(creator = "bbb")
+  expect_equal(wb2$get_properties()[["dc:creator"]], "bbb")
+
+  wb2$set_properties(keywords = "ccc")
+  expect_equal(wb2$get_properties()[["cp:keywords"]], "ccc")
+
+  wb2$set_properties(comments = "ddd")
+  expect_equal(wb2$get_properties()[["dc:description"]], "ddd")
+
+  wb2$set_properties(category = "eee")
+  expect_equal(wb2$get_properties()[["cp:category"]], "eee")
+
 })
