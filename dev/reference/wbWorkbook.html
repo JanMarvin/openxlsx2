@@ -354,6 +354,8 @@ worksheet names.</p></dd>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datetime_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keywords <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  comments <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -364,16 +366,8 @@ worksheet names.</p></dd>
 <dd><p>character vector of creators.  Duplicated are ignored.</p></dd>
 
 
-<dt><code>title</code></dt>
-<dd><p>title</p></dd>
-
-
-<dt><code>subject</code></dt>
-<dd><p>subject</p></dd>
-
-
-<dt><code>category</code></dt>
-<dd><p>category</p></dd>
+<dt><code>title, subject, category, keywords, comments</code></dt>
+<dd><p>workbook properties</p></dd>
 
 
 <dt><code>datetime_created</code></dt>
@@ -2664,13 +2658,15 @@ or more of the following: <code>"selectLockedCells"</code>,
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  date_time_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  modifiers <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  modifiers <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keywords <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  comments <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-50">Arguments<a class="anchor" aria-label="anchor" href="#arguments-50"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>creators, title, subject, category, date_time_created, modifiers</code></dt>
+<p></p><div class="arguments"><dl><dt><code>creators, title, subject, category, date_time_created, modifiers, keywords, comments</code></dt>
 <dd><p>A workbook property to set</p></dd>
 
 

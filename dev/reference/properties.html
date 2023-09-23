@@ -79,7 +79,9 @@ to easily set these properties with a new workbook.</p>
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  date_time_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  modifiers <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  modifiers <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keywords <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  comments <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,7 +95,7 @@ to easily set these properties with a new workbook.</p>
 <dd><p>A character string indicating who has created the workbook</p></dd>
 
 
-<dt>title, subject, category</dt>
+<dt>title, subject, category, keywords, comments</dt>
 <dd><p>Workbook property, a string.</p></dd>
 
 
@@ -130,7 +132,7 @@ to easily set these properties with a new workbook.</p>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">set_properties</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"my title"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">get_properties</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             dc:creator      cp:lastModifiedBy        dcterms:created </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "Jan Marvin Garbuszus" "Jan Marvin Garbuszus" "2023-09-19T18:15:01Z" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Jan Marvin Garbuszus" "Jan Marvin Garbuszus" "2023-09-23T09:23:33Z" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       dcterms:modified               dc:title </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "2023-05-29T10:47:37Z"             "my title" </span>
 </code></pre></div>
