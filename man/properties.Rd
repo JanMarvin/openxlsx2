@@ -15,7 +15,9 @@ wb_set_properties(
   subject = NULL,
   category = NULL,
   date_time_created = Sys.time(),
-  modifiers = NULL
+  modifiers = NULL,
+  keywords = NULL,
+  comments = NULL
 )
 }
 \arguments{
@@ -23,7 +25,7 @@ wb_set_properties(
 
 \item{creators}{A character string indicating who has created the workbook}
 
-\item{title, subject, category}{Workbook property, a string.}
+\item{title, subject, category, keywords, comments}{Workbook property, a string.}
 
 \item{date_time_created}{datetime created}
 

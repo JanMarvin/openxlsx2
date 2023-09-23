@@ -277,6 +277,8 @@ Creates a new \code{wbWorkbook} object
   category = NULL,
   datetime_created = Sys.time(),
   theme = NULL,
+  keywords = NULL,
+  comments = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -286,11 +288,7 @@ Creates a new \code{wbWorkbook} object
 \describe{
 \item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
 
-\item{\code{title}}{title}
-
-\item{\code{subject}}{subject}
-
-\item{\code{category}}{category}
+\item{\code{title, subject, category, keywords, comments}}{workbook properties}
 
 \item{\code{datetime_created}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
@@ -2095,14 +2093,16 @@ Set a property of a workbook
   subject = NULL,
   category = NULL,
   date_time_created = Sys.time(),
-  modifiers = NULL
+  modifiers = NULL,
+  keywords = NULL,
+  comments = NULL
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creators, title, subject, category, date_time_created, modifiers}}{A workbook property to set}
+\item{\code{creators, title, subject, category, date_time_created, modifiers, keywords, comments}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }
