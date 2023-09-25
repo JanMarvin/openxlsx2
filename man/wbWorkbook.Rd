@@ -2092,7 +2092,7 @@ Set a property of a workbook
   title = NULL,
   subject = NULL,
   category = NULL,
-  date_time_created = Sys.time(),
+  datetime_created = Sys.time(),
   modifiers = NULL,
   keywords = NULL,
   comments = NULL
@@ -2102,7 +2102,7 @@ Set a property of a workbook
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creators, title, subject, category, date_time_created, modifiers, keywords, comments}}{A workbook property to set}
+\item{\code{creators, title, subject, category, datetime_created, modifiers, keywords, comments}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }

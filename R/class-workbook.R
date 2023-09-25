@@ -212,7 +212,7 @@ wbWorkbook <- R6::R6Class(
         title             = title,
         subject           = subject,
         category          = category,
-        date_time_created = datetime_created,
+        datetime_created = datetime_created,
         keywords          = keywords,
         comments          = comments
       )
@@ -5131,8 +5131,8 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param creators,title,subject,category,date_time_created,modifiers,keywords,comments A workbook property to set
-    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL) {
+    #' @param creators,title,subject,category,datetime_created,modifiers,keywords,comments A workbook property to set
+    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL) {
       # get an xml output or create one
 
       core_dctitle <- "dc:title"
@@ -5191,7 +5191,7 @@ wbWorkbook <- R6::R6Class(
         xml_attributes = c(
           `xsi:type` = "dcterms:W3CDTF"
         ),
-        xml_children = format(as_POSIXct_utc(date_time_created), "%Y-%m-%dT%H:%M:%SZ")
+        xml_children = format(as_POSIXct_utc(datetime_created), "%Y-%m-%dT%H:%M:%SZ")
       )
 
       if (!is.null(modifiers)) {
