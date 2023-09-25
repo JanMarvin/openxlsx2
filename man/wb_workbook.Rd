@@ -13,13 +13,15 @@ wb_workbook(
   theme = NULL,
   keywords = NULL,
   comments = NULL,
+  manager = NULL,
+  company = NULL,
   ...
 )
 }
 \arguments{
 \item{creator}{Creator of the workbook (your name). Defaults to login username or \code{options("openxlsx2.creator")} if set.}
 
-\item{title, subject, category, keywords, comments}{Workbook property, a string.}
+\item{title, subject, category, keywords, comments, manager, company}{Workbook property, a string.}
 
 \item{datetime_created}{The time of the workbook is created}
 

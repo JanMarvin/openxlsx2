@@ -11,7 +11,7 @@
 #' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 #'
 #' @param creator Creator of the workbook (your name). Defaults to login username or `options("openxlsx2.creator")` if set.
-#' @param title,subject,category,keywords,comments Workbook property, a string.
+#' @param title,subject,category,keywords,comments,manager,company Workbook property, a string.
 #' @param datetime_created The time of the workbook is created
 #' @param theme Optional theme identified by string or number.
 #'   See **Details** for options.
@@ -41,6 +41,8 @@ wb_workbook <- function(
   theme            = NULL,
   keywords         = NULL,
   comments         = NULL,
+  manager          = NULL,
+  company          = NULL,
   ...
 ) {
   wbWorkbook$new(
@@ -52,6 +54,8 @@ wb_workbook <- function(
     theme            = theme,
     keywords         = keywords,
     comments         = comments,
+    manager          = manager,
+    company          = company,
     ...              = ...
   )
 }
@@ -2204,11 +2208,21 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 #' workbook `title`, `subject` and `category` field. Use [wb_workbook()]
 #' to easily set these properties with a new workbook.
 #'
-#' @name properties
+#' To set properties, the following XML core properties are used.
+#' - title = dc:title
+#' - subject = dc:subject
+#' - creator = dc:creator
+#' - keywords = cp:keywords
+#' - comments = dc:description
+#' - modifier = cp:lastModifiedBy
+#' - datetime_created = dcterms:created
+#' - datetime_modified = dcterms:modified
+#' - category = cp:category
+#'
+#' In addition, manager and company are used.
+#' @name properties-wb
 #' @param wb A Workbook object
-#' @param creators A character string indicating who has created the workbook
-#' @param date_time_created datetime created
-#' @param modifiers A character string indicating who was the last person to modify the workbook
+#' @param modifier A character string indicating who was the last person to modify the workbook
 #' @seealso [wb_workbook()]
 #' @inheritParams wb_workbook
 #' @return A wbWorkbook object, invisibly.
@@ -2227,19 +2241,21 @@ wb_get_properties <- function(wb) {
   wb$get_properties()
 }
 
-#' @rdname properties
+#' @rdname properties-wb
 #' @export
-wb_set_properties <- function(wb, creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL) {
+wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
   assert_workbook(wb)
   wb$clone()$set_properties(
-    creators          = creators,
+    creator           = creator,
     title             = title,
     subject           = subject,
     category          = category,
-    date_time_created = date_time_created,
-    modifiers         = modifiers,
+    datetime_created  = datetime_created,
+    modifier          = modifier,
     keywords          = keywords,
-    comments          = comments
+    comments          = comments,
+    manager           = manager,
+    company           = company
   )
 }
 
@@ -2297,7 +2313,7 @@ wb_remove_creators <- function(wb, creators) {
 #' @export
 wb_get_creators <- function(wb) {
   assert_workbook(wb)
-  strsplit(wb$get_properties()[["dc:creator"]], ";")[[1]]
+  strsplit(wb$get_properties()[["creator"]], ";")[[1]]
 }
 
 

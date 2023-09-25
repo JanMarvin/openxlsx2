@@ -155,7 +155,7 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator character vector of creators.  Duplicated are ignored.
-    #' @param title,subject,category,keywords,comments workbook properties
+    #' @param title,subject,category,keywords,comments,manager,company workbook properties
     #' @param datetime_created The datetime (as `POSIXt`) the workbook is
     #'   created.  Defaults to the current `Sys.time()` when the workbook object
     #'   is created, not when the Excel files are saved.
@@ -171,6 +171,8 @@ wbWorkbook <- R6::R6Class(
       theme            = NULL,
       keywords         = NULL,
       comments         = NULL,
+      manager          = NULL,
+      company          = NULL,
       ...
     ) {
 
@@ -199,6 +201,9 @@ wbWorkbook <- R6::R6Class(
       assert_class(category,         "character", or_null = TRUE)
       assert_class(keywords,         "character", or_null = TRUE)
       assert_class(comments,         "character", or_null = TRUE)
+      assert_class(manager,          "character", or_null = TRUE)
+      assert_class(company,          "character", or_null = TRUE)
+
       assert_class(datetime_created, "POSIXt")
 
       stopifnot(
@@ -208,13 +213,15 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$set_properties(
-        creators          = creator,
+        creator           = creator,
         title             = title,
         subject           = subject,
         category          = category,
-        date_time_created = datetime_created,
+        datetime_created  = datetime_created,
         keywords          = keywords,
-        comments          = comments
+        comments          = comments,
+        manager           = manager,
+        company           = company
       )
       self$comments <- list()
       self$threadComments <- list()
@@ -5121,18 +5128,40 @@ wbWorkbook <- R6::R6Class(
     ### creators --------------------------------------------------------------
 
     #' @description Get properties of a workbook
-    #' @param escape escape xml strings
     get_properties = function() {
       nams <- xml_node_name(self$core, "cp:coreProperties")
-      vapply(nams, function(x) {
+      properties <- vapply(nams, function(x) {
         xml_value(self$core, "cp:coreProperties", x, escapes = TRUE)
       },
       FUN.VALUE = NA_character_)
+
+      name_replace <- c(
+        title = "dc:title",
+        subject = "dc:subject",
+        creator = "dc:creator",
+        keywords = "cp:keywords",
+        comments = "dc:description",
+        modifier = "cp:lastModifiedBy",
+        datetime_created = "dcterms:created",
+        datetime_modified = "dcterms:modified",
+        category = "cp:category"
+      )
+      # use names
+      names(properties) <- names(name_replace)[match(names(properties), name_replace)]
+
+
+      if (!is.null(self$app$Company)) {
+        properties <- c(properties, "company" = xml_value(self$app$Company, level1 = "Company"))
+      }
+      if (!is.null(self$app$Manager)) {
+        properties <- c(properties, "manager" = xml_value(self$app$Manager, level1 = "Manager"))
+      }
+      properties
     },
 
     #' @description Set a property of a workbook
-    #' @param creators,title,subject,category,date_time_created,modifiers,keywords,comments A workbook property to set
-    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, date_time_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL) {
+    #' @param creator,title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
+    set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
       # get an xml output or create one
 
       core_dctitle <- "dc:title"
@@ -5173,10 +5202,10 @@ wbWorkbook <- R6::R6Class(
       }
 
       # update values where needed
-      if (!is.null(creators)) {
-        if (length(creators) > 1) creators <- paste0(creators, collapse = ";")
-        xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creators)
-        modifiers <- creators
+      if (!is.null(creator)) {
+        if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
+        xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creator)
+        modifier <- creator
       }
 
       if (!is.null(keywords)) {
@@ -5187,15 +5216,23 @@ wbWorkbook <- R6::R6Class(
         xml_properties[core_describ] <- xml_node_create(core_describ, xml_children = comments)
       }
 
+      if (!is.null(manager)) {
+        self$app$Manager <- xml_node_create("Manager", xml_children = manager)
+      }
+
+      if (!is.null(company)) {
+        self$app$Company <- xml_node_create("Company", xml_children = company)
+      }
+
       xml_properties[core_created] <- xml_node_create(core_created,
         xml_attributes = c(
           `xsi:type` = "dcterms:W3CDTF"
         ),
-        xml_children = format(as_POSIXct_utc(date_time_created), "%Y-%m-%dT%H:%M:%SZ")
+        xml_children = format(as_POSIXct_utc(datetime_created), "%Y-%m-%dT%H:%M:%SZ")
       )
 
-      if (!is.null(modifiers)) {
-        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifiers)
+      if (!is.null(modifier)) {
+        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifier)
       }
 
       if (!is.null(category)) {
@@ -5224,24 +5261,24 @@ wbWorkbook <- R6::R6Class(
     #' @param creators A character vector of creators to set.  Duplicates are
     #'   ignored.
     set_creators = function(creators) {
-      self$set_properties(creators = creators)
+      self$set_properties(creator = creators)
     },
 
     #' @description Add creator(s)
     #' @param creators A character vector of creators to add.  Duplicates are
     #'   ignored.
     add_creators = function(creators) {
-      creators <- paste0(self$get_properties()[["dc:creator"]], ";", creators)
-      self$set_properties(creators = creators)
+      creators <- paste0(self$get_properties()[["creator"]], ";", creators)
+      self$set_properties(creator = creators)
     },
 
     #' @description Remove creator(s)
     #' @param creators A character vector of creators to remove.  All duplicated
     #'   are removed.
     remove_creators = function(creators) {
-      old <- strsplit(self$get_properties()[["dc:creator"]], ";")[[1]]
+      old <- strsplit(self$get_properties()[["creator"]], ";")[[1]]
       old <- old[which(!old %in% creators)]
-      self$set_properties(creators = old)
+      self$set_properties(creator = old)
     },
 
     #' @description
@@ -5254,7 +5291,7 @@ wbWorkbook <- R6::R6Class(
         .Deprecated(old = "LastModifiedBy", new = "name", package = "openxlsx2")
         name <- list(...)$LastModifiedBy
       }
-      self$set_properties(modifiers = name)
+      self$set_properties(modifier = name)
     },
 
     #' @description page_setup()

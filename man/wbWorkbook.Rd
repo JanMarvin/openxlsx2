@@ -279,6 +279,8 @@ Creates a new \code{wbWorkbook} object
   theme = NULL,
   keywords = NULL,
   comments = NULL,
+  manager = NULL,
+  company = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -288,7 +290,7 @@ Creates a new \code{wbWorkbook} object
 \describe{
 \item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
 
-\item{\code{title, subject, category, keywords, comments}}{workbook properties}
+\item{\code{title, subject, category, keywords, comments, manager, company}}{workbook properties}
 
 \item{\code{datetime_created}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
@@ -2073,13 +2075,6 @@ Get properties of a workbook
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_properties()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{escape}}{escape xml strings}
-}
-\if{html}{\out{</div>}}
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_properties"></a>}}
@@ -2088,21 +2083,23 @@ Get properties of a workbook
 Set a property of a workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_properties(
-  creators = NULL,
+  creator = NULL,
   title = NULL,
   subject = NULL,
   category = NULL,
-  date_time_created = Sys.time(),
-  modifiers = NULL,
+  datetime_created = Sys.time(),
+  modifier = NULL,
   keywords = NULL,
-  comments = NULL
+  comments = NULL,
+  manager = NULL,
+  company = NULL
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creators, title, subject, category, date_time_created, modifiers, keywords, comments}}{A workbook property to set}
+\item{\code{creator, title, subject, category, datetime_created, modifier, keywords, comments, manager, company}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }
