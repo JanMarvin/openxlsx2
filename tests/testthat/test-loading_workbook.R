@@ -399,7 +399,7 @@ test_that("sheetView is not switched", {
 })
 
 test_that("Loading a workbook with property preserves it.", {
-  wb <- wb_workbook(title = "x", creator = "y", subject = "z", category = "aa", keywords = "ab", comments = "ac", manager = "ad")$add_worksheet()
+  wb <- wb_workbook(title = "x", creator = "y", subject = "z", category = "aa", keywords = "ab", comments = "ac", manager = "ad", company = "ae")$add_worksheet()
   tmp <- temp_xlsx()
   wb$save(file = tmp)
 
@@ -408,7 +408,7 @@ test_that("Loading a workbook with property preserves it.", {
     `title` = "x", `subject` = "z", `creator` = "y", `keywords` = "ab",
     `comments` = "ac",
     `modifiers` = "y", `category` = "aa",
-    manager = "ad"
+    manager = "ad", company = "ae"
   )
   sel <- names(exp) # ignore creation date
   got <- wb2$get_properties()
@@ -431,6 +431,10 @@ test_that("Loading a workbook with property preserves it.", {
 
   wb2$set_properties(category = "eee")
   expect_equal(wb2$get_properties()[["category"]], "eee")
+
   wb2$set_properties(manager = "fff")
   expect_equal(wb2$get_properties()[["manager"]], "fff")
+
+  wb2$set_properties(company = "ggg")
+  expect_equal(wb2$get_properties()[["company"]], "ggg")
 })

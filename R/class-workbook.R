@@ -5168,7 +5168,7 @@ wbWorkbook <- R6::R6Class(
       core_subject <- "dc:subject"
       core_creator <- "dc:creator"
       core_keyword <- "cp:keywords"
-      core_comments <- "dc:description"
+      core_describ <- "dc:description"
       core_lastmod <- "cp:lastModifiedBy"
       core_created <- "dcterms:created"
       core_modifid <- "dcterms:modified"
@@ -5185,7 +5185,7 @@ wbWorkbook <- R6::R6Class(
           core_subject = "",
           core_creator = "",
           core_keyword = "",
-          core_comments = "",
+          core_describ = "",
           core_lastmod = "",
           core_created = "",
           core_modifid = "",
@@ -5213,7 +5213,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(comments)) {
-        xml_properties[core_comments] <- xml_node_create(core_comments, xml_children = comments)
+        xml_properties[core_describ] <- xml_node_create(core_describ, xml_children = comments)
       }
 
       if (!is.null(manager)) {
