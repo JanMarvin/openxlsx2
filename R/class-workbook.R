@@ -5141,7 +5141,7 @@ wbWorkbook <- R6::R6Class(
         creator = "dc:creator",
         keywords = "cp:keywords",
         comments = "dc:description",
-        modifiers = "cp:lastModifiedBy",
+        modifier = "cp:lastModifiedBy",
         datetime_created = "dcterms:created",
         datetime_modified = "dcterms:modified",
         category = "cp:category"
@@ -5160,8 +5160,8 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param creator,title,subject,category,datetime_created,modifiers,keywords,comments,manager,company A workbook property to set
-    set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
+    #' @param creator,title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
+    set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
       # get an xml output or create one
 
       core_dctitle <- "dc:title"
@@ -5205,7 +5205,7 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(creator)) {
         if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
         xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creator)
-        modifiers <- creator
+        modifier <- creator
       }
 
       if (!is.null(keywords)) {
@@ -5231,8 +5231,8 @@ wbWorkbook <- R6::R6Class(
         xml_children = format(as_POSIXct_utc(datetime_created), "%Y-%m-%dT%H:%M:%SZ")
       )
 
-      if (!is.null(modifiers)) {
-        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifiers)
+      if (!is.null(modifier)) {
+        xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifier)
       }
 
       if (!is.null(category)) {
@@ -5291,7 +5291,7 @@ wbWorkbook <- R6::R6Class(
         .Deprecated(old = "LastModifiedBy", new = "name", package = "openxlsx2")
         name <- list(...)$LastModifiedBy
       }
-      self$set_properties(modifiers = name)
+      self$set_properties(modifier = name)
     },
 
     #' @description page_setup()

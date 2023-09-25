@@ -407,7 +407,7 @@ test_that("Loading a workbook with property preserves it.", {
   exp <- c(
     `title` = "x", `subject` = "z", `creator` = "y", `keywords` = "ab",
     `comments` = "ac",
-    `modifiers` = "y", `category` = "aa",
+    `modifier` = "y", `category` = "aa",
     manager = "ad", company = "ae"
   )
   sel <- names(exp) # ignore creation date

@@ -15,7 +15,7 @@ wb_set_properties(
   subject = NULL,
   category = NULL,
   datetime_created = Sys.time(),
-  modifiers = NULL,
+  modifier = NULL,
   keywords = NULL,
   comments = NULL,
   manager = NULL,
@@ -31,7 +31,7 @@ wb_set_properties(
 
 \item{datetime_created}{The time of the workbook is created}
 
-\item{modifiers}{A character string indicating who was the last person to modify the workbook}
+\item{modifier}{A character string indicating who was the last person to modify the workbook}
 }
 \value{
 A wbWorkbook object, invisibly.
@@ -49,7 +49,7 @@ To set properties, the following XML core properties are used.
 \item creator = dc:creator
 \item keywords = cp:keywords
 \item comments = dc:description
-\item modifiers = cp:lastModifiedBy
+\item modifier = cp:lastModifiedBy
 \item datetime_created = dcterms:created
 \item datetime_modified = dcterms:modified
 \item category = cp:category

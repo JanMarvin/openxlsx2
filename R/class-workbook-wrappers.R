@@ -2214,7 +2214,7 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 #' - creator = dc:creator
 #' - keywords = cp:keywords
 #' - comments = dc:description
-#' - modifiers = cp:lastModifiedBy
+#' - modifier = cp:lastModifiedBy
 #' - datetime_created = dcterms:created
 #' - datetime_modified = dcterms:modified
 #' - category = cp:category
@@ -2222,7 +2222,7 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 #' In addition, manager and company are used.
 #' @name properties-wb
 #' @param wb A Workbook object
-#' @param modifiers A character string indicating who was the last person to modify the workbook
+#' @param modifier A character string indicating who was the last person to modify the workbook
 #' @seealso [wb_workbook()]
 #' @inheritParams wb_workbook
 #' @return A wbWorkbook object, invisibly.
@@ -2243,7 +2243,7 @@ wb_get_properties <- function(wb) {
 
 #' @rdname properties-wb
 #' @export
-wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
+wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
   assert_workbook(wb)
   wb$clone()$set_properties(
     creator           = creator,
@@ -2251,7 +2251,7 @@ wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, 
     subject           = subject,
     category          = category,
     datetime_created  = datetime_created,
-    modifiers         = modifiers,
+    modifier          = modifier,
     keywords          = keywords,
     comments          = comments,
     manager           = manager,
