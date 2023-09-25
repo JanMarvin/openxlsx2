@@ -90,9 +90,9 @@ reference:
   desc: >
     These functions are used to modify setting of a workbook as a whole.
   contents:
+  - properties-wb
   - wb_set_last_modified_by
   - creators-wb
-  - wb_set_properties
   - wb_order
   - sheet_names-wb
   - wb_remove_worksheet

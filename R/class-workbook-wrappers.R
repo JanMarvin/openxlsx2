@@ -2208,10 +2208,11 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 #' workbook `title`, `subject` and `category` field. Use [wb_workbook()]
 #' to easily set these properties with a new workbook.
 #'
-#' @name properties
+#' To set properties, the following XML core properties are used.
+#' - title = dc:title
+#' - ...
+#' @name properties-wb
 #' @param wb A Workbook object
-#' @param creators A character string indicating who has created the workbook
-#' @param datetime_created datetime created
 #' @param modifiers A character string indicating who was the last person to modify the workbook
 #' @seealso [wb_workbook()]
 #' @inheritParams wb_workbook
@@ -2231,12 +2232,12 @@ wb_get_properties <- function(wb) {
   wb$get_properties()
 }
 
-#' @rdname properties
+#' @rdname properties-wb
 #' @export
-wb_set_properties <- function(wb, creators = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
+wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
   assert_workbook(wb)
   wb$clone()$set_properties(
-    creators          = creators,
+    creator           = creator,
     title             = title,
     subject           = subject,
     category          = category,
@@ -2303,7 +2304,7 @@ wb_remove_creators <- function(wb, creators) {
 #' @export
 wb_get_creators <- function(wb) {
   assert_workbook(wb)
-  strsplit(wb$get_properties()[["dc:creator"]], ";")[[1]]
+  strsplit(wb$get_properties()[["creator"]], ";")[[1]]
 }
 
 
