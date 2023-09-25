@@ -5203,7 +5203,7 @@ wbWorkbook <- R6::R6Class(
 
       # update values where needed
       if (!is.null(creator)) {
-        if (length(creator) > 1) creator <- paste0(creators, collapse = ";")
+        if (length(creator) > 1) creator <- paste0(creator, collapse = ";")
         xml_properties[core_creator] <- xml_node_create(core_creator, xml_children = creator)
         modifiers <- creator
       }
