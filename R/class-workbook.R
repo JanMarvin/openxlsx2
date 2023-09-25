@@ -155,7 +155,7 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param creator character vector of creators.  Duplicated are ignored.
-    #' @param title,subject,category,keywords,comments workbook properties
+    #' @param title,subject,category,keywords,comments,manager,company workbook properties
     #' @param datetime_created The datetime (as `POSIXt`) the workbook is
     #'   created.  Defaults to the current `Sys.time()` when the workbook object
     #'   is created, not when the Excel files are saved.
@@ -171,6 +171,8 @@ wbWorkbook <- R6::R6Class(
       theme            = NULL,
       keywords         = NULL,
       comments         = NULL,
+      manager          = NULL,
+      company          = NULL,
       ...
     ) {
 
@@ -199,6 +201,9 @@ wbWorkbook <- R6::R6Class(
       assert_class(category,         "character", or_null = TRUE)
       assert_class(keywords,         "character", or_null = TRUE)
       assert_class(comments,         "character", or_null = TRUE)
+      assert_class(manager,          "character", or_null = TRUE)
+      assert_class(company,          "character", or_null = TRUE)
+
       assert_class(datetime_created, "POSIXt")
 
       stopifnot(
@@ -214,7 +219,9 @@ wbWorkbook <- R6::R6Class(
         category          = category,
         datetime_created  = datetime_created,
         keywords          = keywords,
-        comments          = comments
+        comments          = comments,
+        manager           = manager,
+        company           = company
       )
       self$comments <- list()
       self$threadComments <- list()
@@ -5121,7 +5128,6 @@ wbWorkbook <- R6::R6Class(
     ### creators --------------------------------------------------------------
 
     #' @description Get properties of a workbook
-    #' @param escape escape xml strings
     get_properties = function() {
       nams <- xml_node_name(self$core, "cp:coreProperties")
       vapply(nams, function(x) {
@@ -5132,7 +5138,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Set a property of a workbook
     #' @param creators,title,subject,category,datetime_created,modifiers,keywords,comments A workbook property to set
-    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL) {
+    set_properties = function(creators = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifiers = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
       # get an xml output or create one
 
       core_dctitle <- "dc:title"
@@ -5185,6 +5191,14 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(comments)) {
         xml_properties[core_describ] <- xml_node_create(core_describ, xml_children = comments)
+      }
+
+      if (!is.null(manager)) {
+        self$app$Manager <- xml_node_create("Manager", xml_children = manager)
+      }
+
+      if (!is.null(company)) {
+        self$app$Company <- xml_node_create("Company", xml_children = company)
       }
 
       xml_properties[core_created] <- xml_node_create(core_created,
