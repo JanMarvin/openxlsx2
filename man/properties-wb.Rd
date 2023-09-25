@@ -45,8 +45,17 @@ to easily set these properties with a new workbook.
 To set properties, the following XML core properties are used.
 \itemize{
 \item title = dc:title
-\item ...
+\item subject = dc:subject
+\item creator = dc:creator
+\item keywords = cp:keywords
+\item comments = dc:description
+\item modifiers = cp:lastModifiedBy
+\item datetime_created = dcterms:created
+\item datetime_modified = dcterms:modified
+\item category = cp:category
 }
+
+In addition, manager and company are used.
 }
 \examples{
 file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")

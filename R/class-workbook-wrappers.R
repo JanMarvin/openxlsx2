@@ -2210,7 +2210,16 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 #'
 #' To set properties, the following XML core properties are used.
 #' - title = dc:title
-#' - ...
+#' - subject = dc:subject
+#' - creator = dc:creator
+#' - keywords = cp:keywords
+#' - comments = dc:description
+#' - modifiers = cp:lastModifiedBy
+#' - datetime_created = dcterms:created
+#' - datetime_modified = dcterms:modified
+#' - category = cp:category
+#'
+#' In addition, manager and company are used.
 #' @name properties-wb
 #' @param wb A Workbook object
 #' @param modifiers A character string indicating who was the last person to modify the workbook
