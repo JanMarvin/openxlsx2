@@ -212,7 +212,7 @@ wbWorkbook <- R6::R6Class(
         title             = title,
         subject           = subject,
         category          = category,
-        datetime_created = datetime_created,
+        datetime_created  = datetime_created,
         keywords          = keywords,
         comments          = comments
       )
