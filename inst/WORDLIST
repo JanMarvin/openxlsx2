@@ -69,6 +69,7 @@ colorMarkers
 colorNegative
 colorSeries
 colour
+cp
 ctrlProps
 customXml
 darkDown
@@ -83,7 +84,9 @@ dashedDotDot
 databar
 datetime
 datetimes
+dcterms
 de
+decrypt
 df
 displayEmptyCellsAs
 docx
@@ -127,6 +130,7 @@ headerRow
 hms
 lastColumn
 lastHeaderCell
+lastModifiedBy
 lastTotalCell
 lessThan
 lessThanOrEqual

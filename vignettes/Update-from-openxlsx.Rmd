@@ -12,6 +12,7 @@ vignette: >
 library(openxlsx2)
 ```
 
+
 ## Basic read and write functions
 
 Welcome to the `openxlsx2` update vignette. In this vignette we will take some common code examples from `openxlsx` and show you how similar results can be replicated in `openxlsx2`. Thank you for taking a look, and let's get started.
@@ -39,8 +40,8 @@ This has changed to this:
 openxlsx2::read_xlsx(file = file)
 ```
 
-
 As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in openxlsx2. Another thing to see above, we return the cell row as rowname for the data frame returned. `openxlsx2` should return a data frame of the selected size, even if it empty. If you preferred `openxlsx::readWorkbook()` this has become `wb_read()`. All of these are wrappers for the newly introduced function `wb_to_df()` which provides the most options. `read_xlsx()` and `wb_read()` were created for backward comparability.
+
 
 ## Write xlsx files
 
@@ -234,6 +235,20 @@ wb <- wb_workbook() %>%
 
 Saving has been switched from `saveWorkbook()` to `wb_save()` and opening a workbook has been switched from `openXL()` to `wb_open()`.
 
+
+## Why `openxlsx2`?
+
+Originally, `openxlsx2` was started as a private branch of `openxlsx` to include the pugixml library and provide a fully functional XML parser for `openxlsx`. At that time, it became clear that the home-written `openxlsx` XML parser was limited in its ability to reliably parse XML files, leading to some problems with broken and unreadable xlsx files. Once the inclusion of pugixml was addressed, a new internal structure was created, and this structure required changes to most of the old `openxlsx` functions. This was accompanied by the change from `methods` to `R6` and the possibility of chaining and piping functions.
+
+Working with the styles object of `openxlsx` it became clear that while it is a great idea, it does not work well enough for our needs and that files loaded and modified by `openxlsx` never look the same. There are always things that look a little off because the style objects do not work perfectly. Likewise, there are a lot of edge cases in `openxlsx` that assume a file structure in xlsx objects that is a simplified approximation of what is actually going on. For example, `openxlsx` assumes that each sheet is accompanied by a drawing. While this works in many cases, it does not match the definition of the format in the openxml standard. There may be worksheets with multiple drawings, and there should be no drawing folder if no drawings are included. Unfortunately, many of these things are deeply embedded in the `openxlsx` code, and the more development that took place in `openxlsx2`, the more things differed between the fork from its origin. At some point the fork was called an independent project and the previously privately developed branch was made public.
+
+You could say that this went hand in hand with the modification of the actual project goal. Before, it was about creating a similar looking xlsx file and being able to partially edit it. Now it was about writing an identical xlsx file and just being able to change everything.
+
+Since then most of the internal functions of `openxlsx` have been cleaned up, fixed and mostly rewritten. The package has developed new ways to handle styles with the styles manager, it provides a full range of style options that would be hard or impossible to include in `openxlsx`. We have included support for native graphs with `mschart` and feature the creation of pivot tables. We support more conditional formatting options, we have improved the support for data validation, we have sparklines and form control objects. In addition many of the quirks of the old package have been ironed out. We have switched to a consistent and stable API build on `dims` and we provide multiple vignettes to document our code and plenty of functions to interact with the `openxml` format. We provide basic `xlsb` support and with [`msoc`](https://github.com/JanMarvin/msoc) we have created a package encrypt and decrypt `openxml` files.
+
+
 ## Invitation to contribute
 
-We have put a lot of work into `openxls2` to make it useful for our needs, improving what we found useful about `openxlsx` and removing what we didn't need. We do not claim to be omniscient about all the things you can do with spreadsheet software, nor do we claim to be omniscient about all the things you can do in `openxlsx2`. The package is still under development and we cannot make any promises about a stable API yet. This may change when we reach version 1.0. Nevertheless, we are quite fond of our little package and invite others to try it out and comment on what they like and of course what they think we are missing or if something doesn't work. `openxlsx2` is a complex piece of software that certainly does not work bug-free, even if we did our best. If you want to contribute to the development of `openxlsx2`, please be our guest on our Github. Join or open a discussion, post or fix issues or write us a mail.
+We have put a lot of work into `openxls2` to make it useful for our needs, improving what we found useful about `openxlsx` and removing what we didn't need. We do not claim to be omniscient about all the things you can do with spreadsheet software, nor do we claim to be omniscient about all the things you can do in `openxlsx2`. The package is still under active development, though we have reached a semi stable API that will not change until the next major release.
+
+We are quite fond of our little package and invite others to try it out and comment on what they like and of course what they think we are missing or if something doesn't work. `openxlsx2` is a complex piece of software that certainly does not work bug-free, even if we did our best. If you want to contribute to the development of `openxlsx2`, please be our guest on our Github. Join or open a discussion, post or fix issues or write us a mail.
