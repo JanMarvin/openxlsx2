@@ -330,6 +330,56 @@ examples on formatting.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="why-openxlsx2">Why <code>openxlsx2</code>?<a class="anchor" aria-label="anchor" href="#why-openxlsx2"></a>
+</h2>
+<p>Originally, <code>openxlsx2</code> was started as a private branch of
+<code>openxlsx</code> to include the pugixml library and provide a fully
+functional XML parser for <code>openxlsx</code>. At that time, it became
+clear that the home-written <code>openxlsx</code> XML parser was limited
+in its ability to reliably parse XML files, leading to some problems
+with broken and unreadable xlsx files. Once the inclusion of pugixml was
+addressed, a new internal structure was created, and this structure
+required changes to most of the old <code>openxlsx</code> functions.
+This was accompanied by the change from <code>methods</code> to
+<code>R6</code> and the possibility of chaining and piping
+functions.</p>
+<p>Working with the styles object of <code>openxlsx</code> it became
+clear that while it is a great idea, it does not work well enough for
+our needs and that files loaded and modified by <code>openxlsx</code>
+never look the same. There are always things that look a little off
+because the style objects do not work perfectly. Likewise, there are a
+lot of edge cases in <code>openxlsx</code> that assume a file structure
+in xlsx objects that is a simplified approximation of what is actually
+going on. For example, <code>openxlsx</code> assumes that each sheet is
+accompanied by a drawing. While this works in many cases, it does not
+match the definition of the format in the openxml standard. There may be
+worksheets with multiple drawings, and there should be no drawing folder
+if no drawings are included. Unfortunately, many of these things are
+deeply embedded in the <code>openxlsx</code> code, and the more
+development that took place in <code>openxlsx2</code>, the more things
+differed between the fork from its origin. At some point the fork was
+called an independent project and the previously privately developed
+branch was made public.</p>
+<p>You could say that this went hand in hand with the modification of
+the actual project goal. Before, it was about creating a similar looking
+xlsx file and being able to partially edit it. Now it was about writing
+an identical xlsx file and just being able to change everything.</p>
+<p>Since then most of the internal functions of <code>openxlsx</code>
+have been cleaned up, fixed and mostly rewritten. The package has
+developed new ways to handle styles with the styles manager, it provides
+a full range of style options that would be hard or impossible to
+include in <code>openxlsx</code>. We have included support for native
+graphs with <code>mschart</code> and feature the creation of pivot
+tables. We support more conditional formatting options, we have improved
+the support for data validation, we have sparklines and form control
+objects. In addition many of the quirks of the old package have been
+ironed out. We have switched to a consistent and stable API build on
+<code>dims</code> and we provide multiple vignettes to document our code
+and plenty of functions to interact with the <code>openxml</code>
+format. We provide basic <code>xlsb</code> support and with <a href="https://github.com/JanMarvin/msoc" class="external-link"><code>msoc</code></a> we have
+created a package encrypt and decrypt <code>openxml</code> files.</p>
+</div>
+<div class="section level2">
 <h2 id="invitation-to-contribute">Invitation to contribute<a class="anchor" aria-label="anchor" href="#invitation-to-contribute"></a>
 </h2>
 <p>We have put a lot of work into <code>openxls2</code> to make it
@@ -337,16 +387,16 @@ useful for our needs, improving what we found useful about
 <code>openxlsx</code> and removing what we didn’t need. We do not claim
 to be omniscient about all the things you can do with spreadsheet
 software, nor do we claim to be omniscient about all the things you can
-do in <code>openxlsx2</code>. The package is still under development and
-we cannot make any promises about a stable API yet. This may change when
-we reach version 1.0. Nevertheless, we are quite fond of our little
-package and invite others to try it out and comment on what they like
-and of course what they think we are missing or if something doesn’t
-work. <code>openxlsx2</code> is a complex piece of software that
-certainly does not work bug-free, even if we did our best. If you want
-to contribute to the development of <code>openxlsx2</code>, please be
-our guest on our Github. Join or open a discussion, post or fix issues
-or write us a mail.</p>
+do in <code>openxlsx2</code>. The package is still under active
+development, though we have reached a semi stable API that will not
+change until the next major release.</p>
+<p>We are quite fond of our little package and invite others to try it
+out and comment on what they like and of course what they think we are
+missing or if something doesn’t work. <code>openxlsx2</code> is a
+complex piece of software that certainly does not work bug-free, even if
+we did our best. If you want to contribute to the development of
+<code>openxlsx2</code>, please be our guest on our Github. Join or open
+a discussion, post or fix issues or write us a mail.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
