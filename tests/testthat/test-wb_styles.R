@@ -728,7 +728,7 @@ test_that("wb_add_named_style() works", {
   wb$add_data(dims = dims, x = name)
 
   exp <- c(
-    "Bad", "Good", "Neutral", "Calculation", "Check Cell", "Explanatory Text",
+    "Normal", "Bad", "Good", "Neutral", "Calculation", "Check Cell", "Explanatory Text",
     "Input", "Linked Cell", "Note", "Output", "Warning Text", "Heading 1",
     "Heading 2", "Heading 3", "Heading 4", "Title", "Total", "20% - Accent1",
     "40% - Accent1", "60% - Accent1", "Accent1", "20% - Accent2",
@@ -798,5 +798,39 @@ test_that("wb_add_dxfs_style() works", {
     ),
     "dxfs style names should be unique"
   )
+
+})
+
+test_that("initialized styles remain available", {
+  foo_fill <- create_fill(patternType = "solid",
+                          fgColor = wb_color("blue"))
+  foo_font <- create_font(sz = 36, b = TRUE, color = wb_color("yellow"))
+
+  wb <- wb_workbook()
+  wb$styles_mgr$add(foo_fill, "foo")
+  wb$styles_mgr$add(foo_font, "foo")
+
+  foo_style <- create_cell_style(
+    fill_id = wb$styles_mgr$get_fill_id("foo"),
+    font_id = wb$styles_mgr$get_font_id("foo")
+  )
+
+  wb$styles_mgr$add(foo_style, "foo")
+
+  wb$add_worksheet("test")
+  wb$add_data(x = "Foo")
+  wb$set_cell_style(dims = "A1", style = wb$styles_mgr$get_xf_id("foo"))
+
+  exp <- c("xf-0", "foo")
+  got <- wb$styles_mgr$xf$name
+  expect_equal(exp, got)
+
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  wb <- wb_load(tmp)
+
+  exp <- c("xf-0", "xf-1")
+  got <- wb$styles_mgr$xf$name
+  expect_equal(exp, got)
 
 })
