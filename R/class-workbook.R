@@ -2397,9 +2397,11 @@ wbWorkbook <- R6::R6Class(
       tab_attr <- xml_attr(xml, "table")[[1]]
       tab_attr[["ref"]] <- dims
 
-      tab_autofilter <- xml_node(xml, "table", "autoFilter")
-      tab_autofilter <- xml_attr_mod(tab_autofilter, xml_attributes = c(ref = dims))
-
+      tab_autofilter <- NULL
+      if ("autofilter" %in% tab_nams) {
+        tab_autofilter <- xml_node(xml, "table", "autoFilter")
+        tab_autofilter <- xml_attr_mod(tab_autofilter, xml_attributes = c(ref = dims))
+      }
 
       tab_tabColumns <- xml_node(xml, "table", "tableColumns")
       tab_cols <- names(self$to_df(sheet = sheet, dims = dims))
