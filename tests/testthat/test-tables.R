@@ -196,4 +196,11 @@ test_that("updating table works", {
   got <- wb_to_df(wb, named_region = "Table2")
   expect_equal(exp, got, ignore_attr = TRUE)
 
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = mtcars, with_filter = FALSE)
+  wb$update_table(tabname = "Table1", dims = "A1:J4")
+
+  exp <- "A1:J4"
+  got <- wb$tables$tab_ref
+  expect_equal(exp, got)
+
 })
