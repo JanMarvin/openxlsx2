@@ -2399,6 +2399,15 @@ wbWorkbook <- R6::R6Class(
 
       xml <- wb_tabs$tab_xml
       tab_nams <- xml_node_name(xml, "table")
+      known_xml <- c("autoFilter", "tableColumns", "tableStyleInfo")
+      tab_unks <- tab_nams[!tab_nams %in% known_xml]
+      if (length(tab_unks)) {
+        msg <- paste(
+          "Found unknown table xml nodes. These are lost using update_table: ",
+          tab_unks
+        )
+        warning(msg)
+      }
 
       tab_attr <- xml_attr(xml, "table")[[1]]
       tab_attr[["ref"]] <- dims
