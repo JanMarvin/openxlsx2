@@ -6904,7 +6904,9 @@ wbWorkbook <- R6::R6Class(
     #' @param to the worksheet the style is applied to
     clone_sheet_style = function(from = current_sheet(), to) {
 
-      id_org <- private$get_sheet_index(from)
+      # clone is required, otherwise from sets the current sheet and to can
+      # not use current_sheet().
+      id_org <- self$clone()$.__enclos_env__$private$get_sheet_index(from)
       id_new <- private$get_sheet_index(to)
 
       org_style <- self$worksheets[[id_org]]$sheet_data$cc
