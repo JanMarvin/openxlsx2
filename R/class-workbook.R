@@ -259,11 +259,23 @@ wbWorkbook <- R6::R6Class(
       self$sharedStrings <- list()
       attr(self$sharedStrings, "uniqueCount") <- 0
 
+      # add styles_mgr and set default styles. will initialize after theme
       self$styles_mgr <- style_mgr$new(self)
       self$styles_mgr$styles <- genBaseStyleSheet()
 
+      empty_cellXfs <- data.frame(
+        numFmtId = "0",
+        fontId   = "0",
+        fillId   = "0",
+        borderId = "0",
+        xfId     = "0",
+        stringsAsFactors = FALSE
+      )
+      self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
+
       self$tables <- NULL
       self$tables.xml.rels <- NULL
+
       if (is.null(theme)) {
         self$theme <- NULL
       } else {
@@ -299,11 +311,14 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      self$styles_mgr$initialize(self)
+
       self$vbaProject <- NULL
       self$vml <- NULL
       self$vml_rels <- NULL
 
       private$current_sheet <- 0L
+
       invisible(self)
     },
 
@@ -649,15 +664,6 @@ wbWorkbook <- R6::R6Class(
         veryhidden = "veryHidden",
         visible
       )
-
-      # Order matters: if a sheet is added to a blank workbook, we add a default style. If we already have
-      # sheets in the workbook, we do not add a new style. This could confuse Excel which will complain.
-      # This fixes output of the example in wb_load.
-      if (length(self$sheet_names) == 0) {
-        # TODO this should live wherever the other default values for an empty worksheet are initialized
-        empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
-      }
 
       self$append_sheets(
         sprintf(
