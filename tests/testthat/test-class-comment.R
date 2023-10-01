@@ -248,7 +248,8 @@ test_that("threaded comments work", {
     done = c("0", "")
   )
   got <- wb_get_thread(wb)[, -1]
-  expect_equal(exp, got)
+  # somehow the row ordering differs for parallel and non-parallel testthat runs
+  expect_equal(exp[order(got$displayName), ], got, ignore_attr = TRUE)
 
   exp <- "[Threaded comment]\n\nYour spreadsheet software allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of a certain spreadsheet software.\n\nComment: wow it works!\nReplie:fascinating"
   got <- wb_get_comment(wb)$comment
