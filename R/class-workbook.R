@@ -4395,7 +4395,7 @@ wbWorkbook <- R6::R6Class(
 
       # Workaround for wrapper test. Otherwise tempfile names differ
 
-        if (identical(Sys.getenv("TESTTHAT"), "true")) fileName <- getOption("openxlsx2.temp_png")
+      if (identical(Sys.getenv("TESTTHAT"), "true")) fileName <- getOption("openxlsx2.temp_png")
 
       # TODO use switch()
       if (fileType == "bmp") {
