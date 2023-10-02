@@ -882,8 +882,8 @@ wbWorkbook <- R6::R6Class(
 
                 ## we need to replace "'oldname'" as well as "oldname"
                 chart <- gsub(
-                  old_sheet_name,
-                  new_sheet_name,
+                  paste0(">", old_sheet_name, "!"),
+                  paste0(">", new_sheet_name, "!"),
                   chart,
                   perl = TRUE
                 )
@@ -1030,7 +1030,7 @@ wbWorkbook <- R6::R6Class(
             newid <- 1L
 
 
-          if (stri_join(tbls$tab_name, "_n") %in% self$tables$tab_name) {
+          if (any(stri_join(tbls$tab_name, "_n") %in% self$tables$tab_name)) {
             tbls$tab_name <- stri_join(tbls$tab_name, "1")
           }
 
