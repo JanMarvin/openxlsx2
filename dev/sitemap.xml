@@ -136,6 +136,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/openxlsx2_options.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/person-wb.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/pipe.html</loc>
   </url>
   <url>
@@ -299,9 +302,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_page_setup.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_person.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/wb_protect.html</loc>

@@ -234,20 +234,25 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>   <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>   <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>   <span class="fu"><a href="wb_add_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S1"</span>, x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="wb_add_data.html">wb_add_data</a></span><span class="op">(</span><span class="st">"S1"</span>, x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>   <span class="fu">wb_add_cell_style</span><span class="op">(</span></span></span>
-<span class="r-in"><span>     <span class="st">"S1"</span>,</span></span>
-<span class="r-in"><span>     dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span></span>
-<span class="r-in"><span>     text_rotation <span class="op">=</span> <span class="st">"45"</span>,</span></span>
-<span class="r-in"><span>     horizontal <span class="op">=</span> <span class="st">"center"</span>,</span></span>
-<span class="r-in"><span>     vertical <span class="op">=</span> <span class="st">"center"</span>,</span></span>
-<span class="r-in"><span>     wrap_text <span class="op">=</span> <span class="st">"1"</span></span></span>
-<span class="r-in"><span>   <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_add_cell_style</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span></span>
+<span class="r-in"><span>    text_rotation <span class="op">=</span> <span class="st">"45"</span>,</span></span>
+<span class="r-in"><span>    horizontal <span class="op">=</span> <span class="st">"center"</span>,</span></span>
+<span class="r-in"><span>    vertical <span class="op">=</span> <span class="st">"center"</span>,</span></span>
+<span class="r-in"><span>    wrap_text <span class="op">=</span> <span class="st">"1"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Chaining</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_cell_style</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1:K1"</span>,</span></span>
+<span class="r-in"><span>                  text_rotation <span class="op">=</span> <span class="st">"45"</span>,</span></span>
+<span class="r-in"><span>                  horizontal <span class="op">=</span> <span class="st">"center"</span>,</span></span>
+<span class="r-in"><span>                  vertical <span class="op">=</span> <span class="st">"center"</span>,</span></span>
+<span class="r-in"><span>                  wrap_text <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
