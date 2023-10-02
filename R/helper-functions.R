@@ -1435,9 +1435,10 @@ set_cellstyles <- function(wb, style) {
     if (has_numfmt)
       xf_df$numFmtId <- wb$styles_mgr$get_numfmt_id(session_id)
 
-    xf_xml <- write_xf(xf_df)
+    xf_xml <- write_xf(xf_df) # can be NULL
 
-    wb$styles_mgr$add(xf_xml, session_id)
+    if (length(xf_xml))
+      wb$styles_mgr$add(xf_xml, session_id)
   }
 
   # return updated style id
@@ -1471,19 +1472,26 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   sheet_id <- wb_old$validate_sheet(old)
   cc <- wb_old$worksheets[[sheet_id]]$sheet_data$cc
   sst_ids  <- as.integer(cc$v[cc$c_t == "s"]) + 1
-  sst_uni  <- unique(sst_ids)
-  sst <- wb_old$sharedStrings[sst_uni]
+  sst_uni  <- sort(unique(sst_ids))
+  sst_old <- wb_old$sharedStrings[sst_uni]
 
   old_len <- length(as.character(wb_new$sharedStrings))
 
-  wb_new$sharedStrings <- c(as.character(wb_new$sharedStrings), sst)
-  sst <- xml_node_create("sst", xml_children = wb_new$sharedStrings)
-  attr(wb_new$sharedStrings, "uniqueCount") <- as.character(length(sst))
-  attr(wb_new$sharedStrings, "text") <- xml_si_to_txt(read_xml(sst))
+  wb_new$sharedStrings <- c(as.character(wb_new$sharedStrings), sst_old)
+  sst  <- xml_node_create("sst", xml_children = wb_new$sharedStrings)
+  teyt <- xml_si_to_txt(read_xml(sst))
+  attr(wb_new$sharedStrings, "uniqueCount") <- as.character(length(text))
+  attr(wb_new$sharedStrings, "text") <- text
+
 
   sheet_id <- wb_new$validate_sheet(new)
   cc <- wb_new$worksheets[[sheet_id]]$sheet_data$cc
-  cc$v[cc$c_t == "s"] <- as.character(as.integer(cc$v[cc$c_t == "s"]) + old_len)
+  # order ids and add new offset
+  ids <- as.integer(cc$v[cc$c_t == "s"]) + 1L
+  new_ids <- match(ids, sst_uni) + old_len - 1L
+  new_ids <- as.character(new_ids)
+  new_ids[is.na(new_ids)] <- ""
+  cc$v[cc$c_t == "s"] <- new_ids
   wb_new$worksheets[[sheet_id]]$sheet_data$cc <- cc
 
 }

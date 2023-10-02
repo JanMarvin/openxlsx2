@@ -1098,6 +1098,7 @@ wbWorkbook <- R6::R6Class(
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
           new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s, names(new_sty))])
+          new_s[is.na(new_s)] <- ""
           self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s <- new_s
         }
 
