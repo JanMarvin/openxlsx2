@@ -73,7 +73,7 @@ wbWorkbook <- R6::R6Class(
     #' @field externalLinksRels externalLinksRels
     externalLinksRels = NULL,
 
-    #' @field headFoot The Header and footer
+    #' @field headFoot The header and footer
     headFoot = NULL,
 
     #' @field media media
@@ -133,7 +133,7 @@ wbWorkbook <- R6::R6Class(
     #' @field vml_rels vml_rels
     vml_rels = NULL,
 
-    #' @field comments comments (notes) present in the workbook.
+    #' @field comments Comments (notes) present in the workbook.
     comments = list(),
 
     #' @field threadComments Threaded comments
@@ -1337,7 +1337,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description add formula
+    #' @description Add formula
     #' @param x x
     #' @param start_col startCol
     #' @param start_row startRow
@@ -1345,7 +1345,6 @@ wbWorkbook <- R6::R6Class(
     #' @param cm cm
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
@@ -1422,7 +1421,6 @@ wbWorkbook <- R6::R6Class(
     #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
     #' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
-    #' @param ... additional arguments
     #' @return a data frame
     to_df = function(
       sheet,
@@ -2533,8 +2531,7 @@ wbWorkbook <- R6::R6Class(
 
     ### base font ----
 
-    #' @description
-    #' Get the base font
+    #' @description Get the base font
     #' @return A list of of the font
     get_base_font = function() {
       baseFont <- self$styles_mgr$styles$fonts[[1]]
@@ -2568,12 +2565,10 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
-    #' @description
-    #' Get the base font
+    #' @description Set the base font
     #' @param font_size fontSize
     #' @param font_color font_color
     #' @param font_name font_name
-    #' @param ... ...
     #' @return The `wbWorkbook` object
     set_base_font = function(
       font_size  = 11,
@@ -2589,8 +2584,7 @@ wbWorkbook <- R6::R6Class(
 
     ### book views ----
 
-    #' @description
-    #' Set the book views
+    #' @description Set the book views
     #' @param active_tab activeTab
     #' @param auto_filter_date_grouping autoFilterDateGrouping
     #' @param first_sheet firstSheet
@@ -2604,7 +2598,6 @@ wbWorkbook <- R6::R6Class(
     #' @param window_width windowWidth
     #' @param x_window xWindow
     #' @param y_window yWindow
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     set_bookview = function(
       active_tab                = NULL,
@@ -2802,7 +2795,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description Sets a row height for a sheet
+    #' @description Removes a row height for a sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet = current_sheet(), rows) {
@@ -3376,7 +3369,6 @@ wbWorkbook <- R6::R6Class(
     #' @param error The error text
     #' @param prompt_title The prompt title
     #' @param prompt The prompt text
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_data_validation = function(
       sheet          = current_sheet(),
@@ -4725,7 +4717,7 @@ wbWorkbook <- R6::R6Class(
       }
     },
 
-    #' @description add form control to workbook
+    #' @description Add form control to workbook
     #' @param type type
     #' @param text text
     #' @param link link

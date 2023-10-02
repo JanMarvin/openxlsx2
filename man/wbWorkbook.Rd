@@ -41,7 +41,7 @@ A workbook. The documentation is more complete in each of the wrapper functions.
 
 \item{\code{externalLinksRels}}{externalLinksRels}
 
-\item{\code{headFoot}}{The Header and footer}
+\item{\code{headFoot}}{The header and footer}
 
 \item{\code{media}}{media}
 
@@ -81,7 +81,7 @@ A workbook. The documentation is more complete in each of the wrapper functions.
 
 \item{\code{vml_rels}}{vml_rels}
 
-\item{\code{comments}}{comments (notes) present in the workbook.}
+\item{\code{comments}}{Comments (notes) present in the workbook.}
 
 \item{\code{threadComments}}{Threaded comments}
 
@@ -630,7 +630,7 @@ The \code{wbWorkbook} object
 \if{html}{\out{<a id="method-wbWorkbook-add_formula"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_formula}{}}}
 \subsection{Method \code{add_formula()}}{
-add formula
+Add formula
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
@@ -993,7 +993,7 @@ A list of of the font
 \if{html}{\out{<a id="method-wbWorkbook-set_base_font"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_base_font}{}}}
 \subsection{Method \code{set_base_font()}}{
-Get the base font
+Set the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
   font_size = 11,
@@ -1012,7 +1012,7 @@ Get the base font
 
 \item{\code{font_name}}{font_name}
 
-\item{\code{...}}{...}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1160,7 +1160,7 @@ The \code{wbWorkbook} object, invisibly
 \if{html}{\out{<a id="method-wbWorkbook-remove_row_heights"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-remove_row_heights}{}}}
 \subsection{Method \code{remove_row_heights()}}{
-Sets a row height for a sheet
+Removes a row height for a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_row_heights(sheet = current_sheet(), rows)}\if{html}{\out{</div>}}
 }
@@ -1865,7 +1865,7 @@ The \code{wbWorkbook} object
 \if{html}{\out{<a id="method-wbWorkbook-add_form_control"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_form_control}{}}}
 \subsection{Method \code{add_form_control()}}{
-add form control to workbook
+Add form control to workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(
   sheet = current_sheet(),

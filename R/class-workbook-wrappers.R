@@ -2820,11 +2820,11 @@ wb_add_font <- function(
 #' @param dims the cell range
 #' @param numfmt either an id or a character
 #' @examples
-#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
-#'  # Chaining
-#'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-#'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
+#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+#' wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+#' # Chaining
+#' wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+#' wb$add_numfmt("S1", "A1:A33", numfmt = 1)
 #' @return The `wbWorkbook` object, invisibly.
 #' @family styles
 #' @export
