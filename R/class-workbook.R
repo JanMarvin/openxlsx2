@@ -8050,6 +8050,8 @@ wbWorkbook <- R6::R6Class(
 
 # helpers -----------------------------------------------------------------
 
+is_wbWorkbook <- function(x) inherits(x, c("wbWorkbook",   "R6"))
+
 lcr <- function(var) {
   # quick function for specifying error message
   paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
