@@ -2598,6 +2598,32 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #'  left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
 #'  bottom_color = wb_color(hex = "FFFF0000"))
 #' wb <- wb_add_border(wb, 1, dims = "D28:E28")
+#'
+#' # With chaining
+#'
+#' wb <- wb_workbook()
+#' wb$add_worksheet("S1")$add_data("S1", mtcars)
+#' wb$add_border(1, dims = "A1:K1",
+#'  left_border = NULL, right_border = NULL,
+#'  top_border = NULL, bottom_border = "double")
+#' wb$add_border(1, dims = "A5",
+#'  left_border = "dotted", right_border = "dotted",
+#'  top_border = "hair", bottom_border = "thick")
+#' wb$add_border(1, dims = "C2:C5")
+#' wb$add_border(1, dims = "G2:H3")
+#' wb$add_border(1, dims = "G12:H13",
+#'  left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+#'  top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
+#' wb$add_border(1, dims = "A20:C23")
+#' wb$add_border(1, dims = "B12:D14",
+#'  left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+#'  bottom_color = wb_color(hex = "FFFF0000"))
+#' wb$add_border(1, dims = "D28:E28")
+#' # if (interactive()) wb$open()
+#'
+#' wb <- wb_workbook()
+#' wb$add_worksheet("S1")$add_data("S1", mtcars)
+#' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
 #' @family styles
 #' @export
 wb_add_border <- function(
@@ -2731,6 +2757,9 @@ wb_add_fill <- function(
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+#' # With chaining
+#'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+#'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 #' @return A `wbWorkbook`, invisibly
 #' @family styles
 #' @export
@@ -2793,6 +2822,9 @@ wb_add_font <- function(
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
 #'  wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+#'  # Chaining
+#'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+#'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
 #' @return The `wbWorkbook` object, invisibly.
 #' @family styles
 #' @export
@@ -2846,20 +2878,25 @@ wb_add_numfmt <- function(
 #' @param xf_id xf ID to apply
 #' @param ... additional arguments
 #' @examples
-#'  wb <-
-#'    wb_workbook() %>%
-#'    wb_add_worksheet("S1") %>%
-#'    wb_add_data("S1", x = mtcars)
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet("S1") %>%
+#'   wb_add_data("S1", x = mtcars)
 #'
-#'  wb %>%
-#'    wb_add_cell_style(
-#'      "S1",
-#'      dims = "A1:K1",
-#'      text_rotation = "45",
-#'      horizontal = "center",
-#'      vertical = "center",
-#'      wrap_text = "1"
-#'    )
+#' wb %>%
+#'   wb_add_cell_style(
+#'     dims = "A1:K1",
+#'     text_rotation = "45",
+#'     horizontal = "center",
+#'     vertical = "center",
+#'     wrap_text = "1"
+#' )
+#' # Chaining
+#' wb <- wb_workbook()$add_worksheet("S1")$add_data(x = mtcars)
+#' wb$add_cell_style(dims = "A1:K1",
+#'                   text_rotation = "45",
+#'                   horizontal = "center",
+#'                   vertical = "center",
+#'                   wrap_text = "1")
 #' @return The `wbWorkbook` object, invisibly
 #' @family styles
 #' @export
