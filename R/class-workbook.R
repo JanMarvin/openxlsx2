@@ -264,11 +264,23 @@ wbWorkbook <- R6::R6Class(
       self$sharedStrings <- list()
       attr(self$sharedStrings, "uniqueCount") <- 0
 
+      # add styles_mgr and set default styles. will initialize after theme
       self$styles_mgr <- style_mgr$new(self)
       self$styles_mgr$styles <- genBaseStyleSheet()
 
+      empty_cellXfs <- data.frame(
+        numFmtId = "0",
+        fontId   = "0",
+        fillId   = "0",
+        borderId = "0",
+        xfId     = "0",
+        stringsAsFactors = FALSE
+      )
+      self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
+
       self$tables <- NULL
       self$tables.xml.rels <- NULL
+
       if (is.null(theme)) {
         self$theme <- NULL
       } else {
@@ -304,11 +316,14 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      self$styles_mgr$initialize(self)
+
       self$vbaProject <- NULL
       self$vml <- NULL
       self$vml_rels <- NULL
 
       private$current_sheet <- 0L
+
       invisible(self)
     },
 
@@ -654,15 +669,6 @@ wbWorkbook <- R6::R6Class(
         veryhidden = "veryHidden",
         visible
       )
-
-      # Order matters: if a sheet is added to a blank workbook, we add a default style. If we already have
-      # sheets in the workbook, we do not add a new style. This could confuse Excel which will complain.
-      # This fixes output of the example in wb_load.
-      if (length(self$sheet_names) == 0) {
-        # TODO this should live wherever the other default values for an empty worksheet are initialized
-        empty_cellXfs <- data.frame(numFmtId = "0", fontId = "0", fillId = "0", borderId = "0", xfId = "0", stringsAsFactors = FALSE)
-        self$styles_mgr$styles$cellXfs <- write_xf(empty_cellXfs)
-      }
 
       self$append_sheets(
         sprintf(
@@ -2398,13 +2404,24 @@ wbWorkbook <- R6::R6Class(
 
       xml <- wb_tabs$tab_xml
       tab_nams <- xml_node_name(xml, "table")
+      known_xml <- c("autoFilter", "tableColumns", "tableStyleInfo")
+      tab_unks <- tab_nams[!tab_nams %in% known_xml]
+      if (length(tab_unks)) {
+        msg <- paste(
+          "Found unknown table xml nodes. These are lost using update_table: ",
+          tab_unks
+        )
+        warning(msg)
+      }
 
       tab_attr <- xml_attr(xml, "table")[[1]]
       tab_attr[["ref"]] <- dims
 
-      tab_autofilter <- xml_node(xml, "table", "autoFilter")
-      tab_autofilter <- xml_attr_mod(tab_autofilter, xml_attributes = c(ref = dims))
-
+      tab_autofilter <- NULL
+      if ("autofilter" %in% tab_nams) {
+        tab_autofilter <- xml_node(xml, "table", "autoFilter")
+        tab_autofilter <- xml_attr_mod(tab_autofilter, xml_attributes = c(ref = dims))
+      }
 
       tab_tabColumns <- xml_node(xml, "table", "tableColumns")
       tab_cols <- names(self$to_df(sheet = sheet, dims = dims))
@@ -8034,6 +8051,8 @@ wbWorkbook <- R6::R6Class(
 
 
 # helpers -----------------------------------------------------------------
+
+is_wbWorkbook <- function(x) inherits(x, c("wbWorkbook",   "R6"))
 
 lcr <- function(var) {
   # quick function for specifying error message
