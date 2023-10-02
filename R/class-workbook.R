@@ -1080,6 +1080,18 @@ wbWorkbook <- R6::R6Class(
       #   - Slicers
 
       if (external_wb) {
+
+        # FIXME we copy all references from a workbook over to this workbook.
+        # This is not going to work, if multiple images from different
+        # workbooks are used. The references are called imageX.jpg and will
+        # overwrite each other. This needs a better solution
+        if (length(from$media)) {
+          if (!any(grepl("Default Extension=\"jpg\"", self$Content_Types))) {
+            self$append("Content_Types", "<Default Extension=\"jpg\" ContentType=\"image/jpg\"/>")
+          }
+          self$media <- append(self$media, from$media)
+        }
+
         # update sheet styles
         style   <- get_cellstyle(from, sheet = old)
         # only if styles are present
