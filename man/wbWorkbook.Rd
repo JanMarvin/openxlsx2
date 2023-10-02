@@ -4,84 +4,18 @@
 \alias{wbWorkbook}
 \title{R6 class for a workbook}
 \description{
-A workbook
-}
-\examples{
-
-## ------------------------------------------------
-## Method `wbWorkbook$add_border`
-## ------------------------------------------------
-
-
-wb <- wb_workbook()
-wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A1:K1",
- left_border = NULL, right_border = NULL,
- top_border = NULL, bottom_border = "double")
-wb$add_border(1, dims = "A5",
- left_border = "dotted", right_border = "dotted",
- top_border = "hair", bottom_border = "thick")
-wb$add_border(1, dims = "C2:C5")
-wb$add_border(1, dims = "G2:H3")
-wb$add_border(1, dims = "G12:H13",
- left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
- top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
-wb$add_border(1, dims = "A20:C23")
-wb$add_border(1, dims = "B12:D14",
- left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
- bottom_color = wb_color(hex = "FFFF0000"))
-wb$add_border(1, dims = "D28:E28")
-# if (interactive()) wb$open()
-
-wb <- wb_workbook()
-wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
-
-## ------------------------------------------------
-## Method `wbWorkbook$add_fill`
-## ------------------------------------------------
-
- # example from the gradient fill manual page
- gradient_fill <- "<gradientFill degree=\"90\">
-   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
-   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
-  </gradientFill>"
-
-## ------------------------------------------------
-## Method `wbWorkbook$add_font`
-## ------------------------------------------------
-
- wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
-
-## ------------------------------------------------
-## Method `wbWorkbook$add_numfmt`
-## ------------------------------------------------
-
- wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_numfmt("S1", "A1:A33", numfmt = 1)
-
-## ------------------------------------------------
-## Method `wbWorkbook$add_cell_style`
-## ------------------------------------------------
-
- wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1",
-                   textRotation = "45",
-                   horizontal = "center",
-                   vertical = "center",
-                   wrapText = "1")
+A workbook. The documentation is more complete in each of the wrapper functions.
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{sheet_names}}{sheet_names}
+\item{\code{sheet_names}}{The names of the sheets}
 
 \item{\code{calcChain}}{calcChain}
 
 \item{\code{charts}}{charts}
 
-\item{\code{is_chartsheet}}{is_chartsheet}
+\item{\code{is_chartsheet}}{A logical vector identifying if a sheet is a chartsheet.}
 
 \item{\code{customXml}}{customXml}
 
@@ -93,7 +27,7 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 
 \item{\code{app}}{app}
 
-\item{\code{core}}{core}
+\item{\code{core}}{The XML core}
 
 \item{\code{custom}}{custom}
 
@@ -107,13 +41,13 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 
 \item{\code{externalLinksRels}}{externalLinksRels}
 
-\item{\code{headFoot}}{headFoot}
+\item{\code{headFoot}}{The header and footer}
 
 \item{\code{media}}{media}
 
 \item{\code{metadata}}{contains cell/value metadata imported on load from xl/metadata.xml}
 
-\item{\code{persons}}{persons}
+\item{\code{persons}}{Persons of the workbook. to be used with \code{\link[=wb_add_thread]{wb_add_thread()}}}
 
 \item{\code{pivotTables}}{pivotTables}
 
@@ -147,9 +81,9 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 
 \item{\code{vml_rels}}{vml_rels}
 
-\item{\code{comments}}{comments}
+\item{\code{comments}}{Comments (notes) present in the workbook.}
 
-\item{\code{threadComments}}{threadComments}
+\item{\code{threadComments}}{Threaded comments}
 
 \item{\code{workbook}}{workbook}
 
@@ -288,7 +222,7 @@ Creates a new \code{wbWorkbook} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
+\item{\code{creator}}{character vector of creators. Duplicated are ignored.}
 
 \item{\code{title, subject, category, keywords, comments, manager, company}}{workbook properties}
 
@@ -380,7 +314,7 @@ Add a chart sheet to the workbook
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{tab_color}}{tab_color}
 
@@ -388,7 +322,7 @@ Add a chart sheet to the workbook
 
 \item{\code{visible}}{visible}
 
-\item{\code{...}}{...}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -429,7 +363,7 @@ Add worksheet to the \code{wbWorkbook} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{grid_lines}}{gridLines}
 
@@ -467,7 +401,7 @@ Add worksheet to the \code{wbWorkbook} object
 
 \item{\code{vdpi}}{vdpi}
 
-\item{\code{...}}{...}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -523,11 +457,11 @@ add data
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{start_col}}{startCol}
 
@@ -594,11 +528,11 @@ add a data table
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{start_col}}{startCol}
 
@@ -665,7 +599,7 @@ add pivot table
 \describe{
 \item{\code{x}}{a wb_data object}
 
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{dims}}{the worksheet cell where the pivot table is placed}
 
@@ -696,7 +630,7 @@ The \code{wbWorkbook} object
 \if{html}{\out{<a id="method-wbWorkbook-add_formula"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_formula}{}}}
 \subsection{Method \code{add_formula()}}{
-add formula
+Add formula
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_formula(
   sheet = current_sheet(),
@@ -715,11 +649,11 @@ add formula
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{start_col}}{startCol}
 
@@ -862,7 +796,7 @@ load workbook
 \describe{
 \item{\code{file}}{file}
 
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{data_only}}{data_only}
 
@@ -951,7 +885,7 @@ Build table
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{colNames}}{colNames}
 
@@ -993,9 +927,9 @@ update a data_table
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{cell used as start}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{tabname}}{a tablename}
 }
@@ -1024,9 +958,9 @@ copy cells around in a workbook
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{cell used as start}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{data}}{a wb_data object}
 
@@ -1059,7 +993,7 @@ A list of of the font
 \if{html}{\out{<a id="method-wbWorkbook-set_base_font"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_base_font}{}}}
 \subsection{Method \code{set_base_font()}}{
-Get the base font
+Set the base font
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
   font_size = 11,
@@ -1078,7 +1012,7 @@ Get the base font
 
 \item{\code{font_name}}{font_name}
 
-\item{\code{...}}{...}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
@@ -1208,7 +1142,7 @@ Sets a row height for a sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{rows}}{rows}
 
@@ -1226,7 +1160,7 @@ The \code{wbWorkbook} object, invisibly
 \if{html}{\out{<a id="method-wbWorkbook-remove_row_heights"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-remove_row_heights}{}}}
 \subsection{Method \code{remove_row_heights()}}{
-Sets a row height for a sheet
+Removes a row height for a sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_row_heights(sheet = current_sheet(), rows)}\if{html}{\out{</div>}}
 }
@@ -1234,7 +1168,7 @@ Sets a row height for a sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{rows}}{rows}
 }
@@ -1242,14 +1176,13 @@ Sets a row height for a sheet
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object, invisibly
-description
-creates column object for worksheet
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-createCols"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-createCols}{}}}
 \subsection{Method \code{createCols()}}{
+creates column object for worksheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$createCols(sheet = current_sheet(), n, beg, end)}\if{html}{\out{</div>}}
 }
@@ -1257,7 +1190,7 @@ creates column object for worksheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{n}}{n}
 
@@ -1285,7 +1218,7 @@ Group cols
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{cols}}{cols}
 
@@ -1311,9 +1244,9 @@ ungroup cols
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{cols}}{= cols}
+\item{\code{cols}}{columns}
 }
 \if{html}{\out{</div>}}
 }
@@ -1347,7 +1280,7 @@ The \code{wbWorkbook} object, invisibly
 \if{html}{\out{<a id="method-wbWorkbook-set_col_widths"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_col_widths}{}}}
 \subsection{Method \code{set_col_widths()}}{
-Group cols
+Set column widths
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_col_widths(
   sheet = current_sheet(),
@@ -1360,7 +1293,7 @@ Group cols
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{cols}}{cols}
 
@@ -1392,7 +1325,7 @@ Group rows
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{rows}}{rows}
 
@@ -1418,7 +1351,7 @@ ungroup rows
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{rows}}{rows}
 }
@@ -1475,9 +1408,9 @@ Adds data validation
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{cell dimension}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{type}}{type}
 
@@ -1526,9 +1459,9 @@ Set cell merging for a sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{worksheet cells}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{solve}}{logical if intersecting cells should be solved}
 
@@ -1552,9 +1485,9 @@ Removes cell merging for a sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{worksheet cells}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{...}}{additional arguments}
 }
@@ -1583,7 +1516,7 @@ Set freeze panes for a sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{first_active_row}}{first_active_row}
 
@@ -1613,7 +1546,7 @@ Add comment
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
@@ -1639,7 +1572,7 @@ Remove comment
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
 
@@ -1670,9 +1603,9 @@ add threaded comment to worksheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{a cell}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{comment}}{the comment to add}
 
@@ -1709,9 +1642,9 @@ Add conditional formatting
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{rule}}{rule}
 
@@ -1752,9 +1685,9 @@ Insert an image into a sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{file}}{file}
 
@@ -1799,9 +1732,9 @@ Add plot. A wrapper for add_image()
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{width}}{width}
 
@@ -1842,9 +1775,9 @@ Add xml drawing
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{xml}}{xml}
 
@@ -1862,9 +1795,6 @@ The \code{wbWorkbook} object
 \if{html}{\out{<a id="method-wbWorkbook-add_chart_xml"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_chart_xml}{}}}
 \subsection{Method \code{add_chart_xml()}}{
-Add xml drawing
-
-
 Add xml chart
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_chart_xml(
@@ -1880,9 +1810,9 @@ Add xml chart
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{xml}}{xml}
 
@@ -1915,7 +1845,7 @@ Add mschart chart to the workbook
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{the sheet on which the graph will appear}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{dims}}{the dimensions where the sheet will appear}
 
@@ -1935,7 +1865,7 @@ The \code{wbWorkbook} object
 \if{html}{\out{<a id="method-wbWorkbook-add_form_control"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-add_form_control}{}}}
 \subsection{Method \code{add_form_control()}}{
-add form control to workbook
+Add form control to workbook
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_form_control(
   sheet = current_sheet(),
@@ -1951,9 +1881,9 @@ add form control to workbook
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{type}}{type}
 
@@ -2047,7 +1977,7 @@ protect worksheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{protect}}{protect}
 
@@ -2099,7 +2029,9 @@ Set a property of a workbook
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator, title, subject, category, datetime_created, modifier, keywords, comments, manager, company}}{A workbook property to set}
+\item{\code{creator}}{character vector of creators. Duplicated are ignored.}
+
+\item{\code{title, subject, category, datetime_created, modifier, keywords, comments, manager, company}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }
@@ -2210,7 +2142,7 @@ page_setup()
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{orientation}}{orientation}
 
@@ -2271,7 +2203,7 @@ Sets headers and footers
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{header}}{header}
 
@@ -2305,7 +2237,7 @@ get tables
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 }
 \if{html}{\out{</div>}}
 }
@@ -2325,7 +2257,7 @@ remove tables
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{table}}{table}
 
@@ -2349,7 +2281,7 @@ add filters
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{rows}}{rows}
 
@@ -2373,7 +2305,7 @@ remove filters
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 }
 \if{html}{\out{</div>}}
 }
@@ -2393,7 +2325,7 @@ grid lines
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{show}}{show}
 
@@ -2417,7 +2349,7 @@ grid lines
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{show}}{show}
 
@@ -2461,9 +2393,9 @@ add a named region
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{name}}{name}
 
@@ -2539,7 +2471,7 @@ remove a named region
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{name}}{name}
 }
@@ -2594,7 +2526,7 @@ Set sheet visibility
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{value}}{value}
 }
@@ -2616,7 +2548,7 @@ Add a page break
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{row}}{row}
 
@@ -2647,9 +2579,9 @@ clean sheet (remove all values)
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{numbers}}{remove all numbers}
 
@@ -2693,7 +2625,7 @@ create borders for cell region
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{dims}}{dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"}
 
@@ -2701,44 +2633,13 @@ create borders for cell region
 
 \item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
 
-\item{\code{...}}{...}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook}, invisibly
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{
-wb <- wb_workbook()
-wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A1:K1",
- left_border = NULL, right_border = NULL,
- top_border = NULL, bottom_border = "double")
-wb$add_border(1, dims = "A5",
- left_border = "dotted", right_border = "dotted",
- top_border = "hair", bottom_border = "thick")
-wb$add_border(1, dims = "C2:C5")
-wb$add_border(1, dims = "G2:H3")
-wb$add_border(1, dims = "G12:H13",
- left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
- top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
-wb$add_border(1, dims = "A20:C23")
-wb$add_border(1, dims = "B12:D14",
- left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
- bottom_color = wb_color(hex = "FFFF0000"))
-wb$add_border(1, dims = "D28:E28")
-# if (interactive()) wb$open()
-
-wb <- wb_workbook()
-wb$add_worksheet("S1")$add_data("S1", mtcars)
-wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
-}
-\if{html}{\out{</div>}}
-
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_fill"></a>}}
@@ -2761,9 +2662,9 @@ provide simple fill function
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{the worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{the cell range}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{color}}{the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")}
 
@@ -2779,25 +2680,13 @@ provide simple fill function
 
 \item{\code{every_nth_row}}{which row should be filled}
 
-\item{\code{...}}{...}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{ # example from the gradient fill manual page
- gradient_fill <- "<gradientFill degree=\"90\">
-   <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
-   <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
-  </gradientFill>"
-}
-\if{html}{\out{</div>}}
-
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_font"></a>}}
@@ -2830,9 +2719,9 @@ provide simple font function
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{the worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{the cell range}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{name}}{font name: default "Calibri"}
 
@@ -2864,22 +2753,13 @@ provide simple font function
 
 \item{\code{vert_align}}{vertical alignment}
 
-\item{\code{...}}{...}
+\item{\code{...}}{additional arguments}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook}, invisibly
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
-}
-\if{html}{\out{</div>}}
-
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_numfmt"></a>}}
@@ -2893,9 +2773,9 @@ provide simple number format function
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{the worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{the cell range}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{numfmt}}{number format id or a character of the format}
 }
@@ -2904,15 +2784,6 @@ provide simple number format function
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_numfmt("S1", "A1:A33", numfmt = 1)
-}
-\if{html}{\out{</div>}}
-
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-add_cell_style"></a>}}
@@ -2955,9 +2826,9 @@ provide simple cell style format function
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{the worksheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{the cell range}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{apply_alignment}}{logical apply alignment}
 
@@ -3014,21 +2885,8 @@ provide simple cell style format function
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The \code{wbWorksheetObject}, invisibly
+The \code{wbWorkbook} object, invisibly
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
- wb$add_cell_style("S1", "A1:K1",
-                   textRotation = "45",
-                   horizontal = "center",
-                   vertical = "center",
-                   wrapText = "1")
-}
-\if{html}{\out{</div>}}
-
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-get_cell_style"></a>}}
@@ -3042,9 +2900,9 @@ get sheet style
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 }
 \if{html}{\out{</div>}}
 }
@@ -3064,9 +2922,9 @@ set sheet style
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{style}}{style}
 }
@@ -3094,9 +2952,9 @@ set sheet style
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{name}}{name}
 
@@ -3201,7 +3059,7 @@ apply sparkline to worksheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{the worksheet you are using}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{sparklines}}{sparkline created by \code{create_sparkline()}}
 }
@@ -3233,9 +3091,9 @@ Ignore error on worksheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{dims}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{calculated_column}}{calculatedColumn}
 
@@ -3294,7 +3152,7 @@ add sheetview
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{sheet}
+\item{\code{sheet}}{The name of the sheet}
 
 \item{\code{color_id, default_grid_color}}{Integer: A color, default is 64}
 
@@ -3401,7 +3259,7 @@ description set active sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{The name of the sheet}
 }
 \if{html}{\out{</div>}}
 }
@@ -3411,7 +3269,6 @@ description set active sheet
 \if{latex}{\out{\hypertarget{method-wbWorkbook-get_selected}{}}}
 \subsection{Method \code{get_selected()}}{
 description get selected sheets
-description set selected sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_selected()}\if{html}{\out{</div>}}
 }
@@ -3421,6 +3278,7 @@ description set selected sheet
 \if{html}{\out{<a id="method-wbWorkbook-set_selected"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_selected}{}}}
 \subsection{Method \code{set_selected()}}{
+set selected sheet
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_selected(sheet = current_sheet())}\if{html}{\out{</div>}}
 }
@@ -3428,7 +3286,7 @@ description set selected sheet
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{The name of the sheet}
 }
 \if{html}{\out{</div>}}
 }

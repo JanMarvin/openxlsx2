@@ -56,7 +56,7 @@ wb <- wb \%>\%
   wb_add_thread(dims = "A1", comment = "so cool", person_id = pid, reply = TRUE)
 }
 \seealso{
-\code{\link[=wb_add_comment]{wb_add_comment()}} \link{wb_person}
+\code{\link[=wb_add_comment]{wb_add_comment()}} \code{\link{person-wb}}
 
 Other worksheet content functions: 
 \code{\link{col_widths-wb}},
