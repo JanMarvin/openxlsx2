@@ -5,8 +5,13 @@
 #' R6 class for a workbook
 #'
 #' @description
-#' A workbook
-#'
+#' A workbook. The documentation is more complete in each of the wrapper functions.
+#' @param creator character vector of creators.  Duplicated are ignored.
+#' @param dims Dimensions of a workbook
+#' @param sheet The name of the sheet
+#' @param datetime_created The datetime (as `POSIXt`) the workbook is
+#'   created.  Defaults to the current `Sys.time()` when the workbook object
+#'   is created, not when the Excel files are saved.
 #' @export
 wbWorkbook <- R6::R6Class(
   "wbWorkbook",
@@ -16,7 +21,7 @@ wbWorkbook <- R6::R6Class(
   ## public ----
 
   public = list(
-    #' @field sheet_names sheet_names
+    #' @field sheet_names The names of the sheets
     sheet_names = character(),
 
     #' @field calcChain calcChain
@@ -25,7 +30,7 @@ wbWorkbook <- R6::R6Class(
     #' @field charts charts
     charts = list(),
 
-    #' @field is_chartsheet is_chartsheet
+    #' @field is_chartsheet A logical vector identifying if a sheet is a chartsheet.
     is_chartsheet = logical(),
 
     #' @field customXml customXml
@@ -43,7 +48,7 @@ wbWorkbook <- R6::R6Class(
     #' @field app app
     app = character(),
 
-    #' @field core core
+    #' @field core The XML core
     core = character(),
 
     #' @field custom custom
@@ -67,7 +72,7 @@ wbWorkbook <- R6::R6Class(
     #' @field externalLinksRels externalLinksRels
     externalLinksRels = NULL,
 
-    #' @field headFoot headFoot
+    #' @field headFoot The Header and footer
     headFoot = NULL,
 
     #' @field media media
@@ -76,7 +81,7 @@ wbWorkbook <- R6::R6Class(
     #' @field metadata contains cell/value metadata imported on load from xl/metadata.xml
     metadata = NULL,
 
-    #' @field persons persons
+    #' @field persons Persons of the workbook. to be used with [wb_add_thread()]
     persons = NULL,
 
     #' @field pivotTables pivotTables
@@ -130,7 +135,7 @@ wbWorkbook <- R6::R6Class(
     #' @field comments comments
     comments = list(),
 
-    #' @field threadComments threadComments
+    #' @field threadComments Threaded comments
     threadComments = NULL,
 
     #' @field workbook workbook
@@ -6965,8 +6970,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Ignore error on worksheet
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param calculated_column calculatedColumn
     #' @param empty_cell_reference emptyCellReference
     #' @param eval_error evalError
@@ -7008,7 +7011,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description add sheetview
-    #' @param sheet sheet
     #' @param color_id,default_grid_color Integer: A color, default is 64
     #' @param right_to_left Logical: if TRUE column ordering is right  to left
     #' @param show_formulas Logical: if TRUE cell formulas are shown

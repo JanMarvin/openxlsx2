@@ -1554,7 +1554,7 @@ wb_protect_worksheet <- function(
 #' @param lock_structure Whether the workbook structure should be locked
 #' @param lock_windows Whether the window position of the spreadsheet should be
 #'   locked
-#' @param type Lock type (see details)
+#' @param type Lock type (see **Details**)
 #' @param file_sharing Whether to enable a popup requesting the unlock password
 #'   is prompted
 #' @param username The username for the `file_sharing` popup
@@ -1565,12 +1565,10 @@ wb_protect_worksheet <- function(
 #' @details
 #' Lock types:
 #'
-#' \describe{
-#'   \item{`1` }{xlsx with password (default)}
-#'   \item{`2` }{xlsx recommends read-only}
-#'   \item{`4` }{xlsx enforces read-only}
-#'   \item{`8` }{xlsx is locked for annotation}
-#' }
+#' * `1`  xlsx with password (default)
+#' * `2` xlsx recommends read-only
+#' * `4` xlsx enforces read-only
+#' * `8` xlsx is locked for annotation
 #'
 #' @export
 #' @examples
@@ -3104,7 +3102,7 @@ wb_remove_comment <- function(
 #' Adds a person to a workbook, so that they can be the author of threaded
 #' comments in a workbook with [wb_add_thread()]
 #'
-#' @name wb_person
+#' @name person-wb
 #' @param wb a Workbook
 #' @param name the name of the person to display.
 #' @param id (optional) the display id
@@ -3129,7 +3127,7 @@ wb_add_person <- function(
   )
 }
 
-#' @rdname wb_person
+#' @rdname person-wb
 #' @export
 wb_get_person <- function(wb, name = NULL) {
   assert_workbook(wb)
@@ -3156,7 +3154,7 @@ wb_get_person <- function(wb, name = NULL) {
 #'   `getOption("openxlsx2.thread_id")` if set.
 #' @param reply Is the comment a reply? (default `FALSE`)
 #' @param resolve Should the comment be resolved? (default `FALSE`)
-#' @seealso [wb_add_comment()] [wb_person]
+#' @seealso [wb_add_comment()] [`person-wb`]
 #' @family worksheet content functions
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()

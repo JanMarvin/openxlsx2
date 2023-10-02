@@ -29,7 +29,7 @@ wb_protect(
 \item{lock_windows}{Whether the window position of the spreadsheet should be
 locked}
 
-\item{type}{Lock type (see details)}
+\item{type}{Lock type (see \strong{Details})}
 
 \item{file_sharing}{Whether to enable a popup requesting the unlock password
 is prompted}
@@ -47,12 +47,11 @@ graphical user interface. Replaces an existing protection.
 }
 \details{
 Lock types:
-
-\describe{
-\item{\code{1} }{xlsx with password (default)}
-\item{\code{2} }{xlsx recommends read-only}
-\item{\code{4} }{xlsx enforces read-only}
-\item{\code{8} }{xlsx is locked for annotation}
+\itemize{
+\item \code{1}  xlsx with password (default)
+\item \code{2} xlsx recommends read-only
+\item \code{4} xlsx enforces read-only
+\item \code{8} xlsx is locked for annotation
 }
 }
 \examples{

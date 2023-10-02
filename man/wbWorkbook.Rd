@@ -4,7 +4,7 @@
 \alias{wbWorkbook}
 \title{R6 class for a workbook}
 \description{
-A workbook
+A workbook. The documentation is more complete in each of the wrapper functions.
 }
 \examples{
 
@@ -75,13 +75,13 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{sheet_names}}{sheet_names}
+\item{\code{sheet_names}}{The names of the sheets}
 
 \item{\code{calcChain}}{calcChain}
 
 \item{\code{charts}}{charts}
 
-\item{\code{is_chartsheet}}{is_chartsheet}
+\item{\code{is_chartsheet}}{A logical vector identifying if a sheet is a chartsheet.}
 
 \item{\code{customXml}}{customXml}
 
@@ -93,7 +93,7 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 
 \item{\code{app}}{app}
 
-\item{\code{core}}{core}
+\item{\code{core}}{The XML core}
 
 \item{\code{custom}}{custom}
 
@@ -107,13 +107,13 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 
 \item{\code{externalLinksRels}}{externalLinksRels}
 
-\item{\code{headFoot}}{headFoot}
+\item{\code{headFoot}}{The Header and footer}
 
 \item{\code{media}}{media}
 
 \item{\code{metadata}}{contains cell/value metadata imported on load from xl/metadata.xml}
 
-\item{\code{persons}}{persons}
+\item{\code{persons}}{Persons of the workbook. to be used with \code{\link[=wb_add_thread]{wb_add_thread()}}}
 
 \item{\code{pivotTables}}{pivotTables}
 
@@ -149,7 +149,7 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF
 
 \item{\code{comments}}{comments}
 
-\item{\code{threadComments}}{threadComments}
+\item{\code{threadComments}}{Threaded comments}
 
 \item{\code{workbook}}{workbook}
 
@@ -290,13 +290,25 @@ Creates a new \code{wbWorkbook} object
 \describe{
 \item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
 
-\item{\code{title, subject, category, keywords, comments, manager, company}}{workbook properties}
+\item{\code{title}}{workbook properties}
+
+\item{\code{subject}}{workbook properties}
+
+\item{\code{category}}{workbook properties}
 
 \item{\code{datetime_created}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
 is created, not when the Excel files are saved.}
 
 \item{\code{theme}}{Optional theme identified by string or number}
+
+\item{\code{keywords}}{workbook properties}
+
+\item{\code{comments}}{workbook properties}
+
+\item{\code{manager}}{workbook properties}
+
+\item{\code{company}}{workbook properties}
 
 \item{\code{...}}{additional arguments}
 }
