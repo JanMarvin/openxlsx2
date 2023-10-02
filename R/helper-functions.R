@@ -1463,6 +1463,11 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   if (identical(wb_new$sharedStrings, empty)) {
 
     wb_new$append(
+      "Content_Types",
+      "<Override PartName=\"/xl/sharedStrings.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml\"/>"
+    )
+
+    wb_new$append(
       "workbook.xml.rels",
       "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
     )
@@ -1479,7 +1484,7 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
 
   wb_new$sharedStrings <- c(as.character(wb_new$sharedStrings), sst_old)
   sst  <- xml_node_create("sst", xml_children = wb_new$sharedStrings)
-  teyt <- xml_si_to_txt(read_xml(sst))
+  text <- xml_si_to_txt(read_xml(sst))
   attr(wb_new$sharedStrings, "uniqueCount") <- as.character(length(text))
   attr(wb_new$sharedStrings, "text") <- text
 
