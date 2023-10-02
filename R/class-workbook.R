@@ -6,8 +6,8 @@
 #'
 #' @description
 #' A workbook. The documentation is more complete in each of the wrapper functions.
-#' @param creator character vector of creators.  Duplicated are ignored.
-#' @param dims Dimensions of a workbook
+#' @param creator character vector of creators. Duplicated are ignored.
+#' @param dims Cell range in a sheet
 #' @param sheet The name of the sheet
 #' @param datetime_created The datetime (as `POSIXt`) the workbook is
 #'   created.  Defaults to the current `Sys.time()` when the workbook object
@@ -160,11 +160,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorkbook` object
-    #' @param creator character vector of creators.  Duplicated are ignored.
     #' @param title,subject,category,keywords,comments,manager,company workbook properties
-    #' @param datetime_created The datetime (as `POSIXt`) the workbook is
-    #'   created.  Defaults to the current `Sys.time()` when the workbook object
-    #'   is created, not when the Excel files are saved.
     #' @param theme Optional theme identified by string or number
     #' @param ... additional arguments
     #' @return a `wbWorkbook` object
@@ -5111,7 +5107,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param creator,title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
+    #' @param title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
     set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
       # get an xml output or create one
 

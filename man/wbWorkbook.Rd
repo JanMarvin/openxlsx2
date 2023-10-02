@@ -222,7 +222,7 @@ Creates a new \code{wbWorkbook} object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator}}{character vector of creators.  Duplicated are ignored.}
+\item{\code{creator}}{character vector of creators. Duplicated are ignored.}
 
 \item{\code{title, subject, category, keywords, comments, manager, company}}{workbook properties}
 
@@ -461,7 +461,7 @@ add data
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{start_col}}{startCol}
 
@@ -532,7 +532,7 @@ add a data table
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{start_col}}{startCol}
 
@@ -653,7 +653,7 @@ add formula
 
 \item{\code{x}}{x}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{start_col}}{startCol}
 
@@ -929,7 +929,7 @@ update a data_table
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{tabname}}{a tablename}
 }
@@ -960,7 +960,7 @@ copy cells around in a workbook
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{data}}{a wb_data object}
 
@@ -1410,7 +1410,7 @@ Adds data validation
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{type}}{type}
 
@@ -1461,7 +1461,7 @@ Set cell merging for a sheet
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{solve}}{logical if intersecting cells should be solved}
 
@@ -1487,7 +1487,7 @@ Removes cell merging for a sheet
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{...}}{additional arguments}
 }
@@ -1605,7 +1605,7 @@ add threaded comment to worksheet
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{comment}}{the comment to add}
 
@@ -1644,7 +1644,7 @@ Add conditional formatting
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{rule}}{rule}
 
@@ -1687,7 +1687,7 @@ Insert an image into a sheet
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{file}}{file}
 
@@ -1734,7 +1734,7 @@ Add plot. A wrapper for add_image()
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{width}}{width}
 
@@ -1777,7 +1777,7 @@ Add xml drawing
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{xml}}{xml}
 
@@ -1812,7 +1812,7 @@ Add xml chart
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{xml}}{xml}
 
@@ -1883,7 +1883,7 @@ add form control to workbook
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{type}}{type}
 
@@ -2029,7 +2029,9 @@ Set a property of a workbook
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{creator, title, subject, category, datetime_created, modifier, keywords, comments, manager, company}}{A workbook property to set}
+\item{\code{creator}}{character vector of creators. Duplicated are ignored.}
+
+\item{\code{title, subject, category, datetime_created, modifier, keywords, comments, manager, company}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }
@@ -2393,7 +2395,7 @@ add a named region
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{name}}{name}
 
@@ -2579,7 +2581,7 @@ clean sheet (remove all values)
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{numbers}}{remove all numbers}
 
@@ -2662,7 +2664,7 @@ provide simple fill function
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{color}}{the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")}
 
@@ -2719,7 +2721,7 @@ provide simple font function
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{name}}{font name: default "Calibri"}
 
@@ -2773,7 +2775,7 @@ provide simple number format function
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{numfmt}}{number format id or a character of the format}
 }
@@ -2826,7 +2828,7 @@ provide simple cell style format function
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{apply_alignment}}{logical apply alignment}
 
@@ -2900,7 +2902,7 @@ get sheet style
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 }
 \if{html}{\out{</div>}}
 }
@@ -2922,7 +2924,7 @@ set sheet style
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{style}}{style}
 }
@@ -2952,7 +2954,7 @@ set sheet style
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{name}}{name}
 
@@ -3091,7 +3093,7 @@ Ignore error on worksheet
 \describe{
 \item{\code{sheet}}{The name of the sheet}
 
-\item{\code{dims}}{Dimensions of a workbook}
+\item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{calculated_column}}{calculatedColumn}
 
