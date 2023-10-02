@@ -846,7 +846,7 @@ wbWorkbook <- R6::R6Class(
 
         drawing_id <- from$worksheets[[old_drawing_sheet]]$relships$drawing
 
-        new_drawing_sheet <- length(from$drawings) + 1L
+        new_drawing_sheet <- length(self$drawings) + 1L
 
         self$append("drawings_rels", from$drawings_rels[[drawing_id]])
 
@@ -861,7 +861,7 @@ wbWorkbook <- R6::R6Class(
               chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
 
               for (cf in chartfiles) {
-                chartid <- nrow(self$charts) + 1L
+                chartid <- NROW(self$charts) + 1L
                 newname <- stri_join("chart", chartid, ".xml")
                 old_chart <- as.integer(gsub("\\D+", "", cf))
                 self$charts <- rbind(self$charts, from$charts[old_chart, ])
