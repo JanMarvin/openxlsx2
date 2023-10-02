@@ -1351,10 +1351,14 @@ get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
     xf_xml <- get_cell_styles(wb = wb, sheet = sheet, cell = dims)
   }
 
+  # returns NA if no style found
+  if (all(is.na(xf_xml))) return(NULL)
+
   lst_out <- vector("list", length = length(xf_xml))
 
   for (i in seq_along(xf_xml)) {
 
+    if (is.na(xf_xml[[i]])) next
     xf_df <- read_xf(read_xml(xf_xml[[i]]))
 
     border_id <- which(wb$styles_mgr$border$id == xf_df$borderId)
@@ -1444,4 +1448,42 @@ set_cellstyles <- function(wb, style) {
   }
 
   st_ids
+}
+
+clone_shared_strings <- function(wb_old, old, wb_new, new) {
+
+  empty <- structure(list(), uniqueCount = 0)
+
+  # old has no shared strings
+  if (identical(wb_old$sharedStrings, empty)) {
+    return(NULL)
+  }
+
+  if (identical(wb_new$sharedStrings, empty)) {
+
+    wb_new$append(
+      "workbook.xml.rels",
+      "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
+    )
+
+  }
+
+  sheet_id <- wb_old$validate_sheet(old)
+  cc <- wb_old$worksheets[[sheet_id]]$sheet_data$cc
+  sst_ids  <- as.integer(cc$v[cc$c_t == "s"]) + 1
+  sst_uni  <- unique(sst_ids)
+  sst <- wb_old$sharedStrings[sst_uni]
+
+  old_len <- length(as.character(wb_new$sharedStrings))
+
+  wb_new$sharedStrings <- c(as.character(wb_new$sharedStrings), sst)
+  sst <- xml_node_create("sst", xml_children = wb_new$sharedStrings)
+  attr(wb_new$sharedStrings, "uniqueCount") <- as.character(length(sst))
+  attr(wb_new$sharedStrings, "text") <- xml_si_to_txt(read_xml(sst))
+
+  sheet_id <- wb_new$validate_sheet(new)
+  cc <- wb_new$worksheets[[sheet_id]]$sheet_data$cc
+  cc$v[cc$c_t == "s"] <- as.character(as.integer(cc$v[cc$c_t == "s"]) + old_len)
+  wb_new$worksheets[[sheet_id]]$sheet_data$cc <- cc
+
 }

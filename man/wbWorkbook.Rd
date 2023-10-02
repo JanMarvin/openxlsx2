@@ -110,6 +110,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-add_chartsheet}{\code{wbWorkbook$add_chartsheet()}}
 \item \href{#method-wbWorkbook-add_worksheet}{\code{wbWorkbook$add_worksheet()}}
 \item \href{#method-wbWorkbook-clone_worksheet}{\code{wbWorkbook$clone_worksheet()}}
+\item \href{#method-wbWorkbook-clone_worksheet_to}{\code{wbWorkbook$clone_worksheet_to()}}
 \item \href{#method-wbWorkbook-add_data}{\code{wbWorkbook$add_data()}}
 \item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
 \item \href{#method-wbWorkbook-add_pivot_table}{\code{wbWorkbook$add_pivot_table()}}
@@ -424,6 +425,31 @@ Clone a workbooksheet
 \item{\code{old}}{name of worksheet to clone}
 
 \item{\code{new}}{name of new worksheet to add}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-clone_worksheet_to"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-clone_worksheet_to}{}}}
+\subsection{Method \code{clone_worksheet_to()}}{
+Clone a workbooksheet to another workbook
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_worksheet_to(
+  old = current_sheet(),
+  new = next_sheet(),
+  to = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{old}}{name of worksheet to clone}
+
+\item{\code{new}}{name of new worksheet to add}
+
+\item{\code{to}}{name of new worksheet to add}
 }
 \if{html}{\out{</div>}}
 }
