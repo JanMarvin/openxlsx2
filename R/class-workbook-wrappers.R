@@ -737,6 +737,7 @@ wb_add_worksheet <- function(
 #' @param wb A `wbWorkbook` object
 #' @param old Name of existing worksheet to copy
 #' @param new Name of the new worksheet to create
+#' @param from (optional) Workbook to clone old from
 #' @return The `wbWorkbook` object, invisibly.
 #'
 #' @export
@@ -751,9 +752,9 @@ wb_add_worksheet <- function(
 #' wb$clone_worksheet("Sheet 1", new = "Sheet 2")
 #' # Take advantage of waiver functions
 #' wb$clone_worksheet(old = "Sheet 1")
-wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet()) {
+wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet(), from = NULL) {
   assert_workbook(wb)
-  wb$clone()$clone_worksheet(old = old, new = new)
+  wb$clone()$clone_worksheet(old = old, new = new, from = from)
 }
 
 # worksheets --------------------------------------------------------------

@@ -4,7 +4,7 @@
 \alias{wb_clone_worksheet}
 \title{Create copies of a worksheet within a workbook}
 \usage{
-wb_clone_worksheet(wb, old = current_sheet(), new = next_sheet())
+wb_clone_worksheet(wb, old = current_sheet(), new = next_sheet(), from = NULL)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object}
@@ -12,6 +12,8 @@ wb_clone_worksheet(wb, old = current_sheet(), new = next_sheet())
 \item{old}{Name of existing worksheet to copy}
 
 \item{new}{Name of the new worksheet to create}
+
+\item{from}{(optional) Workbook to clone old from}
 }
 \value{
 The \code{wbWorkbook} object, invisibly.
