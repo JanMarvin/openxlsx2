@@ -1606,7 +1606,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         BrtNameUint2 = readbin(BrtNameUint2, bin, swapit);
 
         BrtNameFields *fields = (BrtNameFields *)&BrtNameUint;
-        BrtNameFields2 *fields2 = (BrtNameFields2 *)&BrtNameUint2;
+        // BrtNameFields2 *fields2 = (BrtNameFields2 *)&BrtNameUint2;
 
         // fHidden    - visible
         // fFunc      - xml macro
