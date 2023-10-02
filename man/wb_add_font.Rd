@@ -80,6 +80,9 @@ not all have to be set. Usually \code{name}, \code{size} and \code{color} should
 \examples{
  wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
  wb \%>\% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+# With chaining
+ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
+ wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 }
 \seealso{
 Other styles: 

@@ -99,7 +99,7 @@ reference:
   - active_sheet-wb
   - sheet_visibility-wb
   - wb_set_bookview
-  - wb_person
+  - person-wb
   - wb_protect
   - wb_get_tables
   - wb_remove_tables

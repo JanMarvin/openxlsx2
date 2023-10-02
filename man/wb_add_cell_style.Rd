@@ -102,20 +102,25 @@ The \code{wbWorkbook} object, invisibly
 Add cell style to a cell region
 }
 \examples{
- wb <-
-   wb_workbook() \%>\%
-   wb_add_worksheet("S1") \%>\%
-   wb_add_data("S1", x = mtcars)
+wb <- wb_workbook() \%>\%
+  wb_add_worksheet("S1") \%>\%
+  wb_add_data("S1", x = mtcars)
 
- wb \%>\%
-   wb_add_cell_style(
-     "S1",
-     dims = "A1:K1",
-     text_rotation = "45",
-     horizontal = "center",
-     vertical = "center",
-     wrap_text = "1"
-   )
+wb \%>\%
+  wb_add_cell_style(
+    dims = "A1:K1",
+    text_rotation = "45",
+    horizontal = "center",
+    vertical = "center",
+    wrap_text = "1"
+)
+# Chaining
+wb <- wb_workbook()$add_worksheet("S1")$add_data(x = mtcars)
+wb$add_cell_style(dims = "A1:K1",
+                  text_rotation = "45",
+                  horizontal = "center",
+                  vertical = "center",
+                  wrap_text = "1")
 }
 \seealso{
 Other styles: 

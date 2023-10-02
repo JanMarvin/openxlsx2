@@ -5,8 +5,14 @@
 #' R6 class for a workbook
 #'
 #' @description
-#' A workbook
-#'
+#' A workbook. The documentation is more complete in each of the wrapper functions.
+#' @param creator character vector of creators. Duplicated are ignored.
+#' @param dims Cell range in a sheet
+#' @param sheet The name of the sheet
+#' @param datetime_created The datetime (as `POSIXt`) the workbook is
+#'   created.  Defaults to the current `Sys.time()` when the workbook object
+#'   is created, not when the Excel files are saved.
+#' @param ... additional arguments
 #' @export
 wbWorkbook <- R6::R6Class(
   "wbWorkbook",
@@ -16,7 +22,7 @@ wbWorkbook <- R6::R6Class(
   ## public ----
 
   public = list(
-    #' @field sheet_names sheet_names
+    #' @field sheet_names The names of the sheets
     sheet_names = character(),
 
     #' @field calcChain calcChain
@@ -25,7 +31,7 @@ wbWorkbook <- R6::R6Class(
     #' @field charts charts
     charts = list(),
 
-    #' @field is_chartsheet is_chartsheet
+    #' @field is_chartsheet A logical vector identifying if a sheet is a chartsheet.
     is_chartsheet = logical(),
 
     #' @field customXml customXml
@@ -43,7 +49,7 @@ wbWorkbook <- R6::R6Class(
     #' @field app app
     app = character(),
 
-    #' @field core core
+    #' @field core The XML core
     core = character(),
 
     #' @field custom custom
@@ -67,7 +73,7 @@ wbWorkbook <- R6::R6Class(
     #' @field externalLinksRels externalLinksRels
     externalLinksRels = NULL,
 
-    #' @field headFoot headFoot
+    #' @field headFoot The header and footer
     headFoot = NULL,
 
     #' @field media media
@@ -76,7 +82,7 @@ wbWorkbook <- R6::R6Class(
     #' @field metadata contains cell/value metadata imported on load from xl/metadata.xml
     metadata = NULL,
 
-    #' @field persons persons
+    #' @field persons Persons of the workbook. to be used with [wb_add_thread()]
     persons = NULL,
 
     #' @field pivotTables pivotTables
@@ -127,10 +133,10 @@ wbWorkbook <- R6::R6Class(
     #' @field vml_rels vml_rels
     vml_rels = NULL,
 
-    #' @field comments comments
+    #' @field comments Comments (notes) present in the workbook.
     comments = list(),
 
-    #' @field threadComments threadComments
+    #' @field threadComments Threaded comments
     threadComments = NULL,
 
     #' @field workbook workbook
@@ -154,11 +160,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Creates a new `wbWorkbook` object
-    #' @param creator character vector of creators.  Duplicated are ignored.
     #' @param title,subject,category,keywords,comments,manager,company workbook properties
-    #' @param datetime_created The datetime (as `POSIXt`) the workbook is
-    #'   created.  Defaults to the current `Sys.time()` when the workbook object
-    #'   is created, not when the Excel files are saved.
     #' @param theme Optional theme identified by string or number
     #' @param ... additional arguments
     #' @return a `wbWorkbook` object
@@ -370,11 +372,9 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Add a chart sheet to the workbook
-    #' @param sheet sheet
     #' @param tab_color tab_color
     #' @param zoom zoom
     #' @param visible visible
-    #' @param ... ...
     #' @return The `wbWorkbook` object, invisibly
     add_chartsheet = function(
       sheet     = next_sheet(),
@@ -500,7 +500,6 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Add worksheet to the `wbWorkbook` object
-    #' @param sheet sheet
     #' @param grid_lines gridLines
     #' @param row_col_headers rowColHeaders
     #' @param tab_color tabColor
@@ -519,7 +518,6 @@ wbWorkbook <- R6::R6Class(
     #' @param orientation orientation
     #' @param hdpi hdpi
     #' @param vdpi vdpi
-    #' @param ... ...
     #' @return The `wbWorkbook` object, invisibly
     add_worksheet = function(
       sheet           = next_sheet(),
@@ -1064,9 +1062,7 @@ wbWorkbook <- R6::R6Class(
     ### add data ----
 
     #' @description add data
-    #' @param sheet sheet
     #' @param x x
-    #' @param dims dims
     #' @param start_col startCol
     #' @param start_row startRow
     #' @param array array
@@ -1080,7 +1076,6 @@ wbWorkbook <- R6::R6Class(
     #' @param na.strings Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
-    #' @param ... additional arguments
     #' @param return The `wbWorkbook` object
     add_data = function(
         sheet            = current_sheet(),
@@ -1125,9 +1120,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description add a data table
-    #' @param sheet sheet
     #' @param x x
-    #' @param dims dims
     #' @param start_col startCol
     #' @param start_row startRow
     #' @param col_names colNames
@@ -1200,7 +1193,6 @@ wbWorkbook <- R6::R6Class(
 
     #' @description add pivot table
     #' @param x a wb_data object
-    #' @param sheet a worksheet
     #' @param dims the worksheet cell where the pivot table is placed
     #' @param filter a character object with names used to filter
     #' @param rows a character object with names used as rows
@@ -1345,9 +1337,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description add formula
-    #' @param sheet sheet
-    #' @param dims dims
+    #' @description Add formula
     #' @param x x
     #' @param start_col startCol
     #' @param start_row startRow
@@ -1355,7 +1345,6 @@ wbWorkbook <- R6::R6Class(
     #' @param cm cm
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
@@ -1432,7 +1421,6 @@ wbWorkbook <- R6::R6Class(
     #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
     #' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
-    #' @param ... additional arguments
     #' @return a data frame
     to_df = function(
       sheet,
@@ -1493,10 +1481,8 @@ wbWorkbook <- R6::R6Class(
     ### load workbook ----
     #' @description load workbook
     #' @param file file
-    #' @param sheet sheet
     #' @param data_only data_only
     #' @param calc_chain calc_chain
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object invisibly
     load = function(
       file,
@@ -1505,6 +1491,7 @@ wbWorkbook <- R6::R6Class(
       calc_chain = FALSE,
       ...
     ) {
+      # Is this required?
       if (missing(file)) file <- substitute()
       if (missing(sheet)) sheet <- substitute()
       self <- wb_load(
@@ -2235,7 +2222,6 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Build table
-    #' @param sheet sheet
     #' @param colNames colNames
     #' @param ref ref
     #' @param showColNames showColNames
@@ -2384,8 +2370,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description update a data_table
-    #' @param sheet a worksheet
-    #' @param dims cell used as start
     #' @param tabname a tablename
     #' @return The `wbWorksheet` object, invisibly
     update_table = function(sheet = current_sheet(), dims = "A1", tabname) {
@@ -2463,8 +2447,6 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' copy cells around in a workbook
-    #' @param sheet a worksheet
-    #' @param dims cell used as start
     #' @param data a wb_data object
     #' @param as_value should a copy of the value be written
     #' @param as_ref should references to the cell be written
@@ -2549,8 +2531,7 @@ wbWorkbook <- R6::R6Class(
 
     ### base font ----
 
-    #' @description
-    #' Get the base font
+    #' @description Get the base font
     #' @return A list of of the font
     get_base_font = function() {
       baseFont <- self$styles_mgr$styles$fonts[[1]]
@@ -2584,12 +2565,10 @@ wbWorkbook <- R6::R6Class(
       )
     },
 
-    #' @description
-    #' Get the base font
+    #' @description Set the base font
     #' @param font_size fontSize
     #' @param font_color font_color
     #' @param font_name font_name
-    #' @param ... ...
     #' @return The `wbWorkbook` object
     set_base_font = function(
       font_size  = 11,
@@ -2605,8 +2584,7 @@ wbWorkbook <- R6::R6Class(
 
     ### book views ----
 
-    #' @description
-    #' Set the book views
+    #' @description Set the book views
     #' @param active_tab activeTab
     #' @param auto_filter_date_grouping autoFilterDateGrouping
     #' @param first_sheet firstSheet
@@ -2620,7 +2598,6 @@ wbWorkbook <- R6::R6Class(
     #' @param window_width windowWidth
     #' @param x_window xWindow
     #' @param y_window yWindow
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     set_bookview = function(
       active_tab                = NULL,
@@ -2767,9 +2744,7 @@ wbWorkbook <- R6::R6Class(
 
     ### row heights ----
 
-    #' @description
-    #' Sets a row height for a sheet
-    #' @param sheet sheet
+    #' @description Sets a row height for a sheet
     #' @param rows rows
     #' @param heights heights
     #' @param hidden hidden
@@ -2820,9 +2795,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' Sets a row height for a sheet
-    #' @param sheet sheet
+    #' @description Removes a row height for a sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object, invisibly
     remove_row_heights = function(sheet = current_sheet(), rows) {
@@ -2847,9 +2820,7 @@ wbWorkbook <- R6::R6Class(
 
     ## columns ----
 
-    #' description
-    #' creates column object for worksheet
-    #' @param sheet sheet
+    #' @description creates column object for worksheet
     #' @param n n
     #' @param beg beg
     #' @param end end
@@ -2858,9 +2829,7 @@ wbWorkbook <- R6::R6Class(
        self$worksheets[[sheet]]$cols_attr <- df_to_xml("col", empty_cols_attr(n, beg, end))
     },
 
-    #' @description
-    #' Group cols
-    #' @param sheet sheet
+    #' @description Group cols
     #' @param cols cols
     #' @param collapsed collapsed
     #' @param levels levels
@@ -2947,8 +2916,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description ungroup cols
-    #' @param sheet sheet
-    #' @param cols = cols
+    #' @param cols columns
     #' @return The `wbWorkbook` object
     ungroup_cols = function(sheet = current_sheet(), cols) {
       sheet <- private$get_sheet_index(sheet)
@@ -3010,9 +2978,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     # TODO wb_group_rows() and group_cols() are very similiar.  Can problem turn
-    #' @description
-    #' Group cols
-    #' @param sheet sheet
+    #' @description Set column widths
     #' @param cols cols
     #' @param widths Width of columns
     #' @param hidden A logical vector to determine which cols are hidden; values
@@ -3084,9 +3050,7 @@ wbWorkbook <- R6::R6Class(
     # TODO groupRows() and groupCols() are very similiar.  Can problem turn
     # these into some wrappers for another method
 
-    #' @description
-    #' Group rows
-    #' @param sheet sheet
+    #' @description Group rows
     #' @param rows rows
     #' @param collapsed collapsed
     #' @param levels levels
@@ -3174,7 +3138,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description ungroup rows
-    #' @param sheet sheet
     #' @param rows rows
     #' @return The `wbWorkbook` object
     ungroup_rows = function(sheet = current_sheet(), rows) {
@@ -3208,8 +3171,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description
-    #' Remove a worksheet
+    #' @description Remove a worksheet
     #' @param sheet The worksheet to delete
     #' @return The `wbWorkbook` object, invisibly
     remove_worksheet = function(sheet = current_sheet()) {
@@ -3396,8 +3358,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Adds data validation
-    #' @param sheet sheet
-    #' @param dims cell dimension
     #' @param type type
     #' @param operator operator
     #' @param value value
@@ -3409,7 +3369,6 @@ wbWorkbook <- R6::R6Class(
     #' @param error The error text
     #' @param prompt_title The prompt title
     #' @param prompt The prompt text
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_data_validation = function(
       sheet          = current_sheet(),
@@ -3530,10 +3489,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Set cell merging for a sheet
-    #' @param sheet sheet
-    #' @param dims worksheet cells
     #' @param solve logical if intersecting cells should be solved
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
 
@@ -3567,9 +3523,6 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Removes cell merging for a sheet
-    #' @param sheet sheet
-    #' @param dims worksheet cells
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     unmerge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
 
@@ -3602,12 +3555,10 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Set freeze panes for a sheet
-    #' @param sheet sheet
     #' @param first_active_row first_active_row
     #' @param first_active_col first_active_col
     #' @param first_row first_row
     #' @param first_col first_col
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     freeze_pane = function(
       sheet            = current_sheet(),
@@ -3703,10 +3654,8 @@ wbWorkbook <- R6::R6Class(
     ## comment ----
 
     #' @description Add comment
-    #' @param sheet sheet
     #' @param dims row and column as spreadsheet dimension, e.g. "A1"
     #' @param comment a comment to apply to the worksheet
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_comment = function(
         sheet   = current_sheet(),
@@ -3738,9 +3687,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Remove comment
-    #' @param sheet sheet
     #' @param dims row and column as spreadsheet dimension, e.g. "A1"
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     remove_comment = function(
       sheet      = current_sheet(),
@@ -3777,8 +3724,6 @@ wbWorkbook <- R6::R6Class(
 
 
     #' @description add threaded comment to worksheet
-    #' @param sheet a worksheet
-    #' @param dims a cell
     #' @param comment the comment to add
     #' @param person_id the person Id this should be added for
     #' @param reply logical if the comment is a reply
@@ -3922,13 +3867,10 @@ wbWorkbook <- R6::R6Class(
     # TODO remove_conditional_formatting?
 
     #' @description Add conditional formatting
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param rule rule
     #' @param style style
     #' @param type type
     #' @param params Additional parameters
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_conditional_formatting = function(
         sheet  = current_sheet(),
@@ -4249,15 +4191,12 @@ wbWorkbook <- R6::R6Class(
 
     #' @description
     #' Insert an image into a sheet
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param file file
     #' @param width width
     #' @param height height
     #' @param row_offset,col_offset offsets
     #' @param units units
     #' @param dpi dpi
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
       sheet = current_sheet(),
@@ -4399,15 +4338,12 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Add plot. A wrapper for add_image()
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param width width
     #' @param height height
     #' @param row_offset,col_offset offsets
     #' @param file_type fileType
     #' @param units units
     #' @param dpi dpi
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_plot = function(
       sheet      = current_sheet(),
@@ -4458,9 +4394,8 @@ wbWorkbook <- R6::R6Class(
       fileName <- tempfile(pattern = "figureImage", fileext = paste0(".", file_type))
 
       # Workaround for wrapper test. Otherwise tempfile names differ
-      if (requireNamespace("testthat")) {
-        if (testthat::is_testing()) fileName <- getOption("openxlsx2.temp_png")
-      }
+
+      if (identical(Sys.getenv("TESTTHAT"), "true")) fileName <- getOption("openxlsx2.temp_png")
 
       # TODO use switch()
       if (fileType == "bmp") {
@@ -4491,11 +4426,8 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Add xml drawing
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param xml xml
     #' @param col_offset,row_offset offsets for column and row
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_drawing = function(
       sheet      = current_sheet(),
@@ -4661,13 +4593,9 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description Add xml drawing
     #' @description Add xml chart
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param xml xml
     #' @param col_offset,row_offset positioning parameters
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_chart_xml = function(
       sheet      = current_sheet(),
@@ -4733,11 +4661,9 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Add mschart chart to the workbook
-    #' @param sheet the sheet on which the graph will appear
     #' @param dims the dimensions where the sheet will appear
     #' @param graph mschart graph
     #' @param col_offset,row_offset offsets for column and row
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_mschart = function(
       sheet      = current_sheet(),
@@ -4790,10 +4716,7 @@ wbWorkbook <- R6::R6Class(
       }
     },
 
-    #' @description
-    #' add form control to workbook
-    #' @param sheet sheet
-    #' @param dims dims
+    #' @description Add form control to workbook
     #' @param type type
     #' @param text text
     #' @param link link
@@ -5031,7 +4954,6 @@ wbWorkbook <- R6::R6Class(
     #' @param file_sharing file_sharing
     #' @param username username
     #' @param read_only_recommended read_only_recommended
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     protect = function(
       protect               = TRUE,
@@ -5084,7 +5006,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description protect worksheet
-    #' @param sheet sheet
     #' @param protect protect
     #' @param password password
     #' @param properties A character vector of properties to lock.  Can be one
@@ -5177,7 +5098,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param creator,title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
+    #' @param title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
     set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
       # get an xml output or create one
 
@@ -5301,7 +5222,6 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Change the last modified by
     #' @param name A new value
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     set_last_modified_by = function(name, ...) {
       if (missing(name) && list(...)$LastModifiedBy) {
@@ -5312,7 +5232,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description page_setup()
-    #' @param sheet sheet
     #' @param orientation orientation
     #' @param scale scale
     #' @param left left
@@ -5328,7 +5247,6 @@ wbWorkbook <- R6::R6Class(
     #' @param print_title_cols printTitleCols
     #' @param summary_row summaryRow
     #' @param summary_col summaryCol
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     page_setup = function(
       sheet            = current_sheet(),
@@ -5486,14 +5404,12 @@ wbWorkbook <- R6::R6Class(
     ## header footer ----
 
     #' @description Sets headers and footers
-    #' @param sheet sheet
     #' @param header header
     #' @param footer footer
     #' @param even_header evenHeader
     #' @param even_footer evenFooter
     #' @param first_header firstHeader
     #' @param first_footer firstFooter
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     set_header_footer = function(
       sheet = current_sheet(),
@@ -5560,7 +5476,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description get tables
-    #' @param sheet sheet
     #' @return The sheet tables.  `character()` if empty
     get_tables = function(sheet = current_sheet()) {
       if (length(sheet) != 1) {
@@ -5580,7 +5495,6 @@ wbWorkbook <- R6::R6Class(
 
 
     #' @description remove tables
-    #' @param sheet sheet
     #' @param table table
     #' @param remove_data removes the data as well
     #' @return The `wbWorkbook` object
@@ -5629,7 +5543,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description add filters
-    #' @param sheet sheet
     #' @param rows rows
     #' @param cols cols
     #' @return The `wbWorkbook` object
@@ -5653,7 +5566,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description remove filters
-    #' @param sheet sheet
     #' @return The `wbWorkbook` object
     remove_filter = function(sheet = current_sheet()) {
       for (s in private$get_sheet_index(sheet)) {
@@ -5664,7 +5576,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description grid lines
-    #' @param sheet sheet
     #' @param show show
     #' @param print print
     #' @return The `wbWorkbook` object
@@ -5687,7 +5598,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description grid lines
-    #' @param sheet sheet
     #' @param show show
     #' @param print print
     #' @return The `wbWorkbook` object
@@ -5699,8 +5609,6 @@ wbWorkbook <- R6::R6Class(
     ### named region ----
 
     #' @description add a named region
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param name name
     #' @param local_sheet local_sheet
     #' @param overwrite overwrite
@@ -5717,7 +5625,6 @@ wbWorkbook <- R6::R6Class(
     #' @param vb_procedure vb procedure
     #' @param workbook_parameter workbookParameter
     #' @param xml xml
-    #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_named_region = function(
       sheet = current_sheet(),
@@ -5846,7 +5753,6 @@ wbWorkbook <- R6::R6Class(
       z
     },
     #' @description remove a named region
-    #' @param sheet sheet
     #' @param name name
     #' @return The `wbWorkbook` object
     remove_named_region = function(sheet = current_sheet(), name = NULL) {
@@ -5912,7 +5818,6 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Set sheet visibility
     #' @param value value
-    #' @param sheet sheet
     #' @return The `wbWorkbook` object
     set_sheet_visibility = function(sheet = current_sheet(), value) {
       if (length(value) != length(sheet)) {
@@ -5955,7 +5860,6 @@ wbWorkbook <- R6::R6Class(
     ## page breaks ----
 
     #' @description Add a page break
-    #' @param sheet sheet
     #' @param row row
     #' @param col col
     #' @return The `wbWorkbook` object
@@ -5966,8 +5870,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description clean sheet (remove all values)
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param numbers remove all numbers
     #' @param characters remove all characters
     #' @param styles remove all styles
@@ -5993,37 +5895,10 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description create borders for cell region
-    #' @param sheet a worksheet
     #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
     #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
     #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
-    #' @param ... ...
-    #' @examples
-    #'
-    #' wb <- wb_workbook()
-    #' wb$add_worksheet("S1")$add_data("S1", mtcars)
-    #' wb$add_border(1, dims = "A1:K1",
-    #'  left_border = NULL, right_border = NULL,
-    #'  top_border = NULL, bottom_border = "double")
-    #' wb$add_border(1, dims = "A5",
-    #'  left_border = "dotted", right_border = "dotted",
-    #'  top_border = "hair", bottom_border = "thick")
-    #' wb$add_border(1, dims = "C2:C5")
-    #' wb$add_border(1, dims = "G2:H3")
-    #' wb$add_border(1, dims = "G12:H13",
-    #'  left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
-    #'  top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
-    #' wb$add_border(1, dims = "A20:C23")
-    #' wb$add_border(1, dims = "B12:D14",
-    #'  left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
-    #'  bottom_color = wb_color(hex = "FFFF0000"))
-    #' wb$add_border(1, dims = "D28:E28")
-    #' # if (interactive()) wb$open()
-    #'
-    #' wb <- wb_workbook()
-    #' wb$add_worksheet("S1")$add_data("S1", mtcars)
-    #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
-    #' @return The `wbWorksheetObject`, invisibly
+    #' @return The `wbWorkbook`, invisibly
     add_border = function(
       sheet         = current_sheet(),
       dims          = "A1",
@@ -6421,8 +6296,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description provide simple fill function
-    #' @param sheet the worksheet
-    #' @param dims the cell range
     #' @param color the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")
     #' @param pattern various default "none" but others are possible:
     #'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
@@ -6432,13 +6305,6 @@ wbWorkbook <- R6::R6Class(
     #' @param gradient_fill a gradient fill xml pattern.
     #' @param every_nth_col which col should be filled
     #' @param every_nth_row which row should be filled
-    #' @param ... ...
-    #' @examples
-    #'  # example from the gradient fill manual page
-    #'  gradient_fill <- "<gradientFill degree=\"90\">
-    #'    <stop position=\"0\"><color rgb=\"FF92D050\"/></stop>
-    #'    <stop position=\"1\"><color rgb=\"FF0070C0\"/></stop>
-    #'   </gradientFill>"
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
         sheet         = current_sheet(),
@@ -6488,8 +6354,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description provide simple font function
-    #' @param sheet the worksheet
-    #' @param dims the cell range
     #' @param name font name: default "Calibri"
     #' @param color rgb color: default "FF000000"
     #' @param size font size: default "11",
@@ -6505,11 +6369,7 @@ wbWorkbook <- R6::R6Class(
     #' @param shadow shadow
     #' @param extend extend
     #' @param vert_align vertical alignment
-    #' @param ... ...
-    #' @examples
-    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
-    #' @return The `wbWorksheetObject`, invisibly
+    #' @return The `wbWorkbook`, invisibly
     add_font = function(
         sheet      = current_sheet(),
         dims       = "A1",
@@ -6577,12 +6437,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description provide simple number format function
-    #' @param sheet the worksheet
-    #' @param dims the cell range
     #' @param numfmt number format id or a character of the format
-    #' @examples
-    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_numfmt("S1", "A1:A33", numfmt = 1)
     #' @return The `wbWorksheetObject`, invisibly
     add_numfmt = function(
         sheet = current_sheet(),
@@ -6633,8 +6488,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description provide simple cell style format function
-    #' @param sheet the worksheet
-    #' @param dims the cell range
     #' @param ext_lst extension list something like `<extLst>...</extLst>`
     #' @param hidden logical cell is hidden
     #' @param horizontal align content horizontal ('left', 'center', 'right')
@@ -6662,15 +6515,7 @@ wbWorkbook <- R6::R6Class(
     #' @param font_id font ID to apply
     #' @param num_fmt_id number format ID to apply
     #' @param xf_id xf ID to apply
-    #' @param ... additional arguments
-    #' @examples
-    #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
-    #'  wb$add_cell_style("S1", "A1:K1",
-    #'                    textRotation = "45",
-    #'                    horizontal = "center",
-    #'                    vertical = "center",
-    #'                    wrapText = "1")
-    #' @return The `wbWorksheetObject`, invisibly
+    #' @return The `wbWorkbook` object, invisibly
     add_cell_style = function(
         sheet               = current_sheet(),
         dims                = "A1",
@@ -6754,8 +6599,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description get sheet style
-    #' @param sheet sheet
-    #' @param dims dims
     #' @return a character vector of cell styles
     get_cell_style = function(sheet = current_sheet(), dims) {
 
@@ -6775,8 +6618,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description set sheet style
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param style style
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
@@ -6798,8 +6639,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description set sheet style
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param name name
     #' @param font_name,font_size optional else the default of the theme
     #' @return The `wbWorkbook`, invisibly
@@ -6970,7 +6809,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description apply sparkline to worksheet
-    #' @param sheet the worksheet you are using
     #' @param sparklines sparkline created by `create_sparkline()`
     add_sparklines = function(
       sheet = current_sheet(),
@@ -6982,8 +6820,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Ignore error on worksheet
-    #' @param sheet sheet
-    #' @param dims dims
     #' @param calculated_column calculatedColumn
     #' @param empty_cell_reference emptyCellReference
     #' @param eval_error evalError
@@ -6993,7 +6829,6 @@ wbWorkbook <- R6::R6Class(
     #' @param number_stored_as_text numberStoredAsText
     #' @param two_digit_text_year twoDigitTextYear
     #' @param unlocked_formula unlockedFormula
-    #' @param ... additional arguments
     add_ignore_error = function(
       sheet                 = current_sheet(),
       dims                  = "A1",
@@ -7025,7 +6860,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description add sheetview
-    #' @param sheet sheet
     #' @param color_id,default_grid_color Integer: A color, default is 64
     #' @param right_to_left Logical: if TRUE column ordering is right  to left
     #' @param show_formulas Logical: if TRUE cell formulas are shown
@@ -7041,7 +6875,6 @@ wbWorkbook <- R6::R6Class(
     #' @param window_protection Logical: if TRUE the panes are protected
     #' @param workbook_view_id integer: Pointing to some other view inside the workbook
     #' @param zoom_scale,zoom_scale_normal,zoom_scale_page_layout_view,zoom_scale_sheet_layout_view Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
-    #' @param ... additional arguments
     #' @return The `wbWorksheetObject`, invisibly
     set_sheetview = function(
       sheet                    = current_sheet(),
@@ -7161,7 +6994,6 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description description set active sheet
-    #' @param sheet a worksheet
     set_active_sheet = function(sheet = current_sheet()) {
       sheet <- self$validate_sheet(sheet)
       self$set_bookview(active_tab = sheet - 1L)
@@ -7182,8 +7014,7 @@ wbWorkbook <- R6::R6Class(
       z
     },
 
-    #' description set selected sheet
-    #' @param sheet a worksheet
+    #' @description set selected sheet
     set_selected = function(sheet = current_sheet()) {
 
       sheet <- self$validate_sheet(sheet)
