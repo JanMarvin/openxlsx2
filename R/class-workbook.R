@@ -1029,6 +1029,11 @@ wbWorkbook <- R6::R6Class(
           else
             newid <- 1L
 
+
+          if (stri_join(tbls$tab_name, "_n") %in% self$tables$tab_name) {
+            tbls$tab_name <- stri_join(tbls$tab_name, "1")
+          }
+
           # add _n to all table names found
           tbls$tab_name <- stri_join(tbls$tab_name, "_n")
           tbls$tab_sheet <- newSheetIndex
