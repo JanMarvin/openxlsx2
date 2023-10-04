@@ -1403,13 +1403,13 @@ set_cellstyles <- function(wb, style) {
     }
 
     has_fill <- FALSE
-    if (length(style[[i]]$fill_xml)) {
+    if (length(style[[i]]$fill_xml) && style[[i]]$fill_xml != wb$styles_mgr$styles$fills[1]) {
       has_fill <- TRUE
       wb$styles_mgr$add(style[[i]]$fill_xml, session_id)
     }
 
     has_font <- FALSE
-    if (length(style[[i]]$font_xml)) {
+    if (length(style[[i]]$font_xml) && style[[i]]$font_xml != wb$styles_mgr$styles$fonts[1]) {
       has_font <- TRUE
       wb$styles_mgr$add(style[[i]]$font_xml, session_id)
     }
@@ -1417,7 +1417,16 @@ set_cellstyles <- function(wb, style) {
     has_numfmt <- FALSE
     if (length(style[[i]]$numfmt_xml)) {
       has_numfmt <- TRUE
-      wb$styles_mgr$add(style[[i]]$numfmt_xml, session_id)
+      numfmt_xml <- style[[i]]$numfmt_xml
+      # assuming all numfmts with ids >= 164.
+      # We have to create unique numfmt ids when cloning numfmts. Otherwise one
+      # ids could point to more than one format code and the output would look
+      # broken.
+      fmtCode <- xml_attr(numfmt_xml, "numFmt")[[1]][["formatCode"]]
+      next_id <- max(163L, as.integer(wb$styles_mgr$get_numfmt()$id)) + 1L
+      numfmt_xml <- create_numfmt(numFmtId = next_id, formatCode = fmtCode)
+
+      wb$styles_mgr$add(numfmt_xml, session_id)
     }
 
     ## create new xf_df. This has to reference updated style ids
@@ -1498,5 +1507,7 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   new_ids[is.na(new_ids)] <- ""
   cc$v[cc$c_t == "s"] <- new_ids
   wb_new$worksheets[[sheet_id]]$sheet_data$cc <- cc
+
+  # print(sprintf("cloned: %s", length(new_ids)))
 
 }

@@ -24,6 +24,13 @@ Create a copy of a worksheet in the same \code{wbWorkbook} object.
 Cloning is possible only to a limited extent. References to sheet names in
 formulas, charts, pivot tables, etc. may not be updated. Some elements like
 named ranges and slicers cannot be cloned yet.
+
+Cloning from another workbook is still an experimental feature and might not
+work reliably. Cloning data, media, charts and tables should work. Slicers
+and pivot tables as well as everything everything relying on dxfs styles
+(e.g. custom table styles and conditional formatting) is currently not
+implemented.
+Formula references are not updated to reflect interactions between workbooks.
 }
 \examples{
 # Create a new workbook
@@ -34,6 +41,23 @@ wb$add_worksheet("Sheet 1")
 wb$clone_worksheet("Sheet 1", new = "Sheet 2")
 # Take advantage of waiver functions
 wb$clone_worksheet(old = "Sheet 1")
+
+## cloning from another workbook
+
+# create a workbook
+wb <- wb_workbook()$
+add_worksheet("NOT_SUM")$
+  add_data(x = head(iris))$
+  add_fill(dims = "A1:B2", color = wb_color("yellow"))$
+  add_border(dims = "B2:C3")
+
+# we will clone this styled chart into another workbook
+fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+wb_from <- wb_load(fl)
+
+# clone styles and shared strings
+wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_from)
+
 }
 \seealso{
 Other workbook wrappers: 

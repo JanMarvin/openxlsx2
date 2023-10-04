@@ -144,3 +144,99 @@ test_that("wb_set_header_footer() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("cloning from workbooks works", {
+
+  ## FIXME these tests should be improved, right now they only check the
+  ## existance of a worksheet
+
+  # create a second workbook
+  wb <- wb_workbook()$
+    add_worksheet("NOT_SUM")$
+    add_data(x = head(iris))$
+    add_fill(dims = "A1:B2", color = wb_color("yellow"))$
+    add_border(dims = "B2:C3")
+
+  ## styled cells
+  fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  wb_in <- wb_load(fl)
+
+  wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in)
+  exp <- c("NOT_SUM", "SUM")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  wb$clone_worksheet(old = "SUM", new = "SUM_clone")
+  exp <- c("NOT_SUM", "SUM", "SUM_clone")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  wb$clone_worksheet(old = "SUM", new = "SUM2", from = wb_in)
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  ## clone table
+
+  wb_in <- wb_workbook()$add_worksheet("tab")$add_data_table(x = mtcars)
+
+  wb$clone_worksheet(old = "tab", new = "tab", from = wb_in)
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  # clone it twice
+  expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in))
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  ## clone a chart
+
+  skip_if_not_installed("mschart")
+  library(mschart)
+  ## Add mschart to worksheet (adds data and chart)
+  scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
+  scatter <- chart_settings(scatter, scatterstyle = "marker")
+
+  wb_ms <- wb_workbook() %>%
+    wb_add_worksheet("chart") %>%
+    wb_add_mschart(dims = "F4:L20", graph = scatter)
+
+  wb$clone_worksheet(old = "chart", new = "chart_1", from = wb_ms)
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  wb$clone_worksheet(old = "chart", new = "chart_2", from = wb_ms)
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  ## clone images
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  wb_img <- wb_workbook()$
+    add_worksheet()$
+    add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5)
+
+  wb$clone_worksheet(old = "Sheet 1", new = "img", from = wb_img)
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  wb$clone_worksheet(old = "Sheet 1", new = "img2", from = wb_img)
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+  ## clone drawing, borders function and shared strings
+  wb_ex <- wb_load(testfile_path("loadExample.xlsx"))
+
+  wb$clone_worksheet(old = "testing", new = "test", from = wb_ex)
+  exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2", "test")
+  got <- wb$get_sheet_names() %>% unname()
+  expect_equal(exp, got)
+
+})
