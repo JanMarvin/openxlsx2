@@ -125,7 +125,6 @@ greatful
 gridLines
 hasDrawing
 hdpi
-headFoot
 headerRow
 hms
 lastColumn
@@ -224,7 +223,6 @@ tableStyle
 tablename
 textLength
 th
-threadComments
 totalRow
 totalsRowCount
 twoCellAnchor

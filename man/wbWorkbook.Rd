@@ -413,9 +413,13 @@ The \code{wbWorkbook} object, invisibly
 \if{html}{\out{<a id="method-wbWorkbook-clone_worksheet"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-clone_worksheet}{}}}
 \subsection{Method \code{clone_worksheet()}}{
-Clone a workbooksheet
+Clone a workbooksheet to another workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_worksheet(old = current_sheet(), new = next_sheet())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$clone_worksheet(
+  old = current_sheet(),
+  new = next_sheet(),
+  from = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -424,6 +428,8 @@ Clone a workbooksheet
 \item{\code{old}}{name of worksheet to clone}
 
 \item{\code{new}}{name of new worksheet to add}
+
+\item{\code{from}}{name of new worksheet to add}
 }
 \if{html}{\out{</div>}}
 }

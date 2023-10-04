@@ -1338,3 +1338,176 @@ basename2 <- function(path) {
     return(basename(path))
   }
 }
+
+## get cell styles for a worksheet
+get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
+
+  st_ids <- NULL
+  if (missing(dims)) {
+    st_ids <- styles_on_sheet(wb = wb, sheet = sheet) %>% as.character()
+    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
+  } else {
+    xf_xml <- get_cell_styles(wb = wb, sheet = sheet, cell = dims)
+  }
+
+  # returns NA if no style found
+  if (all(is.na(xf_xml))) return(NULL)
+
+  lst_out <- vector("list", length = length(xf_xml))
+
+  for (i in seq_along(xf_xml)) {
+
+    if (is.na(xf_xml[[i]])) next
+    xf_df <- read_xf(read_xml(xf_xml[[i]]))
+
+    border_id <- which(wb$styles_mgr$border$id == xf_df$borderId)
+    fill_id   <- which(wb$styles_mgr$fill$id == xf_df$fillId)
+    font_id   <- which(wb$styles_mgr$font$id == xf_df$fontId)
+    numFmt_id <- which(wb$styles_mgr$numfmt$id == xf_df$numFmtId)
+
+    border_xml <- wb$styles_mgr$styles$borders[border_id]
+    fill_xml   <- wb$styles_mgr$styles$fills[fill_id]
+    font_xml   <- wb$styles_mgr$styles$fonts[font_id]
+    numfmt_xml <- wb$styles_mgr$styles$numFmts[numFmt_id]
+
+    out <- list(
+      xf_df,
+      border_xml,
+      fill_xml,
+      font_xml,
+      numfmt_xml
+    )
+    names(out) <- c("xf_df", "border_xml", "fill_xml", "font_xml", "numfmt_xml")
+    lst_out[[i]] <- out
+
+  }
+
+  attr(lst_out, "st_ids") <- st_ids
+
+  lst_out
+}
+
+## apply cell styles to a worksheet and return reference ids
+set_cellstyles <- function(wb, style) {
+
+  session_ids <- random_string(n = length(style))
+
+  for (i in seq_along(style)) {
+    session_id <- session_ids[i]
+
+    has_border <- FALSE
+    if (length(style[[i]]$border_xml)) {
+      has_border <- TRUE
+      wb$styles_mgr$add(style[[i]]$border_xml, session_id)
+    }
+
+    has_fill <- FALSE
+    if (length(style[[i]]$fill_xml) && style[[i]]$fill_xml != wb$styles_mgr$styles$fills[1]) {
+      has_fill <- TRUE
+      wb$styles_mgr$add(style[[i]]$fill_xml, session_id)
+    }
+
+    has_font <- FALSE
+    if (length(style[[i]]$font_xml) && style[[i]]$font_xml != wb$styles_mgr$styles$fonts[1]) {
+      has_font <- TRUE
+      wb$styles_mgr$add(style[[i]]$font_xml, session_id)
+    }
+
+    has_numfmt <- FALSE
+    if (length(style[[i]]$numfmt_xml)) {
+      has_numfmt <- TRUE
+      numfmt_xml <- style[[i]]$numfmt_xml
+      # assuming all numfmts with ids >= 164.
+      # We have to create unique numfmt ids when cloning numfmts. Otherwise one
+      # ids could point to more than one format code and the output would look
+      # broken.
+      fmtCode <- xml_attr(numfmt_xml, "numFmt")[[1]][["formatCode"]]
+      next_id <- max(163L, as.integer(wb$styles_mgr$get_numfmt()$id)) + 1L
+      numfmt_xml <- create_numfmt(numFmtId = next_id, formatCode = fmtCode)
+
+      wb$styles_mgr$add(numfmt_xml, session_id)
+    }
+
+    ## create new xf_df. This has to reference updated style ids
+    xf_df <- style[[i]]$xf_df
+
+    if (has_border)
+      xf_df$borderId <- wb$styles_mgr$get_border_id(session_id)
+
+    if (has_fill)
+      xf_df$fillId <- wb$styles_mgr$get_fill_id(session_id)
+
+    if (has_font)
+      xf_df$fontId <- wb$styles_mgr$get_font_id(session_id)
+
+    if (has_numfmt)
+      xf_df$numFmtId <- wb$styles_mgr$get_numfmt_id(session_id)
+
+    xf_xml <- write_xf(xf_df) # can be NULL
+
+    if (length(xf_xml))
+      wb$styles_mgr$add(xf_xml, session_id)
+  }
+
+  # return updated style id
+  st_ids <- wb$styles_mgr$get_xf_id(session_ids)
+
+  if (!is.null(attr(style, "st_ids"))) {
+    names(st_ids) <- attr(style, "st_ids")
+  }
+
+  st_ids
+}
+
+clone_shared_strings <- function(wb_old, old, wb_new, new) {
+
+  empty <- structure(list(), uniqueCount = 0)
+
+  # old has no shared strings
+  if (identical(wb_old$sharedStrings, empty)) {
+    return(NULL)
+  }
+
+  if (identical(wb_new$sharedStrings, empty)) {
+
+    wb_new$append(
+      "Content_Types",
+      "<Override PartName=\"/xl/sharedStrings.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml\"/>"
+    )
+
+    wb_new$append(
+      "workbook.xml.rels",
+      "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
+    )
+
+  }
+
+  sheet_id <- wb_old$validate_sheet(old)
+  cc <- wb_old$worksheets[[sheet_id]]$sheet_data$cc
+  sst_ids  <- as.integer(cc$v[cc$c_t == "s"]) + 1
+  sst_uni  <- sort(unique(sst_ids))
+  sst_old <- wb_old$sharedStrings[sst_uni]
+
+  old_len <- length(as.character(wb_new$sharedStrings))
+
+  wb_new$sharedStrings <- c(as.character(wb_new$sharedStrings), sst_old)
+  sst  <- xml_node_create("sst", xml_children = wb_new$sharedStrings)
+  text <- xml_si_to_txt(read_xml(sst))
+  attr(wb_new$sharedStrings, "uniqueCount") <- as.character(length(text))
+  attr(wb_new$sharedStrings, "text") <- text
+
+
+  sheet_id <- wb_new$validate_sheet(new)
+  cc <- wb_new$worksheets[[sheet_id]]$sheet_data$cc
+  # order ids and add new offset
+  ids <- as.integer(cc$v[cc$c_t == "s"]) + 1L
+  new_ids <- match(ids, sst_uni) + old_len - 1L
+  new_ids <- as.character(new_ids)
+  new_ids[is.na(new_ids)] <- ""
+  cc$v[cc$c_t == "s"] <- new_ids
+  wb_new$worksheets[[sheet_id]]$sheet_data$cc <- cc
+
+  # print(sprintf("cloned: %s", length(new_ids)))
+
+}

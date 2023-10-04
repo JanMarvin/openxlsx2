@@ -747,24 +747,35 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    # TODO should this be as simple as: wb$wb_add_worksheet(wb$worksheets[[1]]$clone()) ?
 
     #' @description
-    #' Clone a workbooksheet
+    #' Clone a workbooksheet to another workbook
     #' @param old name of worksheet to clone
     #' @param new name of new worksheet to add
-    clone_worksheet = function(old = current_sheet(), new = next_sheet()) {
+    #' @param from name of new worksheet to add
+    clone_worksheet = function(old = current_sheet(), new = next_sheet(), from = NULL) {
+
+      if (is.null(from)) {
+        from        <- self$clone()
+        external_wb <- FALSE
+        suffix      <- "_n"
+      } else {
+        external_wb <- TRUE
+        suffix      <- ""
+        assert_workbook(from)
+      }
 
       sheet <- new
       private$validate_new_sheet(sheet)
       new <- sheet
-      old <- private$get_sheet_index(old)
+
+      old <- from$.__enclos_env__$private$get_sheet_index(old)
 
       newSheetIndex <- length(self$worksheets) + 1L
       private$set_current_sheet(newSheetIndex)
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
-      if (!all(self$charts$chartEx == "")) {
+      if (!all(from$charts$chartEx == "")) {
         warning(
           "The file you have loaded contains chart extensions. At the moment,",
           " cloning worksheets can damage the output."
@@ -776,30 +787,30 @@ wbWorkbook <- R6::R6Class(
       new <- replace_legal_chars(new)
 
       ## copy visibility from cloned sheet!
-      visible <- rbindlist(xml_attr(self$workbook$sheets[[old]], "sheet"))$state
+      visible <- rbindlist(xml_attr(from$workbook$sheets[[old]], "sheet"))$state
 
       ##  Add sheet to workbook.xml
       self$append_sheets(
         xml_node_create(
           "sheet",
           xml_attributes = c(
-          name = new,
-          sheetId = sheetId,
-          state = visible,
-          `r:id` = paste0("rId", newSheetIndex)
+            name = new,
+            sheetId = sheetId,
+            state = visible,
+            `r:id` = paste0("rId", newSheetIndex)
           )
         )
       )
 
       ## append to worksheets list
-      self$append("worksheets", self$worksheets[[old]]$clone(deep = TRUE))
+      self$append("worksheets", from$worksheets[[old]]$clone(deep = TRUE))
 
       ## update content_tyes
       ## add a drawing.xml for the worksheet
       # FIXME only add what is needed. If no previous drawing is found, don't
       # add a new one
       self$append("Content_Types", c(
-        if (self$is_chartsheet[old]) {
+        if (from$is_chartsheet[old]) {
           sprintf('<Override PartName="/xl/chartsheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"/>', newSheetIndex)
         } else {
           sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex)
@@ -809,7 +820,7 @@ wbWorkbook <- R6::R6Class(
       ## Update xl/rels
       self$append(
         "workbook.xml.rels",
-        if (self$is_chartsheet[old]) {
+        if (from$is_chartsheet[old]) {
           sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet" Target="chartsheets/sheet%s.xml"/>', newSheetIndex)
         } else {
           sprintf('<Relationship Id="rId0" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet%s.xml"/>', newSheetIndex)
@@ -817,23 +828,23 @@ wbWorkbook <- R6::R6Class(
       )
 
       ## create sheet.rels to simplify id assignment
-      self$worksheets_rels[[newSheetIndex]] <- self$worksheets_rels[[old]]
+      self$worksheets_rels[[newSheetIndex]] <- from$worksheets_rels[[old]]
 
       old_drawing_sheet <- NULL
 
-      if (length(self$worksheets_rels[[old]])) {
-        relship <- rbindlist(xml_attr(self$worksheets_rels[[old]], "Relationship"))
+      if (length(from$worksheets_rels[[old]])) {
+        relship <- rbindlist(xml_attr(from$worksheets_rels[[old]], "Relationship"))
         relship$typ <- basename(relship$Type)
         old_drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
       }
 
-      if (length(old_drawing_sheet) && length(self$worksheets[[old_drawing_sheet]]$relships$drawing)) {
+      if (length(old_drawing_sheet) && length(from$worksheets[[old_drawing_sheet]]$relships$drawing)) {
 
-        drawing_id <- self$worksheets[[old_drawing_sheet]]$relships$drawing
+        drawing_id <- from$worksheets[[old_drawing_sheet]]$relships$drawing
 
         new_drawing_sheet <- length(self$drawings) + 1L
 
-        self$append("drawings_rels", self$drawings_rels[[drawing_id]])
+        self$append("drawings_rels", from$drawings_rels[[drawing_id]])
 
         # give each chart its own filename (images can re-use the same file, but charts can't)
         self$drawings_rels[[new_drawing_sheet]] <-
@@ -846,10 +857,10 @@ wbWorkbook <- R6::R6Class(
               chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
 
               for (cf in chartfiles) {
-                chartid <- nrow(self$charts) + 1L
+                chartid <- NROW(self$charts) + 1L
                 newname <- stri_join("chart", chartid, ".xml")
                 old_chart <- as.integer(gsub("\\D+", "", cf))
-                self$charts <- rbind(self$charts, self$charts[old_chart, ])
+                self$charts <- rbind(self$charts, from$charts[old_chart, ])
 
                 # Read the chartfile and adjust all formulas to point to the new
                 # sheet name instead of the clone source
@@ -862,13 +873,13 @@ wbWorkbook <- R6::R6Class(
                   x
                 }
 
-                old_sheet_name <- guard_ws(self$sheet_names[[old]])
+                old_sheet_name <- guard_ws(from$sheet_names[[old]])
                 new_sheet_name <- guard_ws(new)
 
                 ## we need to replace "'oldname'" as well as "oldname"
                 chart <- gsub(
-                  old_sheet_name,
-                  new_sheet_name,
+                  paste0(">", old_sheet_name, "!"),
+                  paste0(">", new_sheet_name, "!"),
                   chart,
                   perl = TRUE
                 )
@@ -895,7 +906,7 @@ wbWorkbook <- R6::R6Class(
           )
 
 
-        self$append("drawings", self$drawings[[drawing_id]])
+        self$append("drawings", from$drawings[[drawing_id]])
       }
 
       ## TODO Currently it is not possible to clone a sheet with a slicer in a
@@ -914,14 +925,14 @@ wbWorkbook <- R6::R6Class(
 
         newid <- length(self$slicers) + 1
 
-        cloned_slicers <- self$slicers[[old]]
+        cloned_slicers <- from$slicers[[old]]
         slicer_attr <- xml_attr(cloned_slicers, "slicers")
 
         # Replace name with name_n. This will prevent the slicer from loading,
         # but the xlsx file is not broken
         slicer_child <- xml_node(cloned_slicers, "slicers", "slicer")
         slicer_df <- rbindlist(xml_attr(slicer_child, "slicer"))[c("name", "cache", "caption", "rowHeight")]
-        slicer_df$name <- paste0(slicer_df$name, "_n")
+        slicer_df$name <- paste0(slicer_df$name, suffix)
         slicer_child <- df_to_xml("slicer", slicer_df)
 
         self$slicers[[newid]] <- xml_node_create("slicers", slicer_child, slicer_attr[[1]])
@@ -942,27 +953,27 @@ wbWorkbook <- R6::R6Class(
 
       # The IDs in the drawings array are sheet-specific, so within the new
       # cloned sheet the same IDs can be used => no need to modify drawings
-      vml_id <- self$worksheets[[old]]$relships$vml
-      cmt_id <- self$worksheets[[old]]$relships$comments
-      trd_id <- self$worksheets[[old]]$relships$threadedComment
+      vml_id <- from$worksheets[[old]]$relships$vml
+      cmt_id <- from$worksheets[[old]]$relships$comments
+      trd_id <- from$worksheets[[old]]$relships$threadedComment
 
       if (length(vml_id)) {
-        self$append("vml",      self$vml[[vml_id]])
-        self$append("vml_rels", self$vml_rels[[vml_id]])
-        self$worksheets[[old]]$relships$vml <- length(self$vml)
+        self$append("vml",      from$vml[[vml_id]])
+        self$append("vml_rels", from$vml_rels[[vml_id]])
+        self$worksheets[[newSheetIndex]]$relships$vml <- length(self$vml)
       }
 
       if (length(cmt_id)) {
-        self$append("comments", self$comments[cmt_id])
-        self$worksheets[[old]]$relships$comments <- length(self$comments)
+        self$append("comments", from$comments[cmt_id])
+        self$worksheets[[newSheetIndex]]$relships$comments <- length(self$comments)
       }
 
       if (length(trd_id)) {
-        self$append("threadComments", self$threadComments[cmt_id])
-        self$worksheets[[old]]$relships$threadedComment <- length(self$threadComments)
+        self$append("threadComments", from$threadComments[cmt_id])
+        self$worksheets[[newSheetIndex]]$relships$threadedComment <- length(self$threadComments)
       }
 
-      self$is_chartsheet[[newSheetIndex]]  <- self$is_chartsheet[[old]]
+      self$is_chartsheet[[newSheetIndex]]  <- from$is_chartsheet[[old]]
 
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
@@ -997,6 +1008,10 @@ wbWorkbook <- R6::R6Class(
       ## and in the worksheets[]$tableParts list. We also need to adjust the
       ## worksheets_rels and set the content type for the new table
 
+      ## TODO need to collect table dxfs styles, apply them to the workbook
+      ## and update the table.xml file with the new dxfs ids. Maybe we can
+      ## set these to the default value 0 to avoid broken spreadsheets
+
       # if we have tables to clone, remove every table referece from Relationship
       rid <- as.integer(sub("\\D+", "", get_relship_id(obj = self$worksheets_rels[[newSheetIndex]], x = "table")))
 
@@ -1005,24 +1020,36 @@ wbWorkbook <- R6::R6Class(
         self$worksheets_rels[[newSheetIndex]] <- relship_no(obj = self$worksheets_rels[[newSheetIndex]], x = "table")
 
         # make this the new sheets object
-        tbls <- self$tables[self$tables$tab_sheet == old, ]
+        tbls <- from$tables[from$tables$tab_sheet == old, ]
         if (NROW(tbls)) {
 
           # newid and rid can be different. ids must be unique
-          newid <- max(as.integer(rbindlist(xml_attr(self$tables$tab_xml, "table"))$id)) + seq_along(rid)
+          if (!is.null(self$tables$tab_xml))
+            newid <- max(as.integer(rbindlist(xml_attr(self$tables$tab_xml, "table"))$id)) + seq_along(rid)
+          else
+            newid <- 1L
+
+          if (any(stri_join(tbls$tab_name, suffix) %in% self$tables$tab_name)) {
+            tbls$tab_name <- stri_join(tbls$tab_name, "1")
+          }
 
           # add _n to all table names found
-          tbls$tab_name <- stri_join(tbls$tab_name, "_n")
+          tbls$tab_name <- stri_join(tbls$tab_name, suffix)
           tbls$tab_sheet <- newSheetIndex
           # modify tab_xml with updated name, displayName and id
-          tbls$tab_xml <- vapply(seq_len(nrow(tbls)), function(x) {
-            xml_attr_mod(tbls$tab_xml[x],
-                         xml_attributes = c(name = tbls$tab_name[x],
-                                            displayName = tbls$tab_name[x],
-                                            id = newid[x])
-            )
-          },
-          NA_character_
+          tbls$tab_xml <- vapply(
+            seq_len(nrow(tbls)),
+            function(x) {
+              xml_attr_mod(
+                tbls$tab_xml[x],
+                xml_attributes = c(
+                  name = tbls$tab_name[x],
+                  displayName = tbls$tab_name[x],
+                  id = newid[x]
+                )
+              )
+            },
+            NA_character_
           )
 
           # add new tables to old tables
@@ -1055,6 +1082,96 @@ wbWorkbook <- R6::R6Class(
       # TODO: The following items are currently NOT copied/duplicated for the cloned sheet:
       #   - Comments ???
       #   - Slicers
+
+      if (external_wb) {
+
+        if (length(from$media)) {
+
+          # TODO there might be other content types like png, wav etc.
+          if (!any(grepl("Default Extension=\"jpg\"", self$Content_Types))) {
+            self$append("Content_Types", "<Default Extension=\"jpg\" ContentType=\"image/jpg\"/>")
+          }
+
+          # we pick up the drawing relationship. This is something like: "../media/image1.jpg"
+          # because we might end up with multiple files with similar names, we have to rename
+          # the media file and update the drawing relationship
+          drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_sheet]], "Relationship"))
+          if (ncol(drels) && any(basename(drels$Type) == "image")) {
+            sel <- basename(drels$Type) == "image"
+            targets <- basename2(drels[sel]$Target)
+            media_names <- from$media[grepl(targets, names(from$media))]
+
+            onams    <- names(media_names)
+            mnams    <- vector("character", length(onams))
+            next_ids <- length(names(self$media)) + seq_along(mnams)
+
+            # we might have multiple media references on a sheet
+            for (i in seq_along(onams)) {
+              media_id   <- as.integer(gsub("\\D+", "", onams[i]))
+              # take filetype + number + file extension
+              # e.g. "image5.jpg" and return "image2.jpg"
+              mnams[i] <- gsub("(\\d+)\\.(\\w+)", paste0(next_ids[i], ".\\2"), onams[i])
+            }
+            names(media_names) <- mnams
+
+            # update relationship
+            self$drawings_rels[[new_drawing_sheet]] <- gsub(
+              pattern = onams,
+              replacement = mnams,
+              x = self$drawings_rels[[new_drawing_sheet]],
+            )
+
+            # append media
+            self$media <- append(self$media, media_names)
+          }
+        }
+
+
+        wrels <- rbindlist(xml_attr(self$worksheets_rels[[newSheetIndex]], "Relationship"))
+        if (ncol(wrels) && any(sel <- basename(wrels$Type) == "pivotTable")) {
+          ## Need to collect the pivot table xml below, apply it to the workbook
+          ## and update the references with the new IDs
+          # pt <- which(sel)
+          # self$pivotTables          <- from$pivotTables[pt]
+          # self$pivotTables.xml.rels <- from$pivotTables.xml.rels[pt]
+          # self$pivotDefinitions     <- from$pivotDefinitions[pt]
+          # self$pivotDefinitionsRels <- from$pivotDefinitionsRels[pt]
+          # self$pivotRecords         <- from$pivotRecords[pt]
+          #
+          # self$append(
+          #   "workbook.xml.rels",
+          #   "<Relationship Id=\"rId20001\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"pivotCache/pivotCacheDefinition1.xml\"/>"
+          # )
+          #
+          # self$append(
+          #   "Content_Types",
+          #   c(
+          #     "<Override PartName=\"/xl/pivotTables/pivotTable1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml\"/>",
+          #     "<Override PartName=\"/xl/pivotCache/pivotCacheDefinition1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml\"/>",
+          #     "<Override PartName=\"/xl/pivotCache/pivotCacheRecords1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml\"/>"
+          #   )
+          # )
+          #
+          # self$workbook$pivotCaches <- "<pivotCaches><pivotCache cacheId=\"0\" r:id=\"rId20001\"/></pivotCaches>"
+          # self$styles_mgr$styles$dxfs         <- from$styles_mgr$styles$dxfs
+          # self$styles_mgr$styles$cellStyles   <- from$styles_mgr$styles$cellStyles
+          # self$styles_mgr$styles$cellStyleXfs <- from$styles_mgr$styles$cellStyleXfs
+
+          warning("Cloning pivot tables over workbooks is not yet supported.")
+        }
+
+        # update sheet styles
+        style   <- get_cellstyle(from, sheet = old)
+        # only if styles are present
+        if (!is.null(style)) {
+          new_sty <- set_cellstyles(self, style = style)
+          new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s, names(new_sty))])
+          new_s[is.na(new_s)] <- ""
+          self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s <- new_s
+        }
+
+        clone_shared_strings(from, old, self, newSheetIndex)
+      }
 
       invisible(self)
     },
