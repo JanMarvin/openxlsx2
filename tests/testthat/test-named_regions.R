@@ -462,7 +462,8 @@ test_that("wb_named_regions() is not too noisy in its deprecation. (#764)", {
   expect_error(expect_warning(wb_get_named_regions(temp_file, x = 1)))
 
   opt_deprecation <- getOption("openxlsx2.soon_deprecated")
-  options("openxlsx2.soon_deprecated" = FALSE)
+  op <- options("openxlsx2.soon_deprecated" = FALSE)
+  on.exit(options(op), add = TRUE)
   wb <- wb_workbook()$add_worksheet()
   temp_file <- temp_xlsx()
   wb$save(temp_file)
@@ -473,7 +474,6 @@ test_that("wb_named_regions() is not too noisy in its deprecation. (#764)", {
   expect_warning(wb_get_named_regions(temp_file))
   expect_warning(expect_warning(wb_get_named_regions(x = temp_file)))
 
-  options("openxlsx2.soon_deprecated" = opt_deprecation)
 })
 
 test_that("named regions work.", {

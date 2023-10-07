@@ -68,7 +68,8 @@ test_that("set_sheetview", {
 
   exp <- "<sheetViews><sheetView rightToLeft=\"1\" showGridLines=\"1\" showRowColHeaders=\"1\" tabSelected=\"1\" workbookViewId=\"0\" zoomScale=\"100\"/></sheetViews>"
 
-  options("openxlsx2.rightToLeft" = TRUE)
+  op <- options("openxlsx2.rightToLeft" = TRUE)
+  on.exit(options(op), add = TRUE)
   wb <- wb_workbook()$add_worksheet()
 
   got <- wb$worksheets[[1]]$sheetViews

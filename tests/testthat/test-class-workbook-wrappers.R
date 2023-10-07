@@ -205,7 +205,8 @@ test_that("wb_add_image() is a wrapper", {
 test_that("wb_add_plot() is a wrapper", {
 
   # workaround: this filename is inserted to the wrapper function
-  options("openxlsx2.temp_png" = tempfile(pattern = "figureImage", fileext = ".png"))
+  op <- options("openxlsx2.temp_png" = tempfile(pattern = "figureImage", fileext = ".png"))
+  on.exit(options(op), add = TRUE)
 
   # create a device we can dev.copy() from
   grDevices::pdf(NULL) # do not create "Rplots.pdf"
@@ -388,8 +389,10 @@ test_that("wb_add_comment() is a wrapper", {
     wb = wb,
     params = list(comment = c1, dims = "A1")
   )
-  opt <- getOption("openxlsx2.creator")
-  options("openxlsx2.creator" = "user")
+
+  op <- options("openxlsx2.creator" = "user")
+  on.exit(options(op), add = TRUE)
+
   wb <- wb_workbook()$add_worksheet()
 
   expect_wrapper(
@@ -397,7 +400,7 @@ test_that("wb_add_comment() is a wrapper", {
     wb = wb,
     params = list(comment = "a new comment", dims = "A1")
   )
-  options("openxlsx2.creator" = opt)
+
 })
 
 # wb_remove_comment() -----------------------------------------------------

@@ -345,7 +345,9 @@ test_that("loading slicers works", {
   expect_equal(exp[-8], got)
 
 
-  options("openxlsx2.disableFullCalcOnLoad" = TRUE)
+  op <- options("openxlsx2.disableFullCalcOnLoad" = TRUE)
+  on.exit(options(op), add = TRUE)
+
   wb <- wb_load(file = fl, calc_chain = TRUE)
 
   exp <- "<calcPr calcId=\"152511\"/>"
