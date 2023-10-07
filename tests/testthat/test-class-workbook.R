@@ -874,3 +874,20 @@ expect_warning(
 )
 
 })
+
+test_that("wbWorkbook print works", {
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_worksheet("Sheet 1 (1)")$
+    add_worksheet("Sheet & NoSheet")
+
+  exp <- c("A Workbook object.",
+           " ",
+           "Worksheets:",
+           " Sheets: Sheet 1, Sheet 1 (1), Sheet & NoSheet ",
+           " Write order: 1, 2, 3")
+  got <- capture.output(wb)
+  expect_equal(exp, got)
+
+})

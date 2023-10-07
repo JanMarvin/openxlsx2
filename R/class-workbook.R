@@ -5031,7 +5031,7 @@ wbWorkbook <- R6::R6Class(
     #' Prints the `wbWorkbook` object
     #' @return The `wbWorkbook` object, invisibly; called for its side-effects
     print = function() {
-      exSheets <- self$get_sheet_names(escape = TRUE)
+      exSheets <- self$get_sheet_names()
       nSheets <- length(exSheets)
       nImages <- length(self$media)
       nCharts <- length(self$charts)
@@ -5041,7 +5041,7 @@ wbWorkbook <- R6::R6Class(
       ## worksheets
       if (nSheets > 0) {
         showText <- c(showText, "\nWorksheets:\n")
-        sheetTxt <- sprintf("Sheets: %s", paste(names(exSheets), collapse = " "))
+        sheetTxt <- sprintf("Sheets: %s", paste(exSheets, collapse = ", "))
 
         showText <- c(showText, sheetTxt, "\n")
       } else {
