@@ -5216,8 +5216,21 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Set a property of a workbook
     #' @param title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
-    set_properties = function(creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
-      # get an xml output or create one
+    set_properties = function(
+      creator          = NULL,
+      title            = NULL,
+      subject          = NULL,
+      category         = NULL,
+      datetime_created = Sys.time(),
+      modifier         = NULL,
+      keywords         = NULL,
+      comments         = NULL,
+      manager          = NULL,
+      company          = NULL
+    ) {
+
+      datetime_created <- getOption("openxlsx2.datetimeCreated") %||%
+        datetime_created
 
       core_dctitle <- "dc:title"
       core_subject <- "dc:subject"
@@ -5229,6 +5242,7 @@ wbWorkbook <- R6::R6Class(
       core_modifid <- "dcterms:modified"
       core_categor <- "cp:category"
 
+      # get an xml output or create one
       if (!is.null(self$core)) {
         nams <- xml_node_name(self$core, "cp:coreProperties")
         xml_properties <- vapply(nams, function(x) {
