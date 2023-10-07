@@ -113,7 +113,7 @@ wb
 #> A Workbook object.
 #>  
 #> Worksheets:
-#>  Sheets: Sheet1 Sheet2 
+#>  Sheets: Sheet1, Sheet2 
 #>  Write order: 1, 2
 
 # read a data frame
