@@ -311,7 +311,8 @@ test_that("writeData() forces evaluation of x (#264)", {
 test_that("write character numerics with a correct cell style", {
 
   ## current default
-  options("openxlsx2.string_nums" = 0)
+  op <- options("openxlsx2.string_nums" = 0)
+  on.exit(options(op), add = TRUE)
 
   wb <- wb_workbook() %>%
     wb_add_worksheet() %>%
@@ -595,8 +596,11 @@ test_that("writing in specific encoding works", {
   loc <- Sys.getlocale("LC_CTYPE")
   Sys.setlocale("LC_CTYPE", "")
 
-  options("openxlsx2.force_utf8_encoding" = TRUE)
-  options("openxlsx2.native_encoding" = "CP1251")
+  op <- options(
+    "openxlsx2.force_utf8_encoding" = TRUE,
+    "openxlsx2.native_encoding" = "CP1251"
+  )
+  on.exit(options(op), add = TRUE)
 
   # a cyrillic string: https://github.com/JanMarvin/openxlsx2/issues/640
   enc_str <- as.raw(c(0xd0, 0xb0, 0xd0, 0xb1, 0xd0, 0xb2, 0xd0, 0xb3, 0xd0,

@@ -1,5 +1,6 @@
 test_that("Writing Posixct with write_data & write_datatable", {
-  options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
+  op <- options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
+  on.exit(options(op), add = TRUE)
 
   tstart <- strptime("30/05/2017 08:30", "%d/%m/%Y %H:%M", tz = "CET")
   TimeDT <- c(0, 5, 10, 15, 30, 60, 120, 180, 240, 480, 720, 1440) * 60 + tstart
@@ -20,12 +21,12 @@ test_that("Writing Posixct with write_data & write_datatable", {
   expect_equal(wd$v[[3]], "42885.3541666667")
   expect_equal(wd$is[[4]], "<is><t>2017-05-30 08:30</t></is>")
 
-  options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 })
 
 # missing datetime is not yet implemented
 test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
-  options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
+  op <- options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
+  on.exit(options(op), add = TRUE)
 
   tstart1 <- as.POSIXct("12/03/2018 08:30", format = "%d/%m/%Y %H:%M")
   tstart2 <- as.POSIXct("10/03/2018 08:30", format = "%d/%m/%Y %H:%M")
@@ -68,5 +69,4 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   got <- wb_s2$timetxt
   expect_equal(exp, got)
 
-  options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")
 })

@@ -131,8 +131,10 @@ test_that("wb_add_comment", {
 
 test_that("wb_add_comment() works without supplying a wbComment object.", {
   # Do not alter the workspace
-  opt <- getOption("openxlsx2.creator")
-  options("openxlsx2.creator" = "user")
+
+  op <- options("openxlsx2.creator" = "user")
+  on.exit(options(op), add = TRUE)
+
   # Using the new default values of wb_comment() (options("openxlsx2.creators))
   wb <- wb_workbook()$add_worksheet()$add_comment(comment = "this is a comment", dims = "A1")
 
@@ -147,7 +149,6 @@ test_that("wb_add_comment() works without supplying a wbComment object.", {
   wb3 <- wb_workbook()$add_worksheet()$add_comment(comment = "this is a comment")
   expect_equal(wb$comments, wb3$comments)
 
-  options("openxlsx2.creator" = opt)
 })
 
 

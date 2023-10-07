@@ -347,7 +347,8 @@ test_that("string formating", {
 
 test_that("outdec = \",\" works", {
 
-  options(OutDec = ",")
+  op <- options(OutDec = ",")
+  on.exit(options(op), add = TRUE)
 
   exp <- "[1] 1,1"
   got <- capture.output(print(1.1))
