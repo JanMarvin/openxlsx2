@@ -78,7 +78,7 @@ formatting of the original input file.</p>
 
 <dt>sheet</dt>
 <dd><p>optional sheet parameter. if this is applied, only the selected
-sheet will be loaded.</p></dd>
+sheet will be loaded. This can be a numeric, a string or <code>NULL</code>.</p></dd>
 
 
 <dt>data_only</dt>
@@ -113,6 +113,16 @@ Certain xlsx files created by third-party applications contain a namespace
 software and is not expected by <code>openxlsx2</code>. Therefore it is removed when the
 file is loaded into a workbook. Removal is generally expected to be safe,
 but the feature is still experimental.</p>
+<p>Initial support for binary openxml files (<code>xlsb</code>) has been added to the package.
+We parse the binary file format into pseudo-openxml files that we can import.
+Therefore, after importing, it is possible to interact with the file as if it
+had been provided as xlsx in the first place. This is of course slower than
+reading directly from the binary file. Our implementation is also still missing
+some features: some array formulas are still broken, conditional formatting and
+data validation are not implemented, nor are pivot tables and slicers.</p>
+<p>It is possible to import with <code>wb_load(data_only = TRUE, sheet = NULL)</code>. This
+way only a workbook skeleton is loaded. This can be useful if only some
+workbook properties are of interest.</p>
     </div>
 
     <div class="section level2">

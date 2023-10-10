@@ -61,14 +61,22 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li><p>It is no longer needed to manually create columns for <code><a href="../reference/grouping-wb.html">wb_group_cols()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/781" class="external-link">781</a></p></li>
+<ul><li><p>Basic support for cloning worksheets across workbooks was added in <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code>. This should work with tabular and formula data, images and charts. Support for more complex worksheets is known pending. <a href="https://github.com/JanMarvin/openxlsx2/pull/622" class="external-link">622</a></p></li>
+<li><p>Enable loading workbooks without sheets with <code>wb_load(sheet = NULL)</code>. This is helpful if the sheets contain a lot of data and only some general workbook data is of interest. <a href="https://github.com/JanMarvin/openxlsx2/pull/810" class="external-link">810</a></p></li>
+<li><p>It is no longer needed to manually create columns for <code><a href="../reference/grouping-wb.html">wb_group_cols()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/781" class="external-link">781</a></p></li>
+<li><p>It is now possible to sort pivot tables created by <code><a href="../reference/wb_add_pivot_table.html">wb_add_pivot_table()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/795" class="external-link">795</a></p></li>
 <li>
 <p>Basic support for the <code>xlsb</code> file format. We parse the binary file format into pseudo-openxml files that we can import. Therefore, after importing, it is possible to interact with the file as if it had been provided as <code>xlsx</code> in the first place. This is of course slower than reading directly from the binary file. Our implementation is also still missing some features: some array formulas are still broken, conditional formatting and data validation are not implemented, nor are pivot tables and slicers. <a href="https://github.com/JanMarvin/openxlsx2/pull/688" class="external-link">688</a></p>
 <ul><li>Please note that <code>openxlsx2</code> is not a security tool and the <code>xlsb</code> parser was written with the intention of reading valid <code>xlsb</code> files on little endian systems.</li>
 <li>Please do not raise issues about <code>xlsb</code> in terms of speed or completeness of features of the openxml standard. If you have access to other file conversion tools, such as spreadsheet software, they may provide a better solution for your needs.</li>
 <li>Writing <code>xlsb</code> files is outside the scope of this project.</li>
 </ul></li>
-<li><p>New set of function <code><a href="../reference/properties-wb.html">wb_get_properties()</a></code>/<code><a href="../reference/properties-wb.html">wb_set_properties()</a></code> to view and modify workbook properties. <a href="https://github.com/JanMarvin/openxlsx2/pull/782" class="external-link">782</a></p></li>
+<li><p>New set of function <code><a href="../reference/properties-wb.html">wb_get_properties()</a></code>/<code><a href="../reference/properties-wb.html">wb_set_properties()</a></code> to view and modify workbook properties. <a href="https://github.com/JanMarvin/openxlsx2/pull/782" class="external-link">782</a> This was subsequently improved to handle more workbook properties like <code>company</code> and <code>manager</code>. (<a href="https://github.com/JanMarvin/openxlsx2/pull/799" class="external-link">799</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<ul><li><p>Removing the worksheet that is the active tab does no longer result in warnings in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/792" class="external-link">792</a></p></li>
+<li><p><code>update_table()</code> works now without if the table has no <code>autofilter</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/802" class="external-link">802</a></p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
