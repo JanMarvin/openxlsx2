@@ -10,9 +10,21 @@
 #' file is loaded into a workbook. Removal is generally expected to be safe,
 #' but the feature is still experimental.
 #'
+#' Initial support for binary openxml files (`xlsb`) has been added to the package.
+#' We parse the binary file format into pseudo-openxml files that we can import.
+#' Therefore, after importing, it is possible to interact with the file as if it
+#' had been provided as xlsx in the first place. This is of course slower than
+#' reading directly from the binary file. Our implementation is also still missing
+#' some features: some array formulas are still broken, conditional formatting and
+#' data validation are not implemented, nor are pivot tables and slicers.
+#'
+#' It is possible to import with `wb_load(data_only = TRUE, sheet = NULL)`. This
+#' way only a workbook skeleton is loaded. This can be useful if only some
+#' workbook properties are of interest.
+#'
 #' @param file A path to an existing .xlsx, .xlsm or .xlsb file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
-#'   sheet will be loaded.
+#'   sheet will be loaded. This can be a numeric, a string or `NULL`.
 #' @param data_only mode to import if only a data frame should be returned. This
 #'   strips the `wbWorkbook` to a bare minimum.
 #' @param calc_chain optionally you can keep the calculation chain intact. This

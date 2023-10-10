@@ -2,14 +2,26 @@
 
 ## New features
 
+* Basic support for cloning worksheets across workbooks was added in `wb_clone_worksheet()`. This should work with tabular and formula data, images and charts. Support for more complex worksheets is known pending. [622](https://github.com/JanMarvin/openxlsx2/pull/622)
+
+* Enable loading workbooks without sheets with `wb_load(sheet = NULL)`. This is helpful if the sheets contain a lot of data and only some general workbook data is of interest. [810](https://github.com/JanMarvin/openxlsx2/pull/810)
+
 * It is no longer needed to manually create columns for `wb_group_cols()`. [781](https://github.com/JanMarvin/openxlsx2/pull/781)
+
+* It is now possible to sort pivot tables created by `wb_add_pivot_table()`. [795](https://github.com/JanMarvin/openxlsx2/pull/795)
 
 * Basic support for the `xlsb` file format. We parse the binary file format into pseudo-openxml files that we can import. Therefore, after importing, it is possible to interact with the file as if it had been provided as `xlsx` in the first place. This is of course slower than reading directly from the binary file. Our implementation is also still missing some features: some array formulas are still broken, conditional formatting and data validation are not implemented, nor are pivot tables and slicers. [688](https://github.com/JanMarvin/openxlsx2/pull/688)
   * Please note that `openxlsx2` is not a security tool and the `xlsb` parser was written with the intention of reading valid `xlsb` files on little endian systems.
   * Please do not raise issues about `xlsb` in terms of speed or completeness of features of the openxml standard. If you have access to other file conversion tools, such as spreadsheet software, they may provide a better solution for your needs.
   * Writing `xlsb` files is outside the scope of this project.
 
-* New set of function `wb_get_properties()`/`wb_set_properties()` to view and modify workbook properties. [782](https://github.com/JanMarvin/openxlsx2/pull/782)
+* New set of function `wb_get_properties()`/`wb_set_properties()` to view and modify workbook properties. [782](https://github.com/JanMarvin/openxlsx2/pull/782) This was subsequently improved to handle more workbook properties like `company` and `manager`. ([799](https://github.com/JanMarvin/openxlsx2/pull/799), @olivroy)
+
+## Fixes
+
+* Removing the worksheet that is the active tab does no longer result in warnings in spreadsheet software. [792](https://github.com/JanMarvin/openxlsx2/pull/792)
+
+* `update_table()` works now without if the table has no `autofilter`. [802](https://github.com/JanMarvin/openxlsx2/pull/802)
 
 
 ***************************************************************************
