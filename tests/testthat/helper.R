@@ -1004,6 +1004,9 @@ testfile_path <- function(x, replace = FALSE) {
   if (Sys.getenv("openxlsx2_testthat_fullrun") == "") {
     if (isTRUE(as.logical(Sys.getenv("CI", "false")))) # on_ci()
       return(testthat::skip("Skip on CI"))
+
+    if (!interactive() && !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))) # on_cran()
+      return(testthat::skip("Skip on CRAN"))
   }
 
   # try to download
