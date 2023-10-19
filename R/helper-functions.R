@@ -632,7 +632,7 @@ pivot_def_rel <- function(n) sprintf("<Relationships xmlns=\"http://schemas.open
 
 pivot_xml_rels <- function(n) sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"../pivotCache/pivotCacheDefinition%s.xml\"/></Relationships>", n)
 
-get_items <- function(data, x, item_order) {
+get_items <- function(data, x, item_order, slicer = FALSE) {
   x <- abs(x)
 
   # check length, otherwise a certain spreadsheet software simply dies
@@ -649,22 +649,34 @@ get_items <- function(data, x, item_order) {
     order(distinct(data[[x]]))
   }
 
-  item <- sapply(
-    c(item_order - 1L, "default"),
-    # # TODO this sets the order of the pivot elements
-    # c(seq_along(unique(data[[x]])) - 1L, "default"),
-    function(val) {
-      if (val == "default")
-        xml_node_create("item", xml_attributes = c(t = val))
-      else
-        xml_node_create("item", xml_attributes = c(x = val))
-    },
-    USE.NAMES = FALSE
-  )
+  if (slicer) {
+    item <- sapply(
+      as.character(item_order - 1L),
+      function(val) {
+          xml_node_create("i", xml_attributes = c(x = val, s = "1"))
+      },
+      USE.NAMES = FALSE
+    )
+  } else {
+    item <- sapply(
+      c(item_order - 1L, "default"),
+      # # TODO this sets the order of the pivot elements
+      # c(seq_along(unique(data[[x]])) - 1L, "default"),
+      function(val) {
+        if (val == "default")
+          xml_node_create("item", xml_attributes = c(t = val))
+        else
+          xml_node_create("item", xml_attributes = c(x = val))
+      },
+      USE.NAMES = FALSE
+    )
+  }
+
   items <- xml_node_create(
     "items",
     xml_attributes = c(count = as.character(length(item))), xml_children = item
   )
+
   items
 }
 
