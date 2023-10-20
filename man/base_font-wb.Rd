@@ -66,6 +66,7 @@ Other workbook wrappers:
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
 \code{\link{wb_add_pivot_table}()},
+\code{\link{wb_add_slicer}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_copy_cells}()},

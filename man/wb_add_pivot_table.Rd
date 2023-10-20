@@ -14,7 +14,8 @@ wb_add_pivot_table(
   cols,
   data,
   fun,
-  params
+  params,
+  slicer
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ wb_add_pivot_table(
 \item{fun}{A vector of functions to be used with \code{data}}
 
 \item{params}{A list of parameters to modify pivot table creation.}
+
+\item{slicer}{a character object with names used as slicer}
 }
 \description{
 Add a pivot table to a worksheet. The data must be specified using \code{\link[=wb_data]{wb_data()}}
@@ -71,6 +74,7 @@ Other workbook wrappers:
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
+\code{\link{wb_add_slicer}()},
 \code{\link{wb_add_worksheet}()},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_copy_cells}()},
@@ -90,6 +94,7 @@ Other worksheet content functions:
 \code{\link{wb_add_data_table}()},
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
+\code{\link{wb_add_slicer}()},
 \code{\link{wb_add_thread}()},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_merge_cells}()}

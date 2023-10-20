@@ -317,6 +317,7 @@ wb_add_data_table <- function(
 #' @param data The column name(s) of `x` used as data
 #' @param fun A vector of functions to be used with `data`
 #' @param params A list of parameters to modify pivot table creation.
+#' @param slicer a character object with names used as slicer
 #' @seealso [wb_data()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
@@ -340,7 +341,8 @@ wb_add_pivot_table <- function(
     cols,
     data,
     fun,
-    params
+    params,
+    slicer
 ) {
   assert_workbook(wb)
   if (missing(filter)) filter <- substitute()
@@ -349,6 +351,7 @@ wb_add_pivot_table <- function(
   if (missing(data))   data   <- substitute()
   if (missing(fun))    fun    <- substitute()
   if (missing(params)) params <- substitute()
+  if (missing(slicer)) slicer <- substitute()
 
   wb$clone()$add_pivot_table(
     x      = x,
@@ -359,11 +362,48 @@ wb_add_pivot_table <- function(
     cols   = cols,
     data   = data,
     fun    = fun,
-    params = params
+    params = params,
+    slicer = slicer
   )
 
 }
 
+#' Add a slicer to a pivot table
+#'
+#' Add a slicer to a previously created pivot table.
+#'
+#' @param wb A Workbook object containing a #' worksheet.
+#' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
+#' @param sheet A worksheet containing a #'
+#' @param dims The worksheet cell where the pivot table is placed
+#' @param pivot_table the name of a pivot table on the selected sheet
+#' @param varname a variable used as slicer for the pivot table
+#' @param params a list of parameters to modify pivot table creation
+#' @family workbook wrappers
+#' @family worksheet content functions
+#' @export
+wb_add_slicer <- function(
+    wb,
+    x,
+    dims = "B12:D16",
+    sheet = current_sheet(),
+    pivot_table,
+    varname,
+    params
+) {
+  assert_workbook(wb)
+  if (missing(params)) params <- substitute()
+
+  wb$clone()$add_slicer(
+    x           = x,
+    sheet       = sheet,
+    dims        = dims,
+    pivot_table = pivot_table,
+    varname     = varname,
+    params      = params
+  )
+
+}
 
 #' Add a formula to a cell range in a worksheet
 #'

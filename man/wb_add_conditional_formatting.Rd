@@ -111,6 +111,7 @@ Other worksheet content functions:
 \code{\link{wb_add_data}()},
 \code{\link{wb_add_formula}()},
 \code{\link{wb_add_pivot_table}()},
+\code{\link{wb_add_slicer}()},
 \code{\link{wb_add_thread}()},
 \code{\link{wb_freeze_pane}()},
 \code{\link{wb_merge_cells}()}

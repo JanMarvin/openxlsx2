@@ -488,14 +488,14 @@ distinct <- function(x) {
   unis[dups == FALSE]
 }
 
-cacheFields <- function(wbdata, filter, rows, cols, data) {
+cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
   sapply(
     names(wbdata),
     function(x) {
 
       dat <- wbdata[[x]]
 
-      vars <- c(filter, rows, cols, data)
+      vars <- c(filter, rows, cols, data, slicer)
 
       is_vars <- x %in% vars
       is_data <- x %in% data &&
@@ -604,7 +604,7 @@ cacheFields <- function(wbdata, filter, rows, cols, data) {
   )
 }
 
-pivot_def_xml <- function(wbdata, filter, rows, cols, data) {
+pivot_def_xml <- function(wbdata, filter, rows, cols, data, slicer, pcid) {
 
   ref   <- dataframe_to_dims(attr(wbdata, "dims"))
   sheet <- attr(wbdata, "sheet")
@@ -614,8 +614,13 @@ pivot_def_xml <- function(wbdata, filter, rows, cols, data) {
     sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" mc:Ignorable="xr" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="1" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(wbdata)),
     '<cacheSource type="worksheet"><worksheetSource ref="', ref, '" sheet="', sheet, '"/></cacheSource>',
     '<cacheFields count="', count, '">',
-    paste0(cacheFields(wbdata, filter, rows, cols, data), collapse = ""),
+    paste0(cacheFields(wbdata, filter, rows, cols, data, slicer), collapse = ""),
     '</cacheFields>',
+    '<extLst>',
+    '<ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{725AE2AE-9491-48be-B2B4-4EB974FC3084}">',
+    sprintf('<x14:pivotCacheDefinition pivotCacheId="%s"/>', pcid),
+    '</ext>',
+    '</extLst>',
     '</pivotCacheDefinition>'
   )
 }
@@ -915,9 +920,9 @@ create_pivot_table <- function(
     )
   )
 
-  name <- "PivotStyleLight16"
-  if (!is.null(params$name))
-    name <- params$name
+  table_style <- "PivotStyleLight16"
+  if (!is.null(params$table_style))
+    table_style <- params$table_style
 
   dataCaption <- "Values"
   if (!is.null(params$dataCaption))
@@ -946,7 +951,7 @@ create_pivot_table <- function(
   pivotTableStyleInfo <- xml_node_create(
     "pivotTableStyleInfo",
     xml_attributes = c(
-      name           = name,
+      name           = table_style,
       showRowHeaders = showRowHeaders,
       showColHeaders = showColHeaders,
       showRowStripes = showRowStripes,
@@ -1017,6 +1022,10 @@ create_pivot_table <- function(
   if (!is.null(params$applyWidthHeightFormats))
     applyWidthHeightFormats <- params$applyWidthHeightFormats
 
+  pivot_table_name <- sprintf("PivotTable%s", n)
+  if (!is.null(params$name))
+    pivot_table_name <- params$name
+
   xml_node_create(
     "pivotTableDefinition",
     xml_attributes = c(
@@ -1024,7 +1033,7 @@ create_pivot_table <- function(
       `xmlns:mc`              = "http://schemas.openxmlformats.org/markup-compatibility/2006",
       `mc:Ignorable`          = "xr",
       `xmlns:xr`              = "http://schemas.microsoft.com/office/spreadsheetml/2014/revision",
-      name                    = sprintf("PivotTable%s", n),
+      name                    = pivot_table_name,
       cacheId                 = as.character(n),
       applyNumberFormats      = applyNumberFormats,
       applyBorderFormats      = applyBorderFormats,
@@ -1189,6 +1198,18 @@ to_string <- function(x) {
     if (length(sel_l)) chr[sel_l] <- names(lbls)
   }
   chr
+}
+
+# get the next free relationship id
+get_next_id <- function(x) {
+  if (length(x)) {
+    rlshp <- rbindlist(xml_attr(x, "Relationship"))
+    rlshp$id <- as.integer(gsub("\\D+", "", rlshp$Id))
+    next_id <- paste0("rId", max(rlshp$id) + 1L)
+  } else {
+    next_id <- "rId1"
+  }
+  next_id
 }
 
 #' create a guid string
