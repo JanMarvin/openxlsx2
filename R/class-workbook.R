@@ -1474,7 +1474,16 @@ wbWorkbook <- R6::R6Class(
     #' @param slicer a variable used as slicer for the pivot table
     #' @param params a list of parameters to modify pivot table creation
     #' @return The `wbWorkbook` object
-    add_slicer = function(x, dims = "B12:D16", sheet = current_sheet(), pivot_table, slicer, params) {
+    add_slicer = function(x, dims = "A1", sheet = current_sheet(), pivot_table, slicer, params) {
+
+      if (!grepl(":", dims)) {
+        ddims <- dims_to_rowcol(dims, as_integer = TRUE)
+
+        dims <- rowcol_to_dims(
+          row = c(ddims[[2]], ddims[[2]] + 12L),
+          col = c(ddims[[1]], ddims[[1]] + 1L)
+        )
+      }
 
       if (missing(x))
         stop("x cannot be missing in add_slicer")
@@ -1656,8 +1665,13 @@ wbWorkbook <- R6::R6Class(
         ', uni_name, uni_name
       ), pointer = FALSE)
 
+
+      edit_as <- "oneCell"
+      if (!is.null(params$edit_as))
+        edit_as <- params$edit_as
+
       # place the drawing
-      self$add_drawing(dims = dims, sheet = sheet, xml = drawing_xml)
+      self$add_drawing(dims = dims, sheet = sheet, xml = drawing_xml, edit_as = edit_as)
 
 
       next_id <- get_next_id(self$worksheets_rels[[sheet]])
@@ -4819,7 +4833,9 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
+      edit_as <- NULL
       standardize_case_names(...)
+      if (!is.null(list(...)$edit_as)) edit_as <- list(...)$edit_as
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -4924,6 +4940,9 @@ wbWorkbook <- R6::R6Class(
             grpSp,
             grFrm,
             clDt
+          ),
+          xml_attributes = c(
+            editAs = as_xml_attr(edit_as)
           )
         )
 

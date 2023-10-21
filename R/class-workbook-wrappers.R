@@ -402,8 +402,8 @@ wb_add_pivot_table <- function(
 wb_add_slicer <- function(
     wb,
     x,
-    dims = "B12:D16",
-    sheet = current_sheet(),
+    dims        = "A1",
+    sheet       = current_sheet(),
     pivot_table,
     slicer,
     params

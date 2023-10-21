@@ -7,7 +7,7 @@
 wb_add_slicer(
   wb,
   x,
-  dims = "B12:D16",
+  dims = "A1",
   sheet = current_sheet(),
   pivot_table,
   slicer,

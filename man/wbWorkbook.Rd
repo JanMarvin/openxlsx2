@@ -647,7 +647,7 @@ add pivot table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_slicer(
   x,
-  dims = "B12:D16",
+  dims = "A1",
   sheet = current_sheet(),
   pivot_table,
   slicer,
