@@ -489,7 +489,8 @@ test_that("writing slicers works", {
 
   wb <- wb_workbook() %>%
     ### Sheet 1
-    wb_add_worksheet() %>% wb_add_data(x = mtcars)
+    wb_add_worksheet() %>%
+    wb_add_data(x = mtcars)
 
   df <- wb_data(wb, sheet = 1)
 
@@ -531,7 +532,8 @@ test_that("writing slicers works", {
 
   ## test error
   wb <- wb_workbook() %>%
-  wb_add_worksheet() %>% wb_add_data(x = mtcars)
+  wb_add_worksheet() %>%
+    wb_add_data(x = mtcars)
 
   df <- wb_data(wb, sheet = 1)
 
