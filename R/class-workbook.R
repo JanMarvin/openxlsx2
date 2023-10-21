@@ -1523,7 +1523,7 @@ wbWorkbook <- R6::R6Class(
       fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
       names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
 
-      if (is.na(xml_attr(fields["vs"], "cacheField", "sharedItems")[[1]]["count"])) {
+      if (is.na(xml_attr(fields[slicer], "cacheField", "sharedItems")[[1]]["count"])) {
         stop("slicer was not initialized in pivot table!")
       }
 
