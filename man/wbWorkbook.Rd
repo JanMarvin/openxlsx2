@@ -598,6 +598,7 @@ add pivot table
   data,
   fun,
   params,
+  pivot_table,
   slicer
 )}\if{html}{\out{</div>}}
 }
@@ -623,6 +624,8 @@ add pivot table
 
 \item{\code{params}}{a list of parameters to modify pivot table creation}
 
+\item{\code{pivot_table}}{a character object with a name for the pivot table}
+
 \item{\code{slicer}}{a character object with names used as slicer}
 }
 \if{html}{\out{</div>}}
@@ -647,7 +650,7 @@ add pivot table
   dims = "B12:D16",
   sheet = current_sheet(),
   pivot_table,
-  varname,
+  slicer,
   params
 )}\if{html}{\out{</div>}}
 }
@@ -663,7 +666,7 @@ add pivot table
 
 \item{\code{pivot_table}}{the name of a pivot table on the selected sheet}
 
-\item{\code{varname}}{a variable used as slicer for the pivot table}
+\item{\code{slicer}}{a variable used as slicer for the pivot table}
 
 \item{\code{params}}{a list of parameters to modify pivot table creation}
 }

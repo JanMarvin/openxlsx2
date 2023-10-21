@@ -15,6 +15,7 @@ wb_add_pivot_table(
   data,
   fun,
   params,
+  pivot_table,
   slicer
 )
 }
@@ -38,6 +39,8 @@ wb_add_pivot_table(
 \item{fun}{A vector of functions to be used with \code{data}}
 
 \item{params}{A list of parameters to modify pivot table creation.}
+
+\item{pivot_table}{An optional name for the pivot table}
 
 \item{slicer}{a character object with names used as slicer}
 }

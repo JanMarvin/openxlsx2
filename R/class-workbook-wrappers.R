@@ -317,6 +317,7 @@ wb_add_data_table <- function(
 #' @param data The column name(s) of `x` used as data
 #' @param fun A vector of functions to be used with `data`
 #' @param params A list of parameters to modify pivot table creation.
+#' @param pivot_table An optional name for the pivot table
 #' @param slicer a character object with names used as slicer
 #' @seealso [wb_data()]
 #' @examples
@@ -342,28 +343,31 @@ wb_add_pivot_table <- function(
     data,
     fun,
     params,
+    pivot_table,
     slicer
 ) {
   assert_workbook(wb)
-  if (missing(filter)) filter <- substitute()
-  if (missing(rows))   rows   <- substitute()
-  if (missing(cols))   cols   <- substitute()
-  if (missing(data))   data   <- substitute()
-  if (missing(fun))    fun    <- substitute()
-  if (missing(params)) params <- substitute()
-  if (missing(slicer)) slicer <- substitute()
+  if (missing(filter))      filter <- substitute()
+  if (missing(rows))        rows   <- substitute()
+  if (missing(cols))        cols   <- substitute()
+  if (missing(data))        data   <- substitute()
+  if (missing(fun))         fun    <- substitute()
+  if (missing(params))      params <- substitute()
+  if (missing(pivot_table)) pivot_table <- substitute()
+  if (missing(slicer))      slicer <- substitute()
 
   wb$clone()$add_pivot_table(
-    x      = x,
-    sheet  = sheet,
-    dims   = dims,
-    filter = filter,
-    rows   = rows,
-    cols   = cols,
-    data   = data,
-    fun    = fun,
-    params = params,
-    slicer = slicer
+    x           = x,
+    sheet       = sheet,
+    dims        = dims,
+    filter      = filter,
+    rows        = rows,
+    cols        = cols,
+    data        = data,
+    fun         = fun,
+    params      = params,
+    pivot_table = pivot_table,
+    slicer      = slicer
   )
 
 }
@@ -377,7 +381,7 @@ wb_add_pivot_table <- function(
 #' @param sheet A worksheet containing a #'
 #' @param dims The worksheet cell where the pivot table is placed
 #' @param pivot_table the name of a pivot table on the selected sheet
-#' @param varname a variable used as slicer for the pivot table
+#' @param slicer a variable used as slicer for the pivot table
 #' @param params a list of parameters to modify pivot table creation
 #' @family workbook wrappers
 #' @family worksheet content functions
@@ -391,9 +395,9 @@ wb_add_pivot_table <- function(
 #' wb <- wb %>%
 #'   wb_add_pivot_table(
 #'     df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
-#'     params = list(name = "mtcars")
+#'     pivot_table = "mtcars"
 #'   ) %>%
-#'   wb_add_slicer(x = df, varname = "vs", pivot_table = "mtcars")
+#'   wb_add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
 #' @export
 wb_add_slicer <- function(
     wb,
@@ -401,7 +405,7 @@ wb_add_slicer <- function(
     dims = "B12:D16",
     sheet = current_sheet(),
     pivot_table,
-    varname,
+    slicer,
     params
 ) {
   assert_workbook(wb)
@@ -412,7 +416,7 @@ wb_add_slicer <- function(
     sheet       = sheet,
     dims        = dims,
     pivot_table = pivot_table,
-    varname     = varname,
+    slicer      = slicer,
     params      = params
   )
 

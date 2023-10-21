@@ -501,26 +501,26 @@ test_that("writing slicers works", {
     # first pivot
     add_pivot_table(
       df, dims = "A3", slicer = varname, rows = "cyl", cols = "gear", data = "disp",
-      params = list(name = "mtcars")
+      pivot_table = "mtcars"
     )$
-    add_slicer(x = df, sheet = current_sheet(), varname = "vs", pivot_table = "mtcars")$
-    add_slicer(x = df, dims = "B18:D24", sheet = current_sheet(), varname = "drat", pivot_table = "mtcars",
+    add_slicer(x = df, sheet = current_sheet(), slicer = "vs", pivot_table = "mtcars")$
+    add_slicer(x = df, dims = "B18:D24", sheet = current_sheet(), slicer = "drat", pivot_table = "mtcars",
                params = list(columnCount = 5))$
     # second pivot
     add_pivot_table(
       df, dims = "G3", sheet = current_sheet(), slicer = varname, rows = "gear", cols = "carb", data = "mpg",
-      params = list(name = "mtcars2")
+      pivot_table = "mtcars2"
     )$
-    add_slicer(x = df, dims = "G12:I16", varname = "vs", pivot_table = "mtcars2",
+    add_slicer(x = df, dims = "G12:I16", slicer = "vs", pivot_table = "mtcars2",
                params = list(sortOrder = "descending", caption = "Wow!"))
 
   ### Sheet 3
   wb$
     add_pivot_table(
       df, dims = "A3", slicer = varname, rows = "gear", cols = "carb", data = "mpg",
-      params = list(name = "mtcars3")
+      pivot_table = "mtcars3"
     )$
-    add_slicer(x = df, dims = "A12:D16", varname = "vs", pivot_table = "mtcars3")
+    add_slicer(x = df, dims = "A12:D16", slicer = "vs", pivot_table = "mtcars3")
 
   # test a few conditions
   expect_equal(2L, length(wb$slicers))
@@ -547,7 +547,7 @@ test_that("writing slicers works", {
     )
 
   expect_error(
-    wb$add_slicer(x = df, sheet = current_sheet(), varname = "vs", pivot_table = "mtcars"),
+    wb$add_slicer(x = df, sheet = current_sheet(), slicer = "vs", pivot_table = "mtcars"),
     "slicer was not initialized in pivot table!"
   )
 

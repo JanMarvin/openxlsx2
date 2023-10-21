@@ -1323,6 +1323,7 @@ wbWorkbook <- R6::R6Class(
     #' @param data a character object with names used as data
     #' @param fun a character object of functions to be used with the data
     #' @param params a list of parameters to modify pivot table creation
+    #' @param pivot_table a character object with a name for the pivot table
     #' @param slicer a character object with names used as slicer
     #' @details
     #' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
@@ -1338,6 +1339,7 @@ wbWorkbook <- R6::R6Class(
       data,
       fun,
       params,
+      pivot_table,
       slicer
     ) {
 
@@ -1348,12 +1350,13 @@ wbWorkbook <- R6::R6Class(
       add_sheet <- is_waiver(sheet) && sheet == "next_sheet"
       sheet <- private$get_sheet_index(sheet)
 
-      if (missing(filter)) filter <- substitute()
-      if (missing(rows))   rows   <- substitute()
-      if (missing(cols))   cols   <- substitute()
-      if (missing(data))   data   <- substitute()
-      if (missing(fun))    fun    <- substitute()
-      if (missing(params)) params <- NULL
+      if (missing(filter))      filter <- substitute()
+      if (missing(rows))        rows   <- substitute()
+      if (missing(cols))        cols   <- substitute()
+      if (missing(data))        data   <- substitute()
+      if (missing(fun))         fun    <- substitute()
+      if (missing(pivot_table)) pivot_table <- NULL
+      if (missing(params))      params <- NULL
 
       if (!missing(fun) && !missing(data)) {
         if (length(fun) < length(data)) {
@@ -1382,6 +1385,9 @@ wbWorkbook <- R6::R6Class(
           }
         }
       }
+
+      if (is.null(params$name) && !is.null(pivot_table))
+        params$name <- pivot_table
 
       pivot_table <- create_pivot_table(
         x       = x,
@@ -1465,10 +1471,10 @@ wbWorkbook <- R6::R6Class(
     #' @param x a wb_data object
     #' @param dims the worksheet cell where the pivot table is placed
     #' @param pivot_table the name of a pivot table on the selected sheet
-    #' @param varname a variable used as slicer for the pivot table
+    #' @param slicer a variable used as slicer for the pivot table
     #' @param params a list of parameters to modify pivot table creation
     #' @return The `wbWorkbook` object
-    add_slicer = function(x, dims = "B12:D16", sheet = current_sheet(), pivot_table, varname, params) {
+    add_slicer = function(x, dims = "B12:D16", sheet = current_sheet(), pivot_table, slicer, params) {
 
       if (missing(x))
         stop("x cannot be missing in add_slicer")
@@ -1482,7 +1488,7 @@ wbWorkbook <- R6::R6Class(
       sel <- which(pt$name == pivot_table)
       cid <- pt$cacheId[sel]
 
-      uni_name <- paste0(varname, cid)
+      uni_name <- paste0(slicer, cid)
 
       ### slicer_cache
       sortOrder <- NULL
@@ -1500,7 +1506,7 @@ wbWorkbook <- R6::R6Class(
       # TODO we might be able to initialize the field from here. Something like
       # get_item(...) and insert it to the pivotDefinition
 
-      # test that varname is initalized in wb$pivotDefinitions.
+      # test that slicer is initalized in wb$pivotDefinitions.
       pt  <- self$worksheets[[sheet]]$relships$pivotTable
       ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
       pt  <- pt[which(ptl$name == pivot_table)]
@@ -1520,7 +1526,7 @@ wbWorkbook <- R6::R6Class(
           showMissing  = showMissing,
           crossFilter  = crossFilter
         ),
-        xml_children = get_items(x, which(names(x) == varname), NULL, slicer = TRUE)
+        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE)
       )
 
       slicer_cache <- read_xml(sprintf(
@@ -1533,7 +1539,7 @@ wbWorkbook <- R6::R6Class(
           </data>
         </slicerCacheDefinition>',
         uni_name,
-        varname,
+        slicer,
         sheet,
         pivot_table,
         tab_xml
@@ -1554,7 +1560,7 @@ wbWorkbook <- R6::R6Class(
         self$worksheets[[sheet]]$relships$slicer <- length(self$slicers)
       }
 
-      caption <- varname
+      caption <- slicer
       if (!is.null(params$caption))
         caption <- params$caption
 
@@ -1570,7 +1576,7 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(params$style))
         style <- params$style
 
-      slicer <- xml_node_create(
+      slicer_xml <- xml_node_create(
         "slicer",
         xml_attributes = c(
           name        = uni_name,
@@ -1584,7 +1590,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       sel <- self$worksheets[[sheet]]$relships$slicer
-      self$slicers[sel] <- xml_add_child(self$slicers[sel], xml_child = slicer)
+      self$slicers[sel] <- xml_add_child(self$slicers[sel], xml_child = slicer_xml)
 
       slicer_id <- length(self$slicerCaches)
       # append it to the workbook.xml.rels

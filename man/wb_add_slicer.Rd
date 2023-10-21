@@ -10,7 +10,7 @@ wb_add_slicer(
   dims = "B12:D16",
   sheet = current_sheet(),
   pivot_table,
-  varname,
+  slicer,
   params
 )
 }
@@ -25,7 +25,7 @@ wb_add_slicer(
 
 \item{pivot_table}{the name of a pivot table on the selected sheet}
 
-\item{varname}{a variable used as slicer for the pivot table}
+\item{slicer}{a variable used as slicer for the pivot table}
 
 \item{params}{a list of parameters to modify pivot table creation}
 }
@@ -44,9 +44,9 @@ df <- wb_data(wb, sheet = 1)
 wb <- wb \%>\%
   wb_add_pivot_table(
     df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
-    params = list(name = "mtcars")
+    pivot_table = "mtcars"
   ) \%>\%
-  wb_add_slicer(x = df, sheet = current_sheet(), varname = "vs", pivot_table = "mtcars")
+  wb_add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
 }
 \seealso{
 Other workbook wrappers: 
