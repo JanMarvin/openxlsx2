@@ -1501,7 +1501,7 @@ wbWorkbook <- R6::R6Class(
           showMissing  = showMissing,
           crossFilter  = crossFilter
         ),
-        xml_children = get_items(df, which(names(df) == varname), NULL, slicer = TRUE)
+        xml_children = get_items(x, which(names(x) == varname), NULL, slicer = TRUE)
       )
 
       slicer_cache <- read_xml(sprintf(
