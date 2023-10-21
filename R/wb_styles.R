@@ -610,7 +610,7 @@ set_cellstyle <- function(
   if (!is.null(pivotButton))       z$pivotButton       <- as_xml_attr(pivotButton)
   if (!is.null(quotePrefix))       z$quotePrefix       <- as_xml_attr(quotePrefix)
   if (!is.null(readingOrder))      z$readingOrder      <- as_xml_attr(readingOrder)
-  if (!is.null(relativeIndent))    zz$relativeIndent   <- as_xml_attr(relativeIndent)
+  if (!is.null(relativeIndent))    z$relativeIndent    <- as_xml_attr(relativeIndent)
   if (!is.null(shrinkToFit))       z$shrinkToFit       <- as_xml_attr(shrinkToFit)
   if (!is.null(textRotation))      z$textRotation      <- as_xml_attr(textRotation)
   if (!is.null(vertical))          z$vertical          <- as_xml_attr(vertical)
