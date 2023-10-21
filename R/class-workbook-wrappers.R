@@ -381,6 +381,19 @@ wb_add_pivot_table <- function(
 #' @param params a list of parameters to modify pivot table creation
 #' @family workbook wrappers
 #' @family worksheet content functions
+#' @details This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we *strictly* discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+#' @examples
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet() %>% wb_add_data(x = mtcars)
+#'
+#' df <- wb_data(wb, sheet = 1)
+#'
+#' wb <- wb %>%
+#'   wb_add_pivot_table(
+#'     df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
+#'     params = list(name = "mtcars")
+#'   ) %>%
+#'   wb_add_slicer(x = df, varname = "vs", pivot_table = "mtcars")
 #' @export
 wb_add_slicer <- function(
     wb,

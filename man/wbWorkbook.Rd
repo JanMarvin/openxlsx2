@@ -647,7 +647,8 @@ add pivot table
   dims = "B12:D16",
   sheet = current_sheet(),
   pivot_table,
-  varname
+  varname,
+  params
 )}\if{html}{\out{</div>}}
 }
 

@@ -1404,6 +1404,10 @@ wbWorkbook <- R6::R6Class(
 
       self$append("pivotTables", pivot_table)
       cacheId <- length(self$pivotTables)
+      self$worksheets[[sheet]]$relships$pivotTable <- append(
+        self$worksheets[[sheet]]$relships$pivotTable,
+        cacheId
+      )
 
       self$append("pivotDefinitions", pivot_def_xml(x, filter, rows, cols, data, slicer, cacheId))
 
@@ -1492,6 +1496,21 @@ wbWorkbook <- R6::R6Class(
       crossFilter <- NULL
       if (!is.null(params$crossFilter))
         crossFilter <- params$crossFilter
+
+      # TODO we might be able to initialize the field from here. Something like
+      # get_item(...) and insert it to the pivotDefinition
+
+      # test that varname is initalized in wb$pivotDefinitions.
+      pt  <- self$worksheets[[sheet]]$relships$pivotTable
+      ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
+      pt  <- pt[which(ptl$name == pivot_table)]
+
+      fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
+      names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
+
+      if (is.na(xml_attr(fields["vs"], "cacheField", "sharedItems")[[1]]["count"])) {
+        stop("slicer was not initialized in pivot table!")
+      }
 
       tab_xml <- xml_node_create(
         "tabular",
@@ -1590,6 +1609,12 @@ wbWorkbook <- R6::R6Class(
           </ext>
           </extLst>
           '
+      } else if (!grepl("<x14:slicerCaches>", self$workbook$extLst)) {
+          self$workbook$extLst <- xml_add_child(
+            self$workbook$extLst,
+            level = "ext",
+            xml_child = xml_node_create("x14:slicerCaches")
+          )
       }
 
       self$workbook$extLst <- xml_add_child(
@@ -1634,14 +1659,24 @@ wbWorkbook <- R6::R6Class(
       # add the pivot table and the drawing to the worksheet
       if (!any(grepl(sprintf("Target=\"../slicers/slicer%s.xml\"", self$worksheets[[sheet]]$relships$slicer), self$worksheets_rels[[sheet]]))) {
 
-        # add the extension list to the worksheet
-        self$worksheets[[sheet]]$extLst <- sprintf(
-          "<ext uri=\"{A8765BA9-456A-4dab-B4F3-ACF838C121DE}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">
-          <x14:slicerList>
-          <x14:slicer r:id=\"%s\"/>
-          </x14:slicerList>
-          </ext>", next_id
+        slicer_list_xml <- sprintf(
+          '<x14:slicerList><x14:slicer r:id=\"%s\"/></x14:slicerList>',
+          next_id
         )
+
+        # add the extension list to the worksheet
+        if (length(self$worksheets[[sheet]]$extLst) == 0) {
+          self$worksheets[[sheet]]$extLst <- sprintf(
+            "<ext uri=\"{A8765BA9-456A-4dab-B4F3-ACF838C121DE}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">
+            %s
+            </ext>", slicer_list_xml
+          )
+        } else if (!grepl("<x14:slicerList>", self$worksheets[[sheet]]$extLst)) {
+          self$worksheets[[sheet]]$extLst <- xml_add_child(
+            self$worksheets[[sheet]]$extLst,
+            xml_children = slicer_list_xml
+          )
+        }
 
         self$worksheets_rels[[sheet]] <- append(
           self$worksheets_rels[[sheet]],

@@ -32,6 +32,22 @@ wb_add_slicer(
 \description{
 Add a slicer to a previously created pivot table.
 }
+\details{
+This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we \emph{strictly} discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+}
+\examples{
+wb <- wb_workbook() \%>\%
+  wb_add_worksheet() \%>\% wb_add_data(x = mtcars)
+
+df <- wb_data(wb, sheet = 1)
+
+wb <- wb \%>\%
+  wb_add_pivot_table(
+    df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
+    params = list(name = "mtcars")
+  ) \%>\%
+  wb_add_slicer(x = df, sheet = current_sheet(), varname = "vs", pivot_table = "mtcars")
+}
 \seealso{
 Other workbook wrappers: 
 \code{\link{base_font-wb}},
