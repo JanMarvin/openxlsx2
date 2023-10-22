@@ -17,6 +17,8 @@
 
 * New set of function `wb_get_properties()`/`wb_set_properties()` to view and modify workbook properties. [782](https://github.com/JanMarvin/openxlsx2/pull/782) This was subsequently improved to handle more workbook properties like `company` and `manager`. ([799](https://github.com/JanMarvin/openxlsx2/pull/799), @olivroy)
 
+* Basic (experimental) support to add slicers to pivot tables created by `openxlsx2`. [822](https://github.com/JanMarvin/openxlsx2/pull/822)
+
 ## Fixes
 
 * Removing the worksheet that is the active tab does no longer result in warnings in spreadsheet software. [792](https://github.com/JanMarvin/openxlsx2/pull/792)

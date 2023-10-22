@@ -374,7 +374,7 @@ wb_add_pivot_table <- function(
 
 #' Add a slicer to a pivot table
 #'
-#' Add a slicer to a previously created pivot table.
+#' Add a slicer to a previously created pivot table. This function is still experimental and might be changed/improved in upcoming releases.
 #'
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
@@ -386,6 +386,8 @@ wb_add_pivot_table <- function(
 #' @family workbook wrappers
 #' @family worksheet content functions
 #' @details This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we *strictly* discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+#'
+#' For the time being, the slicer needs to be placed on the slide with the pivot table.
 #' @examples
 #' wb <- wb_workbook() %>%
 #'   wb_add_worksheet() %>% wb_add_data(x = mtcars)

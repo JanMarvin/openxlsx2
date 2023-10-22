@@ -30,10 +30,12 @@ wb_add_slicer(
 \item{params}{a list of parameters to modify pivot table creation}
 }
 \description{
-Add a slicer to a previously created pivot table.
+Add a slicer to a previously created pivot table. This function is still experimental and might be changed/improved in upcoming releases.
 }
 \details{
 This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we \emph{strictly} discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+
+For the time being, the slicer needs to be placed on the slide with the pivot table.
 }
 \examples{
 wb <- wb_workbook() \%>\%
