@@ -1092,37 +1092,43 @@ wbWorkbook <- R6::R6Class(
             self$append("Content_Types", "<Default Extension=\"jpg\" ContentType=\"image/jpg\"/>")
           }
 
-          # we pick up the drawing relationship. This is something like: "../media/image1.jpg"
-          # because we might end up with multiple files with similar names, we have to rename
-          # the media file and update the drawing relationship
-          drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_sheet]], "Relationship"))
-          if (ncol(drels) && any(basename(drels$Type) == "image")) {
-            sel <- basename(drels$Type) == "image"
-            targets <- basename2(drels[sel]$Target)
-            media_names <- from$media[grepl(targets, names(from$media))]
+          # from$worksheet[[old]]$relships$drawing
+          new_drawing_sheet <- self$worksheets[[newSheetIndex]]$relships$drawing
 
-            onams    <- names(media_names)
-            mnams    <- vector("character", length(onams))
-            next_ids <- length(names(self$media)) + seq_along(mnams)
+          if (length(new_drawing_sheet)) {
 
-            # we might have multiple media references on a sheet
-            for (i in seq_along(onams)) {
-              media_id   <- as.integer(gsub("\\D+", "", onams[i]))
-              # take filetype + number + file extension
-              # e.g. "image5.jpg" and return "image2.jpg"
-              mnams[i] <- gsub("(\\d+)\\.(\\w+)", paste0(next_ids[i], ".\\2"), onams[i])
+            # we pick up the drawing relationship. This is something like: "../media/image1.jpg"
+            # because we might end up with multiple files with similar names, we have to rename
+            # the media file and update the drawing relationship
+            drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_sheet]], "Relationship"))
+            if (ncol(drels) && any(basename(drels$Type) == "image")) {
+              sel <- basename(drels$Type) == "image"
+              targets <- basename2(drels[sel]$Target)
+              media_names <- from$media[grepl(targets, names(from$media))]
+
+              onams    <- names(media_names)
+              mnams    <- vector("character", length(onams))
+              next_ids <- length(names(self$media)) + seq_along(mnams)
+
+              # we might have multiple media references on a sheet
+              for (i in seq_along(onams)) {
+                media_id   <- as.integer(gsub("\\D+", "", onams[i]))
+                # take filetype + number + file extension
+                # e.g. "image5.jpg" and return "image2.jpg"
+                mnams[i] <- gsub("(\\d+)\\.(\\w+)", paste0(next_ids[i], ".\\2"), onams[i])
+              }
+              names(media_names) <- mnams
+
+              # update relationship
+              self$drawings_rels[[new_drawing_sheet]] <- gsub(
+                pattern = onams,
+                replacement = mnams,
+                x = self$drawings_rels[[new_drawing_sheet]],
+              )
+
+              # append media
+              self$media <- append(self$media, media_names)
             }
-            names(media_names) <- mnams
-
-            # update relationship
-            self$drawings_rels[[new_drawing_sheet]] <- gsub(
-              pattern = onams,
-              replacement = mnams,
-              x = self$drawings_rels[[new_drawing_sheet]],
-            )
-
-            # append media
-            self$media <- append(self$media, media_names)
           }
         }
 
