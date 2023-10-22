@@ -361,6 +361,13 @@ test_that("wb_add_pivot_table() is a wrapper", {
   expect_wrapper("add_pivot_table", wb = wb, params = list(x = df, data = "disp"))
 })
 
+test_that("wb_add_slicer() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+  df <- wb_data(wb)
+  wb$add_pivot_table(x = df, data = "disp", slicer = "vs", pivot_table = "pivot1")
+  expect_wrapper("add_slicer", wb = wb, params = list(x = df, slicer = "vs", pivot_table = "pivot1"))
+})
+
 test_that("wb_add_formula() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))

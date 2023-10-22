@@ -485,6 +485,74 @@ test_that("writing pivot with escaped characters works", {
 
 })
 
+test_that("writing slicers works", {
+
+  wb <- wb_workbook() %>%
+    ### Sheet 1
+    wb_add_worksheet() %>%
+    wb_add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = 1)
+
+  varname <- c("vs", "drat")
+
+  ### Sheet 2
+  wb$
+    # first pivot
+    add_pivot_table(
+      df, dims = "A3", slicer = varname, rows = "cyl", cols = "gear", data = "disp",
+      pivot_table = "mtcars"
+    )$
+    add_slicer(x = df, sheet = current_sheet(), slicer = "vs", pivot_table = "mtcars")$
+    add_slicer(x = df, dims = "B18:D24", sheet = current_sheet(), slicer = "drat", pivot_table = "mtcars",
+               params = list(columnCount = 5))$
+    # second pivot
+    add_pivot_table(
+      df, dims = "G3", sheet = current_sheet(), slicer = varname, rows = "gear", cols = "carb", data = "mpg",
+      pivot_table = "mtcars2"
+    )$
+    add_slicer(x = df, dims = "G12:I16", slicer = "vs", pivot_table = "mtcars2",
+               params = list(sortOrder = "descending", caption = "Wow!"))
+
+  ### Sheet 3
+  wb$
+    add_pivot_table(
+      df, dims = "A3", slicer = varname, rows = "gear", cols = "carb", data = "mpg",
+      pivot_table = "mtcars3"
+    )$
+    add_slicer(x = df, dims = "A12:D16", slicer = "vs", pivot_table = "mtcars3")
+
+  # test a few conditions
+  expect_equal(2L, length(wb$slicers))
+  expect_equal(4L, length(wb$slicerCaches))
+  expect_equal(xml_node_name(wb$workbook$extLst, "extLst", "ext"), "x14:slicerCaches")
+  expect_equal(1L, wb$worksheets[[2]]$relships$slicer)
+  expect_equal(2L, wb$worksheets[[3]]$relships$slicer)
+  expect_equal(25L, grep("slicer2.xml", wb$Content_Types))
+
+  ## test error
+  wb <- wb_workbook() %>%
+  wb_add_worksheet() %>%
+    wb_add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = 1)
+
+  varname <- c("vs", "drat")
+
+  wb$
+    # first pivot
+    add_pivot_table(
+      df, dims = "A3", rows = "cyl", cols = "gear", data = "disp",
+      params = list(name = "mtcars")
+    )
+
+  expect_error(
+    wb$add_slicer(x = df, sheet = current_sheet(), slicer = "vs", pivot_table = "mtcars"),
+    "slicer was not initialized in pivot table!"
+  )
+
+})
+
 test_that("writing na.strings = NULL works", {
 
   # write na.strings = na_strings()

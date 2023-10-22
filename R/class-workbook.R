@@ -1323,6 +1323,8 @@ wbWorkbook <- R6::R6Class(
     #' @param data a character object with names used as data
     #' @param fun a character object of functions to be used with the data
     #' @param params a list of parameters to modify pivot table creation
+    #' @param pivot_table a character object with a name for the pivot table
+    #' @param slicer a character object with names used as slicer
     #' @details
     #' `fun` can be either of AVERAGE, COUNT, COUNTA, MAX, MIN, PRODUCT, STDEV,
     #' STDEVP, SUM, VAR, VARP
@@ -1336,22 +1338,25 @@ wbWorkbook <- R6::R6Class(
       cols,
       data,
       fun,
-      params
+      params,
+      pivot_table,
+      slicer
     ) {
 
       if (missing(x))
         stop("x cannot be missing in add_pivot_table")
 
       assert_class(x, "wb_data")
-      add_sheet <- is_waiver(sheet)
+      add_sheet <- is_waiver(sheet) && sheet == "next_sheet"
       sheet <- private$get_sheet_index(sheet)
 
-      if (missing(filter)) filter <- substitute()
-      if (missing(rows))   rows   <- substitute()
-      if (missing(cols))   cols   <- substitute()
-      if (missing(data))   data   <- substitute()
-      if (missing(fun))    fun    <- substitute()
-      if (missing(params)) params <- NULL
+      if (missing(filter))      filter <- substitute()
+      if (missing(rows))        rows   <- substitute()
+      if (missing(cols))        cols   <- substitute()
+      if (missing(data))        data   <- substitute()
+      if (missing(fun))         fun    <- substitute()
+      if (missing(pivot_table)) pivot_table <- NULL
+      if (missing(params))      params <- NULL
 
       if (!missing(fun) && !missing(data)) {
         if (length(fun) < length(data)) {
@@ -1381,6 +1386,9 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      if (is.null(params$name) && !is.null(pivot_table))
+        params$name <- pivot_table
+
       pivot_table <- create_pivot_table(
         x       = x,
         dims    = dims,
@@ -1398,11 +1406,16 @@ wbWorkbook <- R6::R6Class(
       if (missing(rows))   rows   <- ""
       if (missing(cols))   cols   <- ""
       if (missing(data))   data   <- ""
+      if (missing(slicer)) slicer <- ""
 
       self$append("pivotTables", pivot_table)
-      self$append("pivotDefinitions", pivot_def_xml(x, filter, rows, cols, data))
-
       cacheId <- length(self$pivotTables)
+      self$worksheets[[sheet]]$relships$pivotTable <- append(
+        self$worksheets[[sheet]]$relships$pivotTable,
+        cacheId
+      )
+
+      self$append("pivotDefinitions", pivot_def_xml(x, filter, rows, cols, data, slicer, cacheId))
 
       self$append("pivotDefinitionsRels", pivot_def_rel(cacheId))
       self$append("pivotRecords", pivot_rec_xml(x))
@@ -1422,13 +1435,7 @@ wbWorkbook <- R6::R6Class(
         self$workbook$pivotCaches <- xml_node_create("pivotCaches", xml_children = pivotCache)
       }
 
-      if (length(self$worksheets_rels[[sheet]])) {
-        rlshp <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-        rlshp$id <- as.integer(gsub("\\D+", "", rlshp$Id))
-        next_id <- paste0("rId", max(rlshp$id) + 1L)
-      } else {
-        next_id <- "rId1"
-      }
+      next_id <- get_next_id(self$worksheets_rels[[sheet]])
 
       self$worksheets_rels[[sheet]] <- c(
         self$worksheets_rels[[sheet]],
@@ -1456,6 +1463,271 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$worksheets[[sheet]]$sheetFormatPr <- "<sheetFormatPr baseColWidth=\"10\" defaultRowHeight=\"15\" x14ac:dyDescent=\"0.2\"/>"
+
+      invisible(self)
+    },
+
+    #' @description add pivot table
+    #' @param x a wb_data object
+    #' @param dims the worksheet cell where the pivot table is placed
+    #' @param pivot_table the name of a pivot table on the selected sheet
+    #' @param slicer a variable used as slicer for the pivot table
+    #' @param params a list of parameters to modify pivot table creation
+    #' @return The `wbWorkbook` object
+    add_slicer = function(x, dims = "A1", sheet = current_sheet(), pivot_table, slicer, params) {
+
+      if (!grepl(":", dims)) {
+        ddims <- dims_to_rowcol(dims, as_integer = TRUE)
+
+        dims <- rowcol_to_dims(
+          row = c(ddims[[2]], ddims[[2]] + 12L),
+          col = c(ddims[[1]], ddims[[1]] + 1L)
+        )
+      }
+
+      if (missing(x))
+        stop("x cannot be missing in add_slicer")
+
+      assert_class(x, "wb_data")
+      if (missing(params)) params <- NULL
+
+      sheet <- private$get_sheet_index(sheet)
+
+      pt <- rbindlist(xml_attr(self$pivotTables, "pivotTableDefinition"))
+      sel <- which(pt$name == pivot_table)
+      cid <- pt$cacheId[sel]
+
+      uni_name <- paste0(slicer, cid)
+
+      ### slicer_cache
+      sortOrder <- NULL
+      if (!is.null(params$sortOrder))
+        sortOrder <- params$sortOrder
+
+      showMissing <- NULL
+      if (!is.null(params$showMissing))
+        showMissing <- params$showMissing
+
+      crossFilter <- NULL
+      if (!is.null(params$crossFilter))
+        crossFilter <- params$crossFilter
+
+      # TODO we might be able to initialize the field from here. Something like
+      # get_item(...) and insert it to the pivotDefinition
+
+      # test that slicer is initalized in wb$pivotDefinitions.
+      pt  <- self$worksheets[[sheet]]$relships$pivotTable
+      ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
+      pt  <- pt[which(ptl$name == pivot_table)]
+
+      fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
+      names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
+
+      if (is.na(xml_attr(fields[slicer], "cacheField", "sharedItems")[[1]]["count"])) {
+        stop("slicer was not initialized in pivot table!")
+      }
+
+      tab_xml <- xml_node_create(
+        "tabular",
+        xml_attributes = c(
+          pivotCacheId = cid,
+          sortOrder    = sortOrder,
+          showMissing  = showMissing,
+          crossFilter  = crossFilter
+        ),
+        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE)
+      )
+
+      slicer_cache <- read_xml(sprintf(
+        '<slicerCacheDefinition xmlns="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x xr10" xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" name="Slicer_%s" xr10:uid="{72B411E0-23B7-7444-B533-EAC1856BE56A}" sourceName="%s">
+          <pivotTables>
+            <pivotTable tabId="%s" name="%s" />
+          </pivotTables>
+          <data>
+            %s
+          </data>
+        </slicerCacheDefinition>',
+        uni_name,
+        slicer,
+        sheet,
+        pivot_table,
+        tab_xml
+      ), pointer = FALSE)
+
+      # we need the slicer cache
+      self$append(
+        "slicerCaches",
+        slicer_cache
+      )
+
+      # and the actual slicer
+      if (length(self$worksheets[[sheet]]$relships$slicer) == 0) {
+        self$append(
+          "slicers",
+          '<slicers xmlns="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x xr10" xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10"></slicers>'
+        )
+        self$worksheets[[sheet]]$relships$slicer <- length(self$slicers)
+      }
+
+      caption <- slicer
+      if (!is.null(params$caption))
+        caption <- params$caption
+
+      row_height <- 230716
+      if (!is.null(params$rowHeight))
+        row_height <- params$rowHeight
+
+      column_count <- NULL
+      if (!is.null(params$columnCount))
+        column_count <- params$columnCount
+
+      style <- NULL
+      if (!is.null(params$style))
+        style <- params$style
+
+      slicer_xml <- xml_node_create(
+        "slicer",
+        xml_attributes = c(
+          name        = uni_name,
+          `xr10:uid`  = st_guid(),
+          cache       = paste0("Slicer_", uni_name),
+          caption     = caption,
+          rowHeight   = as_xml_attr(row_height),
+          columnCount = as_xml_attr(column_count),
+          style       = style
+        )
+      )
+
+      sel <- self$worksheets[[sheet]]$relships$slicer
+      self$slicers[sel] <- xml_add_child(self$slicers[sel], xml_child = slicer_xml)
+
+      slicer_id <- length(self$slicerCaches)
+      # append it to the workbook.xml.rels
+      self$append(
+        "workbook.xml.rels",
+        sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2007/relationships/slicerCache\" Target=\"slicerCaches/slicerCache%s.xml\"/>",
+                100000 + slicer_id, slicer_id)
+      )
+
+      # add this defined name
+      self$workbook$definedNames <- append(
+        self$workbook$definedNames,
+        sprintf("<definedName name=\"Slicer_%s\">#N/A</definedName>", uni_name)
+      )
+
+      # add the workbook extension list
+      if (is.null(self$workbook$extLst)) {
+        self$workbook$extLst <- '
+          <extLst>
+          <ext uri="{BBE1A952-AA13-448e-AADC-164F8A28A991}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
+          <x14:slicerCaches></x14:slicerCaches>
+          </ext>
+          </extLst>
+          '
+      } else if (!grepl("<x14:slicerCaches>", self$workbook$extLst)) {
+          self$workbook$extLst <- xml_add_child(
+            self$workbook$extLst,
+            level = "ext",
+            xml_child = xml_node_create("x14:slicerCaches")
+          )
+      }
+
+      self$workbook$extLst <- xml_add_child(
+        self$workbook$extLst,
+        xml_child = sprintf('<x14:slicerCache r:id="rId%s" />', 100000 + slicer_id),
+        level = c("ext", "x14:slicerCaches")
+      )
+
+      # add a drawing for the slicer
+      drawing_xml <- read_xml(sprintf('
+        <xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">
+          <xdr:absoluteAnchor>
+            <xdr:pos x="0" y="0" />
+            <xdr:ext cx="9313333" cy="6070985" />
+            <mc:AlternateContent xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\">
+              <mc:Choice xmlns:a14=\"http://schemas.microsoft.com/office/drawing/2010/main\" Requires=\"a14\">
+                <xdr:graphicFrame macro=\"\">
+                  <xdr:nvGraphicFramePr>
+                    <xdr:cNvPr id=\"2\" name=\"%s\">
+                      <a:extLst><a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\"><a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\" id=\"{54EAEA0F-6B31-AC4D-D672-2AA8C6402920}\"/></a:ext></a:extLst>
+                    </xdr:cNvPr>
+                    <xdr:cNvGraphicFramePr/>
+                  </xdr:nvGraphicFramePr>
+                  <xdr:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/></xdr:xfrm>
+                  <a:graphic><a:graphicData uri=\"http://schemas.microsoft.com/office/drawing/2010/slicer\"><sle:slicer xmlns:sle=\"http://schemas.microsoft.com/office/drawing/2010/slicer\" name=\"%s\"/></a:graphicData></a:graphic>
+                </xdr:graphicFrame>
+              </mc:Choice>
+              <mc:Fallback><xdr:sp macro=\"\" textlink=\"\"><xdr:nvSpPr><xdr:cNvPr id=\"0\" name=\"\"/><xdr:cNvSpPr><a:spLocks noTextEdit=\"1\"/></xdr:cNvSpPr></xdr:nvSpPr><xdr:spPr><a:xfrm><a:off x=\"6959600\" y=\"2794000\"/><a:ext cx=\"1828800\" cy=\"2428869\"/></a:xfrm><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom><a:solidFill><a:prstClr val=\"white\"/></a:solidFill><a:ln w=\"1\"><a:solidFill><a:prstClr val=\"green\"/></a:solidFill></a:ln></xdr:spPr><xdr:txBody><a:bodyPr vertOverflow=\"clip\" horzOverflow=\"clip\"/><a:lstStyle/><a:p><a:r><a:rPr lang=\"en-GB\" sz=\"1100\"/><a:t>This shape represents a slicer. Slicers are supported in Excel 2010 or later.\n\nIf the shape was modified in an earlier version of Excel, or if the workbook was saved in Excel 2003 or earlier, the slicer cannot be used.</a:t></a:r></a:p></xdr:txBody></xdr:sp></mc:Fallback>
+            </mc:AlternateContent>
+            <xdr:clientData/>
+          </xdr:absoluteAnchor>
+        </xdr:wsDr>
+        ', uni_name, uni_name
+      ), pointer = FALSE)
+
+
+      edit_as <- "oneCell"
+      if (!is.null(params$edit_as))
+        edit_as <- params$edit_as
+
+      # place the drawing
+      self$add_drawing(dims = dims, sheet = sheet, xml = drawing_xml, edit_as = edit_as)
+
+
+      next_id <- get_next_id(self$worksheets_rels[[sheet]])
+
+      # add the pivot table and the drawing to the worksheet
+      if (!any(grepl(sprintf("Target=\"../slicers/slicer%s.xml\"", self$worksheets[[sheet]]$relships$slicer), self$worksheets_rels[[sheet]]))) {
+
+        slicer_list_xml <- sprintf(
+          '<x14:slicerList><x14:slicer r:id=\"%s\"/></x14:slicerList>',
+          next_id
+        )
+
+        # add the extension list to the worksheet
+        if (length(self$worksheets[[sheet]]$extLst) == 0) {
+          self$worksheets[[sheet]]$extLst <- sprintf(
+            "<ext uri=\"{A8765BA9-456A-4dab-B4F3-ACF838C121DE}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">
+            %s
+            </ext>", slicer_list_xml
+          )
+        } else if (!grepl("<x14:slicerList>", self$worksheets[[sheet]]$extLst)) {
+          self$worksheets[[sheet]]$extLst <- xml_add_child(
+            self$worksheets[[sheet]]$extLst,
+            xml_children = slicer_list_xml
+          )
+        }
+
+        self$worksheets_rels[[sheet]] <- append(
+          self$worksheets_rels[[sheet]],
+          sprintf(
+            "<Relationship Id=\"%s\" Type=\"http://schemas.microsoft.com/office/2007/relationships/slicer\" Target=\"../slicers/slicer%s.xml\"/>",
+            next_id, self$worksheets[[sheet]]$relships$slicer
+          )
+        )
+
+      }
+
+      slicer_xml <- sprintf(
+        "<Override PartName=\"/xl/slicers/slicer%s.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>",
+        self$worksheets[[sheet]]$relships$slicer
+      )
+
+      if (!any(self$Content_Types == slicer_xml)) {
+        self$append(
+          "Content_Types",
+          slicer_xml
+        )
+      }
+
+      value <- sprintf(
+        "<Override PartName=\"/xl/slicerCaches/slicerCache%s.xml\" ContentType=\"application/vnd.ms-excel.slicerCache+xml\"/>",
+        slicer_id
+      )
+
+      self$append(
+        "Content_Types", value
+      )
 
       invisible(self)
     },
@@ -4561,7 +4833,9 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
+      edit_as <- NULL
       standardize_case_names(...)
+      if (!is.null(list(...)$edit_as)) edit_as <- list(...)$edit_as
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -4666,6 +4940,9 @@ wbWorkbook <- R6::R6Class(
             grpSp,
             grFrm,
             clDt
+          ),
+          xml_attributes = c(
+            editAs = as_xml_attr(edit_as)
           )
         )
 

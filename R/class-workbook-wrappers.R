@@ -317,6 +317,8 @@ wb_add_data_table <- function(
 #' @param data The column name(s) of `x` used as data
 #' @param fun A vector of functions to be used with `data`
 #' @param params A list of parameters to modify pivot table creation.
+#' @param pivot_table An optional name for the pivot table
+#' @param slicer a character object with names used as slicer
 #' @seealso [wb_data()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
@@ -340,30 +342,87 @@ wb_add_pivot_table <- function(
     cols,
     data,
     fun,
-    params
+    params,
+    pivot_table,
+    slicer
 ) {
   assert_workbook(wb)
-  if (missing(filter)) filter <- substitute()
-  if (missing(rows))   rows   <- substitute()
-  if (missing(cols))   cols   <- substitute()
-  if (missing(data))   data   <- substitute()
-  if (missing(fun))    fun    <- substitute()
-  if (missing(params)) params <- substitute()
+  if (missing(filter))      filter <- substitute()
+  if (missing(rows))        rows   <- substitute()
+  if (missing(cols))        cols   <- substitute()
+  if (missing(data))        data   <- substitute()
+  if (missing(fun))         fun    <- substitute()
+  if (missing(params))      params <- substitute()
+  if (missing(pivot_table)) pivot_table <- substitute()
+  if (missing(slicer))      slicer <- substitute()
 
   wb$clone()$add_pivot_table(
-    x      = x,
-    sheet  = sheet,
-    dims   = dims,
-    filter = filter,
-    rows   = rows,
-    cols   = cols,
-    data   = data,
-    fun    = fun,
-    params = params
+    x           = x,
+    sheet       = sheet,
+    dims        = dims,
+    filter      = filter,
+    rows        = rows,
+    cols        = cols,
+    data        = data,
+    fun         = fun,
+    params      = params,
+    pivot_table = pivot_table,
+    slicer      = slicer
   )
 
 }
 
+#' Add a slicer to a pivot table
+#'
+#' Add a slicer to a previously created pivot table. This function is still experimental and might be changed/improved in upcoming releases.
+#'
+#' @param wb A Workbook object containing a #' worksheet.
+#' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
+#' @param sheet A worksheet containing a #'
+#' @param dims The worksheet cell where the pivot table is placed
+#' @param pivot_table the name of a pivot table on the selected sheet
+#' @param slicer a variable used as slicer for the pivot table
+#' @param params a list of parameters to modify pivot table creation
+#' @family workbook wrappers
+#' @family worksheet content functions
+#' @details This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we *strictly* discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+#'
+#' For the time being, the slicer needs to be placed on the slide with the pivot table.
+#' @examples
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet() %>% wb_add_data(x = mtcars)
+#'
+#' df <- wb_data(wb, sheet = 1)
+#'
+#' wb <- wb %>%
+#'   wb_add_pivot_table(
+#'     df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
+#'     pivot_table = "mtcars"
+#'   ) %>%
+#'   wb_add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
+#' @export
+wb_add_slicer <- function(
+    wb,
+    x,
+    dims        = "A1",
+    sheet       = current_sheet(),
+    pivot_table,
+    slicer,
+    params
+) {
+  assert_workbook(wb)
+  if (missing(params)) params <- substitute()
+
+  wb$clone()$add_slicer(
+    x           = x,
+    sheet       = sheet,
+    dims        = dims,
+    pivot_table = pivot_table,
+    slicer      = slicer,
+    params      = params
+  )
+
+}
 
 #' Add a formula to a cell range in a worksheet
 #'
