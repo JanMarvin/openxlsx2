@@ -30,7 +30,7 @@
     
     <a class="navbar-brand me-2" href="index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,7 +105,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>openxlsx2</code> aims to be the swiss knife for working with the openxml spreadsheet formats xlsx and xlsm (other formats of other spreadsheet software are not supported). We offer two different variants how to work with <code>openxlsx2</code>.</p>
+<p><code>openxlsx2</code> aims to be the swiss knife for working with the openxml spreadsheet formats xlsx, xlsm and (limited) xlsb (other formats of other spreadsheet software are not supported). We offer two different variants how to work with <code>openxlsx2</code>.</p>
 <ul>
 <li>The first one is to simply work with R objects. It is possible to read (<a href="https://janmarvin.github.io/openxlsx2/reference/read_xlsx.html"><code>read_xlsx()</code></a>) and write (<a href="https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html"><code>write_xlsx()</code></a>) data from and to files. We offer a number of options in the commands to support various features of the openxml format, including reading and writing named ranges and tables. Furthermore, there are several ways to read certain information of an openxml spreadsheet without having opened it in a spreadsheet software before, e.g. to get the contained sheet names or tables.</li>
 <li>As a second variant <code>openxlsx2</code> offers the work with so called <a href="https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html"><code>wbWorkbook</code></a> objects. Here an openxml file is read into a corresponding <code>wbWorkbook</code> object (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_load.html"><code>wb_load()</code></a>) or a new one is created (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html"><code>wb_workbook()</code></a>). Afterwards the object can be further modified using various functions. For example, worksheets can be added or removed, the layout of cells or entire worksheets can be changed, and cells can be modified (overwritten or rewritten). Afterwards the <code>wbWorkbook</code> objects can be written as openxml files and processed by suitable spreadsheet software.</li>
@@ -141,7 +141,7 @@
 <span><span class="co">#&gt; A Workbook object.</span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; Worksheets:</span></span>
-<span><span class="co">#&gt;  Sheets: Sheet1 Sheet2 </span></span>
+<span><span class="co">#&gt;  Sheets: Sheet1, Sheet2 </span></span>
 <span><span class="co">#&gt;  Write order: 1, 2</span></span>
 <span></span>
 <span><span class="co"># read a data frame</span></span>
@@ -182,7 +182,7 @@
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p>This package is licensed under the MIT license and is based on <a href="https://github.com/ycphs/openxlsx" class="external-link"><code>openxlsx</code></a> (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and <a href="https://github.com/zeux/pugixml" class="external-link"><code>pugixml</code></a> (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.</p>
+<p>This package is licensed under the MIT license and is based on <a href="https://github.com/ycphs/openxlsx" class="external-link"><code>openxlsx</code></a> (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022) and <a href="https://github.com/zeux/pugixml" class="external-link"><code>pugixml</code></a> (by Arseny Kapoulkine; COPYRIGHT 2006-2023). Both released under the MIT license.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

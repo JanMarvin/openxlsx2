@@ -12,7 +12,7 @@ formatting of the original input file."><!-- mathjax --><script src="https://cdn
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,12 +73,12 @@ formatting of the original input file.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>file</dt>
-<dd><p>A path to an existing .xlsx or .xlsm file</p></dd>
+<dd><p>A path to an existing .xlsx, .xlsm or .xlsb file</p></dd>
 
 
 <dt>sheet</dt>
 <dd><p>optional sheet parameter. if this is applied, only the selected
-sheet will be loaded.</p></dd>
+sheet will be loaded. This can be a numeric, a string or <code>NULL</code>.</p></dd>
 
 
 <dt>data_only</dt>
@@ -113,6 +113,16 @@ Certain xlsx files created by third-party applications contain a namespace
 software and is not expected by <code>openxlsx2</code>. Therefore it is removed when the
 file is loaded into a workbook. Removal is generally expected to be safe,
 but the feature is still experimental.</p>
+<p>Initial support for binary openxml files (<code>xlsb</code>) has been added to the package.
+We parse the binary file format into pseudo-openxml files that we can import.
+Therefore, after importing, it is possible to interact with the file as if it
+had been provided as xlsx in the first place. This is of course slower than
+reading directly from the binary file. Our implementation is also still missing
+some features: some array formulas are still broken, conditional formatting and
+data validation are not implemented, nor are pivot tables and slicers.</p>
+<p>It is possible to import with <code>wb_load(data_only = TRUE, sheet = NULL)</code>. This
+way only a workbook skeleton is loaded. This can be useful if only some
+workbook properties are of interest.</p>
     </div>
 
     <div class="section level2">
@@ -126,7 +136,7 @@ but the feature is still experimental.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1 Sheet2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Sheet1, Sheet2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2</span>
 <span class="r-in"><span><span class="co">## Add a worksheet</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"A new worksheet"</span><span class="op">)</span></span></span>

@@ -139,10 +139,16 @@
     <loc>https://janmarvin.github.io/openxlsx2/reference/openxlsx2_options.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/reference/person-wb.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/pipe.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/print.pugi_xml.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/reference/properties-wb.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/pugixml.html</loc>
@@ -241,6 +247,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_plot.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_slicer.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_sparklines.html</loc>
   </url>
   <url>
@@ -283,9 +292,6 @@
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_freeze_pane.html</loc>
   </url>
   <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_get_named_regions.html</loc>
-  </url>
-  <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_get_tables.html</loc>
   </url>
   <url>
@@ -302,9 +308,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_page_setup.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_person.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_protect.html</loc>

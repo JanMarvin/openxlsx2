@@ -14,7 +14,7 @@ It is important to note that named regions are not case-sensitive and must be un
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@ It is important to note that named regions are not case-sensitive and must be un
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Modify named regions in a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a>, <a href="https://github.com/JanMarvin/openxlsx2/blob/HEAD/R/get-named-regions.R" class="external-link"><code>R/get-named-regions.R</code></a></small>
       <div class="d-none name"><code>named_region-wb.Rd</code></div>
     </div>
 
@@ -93,7 +93,9 @@ It is important to note that named regions are not case-sensitive and must be un
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">wb_remove_named_region</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">wb_remove_named_region</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_get_named_regions</span><span class="op">(</span><span class="va">wb</span>, tables <span class="op">=</span> <span class="cn">FALSE</span>, x <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -112,7 +114,7 @@ It is important to note that named regions are not case-sensitive and must be un
 
 <dt>name</dt>
 <dd><p>Name for region. A character vector of length 1. Note that region
-names musts be case-insensitive unique.</p></dd>
+names must be case-insensitive unique.</p></dd>
 
 
 <dt>local_sheet</dt>
@@ -138,14 +140,32 @@ names musts be case-insensitive unique.</p></dd>
 <dt>...</dt>
 <dd><p>additional arguments</p></dd>
 
+
+<dt>tables</dt>
+<dd><p>Should included both data tables and named regions in the result?</p></dd>
+
+
+<dt>x</dt>
+<dd><p>Deprecated. Use <code>wb</code>. For Excel input use <code><a href="wb_load.html">wb_load()</a></code> to first load
+the xlsx file as a workbook.</p></dd>
+
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>A workbook, invisibly.</p>
+
+
+<p>A data frame with the all named regions in <code>wb</code>. Or <code>NULL</code>, if none are found.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>You can use the <code><a href="wb_dims.html">wb_dims()</a></code> helper to specify the cell range of the named region</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="wb_get_named_regions.html">wb_get_named_regions()</a></code></p>
+    <div class="dont-index"><p><code><a href="wb_get_tables.html">wb_get_tables()</a></code></p>
 <p>Other worksheet content functions: 
 <code><a href="col_widths-wb.html">col_widths-wb</a></code>,
 <code><a href="filter-wb.html">filter-wb</a></code>,
@@ -156,6 +176,7 @@ names musts be case-insensitive unique.</p></dd>
 <code><a href="wb_add_data.html">wb_add_data</a>()</code>,
 <code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
 <code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
+<code><a href="wb_add_slicer.html">wb_add_slicer</a>()</code>,
 <code><a href="wb_add_thread.html">wb_add_thread</a>()</code>,
 <code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
 <code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code></p></div>
@@ -192,6 +213,17 @@ names musts be case-insensitive unique.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5          4.6         3.1          1.5         0.2  setosa</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6          5.0         3.6          1.4         0.2  setosa</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7          5.4         3.9          1.7         0.4  setosa</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract named regions from a file</span></span></span>
+<span class="r-in"><span><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="va">out_file</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load the file as a workbook first, then get named regions.</span></span></span>
+<span class="r-in"><span><span class="va">wb1</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">out_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb1</span><span class="op">$</span><span class="fu">get_named_regions</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name                 value  sheets  coords id local sheet</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 iris 'Sheet 1'!$A$1:$E$151 Sheet 1 A1:E151  1     0     1</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

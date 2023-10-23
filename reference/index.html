@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -175,7 +175,7 @@
         <dd>Group rows and columns in a worksheet</dd>
       </dl><dl><dt>
           
-          <code><a href="named_region-wb.html">wb_add_named_region()</a></code> <code><a href="named_region-wb.html">wb_remove_named_region()</a></code> 
+          <code><a href="named_region-wb.html">wb_add_named_region()</a></code> <code><a href="named_region-wb.html">wb_remove_named_region()</a></code> <code><a href="named_region-wb.html">wb_get_named_regions()</a></code> 
         </dt>
         <dd>Modify named regions in a worksheet</dd>
       </dl><dl><dt>
@@ -208,6 +208,11 @@
           <code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code> 
         </dt>
         <dd>Add a pivot table to a worksheet</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_add_slicer.html">wb_add_slicer()</a></code> 
+        </dt>
+        <dd>Add a slicer to a pivot table</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_thread.html">wb_add_thread()</a></code> 
@@ -286,7 +291,7 @@
           
           <code><a href="wb_add_border.html">wb_add_border()</a></code> 
         </dt>
-        <dd>Modify borders in a cell region</dd>
+        <dd>Modify borders in a cell region of a worksheet</dd>
       </dl><dl><dt>
           
           <code><a href="wb_add_cell_style.html">wb_add_cell_style()</a></code> 
@@ -382,6 +387,11 @@
 
       <dl><dt>
           
+          <code><a href="properties-wb.html">wb_get_properties()</a></code> <code><a href="properties-wb.html">wb_set_properties()</a></code> 
+        </dt>
+        <dd>Modify workbook properties</dd>
+      </dl><dl><dt>
+          
           <code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by()</a></code> 
         </dt>
         <dd>Modify author in the metadata of a workbook</dd>
@@ -422,7 +432,7 @@
         <dd>Set the workbook position, size and filter</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_person.html">wb_add_person()</a></code> <code><a href="wb_person.html">wb_get_person()</a></code> 
+          <code><a href="person-wb.html">wb_add_person()</a></code> <code><a href="person-wb.html">wb_get_person()</a></code> 
         </dt>
         <dd>Helper for adding threaded comments</dd>
       </dl><dl><dt>
@@ -440,11 +450,6 @@
           <code><a href="wb_remove_tables.html">wb_remove_tables()</a></code> 
         </dt>
         <dd>Remove a data table from a worksheet</dd>
-      </dl><dl><dt>
-          
-          <code><a href="wb_get_named_regions.html">wb_get_named_regions()</a></code> 
-        </dt>
-        <dd>Get named regions in a workbook</dd>
       </dl></div><div class="section level2">
       <h2 id="workbook-editing-helpers">Workbook editing helpers<a class="anchor" aria-label="anchor" href="#workbook-editing-helpers"></a></h2>
       

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,30 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.0" id="openxlsx2-10">openxlsx2 1.0<a class="anchor" aria-label="anchor" href="#openxlsx2-10"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.1" id="openxlsx2-11">openxlsx2 1.1<a class="anchor" aria-label="anchor" href="#openxlsx2-11"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-1">New features<a class="anchor" aria-label="anchor" href="#new-features-1-1"></a></h3>
+<ul><li><p>Basic support for cloning worksheets across workbooks was added in <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code>. This should work with tabular and formula data, images and charts. Support for more complex worksheets is known pending. <a href="https://github.com/JanMarvin/openxlsx2/pull/622" class="external-link">622</a></p></li>
+<li><p>Enable loading workbooks without sheets with <code>wb_load(sheet = NULL)</code>. This is helpful if the sheets contain a lot of data and only some general workbook data is of interest. <a href="https://github.com/JanMarvin/openxlsx2/pull/810" class="external-link">810</a></p></li>
+<li><p>It is no longer needed to manually create columns for <code><a href="../reference/grouping-wb.html">wb_group_cols()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/781" class="external-link">781</a></p></li>
+<li><p>It is now possible to sort pivot tables created by <code><a href="../reference/wb_add_pivot_table.html">wb_add_pivot_table()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/795" class="external-link">795</a></p></li>
+<li>
+<p>Basic support for the <code>xlsb</code> file format. We parse the binary file format into pseudo-openxml files that we can import. Therefore, after importing, it is possible to interact with the file as if it had been provided as <code>xlsx</code> in the first place. This is of course slower than reading directly from the binary file. Our implementation is also still missing some features: some array formulas are still broken, conditional formatting and data validation are not implemented, nor are pivot tables and slicers. <a href="https://github.com/JanMarvin/openxlsx2/pull/688" class="external-link">688</a></p>
+<ul><li>Please note that <code>openxlsx2</code> is not a security tool and the <code>xlsb</code> parser was written with the intention of reading valid <code>xlsb</code> files on little endian systems.</li>
+<li>Please do not raise issues about <code>xlsb</code> in terms of speed or completeness of features of the openxml standard. If you have access to other file conversion tools, such as spreadsheet software, they may provide a better solution for your needs.</li>
+<li>Writing <code>xlsb</code> files is outside the scope of this project.</li>
+</ul></li>
+<li><p>New set of function <code><a href="../reference/properties-wb.html">wb_get_properties()</a></code>/<code><a href="../reference/properties-wb.html">wb_set_properties()</a></code> to view and modify workbook properties. <a href="https://github.com/JanMarvin/openxlsx2/pull/782" class="external-link">782</a> This was subsequently improved to handle more workbook properties like <code>company</code> and <code>manager</code>. (<a href="https://github.com/JanMarvin/openxlsx2/pull/799" class="external-link">799</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
+<li><p>Basic (experimental) support to add slicers to pivot tables created by <code>openxlsx2</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/822" class="external-link">822</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-1"></a></h3>
+<ul><li><p>Removing the worksheet that is the active tab does no longer result in warnings in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/792" class="external-link">792</a></p></li>
+<li><p><code>update_table()</code> works now without if the table has no <code>autofilter</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/802" class="external-link">802</a></p></li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0" id="openxlsx2-10">openxlsx2 1.0<a class="anchor" aria-label="anchor" href="#openxlsx2-10"></a></h2><p class="text-muted">CRAN release: 2023-08-25</p>
 <div class="section level3">
 <h3 id="breaking-changes-1-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-0"></a></h3>
 <ul><li>
@@ -121,7 +144,7 @@
 <div class="section level3">
 <h3 id="internal-changes-1-0">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-0"></a></h3>
 <ul><li>
-<code><a href="../reference/active_sheet-wb.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_selected()</a></code> and <code><a href="../reference/active_sheet-wb.html">wb_set_selected()</a></code>, <code><a href="../reference/wb_get_named_regions.html">wb_get_named_regions()</a></code> are now wrapper functions. <a href="https://github.com/JanMarvin/openxlsx2/pull/735" class="external-link">735</a>
+<code><a href="../reference/active_sheet-wb.html">wb_get_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_set_active_sheet()</a></code>, <code><a href="../reference/active_sheet-wb.html">wb_get_selected()</a></code> and <code><a href="../reference/active_sheet-wb.html">wb_set_selected()</a></code>, <code><a href="../reference/named_region-wb.html">wb_get_named_regions()</a></code> are now wrapper functions. <a href="https://github.com/JanMarvin/openxlsx2/pull/735" class="external-link">735</a>
 </li>
 </ul><hr></div>
 </div>
@@ -276,7 +299,7 @@
 </ul></li>
 <li>deprecating function
 <ul><li>
-<code>get_named_regions()</code> for <code><a href="../reference/wb_get_named_regions.html">wb_get_named_regions()</a></code>
+<code>get_named_regions()</code> for <code><a href="../reference/named_region-wb.html">wb_get_named_regions()</a></code>
 </li>
 </ul></li>
 </ul></li>
