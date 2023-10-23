@@ -661,7 +661,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' assigned to a workbook to use them
 #'
 #' @details
-#' It is possible to override border_color and border_style with {left, right, top, bottom}_color, {left, right, top, bottom}_style.
+#' It is possible to override border_color and border_style with \{left, right, top, bottom\}_color, \{left, right, top, bottom\}_style.
 #'
 #' @seealso [wb_add_style()]
 # TODO maybe font_name,font_size could be documented together.
