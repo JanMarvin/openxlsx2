@@ -54,74 +54,74 @@ wb_page_setup(
 Set page margins, orientation and print scaling.
 }
 \details{
-\code{paper_size} is an integer corresponding to:
-\itemize{
-\item{\strong{1}}{ Letter paper (8.5 in. by 11 in.)}
-\item{\strong{2}}{ Letter small paper (8.5 in. by 11 in.)}
-\item{\strong{3}}{ Tabloid paper (11 in. by 17 in.)}
-\item{\strong{4}}{ Ledger paper (17 in. by 11 in.)}
-\item{\strong{5}}{ Legal paper (8.5 in. by 14 in.)}
-\item{\strong{6}}{ Statement paper (5.5 in. by 8.5 in.)}
-\item{\strong{7}}{ Executive paper (7.25 in. by 10.5 in.)}
-\item{\strong{8}}{ A3 paper (297 mm by 420 mm)}
-\item{\strong{9}}{ A4 paper (210 mm by 297 mm)}
-\item{\strong{10}}{ A4 small paper (210 mm by 297 mm)}
-\item{\strong{11}}{ A5 paper (148 mm by 210 mm)}
-\item{\strong{12}}{ B4 paper (250 mm by 353 mm)}
-\item{\strong{13}}{ B5 paper (176 mm by 250 mm)}
-\item{\strong{14}}{ Folio paper (8.5 in. by 13 in.)}
-\item{\strong{15}}{ Quarto paper (215 mm by 275 mm)}
-\item{\strong{16}}{ Standard paper (10 in. by 14 in.)}
-\item{\strong{17}}{ Standard paper (11 in. by 17 in.)}
-\item{\strong{18}}{ Note paper (8.5 in. by 11 in.)}
-\item{\strong{19}}{ #9 envelope (3.875 in. by 8.875 in.)}
-\item{\strong{20}}{ #10 envelope (4.125 in. by 9.5 in.)}
-\item{\strong{21}}{ #11 envelope (4.5 in. by 10.375 in.)}
-\item{\strong{22}}{ #12 envelope (4.75 in. by 11 in.)}
-\item{\strong{23}}{ #14 envelope (5 in. by 11.5 in.)}
-\item{\strong{24}}{ C paper (17 in. by 22 in.)}
-\item{\strong{25}}{ D paper (22 in. by 34 in.)}
-\item{\strong{26}}{ E paper (34 in. by 44 in.)}
-\item{\strong{27}}{ DL envelope (110 mm by 220 mm)}
-\item{\strong{28}}{ C5 envelope (162 mm by 229 mm)}
-\item{\strong{29}}{ C3 envelope (324 mm by 458 mm)}
-\item{\strong{30}}{ C4 envelope (229 mm by 324 mm)}
-\item{\strong{31}}{ C6 envelope (114 mm by 162 mm)}
-\item{\strong{32}}{ C65 envelope (114 mm by 229 mm)}
-\item{\strong{33}}{ B4 envelope (250 mm by 353 mm)}
-\item{\strong{34}}{ B5 envelope (176 mm by 250 mm)}
-\item{\strong{35}}{ B6 envelope (176 mm by 125 mm)}
-\item{\strong{36}}{ Italy envelope (110 mm by 230 mm)}
-\item{\strong{37}}{ Monarch envelope (3.875 in. by 7.5 in.).}
-\item{\strong{38}}{ 6 3/4 envelope (3.625 in. by 6.5 in.)}
-\item{\strong{39}}{ US standard fanfold (14.875 in. by 11 in.)}
-\item{\strong{40}}{ German standard fanfold (8.5 in. by 12 in.)}
-\item{\strong{41}}{ German legal fanfold (8.5 in. by 13 in.)}
-\item{\strong{42}}{ ISO B4 (250 mm by 353 mm)}
-\item{\strong{43}}{ Japanese double postcard (200 mm by 148 mm)}
-\item{\strong{44}}{ Standard paper (9 in. by 11 in.)}
-\item{\strong{45}}{ Standard paper (10 in. by 11 in.)}
-\item{\strong{46}}{ Standard paper (15 in. by 11 in.)}
-\item{\strong{47}}{ Invite envelope (220 mm by 220 mm)}
-\item{\strong{50}}{ Letter extra paper (9.275 in. by 12 in.)}
-\item{\strong{51}}{ Legal extra paper (9.275 in. by 15 in.)}
-\item{\strong{52}}{ Tabloid extra paper (11.69 in. by 18 in.)}
-\item{\strong{53}}{ A4 extra paper (236 mm by 322 mm)}
-\item{\strong{54}}{ Letter transverse paper (8.275 in. by 11 in.)}
-\item{\strong{55}}{ A4 transverse paper (210 mm by 297 mm)}
-\item{\strong{56}}{ Letter extra transverse paper (9.275 in. by 12 in.)}
-\item{\strong{57}}{ SuperA/SuperA/A4 paper (227 mm by 356 mm)}
-\item{\strong{58}}{ SuperB/SuperB/A3 paper (305 mm by 487 mm)}
-\item{\strong{59}}{ Letter plus paper (8.5 in. by 12.69 in.)}
-\item{\strong{60}}{ A4 plus paper (210 mm by 330 mm)}
-\item{\strong{61}}{ A5 transverse paper (148 mm by 210 mm)}
-\item{\strong{62}}{ JIS B5 transverse paper (182 mm by 257 mm)}
-\item{\strong{63}}{ A3 extra paper (322 mm by 445 mm)}
-\item{\strong{64}}{ A5 extra paper (174 mm by 235 mm)}
-\item{\strong{65}}{ ISO B5 extra paper (201 mm by 276 mm)}
-\item{\strong{66}}{ A2 paper (420 mm by 594 mm)}
-\item{\strong{67}}{ A3 transverse paper (297 mm by 420 mm)}
-\item{\strong{68}}{ A3 extra transverse paper (322 mm by 445 mm)}
+\code{paper_size} is an integer corresponding to:\tabular{ll}{
+   size \tab "paper type" \cr
+   1 \tab Letter paper (8.5 in. by 11 in.) \cr
+   2 \tab Letter small paper (8.5 in. by 11 in.) \cr
+   3 \tab Tabloid paper (11 in. by 17 in.) \cr
+   4 \tab Ledger paper (17 in. by 11 in.) \cr
+   5 \tab Legal paper (8.5 in. by 14 in.) \cr
+   6 \tab Statement paper (5.5 in. by 8.5 in.) \cr
+   7 \tab Executive paper (7.25 in. by 10.5 in.) \cr
+   8 \tab A3 paper (297 mm by 420 mm) \cr
+   9 \tab A4 paper (210 mm by 297 mm) \cr
+   10 \tab A4 small paper (210 mm by 297 mm) \cr
+   11 \tab A5 paper (148 mm by 210 mm) \cr
+   12 \tab B4 paper (250 mm by 353 mm) \cr
+   13 \tab B5 paper (176 mm by 250 mm) \cr
+   14 \tab Folio paper (8.5 in. by 13 in.) \cr
+   15 \tab Quarto paper (215 mm by 275 mm) \cr
+   16 \tab Standard paper (10 in. by 14 in.) \cr
+   17 \tab Standard paper (11 in. by 17 in.) \cr
+   18 \tab Note paper (8.5 in. by 11 in.) \cr
+   19 \tab #9 envelope (3.875 in. by 8.875 in.) \cr
+   20 \tab #10 envelope (4.125 in. by 9.5 in.) \cr
+   21 \tab #11 envelope (4.5 in. by 10.375 in.) \cr
+   22 \tab #12 envelope (4.75 in. by 11 in.) \cr
+   23 \tab #14 envelope (5 in. by 11.5 in.) \cr
+   24 \tab C paper (17 in. by 22 in.) \cr
+   25 \tab D paper (22 in. by 34 in.) \cr
+   26 \tab E paper (34 in. by 44 in.) \cr
+   27 \tab DL envelope (110 mm by 220 mm) \cr
+   28 \tab C5 envelope (162 mm by 229 mm) \cr
+   29 \tab C3 envelope (324 mm by 458 mm) \cr
+   30 \tab C4 envelope (229 mm by 324 mm) \cr
+   31 \tab C6 envelope (114 mm by 162 mm) \cr
+   32 \tab C65 envelope (114 mm by 229 mm) \cr
+   33 \tab B4 envelope (250 mm by 353 mm) \cr
+   34 \tab B5 envelope (176 mm by 250 mm) \cr
+   35 \tab B6 envelope (176 mm by 125 mm) \cr
+   36 \tab Italy envelope (110 mm by 230 mm) \cr
+   37 \tab Monarch envelope (3.875 in. by 7.5 in.) \cr
+   38 \tab 6 3/4 envelope (3.625 in. by 6.5 in.) \cr
+   39 \tab US standard fanfold (14.875 in. by 11 in.) \cr
+   40 \tab German standard fanfold (8.5 in. by 12 in.) \cr
+   41 \tab German legal fanfold (8.5 in. by 13 in.) \cr
+   42 \tab ISO B4 (250 mm by 353 mm) \cr
+   43 \tab Japanese double postcard (200 mm by 148 mm) \cr
+   44 \tab Standard paper (9 in. by 11 in.) \cr
+   45 \tab Standard paper (10 in. by 11 in.) \cr
+   46 \tab Standard paper (15 in. by 11 in.) \cr
+   47 \tab Invite envelope (220 mm by 220 mm) \cr
+   50 \tab Letter extra paper (9.275 in. by 12 in.) \cr
+   51 \tab Legal extra paper (9.275 in. by 15 in.) \cr
+   52 \tab Tabloid extra paper (11.69 in. by 18 in.) \cr
+   53 \tab A4 extra paper (236 mm by 322 mm) \cr
+   54 \tab Letter transverse paper (8.275 in. by 11 in.) \cr
+   55 \tab A4 transverse paper (210 mm by 297 mm) \cr
+   56 \tab Letter extra transverse paper (9.275 in. by 12 in.) \cr
+   57 \tab SuperA/SuperA/A4 paper (227 mm by 356 mm) \cr
+   58 \tab SuperB/SuperB/A3 paper (305 mm by 487 mm) \cr
+   59 \tab Letter plus paper (8.5 in. by 12.69 in.) \cr
+   60 \tab A4 plus paper (210 mm by 330 mm) \cr
+   61 \tab A5 transverse paper (148 mm by 210 mm) \cr
+   62 \tab JIS B5 transverse paper (182 mm by 257 mm) \cr
+   63 \tab A3 extra paper (322 mm by 445 mm) \cr
+   64 \tab A5 extra paper (174 mm by 235 mm) \cr
+   65 \tab ISO B5 extra paper (201 mm by 276 mm) \cr
+   66 \tab A2 paper (420 mm by 594 mm) \cr
+   67 \tab A3 transverse paper (297 mm by 420 mm) \cr
+   68 \tab A3 extra transverse paper (322 mm by 445 mm) \cr
 }
 }
 \examples{

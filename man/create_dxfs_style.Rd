@@ -65,7 +65,7 @@ Create a new style to apply to worksheet cells. Created styles have to be
 assigned to a workbook to use them
 }
 \details{
-It is possible to override border_color and border_style with {left, right, top, bottom}_color, {left, right, top, bottom}_style.
+It is possible to override border_color and border_style with \{left, right, top, bottom\}_color, \{left, right, top, bottom\}_style.
 }
 \examples{
 # do not apply anything
