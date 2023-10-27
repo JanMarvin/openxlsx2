@@ -491,3 +491,34 @@ test_that("named regions work.", {
   expect_equal(exp, got)
 
 })
+
+test_that("local_sheet works", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_named_region(
+      name = "foo",
+      dims = "A1",
+      local_sheet = TRUE
+    )$
+    add_worksheet()$
+    add_named_region(
+      name = "bar",
+      dims = "A1",
+      local_sheet = TRUE
+    )$
+    add_named_region(
+      sheet = 1,
+      name = "baz",
+      dims = "A2",
+      local_sheet = TRUE
+    )
+
+  exp <- c(
+    "<definedName localSheetId=\"0\" name=\"foo\">'Sheet 1'!$A$1:$A$1</definedName>",
+    "<definedName localSheetId=\"1\" name=\"bar\">'Sheet 2'!$A$1:$A$1</definedName>",
+    "<definedName localSheetId=\"0\" name=\"baz\">'Sheet 1'!$A$2:$A$2</definedName>"
+  )
+  got <- wb$workbook$definedNames
+  expect_equal(exp, got)
+
+})

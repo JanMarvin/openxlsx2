@@ -6079,7 +6079,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       localSheetId <- ""
-      if (local_sheet) localSheetId <- as.character(sheet)
+      if (local_sheet) localSheetId <- as.character(sheet - 1L)
 
       ## check name doesn't already exist
       ## named region
