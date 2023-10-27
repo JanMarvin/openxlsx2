@@ -305,6 +305,9 @@ wb_add_data_table <- function(
 #' `fun` can be any of `AVERAGE`, `COUNT`, `COUNTA`, `MAX`, `MIN`,
 #' `PRODUCT`, `STDEV`, `STDEVP`, `SUM`, `VAR`, `VARP`.
 #'
+#' `show_data_as` can be any of `normal`, `difference`, `percent`, `percentDiff`,
+#' `runTotal`, `percentOfRow`, `percentOfCol`, `percentOfTotal`, `index`.
+#'
 #' The sheet will be empty unless it is opened in spreadsheet software.
 #'
 #' @param wb A Workbook object containing a #' worksheet.
