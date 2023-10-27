@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,8 +59,13 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+<ul><li>Add new params to <code><a href="../reference/wb_add_pivot_table.html">wb_add_pivot_table()</a></code>. It is now possible to set the <code>show_data_as</code> value and set a tabular table design. <a href="https://github.com/JanMarvin/openxlsx2/pull/833" class="external-link">833</a>
+</li>
+</ul><hr></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1" id="openxlsx2-11">openxlsx2 1.1<a class="anchor" aria-label="anchor" href="#openxlsx2-11"></a></h2><p class="text-muted">CRAN release: 2023-10-23</p>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-1-1">New features<a class="anchor" aria-label="anchor" href="#new-features-1-1"></a></h3>
 <ul><li><p>Basic support for cloning worksheets across workbooks was added in <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code>. This should work with tabular and formula data, images and charts. Support for more complex worksheets is known pending. <a href="https://github.com/JanMarvin/openxlsx2/pull/622" class="external-link">622</a></p></li>
 <li><p>Enable loading workbooks without sheets with <code>wb_load(sheet = NULL)</code>. This is helpful if the sheets contain a lot of data and only some general workbook data is of interest. <a href="https://github.com/JanMarvin/openxlsx2/pull/810" class="external-link">810</a></p></li>
 <li><p>It is no longer needed to manually create columns for <code><a href="../reference/grouping-wb.html">wb_group_cols()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/781" class="external-link">781</a></p></li>
@@ -75,7 +80,7 @@
 <li><p>Basic (experimental) support to add slicers to pivot tables created by <code>openxlsx2</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/822" class="external-link">822</a></p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-1"></a></h3>
 <ul><li><p>Removing the worksheet that is the active tab does no longer result in warnings in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/792" class="external-link">792</a></p></li>
 <li><p><code>update_table()</code> works now without if the table has no <code>autofilter</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/802" class="external-link">802</a></p></li>
 </ul><hr></div>
