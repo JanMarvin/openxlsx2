@@ -758,6 +758,15 @@ create_pivot_table <- function(
   }
 
   pivotField <- NULL
+
+  compact <- ""
+  if (!is.null(params$compact))
+    compact <- params$compact
+
+  outline <- ""
+  if (!is.null(params$outline))
+    outline <- params$outline
+
   for (i in seq_along(x)) {
 
     dataField <- NULL
@@ -814,7 +823,10 @@ create_pivot_table <- function(
       else                  sort <- "ascending"
     }
 
-    attrs <- c(axis, dataField, showAll = "0", sortType = sort)
+    attrs <- c(
+      axis, dataField, showAll = "0", sortType = sort,
+      compact = as_xml_attr(compact), outline = as_xml_attr(outline)
+    )
 
     tmp <- xml_node_create(
       "pivotField",
@@ -991,10 +1003,6 @@ create_pivot_table <- function(
   multipleFieldFilters <- "0"
   if (!is.null(params$multipleFieldFilters))
     multipleFieldFilters <- params$multipleFieldFilters
-
-  outline <- "1"
-  if (!is.null(params$outline))
-    outline <- params$outline
 
   outlineData <- "1"
   if (!is.null(params$outlineData))
