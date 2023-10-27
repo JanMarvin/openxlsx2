@@ -758,6 +758,15 @@ create_pivot_table <- function(
   }
 
   pivotField <- NULL
+
+  compact <- ""
+  if (!is.null(params$compact))
+    compact <- params$compact
+
+  outline <- ""
+  if (!is.null(params$outline))
+    outline <- params$outline
+
   for (i in seq_along(x)) {
 
     dataField <- NULL
@@ -814,7 +823,10 @@ create_pivot_table <- function(
       else                  sort <- "ascending"
     }
 
-    attrs <- c(axis, dataField, showAll = "0", sortType = sort)
+    attrs <- c(
+      axis, dataField, showAll = "0", sortType = sort,
+      compact = as_xml_attr(compact), outline = as_xml_attr(outline)
+    )
 
     tmp <- xml_node_create(
       "pivotField",
@@ -879,6 +891,11 @@ create_pivot_table <- function(
   if (use_data) {
 
     dataField <- NULL
+
+    show_data_as <- rep("", length(data))
+    if (!is.null(params$show_data_as))
+      show_data_as <- params$show_data_as
+
     for (i in seq_along(data)) {
 
       if (missing(fun)) fun <- NULL
@@ -888,12 +905,13 @@ create_pivot_table <- function(
         xml_node_create(
           "dataField",
           xml_attributes = c(
-            name      = sprintf("%s of %s", ifelse(is.null(fun[i]), "Sum", fun[i]), data[i]),
-            fld       = sprintf("%s", data_pos[i] - 1L),
-            subtotal  = fun[i],
-            baseField = "0",
-            baseItem  = "0",
-            numFmtId  = numfmts[i]
+            name       = sprintf("%s of %s", ifelse(is.null(fun[i]), "Sum", fun[i]), data[i]),
+            fld        = sprintf("%s", data_pos[i] - 1L),
+            showDataAs = as_xml_attr(ifelse(is.null(show_data_as[i]), "", show_data_as[i])),
+            subtotal   = fun[i],
+            baseField  = "0",
+            baseItem   = "0",
+            numFmtId   = numfmts[i]
           )
         )
       )
@@ -985,10 +1003,6 @@ create_pivot_table <- function(
   multipleFieldFilters <- "0"
   if (!is.null(params$multipleFieldFilters))
     multipleFieldFilters <- params$multipleFieldFilters
-
-  outline <- "1"
-  if (!is.null(params$outline))
-    outline <- params$outline
 
   outlineData <- "1"
   if (!is.null(params$outlineData))

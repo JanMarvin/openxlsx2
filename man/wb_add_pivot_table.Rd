@@ -52,6 +52,9 @@ to ensure the function works.
 \code{fun} can be any of \code{AVERAGE}, \code{COUNT}, \code{COUNTA}, \code{MAX}, \code{MIN},
 \code{PRODUCT}, \code{STDEV}, \code{STDEVP}, \code{SUM}, \code{VAR}, \code{VARP}.
 
+\code{show_data_as} can be any of \code{normal}, \code{difference}, \code{percent}, \code{percentDiff},
+\code{runTotal}, \code{percentOfRow}, \code{percentOfCol}, \code{percentOfTotal}, \code{index}.
+
 The sheet will be empty unless it is opened in spreadsheet software.
 }
 \examples{
