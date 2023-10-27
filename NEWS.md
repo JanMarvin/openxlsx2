@@ -1,5 +1,7 @@
 # openxlsx2 (development version)
 
+* Add new params to `wb_add_pivot_table()`. It is now possible to set the `show_data_as` value and set a tabular table design. [833](https://github.com/JanMarvin/openxlsx2/pull/833)
+
 
 ***************************************************************************
 
