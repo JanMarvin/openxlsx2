@@ -227,6 +227,16 @@ write_data2 <- function(
     # dc <- openxlsx2_type(data)
   }
 
+  # since 1.2
+  is_fml <- dc == openxlsx2_celltype[["formula"]] | dc == openxlsx2_celltype[["array_formula"]] | dc == openxlsx2_celltype[["cm_formula"]] | dc == openxlsx2_celltype[["hyperlink"]]
+  if (any(is_fml)) {
+    fmls <- names(dc[is_fml])
+    data[fmls] <- lapply(
+      data[fmls],
+      function(val) xml_value(xml_node_create("fml", val, escapes = TRUE), "fml")
+    )
+  }
+
   hconvert_date1904 <- grepl('date1904="1"|date1904="true"',
                              stri_join(unlist(wb$workbook), collapse = ""),
                              ignore.case = TRUE)
@@ -1034,7 +1044,6 @@ write_formula <- function(
   assert_class(x, "character")
   # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
   x <- replaceXMLEntities(x)
-  x <- vapply(x, function(val) xml_value(xml_node_create("fml", val, escapes = TRUE), "fml"), NA_character_)
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
 
   formula <- "formula"

@@ -1,6 +1,12 @@
 # openxlsx2 (development version)
 
+## New features
+
 * Add new params to `wb_add_pivot_table()`. It is now possible to set the `show_data_as` value and set a tabular table design. [833](https://github.com/JanMarvin/openxlsx2/pull/833)
+
+## Fixes
+
+* Previously formulas written as data frames were not xml escaped. [834](https://github.com/JanMarvin/openxlsx2/pull/834)
 
 
 ***************************************************************************
