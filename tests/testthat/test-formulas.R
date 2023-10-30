@@ -70,9 +70,11 @@ test_that("setting ref works", {
 test_that("formual escaping works", {
 
   df_tmp <- data.frame(
-    f = paste0("'A&B'!A1")
+    f = "'A&B'!A1",
+    g = "'A&amp;B'!A1"
   )
   class(df_tmp$f) <- c(class(df_tmp$f), "formula")
+  class(df_tmp$g) <- c(class(df_tmp$g), "formula")
 
   wb <- wb_workbook()$
     add_worksheet("A&B")$
@@ -83,7 +85,7 @@ test_that("formual escaping works", {
 
   expect_warning(wb$add_formula(dims = "A4", x = "SUM('A&B'!A1)", cm = TRUE))
 
-  exp <- c("'A&amp;B'!A1", "'A&amp;B'!A1", "SUM('A&amp;B'!A1)", "SUM('A&amp;B'!A1)")
+  exp <- c("'A&amp;B'!A1", "'A&amp;B'!A1", "'A&amp;B'!A1", "SUM('A&amp;B'!A1)", "SUM('A&amp;B'!A1)")
   got <- wb$worksheets[[2]]$sheet_data$cc$f
   expect_equal(exp, got)
 

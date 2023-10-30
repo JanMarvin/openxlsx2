@@ -220,20 +220,29 @@ write_data2 <- function(
   dc <- openxlsx2_type(data)
 
   # convert factor to character
-  if (any(dc == openxlsx2_celltype[["factor"]])) {
-    is_factor <- dc == openxlsx2_celltype[["factor"]]
+  is_factor <- dc == openxlsx2_celltype[["factor"]]
+
+  if (any(is_factor)) {
     fcts <- names(dc[is_factor])
     data[fcts] <- lapply(data[fcts], to_string)
-    # dc <- openxlsx2_type(data)
   }
 
-  # since 1.2
-  is_fml <- dc == openxlsx2_celltype[["formula"]] | dc == openxlsx2_celltype[["array_formula"]] | dc == openxlsx2_celltype[["cm_formula"]] | dc == openxlsx2_celltype[["hyperlink"]]
+  # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced.
+  # until 1.1 formula encoding was applied in write_formula() and missed formulas written
+  # as data frames with class formula
+  is_fml <- dc %in% c(
+    openxlsx2_celltype[["formula"]], openxlsx2_celltype[["array_formula"]],
+    openxlsx2_celltype[["cm_formula"]], openxlsx2_celltype[["hyperlink"]]
+  )
+
   if (any(is_fml)) {
     fmls <- names(dc[is_fml])
     data[fmls] <- lapply(
       data[fmls],
-      function(val) xml_value(xml_node_create("fml", val, escapes = TRUE), "fml")
+      function(val) {
+        val <- replaceXMLEntities(val)
+        vapply(val, function(x) xml_value(xml_node_create("fml", x, escapes = TRUE), "fml"), "")
+      }
     )
   }
 
@@ -1042,8 +1051,6 @@ write_formula <- function(
   standardize_case_names(...)
 
   assert_class(x, "character")
-  # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced
-  x <- replaceXMLEntities(x)
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
 
   formula <- "formula"
