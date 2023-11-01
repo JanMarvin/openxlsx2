@@ -775,10 +775,10 @@ test_that("numfmt in pivot tables works", {
                     filter = c("Location", "Status"), data = "Units")$
     add_pivot_table(df, dims = "A3", rows = "Plant",
                     filter = c("Location", "Status"), data = "Units",
-                    param = list(numfmts = c(formatCode = "#,###0"), sort_row = "ascending"))$
+                    param = list(numfmt = c(formatCode = "#,###0"), sort_row = "ascending"))$
     add_pivot_table(df, dims = "A3", rows = "Plant",
                     filter = c("Location", "Status"), data = "Units",
-                    param = list(numfmts = c(numfmt = 10), sort_row = "descending"))
+                    param = list(numfmt = c(numfmt = 10), sort_row = "descending"))
 
   exp <- c(
     "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\"/>",
@@ -821,7 +821,7 @@ test_that("numfmt in pivot tables works", {
   expect_error(
     wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
                        data = c("vs", "am"),
-                       param = list(numfmts = c(numfmt = 10))),
+                       param = list(numfmt = c(numfmt = 10))),
     "length of numfmt and data does not match"
   )
 
