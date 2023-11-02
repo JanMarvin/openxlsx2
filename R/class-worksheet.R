@@ -449,11 +449,12 @@ wbWorksheet <- R6::R6Class(
 
       out <- NULL
       for (i in seq_len(nrow(col_df))) {
-        z_i <- col_df[i, ]
-        
-        z <- z_i[rep(seq_len(nrow(z_i)), length(seq(z_i$min, z_i$max))), ]
-        z$key <- seq(z_i$min, z_i$max)
-        out <- rbind(out, z)
+        z <- col_df[i, ]
+        keys <- seq.int(z$min, z$max)
+
+        out_tmp <- z[rep(1L, length(keys)), ]
+        out_tmp$key <- keys
+        out <- rbind(out, out_tmp)
       }
 
       # merge and convert to character, remove key
