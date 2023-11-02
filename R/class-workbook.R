@@ -4677,6 +4677,12 @@ wbWorkbook <- R6::R6Class(
         imageNo <- 1L
       }
 
+      if (length(self$drawings_rels) >= sheet_drawing) {
+        next_id <- get_next_id(self$drawings_rels[[sheet_drawing]])
+      } else {
+        next_id <- "rId1"
+      }
+
       ## write file path to media slot to copy across on save
       tmp <- file
       names(tmp) <- stri_join("image", mediaNo, ".", imageType)
@@ -4688,7 +4694,7 @@ wbWorkbook <- R6::R6Class(
         '<xdr:absoluteAnchor>',
         pos,
         sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
-        genBasePic(imageNo),
+        genBasePic(imageNo, next_id),
         "<xdr:clientData/>",
         "</xdr:absoluteAnchor>"
       )
@@ -4722,8 +4728,8 @@ wbWorkbook <- R6::R6Class(
       self$drawings_rels[[sheet_drawing]] <- c(
         old_drawings_rels,
         sprintf(
-          '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
-          imageNo,
+          '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
+          next_id,
           mediaNo,
           imageType
         )

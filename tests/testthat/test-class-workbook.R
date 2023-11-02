@@ -63,6 +63,14 @@ test_that("wb_set_col_widths", {
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(exp, got)
 
+  wb <- wb_workbook()$add_worksheet()
+  wb$worksheets[[1]]$cols_attr <- c(
+    "<col min=\"1\" max=\"17\" width=\"30.77734375\" style=\"16\" customWidth=\"1\"/>",
+    "<col min=\"18\" max=\"16384\" width=\"8.88671875\" style=\"16\"/>"
+  )
+
+  expect_silent(wb$set_col_widths(cols = 19, width = 9))
+
 })
 
 
