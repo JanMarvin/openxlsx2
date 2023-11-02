@@ -243,7 +243,7 @@ genBaseStyleSheet <- function(dxfs = NULL, tableStyles = NULL, extLst = NULL) {
   )
 }
 
-genBasePic <- function(imageNo) {
+genBasePic <- function(imageNo, next_id) {
   sprintf('<xdr:pic>
       <xdr:nvPicPr>
         <xdr:cNvPr id="%s" name="Picture %s"/>
@@ -252,7 +252,7 @@ genBasePic <- function(imageNo) {
         </xdr:cNvPicPr>
       </xdr:nvPicPr>
       <xdr:blipFill>
-        <a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="rId%s">
+        <a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="%s">
         </a:blip>
         <a:stretch>
           <a:fillRect/>
@@ -263,7 +263,7 @@ genBasePic <- function(imageNo) {
           <a:avLst/>
         </a:prstGeom>
       </xdr:spPr>
-    </xdr:pic>', imageNo, imageNo, imageNo)
+    </xdr:pic>', imageNo, imageNo, next_id)
 }
 
 genBaseTheme <- function() {
