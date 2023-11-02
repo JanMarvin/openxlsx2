@@ -8,6 +8,8 @@
 
 * Previously formulas written as data frames were not xml escaped. [834](https://github.com/JanMarvin/openxlsx2/pull/834)
 
+* Improve drawing relationship id selection that could cause issues with unordered relationship ids in loaded workbooks. [838](https://github.com/JanMarvin/openxlsx2/pull/838)
+
 
 ***************************************************************************
 
