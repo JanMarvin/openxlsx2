@@ -1174,7 +1174,7 @@ wbWorkbook <- R6::R6Class(
           new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s <- new_s
-          rm(style, new_s)
+          rm(style, new_s, new_sty)
         }
 
         style   <- get_colstyle(from, sheet = old)
@@ -1182,11 +1182,11 @@ wbWorkbook <- R6::R6Class(
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
           cols    <- self$worksheets[[newSheetIndex]]$unfold_cols()
-          new_s   <- unname(new_sty[match(cols$s, names(new_sty))])
+          new_s   <- unname(new_sty[match(cols$style, names(new_sty))])
           new_s[is.na(new_s)] <- ""
-          cols$s <- new_s
+          cols$style <- new_s
           self$worksheets[[newSheetIndex]]$fold_cols(cols)
-          rm(style, new_s)
+          rm(style, new_s, new_sty)
         }
 
         style   <- get_rowstyle(from, sheet = old)
@@ -1196,8 +1196,10 @@ wbWorkbook <- R6::R6Class(
           new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s <- new_s
-          rm(style, new_s)
+          rm(style, new_s, new_sty)
         }
+
+        # TODO dxfs styles for (pivot) table styles and conditional formatting
 
         clone_shared_strings(from, old, self, newSheetIndex)
       }

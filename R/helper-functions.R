@@ -1405,6 +1405,7 @@ fetch_styles <- function(wb, xf_xml, st_ids) {
   if (all(is.na(xf_xml))) return(NULL)
 
   lst_out <- vector("list", length = length(xf_xml))
+  names(lst_out) <- st_ids
 
   for (i in seq_along(xf_xml)) {
 
@@ -1432,6 +1433,9 @@ fetch_styles <- function(wb, xf_xml, st_ids) {
     lst_out[[i]] <- out
 
   }
+
+  # unique drops names
+  lst_out <- lst_out[!duplicated(lst_out)]
 
   attr(lst_out, "st_ids") <- st_ids
 
@@ -1549,7 +1553,11 @@ set_cellstyles <- function(wb, style) {
   st_ids <- wb$styles_mgr$get_xf_id(session_ids)
 
   if (!is.null(attr(style, "st_ids"))) {
-    names(st_ids) <- attr(style, "st_ids")
+    names(st_ids) <- names(style)
+    out <- attr(style, "st_ids")
+
+    want <- match(out, names(st_ids))
+    st_ids <- st_ids[want]
   }
 
   st_ids
