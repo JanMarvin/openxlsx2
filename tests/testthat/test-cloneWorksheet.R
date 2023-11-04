@@ -240,3 +240,52 @@ test_that("cloning from workbooks works", {
   expect_equal(exp, got)
 
 })
+
+test_that("cloning column and row styles works", {
+
+  tmp <- temp_xlsx()
+
+  ### prepare a worksheet to clone from
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(x = head(mtcars))$
+    add_worksheet()$add_data(x = head(iris))
+
+  new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "yellow"))
+
+  wb$styles_mgr$add(new_fill, "new_fill")
+  new_cellxfs <- create_cell_style(
+    num_fmt_id = 0,
+    fill_id = wb$styles_mgr$get_fill_id("new_fill")
+  )
+  wb$styles_mgr$add(new_cellxfs, "new_styles")
+
+  wb$worksheets[[1]]$sheet_data$row_attr[2, "customFormat"] <- "1"
+  wb$worksheets[[1]]$sheet_data$row_attr[2, "s"] <- wb$styles_mgr$get_xf_id("new_styles")
+
+  cols <- openxlsx2:::wb_create_columns(wb, sheet = 1, cols = seq_along(mtcars))
+  cols[cols$min == 11, "style"] <- "1"
+  wb$worksheets[[1]]$fold_cols(cols)
+
+  # otherwise the style color somehow is omitted in the data area
+  wb$set_cell_style(sheet = 1, dims = "A2:K2", style = wb$styles_mgr$get_xf_id("new_styles"))
+  wb$set_cell_style(sheet = 1, dims = "K1:K7", style = wb$styles_mgr$get_xf_id("new_styles"))
+
+  wb$save(tmp)
+  rm(wb, cols, new_cellxfs, new_fill)
+
+  ### clone the actual worksheet
+  wb_mtcars <- wb_load(tmp)
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$clone_worksheet(old = "Sheet 1", "mtcars", from = wb_mtcars)
+  wb$clone_worksheet(old = "Sheet 2", "iris", from = wb_mtcars)
+
+  exp <- "<col min=\"11\" max=\"11\" style=\"2\" width=\"8.43\"/>"
+  got <- wb$worksheets[[2]]$cols_attr[2]
+  expect_equal(exp, got)
+
+  exp <- "3"
+  got <- wb$worksheets[[2]]$sheet_data$row_attr[2, "s"]
+  expect_equal(exp, got)
+
+})

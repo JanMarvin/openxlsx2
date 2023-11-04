@@ -1400,22 +1400,12 @@ basename2 <- function(path) {
   }
 }
 
-## get cell styles for a worksheet
-get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
-
-  st_ids <- NULL
-  if (missing(dims)) {
-    st_ids <- styles_on_sheet(wb = wb, sheet = sheet) %>% as.character()
-    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
-    xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
-  } else {
-    xf_xml <- get_cell_styles(wb = wb, sheet = sheet, cell = dims)
-  }
-
+fetch_styles <- function(wb, xf_xml, st_ids) {
   # returns NA if no style found
   if (all(is.na(xf_xml))) return(NULL)
 
   lst_out <- vector("list", length = length(xf_xml))
+  names(lst_out) <- st_ids
 
   for (i in seq_along(xf_xml)) {
 
@@ -1444,9 +1434,57 @@ get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
 
   }
 
+  # unique drops names
+  lst_out <- lst_out[!duplicated(lst_out)]
+
   attr(lst_out, "st_ids") <- st_ids
 
   lst_out
+}
+
+## get cell styles for a worksheet
+get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
+
+  st_ids <- NULL
+  if (missing(dims)) {
+    st_ids <- styles_on_sheet(wb = wb, sheet = sheet) %>% as.character()
+    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
+  } else {
+    xf_xml <- get_cell_styles(wb = wb, sheet = sheet, cell = dims)
+  }
+
+  fetch_styles(wb, xf_xml, st_ids)
+}
+
+get_colstyle <- function(wb, sheet = current_sheet()) {
+
+  st_ids <- NULL
+  if (length(wb$worksheets[[sheet]]$cols_attr)) {
+    cols <- wb$worksheets[[sheet]]$unfold_cols()
+    st_ids <- cols$s[cols$s != ""]
+    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
+  } else {
+    xf_xml <- NA_character_
+  }
+
+  fetch_styles(wb, xf_xml, st_ids)
+}
+
+get_rowstyle <- function(wb, sheet = current_sheet()) {
+
+  st_ids <- NULL
+  if (!is.null(wb$worksheets[[sheet]]$sheet_data$row_attr)) {
+    rows <- wb$worksheets[[sheet]]$sheet_data$row_attr
+    st_ids <- rows$s[rows$s != ""]
+    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
+  } else {
+    xf_xml <- NA_character_
+  }
+
+  fetch_styles(wb, xf_xml, st_ids)
 }
 
 ## apply cell styles to a worksheet and return reference ids
@@ -1515,7 +1553,11 @@ set_cellstyles <- function(wb, style) {
   st_ids <- wb$styles_mgr$get_xf_id(session_ids)
 
   if (!is.null(attr(style, "st_ids"))) {
-    names(st_ids) <- attr(style, "st_ids")
+    names(st_ids) <- names(style)
+    out <- attr(style, "st_ids")
+
+    want <- match(out, names(st_ids))
+    st_ids <- st_ids[want]
   }
 
   st_ids
