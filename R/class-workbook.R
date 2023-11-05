@@ -1552,6 +1552,14 @@ wbWorkbook <- R6::R6Class(
         stop("slicer was not initialized in pivot table!")
       }
 
+      choose    <- params$choose
+
+      if (!is.null(choose) && !is.na(choose[slicer])) {
+        choo <- choose[slicer]
+      } else {
+        choo <- NULL
+      }
+
       tab_xml <- xml_node_create(
         "tabular",
         xml_attributes = c(
@@ -1560,7 +1568,7 @@ wbWorkbook <- R6::R6Class(
           showMissing  = showMissing,
           crossFilter  = crossFilter
         ),
-        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE)
+        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE, choose = choose)
       )
 
       slicer_cache <- read_xml(sprintf(
