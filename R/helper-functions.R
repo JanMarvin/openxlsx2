@@ -637,41 +637,55 @@ pivot_def_rel <- function(n) sprintf("<Relationships xmlns=\"http://schemas.open
 
 pivot_xml_rels <- function(n) sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"../pivotCache/pivotCacheDefinition%s.xml\"/></Relationships>", n)
 
-get_items <- function(data, x, item_order, slicer = FALSE) {
+get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL) {
   x <- abs(x)
 
+  dat <- distinct(data[[x]])
+
   # check length, otherwise a certain spreadsheet software simply dies
-  if (!is.null(item_order) && (length(item_order) != length(distinct(data[[x]])))) {
+  if (!is.null(item_order) && (length(item_order) != length(dat))) {
     msg <- sprintf(
       "Length of sort order for '%s' does not match required length. Is %s, needs %s.\nCheck `openxlsx2:::distinct()` for the correct length. Resetting.",
-      names(data[x]), length(item_order), length(distinct(data[[x]]))
+      names(data[x]), length(item_order), length(dat)
     )
     warning(msg)
     item_order <- NULL
   }
 
-  item_order <- if (is.null(item_order)) {
-    order(distinct(data[[x]]))
+  if (is.null(item_order)) {
+    item_order <- order(dat)
+  }
+
+  if (!is.null(choose)) {
+    # change order
+    choose <- eval(parse(text = choose), data.frame(x = dat))[item_order]
+    hide <- as_xml_attr(!choose)
+    sele <- as_xml_attr(choose)
+  } else {
+    hide <- NULL
+    sele <- rep("1", length(dat))
   }
 
   if (slicer) {
+    vals <- as.character(item_order - 1L)
     item <- sapply(
-      as.character(item_order - 1L),
+      seq_along(vals),
       function(val) {
-          xml_node_create("i", xml_attributes = c(x = val, s = "1"))
+          xml_node_create("i", xml_attributes = c(x = vals[val], s = sele[val]))
       },
       USE.NAMES = FALSE
     )
   } else {
+    vals <- c(item_order - 1L, "default")
     item <- sapply(
-      c(item_order - 1L, "default"),
+      seq_along(vals),
       # # TODO this sets the order of the pivot elements
       # c(seq_along(unique(data[[x]])) - 1L, "default"),
       function(val) {
-        if (val == "default")
-          xml_node_create("item", xml_attributes = c(t = val))
+        if (vals[val] == "default")
+          xml_node_create("item", xml_attributes = c(t = vals[val]))
         else
-          xml_node_create("item", xml_attributes = c(x = val))
+          xml_node_create("item", xml_attributes = c(x = vals[val], h = hide[val]))
       },
       USE.NAMES = FALSE
     )
@@ -763,7 +777,7 @@ create_pivot_table <- function(
     "apply_number_formats", "apply_pattern_formats", "apply_width_height_formats",
     "apply_width_height_formats", "asterisk_totals", "auto_format_id",
     "chart_format", "col_grand_totals", "col_header_caption", "compact",
-    "compact", "compact_data", "custom_list_sort", "data_caption",
+    "compact", "choose", "compact_data", "custom_list_sort", "data_caption",
     "data_on_rows", "data_position", "disable_field_list", "edit_data",
     "enable_drill", "enable_field_properties", "enable_wizard", "error_caption",
     "field_list_sort_ascending", "field_print_titles", "grand_total_caption",
@@ -858,14 +872,20 @@ create_pivot_table <- function(
       xml_attributes = attrs)
 
     sort_item <- params$sort_item
+    choose    <- params$choose
 
     if (i %in% c(filter_pos, rows_pos, cols_pos)) {
       nms <- names(x[i])
       sort_itm <- sort_item[[nms]]
+      if (!is.null(choose) && !is.na(choose[nms])) {
+        choo <- choose[nms]
+      } else {
+        choo <- NULL
+      }
       tmp <- xml_node_create(
         "pivotField",
         xml_attributes = attrs,
-        xml_children = paste0(paste0(get_items(x, i, sort_itm), collapse = ""), autoSortScope))
+        xml_children = paste0(paste0(get_items(x, i, sort_itm, FALSE, choo), collapse = ""), autoSortScope))
     }
 
     pivotField <- c(pivotField, tmp)
