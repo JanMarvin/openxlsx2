@@ -654,6 +654,8 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL) {
 
   if (is.null(item_order)) {
     item_order <- order(dat)
+  } else if (is.character(item_order)) {
+    item_order <- match(dat, item_order)
   }
 
   if (!is.null(choose)) {
