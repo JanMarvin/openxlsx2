@@ -1522,7 +1522,7 @@ wbWorkbook <- R6::R6Class(
       sel <- which(pt$name == pivot_table)
       cid <- pt$cacheId[sel]
 
-      uni_name <- paste0(slicer, cid)
+      uni_name <- paste0(stringi::stri_replace_all_fixed(slicer, ' ', '_'), cid)
 
       ### slicer_cache
       sortOrder <- NULL
