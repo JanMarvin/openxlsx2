@@ -171,6 +171,9 @@ create_border <- function(
 #' @export
 create_numfmt <- function(numFmtId, formatCode) {
 
+  # maybe only required in dates
+  formatCode <- escape_forward_slashes(formatCode)
+
   df_numfmt <- data.frame(
     numFmtId         = as_xml_attr(numFmtId),
     formatCode       = as_xml_attr(formatCode),

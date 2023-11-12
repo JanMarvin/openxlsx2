@@ -69,3 +69,11 @@ replaceXMLEntities <- function(x) {
     vectorize_all = FALSE
   )
 }
+
+# for dateFormats
+escape_forward_slashes <- function(string) {
+  if (!grepl("\\\\/", string)) {
+    string <- gsub("/", "\\\\/", string)
+  }
+  string
+}
