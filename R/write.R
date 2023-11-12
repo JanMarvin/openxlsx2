@@ -486,9 +486,9 @@ write_data2 <- function(
 
     # options("openxlsx2.numFmt" = NULL)
     if (any(dc == openxlsx2_celltype[["numeric"]])) { # numeric or integer
-      if (!is.null(unlist(options("openxlsx2.numFmt")))) {
+      if (!is.null(getOption("openxlsx2.numFmt"))) {
 
-        numfmt_numeric <- unlist(options("openxlsx2.numFmt"))
+        numfmt_numeric <- getOption("openxlsx2.numFmt")
 
         dim_sel <- get_data_class_dims("numeric")
         # message("numeric: ", dim_sel)
@@ -501,11 +501,7 @@ write_data2 <- function(
       }
     }
     if (any(dc == openxlsx2_celltype[["short_date"]])) { # Date
-      if (is.null(unlist(options("openxlsx2.dateFormat")))) {
-        numfmt_dt <- 14
-      } else {
-        numfmt_dt <- unlist(options("openxlsx2.dateFormat"))
-      }
+      numfmt_dt <- getOption("openxlsx2.dateFormat") %||% 14
 
       dim_sel <- get_data_class_dims("short_date")
       # message("short_date: ", dim_sel)
@@ -517,11 +513,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["long_date"]])) {
-      if (is.null(unlist(options("openxlsx2.datetimeFormat")))) {
-        numfmt_posix <- 22
-      } else {
-        numfmt_posix <- unlist(options("openxlsx2.datetimeFormat"))
-      }
+      numfmt_posix <- getOption("openxlsx2.datetimeFormat") %||% 22
 
       dim_sel <- get_data_class_dims("long_date")
       # message("long_date: ", dim_sel)
@@ -533,11 +525,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["hms_time"]])) {
-      if (is.null(unlist(options("openxlsx2.hmsFormat")))) {
-        numfmt_hms <- 21
-      } else {
-        numfmt_hms <- unlist(options("openxlsx2.hmsFormat"))
-      }
+      numfmt_hms <- getOption("openxlsx2.hmsFormat") %||% 21
 
       dim_sel <- get_data_class_dims("hms_time")
       # message("hms: ", dim_sel)
@@ -549,11 +537,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
-      if (is.null(unlist(options("openxlsx2.accountingFormat")))) {
-        numfmt_accounting <- 4
-      } else {
-        numfmt_accounting <- unlist(options("openxlsx2.accountingFormat"))
-      }
+      numfmt_accounting <- getOption("openxlsx2.accountingFormat") %||% 4
 
       dim_sel <- get_data_class_dims("accounting")
       # message("accounting: ", dim_sel)
@@ -564,11 +548,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["percentage"]])) { # percentage
-      if (is.null(unlist(options("openxlsx2.percentageFormat")))) {
-        numfmt_percentage <- 10
-      } else {
-        numfmt_percentage <- unlist(options("openxlsx2.percentageFormat"))
-      }
+      numfmt_percentage <- getOption("openxlsx2.percentageFormat") %||% 10
 
       dim_sel <- get_data_class_dims("percentage")
       # message("percentage: ", dim_sel)
@@ -580,11 +560,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["scientific"]])) {
-      if (is.null(unlist(options("openxlsx2.scientificFormat")))) {
-        numfmt_scientific <- 48
-      } else {
-        numfmt_scientific <- unlist(options("openxlsx2.scientificFormat"))
-      }
+      numfmt_scientific <- getOption("openxlsx2.scientificFormat") %||% 48
 
       dim_sel <- get_data_class_dims("scientific")
       # message("scientific: ", dim_sel)
@@ -596,11 +572,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["comma"]])) {
-      if (is.null(unlist(options("openxlsx2.comma")))) {
-        numfmt_comma <- 3
-      } else {
-        numfmt_comma <- unlist(options("openxlsx2.commaFormat"))
-      }
+      numfmt_comma <- getOption("openxlsx2.commaFormat") %||% 3
 
       dim_sel <- get_data_class_dims("comma")
       # message("comma: ", dim_sel)

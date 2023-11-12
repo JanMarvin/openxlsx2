@@ -70,3 +70,24 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   expect_equal(exp, got)
 
 })
+
+test_that("numfmt escaping works", {
+
+  op <- options(
+    "openxlsx2.datetimeFormat" = "yyyy\\/mm\\/dd",
+    "openxlsx2.dateFormat" = "mm/dd/yyyy"
+  )
+  on.exit(options(op), add = TRUE)
+
+  test_data <- data.frame(
+    datetime_col = as.POSIXct("2023-12-31 00:00:00"),
+    date_col = as.Date("2023-12-31")
+  )
+  wb <- wb_workbook()$add_worksheet()$add_data(x = test_data)
+
+  exp <- c("<numFmt numFmtId=\"165\" formatCode=\"mm\\/dd\\/yyyy\"/>",
+          "<numFmt numFmtId=\"166\" formatCode=\"yyyy\\/mm\\/dd\"/>")
+  got <- wb$styles_mgr$styles$numFmts
+  expect_equal(exp, got)
+
+})

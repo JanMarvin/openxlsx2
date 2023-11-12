@@ -73,6 +73,22 @@ test_that("wb_set_col_widths", {
 
 })
 
+test_that("option maxWidth works", {
+
+  op <- options("openxlsx2.maxWidth" = 6)
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(
+      x = paste0(letters, collapse = ""),
+      y = paste0(letters, collapse = "")
+  ))$set_col_widths(cols = 1:2, widths = "auto")
+
+  exp <- "<col min=\"1\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"6\"/>"
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(exp, got)
+
+})
+
 
 # order -------------------------------------------------------------------
 
