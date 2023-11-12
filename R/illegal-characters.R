@@ -1,21 +1,3 @@
-
-#' Clean worksheet name
-#'
-#' Cleans a worksheet name by removing legal characters.
-#'
-#' @details Illegal characters are considered `\`, `/`, `?`, `*`, `:`, `[`, and
-#' `]`.  These must be intentionally removed from worksheet names prior to
-#' creating a new worksheet.
-#'
-#' @param x A vector, coerced to `character`
-#' @param replacement A single value to replace illegal characters by.
-#' @returns x with bad characters removed
-clean_worksheet_name <- function(x, replacement = " ") {
-  stopifnot(length(replacement) == 1, !has_illegal_chars(replacement))
-  replace_illegal_chars(x, replacement = replacement)
-}
-
-
 #' Detect illegal characters
 #' @param x A vector, coerced to character
 #' @returns A `logical` vector
@@ -58,6 +40,22 @@ replace_illegal_chars <- function(x, replacement = " ") {
   x <- as.character(x)
   x <- stringi::stri_escape_unicode(x)
   stringi::stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
+}
+
+#' Clean worksheet name
+#'
+#' Cleans a worksheet name by removing legal characters.
+#'
+#' @details Illegal characters are considered `\`, `/`, `?`, `*`, `:`, `[`, and
+#' `]`.  These must be intentionally removed from worksheet names prior to
+#' creating a new worksheet.
+#'
+#' @param x A vector, coerced to `character`
+#' @param replacement A single value to replace illegal characters by.
+#' @returns x with bad characters removed
+clean_worksheet_name <- function(x, replacement = " ") {
+  stopifnot(length(replacement) == 1, !has_illegal_chars(replacement))
+  replace_illegal_chars(x, replacement = replacement)
 }
 
 #' converts &amp; to &
