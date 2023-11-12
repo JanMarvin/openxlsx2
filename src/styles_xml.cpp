@@ -24,7 +24,7 @@ bool has_it(Rcpp::DataFrame df_xf, std::set<std::string> xf_nams, size_t row) {
     std::string xf_name = xf_names[i];
     if (df_names.count(xf_name) > 0) {
       auto res = df_names.find(xf_name);
-      auto mtc = std::distance(df_names.begin(), res);
+      R_xlen_t mtc = std::distance(df_names.begin(), res);
       idx.push_back(mtc);
     }
   }
@@ -112,7 +112,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
       if (nams.count(attr_name) == 0) {
         Rcpp::warning("%s: not found in xf name table", attr_name);
       } else {
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
     }
@@ -137,7 +137,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
           if (nams.count(attr_name) == 0) {
             Rcpp::warning("%s: not found in xf name table", attr_name);
           } else {
-            auto mtc = std::distance(nams.begin(), find_res);
+            R_xlen_t mtc = std::distance(nams.begin(), find_res);
             Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
           }
         }
@@ -364,7 +364,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
 
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = oss.str();
       }
 
@@ -465,7 +465,7 @@ Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
       if (nams.count(attr_name) == 0) {
         Rcpp::warning("%s: not found in numfmt name table", attr_name);
       } else {
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
     }
@@ -568,7 +568,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
       if (nams.count(attr_name) == 0) {
         Rcpp::warning("%s: not found in border name table", attr_name);
       } else {
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
     }
@@ -586,7 +586,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
         cld.print(oss, " ", pugi_format_flags);
         std::string cld_value = oss.str();
 
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
       }
     }
@@ -632,13 +632,13 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
 
       // mimic which
       auto res1 = nam_attrs.find(attr_j);
-      auto mtc1 = std::distance(nam_attrs.begin(), res1);
+      R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
 
       std::vector<int> idx1(mtc1 + 1);
       std::iota(idx1.begin(), idx1.end(), 0);
 
       auto res2 = nam_chlds.find(attr_j);
-      auto mtc2 = std::distance(nam_chlds.begin(), res2);
+      R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
 
       std::vector<int> idx2(mtc2 + 1);
       std::iota(idx2.begin(), idx2.end(), 0);
@@ -728,7 +728,7 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
         std::ostringstream oss;
         cld.print(oss, " ", pugi_format_flags);
 
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = oss.str();
       }
 
@@ -840,7 +840,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
       if (nams.count(attr_name) == 0) {
         Rcpp::warning("%s: not found in cellstyle name table", attr_name);
       } else {
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
     }
@@ -858,7 +858,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
         cld.print(oss, " ", pugi_format_flags);
         std::string cld_value = oss.str();
 
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
       }
     }
@@ -1006,7 +1006,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
       if (nams.count(attr_name) == 0) {
         Rcpp::warning("%s: not found in tablestyle name table", attr_name);
       } else {
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
     }
@@ -1025,7 +1025,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
         cld.print(oss, " ", pugi_format_flags);
         cld_value += oss.str();
 
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
       }
     }
@@ -1174,7 +1174,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
         cld.print(oss, " ", pugi_format_flags);
         std::string value = oss.str();
 
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = value;
       }
 
@@ -1281,7 +1281,7 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
         cld.print(oss, " ", pugi_format_flags);
         std::string cld_value = oss.str();
 
-        auto mtc = std::distance(nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
       }
 

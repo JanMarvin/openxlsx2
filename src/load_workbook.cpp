@@ -43,7 +43,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
       if (col_nams.count(attr_name) == 0) {
         Rcpp::Rcout << attr_name << ": not found in col name table" << std::endl;
       } else {
-        auto mtc = std::distance(col_nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(col_nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
 
@@ -147,7 +147,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
       if (row_nams.count(attr_name) == 0) {
         Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
       } else {
-        auto mtc = std::distance(row_nams.begin(), find_res);
+        R_xlen_t mtc = std::distance(row_nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
         if (attr_name == "r") has_rowname = true;
       }
@@ -158,7 +158,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
     if (!has_rowname) {
       std::string attr_name = "r";
       auto find_res = row_nams.find(attr_name);
-      auto mtc = std::distance(row_nams.begin(), find_res);
+      R_xlen_t mtc = std::distance(row_nams.begin(), find_res);
       Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::to_string(itr + 1);
     }
 

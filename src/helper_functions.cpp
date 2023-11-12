@@ -215,7 +215,7 @@ SEXP rbindlist(Rcpp::List x) {
 
     for (size_t j = 0; j < names.size(); ++j) {
       auto find_res = unique_names.find(names[j]);
-      auto mtc = std::distance(unique_names.begin(), find_res);
+      R_xlen_t mtc = std::distance(unique_names.begin(), find_res);
 
       Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = Rcpp::String(values[j]);
     }
