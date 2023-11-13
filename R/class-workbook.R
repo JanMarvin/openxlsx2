@@ -2890,6 +2890,9 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       assert_class(data, "wb_data")
+      from_sheet   <- attr(data, "sheet")
+      from_dims_df <- attr(data, "dims")
+
       sheet <- private$get_sheet_index(sheet)
 
       to_ncol <- ncol(data) - 1
@@ -2901,22 +2904,20 @@ wbWorkbook <- R6::R6Class(
       to_cols <- seq.int(start_col, start_col + to_ncol)
       to_rows <- seq.int(start_row, start_row + to_nrow)
 
-      to_dims    <- rowcol_to_dims(to_rows, to_cols)
-      to_dims_i  <- dims_to_dataframe(to_dims, fill = FALSE)
-      to_dims_f  <- dims_to_dataframe(to_dims, fill = TRUE)
-
       if (transpose) {
-        to_dims_i <- as.data.frame(t(to_dims_i))
-        to_dims_f  <- as.data.frame(t(to_dims_f))
+        to_cols <- seq.int(start_col, start_col + to_nrow)
+        to_rows <- seq.int(start_row, start_row + to_ncol)
+        from_dims_df <- as.data.frame(t(from_dims_df))
       }
 
-      to_dims_f <- unname(unlist(to_dims_f))
+      to_dims       <- rowcol_to_dims(to_rows, to_cols)
+      to_dims_df_i  <- dims_to_dataframe(to_dims, fill = FALSE)
+      to_dims_df_f  <- dims_to_dataframe(to_dims, fill = TRUE)
 
-      from_sheet <- attr(data, "sheet")
-      from_dims  <- attr(data, "dims")
+      to_dims_f <- unname(unlist(to_dims_df_f))
 
       from_sheet <- wb_validate_sheet(self, from_sheet)
-      from_dims  <- as.character(unlist(from_dims))
+      from_dims  <- as.character(unlist(from_dims_df))
       cc <- self$worksheets[[from_sheet]]$sheet_data$cc
 
       # TODO improve this. It should use v or inlineStr from cc
@@ -2949,10 +2950,42 @@ wbWorkbook <- R6::R6Class(
         to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_cells)
       }
 
+      # uninitialized cells are NA_character_
+      to_cc[is.na(to_cc)] <- ""
+
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc[match(to_dims_f, cc$r), ] <- to_cc
 
       self$worksheets[[sheet]]$sheet_data$cc <- cc
+
+      ### add hyperlinks ---
+      hyperlink_in_wb <- vapply(
+        self$worksheets[[from_sheet]]$hyperlinks,
+        function(x) x$ref,
+        NA_character_
+      )
+
+      if (any(sel <- hyperlink_in_wb %in% from_dims)) {
+
+        has_hl <- apply(from_dims_df, 2, function(x) x %in% hyperlink_in_wb)
+
+        old <- from_dims_df[has_hl]
+        new <- to_dims_df_f[has_hl]
+
+        for (hls in match(hyperlink_in_wb, old)) {
+
+          # prepare the updated link
+          hl <- self$worksheets[[from_sheet]]$hyperlinks[[hls]]$clone()
+          hl$ref <- new[which(old == hl$ref)]
+
+          # assign it
+          self$worksheets[[sheet]]$hyperlinks <- append(
+            self$worksheets[[sheet]]$hyperlinks,
+            hl
+          )
+        }
+
+      }
 
       invisible(self)
     },

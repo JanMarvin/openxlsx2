@@ -105,6 +105,28 @@ test_that("copy cells", {
 
 })
 
+test_that("copy_cells works with hyperlinks and empty cells in transpose", {
+
+  fl <- testfile_path("Single_hyperlink.xlsx")
+  wb_in <- wb_load(fl)
+
+  dat <- wb_data(wb_in, 1, dims = "A1:B2", col_names = FALSE)
+  wb_in$copy_cells(data = dat, dims = "A3")
+
+  dat <- wb_data(wb_in, 1, dims = "A1:B3", col_names = FALSE)
+  wb_in$copy_cells(data = dat, dims = "D1", transpose = TRUE)
+
+  exp <- c("A1", "A3", "D1", "F1")
+  got <- vapply(wb_in$worksheets[[1]]$hyperlinks, function(x) x$ref, "")
+  expect_equal(exp, got)
+
+  cc <- wb_in$worksheets[[1]]$sheet_data$cc
+  exp <- rep("0", 4)
+  got <- cc$v[cc$r %in% c("A1", "A3", "D1", "F1")]
+  expect_equal(exp, got)
+
+})
+
 test_that("cloning comments works", {
 
   tmp <- temp_xlsx()
