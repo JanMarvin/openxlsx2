@@ -190,12 +190,12 @@ wbWorkbook <- R6::R6Class(
       self$Content_Types <- genBaseContent_Type()
 
       creator <- creator %||%
-        getOption("openxlsx2.creator") %||%
-        # USERNAME may only be present for windows
-        Sys.getenv("USERNAME", Sys.getenv("USER"))
+        getOption("openxlsx2.creator",
+                  default = Sys.getenv("USERNAME", unset = Sys.getenv("USER")))
+        # USERNAME is present for (Windows, Linux) "USER" is present for Mac
 
-      datetime_created <- getOption("openxlsx2.datetimeCreated") %||%
-        datetime_created
+      datetime_created <- getOption("openxlsx2.datetimeCreated", datetime_created)
+
 
       assert_class(creator,          "character")
       assert_class(title,            "character", or_null = TRUE)
@@ -4269,7 +4269,7 @@ wbWorkbook <- R6::R6Class(
         done <- as_xml_attr(resolve)
         if (reply) done <- NULL
 
-        ts <- getOption("openxlsx2.datetimeCreated") %||% Sys.time()
+        ts <- getOption("openxlsx2.datetimeCreated", default = Sys.time())
 
         tc <- xml_node_create(
           "threadedComment",
@@ -5587,8 +5587,9 @@ wbWorkbook <- R6::R6Class(
       company          = NULL
     ) {
 
-      datetime_created <- getOption("openxlsx2.datetimeCreated") %||%
-        datetime_created
+      datetime_created <-
+        getOption("openxlsx2.datetimeCreated", datetime_created)
+
 
       core_dctitle <- "dc:title"
       core_subject <- "dc:subject"

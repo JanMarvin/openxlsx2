@@ -13,6 +13,8 @@ Typically, this is done in the \code{.Rprofile} startup file
 \item \code{options("openxlsx2.borderStyle" = "thin")}
 \item \code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}
 \item \code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}
+\item \code{options("openxlsx2.maxWidth" = NULL)} (Maximum width allowed in Excel is 250)
+\item \code{options("openxlsx2.minWidth" = NULL)}
 \item \code{options("openxlsx2.numFmt" = NULL)}
 \item \code{options("openxlsx2.paperSize" = 9)} corresponds to a A4 paper size
 \item \code{options("openxlsx2.orientation" = "portrait")} page orientation
@@ -24,5 +26,9 @@ warning if using some functions deprecated recently in openxlsx2
 \code{wbWorkbook} object with \code{\link[=wb_workbook]{wb_workbook()}} or new comments with \code{\link[=wb_add_comment]{wb_add_comment()}}
 \item \code{options("openxlsx2.thread_id")} the default person id when adding a threaded comment
 to a cell with \code{\link[=wb_add_thread]{wb_add_thread()}}
+\item \code{options("openxlsx2.accountingFormat" = 4)}
+\item \code{options("openxlsx2.commaFormat" = 3)}
+\item \code{options("openxlsx2.percentageFormat" = 10)}
+\item \code{options("openxlsx2.scientificFormat" = 48)}
 }
 }
