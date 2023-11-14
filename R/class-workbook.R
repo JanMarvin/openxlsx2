@@ -2947,7 +2947,7 @@ wbWorkbook <- R6::R6Class(
       if (as_ref) {
         from_sheet_name <- self$get_sheet_names(escape = TRUE)[[from_sheet]]
         to_cc[c("c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
-        to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_cells)
+        to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_dims)
       }
 
       # uninitialized cells are NA_character_

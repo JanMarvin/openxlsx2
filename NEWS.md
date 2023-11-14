@@ -10,6 +10,8 @@
 
 * Improve drawing relationship id selection that could cause issues with unordered relationship ids in loaded workbooks. [838](https://github.com/JanMarvin/openxlsx2/pull/838)
 
+* Improve copying cells in transpose mode and with hyperlinks. [850](https://github.com/JanMarvin/openxlsx2/pull/850)
+
 
 ***************************************************************************
 
