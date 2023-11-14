@@ -89,9 +89,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   }
 
   creator <- creator %||%
-    getOption("openxlsx2.creator", default = Sys.getenv("USERNAME")) %||%
-    # USERNAME may only be present for windows
-    Sys.getenv("USER")
+    getOption("openxlsx2.creator", default = Sys.getenv("USERNAME"))
+    # USERNAME should be present for Windows, Mac and Linux
 
   #---add_worksheet---#
   ## sheetName
