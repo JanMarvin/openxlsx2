@@ -108,8 +108,14 @@ calc_col_width <- function(base_font, col_width) {
   # to the expected widths
   widths <- trunc((as.numeric(col_width) * mdw + 5) / mdw * 256) / 256
   widths <- round(widths, 3)
-  if (any(sel <- widths > getOption("openxlsx2.maxWidth"))) {
-    widths[sel] <- getOption("openxlsx2.maxWidth")
+
+  if (any(sel <- widths > getOption("openxlsx2.maxWidth", 250))) {
+    widths[sel] <- getOption("openxlsx2.maxWidth", 250)
   }
+
+  if (any(sel <- widths <= getOption("openxlsx2.minWidth", 0))) {
+    widths[sel] <- getOption("openxlsx2.minWidth", 1)
+  }
+
   widths
 }
