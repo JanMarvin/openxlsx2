@@ -501,7 +501,7 @@ write_data2 <- function(
       }
     }
     if (any(dc == openxlsx2_celltype[["short_date"]])) { # Date
-      numfmt_dt <- getOption("openxlsx2.dateFormat") %||% 14
+      numfmt_dt <- getOption("openxlsx2.dateFormat", 14)
 
       dim_sel <- get_data_class_dims("short_date")
       # message("short_date: ", dim_sel)
@@ -513,7 +513,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["long_date"]])) {
-      numfmt_posix <- getOption("openxlsx2.datetimeFormat") %||% 22
+      numfmt_posix <- getOption("openxlsx2.datetimeFormat", default = 22)
 
       dim_sel <- get_data_class_dims("long_date")
       # message("long_date: ", dim_sel)
@@ -525,7 +525,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["hms_time"]])) {
-      numfmt_hms <- getOption("openxlsx2.hmsFormat") %||% 21
+      numfmt_hms <- getOption("openxlsx2.hmsFormat", default = 21)
 
       dim_sel <- get_data_class_dims("hms_time")
       # message("hms: ", dim_sel)
@@ -537,7 +537,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
-      numfmt_accounting <- getOption("openxlsx2.accountingFormat") %||% 4
+      numfmt_accounting <- getOption("openxlsx2.accountingFormat", default = 4)
 
       dim_sel <- get_data_class_dims("accounting")
       # message("accounting: ", dim_sel)
@@ -548,7 +548,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["percentage"]])) { # percentage
-      numfmt_percentage <- getOption("openxlsx2.percentageFormat") %||% 10
+      numfmt_percentage <- getOption("openxlsx2.percentageFormat", default = 10)
 
       dim_sel <- get_data_class_dims("percentage")
       # message("percentage: ", dim_sel)
@@ -560,7 +560,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["scientific"]])) {
-      numfmt_scientific <- getOption("openxlsx2.scientificFormat") %||% 48
+      numfmt_scientific <- getOption("openxlsx2.scientificFormat", default = 48)
 
       dim_sel <- get_data_class_dims("scientific")
       # message("scientific: ", dim_sel)
@@ -572,7 +572,7 @@ write_data2 <- function(
       )
     }
     if (any(dc == openxlsx2_celltype[["comma"]])) {
-      numfmt_comma <- getOption("openxlsx2.commaFormat") %||% 3
+      numfmt_comma <- getOption("openxlsx2.commaFormat", default = 3)
 
       dim_sel <- get_data_class_dims("comma")
       # message("comma: ", dim_sel)

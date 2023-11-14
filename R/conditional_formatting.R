@@ -114,8 +114,8 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
   newExtLst <- gen_databar_extlst(
     guid      = guid,
     sqref     = sqref,
-    posColor = posColor,
-    negColor = negColor,
+    posColor  = posColor,
+    negColor  = negColor,
     values    = values,
     border    = border,
     gradient  = gradient
