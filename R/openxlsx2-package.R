@@ -70,6 +70,8 @@
 #' * `options("openxlsx2.borderStyle" = "thin")`
 #' * `options("openxlsx2.dateFormat" = "mm/dd/yyyy")`
 #' * `options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`
+#' * `options("openxlsx2.maxWidth" = NULL)` (Maximum width allowed in Excel is 250)
+#' * `options("openxlsx2.minWidth" = NULL)`
 #' * `options("openxlsx2.numFmt" = NULL)`
 #' * `options("openxlsx2.paperSize" = 9)` corresponds to a A4 paper size
 #' * `options("openxlsx2.orientation" = "portrait")` page orientation
@@ -81,7 +83,10 @@
 #'   `wbWorkbook` object with [wb_workbook()] or new comments with [wb_add_comment()]
 #' * `options("openxlsx2.thread_id")` the default person id when adding a threaded comment
 #'   to a cell with [wb_add_thread()]
-#'
+#' * `options("openxlsx2.accountingFormat" = 4)`
+#' * `options("openxlsx2.commaFormat" = 3)`
+#' * `options("openxlsx2.percentageFormat" = 10)`
+#' * `options("openxlsx2.scientificFormat" = 48)`
 #' @name openxlsx2_options
 NULL
 # matches enum celltype
