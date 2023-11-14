@@ -69,6 +69,7 @@
 <ul><li><p>Previously formulas written as data frames were not xml escaped. <a href="https://github.com/JanMarvin/openxlsx2/pull/834" class="external-link">834</a></p></li>
 <li><p>Improve drawing relationship id selection that could cause issues with unordered relationship ids in loaded workbooks. <a href="https://github.com/JanMarvin/openxlsx2/pull/838" class="external-link">838</a></p></li>
 <li><p>Improve copying cells in transpose mode and with hyperlinks. <a href="https://github.com/JanMarvin/openxlsx2/pull/850" class="external-link">850</a></p></li>
+<li><p>Options <code>openxlsx2.maxWidth</code> and <code>openxlsx2.minWidth</code> are now respected as documented when setting column widths with <code><a href="../reference/col_widths-wb.html">wb_set_col_widths()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/847" class="external-link">847</a></p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -119,7 +120,7 @@
 <ul><li>
 <p><code><a href="../reference/wb_comment.html">wb_comment()</a></code> is a new helper function to help create <code>wbComment</code> objects It is very similar to <code><a href="../reference/create_comment.html">create_comment()</a></code>, with the following differences:</p>
 <ul><li>
-<code>author</code> looks at <code>options("openxlsx2.creator")</code>; (<code><a href="../reference/create_comment.html">create_comment()</a></code> only used <code>sys.getenv("user")</code>)</li>
+<code>author</code> looks at <code>options("openxlsx2.creator")</code>; (<code><a href="../reference/create_comment.html">create_comment()</a></code> only used <code>sys.getenv("USERNAME")</code> / <code>Sys.getenv("USER")</code>)</li>
 <li>
 <code>visible</code> defaults to <code>FALSE</code> to account for modern spreadsheet software behavior. (<code><a href="../reference/create_comment.html">create_comment()</a></code>, it is <code>TRUE</code>).</li>
 <li>
