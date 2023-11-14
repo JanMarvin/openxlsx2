@@ -190,8 +190,9 @@ wbWorkbook <- R6::R6Class(
       self$Content_Types <- genBaseContent_Type()
 
       creator <- creator %||%
-        getOption("openxlsx2.creator", default = Sys.getenv("USERNAME"))
-        # USERNAME should be present for all OS (Windows, Mac, Linux)
+        getOption("openxlsx2.creator",
+                  default = Sys.getenv("USERNAME", unset = Sys.getenv("USER")))
+        # USERNAME is present for (Windows, Linux) "USER" is present for Mac
 
       datetime_created <- getOption("openxlsx2.datetimeCreated", datetime_created)
 

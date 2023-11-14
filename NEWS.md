@@ -68,7 +68,7 @@ They will continue to work for some time, but changing to newer functions is rec
 
 * `wb_comment()` is a new helper function to help create `wbComment` objects
   It is very similar to `create_comment()`, with the following differences:
-  * `author` looks at `options("openxlsx2.creator")`; (`create_comment()` only used `sys.getenv("USERNAME")`)
+  * `author` looks at `options("openxlsx2.creator")`; (`create_comment()` only used `sys.getenv("USERNAME")` / `Sys.getenv("USER")`)
   * `visible` defaults to `FALSE` to account for modern spreadsheet software behavior. (`create_comment()`, it is `TRUE`).
   * `width` and `height` must now be of length 1. (In `create_comment()`, the first element is taken, other are ignored.)
 

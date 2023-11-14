@@ -118,7 +118,7 @@ wb_comment <- function(text = NULL,
                        width = 2,
                        height = 4) {
   # Code copied from the wbWorkbook
-  author <- author %||% Sys.getenv("USERNAME")
+  author <- author %||% Sys.getenv("USERNAME", unset = Sys.getenv("USER"))
   text <- text %||% ""
   assert_class(author, "character")
   assert_class(text, "character")
