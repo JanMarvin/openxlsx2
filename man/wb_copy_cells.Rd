@@ -11,7 +11,8 @@ wb_copy_cells(
   data,
   as_value = FALSE,
   as_ref = FALSE,
-  transpose = FALSE
+  transpose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ wb_copy_cells(
 \item{as_ref}{Should references to the cell be written?}
 
 \item{transpose}{Should the data be written transposed?}
+
+\item{...}{additional arguments passed to add_data() if used with \code{as_value}}
 }
 \value{
 the \code{wbWorkbook} invisibly
