@@ -1001,7 +1001,8 @@ copy cells around in a workbook
   data,
   as_value = FALSE,
   as_ref = FALSE,
-  transpose = FALSE
+  transpose = FALSE,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -1019,6 +1020,8 @@ copy cells around in a workbook
 \item{\code{as_ref}}{should references to the cell be written}
 
 \item{\code{transpose}}{should the data be written transposed}
+
+\item{\code{...}}{additional arguments passed to add_data() if used with \code{as_value}}
 }
 \if{html}{\out{</div>}}
 }

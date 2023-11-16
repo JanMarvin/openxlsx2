@@ -2879,6 +2879,7 @@ wbWorkbook <- R6::R6Class(
     #' @param as_value should a copy of the value be written
     #' @param as_ref should references to the cell be written
     #' @param transpose should the data be written transposed
+    #' @param ... additional arguments passed to add_data() if used with `as_value`
     #' @return The `wbWorksheet` object, invisibly
     copy_cells = function(
       sheet     = current_sheet(),
@@ -2886,7 +2887,8 @@ wbWorkbook <- R6::R6Class(
       data,
       as_value  = FALSE,
       as_ref    = FALSE,
-      transpose = FALSE
+      transpose = FALSE,
+      ...
     ) {
 
       assert_class(data, "wb_data")
@@ -2928,7 +2930,7 @@ wbWorkbook <- R6::R6Class(
           data <- t(data)
         }
 
-        self$add_data(sheet = sheet, x = data, dims = to_dims_f[[1]], colNames = FALSE)
+        self$add_data(sheet = sheet, x = data, dims = to_dims_f[[1]], colNames = FALSE, ...)
 
         return(invisible(self))
       }
