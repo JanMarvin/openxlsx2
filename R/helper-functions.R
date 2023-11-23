@@ -827,8 +827,8 @@ create_pivot_table <- function(
         if (!abs(sort) %in% seq_along(rows_pos))
           warning("invalid sort position found")
 
-       if (!abs(sort) == match(i, rows_pos))
-        sort <- NULL
+        if (!abs(sort) == match(i, rows_pos))
+          sort <- NULL
       }
     }
 
@@ -840,8 +840,8 @@ create_pivot_table <- function(
         if (!abs(sort) %in% seq_along(cols_pos))
           warning("invalid sort position found")
 
-       if (!abs(sort) == match(i, cols_pos))
-        sort <- NULL
+        if (!abs(sort) == match(i, cols_pos))
+          sort <- NULL
       }
     }
 
@@ -864,17 +864,18 @@ create_pivot_table <- function(
       else                  sort <- "ascending"
     }
 
+    sort_item <- params$sort_item
+    choose    <- params$choose
+    multi     <- if (is.null(choose)) NULL else as_xml_attr(TRUE)
+
     attrs <- c(
-      axis, dataField, showAll = "0", sortType = sort,
+      axis, dataField, showAll = "0", multipleItemSelectionAllowed = multi, sortType = sort,
       compact = as_xml_attr(compact), outline = as_xml_attr(outline)
     )
 
     tmp <- xml_node_create(
       "pivotField",
       xml_attributes = attrs)
-
-    sort_item <- params$sort_item
-    choose    <- params$choose
 
     if (i %in% c(filter_pos, rows_pos, cols_pos)) {
       nms <- names(x[i])
