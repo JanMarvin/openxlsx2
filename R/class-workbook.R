@@ -1568,7 +1568,7 @@ wbWorkbook <- R6::R6Class(
           showMissing  = showMissing,
           crossFilter  = crossFilter
         ),
-        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE, choose = choose)
+        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE, choose = choo)
       )
 
       slicer_cache <- read_xml(sprintf(
