@@ -1383,6 +1383,12 @@ wbWorkbook <- R6::R6Class(
       if (missing(pivot_table)) pivot_table <- NULL
       if (missing(params))      params <- NULL
 
+      if_not_missing <- function(x) if (missing(x)) NULL else as.character(x)
+
+      if (any(duplicated(c(if_not_missing(filter), if_not_missing(rows), if_not_missing(cols))))) {
+        stop("duplicated variable in filter, rows, and cols detected.")
+      }
+
       if (!missing(fun) && !missing(data)) {
         if (length(fun) < length(data)) {
           fun <- rep(fun[1], length(data))
