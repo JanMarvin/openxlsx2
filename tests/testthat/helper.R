@@ -1024,3 +1024,22 @@ testfile_path <- function(x, replace = FALSE) {
     return(fl)
   }
 }
+
+
+testsetup <- function() {
+
+  if (is.null(getOption("openxlsx2.datetimeCreated"))) {
+    testthat::test_that("testsetup", {
+
+      options("openxlsx2.datetimeCreated" = as.POSIXct("2023-07-20 23:32:14", tz = "UTC"))
+
+      wb <- wb_workbook()
+
+      exp <- "2023-07-20T23:32:14Z"
+      got <- wb$get_properties()[["datetime_created"]]
+      testthat::expect_equal(exp, got)
+
+    })
+  }
+
+}
