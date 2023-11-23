@@ -1,3 +1,5 @@
+testsetup()
+
 test_that("wb_clone_sheet_style", {
 
   # clone style to empty sheet (creates cells and style)

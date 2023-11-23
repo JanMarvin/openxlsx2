@@ -1,3 +1,4 @@
+testsetup()
 
 test_that("class color works", {
   expect_null(assert_color(wb_colour()))

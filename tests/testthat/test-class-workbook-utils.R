@@ -1,3 +1,5 @@
+testsetup()
+
 test_that("waivers works with $add_worksheet()", {
   wb <- wb_workbook()
   expect_identical(wb$.__enclos_env__$private$current_sheet, 0L)

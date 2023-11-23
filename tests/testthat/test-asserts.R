@@ -1,3 +1,4 @@
+testsetup()
 
 test_that("assert_class() works", {
   expect_null(assert_class(2L, "integer"))

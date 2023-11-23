@@ -1,3 +1,5 @@
+testsetup()
+
 test_that("get_base_font works", {
   wb <- wb_workbook()
   expect_equal(
