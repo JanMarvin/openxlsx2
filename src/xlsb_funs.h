@@ -1742,7 +1742,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     if (debug) Rcpp::Rcout << ".";
     if (debug) {
       Rprintf("Formula cb: %d\n", val1);
-      Rprintf("%d: %d\n", (size_t)sas.tellg(), pos);
+      Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
     }
     // this is a little risky. maybe its some kind of vector indicating the
     // order in which extra elements are going to be selected?
@@ -1761,7 +1761,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         Rcpp::Rcout << ptgextra[cntr] << std::endl;
       }
     } else if (ptgextra.size() < (cntr + 1)) {
-      if (debug) Rprintf("ptgextra %d and %d\n", ptgextra.size(),  cntr);
+      if (debug) Rprintf("ptgextra %d and %d\n", (int)ptgextra.size(),  (int)cntr);
     }
 
 
