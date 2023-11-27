@@ -1680,7 +1680,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         }
 
         if ((size_t)bin.tellg() != end_pos) {
-          Rprintf("%d: %d", (size_t)bin.tellg(), end_pos);
+          Rprintf("%d: %d", (int)bin.tellg(), (int)end_pos);
           Rcpp::stop("repositioning");
         }
 
