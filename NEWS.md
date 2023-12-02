@@ -1,3 +1,13 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* `wb_add_ignore_error()` now returns a `wbWorkbook`
+
+
+***************************************************************************
+
+
 # openxlsx2 1.2
 
 ## New features
@@ -13,6 +23,7 @@
 * Improve copying cells in transpose mode and with hyperlinks. [850](https://github.com/JanMarvin/openxlsx2/pull/850)
 
 * Options `openxlsx2.maxWidth` and `openxlsx2.minWidth` are now respected as documented when setting column widths with `wb_set_col_widths()`. [847](https://github.com/JanMarvin/openxlsx2/issues/847)
+
 
 ***************************************************************************
 
