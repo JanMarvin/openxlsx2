@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## Fixes
+
+* `wb_add_ignore_error()` now returns a `wbWorkbook`
+
 
 ***************************************************************************
 

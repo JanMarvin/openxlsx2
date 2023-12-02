@@ -7355,6 +7355,7 @@ wbWorkbook <- R6::R6Class(
         twoDigitTextYear   = two_digit_text_year,
         unlockedFormula    = unlocked_formula
       )
+      invisible(self)
     },
 
     #' @description add sheetview
