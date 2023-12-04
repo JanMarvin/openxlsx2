@@ -310,6 +310,9 @@ wb_add_data_table <- function(
 #'
 #' The sheet will be empty unless it is opened in spreadsheet software.
 #'
+#' Find more details in the [section about pivot tables](https://janmarvin.github.io/ox2-book/chapters/openxlsx2_pivot_tables.html)
+#' in the openxlsx2 book.
+#'
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
 #' @param sheet A worksheet containing a #'
