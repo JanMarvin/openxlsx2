@@ -5064,7 +5064,7 @@ wbWorkbook <- R6::R6Class(
       } else {
         relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
         relship$typ <- basename(relship$Type)
-        next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
+        next_relship <- max(as.integer(gsub("\\D+", "", relship$Id))) + 1L
         has_no_drawing <- !any(relship$typ == "drawing")
       }
 
