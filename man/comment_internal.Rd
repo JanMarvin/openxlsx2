@@ -12,7 +12,8 @@ write_comment(
   col = NULL,
   row = NULL,
   comment,
-  dims = rowcol_to_dim(row, col)
+  dims = rowcol_to_dim(row, col),
+  color = NULL
 )
 
 remove_comment(
@@ -34,6 +35,8 @@ remove_comment(
 \item{comment}{An object created by \code{\link[=create_comment]{create_comment()}}}
 
 \item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
+
+\item{color}{optional background color}
 
 \item{gridExpand}{If \code{TRUE}, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
 will be removed.}

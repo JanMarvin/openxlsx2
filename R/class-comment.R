@@ -198,6 +198,7 @@ NULL
 #' @inheritParams wb_add_comment
 #' @param comment An object created by [create_comment()]
 #' @param row,col Row and column of the cell
+#' @param color optional background color
 #' @keywords internal
 #' @export
 #' @inherit wb_add_comment examples
@@ -207,7 +208,8 @@ write_comment <- function(
     col     = NULL,
     row     = NULL,
     comment,
-    dims    = rowcol_to_dim(row, col)
+    dims    = rowcol_to_dim(row, col),
+    color   = NULL
   ) {
 
   # TODO add as method: wbWorkbook$addComment(); add param for replace?
@@ -264,9 +266,23 @@ write_comment <- function(
 
   id <- 1025 + sum(lengths(wb$comments))
 
+  fillcolor <- color %||% "#ffffe1"
+  # looks like vml accepts only "#RGB" and not "ARGB"
+  if (is_wbColour(fillcolor)) {
+    if (names(fillcolor) != "rgb") {
+      # actually there are more colors like: "lime [11]" and
+      # "infoBackground [80]" (the default). But no clue how
+      # these are created.
+      stop("fillcolor needs to be an RGB color")
+    }
+
+    fillcolor <- paste0("#", substr(fillcolor, 3, 8))
+  }
+
+
   # create new commment vml
   cd <- unapply(comment_list, "[[", "clientData")
-  vml_xml <- read_xml(genBaseShapeVML(cd, id), pointer = FALSE)
+  vml_xml <- read_xml(genBaseShapeVML(cd, id, fillcolor), pointer = FALSE)
   vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
   vml_xml <- paste0(vml_xml, vml_comment)
 

@@ -4135,6 +4135,7 @@ wbWorkbook <- R6::R6Class(
 
       col <- list(...)[["col"]]
       row <- list(...)[["row"]]
+      color <- list(...)[["color"]]
 
       if (!is.null(row) && !is.null(col)) {
         .Deprecated(old = "col/row", new = "dims", package = "openxlsx2")
@@ -4145,11 +4146,15 @@ wbWorkbook <- R6::R6Class(
         comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))
       }
 
+      if (!is.null(color) && !is_wbColour(color))
+        stop("color needs to be a wb_color()")
+
       write_comment(
         wb      = self,
         sheet   = sheet,
         comment = comment,
-        dims    = dims
+        dims    = dims,
+        color   = color
       ) # has no use: xy
 
       invisible(self)
