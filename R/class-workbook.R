@@ -4136,6 +4136,7 @@ wbWorkbook <- R6::R6Class(
       col <- list(...)[["col"]]
       row <- list(...)[["row"]]
       color <- list(...)[["color"]]
+      file <- list(...)[["file"]]
 
       if (!is.null(row) && !is.null(col)) {
         .Deprecated(old = "col/row", new = "dims", package = "openxlsx2")
@@ -4154,7 +4155,8 @@ wbWorkbook <- R6::R6Class(
         sheet   = sheet,
         comment = comment,
         dims    = dims,
-        color   = color
+        color   = color,
+        file    = file
       ) # has no use: xy
 
       invisible(self)

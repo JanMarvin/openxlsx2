@@ -13,23 +13,28 @@ genBaseContent_Type <- function() {
   )
 }
 
-genBaseShapeVML <- function(clientData, id, fillcolor) {
+genBaseShapeVML <- function(clientData, id, fillcolor, rID) {
   if (grepl("visible", clientData, ignore.case = TRUE)) {
     visible <- "visible"
   } else {
     visible <- "hidden"
   }
 
+  if (is.null(rID))
+    fill <- '<v:fill color2="#ffffe1"/>'
+  else
+    fill <- '<v:fill type="frame" on="t" color2="#FFFFFF" focussize="0,0" recolor="t" o:relid="rId1"/>'
+
   paste0(
     sprintf('<v:shape id="_x0000_s%s" type="#_x0000_t202" style=\'position:absolute;', id),
     sprintf('margin-left:107.25pt;margin-top:172.5pt;width:147pt;height:96pt;z-index:1;
           visibility:%s;mso-wrap-style:tight\' fillcolor="%s" o:insetmode="auto">', visible, fillcolor),
-    '<v:fill color2="#ffffe1"/>
-            <v:shadow color="black" obscured="t"/>
-            <v:path o:connecttype="none"/>
-            <v:textbox style=\'mso-direction-alt:auto\'>
-            <div style=\'text-align:left\'/>
-            </v:textbox>', clientData, "</v:shape>"
+    fill,
+    '<v:shadow color="black" obscured="t"/>
+    <v:path o:connecttype="none"/>
+    <v:textbox style=\'mso-direction-alt:auto\'>
+    <div style=\'text-align:left\'/>
+    </v:textbox>', clientData, "</v:shape>"
   )
 }
 

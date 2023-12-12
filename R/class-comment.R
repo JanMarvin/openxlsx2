@@ -209,7 +209,8 @@ write_comment <- function(
     row     = NULL,
     comment,
     dims    = rowcol_to_dim(row, col),
-    color   = NULL
+    color   = NULL,
+    file    = NULL
   ) {
 
   # TODO add as method: wbWorkbook$addComment(); add param for replace?
@@ -279,10 +280,25 @@ write_comment <- function(
     fillcolor <- paste0("#", substr(fillcolor, 3, 8))
   }
 
+  rID <- NULL
+  if (!is.null(file)) {
+    wb$add_media(file = file)
+    file <- names(wb$media)[length(wb$media)]
+    rID <- paste0("rId", length(wb$vml_rels) + 1L)
+
+    wb$append(
+      "vml_rels",
+      sprintf(
+        '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
+        rID,
+        file
+      )
+    )
+  }
 
   # create new commment vml
   cd <- unapply(comment_list, "[[", "clientData")
-  vml_xml <- read_xml(genBaseShapeVML(cd, id, fillcolor), pointer = FALSE)
+  vml_xml <- read_xml(genBaseShapeVML(cd, id, fillcolor, rID), pointer = FALSE)
   vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
   vml_xml <- paste0(vml_xml, vml_comment)
 
