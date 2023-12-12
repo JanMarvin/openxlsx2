@@ -836,3 +836,27 @@ test_that("initialized styles remain available", {
   expect_equal(exp, got)
 
 })
+
+test_that("apply styles across columns and rows", {
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%
+    wb_add_style_across(from = "C3", cols = "C:D", rows = 3:4)
+
+  exp <- c(
+    "<col min=\"1\" max=\"2\" width=\"8.43\"/>",
+    "<col min=\"3\" max=\"4\" style=\"1\" width=\"8.43\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(exp, got)
+
+  exp <- data.frame(
+    customFormat = c("1", "1"),
+    r = c("3", "4"),
+    s = c("1", "1")
+  )
+  got <- wb$worksheets[[1]]$sheet_data$row_attr[c("customFormat", "r", "s")]
+  expect_equal(exp, got)
+
+})
