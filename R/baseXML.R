@@ -23,7 +23,7 @@ genBaseShapeVML <- function(clientData, id, fillcolor, rID) {
   if (is.null(rID))
     fill <- '<v:fill color2="#ffffe1"/>'
   else
-    fill <- '<v:fill type="frame" on="t" color2="#FFFFFF" focussize="0,0" recolor="t" o:relid="rId1"/>'
+    fill <- sprintf('<v:fill type="frame" on="t" color2="#FFFFFF" focussize="0,0" recolor="t" o:relid="%s"/>', rID)
 
   paste0(
     sprintf('<v:shape id="_x0000_s%s" type="#_x0000_t202" style=\'position:absolute;', id),

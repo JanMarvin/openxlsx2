@@ -286,15 +286,13 @@ write_comment <- function(
     file <- names(wb$media)[length(wb$media)]
     rID <- paste0("rId", length(wb$vml_rels) + 1L)
 
-    wb$append(
-      "vml_rels",
-      sprintf(
-        '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
-        rID,
-        file
-      )
+    vml_relship <- sprintf(
+      '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
+      rID,
+      file
     )
   }
+
 
   # create new commment vml
   cd <- unapply(comment_list, "[[", "clientData")
@@ -342,10 +340,25 @@ write_comment <- function(
         ),
         xml_children = vml_xml
       )
+      if (length(wb$vml) == 0) {
+        wb$vml <- list()
+      }
       wb$vml <- c(wb$vml, vml_xml)
 
       wb$worksheets[[sheet]]$relships$vmlDrawing <- next_id
+      if (!is.null(rID)) {
+        if (length(wb$vml_rels) == 0) {
+          wb$vml_rels <- list()
+        }
+        if (length(wb$vml_rels) < next_id) {
+          wb$vml_rels <- wb$vml_rels[seq_len(next_id)]
+        }
 
+        wb$vml_rels[[next_id]] <- append(
+          wb$vml_rels[[next_id]],
+          vml_relship
+        )
+      }
       # TODO hardcoded 2. Marvin fears that this is not good enough
       wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_rid)
 
@@ -353,6 +366,12 @@ write_comment <- function(
     } else {
       vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
       wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
+      if (!is.null(rID)) {
+        wb$vml_rels[[vml_id]] <- append(
+          wb$vml_rels[[vml_id]],
+          vml_relship
+        )
+      }
     }
 
     wb$worksheets_rels[[sheet]] <- c(
@@ -366,6 +385,12 @@ write_comment <- function(
   } else {
     vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
     wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
+      if (!is.null(rID)) {
+        wb$vml_rels[[vml_id]] <- append(
+          wb$vml_rels[[vml_id]],
+          vml_relship
+        )
+      }
   }
 
   cmmnt_id <- wb$worksheets[[sheet]]$relships$comments

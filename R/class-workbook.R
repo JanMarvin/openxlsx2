@@ -7770,7 +7770,7 @@ wbWorkbook <- R6::R6Class(
               fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
           )
 
-          if (!is.null(unlist(self$vml_rels)) && length(self$vml_rels) >= i && self$vml_rels[[i]] != "") {
+          if (!is.null(unlist(self$vml_rels)) && length(self$vml_rels) >= i && !all(self$vml_rels[[i]] == "")) {
             write_file(
               head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(self$vml_rels[[i]]),
