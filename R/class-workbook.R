@@ -4666,39 +4666,6 @@ wbWorkbook <- R6::R6Class(
     ## plots and images ----
 
     #' @description
-    #' Add media to worksheet
-    #' @param file file
-    add_media = function(
-      file
-    ) {
-
-      # TODO tools::file_ext() ...
-      imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
-      imageType <- gsub("^\\.", "", imageType)
-      mediaNo <- length(self$media) + 1L
-
-      ## update Content_Types
-      if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
-        self$Content_Types <-
-          unique(c(
-            sprintf(
-              '<Default Extension="%s" ContentType="image/%s"/>',
-              imageType,
-              imageType
-            ),
-            self$Content_Types
-          ))
-      }
-
-      ## write file path to media slot to copy across on save
-      tmp <- file
-      names(tmp) <- stri_join("image", mediaNo, ".", imageType)
-      self$append("media", tmp)
-
-      invisible(self)
-    },
-
-    #' @description
     #' Insert an image into a sheet
     #' @param file file
     #' @param width width
@@ -4763,7 +4730,7 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- private$get_sheet_index(sheet)
 
-      self$add_media(file)
+      private$add_media(file)
       file <- names(self$media)[length(self$media)]
 
       if (length(self$worksheets[[sheet]]$relships$drawing)) {
@@ -7726,6 +7693,36 @@ wbWorkbook <- R6::R6Class(
     append_sheet_rels = function(sheet = current_sheet(), value = NULL) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
+      invisible(self)
+    },
+
+    add_media = function(
+      file
+    ) {
+
+      # TODO tools::file_ext() ...
+      imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
+      imageType <- gsub("^\\.", "", imageType)
+      mediaNo <- length(self$media) + 1L
+
+      ## update Content_Types
+      if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
+        self$Content_Types <-
+          unique(c(
+            sprintf(
+              '<Default Extension="%s" ContentType="image/%s"/>',
+              imageType,
+              imageType
+            ),
+            self$Content_Types
+          ))
+      }
+
+      ## write file path to media slot to copy across on save
+      tmp <- file
+      names(tmp) <- stri_join("image", mediaNo, ".", imageType)
+      self$append("media", tmp)
+
       invisible(self)
     },
 

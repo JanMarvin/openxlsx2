@@ -283,7 +283,7 @@ write_comment <- function(
 
   rID <- NULL
   if (!is.null(file)) {
-    wb$add_media(file = file)
+    wb$.__enclos_env__$private$add_media(file = file)
     file <- names(wb$media)[length(wb$media)]
     rID <- paste0("rId", length(wb$vml_rels) + 1L)
 

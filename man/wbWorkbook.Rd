@@ -146,7 +146,6 @@ worksheet names.}
 \item \href{#method-wbWorkbook-remove_comment}{\code{wbWorkbook$remove_comment()}}
 \item \href{#method-wbWorkbook-add_thread}{\code{wbWorkbook$add_thread()}}
 \item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
-\item \href{#method-wbWorkbook-add_media}{\code{wbWorkbook$add_media()}}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wbWorkbook-add_drawing}{\code{wbWorkbook$add_drawing()}}
@@ -1714,23 +1713,6 @@ Add conditional formatting
 }
 \subsection{Returns}{
 The \code{wbWorkbook} object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-add_media"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-add_media}{}}}
-\subsection{Method \code{add_media()}}{
-Add media to worksheet
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_media(file)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file}}{file}
-}
-\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
