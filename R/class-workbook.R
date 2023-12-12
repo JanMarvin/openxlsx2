@@ -4133,10 +4133,10 @@ wbWorkbook <- R6::R6Class(
         ...
     ) {
 
-      col <- list(...)[["col"]]
-      row <- list(...)[["row"]]
-      color <- list(...)[["color"]]
-      file <- list(...)[["file"]]
+      col   <- list(...)[["col"]]
+      row   <- list(...)[["row"]]
+      color <- list(...)[["color"]] %||% list(...)[["colour"]]
+      file  <- list(...)[["file"]]
 
       if (!is.null(row) && !is.null(col)) {
         .Deprecated(old = "col/row", new = "dims", package = "openxlsx2")
