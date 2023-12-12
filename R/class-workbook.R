@@ -1844,6 +1844,9 @@ wbWorkbook <- R6::R6Class(
       styid <- self$get_cell_style(dims = from, sheet = sheet)
 
       if (!is.null(rows)) {
+        if (is.character(rows)) # row2int
+          rows <- as.integer(dims_to_rowcol(rows)[[2]])
+
         dims  <- wb_dims(rows, "A")
         cells <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
         cc    <- self$worksheets[[sheet]]$sheet_data$cc
