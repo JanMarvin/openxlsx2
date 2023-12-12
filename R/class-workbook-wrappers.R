@@ -3183,7 +3183,7 @@ wb_add_dxfs_style <- function(
 #' Add comment to worksheet
 #'
 #' @details
-#' If applying a `comment` with a string, it will use [wb_comment()] default values. If additional background colors are applied, RGB colors should be provided, either as hex code or with builtin R colors. The alpha chanel is ignored.
+#' If applying a `comment` with a string, it will use [wb_comment()] default values. If additional background colors are applied, RGB colors should be provided, either as hex code or with builtin R colors. The alpha channel is ignored.
 #'
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
