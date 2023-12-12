@@ -199,6 +199,7 @@ NULL
 #' @param comment An object created by [create_comment()]
 #' @param row,col Row and column of the cell
 #' @param color optional background color
+#' @param file optional background image (file extension must be png or jpeg)
 #' @keywords internal
 #' @export
 #' @inherit wb_add_comment examples
