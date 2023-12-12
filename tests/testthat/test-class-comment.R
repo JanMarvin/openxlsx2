@@ -296,3 +296,43 @@ test_that("thread option works", {
   expect_equal(exp, got)
 
 })
+
+test_that("background images work", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("Sheet 1")
+
+  # file extension must be png or jpeg, not jpg?
+  tmp <- tempfile(fileext = ".png")
+  png(file = tmp, bg = "transparent")
+  plot(1:10)
+  rect(1, 5, 3, 7, col = "white")
+  dev.off()
+
+  # write comment without author
+  c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
+  wb$add_comment(dims = "B12", comment = c1, file = tmp)
+
+  wb$add_worksheet()
+  wb$add_comment(dims = "B12", comment = c1)
+
+  wb$add_worksheet()
+
+  # file extension must be png or jpeg, not jpg?
+  tmp2 <- tempfile(fileext = ".png")
+  png(file = tmp2, bg = "transparent")
+  barplot(1:10)
+  dev.off()
+
+  # write comment without author
+  c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
+  wb$add_comment(dims = "G12", comment = c1, file = tmp2)
+  wb$add_comment(dims = "G12", sheet = 1, comment = c1, file = tmp2)
+
+  expect_equal(3, length(wb$vml))
+  expect_equal(3, length(wb$vml_rels))
+  expect_equal(2, length(wb$vml_rels[[1]]))
+  expect_true(is.null(wb$vml_rels[[2]]))
+  expect_equal(1, length(wb$vml_rels[[3]]))
+
+})
