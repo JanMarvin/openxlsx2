@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Allow further modifications of comments. The background can now be filled with a color or an image. [870](https://github.com/JanMarvin/openxlsx2/pull/870)
+
 ## Fixes
 
 * `wb_add_ignore_error()` now returns a `wbWorkbook`

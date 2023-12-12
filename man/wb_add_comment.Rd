@@ -27,7 +27,7 @@ The Workbook object, invisibly.
 Add comment to worksheet
 }
 \details{
-If applying a \code{comment} with a string, it will use \code{\link[=wb_comment]{wb_comment()}} default values.
+If applying a \code{comment} with a string, it will use \code{\link[=wb_comment]{wb_comment()}} default values. If additional background colors are applied, RGB colors should be provided, either as hex code or with builtin R colors. The alpha chanel is ignored.
 }
 \examples{
 wb <- wb_workbook()

@@ -736,6 +736,24 @@ test_that("various image functions work as expected", {
 
 })
 
+test_that("image relships work with comment", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("Sheet 1")
+
+  c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
+  wb$add_comment(dims = "B12", comment = c1)
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  wb$add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5)
+
+  exp <- "<drawing r:id=\"rId3\"/>"
+  got <- wb$worksheets[[1]]$drawing
+  expect_equal(exp, got)
+
+})
+
 test_that("workbook themes work", {
 
   wb <- wb_workbook()$add_worksheet()

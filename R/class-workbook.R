@@ -4133,8 +4133,10 @@ wbWorkbook <- R6::R6Class(
         ...
     ) {
 
-      col <- list(...)[["col"]]
-      row <- list(...)[["row"]]
+      col   <- list(...)[["col"]]
+      row   <- list(...)[["row"]]
+      color <- list(...)[["color"]] %||% list(...)[["colour"]]
+      file  <- list(...)[["file"]]
 
       if (!is.null(row) && !is.null(col)) {
         .Deprecated(old = "col/row", new = "dims", package = "openxlsx2")
@@ -4145,11 +4147,16 @@ wbWorkbook <- R6::R6Class(
         comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))
       }
 
+      if (!is.null(color) && !is_wbColour(color))
+        stop("color needs to be a wb_color()")
+
       write_comment(
         wb      = self,
         sheet   = sheet,
         comment = comment,
-        dims    = dims
+        dims    = dims,
+        color   = color,
+        file    = file
       ) # has no use: xy
 
       invisible(self)
@@ -4723,23 +4730,8 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- private$get_sheet_index(sheet)
 
-      # TODO tools::file_ext() ...
-      imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
-      imageType <- gsub("^\\.", "", imageType)
-      mediaNo <- length(self$media) + 1L
-
-      ## update Content_Types
-      if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
-        self$Content_Types <-
-          unique(c(
-            sprintf(
-              '<Default Extension="%s" ContentType="image/%s"/>',
-              imageType,
-              imageType
-            ),
-            self$Content_Types
-          ))
-      }
+      private$add_media(file)
+      file <- names(self$media)[length(self$media)]
 
       if (length(self$worksheets[[sheet]]$relships$drawing)) {
         sheet_drawing <- self$worksheets[[sheet]]$relships$drawing
@@ -4756,11 +4748,6 @@ wbWorkbook <- R6::R6Class(
       } else {
         next_id <- "rId1"
       }
-
-      ## write file path to media slot to copy across on save
-      tmp <- file
-      names(tmp) <- stri_join("image", mediaNo, ".", imageType)
-      self$append("media", tmp)
 
       pos <- '<xdr:pos x="0" y="0" />'
 
@@ -4802,10 +4789,9 @@ wbWorkbook <- R6::R6Class(
       self$drawings_rels[[sheet_drawing]] <- c(
         old_drawings_rels,
         sprintf(
-          '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image%s.%s"/>',
+          '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
           next_id,
-          mediaNo,
-          imageType
+          file
         )
       )
 
@@ -5059,7 +5045,7 @@ wbWorkbook <- R6::R6Class(
       } else {
         relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
         relship$typ <- basename(relship$Type)
-        next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
+        next_relship <- max(as.integer(gsub("\\D+", "", relship$Id))) + 1L
         has_no_drawing <- !any(relship$typ == "drawing")
       }
 
@@ -7710,6 +7696,36 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    add_media = function(
+      file
+    ) {
+
+      # TODO tools::file_ext() ...
+      imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
+      imageType <- gsub("^\\.", "", imageType)
+      mediaNo <- length(self$media) + 1L
+
+      ## update Content_Types
+      if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
+        self$Content_Types <-
+          unique(c(
+            sprintf(
+              '<Default Extension="%s" ContentType="image/%s"/>',
+              imageType,
+              imageType
+            ),
+            self$Content_Types
+          ))
+      }
+
+      ## write file path to media slot to copy across on save
+      tmp <- file
+      names(tmp) <- stri_join("image", mediaNo, ".", imageType)
+      self$append("media", tmp)
+
+      invisible(self)
+    },
+
     get_drawingsref = function() {
       has_drawing <- which(grepl("drawings", self$worksheets_rels))
 
@@ -7751,7 +7767,7 @@ wbWorkbook <- R6::R6Class(
               fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
           )
 
-          if (!is.null(unlist(self$vml_rels)) && length(self$vml_rels) >= i && self$vml_rels[[i]] != "") {
+          if (!is.null(unlist(self$vml_rels)) && length(self$vml_rels) >= i && !all(self$vml_rels[[i]] == "")) {
             write_file(
               head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(self$vml_rels[[i]]),

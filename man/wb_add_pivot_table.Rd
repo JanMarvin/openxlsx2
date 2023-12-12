@@ -56,6 +56,9 @@ to ensure the function works.
 \code{runTotal}, \code{percentOfRow}, \code{percentOfCol}, \code{percentOfTotal}, \code{index}.
 
 The sheet will be empty unless it is opened in spreadsheet software.
+
+Find more details in the \href{https://janmarvin.github.io/ox2-book/chapters/openxlsx2_pivot_tables.html}{section about pivot tables}
+in the openxlsx2 book.
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\% wb_add_data(x = mtcars)

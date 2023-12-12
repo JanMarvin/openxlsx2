@@ -198,6 +198,8 @@ NULL
 #' @inheritParams wb_add_comment
 #' @param comment An object created by [create_comment()]
 #' @param row,col Row and column of the cell
+#' @param color optional background color
+#' @param file optional background image (file extension must be png or jpeg)
 #' @keywords internal
 #' @export
 #' @inherit wb_add_comment examples
@@ -207,7 +209,9 @@ write_comment <- function(
     col     = NULL,
     row     = NULL,
     comment,
-    dims    = rowcol_to_dim(row, col)
+    dims    = rowcol_to_dim(row, col),
+    color   = NULL,
+    file    = NULL
   ) {
 
   # TODO add as method: wbWorkbook$addComment(); add param for replace?
@@ -264,9 +268,36 @@ write_comment <- function(
 
   id <- 1025 + sum(lengths(wb$comments))
 
+  fillcolor <- color %||% "#ffffe1"
+  # looks like vml accepts only "#RGB" and not "ARGB"
+  if (is_wbColour(fillcolor)) {
+    if (names(fillcolor) != "rgb") {
+      # actually there are more colors like: "lime [11]" and
+      # "infoBackground [80]" (the default). But no clue how
+      # these are created.
+      stop("fillcolor needs to be an RGB color")
+    }
+
+    fillcolor <- paste0("#", substr(fillcolor, 3, 8))
+  }
+
+  rID <- NULL
+  if (!is.null(file)) {
+    wb$.__enclos_env__$private$add_media(file = file)
+    file <- names(wb$media)[length(wb$media)]
+    rID <- paste0("rId", length(wb$vml_rels) + 1L)
+
+    vml_relship <- sprintf(
+      '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
+      rID,
+      file
+    )
+  }
+
+
   # create new commment vml
   cd <- unapply(comment_list, "[[", "clientData")
-  vml_xml <- read_xml(genBaseShapeVML(cd, id), pointer = FALSE)
+  vml_xml <- read_xml(genBaseShapeVML(cd, id, fillcolor, rID), pointer = FALSE)
   vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
   vml_xml <- paste0(vml_xml, vml_comment)
 
@@ -310,10 +341,25 @@ write_comment <- function(
         ),
         xml_children = vml_xml
       )
+      if (length(wb$vml) == 0) {
+        wb$vml <- list()
+      }
       wb$vml <- c(wb$vml, vml_xml)
 
       wb$worksheets[[sheet]]$relships$vmlDrawing <- next_id
+      if (!is.null(rID)) {
+        if (length(wb$vml_rels) == 0) {
+          wb$vml_rels <- list()
+        }
+        if (length(wb$vml_rels) < next_id) {
+          wb$vml_rels <- wb$vml_rels[seq_len(next_id)]
+        }
 
+        wb$vml_rels[[next_id]] <- append(
+          wb$vml_rels[[next_id]],
+          vml_relship
+        )
+      }
       # TODO hardcoded 2. Marvin fears that this is not good enough
       wb$worksheets[[sheet]]$legacyDrawing <- sprintf('<legacyDrawing r:id="rId%s"/>', next_rid)
 
@@ -321,6 +367,12 @@ write_comment <- function(
     } else {
       vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
       wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
+      if (!is.null(rID)) {
+        wb$vml_rels[[vml_id]] <- append(
+          wb$vml_rels[[vml_id]],
+          vml_relship
+        )
+      }
     }
 
     wb$worksheets_rels[[sheet]] <- c(
@@ -334,6 +386,12 @@ write_comment <- function(
   } else {
     vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
     wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
+      if (!is.null(rID)) {
+        wb$vml_rels[[vml_id]] <- append(
+          wb$vml_rels[[vml_id]],
+          vml_relship
+        )
+      }
   }
 
   cmmnt_id <- wb$worksheets[[sheet]]$relships$comments
