@@ -54,6 +54,7 @@ wb_get_base_font(wb)
 \seealso{
 Other workbook styling functions: 
 \code{\link{wb_add_dxfs_style}()},
+\code{\link{wb_add_style_across}()},
 \code{\link{wb_add_style}()}
 
 Other workbook wrappers: 

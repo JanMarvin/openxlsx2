@@ -71,6 +71,7 @@ wb <- wb_workbook() \%>\%
 \seealso{
 Other workbook styling functions: 
 \code{\link{base_font-wb}},
+\code{\link{wb_add_style_across}()},
 \code{\link{wb_add_style}()}
 }
 \concept{workbook styling functions}
