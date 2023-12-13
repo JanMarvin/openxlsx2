@@ -842,7 +842,7 @@ test_that("apply styles across columns and rows", {
   wb <- wb_workbook() %>%
     wb_add_worksheet() %>%
     wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%
-    wb_add_style_across(from = "C3", cols = "C:D", rows = 3:4)
+    wb_set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
 
   exp <- c(
     "<col min=\"1\" max=\"2\" width=\"8.43\"/>",

@@ -2627,27 +2627,6 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   wb$clone()$add_style(style, style_name)
 }
 
-#' Set the column / row style in a worksheet
-#'
-#' Apply the style from one cell across columns/rows of the worksheet. This affects only empty cells.
-#'
-#' @param wb A workbook
-#' @param sheet A worksheet
-#' @param from The cell containing the style that should be applied column-wise/row-wise
-#' @param cols The columns the style will be applied to, either "A:D" or 1:4
-#' @param rows The rows the style will be applied to
-#' @family workbook styling functions
-#' @examples
-#' wb <- wb_workbook() %>%
-#'   wb_add_worksheet() %>%
-#'   wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%
-#'   wb_add_style_across(from = "C3", cols = "C:D", rows = 3:4)
-#' @export
-wb_add_style_across <- function(wb, sheet = current_sheet(), from = "A1", cols = NULL, rows = NULL) {
-  assert_workbook(wb)
-  wb$clone()$add_style_across(sheet = sheet, from = from, cols = cols, rows = rows)
-}
-
 #' Apply styling to a cell region
 #'
 #' @name wb_cell_style
@@ -2673,13 +2652,30 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
 }
 
 #' @rdname wb_cell_style
-#' @param style A style
+#' @param style A style or a cell with a certain style
 #' @return wb_set_cell_style returns the workbook invisibly.
 #' @export
 wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   assert_workbook(wb)
   # needs deep clone for nested calls as in styles vignette copy cell styles
   wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
+}
+
+#' @rdname wb_cell_style
+#' @param wb A workbook
+#' @param sheet A worksheet
+#' @param style A style or a cell with a certain style
+#' @param cols The columns the style will be applied to, either "A:D" or 1:4
+#' @param rows The rows the style will be applied to
+#' @examples
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet() %>%
+#'   wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%
+#'   wb_set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
+#' @export
+wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = NULL, rows = NULL) {
+  assert_workbook(wb)
+  wb$clone(deep = TRUE)$set_cell_style_across(sheet = sheet, style = style, cols = cols, rows = rows)
 }
 
 #' Modify borders in a cell region of a worksheet

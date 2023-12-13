@@ -38,7 +38,6 @@ wb <- wb_workbook() \%>\% wb_add_style(yellow)
 
 Other workbook styling functions: 
 \code{\link{base_font-wb}},
-\code{\link{wb_add_dxfs_style}()},
-\code{\link{wb_add_style_across}()}
+\code{\link{wb_add_dxfs_style}()}
 }
 \concept{workbook styling functions}

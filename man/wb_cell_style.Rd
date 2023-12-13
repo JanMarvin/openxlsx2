@@ -4,20 +4,33 @@
 \alias{wb_cell_style}
 \alias{wb_get_cell_style}
 \alias{wb_set_cell_style}
+\alias{wb_set_cell_style_across}
 \title{Apply styling to a cell region}
 \usage{
 wb_get_cell_style(wb, sheet = current_sheet(), dims)
 
 wb_set_cell_style(wb, sheet = current_sheet(), dims, style)
+
+wb_set_cell_style_across(
+  wb,
+  sheet = current_sheet(),
+  style,
+  cols = NULL,
+  rows = NULL
+)
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook} object}
+\item{wb}{A workbook}
 
-\item{sheet}{sheet}
+\item{sheet}{A worksheet}
 
 \item{dims}{A cell range in the worksheet}
 
-\item{style}{A style}
+\item{style}{A style or a cell with a certain style}
+
+\item{cols}{The columns the style will be applied to, either "A:D" or 1:4}
+
+\item{rows}{The rows the style will be applied to}
 }
 \value{
 wb_get_cell_style returns the style id as character
@@ -37,6 +50,10 @@ numfmt <- wb$get_cell_style(dims = "B1")
 
 # assign style to a1
 wb$set_cell_style(dims = "A1", style = numfmt)
+wb <- wb_workbook() \%>\%
+  wb_add_worksheet() \%>\%
+  wb_add_fill(dims = "C3", color = wb_color("yellow")) \%>\%
+  wb_set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
 }
 \seealso{
 Other styles: 

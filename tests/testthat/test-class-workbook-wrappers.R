@@ -645,7 +645,7 @@ test_that("wb_add_style() is a wrapper", {
 })
 
 
-# wb_add_style_across() ---------------------------------------------------
+# wb_set_cell_style_across() ----------------------------------------------
 
 test_that("wb_add_style() is a wrapper", {
 
@@ -654,9 +654,9 @@ test_that("wb_add_style() is a wrapper", {
     wb_add_fill(dims = "C3", color = wb_color("yellow"))
 
   expect_wrapper(
-    "add_style_across",
+    "set_cell_style_across",
     wb = wb,
-    params = list(from = "C3", cols = "C:D", rows = 3:4)
+    params = list(style = "C3", cols = "C:D", rows = 3:4)
   )
 
 })
