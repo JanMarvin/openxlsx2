@@ -4,6 +4,8 @@
 
 * Allow further modifications of comments. The background can now be filled with a color or an image. [870](https://github.com/JanMarvin/openxlsx2/pull/870)
 
+* Added `wb_set_cell_style_across()` to apply a cell style to selected columns and rows. This allows unlocking cells to make use column and row properties of `wb_protect_worksheet()` which require additional cell styles (see issue 871 for a more detailed explanation). `wb_set_cell_style()` now accepts a cell dimension in the `style` argument. [873](https://github.com/JanMarvin/openxlsx2/pull/873)
+
 ## Fixes
 
 * `wb_add_ignore_error()` now returns a `wbWorkbook`
