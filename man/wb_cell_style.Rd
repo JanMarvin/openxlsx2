@@ -20,9 +20,9 @@ wb_set_cell_style_across(
 )
 }
 \arguments{
-\item{wb}{A workbook}
+\item{wb}{A \code{wbWorkbook} object}
 
-\item{sheet}{A worksheet}
+\item{sheet}{sheet}
 
 \item{dims}{A cell range in the worksheet}
 
@@ -33,12 +33,10 @@ wb_set_cell_style_across(
 \item{rows}{The rows the style will be applied to}
 }
 \value{
-wb_get_cell_style returns the style id as character
-
-wb_set_cell_style returns the workbook invisibly.
+A Workbook object
 }
 \description{
-Apply styling to a cell region
+Setting a style across only impacts cells that are not yet part of a workbook. The effect is similar to setting the cell style for all cells in a row independently, though much quicker and less memory consuming.
 }
 \examples{
 # set a style in b1

@@ -2996,6 +2996,7 @@ set style across columns and/or rows
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_cell_style_across(
   sheet = current_sheet(),
+  style,
   cols = NULL,
   rows = NULL
 )}\if{html}{\out{</div>}}
@@ -3006,11 +3007,11 @@ set style across columns and/or rows
 \describe{
 \item{\code{sheet}}{sheet}
 
+\item{\code{style}}{style}
+
 \item{\code{cols}}{cols}
 
 \item{\code{rows}}{rows}
-
-\item{\code{style}}{style}
 }
 \if{html}{\out{</div>}}
 }

@@ -28,8 +28,7 @@ more of the following: \code{"selectLockedCells"}, \code{"selectUnlockedCells"},
 \code{"sort"}, \code{"autoFilter"}, \code{"pivotTables"}, \code{"objects"}, \code{"scenarios"}}
 }
 \description{
-Protect or unprotect a worksheet from modifications by the user
-in the graphical user interface. Replaces an existing protection.
+Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection. Certain features require applying unlocking of initialized cells in the worksheet and across columns and/or rows.
 }
 \examples{
 wb <- wb_workbook()

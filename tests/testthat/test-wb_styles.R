@@ -859,4 +859,15 @@ test_that("apply styles across columns and rows", {
   got <- wb$worksheets[[1]]$sheet_data$row_attr[c("customFormat", "r", "s")]
   expect_equal(exp, got)
 
+  # same as above but use cell style id
+  wb <- wb_workbook()$add_worksheet()$add_fill(dims = "C3", color = wb_color("yellow"))
+  wb$set_cell_style_across(style = wb_get_cell_style(wb, sheet = 1, dims = "C3"), cols = "C:D", rows = 3:4)
+
+  exp <- c(
+    "<col min=\"1\" max=\"2\" width=\"8.43\"/>",
+    "<col min=\"3\" max=\"4\" style=\"1\" width=\"8.43\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(exp, got)
+
 })

@@ -1586,8 +1586,7 @@ wb_page_setup <- function(
 
 #' Protect a worksheet from modifications
 #'
-#' Protect or unprotect a worksheet from modifications by the user
-#'   in the graphical user interface. Replaces an existing protection.
+#' Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection. Certain features require applying unlocking of initialized cells in the worksheet and across columns and/or rows.
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
@@ -2629,6 +2628,8 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 
 #' Apply styling to a cell region
 #'
+#' Setting a style across only impacts cells that are not yet part of a workbook. The effect is similar to setting the cell style for all cells in a row independently, though much quicker and less memory consuming.
+#'
 #' @name wb_cell_style
 #' @param wb A `wbWorkbook` object
 #' @param sheet sheet
@@ -2644,7 +2645,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #'
 #' # assign style to a1
 #' wb$set_cell_style(dims = "A1", style = numfmt)
-#' @return wb_get_cell_style returns the style id as character
+#' @return A Workbook object
 #' @export
 wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
   assert_workbook(wb)
@@ -2653,7 +2654,6 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
 
 #' @rdname wb_cell_style
 #' @param style A style or a cell with a certain style
-#' @return wb_set_cell_style returns the workbook invisibly.
 #' @export
 wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   assert_workbook(wb)
@@ -2662,9 +2662,6 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 }
 
 #' @rdname wb_cell_style
-#' @param wb A workbook
-#' @param sheet A worksheet
-#' @param style A style or a cell with a certain style
 #' @param cols The columns the style will be applied to, either "A:D" or 1:4
 #' @param rows The rows the style will be applied to
 #' @examples
