@@ -7110,6 +7110,11 @@ wbWorkbook <- R6::R6Class(
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
+      if (all(grepl("[A-Za-z]", style)))
+        styid <- self$get_cell_style(dims = style, sheet = sheet)
+      else
+        styid <- style
+
       private$do_cell_init(sheet, dims)
 
       # if a range is passed (e.g. "A1:B2") we need to get every cell
@@ -7117,7 +7122,58 @@ wbWorkbook <- R6::R6Class(
 
       sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
 
-      self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- style
+      self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
+
+      invisible(self)
+    },
+
+    #' @description set style across columns and/or rows
+    #' @param sheet sheet
+    #' @param style style
+    #' @param cols cols
+    #' @param rows rows
+    #' @return The `wbWorkbook` object
+    set_cell_style_across = function(sheet = current_sheet(), style, cols = NULL, rows = NULL) {
+
+      sheet <- private$get_sheet_index(sheet)
+      if (all(grepl("[A-Za-z]", style)))
+        styid <- self$get_cell_style(dims = style, sheet = sheet)
+      else
+        styid <- style
+
+      if (!is.null(rows)) {
+        if (is.character(rows)) # row2int
+          rows <- as.integer(dims_to_rowcol(rows)[[2]])
+
+        dims  <- wb_dims(rows, "A")
+        cells <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+        cc    <- self$worksheets[[sheet]]$sheet_data$cc
+
+        cells <- cells[!cells %in% cc$r]
+        if (length(cells) > 0) {
+          private$do_cell_init(sheet, dims)
+          self$set_cell_style(sheet = sheet, dims = cells, style = styid)
+        }
+
+        rows_df <- self$worksheets[[sheet]]$sheet_data$row_attr
+        sel     <- rows_df$r %in% as.character(rows)
+
+        rows_df$customFormat[sel] <- "1"
+        rows_df$s[sel]            <- styid
+        self$worksheets[[sheet]]$sheet_data$row_attr <- rows_df
+
+      }
+
+      if (!is.null(cols)) {
+
+        cols <- col2int(cols)
+
+        cols_df <- wb_create_columns(self, sheet, cols)
+        sel <- cols_df$min %in% as.character(cols)
+        cols_df$style[sel] <- styid
+        self$worksheets[[sheet]]$fold_cols(cols_df)
+
+      }
 
       invisible(self)
     },

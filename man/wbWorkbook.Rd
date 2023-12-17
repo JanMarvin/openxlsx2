@@ -184,6 +184,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-add_cell_style}{\code{wbWorkbook$add_cell_style()}}
 \item \href{#method-wbWorkbook-get_cell_style}{\code{wbWorkbook$get_cell_style()}}
 \item \href{#method-wbWorkbook-set_cell_style}{\code{wbWorkbook$set_cell_style()}}
+\item \href{#method-wbWorkbook-set_cell_style_across}{\code{wbWorkbook$set_cell_style_across()}}
 \item \href{#method-wbWorkbook-add_named_style}{\code{wbWorkbook$add_named_style()}}
 \item \href{#method-wbWorkbook-add_dxfs_style}{\code{wbWorkbook$add_dxfs_style()}}
 \item \href{#method-wbWorkbook-clone_sheet_style}{\code{wbWorkbook$clone_sheet_style()}}
@@ -2985,6 +2986,37 @@ set sheet style
 }
 \subsection{Returns}{
 The \code{wbWorksheetObject}, invisibly
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_cell_style_across"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_cell_style_across}{}}}
+\subsection{Method \code{set_cell_style_across()}}{
+set style across columns and/or rows
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_cell_style_across(
+  sheet = current_sheet(),
+  style,
+  cols = NULL,
+  rows = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{style}}{style}
+
+\item{\code{cols}}{cols}
+
+\item{\code{rows}}{rows}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}

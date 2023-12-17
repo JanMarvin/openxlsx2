@@ -1586,8 +1586,7 @@ wb_page_setup <- function(
 
 #' Protect a worksheet from modifications
 #'
-#' Protect or unprotect a worksheet from modifications by the user
-#'   in the graphical user interface. Replaces an existing protection.
+#' Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection. Certain features require applying unlocking of initialized cells in the worksheet and across columns and/or rows.
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
@@ -2629,6 +2628,8 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 
 #' Apply styling to a cell region
 #'
+#' Setting a style across only impacts cells that are not yet part of a workbook. The effect is similar to setting the cell style for all cells in a row independently, though much quicker and less memory consuming.
+#'
 #' @name wb_cell_style
 #' @param wb A `wbWorkbook` object
 #' @param sheet sheet
@@ -2644,7 +2645,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #'
 #' # assign style to a1
 #' wb$set_cell_style(dims = "A1", style = numfmt)
-#' @return wb_get_cell_style returns the style id as character
+#' @return A Workbook object
 #' @export
 wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
   assert_workbook(wb)
@@ -2652,13 +2653,26 @@ wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
 }
 
 #' @rdname wb_cell_style
-#' @param style A style
-#' @return wb_set_cell_style returns the workbook invisibly.
+#' @param style A style or a cell with a certain style
 #' @export
 wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
   assert_workbook(wb)
   # needs deep clone for nested calls as in styles vignette copy cell styles
   wb$clone(deep = TRUE)$set_cell_style(sheet, dims, style)
+}
+
+#' @rdname wb_cell_style
+#' @param cols The columns the style will be applied to, either "A:D" or 1:4
+#' @param rows The rows the style will be applied to
+#' @examples
+#' wb <- wb_workbook() %>%
+#'   wb_add_worksheet() %>%
+#'   wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%
+#'   wb_set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
+#' @export
+wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = NULL, rows = NULL) {
+  assert_workbook(wb)
+  wb$clone(deep = TRUE)$set_cell_style_across(sheet = sheet, style = style, cols = cols, rows = rows)
 }
 
 #' Modify borders in a cell region of a worksheet
@@ -3162,7 +3176,7 @@ wb_add_dxfs_style <- function(
 #' Add comment to worksheet
 #'
 #' @details
-#' If applying a `comment` with a string, it will use [wb_comment()] default values. If additional background colors are applied, RGB colors should be provided, either as hex code or with builtin R colors. The alpha chanel is ignored.
+#' If applying a `comment` with a string, it will use [wb_comment()] default values. If additional background colors are applied, RGB colors should be provided, either as hex code or with builtin R colors. The alpha channel is ignored.
 #'
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
