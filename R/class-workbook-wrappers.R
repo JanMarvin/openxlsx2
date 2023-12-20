@@ -431,18 +431,27 @@ wb_add_pivot_table <- function(
 #'
 #' Add a slicer to a previously created pivot table. This function is still experimental and might be changed/improved in upcoming releases.
 #'
+#' @details
+#' This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we *strictly* discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+#'
+#' Possible `params` arguments are listed below.
+#' * edit_as: "twoCell" to place the slicer into the cells
+#' * style: "SlicerStyleLight2"
+#' * columnCount: integer used as column count
+#' * caption: string used for a caption
+#' * sortOrder: "descending" / "ascending"
+#' * choose: select variables in the form of a named logical vector like
+#'  `c(agegp = 'x > "25-34"')` for the `esoph` dataset.
+#'
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
 #' @param sheet A worksheet containing a #'
 #' @param dims The worksheet cell where the pivot table is placed
-#' @param pivot_table the name of a pivot table on the selected sheet
-#' @param slicer a variable used as slicer for the pivot table
-#' @param params a list of parameters to modify pivot table creation
+#' @param pivot_table The name of a pivot table on the selected sheet
+#' @param slicer A variable used as slicer for the pivot table
+#' @param params A list of parameters to modify pivot table creation. See **Details** for available options.
 #' @family workbook wrappers
 #' @family worksheet content functions
-#' @details This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we *strictly* discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
-#'
-#' For the time being, the slicer needs to be placed on the slide with the pivot table.
 #' @examples
 #' wb <- wb_workbook() %>%
 #'   wb_add_worksheet() %>% wb_add_data(x = mtcars)
