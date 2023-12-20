@@ -437,9 +437,9 @@ wb_add_pivot_table <- function(
 #' Possible `params` arguments are listed below.
 #' * edit_as: "twoCell" to place the slicer into the cells
 #' * style: "SlicerStyleLight2"
-#' * columnCount: integer used as column count
+#' * column_count: integer used as column count
 #' * caption: string used for a caption
-#' * sortOrder: "descending" / "ascending"
+#' * sort_order: "descending" / "ascending"
 #' * choose: select variables in the form of a named logical vector like
 #'  `c(agegp = 'x > "25-34"')` for the `esoph` dataset.
 #'

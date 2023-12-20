@@ -39,9 +39,9 @@ Possible \code{params} arguments are listed below.
 \itemize{
 \item edit_as: "twoCell" to place the slicer into the cells
 \item style: "SlicerStyleLight2"
-\item columnCount: integer used as column count
+\item column_count: integer used as column count
 \item caption: string used for a caption
-\item sortOrder: "descending" / "ascending"
+\item sort_order: "descending" / "ascending"
 \item choose: select variables in the form of a named logical vector like
 \code{c(agegp = 'x > "25-34"')} for the \code{esoph} dataset.
 }

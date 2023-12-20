@@ -1520,7 +1520,15 @@ wbWorkbook <- R6::R6Class(
         stop("x cannot be missing in add_slicer")
 
       assert_class(x, "wb_data")
-      if (missing(params)) params <- NULL
+      if (missing(params)) {
+        params <- NULL
+      } else {
+        arguments <- c(
+          "caption", "choose", "column_count", "cross_filter", "edit_as",
+          "row_height", "show_missing", "sort_order", "style"
+        )
+        params <- standardize_case_names(params, arguments = arguments, return = TRUE)
+      }
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -1532,16 +1540,16 @@ wbWorkbook <- R6::R6Class(
 
       ### slicer_cache
       sortOrder <- NULL
-      if (!is.null(params$sortOrder))
-        sortOrder <- params$sortOrder
+      if (!is.null(params$sort_order))
+        sortOrder <- params$sort_order
 
       showMissing <- NULL
-      if (!is.null(params$showMissing))
-        showMissing <- params$showMissing
+      if (!is.null(params$show_missing))
+        showMissing <- params$show_missing
 
       crossFilter <- NULL
-      if (!is.null(params$crossFilter))
-        crossFilter <- params$crossFilter
+      if (!is.null(params$cross_filter))
+        crossFilter <- params$cross_filter
 
       # TODO we might be able to initialize the field from here. Something like
       # get_item(...) and insert it to the pivotDefinition
@@ -1613,12 +1621,12 @@ wbWorkbook <- R6::R6Class(
         caption <- params$caption
 
       row_height <- 230716
-      if (!is.null(params$rowHeight))
-        row_height <- params$rowHeight
+      if (!is.null(params$row_height))
+        row_height <- params$row_height
 
       column_count <- NULL
-      if (!is.null(params$columnCount))
-        column_count <- params$columnCount
+      if (!is.null(params$column_count))
+        column_count <- params$column_count
 
       style <- NULL
       if (!is.null(params$style))
