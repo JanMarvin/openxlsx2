@@ -23,11 +23,11 @@ wb_add_slicer(
 
 \item{sheet}{A worksheet containing a #'}
 
-\item{pivot_table}{the name of a pivot table on the selected sheet}
+\item{pivot_table}{The name of a pivot table on the selected sheet}
 
-\item{slicer}{a variable used as slicer for the pivot table}
+\item{slicer}{A variable used as slicer for the pivot table}
 
-\item{params}{a list of parameters to modify pivot table creation}
+\item{params}{A list of parameters to modify pivot table creation. See \strong{Details} for available options.}
 }
 \description{
 Add a slicer to a previously created pivot table. This function is still experimental and might be changed/improved in upcoming releases.
@@ -35,7 +35,16 @@ Add a slicer to a previously created pivot table. This function is still experim
 \details{
 This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we \emph{strictly} discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
 
-For the time being, the slicer needs to be placed on the slide with the pivot table.
+Possible \code{params} arguments are listed below.
+\itemize{
+\item edit_as: "twoCell" to place the slicer into the cells
+\item style: "SlicerStyleLight2"
+\item column_count: integer used as column count
+\item caption: string used for a caption
+\item sort_order: "descending" / "ascending"
+\item choose: select variables in the form of a named logical vector like
+\code{c(agegp = 'x > "25-34"')} for the \code{esoph} dataset.
+}
 }
 \examples{
 wb <- wb_workbook() \%>\%

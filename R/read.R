@@ -1,11 +1,17 @@
 # `wb_to_df()` ----------------------------------------
 #' Create a data frame from a Workbook
 #'
-#' Simple function to create a `data.frame` from a workbook. Simple as in simply
-#' written down. `read_xlsx()` and `wb_read()` are just internal wrappers of
-#' `wb_to_df()` intended for people coming from other packages.
+#' Simple function to create a `data.frame` from a sheet in workbook. Simple as
+#' in it was simply written down. `read_xlsx()` and `wb_read()` are just
+#' internal wrappers of `wb_to_df()` intended for people coming from other
+#' packages.
 #'
 #' @details
+#' The returned data frame will have named rows matching the rows of the
+#' worksheet. With `col_names = FALSE` the returned data frame will have
+#' column names matching the columns of the worksheet. Otherwise the first
+#' row is selected as column name.
+#'
 #' Depending if the R package `hms` is loaded, `wb_to_df()` returns
 #' `hms` variables or string variables in the `hh:mm:ss` format.
 #'
@@ -16,10 +22,11 @@
 #' * 3: posixt (datetime)
 #' * 4: logical
 #'
-#' `read_xlsx()` will not pick up formulas added to a Workbook object
+#' `wb_to_df()` will not pick up formulas added to a workbook object
 #' via [wb_add_formula()]. This is because only the formula is written and left
 #' to be evaluated when the file is opened in a spreadsheet software.
-#' Opening, saving and closing the file in a spreadsheet software will resolve this.
+#' Opening, saving and closing the file in a spreadsheet software will resolve
+#' this.
 #'
 #' @seealso [wb_get_named_regions()]
 #'

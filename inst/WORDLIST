@@ -32,6 +32,7 @@ STDEV
 STDEVP
 Savon
 Schauberger
+SlicerStyleLight
 Sparklines
 SuperA
 SuperB
@@ -155,6 +156,7 @@ notBetween
 notEqual
 numFmt
 numberStoredAsText
+numfmt
 numfmts
 oddFooter
 oddHeader
@@ -228,6 +230,7 @@ textLength
 th
 totalRow
 totalsRowCount
+twoCell
 twoCellAnchor
 twoDigitTextYear
 unescaping
