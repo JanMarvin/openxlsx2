@@ -327,9 +327,9 @@ wb_add_data_table <- function(
 #' `show_data_as` can be any of `normal`, `difference`, `percent`, `percentDiff`,
 #' `runTotal`, `percentOfRow`, `percentOfCol`, `percentOfTotal`, `index`.
 #'
-#' Possible `param` arguments are listed below. Pivot tables accepts more
-#' params, but they were either not tested or misbehaved (probably because we
-#' misunderstood how the parameter should be used).
+#' Possible `params` arguments are listed below. Pivot tables accepts more
+#' parameters, but they were either not tested or misbehaved (probably because
+#' we misunderstood how the parameter should be used).
 #'
 #' Boolean arguments:
 #' * apply_alignment_formats
@@ -354,6 +354,7 @@ wb_add_data_table <- function(
 #' * numfmt: accepts vectors of the form `c(formatCode = "0.0%")`
 #' * choose: select variables in the form of a named logical vector like
 #'  `c(agegp = 'x > "25-34"')` for the `esoph` dataset.
+#' * sort_item: named list of index or character vectors
 #'
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
@@ -363,8 +364,8 @@ wb_add_data_table <- function(
 #' @param rows The column name(s) of `x` used as rows
 #' @param cols The column names(s) of `x` used as cols
 #' @param data The column name(s) of `x` used as data
-#' @param fun A vector of functions to be used with `data`
-#' @param params A list of parameters to modify pivot table creation.
+#' @param fun A vector of functions to be used with `data`. See **Details** for the list of available options.
+#' @param params A list of parameters to modify pivot table creation. See **Details** for available options.
 #' @param pivot_table An optional name for the pivot table
 #' @param slicer Any additional column name(s) of `x` used as slicer
 #' @seealso [wb_data()]
@@ -374,8 +375,14 @@ wb_add_data_table <- function(
 #' df <- wb_data(wb, sheet = 1)
 #'
 #' wb <- wb %>%
+#'   # default pivot table
 #'   wb_add_pivot_table(df, dims = "A3",
 #'     filter = "am", rows = "cyl", cols = "gear", data = "disp"
+#'   ) %>%
+#'   # with parameters
+#'   wb_add_pivot_table(df,
+#'     filter = "am", rows = "cyl", cols = "gear", data = "disp",
+#'     params = list(no_style = TRUE, numfmt = c(formatCode = "##0.0"))
 #'   )
 #' @family workbook wrappers
 #' @family worksheet content functions

@@ -36,9 +36,9 @@ wb_add_pivot_table(
 
 \item{data}{The column name(s) of \code{x} used as data}
 
-\item{fun}{A vector of functions to be used with \code{data}}
+\item{fun}{A vector of functions to be used with \code{data}. See \strong{Details} for the list of available options.}
 
-\item{params}{A list of parameters to modify pivot table creation.}
+\item{params}{A list of parameters to modify pivot table creation. See \strong{Details} for available options.}
 
 \item{pivot_table}{An optional name for the pivot table}
 
@@ -73,9 +73,9 @@ output file and cause spreadsheet software to crash.
 \code{show_data_as} can be any of \code{normal}, \code{difference}, \code{percent}, \code{percentDiff},
 \code{runTotal}, \code{percentOfRow}, \code{percentOfCol}, \code{percentOfTotal}, \code{index}.
 
-Possible \code{param} arguments are listed below. Pivot tables accepts more
-params, but they were either not tested or misbehaved (probably because we
-misunderstood how the parameter should be used).
+Possible \code{params} arguments are listed below. Pivot tables accepts more
+parameters, but they were either not tested or misbehaved (probably because
+we misunderstood how the parameter should be used).
 
 Boolean arguments:
 \itemize{
@@ -105,6 +105,7 @@ Miscellaneous:
 \item numfmt: accepts vectors of the form \code{c(formatCode = "0.0\%")}
 \item choose: select variables in the form of a named logical vector like
 \code{c(agegp = 'x > "25-34"')} for the \code{esoph} dataset.
+\item sort_item: named list of index or character vectors
 }
 }
 \examples{
@@ -113,8 +114,14 @@ wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\% wb_add_data(x = mtcars)
 df <- wb_data(wb, sheet = 1)
 
 wb <- wb \%>\%
+  # default pivot table
   wb_add_pivot_table(df, dims = "A3",
     filter = "am", rows = "cyl", cols = "gear", data = "disp"
+  ) \%>\%
+  # with parameters
+  wb_add_pivot_table(df,
+    filter = "am", rows = "cyl", cols = "gear", data = "disp",
+    params = list(no_style = TRUE, numfmt = c(formatCode = "##0.0"))
   )
 }
 \seealso{
