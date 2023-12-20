@@ -313,7 +313,7 @@ wb_add_data_table <- function(
 #' It is possible to add slicers to the pivot table. For this the pivot
 #' table has to be named and the variable used as slicer, must be part
 #' of the selected pivot table names (`cols`, `rows`, `filter`, or
-#' `slicer`). If these criterions are matched, a slicer can be added
+#' `slicer`). If these criteria are matched, a slicer can be added
 #' using [wb_add_slicer()].
 #'
 #' Be aware that you should always test on a copy if a `param` argument works

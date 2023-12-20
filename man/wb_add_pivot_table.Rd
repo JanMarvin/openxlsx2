@@ -59,7 +59,7 @@ when opening the file.
 It is possible to add slicers to the pivot table. For this the pivot
 table has to be named and the variable used as slicer, must be part
 of the selected pivot table names (\code{cols}, \code{rows}, \code{filter}, or
-\code{slicer}). If these criterions are matched, a slicer can be added
+\code{slicer}). If these criteria are matched, a slicer can be added
 using \code{\link[=wb_add_slicer]{wb_add_slicer()}}.
 
 Be aware that you should always test on a copy if a \code{param} argument works
