@@ -30,5 +30,7 @@ to a cell with \code{\link[=wb_add_thread]{wb_add_thread()}}
 \item \code{options("openxlsx2.commaFormat" = 3)}
 \item \code{options("openxlsx2.percentageFormat" = 10)}
 \item \code{options("openxlsx2.scientificFormat" = 48)}
+\item \code{options("openxlsx2.string_nums" = TRUE)} numerics in character columns
+will be converted. \code{"1"} will be written as \code{1}
 }
 }

@@ -42,23 +42,70 @@ wb_add_pivot_table(
 
 \item{pivot_table}{An optional name for the pivot table}
 
-\item{slicer}{a character object with names used as slicer}
+\item{slicer}{Any additional column name(s) of \code{x} used as slicer}
 }
 \description{
-Add a pivot table to a worksheet. The data must be specified using \code{\link[=wb_data]{wb_data()}}
-to ensure the function works.
+The data must be specified using \code{\link[=wb_data]{wb_data()}} to ensure the function works.
+The sheet will be empty unless it is opened in spreadsheet software. Find
+more details in the \href{https://janmarvin.github.io/ox2-book/chapters/openxlsx2_pivot_tables.html}{section about pivot tables}
+in the openxlsx2 book.
 }
 \details{
+The pivot table is not actually written to the worksheet, therefore the cell
+region has to remain empty. What is written to the workbook is something
+like a recipe how the spreadsheet software has to construct the pivot table
+when opening the file.
+
+It is possible to add slicers to the pivot table. For this the pivot
+table has to be named and the variable used as slicer, must be part
+of the selected pivot table names (\code{cols}, \code{rows}, \code{filter}, or
+\code{slicer}). If these criterions are matched, a slicer can be added
+using \code{\link[=wb_add_slicer]{wb_add_slicer()}}.
+
+Be aware that you should always test on a copy if a \code{param} argument works
+with a pivot table. Not only to check if the desired effect appears, but
+first and foremost if the file loads. Wildly mixing params might brick the
+output file and cause spreadsheet software to crash.
+
 \code{fun} can be any of \code{AVERAGE}, \code{COUNT}, \code{COUNTA}, \code{MAX}, \code{MIN},
 \code{PRODUCT}, \code{STDEV}, \code{STDEVP}, \code{SUM}, \code{VAR}, \code{VARP}.
 
 \code{show_data_as} can be any of \code{normal}, \code{difference}, \code{percent}, \code{percentDiff},
 \code{runTotal}, \code{percentOfRow}, \code{percentOfCol}, \code{percentOfTotal}, \code{index}.
 
-The sheet will be empty unless it is opened in spreadsheet software.
+Possible \code{param} arguments are listed below. Pivot tables accepts more
+params, but they were either not tested or misbehaved (probably because we
+misunderstood how the parameter should be used).
 
-Find more details in the \href{https://janmarvin.github.io/ox2-book/chapters/openxlsx2_pivot_tables.html}{section about pivot tables}
-in the openxlsx2 book.
+Boolean arguments:
+\itemize{
+\item apply_alignment_formats
+\item apply_number_formats
+\item apply_border_formats
+\item apply_font_formats
+\item apply_pattern_formats
+\item apply_width_height_formats
+\item no_style
+\item compact
+\item outline
+\item compact_data
+\item row_grand_totals
+\item col_grand_totals
+}
+
+Table styles accepting character strings:
+\itemize{
+\item auto_format_id: style id as character in the range of 4096 to 4117
+\item table_style: a predefined (pivot) table style \code{"TableStyleMedium23"}
+\item show_data_as: accepts character strings as listed above
+}
+
+Miscellaneous:
+\itemize{
+\item numfmt: accepts vectors of the form \code{c(formatCode = "0.0\%")}
+\item choose: select variables in the form of a named logical vector like
+\code{c(agegp = 'x > "25-34"')} for the \code{esoph} dataset.
+}
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\% wb_add_data(x = mtcars)

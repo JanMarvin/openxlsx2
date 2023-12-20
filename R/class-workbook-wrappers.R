@@ -299,8 +299,27 @@ wb_add_data_table <- function(
 
 #' Add a pivot table to a worksheet
 #'
-#' Add a pivot table to a worksheet. The data must be specified using [wb_data()]
-#' to ensure the function works.
+#' The data must be specified using [wb_data()] to ensure the function works.
+#' The sheet will be empty unless it is opened in spreadsheet software. Find
+#' more details in the [section about pivot tables](https://janmarvin.github.io/ox2-book/chapters/openxlsx2_pivot_tables.html)
+#' in the openxlsx2 book.
+#'
+#' @details
+#' The pivot table is not actually written to the worksheet, therefore the cell
+#' region has to remain empty. What is written to the workbook is something
+#' like a recipe how the spreadsheet software has to construct the pivot table
+#' when opening the file.
+#'
+#' It is possible to add slicers to the pivot table. For this the pivot
+#' table has to be named and the variable used as slicer, must be part
+#' of the selected pivot table names (`cols`, `rows`, `filter`, or
+#' `slicer`). If these criterions are matched, a slicer can be added
+#' using [wb_add_slicer()].
+#'
+#' Be aware that you should always test on a copy if a `param` argument works
+#' with a pivot table. Not only to check if the desired effect appears, but
+#' first and foremost if the file loads. Wildly mixing params might brick the
+#' output file and cause spreadsheet software to crash.
 #'
 #' `fun` can be any of `AVERAGE`, `COUNT`, `COUNTA`, `MAX`, `MIN`,
 #' `PRODUCT`, `STDEV`, `STDEVP`, `SUM`, `VAR`, `VARP`.
@@ -308,10 +327,33 @@ wb_add_data_table <- function(
 #' `show_data_as` can be any of `normal`, `difference`, `percent`, `percentDiff`,
 #' `runTotal`, `percentOfRow`, `percentOfCol`, `percentOfTotal`, `index`.
 #'
-#' The sheet will be empty unless it is opened in spreadsheet software.
+#' Possible `param` arguments are listed below. Pivot tables accepts more
+#' params, but they were either not tested or misbehaved (probably because we
+#' misunderstood how the parameter should be used).
 #'
-#' Find more details in the [section about pivot tables](https://janmarvin.github.io/ox2-book/chapters/openxlsx2_pivot_tables.html)
-#' in the openxlsx2 book.
+#' Boolean arguments:
+#' * apply_alignment_formats
+#' * apply_number_formats
+#' * apply_border_formats
+#' * apply_font_formats
+#' * apply_pattern_formats
+#' * apply_width_height_formats
+#' * no_style
+#' * compact
+#' * outline
+#' * compact_data
+#' * row_grand_totals
+#' * col_grand_totals
+#'
+#' Table styles accepting character strings:
+#' * auto_format_id: style id as character in the range of 4096 to 4117
+#' * table_style: a predefined (pivot) table style `"TableStyleMedium23"`
+#' * show_data_as: accepts character strings as listed above
+#'
+#' Miscellaneous:
+#' * numfmt: accepts vectors of the form `c(formatCode = "0.0%")`
+#' * choose: select variables in the form of a named logical vector like
+#'  `c(agegp = 'x > "25-34"')` for the `esoph` dataset.
 #'
 #' @param wb A Workbook object containing a #' worksheet.
 #' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
@@ -324,7 +366,7 @@ wb_add_data_table <- function(
 #' @param fun A vector of functions to be used with `data`
 #' @param params A list of parameters to modify pivot table creation.
 #' @param pivot_table An optional name for the pivot table
-#' @param slicer a character object with names used as slicer
+#' @param slicer Any additional column name(s) of `x` used as slicer
 #' @seealso [wb_data()]
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
