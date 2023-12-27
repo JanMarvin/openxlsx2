@@ -10,6 +10,8 @@
 
 * `wb_add_ignore_error()` now returns a `wbWorkbook`
 
+* Deactivate the `is_hyperlink` check for non-dataframe objects in `wb_add_data()`. Internally, `vapply()` is applied to the input object, which is applied column-wise for a data frame and cell-wise for a matrix. This speeds up the writing of larger matrices considerably. [876](https://github.com/JanMarvin/openxlsx2/pull/876)
+
 
 ***************************************************************************
 
