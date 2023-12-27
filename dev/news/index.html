@@ -66,9 +66,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>
-<code><a href="../reference/wb_add_ignore_error.html">wb_add_ignore_error()</a></code> now returns a <code>wbWorkbook</code>
-</li>
+<ul><li><p><code><a href="../reference/wb_add_ignore_error.html">wb_add_ignore_error()</a></code> now returns a <code>wbWorkbook</code></p></li>
+<li><p>Deactivate the <code>is_hyperlink</code> check for non-dataframe objects in <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>. Internally, <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply()</a></code> is applied to the input object, which is applied column-wise for a data frame and cell-wise for a matrix. This speeds up the writing of larger matrices considerably. <a href="https://github.com/JanMarvin/openxlsx2/pull/876" class="external-link">876</a></p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
