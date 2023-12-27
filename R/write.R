@@ -759,7 +759,7 @@ write_data_table <- function(
   if (applyCellStyle) {
     if (is.null(dim(x))) {
       is_hyperlink <- inherits(x, "hyperlink")
-    } else {
+    } else if (is.data.frame(x)) { # dont check on a matrix
       is_hyperlink <- vapply(x, inherits, what = "hyperlink", FALSE)
     }
 
