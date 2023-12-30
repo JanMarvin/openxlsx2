@@ -17,7 +17,7 @@ test_that("openxlsx2_types", {
     "Date" = Sys.Date() - 0:19,
     "T" = TRUE, "F" = FALSE,
     "Time" = Sys.time() - 0:19 * 60 * 60,
-    "Cash" = paste("$", 1:20), "Cash2" = 31:50,
+    "Cash" = 1:20, "Cash2" = 31:50,
     "hLink" = "https://CRAN.R-project.org/",
     "Percentage" = seq(0, 1, length.out = 20),
     "TinyNumbers" = runif(20) / 1E9, stringsAsFactors = FALSE
@@ -36,18 +36,23 @@ test_that("openxlsx2_types", {
     T = openxlsx2_celltype[["logical"]],
     F = openxlsx2_celltype[["logical"]],
     Time = openxlsx2_celltype[["long_date"]],
-    Cash = openxlsx2_celltype[["character"]],
+    Cash = openxlsx2_celltype[["currency"]],
     Cash2 = openxlsx2_celltype[["accounting"]],
     hLink = openxlsx2_celltype[["hyperlink"]],
     Percentage = openxlsx2_celltype[["percentage"]],
     TinyNumbers = openxlsx2_celltype[["scientific"]]
   )
 
+  expect_equal(exp, got)
 
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)
+  xf <- rbindlist(xml_attr(wb$styles_mgr$styles$cellXfs, "xf"))
+
+  exp <- c("0", "0", "14", "22", "44", "4", "10", "48")
+  got <- xf$numFmtId
   expect_equal(exp, got)
 
 })
-
 
 test_that("wb_page_setup example", {
 
@@ -233,6 +238,15 @@ test_that("basename2() works", {
 
   exp <- "filenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilenamefilename.txt"
   got <- basename2(long_path)
+  expect_equal(exp, got)
+
+})
+
+test_that("is_double works", {
+
+  x <- c("0.1", "a")
+  exp <- c(TRUE, FALSE)
+  got <- is_charnum(x)
   expect_equal(exp, got)
 
 })

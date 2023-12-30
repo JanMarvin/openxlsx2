@@ -102,6 +102,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// is_charnum
+Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x);
+RcppExport SEXP _openxlsx2_is_charnum(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(is_charnum(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // wide_to_long
 void wide_to_long(Rcpp::DataFrame z, Rcpp::IntegerVector vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::CharacterVector ref, int32_t string_nums, bool na_null, bool na_missing, std::string na_strings, bool inline_strings, std::string c_cm);
 RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refSEXP, SEXP string_numsSEXP, SEXP na_nullSEXP, SEXP na_missingSEXP, SEXP na_stringsSEXP, SEXP inline_stringsSEXP, SEXP c_cmSEXP) {
@@ -942,6 +953,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 3},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
+    {"_openxlsx2_is_charnum", (DL_FUNC) &_openxlsx2_is_charnum, 1},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 13},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},

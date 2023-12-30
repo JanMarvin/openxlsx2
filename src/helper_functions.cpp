@@ -88,6 +88,8 @@ SEXP openxlsx2_type(SEXP x) {
       type[i] = 12;
     } else if (Rf_inherits(z, "hms")) {
       type[i] = 15;
+    } else if (Rf_inherits(z, "currency")) {
+      type[i] = 16;
     } else {
       if (Rf_isNull(Rclass)) {
         type[i] = 2; // numeric and integer
@@ -293,6 +295,7 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
     }
   }
 }
+
 // similar to is.numeric(x)
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
@@ -308,6 +311,17 @@ bool is_double(std::string x) {
   }
 
   return 0;
+}
+
+// function to apply on vector
+// @param x a character vector as input
+// [[Rcpp::export]]
+Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x) {
+  Rcpp::LogicalVector out(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    out[i] = is_double(Rcpp::as<std::string>(x[i]));
+  }
+  return out;
 }
 
 // similar to dcast converts cc dataframe to z dataframe
@@ -374,6 +388,7 @@ void wide_to_long(
       switch(vtyp)
       {
 
+      case currency:
       case short_date:
       case long_date:
       case accounting:

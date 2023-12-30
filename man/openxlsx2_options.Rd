@@ -27,6 +27,7 @@ warning if using some functions deprecated recently in openxlsx2
 \item \code{options("openxlsx2.thread_id")} the default person id when adding a threaded comment
 to a cell with \code{\link[=wb_add_thread]{wb_add_thread()}}
 \item \code{options("openxlsx2.accountingFormat" = 4)}
+\item \code{options("openxlsx2.currencyFormat" = 4)}
 \item \code{options("openxlsx2.commaFormat" = 3)}
 \item \code{options("openxlsx2.percentageFormat" = 10)}
 \item \code{options("openxlsx2.scientificFormat" = 48)}
