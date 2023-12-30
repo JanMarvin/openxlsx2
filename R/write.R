@@ -274,8 +274,22 @@ write_data2 <- function(
     }
 
     # add colnames
-    if (colNames)
-      data <- rbind(colnames(data), data)
+    if (colNames) {
+      cnm <- as.data.frame(t(colnames(data)))
+      names(cnm) <- c(t(colnames(data)))
+
+      # setDF required?
+      #data.table::setDF()
+      data <- data.table::rbindlist(
+        list(
+          cnm,
+          data
+        ),
+        fill = FALSE
+      )
+
+      data <- data.table::setDF(data)
+    }
   }
 
 

@@ -10,6 +10,7 @@
 #'
 #' @import Rcpp
 #' @import R6
+#' @import data.table
 #' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg png rgb tiff
 #' @importFrom magrittr %>%
 #' @importFrom stringi stri_c stri_encode stri_isempty stri_join stri_match
