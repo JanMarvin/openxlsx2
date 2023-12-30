@@ -183,7 +183,7 @@ df <- data.frame(
 )
 
 ## openxlsx will apply default Excel styling for these classes
-class(df$Cash) <- c(class(df$Cash), "currency")
+# class(df$Cash) <- c(class(df$Cash), "currency")
 class(df$Cash2) <- c(class(df$Cash2), "accounting")
 class(df$hLink) <- "hyperlink"
 class(df$Percentage) <- c(class(df$Percentage), "percentage")
@@ -218,7 +218,7 @@ df <- data.frame(
 )
 
 ## openxlsx will apply default Excel styling for these classes
-class(df$Cash) <- c(class(df$Cash), "currency")
+# class(df$Cash) <- c(class(df$Cash), "currency")
 class(df$Cash2) <- c(class(df$Cash2), "accounting")
 class(df$hLink) <- "hyperlink"
 class(df$Percentage) <- c(class(df$Percentage), "percentage")
