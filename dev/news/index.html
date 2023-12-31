@@ -60,6 +60,16 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="documentation-improvement-development-version">Documentation improvement<a class="anchor" aria-label="anchor" href="#documentation-improvement-development-version"></a></h3>
+<ul><li>Further tweaks to documentation and vignettes to make them more consistent.
+<ul><li>
+<code><a href="../reference/wb_add_pivot_table.html">wb_add_pivot_table()</a></code> / <code><a href="../reference/wb_add_slicer.html">wb_add_slicer()</a></code>
+</li>
+<li>
+<code><a href="../reference/wb_load.html">wb_load()</a></code>: <code>calc_chain</code> is no longer visible and the previous text that might have been misleading in regards of its use, has been replaced by a more detailed description of what are the consequences of keeping the calculation chain</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li><p>Allow further modifications of comments. The background can now be filled with a color or an image. <a href="https://github.com/JanMarvin/openxlsx2/pull/870" class="external-link">870</a></p></li>
 <li><p>Added <code><a href="../reference/wb_cell_style.html">wb_set_cell_style_across()</a></code> to apply a cell style to selected columns and rows. This allows unlocking cells to make use column and row properties of <code><a href="../reference/wb_protect_worksheet.html">wb_protect_worksheet()</a></code> which require additional cell styles (see issue 871 for a more detailed explanation). <code><a href="../reference/wb_cell_style.html">wb_set_cell_style()</a></code> now accepts a cell dimension in the <code>style</code> argument. <a href="https://github.com/JanMarvin/openxlsx2/pull/873" class="external-link">873</a></p></li>
