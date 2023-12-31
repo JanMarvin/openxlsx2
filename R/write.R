@@ -536,6 +536,19 @@ write_data2 <- function(
         numfmt = numfmt_hms
       )
     }
+    if (any(dc == openxlsx2_celltype[["currency"]])) { # currency
+      numfmt_currency <- getOption("openxlsx2.currencyFormat", default = 44)
+      ## For vignette: Builtin style for USD
+      #"_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* &quot;-&quot;??_ ;_-@_ "
+
+      dim_sel <- get_data_class_dims("currency")
+      # message("currency: ", dim_sel)
+
+      wb$add_numfmt(
+        dim = dim_sel,
+        numfmt = numfmt_currency
+      )
+    }
     if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
       numfmt_accounting <- getOption("openxlsx2.accountingFormat", default = 4)
 

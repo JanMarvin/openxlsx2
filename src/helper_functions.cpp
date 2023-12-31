@@ -45,9 +45,9 @@ SEXP openxlsx2_type(SEXP x) {
     // logical
     case LGLSXP:
       if (Rf_isNull(Rclass)) {
-        type[i] = 3; // logical
+        type[i] = logical; // logical
       } else {
-        type[i] = 12; // probably some custom class
+        type[i] = factor; // probably some custom class
       };
       break;
 
@@ -55,15 +55,15 @@ SEXP openxlsx2_type(SEXP x) {
     case CPLXSXP:
     case STRSXP:
       if (Rf_inherits(z, "formula")) {
-        type[i] = 5;
+        type[i] = formula;
       } else if (Rf_inherits(z, "hyperlink")) {
-        type[i] = 10;
+        type[i] = hyperlink;
       } else if (Rf_inherits(z, "array_formula")) {
-        type[i] = 11;
+        type[i] = array_formula;
       } else if (Rf_inherits(z, "cm_formula")) {
-        type[i] = 14;
+        type[i] = cm_formula;
       } else {
-        type[i] = 4;
+        type[i] = character;
       }
       break;
 
@@ -73,26 +73,28 @@ SEXP openxlsx2_type(SEXP x) {
     case INTSXP:
     case REALSXP: {
       if (Rf_inherits(z, "Date")) {
-      type[i] = 0;
+      type[i] = short_date;
     } else if (Rf_inherits(z, "POSIXct")) {
-      type[i] = 1;
+      type[i] = long_date;
     } else if (Rf_inherits(z, "accounting")) {
-      type[i] = 6;
+      type[i] = accounting;
     } else if (Rf_inherits(z, "percentage")) {
-      type[i] = 7;
+      type[i] = percentage;
     } else if (Rf_inherits(z, "scientific")) {
-      type[i] = 8;
+      type[i] = scientific;
     } else if (Rf_inherits(z, "comma")) {
-      type[i] = 9;
+      type[i] = comma;
     } else if (Rf_inherits(z, "factor") || !Rf_isNull(Rf_getAttrib(z, Rf_install("labels")))) {
-      type[i] = 12;
+      type[i] = factor;
     } else if (Rf_inherits(z, "hms")) {
-      type[i] = 15;
+      type[i] = hms_time;
+    } else if (Rf_inherits(z, "currency")) {
+      type[i] = currency;
     } else {
       if (Rf_isNull(Rclass)) {
-        type[i] = 2; // numeric and integer
+        type[i] = numeric; // numeric and integer
       } else {
-        type[i] = 12; // probably some custom class
+        type[i] = factor; // probably some custom class
       }
     }
     break;
@@ -101,7 +103,7 @@ SEXP openxlsx2_type(SEXP x) {
 
     // whatever is not covered from above
     default: {
-      type[i] = 4;
+      type[i] = character;
       break;
     }
 
@@ -293,6 +295,7 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
     }
   }
 }
+
 // similar to is.numeric(x)
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
@@ -308,6 +311,17 @@ bool is_double(std::string x) {
   }
 
   return 0;
+}
+
+// function to apply on vector
+// @param x a character vector as input
+// [[Rcpp::export]]
+Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x) {
+  Rcpp::LogicalVector out(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    out[i] = is_double(Rcpp::as<std::string>(x[i]));
+  }
+  return out;
 }
 
 // similar to dcast converts cc dataframe to z dataframe
@@ -374,6 +388,7 @@ void wide_to_long(
       switch(vtyp)
       {
 
+      case currency:
       case short_date:
       case long_date:
       case accounting:

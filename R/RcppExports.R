@@ -36,6 +36,10 @@ long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }
 
+is_charnum <- function(x) {
+    .Call(`_openxlsx2_is_charnum`, x)
+}
+
 wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm) {
     invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm))
 }
