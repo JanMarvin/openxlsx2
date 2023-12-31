@@ -839,7 +839,7 @@ a data frame
 \subsection{Method \code{load()}}{
 load workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$load(file, sheet, data_only = FALSE, calc_chain = FALSE, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$load(file, sheet, data_only = FALSE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -850,8 +850,6 @@ load workbook
 \item{\code{sheet}}{The name of the sheet}
 
 \item{\code{data_only}}{data_only}
-
-\item{\code{calc_chain}}{calc_chain}
 
 \item{\code{...}}{additional arguments}
 }
