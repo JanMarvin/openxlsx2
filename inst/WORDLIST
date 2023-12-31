@@ -47,7 +47,6 @@ autocompletion
 bandedCols
 bandedRows
 bool
-calc
 calcChain
 calculatedColumn
 camelCase

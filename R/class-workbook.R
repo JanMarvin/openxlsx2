@@ -1924,23 +1924,20 @@ wbWorkbook <- R6::R6Class(
     #' @description load workbook
     #' @param file file
     #' @param data_only data_only
-    #' @param calc_chain calc_chain
     #' @return The `wbWorkbook` object invisibly
     load = function(
       file,
       sheet,
       data_only  = FALSE,
-      calc_chain = FALSE,
       ...
     ) {
       # Is this required?
-      if (missing(file)) file <- substitute()
+      if (missing(file))  file  <- substitute()
       if (missing(sheet)) sheet <- substitute()
       self <- wb_load(
         file       = file,
         sheet      = sheet,
         data_only  = data_only,
-        calc_chain = calc_chain,
         ...        = ...
       )
       invisible(self)

@@ -1,5 +1,11 @@
 # openxlsx2 (development version)
 
+## Documentation improvement
+
+* Further tweaks to documentation and vignettes to make them more consistent.
+  * `wb_add_pivot_table()` / `wb_add_slicer()`
+  * `wb_load()`: `calc_chain` is no longer visible and the previous text that might have been misleading in regards of its use, has been replaced by a more detailed description of what are the consequences of keeping the calculation chain
+
 ## New features
 
 * Allow further modifications of comments. The background can now be filled with a color or an image. [870](https://github.com/JanMarvin/openxlsx2/pull/870)
