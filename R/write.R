@@ -344,7 +344,7 @@ write_data2 <- function(
 
   # rtyp character vector per row
   # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
-  rtyp <- dims_to_dataframe(dims, fill = TRUE)
+  rtyp <- dims_to_dataframe(dims, fill = FALSE)
 
   rows_attr <- vector("list", data_nrow)
 
@@ -407,7 +407,7 @@ write_data2 <- function(
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {
-    cc <- cc[cc$r != rtyp[1, 1], ]
+    cc <- cc[cc$r != paste0(names(rtyp)[1], rownames(rtyp)[1]), ]
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
@@ -637,7 +637,7 @@ write_data2 <- function(
     xml <- wb$calcChain
     calcChainR <- rbindlist(xml_attr(xml, "calcChain", "c"))
     # according to the documentation there can be cases, without the sheetno reference
-    sel <- calcChainR$r %in% rtyp & calcChainR$i == sheetno
+    sel <- calcChainR$r %in% wb$worksheets[[sheetno]]$sheet_data$cc$r & calcChainR$i == sheetno
     rmCalcChain <- as.integer(rownames(calcChainR[sel, , drop = FALSE]))
     if (length(rmCalcChain)) {
       xml <- xml_rm_child(xml, xml_child = "c", which = rmCalcChain)
