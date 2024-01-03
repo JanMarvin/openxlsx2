@@ -192,7 +192,7 @@ test_that("update cell(s)", {
 
   exp <- structure(
     list(c(7, NA, NA, NA, NA, 7),
-         c(NA, NA, TRUE, FALSE, TRUE, NA),
+         c("y", "z", "TRUE", "FALSE", "TRUE", NA),
          c(2, NA, 2.5, NA, NA, NA),
          c(7, 2, 3, NA, 5, NA)),
     names = c(NA, "x", "Var2", "Var3"),
