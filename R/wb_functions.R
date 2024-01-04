@@ -106,7 +106,7 @@ guess_col_type <- function(tt) {
   types[names(col_dte[col_dte])] <- 3
 
   # there are bools as well
-  col_log <- vapply(tt[!col_num], function(x) any(x == "b", na.rm = TRUE), NA)
+  col_log <- vapply(tt[!col_num], function(x) all(x == "b", na.rm = TRUE), NA)
   types[names(col_log[col_log])] <- 4
 
   # or even hms

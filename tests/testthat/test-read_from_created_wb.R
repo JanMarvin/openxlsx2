@@ -187,3 +187,17 @@ test_that("wb_load contains path", {
   expect_equal(exp, got)
 
 })
+
+test_that("column names are not missing with col_names = FALSE", {
+  dat <- data.frame(
+    numeric = 1:2,
+    character = c("a", "b"),
+    logical = c(TRUE, FALSE)
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
+  got <- as.character(wb_to_df(wb, col_names = FALSE)[2, ])
+  exp <- c("1", "a", "TRUE")
+  expect_equal(exp, got)
+
+})
