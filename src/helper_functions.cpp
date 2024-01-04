@@ -318,7 +318,7 @@ bool is_double(std::string x) {
 // [[Rcpp::export]]
 Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x) {
   Rcpp::LogicalVector out(x.size());
-  for (size_t i = 0; i < x.size(); ++i) {
+  for (R_xlen_t i = 0; i < x.size(); ++i) {
     out[i] = is_double(Rcpp::as<std::string>(x[i]));
   }
   return out;
