@@ -20,6 +20,8 @@
 
 * Column style `currency` is now correctly applied to numeric vectors. Previously it was not handled. This applies the built in spreadsheet style for currency presumably linked to the spreadsheet software locale. [879](https://github.com/JanMarvin/openxlsx2/pull/879)
 
+* `wb_to_df(col_names = FALSE)` no longer drops column names from logical vectors. Previously, column names were replaced by `NA`. Now the column name is returned as a cell value in a character column. [884](https://github.com/JanMarvin/openxlsx2/pull/884)
+
 
 ***************************************************************************
 
