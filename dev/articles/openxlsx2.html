@@ -163,17 +163,17 @@ user.</p>
 <code class="sourceCode R"><span><span class="co"># do not convert first row to column names</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        B    C  D     E     F          G            H       I        J</span></span>
-<span><span class="co">#&gt; 2     NA Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
+<span><span class="co">#&gt; 2   Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
 <span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
 <span><span class="co">#&gt; 4   TRUE &lt;NA&gt; NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
 <span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
 <span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
 <span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA &lt;NA&gt; NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9   &lt;NA&gt; &lt;NA&gt; NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; 12  &lt;NA&gt;    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="detect_dates---convert-cells-to-r-dates">
@@ -238,7 +238,7 @@ notion used in the <code>openxml</code> standard</p>
 <code class="sourceCode R"><span><span class="co"># read dimension without column names</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    A    B    C</span></span>
-<span><span class="co">#&gt; 2 NA   NA Var2</span></span>
+<span><span class="co">#&gt; 2 NA Var1 Var2</span></span>
 <span><span class="co">#&gt; 3 NA TRUE    1</span></span>
 <span><span class="co">#&gt; 4 NA TRUE &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 5 NA TRUE    2</span></span></code></pre></div>
@@ -249,7 +249,7 @@ in<code><a href="../reference/wb_dims.html">?wb_dims</a></code> for more details
 <code class="sourceCode R"><span><span class="co"># read dimension without column names with `wb_dims()`</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    A    B    C</span></span>
-<span><span class="co">#&gt; 2 NA   NA Var2</span></span>
+<span><span class="co">#&gt; 2 NA Var1 Var2</span></span>
 <span><span class="co">#&gt; 3 NA TRUE    1</span></span>
 <span><span class="co">#&gt; 4 NA TRUE &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 5 NA TRUE    2</span></span></code></pre></div>
