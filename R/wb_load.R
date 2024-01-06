@@ -91,8 +91,14 @@ wb_load <- function(
   # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
   ## Unzip files to temp directory
+  xmlFiles <- withCallingHandlers(
+    utils::unzip(file, exdir = xmlDir),
+    warning = function(w) {
+      msg <- paste("Unable to open and load file: ", file)
+      stop(msg, call. = FALSE)
+    }
+  )
 
-  xmlFiles <- unzip(file, exdir = xmlDir)
   # we need to read the files in human order: 1, 2, 10 and not 1, 10, 2.
   ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))
   xmlFiles <- xmlFiles[ordr]
