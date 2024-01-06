@@ -715,3 +715,33 @@ test_that("writing NULL works silently", {
   expect_equal(wb, wb2)
 
 })
+
+test_that("dimension limits work", {
+
+  max_c <- 16384
+  max_r <- 1048576
+
+  dims <- paste0(int2col(max_c), max_r)
+  expect_silent(
+    wb <- wb_workbook()$add_worksheet()$add_data(x = 1, dims = dims)
+  )
+
+  dims <- paste0(int2col(max_c), max_r + 1L)
+  expect_error(
+    wb_workbook()$add_worksheet()$add_data(x = 1, dims = dims),
+    "Dimensions exceed worksheet"
+  )
+
+  dims <- paste0(int2col(max_c + 1L), max_r)
+  expect_error(
+    wb_workbook()$add_worksheet()$add_data(x = 1, dims = dims),
+    "Dimensions exceed worksheet"
+  )
+
+  dims <- paste0(int2col(max_c + 1L), max_r + 1L)
+  expect_error(
+    wb_workbook()$add_worksheet()$add_data(x = 1, dims = dims),
+    "Dimensions exceed worksheet"
+  )
+
+})

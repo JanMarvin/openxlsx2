@@ -292,6 +292,9 @@ write_data2 <- function(
   endRow <- (startRow - 1) + data_nrow
   endCol <- (startCol - 1) + data_ncol
 
+  if (endRow > 1048576 || endCol > 16384)
+    stop("Dimensions exceed worksheet")
+
   dims <- paste0(
     int2col(startCol), startRow,
     ":",

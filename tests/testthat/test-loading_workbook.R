@@ -440,3 +440,12 @@ test_that("Loading a workbook with property preserves it.", {
   wb2$set_properties(company = "ggg")
   expect_equal(wb2$get_properties()[["company"]], "ggg")
 })
+
+test_that("failing to unzip works as expected", {
+  tmp <- temp_xlsx()
+  writeLines("", tmp)
+  expect_error(wb <- wb_load(tmp), "Unable to open and load file")
+
+  wb_workbook()$add_worksheet()$save(tmp)
+  expect_silent(wb <- wb_load(tmp))
+})
