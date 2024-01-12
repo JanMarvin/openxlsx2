@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,22 +94,28 @@
 
 
 <dt>pivot_table</dt>
-<dd><p>the name of a pivot table on the selected sheet</p></dd>
+<dd><p>The name of a pivot table on the selected sheet</p></dd>
 
 
 <dt>slicer</dt>
-<dd><p>a variable used as slicer for the pivot table</p></dd>
+<dd><p>A variable used as slicer for the pivot table</p></dd>
 
 
 <dt>params</dt>
-<dd><p>a list of parameters to modify pivot table creation</p></dd>
+<dd><p>A list of parameters to modify pivot table creation. See <strong>Details</strong> for available options.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we <em>strictly</em> discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.</p>
-<p>For the time being, the slicer needs to be placed on the slide with the pivot table.</p>
-    </div>
+<p>Possible <code>params</code> arguments are listed below.</p><ul><li><p>edit_as: "twoCell" to place the slicer into the cells</p></li>
+<li><p>style: "SlicerStyleLight2"</p></li>
+<li><p>column_count: integer used as column count</p></li>
+<li><p>caption: string used for a caption</p></li>
+<li><p>sort_order: "descending" / "ascending"</p></li>
+<li><p>choose: select variables in the form of a named logical vector like
+<code>c(agegp = 'x &gt; "25-34"')</code> for the <code>esoph</code> dataset.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other workbook wrappers: 
