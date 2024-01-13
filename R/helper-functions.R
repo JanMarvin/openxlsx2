@@ -508,7 +508,9 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
         dat <- format(dat, format = "%Y-%m-%dT%H:%M:%S")
       }
 
-      if (is_vars && !is_data) {
+      is_formula <- inherits(wbdata[[x]], what = "is_formula")
+
+      if (is_vars && !is_data && !is_formula) {
         sharedItem <- vapply(
           distinct(dat),
           function(uni) {
@@ -594,9 +596,19 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
         xml_children = sharedItem
       )
 
+      formula <- NULL
+      databaseField <- NULL
+
+      # <cacheField name="Field1" numFmtId="0" formula="mpg /cyl" databaseField="0"/>
+      if (is_formula) {
+        formula       <- gsub("^=", "", names(vars[vars == x]))
+        databaseField <- "0"
+        sharedItems   <- NULL
+      }
+
       xml_node_create(
         "cacheField",
-        xml_attributes = c(name = x, numFmtId = "0"),
+        xml_attributes = c(name = x, numFmtId = "0", formula = formula, databaseField = databaseField),
         xml_children = sharedItems
       )
     },
@@ -814,6 +826,7 @@ create_pivot_table <- function(
     axis <- NULL
     sort <- NULL
     autoSortScope <- NULL
+    is_formula <- inherits(x[[i]], "is_formula")
 
     if (i %in% data_pos)    dataField <- c(dataField = "1")
 
@@ -872,6 +885,17 @@ create_pivot_table <- function(
       axis, dataField, showAll = "0", multipleItemSelectionAllowed = multi, sortType = sort,
       compact = as_xml_attr(compact), outline = as_xml_attr(outline)
     )
+
+    if (is_formula) {
+        attrs <- c(
+          dataField       = "1",
+          dragToRow       = "0",
+          dragToCol       = "0",
+          dragToPage      = "0",
+          showAll         = "0",
+          defaultSubtotal = "0"
+        )
+    }
 
     tmp <- xml_node_create(
       "pivotField",
