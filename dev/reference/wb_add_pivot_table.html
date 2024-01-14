@@ -16,7 +16,7 @@ in the openxlsx2 book."><meta name="robots" content="noindex"><!-- mathjax --><s
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -158,6 +158,9 @@ output file and cause spreadsheet software to crash.</p>
 <code>PRODUCT</code>, <code>STDEV</code>, <code>STDEVP</code>, <code>SUM</code>, <code>VAR</code>, <code>VARP</code>.</p>
 <p><code>show_data_as</code> can be any of <code>normal</code>, <code>difference</code>, <code>percent</code>, <code>percentDiff</code>,
 <code>runTotal</code>, <code>percentOfRow</code>, <code>percentOfCol</code>, <code>percentOfTotal</code>, <code>index</code>.</p>
+<p>It is possible to calculate data fields if the formula is assigned as a
+variable name for the field to calculate. This would look like this:
+<code>data = c("am", "disp/cyl" = "New")</code></p>
 <p>Possible <code>params</code> arguments are listed below. Pivot tables accepts more
 parameters, but they were either not tested or misbehaved (probably because
 we misunderstood how the parameter should be used).</p>
