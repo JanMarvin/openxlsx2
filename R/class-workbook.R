@@ -1420,6 +1420,22 @@ wbWorkbook <- R6::R6Class(
       if (is.null(params$name) && !is.null(pivot_table))
         params$name <- pivot_table
 
+      # not sure if rows & cols can be formulas too
+      if (any(sel <- !data %in% names(x))) {
+
+        varfun <- data[sel]
+
+        for (var in varfun) {
+          if (all(grepl("^=", names(varfun)))) {
+            x[[var]] <- names(varfun[varfun == var])
+            class(x[[var]]) <- c("is_formula", "character")
+          } else {
+            stop("missing variable found in pivot table: data object. Formula names must begin with '='.")
+          }
+        }
+
+      }
+
       pivot_table <- create_pivot_table(
         x       = x,
         dims    = dims,
