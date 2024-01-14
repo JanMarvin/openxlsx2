@@ -1,3 +1,13 @@
+# openxlsx2 (development version)
+
+## New features
+
+* Experimental support for calculation of pivot table fields. [892](https://github.com/JanMarvin/openxlsx2/pull/892)
+
+
+***************************************************************************
+
+
 # openxlsx2 1.3
 
 ## Documentation improvement

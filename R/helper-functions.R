@@ -599,7 +599,6 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
       formula <- NULL
       databaseField <- NULL
 
-      # <cacheField name="Field1" numFmtId="0" formula="mpg /cyl" databaseField="0"/>
       if (is_formula) {
         formula       <- gsub("^=", "", names(vars[vars == x]))
         databaseField <- "0"

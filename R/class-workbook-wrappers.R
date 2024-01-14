@@ -327,6 +327,10 @@ wb_add_data_table <- function(
 #' `show_data_as` can be any of `normal`, `difference`, `percent`, `percentDiff`,
 #' `runTotal`, `percentOfRow`, `percentOfCol`, `percentOfTotal`, `index`.
 #'
+#' It is possible to calculate data fields if the formula is assigned as a
+#' variable name for the field to calculate. This would look like this:
+#' `data = c("am", "disp/cyl" = "New")`
+#'
 #' Possible `params` arguments are listed below. Pivot tables accepts more
 #' parameters, but they were either not tested or misbehaved (probably because
 #' we misunderstood how the parameter should be used).
