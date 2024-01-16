@@ -112,12 +112,16 @@ std::string txt_to_xml(
 
   pugi::xml_node is_node = doc.append_child(type.c_str());
 
-  pugi::xml_document txt_node;
-  pugi::xml_parse_result result = txt_node.load_string(text.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
+  // txt input beginning with "<r" is assumed to be a fmt_txt string
+  if (text.rfind("<r>", 0) == 0 || text.rfind("<r/>", 0) == 0) {
 
-  if (result) {
+    pugi::xml_document txt_node;
+    pugi::xml_parse_result result = txt_node.load_string(text.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
+    if (!result) Rcpp::stop("Could not parse xml in txt_to_xml()");
+
     for (auto is_n : txt_node.children())
           is_node.append_copy(is_n);
+
   } else {
     // text to export
     pugi::xml_node t_node = is_node.append_child("t");

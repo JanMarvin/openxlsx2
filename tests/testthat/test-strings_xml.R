@@ -116,4 +116,29 @@ test_that("strings_xml", {
   got <- wb$worksheets[[1]]$sheet_data$cc$is
   expect_equal(exp, got)
 
+  exp <- "<is><t>foo &lt;em&gt;bar&lt;/em&gt;</t></is>"
+  got <- txt_to_is('foo <em>bar</em>')
+  expect_equal(exp, got)
+
+  # exception to the rule: it is not possible to write characters starting with "<r/>" or "<r>""
+  exp <- "<is><r>foo</r></is>"
+  got <- txt_to_is('<r>foo</r>')
+  expect_equal(exp, got)
+
+  exp <- "<is><r><rPr/><t>&lt;r&gt;foo&lt;/r&gt;</t></r></is>"
+  got <- txt_to_is(fmt_txt('<r>foo</r>'))
+  expect_equal(exp, got)
+
+  exp <- "<is><t>&lt;red&gt;foo&lt;/red&gt;</t></is>"
+  got <- txt_to_is('<red>foo</red>')
+  expect_equal(exp, got)
+
+  exp <- "<is><t>foo&lt;/r&gt;</t></is>"
+  got <- txt_to_is('foo</r>')
+  expect_equal(exp, got)
+
+  exp <- "<is><t xml:space=\"preserve\"> &lt;r&gt;foo&lt;/r&gt;</t></is>"
+  got <- txt_to_is(' <r>foo</r>')
+  expect_equal(exp, got)
+
 })

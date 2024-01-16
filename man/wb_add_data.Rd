@@ -76,6 +76,9 @@ The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
 If the data frame contains this string, the output will be broken.
 Many base classes are covered, though not all and far from all third-party classes.
 When data of an unknown class is written, it is handled with \code{as.character()}.
+It is not possible to write character nodes beginning with \verb{<r>} or \verb{<r/>}. Both
+are reserved for internal functions. If you need these. You have to wrap
+the input string in \code{fmt_txt()}.
 }
 \examples{
 ## See formatting vignette for further examples.
