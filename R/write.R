@@ -771,6 +771,7 @@ write_data_table <- function(
   startRow <- as.integer(startRow)
 
   ## special case - vector of hyperlinks
+  # TODO: replace the =HYPERLINK() with the relship hyperlinks
   is_hyperlink <- FALSE
   if (applyCellStyle) {
     if (is.null(dim(x))) {
@@ -789,6 +790,8 @@ write_data_table <- function(
         }
         class(x[is_hyperlink]) <- c("character", "hyperlink")
       } else {
+        # workaround for tibbles that break with the class assignment below
+        if (inherits(x, "tbl_df")) x <- as.data.frame(x)
         # check should be in create_hyperlink and that apply should not be required either
         if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
           x[is_hyperlink] <- apply(
