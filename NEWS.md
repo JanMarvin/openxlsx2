@@ -4,6 +4,10 @@
 
 * Experimental support for calculation of pivot table fields. [892](https://github.com/JanMarvin/openxlsx2/pull/892)
 
+## Fixes
+
+* Character strings with XML content were not written correctly: `a <br/> b` was converted to something neither we nor spreadsheet software was able to decipher. [895](https://github.com/JanMarvin/openxlsx2/pull/895)
+
 
 ***************************************************************************
 

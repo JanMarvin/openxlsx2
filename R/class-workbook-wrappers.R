@@ -122,6 +122,9 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' If the data frame contains this string, the output will be broken.
 #' Many base classes are covered, though not all and far from all third-party classes.
 #' When data of an unknown class is written, it is handled with `as.character()`.
+#' It is not possible to write character nodes beginning with `<r>` or `<r/>`. Both
+#' are reserved for internal functions. If you need these. You have to wrap
+#' the input string in `fmt_txt()`.
 #' @family workbook wrappers
 #' @family worksheet content functions
 #' @return A `wbWorkbook`, invisibly.
