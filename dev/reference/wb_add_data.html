@@ -172,7 +172,10 @@ and left to Excel to evaluate the formula when the file is opened in Excel.
 The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>.
 If the data frame contains this string, the output will be broken.
 Many base classes are covered, though not all and far from all third-party classes.
-When data of an unknown class is written, it is handled with <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code>.</p>
+When data of an unknown class is written, it is handled with <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code>.
+It is not possible to write character nodes beginning with <code>&lt;r&gt;</code> or <code>&lt;r/&gt;</code>. Both
+are reserved for internal functions. If you need these. You have to wrap
+the input string in <code><a href="fmt_txt.html">fmt_txt()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
