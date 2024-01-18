@@ -114,6 +114,12 @@ wb_load <- function(
   ## Not used
   # .relsXML          <- grep_xml("_rels/.rels$")
   ContentTypesXML   <- grep_xml("\\[Content_Types\\].xml$")
+
+  if (length(ContentTypesXML) == 0 && !debug) {
+    msg <- paste("File does not appear to be xlsx, xlsm or xlsb: ", file)
+    stop(msg)
+  }
+
   appXML            <- grep_xml("app.xml$")
   coreXML           <- grep_xml("core.xml$")
   customXML         <- grep_xml("custom.xml$")

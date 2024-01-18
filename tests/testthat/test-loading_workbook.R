@@ -442,10 +442,21 @@ test_that("Loading a workbook with property preserves it.", {
 })
 
 test_that("failing to unzip works as expected", {
+
+  # try to read from single file
   tmp <- temp_xlsx()
   writeLines("", tmp)
   expect_error(wb <- wb_load(tmp), "Unable to open and load file")
 
+  # working
   wb_workbook()$add_worksheet()$save(tmp)
   expect_silent(wb <- wb_load(tmp))
+
+  # zip file
+  tmp <- temp_xlsx()
+  writeLines("", tmp)
+  tmp_zip <- tempfile(fileext = ".zip")
+  zip::zip(zipfile = tmp_zip, files = basename(tmp), root = dirname(tmp))
+  expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
+
 })
