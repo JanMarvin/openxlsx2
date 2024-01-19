@@ -8,7 +8,7 @@ test_that("get_base_font works", {
       size = list(val = "11"),
       # should this be "#000000"?
       color = list(theme = "1"),
-      name = list(val = "Calibri")
+      name = list(val = "Aptos Narrow")
     )
   )
 

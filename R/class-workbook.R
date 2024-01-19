@@ -3043,7 +3043,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(name[[1]]) == 0) {
-        name <- list("val" = "Calibri")
+        name <- list("val" = "Aptos Narrow")
       } else {
         name <- as.list(name)
       }
@@ -3063,7 +3063,7 @@ wbWorkbook <- R6::R6Class(
     set_base_font = function(
       font_size  = 11,
       font_color = wb_color(theme = "1"),
-      font_name  = "Calibri",
+      font_name  = "Aptos Narrow",
        ...
     ) {
       standardize(...)
@@ -6859,7 +6859,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description provide simple font function
-    #' @param name font name: default "Calibri"
+    #' @param name font name: default "Aptos Narrow"
     #' @param color rgb color: default "FF000000"
     #' @param size font size: default "11",
     #' @param bold bold
@@ -6878,7 +6878,7 @@ wbWorkbook <- R6::R6Class(
     add_font = function(
         sheet      = current_sheet(),
         dims       = "A1",
-        name       = "Calibri",
+        name       = "Aptos Narrow",
         color      = wb_color(hex = "FF000000"),
         size       = "11",
         bold       = "",

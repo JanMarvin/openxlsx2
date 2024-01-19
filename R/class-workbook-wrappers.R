@@ -7,8 +7,9 @@
 #' "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 #' "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
 #' "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
-#' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
-#' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
+#' "Office 2013 - 2022 Theme", "Old Office Theme", "Organic", "Parallax",
+#' "Parcel", "Retrospect", "Savon", "Slice", "Vapor Trail", "View", "Wisp",
+#' "Wood Type"
 #'
 #' @param creator Creator of the workbook (your name). Defaults to login username or `options("openxlsx2.creator")` if set.
 #' @param title,subject,category,keywords,comments,manager,company Workbook property, a string.
@@ -1329,7 +1330,7 @@ wb_set_base_font <- function(
   wb,
   font_size  = 11,
   font_color = wb_color(theme = "1"),
-  font_name  = "Calibri",
+  font_name  = "Aptos Narrow",
   ...
 ) {
   assert_workbook(wb)
@@ -2912,7 +2913,7 @@ wb_add_fill <- function(
 #' @param wb A Workbook object
 #' @param sheet the worksheet
 #' @param dims the cell range
-#' @param name Font name: default "Calibri"
+#' @param name Font name: default "Aptos Narrow"
 #' @param color An object created by [wb_color()]
 #' @param size Font size: default "11",
 #' @param bold bold, "single" or "double", default: ""
@@ -2941,7 +2942,7 @@ wb_add_font <- function(
       wb,
       sheet      = current_sheet(),
       dims       = "A1",
-      name       = "Calibri",
+      name       = "Aptos Narrow",
       color      = wb_color(hex = "FF000000"),
       size       = "11",
       bold       = "",

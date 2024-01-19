@@ -41,8 +41,9 @@ Initialize a \link{wbWorkbook} object. You can set workbook properties as well.
 "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
 "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
-"Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
-"Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
+"Office 2013 - 2022 Theme", "Old Office Theme", "Organic", "Parallax",
+"Parcel", "Retrospect", "Savon", "Slice", "Vapor Trail", "View", "Wisp",
+"Wood Type"
 }
 \examples{
 ## Create a new workbook

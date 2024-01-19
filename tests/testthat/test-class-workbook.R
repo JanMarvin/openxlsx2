@@ -757,6 +757,11 @@ test_that("image relships work with comment", {
 test_that("workbook themes work", {
 
   wb <- wb_workbook()$add_worksheet()
+  exp <- "Aptos Narrow"
+  got <- wb$get_base_font()$name$val
+  expect_equal(exp, got)
+
+  wb <- wb_workbook(theme = "Office 2013 - 2022 Theme")$add_worksheet()
   exp <- "Calibri"
   got <- wb$get_base_font()$name$val
   expect_equal(exp, got)
@@ -775,7 +780,7 @@ test_that("workbook themes work", {
     wb <- wb_workbook(theme = "Foo")$add_worksheet(),
     "theme Foo not found falling back to default theme"
   )
-  exp <- "Calibri"
+  exp <- "Aptos Narrow"
   got <- wb$get_base_font()$name$val
   expect_equal(exp, got)
 

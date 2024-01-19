@@ -12,7 +12,7 @@ create_font(
   extend = "",
   family = "2",
   i = "",
-  name = "Calibri",
+  name = "Aptos Narrow",
   outline = "",
   scheme = "minor",
   shadow = "",
@@ -38,7 +38,7 @@ create_font(
 
 \item{i}{italic}
 
-\item{name}{font name: default "Calibri"}
+\item{name}{font name: default "Aptos Narrow"}
 
 \item{outline}{outline}
 

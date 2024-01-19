@@ -165,8 +165,8 @@ test_that("test add_font()", {
 
   # check font
   exp <- c(
-    "<font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
-    "<font><color rgb=\"FFFFFF00\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>"
+    "<font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Aptos Narrow\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
+    "<font><color rgb=\"FFFFFF00\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>"
   )
   got <- wb$styles_mgr$styles$fonts
 
@@ -431,11 +431,11 @@ test_that("style names are xml", {
   exp <- list(
     numFmts = NULL,
     fonts = c(
-      "<font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
-      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><sz val=\"14\"/></font>",
-      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>",
-      "<font><color rgb=\"FF000000\"/><i val=\"1\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>",
-      "<font><color rgb=\"FFFFFFFF\"/><name val=\"Calibri\"/><sz val=\"11\"/></font>"
+      "<font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Aptos Narrow\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
+      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Aptos Narrow\"/><sz val=\"14\"/></font>",
+      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>",
+      "<font><color rgb=\"FF000000\"/><i val=\"1\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>",
+      "<font><color rgb=\"FFFFFFFF\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>"
     ),
     fills = c(
       "<fill><patternFill patternType=\"none\"/></fill>",

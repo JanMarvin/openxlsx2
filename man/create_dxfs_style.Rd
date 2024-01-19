@@ -80,7 +80,7 @@ style2 <- create_dxfs_style(
 # change font (type, size and color) and background
 # the old default in openxlsx and openxlsx2 <= 0.3
 style3 <- create_dxfs_style(
-  font_name = "Calibri",
+  font_name = "Aptos Narrow",
   font_size = 11,
   font_color = wb_color(hex = "FF9C0006"),
   bgFill = wb_color(hex = "FFFFC7CE")
