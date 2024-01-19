@@ -1014,7 +1014,7 @@ testfile_path <- function(x, replace = FALSE) {
     out <- paste0(test_path, "/", x)
     url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", x)
     try({
-      download.file(url, destfile = out, quiet = TRUE)
+      download.file(url, destfile = out, quiet = TRUE, mode = "wb")
     })
   }
 
