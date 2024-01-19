@@ -68,6 +68,15 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>Character strings with XML content were not written correctly: <code>a &lt;br/&gt; b</code> was converted to something neither we nor spreadsheet software was able to decipher. <a href="https://github.com/JanMarvin/openxlsx2/pull/895" class="external-link">895</a>
 </li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>Updating to themse. This includes updates to the default style <code>'Office Theme'</code>:
+<ul><li>This includes switching to the new default font <code>'Aptos Narrow'</code>
+</li>
+<li>A new style <code>'Office 2013 - 2022 Theme'</code> was added</li>
+</ul>
+Users that want to remain on the old style should use <code>wb_workbook(theme = 'Office 2013 - 2022 Theme')</code> or <code>wb_set_base_font(font_name = "Calibri")</code>.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
