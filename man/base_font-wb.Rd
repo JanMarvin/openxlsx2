@@ -10,7 +10,7 @@ wb_set_base_font(
   wb,
   font_size = 11,
   font_color = wb_color(theme = "1"),
-  font_name = "Calibri",
+  font_name = "Aptos Narrow",
   ...
 )
 

@@ -1050,7 +1050,7 @@ Set the base font
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_font(
   font_size = 11,
   font_color = wb_color(theme = "1"),
-  font_name = "Calibri",
+  font_name = "Aptos Narrow",
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -2749,7 +2749,7 @@ provide simple font function
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_font(
   sheet = current_sheet(),
   dims = "A1",
-  name = "Calibri",
+  name = "Aptos Narrow",
   color = wb_color(hex = "FF000000"),
   size = "11",
   bold = "",
@@ -2775,7 +2775,7 @@ provide simple font function
 
 \item{\code{dims}}{Cell range in a sheet}
 
-\item{\code{name}}{font name: default "Calibri"}
+\item{\code{name}}{font name: default "Aptos Narrow"}
 
 \item{\code{color}}{rgb color: default "FF000000"}
 

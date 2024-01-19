@@ -8,7 +8,7 @@ wb_add_font(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  name = "Calibri",
+  name = "Aptos Narrow",
   color = wb_color(hex = "FF000000"),
   size = "11",
   bold = "",
@@ -33,7 +33,7 @@ wb_add_font(
 
 \item{dims}{the cell range}
 
-\item{name}{Font name: default "Calibri"}
+\item{name}{Font name: default "Aptos Narrow"}
 
 \item{color}{An object created by \code{\link[=wb_color]{wb_color()}}}
 

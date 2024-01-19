@@ -8,6 +8,14 @@
 
 * Character strings with XML content were not written correctly: `a <br/> b` was converted to something neither we nor spreadsheet software was able to decipher. [895](https://github.com/JanMarvin/openxlsx2/pull/895)
 
+## Breaking changes
+
+* Updating to themse. This includes updates to the default style `'Office Theme'`:
+  * This includes switching to the new default font `'Aptos Narrow'`
+  * A new style `'Office 2013 - 2022 Theme'` was added
+  
+  Users that want to remain on the old style should use `wb_workbook(theme = 'Office 2013 - 2022 Theme')` or `wb_set_base_font(font_name = "Calibri")`.
+
 
 ***************************************************************************
 

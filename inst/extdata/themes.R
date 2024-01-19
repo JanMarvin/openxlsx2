@@ -30,3 +30,6 @@ themes <- themes[order(names(themes))]
 names(themes) %>% dput()
 
 saveRDS(themes, "inst/extdata/themes.rds")
+
+
+themes$`Office Theme` %>% as_xml()
