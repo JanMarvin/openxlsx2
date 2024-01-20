@@ -10,7 +10,7 @@
 
 ## Breaking changes
 
-* Updating to themse. This includes updates to the default style `'Office Theme'`:
+* Updating to themes. This includes updates to the default style `'Office Theme'`:
   * This includes switching to the new default font `'Aptos Narrow'`
   * A new style `'Office 2013 - 2022 Theme'` was added
   
