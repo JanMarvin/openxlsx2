@@ -534,7 +534,7 @@ test_that("add_drawing works", {
       wt = c(2.62, 2.875, 2.32, 3.215)
     ),
     row.names = 3:6,
-    class = c("data.frame", "wb_data"),
+    class = c("wb_data", "data.frame"),
     dims = structure(
       list(
         A = c("A2", "A3", "A4", "A5", "A6"),

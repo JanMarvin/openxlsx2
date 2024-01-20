@@ -2960,13 +2960,14 @@ wbWorkbook <- R6::R6Class(
 
       # TODO improve this. It should use v or inlineStr from cc
       if (as_value) {
+        data <- as.data.frame(unclass(data))
         to_data <- data
 
         if (transpose) {
           data <- t(data)
         }
 
-        self$add_data(sheet = sheet, x = data, dims = to_dims_f[[1]], colNames = FALSE, ...)
+        self$add_data(sheet = sheet, x = data, dims = to_dims_f[[1]], col_names = FALSE, ...)
 
         return(invisible(self))
       }
