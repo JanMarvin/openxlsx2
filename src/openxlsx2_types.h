@@ -29,7 +29,6 @@ typedef struct {
 typedef struct {
   std::string v;
   std::string c_cm;
-  std::string c_s;
   std::string c_t;
   std::string is;
   std::string f;

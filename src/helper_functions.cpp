@@ -353,7 +353,6 @@ void wide_to_long(
   Rcpp::CharacterVector zz_c_cm  = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
   Rcpp::CharacterVector zz_c_r   = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
   Rcpp::CharacterVector zz_v     = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
-  Rcpp::CharacterVector zz_c_s   = Rcpp::as<Rcpp::CharacterVector>(zz["c_s"]);
   Rcpp::CharacterVector zz_c_t   = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);
   Rcpp::CharacterVector zz_is    = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
   Rcpp::CharacterVector zz_f     = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
@@ -367,6 +366,8 @@ void wide_to_long(
 
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
 
+    std::string col = int_to_col(startcol);
+
     auto startrow = start_row;
     for (auto j = 0; j < n; ++j) {
       Rcpp::checkUserInterrupt();
@@ -376,9 +377,8 @@ void wide_to_long(
       if (ColNames & (j == 0)) vtyp = character;
       std::string vals = Rcpp::as<std::string>(cvec[j]);
       std::string row = std::to_string(startrow);
-      std::string col = int_to_col(startcol);
 
-      auto pos = (j * m) + i;
+      R_xlen_t pos = (j * m) + i;
 
       // factors can be numeric or string or both
       if (vtyp == factor) string_nums = true;
@@ -493,7 +493,6 @@ void wide_to_long(
       zz_c_r[pos]   = col;
       if (!cell.v.empty())     zz_v[pos]     = cell.v;
       if (!cell.c_cm.empty())  zz_c_cm[pos]  = cell.c_cm;
-      if (!cell.c_s.empty())   zz_c_s[pos]   = cell.c_s;
       if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
       if (!cell.is.empty())    zz_is[pos]    = cell.is;
       if (!cell.f.empty())     zz_f[pos]     = cell.f;
