@@ -66,12 +66,12 @@
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Character strings with XML content were not written correctly: <code>a &lt;br/&gt; b</code> was converted to something neither we nor spreadsheet software was able to decipher. <a href="https://github.com/JanMarvin/openxlsx2/pull/895" class="external-link">895</a>
-</li>
+<ul><li><p>Character strings with XML content were not written correctly: <code>a &lt;br/&gt; b</code> was converted to something neither we nor spreadsheet software was able to decipher. <a href="https://github.com/JanMarvin/openxlsx2/pull/895" class="external-link">895</a></p></li>
+<li><p>Restore <code>first_active_row</code>/<code>first_active_col</code> and <code>first_col</code>/<code>first_row</code> functionality in <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/903" class="external-link">903</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>Updating to themes. This includes updates to the default style <code>'Office Theme'</code>:
+<ul><li>Updating to themes. This includes updates to the default style <code>'Office Theme'</code> <a href="https://github.com/JanMarvin/openxlsx2/pull/899" class="external-link">899</a>
 <ul><li>This includes switching to the new default font <code>'Aptos Narrow'</code>
 </li>
 <li>A new style <code>'Office 2013 - 2022 Theme'</code> was added</li>
