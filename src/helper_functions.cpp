@@ -361,6 +361,11 @@ void wide_to_long(
   Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
   Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
+  if (inline_strings)
+    na_strings = txt_to_is(na_strings, 0, 1, 1);
+  else
+    na_strings = txt_to_si(na_strings, 0, 1, 1);
+
   for (auto i = 0; i < m; ++i) {
     Rcpp::checkUserInterrupt();
 
@@ -465,10 +470,10 @@ void wide_to_long(
             // inlineStr or s
             if (inline_strings) {
               cell.c_t = "inlineStr";
-              cell.is  = txt_to_is(na_strings, 0, 1, 1);
+              cell.is  = na_strings;
             } else {
               cell.c_t = "s";
-              cell.v   = txt_to_si(na_strings, 0, 1, 1);
+              cell.v   = na_strings;
             }
 
           }
