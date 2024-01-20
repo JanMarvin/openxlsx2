@@ -78,13 +78,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // dims_to_df
-SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fill);
+SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill);
 RcppExport SEXP _openxlsx2_dims_to_df(SEXP rowsSEXP, SEXP colsSEXP, SEXP fillSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type rows(rowsSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type cols(colsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cols(colsSEXP);
     Rcpp::traits::input_parameter< bool >::type fill(fillSEXP);
     rcpp_result_gen = Rcpp::wrap(dims_to_df(rows, cols, fill));
     return rcpp_result_gen;

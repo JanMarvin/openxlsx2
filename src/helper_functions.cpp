@@ -145,7 +145,7 @@ uint32_t uint_col_to_int(std::string& a) {
 }
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x ) {
+Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 
   // This function converts the Excel column letter to an integer
 
@@ -239,7 +239,7 @@ SEXP copy(SEXP x) {
 
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
-SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fill) {
+SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill) {
 
   size_t kk = cols.size();
   size_t nn = rows.size();
@@ -257,8 +257,9 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, std::vector<std::string> cols, bool fi
   if (fill) {
     for (size_t i = 0; i < kk; ++i) {
       Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+      std::string coli = Rcpp::as<std::string>(cols[i]);
       for (size_t j = 0; j < nn; ++j) {
-        cvec[j] = cols[i] + std::to_string(rows[j]);
+        cvec[j] = coli + std::to_string(rows[j]);
       }
     }
   }
@@ -479,7 +480,6 @@ void wide_to_long(
           }
         }
       }
-
 
       if (cell.v.compare("NaN") == 0) {
         cell.v   = "#VALUE!";
