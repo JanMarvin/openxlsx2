@@ -274,8 +274,14 @@ write_data2 <- function(
     }
 
     # add colnames
-    if (colNames)
-      data <- rbind(colnames(data), data)
+    if (colNames) {
+      # its quicker to convert data to character and append the colnames
+      # then to create a data frame from colnames, construct the required
+      # length and copy the converted to character data into it.
+      data <- rbind(data, colnames(data))
+      out <- c(nrow(data), seq_len(nrow(data))[-nrow(data)])
+      data <- data[out, , drop = FALSE]
+    }
   }
 
 
