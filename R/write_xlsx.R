@@ -389,8 +389,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
   freeze_pane <- FALSE
   firstActiveRow <- rep_len(1L, length.out = nSheets)
-  if ("firstActiveRow" %in% names(params)) {
-    firstActiveRow <- params$firstActiveRow
+  if ("first_active_row" %in% names(params)) {
+    firstActiveRow <- params$first_active_row
     freeze_pane <- TRUE
     if (length(firstActiveRow) != nSheets) {
       firstActiveRow <- rep_len(firstActiveRow, length.out = nSheets)
@@ -398,8 +398,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   }
 
   firstActiveCol <- rep_len(1L, length.out = nSheets)
-  if ("firstActiveCol" %in% names(params)) {
-    firstActiveCol <- params$firstActiveCol
+  if ("first_active_col" %in% names(params)) {
+    firstActiveCol <- params$first_active_col
     freeze_pane <- TRUE
     if (length(firstActiveCol) != nSheets) {
       firstActiveCol <- rep_len(firstActiveCol, length.out = nSheets)
@@ -407,8 +407,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   }
 
   firstRow <- rep_len(FALSE, length.out = nSheets)
-  if ("firstRow" %in% names(params)) {
-    firstRow <- params$firstRow
+  if ("first_row" %in% names(params)) {
+    firstRow <- params$first_row
     freeze_pane <- TRUE
     if (inherits(x, "list") && (length(firstRow) != nSheets)) {
       firstRow <- rep_len(firstRow, length.out = nSheets)
@@ -416,8 +416,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   }
 
   firstCol <- rep_len(FALSE, length.out = nSheets)
-  if ("firstCol" %in% names(params)) {
-    firstCol <- params$firstCol
+  if ("first_col" %in% names(params)) {
+    firstCol <- params$first_col
     freeze_pane <- TRUE
     if (inherits(x, "list") && (length(firstCol) != nSheets)) {
       firstCol <- rep_len(firstCol, length.out = nSheets)
@@ -430,10 +430,10 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
       wb <- wb_freeze_pane(
         wb = wb,
         sheet = i,
-        firstActiveRow = firstActiveRow[i],
-        firstActiveCol = firstActiveCol[i],
-        firstRow = firstRow[i],
-        firstCol = firstCol[i]
+        first_active_row = firstActiveRow[i],
+        first_active_col = firstActiveCol[i],
+        first_row = firstRow[i],
+        first_col = firstCol[i]
       )
     }
   }

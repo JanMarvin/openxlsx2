@@ -358,3 +358,46 @@ test_that("write_xlsx() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("write_xlsx() freezing rows works", {
+
+  tmp <- temp_xlsx()
+
+  wb <- write_xlsx(list(mtcars, mtcars), tmp, firstRow = TRUE, firstCol = TRUE, tab_color = wb_color("green"))
+
+  # tabColor
+  exp <- c(
+    "<sheetPr><tabColor rgb=\"FF00FF00\"/></sheetPr>",
+    "<sheetPr><tabColor rgb=\"FF00FF00\"/></sheetPr>"
+  )
+  got <- c(
+    wb$worksheets[[1]]$sheetPr,
+    wb$worksheets[[2]]$sheetPr
+  )
+  expect_equal(exp, got)
+
+  # firstCol/firstRow
+  exp <- c(
+    "<pane ySplit=\"1\" xSplit=\"1\" topLeftCell=\"B2\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>",
+    "<pane ySplit=\"1\" xSplit=\"1\" topLeftCell=\"B2\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
+  )
+  got <- c(
+    wb$worksheets[[1]]$freezePane,
+    wb$worksheets[[2]]$freezePane
+  )
+  expect_equal(exp, got)
+
+  wb <- write_xlsx(list(mtcars, mtcars), tmp, firstActiveRow = 4, firstActiveCol = 3)
+
+  # firstActiveCol/firstActiveRow
+  exp <- c(
+    "<pane ySplit=\"3\" xSplit=\"2\" topLeftCell=\"C4\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>",
+    "<pane ySplit=\"3\" xSplit=\"2\" topLeftCell=\"C4\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
+  )
+  got <- c(
+    wb$worksheets[[1]]$freezePane,
+    wb$worksheets[[2]]$freezePane
+  )
+  expect_equal(exp, got)
+
+})
