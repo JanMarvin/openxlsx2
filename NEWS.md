@@ -8,9 +8,11 @@
 
 * Character strings with XML content were not written correctly: `a <br/> b` was converted to something neither we nor spreadsheet software was able to decipher. [895](https://github.com/JanMarvin/openxlsx2/pull/895)
 
+* Restore `first_active_row`/`first_active_col` and `first_col`/`first_row` functionality in `write_xlsx()`. [903](https://github.com/JanMarvin/openxlsx2/pull/903)
+
 ## Breaking changes
 
-* Updating to themes. This includes updates to the default style `'Office Theme'`:
+* Updating to themes. This includes updates to the default style `'Office Theme'` [899](https://github.com/JanMarvin/openxlsx2/pull/899)
   * This includes switching to the new default font `'Aptos Narrow'`
   * A new style `'Office 2013 - 2022 Theme'` was added
   
