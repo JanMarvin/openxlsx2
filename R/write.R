@@ -43,7 +43,7 @@ inner_update <- function(
     row_attr_missing <- empty_row_attr(n = length(missing_rows))
     row_attr_missing$r <- missing_rows
 
-    row_attr <- rbind(row_attr, row_attr_missing)
+    row_attr <- dt_rbind(row_attr, row_attr_missing)
 
     # order
     row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
@@ -66,7 +66,7 @@ inner_update <- function(
     cc_missing$c_r   <- stringi::stri_extract_first(missing_cells, regex = "[A-Z]+")
 
     # assign to cc
-    cc <- rbind(cc, cc_missing)
+    cc <- dt_rbind(cc, cc_missing)
 
     # order cc (not really necessary, will be done when saving)
     cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
@@ -278,7 +278,7 @@ write_data2 <- function(
       # its quicker to convert data to character and append the colnames
       # then to create a data frame from colnames, construct the required
       # length and copy the converted to character data into it.
-      data <- rbind(data, colnames(data))
+      data <- dt_rbind(data, colnames(data))
       out <- c(nrow(data), seq_len(nrow(data))[-nrow(data)])
       data <- data[out, , drop = FALSE]
     }

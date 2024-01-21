@@ -1660,3 +1660,19 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   # print(sprintf("cloned: %s", length(new_ids)))
 
 }
+
+names_to_df <- function(x) {
+  structure(
+    lapply(x, c),
+    names = x,
+    class = "data.frame",
+    row.names = c(NA, 1)
+  )
+}
+
+dt_rbind <- function(x, y) {
+  if (is.character(y)) {
+    y <- names_to_df(y)
+  }
+  as.data.frame(data.table::rbindlist(list(x, y)))
+}
