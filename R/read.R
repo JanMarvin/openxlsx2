@@ -734,7 +734,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   sheetname <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
 
   if (missing(dims)) {
-    dims <- unname(unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension")))
+    dims <- df_to_char(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension"))
   }
 
   z <- wb_to_df(wb, sheet, dims = dims, ...)

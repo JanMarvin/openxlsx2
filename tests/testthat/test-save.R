@@ -182,11 +182,11 @@ test_that("writing NA, NaN and Inf", {
 
   # we wont get the same input back
   exp <- c(NA_character_, "#NUM!", "#NUM!", "#VALUE!")
-  got <- unname(unlist(wb_to_df(tmp)))
+  got <- df_to_char(wb_to_df(tmp))
   expect_equal(exp, got)
 
   wb$clone_worksheet(old = "Test1", new = "Clone1")$add_data(x = x)$save(tmp)
-  got <- unname(unlist(wb_to_df(tmp, "Clone1")))
+  got <- df_to_char(wb_to_df(tmp, "Clone1"))
   expect_equal(exp, got)
 
   # distinguish between "NA" and NA_character_
@@ -194,11 +194,11 @@ test_that("writing NA, NaN and Inf", {
   wb$add_worksheet("Test2")$add_data(x = x)$save(tmp)
 
   exp <- c(NA_character_, "NA")
-  got <- unname(unlist(wb_to_df(tmp, "Test2")))
+  got <- df_to_char(wb_to_df(tmp, "Test2"))
   expect_equal(exp, got)
 
   wb$clone_worksheet(old = "Test2", new = "Clone2")$add_data(x = x)$save(tmp)
-  got <- unname(unlist(wb_to_df(tmp, "Clone2")))
+  got <- df_to_char(wb_to_df(tmp, "Clone2"))
   expect_equal(exp, got)
 
 })
@@ -215,22 +215,22 @@ test_that("writing NA, NaN and Inf", {
   wb$add_worksheet("Test3")$add_data(x = x, na.strings = "N/A")$save(tmp)
 
   exp <- c(NA, "s", "s", "s")
-  got <- unname(unlist(attr(wb_to_df(tmp, "Test1", keep_attributes = TRUE), "tt")))
+  got <- df_to_char(attr(wb_to_df(tmp, "Test1", keep_attributes = TRUE), "tt")))
   expect_equal(exp, got)
 
   exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
-  got <- unname(unlist(wb_to_df(tmp, "Test2", keep_attributes = TRUE)))
+  got <- df_to_char(wb_to_df(tmp, "Test2", keep_attributes = TRUE)))
   expect_equal(exp, got)
 
   wb$clone_worksheet("Test1", "Clone1")$add_data(x = x, na.strings = NULL)$save(tmp)
   wb$clone_worksheet("Test3", "Clone3")$add_data(x = x, na.strings = "N/A")$save(tmp)
 
   exp <- c(NA, "s", "s", "s")
-  got <- unname(unlist(attr(wb_to_df(tmp, "Test1", keep_attributes = TRUE), "tt")))
+  got <- df_to_char(attr(wb_to_df(tmp, "Test1", keep_attributes = TRUE), "tt")))
   expect_equal(exp, got)
 
   exp <- c("N/A", "#NUM!", "#NUM!", "#VALUE!")
-  got <- unname(unlist(wb_to_df(tmp, "Test2")))
+  got <- df_to_char(wb_to_df(tmp, "Test2")))
   expect_equal(exp, got)
 
 })

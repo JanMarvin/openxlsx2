@@ -2943,7 +2943,7 @@ wbWorkbook <- R6::R6Class(
       to_dims_df_i  <- dims_to_dataframe(to_dims, fill = FALSE)
       to_dims_df_f  <- dims_to_dataframe(to_dims, fill = TRUE)
 
-      to_dims_f <- unname(unlist(to_dims_df_f))
+      to_dims_f <- df_to_char(to_dims_df_f)
 
       from_sheet <- wb_validate_sheet(self, from_sheet)
       from_dims  <- as.character(unlist(from_dims_df))
@@ -6830,7 +6830,7 @@ wbWorkbook <- R6::R6Class(
       cols <- (seq_len(ncol(did)) %% every_nth_col) == 0
       rows <- (seq_len(nrow(did)) %% every_nth_row) == 0
 
-      dims <- unname(unlist(did[rows, cols, drop = FALSE]))
+      dims <- df_to_char(did[rows, cols, drop = FALSE])
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
@@ -6900,7 +6900,7 @@ wbWorkbook <- R6::R6Class(
       private$do_cell_init(sheet, dims)
 
       did <- dims_to_dataframe(dims, fill = TRUE)
-      dims <- unname(unlist(did))
+      dims <- df_to_char(did)
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
@@ -6953,7 +6953,7 @@ wbWorkbook <- R6::R6Class(
       private$do_cell_init(sheet, dims)
 
       did <- dims_to_dataframe(dims, fill = TRUE)
-      dims <- unname(unlist(did))
+      dims <- df_to_char(did)
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
@@ -7058,7 +7058,7 @@ wbWorkbook <- R6::R6Class(
       private$do_cell_init(sheet, dims)
 
       did <- dims_to_dataframe(dims, fill = TRUE)
-      dims <- unname(unlist(did))
+      dims <- df_to_char(did)
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- cc[cc$r %in% dims, ]
@@ -7115,7 +7115,7 @@ wbWorkbook <- R6::R6Class(
       temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
 
       # if a range is passed (e.g. "A1:B2") we need to get every cell
-      dims <- unname(unlist(dims))
+      dims <- df_to_char(dims)
 
       # TODO check that cc$r is alway valid. not sure atm
       sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% dims
@@ -7139,7 +7139,7 @@ wbWorkbook <- R6::R6Class(
       private$do_cell_init(sheet, dims)
 
       # if a range is passed (e.g. "A1:B2") we need to get every cell
-      dims <- unname(unlist(dims))
+      dims <- df_to_char(dims)
 
       sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
 
@@ -7167,7 +7167,7 @@ wbWorkbook <- R6::R6Class(
           rows <- as.integer(dims_to_rowcol(rows)[[2]])
 
         dims  <- wb_dims(rows, "A")
-        cells <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+        cells <- df_to_char(dims_to_dataframe(dims, fill = TRUE))
         cc    <- self$worksheets[[sheet]]$sheet_data$cc
 
         cells <- cells[!cells %in% cc$r]
@@ -8454,7 +8454,7 @@ wbWorkbook <- R6::R6Class(
         if (length(need_cells) == 1 && grepl(":|;", need_cells))
           need_cells <- dims_to_dataframe(dims, fill = TRUE)
 
-        exp_cells <- unname(unlist(need_cells))
+        exp_cells <- df_to_char(need_cells)
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
         # initialize cell

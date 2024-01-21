@@ -63,9 +63,9 @@ wbComment <- R6::R6Class(
       for (i in seq_along(s)) {
         styleShow <- c(
           styleShow,
-          sprintf("Font name: %s\n", unname(unlist(xml_attr(s[[i]], "font", "name")))), ## Font name
-          sprintf("Font size: %s\n", unname(unlist(xml_attr(s[[i]], "font", "sz")))), ## Font size
-          sprintf("Font color: %s\n", gsub("^FF", "#", unname(unlist(xml_attr(s[[i]], "font", "color"))))), ## Font color
+          sprintf("Font name: %s\n", df_to_char(xml_attr(s[[i]], "font", "name"))), ## Font name
+          sprintf("Font size: %s\n", df_to_char(xml_attr(s[[i]], "font", "sz"))), ## Font size
+          sprintf("Font color: %s\n", gsub("^FF", "#", df_to_char(xml_attr(s[[i]], "font", "color")))), ## Font color
           "\n\n"
         )
       }

@@ -250,3 +250,13 @@ test_that("is_double works", {
   expect_equal(exp, got)
 
 })
+
+test_that("df_to_char works", {
+
+  dims <- dims_to_df(rows = 1:1000, cols = int2col(1:1000), fill = TRUE)
+
+  x <- unname(unlist(dims))
+  y <- df_to_char(dims)
+  expect_equal(x, y)
+
+})

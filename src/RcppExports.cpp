@@ -90,6 +90,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// df_to_char
+SEXP df_to_char(Rcpp::DataFrame df);
+RcppExport SEXP _openxlsx2_df_to_char(SEXP dfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df(dfSEXP);
+    rcpp_result_gen = Rcpp::wrap(df_to_char(df));
+    return rcpp_result_gen;
+END_RCPP
+}
 // long_to_wide
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz);
 RcppExport SEXP _openxlsx2_long_to_wide(SEXP zSEXP, SEXP ttSEXP, SEXP zzSEXP) {
@@ -952,6 +963,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 3},
+    {"_openxlsx2_df_to_char", (DL_FUNC) &_openxlsx2_df_to_char, 1},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_is_charnum", (DL_FUNC) &_openxlsx2_is_charnum, 1},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 13},

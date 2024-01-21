@@ -272,6 +272,26 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill)
   return df;
 }
 
+// [[Rcpp::export]]
+SEXP df_to_char(Rcpp::DataFrame df) {
+
+  Rcpp::CharacterVector out(df.ncol() * df.nrow());
+
+  if (out.size() == 0) return R_NilValue;
+
+  auto pos = 0;
+  for (size_t i = 0; i < df.ncol(); ++i) {
+    Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+    for (size_t j = 0; j < df.nrow(); ++j) {
+         out[pos] = cvec[j];
+      ++pos;
+    }
+  }
+
+  return Rcpp::wrap(out);
+}
+
+
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
@@ -343,10 +363,10 @@ void wide_to_long(
     std::string c_cm
 ) {
 
-  auto n = z.nrow();
-  auto m = z.ncol();
+  int32_t n = z.nrow();
+  int32_t m = z.ncol();
 
-  auto startcol = start_col;
+  int32_t startcol = start_col;
 
   // pointer magic. even though these are extracted, they just point to the
   // memory in the data frame
@@ -367,18 +387,19 @@ void wide_to_long(
   else
     na_strings = txt_to_si(na_strings, 0, 1, 1);
 
-  for (auto i = 0; i < m; ++i) {
+  for (int32_t i = 0; i < m; ++i) {
     Rcpp::checkUserInterrupt();
 
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
 
     std::string col = int_to_col(startcol);
+    int8_t vtyp_i = (int8_t)vtyps[i];
 
-    auto startrow = start_row;
-    for (auto j = 0; j < n; ++j) {
+    int32_t startrow = start_row;
+    for (int32_t j = 0; j < n; ++j) {
       Rcpp::checkUserInterrupt();
 
-      int8_t vtyp = (int8_t)vtyps[i];
+      int8_t vtyp = vtyp_i;
       // if colname is provided, the first row is always a character
       if (ColNames & (j == 0)) vtyp = character;
       std::string vals = Rcpp::as<std::string>(cvec[j]);
@@ -479,14 +500,10 @@ void wide_to_long(
 
           }
         }
-      }
-
-      if (cell.v.compare("NaN") == 0) {
+      } else if (cell.v.compare("NaN") == 0) {
         cell.v   = "#VALUE!";
         cell.c_t = "e";
-      }
-
-      if (cell.v.compare("-Inf") == 0 || cell.v.compare("Inf") == 0) {
+      } else if (cell.v.compare("-Inf") == 0 || cell.v.compare("Inf") == 0) {
         cell.v   = "#NUM!";
         cell.c_t = "e";
       }

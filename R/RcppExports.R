@@ -32,6 +32,10 @@ dims_to_df <- function(rows, cols, fill) {
     .Call(`_openxlsx2_dims_to_df`, rows, cols, fill)
 }
 
+df_to_char <- function(df) {
+    .Call(`_openxlsx2_df_to_char`, df)
+}
+
 long_to_wide <- function(z, tt, zz) {
     invisible(.Call(`_openxlsx2_long_to_wide`, z, tt, zz))
 }

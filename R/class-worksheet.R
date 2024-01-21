@@ -523,8 +523,8 @@ wbWorksheet <- R6::R6Class(
       # regmatch0 will return character(0) when x is NULL
       if (length(current)) {
 
-        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
-        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
+        new_merge     <- df_to_char(dims_to_dataframe(sqref, fill = TRUE))
+        current_cells <- lapply(current, function(x) df_to_char(dims_to_dataframe(x, fill = TRUE)))
         intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
 
         # Error if merge intersects
@@ -572,8 +572,8 @@ wbWorksheet <- R6::R6Class(
       current <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
 
       if (!is.null(current)) {
-        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
-        current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
+        new_merge     <- df_to_char(dims_to_dataframe(sqref, fill = TRUE))
+        current_cells <- lapply(current, function(x) df_to_char(dims_to_dataframe(x, fill = TRUE)))
         intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
 
         # Remove intersection
@@ -603,7 +603,7 @@ wbWorksheet <- R6::R6Class(
         rows <- rownames(ddims)
         cols <- colnames(ddims)
 
-        dims <- unname(unlist(ddims))
+        dims <- df_to_char(ddims)
         sel <- cc$r %in% dims
       }
 
@@ -817,7 +817,7 @@ wbWorksheet <- R6::R6Class(
       unlockedFormula    = FALSE
     ) {
 
-      dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+      dims <- df_to_char(dims_to_dataframe(dims, fill = TRUE))
 
       iEs <- self$ignoredErrors
       if (xml_node_name(iEs) == "ignoredErrors") {
