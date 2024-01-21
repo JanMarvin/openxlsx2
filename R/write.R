@@ -62,8 +62,8 @@ inner_update <- function(
     # create missing cells
     cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
     cc_missing$r     <- missing_cells
-    cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
-    cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
+    cc_missing$row_r <- stringi::stri_extract_first(missing_cells, regex = "[0-9]+")
+    cc_missing$c_r   <- stringi::stri_extract_first(missing_cells, regex = "[A-Z]+")
 
     # assign to cc
     cc <- rbind(cc, cc_missing)

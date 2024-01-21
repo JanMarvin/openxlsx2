@@ -469,7 +469,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         if (skip_duplicates && is_tabSty && style_name[sty] %in% self$tableStyle$name) next
 
         if (is_numfmt) {
-          typ <- "numFmt"         
+          typ <- "numFmt"
           id  <- unname(unlist(xml_attr(style[sty], "numFmt"))["numFmtId"])
           self$styles$numFmts <- c(self$styles$numFmts, style[sty])
         }
