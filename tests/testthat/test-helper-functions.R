@@ -214,6 +214,16 @@ test_that("distinct() works", {
 
 })
 
+test_that("fix_pt_names() works", {
+
+  x <- c("Foo", "foo", "bar", "FOO", "bar", "x")
+
+  exp <- c("Foo", "foo2", "bar", "FOO3", "bar2", "x")
+  got <- fix_pt_names(x)
+  expect_equal(exp, got)
+
+})
+
 test_that("validate_colors() works", {
 
   col <- c("FF0000FF", "#0000FF", "000FF", "#FF000FF", "blue")

@@ -1395,6 +1395,11 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      if (any(sel <- duplicated(tolower(names(x))))) {
+        nms <- names(x)
+        names(x) <- fix_pt_names(nms)
+      }
+
       # for now we use a new worksheet
       if (add_sheet) {
         self$add_worksheet()
