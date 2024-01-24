@@ -918,9 +918,9 @@ expect_silent(
 expect_warning(
   wb_add_pivot_table(wb, df, dims = "A3",
                      filter = "am", rows = "cyl", cols = "gear", data = "disp",
-                     params = list(sort_item = list(gear = c(1)))
+                     params = list(sort_item = list(gear = seq_len(4)))
   ),
-  "Length of sort order for 'gear' does not match required length. Is 1, needs 3."
+  "Length of sort order for 'gear' does not match required length. Is 4, needs 3."
 )
 
 })
