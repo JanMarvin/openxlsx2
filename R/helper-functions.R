@@ -673,19 +673,36 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL) {
   dat <- distinct(data[[x]])
 
   # check length, otherwise a certain spreadsheet software simply dies
-  if (!is.null(item_order) && (length(item_order) != length(dat))) {
-    msg <- sprintf(
-      "Length of sort order for '%s' does not match required length. Is %s, needs %s.\nCheck `openxlsx2:::distinct()` for the correct length. Resetting.",
-      names(data[x]), length(item_order), length(dat)
-    )
-    warning(msg)
-    item_order <- NULL
-  }
+  if (!is.null(item_order)) {
 
-  if (is.null(item_order)) {
+    if (length(item_order) > length(dat)) {
+      msg <- sprintf(
+        "Length of sort order for '%s' does not match required length. Is %s, needs %s.\nCheck `openxlsx2:::distinct()` for the correct length. Resetting.",
+        names(data[x]), length(item_order), length(dat)
+      )
+      warning(msg)
+      item_order <- NULL
+    }
+
+    if (is.character(item_order)) {
+      # add remaining items
+      if (length(item_order) < length(dat)) {
+        item_order <- c(item_order, dat[!dat %in% item_order])
+      }
+
+      item_order <- match(item_order, dat)
+
+    } else {
+      # add remaining items
+      if (length(item_order) < length(dat)) {
+        vals <- seq_along(dat)
+        item_order <- c(item_order, vals[!vals %in% item_order])
+      }
+    }
+
+  } else {
+    # item_order == NULL
     item_order <- order(dat)
-  } else if (is.character(item_order)) {
-    item_order <- match(dat, item_order)
   }
 
   if (!is.null(choose)) {
