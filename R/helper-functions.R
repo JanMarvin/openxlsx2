@@ -488,6 +488,25 @@ distinct <- function(x) {
   unis[dups == FALSE]
 }
 
+# append number of duplicated value.
+# @details c("Foo", "foo") -> c("Foo", "foo2")
+# @param x a character vector
+fix_pt_names <- function(x) {
+  lwrs <- tolower(x)
+
+  dups <- duplicated(lwrs)
+  dups <- stringi::stri_unique(lwrs[dups])
+
+  for (dup in dups) {
+    sel <- which(lwrs == dup)
+    for (i in seq_along(sel)[-1]) {
+      x[sel[i]] <- paste0(x[sel[i]], i)
+    }
+  }
+
+  x
+}
+
 cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
   sapply(
     names(wbdata),
