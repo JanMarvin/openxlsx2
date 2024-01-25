@@ -1430,6 +1430,10 @@ wbWorkbook <- R6::R6Class(
 
         varfun <- data[sel]
 
+        if (is.null(names(varfun))) {
+          stop("Unknown variable in data argument: ", data)
+        }
+
         for (var in varfun) {
           if (all(grepl("^=", names(varfun)))) {
             x[[var]] <- names(varfun[varfun == var])
@@ -1603,7 +1607,7 @@ wbWorkbook <- R6::R6Class(
           showMissing  = showMissing,
           crossFilter  = crossFilter
         ),
-        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE, choose = choo)
+        xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE, choose = choo, has_default = TRUE)
       )
 
       slicer_cache <- read_xml(sprintf(

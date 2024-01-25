@@ -667,10 +667,13 @@ pivot_def_rel <- function(n) sprintf("<Relationships xmlns=\"http://schemas.open
 
 pivot_xml_rels <- function(n) sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"../pivotCache/pivotCacheDefinition%s.xml\"/></Relationships>", n)
 
-get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL) {
+get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_default = TRUE) {
   x <- abs(x)
 
   dat <- distinct(data[[x]])
+
+  default <- NULL
+  if (has_default) default <- "default"
 
   # check length, otherwise a certain spreadsheet software simply dies
   if (!is.null(item_order)) {
@@ -725,7 +728,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL) {
       USE.NAMES = FALSE
     )
   } else {
-    vals <- c(item_order - 1L, "default")
+    vals <- c(as.character(item_order - 1L), default)
     item <- sapply(
       seq_along(vals),
       # # TODO this sets the order of the pivot elements
@@ -842,7 +845,8 @@ create_pivot_table <- function(
     "show_multiple_label", "show_row_headers", "show_row_stripes",
     "sort_col", "sort_item", "sort_row", "subtotal_hidden_items",
     "table_style", "tag", "use_auto_formatting", "vacated_style",
-    "visual_totals"
+    "visual_totals",
+    "subtotal_top", "default_subtotal"
   )
   params <- standardize_case_names(params, arguments = arguments, return = TRUE)
 
@@ -854,6 +858,22 @@ create_pivot_table <- function(
   outline <- ""
   if (!is.null(params$outline))
     outline <- params$outline
+
+  subtotalTop           <- NULL
+  SubtotalsOnTopDefault <- NULL
+  if (!is.null(params$subtotal_top)) {
+    subtotalTop           <- as_xml_attr(params$subtotal_top)
+    SubtotalsOnTopDefault <- as_xml_attr(params$subtotal_top)
+  }
+
+  has_default             <- TRUE
+  defaultSubtotal         <- NULL
+  EnabledSubtotalsDefault <- NULL
+  if (!is.null(params$default_subtotal)) {
+    has_default             <- params$default_subtotal
+    defaultSubtotal         <- as_xml_attr(has_default)
+    EnabledSubtotalsDefault <- as_xml_attr(has_default)
+  }
 
   for (i in seq_along(x)) {
 
@@ -917,8 +937,14 @@ create_pivot_table <- function(
     multi     <- if (is.null(choose)) NULL else as_xml_attr(TRUE)
 
     attrs <- c(
-      axis, dataField, showAll = "0", multipleItemSelectionAllowed = multi, sortType = sort,
-      compact = as_xml_attr(compact), outline = as_xml_attr(outline)
+      axis, dataField,
+      subtotalTop = subtotalTop,
+      showAll = "0",
+      defaultSubtotal = defaultSubtotal,
+      multipleItemSelectionAllowed = multi,
+      sortType = sort,
+      compact = as_xml_attr(compact),
+      outline = as_xml_attr(outline)
     )
 
     if (is_formula) {
@@ -947,7 +973,7 @@ create_pivot_table <- function(
       tmp <- xml_node_create(
         "pivotField",
         xml_attributes = attrs,
-        xml_children = paste0(paste0(get_items(x, i, sort_itm, FALSE, choo), collapse = ""), autoSortScope))
+        xml_children = paste0(paste0(get_items(x, i, sort_itm, FALSE, choo, has_default), collapse = ""), autoSortScope))
     }
 
     pivotField <- c(pivotField, tmp)
@@ -1136,6 +1162,27 @@ create_pivot_table <- function(
   if (!is.null(params$name))
     pivot_table_name <- params$name
 
+
+  ptd16 <- xml_node_create(
+    "xpdl:pivotTableDefinition16",
+    xml_attributes = c(
+      EnabledSubtotalsDefault = EnabledSubtotalsDefault,
+      SubtotalsOnTopDefault   = SubtotalsOnTopDefault
+    )
+  )
+
+  extLst <- sprintf(
+    '<extLst>
+    <ext uri="{962EF5D1-5CA2-4c93-8EF4-DBF5C05439D2}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
+    <x14:pivotTableDefinition hideValuesRow="1" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main" />
+    </ext>
+    <ext uri="{747A6164-185A-40DC-8AA5-F01512510D54}" xmlns:xpdl="http://schemas.microsoft.com/office/spreadsheetml/2016/pivotdefaultlayout">
+    %s
+    </ext>
+    </extLst>',
+    ptd16
+  )
+
   xml_node_create(
     "pivotTableDefinition",
     xml_attributes = c(
@@ -1220,8 +1267,8 @@ create_pivot_table <- function(
       colsFields,
       pageFields,
       dataFields,
-      pivotTableStyleInfo
-      # extLst
+      pivotTableStyleInfo,
+      extLst
     )
   )
 
