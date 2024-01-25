@@ -859,15 +859,20 @@ create_pivot_table <- function(
   if (!is.null(params$outline))
     outline <- params$outline
 
-  subtotalTop <- NULL
-  if (!is.null(params$subtotal_top))
-    subtotalTop <- as_xml_attr(params$subtotal_top)
+  subtotalTop           <- NULL
+  SubtotalsOnTopDefault <- NULL
+  if (!is.null(params$subtotal_top)) {
+    subtotalTop           <- as_xml_attr(params$subtotal_top)
+    SubtotalsOnTopDefault <- as_xml_attr(params$subtotal_top)
+  }
 
-  has_default <- FALSE
-  defaultSubtotal <- NULL
+  has_default             <- TRUE
+  defaultSubtotal         <- NULL
+  EnabledSubtotalsDefault <- NULL
   if (!is.null(params$default_subtotal)) {
-    has_default <- params$default_subtotal
-    defaultSubtotal <- as_xml_attr(has_default)
+    has_default             <- params$default_subtotal
+    defaultSubtotal         <- as_xml_attr(has_default)
+    EnabledSubtotalsDefault <- as_xml_attr(has_default)
   }
 
   for (i in seq_along(x)) {
@@ -1157,15 +1162,26 @@ create_pivot_table <- function(
   if (!is.null(params$name))
     pivot_table_name <- params$name
 
-  extLst <- NULL
-  if (!is.null(defaultSubtotal)) {
-    extLst <-
-      '<extLst>
-      <ext uri="{747A6164-185A-40DC-8AA5-F01512510D54}" xmlns:xpdl="http://schemas.microsoft.com/office/spreadsheetml/2016/pivotdefaultlayout">
-      <xpdl:pivotTableDefinition16 EnabledSubtotalsDefault="0" SubtotalsOnTopDefault="0" />
-      </ext>
-      </extLst>'
- }
+
+  ptd16 <- xml_node_create(
+    "xpdl:pivotTableDefinition16",
+    xml_attributes = c(
+      EnabledSubtotalsDefault = EnabledSubtotalsDefault,
+      SubtotalsOnTopDefault   = SubtotalsOnTopDefault
+    )
+  )
+
+  extLst <- sprintf(
+    '<extLst>
+    <ext uri="{962EF5D1-5CA2-4c93-8EF4-DBF5C05439D2}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
+    <x14:pivotTableDefinition hideValuesRow="1" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main" />
+    </ext>
+    <ext uri="{747A6164-185A-40DC-8AA5-F01512510D54}" xmlns:xpdl="http://schemas.microsoft.com/office/spreadsheetml/2016/pivotdefaultlayout">
+    %s
+    </ext>
+    </extLst>',
+    ptd16
+  )
 
   xml_node_create(
     "pivotTableDefinition",
