@@ -343,6 +343,21 @@ test_that("string formating", {
   got <- wb_to_df(wb)$txt
   expect_equal(exp, got)
 
+  exp <- structure(
+    "<r><rPr><i/><strike/><rFont val=\"Arial\"/><charset/><outline val=\"1\"/><vertAlign val=\"5\"/></rPr><t>test</t></r>",
+    class = c("character", "fmt_txt")
+  )
+  got <- fmt_txt(
+    "test",
+    italic = TRUE,
+    strike = TRUE,
+    font = "Arial",
+    charset = "",
+    outline = TRUE,
+    vert_align = 5
+  )
+  expect_equal(exp, got)
+
 })
 
 test_that("outdec = \",\" works", {
