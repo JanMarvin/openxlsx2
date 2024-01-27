@@ -189,28 +189,28 @@ genBaseWorkbook <- function() {
   # workbookProtection
 
   list(
-    fileVersion = NULL,
-    fileSharing = NULL,
-    workbookPr = '<workbookPr date1904="false"/>',
-    alternateContent = NULL,
-    revisionPtr = NULL,
-    absPath = NULL, # "x15ac:absPath"
-    workbookProtection = NULL,
-    bookViews = NULL,
-    sheets = NULL,
-    functionGroups = NULL,
-    externalReferences = NULL,
-    definedNames = NULL,
-    calcPr = NULL,
-    oleSize = NULL,
+    fileVersion         = NULL,
+    fileSharing         = NULL,
+    workbookPr          = '<workbookPr date1904="false"/>',
+    alternateContent    = NULL,
+    revisionPtr         = NULL,
+    absPath             = NULL, # "x15ac:absPath"
+    workbookProtection  = NULL,
+    bookViews           = NULL,
+    sheets              = NULL,
+    functionGroups      = NULL,
+    externalReferences  = NULL,
+    definedNames        = NULL,
+    calcPr              = NULL,
+    oleSize             = NULL,
     customWorkbookViews = NULL,
-    pivotCaches = NULL,
-    smartTagPr = NULL,
-    smartTagTypes = NULL,
-    webPublishing = NULL,
-    fileRecoveryPr = NULL,
-    webPublishObjects = NULL,
-    extLst = NULL
+    pivotCaches         = NULL,
+    smartTagPr          = NULL,
+    smartTagTypes       = NULL,
+    webPublishing       = NULL,
+    fileRecoveryPr      = NULL,
+    webPublishObjects   = NULL,
+    extLst              = NULL
   )
 }
 

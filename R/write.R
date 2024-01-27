@@ -840,7 +840,7 @@ write_data_table <- function(
   if (!data_table) {
 
     ## write autoFilter, can only have a single filter per worksheet
-    if (withFilter) {
+    if (withFilter) { # TODO: replace ref calculation with wb_dims()
       coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
       ref <- stri_join(get_cell_refs(coords), collapse = ":")
 
@@ -851,11 +851,17 @@ write_data_table <- function(
 
       dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
 
-      if (length(wb$workbook$definedNames) > 0) {
-        ind <- grepl('name="_xlnm._FilterDatabase"', wb$workbook$definedNames)
-        if (length(ind) > 0) {
+      if (!is.null(wbdn <- wb$get_named_regions())) {
+
+        ind <- wbdn$name == "_xlnm._FilterDatabase" & wbdn$localSheetId == sheet - 1L
+        if (any(ind)) {
           wb$workbook$definedNames[ind] <- dn
+        } else {
+          wb$workbook$definedNames <- c(
+            wb$workbook$definedNames, dn
+          )
         }
+
       } else {
         wb$workbook$definedNames <- dn
       }

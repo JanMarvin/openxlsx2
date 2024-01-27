@@ -26,18 +26,6 @@ paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
 `%||%` <- function(x, y) if (is.null(x)) y else x
 `%|||%` <- function(x, y) if (length(x)) x else y
 
-na_to_null <- function(x) {
-  if (is.null(x)) {
-    return(NULL)
-  }
-
-  if (isTRUE(is.na(x))) {
-    return(NULL)
-  }
-
-  x
-}
-
 # opposite of %in%
 `%out%` <- function(x, table) {
   match(x, table, nomatch = 0L) == 0L
@@ -93,11 +81,6 @@ apply_reg_match0 <- function(x, pat) unapply(x, reg_match0, pat = pat)
 wapply <- function(x, FUN, ...) {
   FUN <- match.fun(FUN)
   which(vapply(x, FUN, FUN.VALUE = NA, ...))
-}
-
-has_chr <- function(x, na = FALSE) {
-  # na controls if NA is returned as TRUE or FALSE
-  vapply(nzchar(x, keepNA = !na), isTRUE, NA)
 }
 
 dir_create <- function(..., warn = TRUE, recurse = FALSE) {
