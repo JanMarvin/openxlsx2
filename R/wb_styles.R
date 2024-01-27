@@ -804,27 +804,32 @@ create_dxfs_style <- function(
 
 }
 
-#' create tableStyle
+#' create custom (pivot) table styles
 #'
-#' Create a custom table style.
-#' This function is for expert use only. Use other styling functions instead.
+#' Create a custom (pivot) table style.
+#' These functions are for expert use only. Use other styling functions instead.
 #'
 #' @param name name
 #' @param whole_table wholeTable
-#' @param header_row headerRow
-#' @param total_row totalRow
-#' @param first_column firstColumn
-#' @param last_column lastColumn
-#' @param first_row_stripe firstRowStripe
-#' @param second_row_stripe secondRowStripe
-#' @param first_column_stripe firstColumnStripe
-#' @param second_column_stripe secondColumnStripe
-#' @param first_header_cell firstHeaderCell
-#' @param last_header_cell lastHeaderCell
-#' @param first_total_cell firstTotalCell
-#' @param last_total_cell lastTotalCell
+#' @param header_row,total_row ...Row
+#' @param first_column,last_column ...Column
+#' @param first_row_stripe,second_row_stripe ...RowStripe
+#' @param first_column_stripe,second_column_stripe ...ColumnStripe
+#' @param first_header_cell,last_header_cell ...HeaderCell
+#' @param first_total_cell,last_total_cell ...TotalCell
+#' @param grand_total_row totalRow
+#' @param grand_total_column lastColumn
+#' @param first_subtotal_column,second_subtotal_column,third_subtotal_column ...SubtotalColumn
+#' @param first_subtotal_row,second_subtotal_row,third_subtotal_row ...SubtotalRow
+#' @param first_column_subheading,second_column_subheading,third_column_subheading ...ColumnSubheading
+#' @param first_row_subheading,second_row_subheading,third_row_subheading ...RowSubheading
+#' @param blank_row blankRow
+#' @param page_field_labels pageFieldLabels
+#' @param page_field_values pageFieldValues
 #' @param ... additional arguments
+#' @name tablestyle
 #' @export
+# TODO: combine both functions and simply set pivot=0 or table=0
 create_tablestyle <- function(
     name,
     whole_table          = NULL,
@@ -950,6 +955,234 @@ create_tablestyle <- function(
       count     = as_xml_attr(length(xml_elements)),
        # possible st_guid()
       `xr9:uid` = sprintf("{CE23B8CA-E823-724F-9713-%s}", rand_str)
+    ),
+    xml_children = xml_elements
+  )
+}
+
+#' @rdname tablestyle
+#' @export
+create_pivottablestyle <- function(
+    name,
+    whole_table              = NULL,
+    header_row               = NULL,
+    grand_total_row          = NULL,
+    first_column             = NULL,
+    grand_total_column       = NULL,
+    first_row_stripe         = NULL,
+    second_row_stripe        = NULL,
+    first_column_stripe      = NULL,
+    second_column_stripe     = NULL,
+    first_header_cell        = NULL,
+    first_subtotal_column    = NULL,
+    second_subtotal_column   = NULL,
+    third_subtotal_column    = NULL,
+    first_subtotal_row       = NULL,
+    second_subtotal_row      = NULL,
+    third_subtotal_row       = NULL,
+    blank_row                = NULL,
+    first_column_subheading  = NULL,
+    second_column_subheading = NULL,
+    third_column_subheading  = NULL,
+    first_row_subheading     = NULL,
+    second_row_subheading    = NULL,
+    third_row_subheading     = NULL,
+    page_field_labels        = NULL,
+    page_field_values        = NULL,
+    ...
+) {
+
+  standardize_case_names(...)
+
+  tab_wholeTable <- NULL
+  if (length(whole_table)) {
+    tab_wholeTable <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "wholeTable", dxfId = whole_table))
+  }
+  tab_pageFieldLabels <- NULL
+  if (length(page_field_labels)) {
+    tab_pageFieldLabels <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "pageFieldLabels", dxfId = page_field_labels))
+  }
+  tab_pageFieldValues <- NULL
+  if (length(page_field_values)) {
+    tab_pageFieldValues <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "pageFieldValues", dxfId = page_field_values))
+  }
+  tab_firstColumnStripe <- NULL
+  if (length(first_column_stripe)) {
+    tab_firstColumnStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstColumnStripe", dxfId = first_column_stripe))
+  }
+  tab_secondColumnStripe <- NULL
+  if (length(second_column_stripe)) {
+    tab_secondColumnStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondColumnStripe", dxfId = second_column_stripe))
+  }
+  tab_firstRowStripe <- NULL
+  if (length(first_row_stripe)) {
+    tab_firstRowStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstRowStripe", dxfId = first_row_stripe))
+  }
+  tab_secondRowStripe <- NULL
+  if (length(second_row_stripe)) {
+    tab_secondRowStripe <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondRowStripe", dxfId = second_row_stripe))
+  }
+  tab_firstColumn <- NULL
+  if (length(first_column)) {
+    tab_firstColumn <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstColumn", dxfId = first_column))
+  }
+  tab_headerRow <- NULL
+  if (length(header_row)) {
+    tab_headerRow <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "headerRow", dxfId = header_row))
+  }
+  tab_firstHeaderCell <- NULL
+  if (length(first_header_cell)) {
+    tab_firstHeaderCell <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstHeaderCell", dxfId = first_header_cell))
+  }
+  tab_subtotalColumn1 <- NULL
+  if (length(first_subtotal_column)) {
+    tab_subtotalColumn1 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstSubtotalColumn", dxfId = first_subtotal_column))
+  }
+  tab_subtotalColumn2 <- NULL
+  if (length(second_subtotal_column)) {
+    tab_subtotalColumn2 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondSubtotalColumn", dxfId = second_subtotal_column))
+  }
+  tab_subtotalColumn3 <- NULL
+  if (length(third_subtotal_column)) {
+    tab_subtotalColumn3 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "thirdSubtotalColumn", dxfId = third_subtotal_column))
+  }
+  tab_blankRow <- NULL
+  if (length(blank_row)) {
+    tab_blankRow <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "blankRow", dxfId = blank_row))
+  }
+  tab_subtotalRow1 <- NULL
+  if (length(first_subtotal_row)) {
+    tab_subtotalRow1 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstSubtotalRow", dxfId = first_subtotal_row))
+  }
+  tab_subtotalRow2 <- NULL
+  if (length(second_subtotal_row)) {
+    tab_subtotalRow2 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondSubtotalRow", dxfId = second_subtotal_row))
+  }
+  tab_subtotalRow3 <- NULL
+  if (length(third_subtotal_row)) {
+    tab_subtotalRow3 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "thirdSubtotalRow", dxfId = third_subtotal_row))
+  }
+  tab_columnSubheading1 <- NULL
+  if (length(first_column_subheading)) {
+    tab_columnSubheading1 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstColumnSubheading", dxfId = first_column_subheading))
+  }
+  tab_columnSubheading2 <- NULL
+  if (length(second_column_subheading)) {
+    tab_columnSubheading2 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondColumnSubheading", dxfId = second_column_subheading))
+  }
+  tab_columnSubheading3 <- NULL
+  if (length(third_column_subheading)) {
+    tab_columnSubheading3 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "thirdColumnSubheading", dxfId = third_column_subheading))
+  }
+  tab_rowSubheading1 <- NULL
+  if (length(first_row_subheading)) {
+    tab_rowSubheading1 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "firstRowSubheading", dxfId = first_row_subheading))
+  }
+  tab_rowSubheading2 <- NULL
+  if (length(second_row_subheading)) {
+    tab_rowSubheading2 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "secondRowSubheading", dxfId = second_row_subheading))
+  }
+  tab_rowSubheading3 <- NULL
+  if (length(third_row_subheading)) {
+    tab_rowSubheading3 <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "thirdRowSubheading", dxfId = third_row_subheading))
+  }
+  tab_grandTotalColumn <- NULL
+  if (length(grand_total_column)) {
+    tab_grandTotalColumn <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "lastColumn", dxfId = grand_total_column))
+  }
+  tab_grandTotalRow <- NULL
+  if (length(grand_total_row)) {
+    tab_grandTotalRow <- xml_node_create(
+      "tableStyleElement",
+      xml_attributes = c(type = "totalRow", dxfId = grand_total_row))
+  }
+
+  xml_elements <- c(
+    tab_wholeTable,
+    tab_headerRow,
+    tab_firstColumn,
+    tab_grandTotalColumn,
+    tab_firstRowStripe,
+    tab_secondRowStripe,
+    tab_firstColumnStripe,
+    tab_secondColumnStripe,
+    tab_firstHeaderCell,
+    tab_subtotalColumn1,
+    tab_subtotalColumn2,
+    tab_subtotalColumn3,
+    tab_subtotalRow1,
+    tab_subtotalRow2,
+    tab_subtotalRow3,
+    tab_blankRow,
+    tab_columnSubheading1,
+    tab_columnSubheading2,
+    tab_columnSubheading3,
+    tab_rowSubheading1,
+    tab_rowSubheading2,
+    tab_rowSubheading3,
+    tab_grandTotalRow,
+    tab_pageFieldLabels,
+    tab_pageFieldValues
+  )
+
+  rand_str <- random_string(length = 12, pattern = "[A-Z0-9]")
+
+  xml_node_create(
+    "tableStyle",
+    xml_attributes = c(
+      name      = name,
+      table     = "0", # table uses different styles
+      count     = as_xml_attr(length(xml_elements)),
+       # possible st_guid()
+      `xr9:uid` = sprintf("{ADA2BA8A-2FEC-2C46-A01D-%s}", rand_str)
     ),
     xml_children = xml_elements
   )
