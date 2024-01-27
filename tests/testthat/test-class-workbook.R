@@ -941,3 +941,20 @@ test_that("wbWorkbook print works", {
   expect_equal(exp, got)
 
 })
+
+test_that("genBaseWorkbook() works", {
+
+  # kinda superfluous. if it wouldn't work openxlsx2 would be broken
+
+  exp <- c(
+    "fileVersion", "fileSharing", "workbookPr", "alternateContent",
+    "revisionPtr", "absPath", "workbookProtection", "bookViews",
+    "sheets", "functionGroups", "externalReferences", "definedNames",
+    "calcPr", "oleSize", "customWorkbookViews", "pivotCaches", "smartTagPr",
+    "smartTagTypes", "webPublishing", "fileRecoveryPr", "webPublishObjects",
+    "extLst"
+  )
+  got <- names(genBaseWorkbook())
+  expect_equal(exp, got)
+
+})
