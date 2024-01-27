@@ -20,6 +20,7 @@ test_that("col2int", {
   expect_equal(c(1, 3, 4), col2int(c("A", "C:D")))
   expect_equal(c(1, 3, 4, 11), col2int(c("A", "C:D", "K")))
   expect_equal(c(1, 3, 4, 11, 27, 28, 29, 30), col2int(c("A", "C:D", "K", "AA:AD")))
+  expect_error(col2int(c("a", NA_character_, "c")), "x contains NA")
 
 })
 
@@ -46,4 +47,22 @@ test_that("get_cell_refs() works for multiple cells.", {
   expect_equal(get_cell_refs(data.frame(1:3, 2:4)), c("B1", "C2", "D3"))
 
   expect_error(get_cell_refs(c(1:2, c("a", "b"))))
+})
+
+test_that("", {
+
+  op <- options(
+    "openxlsx2.maxWidth" = 10,
+    "openxlsx2.minWidth" = 8
+  )
+  on.exit(options(op), add = TRUE)
+
+  exp <- 10
+  got <- calc_col_width(wb_workbook()$get_base_font(), 11)
+  expect_equal(exp, got)
+
+  exp <- 8
+  got <- calc_col_width(wb_workbook()$get_base_font(), 7)
+  expect_equal(exp, got)
+
 })
