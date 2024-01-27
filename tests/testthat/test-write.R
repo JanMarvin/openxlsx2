@@ -748,12 +748,12 @@ test_that("dimension limits work", {
 
 test_that("numfmt option works", {
 
-  op <- options("openxlsx2.numFmt" = "€ #.0")
+  op <- options("openxlsx2.numFmt" = "$ #.0")
   on.exit(options(op), add = TRUE)
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = 1:10)
 
-  exp <- "<numFmt numFmtId=\"165\" formatCode=\"€ #.0\"/>"
+  exp <- "<numFmt numFmtId=\"165\" formatCode=\"$ #.0\"/>"
   got <- wb$styles_mgr$styles$numFmts
   expect_equal(exp, got)
 
