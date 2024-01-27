@@ -745,3 +745,52 @@ test_that("dimension limits work", {
   )
 
 })
+
+test_that("numfmt option works", {
+
+  op <- options("openxlsx2.numFmt" = "€ #.0")
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = 1:10)
+
+  exp <- "<numFmt numFmtId=\"165\" formatCode=\"€ #.0\"/>"
+  got <- wb$styles_mgr$styles$numFmts
+  expect_equal(exp, got)
+
+})
+
+test_that("comma option works", {
+
+  op <- options("openxlsx2.commaFormat" = "#.0")
+  on.exit(options(op), add = TRUE)
+
+  dat <- data.frame(x = 1:10 + rnorm(1:10))
+  class(dat$x) <- c("comma", class(dat$x))
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
+
+  exp <- "<numFmt numFmtId=\"165\" formatCode=\"#.0\"/>"
+  got <- wb$styles_mgr$styles$numFmts
+  expect_equal(exp, got)
+
+})
+
+test_that("filter works with wb_add_data()", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$add_data(x = mtcars, with_filter = TRUE)$
+    add_worksheet()$add_data(x = mtcars, with_filter = TRUE)$
+    add_data(x = cars, with_filter = TRUE)
+
+  exp <- "<autoFilter ref=\"A1:K33\"/>"
+  got <- wb$worksheets[[1]]$autoFilter
+  expect_equal(exp, got)
+
+  exp <- c(
+    "<definedName name=\"_xlnm._FilterDatabase\" localSheetId=\"0\" hidden=\"1\">'Sheet 1'!$A$1:$K$33</definedName>",
+    "<definedName name=\"_xlnm._FilterDatabase\" localSheetId=\"1\" hidden=\"1\">'Sheet 2'!$A$1:$B$51</definedName>"
+  )
+  got <- wb$workbook$definedNames
+  expect_equal(exp, got)
+
+})
