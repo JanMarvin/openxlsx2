@@ -283,9 +283,13 @@ write_comment <- function(
 
   rID <- NULL
   if (!is.null(file)) {
+    vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
     wb$.__enclos_env__$private$add_media(file = file)
     file <- names(wb$media)[length(wb$media)]
-    rID <- paste0("rId", length(wb$vml_rels) + 1L)
+    if (length(vml_id)) # continue rId indexing
+      rID <- paste0("rId", length(wb$vml_rels[[vml_id]]) + 1L)
+    else # add a new rId
+      rID <- paste0("rId", 1L)
 
     vml_relship <- sprintf(
       '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
