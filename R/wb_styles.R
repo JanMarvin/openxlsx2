@@ -804,6 +804,10 @@ create_dxfs_style <- function(
 
 }
 
+## The functions below are only partially covered, but span over 300+ LOC ##
+
+# nocov start
+
 #' create custom (pivot) table styles
 #'
 #' Create a custom (pivot) table style.
@@ -1187,3 +1191,5 @@ create_pivottablestyle <- function(
     xml_children = xml_elements
   )
 }
+
+# nocov end

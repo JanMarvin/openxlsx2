@@ -260,3 +260,15 @@ test_that("is_double works", {
   expect_equal(exp, got)
 
 })
+
+test_that("create_hyperlinks() works", {
+  exp <- "=HYPERLINK(\"#'Sheet3'!B1\")"
+  got <- create_hyperlink(sheet = "Sheet3", row = 1, col = 2)
+  expect_equal(exp, got)
+
+  fl <- "testdir/testfile.R"
+  exp <- "=HYPERLINK(\"[testdir/testfile.R]Sheet2!J3\", \"Link to File.\")"
+  got <- create_hyperlink(sheet = "Sheet2", row = 3, col = 10, file = fl, text = "Link to File.")
+  expect_equal(exp, got)
+
+})
