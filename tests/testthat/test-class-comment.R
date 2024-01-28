@@ -338,6 +338,36 @@ test_that("background images work", {
 
 })
 
+test_that("More than two background images work", {
+
+  tmp <- tempfile(fileext = ".png")
+  png(file = tmp, bg = "transparent")
+  plot(1:10)
+  dev.off()
+
+  c1 <- wb_comment(text = "Comm1", author = "", visible = TRUE)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_comment(dims = "A2", comment = c1, file = tmp)$
+    add_comment(dims = "A3", comment = c1, file = tmp)$
+    add_comment(dims = "A4", comment = c1, file = tmp)$
+    add_worksheet()$
+    add_comment(dims = "A2", comment = c1, file = tmp)
+
+  exp <- list(
+    c(
+      "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image1.png\"/>",
+      "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image2.png\"/>",
+      "<Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image3.png\"/>"
+    ),
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image4.png\"/>"
+  )
+  got <- wb$vml_rels
+  expect_equal(exp, got)
+
+})
+
 test_that("background colors work", {
 
   wb <- wb_workbook()$add_worksheet()
