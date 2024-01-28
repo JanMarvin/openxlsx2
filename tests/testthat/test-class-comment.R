@@ -313,7 +313,8 @@ test_that("background images work", {
   c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
   wb$add_comment(dims = "B12", comment = c1, file = tmp)
 
-  wb$add_worksheet()
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  wb$add_worksheet()$add_image(dims = "C5", file = img, width = 6, height = 5)
   wb$add_comment(dims = "B12", comment = c1)
 
   wb$add_worksheet()
@@ -334,5 +335,18 @@ test_that("background images work", {
   expect_equal(2, length(wb$vml_rels[[1]]))
   expect_true(is.null(wb$vml_rels[[2]]))
   expect_equal(1, length(wb$vml_rels[[3]]))
+
+})
+
+test_that("background colors work", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  txt <- fmt_txt("This Part Bold red\n\n", bold = TRUE, size = 12, color = wb_color("red")) +
+    fmt_txt("This part black", size = 9, color = wb_color("black"))
+
+  wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = wb_comment(text = txt), color = wb_color("green"))
+
+  expect_true(grepl("fillcolor=\"#00FF00\"", wb$vml[[1]]))
 
 })
