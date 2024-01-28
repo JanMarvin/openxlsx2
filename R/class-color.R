@@ -31,9 +31,6 @@ wb_color <- function(
 
   z <- z[z != ""]
 
-  if (is.null(z))
-    z <- c(name = "black")
-
   # wbColour for historical reasons
   class(z) <- c("character", "wbColour")
   z
