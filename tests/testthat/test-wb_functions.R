@@ -26,7 +26,7 @@ test_that("wb_to_df", {
   expect_equal(got, exp, ignore_attr = TRUE)
 
   # do not convert first row to colNames
-  got <- wb_to_df(wb1, colNames = FALSE)
+  got <- wb_to_df(wb1, col_names = FALSE)
   expect_equal(int2col(seq_along(got)), names(got))
 
   # do not try to identify dates in the data
@@ -40,8 +40,8 @@ test_that("wb_to_df", {
   got <- wb_to_df(wb1, showFormula = TRUE)
   expect_equal(got$Var7[1], "1/0")
 
-  # read dimension withot colNames
-  got <- wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
+  # read dimension without colNames
+  got <- wb_to_df(wb1, dims = "A2:C5", col_names = FALSE)
   test <- data.frame(A = c(TRUE, TRUE, TRUE, FALSE),
                      B = c(1, NA, 2, 2),
                      C = rep(NA_real_, 4))
@@ -75,7 +75,7 @@ test_that("wb_to_df", {
   expect_equal(exp[c(1, 2, 4, 5, 6, 7, 8)], got, ignore_attr = TRUE)
 
   # # convert first row to rownames
-  # wb_to_df(wb1, sheet = 3, dims = "C6:G9", rowNames = TRUE)
+  # wb_to_df(wb1, sheet = 3, dims = "C6:G9", row_names = TRUE)
 
   # define type of the data.frame
   got <- wb_to_df(wb1, cols = c(1, 4), types = c("Var1" = 0, "Var3" = 1))
@@ -122,12 +122,12 @@ test_that("wb_to_df", {
   expect_silent(wb3 <- wb_load(xlsxFile))
 
   # read dataset with named_region (returns global first)
-  got <- wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
+  got <- wb_to_df(wb3, named_region = "MyRange", col_names = FALSE)
   exp <- data.frame(A = "S2A1", B = "S2B1")
   expect_equal(got, exp, ignore_attr = TRUE)
 
   # read named_region from sheet
-  got <- wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
+  got <- wb_to_df(wb3, named_region = "MyRange", sheet = 4, col_names = FALSE)
   exp <- data.frame(A = "S3A1", B = "S3B1")
   expect_equal(got, exp, ignore_attr = TRUE)
 
@@ -218,10 +218,10 @@ test_that("handle 29Feb1900", {
     add_worksheet()$add_data(x = as_date)$
     add_worksheet()$add_data(x = as_posix)
 
-  got <- wb_to_df(wb, sheet = 1, colNames = FALSE)$A
+  got <- wb_to_df(wb, sheet = 1, col_names = FALSE)$A
   expect_equal(as_date, got)
 
-  got <- wb_to_df(wb, sheet = 2, colNames = FALSE)$A
+  got <- wb_to_df(wb, sheet = 2, col_names = FALSE)$A
   expect_equal(as_posix, got)
 
 })
@@ -229,12 +229,12 @@ test_that("handle 29Feb1900", {
 
 test_that("fillMergedCells works with dims", {
 
-  # create data frame with emtpy second row
+  # create data frame with empty second row
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = t(letters[1:4]), colNames = FALSE)$
+    add_data(x = t(letters[1:4]), col_names = FALSE)$
     add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)),
-             startRow = 3, startCol = 1, colNames = FALSE)
+             start_row = 3, start_col = 1, col_names = FALSE)
 
   # merge rows 1 and 2 in each column
   wb$merge_cells(1, rows = 1:2, cols = 1)
@@ -243,11 +243,10 @@ test_that("fillMergedCells works with dims", {
   wb$merge_cells(1, rows = 1:2, cols = 4)
 
   # read from second column and fill merged cells
-  got <- wb_to_df(wb, dims = "A2:D4", fillMergedCells = TRUE)
+  got <- wb_to_df(wb, dims = "A2:D4", fill_merged_cells = TRUE)
 
   exp <- c("a", "b", "c", "d")
-  got <- names(got)
-  expect_equal(exp, got)
+  expect_equal(names(got), exp)
 
 })
 
@@ -255,9 +254,9 @@ test_that("improve date detection", {
 
   df <- wb_workbook() %>%
     wb_add_worksheet("Rawdata") %>%
-    wb_add_data(x = Sys.Date(), colNames = FALSE) %>%
+    wb_add_data(x = Sys.Date(), col_names = FALSE) %>%
     wb_add_numfmt(numfmt = "[$-1070000]d/mm/yyyy;@") %>%
-    wb_to_df(colNames = FALSE)
+    wb_to_df(col_names = FALSE)
 
   exp <- Sys.Date()
   got <- df$A
@@ -274,15 +273,14 @@ test_that("skip hidden columns and rows works", {
     set_row_heights(rows = c(3, 5, 8:30), hidden = TRUE)$
     add_data(dims = "M1", x = iris)
 
-  dat <- wb_to_df(wb, dims = "A1:K33", skipHiddenRows = TRUE, skipHiddenCols = TRUE)
+  dat <- wb_to_df(wb, dims = "A1:K33", skip_hidden_rows = TRUE, skip_hidden_cols = TRUE)
 
   exp <- c("2", "4", "6", "7", "31", "32", "33")
   got <- rownames(dat)
-  expect_equal(exp, got)
+  expect_equal(rownames(dat), exp)
 
   exp <- c("cyl", "disp", "drat", "vs", "gear", "carb")
-  got <- names(dat)
-  expect_equal(exp, got)
+  expect_equal(names(dat), exp)
 
 })
 

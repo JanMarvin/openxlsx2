@@ -18,7 +18,7 @@ test_that("write_formula", {
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
   wb$add_data("df", df, startCol = "C")
-  write_formula(wb, "df", startCol = "E", startRow = 2,
+  write_formula(wb, "df", start_col = "E", start_row = 2,
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
 
@@ -31,10 +31,10 @@ test_that("write_formula", {
   # write formula first add data later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
-  write_formula(wb, "df", startCol = "E", startRow = 2,
+  write_formula(wb, "df", start_col = "E", start_row = 2,
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
-  wb$add_data("df", df, startCol = "C")
+  wb$add_data("df", df, start_col = "C")
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
@@ -50,19 +50,19 @@ test_that("silent with numfmt option", {
 
   wb$add_data_table("S1", x = iris)
   wb$add_data_table("S2",
-                    x = mtcars, dims = "B3", rowNames = TRUE,
-                    tableStyle = "TableStyleLight9")
+                    x = mtcars, dims = "B3", row_names = TRUE,
+                    table_style = "TableStyleLight9")
 
   # [1:4] to ignore factor
   expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
   expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
 
   # handle rownames
-  got <- wb_to_df(wb, "S2", rowNames = TRUE)
+  got <- wb_to_df(wb, "S2", row_names = TRUE)
   attr(got, "tt") <- NULL
   attr(got, "types") <- NULL
-  expect_equal(mtcars, got)
-  expect_equal(rownames(mtcars), rownames(got))
+  expect_equal(got, mtcars)
+  expect_equal(rownames(got), rownames(mtcars))
 
 })
 
@@ -111,15 +111,14 @@ test_that("update_cells", {
 
   wb <- wb_workbook()$
     add_worksheet("df")$
-    add_data(x = df, startCol = "C")
-  # TODO add_formula()
-  write_formula(wb, "df", startCol = "E", startRow = 2,
+    add_data(x = df, start_col = "C")
+  wb$add_formula("df", start_col = "E", start_row = 2,
                 x = "SUM(C2:C11*D2:D11)",
                 array = TRUE)
-  write_formula(wb, "df", x = "C3 + D3", startCol = "E", startRow = 3)
+  wb$add_formula("df", x = "C3 + D3", start_col = "E", start_row = 3)
   x <- c(google = "https://www.google.com")
   class(x) <- "hyperlink"
-  wb$add_data(sheet = "df", x = x, startCol = "E", startRow = 4)
+  wb$add_data(sheet = "df", x = x, start_col = "E", start_row = 4)
 
 
   exp <- structure(
@@ -147,13 +146,13 @@ test_that("write dims", {
 
   # create a workbook
   wb <- wb_workbook()$
-    add_worksheet()$add_data(dims = "B2:C3", x = matrix(1:4, 2, 2), colNames = FALSE)$
+    add_worksheet()$add_data(dims = "B2:C3", x = matrix(1:4, 2, 2), col_names = FALSE)$
     add_worksheet()$add_data_table(dims = "B:C", x = as.data.frame(matrix(1:4, 2, 2)))$
     add_worksheet()$add_formula(dims = "B3", x = "42")
 
-  s1 <- wb_to_df(wb, 1, colNames = FALSE)
-  s2 <- wb_to_df(wb, 2, colNames = FALSE)
-  s3 <- wb_to_df(wb, 3, colNames = FALSE)
+  s1 <- wb_to_df(wb, 1, col_names = FALSE)
+  s2 <- wb_to_df(wb, 2, col_names = FALSE)
+  s3 <- wb_to_df(wb, 3, col_names = FALSE)
 
   expect_equal(rownames(s1), c("2", "3"))
   expect_equal(rownames(s2), c("1", "2", "3"))
@@ -650,7 +649,7 @@ test_that("writing labeled variables works", {
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = x)
   exp <- c(1, 2)
-  got <- wb_to_df(wb, colNames = FALSE)$A
+  got <- wb_to_df(wb, col_names = FALSE)$A
   expect_equal(exp, got)
 
 })
@@ -685,7 +684,7 @@ test_that("writing in specific encoding works", {
   # got <- wb2$worksheets[[1]]$sheet_data$cc$is[1]
   # expect_equal(exp, got)
 
-  # got <- stringi::stri_encode(wb_to_df(wb, colNames = FALSE)$A, from = "UTF-8", to = "CP1251")
+  # got <- stringi::stri_encode(wb_to_df(wb, col_names = FALSE)$A, from = "UTF-8", to = "CP1251")
   # expect_equal(enc_str, got)
 
   tmp <- tempfile()
