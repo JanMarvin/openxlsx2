@@ -9,28 +9,28 @@ test_that("Reading from new workbook", {
 
 
   ## colNames = TRUE, rowNames = TRUE
-  wb$add_data(sheet = 1, x = mtcars, colNames = TRUE, rowNames = TRUE, startRow = 10, startCol = 5)
-  x <- read_xlsx(wb, 1, colNames = TRUE, rowNames = TRUE)
+  wb$add_data(sheet = 1, x = mtcars, col_names = TRUE, row_names = TRUE, start_row = 10, start_col = 5)
+  x <- read_xlsx(wb, 1, col_names = TRUE, row_names = TRUE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
 
 
   ## colNames = TRUE, rowNames = FALSE
-  wb$add_data(sheet = 2, x = mtcars, colNames = TRUE, rowNames = FALSE, startRow = 10, startCol = 5)
-  x <- read_xlsx(wb, sheet = 2, colNames = TRUE, rowNames = FALSE)
+  wb$add_data(sheet = 2, x = mtcars, col_names = TRUE, row_names = FALSE, start_row = 10, start_col = 5)
+  x <- read_xlsx(wb, sheet = 2, col_names = TRUE, row_names = FALSE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
   expect_equal(object = colnames(mtcars), expected = colnames(x), ignore_attr = TRUE)
 
   ## colNames = FALSE, rowNames = TRUE
-  wb$add_data(sheet = 3, x = mtcars, colNames = FALSE, rowNames = TRUE, startRow = 2, startCol = 2)
-  x <- read_xlsx(wb, sheet = 3, colNames = FALSE, rowNames = TRUE)
+  wb$add_data(sheet = 3, x = mtcars, col_names = FALSE, row_names = TRUE, start_row = 2, start_col = 2)
+  x <- read_xlsx(wb, sheet = 3, col_names = FALSE, row_names = TRUE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
-  expect_equal(object = rownames(mtcars), expected = rownames(x))
+  expect_equal(object = rownames(x), expected = rownames(mtcars))
 
 
   ## colNames = FALSE, rowNames = FALSE
-  wb$add_data(sheet = 4, x = mtcars, colNames = FALSE, rowNames = FALSE, startRow = 12, startCol = 1)
-  x <- read_xlsx(wb, sheet = 4, colNames = FALSE, rowNames = FALSE)
-  expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
+  wb$add_data(sheet = 4, x = mtcars, col_names = FALSE, row_names = FALSE, start_row = 12, start_col = 1)
+  x <- read_xlsx(wb, sheet = 4, col_names = FALSE, row_names = FALSE)
+  expect_equal(object = x, expected = mtcars, ignore_attr = TRUE)
 
   expect_equal(object = getwd(), curr_wd)
   rm(wb)

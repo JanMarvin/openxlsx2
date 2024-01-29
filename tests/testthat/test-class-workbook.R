@@ -825,10 +825,10 @@ test_that("numfmt in pivot tables works", {
                     filter = c("Location", "Status"), data = "Units")$
     add_pivot_table(df, dims = "A3", rows = "Plant",
                     filter = c("Location", "Status"), data = "Units",
-                    param = list(numfmt = c(formatCode = "#,###0"), sort_row = "ascending"))$
+                    params = list(numfmt = c(formatCode = "#,###0"), sort_row = "ascending"))$
     add_pivot_table(df, dims = "A3", rows = "Plant",
                     filter = c("Location", "Status"), data = "Units",
-                    param = list(numfmt = c(numfmt = 10), sort_row = "descending"))
+                    params = list(numfmt = c(numfmt = 10), sort_row = "descending"))
 
   exp <- c(
     "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\"/>",
@@ -844,15 +844,15 @@ test_that("numfmt in pivot tables works", {
   ## Create the workbook and the pivot table
   wb <- wb_workbook()$
     add_worksheet("Data")$
-    add_data(x = df, startCol = 1, startRow = 2)
+    add_data(x = df, start_col = 1, start_row = 2)
 
   df <- wb_data(wb)
   wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
-                     data = c("vs", "am"), param = list(sort_row = 1, sort_col = -2))
+                     data = c("vs", "am"), params = list(sort_row = 1, sort_col = -2))
 
   wb$add_pivot_table(df, dims = "A3", rows = "gear",
                      filter = c("cyl"), data = c("vs", "am"),
-                     param = list(sort_row = "descending"))
+                     params = list(sort_row = "descending"))
 
 
   exp <- c(
@@ -864,14 +864,14 @@ test_that("numfmt in pivot tables works", {
 
   expect_warning(
     wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
-                       data = c("vs", "am"), param = list(sort_row = 1, sort_col = -7)),
+                       data = c("vs", "am"), params = list(sort_row = 1, sort_col = -7)),
     "invalid sort position found"
   )
 
   expect_error(
     wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
                        data = c("vs", "am"),
-                       param = list(numfmt = c(numfmt = 10))),
+                       params = list(numfmt = c(numfmt = 10))),
     "length of numfmt and data does not match"
   )
 
@@ -883,7 +883,7 @@ test_that("numfmt in pivot tables works", {
   ## Create the workbook and the pivot table
   wb <- wb_workbook()$
     add_worksheet("Data")$
-    add_data(x = df, startCol = 1, startRow = 2)
+    add_data(x = df, start_col = 1, start_row = 2)
 
   df <- wb_data(wb)
   wb$add_pivot_table(
@@ -892,8 +892,8 @@ test_that("numfmt in pivot tables works", {
     rows = c("cyl", "am"),
     cols = c("gear", "carb"),
     data = c("disp", "mpg"),
-    param = list(sort_row = 1,
-                 sort_col = -2)
+    params = list(sort_row = 1,
+                  sort_col = -2)
   )
 
   exp <- c("", "ascending", "", "", "", "", "", "", "", "descending", "")
