@@ -695,8 +695,8 @@ test_that("containsBlanks works", {
 
   wb <- wb_workbook()
   wb$add_worksheet()
-  wb$add_data(x = c(NA, 1, 2, ''), colNames = FALSE, na.strings = NULL)
-  wb$add_data(x = c(NA, 1, 2, ''), colNames = FALSE, na.strings = NULL, startCol = 2)
+  wb$add_data(x = c(NA, 1, 2, ""), col_names = FALSE, na.strings = NULL)
+  wb$add_data(x = c(NA, 1, 2, ""), col_names = FALSE, na.strings = NULL, start_col = 2)
   wb$add_conditional_formatting(cols = 1, rows = 1:4, type = "containsBlanks")
   wb$add_conditional_formatting(cols = 2, rows = 1:4, type = "notContainsBlanks")
 
@@ -715,7 +715,7 @@ test_that("warning on cols > 2 and dims", {
     wb$add_conditional_formatting(
       rows = seq_len(nrow(mtcars)),
       cols = c(2, 4, 6),
-      type = 'between',
+      type = "between",
       rule = c(2, 4)
     ),
     "cols > 2, will create range from min to max."
@@ -724,7 +724,7 @@ test_that("warning on cols > 2 and dims", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
   wb$add_conditional_formatting(
     dims = "B2:F5",
-    type = 'between',
+    type = "between",
     rule = c(2, 4)
   )
 

@@ -71,7 +71,7 @@ test_that("grouping levels", {
 
   wb <- wb_workbook()
   wb$add_worksheet("AirPass")
-  wb$add_data("AirPass", t2, rowNames = TRUE)
+  wb$add_data("AirPass", t2, row_names = TRUE)
 
   # lines used for grouping (here: species)
   grp_rows <- list(
@@ -90,7 +90,7 @@ test_that("grouping levels", {
 
   wb <- wb_workbook()
   wb$add_worksheet("AirPass")
-  wb$add_data("AirPass", t2, rowNames = TRUE)
+  wb$add_data("AirPass", t2, row_names = TRUE)
 
   wb$createCols("AirPass", 13)
 
@@ -141,7 +141,7 @@ test_that("ungroup rows", {
 
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
-    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, colNames = FALSE)$
+    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, col_names = FALSE)$
     group_rows("Sheet 1", 1:4)$
     ungroup_rows("Sheet 1", 1:4)
 
@@ -214,7 +214,7 @@ test_that("with outlinePr", {
 
   wb <- wb_workbook()
   wb$add_worksheet("AirPass")
-  wb$add_data("AirPass", t2, rowNames = TRUE)
+  wb$add_data("AirPass", t2, row_names = TRUE)
 
   wb$worksheets[[1]]$sheetPr <-
     xml_node_create(
@@ -255,7 +255,8 @@ test_that("hierarchical grouping works", {
     Var2 = c("B", "B", "B", "C", "C", "C", ""),
     Var3 = c("BA", "BB", "", "CA", "CB", "", ""),
     Var4 = c("BA", "BB", "", "CA", "CB", "", ""),
-    Result = c(1, 2, 3, 4, 5, 9, 12)
+    Result = c(1, 2, 3, 4, 5, 9, 12),
+    stringsAsFactors = FALSE
   )
 
   wb <- wb_workbook()$

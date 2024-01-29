@@ -233,8 +233,8 @@ test_that("update cell(s)", {
 
 test_that("write_rownames", {
   wb <- wb_workbook()$
-    add_worksheet()$add_data(x = mtcars, rowNames = TRUE)$
-    add_worksheet()$add_data_table(x = mtcars, rowNames = TRUE)
+    add_worksheet()$add_data(x = mtcars, row_names = TRUE)$
+    add_worksheet()$add_data_table(x = mtcars, row_names = TRUE)
 
   exp <- structure(
     list(A = c(NA, "Mazda RX4"), B = c("mpg", "21")),
@@ -246,7 +246,7 @@ test_that("write_rownames", {
       class = "data.frame"),
     types = c(A = 0, B = 0)
   )
-  got <- wb_to_df(wb, 1, dims = "A1:B2", colNames = FALSE, keep_attributes = TRUE)
+  got <- wb_to_df(wb, 1, dims = "A1:B2", col_names = FALSE, keep_attributes = TRUE)
   expect_equal(exp, got)
 
   exp <- structure(
@@ -259,7 +259,7 @@ test_that("write_rownames", {
       class = "data.frame"),
     types = c(A = 0, B = 0)
   )
-  got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE, keep_attributes = TRUE)
+  got <- wb_to_df(wb, 2, dims = "A1:B2", col_names = FALSE, keep_attributes = TRUE)
   expect_equal(exp, got)
 
 })
@@ -280,7 +280,7 @@ test_that("NA works as expected", {
     )
 
   exp <- c(NA_real_, NA_real_)
-  got <- wb_to_df(wb, colNames = FALSE)$A
+  got <- wb_to_df(wb, col_names = FALSE)$A
   expect_equal(exp, got)
 
 })
@@ -293,11 +293,11 @@ test_that("writeData() forces evaluation of x (#264)", {
 
   wb <- wb_workbook()
   wb$add_worksheet("sheet")
-  wb$add_data(startCol = 1, x = data.frame(a = format(123.4)))
-  wb$add_data(startCol = 2, x = data.frame(b = as.character(123.4)))
-  wb$add_data(startCol = 3, x = data.frame(c = "123.4"))
-  wb$add_data(startCol = 4, x = df)
-  wb$add_data(startCol = 5, x = df2)
+  wb$add_data(start_col = 1, x = data.frame(a = format(123.4)))
+  wb$add_data(start_col = 2, x = data.frame(b = as.character(123.4)))
+  wb$add_data(start_col = 3, x = data.frame(c = "123.4"))
+  wb$add_data(start_col = 4, x = df)
+  wb$add_data(start_col = 5, x = df2)
 
   exp <- c(
     "<is><t>a</t></is>", "<is><t>b</t></is>", "<is><t>c</t></is>",

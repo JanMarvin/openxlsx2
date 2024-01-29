@@ -284,7 +284,8 @@ test_that("cloning column and row styles works", {
   wb$worksheets[[1]]$sheet_data$row_attr[2, "customFormat"] <- "1"
   wb$worksheets[[1]]$sheet_data$row_attr[2, "s"] <- wb$styles_mgr$get_xf_id("new_styles")
 
-  cols <- openxlsx2:::wb_create_columns(wb, sheet = 1, cols = seq_along(mtcars))
+  # wb_create_columns is an internal function in openxlsx2.
+  cols <- wb_create_columns(wb, sheet = 1, cols = seq_along(mtcars))
   cols[cols$min == 11, "style"] <- "1"
   wb$worksheets[[1]]$fold_cols(cols)
 
