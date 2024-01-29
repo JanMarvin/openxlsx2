@@ -66,7 +66,7 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
     }
 
     if (is.null(text)) {
-      str <- sprintf('=HYPERLINK(%s)', dest)
+      str <- sprintf("=HYPERLINK(%s)", dest)
     } else {
       str <- sprintf('=HYPERLINK(%s, \"%s\")', dest, text)
     }
@@ -114,7 +114,7 @@ validate_color <- function(color = NULL, or_null = FALSE, envir = parent.frame()
   ## create a total size of 8 in ARGB format
   color <- stringi::stri_pad_left(str = color, width = 8, pad = "F")
 
-  if (any(!grepl("[A-F0-9]{8}$", color))) {
+  if (!all(grepl("[A-F0-9]{8}$", color))) {
     if (is.null(msg)) msg <- sprintf("`%s` ['%s'] is not a valid color", sx, color)
     stop(simpleError(msg))
   }

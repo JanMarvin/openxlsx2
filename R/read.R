@@ -331,8 +331,8 @@ wb_to_df <- function(
   cc_tab <- unique(cc$c_t)
 
   # bool
-  if (any(cc_tab == c("b"))) {
-    sel <- cc$c_t %in% c("b")
+  if (any(cc_tab == "b")) {
+    sel <- cc$c_t %in% "b"
     cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
     cc$typ[sel] <- "b"
   }

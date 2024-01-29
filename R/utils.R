@@ -252,7 +252,7 @@ check_wb_dims_args <- function(args, select = NULL) {
 
   cond_acceptable_len_1 <- !is.null(args$from_row) || !is.null(args$from_col) || !is.null(args$x)
   nams <- names(args) %||% rep("", length(args))
-  all_args_unnamed <- all(!nzchar(nams))
+  all_args_unnamed <- !any(nzchar(nams))
 
   if (length(args) == 1 && !cond_acceptable_len_1) {
     # Providing a single argument acceptable is only  `x`
@@ -798,7 +798,7 @@ read_xml_files <- function(x) {
 #' @noRd
 un_list <- function(x) {
 
-  names <- vapply(x, length, NA_integer_)
+  names <- lengths(x)
   nams <- NULL
   for (i in seq_along(names)) {
     nam <- rep(names(names[i]), names[i])

@@ -122,7 +122,7 @@ guess_col_type <- function(tt) {
 numfmt_is_date <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) == 0) return(z <- NULL)
+  if (length(numFmt) == 0) return(NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
@@ -152,7 +152,7 @@ numfmt_is_date <- function(numFmt) {
 numfmt_is_posix <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) == 0) return(z <- NULL)
+  if (length(numFmt) == 0) return(NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
@@ -184,7 +184,7 @@ numfmt_is_posix <- function(numFmt) {
 numfmt_is_hms <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) == 0) return(z <- NULL)
+  if (length(numFmt) == 0) return(NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
@@ -235,7 +235,7 @@ style_is_date <- function(cellXfs, numfmt_date) {
 style_is_posix <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
-  date_numfmts <- as.character(22)
+  date_numfmts <- "22"
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
