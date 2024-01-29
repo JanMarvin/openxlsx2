@@ -10,20 +10,21 @@ create_sparklines(
   sqref,
   type = NULL,
   negative = NULL,
-  displayEmptyCellsAs = "gap",
+  display_empty_cells_as = "gap",
   markers = NULL,
   high = NULL,
   low = NULL,
   first = NULL,
   last = NULL,
-  colorSeries = wb_color(hex = "FF376092"),
-  colorNegative = wb_color(hex = "FFD00000"),
-  colorAxis = wb_color(hex = "FFD00000"),
-  colorMarkers = wb_color(hex = "FFD00000"),
-  colorFirst = wb_color(hex = "FFD00000"),
-  colorLast = wb_color(hex = "FFD00000"),
-  colorHigh = wb_color(hex = "FFD00000"),
-  colorLow = wb_color(hex = "FFD00000")
+  color_series = wb_color(hex = "FF376092"),
+  color_negative = wb_color(hex = "FFD00000"),
+  color_axis = wb_color(hex = "FFD00000"),
+  color_markers = wb_color(hex = "FFD00000"),
+  color_first = wb_color(hex = "FFD00000"),
+  color_last = wb_color(hex = "FFD00000"),
+  color_high = wb_color(hex = "FFD00000"),
+  color_low = wb_color(hex = "FFD00000"),
+  ...
 )
 }
 \arguments{
@@ -33,11 +34,11 @@ create_sparklines(
 
 \item{sqref}{Cell range of the destination of the sparklines.}
 
-\item{type}{type}
+\item{type}{Either \code{NULL}, \code{stacked} or \code{column}}
 
 \item{negative}{negative}
 
-\item{displayEmptyCellsAs}{displayEmptyCellsAs}
+\item{display_empty_cells_as}{Either \code{gap}, \code{span} or \code{zero}}
 
 \item{markers}{markers add marker to line}
 
@@ -49,21 +50,21 @@ create_sparklines(
 
 \item{last}{highlight last value}
 
-\item{colorSeries}{colorSeries}
+\item{color_series}{colorSeries}
 
-\item{colorNegative}{colorNegative}
+\item{color_axis}{colorAxis}
 
-\item{colorAxis}{colorAxis}
+\item{color_markers}{colorMarkers}
 
-\item{colorMarkers}{colorMarkers}
+\item{color_first}{colorFirst}
 
-\item{colorFirst}{colorFirst}
+\item{color_last}{colorLast}
 
-\item{colorLast}{colorLast}
+\item{color_high}{colorHigh}
 
-\item{colorHigh}{colorHigh}
+\item{color_segative}{colorNegative}
 
-\item{colorLow}{colorLow}
+\item{color_how}{colorLow}
 }
 \value{
 A string containing XML code
