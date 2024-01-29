@@ -91,7 +91,7 @@ test_that("dims != rows & cols", {
     add_worksheet("sheet1")$
     add_data(1, data.frame("A" = 1))
 
-  got1 <- wb_to_df(wb, dims = "A2:D5", colNames = FALSE)
+  got1 <- wb_to_df(wb, dims = "A2:D5", col_names = FALSE)
   got2 <- wb_to_df(wb, rows = 2:5, cols = 1:4, col_names = FALSE)
   expect_equal(got1, got2)
 
@@ -103,7 +103,7 @@ test_that("dims != rows & cols", {
   got4 <- wb_to_df(wb, rows = 1:5, col_names = FALSE)
   expect_equal(dim(got4), c(5L, 1L))
 
-  got5 <- wb_to_df(wb, cols = 1:5, colNames = FALSE)
+  got5 <- wb_to_df(wb, cols = 1:5, col_names = FALSE)
   expect_equal(dim(got5), c(2, 5))
 
   got6 <- wb_to_df(wb, start_row = 4, cols = 1:4, col_names = FALSE)
@@ -114,13 +114,13 @@ test_that("dims != rows & cols", {
 
 test_that("read startCol", {
 
-  wb <- wb_workbook()$add_worksheet()$add_data(x = cars, startCol = "E")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = cars, start_col = "E")
 
-  got <- wb_to_df(wb, startCol = 1, colNames = FALSE)
-  expect_equal(LETTERS[1:6], names(got))
+  got <- wb_to_df(wb, start_col = 1, col_names = FALSE)
+  expect_equal(names(got), LETTERS[1:6])
 
-  got <- wb_to_df(wb, startCol = "F", colNames = FALSE)
-  expect_equal(LETTERS[6], names(got))
+  got <- wb_to_df(wb, start_col = "F", col_names = FALSE)
+  expect_equal(names(got), (LETTERS[6])
 
 })
 
@@ -145,10 +145,10 @@ test_that("skipEmtpyCols keeps empty named columns", {
   ## create the workbook
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = na_mat, colNames = FALSE)$
+    add_data(x = na_mat, col_names = FALSE)$
     add_data(x = dat)
 
-  got <- wb_to_df(wb, skipEmptyCols = TRUE)
+  got <- wb_to_df(wb, skip_empty_cols = TRUE)
   expect_equal(dat, got, ignore_attr = TRUE)
 
 })

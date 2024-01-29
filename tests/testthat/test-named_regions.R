@@ -36,7 +36,7 @@ test_that("Maintaining Named Regions on Load", {
   df2 <- read_xlsx(out_file, named_region = "iris")
   expect_equal(df1, df2)
 
-  df1 <- read_xlsx(wb, named_region = "region1", skipEmptyCols = FALSE)
+  df1 <- read_xlsx(wb, named_region = "region1", skip_empty_cols = FALSE)
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 0)
   expect_equal(ncol(df1), 1)
@@ -265,18 +265,18 @@ test_that("Missing columns in named regions", {
   ######################################################################## from Workbook
 
   ## Skip empty cols
-  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 1))
 
-  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 2))
 
 
   ## Keep empty cols
-  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 3))
 
 
@@ -285,18 +285,18 @@ test_that("Missing columns in named regions", {
   wb_save(wb, temp_file)
 
   ## Skip empty cols
-  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 1))
 
-  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 2))
 
 
   ## Keep empty cols
-  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 3))
 
   unlink(temp_file)

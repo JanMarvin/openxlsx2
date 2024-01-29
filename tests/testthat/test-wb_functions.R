@@ -68,10 +68,10 @@ test_that("wb_to_df", {
 
   # # erase empty Rows from dataset
   # not gonna test this :) just want to mention how blazing fast it is now.
-  # got <- wb_to_df(wb1, sheet = 3, skipEmptyRows = TRUE)
+  # got <- wb_to_df(wb1, sheet = 3, skip_empty_rows = TRUE)
 
   # erase rmpty Cols from dataset
-  got <- wb_to_df(wb1, skipEmptyCols = TRUE)
+  got <- wb_to_df(wb1, skip_empty_cols = TRUE)
   expect_equal(exp[c(1, 2, 4, 5, 6, 7, 8)], got, ignore_attr = TRUE)
 
   # # convert first row to rownames
