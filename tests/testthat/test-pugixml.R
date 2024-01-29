@@ -264,7 +264,7 @@ test_that("xml_rm_child", {
       which = which
     )
   }
-  expect_equal(rm_child(which = 0),"<a/>")
+  expect_equal(rm_child(which = 0), "<a/>")
   expect_equal(rm_child(which = 1), "<a><c>2</c></a>")
   expect_equal(rm_child(which = 2), "<a><c>1</c></a>")
   expect_equal(rm_child(which = 3), "<a><c>1</c><c>2</c></a>")

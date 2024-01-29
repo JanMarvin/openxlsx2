@@ -120,7 +120,7 @@ test_that("read startCol", {
   expect_equal(names(got), LETTERS[1:6])
 
   got <- wb_to_df(wb, start_col = "F", col_names = FALSE)
-  expect_equal(names(got), (LETTERS[6])
+  expect_equal(names(got), LETTERS[6])
 
 })
 
@@ -132,7 +132,7 @@ test_that("reading with multiple sections in freezePane works", {
   expect_silent(wb <- wb_load(temp))
 })
 
-test_that("skipEmtpyCols keeps empty named columns", {
+test_that("skipEmptyCols keeps empty named columns", {
 
   ## initialize empty cells
   na_mat <- matrix(NA, nrow = 22, ncol = 7)
