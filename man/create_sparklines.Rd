@@ -24,6 +24,15 @@ create_sparklines(
   color_last = wb_color(hex = "FFD00000"),
   color_high = wb_color(hex = "FFD00000"),
   color_low = wb_color(hex = "FFD00000"),
+  manual_max = NULL,
+  manual_min = NULL,
+  line_weight = NULL,
+  date_axis = NULL,
+  display_x_axis = NULL,
+  display_hidden = NULL,
+  min_axis_type = NULL,
+  max_axis_type = NULL,
+  right_to_left = NULL,
   ...
 )
 }
@@ -52,6 +61,8 @@ create_sparklines(
 
 \item{color_series}{colorSeries}
 
+\item{color_negative}{colorNegative}
+
 \item{color_axis}{colorAxis}
 
 \item{color_markers}{colorMarkers}
@@ -62,9 +73,27 @@ create_sparklines(
 
 \item{color_high}{colorHigh}
 
-\item{color_segative}{colorNegative}
+\item{color_low}{colorLow}
 
-\item{color_how}{colorLow}
+\item{manual_max}{manualMax}
+
+\item{manual_min}{manualMin}
+
+\item{line_weight}{lineWeight}
+
+\item{date_axis}{dateAxis}
+
+\item{display_x_axis}{displayXAxis}
+
+\item{display_hidden}{displayHidden}
+
+\item{min_axis_type}{minAxisType}
+
+\item{max_axis_type}{maxAxisType}
+
+\item{right_to_left}{rightToLeft}
+
+\item{...}{additional arguments}
 }
 \value{
 A string containing XML code

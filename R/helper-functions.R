@@ -370,13 +370,23 @@ hashPassword <- function(password) {
 #' @param first highlight first value
 #' @param last highlight last value
 #' @param color_series colorSeries
-#' @param color_segative colorNegative
+#' @param color_negative colorNegative
 #' @param color_axis colorAxis
 #' @param color_markers colorMarkers
 #' @param color_first colorFirst
 #' @param color_last colorLast
 #' @param color_high colorHigh
-#' @param color_how colorLow
+#' @param color_low colorLow
+#' @param manual_max manualMax
+#' @param manual_min manualMin
+#' @param line_weight lineWeight
+#' @param date_axis dateAxis
+#' @param display_x_axis displayXAxis
+#' @param display_hidden displayHidden
+#' @param min_axis_type minAxisType
+#' @param max_axis_type maxAxisType
+#' @param right_to_left rightToLeft
+#' @param ... additional arguments
 #' @return A string containing XML code
 #' @examples
 #' # create sparklineGroup
@@ -416,6 +426,15 @@ create_sparklines <- function(
     color_last             = wb_color(hex = "FFD00000"),
     color_high             = wb_color(hex = "FFD00000"),
     color_low              = wb_color(hex = "FFD00000"),
+    manual_max             = NULL,
+    manual_min             = NULL,
+    line_weight            = NULL,
+    date_axis              = NULL,
+    display_x_axis         = NULL,
+    display_hidden         = NULL,
+    min_axis_type          = NULL,
+    max_axis_type          = NULL,
+    right_to_left          = NULL,
     ...
 ) {
 
@@ -427,14 +446,13 @@ create_sparklines <- function(
   if (!is.null(type) && !type %in% c("stacked", "column"))
     stop("type must be NULL, stacked or column")
 
-  if (!is.null(markers) && is.null(type))
-    stop("markers only work with stacked or column")
-
+  if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
+    stop("markers only affect lines `type = NULL`, not stacked or column")
 
   sparklineGroup <- xml_node_create(
     "x14:sparklineGroup",
     xml_attributes = c(
-      type = type,
+      type                = type,
       displayEmptyCellsAs = as_xml_attr(display_empty_cells_as),
       markers             = as_xml_attr(markers),
       high                = as_xml_attr(high),
@@ -442,7 +460,16 @@ create_sparklines <- function(
       first               = as_xml_attr(first),
       last                = as_xml_attr(last),
       negative            = as_xml_attr(negative),
-      "xr2:uid" = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-F0-9]"))
+      manualMin           = as_xml_attr(manual_min),
+      manualMax           = as_xml_attr(manual_max),
+      lineWeight          = as_xml_attr(line_weight),
+      dateAxis            = as_xml_attr(date_axis),
+      displayXAxis        = as_xml_attr(display_x_axis),
+      displayHidden       = as_xml_attr(display_hidden),
+      minAxisType         = as_xml_attr(min_axis_type),
+      maxAxisType         = as_xml_attr(max_axis_type),
+      rightToLeft         = as_xml_attr(right_to_left),
+      "xr2:uid"           = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-F0-9]"))
     ),
     xml_children = c(
       xml_node_create("x14:colorSeries",   xml_attributes = color_series),
