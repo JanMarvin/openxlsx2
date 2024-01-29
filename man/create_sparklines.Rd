@@ -10,20 +10,30 @@ create_sparklines(
   sqref,
   type = NULL,
   negative = NULL,
-  displayEmptyCellsAs = "gap",
+  display_empty_cells_as = "gap",
   markers = NULL,
   high = NULL,
   low = NULL,
   first = NULL,
   last = NULL,
-  colorSeries = wb_color(hex = "FF376092"),
-  colorNegative = wb_color(hex = "FFD00000"),
-  colorAxis = wb_color(hex = "FFD00000"),
-  colorMarkers = wb_color(hex = "FFD00000"),
-  colorFirst = wb_color(hex = "FFD00000"),
-  colorLast = wb_color(hex = "FFD00000"),
-  colorHigh = wb_color(hex = "FFD00000"),
-  colorLow = wb_color(hex = "FFD00000")
+  color_series = wb_color(hex = "FF376092"),
+  color_negative = wb_color(hex = "FFD00000"),
+  color_axis = wb_color(hex = "FFD00000"),
+  color_markers = wb_color(hex = "FFD00000"),
+  color_first = wb_color(hex = "FFD00000"),
+  color_last = wb_color(hex = "FFD00000"),
+  color_high = wb_color(hex = "FFD00000"),
+  color_low = wb_color(hex = "FFD00000"),
+  manual_max = NULL,
+  manual_min = NULL,
+  line_weight = NULL,
+  date_axis = NULL,
+  display_x_axis = NULL,
+  display_hidden = NULL,
+  min_axis_type = NULL,
+  max_axis_type = NULL,
+  right_to_left = NULL,
+  ...
 )
 }
 \arguments{
@@ -33,11 +43,11 @@ create_sparklines(
 
 \item{sqref}{Cell range of the destination of the sparklines.}
 
-\item{type}{type}
+\item{type}{Either \code{NULL}, \code{stacked} or \code{column}}
 
 \item{negative}{negative}
 
-\item{displayEmptyCellsAs}{displayEmptyCellsAs}
+\item{display_empty_cells_as}{Either \code{gap}, \code{span} or \code{zero}}
 
 \item{markers}{markers add marker to line}
 
@@ -49,21 +59,41 @@ create_sparklines(
 
 \item{last}{highlight last value}
 
-\item{colorSeries}{colorSeries}
+\item{color_series}{colorSeries}
 
-\item{colorNegative}{colorNegative}
+\item{color_negative}{colorNegative}
 
-\item{colorAxis}{colorAxis}
+\item{color_axis}{colorAxis}
 
-\item{colorMarkers}{colorMarkers}
+\item{color_markers}{colorMarkers}
 
-\item{colorFirst}{colorFirst}
+\item{color_first}{colorFirst}
 
-\item{colorLast}{colorLast}
+\item{color_last}{colorLast}
 
-\item{colorHigh}{colorHigh}
+\item{color_high}{colorHigh}
 
-\item{colorLow}{colorLow}
+\item{color_low}{colorLow}
+
+\item{manual_max}{manualMax}
+
+\item{manual_min}{manualMin}
+
+\item{line_weight}{lineWeight}
+
+\item{date_axis}{dateAxis}
+
+\item{display_x_axis}{displayXAxis}
+
+\item{display_hidden}{displayHidden}
+
+\item{min_axis_type}{minAxisType}
+
+\item{max_axis_type}{maxAxisType}
+
+\item{right_to_left}{rightToLeft}
+
+\item{...}{additional arguments}
 }
 \value{
 A string containing XML code

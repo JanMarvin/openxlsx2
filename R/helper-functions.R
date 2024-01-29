@@ -361,22 +361,32 @@ hashPassword <- function(password) {
 #' @param sheet sheet
 #' @param dims Cell range of cells used to create the sparklines
 #' @param sqref Cell range of the destination of the sparklines.
-#' @param type type
+#' @param type Either `NULL`, `stacked` or `column`
 #' @param negative negative
-#' @param displayEmptyCellsAs displayEmptyCellsAs
+#' @param display_empty_cells_as Either `gap`, `span` or `zero`
 #' @param markers markers add marker to line
 #' @param high highlight highest value
 #' @param low highlight lowest value
 #' @param first highlight first value
 #' @param last highlight last value
-#' @param colorSeries colorSeries
-#' @param colorNegative colorNegative
-#' @param colorAxis colorAxis
-#' @param colorMarkers colorMarkers
-#' @param colorFirst colorFirst
-#' @param colorLast colorLast
-#' @param colorHigh colorHigh
-#' @param colorLow colorLow
+#' @param color_series colorSeries
+#' @param color_negative colorNegative
+#' @param color_axis colorAxis
+#' @param color_markers colorMarkers
+#' @param color_first colorFirst
+#' @param color_last colorLast
+#' @param color_high colorHigh
+#' @param color_low colorLow
+#' @param manual_max manualMax
+#' @param manual_min manualMin
+#' @param line_weight lineWeight
+#' @param date_axis dateAxis
+#' @param display_x_axis displayXAxis
+#' @param display_hidden displayHidden
+#' @param min_axis_type minAxisType
+#' @param max_axis_type maxAxisType
+#' @param right_to_left rightToLeft
+#' @param ... additional arguments
 #' @return A string containing XML code
 #' @examples
 #' # create sparklineGroup
@@ -397,63 +407,79 @@ hashPassword <- function(password) {
 #'
 #' @export
 create_sparklines <- function(
-    sheet = current_sheet(),
+    sheet                  = current_sheet(),
     dims,
     sqref,
-    type = NULL,
-    negative = NULL,
-    displayEmptyCellsAs = "gap", # "span", "zero"
-    markers = NULL,
-    high = NULL,
-    low = NULL,
-    first = NULL,
-    last = NULL,
-    colorSeries = wb_color(hex = "FF376092"),
-    colorNegative = wb_color(hex = "FFD00000"),
-    colorAxis = wb_color(hex = "FFD00000"),
-    colorMarkers = wb_color(hex = "FFD00000"),
-    colorFirst = wb_color(hex = "FFD00000"),
-    colorLast = wb_color(hex = "FFD00000"),
-    colorHigh = wb_color(hex = "FFD00000"),
-    colorLow = wb_color(hex = "FFD00000")
+    type                   = NULL,
+    negative               = NULL,
+    display_empty_cells_as = "gap", # "span", "zero"
+    markers                = NULL,
+    high                   = NULL,
+    low                    = NULL,
+    first                  = NULL,
+    last                   = NULL,
+    color_series           = wb_color(hex = "FF376092"),
+    color_negative         = wb_color(hex = "FFD00000"),
+    color_axis             = wb_color(hex = "FFD00000"),
+    color_markers          = wb_color(hex = "FFD00000"),
+    color_first            = wb_color(hex = "FFD00000"),
+    color_last             = wb_color(hex = "FFD00000"),
+    color_high             = wb_color(hex = "FFD00000"),
+    color_low              = wb_color(hex = "FFD00000"),
+    manual_max             = NULL,
+    manual_min             = NULL,
+    line_weight            = NULL,
+    date_axis              = NULL,
+    display_x_axis         = NULL,
+    display_hidden         = NULL,
+    min_axis_type          = NULL,
+    max_axis_type          = NULL,
+    right_to_left          = NULL,
+    ...
 ) {
-  # TODO change arguments to snake case?
+
+  standardize_case_names(...)
 
   assert_class(dims, "character")
   assert_class(sqref, "character")
 
-  ## FIXME validate_color barks
-  # colorSeries <- validate_color(colorSeries)
-
   if (!is.null(type) && !type %in% c("stacked", "column"))
     stop("type must be NULL, stacked or column")
 
-  if (!is.null(markers) && !is.null(type))
-    stop("markers only work with stacked or column")
-
+  if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
+    stop("markers only affect lines `type = NULL`, not stacked or column")
 
   sparklineGroup <- xml_node_create(
     "x14:sparklineGroup",
     xml_attributes = c(
-      type = type,
-      displayEmptyCellsAs = displayEmptyCellsAs,
-      markers = markers,
-      high = high,
-      low = low,
-      first = first,
-      last = last,
-      negative = negative,
-      "xr2:uid" = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-F0-9]"))
+      type                = type,
+      displayEmptyCellsAs = as_xml_attr(display_empty_cells_as),
+      markers             = as_xml_attr(markers),
+      high                = as_xml_attr(high),
+      low                 = as_xml_attr(low),
+      first               = as_xml_attr(first),
+      last                = as_xml_attr(last),
+      negative            = as_xml_attr(negative),
+      manualMin           = as_xml_attr(manual_min),
+      manualMax           = as_xml_attr(manual_max),
+      lineWeight          = as_xml_attr(line_weight),
+      dateAxis            = as_xml_attr(date_axis),
+      displayXAxis        = as_xml_attr(display_x_axis),
+      displayHidden       = as_xml_attr(display_hidden),
+      minAxisType         = as_xml_attr(min_axis_type),
+      maxAxisType         = as_xml_attr(max_axis_type),
+      rightToLeft         = as_xml_attr(right_to_left),
+      "xr2:uid"           = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-F0-9]"))
     ),
     xml_children = c(
-      xml_node_create("x14:colorSeries", xml_attributes = colorSeries),
-      xml_node_create("x14:colorNegative", xml_attributes = colorNegative),
-      xml_node_create("x14:colorAxis", xml_attributes = colorAxis),
-      xml_node_create("x14:colorMarkers", xml_attributes = colorMarkers),
-      xml_node_create("x14:colorFirst", xml_attributes = colorFirst),
-      xml_node_create("x14:colorLast", xml_attributes = colorLast),
-      xml_node_create("x14:colorHigh", xml_attributes = colorHigh),
-      xml_node_create("x14:colorLow", xml_attributes = colorLow),
+      xml_node_create("x14:colorSeries",   xml_attributes = color_series),
+      xml_node_create("x14:colorNegative", xml_attributes = color_negative),
+      xml_node_create("x14:colorAxis",     xml_attributes = color_axis),
+      xml_node_create("x14:colorMarkers",  xml_attributes = color_markers),
+      xml_node_create("x14:colorFirst",    xml_attributes = color_first),
+      xml_node_create("x14:colorLast",     xml_attributes = color_last),
+      xml_node_create("x14:colorHigh",     xml_attributes = color_high),
+      xml_node_create("x14:colorLow",      xml_attributes = color_low),
       xml_node_create(
         "x14:sparklines", xml_children = c(
           xml_node_create(

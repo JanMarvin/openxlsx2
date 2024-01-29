@@ -63,5 +63,16 @@ wb$add_comment(sheet = 1, dims = "C10", comment = c2)
 # Works with formatted text also.
 formatted_text <- fmt_txt("bar", underline = TRUE)
 wb$add_comment(dims = "B5", comment = formatted_text)
+# With background color
+wb$add_comment(dims = "B7", comment = formatted_text, color = wb_color("green"))
+# With background image. File extension must be png or jpeg, not jpg?
+tmp <- tempfile(fileext = ".png")
+png(file = tmp, bg = "transparent")
+plot(1:10)
+rect(1, 5, 3, 7, col = "white")
+dev.off()
+
+c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
+wb$add_comment(dims = "B12", comment = c1, file = tmp)
 }
 \keyword{internal}
