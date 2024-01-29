@@ -44,10 +44,10 @@ test_that("group rows", {
     group_rows("Sheet 1", 1:4)
 
   got <- wb$worksheets[[1]]$sheet_data$row_attr$outlineLevel
-  expect_equal(c("1", "1", "1", ""), got)
+  expect_equal(got, c("1", "1", "1", ""))
 
   got <- wb$worksheets[[1]]$sheet_data$row_attr$r
-  expect_equal(c("1", "2", "3", "4"), got)
+  expect_equal(got, c("1", "2", "3", "4"))
 
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
@@ -55,10 +55,10 @@ test_that("group rows", {
     group_rows("Sheet 1", 1:4, collapsed = TRUE)
 
   got <- wb$worksheets[[1]]$sheet_data$row_attr$collapsed
-  expect_equal(c("1", "1", "1", "1"), got)
+  expect_equal(got, c("1", "1", "1", "1"))
 
   got <- wb$worksheets[[1]]$sheet_data$row_attr$hidden
-  expect_equal(c("1", "1", "1", ""), got)
+  expect_equal(got, c("1", "1", "1", ""))
 
 })
 
@@ -279,9 +279,9 @@ test_that("hierarchical grouping works", {
   )
   wb$group_cols(cols = grp_cols)
 
-  exp <- c("", "3", "3", "1", "3", "3", "1", "")
   got <- wb$worksheets[[1]]$sheet_data$row_attr$outlineLevel
-  expect_equal(exp, got)
+  exp <- c("", "3", "3", "1", "3", "3", "1", "")
+  expect_equal(got, exp)
 
   exp <- c(
     "<col min=\"1\" max=\"1\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"3\" width=\"8.43\"/>",
@@ -290,6 +290,5 @@ test_that("hierarchical grouping works", {
     "<col min=\"4\" max=\"4\" collapsed=\"0\" hidden=\"0\" outlineLevel=\"1\" width=\"8.43\"/>",
     "<col min=\"5\" max=\"5\" collapsed=\"0\" width=\"8.43\"/>"
   )
-  got <- wb$worksheets[[1]]$cols_attr
-  expect_equal(exp, got)
+  expect_equal(wb$worksheets[[1]]$cols_attr, exp)
 })

@@ -2,52 +2,51 @@ test_that("strings_xml", {
 
   # some sst string
   si <- "<sst><si><t>foo</t></si><si><r><rPr><b/></rPr><t>bar</t></r></si></sst>"
-
   expect_equal(
-    c("foo", "bar"),
-    xml_si_to_txt(read_xml(si))
+    xml_si_to_txt(read_xml(si)),
+    c("foo", "bar")
   )
 
   txt <- "foo"
   expect_equal(
-    "<si><t>foo</t></si>",
-    txt_to_si(txt, raw = TRUE, skip_control = FALSE)
+    txt_to_si(txt, raw = TRUE, skip_control = FALSE),
+    "<si><t>foo</t></si>"
   )
   expect_equal(
-    "<si>\n <t>foo</t>\n</si>\n",
-    txt_to_si(txt, raw = FALSE, skip_control = FALSE)
+    txt_to_si(txt, raw = FALSE, skip_control = FALSE),
+    "<si>\n <t>foo</t>\n</si>\n"
   )
 
   txt <- "foo "
   expect_equal(
-    "<si><t xml:space=\"preserve\">foo </t></si>",
-    txt_to_si(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_si(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE),
+    "<si><t xml:space=\"preserve\">foo </t></si>"
   )
   expect_equal(
-    "<si>\n <t xml:space=\"preserve\">foo </t>\n</si>\n",
-    txt_to_si(txt, raw = FALSE, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_si(txt, raw = FALSE, no_escapes = FALSE, skip_control = FALSE),
+    "<si>\n <t xml:space=\"preserve\">foo </t>\n</si>\n"
   )
 
   txt <- "foo&bar"
   expect_equal(
-    "<si><t>foo&amp;bar</t></si>",
-    txt_to_si(txt, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_si(txt, no_escapes = FALSE, skip_control = FALSE),
+    "<si><t>foo&amp;bar</t></si>"
   )
   expect_equal(
-    "<si><t>foo&bar</t></si>",
-    txt_to_si(txt, no_escapes = TRUE, skip_control = FALSE)
+    txt_to_si(txt, no_escapes = TRUE, skip_control = FALSE),
+    "<si><t>foo&bar</t></si>"
   )
 
   txt <- "foo'abcd\037'"
   expect_equal(
-    "<si><t>foo'abcd'</t></si>",
-    txt_to_si(txt, raw = TRUE, no_escapes = FALSE, skip_control = TRUE)
+    txt_to_si(txt, raw = TRUE, no_escapes = FALSE, skip_control = TRUE),
+    "<si><t>foo'abcd'</t></si>"
   )
 
   is <- c("<is><t>foo</t></is>", "<is><r><rPr><b/></rPr><t>bar</t></r></is>")
   expect_equal(
-    c("foo", "bar"),
-    is_to_txt(is)
+    is_to_txt(is),
+    c("foo", "bar")
   )
 
   is <- "<is><t>foo</t>"
@@ -56,38 +55,38 @@ test_that("strings_xml", {
 
   txt <- "foo"
   expect_equal(
-    "<is><t>foo</t></is>",
-    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE),
+    "<is><t>foo</t></is>"
   )
   expect_equal(
-    "<is>\n <t>foo</t>\n</is>\n",
-    txt_to_is(txt, raw = FALSE, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_is(txt, raw = FALSE, no_escapes = FALSE, skip_control = FALSE),
+    "<is>\n <t>foo</t>\n</is>\n"
   )
 
   txt <- "foo "
   expect_equal(
-    "<is><t xml:space=\"preserve\">foo </t></is>",
-    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE),
+    "<is><t xml:space=\"preserve\">foo </t></is>"
   )
   expect_equal(
-    "<is>\n <t xml:space=\"preserve\">foo </t>\n</is>\n",
-    txt_to_is(txt, raw = FALSE, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_is(txt, raw = FALSE, no_escapes = FALSE, skip_control = FALSE),
+    "<is>\n <t xml:space=\"preserve\">foo </t>\n</is>\n"
   )
 
   txt <- "foo&bar"
   expect_equal(
-    "<is><t>foo&amp;bar</t></is>",
-    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE)
+    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = FALSE),
+    "<is><t>foo&amp;bar</t></is>"
   )
   expect_equal(
-    "<is><t>foo&bar</t></is>",
-    txt_to_is(txt, raw = TRUE, no_escapes = TRUE, skip_control = FALSE)
+    txt_to_is(txt, raw = TRUE, no_escapes = TRUE, skip_control = FALSE),
+    "<is><t>foo&bar</t></is>"
   )
 
   txt <- "foo'abcd\037'"
   expect_equal(
-    "<is><t>foo'abcd'</t></is>",
-    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = TRUE)
+    txt_to_is(txt, raw = TRUE, no_escapes = FALSE, skip_control = TRUE),
+    "<is><t>foo'abcd'</t></is>"
   )
 
   amp <- temp_xlsx()
@@ -96,49 +95,47 @@ test_that("strings_xml", {
     add_data(dims = "A1", x = "A & B")$
     save(amp)
 
-  exp <- "A & B"
-  got <- wb_to_df(amp, colNames = FALSE)[1, 1]
-  expect_equal(exp, got)
+  got <- wb_to_df(amp, col_names = FALSE)[1, 1]
+  expect_equal(got, "A & B")
 
   # a couple of saves and loads later ...
-  exp <- "<is><t>A &amp; B</t></is>"
   got <- wb$worksheets[[1]]$sheet_data$cc$is
-  expect_equal(exp, got)
+  expect_equal(got, "<is><t>A &amp; B</t></is>")
 
   wb <- wb_load(amp)
 
   got <- wb$worksheets[[1]]$sheet_data$cc$is
-  expect_equal(exp, got)
+  expect_equal(got, "<is><t>A &amp; B</t></is>")
 
   wb$save(amp)
 
   wb <- wb_load(amp)
   got <- wb$worksheets[[1]]$sheet_data$cc$is
-  expect_equal(exp, got)
+  expect_equal(got, "<is><t>A &amp; B</t></is>")
 
-  exp <- "<is><t>foo &lt;em&gt;bar&lt;/em&gt;</t></is>"
   got <- txt_to_is('foo <em>bar</em>')
-  expect_equal(exp, got)
+  exp <- "<is><t>foo &lt;em&gt;bar&lt;/em&gt;</t></is>"
+  expect_equal(got, exp)
 
   # exception to the rule: it is not possible to write characters starting with "<r/>" or "<r>""
+  got <- txt_to_is("<r>foo</r>")
   exp <- "<is><r>foo</r></is>"
-  got <- txt_to_is('<r>foo</r>')
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
-  exp <- "<is><r><rPr/><t>&lt;r&gt;foo&lt;/r&gt;</t></r></is>"
   got <- txt_to_is(fmt_txt('<r>foo</r>'))
-  expect_equal(exp, got)
+  exp <- "<is><r><rPr/><t>&lt;r&gt;foo&lt;/r&gt;</t></r></is>"
+  expect_equal(got, exp)
 
-  exp <- "<is><t>&lt;red&gt;foo&lt;/red&gt;</t></is>"
   got <- txt_to_is('<red>foo</red>')
-  expect_equal(exp, got)
+  exp <- "<is><t>&lt;red&gt;foo&lt;/red&gt;</t></is>"
+  expect_equal(got, exp)
 
-  exp <- "<is><t>foo&lt;/r&gt;</t></is>"
   got <- txt_to_is('foo</r>')
-  expect_equal(exp, got)
+  exp <- "<is><t>foo&lt;/r&gt;</t></is>"
+  expect_equal(got, exp)
 
-  exp <- "<is><t xml:space=\"preserve\"> &lt;r&gt;foo&lt;/r&gt;</t></is>"
   got <- txt_to_is(' <r>foo</r>')
-  expect_equal(exp, got)
+  exp <- "<is><t xml:space=\"preserve\"> &lt;r&gt;foo&lt;/r&gt;</t></is>"
+  expect_equal(got, exp)
 
 })

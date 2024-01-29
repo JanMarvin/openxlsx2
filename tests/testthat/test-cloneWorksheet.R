@@ -184,9 +184,8 @@ test_that("cloning from workbooks works", {
   wb_in <- wb_load(fl)
 
   wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in)
-  exp <- c("NOT_SUM", "SUM")
   got <- wb$get_sheet_names() %>% unname()
-  expect_equal(exp, got)
+  expect_equal(got, c("NOT_SUM", "SUM"))
 
   wb$clone_worksheet(old = "SUM", new = "SUM_clone")
   exp <- c("NOT_SUM", "SUM", "SUM_clone")

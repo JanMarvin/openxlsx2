@@ -49,8 +49,8 @@ test_that("page_breaks", {
   )
   cbrk <- "<brk id=\"2\" max=\"1048575\" man=\"1\"/>"
 
-  expect_equal(rbrk, wb$worksheets[[1]]$rowBreaks)
-  expect_equal(cbrk, wb$worksheets[[1]]$colBreaks)
+  expect_equal(wb$worksheets[[1]]$rowBreaks, rbrk)
+  expect_equal(wb$worksheets[[1]]$colBreaks, cbrk)
 
   wb$save(temp)
   wb2 <- wb_load(temp)

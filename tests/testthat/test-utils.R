@@ -274,13 +274,13 @@ test_that("test random_string", {
   tmp <- random_string()
   y <- .Random.seed
   expect_identical(x, y)
-  expect_equal("HmPsw2WtYSxSgZ6t", tmp)
+  expect_equal(tmp, "HmPsw2WtYSxSgZ6t")
 
   x <- .Random.seed
   tmp <- random_string(length = 6)
   y <- .Random.seed
   expect_identical(x, y)
-  expect_equal("GNZuCt", tmp)
+  expect_equal(tmp, "GNZuCt")
 
   x <- .Random.seed
   tmp <- random_string(length = 6, keep_seed = FALSE)
@@ -301,22 +301,22 @@ test_that("relship", {
 
   exp <- "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing3.xml\"/>"
   got <- relship_no(obj = wb$worksheets_rels[[3]], x = "table")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
-  exp <- "rId2"
   got <- get_relship_id(obj = wb$worksheets_rels[[1]], x = "drawing")
-  expect_equal(exp, got)
+  expect_equal(got, "rId2")
 
 })
 
 test_that("as_xml_attr works", {
 
   mm <- matrix("", 2, 2)
-  mm[1, 1] <- openxlsx2:::as_xml_attr(TRUE)
-  mm[2, 1] <- openxlsx2:::as_xml_attr(FALSE)
+  # as_xml_attr is internal
+  mm[1, 1] <- as_xml_attr(TRUE)
+  mm[2, 1] <- as_xml_attr(FALSE)
 
-  mm[1, 2] <- openxlsx2:::as_xml_attr(1)
-  mm[2, 2] <- openxlsx2:::as_xml_attr(NULL)
+  mm[1, 2] <- as_xml_attr(1)
+  mm[2, 2] <- as_xml_attr(NULL)
 
   exp <- matrix(c("1", "0", "1", ""), 2, 2)
   expect_equal(exp, mm)
@@ -401,8 +401,7 @@ test_that("fmt_txt works", {
   expect_equal(exp, got)
 
   expect_message(got <- capture.output(print(got)), "fmt_txt string:")
-  exp <- "[1] \"Hello World \""
-  expect_equal(exp, got)
+  expect_equal(got, "[1] \"Hello World \"")
 
   ## watch out!
   txt <- fmt_txt("Sum ", bold = TRUE) + 2 + 2

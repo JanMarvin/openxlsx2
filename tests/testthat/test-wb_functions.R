@@ -23,7 +23,7 @@ test_that("wb_to_df", {
     class = "data.frame"
   )
   got <- wb_to_df(wb1)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   # do not convert first row to colNames
   got <- wb_to_df(wb1, colNames = FALSE)
@@ -38,7 +38,7 @@ test_that("wb_to_df", {
 
   # return the underlying Excel formula instead of their values
   got <- wb_to_df(wb1, showFormula = TRUE)
-  expect_equal("1/0", got$Var7[1])
+  expect_equal(got$Var7[1], "1/0")
 
   # read dimension withot colNames
   got <- wb_to_df(wb1, dims = "A2:C5", colNames = FALSE)
@@ -89,11 +89,11 @@ test_that("wb_to_df", {
   test <- exp[4:10, ]
   names(test) <- int2col(seq_along(test))
   test[c("D", "G", "H")] <- lapply(test[c("D", "G", "H")], as.numeric)
-  expect_equal(test, got, ignore_attr = TRUE)
+  expect_equal(got, test, ignore_attr = TRUE)
 
   # na string
   got <- wb_to_df(wb1, na.strings = "")
-  expect_equal("#N/A", got$Var7[2], ignore_attr = TRUE)
+  expect_equal(got$Var7[2], "#N/A", ignore_attr = TRUE)
 
 
   ###########################################################################
@@ -113,7 +113,7 @@ test_that("wb_to_df", {
   rownames(exp) <- seq(2, nrow(exp) + 1)
   # read dataset with inlinestr
   got <- wb_to_df(wb2)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
 
 
   ###########################################################################
@@ -122,14 +122,14 @@ test_that("wb_to_df", {
   expect_silent(wb3 <- wb_load(xlsxFile))
 
   # read dataset with named_region (returns global first)
-  exp <- data.frame(A = "S2A1", B = "S2B1")
   got <- wb_to_df(wb3, named_region = "MyRange", colNames = FALSE)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  exp <- data.frame(A = "S2A1", B = "S2B1")
+  expect_equal(got, exp, ignore_attr = TRUE)
 
   # read named_region from sheet
-  exp <- data.frame(A = "S3A1", B = "S3B1")
   got <- wb_to_df(wb3, named_region = "MyRange", sheet = 4, colNames = FALSE)
-  expect_equal(exp, got, ignore_attr = TRUE)
+  exp <- data.frame(A = "S3A1", B = "S3B1")
+  expect_equal(got, exp, ignore_attr = TRUE)
 
 })
 
@@ -145,7 +145,7 @@ test_that("select_active_sheet", {
     row.names = c(NA, 4L), class = "data.frame")
 
   # testing is the selected sheet
-  expect_identical(exp, wb_get_selected(wb))
+  expect_identical(wb_get_selected(wb), exp)
 
   # change the selected sheet to IrisSample
   exp <- structure(
@@ -155,14 +155,14 @@ test_that("select_active_sheet", {
      row.names = c(NA, 4L), class = "data.frame")
 
   wb <- wb_set_selected(wb, "IrisSample")
-  expect_identical(exp, wb_get_selected(wb))
+  expect_identical(wb_get_selected(wb), exp)
 
   # get the active sheet
-  expect_identical(2, wb_get_active_sheet(wb))
+  expect_identical(wb_get_active_sheet(wb), 2)
 
   # change the selected sheet to IrisSample
   wb <- wb_set_active_sheet(wb, sheet = "IrisSample")
-  expect_identical(1, wb_get_active_sheet(wb))
+  expect_identical(wb_get_active_sheet(wb), 1)
 
 })
 

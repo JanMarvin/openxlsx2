@@ -73,15 +73,15 @@ test_that("xml_attr", {
 
   xml_str <- "<a a=\"1\"/>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr1attr(xml, "a"))
+  expect_equal(getXMLXPtr1attr(xml, "a"), exp)
 
   xml_str <- "<b><a a=\"1\"/></b>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr2attr(xml, "b", "a"))
+  expect_equal(getXMLXPtr2attr(xml, "b", "a"), exp)
 
   xml_str <- "<c><b><a a=\"1\"/></b></c>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr3attr(xml, "c", "b", "a"))
+  expect_equal(getXMLXPtr3attr(xml, "c", "b", "a"), exp)
 
 })
 
@@ -90,26 +90,26 @@ test_that("xml_append_child", {
   xml_node <- read_xml("<node><child1/><child2/></node>")
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&</new_child></node>"
-  expect_equal(exp, xml_append_child1(xml_node, xml_child, pointer = FALSE))
+  expect_equal(xml_append_child1(xml_node, xml_child, pointer = FALSE), exp)
 
   # xml_node sets the flags for both
   xml_node <- read_xml("<node><child1/><child2/></node>", escapes = TRUE)
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&amp;</new_child></node>"
-  expect_equal(exp, xml_append_child1(xml_node, xml_child, pointer = FALSE))
+  expect_equal(xml_append_child1(xml_node, xml_child, pointer = FALSE), exp)
 
 
   xml_node <- "<a><b/></a>"
   xml_child <- read_xml("<c/>")
 
   xml_node <- xml_append_child1(read_xml(xml_node), xml_child, pointer = FALSE)
-  expect_equal("<a><b/><c/></a>", xml_node)
+  expect_equal(xml_node, "<a><b/><c/></a>")
 
   xml_node <- xml_append_child2(read_xml(xml_node), xml_child, level1 = "b", pointer = FALSE)
-  expect_equal("<a><b><c/></b><c/></a>", xml_node)
+  expect_equal(xml_node, "<a><b><c/></b><c/></a>")
 
   xml_node <- xml_append_child3(read_xml(xml_node), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
-  expect_equal("<a><b><c><d/></c></b><c/></a>", xml_node)
+  expect_equal(xml_node, "<a><b><c><d/></c></b><c/></a>")
 
 
   # check that escapes does not throw a warning
@@ -117,13 +117,13 @@ test_that("xml_append_child", {
   xml_child <- read_xml("<c>a&b</c>", escapes = FALSE)
 
   xml_node <- xml_append_child1(read_xml(xml_node, escapes = TRUE), xml_child, pointer = FALSE)
-  expect_equal("<a><b/><c>a&amp;b</c></a>", xml_node)
+  expect_equal(xml_node, "<a><b/><c>a&amp;b</c></a>")
 
   xml_node <- xml_append_child2(read_xml(xml_node, escapes = TRUE), xml_child, level1 = "b", pointer = FALSE)
-  expect_equal("<a><b><c>a&amp;b</c></b><c>a&amp;b</c></a>", xml_node)
+  expect_equal(xml_node, "<a><b><c>a&amp;b</c></b><c>a&amp;b</c></a>")
 
   xml_node <- xml_append_child3(read_xml(xml_node, escapes = TRUE), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
-  expect_equal("<a><b><c>a&amp;b<d/></c></b><c>a&amp;b</c></a>", xml_node)
+  expect_equal(xml_node, "<a><b><c>a&amp;b<d/></c></b><c>a&amp;b</c></a>")
 
   # check that pointer is valid
   expect_true(inherits(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml"))
@@ -176,9 +176,9 @@ test_that("is_xml", {
 test_that("getXMLPtr1con", {
 
   xml <- "<xml><a/><a/><b/></xml>"
-  exp <- c("<a/>", "<a/>", "<b/>")
   got <- getXMLPtr1con(read_xml(xml))
-  expect_equal(exp, got)
+  exp <- c("<a/>", "<a/>", "<b/>")
+  expect_equal(got, exp)
 
 })
 

@@ -318,9 +318,8 @@ test_that("write character numerics with a correct cell style", {
     wb_add_worksheet() %>%
     wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
 
-  exp <- NA_character_
   got <- wb$styles_mgr$styles$cellXfs[2]
-  expect_equal(exp, got)
+  expect_equal(got, NA_character_)
 
   exp <- c("4", "4", "4", "4", "4")
   got <- wb$worksheets[[1]]$sheet_data$cc$typ
@@ -365,9 +364,8 @@ test_that("write character numerics with a correct cell style", {
     wb_add_worksheet() %>%
     wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
 
-  exp <- NA_character_
   got <- wb$styles_mgr$styles$cellXfs[2]
-  expect_equal(exp, got)
+  expect_equal(got, NA_character_)
 
   exp <- c("4", "2", "4", "4", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$typ
@@ -394,7 +392,7 @@ test_that("writing as shared string works", {
     add_worksheet()$
     add_data_table(x = df, inline_strings = TRUE)
 
-  expect_equal(letters, wb_to_df(wb, colNames = FALSE)$A)
+  expect_equal(letters, wb_to_df(wb, col_names = FALSE)$A)
   expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 2))
   expect_equal(df, wb_to_df(wb, 3), ignore_attr = TRUE)
   expect_equal(wb_to_df(wb, 3), wb_to_df(wb, 4))
@@ -445,7 +443,7 @@ test_that("writing as shared string works", {
     add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE, na.strings = NULL)
 
   expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 3))
-  expect_equal("N/A", wb_to_df(wb, 2)[1, 1])
+  expect_equal(wb_to_df(wb, 2)[1, 1], "N/A")
 
 })
 
@@ -462,7 +460,7 @@ test_that("writing pivot tables works", {
   wb$add_pivot_table(df, dims = "A20", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = "average")
   wb$add_pivot_table(df, dims = "A30", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = c("sum", "average"))
 
-  expect_equal(4L, length(wb$pivotTables))
+  expect_equal(length(wb$pivotTables), 4L)
 
 })
 
@@ -523,12 +521,12 @@ test_that("writing slicers works", {
     add_slicer(x = df, dims = "A12:D16", slicer = "vs", pivot_table = "mtcars3")
 
   # test a few conditions
-  expect_equal(2L, length(wb$slicers))
-  expect_equal(4L, length(wb$slicerCaches))
+  expect_length(wb$slicers, 2L)
+  expect_length(wb$slicerCaches, 4L)
   expect_equal(xml_node_name(wb$workbook$extLst, "extLst", "ext"), "x14:slicerCaches")
-  expect_equal(1L, wb$worksheets[[2]]$relships$slicer)
-  expect_equal(2L, wb$worksheets[[3]]$relships$slicer)
-  expect_equal(25L, grep("slicer2.xml", wb$Content_Types))
+  expect_equal(wb$worksheets[[2]]$relships$slicer, 1L)
+  expect_equal(wb$worksheets[[3]]$relships$slicer, 2L)
+  expect_equal(grep("slicer2.xml", wb$Content_Types), 25L)
 
   ## test error
   wb <- wb_workbook() %>%

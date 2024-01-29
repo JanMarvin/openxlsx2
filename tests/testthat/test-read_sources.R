@@ -56,14 +56,14 @@ test_that("read html source without r attribute on cell", {
   # original from https://www.atih.sante.fr/sites/default/files/public/content/3968/fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx
   wb <- wb_load(testfile_path("fichier_complementaire_ccam_descriptive_a_usage_pmsi_2021_v2.xlsx"))
 
-  expect_equal(c(46, 1), dim(wb_to_df(wb, sheet = 1)))
-  expect_equal(c(31564, 52), dim(wb_to_df(wb, sheet = 2)))
-  expect_equal("PRÉSENTATION DU DOCUMENT", names(wb_to_df(wb, sheet = 1)))
+  expect_equal(dim(wb_to_df(wb, sheet = 1)), c(46L, 1L))
+  expect_equal(dim(wb_to_df(wb, sheet = 2)), c(31564L, 52L))
+  expect_equal(names(wb_to_df(wb, sheet = 1)), "PRÉSENTATION DU DOCUMENT")
 
   # This file has a few cells with row names, the majority has none. check that
   # we did not create duplicates while loading
-  expect_true(!any(duplicated(wb$worksheets[[1]]$sheet_data$cc)))
-  expect_true(!any(duplicated(wb$worksheets[[2]]$sheet_data$cc)))
+  expect_false(any(duplicated(wb$worksheets[[1]]$sheet_data$cc)))
+  expect_false(any(duplicated(wb$worksheets[[2]]$sheet_data$cc)))
 
 })
 
@@ -81,8 +81,8 @@ test_that("read vml from sheet two works as expected", {
   # test
   expect_silent(wb <- wb_load(testfile_path("vml_numbering.xlsx")))
 
-  expect_equal(1L, length(wb$vml))
-  expect_equal(1L, length(wb$vml_rels))
+  expect_equal(length(wb$vml), 1L)
+  expect_equal(length(wb$vml_rels), 1L)
 
 })
 
@@ -99,7 +99,7 @@ test_that("encoding", {
                                   row.names = 2L, class = "data.frame"),
                    types = c(A = 0, B = 0))
 
-  expect_equal(exp, wb_to_df(wb, keep_attributes = TRUE))
+  expect_equal(wb_to_df(wb, keep_attributes = TRUE), exp)
 
   fl <- testfile_path("eurosymbol.xlsx")
   wb <- wb_load(fl)
@@ -125,7 +125,7 @@ test_that("encoding", {
   exp <- "<xml>\n <a0>äöüß</a0>\n <A0>ÄÖÜ</A0>\n <a1>€</a1>\n</xml>"
   got <- paste(capture.output(
     read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2"))
-    ), collapse = "\n")
+  ), collapse = "\n")
   expect_equal(exp, got)
 
   exp <- "<xml><a0>äöüß</a0><A0>ÄÖÜ</A0><a1>€</a1></xml>"
@@ -186,8 +186,8 @@ test_that("reading charts", {
   wb$remove_worksheet(rmsheet)
 
   expect_false(any(grepl("drawing21.xml", unlist(wb$worksheets_rels))))
-  expect_equal("", wb$drawings[[21]])
-  expect_equal("", wb$drawings_rels[[21]])
+  expect_equal(wb$drawings[[21]], "")
+  expect_equal(wb$drawings_rels[[21]], "")
 
 })
 
@@ -228,13 +228,13 @@ test_that("load file with connection", {
 
   wb <- wb_load(testfile_path("connection.xlsx"))
 
-  expect_true(!is.null(wb$customXml))
-  expect_equal(3, length(wb$customXml))
+  expect_false(is.null(wb$customXml))
+  expect_equal(length(wb$customXml), 3)
 
   wb$save(temp)
 
   wb <- wb_load(temp)
-  expect_equal(3, length(wb$customXml))
+  expect_equal(length(wb$customXml), 3)
 
   expect_true(grepl("customXml/_rels/item1.xml.rels", wb$customXml[1]))
   expect_true(grepl("customXml/item1.xml", wb$customXml[2]))
@@ -329,8 +329,8 @@ test_that("reading multiple slicers on a pivot table works", {
 
   wb <- wb_load(testfile_path("gh_issue_504.xlsx"))
 
-  expect_equal(1L, length(wb$slicers))
-  expect_equal(2L, length(wb$slicerCaches))
+  expect_equal(length(wb$slicers), 1L)
+  expect_equal(length(wb$slicerCaches), 2L)
 
   exp <- c(
     "<Override PartName=\"/xl/slicers/slicer1.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>",

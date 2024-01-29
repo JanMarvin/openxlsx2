@@ -16,8 +16,8 @@ test_that("wb_set_col_widths", {
   # set column width to 12
   expect_silent(wb$set_col_widths("test", widths = 12L, cols = seq_along(mtcars)))
   expect_equal(
-    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"12.711\"/>",
-    wb$worksheets[[1]]$cols_attr
+    wb$worksheets[[1]]$cols_attr,
+    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"12.711\"/>"
   )
 
   # wrong sheet
@@ -26,8 +26,8 @@ test_that("wb_set_col_widths", {
   # reset the column with, we do not provide an option ot remove the column entry
   expect_silent(wb$set_col_widths("test", cols = seq_along(mtcars)))
   expect_equal(
-    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.141\"/>",
-    wb$worksheets[[1]]$cols_attr
+    wb$worksheets[[1]]$cols_attr,
+    "<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.141\"/>"
   )
 
   # create column width for column 25
@@ -360,7 +360,7 @@ test_that("clone worksheet", {
   wb <- wb_load(fl)
   # wb$get_sheet_names() # chartsheet has no named name?
   expect_silent(wb$clone_worksheet(1, "Clone 1"))
-  expect_true(inherits(wb$worksheets[[5]], "wbChartSheet"))
+  expect_s3_class(wb$worksheets[[5]], "wbChartSheet")
   # wb$open()
 
   # clone pivot table and drawing -----------------------------------------
@@ -502,7 +502,7 @@ test_that("add_drawing works", {
     add_drawing(xml = tmp, dims = NULL)$
     add_drawing(xml = tmp, dims = "L19")
 
-  expect_equal(1L, length(wb$drawings))
+  expect_length(wb$drawings, 1L)
 
 })
 
@@ -563,7 +563,7 @@ test_that("add_drawing works", {
   wb <- wb %>%
     wb_add_mschart(dims = "F4:L20", graph = scatter_plot)
 
-  expect_equal(1L, NROW(wb$charts))
+  expect_equal(NROW(wb$charts), 1L)
 
   chart_01 <- ms_linechart(
     data = us_indus_prod,
@@ -644,7 +644,7 @@ test_that("add_chartsheet works", {
 
   wb$add_mschart(graph = data_plot)
 
-  expect_equal(1, nrow(wb$charts))
+  expect_equal(nrow(wb$charts), 1)
 
   expect_true(grepl("A &amp; B", wb$charts$chart))
 
@@ -661,7 +661,7 @@ test_that("add_chartsheet works", {
   )
   wb$add_mschart(sheet = 2, graph = data_plot)
 
-  expect_equal(2L, nrow(wb$charts))
+  expect_equal(nrow(wb$charts), 2L)
 
   exp <- "xdr:absoluteAnchor"
   got <- xml_node_name(unlist(wb$drawings), "xdr:wsDr")
@@ -954,7 +954,9 @@ test_that("genBaseWorkbook() works", {
     "smartTagTypes", "webPublishing", "fileRecoveryPr", "webPublishObjects",
     "extLst"
   )
-  got <- names(genBaseWorkbook())
-  expect_equal(exp, got)
+  expect_equal(
+    names(genBaseWorkbook()),
+    exp
+  )
 
 })
