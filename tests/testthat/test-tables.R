@@ -107,17 +107,17 @@ test_that("Validate Table Names", {
   expect_equal(wb_validate_table_name(wb, "Test"), "test")
 
   ## length
-  expect_error(wb_validate_table_name(wb, paste(sample(LETTERS, size = 300, replace = TRUE), collapse = "")), regexp = "tableName must be less than 255 characters")
+  expect_error(wb_validate_table_name(wb, paste(sample(LETTERS, size = 300, replace = TRUE), collapse = "")), regexp = "`table_name` must be less than 255 characters")
 
   ## look like cell ref
-  expect_error(wb_validate_table_name(wb, "R1C2"), regexp = "tableName cannot be the same as a cell reference, such as R1C1", fixed = TRUE)
-  expect_error(wb_validate_table_name(wb, "A1"), regexp = "tableName cannot be the same as a cell reference", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "R1C2"), regexp = "`table_name` cannot be the same as a cell reference, such as R1C1", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "A1"), regexp = "`table_name` cannot be the same as a cell reference", fixed = TRUE)
 
-  expect_error(wb_validate_table_name(wb, "R06821C9682"), regexp = "tableName cannot be the same as a cell reference, such as R1C1", fixed = TRUE)
-  expect_error(wb_validate_table_name(wb, "ABD918751"), regexp = "tableName cannot be the same as a cell reference", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "R06821C9682"), regexp = "`table_name` cannot be the same as a cell reference, such as R1C1", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "ABD918751"), regexp = "`table_name` cannot be the same as a cell reference", fixed = TRUE)
 
-  expect_error(wb_validate_table_name(wb, "A$100"), regexp = "'$' character cannot exist in a tableName", fixed = TRUE)
-  expect_error(wb_validate_table_name(wb, "A12$100"), regexp = "'$' character cannot exist in a tableName", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "A$100"), regexp = "'$' character cannot exist in a `table_name`", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "A12$100"), regexp = "'$' character cannot exist in a `table_name`", fixed = TRUE)
 
   tbl_nm <- "性別"
   expect_equal(wb_validate_table_name(wb, tbl_nm), tbl_nm)
@@ -128,14 +128,14 @@ test_that("Existing Table Names", {
 
   ## Existing names - case in-sensitive
   wb$add_data_table(sheet = 1, x = head(iris), tableName = "Table1")
-  expect_error(wb_validate_table_name(wb, "Table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "Table1", startCol = 10), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "Table1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), table_name = "Table1", startCol = 10), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 
-  expect_error(wb_validate_table_name(wb, "TABLE1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "TABLE1", startCol = 20), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "TABLE1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "TABLE1", startCol = 20), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 
-  expect_error(wb_validate_table_name(wb, "table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "table1", startCol = 30), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "table1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "table1", startCol = 30), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 })
 
 test_that("custom table styles work", {
@@ -150,7 +150,7 @@ test_that("custom table styles work", {
   tabBrd1 <- create_dxfs_style(border = TRUE)
   tabCol3 <- create_dxfs_style(bgFill = wb_color(hex = "FFC00000"), font_color = wb_color("white"))
 
-  # dont forget to assign them to the workbook
+  # don't forget to assign them to the workbook
   wb$add_style(tabCol1)
   wb$add_style(tabCol2)
   wb$add_style(tabBrd1)
