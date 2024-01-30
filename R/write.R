@@ -450,6 +450,7 @@ write_data2 <- function(
     # styles. gets the reference an passes it on.
     get_data_class_dims <- function(data_class) {
       sel <- dc == openxlsx2_celltype[[data_class]]
+      # sel = TRUE
       sel_cols <- names(rtyp[sel])
       sel_rows <- rownames(rtyp)
 

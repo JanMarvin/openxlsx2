@@ -250,7 +250,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   colWidths <- NULL
   if ("col_widths" %in% names(params)) {
     colWidths <- params$col_widths
-    if (any(is.na(colWidths))) colWidths[is.na(colWidths)] <- 8.43
+    if (anyNA(colWidths)) colWidths[is.na(colWidths)] <- 8.43
   }
 
 

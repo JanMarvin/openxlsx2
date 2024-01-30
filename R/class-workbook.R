@@ -2579,7 +2579,7 @@ wbWorkbook <- R6::R6Class(
       CT$tmpDirPartName <- paste0(tmpDir, CT$PartName)
       CT$fileExists <- file.exists(CT$tmpDirPartName)
 
-      if (any(!CT$fileExists)) {
+      if (!all(CT$fileExists)) {
         missing_in_tmp <- CT$PartName[!CT$fileExists]
         warning(
           "[CT] file expected to be in output is missing: ",
@@ -3377,7 +3377,7 @@ wbWorkbook <- R6::R6Class(
         stop("Invalid rows entered (<= 0).")
       }
 
-      # all collapse = TRUE
+      # all collapsed = TRUE
       hidden <- all(collapsed)
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
 
@@ -3600,7 +3600,7 @@ wbWorkbook <- R6::R6Class(
         stop("Invalid rows entered (<= 0).")
       }
 
-      # All collapsed = TRUE
+      # all collapsed = TRUE
       hidden <- all(collapsed)
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
 

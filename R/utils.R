@@ -582,7 +582,7 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # Just keeping this as a safeguard
-  has_some_unnamed_args <- any(!nzchar(nams))
+  has_some_unnamed_args <- !all(nzchar(nams))
   if (has_some_unnamed_args) {
     stop("Internal error, all arguments should be named after this point.")
   }
