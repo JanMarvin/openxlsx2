@@ -134,7 +134,7 @@ test_that("Existing Table Names", {
   expect_error(wb_validate_table_name(wb, "TABLE1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
   expect_error(wb$add_data_table(sheet = 1, x = head(iris), table_name = "TABLE1", start_col = 20), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 
-  expect_error(wb_validate_table_name(wb, "table1"), regexp = "table with name 'table1' already exists", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "table1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
   expect_error(wb$add_data_table(sheet = 1, x = head(iris), table_name = "table1", start_col = 30), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 })
 
