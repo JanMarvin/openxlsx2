@@ -1020,9 +1020,9 @@ testfile_path <- function(x, replace = FALSE) {
 
   if (!file.exists(fl)) {
     return(testthat::skip("Testfile does not exist"))
-  } else {
-    return(fl)
   }
+
+  fl
 }
 
 
