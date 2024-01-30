@@ -252,7 +252,7 @@ check_wb_dims_args <- function(args, select = NULL) {
 
   cond_acceptable_len_1 <- !is.null(args$from_row) || !is.null(args$from_col) || !is.null(args$x)
   nams <- names(args) %||% rep("", length(args))
-  all_args_unnamed <- all(!nzchar(nams))
+  all_args_unnamed <- !any(nzchar(nams))
 
   if (length(args) == 1 && !cond_acceptable_len_1) {
     # Providing a single argument acceptable is only  `x`
@@ -582,7 +582,7 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # Just keeping this as a safeguard
-  has_some_unnamed_args <- any(!nzchar(nams))
+  has_some_unnamed_args <- !all(nzchar(nams))
   if (has_some_unnamed_args) {
     stop("Internal error, all arguments should be named after this point.")
   }

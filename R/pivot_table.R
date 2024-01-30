@@ -3,7 +3,7 @@ distinct <- function(x) {
   unis <- stringi::stri_unique(x)
   lwrs <- tolower(unis)
   dups <- duplicated(lwrs)
-  unis[dups == FALSE]
+  unis[!dups]
 }
 
 # append number of duplicated value.
@@ -71,7 +71,7 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
         sharedItem <- NULL
       }
 
-      if (any(is.na(dat))) {
+      if (anyNA(dat)) {
         containsBlank <- "1"
         containsSemiMixedTypes <- NULL
       } else {

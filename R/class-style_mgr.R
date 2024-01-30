@@ -447,14 +447,14 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         typ <- NULL
         id  <- NULL
 
-        is_numfmt <- any(ifelse(xml_node_name(style[sty]) == "numFmt", TRUE, FALSE))
-        is_font   <- any(ifelse(xml_node_name(style[sty]) == "font", TRUE, FALSE))
-        is_fill   <- any(ifelse(xml_node_name(style[sty]) == "fill", TRUE, FALSE))
-        is_border <- any(ifelse(xml_node_name(style[sty]) == "border", TRUE, FALSE))
-        is_xf     <- any(ifelse(xml_node_name(style[sty]) == "xf", TRUE, FALSE))
-        is_celSty <- any(ifelse(xml_node_name(style[sty]) == "cellStyle", TRUE, FALSE))
-        is_dxf    <- any(ifelse(xml_node_name(style[sty]) == "dxf", TRUE, FALSE))
-        is_tabSty <- any(ifelse(xml_node_name(style[sty]) == "tableStyle", TRUE, FALSE))
+        is_numfmt <- any(xml_node_name(style[sty]) == "numFmt")
+        is_font   <- any(xml_node_name(style[sty]) == "font")
+        is_fill   <- any(xml_node_name(style[sty]) == "fill")
+        is_border <- any(xml_node_name(style[sty]) == "border")
+        is_xf     <- any(xml_node_name(style[sty]) == "xf")
+        is_celSty <- any(xml_node_name(style[sty]) == "cellStyle")
+        is_dxf    <- any(xml_node_name(style[sty]) == "dxf")
+        is_tabSty <- any(xml_node_name(style[sty]) == "tableStyle")
 
         is_xf_fr  <- isTRUE(attr(style, "cellStyleXf"))
 

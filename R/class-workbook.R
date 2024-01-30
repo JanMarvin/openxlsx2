@@ -1561,7 +1561,7 @@ wbWorkbook <- R6::R6Class(
       sel <- which(pt$name == pivot_table)
       cid <- pt$cacheId[sel]
 
-      uni_name <- paste0(stringi::stri_replace_all_fixed(slicer, ' ', '_'), cid)
+      uni_name <- paste0(stringi::stri_replace_all_fixed(slicer, " ", "_"), cid)
 
       ### slicer_cache
       sortOrder <- NULL
@@ -2517,16 +2517,16 @@ wbWorkbook <- R6::R6Class(
         )
       } else {
        write_file(
-         head = '',
+         head = "",
          body = '<styleSheet xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>',
-         tail = '',
+         tail = "",
          fl = file.path(xlDir, "styles.xml")
        )
       }
 
       if (length(self$calcChain)) {
         write_file(
-          head = '',
+          head = "",
           body = pxml(self$calcChain),
           tail = "",
           fl = file.path(xlDir, "calcChain.xml")
@@ -2536,9 +2536,9 @@ wbWorkbook <- R6::R6Class(
       # write metadata file. required if cm attribut is set.
       if (length(self$metadata)) {
         write_file(
-          head = '',
+          head = "",
           body = self$metadata,
-          tail = '',
+          tail = "",
           fl = file.path(xlDir, "metadata.xml")
         )
       }
@@ -2579,7 +2579,7 @@ wbWorkbook <- R6::R6Class(
       CT$tmpDirPartName <- paste0(tmpDir, CT$PartName)
       CT$fileExists <- file.exists(CT$tmpDirPartName)
 
-      if (any(!CT$fileExists)) {
+      if (!all(CT$fileExists)) {
         missing_in_tmp <- CT$PartName[!CT$fileExists]
         warning(
           "[CT] file expected to be in output is missing: ",
@@ -2592,7 +2592,7 @@ wbWorkbook <- R6::R6Class(
       WR$tmpDirPartName <- paste0(tmpDir, "/xl/", WR$Target)
       WR$fileExists <- file.exists(WR$tmpDirPartName)
 
-      if (any(!WR$fileExists)) {
+      if (!all(WR$fileExists)) {
         missing_in_tmp <- WR$Target[!WR$fileExists]
         warning(
           "[WR] file expected to be in output is missing: ",
@@ -2634,7 +2634,7 @@ wbWorkbook <- R6::R6Class(
             WR$type <- basename(WR$Type)
             WR <- WR[WR$type != "hyperlink", ]
 
-            if (any(!WR$fileExists)) {
+            if (!all(WR$fileExists)) {
               missing_in_tmp <- WR$Target[!WR$fileExists]
               warning(
                 "[", folder, "] file expected to be in output is missing: ",
@@ -3377,7 +3377,8 @@ wbWorkbook <- R6::R6Class(
         stop("Invalid rows entered (<= 0).")
       }
 
-      hidden <- all(collapsed == TRUE)
+      # all collapsed = TRUE
+      hidden <- all(collapsed)
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
 
       # Remove duplicates
@@ -3599,7 +3600,8 @@ wbWorkbook <- R6::R6Class(
         stop("Invalid rows entered (<= 0).")
       }
 
-      hidden <- all(collapsed == TRUE)
+      # all collapsed = TRUE
+      hidden <- all(collapsed)
       collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
 
       # Remove duplicates
@@ -7847,9 +7849,9 @@ wbWorkbook <- R6::R6Class(
         ## write vml output
         if (self$vml[[i]] != "") {
           write_file(
-              head = '',
+              head = "",
               body = pxml(self$vml[[i]]),
-              tail = '',
+              tail = "",
               fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
           )
 
@@ -7951,9 +7953,9 @@ wbWorkbook <- R6::R6Class(
         ## Write drawing i (will always exist) skip those that are empty
         if (!all(self$drawings[[i]] == "")) {
           write_file(
-            head = '',
+            head = "",
             body = pxml(self$drawings[[i]]),
-            tail = '',
+            tail = "",
             fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
           )
           if (!all(self$drawings_rels[[i]] == "")) {

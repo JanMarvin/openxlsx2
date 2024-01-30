@@ -695,8 +695,8 @@ test_that("containsBlanks works", {
 
   wb <- wb_workbook()
   wb$add_worksheet()
-  wb$add_data(x = c(NA, 1, 2, ''), colNames = FALSE, na.strings = NULL)
-  wb$add_data(x = c(NA, 1, 2, ''), colNames = FALSE, na.strings = NULL, startCol = 2)
+  wb$add_data(x = c(NA, 1, 2, ""), colNames = FALSE, na.strings = NULL)
+  wb$add_data(x = c(NA, 1, 2, ""), colNames = FALSE, na.strings = NULL, startCol = 2)
   wb$add_conditional_formatting(cols = 1, rows = 1:4, type = "containsBlanks")
   wb$add_conditional_formatting(cols = 2, rows = 1:4, type = "notContainsBlanks")
 
