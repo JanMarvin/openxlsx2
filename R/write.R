@@ -99,7 +99,7 @@ inner_update <- function(
   cc[sel, replacement] <- x[replacement]
 
   # avoid missings in cc
-  if (any(is.na(cc)))
+  if (anyNA(cc))
     cc[is.na(cc)] <- ""
 
   # push everything back to workbook
@@ -450,7 +450,8 @@ write_data2 <- function(
     # styles. gets the reference an passes it on.
     get_data_class_dims <- function(data_class) {
       sel <- dc == openxlsx2_celltype[[data_class]]
-      sel_cols <- names(rtyp[sel == TRUE])
+      # sel = TRUE
+      sel_cols <- names(rtyp[sel])
       sel_rows <- rownames(rtyp)
 
       # ignore first row if colNames

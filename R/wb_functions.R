@@ -122,7 +122,7 @@ guess_col_type <- function(tt) {
 numfmt_is_date <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) == 0) return(z <- NULL)
+  if (length(numFmt) == 0) return(NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
@@ -152,7 +152,7 @@ numfmt_is_date <- function(numFmt) {
 numfmt_is_posix <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) == 0) return(z <- NULL)
+  if (length(numFmt) == 0) return(NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
@@ -184,7 +184,7 @@ numfmt_is_posix <- function(numFmt) {
 numfmt_is_hms <- function(numFmt) {
 
   # if numFmt is character(0)
-  if (length(numFmt) == 0) return(z <- NULL)
+  if (length(numFmt) == 0) return(NULL)
 
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part

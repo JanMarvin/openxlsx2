@@ -162,7 +162,7 @@ wb_create_columns <- function(wb, sheet, cols) {
     col_df <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
 
   # found a few cols, but not all required cols. create the missing columns
-  if (any(!cols %in% as.numeric(col_df$min))) {
+  if (!all(cols %in% as.numeric(col_df$min))) {
     beg <- max(as.numeric(col_df$min)) + 1
     end <- max(cols)
 
