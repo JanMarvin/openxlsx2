@@ -2517,16 +2517,16 @@ wbWorkbook <- R6::R6Class(
         )
       } else {
        write_file(
-         head = '',
+         head = "",
          body = '<styleSheet xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>',
-         tail = '',
+         tail = "",
          fl = file.path(xlDir, "styles.xml")
        )
       }
 
       if (length(self$calcChain)) {
         write_file(
-          head = '',
+          head = "",
           body = pxml(self$calcChain),
           tail = "",
           fl = file.path(xlDir, "calcChain.xml")
@@ -2536,9 +2536,9 @@ wbWorkbook <- R6::R6Class(
       # write metadata file. required if cm attribut is set.
       if (length(self$metadata)) {
         write_file(
-          head = '',
+          head = "",
           body = self$metadata,
-          tail = '',
+          tail = "",
           fl = file.path(xlDir, "metadata.xml")
         )
       }
@@ -7847,9 +7847,9 @@ wbWorkbook <- R6::R6Class(
         ## write vml output
         if (self$vml[[i]] != "") {
           write_file(
-              head = '',
+              head = "",
               body = pxml(self$vml[[i]]),
-              tail = '',
+              tail = "",
               fl = file.path(dir, sprintf("vmlDrawing%s.vml", i))
           )
 
@@ -7951,9 +7951,9 @@ wbWorkbook <- R6::R6Class(
         ## Write drawing i (will always exist) skip those that are empty
         if (!all(self$drawings[[i]] == "")) {
           write_file(
-            head = '',
+            head = "",
             body = pxml(self$drawings[[i]]),
-            tail = '',
+            tail = "",
             fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
           )
           if (!all(self$drawings_rels[[i]] == "")) {
