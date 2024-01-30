@@ -235,7 +235,7 @@ style_is_date <- function(cellXfs, numfmt_date) {
 style_is_posix <- function(cellXfs, numfmt_date) {
 
   # numfmt_date: some basic date formats and custom formats
-  date_numfmts <- "22"
+  date_numfmts <- as.character(22)
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
