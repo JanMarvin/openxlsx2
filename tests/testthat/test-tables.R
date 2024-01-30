@@ -116,8 +116,8 @@ test_that("Validate Table Names", {
   expect_error(wb_validate_table_name(wb, "R06821C9682"), regexp = "`table_name` cannot be the same as a cell reference, such as R1C1", fixed = TRUE)
   expect_error(wb_validate_table_name(wb, "ABD918751"), regexp = "`table_name` cannot be the same as a cell reference", fixed = TRUE)
 
-  expect_error(wb_validate_table_name(wb, "A$100"), regexp = "'$' character cannot exist in a `table_name`", fixed = TRUE)
-  expect_error(wb_validate_table_name(wb, "A12$100"), regexp = "'$' character cannot exist in a `table_name`", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "A$100"), regexp = "`table_name` cannot contain spaces or the '$' character", fixed = TRUE)
+  expect_error(wb_validate_table_name(wb, "A12$100"), regexp = "`table_name` cannot contain spaces or the '$' character", fixed = TRUE)
 
   tbl_nm <- "性別"
   expect_equal(wb_validate_table_name(wb, tbl_nm), tbl_nm)

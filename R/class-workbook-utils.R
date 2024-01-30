@@ -29,12 +29,8 @@ wb_validate_table_name <- function(wb, tableName) {
     stop("`table_name` must be less than 255 characters.", call. = FALSE)
   }
 
-  if (grepl("$", tableName, fixed = TRUE)) {
-    stop("'$' character cannot exist in a `table_name`.", call. = FALSE)
-  }
-
-  if (grepl(" ", tableName, fixed = TRUE)) {
-    stop("spaces cannot exist in  `table_name`.", call. = FALSE)
+  if (grepl("\\$|\\s", tableName)) {
+    stop("`table_name` cannot contain spaces or the '$' character.", call. = FALSE)
   }
 
   # if (!grepl("^[A-Za-z_]", tableName, perl = TRUE))
