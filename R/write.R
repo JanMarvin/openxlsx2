@@ -469,7 +469,7 @@ write_data2 <- function(
 
       wb$add_font(
         sheet = sheetno,
-        dim = dim_sel,
+        dims = dim_sel,
         color = wb_color(hex = "FF0000FF"),
         name = wb_get_base_font(wb)$name$val,
         u = "single"
@@ -486,7 +486,7 @@ write_data2 <- function(
 
         wb$add_cell_style(
           sheet = sheetno,
-          dim = dim_sel,
+          dims = dim_sel,
           applyNumberFormat = "1",
           quotePrefix = "1",
           numFmtId = "49"
@@ -505,7 +505,7 @@ write_data2 <- function(
 
         wb$add_numfmt(
           sheet = sheetno,
-          dim = dim_sel,
+          dims = dim_sel,
           numfmt = numfmt_numeric
         )
       }
@@ -518,7 +518,7 @@ write_data2 <- function(
 
       wb$add_numfmt(
         sheet = sheetno,
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_dt
       )
     }
@@ -530,7 +530,7 @@ write_data2 <- function(
 
       wb$add_numfmt(
         sheet = sheetno,
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_posix
       )
     }
@@ -542,7 +542,7 @@ write_data2 <- function(
 
       wb$add_numfmt(
         sheet = sheetno,
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_hms
       )
     }
@@ -555,7 +555,7 @@ write_data2 <- function(
       # message("currency: ", dim_sel)
 
       wb$add_numfmt(
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_currency
       )
     }
@@ -566,7 +566,7 @@ write_data2 <- function(
       # message("accounting: ", dim_sel)
 
       wb$add_numfmt(
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_accounting
       )
     }
@@ -578,7 +578,7 @@ write_data2 <- function(
 
       wb$add_numfmt(
         sheet = sheetno,
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_percentage
       )
     }
@@ -590,7 +590,7 @@ write_data2 <- function(
 
       wb$add_numfmt(
         sheet = sheetno,
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_scientific
       )
     }
@@ -602,7 +602,7 @@ write_data2 <- function(
 
       wb$add_numfmt(
         sheet = sheetno,
-        dim = dim_sel,
+        dims = dim_sel,
         numfmt = numfmt_comma
       )
     }

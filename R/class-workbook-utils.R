@@ -26,31 +26,27 @@ wb_validate_table_name <- function(wb, tableName) {
   # TODO add a strict = getOption("openxlsx2.tableName.strict", FALSE)
   # param to force these to allow to stopping
   if (nchar(tableName) > 255) {
-    stop("tableName must be less than 255 characters.", call. = FALSE)
+    stop("`table_name` must be less than 255 characters.", call. = FALSE)
   }
 
-  if (grepl("$", tableName, fixed = TRUE)) {
-    stop("'$' character cannot exist in a tableName", call. = FALSE)
-  }
-
-  if (grepl(" ", tableName, fixed = TRUE)) {
-    stop("spaces cannot exist in a table name", call. = FALSE)
+  if (grepl("\\$|\\s", tableName)) {
+    stop("`table_name` cannot contain spaces or the '$' character.", call. = FALSE)
   }
 
   # if (!grepl("^[A-Za-z_]", tableName, perl = TRUE))
-  #   stop("tableName must begin with a letter or an underscore")
+  #   stop("`table_name` must begin with a letter or an underscore", call. = FALSE)
 
   if (grepl("R[0-9]+C[0-9]+", tableName, perl = TRUE, ignore.case = TRUE)) {
-    stop("tableName cannot be the same as a cell reference, such as R1C1", call. = FALSE)
+    stop("`table_name` cannot be the same as a cell reference, such as R1C1.", call. = FALSE)
   }
 
   if (grepl("^[A-Z]{1,3}[0-9]+$", tableName, ignore.case = TRUE)) {
-    stop("tableName cannot be the same as a cell reference", call. = FALSE)
+    stop("`table_name` cannot be the same as a cell reference.", call. = FALSE)
   }
 
   # only place where self is needed
   if (tableName %in% wb$tables$tab_name) {
-    stop(sprintf("table with name '%s' already exists", tableName), call. = FALSE)
+    stop(sprintf("`table_name = '%s'` already exists.", tableName), call. = FALSE)
   }
 
   tableName
