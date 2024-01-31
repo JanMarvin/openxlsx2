@@ -331,16 +331,16 @@ test_that("get & set cell style(s)", {
 
   # get style from b1 to assign it to a1
   numfmt <- wb$get_cell_style(dims = "B1")
-  expect_equal("1", numfmt)
+  expect_equal(numfmt, "1")
 
   # assign style to a1
   pre <- wb$get_cell_style(dims = "A1")
-  expect_equal("", pre)
+  expect_equal(pre, "")
 
   expect_silent(wb$set_cell_style(dims = "A1", style = numfmt))
 
   post <- wb$get_cell_style(dims = "A1")
-  expect_equal("1", post)
+  expect_equal(post, "1")
 
   s_a1_b1 <- wb$get_cell_style(dims = "A1:B1")
   expect_silent(wb$set_cell_style(dims = "A2:B2", style = s_a1_b1))
@@ -367,21 +367,19 @@ test_that("get_cell_styles()", {
                right_border = "",
                top_border = "")
 
-  exp <- "1"
   got <- wb$get_cell_style(dims = "B2")
-  expect_equal(exp, got)
+  expect_equal(got, "1")
 
   exp <- "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
   got <- get_cell_styles(wb, 1, "B2")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
-  exp <- "3"
   got <- wb$get_cell_style(dims = "B3")
-  expect_equal(exp, got)
+  expect_equal(got, "3")
 
   exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>"
   got <- get_cell_styles(wb, 1, "B3")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$add_cell_style(dims = "B3:L3",
                     textRotation = "45",
@@ -391,7 +389,7 @@ test_that("get_cell_styles()", {
 
   exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"center\" textRotation=\"45\" vertical=\"center\" wrapText=\"1\"/></xf>"
   got <- get_cell_styles(wb, 1, "B3")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 

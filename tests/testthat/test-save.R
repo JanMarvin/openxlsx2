@@ -37,7 +37,7 @@ test_that("creating hyperlinks", {
   # warning: col and row provided, but not required
   expect_warning(
     linkString <- create_hyperlink(col = 1, row = 4,
-                                      text = "test.png", file = img))
+                                   text = "test.png", file = img))
 
   linkString2 <- create_hyperlink(text = "test.png", file = img)
 

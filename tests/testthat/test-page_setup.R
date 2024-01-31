@@ -5,16 +5,16 @@ test_that("Page setup", {
 
   wb$page_setup(
     sheet = "s1", orientation = "landscape", scale = 100, left = 0.1,
-    right = 0.1, top = .75, bottom = .75, header = 0.1, footer = 0.1,
-    fitToWidth = TRUE, fitToHeight = TRUE, paperSize = 1,
-    summaryRow = "below", summaryCol = "right"
+    right = 0.1, top = 0.75, bottom = 0.75, header = 0.1, footer = 0.1,
+    fit_to_width = TRUE, fit_to_height = TRUE, paper_size = 1,
+    summary_row = "below", summary_col = "right"
   )
 
   wb$page_setup(
     sheet = 2, orientation = "landscape", scale = 100, left = 0.1,
-    right = 0.1, top = .75, bottom = .75, header = 0.1, footer = 0.1,
-    fitToWidth = TRUE, fitToHeight = TRUE, paperSize = 1,
-    summaryRow = "below", summaryCol = "right"
+    right = 0.1, top = 0.75, bottom = 0.75, header = 0.1, footer = 0.1,
+    fit_to_width = TRUE, fit_to_height = TRUE, paper_size = 1,
+    summary_row = "below", summary_col = "right"
   )
 
   expect_equal(wb$worksheets[[1]]$pageSetup, wb$worksheets[[2]]$pageSetup)
@@ -49,8 +49,8 @@ test_that("page_breaks", {
   )
   cbrk <- "<brk id=\"2\" max=\"1048575\" man=\"1\"/>"
 
-  expect_equal(rbrk, wb$worksheets[[1]]$rowBreaks)
-  expect_equal(cbrk, wb$worksheets[[1]]$colBreaks)
+  expect_equal(wb$worksheets[[1]]$rowBreaks, rbrk)
+  expect_equal(wb$worksheets[[1]]$colBreaks, cbrk)
 
   wb$save(temp)
   wb2 <- wb_load(temp)

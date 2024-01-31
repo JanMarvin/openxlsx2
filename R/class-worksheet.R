@@ -174,7 +174,7 @@ wbWorksheet <- R6::R6Class(
 
       if (!is.null(tab_color)) {
         tab_color <- xml_node_create("tabColor", xml_attributes = tab_color)
-        tabColor <- sprintf('<sheetPr>%s</sheetPr>', tab_color)
+        tabColor <- sprintf("<sheetPr>%s</sheetPr>", tab_color)
       } else {
         tabColor <- character()
       }
@@ -280,7 +280,7 @@ wbWorksheet <- R6::R6Class(
         if (length(self$cols_attr)) {
           paste(c("<cols>", self$cols_attr, "</cols>"), collapse = "")
         },
-        '</worksheet>',
+        "</worksheet>",
         sep = ""
       )
     },

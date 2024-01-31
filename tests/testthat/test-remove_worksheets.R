@@ -2,7 +2,7 @@ test_that("Deleting worksheets", {
   tempFile <- temp_xlsx()
   genWS <- function(wb, sheetName) {
     wb$add_worksheet(sheetName)
-    wb$add_data_table(sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), colNames = TRUE)
+    wb$add_data_table(sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), col_names = TRUE)
   }
 
   wb <- wb_workbook()
@@ -29,25 +29,25 @@ test_that("Deleting worksheets", {
   wb <- wb_load(tempFile)
   expect_equal(names(wb$get_sheet_names()), c("Sheet 3", "Sheet 1", "Sheet 2"))
 
-  wb$add_data(sheet = "Sheet 2", x = iris[1:10, 1:4], startRow = 5)
-  test <- read_xlsx(wb, "Sheet 2", startRow = 5)
+  wb$add_data(sheet = "Sheet 2", x = iris[1:10, 1:4], start_row = 5)
+  test <- read_xlsx(wb, "Sheet 2", start_row = 5)
   rownames(test) <- seq_len(nrow(test))
   attr(test, "tt") <- NULL
   attr(test, "types") <- NULL
   expect_equal(iris[1:10, 1:4], test)
 
-  wb$add_data(sheet = 1, x = iris[1:20, 1:4], startRow = 5)
-  test <- read_xlsx(wb, "Sheet 3", startRow = 5)
+  wb$add_data(sheet = 1, x = iris[1:20, 1:4], start_row = 5)
+  test <- read_xlsx(wb, "Sheet 3", start_row = 5)
   rownames(test) <- seq_len(nrow(test))
   attr(test, "tt") <- NULL
   attr(test, "types") <- NULL
   expect_equal(iris[1:20, 1:4], test)
 
   wb$remove_worksheet(sheet = 1)
-  expect_equal("This is sheet: Sheet 1", read_xlsx(wb, 1, startRow = 1)[[1]])
+  expect_equal(read_xlsx(wb, 1, start_row = 1)[[1]], "This is sheet: Sheet 1")
 
   wb$remove_worksheet(sheet = 2)
-  expect_equal("This is sheet: Sheet 1", read_xlsx(wb, 1, startRow = 1)[[1]])
+  expect_equal(read_xlsx(wb, 1, start_row = 1)[[1]], "This is sheet: Sheet 1")
 
   wb$remove_worksheet(sheet = 1)
   expect_equal(names(wb$get_sheet_names()), character(0))
@@ -89,9 +89,7 @@ test_that("removing leading chartsheets works", {
     remove_worksheet(1)$
     add_worksheet()
 
-  exp <- c("Sheet 2", "Sheet 3")
-  got <- wb$sheet_names
-  expect_equal(exp, got)
+  expect_equal(wb$sheet_names, c("Sheet 2", "Sheet 3"))
 
   ###
   skip_if_not_installed("mschart")
@@ -125,9 +123,9 @@ test_that("removing leading chartsheets works", {
   dir.create(tmp_dir)
   unzip(tmp, exdir = tmp_dir)
 
-  exp <- c("sheet1.xml", "sheet2.xml")
   got <- dir(paste0(tmp_dir, "/xl/worksheets"), pattern = "*.xml")
-  expect_equal(exp, got)
+  exp <- c("sheet1.xml", "sheet2.xml")
+  expect_equal(got, exp)
 
   unlink(tmp_dir, recursive = TRUE)
 
@@ -140,13 +138,13 @@ test_that("bookViews activeTab attribute is updated", {
     add_worksheet()
 
   wb$set_active_sheet(2)
-  exp <- "<bookViews><workbookView activeTab=\"1\"/></bookViews>"
   got <- wb$workbook$bookViews
-  expect_equal(exp, got)
+  exp <- "<bookViews><workbookView activeTab=\"1\"/></bookViews>"
+  expect_equal(got, exp)
 
   wb$remove_worksheet(1)
-  exp <- "<bookViews><workbookView activeTab=\"0\"/></bookViews>"
   got <- wb$workbook$bookViews
-  expect_equal(exp, got)
+  exp <- "<bookViews><workbookView activeTab=\"0\"/></bookViews>"
+  expect_equal(got, exp)
 
 })

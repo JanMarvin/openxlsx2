@@ -798,6 +798,7 @@ read_xml_files <- function(x) {
 #' @noRd
 un_list <- function(x) {
 
+  # TODO can use `lengths()` when depending on R 4.0
   names <- vapply(x, length, NA_integer_)
   nams <- NULL
   for (i in seq_along(names)) {

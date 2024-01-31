@@ -92,39 +92,37 @@ test_that("xml_node", {
   xml <- "<a><b/></a>"
   x <- read_xml(xml, pointer = FALSE)
 
-  expect_equal("a", xml_node_name(x))
-  expect_equal(xml, xml_node(x))
-  expect_equal(xml, xml_node(x, "a"))
+  expect_equal(xml_node_name(x), "a")
+  expect_equal(xml_node(x), xml)
+  expect_equal(xml_node(x, "a"), xml)
   expect_error(xml_node(x, 1))
 
-  exp <- "<b/>"
-  expect_equal(exp, xml_node(x, "a", "b"))
+  expect_equal(xml_node(x, "a", "b"), "<b/>")
 
 
-  expect_equal(xml, xml_node("<a><b/></a>", "a"))
+  expect_equal(xml_node("<a><b/></a>", "a"), xml)
 
-  exp <- "<b/>"
-  expect_equal(exp, xml_node("<a><b/></a>", "a", "b"))
+  expect_equal(xml_node("<a><b/></a>", "a", "b"), "<b/>")
 
 
   xml_str <- "<a><b><c><d><e/></d></c></b></a>"
   xml <- read_xml(xml_str)
 
-  expect_equal("b", xml_node_name(xml_str, "a"))
-  expect_equal("c", xml_node_name(xml_str, "a", "b"))
-  expect_equal("b", xml_node_name(xml, "a"))
-  expect_equal("c", xml_node_name(xml, "a", "b"))
+  expect_equal(xml_node_name(xml_str, "a"), "b")
+  expect_equal(xml_node_name(xml_str, "a", "b"), "c")
+  expect_equal(xml_node_name(xml, "a"), "b")
+  expect_equal(xml_node_name(xml, "a", "b"), "c")
 
   exp <- xml_str
-  expect_equal(exp, xml_node(xml, "a"))
+  expect_equal(xml_node(xml, "a"), exp)
 
   exp <- "<b><c><d><e/></d></c></b>"
-  expect_equal(exp, xml_node(xml, "a", "b"))
+  expect_equal(xml_node(xml, "a", "b"), exp)
 
   exp <- "<c><d><e/></d></c>"
-  expect_equal(exp, xml_node(xml, "a", "b", "c"))
+  expect_equal(xml_node(xml, "a", "b", "c"), exp)
   # bit cheating, this test returns the same, but not the actual feature of "*"
-  expect_equal(exp, xml_node(xml, "a", "*", "c"))
+  expect_equal(xml_node(xml, "a", "*", "c"), exp)
 
 })
 
@@ -132,34 +130,34 @@ test_that("xml_attr", {
 
   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
   exp <- list(c(a = "1", b = "2"))
-  expect_equal(exp, xml_attr(x, "a"))
+  expect_equal(xml_attr(x, "a"), exp)
   expect_error(xml_attr(x, 1))
 
   x <- read_xml("<a><b r=\"1\">2</b></a>")
   exp <- list(c(r = "1"))
-  expect_equal(exp, xml_attr(x, "a", "b"))
+  expect_equal(xml_attr(x, "a", "b"), exp)
 
   x <- read_xml("<a a=\"1\" b=\"2\">1</a>")
   exp <- list(c(a = "1", b = "2"))
-  expect_equal(exp, xml_attr(x, "a"))
+  expect_equal(xml_attr(x, "a"), exp)
 
   x <- read_xml("<b><a a=\"1\" b=\"2\"/></b>")
   exp <- list(c(a = "1", b = "2"))
-  expect_equal(exp, xml_attr(x, "b", "a"))
+  expect_equal(xml_attr(x, "b", "a"), exp)
 
 
 
   exp <- list(c(a = "1", b = "2"))
-  expect_equal(exp, xml_attr("<a a=\"1\" b=\"2\">1</a>", "a"))
+  expect_equal(xml_attr("<a a=\"1\" b=\"2\">1</a>", "a"), exp)
 
   exp <- list(c(r = "1"))
-  expect_equal(exp, xml_attr("<a><b r=\"1\">2</b></a>", "a", "b"))
+  expect_equal(xml_attr("<a><b r=\"1\">2</b></a>", "a", "b"), exp)
 
   exp <- list(c(a = "1", b = "2"))
-  expect_equal(exp, xml_attr("<a a=\"1\" b=\"2\">1</a>", "a"))
+  expect_equal(xml_attr("<a a=\"1\" b=\"2\">1</a>", "a"), exp)
 
   exp <- list(c(a = "1", b = "2"))
-  expect_equal(exp, xml_attr("<b><a a=\"1\" b=\"2\"/></b>", "b", "a"))
+  expect_equal(xml_attr("<b><a a=\"1\" b=\"2\"/></b>", "b", "a"), exp)
 
 
 
@@ -167,47 +165,44 @@ test_that("xml_attr", {
 
   xml_str <- "<a a=\"1\"/>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, xml_attr(xml, "a"))
+  expect_equal(xml_attr(xml, "a"), exp)
 
   xml_str <- "<b><a a=\"1\"/></b>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, xml_attr(xml, "b", "a"))
+  expect_equal(xml_attr(xml, "b", "a"), exp)
 
   xml_str <- "<c><b><a a=\"1\"/></b></c>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, xml_attr(xml, "c", "b", "a"))
+  expect_equal(xml_attr(xml, "c", "b", "a"), exp)
 
 })
 
 test_that("xml_value", {
 
   x <- read_xml("<a>1</a>")
-  exp <- "1"
-  expect_equal(exp, xml_value(x, "a"))
+  expect_equal(xml_value(x, "a"), "1")
   expect_error(xml_value(x, 1))
 
   x <- read_xml("<a><b r=\"1\">2</b></a>")
-  exp <- "2"
-  expect_equal(exp, xml_value(x, "a", "b"))
+  expect_equal(xml_value(x, "a", "b"), "2")
 
   x <- read_xml("<a><b r=\"1\">2</b><b r=\"2\">3</b></a>")
-  exp <- c("2", "3")
-  expect_equal(exp, xml_value(x, "a", "b"))
+  expect_equal(xml_value(x, "a", "b"), c("2", "3"))
 
 
   exp <- "1"
 
   xml_str <- "<a>1</a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, xml_value(xml, "a"))
+  expect_equal(xml_value(xml, "a"), "1")
 
   xml_str <- "<a><b>1</b></a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, xml_value(xml, "a", "b"))
+  expect_equal(xml_value(xml, "a", "b"), "1")
 
   xml_str <- "<a><b><c>1</c></b></a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, xml_value(xml, "a", "b", "c"))
+  expect_equal(xml_value(xml, "a", "b", "c"), "1")
 
 })
 
@@ -239,7 +234,7 @@ test_that("xml_add_child", {
 
   exp <- "<node><child1/><child2/><new_child/></node>"
 
-  expect_equal(exp, xml_add_child(xml_node, xml_child))
+  expect_equal(xml_add_child(xml_node, xml_child), exp)
 
   expect_error(xml_add_child(xml_node))
   expect_error(xml_add_child(xml_child = xml_child))
@@ -248,13 +243,13 @@ test_that("xml_add_child", {
   xml_child <- "<c/>"
 
   xml_node <- xml_add_child(xml_node, xml_child)
-  expect_equal("<a><b/><c/></a>", xml_node)
+  expect_equal(xml_node, "<a><b/><c/></a>")
 
   xml_node <- xml_add_child(xml_node, xml_child, level = c("b"))
-  expect_equal("<a><b><c/></b><c/></a>", xml_node)
+  expect_equal(xml_node, "<a><b><c/></b><c/></a>")
 
   xml_node <- xml_add_child(xml_node, "<d/>", level = c("b", "c"))
-  expect_equal("<a><b><c><d/></c></b><c/></a>", xml_node)
+  expect_equal(xml_node, "<a><b><c><d/></c></b><c/></a>")
 
 })
 
@@ -262,44 +257,48 @@ test_that("xml_add_child", {
 test_that("xml_rm_child", {
 
 
-  xml_node <- "<a><c>1</c><c>2</c></a>"
-  xml_child <- "c"
-
-  expect_equal("<a/>", xml_rm_child(xml_node, xml_child, which = 0))
-  expect_equal("<a><c>2</c></a>", xml_rm_child(xml_node, xml_child, which = 1))
-  expect_equal("<a><c>1</c></a>", xml_rm_child(xml_node, xml_child, which = 2))
-  expect_equal("<a><c>1</c><c>2</c></a>", xml_rm_child(xml_node, xml_child, which = 3))
+  rm_child <- function(which) {
+    xml_rm_child(
+      xml_node = "<a><c>1</c><c>2</c></a>",
+      xml_child = "c",
+      which = which
+    )
+  }
+  expect_equal(rm_child(which = 0), "<a/>")
+  expect_equal(rm_child(which = 1), "<a><c>2</c></a>")
+  expect_equal(rm_child(which = 2), "<a><c>1</c></a>")
+  expect_equal(rm_child(which = 3), "<a><c>1</c><c>2</c></a>")
 
   xml_node <- "<a><b>1</b><b><c><d/></c><c/></b><c>2</c><c/></a>"
   xml_child <- "c"
 
-  exp <- "<a><b><c><d/></c><c/></b><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, "b", which = 1)
-  expect_equal(exp, got)
+  exp <- "<a><b><c><d/></c><c/></b><c>2</c><c/></a>"
+  expect_equal(got, exp)
 
   xml_node <- exp
 
-  exp <- "<a><b><c/></b><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, xml_child, "b", which = 1)
-  expect_equal(exp, got)
+  exp <- "<a><b><c/></b><c>2</c><c/></a>"
+  expect_equal(got, exp)
 
-  exp <- "<a><b><c><d/></c></b><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, xml_child, level = "b", which = 2)
-  expect_equal(exp, got)
+  exp <- "<a><b><c><d/></c></b><c>2</c><c/></a>"
+  expect_equal(got, exp)
 
-  exp <- "<a><b/><c>2</c><c/></a>"
   got <- xml_rm_child(xml_node, xml_child, "b", which = 0)
-  expect_equal(exp, got)
+  exp <- "<a><b/><c>2</c><c/></a>"
+  expect_equal(got, exp)
 
   xml_node <- "<x><a><b><c>1</c><c>2</c><c>3</c></b></a></x>"
 
-  exp <- "<x><a><b><c>1</c><c>3</c></b></a></x>"
   got <- xml_rm_child(xml_node, xml_child, level = c("a", "b"), which = 2)
-  expect_equal(exp, got)
+  exp <- "<x><a><b><c>1</c><c>3</c></b></a></x>"
+  expect_equal(got, exp)
 
-  exp <- "<x><a><b/></a></x>"
   got <- xml_rm_child(xml_node, xml_child, level = c("a", "b"), which = 0)
-  expect_equal(exp, got)
+  exp <- "<x><a><b/></a></x>"
+  expect_equal(got, exp)
 
 })
 

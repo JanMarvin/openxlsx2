@@ -181,10 +181,9 @@ test_that("print comment", {
 
   c2 <- create_comment(text = "this is another comment",
                        author = "Marco Polo")
-
-  exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\n\n\n\n\nFont name: Aptos Narrow\nFont size: 11\nFont color: #000000\n\n"
   got <- capture_output(print(c2), print = TRUE)
-  expect_equal(exp, got)
+  exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\n\n\n\n\nFont name: Aptos Narrow\nFont size: 11\nFont color: #000000\n\n"
+  expect_equal(got, exp)
 
 })
 
@@ -330,11 +329,11 @@ test_that("background images work", {
   wb$add_comment(dims = "G12", comment = c1, file = tmp2)
   wb$add_comment(dims = "G12", sheet = 1, comment = c1, file = tmp2)
 
-  expect_equal(3, length(wb$vml))
-  expect_equal(3, length(wb$vml_rels))
-  expect_equal(2, length(wb$vml_rels[[1]]))
-  expect_true(is.null(wb$vml_rels[[2]]))
-  expect_equal(1, length(wb$vml_rels[[3]]))
+  expect_length(wb$vml, 3)
+  expect_length(wb$vml_rels, 3)
+  expect_length(wb$vml_rels[[1]], 2)
+  expect_null(wb$vml_rels[[2]])
+  expect_length(wb$vml_rels[[3]], 1)
 
 })
 

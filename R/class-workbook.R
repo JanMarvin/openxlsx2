@@ -4784,7 +4784,7 @@ wbWorkbook <- R6::R6Class(
       pos <- '<xdr:pos x="0" y="0" />'
 
       drawingsXML <- stri_join(
-        '<xdr:absoluteAnchor>',
+        "<xdr:absoluteAnchor>",
         pos,
         sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
         genBasePic(imageNo, next_id),

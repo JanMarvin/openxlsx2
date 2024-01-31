@@ -3,7 +3,7 @@ test_that("load various formulas", {
   fl <- testfile_path("formula.xlsx")
   wb <- wb_load(fl)
 
-  expect_true(!is.null(wb$metadata))
+  expect_false(is.null(wb$metadata))
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
 
@@ -45,7 +45,7 @@ test_that("writing formulas with cell metadata works", {
   got <- wb$worksheets[[1]]$sheet_data$cc[1, ]
   expect_equal(exp, got)
 
-  expect_true(!is.null(wb$metadata))
+  expect_false(is.null(wb$metadata))
 
 })
 

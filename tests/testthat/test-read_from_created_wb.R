@@ -9,28 +9,28 @@ test_that("Reading from new workbook", {
 
 
   ## colNames = TRUE, rowNames = TRUE
-  wb$add_data(sheet = 1, x = mtcars, colNames = TRUE, rowNames = TRUE, startRow = 10, startCol = 5)
-  x <- read_xlsx(wb, 1, colNames = TRUE, rowNames = TRUE)
+  wb$add_data(sheet = 1, x = mtcars, col_names = TRUE, row_names = TRUE, start_row = 10, start_col = 5)
+  x <- read_xlsx(wb, 1, col_names = TRUE, row_names = TRUE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
 
 
   ## colNames = TRUE, rowNames = FALSE
-  wb$add_data(sheet = 2, x = mtcars, colNames = TRUE, rowNames = FALSE, startRow = 10, startCol = 5)
-  x <- read_xlsx(wb, sheet = 2, colNames = TRUE, rowNames = FALSE)
+  wb$add_data(sheet = 2, x = mtcars, col_names = TRUE, row_names = FALSE, start_row = 10, start_col = 5)
+  x <- read_xlsx(wb, sheet = 2, col_names = TRUE, row_names = FALSE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
   expect_equal(object = colnames(mtcars), expected = colnames(x), ignore_attr = TRUE)
 
   ## colNames = FALSE, rowNames = TRUE
-  wb$add_data(sheet = 3, x = mtcars, colNames = FALSE, rowNames = TRUE, startRow = 2, startCol = 2)
-  x <- read_xlsx(wb, sheet = 3, colNames = FALSE, rowNames = TRUE)
+  wb$add_data(sheet = 3, x = mtcars, col_names = FALSE, row_names = TRUE, start_row = 2, start_col = 2)
+  x <- read_xlsx(wb, sheet = 3, col_names = FALSE, row_names = TRUE)
   expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
-  expect_equal(object = rownames(mtcars), expected = rownames(x))
+  expect_equal(object = rownames(x), expected = rownames(mtcars))
 
 
   ## colNames = FALSE, rowNames = FALSE
-  wb$add_data(sheet = 4, x = mtcars, colNames = FALSE, rowNames = FALSE, startRow = 12, startCol = 1)
-  x <- read_xlsx(wb, sheet = 4, colNames = FALSE, rowNames = FALSE)
-  expect_equal(object = mtcars, expected = x, ignore_attr = TRUE)
+  wb$add_data(sheet = 4, x = mtcars, col_names = FALSE, row_names = FALSE, start_row = 12, start_col = 1)
+  x <- read_xlsx(wb, sheet = 4, col_names = FALSE, row_names = FALSE)
+  expect_equal(object = x, expected = mtcars, ignore_attr = TRUE)
 
   expect_equal(object = getwd(), curr_wd)
   rm(wb)
@@ -91,36 +91,36 @@ test_that("dims != rows & cols", {
     add_worksheet("sheet1")$
     add_data(1, data.frame("A" = 1))
 
-  got1 <- wb_to_df(wb, dims = "A2:D5", colNames = FALSE)
-  got2 <- wb_to_df(wb, rows = 2:5, cols = 1:4, colNames = FALSE)
+  got1 <- wb_to_df(wb, dims = "A2:D5", col_names = FALSE)
+  got2 <- wb_to_df(wb, rows = 2:5, cols = 1:4, col_names = FALSE)
   expect_equal(got1, got2)
 
-  got3 <- wb_to_df(wb, rows = c(2:3, 5:6), cols = c(1, 3:5), colNames = FALSE)
-  expect_equal(c(4, 4), dim(got3))
-  expect_equal(c("A", "C", "D", "E"), colnames(got3))
-  expect_equal(c("2", "3", "5", "6"), rownames(got3))
+  got3 <- wb_to_df(wb, rows = c(2:3, 5:6), cols = c(1, 3:5), col_names = FALSE)
+  expect_equal(dim(got3), c(4L, 4L))
+  expect_equal(colnames(got3), c("A", "C", "D", "E"))
+  expect_equal(rownames(got3), c("2", "3", "5", "6"))
 
-  got4 <- wb_to_df(wb, rows = 1:5, colNames = FALSE)
-  expect_equal(c(5, 1), dim(got4))
+  got4 <- wb_to_df(wb, rows = 1:5, col_names = FALSE)
+  expect_equal(dim(got4), c(5L, 1L))
 
-  got5 <- wb_to_df(wb, cols = 1:5, colNames = FALSE)
-  expect_equal(c(2, 5), dim(got5))
+  got5 <- wb_to_df(wb, cols = 1:5, col_names = FALSE)
+  expect_equal(dim(got5), c(2, 5))
 
-  got6 <- wb_to_df(wb, startRow = 4, cols = 1:4, colNames = FALSE)
+  got6 <- wb_to_df(wb, start_row = 4, cols = 1:4, col_names = FALSE)
   expect_true(all(is.na(got6)))
-  expect_equal("4", rownames(got6))
+  expect_equal(rownames(got6), "4")
 
 })
 
 test_that("read startCol", {
 
-  wb <- wb_workbook()$add_worksheet()$add_data(x = cars, startCol = "E")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = cars, start_col = "E")
 
-  got <- wb_to_df(wb, startCol = 1, colNames = FALSE)
-  expect_equal(LETTERS[1:6], names(got))
+  got <- wb_to_df(wb, start_col = 1, col_names = FALSE)
+  expect_equal(names(got), LETTERS[1:6])
 
-  got <- wb_to_df(wb, startCol = "F", colNames = FALSE)
-  expect_equal(LETTERS[6], names(got))
+  got <- wb_to_df(wb, start_col = "F", col_names = FALSE)
+  expect_equal(names(got), LETTERS[6])
 
 })
 
@@ -132,7 +132,7 @@ test_that("reading with multiple sections in freezePane works", {
   expect_silent(wb <- wb_load(temp))
 })
 
-test_that("skipEmtpyCols keeps empty named columns", {
+test_that("skipEmptyCols keeps empty named columns", {
 
   ## initialize empty cells
   na_mat <- matrix(NA, nrow = 22, ncol = 7)
@@ -145,10 +145,10 @@ test_that("skipEmtpyCols keeps empty named columns", {
   ## create the workbook
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = na_mat, colNames = FALSE)$
+    add_data(x = na_mat, col_names = FALSE)$
     add_data(x = dat)
 
-  got <- wb_to_df(wb, skipEmptyCols = TRUE)
+  got <- wb_to_df(wb, skip_empty_cols = TRUE)
   expect_equal(dat, got, ignore_attr = TRUE)
 
 })

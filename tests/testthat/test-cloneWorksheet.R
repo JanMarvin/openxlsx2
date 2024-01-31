@@ -31,8 +31,8 @@ test_that("clone Worksheet with table", {
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris")
-  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = "Sheet 1", x = iris, table_name = "iris")
+  wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 
   # FIXME a wild drawing2.xml appears in wb$Content_Types
   wb$clone_worksheet("Sheet 1", "Clone 1")
@@ -67,7 +67,7 @@ test_that("copy cells", {
     add_data(x = mtcars)$
     add_fill(dims = "A1:F1", color = wb_color("yellow"))
 
-  dat <- wb_data(wb, dims = "A1:D4", colNames = FALSE)
+  dat <- wb_data(wb, dims = "A1:D4", col_names = FALSE)
 
   # FIXME there is a bug with next_sheet() in clone_worksheets()
   wb$
@@ -87,20 +87,20 @@ test_that("copy cells", {
     clone_worksheet(old = 1, new = "Clone5")$
     copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = TRUE)
 
-  got <- wb_data(wb, sheet = 2, dims = "M2:P5", colNames = FALSE)
+  got <- wb_data(wb, sheet = 2, dims = "M2:P5", col_names = FALSE)
   expect_equal(dat, got, ignore_attr = TRUE)
 
-  got <- wb_data(wb, sheet = 3, dims = "A20:D23", colNames = FALSE)
+  got <- wb_data(wb, sheet = 3, dims = "A20:D23", col_names = FALSE)
   expect_equal(unlist(t(dat)), unlist(got), ignore_attr = TRUE)
 
   exp <- c("'Sheet 1'!A1", "'Sheet 1'!B1", "'Sheet 1'!C1", "'Sheet 1'!D1")
-  got <- wb_data(wb, sheet = 4, dims = "A20:D23", colNames = FALSE, showFormula = TRUE)[[1]]
+  got <- wb_data(wb, sheet = 4, dims = "A20:D23", col_names = FALSE, show_formula = TRUE)[[1]]
   expect_equal(exp, got)
 
-  got <- wb_data(wb, sheet = 5, dims = "A20:D23", colNames = FALSE)
+  got <- wb_data(wb, sheet = 5, dims = "A20:D23", col_names = FALSE)
   expect_equal(dat, got, ignore_attr = TRUE)
 
-  got <- wb_data(wb, sheet = 6, dims = "A20:D23", colNames = FALSE)
+  got <- wb_data(wb, sheet = 6, dims = "A20:D23", col_names = FALSE)
   expect_equal(unlist(t(dat)), unlist(got), ignore_attr = TRUE)
 
 })
@@ -170,7 +170,7 @@ test_that("wb_set_header_footer() works", {
 test_that("cloning from workbooks works", {
 
   ## FIXME these tests should be improved, right now they only check the
-  ## existance of a worksheet
+  ## existence of a worksheet
 
   # create a second workbook
   wb <- wb_workbook()$
@@ -184,9 +184,8 @@ test_that("cloning from workbooks works", {
   wb_in <- wb_load(fl)
 
   wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in)
-  exp <- c("NOT_SUM", "SUM")
   got <- wb$get_sheet_names() %>% unname()
-  expect_equal(exp, got)
+  expect_equal(got, c("NOT_SUM", "SUM"))
 
   wb$clone_worksheet(old = "SUM", new = "SUM_clone")
   exp <- c("NOT_SUM", "SUM", "SUM_clone")
@@ -284,7 +283,8 @@ test_that("cloning column and row styles works", {
   wb$worksheets[[1]]$sheet_data$row_attr[2, "customFormat"] <- "1"
   wb$worksheets[[1]]$sheet_data$row_attr[2, "s"] <- wb$styles_mgr$get_xf_id("new_styles")
 
-  cols <- openxlsx2:::wb_create_columns(wb, sheet = 1, cols = seq_along(mtcars))
+  # wb_create_columns is an internal function in openxlsx2.
+  cols <- wb_create_columns(wb, sheet = 1, cols = seq_along(mtcars))
   cols[cols$min == 11, "style"] <- "1"
   wb$worksheets[[1]]$fold_cols(cols)
 

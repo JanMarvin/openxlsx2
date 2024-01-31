@@ -7,42 +7,42 @@ test_that("write_datatable over tables", {
   wb <- wb_add_worksheet(wb_workbook(), "Sheet1")
 
   ## table covers rows 4->10 and cols 4->8
-  wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 4)
+  wb$add_data_table(sheet = 1, x = head(iris), start_col = 4, start_row = 4)
 
   ## should all run without error
-  wb$add_data_table(sheet = 1, x = df1, startCol = 3, startRow = 2)
-  wb$add_data_table(sheet = 1, x = df1, startCol = 9, startRow = 2)
-  wb$add_data_table(sheet = 1, x = df1, startCol = 4, startRow = 11)
-  wb$add_data_table(sheet = 1, x = df1, startCol = 5, startRow = 11)
-  wb$add_data_table(sheet = 1, x = df1, startCol = 6, startRow = 11)
-  wb$add_data_table(sheet = 1, x = df1, startCol = 7, startRow = 11)
-  wb$add_data_table(sheet = 1, x = df1, startCol = 8, startRow = 11)
-  wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 4, startRow = 1)
+  wb$add_data_table(sheet = 1, x = df1, start_col = 3, start_row = 2)
+  wb$add_data_table(sheet = 1, x = df1, start_col = 9, start_row = 2)
+  wb$add_data_table(sheet = 1, x = df1, start_col = 4, start_row = 11)
+  wb$add_data_table(sheet = 1, x = df1, start_col = 5, start_row = 11)
+  wb$add_data_table(sheet = 1, x = df1, start_col = 6, start_row = 11)
+  wb$add_data_table(sheet = 1, x = df1, start_col = 7, start_row = 11)
+  wb$add_data_table(sheet = 1, x = df1, start_col = 8, start_row = 11)
+  wb$add_data_table(sheet = 1, x = head(iris, 2), start_col = 4, start_row = 1)
 
   ## Now error
-  expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = "H", startRow = 21), regexp = overwrite_table_error)
-  expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = 3, startRow = 12), regexp = overwrite_table_error)
-  expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = 9, startRow = 12), regexp = overwrite_table_error)
-  expect_error(wb$add_data_table(sheet = 1, x = df1, startCol = "i", startRow = 12), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = df1, start_col = "H", start_row = 21), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = df1, start_col = 3, start_row = 12), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = df1, start_col = 9, start_row = 12), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = df1, start_col = "i", start_row = 12), regexp = overwrite_table_error)
 
   ## more errors
   expect_error(wb$add_data_table(sheet = 1, x = head(iris)), regexp = overwrite_table_error)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 21), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), start_col = 4, start_row = 21), regexp = overwrite_table_error)
 
   ## should work
-  wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 22)
-  wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 40)
+  wb$add_data_table(sheet = 1, x = head(iris), start_col = 4, start_row = 22)
+  wb$add_data_table(sheet = 1, x = head(iris), start_col = 4, start_row = 40)
 
   ## more errors
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 4, startRow = 38), regexp = overwrite_table_error)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 4, startRow = 38, colNames = FALSE), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), start_col = 4, start_row = 38), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), start_col = 4, start_row = 38, col_names = FALSE), regexp = overwrite_table_error)
 
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), startCol = "H", startRow = 40), regexp = overwrite_table_error)
-  wb$add_data_table(sheet = 1, x = head(iris), startCol = "I", startRow = 40)
-  wb$add_data_table(sheet = 1, x = head(iris)[, 1:3], startCol = "A", startRow = 40)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), start_col = "H", start_row = 40), regexp = overwrite_table_error)
+  wb$add_data_table(sheet = 1, x = head(iris), start_col = "I", start_row = 40)
+  wb$add_data_table(sheet = 1, x = head(iris)[, 1:3], start_col = "A", start_row = 40)
 
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 4, startRow = 38, colNames = FALSE), regexp = overwrite_table_error)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), startCol = 1, startRow = 46, colNames = FALSE), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), start_col = 4, start_row = 38, col_names = FALSE), regexp = overwrite_table_error)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris, 2), start_col = 1, start_row = 46, col_names = FALSE), regexp = overwrite_table_error)
 })
 
 test_that("zero row data table works", {
@@ -68,34 +68,34 @@ test_that("write_data over tables", {
   wb <- wb_add_worksheet(wb_workbook(), "Sheet1")
 
   ## table covers rows 4->10 and cols 4->8
-  wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 4)
+  wb$add_data_table(sheet = 1, x = head(iris), start_col = 4, start_row = 4)
 
   ## Anywhere on row 5 is fine
   for (i in 1:10) {
-    wb$add_data(sheet = 1, x = head(iris), startRow = 5, startCol = i)
+    wb$add_data(sheet = 1, x = head(iris), start_row = 5, start_col = i)
   }
 
   ## Anywhere on col i is fine
   for (i in 1:10) {
-    wb$add_data(sheet = 1, x = head(iris), startRow = i, startCol = "i")
+    wb$add_data(sheet = 1, x = head(iris), start_row = i, start_col = "i")
   }
 
   ## Now errors on headers
-  expect_error(wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 4), regexp = overwrite_table_error)
-  wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 5)
+  expect_error(wb$add_data(sheet = 1, x = head(iris), start_col = 4, start_row = 4), regexp = overwrite_table_error)
+  wb$add_data(sheet = 1, x = head(iris), start_col = 4, start_row = 5)
   wb$add_data(sheet = 1, x = head(iris)[1:3])
-  wb$add_data(sheet = 1, x = head(iris, 2), startCol = 4)
-  wb$add_data(sheet = 1, x = head(iris, 2), startCol = 4, colNames = FALSE)
+  wb$add_data(sheet = 1, x = head(iris, 2), start_col = 4)
+  wb$add_data(sheet = 1, x = head(iris, 2), start_col = 4, col_names = FALSE)
 
   ## Example of how this should be used
-  wb$add_data_table(sheet = 1, x = head(iris), startCol = 4, startRow = 30)
-  wb$add_data(sheet = 1, x = head(iris), startCol = 4, startRow = 31, colNames = FALSE)
+  wb$add_data_table(sheet = 1, x = head(iris), start_col = 4, start_row = 30)
+  wb$add_data(sheet = 1, x = head(iris), start_col = 4, start_row = 31, col_names = FALSE)
 
-  wb$add_data_table(sheet = 1, x = head(iris), startCol = 10, startRow = 30)
-  wb$add_data(sheet = 1, x = tail(iris), startCol = 10, startRow = 31, colNames = FALSE)
+  wb$add_data_table(sheet = 1, x = head(iris), start_col = 10, start_row = 30)
+  wb$add_data(sheet = 1, x = tail(iris), start_col = 10, start_row = 31, col_names = FALSE)
 
-  wb$add_data_table(sheet = 1, x = head(iris)[, 1:3], startCol = 1, startRow = 30)
-  wb$add_data(sheet = 1, x = tail(iris), startCol = 1, startRow = 31, colNames = FALSE)
+  wb$add_data_table(sheet = 1, x = head(iris)[, 1:3], start_col = 1, start_row = 30)
+  wb$add_data(sheet = 1, x = tail(iris), start_col = 1, start_row = 31, col_names = FALSE)
 })
 
 test_that("Validate Table Names", {
@@ -127,15 +127,15 @@ test_that("Existing Table Names", {
   wb <- wb_add_worksheet(wb_workbook(), "Sheet 1")
 
   ## Existing names - case in-sensitive
-  wb$add_data_table(sheet = 1, x = head(iris), tableName = "Table1")
+  wb$add_data_table(sheet = 1, x = head(iris), table_name = "Table1")
   expect_error(wb_validate_table_name(wb, "Table1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), table_name = "Table1", startCol = 10), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), table_name = "Table1", start_col = 10), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 
   expect_error(wb_validate_table_name(wb, "TABLE1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "TABLE1", startCol = 20), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), table_name = "TABLE1", start_col = 20), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 
   expect_error(wb_validate_table_name(wb, "table1"), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
-  expect_error(wb$add_data_table(sheet = 1, x = head(iris), tableName = "table1", startCol = 30), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
+  expect_error(wb$add_data_table(sheet = 1, x = head(iris), table_name = "table1", start_col = 30), regexp = "`table_name = 'table1'` already exists", fixed = TRUE)
 })
 
 test_that("custom table styles work", {
@@ -145,10 +145,10 @@ test_that("custom table styles work", {
     wb_add_worksheet()
 
   # create dxf elements to be used in the table style
-  tabCol1 <- create_dxfs_style(bgFill = wb_color(theme = 7))
-  tabCol2 <- create_dxfs_style(bgFill = wb_color(theme = 5))
+  tabCol1 <- create_dxfs_style(bg_fill = wb_color(theme = 7))
+  tabCol2 <- create_dxfs_style(bg_fill = wb_color(theme = 5))
   tabBrd1 <- create_dxfs_style(border = TRUE)
-  tabCol3 <- create_dxfs_style(bgFill = wb_color(hex = "FFC00000"), font_color = wb_color("white"))
+  tabCol3 <- create_dxfs_style(bg_fill = wb_color(hex = "FFC00000"), font_color = wb_color("white"))
 
   # don't forget to assign them to the workbook
   wb$add_style(tabCol1)
@@ -174,9 +174,9 @@ test_that("custom table styles work", {
   )
   wb$add_style(tab_xml)
 
-  expect_silent(wb$add_data_table(x = mtcars, tableStyle = "RedTableStyle"))
+  expect_silent(wb$add_data_table(x = mtcars, table_style = "RedTableStyle"))
   wb$add_worksheet()
-  expect_error(wb$add_data_table(x = mtcars, tableStyle = "RedTableStyle1"), "Invalid table style.")
+  expect_error(wb$add_data_table(x = mtcars, table_style = "RedTableStyle1"), "Invalid table style.")
 
 })
 
@@ -199,8 +199,7 @@ test_that("updating table works", {
   wb <- wb_workbook()$add_worksheet()$add_data_table(x = mtcars, with_filter = FALSE)
   wb$update_table(tabname = "Table1", dims = "A1:J4")
 
-  exp <- "A1:J4"
   got <- wb$tables$tab_ref
-  expect_equal(exp, got)
+  expect_equal(got, "A1:J4")
 
 })

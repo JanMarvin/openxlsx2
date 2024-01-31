@@ -66,7 +66,7 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
     }
 
     if (is.null(text)) {
-      str <- sprintf('=HYPERLINK(%s)', dest)
+      str <- sprintf("=HYPERLINK(%s)", dest)
     } else {
       str <- sprintf('=HYPERLINK(%s, \"%s\")', dest, text)
     }

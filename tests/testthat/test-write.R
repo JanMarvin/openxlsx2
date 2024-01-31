@@ -18,7 +18,7 @@ test_that("write_formula", {
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
   wb$add_data("df", df, startCol = "C")
-  write_formula(wb, "df", startCol = "E", startRow = 2,
+  write_formula(wb, "df", start_col = "E", start_row = 2,
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
 
@@ -31,10 +31,10 @@ test_that("write_formula", {
   # write formula first add data later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
-  write_formula(wb, "df", startCol = "E", startRow = 2,
+  write_formula(wb, "df", start_col = "E", start_row = 2,
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
-  wb$add_data("df", df, startCol = "C")
+  wb$add_data("df", df, start_col = "C")
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
@@ -50,19 +50,19 @@ test_that("silent with numfmt option", {
 
   wb$add_data_table("S1", x = iris)
   wb$add_data_table("S2",
-                    x = mtcars, dims = "B3", rowNames = TRUE,
-                    tableStyle = "TableStyleLight9")
+                    x = mtcars, dims = "B3", row_names = TRUE,
+                    table_style = "TableStyleLight9")
 
   # [1:4] to ignore factor
   expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
   expect_equal(iris[1:4], wb_to_df(wb, "S1")[1:4], ignore_attr = TRUE)
 
   # handle rownames
-  got <- wb_to_df(wb, "S2", rowNames = TRUE)
+  got <- wb_to_df(wb, "S2", row_names = TRUE)
   attr(got, "tt") <- NULL
   attr(got, "types") <- NULL
-  expect_equal(mtcars, got)
-  expect_equal(rownames(mtcars), rownames(got))
+  expect_equal(got, mtcars)
+  expect_equal(rownames(got), rownames(mtcars))
 
 })
 
@@ -111,15 +111,14 @@ test_that("update_cells", {
 
   wb <- wb_workbook()$
     add_worksheet("df")$
-    add_data(x = df, startCol = "C")
-  # TODO add_formula()
-  write_formula(wb, "df", startCol = "E", startRow = 2,
+    add_data(x = df, start_col = "C")
+  wb$add_formula("df", start_col = "E", start_row = 2,
                 x = "SUM(C2:C11*D2:D11)",
                 array = TRUE)
-  write_formula(wb, "df", x = "C3 + D3", startCol = "E", startRow = 3)
+  wb$add_formula("df", x = "C3 + D3", start_col = "E", start_row = 3)
   x <- c(google = "https://www.google.com")
   class(x) <- "hyperlink"
-  wb$add_data(sheet = "df", x = x, startCol = "E", startRow = 4)
+  wb$add_data(sheet = "df", x = x, start_col = "E", start_row = 4)
 
 
   exp <- structure(
@@ -147,13 +146,13 @@ test_that("write dims", {
 
   # create a workbook
   wb <- wb_workbook()$
-    add_worksheet()$add_data(dims = "B2:C3", x = matrix(1:4, 2, 2), colNames = FALSE)$
+    add_worksheet()$add_data(dims = "B2:C3", x = matrix(1:4, 2, 2), col_names = FALSE)$
     add_worksheet()$add_data_table(dims = "B:C", x = as.data.frame(matrix(1:4, 2, 2)))$
     add_worksheet()$add_formula(dims = "B3", x = "42")
 
-  s1 <- wb_to_df(wb, 1, colNames = FALSE)
-  s2 <- wb_to_df(wb, 2, colNames = FALSE)
-  s3 <- wb_to_df(wb, 3, colNames = FALSE)
+  s1 <- wb_to_df(wb, 1, col_names = FALSE)
+  s2 <- wb_to_df(wb, 2, col_names = FALSE)
+  s3 <- wb_to_df(wb, 3, col_names = FALSE)
 
   expect_equal(rownames(s1), c("2", "3"))
   expect_equal(rownames(s2), c("1", "2", "3"))
@@ -233,8 +232,8 @@ test_that("update cell(s)", {
 
 test_that("write_rownames", {
   wb <- wb_workbook()$
-    add_worksheet()$add_data(x = mtcars, rowNames = TRUE)$
-    add_worksheet()$add_data_table(x = mtcars, rowNames = TRUE)
+    add_worksheet()$add_data(x = mtcars, row_names = TRUE)$
+    add_worksheet()$add_data_table(x = mtcars, row_names = TRUE)
 
   exp <- structure(
     list(A = c(NA, "Mazda RX4"), B = c("mpg", "21")),
@@ -246,7 +245,7 @@ test_that("write_rownames", {
       class = "data.frame"),
     types = c(A = 0, B = 0)
   )
-  got <- wb_to_df(wb, 1, dims = "A1:B2", colNames = FALSE, keep_attributes = TRUE)
+  got <- wb_to_df(wb, 1, dims = "A1:B2", col_names = FALSE, keep_attributes = TRUE)
   expect_equal(exp, got)
 
   exp <- structure(
@@ -259,7 +258,7 @@ test_that("write_rownames", {
       class = "data.frame"),
     types = c(A = 0, B = 0)
   )
-  got <- wb_to_df(wb, 2, dims = "A1:B2", colNames = FALSE, keep_attributes = TRUE)
+  got <- wb_to_df(wb, 2, dims = "A1:B2", col_names = FALSE, keep_attributes = TRUE)
   expect_equal(exp, got)
 
 })
@@ -280,7 +279,7 @@ test_that("NA works as expected", {
     )
 
   exp <- c(NA_real_, NA_real_)
-  got <- wb_to_df(wb, colNames = FALSE)$A
+  got <- wb_to_df(wb, col_names = FALSE)$A
   expect_equal(exp, got)
 
 })
@@ -293,11 +292,11 @@ test_that("writeData() forces evaluation of x (#264)", {
 
   wb <- wb_workbook()
   wb$add_worksheet("sheet")
-  wb$add_data(startCol = 1, x = data.frame(a = format(123.4)))
-  wb$add_data(startCol = 2, x = data.frame(b = as.character(123.4)))
-  wb$add_data(startCol = 3, x = data.frame(c = "123.4"))
-  wb$add_data(startCol = 4, x = df)
-  wb$add_data(startCol = 5, x = df2)
+  wb$add_data(start_col = 1, x = data.frame(a = format(123.4)))
+  wb$add_data(start_col = 2, x = data.frame(b = as.character(123.4)))
+  wb$add_data(start_col = 3, x = data.frame(c = "123.4"))
+  wb$add_data(start_col = 4, x = df)
+  wb$add_data(start_col = 5, x = df2)
 
   exp <- c(
     "<is><t>a</t></is>", "<is><t>b</t></is>", "<is><t>c</t></is>",
@@ -318,9 +317,8 @@ test_that("write character numerics with a correct cell style", {
     wb_add_worksheet() %>%
     wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
 
-  exp <- NA_character_
   got <- wb$styles_mgr$styles$cellXfs[2]
-  expect_equal(exp, got)
+  expect_equal(got, NA_character_)
 
   exp <- c("4", "4", "4", "4", "4")
   got <- wb$worksheets[[1]]$sheet_data$cc$typ
@@ -365,9 +363,8 @@ test_that("write character numerics with a correct cell style", {
     wb_add_worksheet() %>%
     wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
 
-  exp <- NA_character_
   got <- wb$styles_mgr$styles$cellXfs[2]
-  expect_equal(exp, got)
+  expect_equal(got, NA_character_)
 
   exp <- c("4", "2", "4", "4", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$typ
@@ -394,7 +391,7 @@ test_that("writing as shared string works", {
     add_worksheet()$
     add_data_table(x = df, inline_strings = TRUE)
 
-  expect_equal(letters, wb_to_df(wb, colNames = FALSE)$A)
+  expect_equal(letters, wb_to_df(wb, col_names = FALSE)$A)
   expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 2))
   expect_equal(df, wb_to_df(wb, 3), ignore_attr = TRUE)
   expect_equal(wb_to_df(wb, 3), wb_to_df(wb, 4))
@@ -445,7 +442,7 @@ test_that("writing as shared string works", {
     add_data(x = c(1L, NA, NaN, Inf), dims = "A1", inline_strings = FALSE, na.strings = NULL)
 
   expect_equal(wb_to_df(wb, 1), wb_to_df(wb, 3))
-  expect_equal("N/A", wb_to_df(wb, 2)[1, 1])
+  expect_equal(wb_to_df(wb, 2)[1, 1], "N/A")
 
 })
 
@@ -462,7 +459,7 @@ test_that("writing pivot tables works", {
   wb$add_pivot_table(df, dims = "A20", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = "average")
   wb$add_pivot_table(df, dims = "A30", sheet = 2, rows = "cyl", cols = "gear", data = c("disp", "hp"), fun = c("sum", "average"))
 
-  expect_equal(4L, length(wb$pivotTables))
+  expect_equal(length(wb$pivotTables), 4L)
 
 })
 
@@ -523,12 +520,12 @@ test_that("writing slicers works", {
     add_slicer(x = df, dims = "A12:D16", slicer = "vs", pivot_table = "mtcars3")
 
   # test a few conditions
-  expect_equal(2L, length(wb$slicers))
-  expect_equal(4L, length(wb$slicerCaches))
+  expect_length(wb$slicers, 2L)
+  expect_length(wb$slicerCaches, 4L)
   expect_equal(xml_node_name(wb$workbook$extLst, "extLst", "ext"), "x14:slicerCaches")
-  expect_equal(1L, wb$worksheets[[2]]$relships$slicer)
-  expect_equal(2L, wb$worksheets[[3]]$relships$slicer)
-  expect_equal(25L, grep("slicer2.xml", wb$Content_Types))
+  expect_equal(wb$worksheets[[2]]$relships$slicer, 1L)
+  expect_equal(wb$worksheets[[3]]$relships$slicer, 2L)
+  expect_equal(grep("slicer2.xml", wb$Content_Types), 25L)
 
   ## test error
   wb <- wb_workbook() %>%
@@ -652,7 +649,7 @@ test_that("writing labeled variables works", {
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = x)
   exp <- c(1, 2)
-  got <- wb_to_df(wb, colNames = FALSE)$A
+  got <- wb_to_df(wb, col_names = FALSE)$A
   expect_equal(exp, got)
 
 })
@@ -687,7 +684,7 @@ test_that("writing in specific encoding works", {
   # got <- wb2$worksheets[[1]]$sheet_data$cc$is[1]
   # expect_equal(exp, got)
 
-  # got <- stringi::stri_encode(wb_to_df(wb, colNames = FALSE)$A, from = "UTF-8", to = "CP1251")
+  # got <- stringi::stri_encode(wb_to_df(wb, col_names = FALSE)$A, from = "UTF-8", to = "CP1251")
   # expect_equal(enc_str, got)
 
   tmp <- tempfile()

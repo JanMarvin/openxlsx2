@@ -6,7 +6,7 @@ test_that("Maintaining Named Regions on Load", {
   wb$add_worksheet("Sheet 2")
 
   ## specify region
-  wb$add_data(sheet = 1, x = iris, startCol = 1, startRow = 1)
+  wb$add_data(sheet = 1, x = iris, start_col = 1, start_row = 1)
   wb$add_named_region(
     sheet = 1,
     name = "iris",
@@ -18,10 +18,10 @@ test_that("Maintaining Named Regions on Load", {
   )
 
   ## using write_data 'name' argument
-  wb$add_data(sheet = 1, x = iris, name = "iris2", startCol = 10)
+  wb$add_data(sheet = 1, x = iris, name = "iris2", start_col = 10)
 
   ## Named region size 1
-  wb$add_data(sheet = 2, x = 99, name = "region1", startCol = 3, startRow = 3)
+  wb$add_data(sheet = 2, x = 99, name = "region1", start_col = 3, start_row = 3)
 
   ## save file for testing
   out_file <- temp_xlsx()
@@ -32,23 +32,23 @@ test_that("Maintaining Named Regions on Load", {
     expected = wb_get_named_regions(wb_load(out_file))
     )
 
-  df1 <- read_xlsx(wb, namedRegion = "iris")
-  df2 <- read_xlsx(out_file, namedRegion = "iris")
+  df1 <- read_xlsx(wb, named_region = "iris")
+  df2 <- read_xlsx(out_file, named_region = "iris")
   expect_equal(df1, df2)
 
-  df1 <- read_xlsx(wb, namedRegion = "region1", skipEmptyCols = FALSE)
+  df1 <- read_xlsx(wb, named_region = "region1", skip_empty_cols = FALSE)
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 0)
   expect_equal(ncol(df1), 1)
 
-  df1 <- read_xlsx(wb, namedRegion = "region1", colNames = FALSE)
+  df1 <- read_xlsx(wb, named_region = "region1", col_names = FALSE)
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 1)
   expect_equal(ncol(df1), 1)
 
   # nonsense
   # df1 is a single value and this single value is now used as rowName
-  expect_warning(df1 <- read_xlsx(wb, namedRegion = "region1", rowNames = TRUE))
+  expect_warning(df1 <- read_xlsx(wb, named_region = "region1", row_names = TRUE))
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 0)
   expect_equal(ncol(df1), 0)
@@ -67,10 +67,10 @@ test_that("Correctly Loading Named Regions Created in Excel", {
 
   # NamedTable refers to Sheet1!$C$5:$D$8
   table_f <- read_xlsx(filename,
-    namedRegion = "NamedTable"
+    named_region = "NamedTable"
   )
   table_w <- read_xlsx(wb,
-    namedRegion = "NamedTable"
+    named_region = "NamedTable"
   )
 
   expect_equal(object = table_f, expected = table_w)
@@ -82,15 +82,15 @@ test_that("Correctly Loading Named Regions Created in Excel", {
   # This proeduced an error in an earlier version of the pacage when the object
   # wb was passed, but worked correctly when the filename was passed to read_xlsx
   cell_f <- read_xlsx(filename,
-    namedRegion = "NamedCell",
-    colNames = FALSE,
-    rowNames = FALSE
+    named_region = "NamedCell",
+    col_names = FALSE,
+    row_names = FALSE
   )
 
   cell_w <- read_xlsx(wb,
-    namedRegion = "NamedCell",
-    colNames = FALSE,
-    rowNames = FALSE
+    named_region = "NamedCell",
+    col_names = FALSE,
+    row_names = FALSE
   )
 
   expect_equal(object = cell_f, expected = cell_w)
@@ -100,15 +100,15 @@ test_that("Correctly Loading Named Regions Created in Excel", {
 
   # NamedCell2 refers to Sheet1!$C$2:$C$2
   cell2_f <- read_xlsx(filename,
-    namedRegion = "NamedCell2",
-    colNames = FALSE,
-    rowNames = FALSE
+    named_region = "NamedCell2",
+    col_names = FALSE,
+    row_names = FALSE
   )
 
   cell2_w <- read_xlsx(wb,
-    namedRegion = "NamedCell2",
-    colNames = FALSE,
-    rowNames = FALSE
+    named_region = "NamedCell2",
+    col_names = FALSE,
+    row_names = FALSE
   )
 
   expect_equal(object = cell2_f, expected = cell2_w)
@@ -147,7 +147,7 @@ test_that("Missing rows in named regions", {
   wb$add_worksheet("Sheet 1")
 
   ## create region
-  wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
+  wb$add_data(sheet = 1, x = iris[1:11, ], start_col = 1, start_row = 1)
   expect_warning(
     delete_data(wb, sheet = 1, cols = 1:2, rows = c(6, 6)),
     "'delete_data' is deprecated."
@@ -185,18 +185,18 @@ test_that("Missing rows in named regions", {
   ######################################################################## from Workbook
 
   ## Skip empty rows
-  x <- read_xlsx(file = wb, namedRegion = "iris", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skip_empty_rows = TRUE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read_xlsx(file = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skip_empty_rows = TRUE)
   expect_equal(dim(x), c(5, 2))
 
 
   ## Keep empty rows
-  x <- read_xlsx(file = wb, namedRegion = "iris", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skip_empty_rows = FALSE)
   expect_equal(dim(x), c(5, 2))
 
-  x <- read_xlsx(file = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skip_empty_rows = FALSE)
   expect_equal(dim(x), c(6, 2))
 
 
@@ -205,18 +205,18 @@ test_that("Missing rows in named regions", {
   wb_save(wb, temp_file)
 
   ## Skip empty rows
-  x <- read_xlsx(file = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skip_empty_rows = TRUE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read_xlsx(file = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = TRUE)
+  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_rows = TRUE)
   expect_equal(dim(x), c(5, 2))
 
 
   ## Keep empty rows
-  x <- read_xlsx(file = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skip_empty_rows = FALSE)
   expect_equal(dim(x), c(5, 2))
 
-  x <- read_xlsx(file = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyRows = FALSE)
+  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_rows = FALSE)
   expect_equal(dim(x), c(6, 2))
 
   unlink(temp_file)
@@ -230,7 +230,7 @@ test_that("Missing columns in named regions", {
   wb$add_worksheet("Sheet 1")
 
   ## create region
-  wb$add_data(sheet = 1, x = iris[1:11, ], startCol = 1, startRow = 1)
+  wb$add_data(sheet = 1, x = iris[1:11, ], start_col = 1, start_row = 1)
   expect_warning(
     delete_data(wb, sheet = 1, cols = 2, rows = 1:12),
     "'delete_data' is deprecated."
@@ -265,18 +265,18 @@ test_that("Missing columns in named regions", {
   ######################################################################## from Workbook
 
   ## Skip empty cols
-  x <- read_xlsx(file = wb, namedRegion = "iris", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 1))
 
-  x <- read_xlsx(file = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 2))
 
 
   ## Keep empty cols
-  x <- read_xlsx(file = wb, namedRegion = "iris", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = wb, named_region = "iris", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read_xlsx(file = wb, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = wb, named_region = "iris2", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 3))
 
 
@@ -285,18 +285,18 @@ test_that("Missing columns in named regions", {
   wb_save(wb, temp_file)
 
   ## Skip empty cols
-  x <- read_xlsx(file = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 1))
 
-  x <- read_xlsx(file = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = TRUE)
+  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_cols = TRUE)
   expect_equal(dim(x), c(4, 2))
 
 
   ## Keep empty cols
-  x <- read_xlsx(file = temp_file, namedRegion = "iris", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = temp_file, named_region = "iris", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 2))
 
-  x <- read_xlsx(file = temp_file, namedRegion = "iris2", colNames = TRUE, skipEmptyCols = FALSE)
+  x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 3))
 
   unlink(temp_file)
@@ -314,11 +314,11 @@ test_that("Matching Substrings breaks reading named regions", {
   t1$Species <- as.character(t1$Species)
   t2 <- head(mtcars)
 
-  wb$add_data(sheet = "table", x = t1, name = "t", startCol = 3, startRow = 12)
-  wb$add_data(sheet = "table2", x = t2, name = "t2", startCol = 5, startRow = 24, rowNames = TRUE)
+  wb$add_data(sheet = "table", x = t1, name = "t", start_col = 3, start_row = 12)
+  wb$add_data(sheet = "table2", x = t2, name = "t2", start_col = 5, start_row = 24, row_names = TRUE)
 
-  wb$add_data(sheet = "table", x = head(t1, 3), name = "t1", startCol = 9, startRow = 3)
-  wb$add_data(sheet = "table2", x = head(t2, 3), name = "t22", startCol = 15, startRow = 12, rowNames = TRUE)
+  wb$add_data(sheet = "table", x = head(t1, 3), name = "t1", start_col = 9, start_row = 3)
+  wb$add_data(sheet = "table2", x = head(t2, 3), name = "t22", start_col = 15, start_row = 12, row_names = TRUE)
 
   wb_save(wb, temp_file)
 
@@ -335,16 +335,16 @@ test_that("Matching Substrings breaks reading named regions", {
 
 
   ## read file named region
-  expect_equal(t1, read_xlsx(file = temp_file, namedRegion = "t"), ignore_attr = TRUE)
-  expect_equal(t2, read_xlsx(file = temp_file, namedRegion = "t2", rowNames = TRUE), ignore_attr = TRUE)
-  expect_equal(head(t1, 3), read_xlsx(file = temp_file, namedRegion = "t1"), ignore_attr = TRUE)
-  expect_equal(head(t2, 3), read_xlsx(file = temp_file, namedRegion = "t22", rowNames = TRUE), ignore_attr = TRUE)
+  expect_equal(t1, read_xlsx(file = temp_file, named_region = "t"), ignore_attr = TRUE)
+  expect_equal(t2, read_xlsx(file = temp_file, named_region = "t2", row_names = TRUE), ignore_attr = TRUE)
+  expect_equal(head(t1, 3), read_xlsx(file = temp_file, named_region = "t1"), ignore_attr = TRUE)
+  expect_equal(head(t2, 3), read_xlsx(file = temp_file, named_region = "t22", row_names = TRUE), ignore_attr = TRUE)
 
   ## read Workbook named region
-  expect_equal(t1, read_xlsx(file = wb, namedRegion = "t"), ignore_attr = TRUE)
-  expect_equal(t2, read_xlsx(file = wb, namedRegion = "t2", rowNames = TRUE), ignore_attr = TRUE)
-  expect_equal(head(t1, 3), read_xlsx(file = wb, namedRegion = "t1"), ignore_attr = TRUE)
-  expect_equal(head(t2, 3), read_xlsx(file = wb, namedRegion = "t22", rowNames = TRUE), ignore_attr = TRUE)
+  expect_equal(t1, read_xlsx(file = wb, named_region = "t"), ignore_attr = TRUE)
+  expect_equal(t2, read_xlsx(file = wb, named_region = "t2", row_names = TRUE), ignore_attr = TRUE)
+  expect_equal(head(t1, 3), read_xlsx(file = wb, named_region = "t1"), ignore_attr = TRUE)
+  expect_equal(head(t2, 3), read_xlsx(file = wb, named_region = "t22", row_names = TRUE), ignore_attr = TRUE)
 
   unlink(temp_file)
 })
@@ -354,19 +354,19 @@ test_that("Read namedRegion from specific sheet", {
 
   filename <- system.file("extdata", "namedRegions3.xlsx", package = "openxlsx2")
 
-  namedR <- "MyRange"
+  named_r <- "MyRange"
   sheets <- wb_load(filename)$get_sheet_names()
 
   # read the correct sheets
-  expect_equal(data.frame(X1 = "S1A1", X2 = "S1B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet1", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
-  expect_equal(data.frame(X1 = "S2A1", X2 = "S2B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = which(sheets %in% "Sheet2"), namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
-  expect_equal(data.frame(X1 = "S3A1", X2 = "S3B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet3", namedRegion = namedR, rowNames = FALSE, colNames = FALSE), ignore_attr = TRUE)
+  expect_equal(data.frame(X1 = "S1A1", X2 = "S1B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet1", named_region = named_r, row_names = FALSE, col_names = FALSE), ignore_attr = TRUE)
+  expect_equal(data.frame(X1 = "S2A1", X2 = "S2B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = which(sheets %in% "Sheet2"), named_region = named_r, row_names = FALSE, col_names = FALSE), ignore_attr = TRUE)
+  expect_equal(data.frame(X1 = "S3A1", X2 = "S3B1", stringsAsFactors = FALSE), read_xlsx(filename, sheet = "Sheet3", named_region = named_r, row_names = FALSE, col_names = FALSE), ignore_attr = TRUE)
 
-  # Warning: Workbook has no such named region. (Wrong namedRegion selected.)
-  expect_error(read_xlsx(filename, sheet = "Sheet2", namedRegion = "MyRage", rowNames = FALSE, colNames = FALSE))
+  # Warning: Workbook has no such named region. (Wrong named_region selected.)
+  expect_error(read_xlsx(filename, sheet = "Sheet2", named_region = "MyRage", row_names = FALSE, col_names = FALSE))
 
-  # Warning: Workbook has no such named region on this sheet. (Correct namedRegion, but wrong sheet selected.)
-  expect_error(read_xlsx(filename, sheet = "Sheet4", namedRegion = namedR, rowNames = FALSE, colNames = FALSE))
+  # Warning: Workbook has no such named region on this sheet. (Correct named_region, but wrong sheet selected.)
+  expect_error(read_xlsx(filename, sheet = "Sheet4", named_region = named_r, row_names = FALSE, col_names = FALSE))
 })
 
 
@@ -380,7 +380,7 @@ test_that("Overwrite and delete named regions", {
   expect_null(wb_get_named_regions(wb))
 
   ## create region
-  wb$add_data(1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris")
+  wb$add_data(1, iris[1:11, ], start_col = 1, start_row = 1, name = "iris")
   exp <- data.frame(
     name   = "iris",
     value  = "'Sheet 1'!A1:E12",
@@ -388,12 +388,13 @@ test_that("Overwrite and delete named regions", {
     coords = "A1:E12",
     id     = 1L,
     local  = 0,
-    sheet  = 1L
+    sheet  = 1L,
+    stringsAsFactors = FALSE
   )
   expect_identical(wb_get_named_regions(wb), exp)
 
   # no overwrite
-  expect_error(wb$add_data(1, iris[1:11, ], startCol = 1, startRow = 1, name = "iris"))
+  expect_error(wb$add_data(1, iris[1:11, ], start_col = 1, start_row = 1, name = "iris"))
 
   expect_error(wb$add_named_region(1, name = "iris", dims = rowcol_to_dims(1:5, 1:2)))
 
@@ -409,7 +410,8 @@ test_that("Overwrite and delete named regions", {
     coords = "A1:B5",
     id     = 1L,
     local  = 0,
-    sheet  = 1L
+    sheet  = 1L,
+    stringsAsFactors = FALSE
   )
 
   # check modification
@@ -432,10 +434,10 @@ test_that("load table", {
   wb <- wb_workbook()
   # add a table
   wb$add_worksheet("Sheet 1")
-  wb$add_data_table(sheet = "Sheet 1", x = iris, tableName = "iris_tab")
+  wb$add_data_table(sheet = "Sheet 1", x = iris, table_name = "iris_tab")
   # add a named region
   wb$add_worksheet("Sheet 2")
-  wb$add_data(sheet = "Sheet 2", x = iris, startCol = 1, startRow = 1)
+  wb$add_data(sheet = "Sheet 2", x = iris, start_col = 1, start_row = 1)
   wb$add_named_region(
     sheet = 2,
     name = "iris",
