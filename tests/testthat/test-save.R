@@ -401,3 +401,15 @@ test_that("write_xlsx() freezing rows works", {
   expect_equal(exp, got)
 
 })
+
+test_that("write_xlsx works with colour", {
+
+  tmp <- temp_xlsx()
+
+  wb <- write_xlsx(mtcars, tmp, tabColour = "green")
+
+  exp <- "<sheetPr><tabColor rgb=\"FF00FF00\"/></sheetPr>"
+  got <- wb$worksheets[[1]]$sheetPr
+  expect_equal(exp, got)
+
+})

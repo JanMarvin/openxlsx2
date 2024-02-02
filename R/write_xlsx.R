@@ -150,8 +150,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   }
 
   tabColor <- NULL
-  if ("tab_color" %in% names(params)) {
-    tabColor <- params$tab_color
+  if ("tab_color" %in% names(params) || "tab_colour" %in% names(params)) {
+    tabColor <- params$tab_color %||% params$tab_colour
   }
 
   zoom <- 100
