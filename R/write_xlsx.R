@@ -11,8 +11,8 @@
 #' @param as_table If `TRUE`, will write as a data table, instead of data.
 #' @inheritDotParams wb_workbook creator
 #' @inheritDotParams wb_add_worksheet sheet grid_lines tab_color zoom
-#' @inheritDotParams wb_add_data_table start_col start_row col_names row_names na.strings
-#' @inheritDotParams wb_add_data start_col start_row col_names row_names na.strings
+#' @inheritDotParams wb_add_data_table start_col start_row col_names row_names na_strings
+#' @inheritDotParams wb_add_data start_col start_row col_names row_names na_strings
 #' @inheritDotParams wb_freeze_pane first_active_row first_active_col first_row first_col
 #' @inheritDotParams wb_set_col_widths widths
 #' @inheritDotParams wb_save overwrite
@@ -52,7 +52,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     "first_footer", "start_col", "start_row",
     "col.names", "row.names", "col_names", "row_names", "table_style",
     "table_name", "with_filter", "first_active_row", "first_active_col",
-    "first_row", "first_col", "col_widths", "na.strings",
+    "first_row", "first_col", "col_widths", "na_strings", "na.strings",
     "overwrite", "title", "subject", "category"
   )
 
@@ -110,7 +110,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   ## startRow = 1,
   ## colNames = TRUE,
   ## rowNames = FALSE,
-  ## na.strings = NULL
+  ## na_strings = NULL
 
   #----write_datatable---#
   ## startCol = 1
@@ -259,8 +259,10 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     tableStyle <- params$table_style
   }
 
-  na.strings <-
-    if ("na.strings" %in% names(params)) {
+  na_strings <-
+    if ("na_strings" %in% names(params)) {
+      params$na_strings
+    } else if ("na.strings" %in% names(params)) {
       params$na.strings
     } else {
       na_strings()
@@ -355,7 +357,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
         table_style = tableStyle[[i]],
         table_name  = NULL,
         with_filter = withFilter[[i]],
-        na.strings  = na.strings
+        na_strings  = na_strings
       )
     } else {
       write_data(
@@ -366,7 +368,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
         start_row  = startRow[[i]],
         col_names  = colNames[[i]],
         row_names  = rowNames[[i]],
-        na.strings = na.strings
+        na_strings = na_strings
       )
     }
 

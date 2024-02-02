@@ -23,7 +23,7 @@ write_datatable(
   banded_cols = FALSE,
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
-  na.strings = na_strings(),
+  na_strings = na_strings(),
   inline_strings = TRUE,
   ...
 )
@@ -72,7 +72,7 @@ columns to a character vector e.g.
 
 \item{remove_cell_style}{keep the cell style?}
 
-\item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
+\item{na_strings}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{\link[=na_strings]{na_strings()}} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}

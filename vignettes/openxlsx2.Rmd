@@ -138,7 +138,7 @@ wb_to_df(file, start_row = 5, col_names = FALSE)
 There is the "#N/A" string, but often the user will be faced with custom missing values and other values we are not interested. Such strings can be passed as character vector via `na.strings`
 ```{r}
 # na strings
-wb_to_df(file, na.strings = "")
+wb_to_df(file, na_strings = "")
 ```
 
 ### Importing as workbook

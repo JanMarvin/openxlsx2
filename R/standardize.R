@@ -90,7 +90,40 @@ standardize_case_names <- function(..., return = FALSE, arguments = NULL) {
 
 }
 
-#' takes camelCase and colour returns camel_case and color
+#' takes na.strings and returns na_strings
+#' @param ... ...
+#' @returns void. assigns an object in the parent frame
+#' @noRd
+standardize_dot_names <- function(..., return = FALSE) {
+
+  # since R 4.1.0: ...names()
+  args <- list(...)
+  if (return) {
+    args <- args[[1]]
+  }
+  got <- names(args)
+  got_dots <- which(grepl(".", tolower(got)))
+
+  if (length(got_dots)) {
+    for (got_dot in got_dots) {
+      dot_ <- got[got_dot]
+      name_dot <- stringi::stri_replace_all_fixed(dot_, ".", "_")
+
+      if (return) {
+        names(args)[got_dot] <- name_dot
+      } else {
+        # since R 3.5.0: ...elt(got_col)
+        value_dot <- args[[got_dot]]
+        assign(name_dot, value_dot, parent.frame())
+      }
+    }
+  }
+
+  if (return) args
+
+}
+
+#' takes camelCase, colour, and na.strings. returns camel_case, color, and na_strings
 #' @param ... ...
 #' @returns void. assigns an object in the parent frame
 #' @noRd
@@ -102,6 +135,7 @@ standardize <- function(..., arguments) {
   }
 
   rtns <- standardize_color_names(nms, return = TRUE)
+  rtns <- standardize_dot_names(rtns, return = TRUE)
   rtns <- standardize_case_names(rtns, return = TRUE, arguments = arguments)
 
   nms <- names(rtns)

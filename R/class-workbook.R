@@ -1221,7 +1221,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sep sep
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #' @param na_strings Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @param return The `wbWorkbook` object
@@ -1239,12 +1239,18 @@ wbWorkbook <- R6::R6Class(
         sep               = ", ",
         apply_cell_style  = TRUE,
         remove_cell_style = FALSE,
-        na.strings        = na_strings(),
+        na_strings        = na_strings(),
         inline_strings    = TRUE,
         ...
       ) {
 
       standardize(...)
+
+      if (missing(na_strings)) {
+        default <- substitute(na_strings)
+        rm(na_strings)
+        na_strings <- eval(default)
+      }
 
       write_data(
         wb                = self,
@@ -1261,7 +1267,7 @@ wbWorkbook <- R6::R6Class(
         sep               = sep,
         apply_cell_style  = apply_cell_style,
         remove_cell_style = remove_cell_style,
-        na.strings        = na.strings,
+        na_strings        = na_strings,
         inline_strings    = inline_strings
       )
       invisible(self)
@@ -1283,7 +1289,7 @@ wbWorkbook <- R6::R6Class(
     #' @param banded_cols bandedCols
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #' @param na_strings Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @param ... additional arguments
@@ -1306,12 +1312,18 @@ wbWorkbook <- R6::R6Class(
         banded_cols       = FALSE,
         apply_cell_style  = TRUE,
         remove_cell_style = FALSE,
-        na.strings        = na_strings(),
+        na_strings        = na_strings(),
         inline_strings    = TRUE,
         ...
     ) {
 
       standardize(...)
+
+      if (missing(na_strings)) {
+        default <- substitute(na_strings)
+        rm(na_strings)
+        na_strings <- eval(default)
+      }
 
       write_datatable(
         wb              = self,
@@ -1332,7 +1344,7 @@ wbWorkbook <- R6::R6Class(
         bandedCols      = banded_cols,
         applyCellStyle  = apply_cell_style,
         removeCellStyle = remove_cell_style,
-        na.strings      = na.strings,
+        na_strings      = na_strings,
         inline_strings  = inline_strings
       )
       invisible(self)
@@ -1884,8 +1896,8 @@ wbWorkbook <- R6::R6Class(
     #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
     #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
     #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
-    #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
-    #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
+    #' @param na_strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
+    #' @param na_numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
     #' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
     #' @return a data frame
@@ -1902,8 +1914,8 @@ wbWorkbook <- R6::R6Class(
       rows              = NULL,
       cols              = NULL,
       detect_dates      = TRUE,
-      na.strings        = "#N/A",
-      na.numbers        = NA,
+      na_strings        = "#N/A",
+      na_numbers        = NA,
       fill_merged_cells = FALSE,
       dims,
       show_formula      = FALSE,
@@ -1934,8 +1946,8 @@ wbWorkbook <- R6::R6Class(
         rows              = rows,
         cols              = cols,
         detect_dates      = detect_dates,
-        na.strings        = na.strings,
-        na.numbers        = na.numbers,
+        na_strings        = na_strings,
+        na_numbers        = na_numbers,
         fill_merged_cells = fill_merged_cells,
         dims              = dims,
         show_formula      = show_formula,
@@ -8453,7 +8465,7 @@ wbWorkbook <- R6::R6Class(
         self$add_data(
           sheet = sheet,
           x = dims_to_dataframe(dims),
-          na.strings = NULL,
+          na_strings = NULL,
           colNames = FALSE,
           dims = dims
         )

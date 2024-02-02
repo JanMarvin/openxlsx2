@@ -52,9 +52,9 @@
 #'   If no sheet is selected, the first appearance will be selected. See [wb_get_named_regions()]
 #' @param types A named numeric indicating, the type of the data.
 #'   Names must match the returned data. See **Details** for more.
-#' @param na.strings A character vector of strings which are to be interpreted as `NA`.
+#' @param na_strings A character vector of strings which are to be interpreted as `NA`.
 #'   Blank cells will be returned as `NA`.
-#' @param na.numbers A numeric vector of digits which are to be interpreted as `NA`.
+#' @param na_numbers A numeric vector of digits which are to be interpreted as `NA`.
 #'   Blank cells will be returned as `NA`.
 #' @param fill_merged_cells If `TRUE`, the value in a merged cell is given to all cells within the merge.
 #' @param keep_attributes If `TRUE` additional attributes are returned.
@@ -107,7 +107,7 @@
 #' wb_to_df(wb1, start_row = 5, col_names = FALSE)
 #'
 #' # na string
-#' wb_to_df(wb1, na.strings = "a")
+#' wb_to_df(wb1, na_strings = "a")
 #'
 #' ###########################################################################
 #' # Named regions
@@ -140,8 +140,8 @@ wb_to_df <- function(
     rows              = NULL,
     cols              = NULL,
     detect_dates      = TRUE,
-    na.strings        = "#N/A",
-    na.numbers        = NA,
+    na_strings        = "#N/A",
+    na_numbers        = NA,
     fill_merged_cells = FALSE,
     dims,
     show_formula      = FALSE,
@@ -154,7 +154,7 @@ wb_to_df <- function(
 
 
   xlsx_file <- list(...)$xlsx_file
-  standardize_case_names(...)
+  standardize(...)
 
   if (!is.null(xlsx_file)) {
     .Deprecated(old = "xlsx_file", new = "file", package = "openxlsx2")
@@ -357,8 +357,8 @@ wb_to_df <- function(
 
   has_na_string <- FALSE
   # convert missings
-  if (!all(is.na(na.strings))) {
-    sel <- cc$val %in% na.strings
+  if (!all(is.na(na_strings))) {
+    sel <- cc$val %in% na_strings
     if (any(sel)) {
       cc$val[sel] <- NA_character_
       cc$typ[sel] <- "na_string"
@@ -369,9 +369,9 @@ wb_to_df <- function(
   has_na_number <- FALSE
   # convert missings.
   # at this stage we only have characters.
-  na.numbers <- as.character(na.numbers)
-  if (!all(is.na(na.numbers))) {
-    sel <- cc$v %in% na.numbers
+  na_numbers <- as.character(na_numbers)
+  if (!all(is.na(na_numbers))) {
+    sel <- cc$v %in% na_numbers
     if (any(sel)) {
       cc$val[sel] <- NA_character_
       cc$typ[sel] <- "na_number"
@@ -468,7 +468,7 @@ wb_to_df <- function(
             file            = wb,
             sheet           = sheet,
             dims            = filler,
-            na.strings      = na.strings,
+            na_strings      = na_strings,
             convert         = FALSE,
             col_names       = FALSE,
             detect_dates    = detect_dates,
@@ -627,8 +627,8 @@ read_xlsx <- function(
   cols              = NULL,
   detect_dates      = TRUE,
   named_region,
-  na.strings        = "#N/A",
-  na.numbers        = NA,
+  na_strings        = "#N/A",
+  na_numbers        = NA,
   fill_merged_cells = FALSE,
   ...
 ) {
@@ -654,8 +654,8 @@ read_xlsx <- function(
     cols              = cols,
     detect_dates      = detect_dates,
     named_region      = named_region,
-    na.strings        = na.strings,
-    na.numbers        = na.numbers,
+    na_strings        = na_strings,
+    na_numbers        = na_numbers,
     fill_merged_cells = fill_merged_cells,
     ...
   )
@@ -677,8 +677,8 @@ wb_read <- function(
   cols            = NULL,
   detect_dates    = TRUE,
   named_region,
-  na.strings      = "NA",
-  na.numbers      = NA,
+  na_strings      = "NA",
+  na_numbers      = NA,
   ...
 ) {
 
@@ -703,8 +703,8 @@ wb_read <- function(
     cols            = cols,
     detect_dates    = detect_dates,
     named_region    = named_region,
-    na.strings      = na.strings,
-    na.numbers      = na.numbers,
+    na_strings      = na_strings,
+    na_numbers      = na_numbers,
     ...
   )
 

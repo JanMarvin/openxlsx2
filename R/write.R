@@ -9,7 +9,7 @@
 #' @param cells_needed the cells needed
 #' @param colNames has colNames (only in update_cell)
 #' @param removeCellStyle remove the cell style (only in update_cell)
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#' @param na_strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.#' @keywords internal
 #' @noRd
 inner_update <- function(
@@ -20,8 +20,14 @@ inner_update <- function(
     cells_needed,
     colNames = FALSE,
     removeCellStyle = FALSE,
-    na.strings = na_strings()
+    na_strings = na_strings()
 ) {
+
+  if (missing(na_strings)) {
+    default <- substitute(na_strings)
+    rm(na_strings)
+    na_strings <- eval(default)
+  }
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
   cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
@@ -82,8 +88,8 @@ inner_update <- function(
     wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
-  if (is_na_strings(na.strings)) {
-    na.strings <- NULL
+  if (is_na_strings(na_strings)) {
+    na_strings <- NULL
   }
 
   if (removeCellStyle) {
@@ -144,15 +150,15 @@ initialize_cell <- function(wb, sheet, new_cells) {
 #' @param cell the cell you want to update in Excel connotation e.g. "A1"
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
+#' @param na_strings optional na_strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #'
 #' @keywords internal
 #' @noRd
 update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
-                        removeCellStyle = FALSE, na.strings) {
+                        removeCellStyle = FALSE, na_strings) {
 
-  if (missing(na.strings))
-    na.strings <- substitute()
+  if (missing(na_strings))
+    na_strings <- substitute()
 
   sheet_id <- wb$validate_sheet(sheet)
 
@@ -161,7 +167,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 
   cells_needed <- unname(unlist(dims))
 
-  inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle, na.strings)
+  inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle, na_strings)
 }
 
 #' dummy function to write data
@@ -175,7 +181,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param startCol col to place it
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#' @param na_strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
@@ -210,10 +216,16 @@ write_data2 <- function(
     startCol = 1,
     applyCellStyle = TRUE,
     removeCellStyle = FALSE,
-    na.strings = na_strings(),
+    na_strings = na_strings(),
     data_table = FALSE,
     inline_strings = TRUE
 ) {
+
+  if (missing(na_strings)) {
+    default <- substitute(na_strings)
+    rm(na_strings)
+    na_strings <- eval(default)
+  }
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
@@ -390,11 +402,11 @@ write_data2 <- function(
   na_missing <- FALSE
   na_null    <- FALSE
 
-  if (is_na_strings(na.strings)) {
-    na.strings <- ""
+  if (is_na_strings(na_strings)) {
+    na_strings <- ""
     na_missing <- TRUE
-  } else if (is.null(na.strings)) {
-    na.strings <- ""
+  } else if (is.null(na_strings)) {
+    na_strings <- ""
     na_null    <- TRUE
   }
 
@@ -409,7 +421,7 @@ write_data2 <- function(
     string_nums    = string_nums,
     na_null        = na_null,
     na_missing     = na_missing,
-    na_strings     = na.strings,
+    na_strings     = na_strings,
     inline_strings = inline_strings,
     c_cm           = c_cm
   )
@@ -438,7 +450,7 @@ write_data2 <- function(
       cell = dims,
       colNames = colNames,
       removeCellStyle = removeCellStyle,
-      na.strings = na.strings
+      na_strings = na_strings
     )
   }
 
@@ -695,7 +707,7 @@ write_data2 <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#' @param na_strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @noRd
@@ -722,9 +734,15 @@ write_data_table <- function(
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
     data_table      = FALSE,
-    na.strings      = na_strings(),
+    na_strings      = na_strings(),
     inline_strings  = TRUE
 ) {
+
+  if (missing(na_strings)) {
+    default <- substitute(na_strings)
+    rm(na_strings)
+    na_strings <- eval(default)
+  }
 
   ## Input validating
   assert_workbook(wb)
@@ -757,7 +775,7 @@ write_data_table <- function(
 
   if (data_table && nrow(x) < 1) {
     warning("Found data table with zero rows, adding one.",
-            " Modify na with na.strings")
+            " Modify na with na_strings")
     x[1, ] <- NA
   }
 
@@ -902,7 +920,7 @@ write_data_table <- function(
     startCol = startCol,
     applyCellStyle = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings = na.strings,
+    na_strings = na_strings,
     data_table = data_table,
     inline_strings = inline_strings
   )
@@ -994,12 +1012,18 @@ write_data <- function(
     name              = NULL,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na_strings        = na_strings(),
     inline_strings    = TRUE,
     ...
 ) {
 
   standardize_case_names(...)
+
+  if (missing(na_strings)) {
+    default <- substitute(na_strings)
+    rm(na_strings)
+    na_strings <- eval(default)
+  }
 
   write_data_table(
     wb              = wb,
@@ -1023,7 +1047,7 @@ write_data <- function(
     applyCellStyle  = apply_cell_style,
     removeCellStyle = remove_cell_style,
     data_table      = FALSE,
-    na.strings      = na.strings,
+    na_strings      = na_strings,
     inline_strings  = inline_strings
   )
 }
@@ -1163,12 +1187,18 @@ write_datatable <- function(
     banded_cols       = FALSE,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na_strings        = na_strings(),
     inline_strings    = TRUE,
     ...
 ) {
 
   standardize_case_names(...)
+
+  if (missing(na_strings)) {
+    default <- substitute(na_strings)
+    rm(na_strings)
+    na_strings <- eval(default)
+  }
 
   write_data_table(
     wb              = wb,
@@ -1192,7 +1222,7 @@ write_datatable <- function(
     data_table      = TRUE,
     applyCellStyle  = apply_cell_style,
     removeCellStyle = remove_cell_style,
-    na.strings      = na.strings,
+    na_strings      = na_strings,
     inline_strings  = inline_strings
   )
 }

@@ -111,7 +111,7 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #'   columns to a character vector e.g. `sapply(x$list_column, paste, collapse = sep)`.
 #' @param apply_cell_style Should we write cell styles to the workbook
 #' @param remove_cell_style keep the cell style?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
+#' @param na_strings Value used for replacing `NA` values from `x`. Default
 #'   [na_strings()] uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
 #' @param ... additional arguments
@@ -195,11 +195,18 @@ wb_add_data <- function(
     sep               = ", ",
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na_strings        = na_strings(),
     inline_strings    = TRUE,
     ...
 ) {
   assert_workbook(wb)
+
+  if (missing(na_strings)) {
+    default <- substitute(na_strings)
+    rm(na_strings)
+    na_strings <- eval(default)
+  }
+
   wb$clone(deep = TRUE)$add_data(
     sheet             = sheet,
     x                 = x,
@@ -214,7 +221,7 @@ wb_add_data <- function(
     sep               = sep,
     apply_cell_style  = apply_cell_style,
     remove_cell_style = remove_cell_style,
-    na.strings        = na.strings,
+    na_strings        = na_strings,
     inline_strings    = inline_strings,
     ...               = ...
   )
@@ -272,11 +279,18 @@ wb_add_data_table <- function(
     banded_cols       = FALSE,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na_strings        = na_strings(),
     inline_strings    = TRUE,
     ...
 ) {
   assert_workbook(wb)
+
+  if (missing(na_strings)) {
+    default <- substitute(na_strings)
+    rm(na_strings)
+    na_strings <- eval(default)
+  }
+
   wb$clone()$add_data_table(
     sheet             = sheet,
     x                 = x,
@@ -295,7 +309,7 @@ wb_add_data_table <- function(
     banded_cols       = banded_cols,
     apply_cell_style  = apply_cell_style,
     remove_cell_style = remove_cell_style,
-    na.strings        = na.strings,
+    na_strings        = na_strings,
     inline_strings    = inline_strings,
     ...               = ...
   )
