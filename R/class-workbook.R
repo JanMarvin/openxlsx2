@@ -2961,7 +2961,6 @@ wbWorkbook <- R6::R6Class(
       # TODO improve this. It should use v or inlineStr from cc
       if (as_value) {
         data <- as.data.frame(unclass(data))
-        to_data <- data
 
         if (transpose) {
           data <- t(data)
