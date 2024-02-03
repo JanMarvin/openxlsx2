@@ -960,3 +960,112 @@ test_that("genBaseWorkbook() works", {
   )
 
 })
+
+test_that("subsetting wb_data() works", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = head(esoph, 3))
+
+  df1 <- wb_data(wb)
+
+  exp <- data.frame(alcgp = rep("0-39g/day", 3), stringsAsFactors = FALSE)
+  got <- df1[, 2, drop = FALSE]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  exp <- rep("0-39g/day", 3)
+  got <- unclass(df1[, 2])
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(
+      agegp = c("25-34", "25-34"),
+      alcgp = c("0-39g/day", "0-39g/day")
+    ),
+    row.names = 2:3,
+    dims = structure(
+      list(
+        A = c("A1", "A2", "A3"),
+        B = c("B1", "B2", "B3")
+      ),
+      row.names = c(NA, 3L),
+      class = "data.frame"),
+    sheet = "Sheet 1"
+  )
+  got <- unclass(df1[1:2, 1:2])
+  expect_equal(exp, got)
+
+  expect_null(attributes(df1[c("agegp")]))
+
+  exp <- list(
+    names = "agegp",
+    row.names = 2:4,
+    class = c("wb_data", "data.frame"),
+    dims = structure(
+      list(A = c("A1", "A2", "A3", "A4")),
+      row.names = c(NA, 4L),
+      class = "data.frame"
+    ),
+    sheet = "Sheet 1"
+  )
+  got <- attributes(df1[c("agegp"), drop = FALSE])
+  expect_equal(exp, got)
+
+  exp <- list(
+    names = c("alcgp", "tobgp", "ncases"),
+    row.names = 2:4,
+    class = c("wb_data", "data.frame"),
+    dims = structure(
+      list(
+        B = c("B1", "B2", "B3", "B4"),
+        C = c("C1", "C2", "C3", "C4"),
+        D = c("D1", "D2", "D3", "D4")
+      ),
+      row.names = c(NA, 4L),
+      class = "data.frame"
+    ),
+    sheet = "Sheet 1"
+  )
+  got <- attributes(df1[c("alcgp", "tobgp", "ncases")])
+  expect_equal(exp, got)
+
+  exp <- list(
+    names = c("agegp", "alcgp", "tobgp", "ncases", "ncontrols"),
+    row.names = 3:4,
+    class = c("wb_data", "data.frame"),
+    dims = structure(
+      list(
+        A = c("A1", "A3", "A4"),
+        B = c("B1", "B3", "B4"),
+        C = c("C1", "C3", "C4"),
+        D = c("D1", "D3", "D4"),
+        E = c("E1", "E3", "E4")
+      ),
+      row.names = c(1L, 3L, 4L),
+      class = "data.frame"
+    ),
+    sheet = "Sheet 1"
+  )
+  got <- attributes(df1[-1, ])
+  expect_equal(exp, got)
+
+  exp <- list(
+    names = c("agegp", "alcgp", "tobgp", "ncases", "ncontrols"),
+    row.names = 2:3,
+    class = c("wb_data", "data.frame"),
+    dims = structure(
+      list(
+        A = c("A1", "A2", "A3"),
+        B = c("B1", "B2", "B3"),
+        C = c("C1", "C2", "C3"),
+        D = c("D1", "D2", "D3"),
+        E = c("E1", "E2", "E3")
+      ),
+      row.names = c(NA, 3L),
+      class = "data.frame"
+    ),
+    sheet = "Sheet 1")
+  got <- attributes(df1[-nrow(df1), ])
+  expect_equal(exp, got)
+
+})
