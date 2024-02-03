@@ -13,10 +13,65 @@ Based on a powerful XML library and focusing on modern programming flows in pipe
 or chains, \code{openxlsx2} allows to break many new ground.
 }
 \details{
-By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou').
-However, both spellings are supported.
+The \code{openxlsx2} package provides comprehensive functionality for interacting
+with Office Open XML spreadsheet files. Users can read data using \code{\link[=read_xlsx]{read_xlsx()}}
+and write data to spreadsheets via \code{\link[=write_xlsx]{write_xlsx()}}, with options to specify
+sheet names and cell ranges for targeted operations. Beyond basic read/write
+capabilities, \code{openxlsx2} facilitates extensive workbook (\code{\link[=wb_workbook]{wb_workbook()}})
+manipulations, including:
+\itemize{
+\item Loading a workbook into R with \code{\link[=wb_load]{wb_load()}} and saving it with \code{\link[=wb_save]{wb_save()}}
+\item Adding/removing and modifying worksheets and data with \code{\link[=wb_add_worksheet]{wb_add_worksheet()}},
+\code{\link[=wb_remove_worksheet]{wb_remove_worksheet()}}, and \code{\link[=wb_add_data]{wb_add_data()}}.
+\item Enhancing spreadsheets with comments (\code{\link[=wb_add_comment]{wb_add_comment()}}),
+images (\code{\link[=wb_add_image]{wb_add_image()}}), plots (\code{\link[=wb_add_plot]{wb_add_plot()}}), charts (\code{\link[=wb_add_mschart]{wb_add_mschart()}}),
+and pivot tables (\code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}}).
+Customizing cell styles using fonts (\code{\link[=wb_add_font]{wb_add_font()}}),
+number formats (\code{\link[=wb_add_numfmt]{wb_add_numfmt()}}), backgrounds (\code{\link[=wb_add_fill]{wb_add_fill()}}),
+and alignments (\code{\link[=wb_add_cell_style]{wb_add_cell_style()}}). Inserting custom text strings with
+\code{\link[=fmt_txt]{fmt_txt()}} and creating comprehensive table styles with \code{\link[=create_tablestyle]{create_tablestyle()}}.
+}
+\subsection{Interaction}{
+
+Interaction with \code{openxlsx2} objects can occur through two primary methods:
+
+\emph{Wrapper Function Method}: Utilizes the \code{wb} family of functions that support
+piping to streamline operations.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{wb <- wb_workbook(creator = "My name here") \%>\%
+  wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) \%>\%
+  wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
+}\if{html}{\out{</div>}}
+
+\emph{Chaining Method}: Directly modifies the object through a series of chained
+function calls.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{wb <- wb_workbook(creator = "My name here")$
+  add_worksheet(sheet = "Expenditure", grid_lines = FALSE)$
+  add_data(x = USPersonalExpenditure, row_names = TRUE)
+}\if{html}{\out{</div>}}
+
+While wrapper functions require explicit assignment of their output to reflect
+changes, chained functions inherently modify the input object. Both approaches
+are equally supported, offering flexibility to suit user preferences. The
+documentation mainly highlights the use of wrapper functions. To find information,
+users should look up the wb function name e.g. \code{?wb_add_data_table} rather than
+searching for \code{?wbWorkbook}.
+
+Function arguments follow the snake_case convention, but for backward compatibility,
+camelCase is also supported at the moment. The API aims to maintain consistency
+in its arguments, with a special focus on \code{sheet} (\code{\link[=wb_get_sheet_names]{wb_get_sheet_names()}}) and
+\code{dims} (\link{wb_dims}), which are of particular importance to users.
+}
+
+\subsection{Locale}{
+
+By default, \code{openxlsx2} uses the American English word for color (written with
+'o' instead of the British English 'ou'). However, both spellings are supported.
 So where the documentation uses a 'color', the function should also accept a 'colour'.
 However, this is not indicated by the autocompletion.
+}
+
 \subsection{Authors and contributions}{
 
 For a full list of all authors that have made this package possible and for whom we are grateful, please see:
@@ -35,18 +90,38 @@ We will work on problems when we have time or need.
 
 This package is licensed under the MIT license and
 is based on \href{https://github.com/ycphs/openxlsx}{\code{openxlsx}} (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022)
-and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
+and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine; COPYRIGHT 2006-2023). Both released under the MIT license.
 }
+}
+\examples{
+# read xlsx or xlsm files
+path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
+read_xlsx(path)
+
+# or import workbooks
+wb <- wb_load(path)
+
+# read a data frame
+wb_to_df(wb)
+
+# and save
+temp <- temp_xlsx()
+if (interactive()) wb_save(wb, temp)
+
+## or create one yourself
+wb <- wb_workbook()
+# add a worksheet
+wb$add_worksheet("sheet")
+# add some data
+wb$add_data("sheet", cars)
+# open it in your default spreadsheet software
+if (interactive()) wb$open()
 }
 \seealso{
 \itemize{
 \item \code{browseVignettes("openxlsx2")}
-\item \code{\link[=wb_add_data]{wb_add_data()}}
-\item \code{\link[=wb_add_data_table]{wb_add_data_table()}}
-\item \code{\link[=wb_to_df]{wb_to_df()}}
-\item \code{\link[=read_xlsx]{read_xlsx()}}
-\item \code{\link[=write_xlsx]{write_xlsx()}}
 \item \url{https://janmarvin.github.io/openxlsx2/}
+\item \url{https://janmarvin.github.io/ox2-book/}
 for examples
 }
 }
