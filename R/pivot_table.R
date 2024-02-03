@@ -481,7 +481,7 @@ create_pivot_table <- function(
       xml_attributes = attrs)
 
     if (i %in% c(filter_pos, rows_pos, cols_pos)) {
-      nms <- names(x[i])
+      nms <- names(x)[i]
       sort_itm <- sort_item[[nms]]
       if (!is.null(choose) && !is.na(choose[nms])) {
         choo <- choose[nms]

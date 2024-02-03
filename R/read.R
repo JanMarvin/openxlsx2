@@ -741,6 +741,58 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE)
   attr(z, "sheet") <- sheetname
 
-  class(z) <- c("data.frame", "wb_data")
+  class(z) <- c("wb_data", "data.frame")
   z
+}
+
+#' Extract or Replace Parts of an `wb_data` Object
+#' @method [ wb_data
+#' @param x x
+#' @param i i
+#' @param j j
+#' @param drop drop
+#' @rdname wb_data
+#' @export
+"[.wb_data" <- function(x, i, j, drop = ifelse((missing(j) && length(i) > 1) || (!missing(i) && length(j) > 1), FALSE, TRUE)) {
+
+  sheet <- attr(x, "sheet")
+  dd    <- attr(x, "dims")
+
+  class(x) <- "data.frame"
+
+  has_colnames <- as.integer(nrow(dd) - nrow(x))
+
+  if (missing(j) && is.character(i)) {
+    j <- match(i, colnames(x))
+    i <- seq_len(nrow(x))
+  }
+
+  if (missing(i)) {
+    i <- seq_len(nrow(x))
+  }
+
+  if (missing(j)) {
+    j <- seq_along(x)
+  }
+
+  x <- x[i, j, drop]
+
+  if (inherits(x, "data.frame")) {
+
+    # we have the colnames in the first row
+    if (all(i < 0)) {
+      sel <- seq_len(nrow(dd))
+      i <- sel[!sel %in% (abs(i) + has_colnames)]
+    } else {
+      i <- c(1, i + has_colnames)
+    }
+
+    dd <- dd[i, j, drop]
+    attr(x, "dims")  <- dd
+    attr(x, "sheet") <- sheet
+
+    class(x) <- c("wb_data", "data.frame")
+  }
+
+  x
 }

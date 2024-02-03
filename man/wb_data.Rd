@@ -2,9 +2,18 @@
 % Please edit documentation in R/read.R
 \name{wb_data}
 \alias{wb_data}
+\alias{[.wb_data}
 \title{Add the \code{wb_data} attribute to a data frame in a worksheet}
 \usage{
 wb_data(wb, sheet = current_sheet(), dims, ...)
+
+\method{[}{wb_data}(
+  x,
+  i,
+  j,
+  drop = ifelse((missing(j) && length(i) > 1) || (!missing(i) && length(j) > 1), FALSE,
+    TRUE)
+)
 }
 \arguments{
 \item{wb}{a workbook}
@@ -15,6 +24,14 @@ wb_data(wb, sheet = current_sheet(), dims, ...)
 
 \item{...}{additional arguments for \code{wb_to_df()}. Be aware that not every
 argument is valid.}
+
+\item{x}{x}
+
+\item{i}{i}
+
+\item{j}{j}
+
+\item{drop}{drop}
 }
 \value{
 A data frame of class \code{wb_data}.
