@@ -22,17 +22,62 @@
 #'
 #' @seealso
 #' * `browseVignettes("openxlsx2")`
-#' * [wb_add_data()]
-#' * [wb_add_data_table()]
-#' * [wb_to_df()]
-#' * [read_xlsx()]
-#' * [write_xlsx()]
 #' * <https://janmarvin.github.io/openxlsx2/>
+#' * <https://janmarvin.github.io/ox2-book/>
 #' for examples
 #'
 #' @details
-#' By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou').
-#' However, both spellings are supported.
+#' The `openxlsx2` package provides comprehensive functionality for interacting
+#' with Office Open XML spreadsheet files. Users can read data using [read_xlsx()]
+#' and write data to spreadsheets via [write_xlsx()], with options to specify
+#' sheet names and cell ranges for targeted operations. Beyond basic read/write
+#' capabilities, `openxlsx2` facilitates extensive workbook ([wb_workbook()])
+#' manipulations, including:
+#' * Loading a workbook into R with [wb_load()] and saving it with [wb_save()]
+#' * Adding/removing and modifying worksheets and data with [wb_add_worksheet()],
+#'  [wb_remove_worksheet()], and [wb_add_data()].
+#' * Enhancing spreadsheets with comments ([wb_add_comment()]),
+#'  images ([wb_add_image()]), plots ([wb_add_plot()]), charts ([wb_add_mschart()]),
+#'  and pivot tables ([wb_add_pivot_table()]).
+#' Customizing cell styles using fonts ([wb_add_font()]),
+#' number formats ([wb_add_numfmt()]), backgrounds ([wb_add_fill()]),
+#' and alignments ([wb_add_cell_style()]). Inserting custom text strings with
+#' [fmt_txt()] and creating comprehensive table styles with [create_tablestyle()].
+#'
+#' ## Interaction
+#' Interaction with `openxlsx2` objects can occur through two primary methods:
+#'
+#' *Wrapper Function Method*: Utilizes the `wb` family of functions that support
+#'  piping to streamline operations.
+#' ``` r
+#' wb <- wb_workbook(creator = "My name here") %>%
+#'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
+#'   wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
+#' ```
+#' *Chaining Method*: Directly modifies the object through a series of chained
+#'  function calls.
+#' ``` r
+#' wb <- wb_workbook(creator = "My name here")$
+#'   add_worksheet(sheet = "Expenditure", grid_lines = FALSE)$
+#'   add_data(x = USPersonalExpenditure, row_names = TRUE)
+#' ```
+#'
+#' While wrapper functions require explicit assignment of their output to reflect
+#' changes, chained functions inherently modify the input object. Both approaches
+#' are equally supported, offering flexibility to suit user preferences. The
+#' documentation mainly highlights the use of wrapper functions. To find information,
+#' users should look up the wb function name e.g. `?wb_add_data_table` rather than
+#' searching for `?wbWorkbook`.
+#'
+#' Function arguments follow the snake_case convention, but for backward compatibility,
+#' camelCase is also supported at the moment. The API aims to maintain consistency
+#' in its arguments, with a special focus on `sheet` ([wb_get_sheet_names()]) and
+#' `dims` ([wb_dims]), which are of particular importance to users.
+#'
+#' ## Locale
+#'
+#' By default, `openxlsx2` uses the American English word for color (written with
+#' 'o' instead of the British English 'ou'). However, both spellings are supported.
 #' So where the documentation uses a 'color', the function should also accept a 'colour'.
 #' However, this is not indicated by the autocompletion.
 #'
@@ -54,8 +99,31 @@
 #'
 #' This package is licensed under the MIT license and
 #' is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022)
-#' and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.
+#' and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2023). Both released under the MIT license.
 #' @keywords internal
+#' @examples
+#' # read xlsx or xlsm files
+#' path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
+#' read_xlsx(path)
+#'
+#' # or import workbooks
+#' wb <- wb_load(path)
+#'
+#' # read a data frame
+#' wb_to_df(wb)
+#'
+#' # and save
+#' temp <- temp_xlsx()
+#' if (interactive()) wb_save(wb, temp)
+#'
+#' ## or create one yourself
+#' wb <- wb_workbook()
+#' # add a worksheet
+#' wb$add_worksheet("sheet")
+#' # add some data
+#' wb$add_data("sheet", cars)
+#' # open it in your default spreadsheet software
+#' if (interactive()) wb$open()
 "_PACKAGE"
 
 #' Options consulted by openxlsx2
