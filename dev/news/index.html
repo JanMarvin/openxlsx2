@@ -61,13 +61,15 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>Experimental support for calculation of pivot table fields. <a href="https://github.com/JanMarvin/openxlsx2/pull/892" class="external-link">892</a>
-</li>
+<ul><li><p>Experimental support for calculation of pivot table fields. <a href="https://github.com/JanMarvin/openxlsx2/pull/892" class="external-link">892</a></p></li>
+<li><p>Improve sparkline creation with new options and support snake case arguments. <a href="https://github.com/JanMarvin/openxlsx2/pull/920" class="external-link">920</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li><p>Character strings with XML content were not written correctly: <code>a &lt;br/&gt; b</code> was converted to something neither we nor spreadsheet software was able to decipher. <a href="https://github.com/JanMarvin/openxlsx2/pull/895" class="external-link">895</a></p></li>
 <li><p>Restore <code>first_active_row</code>/<code>first_active_col</code> and <code>first_col</code>/<code>first_row</code> functionality in <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/903" class="external-link">903</a></p></li>
+<li><p>Further attempts to fix pivot table sorting. <a href="https://github.com/JanMarvin/openxlsx2/pull/912" class="external-link">912</a> In addition improve handling of non distinct names in <code><a href="../reference/wb_data.html">wb_data()</a></code> and add <code><a href="../reference/tablestyle.html">create_pivottablestyle()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/914" class="external-link">914</a></p></li>
+<li><p>Document adding background color and images to comments and fix adding more than two images as background. <a href="https://github.com/JanMarvin/openxlsx2/pull/919" class="external-link">919</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
@@ -77,6 +79,11 @@
 <li>A new style <code>'Office 2013 - 2022 Theme'</code> was added</li>
 </ul>
 Users that want to remain on the old style should use <code>wb_workbook(theme = 'Office 2013 - 2022 Theme')</code> or <code>wb_set_base_font(font_name = "Calibri")</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="maintenance-development-version">Maintenance<a class="anchor" aria-label="anchor" href="#maintenance-development-version"></a></h3>
+<ul><li><p>Code simplifications (<a href="https://github.com/JanMarvin/openxlsx2/pull/924" class="external-link">924</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>), partial matching (<a href="https://github.com/JanMarvin/openxlsx2/pull/923" class="external-link">923</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
+<li><p>Updates to test files and findings by various linters (<a href="https://github.com/JanMarvin/openxlsx2/pull/922" class="external-link">922</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
