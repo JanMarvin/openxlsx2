@@ -122,12 +122,12 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`.
 #' If the data frame contains this string, the output will be broken.
 #'
-#' Supported classes are data frames and vectors of various types and everything
-#' that can be converted into a data frame with `as.data.frame()`. Everything
-#' else that the user wants to write should either be converted into a vector or
-#' data frame or written in vector or data frame segments. This includes base
-#' classes such as `table`, which were coerced internally in the predecessor of
-#' this package.
+#' Supported classes are data frames, matrices and vectors of various types and
+#' everything that can be converted into a data frame with `as.data.frame()`.
+#' Everything else that the user wants to write should either be converted into
+#' a vector or data frame or written in vector or data frame segments. This
+#' includes base classes such as `table`, which were coerced internally in the
+#' predecessor of this package.
 #'
 #' Even vectors and data frames can consist of different classes. Many base
 #' classes are covered, though not all and far from all third-party classes.
@@ -135,6 +135,15 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' It is not possible to write character nodes beginning with `<r>` or `<r/>`. Both
 #' are reserved for internal functions. If you need these. You have to wrap
 #' the input string in `fmt_txt()`.
+#'
+#' The columns of `x` with class Date/POSIXt, currency, accounting, hyperlink,
+#' percentage are automatically styled as dates, currency, accounting,
+#' hyperlinks, percentages respectively.
+#'
+#' Functions [wb_add_data()] and [wb_add_data_table()] behave quite similar. The
+#' distinction is that the latter creates a table in the worksheet that can be
+#' used for different kind of formulas and can be sorted independently, though
+#' is less flexible than basic cell regions.
 #' @family workbook wrappers
 #' @family worksheet content functions
 #' @return A `wbWorkbook`, invisibly.
@@ -233,13 +242,7 @@ wb_add_data <- function(
 #'
 #' Add data to a worksheet and format as an Excel table.
 #'
-#' The columns of `x` with class Date/POSIXt, currency, accounting, hyperlink,
-#' percentage are automatically styled as dates, currency, accounting, hyperlinks,
-#' percentages respectively.
-#'
-#' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If `x` contains this
-#' string, the output will be broken.
-#'
+#' @inherit wb_add_data details
 #' @inheritParams wb_add_data
 #' @param x A data frame
 #' @param table_style Any table style name or "none" (see `vignette("openxlsx2_style_manual")`)

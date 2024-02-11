@@ -84,11 +84,33 @@ Write to a worksheet and format as an Excel table. Use \code{\link[=wb_add_data_
 This function may not be exported
 }
 \details{
-The columns of \code{x} with class Date/POSIXt, currency, accounting, hyperlink,
-percentage are automatically styled as dates, currency, accounting, hyperlinks,
-percentages respectively.
+Formulae written using \code{\link[=wb_add_formula]{wb_add_formula()}} to a Workbook object will
+not get picked up by \code{read_xlsx()}. This is because only the formula is written
+and left to Excel to evaluate the formula when the file is opened in Excel.
+The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
+If the data frame contains this string, the output will be broken.
 
-The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}. If \code{x} contains this
-string, the output will be broken.
+Supported classes are data frames, matrices and vectors of various types and
+everything that can be converted into a data frame with \code{as.data.frame()}.
+Everything else that the user wants to write should either be converted into
+a vector or data frame or written in vector or data frame segments. This
+includes base classes such as \code{table}, which were coerced internally in the
+predecessor of this package.
+
+Even vectors and data frames can consist of different classes. Many base
+classes are covered, though not all and far from all third-party classes.
+When data of an unknown class is written, it is handled with \code{as.character()}.
+It is not possible to write character nodes beginning with \verb{<r>} or \verb{<r/>}. Both
+are reserved for internal functions. If you need these. You have to wrap
+the input string in \code{fmt_txt()}.
+
+The columns of \code{x} with class Date/POSIXt, currency, accounting, hyperlink,
+percentage are automatically styled as dates, currency, accounting,
+hyperlinks, percentages respectively.
+
+Functions \code{\link[=wb_add_data]{wb_add_data()}} and \code{\link[=wb_add_data_table]{wb_add_data_table()}} behave quite similar. The
+distinction is that the latter creates a table in the worksheet that can be
+used for different kind of formulas and can be sorted independently, though
+is less flexible than basic cell regions.
 }
 \keyword{internal}
