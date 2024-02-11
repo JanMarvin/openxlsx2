@@ -121,7 +121,16 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`.
 #' If the data frame contains this string, the output will be broken.
-#' Many base classes are covered, though not all and far from all third-party classes.
+#'
+#' Supported classes are data frames and vectors of various types and everything
+#' that can be converted into a data frame with `as.data.frame()`. Everything
+#' else that the user wants to write should either be converted into a vector or
+#' data frame or written in vector or data frame segments. This includes base
+#' classes such as `table`, which were coerced internally in the predecessor of
+#' this package.
+#'
+#' Even vectors and data frames can consist of different classes. Many base
+#' classes are covered, though not all and far from all third-party classes.
 #' When data of an unknown class is written, it is handled with `as.character()`.
 #' It is not possible to write character nodes beginning with `<r>` or `<r/>`. Both
 #' are reserved for internal functions. If you need these. You have to wrap
