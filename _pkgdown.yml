@@ -163,6 +163,10 @@ reference:
   - clean_worksheet_name
   - styles_on_sheet
 
+- title: Package introduction
+  contents:
+  - openxlsx2-package
+
 - title: Package options
   contents:
   - openxlsx2_options
