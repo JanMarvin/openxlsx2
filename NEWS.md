@@ -4,11 +4,17 @@
 
 * Experimental support for calculation of pivot table fields. [892](https://github.com/JanMarvin/openxlsx2/pull/892)
 
+* Improve sparkline creation with new options and support snake case arguments. [920](https://github.com/JanMarvin/openxlsx2/pull/920)
+
 ## Fixes
 
 * Character strings with XML content were not written correctly: `a <br/> b` was converted to something neither we nor spreadsheet software was able to decipher. [895](https://github.com/JanMarvin/openxlsx2/pull/895)
 
 * Restore `first_active_row`/`first_active_col` and `first_col`/`first_row` functionality in `write_xlsx()`. [903](https://github.com/JanMarvin/openxlsx2/pull/903)
+
+* Further attempts to fix pivot table sorting. [912](https://github.com/JanMarvin/openxlsx2/pull/912) In addition improve handling of non distinct names in `wb_data()` and add `create_pivottablestyle()`. [914](https://github.com/JanMarvin/openxlsx2/pull/914)
+
+* Document adding background color and images to comments and fix adding more than two images as background. [919](https://github.com/JanMarvin/openxlsx2/pull/919)
 
 ## Breaking changes
 
@@ -17,6 +23,12 @@
   * A new style `'Office 2013 - 2022 Theme'` was added
   
   Users that want to remain on the old style should use `wb_workbook(theme = 'Office 2013 - 2022 Theme')` or `wb_set_base_font(font_name = "Calibri")`.
+
+## Maintenance
+
+* Code simplifications ([924](https://github.com/JanMarvin/openxlsx2/pull/924), @olivroy), partial matching ([923](https://github.com/JanMarvin/openxlsx2/pull/923), @olivroy)
+
+* Updates to test files and findings by various linters ([922](https://github.com/JanMarvin/openxlsx2/pull/922), @olivroy)
 
 
 ***************************************************************************
