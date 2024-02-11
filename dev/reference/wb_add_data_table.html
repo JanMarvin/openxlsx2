@@ -182,11 +182,30 @@ columns to a character vector e.g.
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The columns of <code>x</code> with class Date/POSIXt, currency, accounting, hyperlink,
-percentage are automatically styled as dates, currency, accounting, hyperlinks,
-percentages respectively.</p>
-<p>The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>. If <code>x</code> contains this
-string, the output will be broken.</p>
+    <p>Formulae written using <code><a href="wb_add_formula.html">wb_add_formula()</a></code> to a Workbook object will
+not get picked up by <code><a href="wb_to_df.html">read_xlsx()</a></code>. This is because only the formula is written
+and left to Excel to evaluate the formula when the file is opened in Excel.
+The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>.
+If the data frame contains this string, the output will be broken.</p>
+<p>Supported classes are data frames, matrices and vectors of various types and
+everything that can be converted into a data frame with <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>.
+Everything else that the user wants to write should either be converted into
+a vector or data frame or written in vector or data frame segments. This
+includes base classes such as <code>table</code>, which were coerced internally in the
+predecessor of this package.</p>
+<p>Even vectors and data frames can consist of different classes. Many base
+classes are covered, though not all and far from all third-party classes.
+When data of an unknown class is written, it is handled with <code><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character()</a></code>.
+It is not possible to write character nodes beginning with <code>&lt;r&gt;</code> or <code>&lt;r/&gt;</code>. Both
+are reserved for internal functions. If you need these. You have to wrap
+the input string in <code><a href="fmt_txt.html">fmt_txt()</a></code>.</p>
+<p>The columns of <code>x</code> with class Date/POSIXt, currency, accounting, hyperlink,
+percentage are automatically styled as dates, currency, accounting,
+hyperlinks, percentages respectively.</p>
+<p>Functions <code><a href="wb_add_data.html">wb_add_data()</a></code> and <code>wb_add_data_table()</code> behave quite similar. The
+distinction is that the latter creates a table in the worksheet that can be
+used for different kind of formulas and can be sorted independently, though
+is less flexible than basic cell regions.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
