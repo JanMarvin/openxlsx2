@@ -3079,6 +3079,7 @@ wbWorkbook <- R6::R6Class(
       if (font_size < 0) stop("Invalid font_size")
       if (!is_wbColour(font_color)) font_color <- wb_color(font_color)
       self$styles_mgr$styles$fonts[[1]] <- create_font(sz = font_size, color = font_color, name = font_name)
+      invisible(self)
     },
 
     ### book views ----
