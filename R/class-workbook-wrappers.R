@@ -6,10 +6,10 @@
 #' `theme` can be one of
 #' "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 #' "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
-#' "Ion Boardroom", "Madison", "Main Event", "Mesh", "Office Theme",
-#' "Office 2013 - 2022 Theme", "Old Office Theme", "Organic", "Parallax",
-#' "Parcel", "Retrospect", "Savon", "Slice", "Vapor Trail", "View", "Wisp",
-#' "Wood Type"
+#' "Ion Boardroom", "LibreOffice", "Madison", "Main Event", "Mesh",
+#' "Office 2007 - 2010 Theme", "Office 2013 - 2022 Theme", "Office Theme",
+#' "Old Office Theme", "Organic", "Parallax", "Parcel", "Retrospect",
+#' "Savon", "Slice", "Vapor Trail", "View", "Wisp", "Wood Type"
 #'
 #' @param creator Creator of the workbook (your name). Defaults to login username or `options("openxlsx2.creator")` if set.
 #' @param title,subject,category,keywords,comments,manager,company Workbook property, a string.
