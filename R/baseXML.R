@@ -271,6 +271,14 @@ genBasePic <- function(imageNo, next_id) {
     </xdr:pic>', imageNo, imageNo, next_id)
 }
 
+# TODO: make genBaseTheme() a more flexible function that allows further
+# customization, not only the base font, but also colors and theme name.
+
+# Not sure how the panose values below were created. The second byte looks
+# wrong or at least it differs from our panose table.
+# "\x0B", should be written as as "0B" and not as its decimal value "11".
+# For Calibri it was "\x0F" and for this "0F" was the panose value and
+# not "15". Probably it does not matter.
 genBaseTheme <- function() {
   stringi::stri_unescape_unicode(
     '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">
@@ -462,7 +470,7 @@ genBaseTheme <- function() {
   </a:ext>
   </a:extLst>
   </a:theme>'
-  )
+  ) # stri_unescape_unicode
 }
 
 gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, border, gradient) {
