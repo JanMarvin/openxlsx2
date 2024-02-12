@@ -1046,6 +1046,9 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' and DPI settings used. Setting `widths` to specific value also is no guarantee
 #' that the output will have consistent column widths.
 #'
+#' For automatic text wrapping of columns use
+#' [wb_set_cell_style(wrap_text = TRUE)][wb_set_cell_style()]
+#'
 #' @param wb A `wbWorkbook` object.
 #' @param sheet A name or index of a worksheet, a vector in the case of `remove_`
 #' @param cols Indices of cols to set/remove column widths.

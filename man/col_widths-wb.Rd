@@ -49,6 +49,9 @@ changing one will update the other.
 NOTE: The default column width varies by spreadsheet software, operating system,
 and DPI settings used. Setting \code{widths} to specific value also is no guarantee
 that the output will have consistent column widths.
+
+For automatic text wrapping of columns use
+\link[=wb_set_cell_style]{wb_set_cell_style(wrap_text = TRUE)}
 }
 \examples{
 ## Create a new workbook

@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_fill}
 \alias{create_fill}
-\title{create fill}
+\title{Create fill pattern}
 \usage{
 create_fill(
   gradientFill = "",
@@ -24,7 +24,7 @@ create_fill(
 \item{...}{...}
 }
 \description{
-create fill
+Create fill pattern
 }
 \seealso{
 \code{\link[=wb_add_fill]{wb_add_fill()}}

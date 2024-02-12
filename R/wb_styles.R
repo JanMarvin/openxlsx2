@@ -164,7 +164,7 @@ create_border <- function(
   return(border)
 }
 
-#' create number format
+#' Create number format
 #' @param numFmtId an id, the list can be found in the **Details** of [create_cell_style()]
 #' @param formatCode a format code
 #' @seealso [wb_add_numfmt()]
@@ -184,7 +184,7 @@ create_numfmt <- function(numFmtId, formatCode) {
   return(numfmt)
 }
 
-#' create font format
+#' Create font format
 #' @param b bold
 #' @param charset charset
 #' @param color rgb color: default "FF000000"
@@ -322,7 +322,7 @@ create_font <- function(
   return(font)
 }
 
-#' create fill
+#' Create fill pattern
 #'
 #' @param gradientFill complex fills
 #' @param patternType various: default is "none", but also "solid", or a color like "gray125"
@@ -808,7 +808,7 @@ create_dxfs_style <- function(
 
 # nocov start
 
-#' create custom (pivot) table styles
+#' Create custom (pivot) table styles
 #'
 #' Create a custom (pivot) table style.
 #' These functions are for expert use only. Use other styling functions instead.

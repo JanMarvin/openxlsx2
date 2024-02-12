@@ -2,10 +2,55 @@
 
 # R6 class ----------------------------------------------------------------
 # Lines 7 and 8 are needed until r-lib/roxygen2#1504 is fixed
-#' R6 class for a workbook
+#' Workbook class
 #'
 #' @description
-#' A workbook. The documentation is more complete in each of the wrapper functions.
+#' This is the class used by `openxlsx2` to modify workbooks from R.
+#' You can load an existing workbook with [wb_load()] and create a new one with
+#' [wb_workbook()].
+#'
+#' After that, you can modify the `wbWorkbook` object through two primary methods:
+#'
+#' *Wrapper Function Method*: Utilizes the `wb` family of functions that support
+#'  piping to streamline operations.
+#' ``` r
+#' wb <- wb_workbook(creator = "My name here") %>%
+#'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
+#'   wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
+#' ```
+#' *Chaining Method*: Directly modifies the object through a series of chained
+#'  function calls.
+#' ``` r
+#' wb <- wb_workbook(creator = "My name here")$
+#'   add_worksheet(sheet = "Expenditure", grid_lines = FALSE)$
+#'   add_data(x = USPersonalExpenditure, row_names = TRUE)
+#' ```
+#'
+#' While wrapper functions require explicit assignment of their output to reflect
+#' changes, chained functions inherently modify the input object. Both approaches
+#' are equally supported, offering flexibility to suit user preferences. The
+#' documentation mainly highlights the use of wrapper functions.
+#'
+#' ``` r
+#' # Import workbooks
+#' path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
+#' wb <- wb_load(path)
+#'
+#' ## or create one yourself
+#' wb <- wb_workbook()
+#' # add a worksheet
+#' wb$add_worksheet("sheet")
+#' # add some data
+#' wb$add_data("sheet", cars)
+#' # Add data with piping in a different location
+#' wb <- wb %>% wb_add_data(x = cars, dims = wb_dims(from_col = "D", from_row = 4))
+#' # open it in your default spreadsheet software
+#' if (interactive()) wb$open()
+#' ```
+#'
+#' Note that the documentation is more complete in each of the wrapper functions.
+#' (i.e. `?wb_add_data` rather than `?wbWorkbook`).
+#'
 #' @param creator character vector of creators. Duplicated are ignored.
 #' @param dims Cell range in a sheet
 #' @param sheet The name of the sheet

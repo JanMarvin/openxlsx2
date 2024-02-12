@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_numfmt}
 \alias{create_numfmt}
-\title{create number format}
+\title{Create number format}
 \usage{
 create_numfmt(numFmtId, formatCode)
 }
@@ -12,7 +12,7 @@ create_numfmt(numFmtId, formatCode)
 \item{formatCode}{a format code}
 }
 \description{
-create number format
+Create number format
 }
 \seealso{
 \code{\link[=wb_add_numfmt]{wb_add_numfmt()}}

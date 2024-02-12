@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_font}
 \alias{create_font}
-\title{create font format}
+\title{Create font format}
 \usage{
 create_font(
   b = "",
@@ -57,7 +57,7 @@ create_font(
 \item{...}{...}
 }
 \description{
-create font format
+Create font format
 }
 \examples{
 font <- create_font()
