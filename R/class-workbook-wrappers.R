@@ -1306,11 +1306,15 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 
 #' Set the default font in a workbook
 #'
-#' Modify / get the default font for the workbook. The base font in a workbook
-#' does not affect the font in data tables.
+#' Modify / get the default font for the workbook. This will alter the latin
+#' major and minor font in the workbooks theme.
 #'
-#' The font name is not validated in anyway. Excel replaces unknown font names
-#' with Arial. The default base font is Calibri, black, size 11.
+#' The font name is not validated in anyway. Spreadsheet software replaces
+#' unknown font names with system defaults.
+#'
+#' The default base font is Aptos Narrow, black, size 11. If `font_name` differs
+#' from the name in [wb_get_base_font()], the theme is updated to use the newly
+#' selected font name.
 #'
 #' @param wb A workbook object
 #' @param font_size Font size
@@ -1322,10 +1326,10 @@ wb_remove_worksheet <- function(wb, sheet = current_sheet()) {
 #' @name base_font-wb
 #' @examples
 #' ## create a workbook
-#' wb <- wb_workbook()
+#' wb <- wb_workbook(theme = "Office 2013 - 2022 Theme")
 #' wb$add_worksheet("S1")
-#' ## modify base font to size 10 Arial Narrow in red
-#' wb$set_base_font(font_size = 10, font_color = wb_color("red"), font_name = "Arial Narrow")
+#' ## modify base font to size 10 Aptos Narrow in red
+#' wb$set_base_font(font_size = 10, font_color = wb_color("red"), font_name = "Aptos Narrow")
 #'
 #' wb$add_data(x = iris)
 #'
