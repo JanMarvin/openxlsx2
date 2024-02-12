@@ -3078,6 +3078,38 @@ wbWorkbook <- R6::R6Class(
       standardize(...)
       if (font_size < 0) stop("Invalid font_size")
       if (!is_wbColour(font_color)) font_color <- wb_color(font_color)
+
+      fl <- system.file("extdata", "panose", "panose.csv", package = "openxlsx2")
+      panose <- read.csv(fl, stringsAsFactors = FALSE)
+
+      # if the default font name differes from the wanted name: update theme
+      if (self$get_base_font()$name$val != font_name) {
+        if (!exists("font_type")) font_type <- "Regular"
+
+        sel <- panose$family == font_name & panose$type == font_type
+        if (!any(sel)) {
+          warning("Could not find font in panose table. Ignoring panose entry.")
+          panose_hex <- NULL
+        } else {
+          panose_hex <- panose[sel, "panose"]
+        }
+
+        if (is.null(self$theme)) self$theme <- genBaseTheme()
+
+        xml_font <- xml_node_create(
+          "a:latin",
+          xml_attributes = c(typeface = font_name, panose = panose_hex)
+        )
+
+        # TODO This alters both fonts. Should be able to alter indepdendently
+        fS <- xml_node(self$theme, "a:theme", "a:themeElements", "a:fontScheme")
+        maj_font <- xml_node(fS, "a:fontScheme", "a:majorFont", "a:latin")
+        min_font <- xml_node(fS, "a:fontScheme", "a:minorFont", "a:latin")
+
+        self$theme <- gsub(maj_font, xml_font, self$theme)
+        self$theme <- gsub(min_font, xml_font, self$theme)
+      }
+
       self$styles_mgr$styles$fonts[[1]] <- create_font(sz = font_size, color = font_color, name = font_name)
       invisible(self)
     },
