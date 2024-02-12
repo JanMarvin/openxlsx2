@@ -2,6 +2,11 @@ url: https://janmarvin.github.io/openxlsx2
 
 destination: docs
 
+home:
+  links:
+  - text: Learn more
+    href: https://janmarvin.github.io/ox2-book/
+
 template:
   bootstrap: 5
 
@@ -49,22 +54,20 @@ reference:
   contents:
   - has_concept("worksheet content functions")
 
-- subtitle: Add images to a worksheet
+- subtitle: Add images and charts to a worksheet
+  desc: >
+    Add images or Excel charts to a worksheet with the mschart package.
+    See `vignette("openxlsx2_charts_manual")`.
   contents:
   - wb_add_image
   - wb_add_plot
-
-- subtitle: Add charts to worksheets
-  desc: >
-    Add Excel charts to a worksheet with the mschart package.
-  contents:
   - wb_add_chartsheet
   - wb_add_mschart
 
-
 - title: Style a workbook
   desc: >
-    Style a cell region, a worksheet or the entire workbook
+    Style a cell region, a worksheet or the entire workbook.
+    See `vignette("openxlsx2_style_manual")`.
 
 - subtitle: Worksheet styling
   desc: >

@@ -4,7 +4,7 @@
 \alias{tablestyle}
 \alias{create_tablestyle}
 \alias{create_pivottablestyle}
-\title{create custom (pivot) table styles}
+\title{Create custom (pivot) table styles}
 \usage{
 create_tablestyle(
   name,

@@ -2,9 +2,53 @@
 % Please edit documentation in R/class-workbook.R
 \name{wbWorkbook}
 \alias{wbWorkbook}
-\title{R6 class for a workbook}
+\title{Workbook class}
 \description{
-A workbook. The documentation is more complete in each of the wrapper functions.
+This is the class used by \code{openxlsx2} to modify workbooks from R.
+You can load an existing workbook with \code{\link[=wb_load]{wb_load()}} and create a new one with
+\code{\link[=wb_workbook]{wb_workbook()}}.
+
+After that, you can modify the \code{wbWorkbook} object through two primary methods:
+
+\emph{Wrapper Function Method}: Utilizes the \code{wb} family of functions that support
+piping to streamline operations.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{wb <- wb_workbook(creator = "My name here") \%>\%
+  wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) \%>\%
+  wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
+}\if{html}{\out{</div>}}
+
+\emph{Chaining Method}: Directly modifies the object through a series of chained
+function calls.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{wb <- wb_workbook(creator = "My name here")$
+  add_worksheet(sheet = "Expenditure", grid_lines = FALSE)$
+  add_data(x = USPersonalExpenditure, row_names = TRUE)
+}\if{html}{\out{</div>}}
+
+While wrapper functions require explicit assignment of their output to reflect
+changes, chained functions inherently modify the input object. Both approaches
+are equally supported, offering flexibility to suit user preferences. The
+documentation mainly highlights the use of wrapper functions.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# Import workbooks
+path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
+wb <- wb_load(path)
+
+## or create one yourself
+wb <- wb_workbook()
+# add a worksheet
+wb$add_worksheet("sheet")
+# add some data
+wb$add_data("sheet", cars)
+# Add data with piping in a different location
+wb <- wb \%>\% wb_add_data(x = cars, dims = wb_dims(from_col = "D", from_row = 4))
+# open it in your default spreadsheet software
+if (interactive()) wb$open()
+}\if{html}{\out{</div>}}
+
+Note that the documentation is more complete in each of the wrapper functions.
+(i.e. \code{?wb_add_data} rather than \code{?wbWorkbook}).
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
