@@ -467,12 +467,27 @@ write_data2 <- function(
       dim_sel <- get_data_class_dims("hyperlink")
       # message("hyperlink: ", dim_sel)
 
+      # get hyperlink color from template
+      if (is.null(wb$theme)) {
+        has_hlink <- 11
+      } else {
+        clrs <- xml_node(wb$theme, "a:theme", "a:themeElements", "a:clrScheme")
+        has_hlink <- which(xml_node_name(clrs, "a:clrScheme") == "a:hlink")
+      }
+
+      if (has_hlink) {
+        hyperlink_col <- wb_color(theme = has_hlink - 1L)
+      } else {
+        hyperlink_col <- wb_color(hex = "FF0000FF")
+      }
+
       wb$add_font(
         sheet = sheetno,
-        dims = dim_sel,
-        color = wb_color(hex = "FF0000FF"),
-        name = wb_get_base_font(wb)$name$val,
-        u = "single"
+        dims  = dim_sel,
+        color = hyperlink_col,
+        name  = wb_get_base_font(wb)$name$val,
+        size  = wb_get_base_font(wb)$size$val,
+        u     = "single"
       )
     }
 
