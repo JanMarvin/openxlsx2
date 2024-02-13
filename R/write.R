@@ -469,10 +469,11 @@ write_data2 <- function(
 
       wb$add_font(
         sheet = sheetno,
-        dims = dim_sel,
+        dims  = dim_sel,
         color = wb_color(hex = "FF0000FF"),
-        name = wb_get_base_font(wb)$name$val,
-        u = "single"
+        name  = wb_get_base_font(wb)$name$val,
+        size  = wb_get_base_font(wb)$size$val,
+        u     = "single"
       )
     }
 

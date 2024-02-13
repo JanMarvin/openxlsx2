@@ -3133,8 +3133,10 @@ wbWorkbook <- R6::R6Class(
 
         sel <- panose$family == font_name & panose$type == font_type
         if (!any(sel)) {
-          warning("Could not find font in panose table. Ignoring panose entry.")
           panose_hex <- NULL
+        } else if (exists("font_panose")) {
+          # the input provides a panose value
+          panose_hex <- font_panose
         } else {
           panose_hex <- panose[sel, "panose"]
         }
