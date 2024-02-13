@@ -3120,7 +3120,9 @@ wbWorkbook <- R6::R6Class(
       font_name  = "Aptos Narrow",
        ...
     ) {
-      standardize(...)
+      arguments <- c("font_size", "font_color", "font_name",
+        "font_type", "font_panose")
+      standardize(..., arguments = arguments)
       if (font_size < 0) stop("Invalid font_size")
       if (!is_wbColour(font_color)) font_color <- wb_color(font_color)
 
@@ -3132,7 +3134,7 @@ wbWorkbook <- R6::R6Class(
         if (!exists("font_type")) font_type <- "Regular"
 
         sel <- panose$family == font_name & panose$type == font_type
-        if (!any(sel)) {
+        if (!any(sel) && !exists("font_panose")) {
           panose_hex <- NULL
         } else if (exists("font_panose")) {
           # the input provides a panose value
