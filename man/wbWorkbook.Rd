@@ -1126,9 +1126,18 @@ The \code{wbWorkbook} object
 \subsection{Method \code{get_base_colors()}}{
 Get the base color
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_colors()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_colors(xml = FALSE, plot = TRUE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{xml}}{xml}
+
+\item{\code{plot}}{plot}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-get_base_colours"></a>}}
@@ -1136,9 +1145,18 @@ Get the base color
 \subsection{Method \code{get_base_colours()}}{
 Get the base colour
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_colours()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_colours(xml = FALSE, plot = TRUE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{xml}}{xml}
+
+\item{\code{plot}}{plot}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_base_colors"></a>}}

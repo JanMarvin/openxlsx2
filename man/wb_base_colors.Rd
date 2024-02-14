@@ -10,7 +10,7 @@
 \usage{
 wb_set_base_colors(wb, theme = "Office", ...)
 
-wb_get_base_colors(wb)
+wb_get_base_colors(wb, xml = FALSE, plot = TRUE)
 }
 \arguments{
 \item{wb}{A workbook object}
@@ -18,6 +18,10 @@ wb_get_base_colors(wb)
 \item{theme}{a predefined color theme}
 
 \item{...}{optional parameters}
+
+\item{xml}{Logical if xml string should be returned}
+
+\item{plot}{Logical if a barplot of the colors should be returned}
 }
 \description{
 Modify / get the default colors of the workbook.

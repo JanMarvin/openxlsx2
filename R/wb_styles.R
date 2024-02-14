@@ -1192,4 +1192,90 @@ create_pivottablestyle <- function(
   )
 }
 
+#' create custom color xml schemes
+#' To be used with [wb_set_base_colors()]
+#' @name create_colors_xml
+#' @param name the color name
+#' @param dark four colors: dark, light, brighter dark, darker light
+#' @param accent six accent colors
+#' @param link two link colors: link and visited link
+#' @examples
+#' colors <- create_colors_xml()
+#' wb <- wb_workbook()$add_worksheet()$set_base_colors(xml = colors)
+#' @export
+create_colors_xml <- function(
+    name   = "Base R",
+    dark   = NULL,
+    accent = NULL,
+    link   = NULL
+  ) {
+
+  if (is.null(dark))
+    dark <- c("black", "white", "darkblue", "lightgray")
+
+  if (is.null(accent))
+    accent <- grDevices::palette()[2:7]
+
+  if (is.null(link))
+    link <- c("blue", "gray")
+
+  if (length(dark) != 4) {
+    stop("dark vector must be of length 4")
+  }
+  if (length(accent) != 6) {
+    stop("accent vector must be of length 6")
+  }
+  if (length(link) != 2) {
+    stop("link vector must be of length 2")
+  }
+
+  colors <- c(dark, accent, link)
+  colors <- as.character(wb_color(colors))
+  if (length(colors) != 12) {
+    stop("colors vector must be of length 12")
+  }
+
+  colors <- vapply(
+    colors,
+    function(x) substring(x, 3, nchar(x)),
+    NA_character_
+  )
+
+  read_xml(
+    sprintf(
+      "<a:clrScheme name=\"%s\">
+      <a:dk1><a:sysClr val=\"windowText\" lastClr=\"%s\"/></a:dk1>
+      <a:lt1><a:sysClr val=\"window\" lastClr=\"%s\"/></a:lt1>
+      <a:dk2><a:srgbClr val=\"%s\"/></a:dk2>
+      <a:lt2><a:srgbClr val=\"%s\"/></a:lt2>
+      <a:accent1><a:srgbClr val=\"%s\"/></a:accent1>
+      <a:accent2><a:srgbClr val=\"%s\"/></a:accent2>
+      <a:accent3><a:srgbClr val=\"%s\"/></a:accent3>
+      <a:accent4><a:srgbClr val=\"%s\"/></a:accent4>
+      <a:accent5><a:srgbClr val=\"%s\"/></a:accent5>
+      <a:accent6><a:srgbClr val=\"%s\"/></a:accent6>
+      <a:hlink><a:srgbClr val=\"%s\"/></a:hlink>
+      <a:folHlink><a:srgbClr val=\"%s\"/></a:folHlink>
+      </a:clrScheme>",
+      name,
+      colors[1], # dk1
+      colors[2], # lt1
+      colors[3], # dk2
+      colors[4], # lt2
+      colors[5], # accent1
+      colors[6], # accent2
+      colors[7], # accent3
+      colors[8], # accent4
+      colors[9], # accent5
+      colors[10], # accent6
+      colors[11], # hlink
+      colors[12] # folHlink
+    ), pointer = FALSE
+  )
+}
+#' @export
+#' @rdname create_colors_xml
+#' @usage NULL
+create_colours_xml <- create_colors_xml
+
 # nocov end
