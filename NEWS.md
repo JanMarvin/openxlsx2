@@ -22,6 +22,8 @@
 
 * Hyperlinks now use the color of the theme and the base size. [937](https://github.com/JanMarvin/openxlsx2/pull/937)
 
+* `wb_add_data()` and `wb_add_data_table()` yield better error messages if attempting to add data to an empty workbook ([941](https://github.com/JanMarvin/openxlsx2/pull/941), @olivroy).
+
 ## Breaking changes
 
 * Updating to themes. This includes updates to the default style `'Office Theme'` [899](https://github.com/JanMarvin/openxlsx2/pull/899)
