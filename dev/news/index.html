@@ -73,6 +73,7 @@
 <li><p>Document adding background color and images to comments and fix adding more than two images as background. <a href="https://github.com/JanMarvin/openxlsx2/pull/919" class="external-link">919</a></p></li>
 <li><p>Improvements to <code><a href="../reference/base_font-wb.html">wb_set_base_font()</a></code>. This modifies the workbook theme now, including panose values. <a href="https://github.com/JanMarvin/openxlsx2/pull/935" class="external-link">935</a></p></li>
 <li><p>Hyperlinks now use the color of the theme and the base size. <a href="https://github.com/JanMarvin/openxlsx2/pull/937" class="external-link">937</a></p></li>
+<li><p><code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> and <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code> yield better error messages if attempting to add data to an empty workbook (<a href="https://github.com/JanMarvin/openxlsx2/pull/942" class="external-link">942</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
@@ -87,6 +88,7 @@ Users that want to remain on the old style should use <code>wb_workbook(theme = 
 <h3 id="maintenance-development-version">Maintenance<a class="anchor" aria-label="anchor" href="#maintenance-development-version"></a></h3>
 <ul><li><p>Code simplifications (<a href="https://github.com/JanMarvin/openxlsx2/pull/924" class="external-link">924</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>), partial matching (<a href="https://github.com/JanMarvin/openxlsx2/pull/923" class="external-link">923</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
 <li><p>Updates to test files and findings by various linters (<a href="https://github.com/JanMarvin/openxlsx2/pull/922" class="external-link">922</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
+<li><p>Improve <a href="https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html">wbWorkbook documentation</a> to help disambiguate the chaining and piping methods (<a href="https://github.com/JanMarvin/openxlsx2/pull/936" class="external-link">936</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a> and <a href="https://github.com/JanMarvin/openxlsx2/pull/928" class="external-link">928</a>).</p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
