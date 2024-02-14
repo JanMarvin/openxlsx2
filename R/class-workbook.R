@@ -1290,7 +1290,7 @@ wbWorkbook <- R6::R6Class(
       ) {
 
       standardize(...)
-
+      if (missing(x)) stop("`x` is missing")
       if (length(self$sheet_names) == 0) {
         stop(
           "Can't add data to a workbook with no worksheet.\n",
@@ -1365,7 +1365,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize(...)
-
+      if (missing(x)) stop("`x` is missing")
       if (length(self$sheet_names) == 0) {
         stop(
           "Can't add data to a workbook with no worksheet.\n",
