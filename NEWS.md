@@ -22,6 +22,8 @@
 
 * Hyperlinks now use the color of the theme and the base size. [937](https://github.com/JanMarvin/openxlsx2/pull/937)
 
+* `wb_add_data()` and `wb_add_data_table()` yield better error messages if attempting to add data to an empty workbook ([942](https://github.com/JanMarvin/openxlsx2/pull/942), @olivroy).
+
 ## Breaking changes
 
 * Updating to themes. This includes updates to the default style `'Office Theme'` [899](https://github.com/JanMarvin/openxlsx2/pull/899)
@@ -36,6 +38,7 @@
 
 * Updates to test files and findings by various linters ([922](https://github.com/JanMarvin/openxlsx2/pull/922), @olivroy)
 
+* Improve [wbWorkbook documentation](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html) to help disambiguate the chaining and piping methods ([936](https://github.com/JanMarvin/openxlsx2/pull/936), @olivroy and [928](https://github.com/JanMarvin/openxlsx2/pull/928)).
 
 ***************************************************************************
 

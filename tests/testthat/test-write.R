@@ -78,10 +78,25 @@ test_that("test options", {
 
 })
 
-test_that("missing x is caught early [246]", {
+test_that("missing x is caught early [#246]", {
   expect_error(
     wb_workbook()$add_data(mtcars),
     "`x` is missing"
+  )
+  expect_error(
+    wb_workbook()$add_data_table(mtcars),
+    "`x` is missing"
+  )
+})
+
+test_that("missing sheet is caught early (#942)", {
+  expect_error(
+    wb_workbook()$add_data(x = mtcars),
+    "no worksheet"
+  )
+  expect_error(
+    wb_workbook()$add_data_table(x = mtcars),
+    "no worksheet"
   )
 })
 

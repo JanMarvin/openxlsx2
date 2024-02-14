@@ -1,14 +1,17 @@
 # `create_hyperlink()` ---------------------------------------------------------
 #' Create Excel hyperlink string
 #'
-#' Wrapper to create internal hyperlink string to pass to [write_formula()].
+#' @description
+#' Wrapper to create internal hyperlink string to pass to [wb_add_formula()].
 #' Either link to external URLs or local files or straight to cells of local Excel sheets.
 #'
+#' Note that for an external URL, only `file` and `text` should be supplied.
+#' You can supply `dims` to `wb_add_formula()` to control the location of the link.
 #' @param sheet Name of a worksheet
 #' @param row integer row number for hyperlink to link to
 #' @param col column number of letter for hyperlink to link to
-#' @param text display text
-#' @param file Excel file name to point to. If NULL hyperlink is internal.
+#' @param text Display text
+#' @param file Hyperlink or Excel file name to point to. If `NULL`, hyperlink is internal.
 #' @examples
 #' wb <- wb_workbook()$
 #'   add_worksheet("Sheet1")$add_worksheet("Sheet2")$add_worksheet("Sheet3")
@@ -42,6 +45,11 @@
 #' x <- create_hyperlink(text = "test.png", file = "D:/somepath/somepicture.png")
 #' wb$add_formula(x = x, dims = "A7")
 #'
+#'
+#' ## Link to an URL.
+#' x <- create_hyperlink(text = "openxlsx2 website", file = "https://janmarvin.github.io/openxlsx2/")
+#'
+#' wb$add_formula(x = x, dims = "A8")
 #' # if (interactive()) wb$open()
 #'
 #' @export

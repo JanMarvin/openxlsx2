@@ -1290,6 +1290,14 @@ wbWorkbook <- R6::R6Class(
       ) {
 
       standardize(...)
+      if (missing(x)) stop("`x` is missing")
+      if (length(self$sheet_names) == 0) {
+        stop(
+          "Can't add data to a workbook with no worksheet.\n",
+          "Did you forget to add a worksheet with `wb_add_worksheet()`?",
+          call. = FALSE
+          )
+      }
 
       write_data(
         wb                = self,
@@ -1357,6 +1365,14 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize(...)
+      if (missing(x)) stop("`x` is missing")
+      if (length(self$sheet_names) == 0) {
+        stop(
+          "Can't add data to a workbook with no worksheet.\n",
+          "Did you forget to add a worksheet with `wb_add_worksheet()`?",
+          call. = FALSE
+        )
+      }
 
       write_datatable(
         wb              = self,

@@ -54,7 +54,7 @@ other spreadsheet software are not supported). We offer two different
 variants how to work with `openxlsx2`.
 
 - The first one is to simply work with R objects. It is possible to read
-  ([`read_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/read_xlsx.html))
+  ([`read_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html))
   and write
   ([`write_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html))
   data from and to files. We offer a number of options in the commands
