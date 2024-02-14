@@ -58,7 +58,8 @@ wb_get_base_font(wb)
 \seealso{
 Other workbook styling functions: 
 \code{\link{wb_add_dxfs_style}()},
-\code{\link{wb_add_style}()}
+\code{\link{wb_add_style}()},
+\code{\link{wb_base_colors}}
 
 Other workbook wrappers: 
 \code{\link{col_widths-wb}},
@@ -72,6 +73,7 @@ Other workbook wrappers:
 \code{\link{wb_add_pivot_table}()},
 \code{\link{wb_add_slicer}()},
 \code{\link{wb_add_worksheet}()},
+\code{\link{wb_base_colors}},
 \code{\link{wb_clone_worksheet}()},
 \code{\link{wb_copy_cells}()},
 \code{\link{wb_freeze_pane}()},

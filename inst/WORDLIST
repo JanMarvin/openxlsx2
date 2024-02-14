@@ -1,6 +1,5 @@
 ARGB
 Aptos
-Arial
 ArrowsGray
 CHARSET
 CHINESEBIG
@@ -18,6 +17,7 @@ FFFFF
 FFFFFF
 Github
 Gnumeric
+Greyscale
 HeaderCell
 JIS
 JOHAB
@@ -179,6 +179,7 @@ pageFieldLabels
 pageFieldValues
 pageLayout
 pageSetup
+panose
 paperSize
 params
 patternFill

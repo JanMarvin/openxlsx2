@@ -171,6 +171,24 @@ test_that("wb_set_base_font() is a wrapper", {
   expect_wrapper("set_base_font", params = params)
 })
 
+test_that("wb_get_base_font() is a wrapper", {
+  wb <- wb_workbook()
+  expect_wrapper("get_base_font", wb = wb)
+  expect_wrapper("get_base_font", wb = wb)
+})
+
+test_that("wb_set_base_color() is a wrapper", {
+  params <- list(theme = 2)
+  expect_wrapper("set_base_colors", params = params)
+  expect_wrapper("set_base_colours", params = params)
+})
+
+test_that("wb_get_base_color() is a wrapper", {
+  wb <- wb_workbook()
+  expect_wrapper("get_base_colors", wb = wb)
+  expect_wrapper("get_base_colours", wb = wb)
+})
+
 # wb_set_bookview() -----------------------------------------------------------
 
 test_that("wb_set_bookview() is a wrapper", {

@@ -280,6 +280,7 @@ genBasePic <- function(imageNo, next_id) {
 # For Calibri it was "\x0F" and for this "0F" was the panose value and
 # not "15". Probably it does not matter.
 genBaseTheme <- function() {
+  read_xml(
   stringi::stri_unescape_unicode(
     '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">
   <a:themeElements>
@@ -470,7 +471,9 @@ genBaseTheme <- function() {
   </a:ext>
   </a:extLst>
   </a:theme>'
-  ) # stri_unescape_unicode
+  ), # stri_unescape_unicode
+  pointer = FALSE
+  ) # read_xml
 }
 
 gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, border, gradient) {

@@ -33,3 +33,6 @@ a \code{wbColour} object
 \description{
 Creates a \code{wbColour} object.
 }
+\seealso{
+\code{\link[=wb_get_base_colors]{wb_get_base_colors()}}
+}
