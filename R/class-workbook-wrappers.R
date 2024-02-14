@@ -1374,14 +1374,17 @@ wb_get_base_font <- function(wb) {
 #'
 #' @details Theme must be any of the following:
 #' "Aspect", "Blue", "Blue II", "Blue Green", "Blue Warm", "Greyscale",
-#' "Green", "Green Yellow", "Marquee", "Median", "Office 2007 - 2010",
-#' "Orange", "Orange Red", "Paper", "Red", "Red Orange", "Red Violet",
-#' "Slipstream", "Violet", "Violet II", "Yellow", "Yellow Orange"
+#' "Green", "Green Yellow", "Marquee", "Median", "Office", "Office 2007 - 2010",
+#' "Office 2013 - 2022", "Orange", "Orange Red", "Paper", "Red",
+#' "Red Orange", "Red Violet", "Slipstream", "Violet", "Violet II",
+#' "Yellow", "Yellow Orange"
 #'
 #' @name wb_base_colors
 #' @param wb A workbook object
 #' @param theme a predefined color theme
 #' @param ... optional parameters
+#' @param xml Logical if xml string should be returned
+#' @param plot Logical if a barplot of the colors should be returned
 #' @family workbook styling functions
 #' @family workbook wrappers
 #' @examples
@@ -1406,9 +1409,9 @@ wb_set_base_colors <- function(
 }
 #' @export
 #' @rdname wb_base_colors
-wb_get_base_colors <- function(wb) {
+wb_get_base_colors <- function(wb, xml = FALSE, plot = TRUE) {
   assert_workbook(wb)
-  wb$get_base_colors()
+  wb$get_base_colors(xml = xml, plot = plot)
 }
 #' @export
 #' @rdname wb_base_colors

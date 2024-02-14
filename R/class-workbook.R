@@ -3164,7 +3164,9 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Get the base color
-    get_base_colors = function() {
+    #' @param xml xml
+    #' @param plot plot
+    get_base_colors = function(xml = FALSE, plot = TRUE) {
 
       if (is.null(self$theme)) self$theme <- genBaseTheme()
 
@@ -3183,17 +3185,28 @@ wbWorkbook <- R6::R6Class(
         },
         NA_character_
       )
+      names(rgbs) <- nodes
 
-      if (interactive())
-        barplot(rep(1, length(rgbs)), col = rgbs, main = name, yaxt = "n")
+      if (interactive() && plot)
+        barplot(
+          rep(1, length(rgbs)),
+          col = rgbs, names.arg = names(rgbs),
+          main = name, yaxt = "n", las = 2
+        )
 
-      current
+      out <- list(rgbs)
+      names(out) <- name
 
+      if (xml) out <- current
+
+      out
     },
 
     #' @description Get the base colour
-    get_base_colours = function() {
-      self$get_base_colors()
+    #' @param xml xml
+    #' @param plot plot
+    get_base_colours = function(xml = FALSE, plot = TRUE) {
+      self$get_base_colors(xml = xml, plot = plot)
     },
 
     #' @description Set the base color

@@ -177,7 +177,7 @@ test_that("wb_get_base_font() is a wrapper", {
   expect_wrapper("get_base_font", wb = wb)
 })
 
-test_that("wb_set_base_color() is a wrapper", {
+test_that("wb_set_base_colors() is a wrapper", {
   params <- list(theme = 2)
   expect_wrapper("set_base_colors", params = params)
   expect_wrapper("set_base_colours", params = params)

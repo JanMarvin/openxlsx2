@@ -115,17 +115,17 @@ test_that("hyperlink font size works", {
 test_that("getting and setting base color works", {
   wb <- wb_workbook()
   exp <- "<a:clrScheme name=\"Office\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/></a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/></a:lt1><a:dk2><a:srgbClr val=\"0E2841\"/></a:dk2><a:lt2><a:srgbClr val=\"E8E8E8\"/></a:lt2><a:accent1><a:srgbClr val=\"156082\"/></a:accent1><a:accent2><a:srgbClr val=\"E97132\"/></a:accent2><a:accent3><a:srgbClr val=\"196B24\"/></a:accent3><a:accent4><a:srgbClr val=\"0F9ED5\"/></a:accent4><a:accent5><a:srgbClr val=\"A02B93\"/></a:accent5><a:accent6><a:srgbClr val=\"4EA72E\"/></a:accent6><a:hlink><a:srgbClr val=\"467886\"/></a:hlink><a:folHlink><a:srgbClr val=\"96607D\"/></a:folHlink></a:clrScheme>"
-  got <- wb$get_base_colors()
+  got <- wb$get_base_colors(xml = TRUE, plot = FALSE)
   expect_equal(exp, got)
 
   wb$set_base_colors(theme = 3)
 
   exp <- "<a:clrScheme name=\"Blue II\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/></a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/></a:lt1><a:dk2><a:srgbClr val=\"335B74\"/></a:dk2><a:lt2><a:srgbClr val=\"DFE3E5\"/></a:lt2><a:accent1><a:srgbClr val=\"1CADE4\"/></a:accent1><a:accent2><a:srgbClr val=\"2683C6\"/></a:accent2><a:accent3><a:srgbClr val=\"27CED7\"/></a:accent3><a:accent4><a:srgbClr val=\"42BA97\"/></a:accent4><a:accent5><a:srgbClr val=\"3E8853\"/></a:accent5><a:accent6><a:srgbClr val=\"62A39F\"/></a:accent6><a:hlink><a:srgbClr val=\"6EAC1C\"/></a:hlink><a:folHlink><a:srgbClr val=\"B26B02\"/></a:folHlink></a:clrScheme>"
-  got <- wb$get_base_colours()
+  got <- wb$get_base_colours(xml = TRUE, plot = FALSE)
   expect_equal(exp, got)
 
   wb$set_base_colours(theme = "Violet II")
   exp <- "<a:clrScheme name=\"Violet II\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/></a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/></a:lt1><a:dk2><a:srgbClr val=\"632E62\"/></a:dk2><a:lt2><a:srgbClr val=\"EAE5EB\"/></a:lt2><a:accent1><a:srgbClr val=\"92278F\"/></a:accent1><a:accent2><a:srgbClr val=\"9B57D3\"/></a:accent2><a:accent3><a:srgbClr val=\"755DD9\"/></a:accent3><a:accent4><a:srgbClr val=\"665EB8\"/></a:accent4><a:accent5><a:srgbClr val=\"45A5ED\"/></a:accent5><a:accent6><a:srgbClr val=\"5982DB\"/></a:accent6><a:hlink><a:srgbClr val=\"0066FF\"/></a:hlink><a:folHlink><a:srgbClr val=\"666699\"/></a:folHlink></a:clrScheme>"
-  got <- wb$get_base_colours()
+  got <- wb$get_base_colours(xml = TRUE, plot = FALSE)
   expect_equal(exp, got)
 })
