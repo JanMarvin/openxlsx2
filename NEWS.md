@@ -38,6 +38,7 @@
 
 * Updates to test files and findings by various linters ([922](https://github.com/JanMarvin/openxlsx2/pull/922), @olivroy)
 
+* Improve [wbWorkbook documentation](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html) to help disambiguate the chaining and piping methods ([936](https://github.com/JanMarvin/openxlsx2/pull/936), @olivroy and [928](https://github.com/JanMarvin/openxlsx2/pull/928)).
 
 ***************************************************************************
 
