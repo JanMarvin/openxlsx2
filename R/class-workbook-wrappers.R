@@ -1376,7 +1376,17 @@ wb_get_base_font <- function(wb) {
 #' @param wb A workbook object
 #' @param theme a predefined color theme
 #' @param ... optional parameters
+#' @family workbook styling functions
+#' @family workbook wrappers
+#' @examples
+#' wb <- wb_workbook()
+#' wb$get_base_colors()
+#' wb$set_base_colors(theme = 3)
+#' wb$set_base_colors(theme = "Violet II")
+#' wb$get_base_colours()
+NULL
 #' @export
+#' @rdname wb_base_colors
 wb_set_base_colors <- function(
   wb,
   theme = "Office",

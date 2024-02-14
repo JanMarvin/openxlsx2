@@ -3239,7 +3239,7 @@ wbWorkbook <- R6::R6Class(
     #' @param ... ...
     #' @return The `wbWorkbook` object
     set_base_colours = function(theme = "Office", ...) {
-      self$set_base_colors(theme = theme , ... = ...)
+      self$set_base_colors(theme = theme, ... = ...)
     },
 
     ### book views ----
