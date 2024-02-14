@@ -341,9 +341,10 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   }
 
   for (i in seq_len(nSheets)) {
-    wb$add_worksheet(nms[[i]], gridLines = gridLines[i], tabColor = tabColor[i], zoom = zoom[i])
+    wb$add_worksheet(nms[[i]], grid_lines = gridLines[i], tab_color = tabColor[i], zoom = zoom[i])
 
     if (as_table[i]) {
+      # add data table??
       write_datatable(
         wb          = wb,
         sheet       = i,
@@ -358,6 +359,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
         na.strings  = na.strings
       )
     } else {
+      # TODO add_data()?
       write_data(
         wb = wb,
         sheet = i,

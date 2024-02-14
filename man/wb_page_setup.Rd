@@ -143,8 +143,8 @@ wb$add_worksheet("print_title_rows")
 wb$add_worksheet("print_title_cols")
 
 wb$add_data("print_title_rows", rbind(iris, iris, iris, iris))
-wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
+wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), row_names = TRUE)
 
-wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
-wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+wb$page_setup(sheet = "print_title_rows", print_title_rows = 1) ## first row
+wb$page_setup(sheet = "print_title_cols", print_title_cols = 1, print_title_rows = 1)
 }

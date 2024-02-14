@@ -12,7 +12,7 @@ test_that("openxlsx2_types", {
   z <- complex(real = stats::rnorm(1), imaginary = stats::rnorm(1))
   expect_equal(openxlsx2_celltype[["character"]], openxlsx2_type(z))
 
-  # write_datatable example: data frame with various types
+  # wb_add_data_table() example: data frame with various types
   df <- data.frame(
     "Date" = Sys.Date() - 0:19,
     "T" = TRUE, "F" = FALSE,
@@ -33,8 +33,8 @@ test_that("openxlsx2_types", {
   got <- openxlsx2_type(df)
   exp <- c(
     Date = openxlsx2_celltype[["short_date"]],
-    T = openxlsx2_celltype[["logical"]],
-    F = openxlsx2_celltype[["logical"]],
+    `T` = openxlsx2_celltype[["logical"]],
+    `F` = openxlsx2_celltype[["logical"]],
     Time = openxlsx2_celltype[["long_date"]],
     Cash = openxlsx2_celltype[["currency"]],
     Cash2 = openxlsx2_celltype[["accounting"]],
@@ -78,10 +78,10 @@ test_that("wb_page_setup example", {
   wb$add_worksheet("print_title_cols")
 
   wb$add_data("print_title_rows", rbind(iris, iris, iris, iris))
-  wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
+  wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), row_names = TRUE)
 
-  wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
-  wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+  wb$page_setup(sheet = "print_title_rows", print_title_rows = 1) ## first row
+  wb$page_setup(sheet = "print_title_cols", print_title_cols = 1, print_title_rows = 1)
 
   exp <- c(
     "<definedName localSheetId=\"2\" name=\"_xlnm.Print_Titles\">'print_title_rows'!$1:$1</definedName>",
