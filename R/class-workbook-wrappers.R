@@ -1368,6 +1368,41 @@ wb_get_base_font <- function(wb) {
   wb$get_base_font()
 }
 
+#' Set the default colors in a workbook
+#'
+#' Modify / get the default colors of the workbook.
+#'
+#' @name wb_base_colors
+#' @param wb A workbook object
+#' @param theme a predefined color theme
+#' @param ... optional parameters
+#' @export
+wb_set_base_colors <- function(
+  wb,
+  theme = "Office",
+  ...
+) {
+  assert_workbook(wb)
+  wb$clone()$set_base_colors(
+    theme = theme,
+    ...   = ...
+  )
+}
+#' @export
+#' @rdname wb_base_colors
+wb_get_base_colors <- function(wb) {
+  assert_workbook(wb)
+  wb$get_base_colors()
+}
+#' @export
+#' @rdname wb_base_colors
+#' @usage NULL
+wb_set_base_colours <- wb_set_base_colors
+#' @export
+#' @rdname wb_base_colors
+#' @usage NULL
+wb_get_base_colours <- wb_get_base_colors
+
 
 #' Set the workbook position, size and filter
 #'

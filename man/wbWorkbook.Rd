@@ -169,6 +169,10 @@ worksheet names.}
 \item \href{#method-wbWorkbook-copy_cells}{\code{wbWorkbook$copy_cells()}}
 \item \href{#method-wbWorkbook-get_base_font}{\code{wbWorkbook$get_base_font()}}
 \item \href{#method-wbWorkbook-set_base_font}{\code{wbWorkbook$set_base_font()}}
+\item \href{#method-wbWorkbook-get_base_colors}{\code{wbWorkbook$get_base_colors()}}
+\item \href{#method-wbWorkbook-get_base_colours}{\code{wbWorkbook$get_base_colours()}}
+\item \href{#method-wbWorkbook-set_base_colors}{\code{wbWorkbook$set_base_colors()}}
+\item \href{#method-wbWorkbook-set_base_colours}{\code{wbWorkbook$set_base_colours()}}
 \item \href{#method-wbWorkbook-set_bookview}{\code{wbWorkbook$set_bookview()}}
 \item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
 \item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
@@ -1109,6 +1113,70 @@ Set the base font
 \item{\code{font_name}}{font_name}
 
 \item{\code{...}}{additional arguments}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_base_colors"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_base_colors}{}}}
+\subsection{Method \code{get_base_colors()}}{
+Get the base color
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_colors()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_base_colours"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_base_colours}{}}}
+\subsection{Method \code{get_base_colours()}}{
+Get the base colour
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_base_colours()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_base_colors"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_base_colors}{}}}
+\subsection{Method \code{set_base_colors()}}{
+Set the base color
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_colors(theme = "Office", ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{theme}}{theme}
+
+\item{\code{...}}{...}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-set_base_colours"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-set_base_colours}{}}}
+\subsection{Method \code{set_base_colours()}}{
+Set the base colour
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_base_colours(theme = "Office", ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{theme}}{theme}
+
+\item{\code{...}}{...}
 }
 \if{html}{\out{</div>}}
 }

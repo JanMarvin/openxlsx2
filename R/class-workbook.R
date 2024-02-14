@@ -3163,6 +3163,85 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description Get the base color
+    get_base_colors = function() {
+
+      if (is.null(self$theme)) self$theme <- genBaseTheme()
+
+      current <- xml_node(self$theme, "a:theme", "a:themeElements", "a:clrScheme")
+      name    <- xml_attr(current, "a:clrScheme")[[1]][["name"]]
+
+      nodes  <- xml_node_name(current, "a:clrScheme")
+      childs <- xml_node_name(current, "a:clrScheme", nodes[1])
+
+      rgbs <- vapply(
+        seq_along(nodes),
+        function(x) {
+          nm <- nodes[x]
+          cld <- childs[x]
+          paste0("#", rbindlist(xml_attr(current, "a:clrScheme", nm, cld))[[1]])
+        },
+        NA_character_
+      )
+
+      if (interactive())
+        barplot(rep(1, length(rgbs)), col = rgbs, main = name, yaxt = "n")
+
+      current
+
+    },
+
+    #' @description Get the base colour
+    get_base_colours = function() {
+      self$get_base_colors()
+    },
+
+    #' @description Set the base color
+    #' @param theme theme
+    #' @param ... ...
+    #' @return The `wbWorkbook` object
+    set_base_colors = function(theme = "Office", ...) {
+
+      xml <- list(...)$xml
+
+      if (is.null(xml)) {
+        # read predefined themes
+        clr_rds <- system.file("extdata", "colors.rds", package = "openxlsx2")
+        colors <- readRDS(clr_rds)
+
+        if (is.character(theme)) {
+          sel <- match(theme, names(colors))
+          err <- is.na(sel)
+        } else {
+          sel <- theme
+          err <- sel > length(colors)
+        }
+
+        if (err) {
+          stop("theme ", theme, " not found. doing nothing")
+        }
+
+        new <- colors[[sel]]
+      } else {
+        new <- xml
+      }
+
+      if (is.null(self$theme)) self$theme <- genBaseTheme()
+
+      current    <- xml_node(self$theme, "a:theme", "a:themeElements", "a:clrScheme")
+      self$theme <- stringi::stri_replace_all_fixed(self$theme, current, new)
+
+      invisible(self)
+    },
+
+    #' @description Set the base colour
+    #' @param theme theme
+    #' @param ... ...
+    #' @return The `wbWorkbook` object
+    set_base_colours = function(theme = "Office", ...) {
+      self$set_base_colors(theme = theme , ... = ...)
+    },
+
     ### book views ----
 
     #' @description Set the book views
