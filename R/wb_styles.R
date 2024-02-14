@@ -378,7 +378,7 @@ create_fill <- function(
 #' @param border_id dummy
 #' @param fill_id dummy
 #' @param font_id dummy
-#' @param num_fmt_id a numFmt ID for a builtin style
+#' @param numfmt_id a numFmt ID for a builtin style
 #' @param pivot_button dummy
 #' @param quote_prefix dummy
 #' @param xf_id dummy
@@ -434,7 +434,7 @@ create_cell_style <- function(
     border_id         = "",
     fill_id           = "",
     font_id           = "",
-    num_fmt_id        = "",
+    numfmt_id         = "",
     pivot_button      = "",
     quote_prefix      = "",
     xf_id             = "",
@@ -452,11 +452,11 @@ create_cell_style <- function(
     locked            = "",
     ...
 ) {
-  n <- length(num_fmt_id)
 
   arguments <- c(ls(), "is_cell_style_xf")
   standardize_case_names(..., arguments = arguments)
   args <- list(...)
+  n <- length(numfmt_id)
 
   is_cell_style_xf <- isTRUE(args$is_cell_style_xf)
 
@@ -477,7 +477,7 @@ create_cell_style <- function(
   if (is_cell_style_xf && isTRUE(font_id > "1")) applyFont <- "0"
 
   applyNumberFormat <- ""
-  if (any(num_fmt_id != "")) applyNumberFormat <- "1"
+  if (any(numfmt_id != "")) applyNumberFormat <- "1"
   if (is_cell_style_xf) applyNumberFormat <- "0"
 
   applyProtection <- ""
@@ -495,7 +495,7 @@ create_cell_style <- function(
     borderId          = rep(as_xml_attr(border_id), n),
     fillId            = rep(as_xml_attr(fill_id), n),
     fontId            = rep(as_xml_attr(font_id), n),
-    numFmtId          = as_xml_attr(num_fmt_id),
+    numFmtId          = as_xml_attr(numfmt_id),
     pivotButton       = rep(as_xml_attr(pivot_button), n),
     quotePrefix       = rep(as_xml_attr(quote_prefix), n),
     xfId              = rep(as_xml_attr(xf_id), n),
@@ -675,7 +675,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' (Defaults to black)
 #' @param font_size Font size. A numeric greater than 0.
 #'   By default, the workbook base font size is used. (Defaults to 11)
-#' @param num_fmt Cell formatting. Some custom openxml format
+#' @param numfmt Cell formatting. Some custom openxml format
 #' @param border `NULL` or `TRUE`
 #' @param border_color "black"
 #' @param border_style "thin"
@@ -713,7 +713,7 @@ create_dxfs_style <- function(
     font_name      = NULL,
     font_size      = NULL,
     font_color     = NULL,
-    num_fmt        = NULL,
+    numfmt         = NULL,
     border         = NULL,
     border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
     border_style   = getOption("openxlsx2.borderStyle", "thin"),
@@ -733,15 +733,15 @@ create_dxfs_style <- function(
   )
   standardize(..., arguments = arguments)
 
-  if (is.null(font_color)) font_color <- ""
-  if (is.null(font_size)) font_size <- ""
-  if (is.null(text_bold)) text_bold <- ""
-  if (is.null(text_strike)) text_strike <- ""
-  if (is.null(text_italic)) text_italic <- ""
+  if (is.null(font_color))     font_color <- ""
+  if (is.null(font_size))      font_size <- ""
+  if (is.null(text_bold))      text_bold <- ""
+  if (is.null(text_strike))    text_strike <- ""
+  if (is.null(text_italic))    text_italic <- ""
   if (is.null(text_underline)) text_underline <- ""
 
   # found numFmtId=3 in MS365 xml not sure if this should be increased
-  if (!is.null(num_fmt)) num_fmt <- create_numfmt(3, num_fmt)
+  if (!is.null(numfmt)) numfmt <- create_numfmt(3, numfmt)
 
   font <- create_font(
     color = font_color, name = font_name,

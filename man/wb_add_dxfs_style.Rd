@@ -10,7 +10,7 @@ wb_add_dxfs_style(
   font_name = NULL,
   font_size = NULL,
   font_color = NULL,
-  num_fmt = NULL,
+  numfmt = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
@@ -33,7 +33,7 @@ wb_add_dxfs_style(
 
 \item{font_color}{the font color (a \code{wb_color()} object)}
 
-\item{num_fmt}{the number format}
+\item{numfmt}{the number format}
 
 \item{border}{logical if borders are applied}
 

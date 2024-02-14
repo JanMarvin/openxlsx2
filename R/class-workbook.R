@@ -7190,7 +7190,7 @@ wbWorkbook <- R6::R6Class(
     #' @param border_id border ID to apply
     #' @param fill_id fill ID to apply
     #' @param font_id font ID to apply
-    #' @param num_fmt_id number format ID to apply
+    #' @param numfmt_id number format ID to apply
     #' @param xf_id xf ID to apply
     #' @return The `wbWorkbook` object, invisibly
     add_cell_style = function(
@@ -7211,7 +7211,7 @@ wbWorkbook <- R6::R6Class(
         indent              = NULL,
         justify_last_line   = NULL,
         locked              = NULL,
-        num_fmt_id          = NULL,
+        numfmt_id           = NULL,
         pivot_button        = NULL,
         quote_prefix        = NULL,
         reading_order       = NULL,
@@ -7256,7 +7256,7 @@ wbWorkbook <- R6::R6Class(
           indent            = indent,
           justifyLastLine   = justify_last_line,
           locked            = locked,
-          numFmtId          = num_fmt_id,
+          numFmtId          = numfmt_id,
           pivotButton       = pivot_button,
           quotePrefix       = quote_prefix,
           readingOrder      = reading_order,
@@ -7414,7 +7414,7 @@ wbWorkbook <- R6::R6Class(
     #' @param font_name the font name
     #' @param font_size the font size
     #' @param font_color the font color (a `wb_color()` object)
-    #' @param num_fmt the number format
+    #' @param numfmt the number format
     #' @param border logical if borders are applied
     #' @param border_color the border color
     #' @param border_style the border style
@@ -7431,7 +7431,7 @@ wbWorkbook <- R6::R6Class(
       font_name      = NULL,
       font_size      = NULL,
       font_color     = NULL,
-      num_fmt        = NULL,
+      numfmt         = NULL,
       border         = NULL,
       border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
       border_style   = getOption("openxlsx2.borderStyle", "thin"),
@@ -7449,7 +7449,7 @@ wbWorkbook <- R6::R6Class(
         font_name      = font_name,
         font_size      = font_size,
         font_color     = font_color,
-        num_fmt        = num_fmt,
+        numfmt         = numfmt,
         border         = border,
         border_color   = border_color,
         border_style   = border_style,

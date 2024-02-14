@@ -2973,7 +2973,7 @@ provide simple cell style format function
   indent = NULL,
   justify_last_line = NULL,
   locked = NULL,
-  num_fmt_id = NULL,
+  numfmt_id = NULL,
   pivot_button = NULL,
   quote_prefix = NULL,
   reading_order = NULL,
@@ -3024,7 +3024,7 @@ provide simple cell style format function
 
 \item{\code{locked}}{logical cell is locked}
 
-\item{\code{num_fmt_id}}{number format ID to apply}
+\item{\code{numfmt_id}}{number format ID to apply}
 
 \item{\code{pivot_button}}{unknown}
 
@@ -3173,7 +3173,7 @@ These styles are used with conditional formatting and custom table styles
   font_name = NULL,
   font_size = NULL,
   font_color = NULL,
-  num_fmt = NULL,
+  numfmt = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
@@ -3197,7 +3197,7 @@ These styles are used with conditional formatting and custom table styles
 
 \item{\code{font_color}}{the font color (a \code{wb_color()} object)}
 
-\item{\code{num_fmt}}{the number format}
+\item{\code{numfmt}}{the number format}
 
 \item{\code{border}}{logical if borders are applied}
 

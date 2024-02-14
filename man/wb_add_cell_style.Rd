@@ -23,7 +23,7 @@ wb_add_cell_style(
   indent = NULL,
   justify_last_line = NULL,
   locked = NULL,
-  num_fmt_id = NULL,
+  numfmt_id = NULL,
   pivot_button = NULL,
   quote_prefix = NULL,
   reading_order = NULL,
@@ -73,7 +73,7 @@ wb_add_cell_style(
 
 \item{locked}{logical cell is locked}
 
-\item{num_fmt_id}{number format ID to apply}
+\item{numfmt_id}{number format ID to apply}
 
 \item{pivot_button}{unknown}
 
