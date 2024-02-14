@@ -1674,10 +1674,10 @@ wb_set_header_footer <- function(
 #' wb$add_worksheet("print_title_cols")
 #'
 #' wb$add_data("print_title_rows", rbind(iris, iris, iris, iris))
-#' wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), rowNames = TRUE)
+#' wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), row_names = TRUE)
 #'
-#' wb$page_setup(sheet = "print_title_rows", printTitleRows = 1) ## first row
-#' wb$page_setup(sheet = "print_title_cols", printTitleCols = 1, printTitleRows = 1)
+#' wb$page_setup(sheet = "print_title_rows", print_title_rows = 1) ## first row
+#' wb$page_setup(sheet = "print_title_cols", print_title_cols = 1, print_title_rows = 1)
 wb_page_setup <- function(
     wb,
     sheet            = current_sheet(),
@@ -1897,19 +1897,19 @@ wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = sho
 #' @examples
 #' ## setup a workbook with 3 worksheets
 #' wb <- wb_workbook()
-#' wb$add_worksheet("Sheet 1", gridLines = FALSE)
-#' wb$add_data_table(sheet = 1, x = iris)
+#' wb$add_worksheet("Sheet 1", grid_lines = FALSE)
+#' wb$add_data_table(x = iris)
 #'
-#' wb$add_worksheet("mtcars (Sheet 2)", gridLines = FALSE)
-#' wb$add_data(sheet = 2, x = mtcars)
+#' wb$add_worksheet("mtcars (Sheet 2)", grid_lines = FALSE)
+#' wb$add_data(x = mtcars)
 #'
-#' wb$add_worksheet("Sheet 3", gridLines = FALSE)
-#' wb$add_data(sheet = 3, x = Formaldehyde)
+#' wb$add_worksheet("Sheet 3", grid_lines = FALSE)
+#' wb$add_data(x = Formaldehyde)
 #'
 #' wb_get_order(wb)
 #' wb$get_sheet_na
 #' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
-#' wb$add_data(2, 'This is still the "mtcars" worksheet', startCol = 15)
+#' wb$add_data(2, 'This is still the "mtcars" worksheet', start_col = 15)
 #' wb_get_order(wb)
 #' wb$get_sheet_names() ## ordering within workbook is not changed
 #' wb$set_order(3:1)
@@ -2059,7 +2059,7 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 #' wb$add_filter(1, row = 1, cols = seq_along(iris))
 #'
 #' ## Equivalently
-#' wb$add_data(2, x = iris, withFilter = TRUE)
+#' wb$add_data(2, x = iris, with_filter = TRUE)
 #'
 #' ## Similarly
 #' wb$add_data_table(3, iris)
@@ -2354,7 +2354,7 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("AirPass")
-#' wb$add_data("AirPass", t2, rowNames = TRUE)
+#' wb$add_data("AirPass", t2, row_names = TRUE)
 #'
 #' # groups will always end on/show the last row. in the example 1950, 1955, and 1960
 #' wb <- wb_group_rows(wb, "AirPass", 2:3, collapsed = TRUE) # group years < 1950
@@ -2409,7 +2409,7 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("AirPass")
-#' wb$add_data("AirPass", t2, rowNames = TRUE)
+#' wb$add_data("AirPass", t2, row_names = TRUE)
 #'
 #' wb$group_cols("AirPass", cols = grp_cols)
 #' wb$group_rows("AirPass", rows = grp_rows)
