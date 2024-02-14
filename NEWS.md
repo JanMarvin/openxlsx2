@@ -6,6 +6,8 @@
 
 * Improve sparkline creation with new options and support snake case arguments. [920](https://github.com/JanMarvin/openxlsx2/pull/920)
 
+* Experimental support to get and set base colors. [938](https://github.com/JanMarvin/openxlsx2/pull/938)
+
 ## Fixes
 
 * Character strings with XML content were not written correctly: `a <br/> b` was converted to something neither we nor spreadsheet software was able to decipher. [895](https://github.com/JanMarvin/openxlsx2/pull/895)
@@ -15,6 +17,10 @@
 * Further attempts to fix pivot table sorting. [912](https://github.com/JanMarvin/openxlsx2/pull/912) In addition improve handling of non distinct names in `wb_data()` and add `create_pivottablestyle()`. [914](https://github.com/JanMarvin/openxlsx2/pull/914)
 
 * Document adding background color and images to comments and fix adding more than two images as background. [919](https://github.com/JanMarvin/openxlsx2/pull/919)
+
+* Improvements to `wb_set_base_font()`. This modifies the workbook theme now, including panose values. [935](https://github.com/JanMarvin/openxlsx2/pull/935)
+
+* Hyperlinks now use the color of the theme and the base size. [937](https://github.com/JanMarvin/openxlsx2/pull/937)
 
 ## Breaking changes
 

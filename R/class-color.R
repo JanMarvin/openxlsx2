@@ -7,6 +7,7 @@
 #' @param hex A rgb color as ARGB hex value "FF000000".
 #' @param theme A zero based index referencing a value in the theme.
 #' @param tint A tint value applied. Range from -1 (dark) to 1 (light).
+#' @seealso [wb_get_base_colors()]
 #' @return a `wbColour` object
 #' @export
 wb_color <- function(

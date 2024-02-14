@@ -22,6 +22,13 @@ wb_get_base_colors(wb)
 \description{
 Modify / get the default colors of the workbook.
 }
+\details{
+Theme must be any of the following:
+"Aspect", "Blue", "Blue II", "Blue Green", "Blue Warm", "Greyscale",
+"Green", "Green Yellow", "Marquee", "Median", "Office 2007 - 2010",
+"Orange", "Orange Red", "Paper", "Red", "Red Orange", "Red Violet",
+"Slipstream", "Violet", "Violet II", "Yellow", "Yellow Orange"
+}
 \examples{
 wb <- wb_workbook()
 wb$get_base_colors()
