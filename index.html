@@ -30,7 +30,7 @@
     
     <a class="navbar-brand me-2" href="index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,7 @@
 </h2>
 <p><code>openxlsx2</code> aims to be the swiss knife for working with the openxml spreadsheet formats xlsx, xlsm and (limited) xlsb (other formats of other spreadsheet software are not supported). We offer two different variants how to work with <code>openxlsx2</code>.</p>
 <ul>
-<li>The first one is to simply work with R objects. It is possible to read (<a href="https://janmarvin.github.io/openxlsx2/reference/read_xlsx.html"><code>read_xlsx()</code></a>) and write (<a href="https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html"><code>write_xlsx()</code></a>) data from and to files. We offer a number of options in the commands to support various features of the openxml format, including reading and writing named ranges and tables. Furthermore, there are several ways to read certain information of an openxml spreadsheet without having opened it in a spreadsheet software before, e.g. to get the contained sheet names or tables.</li>
+<li>The first one is to simply work with R objects. It is possible to read (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html"><code>read_xlsx()</code></a>) and write (<a href="https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html"><code>write_xlsx()</code></a>) data from and to files. We offer a number of options in the commands to support various features of the openxml format, including reading and writing named ranges and tables. Furthermore, there are several ways to read certain information of an openxml spreadsheet without having opened it in a spreadsheet software before, e.g. to get the contained sheet names or tables.</li>
 <li>As a second variant <code>openxlsx2</code> offers the work with so called <a href="https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html"><code>wbWorkbook</code></a> objects. Here an openxml file is read into a corresponding <code>wbWorkbook</code> object (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_load.html"><code>wb_load()</code></a>) or a new one is created (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html"><code>wb_workbook()</code></a>). Afterwards the object can be further modified using various functions. For example, worksheets can be added or removed, the layout of cells or entire worksheets can be changed, and cells can be modified (overwritten or rewritten). Afterwards the <code>wbWorkbook</code> objects can be written as openxml files and processed by suitable spreadsheet software.</li>
 </ul>
 <p>Many examples how to work with <code>openxlsx2</code> are in our <a href="https://janmarvin.github.io/openxlsx2/reference/index.html">manual pages</a> and in our <a href="https://janmarvin.github.io/openxlsx2/articles/">vignettes</a>. You can find them under:</p>
@@ -191,6 +191,7 @@
 <li><a href="https://cloud.r-project.org/package=openxlsx2" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/JanMarvin/openxlsx2/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/JanMarvin/openxlsx2/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://janmarvin.github.io/ox2-book/" class="external-link">Learn more</a></li>
 </ul>
 </div>
 

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,20 +70,30 @@
 <span>  <span class="va">sqref</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  negative <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  displayEmptyCellsAs <span class="op">=</span> <span class="st">"gap"</span>,</span>
+<span>  display_empty_cells_as <span class="op">=</span> <span class="st">"gap"</span>,</span>
 <span>  markers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  high <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  low <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  first <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  last <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colorSeries <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF376092"</span><span class="op">)</span>,</span>
-<span>  colorNegative <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorAxis <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorMarkers <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorFirst <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorLast <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorHigh <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
-<span>  colorLow <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span></span>
+<span>  color_series <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF376092"</span><span class="op">)</span>,</span>
+<span>  color_negative <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  color_axis <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  color_markers <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  color_first <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  color_last <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  color_high <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  color_low <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FFD00000"</span><span class="op">)</span>,</span>
+<span>  manual_max <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  manual_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  line_weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  date_axis <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  display_x_axis <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  display_hidden <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  min_axis_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_axis_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  right_to_left <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -102,15 +112,15 @@
 
 
 <dt>type</dt>
-<dd><p>type</p></dd>
+<dd><p>Either <code>NULL</code>, <code>stacked</code> or <code>column</code></p></dd>
 
 
 <dt>negative</dt>
 <dd><p>negative</p></dd>
 
 
-<dt>displayEmptyCellsAs</dt>
-<dd><p>displayEmptyCellsAs</p></dd>
+<dt>display_empty_cells_as</dt>
+<dd><p>Either <code>gap</code>, <code>span</code> or <code>zero</code></p></dd>
 
 
 <dt>markers</dt>
@@ -133,36 +143,76 @@
 <dd><p>highlight last value</p></dd>
 
 
-<dt>colorSeries</dt>
+<dt>color_series</dt>
 <dd><p>colorSeries</p></dd>
 
 
-<dt>colorNegative</dt>
+<dt>color_negative</dt>
 <dd><p>colorNegative</p></dd>
 
 
-<dt>colorAxis</dt>
+<dt>color_axis</dt>
 <dd><p>colorAxis</p></dd>
 
 
-<dt>colorMarkers</dt>
+<dt>color_markers</dt>
 <dd><p>colorMarkers</p></dd>
 
 
-<dt>colorFirst</dt>
+<dt>color_first</dt>
 <dd><p>colorFirst</p></dd>
 
 
-<dt>colorLast</dt>
+<dt>color_last</dt>
 <dd><p>colorLast</p></dd>
 
 
-<dt>colorHigh</dt>
+<dt>color_high</dt>
 <dd><p>colorHigh</p></dd>
 
 
-<dt>colorLow</dt>
+<dt>color_low</dt>
 <dd><p>colorLow</p></dd>
+
+
+<dt>manual_max</dt>
+<dd><p>manualMax</p></dd>
+
+
+<dt>manual_min</dt>
+<dd><p>manualMin</p></dd>
+
+
+<dt>line_weight</dt>
+<dd><p>lineWeight</p></dd>
+
+
+<dt>date_axis</dt>
+<dd><p>dateAxis</p></dd>
+
+
+<dt>display_x_axis</dt>
+<dd><p>displayXAxis</p></dd>
+
+
+<dt>display_hidden</dt>
+<dd><p>displayHidden</p></dd>
+
+
+<dt>min_axis_type</dt>
+<dd><p>minAxisType</p></dd>
+
+
+<dt>max_axis_type</dt>
+<dd><p>maxAxisType</p></dd>
+
+
+<dt>right_to_left</dt>
+<dd><p>rightToLeft</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">

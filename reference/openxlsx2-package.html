@@ -18,7 +18,7 @@ or chains, openxlsx2 allows to break many new ground."><!-- mathjax --><script s
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,10 +77,59 @@ or chains, <code>openxlsx2</code> allows to break many new ground.</p>
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>By default, openxlsx2 uses the American English word for color (written with 'o' instead of the British English 'ou').
-However, both spellings are supported.
+    <p>The <code>openxlsx2</code> package provides comprehensive functionality for interacting
+with Office Open XML spreadsheet files. Users can read data using <code><a href="wb_to_df.html">read_xlsx()</a></code>
+and write data to spreadsheets via <code><a href="write_xlsx.html">write_xlsx()</a></code>, with options to specify
+sheet names and cell ranges for targeted operations. Beyond basic read/write
+capabilities, <code>openxlsx2</code> facilitates extensive workbook (<code><a href="wb_workbook.html">wb_workbook()</a></code>)
+manipulations, including:</p><ul><li><p>Loading a workbook into R with <code><a href="wb_load.html">wb_load()</a></code> and saving it with <code><a href="wb_save.html">wb_save()</a></code></p></li>
+<li><p>Adding/removing and modifying worksheets and data with <code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code>,
+<code><a href="wb_remove_worksheet.html">wb_remove_worksheet()</a></code>, and <code><a href="wb_add_data.html">wb_add_data()</a></code>.</p></li>
+<li><p>Enhancing spreadsheets with comments (<code><a href="wb_add_comment.html">wb_add_comment()</a></code>),
+images (<code><a href="wb_add_image.html">wb_add_image()</a></code>), plots (<code><a href="wb_add_plot.html">wb_add_plot()</a></code>), charts (<code><a href="wb_add_mschart.html">wb_add_mschart()</a></code>),
+and pivot tables (<code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code>).
+Customizing cell styles using fonts (<code><a href="wb_add_font.html">wb_add_font()</a></code>),
+number formats (<code><a href="wb_add_numfmt.html">wb_add_numfmt()</a></code>), backgrounds (<code><a href="wb_add_fill.html">wb_add_fill()</a></code>),
+and alignments (<code><a href="wb_add_cell_style.html">wb_add_cell_style()</a></code>). Inserting custom text strings with
+<code><a href="fmt_txt.html">fmt_txt()</a></code> and creating comprehensive table styles with <code><a href="create_tablestyle.html">create_tablestyle()</a></code>.</p></li>
+</ul><div class="section">
+<h3 id="interaction">Interaction<a class="anchor" aria-label="anchor" href="#interaction"></a></h3>
+
+
+<p>Interaction with <code>openxlsx2</code> objects can occur through two primary methods:</p>
+<p><em>Wrapper Function Method</em>: Utilizes the <code>wb</code> family of functions that support
+piping to streamline operations.</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span>creator <span class="op">=</span> <span class="st">"My name here"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Expenditure"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre><p></p></div>
+<p><em>Chaining Method</em>: Directly modifies the object through a series of chained
+function calls.</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span>creator <span class="op">=</span> <span class="st">"My name here"</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_worksheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Expenditure"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
+<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre><p></p></div>
+<p>While wrapper functions require explicit assignment of their output to reflect
+changes, chained functions inherently modify the input object. Both approaches
+are equally supported, offering flexibility to suit user preferences. The
+documentation mainly highlights the use of wrapper functions. To find information,
+users should look up the wb function name e.g. <code><a href="wb_add_data_table.html">?wb_add_data_table</a></code> rather than
+searching for <code><a href="wbWorkbook.html">?wbWorkbook</a></code>.</p>
+<p>Function arguments follow the snake_case convention, but for backward compatibility,
+camelCase is also supported at the moment. The API aims to maintain consistency
+in its arguments, with a special focus on <code>sheet</code> (<code><a href="sheet_names-wb.html">wb_get_sheet_names()</a></code>) and
+<code>dims</code> (<a href="wb_dims.html">wb_dims</a>), which are of particular importance to users.</p>
+</div>
+
+<div class="section">
+<h3 id="locale">Locale<a class="anchor" aria-label="anchor" href="#locale"></a></h3>
+
+
+<p>By default, <code>openxlsx2</code> uses the American English word for color (written with
+'o' instead of the British English 'ou'). However, both spellings are supported.
 So where the documentation uses a 'color', the function should also accept a 'colour'.
-However, this is not indicated by the autocompletion.</p><div class="section">
+However, this is not indicated by the autocompletion.</p>
+</div>
+
+<div class="section">
 <h3 id="authors-and-contributions">Authors and contributions<a class="anchor" aria-label="anchor" href="#authors-and-contributions"></a></h3>
 
 
@@ -99,7 +148,7 @@ We will work on problems when we have time or need.</p>
 
 <p>This package is licensed under the MIT license and
 is based on <a href="https://github.com/ycphs/openxlsx" class="external-link"><code>openxlsx</code></a> (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022)
-and <a href="https://github.com/zeux/pugixml" class="external-link"><code>pugixml</code></a> (by Arseny Kapoulkine; COPYRIGHT 2006-2022). Both released under the MIT license.</p>
+and <a href="https://github.com/zeux/pugixml" class="external-link"><code>pugixml</code></a> (by Arseny Kapoulkine; COPYRIGHT 2006-2023). Both released under the MIT license.</p>
 </div>
 
     </div>
@@ -107,12 +156,8 @@ and <a href="https://github.com/zeux/pugixml" class="external-link"><code>pugixm
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index">
 <ul><li><p><code>browseVignettes("openxlsx2")</code></p></li>
-<li><p><code><a href="wb_add_data.html">wb_add_data()</a></code></p></li>
-<li><p><code><a href="wb_add_data_table.html">wb_add_data_table()</a></code></p></li>
-<li><p><code><a href="wb_to_df.html">wb_to_df()</a></code></p></li>
-<li><p><code><a href="wb_to_df.html">read_xlsx()</a></code></p></li>
-<li><p><code><a href="write_xlsx.html">write_xlsx()</a></code></p></li>
-<li><p><a href="https://janmarvin.github.io/openxlsx2/">https://janmarvin.github.io/openxlsx2/</a>
+<li><p><a href="https://janmarvin.github.io/openxlsx2/">https://janmarvin.github.io/openxlsx2/</a></p></li>
+<li><p><a href="https://janmarvin.github.io/ox2-book/" class="external-link">https://janmarvin.github.io/ox2-book/</a>
 for examples</p></li>
 </ul></div>
     </div>
@@ -125,6 +170,54 @@ for examples</p></li>
 <li><p>Arseny Kapoulkine (Author of included pugixml code) [contributor, copyright holder]</p></li>
 </ul></div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># read xlsx or xlsm files</span></span></span>
+<span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="wb_to_df.html">read_xlsx</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># or import workbooks</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_load.html">wb_load</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># read a data frame</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># and save</span></span></span>
+<span class="r-in"><span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="wb_save.html">wb_save</a></span><span class="op">(</span><span class="va">wb</span>, <span class="va">temp</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## or create one yourself</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># add a worksheet</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"sheet"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># add some data</span></span></span>
+<span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"sheet"</span>, <span class="va">cars</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># open it in your default spreadsheet software</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="va">wb</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="op">)</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

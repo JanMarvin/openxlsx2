@@ -73,6 +73,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/reference/create_cell_style.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/reference/create_colors_xml.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/create_comment.html</loc>
   </url>
   <url>
@@ -260,6 +263,9 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/wb_cell_style.html</loc>

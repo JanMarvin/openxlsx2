@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,16 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre><code>wb_data(wb, sheet = current_sheet(), dims, ...)
+
+# S3 method for wb_data
+[(
+  x,
+  i,
+  j,
+  drop = ifelse((missing(j) &amp;&amp; length(i) &gt; 1) || (!missing(i) &amp;&amp; length(j) &gt; 1), FALSE,
+    TRUE)
+)</code></pre></div>
     </div>
 
     <div class="section level2">
@@ -84,6 +93,22 @@
 <dt>...</dt>
 <dd><p>additional arguments for <code><a href="wb_to_df.html">wb_to_df()</a></code>. Be aware that not every
 argument is valid.</p></dd>
+
+
+<dt>x</dt>
+<dd><p>x</p></dd>
+
+
+<dt>i</dt>
+<dd><p>i</p></dd>
+
+
+<dt>j</dt>
+<dd><p>j</p></dd>
+
+
+<dt>drop</dt>
+<dd><p>drop</p></dd>
 
 </dl></div>
     <div class="section level2">

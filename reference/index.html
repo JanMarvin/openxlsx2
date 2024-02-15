@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,7 +108,7 @@
           
           <code><a href="wbWorkbook.html">wbWorkbook</a></code> 
         </dt>
-        <dd>R6 class for a workbook</dd>
+        <dd>Workbook class</dd>
       </dl></div><div class="section level2">
       <h2 id="create-a-workbook">Create a workbook<a class="anchor" aria-label="anchor" href="#create-a-workbook"></a></h2>
       
@@ -230,8 +230,8 @@
         <dd>Merge cells within a worksheet</dd>
       </dl></div><div class="section level2">
       
-      <h3 id="add-images-to-a-worksheet">Add images to a worksheet<a class="anchor" aria-label="anchor" href="#add-images-to-a-worksheet"></a></h3>
-      
+      <h3 id="add-images-and-charts-to-a-worksheet">Add images and charts to a worksheet<a class="anchor" aria-label="anchor" href="#add-images-and-charts-to-a-worksheet"></a></h3>
+      <p class="section-desc"></p><p>Add images or Excel charts to a worksheet with the mschart package. See <code><a href="../articles/openxlsx2_charts_manual.html">vignette("openxlsx2_charts_manual")</a></code>.</p>
 
       
     </div><div id="" class="section level2">
@@ -249,18 +249,7 @@
           <code><a href="wb_add_plot.html">wb_add_plot()</a></code> 
         </dt>
         <dd>Insert the current plot into a worksheet</dd>
-      </dl></div><div class="section level2">
-      
-      <h3 id="add-charts-to-worksheets">Add charts to worksheets<a class="anchor" aria-label="anchor" href="#add-charts-to-worksheets"></a></h3>
-      <p class="section-desc"></p><p>Add Excel charts to a worksheet with the mschart package.</p>
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
+      </dl><dl><dt>
           
           <code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code> 
         </dt>
@@ -273,7 +262,7 @@
       </dl></div><div class="section level2">
       <h2 id="style-a-workbook">Style a workbook<a class="anchor" aria-label="anchor" href="#style-a-workbook"></a></h2>
       
-      <p class="section-desc"></p><p>Style a cell region, a worksheet or the entire workbook</p>
+      <p class="section-desc"></p><p>Style a cell region, a worksheet or the entire workbook. See <code><a href="../articles/openxlsx2_style_manual.html">vignette("openxlsx2_style_manual")</a></code>.</p>
 
       
     </div><div class="section level2">
@@ -348,6 +337,11 @@
           <code><a href="wb_add_style.html">wb_add_style()</a></code> 
         </dt>
         <dd>Set the default style in a workbook</dd>
+      </dl><dl><dt>
+          
+          <code><a href="wb_base_colors.html">wb_set_base_colors()</a></code> <code><a href="wb_base_colors.html">wb_get_base_colors()</a></code> 
+        </dt>
+        <dd>Set the default colors in a workbook</dd>
       </dl></div><div class="section level2">
       <h2 id="view-and-save-a-workbook">View and save a workbook<a class="anchor" aria-label="anchor" href="#view-and-save-a-workbook"></a></h2>
       
@@ -473,7 +467,7 @@
         <dd>Helper to create a comment object</dd>
       </dl><dl><dt>
           
-          <code><a href="wb_data.html">wb_data()</a></code> 
+          <code><a href="wb_data.html">wb_data()</a></code> <code><a href="wb_data.html">`[`(<i>&lt;wb_data&gt;</i>)</a></code> 
         </dt>
         <dd>Add the <code>wb_data</code> attribute to a data frame in a worksheet</dd>
       </dl><dl><dt>
@@ -493,6 +487,11 @@
         <dd>Helper to create a cell style</dd>
       </dl><dl><dt>
           
+          <code><a href="create_colors_xml.html">create_colors_xml()</a></code> 
+        </dt>
+        <dd>Create custom color xml schemes</dd>
+      </dl><dl><dt>
+          
           <code><a href="create_dxfs_style.html">create_dxfs_style()</a></code> 
         </dt>
         <dd>Create a custom formatting style</dd>
@@ -500,12 +499,12 @@
           
           <code><a href="create_fill.html">create_fill()</a></code> 
         </dt>
-        <dd>create fill</dd>
+        <dd>Create fill pattern</dd>
       </dl><dl><dt>
           
           <code><a href="create_font.html">create_font()</a></code> 
         </dt>
-        <dd>create font format</dd>
+        <dd>Create font format</dd>
       </dl><dl><dt>
           
           <code><a href="create_hyperlink.html">create_hyperlink()</a></code> 
@@ -515,7 +514,7 @@
           
           <code><a href="create_numfmt.html">create_numfmt()</a></code> 
         </dt>
-        <dd>create number format</dd>
+        <dd>Create number format</dd>
       </dl><dl><dt>
           
           <code><a href="create_sparklines.html">create_sparklines()</a></code> 
@@ -523,9 +522,9 @@
         <dd>Create sparklines object</dd>
       </dl><dl><dt>
           
-          <code><a href="create_tablestyle.html">create_tablestyle()</a></code> 
+          <code><a href="create_tablestyle.html">create_tablestyle()</a></code> <code><a href="create_tablestyle.html">create_pivottablestyle()</a></code> 
         </dt>
-        <dd>create tableStyle</dd>
+        <dd>Create custom (pivot) table styles</dd>
       </dl></div><div class="section level2">
       <h2 id="other-functions">Other functions<a class="anchor" aria-label="anchor" href="#other-functions"></a></h2>
       
@@ -744,7 +743,23 @@
           
           <code><a href="styles_on_sheet.html">styles_on_sheet()</a></code> 
         </dt>
-        <dd>get all styles on a sheet</dd>
+        <dd>Get all styles on a sheet</dd>
+      </dl></div><div class="section level2">
+      <h2 id="package-introduction">Package introduction<a class="anchor" aria-label="anchor" href="#package-introduction"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="openxlsx2-package.html">openxlsx2</a></code> <code><a href="openxlsx2-package.html">openxlsx2-package</a></code> 
+        </dt>
+        <dd>xlsx reading, writing and editing.</dd>
       </dl></div><div class="section level2">
       <h2 id="package-options">Package options<a class="anchor" aria-label="anchor" href="#package-options"></a></h2>
       
