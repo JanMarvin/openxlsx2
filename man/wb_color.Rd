@@ -15,13 +15,13 @@ wb_color(
 )
 }
 \arguments{
-\item{name}{A name of a color known to R}
+\item{name}{A name of a color known to R either as name or RGB/ARGB value.}
 
 \item{auto}{A boolean.}
 
-\item{indexed}{An indexed color values.}
+\item{indexed}{An indexed color value. This color has to be provided by the workbook.}
 
-\item{hex}{A rgb color as ARGB hex value "FF000000".}
+\item{hex}{A rgb color either a ARGB hex value or RGB hex value With or without leading "#".}
 
 \item{theme}{A zero based index referencing a value in the theme.}
 
@@ -34,5 +34,5 @@ a \code{wbColour} object
 Creates a \code{wbColour} object.
 }
 \seealso{
-\code{\link[=wb_get_base_colors]{wb_get_base_colors()}}
+\code{\link[=wb_get_base_colors]{wb_get_base_colors()}} \code{\link[grDevices:colors]{grDevices::colors()}}
 }

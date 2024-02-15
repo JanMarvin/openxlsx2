@@ -1,13 +1,13 @@
 #' Helper to create a color
 #'
 #' Creates a `wbColour` object.
-#' @param name A name of a color known to R
+#' @param name A name of a color known to R either as name or RGB/ARGB value.
 #' @param auto A boolean.
-#' @param indexed An indexed color values.
-#' @param hex A rgb color as ARGB hex value "FF000000".
+#' @param indexed An indexed color value. This color has to be provided by the workbook.
+#' @param hex A rgb color either a ARGB hex value or RGB hex value With or without leading "#".
 #' @param theme A zero based index referencing a value in the theme.
 #' @param tint A tint value applied. Range from -1 (dark) to 1 (light).
-#' @seealso [wb_get_base_colors()]
+#' @seealso [wb_get_base_colors()] [grDevices::colors()]
 #' @return a `wbColour` object
 #' @export
 wb_color <- function(
@@ -33,7 +33,7 @@ wb_color <- function(
   z <- z[z != ""]
 
   # wbColour for historical reasons
-  class(z) <- c("character", "wbColour")
+  class(z) <- c("wbColour", "character")
   z
 }
 

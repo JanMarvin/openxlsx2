@@ -9,7 +9,7 @@ test_that("get()", {
   exp <- c(rgb = "FF000000")
   expect_false(is_wbColour(exp))
 
-  class(exp) <- c("character", "wbColour")
+  class(exp) <- c("wbColour", "character")
   got <- wb_colour("black")
 
   expect_true(is_wbColour(got))
