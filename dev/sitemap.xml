@@ -94,6 +94,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/create_sparklines.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/create_tablestyle.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/creators-wb.html</loc>
   </url>
   <url>
@@ -164,9 +167,6 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/styles_on_sheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/dev/reference/tablestyle.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/dev/reference/temp_xlsx.html</loc>

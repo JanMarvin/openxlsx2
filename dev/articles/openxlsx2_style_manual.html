@@ -519,13 +519,13 @@ as <code>na.strings</code>:</p>
 <div class="section level2">
 <h2 id="create-custom-table-styles">Create custom table styles<a class="anchor" aria-label="anchor" href="#create-custom-table-styles"></a>
 </h2>
-<p>With <code><a href="../reference/tablestyle.html">create_tablestyle()</a></code> it is possible to create your
+<p>With <code><a href="../reference/create_tablestyle.html">create_tablestyle()</a></code> it is possible to create your
 own table styles. This function uses <code><a href="../reference/create_dxfs_style.html">create_dxfs_style()</a></code>
 (just like your spreadsheet software does). Therefore, it is not quite
 as user-friendly. The following example shows how the function creates a
 red table style. The various dxfs styles must be created and assigned to
 the workbook (similar styles are used in conditional formatting). In
-<code><a href="../reference/tablestyle.html">create_tablestyle()</a></code> these styles are assigned to the table
+<code><a href="../reference/create_tablestyle.html">create_tablestyle()</a></code> these styles are assigned to the table
 style elements. Once the table style is created, it must also be
 assigned to the workbook. After that you can use it in the workbook like
 any other table style.</p>
@@ -611,7 +611,7 @@ any other table style.</p>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_style</span><span class="op">(</span><span class="va">dx8</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># finally create the table</span></span>
-<span><span class="va">xml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tablestyle.html">create_tablestyle</a></span><span class="op">(</span></span>
+<span><span class="va">xml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_tablestyle.html">create_tablestyle</a></span><span class="op">(</span></span>
 <span>  name                 <span class="op">=</span> <span class="st">"red_table"</span>,</span>
 <span>  whole_table          <span class="op">=</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_dxf_id</span><span class="op">(</span><span class="st">"dx8"</span><span class="op">)</span>,</span>
 <span>  header_row           <span class="op">=</span> <span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">get_dxf_id</span><span class="op">(</span><span class="st">"dx7"</span><span class="op">)</span>,</span>
