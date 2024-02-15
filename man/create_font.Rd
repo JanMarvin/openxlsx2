@@ -71,4 +71,14 @@ hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1, 2))
 }
 \seealso{
 \code{\link[=wb_add_font]{wb_add_font()}}
+
+Other style creating functions: 
+\code{\link{create_border}()},
+\code{\link{create_cell_style}()},
+\code{\link{create_colors_xml}()},
+\code{\link{create_dxfs_style}()},
+\code{\link{create_fill}()},
+\code{\link{create_numfmt}()},
+\code{\link{create_tablestyle}()}
 }
+\concept{style creating functions}

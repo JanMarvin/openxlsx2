@@ -89,5 +89,15 @@ style3 <- create_dxfs_style(
 ## See package vignettes for further examples
 }
 \seealso{
-\code{\link[=wb_add_style]{wb_add_style()}}
+\code{\link[=wb_add_style]{wb_add_style()}} \code{\link[=wb_add_dxfs_style]{wb_add_dxfs_style()}}
+
+Other style creating functions: 
+\code{\link{create_border}()},
+\code{\link{create_cell_style}()},
+\code{\link{create_colors_xml}()},
+\code{\link{create_fill}()},
+\code{\link{create_font}()},
+\code{\link{create_numfmt}()},
+\code{\link{create_tablestyle}()}
 }
+\concept{style creating functions}

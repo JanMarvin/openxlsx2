@@ -69,7 +69,7 @@ create_cell_style(
 \item{...}{reserved for additional arguments}
 }
 \description{
-Create_cell_style with \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
+Helper to create a cell style
 }
 \details{
 \tabular{ll}{
@@ -104,3 +104,16 @@ Create_cell_style with \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
    "49" \tab "@" \cr
 }
 }
+\seealso{
+\code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
+
+Other style creating functions: 
+\code{\link{create_border}()},
+\code{\link{create_colors_xml}()},
+\code{\link{create_dxfs_style}()},
+\code{\link{create_fill}()},
+\code{\link{create_font}()},
+\code{\link{create_numfmt}()},
+\code{\link{create_tablestyle}()}
+}
+\concept{style creating functions}

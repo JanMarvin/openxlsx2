@@ -89,7 +89,7 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
 #' @param my.col my.col
 #' @noRd
 col2hex <- function(my.col) {
-  rgb(t(col2rgb(my.col)), maxColorValue = 255)
+  grDevices::rgb(t(grDevices::col2rgb(my.col)), maxColorValue = 255)
 }
 
 # validate color --------------------------------------------------------------
