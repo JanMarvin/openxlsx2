@@ -28,4 +28,14 @@ Create fill pattern
 }
 \seealso{
 \code{\link[=wb_add_fill]{wb_add_fill()}}
+
+Other style creating functions: 
+\code{\link{create_border}()},
+\code{\link{create_cell_style}()},
+\code{\link{create_colors_xml}()},
+\code{\link{create_dxfs_style}()},
+\code{\link{create_font}()},
+\code{\link{create_numfmt}()},
+\code{\link{create_tablestyle}()}
 }
+\concept{style creating functions}

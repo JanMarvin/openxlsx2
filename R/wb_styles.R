@@ -79,7 +79,6 @@ import_styles <- function(x) {
 #' @description
 #' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
 #' Border colors can be created with [wb_color()]
-#' @seealso [wb_add_border()]
 #' @param diagonal_down x
 #' @param diagonal_up x
 #' @param outline x
@@ -94,6 +93,8 @@ import_styles <- function(x) {
 #' @param top x
 #' @param vertical x
 #' @param ... x
+#' @seealso [wb_add_border()]
+#' @family style creating functions
 #'
 #' @export
 create_border <- function(
@@ -168,6 +169,7 @@ create_border <- function(
 #' @param numFmtId an id, the list can be found in the **Details** of [create_cell_style()]
 #' @param formatCode a format code
 #' @seealso [wb_add_numfmt()]
+#' @family style creating functions
 #' @export
 create_numfmt <- function(numFmtId, formatCode) {
 
@@ -202,6 +204,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' @param vert_align vertical alignment
 #' @param ... ...
 #' @seealso [wb_add_font()]
+#' @family style creating functions
 #' @examples
 #' font <- create_font()
 #' # openxml has the alpha value leading
@@ -330,6 +333,7 @@ create_font <- function(
 #' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
 #' @param ... ...
 #' @seealso [wb_add_fill()]
+#' @family style creating functions
 #'
 #' @export
 create_fill <- function(
@@ -374,7 +378,6 @@ create_fill <- function(
 # TODO can be further generalized with additional xf attributes and children
 #' Helper to create a cell style
 #'
-#' Create_cell_style with [wb_add_cell_style()]
 #' @param border_id dummy
 #' @param fill_id dummy
 #' @param font_id dummy
@@ -397,6 +400,8 @@ create_fill <- function(
 #' @param horizontal alignment can be "", "center", "right"
 #' @param vertical alignment can be "", "center", "right"
 #' @param ... reserved for additional arguments
+#' @seealso [wb_add_cell_style()]
+#' @family style creating functions
 #'
 #' @details
 #'  | "ID" | "numFmt"                    |
@@ -623,7 +628,7 @@ set_cellstyle <- function(
   write_xf(z)
 }
 
-#' get all styles on a sheet
+#' Get all styles on a sheet
 #'
 #' @param wb workbook
 #' @param sheet worksheet
@@ -666,7 +671,6 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' @details
 #' It is possible to override border_color and border_style with \{left, right, top, bottom\}_color, \{left, right, top, bottom\}_style.
 #'
-#' @seealso [wb_add_style()]
 # TODO maybe font_name,font_size could be documented together.
 #' @param font_name A name of a font. Note the font name is not validated.
 #'   If `font_name` is `NULL`, the workbook `base_font` is used. (Defaults to Calibri), see [wb_get_base_font()]
@@ -688,6 +692,8 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' @param text_underline underline 1, true, single or double
 #' @param ... Additional arguments
 #' @return A dxfs style node
+#' @seealso [wb_add_style()] [wb_add_dxfs_style()]
+#' @family style creating functions
 #' @examples
 #' # do not apply anything
 #' style1 <- create_dxfs_style()
@@ -831,7 +837,8 @@ create_dxfs_style <- function(
 #' @param page_field_labels pageFieldLabels
 #' @param page_field_values pageFieldValues
 #' @param ... additional arguments
-#' @name tablestyle
+#' @name create_tablestyle
+#' @family style creating functions
 #' @export
 # TODO: combine both functions and simply set pivot=0 or table=0
 create_tablestyle <- function(
@@ -964,7 +971,7 @@ create_tablestyle <- function(
   )
 }
 
-#' @rdname tablestyle
+#' @rdname create_tablestyle
 #' @export
 create_pivottablestyle <- function(
     name,
@@ -1192,13 +1199,16 @@ create_pivottablestyle <- function(
   )
 }
 
-#' create custom color xml schemes
-#' To be used with [wb_set_base_colors()]
+#' Create custom color xml schemes
+#'
+#' Create custom color themes that can be used with [wb_set_base_colors()]. The color input will be checked with [wb_color()], so it must be either a color R from [grDevices::colors()] or a hex value.
+#' Default values for the dark argument are: `black`, `white`, `darkblue` and `lightgray`. For the accent argument, the six inner values of [grDevices::palette()]. The link argument uses `blue` and `purple` by default for active and visited links.
 #' @name create_colors_xml
 #' @param name the color name
 #' @param dark four colors: dark, light, brighter dark, darker light
 #' @param accent six accent colors
 #' @param link two link colors: link and visited link
+#' @family style creating functions
 #' @examples
 #' colors <- create_colors_xml()
 #' wb <- wb_workbook()$add_worksheet()$set_base_colors(xml = colors)
@@ -1217,7 +1227,7 @@ create_colors_xml <- function(
     accent <- grDevices::palette()[2:7]
 
   if (is.null(link))
-    link <- c("blue", "gray")
+    link <- c("blue", "purple")
 
   if (length(dark) != 4) {
     stop("dark vector must be of length 4")

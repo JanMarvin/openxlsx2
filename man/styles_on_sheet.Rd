@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{styles_on_sheet}
 \alias{styles_on_sheet}
-\title{get all styles on a sheet}
+\title{Get all styles on a sheet}
 \usage{
 styles_on_sheet(wb, sheet)
 }
@@ -12,5 +12,5 @@ styles_on_sheet(wb, sheet)
 \item{sheet}{worksheet}
 }
 \description{
-get all styles on a sheet
+Get all styles on a sheet
 }

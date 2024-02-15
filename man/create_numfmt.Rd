@@ -16,4 +16,14 @@ Create number format
 }
 \seealso{
 \code{\link[=wb_add_numfmt]{wb_add_numfmt()}}
+
+Other style creating functions: 
+\code{\link{create_border}()},
+\code{\link{create_cell_style}()},
+\code{\link{create_colors_xml}()},
+\code{\link{create_dxfs_style}()},
+\code{\link{create_fill}()},
+\code{\link{create_font}()},
+\code{\link{create_tablestyle}()}
 }
+\concept{style creating functions}

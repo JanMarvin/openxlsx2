@@ -3,8 +3,7 @@
 \name{create_colors_xml}
 \alias{create_colors_xml}
 \alias{create_colours_xml}
-\title{create custom color xml schemes
-To be used with \code{\link[=wb_set_base_colors]{wb_set_base_colors()}}}
+\title{Create custom color xml schemes}
 \usage{
 create_colors_xml(name = "Base R", dark = NULL, accent = NULL, link = NULL)
 }
@@ -18,10 +17,21 @@ create_colors_xml(name = "Base R", dark = NULL, accent = NULL, link = NULL)
 \item{link}{two link colors: link and visited link}
 }
 \description{
-create custom color xml schemes
-To be used with \code{\link[=wb_set_base_colors]{wb_set_base_colors()}}
+Create custom color themes that can be used with \code{\link[=wb_set_base_colors]{wb_set_base_colors()}}. The color input will be checked with \code{\link[=wb_color]{wb_color()}}, so it must be either a color R from \code{\link[grDevices:colors]{grDevices::colors()}} or a hex value.
+Default values for the dark argument are: \code{black}, \code{white}, \code{darkblue} and \code{lightgray}. For the accent argument, the six inner values of \code{\link[grDevices:palette]{grDevices::palette()}}. The link argument uses \code{blue} and \code{purple} by default for active and visited links.
 }
 \examples{
 colors <- create_colors_xml()
 wb <- wb_workbook()$add_worksheet()$set_base_colors(xml = colors)
 }
+\seealso{
+Other style creating functions: 
+\code{\link{create_border}()},
+\code{\link{create_cell_style}()},
+\code{\link{create_dxfs_style}()},
+\code{\link{create_fill}()},
+\code{\link{create_font}()},
+\code{\link{create_numfmt}()},
+\code{\link{create_tablestyle}()}
+}
+\concept{style creating functions}
