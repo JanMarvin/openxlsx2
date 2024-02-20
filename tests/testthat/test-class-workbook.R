@@ -754,6 +754,53 @@ test_that("image relships work with comment", {
 
 })
 
+test_that("start_col/start_row works as expected", {
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, start_row = 5), "'start_col/start_row' is deprecated.")
+
+  exp <- "<xdr:from><xdr:col>0</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>4</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
+  got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, startRow = 5), "'start_col/start_row' is deprecated.")
+
+  exp <- "<xdr:from><xdr:col>0</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>4</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
+  got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, start_col = 5), "'start_col/start_row' is deprecated.")
+
+  exp <- "<xdr:from><xdr:col>4</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>0</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
+  got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, startCol = 5), "'start_col/start_row' is deprecated.")
+
+  exp <- "<xdr:from><xdr:col>4</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>0</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
+  got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, start_col = 5, start_row = 5), "'start_col/start_row' is deprecated.")
+
+  exp <- "<xdr:from><xdr:col>4</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>4</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
+  got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, startCol = 5, startRow = 5), "'start_col/start_row' is deprecated.")
+
+  exp <- "<xdr:from><xdr:col>4</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>4</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
+  got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  expect_equal(exp, got)
+})
+
 test_that("workbook themes work", {
 
   wb <- wb_workbook()$add_worksheet()

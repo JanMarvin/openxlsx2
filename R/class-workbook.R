@@ -4912,13 +4912,17 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "start_row", "start_col")
       standardize_case_names(..., arguments = arguments)
 
-      if ((exists("start_row") && !is.null(start_row)) ||
-          (exists("start_col") && !is.null(start_col))) {
-        if (!exists("start_row") || is.null(start_row)) start_row <- 1
-        if (!exists("start_row") || is.null(start_col)) start_col <- 1
+      params <- list(...)
+      if (!is.null(params$start_row)) start_row <- params$start_row
+      if (!is.null(params$start_col)) start_col <- params$start_col
+
+      if (exists("start_row") || exists("start_col")) {
+        if (!exists("start_row")) start_row <- 1
+        if (!exists("start_col")) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
         start_col <- col2int(start_col)
         start_row <- as.integer(start_row)
+        dims <- rowcol_to_dim(start_row, start_col)
       }
 
       if (!file.exists(file)) {
@@ -5044,10 +5048,13 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "start_row", "start_col")
       standardize_case_names(..., arguments = arguments)
 
-      if ((exists("start_row") && !is.null(start_row)) ||
-          (exists("start_col") && !is.null(start_col))) {
-        if (!exists("start_row") || is.null(start_row)) start_row <- 1
-        if (!exists("start_row") || is.null(start_col)) start_col <- 1
+      params <- list(...)
+      if (!is.null(params$start_row)) start_row <- params$start_row
+      if (!is.null(params$start_col)) start_col <- params$start_col
+
+      if (exists("start_row") || exists("start_col")) {
+        if (!exists("start_row")) start_row <- 1
+        if (!exists("start_col")) start_col <- 1
         .Deprecated(old = "start_row/start_col", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dim(start_row, start_col)
       }
@@ -5300,10 +5307,13 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "start_row", "start_col")
       standardize_case_names(..., arguments = arguments)
 
-      if ((exists("start_row") && !is.null(start_row)) ||
-          (exists("start_col") && !is.null(start_col))) {
-        if (!exists("start_row") || is.null(start_row)) start_row <- 1
-        if (!exists("start_row") || is.null(start_col)) start_col <- 1
+      params <- list(...)
+      if (!is.null(params$start_row)) start_row <- params$start_row
+      if (!is.null(params$start_col)) start_col <- params$start_col
+
+      if (exists("start_row") || exists("start_col")) {
+        if (!exists("start_row")) start_row <- 1
+        if (!exists("start_col")) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dim(start_row, start_col)
       }
