@@ -3692,6 +3692,7 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
 #' @param unlocked_formula unlockedFormula
 #' @param ... additional arguments
 #' @return The `wbWorkbook` object, invisibly.
+#' @export
 wb_add_ignore_error <- function(
     wb,
     sheet                 = current_sheet(),
