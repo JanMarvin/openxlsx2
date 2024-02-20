@@ -1,3 +1,9 @@
+# openxlsx2 (in development)
+
+
+***************************************************************************
+
+
 # openxlsx2 1.4
 
 ## New features
@@ -29,7 +35,7 @@
 * Updating to themes. This includes updates to the default style `'Office Theme'` [899](https://github.com/JanMarvin/openxlsx2/pull/899)
   * This includes switching to the new default font `'Aptos Narrow'`
   * A new style `'Office 2013 - 2022 Theme'` was added
-  
+
   Users that want to remain on the old style should use `wb_workbook(theme = 'Office 2013 - 2022 Theme')` or `wb_set_base_font(font_name = "Calibri")`.
 
 ## Maintenance
