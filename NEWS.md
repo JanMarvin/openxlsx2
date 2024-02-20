@@ -1,5 +1,9 @@
 # openxlsx2 (in development)
 
+## Fixes
+
+* Export `wb_add_ignore_error()`. [955](https://github.com/JanMarvin/openxlsx2/pull/955)
+
 
 ***************************************************************************
 
