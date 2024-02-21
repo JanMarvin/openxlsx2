@@ -4384,6 +4384,36 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description Get comments
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @return The `wbWorkbook` object
+    get_comment = function(
+      sheet = current_sheet(),
+      dims  = NULL
+    ) {
+
+      sheet_id <- self$validate_sheet(sheet)
+      cmmt <- self$worksheets[[sheet_id]]$relships$comments
+
+      if (!is.null(dims) && any(grepl(":", dims)))
+        dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+
+      cmts <- list()
+      if (length(cmmt) && length(self$comments) <= cmmt) {
+        cmts <- as.data.frame(do.call("rbind", self$comments[[cmmt]]))
+        if (!is.null(dims)) cmts <- cmts[cmts$ref %in% dims, ]
+        # print(cmts)
+        cmts <- cmts[c("ref", "author", "comment")]
+        if (nrow(cmts)) {
+          cmts$comment <- as_fmt_txt(cmts$comment)
+          cmts$cmmt_id <- cmmt
+        }
+      }
+
+      invisible(cmts)
+    },
+
     #' @description Remove comment
     #' @param dims row and column as spreadsheet dimension, e.g. "A1"
     #' @return The `wbWorkbook` object

@@ -191,6 +191,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-wbWorkbook-add_comment}{\code{wbWorkbook$add_comment()}}
+\item \href{#method-wbWorkbook-get_comment}{\code{wbWorkbook$get_comment()}}
 \item \href{#method-wbWorkbook-remove_comment}{\code{wbWorkbook$remove_comment()}}
 \item \href{#method-wbWorkbook-add_thread}{\code{wbWorkbook$add_thread()}}
 \item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
@@ -1735,6 +1736,28 @@ Add comment
 \item{\code{comment}}{a comment to apply to the worksheet}
 
 \item{\code{...}}{additional arguments}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_comment"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_comment}{}}}
+\subsection{Method \code{get_comment()}}{
+Get comments
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_comment(sheet = current_sheet(), dims = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 }
 \if{html}{\out{</div>}}
 }

@@ -429,6 +429,18 @@ test_that("wb_add_comment() is a wrapper", {
 
 })
 
+test_that("wb_get_comment() is a wrapper", {
+
+  c1 <- wb_comment(text = "this is a comment", author = "")
+  wb <- wb_workbook()$add_worksheet("Sheet 1")$add_comment(dims = "B10", comment = c1)
+
+  expect_wrapper(
+    "get_comment",
+    wb = wb
+  )
+
+})
+
 # wb_remove_comment() -----------------------------------------------------
 
 test_that("wb_remove_comment() is a wrapper", {

@@ -3377,6 +3377,22 @@ wb_add_comment <- function(
 
 #' @rdname wb_add_comment
 #' @export
+wb_get_comment <- function(
+    wb,
+    sheet = current_sheet(),
+    dims  = NULL
+) {
+
+  assert_workbook(wb)
+
+  wb$clone(deep = TRUE)$get_comment(
+    sheet       = sheet,
+    dims        = dims
+  )
+}
+
+#' @rdname wb_add_comment
+#' @export
 wb_remove_comment <- function(
     wb,
     sheet      = current_sheet(),
