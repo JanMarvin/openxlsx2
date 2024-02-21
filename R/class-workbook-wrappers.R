@@ -3507,6 +3507,22 @@ wb_add_thread <- function(
   )
 }
 
+#' @rdname wb_add_thread
+#' @export
+wb_get_thread <- function(
+    wb,
+    sheet = current_sheet(),
+    dims  = NULL
+) {
+
+  assert_workbook(wb)
+
+  wb$clone(deep = TRUE)$get_thread(
+    sheet       = sheet,
+    dims        = dims
+  )
+}
+
 #' Add a checkbox, radio button or drop menu to a cell in a worksheet
 #'
 #' You can add Form Control to a cell. The three supported types are a Checkbox,

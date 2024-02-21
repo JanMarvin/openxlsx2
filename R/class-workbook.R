@@ -4387,7 +4387,7 @@ wbWorkbook <- R6::R6Class(
     #' @description Get comments
     #' @param sheet sheet
     #' @param dims dims
-    #' @return The `wbWorkbook` object
+    #' @return A data frame containing comments
     get_comment = function(
       sheet = current_sheet(),
       dims  = NULL
@@ -4588,6 +4588,37 @@ wbWorkbook <- R6::R6Class(
       }
 
       invisible(self)
+    },
+
+    #' @description Get threads
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @return A data frame containing threads
+    get_thread = function(sheet = current_sheet(), dims = NULL) {
+
+      sheet <- self$validate_sheet(sheet)
+      thrd <- self$worksheets[[sheet]]$relships$threadedComment
+
+      tc <- cbind(
+        rbindlist(xml_attr(self$threadComments[[thrd]], "threadedComment")),
+        text = xml_value(self$threadComments[[thrd]], "threadedComment", "text")
+      )
+
+      if (!is.null(dims) && any(grepl(":", dims)))
+        dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+
+      if (!is.null(dims)) {
+        tc <- tc[tc$ref %in% dims, ]
+      }
+
+      persons <- self$get_person()
+
+      tc <- merge(tc, persons, by.x = "personId", by.y = "id",
+                  all.x = TRUE, all.y = FALSE)
+
+      tc$dT <- as.POSIXct(tc$dT, format = "%Y-%m-%dT%H:%M:%SZ")
+
+      tc[c("dT", "ref", "displayName", "text", "done")]
     },
 
     ## conditional formatting ----

@@ -466,36 +466,10 @@ remove_comment <- function(
 
 }
 
-
-
 as_fmt_txt <- function(x) {
   vapply(x, function(y) {
     ifelse(is_xml(y), si_to_txt(xml_node_create("si", xml_children = y)), y)
   },
   NA_character_
   )
-}
-
-wb_get_thread <- function(wb, sheet = current_sheet(), dims = "A1") {
-
-  sheet <- wb$validate_sheet(sheet)
-  thrd <- wb$worksheets[[sheet]]$relships$threadedComment
-
-  tc <- cbind(
-    rbindlist(xml_attr(wb$threadComments[[thrd]], "threadedComment")),
-    text = xml_value(wb$threadComments[[thrd]], "threadedComment", "text")
-  )
-
-  if (!is.null(dims)) {
-    tc <- tc[tc$ref == dims, ]
-  }
-
-  persons <- wb$get_person()
-
-  tc <- merge(tc, persons, by.x = "personId", by.y = "id",
-              all.x = TRUE, all.y = FALSE)
-
-  tc$dT <- as.POSIXct(tc$dT, format = "%Y-%m-%dT%H:%M:%SZ")
-
-  tc[c("dT", "ref", "displayName", "text", "done")]
 }

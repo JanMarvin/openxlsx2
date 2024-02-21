@@ -490,6 +490,19 @@ test_that("wb_add_thread() is a wrapper", {
 
 })
 
+test_that("wb_get_thread() is a wrapper", {
+
+  wb <- wb_workbook()$add_worksheet()$add_person("me")
+  me_id <- wb$get_person("me")$id
+  wb$add_thread(comment = "test", person_id = me_id)
+
+  expect_wrapper(
+    "get_thread",
+    wb = wb
+  )
+
+})
+
 # wb_add_form_control() ---------------------------------------------------
 
 test_that("wb_add_form_control() is a wrapper", {
