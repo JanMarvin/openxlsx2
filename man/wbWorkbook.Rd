@@ -191,8 +191,10 @@ worksheet names.}
 \item \href{#method-wbWorkbook-unmerge_cells}{\code{wbWorkbook$unmerge_cells()}}
 \item \href{#method-wbWorkbook-freeze_pane}{\code{wbWorkbook$freeze_pane()}}
 \item \href{#method-wbWorkbook-add_comment}{\code{wbWorkbook$add_comment()}}
+\item \href{#method-wbWorkbook-get_comment}{\code{wbWorkbook$get_comment()}}
 \item \href{#method-wbWorkbook-remove_comment}{\code{wbWorkbook$remove_comment()}}
 \item \href{#method-wbWorkbook-add_thread}{\code{wbWorkbook$add_thread()}}
+\item \href{#method-wbWorkbook-get_thread}{\code{wbWorkbook$get_thread()}}
 \item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
@@ -1743,6 +1745,28 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_comment"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_comment}{}}}
+\subsection{Method \code{get_comment()}}{
+Get comments
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_comment(sheet = current_sheet(), dims = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A data frame containing comments
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-remove_comment"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-remove_comment}{}}}
 \subsection{Method \code{remove_comment()}}{
@@ -1798,6 +1822,28 @@ add threaded comment to worksheet
 \item{\code{resolve}}{logical if the comment should be marked as resolved}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_thread"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_thread}{}}}
+\subsection{Method \code{get_thread()}}{
+Get threads
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_thread(sheet = current_sheet(), dims = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A data frame containing threads
 }
 }
 \if{html}{\out{<hr>}}

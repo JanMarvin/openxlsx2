@@ -2,10 +2,13 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_comment}
 \alias{wb_add_comment}
+\alias{wb_get_comment}
 \alias{wb_remove_comment}
 \title{Add comment to worksheet}
 \usage{
 wb_add_comment(wb, sheet = current_sheet(), dims = "A1", comment, ...)
+
+wb_get_comment(wb, sheet = current_sheet(), dims = NULL)
 
 wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 }

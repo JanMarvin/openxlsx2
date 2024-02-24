@@ -36,12 +36,12 @@ wbComment <- R6::R6Class(
     #' @param height Height of comment in ... units
     #' @return a `wbComment` object
     initialize = function(text, author, style, visible, width, height) {
-      self$text <- text
-      self$author <- author
-      self$style <- style
+      self$text    <- text
+      self$author  <- author
+      self$style   <- style
       self$visible <- visible
-      self$width <- width
-      self$height <- height
+      self$width   <- width
+      self$height  <- height
       invisible(self)
     },
 
@@ -111,12 +111,14 @@ wbComment <- R6::R6Class(
 #' c3 <- wb_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 #'
 #' wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = c3)
-wb_comment <- function(text = NULL,
-                       style = NULL,
-                       visible = FALSE,
-                       author = getOption("openxlsx2.creator"),
-                       width = 2,
-                       height = 4) {
+wb_comment <- function(
+    text    = NULL,
+    style   = NULL,
+    visible = FALSE,
+    author  = getOption("openxlsx2.creator"),
+    width   = 2,
+    height  = 4
+) {
   # Code copied from the wbWorkbook
   author <- author %||% Sys.getenv("USERNAME", unset = Sys.getenv("USER"))
   text <- text %||% ""
@@ -127,18 +129,17 @@ wb_comment <- function(text = NULL,
   assert_class(visible, "logical")
 
   if (length(visible) > 1) stop("visible must be a single logical")
-  if (length(author) > 1) stop("author) must be a single character")
-  if (length(width) > 1) stop("width must be a single integer")
-  if (length(height) > 1) stop("height must be a single integer")
+  if (length(author) > 1)  stop("author) must be a single character")
+  if (length(width) > 1)   stop("width must be a single integer")
+  if (length(height) > 1)  stop("height must be a single integer")
 
-  width <- round(width)
+  width  <- round(width)
   height <- round(height)
 
   if (is.null(style)) {
     style <- create_font()
   }
 
-  author <- replace_legal_chars(author)
   # if text was created using fmt_txt()
   if (inherits(text, "fmt_txt")) {
     text  <- text
@@ -147,7 +148,7 @@ wb_comment <- function(text = NULL,
     text <- replace_legal_chars(text)
   }
 
-
+  author <- replace_legal_chars(author)
   if (author != "") {
     # if author is provided, we write additional lines with the author name as well as an empty line
     text <- c(paste0(author, ":"), "\n", text)
@@ -465,55 +466,10 @@ remove_comment <- function(
 
 }
 
-
-
 as_fmt_txt <- function(x) {
   vapply(x, function(y) {
     ifelse(is_xml(y), si_to_txt(xml_node_create("si", xml_children = y)), y)
   },
   NA_character_
   )
-}
-
-wb_get_comment <- function(wb, sheet = current_sheet(), dims = "A1") {
-
-  sheet_id <- wb$validate_sheet(sheet)
-  cmmt <- wb$worksheets[[sheet_id]]$relships$comments
-
-  cmts <- list()
-  if (length(cmmt) && length(wb$comments) <= cmmt) {
-    cmts <- as.data.frame(do.call("rbind", wb$comments[[cmmt]]))
-    if (!is.null(dims)) cmts <- cmts[cmts$ref == dims, ]
-    # print(cmts)
-    cmts <- cmts[c("ref", "author", "comment")]
-    if (nrow(cmts)) {
-      cmts$comment <- as_fmt_txt(cmts$comment)
-      cmts$cmmt_id <- cmmt
-    }
-  }
-  cmts
-}
-
-wb_get_thread <- function(wb, sheet = current_sheet(), dims = "A1") {
-
-  sheet <- wb$validate_sheet(sheet)
-  thrd <- wb$worksheets[[sheet]]$relships$threadedComment
-
-  tc <- cbind(
-    rbindlist(xml_attr(wb$threadComments[[thrd]], "threadedComment")),
-    text = xml_value(wb$threadComments[[thrd]], "threadedComment", "text")
-  )
-
-  if (!is.null(dims)) {
-    tc <- tc[tc$ref == dims, ]
-  }
-
-  persons <- wb$get_person()
-
-  tc <- merge(tc, persons, by.x = "personId", by.y = "id",
-              all.x = TRUE, all.y = FALSE)
-
-  tc$dT <- as.POSIXct(tc$dT, format = "%Y-%m-%dT%H:%M:%SZ")
-
-  tc[c("dT", "ref", "displayName", "text", "done")]
 }

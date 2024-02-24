@@ -2,6 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_thread}
 \alias{wb_add_thread}
+\alias{wb_get_thread}
 \title{Add threaded comments to a cell in a worksheet}
 \usage{
 wb_add_thread(
@@ -13,6 +14,8 @@ wb_add_thread(
   reply = FALSE,
   resolve = FALSE
 )
+
+wb_get_thread(wb, sheet = current_sheet(), dims = NULL)
 }
 \arguments{
 \item{wb}{A workbook}
