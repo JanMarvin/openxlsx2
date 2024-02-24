@@ -439,13 +439,13 @@ void wide_to_long(
       case array_formula:
         cell.f     = vals;
         cell.f_t   = "array";
-        cell.f_ref = ref[i];
+        cell.f_ref = ref[j];
         break;
       case cm_formula:
         cell.c_cm  = c_cm;
         cell.f     = vals;
         cell.f_t   = "array";
-        cell.f_ref = ref[i];
+        cell.f_ref = ref[j];
         break;
       }
 

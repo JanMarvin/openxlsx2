@@ -90,3 +90,51 @@ test_that("formual escaping works", {
   expect_equal(exp, got)
 
 })
+
+test_that("writing array vectors works", {
+  fml <- function(x) {
+    paste0("=", x, "+", x)
+  }
+
+  wb <- wb_workbook()
+
+  ### write vector of array formulas
+  wb$add_worksheet()$add_formula(x = fml(seq_len(10)), array = TRUE, dims = "B2")
+
+  ## check
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+
+  exp <- c("B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "B11")
+  got <- cc[cc$f_t == "array", c("f_ref")]
+  expect_equal(exp, got)
+
+  ### write array formula as data frame class
+  df <- data.frame(
+    formula       = fml(seq_len(10)),
+    array_formula = fml(seq_len(10)),
+    character     = fml(seq_len(10))
+  )
+
+  class(df$formula) <- c("formula", class(df$formula))
+  class(df$array_formula) <- c("array_formula", class(df$array_formula))
+
+  wb$add_worksheet()$add_data(x = df, dims = "B2")
+
+  ## check
+  cc <- wb$worksheets[[2]]$sheet_data$cc
+
+  exp <- c("C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12")
+  got <- cc[cc$f_t == "array", c("f_ref")]
+  expect_equal(exp, got)
+
+})
+
+test_that("array formula detection works", {
+  wb <- wb_workbook()$add_worksheet()$
+    add_formula(dims = "A1", x = "{1+1}")
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+
+  exp <- "A1"
+  got <- cc[cc$f_t == "array", "f_ref"]
+  expect_equal(exp, got)
+})

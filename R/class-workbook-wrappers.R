@@ -525,6 +525,14 @@ wb_add_slicer <- function(
 #' * MAX(B2:B4)
 #' * ...
 #'
+#' It is possible to pass vectors to `x`. If `x` is an array formula, it will
+#' take `dims` as a reference. For some formulas, the result will span multiple
+#' cells (see the `MMULT()` example below). For this type of formula, the
+#' output range must be known a priori and passed to `dims`, otherwise only the
+#' value of the first cell will be returned. This type of formula, whose result
+#' extends over several cells, is only possible with scalar values. If a vector
+#' is passed, it is only possible to return individual cells.
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. (either as index or name)
 #' @param x A formula as character vector.
@@ -547,6 +555,14 @@ wb_add_slicer <- function(
 #'
 #' # calculate the sum of elements.
 #' wb$add_formula(dims = "D1", x = "SUM(A1:C1)")
+#'
+#' # array formula with result spanning over multiple cells
+#' mm <- matrix(1:4, 2, 2)
+#'
+#' wb$add_worksheet()$
+#'  add_data(x = mm, dims = "A1:B2", col_names = FALSE)$
+#'  add_data(x = mm, dims = "A4:B5", col_names = FALSE)$
+#'  add_formula(x = "MMULT(A1:B2, A4:B5)", dims = "A7:B8", array = TRUE)
 #'
 wb_add_formula <- function(
     wb,

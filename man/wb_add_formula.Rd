@@ -61,6 +61,14 @@ The examples below show a small list of possible formulas:
 \item MAX(B2:B4)
 \item ...
 }
+
+It is possible to pass vectors to \code{x}. If \code{x} is an array formula, it will
+take \code{dims} as a reference. For some formulas, the result will span multiple
+cells (see the \code{MMULT()} example below). For this type of formula, the
+output range must be known a priori and passed to \code{dims}, otherwise only the
+value of the first cell will be returned. This type of formula, whose result
+extends over several cells, is only possible with scalar values. If a vector
+is passed, it is only possible to return individual cells.
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
@@ -68,6 +76,14 @@ wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = t(c(4, 5, 8)), col_names =
 
 # calculate the sum of elements.
 wb$add_formula(dims = "D1", x = "SUM(A1:C1)")
+
+# array formula with result spanning over multiple cells
+mm <- matrix(1:4, 2, 2)
+
+wb$add_worksheet()$
+ add_data(x = mm, dims = "A1:B2", col_names = FALSE)$
+ add_data(x = mm, dims = "A4:B5", col_names = FALSE)$
+ add_formula(x = "MMULT(A1:B2, A4:B5)", dims = "A7:B8", array = TRUE)
 
 }
 \seealso{
