@@ -308,8 +308,20 @@ write_data2 <- function(
   )
 
   ### ref for formulas from write_formula caring ref attr
+  is_array <- dc %in% c(
+    openxlsx2_celltype[["array_formula"]], openxlsx2_celltype[["cm_formula"]]
+  )
+
   if (!is.null(attr(data, "f_ref"))) {
     ref <- attr(data, "f_ref")
+  } else if (any(is_array)) {
+    ddims <- wb_dims(
+      x = data, from_row = startRow, from_col = startCol,
+      row_names = rowNames, col_names = colNames
+    )
+    row_dims <- unname(unlist(dims_to_dataframe(ddims, fill = TRUE)[is_array]))
+
+    ref <- row_dims
   } else {
     ref <- dims
   }
@@ -1069,6 +1081,14 @@ write_formula <- function(
   standardize_case_names(...)
 
   assert_class(x, "character")
+
+  # detect array formulas
+  if (any(substr(x, 1, 1) == "{")) {
+    pattern <- "^\\{(.*)\\}$"
+    x <- gsub(pattern, "\\1", x)
+    array <- TRUE
+  }
+
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
 
   formula <- "formula"
@@ -1122,10 +1142,21 @@ write_formula <- function(
     formula <- "cm_formula"
   }
 
-  class(dfx$X) <- c("character", formula)
-  if (!is.null(dims)) {
-    if (array || cm) {
+  class(dfx$X) <- c(formula, "character")
+
+  if (is.null(dims)) {
+    dims <- wb_dims(start_row, start_col)
+  }
+
+  if (array || cm) {
+    if (length(dfx$X) == 1) {
       attr(dfx, "f_ref") <- dims
+    } else {
+      rowcols <- dims_to_rowcol(dims)
+      ddims   <- wb_dims(x = dfx$X, from_col = rowcols[[1]], from_row = as.integer(rowcols[[2]]))
+      refs    <- unname(unlist(dims_to_dataframe(ddims, fill = TRUE)))
+
+      attr(dfx, "f_ref") <- refs
     }
   }
 

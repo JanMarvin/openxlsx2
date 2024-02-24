@@ -1,5 +1,9 @@
 # openxlsx2 (in development)
 
+## New features
+
+* It's now possible to pass array formula vectors to `wb_add_formula()`.
+
 ## Fixes
 
 * Export `wb_add_ignore_error()`. [955](https://github.com/JanMarvin/openxlsx2/pull/955)
