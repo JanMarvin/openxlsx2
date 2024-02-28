@@ -1339,6 +1339,7 @@ wbWorkbook <- R6::R6Class(
     #' @param na.strings Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
+    #' @param total_row write total rows to table
     #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_data_table = function(
@@ -1361,6 +1362,7 @@ wbWorkbook <- R6::R6Class(
         remove_cell_style = FALSE,
         na.strings        = na_strings(),
         inline_strings    = TRUE,
+        total_row         = FALSE,
         ...
     ) {
 
@@ -1394,7 +1396,8 @@ wbWorkbook <- R6::R6Class(
         applyCellStyle  = apply_cell_style,
         removeCellStyle = remove_cell_style,
         na.strings      = na.strings,
-        inline_strings  = inline_strings
+        inline_strings  = inline_strings,
+        total_row       = total_row
       )
       invisible(self)
     },
@@ -2754,23 +2757,25 @@ wbWorkbook <- R6::R6Class(
     #' @param tableName tableName
     #' @param withFilter withFilter
     #' @param totalsRowCount totalsRowCount
+    #' @param totalLabel totalLabel
     #' @param showFirstColumn showFirstColumn
     #' @param showLastColumn showLastColumn
     #' @param showRowStripes showRowStripes
     #' @param showColumnStripes showColumnStripes
     #' @return The `wbWorksheet` object, invisibly
     buildTable = function(
-      sheet = current_sheet(),
+      sheet             = current_sheet(),
       colNames,
       ref,
       showColNames,
       tableStyle,
       tableName,
-      withFilter, # TODO set default for withFilter?
-      totalsRowCount = 0,
-      showFirstColumn = 0,
-      showLastColumn = 0,
-      showRowStripes = 1,
+      withFilter        = TRUE,
+      totalsRowCount    = 0,
+      totalLabel        = FALSE,
+      showFirstColumn   = 0,
+      showLastColumn    = 0,
+      showRowStripes    = 1,
       showColumnStripes = 0
     ) {
 
@@ -2799,32 +2804,65 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.null(self$tables)) {
-        nms <- NULL
+        nms     <- NULL
         tSheets <- NULL
-        tNames <- NULL
+        tNames  <- NULL
         tActive <- NULL
       } else {
-        nms <- self$tables$tab_ref
+        nms     <- self$tables$tab_ref
         tSheets <- self$tables$tab_sheet
-        tNames <- self$tables$tab_name
+        tNames  <- self$tables$tab_name
         tActive <- self$tables$tab_act
       }
 
 
       ### autofilter
       autofilter <- if (withFilter) {
-        xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = ref))
+        if (!isFALSE(totalsRowCount)) {
+          # exclude total row from filter
+          rowcol         <- dims_to_rowcol(ref)
+          autofilter_ref <- rowcol_to_dims(as.integer(rowcol[[2]])[-length(rowcol[[2]])], rowcol[[1]])
+        } else {
+          autofilter_ref <- ref
+        }
+        xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = autofilter_ref))
+      }
+
+      trf <- NULL
+      has_total_row <- FALSE
+      has_total_lbl <- FALSE
+      if (!isFALSE(totalsRowCount)) {
+        trf <- totalsRowCount
+        has_total_row <- TRUE
+
+        if (length(totalLabel) == length(colNames)) {
+          lbl <- totalLabel
+          has_total_lbl <- all(is.na(totalLabel))
+        } else {
+          lbl <- rep(NA_character_, length(colNames))
+          has_total_lbl <- FALSE
+        }
       }
 
       ### tableColumn
       tableColumn <- sapply(colNames, function(x) {
         id <- which(colNames %in% x)
-        xml_node_create("tableColumn", xml_attributes = c(id = id, name = x))
+        trf_id <- if (has_total_row) trf[[id]] else NULL
+        lbl_id <- if (has_total_lbl && !is.na(lbl[[id]])) lbl[[id]] else NULL
+        xml_node_create(
+          "tableColumn",
+          xml_attributes = c(
+            id                = id,
+            name              = x,
+            totalsRowFunction = trf_id,
+            totalsRowLabel    = lbl_id
+          )
+        )
       })
 
       tableColumns <- xml_node_create(
-        xml_name = "tableColumns",
-        xml_children = tableColumn,
+        xml_name       = "tableColumns",
+        xml_children   = tableColumn,
         xml_attributes = c(count = as.character(length(colNames)))
       )
 
@@ -2849,8 +2887,8 @@ wbWorkbook <- R6::R6Class(
         name           = tableName,
         displayName    = tableName,
         ref            = ref,
-        totalsRowCount = totalsRowCount,
-        totalsRowShown = "0"
+        totalsRowCount = as_xml_attr(has_total_row),
+        totalsRowShown = as_xml_attr(has_total_row)
         #headerRowDxfId="1"
       )
 

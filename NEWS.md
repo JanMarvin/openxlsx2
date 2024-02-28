@@ -4,6 +4,8 @@
 
 * It's now possible to pass array formula vectors to `wb_add_formula()`.
 
+* `wb_add_data_table()` gained a new `total_row` argument. This allows to add a total row to spreadsheets including text and spreadsheet formulas.
+
 ## Fixes
 
 * Export `wb_add_ignore_error()`. [955](https://github.com/JanMarvin/openxlsx2/pull/955)

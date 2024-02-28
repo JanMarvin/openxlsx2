@@ -25,6 +25,7 @@ wb_add_data_table(
   remove_cell_style = FALSE,
   na.strings = na_strings(),
   inline_strings = TRUE,
+  total_row = FALSE,
   ...
 )
 }
@@ -77,6 +78,8 @@ columns to a character vector e.g.
 
 \item{inline_strings}{write characters as inline strings}
 
+\item{total_row}{logical. With the default \code{FALSE} no total row is added.}
+
 \item{...}{additional arguments}
 }
 \description{
@@ -111,6 +114,28 @@ Functions \code{\link[=wb_add_data]{wb_add_data()}} and \code{\link[=wb_add_data
 distinction is that the latter creates a table in the worksheet that can be
 used for different kind of formulas and can be sorted independently, though
 is less flexible than basic cell regions.
+}
+\section{Modify total row argument}{
+It is possible to further tweak the total row. In addition to the default
+\code{FALSE} possible values are \code{TRUE} (the xlsx file will create column sums
+each variable).
+
+In addition it is possible to tweak this further using a character string
+with one of the following functions for each variable: \code{"average"},
+\code{"count"}, \code{"countNums"}, \code{"max"}, \code{"min"}, \code{"stdDev"}, \code{"sum"}, \code{"var"}.
+It is possible to leave the cell empty \code{"none"} or to create a text input
+using a named character with name \code{text} like: \code{c(text = "Total")}.
+It's also possible to pass other spreadsheet software functions if they
+return a single value and hence \code{"SUM"} would work too.
+}
+
+\examples{
+wb <- wb_workbook()$add_worksheet()$
+  add_data_table(
+    x = as.data.frame(USPersonalExpenditure),
+    row_names = TRUE,
+    total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM")
+  )
 }
 \seealso{
 Other worksheet content functions: 

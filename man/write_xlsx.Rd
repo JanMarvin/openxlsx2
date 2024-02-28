@@ -7,9 +7,9 @@
 write_xlsx(x, file, as_table = FALSE, ...)
 }
 \arguments{
-\item{x}{An object or a list of objects that can be handled by \code{\link[=wb_add_data]{wb_add_data()}} to write to file}
+\item{x}{An object or a list of objects that can be handled by \code{\link[=wb_add_data]{wb_add_data()}} to write to file.}
 
-\item{file}{An xlsx file name}
+\item{file}{An optional xlsx file name. If no file is passed, the object is not written to disk and only a workbook object is returned.}
 
 \item{as_table}{If \code{TRUE}, will write as a data table, instead of data.}
 
@@ -24,6 +24,7 @@ hidden.}
 \code{grDevices::colors()}) or a valid hex color beginning with "#".}
     \item{\code{zoom}}{The sheet zoom level, a numeric between 10 and 400 as a
 percentage. (A zoom value smaller than 10 will default to 10.)}
+    \item{\code{total_row}}{logical. With the default \code{FALSE} no total row is added.}
     \item{\code{start_col}}{A vector specifying the starting column to write \code{x} to.}
     \item{\code{start_row}}{A vector specifying the starting row to write \code{x} to.}
     \item{\code{col_names}}{If \code{TRUE}, column names of \code{x} are written.}

@@ -67,7 +67,7 @@ take \code{dims} as a reference. For some formulas, the result will span multipl
 cells (see the \code{MMULT()} example below). For this type of formula, the
 output range must be known a priori and passed to \code{dims}, otherwise only the
 value of the first cell will be returned. This type of formula, whose result
-extends over several cells, is only possible with scalar values. If a vector
+extends over several cells, is only possible with single strings. If a vector
 is passed, it is only possible to return individual cells.
 }
 \examples{

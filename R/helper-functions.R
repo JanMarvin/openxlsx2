@@ -976,3 +976,94 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   # print(sprintf("cloned: %s", length(new_ids)))
 
 }
+
+known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
+
+  # unfortunately x has no row names at this point
+  ncol_x <- ncol(x) + row_names
+  nms_x <- names(x)
+  if (row_names) nms_x <- c("_rowNames_", nms_x)
+
+  fml <- vector("character", ncol_x)
+  atr <- vector("character", ncol_x)
+  lbl <- rep(NA_character_, ncol_x)
+
+  if (isTRUE(total) || all(as.character(total) == "109") || all(total == "sum")) {
+    fml <- paste0("SUBTOTAL(109,", table, "[", names(x), "])")
+    atr <- rep("sum", ncol_x)
+  } else {
+
+    # all get the same total_row value
+    if (length(total) == 1) {
+      total <- rep(total, ncol_x)
+    }
+
+    if (length(total) != ncol_x) {
+      stop("length of total_row and table columns do not match", call. = FALSE)
+    }
+
+    builtinIds <- c("101", "103", "102", "104", "105", "107", "109", "110")
+    builtins   <- c("average", "count", "countNums", "max", "min", "stdDev", "sum", "var")
+
+    ttl <- as.character(total)
+
+    for (i in seq_len(ncol_x)) {
+
+      if (any(names(total)[i] == "") && (ttl[i] %in% builtinIds || ttl[i] %in% builtins)) {
+        if (ttl[i] == "101" || ttl[i] == "average") {
+          fml[i] <- paste0("SUBTOTAL(", 101, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "average"
+        } else if (ttl[i] == "102" || ttl[i] == "countNums") {
+          fml[i] <- paste0("SUBTOTAL(", 102, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "countNums"
+        } else if (ttl[i] == "103" || ttl[i] == "count") {
+          fml[i] <- paste0("SUBTOTAL(", 103, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "count"
+        } else if (ttl[i] == "104" || ttl[i] == "max") {
+          fml[i] <- paste0("SUBTOTAL(", 104, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "max"
+        } else if (ttl[i] == "105" || ttl[i] == "min") {
+          fml[i] <- paste0("SUBTOTAL(", 105, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "min"
+        } else if (ttl[i] == "107" || ttl[i] == "stdDev") {
+          fml[i] <- paste0("SUBTOTAL(", 107, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "stdDev"
+        } else if (ttl[i] == "109" || ttl[i] == "sum") {
+          fml[i] <- paste0("SUBTOTAL(", 109, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "sum"
+        } else if (ttl[i] == "110" || ttl[i] == "var") {
+          fml[i] <- paste0("SUBTOTAL(", 110, ",", table, "[", nms_x[i], "])")
+          atr[i] <- "var"
+        }
+
+      } else if (ttl[i] == "0" || ttl[i] == "none") {
+        fml[i] <- ""
+        atr[i] <- "none"
+      } else if (any(names(total)[i] == "text")) {
+        fml[i] <- as_xml_attr(ttl[i])
+        atr[i] <- ""
+        lbl[i] <- as_xml_attr(ttl[i])
+      } else {
+        # works, but in excel the formula is added to tables.xml as a child to the column
+        fml[i] <- paste0(ttl[i], "(", table, "[", nms_x[i], "])")
+        atr[i] <- "custom"
+      }
+
+    }
+
+  }
+
+  # prepare output
+  fml <- as.data.frame(t(fml))
+  names(fml) <- nms_x
+  names(atr) <- nms_x
+  names(lbl) <- nms_x
+
+  # prepare output to be written with formulas
+  for (i in seq_along(fml)) {
+    if (is.na(lbl[[i]])) class(fml[[i]]) <- c("formula", fml[[i]])
+  }
+
+  list(fml, atr, lbl)
+
+}

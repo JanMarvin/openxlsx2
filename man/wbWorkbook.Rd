@@ -579,6 +579,7 @@ add a data table
   remove_cell_style = FALSE,
   na.strings = na_strings(),
   inline_strings = TRUE,
+  total_row = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -624,6 +625,8 @@ add a data table
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+
+\item{\code{total_row}}{write total rows to table}
 
 \item{\code{...}}{additional arguments}
 }
@@ -972,8 +975,9 @@ Build table
   showColNames,
   tableStyle,
   tableName,
-  withFilter,
+  withFilter = TRUE,
   totalsRowCount = 0,
+  totalLabel = FALSE,
   showFirstColumn = 0,
   showLastColumn = 0,
   showRowStripes = 1,
@@ -999,6 +1003,8 @@ Build table
 \item{\code{withFilter}}{withFilter}
 
 \item{\code{totalsRowCount}}{totalsRowCount}
+
+\item{\code{totalLabel}}{totalLabel}
 
 \item{\code{showFirstColumn}}{showFirstColumn}
 

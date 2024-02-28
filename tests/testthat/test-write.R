@@ -806,3 +806,74 @@ test_that("filter works with wb_add_data()", {
   expect_equal(exp, got)
 
 })
+
+test_that("writing total row works", {
+
+  # default row sums
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = mtcars, total_row = TRUE)
+
+  exp <- data.frame(
+    A = "SUBTOTAL(109,Table1[mpg])", B = "SUBTOTAL(109,Table1[cyl])",
+    C = "SUBTOTAL(109,Table1[disp])", D = "SUBTOTAL(109,Table1[hp])",
+    E = "SUBTOTAL(109,Table1[drat])", F = "SUBTOTAL(109,Table1[wt])",
+    G = "SUBTOTAL(109,Table1[qsec])", H = "SUBTOTAL(109,Table1[vs])",
+    I = "SUBTOTAL(109,Table1[am])", J = "SUBTOTAL(109,Table1[gear])",
+    K = "SUBTOTAL(109,Table1[carb])"
+  )
+  got <- wb_to_df(wb, dims = wb_dims(rows = 33, cols = "A:K"),
+                  show_formula = TRUE, col_names = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # empty total row
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = mtcars, total_row = c("none"))
+
+  exp <- data.frame(
+    A = NA_real_, B = NA_real_, C = NA_real_, D = NA_real_,
+    E = NA_real_, F = NA_real_, G = NA_real_, H = NA_real_, I = NA_real_,
+    J = NA_real_, K = NA_real_
+  )
+  got <- wb_to_df(wb, dims = wb_dims(rows = 33, cols = "A:K"),
+                  show_formula = TRUE, col_names = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # total row with text only
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c(text = "Result", text = "sum"))
+
+  exp <- data.frame(A = "Result", B = "sum")
+  got <- wb_to_df(wb, dims = wb_dims(rows = 51, cols = "A:B"),
+                  show_formula = TRUE, col_names = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # total row with text and formula
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c(text = "Result", "sum"))
+
+  exp <- data.frame(A = "Result", B = "SUBTOTAL(109,Table1[dist])")
+  got <- wb_to_df(wb, dims = wb_dims(rows = 51, cols = "A:B"),
+                  show_formula = TRUE, col_names = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # total row with none and custom formula
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c("none", "COUNTA"))
+
+  exp <- data.frame(A = NA_real_, B = "COUNTA(Table1[dist])")
+  got <- wb_to_df(wb, dims = wb_dims(rows = 51, cols = "A:B"),
+                  show_formula = TRUE, col_names = FALSE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # with rownames
+  wb <- wb_workbook()$add_worksheet()$
+    add_data_table(
+      x = as.data.frame(USPersonalExpenditure),
+      row_names = TRUE,
+      total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM")
+    )
+
+  exp <- data.frame(
+    A = "Total", B = NA_real_, C = "SUBTOTAL(109,Table1[1945])",
+    D = "SUBTOTAL(109,Table1[1950])", E = "SUBTOTAL(109,Table1[1955])",
+    F = "SUM(Table1[1960])"
+  )
+  got <- wb_to_df(wb, dims = wb_dims(rows = 6, cols = "A:F"), col_names = FALSE, show_formula = TRUE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+})
