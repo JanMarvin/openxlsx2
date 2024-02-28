@@ -871,6 +871,7 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  total_row <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -952,6 +953,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>inline_strings</code></dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt><code>total_row</code></dt>
+<dd><p>write total rows to table</p></dd>
 
 
 <dt><code>...</code></dt>
@@ -1406,8 +1411,9 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 <span>  <span class="va">showColNames</span>,</span>
 <span>  <span class="va">tableStyle</span>,</span>
 <span>  <span class="va">tableName</span>,</span>
-<span>  <span class="va">withFilter</span>,</span>
+<span>  withFilter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  totalsRowCount <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  totalLabel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  showFirstColumn <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  showLastColumn <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  showRowStripes <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -1447,6 +1453,10 @@ the value returned from <code><a href="https://rdrr.io/r/base/interactive.html" 
 
 <dt><code>totalsRowCount</code></dt>
 <dd><p>totalsRowCount</p></dd>
+
+
+<dt><code>totalLabel</code></dt>
+<dd><p>totalLabel</p></dd>
 
 
 <dt><code>showFirstColumn</code></dt>

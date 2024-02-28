@@ -70,11 +70,11 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>An object or a list of objects that can be handled by <code><a href="wb_add_data.html">wb_add_data()</a></code> to write to file</p></dd>
+<dd><p>An object or a list of objects that can be handled by <code><a href="wb_add_data.html">wb_add_data()</a></code> to write to file.</p></dd>
 
 
 <dt>file</dt>
-<dd><p>An xlsx file name</p></dd>
+<dd><p>An optional xlsx file name. If no file is passed, the object is not written to disk and only a workbook object is returned.</p></dd>
 
 
 <dt>as_table</dt>
@@ -99,6 +99,9 @@ hidden.</p></dd>
     <dt><code>zoom</code></dt>
 <dd><p>The sheet zoom level, a numeric between 10 and 400 as a
 percentage. (A zoom value smaller than 10 will default to 10.)</p></dd>
+
+    <dt><code>total_row</code></dt>
+<dd><p>logical. With the default <code>FALSE</code> no total row is added.</p></dd>
 
     <dt><code>start_col</code></dt>
 <dd><p>A vector specifying the starting column to write <code>x</code> to.</p></dd>
