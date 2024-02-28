@@ -725,6 +725,7 @@ write_data2 <- function(
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
 #'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
+#' @param total_row optional write total rows
 #' @noRd
 #' @keywords internal
 write_data_table <- function(
@@ -750,7 +751,8 @@ write_data_table <- function(
     removeCellStyle = FALSE,
     data_table      = FALSE,
     na.strings      = na_strings(),
-    inline_strings  = TRUE
+    inline_strings  = TRUE,
+    total_row       = FALSE
 ) {
 
   ## Input validating
@@ -873,10 +875,10 @@ write_data_table <- function(
 
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
-      l <- int2col(unlist(coords[, 2]))
+      l   <- int2col(unlist(coords[, 2]))
       dfn <- sprintf("'%s'!%s", wb$get_sheet_names(escape = TRUE)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
-      dn <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
+      dn  <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
 
       if (!is.null(wbdn <- wb$get_named_regions())) {
 
@@ -897,40 +899,40 @@ write_data_table <- function(
   ### End: Only in data --------------------------------------------------------
 
   if (data_table) {
-    overwrite_nrows <- 1L
+    overwrite_nrows     <- 1L
     check_tab_head_only <- FALSE
-    error_msg <- "Cannot overwrite existing table with another table"
+    error_msg           <- "Cannot overwrite existing table with another table"
   } else {
-    overwrite_nrows <- colNames
+    overwrite_nrows     <- colNames
     check_tab_head_only <- TRUE
-    error_msg <- "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
+    error_msg           <- "Cannot overwrite table headers. Avoid writing over the header row or see wb_get_tables() & wb_remove_tabless() to remove the table object."
   }
 
   ## Check not overwriting existing table headers
   wb_check_overwrite_tables(
-    wb = wb,
-    sheet = sheet,
-    new_rows = c(startRow, startRow + nRow - 1L + overwrite_nrows),
-    new_cols = c(startCol, startCol + nCol - 1L),
+    wb                      = wb,
+    sheet                   = sheet,
+    new_rows                = c(startRow, startRow + nRow - 1L + overwrite_nrows),
+    new_cols                = c(startCol, startCol + nCol - 1L),
     check_table_header_only = check_tab_head_only,
-    error_msg = error_msg
+    error_msg               = error_msg
   )
 
   ## actual driver, the rest should not create data used for writing
   wb <- write_data2(
-    wb =  wb,
-    sheet = sheet,
-    data = x,
-    name = name,
-    colNames = colNames,
-    rowNames = rowNames,
-    startRow = startRow,
-    startCol = startCol,
-    applyCellStyle = applyCellStyle,
+    wb              =  wb,
+    sheet           = sheet,
+    data            = x,
+    name            = name,
+    colNames        = colNames,
+    rowNames        = rowNames,
+    startRow        = startRow,
+    startCol        = startCol,
+    applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings = na.strings,
-    data_table = data_table,
-    inline_strings = inline_strings
+    na.strings      = na.strings,
+    data_table      = data_table,
+    inline_strings  = inline_strings
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -948,6 +950,39 @@ write_data_table <- function(
       tableName <- paste0("Table", as.character(NROW(wb$tables) + 1L))
     } else {
       tableName <- wb_validate_table_name(wb, tableName)
+    }
+
+    ## write total rows column. this is a formula and needs to be written separately
+    total_fml <- FALSE
+    total_lbl <- FALSE
+    if (!isFALSE(total_row)) {
+
+      total <- known_subtotal_funs(
+        x         = x,
+        total     = total_row,
+        table     = tableName,
+        row_names = rowNames
+      )
+
+      total_row <- total[[1]]
+      total_fml <- total[[2]]
+      total_lbl <- total[[3]]
+
+      wb <- write_data2(
+        wb              = wb,
+        sheet           = sheet,
+        data            = total_row,
+        name            = name,
+        colNames        = FALSE,
+        rowNames        = FALSE,
+        startRow        = startRow + nrow(x),
+        startCol        = startCol,
+        applyCellStyle  = applyCellStyle,
+        removeCellStyle = removeCellStyle,
+        na.strings      = na.strings,
+        data_table      = data_table,
+        inline_strings  = inline_strings
+      )
     }
 
     ## If 0 rows append a blank row
@@ -972,21 +1007,22 @@ write_data_table <- function(
 
     ref1 <- paste0(int2col(startCol), startRow)
     ref2 <- paste0(int2col(startCol + nCol - !rowNames), startRow + nRow)
-    ref <- paste(ref1, ref2, sep = ":")
+    ref  <- paste(ref1, ref2, sep = ":")
 
     ## create table.xml and assign an id to worksheet tables
     wb$buildTable(
-      sheet = sheet,
-      colNames = col_names,
-      ref = ref,
-      showColNames = colNames,
-      tableStyle = tableStyle,
-      tableName = tableName,
-      withFilter = withFilter,
-      totalsRowCount = 0L,
-      showFirstColumn = firstColumn,
-      showLastColumn = lastColumn,
-      showRowStripes = bandedRows,
+      sheet             = sheet,
+      colNames          = col_names,
+      ref               = ref,
+      showColNames      = colNames,
+      tableStyle        = tableStyle,
+      tableName         = tableName,
+      totalLabel        = total_lbl,
+      withFilter        = withFilter,
+      totalsRowCount    = total_fml,
+      showFirstColumn   = firstColumn,
+      showLastColumn    = lastColumn,
+      showRowStripes    = bandedRows,
       showColumnStripes = bandedCols
     )
   }
@@ -1210,6 +1246,7 @@ write_datatable <- function(
     remove_cell_style = FALSE,
     na.strings        = na_strings(),
     inline_strings    = TRUE,
+    total_row         = FALSE,
     ...
 ) {
 
@@ -1238,6 +1275,7 @@ write_datatable <- function(
     applyCellStyle  = apply_cell_style,
     removeCellStyle = remove_cell_style,
     na.strings      = na.strings,
-    inline_strings  = inline_strings
+    inline_strings  = inline_strings,
+    total_row       = total_row
   )
 }

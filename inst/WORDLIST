@@ -195,6 +195,7 @@ posixt
 pre
 printTitleCols
 printTitleRows
+priori
 pugi
 pugixml
 queryTables
@@ -239,6 +240,7 @@ tableStyle
 tablename
 textLength
 th
+totalLabel
 totalRow
 totalsRowCount
 twoCell

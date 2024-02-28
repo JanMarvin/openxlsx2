@@ -260,10 +260,31 @@ wb_add_data <- function(
 #' @param last_column logical. If `TRUE`, the last column is bold.
 #' @param banded_rows logical. If `TRUE`, rows are color banded.
 #' @param banded_cols logical. If `TRUE`, the columns are color banded.
+#' @param total_row logical. With the default `FALSE` no total row is added.
 #' @param ... additional arguments
+#'
+#' @details # Modify total row argument
+#' It is possible to further tweak the total row. In addition to the default
+#' `FALSE` possible values are `TRUE` (the xlsx file will create column sums
+#' each variable).
+#'
+#' In addition it is possible to tweak this further using a character string
+#' with one of the following functions for each variable: `"average"`,
+#' `"count"`, `"countNums"`, `"max"`, `"min"`, `"stdDev"`, `"sum"`, `"var"`.
+#' It is possible to leave the cell empty `"none"` or to create a text input
+#' using a named character with name `text` like: `c(text = "Total")`.
+#' It's also possible to pass other spreadsheet software functions if they
+#' return a single value and hence `"SUM"` would work too.
 #'
 #' @family worksheet content functions
 #' @family workbook wrappers
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()$
+#'   add_data_table(
+#'     x = as.data.frame(USPersonalExpenditure),
+#'     row_names = TRUE,
+#'     total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM")
+#'   )
 #' @export
 wb_add_data_table <- function(
     wb,
@@ -286,6 +307,7 @@ wb_add_data_table <- function(
     remove_cell_style = FALSE,
     na.strings        = na_strings(),
     inline_strings    = TRUE,
+    total_row        = FALSE,
     ...
 ) {
   assert_workbook(wb)
@@ -309,6 +331,7 @@ wb_add_data_table <- function(
     remove_cell_style = remove_cell_style,
     na.strings        = na.strings,
     inline_strings    = inline_strings,
+    total_row        = total_row,
     ...               = ...
   )
 }
@@ -530,7 +553,7 @@ wb_add_slicer <- function(
 #' cells (see the `MMULT()` example below). For this type of formula, the
 #' output range must be known a priori and passed to `dims`, otherwise only the
 #' value of the first cell will be returned. This type of formula, whose result
-#' extends over several cells, is only possible with scalar values. If a vector
+#' extends over several cells, is only possible with single strings. If a vector
 #' is passed, it is only possible to return individual cells.
 #'
 #' @param wb A Workbook object containing a worksheet.

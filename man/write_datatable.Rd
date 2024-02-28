@@ -25,6 +25,7 @@ write_datatable(
   remove_cell_style = FALSE,
   na.strings = na_strings(),
   inline_strings = TRUE,
+  total_row = FALSE,
   ...
 )
 }
@@ -76,6 +77,8 @@ columns to a character vector e.g.
 \code{\link[=na_strings]{na_strings()}} uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
+
+\item{total_row}{logical. With the default \code{FALSE} no total row is added.}
 
 \item{...}{additional arguments}
 }

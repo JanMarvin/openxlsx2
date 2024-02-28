@@ -6,12 +6,12 @@
 #' columns of `x` with class `Date` or `POSIXt` are automatically
 #' styled as dates and datetimes respectively.
 #'
-#' @param x An object or a list of objects that can be handled by [wb_add_data()] to write to file
-#' @param file An xlsx file name
+#' @param x An object or a list of objects that can be handled by [wb_add_data()] to write to file.
+#' @param file An optional xlsx file name. If no file is passed, the object is not written to disk and only a workbook object is returned.
 #' @param as_table If `TRUE`, will write as a data table, instead of data.
 #' @inheritDotParams wb_workbook creator
 #' @inheritDotParams wb_add_worksheet sheet grid_lines tab_color zoom
-#' @inheritDotParams wb_add_data_table start_col start_row col_names row_names na.strings
+#' @inheritDotParams wb_add_data_table start_col start_row col_names row_names na.strings total_row
 #' @inheritDotParams wb_add_data start_col start_row col_names row_names na.strings
 #' @inheritDotParams wb_freeze_pane first_active_row first_active_col first_row first_col
 #' @inheritDotParams wb_set_col_widths widths
@@ -49,7 +49,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   arguments <- c(ls(), "creator",  "sheet_name", "grid_lines",
     "tab_color", "tab_colour",
     "zoom", "header", "footer", "even_header", "even_footer", "first_header",
-    "first_footer", "start_col", "start_row",
+    "first_footer", "start_col", "start_row", "total_row",
     "col.names", "row.names", "col_names", "row_names", "table_style",
     "table_name", "with_filter", "first_active_row", "first_active_col",
     "first_row", "first_col", "col_widths", "na.strings",
@@ -259,6 +259,11 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     tableStyle <- params$table_style
   }
 
+  totalRow <- FALSE
+  if ("total_row" %in% names(params)) {
+    totalRow <- params$total_row
+  }
+
   na.strings <-
     if ("na.strings" %in% names(params)) {
       params$na.strings
@@ -356,7 +361,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
         table_style = tableStyle[[i]],
         table_name  = NULL,
         with_filter = withFilter[[i]],
-        na.strings  = na.strings
+        na.strings  = na.strings,
+        total_row   = totalRow
       )
     } else {
       # TODO add_data()?
@@ -440,6 +446,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     }
   }
 
-  wb_save(wb, file = file, overwrite = overwrite)
+  if (!missing(file))
+    wb_save(wb, file = file, overwrite = overwrite)
+
   invisible(wb)
 }
