@@ -43,7 +43,7 @@
 #' # add some data
 #' wb$add_data("sheet", cars)
 #' # Add data with piping in a different location
-#' wb <- wb %>% wb_add_data(x = cars, dims = wb_dims(from_col = "D", from_row = 4))
+#' wb <- wb %>% wb_add_data(x = cars, dims = wb_dims(from_dims = "D4"))
 #' # open it in your default spreadsheet software
 #' if (interactive()) wb$open()
 #' ```

@@ -6,6 +6,8 @@
 
 * `wb_add_data_table()` gained a new `total_row` argument. This allows to add a total row to spreadsheets including text and spreadsheet formulas.
 
+* `wb_dims()` now accepts `from_dims` to specify a starting cell [960](https://github.com/JanMarvin/openxlsx2/pull/960).
+
 ## Fixes
 
 * Export `wb_add_ignore_error()`. [955](https://github.com/JanMarvin/openxlsx2/pull/955)

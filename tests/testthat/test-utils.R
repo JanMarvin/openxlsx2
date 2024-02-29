@@ -256,6 +256,27 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
   # Style row names of an object
 })
 
+test_that("wb_dims() handles `from_dims`", {
+  expect_equal(
+    wb_dims(from_dims = "A3"),
+    "A3"
+  )
+  expect_error(
+    wb_dims(from_dims = "A1", from_col = 2)
+  )
+  expect_error(
+    wb_dims(from_dims = "A1", from_row = 2)
+  )
+  expect_error(
+    wb_dims(from_dims = "A1", from_row = 2, from_col = 2)
+  )
+  expect_equal(
+    wb_dims(x = mtcars, from_dims = "B7"),
+    wb_dims(x = mtcars, from_col = "B", from_row = 7)
+  )
+  expect_error(wb_dims(from_dims = "65"))
+})
+
 test_that("create_char_dataframe", {
 
   exp <- data.frame(x1 = rep("", 5), z1 = rep("", 5), stringsAsFactors = FALSE)

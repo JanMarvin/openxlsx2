@@ -177,6 +177,9 @@ NULL
 #' @export
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
+  # FIXME gives a hard to debug error if providing garbage x
+  # dims_to_rowcol("65")
+  #> Error stoi
   dims <- x
   if (length(x) == 1 && grepl(";", x))
     dims <- unlist(strsplit(x, ";"))
@@ -250,7 +253,7 @@ rowcol_to_dim <- function(row, col) {
 check_wb_dims_args <- function(args, select = NULL) {
   select <- match.arg(select, c("x", "data", "col_names", "row_names"))
 
-  cond_acceptable_len_1 <- !is.null(args$from_row) || !is.null(args$from_col) || !is.null(args$x)
+  cond_acceptable_len_1 <- !is.null(args$from_row) || !is.null(args$from_col) || !is.null(args$x) || !is.null(args$from_dims)
   nams <- names(args) %||% rep("", length(args))
   all_args_unnamed <- !any(nzchar(nams))
 
@@ -259,7 +262,7 @@ check_wb_dims_args <- function(args, select = NULL) {
     sentence_unnamed <- ifelse(all_args_unnamed, " unnamed ", " ")
     stop(
       "Supplying a single", sentence_unnamed, "argument to `wb_dims()` is not supported. \n",
-      "Use any of `x`, `from_row` `from_col`. You can also use `rows` and `cols`, or `dims = NULL`",
+      "Use any of `x`, `from_dims`, `from_row` `from_col`. You can also use `rows` and `cols`, or `dims = NULL`",
       call. = FALSE
     )
   }
@@ -422,7 +425,7 @@ determine_select_valid <- function(args, select = NULL) {
 #' If you need another behavior, use `wb_dims()` without supplying `x`.
 #'
 #' * `x` An object (typically a `matrix` or a `data.frame`, but a vector is also accepted.)
-#' * `from_row` / `from_col` the starting position of `x`
+#' * `from_row` / `from_col` / `from_dims` the starting position of `x`
 #'   (The `dims` returned will assume that the top left corner of `x` is at `from_row / from_col`
 #' * `rows` Optional Which row span in `x` should this apply to.
 #'   If `rows` = 0, only column names will be affected.
@@ -440,7 +443,7 @@ determine_select_valid <- function(args, select = NULL) {
 #' In the `add_data()` / `add_font()` example, if writing the data with row names
 #'
 #' @param ... construct `dims` arguments, from rows/cols vectors or objects that
-#'   can be coerced to data frame. `x`, `rows`, `cols`, `from_row`, `from_col`,
+#'   can be coerced to data frame. `x`, `rows`, `cols`, `from_row`, `from_col`, `from_dims`
 #'   `row_names`, and `col_names` are accepted.
 #' @param select A string, one of the followings.
 #'    it improves the selection of various parts of `x`
@@ -466,7 +469,7 @@ determine_select_valid <- function(args, select = NULL) {
 #' # provide `from_col` / `from_row`
 #' wb_dims(rows = 1:10, cols = c("A", "B", "C"), from_row = 2)
 #' wb_dims(rows = 1:10, cols = 1:10, from_col = 2)
-#'
+#' wb_dims(rows = 1:10, cols = 1:10, from_dims = "B1")
 #' # or objects
 #' wb_dims(x = mtcars, col_names = TRUE)
 #'
@@ -510,13 +513,12 @@ wb_dims <- function(..., select = NULL) {
   len <- length(args)
 
   if (len == 0 || (len == 1 && is.null(args[[1]]))) {
-    stop("`wb_dims()` requires `rows`, `cols`, `from_row`, `from_col`, or `x`.")
-    return("A1")
+    stop("`wb_dims()` requires `rows`, `cols`, `from_row`, `from_col`, `from_dims`, or `x`.")
   }
 
   # nams cannot be NULL now
   nams <- names(args) %||% rep("", len)
-  valid_arg_nams <- c("x", "rows", "cols", "from_row", "from_col", "row_names", "col_names")
+  valid_arg_nams <- c("x", "rows", "cols", "from_row", "from_col", "from_dims", "row_names", "col_names")
   any_args_named <- any(nzchar(nams))
   # unused, but can be used, if we need to check if any, but not all
   # Check if valid args were provided if any argument is named.
@@ -550,7 +552,7 @@ wb_dims <- function(..., select = NULL) {
   if (nams[1] == "" && !ok_if_arg1_unnamed) {
     stop(
       "The first argument must either be named or be a vector.",
-      "Providing a single named argument must either be `from_row`, `from_col` or `x`."
+      "Providing a single named argument must either be `from_dims` `from_row`, `from_col` or `x`."
     )
   }
 
@@ -587,10 +589,23 @@ wb_dims <- function(..., select = NULL) {
     stop("Internal error, all arguments should be named after this point.")
   }
 
+  # handle from_dims
+
+  if (!is.null(args$from_dims)) {
+    if (!is.null(args$from_col) || !is.null(args$from_row)) {
+      stop("Can't handle `from_row` and `from_col` if `from_dims` is supplied.")
+    }
+    # transform to
+    from_row_and_col <- dims_to_rowcol(args$from_dims, as_integer = TRUE)
+    args$from_col <- from_row_and_col[[1]]
+    args$from_row <- from_row_and_col[[2]]
+    args$from_dims <- NULL
+  }
+
   # After this point, all unnamed problems are solved ;)
   x <- args$x
   if (!is.null(select) && is.null(args$x)) {
-    stop("`select` should only be provided with `x`.")
+    stop("`select` must only be provided with `x`.")
   }
 
   # little helper that streamlines which inputs cannot be
