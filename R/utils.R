@@ -591,7 +591,6 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # handle from_dims
-
   if (!is.null(args$from_dims)) {
     if (!is.null(args$from_col) || !is.null(args$from_row)) {
       stop("Can't handle `from_row` and `from_col` if `from_dims` is supplied.")
@@ -607,19 +606,33 @@ wb_dims <- function(..., select = NULL) {
     from_col <- col2int(from_row_and_col[[1]])
     from_row <- as.integer(from_row_and_col[[2]])
 
-    # can only be one
+    # there can be only one
     if (length(c(left, right, above, below)) > 1)
       stop("can only be one direction")
 
+    # default is column names and no row names
+    cnms <- args$col_names %||% 1
+    rnms <- args$row_names %||% 0
+
+    # NCOL(NULL)/NROW(NULL) could work as well, but the behavior might have
+    # changed recently.
+    if (!is.null(args$x)) {
+      width_x  <- ncol(args$x) + rnms
+      height_x <- nrow(args$x) + cnms
+    } else {
+      width_x  <- 1
+      height_x <- 1
+    }
+
     if (!is.null(left)) {
-      fcol <- min(from_col) - left - ncol(args$x) + 1L
+      fcol <- min(from_col) - left - width_x + 1L
       frow <- min(from_row)
     } else if (!is.null(right)) {
       fcol <- max(from_col) + right
       frow <- min(from_row)
     } else if (!is.null(above)) {
       fcol <- min(from_col)
-      frow <- min(from_row) - above - nrow(args$x)
+      frow <- min(from_row) - above - height_x + 1L
     } else if (!is.null(below)) {
       fcol <- min(from_col)
       frow <- max(from_row) + below
@@ -638,8 +651,8 @@ wb_dims <- function(..., select = NULL) {
       frow <- 1
     }
 
-    args$from_col <- int2col(fcol)
-    args$from_row <- frow
+    args$from_col  <- int2col(fcol)
+    args$from_row  <- frow
     args$from_dims <- NULL
 
   }
