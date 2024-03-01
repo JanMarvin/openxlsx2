@@ -5068,7 +5068,7 @@ wbWorkbook <- R6::R6Class(
         imageNo <- 1L
       }
 
-      if (length(self$drawings_rels) >= sheet_drawing) {
+      if (length(self$drawings_rels) >= sheet_drawing && !all(self$drawings_rels[[sheet_drawing]] == "")) {
         next_id <- get_next_id(self$drawings_rels[[sheet_drawing]])
       } else {
         next_id <- "rId1"
