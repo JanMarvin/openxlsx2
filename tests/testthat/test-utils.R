@@ -256,6 +256,27 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
   # Style row names of an object
 })
 
+test_that("wb_dims() handles `from_dims`", {
+  expect_equal(
+    wb_dims(from_dims = "A3"),
+    "A3"
+  )
+  expect_error(
+    wb_dims(from_dims = "A1", from_col = 2)
+  )
+  expect_error(
+    wb_dims(from_dims = "A1", from_row = 2)
+  )
+  expect_error(
+    wb_dims(from_dims = "A1", from_row = 2, from_col = 2)
+  )
+  expect_equal(
+    wb_dims(x = mtcars, from_dims = "B7"),
+    wb_dims(x = mtcars, from_col = "B", from_row = 7)
+  )
+  expect_error(wb_dims(from_dims = "65"))
+})
+
 test_that("create_char_dataframe", {
 
   exp <- data.frame(x1 = rep("", 5), z1 = rep("", 5), stringsAsFactors = FALSE)
@@ -421,6 +442,56 @@ test_that("fmt_txt works", {
 
   exp <- "<r><rPr><b/></rPr><t>0 &lt; 1</t></r>"
   got <- unclass(txt)
+  expect_equal(exp, got)
+
+})
+
+test_that("wb_dims(from_dims) positioning works", {
+
+  mm <- matrix(1:4, 2, 2)
+
+  # positioning
+  dims1 <- wb_dims(from_dims = "B2")
+  dims2 <- wb_dims(from_dims = dims1, below = 2)
+  dims3 <- wb_dims(from_dims = dims2, right = 2)
+  dims4 <- wb_dims(from_dims = dims3, above = 2)
+  dims5 <- wb_dims(from_dims = dims4, left = 2)
+
+  exp <- c("B2", "B4", "D4", "D2", "B2")
+  got <- c(dims1, dims2, dims3, dims4, dims5)
+  expect_equal(exp, got)
+
+  # positioning with x
+  dims1 <- wb_dims(from_dims = "B2", x = mm)
+  dims2 <- wb_dims(from_dims = dims1, x = mm, below = 2)
+  dims3 <- wb_dims(from_dims = dims2, x = mm, right = 2)
+  dims4 <- wb_dims(from_dims = dims3, x = mm, above = 2)
+  dims5 <- wb_dims(from_dims = dims4, x = mm, left = 2)
+
+  exp <- c("B2:C4", "B6:C8", "E6:F8", "E2:F4", "B2:C4")
+  got <- c(dims1, dims2, dims3, dims4, dims5)
+  expect_equal(exp, got)
+
+  # col_names = FALSE
+  dims1 <- wb_dims(from_dims = "B2", x = mm, col_names = FALSE)
+  dims2 <- wb_dims(from_dims = dims1, x = mm, below = 2, col_names = FALSE)
+  dims3 <- wb_dims(from_dims = dims2, x = mm, right = 2, col_names = FALSE)
+  dims4 <- wb_dims(from_dims = dims3, x = mm, above = 2, col_names = FALSE)
+  dims5 <- wb_dims(from_dims = dims4, x = mm, left = 2, col_names = FALSE)
+
+  exp <- c("B2:C3", "B5:C6", "E5:F6", "E2:F3", "B2:C3")
+  got <- c(dims1, dims2, dims3, dims4, dims5)
+  expect_equal(exp, got)
+
+  # row_names = TRUE
+  dims1 <- wb_dims(from_dims = "B2", x = mm, row_names = TRUE)
+  dims2 <- wb_dims(from_dims = dims1, x = mm, below = 2, row_names = TRUE)
+  dims3 <- wb_dims(from_dims = dims2, x = mm, right = 2, row_names = TRUE)
+  dims4 <- wb_dims(from_dims = dims3, x = mm, above = 2, row_names = TRUE)
+  dims5 <- wb_dims(from_dims = dims4, x = mm, left = 2, row_names = TRUE)
+
+  exp <- c("B2:D4", "B6:D8", "F6:H8", "F2:H4", "B2:D4")
+  got <- c(dims1, dims2, dims3, dims4, dims5)
   expect_equal(exp, got)
 
 })

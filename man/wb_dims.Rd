@@ -8,7 +8,7 @@ wb_dims(..., select = NULL)
 }
 \arguments{
 \item{...}{construct \code{dims} arguments, from rows/cols vectors or objects that
-can be coerced to data frame. \code{x}, \code{rows}, \code{cols}, \code{from_row}, \code{from_col},
+can be coerced to data frame. \code{x}, \code{rows}, \code{cols}, \code{from_row}, \code{from_col}, \code{from_dims}
 \code{row_names}, and \code{col_names} are accepted.}
 
 \item{select}{A string, one of the followings.
@@ -38,7 +38,7 @@ to select only the data / row or columns in \code{x}
 If you need another behavior, use \code{wb_dims()} without supplying \code{x}.
 \itemize{
 \item \code{x} An object (typically a \code{matrix} or a \code{data.frame}, but a vector is also accepted.)
-\item \code{from_row} / \code{from_col} the starting position of \code{x}
+\item \code{from_row} / \code{from_col} / \code{from_dims} the starting position of \code{x}
 (The \code{dims} returned will assume that the top left corner of \code{x} is at \code{from_row / from_col}
 \item \code{rows} Optional Which row span in \code{x} should this apply to.
 If \code{rows} = 0, only column names will be affected.
@@ -113,7 +113,7 @@ wb_dims(rows = 1:10, cols = 1:10)
 # provide `from_col` / `from_row`
 wb_dims(rows = 1:10, cols = c("A", "B", "C"), from_row = 2)
 wb_dims(rows = 1:10, cols = 1:10, from_col = 2)
-
+wb_dims(rows = 1:10, cols = 1:10, from_dims = "B1")
 # or objects
 wb_dims(x = mtcars, col_names = TRUE)
 
