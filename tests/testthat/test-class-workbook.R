@@ -504,6 +504,10 @@ test_that("add_drawing works", {
 
   expect_length(wb$drawings, 1L)
 
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  expect_silent(wb$add_image(file = img))
+
 })
 
 test_that("add_drawing works", {
