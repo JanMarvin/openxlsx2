@@ -1,10 +1,10 @@
-# openxlsx2 (in development)
+# openxlsx2 (development version)
 
 ## New features
 
-* It's now possible to pass array formula vectors to `wb_add_formula()`.
+* It's now possible to pass array formula vectors to `wb_add_formula()`. [958](https://github.com/JanMarvin/openxlsx2/pull/958)
 
-* `wb_add_data_table()` gained a new `total_row` argument. This allows to add a total row to spreadsheets including text and spreadsheet formulas.
+* `wb_add_data_table()` gained a new `total_row` argument. This allows to add a total row to spreadsheets including text and spreadsheet formulas. [959](https://github.com/JanMarvin/openxlsx2/pull/959)
 
 * `wb_dims()` now accepts `from_dims` to specify a starting cell [960](https://github.com/JanMarvin/openxlsx2/pull/960).
 
