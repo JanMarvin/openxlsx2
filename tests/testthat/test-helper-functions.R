@@ -63,13 +63,13 @@ test_that("wb_page_setup example", {
 
   ## landscape page scaled to 50%
   wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
-  exp <- "<pageSetup paperSize=\"9\" orientation=\"landscape\" scale = \"50\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\"/>"
+  exp <- "<pageSetup paperSize=\"9\" orientation=\"landscape\" horizontalDpi=\"300\" verticalDpi=\"300\" fitToHeight=\"0\" fitToWidth=\"0\" scale=\"50\"/>"
   expect_equal(exp, wb$worksheets[[1]]$pageSetup)
 
 
   ## portrait page scales to 300% with 0.5in left and right margins
   wb$page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
-  exp <- "<pageSetup paperSize=\"9\" orientation=\"portrait\" scale = \"300\" fitToWidth=\"0\" fitToHeight=\"0\" horizontalDpi=\"300\" verticalDpi=\"300\"/>"
+  exp <- "<pageSetup paperSize=\"9\" orientation=\"portrait\" horizontalDpi=\"300\" verticalDpi=\"300\" fitToHeight=\"0\" fitToWidth=\"0\" scale=\"300\"/>"
   expect_equal(exp, wb$worksheets[[2]]$pageSetup)
 
 

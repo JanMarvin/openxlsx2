@@ -1624,6 +1624,8 @@ wb_set_header_footer <- function(
 #' @param ... additional arguments
 #' @export
 #' @details
+#'  When adding fitting to width and height manual adjustment of the scaling factor is required. Setting `fit_to_width` and `fit_to_height` only tells spreadsheet software that the scaling was applied, but not which scaling was applied.
+#'
 #' `paper_size` is an integer corresponding to:
 #'
 #'  | size   | "paper type"                                         |
@@ -1694,6 +1696,51 @@ wb_set_header_footer <- function(
 #'  | 66     |  A2 paper (420 mm by 594 mm)                         |
 #'  | 67     |  A3 transverse paper (297 mm by 420 mm)              |
 #'  | 68     |  A3 extra transverse paper (322 mm by 445 mm)        |
+#' | 69 | Japanese Double Postcard (200 mm x 148 mm) 70=A6(105mmx148mm) |
+#' | 71 | Japanese Envelope Kaku #2 |
+#' | 72 | Japanese Envelope Kaku #3 |
+#' | 73 | Japanese Envelope Chou #3 |
+#' | 74 | Japanese Envelope Chou #4 |
+#' | 75 | Letter Rotated (11in x 8 1/2 11 in) |
+#' | 76 | A3 Rotated (420 mm x 297 mm) |
+#' | 77 | A4 Rotated (297 mm x 210 mm) |
+#' | 78 | A5 Rotated (210 mm x 148 mm) |
+#' | 79 | B4 (JIS) Rotated (364 mm x 257 mm) |
+#' | 80 | B5 (JIS) Rotated (257 mm x 182 mm) |
+#' | 81 | Japanese Postcard Rotated (148 mm x 100 mm) |
+#' | 82 | Double Japanese Postcard Rotated (148 mm x 200 mm) 83 = A6 Rotated (148 mm x 105 mm) |
+#' | 84 | Japanese Envelope Kaku #2 Rotated |
+#' | 85 | Japanese Envelope Kaku #3 Rotated |
+#' | 86 | Japanese Envelope Chou #3 Rotated |
+#' | 87 | Japanese Envelope Chou #4 Rotated 88=B6(JIS)(128mmx182mm) |
+#' | 89 | B6 (JIS) Rotated (182 mm x 128 mm) |
+#' | 90 | (12 in x 11 in) |
+#' | 91 | Japanese Envelope You #4 |
+#' | 92 | Japanese Envelope You #4 Rotated 93=PRC16K(146mmx215mm) 94=PRC32K(97mmx151mm) |
+#' | 95 | PRC 32K(Big) (97 mm x 151 mm) |
+#' | 96 | PRC Envelope #1 (102 mm x 165 mm) |
+#' | 97 | PRC Envelope #2 (102 mm x 176 mm) |
+#' | 98 | PRC Envelope #3 (125 mm x 176 mm) |
+#' | 99 | PRC Envelope #4 (110 mm x 208 mm) |
+#' | 100 | PRC Envelope #5 (110 mm x 220 mm) |
+#' | 101 | PRC Envelope #6 (120 mm x 230 mm) |
+#' | 102 | PRC Envelope #7 (160 mm x 230 mm) |
+#' | 103 | PRC Envelope #8 (120 mm x 309 mm) |
+#' | 104 | PRC Envelope #9 (229 mm x 324 mm) |
+#' | 105 | PRC Envelope #10 (324 mm x 458 mm) |
+#' | 106 | PRC 16K Rotated |
+#' | 107 | PRC 32K Rotated |
+#' | 108 | PRC 32K(Big) Rotated |
+#' | 109 | PRC Envelope #1 Rotated (165 mm x 102 mm) |
+#' | 110 | PRC Envelope #2 Rotated (176 mm x 102 mm) |
+#' | 111 | PRC Envelope #3 Rotated (176 mm x 125 mm) |
+#' | 112 | PRC Envelope #4 Rotated (208 mm x 110 mm) |
+#' | 113 | PRC Envelope #5 Rotated (220 mm x 110 mm) |
+#' | 114 | PRC Envelope #6 Rotated (230 mm x 120 mm) |
+#' | 115 | PRC Envelope #7 Rotated (230 mm x 160 mm) |
+#' | 116 | PRC Envelope #8 Rotated (309 mm x 120 mm) |
+#' | 117 | PRC Envelope #9 Rotated (324 mm x 229 mm) |
+#' | 118 | PRC Envelope #10 Rotated (458 mm x 324 mm) |
 #'
 #' @examples
 #' wb <- wb_workbook()

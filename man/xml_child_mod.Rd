@@ -13,13 +13,15 @@ xml_child_mod(
 )
 }
 \arguments{
+\item{xml_node}{some valid xml_node}
+
+\item{xml_child}{a name of a child node that should be modified}
+
 \item{xml_attributes}{R vector of named attributes}
 
 \item{xml_children}{R character vector children attached to the xml_node}
 
 \item{...}{additional attributes passed to function}
-
-\item{xml_content}{some valid xml_node}
 }
 \description{
 adds or updates attribute(s) in children of existing xml node
@@ -38,4 +40,7 @@ xml_child_mod(xml, xml_child = "baz", xml_children = "<openxlsx2/>")
 xml_child_mod(xml, xml_child = "bar", xml_attributes = c(a = "1", b = "2"))
 xml_child_mod(xml, xml_child = "baz", xml_attributes = c(a = "1", b = "2"))
 
+}
+\seealso{
+\code{\link[=xml_attr_mod]{xml_attr_mod()}}
 }

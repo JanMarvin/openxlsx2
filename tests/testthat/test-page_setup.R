@@ -26,10 +26,7 @@ test_that("Page setup", {
   expect_true(grepl('fitToHeight="1"', v))
 
   pr <- wb$worksheets[[1]]$sheetPr
-
-  # SheetPr will be a character vector of length 2; the first entry will
-  # be for pageSetupPr, inserted by `fitToWidth`/`fitToHeight`.
-  expect_true(grepl('<outlinePr summaryBelow="1" summaryRight="1"/>', pr[2], fixed = TRUE))
+  expect_true(grepl('<outlinePr summaryBelow="1" summaryRight="1"/>', pr, fixed = TRUE))
 })
 
 test_that("page_breaks", {
