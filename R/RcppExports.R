@@ -236,6 +236,14 @@ xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
 }
 
+xml_find_node <- function(node, chld) {
+    .Call(`_openxlsx2_xml_find_node`, node, chld)
+}
+
+xml_replace_child <- function(node, path, replacement, escapes = FALSE, pointer = FALSE) {
+    .Call(`_openxlsx2_xml_replace_child`, node, path, replacement, escapes, pointer)
+}
+
 xml_si_to_txt <- function(doc) {
     .Call(`_openxlsx2_xml_si_to_txt`, doc)
 }

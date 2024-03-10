@@ -773,3 +773,75 @@ SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std:
     return Rcpp::wrap(Rcpp::String(oss.str()));
   }
 }
+
+// xml_find_node -- used only in combination with xml_replace_child
+// @param node xml_node a child is searched in
+// @param child the xml_node to search
+// @param pointer bool if pointer should be returned
+// @param escapes bool if escapes should be used
+// @export
+// [[Rcpp::export]]
+SEXP xml_find_node(XPtrXML node, std::string chld) {
+
+  struct Local {
+    Local(std::string chld) {this->chld = chld;}
+
+    bool operator()(pugi::xml_node node) const {
+      std::string xml_name = node.name();
+      return xml_name.compare(chld.c_str()) == 0;
+    }
+
+    std::string chld;
+  };
+
+  unsigned int pugi_format_flags = pugi_format(node);
+  pugi::xml_node found = node->find_node(Local(chld));
+  // could return the value instead
+
+  std::ostringstream oss;
+  found.print(oss, " ", pugi_format_flags);
+  SEXP name = Rcpp::wrap(Rcpp::String(oss.str()));
+
+  Rcpp::CharacterVector out = Rcpp::wrap(Rcpp::String(found.path()));
+  out.attr("names") = name;
+
+  return out;
+}
+
+// xml_replace_child
+// @param node xml_node a child is searched in
+// @param child the xml_node to search
+// @param pointer bool if pointer should be returned
+// @param escapes bool if escapes should be used
+// @export
+// [[Rcpp::export]]
+SEXP xml_replace_child(XPtrXML node, std::string path, std::string replacement, bool escapes = false, bool pointer = false) {
+
+
+  // pugi::parse_default without escapes flag
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
+
+  unsigned int pugi_format_flags = pugi_format(node);
+
+  pugi::xml_node got = node->select_node(path.c_str()).node();
+
+  pugi::xml_document rplcmnt;
+  pugi::xml_parse_result result = rplcmnt.load_string(replacement.c_str(), pugi_parse_flags);
+
+  // check if result is a valid xml_node
+  if (result) {
+    node->select_node(path.c_str()).parent().insert_copy_after(rplcmnt.first_child(), got);
+  } else {
+    Rf_error("Could not load replacement string");
+  }
+  node->select_node(path.c_str()).parent().remove_child(got);
+
+  if (pointer) {
+    return (node);
+  } else {
+    std::ostringstream oss;
+    node->print(oss, " ", pugi_format_flags);
+    return Rcpp::wrap(Rcpp::String(oss.str()));
+  }
+}

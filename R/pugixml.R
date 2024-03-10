@@ -312,7 +312,9 @@ xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, ...) {
 
   if (all(xml_child == "")) return(xml_node)
 
-  xml_node <- read_xml(xml_node, ...)
+  if (!inherits(xml_node, "pugi_xml")) xml_node <- read_xml(xml_node, ...)
+  assert_class(xml_child, "character")
+
   xml_child <- read_xml(xml_child, ...)
 
   if (missing(level)) {
@@ -372,6 +374,72 @@ xml_rm_child <- function(xml_node, xml_child, level, which = 0, pointer = FALSE,
     if (length(level) == 2)
       z <- xml_remove_child3(xml_node, xml_child, level[[1]], level[[2]], which, pointer)
 
+  }
+
+  return(z)
+}
+
+
+# inner function update
+upd_child <- function(child, xml_attributes, xml_children, ...) {
+
+if (!is.null(xml_attributes)) {
+  child <- xml_attr_mod(child, xml_attributes = xml_attributes, ...)
+}
+
+if (!is.null(xml_children)) {
+  child <- xml_add_child(child, xml_children, ...)
+}
+
+return(child)
+}
+
+#' adds or updates attribute(s) in children of existing xml node
+#'
+#' @details If a named attribute in `xml_attributes` is "" remove the attribute
+#' from the node.
+#' If `xml_attributes` contains a named entry found in the xml node, it is
+#' updated else it is added as attribute.
+#'
+#' @param xml_content some valid xml_node
+#' @param xml_attributes R vector of named attributes
+#' @param xml_children R character vector children attached to the xml_node
+#' @param ... additional attributes passed to function
+#' @examples
+#' xml <- "<foo><bar a=\"0\"/></foo>"
+#' xml_child_mod(xml, xml_child = "bar", xml_children = "<openxlsx2/>")
+#' xml_child_mod(xml, xml_child = "baz", xml_children = "<openxlsx2/>")
+#'
+#' xml_child_mod(xml, xml_child = "bar", xml_attributes = c(a = "1", b = "2"))
+#' xml_child_mod(xml, xml_child = "baz", xml_attributes = c(a = "1", b = "2"))
+#'
+#' @export
+xml_child_mod <- function(xml_node, xml_child, xml_attributes = NULL, xml_children = NULL, ...) {
+
+  if (missing(xml_node))
+    stop("need xml_node")
+
+  if (missing(xml_child))
+    stop("need xml_child")
+
+  if (!inherits(xml_node, "pugi_xml")) xml_node <- read_xml(xml_node, ...)
+  assert_class(xml_child, "character")
+
+  cld_name <- xml_child
+  xml_name <- xml_node_name(xml_node)
+  xml_clds <- xml_node_name(xml_node, xml_name)
+
+  # check if the child exists, if true, replace it, else add it
+  if (cld_name %in% xml_clds) {
+    message("update child")
+    child <- xml_node(xml_node, xml_name, cld_name)
+    child <- upd_child(child, xml_attributes = xml_attributes, xml_children = xml_children, ... = ...)
+    z     <- xml_replace_child(xml_node, xml_find_node(xml_node, cld_name), child, ...)
+  } else {
+    message("add child")
+    child <- xml_node_create(xml_child, ...)
+    child <- upd_child(child, xml_attributes = xml_attributes, xml_children = xml_children, ... = ...)
+    z     <- xml_add_child(xml_node, child, ...)
   }
 
   return(z)

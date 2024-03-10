@@ -557,6 +557,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// xml_find_node
+SEXP xml_find_node(XPtrXML node, std::string chld);
+RcppExport SEXP _openxlsx2_xml_find_node(SEXP nodeSEXP, SEXP chldSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type chld(chldSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_find_node(node, chld));
+    return rcpp_result_gen;
+END_RCPP
+}
+// xml_replace_child
+SEXP xml_replace_child(XPtrXML node, std::string path, std::string replacement, bool escapes, bool pointer);
+RcppExport SEXP _openxlsx2_xml_replace_child(SEXP nodeSEXP, SEXP pathSEXP, SEXP replacementSEXP, SEXP escapesSEXP, SEXP pointerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::string >::type replacement(replacementSEXP);
+    Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
+    Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_replace_child(node, path, replacement, escapes, pointer));
+    return rcpp_result_gen;
+END_RCPP
+}
 // xml_si_to_txt
 SEXP xml_si_to_txt(XPtrXML doc);
 RcppExport SEXP _openxlsx2_xml_si_to_txt(SEXP docSEXP) {
@@ -987,6 +1014,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_remove_child1", (DL_FUNC) &_openxlsx2_xml_remove_child1, 4},
     {"_openxlsx2_xml_remove_child2", (DL_FUNC) &_openxlsx2_xml_remove_child2, 5},
     {"_openxlsx2_xml_remove_child3", (DL_FUNC) &_openxlsx2_xml_remove_child3, 6},
+    {"_openxlsx2_xml_find_node", (DL_FUNC) &_openxlsx2_xml_find_node, 2},
+    {"_openxlsx2_xml_replace_child", (DL_FUNC) &_openxlsx2_xml_replace_child, 5},
     {"_openxlsx2_xml_si_to_txt", (DL_FUNC) &_openxlsx2_xml_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
