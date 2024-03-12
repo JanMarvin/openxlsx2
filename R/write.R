@@ -783,6 +783,10 @@ write_data_table <- function(
     return(wb)
   }
 
+  # overwrite na.strings with whatever is in the option
+  na.strings <- getOption("openxlsx2.nastrings") %||% na.strings
+
+
   if (data_table && nrow(x) < 1) {
     warning("Found data table with zero rows, adding one.",
             " Modify na with na.strings")
