@@ -267,6 +267,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   na.strings <-
     if ("na.strings" %in% names(params)) {
       params$na.strings
+    } else if (!is.null(getOption("openxlsx2.nastrings"))) {
+      getOption("openxlsx2.nastrings")
     } else {
       na_strings()
     }

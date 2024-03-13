@@ -158,6 +158,7 @@
 #' * `options("openxlsx2.scientificFormat" = 48)`
 #' * `options("openxlsx2.string_nums" = TRUE)` numerics in character columns
 #'    will be converted. `"1"` will be written as `1`
+#' * `options("openxlsx2.nastrings" = "#N/A")` consulted by write and add data functions.
 #' @name openxlsx2_options
 NULL
 # matches enum celltype

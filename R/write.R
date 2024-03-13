@@ -782,6 +782,12 @@ write_data_table <- function(
   if (is.null(x)) {
     return(wb)
   }
+  # overwrite na.strings if nothing was provided
+  # with whatever is in the option if not set to default
+  if (identical(as.character(na.strings), "na_string") &&
+      !is.null(getOption("openxlsx2.nastrings"))) {
+    na.strings <- getOption("openxlsx2.nastrings")
+  }
 
   if (data_table && nrow(x) < 1) {
     warning("Found data table with zero rows, adding one.",
