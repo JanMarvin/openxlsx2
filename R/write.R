@@ -788,7 +788,6 @@ write_data_table <- function(
   # overwrite na.strings if nothing was provided
   # with whatever is in the option if not set to default
   if (is_na_strings(na.strings) && !is.null(getOption("openxlsx2.na.strings"))) {
-
     na.strings <- getOption("openxlsx2.na.strings")
   }
 
