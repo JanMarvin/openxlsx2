@@ -124,7 +124,7 @@ When adding fitting to width and height manual adjustment of the scaling factor 
    66 \tab A2 paper (420 mm by 594 mm) \cr
    67 \tab A3 transverse paper (297 mm by 420 mm) \cr
    68 \tab A3 extra transverse paper (322 mm by 445 mm) \cr
-   69 \tab Japanese Double Postcard (200 mm x 148 mm) 70=A6(105mmx148mm) \cr
+   69 \tab Japanese Double Postcard (200 mm x 148 mm) 70=A6(105mm x 148mm) \cr
    71 \tab Japanese Envelope Kaku #2 \cr
    72 \tab Japanese Envelope Kaku #3 \cr
    73 \tab Japanese Envelope Chou #3 \cr
@@ -140,11 +140,11 @@ When adding fitting to width and height manual adjustment of the scaling factor 
    84 \tab Japanese Envelope Kaku #2 Rotated \cr
    85 \tab Japanese Envelope Kaku #3 Rotated \cr
    86 \tab Japanese Envelope Chou #3 Rotated \cr
-   87 \tab Japanese Envelope Chou #4 Rotated 88=B6(JIS)(128mmx182mm) \cr
+   87 \tab Japanese Envelope Chou #4 Rotated 88=B6(JIS)(128mm x 182mm) \cr
    89 \tab B6 (JIS) Rotated (182 mm x 128 mm) \cr
    90 \tab (12 in x 11 in) \cr
    91 \tab Japanese Envelope You #4 \cr
-   92 \tab Japanese Envelope You #4 Rotated 93=PRC16K(146mmx215mm) 94=PRC32K(97mmx151mm) \cr
+   92 \tab Japanese Envelope You #4 Rotated 93=PRC16K(146mm x 215mm) 94=PRC32K(97mm x 151mm) \cr
    95 \tab PRC 32K(Big) (97 mm x 151 mm) \cr
    96 \tab PRC Envelope #1 (102 mm x 165 mm) \cr
    97 \tab PRC Envelope #2 (102 mm x 176 mm) \cr

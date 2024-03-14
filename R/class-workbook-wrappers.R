@@ -1696,7 +1696,7 @@ wb_set_header_footer <- function(
 #'  | 66     |  A2 paper (420 mm by 594 mm)                                                         |
 #'  | 67     |  A3 transverse paper (297 mm by 420 mm)                                              |
 #'  | 68     |  A3 extra transverse paper (322 mm by 445 mm)                                        |
-#'  | 69     | Japanese Double Postcard (200 mm x 148 mm) 70=A6(105mmx148mm)                        |
+#'  | 69     | Japanese Double Postcard (200 mm x 148 mm) 70=A6(105mm x 148mm)                      |
 #'  | 71     | Japanese Envelope Kaku #2                                                            |
 #'  | 72     | Japanese Envelope Kaku #3                                                            |
 #'  | 73     | Japanese Envelope Chou #3                                                            |
@@ -1712,11 +1712,11 @@ wb_set_header_footer <- function(
 #'  | 84     | Japanese Envelope Kaku #2 Rotated                                                    |
 #'  | 85     | Japanese Envelope Kaku #3 Rotated                                                    |
 #'  | 86     | Japanese Envelope Chou #3 Rotated                                                    |
-#'  | 87     | Japanese Envelope Chou #4 Rotated 88=B6(JIS)(128mmx182mm)                            |
+#'  | 87     | Japanese Envelope Chou #4 Rotated 88=B6(JIS)(128mm x 182mm)                          |
 #'  | 89     | B6 (JIS) Rotated (182 mm x 128 mm)                                                   |
 #'  | 90     | (12 in x 11 in)                                                                      |
 #'  | 91     | Japanese Envelope You #4                                                             |
-#'  | 92     | Japanese Envelope You #4 Rotated 93=PRC16K(146mmx215mm) 94=PRC32K(97mmx151mm)        |
+#'  | 92     | Japanese Envelope You #4 Rotated 93=PRC16K(146mm x 215mm) 94=PRC32K(97mm x 151mm)    |
 #'  | 95     | PRC 32K(Big) (97 mm x 151 mm)                                                        |
 #'  | 96     | PRC Envelope #1 (102 mm x 165 mm)                                                    |
 #'  | 97     | PRC Envelope #2 (102 mm x 176 mm)                                                    |

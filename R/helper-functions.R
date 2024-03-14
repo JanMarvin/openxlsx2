@@ -1068,10 +1068,9 @@ known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
 
 }
 
-
-
-# helper to read sheetPr xml to dataframe
-# @params xml xml_node
+#' helper to read sheetPr xml to dataframe
+#' @param xml xml_node
+#' @noRd
 read_sheetpr <- function(xml) {
   # https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.sheetproperties?view=openxml-2.8.1
   if (!inherits(xml, "pugi_xml")) xml <- read_xml(xml)
@@ -1089,7 +1088,9 @@ read_sheetpr <- function(xml) {
   )
 }
 
-# helper to write sheetPr dataframe to xml
+#' helper to write sheetPr dataframe to xml
+#' @param df a data frame
+#' @noRd
 write_sheetpr <- function(df) {
 
   # we have to preserve a certain order of elements at least for childs

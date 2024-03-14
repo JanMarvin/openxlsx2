@@ -6046,7 +6046,7 @@ wbWorkbook <- R6::R6Class(
       self$set_properties(modifier = name)
     },
 
-    #' @description set_page_setup() this function is intended to supersed page_setup(), but not yet stable.
+    #' @description set_page_setup() this function is intended to supersede page_setup(), but is not yet stable
     #' @param orientation orientation
     #' @param black_and_white black_and_white
     #' @param cell_comments cell_comment
@@ -6075,7 +6075,7 @@ wbWorkbook <- R6::R6Class(
     #' @param summary_row summaryRow
     #' @param summary_col summaryCol
     #' @param tab_color tabColor
-    #' @param ... additonal arguments
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     set_page_setup = function(
       sheet                 = current_sheet(),
