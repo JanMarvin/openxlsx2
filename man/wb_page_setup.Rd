@@ -38,7 +38,7 @@ wb_page_setup(
 
 \item{header, footer}{Margin in inches}
 
-\item{fit_to_width, fit_to_height}{If \code{TRUE}, worksheet is scaled to fit to page width /height on printing.}
+\item{fit_to_width, fit_to_height}{An integer that tells the spreadsheet software on how many pages the scaling should fit. This does not actually scale the sheet.}
 
 \item{paper_size}{See details. Default value is 9 (A4 paper).}
 

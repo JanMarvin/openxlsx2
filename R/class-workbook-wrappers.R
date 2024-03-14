@@ -1616,7 +1616,7 @@ wb_set_header_footer <- function(
 #' @param scale Print scaling. Numeric value between 10 and 400
 #' @param left,right,top,bottom  Page margin in inches
 #' @param header,footer  Margin in inches
-#' @param fit_to_width,fit_to_height If `TRUE`, worksheet is scaled to fit to page width /height on printing.
+#' @param fit_to_width,fit_to_height An integer that tells the spreadsheet software on how many pages the scaling should fit. This does not actually scale the sheet.
 #' @param paper_size See details. Default value is 9 (A4 paper).
 #' @param print_title_rows,print_title_cols Rows / columns to repeat at top of page when printing. Integer vector.
 #' @param summary_row Location of summary rows in groupings. One of "Above" or "Below".
