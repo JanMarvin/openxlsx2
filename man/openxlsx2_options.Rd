@@ -33,5 +33,7 @@ to a cell with \code{\link[=wb_add_thread]{wb_add_thread()}}
 \item \code{options("openxlsx2.scientificFormat" = 48)}
 \item \code{options("openxlsx2.string_nums" = TRUE)} numerics in character columns
 will be converted. \code{"1"} will be written as \code{1}
+\item \code{options("openxlsx2.na.strings" = "#N/A")} consulted by \code{write_xlsx()},
+\code{wb_add_data()} and \code{wb_add_data_table()}.
 }
 }

@@ -8,6 +8,8 @@
 
 * `wb_dims()` now accepts `from_dims` to specify a starting cell [960](https://github.com/JanMarvin/openxlsx2/pull/960).
 
+* You can now set `options(openxlsx2.na.strings)` to a value  to have a default value for `na.strings` in `wb_add_data()`, `wb_add_data_table()`, and `write_xlsx()` [968](https://github.com/JanMarvin/openxlsx2/pull/968).
+
 ## Fixes
 
 * Export `wb_add_ignore_error()`. [955](https://github.com/JanMarvin/openxlsx2/pull/955)

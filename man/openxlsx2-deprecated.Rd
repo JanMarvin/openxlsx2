@@ -17,6 +17,8 @@ to use them in scripts. They originate from openxlsx, but do not fit openxlsx2's
 You should be able to modify
 \itemize{
 \item \code{\link[=delete_data]{delete_data()}} -> \code{\link[=wb_clean_sheet]{wb_clean_sheet()}}
+\item \code{\link[=write_data]{write_data()}} -> \code{\link[=wb_add_data]{wb_add_data()}}
+\item \code{\link[=write_datatable]{write_datatable()}} -> \code{\link[=wb_add_data_table]{wb_add_data_table()}}
 \item \code{\link[=write_comment]{write_comment()}} -> \code{\link[=wb_add_comment]{wb_add_comment()}}
 \item \code{\link[=remove_comment]{remove_comment()}} -> \code{\link[=wb_remove_comment]{wb_remove_comment()}}
 \item \code{\link[=write_formula]{write_formula()}} -> \code{\link[=wb_add_formula]{wb_add_formula()}}

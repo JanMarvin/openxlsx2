@@ -112,7 +112,8 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #' @param apply_cell_style Should we write cell styles to the workbook
 #' @param remove_cell_style keep the cell style?
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   [na_strings()] uses the special `#N/A` value within the workbook.
+#'   looks if `options(openxlsx2.na.strings)` is set. Otherwise [na_strings()]
+#'   uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
 #' @param ... additional arguments
 #' @export

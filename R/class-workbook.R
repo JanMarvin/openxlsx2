@@ -6322,7 +6322,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
 
       if (!table %in% self$tables$tab_name) {
-        stop(sprintf("table '%s' does not exist.", table), call. = FALSE)
+        stop(sprintf("table '%s' does not exist.\n
+                     Call `wb_get_tables()` to get existing table names", table),
+             call. = FALSE)
       }
 
       ## delete table object (by flagging as deleted)

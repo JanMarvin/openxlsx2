@@ -158,6 +158,8 @@
 #' * `options("openxlsx2.scientificFormat" = 48)`
 #' * `options("openxlsx2.string_nums" = TRUE)` numerics in character columns
 #'    will be converted. `"1"` will be written as `1`
+#' * `options("openxlsx2.na.strings" = "#N/A")` consulted by `write_xlsx()`,
+#'   `wb_add_data()` and `wb_add_data_table()`.
 #' @name openxlsx2_options
 NULL
 # matches enum celltype
@@ -197,6 +199,8 @@ openxlsx2_celltype <- c(
 #'
 #' You should be able to modify
 #' * [delete_data()] -> [wb_clean_sheet()]
+#' * [write_data()] -> [wb_add_data()]
+#' * [write_datatable()] -> [wb_add_data_table()]
 #' * [write_comment()] -> [wb_add_comment()]
 #' * [remove_comment()] -> [wb_remove_comment()]
 #' * [write_formula()] -> [wb_add_formula()]
