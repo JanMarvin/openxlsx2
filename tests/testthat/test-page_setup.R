@@ -2,6 +2,7 @@ test_that("Page setup", {
   wb <- wb_workbook()
   wb$add_worksheet("s1")
   wb$add_worksheet("s2")
+  wb$add_worksheet("s3")
 
   wb$page_setup(
     sheet = "s1", orientation = "landscape", scale = 100, left = 0.1,
@@ -17,6 +18,10 @@ test_that("Page setup", {
     summary_row = "below", summary_col = "right"
   )
 
+  wb$set_page_setup(
+    sheet = "s3", tab_color = wb_color("green")
+  )
+
   expect_equal(wb$worksheets[[1]]$pageSetup, wb$worksheets[[2]]$pageSetup)
 
   v <- gsub(" ", "", wb$worksheets[[1]]$pageSetup, fixed = TRUE)
@@ -27,6 +32,17 @@ test_that("Page setup", {
 
   pr <- wb$worksheets[[1]]$sheetPr
   expect_true(grepl('<outlinePr summaryBelow="1" summaryRight="1"/>', pr, fixed = TRUE))
+
+  pr <- wb$worksheets[[3]]$sheetPr
+  expect_equal("<sheetPr><tabColor rgb=\"FF00FF00\"/></sheetPr>", pr)
+
+  wb$set_page_setup(
+    sheet = "s3", tab_colour = ""
+  )
+
+  pr <- wb$worksheets[[3]]$sheetPr
+  expect_equal("<sheetPr/>", pr)
+
 })
 
 test_that("page_breaks", {

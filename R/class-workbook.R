@@ -6046,7 +6046,7 @@ wbWorkbook <- R6::R6Class(
       self$set_properties(modifier = name)
     },
 
-    #' @description page_setup()
+    #' @description set_page_setup() this function is intended to supersed page_setup(), but not yet stable.
     #' @param orientation orientation
     #' @param black_and_white black_and_white
     #' @param cell_comments cell_comment
@@ -6074,41 +6074,48 @@ wbWorkbook <- R6::R6Class(
     #' @param print_title_cols printTitleCols
     #' @param summary_row summaryRow
     #' @param summary_col summaryCol
+    #' @param tab_color tabColor
+    #' @param ... additonal arguments
     #' @return The `wbWorkbook` object, invisibly
     set_page_setup = function(
-      sheet            = current_sheet(),
+      sheet                 = current_sheet(),
       # page properties
-      black_and_white  = NULL,
-      cell_comments    = NULL,
-      copies           = NULL,
-      draft            = NULL,
-      errors           = NULL,
-      first_page_number = NULL,
-      id               = NULL, # useful? and should the user be able to set this by accident?
-      page_order       = NULL,
-      paper_height     = NULL,
-      paper_width      = NULL,
-      hdpi             = NULL,
-      vdpi             = NULL,
+      black_and_white       = NULL,
+      cell_comments         = NULL,
+      copies                = NULL,
+      draft                 = NULL,
+      errors                = NULL,
+      first_page_number     = NULL,
+      id                    = NULL, # useful and should the user be able to set this by accident?
+      page_order            = NULL,
+      paper_height          = NULL,
+      paper_width           = NULL,
+      hdpi                  = NULL,
+      vdpi                  = NULL,
       use_first_page_number = NULL,
-      use_printer_defaults = NULL,
-      orientation      = NULL,
-      scale            = NULL,
-      left             = 0.7,
-      right            = 0.7,
-      top              = 0.75,
-      bottom           = 0.75,
-      header           = 0.3,
-      footer           = 0.3,
-      fit_to_width     = FALSE,
-      fit_to_height    = FALSE,
-      paper_size       = NULL,
+      use_printer_defaults  = NULL,
+      orientation           = NULL,
+      scale                 = NULL,
+      left                  = 0.7,
+      right                 = 0.7,
+      top                   = 0.75,
+      bottom                = 0.75,
+      header                = 0.3,
+      footer                = 0.3,
+      fit_to_width          = FALSE,
+      fit_to_height         = FALSE,
+      paper_size            = NULL,
       # outline properties
-      print_title_rows = NULL,
-      print_title_cols = NULL,
-      summary_row      = NULL,
-      summary_col      = NULL
+      print_title_rows      = NULL,
+      print_title_cols      = NULL,
+      summary_row           = NULL,
+      summary_col           = NULL,
+      # tabColor properties
+      tab_color             = NULL,
+      ...
     ) {
+
+      standardize_color_names(...)
 
       sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
@@ -6213,17 +6220,42 @@ wbWorkbook <- R6::R6Class(
 
       if (length(xml) == 0) xml <- "<sheetPr/>"
 
+      sheetpr_df <- read_sheetpr(xml)
+
       ## order matters: tabColor, outlinePr, pageSetUpPr.
+      if (length(tab_color)) {
+        tc <- sheetpr_df$tabColor
+        if (tc == "") tc <- "<tabColor/>"
+        if (is.null(names(tab_color))) {
+          if (tab_color == "") {
+            tab_color <- NULL
+          } else {
+            warning("tab_color should be a wb_color() object")
+            tab_color <- wb_color(tab_color)
+          }
+        }
+
+        if (is.null(tab_color)) {
+          sheetpr_df$tabColor <- ""
+        } else {
+          sheetpr_df$tabColor <- xml_attr_mod(tc, xml_attributes = tab_color)
+        }
+      }
+
       ## TODO make sure that the order is valid
       if (length(outlinepr)) {
-        xml <- xml_child_mod(xml, "outlinePr", xml_attributes = outlinepr)
+        op <- sheetpr_df$outlinePr
+        if (op == "") op <- "<outlinePr/>"
+        sheetpr_df$outlinePr <- xml_attr_mod(op, xml_attributes = outlinepr)
       }
 
       if (fit_to_height || fit_to_width) {
-        xml <- xml_child_mod(xml, "pageSetUpPr", xml_attributes = c(fitToPage = "1"))
+        psup <- sheetpr_df$pageSetUpPr
+        if (psup == "") psup <- "<pageSetUpPr/>"
+        sheetpr_df$pageSetUpPr <- xml_attr_mod(psup, xml_attributes = c(fitToPage = "1"))
       }
 
-      self$worksheets[[sheet]]$sheetPr <- xml
+      self$worksheets[[sheet]]$sheetPr <- write_sheetpr(sheetpr_df)
 
       ## print Titles ----
       if (!is.null(print_title_rows) && is.null(print_title_cols)) {

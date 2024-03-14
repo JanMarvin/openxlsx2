@@ -540,3 +540,163 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
 
   return df;
 }
+
+// TODO styles_xml.cpp should be converted to use these functions
+
+// [[Rcpp::export]]
+Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::string> vec_attrs, std::vector<std::string> vec_chlds) {
+
+  std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
+  std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
+
+  auto total_length = nam_attrs.size() + nam_chlds.size();
+  std::vector<std::string> all_names(total_length);
+
+  std::copy(nam_attrs.begin(), nam_attrs.end(), all_names.begin());
+  std::copy(nam_chlds.begin(), nam_chlds.end(), all_names.begin() + nam_attrs.size());
+
+  std::set<std::string> nams(std::make_move_iterator(all_names.begin()),
+                             std::make_move_iterator(all_names.end()));
+
+
+  size_t nn = std::distance(xml->begin(), xml->end());
+  size_t kk = nams.size();
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+
+  Rcpp::CharacterVector rvec(nn);
+
+  // 1. create the list
+  Rcpp::List df(kk);
+  for (size_t i = 0; i < kk; ++i)
+  {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+  }
+
+  // 2. fill the list
+  // <vec_name ...>
+  auto itr = 0;
+  for (auto xml_node : xml->children(vec_name.c_str())) {
+    for (auto attrs : xml_node.attributes()) {
+
+      std::string attr_name = attrs.name();
+      std::string attr_value = attrs.value();
+      auto find_res = nams.find(attr_name);
+
+      // check if name is already known
+      if (nams.count(attr_name) == 0) {
+        Rcpp::warning("%s: not found in %s name table", attr_name, vec_name);
+      } else {
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
+        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+      }
+    }
+
+    for (auto cld : xml_node.children()) {
+
+      std::string cld_name = cld.name();
+      auto find_res = nams.find(cld_name);
+
+      // check if name is already known
+      if (nams.count(cld_name) == 0) {
+        Rcpp::warning("%s: not found in %s name table", cld_name, vec_name);
+      } else {
+        std::ostringstream oss;
+        cld.print(oss, " ", pugi_format_flags);
+        std::string cld_value = oss.str();
+
+        R_xlen_t mtc = std::distance(nams.begin(), find_res);
+        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
+      }
+    }
+
+    rvec[itr] = std::to_string(itr);
+    ++itr;
+
+  }
+
+  // 3. Create a data.frame
+  df.attr("row.names") = rvec;
+  df.attr("names") = nams;
+  df.attr("class") = "data.frame";
+
+  return df;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std::vector<std::string> vec_attrs, std::vector<std::string> vec_chlds) {
+
+  auto n = df.nrow();
+  Rcpp::CharacterVector z(n);
+  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+
+  // openxml 2.8.1
+  std::vector<std::string>  attrnams = df.names();
+  std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
+  std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
+
+  Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+    pugi::xml_node xml_node = doc.append_child(vec_name.c_str());
+
+    for (auto j = 0; j < df.ncol(); ++j) {
+
+      std::string attr_j = attrnams[j];
+
+      // mimic which
+      auto res1 = nam_attrs.find(attr_j);
+      auto mtc1 = std::distance(nam_attrs.begin(), res1);
+
+      std::vector<int> idx1(mtc1 + 1);
+      std::iota(idx1.begin(), idx1.end(), 0);
+
+      auto res2 = nam_chlds.find(attr_j);
+      auto mtc2 = std::distance(nam_chlds.begin(), res2);
+
+      std::vector<int> idx2(mtc2 + 1);
+      std::iota(idx2.begin(), idx2.end(), 0);
+
+      // check if name is already known
+      if (nam_attrs.count(attr_j) != 0) {
+        Rcpp::CharacterVector cv_s = "";
+        cv_s = Rcpp::as<Rcpp::CharacterVector>(df[j])[i];
+
+        // only write attributes where cv_s has a value
+        if (cv_s[0] != "") {
+          // Rf_PrintValue(cv_s);
+          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          xml_node.append_attribute(attrnams[j].c_str()) = val_strl.c_str();
+        }
+      }
+
+      if (nam_chlds.count(attr_j) != 0) {
+        Rcpp::CharacterVector cv_s = "";
+        cv_s = Rcpp::as<Rcpp::CharacterVector>(df[j])[i];
+
+        if (cv_s[0] != "") {
+
+          std::string child_i = Rcpp::as<std::string>(cv_s[0]);
+
+          pugi::xml_document xml_child;
+          pugi::xml_parse_result result = xml_child.load_string(child_i.c_str(), pugi_parse_flags);
+          if (!result) Rcpp::stop("loading %s child node fail: %s", vec_name, cv_s);
+
+          xml_node.append_copy(xml_child.first_child());
+
+        }
+      }
+
+      if (idx1.empty() && idx2.empty())
+        Rcpp::warning("%s: not found in %s name table", attr_j, vec_name);
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi_format_flags);
+    z[i] = oss.str();
+  }
+
+  return z;
+}

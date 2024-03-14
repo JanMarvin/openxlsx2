@@ -2351,7 +2351,7 @@ The \code{wbWorkbook} object, invisibly
 \if{html}{\out{<a id="method-wbWorkbook-set_page_setup"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_page_setup}{}}}
 \subsection{Method \code{set_page_setup()}}{
-page_setup()
+set_page_setup() this function is intended to supersed page_setup(), but not yet stable.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_page_setup(
   sheet = current_sheet(),
@@ -2383,7 +2383,9 @@ page_setup()
   print_title_rows = NULL,
   print_title_cols = NULL,
   summary_row = NULL,
-  summary_col = NULL
+  summary_col = NULL,
+  tab_color = NULL,
+  ...
 )}\if{html}{\out{</div>}}
 }
 
@@ -2445,6 +2447,10 @@ page_setup()
 \item{\code{summary_row}}{summaryRow}
 
 \item{\code{summary_col}}{summaryCol}
+
+\item{\code{tab_color}}{tabColor}
+
+\item{\code{...}}{additonal arguments}
 }
 \if{html}{\out{</div>}}
 }

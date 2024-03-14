@@ -51,6 +51,14 @@ create_char_dataframe <- function(colnames, n) {
     .Call(`_openxlsx2_create_char_dataframe`, colnames, n)
 }
 
+read_xml2df <- function(xml, vec_name, vec_attrs, vec_chlds) {
+    .Call(`_openxlsx2_read_xml2df`, xml, vec_name, vec_attrs, vec_chlds)
+}
+
+write_df2xml <- function(df, vec_name, vec_attrs, vec_chlds) {
+    .Call(`_openxlsx2_write_df2xml`, df, vec_name, vec_attrs, vec_chlds)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
@@ -234,14 +242,6 @@ xml_remove_child2 <- function(node, child, level1, which, pointer) {
 
 xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
-}
-
-xml_find_node <- function(node, chld) {
-    .Call(`_openxlsx2_xml_find_node`, node, chld)
-}
-
-xml_replace_child <- function(node, path, replacement, escapes = FALSE, pointer = FALSE) {
-    .Call(`_openxlsx2_xml_replace_child`, node, path, replacement, escapes, pointer)
 }
 
 xml_si_to_txt <- function(doc) {
