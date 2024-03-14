@@ -147,7 +147,8 @@ columns to a character vector e.g. <code>sapply(x$list_column, paste, collapse =
 
 <dt>na.strings</dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
-<code><a href="waivers.html">na_strings()</a></code> uses the special <code>#N/A</code> value within the workbook.</p></dd>
+looks if <code>options(openxlsx2.na.strings)</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
+uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 
 <dt>inline_strings</dt>
