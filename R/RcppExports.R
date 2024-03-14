@@ -51,6 +51,14 @@ create_char_dataframe <- function(colnames, n) {
     .Call(`_openxlsx2_create_char_dataframe`, colnames, n)
 }
 
+read_xml2df <- function(xml, vec_name, vec_attrs, vec_chlds) {
+    .Call(`_openxlsx2_read_xml2df`, xml, vec_name, vec_attrs, vec_chlds)
+}
+
+write_df2xml <- function(df, vec_name, vec_attrs, vec_chlds) {
+    .Call(`_openxlsx2_write_df2xml`, df, vec_name, vec_attrs, vec_chlds)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }

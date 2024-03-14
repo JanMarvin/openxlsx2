@@ -6046,8 +6046,20 @@ wbWorkbook <- R6::R6Class(
       self$set_properties(modifier = name)
     },
 
-    #' @description page_setup()
+    #' @description set_page_setup() this function is intended to supersede page_setup(), but is not yet stable
     #' @param orientation orientation
+    #' @param black_and_white black_and_white
+    #' @param cell_comments cell_comment
+    #' @param copies copies
+    #' @param draft draft
+    #' @param errors errors
+    #' @param first_page_number first_page_number
+    #' @param id id
+    #' @param page_order page_order
+    #' @param paper_height,paper_width paper size
+    #' @param use_first_page_number use_first_page_number
+    #' @param use_printer_defaults use_printer_defaults
+    #' @param hdpi,vdpi horizontal and vertical dpi
     #' @param scale scale
     #' @param left left
     #' @param right right
@@ -6062,72 +6074,118 @@ wbWorkbook <- R6::R6Class(
     #' @param print_title_cols printTitleCols
     #' @param summary_row summaryRow
     #' @param summary_col summaryCol
+    #' @param tab_color tabColor
+    #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
-    page_setup = function(
-      sheet            = current_sheet(),
-      orientation      = NULL,
-      scale            = 100,
-      left             = 0.7,
-      right            = 0.7,
-      top              = 0.75,
-      bottom           = 0.75,
-      header           = 0.3,
-      footer           = 0.3,
-      fit_to_width     = FALSE,
-      fit_to_height    = FALSE,
-      paper_size       = NULL,
-      print_title_rows = NULL,
-      print_title_cols = NULL,
-      summary_row      = NULL,
-      summary_col      = NULL,
+    set_page_setup = function(
+      sheet                 = current_sheet(),
+      # page properties
+      black_and_white       = NULL,
+      cell_comments         = NULL,
+      copies                = NULL,
+      draft                 = NULL,
+      errors                = NULL,
+      first_page_number     = NULL,
+      id                    = NULL, # useful and should the user be able to set this by accident?
+      page_order            = NULL,
+      paper_height          = NULL,
+      paper_width           = NULL,
+      hdpi                  = NULL,
+      vdpi                  = NULL,
+      use_first_page_number = NULL,
+      use_printer_defaults  = NULL,
+      orientation           = NULL,
+      scale                 = NULL,
+      left                  = 0.7,
+      right                 = 0.7,
+      top                   = 0.75,
+      bottom                = 0.75,
+      header                = 0.3,
+      footer                = 0.3,
+      fit_to_width          = FALSE,
+      fit_to_height         = FALSE,
+      paper_size            = NULL,
+      # outline properties
+      print_title_rows      = NULL,
+      print_title_cols      = NULL,
+      summary_row           = NULL,
+      summary_col           = NULL,
+      # tabColor properties
+      tab_color             = NULL,
       ...
     ) {
 
-      standardize_case_names(...)
+      standardize_color_names(...)
 
       sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
 
-      if (!is.null(orientation)) {
-        orientation <- tolower(orientation)
-        if (!orientation %in% c("portrait", "landscape")) stop("Invalid page orientation.")
-      } else {
-        # if length(xml) == 1 then use if () {} else {}
-        orientation <- ifelse(grepl("landscape", xml), "landscape", "portrait") ## get existing
-      }
+      attrs <- rbindlist(xml_attr(xml, "pageSetup"))
 
-      if ((scale < 10) || (scale > 400)) {
-        stop("Scale must be between 10 and 400.")
-      }
+      ## orientation ----
+      orientation <- orientation %||% attrs$orientation
+      orientation <- tolower(orientation)
+      if (!orientation %in% c("portrait", "landscape")) stop("Invalid page orientation.")
 
-      if (!is.null(paper_size)) {
-        paper_sizes <- 1:68
-        paper_sizes <- paper_sizes[!paper_sizes %in% 48:49]
-        if (!paper_size %in% paper_sizes) {
-          stop("paper_size must be an integer in range [1, 68]. See ?wb_page_setup details.")
+      ## scale ----
+      if (!is.null(scale)) {
+        scale <- scale %||% attrs$scale
+        scale <- as.numeric(scale)
+        if ((scale < 10) || (scale > 400)) {
+          message("Scale must be between 10 and 400. Scale was: ", scale)
+          scale <- if (scale < 10) 10 else if (scale > 400) 400
         }
-        paper_size <- as.integer(paper_size)
-      } else {
-        paper_size <- regmatches(xml, regexpr('(?<=paperSize=")[0-9]+', xml, perl = TRUE)) ## get existing
       }
 
-      ## Keep defaults on orientation, hdpi, vdpi, paperSize ----
-      hdpi <- regmatches(xml, regexpr('(?<=horizontalDpi=")[0-9]+', xml, perl = TRUE))
-      vdpi <- regmatches(xml, regexpr('(?<=verticalDpi=")[0-9]+', xml, perl = TRUE))
+      paper_size <- paper_size %||% attrs$paperSize
+      if (!is.null(paper_size)) {
+        paper_sizes <- 1:118
+        paper_size  <- as.integer(paper_size)
+        if (!paper_size %in% paper_sizes) {
+          stop("paper_size must be an integer in range [1, 118]. See ?wb_page_setup details.")
+        }
+      }
 
-      ## Update ----
-      self$worksheets[[sheet]]$pageSetup <- sprintf(
-        '<pageSetup paperSize="%s" orientation="%s" scale = "%s" fitToWidth="%s" fitToHeight="%s" horizontalDpi="%s" verticalDpi="%s"/>',
-        paper_size, orientation, scale, as_xml_attr(fit_to_width), as_xml_attr(fit_to_height), hdpi, vdpi
+      ## HDPI/VDPI ----
+      horizontal_dpi <- hdpi %||% attrs$horizontalDpi
+      vertical_dpi   <- vdpi %||% attrs$verticalDpi
+
+      xml <- xml_attr_mod(
+        xml,
+        xml_attributes = c(
+          blackAndWhite      = as_xml_attr(black_and_white),
+          cellComments       = as_xml_attr(cell_comments),
+          copies             = as_xml_attr(copies),
+          draft              = as_xml_attr(draft),
+          errors             = as_xml_attr(errors),
+          firstPageNumber    = as_xml_attr(first_page_number),
+          fitToHeight        = as_xml_attr(fit_to_height),
+          fitToWidth         = as_xml_attr(fit_to_width),
+          horizontalDpi      = as_xml_attr(horizontal_dpi),
+          id                 = as_xml_attr(id),
+          orientation        = as_xml_attr(orientation),
+          pageOrder          = as_xml_attr(page_order),
+          paperHeight        = as_xml_attr(paper_height),
+          paperSize          = as_xml_attr(paper_size),
+          paperWidth         = as_xml_attr(paper_width),
+          scale              = as_xml_attr(scale),
+          useFirstPageNumber = as_xml_attr(use_first_page_number),
+          usePrinterDefaults = as_xml_attr(use_printer_defaults),
+          verticalDpi        = as_xml_attr(vertical_dpi)
+        )
       )
 
-      if (fit_to_height || fit_to_width) {
-        self$worksheets[[sheet]]$sheetPr <- unique(c(self$worksheets[[sheet]]$sheetPr, '<pageSetupPr fitToPage="1"/>'))
-      }
+      self$worksheets[[sheet]]$pageSetup <- xml
 
+      ## update pageMargins
       self$worksheets[[sheet]]$pageMargins <-
-        sprintf('<pageMargins left="%s" right="%s" top="%s" bottom="%s" header="%s" footer="%s"/>', left, right, top, bottom, header, footer)
+        sprintf(
+          '<pageMargins left="%s" right="%s" top="%s" bottom="%s" header="%s" footer="%s"/>',
+           left, right, top, bottom, header, footer
+        )
 
+      ## summary row and col ----
+      outlinepr <- character()
       validRow <- function(summary_row) {
         return(tolower(summary_row) %in% c("above", "below"))
       }
@@ -6135,16 +6193,14 @@ wbWorkbook <- R6::R6Class(
         return(tolower(summary_col) %in% c("left", "right"))
       }
 
-      outlinepr <- ""
-
       if (!is.null(summary_row)) {
 
         if (!validRow(summary_row)) {
           stop("Invalid \`summary_row\` option. Must be one of \"Above\" or \"Below\".")
         } else if (tolower(summary_row) == "above") {
-          outlinepr <- ' summaryBelow=\"0\"'
+          outlinepr <- c(summaryBelow = "0")
         } else {
-          outlinepr <- ' summaryBelow=\"1\"'
+          outlinepr <- c(summaryBelow = "1")
         }
       }
 
@@ -6153,15 +6209,53 @@ wbWorkbook <- R6::R6Class(
         if (!validCol(summary_col)) {
           stop("Invalid \`summary_col\` option. Must be one of \"Left\" or \"Right\".")
         } else if (tolower(summary_col) == "left") {
-          outlinepr <- paste0(outlinepr, ' summaryRight=\"0\"')
+          outlinepr <- c(outlinepr, c(summaryRight = "0"))
         } else {
-          outlinepr <- paste0(outlinepr, ' summaryRight=\"1\"')
+          outlinepr <- c(outlinepr, c(summaryRight = "1"))
         }
       }
 
-      if (!stri_isempty(outlinepr)) {
-        self$worksheets[[sheet]]$sheetPr <- unique(c(self$worksheets[[sheet]]$sheetPr, paste0("<outlinePr", outlinepr, "/>")))
+      ## update sheetPr ----
+      xml <- self$worksheets[[sheet]]$sheetPr
+
+      if (length(xml) == 0) xml <- "<sheetPr/>"
+
+      sheetpr_df <- read_sheetpr(xml)
+
+      ## order matters: tabColor, outlinePr, pageSetUpPr.
+      if (length(tab_color)) {
+        tc <- sheetpr_df$tabColor
+        if (tc == "") tc <- "<tabColor/>"
+        if (is.null(names(tab_color))) {
+          if (tab_color == "") {
+            tab_color <- NULL
+          } else {
+            warning("tab_color should be a wb_color() object")
+            tab_color <- wb_color(tab_color)
+          }
+        }
+
+        if (is.null(tab_color)) {
+          sheetpr_df$tabColor <- ""
+        } else {
+          sheetpr_df$tabColor <- xml_attr_mod(tc, xml_attributes = tab_color)
+        }
       }
+
+      ## TODO make sure that the order is valid
+      if (length(outlinepr)) {
+        op <- sheetpr_df$outlinePr
+        if (op == "") op <- "<outlinePr/>"
+        sheetpr_df$outlinePr <- xml_attr_mod(op, xml_attributes = outlinepr)
+      }
+
+      if (fit_to_height || fit_to_width) {
+        psup <- sheetpr_df$pageSetUpPr
+        if (psup == "") psup <- "<pageSetUpPr/>"
+        sheetpr_df$pageSetUpPr <- xml_attr_mod(psup, xml_attributes = c(fitToPage = "1"))
+      }
+
+      self$worksheets[[sheet]]$sheetPr <- write_sheetpr(sheetpr_df)
 
       ## print Titles ----
       if (!is.null(print_title_rows) && is.null(print_title_cols)) {
@@ -6208,10 +6302,76 @@ wbWorkbook <- R6::R6Class(
 
         self$workbook$definedNames <- c(
           self$workbook$definedNames,
-          sprintf('<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>', localSheetId, sheet, cols, sheet, rows)
+          sprintf(
+            '<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>',
+            localSheetId, sheet, cols, sheet, rows
+          )
         )
 
       }
+
+      invisible(self)
+    },
+
+    #' @description page_setup()
+    #' @param orientation orientation
+    #' @param scale scale
+    #' @param left left
+    #' @param right right
+    #' @param top top
+    #' @param bottom bottom
+    #' @param header header
+    #' @param footer footer
+    #' @param fit_to_width fitToWidth
+    #' @param fit_to_height fitToHeight
+    #' @param paper_size paperSize
+    #' @param print_title_rows printTitleRows
+    #' @param print_title_cols printTitleCols
+    #' @param summary_row summaryRow
+    #' @param summary_col summaryCol
+    #' @return The `wbWorkbook` object, invisibly
+    page_setup = function(
+      sheet            = current_sheet(),
+      orientation      = NULL,
+      scale            = 100,
+      left             = 0.7,
+      right            = 0.7,
+      top              = 0.75,
+      bottom           = 0.75,
+      header           = 0.3,
+      footer           = 0.3,
+      fit_to_width     = FALSE,
+      fit_to_height    = FALSE,
+      paper_size       = NULL,
+      print_title_rows = NULL,
+      print_title_cols = NULL,
+      summary_row      = NULL,
+      summary_col      = NULL,
+      ...
+    ) {
+
+      standardize_case_names(...)
+
+      sheet <- private$get_sheet_index(sheet)
+
+      self$set_page_setup(
+        sheet            = sheet,
+        orientation      = orientation,
+        scale            = scale,
+        left             = left,
+        right            = right,
+        top              = top,
+        bottom           = bottom,
+        header           = header,
+        footer           = footer,
+        fit_to_width     = fit_to_width,
+        fit_to_height    = fit_to_height,
+        paper_size       = paper_size,
+        print_title_rows = print_title_rows,
+        print_title_cols = print_title_cols,
+        summary_row      = summary_row,
+        summary_col      = summary_col
+      )
 
       invisible(self)
     },

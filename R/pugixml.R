@@ -312,7 +312,9 @@ xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, ...) {
 
   if (all(xml_child == "")) return(xml_node)
 
-  xml_node <- read_xml(xml_node, ...)
+  if (!inherits(xml_node, "pugi_xml")) xml_node <- read_xml(xml_node, ...)
+  assert_class(xml_child, "character")
+
   xml_child <- read_xml(xml_child, ...)
 
   if (missing(level)) {

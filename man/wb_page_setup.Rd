@@ -38,7 +38,7 @@ wb_page_setup(
 
 \item{header, footer}{Margin in inches}
 
-\item{fit_to_width, fit_to_height}{If \code{TRUE}, worksheet is scaled to fit to page width /height on printing.}
+\item{fit_to_width, fit_to_height}{An integer that tells the spreadsheet software on how many pages the scaling should fit. This does not actually scale the sheet.}
 
 \item{paper_size}{See details. Default value is 9 (A4 paper).}
 
@@ -54,6 +54,8 @@ wb_page_setup(
 Set page margins, orientation and print scaling.
 }
 \details{
+When adding fitting to width and height manual adjustment of the scaling factor is required. Setting \code{fit_to_width} and \code{fit_to_height} only tells spreadsheet software that the scaling was applied, but not which scaling was applied.
+
 \code{paper_size} is an integer corresponding to:\tabular{ll}{
    size \tab "paper type" \cr
    1 \tab Letter paper (8.5 in. by 11 in.) \cr
@@ -122,6 +124,51 @@ Set page margins, orientation and print scaling.
    66 \tab A2 paper (420 mm by 594 mm) \cr
    67 \tab A3 transverse paper (297 mm by 420 mm) \cr
    68 \tab A3 extra transverse paper (322 mm by 445 mm) \cr
+   69 \tab Japanese Double Postcard (200 mm x 148 mm) 70=A6(105mm x 148mm) \cr
+   71 \tab Japanese Envelope Kaku #2 \cr
+   72 \tab Japanese Envelope Kaku #3 \cr
+   73 \tab Japanese Envelope Chou #3 \cr
+   74 \tab Japanese Envelope Chou #4 \cr
+   75 \tab Letter Rotated (11in x 8 1/2 11 in) \cr
+   76 \tab A3 Rotated (420 mm x 297 mm) \cr
+   77 \tab A4 Rotated (297 mm x 210 mm) \cr
+   78 \tab A5 Rotated (210 mm x 148 mm) \cr
+   79 \tab B4 (JIS) Rotated (364 mm x 257 mm) \cr
+   80 \tab B5 (JIS) Rotated (257 mm x 182 mm) \cr
+   81 \tab Japanese Postcard Rotated (148 mm x 100 mm) \cr
+   82 \tab Double Japanese Postcard Rotated (148 mm x 200 mm) 83 = A6 Rotated (148 mm x 105 mm) \cr
+   84 \tab Japanese Envelope Kaku #2 Rotated \cr
+   85 \tab Japanese Envelope Kaku #3 Rotated \cr
+   86 \tab Japanese Envelope Chou #3 Rotated \cr
+   87 \tab Japanese Envelope Chou #4 Rotated 88=B6(JIS)(128mm x 182mm) \cr
+   89 \tab B6 (JIS) Rotated (182 mm x 128 mm) \cr
+   90 \tab (12 in x 11 in) \cr
+   91 \tab Japanese Envelope You #4 \cr
+   92 \tab Japanese Envelope You #4 Rotated 93=PRC16K(146mm x 215mm) 94=PRC32K(97mm x 151mm) \cr
+   95 \tab PRC 32K(Big) (97 mm x 151 mm) \cr
+   96 \tab PRC Envelope #1 (102 mm x 165 mm) \cr
+   97 \tab PRC Envelope #2 (102 mm x 176 mm) \cr
+   98 \tab PRC Envelope #3 (125 mm x 176 mm) \cr
+   99 \tab PRC Envelope #4 (110 mm x 208 mm) \cr
+   100 \tab PRC Envelope #5 (110 mm x 220 mm) \cr
+   101 \tab PRC Envelope #6 (120 mm x 230 mm) \cr
+   102 \tab PRC Envelope #7 (160 mm x 230 mm) \cr
+   103 \tab PRC Envelope #8 (120 mm x 309 mm) \cr
+   104 \tab PRC Envelope #9 (229 mm x 324 mm) \cr
+   105 \tab PRC Envelope #10 (324 mm x 458 mm) \cr
+   106 \tab PRC 16K Rotated \cr
+   107 \tab PRC 32K Rotated \cr
+   108 \tab PRC 32K(Big) Rotated \cr
+   109 \tab PRC Envelope #1 Rotated (165 mm x 102 mm) \cr
+   110 \tab PRC Envelope #2 Rotated (176 mm x 102 mm) \cr
+   111 \tab PRC Envelope #3 Rotated (176 mm x 125 mm) \cr
+   112 \tab PRC Envelope #4 Rotated (208 mm x 110 mm) \cr
+   113 \tab PRC Envelope #5 Rotated (220 mm x 110 mm) \cr
+   114 \tab PRC Envelope #6 Rotated (230 mm x 120 mm) \cr
+   115 \tab PRC Envelope #7 Rotated (230 mm x 160 mm) \cr
+   116 \tab PRC Envelope #8 Rotated (309 mm x 120 mm) \cr
+   117 \tab PRC Envelope #9 Rotated (324 mm x 229 mm) \cr
+   118 \tab PRC Envelope #10 Rotated (458 mm x 324 mm) \cr
 }
 }
 \examples{

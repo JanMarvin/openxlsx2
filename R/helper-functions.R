@@ -1067,3 +1067,43 @@ known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
   list(fml, atr, lbl)
 
 }
+
+#' helper to read sheetPr xml to dataframe
+#' @param xml xml_node
+#' @noRd
+read_sheetpr <- function(xml) {
+  # https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.sheetproperties?view=openxml-2.8.1
+  if (!inherits(xml, "pugi_xml")) xml <- read_xml(xml)
+
+  vec_attrs <- c("codeName", "enableFormatConditionsCalculation", "filterMode",
+                 "published", "syncHorizontal", "syncRef", "syncVertical",
+                 "transitionEntry", "transitionEvaluation")
+  vec_chlds <- c("tabColor", "outlinePr", "pageSetUpPr")
+
+  read_xml2df(
+    xml       = xml,
+    vec_name  = "sheetPr",
+    vec_attrs = vec_attrs,
+    vec_chlds = vec_chlds
+  )
+}
+
+#' helper to write sheetPr dataframe to xml
+#' @param df a data frame
+#' @noRd
+write_sheetpr <- function(df) {
+
+  # we have to preserve a certain order of elements at least for childs
+  vec_attrs <- c("codeName", "enableFormatConditionsCalculation", "filterMode",
+                 "published", "syncHorizontal", "syncRef", "syncVertical",
+                 "transitionEntry", "transitionEvaluation")
+  vec_chlds <- c("tabColor", "outlinePr", "pageSetUpPr")
+  nms <- c(vec_attrs, vec_chlds)
+
+  write_df2xml(
+    df        = df[nms],
+    vec_name  = "sheetPr",
+    vec_attrs = vec_attrs,
+    vec_chlds = vec_chlds
+  )
+}

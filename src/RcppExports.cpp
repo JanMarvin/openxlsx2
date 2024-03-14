@@ -147,6 +147,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// read_xml2df
+Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::string> vec_attrs, std::vector<std::string> vec_chlds);
+RcppExport SEXP _openxlsx2_read_xml2df(SEXP xmlSEXP, SEXP vec_nameSEXP, SEXP vec_attrsSEXP, SEXP vec_chldsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type xml(xmlSEXP);
+    Rcpp::traits::input_parameter< std::string >::type vec_name(vec_nameSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type vec_attrs(vec_attrsSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type vec_chlds(vec_chldsSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_xml2df(xml, vec_name, vec_attrs, vec_chlds));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_df2xml
+Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std::vector<std::string> vec_attrs, std::vector<std::string> vec_chlds);
+RcppExport SEXP _openxlsx2_write_df2xml(SEXP dfSEXP, SEXP vec_nameSEXP, SEXP vec_attrsSEXP, SEXP vec_chldsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< std::string >::type vec_name(vec_nameSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type vec_attrs(vec_attrsSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type vec_chlds(vec_chldsSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_df2xml(df, vec_name, vec_attrs, vec_chlds));
+    return rcpp_result_gen;
+END_RCPP
+}
 // col_to_df
 Rcpp::DataFrame col_to_df(XPtrXML doc);
 RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
@@ -956,6 +984,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_is_charnum", (DL_FUNC) &_openxlsx2_is_charnum, 1},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 13},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
+    {"_openxlsx2_read_xml2df", (DL_FUNC) &_openxlsx2_read_xml2df, 4},
+    {"_openxlsx2_write_df2xml", (DL_FUNC) &_openxlsx2_write_df2xml, 4},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
