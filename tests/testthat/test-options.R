@@ -18,7 +18,7 @@ test_that("sheet.default_name", {
 
 test_that("nastrings option works", {
 
-  op <- options("openxlsx2.nastrings" = fmt_txt("N/A", italic = TRUE, color = wb_color("gray")))
+  op <- options("openxlsx2.na.strings" = fmt_txt("N/A", italic = TRUE, color = wb_color("gray")))
   on.exit(options(op), add = TRUE)
 
   ## create a data set with missings

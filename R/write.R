@@ -10,7 +10,8 @@
 #' @param colNames has colNames (only in update_cell)
 #' @param removeCellStyle remove the cell style (only in update_cell)
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.#' @keywords internal
+#'   `na_strings()` uses the special `#N/A` value within the workbook.
+#' @keywords internal
 #' @noRd
 inner_update <- function(
     wb,
@@ -176,7 +177,8 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.
+#'   looks if `options(openxlsx2.na.strings)` is set. Otherwise [na_strings()]
+#'   uses the special `#N/A` value within the workbook.
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
 #' @details
@@ -723,7 +725,8 @@ write_data2 <- function(
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
 #' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.
+#'   looks if `options(openxlsx2.na.strings)` is set. Otherwise [na_strings()]
+#'   uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @param total_row optional write total rows
 #' @noRd
@@ -785,8 +788,8 @@ write_data_table <- function(
   # overwrite na.strings if nothing was provided
   # with whatever is in the option if not set to default
   if (identical(as.character(na.strings), "na_string") &&
-      !is.null(getOption("openxlsx2.nastrings"))) {
-    na.strings <- getOption("openxlsx2.nastrings")
+      !is.null(getOption("openxlsx2.na.strings"))) {
+    na.strings <- getOption("openxlsx2.na.strings")
   }
 
   if (data_table && nrow(x) < 1) {

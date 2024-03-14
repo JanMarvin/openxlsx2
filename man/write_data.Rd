@@ -56,7 +56,8 @@ columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse =
 \item{remove_cell_style}{keep the cell style?}
 
 \item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
-\code{\link[=na_strings]{na_strings()}} uses the special \verb{#N/A} value within the workbook.}
+looks if \code{options(openxlsx2.na.strings)} is set. Otherwise \code{\link[=na_strings]{na_strings()}}
+uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
 
