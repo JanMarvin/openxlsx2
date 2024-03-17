@@ -18,9 +18,17 @@ convert_hms(x)
 \item{origin}{date. Default value is for Windows Excel 2010}
 
 \item{...}{
-  Arguments passed on to \code{\link[base:as.Date]{base::as.Date}}
+  Arguments passed on to \code{\link[base:as.Date]{base::as.Date.character}}
   \describe{
-    \item{\code{}}{}
+    \item{\code{format}}{\code{\link[base]{character}} string.  If not specified, it will try
+    \code{tryFormats} one by one on the first non-\code{NA} element, and
+    give an error if none works.  Otherwise, the processing is via
+    \code{\link[base]{strptime}()} whose help page describes available
+    conversion specifications.}
+    \item{\code{tryFormats}}{\code{\link[base]{character}} vector of \code{format}
+    strings to try if \code{format} is not specified.}
+    \item{\code{optional}}{\code{\link[base]{logical}} indicating to return \code{NA}
+    (instead of signalling an error) if the format guessing does not succeed.}
   }}
 }
 \value{
