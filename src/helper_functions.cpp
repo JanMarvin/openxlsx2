@@ -386,6 +386,10 @@ void wide_to_long(
 
       R_xlen_t pos = (j * m) + i;
 
+      std::string ref_str = Rcpp::String(ref[i]);
+      if (ref_str.compare("0") == 0)
+      ref_str = col + row;
+
       // factors can be numeric or string or both
       if (vtyp == factor) string_nums = true;
 
@@ -439,13 +443,13 @@ void wide_to_long(
       case array_formula:
         cell.f     = vals;
         cell.f_t   = "array";
-        cell.f_ref = ref[j];
+        cell.f_ref = ref_str;
         break;
       case cm_formula:
         cell.c_cm  = c_cm;
         cell.f     = vals;
         cell.f_t   = "array";
-        cell.f_ref = ref[j];
+        cell.f_ref = ref_str;
         break;
       }
 

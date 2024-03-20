@@ -181,6 +181,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #'   uses the special `#N/A` value within the workbook.
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
+#' @param dims worksheet dimensions
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -214,7 +215,8 @@ write_data2 <- function(
     removeCellStyle = FALSE,
     na.strings = na_strings(),
     data_table = FALSE,
-    inline_strings = TRUE
+    inline_strings = TRUE,
+    dims = NULL
 ) {
 
   is_data_frame <- FALSE
@@ -291,41 +293,16 @@ write_data2 <- function(
   # message("sheet no: ", sheetno)
 
   # create a data frame
-  if (!is_data_frame)
+  if (!is_data_frame) {
     data <- as.data.frame(t(data))
+  }
 
-  data_nrow <- NROW(data)
-  data_ncol <- NCOL(data)
-
-  endRow <- (startRow - 1) + data_nrow
-  endCol <- (startCol - 1) + data_ncol
-
-  if (endRow > 1048576 || endCol > 16384)
-    stop("Dimensions exceed worksheet")
-
-  dims <- paste0(
-    int2col(startCol), startRow,
-    ":",
-    int2col(endCol), endRow
-  )
-
-  ### ref for formulas from write_formula caring ref attr
-  is_array <- dc %in% c(
-    openxlsx2_celltype[["array_formula"]], openxlsx2_celltype[["cm_formula"]]
-  )
+  dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
 
   if (!is.null(attr(data, "f_ref"))) {
     ref <- attr(data, "f_ref")
-  } else if (any(is_array)) {
-    ddims <- wb_dims(
-      x = data, from_row = startRow, from_col = startCol,
-      row_names = rowNames, col_names = colNames
-    )
-    row_dims <- unname(unlist(dims_to_dataframe(ddims, fill = TRUE)[is_array]))
-
-    ref <- row_dims
   } else {
-    ref <- dims
+    ref <- rep("0", ncol(data))
   }
 
   if (!is.null(attr(data, "c_cm"))) {
@@ -369,10 +346,10 @@ write_data2 <- function(
   # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
   rtyp <- dims_to_dataframe(dims, fill = FALSE)
 
-  rows_attr <- vector("list", data_nrow)
+  rows_attr <- vector("list", nrow(rtyp))
 
   # create <rows ...>
-  want_rows <- startRow:endRow
+  want_rows <- as.integer(dims_to_rowcol(dims)[[2]])
   rows_attr <- empty_row_attr(n = length(want_rows))
   rows_attr$r <- rownames(rtyp)
 
@@ -849,12 +826,17 @@ write_data_table <- function(
 
   ### Create data frame --------------------------------------------------------
 
+  transpose <- FALSE
+  if (length(dims[[1]]) > length(dims[[2]]))
+    transpose <- TRUE
+
   ## special case - formula
   # only for data frame case where a data frame is passed down containing formulas
   if (inherits(x, "formula")) {
     x <- data.frame("X" = x, stringsAsFactors = FALSE)
     class(x[[1]]) <- if (array) "array_formula" else "formula"
     colNames <- FALSE
+    if (transpose) x <- transpose_df(x)
   }
 
   if (is.vector(x) || is.factor(x) || inherits(x, "Date") || inherits(x, "POSIXt")) {
@@ -866,8 +848,12 @@ write_data_table <- function(
     ## vector of hyperlinks
     class(x) <- c("character", "hyperlink")
     x <- as.data.frame(x, stringsAsFactors = FALSE)
+    if (transpose) x <- transpose_df(x)
+    # colNames <- FALSE
   } else if (!inherits(x, "data.frame")) {
     x <- as.data.frame(x, stringsAsFactors = FALSE)
+    if (transpose) x <- transpose_df(x)
+    # colNames <- FALSE
   }
 
   nCol <- ncol(x)
@@ -940,7 +926,8 @@ write_data_table <- function(
     removeCellStyle = removeCellStyle,
     na.strings      = na.strings,
     data_table      = data_table,
-    inline_strings  = inline_strings
+    inline_strings  = inline_strings,
+    dims            = dims
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -989,7 +976,8 @@ write_data_table <- function(
         removeCellStyle = removeCellStyle,
         na.strings      = na.strings,
         data_table      = data_table,
-        inline_strings  = inline_strings
+        inline_strings  = inline_strings,
+        dims            = NULL
       )
     }
 
@@ -1188,6 +1176,16 @@ write_formula <- function(
 
   class(dfx$X) <- c(formula, "character")
 
+  if (any(grepl("=([\\s]*?)HYPERLINK\\(", x, perl = TRUE))) {
+    class(dfx$X) <- c("character", "formula", "hyperlink")
+  }
+
+  # transpose match write_data_table
+  rc <- dims_to_rowcol(dims)
+  if (length(rc[[1]]) > length(rc[[2]])) {
+    dfx <- transpose_df(dfx)
+  }
+
   if (is.null(dims)) {
     dims <- wb_dims(start_row, start_col)
   }
@@ -1195,17 +1193,7 @@ write_formula <- function(
   if (array || cm) {
     if (length(dfx$X) == 1) {
       attr(dfx, "f_ref") <- dims
-    } else {
-      rowcols <- dims_to_rowcol(dims)
-      ddims   <- wb_dims(x = dfx$X, from_col = rowcols[[1]], from_row = as.integer(rowcols[[2]]))
-      refs    <- unname(unlist(dims_to_dataframe(ddims, fill = TRUE)))
-
-      attr(dfx, "f_ref") <- refs
     }
-  }
-
-  if (any(grepl("=([\\s]*?)HYPERLINK\\(", x, perl = TRUE))) {
-    class(dfx$X) <- c("character", "formula", "hyperlink")
   }
 
   write_data(
