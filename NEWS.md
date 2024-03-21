@@ -19,6 +19,12 @@
 * The direction vectors are written is now controlled via `dims`. Previously it was required to transpose a vector to write it horizontally: `wb_add_data(x = t(letters), col_names = FALSE)`. Now the direction is defined by `dims`. The default is still to write vectors vertically, but for a horizontal vector it is possible to write `wb_add_data(x = letters, dims = "A1:Z1")`. This change impacts vectors, hyperlinks and formulas and basically everything that is not a two dimensional `x` object.
 This is only breaking, if previous code made use of the transposed trick above and already defined a correct `dims`. Since the `wb_add_data()` function is agnostic of the direction of `x`, this `wb_add_data(x = t(letters), dims = "A1:Z1", col_names = FALSE)` would write the `letters` into cells `A1:A26`, because of a round trip through transpose.
 
+```r
+# before (workaround needed)
+wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = t(c(4, 5, 8)), col_names = FALSE)
+# now (listens to dims)
+ wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = c(4, 5, 8))
+```
 
 ***************************************************************************
 
