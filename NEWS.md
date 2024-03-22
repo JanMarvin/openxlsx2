@@ -23,7 +23,7 @@ This is only breaking, if previous code made use of the transposed trick above a
 # before (workaround needed)
 wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = t(c(4, 5, 8)), col_names = FALSE)
 # now (listens to dims)
- wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = c(4, 5, 8))
+wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = c(4, 5, 8))
 ```
 
 ***************************************************************************

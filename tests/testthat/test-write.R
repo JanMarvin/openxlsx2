@@ -909,3 +909,53 @@ test_that("writing vectors direction with dims works", {
   expect_equal(exp, got)
 
 })
+
+test_that("dims size warnings work", {
+
+  op <- options("openxlsx2.warn_if_dims_dont_fit" = TRUE)
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_workbook()$add_worksheet()
+
+  # default no dims
+  expect_warning(
+    wb$add_data(x = head(mtcars)),
+    "dimension of `x` exceeds all `dims`"
+  )
+
+  # with explicit default dims
+  expect_warning(
+    wb$add_data(dims = "A1", x = head(mtcars)),
+    "dimension of `x` exceeds all `dims`"
+  )
+
+  # wb_add_data(dims = wb_dims(x = obj), x = obj) should always be silent
+  expect_silent(wb$add_data(dims = wb_dims(x = head(mtcars)), x = head(mtcars)))
+
+  # correct size should always be silent
+  expect_silent(wb$add_data(dims = "A1:K7", x = head(mtcars)))
+
+  # To wide
+  expect_warning(
+    wb$add_data(dims = "A1:K1", x = head(mtcars)),
+    "dimension of `x` exceeds rows of `dims`"
+  )
+
+  # To short
+  expect_warning(
+    wb$add_data(dims = "A1:J7", x = head(mtcars)),
+    "dimension of `x` exceeds cols of `dims`"
+  )
+
+  # ending in the correct cell isn't enough
+  expect_warning(
+    wb$add_data(dims = "B2:K7", x = head(mtcars)),
+    "dimension of `x` exceeds all `dims`"
+  )
+
+  # currently write_xlsx() uses the default dims
+  expect_warning(
+    wb <- write_xlsx(x = head(mtcars))
+  )
+
+})

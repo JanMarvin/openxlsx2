@@ -1108,6 +1108,14 @@ write_sheetpr <- function(df) {
   )
 }
 
+# helper construct dim comparison from rowcol_to_dims(as_integer = TRUE) object
+min_and_max <- function(x) {
+  c(
+    (max(x[[2]]) + 1L) - min(x[[2]]), # row
+    (max(x[[1]]) + 1L) - min(x[[1]])  # col
+  )
+}
+
 #' helper function to detect if x fits into dims
 #'
 #' This function will throw a warning depending on the experimental option: `openxlsx2.warn_if_dims_dont_fit`
@@ -1123,11 +1131,11 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
   }
 
   if (length(dims) == 1 && is.character(dims)) {
-    dims <- dims_to_rowcol(dims)
+    dims <- dims_to_rowcol(dims, as_integer = TRUE)
   }
 
   dim_x <- dim(x)
-  dim_d <- vapply(dims, length, NA_integer_)[2:1]
+  dim_d <- min_and_max(dims)
 
   opt <- getOption("openxlsx2.warn_if_dims_dont_fit", default = FALSE)
 
@@ -1147,7 +1155,7 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
   if (fits) {
 
     # why oh why wasn't dims_to_rowcol()/rowcol_to_dims() created as a matching pair
-    dims <- rowcol_to_dims(row = as.integer(dims[[2]]), col = col2int(dims[[1]]))
+    dims <- rowcol_to_dims(row = dims[[2]], col = dims[[1]])
 
   } else {
 
