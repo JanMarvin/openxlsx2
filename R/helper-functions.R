@@ -1107,3 +1107,90 @@ write_sheetpr <- function(df) {
     vec_chlds = vec_chlds
   )
 }
+
+# helper construct dim comparison from rowcol_to_dims(as_integer = TRUE) object
+min_and_max <- function(x) {
+  c(
+    (max(x[[2]]) + 1L) - min(x[[2]]), # row
+    (max(x[[1]]) + 1L) - min(x[[1]])  # col
+  )
+}
+
+#' helper function to detect if x fits into dims
+#'
+#' This function will throw a warning depending on the experimental option: `openxlsx2.warn_if_dims_dont_fit`
+#' @param x the x object
+#' @param dims the worksheet dimensions
+#' @param startCol,startRow start column. Since write_data() is not defunct, we might not be fully able to select this from dims
+#' @noRd
+fits_in_dims <- function(x, dims, startCol, startRow) {
+
+  # happens only in direct calls to write_data2 in some old tests
+  if (is.null(dims)) {
+    dims <- wb_dims(from_col = startCol, from_row = startRow)
+  }
+
+  if (length(dims) == 1 && is.character(dims)) {
+    dims <- dims_to_rowcol(dims, as_integer = TRUE)
+  }
+
+  dim_x <- dim(x)
+  dim_d <- min_and_max(dims)
+
+  opt <- getOption("openxlsx2.warn_if_dims_dont_fit", default = FALSE)
+
+  if (all(dim_x <= dim_d)) {
+    fits <- TRUE
+  } else if (all(dim_x > dim_d)) {
+    if (opt) warning("dimension of `x` exceeds all `dims`")
+    fits <- FALSE
+  } else if (dim_x[1] > dim_d[1]) {
+    if (opt) warning("dimension of `x` exceeds rows of `dims`")
+    fits <- FALSE
+  } else if (dim_x[2] > dim_d[2]) {
+    if (opt) warning("dimension of `x` exceeds cols of `dims`")
+    fits <- FALSE
+  }
+
+  if (fits) {
+
+    # why oh why wasn't dims_to_rowcol()/rowcol_to_dims() created as a matching pair
+    dims <- rowcol_to_dims(row = dims[[2]], col = dims[[1]])
+
+  } else {
+
+    # # one off. needs check if dims = NULL or row names argument?
+    # dims <- wb_dims(x = x, from_col = startCol, from_row = startRow)
+
+    data_nrow <- NROW(x)
+    data_ncol <- NCOL(x)
+
+    endRow <- (startRow - 1) + data_nrow
+    endCol <- (startCol - 1) + data_ncol
+
+    dims <- paste0(
+      int2col(startCol), startRow,
+      ":",
+      int2col(endCol), endRow
+    )
+
+  }
+
+  rc <- dims_to_rowcol(dims)
+  if (max(as.integer(rc[[2]])) > 1048576 || max(col2int(rc[[1]])) > 16384)
+    stop("Dimensions exceed worksheet")
+
+  dims
+}
+
+# transpose single column or row data frames to wide/long. keeps attributes and class
+transpose_df <- function(x) {
+  attribs <- attr(x, "c_cm")
+  classes <- class(x[[1]])
+  x <- as.data.frame(t(x))
+  for (i in seq_along(x)) {
+    class(x[[i]]) <- classes
+  }
+  attr(x, "c_cm") <- attribs
+  x
+}

@@ -72,7 +72,7 @@ is passed, it is only possible to return individual cells.
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
-wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = t(c(4, 5, 8)), col_names = FALSE)
+wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = c(4, 5, 8))
 
 # calculate the sum of elements.
 wb$add_formula(dims = "D1", x = "SUM(A1:C1)")

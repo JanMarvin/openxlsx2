@@ -206,10 +206,10 @@ test_that("update cell(s)", {
 
   exp <- structure(
     list(c(7, NA, NA, NA, NA, 7),
-         c("y", "z", "TRUE", "FALSE", "TRUE", NA),
+         c(NA, NA, TRUE, FALSE, TRUE, NA),
          c(2, NA, 2.5, NA, NA, NA),
          c(7, 2, 3, NA, 5, NA)),
-    names = c(NA, "x", "Var2", "Var3"),
+    names = c(NA, "x", "y", "z"),
     row.names = 4:9,
     class = "data.frame")
 
@@ -875,5 +875,87 @@ test_that("writing total row works", {
   )
   got <- wb_to_df(wb, dims = wb_dims(rows = 6, cols = "A:F"), col_names = FALSE, show_formula = TRUE)
   expect_equal(exp, got, ignore_attr = TRUE)
+
+})
+
+test_that("writing vectors direction with dims works", {
+
+  # write vectors column or rowwise
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = 1:2, dims = "A1:B1")$
+    add_data(x = t(1:2), dims = "D1:D2", col_names = FALSE)$
+    add_data(x = 1:2, dims = "A3:A4")$
+    add_data(x = t(1:2), dims = "D3:E3", col_names = FALSE)
+
+  exp <- c("A1", "B1", "D1", "E1", "A3", "D3", "A4", "D4")
+  got <- wb$worksheets[[1]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  ## sum, sum as array and sum as cm
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = head(cars))$
+    add_formula(x = c("SUM(A2:A7)", "SUM(B2:B7)"), dims = "A9:B9")$
+    add_formula(x = c("{SUM(A2:A7)}", "{SUM(B2:B7)}"), dims = "A10:B10")
+
+  expect_warning(
+    wb$add_formula(x = c("{SUM(A2:A7)}", "{SUM(B2:B7)}"), dims = "A11:B11", cm = TRUE),
+    "modifications with cm formulas are experimental. use at own risk"
+  )
+
+  exp <- c("A1", "B1", "A2", "B2", "A3", "B3", "A4", "B4", "A5", "B5",
+           "A6", "B6", "A7", "B7", "A9", "B9", "A10", "B10", "A11", "B11")
+  got <- wb$worksheets[[1]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+})
+
+test_that("dims size warnings work", {
+
+  op <- options("openxlsx2.warn_if_dims_dont_fit" = TRUE)
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_workbook()$add_worksheet()
+
+  # default no dims
+  expect_warning(
+    wb$add_data(x = head(mtcars)),
+    "dimension of `x` exceeds all `dims`"
+  )
+
+  # with explicit default dims
+  expect_warning(
+    wb$add_data(dims = "A1", x = head(mtcars)),
+    "dimension of `x` exceeds all `dims`"
+  )
+
+  # wb_add_data(dims = wb_dims(x = obj), x = obj) should always be silent
+  expect_silent(wb$add_data(dims = wb_dims(x = head(mtcars)), x = head(mtcars)))
+
+  # correct size should always be silent
+  expect_silent(wb$add_data(dims = "A1:K7", x = head(mtcars)))
+
+  # To wide
+  expect_warning(
+    wb$add_data(dims = "A1:K1", x = head(mtcars)),
+    "dimension of `x` exceeds rows of `dims`"
+  )
+
+  # To short
+  expect_warning(
+    wb$add_data(dims = "A1:J7", x = head(mtcars)),
+    "dimension of `x` exceeds cols of `dims`"
+  )
+
+  # ending in the correct cell isn't enough
+  expect_warning(
+    wb$add_data(dims = "B2:K7", x = head(mtcars)),
+    "dimension of `x` exceeds all `dims`"
+  )
+
+  # currently write_xlsx() uses the default dims
+  expect_warning(
+    wb <- write_xlsx(x = head(mtcars))
+  )
 
 })
