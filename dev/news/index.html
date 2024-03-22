@@ -70,7 +70,17 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>Export <code><a href="../reference/wb_add_ignore_error.html">wb_add_ignore_error()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/955" class="external-link">955</a>
 </li>
-</ul><hr></div>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>The direction vectors are written is now controlled via <code>dims</code>. Previously it was required to transpose a vector to write it horizontally: <code>wb_add_data(x = t(letters), col_names = FALSE)</code>. Now the direction is defined by <code>dims</code>. The default is still to write vectors vertically, but for a horizontal vector it is possible to write <code>wb_add_data(x = letters, dims = "A1:Z1")</code>. This change impacts vectors, hyperlinks and formulas and basically everything that is not a two dimensional <code>x</code> object. This is only breaking, if previous code made use of the transposed trick above and already defined a correct <code>dims</code>. Since the <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> function is agnostic of the direction of <code>x</code>, this <code>wb_add_data(x = t(letters), dims = "A1:Z1", col_names = FALSE)</code> would write the <code>letters</code> into cells <code>A1:A26</code>, because of a round trip through transpose.</li>
+</ul><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># before (workaround needed)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co"># now (listens to dims)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<hr></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4" id="openxlsx2-14">openxlsx2 1.4<a class="anchor" aria-label="anchor" href="#openxlsx2-14"></a></h2><p class="text-muted">CRAN release: 2024-02-15</p>
