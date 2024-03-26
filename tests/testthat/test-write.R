@@ -883,11 +883,11 @@ test_that("writing vectors direction with dims works", {
   # write vectors column or rowwise
   wb <- wb_workbook()$add_worksheet()$
     add_data(x = 1:2, dims = "A1:B1")$
-    add_data(x = t(1:2), dims = "D1:D2", col_names = FALSE)$
+    add_data(x = t(1:2), dims = "D1:D2", col_names = FALSE)$ # ignores dims
     add_data(x = 1:2, dims = "A3:A4")$
-    add_data(x = t(1:2), dims = "D3:E3", col_names = FALSE)
+    add_data(x = t(1:2), dims = "D3:E3", col_names = FALSE)  # ignores dims
 
-  exp <- c("A1", "B1", "D1", "E1", "A3", "D3", "A4", "D4")
+  exp <- c("A1", "B1", "D1", "E1", "A3", "D3", "E3", "A4")
   got <- wb$worksheets[[1]]$sheet_data$cc$r
   expect_equal(exp, got)
 
