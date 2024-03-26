@@ -827,7 +827,8 @@ write_data_table <- function(
   ### Create data frame --------------------------------------------------------
 
   transpose <- FALSE
-  # do not transpose if input is a matrix. assuming that the input
+  # do not transpose if input is a matrix or a data frame. assuming that such input
+  # is already transposed as required.
   if (length(dims[[1]]) > length(dims[[2]]) &&
         !inherits(x, "matrix") && !inherits(x, "data.frame"))
     transpose <- TRUE
