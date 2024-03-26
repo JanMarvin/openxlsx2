@@ -22,7 +22,7 @@ All parameters are numeric unless stated otherwise.'><!-- mathjax --><script src
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,7 +89,7 @@ All parameters are numeric unless stated otherwise.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>...</dt>
 <dd><p>construct <code>dims</code> arguments, from rows/cols vectors or objects that
-can be coerced to data frame. <code>x</code>, <code>rows</code>, <code>cols</code>, <code>from_row</code>, <code>from_col</code>,
+can be coerced to data frame. <code>x</code>, <code>rows</code>, <code>cols</code>, <code>from_row</code>, <code>from_col</code>, <code>from_dims</code>
 <code>row_names</code>, and <code>col_names</code> are accepted.</p></dd>
 
 
@@ -114,7 +114,7 @@ One of "x", "data", "col_names", or "row_names".
     <p>When using <code>wb_dims()</code> with an object, the default behavior is
 to select only the data / row or columns in <code>x</code>
 If you need another behavior, use <code>wb_dims()</code> without supplying <code>x</code>.</p><ul><li><p><code>x</code> An object (typically a <code>matrix</code> or a <code>data.frame</code>, but a vector is also accepted.)</p></li>
-<li><p><code>from_row</code> / <code>from_col</code> the starting position of <code>x</code>
+<li><p><code>from_row</code> / <code>from_col</code> / <code>from_dims</code> the starting position of <code>x</code>
 (The <code>dims</code> returned will assume that the top left corner of <code>x</code> is at <code>from_row / from_col</code></p></li>
 <li><p><code>rows</code> Optional Which row span in <code>x</code> should this apply to.
 If <code>rows</code> = 0, only column names will be affected.</p></li>
@@ -189,7 +189,8 @@ performed seamlessly.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A2:C11"</span>
 <span class="r-in"><span><span class="fu">wb_dims</span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, from_col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "B1:K10"</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">wb_dims</span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, from_dims <span class="op">=</span> <span class="st">"B1"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "B1:K10"</span>
 <span class="r-in"><span><span class="co"># or objects</span></span></span>
 <span class="r-in"><span><span class="fu">wb_dims</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, col_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A1:K33"</span>

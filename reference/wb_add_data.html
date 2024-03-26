@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -147,7 +147,8 @@ columns to a character vector e.g. <code>sapply(x$list_column, paste, collapse =
 
 <dt>na.strings</dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
-<code><a href="waivers.html">na_strings()</a></code> uses the special <code>#N/A</code> value within the workbook.</p></dd>
+looks if <code>options(openxlsx2.na.strings)</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
+uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 
 <dt>inline_strings</dt>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,8 +82,20 @@
 
 
 <dt>...</dt>
-<dd><p>Arguments passed on to <code><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">base::as.Date</a></code></p><dl><dt><code></code></dt>
-<dd></dd>
+<dd><p>Arguments passed on to <code><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">base::as.Date.character</a></code></p><dl><dt><code>format</code></dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></code> string.  If not specified, it will try
+    <code>tryFormats</code> one by one on the first non-<code>NA</code> element, and
+    give an error if none works.  Otherwise, the processing is via
+    <code><a href="https://rdrr.io/r/base/strptime.html" class="external-link">strptime</a>()</code> whose help page describes available
+    conversion specifications.</p></dd>
+
+    <dt><code>tryFormats</code></dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></code> vector of <code>format</code>
+    strings to try if <code>format</code> is not specified.</p></dd>
+
+    <dt><code>optional</code></dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></code> indicating to return <code>NA</code>
+    (instead of signalling an error) if the format guessing does not succeed.</p></dd>
 
   
 </dl></dd>

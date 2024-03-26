@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,7 @@
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  total_row <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -169,11 +170,16 @@ columns to a character vector e.g.
 
 <dt>na.strings</dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
-<code><a href="waivers.html">na_strings()</a></code> uses the special <code>#N/A</code> value within the workbook.</p></dd>
+looks if <code>options(openxlsx2.na.strings)</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
+uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 
 <dt>inline_strings</dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt>total_row</dt>
+<dd><p>logical. With the default <code>FALSE</code> no total row is added.</p></dd>
 
 
 <dt>...</dt>
@@ -206,6 +212,19 @@ hyperlinks, percentages respectively.</p>
 distinction is that the latter creates a table in the worksheet that can be
 used for different kind of formulas and can be sorted independently, though
 is less flexible than basic cell regions.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="modify-total-row-argument">Modify total row argument<a class="anchor" aria-label="anchor" href="#modify-total-row-argument"></a></h2>
+    <p>It is possible to further tweak the total row. In addition to the default
+<code>FALSE</code> possible values are <code>TRUE</code> (the xlsx file will create column sums
+each variable).</p>
+<p>In addition it is possible to tweak this further using a character string
+with one of the following functions for each variable: <code>"average"</code>,
+<code>"count"</code>, <code>"countNums"</code>, <code>"max"</code>, <code>"min"</code>, <code>"stdDev"</code>, <code>"sum"</code>, <code>"var"</code>.
+It is possible to leave the cell empty <code>"none"</code> or to create a text input
+using a named character with name <code>text</code> like: <code>c(text = "Total")</code>.
+It's also possible to pass other spreadsheet software functions if they
+return a single value and hence <code>"SUM"</code> would work too.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -245,6 +264,16 @@ is less flexible than basic cell regions.</p>
 <code><a href="wb_workbook.html">wb_workbook</a>()</code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span></span>
+<span class="r-in"><span>  <span class="fu">add_data_table</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">USPersonalExpenditure</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    row_names <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    total_row <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"Total"</span>, <span class="st">"none"</span>, <span class="st">"sum"</span>, <span class="st">"sum"</span>, <span class="st">"sum"</span>, <span class="st">"SUM"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

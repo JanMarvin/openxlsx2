@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,11 +70,11 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>An object or a list of objects that can be handled by <code><a href="wb_add_data.html">wb_add_data()</a></code> to write to file</p></dd>
+<dd><p>An object or a list of objects that can be handled by <code><a href="wb_add_data.html">wb_add_data()</a></code> to write to file.</p></dd>
 
 
 <dt>file</dt>
-<dd><p>An xlsx file name</p></dd>
+<dd><p>An optional xlsx file name. If no file is passed, the object is not written to disk and only a workbook object is returned.</p></dd>
 
 
 <dt>as_table</dt>
@@ -100,6 +100,9 @@ hidden.</p></dd>
 <dd><p>The sheet zoom level, a numeric between 10 and 400 as a
 percentage. (A zoom value smaller than 10 will default to 10.)</p></dd>
 
+    <dt><code>total_row</code></dt>
+<dd><p>logical. With the default <code>FALSE</code> no total row is added.</p></dd>
+
     <dt><code>start_col</code></dt>
 <dd><p>A vector specifying the starting column to write <code>x</code> to.</p></dd>
 
@@ -114,7 +117,8 @@ percentage. (A zoom value smaller than 10 will default to 10.)</p></dd>
 
     <dt><code>na.strings</code></dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
-<code><a href="waivers.html">na_strings()</a></code> uses the special <code>#N/A</code> value within the workbook.</p></dd>
+looks if <code>options(openxlsx2.na.strings)</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
+uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
     <dt><code>first_active_row</code></dt>
 <dd><p>Top row of active region</p></dd>
