@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.5.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,28 +59,29 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.5" id="openxlsx2-15">openxlsx2 1.5<a class="anchor" aria-label="anchor" href="#openxlsx2-15"></a></h2><p class="text-muted">CRAN release: 2024-03-26</p>
+<p>(This was updated post release.)</p>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-1-5">New features<a class="anchor" aria-label="anchor" href="#new-features-1-5"></a></h3>
 <ul><li><p>It’s now possible to pass array formula vectors to <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/958" class="external-link">958</a></p></li>
 <li><p><code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code> gained a new <code>total_row</code> argument. This allows to add a total row to spreadsheets including text and spreadsheet formulas. <a href="https://github.com/JanMarvin/openxlsx2/pull/959" class="external-link">959</a></p></li>
 <li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> now accepts <code>from_dims</code> to specify a starting cell <a href="https://github.com/JanMarvin/openxlsx2/pull/960" class="external-link">960</a>.</p></li>
 <li><p>You can now set <code>options(openxlsx2.na.strings)</code> to a value to have a default value for <code>na.strings</code> in <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>, and <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> <a href="https://github.com/JanMarvin/openxlsx2/pull/968" class="external-link">968</a>.</p></li>
-</ul></div>
-<div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Export <code><a href="../reference/wb_add_ignore_error.html">wb_add_ignore_error()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/955" class="external-link">955</a>
-</li>
-</ul></div>
-<div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>The direction vectors are written is now controlled via <code>dims</code>. Previously it was required to transpose a vector to write it horizontally: <code>wb_add_data(x = t(letters), col_names = FALSE)</code>. Now the direction is defined by <code>dims</code>. The default is still to write vectors vertically, but for a horizontal vector it is possible to write <code>wb_add_data(x = letters, dims = "A1:Z1")</code>. This change impacts vectors, hyperlinks and formulas and basically everything that is not a two dimensional <code>x</code> object. This is only breaking, if previous code made use of the transposed trick above and already defined a correct <code>dims</code>. Since the <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> function is agnostic of the direction of <code>x</code>, this <code>wb_add_data(x = t(letters), dims = "A1:Z1", col_names = FALSE)</code> would write the <code>letters</code> into cells <code>A1:A26</code>, because of a round trip through transpose.</li>
+<li><p>The direction vectors are written is now controlled via <code>dims</code>. Previously it was required to transpose a vector to write it horizontally: <code>wb_add_data(x = t(letters), col_names = FALSE)</code>. Now the direction is defined by <code>dims</code>. The default is still to write vectors vertically, but for a horizontal vector it is possible to write <code>wb_add_data(x = letters, dims = "A1:Z1")</code>. This change impacts vectors, hyperlinks and formulas and basically everything that is not a two dimensional <code>x</code> object.</p></li>
 </ul><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># before (workaround needed)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># now (listens to dims)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<hr></div>
+</div>
+<div class="section level3">
+<h3 id="fixes-1-5">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-5"></a></h3>
+<ul><li>Export <code><a href="../reference/wb_add_ignore_error.html">wb_add_ignore_error()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/955" class="external-link">955</a>
+</li>
+</ul><hr></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4" id="openxlsx2-14">openxlsx2 1.4<a class="anchor" aria-label="anchor" href="#openxlsx2-14"></a></h2><p class="text-muted">CRAN release: 2024-02-15</p>
