@@ -105,6 +105,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{queryTables}}{queryTables}
 
+\item{\code{richData}}{richData}
+
 \item{\code{slicers}}{slicers}
 
 \item{\code{slicerCaches}}{slicerCaches}
