@@ -187,6 +187,13 @@ wb_load <- function(
   pivotDefRelsXML   <- grep_xml("pivotCacheDefinition[0-9]+.xml.rels$")
   pivotCacheRecords <- grep_xml("pivotCacheRecords[0-9]+.xml$")
 
+  # rich data
+  rdrichvalue       <- grep_xml("richData/rdrichvalue.xml")
+  rdrichvaluestr    <- grep_xml("richData/rdrichvaluestructure.xml")
+  rdRichValueTypes  <- grep_xml("richData/rdRichValueTypes.xml")
+  richValueRel      <- grep_xml("richData/richValueRel.xml")
+  richValueRelrels  <- grep_xml("richData/_rels/richValueRel.xml.rels")
+
   ## slicers
   slicerXML         <- grep_xml("slicer[0-9]+.xml$")
   slicerCachesXML   <- grep_xml("slicerCache[0-9]+.xml$")
@@ -1512,6 +1519,75 @@ wb_load <- function(
     }
 
   }
+
+  ## richData ------------------------------------------------------------------------------------
+  # This is new in openxlsx2 1.6 and probably not yet entire correct
+  if (!data_only && (length(richValueRel) || length(rdrichvalue) || length(rdrichvaluestr) || length(rdRichValueTypes))) {
+
+    rd <- data.frame(
+      richValueRel     = "",
+      richValueRelrels = "",
+      rdrichvalue      = "",
+      rdrichvaluestr   = "",
+      rdRichValueTypes = "",
+      stringsAsFactors = FALSE
+    )
+
+    if (length(richValueRel)) {
+      wb$append(
+        "Content_Types",
+        '<Override PartName="/xl/richData/richValueRel.xml" ContentType="application/vnd.ms-excel.richvaluerel+xml"/>'
+      )
+      wb$append(
+        "workbook.xml.rels",
+        '<Relationship Id="rId5" Type="http://schemas.microsoft.com/office/2022/10/relationships/richValueRel" Target="richData/richValueRel.xml"/>'
+      )
+      rd$richValueRel <- read_xml(richValueRel, pointer = FALSE)
+    }
+
+    if (length(richValueRelrels)) {
+      rd$richValueRelrels <- read_xml(richValueRelrels, pointer = FALSE)
+    }
+
+    if (length(rdrichvalue)) {
+      wb$append(
+        "Content_Types",
+        '<Override PartName="/xl/richData/rdrichvalue.xml" ContentType="application/vnd.ms-excel.rdrichvalue+xml"/>'
+      )
+      wb$append(
+        "workbook.xml.rels",
+        '<Relationship Id="rId6" Type="http://schemas.microsoft.com/office/2017/06/relationships/rdRichValue" Target="richData/rdrichvalue.xml"/>'
+      )
+      rd$rdrichvalue <- read_xml(rdrichvalue, pointer = FALSE)
+    }
+
+    if (length(rdrichvaluestr)) {
+      wb$append(
+        "Content_Types",
+        '<Override PartName="/xl/richData/rdrichvaluestructure.xml" ContentType="application/vnd.ms-excel.rdrichvaluestructure+xml"/>'
+      )
+      wb$append(
+        "workbook.xml.rels",
+        '<Relationship Id="rId7" Type="http://schemas.microsoft.com/office/2017/06/relationships/rdRichValueStructure" Target="richData/rdrichvaluestructure.xml"/>'
+      )
+      rd$rdrichvaluestr <- read_xml(rdrichvaluestr, pointer = FALSE)
+    }
+
+    if (length(rdRichValueTypes)) {
+      wb$append(
+        "Content_Types",
+        '<Override PartName="/xl/richData/rdRichValueTypes.xml" ContentType="application/vnd.ms-excel.rdrichvaluetypes+xml"/>'
+      )
+      wb$append(
+        "workbook.xml.rels",
+        '<Relationship Id="rId8" Type="http://schemas.microsoft.com/office/2017/06/relationships/rdRichValueTypes" Target="richData/rdRichValueTypes.xml"/>'
+      )
+      rd$rdRichValueTypes <- read_xml(rdRichValueTypes, pointer = FALSE)
+    }
+
+    wb$richData <- rd
+  }
+
 
   # final cleanup
   if (length(workbookBIN)) {

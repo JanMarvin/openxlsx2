@@ -373,3 +373,10 @@ test_that("hyperlinks work", {
 
   unlink(temp_uzip, recursive = TRUE)
 })
+
+test_that("reading richData content works", {
+
+  tmp <- temp_xlsx()
+  expect_silent(wb_load(testfile_path("pic_in_cell.xlsx"))$save(tmp))
+
+})

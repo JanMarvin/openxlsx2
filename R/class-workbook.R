@@ -148,6 +148,9 @@ wbWorkbook <- R6::R6Class(
     #' @field queryTables queryTables
     queryTables = NULL,
 
+    #' @field richData richData
+    richData = NULL,
+
     #' @field slicers slicers
     slicers = NULL,
 
@@ -296,6 +299,8 @@ wbWorkbook <- R6::R6Class(
       self$pivotDefinitionsRels <- NULL
 
       self$queryTables <- NULL
+
+      self$richData <- NULL
 
       self$slicers <- NULL
       self$slicerCaches <- NULL
@@ -994,6 +999,10 @@ wbWorkbook <- R6::R6Class(
           sprintf("<Override PartName=\"/xl/slicers/slicer%s.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>", newid)
         )
 
+      }
+
+      if (!is.null(self$richData)) {
+        warning("Cloning richData (e.g., cells with picture) is not yet supported. The output file will be broken.")
       }
 
       # The IDs in the drawings array are sheet-specific, so within the new
@@ -2430,6 +2439,57 @@ wbWorkbook <- R6::R6Class(
             fl = file.path(
               externalLinksRelsDir,
               sprintf("externalLink%s.xml.rels", i)
+            )
+          )
+        }
+      }
+
+      if (!is.null(self$richData)) {
+        richDataDir <- dir_create(tmpDir, "xl", "richData")
+        if (length(self$richData$richValueRel)) {
+          write_file(
+            body = self$richData$richValueRel,
+            fl = file.path(
+              richDataDir,
+              "richValueRel.xml"
+            )
+          )
+        }
+        if (length(self$richData$rdrichvalue)) {
+          write_file(
+            body = self$richData$rdrichvalue,
+            fl = file.path(
+              richDataDir,
+              "rdrichvalue.xml"
+            )
+          )
+        }
+        if (length(self$richData$rdrichvaluestr)) {
+          write_file(
+            body = self$richData$rdrichvaluestr,
+            fl = file.path(
+              richDataDir,
+              "rdrichvaluestructure.xml"
+            )
+          )
+        }
+        if (length(self$richData$rdRichValueTypes)) {
+          write_file(
+            body = self$richData$rdRichValueTypes,
+            fl = file.path(
+              richDataDir,
+              "rdRichValueTypes.xml"
+            )
+          )
+        }
+
+        if (length(self$richData$richValueRelrels)) {
+          richDataRelDir <- dir_create(tmpDir, "xl", "richData", "_rels")
+          write_file(
+            body = self$richData$richValueRelrels,
+            fl = file.path(
+              richDataRelDir,
+              "richValueRel.xml.rels"
             )
           )
         }
@@ -8794,6 +8854,7 @@ wbWorkbook <- R6::R6Class(
       tableInds        <- grep("table[0-9]+.xml",                            self$workbook.xml.rels)
       personInds       <- grep("person.xml",                                 self$workbook.xml.rels)
       calcChainInd     <- grep("calcChain.xml",                              self$workbook.xml.rels)
+      richDataInd      <- grep("richData",                                   self$workbook.xml.rels)
 
 
       ## Reordering of workbook.xml.rels
@@ -8813,7 +8874,8 @@ wbWorkbook <- R6::R6Class(
           sharedStringsInd,
           tableInds,
           personInds,
-          calcChainInd
+          calcChainInd,
+          richDataInd
         )]
 
       ## Re assign rIds to children of workbook.xml.rels
