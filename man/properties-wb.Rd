@@ -19,7 +19,8 @@ wb_set_properties(
   keywords = NULL,
   comments = NULL,
   manager = NULL,
-  company = NULL
+  company = NULL,
+  custom = NULL
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ wb_set_properties(
 \item{datetime_created}{The time of the workbook is created}
 
 \item{modifier}{A character string indicating who was the last person to modify the workbook}
+
+\item{custom}{A named vector of custom properties added to the workbook}
 }
 \value{
 A wbWorkbook object, invisibly.

@@ -5958,7 +5958,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param title,subject,category,datetime_created,modifier,keywords,comments,manager,company A workbook property to set
+    #' @param title,subject,category,datetime_created,modifier,keywords,comments,manager,company,custom A workbook property to set
     set_properties = function(
       creator          = NULL,
       title            = NULL,
@@ -5969,7 +5969,8 @@ wbWorkbook <- R6::R6Class(
       keywords         = NULL,
       comments         = NULL,
       manager          = NULL,
-      company          = NULL
+      company          = NULL,
+      custom           = NULL
     ) {
 
       datetime_created <-
@@ -6065,6 +6066,88 @@ wbWorkbook <- R6::R6Class(
         xml_children = xml_properties,
         escapes = TRUE
       )
+
+      if (!is.null(custom)) {
+
+        if (!is.null(names(custom))) {
+          custom <- mapply(
+            custom, names(custom),
+            FUN = function(x, y) {
+
+              child <- xml_node_create("vt:lpwstr", xml_children = x)
+              if (is.logical(x)) {
+                child <- xml_node_create("vt:bool", xml_children = as_xml_attr(x))
+              } else if (is.numeric(x) && is.integer(x)) {
+                child <- xml_node_create("vt:i4", xml_children = as_xml_attr(x))
+              } else if (is.numeric(x) && !is.integer(x)) {
+                child <- xml_node_create("vt:r8", xml_children = as_xml_attr(x))
+              } else if (inherits(x, "Date") || inherits(x, "POSIXt")) {
+                child <- xml_node_create("vt:filetime", xml_children = format(as_POSIXct_utc(x), "%Y-%m-%dT%H:%M:%SZ"))
+              }
+
+              xml_node_create(
+                "property",
+                xml_attributes = c(
+                  fmtid = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}",
+                  pid   = "0",
+                  name  = y
+                ),
+                xml_children = child
+              )
+            },
+            USE.NAMES = FALSE
+          )
+        }
+
+        ## TODO create a clever assert
+        #  else if (is_xml(paste0(custom, collape = "")) && !all(xml_node_name(custom) == "property")) {
+        #   stop("custom needs to be an xml string beginning with `<property .../>`")
+        # } else {
+        #   # propaby not helpful to advertise that an XML character is possible too
+        #   stop("custom needs to be a named character")
+        # }
+
+        custom <- xml_node(custom, "property")
+
+        if (length(self$custom) == 0) {
+          self$custom <- xml_node_create(
+            "Properties",
+            xml_attributes = c(
+              xmlns = "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties",
+              `xmlns:vt` = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"
+            ),
+            xml_children = custom
+          )
+          self$append(
+            "Content_Types",
+            "<Override PartName=\"/docProps/custom.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.custom-properties+xml\"/>"
+          )
+        } else {
+
+          props <- xml_node(self$custom, "Properties", "property")
+
+          new_names <- rbindlist(xml_attr(custom, "property"))$name
+          old_names <- rbindlist(xml_attr(props, "property"))$name
+
+          # TODO add update or remove option
+          if (any(duplicated(c(old_names, new_names)))) {
+            message("File has duplicated custom section")
+            cstm <- self$custom
+            idxs <- which(old_names %in% new_names)
+            # remove all duplicates in reverse order
+            for (idx in rev(idxs)) {
+              cstm <- xml_rm_child(cstm, "property", which = idx)
+            }
+            # add replacement childs (order might differ. does it matter?)
+            self$custom <- xml_add_child(cstm, custom)
+          } else {
+            self$custom <- xml_add_child(self$custom, custom) # pxml()
+          }
+
+        }
+
+        self$custom <- wb_upd_custom_pid(self)
+      }
 
       invisible(self)
 

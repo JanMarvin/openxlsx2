@@ -2541,6 +2541,7 @@ wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
 #' @name properties-wb
 #' @param wb A Workbook object
 #' @param modifier A character string indicating who was the last person to modify the workbook
+#' @param custom A named vector of custom properties added to the workbook
 #' @seealso [wb_workbook()]
 #' @inheritParams wb_workbook
 #' @return A wbWorkbook object, invisibly.
@@ -2561,7 +2562,7 @@ wb_get_properties <- function(wb) {
 
 #' @rdname properties-wb
 #' @export
-wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL) {
+wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, category = NULL, datetime_created = Sys.time(), modifier = NULL, keywords = NULL, comments = NULL, manager = NULL, company = NULL, custom = NULL) {
   assert_workbook(wb)
   wb$clone()$set_properties(
     creator           = creator,
@@ -2573,7 +2574,8 @@ wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, 
     keywords          = keywords,
     comments          = comments,
     manager           = manager,
-    company           = company
+    company           = company,
+    custom            = custom
   )
 }
 

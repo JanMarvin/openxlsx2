@@ -1195,16 +1195,67 @@ transpose_df <- function(x) {
   x
 }
 
-#' function to extract mips string from workbook
+#' helper function to update custom pids. Pids are indexed starting with 2.
 #' @param wb a workbook
+#' @noRd
+wb_upd_custom_pid <- function(wb) {
+
+  cstm <- xml_node(wb$custom, "Properties", "property")
+
+  cstm_nams <- xml_node_name(cstm, "property")
+
+  cstm_df      <- rbindlist(xml_attr(cstm, "property"))
+  cstm_df$clds <- vapply(seq_along(cstm), function(x) xml_node(cstm[x], "property", cstm_nams[x]), NA_character_)
+  cstm_df$pid  <- as.character(2L + (seq_len(nrow(cstm_df)) - 1L))
+
+  out <- NULL
+  for (i in seq_len(nrow(cstm_df))) {
+    tmp <- xml_node_create(
+      "property",
+      xml_attributes = c(fmtid = cstm_df$fmtid[i], pid = cstm_df$pid[i], name = cstm_df$name[i]),
+      xml_children   = c(cstm_df$clds[i])
+    )
+    out <- c(out, tmp)
+  }
+
+  ## return
+  xml_node_create(
+    "Properties",
+    xml_attributes = c(
+      xmlns = "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties",
+      `xmlns:vt` = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"
+    ),
+    xml_children = out
+  )
+}
+
+
+#' wb get and apply MIP section
+#' @param wb a workbook
+#' @param xml a mips string obtained from [wb_get_mips()] or a global option "openxlsx2.mips_xml_string"
+#' @returns the workbook invisible
+#' @export
+wb_add_mips <- function(wb, xml = NULL) {
+
+  wb <- wb$clone()
+
+  # get option and make sure that it can be imported as xml
+  mips <- xml_node(xml, "property") %||% getOption("openxlsx2.mips_xml_string")
+  if (is.null(mips)) stop("no mips xml provided")
+  mips <- xml_node(mips, "property")
+
+  wb$set_properties(custom = xml)
+
+}
+
 #' @param single_xml option to define if the string should be exported as single string. helpful if storing as option is desired.
-#' @seealso wb_add_mips
+#' @rdname wb_add_mips
 #' @export
 wb_get_mips <- function(wb, single_xml = TRUE) {
   props <- xml_node(wb$custom, "Properties", "property")
-  prop_nams <- grepl("MSIP_Label_", openxlsx2:::rbindlist(xml_attr(props, "property"))$name)
+  prop_nams <- grepl("MSIP_Label_", rbindlist(xml_attr(props, "property"))$name)
 
-  name <- grepl("_Name$", openxlsx2:::rbindlist(xml_attr(props[prop_nams], "property"))$name)
+  name <- grepl("_Name$", rbindlist(xml_attr(props[prop_nams], "property"))$name)
 
   name <- xml_value(props[prop_nams][name], "property", "vt:lpwstr")
   message("Found MIPS section: ", name)
@@ -1214,73 +1265,4 @@ wb_get_mips <- function(wb, single_xml = TRUE) {
     paste0(mips, collapse = "")
   else
     mips
-}
-
-#' helper function to update mips id
-#' @param mips the mips xml string as character vector. either single lines or multiple lines
-#' @param index the index must be > 2
-#' @noRd
-upd_mips_pid <- function(mips = NULL, index = 2) {
-
-  if (index < 2) index <- 2
-
-  # get option and make sure that it can be imported as xml
-  mips <- getOption("openxlsx2.mips_xml_string") %||% xml_node(mips, "property")
-  mips <- xml_node(mips, "property")
-
-  # pid is a +1 based index
-  # fmtid is always: {D5CDD505-2E9C-101B-9397-08002B2CF9AE}
-  mips_children <- xml_node_name(mips, "property")
-  mips_nams <- openxlsx2:::rbindlist(xml_attr(mips, "property"))
-  mips_nams$clds <- vapply(seq_along(mips_children), function(x) xml_node(mips[x], "property", mips_children[x]), NA_character_)
-  mips_nams$pid  <- as.character(index + (seq_len(nrow(mips_nams)) - 1L))
-
-  out <- NULL
-  for (i in seq_len(nrow(mips_nams))) {
-    tmp <- xml_node_create(
-      "property",
-      xml_attributes = c(fmtid = mips_nams$fmtid[i], pid = mips_nams$pid[i], name = mips_nams$name[i]),
-      xml_children   = c(mips_nams$clds[i])
-    )
-    out <- c(out, tmp)
-  }
-
-  out
-}
-
-#' wb add mips
-#' @param wb a workbook
-#' @param mips a mips string obtained from [wb_get_mips()] or a global option "openxlsx2.mips_xml_string"
-#' @returns the workbook invisible
-#' @export
-wb_add_mips <- function(wb, mips = NULL) {
-
-  wb <- wb$clone()
-
-  if (length(wb$custom) == 0) {
-    wb$custom <- xml_node_create(
-      "Properties",
-      xml_attributes = c(
-        xmlns = "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties",
-        `xmlns:vt` = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"
-      ),
-      xml_children = upd_mips_pid(mips)
-    )
-    wb$append(
-      "Content_Types",
-      "<Override PartName=\"/docProps/custom.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.custom-properties+xml\"/>"
-    )
-  } else {
-
-    props <- xml_node(wb$custom, "Properties", "property")
-
-    if (any(grepl("MSIP_Label_", openxlsx2:::rbindlist(xml_attr(props, "property"))$name))) {
-      message("File already has a mips section")
-    } else {
-      wb$custom <- xml_add_child(wb$custom, upd_mips_pid(mips, length(props)))
-    }
-
-  }
-
-  invisible(wb)
 }

@@ -2259,7 +2259,8 @@ Set a property of a workbook
   keywords = NULL,
   comments = NULL,
   manager = NULL,
-  company = NULL
+  company = NULL,
+  custom = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -2268,7 +2269,7 @@ Set a property of a workbook
 \describe{
 \item{\code{creator}}{character vector of creators. Duplicated are ignored.}
 
-\item{\code{title, subject, category, datetime_created, modifier, keywords, comments, manager, company}}{A workbook property to set}
+\item{\code{title, subject, category, datetime_created, modifier, keywords, comments, manager, company, custom}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }

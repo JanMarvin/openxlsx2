@@ -2,18 +2,23 @@
 % Please edit documentation in R/helper-functions.R
 \name{wb_add_mips}
 \alias{wb_add_mips}
-\title{wb add mips}
+\alias{wb_get_mips}
+\title{wb get and apply MIP section}
 \usage{
-wb_add_mips(wb, mips = NULL)
+wb_add_mips(wb, xml = NULL)
+
+wb_get_mips(wb, single_xml = TRUE)
 }
 \arguments{
 \item{wb}{a workbook}
 
-\item{mips}{a mips string obtained from \code{\link[=wb_get_mips]{wb_get_mips()}} or a global option "openxlsx2.mips_xml_string"}
+\item{xml}{a mips string obtained from \code{\link[=wb_get_mips]{wb_get_mips()}} or a global option "openxlsx2.mips_xml_string"}
+
+\item{single_xml}{option to define if the string should be exported as single string. helpful if storing as option is desired.}
 }
 \value{
 the workbook invisible
 }
 \description{
-wb add mips
+wb get and apply MIP section
 }
