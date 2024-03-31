@@ -58,7 +58,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          remotes::install_deps(dependencies = "Suggests")
+          remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_github("r-lib/revdepcheck")
         shell: Rscript {0}
@@ -73,7 +73,7 @@ jobs:
       - name: Run revdepcheck
         run: |
           revdepcheck::revdep_reset()
-          revdepcheck::revdep_check(num_workers=4)
+          revdepcheck::revdep_check(num_workers=4, env = revdep_env_vars(force_suggests = TRUE))
           revdepcheck::revdep_report()
           revdepcheck::revdep_report_summary()
         shell: Rscript {0}
