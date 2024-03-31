@@ -455,6 +455,20 @@ test_that("Loading a workbook with property preserves it.", {
   got <- wb$custom
   expect_equal(exp, got)
 
+  wb <- wb |> wb_set_properties(
+    custom = list(
+      Software    = "openxlsx2",
+      Version     = "1.5.0.9000",
+      ReleaseDate = as.Date("2024-03-31"),
+      CRAN        = FALSE,
+      DEV         = TRUE
+    )
+  )
+
+  exp <- "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/custom-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"2\" name=\"Software\"><vt:lpwstr>openxlsx2</vt:lpwstr></property><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"3\" name=\"Version\"><vt:lpwstr>1.5.0.9000</vt:lpwstr></property><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"4\" name=\"ReleaseDate\"><vt:filetime>2024-03-31T00:00:00Z</vt:filetime></property><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"5\" name=\"CRAN\"><vt:bool>0</vt:bool></property><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"6\" name=\"DEV\"><vt:bool>1</vt:bool></property></Properties>"
+  got <- wb$custom
+  expect_equal(exp, got)
+
 })
 
 test_that("failing to unzip works as expected", {
