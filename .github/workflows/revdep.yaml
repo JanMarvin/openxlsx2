@@ -73,7 +73,7 @@ jobs:
       - name: Run revdepcheck
         run: |
           revdepcheck::revdep_reset()
-          revdepcheck::revdep_check(num_workers=4, env = revdep_env_vars(force_suggests = TRUE))
+          revdepcheck::revdep_check(num_workers = 4, env = revdepcheck::revdep_env_vars(force_suggests = TRUE))
           revdepcheck::revdep_report()
           revdepcheck::revdep_report_summary()
         shell: Rscript {0}

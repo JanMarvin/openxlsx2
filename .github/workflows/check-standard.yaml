@@ -31,7 +31,7 @@ jobs:
       openxlsx2_testthat_fullrun: ${{ matrix.config.openxlsx2_testthat_fullrun }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
 
