@@ -1240,7 +1240,7 @@ wb_add_mips <- function(wb, xml = NULL) {
   wb <- wb$clone()
 
   # get option and make sure that it can be imported as xml
-  mips <- xml_node(xml, "property") %||% getOption("openxlsx2.mips_xml_string")
+  mips <- xml %||% getOption("openxlsx2.mips_xml_string")
   if (is.null(mips)) stop("no mips xml provided")
   mips <- xml_node(mips, "property")
 
