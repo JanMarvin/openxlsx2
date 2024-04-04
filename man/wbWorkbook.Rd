@@ -209,6 +209,8 @@ worksheet names.}
 \item \href{#method-wbWorkbook-protect_worksheet}{\code{wbWorkbook$protect_worksheet()}}
 \item \href{#method-wbWorkbook-get_properties}{\code{wbWorkbook$get_properties()}}
 \item \href{#method-wbWorkbook-set_properties}{\code{wbWorkbook$set_properties()}}
+\item \href{#method-wbWorkbook-add_mips}{\code{wbWorkbook$add_mips()}}
+\item \href{#method-wbWorkbook-get_mips}{\code{wbWorkbook$get_mips()}}
 \item \href{#method-wbWorkbook-set_creators}{\code{wbWorkbook$set_creators()}}
 \item \href{#method-wbWorkbook-add_creators}{\code{wbWorkbook$add_creators()}}
 \item \href{#method-wbWorkbook-remove_creators}{\code{wbWorkbook$remove_creators()}}
@@ -2270,6 +2272,40 @@ Set a property of a workbook
 \item{\code{creator}}{character vector of creators. Duplicated are ignored.}
 
 \item{\code{title, subject, category, datetime_created, modifier, keywords, comments, manager, company, custom}}{A workbook property to set}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_mips"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_mips}{}}}
+\subsection{Method \code{add_mips()}}{
+add mips string
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_mips(xml = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{xml}}{A mips string added to self$custom}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_mips"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_mips}{}}}
+\subsection{Method \code{get_mips()}}{
+get mips string
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_mips(single_xml = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{single_xml}}{single_xml}
 }
 \if{html}{\out{</div>}}
 }

@@ -2579,6 +2579,24 @@ wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, 
   )
 }
 
+#' wb get and apply MIP section
+#' @param wb a workbook
+#' @param xml a mips string obtained from [wb_get_mips()] or a global option "openxlsx2.mips_xml_string"
+#' @returns the workbook invisible
+#' @export
+wb_add_mips <- function(wb, xml = NULL) {
+  assert_workbook(wb)
+  wb$clone()$set_properties(custom = xml)
+}
+
+#' @param single_xml option to define if the string should be exported as single string. helpful if storing as option is desired.
+#' @rdname wb_add_mips
+#' @export
+wb_get_mips <- function(wb, single_xml = TRUE) {
+  assert_workbook(wb)
+  wb$get_mips(single_xml = single_xml)
+}
+
 #' Modify creators of a workbook
 #'
 #' Modify and get workbook creators

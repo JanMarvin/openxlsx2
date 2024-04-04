@@ -6153,6 +6153,37 @@ wbWorkbook <- R6::R6Class(
 
     },
 
+    #' @description add mips string
+    #' @param xml A mips string added to self$custom
+    add_mips = function(xml = NULL) {
+      assert_class(xml, "character")
+
+      # get option and make sure that it can be imported as xml
+      mips <- xml %||% getOption("openxlsx2.mips_xml_string")
+      if (is.null(mips)) stop("no mips xml provided")
+      mips <- xml_node(mips, "property")
+
+      self$set_properties(custom = xml)
+    },
+
+    #' @description get mips string
+    #' @param single_xml single_xml
+    get_mips = function(single_xml = TRUE) {
+        props <- xml_node(self$custom, "Properties", "property")
+        prop_nams <- grepl("MSIP_Label_", rbindlist(xml_attr(props, "property"))$name)
+
+        name <- grepl("_Name$", rbindlist(xml_attr(props[prop_nams], "property"))$name)
+
+        name <- xml_value(props[prop_nams][name], "property", "vt:lpwstr")
+        message("Found MIPS section: ", name)
+
+        mips <- props[prop_nams]
+        if (single_xml)
+          paste0(mips, collapse = "")
+        else
+          mips
+    },
+
     #' @description Set creator(s)
     #' @param creators A character vector of creators to set.  Duplicates are
     #'   ignored.
