@@ -304,9 +304,10 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
 
   if (!several.ok) {
     if (length(arg) != 1) {
+      valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
       stop(
-        "Must provide a single argument found in ", fn_name, ": ",
-        invalid_arg_nams, "\n", "Use one of ", valid_arg_nams,
+        "Must provide a single argument in ", fn_name, "\n",
+        "Use one of ", valid_arg_nams,
         call. = FALSE
       )
     }
