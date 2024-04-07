@@ -211,6 +211,27 @@ wb_load <- function(
     add = TRUE
   )
 
+  file_folders <- unique(basename(dirname(xmlFiles)))
+  known <- c(
+    basename(xmlDir), "_rels", "charts", "chartsheets", "ctrlProps",
+    "customXml", "docProps", "drawings", "embeddings", "externalLinks",
+    "media", "persons", "pivotCache", "pivotTables", "printerSettings",
+    "queryTables", "richData", "slicerCaches", "slicers", "tables", "theme",
+    "threadedComments", "worksheets", "xl"
+  )
+  unknown <- file_folders[!file_folders %in% known]
+  # nocov start
+  if (length(unknown)) {
+    message <- paste0(
+      "Found unknown folders in the input file:\n",
+      paste(unknown, collapse = "\n"), "\n\n",
+      "These folders are not yet processed by openxlsx2, but depending on what you want to do, this may not be fatal.\n",
+      "Most likely a file with these folders has not yet been detected. If you want to contribute to the development of the package, maybe just to silence this warning, please open an issue about unknown content folders and, if possible, provide a file via our Github or by mail."
+    )
+    warning(message, call. = FALSE)
+  }
+  # nocov end
+
   # modifications for xlsb
   if (length(workbookBIN)) {
 
