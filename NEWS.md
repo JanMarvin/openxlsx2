@@ -1,5 +1,10 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Helper to read sensitivity labels from files and apply them to workbooks. 
+[983](https://github.com/JanMarvin/openxlsx2/pull/983)
+
 
 # openxlsx2 1.5
 
