@@ -1126,7 +1126,7 @@ test_that("adding mips section works", {
   # helper function to mock a mips section
   create_fake_mips <- function() {
     guid <- st_guid()
-    lid  <- tolower(gsub("[{}]","", guid))
+    lid  <- tolower(gsub("[{}]", "", guid))
 
     mips_xml <- sprintf(
       '<property fmtid="%s" pid="2" name="MSIP_Label_%s_Enabled">

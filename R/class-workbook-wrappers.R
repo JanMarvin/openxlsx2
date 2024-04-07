@@ -2580,9 +2580,9 @@ wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, 
 }
 
 #' wb get and apply MIP section
-#' 
+#'
 #' Read sensitivity labels from files and apply them to workbooks
-#' 
+#'
 #' @details
 #' The MIP section is a special user-defined XML section that is used to create
 #' sensitivity labels in workbooks. It consists of a series of XML property
@@ -2596,7 +2596,7 @@ wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, 
 #' string is passed, the MIP section is taken from the option. This should make
 #' it easier for users to read the section from a specific workbook, save it to
 #' a file or string and copy it to an option via the .Rprofile.
-#' 
+#'
 #' @param wb a workbook
 #' @param xml a mips string obtained from [wb_get_mips()] or a global option "openxlsx2.mips_xml_string"
 #' @returns the workbook invisible ([wb_add_mips()]) or the xml string ([wb_get_mips()])

@@ -220,6 +220,7 @@ wb_load <- function(
     "threadedComments", "worksheets", "xl"
   )
   unknown <- file_folders[!file_folders %in% known]
+  # nocov start
   if (length(unknown)) {
     message <- paste0(
       "Found unknown folders in the input file:\n",
@@ -229,6 +230,7 @@ wb_load <- function(
     )
     warning(message, call. = FALSE)
   }
+  # nocov end
 
   # modifications for xlsb
   if (length(workbookBIN)) {
