@@ -1189,4 +1189,27 @@ test_that("adding mips section works", {
   wb <- wb_workbook()$add_worksheet()$add_mips()
   expect_equal(fmips, wb$get_mips())
 
+
+  wb <- wb_workbook() |>
+    wb_add_worksheet() |>
+    wb_set_properties(
+      custom = list(
+        Software    = "openxlsx2",
+        Version     = 1.5,
+        ReleaseDate = as.Date("2024-03-26"),
+        CRAN        = TRUE,
+        DEV         = FALSE
+      )
+    )
+
+  wb <- wb_workbook()$add_worksheet()$
+    set_properties(
+      custom = list(int     = 1L)
+    )
+  expect_silent(wb$add_mips())
+
+  exp <- "3"
+  got <- rbindlist(xml_attr(wb$get_mips(single_xml = FALSE)[1], "property"))$pid
+  expect_equal(exp, got)
+
 })
