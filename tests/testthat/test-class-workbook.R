@@ -1120,3 +1120,73 @@ test_that("subsetting wb_data() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("adding mips section works", {
+
+  # helper function to mock a mips section
+  create_fake_mips <- function() {
+    guid <- st_guid()
+    lid  <- tolower(gsub("[{}]","", guid))
+
+    mips_xml <- sprintf(
+      '<property fmtid="%s" pid="2" name="MSIP_Label_%s_Enabled">
+      <vt:lpwstr>true</vt:lpwstr>
+    </property>
+    <property fmtid="%s" pid="3" name="MSIP_Label_%s_SetDate">
+      <vt:lpwstr>2024-04-07T14:27:12Z</vt:lpwstr>
+    </property>
+    <property fmtid="%s" pid="4" name="MSIP_Label_%s_Method">
+      <vt:lpwstr>Privileged</vt:lpwstr>
+    </property>
+    <property fmtid="%s" pid="5" name="MSIP_Label_%s_Name">
+      <vt:lpwstr>General</vt:lpwstr>
+    </property>
+    <property fmtid="%s" pid="6" name="MSIP_Label_%s_SiteId">
+      <vt:lpwstr>%s</vt:lpwstr>
+    </property>
+    <property fmtid="%s" pid="7" name="MSIP_Label_%s_ActionId">
+      <vt:lpwstr>%s</vt:lpwstr>
+    </property>
+    <property fmtid="%s" pid="8" name="MSIP_Label_%s_ContentBits">
+      <vt:lpwstr>0</vt:lpwstr>
+    </property>',
+      guid, lid,
+      guid, lid,
+      guid, lid,
+      guid, lid,
+      guid, lid, lid,
+      guid, lid, lid,
+      guid, lid
+    )
+    read_xml(mips_xml, pointer = FALSE)
+  }
+
+  fmips <- create_fake_mips()
+
+  wb <- wb_workbook()$add_worksheet()$add_mips(xml = fmips)
+
+  expect_message(wb_get_mips(wb, quiet = FALSE), "Found MIPS section: General")
+
+  expect_equal(fmips, wb$get_mips())
+
+  tmp <- temp_xlsx()
+
+  wb$save(tmp)
+
+  expect_equal(fmips, wb_load(tmp)$get_mips())
+
+  wb <- wb_load(tmp)
+
+  expect_message(wb$add_mips(xml = fmips), "File has duplicated custom section")
+  expect_equal(fmips, wb$get_mips())
+
+
+  op <- options("openxlsx2.mips_xml_string" = fmips)
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_workbook()$add_worksheet()$add_mips(xml = fmips)
+
+  wb <- wb_workbook()$add_worksheet()$add_mips()
+  expect_equal(fmips, wb$get_mips())
+
+})

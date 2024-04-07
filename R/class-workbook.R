@@ -6099,14 +6099,6 @@ wbWorkbook <- R6::R6Class(
           )
         }
 
-        ## TODO create a clever assert
-        #  else if (is_xml(paste0(custom, collape = "")) && !all(xml_node_name(custom) == "property")) {
-        #   stop("custom needs to be an xml string beginning with `<property .../>`")
-        # } else {
-        #   # propaby not helpful to advertise that an XML character is possible too
-        #   stop("custom needs to be a named character")
-        # }
-
         custom <- xml_node(custom, "property")
 
         if (length(self$custom) == 0) {
@@ -6156,26 +6148,27 @@ wbWorkbook <- R6::R6Class(
     #' @description add mips string
     #' @param xml A mips string added to self$custom
     add_mips = function(xml = NULL) {
-      assert_class(xml, "character")
+      if (!is.null(xml)) assert_class(xml, "character")
 
       # get option and make sure that it can be imported as xml
       mips <- xml %||% getOption("openxlsx2.mips_xml_string")
       if (is.null(mips)) stop("no mips xml provided")
       mips <- xml_node(mips, "property")
 
-      self$set_properties(custom = xml)
+      self$set_properties(custom = mips)
     },
 
     #' @description get mips string
     #' @param single_xml single_xml
-    get_mips = function(single_xml = TRUE) {
+    #' @param quiet quiet
+    get_mips = function(single_xml = TRUE, quiet = TRUE) {
         props <- xml_node(self$custom, "Properties", "property")
         prop_nams <- grepl("MSIP_Label_", rbindlist(xml_attr(props, "property"))$name)
 
         name <- grepl("_Name$", rbindlist(xml_attr(props[prop_nams], "property"))$name)
 
         name <- xml_value(props[prop_nams][name], "property", "vt:lpwstr")
-        message("Found MIPS section: ", name)
+        if (!quiet) message("Found MIPS section: ", name)
 
         mips <- props[prop_nams]
         if (single_xml)

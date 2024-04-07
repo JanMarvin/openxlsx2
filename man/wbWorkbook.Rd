@@ -2299,13 +2299,15 @@ add mips string
 \subsection{Method \code{get_mips()}}{
 get mips string
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_mips(single_xml = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_mips(single_xml = TRUE, quiet = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{single_xml}}{single_xml}
+
+\item{\code{quiet}}{quiet}
 }
 \if{html}{\out{</div>}}
 }
