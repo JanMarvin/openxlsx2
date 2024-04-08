@@ -71,6 +71,8 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
 
   expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "You must supply positive, consecutive values to `cols`")
 
+  expect_error(wb_dims(1, 2, 3))
+  expect_error(wb_dims(x = mtcars, select = c("bad", "col_names")), "accepts a single")
 })
 
 test_that("`wb_dims()` errors when providing unsupported arguments", {
@@ -95,12 +97,14 @@ test_that("wb_dims() works when not supplying `x`.", {
   expect_equal(wb_dims(rows = 5, cols = 7), "G5")
 
   expect_equal(wb_dims(1:2, 1:4, from_row = 2, from_col = "B"), "B2:E3")
-  # This used to error, but now passes with a message.
+  # Assuming other unnamed argument is rows or cols.
   expect_message(out <- wb_dims(1, rows = 2), "Assuming the .+ `cols`")
+  expect_equal(out, "A2")
+  expect_message(out <- wb_dims(cols = 1, 2), "Assuming the .+ `rows`")
   expect_equal(out, "A2")
   # warns when trying to pass weird things
   expect_warning(wb_dims(rows = "BC", cols = 1), regexp = "supply an integer")
-  # "`wb_dims()` newe
+  # "`wb_dims()` works
   expect_equal(wb_dims(from_col = 4), "D1")
   expect_equal(wb_dims(from_row = 4), "A4")
   expect_equal(wb_dims(from_row = 4, from_col = 3), "C4")
@@ -111,6 +115,8 @@ test_that("wb_dims() works when not supplying `x`.", {
   expect_error(wb_dims(3, 0))
   expect_error(wb_dims(1, 1, col_names = TRUE))
   expect_error(wb_dims(1, 1, row_names = FALSE), "`row_names`")
+  expect_error(wb_dims(2, 10, select = "col_names"), "`select` must only be provided with `x`")
+
 })
 
 test_that("`wb_dims()` can select content in a nice fashion with `x`", {

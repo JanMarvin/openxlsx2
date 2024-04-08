@@ -297,19 +297,34 @@ check_wb_dims_args <- function(args, select = NULL) {
 
 # it is a wrapper around base::match.arg(), but it doesn't allow partial matching.
 # It also provides a more informative error message in case it fails.
-match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) {
+match.arg_wrapper <- function(arg,
+                              choices,
+                              several.ok = FALSE,
+                              fn_name = NULL,
+                              arg_name = NULL) {
   # Check valid argument names
   # partial matching accepted
   fn_name <- fn_name %||% "fn_name"
 
   if (!several.ok) {
     if (length(arg) != 1) {
+
       valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
-      stop(
-        "Must provide a single argument in ", fn_name, "\n",
-        "Use one of ", valid_arg_nams,
-        call. = FALSE
-      )
+      if (is.null(arg_name)) {
+        # validating arguments passed as ...
+        msg <- c(
+          "`", fn_name, "()` accepts a single argument\n",
+          "Use one of ", valid_arg_nams
+        )
+      } else {
+        # validating value of argument
+        msg <- c(
+          "`", arg_name, "` accepts a single value in `", fn_name, "()`\n",
+          "Use one of ", valid_arg_nams
+        )
+      }
+
+      stop(msg,  call. = FALSE)
     }
   }
 
@@ -317,11 +332,22 @@ match.arg_wrapper <- function(arg, choices, several.ok = FALSE, fn_name = NULL) 
   if (any(invalid_args)) {
     invalid_arg_nams <- paste0("`", arg[invalid_args], "`", collapse = ", ")
     multi <- length(invalid_arg_nams) > 0
-    plural_sentence <- ifelse(multi, " is an invalid argument for ", " are invalid arguments for ")
 
     valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
+
+    if (is.null(arg_name)) {
+      # validating arguments passed as ...
+      arg_msg <- ""
+      plural_sentence <- ifelse(multi, " is an invalid argument for `", " are invalid arguments for `")
+
+    } else {
+      # validating value of argument
+      arg_msg <- c(arg_name, "` in `")
+      plural_sentence <- ifelse(multi, " is an invalid value for `", " are invalid values for `")
+    }
+
     stop(
-      invalid_arg_nams, plural_sentence, fn_name, ": ", "\n", "Use any of ", valid_arg_nams,
+      invalid_arg_nams, plural_sentence, arg_msg, fn_name, "()`: ", "\n", "Use any of ", valid_arg_nams,
       call. = FALSE
     )
   }
@@ -350,7 +376,13 @@ determine_select_valid <- function(args, select = NULL) {
 
   select <- select %||% default_select
   valid_cases_choices <- names(valid_cases)
-  match.arg_wrapper(select, choices = valid_cases_choices, fn_name = "wb_dims", several.ok = FALSE)
+  match.arg_wrapper(
+    select,
+    choices = valid_cases_choices,
+    several.ok = FALSE,
+    fn_name = "wb_dims",
+    arg_name = "select"
+  )
 
   if (isFALSE(valid_cases[[select]])) {
     stop(
@@ -514,13 +546,13 @@ wb_dims <- function(..., select = NULL) {
   len <- length(args)
 
   if (len == 0 || (len == 1 && is.null(args[[1]]))) {
-    stop("`wb_dims()` requires `rows`, `cols`, `from_row`, `from_col`, `from_dims`, or `x`.")
+    stop("`wb_dims()` requires any of `rows`, `cols`, `from_row`, `from_col`, `from_dims`, or `x`.", call. = FALSE)
   }
 
   # nams cannot be NULL now
   nams <- names(args) %||% rep("", len)
   valid_arg_nams <- c("x", "rows", "cols", "from_row", "from_col", "from_dims", "row_names", "col_names",
-                      "left", "right", "above", "below")
+                      "left", "right", "above", "below", "select")
   any_args_named <- any(nzchar(nams))
   # unused, but can be used, if we need to check if any, but not all
   # Check if valid args were provided if any argument is named.
@@ -528,7 +560,7 @@ wb_dims <- function(..., select = NULL) {
     if (any(c("start_col", "start_row") %in% nams)) {
       stop("Use `from_row` / `from_col` instead of `start_row` / `start_col`")
     }
-    match.arg_wrapper(arg = nams, choices = c(valid_arg_nams, ""), several.ok = TRUE, fn_name = "`wb_dims()`")
+    match.arg_wrapper(arg = nams, choices = c(valid_arg_nams, ""), several.ok = TRUE, fn_name = "wb_dims")
   }
   # After this point, no need to search for invalid arguments!
 
@@ -539,17 +571,23 @@ wb_dims <- function(..., select = NULL) {
   # Checking if valid names were provided.
 
   if (n_unnamed_args > 2) {
-    stop("Only `rows` and `cols` can be provided unnamed. You must name all other arguments.")
+    stop(
+      "Only `rows` and `cols` can be provided unnamed to `wb_dims()`.\n",
+      "You must name all other arguments.",
+      call. = FALSE
+      )
   }
+
   if (len == 1 && all_args_unnamed) {
     stop(
-      "Supplying a single unnamed argument is not handled by `wb_dims()`",
-      "use `x`, `from_row` / `from_col`. You can also use `dims = NULL`"
+      "Supplying a single unnamed argument is not handled by `wb_dims()`.\n",
+      "Use `x`, `from_row` / `from_col`.",
+      call. = FALSE
     )
   }
 
   ok_if_arg1_unnamed <-
-    is.atomic(args[[1]]) || any(nams %in% c("rows", "cols"))
+    is.null(args[[1]]) || is.atomic(args[[1]]) || any(nams %in% c("rows", "cols"))
 
   if (nams[1] == "" && !ok_if_arg1_unnamed) {
     stop(
