@@ -134,6 +134,7 @@ reference:
   - wb_add_form_control
   - wb_add_ignore_error
   - wb_add_page_break
+  - wb_add_mips
   - wb_clean_sheet
   - starts_with("wb_clone")
   - starts_with("wb_copy")

@@ -1194,3 +1194,37 @@ transpose_df <- function(x) {
   attr(x, "c_cm") <- attribs
   x
 }
+
+#' helper function to update custom pids. Pids are indexed starting with 2.
+#' @param wb a workbook
+#' @noRd
+wb_upd_custom_pid <- function(wb) {
+
+  cstm <- xml_node(wb$custom, "Properties", "property")
+
+  cstm_nams <- xml_node_name(cstm, "property")
+
+  cstm_df      <- rbindlist(xml_attr(cstm, "property"))
+  cstm_df$clds <- vapply(seq_along(cstm), function(x) xml_node(cstm[x], "property", cstm_nams[x]), NA_character_)
+  cstm_df$pid  <- as.character(2L + (seq_len(nrow(cstm_df)) - 1L))
+
+  out <- NULL
+  for (i in seq_len(nrow(cstm_df))) {
+    tmp <- xml_node_create(
+      "property",
+      xml_attributes = c(fmtid = cstm_df$fmtid[i], pid = cstm_df$pid[i], name = cstm_df$name[i]),
+      xml_children   = c(cstm_df$clds[i])
+    )
+    out <- c(out, tmp)
+  }
+
+  ## return
+  xml_node_create(
+    "Properties",
+    xml_attributes = c(
+      xmlns = "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties",
+      `xmlns:vt` = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"
+    ),
+    xml_children = out
+  )
+}
