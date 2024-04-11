@@ -1007,14 +1007,14 @@ wbWorkbook <- R6::R6Class(
 
       # The IDs in the drawings array are sheet-specific, so within the new
       # cloned sheet the same IDs can be used => no need to modify drawings
-      vml_id <- from$worksheets[[old]]$relships$vml
+      vml_id <- from$worksheets[[old]]$relships$vmlDrawing
       cmt_id <- from$worksheets[[old]]$relships$comments
       trd_id <- from$worksheets[[old]]$relships$threadedComment
 
       if (length(vml_id)) {
         self$append("vml",      from$vml[[vml_id]])
         self$append("vml_rels", from$vml_rels[[vml_id]])
-        self$worksheets[[newSheetIndex]]$relships$vml <- length(self$vml)
+        self$worksheets[[newSheetIndex]]$relships$vmlDrawing <- length(self$vml)
       }
 
       if (length(cmt_id)) {
