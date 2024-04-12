@@ -13,7 +13,6 @@ test_that("rbindlist", {
 
 })
 
-
 test_that("dims to col & row and back", {
 
   exp <- list(c("A", "B"), c("1", "2"))
@@ -44,7 +43,12 @@ test_that("dims to col & row and back", {
   got <- rowcol_to_dims(2:8, 5:10)
   expect_equal(exp, got)
 
+  # We might have to relax this in the future, if we are ever going to allow
+  # something like "$1:$2" to select every column for a range of cells.
+  expect_error(dims_to_rowcol("A1;B64:65"), "A dims string passed to ")
+
 })
+
 test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
 
   # Acceptable inputs

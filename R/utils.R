@@ -177,9 +177,6 @@ NULL
 #' @export
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
-  # FIXME gives a hard to debug error if providing garbage x
-  # dims_to_rowcol("65")
-  #> Error stoi
   dims <- x
   if (length(x) == 1 && grepl(";", x))
     dims <- unlist(strsplit(x, ";"))
@@ -193,6 +190,13 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
     # if "A:B"
     if (any(rows == "")) rows[rows == ""] <- "1"
+
+    if (any(cols == "")) {
+      stop(
+        "A dims string passed to `dims_to_rowcol()` contained no alphabetic column",
+        call. = FALSE
+      )
+    }
 
     # convert cols to integer
     cols_int <- col2int(cols)
