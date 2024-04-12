@@ -9,6 +9,14 @@
 
 * Allow writing data frames with zero rows. [987](https://github.com/JanMarvin/openxlsx2/pull/987)
 
+* `wb_dims()` has been improved and is safer on 0-length inputs. In particular, it will error for a case where a `cols` doesn't exist in `x`
+
+```r
+# Previously created a wrong dims
+wb_dims(x = mtcars, cols = "non-existent-col")
+# Now errors
+```
+
 
 ***************************************************************************
 
