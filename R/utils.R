@@ -280,9 +280,9 @@ check_wb_dims_args <- function(args, select = NULL) {
 
   x_has_colnames <- !is.null(colnames(args$x))
 
-  if (x_has_colnames && !is.null(args$rows) && is.character(args$rows)) {
+  if ( is.character(args$rows) && !is.null(args$rows) && x_has_colnames) {
     # Not checking whether it's a row name, not supported.
-    is_rows_a_colname <- args$row %in% colnames(args$x)
+    is_rows_a_colname <- args$rows %in% colnames(args$x)
 
     if (any(is_rows_a_colname)) {
       stop(
@@ -292,6 +292,15 @@ check_wb_dims_args <- function(args, select = NULL) {
       )
     }
   }
+
+  if (is.character(args$cols) && x_has_colnames && !all(args$cols %in% colnames(args$x))) {
+    # Checking whether cols is character, and error if it is not the col names of x
+    stop(
+      "`cols` must be an integer or an existing column name of `x`, not ", args$cols,
+      call. = FALSE
+    )
+  }
+
   invisible(NULL)
 }
 
@@ -699,7 +708,7 @@ wb_dims <- function(..., select = NULL) {
   # After this point, all unnamed problems are solved ;)
   x <- args$x
   if (!is.null(select) && is.null(args$x)) {
-    stop("`select` must only be provided with `x`.")
+    stop("Can't supply `select` when `x` is absent.")
   }
 
   # little helper that streamlines which inputs cannot be
@@ -731,7 +740,7 @@ wb_dims <- function(..., select = NULL) {
   col_names <- args$col_names %||% x_has_named_dims
 
   if (!cnam_null && !x_has_named_dims) {
-    stop("Supplying `col_names` when `x` is a vector is not supported.")
+    stop("Can't supply `col_names` when `x` is a vector.\n", "Transform `x` to a data.frame")
   }
 
   row_names <- args$row_names %||% FALSE
@@ -842,9 +851,22 @@ wb_dims <- function(..., select = NULL) {
     }
   }
 
+  # Correct for empty data frame?
+  # patch so that we will want to span at least 1 row and one col
+  if (identical(nrow_to_span, 0L)) {
+    nrow_to_span <- 1L
+  }
+
+  if (identical(ncol_to_span, 0L)) {
+    ncol_to_span <- 1L
+  }
+
   row_span <- frow + seq_len(nrow_to_span) - 1L
   col_span <- fcol + seq_len(ncol_to_span) - 1L
 
+  if (length(row_span) == 0 || length(col_span) == 0) {
+    warning("Something went wrong")
+  }
   if (length(row_span) == 1 && length(col_span) == 1) {
     # A1
     row_start <- row_span

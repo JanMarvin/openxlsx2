@@ -115,7 +115,7 @@ test_that("wb_dims() works when not supplying `x`.", {
   expect_error(wb_dims(3, 0))
   expect_error(wb_dims(1, 1, col_names = TRUE))
   expect_error(wb_dims(1, 1, row_names = FALSE), "`row_names`")
-  expect_error(wb_dims(2, 10, select = "col_names"), "`select` must only be provided with `x`")
+  expect_error(wb_dims(2, 10, select = "col_names"), "Can't supply `select` when `x` is absent")
 
 })
 
@@ -181,7 +181,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   # doesn't work
   expect_equal(wb_dims(x = letters), "A1:A26")
   expect_equal(wb_dims(x = t(letters), col_names = TRUE), "A1:Z2")
-  expect_error(wb_dims(x = letters, col_names = TRUE), "Supplying `col_names` when `x` is a vector is not supported.") # don't want this error anymore.
+  expect_error(wb_dims(x = letters, col_names = TRUE), "Can't supply `col_names` when `x` is a vector") # don't want this error anymore.
 
   expect_equal(wb_dims(x = mtcars, rows = 5, from_col = "C"), "C6:M6")
 
@@ -195,9 +195,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
 
   # select rows and columns work
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl"), "B3:B11")
-
-
-
+  expect_error(wb_dims(x = mtcars, cols = "A"), "`cols` must be an integer or an existing column name of `x`.")
   expect_equal(wb_dims(rows = 1 + seq_len(nrow(mtcars)), cols = 4), "D2:D33")
   out_hp <- wb_dims(x = mtcars, cols = "hp") # , "col name = 'hp' to `cols = 4`")
   expect_equal(out_hp, "D2:D33")
@@ -260,6 +258,10 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, col_names = TRUE), "A1:L33")
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl", row_names = TRUE), "C3:C11")
   # Style row names of an object
+})
+
+test_that("wb_dims() handles empty data frames", {
+  expect_equal(wb_dims(x = data.frame(), from_col = "B"), "B1")
 })
 
 test_that("wb_dims() handles `from_dims`", {
