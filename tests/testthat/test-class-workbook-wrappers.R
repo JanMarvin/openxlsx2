@@ -291,7 +291,7 @@ test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
 
 test_that("wb_add_filter(), wb_remove_filter() is a wrapper", {
   wb <- wb_workbook()$add_worksheet("a")
-  params <- list(sheet = "a", col = 1, row = 1)
+  params <- list(sheet = "a", cols = 1, rows = 1)
   expect_wrapper("add_filter", wb = wb, params = params)
   wb$add_filter("a", 1, 1)
   expect_wrapper("remove_filter", wb = wb, params = list(sheet = "a"))

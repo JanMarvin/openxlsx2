@@ -475,12 +475,12 @@ write_data2 <- function(
       }
 
       wb$add_font(
-        sheet = sheetno,
-        dims  = dim_sel,
-        color = hyperlink_col,
-        name  = wb_get_base_font(wb)$name$val,
-        size  = wb_get_base_font(wb)$size$val,
-        u     = "single"
+        sheet     = sheetno,
+        dims      = dim_sel,
+        color     = hyperlink_col,
+        name      = wb$get_base_font()$name$val,
+        size      = wb$get_base_font()$size$val,
+        underline = "single"
       )
     }
 

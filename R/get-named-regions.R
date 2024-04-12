@@ -43,7 +43,7 @@ get_nr_from_definedName <- function(wb) {
 get_named_regions_tab <- function(wb) {
   data.frame(
     #localSheetId is not always available
-    name = wb$tables$tab_nam,
+    name = wb$tables$tab_name,
     value = "table",
     sheets = wb_get_sheet_name(wb, wb$tables$tab_sheet),
     coords = wb$tables$tab_ref,
