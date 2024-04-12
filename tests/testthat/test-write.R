@@ -959,3 +959,30 @@ test_that("dims size warnings work", {
   )
 
 })
+
+test_that("writing zero row data frames works", {
+
+  # write an empty data frame
+  dat <- data.frame()
+  expect_silent(wb <- wb_workbook()$add_worksheet()$add_data(x = dat))
+
+  exp <- NULL
+  expect_message(got <- wb_to_df(wb), "sheet found, but contains no data")
+  expect_equal(exp, got)
+
+  # write a data frame containing an empty date vector
+  dat <- data.frame(date = base::as.Date(NULL))
+  expect_silent(wb <- wb_workbook()$add_worksheet()$add_data(x = dat))
+
+  exp <- "date"
+  got <- names(wb_to_df(wb))
+  expect_equal(exp, got)
+
+  # try the same with write_xlsx()
+  expect_silent(wb <- write_xlsx(x = dat))
+
+  exp <- "date"
+  got <- names(wb_to_df(wb))
+  expect_equal(exp, got)
+
+})

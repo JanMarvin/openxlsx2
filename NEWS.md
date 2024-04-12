@@ -5,6 +5,12 @@
 * Helper to read sensitivity labels from files and apply them to workbooks. 
 [983](https://github.com/JanMarvin/openxlsx2/pull/983)
 
+## Fixes
+
+* Allow writing data frames with zero rows. [987](https://github.com/JanMarvin/openxlsx2/pull/987)
+
+
+***************************************************************************
 
 # openxlsx2 1.5
 
