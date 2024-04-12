@@ -6,7 +6,7 @@ test_that("Workbook class", {
 })
 
 
-test_that("wb_set_col_widths", {
+test_that("wb_set_col_widths works", {
 # TODO use wb$wb_set_col_widths()
 
   wb <- wbWorkbook$new()
@@ -39,17 +39,10 @@ test_that("wb_set_col_widths", {
     wb$worksheets[[1]]$cols_attr
   )
 
-  # a few more errors
-  expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
-  expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
-
-
-
-
   wb <- wb_workbook()$
     add_worksheet()$
-    set_col_widths(cols = 1:10, width = (8:17) + .5)$
-    add_data(x = rbind(8:17), colNames = FALSE)
+    set_col_widths(cols = 1:10, widths = (8:17) + .5)$
+    add_data(x = rbind(8:17), col_names = FALSE)
 
   exp <- c(
     "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.211\"/>",
@@ -72,8 +65,18 @@ test_that("wb_set_col_widths", {
     "<col min=\"18\" max=\"16384\" width=\"8.88671875\" style=\"16\"/>"
   )
 
-  expect_silent(wb$set_col_widths(cols = 19, width = 9))
+  expect_silent(wb$set_col_widths(cols = 19, widths = 9))
 
+})
+
+test_that("set_col_widths errors when inconsistent lengths are supplied", {
+  wb <- wbWorkbook$new()
+  wb$add_worksheet("test")
+
+  expect_error(wb$set_col_widths(cols = c(1, 2, 3), widths = c(2, 3)), "compatible length")
+  expect_error(wb$set_col_widths(cols = "Y", widths = 1:2))
+  expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
+  expect_error(wb$set_col_widths(cols = c("Y", "Z"), hidden = 1))
 })
 
 test_that("option maxWidth works", {
