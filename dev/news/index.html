@@ -66,9 +66,14 @@
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Allow writing data frames with zero rows. <a href="https://github.com/JanMarvin/openxlsx2/pull/987" class="external-link">987</a>
-</li>
-</ul><hr></div>
+<ul><li><p>Allow writing data frames with zero rows. <a href="https://github.com/JanMarvin/openxlsx2/pull/987" class="external-link">987</a></p></li>
+<li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> has been improved and is safer on 0-length inputs. In particular, it will error for a case where a <code>cols</code> doesn’t exist in <code>x</code></p></li>
+</ul><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Previously created a wrong dims</span></span>
+<span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, cols <span class="op">=</span> <span class="st">"non-existent-col"</span><span class="op">)</span></span>
+<span><span class="co"># Now errors</span></span></code></pre></div>
+<hr></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5" id="openxlsx2-15">openxlsx2 1.5<a class="anchor" aria-label="anchor" href="#openxlsx2-15"></a></h2><p class="text-muted">CRAN release: 2024-03-26</p>
@@ -80,7 +85,7 @@
 <li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> now accepts <code>from_dims</code> to specify a starting cell <a href="https://github.com/JanMarvin/openxlsx2/pull/960" class="external-link">960</a>.</p></li>
 <li><p>You can now set <code>options(openxlsx2.na.strings)</code> to a value to have a default value for <code>na.strings</code> in <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>, and <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> <a href="https://github.com/JanMarvin/openxlsx2/pull/968" class="external-link">968</a>.</p></li>
 <li><p>The direction vectors are written is now controlled via <code>dims</code>. Previously it was required to transpose a vector to write it horizontally: <code>wb_add_data(x = t(letters), col_names = FALSE)</code>. Now the direction is defined by <code>dims</code>. The default is still to write vectors vertically, but for a horizontal vector it is possible to write <code>wb_add_data(x = letters, dims = "A1:Z1")</code>. This change impacts vectors, hyperlinks and formulas and basically everything that is not a two dimensional <code>x</code> object.</p></li>
-</ul><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+</ul><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># before (workaround needed)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
