@@ -40,7 +40,7 @@ test_that("wb_set_col_widths", {
   )
 
   # a few more errors
-  expect_error(wb$set_col_widths("test", cols = "Y", width = 1:2))
+  expect_error(wb$set_col_widths("test", cols = "Y", widths = 1:2))
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
 
 
@@ -48,7 +48,7 @@ test_that("wb_set_col_widths", {
 
   wb <- wb_workbook()$
     add_worksheet()$
-    set_col_widths(cols = 1:10, width = (8:17) + .5)$
+    set_col_widths(cols = 1:10, widths = (8:17) + .5)$
     add_data(x = rbind(8:17), colNames = FALSE)
 
   exp <- c(
@@ -72,7 +72,7 @@ test_that("wb_set_col_widths", {
     "<col min=\"18\" max=\"16384\" width=\"8.88671875\" style=\"16\"/>"
   )
 
-  expect_silent(wb$set_col_widths(cols = 19, width = 9))
+  expect_silent(wb$set_col_widths(cols = 19, widths = 9))
 
 })
 

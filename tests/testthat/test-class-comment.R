@@ -303,7 +303,7 @@ test_that("background images work", {
 
   # file extension must be png or jpeg, not jpg?
   tmp <- tempfile(fileext = ".png")
-  png(file = tmp, bg = "transparent")
+  png(filename = tmp, bg = "transparent")
   plot(1:10)
   rect(1, 5, 3, 7, col = "white")
   dev.off()
@@ -320,7 +320,7 @@ test_that("background images work", {
 
   # file extension must be png or jpeg, not jpg?
   tmp2 <- tempfile(fileext = ".png")
-  png(file = tmp2, bg = "transparent")
+  png(filename = tmp2, bg = "transparent")
   barplot(1:10)
   dev.off()
 
@@ -340,7 +340,7 @@ test_that("background images work", {
 test_that("More than two background images work", {
 
   tmp <- tempfile(fileext = ".png")
-  png(file = tmp, bg = "transparent")
+  png(filename = tmp, bg = "transparent")
   plot(1:10)
   dev.off()
 

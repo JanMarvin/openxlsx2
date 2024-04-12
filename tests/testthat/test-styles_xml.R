@@ -123,7 +123,7 @@ test_that("dxf", {
   exp <- c("font", "fill", "alignment", "border", "extLst",   "numFmt",
            "protection")
 
-  input <- wb$styles_mgr$styles$dxf
+  input <- wb$styles_mgr$styles$dxfs
   got <- read_dxf(as_xml(input))
   expect_equal(sort(exp), sort(names(got)))
 

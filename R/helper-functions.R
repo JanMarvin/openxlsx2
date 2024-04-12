@@ -824,7 +824,7 @@ get_colstyle <- function(wb, sheet = current_sheet()) {
   st_ids <- NULL
   if (length(wb$worksheets[[sheet]]$cols_attr)) {
     cols <- wb$worksheets[[sheet]]$unfold_cols()
-    st_ids <- cols$s[cols$s != ""]
+    st_ids <- cols$style[cols$style != ""]
     xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
     xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
   } else {
