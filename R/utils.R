@@ -280,7 +280,7 @@ check_wb_dims_args <- function(args, select = NULL) {
 
   x_has_colnames <- !is.null(colnames(args$x))
 
-  if ( is.character(args$rows) && !is.null(args$rows) && x_has_colnames) {
+  if (is.character(args$rows) && !is.null(args$rows) && x_has_colnames) {
     # Not checking whether it's a row name, not supported.
     is_rows_a_colname <- args$rows %in% colnames(args$x)
 
@@ -864,9 +864,6 @@ wb_dims <- function(..., select = NULL) {
   row_span <- frow + seq_len(nrow_to_span) - 1L
   col_span <- fcol + seq_len(ncol_to_span) - 1L
 
-  if (length(row_span) == 0 || length(col_span) == 0) {
-    warning("Something went wrong")
-  }
   if (length(row_span) == 1 && length(col_span) == 1) {
     # A1
     row_start <- row_span

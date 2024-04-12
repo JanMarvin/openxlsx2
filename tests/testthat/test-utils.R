@@ -195,7 +195,9 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
 
   # select rows and columns work
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl"), "B3:B11")
-  expect_error(wb_dims(x = mtcars, cols = "A"), "`cols` must be an integer or an existing column name of `x`.")
+
+
+
   expect_equal(wb_dims(rows = 1 + seq_len(nrow(mtcars)), cols = 4), "D2:D33")
   out_hp <- wb_dims(x = mtcars, cols = "hp") # , "col name = 'hp' to `cols = 4`")
   expect_equal(out_hp, "D2:D33")
@@ -212,6 +214,8 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   # use 1 column name works
 
   expect_error(wb_dims(cols = "hp"), "Supplying a single argument")
+  # using non-existing character column doesn't work
+  expect_error(wb_dims(x = mtcars, cols = "A"), "`cols` must be an integer or an existing column name of `x`.")
   expect_error(
     wb_dims(x = mtcars, cols = c("hp", "vs")),
     regexp = "Supplying multiple column names is not supported"
