@@ -3518,7 +3518,7 @@ wbWorkbook <- R6::R6Class(
 
           if (any(ind)) {
             nn <- sprintf("'%s'", new_name[i])
-            nn <- stringi::stri_replace_all_fixed(self$workbook$definedName[ind], old, nn)
+            nn <- stringi::stri_replace_all_fixed(self$workbook$definedNames[ind], old, nn)
             nn <- stringi::stri_replace_all(nn, regex = "'+", replacement = "'")
             self$workbook$definedNames[ind] <- nn
           }
