@@ -24,6 +24,7 @@ JOHAB
 Kaku
 LastModifiedBy
 Libreoffice
+MIP
 OEM
 ORCID
 Openoffice
@@ -34,6 +35,7 @@ RGBA
 RedToBlack
 RowStripe
 RowSubheading
+Rprofile
 SHIFTJIS
 STDEV
 STDEVP
@@ -159,6 +161,7 @@ mediumDashDot
 mediumDashed
 mediumGray
 minAxisType
+mips
 mmm
 mmss
 mschart
@@ -203,6 +206,7 @@ queryTables
 reimported
 rels
 rgb
+richData
 rightToLeft
 rowColHeaders
 rowNames

@@ -277,6 +277,8 @@ write_data2 <- function(
       dc <- c(c("_rowNames_" = openxlsx2_celltype[["character"]]), dc)
     }
 
+    if (nrow(data) == 0) applyCellStyle <- FALSE
+
     # add colnames
     if (colNames) {
       # its quicker to convert data to character and append the colnames
