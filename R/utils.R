@@ -851,8 +851,7 @@ wb_dims <- function(..., select = NULL) {
     }
   }
 
-  # Correct for empty data frame?
-  # patch so that we will want to span at least 1 row and one col
+  # Ensure we are spanning at least 1 row and 1 col
   if (identical(nrow_to_span, 0L)) {
     nrow_to_span <- 1L
   }
