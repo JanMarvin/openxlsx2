@@ -302,7 +302,9 @@ write_data2 <- function(
     data <- as.data.frame(t(data))
   }
 
-  dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
+  # hackish solution
+  if (!getOption("openxlsx2.enforce_dims", default = FALSE))
+    dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
 
   if (!is.null(attr(data, "f_ref"))) {
     ref <- attr(data, "f_ref")
@@ -349,7 +351,7 @@ write_data2 <- function(
 
   # rtyp character vector per row
   # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
-  rtyp <- dims_to_dataframe(dims, fill = FALSE)
+  rtyp <- dims_to_dataframe(dims, fill = TRUE)
 
   rows_attr <- vector("list", nrow(rtyp))
 
@@ -409,6 +411,21 @@ write_data2 <- function(
     inline_strings = inline_strings,
     c_cm           = c_cm
   )
+
+  # hackish attemt
+  if (getOption("openxlsx2.enforce_dims", default = FALSE)) {
+
+      clls <- c(t(rtyp))
+      clls <- unique(clls)
+      clls <- clls[clls != ""]
+
+      cc$r     <- clls
+      cc$row_r <- as.numeric(gsub("[[:upper:]]", "", clls))
+      cc$c_r   <- gsub("[[:digit:]]", "", clls)
+
+      dims <- dataframe_to_dims(rtyp, dim_break = FALSE)
+
+  }
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {
@@ -757,6 +774,8 @@ write_data_table <- function(
   op <- default_save_opt()
   on.exit(options(op), add = TRUE)
 
+  odims <- dims
+
   if (!is.null(dims)) {
     dims <- dims_to_rowcol(dims, as_integer = TRUE)
     startCol <- min(dims[[1]])
@@ -935,7 +954,7 @@ write_data_table <- function(
     na.strings      = na.strings,
     data_table      = data_table,
     inline_strings  = inline_strings,
-    dims            = dims
+    dims            = odims
   )
 
   ### Beg: Only in datatable ---------------------------------------------------

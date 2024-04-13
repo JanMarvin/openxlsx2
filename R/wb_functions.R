@@ -66,34 +66,48 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 #'
 #' Use [wb_dims()]
 #' @param df dataframe with spreadsheet columns and rows
+#' @param dim_break split the dims?
 #' @examples
 #'  df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
 #'  dataframe_to_dims(df)
 #' @keywords internal
 #' @export
-dataframe_to_dims <- function(df) {
+dataframe_to_dims <- function(df, dim_break = TRUE) {
 
-  # get continuous sequences of columns and rows in df
-  v <- as.integer(rownames(df))
-  rows <- split(v, cumsum(diff(c(-Inf, v)) != 1))
+  if (dim_break) {
+    # get continuous sequences of columns and rows in df
+    v <- as.integer(rownames(df))
+    rows <- split(v, cumsum(diff(c(-Inf, v)) != 1))
 
-  v <- col2int(colnames(df))
-  cols <- split(colnames(df), cumsum(diff(c(-Inf, v)) != 1))
+    v <- col2int(colnames(df))
+    cols <- split(colnames(df), cumsum(diff(c(-Inf, v)) != 1))
 
-  # combine columns and rows to construct dims
-  out <- NULL
-  for (col in seq_along(cols)) {
-    for (row in seq_along(rows)) {
-      tmp <- paste0(
-        cols[[col]][[1]], rows[[row]][[1]],
-        ":",
-        rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
-      )
-      out <- c(out, tmp)
+    # combine columns and rows to construct dims
+    out <- NULL
+    for (col in seq_along(cols)) {
+      for (row in seq_along(rows)) {
+        tmp <- paste0(
+          cols[[col]][[1]], rows[[row]][[1]],
+          ":",
+          rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
+        )
+        out <- c(out, tmp)
+      }
     }
-  }
 
-  paste0(out, collapse = ";")
+    return(paste0(out, collapse = ";"))
+  } else {
+    rows <- as.integer(rownames(df))
+    cols <- colnames(df)
+
+    tmp <- paste0(
+      cols[[1]][[1]], rows[[1]][[1]],
+      ":",
+      rev(cols)[[1]][[1]],  rev(rows)[[1]][[1]]
+    )
+
+    return(tmp)
+  }
 }
 
 #' function to estimate the column type.
