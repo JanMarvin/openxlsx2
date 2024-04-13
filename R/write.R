@@ -303,8 +303,9 @@ write_data2 <- function(
   }
 
   # hackish solution
-  if (!getOption("openxlsx2.enforce_dims", default = FALSE))
+  if (!getOption("openxlsx2.enforce_dims", default = FALSE)) {
     dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
+  }
 
   if (!is.null(attr(data, "f_ref"))) {
     ref <- attr(data, "f_ref")
@@ -323,7 +324,7 @@ write_data2 <- function(
   # this requires access to wb$workbook.
   # TODO The check for existing names is in write_data()
   # TODO use wb$add_named_region()
-  if (!is.null(name)) {
+  if (!is.null(name) && !any(grepl(";", dims))) {
 
     ## named region
     ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
@@ -396,6 +397,17 @@ write_data2 <- function(
     na_null    <- TRUE
   }
 
+  # hackish attemt
+  if (getOption("openxlsx2.enforce_dims", default = FALSE)) {
+    clls <- unlist(lapply(unlist(strsplit(dims, ";")), FUN = function(x) {
+      matrix(openxlsx2:::needed_cells(x), ncol = ncol(data), byrow = TRUE)
+    }))
+
+    clls <- matrix(clls, ncol = ncol(data), nrow = nrow(data), byrow = TRUE)
+  } else {
+    clls <- rtyp[1, 1]
+  }
+
   wide_to_long(
     data,
     dc,
@@ -409,23 +421,14 @@ write_data2 <- function(
     na_missing     = na_missing,
     na_strings     = na.strings,
     inline_strings = inline_strings,
-    c_cm           = c_cm
+    c_cm           = c_cm,
+    dims           = c(clls) # required only for combined cell ranges
   )
 
-  # hackish attemt
   if (getOption("openxlsx2.enforce_dims", default = FALSE)) {
-
-      clls <- c(t(rtyp))
-      clls <- unique(clls)
-      clls <- clls[clls != ""]
-
-      cc$r     <- clls
-      cc$row_r <- as.numeric(gsub("[[:upper:]]", "", clls))
-      cc$c_r   <- gsub("[[:digit:]]", "", clls)
-
-      dims <- dataframe_to_dims(rtyp, dim_break = FALSE)
-
+    dims <- dataframe_to_dims(rtyp, dim_break = FALSE)
   }
+
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {

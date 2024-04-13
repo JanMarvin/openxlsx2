@@ -237,19 +237,36 @@ SEXP copy(SEXP x) {
   return Rf_duplicate(x);
 }
 
-// FIXME C++17 is quite a jump for such a tiny function ...
+std::string rm_dig(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (!std::isdigit(c)) {
+            result += c;
+        }
+    }
+    return result;
+}
+
+std::string rm_alf(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (std::isdigit(c)) {
+            result += c;
+        }
+    }
+    return result;
+}
+
 
 // Function to remove digits from a string
 uint32_t rm_num(const std::string& str) {
-  std::string result;
-  std::remove_copy_if(str.begin(), str.end(), std::back_inserter(result), ::isdigit);
+  std::string result = rm_dig(str);
   return uint_col_to_int(result);
 }
 
 // Function to keep only digits in a string
 uint32_t rm_chr(const std::string& str) {
-  std::string result;
-  std::copy_if(str.begin(), str.end(), std::back_inserter(result), ::isdigit);
+  std::string result = rm_alf(str);
   return std::stoi(result);
 }
 
@@ -434,7 +451,8 @@ void wide_to_long(
     bool na_missing,
     std::string na_strings,
     bool inline_strings,
-    std::string c_cm
+    std::string c_cm,
+    std::vector<std::string> dims
 ) {
 
   auto n = z.nrow();
@@ -460,6 +478,11 @@ void wide_to_long(
     na_strings = txt_to_is(na_strings, 0, 1, 1);
   else
     na_strings = txt_to_si(na_strings, 0, 1, 1);
+
+  R_xlen_t idx = 0;
+
+  bool has_dims = false;
+  if (dims.size() == n * m) has_dims = true;
 
   for (auto i = 0; i < m; ++i) {
     Rcpp::checkUserInterrupt();
@@ -590,10 +613,19 @@ void wide_to_long(
       }
 
       cell.typ = std::to_string(vtyp);
-      cell.r =  col + row;
 
-      zz_row_r[pos] = row;
-      zz_c_r[pos]   = col;
+      if (has_dims) {
+        cell.r =  dims[idx];
+
+        zz_row_r[pos] = rm_alf(cell.r);
+        zz_c_r[pos]   = rm_dig(cell.r);
+      } else {
+        cell.r =  col + row;
+
+        zz_row_r[pos] = row;
+        zz_c_r[pos]   = col;
+      }
+
       if (!cell.v.empty())     zz_v[pos]     = cell.v;
       if (!cell.c_cm.empty())  zz_c_cm[pos]  = cell.c_cm;
       if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
@@ -603,6 +635,8 @@ void wide_to_long(
       if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
       if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
       if (!cell.r.empty())     zz_r[pos]     = cell.r;
+
+      ++idx;
 
       ++startrow;
     }
