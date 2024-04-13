@@ -28,8 +28,16 @@ copy <- function(x) {
     .Call(`_openxlsx2_copy`, x)
 }
 
+needed_cells <- function(range) {
+    .Call(`_openxlsx2_needed_cells`, range)
+}
+
 dims_to_df <- function(rows, cols, fill) {
     .Call(`_openxlsx2_dims_to_df`, rows, cols, fill)
+}
+
+dims_to_df2 <- function(rows, cols, filled, fill) {
+    .Call(`_openxlsx2_dims_to_df2`, rows, cols, filled, fill)
 }
 
 long_to_wide <- function(z, tt, zz) {

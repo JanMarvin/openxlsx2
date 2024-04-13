@@ -14,11 +14,15 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 
   rows_out <- NULL
   cols_out <- NULL
+  filled   <- NULL
   for (dim in dims) {
 
     if (!grepl(":", dim)) {
       dim <- paste0(dim, ":", dim)
     }
+
+    if (length(dims) > 1)
+      filled <- c(filled, needed_cells(dim))
 
     if (identical(dim, "Inf:-Inf")) {
       # This should probably be fixed elsewhere?
@@ -40,12 +44,22 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
     }
   }
 
-  # create data frame from rows/
-  dims_to_df(
-    rows = rows_out,
-    cols = cols_out,
-    fill = fill
-  )
+  if (is.null(filled)) {
+    # create data frame from rows/
+    dims_to_df(
+      rows = rows_out,
+      cols = cols_out,
+      fill = fill
+    )
+  } else {
+    # create data frame from rows/
+    dims_to_df2(
+      rows   = rows_out,
+      cols   = cols_out,
+      filled = filled,
+      fill   = fill
+    )
+  }
 }
 
 #' Create dimensions from dataframe

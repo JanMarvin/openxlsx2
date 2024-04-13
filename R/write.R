@@ -24,6 +24,9 @@ inner_update <- function(
     na.strings = na_strings()
 ) {
 
+  cells_needed <- cells_needed[cells_needed != ""]
+  if (length(cells_needed) == 0) return(wb)
+
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
   cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
   row_attr <- wb$worksheets[[sheet_id]]$sheet_data$row_attr
