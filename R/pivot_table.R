@@ -399,6 +399,7 @@ create_pivot_table <- function(
     axis <- NULL
     sort <- NULL
     autoSortScope <- NULL
+    downfill <- NULL
     is_formula <- inherits(x[[i]], "is_formula")
 
     if (i %in% data_pos)    dataField <- c(dataField = "1")
@@ -415,6 +416,16 @@ create_pivot_table <- function(
 
         if (!abs(sort) == match(i, rows_pos))
           sort <- NULL
+      }
+
+      if (isTRUE(params$downfill)) {
+        downfill <- read_xml(
+          '<extLst>
+            <ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{2946ED86-A175-432a-8AC1-64E0C546D7DE}">
+              <x14:pivotField fillDownLabels="1"/>
+            </ext>
+          </extLst>',
+          pointer = FALSE)
       }
     }
 
@@ -474,18 +485,6 @@ create_pivot_table <- function(
           showAll         = "0",
           defaultSubtotal = "0"
         )
-    }
-
-
-    downfill <- NULL
-    if (!is.null(params$downfill) && !is.null(axis) && axis == "axisRow") {
-      downfill <- read_xml(
-        '<extLst>
-           <ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{2946ED86-A175-432a-8AC1-64E0C546D7DE}">
-             <x14:pivotField fillDownLabels="1"/>
-           </ext>
-        </extLst>',
-        pointer = FALSE)
     }
 
     tmp <- xml_node_create(
