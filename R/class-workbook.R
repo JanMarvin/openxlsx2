@@ -3780,7 +3780,6 @@ wbWorkbook <- R6::R6Class(
       if (length(cols) == 0L) {
         return(self)
       }
-      assert_class(hidden, "logical", arg_nm = "hidden")
 
       cols <- col2int(cols)
 
@@ -3797,7 +3796,7 @@ wbWorkbook <- R6::R6Class(
       if (!compatible_length) {
         # needed because rep(c(1, 2 ), length.out = 3) is successful,
         # but not clear if this is what the user wanted.
-        stop("`cols` and `widths` don't have compatible lengths.\n",
+        warning("`cols` and `widths` don't have compatible lengths.\n",
              "`cols` has length ", length(cols), " while ",
              "`widths` has length ", length(widths), ".")
       }
@@ -3808,7 +3807,7 @@ wbWorkbook <- R6::R6Class(
       compatible_length <- length(cols) %% length(hidden) == 0
 
       if (!compatible_length) {
-        stop("`cols` and `hidden` must have compatible lengths.\n",
+        warning("`cols` and `hidden` must have compatible lengths.\n",
              "`cols` has length ", length(cols), " while ",
              "`hidden` has length ", length(hidden), ".")
       }

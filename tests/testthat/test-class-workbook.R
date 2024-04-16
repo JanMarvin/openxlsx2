@@ -73,10 +73,11 @@ test_that("set_col_widths errors when inconsistent lengths are supplied", {
   wb <- wbWorkbook$new()
   wb$add_worksheet("test")
 
-  expect_error(wb$set_col_widths(cols = c(1, 2, 3), widths = c(2, 3)), "compatible length")
+  expect_warning(wb$set_col_widths(cols = c(1, 2, 3), widths = c(2, 3)), "compatible length")
   expect_error(wb$set_col_widths(cols = "Y", widths = 1:2))
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2))
-  expect_error(wb$set_col_widths(cols = c("Y", "Z"), hidden = 1))
+  expect_warning(wb$set_col_widths(cols = c("X","Y", "Z"), hidden = c(1, 0)))
+
 })
 
 test_that("option maxWidth works", {
