@@ -348,7 +348,7 @@ create_pivot_table <- function(
     "apply_width_height_formats", "asterisk_totals", "auto_format_id",
     "chart_format", "col_grand_totals", "col_header_caption", "compact",
     "compact", "choose", "compact_data", "custom_list_sort", "data_caption",
-    "data_on_rows", "data_position", "disable_field_list", "edit_data",
+    "data_on_rows", "data_position", "disable_field_list", "downfill", "edit_data",
     "enable_drill", "enable_field_properties", "enable_wizard", "error_caption",
     "field_list_sort_ascending", "field_print_titles", "grand_total_caption",
     "grid_drop_zones", "immersive", "indent", "item_print_titles",
@@ -476,6 +476,18 @@ create_pivot_table <- function(
         )
     }
 
+
+    downfill <- NULL
+    if (!is.null(params$downfill) && !is.null(axis) && axis == "axisRow") {
+      downfill <- read_xml(
+        '<extLst>
+           <ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{2946ED86-A175-432a-8AC1-64E0C546D7DE}">
+             <x14:pivotField fillDownLabels="1"/>
+           </ext>
+        </extLst>',
+        pointer = FALSE)
+    }
+
     tmp <- xml_node_create(
       "pivotField",
       xml_attributes = attrs)
@@ -491,7 +503,7 @@ create_pivot_table <- function(
       tmp <- xml_node_create(
         "pivotField",
         xml_attributes = attrs,
-        xml_children = paste0(paste0(get_items(x, i, sort_itm, FALSE, choo, has_default), collapse = ""), autoSortScope))
+        xml_children = paste0(paste0(get_items(x, i, sort_itm, FALSE, choo, has_default), collapse = ""), autoSortScope, downfill))
     }
 
     pivotField <- c(pivotField, tmp)
