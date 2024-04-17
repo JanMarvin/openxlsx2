@@ -1016,6 +1016,12 @@ testfile_path <- function(x, replace = FALSE) {
     try({
       download.file(url, destfile = out, quiet = TRUE, mode = "wb")
     })
+
+    i <- 1
+    while (!file.exists(out)) {
+      i <- i + 1
+      if (i > 1000) return(testthat::skip("Skip slow download"))
+    }
   }
 
   if (!file.exists(fl)) {
