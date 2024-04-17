@@ -185,6 +185,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
 #' @param dims worksheet dimensions
+#' @param enforce enforce dims
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -219,7 +220,8 @@ write_data2 <- function(
     na.strings = na_strings(),
     data_table = FALSE,
     inline_strings = TRUE,
-    dims = NULL
+    dims = NULL,
+    enforce = FALSE
 ) {
 
   is_data_frame <- FALSE
@@ -303,7 +305,8 @@ write_data2 <- function(
   }
 
   # hackish solution
-  if (!getOption("openxlsx2.enforce_dims", default = FALSE)) {
+  if (!enforce) {
+    # not really sure why. With enforce this breaks, without it works.
     dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
   }
 
@@ -398,7 +401,7 @@ write_data2 <- function(
   }
 
   # hackish attemt
-  if (getOption("openxlsx2.enforce_dims", default = FALSE)) {
+  if (enforce) {
     clls <- unlist(lapply(unlist(strsplit(dims, ";")), FUN = function(x) {
       matrix(openxlsx2:::needed_cells(x), ncol = ncol(data), byrow = TRUE)
     }))
@@ -425,7 +428,9 @@ write_data2 <- function(
     dims           = c(clls) # required only for combined cell ranges
   )
 
-  if (getOption("openxlsx2.enforce_dims", default = FALSE)) {
+  if (enforce) {
+    # this is required for the worksheet dimension spanning the entire
+    # initialized worksheet from top left to bottom right
     dims <- dataframe_to_dims(rtyp, dim_break = FALSE)
   }
 
@@ -757,7 +762,8 @@ write_data_table <- function(
     data_table      = FALSE,
     na.strings      = na_strings(),
     inline_strings  = TRUE,
-    total_row       = FALSE
+    total_row       = FALSE,
+    enforce         = FALSE
 ) {
 
   ## Input validating
@@ -957,7 +963,8 @@ write_data_table <- function(
     na.strings      = na.strings,
     data_table      = data_table,
     inline_strings  = inline_strings,
-    dims            = odims
+    dims            = odims,
+    enforce         = enforce
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -1007,7 +1014,8 @@ write_data_table <- function(
         na.strings      = na.strings,
         data_table      = data_table,
         inline_strings  = inline_strings,
-        dims            = NULL
+        dims            = NULL,
+        enforce         = FALSE
       )
     }
 
@@ -1084,6 +1092,7 @@ write_data <- function(
     remove_cell_style = FALSE,
     na.strings        = na_strings(),
     inline_strings    = TRUE,
+    enforce           = FALSE,
     ...
 ) {
 
@@ -1112,7 +1121,8 @@ write_data <- function(
     removeCellStyle = remove_cell_style,
     data_table      = FALSE,
     na.strings      = na.strings,
-    inline_strings  = inline_strings
+    inline_strings  = inline_strings,
+    enforce         = enforce
   )
 }
 
@@ -1137,6 +1147,7 @@ write_formula <- function(
     cm                = FALSE,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
+    enforce           = FALSE,
     ...
 ) {
 
@@ -1237,7 +1248,8 @@ write_formula <- function(
     col_names         = FALSE,
     row_names         = FALSE,
     apply_cell_style  = apply_cell_style,
-    remove_cell_style = remove_cell_style
+    remove_cell_style = remove_cell_style,
+    enforce           = enforce
   )
 
 }

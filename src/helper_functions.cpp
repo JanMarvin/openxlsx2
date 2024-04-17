@@ -237,6 +237,24 @@ SEXP copy(SEXP x) {
   return Rf_duplicate(x);
 }
 
+// [[Rcpp::export]]
+bool validate_dims(const std::string& input) {
+    bool has_col = false;
+    bool has_row = false;
+
+    for (char c : input) {
+        if (std::isupper(c)) {
+            has_col = true;
+        } else if (std::isdigit(c)) {
+            has_row = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_col && has_row;
+}
+
 std::string rm_dig(const std::string& str) {
     std::string result;
     for (char c : str) {
@@ -281,8 +299,12 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
     startCell = range.substr(0, colonPos);
     endCell = range.substr(colonPos + 1);
   } else {
-    // Invalid range format
-    Rcpp::stop("Invalid input. Need something like A1:B2");
+    startCell = range;
+    endCell = range;
+  }
+
+  if (!validate_dims(startCell) || !validate_dims(endCell)) {
+    Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
   }
 
   // Extract column and row numbers from start and end cells
@@ -295,7 +317,7 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
   startRow = rm_chr(startCell);
   endRow   = rm_chr(endCell);
 
-  // Generate Excel cell references
+  // Generate spreadsheet cell references
   for (uint32_t col = startCol; col <= endCol; ++col) {
     for (uint32_t row = startRow; row <= endRow; ++row) {
       std::string cell = int_to_col(col);
@@ -307,12 +329,18 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
   return Rcpp::wrap(cells);
 }
 
+bool has_cell(const std::string& str, const Rcpp::CharacterVector& vec) {
+  return std::find(vec.begin(), vec.end(), str) != vec.end();
+}
+
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
-SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill) {
+SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill) {
 
   size_t kk = cols.size();
   size_t nn = rows.size();
+
+  bool has_filled = filled.isNotNull();
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -324,7 +352,7 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill)
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  if (fill) {
+  if (fill && !has_filled) {
     for (size_t i = 0; i < kk; ++i) {
       Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
       std::string coli = Rcpp::as<std::string>(cols[i]);
@@ -332,46 +360,19 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill)
         cvec[j] = coli + std::to_string(rows[j]);
       }
     }
-  }
+  } else {
 
-  // 3. Create a data.frame
-  df.attr("row.names") = rows;
-  df.attr("names") = cols;
-  df.attr("class") = "data.frame";
-
-  return df;
-}
-
-bool has_cell(const std::string& str, const std::vector<std::string>& vec) {
-  return std::find(vec.begin(), vec.end(), str) != vec.end();
-}
-
-// [[Rcpp::export]]
-SEXP dims_to_df2(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, std::vector<std::string> filled, bool fill) {
-
-  size_t kk = cols.size();
-  size_t nn = rows.size();
-
-  // 1. create the list
-  Rcpp::List df(kk);
-  for (size_t i = 0; i < kk; ++i)
-  {
-    if (fill)
-      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
-    else
-      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
-  }
-
-  // in df2 we have to always run this loop
-  for (size_t i = 0; i < kk; ++i) {
-    Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-    std::string coli = Rcpp::as<std::string>(cols[i]);
-    for (size_t j = 0; j < nn; ++j) {
-      std::string cell = coli + std::to_string(rows[j]);
-      if (!has_cell(cell, filled))
-        cvec[j] = "";
-      else if (fill)
-        cvec[j] = coli + std::to_string(rows[j]);
+    // in df2 we have to always run this loop
+    for (size_t i = 0; i < kk; ++i) {
+      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+      std::string coli = Rcpp::as<std::string>(cols[i]);
+      for (size_t j = 0; j < nn; ++j) {
+        std::string cell = coli + std::to_string(rows[j]);
+        if (!has_cell(cell, filled.get()))
+          cvec[j] = "";
+        else if (fill)
+          cvec[j] = coli + std::to_string(rows[j]);
+      }
     }
   }
 

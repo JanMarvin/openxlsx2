@@ -44,22 +44,12 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
     }
   }
 
-  if (is.null(filled)) {
-    # create data frame from rows/
-    dims_to_df(
-      rows = rows_out,
-      cols = cols_out,
-      fill = fill
-    )
-  } else {
-    # create data frame from rows/
-    dims_to_df2(
-      rows   = rows_out,
-      cols   = cols_out,
-      filled = filled,
-      fill   = fill
-    )
-  }
+  dims_to_df(
+    rows = rows_out,
+    cols = cols_out,
+    filled = filled,
+    fill = fill
+  )
 }
 
 #' Create dimensions from dataframe

@@ -513,6 +513,7 @@ add data
   remove_cell_style = FALSE,
   na.strings = na_strings(),
   inline_strings = TRUE,
+  enforce = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -550,6 +551,8 @@ add data
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+
+\item{\code{enforce}}{enforce that selected dims is filled. For this to work, \code{dims} must match \code{x}}
 
 \item{\code{...}}{additional arguments}
 
