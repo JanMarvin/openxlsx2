@@ -11,6 +11,9 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   if (grepl(";", dims)) {
     dims <- unlist(strsplit(dims, ";"))
   }
+  if (grepl(",", dims)) {
+    dims <- unlist(strsplit(dims, ","))
+  }
 
   rows_out <- NULL
   cols_out <- NULL

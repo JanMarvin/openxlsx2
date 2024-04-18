@@ -178,8 +178,10 @@ NULL
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   dims <- x
-  if (length(x) == 1 && grepl(";", x))
-    dims <- unlist(strsplit(x, ";"))
+  if (length(x) == 1) {
+    if (grepl(";", x)) dims <- unlist(strsplit(x, ";"))
+    if (grepl(",", x)) dims <- unlist(strsplit(x, ","))
+  }
 
   cols_out <- NULL
   rows_out <- NULL

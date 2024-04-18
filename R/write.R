@@ -224,6 +224,12 @@ write_data2 <- function(
     enforce = FALSE
 ) {
 
+  dim_sep <- ";"
+  if (any(grepl(";|,", dims))) {
+    if (any(grepl(";", dims))) dim_sep <- ";"
+    if (any(grepl(",", dims))) dim_sep <- ","
+  }
+
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
   dc <- openxlsx2_type(data)
@@ -327,7 +333,7 @@ write_data2 <- function(
   # this requires access to wb$workbook.
   # TODO The check for existing names is in write_data()
   # TODO use wb$add_named_region()
-  if (!is.null(name) && !any(grepl(";", dims))) {
+  if (!is.null(name) && !any(grepl(dim_sep, dims))) {
 
     ## named region
     ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
@@ -400,9 +406,8 @@ write_data2 <- function(
     na_null    <- TRUE
   }
 
-  # hackish attemt
   if (enforce) {
-    clls <- unlist(lapply(unlist(strsplit(dims, ";")), FUN = function(x) {
+    clls <- unlist(lapply(unlist(strsplit(dims, dim_sep)), FUN = function(x) {
       matrix(needed_cells(x), ncol = ncol(data), byrow = TRUE)
     }))
 
