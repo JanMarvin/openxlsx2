@@ -314,3 +314,20 @@ test_that("missings cells are returned", {
   expect_silent(got <- wb_to_df(wb, col_names = FALSE, rows = c(101), cols = c(27)))
 
 })
+
+test_that("dims with separator work", {
+
+  wb <- wb_workbook()$
+    # this picks the top left corner of dims to write the data frame
+    add_worksheet()$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2))$
+    add_worksheet()$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
+
+  exp <- c("A1", "B1", "A2", "B2", "A3", "B3", "A4", "B4", "A5", "B5")
+  got <- wb$worksheets[[1]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("I2", "J2", "A1", "B1", "A2", "B2", "G5", "H5", "G6", "H6")
+  got <- wb$worksheets[[2]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+})
