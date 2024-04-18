@@ -403,7 +403,7 @@ write_data2 <- function(
   # hackish attemt
   if (enforce) {
     clls <- unlist(lapply(unlist(strsplit(dims, ";")), FUN = function(x) {
-      matrix(openxlsx2:::needed_cells(x), ncol = ncol(data), byrow = TRUE)
+      matrix(needed_cells(x), ncol = ncol(data), byrow = TRUE)
     }))
 
     clls <- matrix(clls, ncol = ncol(data), nrow = nrow(data), byrow = TRUE)

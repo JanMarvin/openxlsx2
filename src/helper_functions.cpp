@@ -180,9 +180,6 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 }
 
 // provide a basic rbindlist for lists of named characters
-// xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-// wb <- wb_load(xlsxFile)
-// openxlsx2:::rbindlist(xml_attr(wb$styles_mgr$styles$cellXfs, "xf"))
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
 
