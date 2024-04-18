@@ -754,6 +754,7 @@ Add formula
   cm = FALSE,
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
+  enforce = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -778,6 +779,8 @@ Add formula
 \item{\code{apply_cell_style}}{applyCellStyle}
 
 \item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
+
+\item{\code{enforce}}{enforce dims}
 
 \item{\code{...}}{additional arguments}
 }
