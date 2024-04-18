@@ -144,6 +144,47 @@ uint32_t uint_col_to_int(std::string& a) {
   return sum;
 }
 
+
+std::string rm_rownum(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (!std::isdigit(c)) {
+            result += c;
+        }
+    }
+    return result;
+}
+
+std::string rm_colnum(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (std::isdigit(c)) {
+            result += c;
+        }
+    }
+    return result;
+}
+
+// Function to keep only digits in a string
+uint32_t cell_to_rowint(const std::string& str) {
+  std::string result = rm_colnum(str);
+  return std::stoi(result);
+}
+
+std::string str_toupper(std::string s) {
+  std::transform(s.begin(), s.end(), s.begin(),
+                 [](unsigned char c){ return std::toupper(c); }
+  );
+  return s;
+}
+
+// Function to remove digits from a string
+uint32_t cell_to_colint(const std::string& str) {
+  std::string result = rm_rownum(str);
+  result = str_toupper(result);
+  return uint_col_to_int(result);
+}
+
 // [[Rcpp::export]]
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 
@@ -167,12 +208,8 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
       continue;
     }
 
-    // remove digits from string
-    a.erase(std::remove_if(a.begin()+1, a.end(), ::isdigit), a.end());
-    transform(a.begin(), a.end(), a.begin(), ::toupper);
-
     // return index from column name
-    colNums[i] = uint_col_to_int(a);
+    colNums[i] = cell_to_colint(a);
   }
 
   return colNums;
@@ -252,39 +289,6 @@ bool validate_dims(const std::string& input) {
     return has_col && has_row;
 }
 
-std::string rm_dig(const std::string& str) {
-    std::string result;
-    for (char c : str) {
-        if (!std::isdigit(c)) {
-            result += c;
-        }
-    }
-    return result;
-}
-
-std::string rm_alf(const std::string& str) {
-    std::string result;
-    for (char c : str) {
-        if (std::isdigit(c)) {
-            result += c;
-        }
-    }
-    return result;
-}
-
-
-// Function to remove digits from a string
-uint32_t rm_num(const std::string& str) {
-  std::string result = rm_dig(str);
-  return uint_col_to_int(result);
-}
-
-// Function to keep only digits in a string
-uint32_t rm_chr(const std::string& str) {
-  std::string result = rm_alf(str);
-  return std::stoi(result);
-}
-
 // [[Rcpp::export]]
 Rcpp::CharacterVector needed_cells(const std::string& range) {
   std::vector<std::string> cells;
@@ -308,11 +312,11 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
   uint32_t startRow, endRow;
   uint32_t startCol = 0, endCol = 0;
 
-  startCol = rm_num(startCell);
-  endCol   = rm_num(endCell);
+  startCol = cell_to_colint(startCell);
+  endCol   = cell_to_colint(endCell);
 
-  startRow = rm_chr(startCell);
-  endRow   = rm_chr(endCell);
+  startRow = cell_to_rowint(startCell);
+  endRow   = cell_to_rowint(endCell);
 
   // Generate spreadsheet cell references
   for (uint32_t col = startCol; col <= endCol; ++col) {
@@ -618,8 +622,8 @@ void wide_to_long(
       if (has_dims) {
         cell.r =  dims[idx];
 
-        zz_row_r[pos] = rm_alf(cell.r);
-        zz_c_r[pos]   = rm_dig(cell.r);
+        zz_row_r[pos] = rm_colnum(cell.r);
+        zz_c_r[pos]   = rm_rownum(cell.r);
       } else {
         cell.r =  col + row;
 
