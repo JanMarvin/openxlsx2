@@ -45,10 +45,10 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   }
 
   dims_to_df(
-    rows = rows_out,
-    cols = cols_out,
+    rows   = rows_out,
+    cols   = cols_out,
     filled = filled,
-    fill = fill
+    fill   = fill
   )
 }
 

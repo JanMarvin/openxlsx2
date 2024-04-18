@@ -352,17 +352,9 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  if (fill && !has_filled) {
-    for (size_t i = 0; i < kk; ++i) {
-      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-      std::string coli = Rcpp::as<std::string>(cols[i]);
-      for (size_t j = 0; j < nn; ++j) {
-        cvec[j] = coli + std::to_string(rows[j]);
-      }
-    }
-  } else {
+  if (has_filled) {
 
-    // in df2 we have to always run this loop
+    // with has_filled we always have to run this loop
     for (size_t i = 0; i < kk; ++i) {
       Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
       std::string coli = Rcpp::as<std::string>(cols[i]);
@@ -374,7 +366,18 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
           cvec[j] = coli + std::to_string(rows[j]);
       }
     }
-  }
+
+  } else if (fill) { // insert cells into data frame
+
+    for (size_t i = 0; i < kk; ++i) {
+      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+      std::string coli = Rcpp::as<std::string>(cols[i]);
+      for (size_t j = 0; j < nn; ++j) {
+        cvec[j] = coli + std::to_string(rows[j]);
+      }
+    }
+
+  } // else return data frame filled with NA_character_
 
   // 3. Create a data.frame
   df.attr("row.names") = rows;
