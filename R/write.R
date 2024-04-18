@@ -310,9 +310,9 @@ write_data2 <- function(
     data <- as.data.frame(t(data))
   }
 
-  # hackish solution
+  # TODO fits_in_dims does not handle "A1,B2" and instead converts it to the
+  # outer range "A1:B2"
   if (!enforce) {
-    # not really sure why. With enforce this breaks, without it works.
     dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
   }
 
@@ -361,7 +361,7 @@ write_data2 <- function(
 
   # rtyp character vector per row
   # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
-  rtyp <- dims_to_dataframe(dims, fill = TRUE)
+  rtyp <- dims_to_dataframe(dims, fill = enforce)
 
   rows_attr <- vector("list", nrow(rtyp))
 
@@ -411,9 +411,9 @@ write_data2 <- function(
       matrix(needed_cells(x), ncol = ncol(data), byrow = TRUE)
     }))
 
-    clls <- matrix(clls, ncol = ncol(data), nrow = nrow(data), byrow = TRUE)
+    clls <- c(matrix(clls, ncol = ncol(data), nrow = nrow(data), byrow = TRUE))
   } else {
-    clls <- rtyp[1, 1]
+    clls <- paste0(colnames(rtyp[1, 1]), rownames(rtyp[1, 1]))
   }
 
   wide_to_long(
@@ -430,7 +430,7 @@ write_data2 <- function(
     na_strings     = na.strings,
     inline_strings = inline_strings,
     c_cm           = c_cm,
-    dims           = c(clls) # required only for combined cell ranges
+    dims           = clls
   )
 
   if (enforce) {
@@ -968,7 +968,7 @@ write_data_table <- function(
     na.strings      = na.strings,
     data_table      = data_table,
     inline_strings  = inline_strings,
-    dims            = odims,
+    dims            = if (enforce) odims else dims,
     enforce         = enforce
   )
 
