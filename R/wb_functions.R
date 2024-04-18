@@ -8,11 +8,14 @@
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
 
-  if (grepl(";", dims)) {
+  has_dim_sep <- FALSE
+  if (any(grepl(";", dims))) {
     dims <- unlist(strsplit(dims, ";"))
+    has_dim_sep <- TRUE
   }
-  if (grepl(",", dims)) {
+  if (any(grepl(",", dims))) {
     dims <- unlist(strsplit(dims, ","))
+    has_dim_sep <- TRUE
   }
 
   rows_out <- NULL
@@ -45,6 +48,11 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 
       cols_out <- unique(c(cols_out, cols))
     }
+  }
+
+  if (has_dim_sep) {
+    cols_out <- int2col(sort(col2int(cols_out)))
+    rows_out <- sort(rows_out)
   }
 
   dims_to_df(
