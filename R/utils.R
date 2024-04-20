@@ -226,7 +226,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
 #' @rdname dims_helper
 #' @export
-rowcol_to_dims <- function(row, col) {
+rowcol_to_dims <- function(row, col, single = TRUE) {
 
   # no assert for col. will output character anyways
   # assert_class(row, "numeric") - complains if integer
@@ -240,7 +240,11 @@ rowcol_to_dims <- function(row, col) {
   max_row <- max(row)
 
   # we will always return something like "A1:A1", even for single cells
-  stringi::stri_join(min_col, min_row, ":", max_col, max_row)
+  if (single) {
+    return(stringi::stri_join(min_col, min_row, ":", max_col, max_row))
+  } else {
+    return(paste0(vapply(int2col(col_int), FUN = function(x) stringi::stri_join(x, min_row, ":", x, max_row), ""), collapse = ","))
+  }
 
 }
 
