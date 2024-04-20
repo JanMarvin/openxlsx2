@@ -307,7 +307,7 @@ bool is_double(std::string x) {
 
   res = R_strtod(x.c_str(), &endp);
 
-  if (isBlankString(endp) && std::isfinite(res)) {
+  if (Rf_isBlankString(endp) && std::isfinite(res)) {
     return 1;
   }
 
