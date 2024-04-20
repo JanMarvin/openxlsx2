@@ -329,4 +329,46 @@ test_that("dims with separator work", {
   got <- wb$worksheets[[2]]$sheet_data$cc$r
   expect_equal(exp, got)
 
+  # write a workbook with a few colored cells
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(dims = wb_dims(x = mtcars), x = mtcars, enforce = TRUE)$
+    add_worksheet()$
+    add_data(dims = "A1:K20,A22:K34", x = mtcars, enforce = TRUE)$
+    add_worksheet()$
+    add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
+
+  # sheet 1
+  df <- wb_to_df(wb, sheet = 1)
+  expect_equal(df, mtcars, ignore_attr = TRUE)
+
+  # sheet 2
+  df <- wb_to_df(wb, sheet = 2)
+  expect_true(all(is.na(df[20,])))
+  expect_equal(df[-20,], mtcars, ignore_attr = TRUE)
+
+  # sheet 3
+  df <- wb_to_df(wb, sheet = 3, col_names = FALSE)
+  ll <- list(
+    df["2", c("I", "J")],
+    df[c("1", "2"), c("A", "B")],
+    df[c("5", "6"), c("G", "H")]
+  )
+
+  for (i in seq_len(length(ll)))
+    names(ll[[i]]) <- c("V1", "V2")
+
+  exp <- data.frame(
+    V1 = c("V1", 1, 2, 3, 4),
+    V2 = c("V2", 5, 6, 7, 8)
+  )
+
+  got <- do.call("rbind", ll)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  wb$add_worksheet()$add_formula(dims = "D1;F2", x = c("SUM(A1:C1)", "SUM(A1)"), enforce = TRUE)
+  exp <- c("D1", "F2")
+  got <- wb$worksheets[[4]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
 })
