@@ -407,11 +407,15 @@ write_data2 <- function(
   }
 
   if (enforce) {
-    clls <- unlist(lapply(unlist(strsplit(dims, dim_sep)), FUN = function(x) {
-      matrix(needed_cells(x), ncol = ncol(data), byrow = TRUE)
-    }))
 
-    clls <- c(matrix(clls, ncol = ncol(data), nrow = nrow(data), byrow = TRUE))
+    clls <- lapply(unlist(strsplit(dims, dim_sep)), FUN = function(x) {
+      matrix(needed_cells(x), ncol = ncol(data), byrow = FALSE)
+    })
+
+    clls <- do.call("rbind", clls)
+
+    clls <- c(matrix(clls, nrow = nrow(data), byrow = FALSE))
+
   } else {
     clls <- paste0(colnames(rtyp[1, 1]), rownames(rtyp[1, 1]))
   }
