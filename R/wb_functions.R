@@ -73,7 +73,7 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 #'  dataframe_to_dims(df)
 #' @keywords internal
 #' @export
-dataframe_to_dims <- function(df, dim_break = TRUE) {
+dataframe_to_dims <- function(df, dim_break = FALSE) {
 
   if (dim_break) {
 
@@ -102,7 +102,7 @@ dataframe_to_dims <- function(df, dim_break = TRUE) {
     tmp <- paste0(
       cols[[1]][[1]], rows[[1]][[1]],
       ":",
-      rev(cols)[[1]][[1]],  rev(rows)[[1]][[1]]
+      rev(cols)[[1]][[1]], rev(rows)[[1]][[1]]
     )
 
     return(tmp)

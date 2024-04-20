@@ -8,7 +8,7 @@
 \usage{
 dims_to_rowcol(x, as_integer = FALSE)
 
-rowcol_to_dims(row, col)
+rowcol_to_dims(row, col, single = TRUE)
 }
 \arguments{
 \item{x}{a dimension object "A1" or "A1:A1"}

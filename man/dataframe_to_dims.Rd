@@ -4,7 +4,7 @@
 \alias{dataframe_to_dims}
 \title{Create dimensions from dataframe}
 \usage{
-dataframe_to_dims(df, dim_break = TRUE)
+dataframe_to_dims(df, dim_break = FALSE)
 }
 \arguments{
 \item{df}{dataframe with spreadsheet columns and rows}

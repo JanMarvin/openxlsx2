@@ -190,7 +190,7 @@ test_that("dataframe_to_dims", {
 
   # dims_to_dataframe will always create a square
   df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
-  dims <- dataframe_to_dims(df)
+  dims <- dataframe_to_dims(df, dim_break = TRUE)
   df2 <- dims_to_dataframe(dims, fill = TRUE)
   expect_equal(df, df2)
 
