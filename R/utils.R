@@ -163,6 +163,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #' @param as_integer If the output should be returned as integer, (defaults to string)
 #' @param row a numeric vector of rows
 #' @param col a numeric or character vector of cols
+#' @param single argument indicating if [rowcol_to_dims()] returns a single cell dimension
 #' @returns
 #'   * A `dims` string for `_to_dim` i.e  "A1:A1"
 #'   * A list of rows and columns for `to_rowcol`

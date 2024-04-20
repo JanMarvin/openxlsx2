@@ -18,6 +18,8 @@ rowcol_to_dims(row, col, single = TRUE)
 \item{row}{a numeric vector of rows}
 
 \item{col}{a numeric or character vector of cols}
+
+\item{single}{argument indicating if \code{\link[=rowcol_to_dims]{rowcol_to_dims()}} returns a single cell dimension}
 }
 \value{
 \itemize{
