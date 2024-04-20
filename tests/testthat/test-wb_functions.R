@@ -344,8 +344,8 @@ test_that("dims with separator work", {
 
   # sheet 2
   df <- wb_to_df(wb, sheet = 2)
-  expect_true(all(is.na(df[20,])))
-  expect_equal(df[-20,], mtcars, ignore_attr = TRUE)
+  expect_true(all(is.na(df[20, ])))
+  expect_equal(df[-20, ], mtcars, ignore_attr = TRUE)
 
   # sheet 3
   df <- wb_to_df(wb, sheet = 3, col_names = FALSE)
