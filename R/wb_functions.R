@@ -76,28 +76,26 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 dataframe_to_dims <- function(df, dim_break = TRUE) {
 
   if (dim_break) {
-    # get continuous sequences of columns and rows in df
-    v <- as.integer(rownames(df))
-    rows <- split(v, cumsum(diff(c(-Inf, v)) != 1))
 
-    v <- col2int(colnames(df))
-    cols <- split(colnames(df), cumsum(diff(c(-Inf, v)) != 1))
+    dims <- dims_to_dataframe(dataframe_to_dims(df, dim_break = FALSE), fill = TRUE)
 
-    # combine columns and rows to construct dims
-    out <- NULL
-    for (col in seq_along(cols)) {
-      for (row in seq_along(rows)) {
-        tmp <- paste0(
-          cols[[col]][[1]], rows[[row]][[1]],
-          ":",
-          rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
-        )
-        out <- c(out, tmp)
-      }
-    }
+    mm <- as.matrix(df)
+    mm[mm != "" | is.na(mm)] <- 1
+    mm[mm == ""] <- 0
 
-    return(paste0(out, collapse = ";"))
+    matrix <- matrix(as.numeric(mm), nrow(mm), ncol(mm))
+    dimnames(matrix) <- list(rownames(mm), colnames(mm))
+
+    # remove columns and rows not in df
+    dims <- dims[, colnames(dims) %in% colnames(matrix)]
+    dims <- dims[rownames(dims) %in% rownames(matrix), ]
+
+    out <- dims[matrix == 1]
+
+    return(paste0(out, collapse = ","))
+
   } else {
+
     rows <- as.integer(rownames(df))
     cols <- colnames(df)
 
@@ -108,6 +106,7 @@ dataframe_to_dims <- function(df, dim_break = TRUE) {
     )
 
     return(tmp)
+
   }
 }
 

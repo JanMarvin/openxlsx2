@@ -188,12 +188,11 @@ test_that("dims_to_dataframe", {
 
 test_that("dataframe_to_dims", {
 
-  ## I should probably fix this failing test
-  # # dims_to_dataframe will always create a square
-  # df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
-  # dims <- dataframe_to_dims(df)
-  # df2 <- dims_to_dataframe(dims, fill = TRUE)
-  # expect_equal(df, df2)
+  # dims_to_dataframe will always create a square
+  df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
+  dims <- dataframe_to_dims(df)
+  df2 <- dims_to_dataframe(dims, fill = TRUE)
+  expect_equal(df, df2)
 
 })
 
