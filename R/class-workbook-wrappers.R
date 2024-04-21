@@ -115,6 +115,7 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
 #'   looks if `options(openxlsx2.na.strings)` is set. Otherwise [na_strings()]
 #'   uses the special `#N/A` value within the workbook.
 #' @param inline_strings write characters as inline strings
+#' @param enforce enforce that selected dims is filled. For this to work, `dims` must match `x`
 #' @param ... additional arguments
 #' @export
 #' @details Formulae written using [wb_add_formula()] to a Workbook object will
@@ -216,6 +217,7 @@ wb_add_data <- function(
     remove_cell_style = FALSE,
     na.strings        = na_strings(),
     inline_strings    = TRUE,
+    enforce           = FALSE,
     ...
 ) {
   assert_workbook(wb)
@@ -235,6 +237,7 @@ wb_add_data <- function(
     remove_cell_style = remove_cell_style,
     na.strings        = na.strings,
     inline_strings    = inline_strings,
+    enforce           = enforce,
     ...               = ...
   )
 }
@@ -332,7 +335,7 @@ wb_add_data_table <- function(
     remove_cell_style = remove_cell_style,
     na.strings        = na.strings,
     inline_strings    = inline_strings,
-    total_row        = total_row,
+    total_row         = total_row,
     ...               = ...
   )
 }
@@ -568,6 +571,7 @@ wb_add_slicer <- function(
 #'   Add this, if you see "@" inserted into your formulas.
 #' @param apply_cell_style Should we write cell styles to the workbook?
 #' @param remove_cell_style Should we keep the cell style?
+#' @param enforce enforce dims
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
@@ -599,6 +603,7 @@ wb_add_formula <- function(
     cm                = FALSE,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
+    enforce           = FALSE,
     ...
 ) {
   assert_workbook(wb)
@@ -612,6 +617,7 @@ wb_add_formula <- function(
     cm                = cm,
     apply_cell_style  = apply_cell_style,
     remove_cell_style = remove_cell_style,
+    enforce           = enforce,
     ...               = ...
   )
 }

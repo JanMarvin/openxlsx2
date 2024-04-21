@@ -24,6 +24,9 @@ inner_update <- function(
     na.strings = na_strings()
 ) {
 
+  cells_needed <- cells_needed[cells_needed != ""]
+  if (length(cells_needed) == 0) return(wb)
+
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
   cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
   row_attr <- wb$worksheets[[sheet_id]]$sheet_data$row_attr
@@ -182,6 +185,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
 #' @param dims worksheet dimensions
+#' @param enforce enforce dims
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -216,8 +220,15 @@ write_data2 <- function(
     na.strings = na_strings(),
     data_table = FALSE,
     inline_strings = TRUE,
-    dims = NULL
+    dims = NULL,
+    enforce = FALSE
 ) {
+
+  dim_sep <- ";"
+  if (any(grepl(";|,", dims))) {
+    if (any(grepl(";", dims))) dim_sep <- ";"
+    if (any(grepl(",", dims))) dim_sep <- ","
+  }
 
   is_data_frame <- FALSE
   #### prepare the correct data formats for openxml
@@ -299,7 +310,11 @@ write_data2 <- function(
     data <- as.data.frame(t(data))
   }
 
-  dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
+  # TODO fits_in_dims does not handle "A1,B2" and instead converts it to the
+  # outer range "A1:B2"
+  if (!enforce) {
+    dims <- fits_in_dims(x = data, dims = dims, startCol = startCol, startRow = startRow)
+  }
 
   if (!is.null(attr(data, "f_ref"))) {
     ref <- attr(data, "f_ref")
@@ -318,7 +333,7 @@ write_data2 <- function(
   # this requires access to wb$workbook.
   # TODO The check for existing names is in write_data()
   # TODO use wb$add_named_region()
-  if (!is.null(name)) {
+  if (!is.null(name) && !any(grepl(dim_sep, dims))) {
 
     ## named region
     ex_names <- regmatches(wb$workbook$definedNames, regexpr('(?<=name=")[^"]+', wb$workbook$definedNames, perl = TRUE))
@@ -346,7 +361,7 @@ write_data2 <- function(
 
   # rtyp character vector per row
   # list(c("A1, ..., "k1"), ...,  c("An", ..., "kn"))
-  rtyp <- dims_to_dataframe(dims, fill = FALSE)
+  rtyp <- dims_to_dataframe(dims, fill = enforce)
 
   rows_attr <- vector("list", nrow(rtyp))
 
@@ -391,6 +406,27 @@ write_data2 <- function(
     na_null    <- TRUE
   }
 
+  if (enforce) {
+
+    clls <- lapply(unlist(strsplit(dims, dim_sep)), FUN = function(x) {
+      nc <- needed_cells(x)
+      len <- length(unique(col2int(nc)))
+
+      if (length(nc) > 1) {
+        matrix(nc, ncol = len, byrow = FALSE)
+      } else {
+        nc
+      }
+
+    })
+
+    clls <- do.call("rbind", clls)
+    clls <- c(clls)
+
+  } else {
+    clls <- paste0(colnames(rtyp[1, 1]), rownames(rtyp[1, 1]))
+  }
+
   wide_to_long(
     data,
     dc,
@@ -404,8 +440,16 @@ write_data2 <- function(
     na_missing     = na_missing,
     na_strings     = na.strings,
     inline_strings = inline_strings,
-    c_cm           = c_cm
+    c_cm           = c_cm,
+    dims           = clls
   )
+
+  if (enforce) {
+    # this is required for the worksheet dimension spanning the entire
+    # initialized worksheet from top left to bottom right
+    dims <- dataframe_to_dims(rtyp, dim_break = FALSE)
+  }
+
 
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {
@@ -734,7 +778,8 @@ write_data_table <- function(
     data_table      = FALSE,
     na.strings      = na_strings(),
     inline_strings  = TRUE,
-    total_row       = FALSE
+    total_row       = FALSE,
+    enforce         = FALSE
 ) {
 
   ## Input validating
@@ -754,8 +799,11 @@ write_data_table <- function(
   op <- default_save_opt()
   on.exit(options(op), add = TRUE)
 
+  odims <- dims
+
   if (!is.null(dims)) {
     dims <- dims_to_rowcol(dims, as_integer = TRUE)
+    # if dims = "K1,A1" startCol = "A" and startRow = "1" are selected
     startCol <- min(dims[[1]])
     startRow <- min(dims[[2]])
   }
@@ -764,6 +812,7 @@ write_data_table <- function(
   if (is.null(x)) {
     return(wb)
   }
+
   # overwrite na.strings if nothing was provided
   # with whatever is in the option if not set to default
   if (is_na_strings(na.strings) && !is.null(getOption("openxlsx2.na.strings"))) {
@@ -932,7 +981,8 @@ write_data_table <- function(
     na.strings      = na.strings,
     data_table      = data_table,
     inline_strings  = inline_strings,
-    dims            = dims
+    dims            = if (enforce) odims else dims,
+    enforce         = enforce
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -982,7 +1032,8 @@ write_data_table <- function(
         na.strings      = na.strings,
         data_table      = data_table,
         inline_strings  = inline_strings,
-        dims            = NULL
+        dims            = NULL,
+        enforce         = FALSE
       )
     }
 
@@ -1059,6 +1110,7 @@ write_data <- function(
     remove_cell_style = FALSE,
     na.strings        = na_strings(),
     inline_strings    = TRUE,
+    enforce           = FALSE,
     ...
 ) {
 
@@ -1087,7 +1139,8 @@ write_data <- function(
     removeCellStyle = remove_cell_style,
     data_table      = FALSE,
     na.strings      = na.strings,
-    inline_strings  = inline_strings
+    inline_strings  = inline_strings,
+    enforce         = enforce
   )
 }
 
@@ -1112,6 +1165,7 @@ write_formula <- function(
     cm                = FALSE,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
+    enforce           = FALSE,
     ...
 ) {
 
@@ -1212,7 +1266,8 @@ write_formula <- function(
     col_names         = FALSE,
     row_names         = FALSE,
     apply_cell_style  = apply_cell_style,
-    remove_cell_style = remove_cell_style
+    remove_cell_style = remove_cell_style,
+    enforce           = enforce
   )
 
 }

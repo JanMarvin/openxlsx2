@@ -513,6 +513,7 @@ add data
   remove_cell_style = FALSE,
   na.strings = na_strings(),
   inline_strings = TRUE,
+  enforce = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -550,6 +551,8 @@ add data
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
+
+\item{\code{enforce}}{enforce that selected dims is filled. For this to work, \code{dims} must match \code{x}}
 
 \item{\code{...}}{additional arguments}
 
@@ -751,6 +754,7 @@ Add formula
   cm = FALSE,
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
+  enforce = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -775,6 +779,8 @@ Add formula
 \item{\code{apply_cell_style}}{applyCellStyle}
 
 \item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
+
+\item{\code{enforce}}{enforce dims}
 
 \item{\code{...}}{additional arguments}
 }

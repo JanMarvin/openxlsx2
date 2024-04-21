@@ -1278,6 +1278,7 @@ wbWorkbook <- R6::R6Class(
     #' @param na.strings Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
+    #' @param enforce enforce that selected dims is filled. For this to work, `dims` must match `x`
     #' @param return The `wbWorkbook` object
     add_data = function(
         sheet            = current_sheet(),
@@ -1295,6 +1296,7 @@ wbWorkbook <- R6::R6Class(
         remove_cell_style = FALSE,
         na.strings        = na_strings(),
         inline_strings    = TRUE,
+        enforce           = FALSE,
         ...
       ) {
 
@@ -1324,7 +1326,8 @@ wbWorkbook <- R6::R6Class(
         apply_cell_style  = apply_cell_style,
         remove_cell_style = remove_cell_style,
         na.strings        = na.strings,
-        inline_strings    = inline_strings
+        inline_strings    = inline_strings,
+        enforce           = enforce
       )
       invisible(self)
     },
@@ -1885,6 +1888,7 @@ wbWorkbook <- R6::R6Class(
     #' @param cm cm
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
+    #' @param enforce enforce dims
     #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
@@ -1896,6 +1900,7 @@ wbWorkbook <- R6::R6Class(
         cm                = FALSE,
         apply_cell_style  = TRUE,
         remove_cell_style = FALSE,
+        enforce           = FALSE,
         ...
     ) {
 
@@ -1910,7 +1915,8 @@ wbWorkbook <- R6::R6Class(
         array           = array,
         cm              = cm,
         applyCellStyle  = apply_cell_style,
-        removeCellStyle = remove_cell_style
+        removeCellStyle = remove_cell_style,
+        enforce         = enforce
       )
       invisible(self)
     },

@@ -8,17 +8,27 @@
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE) {
 
-  if (grepl(";", dims)) {
+  has_dim_sep <- FALSE
+  if (any(grepl(";", dims))) {
     dims <- unlist(strsplit(dims, ";"))
+    has_dim_sep <- TRUE
+  }
+  if (any(grepl(",", dims))) {
+    dims <- unlist(strsplit(dims, ","))
+    has_dim_sep <- TRUE
   }
 
   rows_out <- NULL
   cols_out <- NULL
+  filled   <- NULL
   for (dim in dims) {
 
     if (!grepl(":", dim)) {
       dim <- paste0(dim, ":", dim)
     }
+
+    if (length(dims) > 1)
+      filled <- c(filled, needed_cells(dim))
 
     if (identical(dim, "Inf:-Inf")) {
       # This should probably be fixed elsewhere?
@@ -40,11 +50,16 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
     }
   }
 
-  # create data frame from rows/
+  if (has_dim_sep) {
+    cols_out <- int2col(sort(col2int(cols_out)))
+    rows_out <- sort(rows_out)
+  }
+
   dims_to_df(
-    rows = rows_out,
-    cols = cols_out,
-    fill = fill
+    rows   = rows_out,
+    cols   = cols_out,
+    filled = filled,
+    fill   = fill
   )
 }
 
@@ -52,34 +67,47 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
 #'
 #' Use [wb_dims()]
 #' @param df dataframe with spreadsheet columns and rows
+#' @param dim_break split the dims?
 #' @examples
 #'  df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
 #'  dataframe_to_dims(df)
 #' @keywords internal
 #' @export
-dataframe_to_dims <- function(df) {
+dataframe_to_dims <- function(df, dim_break = FALSE) {
 
-  # get continuous sequences of columns and rows in df
-  v <- as.integer(rownames(df))
-  rows <- split(v, cumsum(diff(c(-Inf, v)) != 1))
+  if (dim_break) {
 
-  v <- col2int(colnames(df))
-  cols <- split(colnames(df), cumsum(diff(c(-Inf, v)) != 1))
+    dims <- dims_to_dataframe(dataframe_to_dims(df, dim_break = FALSE), fill = TRUE)
 
-  # combine columns and rows to construct dims
-  out <- NULL
-  for (col in seq_along(cols)) {
-    for (row in seq_along(rows)) {
-      tmp <- paste0(
-        cols[[col]][[1]], rows[[row]][[1]],
-        ":",
-        rev(cols[[col]])[[1]],  rev(rows[[row]])[[1]]
-      )
-      out <- c(out, tmp)
-    }
+    mm <- as.matrix(df)
+    mm[mm != "" | is.na(mm)] <- 1
+    mm[mm == ""] <- 0
+
+    matrix <- matrix(as.numeric(mm), nrow(mm), ncol(mm))
+    dimnames(matrix) <- list(rownames(mm), colnames(mm))
+
+    # remove columns and rows not in df
+    dims <- dims[, colnames(dims) %in% colnames(matrix)]
+    dims <- dims[rownames(dims) %in% rownames(matrix), ]
+
+    out <- dims[matrix == 1]
+
+    return(paste0(out, collapse = ","))
+
+  } else {
+
+    rows <- as.integer(rownames(df))
+    cols <- colnames(df)
+
+    tmp <- paste0(
+      cols[[1]][[1]], rows[[1]][[1]],
+      ":",
+      rev(cols)[[1]][[1]], rev(rows)[[1]][[1]]
+    )
+
+    return(tmp)
+
   }
-
-  paste0(out, collapse = ";")
 }
 
 #' function to estimate the column type.

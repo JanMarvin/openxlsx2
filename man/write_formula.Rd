@@ -15,6 +15,7 @@ write_formula(
   cm = FALSE,
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
+  enforce = FALSE,
   ...
 )
 }
@@ -39,6 +40,8 @@ Add this, if you see "@" inserted into your formulas.}
 \item{apply_cell_style}{Should we write cell styles to the workbook?}
 
 \item{remove_cell_style}{Should we keep the cell style?}
+
+\item{enforce}{enforce dims}
 
 \item{...}{additional arguments}
 }
