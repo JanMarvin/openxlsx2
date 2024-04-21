@@ -371,4 +371,51 @@ test_that("dims with separator work", {
   got <- wb$worksheets[[4]]$sheet_data$cc$r
   expect_equal(exp, got)
 
+  # write to different dims
+  dat <- as.data.frame(matrix(1:15, ncol = 3))
+
+  wb <- wb_workbook()
+
+  # write columns separately
+  wb$add_worksheet()$
+    add_data(dims = "A1:A6", x = dat[, 1, drop = FALSE],
+            enforce = TRUE, col_names = TRUE)$
+    add_data(dims = "C2:C4,C6:C7", x = dat[, 2, drop = FALSE],
+            enforce = TRUE, col_names = FALSE)
+
+  # write columns as unique cells
+  wb$add_worksheet()$
+    add_data(dims = "A1,B2,C3,D4,E5,F6,C1,D2,E3,F4,G5,H6,I1:I6", x = dat,
+            enforce = TRUE, col_names = TRUE)
+
+  # write columns as two column ranges
+  wb$add_worksheet()$
+    add_data(dims = "A1:A6,C1:C6,E1:E6", x = dat,
+            enforce = TRUE, col_names = TRUE)
+
+  # write columns as two row ranges
+  wb$add_worksheet()$
+    add_data(dims = "A1:C3,B5:D7", x = dat,
+            enforce = TRUE, col_names = TRUE)
+
+
+  exp <- c("A1", "A2", "C2", "A3", "C3", "A4", "C4", "A5", "C5", "A6", "C6", "C7")
+  got <- wb$worksheets[[1]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("A1", "C1", "I1", "B2", "D2", "I2", "C3", "E3", "I3", "D4",
+          "F4", "I4", "E5", "G5", "I5", "F6", "H6", "I6")
+  got <- wb$worksheets[[2]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("A1", "C1", "E1", "A2", "C2", "E2", "A3", "C3", "E3", "A4",
+          "C4", "E4", "A5", "C5", "E5", "A6", "C6", "E6")
+  got <- wb$worksheets[[3]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("A1", "B1", "C1", "A2", "B2", "C2", "A3", "B3", "C3", "B5",
+          "C5", "D5", "B6", "C6", "D6", "B7", "C7", "D7")
+  got <- wb$worksheets[[4]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
 })
