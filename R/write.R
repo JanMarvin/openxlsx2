@@ -796,6 +796,7 @@ write_data_table <- function(
 
   if (!is.null(dims)) {
     dims <- dims_to_rowcol(dims, as_integer = TRUE)
+    # if dims = "K1,A1" startCol = "A" and startRow = "1" are selected
     startCol <- min(dims[[1]])
     startRow <- min(dims[[2]])
   }
@@ -804,6 +805,7 @@ write_data_table <- function(
   if (is.null(x)) {
     return(wb)
   }
+
   # overwrite na.strings if nothing was provided
   # with whatever is in the option if not set to default
   if (is_na_strings(na.strings) && !is.null(getOption("openxlsx2.na.strings"))) {

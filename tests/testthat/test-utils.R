@@ -47,6 +47,10 @@ test_that("dims to col & row and back", {
   # something like "$1:$2" to select every column for a range of cells.
   expect_error(dims_to_rowcol("A1;B64:65"), "A dims string passed to ")
 
+  exp <- "A1:A3,B1:B3"
+  got <- rowcol_to_dims(row = c(1, 3), col = c(1, 2), single = FALSE)
+  expect_equal(exp, got)
+
 })
 
 test_that("`wb_dims()` works/errors as expected with unnamed arguments", {

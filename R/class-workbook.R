@@ -9081,8 +9081,6 @@ wbWorkbook <- R6::R6Class(
     ## @keywords internal
     do_cell_init = function(sheet = current_sheet(), dims) {
 
-      if (all(dims == "")) return(invisible(self))
-
       sheet <- private$get_sheet_index(sheet)
 
       if (is.null(self$worksheets[[sheet]]$sheet_data$cc)) {
