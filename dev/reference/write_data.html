@@ -81,6 +81,7 @@
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  enforce <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -153,6 +154,10 @@ uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 <dt>inline_strings</dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt>enforce</dt>
+<dd><p>enforce that selected dims is filled. For this to work, <code>dims</code> must match <code>x</code></p></dd>
 
 
 <dt>...</dt>

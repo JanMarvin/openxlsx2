@@ -776,6 +776,7 @@ is created, not when the Excel files are saved.</p></dd>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.strings <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  enforce <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -841,6 +842,10 @@ is created, not when the Excel files are saved.</p></dd>
 
 <dt><code>inline_strings</code></dt>
 <dd><p>write characters as inline strings</p></dd>
+
+
+<dt><code>enforce</code></dt>
+<dd><p>enforce that selected dims is filled. For this to work, <code>dims</code> must match <code>x</code></p></dd>
 
 
 <dt><code>...</code></dt>
@@ -1116,6 +1121,7 @@ STDEVP, SUM, VAR, VARP</p>
 <span>  cm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  enforce <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -1156,6 +1162,10 @@ STDEVP, SUM, VAR, VARP</p>
 
 <dt><code>remove_cell_style</code></dt>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
+
+
+<dt><code>enforce</code></dt>
+<dd><p>enforce dims</p></dd>
 
 
 <dt><code>...</code></dt>
