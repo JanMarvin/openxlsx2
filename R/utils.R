@@ -163,6 +163,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #' @param as_integer If the output should be returned as integer, (defaults to string)
 #' @param row a numeric vector of rows
 #' @param col a numeric or character vector of cols
+#' @param single argument indicating if [rowcol_to_dims()] returns a single cell dimension
 #' @returns
 #'   * A `dims` string for `_to_dim` i.e  "A1:A1"
 #'   * A list of rows and columns for `to_rowcol`
@@ -178,8 +179,10 @@ NULL
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   dims <- x
-  if (length(x) == 1 && grepl(";", x))
-    dims <- unlist(strsplit(x, ";"))
+  if (length(x) == 1) {
+    if (grepl(";", x)) dims <- unlist(strsplit(x, ";"))
+    if (grepl(",", x)) dims <- unlist(strsplit(x, ","))
+  }
 
   cols_out <- NULL
   rows_out <- NULL
@@ -224,7 +227,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
 #' @rdname dims_helper
 #' @export
-rowcol_to_dims <- function(row, col) {
+rowcol_to_dims <- function(row, col, single = TRUE) {
 
   # no assert for col. will output character anyways
   # assert_class(row, "numeric") - complains if integer
@@ -238,7 +241,11 @@ rowcol_to_dims <- function(row, col) {
   max_row <- max(row)
 
   # we will always return something like "A1:A1", even for single cells
-  stringi::stri_join(min_col, min_row, ":", max_col, max_row)
+  if (single) {
+    return(stringi::stri_join(min_col, min_row, ":", max_col, max_row))
+  } else {
+    return(paste0(vapply(int2col(col_int), FUN = function(x) stringi::stri_join(x, min_row, ":", x, max_row), ""), collapse = ","))
+  }
 
 }
 

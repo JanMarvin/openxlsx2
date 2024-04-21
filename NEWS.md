@@ -5,6 +5,14 @@
 * Helper to read sensitivity labels from files and apply them to workbooks. 
 [983](https://github.com/JanMarvin/openxlsx2/pull/983)
 
+* It is now possible to pass non consecutive dims like `"A1:B1,C2:D2"` to various style helpers like `wb_add_fill()`. In addition it is now possible to write a data set into a predefined dims region using `enforce = TRUE`. This handles either `","` or `";"` as cell separator. [993](https://github.com/JanMarvin/openxlsx2/pull/993)
+
+```r
+# force a dataset into a specific cell dimension
+wb <- wb_workbook()$add_worksheet()
+wb$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
+```
+
 ## Fixes
 
 * Allow writing data frames with zero rows. [987](https://github.com/JanMarvin/openxlsx2/pull/987)

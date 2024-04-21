@@ -8,7 +8,7 @@
 \usage{
 dims_to_rowcol(x, as_integer = FALSE)
 
-rowcol_to_dims(row, col)
+rowcol_to_dims(row, col, single = TRUE)
 }
 \arguments{
 \item{x}{a dimension object "A1" or "A1:A1"}
@@ -18,6 +18,8 @@ rowcol_to_dims(row, col)
 \item{row}{a numeric vector of rows}
 
 \item{col}{a numeric or character vector of cols}
+
+\item{single}{argument indicating if \code{\link[=rowcol_to_dims]{rowcol_to_dims()}} returns a single cell dimension}
 }
 \value{
 \itemize{
