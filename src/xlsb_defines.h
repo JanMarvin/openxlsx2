@@ -1015,7 +1015,7 @@ enum RecordTypes
   BrtBeginModelTimeGrouping = 2139,
   BrtEndModelTimeGrouping = 2140,
   BrtModelTimeGroupingCalcCol = 2141,
-  BrtUID = 3072,
+  BrtUID = 3072, /* No longer part of 2.3.2 By Number */
   BrtRevisionPtr = 3073,
   BrtBeginDynamicArrayPr = 4096,
   BrtEndDynamicArrayPr = 4097,
@@ -1037,7 +1037,23 @@ enum RecordTypes
   BrtBeginCalcFeatures = 5095,
   BrtEndCalcFeatures = 5096,
   BrtCalcFeature = 5097,
-  BrtExternalLinksPr = 5099
+  BrtExternalLinksPr = 5099,
+  BrtPivotCacheImplicitMeasureSupport = 5100,
+  BrtPivotFieldIgnorableAfter = 5101,
+  BrtPivotHierarchyIgnorableAfter = 5102,
+  BrtPivotDataFieldFutureData = 5103,
+  BrtPivotCacheRichData = 5105,
+  BrtExternalLinksAlternateUrls = 5108,
+  BrtBeginPivotVersionInfo = 5109,
+  BrtEndPivotVersionInfo = 5110,
+  BrtBeginCacheVersionInfo = 5111,
+  BrtEndCacheVersionInfo = 5112, /* possible typo in 2.3.2 By Number */
+  BrtPivotRequiredFeature = 5113,
+  BrtPivotLastUsedFeature = 5114,
+  BrtExternalCodeService = 5117,
+  BrtSXDIAggregation = 5130,
+  BrtPivotFieldFeatureSupportInfo = 5131,
+  BrtPivotCacheAutoRefresh = 5132
 };
 
 enum PtgTypes
@@ -1644,7 +1660,7 @@ std::string Ftab(const uint16_t val) {
   case	0x0059:	return "CALLER()";
   case	0x005A:	return "DEREF(%s)";
   case	0x005B:	return "WINDOWS";
-  case	0x005C:	return "SERIES";
+  case	0x005C:	return "SERIES"; /* no longer in 2.5.98.10 Ftab */
   case	0x005D:	return "DOCUMENTS";
   case	0x005E:	return "ACTIVE.CELL()";
   case	0x005F:	return "SELECTION()";
