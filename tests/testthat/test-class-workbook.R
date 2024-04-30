@@ -76,7 +76,7 @@ test_that("set_col_widths informs when inconsistent lengths are supplied", {
   expect_warning(wb$set_col_widths(cols = c(1, 2, 3), widths = c(2, 3)), "compatible length")
   expect_error(wb$set_col_widths(cols = "Y", widths = 1:2), "More widths than column")
   expect_error(wb$set_col_widths("test", cols = "Y", hidden = 1:2), "hidden argument is longer")
-  expect_warning(wb$set_col_widths(cols = c("X","Y", "Z"), hidden = c(1, 0)), "compatible length")
+  expect_warning(wb$set_col_widths(cols = c("X", "Y", "Z"), hidden = c(1, 0)), "compatible length")
 })
 
 test_that("option maxWidth works", {
