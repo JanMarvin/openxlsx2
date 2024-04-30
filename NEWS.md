@@ -25,6 +25,8 @@ wb_dims(x = mtcars, cols = "non-existent-col")
 # Now errors
 ```
 
+* `wb_set_col_widths()` is more strict about its arguments. If you provide `cols`, `widths`, or `hidden` don't have appropriate length, it will throw a warning. This may change to an error in the future, so it is recommended to use appropriate values.
+
 
 ***************************************************************************
 

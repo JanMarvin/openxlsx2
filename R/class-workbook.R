@@ -3797,8 +3797,25 @@ wbWorkbook <- R6::R6Class(
         stop("hidden argument is longer than cols.")
       }
 
+      compatible_length <- length(cols) %% length(widths) == 0
+
+      if (!compatible_length) {
+        # needed because rep(c(1, 2 ), length.out = 3) is successful,
+        # but not clear if this is what the user wanted.
+        warning("`cols` and `widths` should have compatible lengths.\n",
+             "`cols` has length ", length(cols), " while ",
+             "`widths` has length ", length(widths), ".")
+      }
+
       if (length(widths) < length(cols)) {
         widths <- rep(widths, length.out = length(cols))
+      }
+      compatible_length <- length(cols) %% length(hidden) == 0
+
+      if (!compatible_length) {
+        warning("`cols` and `hidden` should have compatible lengths.\n",
+             "`cols` has length ", length(cols), " while ",
+             "`hidden` has length ", length(hidden), ".")
       }
 
       if (length(hidden) < length(cols)) {
