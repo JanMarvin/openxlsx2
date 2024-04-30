@@ -144,6 +144,47 @@ uint32_t uint_col_to_int(std::string& a) {
   return sum;
 }
 
+
+std::string rm_rownum(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (!std::isdigit(c)) {
+            result += c;
+        }
+    }
+    return result;
+}
+
+std::string rm_colnum(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (std::isdigit(c)) {
+            result += c;
+        }
+    }
+    return result;
+}
+
+// Function to keep only digits in a string
+uint32_t cell_to_rowint(const std::string& str) {
+  std::string result = rm_colnum(str);
+  return std::stoi(result);
+}
+
+std::string str_toupper(std::string s) {
+  std::transform(s.begin(), s.end(), s.begin(),
+                 [](unsigned char c){ return std::toupper(c); }
+  );
+  return s;
+}
+
+// Function to remove digits from a string
+uint32_t cell_to_colint(const std::string& str) {
+  std::string result = rm_rownum(str);
+  result = str_toupper(result);
+  return uint_col_to_int(result);
+}
+
 // [[Rcpp::export]]
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 
@@ -167,12 +208,8 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
       continue;
     }
 
-    // remove digits from string
-    a.erase(std::remove_if(a.begin()+1, a.end(), ::isdigit), a.end());
-    transform(a.begin(), a.end(), a.begin(), ::toupper);
-
     // return index from column name
-    colNums[i] = uint_col_to_int(a);
+    colNums[i] = cell_to_colint(a);
   }
 
   return colNums;
@@ -180,9 +217,6 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 }
 
 // provide a basic rbindlist for lists of named characters
-// xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-// wb <- wb_load(xlsxFile)
-// openxlsx2:::rbindlist(xml_attr(wb$styles_mgr$styles$cellXfs, "xf"))
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
 
@@ -237,12 +271,77 @@ SEXP copy(SEXP x) {
   return Rf_duplicate(x);
 }
 
+// [[Rcpp::export]]
+bool validate_dims(const std::string& input) {
+    bool has_col = false;
+    bool has_row = false;
+
+    for (char c : input) {
+        if (std::isupper(c)) {
+            has_col = true;
+        } else if (std::isdigit(c)) {
+            has_row = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_col && has_row;
+}
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector needed_cells(const std::string& range) {
+  std::vector<std::string> cells;
+
+  // Parse the input range
+  std::string startCell, endCell;
+  size_t colonPos = range.find(':');
+  if (colonPos != std::string::npos) {
+    startCell = range.substr(0, colonPos);
+    endCell = range.substr(colonPos + 1);
+  } else {
+    startCell = range;
+    endCell = range;
+  }
+
+  if (!validate_dims(startCell) || !validate_dims(endCell)) {
+    Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
+  }
+
+  // Extract column and row numbers from start and end cells
+  uint32_t startRow, endRow;
+  uint32_t startCol = 0, endCol = 0;
+
+  startCol = cell_to_colint(startCell);
+  endCol   = cell_to_colint(endCell);
+
+  startRow = cell_to_rowint(startCell);
+  endRow   = cell_to_rowint(endCell);
+
+  // Generate spreadsheet cell references
+  for (uint32_t col = startCol; col <= endCol; ++col) {
+    for (uint32_t row = startRow; row <= endRow; ++row) {
+      std::string cell = int_to_col(col);
+      cell += std::to_string(row);
+      cells.push_back(cell);
+    }
+  }
+
+  return Rcpp::wrap(cells);
+}
+
+bool has_cell(const std::string& str, const Rcpp::CharacterVector& vec) {
+  return std::find(vec.begin(), vec.end(), str) != vec.end();
+}
+
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
-SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill) {
+SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill) {
 
   size_t kk = cols.size();
   size_t nn = rows.size();
+
+  bool has_filled = filled.isNotNull();
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -254,7 +353,23 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill)
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  if (fill) {
+  if (has_filled) {
+
+    // with has_filled we always have to run this loop
+    for (size_t i = 0; i < kk; ++i) {
+      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+      std::string coli = Rcpp::as<std::string>(cols[i]);
+      for (size_t j = 0; j < nn; ++j) {
+        std::string cell = coli + std::to_string(rows[j]);
+        if (!has_cell(cell, filled.get()))
+          cvec[j] = "";
+        else if (fill)
+          cvec[j] = coli + std::to_string(rows[j]);
+      }
+    }
+
+  } else if (fill) { // insert cells into data frame
+
     for (size_t i = 0; i < kk; ++i) {
       Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
       std::string coli = Rcpp::as<std::string>(cols[i]);
@@ -262,7 +377,8 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, bool fill)
         cvec[j] = coli + std::to_string(rows[j]);
       }
     }
-  }
+
+  } // else return data frame filled with NA_character_
 
   // 3. Create a data.frame
   df.attr("row.names") = rows;
@@ -307,7 +423,7 @@ bool is_double(std::string x) {
 
   res = R_strtod(x.c_str(), &endp);
 
-  if (isBlankString(endp) && std::isfinite(res)) {
+  if (strlen(endp) == 0 && std::isfinite(res)) {
     return 1;
   }
 
@@ -340,7 +456,8 @@ void wide_to_long(
     bool na_missing,
     std::string na_strings,
     bool inline_strings,
-    std::string c_cm
+    std::string c_cm,
+    std::vector<std::string> dims
 ) {
 
   auto n = z.nrow();
@@ -366,6 +483,11 @@ void wide_to_long(
     na_strings = txt_to_is(na_strings, 0, 1, 1);
   else
     na_strings = txt_to_si(na_strings, 0, 1, 1);
+
+  R_xlen_t idx = 0;
+
+  bool has_dims = false;
+  if (dims.size() == n * m) has_dims = true;
 
   for (auto i = 0; i < m; ++i) {
     Rcpp::checkUserInterrupt();
@@ -496,10 +618,19 @@ void wide_to_long(
       }
 
       cell.typ = std::to_string(vtyp);
-      cell.r =  col + row;
 
-      zz_row_r[pos] = row;
-      zz_c_r[pos]   = col;
+      if (has_dims) {
+        cell.r =  dims[idx];
+
+        zz_row_r[pos] = rm_colnum(cell.r);
+        zz_c_r[pos]   = rm_rownum(cell.r);
+      } else {
+        cell.r =  col + row;
+
+        zz_row_r[pos] = row;
+        zz_c_r[pos]   = col;
+      }
+
       if (!cell.v.empty())     zz_v[pos]     = cell.v;
       if (!cell.c_cm.empty())  zz_c_cm[pos]  = cell.c_cm;
       if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
@@ -509,6 +640,8 @@ void wide_to_long(
       if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
       if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
       if (!cell.r.empty())     zz_r[pos]     = cell.r;
+
+      ++idx;
 
       ++startrow;
     }

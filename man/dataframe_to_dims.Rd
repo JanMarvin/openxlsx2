@@ -4,10 +4,12 @@
 \alias{dataframe_to_dims}
 \title{Create dimensions from dataframe}
 \usage{
-dataframe_to_dims(df)
+dataframe_to_dims(df, dim_break = FALSE)
 }
 \arguments{
 \item{df}{dataframe with spreadsheet columns and rows}
+
+\item{dim_break}{split the dims?}
 }
 \description{
 Use \code{\link[=wb_dims]{wb_dims()}}

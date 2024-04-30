@@ -28,8 +28,16 @@ copy <- function(x) {
     .Call(`_openxlsx2_copy`, x)
 }
 
-dims_to_df <- function(rows, cols, fill) {
-    .Call(`_openxlsx2_dims_to_df`, rows, cols, fill)
+validate_dims <- function(input) {
+    .Call(`_openxlsx2_validate_dims`, input)
+}
+
+needed_cells <- function(range) {
+    .Call(`_openxlsx2_needed_cells`, range)
+}
+
+dims_to_df <- function(rows, cols, filled, fill) {
+    .Call(`_openxlsx2_dims_to_df`, rows, cols, filled, fill)
 }
 
 long_to_wide <- function(z, tt, zz) {
@@ -40,8 +48,8 @@ is_charnum <- function(x) {
     .Call(`_openxlsx2_is_charnum`, x)
 }
 
-wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm) {
-    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm))
+wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims) {
+    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, ref, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims))
 }
 
 #' @param colnames a vector of the names of the data frame

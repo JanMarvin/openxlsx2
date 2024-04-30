@@ -190,7 +190,7 @@ test_that("dataframe_to_dims", {
 
   # dims_to_dataframe will always create a square
   df <- dims_to_dataframe("A1:D5;F1:F6;D8", fill = TRUE)
-  dims <- dataframe_to_dims(df)
+  dims <- dataframe_to_dims(df, dim_break = TRUE)
   df2 <- dims_to_dataframe(dims, fill = TRUE)
   expect_equal(df, df2)
 
@@ -311,5 +311,111 @@ test_that("missings cells are returned", {
   expect_silent(got <- wb_to_df(wb, col_names = FALSE, rows = c(1, 4, 10), cols = c(2, 5, 10)))
 
   expect_silent(got <- wb_to_df(wb, col_names = FALSE, rows = c(101), cols = c(27)))
+
+})
+
+test_that("dims with separator work", {
+
+  wb <- wb_workbook()$
+    # this picks the top left corner of dims to write the data frame
+    add_worksheet()$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2))$
+    add_worksheet()$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
+
+  exp <- c("A1", "B1", "A2", "B2", "A3", "B3", "A4", "B4", "A5", "B5")
+  got <- wb$worksheets[[1]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("I2", "J2", "A1", "B1", "A2", "B2", "G5", "H5", "G6", "H6")
+  got <- wb$worksheets[[2]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  # write a workbook with a few colored cells
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(dims = wb_dims(x = mtcars), x = mtcars, enforce = TRUE)$
+    add_worksheet()$
+    add_data(dims = "A1:K20,A22:K34", x = mtcars, enforce = TRUE)$
+    add_worksheet()$
+    add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
+
+  # sheet 1
+  df <- wb_to_df(wb, sheet = 1)
+  expect_equal(df, mtcars, ignore_attr = TRUE)
+
+  # sheet 2
+  df <- wb_to_df(wb, sheet = 2)
+  expect_true(all(is.na(df[20, ])))
+  expect_equal(df[-20, ], mtcars, ignore_attr = TRUE)
+
+  # sheet 3
+  df <- wb_to_df(wb, sheet = 3, col_names = FALSE)
+  ll <- list(
+    df["2", c("I", "J")],
+    df[c("1", "2"), c("A", "B")],
+    df[c("5", "6"), c("G", "H")]
+  )
+
+  for (i in seq_len(length(ll)))
+    names(ll[[i]]) <- c("V1", "V2")
+
+  exp <- data.frame(
+    V1 = c("V1", 1, 2, 3, 4),
+    V2 = c("V2", 5, 6, 7, 8)
+  )
+
+  got <- do.call("rbind", ll)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  wb$add_worksheet()$add_formula(dims = "D1;F2", x = c("SUM(A1:C1)", "SUM(A1)"), enforce = TRUE)
+  exp <- c("D1", "F2")
+  got <- wb$worksheets[[4]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  # write to different dims
+  dat <- as.data.frame(matrix(1:15, ncol = 3))
+
+  wb <- wb_workbook()
+
+  # write columns separately
+  wb$add_worksheet()$
+    add_data(dims = "A1:A6", x = dat[, 1, drop = FALSE],
+            enforce = TRUE, col_names = TRUE)$
+    add_data(dims = "C2:C4,C6:C7", x = dat[, 2, drop = FALSE],
+            enforce = TRUE, col_names = FALSE)
+
+  # write columns as unique cells
+  wb$add_worksheet()$
+    add_data(dims = "A1,B2,C3,D4,E5,F6,C1,D2,E3,F4,G5,H6,I1:I6", x = dat,
+            enforce = TRUE, col_names = TRUE)
+
+  # write columns as two column ranges
+  wb$add_worksheet()$
+    add_data(dims = "A1:A6,C1:C6,E1:E6", x = dat,
+            enforce = TRUE, col_names = TRUE)
+
+  # write columns as two row ranges
+  wb$add_worksheet()$
+    add_data(dims = "A1:C3,B5:D7", x = dat,
+            enforce = TRUE, col_names = TRUE)
+
+
+  exp <- c("A1", "A2", "C2", "A3", "C3", "A4", "C4", "A5", "C5", "A6", "C6", "C7")
+  got <- wb$worksheets[[1]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("A1", "C1", "I1", "B2", "D2", "I2", "C3", "E3", "I3", "D4",
+          "F4", "I4", "E5", "G5", "I5", "F6", "H6", "I6")
+  got <- wb$worksheets[[2]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("A1", "C1", "E1", "A2", "C2", "E2", "A3", "C3", "E3", "A4",
+          "C4", "E4", "A5", "C5", "E5", "A6", "C6", "E6")
+  got <- wb$worksheets[[3]]$sheet_data$cc$r
+  expect_equal(exp, got)
+
+  exp <- c("A1", "B1", "C1", "A2", "B2", "C2", "A3", "B3", "C3", "B5",
+          "C5", "D5", "B6", "C6", "D6", "B7", "C7", "D7")
+  got <- wb$worksheets[[4]]$sheet_data$cc$r
+  expect_equal(exp, got)
 
 })

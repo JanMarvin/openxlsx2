@@ -21,6 +21,7 @@ wb_add_data(
   remove_cell_style = FALSE,
   na.strings = na_strings(),
   inline_strings = TRUE,
+  enforce = FALSE,
   ...
 )
 }
@@ -60,6 +61,8 @@ looks if \code{options(openxlsx2.na.strings)} is set. Otherwise \code{\link[=na_
 uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
+
+\item{enforce}{enforce that selected dims is filled. For this to work, \code{dims} must match \code{x}}
 
 \item{...}{additional arguments}
 }
