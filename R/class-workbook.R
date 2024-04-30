@@ -16,7 +16,7 @@
 #' ``` r
 #' wb <- wb_workbook(creator = "My name here") %>%
 #'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
-#'   wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
+#'   wb_add_data(x = USPermsonalExpenditure, row_names = TRUE)
 #' ```
 #' *Chaining Method*: Directly modifies the object through a series of chained
 #'  function calls.
@@ -3796,7 +3796,7 @@ wbWorkbook <- R6::R6Class(
       if (!compatible_length) {
         # needed because rep(c(1, 2 ), length.out = 3) is successful,
         # but not clear if this is what the user wanted.
-        warning("`cols` and `widths` don't have compatible lengths.\n",
+        warning("`cols` and `widths` should have compatible lengths.\n",
              "`cols` has length ", length(cols), " while ",
              "`widths` has length ", length(widths), ".")
       }
@@ -3807,7 +3807,7 @@ wbWorkbook <- R6::R6Class(
       compatible_length <- length(cols) %% length(hidden) == 0
 
       if (!compatible_length) {
-        warning("`cols` and `hidden` must have compatible lengths.\n",
+        warning("`cols` and `hidden` should have compatible lengths.\n",
              "`cols` has length ", length(cols), " while ",
              "`hidden` has length ", length(hidden), ".")
       }
