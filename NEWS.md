@@ -1,4 +1,4 @@
-# openxlsx2 (development version)
+# openxlsx2 1.6
 
 ## New features
 
@@ -17,7 +17,7 @@ wb$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
 
 * Allow writing data frames with zero rows. [987](https://github.com/JanMarvin/openxlsx2/pull/987)
 
-* `wb_dims()` has been improved and is safer on 0-length inputs. In particular, it will error for a case where a `cols` doesn't exist in `x`
+* `wb_dims()` has been improved and is safer on 0-length inputs. In particular, it will error for a case where a `cols` doesn't exist in `x`  ([990](https://github.com/JanMarvin/openxlsx2/pull/990), @olivroy).
 
 ```r
 # Previously created a wrong dims
@@ -25,7 +25,7 @@ wb_dims(x = mtcars, cols = "non-existent-col")
 # Now errors
 ```
 
-* `wb_set_col_widths()` is more strict about its arguments. If you provide `cols`, `widths`, or `hidden` don't have appropriate length, it will throw a warning. This may change to an error in the future, so it is recommended to use appropriate values.
+* `wb_set_col_widths()` is more strict about its arguments. If you provide `cols`, `widths`, or `hidden` don't have appropriate length, it will throw a warning. This may change to an error in the future, so it is recommended to use appropriate values. ([991](https://github.com/JanMarvin/openxlsx2/pull/991), @olivroy).
 
 
 ***************************************************************************
