@@ -20,7 +20,8 @@ convert_hms(x)
 \item{...}{
   Arguments passed on to \code{\link[base:as.Date]{base::as.Date.character}}
   \describe{
-    \item{\code{format}}{\code{\link[base]{character}} string.  If not specified, it will try
+    \item{\code{format}}{a \code{\link[base]{character}} string.  If not specified when
+    converting from a character representation, it will try
     \code{tryFormats} one by one on the first non-\code{NA} element, and
     give an error if none works.  Otherwise, the processing is via
     \code{\link[base]{strptime}()} whose help page describes available
