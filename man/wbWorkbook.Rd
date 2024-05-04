@@ -198,6 +198,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-add_thread}{\code{wbWorkbook$add_thread()}}
 \item \href{#method-wbWorkbook-get_thread}{\code{wbWorkbook$get_thread()}}
 \item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
+\item \href{#method-wbWorkbook-remove_conditional_formatting}{\code{wbWorkbook$remove_conditional_formatting()}}
 \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wbWorkbook-add_drawing}{\code{wbWorkbook$add_drawing()}}
@@ -1900,6 +1901,37 @@ Add conditional formatting
 \item{\code{params}}{Additional parameters}
 
 \item{\code{...}}{additional arguments}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_conditional_formatting"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_conditional_formatting}{}}}
+\subsection{Method \code{remove_conditional_formatting()}}{
+Remove conditional formatting
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_conditional_formatting(
+  sheet = current_sheet(),
+  dims = NULL,
+  first = FALSE,
+  last = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+
+\item{\code{first}}{first}
+
+\item{\code{last}}{last}
 }
 \if{html}{\out{</div>}}
 }

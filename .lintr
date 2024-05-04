@@ -3,6 +3,7 @@ linters: linters_with_defaults(
   cyclocomp_linter = NULL,                 #
   commented_code_linter = NULL,            #
   object_name_linter = NULL,               # more camel case
+  object_length_linter = NULL,
   indentation_linter = NULL,               # many
   quotes_linter = NULL
   )

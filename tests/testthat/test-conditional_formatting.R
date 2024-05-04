@@ -868,3 +868,46 @@ test_that("escaping conditional formatting works", {
     )
 
 })
+
+test_that("remove conditional formatting works", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = 1:4)$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:4), rule = ">2")$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:3), rule = "<2")$
+    add_worksheet()$
+    add_data(x = 1:4)$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:4), rule = ">2")$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:3), rule = "<2")$
+    add_worksheet()$
+    add_data(x = 1:4)$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:4), rule = ">2")$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:3), rule = "<2")$
+    add_worksheet()$
+    add_data(x = 1:4)$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:4), rule = ">2")$
+    add_conditional_formatting(dims = wb_dims(cols = "A", rows = 1:3), rule = "<2")
+
+  wb$remove_conditional_formatting(sheet = 1)
+  wb$remove_conditional_formatting(sheet = 1, first = TRUE)
+  wb$remove_conditional_formatting(sheet = 1, last = TRUE)
+  wb$remove_conditional_formatting(sheet = 2, dims = wb_dims(cols = "A", rows = 1:4))
+  wb$remove_conditional_formatting(sheet = 3, first = TRUE)
+  wb$remove_conditional_formatting(sheet = 4, last = TRUE)
+
+  exp <- character()
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  exp <- c(`A1:A3` = "<cfRule type=\"expression\" dxfId=\"3\" priority=\"1\"><formula>A1&lt;2</formula></cfRule>")
+  got <- wb$worksheets[[2]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  exp <- c(`A1:A3` = "<cfRule type=\"expression\" dxfId=\"5\" priority=\"1\"><formula>A1&lt;2</formula></cfRule>")
+  got <- wb$worksheets[[3]]$conditionalFormatting
+  expect_equal(exp, got)
+
+  exp <- c(`A1:A4` = "<cfRule type=\"expression\" dxfId=\"6\" priority=\"2\"><formula>A1&gt;2</formula></cfRule>")
+  got <- wb$worksheets[[4]]$conditionalFormatting
+  expect_equal(exp, got)
+})

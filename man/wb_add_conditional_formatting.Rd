@@ -2,6 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_conditional_formatting}
 \alias{wb_add_conditional_formatting}
+\alias{wb_remove_conditional_formatting}
 \title{Add conditional formatting to cells in a worksheet}
 \usage{
 wb_add_conditional_formatting(
@@ -18,6 +19,14 @@ wb_add_conditional_formatting(
     5L),
   ...
 )
+
+wb_remove_conditional_formatting(
+  wb,
+  sheet = current_sheet(),
+  dims = NULL,
+  first = FALSE,
+  last = FALSE
+)
 }
 \arguments{
 \item{wb}{A Workbook object}
@@ -28,14 +37,18 @@ wb_add_conditional_formatting(
 
 \item{rule}{The condition under which to apply the formatting. See \strong{Examples}.}
 
-\item{style}{A style to apply to those cells that satisfy the rule.
-Default is \code{font_color = "FF9C0006"} and \code{bg_fill = "FFFFC7CE"}}
+\item{style}{A name of a style to apply to those cells that satisfy the rule. See \code{\link[=wb_add_dxfs_style]{wb_add_dxfs_style()}} how to create one.
+The default style has \code{font_color = "FF9C0006"} and \code{bg_fill = "FFFFC7CE"}}
 
 \item{type}{The type of conditional formatting rule to apply. One of \code{"expression"}, \code{"colorScale"} or others mentioned in \strong{Details}.}
 
 \item{params}{A list of additional parameters passed.  See \strong{Details} for more.}
 
 \item{...}{additional arguments}
+
+\item{first}{remove the first conditional formatting}
+
+\item{last}{remove the last conditional formatting}
 }
 \description{
 Add conditional formatting to cells.
