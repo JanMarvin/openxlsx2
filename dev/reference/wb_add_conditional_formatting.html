@@ -12,7 +12,7 @@ You can find more details in vignette("conditional-formatting").'><meta name="ro
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.5.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.6.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,6 +80,14 @@ You can find more details in <code><a href="../articles/conditional-formatting.h
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">TRUE</span>, percent <span class="op">=</span> <span class="cn">FALSE</span>, rank <span class="op">=</span></span>
 <span>    <span class="fl">5L</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_remove_conditional_formatting</span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>,</span>
+<span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  last <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -102,8 +110,8 @@ You can find more details in <code><a href="../articles/conditional-formatting.h
 
 
 <dt>style</dt>
-<dd><p>A style to apply to those cells that satisfy the rule.
-Default is <code>font_color = "FF9C0006"</code> and <code>bg_fill = "FFFFC7CE"</code></p></dd>
+<dd><p>A name of a style to apply to those cells that satisfy the rule. See <code><a href="wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> how to create one.
+The default style has <code>font_color = "FF9C0006"</code> and <code>bg_fill = "FFFFC7CE"</code></p></dd>
 
 
 <dt>type</dt>
@@ -116,6 +124,14 @@ Default is <code>font_color = "FF9C0006"</code> and <code>bg_fill = "FFFFC7CE"</
 
 <dt>...</dt>
 <dd><p>additional arguments</p></dd>
+
+
+<dt>first</dt>
+<dd><p>remove the first conditional formatting</p></dd>
+
+
+<dt>last</dt>
+<dd><p>remove the last conditional formatting</p></dd>
 
 </dl></div>
     <div class="section level2">
