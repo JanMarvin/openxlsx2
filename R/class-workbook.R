@@ -4744,8 +4744,6 @@ wbWorkbook <- R6::R6Class(
 
     ## conditional formatting ----
 
-    # TODO remove_conditional_formatting?
-
     #' @description Add conditional formatting
     #' @param rule rule
     #' @param style style
@@ -5063,6 +5061,41 @@ wbWorkbook <- R6::R6Class(
         values   = values,
         params   = params
       )
+
+      invisible(self)
+    },
+
+    #' @description Remove conditional formatting
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param first first
+    #' @param last last
+    #' @return The `wbWorkbook` object
+    remove_conditional_formatting = function(
+        sheet  = current_sheet(),
+        dims   = NULL,
+        first  = FALSE,
+        last   = FALSE
+    ) {
+
+      sheet <- private$get_sheet_index(sheet)
+
+      if (is.null(dims) && isFALSE(first) && isFALSE(last)) {
+        self$worksheets[[sheet]]$conditionalFormatting <- character()
+      } else {
+
+        cf <- self$worksheets[[sheet]]$conditionalFormatting
+
+        if (!is.null(dims)) {
+          if (any(sel <- names(cf) %in% dims)) {
+            self$worksheets[[sheet]]$conditionalFormatting <- cf[!sel]
+          }
+        } else if (first) {
+            self$worksheets[[sheet]]$conditionalFormatting <- cf[-1]
+        } else if (last) {
+            self$worksheets[[sheet]]$conditionalFormatting <- cf[-length(cf)]
+        }
+      }
 
       invisible(self)
     },

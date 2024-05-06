@@ -542,6 +542,16 @@ test_that("wb_add_conditional_formatting() is a wrapper", {
   )
 })
 
+# wb_remove_conditional_formatting() -----------------------------------------
+
+test_that("wb_remove_conditional_formatting() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_wrapper(
+    "remove_conditional_formatting",
+    wb = wb
+  )
+})
+
 # wb_set_sheet_names() ----------------------------------------------------
 
 test_that("wb_set_sheet_names() is a wrapper", {

@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## New features
+
+* remove conditional formatting from worksheet
+
+
+***************************************************************************
+
 # openxlsx2 1.6
 
 ## New features

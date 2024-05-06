@@ -3707,8 +3707,8 @@ wb_add_form_control <- function(
 #' @param sheet A name or index of a worksheet
 #' @param dims A cell or cell range like "A1" or "A1:B2"
 #' @param rule The condition under which to apply the formatting. See **Examples**.
-#' @param style A style to apply to those cells that satisfy the rule.
-#'   Default is `font_color = "FF9C0006"` and `bg_fill = "FFFFC7CE"`
+#' @param style A name of a style to apply to those cells that satisfy the rule. See [wb_add_dxfs_style()] how to create one.
+#'   The default style has `font_color = "FF9C0006"` and `bg_fill = "FFFFC7CE"`
 #' @param type The type of conditional formatting rule to apply. One of `"expression"`, `"colorScale"` or others mentioned in **Details**.
 #' @param params A list of additional parameters passed.  See **Details** for more.
 #' @param ... additional arguments
@@ -3804,6 +3804,26 @@ wb_add_conditional_formatting <- function(
     type   = type,
     params = params,
     ...    = ...
+  )
+}
+
+#' @rdname wb_add_conditional_formatting
+#' @param first remove the first conditional formatting
+#' @param last remove the last conditional formatting
+#' @export
+wb_remove_conditional_formatting <- function(
+    wb,
+    sheet  = current_sheet(),
+    dims   = NULL,
+    first  = FALSE,
+    last   = FALSE
+) {
+  assert_workbook(wb)
+  wb$clone()$remove_conditional_formatting(
+    sheet  = sheet,
+    dims   = dims,
+    first  = first,
+    last   = last
   )
 }
 
