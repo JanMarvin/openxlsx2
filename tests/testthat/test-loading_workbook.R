@@ -490,3 +490,10 @@ test_that("failing to unzip works as expected", {
   expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
 
 })
+
+test_that("file with [trash] folder works", {
+
+  fl <- testfile_path("trash_folder.xlsx")
+  expect_silent(wb <- wb_load(fl))
+
+})

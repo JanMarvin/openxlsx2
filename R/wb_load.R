@@ -217,7 +217,7 @@ wb_load <- function(
     "customXml", "docProps", "drawings", "embeddings", "externalLinks",
     "media", "persons", "pivotCache", "pivotTables", "printerSettings",
     "queryTables", "richData", "slicerCaches", "slicers", "tables", "theme",
-    "threadedComments", "worksheets", "xl"
+    "threadedComments", "worksheets", "xl", "[trash]"
   )
   unknown <- file_folders[!file_folders %in% known]
   # nocov start
