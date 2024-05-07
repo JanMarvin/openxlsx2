@@ -2,7 +2,9 @@
 
 ## New features
 
-* remove conditional formatting from worksheet
+* Add function to remove conditional formatting from worksheet `wb_remove_conditional_formatting()` [1011](https://github.com/JanMarvin/openxlsx2/pull/1011)
+
+* Silence a warning triggered by a folder called `"[trash]"`. [1012](https://github.com/JanMarvin/openxlsx2/pull/1012)
 
 
 ***************************************************************************
