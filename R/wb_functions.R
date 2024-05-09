@@ -2,11 +2,12 @@
 #'
 #' @param dims Character vector of expected dimension.
 #' @param fill If `TRUE`, fills the dataframe with variables
+#' @param empty_rm Logical if empty columns and rows should be included
 #' @examples
 #' dims_to_dataframe("A1:B2")
 #' @keywords internal
 #' @export
-dims_to_dataframe <- function(dims, fill = FALSE) {
+dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
 
   has_dim_sep <- FALSE
   if (any(grepl(";", dims))) {
@@ -51,8 +52,17 @@ dims_to_dataframe <- function(dims, fill = FALSE) {
   }
 
   if (has_dim_sep) {
-    cols_out <- int2col(sort(col2int(cols_out)))
-    rows_out <- sort(rows_out)
+    if (empty_rm) {
+      cols_out <- int2col(sort(col2int(cols_out)))
+      rows_out <- sort(rows_out)
+    } else {
+      # somehow we have to make sure that all columns are covered
+      col_ints <- col2int(cols_out)
+      cols_out <- int2col(seq.int(from = min(col_ints), to = max(col_ints)))
+
+      row_ints <- rows_out
+      rows_out <- seq.int(from = min(row_ints), to = max(row_ints))
+    }
   }
 
   dims_to_df(

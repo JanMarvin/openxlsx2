@@ -6,6 +6,10 @@
 
 * Silence a warning triggered by a folder called `"[trash]"`. [1012](https://github.com/JanMarvin/openxlsx2/pull/1012)
 
+## Fixes
+
+* Fixed an issue with non consecutive dims, where columns or rows were silently dropped. [1015](https://github.com/JanMarvin/openxlsx2/pull/1015)
+
 
 ***************************************************************************
 

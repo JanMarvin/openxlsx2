@@ -249,7 +249,7 @@ wb_to_df <- function(
   xlsx_posix_style <- style_is_posix(wb$styles_mgr$styles$cellXfs, numfmt_posix)
 
   # create temporary data frame. hard copy required
-  z  <- dims_to_dataframe(dims)
+  z  <- dims_to_dataframe(dims, empty_rm = TRUE)
   tt <- copy(z)
 
   keep_cols <- colnames(z)
@@ -738,7 +738,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   }
 
   z <- wb_to_df(wb, sheet, dims = dims, ...)
-  attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE)
+  attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
   attr(z, "sheet") <- sheetname
 
   class(z) <- c("wb_data", "data.frame")
