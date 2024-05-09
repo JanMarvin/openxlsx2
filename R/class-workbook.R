@@ -9151,7 +9151,7 @@ wbWorkbook <- R6::R6Class(
         if (length(need_cells) == 1 && grepl(":|;", need_cells))
           need_cells <- dims_to_dataframe(dims, fill = TRUE)
 
-        exp_cells <- unname(unlist(need_cells))
+        exp_cells <- unname(unlist(need_cells[need_cells != ""]))
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
         # initialize cell

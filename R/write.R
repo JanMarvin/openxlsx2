@@ -368,6 +368,9 @@ write_data2 <- function(
   # create <rows ...>
   want_rows <- as.integer(dims_to_rowcol(dims)[[2]])
   rows_attr <- empty_row_attr(n = length(want_rows))
+  # number of rows might differ
+  if (enforce) rows_attr <- empty_row_attr(n = nrow(rtyp))
+
   rows_attr$r <- rownames(rtyp)
 
   # original cc data frame

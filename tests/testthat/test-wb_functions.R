@@ -175,9 +175,15 @@ test_that("dims_to_dataframe", {
     class = "data.frame"
   )
   got <- dims_to_dataframe("A1:A2;C1:C2", fill = TRUE)
+  expect_equal(exp, got[c("A", "C")])
+
+  got <- dims_to_dataframe("A1;A2,C1;C2", fill = TRUE)
+  expect_equal(exp, got[c("A", "C")])
+
+  got <- dims_to_dataframe("A1:A2;C1:C2", fill = TRUE, empty_rm = TRUE)
   expect_equal(exp, got)
 
-  got <- dims_to_dataframe("A1;A2;C1;C2", fill = TRUE)
+  got <- dims_to_dataframe("A1;A2,C1;C2", fill = TRUE, empty_rm = TRUE)
   expect_equal(exp, got)
 
   exp <- list(c("A", "B"), "1")
@@ -417,5 +423,59 @@ test_that("dims with separator work", {
           "C5", "D5", "B6", "C6", "D6", "B7", "C7", "D7")
   got <- wb$worksheets[[4]]$sheet_data$cc$r
   expect_equal(exp, got)
+
+})
+
+test_that("improve non consecutive dims", {
+
+  # dims <- "B7:B9,C6:C10,D5:D11,E5:E12,F6:F13,G7:G14,H6:H13,I5:I12,J5:J11,K6:K10,L7:L9"
+  dims <- "B7:B9,C6:C10,D5:D11,E5:E12,G7:G14,H6:H13,I5:I12,J5:J11,K6:K10,L7:L9"
+
+  wb1 <- wb_workbook()$
+    add_worksheet(grid_lines = FALSE)$
+    set_col_widths(cols = "A:M", widths = 2)$
+    add_fill(dims = dims, color = wb_color("red"))
+
+  wb2 <- wb_workbook()$
+    add_worksheet(grid_lines = FALSE)$
+    set_col_widths(cols = "A:M", widths = 2)$
+    add_data(x = "", dims = "B5:L14")$
+    add_fill(dims = dims, color = wb_color("red"))
+
+  expect_true(wb1$worksheets[[1]]$dimension == wb2$worksheets[[1]]$dimension)
+
+  # TODO might want to exclude the empty cells here
+  exp <- dims_to_dataframe(dims, fill = TRUE)
+  exp <- unname(unlist(exp[exp != ""]))
+  got <- wb1$worksheets[[1]]$sheet_data$cc$r[wb1$worksheets[[1]]$sheet_data$cc$c_s != ""]
+  expect_true(all(exp %in% got))
+
+  got <- wb2$worksheets[[1]]$sheet_data$cc$r[wb2$worksheets[[1]]$sheet_data$cc$c_s != ""]
+  expect_true(all(exp %in% got))
+
+  ### Test rowwise
+  # dims <- "D5:E5,I5:J5,C6:F6,H6:K6,B7:L9,C10:K10,D11:J11,E12:I12,F13:H13,G14"
+  dims <- "D5:E5,I5:J5,B7:L9,C10:K10,E12:I12,F13:H13,G14"
+
+  wb3 <- wb_workbook()$
+    add_worksheet(grid_lines = FALSE)$
+    set_col_widths(cols = "A:M", widths = 2)$
+    add_fill(dims = dims, color = wb_color("red"))
+
+  wb4 <- wb_workbook()$
+    add_worksheet(grid_lines = FALSE)$
+    set_col_widths(cols = "A:M", widths = 2)$
+    add_data(x = "", dims = "B5:L14")$
+    add_fill(dims = dims, color = wb_color("red"))
+
+  expect_true(wb3$worksheets[[1]]$dimension == wb4$worksheets[[1]]$dimension)
+
+  exp <- dims_to_dataframe(dims, fill = TRUE)
+  exp <- unname(unlist(exp[exp != ""]))
+  got <- wb3$worksheets[[1]]$sheet_data$cc$r[wb3$worksheets[[1]]$sheet_data$cc$c_s != ""]
+  expect_true(all(exp %in% got))
+
+  got <- wb4$worksheets[[1]]$sheet_data$cc$r[wb4$worksheets[[1]]$sheet_data$cc$c_s != ""]
+  expect_true(all(exp %in% got))
 
 })
