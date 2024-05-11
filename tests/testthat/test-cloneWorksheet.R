@@ -255,7 +255,10 @@ test_that("cloning from workbooks works", {
   ## clone drawing, borders function and shared strings
   wb_ex <- wb_load(testfile_path("loadExample.xlsx"))
 
-  wb$clone_worksheet(old = "testing", new = "test", from = wb_ex)
+  expect_warning(
+    wb$clone_worksheet(old = "testing", new = "test", from = wb_ex),
+    "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
+  )
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2", "test")
   got <- wb$get_sheet_names() %>% unname()
   expect_equal(exp, got)

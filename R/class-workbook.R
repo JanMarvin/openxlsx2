@@ -1182,14 +1182,19 @@ wbWorkbook <- R6::R6Class(
             self$append("Content_Types", "<Default Extension=\"jpg\" ContentType=\"image/jpg\"/>")
           }
 
-          # from$worksheet[[old]]$relships$drawing
-          new_drawing_sheet <- self$worksheets[[newSheetIndex]]$relships$drawing
+          # get old drawing id, must not match new drawing id
+          old_drawing_sheet <- from$worksheets[[old]]$relships$drawing
 
-          if (length(new_drawing_sheet)) {
+          if (length(old_drawing_sheet)) {
+
+            # assuming that if drawing was copied, this is the new drawing id
+            new_drawing_sheet <- length(self$drawings)
+            self$worksheets[[newSheetIndex]]$relships$drawing <- new_drawing_sheet
 
             # we pick up the drawing relationship. This is something like: "../media/image1.jpg"
             # because we might end up with multiple files with similar names, we have to rename
             # the media file and update the drawing relationship
+            # TODO has every drawing a drawing_rel of the same size?
             drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_sheet]], "Relationship"))
             if (ncol(drels) && any(basename(drels$Type) == "image")) {
               sel <- basename(drels$Type) == "image"
@@ -1217,7 +1222,7 @@ wbWorkbook <- R6::R6Class(
               )
 
               # append media
-              self$media <- append(self$media, media_names)
+              self$append("media", media_names)
             }
           }
         }
@@ -1290,6 +1295,10 @@ wbWorkbook <- R6::R6Class(
         }
 
         # TODO dxfs styles for (pivot) table styles and conditional formatting
+        if (length(from$styles_mgr$get_dxf())) {
+          msg <- "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
+          warning(msg, call. = FALSE)
+        }
 
         clone_shared_strings(from, old, self, newSheetIndex)
       }
