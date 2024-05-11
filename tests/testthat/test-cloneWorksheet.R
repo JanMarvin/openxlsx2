@@ -311,3 +311,24 @@ test_that("cloning column and row styles works", {
   expect_equal(exp, got)
 
 })
+
+test_that("cloning slicers throws warning", {
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>% wb_add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = 1)
+
+  wb <- wb %>%
+    wb_add_pivot_table(
+      df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
+      pivot_table = "mtcars"
+    ) %>%
+    wb_add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
+
+  expect_warning(
+    wb$clone_worksheet(old = "Sheet 2", new = "Sheet 3"),
+    "Cloning slicers is not yet supported. It will not appear on the sheet."
+  )
+
+})

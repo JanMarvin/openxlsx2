@@ -400,4 +400,9 @@ test_that("reading timeline works", {
   expect_true(all(wb$Content_Types %in% wb2$Content_Types))
   expect_true(all(wb$workbook.xml.rels == wb2$workbook.xml.rels))
 
+  expect_warning(
+    wb$clone_worksheet(old = "Sheet 2", new = "Sheet3"),
+    "Cloning timelines is not yet supported. It will not appear on the sheet."
+  )
+
 })
