@@ -317,17 +317,15 @@ test_that("cloning column and row styles works", {
 
 test_that("cloning slicers throws warning", {
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>% wb_add_data(x = mtcars)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
 
   df <- wb_data(wb, sheet = 1)
 
-  wb <- wb %>%
-    wb_add_pivot_table(
+  wb$add_pivot_table(
       df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
       pivot_table = "mtcars"
-    ) %>%
-    wb_add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
+    )$
+    add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
 
   expect_warning(
     wb$clone_worksheet(old = "Sheet 2", new = "Sheet 3"),
