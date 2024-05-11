@@ -187,6 +187,12 @@ wbWorkbook <- R6::R6Class(
     #' @field threadComments Threaded comments
     threadComments = NULL,
 
+    #' @field timelines timelines
+    timelines = NULL,
+
+    #' @field timelineCaches timelineCaches
+    timelineCaches = NULL,
+
     #' @field workbook workbook
     workbook = genBaseWorkbook(),
 
@@ -301,9 +307,6 @@ wbWorkbook <- R6::R6Class(
       self$queryTables <- NULL
 
       self$richData <- NULL
-
-      self$slicers <- NULL
-      self$slicerCaches <- NULL
 
       self$sheet_names <- character()
       self$sheetOrder <- integer()
@@ -998,6 +1001,14 @@ wbWorkbook <- R6::R6Class(
           self$Content_Types,
           sprintf("<Override PartName=\"/xl/slicers/slicer%s.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>", newid)
         )
+
+      }
+
+      rid <- as.integer(sub("\\D+", "", get_relship_id(obj = self$worksheets_rels[[newSheetIndex]], "timeline")))
+      if (length(rid)) {
+
+        warning("Cloning timelines is not yet supported. It will not appear on the sheet.")
+        # TODO add some code to avoid breaking xlsx files
 
       }
 
@@ -2090,6 +2101,7 @@ wbWorkbook <- R6::R6Class(
       nThemes         <- length(self$theme)
       nPivots         <- length(self$pivotDefinitions)
       nSlicers        <- length(self$slicers)
+      nTimelines      <- length(self$timelines)
       nComments       <- length(self$comments)
       nThreadComments <- sum(lengths(self$threadComments) > 0)
       nPersons        <- length(self$persons)
@@ -2255,6 +2267,26 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      # timelines
+      if (nTimelines) {
+        timelinesDir      <- dir_create(tmpDir, "xl", "timelines")
+        timelineCachesDir <- dir_create(tmpDir, "xl", "timelineCaches")
+
+        timeline <- self$timelines[self$timelines != ""]
+        for (i in seq_along(timeline)) {
+          write_file(
+            body = timeline[i],
+            fl = file.path(timelinesDir, sprintf("timeline%s.xml", i))
+          )
+        }
+
+        for (i in seq_along(self$timelineCaches)) {
+          write_file(
+            body = self$timelineCaches[[i]],
+            fl = file.path(timelineCachesDir, sprintf("timelineCache%s.xml", i))
+          )
+        }
+      }
 
       ## Write content
 
@@ -4117,6 +4149,11 @@ wbWorkbook <- R6::R6Class(
       if (any(grepl("slicers", self$worksheets_rels[[sheet]]))) {
         # don't change to a grep(value = TRUE)
         self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels)]
+      }
+
+      if (any(grepl("timelines", self$worksheets_rels[[sheet]]))) {
+        # don't change to a grep(value = TRUE)
+        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("(timelineCache%s\\.xml)", sheet), self$workbook.xml.rels)]
       }
 
       ## wont't remove tables and then won't need to reassign table r:id's but will rename them!
@@ -9024,6 +9061,7 @@ wbWorkbook <- R6::R6Class(
       ## don't want to re-assign rIds for pivot tables or slicer caches
       pivotNode        <- grep("pivotCache/pivotCacheDefinition[0-9]+.xml", self$workbook.xml.rels, value = TRUE)
       slicerNode       <- grep("slicerCache[0-9]+.xml",                     self$workbook.xml.rels, value = TRUE)
+      timelineNode     <- grep("timelineCache[0-9]+.xml",                   self$workbook.xml.rels, value = TRUE)
 
       ## Reorder children of workbook.xml.rels
       self$workbook.xml.rels <-
@@ -9054,7 +9092,7 @@ wbWorkbook <- R6::R6Class(
           }
         )
 
-      self$append("workbook.xml.rels", c(pivotNode, slicerNode))
+      self$append("workbook.xml.rels", c(pivotNode, slicerNode, timelineNode))
 
       if (length(self$metadata)) {
         self$append("workbook.xml.rels",

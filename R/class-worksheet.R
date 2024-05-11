@@ -236,6 +236,7 @@ wbWorksheet <- R6::R6Class(
         slicer           = integer(),
         table            = integer(),
         threadedComment  = integer(),
+        timeline         = integer(),
         vmlDrawing       = integer()
       )
 

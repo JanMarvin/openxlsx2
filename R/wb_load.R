@@ -198,6 +198,10 @@ wb_load <- function(
   slicerXML         <- grep_xml("slicer[0-9]+.xml$")
   slicerCachesXML   <- grep_xml("slicerCache[0-9]+.xml$")
 
+  ## timelines
+  timelineXML         <- grep_xml("timeline[0-9]+.xml$")
+  timelineCachesXML   <- grep_xml("timelineCache[0-9]+.xml$")
+
   ## VBA Macro
   vbaProject        <- grep_xml("vbaProject\\.bin$")
 
@@ -217,7 +221,8 @@ wb_load <- function(
     "customXml", "docProps", "drawings", "embeddings", "externalLinks",
     "media", "persons", "pivotCache", "pivotTables", "printerSettings",
     "queryTables", "richData", "slicerCaches", "slicers", "tables", "theme",
-    "threadedComments", "worksheets", "xl", "[trash]"
+    "threadedComments", "timelineCaches", "timelines", "worksheets", "xl",
+    "[trash]"
   )
   unknown <- file_folders[!file_folders %in% known]
   # nocov start
@@ -1029,6 +1034,7 @@ wb_load <- function(
       slcrs <- integer()
       table <- integer()
       trcmt <- integer()
+      tmlne <- integer()
       vmldr <- integer()
 
       if (ncol(wb_rels)) {
@@ -1042,6 +1048,7 @@ wb_load <- function(
         slcrs <- wb_rels$tid[wb_rels$typ == "slicer"]
         table <- wb_rels$tid[wb_rels$typ == "table"]
         trcmt <- wb_rels$tid[wb_rels$typ == "threadedComment"]
+        tmlne <- wb_rels$tid[wb_rels$typ == "timeline"]
         vmldr <- wb_rels$tid[wb_rels$typ == "vmlDrawing"]
       }
 
@@ -1054,6 +1061,7 @@ wb_load <- function(
         slicer           = slcrs,
         table            = table,
         threadedComment  = trcmt,
+        timeline         = tmlne,
         vmlDrawing       = vmldr
       )
     }
@@ -1098,6 +1106,44 @@ wb_load <- function(
       wb$workbook$extLst <- xml_node_create("extLst", xml_children = ext)
     }
 
+    ## Timeline -------------------------------------------------------------------------------------
+    if (length(timelineXML)) {
+
+      # maybe these need to be sorted?
+      # timelineXML <- timelineXML[order(nchar(timelineXML), timelineXML)] ???
+
+      wb$timelines <- vapply(timelineXML, read_xml, pointer = FALSE,
+                             FUN.VALUE = NA_character_, USE.NAMES = FALSE)
+
+      ## worksheet_rels Id for timeline will be rId0
+      for (i in seq_along(wb$timelines)) {
+
+        # this will add timelines to Content_Types. Ergo if worksheets with
+        # timelines are removed, the timeline needs to remain in the worksheet
+        wb$append(
+          "Content_Types",
+          sprintf('<Override PartName="/xl/timelines/timeline%s.xml" ContentType="application/vnd.ms-excel.timeline+xml"/>', i)
+        )
+      }
+    }
+
+    ## ---- timelineCaches
+    if (length(timelineCachesXML)) {
+      wb$timelineCaches <- vapply(timelineCachesXML, read_xml, pointer = FALSE,
+                                  FUN.VALUE = NA_character_, USE.NAMES = FALSE)
+
+      for (i in seq_along(wb$timelineCaches)) {
+        wb$append("Content_Types", sprintf('<Override PartName="/xl/timelineCaches/timelineCache%s.xml" ContentType="application/vnd.ms-excel.timelineCache+xml"/>', i))
+        wb$append("workbook.xml.rels", sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2011/relationships/timelineCache" Target="timelineCaches/timelineCache%s.xml"/>', 2E5 + i, i))
+      }
+
+      # get extLst object. select the timelineCaches and replace it
+      ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")
+      is_timeline <- which(ext_nams == "x15:timelineCacheRefs")
+      ext <- xml_node(wb$workbook$extLst, "extLst", "ext")
+      ext[is_timeline] <- genTimelineCachesExtLst(2E5 + seq_along(timelineCachesXML))
+      wb$workbook$extLst <- xml_node_create("extLst", xml_children = ext)
+    }
 
     ## Tables --------------------------------------------------------------------------------------
     if (length(tablesXML)) {
