@@ -504,6 +504,15 @@ genSlicerCachesExtLst <- function(i) {
   )
 }
 
+genTimelineCachesExtLst <- function(i) {
+  paste0(
+    '<ext uri=\"{D0CA8CA8-9F24-4464-BF8E-62219DCF47F9}\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\">
+    <x15:timelineCacheRefs>',
+    paste(sprintf('<x15:timelineCacheRef r:id="rId%s"/>', i), collapse = ""),
+    "</x15:timelineCacheRefs></ext>"
+  )
+}
+
 
 colors1_xml <- "<cs:colorStyle xmlns:cs=\"http://schemas.microsoft.com/office/drawing/2012/chartStyle\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" meth=\"cycle\" id=\"10\">
 <a:schemeClr val=\"accent1\"/>

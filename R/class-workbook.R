@@ -187,6 +187,12 @@ wbWorkbook <- R6::R6Class(
     #' @field threadComments Threaded comments
     threadComments = NULL,
 
+    #' @field timelines timelines
+    timelines = NULL,
+
+    #' @field timelineCaches timelineCaches
+    timelineCaches = NULL,
+
     #' @field workbook workbook
     workbook = genBaseWorkbook(),
 
@@ -301,9 +307,6 @@ wbWorkbook <- R6::R6Class(
       self$queryTables <- NULL
 
       self$richData <- NULL
-
-      self$slicers <- NULL
-      self$slicerCaches <- NULL
 
       self$sheet_names <- character()
       self$sheetOrder <- integer()
@@ -880,17 +883,10 @@ wbWorkbook <- R6::R6Class(
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]] <- from$worksheets_rels[[old]]
 
-      old_drawing_sheet <- NULL
+      new_drawing_sheet <- NULL
+      if (length(from$worksheets[[old]]$relships$drawing)) {
 
-      if (length(from$worksheets_rels[[old]])) {
-        relship <- rbindlist(xml_attr(from$worksheets_rels[[old]], "Relationship"))
-        relship$typ <- basename(relship$Type)
-        old_drawing_sheet  <- as.integer(gsub("\\D+", "", relship$Target[relship$typ == "drawing"]))
-      }
-
-      if (length(old_drawing_sheet) && length(from$worksheets[[old_drawing_sheet]]$relships$drawing)) {
-
-        drawing_id <- from$worksheets[[old_drawing_sheet]]$relships$drawing
+        drawing_id <- from$worksheets[[old]]$relships$drawing
 
         new_drawing_sheet <- length(self$drawings) + 1L
 
@@ -955,7 +951,6 @@ wbWorkbook <- R6::R6Class(
             USE.NAMES = FALSE
           )
 
-
         self$append("drawings", from$drawings[[drawing_id]])
       }
 
@@ -975,7 +970,9 @@ wbWorkbook <- R6::R6Class(
 
         newid <- length(self$slicers) + 1
 
-        cloned_slicers <- from$slicers[[old]]
+        old_s_id <- from$worksheets[[old]]$relships$slicer
+
+        cloned_slicers <- from$slicers[[old_s_id]]
         slicer_attr <- xml_attr(cloned_slicers, "slicers")
 
         # Replace name with name_n. This will prevent the slicer from loading,
@@ -986,6 +983,8 @@ wbWorkbook <- R6::R6Class(
         slicer_child <- df_to_xml("slicer", slicer_df)
 
         self$slicers[[newid]] <- xml_node_create("slicers", slicer_child, slicer_attr[[1]])
+
+        self$worksheets[[newSheetIndex]]$relships$slicer <- newid
 
         self$worksheets_rels[[newSheetIndex]] <- c(
           self$worksheets_rels[[newSheetIndex]],
@@ -999,6 +998,43 @@ wbWorkbook <- R6::R6Class(
           sprintf("<Override PartName=\"/xl/slicers/slicer%s.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>", newid)
         )
 
+      }
+
+      rid <- as.integer(sub("\\D+", "", get_relship_id(obj = self$worksheets_rels[[newSheetIndex]], "timeline")))
+      if (length(rid)) {
+
+        warning("Cloning timelines is not yet supported. It will not appear on the sheet.")
+        self$worksheets_rels[[newSheetIndex]] <- relship_no(obj = self$worksheets_rels[[newSheetIndex]], x = "timeline")
+
+        newid <- length(self$timelines) + 1L
+
+        old_t_id <- from$worksheets[[old]]$relships$timeline
+
+        cloned_timelines <- from$timelines[[old_t_id]]
+        timeline_attr <- xml_attr(cloned_timelines, "timelines")
+
+        # Replace name with name_n. This will prevent the timeline from loading,
+        # but the xlsx file is not broken
+        timeline_child <- xml_node(cloned_timelines, "timelines", "timeline")
+        timeline_df <- rbindlist(xml_attr(timeline_child, "timeline"))[c("name", "xr10:uid", "cache", "caption", "level", "selectionLevel", "scrollPosition")]
+        timeline_df$name <- paste0(timeline_df$name, suffix)
+        timeline_child <- df_to_xml("timeline", timeline_df)
+
+        self$timelines[[newid]] <- xml_node_create("timelines", timeline_child, timeline_attr[[1]])
+
+        self$worksheets[[newSheetIndex]]$relships$timeline <- newid
+
+        self$worksheets_rels[[newSheetIndex]] <- c(
+          self$worksheets_rels[[newSheetIndex]],
+          sprintf("<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2011/relationships/timeline\" Target=\"../timelines/timeline%s.xml\"/>",
+                  rid,
+                  newid)
+        )
+
+        self$Content_Types <- c(
+          self$Content_Types,
+          sprintf("<Override PartName=\"/xl/timelines/timeline%s.xml\" ContentType=\"application/vnd.ms-excel.timeline+xml\"/>", newid)
+        )
       }
 
       if (!is.null(self$richData)) {
@@ -1041,7 +1077,7 @@ wbWorkbook <- R6::R6Class(
 
       rid <- as.integer(sub("\\D+", "", get_relship_id(obj = self$worksheets_rels[[newSheetIndex]], x = "drawing")))
 
-      if (length(rid)) {
+      if (length(rid) && !is.null(new_drawing_sheet)) {
 
         self$worksheets_rels[[newSheetIndex]] <- relship_no(obj = self$worksheets_rels[[newSheetIndex]], x = "drawing")
 
@@ -1146,14 +1182,19 @@ wbWorkbook <- R6::R6Class(
             self$append("Content_Types", "<Default Extension=\"jpg\" ContentType=\"image/jpg\"/>")
           }
 
-          # from$worksheet[[old]]$relships$drawing
-          new_drawing_sheet <- self$worksheets[[newSheetIndex]]$relships$drawing
+          # get old drawing id, must not match new drawing id
+          old_drawing_sheet <- from$worksheets[[old]]$relships$drawing
 
-          if (length(new_drawing_sheet)) {
+          if (length(old_drawing_sheet)) {
+
+            # assuming that if drawing was copied, this is the new drawing id
+            new_drawing_sheet <- length(self$drawings)
+            self$worksheets[[newSheetIndex]]$relships$drawing <- new_drawing_sheet
 
             # we pick up the drawing relationship. This is something like: "../media/image1.jpg"
             # because we might end up with multiple files with similar names, we have to rename
             # the media file and update the drawing relationship
+            # TODO has every drawing a drawing_rel of the same size?
             drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_sheet]], "Relationship"))
             if (ncol(drels) && any(basename(drels$Type) == "image")) {
               sel <- basename(drels$Type) == "image"
@@ -1181,7 +1222,7 @@ wbWorkbook <- R6::R6Class(
               )
 
               # append media
-              self$media <- append(self$media, media_names)
+              self$append("media", media_names)
             }
           }
         }
@@ -1254,6 +1295,10 @@ wbWorkbook <- R6::R6Class(
         }
 
         # TODO dxfs styles for (pivot) table styles and conditional formatting
+        if (length(from$styles_mgr$get_dxf())) {
+          msg <- "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
+          warning(msg, call. = FALSE)
+        }
 
         clone_shared_strings(from, old, self, newSheetIndex)
       }
@@ -2090,6 +2135,7 @@ wbWorkbook <- R6::R6Class(
       nThemes         <- length(self$theme)
       nPivots         <- length(self$pivotDefinitions)
       nSlicers        <- length(self$slicers)
+      nTimelines      <- length(self$timelines)
       nComments       <- length(self$comments)
       nThreadComments <- sum(lengths(self$threadComments) > 0)
       nPersons        <- length(self$persons)
@@ -2255,6 +2301,26 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      # timelines
+      if (nTimelines) {
+        timelinesDir      <- dir_create(tmpDir, "xl", "timelines")
+        timelineCachesDir <- dir_create(tmpDir, "xl", "timelineCaches")
+
+        timeline <- self$timelines[self$timelines != ""]
+        for (i in seq_along(timeline)) {
+          write_file(
+            body = timeline[i],
+            fl = file.path(timelinesDir, sprintf("timeline%s.xml", i))
+          )
+        }
+
+        for (i in seq_along(self$timelineCaches)) {
+          write_file(
+            body = self$timelineCaches[[i]],
+            fl = file.path(timelineCachesDir, sprintf("timelineCache%s.xml", i))
+          )
+        }
+      }
 
       ## Write content
 
@@ -4117,6 +4183,11 @@ wbWorkbook <- R6::R6Class(
       if (any(grepl("slicers", self$worksheets_rels[[sheet]]))) {
         # don't change to a grep(value = TRUE)
         self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("(slicerCache%s\\.xml)", sheet), self$workbook.xml.rels)]
+      }
+
+      if (any(grepl("timelines", self$worksheets_rels[[sheet]]))) {
+        # don't change to a grep(value = TRUE)
+        self$workbook.xml.rels <- self$workbook.xml.rels[!grepl(sprintf("(timelineCache%s\\.xml)", sheet), self$workbook.xml.rels)]
       }
 
       ## wont't remove tables and then won't need to reassign table r:id's but will rename them!
@@ -9024,6 +9095,7 @@ wbWorkbook <- R6::R6Class(
       ## don't want to re-assign rIds for pivot tables or slicer caches
       pivotNode        <- grep("pivotCache/pivotCacheDefinition[0-9]+.xml", self$workbook.xml.rels, value = TRUE)
       slicerNode       <- grep("slicerCache[0-9]+.xml",                     self$workbook.xml.rels, value = TRUE)
+      timelineNode     <- grep("timelineCache[0-9]+.xml",                   self$workbook.xml.rels, value = TRUE)
 
       ## Reorder children of workbook.xml.rels
       self$workbook.xml.rels <-
@@ -9054,7 +9126,7 @@ wbWorkbook <- R6::R6Class(
           }
         )
 
-      self$append("workbook.xml.rels", c(pivotNode, slicerNode))
+      self$append("workbook.xml.rels", c(pivotNode, slicerNode, timelineNode))
 
       if (length(self$metadata)) {
         self$append("workbook.xml.rels",

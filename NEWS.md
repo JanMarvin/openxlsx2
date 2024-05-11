@@ -6,9 +6,13 @@
 
 * Silence a warning triggered by a folder called `"[trash]"`. [1012](https://github.com/JanMarvin/openxlsx2/pull/1012)
 
+* Initial support for pivot table timelines. [1016](https://github.com/JanMarvin/openxlsx2/pull/1016)
+
 ## Fixes
 
 * Fixed an issue with non consecutive dims, where columns or rows were silently dropped. [1015](https://github.com/JanMarvin/openxlsx2/pull/1015)
+
+* Fixes to `wb_clone_worksheet()` cloning drawings and images should be restored. [1016](https://github.com/JanMarvin/openxlsx2/pull/1016)
 
 
 ***************************************************************************

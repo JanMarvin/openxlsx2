@@ -255,7 +255,10 @@ test_that("cloning from workbooks works", {
   ## clone drawing, borders function and shared strings
   wb_ex <- wb_load(testfile_path("loadExample.xlsx"))
 
-  wb$clone_worksheet(old = "testing", new = "test", from = wb_ex)
+  expect_warning(
+    wb$clone_worksheet(old = "testing", new = "test", from = wb_ex),
+    "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
+  )
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2", "test")
   got <- wb$get_sheet_names() %>% unname()
   expect_equal(exp, got)
@@ -309,5 +312,24 @@ test_that("cloning column and row styles works", {
   exp <- "3"
   got <- wb$worksheets[[2]]$sheet_data$row_attr[2, "s"]
   expect_equal(exp, got)
+
+})
+
+test_that("cloning slicers throws warning", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = 1)
+
+  wb$add_pivot_table(
+      df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
+      pivot_table = "mtcars"
+    )$
+    add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
+
+  expect_warning(
+    wb$clone_worksheet(old = "Sheet 2", new = "Sheet 3"),
+    "Cloning slicers is not yet supported. It will not appear on the sheet."
+  )
 
 })

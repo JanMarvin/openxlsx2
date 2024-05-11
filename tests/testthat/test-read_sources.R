@@ -380,3 +380,29 @@ test_that("reading richData content works", {
   expect_silent(wb_load(testfile_path("pic_in_cell.xlsx"))$save(tmp))
 
 })
+
+test_that("reading timeline works", {
+
+  tmp <- temp_xlsx()
+  fl  <- testfile_path("timeline.xlsx")
+
+  wb <- wb_load(fl)
+  expect_true(wb$worksheets[[2]]$relships$timeline == 1)
+
+  wb$save(tmp)
+
+  # save again, so that all sheets in workbook.xml.rels have a correct id. Not
+  # sure why we keep the update rel ids once we have saved a file saving.
+  wb2 <- wb_load(tmp)
+  wb2$save(tmp)
+
+  expect_true(wb$timelines == wb2$timelines)
+  expect_true(all(wb$Content_Types %in% wb2$Content_Types))
+  expect_true(all(wb$workbook.xml.rels == wb2$workbook.xml.rels))
+
+  expect_warning(
+    wb$clone_worksheet(old = "Sheet 2", new = "Sheet3"),
+    "Cloning timelines is not yet supported. It will not appear on the sheet."
+  )
+
+})
