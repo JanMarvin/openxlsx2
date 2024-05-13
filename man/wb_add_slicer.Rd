@@ -2,7 +2,8 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_slicer}
 \alias{wb_add_slicer}
-\title{Add a slicer to a pivot table}
+\alias{wb_add_timeline}
+\title{Add a slicer/timeline to a pivot table}
 \usage{
 wb_add_slicer(
   wb,
@@ -13,51 +14,124 @@ wb_add_slicer(
   slicer,
   params
 )
+
+wb_add_timeline(
+  wb,
+  x,
+  dims = "A1",
+  sheet = current_sheet(),
+  pivot_table,
+  timeline,
+  params
+)
 }
 \arguments{
-\item{wb}{A Workbook object containing a #' worksheet.}
+\item{wb}{A Workbook object containing a worksheet.}
 
 \item{x}{A \code{data.frame} that inherits the \code{\link[=wb_data]{wb_data}} class.}
 
 \item{dims}{The worksheet cell where the pivot table is placed}
 
-\item{sheet}{A worksheet containing a #'}
+\item{sheet}{A worksheet}
 
-\item{pivot_table}{The name of a pivot table on the selected sheet}
+\item{pivot_table}{The name of a pivot table}
 
-\item{slicer}{A variable used as slicer for the pivot table}
+\item{slicer, timeline}{A variable used as slicer/timeline for the pivot table}
 
 \item{params}{A list of parameters to modify pivot table creation. See \strong{Details} for available options.}
 }
 \description{
-Add a slicer to a previously created pivot table. This function is still experimental and might be changed/improved in upcoming releases.
+Add a slicer/timeline to a previously created pivot table. This function is still experimental and might be changed/improved in upcoming releases.
 }
 \details{
-This assumes that the slicer variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we \emph{strictly} discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+This assumes that the slicer/timeline variable initialization has happened before. Unfortunately, it is unlikely that we can guarantee this for loaded workbooks, and we \emph{strictly} discourage users from attempting this. If the variable has not been initialized properly, this may cause the spreadsheet software to crash.
+Although it is documented that slicers should use "TimelineStyleLight[1-6]" and "TimelineStyleDark[1-6]" they use slicer styles.
 
-Possible \code{params} arguments are listed below.
+Possible \code{params} arguments for slicers are listed below.
 \itemize{
 \item edit_as: "twoCell" to place the slicer into the cells
-\item style: "SlicerStyleLight2"
 \item column_count: integer used as column count
-\item caption: string used for a caption
 \item sort_order: "descending" / "ascending"
 \item choose: select variables in the form of a named logical vector like
 \code{c(agegp = 'x > "25-34"')} for the \code{esoph} dataset.
+\item locked_position
+\item start_item
+}
+
+Possible \code{params} arguments for timelines are listed below.
+\itemize{
+\item beg_date/end_date: dates when the timeline should begin or end
+\item choose_beg/choose_end: dates when the selection should begin or end
+\item scroll_position
+\item show_selection_label
+\item show_time_level
+\item show_horizontal_scrollbar
+}
+
+Possible common \code{params}:
+\itemize{
+\item caption: string used for a caption
+\item style: "SlicerStyleLight[1-6]", "SlicerStyleDark[1-6]" only for slicer "SlicerStyleOther[1-2]"
+\item level: the granularity of the slicer (for timeline 0 = year, 1 = quarter, 2 = month)
+\item show_caption: logical if caption should be shown or not
 }
 }
 \examples{
-wb <- wb_workbook() \%>\%
-  wb_add_worksheet() \%>\% wb_add_data(x = mtcars)
+# prepare data
+df <- data.frame(
+  AirPassengers = c(AirPassengers),
+  time = seq(from = as.Date("1949-01-01"), to = as.Date("1960-12-01"), by = "month"),
+  letters = letters[1:4]
+)
 
-df <- wb_data(wb, sheet = 1)
+# create workbook
+wb <- wb_workbook()$
+  add_worksheet("pivot")$
+  add_worksheet("data")$
+  add_data(x = df)
 
-wb <- wb \%>\%
-  wb_add_pivot_table(
-    df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
-    pivot_table = "mtcars"
-  ) \%>\%
-  wb_add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
+# get pivot table data source
+df <- wb_data(wb, sheet = "data")
+
+# create pivot table
+wb$add_pivot_table(
+  df,
+  sheet = "pivot",
+  rows = "time",
+  cols = "letters",
+  data = "AirPassengers",
+  pivot_table = "airpassengers",
+  params = list(
+    compact = FALSE, outline = FALSE, compact_data = FALSE,
+    row_grand_totals = FALSE, col_grand_totals = FALSE)
+)
+
+# add slicer
+wb$add_slicer(
+  df,
+  dims = "E1:I7",
+  sheet = "pivot",
+  slicer = "letters",
+  pivot_table = "airpassengers",
+  params = list(choose = c(letters = 'x \%in\% c("a", "b")'))
+)
+
+# add timeline
+wb$add_timeline(
+  df,
+  dims = "E9:I14",
+  sheet = "pivot",
+  timeline = "time",
+  pivot_table = "airpassengers",
+  params = list(
+    beg_date = as.Date("1954-01-01"),
+    end_date = as.Date("1961-01-01"),
+    choose_beg = as.Date("1957-01-01"),
+    choose_end = as.Date("1958-01-01"),
+    level = 0,
+    style = "TimeSlicerStyleLight2"
+  )
+)
 }
 \seealso{
 Other workbook wrappers: 
