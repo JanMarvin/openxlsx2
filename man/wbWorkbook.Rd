@@ -131,6 +131,10 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{threadComments}}{Threaded comments}
 
+\item{\code{timelines}}{timelines}
+
+\item{\code{timelineCaches}}{timelineCaches}
+
 \item{\code{workbook}}{workbook}
 
 \item{\code{workbook.xml.rels}}{workbook.xml.rels}
@@ -160,6 +164,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
 \item \href{#method-wbWorkbook-add_pivot_table}{\code{wbWorkbook$add_pivot_table()}}
 \item \href{#method-wbWorkbook-add_slicer}{\code{wbWorkbook$add_slicer()}}
+\item \href{#method-wbWorkbook-add_timeline}{\code{wbWorkbook$add_timeline()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
 \item \href{#method-wbWorkbook-add_style}{\code{wbWorkbook$add_style()}}
 \item \href{#method-wbWorkbook-to_df}{\code{wbWorkbook$to_df()}}
@@ -662,7 +667,8 @@ add pivot table
   fun,
   params,
   pivot_table,
-  slicer
+  slicer,
+  timeline
 )}\if{html}{\out{</div>}}
 }
 
@@ -690,6 +696,8 @@ add pivot table
 \item{\code{pivot_table}}{a character object with a name for the pivot table}
 
 \item{\code{slicer}}{a character object with names used as slicer}
+
+\item{\code{timeline}}{a character object with names used as timeline}
 }
 \if{html}{\out{</div>}}
 }
@@ -730,6 +738,43 @@ add pivot table
 \item{\code{pivot_table}}{the name of a pivot table on the selected sheet}
 
 \item{\code{slicer}}{a variable used as slicer for the pivot table}
+
+\item{\code{params}}{a list of parameters to modify pivot table creation}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_timeline"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_timeline}{}}}
+\subsection{Method \code{add_timeline()}}{
+add pivot table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_timeline(
+  x,
+  dims = "A1",
+  sheet = current_sheet(),
+  pivot_table,
+  timeline,
+  params
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x}}{a wb_data object}
+
+\item{\code{dims}}{the worksheet cell where the pivot table is placed}
+
+\item{\code{sheet}}{The name of the sheet}
+
+\item{\code{pivot_table}}{the name of a pivot table on the selected sheet}
+
+\item{\code{timeline}}{a variable used as timeline for the pivot table}
 
 \item{\code{params}}{a list of parameters to modify pivot table creation}
 }

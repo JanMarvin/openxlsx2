@@ -8,6 +8,8 @@
 
 * Initial support for pivot table timelines. [1016](https://github.com/JanMarvin/openxlsx2/pull/1016)
 
+* Add `wb_add_timeline()` and extend `wb_add_slicer()`. [1017](https://github.com/JanMarvin/openxlsx2/pull/1017)
+
 ## Fixes
 
 * Fixed an issue with non consecutive dims, where columns or rows were silently dropped. [1015](https://github.com/JanMarvin/openxlsx2/pull/1015)

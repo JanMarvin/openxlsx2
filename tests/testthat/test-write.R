@@ -565,6 +565,41 @@ test_that("writing slicers works", {
 
 })
 
+test_that("writing slicers works", {
+
+  dat <- data.frame(
+    date = seq(from = as.Date("2024-01-01"), length.out = 26, by = "month"),
+    amnt = sample(seq(100:150), 26, replace = TRUE),
+    lttr = letters[1:2]
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
+  df <- wb_data(wb)
+  wb$add_pivot_table(x = df, cols = "lttr", data = "amnt", timeline = "date", pivot_table = "pivot1")
+  wb$add_timeline(x = df, timeline = "date", pivot_table = "pivot1")
+
+  expect_equal("x15:timelineCacheRefs", xml_node_name(wb$workbook$extLst, "extLst", "ext"))
+  expect_equal("timelines", xml_node_name(wb$timelines))
+  expect_equal("timelineCacheDefinition", xml_node_name(wb$timelineCaches))
+  expect_true(grepl("x15:timelineRefs", wb$worksheets[[2]]$extLst))
+
+  wb$add_slicer(df, slicer = "lttr", pivot_table = "pivot1")
+
+  expect_equal(c("x15:timelineCacheRefs", "x14:slicerCaches"), xml_node_name(wb$workbook$extLst, "extLst", "ext"))
+  expect_equal(c("x15:timelineRefs", "x14:slicerList"), xml_node_name(wb$worksheets[[2]]$extLst, "ext"))
+
+  # and the other way around it works too
+  wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
+  df <- wb_data(wb)
+  wb$add_pivot_table(x = df, cols = "lttr", data = "amnt", timeline = "date", pivot_table = "pivot1")
+  wb$add_slicer(df, slicer = "lttr", pivot_table = "pivot1")
+  wb$add_timeline(x = df, timeline = "date", pivot_table = "pivot1")
+
+  expect_equal(c("x14:slicerCaches", "x15:timelineCacheRefs"), xml_node_name(wb$workbook$extLst, "extLst", "ext"))
+  expect_equal(c("x14:slicerList", "x15:timelineRefs"), xml_node_name(wb$worksheets[[2]]$extLst, "ext"))
+
+})
+
 test_that("writing na.strings = NULL works", {
 
   # write na.strings = na_strings()

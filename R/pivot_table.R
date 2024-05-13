@@ -25,14 +25,14 @@ fix_pt_names <- function(x) {
   x
 }
 
-cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
+cacheFields <- function(wbdata, filter, rows, cols, data, slicer, timeline) {
   sapply(
     names(wbdata),
     function(x) {
 
       dat <- wbdata[[x]]
 
-      vars <- c(filter, rows, cols, data, slicer)
+      vars <- c(filter, rows, cols, data, slicer, timeline)
 
       is_vars <- x %in% vars
       is_data <- x %in% data &&
@@ -152,7 +152,7 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer) {
   )
 }
 
-pivot_def_xml <- function(wbdata, filter, rows, cols, data, slicer, pcid) {
+pivot_def_xml <- function(wbdata, filter, rows, cols, data, slicer, timeline, pcid) {
 
   ref   <- dataframe_to_dims(attr(wbdata, "dims"))
   sheet <- attr(wbdata, "sheet")
@@ -162,7 +162,7 @@ pivot_def_xml <- function(wbdata, filter, rows, cols, data, slicer, pcid) {
     sprintf('<pivotCacheDefinition xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" mc:Ignorable="xr" r:id="rId1" refreshedBy="openxlsx2" invalid="1" refreshOnLoad="1" refreshedDate="1" createdVersion="8" refreshedVersion="8" minRefreshableVersion="3" recordCount="%s">', nrow(wbdata)),
     '<cacheSource type="worksheet"><worksheetSource ref="', ref, '" sheet="', sheet, '"/></cacheSource>',
     '<cacheFields count="', count, '">',
-    paste0(cacheFields(wbdata, filter, rows, cols, data, slicer), collapse = ""),
+    paste0(cacheFields(wbdata, filter, rows, cols, data, slicer, timeline), collapse = ""),
     '</cacheFields>',
     '<extLst>',
     '<ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{725AE2AE-9491-48be-B2B4-4EB974FC3084}">',

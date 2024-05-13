@@ -16,7 +16,8 @@ wb_add_pivot_table(
   fun,
   params,
   pivot_table,
-  slicer
+  slicer,
+  timeline
 )
 }
 \arguments{
@@ -42,7 +43,7 @@ wb_add_pivot_table(
 
 \item{pivot_table}{An optional name for the pivot table}
 
-\item{slicer}{Any additional column name(s) of \code{x} used as slicer}
+\item{slicer, timeline}{Any additional column name(s) of \code{x} used as slicer/timeline}
 }
 \description{
 The data must be specified using \code{\link[=wb_data]{wb_data()}} to ensure the function works.

@@ -41,7 +41,9 @@ STDEV
 STDEVP
 Savon
 Schauberger
+SlicerStyleDark
 SlicerStyleLight
+SlicerStyleOther
 Sparklines
 SubtotalColumn
 SubtotalRow
@@ -212,6 +214,7 @@ rowColHeaders
 rowNames
 rowOffset
 rowname
+scrollbar
 sep
 sharedStrings
 sheetViews
@@ -246,6 +249,7 @@ tableStyle
 tablename
 textLength
 th
+timelineCaches
 totalLabel
 totalRow
 totalsRowCount
