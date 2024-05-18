@@ -8394,7 +8394,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
 
-      if (length(dims) == 1 && grepl(":|;", dims))
+      if (length(dims) == 1 && grepl(":|;|,", dims))
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
@@ -9721,7 +9721,7 @@ wbWorkbook <- R6::R6Class(
         # there are some cells already available, we have to create the missing cells
 
         need_cells <- dims
-        if (length(need_cells) == 1 && grepl(":|;", need_cells))
+        if (length(need_cells) == 1 && grepl(":|;|,", need_cells))
           need_cells <- dims_to_dataframe(dims, fill = TRUE)
 
         exp_cells <- unname(unlist(need_cells[need_cells != ""]))

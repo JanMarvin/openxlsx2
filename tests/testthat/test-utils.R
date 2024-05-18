@@ -77,7 +77,7 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
   expect_error(wb_dims(mtcars), "Supplying a single unnamed argument")
 
 
-  expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "You must supply positive, consecutive values to `cols`")
+  expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "You must supply positive, consecutive values to `rows`")
 
   expect_error(wb_dims(1, 2, 3))
 })
@@ -168,6 +168,22 @@ test_that("`wb_dims()` can select content in a nice fashion with `x`", {
   expect_equal(wb_dims_cars(rows = 1:5, select = "x"), dims_row1_to_5_and_names)
 })
 
+test_that("wb_dims can select multiple columns", {
+
+  exp <- "B2:B33"
+  got <- wb_dims(x = mtcars, cols = c("cyl"))
+  expect_equal(exp, got)
+
+  exp <- "B2:B33,J2:J33"
+  got <- wb_dims(x = mtcars, cols = c("cyl", "gear"))
+  expect_equal(exp, got)
+
+  exp <- "B1,J1"
+  got <- wb_dims(x = mtcars, cols = c("cyl", "gear"), select = "col_names")
+  expect_equal(exp, got)
+
+})
+
 test_that("`wb_dims()` works for a matrix without column names", {
   mt <- matrix(c(1, 2))
   expect_equal(wb_dims(x = mt), "A1:A3")
@@ -196,7 +212,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   expect_equal(wb_dims(x = mtcars, rows = 5:10, from_col = "C"), "C6:M11")
   # Write without column names on top
 
-  expect_error(wb_dims(x = mtcars, cols = 0, from_col = "C"), "supply positive.+ values to `cols`")
+  expect_error(wb_dims(x = mtcars, cols = 0, from_col = "C"), "You must supply positive values to `cols`")
 
   # select rows and columns work
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl"), "B3:B11")
@@ -221,10 +237,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   expect_error(wb_dims(cols = "hp"), "Supplying a single argument")
   # using non-existing character column doesn't work
   expect_error(wb_dims(x = mtcars, cols = "A"), "`cols` must be an integer or an existing column name of `x`.")
-  expect_error(
-    wb_dims(x = mtcars, cols = c("hp", "vs")),
-    regexp = "Supplying multiple column names is not supported"
-  )
+  expect_equal(wb_dims(x = mtcars, cols = c("hp", "vs")), "D2:D33,H2:H33")
   expect_error(expect_warning(wb_dims(x = mtcars, rows = "hp")), "[Uu]se `cols` instead.")
   # Access only row / col name
   expect_no_message(wb_dims(x = mtcars, select = "col_names"))

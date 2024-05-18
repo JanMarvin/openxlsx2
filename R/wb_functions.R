@@ -9,6 +9,10 @@
 #' @export
 dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
 
+  # in R 4.4.0 grepl(",", data.frame(x = paste0("K",))) == TRUE
+  if (inherits(dims, "data.frame"))
+    dims <- unlist(dims)
+
   has_dim_sep <- FALSE
   if (any(grepl(";", dims))) {
     dims <- unlist(strsplit(dims, ";"))
