@@ -74,6 +74,8 @@
 <span>  <span class="va">params</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">wb_remove_slicer</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">wb_add_timeline</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
 <span>  <span class="va">x</span>,</span>
@@ -136,7 +138,8 @@ Although it is documented that slicers should use "TimelineStyleLight[1-6]" and 
 <li><p>style: "SlicerStyleLight[1-6]", "SlicerStyleDark[1-6]" only for slicer "SlicerStyleOther[1-2]"</p></li>
 <li><p>level: the granularity of the slicer (for timeline 0 = year, 1 = quarter, 2 = month)</p></li>
 <li><p>show_caption: logical if caption should be shown or not</p></li>
-</ul></div>
+</ul><p>Removing slicers works on the spreadsheet level. Therefore all slicers are removed from a worksheet.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other workbook wrappers: 

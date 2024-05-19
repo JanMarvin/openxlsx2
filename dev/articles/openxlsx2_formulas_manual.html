@@ -184,8 +184,9 @@ to.</p>
 <code class="sourceCode R"><span><span class="co"># we expect to find this in D1:E1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; (Intercept)        dist </span></span>
-<span><span class="co">#&gt;   5.2692308   0.1153846</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
+<span><span class="co">#&gt;   5.2692308   0.1153846</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_formula</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"LINEST(A2:A7, B2:B7, TRUE)"</span>, dims <span class="op">=</span> <span class="st">"D2:E2"</span>, array <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># wb$open()</span></span></code></pre></div>
@@ -196,13 +197,14 @@ to.</p>
 <p>Similar to array formulas, these cell metadata (cm) formulas hide to
 the user that they are array formulas. Using these is implemented in
 <code>openxlsx2</code> &gt; 0.6.1:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_formula</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"SUM(ABS(A2:A7))"</span>, dims <span class="op">=</span> <span class="st">"D2"</span>, cm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in write_data2(wb = wb, sheet = sheet, data = x, name = name, colNames</span></span>
-<span><span class="co">#&gt; = colNames, : modifications with cm formulas are experimental. use at own risk</span></span>
-<span><span class="co"># wb$open()</span></span></code></pre></div>
+<span><span class="co">#&gt; = colNames, : modifications with cm formulas are experimental. use at own risk</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># wb$open()</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="datatable-formulas">
@@ -253,7 +255,7 @@ changing at each row.</p>
 <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code> would look this (taken from current
 documentation) lets say we’ve read in the data and assigned it to the
 table <code>company_sales</code></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## creating example data</span></span>
 <span><span class="va">company_sales</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>    sales_price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">30</span>, <span class="fl">40</span><span class="op">)</span>,</span>
@@ -296,7 +298,7 @@ requires for selecting the current row is different.</p>
 <p>Now we can see that open xml replaces <code>[@[sales_price]]</code>
 with <code>daily_sales[[#This Row],[sales_price]]</code> We must then
 use this syntax when writing formulas for <code>dataTable</code></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Because we want the `dataTable` formula to propagate down the entire column of the data</span></span>
 <span><span class="co">## we can assign the formula by itself to any column and allow that single string to be repeated for each row.</span></span>
 <span></span>
@@ -318,7 +320,7 @@ use this syntax when writing formulas for <code>dataTable</code></p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">$</span><span class="va">total_COGS</span><span class="op">)</span>        <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">$</span><span class="va">total_COGS</span><span class="op">)</span>,          <span class="st">"formula"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">$</span><span class="va">total_sales</span><span class="op">)</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">$</span><span class="va">total_sales</span><span class="op">)</span>,         <span class="st">"formula"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">$</span><span class="va">total_gross_profit</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">$</span><span class="va">total_gross_profit</span><span class="op">)</span>, <span class="st">"formula"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span></span>
 <span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Daily Sales"</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data_table</span><span class="op">(</span></span>
@@ -520,7 +522,7 @@ Row],[total_COGS]]</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#### sum dataTable examples</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"sum_examples"</span><span class="op">)</span></span>
 <span></span>

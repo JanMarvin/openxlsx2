@@ -114,11 +114,13 @@ and save the output and pass it to the worksheet with
 <code class="sourceCode R"><span><span class="va">myplot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".jpg"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg</a></span><span class="op">(</span><span class="va">myplot</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">AirPassengers</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; NULL</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; agg_png </span></span>
-<span><span class="co">#&gt;       2</span></span>
-<span></span>
+<span><span class="co">#&gt;       2</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># Add basic plots to the workbook</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"add_image"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_image</span><span class="op">(</span>file <span class="op">=</span> <span class="va">myplot</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -128,7 +130,7 @@ and save the output and pass it to the worksheet with
 <p>You can include <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a> plots similar to how you would
 include them with <code>openxlsx</code>. Call the plot first and
 afterwards use <code><a href="../reference/wb_add_plot.html">wb_add_plot()</a></code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
@@ -151,7 +153,7 @@ afterwards use <code><a href="../reference/wb_add_plot.html">wb_add_plot()</a></
 <p>If you want vector graphics that can be modified in spreadsheet
 software the <code><a href="https://davidgohel.github.io/rvg/reference/dml_xlsx.html" class="external-link">dml_xlsx()</a></code> device comes in handy. You can pass
 the output via <code><a href="../reference/wb_add_drawing.html">wb_add_drawing()</a></code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"rvg"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/officeverse/" class="external-link">rvg</a></span><span class="op">)</span></span>
@@ -189,7 +191,7 @@ to the one in <a href="https://ardata-fr.github.io/officeverse/" class="external
 <code><a href="../reference/wb_data.html">wb_data()</a></code> object to <a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a>. This object
 contains references to the data on the worksheet and allows using data
 “as is”.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"mschart"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a></span><span class="op">)</span> <span class="co"># mschart &gt;= 0.4 for openxlsx2 support</span></span>
