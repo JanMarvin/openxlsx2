@@ -164,7 +164,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-add_data_table}{\code{wbWorkbook$add_data_table()}}
 \item \href{#method-wbWorkbook-add_pivot_table}{\code{wbWorkbook$add_pivot_table()}}
 \item \href{#method-wbWorkbook-add_slicer}{\code{wbWorkbook$add_slicer()}}
-\item \href{#method-wbWorkbook-remove_slicers}{\code{wbWorkbook$remove_slicers()}}
+\item \href{#method-wbWorkbook-remove_slicer}{\code{wbWorkbook$remove_slicer()}}
 \item \href{#method-wbWorkbook-add_timeline}{\code{wbWorkbook$add_timeline()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
 \item \href{#method-wbWorkbook-add_style}{\code{wbWorkbook$add_style()}}
@@ -749,12 +749,12 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-wbWorkbook-remove_slicers"></a>}}
-\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_slicers}{}}}
-\subsection{Method \code{remove_slicers()}}{
+\if{html}{\out{<a id="method-wbWorkbook-remove_slicer"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_slicer}{}}}
+\subsection{Method \code{remove_slicer()}}{
 add pivot table
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_slicers(sheet = current_sheet())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_slicer(sheet = current_sheet())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

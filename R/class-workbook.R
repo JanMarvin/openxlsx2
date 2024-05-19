@@ -1967,6 +1967,10 @@ wbWorkbook <- R6::R6Class(
 
       # get indices
       slicer_id       <- self$worksheets[[sheet]]$relships$slicer
+
+      # skip if nothing to do
+      if (identical(slicer_id, integer())) return(invisible(self))
+
       cache_names     <- unname(sapply(xml_attr(self$slicers[slicer_id], "slicers", "slicer"), "[", "cache"))
       slicer_names    <- unname(sapply(xml_attr(self$slicerCaches, "slicerCacheDefinition"), "[", "name"))
       slicer_cache_id <- which(cache_names %in% slicer_names)

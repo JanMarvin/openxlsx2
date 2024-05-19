@@ -508,6 +508,8 @@ wb_add_pivot_table <- function(
 #' * level: the granularity of the slicer (for timeline 0 = year, 1 = quarter, 2 = month)
 #' * show_caption: logical if caption should be shown or not
 #'
+#' Removing slicers works on the spreadsheet level. Therefore all slicers are removed from a worksheet.
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param x A `data.frame` that inherits the [`wb_data`][wb_data()] class.
 #' @param sheet A worksheet
@@ -595,6 +597,18 @@ wb_add_slicer <- function(
     params      = params
   )
 
+}
+
+#' @rdname wb_add_slicer
+#' @export
+wb_remove_slicer <- function(
+    wb,
+    sheet       = current_sheet()
+) {
+  assert_workbook(wb)
+  wb$clone()$remove_slicer(
+    sheet       = sheet
+  )
 }
 
 #' @rdname wb_add_slicer
