@@ -600,6 +600,98 @@ test_that("writing slicers works", {
 
 })
 
+
+test_that("removing slicers works", {
+
+  ### prepare data
+  df <- data.frame(
+    AirPassengers = c(AirPassengers),
+    time = seq(from = as.Date("1949-01-01"), to = as.Date("1960-12-01"), by = "month"),
+    letters = letters[1:4]
+  )
+
+  ### create workbook
+  wb <- wb_workbook()$
+    add_worksheet("pivot")$
+    add_worksheet("pivot2")$
+    add_worksheet("data")$
+    add_data(x = df)
+
+  ### get pivot table data source
+  df <- wb_data(wb, sheet = "data")
+
+  ### first sheet
+  # create pivot table
+  wb$add_pivot_table(
+    df,
+    sheet = "pivot",
+    rows = "time",
+    cols = "letters",
+    data = "AirPassengers",
+    pivot_table = "airpassengers",
+    params = list(
+      compact = FALSE, outline = FALSE, compact_data = FALSE,
+      row_grand_totals = FALSE, col_grand_totals = FALSE)
+  )
+
+  # add slicer
+  wb$add_slicer(
+    df,
+    dims = "E1:I7",
+    sheet = "pivot",
+    slicer = "letters",
+    pivot_table = "airpassengers",
+    params = list(choose = c(letters = 'x %in% c("a", "b")'))
+  )
+
+  wb$add_slicer(
+    df,
+    dims = "E8:I15",
+    sheet = "pivot",
+    slicer = "time",
+    pivot_table = "airpassengers"
+  )
+
+  ### second sheet
+  # create pivot table
+  wb$add_pivot_table(
+    df,
+    sheet = "pivot2",
+    rows = "time",
+    cols = "letters",
+    data = "AirPassengers",
+    pivot_table = "airpassengers2",
+    params = list(
+      compact = FALSE, outline = FALSE, compact_data = FALSE,
+      row_grand_totals = FALSE, col_grand_totals = FALSE)
+  )
+
+  # add slicer
+  wb$add_slicer(
+    df,
+    dims = "E1:I7",
+    sheet = "pivot2",
+    slicer = "letters",
+    pivot_table = "airpassengers2",
+    params = list(choose = c(letters = 'x %in% c("a", "b")'))
+  )
+
+  wb$add_slicer(
+    df,
+    dims = "E8:I15",
+    sheet = "pivot2",
+    slicer = "time",
+    pivot_table = "airpassengers2"
+  )
+
+  ### remove slicer
+  wb$remove_slicer(sheet = "pivot")
+
+  temp <- temp_xlsx()
+  expect_silent(wb$save(temp)) # no warning, all files written as expected
+
+})
+
 test_that("writing na.strings = NULL works", {
 
   # write na.strings = na_strings()

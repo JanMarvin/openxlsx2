@@ -2,6 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_slicer}
 \alias{wb_add_slicer}
+\alias{wb_remove_slicer}
 \alias{wb_add_timeline}
 \title{Add a slicer/timeline to a pivot table}
 \usage{
@@ -14,6 +15,8 @@ wb_add_slicer(
   slicer,
   params
 )
+
+wb_remove_slicer(wb, sheet = current_sheet())
 
 wb_add_timeline(
   wb,
@@ -75,6 +78,8 @@ Possible common \code{params}:
 \item level: the granularity of the slicer (for timeline 0 = year, 1 = quarter, 2 = month)
 \item show_caption: logical if caption should be shown or not
 }
+
+Removing slicers works on the spreadsheet level. Therefore all slicers are removed from a worksheet.
 }
 \examples{
 # prepare data

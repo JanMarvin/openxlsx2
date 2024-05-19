@@ -403,6 +403,11 @@ test_that("wb_add_slicer() is a wrapper", {
   expect_wrapper("add_slicer", wb = wb, params = list(x = df, slicer = "vs", pivot_table = "pivot1"))
 })
 
+test_that("wb_remove_slicer() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_wrapper("remove_slicer", wb = wb)
+})
+
 test_that("wb_add_timeline() is a wrapper", {
   df <- data.frame(
     date = seq(from = as.Date("2024-01-01"), length.out = 26, by = "month"),

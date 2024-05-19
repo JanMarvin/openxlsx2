@@ -1961,6 +1961,48 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description add pivot table
+    #' @return The `wbWorkbook` object
+    remove_slicer = function(sheet = current_sheet()) {
+      sheet <- private$get_sheet_index(sheet)
+
+      # get indices
+      slicer_id       <- self$worksheets[[sheet]]$relships$slicer
+
+      # skip if nothing to do
+      if (identical(slicer_id, integer())) return(invisible(self))
+
+      cache_names     <- unname(sapply(xml_attr(self$slicers[slicer_id], "slicers", "slicer"), "[", "cache"))
+      slicer_names    <- unname(sapply(xml_attr(self$slicerCaches, "slicerCacheDefinition"), "[", "name"))
+      slicer_cache_id <- which(cache_names %in% slicer_names)
+
+      # strings to grep
+      slicer_xml <- sprintf("slicers/slicer%s.xml", slicer_id)
+      caches_xml <- sprintf("slicerCaches/slicerCache%s.xml", slicer_cache_id)
+
+      # empty slicer
+      self$slicers[slicer_id]                  <- ""
+      # empty slicerCache
+      self$slicerCaches[slicer_cache_id]       <- ""
+
+      # remove slicer cache relship
+      self$worksheets[[sheet]]$relships$slicer <- integer()
+      # remove worksheet relationship
+      self$worksheets_rels[[sheet]]            <- self$worksheets_rels[[sheet]][!grepl(slicer_xml, self$worksheets_rels[[sheet]])]
+      # remove "x14:slicerList"
+      is_ext_x14 <- grepl("xmlns:x14", self$worksheets[[sheet]]$extLst)
+      extLst     <- xml_rm_child(self$worksheets[[sheet]]$extLst[is_ext_x14], xml_child = "x14:slicerList")
+      self$worksheets[[sheet]]$extLst[is_ext_x14] <- extLst
+
+      # clear workbook.xml.rels
+      self$workbook.xml.rels                   <- self$workbook.xml.rels[!grepl(paste0(caches_xml, collapse = "|"), self$workbook.xml.rels)]
+
+      # clear Content_Types
+      self$Content_Types                       <- self$Content_Types[!grepl(paste0(c(slicer_xml, caches_xml), collapse = "|"), self$Content_Types)]
+
+      invisible(self)
+    },
+
+    #' @description add pivot table
     #' @param x a wb_data object
     #' @param dims the worksheet cell where the pivot table is placed
     #' @param pivot_table the name of a pivot table on the selected sheet
@@ -2662,15 +2704,16 @@ wbWorkbook <- R6::R6Class(
         slicersDir      <- dir_create(tmpDir, "xl", "slicers")
         slicerCachesDir <- dir_create(tmpDir, "xl", "slicerCaches")
 
-        slicer <- self$slicers[self$slicers != ""]
-        for (i in seq_along(slicer)) {
+        slicer_id <- which(self$slicers != "")
+        for (i in slicer_id) {
           write_file(
-            body = slicer[i],
+            body = self$slicers[i],
             fl = file.path(slicersDir, sprintf("slicer%s.xml", i))
           )
         }
 
-        for (i in seq_along(self$slicerCaches)) {
+        caches_id <- which(self$slicerCaches != "")
+        for (i in caches_id) {
           write_file(
             body = self$slicerCaches[[i]],
             fl = file.path(slicerCachesDir, sprintf("slicerCache%s.xml", i))
