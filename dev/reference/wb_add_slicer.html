@@ -84,7 +84,9 @@
 <span>  <span class="va">pivot_table</span>,</span>
 <span>  <span class="va">timeline</span>,</span>
 <span>  <span class="va">params</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wb_remove_timeline</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -138,7 +140,7 @@ Although it is documented that slicers should use "TimelineStyleLight[1-6]" and 
 <li><p>style: "SlicerStyleLight[1-6]", "SlicerStyleDark[1-6]" only for slicer "SlicerStyleOther[1-2]"</p></li>
 <li><p>level: the granularity of the slicer (for timeline 0 = year, 1 = quarter, 2 = month)</p></li>
 <li><p>show_caption: logical if caption should be shown or not</p></li>
-</ul><p>Removing slicers works on the spreadsheet level. Therefore all slicers are removed from a worksheet.</p>
+</ul><p>Removing works on the spreadsheet level. Therefore all slicers/timelines are removed from a worksheet. At the moment the drawing reference remains on the spreadsheet. Therefore spreadsheet software that does not handle slicers/timelines will still show the drawing.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
