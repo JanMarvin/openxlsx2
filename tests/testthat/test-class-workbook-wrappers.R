@@ -420,6 +420,11 @@ test_that("wb_add_timeline() is a wrapper", {
   expect_wrapper("add_timeline", wb = wb, params = list(x = df, timeline = "date", pivot_table = "pivot1"))
 })
 
+test_that("wb_remove_timeline() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_wrapper("remove_timeline", wb = wb)
+})
+
 test_that("wb_add_formula() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
   expect_wrapper("add_formula",    wb = wb, params = list(sheet = 1, x = "=TODAY()"))

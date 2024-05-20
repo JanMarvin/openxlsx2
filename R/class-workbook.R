@@ -2346,6 +2346,48 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description add pivot table
+    #' @return The `wbWorkbook` object
+    remove_timeline = function(sheet = current_sheet()) {
+      sheet <- private$get_sheet_index(sheet)
+
+      # get indices
+      timeline_id       <- self$worksheets[[sheet]]$relships$timeline
+
+      # skip if nothing to do
+      if (identical(timeline_id, integer())) return(invisible(self))
+
+      cache_names       <- unname(sapply(xml_attr(self$timelines[timeline_id], "timelines", "timeline"), "[", "cache"))
+      timeline_names    <- unname(sapply(xml_attr(self$timelineCaches, "timelineCacheDefinition"), "[", "name"))
+      timeline_cache_id <- which(cache_names %in% timeline_names)
+
+      # strings to grep
+      timeline_xml <- sprintf("timelines/timeline%s.xml", timeline_id)
+      caches_xml   <- sprintf("timelineCaches/timelineCache%s.xml", timeline_cache_id)
+
+      # empty timelines
+      self$timelines[timeline_id]                <- ""
+      # empty timelineCache
+      self$timelineCaches[timeline_cache_id]     <- ""
+
+      # remove timeline cache relship
+      self$worksheets[[sheet]]$relships$timeline <- integer()
+      # remove worksheet relationship
+      self$worksheets_rels[[sheet]]              <- self$worksheets_rels[[sheet]][!grepl(timeline_xml, self$worksheets_rels[[sheet]])]
+      # remove "x15:timelineRefs"
+      is_ext_x15 <- grepl("xmlns:x15", self$worksheets[[sheet]]$extLst)
+      extLst     <- xml_rm_child(self$worksheets[[sheet]]$extLst[is_ext_x15], xml_child = "x15:timelineRefs")
+      self$worksheets[[sheet]]$extLst[is_ext_x15] <- extLst
+
+      # clear workbook.xml.rels
+      self$workbook.xml.rels                     <- self$workbook.xml.rels[!grepl(paste0(caches_xml, collapse = "|"), self$workbook.xml.rels)]
+
+      # clear Content_Types
+      self$Content_Types                         <- self$Content_Types[!grepl(paste0(c(timeline_xml, caches_xml), collapse = "|"), self$Content_Types)]
+
+      invisible(self)
+    },
+
     #' @description Add formula
     #' @param x x
     #' @param start_col startCol
@@ -2728,15 +2770,16 @@ wbWorkbook <- R6::R6Class(
         timelinesDir      <- dir_create(tmpDir, "xl", "timelines")
         timelineCachesDir <- dir_create(tmpDir, "xl", "timelineCaches")
 
-        timeline <- self$timelines[self$timelines != ""]
-        for (i in seq_along(timeline)) {
+        timeline_id <- which(self$timelines != "")
+        for (i in timeline_id) {
           write_file(
-            body = timeline[i],
+            body = self$timelines[i],
             fl = file.path(timelinesDir, sprintf("timeline%s.xml", i))
           )
         }
 
-        for (i in seq_along(self$timelineCaches)) {
+        caches_id <- which(self$timelineCaches != "")
+        for (i in caches_id) {
           write_file(
             body = self$timelineCaches[[i]],
             fl = file.path(timelineCachesDir, sprintf("timelineCache%s.xml", i))
