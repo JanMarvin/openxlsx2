@@ -2113,19 +2113,21 @@ wbWorkbook <- R6::R6Class(
 
       # without choose: filterType = unknown
       timeline_cache <- read_xml(sprintf(
-        '<timelineCacheDefinition xmlns="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" mc:Ignorable="xr10" name="NativeTimeline_%s" xr10:uid="{7CE32DD1-8A45-FD42-8E6D-FD9376CAC325}" sourceName="%s">
+        '<timelineCacheDefinition xmlns="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" mc:Ignorable="xr10" name="NativeTimeline_%s" xr10:uid="%s" sourceName="%s">
           <pivotTables>
             <pivotTable tabId="%s" name="%s" />
           </pivotTables>
-          <state minimalRefreshVersion="6" lastRefreshVersion="6" pivotCacheId="1" filterType="dateBetween">
+          <state minimalRefreshVersion="6" lastRefreshVersion="6" pivotCacheId="%s" filterType="dateBetween">
             %s
             %s
           </state>
         </timelineCacheDefinition>',
         uni_name,
+        st_guid(),
         timeline,
         sheet,
         pivot_table,
+        cid,
         selection_xml,
         bounds_xml
       ), pointer = FALSE)
