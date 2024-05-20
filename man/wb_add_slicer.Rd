@@ -4,6 +4,7 @@
 \alias{wb_add_slicer}
 \alias{wb_remove_slicer}
 \alias{wb_add_timeline}
+\alias{wb_remove_timeline}
 \title{Add a slicer/timeline to a pivot table}
 \usage{
 wb_add_slicer(
@@ -27,6 +28,8 @@ wb_add_timeline(
   timeline,
   params
 )
+
+wb_remove_timeline(wb, sheet = current_sheet())
 }
 \arguments{
 \item{wb}{A Workbook object containing a worksheet.}
@@ -79,7 +82,7 @@ Possible common \code{params}:
 \item show_caption: logical if caption should be shown or not
 }
 
-Removing slicers works on the spreadsheet level. Therefore all slicers are removed from a worksheet.
+Removing works on the spreadsheet level. Therefore all slicers/timelines are removed from a worksheet. At the moment the drawing reference remains on the spreadsheet. Therefore spreadsheet software that does not handle slicers/timelines will still show the drawing.
 }
 \examples{
 # prepare data
