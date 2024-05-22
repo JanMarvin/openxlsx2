@@ -80,7 +80,6 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
   expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "You must supply positive, consecutive values to `cols`")
 
   expect_error(wb_dims(1, 2, 3))
-  expect_error(wb_dims(x = mtcars, select = c("bad", "col_names")), "accepts a single")
 })
 
 test_that("`wb_dims()` errors when providing unsupported arguments", {
@@ -123,8 +122,6 @@ test_that("wb_dims() works when not supplying `x`.", {
   expect_error(wb_dims(3, 0))
   expect_error(wb_dims(1, 1, col_names = TRUE))
   expect_error(wb_dims(1, 1, row_names = FALSE), "`row_names`")
-  expect_error(wb_dims(2, 10, select = "col_names"), "Can't supply `select` when `x` is absent")
-
 })
 
 test_that("`wb_dims()` can select content in a nice fashion with `x`", {
@@ -270,6 +267,17 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
   expect_equal(wb_dims(x = mtcars, row_names = TRUE, col_names = TRUE), "A1:L33")
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl", row_names = TRUE), "C3:C11")
   # Style row names of an object
+})
+
+test_that("wb_dims() errors clearly with bad `select`.", {
+  expect_error(wb_dims(x = mtcars, select = c("bad", "col_names")), "accepts a single")
+  expect_error(wb_dims(2, 10, select = "col_names"), "Can't supply `select` when `x` is absent")
+
+  expect_error(wb_dims(x = mtcars, col_names = FALSE, select = "col_names"), "col_names = TRUE")
+  expect_error(wb_dims(x = mtcars, col_names = FALSE, select = "row_names"), "row_names = TRUE")
+  expect_error(wb_dims(x = mtcars, row_names = FALSE, select = "row_names"), "row_names = TRUE")
+  # row_names = FALSE is the default
+  expect_error(wb_dims(x = mtcars, select = "row_names"), "row_names = TRUE")
 })
 
 test_that("wb_dims() handles empty data frames", {

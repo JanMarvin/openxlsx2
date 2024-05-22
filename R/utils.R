@@ -405,11 +405,28 @@ determine_select_valid <- function(args, select = NULL) {
   )
 
   if (isFALSE(valid_cases[[select]])) {
-    stop(
-      "You provided a bad value to `select` in `wb_dims()`.\n ",
-      "Please review. see `?wb_dims`.",
-      call. = FALSE
-    )
+
+    if (isFALSE(args$row_names %||% FALSE) && identical(select, "row_names")) {
+      # If the default for row_names ever changes in openxlsx2, this would need adjustment.
+      stop(
+        "`select` can't be \"row_names\" if `x` doesn't have row names.\n",
+        "Provide `wb_dims(x = x, row_names = TRUE, select = \"row_names\")`",
+        call. = FALSE
+        )
+    } else if (isFALSE(args$col_names %||% TRUE) && identical(select, "col_names")) {
+      # If the default for col_names ever changes in openxlsx2, this would need adjustment.
+      stop(
+        "`select` can't be \"col_names\" if `x` doesn't have column names.\n",
+        "Provide `wb_dims(x = x, col_names = TRUE, select = \"col_names\")`",
+        call. = FALSE
+      )
+    } else {
+      stop(
+        "You provided a bad value to `select` in `wb_dims()`.\n ",
+        "Please review. see `?wb_dims`.",
+        call. = FALSE
+      )
+    }
   }
 
   select
