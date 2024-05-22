@@ -410,17 +410,18 @@ determine_select_valid <- function(args, select = NULL) {
       # If the default for row_names ever changes in openxlsx2, this would need adjustment.
       stop(
         "`select` can't be \"row_names\" if `x` doesn't have row names.\n",
-        "Provide `wb_dims(x = x, row_names = TRUE, select = \"row_names\")`",
+        "Use `row_names = TRUE` inside `wb_dims()` to ensure row names are preserved.",
         call. = FALSE
         )
     } else if (isFALSE(args$col_names %||% TRUE) && identical(select, "col_names")) {
       # If the default for col_names ever changes in openxlsx2, this would need adjustment.
       stop(
         "`select` can't be \"col_names\" if `x` doesn't have column names.\n",
-        "Provide `wb_dims(x = x, col_names = TRUE, select = \"col_names\")`",
+        "Use `col_names = TRUE` inside `wb_dims()` to ensure column names are preserved.",
         call. = FALSE
       )
     } else {
+      # this is probably redundant now?
       stop(
         "You provided a bad value to `select` in `wb_dims()`.\n ",
         "Please review. see `?wb_dims`.",
