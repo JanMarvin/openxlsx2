@@ -261,6 +261,48 @@ rowcol_to_dim <- function(row, col) {
   # we will always return something like "A1"
   stringi::stri_join(min_col, min_row)
 }
+
+#' consecutive range in vector
+#' @param x integer vector
+#' @keywords internal
+con_rng <- function(x) {
+  if (length(x) == 0) return(NULL)
+  group <- cumsum(c(1, diff(x) != 1))
+
+  # Extract the first and last element of each group using tapply
+  ranges <- tapply(x, group, function(y) c(beg = y[1], end = y[length(y)]))
+  ranges_df <- do.call(rbind, ranges)
+
+  as.data.frame(ranges_df)
+}
+
+#' create consecutive dims from column and row vector
+#' @param cols,rows integer vectors
+#' @keywords internal
+con_dims <- function(cols, rows) {
+
+  c_cols <- con_rng(cols)
+  c_rows <- con_rng(rows)
+
+  c_cols$beg <- int2col(c_cols$beg)
+  c_cols$end <- int2col(c_cols$end)
+
+  dims_cols <- paste0(c_cols$beg, "%s:", c_cols$end, "%s")
+
+  out <- NULL
+  for (i in seq_along(dims_cols)) {
+    for (j in seq_len(nrow(c_rows))) {
+      beg_row <- c_rows[j, "beg"]
+      end_row <- c_rows[j, "end"]
+
+      dims <- sprintf(dims_cols[i], beg_row, end_row)
+      out <- c(out, dims)
+    }
+  }
+
+  paste0(out, collapse = ",")
+}
+
 check_wb_dims_args <- function(args, select = NULL) {
   select <- match.arg(select, c("x", "data", "col_names", "row_names"))
 

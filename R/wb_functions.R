@@ -109,11 +109,15 @@ dataframe_to_dims <- function(df, dim_break = FALSE) {
     rows <- as.integer(rownames(df))
     cols <- colnames(df)
 
-    tmp <- paste0(
-      cols[[1]][[1]], rows[[1]][[1]],
-      ":",
-      rev(cols)[[1]][[1]], rev(rows)[[1]][[1]]
-    )
+    if (all(diff(col2int(cols)) == 1L) && all(diff(rows) == 1L)) {
+      tmp <- paste0(
+        cols[[1]][[1]], rows[[1]][[1]],
+        ":",
+        rev(cols)[[1]][[1]], rev(rows)[[1]][[1]]
+      )
+    } else {
+      tmp <- con_dims(col2int(cols), rows)
+    }
 
     return(tmp)
 

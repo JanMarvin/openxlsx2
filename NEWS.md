@@ -16,6 +16,8 @@
 
 * Fixes to `wb_clone_worksheet()` cloning drawings and images should be restored. [1016](https://github.com/JanMarvin/openxlsx2/pull/1016)
 
+* Fixed an issue where non consecutive columns with special types would overlap. If columns A and C were dates, column B would be formatted as date too. [1026](https://github.com/JanMarvin/openxlsx2/pull/1026)
+
 
 ***************************************************************************
 
