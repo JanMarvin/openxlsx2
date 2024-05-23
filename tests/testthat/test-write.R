@@ -1205,3 +1205,31 @@ test_that("writing zero row data frames works", {
   expect_equal(exp, got)
 
 })
+
+test_that("non consecutive columns do not overlap", {
+  test_dt <- data.frame(
+    V1 = seq(as.Date("2024-01-01"), as.Date("2024-01-05"), 1),
+    V2 = letters[1:5],
+    V3 = seq(as.Date("2024-01-01"), as.Date("2024-01-05"), 1),
+    V4 = c(letters[3:5], NA, NA),
+    V5 = 1:5,
+    V6 = c(NA, NA, 3, 4, 5),
+    V7 = letters[1:5],
+    V8 = c(letters[3:5], NA, NA),
+    V9 = 1:5,
+    V0 = c(NA, NA, 3, 4, 5)
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = test_dt)
+
+  # df <- wb_to_df(wb, col_names = F)
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+
+  exp <- ""
+  got <- cc[cc$r == "B2", "c_s"]
+  expect_equal(exp, got)
+
+})
