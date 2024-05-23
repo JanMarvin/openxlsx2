@@ -70,6 +70,7 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li><p>Fixed an issue with non consecutive dims, where columns or rows were silently dropped. <a href="https://github.com/JanMarvin/openxlsx2/pull/1015" class="external-link">1015</a></p></li>
 <li><p>Fixes to <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code> cloning drawings and images should be restored. <a href="https://github.com/JanMarvin/openxlsx2/pull/1016" class="external-link">1016</a></p></li>
+<li><p>Fixed an issue where non consecutive columns with special types would overlap. If columns A and C were dates, column B would be formatted as date too. <a href="https://github.com/JanMarvin/openxlsx2/pull/1026" class="external-link">1026</a></p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
