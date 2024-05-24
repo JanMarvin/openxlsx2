@@ -106,6 +106,9 @@ wbWorkbook <- R6::R6Class(
     #' @field drawings_rels drawings_rels
     drawings_rels = NULL,
 
+    #' field docMetadata doc_meta_data
+    docMetadata = NULL,
+
     # #' @field drawings_vml drawings_vml
     # drawings_vml = NULL,
 
@@ -2808,6 +2811,16 @@ wbWorkbook <- R6::R6Class(
         Targets <- c(Targets, "docProps/custom.xml")
       }
 
+      # At the moment there is only a single known docMetadata file
+      if (length(self$docMetadata)) {
+        Ids <- c(Ids, paste0("rId", length(Ids) + 1L))
+        Types <- c(
+          Types,
+          "http://schemas.microsoft.com/office/2020/02/relationships/classificationlabels"
+        )
+        Targets <- c(Targets, "docMetadata/LabelInfo.xml")
+      }
+
       relship <- df_to_xml("Relationship",
         data.frame(Id = Ids, Type = Types, Target = Targets, stringsAsFactors = FALSE)
       )
@@ -2952,6 +2965,14 @@ wbWorkbook <- R6::R6Class(
         for (fl in self$customXml[grepl(".xml.rels$", self$customXml)]) {
           file.copy(fl, customXmlRelsDir, overwrite = TRUE)
         }
+      }
+
+      if (length(self$docMetadata)) {
+        docMetadataDir     <- dir_create(tmpDir, "docMetadata")
+
+        write_file(body = self$docMetadata, fl = file.path(docMetadataDir, "LabelInfo.xml"))
+
+        ct <- append(ct, '<Override PartName="/docMetadata/LabelInfo.xml" ContentType="application/vnd.ms-office.classificationlabels+xml"/>')
       }
 
       ## externalLinks
@@ -6745,9 +6766,17 @@ wbWorkbook <- R6::R6Class(
       # get option and make sure that it can be imported as xml
       mips <- xml %||% getOption("openxlsx2.mips_xml_string")
       if (is.null(mips)) stop("no mips xml provided")
-      mips <- xml_node(mips, "property")
 
-      self$set_properties(custom = mips)
+      nam <- xml_node_name(mips)
+
+      if (all(nam == "clbl:labelList")) {
+        self$docMetadata <- xml_node(mips, nam)
+      } else {
+        mips <- xml_node(mips, "property")
+        self$set_properties(custom = mips)
+      }
+
+      invisible(self)
     },
 
     #' @description get mips string
@@ -6758,11 +6787,18 @@ wbWorkbook <- R6::R6Class(
         prop_nams <- grepl("MSIP_Label_", rbindlist(xml_attr(props, "property"))$name)
 
         name <- grepl("_Name$", rbindlist(xml_attr(props[prop_nams], "property"))$name)
-
         name <- xml_value(props[prop_nams][name], "property", "vt:lpwstr")
+        mips <- props[prop_nams]
+
+        if (length(name) == 0 && length(self$docMetadata)) {
+          name <- xml_attr(self$docMetadata, "clbl:labelList", "clbl:label")[[1]][["id"]]
+          mips <- self$docMetadata
+          # names(mips) <- "docMetadata"
+          single_xml <- FALSE
+        }
+
         if (!quiet) message("Found MIPS section: ", name)
 
-        mips <- props[prop_nams]
         if (single_xml)
           paste0(mips, collapse = "")
         else

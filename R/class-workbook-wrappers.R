@@ -2722,7 +2722,7 @@ wb_set_properties <- function(wb, creator = NULL, title = NULL, subject = NULL, 
 #' @export
 wb_add_mips <- function(wb, xml = NULL) {
   assert_workbook(wb)
-  wb$clone()$set_properties(custom = xml)
+  wb$clone()$add_mips(xml = xml)
 }
 
 #' @param single_xml option to define if the string should be exported as single string. helpful if storing as option is desired.

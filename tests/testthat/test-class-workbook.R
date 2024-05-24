@@ -1216,3 +1216,15 @@ test_that("adding mips section works", {
   expect_equal(exp, got)
 
 })
+
+test_that("handling mips in docMetadata works", {
+  tmp <- temp_xlsx()
+  xml <- '<clbl:labelList xmlns:clbl=\"http://schemas.microsoft.com/office/2020/mipLabelMetadata\"><clbl:label foo="bar"/></clbl:labelList>'
+  wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_mips(xml = xml)
+  wb$docMetadata
+  wb$save(tmp)
+  rm(wb)
+
+  wb <- wb_load(tmp)
+  expect_equal(xml, wb$docMetadata)
+})

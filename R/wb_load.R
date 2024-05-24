@@ -112,7 +112,6 @@ wb_load <- function(
   }
 
   ## Not used
-  # .relsXML          <- grep_xml("_rels/.rels$")
   ContentTypesXML   <- grep_xml("\\[Content_Types\\].xml$")
 
   if (length(ContentTypesXML) == 0 && !debug) {
@@ -120,11 +119,14 @@ wb_load <- function(
     stop(msg)
   }
 
+  # relsXML           <- grep_xml("_rels/.rels$")
+
   appXML            <- grep_xml("app.xml$")
   coreXML           <- grep_xml("core.xml$")
   customXML         <- grep_xml("custom.xml$")
 
   customXmlDir      <- grep_xml("customXml/")
+  docMetadataXML    <- grep_xml("docMetadata/")
 
   workbookBIN       <- grep_xml("workbook.bin$")
   workbookXML       <- grep_xml("workbook.xml$")
@@ -218,11 +220,11 @@ wb_load <- function(
   file_folders <- unique(basename(dirname(xmlFiles)))
   known <- c(
     basename(xmlDir), "_rels", "charts", "chartsheets", "ctrlProps",
-    "customXml", "docProps", "drawings", "embeddings", "externalLinks",
-    "media", "persons", "pivotCache", "pivotTables", "printerSettings",
-    "queryTables", "richData", "slicerCaches", "slicers", "tables", "theme",
-    "threadedComments", "timelineCaches", "timelines", "worksheets", "xl",
-    "[trash]"
+    "customXml", "docMetadata", "docProps", "drawings", "embeddings",
+    "externalLinks", "media", "persons", "pivotCache", "pivotTables",
+    "printerSettings", "queryTables", "richData", "slicerCaches",
+    "slicers", "tables", "theme", "threadedComments", "timelineCaches",
+    "timelines", "worksheets", "xl", "[trash]"
   )
   unknown <- file_folders[!file_folders %in% known]
   # nocov start
@@ -320,6 +322,17 @@ wb_load <- function(
   if (!data_only && length(customXML)) {
     wb$append("Content_Types", '<Override PartName="/docProps/custom.xml" ContentType="application/vnd.openxmlformats-officedocument.custom-properties+xml"/>')
     wb$custom <- read_xml(customXML, pointer = FALSE)
+  }
+
+  if (!data_only && length(docMetadataXML)) {
+
+    # rels <- read_xml(relsXML)
+    # rels_df <- rbindlist(xml_attr(rels, "Relationships", "Relationship"))
+
+    if (any(basename2(docMetadataXML) != "LabelInfo.xml"))
+      warning("unknown metadata file found")
+
+    wb$docMetadata <- read_xml(docMetadataXML, pointer = FALSE)
   }
 
   nSheets <- length(worksheetsXML) + length(chartSheetsXML)
