@@ -2548,13 +2548,30 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       ccolspan = readbin(ccolspan, bin, swapit);
       if (ccolspan > 16) Rcpp::stop("ccolspan to large");
       std::string spans;
-      if (ccolspan) {
-        // rgBrtColspan
-        // not sure if these are alway around. maybe ccolspan is a counter
-        colMic = readbin(colMic, bin, swapit);
-        colLast = readbin(colLast, bin, swapit);
 
-        spans = std::to_string(colMic + 1) + ":" + std::to_string(colLast + 1);
+      std::vector<int32_t> spans_int;
+      if (ccolspan) {
+        // has number of rgBrtColspan elements. For now take max and min value.
+        // there are other types of spans (1:1 1024:16384), but unsure how this is
+        // supposed to be handled. It's possible to have elements like spans =
+        // "1:1 16384:16384" which we will read as spans = "1:16384"
+        for (uint8_t clpn = 0; clpn < ccolspan; ++clpn) {
+          colMic = readbin(colMic, bin, swapit);
+          colLast = readbin(colLast, bin, swapit);
+
+          if (debug) {
+            spans = std::to_string(colMic + 1) + ":" + std::to_string(colLast + 1);
+            Rcpp::Rcout << (int32_t)clpn << ": " << spans << std::endl;
+          }
+
+          spans_int.push_back(colMic);
+          spans_int.push_back(colLast);
+        }
+
+        int32_t min_span = *std::min_element(spans_int.begin(), spans_int.end());
+        int32_t max_span = *std::max_element(spans_int.begin(), spans_int.end());
+
+        spans = std::to_string(min_span + 1) + ":" + std::to_string(max_span + 1);
       }
 
       out << "<row r=\""; //  << bin.tellg()
