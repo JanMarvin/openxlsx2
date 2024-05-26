@@ -487,7 +487,7 @@ void wide_to_long(
   R_xlen_t idx = 0;
 
   bool has_dims = false;
-  if (dims.size() == n * m) has_dims = true;
+  if (dims.size() == (size_t)(n * m)) has_dims = true;
 
   for (auto i = 0; i < m; ++i) {
     Rcpp::checkUserInterrupt();
