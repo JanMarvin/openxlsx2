@@ -2546,7 +2546,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       // fReserved = 7
 
       ccolspan = readbin(ccolspan, bin, swapit);
-      if (ccolspan >= 16) Rcpp::stop("ccolspan to large");
+      if (ccolspan > 16) Rcpp::stop("ccolspan to large");
       std::string spans;
       if (ccolspan) {
         // rgBrtColspan
