@@ -454,7 +454,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
           if (fields->fJustLast)
             out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
           if (trot)
-            out << " textRotation=\"" << trot <<"\"";
+            out << " textRotation=\"" << (uint16_t)trot <<"\"";
 
           out << "/>";
           out << "</xf>" << std::endl;
@@ -1205,7 +1205,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
         uint32_t col = UncheckedCol(bin, swapit);
         value = readbin(value, bin, swapit);
         out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"b\">" << std::endl;
-        out << "<v>" << value << "</v>" << std::endl;
+        out << "<v>" << (uint16_t)value << "</v>" << std::endl;
         out << "</cell>" << std::endl;
 
         break;
