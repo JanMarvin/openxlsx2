@@ -106,7 +106,7 @@ wbWorkbook <- R6::R6Class(
     #' @field drawings_rels drawings_rels
     drawings_rels = NULL,
 
-    #' field docMetadata doc_meta_data
+    #' @field docMetadata doc_meta_data
     docMetadata = NULL,
 
     # #' @field drawings_vml drawings_vml

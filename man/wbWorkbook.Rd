@@ -79,6 +79,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{drawings_rels}}{drawings_rels}
 
+\item{\code{docMetadata}}{doc_meta_data}
+
 \item{\code{embeddings}}{embeddings}
 
 \item{\code{externalLinks}}{externalLinks}
