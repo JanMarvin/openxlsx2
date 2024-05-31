@@ -75,6 +75,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{custom}}{custom}
 
+\item{\code{blob}}{blob}
+
 \item{\code{drawings}}{drawings}
 
 \item{\code{drawings_rels}}{drawings_rels}

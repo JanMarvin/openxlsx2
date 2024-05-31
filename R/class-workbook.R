@@ -100,6 +100,9 @@ wbWorkbook <- R6::R6Class(
     #' @field custom custom
     custom = character(),
 
+    #' @field blob blob
+    blob = NULL,
+
     #' @field drawings drawings
     drawings = NULL,
 
@@ -2929,7 +2932,6 @@ wbWorkbook <- R6::R6Class(
       ## ct is updated as xml
       ct <- c(default, df_to_xml(name = "Override", df_col = override[c("PartName", "ContentType")]))
 
-
       ## write query tables
       if (length(self$queryTables)) {
         xlqueryTablesDir <- dir_create(tmpDir, "xl", "queryTables")
@@ -2954,6 +2956,10 @@ wbWorkbook <- R6::R6Class(
         for (i in seq_along(self$ctrlProps)) {
           write_file(body = self$ctrlProps[i], fl = file.path(ctrlPropsDir, sprintf("ctrlProp%i.xml", i)))
         }
+      }
+
+      if (length(self$blob)) {
+        file.copy(self$blob, paste0(tmpDir, "/xl/", basename2(self$blob)), overwrite = TRUE)
       }
 
       if (length(self$customXml)) {
@@ -9598,6 +9604,11 @@ wbWorkbook <- R6::R6Class(
       slicerNode       <- grep("slicerCache[0-9]+.xml",                     self$workbook.xml.rels, value = TRUE)
       timelineNode     <- grep("timelineCache[0-9]+.xml",                   self$workbook.xml.rels, value = TRUE)
 
+      ## Others
+      blob <- NULL
+      if (length(self$blob))
+        blob           <- grep(paste0(basename2(self$blob), collapse = "|"), self$workbook.xml.rels, value = TRUE)
+
       ## Reorder children of workbook.xml.rels
       self$workbook.xml.rels <-
         self$workbook.xml.rels[c(
@@ -9627,7 +9638,7 @@ wbWorkbook <- R6::R6Class(
           }
         )
 
-      self$append("workbook.xml.rels", c(pivotNode, slicerNode, timelineNode))
+      self$append("workbook.xml.rels", c(pivotNode, slicerNode, timelineNode, blob))
 
       if (length(self$metadata)) {
         self$append("workbook.xml.rels",

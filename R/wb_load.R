@@ -207,16 +207,6 @@ wb_load <- function(
   ## VBA Macro
   vbaProject        <- grep_xml("vbaProject\\.bin$")
 
-  ## remove all EXCEPT media and charts
-  on.exit(
-    unlink(
-      # TODO: this removes all files, the folders remain. grep instead grep_xml?
-      grep_xml("media|vmlDrawing|customXml|embeddings|vbaProject", ignore.case = TRUE, invert = TRUE),
-      recursive = TRUE, force = TRUE
-    ),
-    add = TRUE
-  )
-
   file_folders <- unique(basename(dirname(xmlFiles)))
   known <- c(
     basename(xmlDir), "_rels", "charts", "chartsheets", "ctrlProps",
@@ -377,6 +367,28 @@ wb_load <- function(
         "workbook.xml.rels",
         "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
       )
+    }
+
+    if (any(sel <- !grepl("Type=\"http://schemas.openxmlformats.org|Type=\"http://schemas.microsoft.com/office/", workbookRelsXML))) {
+      wb$append(
+        "workbook.xml.rels",
+        workbookRelsXML[sel]
+      )
+
+      need_also <- rbindlist(xml_attr(workbookRelsXML[sel], "Relationship"))$Target
+
+      grep_need_also <- paste0(paste0("xl/", need_also), collapse = "|")
+
+      ct_override  <- xml_node(ContentTypesXML, "Types", "Override")
+      ct_need_also <- ct_override[grepl(grep_need_also, ct_override)]
+
+      wb$append(
+        "Content_Types",
+        ct_need_also
+      )
+
+      wb$blob <- paste0(xmlDir, "/xl/", need_also)
+
     }
   }
 
@@ -1673,6 +1685,25 @@ wb_load <- function(
   if (length(workbookBIN)) {
     wb$workbook$xti <- NULL
   }
+
+  do_not_remove <- c(
+    if (length(wb$blob)) paste0(basename2(wb$blob)) else NULL,
+    "media",
+    "vmlDrawing",
+    "customXml",
+    "embeddings",
+    "vbaProject"
+  )
+
+  ## remove all EXCEPT media and charts
+  on.exit(
+    unlink(
+      # TODO: this removes all files, the folders remain. grep instead grep_xml?
+      grep_xml(paste0(do_not_remove, collapse = "|"), ignore.case = TRUE, invert = TRUE),
+      recursive = TRUE, force = TRUE
+    ),
+    add = TRUE
+  )
 
 
   return(wb)
