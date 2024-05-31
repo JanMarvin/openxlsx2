@@ -501,7 +501,16 @@ wb_load <- function(
 
     extLst <- xml_node(workbook_xml, "workbook", "extLst")
     if (!data_only && length(extLst)) {
-      wb$workbook$extLst <- extLst
+
+      # remove GoogleSheets "metadata" binary blob
+      ext <- xml_node(extLst, "extLst", "ext")
+      sel <- which(grepl("GoogleSheets", ext))
+
+      if (length(sel))
+        extLst <- xml_rm_child(extLst, "ext", which = sel)
+
+      if (length(xml_node_name(extLst, "extLst")))
+        wb$workbook$extLst <- extLst
     }
 
     workbookPr <- xml_node(workbook_xml, "workbook", "workbookPr")
