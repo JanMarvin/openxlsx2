@@ -48,6 +48,7 @@
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Add conditional formatting to a workbook</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">Add charts to a workbook</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">Add formulas to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_read_to_df.html">openxlsx2 read to data frame manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">Add styling to a workbook</a>
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
   </div>
@@ -101,350 +102,172 @@ countless other R-packages as well as third party libraries or
 calculation software capable of handling such files. Please feel free to
 use and test your files with other software and or let us know about
 your experience. Open an issue on github or write us a mail.</p>
-<div class="section level2">
-<h2 id="importing-data">Importing data<a class="anchor" aria-label="anchor" href="#importing-data"></a>
-</h2>
-<p>Coming from <code>openxlsx</code> you might know about
-<code>read.xlsx()</code> (two functions, one for files and one for
-workbooks) and <code>readWorkbook()</code>. Functions that do different
-things, but mostly the same. In <code>openxlsx2</code> we tried our best
-to reduce the complexity under the hood and for the user as well. In
-<code>openxlsx2</code> they are replaced with <code><a href="../reference/wb_to_df.html">read_xlsx()</a></code>,
-<code><a href="../reference/wb_to_df.html">wb_read()</a></code> and they share the same underlying function
-<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>.</p>
-<p>For this example we will use example data provided by the package.
-You can locate it in our “inst/extdata” folder. The files are included
-with the package source and you can open them in any calculation
-software as well.</p>
 <div class="section level3">
-<h3 id="basic-import">Basic import<a class="anchor" aria-label="anchor" href="#basic-import"></a>
+<h3 id="first-steps">First steps<a class="anchor" aria-label="anchor" href="#first-steps"></a>
 </h3>
-<p>We begin with the <code>openxlsx2_example.xlsx</code> file by telling
-R where to find this file on our system</p>
+<p>First let’s assume that you have a working installation of
+<code>openxlsx2</code> otherwise run the lines below to install the
+latest CRAN release:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
-<p>The object contains a path to the xlsx file and we pass this file to
-our function to read the workbook into R</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
+<p>Now we load the library:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># import workbook</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/openxlsx2/">openxlsx2</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
-<p>The output is created as a data frame and contains data types date,
-logical, numeric and character. The function to import the file to R,
-<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> provides similar options as the
-<code>openxlsx</code> functions <code>read.xlsx()</code> and
-<code>readWorkbook()</code> and a few new functions we will go through
-the options. As you might have noticed, we return the column of the xlsx
-file as the row name of the data frame returned. Per default the first
-sheet in the workbook is imported. If you want to switch this, either
-provide the <code>sheet</code> parameter with the correct index or
-provide the sheet name.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/openxlsx2/">openxlsx2</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="col_names---first-row-as-column-name">
-<code>col_names</code> - first row as column name<a class="anchor" aria-label="anchor" href="#col_names---first-row-as-column-name"></a>
+<h3 id="handling-workbooks">Handling workbooks<a class="anchor" aria-label="anchor" href="#handling-workbooks"></a>
 </h3>
-<p>In the previous example the first imported row was used as column
-name for the data frame. This is the default behavior, but not always
-wanted or expected. Therefore this behavior can be disabled by the
-user.</p>
+<p>The foundation of <code>openxlsx2</code> is a workbook object. You
+can think of this object as a workbook loaded in a spreadsheet software.
+We import the entire thing. Every sheet, every chart, image, column,
+formula style, conditional formatting, pivot table and whatever else a
+spreadsheet file is allowed to carry. Therefore if you have a file that
+you want to work with, you can load it with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># do not convert first row to column names</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        B    C  D     E     F          G            H       I        J</span></span>
-<span><span class="co">#&gt; 2   Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE &lt;NA&gt; NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9   &lt;NA&gt; &lt;NA&gt; NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12  &lt;NA&gt;    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="detect_dates---convert-cells-to-r-dates">
-<code>detect_dates</code> - convert cells to R dates<a class="anchor" aria-label="anchor" href="#detect_dates---convert-cells-to-r-dates"></a>
-</h3>
-<p>The creators of the openxml standard are well known for mistakenly
-treating something as a date and <code>openxlsx2</code> has built in
-ways to identify a cell as a date and will try to convert the value for
-you, but unfortunately this is not always a trivial task and might fail.
-In such a case we provide an option to disable the date conversion
-entirely. In this case the underlying numerical value will be
-returned.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># do not try to identify dates in the data</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, detect_dates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4  Var5         Var6    Var7       Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 45075 3209324 This #DIV/0! 0.06059028</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 45069         &lt;NA&gt;       0 0.58538194</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 44958         &lt;NA&gt; #VALUE! 0.95905093</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!    NA         &lt;NA&gt;       2 0.72561343</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 44987         &lt;NA&gt;     2.7 0.36525463</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 45284         &lt;NA&gt;      25         NA</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 45285         &lt;NA&gt;       3         NA</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 45138         &lt;NA&gt;     122         NA</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="show_formula---show-formulas-instead-of-results">
-<code>show_formula</code> - show formulas instead of results<a class="anchor" aria-label="anchor" href="#show_formula---show-formulas-instead-of-results"></a>
-</h3>
-<p>Sometimes things might feel off. This can be because the openxml
-files are not updating formula results in the sheets unless they are
-opened in software that provides such functionality as certain tabular
-calculation software. Therefore the user might be interested in the
-underlying functions to see what is going on in the sheet. Using
-<code>show_formula</code> this is possible</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span><span class="st">"your_file.xlsx"</span><span class="op">)</span></span></code></pre></div>
+<p>We usually name workbook objects <code>wb</code> in our
+documentation, but this is no obligation, you can name your workbook
+object whatever you like to call them.</p>
+<p>If you do not have a workbook yet, it is possible to create one. In
+the next line we will use three wrapper functions
+<code><a href="../reference/wb_workbook.html">wb_workbook()</a></code>, <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code>, and
+<code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>. The wrapper functions are piped together
+using the classic <code>magrittr</code> pipe operator
+<code>%&gt;%</code>, but similarly you can use the <code>R</code>’s
+native pipe operator <code>|&gt;</code>. <a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Basically a pipe operator allows to write code from left
+to right. Without pipes the code would look like this:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb4"&gt;&lt;pre class="downlit sourceCode r"&gt;
+&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="va"&gt;wb&lt;/span&gt; &lt;span class="op"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu"&gt;&lt;a href="../reference/wb_add_data.html"&gt;wb_add_data&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/wb_add_worksheet.html"&gt;wb_add_worksheet&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/wb_workbook.html"&gt;wb_workbook&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;, x &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;your_data&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>1</sup></a> We assume that you
+have a dataset <code>your_data</code>, either a vector, a matrix or a
+data frame and want to write this in a worksheet:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># return the underlying Excel formula instead of their values</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, show_formula <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6            Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This            E3/0 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;              C4 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt;         #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;           C6+E6 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;           C8+E8 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;    SUM(C10,E10)     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt; PRODUCT(C11,E3)     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;         E12-C12     &lt;NA&gt;</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="dims---read-specific-dimension">
-<code>dims</code> - read specific dimension<a class="anchor" aria-label="anchor" href="#dims---read-specific-dimension"></a>
-</h3>
-<p>Sometimes the entire worksheet contains to much data, in such case we
-provide functions to read only a selected dimension range. Such a range
-consists of either a specific cell like “A1” or a cell range in the
-notion used in the <code>openxml</code> standard</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">your_data</span><span class="op">)</span></span></code></pre></div>
+<p>Okay, now you have a workbook object, but what have we actually done?
+Let’s work along the pipe syntax: (1) first we have created the workbook
+object <code>wb_worbkook()</code>, (2) next we have assigned it a
+worksheet <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code>, and (3) we have written data
+onto the worksheet.</p>
+<p>Let’s try this with actual data. We use the <code>mtcars</code>
+dataset. In the code we switch the fictional <code>your_data</code> with
+<code>mtcars</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># read dimension without column names</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    A    B    C</span></span>
-<span><span class="co">#&gt; 2 NA Var1 Var2</span></span>
-<span><span class="co">#&gt; 3 NA TRUE    1</span></span>
-<span><span class="co">#&gt; 4 NA TRUE &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5 NA TRUE    2</span></span></code></pre></div>
-<p>Alternatively, if you don’t know the Excel sheet’s address, you can
-use <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to specify the dimension. See below or
-in<code><a href="../reference/wb_dims.html">?wb_dims</a></code> for more details.</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></code></pre></div>
+<p>Let’s see what the output looks like:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># read dimension without column names with `wb_dims()`</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    A    B    C</span></span>
-<span><span class="co">#&gt; 2 NA Var1 Var2</span></span>
-<span><span class="co">#&gt; 3 NA TRUE    1</span></span>
-<span><span class="co">#&gt; 4 NA TRUE &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5 NA TRUE    2</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="cols---read-selected-columns">
-<code>cols</code> - read selected columns<a class="anchor" aria-label="anchor" href="#cols---read-selected-columns"></a>
-</h3>
-<p>If you do not want to read a specific cell, but a cell range you can
-use the column attribute. This attribute takes a numeric vector as
-argument</p>
+<code class="sourceCode R"><span><span class="va">wb</span></span>
+<span><span class="co">#&gt; A Workbook object.</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Worksheets:</span></span>
+<span><span class="co">#&gt;  Sheets: Sheet 1 </span></span>
+<span><span class="co">#&gt;  Write order: 1</span></span></code></pre></div>
+<p>The output looks a little cryptic, it simply tells the name of the
+worksheet: <code><a href="../reference/wb_add_worksheet.html">wb_add_worksheet()</a></code> created a default worksheet
+name <code>"Sheet 1"</code>. In the code above you can see that we do
+not use <code>sheet</code> to tell <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> where it
+should write the data. This is because internally we use a waiver
+<code><a href="../reference/waivers.html">current_sheet()</a></code> so that we do not have to write
+<code>sheet = "Sheet 1"</code> whenever we work on the same worksheet.
+Basically the current sheet is updated whenever a new worksheet is added
+to the workbook.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># read selected cols</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A:B"</span>, <span class="st">"G"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    NA  Var1       Var5</span></span>
-<span><span class="co">#&gt; 3  NA  TRUE 2023-05-29</span></span>
-<span><span class="co">#&gt; 4  NA  TRUE 2023-05-23</span></span>
-<span><span class="co">#&gt; 5  NA  TRUE 2023-02-01</span></span>
-<span><span class="co">#&gt; 6  NA FALSE       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 7  NA FALSE       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  NA FALSE 2023-03-02</span></span>
-<span><span class="co">#&gt; 9  NA    NA       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 NA FALSE 2023-12-24</span></span>
-<span><span class="co">#&gt; 11 NA FALSE 2023-12-25</span></span>
-<span><span class="co">#&gt; 12 NA    NA 2023-07-31</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="rows---read-selected-rows">
-<code>rows</code> - read selected rows<a class="anchor" aria-label="anchor" href="#rows---read-selected-rows"></a>
-</h3>
-<p>The same goes with rows. You can select them using numeric
-vectors</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></code></pre></div>
+<p>This will create two sheets <code>"Sheet 1"</code> and
+<code>"Sheet 2"</code> and the data will be written to the second
+sheet.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># read selected rows</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Var1 Var2 NA  Var3  Var4       Var5 Var6 Var7     Var8</span></span>
-<span><span class="co">#&gt; 4  TRUE   NA NA #NUM!     b 2023-05-23   NA    0 14:02:57</span></span>
-<span><span class="co">#&gt; 6 FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;   NA    2 17:24:53</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="convert---convert-input-to-guessed-type">
-<code>convert</code> - convert input to guessed type<a class="anchor" aria-label="anchor" href="#convert---convert-input-to-guessed-type"></a>
-</h3>
-<p>In xml exists no difference between value types. All values are per
-default characters. To provide these as numerics, logicals or dates,
-<code>openxlsx2</code> and every other software dealing with xlsx files
-has to make assumptions about the cell type. This is especially tricky
-due to the notion of worksheets. Unlike in a data frame, a worksheet can
-have a wild mix of all types of data. Even though the conversion process
-from character to date or numeric is rather solid, sometimes the user
-might want to see the data without any conversion applied. This might be
-useful in cases where something unexpected happened or the import
-created warnings. In such a case you can look at the raw input data. If
-you want to disable date detection as well, please see the entry
-above.</p>
+<code class="sourceCode R"><span><span class="va">wb</span></span>
+<span><span class="co">#&gt; A Workbook object.</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Worksheets:</span></span>
+<span><span class="co">#&gt;  Sheets: Sheet 1, Sheet 2 </span></span>
+<span><span class="co">#&gt;  Write order: 1, 2</span></span></code></pre></div>
+<p>So how can we access the data on the sheet? Either with
+<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> our internal handler to read from workbooks
+(this is the underlying function for <code><a href="../reference/wb_to_df.html">wb_read()</a></code> and
+<code><a href="../reference/wb_to_df.html">read_xlsx()</a></code> which are mere aliases for
+<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>). So lets have a look at the top of the
+output:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># convert characters to numerics and date (logical too?)</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2   NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 &lt;NA&gt;     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE &lt;NA&gt; &lt;NA&gt; #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 &lt;NA&gt;  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 &lt;NA&gt;  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 &lt;NA&gt;  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 &lt;NA&gt;   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9   &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 &lt;NA&gt;    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 &lt;NA&gt;  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12  &lt;NA&gt;    1 &lt;NA&gt;   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="skip_empty_rows---remove-empty-rows">
-<code>skip_empty_rows</code> - remove empty rows<a class="anchor" aria-label="anchor" href="#skip_empty_rows---remove-empty-rows"></a>
-</h3>
-<p>Even though <code>openxlsx2</code> imports everything as requested,
-sometimes it might be helpful to remove empty lines from the data. These
-might be either left empty intentional or empty because they are were
-formatted, but the cell value was removed afterwards. This was added
-mostly for backward comparability, but the default has been changed to
-<code>FALSE</code>. The behavior has changed a bit as well. Previously
-empty cells were removed prior to the conversion to R data frames, now
-they are removed after the conversion and are removed only if they are
-completely empty</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; sheet found, but contains no data</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<p>Ah! The output is on the second sheet. We need either
+<code>sheet = 2</code> or <code>sheet = "Sheet 2"</code>. We go with the
+second variant, because the sheet index position and their name might
+differ.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># erase empty rows from dataset</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, sheet <span class="op">=</span> <span class="fl">1</span>, skip_empty_rows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA Var3  Var4       Var5 Var6 Var7     Var8</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA &lt;NA&gt; #NUM!       &lt;NA&gt; &lt;NA&gt;    2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA 1.56     e       &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA  1.7     f 2023-03-02 &lt;NA&gt;  2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA   23     h 2023-12-24 &lt;NA&gt;   25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA 67.3     i 2023-12-25 &lt;NA&gt;    3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA  123  &lt;NA&gt; 2023-07-31 &lt;NA&gt;  122     &lt;NA&gt;</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="skip_empty_cols---remove-empty-columns">
-<code>skip_empty_cols</code> - remove empty columns<a class="anchor" aria-label="anchor" href="#skip_empty_cols---remove-empty-columns"></a>
-</h3>
-<p>The same for columns</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet 2"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    mpg cyl disp  hp drat    wt  qsec vs am gear carb</span></span>
+<span><span class="co">#&gt; 2 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4</span></span>
+<span><span class="co">#&gt; 3 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4</span></span>
+<span><span class="co">#&gt; 4 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</span></span>
+<span><span class="co">#&gt; 5 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1</span></span>
+<span><span class="co">#&gt; 6 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2</span></span>
+<span><span class="co">#&gt; 7 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</span></span></code></pre></div>
+<p>This looks like the head of the <code>mtcars</code> dataset. So we
+have successfully read from the workbook. Now you want to export the
+workbook to a file:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># erase empty cols from dataset</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, skip_empty_cols <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="row_names---keep-rownames-from-input">
-<code>row_names</code> - keep rownames from input<a class="anchor" aria-label="anchor" href="#row_names---keep-rownames-from-input"></a>
-</h3>
-<p>Sometimes the data source might provide rownames as well. In such a
-case you can <code>openxlsx2</code> to treat the first column as
-rowname</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_save.html">wb_save</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"my_first_worksheet.xlsx"</span><span class="op">)</span></span></code></pre></div>
+<p>Alternatively you can directly open it in a spreadsheet software (if
+you have one installed):</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># convert first row to rownames</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, sheet <span class="op">=</span> <span class="fl">2</span>, dims <span class="op">=</span> <span class="st">"C6:G9"</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                mpg cyl disp  hp</span></span>
-<span><span class="co">#&gt; Mazda RX4     21.0   6  160 110</span></span>
-<span><span class="co">#&gt; Mazda RX4 Wag 21.0   6  160 110</span></span>
-<span><span class="co">#&gt; Datsun 710    22.8   4  108  93</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="types---convert-column-to-specific-type">
-<code>types</code> - convert column to specific type<a class="anchor" aria-label="anchor" href="#types---convert-column-to-specific-type"></a>
-</h3>
-<p>If the user know better than the software what type to expect in a
-worksheet, this can be provided via types. This parameter takes a named
-numeric. <code>0</code> is character, <code>1</code> is numeric and
-<code>2</code> is date</p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_open.html">wb_open</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Once again, lets try this with the <code>USPersonalExpenditure</code>
+dataset:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># define type of the data.frame</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span>, types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Var1"</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">"Var3"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1   Var3</span></span>
-<span><span class="co">#&gt; 3   TRUE   1.00</span></span>
-<span><span class="co">#&gt; 4   TRUE    NaN</span></span>
-<span><span class="co">#&gt; 5   TRUE   1.34</span></span>
-<span><span class="co">#&gt; 6  FALSE     NA</span></span>
-<span><span class="co">#&gt; 7  FALSE   1.56</span></span>
-<span><span class="co">#&gt; 8  FALSE   1.70</span></span>
-<span><span class="co">#&gt; 9   &lt;NA&gt;     NA</span></span>
-<span><span class="co">#&gt; 10 FALSE  23.00</span></span>
-<span><span class="co">#&gt; 11 FALSE  67.30</span></span>
-<span><span class="co">#&gt; 12  &lt;NA&gt; 123.00</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="start_row---where-to-begin">
-<code>start_row</code> - where to begin<a class="anchor" aria-label="anchor" href="#start_row---where-to-begin"></a>
-</h3>
-<p>Often the creator of the worksheet has used a lot of creativity and
-the data does not begin in the first row, instead it begins somewhere
-else. To define the row where to begin reading, define it via the
-<code>start_row</code> parameter</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># start in row 5</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, start_row <span class="op">=</span> <span class="fl">5</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        B  C  D      E     F          G  H       I        J</span></span>
-<span><span class="co">#&gt; 5   TRUE  2 NA   1.34     c 2023-02-01 NA #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE  2 NA     NA #NUM!       &lt;NA&gt; NA       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE  3 NA   1.56     e       &lt;NA&gt; NA    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE  1 NA   1.70     f 2023-03-02 NA     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA NA NA     NA  &lt;NA&gt;       &lt;NA&gt; NA    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE  2 NA  23.00     h 2023-12-24 NA      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE  3 NA  67.30     i 2023-12-25 NA       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA  1 NA 123.00  &lt;NA&gt; 2023-07-31 NA     122     &lt;NA&gt;</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="na-strings---define-missing-values">
-<code>na.strings</code> - define missing values<a class="anchor" aria-label="anchor" href="#na-strings---define-missing-values"></a>
-</h3>
-<p>There is the “#N/A” string, but often the user will be faced with
-custom missing values and other values we are not interested. Such
-strings can be passed as character vector via
-<code>na.strings</code></p>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="st">"USexp"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"USexp"</span>, <span class="va">USPersonalExpenditure</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; Error : Can't add data to a workbook with no worksheet.</span></span>
+<span><span class="co">#&gt; Did you forget to add a worksheet with `wb_add_worksheet()`?</span></span></code></pre>
+<p>Dang! What did we do? We’ve added a worksheet, but wait, did we? No,
+you have to assign wrapper functions to an object for them to have an
+effect. Wrapper functions do not alter the workbook objects they are
+executed on. You can check that the workbook has no worksheets:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># na strings</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, na.strings <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/sheet_names-wb.html">wb_get_sheet_names</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; named character(0)</span></span></code></pre></div>
+<p>Once we assign a sheet, this changes, and the data was correctly
+written:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="st">"USexp"</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"USexp"</span>, <span class="va">USPersonalExpenditure</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/sheet_names-wb.html">wb_get_sheet_names</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   USexp </span></span>
+<span><span class="co">#&gt; "USexp"</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     1940   1945  1950 1955  1960</span></span>
+<span><span class="co">#&gt; 2 22.200 44.500 59.60 73.2 86.80</span></span>
+<span><span class="co">#&gt; 3 10.500 15.500 29.00 36.5 46.20</span></span>
+<span><span class="co">#&gt; 4  3.530  5.760  9.71 14.0 21.10</span></span>
+<span><span class="co">#&gt; 5  1.040  1.980  2.45  3.4  5.40</span></span>
+<span><span class="co">#&gt; 6  0.341  0.974  1.80  2.6  3.64</span></span></code></pre></div>
+<p>Now you’re probably thinking, I don’t want to assign the workbook
+object all the time and all the <code>wb_</code> functions are a little
+tedious to type. There is an alternative for you and it is called
+chaining. Since the workbook is a <code>R6</code> object internally, you
+can make use of chains. Basically every function that starts with
+<code>wb_</code> should have a underlying function of the same name
+without the prefix. So our data writing example from above can be
+written as:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"USexp"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">USPersonalExpenditure</span><span class="op">)</span></span>
+<span><span class="va">wb</span><span class="op">$</span><span class="fu">to_df</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     1940   1945  1950 1955  1960</span></span>
+<span><span class="co">#&gt; 2 22.200 44.500 59.60 73.2 86.80</span></span>
+<span><span class="co">#&gt; 3 10.500 15.500 29.00 36.5 46.20</span></span>
+<span><span class="co">#&gt; 4  3.530  5.760  9.71 14.0 21.10</span></span>
+<span><span class="co">#&gt; 5  1.040  1.980  2.45  3.4  5.40</span></span>
+<span><span class="co">#&gt; 6  0.341  0.974  1.80  2.6  3.64</span></span></code></pre></div>
+<p>Whether you use wrapper functions or chain functions is up to you and
+personal preference. There is just one thing to remember, the
+documentation is exclusively written for the wrapper function. So if you
+want to know the arguments for the <code>wb$add_data()</code> part, you
+have to lookup the wrapper functions man page
+<code><a href="../reference/wb_add_data.html">?wb_add_data</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="importing-as-workbook">Importing as workbook<a class="anchor" aria-label="anchor" href="#importing-as-workbook"></a>
@@ -456,7 +279,7 @@ This <code>workbook</code> class is the heart of <code>openxlsx2</code>
 and probably the reason why you are reading this manual in the first
 place.</p>
 <p>Importing a file into a workbook looks like this:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># the file we are going to load</span></span>
 <span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span>
 <span><span class="co"># loading the file into the workbook</span></span>
@@ -477,7 +300,6 @@ fonts, background colors and number formats. There is a wealth of
 options explained in the man pages and the additional style vignette
 (more vignettes to follow).</p>
 </div>
-</div>
 <div class="section level2">
 <h2 id="exporting-data">Exporting data<a class="anchor" aria-label="anchor" href="#exporting-data"></a>
 </h2>
@@ -488,7 +310,7 @@ options explained in the man pages and the additional style vignette
 <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> which will create an xlsx file. This file can
 be tweaked further. See <code><a href="../reference/write_xlsx.html">?write_xlsx</a></code> to see all the options.
 (further explanation and examples will follow).</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_xlsx.html">write_xlsx</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, file <span class="op">=</span> <span class="st">"mtcars.xlsx"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -502,7 +324,7 @@ the file you want to write already exists. But be careful, this is
 optional. The default is to save the file and replace an existing file.
 Of course, on Windows, files that are locked (for example, if they were
 opened by another process) will not be replaced.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># replace the existing file</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="st">"mtcars.xlsx"</span><span class="op">)</span></span>
 <span></span>
@@ -522,55 +344,55 @@ notation. The single argument <code>dims</code> hereby replaces
 and <code>xy</code>. Since A1 notation is rather simple in the first few
 columns it might get confusing after the 26. Therefore we provide a
 wrapper to construct it:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># various options</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>from_row <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A4"</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span>, cols <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "D4"</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span>, cols <span class="op">=</span> <span class="st">"D"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "D4"</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">5</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "E4:I10"</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="st">"A:D"</span><span class="op">)</span> <span class="co"># same as below</span></span>
 <span><span class="co">#&gt; [1] "A4:D10"</span></span></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, from_row <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A4:D10"</span></span></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 10 rows and 15 columns from indice B2.</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span>, from_col <span class="op">=</span> <span class="st">"B"</span>, from_row <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "B2:P11"</span></span></code></pre></div>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># data + col names</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A1:K33"</span></span></code></pre></div>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># only data</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, select <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A2:K33"</span></span></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># The dims of the values of a column in `x`</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, cols <span class="op">=</span> <span class="st">"cyl"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "B2:B33"</span></span></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># a column in `x` with the column name</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, cols <span class="op">=</span> <span class="st">"cyl"</span>, select <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "B1:B33"</span></span></code></pre></div>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># rows in `x`</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A1:K33"</span></span></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># in a wb chain</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
@@ -632,6 +454,7 @@ always happy to improve, so if you have found a way to improve what we
 are currently doing, please let us know and open an issue or a pull
 request.</p>
 </div>
+
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
 </div>

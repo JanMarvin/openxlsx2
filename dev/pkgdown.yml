@@ -5,10 +5,11 @@ articles:
   conditional-formatting: conditional-formatting.html
   openxlsx2_charts_manual: openxlsx2_charts_manual.html
   openxlsx2_formulas_manual: openxlsx2_formulas_manual.html
+  openxlsx2_read_to_df: openxlsx2_read_to_df.html
   openxlsx2_style_manual: openxlsx2_style_manual.html
   openxlsx2: openxlsx2.html
   Update-from-openxlsx: Update-from-openxlsx.html
-last_built: 2024-05-31T15:34Z
+last_built: 2024-06-01T09:26Z
 urls:
   reference: https://janmarvin.github.io/openxlsx2/reference
   article: https://janmarvin.github.io/openxlsx2/articles
