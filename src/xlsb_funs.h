@@ -4,7 +4,9 @@
 #include <string>
 #include <fstream>
 #include <cstdint>
-#include <typeinfo>
+
+// for swap_endian
+#include <type_traits>
 
 // detect if we need to swap. assuming that there is no big endian xlsb format,
 // we only need to swap little endian xlsb files on big endian systems
@@ -26,45 +28,62 @@ static inline unsigned short __builtin_bswap16(unsigned short a)
 }
 #endif
 
+// start swap_endian
 template <typename T>
-T swap_endian(T t) {
-  if (typeid(T) == typeid(int16_t))
-    return __builtin_bswap16(t);
-  if (typeid(T) == typeid(uint16_t))
-    return __builtin_bswap16(t);
+typename std::enable_if<std::is_same<T, int16_t>::value || std::is_same<T, uint16_t>::value, T>::type
+swap_endian(T t) {
+  return __builtin_bswap16(t);
+}
 
-  if (typeid(T)  == typeid(int32_t))
-    return __builtin_bswap32(t);
-  if (typeid(T)  == typeid(uint32_t))
-    return __builtin_bswap32(t);
+template <typename T>
+typename std::enable_if<std::is_same<T, int32_t>::value || std::is_same<T, uint32_t>::value, T>::type
+swap_endian(T t) {
+  return __builtin_bswap32(t);
+}
 
-  if (typeid(T)  == typeid(int64_t))
-    return __builtin_bswap64(t);
-  if (typeid(T)  == typeid(uint64_t))
-    return __builtin_bswap64(t);
+template <typename T>
+typename std::enable_if<std::is_same<T, int64_t>::value || std::is_same<T, uint64_t>::value, T>::type
+swap_endian(T t) {
+  return __builtin_bswap64(t);
+}
 
+template <typename T>
+typename std::enable_if<std::is_same<T, float>::value, float>::type
+swap_endian(T t) {
   union v {
-    double      d;
     float       f;
     uint32_t    i32;
+  } val;
+  val.f = t;
+  val.i32 = __builtin_bswap32(val.i32);
+  return val.f;
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, double>::value, double>::type
+swap_endian(T t) {
+  union v {
+    double      d;
     uint64_t    i64;
   } val;
-
-  if (typeid(T) == typeid(float)){
-    val.f = t;
-    val.i32 = __builtin_bswap32(val.i32);
-    return val.f;
-  }
-
-  if (typeid(T) == typeid(double)){
-    val.d = t;
-    val.i64 = __builtin_bswap64(val.i64);
-    return val.d;
-  }
-
-  else
-    return t;
+  val.d = t;
+  val.i64 = __builtin_bswap64(val.i64);
+  return val.d;
 }
+
+template <typename T>
+typename std::enable_if<!std::is_same<T, int16_t>::value &&
+!std::is_same<T, uint16_t>::value &&
+!std::is_same<T, int32_t>::value &&
+!std::is_same<T, uint32_t>::value &&
+!std::is_same<T, int64_t>::value &&
+!std::is_same<T, uint64_t>::value &&
+!std::is_same<T, float>::value &&
+!std::is_same<T, double>::value, T>::type
+swap_endian(T t) {
+  return t;
+}
+// end swap_endian
 
 template <typename T>
 T readbin( T t , std::istream& sas, bool swapit)
@@ -147,7 +166,7 @@ std::string to_utf8(const std::u16string& u16str) {
     bool isLittleEndian = is_big_endian();
     char16_t networkOrderChar = u16char;
     if (isLittleEndian) {
-      networkOrderChar = (u16char << 8) | (u16char >> 8);
+      networkOrderChar = static_cast<char16_t>((u16char << 8) | (u16char >> 8));
     }
 
     if (networkOrderChar <= 0x7F) {
@@ -188,13 +207,13 @@ std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
 
   size_t size = mystring.size();
   std::u16string str;
-  str.resize((double)size * 2);
+  str.resize(size * 2);
 
   if (!sas.read((char*)&str[0], str.size()))
     Rcpp::stop("char: a binary read error occurred");
 
   std::string outstr = to_utf8(str);
-  if ((double)str.size()/2 != size) Rcpp::warning("String size unexpected");
+  if (str.size()/2 != size) Rcpp::warning("String size unexpected");
   // cannot resize but have to remove '\0' from string
   // mystring.resize(size);
   outstr.erase(std::remove(outstr.begin(), outstr.end(), '\0'), outstr.end());

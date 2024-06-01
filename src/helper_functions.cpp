@@ -134,9 +134,9 @@ uint32_t uint_col_to_int(std::string& a) {
   char A = 'A';
   int aVal = (int)A - 1;
   int sum = 0;
-  int k = a.length();
+  size_t k = a.length();
 
-  for (int32_t j = 0; j < k; ++j) {
+  for (size_t j = 0; j < k; ++j) {
     sum *= 26;
     sum += (a[j] - aVal);
   }
@@ -191,12 +191,12 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
   // This function converts the Excel column letter to an integer
 
   std::vector<std::string> r = Rcpp::as<std::vector<std::string> >(x);
-  int n = r.size();
+  size_t n = r.size();
 
   std::string a;
   Rcpp::IntegerVector colNums(n);
 
-  for (int i = 0; i < n; i++) {
+  for (size_t i = 0; i < n; i++) {
     a = r[i];
 
     // check if the value is digit only, if yes, add it and continue the loop
@@ -656,17 +656,17 @@ void wide_to_long(
 // [[Rcpp::export]]
 Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
 
-  int32_t kk = colnames.size();
+  size_t kk = colnames.size();
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (int32_t i = 0; i < kk; ++i)
+  for (size_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
   }
 
   Rcpp::IntegerVector rvec(n);
-  for (int64_t i = 0; i < n; ++i) {
+  for (int32_t i = 0; i < n; ++i) {
     rvec[i] = i + 1L;
   }
 

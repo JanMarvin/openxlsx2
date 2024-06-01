@@ -19,7 +19,7 @@ bool has_it(Rcpp::DataFrame df_xf, std::set<std::string> xf_nams, size_t row) {
   df_tmp = df_xf[sel_chr];
 
   // get the position of the xf_nams in the sorted df_xf data frame
-  std::vector<int32_t> idx;
+  std::vector<R_xlen_t> idx;
   for (size_t i = 0; i < xf_names.size(); ++i) {
     std::string xf_name = xf_names[i];
     if (df_names.count(xf_name) > 0) {
