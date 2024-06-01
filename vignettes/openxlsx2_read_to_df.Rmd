@@ -1,8 +1,8 @@
 ---
-title: "openxlsx2 to data frame manual"
+title: "openxlsx2 read to data frame manual"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{openxlsx2 basic manual}
+  %\VignetteIndexEntry{openxlsx2 read to dataframe}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
