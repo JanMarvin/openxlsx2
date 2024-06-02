@@ -1103,12 +1103,15 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       {
         if (debug) Rcpp::Rcout << "PtgAttrChoose" <<std::endl;
 
-        uint16_t cOffset = 0;
-        uint32_t rgOffset0 = 0, rgOffset1 = 0;
+        uint16_t cOffset = 0, rgOffset;
 
         cOffset = readbin(cOffset, sas, swapit);
-        rgOffset0 = readbin(rgOffset0, sas, swapit);
-        rgOffset1 = readbin(rgOffset1, sas, swapit);
+
+        // some offsets, currently unused
+        for (int16_t off = 0; off < (cOffset + 1); ++off) {
+          rgOffset = readbin(rgOffset, sas, swapit);
+          if (debug) Rcpp::Rcout << rgOffset << std::endl;
+        }
 
         break;
       }

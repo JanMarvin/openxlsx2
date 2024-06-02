@@ -2587,7 +2587,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         out << " spans=\"" << spans << "\"";
 
       if (fields->iOutLevel > 0) {
-        out << " outlineLevel=\"" << fields->iOutLevel << "\"";
+        out << " outlineLevel=\"" << (uint16_t)fields->iOutLevel << "\"";
       }
 
       if (fields->fCollapsed) {
@@ -2611,7 +2611,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       row = rw;
 
       if (debug)
-        Rcpp::Rcout << (rw) << " : " << ixfe << " : " << miyRw << " : " << (int32_t)fExtraAsc << " : " <<
+        Rcpp::Rcout << "ROW:" << (rw +1) << " : " << ixfe << " : " << miyRw << " : " << (int32_t)fExtraAsc << " : " <<
           (int32_t)fExtraDsc << " : " << unk32 << " : " << (int32_t)fCollapsed << " : " << (int32_t)fDyZero << " : " <<
             (int32_t)fUnsynced << " : " << (int32_t)fGhostDirty << " : " << (int32_t)fReserved << " : " <<
               (int32_t)fPhShow << " : " << ccolspan << "; " << bin.tellg() << std::endl;
