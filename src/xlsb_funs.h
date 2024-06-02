@@ -598,10 +598,10 @@ std::string LocRel(std::istream& sas, bool swapit, int col, int row) {
       col_rel[0] -= 0x4000;
   }
 
-  // if (!fColRel) out += "$";
+  if (!fColRel) out += "$";
   out += int_to_col(col_rel[0] + 1);
 
-  // if (!fRwRel) out += "$";
+  if (!fRwRel) out += "$";
   out += std::to_string(row_rel + 1);
 
   return out;
@@ -692,18 +692,18 @@ std::string AreaRel(std::istream& sas, bool swapit, int col, int row) {
       col_rel1[0] -= 0x4000;
   }
 
-  // if (!fColRel0) out += "$";
+  if (!fColRel0) out += "$";
   out += int_to_col(col_rel0[0] + 1);
 
-  // if (!fRwRel0) out += "$";
+  if (!fRwRel0) out += "$";
   out += std::to_string(row_rel0 + 1);
 
   out += ":";
 
-  // if (!fColRel1) out += "$";
+  if (!fColRel1) out += "$";
   out += int_to_col(col_rel1[0] + 1);
 
-  // if (!fRwRel1) out += "$";
+  if (!fRwRel1) out += "$";
   out += std::to_string(row_rel1 + 1);
 
   return out;
@@ -1528,7 +1528,12 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       uint32_t nameindex = 0;
       nameindex = readbin(nameindex, sas, swapit);
       // Rcpp::Rcout << nameindex << std::endl;
-      fml_out += std::to_string(nameindex);
+      // fml_out += std::to_string(nameindex);
+
+      std::stringstream paddedStr;
+      paddedStr << std::setw(12) << std::setfill('0') << nameindex;
+
+      fml_out += "openxlsx2defnam_" + paddedStr.str();
       fml_out += "\n";
 
       break;
@@ -1550,7 +1555,13 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       nameindex = readbin(nameindex, sas, swapit);
       // Rcpp::Rcout << nameindex << std::endl;
       // fml_out += std::to_string(ixti);
-      fml_out += std::to_string(nameindex);
+      // fml_out += std::to_string(nameindex);
+
+      // copied from above, does this work?
+      std::stringstream paddedStr;
+      paddedStr << std::setw(12) << std::setfill('0') << nameindex;
+
+      fml_out += "openxlsx2defnam_" + paddedStr.str();
       fml_out += "\n";
 
       break;
