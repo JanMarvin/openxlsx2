@@ -1056,9 +1056,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         paddedStr << std::setw(12) << std::setfill('0') << ixti;
 
         // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str();
+        // fml_out += "openxlsx2xlsb_" + paddedStr.str();
         // maybe [ ]
-        // fml_out += "#REF!";
+        fml_out += "#REF!";
         fml_out += "\n";
 
         // Do something with this, just ... what?
