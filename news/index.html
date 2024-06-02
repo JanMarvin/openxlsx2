@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,7 @@
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Add conditional formatting to a workbook</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">Add charts to a workbook</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">Add formulas to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_read_to_df.html">openxlsx2 read to data frame manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">Add styling to a workbook</a>
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
   </div>
@@ -58,7 +59,23 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.6" id="openxlsx2-16">openxlsx2 1.6<a class="anchor" aria-label="anchor" href="#openxlsx2-16"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.7" id="openxlsx2-17">openxlsx2 1.7<a class="anchor" aria-label="anchor" href="#openxlsx2-17"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-7">New features<a class="anchor" aria-label="anchor" href="#new-features-1-7"></a></h3>
+<ul><li><p>Add function to remove conditional formatting from worksheet <code><a href="../reference/wb_add_conditional_formatting.html">wb_remove_conditional_formatting()</a></code> <a href="https://github.com/JanMarvin/openxlsx2/pull/1011" class="external-link">1011</a></p></li>
+<li><p>Silence a warning triggered by a folder called <code>"[trash]"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1012" class="external-link">1012</a></p></li>
+<li><p>Initial support for pivot table timelines. <a href="https://github.com/JanMarvin/openxlsx2/pull/1016" class="external-link">1016</a></p></li>
+<li><p>Add <code><a href="../reference/wb_add_slicer.html">wb_add_timeline()</a></code> and extend <code><a href="../reference/wb_add_slicer.html">wb_add_slicer()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1017" class="external-link">1017</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-7">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-7"></a></h3>
+<ul><li><p>Fixed an issue with non consecutive dims, where columns or rows were silently dropped. <a href="https://github.com/JanMarvin/openxlsx2/pull/1015" class="external-link">1015</a></p></li>
+<li><p>Fixes to <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code> cloning drawings and images should be restored. <a href="https://github.com/JanMarvin/openxlsx2/pull/1016" class="external-link">1016</a></p></li>
+<li><p>Fixed an issue where non consecutive columns with special types would overlap. If columns A and C were dates, column B would be formatted as date too. <a href="https://github.com/JanMarvin/openxlsx2/pull/1026" class="external-link">1026</a></p></li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.6" id="openxlsx2-16">openxlsx2 1.6<a class="anchor" aria-label="anchor" href="#openxlsx2-16"></a></h2><p class="text-muted">CRAN release: 2024-05-01</p>
 <div class="section level3">
 <h3 id="new-features-1-6">New features<a class="anchor" aria-label="anchor" href="#new-features-1-6"></a></h3>
 <ul><li><p>Helper to read sensitivity labels from files and apply them to workbooks. <a href="https://github.com/JanMarvin/openxlsx2/pull/983" class="external-link">983</a></p></li>

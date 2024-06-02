@@ -25,6 +25,9 @@
     <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_formulas_manual.html</loc>
   </url>
   <url>
+    <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_read_to_df.html</loc>
+  </url>
+  <url>
     <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_style_manual.html</loc>
   </url>
   <url>
@@ -56,6 +59,12 @@
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/comment_internal.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/reference/con_dims.html</loc>
+  </url>
+  <url>
+    <loc>https://janmarvin.github.io/openxlsx2/reference/con_rng.html</loc>
   </url>
   <url>
     <loc>https://janmarvin.github.io/openxlsx2/reference/convertToExcelDate.html</loc>

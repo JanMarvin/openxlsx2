@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,7 @@
     <a class="dropdown-item" href="../articles/conditional-formatting.html">Add conditional formatting to a workbook</a>
     <a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">Add charts to a workbook</a>
     <a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">Add formulas to a workbook</a>
+    <a class="dropdown-item" href="../articles/openxlsx2_read_to_df.html">openxlsx2 read to data frame manual</a>
     <a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">Add styling to a workbook</a>
     <a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a>
   </div>
@@ -64,7 +65,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dims_to_dataframe</span><span class="op">(</span><span class="va">dims</span>, fill <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dims_to_dataframe</span><span class="op">(</span><span class="va">dims</span>, fill <span class="op">=</span> <span class="cn">FALSE</span>, empty_rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,6 +76,10 @@
 
 <dt>fill</dt>
 <dd><p>If <code>TRUE</code>, fills the dataframe with variables</p></dd>
+
+
+<dt>empty_rm</dt>
+<dd><p>Logical if empty columns and rows should be included</p></dd>
 
 </dl></div>
 
