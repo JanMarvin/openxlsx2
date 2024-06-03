@@ -1317,7 +1317,8 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgMissArg:
     {
       if (debug) Rcpp::Rcout << "MISSING()" <<std::endl;
-      fml_out += "";
+      fml_out += " ";
+      fml_out += "\n";
       break;
     }
 
@@ -1345,7 +1346,10 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     {
       if (debug) Rcpp::Rcout << "PtgStr" <<std::endl;
 
-      fml_out += "\"" + escape_quote(PtrStr(sas, swapit)) + "\"";
+      std::string esc_quote = PtrStr(sas, swapit);
+      // Rcpp::Rcout << esc_quote << std::endl;
+      if (esc_quote == "\n") fml_out += '\"'; // + escape_quote(esc_quote) + "\"";
+      else fml_out += "\"" + escape_xml(escape_quote(esc_quote)) + "\"";
       fml_out += "\n";
 
       break;

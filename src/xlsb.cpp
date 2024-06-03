@@ -2816,10 +2816,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         column.v = std::to_string((int32_t)val);
+
+        std::string a0 = int_to_col(cell[0] + 1) + std::to_string(row);
         std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
 
-        auto sfml = shared_cells.find(a1);
-        if (sfml != shared_cells.end()) {
+        auto sfml = shared_cells.find(fml);
+        auto sfml1 = shared_cells.find(a0);
+        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
           column.f_si = std::to_string(sfml->second);
         } else {
@@ -2859,10 +2862,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         xml_col column;
         column.v = fErr;
+
+        std::string a0 = int_to_col(cell[0] + 1) + std::to_string(row);
         std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
 
-        auto sfml = shared_cells.find(a1);
-        if (sfml != shared_cells.end()) {
+        auto sfml = shared_cells.find(fml);
+        auto sfml1 = shared_cells.find(a0);
+        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
           column.f_si = std::to_string(sfml->second);
         } else {
@@ -2904,13 +2910,22 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         std::stringstream stream;
         stream << std::setprecision(16) << xnum;
+        std::string a0 = int_to_col(cell[0] + 1) + std::to_string(row);
         std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
 
         xml_col column;
         column.v = stream.str();
 
-        auto sfml = shared_cells.find(a1);
-        if (sfml != shared_cells.end()) {
+        // if (a1 == "AH59") {
+        //   Rcpp::Rcout << "AG56 Formula: " << a1 << ": " << fml << std::endl;
+        //   Rcpp::stop("ag56");
+        // }
+
+        // fml is a reference to another cell in shared formula case?
+
+        auto sfml = shared_cells.find(fml);
+        auto sfml1 = shared_cells.find(a0);
+        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
           column.f_si = std::to_string(sfml->second);
         } else {
@@ -2948,12 +2963,15 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         //   Rcpp::Rcout << fml << std::endl;
         // }
 
+
+        std::string a0 = int_to_col(cell[0] + 1) + std::to_string(row);
         std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
 
-        auto sfml = shared_cells.find(a1);
-
         xml_col column;
-        if (sfml != shared_cells.end()) {
+
+        auto sfml = shared_cells.find(fml);
+        auto sfml1 = shared_cells.find(a0);
+        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
           column.f_si = std::to_string(sfml->second);
         } else {
@@ -3012,8 +3030,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         int is_shared_formula = false;
 
         uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
-        rwFirst  = UncheckedRw(bin, swapit) +1;
-        rwLast   = UncheckedRw(bin, swapit) +1;
+        rwFirst  = UncheckedRw(bin, swapit); // +1
+        rwLast   = UncheckedRw(bin, swapit); // +1
         colFirst = UncheckedCol(bin, swapit) +1;
         colLast  = UncheckedCol(bin, swapit) +1;
 
@@ -3021,12 +3039,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         // fill the unordered map
         for (size_t i = 0; i < cells.size(); ++i) {
-          // Rcpp::Rcout << cells[i] << "\n";
           shared_cells[cells[i]] = shared_cell_cntr;
         }
 
-        std::string lref = int_to_col(colFirst) + std::to_string(rwFirst);
-        std::string rref = int_to_col(colLast) + std::to_string(rwLast);
+        // shared_cells needs to compare against fml. fml is (row - 1)
+        // reference must be row
+        std::string lref = int_to_col(colFirst) + std::to_string(rwFirst + 1);
+        std::string rref = int_to_col(colLast) + std::to_string(rwLast + 1);
 
         std::string ref;
         if (lref.compare(rref) == 0) {
@@ -3612,6 +3631,16 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           out << "</worksheet>" << std::endl;
         end_of_worksheet = true;
         row = 0;
+        break;
+      }
+
+      // ignore error section
+      case BrtBeginCellIgnoreECs:
+      case BrtCellIgnoreEC:
+      case BrtEndCellIgnoreECs:
+      {
+        // Rcpp::warning("Worksheet contains unhandled data validation.");
+        bin.seekg(size, bin.cur);
         break;
       }
 
