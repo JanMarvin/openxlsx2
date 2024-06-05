@@ -1590,6 +1590,23 @@ wb_load <- function(
               xti$sheets,
               vectorize_all = FALSE
             )
+
+          # replace named region in formulas
+          nri         <- wb$get_named_regions()
+          nri$name_id <- paste0("openxlsx2defnam_", sprintf("%012d", as.integer(rownames(nri))))
+
+          for (j in seq_along(wb$worksheets)) {
+            if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != "")) {
+              wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
+                stringi::stri_replace_all_fixed(
+                  wb$worksheets[[j]]$sheet_data$cc$f[sel],
+                  nri$name_id,
+                  nri$name,
+                  vectorize_all = FALSE
+                )
+            }
+          }
+
         }
 
         # this might be terribly slow!

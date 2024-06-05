@@ -598,10 +598,10 @@ std::string LocRel(std::istream& sas, bool swapit, int col, int row) {
       col_rel[0] -= 0x4000;
   }
 
-  // if (!fColRel) out += "$";
+  if (!fColRel) out += "$";
   out += int_to_col(col_rel[0] + 1);
 
-  // if (!fRwRel) out += "$";
+  if (!fRwRel) out += "$";
   out += std::to_string(row_rel + 1);
 
   return out;
@@ -692,18 +692,18 @@ std::string AreaRel(std::istream& sas, bool swapit, int col, int row) {
       col_rel1[0] -= 0x4000;
   }
 
-  // if (!fColRel0) out += "$";
+  if (!fColRel0) out += "$";
   out += int_to_col(col_rel0[0] + 1);
 
-  // if (!fRwRel0) out += "$";
+  if (!fRwRel0) out += "$";
   out += std::to_string(row_rel0 + 1);
 
   out += ":";
 
-  // if (!fColRel1) out += "$";
+  if (!fColRel1) out += "$";
   out += int_to_col(col_rel1[0] + 1);
 
-  // if (!fRwRel1) out += "$";
+  if (!fRwRel1) out += "$";
   out += std::to_string(row_rel1 + 1);
 
   return out;
@@ -1056,9 +1056,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         paddedStr << std::setw(12) << std::setfill('0') << ixti;
 
         // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str();
+        // fml_out += "openxlsx2xlsb_" + paddedStr.str();
         // maybe [ ]
-        // fml_out += "#REF!";
+        fml_out += "#REF!";
         fml_out += "\n";
 
         // Do something with this, just ... what?
@@ -1103,12 +1103,15 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       {
         if (debug) Rcpp::Rcout << "PtgAttrChoose" <<std::endl;
 
-        uint16_t cOffset = 0;
-        uint32_t rgOffset0 = 0, rgOffset1 = 0;
+        uint16_t cOffset = 0, rgOffset;
 
         cOffset = readbin(cOffset, sas, swapit);
-        rgOffset0 = readbin(rgOffset0, sas, swapit);
-        rgOffset1 = readbin(rgOffset1, sas, swapit);
+
+        // some offsets, currently unused
+        for (int16_t off = 0; off < (cOffset + 1); ++off) {
+          rgOffset = readbin(rgOffset, sas, swapit);
+          if (debug) Rcpp::Rcout << rgOffset << std::endl;
+        }
 
         break;
       }
@@ -1314,7 +1317,8 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     case PtgMissArg:
     {
       if (debug) Rcpp::Rcout << "MISSING()" <<std::endl;
-      fml_out += "";
+      fml_out += " ";
+      fml_out += "\n";
       break;
     }
 
@@ -1342,7 +1346,10 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     {
       if (debug) Rcpp::Rcout << "PtgStr" <<std::endl;
 
-      fml_out += "\"" + escape_quote(PtrStr(sas, swapit)) + "\"";
+      std::string esc_quote = PtrStr(sas, swapit);
+      // Rcpp::Rcout << esc_quote << std::endl;
+      if (esc_quote == "\n") fml_out += '\"'; // + escape_quote(esc_quote) + "\"";
+      else fml_out += "\"" + escape_xml(escape_quote(esc_quote)) + "\"";
       fml_out += "\n";
 
       break;
@@ -1525,7 +1532,12 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       uint32_t nameindex = 0;
       nameindex = readbin(nameindex, sas, swapit);
       // Rcpp::Rcout << nameindex << std::endl;
-      fml_out += std::to_string(nameindex);
+      // fml_out += std::to_string(nameindex);
+
+      std::stringstream paddedStr;
+      paddedStr << std::setw(12) << std::setfill('0') << nameindex;
+
+      fml_out += "openxlsx2defnam_" + paddedStr.str();
       fml_out += "\n";
 
       break;
@@ -1547,7 +1559,13 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       nameindex = readbin(nameindex, sas, swapit);
       // Rcpp::Rcout << nameindex << std::endl;
       // fml_out += std::to_string(ixti);
-      fml_out += std::to_string(nameindex);
+      // fml_out += std::to_string(nameindex);
+
+      // copied from above, does this work?
+      std::stringstream paddedStr;
+      paddedStr << std::setw(12) << std::setfill('0') << nameindex;
+
+      fml_out += "openxlsx2defnam_" + paddedStr.str();
       fml_out += "\n";
 
       break;
