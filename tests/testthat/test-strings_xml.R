@@ -52,6 +52,9 @@ test_that("strings_xml", {
   is <- "<is><t>foo</t>"
   expect_error(is_to_txt(is))
 
+  exp <- c("a", NA_character_, "")
+  got <- is_to_txt(c("<is><t>a</t></is>", "", "<is><t/></is>"))
+  expect_equal(exp, got)
 
   txt <- "foo"
   expect_equal(
