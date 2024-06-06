@@ -840,8 +840,8 @@ wb_dims <- function(..., select = NULL) {
     stop("You must supply positive values to `cols`")
   }
 
-  if (!is.null(rows_arg) && (min(rows_arg) < 1L || (length(rows_arg) > 1 && any(diff(rows_arg) != 1)))) {
-    stop("You must supply positive, consecutive values to `rows`.")
+  if (!is.null(rows_arg) && (min(rows_arg) < 1L)) {
+    stop("You must supply positive values to `rows`.")
   }
 
   # assess from_row / from_col
@@ -910,9 +910,12 @@ wb_dims <- function(..., select = NULL) {
       fcol <- fcol #+ row_names
     }
 
-    if (!is.null(rows_arg)) {
+    if (!is.null(rows_arg)) { # && length(rows_arg) == 1L && all(diff(rows_arg) == 1L)) {
       if (min(rows_arg) > 1) {
-        frow <- frow + min(rows_arg) - 1L
+        if (all(diff(rows_arg) == 1L))
+          frow <- frow + min(rows_arg) - 1L
+        else
+          frow         <- vapply(rows_arg, function(x) frow + min(x) - 1L, NA_real_)
       }
     }
 
@@ -931,7 +934,10 @@ wb_dims <- function(..., select = NULL) {
     ncol_to_span <- 1L
   }
 
-  row_span <- frow + seq_len(nrow_to_span) - 1L
+  if (all(diff(frow) == 1))
+    row_span <- frow + seq_len(nrow_to_span) - 1L
+  else
+    row_span <- frow
 
   if (length(ncol_to_span) == 1)
     col_span <- fcol + seq_len(ncol_to_span) - 1L
@@ -959,15 +965,29 @@ wb_dims <- function(..., select = NULL) {
   } else { # return range "A1:A7" or "A1:A7,B1:B7"
 
     dims <- NULL
-    if (any(diff(col_span) != 1L)) {
-      for (col_start in col_span) {
-        tmp  <- rowcol_to_dims(row_span, col_start)
-        dims <- c(dims, tmp)
+    if (any(diff(row_span) != 1L)) {
+      for (row_start in row_span) {
+        cdims <- NULL
+        if (any(diff(col_span) != 1L)) {
+          for (col_start in col_span) {
+            tmp  <- rowcol_to_dims(row_start, col_start)
+            cdims <- c(cdims, tmp)
+          }
+        } else {
+          cdims <- rowcol_to_dims(row_start, col_span)
+        }
+        dims <- c(dims, cdims)
       }
     } else {
-      dims <- rowcol_to_dims(row_span, col_span)
+      if (any(diff(col_span) != 1L)) {
+        for (col_start in col_span) {
+          tmp  <- rowcol_to_dims(row_span, col_start)
+          dims <- c(dims, tmp)
+        }
+      } else {
+        dims <- rowcol_to_dims(row_span, col_span)
+      }
     }
-
   }
 
   paste0(dims, collapse = ",")

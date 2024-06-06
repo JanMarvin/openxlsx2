@@ -77,7 +77,8 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
   expect_error(wb_dims(mtcars), "Supplying a single unnamed argument")
 
 
-  expect_error(wb_dims(rows = c(1, 3, 4), cols = c(1, 4)), "You must supply positive, consecutive values to `rows`")
+  expect_error(wb_dims(rows = c(1), cols = c(-1)), "You must supply positive values to `cols`")
+  expect_error(wb_dims(rows = c(-1), cols = c(1)), "You must supply positive values to `rows`")
 
   expect_error(wb_dims(1, 2, 3))
 })
@@ -168,7 +169,7 @@ test_that("`wb_dims()` can select content in a nice fashion with `x`", {
   expect_equal(wb_dims_cars(rows = 1:5, select = "x"), dims_row1_to_5_and_names)
 })
 
-test_that("wb_dims can select multiple columns", {
+test_that("wb_dims can select multiple columns and rows", {
 
   exp <- "B2:B33"
   got <- wb_dims(x = mtcars, cols = c("cyl"))
@@ -180,6 +181,30 @@ test_that("wb_dims can select multiple columns", {
 
   exp <- "B1,J1"
   got <- wb_dims(x = mtcars, cols = c("cyl", "gear"), select = "col_names")
+  expect_equal(exp, got)
+
+  exp <- "A1:K33"
+  got <- wb_dims(x = mtcars)
+  expect_equal(exp, got)
+
+  exp <- "B2:B33"
+  got <- wb_dims(x = mtcars, cols = c(2))
+  expect_equal(exp, got)
+
+  exp <- "B2:B33,D2:D33"
+  got <- wb_dims(x = mtcars, cols = c(2, 4))
+  expect_equal(exp, got)
+
+  exp <- "A5:K5"
+  got <- wb_dims(x = mtcars, rows = c(4))
+  expect_equal(exp, got)
+
+  exp <- "A3:K3,A5:K5,A6:K6"
+  got <- wb_dims(x = mtcars, rows = c(2, 4:5))
+  expect_equal(exp, got)
+
+  exp <- "B3:B3,D3:D3,B5:B5,D5:D5,B6:B6,D6:D6"
+  got <- wb_dims(x = mtcars, cols = c(2, 4), rows = c(2, 4:5))
   expect_equal(exp, got)
 
 })
