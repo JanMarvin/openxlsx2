@@ -1103,7 +1103,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       {
         if (debug) Rcpp::Rcout << "PtgAttrChoose" <<std::endl;
 
-        uint16_t cOffset = 0, rgOffset;
+        uint16_t cOffset = 0, rgOffset = 0;
 
         cOffset = readbin(cOffset, sas, swapit);
 
