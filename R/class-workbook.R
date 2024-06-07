@@ -3309,19 +3309,22 @@ wbWorkbook <- R6::R6Class(
           }, FUN.VALUE = ""), collapse = "")
           if (WR != "") {
             WR <- rbindlist(xml_attr(WR, "Relationships", "Relationship"))
-            WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
-            WR$fileExists <- file.exists(WR$tmpDirPartName)
 
-            # exclude hyperlinks
-            WR$type <- basename(WR$Type)
-            WR <- WR[WR$type != "hyperlink", ]
+            if (NROW(WR)) { # in xlsb files it can be that WR has no rows
+              WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
+              WR$fileExists <- file.exists(WR$tmpDirPartName)
 
-            if (!all(WR$fileExists)) {
-              missing_in_tmp <- WR$Target[!WR$fileExists]
-              warning(
-                "[", folder, "] file expected to be in output is missing: ",
-                paste(missing_in_tmp, collapse = " ")
-              )
+              # exclude hyperlinks
+              WR$type <- basename(WR$Type)
+              WR <- WR[WR$type != "hyperlink", ]
+
+              if (!all(WR$fileExists)) {
+                missing_in_tmp <- WR$Target[!WR$fileExists]
+                warning(
+                  "[", folder, "] file expected to be in output is missing: ",
+                  paste(missing_in_tmp, collapse = " ")
+                )
+              }
             }
           }
         }
