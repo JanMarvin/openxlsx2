@@ -1013,7 +1013,7 @@ std::string parseRPN(const std::string& expression) {
 }
 
 
-std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml) {
+std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
 
@@ -1062,7 +1062,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       case PtgList:
       {
         RgbExtra typ = PtgExtraList;
-        ptgextra.push_back(typ);
+
         if (debug) Rcpp::Rcout << "PtgList " << sas.tellg() << std::endl;
         uint16_t ixti = 0, flags = 0;
         uint32_t listIndex = 0;
@@ -1074,6 +1074,12 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         listIndex = readbin(listIndex, sas, swapit);
         colFirst = ColShort(sas, swapit);
         colLast = ColShort(sas, swapit);
+
+
+        PtgListFields *fields = (PtgListFields *)&flags;
+
+        if (fields->nonresident) // different workbook and invalid == 0
+          ptgextra.push_back(typ);
 
         std::stringstream paddedStr;
         paddedStr << std::setw(12) << std::setfill('0') << ixti;
@@ -1434,7 +1440,8 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       if (debug) Rcpp::Rcout << "PtgRef3d" <<std::endl;
       // need_ptg_revextern = true;
       RgbExtra typ = RevExtern;
-      ptgextra.push_back(typ);
+      if (has_revision_record)
+        ptgextra.push_back(typ);
 
       uint16_t ixti = 0;
       ixti = readbin(ixti, sas, swapit); // XtiIndex
@@ -1488,7 +1495,8 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // need_ptg_revextern = true;
       RgbExtra typ = RevExtern;
-      ptgextra.push_back(typ);
+      if (has_revision_record)
+        ptgextra.push_back(typ);
 
       uint16_t ixti = 0;
 
@@ -1551,7 +1559,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // need_ptg_revnametabid = true;
       RgbExtra typ = RevNameTabid;
-      ptgextra.push_back(typ);
+      if (has_revision_record)
+        ptgextra.push_back(typ);
+
       uint32_t nameindex = 0;
       nameindex = readbin(nameindex, sas, swapit);
       // Rcpp::Rcout << nameindex << std::endl;
@@ -1574,7 +1584,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // need_ptg_revname = true;
       RgbExtra typ = RevName;
-      ptgextra.push_back(typ);
+      if (has_revision_record)
+        ptgextra.push_back(typ);
+
       // not yet found
       uint16_t ixti = 0;
       uint32_t nameindex = 0;
@@ -1620,7 +1632,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // need_ptg_revextern = true;
       RgbExtra typ = RevExtern;
-      ptgextra.push_back(typ);
+      if (has_revision_record)
+        ptgextra.push_back(typ);
+
       uint16_t ixti = 0, unused2 = 0;
       uint32_t unused1 = 0;
 
@@ -1649,7 +1663,9 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       // need_ptg_revextern = true;
       RgbExtra typ = RevExtern;
-      ptgextra.push_back(typ);
+      if (has_revision_record)
+        ptgextra.push_back(typ);
+
       uint16_t ixti = 0;
       uint32_t unused1 = 0, unused2 = 0, unused3 = 0;
 
@@ -1778,12 +1794,12 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
   if ((size_t)sas.tellg() != pos) {
     // somethings not correct
+    Rcpp::Rcout << "[fml] unexpected position when parsing head" << std::endl;
     sas.seekg(pos, sas.beg);
   }
 
-  if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
-  cb = readbin(cb, sas, swapit);
+  cb = readbin(cb, sas, swapit); // is there a control bit, even if CB is empty?
 
   if (debug)
     Rcpp::Rcout << "cb: " << cb << std::endl;
@@ -1791,44 +1807,28 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
   pos = sas.tellg();
   // sas.seekg(cce, sas.cur);
 
-  // Rcpp::Rcout << "pre " << pos << std::endl;
   pos += cb;
-  // Rcpp::Rcout << "post " << pos << std::endl;
 
-  size_t cntr = 0;
+  if (debug) Rcpp::Rcout << ".";
+  if (debug) {
+    Rprintf("Formula cb: %d\n", val1);
+    Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
+  }
 
-  while((size_t)sas.tellg() < pos) {
+  if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
-    if (debug) Rcpp::Rcout << ".";
-    if (debug) {
-      Rprintf("Formula cb: %d\n", val1);
-      Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
-    }
-    // this is a little risky. maybe its some kind of vector indicating the
-    // order in which extra elements are going to be selected?
+  // RgbExtra
+  for (size_t cntr = 0; cntr < ptgextra.size(); ++cntr) {
 
-    if (ptgextra.size() > 0 && ptgextra.size() > cntr) {
-      if (ptgextra[cntr] == PtgExtraArray) {
-        if (debug) Rcpp::Rcout << "need PtgArray" << std::endl;
-        val1 = PtgArray;
-      } else if  (ptgextra[cntr] == PtgExtraCol) {
-        if (debug) Rcpp::Rcout << "need PtgExp" << std::endl;
-        val1 = PtgExp;
-      } else if (ptgextra[cntr] == RevExtern) {
-        if (debug) Rcpp::Rcout << "need RevExtern" << std::endl;
-        val1 = RevExtern;
-      } else{
-        Rcpp::Rcout << ptgextra[cntr] << std::endl;
-      }
-    } else if (ptgextra.size() < (cntr + 1)) {
-      if (debug) Rprintf("ptgextra %d and %d\n", (int)ptgextra.size(),  (int)cntr);
-    }
+    val1 = ptgextra[cntr];
 
 
-    ++cntr;
+    if (debug)
+      Rcpp::Rcout << cntr << ": " << (int32_t)val1 << std::endl;
 
     switch(val1) {
-    case PtgExp:
+
+    case PtgExtraCol:
     { // PtgExtraCol
 
       // need_ptg_extra_col = true;
@@ -1842,9 +1842,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       break;
     }
 
-    case PtgArray:
-    case PtgArray2:
-    case PtgArray3:
+    case PtgExtraArray:
     {
       if (debug) Rcpp::Rcout << "PtgExtraArray" << std::endl;
       // PtgExtraArray
@@ -1937,6 +1935,45 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       break;
     }
 
+    case PtgExtraMem:
+    {
+      // not sure what this is good for
+      if (debug) Rcpp::Rcout << "PtgExtraMem: " << (int32_t)val1 << std::endl;
+
+      int32_t count = 0;
+      count = readbin(count, sas, swapit);
+
+      for (int32_t cnt = 0; cnt < count; ++cnt) {
+        std::vector<int> ucrfx = UncheckedRfX(sas, swapit);
+      }
+
+      break;
+    }
+
+    case RevNameTabid:
+    {
+      // Rcpp::stop("Skip");
+      if (debug) Rcpp::Rcout << "RevNameTabid: " << (int32_t)val1 << std::endl;
+      sas.seekg(pos, sas.beg);
+      break;
+    }
+
+    case RevName:
+    {
+      // Rcpp::stop("Skip");
+      if (debug) Rcpp::Rcout << "RevName: " << (int32_t)val1 << std::endl;
+      sas.seekg(pos, sas.beg);
+      break;
+    }
+
+    case PtgExtraList:
+    {
+      // Rcpp::stop("Skip");
+      if (debug) Rcpp::Rcout << "PtgExtraList: " << (int32_t)val1 << std::endl;
+      sas.seekg(pos, sas.beg);
+      break;
+    }
+
       // do i need this?
     case RevExtern:
     {
@@ -1965,7 +2002,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     default :
     {
       // Rcpp::stop("Skip");
-      Rcpp::Rcout << "undefined cb: " << cb << std::endl;
+      Rcpp::Rcout << "undefined cb: " << (int32_t)val1 << std::endl;
       sas.seekg(pos, sas.beg);
       break;
     }
@@ -1981,6 +2018,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     Rcpp::Rcout << "...fml..." << std::endl;
     Rcpp::Rcout << fml_out << std::endl;
   }
+
   std::string inflix =  parseRPN(fml_out);
 
   return inflix;
