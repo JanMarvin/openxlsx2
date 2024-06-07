@@ -922,6 +922,29 @@ std::vector<int> Xti(std::istream& sas, bool swapit) {
 //     token == "#" || token == "@";
 // }
 
+
+std::string array_elements(const std::vector<std::string>& elements, int n, int k) {
+    std::stringstream ss;
+    ss << "{";
+    for (int i = 0; i < n; ++i) {
+        if (i > 0) ss << ";";
+        for (int j = 0; j < k; ++j) {
+            if (j > 0) ss << ",";
+            int index = i * k + j;
+            if (index < elements.size()) {
+              // check if it needs escaping
+              if (elements[index][0] == '"') ss << "\"";
+                ss << "\"";
+                ss << elements[index];
+              if (elements[index][0] == '"') ss << "\"";
+                ss << "\"";
+            }
+        }
+    }
+    ss << "}";
+    return ss.str();
+}
+
 #include <stack>
 
 std::string parseRPN(const std::string& expression) {
@@ -1819,7 +1842,6 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       break;
     }
 
-    // TODO: this does not handle {"foo", "bar"}
     case PtgArray:
     case PtgArray2:
     case PtgArray3:
@@ -1827,69 +1849,77 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       if (debug) Rcpp::Rcout << "PtgExtraArray" << std::endl;
       // PtgExtraArray
 
-      uint32_t rows = 0, cols = 0;
-      rows = readbin(rows, sas, swapit);
-      cols = readbin(cols, sas, swapit);
-      // blob (it is actually called this way)
-      uint8_t reserved = 0;
-      reserved = readbin(reserved, sas, swapit);
+      int32_t rows = 0, cols = 0;
+      // actually its DRw() and DCol(), but it does not matter?
+      rows = UncheckedRw(sas, swapit);
+      cols = UncheckedCol(sas, swapit);
 
       std::string array = "";
+      std::vector<std::string> array_elems; // (cols*rows);
 
-      if (debug) Rcpp::Rcout << (int32_t)reserved << std::endl;
+      if (debug) Rcpp::Rcout << rows << ": " << cols << std::endl;
 
-      // SerBool
-      if (reserved == 0x02) {
-        if (debug) Rcpp::Rcout << "SerBool" << std::endl;
-        uint8_t f = 0;
-        f = readbin(f, sas, swapit);
-        if (debug) Rcpp::Rcout << (int32_t)f << std::endl;
+      // number of elements in row order: must be equal to rows * cols
+      for (int32_t row = 0; row < rows; ++row) {
+        for (int32_t col = 0; col < cols; ++col) {
 
-        array = "{" + std::to_string((int32_t)f) + "}";
-        // fml_out += "\n";
+          // blob (it is actually called this way)
+          uint8_t reserved = 0;
+          reserved = readbin(reserved, sas, swapit);
+
+          if (debug) Rcpp::Rcout << (int32_t)reserved << std::endl;
+
+          // SerBool
+          if (reserved == 0x02) {
+            if (debug) Rcpp::Rcout << "SerBool" << std::endl;
+            uint8_t f = 0;
+            f = readbin(f, sas, swapit);
+
+            if (debug) Rcpp::Rcout << (int32_t)f << std::endl;
+            array_elems.push_back(std::to_string((int32_t)f));
+          }
+
+          // SerErr
+          if (reserved == 0x04) {
+            if (debug) Rcpp::Rcout << "SerErr" << std::endl;
+            uint8_t reserved2 = 0;
+            uint16_t reserved3 = 0;
+            std::string strerr = BErr(sas, swapit);
+            reserved2 = readbin(reserved2, sas, swapit);
+            reserved3 = readbin(reserved3, sas, swapit);
+
+            if (debug) Rcpp::Rcout << strerr << std::endl;
+            array_elems.push_back(strerr);
+          }
+
+          // SerNum
+          if (reserved == 0x00) {
+            if (debug) Rcpp::Rcout << "SerNum" << std::endl;
+            double xnum = 0.0;
+            xnum = Xnum(sas, swapit);
+
+            std::stringstream stream;
+            stream << std::setprecision(16) << xnum;
+
+            if (debug) Rcpp::Rcout << xnum << std::endl;
+            array_elems.push_back(stream.str());
+          }
+
+          // SerStr
+          if (reserved == 0x01) {
+            if (debug) Rcpp::Rcout << "SerStr" << std::endl;
+            uint16_t cch = 0;
+            cch = readbin(cch, sas, swapit);
+            std::string rgch(cch, '\0');
+            rgch = read_xlwidestring(rgch, sas);
+
+            if (debug) Rcpp::Rcout << rgch << std::endl;
+            array_elems.push_back(rgch);
+          }
+        }
       }
 
-      // SerErr
-      if (reserved == 0x04) {
-        if (debug) Rcpp::Rcout << "SerErr" << std::endl;
-        uint8_t reserved2 = 0;
-        uint16_t reserved3 = 0;
-        std::string strerr = BErr(sas, swapit);
-        if (debug) Rcpp::Rcout << strerr << std::endl;
-        reserved2 = readbin(reserved2, sas, swapit);
-        reserved3 = readbin(reserved3, sas, swapit);
-
-        array = "{" + strerr + "}";
-        // fml_out += "\n";
-      }
-
-      // SerNum
-      if (reserved == 0x00) {
-        if (debug) Rcpp::Rcout << "SerNum" << std::endl;
-        double xnum = 0.0;
-        xnum = Xnum(sas, swapit);
-
-        std::stringstream stream;
-        stream << std::setprecision(16) << xnum;
-
-        if (debug) Rcpp::Rcout << xnum << std::endl;
-        array = "{" + stream.str() + "}";
-        // fml_out += "\n";
-      }
-
-      // SerStr
-      if (reserved == 0x01) {
-        if (debug) Rcpp::Rcout << "SerStr" << std::endl;
-        uint16_t cch = 0;
-        cch = readbin(cch, sas, swapit);
-        std::string rgch(cch, '\0');
-        rgch = read_xlwidestring(rgch, sas);
-        if (debug)
-          Rcpp::Rcout << rgch << std::endl;
-
-        array = "{\"" + rgch + "\"}";
-        // fml_out += "\n";
-      }
+      array += array_elements(array_elems, rows, cols);
 
       size_t fi = fml_out.find("@array@");
 
