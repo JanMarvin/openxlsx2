@@ -1303,6 +1303,36 @@ wb_load <- function(
         authors <- xml_value(txt, "comments", "authors", "author")
         comments <- xml_node(txt, "comments", "commentList", "comment")
 
+
+      # create valid rich text strings in comments table
+      if (length(commentsBIN) && any(sel <- grepl("<FONT_\\d+/>", comments))) {
+
+        SST      <- c(comments)
+
+        matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
+        matches <- unique(unlist(matches))
+
+        values  <- as.integer(gsub("\\D+", "", matches))
+
+        xmls    <- stringi::stri_replace_all_fixed(
+          wb$styles_mgr$styles$fonts[values + 1],
+          c("<name", "font>"),
+          c("<rFont", "rPr>"),
+          vectorize_all = FALSE
+        )
+
+        sst <- stringi::stri_replace_all_fixed(
+          str           = SST[sel],
+          pattern       = matches,
+          replacement   = xmls,
+          vectorize_all = FALSE
+        )
+
+        SST[sel] <- sst
+
+        comments <- SST
+      }
+
         comments_attr <- rbindlist(xml_attr(comments, "comment"))
 
         refs <- comments_attr$ref

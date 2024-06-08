@@ -1058,7 +1058,8 @@ int comments_bin(std::string filePath, std::string outPath, bool debug) {
       {
         // we do not handle RichStr correctly. Ignore all formatting
         std::string commentText = RichStr(bin, swapit);
-        out << "<text><r><rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr><t>" << escape_xml(commentText) << "</t></r></text>" << std::endl;
+        // out << "<text><r><rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr><t>" << escape_xml(commentText) << "</t></r></text>" << std::endl;
+        out << "<text>" << commentText << "</text>" << std::endl;
         break;
       }
 

@@ -48,7 +48,11 @@ test_that("reading complex xlsb works", {
   expect_equal(exp, got)
 
   # comments
-  exp <- "<t>Jan Marvin Garbuszus:\nA new note!</t>"
+  exp <- c(
+    "<t xml:space=\"preserve\">Jan Marvin Garbuszus:</t>",
+    "<t xml:space=\"preserve\">\n</t>",
+    "<t xml:space=\"preserve\">A new note!</t>"
+  )
   got <- wb$comments[[1]][[1]]$comment
   expect_equal(exp, got)
 
