@@ -1624,6 +1624,37 @@ wb_load <- function(
       }
     }
 
+    # create valid rich text strings in shared strings table
+    if (any(sel <- grepl("<FONT_\\d+/>", wb$sharedStrings))) {
+
+      attr_sst <- attributes(wb$sharedStrings)
+      SST      <- c(wb$sharedStrings)
+
+      matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
+      matches <- unique(unlist(matches))
+
+      values  <- as.integer(gsub("\\D+", "", matches))
+
+      xmls    <- stringi::stri_replace_all_fixed(
+        wb$styles_mgr$styles$fonts[values + 1],
+        c("<name", "font>"),
+        c("<rFont", "rPr>"),
+        vectorize_all = FALSE
+      )
+
+      sst <- stringi::stri_replace_all_fixed(
+        str           = SST[sel],
+        pattern       = matches,
+        replacement   = xmls,
+        vectorize_all = FALSE
+      )
+
+      SST[sel] <- sst
+      attributes(SST) <- attr_sst
+
+      wb$sharedStrings <- SST
+    }
+
   }
 
   ## richData ------------------------------------------------------------------------------------

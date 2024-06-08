@@ -1284,6 +1284,15 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
         break;
       }
 
+      case BrtACBegin:
+      case BrtExternalLinksAlternateUrls:
+      case BrtACEnd:
+      {
+        // unhandled
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
       default:
       {
         // if (debug) {
@@ -1360,8 +1369,7 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
           bin.seekg(pos, bin.beg);
         }
         // if (debug)
-        out << "<si><t>" << escape_xml(val) <<
-          "</t></si>" << std::endl;
+        out << "<si>" << val << "</si>" << std::endl;
         break;
       }
 
@@ -2024,6 +2032,38 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           out << "<worksheet>" << std::endl;
 
         if (debug) Rcpp::Rcout << "Begin of <worksheet>: " << bin.tellg() << std::endl;
+        break;
+      }
+
+      case BrtCsProp:
+      {
+        if (debug) Rcpp::Rcout << "CsProp: " << bin.tellg() << std::endl;
+
+        uint16_t A = 0;
+        A = readbin(A, bin, swapit);
+
+        std::vector<int> color = brtColor(bin, swapit);
+        std::string strName = XLWideString(bin, swapit);
+
+        // for now we only handle color in sheetPR
+        if (color[0] >= 1 && color[0] <= 3) {
+          out << "<sheetPr>" << std::endl;
+
+          if (color[0] == 0x01) {
+            out << "<tabColor indexed=\"" << color[1] << "\" />" << std::endl;
+          }
+
+          if (color[0] == 0x02) {
+            out << "<tabColor rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />" << std::endl;
+          }
+
+          if (color[0] == 0x03) {
+            out << "<tabColor theme=\"" << color[1] << "\" />" << std::endl; //  << "\" tint=\""<< color[2]
+          }
+
+          out << "</sheetPr>" << std::endl;
+        }
+
         break;
       }
 
@@ -3679,6 +3719,27 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // rgce.rgce or rgceOld.rgce in BrtRRDefName
         if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
         Rcpp::warning("Assuming revision record.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtBeginSortState:
+      case BrtEndSortState:
+      case BrtBeginSortCond:
+      case BrtEndSortCond:
+      {
+        if (debug) Rcpp::warning("Worksheet contains unhandled sorting.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtSheetProtectionIso:
+      case BrtCsProtection:
+      {
+        // uint16_t protpwd = 0;
+        // uint32_t fLocked = 0, fObjects = 0;
+        // unhandled
+        if (debug) Rcpp::warning("Worksheet contains unhandled protection.");
         bin.seekg(size, bin.cur);
         break;
       }

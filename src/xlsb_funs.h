@@ -147,7 +147,7 @@ std::string escape_xml(const std::string& input) {
       break;
     default:
       result += c;
-    break;
+      break;
     }
   }
 
@@ -399,27 +399,136 @@ std::string valign(int style) {
   return out;
 }
 
-void StrRun(std::istream& sas, uint32_t dwSizeStrRun, bool swapit) {
+std::vector<std::pair<int, int>> StrRun(std::istream& sas, uint32_t dwSizeStrRun, bool swapit) {
 
   uint16_t ich = 0, ifnt = 0;
 
   // something?
+  std::vector<std::pair<int, int>> str_run;
   for (uint8_t i = 0; i < dwSizeStrRun; ++i) {
     ich  = readbin(ich, sas, swapit);
     ifnt = readbin(ifnt, sas, swapit);
     // Rprintf("Styled string will be unstyled - strRun: %d %d\n", ich, ifnt);
+    str_run.push_back({ich, ifnt});
   }
+
+  return str_run;
+}
+
+// Function to count the number of characters in a UTF-8 string
+size_t utf8_strlen(const std::string& str) {
+    size_t length = 0;
+    for (size_t i = 0; i < str.size(); ) {
+        if ((str[i] & 0x80) == 0) {
+            // Single-byte character (ASCII)
+            i += 1;
+        } else if ((str[i] & 0xE0) == 0xC0) {
+            // Two-byte character
+            i += 2;
+        } else if ((str[i] & 0xF0) == 0xE0) {
+            // Three-byte character
+            i += 3;
+        } else if ((str[i] & 0xF8) == 0xF0) {
+            // Four-byte character
+            i += 4;
+        } else {
+            Rcpp::stop("Invalid UTF-8 encoding detected.");
+        }
+        ++length;
+    }
+    return length;
+}
+
+// Function to get a safe substring from a UTF-8 string
+std::string utf8_substr(const std::string& str, size_t start, size_t length) {
+    size_t byte_pos = 0; // Byte position in the original string
+    size_t char_pos = 0; // Character position
+
+    // Find the byte position of the start character
+    while (char_pos < start && byte_pos < str.size()) {
+        if ((str[byte_pos] & 0x80) == 0) {
+            // Single-byte character (ASCII)
+            byte_pos += 1;
+        } else if ((str[byte_pos] & 0xE0) == 0xC0) {
+            // Two-byte character
+            byte_pos += 2;
+        } else if ((str[byte_pos] & 0xF0) == 0xE0) {
+            // Three-byte character
+            byte_pos += 3;
+        } else if ((str[byte_pos] & 0xF8) == 0xF0) {
+            // Four-byte character
+            byte_pos += 4;
+        } else {
+            Rcpp::stop("Invalid UTF-8 encoding detected.");
+        }
+        ++char_pos;
+    }
+
+    size_t start_byte_pos = byte_pos;
+
+    // Find the byte position of the end character
+    while (char_pos < start + length && byte_pos < str.size()) {
+        if ((str[byte_pos] & 0x80) == 0) {
+            // Single-byte character (ASCII)
+            byte_pos += 1;
+        } else if ((str[byte_pos] & 0xE0) == 0xC0) {
+            // Two-byte character
+            byte_pos += 2;
+        } else if ((str[byte_pos] & 0xF0) == 0xE0) {
+            // Three-byte character
+            byte_pos += 3;
+        } else if ((str[byte_pos] & 0xF8) == 0xF0) {
+            // Four-byte character
+            byte_pos += 4;
+        } else {
+            Rcpp::stop("Invalid UTF-8 encoding detected.");
+        }
+        ++char_pos;
+    }
+
+    return str.substr(start_byte_pos, byte_pos - start_byte_pos);
+}
+
+std::string to_rich_text(const std::string& str, const std::vector<std::pair<int, int>>& str_runs) {
+    std::string result;
+    int start = 0, len = 0;
+
+    for (size_t str_run = 0; str_run < str_runs.size(); ++str_run) {
+
+        if (str_run == 0 && str_runs[0].first > 0) {
+
+          start = 0;
+          len   = str_runs[str_run].first;
+
+          std::string part = utf8_substr(str, start, len);
+
+          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/><t xml:space=\"preserve\">" + escape_xml(part) + "</t></r>";
+        }
+
+          start = str_runs[str_run].first;
+          if ((str_run + 1) < str_runs.size())
+            len = str_runs[str_run + 1].first - start;
+          else
+            len = str.size() - start;
+
+          std::string part = utf8_substr(str, start, len);
+
+          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/><t xml:space=\"preserve\">" + escape_xml(part) + "</t></r>";
+    }
+
+    return result;
 }
 
 void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
 
-  uint16_t ichFirst = 0, ichMom = 0, cchMom = 0, ifnt = 0;
+  uint16_t ichFirst = 0, ichMom = 0, cchMom = 0, ifnt = 0, AB = 0;
   // uint32_t phrun = 0;
   for (uint8_t i = 0; i < dwPhoneticRun; ++i) {
     ichFirst = readbin(ichFirst, sas, swapit);
     ichMom   = readbin(ichMom, sas, swapit);
     cchMom   = readbin(cchMom, sas, swapit);
     ifnt     = readbin(ifnt, sas, swapit);
+    AB       = readbin(AB, sas, swapit);  // phType (2) alcH (2) unused (12)
   }
 }
 
@@ -435,6 +544,8 @@ std::string RichStr(std::istream& sas, bool swapit) {
   // unk = AB & 0x3F;
   // if (debug) if (unk) Rcpp::Rcout << std::to_string(unk) << std::endl;
 
+  std::vector<std::pair<int, int>> str_run;
+
   std::string str = XLWideString(sas, swapit);
 
   uint32_t dwSizeStrRun = 0, dwPhoneticRun = 0;
@@ -444,7 +555,11 @@ std::string RichStr(std::istream& sas, bool swapit) {
     // number of runs following
     dwSizeStrRun = readbin(dwSizeStrRun, sas, swapit);
     if (dwSizeStrRun > 0x7FFF) Rcpp::stop("dwSizeStrRun to large");
-    StrRun(sas, dwSizeStrRun, swapit);
+    str_run = StrRun(sas, dwSizeStrRun, swapit);
+
+    str = to_rich_text(str, str_run);
+  } else {
+    str = "<t>" + escape_xml(str) + "</t>";
   }
 
   if (B) {
