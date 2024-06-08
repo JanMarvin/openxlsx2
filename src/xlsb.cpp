@@ -628,6 +628,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_table = false;
+    bool has_revision_record = false;
 
     while(!end_of_table) {
       Rcpp::checkUserInterrupt();
@@ -893,7 +894,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         std::string fml;
         flags = readbin(flags, bin, swapit);
         int sharedFormula = false;
-        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
         // need to write this formula somehwere
         if (debug )Rcpp::Rcout << fml << std::endl;
@@ -918,6 +919,18 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         out <<" showRowStripes=\"" << fields->fRowStripes << "\"";
         out <<" showColumnStripes=\"" << fields->fColumnStripes << "\"";
         out << " />" << std::endl;
+        break;
+      }
+
+      case BrtRRChgCell:
+      case BrtRRDefName:
+      {
+        has_revision_record = true;
+        // -- have not seen this yet. if it appears, treat it as if a revision record was found --
+        // rgce.rgce or rgceOld.rgce in BrtRRDefName
+        if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
+        Rcpp::warning("Assuming revision record.");
+        bin.seekg(size, bin.cur);
         break;
       }
 
@@ -1395,6 +1408,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_workbook = false;
     bool first_extern_sheet = true;
+    bool has_revision_record = false;
 
     std::vector<std::string> defNams, xtis, reference_type;
     defNams.push_back("<definedNames>");
@@ -1654,7 +1668,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         std::string fml = "", comment = "";
 
         int sharedFormula = false;
-        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
         comment = XLNullableWideString(bin, swapit);
 
@@ -1920,6 +1934,18 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         break;
       }
 
+      case BrtRRChgCell:
+      case BrtRRDefName:
+      {
+        has_revision_record = true;
+        // -- have not seen this yet. if it appears, treat it as if a revision record was found --
+        // rgce.rgce or rgceOld.rgce in BrtRRDefName
+        if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
+        Rcpp::warning("Assuming revision record.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
       default:
       {
         if (debug) {
@@ -1961,6 +1987,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
     bool first_row = true;
     bool in_sheet_data = false;
     bool end_of_worksheet = false;
+    bool has_revision_record = false;
     std::string fml_type;
 
     uint32_t row = 0;
@@ -2810,7 +2837,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
         // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
 
 
@@ -2858,7 +2885,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
         xml_col column;
         column.v = fErr;
@@ -2906,7 +2933,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         //         fields->fAlwaysCalc,
         //         fields->unused);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
         std::stringstream stream;
         stream << std::setprecision(16) << xnum;
@@ -2957,7 +2984,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula);
+        std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
         // if (is_shared_formula) {
         //   Rcpp::Rcout << fml << std::endl;
@@ -3011,7 +3038,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         flags = readbin(flags, bin, 0);
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula);
+        std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula, has_revision_record);
         if (debug) Rcpp::Rcout << "BrtArrFmla: " << fml << std::endl;
 
         // add to the last colvec element
@@ -3056,7 +3083,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         if (debug) Rcpp::Rcout << "ref: " << ref << std::endl;
 
-        std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula);
+        std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula, has_revision_record);
         if (debug) Rcpp::Rcout << "BrtShrFmla: " << fml << std::endl;
 
         fml_type = "shared";
@@ -3414,7 +3441,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         std::string strProgID = XLNullableWideString(bin, swapit);
 
         int sharedFormula = false;
-        if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+        if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
         std::string stRelID = XLNullableWideString(bin, swapit);
         out << "<oleObject progId=\"" << strProgID << "\" shapeId=\"" << shapeId << "\" r:id=\"" << stRelID << "\" />" << std::endl;
@@ -3507,13 +3534,13 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         int sharedFormula = false;
         std::string rgce1, rgce2, rgce3;
         if (cbFmla1 != 0x00000000) {
-          rgce1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+          rgce1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
         }
         if (cbFmla2 != 0x00000000) {
-          rgce2 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+          rgce2 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
         }
         if (cbFmla3 != 0x00000000) {
-          rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula);
+          rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
         }
 
         BrtBeginCFRuleFields *fields = (BrtBeginCFRuleFields *)&flags;
@@ -3640,6 +3667,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtEndCellIgnoreECs:
       {
         // Rcpp::warning("Worksheet contains unhandled data validation.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtRRChgCell:
+      case BrtRRDefName:
+      {
+        has_revision_record = true;
+        // -- have not seen this yet. if it appears, treat it as if a revision record was found --
+        // rgce.rgce or rgceOld.rgce in BrtRRDefName
+        if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
+        Rcpp::warning("Assuming revision record.");
         bin.seekg(size, bin.cur);
         break;
       }

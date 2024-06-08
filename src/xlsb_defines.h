@@ -179,6 +179,19 @@ typedef struct {
   uint16_t unused : 13;
 } BrtWbPropFields;
 
+
+typedef struct {
+  uint8_t columns : 2;
+  uint8_t rowType : 5;
+  bool squareBracketSpace : 1;
+  bool commaSpace : 1;
+  bool unused : 1;
+  uint8_t type : 2;
+  bool invalid : 1;
+  bool nonresident : 1;
+  uint8_t reserved2 : 2;
+} PtgListFields;
+
 enum RgbExtra
 {
   PtgExtraArray = 0,
