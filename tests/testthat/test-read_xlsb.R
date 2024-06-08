@@ -81,4 +81,36 @@ test_that("worksheets with real world formulas", {
   got <- wb$get_sheet_names() %>% names()
   expect_equal(exp, got)
 
+  xlsxFile <- testfile_path("array_fml.xlsb")
+
+  wb <- wb_load(xlsxFile)
+
+  exp <- structure(
+    list(
+      A = c("1", "2", NA, "6", "#VALUE!"),
+      B = c("2", "3", NA, "a", NA),
+      C = c(3, 4, NA, NA, NA),
+      D = c(4, 5, NA, NA, NA),
+      E = c(5, 6, NA, NA, NA)
+    ),
+    row.names = c(NA, 5L),
+    class = "data.frame"
+  )
+  got <- wb_to_df(wb, col_names = FALSE)
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(
+      A = c("1", "A1+1", NA, "SUM({\"1\",\"2\",\"3\"})", "SUMIFS(A1:A2,'[1]foo'!B2:B3,{\"A\"})"),
+      B = c("A1+1", "B1+1", NA, "{\"a\"}", NA),
+      C = c("B1+1", "C1+1", NA, NA, NA),
+      D = c("C1+1", "D1+1", NA, NA, NA),
+      E = c("D1+1", "E1+1", NA, NA, NA)
+    ),
+    row.names = c(NA, 5L),
+    class = "data.frame"
+  )
+  got <- wb_to_df(wb, col_names = FALSE, show_formula = TRUE)
+  expect_equal(exp, got)
+
 })
