@@ -823,15 +823,7 @@ wb_dims <- function(..., select = NULL) {
     is_cols_a_colname <- cols_arg %in% colnames(x)
 
     if (any(is_cols_a_colname)) {
-      if (length(is_cols_a_colname) != 1) {
-        stop(
-          "Supplying multiple column names is not supported by the `wb_dims()` helper, ",
-          "use the `cols` with a range instead of `x` column names.",
-          "\n Use a single `cols` at a time with `wb_dims()`"
-        )
-      }
-      # message("Transforming col name = '", cols_arg, "' to `cols = ", which(colnames(x) == cols_arg), "`")
-      cols_arg <- which(colnames(x) == cols_arg)
+      cols_arg <- which(colnames(x) %in% cols_arg)
     }
   }
 
@@ -844,12 +836,12 @@ wb_dims <- function(..., select = NULL) {
     cols_arg <- 1L # no more NULL for cols_arg and rows_arg if `x` is not supplied
   }
 
-  if (!is.null(cols_arg) && (min(cols_arg) < 1L || (length(cols_arg) > 1 && any(diff(cols_arg) != 1)))) {
-    stop("You must supply positive, consecutive values to `cols`")
+  if (!is.null(cols_arg) && (min(cols_arg) < 1L)) {
+    stop("You must supply positive values to `cols`")
   }
 
-  if (!is.null(rows_arg) && (min(rows_arg) < 1L || (length(rows_arg) > 1 && any(diff(rows_arg) != 1)))) {
-    stop("You must supply positive, consecutive values to `rows`.")
+  if (!is.null(rows_arg) && (min(rows_arg) < 1L)) {
+    stop("You must supply positive values to `rows`.")
   }
 
   # assess from_row / from_col
@@ -873,14 +865,20 @@ wb_dims <- function(..., select = NULL) {
   }
 
   if (select == "col_names") {
-    ncol_to_span <- ncol(x)
+    if (is.null(cols_arg) || length(cols_arg) %in% c(0, 1))
+        ncol_to_span <- ncol(x)
+      else
+        ncol_to_span <- cols_arg
     nrow_to_span <- 1L
   } else if (select == "row_names") {
     ncol_to_span <- 1L
     nrow_to_span <- nrow(x) %||% 1L
   } else if (select %in% c("x", "data")) {
     if (!is.null(cols_arg)) {
-      ncol_to_span <- length(cols_arg)
+      if (length(cols_arg) == 1)
+        ncol_to_span <- length(cols_arg)
+      else
+        ncol_to_span <- cols_arg
     } else {
       ncol_to_span <- ncol(x) %||% 1L
     }
@@ -904,15 +902,20 @@ wb_dims <- function(..., select = NULL) {
     fcol <- fcol + row_names
     frow <- frow
   } else if (select %in% c("x", "data")) {
-    if (!is.null(cols_arg)) {
+    if (!is.null(cols_arg) && length(cols_arg) == 1L && all(diff(cols_arg) == 1L)) {
       if (min(cols_arg) > 1) {
-        fcol <- fcol + min(cols_arg) - 1L
+        fcol <- fcol + min(cols_arg) - 1L # does not work with multi select
       }
+    } else {
+      fcol <- fcol #+ row_names
     }
 
-    if (!is.null(rows_arg)) {
+    if (!is.null(rows_arg)) { # && length(rows_arg) == 1L && all(diff(rows_arg) == 1L)) {
       if (min(rows_arg) > 1) {
-        frow <- frow + min(rows_arg) - 1L
+        if (all(diff(rows_arg) == 1L))
+          frow <- frow + min(rows_arg) - 1L
+        else
+          frow         <- vapply(rows_arg, function(x) frow + min(x) - 1L, NA_real_)
       }
     }
 
@@ -931,20 +934,63 @@ wb_dims <- function(..., select = NULL) {
     ncol_to_span <- 1L
   }
 
-  row_span <- frow + seq_len(nrow_to_span) - 1L
-  col_span <- fcol + seq_len(ncol_to_span) - 1L
+  if (all(diff(frow) == 1))
+    row_span <- frow + seq_len(nrow_to_span) - 1L
+  else
+    row_span <- frow
 
-  if (length(row_span) == 1 && length(col_span) == 1) {
+  if (length(ncol_to_span) == 1)
+    col_span <- fcol + seq_len(ncol_to_span) - 1L
+  else # what does this do?
+    col_span <- fcol + ncol_to_span - 1L
+
+  # return single cells (A1 or A1,B1)
+  if (length(row_span) == 1 && (length(col_span) == 1 || any(diff(col_span) != 1L))) {
+
     # A1
     row_start <- row_span
     col_start <- col_span
-    dims <- rowcol_to_dim(row_start, col_start)
-  } else {
-    # A1:B2
-    dims <- rowcol_to_dims(row_span, col_span)
+
+    dims <- NULL
+
+    if (any(diff(col_span) != 1L)) {
+      for (col_start in col_span) {
+        tmp  <- rowcol_to_dim(row_start, col_start)
+        dims <- c(dims, tmp)
+      }
+    } else {
+      dims <- rowcol_to_dim(row_start, col_start)
+    }
+
+  } else { # return range "A1:A7" or "A1:A7,B1:B7"
+
+    dims <- NULL
+    if (any(diff(row_span) != 1L)) {
+      for (row_start in row_span) {
+        cdims <- NULL
+        if (any(diff(col_span) != 1L)) {
+          for (col_start in col_span) {
+            tmp  <- rowcol_to_dims(row_start, col_start)
+            cdims <- c(cdims, tmp)
+          }
+        } else {
+          cdims <- rowcol_to_dims(row_start, col_span)
+        }
+        dims <- c(dims, cdims)
+      }
+    } else {
+      if (any(diff(col_span) != 1L)) {
+        for (col_start in col_span) {
+          tmp  <- rowcol_to_dims(row_span, col_start)
+          dims <- c(dims, tmp)
+        }
+      } else {
+        dims <- rowcol_to_dims(row_span, col_span)
+      }
+    }
   }
 
-  dims
+  paste0(dims, collapse = ",")
 }
 
 
