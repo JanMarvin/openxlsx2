@@ -113,4 +113,13 @@ test_that("worksheets with real world formulas", {
   got <- wb_to_df(wb, col_names = FALSE, show_formula = TRUE)
   expect_equal(exp, got)
 
+
+  xlsxFile <- testfile_path("match_escape.xlsb")
+
+  wb <- wb_load(xlsxFile)
+
+  exp <- "IF(ISNA(MATCH(G681,{\"Annual\",\"\"\"5\"\"\",\"\"\"1+4\"\"\"},0)),1,MATCH(G681,{\"Annual\",\"\"\"5\"\"\",\"\"\"1+4\"\"\"},0))"
+  got <- wb_to_df(wb, col_names = FALSE, show_formula = TRUE)$A
+  expect_equal(exp, got)
+
 })

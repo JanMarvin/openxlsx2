@@ -5,8 +5,14 @@
 #include <fstream>
 #include <cstdint>
 
+
+/* We have no real way to test if the big endian stuff works. Some parts might,
+ * others not. */
+
+// #nocov start
 // for swap_endian
 #include <type_traits>
+
 
 // detect if we need to swap. assuming that there is no big endian xlsb format,
 // we only need to swap little endian xlsb files on big endian systems
@@ -84,6 +90,7 @@ swap_endian(T t) {
   return t;
 }
 // end swap_endian
+// #nocov end
 
 template <typename T>
 T readbin( T t , std::istream& sas, bool swapit)
@@ -413,30 +420,6 @@ std::vector<std::pair<int, int>> StrRun(std::istream& sas, uint32_t dwSizeStrRun
   }
 
   return str_run;
-}
-
-// Function to count the number of characters in a UTF-8 string
-size_t utf8_strlen(const std::string& str) {
-    size_t length = 0;
-    for (size_t i = 0; i < str.size(); ) {
-        if ((str[i] & 0x80) == 0) {
-            // Single-byte character (ASCII)
-            i += 1;
-        } else if ((str[i] & 0xE0) == 0xC0) {
-            // Two-byte character
-            i += 2;
-        } else if ((str[i] & 0xF0) == 0xE0) {
-            // Three-byte character
-            i += 3;
-        } else if ((str[i] & 0xF8) == 0xF0) {
-            // Four-byte character
-            i += 4;
-        } else {
-            Rcpp::stop("Invalid UTF-8 encoding detected.");
-        }
-        ++length;
-    }
-    return length;
 }
 
 // Function to get a safe substring from a UTF-8 string
@@ -1048,10 +1031,8 @@ std::string array_elements(const std::vector<std::string>& elements, int n, int 
             int index = i * k + j;
             if (index < elements.size()) {
               // check if it needs escaping
-              if (elements[index][0] == '"') ss << "\"";
                 ss << "\"";
-                ss << elements[index];
-              if (elements[index][0] == '"') ss << "\"";
+                ss << escape_quote(elements[index]);
                 ss << "\"";
             }
         }
