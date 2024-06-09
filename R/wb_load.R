@@ -1303,6 +1303,36 @@ wb_load <- function(
         authors <- xml_value(txt, "comments", "authors", "author")
         comments <- xml_node(txt, "comments", "commentList", "comment")
 
+
+      # create valid rich text strings in comments table
+      if (length(commentsBIN) && any(sel <- grepl("<FONT_\\d+/>", comments))) {
+
+        SST      <- c(comments)
+
+        matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
+        matches <- unique(unlist(matches))
+
+        values  <- as.integer(gsub("\\D+", "", matches))
+
+        xmls    <- stringi::stri_replace_all_fixed(
+          wb$styles_mgr$styles$fonts[values + 1],
+          c("<name", "font>"),
+          c("<rFont", "rPr>"),
+          vectorize_all = FALSE
+        )
+
+        sst <- stringi::stri_replace_all_fixed(
+          str           = SST[sel],
+          pattern       = matches,
+          replacement   = xmls,
+          vectorize_all = FALSE
+        )
+
+        SST[sel] <- sst
+
+        comments <- SST
+      }
+
         comments_attr <- rbindlist(xml_attr(comments, "comment"))
 
         refs <- comments_attr$ref
@@ -1498,7 +1528,7 @@ wb_load <- function(
 
       sheets <- wb$get_sheet_names(escape = TRUE)
 
-      xti$sheets <- NA_character_ #(otherwise in missing cases: all is <NA>)
+      xti$sheets <- "" # was NA_character_ but (in missing cases: all is <NA>)
       # all id == 0 are local references, otherwise external references
       # external references are written as "[0]sheetname!A1". Require
       # handling of externalReferences.bin
@@ -1556,7 +1586,7 @@ wb_load <- function(
           ref  <- xti$ext_id[sel][i]
 
           # want can be zero
-          if (want %in% seq_along(extSheets)) {
+          if (ref %in% seq_along(extSheets)) {
 
             sheetName <- extSheets[[ref]][[want]]
             if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
@@ -1622,6 +1652,37 @@ wb_load <- function(
           }
         }
       }
+    }
+
+    # create valid rich text strings in shared strings table
+    if (any(sel <- grepl("<FONT_\\d+/>", wb$sharedStrings))) {
+
+      attr_sst <- attributes(wb$sharedStrings)
+      SST      <- c(wb$sharedStrings)
+
+      matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
+      matches <- unique(unlist(matches))
+
+      values  <- as.integer(gsub("\\D+", "", matches))
+
+      xmls    <- stringi::stri_replace_all_fixed(
+        wb$styles_mgr$styles$fonts[values + 1],
+        c("<name", "font>"),
+        c("<rFont", "rPr>"),
+        vectorize_all = FALSE
+      )
+
+      sst <- stringi::stri_replace_all_fixed(
+        str           = SST[sel],
+        pattern       = matches,
+        replacement   = xmls,
+        vectorize_all = FALSE
+      )
+
+      SST[sel] <- sst
+      attributes(SST) <- attr_sst
+
+      wb$sharedStrings <- SST
     }
 
   }
