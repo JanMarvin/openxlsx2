@@ -897,8 +897,12 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
         // need to write this formula somehwere
-        if (debug )Rcpp::Rcout << fml << std::endl;
-        Rcpp::warning("Table formulas are not implemented.");
+        // if (debug) Rcpp::Rcout << fml << std::endl;
+        if (debug) Rcpp::warning("Table formulas are not fully implemented.");
+
+        out << "<calculatedColumnFormula>";
+        out << fml;
+        out << "</calculatedColumnFormula>" << std::endl;
 
         break;
       }
@@ -912,10 +916,10 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         BrtTableStyleClientFields *fields = (BrtTableStyleClientFields*)&flags;
 
         out << "<tableStyleInfo name=\""<< stStyleName << "\"";
-        out <<" showColHeaders=\"" << fields->fColumnHeaders << "\"";
+        // out <<" showColHeaders=\"" << fields->fColumnHeaders << "\""; // not part of tableStyleInfo?
         out <<" showFirstColumn=\"" << fields->fFirstColumn << "\"";
         out <<" showLastColumn=\"" << fields->fLastColumn << "\"";
-        out <<" showRowHeaders=\"" << fields->fRowHeaders << "\"";
+        // out <<" showRowHeaders=\"" << fields->fRowHeaders << "\""; // not part of tableStyleInfo?
         out <<" showRowStripes=\"" << fields->fRowStripes << "\"";
         out <<" showColumnStripes=\"" << fields->fColumnStripes << "\"";
         out << " />" << std::endl;
