@@ -1528,7 +1528,7 @@ wb_load <- function(
 
       sheets <- wb$get_sheet_names(escape = TRUE)
 
-      xti$sheets <- NA_character_ #(otherwise in missing cases: all is <NA>)
+      xti$sheets <- "" # was NA_character_ but (in missing cases: all is <NA>)
       # all id == 0 are local references, otherwise external references
       # external references are written as "[0]sheetname!A1". Require
       # handling of externalReferences.bin
@@ -1586,7 +1586,7 @@ wb_load <- function(
           ref  <- xti$ext_id[sel][i]
 
           # want can be zero
-          if (want %in% seq_along(extSheets)) {
+          if (ref %in% seq_along(extSheets)) {
 
             sheetName <- extSheets[[ref]][[want]]
             if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
