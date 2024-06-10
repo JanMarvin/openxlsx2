@@ -1028,7 +1028,7 @@ std::string array_elements(const std::vector<std::string>& elements, int n, int 
         if (i > 0) ss << ";";
         for (int j = 0; j < k; ++j) {
             if (j > 0) ss << ",";
-            int index = i * k + j;
+            size_t index = i * k + j;
             if (index < elements.size()) {
               // check if it needs escaping
                 ss << "\"";
