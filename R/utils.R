@@ -179,7 +179,7 @@ NULL
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   dims <- x
-  if (length(x) == 1) {
+  if (length(x) == 1 && inherits(x, "character")) {
     if (grepl(";", x)) dims <- unlist(strsplit(x, ";"))
     if (grepl(",", x)) dims <- unlist(strsplit(x, ","))
   }

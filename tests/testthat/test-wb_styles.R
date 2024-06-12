@@ -888,3 +888,27 @@ test_that("create_colors_xml() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("dims work", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FF334E6F"))
+  wb$styles_mgr$add(new_fill, "new_fill")
+
+  xf <- create_cell_style(fill_id = wb$styles_mgr$get_fill_id("new_fill"))
+  wb$styles_mgr$add(xf, "xf")
+
+  wb$set_cell_style(
+    dims = "A1:A2",
+    style = wb$styles_mgr$get_xf_id("xf")
+  )
+
+  wb$set_cell_style(
+    dims = c("B1", "B2"),
+    style = wb$styles_mgr$get_xf_id("xf")
+  )
+
+  expect_true(all(wb$worksheets[[1]]$sheet_data$cc$c_s == "1"))
+
+})
