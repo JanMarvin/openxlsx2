@@ -48,6 +48,8 @@ numfmt <- wb$get_cell_style(dims = "B1")
 
 # assign style to a1
 wb$set_cell_style(dims = "A1", style = numfmt)
+
+# set style across a workbook
 wb <- wb_workbook() \%>\%
   wb_add_worksheet() \%>\%
   wb_add_fill(dims = "C3", color = wb_color("yellow")) \%>\%

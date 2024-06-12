@@ -3048,6 +3048,8 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' @param cols The columns the style will be applied to, either "A:D" or 1:4
 #' @param rows The rows the style will be applied to
 #' @examples
+#'
+#' # set style across a workbook
 #' wb <- wb_workbook() %>%
 #'   wb_add_worksheet() %>%
 #'   wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%

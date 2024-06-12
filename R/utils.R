@@ -1229,3 +1229,10 @@ print.fmt_txt <- function(x, ...) {
   message("fmt_txt string: ")
   print(as.character(x), ...)
 }
+
+#' helper to check if a string looks like a cell
+#' @param x a string
+#' @keywords internal
+is_dims  <- function(x) {
+  grepl("^[A-Z]+[0-9]+(:[A-Z]+[0-9]+)?$", x)
+}

@@ -8401,10 +8401,15 @@ wbWorkbook <- R6::R6Class(
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
-      if (all(grepl("[A-Za-z]", style)))
-        styid <- self$get_cell_style(dims = style, sheet = sheet)
-      else
+      if (all(grepl("[A-Za-z]", style))) {
+        if (is_dims(style)) {
+          styid <- self$get_cell_style(dims = style, sheet = sheet)
+        } else {
+          styid <- self$styles_mgr$get_xf_id(style)
+        }
+      } else {
         styid <- style
+      }
 
       private$do_cell_init(sheet, dims)
 
@@ -8427,10 +8432,15 @@ wbWorkbook <- R6::R6Class(
     set_cell_style_across = function(sheet = current_sheet(), style, cols = NULL, rows = NULL) {
 
       sheet <- private$get_sheet_index(sheet)
-      if (all(grepl("[A-Za-z]", style)))
-        styid <- self$get_cell_style(dims = style, sheet = sheet)
-      else
+      if (all(grepl("[A-Za-z]", style))) {
+        if (is_dims(style)) {
+          styid <- self$get_cell_style(dims = style, sheet = sheet)
+        } else {
+          styid <- self$styles_mgr$get_xf_id(style)
+        }
+      } else {
         styid <- style
+      }
 
       if (!is.null(rows)) {
         if (is.character(rows)) # row2int
