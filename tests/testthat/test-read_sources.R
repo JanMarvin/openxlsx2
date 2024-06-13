@@ -355,7 +355,12 @@ test_that("reading multiple slicers on a pivot table works", {
   )
   got <- wb$workbook.xml.rels[6:8]
   expect_equal(exp, got)
+})
 
+test_that("reading slicer for tables works", {
+  fl <- testfile_path("table_slicer.xlsx")
+  wb <- wb_load(fl)
+  expect_true(grepl("<x14:slicerCache r:id=\"rId100001\"/>", wb$workbook$extLst))
 })
 
 test_that("hyperlinks work", {

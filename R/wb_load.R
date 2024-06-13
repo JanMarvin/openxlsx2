@@ -1122,7 +1122,7 @@ wb_load <- function(
 
       # get extLst object. select the slicerCaches and replace it
       ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")
-      is_slicer <- which(ext_nams == "x14:slicerCaches")
+      is_slicer <- which(ext_nams %in% c("x14:slicerCaches", "x15:slicerCaches"))
       ext <- xml_node(wb$workbook$extLst, "extLst", "ext")
       ext[is_slicer] <- genSlicerCachesExtLst(1E5 + seq_along(slicerCachesXML))
       wb$workbook$extLst <- xml_node_create("extLst", xml_children = ext)
