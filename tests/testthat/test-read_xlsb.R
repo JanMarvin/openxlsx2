@@ -123,3 +123,17 @@ test_that("worksheets with real world formulas", {
   expect_equal(exp, got)
 
 })
+
+test_that("xlsb formulas", {
+
+  fl <- testfile_path("formula_checks.xlsb")
+  wb <- wb_load(fl)
+
+  exp <- c("", "D2:E2", "A1,B1", "A1 A2", "1+1", "1-1", "1*1", "1/1",
+          "1%", "1^1", "1=1", "1&gt;1", "1&gt;=1", "1&lt;1", "1&lt;=1",
+          "1&lt;&gt;1", "+A3", "-R2", "(1)", "SUM(1, )", "1", "2.500000",
+          "\"a\"", "\"A\"&amp;\"B\"")
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$f)
+  expect_equal(exp, got)
+
+})
