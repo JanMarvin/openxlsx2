@@ -1874,7 +1874,32 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
       if (debug) Rcpp::Rcout << "PtgMemFunc" <<std::endl;
 
       uint16_t cce = 0;
-      cce = readbin(cce, sas, swapit);
+      cce = readbin(cce, sas, swapit); // count of bytes in the binary reference expression
+      break;
+    }
+
+    case PtgMemErr:
+    case PtgMemErr2:
+    case PtgMemErr3:
+    {
+      if (debug) Rcpp::Rcout << "PtgMemErr" <<std::endl;
+
+      uint8_t unused1 = 0;
+      uint16_t unused2 = 0, cce = 0;
+
+      // Error txt is already in the value field
+      // fml_out += BErr(sas, swapit);
+      // fml_out += "\n";
+
+      std::string err_str = "";
+      err_str = BErr(sas, swapit);
+
+      if (debug) Rcpp::Rcout << "PtgMemErr: " << err_str << std::endl;
+
+      unused1 = readbin(unused1, sas, swapit);
+      unused2 = readbin(unused2, sas, swapit);
+      cce = readbin(cce, sas, swapit); // count of bytes in the binary reference expression
+
       break;
     }
 
