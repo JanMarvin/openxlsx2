@@ -1248,6 +1248,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
         if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
 
+        // PtgAttrSpaceType
         type = readbin(type, sas, swapit);
         // 0-6 various different types where to add the whitespace
         cch = readbin(cch, sas, swapit);
@@ -1264,6 +1265,17 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         break;
       }
 
+      case PtgAttrSpaceSemi:
+      {
+        // type: A PtgAttrSpaceType
+        uint8_t type = 0, cch = 0;
+        type = readbin(type, sas, swapit);
+        cch = readbin(cch, sas, swapit);
+
+        if (debug) Rprintf("PtgAttrSpaceSemi: %d %d\n", type, cch);
+        break;
+      }
+
       case PtgAttrSum:
       {
         if (debug) Rcpp::Rcout << "PtgAttrSum" << std::endl;
@@ -1275,6 +1287,20 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         // Rcpp::Rcout << unused << std::endl;
         fml_out += "SUM(%s)"; // maybe attr because it is a single cell function?
         fml_out += "\n";
+        break;
+      }
+
+      case PtgAttrBaxcel:
+      case PtgAttrBaxcel2:
+      {
+        // val1[8]   == bitSemi if Rgce is volatile
+        // val2[1:4] == 0
+        // val2[5]   == 1
+        // val2[6:8] == 0
+
+        uint16_t unused = 0;
+        unused = readbin(unused, sas, swapit);
+        Rcpp::warning("PtgAttrBaxcel: unhandled formula thing");
         break;
       }
 
@@ -1898,6 +1924,21 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
       unused1 = readbin(unused1, sas, swapit);
       unused2 = readbin(unused2, sas, swapit);
+      cce = readbin(cce, sas, swapit); // count of bytes in the binary reference expression
+
+      break;
+    }
+
+    case PtgMemNoMem:
+    case PtgMemNoMem2:
+    case PtgMemNoMem3:
+    {
+      if (debug) Rcpp::Rcout << "PtgMemNoMem" <<std::endl;
+
+      uint32_t unused = 0;
+      unused = readbin(unused, sas, swapit);
+
+      uint16_t cce = 0;
       cce = readbin(cce, sas, swapit); // count of bytes in the binary reference expression
 
       break;
