@@ -3738,6 +3738,14 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         break;
       }
 
+      case BrtValueMeta:
+      {
+        if (debug) Rcpp::Rcout << "BrtValueMeta" << std::endl;
+        int32_t ivmb = 0;
+        ivmb = readbin(ivmb, bin, swapit);
+        break;
+      }
+
       case BrtSheetProtectionIso:
       case BrtCsProtection:
       {
