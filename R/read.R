@@ -59,6 +59,7 @@
 #' @param fill_merged_cells If `TRUE`, the value in a merged cell is given to all cells within the merge.
 #' @param keep_attributes If `TRUE` additional attributes are returned.
 #'   (These are used internally to define a cell type.)
+#' @param check_names If `TRUE` then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.
 #' @param ... additional arguments
 #'
 #' @examples
@@ -149,6 +150,7 @@ wb_to_df <- function(
     types,
     named_region,
     keep_attributes   = FALSE,
+    check_names       = FALSE,
     ...
 ) {
 
@@ -596,6 +598,10 @@ wb_to_df <- function(
   }
 
   if (col_names) {
+    if (check_names) {
+      xlsx_cols_names <- make.names(xlsx_cols_names, unique = TRUE)
+    }
+
     names(z)  <- xlsx_cols_names
     names(tt) <- xlsx_cols_names
   }
@@ -630,6 +636,7 @@ read_xlsx <- function(
   na.strings        = "#N/A",
   na.numbers        = NA,
   fill_merged_cells = FALSE,
+  check_names       = FALSE,
   ...
 ) {
 
@@ -657,6 +664,7 @@ read_xlsx <- function(
     na.strings        = na.strings,
     na.numbers        = na.numbers,
     fill_merged_cells = fill_merged_cells,
+    check_names       = check_names,
     ...
   )
 }
@@ -679,6 +687,7 @@ wb_read <- function(
   named_region,
   na.strings      = "NA",
   na.numbers      = NA,
+  check_names     = FALSE,
   ...
 ) {
 
@@ -705,6 +714,7 @@ wb_read <- function(
     named_region    = named_region,
     na.strings      = na.strings,
     na.numbers      = na.numbers,
+    check_names     = check_names,
     ...
   )
 

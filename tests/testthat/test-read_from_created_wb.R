@@ -201,3 +201,23 @@ test_that("column names are not missing with col_names = FALSE", {
   expect_equal(exp, got)
 
 })
+
+test_that("check_names works", {
+
+  dd <- data.frame(
+    "a and b"  = 1:2,
+    "a-and-b" = 3:4,
+    check.names = FALSE
+  )
+
+  wb <- write_xlsx(x = dd)
+
+  exp <- c("a and b", "a-and-b")
+  got <- names(wb_to_df(wb, check_names = FALSE))
+  expect_equal(exp, got)
+
+  exp <- c("a.and.b", "a.and.b.1")
+  got <- names(wb_to_df(wb, check_names = TRUE))
+  expect_equal(exp, got)
+
+})

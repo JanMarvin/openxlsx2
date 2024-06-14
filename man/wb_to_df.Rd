@@ -29,6 +29,7 @@ wb_to_df(
   types,
   named_region,
   keep_attributes = FALSE,
+  check_names = FALSE,
   ...
 )
 
@@ -48,6 +49,7 @@ read_xlsx(
   na.strings = "#N/A",
   na.numbers = NA,
   fill_merged_cells = FALSE,
+  check_names = FALSE,
   ...
 )
 
@@ -66,6 +68,7 @@ wb_read(
   named_region,
   na.strings = "NA",
   na.numbers = NA,
+  check_names = FALSE,
   ...
 )
 }
@@ -120,6 +123,8 @@ If no sheet is selected, the first appearance will be selected. See \code{\link[
 
 \item{keep_attributes}{If \code{TRUE} additional attributes are returned.
 (These are used internally to define a cell type.)}
+
+\item{check_names}{If \code{TRUE} then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.}
 
 \item{...}{additional arguments}
 }

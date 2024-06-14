@@ -930,6 +930,7 @@ to_df
   types,
   named_region,
   keep_attributes = FALSE,
+  check_names = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -978,6 +979,8 @@ to_df
 \item{\code{named_region}}{Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.}
 
 \item{\code{keep_attributes}}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
+
+\item{\code{check_names}}{If TRUE then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.}
 
 \item{\code{...}}{additional arguments}
 }
