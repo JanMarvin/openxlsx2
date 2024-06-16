@@ -1561,6 +1561,16 @@ wb_load <- function(
           }
       }
 
+      for (i in seq_along(wb$tables$tab_xml)) {
+        wb$tables$tab_xml[i] <-
+          stringi::stri_replace_all_fixed(
+            wb$tables$tab_xml[i],
+            xti$name_id,
+            xti$sheets,
+            vectorize_all = FALSE
+          )
+      }
+
       ### for external references we need to get the required sheet names first
       # For now this is all a little guess work
 
@@ -1623,10 +1633,13 @@ wb_load <- function(
 
           # replace named region in formulas
           nri         <- wb$get_named_regions()
-          nri$name_id <- paste0("openxlsx2defnam_", sprintf("%012d", as.integer(rownames(nri))))
+          nri$name_id <- paste0("openxlsx2defnam_", sprintf("%012d", as.integer(nri$id)))
+
+          if (debug)
+            print(nri)
 
           for (j in seq_along(wb$worksheets)) {
-            if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != "")) {
+            if (any(sel <- grepl(paste0(nri$name_id, collapse = "|"), wb$worksheets[[j]]$sheet_data$cc$f))) {
               wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
                 stringi::stri_replace_all_fixed(
                   wb$worksheets[[j]]$sheet_data$cc$f[sel],
@@ -1634,6 +1647,58 @@ wb_load <- function(
                   nri$name,
                   vectorize_all = FALSE
                 )
+            }
+          }
+
+        }
+
+        if (length(wb$tables)) {
+          # replace named region in formulas
+          tri         <- wb$get_tables(sheet = NULL)
+          tri$id      <- as.integer(rbindlist(xml_attr(wb$tables$tab_xml, "table"))$id) # - 1L
+          tri$name_id <- paste0("openxlsx2tab_", sprintf("%012d", tri$id))
+          tri$vars    <- lapply(wb$tables$tab_xml, function(x) rbindlist(xml_attr(x, "table", "tableColumns", "tableColumn"))$name)
+
+          tri <- tri[order(tri$id), ]
+
+          if (debug)
+            print(tri)
+
+          for (j in seq_along(wb$worksheets)) {
+            if (any(sel <- grepl(paste0(tri$name_id, collapse = "|"), wb$worksheets[[j]]$sheet_data$cc$f))) {
+
+              for (i in seq_len(nrow(tri))) {
+
+                sel <- grepl(paste0(tri$name_id, collapse = "|"), wb$worksheets[[j]]$sheet_data$cc$f)
+
+                from_xlsb <- c(tri$name_id[i], paste0("[openxlsx2col_", tri$id[i], "_", seq_along(unlist(tri$vars[i])) - 1L, "]"))
+                to_xlsx   <- c(tri$tab_name[i], paste0("[", unlist(tri$vars[i]), "]"))
+
+                # always on all?
+                wb$tables$tab_xml <-
+                  stringi::stri_replace_all_fixed(
+                    wb$tables$tab_xml,
+                    from_xlsb,
+                    to_xlsx,
+                    vectorize_all = FALSE
+                  )
+
+                wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
+                  stringi::stri_replace_all_fixed(
+                    wb$worksheets[[j]]$sheet_data$cc$f[sel],
+                    from_xlsb,
+                    to_xlsx,
+                    vectorize_all = FALSE
+                  )
+
+                wb$workbook$definedNames <-
+                  stringi::stri_replace_all_fixed(
+                    wb$workbook$definedNames,
+                    from_xlsb,
+                    to_xlsx,
+                    vectorize_all = FALSE
+                  )
+              }
             }
           }
 

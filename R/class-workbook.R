@@ -7251,7 +7251,7 @@ wbWorkbook <- R6::R6Class(
     #' @description get tables
     #' @return The sheet tables.  `character()` if empty
     get_tables = function(sheet = current_sheet()) {
-      if (length(sheet) != 1) {
+      if (!is.null(sheet) && length(sheet) != 1) {
         stop("sheet argument must be length 1")
       }
 
@@ -7259,10 +7259,14 @@ wbWorkbook <- R6::R6Class(
         return(character())
       }
 
-      sheet <- private$get_sheet_index(sheet)
-      if (is.na(sheet)) stop("No such sheet in workbook")
+      if (!is.null(sheet)) {
+        sheet <- private$get_sheet_index(sheet)
+        if (is.na(sheet)) stop("No such sheet in workbook")
 
-      sel <- self$tables$tab_sheet == sheet & self$tables$tab_act == 1
+        sel <- self$tables$tab_sheet == sheet & self$tables$tab_act == 1
+      } else {
+        sel <- self$tables$tab_act == 1
+      }
       self$tables[sel, c("tab_name", "tab_ref")]
     },
 
