@@ -2478,6 +2478,7 @@ wbWorkbook <- R6::R6Class(
     #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
     #' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
+    #' @param check_names If TRUE then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.
     #' @return a data frame
     to_df = function(
       sheet,
@@ -2501,6 +2502,7 @@ wbWorkbook <- R6::R6Class(
       types,
       named_region,
       keep_attributes   = FALSE,
+      check_names       = FALSE,
       ...
     ) {
 
@@ -2531,7 +2533,8 @@ wbWorkbook <- R6::R6Class(
         show_formula      = show_formula,
         convert           = convert,
         types             = types,
-        named_region      = named_region
+        named_region      = named_region,
+        check_names       = check_names
       )
     },
 
