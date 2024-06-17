@@ -49,9 +49,9 @@ test_that("reading complex xlsb works", {
 
   # comments
   exp <- c(
-    "<t xml:space=\"preserve\">Jan Marvin Garbuszus:</t>",
+    "<t>Jan Marvin Garbuszus:</t>",
     "<t xml:space=\"preserve\">\n</t>",
-    "<t xml:space=\"preserve\">A new note!</t>"
+    "<t>A new note!</t>"
   )
   got <- wb$comments[[1]][[1]]$comment
   expect_equal(exp, got)
@@ -132,8 +132,16 @@ test_that("xlsb formulas", {
   exp <- c("", "D2:E2", "A1,B1", "A1 A2", "1+1", "1-1", "1*1", "1/1",
           "1%", "1^1", "1=1", "1&gt;1", "1&gt;=1", "1&lt;1", "1&lt;=1",
           "1&lt;&gt;1", "+A3", "-R2", "(1)", "SUM(1, )", "1", "2.500000",
-          "\"a\"", "\"A\"&amp;\"B\"")
+          "\"a\"", "\"A\"&amp;\"B\"", "Sheet2!B2", "'[1]Sheet3'!A2")
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$f)
   expect_equal(exp, got)
+
+  fl <- testfile_path("formula_checks.xlsx")
+  xl <- wb_load(fl)
+
+  expect_equal(
+    xl$worksheets[[2]]$sheet_data$cc$f,
+    wb$worksheets[[2]]$sheet_data$cc$f
+  )
 
 })

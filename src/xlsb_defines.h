@@ -192,6 +192,25 @@ typedef struct {
   uint8_t reserved2 : 2;
 } PtgListFields;
 
+enum PtgRowType
+{
+  data = 0x00,
+  all = 0x01,         // #All
+  headers = 0x02,     // #Headers
+  data2 = 0x04,       // #Data
+  dataheaders = 0x06,
+  totals = 0x08,      // #Totals
+  datatotals = 0x0C,
+  current = 0x10      // #This Row
+};
+
+enum PtgDataType
+{
+  reference = 0x1,
+  value = 0x2,
+  array = 0x3
+};
+
 enum RgbExtra
 {
   PtgExtraArray = 0,

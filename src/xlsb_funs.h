@@ -161,6 +161,14 @@ std::string escape_xml(const std::string& input) {
   return result;
 }
 
+std::string wrap_xml(const std::string& str) {
+    if (!str.empty() && isspace(str[0])) {
+        return "<t xml:space=\"preserve\">" + str + "</t>";
+    } else {
+        return "<t>" + str + "</t>";
+    }
+}
+
 std::string to_utf8(const std::u16string& u16str) {
 
   std::string utf8str;
@@ -485,7 +493,7 @@ std::string to_rich_text(const std::string& str, const std::vector<std::pair<int
 
           std::string part = utf8_substr(str, start, len);
 
-          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/><t xml:space=\"preserve\">" + escape_xml(part) + "</t></r>";
+          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/>" + wrap_xml(escape_xml(part)) + "</r>";
         }
 
           start = str_runs[str_run].first;
@@ -496,7 +504,7 @@ std::string to_rich_text(const std::string& str, const std::vector<std::pair<int
 
           std::string part = utf8_substr(str, start, len);
 
-          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/><t xml:space=\"preserve\">" + escape_xml(part) + "</t></r>";
+          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/>" + wrap_xml(escape_xml(part)) + "</r>";
     }
 
     return result;
@@ -542,7 +550,7 @@ std::string RichStr(std::istream& sas, bool swapit) {
 
     str = to_rich_text(str, str_run);
   } else {
-    str = "<t>" + escape_xml(str) + "</t>";
+    str = wrap_xml(escape_xml(str));
   }
 
   if (B) {
@@ -1164,33 +1172,113 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
         uint32_t listIndex = 0;
         int16_t colFirst = 0, colLast = 0;
 
-        // this is a reference to a table column something like "tab[col]"
+        // ixti = location of table
         ixti = readbin(ixti, sas, swapit);
-        flags = readbin(flags, sas, swapit);
+
+        // B:
+        // 0x00 columns consist of all columns in table
+        // 0x01 one column wide, only colFirst required
+        // 0x02 columns from colFirst to colLast
+        // rowType = PtgRowType()
+        // squareBracketSpace: spacing?
+        // commaSpace: comma space?
+        // unused
+        // type: PtgDataType()
+        // invalid: bool
+        // nonresident: bool
+        flags     = readbin(flags, sas, swapit);
+
+        // table identifier: unused if invalid=1 || nonresident=1
         listIndex = readbin(listIndex, sas, swapit);
-        colFirst = ColShort(sas, swapit);
-        colLast = ColShort(sas, swapit);
+
+        // cols: unused if invalid = 1 || nonresident = 1 || columns = 0
+        colFirst  = ColShort(sas, swapit);
+        colLast   = ColShort(sas, swapit);
 
 
         PtgListFields *fields = (PtgListFields *)&flags;
+
+        // if (debug)
+        // Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+        //   (uint32_t)fields->columns,
+        //   (uint32_t)fields->commaSpace,
+        //   (uint32_t)fields->invalid,
+        //   (uint32_t)fields->nonresident,
+        //   (uint32_t)fields->reserved2,
+        //   (uint32_t)fields->rowType,
+        //   (uint32_t)fields->squareBracketSpace,
+        //   (uint32_t)fields->type,
+        //   (uint32_t)fields->unused
+        // );
 
         if (fields->nonresident) // different workbook and invalid == 0
           ptgextra.push_back(typ);
 
         std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
+        paddedStr << std::setw(12) << std::setfill('0') << listIndex; // << ixti;
 
         // A1 notation cell
-        // fml_out += "openxlsx2xlsb_" + paddedStr.str();
-        // maybe [ ]
-        fml_out += "#REF!";
+        // something like this: Table1[[#This Row],[a]]
+        fml_out += "openxlsx2tab_" + paddedStr.str();
+
+        bool no_row_type = fields->invalid == 1 || fields->nonresident == 1;
+
+        fml_out += "[";
+
+        bool need_bracket = fields->columns > 0 ||
+            (fields->columns == 0 &&
+              (fields->rowType == dataheaders ||
+                fields->rowType == datatotals)
+            );
+
+
+        // if rowType == 0 no #Data etc is added
+        if (!no_row_type && fields->rowType) {
+          if (need_bracket) fml_out += "[";
+          if (fields->rowType == data)        fml_out += "";
+          if (fields->rowType == all)         fml_out += "#All";
+          if (fields->rowType == headers)     fml_out += "#Headers";
+          if (fields->rowType == data2)       fml_out += "#Data";
+          if (fields->rowType == dataheaders) fml_out += "#Headers],[#Data";
+          if (fields->rowType == totals)      fml_out += "#Totals";
+          if (fields->rowType == datatotals)  fml_out += "#Data],[#Totals";
+          if (fields->rowType == current)     fml_out += "#This Row";
+          if (need_bracket) fml_out += "]";
+          if (fields->columns > 0) fml_out += ",";
+        }
+
+        // not sure what is supposed to happen in this case?
+        // have to replace colFirst with a variable name
+        if (!(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
+          // Rcpp::Rcout << "colFirst" << std::endl;
+          if (fields->columns > 1 || fields->rowType > data) fml_out += "[";
+          fml_out += "openxlsx2col_";
+          fml_out += std::to_string(listIndex);
+          fml_out += "_";
+          fml_out += std::to_string(colFirst);
+          if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
+        }
+
+        // have to replace colLast with a variable name
+        if ((colFirst < colLast) && !(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
+          // Rcpp::Rcout << "colLast" << std::endl;
+          fml_out += ":[openxlsx2col_";
+          fml_out += std::to_string(listIndex);
+          fml_out += "_";
+          fml_out += std::to_string(colLast);
+          if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
+        }
+
+        fml_out += "]";
         fml_out += "\n";
 
         // Do something with this, just ... what?
-        if (debug) Rprintf("PtgList: %d, %d, %d, %d\n",
+        if (debug)
+        Rprintf("PtgList: %d, %d, %d, %d\n",
             ixti, listIndex, colFirst, colLast);
 
-        Rcpp::warning("formulas with table references are not implemented.");
+        // if (debug)
+        // Rcpp::warning("formulas with table references are not implemented.");
 
         break;
       }
