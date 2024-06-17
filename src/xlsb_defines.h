@@ -179,6 +179,33 @@ typedef struct {
   uint16_t unused : 13;
 } BrtWbPropFields;
 
+typedef struct {
+  uint8_t valType : 4;
+  uint8_t errStyle : 3;
+  bool unused : 1;
+  bool fAllowBlank : 1;
+  bool fSuppressCombo : 1;
+  uint8_t mdImeMode : 8;
+  bool fShowInputMsg : 1;
+  bool fShowErrorMsg : 1;
+  uint8_t typOperator : 4;
+  bool fDVMinFmla : 1; // only in 14
+  bool fDVMaxFmla : 1; // only in 14
+  uint8_t reserved : 6;
+} BrtDValFields;
+
+typedef struct {
+  uint16_t product : 15;
+  bool reserved : 1;
+} FRTVersionFields;
+
+typedef struct {
+  bool fRef : 1;
+  bool fSqref : 1;
+  bool fFormula : 1;
+  bool fRelID : 1;
+  uint32_t reserved : 28;
+} FRTHeaderFields;
 
 typedef struct {
   uint8_t columns : 2;
