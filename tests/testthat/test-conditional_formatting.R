@@ -564,14 +564,14 @@ test_that("extend dataBar tests", {
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_equal(exp, got)
 
-  exp <- read_xml("<ext uri=\"{78C0D931-6437-407d-A8EE-F0AAD7539E65}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">
-                  <x14:conditionalFormattings>
-                  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40000}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"1\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FF638EC6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>A1:A11</xm:sqref></x14:conditionalFormatting>
-                  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40001}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FF638EC6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>C1:C11</xm:sqref></x14:conditionalFormatting>
-                  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40002}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"1\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>E1:E11</xm:sqref></x14:conditionalFormatting>
-                  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40003}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFFF0000\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>G1:G11</xm:sqref></x14:conditionalFormatting>
-                  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40004}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFA6A6A6\"/><x14:negativeBorderColor rgb=\"FFA6A6A6\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>I1:I11</xm:sqref></x14:conditionalFormatting>
-                  <x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\"><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40005}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"num\"><xm:f>0</xm:f></x14:cfvo><x14:cfvo type=\"num\"><xm:f>5</xm:f></x14:cfvo><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFA6A6A6\"/><x14:negativeBorderColor rgb=\"FFA6A6A6\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>K1:K11</xm:sqref></x14:conditionalFormatting>
+  exp <- read_xml("<ext xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" uri=\"{78C0D931-6437-407d-A8EE-F0AAD7539E65}\">
+                  <x14:conditionalFormattings xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\">
+                  <x14:conditionalFormatting><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40000}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"1\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FF638EC6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>A1:A11</xm:sqref></x14:conditionalFormatting>
+                  <x14:conditionalFormatting><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40001}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FF638EC6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>C1:C11</xm:sqref></x14:conditionalFormatting>
+                  <x14:conditionalFormatting><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40002}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"1\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>E1:E11</xm:sqref></x14:conditionalFormatting>
+                  <x14:conditionalFormatting><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40003}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFFF0000\"/><x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>G1:G11</xm:sqref></x14:conditionalFormatting>
+                  <x14:conditionalFormatting><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40004}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFA6A6A6\"/><x14:negativeBorderColor rgb=\"FFA6A6A6\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>I1:I11</xm:sqref></x14:conditionalFormatting>
+                  <x14:conditionalFormatting><x14:cfRule type=\"dataBar\" id=\"{F7189283-14F7-4DE0-9601-54DE9DB40005}\"><x14:dataBar minLength=\"0\" maxLength=\"100\" border=\"1\" gradient=\"0\" negativeBarBorderColorSameAsPositive=\"0\"><x14:cfvo type=\"num\"><xm:f>0</xm:f></x14:cfvo><x14:cfvo type=\"num\"><xm:f>5</xm:f></x14:cfvo><x14:borderColor rgb=\"FFA6A6A6\"/><x14:negativeFillColor rgb=\"FFA6A6A6\"/><x14:negativeBorderColor rgb=\"FFA6A6A6\"/><x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule><xm:sqref>K1:K11</xm:sqref></x14:conditionalFormatting>
                   </x14:conditionalFormattings></ext>", pointer = FALSE)
   got <- wb$worksheets[[1]]$extLst
   expect_equal(exp, got)
@@ -910,4 +910,115 @@ test_that("remove conditional formatting works", {
   exp <- c(`A1:A4` = "<cfRule type=\"expression\" dxfId=\"6\" priority=\"2\"><formula>A1&gt;2</formula></cfRule>")
   got <- wb$worksheets[[4]]$conditionalFormatting
   expect_equal(exp, got)
+})
+
+test_that("conditional formatting works with slicers/timelines", {
+
+  # create a workbook with two sheets and some data
+  test_wb <- function() {
+    # prepare data
+    df <- data.frame(
+      AirPassengers = c(AirPassengers),
+      time = seq(from = as.Date("1949-01-01"), to = as.Date("1960-12-01"), by = "month"),
+      letters = letters[1:4]
+    )
+
+    # create workbook
+    wb <- wb_workbook()$
+      add_worksheet("pivot")$
+      add_worksheet("data")$
+      add_data(x = df)
+  }
+
+  # create data on sheet pivot with cf
+  test_cf <- function(wb) {
+    x <- matrix(
+      sample(c(0, 1), size = 20 * 10, replace = TRUE),
+      20,
+      10
+    )
+
+    wb$add_data(x = x, sheet = "pivot", colNames = FALSE, dims = wb_dims(x = x, from_row = 30))
+    wb$add_conditional_formatting(
+      dims = wb_dims(x = x, from_row = 30, cols = 1),
+      rule = c(.1, 0.1, 1),
+      type = "iconSet",
+      params = list(
+        percent = FALSE,
+        iconSet = "3Stars",
+        reverse = FALSE)
+    )
+    wb$add_conditional_formatting(
+      dims = wb_dims(x = x, from_row = 30, cols = 2),
+      rule = c(.1, 0.1, 1),
+      type = "iconSet",
+      params = list(
+        percent = FALSE,
+        iconSet = "3Stars",
+        reverse = FALSE)
+    )
+    wb
+  }
+
+  # add pt w/ slicer and timeline on sheet pivot
+  test_pt <- function(wb) {
+
+    # get pivot table data source
+    df <- wb_data(wb, sheet = "data")
+
+    # create pivot table
+    wb$add_pivot_table(
+      df,
+      sheet = "pivot",
+      rows = "time",
+      cols = "letters",
+      data = "AirPassengers",
+      pivot_table = "airpassengers",
+      params = list(
+        compact = FALSE, outline = FALSE, compact_data = FALSE,
+        row_grand_totals = FALSE, col_grand_totals = FALSE)
+    )
+
+    # add slicer
+    wb$add_slicer(
+      df,
+      dims = "E1:I7",
+      sheet = "pivot",
+      slicer = "letters",
+      pivot_table = "airpassengers",
+      params = list(choose = c(letters = 'x %in% c("a", "b")'))
+    )
+
+    # add timeline
+    wb$add_timeline(
+      df,
+      dims = "E9:I14",
+      sheet = "pivot",
+      timeline = "time",
+      pivot_table = "airpassengers",
+      params = list(
+        beg_date = as.Date("1954-01-01"),
+        end_date = as.Date("1961-01-01"),
+        choose_beg = as.Date("1957-01-01"),
+        choose_end = as.Date("1958-01-01"),
+        level = 0,
+        style = "TimeSlicerStyleLight2"
+      )
+    )
+    wb
+  }
+
+  wb <- test_wb()
+  wb <- test_cf(wb)
+  wb <- test_pt(wb)
+
+  expect_equal(3L, length(wb$worksheets[[1]]$extLst))
+
+  wb <- test_wb()
+  wb <- test_pt(wb)
+  wb <- test_cf(wb)
+
+  expect_equal(3L, length(wb$worksheets[[1]]$extLst))
+
+
 })

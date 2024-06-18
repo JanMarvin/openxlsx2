@@ -902,6 +902,7 @@ wbWorksheet <- R6::R6Class(
 
     # @description add data_validation_lst
     # @param datavalidation datavalidation
+    # TODO extend this for x15 and add it to timeline
     do_append_x14 = function(
       x,
       s_name,
@@ -921,6 +922,8 @@ wbWorksheet <- R6::R6Class(
       uri <- ""
       # if (l_name == "x14:dataValidations") uri <- "{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}"
       if (l_name == "x14:sparklineGroups") uri <- "{05C60535-1F16-4fd2-B633-F4F36F0B64E0}"
+      if (l_name == "x14:conditionalFormattings") uri <- "{78C0D931-6437-407d-A8EE-F0AAD7539E65}"
+      if (l_name == "x14:slicerList") uri <- "{A8765BA9-456A-4dab-B4F3-ACF838C121DE}"
 
       is_needed_uri <- grepl(pattern = uri, extLst, fixed = TRUE)
 
@@ -942,13 +945,15 @@ wbWorksheet <- R6::R6Class(
       # check again and should be exactly one ext node
       is_xmlns_x14 <- grepl(pattern = "xmlns:x14", extLst)
 
+      l_name_attr <- c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main")
+
       # check for l_name and add one if none is found
       if (length(xml_node(ext, "ext", l_name)) == 0) {
         ext <- xml_add_child(
           ext,
           xml_node_create(
             l_name,
-            xml_attributes = c("xmlns:xm" = "http://schemas.microsoft.com/office/excel/2006/main"))
+            xml_attributes = l_name_attr)
         )
       }
 

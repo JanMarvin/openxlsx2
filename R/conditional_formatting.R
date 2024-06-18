@@ -121,29 +121,6 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
     gradient  = gradient
   )
 
-  # check if any extLst availaible
-  if (length(extLst) == 0) {
-    extLst <- newExtLst
-  } else if (length(xml_node(extLst, "ext", "x14:conditionalFormattings")) == 0) {
-    # extLst is available, has no conditionalFormattings
-    extLst <- xml_add_child(
-      extLst,
-      xml_node(newExtLst, "ext", "x14:conditionalFormattings")
-    )
-  } else {
-    # extLst is available, has conditionalFormattings
-    extLst <- xml_add_child(
-      extLst,
-      xml_node(
-        newExtLst,
-        "ext",
-        "x14:conditionalFormattings",
-        "x14:conditionalFormatting"
-      ),
-      level = "x14:conditionalFormattings"
-    )
-  }
-
   cf_rule_extLst <- sprintf(
     '<extLst>
       <ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
@@ -192,7 +169,7 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
     )
   }
 
-  attr(cf_rule, "extLst") <- extLst
+  attr(cf_rule, "extLst") <- newExtLst
   cf_rule
 }
 
@@ -349,6 +326,8 @@ cf_bottom_n <- function(dxfId, values) {
 #' @rdname cf_rules
 #' @noRd
 cf_icon_set <- function(
+    extLst,
+    sqref,
     values,
     params
   ) {
@@ -358,6 +337,15 @@ cf_icon_set <- function(
   showValue <- NULL
   reverse   <- NULL
   iconSet   <- NULL
+
+  # per default iconSet creation is store in $conditionalFormatting.
+  # The few exceptions are stored in extLst
+  guid <- NULL
+  x14_ns <- NULL
+  if (any(params$iconSet %in% c("3Stars", "3Triangles", "5Boxes", "NoIcons"))) {
+    guid <- st_guid()
+    x14_ns <- "x14:"
+  }
 
   if (!is.null(params$iconSet))
     iconSet <- params$iconSet
@@ -372,15 +360,16 @@ cf_icon_set <- function(
   # create cfRule with iconset and cfvo
 
   cf_rule <- xml_node_create(
-    "cfRule",
+    paste0(x14_ns, "cfRule"),
     xml_attributes = c(
       type     = "iconSet",
-      priority = priority
+      priority = priority,
+      id = guid
     )
   )
 
   iconset <- xml_node_create(
-    "iconSet",
+    paste0(x14_ns, "iconSet"),
     xml_attributes = c(
       iconSet   = iconSet,
       showValue = showValue,
@@ -389,25 +378,59 @@ cf_icon_set <- function(
   )
 
   for (i in seq_along(values)) {
-    iconset <- xml_add_child(
-      iconset,
-      xml_child = c(
-        xml_node_create(
-          "cfvo",
-          xml_attributes = c(
-            type = type,
-            val = values[i]
+    if (is.null(x14_ns)) {
+      iconset <- xml_add_child(
+        iconset,
+        xml_child = c(
+          xml_node_create(
+            "cfvo",
+            xml_attributes = c(
+              type = type,
+              val = values[i]
+            )
           )
         )
       )
-    )
+    } else {
+      iconset <- xml_add_child(
+        iconset,
+        xml_child = c(
+          xml_node_create(
+            "x14:cfvo",
+            xml_attributes = c(
+              type = type
+            ),
+            xml_children = xml_node_create("xm:f",
+              xml_children = values[i]
+            )
+          )
+        )
+      )
+    }
   }
 
   # return
-  xml_add_child(
+  xml <- xml_add_child(
     cf_rule,
     xml_child = iconset
   )
+
+  if (!is.null(x14_ns)) {
+    extLst <- paste0(
+      "<x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\">",
+      xml,
+      "<xm:sqref>",
+      sqref,
+      "</xm:sqref>",
+      "</x14:conditionalFormatting>"
+    )
+
+    xml <- character()
+    attr(xml, "extLst") <- extLst
+
+  }
+
+  xml
 }
 
 #' @rdname cf_rules
