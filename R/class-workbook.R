@@ -9537,7 +9537,7 @@ wbWorkbook <- R6::R6Class(
         uniqueValues = cf_unique_values(dxfId),
 
         ## iconSet ----
-        iconSet = cf_icon_set(values, params),
+        iconSet = cf_icon_set(self$worksheets[[sheet]]$extLst, sqref, values, params),
 
         ## containsErrors ----
         containsErrors = cf_iserror(dxfId, sqref),
@@ -9559,8 +9559,12 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(attr(cfRule, "extLst")))
         self$worksheets[[sheet]]$extLst <- read_xml(attr(cfRule, "extLst"), pointer = FALSE)
 
-      private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE))
-      names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
+      if (any(grepl("^<ext", cfRule))) {
+        self$worksheets[[sheet]]$extLst <- c(cfRule)
+      } else {
+        private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE))
+        names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
+      }
       invisible(self)
     },
 
