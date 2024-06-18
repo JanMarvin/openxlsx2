@@ -3873,9 +3873,9 @@ wb_add_form_control <- function(
 #'     `[params$reverse]`\cr If `TRUE`, the order is reversed. Default `FALSE`\cr\cr
 #'     `[params$percent]`\cr If `TRUE`, uses percentage\cr\cr
 #'     `[params$iconSet]`\cr Uses one of the implemented icon sets. Values must match the length of the icons
-#'      in the set 3Arrows, 3ArrowsGray, 3Flags, 3Signs, 3Symbols, 3Symbols2, 3TrafficLights1, 3TrafficLights2,
-#'      4Arrows, 4ArrowsGray, 4Rating, 4RedToBlack, 4TrafficLights, 5Arrows, 5ArrowsGray, 5Quarters, 5Rating. The
-#'      default is 3TrafficLights1.
+#'      in the set 3Arrows, 3ArrowsGray, 3Flags, 3Signs, 3Stars, 3Symbols, 3Symbols2, 3TrafficLights1, 3TrafficLights2,
+#'      3Triangles, 4Arrows, 4ArrowsGray, 4Rating, 4RedToBlack, 4TrafficLights, 5Arrows, 5ArrowsGray, 5Boxes, 5Quarters, 5Rating.
+#'      The default is 3TrafficLights1.
 #'  }
 #' }
 #'
