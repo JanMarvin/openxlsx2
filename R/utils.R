@@ -454,7 +454,7 @@ determine_select_valid <- function(args, select = NULL) {
         "`select` can't be \"row_names\" if `x` doesn't have row names.\n",
         "Use `row_names = TRUE` inside `wb_dims()` to ensure row names are preserved.",
         call. = FALSE
-        )
+      )
     } else if (isFALSE(args$col_names %||% TRUE) && identical(select, "col_names")) {
       # If the default for col_names ever changes in openxlsx2, this would need adjustment.
       stop(
@@ -655,7 +655,7 @@ wb_dims <- function(..., select = NULL) {
       "Only `rows` and `cols` can be provided unnamed to `wb_dims()`.\n",
       "You must name all other arguments.",
       call. = FALSE
-      )
+    )
   }
 
   if (len == 1 && all_args_unnamed) {
@@ -866,9 +866,9 @@ wb_dims <- function(..., select = NULL) {
 
   if (select == "col_names") {
     if (is.null(cols_arg) || length(cols_arg) %in% c(0, 1))
-        ncol_to_span <- ncol(x)
-      else
-        ncol_to_span <- cols_arg
+      ncol_to_span <- ncol(x)
+    else
+      ncol_to_span <- cols_arg
     nrow_to_span <- 1L
   } else if (select == "row_names") {
     ncol_to_span <- 1L
