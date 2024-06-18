@@ -121,8 +121,6 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
     gradient  = gradient
   )
 
-  extLst <- update_extLst(extLst, newExtLst)
-
   cf_rule_extLst <- sprintf(
     '<extLst>
       <ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
@@ -171,7 +169,7 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
     )
   }
 
-  attr(cf_rule, "extLst") <- extLst
+  attr(cf_rule, "extLst") <- newExtLst
   cf_rule
 }
 
@@ -418,15 +416,18 @@ cf_icon_set <- function(
   )
 
   if (!is.null(x14_ns)) {
-    xml <- paste0(
-      "<ext uri=\"{78C0D931-6437-407d-A8EE-F0AAD7539E65}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:conditionalFormattings><x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\">",
+    extLst <- paste0(
+      "<x14:conditionalFormatting xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\">",
       xml,
       "<xm:sqref>",
       sqref,
       "</xm:sqref>",
-      "</x14:conditionalFormatting></x14:conditionalFormattings></ext>"
+      "</x14:conditionalFormatting>"
     )
-    xml <- update_extLst(extLst, xml)
+
+    xml <- character()
+    attr(xml, "extLst") <- extLst
+
   }
 
   xml

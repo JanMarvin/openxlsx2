@@ -1901,33 +1901,17 @@ wbWorkbook <- R6::R6Class(
 
       next_id <- get_next_id(self$worksheets_rels[[sheet]])
 
+
+
       # add the pivot table and the drawing to the worksheet
-      is_ext_x14 <- grepl("x14:slicerList", self$worksheets[[sheet]]$extLst)
       if (!any(grepl(sprintf("Target=\"../slicers/slicer%s.xml\"", self$worksheets[[sheet]]$relships$slicer), self$worksheets_rels[[sheet]]))) {
 
         slicer_list_xml <- sprintf(
-          '<x14:slicerList><x14:slicer r:id=\"%s\"/></x14:slicerList>',
+          '<x14:slicer r:id=\"%s\"/>',
           next_id
         )
 
-        # add the extension list to the worksheet
-        if (length(self$worksheets[[sheet]]$extLst) == 0 || !any(is_ext_x14)) {
-
-          ext_x14 <- "<ext uri=\"{A8765BA9-456A-4dab-B4F3-ACF838C121DE}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"></ext>"
-
-          self$worksheets[[sheet]]$append(
-            "extLst",
-            ext_x14
-          )
-
-          is_ext_x14 <- length(self$worksheets[[sheet]]$extLst)
-
-        }
-
-        self$worksheets[[sheet]]$extLst[is_ext_x14] <- xml_add_child(
-          self$worksheets[[sheet]]$extLst[is_ext_x14],
-          xml_child = slicer_list_xml
-        )
+        self$worksheets[[sheet]]$.__enclos_env__$private$do_append_x14(slicer_list_xml, "x14:slicer", "x14:slicerList")
 
         self$worksheets_rels[[sheet]] <- append(
           self$worksheets_rels[[sheet]],
@@ -9556,12 +9540,12 @@ wbWorkbook <- R6::R6Class(
       )
 
       # dataBar needs additional extLst
-      if (!is.null(attr(cfRule, "extLst")))
-        self$worksheets[[sheet]]$extLst <- read_xml(attr(cfRule, "extLst"), pointer = FALSE)
+      if (!is.null(attr(cfRule, "extLst"))) {
+        # self$worksheets[[sheet]]$extLst <- read_xml(attr(cfRule, "extLst"), pointer = FALSE)
+        self$worksheets[[sheet]]$.__enclos_env__$private$do_append_x14(attr(cfRule, "extLst"), "x14:conditionalFormatting", "x14:conditionalFormattings")
+      }
 
-      if (any(grepl("^<ext", cfRule))) {
-        self$worksheets[[sheet]]$extLst <- c(cfRule)
-      } else {
+      if (length(cfRule)) {
         private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE))
         names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
       }
