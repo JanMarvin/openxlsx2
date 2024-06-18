@@ -933,7 +933,7 @@ test_that("conditional formatting works with slicers/timelines", {
   # create data on sheet pivot with cf
   test_cf <- function(wb) {
     x <- matrix(
-      sample(c(0, 1), size = 20*10, replace = TRUE),
+      sample(c(0, 1), size = 20 * 10, replace = TRUE),
       20,
       10
     )
