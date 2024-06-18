@@ -911,3 +911,114 @@ test_that("remove conditional formatting works", {
   got <- wb$worksheets[[4]]$conditionalFormatting
   expect_equal(exp, got)
 })
+
+test_that("conditional formatting works with slicers/timelines", {
+
+  # create a workbook with two sheets and some data
+  test_wb <- function() {
+    # prepare data
+    df <- data.frame(
+      AirPassengers = c(AirPassengers),
+      time = seq(from = as.Date("1949-01-01"), to = as.Date("1960-12-01"), by = "month"),
+      letters = letters[1:4]
+    )
+
+    # create workbook
+    wb <- wb_workbook()$
+      add_worksheet("pivot")$
+      add_worksheet("data")$
+      add_data(x = df)
+  }
+
+  # create data on sheet pivot with cf
+  test_cf <- function(wb) {
+    x <- matrix(
+      sample(c(0, 1), size = 20*10, replace = TRUE),
+      20,
+      10
+    )
+
+    wb$add_data(x = x, sheet = "pivot", colNames = FALSE, dims = wb_dims(x = x, from_row = 30))
+    wb$add_conditional_formatting(
+      dims = wb_dims(x = x, from_row = 30, cols = 1),
+      rule = c(.1, 0.1, 1),
+      type = "iconSet",
+      params = list(
+        percent = FALSE,
+        iconSet = "3Stars",
+        reverse = FALSE)
+    )
+    wb$add_conditional_formatting(
+      dims = wb_dims(x = x, from_row = 30, cols = 2),
+      rule = c(.1, 0.1, 1),
+      type = "iconSet",
+      params = list(
+        percent = FALSE,
+        iconSet = "3Stars",
+        reverse = FALSE)
+    )
+    wb
+  }
+
+  # add pt w/ slicer and timeline on sheet pivot
+  test_pt <- function(wb) {
+
+    # get pivot table data source
+    df <- wb_data(wb, sheet = "data")
+
+    # create pivot table
+    wb$add_pivot_table(
+      df,
+      sheet = "pivot",
+      rows = "time",
+      cols = "letters",
+      data = "AirPassengers",
+      pivot_table = "airpassengers",
+      params = list(
+        compact = FALSE, outline = FALSE, compact_data = FALSE,
+        row_grand_totals = FALSE, col_grand_totals = FALSE)
+    )
+
+    # add slicer
+    wb$add_slicer(
+      df,
+      dims = "E1:I7",
+      sheet = "pivot",
+      slicer = "letters",
+      pivot_table = "airpassengers",
+      params = list(choose = c(letters = 'x %in% c("a", "b")'))
+    )
+
+    # add timeline
+    wb$add_timeline(
+      df,
+      dims = "E9:I14",
+      sheet = "pivot",
+      timeline = "time",
+      pivot_table = "airpassengers",
+      params = list(
+        beg_date = as.Date("1954-01-01"),
+        end_date = as.Date("1961-01-01"),
+        choose_beg = as.Date("1957-01-01"),
+        choose_end = as.Date("1958-01-01"),
+        level = 0,
+        style = "TimeSlicerStyleLight2"
+      )
+    )
+    wb
+  }
+
+  wb <- test_wb()
+  wb <- test_cf(wb)
+  wb <- test_pt(wb)
+
+  expect_equal(3L, length(wb$worksheets[[1]]$extLst))
+
+  wb <- test_wb()
+  wb <- test_pt(wb)
+  wb <- test_cf(wb)
+
+  expect_equal(3L, length(wb$worksheets[[1]]$extLst))
+
+
+})

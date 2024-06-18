@@ -1902,7 +1902,7 @@ wbWorkbook <- R6::R6Class(
       next_id <- get_next_id(self$worksheets_rels[[sheet]])
 
       # add the pivot table and the drawing to the worksheet
-      is_ext_x14 <- grepl("xmlns:x14", self$worksheets[[sheet]]$extLst)
+      is_ext_x14 <- grepl("x14:slicerList", self$worksheets[[sheet]]$extLst)
       if (!any(grepl(sprintf("Target=\"../slicers/slicer%s.xml\"", self$worksheets[[sheet]]$relships$slicer), self$worksheets_rels[[sheet]]))) {
 
         slicer_list_xml <- sprintf(
@@ -1920,7 +1920,7 @@ wbWorkbook <- R6::R6Class(
             ext_x14
           )
 
-          is_ext_x14 <- grepl("xmlns:x14", self$worksheets[[sheet]]$extLst)
+          is_ext_x14 <- length(self$worksheets[[sheet]]$extLst)
 
         }
 
@@ -1992,7 +1992,7 @@ wbWorkbook <- R6::R6Class(
       # remove worksheet relationship
       self$worksheets_rels[[sheet]]            <- self$worksheets_rels[[sheet]][!grepl(slicer_xml, self$worksheets_rels[[sheet]])]
       # remove "x14:slicerList"
-      is_ext_x14 <- grepl("xmlns:x14", self$worksheets[[sheet]]$extLst)
+      is_ext_x14 <- grepl("x14:slicerList", self$worksheets[[sheet]]$extLst)
       extLst     <- xml_rm_child(self$worksheets[[sheet]]$extLst[is_ext_x14], xml_child = "x14:slicerList")
       self$worksheets[[sheet]]$extLst[is_ext_x14] <- extLst
 
@@ -2296,7 +2296,7 @@ wbWorkbook <- R6::R6Class(
         )
 
         # add the extension list to the worksheet
-        is_ext_x15 <- grepl("xmlns:x15", self$worksheets[[sheet]]$extLst)
+        is_ext_x15 <- grepl("x15:timelineRefs", self$worksheets[[sheet]]$extLst)
         if (length(self$worksheets[[sheet]]$extLst) == 0 || !any(is_ext_x15)) {
 
           ext_x15 <- "<ext uri=\"{7E03D99C-DC04-49d9-9315-930204A7B6E9}\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\"></ext>"
@@ -2306,7 +2306,7 @@ wbWorkbook <- R6::R6Class(
             ext_x15
           )
 
-          is_ext_x15 <- grepl("xmlns:x15", self$worksheets[[sheet]]$extLst)
+          is_ext_x15 <- length(self$worksheets[[sheet]]$extLst)
 
         }
 
@@ -2378,7 +2378,7 @@ wbWorkbook <- R6::R6Class(
       # remove worksheet relationship
       self$worksheets_rels[[sheet]]              <- self$worksheets_rels[[sheet]][!grepl(timeline_xml, self$worksheets_rels[[sheet]])]
       # remove "x15:timelineRefs"
-      is_ext_x15 <- grepl("xmlns:x15", self$worksheets[[sheet]]$extLst)
+      is_ext_x15 <- grepl("x15:timelineRefs", self$worksheets[[sheet]]$extLst)
       extLst     <- xml_rm_child(self$worksheets[[sheet]]$extLst[is_ext_x15], xml_child = "x15:timelineRefs")
       self$worksheets[[sheet]]$extLst[is_ext_x15] <- extLst
 
