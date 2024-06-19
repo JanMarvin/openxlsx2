@@ -1233,3 +1233,9 @@ test_that("non consecutive columns do not overlap", {
   expect_equal(exp, got)
 
 })
+
+test_that("sheet is a valid argument in write_xlsx", {
+  wb1 <- write_xlsx(x = mtcars, sheet_name = "data")
+  wb2 <- write_xlsx(x = mtcars, sheet = "data")
+  expect_equal(wb1$get_sheet_names(), wb2$get_sheet_names())
+})
