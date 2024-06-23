@@ -3787,11 +3787,18 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         break;
       }
 
+      case BrtBeginConditionalFormattings:
+      case BrtBeginConditionalFormatting14:
+      {
+        if (debug) Rcpp::Rcout << "BrtBegin/EndDCon" << std::endl;
+
+        Rcpp::warning("Worksheet contains unhandled conditional formatting.");
+        bin.seekg(size, bin.cur);
+        break;
+      }
 
       case BrtBeginConditionalFormatting:
       {
-
-        Rcpp::warning("Worksheet contains unhandled conditional formatting.");
 
         if (debug) Rcpp::Rcout << "<conditionalFormatting>" << std::endl;
 
@@ -3885,6 +3892,27 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         break;
       }
 
+      case BrtEndConditionalFormatting14:
+      case BrtBeginCFRule14:
+      case BrtEndCFRule14:
+      {
+        if (debug) Rcpp::Rcout << "BrtBegin/EndDCon 14" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+      // dxf styles for conditional formatting can be (or is always?) embedded in the worksheet
+      // the xlsx conversion creates <x14:dxf/>
+      case BrtBeginDXFs:
+      case BrtDXF:
+      case BrtEndDXFs:
+      {
+        if (debug) Rcpp::Rcout << "BrtBegin/EndDXFs in worksheet (?)" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
+
+
       case BrtEndCFRule:
       {
 
@@ -3896,10 +3924,17 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
       case BrtEndConditionalFormatting:
       {
-
         if (debug) Rcpp::Rcout << "</conditionalFormatting>" << std::endl;
         out << "</conditionalFormatting>" << std::endl;
+        bin.seekg(size, bin.cur);
+        break;
+      }
 
+      case BrtEndConditionalFormattings:
+      {
+        // UNHANDLED
+        if (debug) Rcpp::Rcout << "</conditionalFormattings>" << std::endl;
+        bin.seekg(size, bin.cur);
         break;
       }
 
