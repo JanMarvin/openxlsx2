@@ -243,6 +243,13 @@ std::string PtrStr(std::istream& sas, bool swapit) {
   return read_xlwidestring(str, sas);
 }
 
+std::string LPWideString(std::istream& sas, bool swapit) {
+  uint16_t len = 0;
+  len = readbin(len, sas, swapit);
+  std::string str(len, '\0');
+  return read_xlwidestring(str, sas);
+}
+
 std::string XLWideString(std::istream& sas, bool swapit) {
   uint32_t len = 0;
   len = readbin(len, sas, swapit);
@@ -568,15 +575,16 @@ std::string RichStr(std::istream& sas, bool swapit) {
 }
 
 void ProductVersion(std::istream& sas, bool swapit, bool debug) {
-  uint16_t fileVersion = 0, fileProduct = 0;
-  int8_t fileExtension = 0;
 
-  fileVersion = readbin(fileVersion, sas, swapit);
-  fileProduct = readbin(fileProduct, sas, swapit);
+  uint16_t version = 0, flags = 0;
+  version = readbin(version, sas, swapit); // 3586 - x14?
+  flags = readbin(flags, sas, swapit);     // 0
 
-  fileExtension = fileProduct & 0x01;
-  fileProduct   = fileProduct & ~static_cast<uint16_t>(0x01);
-  if (debug) Rprintf("ProductVersion: %d: %d: %d\n", fileVersion, fileProduct, fileExtension);
+  FRTVersionFields *fields = (FRTVersionFields *)&flags;
+
+  // if (fields->reserved != 0) Rcpp::stop("product version reserved not 0");
+
+  if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, fields->product, fields->reserved);
 }
 
 std::vector<int> UncheckedRfX(std::istream& sas, bool swapit) {
@@ -1000,6 +1008,34 @@ std::string BErr(std::istream& sas, bool swapit) {
   return "unknown_ERROR";
 }
 
+std::string valType(uint8_t type) {
+
+  if (type == 0x0) return "none";
+  if (type == 0x1) return "whole";
+  if (type == 0x2) return "decimal";
+  if (type == 0x3) return "list";
+  if (type == 0x4) return "date";
+  if (type == 0x5) return "time";
+  if (type == 0x6) return "textLength";
+  if (type == 0x7) return "custom";
+
+  return "unknown_type";
+}
+
+std::string typOperator(uint8_t oprtr) {
+
+  if (oprtr == 0x0) return "between";
+  if (oprtr == 0x1) return "notBetween";
+  if (oprtr == 0x2) return "equal";
+  if (oprtr == 0x3) return "notEqual";
+  if (oprtr == 0x4) return "greaterThan";
+  if (oprtr == 0x5) return "lessThan";
+  if (oprtr == 0x6) return "greaterThanOrEqual";
+  if (oprtr == 0x7) return "lessThanOrEqual";
+
+  return "unknown_operator";
+}
+
 std::vector<int> Xti(std::istream& sas, bool swapit) {
   int32_t firstSheet = 0, lastSheet = 0;
   uint32_t externalLink = 0;
@@ -1116,27 +1152,11 @@ std::string parseRPN(const std::string& expression) {
   return parsedFormula;
 }
 
+std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record, size_t pos, std::vector<int32_t> &ptgextra) {
 
-std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record) {
-  // bool ptg_extra_array = false;
-  uint32_t  cce= 0, cb= 0;
-
-  if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
-
-  cce = readbin(cce, sas, swapit);
-  if (cce >= 16385) Rcpp::stop("wrong cce size");
-  if (debug) Rcpp::Rcout << "cce: " << cce << std::endl;
-  size_t pos = sas.tellg();
-  // sas.seekg(cce, sas.cur);
-  pos += cce;
   int8_t val1 = 0;
-
-  // row = 0;
-
-  std::vector<int32_t> ptgextra;
-
-  std::string fml_out;
-  while((size_t)sas.tellg() < pos) {
+  // std::vector<int32_t> ptgextra;
+    while((size_t)sas.tellg() < pos) {
 
     if (debug) Rcpp::Rcout << ".";
 
@@ -2048,25 +2068,13 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     sas.seekg(pos, sas.beg);
   }
 
+  return fml_out;
+}
 
-  cb = readbin(cb, sas, swapit); // is there a control bit, even if CB is empty?
+std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record, size_t pos, std::vector<int32_t> &ptgextra) {
 
-  if (debug)
-    Rcpp::Rcout << "cb: " << cb << std::endl;
-
-  pos = sas.tellg();
-  // sas.seekg(cce, sas.cur);
-
-  pos += cb;
-
-  if (debug) Rcpp::Rcout << ".";
-  if (debug) {
-    Rprintf("Formula cb: %d\n", val1);
-    Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
-  }
-
-  if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
-
+  int8_t val1 = 0;
+  // std::vector<int32_t> ptgextra;
   // RgbExtra
   for (size_t cntr = 0; cntr < ptgextra.size(); ++cntr) {
 
@@ -2264,6 +2272,49 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
     sas.seekg(pos, sas.beg);
   }
 
+  return fml_out;
+}
+
+
+std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record) {
+  // bool ptg_extra_array = false;
+  uint32_t  cce= 0, cb= 0;
+  std::vector<int32_t> ptgextra;
+
+  if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
+
+  cce = readbin(cce, sas, swapit);
+  if (cce >= 16385) Rcpp::stop("wrong cce size");
+  if (debug) Rcpp::Rcout << "cce: " << cce << std::endl;
+
+  size_t pos = sas.tellg();
+  // sas.seekg(cce, sas.cur);
+  pos += cce;
+
+  std::string fml_out;
+
+  fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+
+  cb = readbin(cb, sas, swapit); // is there a control bit, even if CB is empty?
+
+  if (debug)
+    Rcpp::Rcout << "cb: " << cb << std::endl;
+
+  pos = sas.tellg();
+  // sas.seekg(cce, sas.cur);
+
+  pos += cb;
+
+  if (debug) Rcpp::Rcout << ".";
+  if (debug) {
+    // Rprintf("Formula cb: %d\n", val1);
+    Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
+  }
+
+  if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
+
+  fml_out = rgcb(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+
   if (debug) {
     Rcpp::Rcout << "...fml..." << std::endl;
     Rcpp::Rcout << fml_out << std::endl;
@@ -2273,5 +2324,52 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
 
   return inflix;
 }
+
+std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record) {
+  // bool ptg_extra_array = false;
+  uint32_t  cce= 0, cb= 0;
+  std::vector<int32_t> ptgextra;
+
+  if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
+
+  cce = readbin(cce, sas, swapit);
+  if (cce >= 16385) Rcpp::stop("wrong cce size");
+  if (debug) Rcpp::Rcout << "cce: " << cce << std::endl;
+
+  cb = readbin(cb, sas, swapit); // is there a control bit, even if CB is empty?
+
+  size_t pos = sas.tellg();
+  pos += cce;
+
+  std::string fml_out;
+
+  fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+
+  if (debug)
+    Rcpp::Rcout << "cb: " << cb << std::endl;
+
+  pos = sas.tellg();
+  pos += cb;
+
+  if (debug) Rcpp::Rcout << ".";
+  if (debug) {
+    Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
+  }
+
+  if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
+
+  fml_out = rgcb(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+
+  if (debug) {
+    Rcpp::Rcout << "...fml..." << std::endl;
+    Rcpp::Rcout << fml_out << std::endl;
+  }
+
+  std::string inflix =  parseRPN(fml_out);
+
+  return inflix;
+}
+
+
 
 #endif

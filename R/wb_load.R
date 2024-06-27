@@ -1571,6 +1571,17 @@ wb_load <- function(
           )
       }
 
+      for (i in seq_along(wb$worksheets)) {
+        if (!wb$is_chartsheet[[i]])
+          wb$worksheets[[i]]$extLst <-
+            stringi::stri_replace_all_fixed(
+              wb$worksheets[[i]]$extLst,
+              xti$name_id,
+              xti$sheets,
+              vectorize_all = FALSE
+            )
+      }
+
       ### for external references we need to get the required sheet names first
       # For now this is all a little guess work
 
@@ -1648,6 +1659,16 @@ wb_load <- function(
                   vectorize_all = FALSE
                 )
             }
+
+
+            if (!wb$is_chartsheet[[i]])
+              wb$worksheets[[j]]$dataValidations <-
+                stringi::stri_replace_all_fixed(
+                  wb$worksheets[[j]]$dataValidations,
+                  nri$name_id,
+                  nri$name,
+                  vectorize_all = FALSE
+                )
           }
 
         }
