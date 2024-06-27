@@ -1275,7 +1275,7 @@ wb_load <- function(
         # fix broken xml in vml buttons
         vml <- stringi::stri_read_lines(vml, encoding = "UTF-8")
         vml <- paste(vml, sep = "", collapse = "")
-        vml <- gsub("<br>", "<br/>", vml)
+        vml <- gsub("<br>(?!</br>)", "<br/>", vml, perl = TRUE)
         wb$vml[vml_file] <- read_xml(vml, pointer = FALSE)
       }
 
