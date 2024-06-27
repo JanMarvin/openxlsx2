@@ -145,3 +145,18 @@ test_that("xlsb formulas", {
   )
 
 })
+
+test_that("shared formulas are detected correctly", {
+
+  xlsb <- testfile_path("formula_checks.xlsb")
+  xlsx <- testfile_path("formula_checks.xlsx")
+
+  wbb <- wb_load(xlsb)
+  wbx <- wb_load(xlsx)
+
+  expect_equal(
+    wbb$worksheets[[4]]$sheet_data$cc,
+    wbx$worksheets[[4]]$sheet_data$cc
+  )
+
+})

@@ -2572,7 +2572,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           for (size_t i = 0; i < colvec.size(); ++i) {
             out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
             out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
-            out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
+            out << "<f ref=\"" << colvec[i].f_ref << "\" ca=\"" << colvec[i].f_ca << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
             out << "</c>" << std::endl;
           }
 
@@ -2886,10 +2886,10 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
+        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+
         // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
         std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
-
-
 
         xml_col column;
         column.v = std::to_string((int32_t)val);
@@ -2899,15 +2899,19 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         auto sfml = shared_cells.find(fml);
         auto sfml1 = shared_cells.find(a0);
-        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
+        if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(sfml->second);
+          if (sfml != shared_cells.end())
+            column.f_si = std::to_string(sfml->second);
+          else
+            column.f_si = std::to_string(sfml1->second);
         } else {
           column.f = fml;
         }
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "b";
         column.c_r = a1;
+        if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
         colvec.push_back(column);
 
         break;
@@ -2930,7 +2934,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         // int32_t len = size - 4 * 32 - 2 * 8;
         // std::string fml(len, '\0');
@@ -2945,15 +2949,19 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         auto sfml = shared_cells.find(fml);
         auto sfml1 = shared_cells.find(a0);
-        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
+        if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(sfml->second);
+          if (sfml != shared_cells.end())
+            column.f_si = std::to_string(sfml->second);
+          else
+            column.f_si = std::to_string(sfml1->second);
         } else {
           column.f = fml;
         }
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "e";
         column.c_r = a1;
+        if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
         colvec.push_back(column);
 
         break;
@@ -2976,7 +2984,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
-        // GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
+        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         // Rprintf("%d, %d, %d\n",
         //         fields->reserved,
@@ -2993,24 +3001,23 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         xml_col column;
         column.v = stream.str();
 
-        // if (a1 == "AH59") {
-        //   Rcpp::Rcout << "AG56 Formula: " << a1 << ": " << fml << std::endl;
-        //   Rcpp::stop("ag56");
-        // }
-
         // fml is a reference to another cell in shared formula case?
 
         auto sfml = shared_cells.find(fml);
         auto sfml1 = shared_cells.find(a0);
-        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
+        if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(sfml->second);
+          if (sfml != shared_cells.end())
+            column.f_si = std::to_string(sfml->second);
+          else
+            column.f_si = std::to_string(sfml1->second);
         } else {
           column.f = fml;
         }
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         // column.c_t = "e";
         column.c_r = a1;
+        if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
         colvec.push_back(column);
 
         break;
@@ -3033,6 +3040,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t grbitFlags = 0;
         grbitFlags = readbin(grbitFlags, bin, swapit);
 
+        GrbitFmlaFields *fields = (GrbitFmlaFields *)&grbitFlags;
 
         std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -3048,9 +3056,12 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         auto sfml = shared_cells.find(fml);
         auto sfml1 = shared_cells.find(a0);
-        if (sfml != shared_cells.end() && sfml1 != shared_cells.end()) {
+        if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
           column.f_t = fml_type;
-          column.f_si = std::to_string(sfml->second);
+          if (sfml != shared_cells.end())
+            column.f_si = std::to_string(sfml->second);
+          else
+            column.f_si = std::to_string(sfml1->second);
         } else {
           column.f = fml;
         }
@@ -3058,6 +3069,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (cell[1]) column.c_s = std::to_string(cell[1]);
         column.c_t = "str";
         column.c_r = a1;
+        if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
         colvec.push_back(column);
 
         break;
@@ -3161,7 +3173,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           for (size_t i = 0; i < colvec.size(); ++i) {
             out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
             out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
-            out << "<f ref=\"" << colvec[i].f_ref << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
+            out << "<f ref=\"" << colvec[i].f_ref << "\" ca=\"" << colvec[i].f_ca << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
             out << "</c>" << std::endl;
           }
 
