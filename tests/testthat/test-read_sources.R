@@ -186,7 +186,7 @@ test_that("reading charts", {
   rmsheet <- length(wb$worksheets) - 2
   wb$remove_worksheet(rmsheet)
 
-  expect_no_match( unlist(wb$worksheets_rels), "drawing21.xml")
+  expect_no_match(unlist(wb$worksheets_rels), "drawing21.xml")
   expect_equal(wb$drawings[[21]], "")
   expect_equal(wb$drawings_rels[[21]], "")
 
