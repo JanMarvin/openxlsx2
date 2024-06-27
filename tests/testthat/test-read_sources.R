@@ -162,9 +162,10 @@ test_that("reading charts", {
 
   unzip(temp, exdir = xlsx_unzip)
   overrides <- xml_node(read_xml(paste0(xlsx_unzip, "/[Content_Types].xml"), pointer = FALSE), "Types", "Override")
+  expect_match(overrides, "chartshapes", all = FALSE)
+
   unlink(xlsx_unzip, recursive = TRUE)
 
-  expect_true(any(grepl("chartshapes", overrides)))
 
   # check that the image is valid and was placed on the correct sheet and drawing
   exp <- c(
@@ -185,7 +186,7 @@ test_that("reading charts", {
   rmsheet <- length(wb$worksheets) - 2
   wb$remove_worksheet(rmsheet)
 
-  expect_false(any(grepl("drawing21.xml", unlist(wb$worksheets_rels))))
+  expect_no_match( unlist(wb$worksheets_rels), "drawing21.xml")
   expect_equal(wb$drawings[[21]], "")
   expect_equal(wb$drawings_rels[[21]], "")
 
@@ -229,16 +230,15 @@ test_that("load file with connection", {
   wb <- wb_load(testfile_path("connection.xlsx"))
 
   expect_false(is.null(wb$customXml))
-  expect_equal(length(wb$customXml), 3)
+  expect_length(wb$customXml, 3)
 
   wb$save(temp)
 
   wb <- wb_load(temp)
-  expect_equal(length(wb$customXml), 3)
-
-  expect_true(grepl("customXml/_rels/item1.xml.rels", wb$customXml[1]))
-  expect_true(grepl("customXml/item1.xml", wb$customXml[2]))
-  expect_true(grepl("customXml/itemProps1.xml", wb$customXml[3]))
+  expect_length(wb$customXml, 3)
+  expect_match(wb$customXml[1], "customXml/_rels/item1.xml.rels")
+  expect_match(wb$customXml[2], "customXml/item1.xml")
+  expect_match(wb$customXml[3], "customXml/itemProps1.xml")
 
 })
 
@@ -360,7 +360,7 @@ test_that("reading multiple slicers on a pivot table works", {
 test_that("reading slicer for tables works", {
   fl <- testfile_path("table_slicer.xlsx")
   wb <- wb_load(fl)
-  expect_true(grepl("<x14:slicerCache r:id=\"rId100001\"/>", wb$workbook$extLst))
+  expect_match(wb$workbook$extLst, "<x14:slicerCache r:id=\"rId100001\"/>")
 })
 
 test_that("hyperlinks work", {

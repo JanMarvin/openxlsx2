@@ -581,7 +581,7 @@ test_that("writing slicers works", {
   expect_equal("x15:timelineCacheRefs", xml_node_name(wb$workbook$extLst, "extLst", "ext"))
   expect_equal("timelines", xml_node_name(wb$timelines))
   expect_equal("timelineCacheDefinition", xml_node_name(wb$timelineCaches))
-  expect_true(grepl("x15:timelineRefs", wb$worksheets[[2]]$extLst))
+  expect_match(wb$worksheets[[2]]$extLst, "x15:timelineRefs")
 
   wb$add_slicer(df, slicer = "lttr", pivot_table = "pivot1")
 

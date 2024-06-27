@@ -146,7 +146,7 @@ test_that("ungroup rows", {
     ungroup_rows("Sheet 1", 1:4)
 
   got <- wb$worksheets[[1]]$sheet_data$row_attr$outlineLevel
-  expect_true(all(got == ""))
+  expect_setequal(got, "")
 
 })
 

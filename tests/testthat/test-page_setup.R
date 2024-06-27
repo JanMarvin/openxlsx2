@@ -25,13 +25,13 @@ test_that("Page setup", {
   expect_equal(wb$worksheets[[1]]$pageSetup, wb$worksheets[[2]]$pageSetup)
 
   v <- gsub(" ", "", wb$worksheets[[1]]$pageSetup, fixed = TRUE)
-  expect_true(grepl('paperSize="1"', v))
-  expect_true(grepl('orientation="landscape"', v))
-  expect_true(grepl('fitToWidth="1"', v))
-  expect_true(grepl('fitToHeight="1"', v))
+  expect_match(v, 'paperSize="1"')
+  expect_match(v, 'orientation="landscape"')
+  expect_match(v, 'fitToWidth="1"')
+  expect_match(v, 'fitToHeight="1"')
 
   pr <- wb$worksheets[[1]]$sheetPr
-  expect_true(grepl('<outlinePr summaryBelow="1" summaryRight="1"/>', pr, fixed = TRUE))
+  expect_match(pr, '<outlinePr summaryBelow="1" summaryRight="1"/>', fixed = TRUE)
 
   pr <- wb$worksheets[[3]]$sheetPr
   expect_equal("<sheetPr><tabColor rgb=\"FF00FF00\"/></sheetPr>", pr)
@@ -41,7 +41,7 @@ test_that("Page setup", {
   )
 
   pr <- wb$worksheets[[3]]$sheetPr
-  expect_equal("<sheetPr/>", pr)
+  expect_equal(pr, "<sheetPr/>")
 
 })
 
