@@ -190,8 +190,8 @@ create_comment <- function(text,
 #' Internal comment functions
 #'
 #' Users are advised to use [wb_add_comment()] and [wb_remove_comment()].
-#' This function is used internally by openxlsx2. It will stop exporting it at
-#' some point in the future. Use the replacement function at your earliest convenience.
+#' `write_comment()` and `remove_comment()` are now deprecated. openxlsx2 will stop
+#' exporting it at some point in the future. Use the replacement functions.
 #' @name comment_internal
 NULL
 
@@ -205,6 +205,29 @@ NULL
 #' @export
 #' @inherit wb_add_comment examples
 write_comment <- function(
+    wb,
+    sheet,
+    col     = NULL,
+    row     = NULL,
+    comment,
+    dims    = rowcol_to_dim(row, col),
+    color   = NULL,
+    file    = NULL
+  ) {
+  .Deprecated("wb_add_comment()", package = "openxlsx2", old = "write_comment()")
+  do_write_comment(
+    wb,
+    sheet,
+    col,
+    row,
+    comment,
+    dims,
+    color,
+    file
+  )
+}
+
+do_write_comment <- function(
     wb,
     sheet,
     col     = NULL,
@@ -431,6 +454,25 @@ remove_comment <- function(
     gridExpand = TRUE,
     dims       = NULL
   ) {
+  .Deprecated("wb_remove_comment()", package = "openxlsx2", old = "remove_comment()")
+  do_remove_comment(
+    wb,
+    sheet,
+    col,
+    row,
+    gridExpand,
+    dims
+  )
+}
+
+do_remove_comment <- function(
+    wb,
+    sheet,
+    col        = NULL,
+    row        = NULL,
+    gridExpand = TRUE,
+    dims       = NULL
+) {
   # TODO add as method; wbWorkbook$remove_comment()
   assert_workbook(wb)
 

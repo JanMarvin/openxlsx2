@@ -1096,7 +1096,51 @@ write_data_table <- function(
 #' @return invisible(0)
 #' @export
 #' @keywords internal
-write_data <- function(
+write_data <-  function(
+    wb,
+    sheet,
+    x,
+    dims              = wb_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    array             = FALSE,
+    col_names         = TRUE,
+    row_names         = FALSE,
+    with_filter       = FALSE,
+    sep               = ", ",
+    name              = NULL,
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    na.strings        = na_strings(),
+    inline_strings    = TRUE,
+    enforce           = FALSE,
+    ...
+) {
+  .Deprecated("wb_add_data()", package = "openxlsx2", old = "write_data()")
+  do_write_data(
+    wb = wb,
+    sheet = sheet,
+    x = x,
+    dims = dims,
+    start_col         = start_col,
+    start_row         = start_col,
+    array             = array,
+    col_names         = col_names,
+    row_names         = row_names,
+    with_filter       = with_filter,
+    sep               = sep,
+    name              = name,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    na.strings        = na.strings,
+    inline_strings    = inline_strings,
+    enforce           = enforce,
+    ...
+  )
+}
+
+
+do_write_data <- function(
     wb,
     sheet,
     x,
@@ -1151,8 +1195,8 @@ write_data <- function(
 #' Write a character vector as an Excel Formula
 #'
 #' Write a a character vector containing Excel formula to a worksheet.
-#' Use [wb_add_formula()] or `add_formula()` in new code. This function is meant
-#' for internal use.
+#' Use [wb_add_formula()] or `add_formula()` in new code. This function is
+#' deprecated and may be defunct.
 #'
 #' @inheritParams wb_add_formula
 #' @export
@@ -1171,7 +1215,38 @@ write_formula <- function(
     enforce           = FALSE,
     ...
 ) {
+  .Deprecated("wb_add_formula()", package = "openxlsx2", old = "write_formula")
 
+  do_write_formula(
+    wb = wb,
+    sheet = sheet,
+    x = x,
+    dims = dims,
+    start_col = start_col,
+    start_row = start_row,
+    array = array,
+    cm = cm,
+    apply_cell_style = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    enforce = enforce,
+    ...
+  )
+}
+
+do_write_formula <- function(
+    wb,
+    sheet,
+    x,
+    dims              = wb_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    array             = FALSE,
+    cm                = FALSE,
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    enforce           = FALSE,
+    ...
+) {
   standardize_case_names(...)
 
   assert_class(x, "character")
@@ -1258,7 +1333,7 @@ write_formula <- function(
     }
   }
 
-  write_data(
+  do_write_data(
     wb                = wb,
     sheet             = sheet,
     x                 = dfx,
@@ -1279,12 +1354,64 @@ write_formula <- function(
 #' Write to a worksheet as an Excel table
 #'
 #' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
-#' This function may not be exported
+#' This function is deprecated and may not be exported in the future.
 #' @inheritParams wb_add_data_table
 #' @inherit wb_add_data_table details
 #' @export
 #' @keywords internal
 write_datatable <- function(
+    wb,
+    sheet,
+    x,
+    dims              = wb_dims(start_row, start_col),
+    start_col         = 1,
+    start_row         = 1,
+    col_names         = TRUE,
+    row_names         = FALSE,
+    table_style       = "TableStyleLight9",
+    table_name        = NULL,
+    with_filter       = TRUE,
+    sep               = ", ",
+    first_column      = FALSE,
+    last_column       = FALSE,
+    banded_rows       = TRUE,
+    banded_cols       = FALSE,
+    apply_cell_style  = TRUE,
+    remove_cell_style = FALSE,
+    na.strings        = na_strings(),
+    inline_strings    = TRUE,
+    total_row         = FALSE,
+    ...
+) {
+  .Deprecated("wb_add_data_table()", package = "openxlsx2", old = "write_datatable")
+  do_write_datatable(
+    wb = wb,
+    sheet = sheet,
+    x = x,
+    dims = dims,
+    start_col         = start_col,
+    start_row         = start_row,
+    col_names         = col_names,
+    row_names         = row_names,
+    table_style       = table_style,
+    table_name        = table_name,
+    with_filter       = with_filter,
+    sep               = sep,
+    first_column      = first_column,
+    last_column       = last_column,
+    banded_rows       = banded_rows,
+    banded_cols       = banded_cols,
+    apply_cell_style  = apply_cell_style,
+    remove_cell_style = remove_cell_style,
+    na.strings        = na.strings,
+    inline_strings    = inline_strings,
+    total_row         = total_row,
+    ...
+
+  )
+}
+
+do_write_datatable <- function(
     wb,
     sheet,
     x,

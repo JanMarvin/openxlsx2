@@ -1358,7 +1358,7 @@ wbWorkbook <- R6::R6Class(
           )
       }
 
-      write_data(
+      do_write_data(
         wb                = self,
         sheet             = sheet,
         x                 = x,
@@ -1436,7 +1436,7 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
-      write_datatable(
+      do_write_datatable(
         wb              = self,
         x               = x,
         sheet           = sheet,
@@ -2400,7 +2400,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize_case_names(...)
-      write_formula(
+      do_write_formula(
         wb              = self,
         sheet           = sheet,
         x               = x,
@@ -5040,7 +5040,7 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(color) && !is_wbColour(color))
         stop("color needs to be a wb_color()")
 
-      write_comment(
+      do_write_comment(
         wb      = self,
         sheet   = sheet,
         comment = comment,
@@ -5106,7 +5106,7 @@ wbWorkbook <- R6::R6Class(
         gridExpand <- TRUE
       }
 
-      remove_comment(
+      do_remove_comment(
         wb         = self,
         sheet      = sheet,
         col        = col,

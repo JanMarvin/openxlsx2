@@ -47,7 +47,7 @@ Add this, if you see "@" inserted into your formulas.}
 }
 \description{
 Write a a character vector containing Excel formula to a worksheet.
-Use \code{\link[=wb_add_formula]{wb_add_formula()}} or \code{add_formula()} in new code. This function is meant
-for internal use.
+Use \code{\link[=wb_add_formula]{wb_add_formula()}} or \code{add_formula()} in new code. This function is
+deprecated and may be defunct.
 }
 \keyword{internal}

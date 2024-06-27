@@ -9,6 +9,6 @@
 \item{date1904}{take different origin}
 }
 \description{
-Use \code{\link[=convert_to_excel_date]{convert_to_excel_date()}} in new code
+Use \code{\link[=convert_to_excel_date]{convert_to_excel_date()}}.
 }
 \keyword{internal}

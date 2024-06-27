@@ -353,7 +353,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
     if (as_table[i]) {
       # add data table??
-      write_datatable(
+      do_write_datatable(
         wb          = wb,
         sheet       = i,
         x           = x[[i]],
@@ -369,7 +369,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
       )
     } else {
       # TODO add_data()?
-      write_data(
+      do_write_data(
         wb = wb,
         sheet = i,
         x = x[[i]],

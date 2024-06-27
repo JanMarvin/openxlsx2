@@ -85,7 +85,7 @@ uses the special \verb{#N/A} value within the workbook.}
 }
 \description{
 Write to a worksheet and format as an Excel table. Use \code{\link[=wb_add_data_table]{wb_add_data_table()}} in new code.
-This function may not be exported
+This function is deprecated and may not be exported in the future.
 }
 \details{
 Formulae written using \code{\link[=wb_add_formula]{wb_add_formula()}} to a Workbook object will

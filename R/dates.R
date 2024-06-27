@@ -180,14 +180,14 @@ convert_to_excel_date <- function(df, date1904 = FALSE) {
 
 #' Convert to Excel data
 #'
-#' Use [convert_to_excel_date()] in new code
+#' Use [convert_to_excel_date()].
 #' @usage NULL
 #' @inheritParams convert_to_excel_date
 #' @keywords internal
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
   .Deprecated(old = "convertToExcelDate", new = "convert_to_excel_date", package = "openxlsx2")
-  convert_to_excel_date(df = df, date1904 = date1904)
+  stop("convertToExcelDate() is defunct and will be removed in new version. Use convert_to_excel_date().", call. = FALSE)
 }
 
 # `convert_to_excel_date()` helpers -----------------------------------

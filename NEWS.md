@@ -1,5 +1,8 @@
 # openxlsx2 (development version)
 
+* Legacy `write_data()`, `write_datatable()`, `write_formula()`, `write_comment()` are now deprecated in favour of `wb_add_data()`, `wb_add_data_table()`,  `wb_add_formula()`, and `wb_add_comment()`.
+
+* `convertToExcelDate()` is defunct and will be removed in a future version of the package. Use `convert_to_excel_date()`.
 
 ***************************************************************************
 

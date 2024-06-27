@@ -44,23 +44,23 @@ test_that("comments", {
 
   # write comment without author
   c1 <- create_comment(text = "this is a comment", author = "")
-  write_comment(wb, 1, col = "B", row = 10, comment = c1)
+  wb <- wb_add_comment(wb, 1, dims = "B10", comment = c1)
 
   # Write another comment with author information
   c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
-  write_comment(wb, 1, col = "C", row = 10, comment = c2)
+  wb <- wb_add_comment(wb, 1, dims = "C10", comment = c2)
 
   # write a styled comment with system author
   s1 <- create_font(b = "true", color = wb_colour(hex = "FFFF0000"), sz = "12")
   s2 <- create_font(color = wb_colour(hex = "FF000000"), sz = "9")
   c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 
-  expect_silent(write_comment(wb, 1, col = 6, row = 3, comment = c3))
+  expect_silent(wb$add_comment(1, dims = "F1", comment = c3))
 
   expect_true(length(wb$comments) == 1)
   expect_true(length(wb$comments[[1]]) == 3)
 
-  expect_silent(remove_comment(wb, 1, col = "B", row = 10))
+  expect_silent(wb$remove_comment(1, dims = "B10"))
 
   expect_true(length(wb$comments) == 1)
   expect_true(length(wb$comments[[1]]) == 2)
@@ -98,7 +98,7 @@ test_that("load comments", {
 
   ## add a new comment to a workbook that has comments
   c1 <- create_comment(text = "this is a comment", author = "")
-  expect_silent(write_comment(wb, 5, col = "B", row = 10, comment = c1))
+  expect_silent(wb$add_comment(5, dims = "B10", comment = c1))
 
   wb$save(temp)
 

@@ -45,7 +45,7 @@ test_that("creating hyperlinks", {
   expect_equal(linkString, linkString2)
 
   # write file without errors
-  write_formula(wb, sheet, x = linkString, startCol = 1, startRow = 1)
+  wb$add_formula(sheet, x = linkString, startCol = 1, startRow = 1)
   expect_silent(wb_save(wb, tempFile, overwrite = TRUE))
 
   # TODO: add a check that the written xlsx file contains linkString
