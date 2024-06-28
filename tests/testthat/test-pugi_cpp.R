@@ -126,14 +126,14 @@ test_that("xml_append_child", {
   expect_equal(xml_node, "<a><b><c>a&amp;b<d/></c></b><c>a&amp;b</c></a>")
 
   # check that pointer is valid
-  expect_true(inherits(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml"))
-  expect_true(inherits(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml"))
+  expect_s3_class(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml")
 
-  expect_true(inherits(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml"))
-  expect_true(inherits(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml"))
+  expect_s3_class(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml")
 
-  expect_true(inherits(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml"))
-  expect_true(inherits(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml"))
+  expect_s3_class(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml")
 
 })
 
