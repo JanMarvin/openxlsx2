@@ -561,3 +561,19 @@ test_that("wb_dims(from_dims) positioning works", {
   expect_equal(exp, got)
 
 })
+
+test_that("dims are quick", {
+
+  ddims <- dims_to_dataframe(
+    "A1:D5000",
+    fill = TRUE
+  )
+
+  edims <- dims_to_dataframe(
+    "A1:A5000,B1:B5000,C1:C5000,D1:D5000",
+    fill = TRUE
+  )
+
+  expect_equal(ddims, edims)
+
+})
