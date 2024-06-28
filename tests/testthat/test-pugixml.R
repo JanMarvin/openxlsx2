@@ -13,7 +13,7 @@ test_that("read_xml", {
   x <- read_xml("<a><b/></a>")
   exp <- "<a>\n  <b/>\n</a>"
 
-  expect_true(inherits(x, "pugi_xml"))
+  expect_s3_class(x, "pugi_xml")
 
   xml <- "<a> </a>"
   got <- read_xml(xml, whitespace = TRUE, pointer = FALSE)
@@ -40,7 +40,7 @@ test_that("read_xml", {
 
   # a character
   y <- read_xml("<a><b/></a>", pointer = FALSE)
-  expect_true(is.character(y))
+  expect_type(y, "character")
 
   # Errors if the import was unsuccessful
   expect_error(z <- read_xml("<a><b/>"))

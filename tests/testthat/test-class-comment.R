@@ -57,13 +57,13 @@ test_that("comments", {
 
   expect_silent(wb$add_comment(1, dims = "F1", comment = c3))
 
-  expect_true(length(wb$comments) == 1)
-  expect_true(length(wb$comments[[1]]) == 3)
+  expect_length(wb$comments, 1)
+  expect_length(wb$comments[[1]], 3)
 
   expect_silent(wb$remove_comment(1, dims = "B10"))
 
-  expect_true(length(wb$comments) == 1)
-  expect_true(length(wb$comments[[1]]) == 2)
+  expect_length(wb$comments, 1)
+  expect_length(wb$comments[[1]], 2)
 
   expect_silent(wb_save(wb, tmp))
 
@@ -376,6 +376,6 @@ test_that("background colors work", {
 
   wb$add_comment(sheet = 1, dims = wb_dims(3, 6), comment = wb_comment(text = txt), color = wb_color("green"))
 
-  expect_true(grepl("fillcolor=\"#00FF00\"", wb$vml[[1]]))
+  expect_match(wb$vml[[1]], "fillcolor=\"#00FF00\"")
 
 })

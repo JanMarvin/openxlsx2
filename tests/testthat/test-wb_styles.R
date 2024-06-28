@@ -909,6 +909,6 @@ test_that("dims work", {
     style = wb$styles_mgr$get_xf_id("xf")
   )
 
-  expect_true(all(wb$worksheets[[1]]$sheet_data$cc$c_s == "1"))
+  expect_setequal(wb$worksheets[[1]]$sheet_data$cc$c_s, "1")
 
 })

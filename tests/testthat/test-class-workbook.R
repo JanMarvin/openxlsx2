@@ -401,8 +401,8 @@ test_that("clone worksheet", {
   wb <- wb_load(fl)
   wb$clone_worksheet(2, "Clone 1")
 
-  expect_true(grepl("test", wb$charts$chart[2]))
-  expect_true(grepl("'Clone 1'", wb$charts$chart[3]))
+  expect_match(wb$charts$chart[2], "test")
+  expect_match(wb$charts$chart[3], "'Clone 1'")
   # wb$open()
 
   # clone slicer ----------------------------------------------------------
@@ -622,9 +622,10 @@ test_that("add_drawing works", {
     add_mschart(dims = "A1", graph = scatter_plot)$
     add_mschart(dims = "F4:L20", graph = scatter_plot)
 
-  expect_true(grepl("absoluteAnchor", wb$drawings))
-  expect_true(grepl("oneCellAnchor", wb$drawings))
-  expect_true(grepl("twoCellAnchor", wb$drawings))
+  drawings <- as.character(wb$drawings)
+  expect_match(drawings, "absoluteAnchor")
+  expect_match(drawings, "oneCellAnchor")
+  expect_match(drawings, "twoCellAnchor")
 
 })
 
@@ -653,7 +654,7 @@ test_that("add_chartsheet works", {
 
   expect_equal(nrow(wb$charts), 1)
 
-  expect_true(grepl("A &amp; B", wb$charts$chart))
+  expect_match(wb$charts$chart, "A &amp; B")
 
   expect_true(wb$is_chartsheet[[2]])
 
