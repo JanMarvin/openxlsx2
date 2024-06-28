@@ -1,1 +1,2 @@
 inst/include/pugixml/*
+R/deprecate.R
