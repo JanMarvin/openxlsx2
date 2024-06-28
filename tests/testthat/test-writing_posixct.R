@@ -1,4 +1,4 @@
-test_that("Writing Posixct with write_data & write_datatable", {
+test_that("Writing Posixct with wb_add_data() & wb_add_data_table()", {
   op <- options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
   on.exit(options(op), add = TRUE)
 

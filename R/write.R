@@ -1087,16 +1087,9 @@ write_data_table <- function(
   return(wb)
 }
 
-# `write_data()` ---------------------------------------------------------------
-#' Write an object to a worksheet
-#'
-#' Use [wb_add_data()] or [write_xlsx()] in new code.
-#'
-#' @inheritParams wb_add_data
-#' @return invisible(0)
-#' @export
-#' @keywords internal
-write_data <- function(
+# `do_write_data()` ---------------------------------------------------------------
+
+do_write_data <- function(
     wb,
     sheet,
     x,
@@ -1147,17 +1140,8 @@ write_data <- function(
   )
 }
 
-# write_formula() -------------------------------------------
-#' Write a character vector as an Excel Formula
-#'
-#' Write a a character vector containing Excel formula to a worksheet.
-#' Use [wb_add_formula()] or `add_formula()` in new code. This function is meant
-#' for internal use.
-#'
-#' @inheritParams wb_add_formula
-#' @export
-#' @keywords internal
-write_formula <- function(
+# do_write_formula() -------------------------------------------
+do_write_formula <- function(
     wb,
     sheet,
     x,
@@ -1171,7 +1155,6 @@ write_formula <- function(
     enforce           = FALSE,
     ...
 ) {
-
   standardize_case_names(...)
 
   assert_class(x, "character")
@@ -1258,7 +1241,7 @@ write_formula <- function(
     }
   }
 
-  write_data(
+  do_write_data(
     wb                = wb,
     sheet             = sheet,
     x                 = dfx,
@@ -1275,16 +1258,8 @@ write_formula <- function(
 
 }
 
-# `write_datatable()` ----------------------
-#' Write to a worksheet as an Excel table
-#'
-#' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
-#' This function may not be exported
-#' @inheritParams wb_add_data_table
-#' @inherit wb_add_data_table details
-#' @export
-#' @keywords internal
-write_datatable <- function(
+# `do_write_datatable()` ----------------------
+do_write_datatable <- function(
     wb,
     sheet,
     x,

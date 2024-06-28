@@ -17,8 +17,8 @@ test_that("write_formula", {
   # write data add array formula later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
-  wb$add_data("df", df, startCol = "C")
-  write_formula(wb, "df", start_col = "E", start_row = 2,
+  wb$add_data(x = df, startCol = "C")
+  wb$add_formula(start_col = "E", start_row = 2,
                x = "SUM(C2:C11*D2:D11)",
                array = TRUE)
 
@@ -31,9 +31,9 @@ test_that("write_formula", {
   # write formula first add data later
   wb <- wb_workbook()
   wb <- wb_add_worksheet(wb, "df")
-  write_formula(wb, "df", start_col = "E", start_row = 2,
-               x = "SUM(C2:C11*D2:D11)",
-               array = TRUE)
+  wb$add_formula(start_col = "E", start_row = 2,
+                 x = "SUM(C2:C11*D2:D11)",
+                 array = TRUE)
   wb$add_data("df", df, start_col = "C")
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
