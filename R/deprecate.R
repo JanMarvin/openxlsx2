@@ -70,7 +70,6 @@ remove_comment <- function(
 #' @keywords internal
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
-  .Deprecated(old = "convertToExcelDate", new = "convert_to_excel_date", package = "openxlsx2")
   stop("convertToExcelDate() is defunct and will be removed in new version. Use convert_to_excel_date().", call. = FALSE)
 }
 
@@ -157,7 +156,7 @@ write_datatable <- function(
     total_row         = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_data_table()", package = "openxlsx2", old = "write_datatable")
+  .Deprecated("wb_add_data_table()", package = "openxlsx2", old = "write_datatable()")
   do_write_datatable(
     wb = wb,
     sheet = sheet,
@@ -208,7 +207,7 @@ write_formula <- function(
     enforce           = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_formula()", package = "openxlsx2", old = "write_formula")
+  .Deprecated("wb_add_formula()", package = "openxlsx2", old = "write_formula()")
 
   do_write_formula(
     wb = wb,
