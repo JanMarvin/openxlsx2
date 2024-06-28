@@ -610,7 +610,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       got <- self$get_cellStyle_id(name)
 
       if (!is.null(got) && !is.na(got))
-        return(self)
+        return(invisible(self))
 
       font_xml <- NULL
       fill_xml <- NULL
