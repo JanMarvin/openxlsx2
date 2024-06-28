@@ -187,46 +187,6 @@ create_comment <- function(text,
   wb_comment(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1])
 }
 
-#' Internal comment functions
-#'
-#' Users are advised to use [wb_add_comment()] and [wb_remove_comment()].
-#' `write_comment()` and `remove_comment()` are now deprecated. openxlsx2 will stop
-#' exporting it at some point in the future. Use the replacement functions.
-#' @name comment_internal
-NULL
-
-#' @rdname comment_internal
-#' @inheritParams wb_add_comment
-#' @param comment An object created by [create_comment()]
-#' @param row,col Row and column of the cell
-#' @param color optional background color
-#' @param file optional background image (file extension must be png or jpeg)
-#' @keywords internal
-#' @export
-#' @inherit wb_add_comment examples
-write_comment <- function(
-    wb,
-    sheet,
-    col     = NULL,
-    row     = NULL,
-    comment,
-    dims    = rowcol_to_dim(row, col),
-    color   = NULL,
-    file    = NULL
-  ) {
-  .Deprecated("wb_add_comment()", package = "openxlsx2", old = "write_comment()")
-  do_write_comment(
-    wb,
-    sheet,
-    col,
-    row,
-    comment,
-    dims,
-    color,
-    file
-  )
-}
-
 do_write_comment <- function(
     wb,
     sheet,
@@ -439,30 +399,6 @@ do_write_comment <- function(
   wb$comments[[cmmnt_id]] <- c(previous_comment, comment_list)
 
   invisible(wb)
-}
-
-#' @rdname comment_internal
-#' @param gridExpand If `TRUE`, all data in rectangle min(rows):max(rows) X min(cols):max(cols)
-#' will be removed.
-#' @keywords internal
-#' @export
-remove_comment <- function(
-    wb,
-    sheet,
-    col        = NULL,
-    row        = NULL,
-    gridExpand = TRUE,
-    dims       = NULL
-  ) {
-  .Deprecated("wb_remove_comment()", package = "openxlsx2", old = "remove_comment()")
-  do_remove_comment(
-    wb,
-    sheet,
-    col,
-    row,
-    gridExpand,
-    dims
-  )
 }
 
 do_remove_comment <- function(
