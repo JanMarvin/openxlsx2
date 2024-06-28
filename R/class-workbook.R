@@ -4014,7 +4014,7 @@ wbWorkbook <- R6::R6Class(
       old <- old %||% seq_along(self$sheet_names)
 
       if (identical(old, new)) {
-        return(self)
+        return(invisible(self))
       }
 
       if (!length(self$worksheets)) {
@@ -4030,7 +4030,7 @@ wbWorkbook <- R6::R6Class(
       new_name <- replace_legal_chars(new_raw)
 
       if (identical(self$sheet_names[pos], new_name)) {
-        return(self)
+        return(invisible(self))
       }
 
       bad <- duplicated(tolower(new))
@@ -4326,7 +4326,7 @@ wbWorkbook <- R6::R6Class(
       # should do nothing if the cols' length is zero
       # TODO why would cols ever be 0?  Can we just signal this as an error?
       if (length(cols) == 0L) {
-        return(self)
+        return(invisible(self))
       }
 
       cols <- col2int(cols)
@@ -6434,7 +6434,7 @@ wbWorkbook <- R6::R6Class(
 
       if (!protect) {
         self$workbook$workbookProtection <- NULL
-        return(self)
+        return(invisible(self))
       }
 
       # match.arg() doesn't handle numbers too well
@@ -6490,7 +6490,7 @@ wbWorkbook <- R6::R6Class(
       if (!protect) {
         # initializes as character()
         self$worksheets[[sheet]]$sheetProtection <- character()
-        return(self)
+        return(invisible(self))
       }
 
       all_props <- worksheet_lock_properties()
