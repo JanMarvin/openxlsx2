@@ -330,8 +330,8 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
   return Rcpp::wrap(cells);
 }
 
-bool has_cell(const std::string& str, const Rcpp::CharacterVector& vec) {
-  return std::find(vec.begin(), vec.end(), str) != vec.end();
+bool has_cell(const std::string& str, const std::unordered_set<std::string>& vec) {
+  return vec.find(str) != vec.end();
 }
 
 // provide a basic rbindlist for lists of named characters
@@ -353,7 +353,10 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  if (has_filled) {
+  if (has_filled && fill) {
+
+    std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
+    std::unordered_set<std::string> flls(flld.begin(), flld.end());
 
     // with has_filled we always have to run this loop
     for (size_t i = 0; i < kk; ++i) {
@@ -361,10 +364,9 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
       std::string coli = Rcpp::as<std::string>(cols[i]);
       for (size_t j = 0; j < nn; ++j) {
         std::string cell = coli + std::to_string(rows[j]);
-        if (!has_cell(cell, filled.get()))
-          cvec[j] = "";
-        else if (fill)
+        if (has_cell(cell, flls))
           cvec[j] = coli + std::to_string(rows[j]);
+        // else cvec[j] = "";
       }
     }
 
