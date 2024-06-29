@@ -36,8 +36,8 @@ needed_cells <- function(range) {
     .Call(`_openxlsx2_needed_cells`, range)
 }
 
-dims_to_df <- function(rows, cols, filled, fill) {
-    .Call(`_openxlsx2_dims_to_df`, rows, cols, filled, fill)
+dims_to_df <- function(rows, cols, filled, fill, fcols) {
+    .Call(`_openxlsx2_dims_to_df`, rows, cols, filled, fill, fcols)
 }
 
 long_to_wide <- function(z, tt, zz) {

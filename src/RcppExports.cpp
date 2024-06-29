@@ -100,8 +100,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // dims_to_df
-SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill);
-RcppExport SEXP _openxlsx2_dims_to_df(SEXP rowsSEXP, SEXP colsSEXP, SEXP filledSEXP, SEXP fillSEXP) {
+SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill, Rcpp::Nullable<Rcpp::IntegerVector> fcols);
+RcppExport SEXP _openxlsx2_dims_to_df(SEXP rowsSEXP, SEXP colsSEXP, SEXP filledSEXP, SEXP fillSEXP, SEXP fcolsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -109,7 +109,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cols(colsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type filled(filledSEXP);
     Rcpp::traits::input_parameter< bool >::type fill(fillSEXP);
-    rcpp_result_gen = Rcpp::wrap(dims_to_df(rows, cols, filled, fill));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::IntegerVector> >::type fcols(fcolsSEXP);
+    rcpp_result_gen = Rcpp::wrap(dims_to_df(rows, cols, filled, fill, fcols));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1005,7 +1006,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_validate_dims", (DL_FUNC) &_openxlsx2_validate_dims, 1},
     {"_openxlsx2_needed_cells", (DL_FUNC) &_openxlsx2_needed_cells, 1},
-    {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 4},
+    {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 5},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_is_charnum", (DL_FUNC) &_openxlsx2_is_charnum, 1},
     {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 14},

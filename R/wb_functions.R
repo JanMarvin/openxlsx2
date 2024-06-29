@@ -23,42 +23,62 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
     has_dim_sep <- TRUE
   }
 
-  rows_out <- NULL
-  cols_out <- NULL
-  filled   <- NULL
-  for (dim in dims) {
+  # this is only required, if dims is not equal sized
+  rows_out  <- NULL
+  cols_out  <- NULL
+  filled    <- NULL
+  full_cols <- NULL
 
-    if (!grepl(":", dim)) {
-      dim <- paste0(dim, ":", dim)
-    }
+  # condition 1) contains dims separator, but all dims are of
+  # equal size: "A1:A5,B1:B5"
+  # condition 2) either "A1:B5" or separator, but unequal size or "A1:A2,A4:A6,B1:B5"
+  if (has_dim_sep && get_dims(dims)) {
 
-    if (length(dims) > 1)
-      filled <- c(filled, needed_cells(dim))
+    full_rows <- get_dims(dims, check = FALSE, cols = FALSE)
+    full_cols <- sort(get_dims(dims, check = FALSE, cols = TRUE))
 
-    if (identical(dim, "Inf:-Inf")) {
-      # This should probably be fixed elsewhere?
-      stop("dims are inf:-inf")
-    } else {
-      dimensions <- strsplit(dim, ":")[[1]]
+    rows_out  <- unlist(full_rows)
+    cols_out  <- int2col(full_cols)
+    full_cols <- full_cols - min(full_cols) # is always a zero offset
 
-      rows <- as.numeric(gsub("[[:upper:]]", "", dimensions))
-      if (all(is.na(rows))) rows <- c(1, 1048576)
-      rows <- seq.int(rows[1], rows[2])
+  } else {
 
-      rows_out <- unique(c(rows_out, rows))
+    for (dim in dims) {
 
-      # TODO seq.wb_columns?  make a wb_cols vector?
-      cols <- gsub("[[:digit:]]", "", dimensions)
-      cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
+      if (!grepl(":", dim)) {
+        dim <- paste0(dim, ":", dim)
+      }
 
-      cols_out <- unique(c(cols_out, cols))
+      if (length(dims) > 1)
+        filled <- c(filled, needed_cells(dim))
+
+      if (identical(dim, "Inf:-Inf")) {
+        # This should probably be fixed elsewhere?
+        stop("dims are inf:-inf")
+      } else {
+        dimensions <- strsplit(dim, ":")[[1]]
+
+        rows <- as.numeric(gsub("[[:upper:]]", "", dimensions))
+        if (all(is.na(rows))) rows <- c(1, 1048576)
+        rows <- seq.int(rows[1], rows[2])
+
+        rows_out <- unique(c(rows_out, rows))
+
+        # TODO seq.wb_columns?  make a wb_cols vector?
+        cols <- gsub("[[:digit:]]", "", dimensions)
+        cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
+
+        cols_out <- unique(c(cols_out, cols))
+      }
     }
   }
 
   if (has_dim_sep) {
     if (empty_rm) {
-      cols_out <- int2col(sort(col2int(cols_out)))
-      rows_out <- sort(rows_out)
+      cols_out  <- int2col(sort(col2int(cols_out)))
+      rows_out  <- sort(rows_out)
+      # with empty_rm the dataframe will contain only needed columns
+      if (!is.null(full_cols)) full_cols <- seq_along(cols_out) - 1L
     } else {
       # somehow we have to make sure that all columns are covered
       col_ints <- col2int(cols_out)
@@ -73,7 +93,8 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
     rows   = rows_out,
     cols   = cols_out,
     filled = filled,
-    fill   = fill
+    fill   = fill,
+    fcols  = full_cols
   )
 }
 
