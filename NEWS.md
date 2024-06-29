@@ -1,8 +1,29 @@
-# openxlsx2 (development version)
+# openxlsx2 1.8
 
-* Legacy `write_data()`, `write_datatable()`, `write_formula()`, `write_comment()` are now deprecated in favour of `wb_add_data()`, `wb_add_data_table()`,  `wb_add_formula()`, and `wb_add_comment()`.
+## Maintenance
 
-* `convertToExcelDate()` is defunct and will be removed in a future version of the package. Use `convert_to_excel_date()`.
+* Legacy `write_data()`, `write_datatable()`, `write_formula()`, `write_comment()` are now deprecated in favor of `wb_add_data()`, `wb_add_data_table()`,  `wb_add_formula()`, and `wb_add_comment()`. ([1064](https://github.com/JanMarvin/openxlsx2/pull/1064), @olivroy).
+
+* `convertToExcelDate()` is defunct and will be removed in a future version of the package. Use `convert_to_excel_date()`. ([1064](https://github.com/JanMarvin/openxlsx2/pull/1064), @olivroy).
+
+## New features
+
+* `wb_dims()` is now able to handle various columns. [1019](https://github.com/JanMarvin/openxlsx2/pull/1019)
+
+* `wb_to_df()` now has a `check_names` argument. [1050](https://github.com/JanMarvin/openxlsx2/pull/1050)
+
+* The set of conditional formatting icon sets now includes x14 icons. This commit also fixed adding conditional formatting to worksheets with pivot tables.  [1053](https://github.com/JanMarvin/openxlsx2/pull/1053)
+
+## Fixes
+
+* Many improvements in the `xlsb` parser. This includes changes to the logic of the formula parser, rich text strings are now handled, data validation, table formulas and various corrections all over the place. It is still lacking various features and this wont change in the foreseeable future, but the parser is now in better shape than ever. [1037](https://github.com/JanMarvin/openxlsx2/pull/1037), [1040](https://github.com/JanMarvin/openxlsx2/pull/1040), [1042](https://github.com/JanMarvin/openxlsx2/pull/1042), [1044](https://github.com/JanMarvin/openxlsx2/pull/1044), [1049](https://github.com/JanMarvin/openxlsx2/pull/1049), [1054](https://github.com/JanMarvin/openxlsx2/pull/1054)
+
+* `write_xlsx()` now uses `sheet`. Previously it required the undocumented `sheet_name`. [1057](https://github.com/JanMarvin/openxlsx2/pull/1057)
+
+* Fixed a bug were we obfuscated valid html in worksheets with vml buttons. These files previously did not load. [1062](https://github.com/JanMarvin/openxlsx2/pull/1062)
+
+* Fixed slow writing of non consecutive number formats introduced in the previous release. [1067](https://github.com/JanMarvin/openxlsx2/pull/1067), [1068](https://github.com/JanMarvin/openxlsx2/pull/1068)
+
 
 ***************************************************************************
 
