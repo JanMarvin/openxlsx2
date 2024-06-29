@@ -1238,17 +1238,25 @@ is_dims  <- function(x) {
 }
 
 #' check if non consecutive dims is equal sized: "A1:A4,B1:B4"
-get_dims <- function(dims, check = TRUE, cols = TRUE) {
+#' @param dims dims
+#' @param check check if all the same size
+#' @param cols return columns index
+#' @keywords internal
+#' @noRd
+get_dims <- function(dims, check = FALSE, cols = FALSE, rows = FALSE) {
 
-  rows <- unique(
-    lapply(dims, FUN = function(dim) {
-      dimensions <- strsplit(dim, ":")[[1]]
-      as.integer(gsub("[[:upper:]]", "", dimensions))
-    })
-  )
+  if (check || rows) {
+    rows <- unique(
+      lapply(dims, FUN = function(dim) {
+        dimensions <- strsplit(dim, ":")[[1]]
+        as.integer(gsub("[[:upper:]]", "", dimensions))
+      })
+    )
+  }
 
-  if (check)
+  if (check) {
     return(length(rows) == 1)
+  }
 
   if (cols) {
     cols <- unique(
