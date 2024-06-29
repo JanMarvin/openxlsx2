@@ -32,10 +32,10 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
   # condition 1) contains dims separator, but all dims are of
   # equal size: "A1:A5,B1:B5"
   # condition 2) either "A1:B5" or separator, but unequal size or "A1:A2,A4:A6,B1:B5"
-  if (has_dim_sep && get_dims(dims)) {
+  if (has_dim_sep && get_dims(dims, check = TRUE)) {
 
-    full_rows <- get_dims(dims, check = FALSE, cols = FALSE)
-    full_cols <- sort(get_dims(dims, check = FALSE, cols = TRUE))
+    full_rows <- get_dims(dims, rows = TRUE)
+    full_cols <- sort(get_dims(dims, cols = TRUE))
 
     rows_out  <- unlist(full_rows)
     cols_out  <- int2col(full_cols)
