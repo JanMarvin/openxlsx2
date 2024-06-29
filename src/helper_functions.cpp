@@ -336,11 +336,13 @@ bool has_cell(const std::string& str, const std::unordered_set<std::string>& vec
 
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
-SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill) {
+SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill,
+                Rcpp::Nullable<Rcpp::IntegerVector> fcols) {
 
   size_t kk = cols.size();
   size_t nn = rows.size();
 
+  bool has_fcols  = fcols.isNotNull();
   bool has_filled = filled.isNotNull();
 
   // 1. create the list
@@ -353,30 +355,38 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  if (has_filled && fill) {
+  if (fill) {
+    if (has_filled) {
 
-    std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
-    std::unordered_set<std::string> flls(flld.begin(), flld.end());
+      std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
+      std::unordered_set<std::string> flls(flld.begin(), flld.end());
 
-    // with has_filled we always have to run this loop
-    for (size_t i = 0; i < kk; ++i) {
-      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-      std::string coli = Rcpp::as<std::string>(cols[i]);
-      for (size_t j = 0; j < nn; ++j) {
-        std::string cell = coli + std::to_string(rows[j]);
-        if (has_cell(cell, flls))
-          cvec[j] = coli + std::to_string(rows[j]);
-        // else cvec[j] = "";
+      // with has_filled we always have to run this loop
+      for (size_t i = 0; i < kk; ++i) {
+        Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+        std::string coli = Rcpp::as<std::string>(cols[i]);
+        for (size_t j = 0; j < nn; ++j) {
+          std::string cell = coli + std::to_string(rows[j]);
+          if (has_cell(cell, flls))
+            cvec[j] = cell;
+        }
       }
-    }
 
-  } else if (fill) { // insert cells into data frame
+    } else { // insert cells into data frame
 
-    for (size_t i = 0; i < kk; ++i) {
-      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-      std::string coli = Rcpp::as<std::string>(cols[i]);
-      for (size_t j = 0; j < nn; ++j) {
-        cvec[j] = coli + std::to_string(rows[j]);
+      std::vector<size_t> fcls;
+      if (has_fcols) {
+        fcls = Rcpp::as<std::vector<size_t>>(fcols.get());
+      }
+
+      for (size_t i = 0; i < kk; ++i) {
+        if (has_fcols && std::find(fcls.begin(), fcls.end(), i) == fcls.end())
+          continue;
+        Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+        std::string coli = Rcpp::as<std::string>(cols[i]);
+        for (size_t j = 0; j < nn; ++j) {
+          cvec[j] = coli + std::to_string(rows[j]);
+        }
       }
     }
 
