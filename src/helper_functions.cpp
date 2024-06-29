@@ -353,30 +353,31 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
   }
 
-  if (has_filled && fill) {
+  if (fill) {
+    if (has_filled) {
 
-    std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
-    std::unordered_set<std::string> flls(flld.begin(), flld.end());
+      std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
+      std::unordered_set<std::string> flls(flld.begin(), flld.end());
 
-    // with has_filled we always have to run this loop
-    for (size_t i = 0; i < kk; ++i) {
-      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-      std::string coli = Rcpp::as<std::string>(cols[i]);
-      for (size_t j = 0; j < nn; ++j) {
-        std::string cell = coli + std::to_string(rows[j]);
-        if (has_cell(cell, flls))
-          cvec[j] = coli + std::to_string(rows[j]);
-        // else cvec[j] = "";
+      // with has_filled we always have to run this loop
+      for (size_t i = 0; i < kk; ++i) {
+        Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+        std::string coli = Rcpp::as<std::string>(cols[i]);
+        for (size_t j = 0; j < nn; ++j) {
+          std::string cell = coli + std::to_string(rows[j]);
+          if (has_cell(cell, flls))
+            cvec[j] = cell;
+        }
       }
-    }
 
-  } else if (fill) { // insert cells into data frame
+    } else { // insert cells into data frame
 
-    for (size_t i = 0; i < kk; ++i) {
-      Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-      std::string coli = Rcpp::as<std::string>(cols[i]);
-      for (size_t j = 0; j < nn; ++j) {
-        cvec[j] = coli + std::to_string(rows[j]);
+      for (size_t i = 0; i < kk; ++i) {
+        Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
+        std::string coli = Rcpp::as<std::string>(cols[i]);
+        for (size_t j = 0; j < nn; ++j) {
+          cvec[j] = coli + std::to_string(rows[j]);
+        }
       }
     }
 
