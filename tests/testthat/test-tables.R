@@ -203,3 +203,23 @@ test_that("updating table works", {
   expect_equal(got, "A1:J4")
 
 })
+
+test_that("writing table headers with factor variables works", {
+  df <- data.frame(
+    fct = structure(
+      1:2,
+      levels = c(
+        "one",
+        "two"
+      ),
+      class = "factor"),
+    `1` = 1:2,
+    check.names = FALSE
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = df)
+
+  exp <- "<is><t>1</t></is>"
+  got <- wb$worksheets[[1]]$sheet_data$cc$is[[2]]
+  expect_equal(exp, got)
+})
