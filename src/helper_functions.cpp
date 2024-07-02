@@ -477,6 +477,8 @@ void wide_to_long(
 
   auto startcol = start_col;
 
+  int32_t in_string_nums = string_nums;
+
   // pointer magic. even though these are extracted, they just point to the
   // memory in the data frame
   Rcpp::CharacterVector zz_row_r = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
@@ -514,7 +516,7 @@ void wide_to_long(
 
       int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
-      if (ColNames & (j == 0)) vtyp = character;
+      if (ColNames && j == 0) vtyp = character;
       std::string vals = Rcpp::as<std::string>(cvec[j]);
       std::string row = std::to_string(startrow);
 
@@ -524,8 +526,13 @@ void wide_to_long(
       if (ref_str.compare("0") == 0)
       ref_str = col + row;
 
-      // factors can be numeric or string or both
-      if (vtyp == factor) string_nums = true;
+      // factors can be numeric or string or both. tables require the
+      // column name to be character and once we have overwritten for
+      // a factor, we have to reset string_nums.
+      if (!(ColNames && j == 0) && vtyp == factor)
+        string_nums = 1;
+      else
+        string_nums = in_string_nums;
 
       // create struct
       celltyp cell;
