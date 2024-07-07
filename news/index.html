@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,28 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.7" id="openxlsx2-17">openxlsx2 1.7<a class="anchor" aria-label="anchor" href="#openxlsx2-17"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.8" id="openxlsx2-18">openxlsx2 1.8<a class="anchor" aria-label="anchor" href="#openxlsx2-18"></a></h2><p class="text-muted">CRAN release: 2024-07-07</p>
+<div class="section level3">
+<h3 id="maintenance-1-8">Maintenance<a class="anchor" aria-label="anchor" href="#maintenance-1-8"></a></h3>
+<ul><li><p>Legacy <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code>, <code><a href="../reference/write_formula.html">write_formula()</a></code>, <code><a href="../reference/comment_internal.html">write_comment()</a></code> are now deprecated in favor of <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>, <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>, and <code><a href="../reference/wb_add_comment.html">wb_add_comment()</a></code>. (<a href="https://github.com/JanMarvin/openxlsx2/pull/1064" class="external-link">1064</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>).</p></li>
+<li><p><code><a href="../reference/convertToExcelDate.html">convertToExcelDate()</a></code> is defunct and will be removed in a future version of the package. Use <code><a href="../reference/convert_to_excel_date.html">convert_to_excel_date()</a></code>. (<a href="https://github.com/JanMarvin/openxlsx2/pull/1064" class="external-link">1064</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>).</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-1-8">New features<a class="anchor" aria-label="anchor" href="#new-features-1-8"></a></h3>
+<ul><li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> is now able to handle various columns. <a href="https://github.com/JanMarvin/openxlsx2/pull/1019" class="external-link">1019</a></p></li>
+<li><p><code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> now has a <code>check_names</code> argument. <a href="https://github.com/JanMarvin/openxlsx2/pull/1050" class="external-link">1050</a></p></li>
+<li><p>The set of conditional formatting icon sets now includes x14 icons. This commit also fixed adding conditional formatting to worksheets with pivot tables. <a href="https://github.com/JanMarvin/openxlsx2/pull/1053" class="external-link">1053</a></p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-8">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-8"></a></h3>
+<ul><li><p>Many improvements in the <code>xlsb</code> parser. This includes changes to the logic of the formula parser, rich text strings are now handled, data validation, table formulas and various corrections all over the place. It is still lacking various features and this wont change in the foreseeable future, but the parser is now in better shape than ever. <a href="https://github.com/JanMarvin/openxlsx2/pull/1037" class="external-link">1037</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1040" class="external-link">1040</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1042" class="external-link">1042</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1044" class="external-link">1044</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1049" class="external-link">1049</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1054" class="external-link">1054</a></p></li>
+<li><p><code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> now uses <code>sheet</code>. Previously it required the undocumented <code>sheet_name</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1057" class="external-link">1057</a></p></li>
+<li><p>Fixed a bug were we obfuscated valid html in worksheets with vml buttons. These files previously did not load. <a href="https://github.com/JanMarvin/openxlsx2/pull/1062" class="external-link">1062</a></p></li>
+<li><p>Fixed slow writing of non consecutive number formats introduced in the previous release. <a href="https://github.com/JanMarvin/openxlsx2/pull/1067" class="external-link">1067</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1068" class="external-link">1068</a></p></li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.7" id="openxlsx2-17">openxlsx2 1.7<a class="anchor" aria-label="anchor" href="#openxlsx2-17"></a></h2><p class="text-muted">CRAN release: 2024-06-02</p>
 <div class="section level3">
 <h3 id="new-features-1-7">New features<a class="anchor" aria-label="anchor" href="#new-features-1-7"></a></h3>
 <ul><li><p>Add function to remove conditional formatting from worksheet <code><a href="../reference/wb_add_conditional_formatting.html">wb_remove_conditional_formatting()</a></code> <a href="https://github.com/JanMarvin/openxlsx2/pull/1011" class="external-link">1011</a></p></li>
