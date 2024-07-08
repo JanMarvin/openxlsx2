@@ -1,399 +1,135 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/404.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/Update-from-openxlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_charts_manual.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_formulas_manual.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_read_to_df.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_style_manual.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/index.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/active_sheet-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/as_xml.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/base_font-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/clean_worksheet_name.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/col2int.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/col_widths-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/comment_internal.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/con_dims.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/con_rng.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/convertToExcelDate.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/convert_date.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/convert_to_excel_date.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_border.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_cell_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_colors_xml.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_comment.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_dxfs_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_fill.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_font.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_hyperlink.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_numfmt.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_sparklines.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/create_tablestyle.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/creators-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/dataframe_to_dims.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/delete_data.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/dims_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/dims_to_dataframe.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/filter-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/fmt_txt.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/grouping-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/int2col.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/is_dims.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/named_region-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/openxlsx2-deprecated.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/openxlsx2-package.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/openxlsx2_options.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/person-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/print.pugi_xml.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/properties-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/pugixml.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/read_xml.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/row_heights-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/sheet_names-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/sheet_visibility-wb.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/styles_on_sheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/temp_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/waivers.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_border.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_cell_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_chart_xml.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_chartsheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_comment.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_conditional_formatting.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_data.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_data_table.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_data_validation.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_drawing.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_dxfs_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_fill.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_font.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_form_control.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_formula.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_ignore_error.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_image.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_mips.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_named_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_numfmt.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_page_break.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_pivot_table.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_plot.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_slicer.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_sparklines.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_thread.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_cell_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_clean_sheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_clone_sheet_style.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_clone_worksheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_color.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_comment.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_copy_cells.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_data.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_dims.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_freeze_pane.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_get_tables.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_load.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_merge_cells.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_open.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_order.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_page_setup.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_protect.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_protect_worksheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_remove_tables.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_remove_worksheet.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_save.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_bookview.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_grid_lines.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_header_footer.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_last_modified_by.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_sheetview.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_update_table.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/write_data.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/write_datatable.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/write_formula.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/xl_open.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/xml_add_child.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/xml_attr_mod.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/xml_node_create.html</loc>
-  </url>
-  <url>
-    <loc>https://janmarvin.github.io/openxlsx2/reference/xml_rm_child.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://janmarvin.github.io/openxlsx2/404.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/LICENSE-text.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/Update-from-openxlsx.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/conditional-formatting.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/index.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_charts_manual.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_formulas_manual.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_read_to_df.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/articles/openxlsx2_style_manual.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/authors.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/index.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/news/index.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/active_sheet-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/as_xml.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/base_font-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/clean_worksheet_name.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/col2int.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/col_widths-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/comment_internal.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/con_dims.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/con_rng.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/convertToExcelDate.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/convert_date.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/convert_to_excel_date.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_border.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_cell_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_colors_xml.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_comment.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_dxfs_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_fill.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_font.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_hyperlink.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_numfmt.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_sparklines.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/create_tablestyle.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/creators-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/dataframe_to_dims.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/delete_data.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/dims_helper.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/dims_to_dataframe.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/filter-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/fmt_txt.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/grouping-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/index.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/int2col.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/is_dims.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/named_region-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/openxlsx2-deprecated.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/openxlsx2-package.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/openxlsx2_options.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/person-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/pipe.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/print.pugi_xml.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/properties-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/pugixml.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/read_xml.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/row_heights-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/sheet_names-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/sheet_visibility-wb.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/styles_on_sheet.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/temp_xlsx.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/waivers.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_border.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_cell_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_chart_xml.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_chartsheet.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_comment.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_conditional_formatting.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_data.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_data_table.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_data_validation.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_drawing.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_dxfs_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_fill.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_font.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_form_control.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_formula.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_ignore_error.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_image.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_mips.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_named_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_numfmt.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_page_break.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_pivot_table.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_plot.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_slicer.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_sparklines.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_thread.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_cell_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_clean_sheet.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_clone_sheet_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_clone_worksheet.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_color.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_comment.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_copy_cells.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_data.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_dims.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_freeze_pane.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_get_tables.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_load.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_merge_cells.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_open.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_order.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_page_setup.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_protect.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_protect_worksheet.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_remove_tables.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_remove_worksheet.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_save.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_bookview.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_grid_lines.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_header_footer.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_last_modified_by.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_set_sheetview.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_update_table.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/write_data.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/write_datatable.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/write_formula.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/xl_open.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/xml_add_child.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/xml_attr_mod.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/xml_node_create.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/xml_rm_child.html</loc></url>
 </urlset>
+
