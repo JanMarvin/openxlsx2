@@ -1180,6 +1180,9 @@ do_write_formula <- function(
 ) {
   standardize_case_names(...)
 
+  if (is.data.frame(x))
+    x <- unlist(x)
+
   assert_class(x, "character")
 
   # detect array formulas

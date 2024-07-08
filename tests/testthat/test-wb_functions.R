@@ -498,3 +498,24 @@ test_that("creating a formula matrix works", {
   expect_equal(exp, got)
 
 })
+
+test_that("writing formula dataframes works", {
+
+  df <- matrix(
+    1:100, ncol = 10, nrow = 10
+  )
+
+  fml_df <- dims_to_dataframe(wb_dims(x = df, col_names = FALSE, from_row = 2), fill = TRUE)
+
+  wb <-  wb_workbook()$add_worksheet()$add_data(x = df)
+
+  wb$add_formula(
+    x      = fml_df,
+    dims   = wb_dims(x = df, from_row = 13, col_names = FALSE)
+  )
+
+  exp <- c(210, 16)
+  got <- dim(wb$worksheets[[1]]$sheet_data$cc)
+  expect_equal(exp, got)
+
+})
