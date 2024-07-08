@@ -467,12 +467,19 @@ write_data2 <- function(
     ## all have shared and all share the same f_si
     ## only the reference cell has a formula
     ## only the reference cell has the formula reference
+
+    uni_si <- unique(wb$worksheets[[sheetno]]$sheet_data$cc$f_si)
+    int_si <- as.integer(
+      replace(
+        uni_si,
+        uni_si == "",
+        "-1"
+      )
+    )
+
     cc$f_t              <- "shared"
     cc[1, "f_ref"]      <- dims
     cc[2:nrow(cc), "f"] <- ""
-
-    int_si <- as.integer(wb$worksheets[[sheetno]]$sheet_data$cc$f_si)
-    int_si[is.na(int_si)] <- -1L
     cc$f_si             <- max(int_si) + 1L
   }
 
