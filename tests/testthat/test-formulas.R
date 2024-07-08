@@ -138,3 +138,49 @@ test_that("array formula detection works", {
   got <- cc[cc$f_t == "array", "f_ref"]
   expect_equal(exp, got)
 })
+
+test_that("writing shared formulas works", {
+  df <- data.frame(
+    x = 1:5,
+    y = 1:5 * 2
+  )
+
+  wb <-  wb_workbook()$add_worksheet()$add_data(x = df)
+
+  wb$add_formula(
+    x      = "=A2/B2",
+    dims   = "C2:C6",
+    array  = FALSE,
+    shared = TRUE
+  )
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  cc <- cc[cc$c_r == "C", ]
+
+  exp <- c("=A2/B2", "", "", "", "")
+  got <- cc$f
+  expect_equal(exp, got)
+
+  exp <- c("shared")
+  got <- unique(cc$f_t)
+  expect_equal(exp, got)
+
+  wb$add_formula(
+    x      = "=A$2/B$2",
+    dims   = "D2:D6",
+    array  = FALSE,
+    shared = TRUE
+  )
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  cc <- cc[cc$c_r == "D", ]
+
+  exp <- c("=A$2/B$2", "", "", "", "")
+  got <- cc$f
+  expect_equal(exp, got)
+
+  exp <- c("1")
+  got <- unique(cc$f_si)
+  expect_equal(exp, got)
+
+})

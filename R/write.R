@@ -186,6 +186,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param inline_strings write characters as inline strings
 #' @param dims worksheet dimensions
 #' @param enforce enforce dims
+#' @param shared shared formula
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -221,7 +222,8 @@ write_data2 <- function(
     data_table = FALSE,
     inline_strings = TRUE,
     dims = NULL,
-    enforce = FALSE
+    enforce = FALSE,
+    shared  = FALSE
 ) {
 
   dim_sep <- ";"
@@ -457,6 +459,21 @@ write_data2 <- function(
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {
     cc <- cc[cc$r != paste0(names(rtyp)[1], rownames(rtyp)[1]), ]
+  }
+
+  if (shared) {
+    # This cc contains only the formula range.
+    ## the top left cell is the reference
+    ## all have shared and all share the same f_si
+    ## only the reference cell has a formula
+    ## only the reference cell has the formula reference
+    cc$f_t              <- "shared"
+    cc[1, "f_ref"]      <- dims
+    cc[2:nrow(cc), "f"] <- ""
+
+    int_si <- as.integer(wb$worksheets[[sheetno]]$sheet_data$cc$f_si)
+    int_si[is.na(int_si)] <- -1L
+    cc$f_si             <- max(int_si) + 1L
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
@@ -755,6 +772,7 @@ write_data2 <- function(
 #'   uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @param total_row optional write total rows
+#' @param shared shared formula
 #' @noRd
 #' @keywords internal
 write_data_table <- function(
@@ -782,7 +800,8 @@ write_data_table <- function(
     na.strings      = na_strings(),
     inline_strings  = TRUE,
     total_row       = FALSE,
-    enforce         = FALSE
+    enforce         = FALSE,
+    shared          = FALSE
 ) {
 
   ## Input validating
@@ -985,7 +1004,8 @@ write_data_table <- function(
     data_table      = data_table,
     inline_strings  = inline_strings,
     dims            = if (enforce) odims else dims,
-    enforce         = enforce
+    enforce         = enforce,
+    shared          = shared
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -1107,6 +1127,7 @@ do_write_data <- function(
     na.strings        = na_strings(),
     inline_strings    = TRUE,
     enforce           = FALSE,
+    shared            = FALSE,
     ...
 ) {
 
@@ -1136,7 +1157,8 @@ do_write_data <- function(
     data_table      = FALSE,
     na.strings      = na.strings,
     inline_strings  = inline_strings,
-    enforce         = enforce
+    enforce         = enforce,
+    shared          = shared
   )
 }
 
@@ -1153,6 +1175,7 @@ do_write_formula <- function(
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
     enforce           = FALSE,
+    shared            = FALSE,
     ...
 ) {
   standardize_case_names(...)
@@ -1164,6 +1187,14 @@ do_write_formula <- function(
     pattern <- "^\\{(.*)\\}$"
     x <- gsub(pattern, "\\1", x)
     array <- TRUE
+  }
+
+  if (array && shared) stop("either array or shared")
+
+  # we need to increase the data
+  if (shared) { # not sure if this applies to arrays as well
+    size <- dims_to_dataframe(dims)
+    x <- rep(x, ncol(size) * nrow(size))
   }
 
   dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
@@ -1253,7 +1284,8 @@ do_write_formula <- function(
     row_names         = FALSE,
     apply_cell_style  = apply_cell_style,
     remove_cell_style = remove_cell_style,
-    enforce           = enforce
+    enforce           = enforce,
+    shared            = shared
   )
 
 }
@@ -1281,6 +1313,7 @@ do_write_datatable <- function(
     na.strings        = na_strings(),
     inline_strings    = TRUE,
     total_row         = FALSE,
+    shared            = FALSE,
     ...
 ) {
 
@@ -1310,6 +1343,7 @@ do_write_datatable <- function(
     removeCellStyle = remove_cell_style,
     na.strings      = na.strings,
     inline_strings  = inline_strings,
-    total_row       = total_row
+    total_row       = total_row,
+    shared          = shared
   )
 }

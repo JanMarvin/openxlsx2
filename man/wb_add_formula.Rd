@@ -16,6 +16,7 @@ wb_add_formula(
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
   enforce = FALSE,
+  shared = FALSE,
   ...
 )
 }
@@ -42,6 +43,8 @@ Add this, if you see "@" inserted into your formulas.}
 \item{remove_cell_style}{Should we keep the cell style?}
 
 \item{enforce}{enforce dims}
+
+\item{shared}{shared formula}
 
 \item{...}{additional arguments}
 }

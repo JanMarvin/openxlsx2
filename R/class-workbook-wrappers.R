@@ -685,6 +685,7 @@ wb_remove_timeline <- function(
 #' @param apply_cell_style Should we write cell styles to the workbook?
 #' @param remove_cell_style Should we keep the cell style?
 #' @param enforce enforce dims
+#' @param shared shared formula
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
@@ -717,6 +718,7 @@ wb_add_formula <- function(
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
     enforce           = FALSE,
+    shared            = FALSE,
     ...
 ) {
   assert_workbook(wb)
@@ -731,6 +733,7 @@ wb_add_formula <- function(
     apply_cell_style  = apply_cell_style,
     remove_cell_style = remove_cell_style,
     enforce           = enforce,
+    shared            = shared,
     ...               = ...
   )
 }
