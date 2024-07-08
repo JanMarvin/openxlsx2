@@ -1189,7 +1189,7 @@ do_write_formula <- function(
     array <- TRUE
   }
 
-  if (array && shared) stop("either array or shared")
+  if ((array || cm) && shared) stop("either array/cm or shared")
 
   # we need to increase the data
   if (shared) { # not sure if this applies to arrays as well
@@ -1197,7 +1197,16 @@ do_write_formula <- function(
     x <- rep(x, ncol(size) * nrow(size))
   }
 
-  dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
+  if (is.null(dims)) {
+    dims <- wb_dims(start_row, start_col)
+  }
+
+  if (array || enforce) {
+    dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
+  } else {
+    dfx   <- dims_to_dataframe(dims)
+    dfx[] <- x
+  }
 
   formula <- "formula"
   if (array) formula <- "array_formula"
@@ -1250,20 +1259,26 @@ do_write_formula <- function(
     formula <- "cm_formula"
   }
 
-  class(dfx$X) <- c(formula, "character")
+  # class(dfx$X) <- c(formula, "character")
+  for (i in seq_along(dfx)) {
+    class(dfx[[i]]) <- c(formula, "character")
+  }
 
   if (any(grepl("=([\\s]*?)HYPERLINK\\(", x, perl = TRUE))) {
-    class(dfx$X) <- c("character", "formula", "hyperlink")
+    # class(dfx$X) <- c("character", "formula", "hyperlink")
+
+    # TODO does not handle mixed types
+    for (i in seq_along(dfx)) {
+      class(dfx[[i]]) <- c("character", "formula", "hyperlink")
+    }
   }
 
   # transpose match write_data_table
-  rc <- dims_to_rowcol(dims)
-  if (length(rc[[1]]) > length(rc[[2]])) {
-    dfx <- transpose_df(dfx)
-  }
-
-  if (is.null(dims)) {
-    dims <- wb_dims(start_row, start_col)
+  if (array || enforce) {
+    rc <- dims_to_rowcol(dims)
+    if (length(rc[[1]]) > length(rc[[2]])) {
+      dfx <- transpose_df(dfx)
+    }
   }
 
   if (array || cm) {

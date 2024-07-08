@@ -478,3 +478,23 @@ test_that("improve non consecutive dims", {
   got <- wb4$worksheets[[1]]$sheet_data$cc$r[wb4$worksheets[[1]]$sheet_data$cc$c_s != ""]
   expect_contains(got, exp)
 })
+
+test_that("creating a formula matrix works", {
+
+  df <- matrix(
+    1:100, ncol = 10, nrow = 10
+  )
+
+  wb <-  wb_workbook()$add_worksheet()$add_data(x = df)
+
+  wb$add_formula(
+    x      = "=$A2/B$2",
+    dims   = wb_dims(x = df, from_row = 13, col_names = FALSE),
+    shared = TRUE
+  )
+
+  exp <- c(210, 16)
+  got <- dim(wb$worksheets[[1]]$sheet_data$cc)
+  expect_equal(exp, got)
+
+})
