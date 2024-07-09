@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## New features
+
+* Experimental support for shared formulas. Similar to spreadsheet software, when a cell is dragged to horizontally or vertically. This requires the formula to be written only for a single cell and it is filled by spreadsheet software for the remaining dimensions. `wb_add_formula()` gained a new argument `shared`. [1074](https://github.com/JanMarvin/openxlsx2/pull/1074)
+
+
+***************************************************************************
+
 # openxlsx2 1.8
 
 ## Maintenance
