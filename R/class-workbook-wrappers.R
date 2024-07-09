@@ -706,6 +706,11 @@ wb_remove_timeline <- function(
 #'  add_data(x = mm, dims = "A4:B5", col_names = FALSE)$
 #'  add_formula(x = "MMULT(A1:B2, A4:B5)", dims = "A7:B8", array = TRUE)
 #'
+#' # add shared formula
+#' wb$add_worksheet()$
+#'  add_data(x = matrix(rnorm(5*5), ncol = 5, nrow = 5))$
+#'  add_formula(x = "SUM($A2:A2)", dims = "A8:E12", shared = TRUE)
+#'
 wb_add_formula <- function(
     wb,
     sheet             = current_sheet(),
