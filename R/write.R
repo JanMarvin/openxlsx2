@@ -186,6 +186,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param inline_strings write characters as inline strings
 #' @param dims worksheet dimensions
 #' @param enforce enforce dims
+#' @param shared shared formula
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -221,7 +222,8 @@ write_data2 <- function(
     data_table = FALSE,
     inline_strings = TRUE,
     dims = NULL,
-    enforce = FALSE
+    enforce = FALSE,
+    shared  = FALSE
 ) {
 
   dim_sep <- ";"
@@ -457,6 +459,28 @@ write_data2 <- function(
   # if rownames = TRUE and data_table = FALSE, remove "_rownames_"
   if (!data_table && rowNames && colNames) {
     cc <- cc[cc$r != paste0(names(rtyp)[1], rownames(rtyp)[1]), ]
+  }
+
+  if (shared) {
+    # This cc contains only the formula range.
+    ## the top left cell is the reference
+    ## all have shared and all share the same f_si
+    ## only the reference cell has a formula
+    ## only the reference cell has the formula reference
+
+    uni_si <- unique(wb$worksheets[[sheetno]]$sheet_data$cc$f_si)
+    int_si <- as.integer(
+      replace(
+        uni_si,
+        uni_si == "",
+        "-1"
+      )
+    )
+
+    cc$f_t              <- "shared"
+    cc[1, "f_ref"]      <- dims
+    cc[2:nrow(cc), "f"] <- ""
+    cc$f_si             <- max(int_si) + 1L
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
@@ -755,6 +779,7 @@ write_data2 <- function(
 #'   uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @param total_row optional write total rows
+#' @param shared shared formula
 #' @noRd
 #' @keywords internal
 write_data_table <- function(
@@ -782,7 +807,8 @@ write_data_table <- function(
     na.strings      = na_strings(),
     inline_strings  = TRUE,
     total_row       = FALSE,
-    enforce         = FALSE
+    enforce         = FALSE,
+    shared          = FALSE
 ) {
 
   ## Input validating
@@ -985,7 +1011,8 @@ write_data_table <- function(
     data_table      = data_table,
     inline_strings  = inline_strings,
     dims            = if (enforce) odims else dims,
-    enforce         = enforce
+    enforce         = enforce,
+    shared          = shared
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -1107,6 +1134,7 @@ do_write_data <- function(
     na.strings        = na_strings(),
     inline_strings    = TRUE,
     enforce           = FALSE,
+    shared            = FALSE,
     ...
 ) {
 
@@ -1136,7 +1164,8 @@ do_write_data <- function(
     data_table      = FALSE,
     na.strings      = na.strings,
     inline_strings  = inline_strings,
-    enforce         = enforce
+    enforce         = enforce,
+    shared          = shared
   )
 }
 
@@ -1153,9 +1182,13 @@ do_write_formula <- function(
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
     enforce           = FALSE,
+    shared            = FALSE,
     ...
 ) {
   standardize_case_names(...)
+
+  if (is.data.frame(x))
+    x <- unlist(x)
 
   assert_class(x, "character")
 
@@ -1166,7 +1199,24 @@ do_write_formula <- function(
     array <- TRUE
   }
 
-  dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
+  if ((array || cm) && shared) stop("either array/cm or shared")
+
+  # we need to increase the data
+  if (shared) { # not sure if this applies to arrays as well
+    size <- dims_to_dataframe(dims)
+    x <- rep(x, ncol(size) * nrow(size))
+  }
+
+  if (is.null(dims)) {
+    dims <- wb_dims(start_row, start_col)
+  }
+
+  if (array || enforce) {
+    dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
+  } else {
+    dfx   <- dims_to_dataframe(dims)
+    dfx[] <- x
+  }
 
   formula <- "formula"
   if (array) formula <- "array_formula"
@@ -1219,20 +1269,26 @@ do_write_formula <- function(
     formula <- "cm_formula"
   }
 
-  class(dfx$X) <- c(formula, "character")
+  # class(dfx$X) <- c(formula, "character")
+  for (i in seq_along(dfx)) {
+    class(dfx[[i]]) <- c(formula, "character")
+  }
 
   if (any(grepl("=([\\s]*?)HYPERLINK\\(", x, perl = TRUE))) {
-    class(dfx$X) <- c("character", "formula", "hyperlink")
+    # class(dfx$X) <- c("character", "formula", "hyperlink")
+
+    # TODO does not handle mixed types
+    for (i in seq_along(dfx)) {
+      class(dfx[[i]]) <- c("character", "formula", "hyperlink")
+    }
   }
 
   # transpose match write_data_table
-  rc <- dims_to_rowcol(dims)
-  if (length(rc[[1]]) > length(rc[[2]])) {
-    dfx <- transpose_df(dfx)
-  }
-
-  if (is.null(dims)) {
-    dims <- wb_dims(start_row, start_col)
+  if (array || enforce) {
+    rc <- dims_to_rowcol(dims)
+    if (length(rc[[1]]) > length(rc[[2]])) {
+      dfx <- transpose_df(dfx)
+    }
   }
 
   if (array || cm) {
@@ -1253,7 +1309,8 @@ do_write_formula <- function(
     row_names         = FALSE,
     apply_cell_style  = apply_cell_style,
     remove_cell_style = remove_cell_style,
-    enforce           = enforce
+    enforce           = enforce,
+    shared            = shared
   )
 
 }
@@ -1281,6 +1338,7 @@ do_write_datatable <- function(
     na.strings        = na_strings(),
     inline_strings    = TRUE,
     total_row         = FALSE,
+    shared            = FALSE,
     ...
 ) {
 
@@ -1310,6 +1368,7 @@ do_write_datatable <- function(
     removeCellStyle = remove_cell_style,
     na.strings      = na.strings,
     inline_strings  = inline_strings,
-    total_row       = total_row
+    total_row       = total_row,
+    shared          = shared
   )
 }

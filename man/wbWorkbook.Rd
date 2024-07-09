@@ -845,6 +845,7 @@ Add formula
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
   enforce = FALSE,
+  shared = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -871,6 +872,8 @@ Add formula
 \item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
 
 \item{\code{enforce}}{enforce dims}
+
+\item{\code{shared}}{shared formula}
 
 \item{\code{...}}{additional arguments}
 }

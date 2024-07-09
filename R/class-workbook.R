@@ -2384,6 +2384,7 @@ wbWorkbook <- R6::R6Class(
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
     #' @param enforce enforce dims
+    #' @param shared shared formula
     #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
@@ -2396,6 +2397,7 @@ wbWorkbook <- R6::R6Class(
         apply_cell_style  = TRUE,
         remove_cell_style = FALSE,
         enforce           = FALSE,
+        shared            = FALSE,
         ...
     ) {
 
@@ -2411,7 +2413,8 @@ wbWorkbook <- R6::R6Class(
         cm              = cm,
         applyCellStyle  = apply_cell_style,
         removeCellStyle = remove_cell_style,
-        enforce         = enforce
+        enforce         = enforce,
+        shared          = shared
       )
       invisible(self)
     },
