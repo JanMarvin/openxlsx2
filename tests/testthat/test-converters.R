@@ -58,3 +58,10 @@ test_that("", {
   expect_equal(got, 8)
 
 })
+
+test_that("unknown font works", {
+  wb <- wb_workbook()
+  wb$add_worksheet("Sheet 1")
+  wb$set_base_font(font_name = "Roboto")
+  expect_silent(wb$set_col_widths(cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33)))
+})
