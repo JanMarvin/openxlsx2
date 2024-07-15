@@ -94,6 +94,9 @@ calc_col_width <- function(base_font, col_width) {
   font <- base_font$name$val
   size <- as.integer(base_font$size$val)
 
+  if (!any(font %in% font_width_tab$FontFamilyName))
+    font <- "Aptos Narrow"
+
   sel <- font_width_tab$FontFamilyName == font & font_width_tab$FontSize == size
   # maximum digit width of selected font
   mdw <- font_width_tab$Width[sel]
