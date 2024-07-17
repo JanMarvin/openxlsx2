@@ -13,6 +13,8 @@ wb_set_header_footer(
   even_footer = NULL,
   first_header = NULL,
   first_footer = NULL,
+  align_with_margins = NULL,
+  scale_with_doc = NULL,
   ...
 )
 }
@@ -25,6 +27,10 @@ wb_set_header_footer(
 right.  \code{header} and \code{footer} are used to default additional arguments.
 Setting \code{even}, \code{odd}, or \code{first}, overrides \code{header}/\code{footer}. Use \code{NA} to
 skip a position.}
+
+\item{align_with_margins}{Align header/footer with margins}
+
+\item{scale_with_doc}{Scale header/footer with document}
 
 \item{...}{additional arguments}
 }

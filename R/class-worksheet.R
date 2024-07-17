@@ -62,6 +62,12 @@ wbWorksheet <- R6::R6Class(
     #' @field headerFooter headerFooter
     headerFooter = NULL,
 
+    #' @field scale_with_doc scale_with_doc
+    scale_with_doc = FALSE,
+
+    #' @field align_with_margins align_with_margins
+    align_with_margins = FALSE,
+
     #' @field rowBreaks rowBreaks
     rowBreaks = character(),
 
@@ -364,7 +370,11 @@ wbWorksheet <- R6::R6Class(
 
         # headerFooter
         # should return NULL when !length(self$headerFooter)
-        genHeaderFooterNode(self$headerFooter),
+        genHeaderFooterNode(
+          self$headerFooter,
+          self$scale_with_doc,
+          self$align_with_margins
+        ),
 
         # rowBreaks
         if (n <- length(self$rowBreaks)) {

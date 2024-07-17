@@ -238,8 +238,10 @@ getHeaderFooterNode <- function(x) {
 
 #' generate headerFooter xml from left, center, and right characters
 #' @param x xml string
+#' @param scale_with_doc scale with doc
+#' @param align_with_margins align with margins
 #' @noRd
-genHeaderFooterNode <- function(x) {
+genHeaderFooterNode <- function(x, scale_with_doc = FALSE, align_with_margins = FALSE) {
 
   # <headerFooter differentOddEven="1" differentFirst="1" scaleWithDoc="0" alignWithMargins="0">
   #   <oddHeader>&amp;Lfirst L&amp;CfC&amp;RfR</oddHeader>
@@ -312,9 +314,11 @@ genHeaderFooterNode <- function(x) {
 
 
   headTag <- sprintf(
-    '<headerFooter differentOddEven="%s" differentFirst="%s" scaleWithDoc="0" alignWithMargins="0">',
+    '<headerFooter differentOddEven="%s" differentFirst="%s" scaleWithDoc="%s" alignWithMargins="%s">',
     as.integer(!(is.null(evenHeader) & is.null(evenFooter))),
-    as.integer(!(is.null(firstHeader) & is.null(firstFooter)))
+    as.integer(!(is.null(firstHeader) & is.null(firstFooter))),
+    as_xml_attr(scale_with_doc),
+    as_xml_attr(align_with_margins)
   )
 
   paste0(headTag, oddHeader, oddFooter, evenHeader, evenFooter, firstHeader, firstFooter, "</headerFooter>")

@@ -2716,6 +2716,8 @@ Sets headers and footers
   even_footer = NULL,
   first_header = NULL,
   first_footer = NULL,
+  align_with_margins = NULL,
+  scale_with_doc = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -2736,6 +2738,10 @@ Sets headers and footers
 \item{\code{first_header}}{firstHeader}
 
 \item{\code{first_footer}}{firstFooter}
+
+\item{\code{align_with_margins}}{align_with_margins}
+
+\item{\code{scale_with_doc}}{scale_with_doc}
 
 \item{\code{...}}{additional arguments}
 }
