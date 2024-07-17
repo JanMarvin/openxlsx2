@@ -1667,6 +1667,8 @@ wb_set_bookview <- function(
 #'   right.  `header` and `footer` are used to default additional arguments.
 #'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
 #'   skip a position.
+#' @param align_with_margins Align header/footer with margins
+#' @param scale_with_doc Scale header/footer with document
 # #' @inheritParams wb_add_worksheet
 #' @param ... additional arguments
 #' @export
@@ -1710,28 +1712,31 @@ wb_set_bookview <- function(
 #' )
 wb_set_header_footer <- function(
     wb,
-    sheet        = current_sheet(),
-    header       = NULL,
-    footer       = NULL,
-    even_header  = NULL,
-    even_footer  = NULL,
-    first_header = NULL,
-    first_footer = NULL,
+    sheet              = current_sheet(),
+    header             = NULL,
+    footer             = NULL,
+    even_header        = NULL,
+    even_footer        = NULL,
+    first_header       = NULL,
+    first_footer       = NULL,
+    align_with_margins = NULL,
+    scale_with_doc     = NULL,
     ...
 ) {
   assert_workbook(wb)
   wb$clone()$set_header_footer(
-    sheet        = sheet,
-    header       = header,
-    footer       = footer,
-    even_header  = even_header,
-    even_footer  = even_footer,
-    first_header = first_header,
-    first_footer = first_footer,
-    ...          = ...
+    sheet              = sheet,
+    header             = header,
+    footer             = footer,
+    even_header        = even_header,
+    even_footer        = even_footer,
+    first_header       = first_header,
+    first_footer       = first_footer,
+    align_with_margins = align_with_margins,
+    scale_with_doc     = scale_with_doc,
+    ...                = ...
   )
 }
-
 
 
 #' Set page margins, orientation and print scaling of a worksheet

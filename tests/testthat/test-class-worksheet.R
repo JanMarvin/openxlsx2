@@ -177,3 +177,24 @@ test_that("tab_color works", {
   )
 
 })
+
+test_that("setting and loading header/footer attributes works", {
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_set_header_footer(
+      header             = c(NA, "Header", NA),
+      scale_with_doc     = TRUE,
+      align_with_margins = TRUE
+    ) %>%
+    wb_page_setup(orientation = "landscape", fit_to_width = 1) %>%
+    wb_set_sheetview(view = "pageLayout", zoom_scale = 40) %>%
+    wb_add_data(x = as.data.frame(matrix(1:500, ncol = 25)))
+
+  temp <- temp_xlsx()
+  wb$save(temp)
+  rm(wb)
+
+  wb <- wb_load(temp)
+  expect_true(wb$worksheets[[1]]$scale_with_doc)
+  expect_true(wb$worksheets[[1]]$align_with_margins)
+})

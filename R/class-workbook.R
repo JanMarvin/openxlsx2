@@ -7173,15 +7173,19 @@ wbWorkbook <- R6::R6Class(
     #' @param even_footer evenFooter
     #' @param first_header firstHeader
     #' @param first_footer firstFooter
+    #' @param align_with_margins align_with_margins
+    #' @param scale_with_doc scale_with_doc
     #' @return The `wbWorkbook` object, invisibly
     set_header_footer = function(
-      sheet = current_sheet(),
-      header       = NULL,
-      footer       = NULL,
-      even_header  = NULL,
-      even_footer  = NULL,
-      first_header = NULL,
-      first_footer = NULL,
+      sheet              = current_sheet(),
+      header             = NULL,
+      footer             = NULL,
+      even_header        = NULL,
+      even_footer        = NULL,
+      first_header       = NULL,
+      first_footer       = NULL,
+      align_with_margins = NULL,
+      scale_with_doc     = NULL,
       ...
     ) {
 
@@ -7232,6 +7236,16 @@ wbWorkbook <- R6::R6Class(
 
       if (all(lengths(hf) == 0)) {
         hf <- NULL
+      }
+
+      if (!is.null(scale_with_doc)) {
+        assert_class(scale_with_doc, "logical")
+        self$worksheets[[sheet]]$scale_with_doc     <- scale_with_doc
+      }
+
+      if (!is.null(align_with_margins)) {
+        assert_class(align_with_margins, "logical")
+        self$worksheets[[sheet]]$align_with_margins <- align_with_margins
       }
 
       self$worksheets[[sheet]]$headerFooter <- hf

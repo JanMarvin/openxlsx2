@@ -972,7 +972,16 @@ wb_load <- function(
   for (i in seq_len(nSheets)) {
     if (sheets$typ[i] == "worksheet") {
       if (length(wb$worksheets[[i]]$headerFooter)) {
-        wb$worksheets[[i]]$headerFooter <- getHeaderFooterNode(wb$worksheets[[i]]$headerFooter)
+        # get attributes
+        hf_attrs <- rbindlist(xml_attr(wb$worksheets[[i]]$headerFooter, "headerFooter"))
+
+        if (!is.null(hf_attrs$alignWithMargins))
+          wb$worksheets[[i]]$align_with_margins <- as.logical(as.integer(hf_attrs$alignWithMargins))
+
+        if (!is.null(hf_attrs$scaleWithDoc))
+          wb$worksheets[[i]]$scale_with_doc     <- as.logical(as.integer(hf_attrs$scaleWithDoc))
+
+        wb$worksheets[[i]]$headerFooter       <- getHeaderFooterNode(wb$worksheets[[i]]$headerFooter)
       }
     }
   }
