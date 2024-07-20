@@ -9318,14 +9318,33 @@ wbWorkbook <- R6::R6Class(
             ws$sheet_data$cc_out <- NULL
           }
 
-          # create entire sheet prior to writing it
-          sheet_xml <- write_worksheet(
-            prior = prior,
-            post = post,
-            sheet_data = ws$sheet_data
-          )
           ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
-          write_xmlPtr(doc = sheet_xml, fl = ws_file)
+
+          use_pugixml_export <- getOption("openxlsx2.export_with_pugi", default = TRUE)
+
+          if (use_pugixml_export) {
+          
+            # create entire sheet prior to writing it
+            sheet_xml <- write_worksheet(
+              prior      = prior,
+              post       = post,
+              sheet_data = ws$sheet_data
+            )
+            write_xmlPtr(doc = sheet_xml, fl = ws_file)
+          
+          } else {
+
+            if (grepl("</worksheet>", prior))
+              prior <- substr(prior, 1, nchar(prior) - 13) # remove " </worksheet>"
+
+            write_worksheet_slim(
+              sheet_data = ws$sheet_data,
+              prior      = prior,
+              post       = post,
+              fl         = ws_file
+            )
+
+          }
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]]) || hasHL) {

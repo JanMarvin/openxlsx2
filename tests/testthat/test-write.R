@@ -1239,3 +1239,26 @@ test_that("sheet is a valid argument in write_xlsx", {
   wb2 <- write_xlsx(x = mtcars, sheet = "data")
   expect_equal(wb1$get_sheet_names(), wb2$get_sheet_names())
 })
+
+test_that("writing without pugixml works", {
+
+  temp <- temp_xlsx()
+  expect_silent(write_xlsx(x = mtcars, file = temp))
+  expect_silent(wb <- wb_load(temp))
+
+  temp <- temp_xlsx()
+  options("openxlsx2.export_with_pugi" = FALSE)
+  expect_silent(write_xlsx(x = mtcars, file = temp))
+  expect_silent(wb <- wb_load(temp))
+
+  temp <- temp_xlsx()
+  options("openxlsx2.export_with_pugi" = TRUE)
+  expect_silent(write_xlsx(x = mtcars, file = temp))
+  expect_silent(wb <- wb_load(temp))
+
+  temp <- temp_xlsx()
+  options("openxlsx2.export_with_pugi" = NULL)
+  expect_silent(write_xlsx(x = mtcars, file = temp))
+  expect_silent(wb <- wb_load(temp))
+
+})
