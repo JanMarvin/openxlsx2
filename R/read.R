@@ -427,9 +427,11 @@ wb_to_df <- function(
 
     if (any(cc$f_t == "shared")) {
 
-      cc_shared <- cc[cc$f_t == "shared", ]
-      cc_shared <- cc_shared[order(as.integer(cc$f_si)), ]
+      cc_shared <- wb$worksheets[[sheet]]$sheet_data$cc
+      cc_shared <- cc_shared[cc_shared$f_t == "shared", ]
+      cc_shared <- cc_shared[order(as.integer(cc_shared$f_si)), ]
 
+      # extend shared formula into all formula cells
       carry_forward <- function(x) {
         last_val <- NA
         for (i in seq_along(x)) {
@@ -448,6 +450,7 @@ wb_to_df <- function(
         FUN = carry_forward
       )
 
+      # calculate difference for each shared formula to the origin
       calc_distance <- function(x) {
         x - x[1]
       }
@@ -458,11 +461,12 @@ wb_to_df <- function(
         FUN = calc_distance
       )
       cc_shared$rows <- ave(
-        col2int(cc_shared$row_r),
+        as.integer(cc_shared$row_r),
         as.integer(cc_shared$f_si),
         FUN = calc_distance
       )
 
+      # TODO skip non A1 shared cells
       cells <- find_a1_notation(cc_shared$f)
       repls <- cells
 
@@ -474,6 +478,8 @@ wb_to_df <- function(
       cc_shared$cols <- NULL
       cc_shared$rows <- NULL
 
+      # reduce and assign
+      cc_shared <- cc_shared[which(cc_shared$r %in% cc$r), ]
       cc[match(cc_shared$r, cc$r), ] <- cc_shared
 
     }

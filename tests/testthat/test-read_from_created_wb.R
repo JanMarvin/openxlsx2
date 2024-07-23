@@ -221,3 +221,20 @@ test_that("check_names works", {
   expect_equal(exp, got)
 
 })
+
+test_that("shared formulas are handled", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = matrix(rnorm(5*5), ncol = 5, nrow = 5))$
+    add_formula(x = "SUM($A2:A2) + B$1", dims = "A8:E12", shared = TRUE)
+
+  exp <- structure(
+    c("SUM($A4:A4) + B$1", "SUM($A5:A5) + B$1", "SUM($A6:A6) + B$1",
+      "SUM($A4:B4) + C$1", "SUM($A5:B5) + C$1", "SUM($A6:B6) + C$1",
+      "SUM($A4:C4) + D$1", "SUM($A5:C5) + D$1", "SUM($A6:C6) + D$1"),
+    dim = c(3L, 3L),
+    dimnames = list(c("10", "11", "12"), c("A", "B", "C"))
+  )
+  got <- as.matrix(wb_to_df(wb, dims = "A10:C12", col_names = FALSE, show_formula = TRUE))
+  expect_equal(exp, got)
+})
