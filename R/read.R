@@ -424,9 +424,64 @@ wb_to_df <- function(
   }
 
   if (show_formula) {
+
+    if (any(cc$f_t == "shared")) {
+
+      cc_shared <- cc[cc$f_t == "shared", ]
+      cc_shared <- cc_shared[order(as.integer(cc$f_si)), ]
+
+      carry_forward <- function(x) {
+        last_val <- NA
+        for (i in seq_along(x)) {
+          if (x[i] != "") {
+            last_val <- x[i]
+          } else {
+            x[i] <- last_val
+          }
+        }
+        return(x)
+      }
+
+      cc_shared$f <- ave(
+        cc_shared$f,
+        as.integer(cc_shared$f_si),
+        FUN = carry_forward
+      )
+
+      calc_distance <- function(x) {
+        x - x[1]
+      }
+
+      cc_shared$cols <- ave(
+        col2int(cc_shared$c_r),
+        as.integer(cc_shared$f_si),
+        FUN = calc_distance
+      )
+      cc_shared$rows <- ave(
+        col2int(cc_shared$row_r),
+        as.integer(cc_shared$f_si),
+        FUN = calc_distance
+      )
+
+      cells <- find_a1_notation(cc_shared$f)
+      repls <- cells
+
+      for (i in seq_len(nrow(cells))) {
+        repls[i, ] <- next_cell(cells[i, ], cc_shared$cols[i], cc_shared$rows[i])
+      }
+
+      cc_shared$f    <- replace_a1_notation(cc_shared["f"], cells, repls)
+      cc_shared$cols <- NULL
+      cc_shared$rows <- NULL
+
+      cc[match(cc_shared$r, cc$r), ] <- cc_shared
+
+    }
+
     sel <- cc$f != ""
     cc$val[sel] <- replaceXMLEntities(cc$f[sel])
     cc$typ[sel] <- "s"
+
   }
 
   # convert "na_string" to missing

@@ -1274,3 +1274,87 @@ get_dims <- function(dims, check = FALSE, cols = FALSE, rows = FALSE) {
   return(rows)
 
 }
+
+#' the function to find the cell
+#' @param string the formula
+#' @family internal
+#' @noRd
+find_a1_notation <- function(string) {
+  pattern <- "\\$?[A-Z]\\$?[0-9]+(:\\$?[A-Z]\\$?[0-9]+)?"
+  as.data.frame(do.call("rbind", stringi::stri_extract_all_regex(string, pattern)))
+}
+
+#' the function to replace the next cell
+#' @param cell the cell from a shared formula [find_a1_notation()]
+#' @param cols,rows an integer where to move the cell
+#' @family internal
+#' @noRd
+next_cell <- function(cell, cols = 0L, rows = 0L) {
+  z <- NULL
+  for (i in cell) {
+    # Match individual cells and ranges
+    match <- stringi::stri_match_first_regex(i, "^(\\$?)([A-Z]+)(\\$?)(\\d+)(:(\\$?)([A-Z]+)(\\$?)(\\d+))?$")
+
+    if (is.na(match[1, 1])) stop("Invalid A1 notation")
+
+    # Extract parts of the cell
+    fixed_col1 <- match[2]
+    col1 <- match[3]
+    fixed_row1 <- match[4]
+    row1 <- as.numeric(match[5])
+
+    fixed_col2 <- match[7]
+    col2 <- match[8]
+    fixed_row2 <- match[9]
+    row2 <- as.numeric(match[10])
+
+    if (is.na(col2)) {
+
+      # Handle individual cell
+      next_col <- if (fixed_col1 == "") int2col(col2int(col1) + cols) else col1
+      next_row <- if (fixed_row1 == "") row1 + rows else row1
+      z <- c(z, paste0(fixed_col1, next_col, fixed_row1, next_row))
+
+    } else {
+
+      # Handle range
+      next_col1 <- if (fixed_col1 == "") int2col(col2int(col1) + cols) else col1
+      next_row1 <- if (fixed_row1 == "") row1 + rows else row1
+      next_col2 <- if (fixed_col2 == "") int2col(col2int(col2) + cols) else col2
+      next_row2 <- if (fixed_col2 == "") row2 + rows else row2
+      z <- c(z, paste0(fixed_col1, next_col1, fixed_row1, next_row1, ":", fixed_col2, next_col2, fixed_row2, next_row2))
+
+    }
+  }
+
+  as.data.frame(matrix(z, ncol = 2))
+}
+
+#' the replacement function for shared formulas
+#' @param string the formula
+#' @param matches the matches, obtained via [find_a1_notation()]
+#' @param replacements the replacements, from [next_cell()]
+#' @family internal
+#' @noRd
+replace_a1_notation <- function(strings, matches, replacements) {
+
+  # strings <- data.frame(rep(string, NROW(replacements)))
+
+  # matches <- as.data.frame(
+  #   matrix(matches, nrow = NROW(replacements), ncol = length(matches), byrow = TRUE)
+  # )
+
+  repl_fun <- function(str, x, y) {
+    for (i in seq_along(x)) {
+      str <- stringi::stri_replace_first_fixed(str, x[i], y[i])
+    }
+    str
+  }
+
+  z <- NULL
+  for (i in seq_len(NROW(strings))) {
+    z <- c(z, repl_fun(strings[i, ], matches[i, ], replacements[i, ]))
+  }
+
+  z
+}
