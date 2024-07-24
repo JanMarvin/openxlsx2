@@ -427,54 +427,29 @@ wb_to_df <- function(
 
     if (any(cc$f_t == "shared")) {
 
+      # depending on the sheet, this might require updates to many cells
+      # TODO reduce this to cells, that are part of `cc`. Currently we
+      # might waste time, updating cells that are not visible to the user
       cc_shared <- wb$worksheets[[sheet]]$sheet_data$cc
       cc_shared <- cc_shared[cc_shared$f_t == "shared", ]
       cc_shared <- cc_shared[order(as.integer(cc_shared$f_si)), ]
 
-      # extend shared formula into all formula cells
-      carry_forward <- function(x) {
-        last_val <- NA
-        for (i in seq_along(x)) {
-          if (x[i] != "") {
-            last_val <- x[i]
-          } else {
-            x[i] <- last_val
-          }
-        }
-        return(x)
-      }
+      # carry forward the shared formula
+      cc_shared$f    <- ave2(cc_shared$f, cc_shared$f_si, carry_forward)
 
-      cc_shared$f <- ave(
-        cc_shared$f,
-        as.integer(cc_shared$f_si),
-        FUN = carry_forward
-      )
+      # calculate differences from the formula cell, to the shared cells
+      cc_shared$cols <- ave2(col2int(cc_shared$c_r), cc_shared$f_si, calc_distance)
+      cc_shared$rows <- ave2(as.integer(cc_shared$row_r), cc_shared$f_si, calc_distance)
 
-      # calculate difference for each shared formula to the origin
-      calc_distance <- function(x) {
-        x - x[1]
-      }
-
-      cc_shared$cols <- ave(
-        col2int(cc_shared$c_r),
-        as.integer(cc_shared$f_si),
-        FUN = calc_distance
-      )
-      cc_shared$rows <- ave(
-        as.integer(cc_shared$row_r),
-        as.integer(cc_shared$f_si),
-        FUN = calc_distance
-      )
-
-      # TODO skip non A1 shared cells
+      # begin updating the formulas. find a1 notion, get the next cell, update formula
       cells <- find_a1_notation(cc_shared$f)
-      repls <- cells
+      repls <- vector("list", length = length(cells))
 
-      for (i in seq_len(nrow(cells))) {
-        repls[i, ] <- next_cell(cells[i, ], cc_shared$cols[i], cc_shared$rows[i])
+      for (i in seq_along(cells)) {
+        repls[[i]] <- next_cell(cells[[i]], cc_shared$cols[i], cc_shared$rows[i])
       }
 
-      cc_shared$f    <- replace_a1_notation(cc_shared["f"], cells, repls)
+      cc_shared$f    <- replace_a1_notation(cc_shared$f, repls)
       cc_shared$cols <- NULL
       cc_shared$rows <- NULL
 
