@@ -221,3 +221,57 @@ test_that("check_names works", {
   expect_equal(exp, got)
 
 })
+
+test_that("shared formulas are handled", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_formula(x = "SUM($A2:A2) + B$1", dims = "A8:E12", shared = TRUE)
+
+  exp <- structure(
+    c("SUM($A4:A4) + B$1", "SUM($A5:A5) + B$1", "SUM($A6:A6) + B$1",
+      "SUM($A4:B4) + C$1", "SUM($A5:B5) + C$1", "SUM($A6:B6) + C$1",
+      "SUM($A4:C4) + D$1", "SUM($A5:C5) + D$1", "SUM($A6:C6) + D$1"),
+    dim = c(3L, 3L),
+    dimnames = list(c("10", "11", "12"), c("A", "B", "C"))
+  )
+  got <- as.matrix(wb_to_df(wb, dims = "A10:C12", col_names = FALSE, show_formula = TRUE))
+  expect_equal(exp, got)
+
+  # shared formula w/o A1 notation
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_formula(x = "TODAY()", dims = "A8:E12", shared = TRUE)
+
+  exp <- rep("TODAY()", 9)
+  got <- unname(unlist(wb_to_df(wb, dims = "A10:C12", col_names = FALSE, show_formula = TRUE)))
+  expect_equal(exp, got)
+
+  # a bunch of mixed shared formulas
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_formula(x = "SUM($A2:A2) + B$1", dims = "A8:E9", shared = TRUE)$
+    add_formula(x = "SUM($A2:A2)", dims = "A10:E11", shared = TRUE)$
+    add_formula(x = "A2", dims = "A12:E13", shared = TRUE)
+
+  exp <- c("SUM($A2:B2) + C$1", "SUM($A3:B3) + C$1", "SUM($A2:B2)", "SUM($A3:B3)",
+           "B2", "B3", "SUM($A2:C2) + D$1", "SUM($A3:C3) + D$1", "SUM($A2:C2)",
+           "SUM($A3:C3)", "C2", "C3", "SUM($A2:D2) + E$1", "SUM($A3:D3) + E$1",
+           "SUM($A2:D2)", "SUM($A3:D3)", "D2", "D3")
+  got <- unname(unlist(wb_to_df(wb, dims = "B8:D13", col_names = FALSE, show_formula = TRUE)))
+  expect_equal(exp, got)
+
+  # make sure that replacements work as expected
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_formula(x = "A2 + B2", dims = "A12:E13", shared = TRUE)
+
+  exp <- c("A2 + B2", "A3 + B3", "B2 + C2", "B3 + C3", "C2 + D2", "C3 + D3", "D2 + E2", "D3 + E3")
+  got <- unname(unlist(wb_to_df(wb, dims = "A12:D13", col_names = FALSE, show_formula = TRUE)))
+  expect_equal(exp, got)
+
+})
