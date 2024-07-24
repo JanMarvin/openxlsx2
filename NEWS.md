@@ -4,6 +4,8 @@
 
 * Experimental support for shared formulas. Similar to spreadsheet software, when a cell is dragged to horizontally or vertically. This requires the formula to be written only for a single cell and it is filled by spreadsheet software for the remaining dimensions. `wb_add_formula()` gained a new argument `shared`. [1074](https://github.com/JanMarvin/openxlsx2/pull/1074)
 
+* Experimental support for reading shared formulas. If `show_formula` is used with `wb_to_df()`, we try to show the value that is shown in spreadsheet software. [1091](https://github.com/JanMarvin/openxlsx2/pull/1091)
+
 
 ***************************************************************************
 
