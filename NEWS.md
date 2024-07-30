@@ -6,6 +6,10 @@
 
 * Experimental support for reading shared formulas. If `show_formula` is used with `wb_to_df()`, we try to show the value that is shown in spreadsheet software. [1091](https://github.com/JanMarvin/openxlsx2/pull/1091)
 
+## Fixes
+
+* Previously, if only `cols` and `rows` were passed to `wb_dims()` incorrect results were returned. This has been fixed. [1094](https://github.com/JanMarvin/openxlsx2/pull/1094)
+
 
 ***************************************************************************
 

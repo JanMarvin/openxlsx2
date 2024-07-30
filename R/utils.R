@@ -915,7 +915,7 @@ wb_dims <- function(..., select = NULL) {
         if (all(diff(rows_arg) == 1L))
           frow <- frow + min(rows_arg) - 1L
         else
-          frow         <- vapply(rows_arg, function(x) frow + min(x) - 1L, NA_real_)
+          frow <- vapply(rows_arg, function(x) frow + min(x) - 1L, NA_real_)
       }
     }
 
@@ -932,6 +932,11 @@ wb_dims <- function(..., select = NULL) {
 
   if (identical(ncol_to_span, 0L)) {
     ncol_to_span <- 1L
+  }
+
+  if (is.null(args$x) && !all(diff(rows_arg) == 1L)) {
+    diff <- min(frow) - min(rows_arg)
+    frow <- diff + rows_arg
   }
 
   if (all(diff(frow) == 1))
