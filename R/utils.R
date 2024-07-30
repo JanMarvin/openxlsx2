@@ -923,6 +923,14 @@ wb_dims <- function(..., select = NULL) {
       fcol <- fcol + row_names
       frow <- frow + col_names
     }
+
+    # for cases were cols and rows are vectors and row 1 is selected
+    # frow is a scalar and rows_arg is a vector. We need the vector.
+    # it's mystery, why crossing 1 is such an issue.
+    if (is.null(args$x) && !all(diff(rows_arg) == 1L)) {
+      diff <- min(frow) - min(rows_arg)
+      frow <- diff + rows_arg
+    }
   }
 
   # Ensure we are spanning at least 1 row and 1 col
@@ -932,11 +940,6 @@ wb_dims <- function(..., select = NULL) {
 
   if (identical(ncol_to_span, 0L)) {
     ncol_to_span <- 1L
-  }
-
-  if (is.null(args$x) && !all(diff(rows_arg) == 1L)) {
-    diff <- min(frow) - min(rows_arg)
-    frow <- diff + rows_arg
   }
 
   if (all(diff(frow) == 1))

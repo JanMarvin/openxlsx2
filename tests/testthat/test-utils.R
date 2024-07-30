@@ -353,6 +353,10 @@ test_that("wb_dims() corner cases work", {
   got <- wb_dims(rows = c(1, 30), cols = 2)       # expect B1,B30
   expect_equal(exp, got)
 
+  exp <- "B11:B11,B40:B40"
+  got <- wb_dims(rows = c(1, 30), cols = 2, from_row = 11)
+  expect_equal(exp, got)
+
   exp <- "B2:B2,D2:D2,B30:B30,D30:D30"
   got <- wb_dims(rows = c(2, 30), cols = c(2, 4)) # expect B2,D2,B30,D30
   expect_equal(exp, got)
