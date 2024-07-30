@@ -8,7 +8,7 @@
 
 ## Fixes
 
-* Previously, if only `cols` and `rows` were passed to `wb_dims()` incorrect results were returned. This has been fixed. [1094](https://github.com/JanMarvin/openxlsx2/pull/1094)
+* Previously, if only `cols` and `rows` were passed to `wb_dims()` and row `1` was selected, incorrect results were returned. This has been fixed. [1094](https://github.com/JanMarvin/openxlsx2/pull/1094)
 
 
 ***************************************************************************
