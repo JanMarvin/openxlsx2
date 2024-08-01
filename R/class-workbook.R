@@ -9395,6 +9395,9 @@ wbWorkbook <- R6::R6Class(
     ) {
       name <- replace_legal_chars(name)
 
+      if (!grepl("^[\\p{L}_][^\\s]*$", name, perl = TRUE))
+        stop("named region must begin with a letter or an underscore and not contain whitespace(s).")
+
       # special names
 
       ## print
