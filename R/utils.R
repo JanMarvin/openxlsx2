@@ -915,13 +915,21 @@ wb_dims <- function(..., select = NULL) {
         if (all(diff(rows_arg) == 1L))
           frow <- frow + min(rows_arg) - 1L
         else
-          frow         <- vapply(rows_arg, function(x) frow + min(x) - 1L, NA_real_)
+          frow <- vapply(rows_arg, function(x) frow + min(x) - 1L, NA_real_)
       }
     }
 
     if (select == "data") {
       fcol <- fcol + row_names
       frow <- frow + col_names
+    }
+
+    # for cases were cols and rows are vectors and row 1 is selected
+    # frow is a scalar and rows_arg is a vector. We need the vector.
+    # it's mystery, why crossing 1 is such an issue.
+    if (is.null(args$x) && !all(diff(rows_arg) == 1L)) {
+      diff <- min(frow) - min(rows_arg)
+      frow <- diff + rows_arg
     }
   }
 
