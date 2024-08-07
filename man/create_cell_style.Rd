@@ -8,7 +8,7 @@ create_cell_style(
   border_id = "",
   fill_id = "",
   font_id = "",
-  num_fmt_id = "",
+  numfmt_id = "",
   pivot_button = "",
   quote_prefix = "",
   xf_id = "",
@@ -34,7 +34,7 @@ create_cell_style(
 
 \item{font_id}{dummy}
 
-\item{num_fmt_id}{a numFmt ID for a builtin style}
+\item{numfmt_id}{a numFmt ID for a builtin style}
 
 \item{pivot_button}{dummy}
 
