@@ -93,7 +93,10 @@ test_that("copy cells", {
   got <- wb_data(wb, sheet = 3, dims = "A20:D23", col_names = FALSE)
   expect_equal(unlist(t(dat)), unlist(got), ignore_attr = TRUE)
 
-  exp <- c("'Sheet 1'!A1", "'Sheet 1'!B1", "'Sheet 1'!C1", "'Sheet 1'!D1")
+  exp <- structure(
+    c("'Sheet 1'!A1", "'Sheet 1'!B1", "'Sheet 1'!C1", "'Sheet 1'!D1"),
+    class = c("character", "formula")
+  )
   got <- wb_data(wb, sheet = 4, dims = "A20:D23", col_names = FALSE, show_formula = TRUE)[[1]]
   expect_equal(exp, got)
 

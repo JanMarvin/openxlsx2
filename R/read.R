@@ -461,7 +461,7 @@ wb_to_df <- function(
 
     sel <- cc$f != ""
     cc$val[sel] <- replaceXMLEntities(cc$f[sel])
-    cc$typ[sel] <- "s"
+    cc$typ[sel] <- "f"
 
   }
 
@@ -621,6 +621,7 @@ wb_to_df <- function(
       poxs <- names(which(types[sel] == 3))
       logs <- names(which(types[sel] == 4))
       difs <- names(which(types[sel] == 5))
+      fmls <- names(which(types[sel] == 6))
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
@@ -628,6 +629,11 @@ wb_to_df <- function(
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv, origin = origin)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
       if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
+
+      for (i in seq_along(z)) { # convert df to class formula
+        if (names(z)[i] %in% fmls) class(z[[i]]) <- c(class(z[[i]]), "formula")
+      }
+
     } else {
       warning("could not convert. All missing in row used for variable names")
     }
