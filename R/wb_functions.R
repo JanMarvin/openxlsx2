@@ -180,6 +180,10 @@ guess_col_type <- function(tt) {
   col_dte <- vapply(tt[!col_num], function(x) all(x == "h", na.rm = TRUE), NA)
   types[names(col_dte[col_dte])] <- 5
 
+  # or formula
+  col_fml <- vapply(tt[!col_num], function(x) all(x == "f", na.rm = TRUE), NA)
+  types[names(col_fml[col_fml])] <- 6
+
   types
 }
 
