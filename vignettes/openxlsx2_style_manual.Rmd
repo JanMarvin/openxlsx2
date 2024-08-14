@@ -9,15 +9,35 @@ vignette: >
 
 
 ```{r setup, include = FALSE}
-library(openxlsx2)
 options(rmarkdown.html_vignette.check_title = FALSE)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+# Mechanism to avoid including all images in the package, but display them on
+# the pkgdown site
+in_pkgdown <- function() {
+  identical(Sys.getenv("IN_PKGDOWN"), "true")
+}
+
+incl_graph_in_pkgdown <- function(path) {
+  if (in_pkgdown()) {
+    knitr::include_graphics(path)
+  }
+}
 ```
 
+```{asis, echo=!in_pkgdown()}
+You can read the [styling vignette](https://janmarvin.github.io/openxlsx2/articles/openxlsx2_style_manual.html) online to see images.
+```
+
+
 Welcome to the styling manual for `openxlsx2`. In this manual you will learn how to use `openxlsx2` to style your worksheets. data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these `openxml` workbooks in R.
+
+```{r}
+library(openxlsx2)
+```
 
 # Styling showcase
 
@@ -26,7 +46,7 @@ Welcome to the styling manual for `openxlsx2`. In this manual you will learn how
 Below we show you two ways how to create styled tables with `openxlsx2` one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table. We show both ways to create styles in `openxlsx2` to show how you could build on our functions or create your very own functions.
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", fig.cap="The example below, with increased column width."}
-knitr::include_graphics("img/worksheet_styling.jpg")
+incl_graph_in_pkgdown("img/worksheet_styling.jpg")
 ```
 
 ### the quick way: using high level functions

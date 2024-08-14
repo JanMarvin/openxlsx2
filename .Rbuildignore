@@ -23,3 +23,4 @@ cran-comments.md
 ^inst/img$
 ^tests/testthat/_snaps$
 ^tests/testthat/testfiles$
+vignettes/img/worksheet_styling.jpg
