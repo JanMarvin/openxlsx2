@@ -85,6 +85,8 @@ manual you will learn how to use <code>openxlsx2</code> to style your
 worksheets. data from xlsx-files to R as well as how to export data from
 R to xlsx, and how to import and modify these <code>openxml</code>
 workbooks in R.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/openxlsx2/">openxlsx2</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="styling-showcase">Styling showcase<a class="anchor" aria-label="anchor" href="#styling-showcase"></a>
 </h2>
@@ -105,7 +107,7 @@ The example below, with increased column width.
 <div class="section level4">
 <h4 id="the-quick-way-using-high-level-functions">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions"></a>
 </h4>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># add some dummy data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">28</span> <span class="op">*</span> <span class="fl">28</span>, mean <span class="op">=</span> <span class="fl">44444</span>, sd <span class="op">=</span> <span class="fl">555</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">28</span><span class="op">)</span></span>
@@ -148,7 +150,7 @@ The example below, with increased column width.
 <div class="section level4">
 <h4 id="the-long-way-using-bare-metal-functions">the long way: using bare metal functions<a class="anchor" aria-label="anchor" href="#the-long-way-using-bare-metal-functions"></a>
 </h4>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create workbook</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span></span>
 <span></span>
@@ -243,7 +245,7 @@ selected R classes.</p>
 <div class="section level3">
 <h3 id="numfmts">numfmts<a class="anchor" aria-label="anchor" href="#numfmts"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Create Workbook object and add worksheets</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span></span>
@@ -275,7 +277,7 @@ selected R classes.</p>
 </h3>
 <p>In addition, you can set the style to be picked up using
 <code>openxlsx2</code> options.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"test"</span><span class="op">)</span></span>
 <span></span>
@@ -310,7 +312,7 @@ selected R classes.</p>
 <div class="section level3">
 <h3 id="wb_set_col_widths">wb_set_col_widths<a class="anchor" aria-label="anchor" href="#wb_set_col_widths"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -325,7 +327,7 @@ selected R classes.</p>
 <div class="section level3">
 <h3 id="add-borders">add borders<a class="anchor" aria-label="anchor" href="#add-borders"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># full inner grid</span></span>
 <span>  <span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"S1"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span></span>
@@ -369,7 +371,7 @@ identical table.</p>
 <div class="section level4">
 <h4 id="the-quick-way-using-high-level-functions-1">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions-1"></a>
 </h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># add some dummy data to the worksheet</span></span>
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -396,7 +398,7 @@ identical table.</p>
 <div class="section level4">
 <h4 id="the-long-way-creating-everything-from-the-bone">the long way: creating everything from the bone<a class="anchor" aria-label="anchor" href="#the-long-way-creating-everything-from-the-bone"></a>
 </h4>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># add some dummy data to the worksheet</span></span>
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -452,7 +454,7 @@ identical table.</p>
 Tint variations of the theme colors.
 </p>
 </div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.9</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
@@ -478,7 +480,7 @@ are applied to a previously empty cell range. Be careful though,
 <code><a href="../reference/wb_cell_style.html">wb_get_cell_style()</a></code> returns only some styles, so you have
 to make sure that the copy-from and copy-to dimensions match in a
 meaningful way.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_load.html">wb_load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"oxlsx2_sheet.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/wb_cell_style.html">wb_set_cell_style</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"A30:G35"</span>, <span class="fu"><a href="../reference/wb_cell_style.html">wb_get_cell_style</a></span><span class="op">(</span><span class="va">.</span>, <span class="fl">1</span>, <span class="st">"A10:G15"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># wb_open(wb)</span></span></code></pre></div>
@@ -488,7 +490,7 @@ meaningful way.</p>
 </h2>
 <p>Using <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code> is possible to style strings
 independently of the cell containing the string.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">txt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/fmt_txt.html">fmt_txt</a></span><span class="op">(</span><span class="st">"Embracing the full potential of "</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/fmt_txt.html">fmt_txt</a></span><span class="op">(</span><span class="st">"openxlsx2"</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span>,</span>
@@ -500,7 +502,7 @@ independently of the cell containing the string.</p>
 <p>As shown above it is possible to combine multiple styles together
 into a longer string. It is even possible to use <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code>
 as <code>na.strings</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">mtcars</span></span>
 <span><span class="va">df</span><span class="op">[</span><span class="va">df</span> <span class="op">&lt;</span> <span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
@@ -521,7 +523,7 @@ the workbook (similar styles are used in conditional formatting). In
 style elements. Once the table style is created, it must also be
 assigned to the workbook. After that you can use it in the workbook like
 any other table style.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># a red table style</span></span>
 <span><span class="va">dx0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span></span>
 <span>  border <span class="op">=</span> <span class="cn">TRUE</span>,</span>
