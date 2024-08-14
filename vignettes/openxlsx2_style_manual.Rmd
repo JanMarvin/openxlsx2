@@ -28,6 +28,11 @@ incl_graph_in_pkgdown <- function(path) {
 }
 ```
 
+```{asis, echo=!in_pkgdown()}
+You can read the [styling vignette](https://janmarvin.github.io/openxlsx2/articles/openxlsx2_style_manual.html) online to see images.
+```
+
+
 Welcome to the styling manual for `openxlsx2`. In this manual you will learn how to use `openxlsx2` to style your worksheets. data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these `openxml` workbooks in R.
 
 ```{r}
