@@ -865,20 +865,22 @@ wb_dims <- function(..., select = NULL) {
   }
 
   if (select == "col_names") {
-    if (is.null(cols_arg) || length(cols_arg) %in% c(0, 1))
+    if (is.null(cols_arg) || length(cols_arg) %in% c(0, 1)) {
       ncol_to_span <- ncol(x)
-    else
+    } else {
       ncol_to_span <- cols_arg
+    }
     nrow_to_span <- 1L
   } else if (select == "row_names") {
     ncol_to_span <- 1L
     nrow_to_span <- nrow(x) %||% 1L
   } else if (select %in% c("x", "data")) {
     if (!is.null(cols_arg)) {
-      if (length(cols_arg) == 1)
+      if (length(cols_arg) == 1) {
         ncol_to_span <- length(cols_arg)
-      else
+      } else {
         ncol_to_span <- cols_arg
+      }
     } else {
       ncol_to_span <- ncol(x) %||% 1L
     }
@@ -912,10 +914,11 @@ wb_dims <- function(..., select = NULL) {
 
     if (!is.null(rows_arg)) { # && length(rows_arg) == 1L && all(diff(rows_arg) == 1L)) {
       if (min(rows_arg) > 1) {
-        if (all(diff(rows_arg) == 1L))
+        if (all(diff(rows_arg) == 1L)) {
           frow <- frow + min(rows_arg) - 1L
-        else
+        } else {
           frow <- vapply(rows_arg, function(x) frow + min(x) - 1L, NA_real_)
+        }
       }
     }
 
@@ -942,16 +945,17 @@ wb_dims <- function(..., select = NULL) {
     ncol_to_span <- 1L
   }
 
-  if (all(diff(frow) == 1))
+  if (all(diff(frow) == 1)) {
     row_span <- frow + seq_len(nrow_to_span) - 1L
-  else
+  } else {
     row_span <- frow
+  }
 
-  if (length(ncol_to_span) == 1)
+  if (length(ncol_to_span) == 1) {
     col_span <- fcol + seq_len(ncol_to_span) - 1L
-  else # what does this do?
+  } else { # what does this do?
     col_span <- fcol + ncol_to_span - 1L
-
+  }
   # return single cells (A1 or A1,B1)
   if (length(row_span) == 1 && (length(col_span) == 1 || any(diff(col_span) != 1L))) {
 
