@@ -10,7 +10,7 @@
 #' @examples
 #' int2col(1:10)
 int2col <- function(x) {
-  if (!is.numeric(x) || is.infinite(x)) {
+  if (!is.numeric(x) || any(is.infinite(x))) {
     stop("x must be finite and numeric.")
   }
 
