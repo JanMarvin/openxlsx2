@@ -125,6 +125,18 @@ test_that("wb_dims() works when not supplying `x`.", {
   expect_error(wb_dims(1, 1, row_names = FALSE), "`row_names`")
 })
 
+test_that("wb_dims() works with above and one line", {
+  expect_equal(wb_dims(x = names(mtcars), from_row = 2), "A2:A12")
+  # doesn't work
+  # expect_equal(wb_dims(x = names(mtcars), from_row = 3, above = 1), "A2:A12")
+  expect_equal(wb_dims(x = names(mtcars), from_row = 2, above = 1), "A1:A11")
+  expect_equal(wb_dims(x = names(mtcars), from_dims = "A2", above = 1), "A1:A11")
+  # Doesn't work returns A1:A11
+  # expect_equal(wb_dims(x = names(mtcars), from_dims = "A3", above = 1), "A2:A12")
+  # Doesn't work returns A1:A11
+  # expect_equal(wb_dims(x = names(mtcars), from_dims = "A4", above = 1), "A3:A13")
+})
+
 test_that("`wb_dims()` can select content in a nice fashion with `x`", {
   # Selecting content
   # Assuming that the data was written to a workbook with:
