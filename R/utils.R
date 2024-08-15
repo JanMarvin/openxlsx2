@@ -709,6 +709,9 @@ wb_dims <- function(..., select = NULL) {
     stop("Internal error, all arguments should be named after this point.")
   }
 
+  if (length(args$from_col) > 1 || length(args$from_row) > 1) {
+    stop("from_col/from_row must be positive integers if supplied.")
+  }
   # handle from_dims
   if (!is.null(args$from_dims)) {
     if (!is.null(args$from_col) || !is.null(args$from_row)) {
@@ -716,64 +719,68 @@ wb_dims <- function(..., select = NULL) {
     }
     # transform to
     from_row_and_col <- dims_to_rowcol(args$from_dims, as_integer = TRUE)
+    fcol <- col2int(from_row_and_col[[1]])
+    frow <- as.integer(from_row_and_col[[2]])
+  } else {
+    fcol <- args$from_col %||% 1L
+    frow <- args$from_row %||% 1L
+  }
 
-    left  <- args$left
-    right <- args$right
-    above <- args$above
-    below <- args$below
+  left <- args$left
+  right <- args$right
+  above <- args$above
+  below <- args$below
 
-    from_col <- col2int(from_row_and_col[[1]])
-    from_row <- as.integer(from_row_and_col[[2]])
 
-    # there can be only one
-    if (length(c(left, right, above, below)) > 1)
-      stop("can only be one direction")
+  # there can be only one
+  if (length(c(left, right, above, below)) > 1) {
+    stop("can only be one direction")
+  }
 
-    # default is column names and no row names
-    cnms <- args$col_names %||% 1
-    rnms <- args$row_names %||% 0
+  # default is column names and no row names
+  cnms <- args$col_names %||% 1
+  rnms <- args$row_names %||% 0
 
-    # NCOL(NULL)/NROW(NULL) could work as well, but the behavior might have
-    # changed recently.
-    if (!is.null(args$x)) {
-      width_x  <- ncol(args$x) + rnms
-      height_x <- nrow(args$x) + cnms
-    } else {
-      width_x  <- 1
-      height_x <- 1
-    }
+  # NCOL(NULL)/NROW(NULL) could work as well, but the behavior might have
+  # changed recently.
+  if (!is.null(args$x)) {
+    width_x <- ncol(args$x) + rnms
+    height_x <- nrow(args$x) + cnms
+  } else {
+    width_x <- 1
+    height_x <- 1
+  }
 
-    if (!is.null(left)) {
-      fcol <- min(from_col) - left - width_x + 1L
-      frow <- min(from_row)
-    } else if (!is.null(right)) {
-      fcol <- max(from_col) + right
-      frow <- min(from_row)
-    } else if (!is.null(above)) {
-      fcol <- min(from_col)
-      frow <- min(from_row) - above - height_x + 1L
-    } else if (!is.null(below)) {
-      fcol <- min(from_col)
-      frow <- max(from_row) + below
-    } else {
-      fcol <- max(from_col)
-      frow <- max(from_row)
-    }
-
-    # guard against negative values
-    if (fcol < 1) {
-      warning("columns cannot be left of column A (integer position 1). resetting")
-      fcol <- 1
-    }
-    if (frow < 1) {
-      warning("rows cannot be above of row 1 (integer position 1). resetting")
-      frow <- 1
-    }
-
-    args$from_col  <- int2col(fcol)
-    args$from_row  <- frow
-    args$from_dims <- NULL
-
+  if (!is.null(left)) {
+    fcol <- min(fcol) - left - width_x + 1L
+    frow <- min(frow)
+  } else if (!is.null(right)) {
+    fcol <- max(fcol) + right
+    frow <- min(frow)
+  } else if (!is.null(above)) {
+    fcol <- min(fcol)
+    frow <- min(frow) - above - height_x + 1L
+  } else if (!is.null(below)) {
+    fcol <- min(fcol)
+    frow <- max(frow) + below
+  } else {
+    fcol <- max(fcol)
+    frow <- max(frow)
+  }
+  if (length(fcol) == 0) {
+    fcol <- 1
+  }
+  if (length(frow) == 0) {
+    frow <- 1
+  }
+  # guard against negative values
+  if (fcol < 1) {
+    warning("columns cannot be left of column A (integer position 1). resetting")
+    fcol <- 1
+  }
+  if (frow < 1) {
+    warning("rows cannot be above of row 1 (integer position 1). resetting")
+    frow <- 1
   }
 
   # After this point, all unnamed problems are solved ;)
@@ -786,6 +793,11 @@ wb_dims <- function(..., select = NULL) {
   select <- determine_select_valid(args = args, select = select)
 
   check_wb_dims_args(args, select = select)
+
+  args$from_col <- col2int(fcol)
+  args$from_row <- frow
+  args$from_dims <- NULL
+
   rows_arg <- args$rows
   rows_arg <- if (is.character(rows_arg)) {
     col2int(rows_arg)
@@ -861,7 +873,7 @@ wb_dims <- function(..., select = NULL) {
 
   # from_row / from_col = 0 only acceptable in certain cases.
   if (!all(length(fcol) == 1, length(frow) == 1, fcol >= 1, frow >= 1)) {
-    stop("`from_col` / `from_row` should have length 1, and be positive.")
+    stop("`from_col` / `from_row` must be a single positive number.")
   }
 
   if (select == "col_names") {
