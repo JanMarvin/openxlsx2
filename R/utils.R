@@ -322,7 +322,7 @@ check_wb_dims_args <- function(args, select = NULL) {
   cnam_null <- is.null(args$col_names)
   rnam_null <- is.null(args$row_names)
   if (is.character(args$rows) || is.character(args$from_row)) {
-    warning("`rows` and `from_rows` in `wb_dims()` should not be a character. Please supply an integer vector.", call. = FALSE)
+    warning("`rows` and `from_row` in `wb_dims()` should not be a character. Please supply an integer vector.", call. = FALSE)
   }
 
   if (is.null(args$x)) {
@@ -852,7 +852,7 @@ wb_dims <- function(..., select = NULL) {
     frow <- as.integer(frow)
   }
 
-  # from_row is a function of col_names, from_rows and cols.
+  # from_row is a function of col_names, from_row and cols.
   # cols_seq should start at 1 after this
   # if from_row = 4, rows = 4:7,
   # then frow = 4 + 4 et rows = seq_len(length(rows))
