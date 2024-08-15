@@ -10,8 +10,8 @@
 #' @examples
 #' int2col(1:10)
 int2col <- function(x) {
-  if (!is.numeric(x)) {
-    stop("x must be numeric.")
+  if (!is.numeric(x) || is.infinite(x)) {
+    stop("x must be finite and numeric.")
   }
 
   sapply(x, int_to_col)
