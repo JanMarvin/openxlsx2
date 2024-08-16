@@ -127,14 +127,46 @@ test_that("wb_dims() works when not supplying `x`.", {
 
 test_that("wb_dims() works with above and one line", {
   expect_equal(wb_dims(x = names(mtcars), from_row = 2), "A2:A12")
+
   # doesn't work
   # expect_equal(wb_dims(x = names(mtcars), from_row = 3, above = 1), "A2:A12")
-  expect_equal(wb_dims(x = names(mtcars), from_row = 2, above = 1), "A1:A11")
-  expect_equal(wb_dims(x = names(mtcars), from_dims = "A2", above = 1), "A1:A11")
+
+  expect_warning(
+    expect_equal(
+      wb_dims(x = names(mtcars), from_row = 2, above = 1),
+      "A1:A11"
+    ),
+    "rows cannot be above of row 1 "
+  )
+
+  expect_warning(
+    expect_equal(
+      wb_dims(x = names(mtcars), from_dims = "A2", above = 1),
+      "A1:A11"),
+    "rows cannot be above of row 1 "
+  )
+
   # Doesn't work returns A1:A11
   # expect_equal(wb_dims(x = names(mtcars), from_dims = "A3", above = 1), "A2:A12")
   # Doesn't work returns A1:A11
   # expect_equal(wb_dims(x = names(mtcars), from_dims = "A4", above = 1), "A3:A13")
+
+  # currently the only ways to create horizontal single row dims with wb_dims()
+
+  nms <- mtcars[NULL, ]
+
+  expect_equal(wb_dims(x = nms, from_row = 3), "A3:K3")
+  expect_equal(wb_dims(x = nms, from_row = 3, above = 1), "A2:K2")
+  expect_equal(wb_dims(x = nms, from_dims = "A3"), "A3:K3")
+  expect_equal(wb_dims(x = nms, from_dims = "A3", above = 1), "A2:K2")
+  expect_equal(wb_dims(x = nms, from_dims = "A4", above = 1), "A3:K3")
+
+  expect_equal(wb_dims(x = t(names(mtcars)), col_names = FALSE, from_row = 3), "A3:K3")
+  expect_equal(wb_dims(x = t(names(mtcars)), col_names = FALSE, from_row = 3, above = 1), "A2:K2")
+  expect_equal(wb_dims(x = t(names(mtcars)), col_names = FALSE, from_dims = "A3"), "A3:K3")
+  expect_equal(wb_dims(x = t(names(mtcars)), col_names = FALSE, from_dims = "A3", above = 1), "A2:K2")
+  expect_equal(wb_dims(x = t(names(mtcars)), col_names = FALSE, from_dims = "A4", above = 1), "A3:K3")
+
 })
 
 test_that("`wb_dims()` can select content in a nice fashion with `x`", {

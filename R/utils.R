@@ -726,7 +726,7 @@ wb_dims <- function(..., select = NULL) {
     frow <- args$from_row %||% 1L
   }
 
-  left <- args$left
+  left  <- args$left
   right <- args$right
   above <- args$above
   below <- args$below
@@ -744,10 +744,10 @@ wb_dims <- function(..., select = NULL) {
   # NCOL(NULL)/NROW(NULL) could work as well, but the behavior might have
   # changed recently.
   if (!is.null(args$x)) {
-    width_x <- ncol(args$x) + rnms
-    height_x <- nrow(args$x) + cnms
+    width_x  <- NCOL(args$x) + rnms
+    height_x <- NROW(args$x) + cnms
   } else {
-    width_x <- 1
+    width_x  <- 1
     height_x <- 1
   }
 
