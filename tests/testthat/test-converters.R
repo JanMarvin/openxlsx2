@@ -1,7 +1,7 @@
 test_that("int2col", {
-
   expect_equal(int2col(1:10), LETTERS[1:10])
-  expect_error(int2col("a"), "x must be numeric.")
+  expect_error(int2col("a"), "x must be finite and numeric.")
+  expect_error(int2col(Inf))
 })
 
 test_that("col2int", {
