@@ -809,7 +809,7 @@ test_that("writing na.strings = NULL works", {
   write_xlsx(matrix(NA, 2, 2), tmp, na.strings = NULL)
   wb <- wb_load(tmp)
 
-  exp <- ""
+  exp <- NA_character_
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$v[3:6])
   expect_equal(exp, got)
 
