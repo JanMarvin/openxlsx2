@@ -580,11 +580,10 @@ void ProductVersion(std::istream& sas, bool swapit, bool debug) {
   version = readbin(version, sas, swapit); // 3586 - x14?
   flags = readbin(flags, sas, swapit);     // 0
 
-  FRTVersionFields *fields = (FRTVersionFields *)&flags;
-
+  /* unused and commented due to a false positive in GCC12 reported on CRAN */
+  // FRTVersionFields *fields = (FRTVersionFields *)&flags;
   // if (fields->reserved != 0) Rcpp::stop("product version reserved not 0");
-
-  if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, fields->product, fields->reserved);
+  // if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, fields->product, fields->reserved);
 }
 
 std::vector<int> UncheckedRfX(std::istream& sas, bool swapit) {
