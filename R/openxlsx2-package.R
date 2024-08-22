@@ -160,6 +160,7 @@
 #'    will be converted. `"1"` will be written as `1`
 #' * `options("openxlsx2.na.strings" = "#N/A")` consulted by `write_xlsx()`,
 #'   `wb_add_data()` and `wb_add_data_table()`.
+#' * `options("openxlsx2.date_origin" = NULL)` custom date origin when reading file
 #' @name openxlsx2_options
 NULL
 # matches enum celltype

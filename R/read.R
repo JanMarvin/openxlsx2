@@ -381,7 +381,7 @@ wb_to_df <- function(
     }
   }
 
-  origin <- get_date_origin(wb)
+  origin <- getOption("openxlsx2.date_origin") %||% get_date_origin(wb)
 
   # dates
   if (!is.null(cc$c_s)) {
