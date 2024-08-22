@@ -3325,12 +3325,17 @@ wbWorkbook <- R6::R6Class(
       # TODO make self$vbaProject be TRUE/FALSE
       tmpFile <- tempfile(tmpdir = tmpDir, fileext = if (isTRUE(self$vbaProject)) ".xlsm" else ".xlsx")
 
+      # typo until release 1.8
+      compr_level <- getOption("openxlsx2.compression_level") %||%
+        getOption("openxlsx2.compresssionevel") %||%
+        6L
+
       ## zip it
       zip::zip(
         zipfile = tmpFile,
         files = list.files(tmpDir, full.names = FALSE),
         recurse = TRUE,
-        compression_level = getOption("openxlsx2.compresssionevel", 6),
+        compression_level = compr_level,
         include_directories = FALSE,
         # change the working directory for this
         root = tmpDir,
