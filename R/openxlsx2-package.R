@@ -161,6 +161,7 @@
 #' * `options("openxlsx2.na.strings" = "#N/A")` consulted by `write_xlsx()`,
 #'   `wb_add_data()` and `wb_add_data_table()`.
 #' * `options("openxlsx2.date_origin" = NULL)` custom date origin when reading file
+#' * `options("openxlsx2.compresssionevel" = 6)` compression level for the output file. Increasing compression and time consumend from 1-9.
 #' @name openxlsx2_options
 NULL
 # matches enum celltype
