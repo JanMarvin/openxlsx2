@@ -940,8 +940,6 @@ wb_load <- function(
         }
         wb$worksheets[[i]]$sheetViews <- sheetViews
 
-        wb$worksheets[[i]]$cols_attr     <- xml_node(worksheet_xml, "worksheet", "cols", "col")
-
         wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
         wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst", "ext")
         wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
@@ -959,7 +957,8 @@ wb_load <- function(
 
       } ## end !data_only
 
-      wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
+      wb$worksheets[[i]]$dimension  <- xml_node(worksheet_xml, "worksheet", "dimension")
+      wb$worksheets[[i]]$cols_attr  <- xml_node(worksheet_xml, "worksheet", "cols", "col")
       wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
 
       # load the data. This function reads sheet_data and returns cc and row_attr
