@@ -22,6 +22,11 @@
 #' * 3: posixt (datetime)
 #' * 4: logical
 #'
+#' If no type is specified, the column types are derived based on all cells
+#' in a column within the selected data range, excluding potential column
+#' names. If `keep_attr` is `TRUE`, the derived column types can be inspected
+#' as an attribute of the data frame.
+#'
 #' `wb_to_df()` will not pick up formulas added to a workbook object
 #' via [wb_add_formula()]. This is because only the formula is written and left
 #' to be evaluated when the file is opened in a spreadsheet software.
