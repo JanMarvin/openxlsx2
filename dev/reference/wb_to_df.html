@@ -251,7 +251,11 @@ row is selected as column name.</p>
 <li><p>2: date</p></li>
 <li><p>3: posixt (datetime)</p></li>
 <li><p>4: logical</p></li>
-</ul><p><code>wb_to_df()</code> will not pick up formulas added to a workbook object
+</ul><p>If no type is specified, the column types are derived based on all cells
+in a column within the selected data range, excluding potential column
+names. If <code>keep_attr</code> is <code>TRUE</code>, the derived column types can be inspected
+as an attribute of the data frame.</p>
+<p><code>wb_to_df()</code> will not pick up formulas added to a workbook object
 via <code><a href="wb_add_formula.html">wb_add_formula()</a></code>. This is because only the formula is written and left
 to be evaluated when the file is opened in a spreadsheet software.
 Opening, saving and closing the file in a spreadsheet software will resolve
