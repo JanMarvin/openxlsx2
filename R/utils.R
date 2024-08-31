@@ -321,12 +321,8 @@ check_wb_dims_args <- function(args, select = NULL) {
   }
   cnam_null <- is.null(args$col_names)
   rnam_null <- is.null(args$row_names)
-  if ((is.character(args$rows) && all(is_charnum(args$rows))) || is.character(args$from_row)) {
+  if (is.character(args$rows) || is.character(args$from_row)) {
     warning("`rows` and `from_row` in `wb_dims()` should not be a character. Please supply an integer vector.", call. = FALSE)
-  }
-
-  if (is.character(args$rows) && !all(is_charnum(args$rows))) {
-    stop("`rows` is character and contains nothing that can be interpreted as number.")
   }
 
   if (is.null(args$x)) {
@@ -719,6 +715,19 @@ wb_dims <- function(..., select = NULL) {
     cols_arg <- args[[cols_pos]]
   }
 
+  if (!is.null(cols_arg) && (min(col2int(cols_arg)) < 1L)) {
+    stop("You must supply positive values to `cols`")
+  }
+
+  # in case the user mixes up column and row
+  if (is.character(rows_arg) && !all(is_charnum(rows_arg))) {
+    stop("`rows` is character and contains nothing that can be interpreted as number.")
+  }
+
+  if (!is.null(rows_arg) && (min(as.integer(rows_arg)) < 1L)) {
+    stop("You must supply positive values to `rows`.")
+  }
+
   # Just keeping this as a safeguard
   has_some_unnamed_args <- !all(nzchar(nams))
   if (has_some_unnamed_args) {
@@ -818,10 +827,6 @@ wb_dims <- function(..., select = NULL) {
   if (!is.null(rows_arg)) rows_arg <- as.integer(rows_arg)
   if (!is.null(frow))     frow     <- as.integer(frow)
 
-  args$from_col  <- col2int(fcol)
-  args$from_row  <- frow
-  args$from_dims <- NULL
-
   assert_class(rows_arg, class = "integer", arg_nm = "rows", or_null = TRUE)
   # Checking cols (if it is a column name)
   cols_arg <- args$cols
@@ -866,103 +871,95 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # reduce to required length
-  cols_sel <- cols_all[cols_all %in% cols_sel]
-  rows_sel <- rows_all[rows_all %in% rows_sel]
+  col_span <- cols_all[cols_all %in% cols_sel]
+  row_span <- rows_all[rows_all %in% rows_sel]
 
   # if required add column name and row name
-  if (col_names) rows_sel <- c(max(min(rows_sel, 1), 1L), rows_sel + 1L)
-  if (row_names) cols_sel <- c(max(min(cols_sel, 1), 1L), cols_sel + 1L)
+  if (col_names) row_span <- c(max(min(row_span, 1), 1L), row_span + 1L)
+  if (row_names) col_span <- c(max(min(col_span, 1), 1L), col_span + 1L)
 
   # data has no column name
   if (!is.null(x) && select == "data") {
-    if (col_names) rows_sel <- rows_sel[-1]
-    if (row_names) cols_sel <- cols_sel[-1]
+    if (col_names) row_span <- row_span[-1]
+    if (row_names) col_span <- col_span[-1]
   }
 
   # column name has only the column name
   if (!is.null(x) && select == "col_names") {
-    if (col_names) rows_sel <- rows_sel[1] # else 0?
-    if (row_names) cols_sel <- cols_sel[-1]
+    if (col_names) row_span <- row_span[1] # else 0?
+    if (row_names) col_span <- col_span[-1]
   }
 
   if (!is.null(x) && select == "row_names") {
-    if (col_names) rows_sel <- rows_sel[-1]
-    if (row_names) cols_sel <- cols_sel[1] # else 0?
+    if (col_names) row_span <- row_span[-1]
+    if (row_names) col_span <- col_span[1] # else 0?
   }
 
   # This can happen if only from_col or from_row is supplied
-  if (length(rows_sel) == 0) rows_sel <- 1L
-  if (length(cols_sel) == 0) cols_sel <- 1L
+  if (length(row_span) == 0) row_span <- 1L
+  if (length(col_span) == 0) col_span <- 1L
 
   # frow & fcol start at 1
-  rows_sel <- rows_sel + (frow - 1L)
-  cols_sel <- cols_sel + (fcol - 1L)
-
-  if (!is.null(cols_sel) && (min(cols_sel) < 1L)) {
-    stop("You must supply positive values to `cols`")
-  }
-
-  if (!is.null(rows_sel) && (min(rows_sel) < 1L)) {
-    stop("You must supply positive values to `rows`.")
-  }
+  row_span <- row_span + (frow - 1L)
+  col_span <- col_span + (fcol - 1L)
 
   # return single cells (A1 or A1,B1)
-  if ((length(rows_sel) == 1 || any(diff(rows_sel) != 1L)) && (length(cols_sel) == 1 || any(diff(cols_sel) != 1L))) {
+  if ((length(row_span) == 1 || any(diff(row_span) != 1L)) && (length(col_span) == 1 || any(diff(col_span) != 1L))) {
 
     # A1
-    row_start <- rows_sel
-    col_start <- cols_sel
+    row_start <- row_span
+    col_start <- col_span
 
     dims <- NULL
 
-    if (any(diff(rows_sel) != 1L)) {
-      for (row_start in rows_sel) {
+    if (any(diff(row_span) != 1L)) {
+      for (row_start in row_span) {
         cdims <- NULL
-        if (any(diff(cols_sel) != 1L)) {
-          for (col_start in cols_sel) {
+        if (any(diff(col_span) != 1L)) {
+          for (col_start in col_span) {
             tmp  <- rowcol_to_dim(row_start, col_start)
             cdims <- c(cdims, tmp)
           }
         } else {
-          cdims <- rowcol_to_dim(row_start, cols_sel)
+          cdims <- rowcol_to_dim(row_start, col_span)
         }
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(diff(cols_sel) != 1L)) {
-        for (col_start in cols_sel) {
-          tmp  <- rowcol_to_dim(rows_sel, col_start)
+      if (any(diff(col_span) != 1L)) {
+        for (col_start in col_span) {
+          tmp  <- rowcol_to_dim(row_span, col_start)
           dims <- c(dims, tmp)
         }
       } else {
-        dims <- rowcol_to_dim(rows_sel, cols_sel)
+        dims <- rowcol_to_dim(row_span, col_span)
       }
     }
 
   } else { # return range "A1:A7" or "A1:A7,B1:B7"
 
     dims <- NULL
-    if (any(diff(rows_sel) != 1L)) {
-      for (row_start in rows_sel) {
+    if (any(diff(row_span) != 1L)) {
+      for (row_start in row_span) {
         cdims <- NULL
-        if (any(diff(cols_sel) != 1L)) {
-          for (col_start in cols_sel) {
+        if (any(diff(col_span) != 1L)) {
+          for (col_start in col_span) {
             tmp  <- rowcol_to_dims(row_start, col_start)
             cdims <- c(cdims, tmp)
           }
         } else {
-          cdims <- rowcol_to_dims(row_start, cols_sel)
+          cdims <- rowcol_to_dims(row_start, col_span)
         }
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(diff(cols_sel) != 1L)) {
-        for (col_start in cols_sel) {
-          tmp  <- rowcol_to_dims(rows_sel, col_start)
+      if (any(diff(col_span) != 1L)) {
+        for (col_start in col_span) {
+          tmp  <- rowcol_to_dims(row_span, col_start)
           dims <- c(dims, tmp)
         }
       } else {
-        dims <- rowcol_to_dims(rows_sel, cols_sel)
+        dims <- rowcol_to_dims(row_span, col_span)
       }
     }
   }

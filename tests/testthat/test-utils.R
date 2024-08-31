@@ -281,7 +281,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   expect_equal(wb_dims(x = mtcars, rows = 5:10, from_col = "C"), "C6:M11")
   # Write without column names on top
 
-  # expect_error(wb_dims(x = mtcars, cols = 0, from_col = "C"), "You must supply positive values to `cols`")
+  expect_error(wb_dims(x = mtcars, cols = 0, from_col = "C"), "You must supply positive values to `cols`")
 
   # select rows and columns work
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl"), "B3:B11")
