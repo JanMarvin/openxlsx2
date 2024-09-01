@@ -1,6 +1,6 @@
 test_that("read_xlsx from different sources", {
 
-  skip_if_offline()
+  skip_online_checks()
 
   ## URL
   xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/oxlsx2_sheet.xlsx"
@@ -26,7 +26,7 @@ test_that("read_xlsx from different sources", {
 
 test_that("wb_load from different sources", {
 
-  skip_if_offline()
+  skip_online_checks()
 
   ## URL
   xlsxFile <- "https://github.com/JanMarvin/openxlsx2/raw/main/inst/extdata/oxlsx2_sheet.xlsx"
@@ -194,7 +194,7 @@ test_that("reading charts", {
 
 test_that("load file with xml namespace", {
 
-  skip_if_offline()
+  skip_online_checks()
 
   fl <- "https://github.com/ycphs/openxlsx/files/8480120/2022-04-12-11-42-36-DP_Melanges1.xlsx"
 
@@ -305,7 +305,7 @@ test_that("reading of formControl works", {
 
 test_that("reading xml escapes works", {
 
-  skip_if_offline()
+  skip_online_checks()
 
   fl <- "https://github.com/ycphs/openxlsx/files/10032200/sample_data.xlsx"
   wb <- wb_load(fl)

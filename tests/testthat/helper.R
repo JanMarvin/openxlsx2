@@ -1043,3 +1043,10 @@ testsetup <- function() {
   }
 
 }
+
+# testthat::skip_if_offline requires curl, but fails if curl is not available
+skip_online_checks <- function() {
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("curl")
+  testthat::skip_if_offline()
+}
