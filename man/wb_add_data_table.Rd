@@ -26,6 +26,7 @@ wb_add_data_table(
   na = na_strings(),
   inline_strings = TRUE,
   total_row = FALSE,
+  params = NULL,
   ...
 )
 }
@@ -75,6 +76,8 @@ uses the special \verb{#N/A} value within the workbook.}
 \item{inline_strings}{write characters as inline strings}
 
 \item{total_row}{logical. With the default \code{FALSE} no total row is added.}
+
+\item{params}{list. Optional arguments passed to the data table creation.}
 
 \item{...}{additional arguments}
 }
