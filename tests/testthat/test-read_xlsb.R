@@ -1,6 +1,6 @@
 test_that("reading xlsb works", {
 
-  skip_if_offline()
+  skip_online_checks()
 
   xlsxFile <- testfile_path("openxlsx2_example.xlsb")
 
@@ -21,7 +21,7 @@ test_that("reading xlsb works", {
 
 test_that("reading complex xlsb works", {
 
-  skip_if_offline()
+  skip_online_checks()
 
   xlsxFile <- testfile_path("hyperlink.xlsb")
 
@@ -65,7 +65,7 @@ test_that("reading complex xlsb works", {
 
 test_that("worksheets with real world formulas", {
 
-  skip_if_offline()
+  skip_online_checks()
 
   xlsxFile <- testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb")
 
