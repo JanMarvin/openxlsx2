@@ -282,6 +282,7 @@ wb_add_data <- function(
 #' @param banded_rows logical. If `TRUE`, rows are color banded.
 #' @param banded_cols logical. If `TRUE`, the columns are color banded.
 #' @param total_row logical. With the default `FALSE` no total row is added.
+#' @param params list. Optional arguments passed to the data table creation.
 #' @param ... additional arguments
 #'
 #' @details # Modify total row argument
@@ -329,7 +330,8 @@ wb_add_data_table <- function(
     remove_cell_style = FALSE,
     na.strings        = na_strings(),
     inline_strings    = TRUE,
-    total_row        = FALSE,
+    total_row         = FALSE,
+    params            = NULL,
     ...
 ) {
   assert_workbook(wb)
@@ -354,6 +356,7 @@ wb_add_data_table <- function(
     na.strings        = na.strings,
     inline_strings    = inline_strings,
     total_row         = total_row,
+    params            = params,
     ...               = ...
   )
 }
