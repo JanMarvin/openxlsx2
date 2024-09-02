@@ -65,8 +65,8 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
     wb_dims(1:10, 1:12, from_row = 2),
     wb_dims(rows = 1:10, cols = 1:12, from_row = 2)
   )
-  expect_warning(wb_dims("1", 2))
-  expect_warning(wb_dims(from_row = "C"))
+  expect_warning(wb_dims("1", 2), "should not be a character")
+  expect_error(wb_dims(from_row = "C"), "from_col/from_row must be positive integers if supplied.")
 
   # Ambiguous / input not accepted.
   # This now fails, as it used not to work. (Use `wb_dims()`, `NULL`, or )
@@ -111,7 +111,7 @@ test_that("wb_dims() works when not supplying `x`.", {
   expect_message(out <- wb_dims(cols = 1, 2), "Assuming the .+ `rows`")
   expect_equal(out, "A2")
   # warns when trying to pass weird things
-  expect_warning(wb_dims(rows = "BC", cols = 1), regexp = "supply an integer")
+  expect_error(wb_dims(rows = "BC", cols = 1), "`rows` is character and contains nothing that can be interpreted as number.")
   # "`wb_dims()` works
   expect_equal(wb_dims(from_col = 4), "D1")
   expect_equal(wb_dims(from_row = 4), "A4")
@@ -206,11 +206,11 @@ test_that("`wb_dims()` can select content in a nice fashion with `x`", {
 
   # Selecting a row range
   dims_row1_to_5 <- "B3:L7"
-  expect_equal(wb_dims_cars(rows = 1:5), dims_row1_to_5)
+  expect_equal(wb_dims(x = mtcars, from_row = 2, from_col = "B", rows = 1:5), dims_row1_to_5)
 
   # Select a row range with the names of `x`
   dims_row1_to_5_and_names <- "B2:L7"
-  expect_equal(wb_dims_cars(rows = 1:5, select = "x"), dims_row1_to_5_and_names)
+  expect_equal(wb_dims(x = mtcars, from_row = 2, from_col = "B", rows = 1:5, select = "x"), dims_row1_to_5_and_names)
 })
 
 test_that("wb_dims can select multiple columns and rows", {
@@ -247,7 +247,7 @@ test_that("wb_dims can select multiple columns and rows", {
   got <- wb_dims(x = mtcars, rows = c(2, 4:5))
   expect_equal(exp, got)
 
-  exp <- "B3:B3,D3:D3,B5:B5,D5:D5,B6:B6,D6:D6"
+  exp <- "B3,D3,B5,D5,B6,D6"
   got <- wb_dims(x = mtcars, cols = c(2, 4), rows = c(2, 4:5))
   expect_equal(exp, got)
 
@@ -286,8 +286,6 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   # select rows and columns work
   expect_equal(wb_dims(x = mtcars, rows = 2:10, cols = "cyl"), "B3:B11")
 
-
-
   expect_equal(wb_dims(rows = 1 + seq_len(nrow(mtcars)), cols = 4), "D2:D33")
   out_hp <- wb_dims(x = mtcars, cols = "hp") # , "col name = 'hp' to `cols = 4`")
   expect_equal(out_hp, "D2:D33")
@@ -307,7 +305,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   # using non-existing character column doesn't work
   expect_error(wb_dims(x = mtcars, cols = "A"), "`cols` must be an integer or an existing column name of `x`.")
   expect_equal(wb_dims(x = mtcars, cols = c("hp", "vs")), "D2:D33,H2:H33")
-  expect_error(expect_warning(wb_dims(x = mtcars, rows = "hp")), "[Uu]se `cols` instead.")
+  expect_error(expect_warning(wb_dims(x = mtcars, rows = "hp")), "`rows` is character and contains nothing that can be interpreted as number.")
   # Access only row / col name
   expect_no_message(wb_dims(x = mtcars, select = "col_names"))
   # to write without column names, specify `from_row = 0` (or -1 of what you wanted)
@@ -389,33 +387,64 @@ test_that("wb_dims() handles `from_dims`", {
 
 test_that("wb_dims() corner cases work", {
 
-  exp <- "B2:B2,B30:B30"
+  exp <- "B2,B30"
   got <- wb_dims(rows = c(2, 30), cols = 2)       # expect B2,B30
   expect_equal(exp, got)
 
-  exp <- "B1:B1,B30:B30"
+  exp <- "B1,B30"
   got <- wb_dims(rows = c(1, 30), cols = 2)       # expect B1,B30
   expect_equal(exp, got)
 
-  exp <- "B11:B11,B40:B40"
+  exp <- "B11,B40"
   got <- wb_dims(rows = c(1, 30), cols = 2, from_row = 11)
   expect_equal(exp, got)
 
-  exp <- "B2:B2,D2:D2,B30:B30,D30:D30"
+  exp <- "B2,D2,B30,D30"
   got <- wb_dims(rows = c(2, 30), cols = c(2, 4)) # expect B2,D2,B30,D30
   expect_equal(exp, got)
 
-  exp <- "B1:B1,D1:D1,B30:B30,D30:D30"
+  exp <- "B1,D1,B30,D30"
   got <- wb_dims(rows = c(1, 30), cols = c(2, 4)) # expect B1,D1,B30,D30
   expect_equal(exp, got)
 
-  exp <- "B2:B2,D2:D2,B1:B1,D1:D1"
+  exp <- "B2,D2,B1,D1"
   got <- wb_dims(rows = c(2, 1), cols = c(2, 4))  # expect B2,D2,B1,D1
   expect_equal(exp, got)
 
-  exp <- "B5:B5,D5:D5,B1:B1,D1:D1"
+  exp <- "B5,D5,B1,D1"
   got <- wb_dims(rows = c(5, 1), cols = c(2, 4))  # expect B5,D5,B1,D1
   expect_equal(exp, got)
+
+})
+
+test_that("row and col selection works", {
+
+  # equal with sample cols
+  expect_equal(
+    wb_dims(x = mtcars, cols = c(1, 4:7, 9)),
+    wb_dims(rows = seq_len(nrow(mtcars)) + 1L, cols = c(1, 4:7, 9))
+  )
+
+  # unequeal with sample rows
+  expect_equal(
+    wb_dims(x = mtcars, rows = which(mtcars$cyl == 6)),
+    wb_dims(rows = which(mtcars$cyl == 6) + 1L, cols = seq_along(mtcars))
+  )
+
+  expect_equal(
+    wb_dims(x = mtcars, rows = which(mtcars$cyl == 6), from_row = 4),
+    wb_dims(rows = which(mtcars$cyl == 6) + 1L, cols = seq_along(mtcars), from_row = 4)
+  )
+
+  expect_equal(
+    wb_dims(x = mtcars, rows = which(mtcars$cyl == 6), from_col = 6),
+    wb_dims(rows = which(mtcars$cyl == 6) + 1L, cols = seq_along(mtcars), from_col = 6)
+  )
+
+  expect_equal(
+    wb_dims(x = mtcars, cols = c(1, 4:7, 9), row_names = TRUE),
+    wb_dims(rows = seq_len(nrow(mtcars)) + 1L, cols = c(1, 4:7, 9), from_col = 2)
+  )
 
 })
 
