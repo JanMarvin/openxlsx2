@@ -46,7 +46,7 @@ wb$add_worksheet("add_image")$add_image(file = myplot)
 
 You can include `{ggplot2}` plots similar to how you would include them with `openxlsx`. Call the plot first and afterwards use `wb_add_plot()`.
 
-```{r ggplot}
+```{r ggplot, purl = FALSE}
 if (requireNamespace("ggplot2")) {
 
 library(ggplot2)
@@ -67,7 +67,7 @@ wb$add_worksheet("add_plot")$
 
 If you want vector graphics that can be modified in spreadsheet software the `dml_xlsx()` device comes in handy. You can pass the output via `wb_add_drawing()`.
 
-```{r rvg}
+```{r rvg, purl = FALSE}
 if (requireNamespace("ggplot2") && requireNamespace("rvg")) {
 
 library(rvg)
@@ -164,4 +164,3 @@ wb <- wb %>%
 
 }
 ```
-
