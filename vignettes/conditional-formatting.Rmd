@@ -235,7 +235,7 @@ wb$add_conditional_formatting(
 knitr::include_graphics("img/cf_color_scale.jpg")
 ```
 
-```{r}
+```{r eval=FALSE}
 df <- read_xlsx("https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx", sheet = 5)
 wb$add_worksheet("colorScale", zoom = 30)
 wb$add_data(x = df, col_names = FALSE) ## write data.frame
@@ -244,7 +244,7 @@ wb$add_data(x = df, col_names = FALSE) ## write data.frame
 Rule is a vector or colors of length 2 or 3 (any hex color or any of `colors()`).
 If rule is `NULL`, min and max of cells is used. Rule must be the same length as style or L.
 
-```{r}
+```{r eval=FALSE}
 wb$add_conditional_formatting(
   sheet = "colorScale",
   dims = wb_dims(
