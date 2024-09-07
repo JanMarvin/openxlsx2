@@ -35,7 +35,7 @@ You can install the development version of `openxlsx2` from
 remotes::install_github("JanMarvin/openxlsx2")
 ```
 
-Or from [r-universe](https://r-universe.dev/) with:
+Or from [r-universe](https://janmarvin.r-universe.dev/openxlsx2) with:
 
 ``` r
 # Enable repository from janmarvin
