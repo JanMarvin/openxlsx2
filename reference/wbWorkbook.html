@@ -79,7 +79,7 @@ Note that the documentation is more complete in each of the wrapper functions.
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1221,6 +1221,7 @@ STDEVP, SUM, VAR, VARP</p>
 <span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  enforce <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  shared <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -1265,6 +1266,10 @@ STDEVP, SUM, VAR, VARP</p>
 
 <dt><code>enforce</code></dt>
 <dd><p>enforce dims</p></dd>
+
+
+<dt><code>shared</code></dt>
+<dd><p>shared formula</p></dd>
 
 
 <dt><code>...</code></dt>
@@ -3546,6 +3551,8 @@ are removed.</p></dd>
 <span>  even_footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  first_header <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  first_footer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  align_with_margins <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scale_with_doc <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -3578,6 +3585,14 @@ are removed.</p></dd>
 
 <dt><code>first_footer</code></dt>
 <dd><p>firstFooter</p></dd>
+
+
+<dt><code>align_with_margins</code></dt>
+<dd><p>align_with_margins</p></dd>
+
+
+<dt><code>scale_with_doc</code></dt>
+<dd><p>scale_with_doc</p></dd>
 
 
 <dt><code>...</code></dt>
