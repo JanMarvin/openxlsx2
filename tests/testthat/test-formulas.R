@@ -184,3 +184,22 @@ test_that("writing shared formulas works", {
   expect_equal(exp, got)
 
 })
+
+test_that("increase formula dims if required", {
+
+  fml <- c("SUM(A2:B2)", "SUM(A3:B3)")
+
+  # This only handles single cells, if C2 is passed and length(x) > 1
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = matrix(1:4, 2, 2))
+
+  wb1 <- wb_add_formula(wb, dims = "C2", x = fml)
+  wb2 <- wb_add_formula(wb, dims = "C2:D2", x = fml)
+
+  expect_equal(
+    wb1$worksheets[[1]]$sheet_data$cc,
+    wb2$worksheets[[1]]$sheet_data$cc
+  )
+
+})

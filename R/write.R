@@ -1214,7 +1214,12 @@ do_write_formula <- function(
   if (array || enforce) {
     dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   } else {
-    dfx   <- dims_to_dataframe(dims)
+    # if dims a single cell and x > dfx, increase dfx
+    if (!grepl(":", dims) && (NROW(x) > 1 || NCOL(x) > 1)) {
+      dfx   <- dims_to_dataframe(wb_dims(x = x, from_dims = dims))
+    } else {
+      dfx   <- dims_to_dataframe(dims)
+    }
     dfx[] <- x
   }
 
