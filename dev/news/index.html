@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.8.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,14 +51,25 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<ul><li>The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell <code>dims</code> was provided for an <code>x</code> that was larger than a single cell in <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1131" class="external-link">1131</a>
+</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.9" id="openxlsx2-19">openxlsx2 1.9<a class="anchor" aria-label="anchor" href="#openxlsx2-19"></a></h2><p class="text-muted">CRAN release: 2024-09-08</p>
+<div class="section level3">
+<h3 id="new-features-1-9">New features<a class="anchor" aria-label="anchor" href="#new-features-1-9"></a></h3>
 <ul><li><p>Experimental support for shared formulas. Similar to spreadsheet software, when a cell is dragged to horizontally or vertically. This requires the formula to be written only for a single cell and it is filled by spreadsheet software for the remaining dimensions. <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code> gained a new argument <code>shared</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1074" class="external-link">1074</a></p></li>
 <li><p>Experimental support for reading shared formulas. If <code>show_formula</code> is used with <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, we try to show the value that is shown in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/1091" class="external-link">1091</a></p></li>
+<li><p>It is possible to read cells containing formulas as formula. <a href="https://github.com/JanMarvin/openxlsx2/pull/1103" class="external-link">1103</a></p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li><p>Previously, if only <code>cols</code> and <code>rows</code> were passed to <code><a href="../reference/wb_dims.html">wb_dims()</a></code> and row <code>1</code> was selected, incorrect results were returned. This has been fixed. <a href="https://github.com/JanMarvin/openxlsx2/pull/1094" class="external-link">1094</a></p></li>
-<li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> no longer ignores <code>above</code>, <code>below</code>, <code>left</code>, <code>right</code> if <code>from_dims</code> is not supplied <a href="https://github.com/JanMarvin/openxlsx2/pull/1104" class="external-link">1104</a></p></li>
+<h3 id="fixes-1-9">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-9"></a></h3>
+<ul><li><p>If a font unknown to <code>openxlsx2</code> is used <code><a href="../reference/col_widths-wb.html">wb_set_col_widths()</a></code> defaults to using the workbooks default font. <a href="https://github.com/JanMarvin/openxlsx2/pull/1080" class="external-link">1080</a></p></li>
+<li><p>Previously, if only <code>cols</code> and <code>rows</code> were passed to <code><a href="../reference/wb_dims.html">wb_dims()</a></code> and row <code>1</code> was selected, incorrect results were returned. This has been fixed. <a href="https://github.com/JanMarvin/openxlsx2/pull/1094" class="external-link">1094</a></p></li>
+<li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> no longer ignores <code>above</code>, <code>below</code>, <code>left</code>, <code>right</code> if <code>from_dims</code> is not supplied. <a href="https://github.com/JanMarvin/openxlsx2/pull/1104" class="external-link">1104</a></p></li>
+<li><p><code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> with <code>skip_hidden_rows = TRUE</code> works now if a file path is passed. <a href="https://github.com/JanMarvin/openxlsx2/pull/1122" class="external-link">1122</a></p></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
