@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell `dims` was provided for an `x` that was larger than a single cell in `wb_add_formula()`. [1131](https://github.com/JanMarvin/openxlsx2/pull/1131)
+
+
+***************************************************************************
+
 # openxlsx2 1.9
 
 ## New features
