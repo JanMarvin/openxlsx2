@@ -809,7 +809,7 @@ test_that("writing na.strings = NULL works", {
   write_xlsx(matrix(NA, 2, 2), tmp, na.strings = NULL)
   wb <- wb_load(tmp)
 
-  exp <- ""
+  exp <- NA_character_
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$v[3:6])
   expect_equal(exp, got)
 
@@ -1238,4 +1238,24 @@ test_that("sheet is a valid argument in write_xlsx", {
   wb1 <- write_xlsx(x = mtcars, sheet_name = "data")
   wb2 <- write_xlsx(x = mtcars, sheet = "data")
   expect_equal(wb1$get_sheet_names(), wb2$get_sheet_names())
+})
+
+test_that("skipping entirely blank cells works", {
+
+  tp <- temp_xlsx()
+
+  mm <- matrix(1:9, 3, 3)
+  mm[diag(mm)] <- NA
+
+  wb1  <- write_xlsx(x = mm, file = tp, col_names = FALSE, na.strings = NULL)
+  cc1  <- wb1$worksheets[[1]]$sheet_data$cc
+  got1 <- cc1[cc1$r %in% c("A1", "B2", "C3"), ]
+
+  wb2  <- wb_load(tp)
+  cc2  <- wb2$worksheets[[1]]$sheet_data$cc
+  got2 <- cc2[cc2$r %in% c("A1", "B2", "C3"), ]
+
+  expect_equal(3, nrow(got1))
+  expect_equal(0, nrow(got2))
+
 })

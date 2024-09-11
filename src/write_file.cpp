@@ -96,6 +96,26 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
       }
     }
 
+    // update lastrow
+    lastrow = thisrow;
+
+    if ( // skip blank cells entirely
+        cc_c_s[i]   == "" &&
+        cc_c_t[i]   == "" &&
+        cc_c_cm[i]  == "" &&
+        cc_c_ph[i]  == "" &&
+        cc_c_vm[i]  == "" &&
+        cc_v[i]     == "" &&
+        cc_f[i]     == "" &&
+        cc_f_t[i]   == "" &&
+        cc_f_ref[i] == "" &&
+        cc_f_ca[i]  == "" &&
+        cc_f_si[i]  == "" &&
+        cc_is[i]    == ""
+    ) {
+      continue;
+    }
+
     // create node <c>
     pugi::xml_node cell = row.append_child("c");
 
@@ -170,9 +190,6 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
         cell.append_copy(is_node.first_child());
       }
     }
-
-    // update lastrow
-    lastrow = thisrow;
   }
 
   return doc;
