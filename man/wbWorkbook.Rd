@@ -598,6 +598,7 @@ add a data table
   na.strings = na_strings(),
   inline_strings = TRUE,
   total_row = FALSE,
+  params = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -645,6 +646,8 @@ add a data table
 \item{\code{inline_strings}}{write characters as inline strings}
 
 \item{\code{total_row}}{write total rows to table}
+
+\item{\code{params}}{optional parameters passed to the data table creation}
 
 \item{\code{...}}{additional arguments}
 }

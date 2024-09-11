@@ -53,7 +53,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     "col.names", "row.names", "col_names", "row_names", "table_style",
     "table_name", "with_filter", "first_active_row", "first_active_col",
     "first_row", "first_col", "col_widths", "na.strings",
-    "overwrite", "title", "subject", "category"
+    "overwrite", "title", "subject", "category", "params"
   )
 
   params <- list(...)
@@ -352,6 +352,19 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     wb$add_worksheet(nms[[i]], grid_lines = gridLines[i], tab_color = tabColor[i], zoom = zoom[i])
 
     if (as_table[i]) {
+
+      # every sheet has uniqure choose parameters
+      # or all share the same
+      # or choose parameters were found
+      if (is.list(params$params$choose) && length(params$params$choose) <= nSheets) {
+        params_list <- list(choose = params$params$choose[[i]])
+      } else if (is.character(params$params$choose)) {
+        message("yes")
+        params_list <- list(choose = params$params$choose)
+      } else {
+        params_list <- NULL
+      }
+
       # add data table??
       do_write_datatable(
         wb          = wb,
@@ -365,7 +378,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
         table_name  = NULL,
         with_filter = withFilter[[i]],
         na.strings  = na.strings,
-        total_row   = totalRow
+        total_row   = totalRow,
+        params      = params_list
       )
     } else {
       # TODO add_data()?
