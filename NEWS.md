@@ -4,6 +4,8 @@
 
 * The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell `dims` was provided for an `x` that was larger than a single cell in `wb_add_formula()`. [1131](https://github.com/JanMarvin/openxlsx2/pull/1131)
 
+* Fixed a regression in the previous release, where `wb_dims()` would pass column names passed via `cols` to `col2int()` which could cause overflow errors resulting in a failing check. [1133](https://github.com/JanMarvin/openxlsx2/pull/1133)
+
 
 ***************************************************************************
 
