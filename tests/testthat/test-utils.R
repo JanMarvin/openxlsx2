@@ -682,3 +682,26 @@ test_that("dims are quick", {
   expect_equal(ddims, edims)
 
 })
+
+test_that("wb_dims does not try to validate column names", {
+
+  df <- data.frame(
+    a1 = 1,
+    aa2 = 2,
+    aaa3 = 3,
+    aaaa4 = 4,
+    aaaaa5 = 5,
+    aaaaaa6 = 6,
+    aaaaaaa7 = 7,
+    aaaaaaaa8 = 8,
+    aaaaaaaaa9 = 9
+  )
+
+  exp <- paste0(LETTERS[1:9], "2")
+  got <- vector("character", length = ncol(df))
+  for (i in seq_along(df)) {
+    got[i] <- wb_dims(x = df, cols = colnames(df)[i], rows = 1)
+  }
+  expect_equal(exp, got)
+
+})

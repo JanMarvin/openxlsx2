@@ -715,8 +715,18 @@ wb_dims <- function(..., select = NULL) {
     cols_arg <- args[[cols_pos]]
   }
 
-  if (!is.null(cols_arg) && (min(col2int(cols_arg)) < 1L)) {
-    stop("You must supply positive values to `cols`")
+  if (!is.null(cols_arg)) {
+    # cols_arg could be name(s) in x or must indicate a positive integer
+    is_lwr_one <- FALSE
+    if (!is.null(args$x)) {
+      if (!all(cols_arg %in% names(args$x)))
+        is_lwr_one <- min(col2int(cols_arg)) < 1L
+    } else {
+      is_lwr_one <- min(col2int(cols_arg)) < 1L
+    }
+
+    if (is_lwr_one)
+      stop("You must supply positive values to `cols`")
   }
 
   # in case the user mixes up column and row
