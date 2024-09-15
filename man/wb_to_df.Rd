@@ -30,6 +30,7 @@ wb_to_df(
   named_region,
   keep_attributes = FALSE,
   check_names = FALSE,
+  show_hyperlinks = FALSE,
   ...
 )
 
@@ -50,6 +51,7 @@ read_xlsx(
   na.numbers = NA,
   fill_merged_cells = FALSE,
   check_names = FALSE,
+  show_hyperlinks = FALSE,
   ...
 )
 
@@ -69,6 +71,7 @@ wb_read(
   na.strings = "NA",
   na.numbers = NA,
   check_names = FALSE,
+  show_hyperlinks = FALSE,
   ...
 )
 }
@@ -125,6 +128,8 @@ If no sheet is selected, the first appearance will be selected. See \code{\link[
 (These are used internally to define a cell type.)}
 
 \item{check_names}{If \code{TRUE} then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.}
+
+\item{show_hyperlinks}{If \code{TRUE} instead of the displayed text, hyperlink targets are shown.}
 
 \item{...}{additional arguments}
 }

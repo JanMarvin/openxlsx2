@@ -411,3 +411,44 @@ test_that("reading timeline works", {
   )
 
 })
+
+test_that("show_hyperlink works", {
+
+  fl  <- testfile_path("hyperlinks.xlsx")
+
+  not_hl <- wb_to_df(fl, show_hyperlinks = FALSE)
+  has_hl <- wb_to_df(fl, show_hyperlinks = TRUE)
+
+  # everything identical in column A
+  expect_equal(not_hl$A, has_hl$A)
+
+  # column B: mail gets mailto:
+  exp <- "noreply@openxlsx2.com"
+  got <- not_hl$B[5]
+  expect_equal(exp, got)
+
+  exp <- "mailto:noreply@openxlsx2.com"
+  got <- has_hl$B[5]
+  expect_equal(exp, got)
+
+  # column B: hyperlink target url does not match hyperlink text
+  exp <- "https://github.com/JanMarvin/openxlsx2"
+  got <- not_hl$B[3]
+  expect_equal(exp, got)
+
+  exp <- "https://janmarvin.github.io/openxlsx2"
+  got <- has_hl$B[3]
+  expect_equal(exp, got)
+
+  # everything identical in column C
+  expect_equal(not_hl$C, has_hl$C)
+
+  # link to external file
+  exp <- "test"
+  got <- not_hl$D[1]
+  expect_equal(exp, got)
+
+  exp <- "hyperlink.xlsb"
+  got <- has_hl$D[1]
+  expect_equal(exp, got)
+})
