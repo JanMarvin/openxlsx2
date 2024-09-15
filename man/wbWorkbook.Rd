@@ -934,6 +934,7 @@ to_df
   named_region,
   keep_attributes = FALSE,
   check_names = FALSE,
+  show_hyperlinks = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -984,6 +985,8 @@ to_df
 \item{\code{keep_attributes}}{If TRUE additional attributes are returned. (These are used internally to define a cell type.)}
 
 \item{\code{check_names}}{If TRUE then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.}
+
+\item{\code{show_hyperlinks}}{If \code{TRUE} instead of the displayed text, hyperlink targets are shown.}
 
 \item{\code{...}}{additional arguments}
 }

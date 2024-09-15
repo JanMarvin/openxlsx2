@@ -4,6 +4,8 @@
 
 * When writing a file with `na.strings = NULL`, the file will not contain any reference to the blank cell. Depending on the number of missings in a data set, this can reduce the file size significantly. [1111](https://github.com/JanMarvin/openxlsx2/pull/1111)
 
+* `wb_to_df()` gained a new argument `show_hyperlinks` which returns the target or location of a hyperlink, instead of the links description. [1136](https://github.com/JanMarvin/openxlsx2/pull/1136)
+
 ## Fixes
 
 * The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell `dims` was provided for an `x` that was larger than a single cell in `wb_add_formula()`. [1131](https://github.com/JanMarvin/openxlsx2/pull/1131)
