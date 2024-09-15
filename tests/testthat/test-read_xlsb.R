@@ -58,7 +58,7 @@ test_that("reading complex xlsb works", {
 
   # hyperlinks
   exp <- "Sheet1!E3"
-  got <- wb$worksheets[[2]]$hyperlinks[[1]]$location
+  got <- xml_attr(wb$worksheets[[2]]$hyperlinks[[1]], "hyperlink")[[1]][["location"]]
   expect_equal(exp, got)
 
 })

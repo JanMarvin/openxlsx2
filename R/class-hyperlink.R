@@ -31,11 +31,11 @@ wbHyperlink <- R6::R6Class(
     #' @param display display
     #' @param is_external is_external
     #' @return a `wbHyperlink` object
-    initialize = function(ref, target, location, display = NULL, is_external = TRUE) {
+    initialize = function(ref, target = NULL, location, display = NULL, is_external = TRUE) {
       self$ref         <- ref
-      self$target      <- target
+      if (!is.null(target) && !is.na(target) && target != "")    self$target      <- target
       self$location    <- location
-      self$display     <- display
+      if (!is.null(display) && !is.na(display) && display != "") self$display     <- display
       self$is_external <- is_external
 
       invisible(self)
@@ -78,7 +78,7 @@ wb_hyperlink <- function() {
 }
 
 
-xml_to_hyperlink <- function(xml) {
+xml_to_hyperlink <- function(xml, relship) {
   # xml_to_hyperlink() is used once in wb_load()
 
   # TODO allow wbHyperlink$new(xml = xml)
@@ -87,41 +87,25 @@ xml_to_hyperlink <- function(xml) {
   # '<hyperlink ref="B1" r:id="rId2"/>',
   # '<hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1"/>')
 
-  if (length(xml) == 0) {
-    return(xml)
-  }
+  # prepare relships data frame
+  relships <- rbindlist(xml_attr(relship, "Relationship"))
+  relships <- relships[basename(relships$Type) == "hyperlink", ]
 
-  targets <- names(xml) %||% rep(NA, length(xml))
-  xml <- unname(xml)
+  # prepare hyperlinks data frame
+  hlinks <- rbindlist(xml_attr(xml, "hyperlink"))
 
-  # TODO a, names, and vals could be moved within the larger lapply()
-  a <- unapply(xml, function(i) regmatches(i, gregexpr('[a-zA-Z]+=".*?"', i)), .recurse = FALSE)
-  names <- lapply(a, function(i) regmatches(i, regexpr('[a-zA-Z]+(?=\\=".*?")', i, perl = TRUE)))
-  vals <- lapply(a, function(i) {
-    res <- regmatches(i, regexpr('(?<=").*?(?=")', i, perl = TRUE))
-    res
-  })
+  # merge both
+  hl_df <- merge(hlinks, relships, by.x = "r:id", by.y = "Id", all.x = TRUE, all.y = FALSE)
 
-  lapply(seq_along(xml), function(i) {
-    tmp_vals <- vals[[i]]
-    tmp_nms <- names[[i]]
-    names(tmp_vals) <- tmp_nms
+  lapply(seq_len(nrow(hl_df)), function(i) {
 
-    ## ref
-    ref <- tmp_vals[["ref"]]
+    x <- hl_df[i, ]
 
-    ## location
-    location <- if ("location" %in% tmp_nms) tmp_vals[["location"]]
-    display <- if ("display" %in% tmp_nms) tmp_vals[["display"]]
-
-    ## target/external
-    if (is.na(targets[i])) {
-      target <- NULL
-      is_external <- FALSE
-    } else {
-      is_external <- TRUE
-      target <- targets[i]
-    }
+    ref         <- x$ref
+    target      <- x$Target
+    location    <- x$location
+    display     <- x$display
+    is_external <- x$TargetMode == "External"
 
     wbHyperlink$new(
       ref         = ref,

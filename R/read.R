@@ -479,9 +479,14 @@ wb_to_df <- function(
   if (show_hyperlinks) {
 
     if (length(wb$worksheets[[sheet]]$hyperlinks)) {
+
+      hls <- xml_to_hyperlink(
+        wb$worksheets[[sheet]]$hyperlinks,
+        wb$worksheets_rels[[sheet]]
+      )
       hyprlnks <- as.data.frame(
         do.call("rbind",
-                lapply(wb$worksheets[[sheet]]$hyperlinks, function(hl) {
+                lapply(hls, function(hl) {
                   c(hl$ref, ifelse(is.null(hl$target), hl$location, hl$target))
                 })
         )

@@ -3715,34 +3715,47 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$sheet_data$cc <- cc
 
-      ### add hyperlinks ---
-      hyperlink_in_wb <- vapply(
-        self$worksheets[[from_sheet]]$hyperlinks,
-        function(x) x$ref,
-        NA_character_
-      )
+      # # FIXME need to think about this some more.
+      # ### add hyperlinks ---
+      # if (length(self$worksheets[[from_sheet]]$relships$hyperlinks)) {
 
-      if (any(sel <- hyperlink_in_wb %in% from_dims)) {
+      #   ws_hyls <- self$worksheets[[from_sheet]]$hyperlinks
+      #   ws_rels <- self$worksheets_rels[[self$worksheets[[from_sheet]]$relships$hyperlinks]]
 
-        has_hl <- apply(from_dims_df, 2, function(x) x %in% hyperlink_in_wb)
+      #   relships <- rbindlist(xml_attr(ws_rels, "Relationship"))
+      #   relships <- relships[basename(relships$Type) == "hyperlink", ]
 
-        old <- from_dims_df[has_hl]
-        new <- to_dims_df_f[has_hl]
+      #   # prepare hyperlinks data frame
+      #   hlinks <- rbindlist(xml_attr(ws_hyls, "hyperlink"))
 
-        for (hls in match(hyperlink_in_wb, old)) {
+      #   # merge both
+      #   hl_df <- merge(hlinks, relships, by.x = "r:id", by.y = "Id", all.x = TRUE, all.y = FALSE)
 
-          # prepare the updated link
-          hl <- self$worksheets[[from_sheet]]$hyperlinks[[hls]]$clone()
-          hl$ref <- new[which(old == hl$ref)]
+      #   hyperlink_in_wb <- hlinks$ref
 
-          # assign it
-          self$worksheets[[sheet]]$hyperlinks <- append(
-            self$worksheets[[sheet]]$hyperlinks,
-            hl
-          )
-        }
+      #   if (any(sel <- hyperlink_in_wb %in% from_dims)) {
 
-      }
+      #     has_hl <- apply(from_dims_df, 2, function(x) x %in% hyperlink_in_wb)
+
+      #     old <- from_dims_df[has_hl]
+      #     new <- to_dims_df_f[has_hl]
+
+      #     for (hls in match(hyperlink_in_wb, old)) {
+
+      #       # prepare the updated link
+
+      #       which(hls)
+
+      #       # assign it
+      #       self$worksheets[[sheet]]$hyperlinks <- append(
+      #         self$worksheets[[sheet]]$hyperlinks,
+      #         hl
+      #       )
+      #     }
+
+      #   }
+
+      # }
 
       invisible(self)
     },
@@ -9339,15 +9352,15 @@ wbWorkbook <- R6::R6Class(
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]]) || hasHL) {
             ws_rels <- self$worksheets_rels[[i]]
-            if (hasHL) {
-              h_inds <- stri_join(seq_along(self$worksheets[[i]]$hyperlinks), "h")
-              ws_rels <-
-                c(ws_rels, unlist(
-                  lapply(seq_along(h_inds), function(j) {
-                    self$worksheets[[i]]$hyperlinks[[j]]$to_target_xml(h_inds[j])
-                  })
-                ))
-            }
+            # if (hasHL) {
+            #   h_inds <- stri_join(seq_along(self$worksheets[[i]]$hyperlinks), "h")
+            #   ws_rels <-
+            #     c(ws_rels, unlist(
+            #       lapply(seq_along(h_inds), function(j) {
+            #         self$worksheets[[i]]$hyperlinks[[j]]$to_target_xml(h_inds[j])
+            #       })
+            #     ))
+            # }
 
             ## Check if any tables were deleted - remove these from rels
             # TODO a relship manager should take care of this

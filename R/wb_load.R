@@ -1060,6 +1060,7 @@ wb_load <- function(
       wb_rels <- rbindlist(xml_attr(wb$worksheets_rels[[ws]], "Relationship"))
       cmmts <- integer()
       drwns <- integer()
+      hyper <- integer()
       pvtbl <- integer()
       slcrs <- integer()
       table <- integer()
@@ -1072,8 +1073,16 @@ wb_load <- function(
         wb_rels$tid <- suppressWarnings(as.integer(gsub("\\D+", "", basename2(wb_rels$Target))))
         wb_rels$typ <- basename(wb_rels$Type)
 
+        # for hyperlinks, we take the relationship id
+        if (length(wb_rels$typ == "hyperlink")) {
+          wb_rels$tid[wb_rels$typ == "hyperlink"] <- as.integer(
+            gsub("\\D+", "", basename2(wb_rels$Id[wb_rels$typ == "hyperlink"]))
+          )
+        }
+
         cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
         drwns <- wb_rels$tid[wb_rels$typ == "drawing"]
+        hyper <- wb_rels$tid[wb_rels$typ == "hyperlink"]
         pvtbl <- wb_rels$tid[wb_rels$typ == "pivotTable"]
         slcrs <- wb_rels$tid[wb_rels$typ == "slicer"]
         table <- wb_rels$tid[wb_rels$typ == "table"]
@@ -1087,6 +1096,7 @@ wb_load <- function(
       wb$worksheets[[ws]]$relships <- list(
         comments         = cmmts,
         drawing          = drwns,
+        hyperlink        = hyper,
         pivotTable       = pvtbl,
         slicer           = slcrs,
         table            = table,
@@ -1207,37 +1217,6 @@ wb_load <- function(
       }
 
     } ## if (length(tablesXML))
-
-    ## might we have some external hyperlinks
-    # TODO use lengths()
-    if (any(vapply(wb$worksheets[sheets$typ == "worksheet"], function(x) length(x$hyperlinks), NA_integer_) > 0)) {
-
-      ## Do we have external hyperlinks
-      hlinks <- lapply(xml, function(x) x[grepl("hyperlink", x) & grepl("External", x)])
-      # TODO use lengths()
-      hlinksInds <- which(lengths(hlinks) > 0)
-
-      ## If it's an external hyperlink it will have a target in the sheet_rels
-      if (length(hlinksInds)) {
-        for (i in hlinksInds) {
-          ids <- apply_reg_match(hlinks[[i]], '(?<=Id=").*?"')
-          ids <- gsub('"$', "", ids)
-
-          targets <- apply_reg_match(hlinks[[i]], '(?<=Target=").*?"')
-          targets <- gsub('"$', "", targets)
-
-          ids2 <- lapply(wb$worksheets[[i]]$hyperlinks, reg_match, pat = '(?<=r:id=").*?"')
-          ids2[lengths(ids2) == 0] <- NA
-          ids2 <- gsub('"$', "", unlist(ids2))
-
-          targets <- targets[match(ids2, ids)]
-          names(wb$worksheets[[i]]$hyperlinks) <- targets
-        }
-      }
-
-      # remove unused hyperlink reference from worksheets_rels
-      wb$worksheets_rels[[i]] <- relship_no(wb$worksheets_rels[[i]], "hyperlink")
-    }
 
 
     ## Drawings ------------------------------------------------------------------------------------
@@ -1427,13 +1406,6 @@ wb_load <- function(
     # Otherwise spreadsheet software will stumble over missing rels to drwaing.
     wb$worksheets_rels <- lapply(seq_along(wb$sheet_names), FUN = function(x) character())
   } ## end of worksheetRels
-
-  ## convert hyperliks to hyperlink objects
-  if (!data_only)
-    for (i in seq_len(nSheets)) {
-      if (!wb$is_chartsheet[i])
-        wb$worksheets[[i]]$hyperlinks <- xml_to_hyperlink(wb$worksheets[[i]]$hyperlinks)
-    }
 
   ## queryTables
   if (!data_only && length(queryTablesXML) > 0) {

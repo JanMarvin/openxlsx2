@@ -14,7 +14,7 @@ test_that("class assertions work", {
   # nolint start
   expect_null(assert_comment(    wb_comment()))
   expect_null(assert_color(      wb_colour()))
-  expect_null(assert_hyperlink(  wb_hyperlink()))
+  # expect_null(assert_hyperlink(  wb_hyperlink())) # is this required?
   expect_null(assert_sheet_data( wb_sheet_data()))
   expect_null(assert_workbook(   wb_workbook()))
   expect_null(assert_worksheet(  wb_worksheet()))

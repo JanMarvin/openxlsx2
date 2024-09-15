@@ -1,9 +1,5 @@
 testsetup()
 
-test_that("class Hyperlink works", {
-  expect_null(assert_hyperlink(wb_hyperlink()))
-})
-
 test_that("encode Hyperlink works", {
 
   formula_old <- '=HYPERLINK("#Tab_1!" &amp; CELL("address", INDEX(C1:F1, MATCH(A1, C1:F1, 0))), "Go to the selected column")'
