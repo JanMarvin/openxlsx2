@@ -38,3 +38,50 @@ test_that("formulas with hyperlinks works", {
   expect_equal(exp, got)
 
 })
+
+
+test_that("hyperlinks work", {
+
+  df <- data.frame(
+    "Cash" = 1:20, "Cash2" = 31:50,
+    "hLink" = "https://r-project.org",
+    "hLink2" = LETTERS[1:20],
+    "hLink3" = paste0("https://wikipedia.org/wiki/", LETTERS[1:20]),
+    "Percentage" = seq(0, 1, length.out = 20)
+  )
+
+  # custom target for letters to their wikipedia page
+  target <- list(hLink2 = paste0("https://wikipedia.org/wiki/", LETTERS[1:20]))
+
+  wb <- wb_workbook()
+  wb$add_worksheet()$add_hyperlink(x = df, target = target, cols = "hLink2")
+
+  class(df$hLink) <- c(class(df$hLink), "hyperlink")
+  expect_warning(wb$add_worksheet()$add_hyperlink(x = df, target = target))
+
+  class(df$hLink) <- c("character")
+  wb$add_worksheet()$add_hyperlink(x = df, target = target, cols = c("hLink", "hLink2"), as_table = TRUE)
+
+  wb$add_worksheet()$add_hyperlink(x = "noreply@openxlsx2", target = "mailto:noreply@openxlsx2.com", tooltip = "An Invalid E-Mail Adress")
+
+  wb$add_worksheet()$add_hyperlink(x = c("https://r-project.org", "https://cran.r-project.org"), dims = "B2:C2",
+                                   tooltip = c("The R-Project Homepage", "CRAN"))
+
+  exp <- c("<hyperlink ref=\"B2\" r:id=\"rId1\" tooltip=\"The R-Project Homepage\"/>",
+           "<hyperlink ref=\"C2\" r:id=\"rId3\" tooltip=\"CRAN\"/>")
+  got <- wb$worksheets[[5]]$hyperlinks
+  expect_equal(exp, got)
+
+  wb$add_worksheet()$add_hyperlink(x = "hyperlinks.xlsx", target = "/Users/janmarvingarbuszus/Source/openxlsx-data/hyperlinks.xlsx", dims = "B2",
+                                   tooltip = "my testfile")
+
+  exp <- "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"/Users/janmarvingarbuszus/Source/openxlsx-data/hyperlinks.xlsx\" TargetMode=\"External\"/>"
+  got <- wb$worksheets_rels[[6]]
+  expect_equal(exp, got)
+
+  wb$add_worksheet()$add_hyperlink(x = "'Sheet 1'!C5", target = "'Sheet 1'!C5", dims = "B2",
+                                   tooltip = "An internal reference", is_external = FALSE)$
+    add_hyperlink(x = "'Sheet 1'!C5", dims = "B4",
+                  tooltip = "An internal reference", is_external = FALSE)
+
+})

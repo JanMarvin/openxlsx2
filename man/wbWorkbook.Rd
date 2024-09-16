@@ -170,6 +170,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-add_timeline}{\code{wbWorkbook$add_timeline()}}
 \item \href{#method-wbWorkbook-remove_timeline}{\code{wbWorkbook$remove_timeline()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
+\item \href{#method-wbWorkbook-add_hyperlink}{\code{wbWorkbook$add_hyperlink()}}
 \item \href{#method-wbWorkbook-add_style}{\code{wbWorkbook$add_style()}}
 \item \href{#method-wbWorkbook-to_df}{\code{wbWorkbook$to_df()}}
 \item \href{#method-wbWorkbook-load}{\code{wbWorkbook$load()}}
@@ -876,6 +877,57 @@ Add formula
 \item{\code{shared}}{shared formula}
 
 \item{\code{...}}{additional arguments}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_hyperlink"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_hyperlink}{}}}
+\subsection{Method \code{add_hyperlink()}}{
+Add hyperlink
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_hyperlink(
+  sheet = current_sheet(),
+  dims = "A1",
+  x,
+  target = NULL,
+  is_external = TRUE,
+  cols = NULL,
+  col_names = TRUE,
+  tooltip = NULL,
+  as_table = FALSE,
+  ...
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{a worksheet}
+
+\item{\code{dims}}{a worksheet dimension}
+
+\item{\code{x}}{an object to write}
+
+\item{\code{target}}{an optional target, if no target is specified, it is assumend that the object contains the reference}
+
+\item{\code{is_external}}{a logical indicating if the hyperlink is external (a url, a mail adress, external file) or internal (a reference to worksheet cells)}
+
+\item{\code{cols}}{columns to be used as hyperlink reference}
+
+\item{\code{col_names}}{wheather or not the object contains column names}
+
+\item{\code{tooltip}}{an optional description for a variable}
+
+\item{\code{as_table}}{logical if the data is written as table}
+
+\item{\code{...}}{optional arguments used by \code{\link[=wb_add_data]{wb_add_data()}} or \code{\link[=wb_add_data_table]{wb_add_data_table()}}}
+
+\item{\code{wb}}{a workbook}
 }
 \if{html}{\out{</div>}}
 }
