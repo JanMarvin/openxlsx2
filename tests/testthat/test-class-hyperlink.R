@@ -50,38 +50,52 @@ test_that("hyperlinks work", {
     "Percentage" = seq(0, 1, length.out = 20)
   )
 
-  # custom target for letters to their wikipedia page
-  target <- list(hLink2 = paste0("https://wikipedia.org/wiki/", LETTERS[1:20]))
+  # custom target for letters to their wikipedia page and a few dims
+  target       <- list(hLink2 = paste0("https://wikipedia.org/wiki/", LETTERS[1:20]))
+  dims_hlink2  <- wb_dims(x = df, cols = "hLink2", select = "x")
+  dims_hlink_2 <- wb_dims(x = df, cols = c("hLink", "hLink2"), select = "x")
 
+  # create workbook
   wb <- wb_workbook()
-  wb$add_worksheet()$add_hyperlink(x = df, target = target, cols = "hLink2")
+
+  wb$add_worksheet()$add_data(x = df)$add_hyperlink(dims = dims_hlink2, target = target)
 
   class(df$hLink) <- c(class(df$hLink), "hyperlink")
-  expect_warning(wb$add_worksheet()$add_hyperlink(x = df, target = target))
+  # no warning is thrown regarding the hyperlink in the cell, but the hyperlink is from the class, not the
+  expect_warning(wb$add_worksheet()$add_data(x = df)$add_hyperlink(target = target), "target not found")
 
+  # restore plain text
   class(df$hLink) <- c("character")
-  wb$add_worksheet()$add_hyperlink(x = df, target = target, cols = c("hLink", "hLink2"), as_table = TRUE)
 
-  wb$add_worksheet()$add_hyperlink(x = "noreply@openxlsx2", target = "mailto:noreply@openxlsx2.com", tooltip = "An Invalid E-Mail Adress")
+  # add hyperlink without target
+  wb$add_worksheet()$add_data(x = df)$add_hyperlink(dims = wb_dims(x = df, cols = "hLink"), col_names = FALSE)
 
-  wb$add_worksheet()$add_hyperlink(x = c("https://r-project.org", "https://cran.r-project.org"), dims = "B2:C2",
-                                   tooltip = c("The R-Project Homepage", "CRAN"))
+  # FIXME with a typo this happend:
+  # Error: `cols` must be an integer or an existing column name of `x`, not hLinkhlink2
+  wb$add_worksheet()$add_data_table(x = df)$add_hyperlink(dims = dims_hlink_2, target = target)
+
+  wb$add_worksheet()$add_data(x = "noreply@openxlsx2")$add_hyperlink(target = "mailto:noreply@openxlsx2.com", tooltip = "An Invalid E-Mail Adress")
+
+  wb$add_worksheet()$add_data(x = c("https://r-project.org", "https://cran.r-project.org"), dims = "B2:C2", col_names = FALSE)$
+    add_hyperlink(dims = "B2:C2", tooltip = c("The R-Project Homepage", "CRAN"), col_names = FALSE)
 
   exp <- c("<hyperlink ref=\"B2\" r:id=\"rId1\" tooltip=\"The R-Project Homepage\"/>",
            "<hyperlink ref=\"C2\" r:id=\"rId3\" tooltip=\"CRAN\"/>")
-  got <- wb$worksheets[[5]]$hyperlinks
+  got <- wb$worksheets[[6]]$hyperlinks
   expect_equal(exp, got)
 
-  wb$add_worksheet()$add_hyperlink(x = "hyperlinks.xlsx", target = "/Users/janmarvingarbuszus/Source/openxlsx-data/hyperlinks.xlsx", dims = "B2",
-                                   tooltip = "my testfile")
+  wb$add_worksheet()$add_data(x = "hyperlinks.xlsx", dims = "B2")$
+    add_hyperlink(dims = "B2", target = "/Users/janmarvingarbuszus/Source/openxlsx-data/hyperlinks.xlsx", tooltip = "my testfile", col_names = FALSE)
 
   exp <- "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"/Users/janmarvingarbuszus/Source/openxlsx-data/hyperlinks.xlsx\" TargetMode=\"External\"/>"
-  got <- wb$worksheets_rels[[6]]
+  got <- wb$worksheets_rels[[7]]
   expect_equal(exp, got)
 
-  wb$add_worksheet()$add_hyperlink(x = "'Sheet 1'!C5", target = "'Sheet 1'!C5", dims = "B2",
-                                   tooltip = "An internal reference", is_external = FALSE)$
-    add_hyperlink(x = "'Sheet 1'!C5", dims = "B4",
+  wb$add_worksheet()$add_data(x = "'Sheet 1'!C5", dims = "B2")$
+    add_hyperlink(target = "'Sheet 1'!C5", dims = "B2", col_names = FALSE,
+                  tooltip = "An internal reference", is_external = FALSE)$
+    add_data(x = "'Sheet 1'!C5", dims = "B4")$
+    add_hyperlink(dims = "B4", col_names = FALSE,
                   tooltip = "An internal reference", is_external = FALSE)
 
 })

@@ -431,8 +431,8 @@ test_that("wb_add_formula() is a wrapper", {
 })
 
 test_that("wb_add_hyperlink() is a wrapper", {
-  wb <- wb_workbook()$add_worksheet(1)
-  expect_wrapper("add_hyperlink", wb = wb, params = list(sheet = 1, x = "http://github.com/JanMarvin/openxlsx2"))
+  wb <- wb_workbook()$add_worksheet(1)$add_data(x = "http://github.com/JanMarvin/openxlsx2")
+  expect_wrapper("add_hyperlink", wb = wb, params = list(sheet = 1, col_names = FALSE))
 })
 
 test_that("wb_update_table() is a wrapper", {

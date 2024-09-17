@@ -2435,195 +2435,159 @@ wbWorkbook <- R6::R6Class(
     add_hyperlink = function(
       sheet       = current_sheet(),
       dims        = "A1",
-      x,
       target      = NULL,
       is_external = TRUE,
-      cols        = NULL,
-      col_names   = TRUE,
       tooltip     = NULL,
-      as_table    = FALSE,
-      ...
+      col_names   = TRUE
     ) {
 
       sheet <- self$validate_sheet(sheet)
 
-      # character vectors have no column name
-      if (is.character(x)) {
-        col_names <- FALSE
-      }
+      if (!grepl(":", dims)) col_names <- FALSE
 
-      # if dims is something other than a single cell, extend it from the top left corner
-      if (!grepl(":", dims)) {
-        dims <- wb_dims(x = x, from_dims = dims, col_names = col_names)
-      } # else assume that it is correct?
-
-      if (!is.data.frame(x) && !is.matrix(x)) {
-        cols <- colnames(dims_to_dataframe(dims))
-      }
+      x <- wb_to_df(self, sheet = sheet, dims = dims, col_names = col_names)
+      nams <- names(x)
 
       if (!is.null(target) && is.null(names(target))) {
-        names(target) <- cols
+        names(target) <- nams
       }
 
       if (!is.null(tooltip) && is.null(names(tooltip))) {
-        names(tooltip) <- cols
+        names(tooltip) <- nams
       }
 
-      if (any(is_hyperlink <- sapply(x, inherits, what = "hyperlink"))) {
-        warning("found class hyperlink, this interferes with `wb_add_hyperlink()`")
-        for (nam in names(is_hyperlink[is_hyperlink])) class(x[[nam]]) <- c("charaacter")
+      rel_ids <- NULL
+      if (length(self$worksheets_rels[[sheet]])) {
+        relships <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        rel_ids  <- as.integer(gsub("\\D+", "", relships$Id))
       }
 
-      if (as_table) {
-        self$add_data_table(sheet = sheet, x = x, col_names = col_names, dims = dims, ...)
-      } else {
-        self$add_data(sheet = sheet, x = x, col_names = col_names, dims = dims, ...)
+      max_id <- max(rel_ids, 0)
+      if (!is.null(nams) && any(!nams %in% names(x)))
+        stop("some selected columns are not part of `dims`")
+
+      if (!is.null(target) && !any(names(target) %in% nams)) {
+        warning("target not found in selected `dims`")
+        return(invisible(self))
       }
 
-      x <- wb_data(self, sheet = sheet, dims = dims, col_names = col_names)
-      x_dims  <- attr(x, "dims")
-      x_sheet <- attr(x, "sheet")
-
-      if (!is.data.frame(x)) {
-        x <- data.frame(x = unclass(x), drop = FALSE)
-        attr(x, "dims") <- x_dims
-        attr(x, "sheet") <- x_sheet
+      if (!is.null(tooltip) && !any(names(tooltip) %in% nams)) {
+        warning("tooltip not found in selected `dims`")
+        return(invisible(self))
       }
 
-      if (is.data.frame(x)) {
+      for (nam in nams) {
 
-        rel_ids <- NULL
-        if (length(self$worksheets_rels[[sheet]])) {
-          relships <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-          rel_ids  <- as.integer(gsub("\\D+", "", relships$Id))
+        ddims <- dims_to_dataframe(dims, fill = TRUE)
+        names(ddims) <- nams
+        # the first row is removed, because it is used only
+        # to identify the column, if a target/tooltip is named
+        if (col_names) ddims <- ddims[-1, , drop = FALSE]
+
+        if (!is.null(tooltip)) {
+          if (is.null(names(tooltip))) {
+            tooltip_i <- tooltip
+          } else if (nam %in% names(tooltip)) {
+            tooltip_i <- tooltip[[nam]]
+          } else { # pushing our luck
+            tooltip_i <- tooltip[[max_id]]
+          }
+        } else {
+          tooltip_i <- NULL
         }
 
-        max_id       <- max(rel_ids, 0)
-        if (!is.null(cols) && any(!cols %in% names(x)))
-          stop("some selected columns are not part of `x`")
+        if (is_external) {
 
-        nams <- cols
-
-        for (nam in nams) {
-
-          ddims <- dims_to_dataframe(dims, fill = TRUE)
-
-          # check if x fits in dims
-          if (!all(dim(ddims) %in% dim(x))) {
-            if (!is.null(col_names) && !is.logical(col_names)) col_names <- TRUE
-            if (grepl(":", dims)) dims <- strsplit(dims, ":")[[1]][1]
-            dims_i  <- wb_dims(x = x, from_dims = dims, cols = nam, col_names = col_names)
-            ddims <- dims_to_dataframe(dims_i, fill = TRUE)
-            names(ddims) <- nam
-          } else {
-            dims_i <- dims
-          }
-
-          if (!is.null(tooltip)) {
-            if (is.null(names(tooltip))) {
-              tooltip_i <- tooltip
-            } else if (nam %in% names(tooltip)) {
-              tooltip_i <- tooltip[[nam]]
-            } else { # pushing our luck
-              tooltip_i <- tooltip[[max_id]]
+          Target     <- x[[nam]]
+          if (!is.null(target)) { # apply target from named vector
+            if (is.null(names(target))) {
+              Target <- target
+            } else if (nam %in% names(target)) {
+              Target <- target[[nam]]
             }
-          } else {
-            tooltip_i <- NULL
           }
+          max_id_seq <- seq.int(from = max_id + 1L, length.out = length(Target))
+          Id         <- paste0("rId", max_id_seq)
+          TargetMode <- ifelse(is_external, "External", "Internal") # no longer reached
 
-          if (is_external) {
-
-            Target     <- x[[nam]]
-            if (!is.null(target)) { # apply target from named vector
-              if (is.null(names(target))) {
-                Target <- target
-              } else if (nam %in% names(target)) {
-                Target <- target[[nam]]
-              }
-            }
-            max_id_seq <- seq.int(from = max_id + 1L, length.out = length(Target))
-            Id         <- paste0("rId", max_id_seq)
-            TargetMode <- ifelse(is_external, "External", "Internal") # no longer reached
-
-            # display <- target
-            df <- data.frame(
-              Id = Id,
-              Type = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
-              Target = Target,
-              TargetMode = TargetMode,
-              stringsAsFactors = FALSE
-            )
-
-            new_relship <- df_to_xml("Relationship", df)
-
-            self$worksheets_rels[[sheet]] <- append(
-              self$worksheets_rels[[sheet]],
-              new_relship
-            )
-
-            df <- data.frame(
-              ref = unlist(unname(ddims[[nam]])),
-              `r:id` = Id,
-              tooltip = as_xml_attr(tooltip_i),
-              stringsAsFactors = FALSE,
-              check.names = FALSE
-            )
-
-            max_id <- max(max_id_seq, 0) + 1L
-
-          } else { # a cell reference within the workbook
-
-            if (!is.null(target)) {
-              Location <- unname(target[[nam]])
-              Display  <- unname(x[[nam]])
-            } else {
-              Location <- unname(x[[nam]])
-              Display  <- as_xml_attr(NULL)
-            }
-
-            df <- data.frame(
-              ref = unlist(unname(ddims[[nam]])),
-              location = Location,
-              display = Display,
-              tooltip = as_xml_attr(tooltip_i),
-              stringsAsFactors = FALSE,
-              check.names = FALSE
-            )
-
-          }
-
-          new_hyperlink <- df_to_xml("hyperlink", df)
-
-          self$worksheets[[sheet]]$hyperlinks <- append(
-            unlist(self$worksheets[[sheet]]$hyperlinks),
-            new_hyperlink
+          # display <- target
+          df <- data.frame(
+            Id = Id,
+            Type = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+            Target = Target,
+            TargetMode = TargetMode,
+            stringsAsFactors = FALSE
           )
 
-          # get hyperlink color from template
-          if (is.null(self$theme)) {
-            has_hlink <- 11
-          } else {
-            clrs <- xml_node(self$theme, "a:theme", "a:themeElements", "a:clrScheme")
-            has_hlink <- which(xml_node_name(clrs, "a:clrScheme") == "a:hlink")
-          }
+          new_relship <- df_to_xml("Relationship", df)
 
-          if (has_hlink) {
-            hyperlink_col <- wb_color(theme = has_hlink - 1L)
-          } else {
-            hyperlink_col <- wb_color(hex = "FF0000FF")
-          }
-
-          self$add_font(
-            sheet     = sheet,
-            dims      = dims_i,
-            color     = hyperlink_col,
-            name      = self$get_base_font()$name$val,
-            size      = self$get_base_font()$size$val,
-            underline = "single"
+          self$worksheets_rels[[sheet]] <- append(
+            self$worksheets_rels[[sheet]],
+            new_relship
           )
+
+          df <- data.frame(
+            ref = unlist(unname(ddims[[nam]])),
+            `r:id` = Id,
+            tooltip = as_xml_attr(tooltip_i),
+            stringsAsFactors = FALSE,
+            check.names = FALSE
+          )
+
+          max_id <- max(max_id_seq, 0) + 1L
+
+        } else { # a cell reference within the workbook
+
+          if (!is.null(target)) {
+            Location <- unname(target[[nam]])
+            Display  <- unname(x[[nam]])
+          } else {
+            Location <- unname(x[[nam]])
+            Display  <- as_xml_attr(NULL)
+          }
+
+          df <- data.frame(
+            ref = unlist(unname(ddims[[nam]])),
+            location = Location,
+            display = Display,
+            tooltip = as_xml_attr(tooltip_i),
+            stringsAsFactors = FALSE,
+            check.names = FALSE
+          )
+
         }
 
-      }
+        new_hyperlink <- df_to_xml("hyperlink", df)
+
+        self$worksheets[[sheet]]$hyperlinks <- append(
+          unlist(self$worksheets[[sheet]]$hyperlinks),
+          new_hyperlink
+        )
+
+        # get hyperlink color from template
+        if (is.null(self$theme)) {
+          has_hlink <- 11
+        } else {
+          clrs <- xml_node(self$theme, "a:theme", "a:themeElements", "a:clrScheme")
+          has_hlink <- which(xml_node_name(clrs, "a:clrScheme") == "a:hlink")
+        }
+
+        if (has_hlink) {
+          hyperlink_col <- wb_color(theme = has_hlink - 1L)
+        } else {
+          hyperlink_col <- wb_color(hex = "FF0000FF")
+        }
+
+        self$add_font(
+          sheet     = sheet,
+          dims      = ddims[[nam]],
+          color     = hyperlink_col,
+          name      = self$get_base_font()$name$val,
+          size      = self$get_base_font()$size$val,
+          underline = "single"
+        )
+
+      } # end nam loop
 
       if (length(self$worksheets_rels[[sheet]])) {
         relships <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))

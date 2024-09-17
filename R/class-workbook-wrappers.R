@@ -750,14 +750,10 @@ wb_add_formula <- function(
 #' @param wb a workbook
 #' @param sheet a worksheet
 #' @param dims a worksheet dimension
-#' @param x an object to write
 #' @param target an optional target, if no target is specified, it is assumend that the object contains the reference
 #' @param is_external a logical indicating if the hyperlink is external (a url, a mail adress, external file) or internal (a reference to worksheet cells)
-#' @param cols columns to be used as hyperlink reference
 #' @param col_names wheather or not the object contains column names
 #' @param tooltip an optional description for a variable
-#' @param as_table logical if the data is written as table
-#' @param ... optional arguments used by [wb_add_data()] or [wb_add_data_table()]
 #' @export
 #' @family workbook wrappers
 #' @family worksheet content functions
@@ -765,14 +761,10 @@ wb_add_hyperlink <- function(
     wb,
     sheet       = current_sheet(),
     dims        = "A1",
-    x,
     target      = NULL,
     is_external = TRUE,
-    cols        = NULL,
-    col_names   = TRUE,
     tooltip     = NULL,
-    as_table    = FALSE,
-    ...
+    col_names   = TRUE
   ) {
 
   assert_workbook(wb)
@@ -780,14 +772,10 @@ wb_add_hyperlink <- function(
   wb$clone()$add_hyperlink(
     sheet       = sheet,
     dims        = dims,
-    x           = x,
     target      = target,
     is_external = is_external,
-    cols        = cols,
-    col_names   = col_names,
     tooltip     = tooltip,
-    as_table    = as_table,
-    ...         = ...
+    col_names   = col_names
   )
 }
 

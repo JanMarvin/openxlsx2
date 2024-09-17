@@ -8,14 +8,10 @@ wb_add_hyperlink(
   wb,
   sheet = current_sheet(),
   dims = "A1",
-  x,
   target = NULL,
   is_external = TRUE,
-  cols = NULL,
-  col_names = TRUE,
   tooltip = NULL,
-  as_table = FALSE,
-  ...
+  col_names = TRUE
 )
 }
 \arguments{
@@ -25,21 +21,13 @@ wb_add_hyperlink(
 
 \item{dims}{a worksheet dimension}
 
-\item{x}{an object to write}
-
 \item{target}{an optional target, if no target is specified, it is assumend that the object contains the reference}
 
 \item{is_external}{a logical indicating if the hyperlink is external (a url, a mail adress, external file) or internal (a reference to worksheet cells)}
 
-\item{cols}{columns to be used as hyperlink reference}
-
-\item{col_names}{wheather or not the object contains column names}
-
 \item{tooltip}{an optional description for a variable}
 
-\item{as_table}{logical if the data is written as table}
-
-\item{...}{optional arguments used by \code{\link[=wb_add_data]{wb_add_data()}} or \code{\link[=wb_add_data_table]{wb_add_data_table()}}}
+\item{col_names}{wheather or not the object contains column names}
 }
 \description{
 Helper to add hyperlinks into a worksheet. This can apply to data
