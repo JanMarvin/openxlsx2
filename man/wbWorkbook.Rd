@@ -2091,6 +2091,7 @@ Insert an image into a sheet
   col_offset = 0,
   units = "in",
   dpi = 300,
+  address = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -2113,6 +2114,8 @@ Insert an image into a sheet
 \item{\code{units}}{units}
 
 \item{\code{dpi}}{dpi}
+
+\item{\code{address}}{address}
 
 \item{\code{...}}{additional arguments}
 }

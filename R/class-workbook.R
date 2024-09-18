@@ -5856,17 +5856,19 @@ wbWorkbook <- R6::R6Class(
     #' @param row_offset,col_offset offsets
     #' @param units units
     #' @param dpi dpi
+    #' @param address address
     #' @return The `wbWorkbook` object, invisibly
     add_image = function(
-      sheet = current_sheet(),
-      dims      = "A1",
+      sheet      = current_sheet(),
+      dims       = "A1",
       file,
-      width     = 6,
-      height    = 3,
+      width      = 6,
+      height     = 3,
       row_offset = 0,
       col_offset = 0,
-      units     = "in",
-      dpi       = 300,
+      units      = "in",
+      dpi        = 300,
+      address    = NULL,
       ...
     ) {
 
@@ -5930,10 +5932,15 @@ wbWorkbook <- R6::R6Class(
         imageNo <- 1L
       }
 
+      # TODO might want to clean this a bit more
+      if (is.null(address)) address_id <- ""
+
       if (length(self$drawings_rels) >= sheet_drawing && !all(self$drawings_rels[[sheet_drawing]] == "")) {
         next_id <- get_next_id(self$drawings_rels[[sheet_drawing]])
+        if (!is.null(address)) address_id <- get_next_id(self$drawings_rels[[sheet_drawing]], 2L)
       } else {
         next_id <- "rId1"
+        if (!is.null(address)) address_id <- "rId2"
       }
 
       pos <- '<xdr:pos x="0" y="0" />'
@@ -5942,7 +5949,7 @@ wbWorkbook <- R6::R6Class(
         "<xdr:absoluteAnchor>",
         pos,
         sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
-        genBasePic(imageNo, next_id),
+        genBasePic(imageNo, next_id, address_id),
         "<xdr:clientData/>",
         "</xdr:absoluteAnchor>"
       )
@@ -5981,6 +5988,18 @@ wbWorkbook <- R6::R6Class(
           file
         )
       )
+
+      if (!is.null(address)) {
+        relship <- sprintf(
+          '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>',
+          address_id,
+          address
+        )
+        self$drawings_rels[[sheet_drawing]] <- append(
+          self$drawings_rels[[sheet_drawing]],
+          relship
+        )
+      }
 
       invisible(self)
     },

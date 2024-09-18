@@ -2921,6 +2921,7 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 #' @param col_offset offset vector for one or two cell anchor within cell (column)
 #' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
 #' @param dpi Image resolution used for conversion between units.
+#' @param address An optional character string specifying an external URL, relative or absolute path to a file, or "mailto:" string (e.g. "mailto:example@@example.com") that will be opened when the image is clicked.
 #' @param ... additional arguments
 #' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_mschart()] [wb_add_plot()]
 #' @export
@@ -2945,6 +2946,7 @@ wb_add_image <- function(
   col_offset = 0,
   units      = "in",
   dpi        = 300,
+  address    = NULL,
   ...
 ) {
   assert_workbook(wb)
@@ -2958,6 +2960,7 @@ wb_add_image <- function(
     col_offset = col_offset,
     units      = units,
     dpi        = dpi,
+    address    = address,
     ...
   )
 }

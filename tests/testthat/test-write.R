@@ -1259,3 +1259,28 @@ test_that("skipping entirely blank cells works", {
   expect_equal(0, nrow(got2))
 
 })
+
+test_that("saving images with address works", {
+
+  tmp <- temp_xlsx()
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  url <- "https://en.wikipedia.org/wiki/Albert_Einstein"
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_image(dims = "A1:D4", file = img, address = url)
+
+  exp <- "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://en.wikipedia.org/wiki/Albert_Einstein\" TargetMode=\"External\"/>"
+  got <- wb$drawings_rels[[1]][2]
+  expect_equal(exp, got)
+
+  wb$save(tmp)
+  rm(wb)
+
+  wb <- wb_load(tmp)
+  wb$add_image(dims = "E1:H4", file = img, address = "https://de.wikipedia.org/wiki/Albert_Einstein")
+
+  exp <- "<Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://de.wikipedia.org/wiki/Albert_Einstein\" TargetMode=\"External\"/>"
+  got <- wb$drawings_rels[[1]][4]
+  expect_equal(exp, got)
+
+})

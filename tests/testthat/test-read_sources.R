@@ -422,7 +422,7 @@ test_that("show_hyperlink works", {
   # everything identical in column A
   expect_equal(not_hl$A, has_hl$A)
 
-  # column B: mail gets mailto:
+  # column B: mail gets "mailto:":
   exp <- "noreply@openxlsx2.com"
   got <- not_hl$B[5]
   expect_equal(exp, got)

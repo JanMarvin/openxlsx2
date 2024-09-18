@@ -596,11 +596,11 @@ to_string <- function(x) {
 }
 
 # get the next free relationship id
-get_next_id <- function(x) {
+get_next_id <- function(x, increase = 1L) {
   if (length(x)) {
     rlshp <- rbindlist(xml_attr(x, "Relationship"))
     rlshp$id <- as.integer(gsub("\\D+", "", rlshp$Id))
-    next_id <- paste0("rId", max(rlshp$id) + 1L)
+    next_id <- paste0("rId", max(rlshp$id) + increase)
   } else {
     next_id <- "rId1"
   }

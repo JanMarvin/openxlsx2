@@ -8,6 +8,8 @@
 
 * A new wrapper function `wb_add_hyperlink()` extends the capabilities of writing hyperlinks to shared hyperlinks. Shared hyperlinks bring along internal changes that are noted below. [1137](https://github.com/JanMarvin/openxlsx2/pull/1137)
 
+* Add `address` field to `wb_add_image()`. This can be used to add a url or mailto address to an image ([1138](https://github.com/JanMarvin/openxlsx2/pull/1138), conversion from a PR by @jistria for `openxlsx`)
+
 ## Fixes
 
 * The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell `dims` was provided for an `x` that was larger than a single cell in `wb_add_formula()`. [1131](https://github.com/JanMarvin/openxlsx2/pull/1131)
@@ -100,7 +102,7 @@
 
 ## New features
 
-* Helper to read sensitivity labels from files and apply them to workbooks. 
+* Helper to read sensitivity labels from files and apply them to workbooks.
 [983](https://github.com/JanMarvin/openxlsx2/pull/983)
 
 * It is now possible to pass non consecutive dims like `"A1:B1,C2:D2"` to various style helpers like `wb_add_fill()`. In addition it is now possible to write a data set into a predefined dims region using `enforce = TRUE`. This handles either `","` or `";"` as cell separator. [993](https://github.com/JanMarvin/openxlsx2/pull/993)
