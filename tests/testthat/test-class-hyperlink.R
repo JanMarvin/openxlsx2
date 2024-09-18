@@ -67,6 +67,7 @@ test_that("hyperlinks work", {
   class(df$hLink) <- c(class(df$hLink), "hyperlink")
   # no warning is thrown regarding the hyperlink in the cell, but the hyperlink is from the class, not the
   expect_warning(wb$add_worksheet()$add_data(x = df)$add_hyperlink(target = target), "target not found")
+  expect_warning(wb$add_hyperlink(tooltip = target), "tooltip not found")
 
   exp <- "=HYPERLINK(\"https://r-project.org\")"
   got <- wb$worksheets[[2]]$sheet_data$cc$f[9]
@@ -97,12 +98,16 @@ test_that("hyperlinks work", {
     add_data(x = c("https://r-project.org", "https://cran.r-project.org"), dims = "B2:C2")$
     add_hyperlink(dims = "B2:C2", tooltip = c("The R-Project Homepage", "CRAN"))$
     add_data(x = c("https://r-project.org", "https://cran.r-project.org"), dims = "B4:B5")$
-    add_hyperlink(dims = "B4:B5", tooltip = c("The R-Project Homepage", "CRAN"))
+    add_hyperlink(dims = "B4:B5", tooltip = c("The R-Project Homepage", "CRAN"))$
+    add_data(x = c("The R-Project Homepage", "CRAN"), dims = "B7:B8")$
+    add_hyperlink(dims = "B7:B8", target = c("https://r-project.org", "https://cran.r-project.org"))
 
   exp <- c("<hyperlink ref=\"B2\" r:id=\"rId1\" tooltip=\"The R-Project Homepage\"/>",
            "<hyperlink ref=\"C2\" r:id=\"rId3\" tooltip=\"CRAN\"/>",
            "<hyperlink ref=\"B4\" r:id=\"rId4\" tooltip=\"The R-Project Homepage\"/>",
-           "<hyperlink ref=\"B5\" r:id=\"rId5\" tooltip=\"CRAN\"/>")
+           "<hyperlink ref=\"B5\" r:id=\"rId5\" tooltip=\"CRAN\"/>",
+           "<hyperlink ref=\"B7\" r:id=\"rId6\"/>",
+           "<hyperlink ref=\"B8\" r:id=\"rId7\"/>")
   got <- wb$worksheets[[6]]$hyperlinks
   expect_equal(exp, got)
 
@@ -126,5 +131,9 @@ test_that("hyperlinks work", {
   )
   got <- wb$worksheets[[8]]$hyperlinks
   expect_equal(exp, got)
+
+  wb <- wb_workbook(theme = "LibreOffice")$add_worksheet()$
+    add_data(x = "https://cran.r-project.org/package=openxlsx2")
+  expect_silent(wb$add_hyperlink())
 
 })

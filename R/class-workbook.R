@@ -2485,14 +2485,8 @@ wbWorkbook <- R6::R6Class(
         # to identify the column, if a target/tooltip is named
         if (col_names) ddims <- ddims[-1, , drop = FALSE]
 
-        if (!is.null(tooltip)) {
-          if (is.null(names(tooltip))) {
-            tooltip_i <- tooltip
-          } else if (nam %in% names(tooltip)) {
-            tooltip_i <- tooltip[[nam]]
-          } else { # pushing our luck
-            tooltip_i <- tooltip[[max_id]]
-          }
+        if (!is.null(tooltip) && nam %in% names(tooltip)) {
+          tooltip_i <- tooltip[[nam]]
         } else {
           tooltip_i <- NULL
         }
@@ -2500,16 +2494,12 @@ wbWorkbook <- R6::R6Class(
         if (is_external) {
 
           Target     <- x[[nam]]
-          if (!is.null(target)) { # apply target from named vector
-            if (is.null(names(target))) {
-              Target <- target
-            } else if (nam %in% names(target)) {
-              Target <- target[[nam]]
-            }
+          if (!is.null(target) && nam %in% names(target)) {
+            Target <- target[[nam]]
           }
           max_id_seq <- seq.int(from = max_id + 1L, length.out = length(Target))
           Id         <- paste0("rId", max_id_seq)
-          TargetMode <- ifelse(is_external, "External", "Internal") # no longer reached
+          TargetMode <- "External"
 
           # display <- target
           df <- data.frame(

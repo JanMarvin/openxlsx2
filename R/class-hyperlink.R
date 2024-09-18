@@ -84,8 +84,9 @@ wb_hyperlink <- function() {
 #' @param sheet a sheet index
 #' @noRd
 wb_to_hyperlink <- function(wb, sheet = 1) {
-    xml      <- wb$worksheets[[sheet]]$hyperlinks
-    relship <- wb$worksheets_rels[[sheet]]
+
+  xml     <- wb$worksheets[[sheet]]$hyperlinks
+  relship <- wb$worksheets_rels[[sheet]]
 
   # prepare relships data frame
   relships <- rbindlist(xml_attr(relship, "Relationship"))
