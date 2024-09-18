@@ -68,6 +68,7 @@ wbChartSheet <- R6::R6Class(
       self$relships    <- list(
         comments         = integer(),
         drawing          = integer(),
+        hyperlink        = integer(),
         pivotTable       = integer(),
         slicer           = integer(),
         table            = integer(),

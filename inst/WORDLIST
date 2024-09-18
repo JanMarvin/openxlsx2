@@ -253,6 +253,7 @@ tablename
 textLength
 th
 timelineCaches
+tooltip
 totalLabel
 totalRow
 totalsRowCount

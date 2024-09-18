@@ -372,7 +372,7 @@ test_that("hyperlinks work", {
   dir.create(temp_uzip)
   unzip(tmp, exdir = temp_uzip)
 
-  exp <- "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1h\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://www.github.com/JanMarvin/openxlsx2\" TargetMode=\"External\"/></Relationships>"
+  exp <- "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://www.github.com/JanMarvin/openxlsx2\" TargetMode=\"External\"/></Relationships>"
   got <- read_xml(paste0(temp_uzip, "/xl/worksheets/_rels/sheet1.xml.rels"), pointer = FALSE)
   expect_equal(exp, got)
 

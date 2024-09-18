@@ -120,7 +120,7 @@ test_that("copy_cells works with hyperlinks and empty cells in transpose", {
   wb_in$copy_cells(data = dat, dims = "D1", transpose = TRUE)
 
   exp <- c("A1", "A3", "D1", "F1")
-  got <- vapply(wb_in$worksheets[[1]]$hyperlinks, function(x) x$ref, "")
+  got <- rbindlist(xml_attr(wb_in$worksheets[[1]]$hyperlinks, "hyperlink"))$ref
   expect_equal(exp, got)
 
   cc <- wb_in$worksheets[[1]]$sheet_data$cc

@@ -2419,6 +2419,176 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description Add hyperlink
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param target target
+    #' @param tooltip tooltip
+    #' @param is_external is_external
+    #' @param col_names col_names
+    #' @return The `wbWorkbook` object
+    add_hyperlink = function(
+      sheet       = current_sheet(),
+      dims        = "A1",
+      target      = NULL,
+      tooltip     = NULL,
+      is_external = TRUE,
+      col_names   = FALSE
+    ) {
+
+      sheet <- self$validate_sheet(sheet)
+
+      if (!grepl(":", dims)) col_names <- FALSE
+
+      x <- wb_to_df(self, sheet = sheet, dims = dims, col_names = col_names)
+      nams <- names(x)
+
+      if (!is.null(target) && is.null(names(target))) {
+        if (nrow(x) > ncol(x)) {
+          target <- as.data.frame(as.matrix(target, nrow = nrow(x), ncol = ncol(x)))
+        }
+        names(target) <- nams
+      }
+
+      if (!is.null(tooltip) && is.null(names(tooltip))) {
+        if (nrow(x) > ncol(x)) {
+          tooltip <- as.data.frame(as.matrix(tooltip, nrow = nrow(x), ncol = ncol(x)))
+        }
+        names(tooltip) <- nams
+      }
+
+      rel_ids <- NULL
+      if (length(self$worksheets_rels[[sheet]])) {
+        relships <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        rel_ids  <- as.integer(gsub("\\D+", "", relships$Id))
+      }
+
+      max_id <- max(rel_ids, 0)
+      if (!is.null(nams) && any(!nams %in% names(x)))
+        stop("some selected columns are not part of `dims`")
+
+      if (!is.null(target) && !any(names(target) %in% nams)) {
+        warning("target not found in selected `dims`")
+        return(invisible(self))
+      }
+
+      if (!is.null(tooltip) && !any(names(tooltip) %in% nams)) {
+        warning("tooltip not found in selected `dims`")
+        return(invisible(self))
+      }
+
+      for (nam in nams) {
+
+        ddims <- dims_to_dataframe(dims, fill = TRUE)
+        names(ddims) <- nams
+        # the first row is removed, because it is used only
+        # to identify the column, if a target/tooltip is named
+        if (col_names) ddims <- ddims[-1, , drop = FALSE]
+
+        if (!is.null(tooltip) && nam %in% names(tooltip)) {
+          tooltip_i <- tooltip[[nam]]
+        } else {
+          tooltip_i <- NULL
+        }
+
+        if (is_external) {
+
+          Target     <- x[[nam]]
+          if (!is.null(target) && nam %in% names(target)) {
+            Target <- target[[nam]]
+          }
+          max_id_seq <- seq.int(from = max_id + 1L, length.out = length(Target))
+          Id         <- paste0("rId", max_id_seq)
+          TargetMode <- "External"
+
+          # display <- target
+          df <- data.frame(
+            Id = Id,
+            Type = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+            Target = Target,
+            TargetMode = TargetMode,
+            stringsAsFactors = FALSE
+          )
+
+          new_relship <- df_to_xml("Relationship", df)
+
+          self$worksheets_rels[[sheet]] <- append(
+            self$worksheets_rels[[sheet]],
+            new_relship
+          )
+
+          df <- data.frame(
+            ref = unlist(unname(ddims[[nam]])),
+            `r:id` = Id,
+            tooltip = as_xml_attr(tooltip_i),
+            stringsAsFactors = FALSE,
+            check.names = FALSE
+          )
+
+          max_id <- max(max_id_seq, 0) + 1L
+
+        } else { # a cell reference within the workbook
+
+          if (!is.null(target)) {
+            Location <- unname(target[[nam]])
+            Display  <- unname(x[[nam]])
+          } else {
+            Location <- unname(x[[nam]])
+            Display  <- as_xml_attr(NULL)
+          }
+
+          df <- data.frame(
+            ref = unlist(unname(ddims[[nam]])),
+            location = Location,
+            display = Display,
+            tooltip = as_xml_attr(tooltip_i),
+            stringsAsFactors = FALSE,
+            check.names = FALSE
+          )
+
+        }
+
+        new_hyperlink <- df_to_xml("hyperlink", df)
+
+        self$worksheets[[sheet]]$hyperlinks <- append(
+          unlist(self$worksheets[[sheet]]$hyperlinks),
+          new_hyperlink
+        )
+
+        # get hyperlink color from template
+        if (is.null(self$theme)) {
+          has_hlink <- 11
+        } else {
+          clrs <- xml_node(self$theme, "a:theme", "a:themeElements", "a:clrScheme")
+          has_hlink <- which(xml_node_name(clrs, "a:clrScheme") == "a:hlink")
+        }
+
+        if (has_hlink) {
+          hyperlink_col <- wb_color(theme = has_hlink - 1L)
+        } else {
+          hyperlink_col <- wb_color(hex = "FF0000FF")
+        }
+
+        self$add_font(
+          sheet     = sheet,
+          dims      = ddims[[nam]],
+          color     = hyperlink_col,
+          name      = self$get_base_font()$name$val,
+          size      = self$get_base_font()$size$val,
+          underline = "single"
+        )
+
+      } # end nam loop
+
+      if (length(self$worksheets_rels[[sheet]])) {
+        relships <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
+        rel_ids  <- as.integer(gsub("\\D+", "", relships$Id[basename(relships$Type) == "hyperlink"]))
+        self$worksheets[[sheet]]$relships$hyperlink <- rel_ids
+      }
+
+      invisible(self)
+    },
+
     #' @description add style
     #' @param style style
     #' @param style_name style_name
@@ -3716,30 +3886,47 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$sheet_data$cc <- cc
 
       ### add hyperlinks ---
-      hyperlink_in_wb <- vapply(
-        self$worksheets[[from_sheet]]$hyperlinks,
-        function(x) x$ref,
-        NA_character_
-      )
+      if (length(self$worksheets[[from_sheet]]$relships$hyperlink)) {
 
-      if (any(sel <- hyperlink_in_wb %in% from_dims)) {
+        ws_hyls <- self$worksheets[[from_sheet]]$hyperlinks
+        ws_rels <- self$worksheets_rels[[self$worksheets[[from_sheet]]$relships$hyperlink]]
 
-        has_hl <- apply(from_dims_df, 2, function(x) x %in% hyperlink_in_wb)
+        relships <- rbindlist(xml_attr(ws_rels, "Relationship"))
+        relships <- relships[basename(relships$Type) == "hyperlink", ]
 
-        old <- from_dims_df[has_hl]
-        new <- to_dims_df_f[has_hl]
+        # prepare hyperlinks data frame
+        hlinks <- rbindlist(xml_attr(ws_hyls, "hyperlink"))
 
-        for (hls in match(hyperlink_in_wb, old)) {
+        # merge both
+        hl_df <- merge(hlinks, relships, by.x = "r:id", by.y = "Id", all.x = TRUE, all.y = FALSE)
 
-          # prepare the updated link
-          hl <- self$worksheets[[from_sheet]]$hyperlinks[[hls]]$clone()
-          hl$ref <- new[which(old == hl$ref)]
+        hyperlink_in_wb <- hlinks$ref
 
-          # assign it
-          self$worksheets[[sheet]]$hyperlinks <- append(
-            self$worksheets[[sheet]]$hyperlinks,
-            hl
-          )
+        if (any(sel <- hyperlink_in_wb %in% from_dims)) {
+
+          has_hl <- apply(from_dims_df, 2, function(x) x %in% hyperlink_in_wb)
+
+          # are these always the same size?
+          old <- from_dims_df[has_hl]
+          new <- to_dims_df_f[has_hl]
+
+          for (hls in match(hyperlink_in_wb, old)) {
+
+            # prepare the updated link
+            need_clone <- hyperlink_in_wb[hls]
+
+            hl_df <- hlinks[hlinks$ref == need_clone, ]
+            # this assumes that old and new are the same size
+            hl_df$ref <- new[hls]
+            hl <- df_to_xml("hyperlink", hl_df)
+
+            # assign it
+            self$worksheets[[sheet]]$hyperlinks <- append(
+              self$worksheets[[sheet]]$hyperlinks,
+              hl
+            )
+          }
+
         }
 
       }
@@ -9337,17 +9524,8 @@ wbWorkbook <- R6::R6Class(
           write_xmlPtr(doc = sheet_xml, fl = ws_file)
 
           ## write worksheet rels
-          if (length(self$worksheets_rels[[i]]) || hasHL) {
+          if (length(self$worksheets_rels[[i]])) {
             ws_rels <- self$worksheets_rels[[i]]
-            if (hasHL) {
-              h_inds <- stri_join(seq_along(self$worksheets[[i]]$hyperlinks), "h")
-              ws_rels <-
-                c(ws_rels, unlist(
-                  lapply(seq_along(h_inds), function(j) {
-                    self$worksheets[[i]]$hyperlinks[[j]]$to_target_xml(h_inds[j])
-                  })
-                ))
-            }
 
             ## Check if any tables were deleted - remove these from rels
             # TODO a relship manager should take care of this
