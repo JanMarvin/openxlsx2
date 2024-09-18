@@ -52,6 +52,7 @@
 #' wb$add_formula(x = x, dims = "A8")
 #' # if (interactive()) wb$open()
 #'
+#' @seealso [wb_add_hyperlink()]
 #' @export
 create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) {
   if (missing(sheet)) {

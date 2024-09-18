@@ -480,10 +480,7 @@ wb_to_df <- function(
 
     if (length(wb$worksheets[[sheet]]$hyperlinks)) {
 
-      hls <- xml_to_hyperlink(
-        wb$worksheets[[sheet]]$hyperlinks,
-        wb$worksheets_rels[[sheet]]
-      )
+      hls <- wb_to_hyperlink(wb, sheet)
       hyprlnks <- as.data.frame(
         do.call("rbind",
                 lapply(hls, function(hl) {

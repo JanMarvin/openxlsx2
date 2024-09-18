@@ -31,11 +31,11 @@ wbHyperlink <- R6::R6Class(
     #' @param display display
     #' @param is_external is_external
     #' @return a `wbHyperlink` object
-    initialize = function(ref, target = NULL, location, display = NULL, is_external = TRUE) {
+    initialize = function(ref, target, location, display = NULL, is_external = TRUE) {
       self$ref         <- ref
-      if (!is.null(target) && !is.na(target) && target != "")    self$target      <- target
+      self$target      <- target
       self$location    <- location
-      if (!is.null(display) && !is.na(display) && display != "") self$display     <- display
+      self$display     <- display
       self$is_external <- is_external
 
       invisible(self)
@@ -77,15 +77,15 @@ wb_hyperlink <- function() {
   wbHyperlink$new(ref = character(), target = character(), location = character())
 }
 
-
-xml_to_hyperlink <- function(xml, relship) {
-  # xml_to_hyperlink() is used once in wb_load()
-
-  # TODO allow wbHyperlink$new(xml = xml)
-
-  # xml <- c('<hyperlink ref="A1" r:id="rId1" location="Authority"/>',
-  # '<hyperlink ref="B1" r:id="rId2"/>',
-  # '<hyperlink ref="A1" location="Sheet2!A1" display="Sheet2!A1"/>')
+#' Helper function to create `wbHyperlink` objects from a workbook
+#'
+#' This function is used only in wb_to_df(show_hyperlinks = TRUE) to construct ref, target and location
+#' @param wb a workbook
+#' @param sheet a sheet index
+#' @noRd
+wb_to_hyperlink <- function(wb, sheet = 1) {
+    xml      <- wb$worksheets[[sheet]]$hyperlinks
+    relship <- wb$worksheets_rels[[sheet]]
 
   # prepare relships data frame
   relships <- rbindlist(xml_attr(relship, "Relationship"))

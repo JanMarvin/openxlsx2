@@ -894,8 +894,8 @@ Add hyperlink
   sheet = current_sheet(),
   dims = "A1",
   target = NULL,
-  is_external = TRUE,
   tooltip = NULL,
+  is_external = TRUE,
   col_names = FALSE
 )}\if{html}{\out{</div>}}
 }
@@ -903,27 +903,17 @@ Add hyperlink
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sheet}}{a worksheet}
+\item{\code{sheet}}{sheet}
 
-\item{\code{dims}}{a worksheet dimension}
+\item{\code{dims}}{dims}
 
-\item{\code{target}}{an optional target, if no target is specified, it is assumed that the object contains the reference}
+\item{\code{target}}{target}
 
-\item{\code{is_external}}{a logical indicating if the hyperlink is external (a url, a mail address, external file) or internal (a reference to worksheet cells)}
+\item{\code{tooltip}}{tooltip}
 
-\item{\code{tooltip}}{an optional description for a variable}
+\item{\code{is_external}}{is_external}
 
-\item{\code{col_names}}{whether or not the object contains column names}
-
-\item{\code{wb}}{a workbook}
-
-\item{\code{x}}{an object to write}
-
-\item{\code{cols}}{columns to be used as hyperlink reference}
-
-\item{\code{as_table}}{logical if the data is written as table}
-
-\item{\code{...}}{optional arguments used by \code{\link[=wb_add_data]{wb_add_data()}} or \code{\link[=wb_add_data_table]{wb_add_data_table()}}}
+\item{\code{col_names}}{col_names}
 }
 \if{html}{\out{</div>}}
 }

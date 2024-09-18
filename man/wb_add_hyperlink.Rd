@@ -9,28 +9,39 @@ wb_add_hyperlink(
   sheet = current_sheet(),
   dims = "A1",
   target = NULL,
-  is_external = TRUE,
   tooltip = NULL,
+  is_external = TRUE,
   col_names = FALSE
 )
 }
 \arguments{
-\item{wb}{a workbook}
+\item{wb}{A Workbook object containing a worksheet.}
 
-\item{sheet}{a worksheet}
+\item{sheet}{The worksheet to write to. (either as index or name)}
 
-\item{dims}{a worksheet dimension}
+\item{dims}{Spreadsheet dimensions that will determine where the hyperlink reference spans: "A1", "A1:B2", "A:B"}
 
-\item{target}{an optional target, if no target is specified, it is assumed that the object contains the reference}
+\item{target}{An optional target, if no target is specified, it is assumed that the cell already contains a reference (the cell could be a url or a filename)}
 
-\item{is_external}{a logical indicating if the hyperlink is external (a url, a mail address, external file) or internal (a reference to worksheet cells)}
+\item{tooltip}{An optional description for a variable that will be visible when hovering over the link text in the spreadsheet}
 
-\item{tooltip}{an optional description for a variable}
+\item{is_external}{A logical indicating if the hyperlink is external (a url, a mail address, a file) or internal (a reference to worksheet cells)}
 
-\item{col_names}{whether or not the object contains column names}
+\item{col_names}{Whether or not the object contains column names. If yes the first column of the dimension will be ignored}
 }
 \description{
-Helper to add hyperlinks into a worksheet. This can apply to data
+Helper to add shared hyperlinks into a worksheet
+}
+\details{
+There are multiple ways to add hyperlinks into a worksheet. One way is to construct a formula with \code{\link[=create_hyperlink]{create_hyperlink()}} another is to assign a class \code{hyperlink} to a column of a data frame.
+Contrary to the previous method, shared hyperlinks are not cell formulas in the worksheet, but references in the worksheet relationship and hyperlinks in the worksheet xml structure.
+These shared hyperlinks can be reused and they are not visible to spreadsheet users as \code{HYPERLINK()} formulas.
+}
+\examples{
+wb <- wb_workbook()$add_worksheet()$
+  add_data(x = "openxlsx2 on CRAN")$
+  add_hyperlink(target = "https://cran.r-project.org/package=openxlsx2",
+                tooltip = "The canonical form to link to our CRAN page.")
 }
 \seealso{
 Other workbook wrappers: 

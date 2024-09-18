@@ -745,25 +745,35 @@ wb_add_formula <- function(
 
 #' wb_add_hyperlink
 #'
-#' Helper to add hyperlinks into a worksheet. This can apply to data
+#' Helper to add shared hyperlinks into a worksheet
 #'
-#' @param wb a workbook
-#' @param sheet a worksheet
-#' @param dims a worksheet dimension
-#' @param target an optional target, if no target is specified, it is assumed that the object contains the reference
-#' @param is_external a logical indicating if the hyperlink is external (a url, a mail address, external file) or internal (a reference to worksheet cells)
-#' @param col_names whether or not the object contains column names
-#' @param tooltip an optional description for a variable
+#' @details
+#' There are multiple ways to add hyperlinks into a worksheet. One way is to construct a formula with [create_hyperlink()] another is to assign a class `hyperlink` to a column of a data frame.
+#' Contrary to the previous method, shared hyperlinks are not cell formulas in the worksheet, but references in the worksheet relationship and hyperlinks in the worksheet xml structure.
+#' These shared hyperlinks can be reused and they are not visible to spreadsheet users as `HYPERLINK()` formulas.
+#'
+#' @param wb A Workbook object containing a worksheet.
+#' @param sheet The worksheet to write to. (either as index or name)
+#' @param dims Spreadsheet dimensions that will determine where the hyperlink reference spans: "A1", "A1:B2", "A:B"
+#' @param target An optional target, if no target is specified, it is assumed that the cell already contains a reference (the cell could be a url or a filename)
+#' @param tooltip An optional description for a variable that will be visible when hovering over the link text in the spreadsheet
+#' @param is_external A logical indicating if the hyperlink is external (a url, a mail address, a file) or internal (a reference to worksheet cells)
+#' @param col_names Whether or not the object contains column names. If yes the first column of the dimension will be ignored
 #' @export
 #' @family workbook wrappers
 #' @family worksheet content functions
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()$
+#'   add_data(x = "openxlsx2 on CRAN")$
+#'   add_hyperlink(target = "https://cran.r-project.org/package=openxlsx2",
+#'                 tooltip = "The canonical form to link to our CRAN page.")
 wb_add_hyperlink <- function(
     wb,
     sheet       = current_sheet(),
     dims        = "A1",
     target      = NULL,
-    is_external = TRUE,
     tooltip     = NULL,
+    is_external = TRUE,
     col_names   = FALSE
   ) {
 
@@ -773,8 +783,8 @@ wb_add_hyperlink <- function(
     sheet       = sheet,
     dims        = dims,
     target      = target,
-    is_external = is_external,
     tooltip     = tooltip,
+    is_external = is_external,
     col_names   = col_names
   )
 }

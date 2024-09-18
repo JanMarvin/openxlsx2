@@ -60,9 +60,17 @@ test_that("hyperlinks work", {
 
   wb$add_worksheet()$add_data(x = df)$add_hyperlink(dims = dims_hlink2, target = target, col_names = TRUE)
 
+  exp <- "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://wikipedia.org/wiki/A\" TargetMode=\"External\"/>"
+  got <- wb$worksheets_rels[[1]][1]
+  expect_equal(exp, got)
+
   class(df$hLink) <- c(class(df$hLink), "hyperlink")
   # no warning is thrown regarding the hyperlink in the cell, but the hyperlink is from the class, not the
   expect_warning(wb$add_worksheet()$add_data(x = df)$add_hyperlink(target = target), "target not found")
+
+  exp <- "=HYPERLINK(\"https://r-project.org\")"
+  got <- wb$worksheets[[2]]$sheet_data$cc$f[9]
+  expect_equal(exp, got)
 
   # restore plain text
   class(df$hLink) <- c("character")
@@ -70,11 +78,20 @@ test_that("hyperlinks work", {
   # add hyperlink without target
   wb$add_worksheet()$add_data(x = df)$add_hyperlink(dims = wb_dims(x = df, cols = "hLink"))
 
+  got <- "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://r-project.org\" TargetMode=\"External\"/>"
+  exp <- wb$worksheets_rels[[3]][2]
+  expect_equal(exp, got)
+
   # FIXME with a typo this happend:
   # Error: `cols` must be an integer or an existing column name of `x`, not hLinkhlink2
   wb$add_worksheet()$add_data_table(x = df)$add_hyperlink(dims = dims_hlink_2, target = target, col_names = TRUE)
+  expect_equal(41L, length(wb$worksheets_rels[[4]]))
 
   wb$add_worksheet()$add_data(x = "noreply@openxlsx2")$add_hyperlink(target = "mailto:noreply@openxlsx2.com", tooltip = "An Invalid E-Mail address")
+
+  exp <- "<hyperlink ref=\"A1\" r:id=\"rId1\" tooltip=\"An Invalid E-Mail address\"/>"
+  got <- wb$worksheets[[5]]$hyperlinks
+  expect_equal(exp, got)
 
   wb$add_worksheet()$
     add_data(x = c("https://r-project.org", "https://cran.r-project.org"), dims = "B2:C2")$
@@ -102,5 +119,12 @@ test_that("hyperlinks work", {
     add_data(x = "'Sheet 1'!C5", dims = "B4")$
     add_hyperlink(dims = "B4",
                   tooltip = "An internal reference", is_external = FALSE)
+
+  exp <- c(
+    "<hyperlink ref=\"B2\" location=\"'Sheet 1'!C5\" display=\"'Sheet 1'!C5\" tooltip=\"An internal reference\"/>",
+    "<hyperlink ref=\"B4\" location=\"'Sheet 1'!C5\" tooltip=\"An internal reference\"/>"
+  )
+  got <- wb$worksheets[[8]]$hyperlinks
+  expect_equal(exp, got)
 
 })

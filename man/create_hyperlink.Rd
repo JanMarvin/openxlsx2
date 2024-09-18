@@ -65,3 +65,6 @@ wb$add_formula(x = x, dims = "A8")
 # if (interactive()) wb$open()
 
 }
+\seealso{
+\code{\link[=wb_add_hyperlink]{wb_add_hyperlink()}}
+}

@@ -6,11 +6,17 @@
 
 * `wb_to_df()` gained a new argument `show_hyperlinks` which returns the target or location of a hyperlink, instead of the links description. [1136](https://github.com/JanMarvin/openxlsx2/pull/1136)
 
+* A new wrapper function `wb_add_hyperlink()` extends the capabilities of writing hyperlinks to shared hyperlinks. Shared hyperlinks bring along internal changes that are noted below. [1137](https://github.com/JanMarvin/openxlsx2/pull/1137)
+
 ## Fixes
 
 * The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell `dims` was provided for an `x` that was larger than a single cell in `wb_add_formula()`. [1131](https://github.com/JanMarvin/openxlsx2/pull/1131)
 
 * Fixed a regression in the previous release, where `wb_dims()` would pass column names passed via `cols` to `col2int()` which could cause overflow errors resulting in a failing check. [1133](https://github.com/JanMarvin/openxlsx2/pull/1133)
+
+## Internal changes
+
+* The handling of shared hyperlinks has been updated. Previously, when loading a file with shared hyperlinks, they were converted into `wbHyperlink` objects (a legacy from `openxlsx`). With recent internal changes, hyperlinks are no longer automatically transformed into `wbHyperlink` objects. If you still require these objects, you can use the internal function `wb_to_hyperlink(wb, sheet = 1)`. However, please note that this class is not essential for `openxlsx2` and may be further simplified or removed in the future without notice. [1137](https://github.com/JanMarvin/openxlsx2/pull/1137)
 
 
 ***************************************************************************

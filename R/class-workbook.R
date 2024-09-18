@@ -2420,24 +2420,19 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Add hyperlink
-    #' @param wb a workbook
-    #' @param sheet a worksheet
-    #' @param dims a worksheet dimension
-    #' @param x an object to write
-    #' @param target an optional target, if no target is specified, it is assumed that the object contains the reference
-    #' @param is_external a logical indicating if the hyperlink is external (a url, a mail address, external file) or internal (a reference to worksheet cells)
-    #' @param cols columns to be used as hyperlink reference
-    #' @param col_names whether or not the object contains column names
-    #' @param tooltip an optional description for a variable
-    #' @param as_table logical if the data is written as table
-    #' @param ... optional arguments used by [wb_add_data()] or [wb_add_data_table()]
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param target target
+    #' @param tooltip tooltip
+    #' @param is_external is_external
+    #' @param col_names col_names
     #' @return The `wbWorkbook` object
     add_hyperlink = function(
       sheet       = current_sheet(),
       dims        = "A1",
       target      = NULL,
-      is_external = TRUE,
       tooltip     = NULL,
+      is_external = TRUE,
       col_names   = FALSE
     ) {
 
@@ -3900,7 +3895,6 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$sheet_data$cc <- cc
 
-      # FIXME need to think about this some more.
       ### add hyperlinks ---
       if (length(self$worksheets[[from_sheet]]$relships$hyperlink)) {
 
