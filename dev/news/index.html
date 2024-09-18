@@ -55,6 +55,7 @@
 <ul><li><p>When writing a file with <code>na.strings = NULL</code>, the file will not contain any reference to the blank cell. Depending on the number of missings in a data set, this can reduce the file size significantly. <a href="https://github.com/JanMarvin/openxlsx2/pull/1111" class="external-link">1111</a></p></li>
 <li><p><code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> gained a new argument <code>show_hyperlinks</code> which returns the target or location of a hyperlink, instead of the links description. <a href="https://github.com/JanMarvin/openxlsx2/pull/1136" class="external-link">1136</a></p></li>
 <li><p>A new wrapper function <code><a href="../reference/wb_add_hyperlink.html">wb_add_hyperlink()</a></code> extends the capabilities of writing hyperlinks to shared hyperlinks. Shared hyperlinks bring along internal changes that are noted below. <a href="https://github.com/JanMarvin/openxlsx2/pull/1137" class="external-link">1137</a></p></li>
+<li><p>Add <code>address</code> field to <code><a href="../reference/wb_add_image.html">wb_add_image()</a></code>. This can be used to add a url or mailto address to an image (<a href="https://github.com/JanMarvin/openxlsx2/pull/1138" class="external-link">1138</a>, conversion from a PR by <a href="https://github.com/jistria" class="external-link">@jistria</a> for <code>openxlsx</code>)</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
