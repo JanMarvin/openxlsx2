@@ -11,7 +11,7 @@ wb_add_hyperlink(
   target = NULL,
   is_external = TRUE,
   tooltip = NULL,
-  col_names = TRUE
+  col_names = FALSE
 )
 }
 \arguments{

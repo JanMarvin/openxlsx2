@@ -764,7 +764,7 @@ wb_add_hyperlink <- function(
     target      = NULL,
     is_external = TRUE,
     tooltip     = NULL,
-    col_names   = TRUE
+    col_names   = FALSE
   ) {
 
   assert_workbook(wb)

@@ -2438,7 +2438,7 @@ wbWorkbook <- R6::R6Class(
       target      = NULL,
       is_external = TRUE,
       tooltip     = NULL,
-      col_names   = TRUE
+      col_names   = FALSE
     ) {
 
       sheet <- self$validate_sheet(sheet)
@@ -2449,10 +2449,16 @@ wbWorkbook <- R6::R6Class(
       nams <- names(x)
 
       if (!is.null(target) && is.null(names(target))) {
+        if (nrow(x) > ncol(x)) {
+          target <- as.data.frame(as.matrix(target, nrow = nrow(x), ncol = ncol(x)))
+        }
         names(target) <- nams
       }
 
       if (!is.null(tooltip) && is.null(names(tooltip))) {
+        if (nrow(x) > ncol(x)) {
+          tooltip <- as.data.frame(as.matrix(tooltip, nrow = nrow(x), ncol = ncol(x)))
+        }
         names(tooltip) <- nams
       }
 

@@ -896,7 +896,7 @@ Add hyperlink
   target = NULL,
   is_external = TRUE,
   tooltip = NULL,
-  col_names = TRUE
+  col_names = FALSE
 )}\if{html}{\out{</div>}}
 }
 
