@@ -15,6 +15,7 @@ wb_add_image(
   col_offset = 0,
   units = "in",
   dpi = 300,
+  address = NULL,
   ...
 )
 }
@@ -39,6 +40,8 @@ oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor}
 \item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
 
 \item{dpi}{Image resolution used for conversion between units.}
+
+\item{address}{An optional character string specifying an external URL, relative or absolute path to a file, or "mailto:" string (e.g. "mailto:example@example.com") that will be opened when the image is clicked.}
 
 \item{...}{additional arguments}
 }

@@ -158,6 +158,7 @@ linters
 listDataValidation
 localName
 magrittr
+mailto
 manualMax
 manualMin
 maxAxisType

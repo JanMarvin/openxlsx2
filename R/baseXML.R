@@ -248,8 +248,9 @@ genBaseStyleSheet <- function(dxfs = NULL, tableStyles = NULL, extLst = NULL) {
   )
 }
 
-genBasePic <- function(imageNo, next_id) {
-  sprintf('<xdr:pic>
+genBasePic <- function(imageNo, next_id, address_id) {
+
+  pic <- sprintf('<xdr:pic>
       <xdr:nvPicPr>
         <xdr:cNvPr id="%s" name="Picture %s"/>
         <xdr:cNvPicPr>
@@ -257,8 +258,7 @@ genBasePic <- function(imageNo, next_id) {
         </xdr:cNvPicPr>
       </xdr:nvPicPr>
       <xdr:blipFill>
-        <a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="%s">
-        </a:blip>
+        <a:blip r:embed="%s"></a:blip>
         <a:stretch>
           <a:fillRect/>
         </a:stretch>
@@ -269,6 +269,13 @@ genBasePic <- function(imageNo, next_id) {
         </a:prstGeom>
       </xdr:spPr>
     </xdr:pic>', imageNo, imageNo, next_id)
+
+  if (nchar(address_id)) {
+    hlinkClick <- sprintf("<a:hlinkClick r:id=\"%s\"/>", address_id)
+    pic <- xml_add_child(pic, hlinkClick, level = c("xdr:nvPicPr", "xdr:cNvPr"))
+  }
+
+  pic
 }
 
 # TODO: make genBaseTheme() a more flexible function that allows further
