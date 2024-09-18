@@ -750,9 +750,9 @@ wb_add_formula <- function(
 #' @param wb a workbook
 #' @param sheet a worksheet
 #' @param dims a worksheet dimension
-#' @param target an optional target, if no target is specified, it is assumend that the object contains the reference
-#' @param is_external a logical indicating if the hyperlink is external (a url, a mail adress, external file) or internal (a reference to worksheet cells)
-#' @param col_names wheather or not the object contains column names
+#' @param target an optional target, if no target is specified, it is assumed that the object contains the reference
+#' @param is_external a logical indicating if the hyperlink is external (a url, a mail address, external file) or internal (a reference to worksheet cells)
+#' @param col_names whether or not the object contains column names
 #' @param tooltip an optional description for a variable
 #' @export
 #' @family workbook wrappers

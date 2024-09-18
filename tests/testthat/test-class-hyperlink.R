@@ -74,7 +74,7 @@ test_that("hyperlinks work", {
   # Error: `cols` must be an integer or an existing column name of `x`, not hLinkhlink2
   wb$add_worksheet()$add_data_table(x = df)$add_hyperlink(dims = dims_hlink_2, target = target)
 
-  wb$add_worksheet()$add_data(x = "noreply@openxlsx2")$add_hyperlink(target = "mailto:noreply@openxlsx2.com", tooltip = "An Invalid E-Mail Adress")
+  wb$add_worksheet()$add_data(x = "noreply@openxlsx2")$add_hyperlink(target = "mailto:noreply@openxlsx2.com", tooltip = "An Invalid E-Mail address")
 
   wb$add_worksheet()$add_data(x = c("https://r-project.org", "https://cran.r-project.org"), dims = "B2:C2", col_names = FALSE)$
     add_hyperlink(dims = "B2:C2", tooltip = c("The R-Project Homepage", "CRAN"), col_names = FALSE)

@@ -907,13 +907,13 @@ Add hyperlink
 
 \item{\code{dims}}{a worksheet dimension}
 
-\item{\code{target}}{an optional target, if no target is specified, it is assumend that the object contains the reference}
+\item{\code{target}}{an optional target, if no target is specified, it is assumed that the object contains the reference}
 
-\item{\code{is_external}}{a logical indicating if the hyperlink is external (a url, a mail adress, external file) or internal (a reference to worksheet cells)}
+\item{\code{is_external}}{a logical indicating if the hyperlink is external (a url, a mail address, external file) or internal (a reference to worksheet cells)}
 
 \item{\code{tooltip}}{an optional description for a variable}
 
-\item{\code{col_names}}{wheather or not the object contains column names}
+\item{\code{col_names}}{whether or not the object contains column names}
 
 \item{\code{wb}}{a workbook}
 
