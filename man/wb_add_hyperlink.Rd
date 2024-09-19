@@ -2,6 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_hyperlink}
 \alias{wb_add_hyperlink}
+\alias{wb_remove_hyperlink}
 \title{wb_add_hyperlink}
 \usage{
 wb_add_hyperlink(
@@ -13,6 +14,8 @@ wb_add_hyperlink(
   is_external = TRUE,
   col_names = FALSE
 )
+
+wb_remove_hyperlink(wb, sheet = current_sheet(), dims = NULL)
 }
 \arguments{
 \item{wb}{A Workbook object containing a worksheet.}
@@ -30,7 +33,7 @@ wb_add_hyperlink(
 \item{col_names}{Whether or not the object contains column names. If yes the first column of the dimension will be ignored}
 }
 \description{
-Helper to add shared hyperlinks into a worksheet
+Helper to add shared hyperlinks into a worksheet or remove shared hyperlinks from a worksheet
 }
 \details{
 There are multiple ways to add hyperlinks into a worksheet. One way is to construct a formula with \code{\link[=create_hyperlink]{create_hyperlink()}} another is to assign a class \code{hyperlink} to a column of a data frame.
@@ -42,6 +45,8 @@ wb <- wb_workbook()$add_worksheet()$
   add_data(x = "openxlsx2 on CRAN")$
   add_hyperlink(target = "https://cran.r-project.org/package=openxlsx2",
                 tooltip = "The canonical form to link to our CRAN page.")
+
+wb$remove_hyperlink()
 }
 \seealso{
 Other workbook wrappers: 
