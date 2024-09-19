@@ -171,6 +171,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-remove_timeline}{\code{wbWorkbook$remove_timeline()}}
 \item \href{#method-wbWorkbook-add_formula}{\code{wbWorkbook$add_formula()}}
 \item \href{#method-wbWorkbook-add_hyperlink}{\code{wbWorkbook$add_hyperlink()}}
+\item \href{#method-wbWorkbook-remove_hyperlink}{\code{wbWorkbook$remove_hyperlink()}}
 \item \href{#method-wbWorkbook-add_style}{\code{wbWorkbook$add_style()}}
 \item \href{#method-wbWorkbook-to_df}{\code{wbWorkbook$to_df()}}
 \item \href{#method-wbWorkbook-load}{\code{wbWorkbook$load()}}
@@ -914,6 +915,28 @@ Add hyperlink
 \item{\code{is_external}}{is_external}
 
 \item{\code{col_names}}{col_names}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_hyperlink"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_hyperlink}{}}}
+\subsection{Method \code{remove_hyperlink()}}{
+remove hyperlink
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_hyperlink(sheet = current_sheet(), dims = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
 }
 \if{html}{\out{</div>}}
 }

@@ -745,7 +745,7 @@ wb_add_formula <- function(
 
 #' wb_add_hyperlink
 #'
-#' Helper to add shared hyperlinks into a worksheet
+#' Helper to add shared hyperlinks into a worksheet or remove shared hyperlinks from a worksheet
 #'
 #' @details
 #' There are multiple ways to add hyperlinks into a worksheet. One way is to construct a formula with [create_hyperlink()] another is to assign a class `hyperlink` to a column of a data frame.
@@ -767,6 +767,8 @@ wb_add_formula <- function(
 #'   add_data(x = "openxlsx2 on CRAN")$
 #'   add_hyperlink(target = "https://cran.r-project.org/package=openxlsx2",
 #'                 tooltip = "The canonical form to link to our CRAN page.")
+#'
+#' wb$remove_hyperlink()
 wb_add_hyperlink <- function(
     wb,
     sheet       = current_sheet(),
@@ -789,6 +791,11 @@ wb_add_hyperlink <- function(
   )
 }
 
+#' @rdname wb_add_hyperlink
+wb_remove_hyperlink <- function(wb, sheet = current_sheet(), dims = NULL) {
+  assert_workbook(wb)
+  wb$clone()$remove_hyperlink(sheet = sheet, dims = dims)
+}
 
 #' Update a data table position in a worksheet
 #'

@@ -136,4 +136,7 @@ test_that("hyperlinks work", {
     add_data(x = "https://cran.r-project.org/package=openxlsx2")
   expect_silent(wb$add_hyperlink())
 
+  wb$remove_hyperlink(dims = "A1")
+  expect_equal(character(), wb$worksheets[[1]]$hyperlinks)
+
 })

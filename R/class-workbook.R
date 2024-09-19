@@ -2589,6 +2589,43 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
+    #' @description remove hyperlink
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @return The `wbWorkbook` object
+    remove_hyperlink = function(sheet = current_sheet(), dims = NULL) {
+
+      sheet <- self$validate_sheet(sheet)
+
+      # get all hyperlinks
+      hls    <- self$worksheets[[sheet]]$hyperlinks
+
+      if (length(hls)) {
+        hls_df <- rbindlist(xml_attr(hls, "hyperlink"))
+
+        if (is.null(dims)) {
+          # remove all hyperlinks
+          self$worksheets[[sheet]]$hyperlinks <- character()
+          refs <- hls_df$ref
+        } else {
+          # get cells in dims, get required cells, replace these and reduce refs
+          ddims <- dims_to_dataframe(dims = dims, fill = TRUE)
+          sel <- which(hls_df$ref %in% unname(unlist(ddims)))
+          self$worksheets[[sheet]]$hyperlinks <- hls_df$ref[-sel]
+          refs <- hls_df$ref[sel]
+        }
+
+        # TODO remove "r:id" reference from worksheets_rels
+
+        # reset font style
+        for (ref in refs) {
+          self$add_cell_style(font_id = 0)
+        }
+      }
+
+      invisible(self)
+    },
+
     #' @description add style
     #' @param style style
     #' @param style_name style_name
@@ -7889,6 +7926,13 @@ wbWorkbook <- R6::R6Class(
         styles       = styles,
         merged_cells = merged_cells
       )
+
+      if (numbers || characters)
+        self$remove_hyperlink(
+          sheet = sheet,
+          dims  = dims
+        )
+
       invisible(self)
     },
 
