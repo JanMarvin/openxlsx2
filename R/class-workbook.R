@@ -7926,6 +7926,13 @@ wbWorkbook <- R6::R6Class(
         styles       = styles,
         merged_cells = merged_cells
       )
+
+      if (numbers || characters)
+        self$remove_hyperlink(
+          sheet = sheet,
+          dims  = dims
+        )
+
       invisible(self)
     },
 
