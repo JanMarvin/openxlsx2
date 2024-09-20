@@ -7909,6 +7909,7 @@ wbWorkbook <- R6::R6Class(
     #' @param characters remove all characters
     #' @param styles remove all styles
     #' @param merged_cells remove all merged_cells
+    #' @param hyperlinks remove all hyperlinks
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
         sheet        = current_sheet(),
@@ -7916,7 +7917,8 @@ wbWorkbook <- R6::R6Class(
         numbers      = TRUE,
         characters   = TRUE,
         styles       = TRUE,
-        merged_cells = TRUE
+        merged_cells = TRUE,
+        hyperlinks   = TRUE
     ) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$clean_sheet(
@@ -7927,7 +7929,7 @@ wbWorkbook <- R6::R6Class(
         merged_cells = merged_cells
       )
 
-      if (numbers || characters)
+      if (hyperlinks)
         self$remove_hyperlink(
           sheet = sheet,
           dims  = dims

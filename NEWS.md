@@ -10,6 +10,8 @@
 
 * Add `address` field to `wb_add_image()`. This can be used to add a url or mailto address to an image ([1138](https://github.com/JanMarvin/openxlsx2/pull/1138), conversion from a PR by @jistria for `openxlsx`)
 
+* It is now possible to remove hyperlinks with either `wb_remove_hyperlinks()` or `wb_clean_sheet()`. [1139](https://github.com/JanMarvin/openxlsx2/pull/1139)
+
 ## Fixes
 
 * The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell `dims` was provided for an `x` that was larger than a single cell in `wb_add_formula()`. [1131](https://github.com/JanMarvin/openxlsx2/pull/1131)

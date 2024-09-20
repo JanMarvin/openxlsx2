@@ -11,7 +11,8 @@ wb_clean_sheet(
   numbers = TRUE,
   characters = TRUE,
   styles = TRUE,
-  merged_cells = TRUE
+  merged_cells = TRUE,
+  hyperlinks = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ wb_clean_sheet(
 \item{styles}{remove all styles}
 
 \item{merged_cells}{remove all merged_cells}
+
+\item{hyperlinks}{remove all hyperlinks}
 }
 \value{
 A Workbook object
