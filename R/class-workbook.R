@@ -892,67 +892,67 @@ wbWorkbook <- R6::R6Class(
         drawing_id <- from$worksheets[[old]]$relships$drawing
 
         new_drawing_sheet <- length(self$drawings) + 1L
+        new_drawing_rels  <- length(self$drawings_rels) + 1L
 
-        self$append("drawings_rels", from$drawings_rels[[drawing_id]])
+        # if drawings_rels is list(), appending will create multiple lists
+        self$append("drawings_rels", list(from$drawings_rels[[drawing_id]]))
 
+        # select the latest addition to drawings_rels
+        drawings_rels <- self$drawings_rels[[new_drawing_rels]]
+
+        # For charts we have to modify the name of the chart in the xml code
         # give each chart its own filename (images can re-use the same file, but charts can't)
-        self$drawings_rels[[new_drawing_sheet]] <-
-          # TODO Can this be simplified?  There's a bit going on here
-          vapply(
-            self$drawings_rels[[new_drawing_sheet]],
-            function(rl) {
-              # is rl here a length of 1?
-              stopifnot(length(rl) == 1L) # lets find out...  if this fails, just remove it
-              chartfiles <- reg_match(rl, "(?<=charts/)chart[0-9]+\\.xml")
+        for (dl in seq_along(drawings_rels)) {
+          chartfiles <- reg_match(drawings_rels[dl], "(?<=charts/)chart[0-9]+\\.xml")
 
-              for (cf in chartfiles) {
-                chartid <- NROW(self$charts) + 1L
-                newname <- stri_join("chart", chartid, ".xml")
-                old_chart <- as.integer(gsub("\\D+", "", cf))
-                self$charts <- rbind(self$charts, from$charts[old_chart, ])
+          for (cf in chartfiles) {
+            chartid <- NROW(self$charts) + 1L
+            newname <- stri_join("chart", chartid, ".xml")
+            old_chart <- as.integer(gsub("\\D+", "", cf))
+            self$charts <- rbind(self$charts, from$charts[old_chart, ])
 
-                # Read the chartfile and adjust all formulas to point to the new
-                # sheet name instead of the clone source
+            # Read the chartfile and adjust all formulas to point to the new
+            # sheet name instead of the clone source
 
-                chart <- self$charts$chart[chartid]
-                self$charts$rels[chartid] <- gsub("?drawing[0-9]+.xml", paste0("drawing", chartid, ".xml"), self$charts$rels[chartid])
+            chart <- self$charts$chart[chartid]
+            self$charts$rels[chartid] <- gsub(
+              "?drawing[0-9]+.xml",
+              paste0("drawing", chartid, ".xml"),
+              self$charts$rels[chartid]
+            )
 
-                guard_ws <- function(x) {
-                  if (grepl(" ", x)) x <- shQuote(x, type = "sh")
-                  x
-                }
+            guard_ws <- function(x) {
+              if (grepl(" ", x)) x <- shQuote(x, type = "sh")
+              x
+            }
 
-                old_sheet_name <- guard_ws(from$sheet_names[[old]])
-                new_sheet_name <- guard_ws(new)
+            old_sheet_name <- guard_ws(from$sheet_names[[old]])
+            new_sheet_name <- guard_ws(new)
 
-                ## we need to replace "'oldname'" as well as "oldname"
-                chart <- gsub(
-                  paste0(">", old_sheet_name, "!"),
-                  paste0(">", new_sheet_name, "!"),
-                  chart,
-                  perl = TRUE
-                )
+            ## we need to replace "'oldname'" as well as "oldname"
+            chart <- gsub(
+              paste0(">", old_sheet_name, "!"),
+              paste0(">", new_sheet_name, "!"),
+              chart,
+              perl = TRUE
+            )
 
-                self$charts$chart[chartid] <- chart
+            self$charts$chart[chartid] <- chart
 
-                # two charts can not point to the same rels
-                if (self$charts$rels[chartid] != "") {
-                  self$charts$rels[chartid] <- gsub(
-                    stri_join(old_chart, ".xml"),
-                    stri_join(chartid, ".xml"),
-                    self$charts$rels[chartid]
-                  )
-                }
+            # two charts can not point to the same rels
+            if (self$charts$rels[chartid] != "") {
+              self$charts$rels[chartid] <- gsub(
+                stri_join(old_chart, ".xml"),
+                stri_join(chartid, ".xml"),
+                self$charts$rels[chartid]
+              )
+            }
 
-                rl <- gsub(stri_join("(?<=charts/)", cf), newname, rl, perl = TRUE)
-              }
+            drawings_rels[dl] <- gsub(stri_join("(?<=charts/)", cf), newname, drawings_rels[dl], perl = TRUE)
+          }
+        }
 
-              rl
-
-            },
-            NA_character_,
-            USE.NAMES = FALSE
-          )
+        self$drawings_rels[[new_drawing_rels]] <- drawings_rels
 
         self$append("drawings", from$drawings[[drawing_id]])
       }
@@ -1180,11 +1180,6 @@ wbWorkbook <- R6::R6Class(
 
         if (length(from$media)) {
 
-          # TODO there might be other content types like png, wav etc.
-          if (!any(grepl("Default Extension=\"jpg\"", self$Content_Types))) {
-            self$append("Content_Types", "<Default Extension=\"jpg\" ContentType=\"image/jpg\"/>")
-          }
-
           # get old drawing id, must not match new drawing id
           old_drawing_sheet <- from$worksheets[[old]]$relships$drawing
 
@@ -1198,34 +1193,47 @@ wbWorkbook <- R6::R6Class(
             # because we might end up with multiple files with similar names, we have to rename
             # the media file and update the drawing relationship
             # TODO has every drawing a drawing_rel of the same size?
-            drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_sheet]], "Relationship"))
-            if (ncol(drels) && any(basename(drels$Type) == "image")) {
-              sel <- basename(drels$Type) == "image"
-              targets <- basename2(drels[sel]$Target)
-              media_names <- from$media[grepl(targets, names(from$media))]
+            if (all(nchar(self$drawings_rels[[new_drawing_rels]]))) {
 
-              onams    <- names(media_names)
-              mnams    <- vector("character", length(onams))
-              next_ids <- length(names(self$media)) + seq_along(mnams)
+              drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_rels]], "Relationship"))
+              fe <- unique(tools::file_ext(drels$Target))
 
-              # we might have multiple media references on a sheet
-              for (i in seq_along(onams)) {
-                media_id   <- as.integer(gsub("\\D+", "", onams[i]))
-                # take filetype + number + file extension
-                # e.g. "image5.jpg" and return "image2.jpg"
-                mnams[i] <- gsub("(\\d+)\\.(\\w+)", paste0(next_ids[i], ".\\2"), onams[i])
+              cte <- sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe)
+              sel <- which(!cte %in% self$Content_Types)
+
+              if (length(sel)) {
+                self$append("Content_Types", sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe))
               }
-              names(media_names) <- mnams
 
-              # update relationship
-              self$drawings_rels[[new_drawing_sheet]] <- gsub(
-                pattern = onams,
-                replacement = mnams,
-                x = self$drawings_rels[[new_drawing_sheet]],
-              )
+              if (ncol(drels) && any(basename(drels$Type) == "image")) {
+                sel <- basename(drels$Type) == "image"
+                targets <- basename2(drels$Target)[sel]
+                media_names <- from$media[targets %in% names(from$media)]
 
-              # append media
-              self$append("media", media_names)
+                onams    <- names(media_names)
+                mnams    <- vector("character", length(onams))
+                next_ids <- length(names(self$media)) + seq_along(mnams)
+
+                # we might have multiple media references on a sheet
+                for (i in seq_along(onams)) {
+                  media_id   <- as.integer(gsub("\\D+", "", onams[i]))
+                  # take filetype + number + file extension
+                  # e.g. "image5.jpg" and return "image2.jpg"
+                  mnams[i] <- gsub("(\\d+)\\.(\\w+)", paste0(next_ids[i], ".\\2"), onams[i])
+                }
+                names(media_names) <- mnams
+
+                # update relationship
+                self$drawings_rels[[new_drawing_rels]] <- stringi::stri_replace_all_fixed(
+                  self$drawings_rels[[new_drawing_rels]],
+                  pattern = onams,
+                  replacement = mnams,
+                  vectorize_all = FALSE
+                )
+
+                # append media
+                self$append("media", media_names)
+              }
             }
           }
         }

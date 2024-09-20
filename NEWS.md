@@ -18,6 +18,8 @@
 
 * Fixed a regression in the previous release, where `wb_dims()` would pass column names passed via `cols` to `col2int()` which could cause overflow errors resulting in a failing check. [1133](https://github.com/JanMarvin/openxlsx2/pull/1133)
 
+* Fix cloning from worksheets with multiple images.
+
 ## Internal changes
 
 * The handling of shared hyperlinks has been updated. Previously, when loading a file with shared hyperlinks, they were converted into `wbHyperlink` objects (a legacy from `openxlsx`). With recent internal changes, hyperlinks are no longer automatically transformed into `wbHyperlink` objects. If you still require these objects, you can use the internal function `wb_to_hyperlink(wb, sheet = 1)`. However, please note that this class is not essential for `openxlsx2` and may be further simplified or removed in the future without notice. [1137](https://github.com/JanMarvin/openxlsx2/pull/1137)
