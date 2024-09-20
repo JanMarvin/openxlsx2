@@ -325,14 +325,63 @@ test_that("cloning slicers throws warning", {
   df <- wb_data(wb, sheet = 1)
 
   wb$add_pivot_table(
-      df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
-      pivot_table = "mtcars"
-    )$
+    df, dims = "A3", slicer = "vs", rows = "cyl", cols = "gear", data = "disp",
+    pivot_table = "mtcars"
+  )$
     add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
 
   expect_warning(
     wb$clone_worksheet(old = "Sheet 2", new = "Sheet 3"),
     "Cloning slicers is not yet supported. It will not appear on the sheet."
   )
+
+})
+
+test_that("cloning sheets with multiple images works", {
+
+  png1 <- tempfile(fileext = "plot1.png")
+  png2 <- tempfile(fileext = "plot2.png")
+  jpg1 <- tempfile(fileext = "plot1.jpg")
+  jpg2 <- tempfile(fileext = "plot2.jpg")
+
+  png(png1)
+  plot(1)
+  dev.off()
+
+  png(png2)
+  plot(1:2)
+  dev.off()
+
+  jpeg(jpg1)
+  plot(1:3)
+  dev.off()
+
+  jpeg(jpg2)
+  plot(1:4)
+  dev.off()
+
+  wb_old <- wb_workbook()$add_worksheet()$
+    add_image(dims = "A1:A1", file = png1)$
+    add_image(dims = "A2:A2", file = png2)$
+    add_image(dims = "A3:A3", file = jpg1)$
+    add_image(dims = "A4:A4", file = jpg2)
+
+  wb <- wb_workbook()
+  wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old)
+
+  exp <- list(
+    c(
+      "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image1.png\"/>",
+      "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image2.png\"/>",
+      "<Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image3.jpg\"/>",
+      "<Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image4.jpg\"/>"
+    )
+  )
+  got <- wb$drawings_rels
+  expect_equal(exp, got)
+
+  exp <- c("<Default Extension=\"png\" ContentType=\"image/png\"/>", "<Default Extension=\"jpg\" ContentType=\"image/jpg\"/>")
+  got <- wb$Content_Types[10:11]
+  expect_equal(exp, got)
 
 })
