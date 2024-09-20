@@ -3165,7 +3165,8 @@ clean sheet (remove all values)
   numbers = TRUE,
   characters = TRUE,
   styles = TRUE,
-  merged_cells = TRUE
+  merged_cells = TRUE,
+  hyperlinks = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -3183,6 +3184,8 @@ clean sheet (remove all values)
 \item{\code{styles}}{remove all styles}
 
 \item{\code{merged_cells}}{remove all merged_cells}
+
+\item{\code{hyperlinks}}{remove all hyperlinks}
 }
 \if{html}{\out{</div>}}
 }

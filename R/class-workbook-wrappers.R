@@ -3015,6 +3015,7 @@ wb_add_chart_xml <- function(
 #' @param characters remove all characters
 #' @param styles remove all styles
 #' @param merged_cells remove all merged_cells
+#' @param hyperlinks remove all hyperlinks
 #' @return A Workbook object
 #' @export
 wb_clean_sheet <- function(
@@ -3024,7 +3025,8 @@ wb_clean_sheet <- function(
     numbers      = TRUE,
     characters   = TRUE,
     styles       = TRUE,
-    merged_cells = TRUE
+    merged_cells = TRUE,
+    hyperlinks   = TRUE
 ) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$clean_sheet(
@@ -3033,7 +3035,8 @@ wb_clean_sheet <- function(
     numbers      = numbers,
     characters   = characters,
     styles       = styles,
-    merged_cells = merged_cells
+    merged_cells = merged_cells,
+    hyperlinks   = hyperlinks
   )
 }
 
