@@ -8175,7 +8175,6 @@ wbWorkbook <- R6::R6Class(
       # we might create duplicates, but if a single style changes, the rest of
       # the workbook remains valid.
       smp <- random_string()
-      s <- function(x) paste0(smp, "s", deparse(substitute(x)), seq_along(x))
       sfull_single <- paste0(smp, "full_single")
       stop_single <- paste0(smp, "full_single")
       sbottom_single <- paste0(smp, "bottom_single")
@@ -8658,14 +8657,19 @@ wbWorkbook <- R6::R6Class(
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
-      # This alters the workbook
-      temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
-
-      # if a range is passed (e.g. "A1:B2") we need to get every cell
-      dims <- unname(unlist(dims))
+      # We need to return a cell style, even if the cell is not part of the
+      # workbook. Since we need to return the values in the corret order, we
+      # initiate a cell, if needed. Because the initiation of a cell alters the
+      # workbook, we do it on a clone.
+      wanted_dims <- unname(unlist(dims))
+      need_dims   <- wanted_dims[!wanted_dims %in% self$worksheets[[sheet]]$sheet_data$cc$r]
+      if (length(need_dims)) # could be enough to pass wanted_dims
+        temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
+      else
+        temp <- self
 
       # TODO check that cc$r is alway valid. not sure atm
-      sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% dims
+      sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% wanted_dims
       temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
     },
 
