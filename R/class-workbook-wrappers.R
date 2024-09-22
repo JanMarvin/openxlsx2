@@ -792,6 +792,7 @@ wb_add_hyperlink <- function(
 }
 
 #' @rdname wb_add_hyperlink
+#' @export
 wb_remove_hyperlink <- function(wb, sheet = current_sheet(), dims = NULL) {
   assert_workbook(wb)
   wb$clone()$remove_hyperlink(sheet = sheet, dims = dims)
