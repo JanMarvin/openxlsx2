@@ -1,5 +1,96 @@
 
 
+# helpers -----------------------------------------------------------------
+
+guard_ws <- function(x) {
+  if (grepl(" ", x)) x <- shQuote(x, type = "sh")
+  x
+}
+
+if_not_missing <- function(x) if (missing(x)) NULL else as.character(x)
+
+# TODO get table Id from table entry
+table_ids <- function(wb) {
+  z <- 0
+  if (!all(identical(unlist(wb$worksheets_rels), character()))) {
+    relship <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
+    relship$typ <- basename(relship$Type)
+    relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+
+    z <- sort(relship$tid[relship$typ == "table"])
+  }
+  z
+}
+
+## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
+last_table_id <- function(wb) {
+  z <- 0
+
+  if (!all(unlist(wb$worksheets_rels) == "")) {
+    relship <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
+    # assign("relship", relship, globalenv())
+    relship$typ <- basename(relship$Type)
+    relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+    if (any(relship$typ == "table"))
+      z <- max(relship$tid[relship$typ == "table"])
+  }
+
+  z
+}
+
+fun_tab_cols <- function(tab_cols) {
+  tabCols <- NULL
+  for (i in seq_along(tab_cols)) {
+    tmp <- xml_node_create(
+      "tableColumn",
+      xml_attributes = c(id = as.character(i), name = tab_cols[i])
+    )
+    tabCols <- c(tabCols, tmp)
+  }
+
+  xml_node_create(
+    "tableColumns",
+    xml_attributes = c(count = as.character(length(tabCols))),
+    xml_children = tabCols
+  )
+}
+
+validRow <- function(summary_row) {
+  return(tolower(summary_row) %in% c("above", "below"))
+}
+
+validCol <- function(summary_col) {
+  return(tolower(summary_col) %in% c("left", "right"))
+}
+
+lcr <- function(var) {
+  # quick function for specifying error message
+  paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
+}
+
+worksheet_lock_properties <- function() {
+  # provides a reference for the lock properties
+  c(
+    "selectLockedCells",
+    "selectUnlockedCells",
+    "formatCells",
+    "formatColumns",
+    "formatRows",
+    "insertColumns",
+    "insertRows",
+    "insertHyperlinks",
+    "deleteColumns",
+    "deleteRows",
+    "sort",
+    "autoFilter",
+    "pivotTables",
+    "objects",
+    "scenarios",
+    NULL
+  )
+}
+
+
 # R6 class ----------------------------------------------------------------
 # Lines 7 and 8 are needed until r-lib/roxygen2#1504 is fixed
 #' Workbook class
@@ -921,11 +1012,6 @@ wbWorkbook <- R6::R6Class(
               self$charts$rels[chartid]
             )
 
-            guard_ws <- function(x) {
-              if (grepl(" ", x)) x <- shQuote(x, type = "sh")
-              x
-            }
-
             old_sheet_name <- guard_ws(from$sheet_names[[old]])
             new_sheet_name <- guard_ws(new)
 
@@ -1516,8 +1602,6 @@ wbWorkbook <- R6::R6Class(
       if (missing(fun))         fun    <- substitute()
       if (missing(pivot_table)) pivot_table <- NULL
       if (missing(params))      params <- NULL
-
-      if_not_missing <- function(x) if (missing(x)) NULL else as.character(x)
 
       if (any(duplicated(c(if_not_missing(filter), if_not_missing(rows), if_not_missing(cols))))) {
         stop("duplicated variable in filter, rows, and cols detected.")
@@ -3090,20 +3174,7 @@ wbWorkbook <- R6::R6Class(
       # TODO remove length() check since we have seq_along()
       if (any(self$tables$tab_act == 1)) {
 
-        # TODO get table Id from table entry
-        table_ids <- function() {
-          z <- 0
-          if (!all(identical(unlist(self$worksheets_rels), character()))) {
-            relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
-            relship$typ <- basename(relship$Type)
-            relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-
-            z <- sort(relship$tid[relship$typ == "table"])
-          }
-          z
-        }
-
-        tab_ids <- table_ids()
+        tab_ids <- table_ids(self)
 
         for (i in seq_along(tab_ids)) {
 
@@ -3614,23 +3685,7 @@ wbWorkbook <- R6::R6Class(
       showColumnStripes = 0
     ) {
 
-      ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
-      last_table_id <- function() {
-        z <- 0
-
-        if (!all(unlist(self$worksheets_rels) == "")) {
-          relship <- rbindlist(xml_attr(unlist(self$worksheets_rels), "Relationship"))
-          # assign("relship", relship, globalenv())
-          relship$typ <- basename(relship$Type)
-          relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-          if (any(relship$typ == "table"))
-            z <- max(relship$tid[relship$typ == "table"])
-        }
-
-        z
-      }
-
-      id <- as.character(last_table_id() + 1) # otherwise will start at 0 for table 1 length indicates the last known
+      id <- as.character(last_table_id(self) + 1) # otherwise will start at 0 for table 1 length indicates the last known
       sheet <- wb_validate_sheet(self, sheet)
       # get the next highest rid
       rid <- 1
@@ -3803,23 +3858,7 @@ wbWorkbook <- R6::R6Class(
       tab_tabColumns <- xml_node(xml, "table", "tableColumns")
       tab_cols <- names(self$to_df(sheet = sheet, dims = dims))
 
-      fun <- function(tab_cols) {
-        tabCols <- NULL
-        for (i in seq_along(tab_cols)) {
-          tmp <- xml_node_create(
-            "tableColumn",
-            xml_attributes = c(id = as.character(i), name = tab_cols[i])
-          )
-          tabCols <- c(tabCols, tmp)
-        }
-
-        xml_node_create(
-          "tableColumns",
-          xml_attributes = c(count = as.character(length(tabCols))),
-          xml_children = tabCols
-        )
-      }
-      tab_tabColumns <- fun(tab_cols)
+      tab_tabColumns <- fun_tab_cols(tab_cols)
 
       tab_tabStyleIn <- xml_node(xml, "table", "tableStyleInfo")
 
@@ -7234,12 +7273,6 @@ wbWorkbook <- R6::R6Class(
 
       ## summary row and col ----
       outlinepr <- character()
-      validRow <- function(summary_row) {
-        return(tolower(summary_row) %in% c("above", "below"))
-      }
-      validCol <- function(summary_col) {
-        return(tolower(summary_col) %in% c("left", "right"))
-      }
 
       if (!is.null(summary_row)) {
 
@@ -8175,7 +8208,6 @@ wbWorkbook <- R6::R6Class(
       # we might create duplicates, but if a single style changes, the rest of
       # the workbook remains valid.
       smp <- random_string()
-      s <- function(x) paste0(smp, "s", deparse(substitute(x)), seq_along(x))
       sfull_single <- paste0(smp, "full_single")
       stop_single <- paste0(smp, "full_single")
       sbottom_single <- paste0(smp, "bottom_single")
@@ -8658,14 +8690,18 @@ wbWorkbook <- R6::R6Class(
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
-      # This alters the workbook
-      temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
+      # We need to return a cell style, even if the cell is not part of the
+      # workbook. Since we need to return the values in the corret order, we
+      # initiate a cell, if needed. Because the initiation of a cell alters the
+      # workbook, we do it on a clone.
+      wanted_dims <- unname(unlist(dims))
+      need_dims   <- wanted_dims[!wanted_dims %in% self$worksheets[[sheet]]$sheet_data$cc$r]
+      if (length(need_dims)) # could be enough to pass wanted_dims
+        temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
+      else
+        temp <- self
 
-      # if a range is passed (e.g. "A1:B2") we need to get every cell
-      dims <- unname(unlist(dims))
-
-      # TODO check that cc$r is alway valid. not sure atm
-      sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% dims
+      sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% wanted_dims
       temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
     },
 
@@ -10027,65 +10063,3 @@ wbWorkbook <- R6::R6Class(
     }
   )
 )
-
-
-# helpers -----------------------------------------------------------------
-
-is_wbWorkbook <- function(x) inherits(x, c("wbWorkbook",   "R6"))
-
-lcr <- function(var) {
-  # quick function for specifying error message
-  paste(var, "must have length 3 where elements correspond to positions: left, center, right.")
-}
-
-
-# TODO Does this need to be checked?  No sheet name can be NA right?
-# res <- self$sheet_names[ind]; stopifnot(!anyNA(ind))
-
-#' Get sheet name
-#'
-#' @param wb a [wbWorkbook] object
-#' @param index Sheet name index
-#' @return The sheet index
-#' @keywords internal
-#' @noRd
-wb_get_sheet_name <- function(wb, index = NULL) {
-  index <- index %||% seq_along(wb$sheet_names)
-
-  # index should be integer like
-  stopifnot(is_integer_ish(index))
-
-  n <- length(wb$sheet_names)
-
-  if (any(index > n)) {
-    stop("Invalid sheet index. Workbook ", n, " sheet(s)", call. = FALSE)
-  }
-
-  # keep index 0 as ""
-  z <- vector("character", length(index))
-  names(z) <- index
-  z[index > 0] <- wb$sheet_names[index]
-  z
-}
-
-worksheet_lock_properties <- function() {
-  # provides a reference for the lock properties
-  c(
-    "selectLockedCells",
-    "selectUnlockedCells",
-    "formatCells",
-    "formatColumns",
-    "formatRows",
-    "insertColumns",
-    "insertRows",
-    "insertHyperlinks",
-    "deleteColumns",
-    "deleteRows",
-    "sort",
-    "autoFilter",
-    "pivotTables",
-    "objects",
-    "scenarios",
-    NULL
-  )
-}
