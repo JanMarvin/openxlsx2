@@ -15,11 +15,12 @@
 #' Depending if the R package `hms` is loaded, `wb_to_df()` returns
 #' `hms` variables or string variables in the `hh:mm:ss` format.
 #'
-#' The `types` argument must be a named numeric.
+#' The `types` argument can be a named numeric or a character string of the
+#' matching R variable type. Either `c(foo = 1)` or `c(foo = "numeric")`.
 #' * 0: character
 #' * 1: numeric
-#' * 2: date
-#' * 3: posixt (datetime)
+#' * 2: Date
+#' * 3: POSIXct (datetime)
 #' * 4: logical
 #'
 #' If no type is specified, the column types are derived based on all cells
@@ -633,8 +634,35 @@ wb_to_df <- function(
     date_conv     <- as.Date
     datetime_conv <- as.POSIXct
   } else {
-    # assign types the correct column name "A", "B" etc.
-    names(types) <- names(xlsx_cols_names[names(types) %in% xlsx_cols_names])
+    # TODO check if guessing only if !all() is possible
+    if (any(xlsx_cols_names %in% names(types))) {
+
+      if (is.character(types)) {
+        types[types == "character"] <- 0
+        types[types == "numeric"]   <- 1
+        types[types == "Date"]      <- 2
+        types[types == "POSIXct"]   <- 3
+        types[types == "logical"]   <- 4
+        types[types == "hms"]       <- 5
+        types[types == "formula"]   <- 6
+      }
+
+      if (any(!names(types) %in% xlsx_cols_names)) {
+        warning("variable from `types` not found in data")
+        types <- types[names(types) %in% xlsx_cols_names]
+      }
+
+      # assign types the correct column name "A", "B" etc.
+      names(types) <- names(xlsx_cols_names[match(names(types), xlsx_cols_names)])
+
+      # replace predefined types in guessed column types
+      guess <- guess_col_type(tt)
+      guess[names(types)] <- types
+      types <- guess
+    } else {
+      stop("no variable from `types` found in data")
+    }
+
     date_conv     <- convert_date
     datetime_conv <- convert_datetime
   }

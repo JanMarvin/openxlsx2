@@ -148,12 +148,13 @@ row is selected as column name.
 Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns
 \code{hms} variables or string variables in the \code{hh:mm:ss} format.
 
-The \code{types} argument must be a named numeric.
+The \code{types} argument can be a named numeric or a character string of the
+matching R variable type. Either \code{c(foo = 1)} or \code{c(foo = "numeric")}.
 \itemize{
 \item 0: character
 \item 1: numeric
-\item 2: date
-\item 3: posixt (datetime)
+\item 2: Date
+\item 3: POSIXct (datetime)
 \item 4: logical
 }
 

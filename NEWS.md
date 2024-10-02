@@ -22,6 +22,8 @@
 
 * Fix cloning from worksheets with multiple images.
 
+* Improved `wb_to_df(types = ...)`. Previously if used on unordered data this could cause unintended class order. `types` no longer requires knowledge of the order of the variables. Not all variables must be specified and it accepts character classes as well. [1147](https://github.com/JanMarvin/openxlsx2/pull/1147)
+
 * Improve creation of table ids. Previously, on a dirty workbook, unique table ids were not enforced. This caused duplicated table ids, which lead to errors in spreadsheet software. [1152](https://github.com/JanMarvin/openxlsx2/pull/1152)
 
 ## Internal changes

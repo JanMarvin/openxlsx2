@@ -1284,3 +1284,52 @@ test_that("saving images with address works", {
   expect_equal(exp, got)
 
 })
+
+test_that("incomplete types work and character types work as well", {
+
+  # create a labelled test
+  df <- structure(
+    list(Var1 = c("abc", "def"),
+         Var3 = c(123, 456),
+         Var2 = structure(c(99999, 987),
+                          labels = c(ghi = 99999),
+                          # "vctrs_vctr", breaks if labelled is not loaded
+                          class = c("haven_labelled", "double"))),
+    row.names = c(NA, -2L),
+    class = "data.frame"
+  )
+  wb1 <- wb_workbook()$add_worksheet()$add_data(x = df)
+
+  # with characters
+  x <- wb_to_df(wb1, types = c("Var1" = "character", "Var3" = "numeric"))
+
+  exp <- c("character", "numeric")
+  got <- c(class(x$Var1), class(x$Var3))
+  expect_equal(exp, got)
+
+  # with numbers
+  x <- wb_to_df(wb1, types = c("Var1" = 0, "Var3" = 1))
+
+  exp <- c("character", "numeric")
+  got <- c(class(x$Var1), class(x$Var3))
+  expect_equal(exp, got)
+
+  # partial match
+  expect_warning(x <- wb_to_df(wb1, types = c("Var1" = 0, "foo" = 1)),
+                 "variable from")
+
+  exp <- c("character", "numeric")
+  got <- c(class(x$Var1), class(x$Var3))
+  expect_equal(exp, got)
+
+  # nothing found
+  expect_error(x <- wb_to_df(wb1, types = c("bar" = 0, "foo" = 1)),
+               "no variable from")
+
+  # with cols
+  x <- wb_to_df(wb1, cols = c(2, 1), types = c("Var1" = 0, "Var3" = 1))
+  exp <- c("numeric", "character")
+  got <- vapply(x, class, NA_character_, USE.NAMES = FALSE)
+  expect_equal(exp, got)
+
+})
