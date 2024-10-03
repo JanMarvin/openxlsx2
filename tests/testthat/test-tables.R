@@ -223,3 +223,34 @@ test_that("writing table headers with factor variables works", {
   got <- wb$worksheets[[1]]$sheet_data$cc$is[[2]]
   expect_equal(exp, got)
 })
+
+test_that("tables cannot have duplicated column names", {
+
+  df1 <- data.frame(
+    x = 1,
+    x = 2,
+    check.names = FALSE
+  )
+
+  df2 <- data.frame(
+    x = 1,
+    X = 2,
+    check.names = FALSE
+  )
+
+
+  wb <- wb_workbook()
+
+  expect_warning(wb$add_worksheet()$add_data_table(x = df1), "tables cannot have duplicated column names")
+  expect_warning(wb$add_worksheet()$add_data_table(x = df2), "tables cannot have duplicated column names")
+
+
+  exp <- c("<tableColumn id=\"1\" name=\"x\"/>", "<tableColumn id=\"2\" name=\"x2\"/>")
+  got <- xml_node(wb$tables$tab_xml[[1]], "table", "tableColumns", "tableColumn")
+  expect_equal(exp, got)
+
+  exp <- c("<tableColumn id=\"1\" name=\"x\"/>", "<tableColumn id=\"2\" name=\"X2\"/>")
+  got <- xml_node(wb$tables$tab_xml[[2]], "table", "tableColumns", "tableColumn")
+  expect_equal(exp, got)
+
+})
