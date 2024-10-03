@@ -848,10 +848,16 @@ write_data_table <- function(
     na.strings <- getOption("openxlsx2.na.strings")
   }
 
-  if (data_table && nrow(x) < 1) {
-    warning("Found data table with zero rows, adding one.",
-            " Modify na with na.strings")
-    x[1, ] <- NA
+  if (data_table) {
+    if (nrow(x) < 1) {
+      warning("Found data table with zero rows, adding one.",
+             " Modify na with na.strings")
+      x[1, ] <- NA
+    }
+    if (any(duplicated(tolower(colnames(x))))) {
+      warning("tables cannot have duplicated column names")
+      colnames(x) <- fix_pt_names(colnames(x))
+    }
   }
 
   ## common part ---------------------------------------------------------------
