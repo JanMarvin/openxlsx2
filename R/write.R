@@ -1033,7 +1033,7 @@ write_data_table <- function(
 
     ## Table name validation
     if (is.null(tableName)) {
-      tableName <- paste0("Table", as.character(NROW(wb$tables) + 1L))
+      tableName <- paste0("Table", last_table_id(wb) + 1L)
     } else {
       tableName <- wb_validate_table_name(wb, tableName)
     }

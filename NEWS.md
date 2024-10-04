@@ -22,6 +22,8 @@
 
 * Fix cloning from worksheets with multiple images.
 
+* Improve creation of table ids. Previously, on a dirty workbook, unique table ids were not enforced. This caused duplicated table ids, which lead to errors in spreadsheet software. [1152](https://github.com/JanMarvin/openxlsx2/pull/1152)
+
 ## Internal changes
 
 * The handling of shared hyperlinks has been updated. Previously, when loading a file with shared hyperlinks, they were converted into `wbHyperlink` objects (a legacy from `openxlsx`). With recent internal changes, hyperlinks are no longer automatically transformed into `wbHyperlink` objects. If you still require these objects, you can use the internal function `wb_to_hyperlink(wb, sheet = 1)`. However, please note that this class is not essential for `openxlsx2` and may be further simplified or removed in the future without notice. [1137](https://github.com/JanMarvin/openxlsx2/pull/1137)
