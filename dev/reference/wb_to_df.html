@@ -253,10 +253,11 @@ column names matching the columns of the worksheet. Otherwise the first
 row is selected as column name.</p>
 <p>Depending if the R package <code>hms</code> is loaded, <code>wb_to_df()</code> returns
 <code>hms</code> variables or string variables in the <code>hh:mm:ss</code> format.</p>
-<p>The <code>types</code> argument must be a named numeric.</p><ul><li><p>0: character</p></li>
+<p>The <code>types</code> argument can be a named numeric or a character string of the
+matching R variable type. Either <code>c(foo = 1)</code> or <code>c(foo = "numeric")</code>.</p><ul><li><p>0: character</p></li>
 <li><p>1: numeric</p></li>
-<li><p>2: date</p></li>
-<li><p>3: posixt (datetime)</p></li>
+<li><p>2: Date</p></li>
+<li><p>3: POSIXct (datetime)</p></li>
 <li><p>4: logical</p></li>
 </ul><p>If no type is specified, the column types are derived based on all cells
 in a column within the selected data range, excluding potential column
