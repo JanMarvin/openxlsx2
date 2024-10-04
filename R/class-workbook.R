@@ -24,18 +24,7 @@ table_ids <- function(wb) {
 
 ## id will start at 3 and drawing will always be 1, printer Settings at 2 (printer settings has been removed)
 last_table_id <- function(wb) {
-  z <- 0
-
-  if (!all(unlist(wb$worksheets_rels) == "")) {
-    relship <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
-    # assign("relship", relship, globalenv())
-    relship$typ <- basename(relship$Type)
-    relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
-    if (any(relship$typ == "table"))
-      z <- max(relship$tid[relship$typ == "table"])
-  }
-
-  z
+  max(as.integer(rbindlist(xml_attr(wb$tables$tab_xml, "table"))$id), 0)
 }
 
 fun_tab_cols <- function(tab_cols) {
