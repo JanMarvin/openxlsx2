@@ -3414,6 +3414,7 @@ wb_add_fill <- function(
 #' @param shadow shadow
 #' @param extend extend
 #' @param vert_align vertical alignment
+#' @param update update
 #' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
@@ -3444,6 +3445,7 @@ wb_add_font <- function(
       scheme     = "",
       shadow     = "",
       vert_align = "",
+      update     = FALSE,
       ...
 ) {
   assert_workbook(wb)
@@ -3466,6 +3468,7 @@ wb_add_font <- function(
     scheme     = scheme,
     shadow     = shadow,
     vert_align = vert_align,
+    update     = update,
     ...        = ...
   )
 }
