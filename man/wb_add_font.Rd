@@ -23,6 +23,7 @@ wb_add_font(
   scheme = "",
   shadow = "",
   vert_align = "",
+  update = FALSE,
   ...
 )
 }
@@ -62,6 +63,8 @@ wb_add_font(
 \item{shadow}{Logical, whether the font should have a shadow.}
 
 \item{vert_align}{Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".}
+
+\item{update}{update}
 
 \item{...}{...}
 }
