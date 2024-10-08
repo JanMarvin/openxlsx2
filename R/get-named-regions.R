@@ -41,15 +41,16 @@ get_nr_from_definedName <- function(wb) {
 #' @returns a data frame in named_region format
 #' @noRd
 get_named_regions_tab <- function(wb) {
+  tabs <- wb$tables[wb$tables$tab_act == 1, ]
   data.frame(
     #localSheetId is not always available
-    name = wb$tables$tab_name,
+    name = tabs$tab_name,
     value = "table",
-    sheets = unname(wb$get_sheet_names()[wb$tables$tab_sheet]),
-    coords = wb$tables$tab_ref,
+    sheets = unname(wb$get_sheet_names()[tabs$tab_sheet]),
+    coords = tabs$tab_ref,
     id = NA_integer_,
     local = NA_integer_,
-    sheet = wb$tables$tab_sheet,
+    sheet = tabs$tab_sheet,
     stringsAsFactors = FALSE
   )
 }

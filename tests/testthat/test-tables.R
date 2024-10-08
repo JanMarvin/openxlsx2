@@ -273,3 +273,19 @@ test_that("make sure that table id is unique", {
   expect_equal(exp, got)
 
 })
+
+test_that("wb_get_named_regions, works with removed tables", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$add_data_table(x = iris, table_name = "iris1")$
+    add_worksheet()$add_data_table(x = iris, table_name = "iris2")$
+    add_worksheet()$add_data_table(x = iris, table_name = "iris3")
+
+  wb$remove_tables(table = "iris3")
+
+  tabs <- wb$get_named_regions(tables = TRUE)
+
+  expect_equal(2, nrow(tabs))
+  expect_equal(paste0("iris", 1:2), tabs$name)
+
+})
