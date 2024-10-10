@@ -181,8 +181,8 @@ wb_to_df <- function(
       sheet <- substitute()
 
     data_only <- TRUE
-    # TODO hyperlinks are deeper embedded into the wb_load code
-    if (show_hyperlinks) data_only <- FALSE
+    # TODO tables and hyperlinks are deeper embedded into the wb_load code
+    if (!missing(named_region) || show_hyperlinks) data_only <- FALSE
 
     # possible false positive on current lintr runs
     wb <- wb_load(file, sheet = sheet, data_only = data_only) # nolint
@@ -190,7 +190,7 @@ wb_to_df <- function(
 
   if (!missing(named_region)) {
 
-    nr <- wb_get_named_regions(wb, tables = TRUE)
+    nr <- wb$get_named_regions(tables = TRUE)
 
     if ((named_region %in% nr$name) && missing(sheet)) {
       sel   <- nr[nr$name == named_region, ][1, ]

@@ -289,3 +289,12 @@ test_that("wb_get_named_regions, works with removed tables", {
   expect_equal(paste0("iris", 1:2), tabs$name)
 
 })
+
+test_that("reading tables from file works", {
+  tmp <- temp_xlsx()
+  exp <- head(mtcars)
+  write_xlsx(x = exp, file = tmp, as_table = TRUE)
+
+  got <- wb_to_df(tmp, named_region = "Table1")
+  expect_equal(exp, got, ignore_attr = TRUE)
+})
