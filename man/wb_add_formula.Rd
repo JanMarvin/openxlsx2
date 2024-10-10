@@ -17,6 +17,7 @@ wb_add_formula(
   remove_cell_style = FALSE,
   enforce = FALSE,
   shared = FALSE,
+  as_named_region = NULL,
   ...
 )
 }
@@ -45,6 +46,8 @@ Add this, if you see "@" inserted into your formulas.}
 \item{enforce}{enforce dims}
 
 \item{shared}{shared formula}
+
+\item{as_named_region}{A function name to access the custom formula}
 
 \item{...}{additional arguments}
 }
@@ -75,6 +78,16 @@ output range must be known a priori and passed to \code{dims}, otherwise only th
 value of the first cell will be returned. This type of formula, whose result
 extends over several cells, is only possible with single strings. If a vector
 is passed, it is only possible to return individual cells.
+
+Custom functions can be registered as lambda functions in the workbook. For
+this you take the function you want to add \code{"LAMBDA(x, y, x + y)"} and escape
+it as follows. \code{LAMBDA()} is a future function and needs a prefix \verb{_xlfn}. The
+arguments need a prefix \verb{_xlpm.}. So the full function looks like this:
+\code{"_xlfn.LAMBDA(_xlpm.x, _xlpm.y, _xlpm.x + _xlpm.y)"}. These custom formulas
+are accessible via the named region manager and can be removed with
+\code{\link[=wb_remove_named_region]{wb_remove_named_region()}}. Contrary to other formulas, custom formulas must
+be registered with the workbook before they can be used (see the example
+below).
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
@@ -95,6 +108,10 @@ wb$add_worksheet()$
 wb$add_worksheet()$
  add_data(x = matrix(rnorm(5*5), ncol = 5, nrow = 5))$
  add_formula(x = "SUM($A2:A2)", dims = "A8:E12", shared = TRUE)
+
+# add a custom formula, first define it, then use it
+wb$add_formula(x = "_xlfn.LAMBDA(TODAY() - 1)", as_named_region = "YESTERDAY")
+wb$add_formula(x = "=YESTERDAY()", dims = "A1", cm = TRUE)
 
 }
 \seealso{

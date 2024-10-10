@@ -41,6 +41,11 @@ assert_sheet_data  <- function(x) assert_class(x, c("wbSheetData",  "R6"), all =
 assert_workbook    <- function(x) assert_class(x, c("wbWorkbook",   "R6"), all = TRUE)
 assert_worksheet   <- function(x) assert_class(x, c("wbWorksheet",  "R6"), all = TRUE)
 
+assert_named_region <- function(x) {
+  if (grepl("^[A-Z]{1,3}[0-9]+$", x))
+    stop("name cannot look like a cell reference.")
+}
+
 match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.frame()) {
   sx <- as.character(substitute(x, envir))
 
