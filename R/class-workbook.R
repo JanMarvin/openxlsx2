@@ -2466,6 +2466,7 @@ wbWorkbook <- R6::R6Class(
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
     #' @param enforce enforce dims
     #' @param shared shared formula
+    #' @param as_named_region as_named_region
     #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
@@ -2479,10 +2480,27 @@ wbWorkbook <- R6::R6Class(
         remove_cell_style = FALSE,
         enforce           = FALSE,
         shared            = FALSE,
+        as_named_region   = NULL,
         ...
     ) {
 
       standardize_case_names(...)
+
+      if (!is.null(as_named_region)) {
+        assert_class(x, "character")
+        assert_class(as_named_region, "character") # better check that it is a valid name
+
+        xml <- xml_node_create(
+          "definedName",
+          xml_children = x,
+          xml_attributes = c(name = as_named_region)
+        )
+        private$append_workbook_field("definedNames", xml)
+
+        message("formula registered to the workbook")
+        return(invisible(self))
+      }
+
       do_write_formula(
         wb              = self,
         sheet           = sheet,
@@ -9700,7 +9718,7 @@ wbWorkbook <- R6::R6Class(
       # _xlnm .Sheet_Title
 
       named_region <- c(
-        comment          = comment,
+        comment           = comment,
         customMenu        = customMenu,
         description       = description,
         `function`        = is_function,
