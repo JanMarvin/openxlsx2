@@ -2488,7 +2488,8 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(as_named_region)) {
         assert_class(x, "character")
-        assert_class(as_named_region, "character") # better check that it is a valid name
+        assert_named_region(x)
+        assert_class(as_named_region, "character")
 
         xml <- xml_node_create(
           "definedName",
@@ -7760,13 +7761,13 @@ wbWorkbook <- R6::R6Class(
       }
       match_dn <- which(sel)
 
+      assert_named_region(name)
+
       if (any(match_dn)) {
         if (overwrite)
           self$workbook$definedNames <- self$workbook$definedNames[-match_dn]
         else
           stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
-      } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
-        stop("name cannot look like a cell reference.")
       }
 
       rowcols <- dims_to_rowcol(dims, as_integer = TRUE)
