@@ -210,6 +210,10 @@ test_that("registering formulas works", {
   wb <- wb_workbook()$add_worksheet()
 
   expect_message(wb$add_formula(x = c(YESTERDAY = fml)), "formula registered to the workbook")
+  expect_error(wb$add_formula(x = c(YESTERDAY = fml)), "named regions cannot be duplicates")
   expect_equal(wb$get_named_regions()$value, fml)
+
+  wb <- wb_add_formula(wb, x = "YESTERDAY()", name = "YSTRDY", array = TRUE)
+  expect_equal(wb$get_named_regions()$name, c("YESTERDAY", "YSTRDY"))
 
 })

@@ -17,6 +17,7 @@ wb_add_formula(
   remove_cell_style = FALSE,
   enforce = FALSE,
   shared = FALSE,
+  name = NULL,
   ...
 )
 }
@@ -45,6 +46,8 @@ Add this, if you see "@" inserted into your formulas.}
 \item{enforce}{enforce dims}
 
 \item{shared}{shared formula}
+
+\item{name}{The name of a named region if specified.}
 
 \item{...}{additional arguments}
 }

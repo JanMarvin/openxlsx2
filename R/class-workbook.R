@@ -2466,6 +2466,7 @@ wbWorkbook <- R6::R6Class(
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
     #' @param enforce enforce dims
     #' @param shared shared formula
+    #' @param name name
     #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
@@ -2479,14 +2480,22 @@ wbWorkbook <- R6::R6Class(
         remove_cell_style = FALSE,
         enforce           = FALSE,
         shared            = FALSE,
+        name              = NULL,
         ...
     ) {
 
       standardize_case_names(...)
 
-      if (!is.null(names(x))) {
+      if (is.character(x) && !is.null(names(x)) && is.null(name)) {
         assert_class(x, "character")
         assert_named_region(names(x))
+
+        if (NROW(nr <- self$get_named_regions())) {
+          nr_name <- nr$name[nr$local == 0]
+
+          if (any(tolower(names(x)) %in% tolower(nr_name)))
+            stop("named regions cannot be duplicates")
+        }
 
         xml <- xml_node_create(
           "definedName",
@@ -2511,7 +2520,8 @@ wbWorkbook <- R6::R6Class(
         applyCellStyle  = apply_cell_style,
         removeCellStyle = remove_cell_style,
         enforce         = enforce,
-        shared          = shared
+        shared          = shared,
+        name            = name
       )
       invisible(self)
     },

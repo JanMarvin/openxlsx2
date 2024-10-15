@@ -1189,6 +1189,7 @@ do_write_formula <- function(
     remove_cell_style = FALSE,
     enforce           = FALSE,
     shared            = FALSE,
+    name              = NULL,
     ...
 ) {
   standardize_case_names(...)
@@ -1318,6 +1319,7 @@ do_write_formula <- function(
     array             = array,
     col_names         = FALSE,
     row_names         = FALSE,
+    name              = name,
     apply_cell_style  = apply_cell_style,
     remove_cell_style = remove_cell_style,
     enforce           = enforce,

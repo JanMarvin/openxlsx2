@@ -696,6 +696,7 @@ wb_remove_timeline <- function(
 #' @param remove_cell_style Should we keep the cell style?
 #' @param enforce enforce dims
 #' @param shared shared formula
+#' @param name The name of a named region if specified.
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
@@ -738,6 +739,7 @@ wb_add_formula <- function(
     remove_cell_style = FALSE,
     enforce           = FALSE,
     shared            = FALSE,
+    name              = NULL,
     ...
 ) {
   assert_workbook(wb)
@@ -753,6 +755,7 @@ wb_add_formula <- function(
     remove_cell_style = remove_cell_style,
     enforce           = enforce,
     shared            = shared,
+    name              = name,
     ...               = ...
   )
 }
