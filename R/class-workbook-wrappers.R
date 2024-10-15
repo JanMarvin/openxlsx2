@@ -673,6 +673,16 @@ wb_remove_timeline <- function(
 #' extends over several cells, is only possible with single strings. If a vector
 #' is passed, it is only possible to return individual cells.
 #'
+#' Custom functions can be registered as lambda functions in the workbook. For
+#' this you take the function you want to add `"LAMBDA(x, y, x + y)"` and escape
+#' it as follows. `LAMBDA()` is a future function and needs a prefix `_xlfn`. The
+#' arguments need a prefix `_xlpm.`. So the full function looks like this:
+#' `"_xlfn.LAMBDA(_xlpm.x, _xlpm.y, _xlpm.x + _xlpm.y)"`. These custom formulas
+#' are accessible via the named region manager and can be removed with
+#' [wb_remove_named_region()]. Contrary to other formulas, custom formulas must
+#' be registered with the workbook before they can be used (see the example
+#' below).
+#'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. (either as index or name)
 #' @param x A formula as character vector.
@@ -686,6 +696,7 @@ wb_remove_timeline <- function(
 #' @param remove_cell_style Should we keep the cell style?
 #' @param enforce enforce dims
 #' @param shared shared formula
+#' @param name The name of a named region if specified.
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
@@ -711,6 +722,10 @@ wb_remove_timeline <- function(
 #'  add_data(x = matrix(rnorm(5*5), ncol = 5, nrow = 5))$
 #'  add_formula(x = "SUM($A2:A2)", dims = "A8:E12", shared = TRUE)
 #'
+#' # add a custom formula, first define it, then use it
+#' wb$add_formula(x = c(YESTERDAY = "_xlfn.LAMBDA(TODAY() - 1)"))
+#' wb$add_formula(x = "=YESTERDAY()", dims = "A1", cm = TRUE)
+#'
 wb_add_formula <- function(
     wb,
     sheet             = current_sheet(),
@@ -724,6 +739,7 @@ wb_add_formula <- function(
     remove_cell_style = FALSE,
     enforce           = FALSE,
     shared            = FALSE,
+    name              = NULL,
     ...
 ) {
   assert_workbook(wb)
@@ -739,6 +755,7 @@ wb_add_formula <- function(
     remove_cell_style = remove_cell_style,
     enforce           = enforce,
     shared            = shared,
+    name              = name,
     ...               = ...
   )
 }

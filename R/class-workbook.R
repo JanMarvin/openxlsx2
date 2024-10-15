@@ -2466,6 +2466,7 @@ wbWorkbook <- R6::R6Class(
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
     #' @param enforce enforce dims
     #' @param shared shared formula
+    #' @param name name
     #' @return The `wbWorkbook` object
     add_formula = function(
         sheet             = current_sheet(),
@@ -2479,10 +2480,34 @@ wbWorkbook <- R6::R6Class(
         remove_cell_style = FALSE,
         enforce           = FALSE,
         shared            = FALSE,
+        name              = NULL,
         ...
     ) {
 
       standardize_case_names(...)
+
+      if (is.character(x) && !is.null(names(x)) && is.null(name)) {
+        assert_class(x, "character")
+        assert_named_region(names(x))
+
+        if (NROW(nr <- self$get_named_regions())) {
+          nr_name <- nr$name[nr$local == 0]
+
+          if (any(tolower(names(x)) %in% tolower(nr_name)))
+            stop("named regions cannot be duplicates")
+        }
+
+        xml <- xml_node_create(
+          "definedName",
+          xml_children = x,
+          xml_attributes = c(name = names(x))
+        )
+        private$append_workbook_field("definedNames", xml)
+
+        message("formula registered to the workbook")
+        return(invisible(self))
+      }
+
       do_write_formula(
         wb              = self,
         sheet           = sheet,
@@ -2495,7 +2520,8 @@ wbWorkbook <- R6::R6Class(
         applyCellStyle  = apply_cell_style,
         removeCellStyle = remove_cell_style,
         enforce         = enforce,
-        shared          = shared
+        shared          = shared,
+        name            = name
       )
       invisible(self)
     },
@@ -7742,13 +7768,13 @@ wbWorkbook <- R6::R6Class(
       }
       match_dn <- which(sel)
 
+      assert_named_region(name)
+
       if (any(match_dn)) {
         if (overwrite)
           self$workbook$definedNames <- self$workbook$definedNames[-match_dn]
         else
           stop(sprintf("Named region with name '%s' already exists! Use overwrite  = TRUE if you want to replace it", name))
-      } else if (grepl("^[A-Z]{1,3}[0-9]+$", name)) {
-        stop("name cannot look like a cell reference.")
       }
 
       rowcols <- dims_to_rowcol(dims, as_integer = TRUE)
@@ -9700,7 +9726,7 @@ wbWorkbook <- R6::R6Class(
       # _xlnm .Sheet_Title
 
       named_region <- c(
-        comment          = comment,
+        comment           = comment,
         customMenu        = customMenu,
         description       = description,
         `function`        = is_function,

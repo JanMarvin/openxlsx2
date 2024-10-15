@@ -848,6 +848,7 @@ Add formula
   remove_cell_style = FALSE,
   enforce = FALSE,
   shared = FALSE,
+  name = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -876,6 +877,8 @@ Add formula
 \item{\code{enforce}}{enforce dims}
 
 \item{\code{shared}}{shared formula}
+
+\item{\code{name}}{name}
 
 \item{\code{...}}{additional arguments}
 }
