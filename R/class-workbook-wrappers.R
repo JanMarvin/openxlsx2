@@ -696,7 +696,6 @@ wb_remove_timeline <- function(
 #' @param remove_cell_style Should we keep the cell style?
 #' @param enforce enforce dims
 #' @param shared shared formula
-#' @param name A function name to access the custom formula
 #' @param ... additional arguments
 #' @return The workbook, invisibly.
 #' @family workbook wrappers
@@ -723,7 +722,7 @@ wb_remove_timeline <- function(
 #'  add_formula(x = "SUM($A2:A2)", dims = "A8:E12", shared = TRUE)
 #'
 #' # add a custom formula, first define it, then use it
-#' wb$add_formula(x = "_xlfn.LAMBDA(TODAY() - 1)", name = "YESTERDAY")
+#' wb$add_formula(x = c(YESTERDAY = "_xlfn.LAMBDA(TODAY() - 1)"))
 #' wb$add_formula(x = "=YESTERDAY()", dims = "A1", cm = TRUE)
 #'
 wb_add_formula <- function(
@@ -739,7 +738,6 @@ wb_add_formula <- function(
     remove_cell_style = FALSE,
     enforce           = FALSE,
     shared            = FALSE,
-    name              = NULL,
     ...
 ) {
   assert_workbook(wb)
@@ -755,7 +753,6 @@ wb_add_formula <- function(
     remove_cell_style = remove_cell_style,
     enforce           = enforce,
     shared            = shared,
-    name              = name,
     ...               = ...
   )
 }

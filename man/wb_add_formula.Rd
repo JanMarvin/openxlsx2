@@ -17,7 +17,6 @@ wb_add_formula(
   remove_cell_style = FALSE,
   enforce = FALSE,
   shared = FALSE,
-  name = NULL,
   ...
 )
 }
@@ -46,8 +45,6 @@ Add this, if you see "@" inserted into your formulas.}
 \item{enforce}{enforce dims}
 
 \item{shared}{shared formula}
-
-\item{name}{A function name to access the custom formula}
 
 \item{...}{additional arguments}
 }
@@ -110,7 +107,7 @@ wb$add_worksheet()$
  add_formula(x = "SUM($A2:A2)", dims = "A8:E12", shared = TRUE)
 
 # add a custom formula, first define it, then use it
-wb$add_formula(x = "_xlfn.LAMBDA(TODAY() - 1)", name = "YESTERDAY")
+wb$add_formula(x = c(YESTERDAY = "_xlfn.LAMBDA(TODAY() - 1)"))
 wb$add_formula(x = "=YESTERDAY()", dims = "A1", cm = TRUE)
 
 }

@@ -207,9 +207,9 @@ test_that("increase formula dims if required", {
 test_that("registering formulas works", {
 
   fml <- "_xlfn.LAMBDA(TODAY() - 1)"
-  wb <- wb_workbook()$add_worksheet()$
-    add_formula(x = fml, name = "YESTERDAY")
+  wb <- wb_workbook()$add_worksheet()
 
+  expect_message(wb$add_formula(x = c(YESTERDAY = fml)), "formula registered to the workbook")
   expect_equal(wb$get_named_regions()$value, fml)
 
 })
