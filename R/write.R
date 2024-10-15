@@ -1189,7 +1189,6 @@ do_write_formula <- function(
     remove_cell_style = FALSE,
     enforce           = FALSE,
     shared            = FALSE,
-    as_named_range    = NULL,
     ...
 ) {
   standardize_case_names(...)

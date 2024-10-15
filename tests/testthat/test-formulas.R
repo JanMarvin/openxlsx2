@@ -203,3 +203,13 @@ test_that("increase formula dims if required", {
   )
 
 })
+
+test_that("registering formulas works", {
+
+  fml <- "_xlfn.LAMBDA(TODAY() - 1)"
+  wb <- wb_workbook()$add_worksheet()$
+    add_formula(x = fml, name = "YESTERDAY")
+
+  expect_equal(wb$get_named_regions()$value, fml)
+
+})
