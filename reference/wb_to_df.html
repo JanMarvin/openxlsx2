@@ -13,7 +13,7 @@ packages."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ packages."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create a data frame from a Workbook</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.9/R/read.R" class="external-link"><code>R/read.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/read.R" class="external-link"><code>R/read.R</code></a></small>
       <div class="d-none name"><code>wb_to_df.Rd</code></div>
     </div>
 
@@ -88,6 +88,7 @@ packages.</p>
 <span>  <span class="va">named_region</span>,</span>
 <span>  keep_attributes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -108,6 +109,7 @@ packages.</p>
 <span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  fill_merged_cells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -127,6 +129,7 @@ packages.</p>
 <span>  na.strings <span class="op">=</span> <span class="st">"NA"</span>,</span>
 <span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -234,6 +237,10 @@ If no sheet is selected, the first appearance will be selected. See <code><a hre
 <dd><p>If <code>TRUE</code> then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.</p></dd>
 
 
+<dt id="arg-show-hyperlinks">show_hyperlinks<a class="anchor" aria-label="anchor" href="#arg-show-hyperlinks"></a></dt>
+<dd><p>If <code>TRUE</code> instead of the displayed text, hyperlink targets are shown.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments</p></dd>
 
@@ -246,10 +253,11 @@ column names matching the columns of the worksheet. Otherwise the first
 row is selected as column name.</p>
 <p>Depending if the R package <code>hms</code> is loaded, <code>wb_to_df()</code> returns
 <code>hms</code> variables or string variables in the <code>hh:mm:ss</code> format.</p>
-<p>The <code>types</code> argument must be a named numeric.</p><ul><li><p>0: character</p></li>
+<p>The <code>types</code> argument can be a named numeric or a character string of the
+matching R variable type. Either <code>c(foo = 1)</code> or <code>c(foo = "numeric")</code>.</p><ul><li><p>0: character</p></li>
 <li><p>1: numeric</p></li>
-<li><p>2: date</p></li>
-<li><p>3: posixt (datetime)</p></li>
+<li><p>2: Date</p></li>
+<li><p>3: POSIXct (datetime)</p></li>
 <li><p>4: logical</p></li>
 </ul><p>If no type is specified, the column types are derived based on all cells
 in a column within the selected data range, excluding potential column
@@ -488,7 +496,7 @@ this.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

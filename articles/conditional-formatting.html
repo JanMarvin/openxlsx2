@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
       <h1>Add conditional formatting to a workbook</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.9/vignettes/conditional-formatting.Rmd" class="external-link"><code>vignettes/conditional-formatting.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/vignettes/conditional-formatting.Rmd" class="external-link"><code>vignettes/conditional-formatting.Rmd</code></a></small>
       <div class="d-none name"><code>conditional-formatting.Rmd</code></div>
     </div>
 
@@ -88,7 +88,7 @@
 <div class="section level2">
 <h2 id="rule-applies-to-all-each-cell-in-range">Rule applies to all each cell in range<a class="anchor" aria-label="anchor" href="#rule-applies-to-all-each-cell-in-range"></a>
 </h2>
-<p><img src="img/cf_cells.jpg"><!-- --></p>
+<p><img src="img%2Fcf_cells.jpg"><!-- --></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"cellIs"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"cellIs"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -109,7 +109,7 @@
 <div class="section level2">
 <h2 id="highlight-row-dependent-on-first-cell-in-row">Highlight row dependent on first cell in row<a class="anchor" aria-label="anchor" href="#highlight-row-dependent-on-first-cell-in-row"></a>
 </h2>
-<p><img src="img/cf_moving_row.jpg"><!-- --></p>
+<p><img src="img%2Fcf_moving_row.jpg"><!-- --></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Row"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Row"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -130,7 +130,7 @@
 <div class="section level2">
 <h2 id="highlight-column-dependent-on-first-cell-in-column">Highlight column dependent on first cell in column<a class="anchor" aria-label="anchor" href="#highlight-column-dependent-on-first-cell-in-column"></a>
 </h2>
-<p><img src="img/cf_moving_col.jpg"><!-- --></p>
+<p><img src="img%2Fcf_moving_col.jpg"><!-- --></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Moving Col"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Moving Col"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -151,7 +151,7 @@
 <div class="section level2">
 <h2 id="highlight-entire-range-cols-x-rows-dependent-only-on-cell-a1">Highlight entire range cols X rows dependent only on cell A1<a class="anchor" aria-label="anchor" href="#highlight-entire-range-cols-x-rows-dependent-only-on-cell-a1"></a>
 </h2>
-<p><img src="img/cf_dependent_on.jpg"><!-- --></p>
+<p><img src="img%2Fcf_dependent_on.jpg"><!-- --></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Dependent on"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Dependent on"</span>, <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
@@ -190,7 +190,7 @@
 <div class="section level2">
 <h2 id="highlight-duplicates-using-default-style">Highlight duplicates using default style<a class="anchor" aria-label="anchor" href="#highlight-duplicates-using-default-style"></a>
 </h2>
-<p><img src="img/cf_duplicates.jpg"><!-- --></p>
+<p><img src="img%2Fcf_duplicates.jpg"><!-- --></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"Duplicates"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"Duplicates"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>, size <span class="op">=</span> <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
@@ -203,7 +203,7 @@
 <div class="section level2">
 <h2 id="cells-containing-text">Cells containing text<a class="anchor" aria-label="anchor" href="#cells-containing-text"></a>
 </h2>
-<p><img src="img/cf_contains_text.jpg"><!-- --></p>
+<p><img src="img%2Fcf_contains_text.jpg"><!-- --></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"containsText"</span><span class="op">)</span></span>
@@ -218,7 +218,7 @@
 <div class="section level2">
 <h2 id="cells-not-containing-text">Cells not containing text<a class="anchor" aria-label="anchor" href="#cells-not-containing-text"></a>
 </h2>
-<p><img src="img/cf_contains_no_text.jpg"><!-- --></p>
+<p><img src="img%2Fcf_contains_no_text.jpg"><!-- --></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">my_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">fn</span><span class="op">)</span></span>
@@ -235,7 +235,7 @@
 <div class="section level2">
 <h2 id="cells-begins-with-text">Cells begins with text<a class="anchor" aria-label="anchor" href="#cells-begins-with-text"></a>
 </h2>
-<p><img src="img/cf_begins_with.jpg"><!-- --></p>
+<p><img src="img%2Fcf_begins_with.jpg"><!-- --></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"beginsWith"</span><span class="op">)</span></span>
@@ -250,7 +250,7 @@
 <div class="section level2">
 <h2 id="cells-ends-with-text">Cells ends with text<a class="anchor" aria-label="anchor" href="#cells-ends-with-text"></a>
 </h2>
-<p><img src="img/cf_ends_with.jpg"><!-- --></p>
+<p><img src="img%2Fcf_ends_with.jpg"><!-- --></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, <span class="fl">10</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"endsWith"</span><span class="op">)</span></span>
@@ -266,7 +266,7 @@
 <h2 id="colorscale-colors-cells-based-on-cell-value">Colorscale colors cells based on cell value<a class="anchor" aria-label="anchor" href="#colorscale-colors-cells-based-on-cell-value"></a>
 </h2>
 <div class="figure">
-<img src="img/cf_color_scale.jpg" alt="Yep, that is a color scale image." width="100%"><p class="caption">
+<img src="img%2Fcf_color_scale.jpg" alt="Yep, that is a color scale image." width="100%"><p class="caption">
 Yep, that is a color scale image.
 </p>
 </div>
@@ -295,7 +295,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="section level2">
 <h2 id="databars">Databars<a class="anchor" aria-label="anchor" href="#databars"></a>
 </h2>
-<p><img src="img/cf_databar.jpg" width="100%"></p>
+<p><img src="img%2Fcf_databar.jpg" width="100%"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"databar"</span><span class="op">)</span></span>
 <span><span class="co">## Databars</span></span>
@@ -368,7 +368,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="section level2">
 <h2 id="between">Between<a class="anchor" aria-label="anchor" href="#between"></a>
 </h2>
-<p><img src="img/cf_between.jpg"><!-- --></p>
+<p><img src="img%2Fcf_between.jpg"><!-- --></p>
 <p>Highlight cells in interval [-2, 2]</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"between"</span><span class="op">)</span></span>
@@ -384,7 +384,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="section level2">
 <h2 id="top-n">Top N<a class="anchor" aria-label="anchor" href="#top-n"></a>
 </h2>
-<p><img src="img/cf_top_n.jpg"><!-- --></p>
+<p><img src="img%2Fcf_top_n.jpg"><!-- --></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"topN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Highlight top 5 values in column <code>x</code></p>
@@ -410,7 +410,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="section level2">
 <h2 id="bottom-n">Bottom N<a class="anchor" aria-label="anchor" href="#bottom-n"></a>
 </h2>
-<p><img src="img/cf_bottom_n.jpg"><!-- --></p>
+<p><img src="img%2Fcf_bottom_n.jpg"><!-- --></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"bottomN"</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Highlight bottom 5 values in column <code>x</code></p>
@@ -437,7 +437,7 @@ cells is used. Rule must be the same length as style or L.</p>
 <div class="section level2">
 <h2 id="logical-operators">Logical Operators<a class="anchor" aria-label="anchor" href="#logical-operators"></a>
 </h2>
-<p><img src="img/cf_logical_operators.jpg"><!-- --></p>
+<p><img src="img%2Fcf_logical_operators.jpg"><!-- --></p>
 <p>You can use Excels logical Operators</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"logical operators"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
@@ -458,7 +458,7 @@ cells is used. Rule must be the same length as style or L.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
