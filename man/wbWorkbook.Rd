@@ -3311,6 +3311,7 @@ provide simple font function
   scheme = "",
   shadow = "",
   vert_align = "",
+  update = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -3351,6 +3352,8 @@ provide simple font function
 \item{\code{shadow}}{shadow}
 
 \item{\code{vert_align}}{vertical alignment}
+
+\item{\code{update}}{update}
 
 \item{\code{...}}{additional arguments}
 }
