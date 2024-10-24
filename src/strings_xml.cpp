@@ -18,14 +18,14 @@ SEXP xml_si_to_txt(XPtrXML doc) {
 
     // has only t node
     for (auto t : si.children("t")) {
-      text = t.child_value();
+      text = t.text().get();
     }
 
     // has r node with t node
     // linebreaks and spaces are handled in the nodes
     for (auto r : si.children("r")) {
       for (auto t :r.children("t")) {
-        text += t.child_value();
+        text += t.text().get();
       }
     }
 
@@ -65,7 +65,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
 
       // has only t node
       for (auto t : is.children("t")) {
-        text = t.child_value();
+        text = t.text().get();
       }
 
       // has r node with t node
@@ -77,7 +77,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       // linebreaks and spaces are handled in the nodes
       for (auto r : is.children("r")) {
         for (auto t :r.children("t")) {
-          text += t.child_value();
+          text += t.text().get();
         }
       }
 
