@@ -300,7 +300,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           // <f>
           if (val_name == f_str) {
 
-            single_xml_col.f = val.child_value();
+            single_xml_col.f = val.text().get();
 
             // additional attributes to <f>
             // This currently handles
@@ -321,7 +321,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           } // </f>
 
           // <v>
-          if (val_name == v_str)  single_xml_col.v = val.child_value();
+          if (val_name == v_str)  single_xml_col.v = val.text().get();
 
         }
 

@@ -255,7 +255,7 @@ SEXP getXMLXPtr1val(XPtrXML doc, std::string child) {
 
   for (auto worksheet : doc->children(child.c_str()))
   {
-    x.push_back(Rcpp::String(worksheet.child_value()));
+    x.push_back(Rcpp::String(worksheet.text().get()));
   }
 
   return  Rcpp::wrap(x);
@@ -270,7 +270,7 @@ SEXP getXMLXPtr2val(XPtrXML doc, std::string level1, std::string child) {
   for (auto worksheet : doc->children(level1.c_str())) {
 
     for (auto col : worksheet.children(child.c_str())) {
-      x.push_back(Rcpp::String(col.child_value()));
+      x.push_back(Rcpp::String(col.text().get()));
     }
   }
 
@@ -287,7 +287,7 @@ SEXP getXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::st
   {
 
     for (auto col : worksheet.children(child.c_str()))
-      x.push_back(Rcpp::String(col.child_value()));
+      x.push_back(Rcpp::String(col.text().get()));
   }
 
   return  Rcpp::wrap(x);
