@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.9.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.10.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+<hr></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.10" id="openxlsx2-110">openxlsx2 1.10<a class="anchor" aria-label="anchor" href="#openxlsx2-110"></a></h2><p class="text-muted">CRAN release: 2024-10-17</p>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-1-10">New features<a class="anchor" aria-label="anchor" href="#new-features-1-10"></a></h3>
 <ul><li><p>When writing a file with <code>na.strings = NULL</code>, the file will not contain any reference to the blank cell. Depending on the number of missings in a data set, this can reduce the file size significantly. <a href="https://github.com/JanMarvin/openxlsx2/pull/1111" class="external-link">1111</a></p></li>
 <li><p><code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> gained a new argument <code>show_hyperlinks</code> which returns the target or location of a hyperlink, instead of the links description. <a href="https://github.com/JanMarvin/openxlsx2/pull/1136" class="external-link">1136</a></p></li>
 <li><p>A new wrapper function <code><a href="../reference/wb_add_hyperlink.html">wb_add_hyperlink()</a></code> extends the capabilities of writing hyperlinks to shared hyperlinks. Shared hyperlinks bring along internal changes that are noted below. <a href="https://github.com/JanMarvin/openxlsx2/pull/1137" class="external-link">1137</a></p></li>
@@ -60,7 +63,7 @@
 <li><p><code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code> will throw a warning if non distinct column names are found and will fix this for the user. Non distinct can be duplicated or even upper and lower case <code>x</code> and <code>X</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1150" class="external-link">1150</a></p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-10">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-10"></a></h3>
 <ul><li><p>The integration of the shared formula feature in the previous release broke the silent extension of dims, if a single cell <code>dims</code> was provided for an <code>x</code> that was larger than a single cell in <code><a href="../reference/wb_add_formula.html">wb_add_formula()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1131" class="external-link">1131</a></p></li>
 <li><p>Fixed a regression in the previous release, where <code><a href="../reference/wb_dims.html">wb_dims()</a></code> would pass column names passed via <code>cols</code> to <code><a href="../reference/col2int.html">col2int()</a></code> which could cause overflow errors resulting in a failing check. <a href="https://github.com/JanMarvin/openxlsx2/pull/1133" class="external-link">1133</a></p></li>
 <li><p>Fix cloning from worksheets with multiple images.</p></li>
@@ -68,7 +71,7 @@
 <li><p>Improve creation of table ids. Previously, on a dirty workbook, unique table ids were not enforced. This caused duplicated table ids, which lead to errors in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/1152" class="external-link">1152</a></p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<h3 id="internal-changes-1-10">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-10"></a></h3>
 <ul><li>The handling of shared hyperlinks has been updated. Previously, when loading a file with shared hyperlinks, they were converted into <code>wbHyperlink</code> objects (a legacy from <code>openxlsx</code>). With recent internal changes, hyperlinks are no longer automatically transformed into <code>wbHyperlink</code> objects. If you still require these objects, you can use the internal function <code>wb_to_hyperlink(wb, sheet = 1)</code>. However, please note that this class is not essential for <code>openxlsx2</code> and may be further simplified or removed in the future without notice. <a href="https://github.com/JanMarvin/openxlsx2/pull/1137" class="external-link">1137</a>
 </li>
 </ul><hr></div>
