@@ -155,12 +155,15 @@ test_that("skipEmptyCols keeps empty named columns", {
 
 test_that("reading with pre defined types works", {
 
-  dat <- data.frame(
-    numeric = rnorm(n = 5),
-    integer = sample(1:5, 5, TRUE),
-    date = Sys.Date() - 0:4,
-    datetime = Sys.time() - 0:4,
-    character = letters[1:5]
+  dat <- structure(
+    list(numeric = c(0.837787044494525, 0.153373117836515, -1.13813693701195, 1.25381492106993, 0.426464221476814),
+         integer = c(4L, 5L, 2L, 1L, 1L),
+         date = structure(c(20023, 20022, 20021, 20020, 20019), class = "Date"),
+         datetime = structure(c(1730064568.89935, 1730064567.89935, 1730064566.89935, 1730064565.89935, 1730064564.89935), class = c("POSIXct", "POSIXt")),
+         character = c("a", "b", "c", "d", "e")
+         ),
+    class = "data.frame",
+    row.names = c(NA, -5L)
   )
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
