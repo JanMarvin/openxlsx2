@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Add `hide_no_data_items` option in `wb_add_slicer()`. [1169](https://github.com/JanMarvin/openxlsx2/pull/1169)
+
 ## Fixes
 
 * Previously rows that trigger scientific notation (e.g. `1e+05`) would cause issues, when matched against a non scientific version.  [1170](https://github.com/JanMarvin/openxlsx2/pull/1170)
