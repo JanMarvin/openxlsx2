@@ -477,6 +477,26 @@ test_that("set and remove row heights work", {
 
 })
 
+test_that("set and remove row heights work", {
+
+  rows <- c(99999, 100000, 100001)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = 1:3, dims = "A99999:A100001")$
+    set_row_heights(
+      rows = rows,
+      heights = c(24, 28, 32)
+    )
+
+  exp <- c("99999", "100000", "100001")
+  got <- wb$worksheets[[1]]$sheet_data$row_attr$r
+  expect_equal(exp, got)
+
+  wb$remove_row_heights(rows = rows)
+
+})
+
 test_that("add_drawing works", {
 
   skip_if_not_installed("rvg")

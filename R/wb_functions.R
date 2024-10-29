@@ -351,9 +351,9 @@ delete_data <- function(wb, sheet, cols, rows) {
   cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
 
   if (is.numeric(cols)) {
-    sel <- cc$row_r %in% as.character(rows) & cc$c_r %in% int2col(cols)
+    sel <- cc$row_r %in% as.character(as.integer(rows)) & cc$c_r %in% int2col(cols)
   } else {
-    sel <- cc$row_r %in% as.character(rows) & cc$c_r %in% cols
+    sel <- cc$row_r %in% as.character(as.integer(rows)) & cc$c_r %in% cols
   }
 
   # clean selected entries of cc

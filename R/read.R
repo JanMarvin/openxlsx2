@@ -288,7 +288,7 @@ wb_to_df <- function(
   }
 
   if (!is.null(rows)) {
-    keep_rows <- as.character(rows)
+    keep_rows <- as.character(as.integer(rows))
 
     if (all(keep_rows %in% rownames(z))) {
       z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
