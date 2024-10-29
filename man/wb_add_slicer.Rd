@@ -62,6 +62,7 @@ Possible \code{params} arguments for slicers are listed below.
 \code{c(agegp = 'x > "25-34"')} for the \code{esoph} dataset.
 \item locked_position
 \item start_item
+\item hide_no_data_items
 }
 
 Possible \code{params} arguments for timelines are listed below.

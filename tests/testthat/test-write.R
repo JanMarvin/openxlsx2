@@ -784,6 +784,32 @@ test_that("removing timelines works", {
 
 })
 
+test_that("slicer extension 'hide_no_data_items' works", {
+
+  dat <- data.frame(
+    var = c("x", "y", "y", "z", "z", "x"),
+    speed = c(4, 4, 7, 7, 8, 9),
+    dis = c(2, 10, 4, 22, 16, 10),
+    slicervar1 = c("option1", "option1", "option1", "option2", "option2", "option2"),
+    slicervar2 = c("choice1", "choice1", "choice2", "choice3", "choice3", "choice1")
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet("pivot")$
+    add_worksheet("dat")$add_data(x = dat)
+
+  df <- wb_data(wb)
+
+  wb$
+    add_pivot_table(df, sheet = "pivot", dims = "A3", slicer = c("slicervar1", "slicervar2"), rows = c("var"), data = "speed", params = list(name = "pivot_1"))$
+    add_slicer(x = df, sheet = "pivot", dims = "D3:E9", slicer = "slicervar1", pivot_table = "pivot_1", param = list(hide_no_data_items = TRUE))$
+    add_slicer(x = df, sheet = "pivot", dims = "F3:G9", slicer = "slicervar2", pivot_table = "pivot_1")
+
+  expect_true(grepl("x15:slicerCacheHideItemsWithNoData", wb$slicerCaches[[1]]))
+  expect_true(!grepl("x15:slicerCacheHideItemsWithNoData", wb$slicerCaches[[2]]))
+
+})
+
 test_that("writing na.strings = NULL works", {
 
   # write na.strings = na_strings()

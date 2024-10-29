@@ -493,6 +493,7 @@ wb_add_pivot_table <- function(
 #'  `c(agegp = 'x > "25-34"')` for the `esoph` dataset.
 #' * locked_position
 #' * start_item
+#' * hide_no_data_items
 #'
 #' Possible `params` arguments for timelines are listed below.
 #' * beg_date/end_date: dates when the timeline should begin or end

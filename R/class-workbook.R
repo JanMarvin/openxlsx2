@@ -1758,8 +1758,8 @@ wbWorkbook <- R6::R6Class(
       } else {
         arguments <- c(
           "caption", "choose", "column_count", "cross_filter", "edit_as",
-          "level", "locked_position", "row_height", "show_caption",
-          "show_missing", "sort_order", "start_item", "style"
+          "hide_no_data_items", "level", "locked_position", "row_height",
+          "show_caption", "show_missing", "sort_order", "start_item", "style"
         )
         params <- standardize_case_names(params, arguments = arguments, return = TRUE)
       }
@@ -1819,6 +1819,16 @@ wbWorkbook <- R6::R6Class(
         xml_children = get_items(x, which(names(x) == slicer), NULL, slicer = TRUE, choose = choo, has_default = TRUE)
       )
 
+
+      hide_items_with_no_data <- ""
+      if (isTRUE(params$hide_no_data_items)) {
+        hide_items_with_no_data <- '<extLst>
+          <x:ext xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main" uri="{470722E0-AACD-4C17-9CDC-17EF765DBC7E}">
+            <x15:slicerCacheHideItemsWithNoData/>
+          </x:ext>
+        </extLst>'
+      }
+
       slicer_cache <- read_xml(sprintf(
         '<slicerCacheDefinition xmlns="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x xr10" xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10" name="Slicer_%s" xr10:uid="{72B411E0-23B7-7444-B533-EAC1856BE56A}" sourceName="%s">
           <pivotTables>
@@ -1827,12 +1837,14 @@ wbWorkbook <- R6::R6Class(
           <data>
             %s
           </data>
+          %s
         </slicerCacheDefinition>',
         uni_name,
         slicer,
         sheet,
         pivot_table,
-        tab_xml
+        tab_xml,
+        hide_items_with_no_data
       ), pointer = FALSE)
 
       # we need the slicer cache
