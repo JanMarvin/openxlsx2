@@ -4397,7 +4397,7 @@ wbWorkbook <- R6::R6Class(
       private$do_cell_init(sheet, dims)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
-      sel <- match(as.character(rows), row_attr$r)
+      sel <- match(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
 
       if (!is.null(heights)) {
@@ -4441,7 +4441,7 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      sel <- match(as.character(rows), row_attr$r)
+      sel <- match(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
       row_attr[sel, "ht"] <- ""
       row_attr[sel, "customHeight"] <- ""
@@ -4768,7 +4768,7 @@ wbWorkbook <- R6::R6Class(
       # get the selection based on the row_attr frame.
 
       # the first n -1 rows get outlineLevel
-      select <- row_attr$r %in% as.character(rows)
+      select <- row_attr$r %in% as.character(as.integer(rows))
       collapse_in <- ifelse(below, length(rows), 1)
       select_n1 <- row_attr$r %in% as.character(rows[-collapse_in])
       if (length(select)) {
@@ -4804,7 +4804,7 @@ wbWorkbook <- R6::R6Class(
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 
       # get the selection based on the row_attr frame.
-      select <- row_attr$r %in% as.character(rows)
+      select <- row_attr$r %in% as.character(as.integer(rows))
       if (length(select)) {
         row_attr$outlineLevel[select] <- ""
         row_attr$collapsed[select] <- ""
@@ -8785,7 +8785,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         rows_df <- self$worksheets[[sheet]]$sheet_data$row_attr
-        sel     <- rows_df$r %in% as.character(rows)
+        sel     <- rows_df$r %in% as.character(as.integer(rows))
 
         rows_df$customFormat[sel] <- "1"
         rows_df$s[sel]            <- styid
