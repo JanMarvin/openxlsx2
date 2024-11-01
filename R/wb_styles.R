@@ -173,8 +173,11 @@ create_border <- function(
 #' @export
 create_numfmt <- function(numFmtId, formatCode) {
 
-  # maybe only required in dates
-  formatCode <- escape_forward_slashes(formatCode)
+  # in dates a slash does not indicate a fraction, but can be used to
+  # separate year, month, day
+  if (grepl("(y{2,4}|m{1,4}|d{1,2})", tolower(formatCode)) && grepl("/", formatCode)) {
+    formatCode <- escape_forward_slashes(formatCode)
+  }
 
   df_numfmt <- data.frame(
     numFmtId         = as_xml_attr(numFmtId),
