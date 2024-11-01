@@ -13,7 +13,7 @@ wb_add_numfmt(wb, sheet = current_sheet(), dims = "A1", numfmt)
 
 \item{dims}{the cell range}
 
-\item{numfmt}{either an id or a character}
+\item{numfmt}{either an integer id for a builtin numeric font or a character string as described in the \emph{\strong{Details}}}
 }
 \value{
 The \code{wbWorkbook} object, invisibly.
@@ -24,6 +24,76 @@ by \code{\link[=create_numfmt]{create_numfmt()}}.
 }
 \details{
 The list of number formats ID is located in the \strong{Details} section of \code{\link[=create_cell_style]{create_cell_style()}}.
+\subsection{General Number Formatting}{
+\itemize{
+\item \code{"0"}: Displays numbers as integers without decimal places.
+\item \code{"0.00"}: Displays numbers with two decimal places (e.g., \code{123.45}).
+\item \code{"#,##0"}: Displays thousands separators without decimals (e.g., \verb{1,000}).
+\item \code{"#,##0.00"}: Displays thousands separators with two decimal places (e.g., \verb{1,000.00}).
+}
+}
+
+\subsection{Currency Formatting}{
+\itemize{
+\item \code{"$#,##0.00"}: Formats numbers as currency with two decimal places (e.g., \verb{$1,000.00}).
+\item \code{"[$$-409]#,##0.00"}: Localized currency format in U.S. dollars.
+\item \code{"¥#,##0"}: Custom currency format (e.g., for Japanese yen) without decimals.
+\item \code{"£#,##0.00"}: GBP currency format with two decimal places.
+}
+}
+
+\subsection{Percentage Formatting}{
+\itemize{
+\item \code{"0\%"}: Displays numbers as percentages with no decimal places (e.g., \verb{50\%}).
+\item \code{"0.00\%"}: Displays numbers as percentages with two decimal places (e.g., \verb{50.00\%}).
+}
+}
+
+\subsection{Scientific Formatting}{
+\itemize{
+\item \code{"0.00E+00"}: Scientific notation with two decimal places (e.g., \code{1.23E+03} for \code{1230}).
+}
+}
+
+\subsection{Date and Time Formatting}{
+\itemize{
+\item \code{"yyyy-mm-dd"}: Year-month-day format (e.g., \code{2023-10-31}).
+\item \code{"dd/mm/yyyy"}: Day/month/year format (e.g., \code{31/10/2023}).
+\item \code{"mmm d, yyyy"}: Month abbreviation with day and year (e.g., \verb{Oct 31, 2023}).
+\item \code{"h:mm AM/PM"}: Time with AM/PM format (e.g., \verb{1:30 PM}).
+\item \code{"h:mm:ss"}: Time with seconds (e.g., \code{13:30:15} for \verb{1:30:15 PM}).
+\item \code{"yyyy-mm-dd h:mm:ss"}: Full date and time format.
+}
+}
+
+\subsection{Fraction Formatting}{
+\itemize{
+\item \code{"# ?/?"}: Displays numbers as a fraction with a single digit denominator (e.g., \code{1/2}).
+\item \code{"# ??/??"}: Displays numbers as a fraction with a two-digit denominator (e.g., \verb{1 12/25}).
+}
+}
+
+\subsection{Custom Formatting}{
+\itemize{
+\item \verb{"_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)}:
+Custom currency format with parentheses for negative values and dashes for zero values.
+\item \code{"[Red]0.00;[Blue](0.00);0"}: Displays positive numbers in red, negatives in blue, and zeroes as plain.
+\item \code{"@"}: Text placeholder format (e.g., for cells with mixed text and numeric values).
+}
+}
+
+\subsection{Formatting Symbols Reference}{
+\itemize{
+\item \code{0}: Digit placeholder, displays a digit or zero.
+\item \verb{#}: Digit placeholder, does not display extra zeroes.
+\item \code{.}: Decimal point.
+\item \verb{,}: Thousands separator.
+\item \verb{E+}, \verb{E-}: Scientific notation.
+\item \verb{_} (underscore): Adds a space equal to the width of the next character.
+\item \code{"text"}: Displays literal text within quotes.
+\item \code{*}: Repeat character to fill the cell width.
+}
+}
 }
 \examples{
 wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
