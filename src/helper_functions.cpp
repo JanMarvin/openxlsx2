@@ -145,7 +145,7 @@ uint32_t uint_col_to_int(std::string& a) {
 }
 
 
-std::string rm_rownum(const std::string& str) {
+static inline std::string rm_rownum(const std::string& str) {
     std::string result;
     for (char c : str) {
         if (!std::isdigit(c)) {
@@ -155,7 +155,7 @@ std::string rm_rownum(const std::string& str) {
     return result;
 }
 
-std::string rm_colnum(const std::string& str) {
+inline std::string rm_colnum(const std::string& str) {
     std::string result;
     for (char c : str) {
         if (std::isdigit(c)) {
@@ -166,12 +166,12 @@ std::string rm_colnum(const std::string& str) {
 }
 
 // Function to keep only digits in a string
-uint32_t cell_to_rowint(const std::string& str) {
+inline uint32_t cell_to_rowint(const std::string& str) {
   std::string result = rm_colnum(str);
   return std::stoi(result);
 }
 
-std::string str_toupper(std::string s) {
+inline std::string str_toupper(std::string s) {
   std::transform(s.begin(), s.end(), s.begin(),
                  [](unsigned char c){ return std::toupper(c); }
   );
@@ -179,7 +179,7 @@ std::string str_toupper(std::string s) {
 }
 
 // Function to remove digits from a string
-uint32_t cell_to_colint(const std::string& str) {
+inline uint32_t cell_to_colint(const std::string& str) {
   std::string result = rm_rownum(str);
   result = str_toupper(result);
   return uint_col_to_int(result);
@@ -428,7 +428,7 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 // similar to is.numeric(x)
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
-bool is_double(std::string x) {
+inline bool is_double(std::string x) {
 
   char *endp;
   double res;
@@ -472,10 +472,11 @@ void wide_to_long(
     std::vector<std::string> dims
 ) {
 
-  auto n = z.nrow();
-  auto m = z.ncol();
+  int64_t n = z.nrow();
+  int32_t m = z.ncol();
+  bool has_dims = dims.size() == static_cast<size_t>(n * m);
 
-  auto startcol = start_col;
+  int32_t startcol = start_col;
 
   int32_t in_string_nums = string_nums;
 
@@ -493,38 +494,37 @@ void wide_to_long(
   Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
   Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
-  if (inline_strings)
-    na_strings = txt_to_is(na_strings, 0, 1, 1);
-  else
-    na_strings = txt_to_si(na_strings, 0, 1, 1);
+  // Convert na_strings only once outside the loop.
+  na_strings = inline_strings ? txt_to_is(na_strings, 0, 1, 1) : txt_to_si(na_strings, 0, 1, 1);
 
   R_xlen_t idx = 0;
 
-  bool has_dims = false;
-  if (dims.size() == (size_t)(n * m)) has_dims = true;
+  for (int32_t i = 0; i < m; ++i, ++startcol) {
 
-  for (auto i = 0; i < m; ++i) {
     Rcpp::checkUserInterrupt();
-
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
-
     std::string col = int_to_col(startcol);
+    int8_t vtyp_i = static_cast<int8_t>(vtyps[i]);
 
     auto startrow = start_row;
-    for (auto j = 0; j < n; ++j) {
+    for (int64_t j = 0; j < n; ++j, ++idx, ++startrow) {
       Rcpp::checkUserInterrupt();
 
-      int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
-      if (ColNames && j == 0) vtyp = character;
+      int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;
       std::string vals = Rcpp::as<std::string>(cvec[j]);
       std::string row = std::to_string(startrow);
 
       R_xlen_t pos = (j * m) + i;
 
-      std::string ref_str = Rcpp::String(ref[i]);
-      if (ref_str.compare("0") == 0)
-      ref_str = col + row;
+      // there should be no unicode character in ref_str
+      std::string ref_str = "";
+      if (vtyp == array_formula || vtyp == cm_formula) {
+        ref_str = Rcpp::as<std::string>(ref[i]);
+        if (ref_str == "0") {
+          ref_str = col + row;
+        }
+      }
 
       // factors can be numeric or string or both. tables require the
       // column name to be character and once we have overwritten for
@@ -560,11 +560,7 @@ void wide_to_long(
         // test if string can be written as number
         if (string_nums && is_double(vals)) {
           cell.v   = vals;
-          if (string_nums == 1) {
-            vtyp = string_num;
-          } else {
-            vtyp = numeric;
-          }
+          vtyp     = (string_nums == 1) ? string_num : numeric;
         } else {
           // check if we write sst or inlineStr
           if (inline_strings) {
@@ -604,26 +600,19 @@ void wide_to_long(
         if (na_missing) {
           cell.v   = "#N/A";
           cell.c_t = "e";
-          cell.is  = "";
+          cell.is.clear();
         } else  {
-
-          cell.v = "";
-          // clear cell
+          cell.v.clear();
           if (na_null) {
-            cell.c_t = "";
-            cell.is  = "";
+            cell.c_t.clear();
+            cell.is.clear();
           } else {
-            // inlineStr or s
-            if (inline_strings) {
-              cell.c_t = "inlineStr";
-              cell.is  = na_strings;
-            } else {
-              cell.c_t = "s";
-              cell.v   = na_strings;
-            }
-
+            cell.c_t = inline_strings  ? "inlineStr" : "s";
+            cell.is  = inline_strings  ? na_strings  : "";
+            cell.v   = !inline_strings ? na_strings  : "";
           }
         }
+
       }
 
       if (cell.v.compare("NaN") == 0) {
@@ -637,15 +626,12 @@ void wide_to_long(
       }
 
       cell.typ = std::to_string(vtyp);
+      cell.r   = has_dims ? dims[idx] : col + row;
 
       if (has_dims) {
-        cell.r =  dims[idx];
-
         zz_row_r[pos] = rm_colnum(cell.r);
         zz_c_r[pos]   = rm_rownum(cell.r);
       } else {
-        cell.r =  col + row;
-
         zz_row_r[pos] = row;
         zz_c_r[pos]   = col;
       }
@@ -660,11 +646,7 @@ void wide_to_long(
       if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
       if (!cell.r.empty())     zz_r[pos]     = cell.r;
 
-      ++idx;
-
-      ++startrow;
     }
-    ++startcol;
   }
 }
 
