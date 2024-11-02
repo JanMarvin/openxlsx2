@@ -592,9 +592,9 @@ void wide_to_long(
 
 
       if (
-          cell.is.compare("<is><t>_openxlsx_NA</t></is>") == 0 ||
-            cell.v.compare("<si><t>_openxlsx_NA</t></si>") == 0 ||
-            cell.v.compare("NA") == 0
+          cell.is == "<is><t>_openxlsx_NA</t></is>" ||
+            cell.v == "<si><t>_openxlsx_NA</t></si>" ||
+            cell.v == "NA"
       ) {
 
         if (na_missing) {
@@ -615,12 +615,12 @@ void wide_to_long(
 
       }
 
-      if (cell.v.compare("NaN") == 0) {
+      if (cell.v == "NaN") {
         cell.v   = "#VALUE!";
         cell.c_t = "e";
       }
 
-      if (cell.v.compare("-Inf") == 0 || cell.v.compare("Inf") == 0) {
+      if (cell.v == "-Inf" || cell.v == "Inf") {
         cell.v   = "#NUM!";
         cell.c_t = "e";
       }
