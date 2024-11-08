@@ -471,6 +471,16 @@ test_that("Loading a workbook with property preserves it.", {
 
 })
 
+test_that("Creation time is not changed by set_property unless specified", {
+  op <- options("openxlsx2.datetimeCreated" = NULL)
+  on.exit(options(op), add = TRUE)
+  t1 <- "2000-01-01T00:00:00Z"
+  wb <- wb_workbook(datetime_created = as.POSIXct(t1, tz = "UTC"))
+  wb$set_properties()
+  t2 <- wb$get_properties()[["datetime_created"]]
+  expect_equal(t1, t2)
+})
+
 test_that("failing to unzip works as expected", {
 
   # try to read from single file

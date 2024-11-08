@@ -279,6 +279,7 @@ Creates a new \code{wbWorkbook} object
   subject = NULL,
   category = NULL,
   datetime_created = Sys.time(),
+  datetime_modified = NULL,
   theme = NULL,
   keywords = NULL,
   comments = NULL,
@@ -298,6 +299,9 @@ Creates a new \code{wbWorkbook} object
 \item{\code{datetime_created}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
 is created, not when the Excel files are saved.}
+
+\item{\code{datetime_modified}}{The datetime (as \code{POSIXt}) that should be recorded
+as last modification date. Defaults to the creation date.}
 
 \item{\code{theme}}{Optional theme identified by string or number}
 
@@ -2459,7 +2463,8 @@ Set a property of a workbook
   title = NULL,
   subject = NULL,
   category = NULL,
-  datetime_created = Sys.time(),
+  datetime_created = NULL,
+  datetime_modified = NULL,
   modifier = NULL,
   keywords = NULL,
   comments = NULL,
@@ -2474,7 +2479,7 @@ Set a property of a workbook
 \describe{
 \item{\code{creator}}{character vector of creators. Duplicated are ignored.}
 
-\item{\code{title, subject, category, datetime_created, modifier, keywords, comments, manager, company, custom}}{A workbook property to set}
+\item{\code{title, subject, category, datetime_created, datetime_modified, modifier, keywords, comments, manager, company, custom}}{A workbook property to set}
 }
 \if{html}{\out{</div>}}
 }
