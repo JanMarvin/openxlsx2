@@ -501,14 +501,14 @@ void wide_to_long(
 
   for (int32_t i = 0; i < m; ++i, ++startcol) {
 
-    Rcpp::checkUserInterrupt();
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
     std::string col = int_to_col(startcol);
     int8_t vtyp_i = static_cast<int8_t>(vtyps[i]);
 
     auto startrow = start_row;
     for (int64_t j = 0; j < n; ++j, ++idx, ++startrow) {
-      Rcpp::checkUserInterrupt();
+
+      checkInterrupt(j);
 
       // if colname is provided, the first row is always a character
       int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;

@@ -14,3 +14,9 @@ std::string txt_to_si(std::string txt, bool no_escapes, bool raw, bool skip_cont
 inline std::string to_string(Rcpp::Vector<16>::Proxy x) {
   return Rcpp::String(x);
 }
+
+inline void checkInterrupt(int64_t iteration, int64_t frequency = 10000) {
+  if (iteration % frequency == 0) {
+    Rcpp::checkUserInterrupt();
+  }
+}
