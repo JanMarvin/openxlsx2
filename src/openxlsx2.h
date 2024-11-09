@@ -15,7 +15,7 @@ inline std::string to_string(Rcpp::Vector<16>::Proxy x) {
   return Rcpp::String(x);
 }
 
-inline void checkInterrupt(int64_t iteration, int64_t frequency = 10000) {
+inline void checkInterrupt(R_xlen_t iteration, R_xlen_t frequency = 10000) {
   if (iteration % frequency == 0) {
     Rcpp::checkUserInterrupt();
   }

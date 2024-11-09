@@ -513,7 +513,7 @@ void wide_to_long(
     auto startrow = start_row;
     for (int64_t j = 0; j < n; ++j, ++idx, ++startrow) {
 
-      checkInterrupt(j);
+      checkInterrupt(idx);
 
       // if colname is provided, the first row is always a character
       int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;

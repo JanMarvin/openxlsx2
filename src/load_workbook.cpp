@@ -211,9 +211,8 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
    ****************************************************************************/
   row_attributes = row_to_df(doc);
 
-  auto itr_rows = 0;
+  R_xlen_t idx = 0, itr_rows = 0;
   for (auto worksheet: ws.children("row")) {
-    Rcpp::checkUserInterrupt();
 
     /* ---------------------------------------------------------------------- */
     /* read cval, and ctyp -------------------------------------------------- */
@@ -222,9 +221,10 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     // buffer is string buf is SEXP
     std::string buffer, attr_name, val_name, cattr_name;
 
-    int64_t itr_cols = 0;
+    auto itr_cols = 0;
     for (auto col : worksheet.children("c")) {
-      checkInterrupt(itr_cols);
+      checkInterrupt(idx);
+      ++idx;
 
       // contains all values of a col
       xml_col single_xml_col;
