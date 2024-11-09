@@ -478,10 +478,8 @@ void wide_to_long(
 
   std::vector<std::string> srows(n);
   for (int64_t j = 0; j < n; ++j) {
-    srows[j] = std::to_string(start_row + j);
+    srows[j] = std::to_string((int64_t)start_row + j);
   }
-
-  int32_t startcol = start_col;
 
   int32_t in_string_nums = string_nums;
 
@@ -504,14 +502,13 @@ void wide_to_long(
 
   R_xlen_t idx = 0;
 
-  for (int32_t i = 0; i < m; ++i, ++startcol) {
+  for (int32_t i = 0; i < m; ++i) {
 
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
-    std::string col = int_to_col(startcol);
+    std::string col = int_to_col(start_col + i);
     int8_t vtyp_i = static_cast<int8_t>(vtyps[i]);
 
-    auto startrow = start_row;
-    for (int64_t j = 0; j < n; ++j, ++idx, ++startrow) {
+    for (int64_t j = 0; j < n; ++j, ++idx) {
 
       checkInterrupt(idx);
 
