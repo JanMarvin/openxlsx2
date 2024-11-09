@@ -457,12 +457,12 @@ Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x) {
 // [[Rcpp::export]]
 void wide_to_long(
     Rcpp::DataFrame z,
-    Rcpp::IntegerVector vtyps,
+    std::vector<int32_t> vtyps,
     Rcpp::DataFrame zz,
     bool ColNames,
     int32_t start_col,
     int32_t start_row,
-    Rcpp::CharacterVector ref,
+    std::vector<std::string> ref,
     int32_t string_nums,
     bool na_null,
     bool na_missing,
@@ -520,7 +520,7 @@ void wide_to_long(
       // there should be no unicode character in ref_str
       std::string ref_str = "";
       if (vtyp == array_formula || vtyp == cm_formula) {
-        ref_str = Rcpp::as<std::string>(ref[i]);
+        ref_str = ref[i];
         if (ref_str == "0") {
           ref_str = col + row;
         }
