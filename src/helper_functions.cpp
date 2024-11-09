@@ -476,6 +476,11 @@ void wide_to_long(
   int32_t m = z.ncol();
   bool has_dims = dims.size() == static_cast<size_t>(n * m);
 
+  std::vector<std::string> srows(n);
+  for (int64_t j = 0; j < n; ++j) {
+    srows[j] = std::to_string(start_row + j);
+  }
+
   int32_t startcol = start_col;
 
   int32_t in_string_nums = string_nums;
@@ -512,8 +517,8 @@ void wide_to_long(
 
       // if colname is provided, the first row is always a character
       int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;
-      std::string vals = Rcpp::as<std::string>(cvec[j]);
-      std::string row = std::to_string(startrow);
+      const std::string& vals = Rcpp::as<std::string>(cvec[j]);
+      std::string row = srows[j];
 
       R_xlen_t pos = (j * m) + i;
 
