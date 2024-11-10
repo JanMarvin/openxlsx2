@@ -160,7 +160,7 @@ test_that("col2int and int2col", {
   expect_equal(test, that)
 
   x <- col_to_int(test)
-  that <- int_to_col(x)
+  that <- ox_int_to_col(x)
 
   expect_equal(test, that)
 

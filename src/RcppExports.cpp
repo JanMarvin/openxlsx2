@@ -33,17 +33,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// int_to_col
-std::string int_to_col(uint32_t cell);
-RcppExport SEXP _openxlsx2_int_to_col(SEXP cellSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< uint32_t >::type cell(cellSEXP);
-    rcpp_result_gen = Rcpp::wrap(int_to_col(cell));
-    return rcpp_result_gen;
-END_RCPP
-}
 // col_to_int
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x);
 RcppExport SEXP _openxlsx2_col_to_int(SEXP xSEXP) {
@@ -52,6 +41,17 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(col_to_int(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ox_int_to_col
+std::string ox_int_to_col(int32_t cell);
+RcppExport SEXP _openxlsx2_ox_int_to_col(SEXP cellSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int32_t >::type cell(cellSEXP);
+    rcpp_result_gen = Rcpp::wrap(ox_int_to_col(cell));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -74,17 +74,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(copy(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// validate_dims
-bool validate_dims(const std::string& input);
-RcppExport SEXP _openxlsx2_validate_dims(SEXP inputSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::string& >::type input(inputSEXP);
-    rcpp_result_gen = Rcpp::wrap(validate_dims(input));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1000,11 +989,10 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_to_long", (DL_FUNC) &_openxlsx2_to_long, 1},
     {"_openxlsx2_openxlsx2_type", (DL_FUNC) &_openxlsx2_openxlsx2_type, 1},
-    {"_openxlsx2_int_to_col", (DL_FUNC) &_openxlsx2_int_to_col, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
+    {"_openxlsx2_ox_int_to_col", (DL_FUNC) &_openxlsx2_ox_int_to_col, 1},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
-    {"_openxlsx2_validate_dims", (DL_FUNC) &_openxlsx2_validate_dims, 1},
     {"_openxlsx2_needed_cells", (DL_FUNC) &_openxlsx2_needed_cells, 1},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 5},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
