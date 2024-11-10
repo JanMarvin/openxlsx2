@@ -211,9 +211,8 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
    ****************************************************************************/
   row_attributes = row_to_df(doc);
 
-  auto itr_rows = 0;
+  R_xlen_t idx = 0, itr_rows = 0;
   for (auto worksheet: ws.children("row")) {
-    Rcpp::checkUserInterrupt();
 
     /* ---------------------------------------------------------------------- */
     /* read cval, and ctyp -------------------------------------------------- */
@@ -224,7 +223,8 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
     auto itr_cols = 0;
     for (auto col : worksheet.children("c")) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
+      ++idx;
 
       // contains all values of a col
       xml_col single_xml_col;

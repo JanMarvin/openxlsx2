@@ -114,76 +114,6 @@ SEXP openxlsx2_type(SEXP x) {
   return type;
 }
 
-// [[Rcpp::export]]
-std::string int_to_col(uint32_t cell) {
-  std::string col_name = "";
-
-  while (cell > 0)
-  {
-    auto modulo = (cell - 1) % 26;
-    col_name = (char)('A' + modulo) + col_name;
-    cell = (cell - modulo) / 26;
-  }
-
-  return col_name;
-}
-
-// driver function for col_to_int
-uint32_t uint_col_to_int(std::string& a) {
-
-  char A = 'A';
-  int aVal = (int)A - 1;
-  int sum = 0;
-  size_t k = a.length();
-
-  for (size_t j = 0; j < k; ++j) {
-    sum *= 26;
-    sum += (a[j] - aVal);
-  }
-
-  return sum;
-}
-
-
-std::string rm_rownum(const std::string& str) {
-    std::string result;
-    for (char c : str) {
-        if (!std::isdigit(c)) {
-            result += c;
-        }
-    }
-    return result;
-}
-
-std::string rm_colnum(const std::string& str) {
-    std::string result;
-    for (char c : str) {
-        if (std::isdigit(c)) {
-            result += c;
-        }
-    }
-    return result;
-}
-
-// Function to keep only digits in a string
-uint32_t cell_to_rowint(const std::string& str) {
-  std::string result = rm_colnum(str);
-  return std::stoi(result);
-}
-
-std::string str_toupper(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(),
-                 [](unsigned char c){ return std::toupper(c); }
-  );
-  return s;
-}
-
-// Function to remove digits from a string
-uint32_t cell_to_colint(const std::string& str) {
-  std::string result = rm_rownum(str);
-  result = str_toupper(result);
-  return uint_col_to_int(result);
-}
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
@@ -214,6 +144,12 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 
   return colNums;
 
+}
+
+// [[Rcpp::export]]
+std::string ox_int_to_col(int32_t cell) {
+  uint32_t cell_u32 = static_cast<uint32_t>(cell);
+  return int_to_col(cell_u32);
 }
 
 // provide a basic rbindlist for lists of named characters
@@ -272,24 +208,6 @@ SEXP copy(SEXP x) {
 }
 
 // [[Rcpp::export]]
-bool validate_dims(const std::string& input) {
-    bool has_col = false;
-    bool has_row = false;
-
-    for (char c : input) {
-        if (std::isupper(c)) {
-            has_col = true;
-        } else if (std::isdigit(c)) {
-            has_row = true;
-        } else {
-            return false;
-        }
-    }
-
-    return has_col && has_row;
-}
-
-// [[Rcpp::export]]
 Rcpp::CharacterVector needed_cells(const std::string& range) {
   std::vector<std::string> cells;
 
@@ -328,10 +246,6 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
   }
 
   return Rcpp::wrap(cells);
-}
-
-bool has_cell(const std::string& str, const std::unordered_set<std::string>& vec) {
-  return vec.find(str) != vec.end();
 }
 
 // provide a basic rbindlist for lists of named characters
@@ -425,23 +339,6 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   }
 }
 
-// similar to is.numeric(x)
-// returns true if string can be written as numeric and is not Inf
-// @param x a string input
-bool is_double(std::string x) {
-
-  char *endp;
-  double res;
-
-  res = R_strtod(x.c_str(), &endp);
-
-  if (strlen(endp) == 0 && std::isfinite(res)) {
-    return 1;
-  }
-
-  return 0;
-}
-
 // function to apply on vector
 // @param x a character vector as input
 // [[Rcpp::export]]
@@ -457,12 +354,12 @@ Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x) {
 // [[Rcpp::export]]
 void wide_to_long(
     Rcpp::DataFrame z,
-    Rcpp::IntegerVector vtyps,
+    std::vector<int32_t> vtyps,
     Rcpp::DataFrame zz,
     bool ColNames,
     int32_t start_col,
     int32_t start_row,
-    Rcpp::CharacterVector ref,
+    std::vector<std::string> ref,
     int32_t string_nums,
     bool na_null,
     bool na_missing,
@@ -472,10 +369,14 @@ void wide_to_long(
     std::vector<std::string> dims
 ) {
 
-  auto n = z.nrow();
-  auto m = z.ncol();
+  int64_t n = z.nrow();
+  int32_t m = z.ncol();
+  bool has_dims = dims.size() == static_cast<size_t>(n * m);
 
-  auto startcol = start_col;
+  std::vector<std::string> srows(n);
+  for (int64_t j = 0; j < n; ++j) {
+    srows[j] = std::to_string((int64_t)start_row + j);
+  }
 
   int32_t in_string_nums = string_nums;
 
@@ -493,38 +394,36 @@ void wide_to_long(
   Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
   Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
-  if (inline_strings)
-    na_strings = txt_to_is(na_strings, 0, 1, 1);
-  else
-    na_strings = txt_to_si(na_strings, 0, 1, 1);
+  // Convert na_strings only once outside the loop.
+  na_strings = inline_strings ? txt_to_is(na_strings, 0, 1, 1) : txt_to_si(na_strings, 0, 1, 1);
 
   R_xlen_t idx = 0;
 
-  bool has_dims = false;
-  if (dims.size() == (size_t)(n * m)) has_dims = true;
-
-  for (auto i = 0; i < m; ++i) {
-    Rcpp::checkUserInterrupt();
+  for (int32_t i = 0; i < m; ++i) {
 
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
+    std::string col = int_to_col(start_col + i);
+    int8_t vtyp_i = static_cast<int8_t>(vtyps[i]);
 
-    std::string col = int_to_col(startcol);
+    for (int64_t j = 0; j < n; ++j, ++idx) {
 
-    auto startrow = start_row;
-    for (auto j = 0; j < n; ++j) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
-      int8_t vtyp = (int8_t)vtyps[i];
       // if colname is provided, the first row is always a character
-      if (ColNames && j == 0) vtyp = character;
-      std::string vals = Rcpp::as<std::string>(cvec[j]);
-      std::string row = std::to_string(startrow);
+      int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;
+      const std::string& vals = Rcpp::as<std::string>(cvec[j]);
+      std::string row = srows[j];
 
       R_xlen_t pos = (j * m) + i;
 
-      std::string ref_str = Rcpp::String(ref[i]);
-      if (ref_str.compare("0") == 0)
-      ref_str = col + row;
+      // there should be no unicode character in ref_str
+      std::string ref_str = "";
+      if (vtyp == array_formula || vtyp == cm_formula) {
+        ref_str = ref[i];
+        if (ref_str == "0") {
+          ref_str = col + row;
+        }
+      }
 
       // factors can be numeric or string or both. tables require the
       // column name to be character and once we have overwritten for
@@ -560,11 +459,7 @@ void wide_to_long(
         // test if string can be written as number
         if (string_nums && is_double(vals)) {
           cell.v   = vals;
-          if (string_nums == 1) {
-            vtyp = string_num;
-          } else {
-            vtyp = numeric;
-          }
+          vtyp     = (string_nums == 1) ? string_num : numeric;
         } else {
           // check if we write sst or inlineStr
           if (inline_strings) {
@@ -596,56 +491,46 @@ void wide_to_long(
 
 
       if (
-          cell.is.compare("<is><t>_openxlsx_NA</t></is>") == 0 ||
-            cell.v.compare("<si><t>_openxlsx_NA</t></si>") == 0 ||
-            cell.v.compare("NA") == 0
+          cell.is == "<is><t>_openxlsx_NA</t></is>" ||
+            cell.v == "<si><t>_openxlsx_NA</t></si>" ||
+            cell.v == "NA"
       ) {
 
         if (na_missing) {
           cell.v   = "#N/A";
           cell.c_t = "e";
-          cell.is  = "";
+          cell.is.clear();
         } else  {
-
-          cell.v = "";
-          // clear cell
+          cell.v.clear();
           if (na_null) {
-            cell.c_t = "";
-            cell.is  = "";
+            cell.c_t.clear();
+            cell.is.clear();
           } else {
-            // inlineStr or s
-            if (inline_strings) {
-              cell.c_t = "inlineStr";
-              cell.is  = na_strings;
-            } else {
-              cell.c_t = "s";
-              cell.v   = na_strings;
-            }
-
+            cell.c_t = inline_strings  ? "inlineStr" : "s";
+            cell.is  = inline_strings  ? na_strings  : "";
+            cell.v   = !inline_strings ? na_strings  : "";
           }
         }
+
       }
 
-      if (cell.v.compare("NaN") == 0) {
+      if (cell.v == "NaN") {
         cell.v   = "#VALUE!";
         cell.c_t = "e";
       }
 
-      if (cell.v.compare("-Inf") == 0 || cell.v.compare("Inf") == 0) {
+      if (cell.v == "-Inf" || cell.v == "Inf") {
         cell.v   = "#NUM!";
         cell.c_t = "e";
       }
 
       cell.typ = std::to_string(vtyp);
+      cell.r   = has_dims ? dims[idx] : col + row;
 
       if (has_dims) {
-        cell.r =  dims[idx];
-
         zz_row_r[pos] = rm_colnum(cell.r);
         zz_c_r[pos]   = rm_rownum(cell.r);
       } else {
-        cell.r =  col + row;
-
         zz_row_r[pos] = row;
         zz_c_r[pos]   = col;
       }
@@ -660,11 +545,7 @@ void wide_to_long(
       if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
       if (!cell.r.empty())     zz_r[pos]     = cell.r;
 
-      ++idx;
-
-      ++startrow;
     }
-    ++startcol;
   }
 }
 

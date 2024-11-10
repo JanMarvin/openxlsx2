@@ -12,12 +12,12 @@ openxlsx2_type <- function(x) {
     .Call(`_openxlsx2_openxlsx2_type`, x)
 }
 
-int_to_col <- function(cell) {
-    .Call(`_openxlsx2_int_to_col`, cell)
-}
-
 col_to_int <- function(x) {
     .Call(`_openxlsx2_col_to_int`, x)
+}
+
+ox_int_to_col <- function(cell) {
+    .Call(`_openxlsx2_ox_int_to_col`, cell)
 }
 
 rbindlist <- function(x) {
@@ -26,10 +26,6 @@ rbindlist <- function(x) {
 
 copy <- function(x) {
     .Call(`_openxlsx2_copy`, x)
-}
-
-validate_dims <- function(input) {
-    .Call(`_openxlsx2_validate_dims`, input)
 }
 
 needed_cells <- function(range) {
