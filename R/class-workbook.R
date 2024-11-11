@@ -3735,13 +3735,7 @@ wbWorkbook <- R6::R6Class(
 
       ### autofilter
       autofilter <- if (withFilter) {
-        if (!isFALSE(totalsRowCount)) {
-          # exclude total row from filter
-          rowcol         <- dims_to_rowcol(ref)
-          autofilter_ref <- rowcol_to_dims(as.integer(rowcol[[2]])[-length(rowcol[[2]])], rowcol[[1]])
-        } else {
-          autofilter_ref <- ref
-        }
+        autofilter_ref <- ref
         xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = autofilter_ref))
       }
 
@@ -3759,7 +3753,12 @@ wbWorkbook <- R6::R6Class(
           lbl <- rep(NA_character_, length(colNames))
           has_total_lbl <- FALSE
         }
+
+        rowcol   <- dims_to_rowcol(ref)
+        ref_rows <- as.integer(rowcol[[2]])
+        ref      <- rowcol_to_dims(c(ref_rows, max(ref_rows) + 1L), rowcol[[1]])
       }
+
 
       ### tableColumn
       tableColumn <- sapply(colNames, function(x) {
@@ -3835,6 +3834,7 @@ wbWorkbook <- R6::R6Class(
 
       ## create a table.xml.rels
       self$append("tables.xml.rels", "")
+
 
       ## update worksheets_rels
       self$worksheets_rels[[sheet]] <- c(

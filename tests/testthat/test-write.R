@@ -1065,7 +1065,7 @@ test_that("writing total row works", {
     I = "SUBTOTAL(109,Table1[am])", J = "SUBTOTAL(109,Table1[gear])",
     K = "SUBTOTAL(109,Table1[carb])"
   )
-  got <- wb_to_df(wb, dims = wb_dims(rows = 33, cols = "A:K"),
+  got <- wb_to_df(wb, dims = wb_dims(rows = 34, cols = "A:K"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
@@ -1077,7 +1077,7 @@ test_that("writing total row works", {
     E = NA_real_, F = NA_real_, G = NA_real_, H = NA_real_, I = NA_real_,
     J = NA_real_, K = NA_real_
   )
-  got <- wb_to_df(wb, dims = wb_dims(rows = 33, cols = "A:K"),
+  got <- wb_to_df(wb, dims = wb_dims(rows = 34, cols = "A:K"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
@@ -1085,7 +1085,7 @@ test_that("writing total row works", {
   wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c(text = "Result", text = "sum"))
 
   exp <- data.frame(A = "Result", B = "sum")
-  got <- wb_to_df(wb, dims = wb_dims(rows = 51, cols = "A:B"),
+  got <- wb_to_df(wb, dims = wb_dims(rows = 52, cols = "A:B"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
@@ -1093,7 +1093,7 @@ test_that("writing total row works", {
   wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c(text = "Result", "sum"))
 
   exp <- data.frame(A = "Result", B = "SUBTOTAL(109,Table1[dist])")
-  got <- wb_to_df(wb, dims = wb_dims(rows = 51, cols = "A:B"),
+  got <- wb_to_df(wb, dims = wb_dims(rows = 52, cols = "A:B"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
@@ -1101,7 +1101,7 @@ test_that("writing total row works", {
   wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c("none", "COUNTA"))
 
   exp <- data.frame(A = NA_real_, B = "COUNTA(Table1[dist])")
-  got <- wb_to_df(wb, dims = wb_dims(rows = 51, cols = "A:B"),
+  got <- wb_to_df(wb, dims = wb_dims(rows = 52, cols = "A:B"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
@@ -1118,7 +1118,7 @@ test_that("writing total row works", {
     D = "SUBTOTAL(109,Table1[1950])", E = "SUBTOTAL(109,Table1[1955])",
     F = "SUM(Table1[1960])"
   )
-  got <- wb_to_df(wb, dims = wb_dims(rows = 6, cols = "A:F"), col_names = FALSE, show_formula = TRUE)
+  got <- wb_to_df(wb, dims = wb_dims(rows = 7, cols = "A:F"), col_names = FALSE, show_formula = TRUE)
   expect_equal(exp, got, ignore_attr = TRUE)
 
 })
