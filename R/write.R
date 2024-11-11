@@ -1066,7 +1066,7 @@ write_data_table <- function(
         name            = name,
         colNames        = FALSE,
         rowNames        = FALSE,
-        startRow        = startRow + nrow(x),
+        startRow        = startRow + nrow(x) + 1L,
         startCol        = startCol,
         applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle,

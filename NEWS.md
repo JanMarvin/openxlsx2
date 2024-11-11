@@ -7,6 +7,7 @@
 ## Fixes
 
 * Previously rows that trigger scientific notation (e.g. `1e+05`) would cause issues, when matched against a non scientific version.  [1170](https://github.com/JanMarvin/openxlsx2/pull/1170)
+* When using `wb_add_data_table(..., total_row = TRUE)` the last row of the returned data tabled was replaced with the total row. This caused loss of data. [1179](https://github.com/JanMarvin/openxlsx2/issues/1179)
 
 
 ***************************************************************************
