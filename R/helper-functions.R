@@ -982,11 +982,17 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
 
 }
 
+# In table names special characters must have a leading ' in front
+# @params str a variable name
+escape_specials <- function(str) {
+  gsub("([^a-zA-Z0-9\\s])", "'\\1", str, perl = TRUE)
+}
+
 known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
 
   # unfortunately x has no row names at this point
   ncol_x <- ncol(x) + row_names
-  nms_x <- names(x)
+  nms_x <- escape_specials(names(x))
   if (row_names) nms_x <- c("_rowNames_", nms_x)
 
   fml <- vector("character", ncol_x)
@@ -994,7 +1000,7 @@ known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
   lbl <- rep(NA_character_, ncol_x)
 
   if (isTRUE(total) || all(as.character(total) == "109") || all(total == "sum")) {
-    fml <- paste0("SUBTOTAL(109,", table, "[", names(x), "])")
+    fml <- paste0("SUBTOTAL(109,", table, "[", nms_x, "])")
     atr <- rep("sum", ncol_x)
   } else {
 

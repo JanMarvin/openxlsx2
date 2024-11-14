@@ -1123,6 +1123,23 @@ test_that("writing total row works", {
 
 })
 
+test_that("escaping special characters works", {
+  df <- data.frame(
+    foo = rep("#Ref!", 5),
+    `1#1`  = 1:5,
+    `@Two` = 1:5,
+    `A1-A3` = 1:5,
+    check.names = FALSE
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_data_table(x = df, total_row = TRUE)
+
+  exp <- c("SUBTOTAL(109,Table1[foo])", "SUBTOTAL(109,Table1[1'#1])",
+           "SUBTOTAL(109,Table1['@Two])", "SUBTOTAL(109,Table1[A1'-A3])")
+  got <- unname(unlist(wb_to_df(wb, dims = "A7:D7", col_names = FALSE, show_formula = TRUE)))
+  expect_equal(exp, got)
+})
+
 test_that("writing vectors direction with dims works", {
 
   # write vectors column or rowwise
