@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,9 +45,24 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.10/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.11" id="openxlsx2-111">openxlsx2 1.11<a class="anchor" aria-label="anchor" href="#openxlsx2-111"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-11">New features<a class="anchor" aria-label="anchor" href="#new-features-1-11"></a></h3>
+<ul><li>Add <code>hide_no_data_items</code> option in <code><a href="../reference/wb_add_slicer.html">wb_add_slicer()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1169" class="external-link">1169</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-11">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-11"></a></h3>
+<ul><li>Previously rows that trigger scientific notation (e.g. <code>1e+05</code>) would cause issues, when matched against a non scientific version. <a href="https://github.com/JanMarvin/openxlsx2/pull/1170" class="external-link">1170</a>
+</li>
+<li>When using <code>wb_add_data_table(..., total_row = TRUE)</code> the last row of the data table in the workbook was mistakenly overwritten with the total row formula, which should have been placed below the last row of the table. This caused loss of data. <a href="https://github.com/JanMarvin/openxlsx2/issues/1179" class="external-link">1179</a>
+</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.10" id="openxlsx2-110">openxlsx2 1.10<a class="anchor" aria-label="anchor" href="#openxlsx2-110"></a></h2><p class="text-muted">CRAN release: 2024-10-17</p>
 <div class="section level3">

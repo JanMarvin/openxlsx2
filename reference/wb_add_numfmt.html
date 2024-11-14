@@ -9,7 +9,7 @@ by create_numfmt()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@ by create_numfmt()."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Modify number formatting in a cell region</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.10/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_numfmt.Rd</code></div>
     </div>
 
@@ -78,7 +78,7 @@ by <code><a href="create_numfmt.html">create_numfmt()</a></code>.</p>
 
 
 <dt id="arg-numfmt">numfmt<a class="anchor" aria-label="anchor" href="#arg-numfmt"></a></dt>
-<dd><p>either an id or a character</p></dd>
+<dd><p>either an integer id for a builtin numeric font or a character string as described in the <em><strong>Details</strong></em></p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -87,7 +87,77 @@ by <code><a href="create_numfmt.html">create_numfmt()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The list of number formats ID is located in the <strong>Details</strong> section of <code><a href="create_cell_style.html">create_cell_style()</a></code>.</p>
+    <p>The list of number formats ID is located in the <strong>Details</strong> section of <code><a href="create_cell_style.html">create_cell_style()</a></code>.</p><div class="section">
+<h3 id="general-number-formatting">General Number Formatting<a class="anchor" aria-label="anchor" href="#general-number-formatting"></a></h3>
+
+<ul><li><p><code>"0"</code>: Displays numbers as integers without decimal places.</p></li>
+<li><p><code>"0.00"</code>: Displays numbers with two decimal places (e.g., <code>123.45</code>).</p></li>
+<li><p><code>"#,##0"</code>: Displays thousands separators without decimals (e.g., <code>1,000</code>).</p></li>
+<li><p><code>"#,##0.00"</code>: Displays thousands separators with two decimal places (e.g., <code>1,000.00</code>).</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="currency-formatting">Currency Formatting<a class="anchor" aria-label="anchor" href="#currency-formatting"></a></h3>
+
+<ul><li><p><code>"$#,##0.00"</code>: Formats numbers as currency with two decimal places (e.g., <code>$1,000.00</code>).</p></li>
+<li><p><code>"[$$-409]#,##0.00"</code>: Localized currency format in U.S. dollars.</p></li>
+<li><p><code>"¥#,##0"</code>: Custom currency format (e.g., for Japanese yen) without decimals.</p></li>
+<li><p><code>"£#,##0.00"</code>: GBP currency format with two decimal places.</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="percentage-formatting">Percentage Formatting<a class="anchor" aria-label="anchor" href="#percentage-formatting"></a></h3>
+
+<ul><li><p><code>"0%"</code>: Displays numbers as percentages with no decimal places (e.g., <code>50%</code>).</p></li>
+<li><p><code>"0.00%"</code>: Displays numbers as percentages with two decimal places (e.g., <code>50.00%</code>).</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="scientific-formatting">Scientific Formatting<a class="anchor" aria-label="anchor" href="#scientific-formatting"></a></h3>
+
+<ul><li><p><code>"0.00E+00"</code>: Scientific notation with two decimal places (e.g., <code>1.23E+03</code> for <code>1230</code>).</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="date-and-time-formatting">Date and Time Formatting<a class="anchor" aria-label="anchor" href="#date-and-time-formatting"></a></h3>
+
+<ul><li><p><code>"yyyy-mm-dd"</code>: Year-month-day format (e.g., <code>2023-10-31</code>).</p></li>
+<li><p><code>"dd/mm/yyyy"</code>: Day/month/year format (e.g., <code>31/10/2023</code>).</p></li>
+<li><p><code>"mmm d, yyyy"</code>: Month abbreviation with day and year (e.g., <code>Oct 31, 2023</code>).</p></li>
+<li><p><code>"h:mm AM/PM"</code>: Time with AM/PM format (e.g., <code>1:30 PM</code>).</p></li>
+<li><p><code>"h:mm:ss"</code>: Time with seconds (e.g., <code>13:30:15</code> for <code>1:30:15 PM</code>).</p></li>
+<li><p><code>"yyyy-mm-dd h:mm:ss"</code>: Full date and time format.</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="fraction-formatting">Fraction Formatting<a class="anchor" aria-label="anchor" href="#fraction-formatting"></a></h3>
+
+<ul><li><p><code>"# ?/?"</code>: Displays numbers as a fraction with a single digit denominator (e.g., <code>1/2</code>).</p></li>
+<li><p><code>"# ??/??"</code>: Displays numbers as a fraction with a two-digit denominator (e.g., <code>1 12/25</code>).</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="custom-formatting">Custom Formatting<a class="anchor" aria-label="anchor" href="#custom-formatting"></a></h3>
+
+<ul><li><p><code>"_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)</code>:
+Custom currency format with parentheses for negative values and dashes for zero values.</p></li>
+<li><p><code>"[Red]0.00;[Blue](0.00);0"</code>: Displays positive numbers in red, negatives in blue, and zeroes as plain.</p></li>
+<li><p><code>"@"</code>: Text placeholder format (e.g., for cells with mixed text and numeric values).</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="formatting-symbols-reference">Formatting Symbols Reference<a class="anchor" aria-label="anchor" href="#formatting-symbols-reference"></a></h3>
+
+<ul><li><p><code>0</code>: Digit placeholder, displays a digit or zero.</p></li>
+<li><p><code>#</code>: Digit placeholder, does not display extra zeroes.</p></li>
+<li><p><code>.</code>: Decimal point.</p></li>
+<li><p><code>,</code>: Thousands separator.</p></li>
+<li><p><code>E+</code>, <code>E-</code>: Scientific notation.</p></li>
+<li><p><code>_</code> (underscore): Adds a space equal to the width of the next character.</p></li>
+<li><p><code>"text"</code>: Displays literal text within quotes.</p></li>
+<li><p><code>*</code>: Repeat character to fill the cell width.</p></li>
+</ul></div>
+
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
