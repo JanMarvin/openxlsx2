@@ -69,7 +69,8 @@ to easily set these properties with a new workbook.</p>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  datetime_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  datetime_created <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  datetime_modified <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  modifier <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  comments <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -97,6 +98,10 @@ to easily set these properties with a new workbook.</p>
 
 <dt id="arg-datetime-created">datetime_created<a class="anchor" aria-label="anchor" href="#arg-datetime-created"></a></dt>
 <dd><p>The time of the workbook is created</p></dd>
+
+
+<dt id="arg-datetime-modified">datetime_modified<a class="anchor" aria-label="anchor" href="#arg-datetime-modified"></a></dt>
+<dd><p>The time of the workbook was last modified</p></dd>
 
 
 <dt id="arg-modifier">modifier<a class="anchor" aria-label="anchor" href="#arg-modifier"></a></dt>
@@ -143,7 +148,7 @@ to easily set these properties with a new workbook.</p>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">set_properties</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"my title"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wb</span><span class="op">$</span><span class="fu">get_properties</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                creator               modifier       datetime_created </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "Jan Marvin Garbuszus" "Jan Marvin Garbuszus" "2024-11-14T22:27:55Z" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Jan Marvin Garbuszus" "Jan Marvin Garbuszus" "2023-05-29T07:43:12Z" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      datetime_modified                  title                company </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "2023-05-29T10:47:37Z"             "my title"                     "" </span>
 </code></pre></div>

@@ -482,6 +482,7 @@ worksheet names.</p></dd>
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datetime_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  datetime_modified <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  comments <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -505,6 +506,11 @@ worksheet names.</p></dd>
 <dd><p>The datetime (as <code>POSIXt</code>) the workbook is
 created.  Defaults to the current <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time()</a></code> when the workbook object
 is created, not when the Excel files are saved.</p></dd>
+
+
+<dt><code>datetime_modified</code></dt>
+<dd><p>The datetime (as <code>POSIXt</code>) that should be recorded
+as last modification date. Defaults to the creation date.</p></dd>
 
 
 <dt><code>theme</code></dt>
@@ -3222,7 +3228,8 @@ or more of the following: <code>"selectLockedCells"</code>,
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  datetime_created <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  datetime_created <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  datetime_modified <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  modifier <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  comments <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -3238,7 +3245,7 @@ or more of the following: <code>"selectLockedCells"</code>,
 <dd><p>character vector of creators. Duplicated are ignored.</p></dd>
 
 
-<dt><code>title, subject, category, datetime_created, modifier, keywords, comments, manager, company, custom</code></dt>
+<dt><code>title, subject, category, datetime_created, datetime_modified, modifier, keywords, comments, manager, company, custom</code></dt>
 <dd><p>A workbook property to set</p></dd>
 
 
