@@ -14,7 +14,8 @@ wb_set_properties(
   title = NULL,
   subject = NULL,
   category = NULL,
-  datetime_created = Sys.time(),
+  datetime_created = NULL,
+  datetime_modified = NULL,
   modifier = NULL,
   keywords = NULL,
   comments = NULL,
@@ -31,6 +32,8 @@ wb_set_properties(
 \item{title, subject, category, keywords, comments, manager, company}{Workbook property, a string.}
 
 \item{datetime_created}{The time of the workbook is created}
+
+\item{datetime_modified}{The time of the workbook was last modified}
 
 \item{modifier}{A character string indicating who was the last person to modify the workbook}
 

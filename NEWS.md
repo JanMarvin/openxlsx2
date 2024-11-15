@@ -1,5 +1,13 @@
 # openxlsx2 (development version)
 
+## New features
+
+* `wb_set_properties()` now has a `datetime_modify` option. [1176](https://github.com/JanMarvin/openxlsx2/pull/1176)
+
+## Fixes
+
+* Create date is not reset to the present time in each call to `wb_set_properties()` [1176](https://github.com/JanMarvin/openxlsx2/pull/1176)
+
 
 ***************************************************************************
 

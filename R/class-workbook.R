@@ -137,6 +137,8 @@ worksheet_lock_properties <- function() {
 #' @param datetime_created The datetime (as `POSIXt`) the workbook is
 #'   created.  Defaults to the current `Sys.time()` when the workbook object
 #'   is created, not when the Excel files are saved.
+#' @param datetime_modified The datetime (as `POSIXt`) that should be recorded
+#'   as last modification date. Defaults to the creation date.
 #' @param ... additional arguments
 #' @export
 wbWorkbook <- R6::R6Class(
@@ -302,16 +304,17 @@ wbWorkbook <- R6::R6Class(
     #' @param ... additional arguments
     #' @return a `wbWorkbook` object
     initialize = function(
-      creator          = NULL,
-      title            = NULL,
-      subject          = NULL,
-      category         = NULL,
-      datetime_created = Sys.time(),
-      theme            = NULL,
-      keywords         = NULL,
-      comments         = NULL,
-      manager          = NULL,
-      company          = NULL,
+      creator           = NULL,
+      title             = NULL,
+      subject           = NULL,
+      category          = NULL,
+      datetime_created  = Sys.time(),
+      datetime_modified = NULL,
+      theme             = NULL,
+      keywords          = NULL,
+      comments          = NULL,
+      manager           = NULL,
+      company           = NULL,
       ...
     ) {
 
@@ -331,6 +334,7 @@ wbWorkbook <- R6::R6Class(
                   default = Sys.getenv("USERNAME", unset = Sys.getenv("USER")))
         # USERNAME is present for (Windows, Linux) "USER" is present for Mac
 
+      # Internal option to alleviate timing problems in CI and CRAN
       datetime_created <- getOption("openxlsx2.datetimeCreated", datetime_created)
 
 
@@ -344,6 +348,11 @@ wbWorkbook <- R6::R6Class(
       assert_class(company,          "character", or_null = TRUE)
 
       assert_class(datetime_created, "POSIXt")
+      assert_class(datetime_modified, "POSIXt", or_null = TRUE)
+
+      # Avoid modtime being slightly different from createtime by two distinct
+      # Sys.time() calls
+      if (is.null(datetime_modified)) datetime_modified <- datetime_created
 
       stopifnot(
         length(title) <= 1L,
@@ -352,15 +361,16 @@ wbWorkbook <- R6::R6Class(
       )
 
       self$set_properties(
-        creator           = creator,
-        title             = title,
-        subject           = subject,
-        category          = category,
-        datetime_created  = datetime_created,
-        keywords          = keywords,
-        comments          = comments,
-        manager           = manager,
-        company           = company
+        creator            = creator,
+        title              = title,
+        subject            = subject,
+        category           = category,
+        datetime_created   = datetime_created,
+        datetime_modified  = datetime_modified,
+        keywords           = keywords,
+        comments           = comments,
+        manager            = manager,
+        company            = company
       )
       self$comments <- list()
       self$threadComments <- list()
@@ -5514,6 +5524,7 @@ wbWorkbook <- R6::R6Class(
         done <- as_xml_attr(resolve)
         if (reply) done <- NULL
 
+        # Internal option to alleviate timing problems in CI and CRAN
         ts <- getOption("openxlsx2.datetimeCreated", default = Sys.time())
 
         tc <- xml_node_create(
@@ -6890,21 +6901,23 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Set a property of a workbook
-    #' @param title,subject,category,datetime_created,modifier,keywords,comments,manager,company,custom A workbook property to set
+    #' @param title,subject,category,datetime_created,datetime_modified,modifier,keywords,comments,manager,company,custom A workbook property to set
     set_properties = function(
-      creator          = NULL,
-      title            = NULL,
-      subject          = NULL,
-      category         = NULL,
-      datetime_created = Sys.time(),
-      modifier         = NULL,
-      keywords         = NULL,
-      comments         = NULL,
-      manager          = NULL,
-      company          = NULL,
-      custom           = NULL
+      creator           = NULL,
+      title             = NULL,
+      subject           = NULL,
+      category          = NULL,
+      datetime_created  = NULL,
+      datetime_modified = NULL,
+      modifier          = NULL,
+      keywords          = NULL,
+      comments          = NULL,
+      manager           = NULL,
+      company           = NULL,
+      custom            = NULL
     ) {
 
+      # Internal option to alleviate timing problems in CI and CRAN
       datetime_created <-
         getOption("openxlsx2.datetimeCreated", datetime_created)
 
@@ -6970,12 +6983,23 @@ wbWorkbook <- R6::R6Class(
         self$app$Company <- xml_node_create("Company", xml_children = company)
       }
 
-      xml_properties[core_created] <- xml_node_create(core_created,
-        xml_attributes = c(
-          `xsi:type` = "dcterms:W3CDTF"
-        ),
-        xml_children = format(as_POSIXct_utc(datetime_created), "%Y-%m-%dT%H:%M:%SZ")
-      )
+      if (!is.null(datetime_created)) {
+        xml_properties[core_created] <- xml_node_create(core_created,
+          xml_attributes = c(
+            `xsi:type` = "dcterms:W3CDTF"
+          ),
+          xml_children = format(as_POSIXct_utc(datetime_created), "%Y-%m-%dT%H:%M:%SZ")
+        )
+      }
+
+      if (!is.null(datetime_modified)) {
+        xml_properties[core_modifid] <- xml_node_create(core_modifid,
+          xml_attributes = c(
+            `xsi:type` = "dcterms:W3CDTF"
+          ),
+          xml_children = format(as_POSIXct_utc(datetime_modified), "%Y-%m-%dT%H:%M:%SZ")
+        )
+      }
 
       if (!is.null(modifier)) {
         xml_properties[core_lastmod] <- xml_node_create(core_lastmod, xml_children = modifier)

@@ -10,6 +10,7 @@ wb_workbook(
   subject = NULL,
   category = NULL,
   datetime_created = Sys.time(),
+  datetime_modified = NULL,
   theme = NULL,
   keywords = NULL,
   comments = NULL,
@@ -24,6 +25,8 @@ wb_workbook(
 \item{title, subject, category, keywords, comments, manager, company}{Workbook property, a string.}
 
 \item{datetime_created}{The time of the workbook is created}
+
+\item{datetime_modified}{The time of the workbook was last modified}
 
 \item{theme}{Optional theme identified by string or number.
 See \strong{Details} for options.}
