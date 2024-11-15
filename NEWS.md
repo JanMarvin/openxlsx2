@@ -3,6 +3,7 @@
 ## New features
 
 * `wb_set_properties()` now has a `datetime_modify` option. [1176](https://github.com/JanMarvin/openxlsx2/pull/1176)
+* Make non consecutive equal sized dims behave similar to non equal sized non consecutive dims. This makes `dims = "A1:A5,C1:D5"` behave similar to `dims = "A1,C1:D1,A2:A5,C2:D5"`.
 
 ## Fixes
 
