@@ -38,6 +38,7 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
     full_cols <- sort(get_dims(dims, cols = TRUE))
 
     rows_out  <- unlist(full_rows)
+    rows_out  <- seq.int(rows_out[1], rows_out[2])
     cols_out  <- int2col(full_cols)
     full_cols <- full_cols - min(full_cols) # is always a zero offset
 

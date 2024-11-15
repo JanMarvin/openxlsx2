@@ -513,6 +513,21 @@ test_that("improve non consecutive dims", {
   expect_contains(got, exp)
 })
 
+test_that("reading equal sized ranges works", {
+
+  df <- as.data.frame(matrix(rep(1:4, 4), 4, 4, byrow = TRUE))
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)
+
+  exp <- df[, -2]
+  got <- wb_to_df(wb, dims = "A1:A5,C1:D5")
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  got <- wb_to_df(wb, dims = "A1,C1:D1,A2:A5,C2:D5")
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+})
+
 test_that("creating a formula matrix works", {
 
   df <- matrix(
