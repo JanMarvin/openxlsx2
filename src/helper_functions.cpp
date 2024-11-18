@@ -404,9 +404,19 @@ void wide_to_long(
 
   R_xlen_t idx = 0;
 
-  SEXP blank_sexp     = Rf_mkChar("");
-  SEXP inlineStr_sexp = Rf_mkChar("inlineStr");
-  SEXP sharedStr_sexp = Rf_mkChar("s");
+  SEXP blank_sexp      = Rf_mkChar("");
+  SEXP array_sexp      = Rf_mkChar("array");
+  SEXP inlineStr_sexp  = Rf_mkChar("inlineStr");
+  SEXP bool_sexp       = Rf_mkChar("b");
+  SEXP expr_sexp       = Rf_mkChar("e");
+  SEXP sharedStr_sexp  = Rf_mkChar("s");
+  SEXP string_sexp     = Rf_mkChar("str");
+
+  SEXP na_sexp         = Rf_mkChar("#N/A");
+  SEXP num_sexp        = Rf_mkChar("#NUM!");
+  SEXP value_sexp      = Rf_mkChar("#VALUE!");
+  SEXP na_strings_sexp = Rf_mkChar(na_strings.c_str());
+
 
   for (int32_t i = 0; i < m; ++i) {
 
@@ -464,7 +474,8 @@ void wide_to_long(
       case logical:
         // cell.v   = vals;
         SET_STRING_ELT(zz_v, pos, vals_sexp);
-        cell.c_t = "b";
+        // cell.c_t = "b";
+        SET_STRING_ELT(zz_c_t, pos, bool_sexp);
         break;
       case factor:
       case character:
@@ -478,28 +489,38 @@ void wide_to_long(
           // check if we write sst or inlineStr
           if (inline_strings) {
               SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
-              cell.is  = txt_to_is(vals, 0, 1, 1);
+              // cell.is  = txt_to_is(vals, 0, 1, 1);
+              SET_STRING_ELT(zz_is, pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
             } else {
               SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
-              cell.v   = txt_to_si(vals, 0, 1, 1);
+              // cell.v   = txt_to_si(vals, 0, 1, 1);
+              SET_STRING_ELT(zz_v, pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
           }
         }
         break;
       case hyperlink:
       case formula:
-        cell.c_t = "str";
-        cell.f   = vals;
+        // cell.c_t = "str";
+        SET_STRING_ELT(zz_c_t, pos, string_sexp);
+        // cell.f   = vals;
+        SET_STRING_ELT(zz_f, pos, vals_sexp);
         break;
       case array_formula:
-        cell.f     = vals;
-        cell.f_t   = "array";
-        cell.f_ref = ref_str;
+        // cell.f     = vals;
+        SET_STRING_ELT(zz_f, pos, vals_sexp);
+        // cell.f_t   = "array";
+        SET_STRING_ELT(zz_f_t, pos, array_sexp);
+        // cell.f_ref = ref_str;
+        SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
         break;
       case cm_formula:
         cell.c_cm  = c_cm;
-        cell.f     = vals;
-        cell.f_t   = "array";
-        cell.f_ref = ref_str;
+        // cell.f     = vals;
+        SET_STRING_ELT(zz_f, pos, vals_sexp);
+        // cell.f_t   = "array";
+        SET_STRING_ELT(zz_f_t, pos, array_sexp);
+        // cell.f_ref = ref_str;
+        SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
         break;
       }
 
@@ -507,8 +528,9 @@ void wide_to_long(
       if (vals_sexp == NA_STRING || strcmp(vals, "_openxlsx_NA") == 0) {
 
         if (na_missing) {
-          cell.v   = "#N/A";
-          cell.c_t = "e";
+          // cell.v   = "#N/A";
+          SET_STRING_ELT(zz_v, pos, na_sexp);
+          SET_STRING_ELT(zz_c_t, pos, expr_sexp);
           cell.is.clear();
         } else  {
           cell.v.clear();
@@ -519,22 +541,27 @@ void wide_to_long(
             SET_STRING_ELT(zz_c_t, pos, blank_sexp);
             SET_STRING_ELT(zz_is, pos, blank_sexp);
           } else {
-            cell.c_t = inline_strings  ? "inlineStr" : "s";
-            cell.is  = inline_strings  ? na_strings  : "";
-            cell.v   = !inline_strings ? na_strings  : "";
+            // cell.c_t = inline_strings  ? "inlineStr" : "s";
+            SET_STRING_ELT(zz_c_t, pos, inline_strings  ? inlineStr_sexp  : sharedStr_sexp);
+            // cell.is  = inline_strings  ? na_strings  : "";
+            SET_STRING_ELT(zz_is, pos, inline_strings  ? na_strings_sexp  : blank_sexp);
+            // cell.v   = !inline_strings ? na_strings  : "";
+            SET_STRING_ELT(zz_v, pos, !inline_strings ? na_strings_sexp  : blank_sexp);
           }
         }
 
       }
 
       if (strcmp(vals, "NaN") == 0) {
-        cell.v   = "#VALUE!";
-        cell.c_t = "e";
+        // cell.v   = "#VALUE!";
+        SET_STRING_ELT(zz_v, pos, value_sexp);
+        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       }
 
       if (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0) {
-        cell.v   = "#NUM!";
-        cell.c_t = "e";
+        // cell.v   = "#NUM!";
+        SET_STRING_ELT(zz_v, pos, num_sexp);
+        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       }
 
       cell.typ = std::to_string(vtyp);
