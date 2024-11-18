@@ -333,8 +333,10 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 
     // need to check for missing values
     if ((col <= z_cols) && (row <= z_rows)) {
-      Rcpp::as<Rcpp::CharacterVector>(z[col])[row] = vals[i];
-      Rcpp::as<Rcpp::CharacterVector>(tt[col])[row] = typs[i];
+      // Rcpp::as<Rcpp::CharacterVector>(z[col])[row] = vals[i];
+      // Rcpp::as<Rcpp::CharacterVector>(tt[col])[row] = typs[i];
+      SET_STRING_ELT(Rcpp::as<Rcpp::CharacterVector>(z[col]), row, STRING_ELT(vals, i));
+      SET_STRING_ELT(Rcpp::as<Rcpp::CharacterVector>(tt[col]), row, STRING_ELT(typs, i));
     }
   }
 }
@@ -399,6 +401,10 @@ void wide_to_long(
 
   R_xlen_t idx = 0;
 
+  SEXP blank_sexp     = Rf_mkChar("");
+  SEXP inlineStr_sexp = Rf_mkChar("inlineStr");
+  SEXP sharedStr_sexp = Rf_mkChar("s");
+
   for (int32_t i = 0; i < m; ++i) {
 
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
@@ -411,7 +417,9 @@ void wide_to_long(
 
       // if colname is provided, the first row is always a character
       int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;
-      const std::string& vals = Rcpp::as<std::string>(cvec[j]);
+      SEXP vals_sexp = STRING_ELT(cvec, j);
+      const char* vals = CHAR(vals_sexp);
+
       std::string row = srows[j];
 
       R_xlen_t pos = (j * m) + i;
@@ -447,10 +455,12 @@ void wide_to_long(
       case comma:
       case hms_time:
       case numeric:
-        cell.v   = vals;
+        // cell.v   = vals;
+        SET_STRING_ELT(zz_v, pos, vals_sexp);
         break;
       case logical:
-        cell.v   = vals;
+        // cell.v   = vals;
+        SET_STRING_ELT(zz_v, pos, vals_sexp);
         cell.c_t = "b";
         break;
       case factor:
@@ -458,15 +468,16 @@ void wide_to_long(
 
         // test if string can be written as number
         if (string_nums && is_double(vals)) {
-          cell.v   = vals;
+          // cell.v   = vals;
+          SET_STRING_ELT(zz_v, pos, vals_sexp);
           vtyp     = (string_nums == 1) ? string_num : numeric;
         } else {
           // check if we write sst or inlineStr
           if (inline_strings) {
-              cell.c_t = "inlineStr";
+              SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
               cell.is  = txt_to_is(vals, 0, 1, 1);
             } else {
-              cell.c_t = "s";
+              SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
               cell.v   = txt_to_si(vals, 0, 1, 1);
           }
         }
@@ -490,11 +501,7 @@ void wide_to_long(
       }
 
 
-      if (
-          cell.is == "<is><t>_openxlsx_NA</t></is>" ||
-            cell.v == "<si><t>_openxlsx_NA</t></si>" ||
-            cell.v == "NA"
-      ) {
+      if (vals_sexp == NA_STRING || strcmp(vals, "_openxlsx_NA") == 0) {
 
         if (na_missing) {
           cell.v   = "#N/A";
@@ -502,9 +509,12 @@ void wide_to_long(
           cell.is.clear();
         } else  {
           cell.v.clear();
+          SET_STRING_ELT(zz_v, pos, blank_sexp);
           if (na_null) {
             cell.c_t.clear();
             cell.is.clear();
+            SET_STRING_ELT(zz_c_t, pos, blank_sexp);
+            SET_STRING_ELT(zz_is, pos, blank_sexp);
           } else {
             cell.c_t = inline_strings  ? "inlineStr" : "s";
             cell.is  = inline_strings  ? na_strings  : "";
@@ -514,12 +524,12 @@ void wide_to_long(
 
       }
 
-      if (cell.v == "NaN") {
+      if (strcmp(vals, "NaN") == 0) {
         cell.v   = "#VALUE!";
         cell.c_t = "e";
       }
 
-      if (cell.v == "-Inf" || cell.v == "Inf") {
+      if (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0) {
         cell.v   = "#NUM!";
         cell.c_t = "e";
       }
