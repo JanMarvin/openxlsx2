@@ -333,8 +333,6 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 
     // need to check for missing values
     if ((col <= z_cols) && (row <= z_rows)) {
-      // Rcpp::as<Rcpp::CharacterVector>(z[col])[row] = vals[i];
-      // Rcpp::as<Rcpp::CharacterVector>(tt[col])[row] = typs[i];
       SET_STRING_ELT(Rcpp::as<Rcpp::CharacterVector>(z[col]), row, STRING_ELT(vals, i));
       SET_STRING_ELT(Rcpp::as<Rcpp::CharacterVector>(tt[col]), row, STRING_ELT(typs, i));
     }
@@ -575,10 +573,7 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
   }
 
-  Rcpp::IntegerVector rvec(n);
-  for (int32_t i = 0; i < n; ++i) {
-    rvec[i] = i + 1L;
-  }
+  Rcpp::IntegerVector rvec = Rcpp::IntegerVector::create(NA_INTEGER, n);
 
   // 3. Create a data.frame
   df.attr("row.names") = rvec;
