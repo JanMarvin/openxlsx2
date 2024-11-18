@@ -375,7 +375,7 @@ void wide_to_long(
 
   std::vector<std::string> srows(n);
   for (int64_t j = 0; j < n; ++j) {
-    srows[j] = std::to_string((int64_t)start_row + j);
+    srows[j] = std::to_string(static_cast<int64_t>(start_row) + j);
   }
 
   std::vector<std::string> scols(m);
