@@ -378,6 +378,11 @@ void wide_to_long(
     srows[j] = std::to_string((int64_t)start_row + j);
   }
 
+  std::vector<std::string> scols(m);
+  for (int32_t i = 0; i < m; ++i) {
+    scols[i] = int_to_col(start_col + i);
+  }
+
   int32_t in_string_nums = string_nums;
 
   // pointer magic. even though these are extracted, they just point to the
@@ -406,7 +411,7 @@ void wide_to_long(
   for (int32_t i = 0; i < m; ++i) {
 
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
-    std::string col = int_to_col(start_col + i);
+    std::string col = scols[i];
     int8_t vtyp_i = static_cast<int8_t>(vtyps[i]);
 
     for (int64_t j = 0; j < n; ++j, ++idx) {
