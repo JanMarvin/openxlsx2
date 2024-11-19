@@ -373,8 +373,6 @@ void wide_to_long(
   int32_t m = z.ncol();
   bool has_dims = dims.size() == static_cast<size_t>(n * m);
 
-  bool has_refs  = refed.isNotNull();
-
   std::vector<std::string> srows(n);
   for (int64_t j = 0; j < n; ++j) {
     srows[j] = std::to_string(static_cast<int64_t>(start_row) + j);
@@ -423,7 +421,7 @@ void wide_to_long(
   for (int32_t i = 0; i < m; ++i) {
 
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
-    std::string col = scols[i];
+    const std::string& col = scols[i];
     int8_t vtyp_i = static_cast<int8_t>(vtyps[i]);
 
     for (int64_t j = 0; j < n; ++j, ++idx) {
@@ -435,13 +433,14 @@ void wide_to_long(
       SEXP vals_sexp = STRING_ELT(cvec, j);
       const char* vals = CHAR(vals_sexp);
 
-      std::string row = srows[j];
+      const std::string& row = srows[j];
 
       R_xlen_t pos = (j * m) + i;
 
       // there should be no unicode character in ref_str
       std::string ref_str = "";
       if (vtyp == array_formula || vtyp == cm_formula) {
+        bool has_refs  = refed.isNotNull();
         if (!has_refs) {
           ref_str = col + row;
         } else {
@@ -459,7 +458,7 @@ void wide_to_long(
         string_nums = in_string_nums;
 
       // create struct
-      celltyp cell;
+      // celltyp cell;
       switch(vtyp)
       {
 
@@ -518,7 +517,8 @@ void wide_to_long(
         SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
         break;
       case cm_formula:
-        cell.c_cm  = c_cm;
+        // cell.c_cm  = c_cm;
+        SET_STRING_ELT(zz_c_cm, pos, Rf_mkChar(c_cm.c_str()));
         // cell.f     = vals;
         SET_STRING_ELT(zz_f, pos, vals_sexp);
         // cell.f_t   = "array";
@@ -535,13 +535,14 @@ void wide_to_long(
           // cell.v   = "#N/A";
           SET_STRING_ELT(zz_v, pos, na_sexp);
           SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-          cell.is.clear();
+          // cell.is.clear();
+          SET_STRING_ELT(zz_is, pos, blank_sexp);
         } else  {
-          cell.v.clear();
+          // cell.v.clear();
           SET_STRING_ELT(zz_v, pos, blank_sexp);
           if (na_null) {
-            cell.c_t.clear();
-            cell.is.clear();
+            // cell.c_t.clear();
+            // cell.is.clear();
             SET_STRING_ELT(zz_c_t, pos, blank_sexp);
             SET_STRING_ELT(zz_is, pos, blank_sexp);
           } else {
@@ -568,26 +569,33 @@ void wide_to_long(
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       }
 
-      cell.typ = std::to_string(vtyp);
-      cell.r   = has_dims ? dims[idx] : col + row;
+      // cell.typ = std::to_string(vtyp);
+      SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
+
+      std::string cell_r   = has_dims ? dims[idx] : col + row;
+      SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r.c_str()));
 
       if (has_dims) {
-        zz_row_r[pos] = rm_colnum(cell.r);
-        zz_c_r[pos]   = rm_rownum(cell.r);
+        //   zz_row_r[pos] = rm_colnum(cell.r);
+        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r).c_str()));
+        //   zz_c_r[pos]   = rm_rownum(cell.r);
+        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r).c_str()));
       } else {
-        zz_row_r[pos] = row;
-        zz_c_r[pos]   = col;
+        //   zz_row_r[pos] = row;
+        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
+        //   zz_c_r[pos]   = col;
+        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
       }
 
-      if (!cell.v.empty())     zz_v[pos]     = cell.v;
-      if (!cell.c_cm.empty())  zz_c_cm[pos]  = cell.c_cm;
-      if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
-      if (!cell.is.empty())    zz_is[pos]    = cell.is;
-      if (!cell.f.empty())     zz_f[pos]     = cell.f;
-      if (!cell.f_t.empty())   zz_f_t[pos]   = cell.f_t;
-      if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
-      if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
-      if (!cell.r.empty())     zz_r[pos]     = cell.r;
+      // if (!cell.v.empty())     zz_v[pos]     = cell.v;
+      // if (!cell.c_cm.empty())  zz_c_cm[pos]  = cell.c_cm;
+      // if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
+      // if (!cell.is.empty())    zz_is[pos]    = cell.is;
+      // if (!cell.f.empty())     zz_f[pos]     = cell.f;
+      // if (!cell.f_t.empty())   zz_f_t[pos]   = cell.f_t;
+      // if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
+      // if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
+      // if (!cell.r.empty())     zz_r[pos]     = cell.r;
 
     }
   }
