@@ -56,10 +56,17 @@
 <code><a href="../reference/properties-wb.html">wb_set_properties()</a></code> now has a <code>datetime_modify</code> option. <a href="https://github.com/JanMarvin/openxlsx2/pull/1176" class="external-link">1176</a>
 </li>
 <li>Make non consecutive equal sized dims behave similar to non equal sized non consecutive dims. This makes <code>dims = "A1:A5,C1:D5"</code> behave similar to <code>dims = "A1,C1:D1,A2:A5,C2:D5"</code>.</li>
+<li>Improvements to the internal C++ code in <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> to avoid string copies. <a href="https://github.com/JanMarvin/openxlsx2/pull/1184" class="external-link">1184</a> This is a continuation of work started in <a href="https://github.com/JanMarvin/openxlsx2/pull/1177" class="external-link">1177</a> to speedup <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>/<code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Create date is not reset to the present time in each call to <code><a href="../reference/properties-wb.html">wb_set_properties()</a></code> <a href="https://github.com/JanMarvin/openxlsx2/pull/1176" class="external-link">1176</a>
+<ul><li>Create date is not reset to the present time in each call to <code><a href="../reference/properties-wb.html">wb_set_properties()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1176" class="external-link">1176</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/wb_workbook.html">wb_workbook()</a></code> and the underlying <code>wbWorkbook</code> object gained a new argument <code>datetime_modified</code>. This argument was added after <code>datetime_created</code> and changes the number and ordering of arguments. <a href="https://github.com/JanMarvin/openxlsx2/pull/1176" class="external-link">1176</a>
 </li>
 </ul><hr></div>
 </div>
