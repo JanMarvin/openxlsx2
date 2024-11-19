@@ -380,8 +380,13 @@ void wide_to_long(
 
   std::vector<std::string> scols(m);
   for (int32_t i = 0; i < m; ++i) {
-    scols[i] = int_to_col(start_col + i);
+    scols[i] = int_to_col(static_cast<uint32_t>(start_col) + i);
   }
+
+  bool has_refs  = refed.isNotNull();
+
+  std::vector<std::string> ref;
+  if (has_refs) ref = Rcpp::as<std::vector<std::string>>(refed.get());
 
   int32_t in_string_nums = string_nums;
 
@@ -440,11 +445,9 @@ void wide_to_long(
       // there should be no unicode character in ref_str
       std::string ref_str = "";
       if (vtyp == array_formula || vtyp == cm_formula) {
-        bool has_refs  = refed.isNotNull();
         if (!has_refs) {
           ref_str = col + row;
         } else {
-          std::vector<std::string> ref = Rcpp::as<std::vector<std::string>>(refed.get());
           ref_str = ref[i];
         }
       }
@@ -457,8 +460,6 @@ void wide_to_long(
       else
         string_nums = in_string_nums;
 
-      // create struct
-      // celltyp cell;
       switch(vtyp)
       {
 
@@ -471,13 +472,12 @@ void wide_to_long(
       case comma:
       case hms_time:
       case numeric:
-        // cell.v   = vals;
+        // v
         SET_STRING_ELT(zz_v, pos, vals_sexp);
         break;
       case logical:
-        // cell.v   = vals;
-        SET_STRING_ELT(zz_v, pos, vals_sexp);
-        // cell.c_t = "b";
+        // v and c_t = "b"
+        SET_STRING_ELT(zz_v,   pos, vals_sexp);
         SET_STRING_ELT(zz_c_t, pos, bool_sexp);
         break;
       case factor:
@@ -485,120 +485,95 @@ void wide_to_long(
 
         // test if string can be written as number
         if (string_nums && is_double(vals)) {
-          // cell.v   = vals;
+          // v
           SET_STRING_ELT(zz_v, pos, vals_sexp);
           vtyp     = (string_nums == 1) ? string_num : numeric;
         } else {
           // check if we write sst or inlineStr
           if (inline_strings) {
+              // is and c_t = "inlineStr"
               SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
-              // cell.is  = txt_to_is(vals, 0, 1, 1);
-              SET_STRING_ELT(zz_is, pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
+              SET_STRING_ELT(zz_is,  pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
             } else {
+              // v and c_t = "s"
               SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
-              // cell.v   = txt_to_si(vals, 0, 1, 1);
-              SET_STRING_ELT(zz_v, pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
+              SET_STRING_ELT(zz_v,   pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
           }
         }
         break;
       case hyperlink:
       case formula:
-        // cell.c_t = "str";
+        // f and c_t = "str";
         SET_STRING_ELT(zz_c_t, pos, string_sexp);
-        // cell.f   = vals;
-        SET_STRING_ELT(zz_f, pos, vals_sexp);
+        SET_STRING_ELT(zz_f,   pos, vals_sexp);
         break;
       case array_formula:
-        // cell.f     = vals;
-        SET_STRING_ELT(zz_f, pos, vals_sexp);
-        // cell.f_t   = "array";
-        SET_STRING_ELT(zz_f_t, pos, array_sexp);
-        // cell.f_ref = ref_str;
+        // f, f_t = "array", and f_ref
+        SET_STRING_ELT(zz_f,     pos, vals_sexp);
+        SET_STRING_ELT(zz_f_t,   pos, array_sexp);
         SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
         break;
       case cm_formula:
-        // cell.c_cm  = c_cm;
-        SET_STRING_ELT(zz_c_cm, pos, Rf_mkChar(c_cm.c_str()));
-        // cell.f     = vals;
-        SET_STRING_ELT(zz_f, pos, vals_sexp);
-        // cell.f_t   = "array";
-        SET_STRING_ELT(zz_f_t, pos, array_sexp);
-        // cell.f_ref = ref_str;
+        // c_cm, f, f_t = "array", and f_ref
+        SET_STRING_ELT(zz_c_cm,  pos, Rf_mkChar(c_cm.c_str()));
+        SET_STRING_ELT(zz_f,     pos, vals_sexp);
+        SET_STRING_ELT(zz_f_t,   pos, array_sexp);
         SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
         break;
       }
-
 
       if (vals_sexp == NA_STRING || strcmp(vals, "_openxlsx_NA") == 0) {
 
         if (na_missing) {
-          // cell.v   = "#N/A";
-          SET_STRING_ELT(zz_v, pos, na_sexp);
+          // v = "#N/A"
+          SET_STRING_ELT(zz_v,   pos, na_sexp);
           SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-          // cell.is.clear();
-          SET_STRING_ELT(zz_is, pos, blank_sexp);
+          // is = "" - required only if inline_strings
+          // and vtyp = character || vtyp = factor
+          SET_STRING_ELT(zz_is,  pos, blank_sexp);
         } else  {
-          // cell.v.clear();
-          SET_STRING_ELT(zz_v, pos, blank_sexp);
           if (na_null) {
-            // cell.c_t.clear();
-            // cell.is.clear();
+            // all three v, c_t, and is = "" - there should be nothing in this row
+            SET_STRING_ELT(zz_v,   pos, blank_sexp);
             SET_STRING_ELT(zz_c_t, pos, blank_sexp);
-            SET_STRING_ELT(zz_is, pos, blank_sexp);
+            SET_STRING_ELT(zz_is,  pos, blank_sexp);
           } else {
-            // cell.c_t = inline_strings  ? "inlineStr" : "s";
+            // c_t = "inlineStr" or "s"
             SET_STRING_ELT(zz_c_t, pos, inline_strings  ? inlineStr_sexp  : sharedStr_sexp);
-            // cell.is  = inline_strings  ? na_strings  : "";
-            SET_STRING_ELT(zz_is, pos, inline_strings  ? na_strings_sexp  : blank_sexp);
-            // cell.v   = !inline_strings ? na_strings  : "";
-            SET_STRING_ELT(zz_v, pos, !inline_strings ? na_strings_sexp  : blank_sexp);
+            // for inlineStr is = na_strings else ""
+            SET_STRING_ELT(zz_is,  pos, inline_strings  ? na_strings_sexp : blank_sexp);
+            // otherwise v = na_strings else ""
+            SET_STRING_ELT(zz_v,   pos, !inline_strings ? na_strings_sexp : blank_sexp);
           }
         }
 
-      }
-
-      if (strcmp(vals, "NaN") == 0) {
-        // cell.v   = "#VALUE!";
-        SET_STRING_ELT(zz_v, pos, value_sexp);
+      } else if (strcmp(vals, "NaN") == 0) {
+        // v = "#VALUE!"
+        SET_STRING_ELT(zz_v,   pos, value_sexp);
+        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
+      } else if (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0) {
+        // v = "#NUM!"
+        SET_STRING_ELT(zz_v,   pos, num_sexp);
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       }
 
-      if (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0) {
-        // cell.v   = "#NUM!";
-        SET_STRING_ELT(zz_v, pos, num_sexp);
-        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-      }
-
-      // cell.typ = std::to_string(vtyp);
+      // typ = std::to_string(vtyp)
       SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
 
-      std::string cell_r   = has_dims ? dims[idx] : col + row;
+      std::string cell_r = has_dims ? dims[idx] : col + row;
       SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r.c_str()));
 
       if (has_dims) {
-        //   zz_row_r[pos] = rm_colnum(cell.r);
+        // row_r = rm_colnum(r) and c_r = rm_rownum(r)
         SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r).c_str()));
-        //   zz_c_r[pos]   = rm_rownum(cell.r);
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r).c_str()));
       } else {
-        //   zz_row_r[pos] = row;
+        // row_r = row and c_r = col
         SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
-        //   zz_c_r[pos]   = col;
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
       }
-
-      // if (!cell.v.empty())     zz_v[pos]     = cell.v;
-      // if (!cell.c_cm.empty())  zz_c_cm[pos]  = cell.c_cm;
-      // if (!cell.c_t.empty())   zz_c_t[pos]   = cell.c_t;
-      // if (!cell.is.empty())    zz_is[pos]    = cell.is;
-      // if (!cell.f.empty())     zz_f[pos]     = cell.f;
-      // if (!cell.f_t.empty())   zz_f_t[pos]   = cell.f_t;
-      // if (!cell.f_ref.empty()) zz_f_ref[pos] = cell.f_ref;
-      // if (!cell.typ.empty())   zz_typ[pos]   = cell.typ;
-      // if (!cell.r.empty())     zz_r[pos]     = cell.r;
-
-    }
-  }
+    } // n
+  } // m
 }
 
 // simple helper function to create a data frame of type character

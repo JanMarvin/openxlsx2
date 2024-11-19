@@ -444,7 +444,7 @@ write_data2 <- function(
     ColNames       = colNames,
     start_col      = startCol,
     start_row      = startRow,
-    ref            = ref,
+    refed          = ref,
     string_nums    = string_nums,
     na_null        = na_null,
     na_missing     = na_missing,
