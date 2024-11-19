@@ -359,7 +359,7 @@ void wide_to_long(
     bool ColNames,
     int32_t start_col,
     int32_t start_row,
-    std::vector<std::string> ref,
+    Rcpp::Nullable<Rcpp::CharacterVector> refed,
     int32_t string_nums,
     bool na_null,
     bool na_missing,
@@ -372,6 +372,8 @@ void wide_to_long(
   int64_t n = z.nrow();
   int32_t m = z.ncol();
   bool has_dims = dims.size() == static_cast<size_t>(n * m);
+
+  bool has_refs  = refed.isNotNull();
 
   std::vector<std::string> srows(n);
   for (int64_t j = 0; j < n; ++j) {
@@ -440,9 +442,11 @@ void wide_to_long(
       // there should be no unicode character in ref_str
       std::string ref_str = "";
       if (vtyp == array_formula || vtyp == cm_formula) {
-        ref_str = ref[i];
-        if (ref_str == "0") {
+        if (!has_refs) {
           ref_str = col + row;
+        } else {
+          std::vector<std::string> ref = Rcpp::as<std::vector<std::string>>(refed.get());
+          ref_str = ref[i];
         }
       }
 
