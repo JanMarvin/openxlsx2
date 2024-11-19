@@ -326,7 +326,7 @@ write_data2 <- function(
   if (!is.null(attr(data, "f_ref"))) {
     ref <- attr(data, "f_ref")
   } else {
-    ref <- rep("0", ncol(data))
+    ref <- NULL
   }
 
   if (!is.null(attr(data, "c_cm"))) {
@@ -444,7 +444,7 @@ write_data2 <- function(
     ColNames       = colNames,
     start_col      = startCol,
     start_row      = startRow,
-    ref            = ref,
+    refed          = ref,
     string_nums    = string_nums,
     na_null        = na_null,
     na_missing     = na_missing,

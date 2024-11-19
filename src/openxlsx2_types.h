@@ -25,19 +25,6 @@ typedef struct {
   std::string is;    // inlineStr
 } xml_col;
 
-
-typedef struct {
-  std::string v;
-  std::string c_cm;
-  std::string c_t;
-  std::string is;
-  std::string f;
-  std::string f_t;
-  std::string f_ref;
-  std::string typ;
-  std::string r;
-} celltyp;
-
 typedef std::vector<std::string> vec_string;
 
 // matches openxlsx2_celltype in openxlsx2.R
