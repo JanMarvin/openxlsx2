@@ -119,6 +119,16 @@ test_that("amp_split & genHeaderFooterNode", {
   got <- genHeaderFooterNode(got)
   expect_equal(exp, got)
 
+  xml <- "<headerFooter alignWithMargins=\"0\"><oddFooter>&amp;L^  &amp;D  +&amp;C&amp;R</oddFooter></headerFooter>"
+
+  exp <- list(oddFooter = c("^  &amp;D  +", "", ""))
+  got <- getHeaderFooterNode(xml)
+  expect_equal(exp, got)
+
+  exp <- "<headerFooter differentOddEven=\"0\" differentFirst=\"0\" scaleWithDoc=\"0\" alignWithMargins=\"0\"><oddFooter>&amp;L^  &amp;D  +</oddFooter></headerFooter>"
+  got <- genHeaderFooterNode(got)
+  expect_equal(exp, got)
+
 })
 
 test_that("add_sparklines", {
