@@ -97,7 +97,7 @@ cf_create_databar <- function(extLst, formula, params, sqref, values) {
     negColor <- "FFFF0000"
   }
 
-  guid <- stri_join(
+  guid <- stringi::stri_join(
     "F7189283-14F7-4DE0-9601-54DE9DB",
     40000L + length(xml_node(
       extLst,

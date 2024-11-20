@@ -997,7 +997,7 @@ wbWorkbook <- R6::R6Class(
 
           for (cf in chartfiles) {
             chartid <- NROW(self$charts) + 1L
-            newname <- stri_join("chart", chartid, ".xml")
+            newname <- stringi::stri_join("chart", chartid, ".xml")
             old_chart <- as.integer(gsub("\\D+", "", cf))
             self$charts <- rbind(self$charts, from$charts[old_chart, ])
 
@@ -1027,13 +1027,13 @@ wbWorkbook <- R6::R6Class(
             # two charts can not point to the same rels
             if (self$charts$rels[chartid] != "") {
               self$charts$rels[chartid] <- gsub(
-                stri_join(old_chart, ".xml"),
-                stri_join(chartid, ".xml"),
+                stringi::stri_join(old_chart, ".xml"),
+                stringi::stri_join(chartid, ".xml"),
                 self$charts$rels[chartid]
               )
             }
 
-            drawings_rels[dl] <- gsub(stri_join("(?<=charts/)", cf), newname, drawings_rels[dl], perl = TRUE)
+            drawings_rels[dl] <- gsub(stringi::stri_join("(?<=charts/)", cf), newname, drawings_rels[dl], perl = TRUE)
           }
         }
 
@@ -1207,12 +1207,12 @@ wbWorkbook <- R6::R6Class(
           else
             newid <- 1L
 
-          if (any(stri_join(tbls$tab_name, suffix) %in% self$tables$tab_name)) {
-            tbls$tab_name <- stri_join(tbls$tab_name, "1")
+          if (any(stringi::stri_join(tbls$tab_name, suffix) %in% self$tables$tab_name)) {
+            tbls$tab_name <- stringi::stri_join(tbls$tab_name, "1")
           }
 
           # add _n to all table names found
-          tbls$tab_name <- stri_join(tbls$tab_name, suffix)
+          tbls$tab_name <- stringi::stri_join(tbls$tab_name, suffix)
           tbls$tab_sheet <- newSheetIndex
           # modify tab_xml with updated name, displayName and id
           tbls$tab_xml <- vapply(
@@ -2958,7 +2958,7 @@ wbWorkbook <- R6::R6Class(
       } else {
         # TODO replace with seq_len() or seq_along()
         lapply(seq_len(nThemes), function(i) {
-          con <- file(file.path(xlthemeDir, stri_join("theme", i, ".xml")), open = "wb")
+          con <- file(file.path(xlthemeDir, stringi::stri_join("theme", i, ".xml")), open = "wb")
           writeBin(charToRaw(pxml(self$theme[[i]])), con)
           close(con)
         })
@@ -3400,8 +3400,8 @@ wbWorkbook <- R6::R6Class(
             length(self$sharedStrings),
             attr(self$sharedStrings, "uniqueCount")
           ),
-          #body = stri_join(set_sst(attr(self$sharedStrings, "text")), collapse = "", sep = " "),
-          body = stri_join(self$sharedStrings, collapse = "", sep = ""),
+          #body = stringi::stri_join(set_sst(attr(self$sharedStrings, "text")), collapse = "", sep = " "),
+          body = stringi::stri_join(self$sharedStrings, collapse = "", sep = ""),
           tail = "</sst>",
           fl = file.path(xlDir, "sharedStrings.xml")
         )
@@ -3436,26 +3436,26 @@ wbWorkbook <- R6::R6Class(
       styleXML <- self$styles_mgr$styles
       if (length(styleXML$numFmts)) {
         styleXML$numFmts <-
-          stri_join(
+          stringi::stri_join(
             sprintf('<numFmts count="%s">', length(styleXML$numFmts)),
             pxml(styleXML$numFmts),
             "</numFmts>"
           )
       }
       styleXML$fonts <-
-        stri_join(
+        stringi::stri_join(
           sprintf('<fonts count="%s">', length(styleXML$fonts)),
           pxml(styleXML$fonts),
           "</fonts>"
         )
       styleXML$fills <-
-        stri_join(
+        stringi::stri_join(
           sprintf('<fills count="%s">', length(styleXML$fills)),
           pxml(styleXML$fills),
           "</fills>"
         )
       styleXML$borders <-
-        stri_join(
+        stringi::stri_join(
           sprintf('<borders count="%s">', length(styleXML$borders)),
           pxml(styleXML$borders),
           "</borders>"
@@ -3467,13 +3467,13 @@ wbWorkbook <- R6::R6Class(
           "</cellStyleXfs>"
         )
       styleXML$cellXfs <-
-        stri_join(
+        stringi::stri_join(
           sprintf('<cellXfs count="%s">', length(styleXML$cellXfs)),
           paste0(styleXML$cellXfs, collapse = ""),
           "</cellXfs>"
         )
       styleXML$cellStyles <-
-        stri_join(
+        stringi::stri_join(
           sprintf('<cellStyles count="%s">', length(styleXML$cellStyles)),
           pxml(styleXML$cellStyles),
           "</cellStyles>"
@@ -3481,9 +3481,9 @@ wbWorkbook <- R6::R6Class(
 
       styleXML$dxfs <-
         if (length(styleXML$dxfs)) {
-          stri_join(
+          stringi::stri_join(
             sprintf('<dxfs count="%s">', length(styleXML$dxfs)),
-            stri_join(unlist(styleXML$dxfs), sep = " ", collapse = ""),
+            stringi::stri_join(unlist(styleXML$dxfs), sep = " ", collapse = ""),
             "</dxfs>"
           )
         } else {
@@ -3544,10 +3544,10 @@ wbWorkbook <- R6::R6Class(
 
       ## write workbook.xml
       workbookXML <- self$workbook
-      workbookXML$sheets <- stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
+      workbookXML$sheets <- stringi::stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
 
       if (length(workbookXML$definedNames)) {
-        workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>")
+        workbookXML$definedNames <- stringi::stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>")
       }
 
       # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
@@ -4956,13 +4956,13 @@ wbWorkbook <- R6::R6Class(
         fileNo <- reg_match0(removeRels, "(?<=pivotTable)[0-9]+(?=\\.xml)")
         fileNo <- as.integer(unlist(fileNo))
 
-        toRemove <- stri_join(
+        toRemove <- stringi::stri_join(
           sprintf("(pivotCacheDefinition%i\\.xml)", fileNo),
           sep = " ",
           collapse = "|"
         )
 
-        toRemove <- stri_join(
+        toRemove <- stringi::stri_join(
           sprintf("(pivotCacheDefinition%i\\.xml)", grep(toRemove, self$pivotTables.xml.rels)),
           sep = " ",
           collapse = "|"
@@ -5013,15 +5013,15 @@ wbWorkbook <- R6::R6Class(
       if (nSheets > 1) {
         for (i in (sheet + 1L):nSheets) {
           self$workbook$sheets <- gsub(
-            stri_join("rId", i),
-            stri_join("rId", i - 1L),
+            stringi::stri_join("rId", i),
+            stringi::stri_join("rId", i - 1L),
             self$workbook$sheets,
             fixed = TRUE
           )
           # these are zero indexed
           self$workbook$bookViews <- gsub(
-            stri_join("activeTab=\"", i - 1L, "\""),
-            stri_join("activeTab=\"", i - 2L, "\""),
+            stringi::stri_join("activeTab=\"", i - 1L, "\""),
+            stringi::stri_join("activeTab=\"", i - 2L, "\""),
             self$workbook$bookViews,
             fixed = TRUE
           )
@@ -5319,7 +5319,7 @@ wbWorkbook <- R6::R6Class(
 
           sprintf(
             '<pane %s topLeftCell="%s" activePane="%s" state="frozen"/><selection pane="%s"/>',
-            stri_join(attrs, collapse = " ", sep = " "),
+            stringi::stri_join(attrs, collapse = " ", sep = " "),
             get_cell_refs(data.frame(first_active_row, first_active_col)),
             activePane,
             activePane
@@ -6067,7 +6067,7 @@ wbWorkbook <- R6::R6Class(
 
       pos <- '<xdr:pos x="0" y="0" />'
 
-      drawingsXML <- stri_join(
+      drawingsXML <- stringi::stri_join(
         "<xdr:absoluteAnchor>",
         pos,
         sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
@@ -6739,7 +6739,7 @@ wbWorkbook <- R6::R6Class(
         showText <-
           c(showText, sprintf(
             "Write order: %s",
-            stri_join(self$sheetOrder, sep = " ", collapse = ", ")
+            stringi::stri_join(self$sheetOrder, sep = " ", collapse = ", ")
           ))
       }
 
@@ -9441,7 +9441,7 @@ wbWorkbook <- R6::R6Class(
 
       ## write file path to media slot to copy across on save
       tmp <- file
-      names(tmp) <- stri_join("image", mediaNo, ".", imageType)
+      names(tmp) <- stringi::stri_join("image", mediaNo, ".", imageType)
       self$append("media", tmp)
 
       invisible(self)
@@ -9529,7 +9529,7 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$chart[crt],
-              fl = file.path(xlchartsDir, stri_join("chart", crt, ".xml"))
+              fl = file.path(xlchartsDir, stringi::stri_join("chart", crt, ".xml"))
             )
           }
 
@@ -9538,7 +9538,7 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$chartEx[crt],
-              fl = file.path(xlchartsDir, stri_join("chartEx", crt, ".xml"))
+              fl = file.path(xlchartsDir, stringi::stri_join("chartEx", crt, ".xml"))
             )
           }
 
@@ -9547,7 +9547,7 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$colors[crt],
-              fl = file.path(xlchartsDir, stri_join("colors", crt, ".xml"))
+              fl = file.path(xlchartsDir, stringi::stri_join("colors", crt, ".xml"))
             )
           }
 
@@ -9556,21 +9556,21 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$style[crt],
-              fl = file.path(xlchartsDir, stri_join("style", crt, ".xml"))
+              fl = file.path(xlchartsDir, stringi::stri_join("style", crt, ".xml"))
             )
           }
 
           if (self$charts$rels[crt] != "") {
             write_file(
               body = self$charts$rels[crt],
-              fl = file.path(xlchartsRelsDir, stri_join("chart", crt, ".xml.rels"))
+              fl = file.path(xlchartsRelsDir, stringi::stri_join("chart", crt, ".xml.rels"))
             )
           }
 
           if (self$charts$relsEx[crt] != "") {
             write_file(
               body = self$charts$relsEx[crt],
-              fl = file.path(xlchartsRelsDir, stri_join("chartEx", crt, ".xml.rels"))
+              fl = file.path(xlchartsRelsDir, stringi::stri_join("chartEx", crt, ".xml.rels"))
             )
           }
         }
@@ -9589,14 +9589,14 @@ wbWorkbook <- R6::R6Class(
             head = "",
             body = pxml(self$drawings[[i]]),
             tail = "",
-            fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
+            fl = file.path(xldrawingsDir, stringi::stri_join("drawing", i, ".xml"))
           )
           if (!all(self$drawings_rels[[i]] == "")) {
             write_file(
               head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(self$drawings_rels[[i]]),
               tail = '</Relationships>',
-              fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
+              fl = file.path(xldrawingsRelsDir, stringi::stri_join("drawing", i, ".xml.rels"))
             )
           }
 
@@ -9632,7 +9632,7 @@ wbWorkbook <- R6::R6Class(
 
           write_file(
             body = self$worksheets[[i]]$get_prior_sheet_data(),
-            fl = file.path(chartSheetDir, stri_join("sheet", i, ".xml"))
+            fl = file.path(chartSheetDir, stringi::stri_join("sheet", i, ".xml"))
           )
 
           if (length(self$worksheets_rels[[i]])) {
@@ -9655,7 +9655,7 @@ wbWorkbook <- R6::R6Class(
 
 
           if (!is.null(cc)) {
-            cc$r <- stri_join(cc$c_r, cc$row_r)
+            cc$r <- stringi::stri_join(cc$c_r, cc$row_r)
             # prepare data for output
 
             # there can be files, where row_attr is incomplete because a row
@@ -9820,7 +9820,7 @@ wbWorkbook <- R6::R6Class(
       # TODO rename: setConditionFormatting?  Or addConditionalFormatting
       # TODO can this be moved to the sheet data?
       sheet <- private$get_sheet_index(sheet)
-      sqref <- stri_join(
+      sqref <- stringi::stri_join(
         get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
         collapse = ":"
       )
@@ -10063,9 +10063,9 @@ wbWorkbook <- R6::R6Class(
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
       if (length(extRefInds)) {
         newInds <- seq_along(extRefInds) + length(sheetInds)
-        self$workbook$externalReferences <- stri_join(
+        self$workbook$externalReferences <- stringi::stri_join(
           "<externalReferences>",
-          stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
+          stringi::stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
           "</externalReferences>"
         )
       }

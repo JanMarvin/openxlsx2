@@ -451,7 +451,7 @@ wb_load <- function(
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
     sheets$typ <- basename(sheets$Type)
-    sheets$target <- stri_join(xmlDir, xl_path, sheets$Target)
+    sheets$target <- stringi::stri_join(xmlDir, xl_path, sheets$Target)
     sheets$id <- as.numeric(sheets$sheetId)
 
     if (is.null(sheets$state)) sheets$state <- "visible"
