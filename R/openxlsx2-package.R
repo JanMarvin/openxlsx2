@@ -12,7 +12,7 @@
 #' @import R6
 #' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg palette png rgb tiff
 #' @importFrom magrittr %>%
-#' @importFrom stringi stri_c stri_encode stri_extract_all_regex
+#' @importFrom stringi stri_c stri_encode stri_extract_all_regex stri_extract_first_regex
 #'   stri_isempty stri_join stri_match stri_match_all_regex stri_match_first_regex
 #'   stri_order stri_opts_collator stri_pad_left stri_rand_strings stri_read_lines
 #'   stri_replace_all_fixed stri_replace_all_regex stri_split_fixed

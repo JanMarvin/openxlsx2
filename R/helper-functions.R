@@ -201,17 +201,28 @@ pxml <- function(x) {
 #' @noRd
 amp_split <- function(x) {
   if (length(x) == 0) return(NULL)
-  # create output string of width 3
-  res <- vector("character", 3)
-  # Identify the names found in the string: returns them as matrix: strip the &amp;
-  nam <- gsub(pattern = "&amp;", "", unlist(stri_match_all_regex(x, "&amp;[LCR]")))
-  # split the string and assign names to join
-  z <- unlist(stri_split_regex(x, "&amp;[LCR]", omit_empty = TRUE))
 
-  if (length(z) == 0) return(character(0))
+  # Initialize an empty vector of three elements
+  res <- c(L = "", C = "", R = "")
 
-  names(z) <- as.character(nam)
-  res[c("L", "C", "R") %in% names(z)] <- z
+  has <- c(0, 0, 0)
+  # Extract each component if present and remove &amp;[LCR]
+  if (grepl("&amp;L", x)) {
+    has[1] <- 1
+    res[1] <- stri_extract_first_regex(x, "&amp;L.*?(?=&amp;C|&amp;R|$)")
+  }
+  if (grepl("&amp;C", x)) {
+    has[2] <- 1
+    res[2] <- stri_extract_first_regex(x, "&amp;C.*?(?=&amp;R|$)")
+  }
+  if (grepl("&amp;R", x)) {
+    has[3] <- 1
+    res[3] <- stri_extract_first_regex(x, "&amp;R.*?$")
+  }
+
+  if (sum(has) == 0) return(character(0))
+
+  res <- stri_replace_all_regex(res, "&amp;[LCR]", "")
 
   # return the string vector
   unname(res)
