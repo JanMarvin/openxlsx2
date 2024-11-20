@@ -264,7 +264,7 @@ write_data2 <- function(
   }
 
   hconvert_date1904 <- grepl('date1904="1"|date1904="true"',
-                             stri_join(unlist(wb$workbook), collapse = ""),
+                             stringi::stri_join(unlist(wb$workbook), collapse = ""),
                              ignore.case = TRUE)
 
   # TODO need to tell excel that we have a date, apply some kind of numFmt
@@ -959,12 +959,12 @@ write_data_table <- function(
     ## write autoFilter, can only have a single filter per worksheet
     if (withFilter) { # TODO: replace ref calculation with wb_dims()
       coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
-      ref <- stri_join(get_cell_refs(coords), collapse = ":")
+      ref <- stringi::stri_join(get_cell_refs(coords), collapse = ":")
 
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
       l   <- int2col(unlist(coords[, 2]))
-      dfn <- sprintf("'%s'!%s", wb$get_sheet_names(escape = TRUE)[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
+      dfn <- sprintf("'%s'!%s", wb$get_sheet_names(escape = TRUE)[sheet], stringi::stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
       dn  <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
 

@@ -209,20 +209,20 @@ amp_split <- function(x) {
   # Extract each component if present and remove &amp;[LCR]
   if (grepl("&amp;L", x)) {
     has[1] <- 1
-    res[1] <- stri_extract_first_regex(x, "&amp;L.*?(?=&amp;C|&amp;R|$)")
+    res[1] <- stringi::stri_extract_first_regex(x, "&amp;L.*?(?=&amp;C|&amp;R|$)")
   }
   if (grepl("&amp;C", x)) {
     has[2] <- 1
-    res[2] <- stri_extract_first_regex(x, "&amp;C.*?(?=&amp;R|$)")
+    res[2] <- stringi::stri_extract_first_regex(x, "&amp;C.*?(?=&amp;R|$)")
   }
   if (grepl("&amp;R", x)) {
     has[3] <- 1
-    res[3] <- stri_extract_first_regex(x, "&amp;R.*?$")
+    res[3] <- stringi::stri_extract_first_regex(x, "&amp;R.*?$")
   }
 
   if (sum(has) == 0) return(character(0))
 
-  res <- stri_replace_all_regex(res, "&amp;[LCR]", "")
+  res <- stringi::stri_replace_all_regex(res, "&amp;[LCR]", "")
 
   # return the string vector
   unname(res)

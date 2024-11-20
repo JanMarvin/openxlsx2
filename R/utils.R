@@ -20,7 +20,7 @@ naToNULLList <- function(x) {
 paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
   x <- c(...)
   if (unlist) x <- unlist(x, use.names = FALSE)
-  stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
+  stringi::stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
 }
 
 `%||%` <- function(x, y) if (is.null(x)) y else x

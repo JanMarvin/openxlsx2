@@ -10,6 +10,7 @@
 ## Fixes
 
 * Create date is not reset to the present time in each call to `wb_set_properties()`. [1176](https://github.com/JanMarvin/openxlsx2/pull/1176)
+* Improve handling of file headers and footers for a case where `wb_load()` would previously fail. [1186](https://github.com/JanMarvin/openxlsx2/pull/1186)
 
 ## Breaking changes
 
