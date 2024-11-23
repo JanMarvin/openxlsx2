@@ -37,7 +37,7 @@ SEXP xml_si_to_txt(XPtrXML doc) {
   return res;
 }
 
-SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
+inline SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
 
   auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));
@@ -100,8 +100,8 @@ SEXP si_to_txt(Rcpp::CharacterVector si_vec) {
   return xml_to_txt(si_vec, "si");
 }
 
-std::string txt_to_xml(
-    std::string text,
+inline std::string txt_to_xml(
+    std::string& text,
     bool no_escapes,
     bool raw,
     bool skip_control,
