@@ -8,6 +8,10 @@ to_long <- function(path) {
     .Call(`_openxlsx2_to_long`, path)
 }
 
+as_character <- function(x) {
+    .Call(`_openxlsx2_as_character`, x)
+}
+
 openxlsx2_type <- function(x) {
     .Call(`_openxlsx2_openxlsx2_type`, x)
 }

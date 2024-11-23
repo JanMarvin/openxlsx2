@@ -22,6 +22,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// as_character
+SEXP as_character(SEXP x);
+RcppExport SEXP _openxlsx2_as_character(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(as_character(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // openxlsx2_type
 SEXP openxlsx2_type(SEXP x);
 RcppExport SEXP _openxlsx2_openxlsx2_type(SEXP xSEXP) {
@@ -988,6 +999,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_to_long", (DL_FUNC) &_openxlsx2_to_long, 1},
+    {"_openxlsx2_as_character", (DL_FUNC) &_openxlsx2_as_character, 1},
     {"_openxlsx2_openxlsx2_type", (DL_FUNC) &_openxlsx2_openxlsx2_type, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
     {"_openxlsx2_ox_int_to_col", (DL_FUNC) &_openxlsx2_ox_int_to_col, 1},

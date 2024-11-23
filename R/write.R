@@ -281,7 +281,14 @@ write_data2 <- function(
 
     if (is.data.frame(data)) data <- as.data.frame(data)
 
-    sel <- !dc %in% c(4, 5, 10)
+
+    # as.character creates <deferred string conversion> objects
+    # see .Internal(inspect(data))
+    # as.character
+    sel <- dc %in% c(2)
+    data[sel] <- lapply(data[sel], as_character)
+
+    sel <- !dc %in% c(2, 4, 5, 10)
     data[sel] <- lapply(data[sel], as.character)
 
     # add rownames

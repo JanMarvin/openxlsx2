@@ -20,6 +20,49 @@ bool to_long(std::string path) {
 }
 
 // [[Rcpp::export]]
+SEXP as_character(SEXP x) {
+
+  R_xlen_t n = XLENGTH(x);
+  SEXP result = PROTECT(Rf_allocVector(STRSXP, n));
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    if (TYPEOF(x) == INTSXP) {
+      if (INTEGER(x)[i] == NA_INTEGER) {
+        SET_STRING_ELT(result, i, NA_STRING);
+      } else {
+        char buffer[32];
+        snprintf(buffer, sizeof(buffer), "%d", INTEGER(x)[i]);
+        SET_STRING_ELT(result, i, Rf_mkChar(buffer));
+      }
+    } else if (TYPEOF(x) == REALSXP) {
+      if (ISNA(REAL(x)[i])) {
+        SET_STRING_ELT(result, i, NA_STRING);
+      } else if (ISNAN(REAL(x)[i])) {
+        SET_STRING_ELT(result, i, Rf_mkChar("NaN"));
+      } else if (isinf(REAL(x)[i])) {
+        if (REAL(x)[i] > 0) {
+          SET_STRING_ELT(result, i, Rf_mkChar("Inf"));
+        } else {
+          SET_STRING_ELT(result, i, Rf_mkChar("-Inf"));
+        }
+      } else if (std::fmod(REAL(x)[i], 1.0) == 0.0) { // Check if numeric value is an integer
+        char buffer[32];
+        snprintf(buffer, sizeof(buffer), "%.0f", REAL(x)[i]);
+        SET_STRING_ELT(result, i, Rf_mkChar(buffer));
+      } else {
+        char buffer[64];
+        snprintf(buffer, sizeof(buffer), "%.15g", REAL(x)[i]);
+        SET_STRING_ELT(result, i, Rf_mkChar(buffer));
+      }
+    }
+  }
+
+  UNPROTECT(1);  // Unprotect the allocated result vector
+  return result;
+}
+
+
+// [[Rcpp::export]]
 SEXP openxlsx2_type(SEXP x) {
 
   const SEXP names = Rf_getAttrib(x, R_NamesSymbol);
