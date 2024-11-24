@@ -914,6 +914,45 @@ test_that("writing labeled variables works", {
 
 })
 
+test_that("partial labels work", {
+  vec <- sample(c(0, 1, 2), size = 10, replace = TRUE)
+
+  df <- data.frame(
+    var1 = vec,
+    var2 = vec,
+    var3 = vec,
+    var4 = vec,
+    var5 = vec,
+    var6 = vec,
+    var7 = ifelse(vec == 0, "No", ifelse(vec == 1, "Yes", "Maybe"))
+  )
+
+  attr(df$var1, "labels") <- c(No = 0, Yes = 1, Maybe = 2)       # ordered labels
+  attr(df$var2, "labels") <- c(Yes = 1, Maybe = 2, No = 0)       # unordered labels
+  attr(df$var3, "labels") <- c(Yes = 1, Maybe = 2)               # partial labels
+  attr(df$var4, "labels") <- c(No = 0, Maybe = 2)                # partial labels
+  attr(df$var5, "labels") <- c(Undecided = -1)                   # unmatched label
+
+  df$var6 <- factor(df$var6, levels = c(1, 0, 2), label = c("Yes", "No", "Maybe"))
+
+
+  got <- write_xlsx(x = df)$to_df()
+  expect_equal(got$var1, got$var7)
+  expect_equal(got$var2, got$var7)
+  expect_equal(which(got$var3 != "0"), which(got$var7 != "No"))
+  expect_equal(which(got$var3 == "0"), which(got$var7 == "No"))
+
+  expect_equal(which(got$var4 != "1"), which(got$var7 != "Yes"))
+  expect_equal(which(got$var4 == "1"), which(got$var7 == "Yes"))
+
+  expect_equal(which(got$var5 == "0"), which(got$var7 == "No"))
+  expect_equal(which(got$var5 == "1"), which(got$var7 == "Yes"))
+  expect_equal(which(got$var5 == "2"), which(got$var7 == "Maybe"))
+
+  expect_equal(got$var6, got$var7)
+
+})
+
 test_that("writing in specific encoding works", {
 
   skip_on_cran()
