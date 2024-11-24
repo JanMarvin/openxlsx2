@@ -597,11 +597,11 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
 #' @noRd
 to_string <- function(x) {
   lbls <- attr(x, "labels")
-  chr <- as.character(x)
-  if (!is.null(lbls)) {
-    lbls <- lbls[lbls %in% x]
-    sel_l <- match(lbls, x)
-    if (length(sel_l)) chr[sel_l] <- names(lbls)
+  chr  <- as.character(x)
+  if (!is.null(lbls) && !is.null(names(lbls))) {
+    lbls <- lbls[match(x, lbls)]
+    sel_l <- which(!is.na(lbls))
+    if (length(sel_l)) chr[sel_l] <- names(lbls[!is.na(lbls)])
   }
   chr
 }
