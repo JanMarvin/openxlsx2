@@ -65,7 +65,7 @@ wb_add_cell_style(
 
 \item{hidden}{logical cell is hidden}
 
-\item{horizontal}{align content horizontal ('left', 'center', 'right')}
+\item{horizontal}{align content horizontal ('general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed')}
 
 \item{indent}{logical indent content}
 
@@ -87,7 +87,7 @@ wb_add_cell_style(
 
 \item{text_rotation}{degrees of text rotation}
 
-\item{vertical}{vertical alignment of content ('top', 'center', 'bottom')}
+\item{vertical}{vertical alignment of content ('top', 'center', 'bottom', 'justify', 'distributed')}
 
 \item{wrap_text}{wrap text in cell}
 

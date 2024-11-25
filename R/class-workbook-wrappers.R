@@ -3491,7 +3491,7 @@ wb_add_numfmt <- function(
 #' @param dims the cell range
 #' @param ext_lst extension list something like `<extLst>...</extLst>`
 #' @param hidden logical cell is hidden
-#' @param horizontal align content horizontal ('left', 'center', 'right')
+#' @param horizontal align content horizontal ('general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed')
 #' @param indent logical indent content
 #' @param justify_last_line logical justify last line
 #' @param locked logical cell is locked
@@ -3501,7 +3501,7 @@ wb_add_numfmt <- function(
 #' @param relative_indent relative indentation
 #' @param shrink_to_fit logical shrink to fit
 #' @param text_rotation degrees of text rotation
-#' @param vertical vertical alignment of content ('top', 'center', 'bottom')
+#' @param vertical vertical alignment of content ('top', 'center', 'bottom', 'justify', 'distributed')
 #' @param wrap_text wrap text in cell
 ## alignments
 #' @param apply_alignment logical apply alignment

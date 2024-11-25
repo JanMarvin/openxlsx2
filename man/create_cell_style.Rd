@@ -42,7 +42,7 @@ create_cell_style(
 
 \item{xf_id}{dummy}
 
-\item{horizontal}{alignment can be "", "center", "right"}
+\item{horizontal}{alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'}
 
 \item{indent}{dummy}
 
@@ -56,7 +56,7 @@ create_cell_style(
 
 \item{text_rotation}{dummy}
 
-\item{vertical}{alignment can be "", "center", "right"}
+\item{vertical}{alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'}
 
 \item{wrap_text}{dummy}
 
