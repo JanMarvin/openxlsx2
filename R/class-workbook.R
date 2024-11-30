@@ -4252,9 +4252,9 @@ wbWorkbook <- R6::R6Class(
     },
 
     #' @description Get the book views
-    #' @param remove_view remove_view
+    #' @param view view
     #' @return The `wbWorkbook` object
-    remove_bookview = function(remove_view = NULL) {
+    remove_bookview = function(view = NULL) {
 
       wbv <- self$workbook$bookViews
 
@@ -4264,11 +4264,11 @@ wbWorkbook <- R6::R6Class(
         wbv <- xml_node(wbv, "bookViews", "workbookView")
       }
 
-      if (!is.null(remove_view)) {
-        if (!is.integer(remove_view)) remove_view <- as.integer(remove_view)
+      if (!is.null(view)) {
+        if (!is.integer(view)) view <- as.integer(view)
         # if there are three views, and 2 is removed, the indices are
         # now 1, 2 and not 1, 3. removing -1 keeps only the first view
-        wbv <- wbv[-remove_view]
+        wbv <- wbv[-view]
       }
 
       self$workbook$bookViews <- xml_node_create(
@@ -4292,7 +4292,7 @@ wbWorkbook <- R6::R6Class(
     #' @param window_width windowWidth
     #' @param x_window xWindow
     #' @param y_window yWindow
-    #' @param use_view use_view
+    #' @param view view
     #' @return The `wbWorkbook` object
     set_bookview = function(
       active_tab                = NULL,
@@ -4308,7 +4308,7 @@ wbWorkbook <- R6::R6Class(
       window_width              = NULL,
       x_window                  = NULL,
       y_window                  = NULL,
-      use_view                  = 1L,
+      view                      = 1L,
       ...
     ) {
 
@@ -4322,20 +4322,20 @@ wbWorkbook <- R6::R6Class(
         wbv <- xml_node(wbv, "bookViews", "workbookView")
       }
 
-      if (use_view > length(wbv)) {
-        if (use_view == length(wbv) + 1L) {
+      if (view > length(wbv)) {
+        if (view == length(wbv) + 1L) {
           wbv <- c(wbv, xml_node_create("workbookView"))
         } else {
           msg <- paste0(
             "There is more than one workbook view missing.",
-            " Available: ", length(wbv), ". Requested: ", use_view
+            " Available: ", length(wbv), ". Requested: ", view
           )
           stop(msg, call. = FALSE)
         }
       }
 
-      wbv[use_view] <- xml_attr_mod(
-        wbv[use_view],
+      wbv[view] <- xml_attr_mod(
+        wbv[view],
         xml_attributes = c(
           activeTab              = as_xml_attr(active_tab),
           autoFilterDateGrouping = as_xml_attr(auto_filter_date_grouping),

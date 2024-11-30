@@ -218,7 +218,7 @@ test_that("wb_set_bookview() is a wrapper", {
 
 test_that("wb_remove_bookview() is a wrapper", {
   wb <- wb_workbook()$add_worksheet()$set_bookview()
-  params <- list(remove_view = 1L)
+  params <- list(view = 1L)
   expect_wrapper("remove_bookview", params = params)
 })
 

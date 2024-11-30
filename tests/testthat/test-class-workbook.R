@@ -1256,7 +1256,7 @@ test_that("using and removing secondary bookviews works", {
   # set the first and second bookview (horizontal split)
   wb <- wb %>%
     wb_set_bookview(window_height = 17600, window_width = 15120, x_window = 15120, y_window = 760) %>%
-    wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, use_view = 2)
+    wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, view = 2)
 
   exp <- structure(
     list(windowHeight = c("17600", "17600"), windowWidth = c("15120", "15040"),
@@ -1270,7 +1270,7 @@ test_that("using and removing secondary bookviews works", {
     list(windowHeight = c("17600"), windowWidth = c("15040"),
          xWindow = c("0"), yWindow = c("760")),
     row.names = c(NA, 1L), class = "data.frame")
-  got <- wb %>% wb_remove_bookview(remove_view = 1) %>% wb_get_bookview()
+  got <- wb %>% wb_remove_bookview(view = 1) %>% wb_get_bookview()
   expect_equal(exp, got)
 
   # keep only the first view
@@ -1278,16 +1278,16 @@ test_that("using and removing secondary bookviews works", {
     list(windowHeight = c("17600"), windowWidth = c("15120"),
          xWindow = c("15120"), yWindow = c("760")),
     row.names = c(NA, 1L), class = "data.frame")
-  got <- wb %>% wb_remove_bookview(remove_view = -1) %>% wb_get_bookview()
+  got <- wb %>% wb_remove_bookview(view = -1) %>% wb_get_bookview()
   expect_equal(exp, got)
 
   wb <- wb_workbook() %>% wb_add_worksheet()
   exp <- structure(list(), row.names = c(NA, 1L), names = character(0), class = "data.frame")
-  got <- wb %>% wb_remove_bookview(remove_view = 1) %>% wb_get_bookview()
+  got <- wb %>% wb_remove_bookview(view = 1) %>% wb_get_bookview()
   expect_equal(exp, got)
 
   expect_error(
-    wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_set_bookview(use_view = 3),
+    wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_set_bookview(view = 3),
     "There is more than one workbook view missing. Available: 1. Requested: 3"
   )
 
