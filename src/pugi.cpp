@@ -504,7 +504,7 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVecto
   std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attributes);
 
   for (auto cld : doc.children()) {
-    for (auto i = 0; i < xml_attributes.length(); ++i){
+    for (size_t i = 0; i < static_cast<size_t>(xml_attributes.length()); ++i){
 
       // check if attribute_val is empty. if yes, remove the attribute.
       // otherwise add or update the attribute
@@ -602,7 +602,7 @@ Rcpp::CharacterVector xml_node_create(
     std::vector<std::string> new_attr_nam = xml_attr.names();
     std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attr);
 
-    for (auto i = 0; i < xml_attr.length(); ++i){
+    for (size_t i = 0; i < static_cast<size_t>(xml_attr.length()); ++i){
       if (!new_attr_val[i].empty())
         cld.append_attribute(new_attr_nam[i].c_str()) = new_attr_val[i].c_str();
     }

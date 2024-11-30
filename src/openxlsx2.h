@@ -19,7 +19,9 @@ inline void checkInterrupt(R_xlen_t iteration, R_xlen_t frequency = 10000) {
   }
 }
 
-static inline std::string int_to_col(uint32_t cell) {
+
+template <typename T>
+static inline std::string int_to_col(T cell) {
   std::string col_name = "";
 
   while (cell > 0)
@@ -59,12 +61,12 @@ static inline uint32_t uint_col_to_int(std::string& a) {
 
   char A = 'A';
   int aVal = (int)A - 1;
-  int sum = 0;
+  uint32_t sum = 0;
   size_t k = a.length();
 
   for (size_t j = 0; j < k; ++j) {
     sum *= 26;
-    sum += (a[j] - aVal);
+    sum += static_cast<uint32_t>(a[j] - aVal);
   }
 
   return sum;
@@ -93,7 +95,7 @@ static inline std::string rm_colnum(const std::string& str) {
 // Function to keep only digits in a string
 inline uint32_t cell_to_rowint(const std::string& str) {
   std::string result = rm_colnum(str);
-  return std::stoi(result);
+  return static_cast<uint32_t>(std::stoi(result));
 }
 
 static inline std::string str_toupper(std::string s) {
@@ -104,10 +106,10 @@ static inline std::string str_toupper(std::string s) {
 }
 
 // Function to remove digits from a string
-static inline uint32_t cell_to_colint(const std::string& str) {
+static inline int32_t cell_to_colint(const std::string& str) {
   std::string result = rm_rownum(str);
   result = str_toupper(result);
-  return uint_col_to_int(result);
+  return static_cast<int32_t>(uint_col_to_int(result));
 }
 
 static inline bool validate_dims(const std::string& input) {
