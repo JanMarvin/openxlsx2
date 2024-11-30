@@ -1409,13 +1409,13 @@ A dataframe with the bookview properties
 \subsection{Method \code{remove_bookview()}}{
 Get the book views
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_bookview(remove_view = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_bookview(view = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{remove_view}}{remove_view}
+\item{\code{view}}{view}
 }
 \if{html}{\out{</div>}}
 }
@@ -1442,7 +1442,7 @@ The \code{wbWorkbook} object
   window_width = NULL,
   x_window = NULL,
   y_window = NULL,
-  use_view = 1L,
+  view = 1L,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -1476,7 +1476,7 @@ The \code{wbWorkbook} object
 
 \item{\code{y_window}}{yWindow}
 
-\item{\code{use_view}}{use_view}
+\item{\code{view}}{view}
 
 \item{\code{...}}{additional arguments}
 }

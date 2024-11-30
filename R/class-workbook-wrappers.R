@@ -1676,12 +1676,12 @@ wb_get_bookview <- function(wb) {
 }
 
 #' @name wb_set_bookview
-#' @param remove_view You can remove views using index positions. This will only remove the view wont apply modifications.
+#' @param view You can remove views using index positions. This will only remove the view wont apply modifications.
 #' @return The Workbook object
 #' @export
-wb_remove_bookview <- function(wb, remove_view = NULL) {
+wb_remove_bookview <- function(wb, view = NULL) {
   assert_workbook(wb)
-  wb$clone()$remove_bookview(remove_view = remove_view)
+  wb$clone()$remove_bookview(view = view)
 }
 
 #' @rdname wb_set_bookview
@@ -1699,7 +1699,7 @@ wb_remove_bookview <- function(wb, remove_view = NULL) {
 #' @param window_width windowWidth
 #' @param x_window xWindow
 #' @param y_window yWindow
-#' @param use_view Which view to modify. Default is `1` (the first view).
+#' @param view Which view to modify. Default is `1` (the first view).
 #' @param ... additional arguments
 #' @return The Workbook object
 #' @examples
@@ -1708,15 +1708,15 @@ wb_remove_bookview <- function(wb, remove_view = NULL) {
 #'  # set the first and second bookview (horizontal split)
 #'  wb <- wb %>%
 #'    wb_set_bookview(window_height = 17600, window_width = 15120, x_window = 15120, y_window = 760) %>%
-#'    wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, use_view = 2)
+#'    wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, view = 2)
 #'
 #'  wb %>% wb_get_bookview()
 #'
 #'  # remove the first view
-#'  wb %>% wb_remove_bookview(remove_view = 1) %>% wb_get_bookview()
+#'  wb %>% wb_remove_bookview(view = 1) %>% wb_get_bookview()
 #'
 #'  # keep only the first view
-#'  wb %>% wb_remove_bookview(remove_view = -1) %>% wb_get_bookview()
+#'  wb %>% wb_remove_bookview(view = -1) %>% wb_get_bookview()
 #' @export
 wb_set_bookview <- function(
     wb,
@@ -1733,7 +1733,7 @@ wb_set_bookview <- function(
     window_width              = NULL,
     x_window                  = NULL,
     y_window                  = NULL,
-    use_view                  = 1L,
+    view                      = 1L,
     ...
 ) {
   assert_workbook(wb)
@@ -1751,7 +1751,7 @@ wb_set_bookview <- function(
     window_width              = window_width,
     x_window                  = x_window,
     y_window                  = y_window,
-    use_view                  = use_view,
+    view                      = view,
     ...                       = ...
   )
 }

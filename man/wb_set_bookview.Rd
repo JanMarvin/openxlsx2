@@ -8,7 +8,7 @@
 \usage{
 wb_get_bookview(wb)
 
-wb_remove_bookview(wb, remove_view = NULL)
+wb_remove_bookview(wb, view = NULL)
 
 wb_set_bookview(
   wb,
@@ -25,14 +25,14 @@ wb_set_bookview(
   window_width = NULL,
   x_window = NULL,
   y_window = NULL,
-  use_view = 1L,
+  view = 1L,
   ...
 )
 }
 \arguments{
 \item{wb}{A \link{wbWorkbook} object}
 
-\item{remove_view}{You can remove views using index positions. This will only remove the view wont apply modifications.}
+\item{view}{Which view to modify. Default is \code{1} (the first view).}
 
 \item{active_tab}{activeTab}
 
@@ -60,8 +60,6 @@ wb_set_bookview(
 
 \item{y_window}{yWindow}
 
-\item{use_view}{Which view to modify. Default is \code{1} (the first view).}
-
 \item{...}{additional arguments}
 }
 \value{
@@ -80,13 +78,13 @@ Get and Set the workbook position, size and filter
  # set the first and second bookview (horizontal split)
  wb <- wb \%>\%
    wb_set_bookview(window_height = 17600, window_width = 15120, x_window = 15120, y_window = 760) \%>\%
-   wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, use_view = 2)
+   wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, view = 2)
 
  wb \%>\% wb_get_bookview()
 
  # remove the first view
- wb \%>\% wb_remove_bookview(remove_view = 1) \%>\% wb_get_bookview()
+ wb \%>\% wb_remove_bookview(view = 1) \%>\% wb_get_bookview()
 
  # keep only the first view
- wb \%>\% wb_remove_bookview(remove_view = -1) \%>\% wb_get_bookview()
+ wb \%>\% wb_remove_bookview(view = -1) \%>\% wb_get_bookview()
 }
