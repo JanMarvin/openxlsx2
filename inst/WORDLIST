@@ -64,6 +64,7 @@ autocompletion
 bandedCols
 bandedRows
 blankRow
+bookview
 bool
 calcChain
 calculatedColumn

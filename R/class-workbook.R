@@ -4239,7 +4239,46 @@ wbWorkbook <- R6::R6Class(
 
     ### book views ----
 
-    #' @description Set the book views
+    #' @description Get the book views
+    #' @return A dataframe with the bookview properties
+    get_bookview = function() {
+      wbv <- self$workbook$bookViews
+      if (is.null(wbv)) {
+        wbv <- xml_node_create("workbookView")
+      } else {
+        wbv <- xml_node(wbv, "bookViews", "workbookView")
+      }
+      rbindlist(xml_attr(wbv, "workbookView"))
+    },
+
+    #' @description Get the book views
+    #' @param remove_view remove_view
+    #' @return The `wbWorkbook` object
+    remove_bookview = function(remove_view = NULL) {
+
+      wbv <- self$workbook$bookViews
+
+      if (is.null(wbv)) {
+        return(invisible(self))
+      } else {
+        wbv <- xml_node(wbv, "bookViews", "workbookView")
+      }
+
+      if (!is.null(remove_view)) {
+        if (!is.integer(remove_view)) remove_view <- as.integer(remove_view)
+        # if there are three views, and 2 is removed, the indices are
+        # now 1, 2 and not 1, 3. removing -1 keeps only the first view
+        wbv <- wbv[-remove_view]
+      }
+
+      self$workbook$bookViews <- xml_node_create(
+        "bookViews",
+        xml_children = wbv
+      )
+
+      invisible(self)
+    },
+
     #' @param active_tab activeTab
     #' @param auto_filter_date_grouping autoFilterDateGrouping
     #' @param first_sheet firstSheet
@@ -4253,6 +4292,7 @@ wbWorkbook <- R6::R6Class(
     #' @param window_width windowWidth
     #' @param x_window xWindow
     #' @param y_window yWindow
+    #' @param use_view use_view
     #' @return The `wbWorkbook` object
     set_bookview = function(
       active_tab                = NULL,
@@ -4268,6 +4308,7 @@ wbWorkbook <- R6::R6Class(
       window_width              = NULL,
       x_window                  = NULL,
       y_window                  = NULL,
+      use_view                  = 1L,
       ...
     ) {
 
@@ -4281,8 +4322,20 @@ wbWorkbook <- R6::R6Class(
         wbv <- xml_node(wbv, "bookViews", "workbookView")
       }
 
-      wbv <- xml_attr_mod(
-        wbv,
+      if (use_view > length(wbv)) {
+        if (use_view == length(wbv) + 1L) {
+          wbv <- c(wbv, xml_node_create("workbookView"))
+        } else {
+          msg <- paste0(
+            "There is more than one workbook view missing.",
+            " Available: ", length(wbv), ". Requested: ", use_view
+          )
+          stop(msg, call. = FALSE)
+        }
+      }
+
+      wbv[use_view] <- xml_attr_mod(
+        wbv[use_view],
         xml_attributes = c(
           activeTab              = as_xml_attr(active_tab),
           autoFilterDateGrouping = as_xml_attr(auto_filter_date_grouping),

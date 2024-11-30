@@ -205,11 +205,21 @@ test_that("wb_get_base_color() is a wrapper", {
   expect_wrapper("get_base_colours", wb = wb)
 })
 
-# wb_set_bookview() -----------------------------------------------------------
+# wb_get_bookview(),wb_remove_bookview(), wb_set_bookview() -------------------
+
+test_that("wb_get_bookview() is a wrapper", {
+  expect_wrapper("get_bookview")
+})
 
 test_that("wb_set_bookview() is a wrapper", {
   params <- list(activeTab = "1")
   expect_wrapper("set_bookview", params = params)
+})
+
+test_that("wb_remove_bookview() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet()$set_bookview()
+  params <- list(remove_view = 1L)
+  expect_wrapper("remove_bookview", params = params)
 })
 
 # wb_set_header_footer() ------------------------------------------------------
