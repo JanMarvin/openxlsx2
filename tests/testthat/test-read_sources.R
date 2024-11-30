@@ -470,3 +470,15 @@ test_that("file extension handling works", {
   expect_silent(wb_save(wb, file = tempfile(fileext = ".XLSM")))
 
 })
+
+test_that("loading d3p1 file works", {
+
+  fl  <- testfile_path("gh_issue_1194.xlsx")
+
+  df <- wb_to_df(fl)
+
+  exp <- c(1347, 31)
+  got <- dim(df)
+  expect_equal(exp, got)
+
+})
