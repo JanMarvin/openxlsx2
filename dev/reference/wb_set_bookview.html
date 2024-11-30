@@ -57,7 +57,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_get_bookview</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">wb_remove_bookview</span><span class="op">(</span><span class="va">wb</span>, remove_view <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">wb_remove_bookview</span><span class="op">(</span><span class="va">wb</span>, view <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_set_bookview</span><span class="op">(</span></span>
 <span>  <span class="va">wb</span>,</span>
@@ -74,7 +74,7 @@
 <span>  window_width <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x_window <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_window <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  use_view <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  view <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -87,8 +87,8 @@
 <dd><p>A <a href="wbWorkbook.html">wbWorkbook</a> object</p></dd>
 
 
-<dt id="arg-remove-view">remove_view<a class="anchor" aria-label="anchor" href="#arg-remove-view"></a></dt>
-<dd><p>You can remove views using index positions. This will only remove the view wont apply modifications.</p></dd>
+<dt id="arg-view">view<a class="anchor" aria-label="anchor" href="#arg-view"></a></dt>
+<dd><p>Which view to modify. Default is <code>1</code> (the first view).</p></dd>
 
 
 <dt id="arg-active-tab">active_tab<a class="anchor" aria-label="anchor" href="#arg-active-tab"></a></dt>
@@ -143,10 +143,6 @@
 <dd><p>yWindow</p></dd>
 
 
-<dt id="arg-use-view">use_view<a class="anchor" aria-label="anchor" href="#arg-use-view"></a></dt>
-<dd><p>Which view to modify. Default is <code>1</code> (the first view).</p></dd>
-
-
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments</p></dd>
 
@@ -165,7 +161,7 @@
 <span class="r-in"><span> <span class="co"># set the first and second bookview (horizontal split)</span></span></span>
 <span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span>   <span class="fu">wb_set_bookview</span><span class="op">(</span>window_height <span class="op">=</span> <span class="fl">17600</span>, window_width <span class="op">=</span> <span class="fl">15120</span>, x_window <span class="op">=</span> <span class="fl">15120</span>, y_window <span class="op">=</span> <span class="fl">760</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>   <span class="fu">wb_set_bookview</span><span class="op">(</span>window_height <span class="op">=</span> <span class="fl">17600</span>, window_width <span class="op">=</span> <span class="fl">15040</span>, x_window <span class="op">=</span> <span class="fl">0</span>, y_window <span class="op">=</span> <span class="fl">760</span>, use_view <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="fu">wb_set_bookview</span><span class="op">(</span>window_height <span class="op">=</span> <span class="fl">17600</span>, window_width <span class="op">=</span> <span class="fl">15040</span>, x_window <span class="op">=</span> <span class="fl">0</span>, y_window <span class="op">=</span> <span class="fl">760</span>, view <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_get_bookview</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   windowHeight windowWidth xWindow yWindow</span>
@@ -173,12 +169,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2        17600       15040       0     760</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co"># remove the first view</span></span></span>
-<span class="r-in"><span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_remove_bookview</span><span class="op">(</span>remove_view <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_get_bookview</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_remove_bookview</span><span class="op">(</span>view <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_get_bookview</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   windowHeight windowWidth xWindow yWindow</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1        17600       15040       0     760</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co"># keep only the first view</span></span></span>
-<span class="r-in"><span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_remove_bookview</span><span class="op">(</span>remove_view <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_get_bookview</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_remove_bookview</span><span class="op">(</span>view <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_get_bookview</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   windowHeight windowWidth xWindow yWindow</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1        17600       15120   15120     760</span>
 </code></pre></div>
