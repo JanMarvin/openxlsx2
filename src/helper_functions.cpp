@@ -697,8 +697,6 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
   std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
   std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
 
-  Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
-
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
     pugi::xml_node xml_node = doc.append_child(vec_name.c_str());

@@ -1994,9 +1994,9 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
       if (debug) Rcpp::Rcout << "PtgExp" <<std::endl;
 
       // this is a reference to the cell that contains the shared formula
-      uint32_t row = UncheckedRw(sas, swapit) + 1;
-      if (debug) Rcpp::Rcout << "PtgExp: " << row << std::endl;
-      sharedFml = row;
+      uint32_t ptg_row = UncheckedRw(sas, swapit) + 1;
+      if (debug) Rcpp::Rcout << "PtgExp: " << ptg_row << std::endl;
+      sharedFml = ptg_row;
       break;
     }
 
@@ -2090,10 +2090,10 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
       // need_ptg_extra_col = true;
       if (debug) Rcpp::Rcout << "PtgExtraCol" << std::endl;
-      int32_t col = UncheckedCol(sas, swapit);
-      if (debug) Rcpp::Rcout << "cb PtgExp: " << int_to_col(col+1) << std::endl;
+      int32_t ptg_col = UncheckedCol(sas, swapit);
+      if (debug) Rcpp::Rcout << "cb PtgExp: " << int_to_col(ptg_col+1) << std::endl;
 
-      fml_out += int_to_col(col + 1);
+      fml_out += int_to_col(ptg_col + 1);
       fml_out += std::to_string(row);
       fml_out += "\n";
       break;
@@ -2115,8 +2115,8 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
       if (debug) Rcpp::Rcout << rows << ": " << cols << std::endl;
 
       // number of elements in row order: must be equal to rows * cols
-      for (int32_t row = 0; row < rows; ++row) {
-        for (int32_t col = 0; col < cols; ++col) {
+      for (int32_t rr = 0; rr < rows; ++rr) {
+        for (int32_t cc = 0; cc < cols; ++cc) {
 
           // blob (it is actually called this way)
           uint8_t reserved = 0;

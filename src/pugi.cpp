@@ -299,20 +299,20 @@ SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
 
   auto children = doc->children(child.c_str());
 
-  size_t n = std::distance(children.begin(),
-                           children.end());
+  R_xlen_t n = std::distance(children.begin(),
+                             children.end());
 
   // for a childless single line node the distance might be zero
   if (n == 0) n++;
   Rcpp::List z(n);
 
   auto itr = 0;
-  for (auto child : children) {
+  for (auto chld : children) {
 
     Rcpp::CharacterVector res;
     std::vector<std::string> nam;
 
-    for (auto attrs : child.attributes())
+    for (auto attrs : chld.attributes())
     {
       nam.push_back(Rcpp::String(attrs.name()));
       res.push_back(Rcpp::String(attrs.value()));
@@ -332,17 +332,17 @@ SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
 Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child) {
 
   auto worksheet = doc->child(level1.c_str()).children(child.c_str());
-  auto n = std::distance(worksheet.begin() , worksheet.end());
+  R_xlen_t n = std::distance(worksheet.begin() , worksheet.end());
   Rcpp::List z(n);
 
   auto itr = 0;
   for (auto ws : worksheet)
   {
 
-    auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
+    R_xlen_t w_n = std::distance(ws.attributes_begin(), ws.attributes_end());
 
-    Rcpp::CharacterVector res(n);
-    Rcpp::CharacterVector nam(n);
+    Rcpp::CharacterVector res(w_n);
+    Rcpp::CharacterVector nam(w_n);
 
     auto attr_itr = 0;
     for (auto attr : ws.attributes())
@@ -366,17 +366,17 @@ Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child) {
 SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::string child) {
 
   auto worksheet = doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str());
-  auto n = std::distance(worksheet.begin(), worksheet.end());
+  R_xlen_t n = std::distance(worksheet.begin(), worksheet.end());
   Rcpp::List z(n);
 
   auto itr = 0;
   for (auto ws : worksheet)
   {
 
-    auto n = std::distance(ws.attributes_begin(), ws.attributes_end());
+    R_xlen_t w_n = std::distance(ws.attributes_begin(), ws.attributes_end());
 
-    Rcpp::CharacterVector res(n);
-    Rcpp::CharacterVector nam(n);
+    Rcpp::CharacterVector res(w_n);
+    Rcpp::CharacterVector nam(w_n);
 
     auto attr_itr = 0;
     for (auto attr : ws.attributes())
@@ -562,7 +562,6 @@ Rcpp::CharacterVector xml_node_create(
     bool escapes = false, bool declaration = false) {
 
   pugi::xml_document doc;
-  pugi::xml_parse_result result;
 
   unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;

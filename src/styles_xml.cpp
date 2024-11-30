@@ -892,9 +892,6 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
   std::set<std::string> nam_attrs = {"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId"};
   std::set<std::string> nam_chlds = {"extLst"};
 
-
-  Rcpp::IntegerVector mtc1, mtc2, idx1, idx2;
-
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
     pugi::xml_node cellstyle = doc.append_child("cellStyle");
