@@ -186,6 +186,8 @@ worksheet names.}
 \item \href{#method-wbWorkbook-get_base_colours}{\code{wbWorkbook$get_base_colours()}}
 \item \href{#method-wbWorkbook-set_base_colors}{\code{wbWorkbook$set_base_colors()}}
 \item \href{#method-wbWorkbook-set_base_colours}{\code{wbWorkbook$set_base_colours()}}
+\item \href{#method-wbWorkbook-get_bookview}{\code{wbWorkbook$get_bookview()}}
+\item \href{#method-wbWorkbook-remove_bookview}{\code{wbWorkbook$remove_bookview()}}
 \item \href{#method-wbWorkbook-set_bookview}{\code{wbWorkbook$set_bookview()}}
 \item \href{#method-wbWorkbook-get_sheet_names}{\code{wbWorkbook$get_sheet_names()}}
 \item \href{#method-wbWorkbook-set_sheet_names}{\code{wbWorkbook$set_sheet_names()}}
@@ -1389,10 +1391,42 @@ The \code{wbWorkbook} object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-get_bookview"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-get_bookview}{}}}
+\subsection{Method \code{get_bookview()}}{
+Get the book views
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$get_bookview()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A dataframe with the bookview properties
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-remove_bookview"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-remove_bookview}{}}}
+\subsection{Method \code{remove_bookview()}}{
+Get the book views
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$remove_bookview(remove_view = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{remove_view}}{remove_view}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wbWorkbook-set_bookview"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-set_bookview}{}}}
 \subsection{Method \code{set_bookview()}}{
-Set the book views
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$set_bookview(
   active_tab = NULL,
@@ -1408,6 +1442,7 @@ Set the book views
   window_width = NULL,
   x_window = NULL,
   y_window = NULL,
+  use_view = 1L,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -1440,6 +1475,8 @@ Set the book views
 \item{\code{x_window}}{xWindow}
 
 \item{\code{y_window}}{yWindow}
+
+\item{\code{use_view}}{use_view}
 
 \item{\code{...}}{additional arguments}
 }

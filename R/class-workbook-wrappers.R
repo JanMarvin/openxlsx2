@@ -1666,8 +1666,25 @@ wb_set_base_colours <- wb_set_base_colors
 wb_get_base_colours <- wb_get_base_colors
 
 
-#' Set the workbook position, size and filter
-#'
+#' Get and Set the workbook position, size and filter
+#' @name wb_set_bookview
+#' @return A data frame with the bookview properties
+#' @export
+wb_get_bookview <- function(wb) {
+  assert_workbook(wb)
+  wb$get_bookview()
+}
+
+#' @name wb_set_bookview
+#' @param remove_view You can remove views using index positions. This will only remove the view wont apply modifications.
+#' @return The Workbook object
+#' @export
+wb_remove_bookview <- function(wb, remove_view = NULL) {
+  assert_workbook(wb)
+  wb$clone()$remove_bookview(remove_view = remove_view)
+}
+
+#' @rdname wb_set_bookview
 #' @param wb A [wbWorkbook] object
 #' @param active_tab activeTab
 #' @param auto_filter_date_grouping autoFilterDateGrouping
@@ -1682,8 +1699,24 @@ wb_get_base_colours <- wb_get_base_colors
 #' @param window_width windowWidth
 #' @param x_window xWindow
 #' @param y_window yWindow
+#' @param use_view Which view to modify. Default is `1` (the first view).
 #' @param ... additional arguments
 #' @return The Workbook object
+#' @examples
+#'  wb <- wb_workbook() %>% wb_add_worksheet()
+#'
+#'  # set the first and second bookview (horizontal split)
+#'  wb <- wb %>%
+#'    wb_set_bookview(window_height = 17600, window_width = 15120, x_window = 15120, y_window = 760) %>%
+#'    wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, use_view = 2)
+#'
+#'  wb %>% wb_get_bookview()
+#'
+#'  # remove the first view
+#'  wb %>% wb_remove_bookview(remove_view = 1) %>% wb_get_bookview()
+#'
+#'  # keep only the first view
+#'  wb %>% wb_remove_bookview(remove_view = -1) %>% wb_get_bookview()
 #' @export
 wb_set_bookview <- function(
     wb,
@@ -1700,6 +1733,7 @@ wb_set_bookview <- function(
     window_width              = NULL,
     x_window                  = NULL,
     y_window                  = NULL,
+    use_view                  = 1L,
     ...
 ) {
   assert_workbook(wb)
@@ -1717,6 +1751,7 @@ wb_set_bookview <- function(
     window_width              = window_width,
     x_window                  = x_window,
     y_window                  = y_window,
+    use_view                  = use_view,
     ...                       = ...
   )
 }
