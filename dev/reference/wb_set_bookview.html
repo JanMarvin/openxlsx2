@@ -160,8 +160,13 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co"># set the first and second bookview (horizontal split)</span></span></span>
 <span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>   <span class="fu">wb_set_bookview</span><span class="op">(</span>window_height <span class="op">=</span> <span class="fl">17600</span>, window_width <span class="op">=</span> <span class="fl">15120</span>, x_window <span class="op">=</span> <span class="fl">15120</span>, y_window <span class="op">=</span> <span class="fl">760</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>   <span class="fu">wb_set_bookview</span><span class="op">(</span>window_height <span class="op">=</span> <span class="fl">17600</span>, window_width <span class="op">=</span> <span class="fl">15040</span>, x_window <span class="op">=</span> <span class="fl">0</span>, y_window <span class="op">=</span> <span class="fl">760</span>, view <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="fu">wb_set_bookview</span><span class="op">(</span></span></span>
+<span class="r-in"><span>     window_height <span class="op">=</span> <span class="fl">17600</span>, window_width <span class="op">=</span> <span class="fl">15120</span>,</span></span>
+<span class="r-in"><span>     x_window <span class="op">=</span> <span class="fl">15120</span>, y_window <span class="op">=</span> <span class="fl">760</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>   <span class="fu">wb_set_bookview</span><span class="op">(</span></span></span>
+<span class="r-in"><span>     window_height <span class="op">=</span> <span class="fl">17600</span>, window_width <span class="op">=</span> <span class="fl">15040</span>,</span></span>
+<span class="r-in"><span>     x_window <span class="op">=</span> <span class="fl">0</span>, y_window <span class="op">=</span> <span class="fl">760</span>, view <span class="op">=</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_get_bookview</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   windowHeight windowWidth xWindow yWindow</span>
