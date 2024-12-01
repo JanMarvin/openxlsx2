@@ -1107,7 +1107,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
     bool first_row = true;
-    uint32_t row = 0;
+    int32_t row = 0;
     bool end_of_external_reference = false;
 
     while(!end_of_external_reference) {
@@ -1209,7 +1209,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
       {
         if (debug) Rcpp::Rcout << "<BrtExternCellBlank>" << std::endl;
 
-        uint32_t col = UncheckedCol(bin, swapit);
+        int32_t col = UncheckedCol(bin, swapit);
         out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" />" << std::endl;
 
         break;
@@ -1220,7 +1220,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
         if (debug) Rcpp::Rcout << "<BrtExternCellBool>" << std::endl;
 
         uint8_t value = 0;
-        uint32_t col = UncheckedCol(bin, swapit);
+        int32_t col = UncheckedCol(bin, swapit);
         value = readbin(value, bin, swapit);
         out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"b\">" << std::endl;
         out << "<v>" << (uint16_t)value << "</v>" << std::endl;
@@ -1234,7 +1234,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
         if (debug) Rcpp::Rcout << "<BrtExternCellError>" << std::endl;
 
         std::string value;
-        uint32_t col = UncheckedCol(bin, swapit);
+        int32_t col = UncheckedCol(bin, swapit);
         value = BErr(bin, swapit);
         out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"e\">" << std::endl;
         out << "<v>" << value << "</v>" << std::endl;
@@ -1248,7 +1248,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
         if (debug) Rcpp::Rcout << "<BrtExternCellReal>" << std::endl;
 
         double value = 0;
-        uint32_t col = UncheckedCol(bin, swapit);
+        int32_t col = UncheckedCol(bin, swapit);
         value = Xnum(bin, swapit);
         out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\">" << std::endl;
         out << "<v>" << value << "</v>" << std::endl;
@@ -1261,7 +1261,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
       {
         if (debug) Rcpp::Rcout << "<BrtExternCellString>" << std::endl;
 
-        uint32_t col = UncheckedCol(bin, swapit);
+        int32_t col = UncheckedCol(bin, swapit);
         std::string value = XLWideString(bin, swapit);
         out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"str\">" << std::endl;
         out << "<v>" << value << "</v>" << std::endl;
@@ -1361,14 +1361,14 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtSSTItem:
       {
         std::string val;
-        size_t pos = bin.tellg();
-        pos += size;
+        std::streampos pos = bin.tellg();
+        pos += static_cast<std::streampos>(size);
         val += RichStr(bin, swapit);
-        if((size_t)bin.tellg() < pos) {
+        if(bin.tellg() < pos) {
           // if (debug) {
             // some RichStr() behave different to what is documented. Not sure
             // if this is padding or something else. 12 bytes seems common
-            size_t missing = pos - (size_t)bin.tellg();
+            size_t missing = static_cast<size_t>(pos - bin.tellg());
             Rcpp::Rcout << "BrtSSTItem skipping ahead (bytes): " << missing  << std::endl;
           // }
           bin.seekg(pos, bin.beg);
@@ -1621,8 +1621,8 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtName:
       {
         if (debug)  Rcpp::Rcout << "<BrtName>" << std::endl;
-        size_t end_pos = bin.tellg();
-        end_pos += size;
+        std::streampos end_pos = bin.tellg();
+        end_pos += static_cast<std::streampos>(size);
 
         if (debug) Rcpp::Rcout << "BrtName endpos: "<< end_pos << std::endl;
 
@@ -1835,7 +1835,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
           std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
             "\" firstSheet=\"" + std::to_string(xti[1]) +
             "\" lastSheet=\"" +  std::to_string(xti[2]) +
-            "\" type=\"" +  reference_type[xti[0]] +
+            "\" type=\"" +  reference_type[static_cast<size_t>(xti[0])] +
             "\" />";
           xtis.push_back(tmp);
         }
@@ -2003,8 +2003,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
     bool has_revision_record = false;
     std::string fml_type;
 
-    uint32_t row = 0;
-    uint32_t col = 0;
+    int32_t row = 0;
+    int32_t col = 0;
     std::vector<std::string> hlinks;
     hlinks.push_back("<hyperlinks>");
 
@@ -2189,7 +2189,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtPane: " << std::endl;
         uint8_t flags = 0;
-        uint32_t rwTop = 0, colLeft = 0, pnnAct = 0;
+        int32_t rwTop = 0, colLeft = 0;
+        uint32_t pnnAct = 0;
         double xnumXSplit = 0.0, xnumYSplit = 0.0;
 
         xnumXSplit = Xnum(bin, swapit);
@@ -2239,7 +2240,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         uint8_t icvHdr = 0, reserved2 = 0;
         uint16_t flags = 0, reserved3 = 0, wScale = 0, wScaleNormal = 0, wScaleSLV = 0, wScalePLV = 0;
-        uint32_t xlView = 0, rwTop = 0, colLeft = 0, iWbkView = 0;
+        uint32_t xlView = 0, iWbkView = 0;
+        int32_t rwTop = 0, colLeft = 0;
 
         flags = readbin(flags, bin, swapit);
         xlView = readbin(xlView, bin, swapit);
@@ -2464,7 +2466,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "<col/>: " << bin.tellg() << std::endl;
         uint16_t colinfo = 0;
-        uint32_t colFirst = 0, colLast = 0, coldx = 0, ixfe = 0;
+        uint32_t coldx = 0, ixfe = 0;
+        int32_t colFirst = 0, colLast = 0;
 
         colFirst = UncheckedCol(bin, swapit) + 1;
         colLast = UncheckedCol(bin, swapit) + 1;
@@ -2589,8 +2592,8 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t miyRw = 0;
 
         // uint24_t;
-        uint32_t rw = 0;
-        uint32_t ixfe = 0, ccolspan = 0, unk32 = 0, colMic = 0, colLast = 0;
+        int32_t rw = 0, colMic = 0, colLast = 0; // uint32?
+        uint32_t ixfe = 0, ccolspan = 0, unk32 = 0;
 
         rw = readbin(rw, bin, swapit);
 
@@ -3081,7 +3084,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         int is_shared_formula = false;
 
         uint8_t flags = 0;
-        uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
+        int32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
         rwFirst  = UncheckedRw(bin, swapit) +1;
         rwLast   = UncheckedRw(bin, swapit) +1;
         colFirst = UncheckedCol(bin, swapit) +1;
@@ -3119,7 +3122,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtShrFmla: " << bin.tellg() << std::endl;
         int is_shared_formula = false;
 
-        uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
+        int32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
         rwFirst  = UncheckedRw(bin, swapit); // +1
         rwLast   = UncheckedRw(bin, swapit); // +1
         colFirst = UncheckedCol(bin, swapit) +1;
@@ -3213,7 +3216,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtMergeCell: " << bin.tellg() << std::endl;
 
-        uint32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
+        int32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
 
         rwFirst  = UncheckedRw(bin, swapit) + 1L;
         rwLast   = UncheckedRw(bin, swapit) + 1L;

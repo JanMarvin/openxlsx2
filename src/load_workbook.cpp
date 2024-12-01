@@ -18,7 +18,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   };
 
   R_xlen_t nn = std::distance(doc->begin(), doc->end());
-  R_xlen_t kk = col_nams.size();
+  R_xlen_t kk = static_cast<R_xlen_t>(col_nams.size());
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -118,14 +118,14 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
     "thickTop"
   };
 
-  size_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
-  size_t kk = row_nams.size();
+  R_xlen_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
+  R_xlen_t kk = static_cast<R_xlen_t>(row_nams.size());
 
   Rcpp::CharacterVector rvec(nn);
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (size_t i = 0; i < kk; ++i)
+  for (R_xlen_t i = 0; i < kk; ++i)
   {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
@@ -221,7 +221,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     // buffer is string buf is SEXP
     std::string buffer, attr_name, val_name, cattr_name;
 
-    auto itr_cols = 0;
+    uint32_t itr_cols = 0;
     for (auto col : worksheet.children("c")) {
       checkInterrupt(idx);
       ++idx;
@@ -264,7 +264,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
           // if some cells of the workbook have colnames but other dont,
           // this will increase itr_cols and avoid duplicates in cc
-          itr_cols = uint_col_to_int(single_xml_col.c_r) - 1;
+          itr_cols = static_cast<uint32_t>(uint_col_to_int(single_xml_col.c_r) - 1);
 
         }
 
