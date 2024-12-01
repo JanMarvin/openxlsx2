@@ -1707,8 +1707,13 @@ wb_remove_bookview <- function(wb, view = NULL) {
 #'
 #'  # set the first and second bookview (horizontal split)
 #'  wb <- wb %>%
-#'    wb_set_bookview(window_height = 17600, window_width = 15120, x_window = 15120, y_window = 760) %>%
-#'    wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, view = 2)
+#'    wb_set_bookview(
+#'      window_height = 17600, window_width = 15120,
+#'      x_window = 15120, y_window = 760) %>%
+#'    wb_set_bookview(
+#'      window_height = 17600, window_width = 15040,
+#'      x_window = 0, y_window = 760, view = 2
+#'    )
 #'
 #'  wb %>% wb_get_bookview()
 #'
