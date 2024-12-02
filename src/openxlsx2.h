@@ -60,7 +60,7 @@ static inline bool has_cell(const std::string& str, const std::unordered_set<std
 static inline uint32_t uint_col_to_int(std::string& a) {
 
   char A = 'A';
-  int aVal = (int)A - 1;
+  int32_t aVal = (int)A - 1;
   uint32_t sum = 0;
   size_t k = a.length();
 

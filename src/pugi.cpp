@@ -693,7 +693,7 @@ SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::str
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer) {
+SEXP xml_remove_child1(XPtrXML node, std::string child, int32_t which, bool pointer) {
 
   unsigned int pugi_format_flags = pugi_format(node);
 
@@ -722,7 +722,7 @@ SEXP xml_remove_child1(XPtrXML node, std::string child, int which, bool pointer)
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int which,  bool pointer) {
+SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int32_t which,  bool pointer) {
 
   unsigned int pugi_format_flags = pugi_format(node);
 
@@ -752,7 +752,7 @@ SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int 
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int which, bool pointer) {
+SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int32_t which, bool pointer) {
 
   unsigned int pugi_format_flags = pugi_format(node);
 

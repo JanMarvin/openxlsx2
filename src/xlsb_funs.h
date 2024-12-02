@@ -209,7 +209,7 @@ std::string to_utf8(const std::u16string& u16str) {
         char16_t low_surrogate = u16str[++i];
 
         // Calculate the code point from the surrogate pair
-        int code_point = ((high_surrogate - 0xD800) << 10) + (low_surrogate - 0xDC00) + 0x10000;
+        int32_t code_point = ((high_surrogate - 0xD800) << 10) + (low_surrogate - 0xDC00) + 0x10000;
 
         // Four-byte UTF-8 character (0x10000 - 0x10FFFF)
         utf8str.push_back(static_cast<char>(0xF0 | (code_point >> 18)));
@@ -346,7 +346,7 @@ int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
   return -1;
 }
 
-int32_t RECORD(int &rid, int &rsize, std::istream& sas, bool swapit) {
+int32_t RECORD(int32_t &rid, int32_t &rsize, std::istream& sas, bool swapit) {
 
   /* Record ID ---------------------------------------------------------------*/
   rid = RECORD_ID(sas, swapit);
@@ -357,7 +357,7 @@ int32_t RECORD(int &rid, int &rsize, std::istream& sas, bool swapit) {
   return 0;
 }
 
-std::string cell_style(int style) {
+std::string cell_style(int32_t style) {
   std::string out = "";
   if (style > 0) {
     out = out + " s=\"" + std::to_string(style) + "\"";
@@ -366,7 +366,7 @@ std::string cell_style(int style) {
 }
 
 
-std::string halign(int style) {
+std::string halign(int32_t style) {
   std::string out = "";
   std::string hali = "";
   if (style > 0) {
@@ -416,7 +416,7 @@ std::string to_iconset(uint32_t style) {
   return out;
 }
 
-std::string valign(int style) {
+std::string valign(int32_t style) {
   std::string out = "";
   std::string vali = "";
   if (style >= 0) {
@@ -596,9 +596,9 @@ void ProductVersion(std::istream& sas, bool swapit, bool debug) {
   // if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, fields->product, fields->reserved);
 }
 
-std::vector<int> UncheckedRfX(std::istream& sas, bool swapit) {
+std::vector<int32_t> UncheckedRfX(std::istream& sas, bool swapit) {
 
-  std::vector<int> out;
+  std::vector<int32_t> out;
   int32_t rwFirst= 0, rwLast= 0, colFirst= 0, colLast= 0;
 
   out.push_back(readbin(rwFirst, sas, swapit));
@@ -609,15 +609,15 @@ std::vector<int> UncheckedRfX(std::istream& sas, bool swapit) {
   return(out);
 }
 
-std::vector<int> UncheckedSqRfX(std::istream& sas, bool swapit) {
+std::vector<int32_t> UncheckedSqRfX(std::istream& sas, bool swapit) {
 
-  std::vector<int> out;
+  std::vector<int32_t> out;
   int32_t crfx = 0;
   crfx = readbin(crfx, sas, swapit);
   out.push_back(crfx);
 
   for (int32_t i = 0; i < crfx; ++i) {
-    std::vector<int> ucrfx = UncheckedRfX(sas, swapit);
+    std::vector<int32_t> ucrfx = UncheckedRfX(sas, swapit);
     out.insert(out.end(), ucrfx.begin(), ucrfx.end());
   }
 
@@ -652,7 +652,7 @@ uint16_t ColShort(std::istream& sas, bool swapit) {
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
-std::vector<int> ColRelShort(std::istream& sas, bool swapit) {
+std::vector<int32_t> ColRelShort(std::istream& sas, bool swapit) {
   uint16_t tmp = 0;
   tmp = readbin(tmp, sas, swapit);
 
@@ -661,7 +661,7 @@ std::vector<int> ColRelShort(std::istream& sas, bool swapit) {
   fColRel = (tmp >> 14) & 0x0001;
   fRwRel  = (tmp >> 15) & 0x0001;
 
-  std::vector<int> out(3);
+  std::vector<int32_t> out(3);
   out[0] = col;
   out[1] = fColRel;
   out[2] = fRwRel;
@@ -671,7 +671,7 @@ std::vector<int> ColRelShort(std::istream& sas, bool swapit) {
 
 std::string Loc(std::istream& sas, bool swapit) {
 
-  std::vector<int> col;
+  std::vector<int32_t> col;
   int32_t row = 0;
   row = UncheckedRw(sas, swapit);
   col = ColRelShort(sas, swapit);
@@ -691,9 +691,9 @@ std::string Loc(std::istream& sas, bool swapit) {
 }
 
 // RgceLocRel
-std::string LocRel(std::istream& sas, bool swapit, int col, int row) {
+std::string LocRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
 
-  std::vector<int> col_rel;
+  std::vector<int32_t> col_rel;
   int32_t row_rel = 0;
   row_rel = readbin(row_rel, sas, swapit);
   col_rel = ColRelShort(sas, swapit);
@@ -732,7 +732,7 @@ std::string LocRel(std::istream& sas, bool swapit, int col, int row) {
 
 std::string Area(std::istream& sas, bool swapit) {
 
-  std::vector<int> col0(3), col1(3);
+  std::vector<int32_t> col0(3), col1(3);
   int32_t row0 = 0, row1 = 0;
   row0 = UncheckedRw(sas, swapit); // rowFirst
   row1 = UncheckedRw(sas, swapit); // rowLast
@@ -763,9 +763,9 @@ std::string Area(std::istream& sas, bool swapit) {
   return out;
 }
 
-std::string AreaRel(std::istream& sas, bool swapit, int col, int row) {
+std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
 
-  std::vector<int> col_rel0(3), col_rel1(3);
+  std::vector<int32_t> col_rel0(3), col_rel1(3);
   int32_t row_rel0 = 0, row_rel1 = 0;
   row_rel0 = UncheckedRw(sas, swapit); // rowFirst
   row_rel1 = UncheckedRw(sas, swapit); // rowLast
@@ -832,9 +832,9 @@ std::string AreaRel(std::istream& sas, bool swapit, int col, int row) {
   return out;
 }
 
-std::vector<int> Cell(std::istream& sas, bool swapit) {
+std::vector<int32_t> Cell(std::istream& sas, bool swapit) {
 
-  std::vector<int> out(3);
+  std::vector<int32_t> out(3);
 
   out[0] = UncheckedCol(sas, swapit);
 
@@ -848,9 +848,9 @@ std::vector<int> Cell(std::istream& sas, bool swapit) {
   return(out);
 }
 
-std::vector<std::string> dims_to_cells(int firstRow, int lastRow, int firstCol, int lastCol) {
+std::vector<std::string> dims_to_cells(int32_t firstRow, int32_t lastRow, int32_t firstCol, int32_t lastCol) {
 
-  std::vector<int> cols, rows;
+  std::vector<int32_t> cols, rows;
   for (int32_t i = firstCol; i <= lastCol; ++i) {
     cols.push_back(i);
   }
@@ -869,7 +869,7 @@ std::vector<std::string> dims_to_cells(int firstRow, int lastRow, int firstCol, 
   return cells;
 }
 
-std::vector<int> brtColor(std::istream& sas, bool swapit) {
+std::vector<int32_t> brtColor(std::istream& sas, bool swapit) {
 
   uint8_t AB = 0, xColorType = 0, index = 0,
     bRed = 0, bGreen = 0, bBlue = 0, bAlpha = 0;
@@ -913,7 +913,7 @@ std::vector<int> brtColor(std::istream& sas, bool swapit) {
   return out;
 }
 
-std::string as_border_style(int style) {
+std::string as_border_style(int32_t style) {
   if (style == 0) return "none";
   if (style == 1) return "thin";
   if (style == 2) return "medium";
@@ -931,7 +931,7 @@ std::string as_border_style(int style) {
   return "";
 }
 
-std::string to_argb(int a, int r, int g, int b) {
+std::string to_argb(int32_t a, int32_t r, int32_t g, int32_t b) {
   std::stringstream out;
   out << std::uppercase << std::hex <<
     std::setw(2) << std::setfill('0') << (int32_t)a <<
@@ -947,7 +947,7 @@ std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
   dg = readbin(dg, sas, swapit);
   reserved = readbin(reserved, sas, swapit);
 
-  std::vector<int> color = brtColor(sas, swapit);
+  std::vector<int32_t> color = brtColor(sas, swapit);
 
   std::stringstream out;
 
@@ -1045,7 +1045,7 @@ std::string typOperator(uint8_t oprtr) {
   return "unknown_operator";
 }
 
-std::vector<int> Xti(std::istream& sas, bool swapit) {
+std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
   int32_t firstSheet = 0, lastSheet = 0;
   int32_t externalLink = 0; // TODO actually uint32?
   externalLink = readbin(externalLink, sas, swapit);
@@ -2080,7 +2080,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
   return fml_out;
 }
 
-std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
+std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
@@ -2211,7 +2211,7 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
       count = readbin(count, sas, swapit);
 
       for (int32_t cnt = 0; cnt < count; ++cnt) {
-        std::vector<int> ucrfx = UncheckedRfX(sas, swapit);
+        std::vector<int32_t> ucrfx = UncheckedRfX(sas, swapit);
       }
 
       break;
@@ -2285,7 +2285,7 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
 }
 
 
-std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record) {
+std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
   std::vector<int32_t> ptgextra;
@@ -2334,7 +2334,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int co
   return inflix;
 }
 
-std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record) {
+std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
   uint32_t  cce= 0, cb= 0;
   std::vector<int32_t> ptgextra;

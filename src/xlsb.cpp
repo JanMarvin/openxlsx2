@@ -7,7 +7,7 @@
 #include <iomanip>
 
 // [[Rcpp::export]]
-int styles_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -131,7 +131,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         // 0xFF OEM_CHARSET OEM code page (based on system locale)
         unused = readbin(unused, bin , swapit);
 
-        std::vector<int> color = brtColor(bin, swapit);
+        std::vector<int32_t> color = brtColor(bin, swapit);
         // needs handling for rgb/hex colors
         if (debug) Rf_PrintValue(Rcpp::wrap(color));
 
@@ -228,11 +228,11 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
           xnumFillToBottom = 0.0,
           aPos = 0.0 // not used
         ;
-        std::vector<int> aColor; // not used
+        std::vector<int32_t> aColor; // not used
 
         fls = readbin(fls, bin, swapit);
-        std::vector<int> fgColor = brtColor(bin, swapit);
-        std::vector<int> bgColor = brtColor(bin, swapit);
+        std::vector<int32_t> fgColor = brtColor(bin, swapit);
+        std::vector<int32_t> bgColor = brtColor(bin, swapit);
         iGradientType = readbin(iGradientType, bin, swapit);
         xnumDegree = Xnum(bin, swapit);
         xnumFillToLeft = Xnum(bin, swapit);
@@ -534,7 +534,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
         bBlue = readbin(bBlue, bin, swapit);
         reserved = readbin(reserved, bin, swapit);
 
-        // std::vector<int> color = brtColor(bin);
+        // std::vector<int32_t> color = brtColor(bin);
         // if (color[0] == 0x02) {
         out << "<rgbColor rgb=\"" <<
           to_argb(reserved, bRed, bGreen, bRed) <<
@@ -617,7 +617,7 @@ int styles_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int table_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -652,7 +652,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       {
         if (debug) Rcpp::Rcout << "<table>" << std::endl;
 
-        std::vector<int> rfxList = UncheckedRfX(bin, swapit);
+        std::vector<int32_t> rfxList = UncheckedRfX(bin, swapit);
         std::string ref = int_to_col(rfxList[2] + 1) + std::to_string(rfxList[0] + 1) + ":" + int_to_col(rfxList[3] + 1) + std::to_string(rfxList[1] + 1);
 
         if (debug) Rcpp::Rcout << "table ref: " << ref << std::endl;
@@ -706,7 +706,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginAFilter:
       {
         if (debug) Rcpp::Rcout << "<autofilter>" << std::endl;
-        std::vector<int> rfx = UncheckedRfX(bin, swapit);
+        std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
         std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
         std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
@@ -893,7 +893,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
         uint8_t flags = 0;
         std::string fml;
         flags = readbin(flags, bin, swapit);
-        int sharedFormula = false;
+        int32_t sharedFormula = false;
         fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
         // need to write this formula somehwere
@@ -962,7 +962,7 @@ int table_bin(std::string filePath, std::string outPath, bool debug) {
 
 
 // [[Rcpp::export]]
-int comments_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -1020,7 +1020,7 @@ int comments_bin(std::string filePath, std::string outPath, bool debug) {
       {
         uint32_t iauthor = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0;
         iauthor = readbin(iauthor, bin, swapit);
-        std::vector<int> rfx = UncheckedRfX(bin, swapit);
+        std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
         std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
         std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
@@ -1096,7 +1096,7 @@ int comments_bin(std::string filePath, std::string outPath, bool debug) {
 
 }
 // [[Rcpp::export]]
-int externalreferences_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t externalreferences_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -1323,7 +1323,7 @@ int externalreferences_bin(std::string filePath, std::string outPath, bool debug
 
 
 // [[Rcpp::export]]
-int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -1409,7 +1409,7 @@ int sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int workbook_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -1680,7 +1680,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
         std::string fml = "", comment = "";
 
-        int sharedFormula = false;
+        int32_t sharedFormula = false;
         fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
         comment = XLNullableWideString(bin, swapit);
@@ -1830,7 +1830,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
         // Rcpp::Rcout << "reference_type: " << reference_type.size() << std::endl;
         // Rcpp::Rcout << "reference_type: " << cXti << std::endl;
         for (uint32_t i = 0; i < cXti; ++i) {
-          std::vector<int> xti = Xti(bin, swapit);
+          std::vector<int32_t> xti = Xti(bin, swapit);
           if ((size_t)xti[0] > reference_type.size()) Rcpp::stop("references do not match");
           std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
             "\" firstSheet=\"" + std::to_string(xti[1]) +
@@ -1986,7 +1986,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
 
 // [[Rcpp::export]]
-int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
+int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
 
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -2048,7 +2048,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         uint16_t A = 0;
         A = readbin(A, bin, swapit);
 
-        std::vector<int> color = brtColor(bin, swapit);
+        std::vector<int32_t> color = brtColor(bin, swapit);
         std::string strName = XLWideString(bin, swapit);
 
         // for now we only handle color in sheetPR
@@ -2087,7 +2087,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         brtwsprop_sec = readbin(brtwsprop_sec, bin, swapit);
         // BrtWsPropFields2 *fields2 = (BrtWsPropFields2 *)&brtwsprop_sec;
 
-        std::vector<int> color = brtColor(bin, swapit);
+        std::vector<int32_t> color = brtColor(bin, swapit);
         rwSync = readbin(rwSync, bin, swapit);
         colSync = readbin(colSync, bin, swapit);
         std::string strName = XLWideString(bin, swapit);
@@ -2124,7 +2124,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "WsDim: " << bin.tellg() << std::endl;
 
         // 16 bit
-        std::vector<int> dims;
+        std::vector<int32_t> dims;
         // 0 index vectors
         // first row, last row, first col, last col
         dims = UncheckedRfX(bin, swapit);
@@ -2405,7 +2405,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtSel: " << bin.tellg() << std::endl;
         uint32_t pnn = 0, rwAct = 0, colAct = 0, dwRfxAct = 0;
-        std::vector<int> sqrfx;
+        std::vector<int32_t> sqrfx;
 
         pnn = readbin(pnn, bin, swapit);
         rwAct = readbin(rwAct, bin, swapit);
@@ -2521,9 +2521,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         bin.seekg(size, bin.cur);
         // int16_t nversions, version;
         // nversions = readbin(nversions, bin , swapit);
-        // std::vector<int> versions;
+        // std::vector<int32_t> versions;
         //
-        // for (int i = 0; i < nversions; ++i) {
+        // for (int32_t i = 0; i < nversions; ++i) {
         //   version = readbin(version, bin, swapit);
         //   versions.push_back(version);
         // }
@@ -2817,7 +2817,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtCellBlank: " << bin.tellg() << std::endl;
 
-        std::vector<int> blank = Cell(bin, swapit);
+        std::vector<int32_t> blank = Cell(bin, swapit);
         col = blank[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(blank));
 
@@ -2875,9 +2875,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtFmlaBool: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
-        int is_shared_formula = false;
+        int32_t is_shared_formula = false;
 
-        std::vector<int> cell;
+        std::vector<int32_t> cell;
         cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
@@ -2924,9 +2924,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       { // t="e" & <f>
         if (debug) Rcpp::Rcout << "BrtFmlaError: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
-        int is_shared_formula = false;
+        int32_t is_shared_formula = false;
 
-        std::vector<int> cell;
+        std::vector<int32_t> cell;
         cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
@@ -2974,9 +2974,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtFmlaNum: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
-        int is_shared_formula = false;
+        int32_t is_shared_formula = false;
 
-        std::vector<int> cell;
+        std::vector<int32_t> cell;
         cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
@@ -3030,9 +3030,9 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtFmlaString: " << bin.tellg() << std::endl;
         // bin.seekg(size, bin.cur);
-        int is_shared_formula = false;
+        int32_t is_shared_formula = false;
 
-        std::vector<int> cell;
+        std::vector<int32_t> cell;
         cell = Cell(bin, swapit);
         col = cell[0];
         if (debug) Rf_PrintValue(Rcpp::wrap(cell));
@@ -3081,7 +3081,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtArrFmla:
       {
         if (debug) Rcpp::Rcout << "BrtArrFmla: " << bin.tellg() << std::endl;
-        int is_shared_formula = false;
+        int32_t is_shared_formula = false;
 
         uint8_t flags = 0;
         int32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
@@ -3120,7 +3120,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtShrFmla:
       {
         if (debug) Rcpp::Rcout << "BrtShrFmla: " << bin.tellg() << std::endl;
-        int is_shared_formula = false;
+        int32_t is_shared_formula = false;
 
         int32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
         rwFirst  = UncheckedRw(bin, swapit); // +1
@@ -3316,7 +3316,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       {
         if (debug) Rcpp::Rcout << "BrtHLink" << std::endl;
 
-        std::vector<int> rfx = UncheckedRfX(bin, swapit);
+        std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
         std::string relId = XLNullableWideString(bin, swapit);
         std::string location = XLWideString(bin, swapit);
         std::string tooltip = XLWideString(bin, swapit);
@@ -3342,7 +3342,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
       case BrtBeginAFilter:
       {
         if (debug) Rcpp::Rcout << "BrtBeginAFilter" << std::endl;
-        std::vector<int> rfx = UncheckedRfX(bin, swapit);
+        std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
         std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
         std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
@@ -3515,7 +3515,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         std::string strProgID = XLNullableWideString(bin, swapit);
 
-        int sharedFormula = false;
+        int32_t sharedFormula = false;
         if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
         std::string stRelID = XLNullableWideString(bin, swapit);
@@ -3557,7 +3557,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "BrtDVal" << std::endl;
 
         uint32_t flags = 0;
-        std::vector<int> sqrfx;
+        std::vector<int32_t> sqrfx;
         std::string strErrorTitle = "", strError = "", strPromptTitle = "", strPrompt = "";
 
         flags = readbin(flags, bin, swapit);
@@ -3570,7 +3570,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         strPromptTitle = XLNullableWideString(bin, swapit);
         strPrompt      = XLNullableWideString(bin, swapit);
 
-        int sharedFormula = false;
+        int32_t sharedFormula = false;
         std::string formula1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
         std::string formula2 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
@@ -3668,7 +3668,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           for (uint32_t crf = 0; crf < cref; ++crf) {
             uint32_t flags_cref = 0;
             flags_cref = readbin(flags_cref, bin, swapit);
-            std::vector<int> rfx_cref = UncheckedRfX(bin, swapit);
+            std::vector<int32_t> rfx_cref = UncheckedRfX(bin, swapit);
           }
 
         }
@@ -3684,7 +3684,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
             flags_csqrf = readbin(flags_csqrf, bin, swapit);
 
             /* beg move this to function -------------------------------------*/
-            std::vector<int> rfx_csqrfx = UncheckedSqRfX(bin, swapit);
+            std::vector<int32_t> rfx_csqrfx = UncheckedSqRfX(bin, swapit);
 
             std::string lref = int_to_col(rfx_csqrfx[3] + 1) + std::to_string(rfx_csqrfx[1] + 1);
             std::string rref = int_to_col(rfx_csqrfx[4] + 1) + std::to_string(rfx_csqrfx[2] + 1);
@@ -3712,7 +3712,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
           for (uint32_t cfml = 0; cfml < cformula; ++cfml) {
             uint32_t flags_cfml = 0;
             flags_cfml = readbin(flags_cfml, bin, swapit);
-            int sharedFormula = false;
+            int32_t sharedFormula = false;
             std::string frt_fml = FRTParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
             frt_fmls.push_back(frt_fml);
             // Rcpp::Rcout << frt_fmls[cfml] << std::endl;
@@ -3818,7 +3818,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
         if (debug) Rcpp::Rcout << "<conditionalFormatting>" << std::endl;
 
         uint32_t ccf = 0, fPivot = 0;
-        std::vector<int> sqrfx;
+        std::vector<int32_t> sqrfx;
 
         ccf = readbin(ccf, bin, swapit); // not needed?
         fPivot = readbin(fPivot, bin, swapit);
@@ -3864,7 +3864,7 @@ int worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bo
 
         std::string strParam = XLNullableWideString(bin, swapit);
 
-        int sharedFormula = false;
+        int32_t sharedFormula = false;
         std::string rgce1, rgce2, rgce3;
         if (cbFmla1 != 0x00000000) {
           rgce1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);

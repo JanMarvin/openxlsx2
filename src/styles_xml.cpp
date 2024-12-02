@@ -636,13 +636,13 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
       auto res1 = nam_attrs.find(attr_j);
       R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      std::vector<int> idx1(static_cast<size_t>(mtc1) + 1);
+      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
       std::iota(idx1.begin(), idx1.end(), 0);
 
       auto res2 = nam_chlds.find(attr_j);
       R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
 
-      std::vector<int> idx2(static_cast<size_t>(mtc2) + 1);
+      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
       std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
@@ -907,13 +907,13 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
       auto res1 = nam_attrs.find(attr_j);
       R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      std::vector<int> idx1(static_cast<size_t>(mtc1) + 1);
+      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
       std::iota(idx1.begin(), idx1.end(), 0);
 
       auto res2 = nam_chlds.find(attr_j);
       R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
 
-      std::vector<int> idx2(static_cast<size_t>(mtc2) + 1);
+      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
       std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
@@ -1074,13 +1074,13 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
       auto res1 = nam_attrs.find(attr_j);
       R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      std::vector<int> idx1(static_cast<size_t>(mtc1) + 1);
+      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
       std::iota(idx1.begin(), idx1.end(), 0);
 
       auto res2 = nam_chlds.find(attr_j);
       R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
 
-      std::vector<int> idx2(static_cast<size_t>(mtc2) + 1);
+      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
       std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
