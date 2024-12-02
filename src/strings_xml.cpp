@@ -110,7 +110,7 @@ std::string txt_to_xml(
 
   pugi::xml_document doc;
 
-  unsigned int pugi_format_flags = pugi::format_indent;
+  uint32_t pugi_format_flags = pugi::format_indent;
   if (no_escapes) pugi_format_flags |= pugi::format_no_escapes;
   if (raw)  pugi_format_flags |= pugi::format_raw;
   if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;

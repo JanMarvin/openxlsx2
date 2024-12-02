@@ -169,7 +169,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
   R_xlen_t k = static_cast<R_xlen_t>(df_xf.ncol());
   Rcpp::CharacterVector z(n);
 
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   std::vector<std::string> attrnams = df_xf.names();
 
@@ -335,7 +335,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
 
   R_xlen_t nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -391,8 +391,8 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
 
   auto n = df_font.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -491,7 +491,7 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
 
   auto n = df_numfmt.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -544,7 +544,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
 
   R_xlen_t nn = std::distance(xml_doc_border->begin(), xml_doc_border->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -613,8 +613,8 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
   R_xlen_t n = static_cast<R_xlen_t>(df_border.nrow());
   R_xlen_t k = static_cast<R_xlen_t>(df_border.ncol());
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
   // openxml 2.8.1
@@ -636,13 +636,13 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
       auto res1 = nam_attrs.find(attr_j);
       R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      std::vector<int> idx1(static_cast<size_t>(mtc1) + 1);
+      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
       std::iota(idx1.begin(), idx1.end(), 0);
 
       auto res2 = nam_chlds.find(attr_j);
       R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
 
-      std::vector<int> idx2(static_cast<size_t>(mtc2) + 1);
+      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
       std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
@@ -701,7 +701,7 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
 
   R_xlen_t nn = std::distance(xml_doc_fill->begin(), xml_doc_fill->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -756,8 +756,8 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
 
   auto n = df_fill.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -817,7 +817,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
 
   R_xlen_t nn = std::distance(xml_doc_cellStyle->begin(), xml_doc_cellStyle->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -886,8 +886,8 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
   R_xlen_t n = static_cast<R_xlen_t>(df_cellstyle.nrow());
   R_xlen_t k = static_cast<R_xlen_t>(df_cellstyle.ncol());
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
   // openxml 2.8.1
@@ -907,13 +907,13 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
       auto res1 = nam_attrs.find(attr_j);
       R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      std::vector<int> idx1(static_cast<size_t>(mtc1) + 1);
+      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
       std::iota(idx1.begin(), idx1.end(), 0);
 
       auto res2 = nam_chlds.find(attr_j);
       R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
 
-      std::vector<int> idx2(static_cast<size_t>(mtc2) + 1);
+      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
       std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
@@ -981,7 +981,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
 
   R_xlen_t nn = std::distance(xml_doc_tableStyle->begin(), xml_doc_tableStyle->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -1051,8 +1051,8 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
   R_xlen_t n = static_cast<R_xlen_t>(df_tablestyle.nrow());
   R_xlen_t k = static_cast<R_xlen_t>(df_tablestyle.ncol());
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
 
   // openxml 2.8.1
@@ -1074,13 +1074,13 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
       auto res1 = nam_attrs.find(attr_j);
       R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
 
-      std::vector<int> idx1(static_cast<size_t>(mtc1) + 1);
+      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
       std::iota(idx1.begin(), idx1.end(), 0);
 
       auto res2 = nam_chlds.find(attr_j);
       R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
 
-      std::vector<int> idx2(static_cast<size_t>(mtc2) + 1);
+      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
       std::iota(idx2.begin(), idx2.end(), 0);
 
       // check if name is already known
@@ -1146,7 +1146,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
 
   R_xlen_t nn = std::distance(xml_doc_dxf->begin(), xml_doc_dxf->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -1201,8 +1201,8 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
 
   auto n = df_dxf.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (auto i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -1253,7 +1253,7 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
 
   R_xlen_t nn = std::distance(xml_doc_colors->begin(), xml_doc_colors->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -1309,8 +1309,8 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
   R_xlen_t n = static_cast<R_xlen_t>(df_colors.nrow());
   R_xlen_t k = static_cast<R_xlen_t>(df_colors.ncol());
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   for (R_xlen_t i = 0; i < n; ++i) {
     pugi::xml_document doc;

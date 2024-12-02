@@ -40,8 +40,8 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   std::string xml_preserver = " ";
 
   // non optional: treat input as valid at this stage
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  // unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  // uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // we cannot access rows directly in the dataframe.
   // Have to extract the columns and use these
@@ -208,7 +208,7 @@ XPtrXML write_worksheet(
     Rcpp::Environment sheet_data
 ) {
 
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
 
   // sheet_data will be in order, just need to check for row_heights
@@ -258,7 +258,7 @@ void write_xmlPtr(
     XPtrXML doc,
     std::string fl
 ) {
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
   const bool success = doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
   if (!success) Rcpp::stop("could not save file");
 }

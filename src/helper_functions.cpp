@@ -618,7 +618,7 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
 
   R_xlen_t nn = std::distance(xml->begin(), xml->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   Rcpp::CharacterVector rvec(nn);
 
@@ -685,8 +685,8 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
 
   int64_t n = df.nrow();
   Rcpp::CharacterVector z(n);
-  unsigned int pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-  unsigned int pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // openxml 2.8.1
   std::vector<std::string>  attrnams = df.names();
