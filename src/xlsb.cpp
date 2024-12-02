@@ -1706,7 +1706,7 @@ int workbook_bin(std::string filePath, std::string outPath, bool debug) {
           std::string unusedstring2 = XLNullableWideString(bin, swapit);
         }
 
-        if ((size_t)bin.tellg() != end_pos) {
+        if (bin.tellg() != end_pos) {
           Rprintf("%d: %d", (int)bin.tellg(), (int)end_pos);
           Rcpp::stop("repositioning");
         }

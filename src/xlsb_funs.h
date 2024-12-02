@@ -453,7 +453,7 @@ std::string utf8_substr(const std::string& str, int32_t start, int32_t length) {
     size_t char_pos = 0; // Character position
 
     // Find the byte position of the start character
-    while (char_pos < start && byte_pos < str.size()) {
+    while (char_pos < static_cast<size_t>(start) && byte_pos < str.size()) {
         if ((str[byte_pos] & 0x80) == 0) {
             // Single-byte character (ASCII)
             byte_pos += 1;
@@ -475,7 +475,7 @@ std::string utf8_substr(const std::string& str, int32_t start, int32_t length) {
     size_t start_byte_pos = byte_pos;
 
     // Find the byte position of the end character
-    while (char_pos < start + length && byte_pos < str.size()) {
+    while (char_pos < static_cast<size_t>(start + length) && byte_pos < str.size()) {
         if ((str[byte_pos] & 0x80) == 0) {
             // Single-byte character (ASCII)
             byte_pos += 1;
@@ -1161,11 +1161,11 @@ std::string parseRPN(const std::string& expression) {
   return parsedFormula;
 }
 
-std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int col, int row, int &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
+std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
-    while((size_t)sas.tellg() < pos) {
+    while(sas.tellg() < pos) {
 
     if (debug) Rcpp::Rcout << ".";
 
