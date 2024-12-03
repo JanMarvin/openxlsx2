@@ -1415,3 +1415,64 @@ test_that("incomplete types work and character types work as well", {
   expect_equal(exp, got)
 
 })
+
+test_that("writing list with sep works", {
+
+  # input data
+  df <- structure(
+    list(
+      CharCol = c("A", "B", "C", "D", "E"),
+      ListCol = list(c("X", "F", "Q", "R", "J"),
+                     c("Q", "E", "O", "E", "O"),
+                     c("X", "O", "F", "Z", "P"),
+                     c("T", "W", "U", "J", "S"),
+                     c("R", "S", "U", "W", "L")
+      )
+    ),
+    class = "data.frame",
+    row.names = c(NA, -5L)
+  )
+
+  wb <- wb_workbook() %>%
+    # basic
+    wb_add_worksheet() %>%
+    wb_add_data(
+      x = df
+    ) %>%
+    wb_add_worksheet() %>%
+    wb_add_data_table(
+      x = df
+    ) %>%
+    # with different sep
+    wb_add_worksheet() %>%
+    wb_add_data(
+      x = df, sep = "_"
+    ) %>%
+    wb_add_worksheet() %>%
+    wb_add_data_table(
+      x = df, sep = "_"
+    )
+
+  # basic
+  exp <- structure(list(CharCol = c("A", "B", "C", "D", "E"),
+                        ListCol = c("X, F, Q, R, J", "Q, E, O, E, O", "X, O, F, Z, P", "T, W, U, J, S", "R, S, U, W, L")),
+                   row.names = 2:6, class = "data.frame")
+
+  got <- wb_to_df(wb, sheet = 1)
+  expect_equal(exp, got)
+
+  got <- wb_to_df(wb, sheet = 2)
+  expect_equal(exp, got)
+
+  # with custom
+  exp <- structure(list(CharCol = c("A", "B", "C", "D", "E"),
+                        ListCol = c("X_F_Q_R_J", "Q_E_O_E_O", "X_O_F_Z_P", "T_W_U_J_S", "R_S_U_W_L")),
+                   row.names = 2:6, class = "data.frame")
+
+  got <- wb_to_df(wb, sheet = 3)
+  expect_equal(exp, got)
+
+  got <- wb_to_df(wb, sheet = 4)
+  expect_equal(exp, got)
+
+})

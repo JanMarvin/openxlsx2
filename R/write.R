@@ -187,6 +187,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param dims worksheet dimensions
 #' @param enforce enforce dims
 #' @param shared shared formula
+#' @param sep the separator string used in collapse
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 #' contains this string, the output will be broken.
@@ -211,19 +212,20 @@ write_data2 <- function(
     wb,
     sheet,
     data,
-    name = NULL,
-    colNames = TRUE,
-    rowNames = FALSE,
-    startRow = 1,
-    startCol = 1,
-    applyCellStyle = TRUE,
+    name            = NULL,
+    colNames        = TRUE,
+    rowNames        = FALSE,
+    startRow        = 1,
+    startCol        = 1,
+    applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings = na_strings(),
-    data_table = FALSE,
-    inline_strings = TRUE,
-    dims = NULL,
-    enforce = FALSE,
-    shared  = FALSE
+    na.strings      = na_strings(),
+    data_table      = FALSE,
+    inline_strings  = TRUE,
+    dims            = NULL,
+    enforce         = FALSE,
+    shared          = FALSE,
+    sep             = ", "
 ) {
 
   dim_sep <- ";"
@@ -242,6 +244,17 @@ write_data2 <- function(
   if (any(is_factor)) {
     fcts <- names(dc[is_factor])
     data[fcts] <- lapply(data[fcts], to_string)
+  }
+
+  # convert list to character
+  is_list <- dc == openxlsx2_celltype[["list"]]
+
+  if (any(is_list)) {
+    lsts <- names(dc[is_list])
+    data[lsts] <- lapply(data[lsts], function(col) {
+      vapply(col, FUN = stringi::stri_join, collapse = sep, FUN.VALUE = NA_character_)
+    })
+    dc[is_list] <- openxlsx2_celltype[["character"]]
   }
 
   # remove xml encoding and reapply it afterwards. until v0.3 encoding was not enforced.
@@ -1023,7 +1036,8 @@ write_data_table <- function(
     inline_strings  = inline_strings,
     dims            = if (enforce) odims else dims,
     enforce         = enforce,
-    shared          = shared
+    shared          = shared,
+    sep             = sep
   )
 
   ### Beg: Only in datatable ---------------------------------------------------
@@ -1074,7 +1088,8 @@ write_data_table <- function(
         data_table      = data_table,
         inline_strings  = inline_strings,
         dims            = NULL,
-        enforce         = FALSE
+        enforce         = FALSE,
+        sep             = sep
       )
     }
 
