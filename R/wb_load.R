@@ -106,8 +106,12 @@ wb_load <- function(
   wb <- wb_workbook()
   wb$path <- file
 
-  grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
+
+  needs_lower <- ifelse(any(grepl("\\[content_types\\].xml$", xmlFiles)), TRUE, FALSE)
+
+  grep_xml <- function(pattern, perl = TRUE, value = TRUE, to_lower = needs_lower, ...) {
     # targets xmlFiles; has presents
+    if (to_lower) pattern <- tolower(pattern)
     grep(pattern, xmlFiles, perl = perl, value = value, ...)
   }
 
@@ -421,6 +425,12 @@ wb_load <- function(
 
     sheets <- xml_attr(workbook_xml, "workbook", "sheets", "sheet")
     sheets <- rbindlist(sheets)
+
+    if (any(grepl("d3p1", nams <- names(sheets)))) {
+      nams <- gsub("d3p1:", "r:", nams)
+      nams <- gsub(":d3p1", "", nams)
+      names(sheets) <- nams
+    }
 
     ## Some veryHidden sheets do not have a sheet content and their rId is empty.
     ## Such sheets need to be filtered out because otherwise their sheet names
