@@ -19,7 +19,6 @@ inline void checkInterrupt(R_xlen_t iteration, R_xlen_t frequency = 10000) {
   }
 }
 
-
 template <typename T>
 static inline std::string int_to_col(T cell) {
   std::string col_name = "";
@@ -54,7 +53,6 @@ static inline bool is_double(std::string x) {
 static inline bool has_cell(const std::string& str, const std::unordered_set<std::string>& vec) {
   return vec.find(str) != vec.end();
 }
-
 
 // driver function for col_to_int
 static inline uint32_t uint_col_to_int(std::string& a) {

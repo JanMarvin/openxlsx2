@@ -45,7 +45,8 @@ enum celltype {
   string_num     = 13,
   cm_formula     = 14,
   hms_time       = 15,
-  currency       = 16
+  currency       = 16,
+  list           = 17
 };
 
 // check for 1.0.8.0

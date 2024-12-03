@@ -180,7 +180,8 @@ openxlsx2_celltype <- c(
   string_nums    = 13,
   cm_formula     = 14,
   hms_time       = 15,
-  currency       = 16
+  currency       = 16,
+  list           = 17
 )
 
 #' Deprecated functions in package *openxlsx2*

@@ -73,33 +73,37 @@ SEXP openxlsx2_type(SEXP x) {
     case INTSXP:
     case REALSXP: {
       if (Rf_inherits(z, "Date")) {
-      type[i] = short_date;
-    } else if (Rf_inherits(z, "POSIXct")) {
-      type[i] = long_date;
-    } else if (Rf_inherits(z, "accounting")) {
-      type[i] = accounting;
-    } else if (Rf_inherits(z, "percentage")) {
-      type[i] = percentage;
-    } else if (Rf_inherits(z, "scientific")) {
-      type[i] = scientific;
-    } else if (Rf_inherits(z, "comma")) {
-      type[i] = comma;
-    } else if (Rf_inherits(z, "factor") || !Rf_isNull(Rf_getAttrib(z, Rf_install("labels")))) {
-      type[i] = factor;
-    } else if (Rf_inherits(z, "hms")) {
-      type[i] = hms_time;
-    } else if (Rf_inherits(z, "currency")) {
-      type[i] = currency;
-    } else {
-      if (Rf_isNull(Rclass)) {
-        type[i] = numeric; // numeric and integer
+        type[i] = short_date;
+      } else if (Rf_inherits(z, "POSIXct")) {
+        type[i] = long_date;
+      } else if (Rf_inherits(z, "accounting")) {
+        type[i] = accounting;
+      } else if (Rf_inherits(z, "percentage")) {
+        type[i] = percentage;
+      } else if (Rf_inherits(z, "scientific")) {
+        type[i] = scientific;
+      } else if (Rf_inherits(z, "comma")) {
+        type[i] = comma;
+      } else if (Rf_inherits(z, "factor") || !Rf_isNull(Rf_getAttrib(z, Rf_install("labels")))) {
+        type[i] = factor;
+      } else if (Rf_inherits(z, "hms")) {
+        type[i] = hms_time;
+      } else if (Rf_inherits(z, "currency")) {
+        type[i] = currency;
       } else {
-        type[i] = factor; // probably some custom class
+        if (Rf_isNull(Rclass)) {
+          type[i] = numeric; // numeric and integer
+        } else {
+          type[i] = factor; // probably some custom class
+        }
       }
+      break;
     }
-    break;
 
-    }
+    case VECSXP:
+      type[i] = list;
+      break;
+
 
     // whatever is not covered from above
     default: {
