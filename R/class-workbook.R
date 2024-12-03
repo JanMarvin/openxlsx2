@@ -2912,6 +2912,15 @@ wbWorkbook <- R6::R6Class(
         stop("File already exists!")
       }
 
+      valid_extensions <- c("xlsx", "xlsm") # "xlsb"
+      file_extension   <- tolower(tools::file_ext(file))
+
+      if (!file_extension %in% valid_extensions) {
+        warning("The file extension '", file_extension,
+        "' is invalid. Expected one of: ", paste0(valid_extensions, collapse = ", "),
+        call. = FALSE)
+      }
+
       ## temp directory to save XML files prior to compressing
       tmpDir <- file.path(tempfile(pattern = "workbookTemp_"))
       on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
