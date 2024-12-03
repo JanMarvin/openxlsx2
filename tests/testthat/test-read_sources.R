@@ -452,3 +452,21 @@ test_that("show_hyperlink works", {
   got <- has_hl$D[1]
   expect_equal(exp, got)
 })
+
+test_that("file extension handling works", {
+  docx_path <- "https://github.com/JanMarvin/msoc/raw/refs/heads/main/inst/extdata/Untitled1.docx"
+
+  # confusing error on docx
+  expect_error(wb_load(docx_path), "File does not appear to be xlsx, xlsm or xlsb")
+
+  wb <- wb_workbook()$add_worksheet()
+
+  # warns
+  expect_warning(wb_save(wb, file = tempfile(fileext = ".xslx")), "The file extension 'xslx' is invalid. Expected one of: xlsx, xlsm")
+  expect_warning(wb_save(wb, file = tempfile(fileext = ".docx")), "The file extension 'docx' is invalid. Expected one of: xlsx, xlsm")
+
+  # silent
+  expect_silent(wb_save(wb, file = tempfile(fileext = ".XLSX")))
+  expect_silent(wb_save(wb, file = tempfile(fileext = ".XLSM")))
+
+})

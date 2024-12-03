@@ -111,10 +111,11 @@ wb_load <- function(
     grep(pattern, xmlFiles, perl = perl, value = value, ...)
   }
 
-  ## Not used
+  ## We have found a zip file, but it must not necessarily be a spreadsheet
   ContentTypesXML   <- grep_xml("\\[Content_Types\\].xml$")
+  worksheetsXML     <- grep_xml("/worksheets/sheet[0-9]+")
 
-  if (length(ContentTypesXML) == 0 && !debug) {
+  if ((length(ContentTypesXML) == 0 || length(worksheetsXML) == 0) && !debug) {
     msg <- paste("File does not appear to be xlsx, xlsm or xlsb: ", file)
     stop(msg)
   }
@@ -134,7 +135,6 @@ wb_load <- function(
   workbookXMLRels   <- grep_xml("workbook.xml.rels")
 
   drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
-  worksheetsXML     <- grep_xml("/worksheets/sheet[0-9]+")
 
   stylesBIN         <- grep_xml("styles.bin$")
   stylesXML         <- grep_xml("styles.xml$")
