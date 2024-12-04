@@ -37,13 +37,17 @@ wb_ungroup_rows(wb, sheet = current_sheet(), rows)
 
 \item{levels}{levels}
 
-\item{rows, cols}{Indices of rows and columns to group}
+\item{rows, cols}{Indices or for columns also characters of rows and columns to group}
 }
 \description{
 Group a selection of rows or cols
 }
 \details{
-If row was previously hidden, it will now be shown.
+If row was previously hidden, it will now be shown. Columns can be
+added using A1 notion, so \code{cols = 2:3} is similar to \code{cols = "B:C"}. It is
+possible to add nested groups, so \verb{cols = list("3" = list(1:2, 3:4)} is also
+possible. Depending on the selected summary column either left or right will
+be selected for grouping, this can be changed in \code{wb_set_page_setup()}.
 }
 \examples{
 # create matrix
