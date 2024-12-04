@@ -4563,6 +4563,10 @@ wbWorkbook <- R6::R6Class(
         right <- TRUE
 
       if (is.list(cols)) {
+        cols <- lapply(cols, function(x) {
+          if (is.list(x)) lapply(x, col2int)
+          else col2int(x)
+        })
         unis <- unique(unlist(cols))
         levels <- vector("character", length(unis))
 
@@ -4578,6 +4582,7 @@ wbWorkbook <- R6::R6Class(
         }
         cols <- unlist(cols)
       } else {
+        cols <- col2int(cols)
         levels <- levels %||% rep("1", length(cols))
         collapse_in <- ifelse(right, length(levels), 1)
         levels[collapse_in] <- ""
@@ -4648,7 +4653,7 @@ wbWorkbook <- R6::R6Class(
       col_attr <- self$worksheets[[sheet]]$unfold_cols()
 
       # get the selection based on the col_attr frame.
-      select <- col_attr$min %in% as.character(cols)
+      select <- col_attr$min %in% as.character(col2int(cols))
 
       if (length(select)) {
         col_attr$outlineLevel[select] <- ""

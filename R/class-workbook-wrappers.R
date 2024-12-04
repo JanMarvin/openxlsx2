@@ -2672,11 +2672,15 @@ wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = T
 #'
 #' Group a selection of rows or cols
 #'
-#' @details If row was previously hidden, it will now be shown.
+#' @details If row was previously hidden, it will now be shown. Columns can be
+#' added using A1 notion, so `cols = 2:3` is similar to `cols = "B:C"`. It is
+#' possible to add nested groups, so `cols = list("3" = list(1:2, 3:4)` is also
+#' possible. Depending on the selected summary column either left or right will
+#' be selected for grouping, this can be changed in `wb_set_page_setup()`.
 #'
 #' @param wb A `wbWorkbook` object
 #' @param sheet A name or index of a worksheet
-#' @param rows,cols Indices of rows and columns to group
+#' @param rows,cols Indices or for columns also characters of rows and columns to group
 #' @param collapsed If `TRUE` the grouped columns are collapsed
 #' @param levels levels
 #' @family workbook wrappers

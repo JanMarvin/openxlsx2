@@ -113,6 +113,22 @@ test_that("grouping levels", {
   )
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(exp, got)
+
+  ## characters
+  grp_cols <- list(
+    "1" = "B:D",
+    "2" = "E:G",
+    "3" = "H:J",
+    "4" = "K:M"
+  )
+
+  wb2 <- wb_workbook()
+  wb2$add_worksheet("AirPass")
+  wb2$group_cols("AirPass", cols = grp_cols)
+
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(exp, got)
+
 })
 
 test_that("ungroup columns", {
@@ -132,6 +148,16 @@ test_that("ungroup columns", {
     "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" width=\"18.711\"/>",
     "<col min=\"3\" max=\"3\" width=\"8.43\"/>"
   )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()
+  wb$add_worksheet("Sheet 1")
+  wb$createCols("Sheet 1", 3)
+  wb$set_col_widths("Sheet 1", 2, widths = "18", hidden = FALSE)
+  wb$group_cols("Sheet 1", 1:3)
+
+  wb$ungroup_cols("Sheet 1", "A:C")
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(exp, got)
 
