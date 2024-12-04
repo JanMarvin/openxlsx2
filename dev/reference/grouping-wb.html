@@ -97,12 +97,16 @@
 
 
 <dt id="arg-rows-cols">rows, cols<a class="anchor" aria-label="anchor" href="#arg-rows-cols"></a></dt>
-<dd><p>Indices of rows and columns to group</p></dd>
+<dd><p>Indices or for columns also characters of rows and columns to group</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If row was previously hidden, it will now be shown.</p>
+    <p>If row was previously hidden, it will now be shown. Columns can be
+added using A1 notion, so <code>cols = 2:3</code> is similar to <code>cols = "B:C"</code>. It is
+possible to add nested groups, so <code>cols = list("3" = list(1:2, 3:4)</code> is also
+possible. Depending on the selected summary column either left or right will
+be selected for grouping, this can be changed in <code>wb_set_page_setup()</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
