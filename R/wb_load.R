@@ -150,6 +150,7 @@ wb_load <- function(
   vmlDrawingRelsXML <- grep_xml("vmlDrawing[0-9]+.vml.rels$")
   calcChainXML      <- grep_xml("xl/calcChain.xml")
   embeddings        <- grep_xml("xl/embeddings")
+  activeX           <- grep_xml("xl/activeX")
 
   # comments
   commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
@@ -211,7 +212,7 @@ wb_load <- function(
   on.exit(
     unlink(
       # TODO: this removes all files, the folders remain. grep instead grep_xml?
-      grep_xml("media|vmlDrawing|customXml|embeddings|vbaProject", ignore.case = TRUE, invert = TRUE),
+      grep_xml("media|vmlDrawing|customXml|embeddings|activeX|vbaProject", ignore.case = TRUE, invert = TRUE),
       recursive = TRUE, force = TRUE
     ),
     add = TRUE
@@ -219,12 +220,12 @@ wb_load <- function(
 
   file_folders <- unique(basename(dirname(xmlFiles)))
   known <- c(
-    basename(xmlDir), "_rels", "charts", "chartsheets", "ctrlProps",
-    "customXml", "docMetadata", "docProps", "drawings", "embeddings",
-    "externalLinks", "media", "persons", "pivotCache", "pivotTables",
-    "printerSettings", "queryTables", "richData", "slicerCaches",
-    "slicers", "tables", "theme", "threadedComments", "timelineCaches",
-    "timelines", "worksheets", "xl", "[trash]"
+    basename(xmlDir), "_rels", "activeX", "charts", "chartsheets",
+    "ctrlProps", "customXml", "docMetadata", "docProps", "drawings",
+    "embeddings", "externalLinks", "media", "persons", "pivotCache",
+    "pivotTables", "printerSettings", "queryTables", "richData",
+    "slicerCaches", "slicers", "tables", "theme", "threadedComments",
+    "timelineCaches", "timelines", "worksheets", "xl", "[trash]"
   )
   unknown <- file_folders[!file_folders %in% known]
   # nocov start
@@ -1383,7 +1384,7 @@ wb_load <- function(
     }
 
     ## Embedded docx
-    if (length(embeddings) > 0) {
+    if (length(embeddings)) {
 
       # get the embedded files extensions
       files <- unique(gsub(".+\\.(\\w+)$", "\\1", embeddings))
@@ -1399,6 +1400,18 @@ wb_load <- function(
       wb$append("Content_Types", default)
 
       wb$embeddings <- embeddings
+    }
+
+    ## xl\activeX
+    if (length(activeX)) {
+
+      wb$activeX <- activeX
+      ax_sel <- tools::file_ext(activeX) == "xml"
+      ax_fls <- basename2(activeX[ax_sel])
+
+      # if (any(tools::file_ext(activeX) == "bin")) # is this always available?
+      wb$append("Content_Types", '<Default Extension="bin" ContentType="application/vnd.ms-office.activeX"/>')
+      wb$append("Content_Types", sprintf('<Override PartName="/xl/activeX/%s" ContentType="application/vnd.ms-office.activeX+xml"/>', ax_fls))
     }
 
   } else {

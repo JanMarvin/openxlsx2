@@ -194,6 +194,9 @@ wbWorkbook <- R6::R6Class(
     # #' @field drawings_vml drawings_vml
     # drawings_vml = NULL,
 
+    #' @field activeX activeX
+    activeX = NULL,
+
     #' @field embeddings embeddings
     embeddings = NULL,
 
@@ -3039,6 +3042,12 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      if (length(self$activeX)) {
+        activeXDir <- dir_create(tmpDir, "xl", "activeX")
+        for (fl in self$activeX) {
+          file.copy(fl, activeXDir, overwrite = TRUE)
+        }
+      }
 
       if (nPivots > 0) {
         # TODO consider just making a function to create a bunch of directories
