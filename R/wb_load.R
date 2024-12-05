@@ -1409,7 +1409,6 @@ wb_load <- function(
       ax_sel <- tools::file_ext(activeX) == "xml"
       ax_fls <- basename2(activeX[ax_sel])
 
-      # if (any(tools::file_ext(activeX) == "bin")) # is this always available?
       wb$append("Content_Types", '<Default Extension="bin" ContentType="application/vnd.ms-office.activeX"/>')
       wb$append("Content_Types", sprintf('<Override PartName="/xl/activeX/%s" ContentType="application/vnd.ms-office.activeX+xml"/>', ax_fls))
     }

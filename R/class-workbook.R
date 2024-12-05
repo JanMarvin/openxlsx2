@@ -979,6 +979,12 @@ wbWorkbook <- R6::R6Class(
       ## create sheet.rels to simplify id assignment
       self$worksheets_rels[[newSheetIndex]] <- from$worksheets_rels[[old]]
 
+      ## TODO actually check this and add a similar warning for embeddings
+      ## TODO it should be able to clone this
+      if (any(grepl("activeX", self$worksheets_rels[[newSheetIndex]]))) {
+        warning("The cloned sheet contains an activeX element. Cloning this is not yet handled.")
+      }
+
       new_drawing_sheet <- NULL
       if (length(from$worksheets[[old]]$relships$drawing)) {
 
@@ -3043,9 +3049,14 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(self$activeX)) {
-        activeXDir <- dir_create(tmpDir, "xl", "activeX")
+        # we have to split activeX into activeX and activeX/_rels
+        activeXDir     <- dir_create(tmpDir, "xl", "activeX")
+        activeXRelsDir <- dir_create(tmpDir, "xl", "activeX", "_rels")
         for (fl in self$activeX) {
-          file.copy(fl, activeXDir, overwrite = TRUE)
+          if (tools::file_ext(fl) == "rels")
+            file.copy(fl, activeXRelsDir, overwrite = TRUE)
+          else
+            file.copy(fl, activeXDir, overwrite = TRUE)
         }
       }
 
