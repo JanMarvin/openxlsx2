@@ -449,7 +449,6 @@ create_sparklines <- function(
     dims,
     sqref,
     type                   = NULL,
-    direction              = "row",
     negative               = NULL,
     display_empty_cells_as = "gap", # "span", "zero"
     markers                = NULL,
@@ -474,6 +473,7 @@ create_sparklines <- function(
     min_axis_type          = NULL,
     max_axis_type          = NULL,
     right_to_left          = NULL,
+    direction              = "row",
     ...
 ) {
 

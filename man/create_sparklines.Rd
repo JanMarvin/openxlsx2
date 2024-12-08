@@ -9,7 +9,6 @@ create_sparklines(
   dims,
   sqref,
   type = NULL,
-  direction = "row",
   negative = NULL,
   display_empty_cells_as = "gap",
   markers = NULL,
@@ -34,6 +33,7 @@ create_sparklines(
   min_axis_type = NULL,
   max_axis_type = NULL,
   right_to_left = NULL,
+  direction = "row",
   ...
 )
 }
@@ -45,10 +45,6 @@ create_sparklines(
 \item{sqref}{Cell range of the destination of the sparklines.}
 
 \item{type}{Either \code{NULL}, \code{stacked} or \code{column}}
-
-\item{direction}{Either \code{row} or \code{col}. Should sparklines be created
-for rows or columns in cases where \code{dims} is a cell range spanning
-both multiple columns and rows. Defaults to \code{row}.}
 
 \item{negative}{negative}
 
@@ -97,6 +93,10 @@ both multiple columns and rows. Defaults to \code{row}.}
 \item{max_axis_type}{maxAxisType}
 
 \item{right_to_left}{rightToLeft}
+
+\item{direction}{Either \code{row} or \code{col}. Should sparklines be created
+for rows or columns in cases where \code{dims} is a cell range spanning
+both multiple columns and rows. Defaults to \code{row}.}
 
 \item{...}{additional arguments}
 }
