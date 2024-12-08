@@ -23,6 +23,7 @@ wb_add_font(
   scheme = "",
   shadow = "",
   vert_align = "",
+  update = FALSE,
   ...
 )
 }
@@ -62,6 +63,8 @@ wb_add_font(
 \item{shadow}{shadow}
 
 \item{vert_align}{vertical alignment}
+
+\item{update}{update}
 
 \item{...}{...}
 }
