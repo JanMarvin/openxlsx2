@@ -571,14 +571,14 @@ create_sparklines <- function(
       "xr2:uid"           = sprintf("{6F57B887-24F1-C14A-942C-%s}", random_string(length = 12, pattern = "[A-F0-9]"))
     ),
     xml_children = c(
-      xml_node_create("x14:colorSeries", xml_attributes = color_series),
+      xml_node_create("x14:colorSeries",   xml_attributes = color_series),
       xml_node_create("x14:colorNegative", xml_attributes = color_negative),
-      xml_node_create("x14:colorAxis", xml_attributes = color_axis),
-      xml_node_create("x14:colorMarkers", xml_attributes = color_markers),
-      xml_node_create("x14:colorFirst", xml_attributes = color_first),
-      xml_node_create("x14:colorLast", xml_attributes = color_last),
-      xml_node_create("x14:colorHigh", xml_attributes = color_high),
-      xml_node_create("x14:colorLow", xml_attributes = color_low),
+      xml_node_create("x14:colorAxis",     xml_attributes = color_axis),
+      xml_node_create("x14:colorMarkers",  xml_attributes = color_markers),
+      xml_node_create("x14:colorFirst",    xml_attributes = color_first),
+      xml_node_create("x14:colorLast",     xml_attributes = color_last),
+      xml_node_create("x14:colorHigh",     xml_attributes = color_high),
+      xml_node_create("x14:colorLow",      xml_attributes = color_low),
       xml_node_create(
         "x14:sparklines",
         xml_children = sparklines
