@@ -525,28 +525,30 @@ create_sparklines <- function(
     stop("dims and sqref must be equal length.")
   }
 
-  sparkline <- Map(
-    function(dims, sqref) {
+  sparklines <- vapply(
+    seq_along(dims),
+    function(i) {
       xml_node_create(
         "x14:sparkline",
         xml_children = c(
           xml_node_create(
             "xm:f",
             xml_children = c(
-              paste0(shQuote(sheet, type = "sh"), "!", dims)
+              paste0(shQuote(sheet, type = "sh"), "!", dims[[i]])
             )
           ),
           xml_node_create(
             "xm:sqref",
             xml_children = c(
-              sqref
+              sqref[[i]]
             )
           )
         )
       )
-    }, dims, sqref
+    },
+    FUN.VALUE = NA_character_
   )
-  sparklines <- paste(unlist(sparkline), collapse = "")
+  sparklines <- paste(sparklines, collapse = "")
 
   sparklineGroup <- xml_node_create(
     "x14:sparklineGroup",
