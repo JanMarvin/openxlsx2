@@ -33,7 +33,7 @@ create_sparklines(
   min_axis_type = NULL,
   max_axis_type = NULL,
   right_to_left = NULL,
-  direction = "row",
+  direction = NULL,
   ...
 )
 }
@@ -116,7 +116,7 @@ sparklines <- c(
   create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"),
   create_sparklines("Sheet 1", "A2:L2", "M2", markers = "1"),
   create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1"),
-  create_sparklines("Sheet 1", "A5:L5;A7:L7", "M5;M7", markers = "1")
+  create_sparklines("Sheet 1", "A5:L5;A7:L7", "M5;M7", markers = "1", direction = "row")
 )
 
 t1 <- AirPassengers
@@ -132,11 +132,12 @@ wb <- wb_workbook()$
 sparklines <- c(
   create_sparklines("Sheet 2", "A2:L6;", "M2:M6", markers = "1"),
   create_sparklines(
-    "Sheet 2", "A7:L7;A9:L9", "M7;M9", type = "stacked", negative = "1"
+    "Sheet 2", "A7:L7;A9:L9", "M7;M9", type = "stacked", negative = "1",
+    direction = "row"
   ),
   create_sparklines(
     "Sheet 2", "A8:L8;A10:L13", "M8;M10:M13",
-    type = "column", first = "1"
+    type = "column", first = "1", direction = "row"
    ),
   create_sparklines(
     "Sheet 2", "A2:L13", "A14:L14", type = "column", first = "1",

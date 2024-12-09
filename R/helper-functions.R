@@ -371,7 +371,7 @@ split_dims <- function(dims, direction = c("row", "col")) {
     if (direction == 1) direction <- "row"
     if (direction == 2) direction <- "col"
   }
-  df <- dims_to_dataframe(dims, fill = TRUE)
+  df <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
   direction <- match.arg(direction)
   if (direction == "row") df <- as.data.frame(t(df))
   vapply(df, FUN = function(x) {
@@ -382,7 +382,7 @@ split_dims <- function(dims, direction = c("row", "col")) {
 }
 
 split_dim <- function(dims) {
-  df <- dims_to_dataframe(dims, fill = TRUE)
+  df <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
   if (ncol(df) > 1 && nrow(df) > 1)
     stop("`dims` should be a cell range of one row or one column.", call. = FALSE)
   unlist(df)
@@ -433,7 +433,7 @@ split_dim <- function(dims) {
 #'   create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"),
 #'   create_sparklines("Sheet 1", "A2:L2", "M2", markers = "1"),
 #'   create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1"),
-#'   create_sparklines("Sheet 1", "A5:L5;A7:L7", "M5;M7", markers = "1")
+#'   create_sparklines("Sheet 1", "A5:L5;A7:L7", "M5;M7", markers = "1", direction = "row")
 #' )
 #'
 #' t1 <- AirPassengers
@@ -449,11 +449,12 @@ split_dim <- function(dims) {
 #' sparklines <- c(
 #'   create_sparklines("Sheet 2", "A2:L6;", "M2:M6", markers = "1"),
 #'   create_sparklines(
-#'     "Sheet 2", "A7:L7;A9:L9", "M7;M9", type = "stacked", negative = "1"
+#'     "Sheet 2", "A7:L7;A9:L9", "M7;M9", type = "stacked", negative = "1",
+#'     direction = "row"
 #'   ),
 #'   create_sparklines(
 #'     "Sheet 2", "A8:L8;A10:L13", "M8;M10:M13",
-#'     type = "column", first = "1"
+#'     type = "column", first = "1", direction = "row"
 #'    ),
 #'   create_sparklines(
 #'     "Sheet 2", "A2:L13", "A14:L14", type = "column", first = "1",
@@ -496,13 +497,13 @@ create_sparklines <- function(
     min_axis_type          = NULL,
     max_axis_type          = NULL,
     right_to_left          = NULL,
-    direction              = "row",
+    direction              = NULL,
     ...
 ) {
 
   standardize_case_names(...)
 
-  assert_class(dims, "character")
+  assert_class(dims,  "character")
   assert_class(sqref, "character")
 
   if (!is.null(type) && !type %in% c("stacked", "column"))
@@ -511,17 +512,19 @@ create_sparklines <- function(
   if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
     stop("markers only affect lines `type = NULL`, not stacked or column")
 
-  match.arg_wrapper(
-    direction,
-    c("row", "col"),
-    fn_name = "create_sparklines",
-    arg_name = "direction"
-  )
+  if (!is.null(direction)) {
+    match.arg_wrapper(
+      direction,
+      c("row", "col"),
+      fn_name = "create_sparklines",
+      arg_name = "direction"
+    )
 
-  dims  <- split_dims(dims, direction = direction)
-  sqref <- split_dim(sqref)
+    dims  <- split_dims(dims, direction = direction)
+    sqref <- split_dim(sqref)
+  }
 
-  if (!length(dims) == length(sqref)) {
+  if (length(dims) != length(sqref)) {
     stop("dims and sqref must be equal length.")
   }
 

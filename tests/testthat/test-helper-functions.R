@@ -231,7 +231,7 @@ test_that("add_sparkline_group", {
 
   sparklines <- c(
     create_sparklines(
-      "Sheet 1", "A2:L13", "M2:M13", type = "column"
+      "Sheet 1", "A2:L13", "M2:M13", type = "column", direction = "row"
     ),
     create_sparklines(
       "Sheet 2", "A2:L13", "A14:L14", direction =  "col",
