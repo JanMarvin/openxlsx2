@@ -27,6 +27,18 @@ test_that("test data validation list and sparklines", {
 
 })
 
+test_that("sparkline waivers work", {
+  sl <- create_sparklines(dims = "A2:L2", sqref = "M2", markers = "1")
+
+  wb <- wb_workbook()$add_worksheet("Sparklines 1")
+
+  sl_xml <- replace_waiver(sl, wb)
+
+  exp <- "<x14:sparkline><xm:f>'Sparklines 1'!A2:L2</xm:f><xm:sqref>M2</xm:sqref></x14:sparkline>"
+  got <- xml_node(sl_xml, "x14:sparklineGroup", "x14:sparklines", "x14:sparkline")
+  expect_equal(exp, got)
+})
+
 test_that("old and new data validations", {
 
   temp <- temp_xlsx()

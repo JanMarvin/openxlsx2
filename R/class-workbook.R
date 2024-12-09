@@ -9107,6 +9107,7 @@ wbWorkbook <- R6::R6Class(
       sparklines
     ) {
       sheet <- private$get_sheet_index(sheet)
+      sparklines <- replace_waiver(sparklines, wb = self)
       self$worksheets[[sheet]]$add_sparklines(sparklines)
       invisible(self)
     },

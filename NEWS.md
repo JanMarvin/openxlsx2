@@ -14,6 +14,7 @@
 * Create date is not reset to the present time in each call to `wb_set_properties()`. [1176](https://github.com/JanMarvin/openxlsx2/pull/1176)
 * Improve handling of file headers and footers for a case where `wb_load()` would previously fail. [1186](https://github.com/JanMarvin/openxlsx2/pull/1186)
 * Partial labels were written only over the first element and only if assigned in an ordered fashion. [1189](https://github.com/JanMarvin/openxlsx2/pull/1189)
+* Enable use of `current_sheet()` in `create_sparklines()`. This is the default for the function, but was not supported.
 
 ## Breaking changes
 
