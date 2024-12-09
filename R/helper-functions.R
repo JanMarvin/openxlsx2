@@ -365,6 +365,29 @@ hashPassword <- function(password) {
   format(as.hexmode(hash), upper.case = TRUE)
 }
 
+# Helper to split a cell range into rows or columns
+split_dims <- function(dims, direction = c("row", "col")) {
+  if (is.numeric(direction)) {
+    if (direction == 1) direction <- "row"
+    if (direction == 2) direction <- "col"
+  }
+  df <- dims_to_dataframe(dims, fill = TRUE)
+  direction <- match.arg(direction)
+  if (direction == "row") df <- as.data.frame(t(df))
+  vapply(df, FUN = function(x) {
+    fst <- x[1]
+    snd <- x[length(x)]
+    sprintf("%s:%s", fst, snd)
+  }, FUN.VALUE = NA_character_)
+}
+
+split_dim <- function(dims) {
+  df <- dims_to_dataframe(dims, fill = TRUE)
+  if (ncol(df) > 1 && nrow(df) > 1)
+    stop("`dims` should be a cell range of one row or one column.", call. = FALSE)
+  unlist(df)
+}
+
 #' Create sparklines object
 #'
 #' Create a sparkline to be added a workbook with [wb_add_sparklines()]
@@ -495,7 +518,7 @@ create_sparklines <- function(
     arg_name = "direction"
   )
 
-  dims <- split_dims(dims, direction = direction)
+  dims  <- split_dims(dims, direction = direction)
   sqref <- split_dim(sqref)
 
   if (!length(dims) == length(sqref)) {
@@ -566,60 +589,6 @@ create_sparklines <- function(
   )
 
   sparklineGroup
-}
-
-# Helper to split a cell range into rows or columns
-split_dims <- function(x, direction = "row") {
-  match.arg_wrapper(
-    direction,
-    c("row", "col"),
-    fn_name = "dims_split",
-    arg_name = "direction"
-  )
-
-  rc <- dims_to_rowcol(x, as_integer = FALSE)
-
-  cols <- col2int(rc[[1]])
-  rows <- as.integer(rc[[2]])
-
-  if (identical(length(rows), 1L) || identical(length(cols), 1L)) {
-    return(rowcol_to_dims(row = rows, col = cols))
-  }
-
-  if (identical(direction, "row")) {
-    vapply(rows, function(row) {
-      rowcol_to_dims(row = row, col = cols)
-    }, FUN.VALUE = character(1))
-  } else {
-    vapply(cols, function(col) {
-      rowcol_to_dims(row = rows, col = col)
-    }, FUN.VALUE = character(1))
-  }
-}
-
-# Helper to split a cell range of one row or column into single cells
-split_dim <- function(x) {
-  rc <- dims_to_rowcol(x, as_integer = FALSE)
-
-  cols <- col2int(rc[[1]])
-  rows <- as.integer(rc[[2]])
-
-  if (length(cols) > 1 && length(rows) > 1) {
-    stop("`x` should be a cell range of one row or one column.")
-  }
-
-  col_min <- min(cols)
-  row_min <- min(rows)
-
-  if (identical(length(cols), 1L)) {
-    vapply(rows, function(row) {
-      rowcol_to_dim(row = row, col = col_min)
-    }, FUN.VALUE = character(1))
-  } else {
-    vapply(cols, function(col) {
-      rowcol_to_dim(row = row_min, col = col)
-    }, FUN.VALUE = character(1))
-  }
 }
 
 ### modify xml file names
