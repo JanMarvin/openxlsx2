@@ -182,7 +182,7 @@ wb_create_columns <- function(wb, sheet, cols) {
 #' * `current_sheet()` uses [wb_get_active_sheet()] by default if performing
 #'   actions on a worksheet, for example when you add data.
 #' * `next_sheet()` is used when you add a new worksheet, a new chartsheet or
-#'   when you add a pivot table
+#'   when you add a pivot table. It is defined as available sheets + 1L.
 #'
 #' @name waivers
 #' @returns An object of class `openxlsx2_waiver`
@@ -214,4 +214,28 @@ is_waiver <- function(x) {
 
 is_na_strings <- function(x) {
   is_waiver(x) && isTRUE(x == "na_strings")
+}
+
+# replaces current_sheet() in `create_sparklines()`
+replace_waiver <- function(x, wb) {
+  assert_class(x, "character")
+  assert_workbook(wb)
+
+  crn <- '<<CURRENT_SHEET>>'
+  # nxt <- '<<NEXT_SHEET>>' # not helpful
+
+  # assuming that we cannot have both
+  if (any(grepl(crn, x))) {
+    sheet <- current_sheet()
+    rpl <- crn
+  # } else if (any(grepl(nxt, x))) {
+  #   sheet <- next_sheet()
+  #   rpl <- nxt
+  } else {
+    return(x)
+  }
+
+  sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
+  sheet_name <- wb$clone()$get_sheet_names(escape = TRUE)[[sheetno]]
+  stringi::stri_replace_all_fixed(x, rpl, sheet_name)
 }

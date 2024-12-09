@@ -1219,6 +1219,8 @@ do_write_formula <- function(
 
   assert_class(x, "character")
 
+  x <- replace_waiver(x, wb = wb)
+
   # detect array formulas
   if (any(substr(x, 1, 1) == "{")) {
     pattern <- "^\\{(.*)\\}$"

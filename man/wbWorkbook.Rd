@@ -81,6 +81,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{docMetadata}}{doc_meta_data}
 
+\item{\code{activeX}}{activeX}
+
 \item{\code{embeddings}}{embeddings}
 
 \item{\code{externalLinks}}{externalLinks}

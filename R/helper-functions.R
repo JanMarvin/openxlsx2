@@ -67,7 +67,13 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
     if (!is.null(text) && !is.null(file))
       str <- sprintf("=HYPERLINK(\"%s\", \"%s\")", file, text)
   } else {
+
+    if (is_waiver(sheet)) {
+      sheet <- paste0('<<', toupper(sheet), '>>')
+    }
+
     cell <- paste0(int2col(col), row)
+
     if (!is.null(file)) {
       dest <- sprintf('"[%s]%s!%s"', file, sheet, cell)
     } else {
@@ -463,6 +469,12 @@ create_sparklines <- function(
 ) {
 
   standardize_case_names(...)
+
+  if (is_waiver(sheet)) {
+    sheet <- paste0('<<', toupper(sheet), '>>')
+  } else {
+    assert_class(sheet, "character")
+  }
 
   assert_class(dims, "character")
   assert_class(sqref, "character")

@@ -302,3 +302,20 @@ test_that("create_hyperlinks() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("waiver works in hyperlink", {
+  wb <- wb_workbook()$
+    add_worksheet("Sheet1")$add_worksheet("Sheet2")$add_worksheet("Sheet3")
+
+  ## Internal - No text to display using create_hyperlink() function
+  x <- create_hyperlink(sheet = "Sheet3", row = 1, col = 2)
+  wb$add_formula(sheet = "Sheet1", x = x, dims = "A2")
+
+  ## Internal - No text to display using create_hyperlink() function
+  x <- create_hyperlink(sheet = current_sheet(), row = 1, col = 2)
+  wb$add_formula(sheet = "Sheet3", x = x, dims = "A3")
+
+  exp <- '=HYPERLINK(\"#\'Sheet3\'!B1\")'
+  got <- unique(unname(unlist(wb$to_df(show_formula = TRUE, col_names = FALSE))))
+  expect_equal(exp, got)
+})

@@ -22,6 +22,6 @@ Waiver functions for \code{openxlsx2} functions.
 \item \code{current_sheet()} uses \code{\link[=wb_get_active_sheet]{wb_get_active_sheet()}} by default if performing
 actions on a worksheet, for example when you add data.
 \item \code{next_sheet()} is used when you add a new worksheet, a new chartsheet or
-when you add a pivot table
+when you add a pivot table. It is defined as available sheets + 1L.
 }
 }
