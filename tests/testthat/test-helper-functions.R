@@ -234,6 +234,174 @@ test_that("more sparkline tests", {
 
 })
 
+test_that("add_sparkline_group", {
+
+  set.seed(123) # sparklines has a random uri string
+  options("openxlsx2_seed" = NULL)
+
+  sparklines <- c(
+    create_sparklines(
+      "Sheet 1", "A2:L13", "M2:M13", type = "column"
+    ),
+    create_sparklines(
+      "Sheet 2", "A2:L13", "A14:L14", direction =  "col",
+      high = TRUE, low = TRUE,
+      color_series = wb_color(hex = "FF323232"),
+      color_high = wb_color(hex = "FF00B050"),
+      color_low = wb_color(hex = "FFFF0000")
+    )
+  )
+
+  t1 <- AirPassengers
+  t2 <- do.call(cbind, split(t1, cycle(t1)))
+  dimnames(t2) <- dimnames(.preformat.ts(t1))
+
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_data(x = t2)$
+    add_sparklines(sparklines = sparklines[[1]])$
+    add_worksheet("Sheet 2")$
+    add_data(x = t2)$
+    add_sparklines(sparklines = sparklines[[2]])
+
+  exp <- read_xml('<ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}">
+ <x14:sparklineGroups xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
+  <x14:sparklineGroup type="column" displayEmptyCellsAs="gap" xr2:uid="{6F57B887-24F1-C14A-942C-4C6EF08E87F7}">
+    <x14:colorSeries rgb="FF376092"/>
+    <x14:colorNegative rgb="FFD00000"/>
+    <x14:colorAxis rgb="FFD00000"/>
+    <x14:colorMarkers rgb="FFD00000"/>
+    <x14:colorFirst rgb="FFD00000"/>
+    <x14:colorLast rgb="FFD00000"/>
+    <x14:colorHigh rgb="FFD00000"/>
+    <x14:colorLow rgb="FFD00000"/>
+    <x14:sparklines>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A2:L2</xm:f>
+        <xm:sqref>M2</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A3:L3</xm:f>
+        <xm:sqref>M3</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A4:L4</xm:f>
+        <xm:sqref>M4</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A5:L5</xm:f>
+        <xm:sqref>M5</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A6:L6</xm:f>
+        <xm:sqref>M6</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A7:L7</xm:f>
+        <xm:sqref>M7</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A8:L8</xm:f>
+        <xm:sqref>M8</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A9:L9</xm:f>
+        <xm:sqref>M9</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A10:L10</xm:f>
+        <xm:sqref>M10</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A11:L11</xm:f>
+        <xm:sqref>M11</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A12:L12</xm:f>
+        <xm:sqref>M12</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 1\'!A13:L13</xm:f>
+        <xm:sqref>M13</xm:sqref>
+      </x14:sparkline>
+    </x14:sparklines>
+  </x14:sparklineGroup>
+</x14:sparklineGroups>
+</ext>', pointer = FALSE)
+  got <- wb$worksheets[[1]]$extLst
+
+  expect_equal(exp, got)
+
+  exp <- read_xml('<ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{05C60535-1F16-4fd2-B633-F4F36F0B64E0}">
+ <x14:sparklineGroups xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
+  <x14:sparklineGroup displayEmptyCellsAs="gap" high="1" low="1" xr2:uid="{6F57B887-24F1-C14A-942C-459E3EFAA032}">
+    <x14:colorSeries rgb="FF323232"/>
+    <x14:colorNegative rgb="FFD00000"/>
+    <x14:colorAxis rgb="FFD00000"/>
+    <x14:colorMarkers rgb="FFD00000"/>
+    <x14:colorFirst rgb="FFD00000"/>
+    <x14:colorLast rgb="FFD00000"/>
+    <x14:colorHigh rgb="FF00B050"/>
+    <x14:colorLow rgb="FFFF0000"/>
+    <x14:sparklines>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!A2:A13</xm:f>
+        <xm:sqref>A14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!B2:B13</xm:f>
+        <xm:sqref>B14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!C2:C13</xm:f>
+        <xm:sqref>C14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!D2:D13</xm:f>
+        <xm:sqref>D14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!E2:E13</xm:f>
+        <xm:sqref>E14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!F2:F13</xm:f>
+        <xm:sqref>F14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!G2:G13</xm:f>
+        <xm:sqref>G14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!H2:H13</xm:f>
+        <xm:sqref>H14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!I2:I13</xm:f>
+        <xm:sqref>I14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!J2:J13</xm:f>
+        <xm:sqref>J14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!K2:K13</xm:f>
+        <xm:sqref>K14</xm:sqref>
+      </x14:sparkline>
+      <x14:sparkline>
+        <xm:f>\'Sheet 2\'!L2:L13</xm:f>
+        <xm:sqref>L14</xm:sqref>
+      </x14:sparkline>
+    </x14:sparklines>
+  </x14:sparklineGroup>
+</x14:sparklineGroups>
+</ext>', pointer = FALSE)
+  got <- wb$worksheets[[2]]$extLst
+
+  expect_equal(exp, got)
+})
+
 test_that("distinct() works", {
 
   x <- c("London", "NYC", "NYC", "Berlin", "Madrid", "London", "BERLIN", "berlin")
