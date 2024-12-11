@@ -106,8 +106,13 @@ wb_load <- function(
   wb <- wb_workbook()
   wb$path <- file
 
-  grep_xml <- function(pattern, perl = TRUE, value = TRUE, ...) {
+  # There is one known file in #1194. this file has lower case folders, while
+  # the references in the file are the usual camel case.
+  needs_lower <- ifelse(any(grepl("\\[content_types\\].xml$", xmlFiles)), TRUE, FALSE)
+
+  grep_xml <- function(pattern, perl = TRUE, value = TRUE, to_lower = needs_lower, ...) {
     # targets xmlFiles; has presents
+    if (to_lower) pattern <- tolower(pattern)
     grep(pattern, xmlFiles, perl = perl, value = value, ...)
   }
 
@@ -423,11 +428,15 @@ wb_load <- function(
     sheets <- xml_attr(workbook_xml, "workbook", "sheets", "sheet")
     sheets <- rbindlist(sheets)
 
+    # Usually the id variable is called `r:id`, but there is one known sheet
+    # that has `d3p1:id`
+    r_id <- names(sheets)[grepl(":id", names(sheets))]
+
     ## Some veryHidden sheets do not have a sheet content and their rId is empty.
     ## Such sheets need to be filtered out because otherwise their sheet names
     ## occur in the list of all sheet names, leading to a wrong association
     ## of sheet names with sheet indeces.
-    sheets <- sheets[sheets$`r:id` != "", ]
+    sheets <- sheets[sheets[r_id] != "", ]
 
     # if wb_relsxml is not available, the workbook has no relationships, not
     # sure if this is possible
@@ -439,7 +448,7 @@ wb_load <- function(
 
     sheets <- merge(
       sheets, wb_rels_xml,
-      by.x = "r:id", by.y = "Id",
+      by.x = r_id, by.y = "Id",
       all.x = TRUE,
       all.y = FALSE,
       sort = FALSE
