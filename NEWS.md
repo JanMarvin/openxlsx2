@@ -2,13 +2,14 @@
 
 ## New features
 
-* `create_sparklines` now allows to add multiple sparklines as a group. [1205](https://github.com/JanMarvin/openxlsx2/pull/1205)
 * `wb_set_properties()` now has a `datetime_modify` option. [1176](https://github.com/JanMarvin/openxlsx2/pull/1176)
 * Make non consecutive equal sized dims behave similar to non equal sized non consecutive dims. This makes `dims = "A1:A5,C1:D5"` behave similar to `dims = "A1,C1:D1,A2:A5,C2:D5"`.
 * Improvements to the internal C++ code in `wb_add_data()` to avoid string copies. [1184](https://github.com/JanMarvin/openxlsx2/pull/1184)
   This is a continuation of work started in [1177](https://github.com/JanMarvin/openxlsx2/pull/1177) to speedup `wb_add_data()`/`wb_add_data_table()`.
 * Extend the `bookview` handling. It is now possible to add more than one `bookview` using `wb_set_bookview(view = 2L)` and to remove additional `bookview`s with `wb_remove_bookview()`. Available `bookview`s can be inspected with `wb_get_bookview()`. [1193](https://github.com/JanMarvin/openxlsx2/pull/1193)
 * Actually implement `sep` functionality in `wb_add_data()` and `wb_add_data_table()` for list columns in `x`. [1200](https://github.com/JanMarvin/openxlsx2/pull/1200)
+* `create_sparklines` now allows to add multiple sparklines as a group. ([1205](https://github.com/JanMarvin/openxlsx2/pull/1205), @trekonom)
+
 
 ## Fixes
 
