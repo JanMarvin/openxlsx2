@@ -8,6 +8,8 @@
   This is a continuation of work started in [1177](https://github.com/JanMarvin/openxlsx2/pull/1177) to speedup `wb_add_data()`/`wb_add_data_table()`.
 * Extend the `bookview` handling. It is now possible to add more than one `bookview` using `wb_set_bookview(view = 2L)` and to remove additional `bookview`s with `wb_remove_bookview()`. Available `bookview`s can be inspected with `wb_get_bookview()`. [1193](https://github.com/JanMarvin/openxlsx2/pull/1193)
 * Actually implement `sep` functionality in `wb_add_data()` and `wb_add_data_table()` for list columns in `x`. [1200](https://github.com/JanMarvin/openxlsx2/pull/1200)
+* `create_sparklines` now allows to add multiple sparklines as a group. ([1205](https://github.com/JanMarvin/openxlsx2/pull/1205), @trekonom)
+
 
 ## Fixes
 

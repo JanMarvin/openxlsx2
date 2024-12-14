@@ -33,6 +33,7 @@ create_sparklines(
   min_axis_type = NULL,
   max_axis_type = NULL,
   right_to_left = NULL,
+  direction = NULL,
   ...
 )
 }
@@ -93,6 +94,11 @@ create_sparklines(
 
 \item{right_to_left}{rightToLeft}
 
+\item{direction}{Either \code{NULL}, \code{row} (or \code{1}) or \code{col} (or \code{2}). Should
+sparklines be created in the row or column direction? Defaults to \code{NULL}.
+When \code{NULL} the direction is inferred from \code{dims} in cases where \code{dims}
+spans a single row or column and defaults to \code{row} otherwise.}
+
 \item{...}{additional arguments}
 }
 \value{
@@ -106,11 +112,12 @@ Colors are all predefined to be rgb. Maybe theme colors can be
 used too.
 }
 \examples{
-# create sparklineGroup
+# create multiple sparklines
 sparklines <- c(
   create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"),
   create_sparklines("Sheet 1", "A2:L2", "M2", markers = "1"),
-  create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1")
+  create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1"),
+  create_sparklines("Sheet 1", "A5:L5;A7:L7", "M5;M7", markers = "1")
 )
 
 t1 <- AirPassengers
@@ -119,6 +126,27 @@ dimnames(t2) <- dimnames(.preformat.ts(t1))
 
 wb <- wb_workbook()$
   add_worksheet("Sheet 1")$
+  add_data(x = t2)$
+  add_sparklines(sparklines = sparklines)
+
+# create sparkline groups
+sparklines <- c(
+  create_sparklines("Sheet 2", "A2:L6;", "M2:M6", markers = "1"),
+  create_sparklines(
+    "Sheet 2", "A7:L7;A9:L9", "M7;M9", type = "stacked", negative = "1"
+  ),
+  create_sparklines(
+    "Sheet 2", "A8:L8;A10:L13", "M8;M10:M13",
+    type = "column", first = "1"
+   ),
+  create_sparklines(
+    "Sheet 2", "A2:L13", "A14:L14", type = "column", first = "1",
+    direction = "col"
+  )
+)
+
+wb <- wb$
+  add_worksheet("Sheet 2")$
   add_data(x = t2)$
   add_sparklines(sparklines = sparklines)
 

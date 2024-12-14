@@ -382,6 +382,34 @@ hashPassword <- function(password) {
   format(as.hexmode(hash), upper.case = TRUE)
 }
 
+# Helper to split a cell range into rows or columns
+split_dims <- function(dims, direction = NULL, preserve_single = FALSE) {
+  df <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
+
+  if (preserve_single && is.null(direction) && any(dim(df) == 1)) {
+    return(dims)
+  }
+  if (is.null(direction)) direction <- "row"
+  if (is.numeric(direction)) {
+    if (direction == 1) direction <- "row"
+    if (direction == 2) direction <- "col"
+  }
+  direction <- match.arg(direction, choices = c("row", "col"))
+  if (direction == "row") df <- as.data.frame(t(df))
+  vapply(df, FUN = function(x) {
+    fst <- x[1]
+    snd <- x[length(x)]
+    sprintf("%s:%s", fst, snd)
+  }, FUN.VALUE = NA_character_)
+}
+
+split_dim <- function(dims) {
+  df <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
+  if (ncol(df) > 1 && nrow(df) > 1)
+    stop("`dims` should be a cell range of one row or one column.", call. = FALSE)
+  unlist(df)
+}
+
 #' Create sparklines object
 #'
 #' Create a sparkline to be added a workbook with [wb_add_sparklines()]
@@ -392,6 +420,10 @@ hashPassword <- function(password) {
 #' @param dims Cell range of cells used to create the sparklines
 #' @param sqref Cell range of the destination of the sparklines.
 #' @param type Either `NULL`, `stacked` or `column`
+#' @param direction Either `NULL`, `row` (or `1`) or `col` (or `2`). Should
+#' sparklines be created in the row or column direction? Defaults to `NULL`.
+#' When `NULL` the direction is inferred from `dims` in cases where `dims`
+#' spans a single row or column and defaults to `row` otherwise.
 #' @param negative negative
 #' @param display_empty_cells_as Either `gap`, `span` or `zero`
 #' @param markers markers add marker to line
@@ -419,11 +451,12 @@ hashPassword <- function(password) {
 #' @param ... additional arguments
 #' @return A string containing XML code
 #' @examples
-#' # create sparklineGroup
+#' # create multiple sparklines
 #' sparklines <- c(
 #'   create_sparklines("Sheet 1", "A3:L3", "M3", type = "column", first = "1"),
 #'   create_sparklines("Sheet 1", "A2:L2", "M2", markers = "1"),
-#'   create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1")
+#'   create_sparklines("Sheet 1", "A4:L4", "M4", type = "stacked", negative = "1"),
+#'   create_sparklines("Sheet 1", "A5:L5;A7:L7", "M5;M7", markers = "1")
 #' )
 #'
 #' t1 <- AirPassengers
@@ -432,6 +465,27 @@ hashPassword <- function(password) {
 #'
 #' wb <- wb_workbook()$
 #'   add_worksheet("Sheet 1")$
+#'   add_data(x = t2)$
+#'   add_sparklines(sparklines = sparklines)
+#'
+#' # create sparkline groups
+#' sparklines <- c(
+#'   create_sparklines("Sheet 2", "A2:L6;", "M2:M6", markers = "1"),
+#'   create_sparklines(
+#'     "Sheet 2", "A7:L7;A9:L9", "M7;M9", type = "stacked", negative = "1"
+#'   ),
+#'   create_sparklines(
+#'     "Sheet 2", "A8:L8;A10:L13", "M8;M10:M13",
+#'     type = "column", first = "1"
+#'    ),
+#'   create_sparklines(
+#'     "Sheet 2", "A2:L13", "A14:L14", type = "column", first = "1",
+#'     direction = "col"
+#'   )
+#' )
+#'
+#' wb <- wb$
+#'   add_worksheet("Sheet 2")$
 #'   add_data(x = t2)$
 #'   add_sparklines(sparklines = sparklines)
 #'
@@ -465,6 +519,7 @@ create_sparklines <- function(
     min_axis_type          = NULL,
     max_axis_type          = NULL,
     right_to_left          = NULL,
+    direction              = NULL,
     ...
 ) {
 
@@ -476,7 +531,7 @@ create_sparklines <- function(
     assert_class(sheet, "character")
   }
 
-  assert_class(dims, "character")
+  assert_class(dims,  "character")
   assert_class(sqref, "character")
 
   if (!is.null(type) && !type %in% c("stacked", "column"))
@@ -484,6 +539,38 @@ create_sparklines <- function(
 
   if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
     stop("markers only affect lines `type = NULL`, not stacked or column")
+
+  dims <- split_dims(dims, direction = direction, preserve_single = TRUE)
+  sqref <- split_dim(sqref)
+
+  if (length(dims) != 1 && length(dims) != length(sqref)) {
+    stop("dims and sqref must be equal length.")
+  }
+
+  sparklines <- vapply(
+    seq_along(dims),
+    function(i) {
+      xml_node_create(
+        "x14:sparkline",
+        xml_children = c(
+          xml_node_create(
+            "xm:f",
+            xml_children = c(
+              paste0(shQuote(sheet, type = "sh"), "!", dims[[i]])
+            )
+          ),
+          xml_node_create(
+            "xm:sqref",
+            xml_children = c(
+              sqref[[i]]
+            )
+          )
+        )
+      )
+    },
+    FUN.VALUE = NA_character_
+  )
+  sparklines <- paste(sparklines, collapse = "")
 
   sparklineGroup <- xml_node_create(
     "x14:sparklineGroup",
@@ -517,19 +604,8 @@ create_sparklines <- function(
       xml_node_create("x14:colorHigh",     xml_attributes = color_high),
       xml_node_create("x14:colorLow",      xml_attributes = color_low),
       xml_node_create(
-        "x14:sparklines", xml_children = c(
-          xml_node_create(
-            "x14:sparkline", xml_children = c(
-              xml_node_create(
-                "xm:f", xml_children = c(
-                  paste0(shQuote(sheet, type = "sh"), "!", dims)
-                )),
-              xml_node_create(
-                "xm:sqref", xml_children = c(
-                  sqref
-                ))
-            ))
-        )
+        "x14:sparklines",
+        xml_children = sparklines
       )
     )
   )
