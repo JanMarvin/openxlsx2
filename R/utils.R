@@ -11,6 +11,7 @@ is_integer_ish <- function(x) {
 }
 
 naToNULLList <- function(x) {
+  if (length(x) == 1 && is.na(x)) x <- c(NA, NA, NA)
   lapply(x, function(i) if (is.na(i)) NULL else i)
 }
 
