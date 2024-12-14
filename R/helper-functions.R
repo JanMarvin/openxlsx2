@@ -383,13 +383,18 @@ hashPassword <- function(password) {
 }
 
 # Helper to split a cell range into rows or columns
-split_dims <- function(dims, direction = c("row", "col")) {
+split_dims <- function(dims, direction = NULL, preserve_single = FALSE) {
+  df <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
+
+  if (preserve_single && is.null(direction) && any(dim(df) == 1)) {
+    return(dims)
+  }
+  if (is.null(direction)) direction <- "row"
   if (is.numeric(direction)) {
     if (direction == 1) direction <- "row"
     if (direction == 2) direction <- "col"
   }
-  df <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
-  direction <- match.arg(direction)
+  direction <- match.arg(direction, choices = c("row", "col"))
   if (direction == "row") df <- as.data.frame(t(df))
   vapply(df, FUN = function(x) {
     fst <- x[1]
@@ -415,9 +420,10 @@ split_dim <- function(dims) {
 #' @param dims Cell range of cells used to create the sparklines
 #' @param sqref Cell range of the destination of the sparklines.
 #' @param type Either `NULL`, `stacked` or `column`
-#' @param direction Either `row` or `col`. Should sparklines be created
-#' for rows or columns in cases where `dims` is a cell range spanning
-#' both multiple columns and rows. Defaults to `row`.
+#' @param direction Either `NULL`, `row` (or `1`) or `col` (or `2`). Should
+#' sparklines be created in the row or column direction? Defaults to `NULL`.
+#' When `NULL` the direction is inferred from `dims` in cases where `dims`
+#' spans a single row or column and defaults to `row` otherwise.
 #' @param negative negative
 #' @param display_empty_cells_as Either `gap`, `span` or `zero`
 #' @param markers markers add marker to line
@@ -513,7 +519,7 @@ create_sparklines <- function(
     min_axis_type          = NULL,
     max_axis_type          = NULL,
     right_to_left          = NULL,
-    direction              = "row",
+    direction              = NULL,
     ...
 ) {
 
@@ -534,17 +540,10 @@ create_sparklines <- function(
   if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
     stop("markers only affect lines `type = NULL`, not stacked or column")
 
-  match.arg_wrapper(
-    direction,
-    c("row", "col"),
-    fn_name = "create_sparklines",
-    arg_name = "direction"
-  )
-
-  dims <- split_dims(dims, direction = direction)
+  dims <- split_dims(dims, direction = direction, preserve_single = TRUE)
   sqref <- split_dim(sqref)
 
-  if (!length(dims) == length(sqref)) {
+  if (length(dims) != 1 && length(dims) != length(sqref)) {
     stop("dims and sqref must be equal length.")
   }
 

@@ -33,7 +33,7 @@ create_sparklines(
   min_axis_type = NULL,
   max_axis_type = NULL,
   right_to_left = NULL,
-  direction = "row",
+  direction = NULL,
   ...
 )
 }
@@ -94,9 +94,10 @@ create_sparklines(
 
 \item{right_to_left}{rightToLeft}
 
-\item{direction}{Either \code{row} or \code{col}. Should sparklines be created
-for rows or columns in cases where \code{dims} is a cell range spanning
-both multiple columns and rows. Defaults to \code{row}.}
+\item{direction}{Either \code{NULL}, \code{row} (or \code{1}) or \code{col} (or \code{2}). Should
+sparklines be created in the row or column direction? Defaults to \code{NULL}.
+When \code{NULL} the direction is inferred from \code{dims} in cases where \code{dims}
+spans a single row or column and defaults to \code{row} otherwise.}
 
 \item{...}{additional arguments}
 }
