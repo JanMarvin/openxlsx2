@@ -1859,6 +1859,7 @@ Set cell merging for a sheet
   sheet = current_sheet(),
   dims = NULL,
   solve = FALSE,
+  direction = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -1871,6 +1872,8 @@ Set cell merging for a sheet
 \item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{solve}}{logical if intersecting cells should be solved}
+
+\item{\code{direction}}{direction in which to split the cell merging. Allows "row" or "col".}
 
 \item{\code{...}}{additional arguments}
 }

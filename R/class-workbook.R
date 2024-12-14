@@ -5256,8 +5256,9 @@ wbWorkbook <- R6::R6Class(
     #' @description
     #' Set cell merging for a sheet
     #' @param solve logical if intersecting cells should be solved
+    #' @param direction direction in which to split the cell merging. Allows "row" or "col".
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
+    merge_cells = function(sheet = current_sheet(), dims = NULL, solve = FALSE, direction = NULL, ...) {
 
       cols <- list(...)[["cols"]]
       rows <- list(...)[["rows"]]
@@ -5273,17 +5274,8 @@ wbWorkbook <- R6::R6Class(
         dims <- rowcol_to_dims(rows, cols)
       }
 
-      ddims <- dims_to_rowcol(dims)
-
-      rows <- ddims[[2]]
-      cols <- ddims[[1]]
-
       sheet <- private$get_sheet_index(sheet)
-      self$worksheets[[sheet]]$merge_cells(
-        rows   = rows,
-        cols   = cols,
-        solve  = solve
-      )
+      self$worksheets[[sheet]]$merge_cells(dims = dims, solve = solve, direction = direction)
       invisible(self)
     },
 
