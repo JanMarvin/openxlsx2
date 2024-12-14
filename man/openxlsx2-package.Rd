@@ -136,6 +136,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Olivier Roy [contributor]
+  \item Stefan Moog [contributor]
   \item  openxlsx authors (openxlsx package) [copyright holder]
   \item Arseny Kapoulkine (Author of included pugixml code) [contributor, copyright holder]
 }
