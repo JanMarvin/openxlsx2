@@ -4801,6 +4801,24 @@ wbWorkbook <- R6::R6Class(
 
       if (any(widths == "auto")) {
         df <- wb_to_df(self, sheet = sheet, cols = cols, colNames = FALSE)
+        # exclude merged cells from width calculation.
+        # adapted from wb_to_df(fill_merged_cells = TRUE)
+        mc <- self$worksheets[[sheet]]$mergeCells
+        if (length(mc)) {
+          mc <- unlist(xml_attr(mc, "mergeCell"))
+
+          for (i in seq_along(mc)) {
+            filler <- stringi::stri_split_fixed(mc[i], pattern = ":")[[1]][1]
+
+            dms <- dims_to_dataframe(mc[i])
+
+            if (any(row_sel <- rownames(df) %in% rownames(dms)) &&
+                any(col_sel <- colnames(df) %in% colnames(dms))) {
+
+              df[row_sel,  col_sel] <- NA
+            }
+          }
+        }
         # TODO format(x) might not be the way it is formatted in the xlsx file.
         col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
       }
