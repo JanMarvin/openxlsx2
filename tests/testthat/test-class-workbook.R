@@ -79,6 +79,21 @@ test_that("set_col_widths informs when inconsistent lengths are supplied", {
   expect_warning(wb$set_col_widths(cols = c("X", "Y", "Z"), hidden = c(1, 0)), "compatible length")
 })
 
+test_that("merged cells are excluded from col width `auto` calculation", {
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = "the `cars` dataset", dims = "A1")$
+    merge_cells(dims = "A1:B1")$
+    add_data(x = head(cars), dims = "A2")$
+    set_col_widths(cols = "A:B", width = "auto")
+
+  exp <- c(
+    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"5.711\"/>",
+    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(exp, got)
+})
+
 test_that("option maxWidth works", {
 
   op <- options("openxlsx2.maxWidth" = 6)
