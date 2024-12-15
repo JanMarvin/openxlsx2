@@ -119,7 +119,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
     // only handle known names
     // <alignment ...>
-    // <extLst ...> // FIXME should be imported as single node. most likely broken
+    // <extLst ...>
     // <protection ...>
     for (auto cld : xml_xf.children()) {
 
@@ -127,6 +127,14 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
 
       // check known names
       if (cld_name ==  "alignment" || cld_name == "extLst" || cld_name == "protection") {
+
+        if (cld_name == "extLst") {
+          R_xlen_t mtc = std::distance(nams.begin(), nams.find(cld_name));
+          uint32_t pugi_format_flags = pugi::format_raw;
+          std::ostringstream oss;
+          cld.print(oss, " ", pugi_format_flags);
+          Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = Rcpp::String(oss.str());
+        }
 
         for (auto attrs : cld.attributes()) {
           std::string attr_name = attrs.name();
@@ -229,9 +237,6 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
     has_extLst = has_it(df_xf, xf_nams_extLst, i);
 
     pugi::xml_node xf_extLst;
-    if (has_extLst) {
-      xf_extLst = xf.append_child("extLst");
-    }
 
     // check if protection node is required
     bool has_protection = false;
@@ -275,14 +280,19 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
         }
       }
 
-      // FIXME should be written as single node. most likely broken
       if (has_extLst && is_extLst) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
         if (cv_s[0] != "") {
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
-          xf_extLst.append_attribute(attrnam.c_str()) = val_strl.c_str();
+          pugi::xml_document tempDoc;
+          pugi::xml_parse_result tempResult = tempDoc.load_string(val_strl.c_str());
+          if (tempResult) {
+            xf.append_copy(tempDoc.first_child());
+          } else {
+            Rcpp::stop("failed to load xf child `extLst`.");
+          }
         }
       }
 

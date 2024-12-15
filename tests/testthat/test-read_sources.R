@@ -482,3 +482,11 @@ test_that("loading d3p1 file works", {
   expect_equal(exp, got)
 
 })
+
+test_that("loading file with featurePropertyBag works", {
+  fl  <- testfile_path("checkboxes.xlsx")
+  tmp <- temp_xlsx()
+
+  expect_silent(wb <- wb_load(fl))
+  expect_silent(wb$save(tmp))
+})
