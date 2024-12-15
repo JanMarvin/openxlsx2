@@ -57,6 +57,7 @@ TotalCell
 TrafficLights
 VARP
 activeTab
+activeX
 allowBlank
 applyCellStyle
 autoFilterDateGrouping

@@ -89,4 +89,27 @@ wb$set_header_footer(
   first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
   first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
 )
+
+# ---- Updating the header ----
+## Variant a
+## this will keep the odd and even header / footer from the original header /
+## footerkeep the first header / footer and will set the first page header /
+## footer and will use the original header / footer for the missing element
+wb$set_header_footer(
+  header = NA,
+  footer = NA,
+  even_header = NA,
+  even_footer = NA,
+  first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+  first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
+)
+
+## Variant b
+## this will keep the first header / footer only and will use the missing
+## element from the original header / footer
+wb$set_header_footer(
+  first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+  first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
+)
+
 }

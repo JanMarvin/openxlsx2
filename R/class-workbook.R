@@ -7650,29 +7650,23 @@ wbWorkbook <- R6::R6Class(
 
       sheet <- private$get_sheet_index(sheet)
 
-      if (!is.null(header) && length(header) != 3) {
-        stop("header must have length 3 where elements correspond to positions: left, center, right.")
+      not_three_or_na <- function(x) {
+        nam <- deparse(substitute(x))
+        msg <- sprintf(
+          "`%s` must have length 3 where elements correspond to positions: left, center, right.",
+          nam
+        )
+
+        if (!is.null(x) && !(length(x) == 3 || (length(x) == 1 && is.na(x))))
+          stop(msg, call. = FALSE)
       }
 
-      if (!is.null(footer) && length(footer) != 3) {
-        stop("footer must have length 3 where elements correspond to positions: left, center, right.")
-      }
-
-      if (!is.null(even_header) && length(even_header) != 3) {
-        stop("evenHeader must have length 3 where elements correspond to positions: left, center, right.")
-      }
-
-      if (!is.null(even_footer) && length(even_footer) != 3) {
-        stop("evenFooter must have length 3 where elements correspond to positions: left, center, right.")
-      }
-
-      if (!is.null(first_header) && length(first_header) != 3) {
-        stop("firstHeader must have length 3 where elements correspond to positions: left, center, right.")
-      }
-
-      if (!is.null(first_footer) && length(first_footer) != 3) {
-        stop("firstFooter must have length 3 where elements correspond to positions: left, center, right.")
-      }
+      not_three_or_na(header)
+      not_three_or_na(footer)
+      not_three_or_na(even_header)
+      not_three_or_na(even_footer)
+      not_three_or_na(first_header)
+      not_three_or_na(first_footer)
 
       # TODO this could probably be moved to the hf assignment
       oddHeader   <- headerFooterSub(header)
@@ -7693,6 +7687,17 @@ wbWorkbook <- R6::R6Class(
 
       if (all(lengths(hf) == 0)) {
         hf <- NULL
+      } else {
+        if (!is.null(old_hf <- self$worksheets[[sheet]]$headerFooter)) {
+          for (nam in names(hf)) {
+            # Update using new_vector if it exists, keeping original values where NA
+            if (length(hf[[nam]]) && length(old_hf[[nam]])) {
+              sel <- if (is.list(hf[[nam]]) && length(hf[[nam]]) == 0) sel <- seq_len(3)
+                      else which(vapply(hf[[nam]], is.null, NA))
+              hf[[nam]][sel] <- old_hf[[nam]][sel]
+            }
+          }
+        }
       }
 
       if (!is.null(scale_with_doc)) {

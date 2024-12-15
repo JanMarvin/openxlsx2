@@ -210,3 +210,71 @@ test_that("setting and loading header/footer attributes works", {
   expect_true(wb$worksheets[[1]]$scale_with_doc)
   expect_true(wb$worksheets[[1]]$align_with_margins)
 })
+
+test_that("updating page header / footer works", {
+  wb <- wb_workbook()$add_worksheet()$set_sheetview(view = "pageLayout")
+  wb$add_data(x = matrix(1, nrow = 150, ncol = 1))
+
+  first_hf <- wb$worksheets[[1]]$headerFooter
+
+  wb$set_header_footer(
+    header = c("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
+    footer = c("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
+    even_header = c("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
+    even_footer = c("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
+    first_header = c("TOP", "OF FIRST", "PAGE"),
+    first_footer = c("BOTTOM", "OF FIRST", "PAGE")
+  )
+
+  second_hf <- wb$worksheets[[1]]$headerFooter
+
+  wb$set_header_footer(
+    header = NA,
+    footer = NA,
+    even_header = NA,
+    even_footer = NA,
+    first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+    first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
+  )
+
+  third_hf <- wb$worksheets[[1]]$headerFooter
+
+  wb$set_header_footer(
+    first_header = c("FIRST ONLY L", NA, "FIRST ONLY R"),
+    first_footer = c("FIRST ONLY L", NA, "FIRST ONLY R")
+  )
+
+  fourth_hf <- wb$worksheets[[1]]$headerFooter
+
+
+  expect_equal(NULL, first_hf)
+
+
+  exp <- list(oddHeader = list("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
+              oddFooter = list("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
+              evenHeader = list("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
+              evenFooter = list("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
+              firstHeader = list("TOP", "OF FIRST", "PAGE"),
+              firstFooter = list("BOTTOM", "OF FIRST", "PAGE"))
+  expect_equal(exp, second_hf)
+
+
+  exp <- list(oddHeader = list("ODD HEAD LEFT", "ODD HEAD CENTER", "ODD HEAD RIGHT"),
+              oddFooter = list("ODD FOOT RIGHT", "ODD FOOT CENTER", "ODD FOOT RIGHT"),
+              evenHeader = list("EVEN HEAD LEFT", "EVEN HEAD CENTER", "EVEN HEAD RIGHT"),
+              evenFooter = list("EVEN FOOT RIGHT", "EVEN FOOT CENTER", "EVEN FOOT RIGHT"),
+              firstHeader = list("FIRST ONLY L", "OF FIRST", "FIRST ONLY R"),
+              firstFooter = list("FIRST ONLY L", "OF FIRST", "FIRST ONLY R"))
+  expect_equal(exp, third_hf)
+
+
+  exp <- list(oddHeader = list(),
+              oddFooter = list(),
+              evenHeader = list(),
+              evenFooter = list(),
+              firstHeader = list("FIRST ONLY L", "OF FIRST", "FIRST ONLY R"),
+              firstFooter = list("FIRST ONLY L", "OF FIRST", "FIRST ONLY R"))
+  expect_equal(exp, fourth_hf)
+
+  expect_error(wb$set_header_footer(header = c("foo", "bar")), "must have length 3 where elements correspond to positions: left, center, right.")
+})
