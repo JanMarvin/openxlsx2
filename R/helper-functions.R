@@ -383,13 +383,8 @@ hashPassword <- function(password) {
 }
 
 # Helper to split a cell range into rows or columns
-split_dims <- function(dims, direction = NULL, preserve_single = FALSE) {
+split_dims <- function(dims, direction = "row") {
   df <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
-
-  if (preserve_single && is.null(direction) && any(dim(df) == 1)) {
-    return(dims)
-  }
-  if (is.null(direction)) direction <- "row"
   if (is.numeric(direction)) {
     if (direction == 1) direction <- "row"
     if (direction == 2) direction <- "col"
@@ -408,6 +403,10 @@ split_dim <- function(dims) {
   if (ncol(df) > 1 && nrow(df) > 1)
     stop("`dims` should be a cell range of one row or one column.", call. = FALSE)
   unlist(df)
+}
+
+is_single_cell <- function(dims) {
+  all(lengths(dims_to_rowcol(dims)) == 1)
 }
 
 #' Create sparklines object
@@ -540,8 +539,10 @@ create_sparklines <- function(
   if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
     stop("markers only affect lines `type = NULL`, not stacked or column")
 
-  dims <- split_dims(dims, direction = direction, preserve_single = TRUE)
-  sqref <- split_dim(sqref)
+  if (!is.null(direction) || !is_single_cell(sqref)) {
+    dims <- split_dims(dims, direction = direction)
+    sqref <- split_dim(sqref)
+  }
 
   if (length(dims) != 1 && length(dims) != length(sqref)) {
     stop("dims and sqref must be equal length.")

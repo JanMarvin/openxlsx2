@@ -5,7 +5,14 @@
 \alias{wb_unmerge_cells}
 \title{Merge cells within a worksheet}
 \usage{
-wb_merge_cells(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...)
+wb_merge_cells(
+  wb,
+  sheet = current_sheet(),
+  dims = NULL,
+  solve = FALSE,
+  direction = NULL,
+  ...
+)
 
 wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 }
@@ -17,6 +24,8 @@ wb_unmerge_cells(wb, sheet = current_sheet(), dims = NULL, ...)
 \item{dims}{worksheet cells}
 
 \item{solve}{logical if intersecting merges should be solved}
+
+\item{direction}{direction in which to split the cell merging. Allows "row" or "col"}
 
 \item{...}{additional arguments}
 }

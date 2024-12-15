@@ -514,8 +514,14 @@ wbWorksheet <- R6::R6Class(
     #' Set cell merging for a sheet
     #' @param rows,cols Row and column specifications.
     #' @param solve logical if intersects should be solved
+    #' @param direction direction in which to split
     #' @return The `wbWorkbook` object, invisibly
-    merge_cells = function(rows = NULL, cols = NULL, solve = FALSE) {
+    merge_cells = function(dims = NULL, solve = FALSE, direction = NULL) {
+
+      ddims <- dims_to_rowcol(dims)
+
+      rows <- ddims[[2]]
+      cols <- ddims[[1]]
 
       rows <- range(as.integer(rows))
       cols <- range(col2int(cols))
@@ -554,6 +560,12 @@ wbWorksheet <- R6::R6Class(
             stop(msg, call. = FALSE)
           }
         }
+      }
+
+      if (!is.null(direction)) {
+        if (direction == "row") direction <- 1
+        if (direction == "col") direction <- 2
+        sqref <- split_dims(sqref, direction = direction)
       }
 
       self$append("mergeCells", sprintf('<mergeCell ref="%s"/>', sqref))

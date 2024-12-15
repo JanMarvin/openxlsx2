@@ -903,6 +903,7 @@ wb_copy_cells <- function(
 #' @param sheet A name or index of a worksheet
 #' @param dims worksheet cells
 #' @param solve logical if intersecting merges should be solved
+#' @param direction direction in which to split the cell merging. Allows "row" or "col"
 #' @param ... additional arguments
 #'
 #' @examples
@@ -934,9 +935,9 @@ wb_copy_cells <- function(
 #' @family workbook wrappers
 #' @family worksheet content functions
 #' @export
-wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, ...) {
+wb_merge_cells <- function(wb, sheet = current_sheet(), dims = NULL, solve = FALSE, direction = NULL, ...) {
   assert_workbook(wb)
-  wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, ... = ...)
+  wb$clone(deep = TRUE)$merge_cells(sheet = sheet, dims = dims, solve = solve, direction = direction, ... = ...)
 }
 
 #' @export

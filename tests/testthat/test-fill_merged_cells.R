@@ -107,3 +107,15 @@ test_that("solving merge conflicts works", {
   expect_equal(exp, got)
 
 })
+
+test_that("merging with direction works", {
+  wb <- wb_workbook()$add_worksheet()$
+    merge_cells(dims = "A1:C3", direction = "row")$
+    merge_cells(dims = "A4:C6", direction = "col")
+
+  exp <- c("<mergeCell ref=\"A1:C1\"/>", "<mergeCell ref=\"A2:C2\"/>",
+           "<mergeCell ref=\"A3:C3\"/>", "<mergeCell ref=\"A4:A6\"/>",
+           "<mergeCell ref=\"B4:B6\"/>", "<mergeCell ref=\"C4:C6\"/>")
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(exp, got)
+})
