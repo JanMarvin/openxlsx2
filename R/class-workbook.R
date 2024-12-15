@@ -206,6 +206,9 @@ wbWorkbook <- R6::R6Class(
     #' @field externalLinksRels externalLinksRels
     externalLinksRels = NULL,
 
+    #' @field featurePropertyBag featurePropertyBag
+    featurePropertyBag = NULL,
+
     #' @field headFoot The header and footer
     headFoot = NULL,
 
@@ -3346,6 +3349,19 @@ wbWorkbook <- R6::R6Class(
             )
           )
         }
+      }
+
+      # featurePropertyBag
+      if (length(self$featurePropertyBag)) {
+        featurePropertyBagDir <- dir_create(tmpDir, "xl", "featurePropertyBag")
+
+        write_file(
+          body = self$featurePropertyBag,
+          fl = file.path(
+            featurePropertyBagDir,
+            sprintf("featurePropertyBag.xml")
+          )
+        )
       }
 
       if (!is.null(self$richData)) {
@@ -10097,6 +10113,15 @@ wbWorkbook <- R6::R6Class(
         self$append("workbook.xml.rels",
           sprintf(
             '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2006/relationships/vbaProject" Target="vbaProject.bin"/>',
+            1L + length(self$workbook.xml.rels)
+          )
+        )
+      }
+
+      if (!is.null(self$featurePropertyBag)) {
+        self$append("workbook.xml.rels",
+          sprintf(
+            '<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2022/11/relationships/FeaturePropertyBag" Target="featurePropertyBag/featurePropertyBag.xml"/>',
             1L + length(self$workbook.xml.rels)
           )
         )

@@ -164,3 +164,15 @@ test_that("colors", {
   )
 
 })
+
+test_that("reading xf node extLst works", {
+  xml <- "<xf borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"><extLst><ext><foo/></ext></extLst></xf>"
+  xf  <- read_xml(xml)
+
+  df_xf <- read_xf(xml_doc_xf = xf)
+  got   <- write_xf(df_xf)
+  expect_equal(xml, got)
+
+  df_xf$extLst <- "<extLst></foo/></extLst>"
+  expect_error(write_xf(df_xf), "failed to load xf child")
+})

@@ -213,6 +213,9 @@ wb_load <- function(
   ## VBA Macro
   vbaProject        <- grep_xml("vbaProject\\.bin$")
 
+  ## feature property bag
+  featureProperty   <- grep_xml("featurePropertyBag.xml$")
+
   ## remove all EXCEPT media and charts
   on.exit(
     unlink(
@@ -227,10 +230,11 @@ wb_load <- function(
   known <- c(
     basename(xmlDir), "_rels", "activeX", "charts", "chartsheets",
     "ctrlProps", "customXml", "docMetadata", "docProps", "drawings",
-    "embeddings", "externalLinks", "media", "persons", "pivotCache",
-    "pivotTables", "printerSettings", "queryTables", "richData",
-    "slicerCaches", "slicers", "tables", "theme", "threadedComments",
-    "timelineCaches", "timelines", "worksheets", "xl", "[trash]"
+    "embeddings", "externalLinks", "featurePropertyBag", "media",
+    "persons", "pivotCache", "pivotTables", "printerSettings",
+    "queryTables", "richData", "slicerCaches", "slicers", "tables",
+    "theme", "threadedComments", "timelineCaches", "timelines",
+    "worksheets", "xl", "[trash]"
   )
   unknown <- file_folders[!file_folders %in% known]
   # nocov start
@@ -624,7 +628,7 @@ wb_load <- function(
   }
 
 
-  ## xl\sharedStrings
+  ## xl\metadata
   if (!data_only && length(metadataXML)) {
     wb$append(
       "Content_Types",
@@ -811,6 +815,15 @@ wb_load <- function(
   ## externalLinksRels
   if (!data_only && length(extLinksRelsXML)) {
     wb$externalLinksRels <- lapply(extLinksRelsXML, read_xml, pointer = FALSE)
+  }
+
+  ## featurePropertyBag
+  if (!data_only && length(featureProperty)) {
+    wb$append(
+      "Content_Types",
+      '<Override PartName="/xl/featurePropertyBag/featurePropertyBag.xml" ContentType="application/vnd.ms-excel.featurepropertybag+xml"/>'
+    )
+    wb$featurePropertyBag <- read_xml(featureProperty, pointer = FALSE)
   }
 
 
