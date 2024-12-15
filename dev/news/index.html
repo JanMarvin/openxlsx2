@@ -55,7 +55,8 @@
 <ul><li>
 <code><a href="../reference/properties-wb.html">wb_set_properties()</a></code> now has a <code>datetime_modify</code> option. <a href="https://github.com/JanMarvin/openxlsx2/pull/1176" class="external-link">1176</a>
 </li>
-<li>Make non consecutive equal sized dims behave similar to non equal sized non consecutive dims. This makes <code>dims = "A1:A5,C1:D5"</code> behave similar to <code>dims = "A1,C1:D1,A2:A5,C2:D5"</code>.</li>
+<li>Make non consecutive equal sized dims behave similar to non equal sized non consecutive dims. This makes <code>dims = "A1:A5,C1:D5"</code> behave similar to <code>dims = "A1,C1:D1,A2:A5,C2:D5"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1183" class="external-link">1183</a>
+</li>
 <li>Improvements to the internal C++ code in <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> to avoid string copies. <a href="https://github.com/JanMarvin/openxlsx2/pull/1184" class="external-link">1184</a> This is a continuation of work started in <a href="https://github.com/JanMarvin/openxlsx2/pull/1177" class="external-link">1177</a> to speedup <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>/<code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>.</li>
 <li>Extend the <code>bookview</code> handling. It is now possible to add more than one <code>bookview</code> using <code>wb_set_bookview(view = 2L)</code> and to remove additional <code>bookview</code>s with <code><a href="../reference/wb_set_bookview.html">wb_remove_bookview()</a></code>. Available <code>bookview</code>s can be inspected with <code><a href="../reference/wb_set_bookview.html">wb_get_bookview()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1193" class="external-link">1193</a>
 </li>
@@ -73,6 +74,8 @@
 <li>Partial labels were written only over the first element and only if assigned in an ordered fashion. <a href="https://github.com/JanMarvin/openxlsx2/pull/1189" class="external-link">1189</a>
 </li>
 <li>Enable use of <code><a href="../reference/waivers.html">current_sheet()</a></code> in <code><a href="../reference/create_sparklines.html">create_sparklines()</a></code>. This is the default for the function, but was not supported.</li>
+<li>When setting headers and footers, elements can now be skipped with <code>NA</code> as documented. <a href="https://github.com/JanMarvin/openxlsx2/pull/1211" class="external-link">1211</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
