@@ -100,6 +100,28 @@ inner_update <- function(
                    "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
 
   sel <- match(x$r, cc$r)
+
+  # to avoid bricking the worksheet, we make sure that we do not overwrite the
+  # reference cell of a shared formula. To be on the save side, we replace all
+  # values with the formula. If the entire cc is replaced with x, we can skip.
+  if (length(sf <- cc$f_si[sel & cc$f_t[sel] == "shared" & cc$f_ref[sel] != ""]) && !all(cc$r %in% x$r)) {
+
+    # collect all the shared formulas that we have to convert
+    sel_fsi <- cc$f_si %in% unique(sf)
+
+    cc_shared <- cc[sel_fsi, , drop = FALSE]
+
+    cc <- shared_as_fml(cc, cc_shared)
+
+    msg <- paste0(
+      "A shared formula reference cell was overwritten. To protect the",
+      " spreadsheet formulas, the impacted cells were converted from shared",
+      " formulas to normal formulas."
+    )
+    warning(msg, call. = FALSE)
+
+  }
+
   cc[sel, replacement] <- x[replacement]
 
   # avoid missings in cc
