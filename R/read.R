@@ -438,37 +438,12 @@ wb_to_df <- function(
   if (show_formula) {
 
     if (any(cc$f_t == "shared")) {
-
       # depending on the sheet, this might require updates to many cells
       # TODO reduce this to cells, that are part of `cc`. Currently we
       # might waste time, updating cells that are not visible to the user
       cc_shared <- wb$worksheets[[sheet]]$sheet_data$cc
       cc_shared <- cc_shared[cc_shared$f_t == "shared", ]
-      cc_shared <- cc_shared[order(as.integer(cc_shared$f_si)), ]
-
-      # carry forward the shared formula
-      cc_shared$f    <- ave2(cc_shared$f, cc_shared$f_si, carry_forward)
-
-      # calculate differences from the formula cell, to the shared cells
-      cc_shared$cols <- ave2(col2int(cc_shared$c_r), cc_shared$f_si, calc_distance)
-      cc_shared$rows <- ave2(as.integer(cc_shared$row_r), cc_shared$f_si, calc_distance)
-
-      # begin updating the formulas. find a1 notion, get the next cell, update formula
-      cells <- find_a1_notation(cc_shared$f)
-      repls <- vector("list", length = length(cells))
-
-      for (i in seq_along(cells)) {
-        repls[[i]] <- next_cell(cells[[i]], cc_shared$cols[i], cc_shared$rows[i])
-      }
-
-      cc_shared$f    <- replace_a1_notation(cc_shared$f, repls)
-      cc_shared$cols <- NULL
-      cc_shared$rows <- NULL
-
-      # reduce and assign
-      cc_shared <- cc_shared[which(cc_shared$r %in% cc$r), ]
-      cc[match(cc_shared$r, cc$r), ] <- cc_shared
-
+      cc <- shared_as_fml(cc, cc_shared)
     }
 
     sel <- cc$f != ""

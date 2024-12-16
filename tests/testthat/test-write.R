@@ -1476,3 +1476,20 @@ test_that("writing list with sep works", {
   expect_equal(exp, got)
 
 })
+
+test_that("guarding against overwriting shared formula reference works", {
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = 1)$
+    add_formula(dims = "B1:D1", x = "A1 + 1", shared = TRUE)
+
+  expect_warning(
+    wb$add_data(x = 2, dims = "B1"),
+    "A shared formula reference cell was overwritten."
+  )
+
+  exp <- c("1", "2", "B1 + 1", "C1 + 1")
+  got <- unname(unlist(wb$to_df(show_formula = TRUE, col_names = FALSE)))
+  expect_equal(exp, got)
+
+})
