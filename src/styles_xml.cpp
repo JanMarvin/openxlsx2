@@ -134,19 +134,19 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
           std::ostringstream oss;
           cld.print(oss, " ", pugi_format_flags);
           Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = Rcpp::String(oss.str());
-        }
+        } else {
+          for (auto attrs : cld.attributes()) {
+            std::string attr_name = attrs.name();
+            std::string attr_value = attrs.value();
+            auto find_res = nams.find(attr_name);
 
-        for (auto attrs : cld.attributes()) {
-          std::string attr_name = attrs.name();
-          std::string attr_value = attrs.value();
-          auto find_res = nams.find(attr_name);
-
-          // check if name is already known
-          if (nams.count(attr_name) == 0) {
-            Rcpp::warning("%s: not found in xf name table", attr_name);
-          } else {
-            R_xlen_t mtc = std::distance(nams.begin(), find_res);
-            Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+            // check if name is already known
+            if (nams.count(attr_name) == 0) {
+              Rcpp::warning("%s: not found in xf name table", attr_name);
+            } else {
+              R_xlen_t mtc = std::distance(nams.begin(), find_res);
+              Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+            }
           }
         }
       } else {
