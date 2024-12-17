@@ -90,7 +90,8 @@ Removing works on the spreadsheet level. Therefore all slicers/timelines are rem
 df <- data.frame(
   AirPassengers = c(AirPassengers),
   time = seq(from = as.Date("1949-01-01"), to = as.Date("1960-12-01"), by = "month"),
-  letters = letters[1:4]
+  letters = letters[1:4],
+  stringsAsFactors = FALSE
 )
 
 # create workbook

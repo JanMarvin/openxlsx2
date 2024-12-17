@@ -137,7 +137,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       fonts <- self$styles$fonts
       if (length(fonts)) {
         typ <- xml_node_name(fonts)
-        id  <- as.numeric(rownames(read_font(read_xml(fonts))))
+        id  <- rownames(read_font(read_xml(fonts)))
         name <- paste0(typ, "-", id)
 
         self$font <- data.frame(
@@ -151,7 +151,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       fills <- self$styles$fills
       if (length(fills)) {
         typ <- xml_node_name(fills)
-        id  <- as.numeric(rownames(read_fill(read_xml(fills))))
+        id  <- rownames(read_fill(read_xml(fills)))
         name <- paste0(typ, "-", id)
 
         self$fill <- data.frame(
@@ -165,7 +165,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       borders <- self$styles$borders
       if (length(borders)) {
         typ <- xml_node_name(borders)
-        id  <- as.numeric(rownames(read_border(read_xml(borders))))
+        id  <- rownames(read_border(read_xml(borders)))
         name <- paste0(typ, "-", id)
 
         self$border <- data.frame(
@@ -179,7 +179,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       xfs <- self$styles$cellXfs
       if (length(xfs)) {
         typ <- xml_node_name(xfs)
-        id  <- as.numeric(rownames(read_xf(read_xml(xfs))))
+        id  <- rownames(read_xf(read_xml(xfs)))
         name <- paste0(typ, "-", id)
 
         self$xf <- data.frame(
@@ -194,7 +194,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       if (length(cellStyles)) {
 
         typ <- xml_node_name(cellStyles)
-        id  <- as.numeric(rownames(read_cellStyle(read_xml(cellStyles))))
+        id  <- rownames(read_cellStyle(read_xml(cellStyles)))
         name <- rbindlist(xml_attr(cellStyles, "cellStyle"))$name
 
         self$cellStyle <- data.frame(
@@ -209,7 +209,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       if (length(cellStyleXfs)) {
 
         typ <- xml_node_name(cellStyleXfs)
-        id  <- as.numeric(rownames(read_xf(read_xml(cellStyleXfs))))
+        id  <- rownames(read_xf(read_xml(cellStyleXfs)))
         name <- paste0(typ, "-", id)
 
         self$cellStyleXf <- data.frame(
@@ -223,7 +223,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       dxfs <- self$styles$dxfs
       if (length(dxfs)) {
         typ <- xml_node_name(dxfs)
-        id  <- as.numeric(rownames(read_dxf(read_xml(dxfs))))
+        id  <- rownames(read_dxf(read_xml(dxfs)))
         name <- paste0(typ, "-", id)
 
         self$dxf <- data.frame(
