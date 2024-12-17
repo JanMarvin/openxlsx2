@@ -33,7 +33,6 @@ Suggests:
     knitr,
     mschart (>= 0.4),
     rmarkdown,
-    rvg,
     testthat (>= 3.0.0),
     waldo
 VignetteBuilder:
