@@ -249,7 +249,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
           self$tableStyle <- data.frame(
             typ,
             id,
-            name
+            name,
+            stringsAsFactors = FALSE
           )
         }
       }
