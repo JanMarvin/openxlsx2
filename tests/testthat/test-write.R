@@ -302,14 +302,14 @@ test_that("NA works as expected", {
 test_that("writeData() forces evaluation of x (#264)", {
 
   x <- format(123.4)
-  df <- data.frame(d = format(123.4), stringsAsFactors = FALSE)
-  df2 <- data.frame(e = x, stringsAsFactors = FALSE)
+  df <- data.frame(d = format(123.4))
+  df2 <- data.frame(e = x)
 
   wb <- wb_workbook()
   wb$add_worksheet("sheet")
-  wb$add_data(start_col = 1, x = data.frame(a = format(123.4), stringsAsFactors = FALSE))
-  wb$add_data(start_col = 2, x = data.frame(b = as.character(123.4), stringsAsFactors = FALSE))
-  wb$add_data(start_col = 3, x = data.frame(c = "123.4", stringsAsFactors = FALSE))
+  wb$add_data(start_col = 1, x = data.frame(a = format(123.4)))
+  wb$add_data(start_col = 2, x = data.frame(b = as.character(123.4)))
+  wb$add_data(start_col = 3, x = data.frame(c = "123.4"))
   wb$add_data(start_col = 4, x = df)
   wb$add_data(start_col = 5, x = df2)
 
@@ -1102,8 +1102,7 @@ test_that("writing total row works", {
     E = "SUBTOTAL(109,Table1[drat])", F = "SUBTOTAL(109,Table1[wt])",
     G = "SUBTOTAL(109,Table1[qsec])", H = "SUBTOTAL(109,Table1[vs])",
     I = "SUBTOTAL(109,Table1[am])", J = "SUBTOTAL(109,Table1[gear])",
-    K = "SUBTOTAL(109,Table1[carb])",
-    stringsAsFactors = FALSE
+    K = "SUBTOTAL(109,Table1[carb])"
   )
   got <- wb_to_df(wb, dims = wb_dims(rows = 34, cols = "A:K"),
                   show_formula = TRUE, col_names = FALSE)
@@ -1115,8 +1114,7 @@ test_that("writing total row works", {
   exp <- data.frame(
     A = NA_real_, B = NA_real_, C = NA_real_, D = NA_real_,
     E = NA_real_, F = NA_real_, G = NA_real_, H = NA_real_, I = NA_real_,
-    J = NA_real_, K = NA_real_,
-    stringsAsFactors = FALSE
+    J = NA_real_, K = NA_real_
   )
   got <- wb_to_df(wb, dims = wb_dims(rows = 34, cols = "A:K"),
                   show_formula = TRUE, col_names = FALSE)
@@ -1125,7 +1123,7 @@ test_that("writing total row works", {
   # total row with text only
   wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c(text = "Result", text = "sum"))
 
-  exp <- data.frame(A = "Result", B = "sum", stringsAsFactors = FALSE)
+  exp <- data.frame(A = "Result", B = "sum")
   got <- wb_to_df(wb, dims = wb_dims(rows = 52, cols = "A:B"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
@@ -1133,7 +1131,7 @@ test_that("writing total row works", {
   # total row with text and formula
   wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c(text = "Result", "sum"))
 
-  exp <- data.frame(A = "Result", B = "SUBTOTAL(109,Table1[dist])", stringsAsFactors = FALSE)
+  exp <- data.frame(A = "Result", B = "SUBTOTAL(109,Table1[dist])")
   got <- wb_to_df(wb, dims = wb_dims(rows = 52, cols = "A:B"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
@@ -1141,7 +1139,7 @@ test_that("writing total row works", {
   # total row with none and custom formula
   wb <- wb_workbook()$add_worksheet()$add_data_table(x = cars, total_row = c("none", "COUNTA"))
 
-  exp <- data.frame(A = NA_real_, B = "COUNTA(Table1[dist])", stringsAsFactors = FALSE)
+  exp <- data.frame(A = NA_real_, B = "COUNTA(Table1[dist])")
   got <- wb_to_df(wb, dims = wb_dims(rows = 52, cols = "A:B"),
                   show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got, ignore_attr = TRUE)
@@ -1149,7 +1147,7 @@ test_that("writing total row works", {
   # with rownames
   wb <- wb_workbook()$add_worksheet()$
     add_data_table(
-      x = as.data.frame(USPersonalExpenditure, stringsAsFactors = FALSE),
+      x = as.data.frame(USPersonalExpenditure),
       row_names = TRUE,
       total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM")
     )
@@ -1157,8 +1155,7 @@ test_that("writing total row works", {
   exp <- data.frame(
     A = "Total", B = NA_real_, C = "SUBTOTAL(109,Table1[1945])",
     D = "SUBTOTAL(109,Table1[1950])", E = "SUBTOTAL(109,Table1[1955])",
-    F = "SUM(Table1[1960])",
-    stringsAsFactors = FALSE
+    F = "SUM(Table1[1960])"
   )
   got <- wb_to_df(wb, dims = wb_dims(rows = 7, cols = "A:F"), col_names = FALSE, show_formula = TRUE)
   expect_equal(exp, got, ignore_attr = TRUE)
@@ -1275,11 +1272,7 @@ test_that("writing zero row data frames works", {
   expect_equal(exp, got)
 
   # write a data frame containing an empty date vector
-  if (getRversion() < "4.0.0") {
-    dat <- data.frame(date = base::as.Date(character()))
-  } else {
-    dat <- data.frame(date = base::as.Date(NULL))
-  }
+  dat <- data.frame(date = base::as.Date(NULL))
   expect_silent(wb <- wb_workbook()$add_worksheet()$add_data(x = dat))
 
   exp <- "date"

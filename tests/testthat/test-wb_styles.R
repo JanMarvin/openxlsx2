@@ -480,8 +480,7 @@ test_that("add numfmt is no longer slow", {
   out <- data.frame(
     date = dat,
     chr  = as.character(dat),
-    num  = seq_along(dat) - 1,
-    stringsAsFactors = FALSE
+    num  = seq_along(dat) - 1
   )
 
   wb <- wb_workbook() %>%
@@ -853,8 +852,7 @@ test_that("apply styles across columns and rows", {
   exp <- data.frame(
     customFormat = c("1", "1"),
     r = c("3", "4"),
-    s = c("1", "1"),
-    stringsAsFactors = FALSE
+    s = c("1", "1")
   )
   got <- wb$worksheets[[1]]$sheet_data$row_attr[c("customFormat", "r", "s")]
   expect_equal(exp, got)
@@ -873,8 +871,6 @@ test_that("apply styles across columns and rows", {
 })
 
 test_that("create_colors_xml() works", {
-
-  skip_if(grDevices::palette()[2] == "red") # R 3.6 has a different palette
 
   exp <- "<a:clrScheme name=\"Base R\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/></a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/></a:lt1><a:dk2><a:srgbClr val=\"00008B\"/></a:dk2><a:lt2><a:srgbClr val=\"D3D3D3\"/></a:lt2><a:accent1><a:srgbClr val=\"DF536B\"/></a:accent1><a:accent2><a:srgbClr val=\"61D04F\"/></a:accent2><a:accent3><a:srgbClr val=\"2297E6\"/></a:accent3><a:accent4><a:srgbClr val=\"28E2E5\"/></a:accent4><a:accent5><a:srgbClr val=\"CD0BBC\"/></a:accent5><a:accent6><a:srgbClr val=\"F5C710\"/></a:accent6><a:hlink><a:srgbClr val=\"0000FF\"/></a:hlink><a:folHlink><a:srgbClr val=\"A020F0\"/></a:folHlink></a:clrScheme>"
   got <- create_colors_xml()

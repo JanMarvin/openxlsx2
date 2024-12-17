@@ -268,7 +268,7 @@ test_that("make sure that table id is unique", {
 
   wb$add_worksheet()$add_data_table(x = head(Orange))
 
-  exp <- data.frame(name = c("Table2", "Table3"), id = c("2", "3"), stringsAsFactors = FALSE)
+  exp <- data.frame(name = c("Table2", "Table3"), id = c("2", "3"))
   got <- rbindlist(xml_attr(wb$tables$tab_xml, "table"))[c("name", "id")]
   expect_equal(exp, got)
 
@@ -298,4 +298,3 @@ test_that("reading tables from file works", {
   got <- wb_to_df(tmp, named_region = "Table1")
   expect_equal(exp, got, ignore_attr = TRUE)
 })
-

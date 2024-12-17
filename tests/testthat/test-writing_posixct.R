@@ -35,8 +35,7 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
 
   df <- data.frame(
     timeval = c(TimeDT1, TimeDT2),
-    timetxt = format(c(TimeDT1, TimeDT2), "%Y-%m-%d %H:%M"),
-    stringsAsFactors = FALSE
+    timetxt = format(c(TimeDT1, TimeDT2), "%Y-%m-%d %H:%M")
   )
 
   wb <- wb_workbook()
@@ -82,8 +81,7 @@ test_that("numfmt escaping works", {
 
   test_data <- data.frame(
     datetime_col = as.POSIXct("2023-12-31 00:00:00"),
-    date_col = as.Date("2023-12-31"),
-    stringsAsFactors = FALSE
+    date_col = as.Date("2023-12-31")
   )
   wb <- wb_workbook()$add_worksheet()$add_data(x = test_data)
 

@@ -123,12 +123,12 @@ test_that("wb_to_df", {
 
   # read dataset with named_region (returns global first)
   got <- wb_to_df(wb3, named_region = "MyRange", col_names = FALSE)
-  exp <- data.frame(A = "S2A1", B = "S2B1", stringsAsFactors = FALSE)
+  exp <- data.frame(A = "S2A1", B = "S2B1")
   expect_equal(got, exp, ignore_attr = TRUE)
 
   # read named_region from sheet
   got <- wb_to_df(wb3, named_region = "MyRange", sheet = 4, col_names = FALSE)
-  exp <- data.frame(A = "S3A1", B = "S3B1", stringsAsFactors = FALSE)
+  exp <- data.frame(A = "S3A1", B = "S3B1")
   expect_equal(got, exp, ignore_attr = TRUE)
 
 })
@@ -400,8 +400,7 @@ test_that("dims with separator work", {
 
   exp <- data.frame(
     V1 = c("V1", 1, 2, 3, 4),
-    V2 = c("V2", 5, 6, 7, 8),
-    stringsAsFactors = FALSE
+    V2 = c("V2", 5, 6, 7, 8)
   )
 
   got <- do.call("rbind", ll)

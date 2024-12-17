@@ -48,8 +48,7 @@ test_that("convert hms works", {
   exp <- data.frame(
     r = "A1", row_r = "1", c_r = "A", c_s = "1", c_t = "",
     c_cm = "", c_ph = "", c_vm = "", v = "0.509189814814815",
-    f = "", f_t = "", f_ref = "", f_ca = "", f_si = "", is = "", typ = "15",
-    stringsAsFactors = FALSE)
+    f = "", f_t = "", f_ref = "", f_ca = "", f_si = "", is = "", typ = "15")
   got <- wb$worksheets[[1]]$sheet_data$cc
   expect_equal(exp, got)
 

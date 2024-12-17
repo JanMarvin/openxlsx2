@@ -160,8 +160,7 @@ test_that("reading with pre defined types works", {
     integer = sample(1:5, 5, TRUE),
     date = Sys.Date() - 0:4,
     datetime = Sys.time() - 0:4,
-    character = letters[1:5],
-    stringsAsFactors = FALSE
+    character = letters[1:5]
   )
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
@@ -193,8 +192,7 @@ test_that("column names are not missing with col_names = FALSE", {
   dat <- data.frame(
     numeric = 1:2,
     character = c("a", "b"),
-    logical = c(TRUE, FALSE),
-    stringsAsFactors = FALSE
+    logical = c(TRUE, FALSE)
   )
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
