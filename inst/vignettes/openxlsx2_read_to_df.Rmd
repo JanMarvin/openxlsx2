@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 # Check if the native pipe |> is not available
-if (is.null(match("|>", names(.Primitive)))) {
+if (!exists("|>", envir = globalenv())) {
   `|>` <- function(lhs, rhs) openxlsx2::`%>%`(lhs, rhs)
 }
 ```
