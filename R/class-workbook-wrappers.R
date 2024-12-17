@@ -290,7 +290,8 @@ wb_add_data <- function(
 #'   add_data_table(
 #'     x = as.data.frame(USPersonalExpenditure),
 #'     row_names = TRUE,
-#'     total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM")
+#'     total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM"),
+#'     stringsAsFactors = FALSE
 #'   )
 #' @export
 wb_add_data_table <- function(
@@ -528,7 +529,8 @@ wb_add_pivot_table <- function(
 #' df <- data.frame(
 #'   AirPassengers = c(AirPassengers),
 #'   time = seq(from = as.Date("1949-01-01"), to = as.Date("1960-12-01"), by = "month"),
-#'   letters = letters[1:4]
+#'   letters = letters[1:4],
+#'   stringsAsFactors = FALSE
 #' )
 #'
 #' # create workbook

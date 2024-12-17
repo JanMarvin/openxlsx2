@@ -307,21 +307,21 @@ write_data2 <- function(
 
   # backward compatible
   if (!inherits(data, "data.frame") || inherits(data, "matrix")) {
-    data <- as.data.frame(data)
+    data <- as.data.frame(data, stringsAsFactors = FALSE)
     colNames <- FALSE
   }
 
   if (inherits(data, "data.frame") || inherits(data, "matrix")) {
     is_data_frame <- TRUE
 
-    if (is.data.frame(data)) data <- as.data.frame(data)
+    if (is.data.frame(data)) data <- as.data.frame(data, stringsAsFactors = FALSE)
 
     sel <- !dc %in% c(4, 5, 10)
     data[sel] <- lapply(data[sel], as.character)
 
     # add rownames
     if (rowNames) {
-      data <- cbind("_rowNames_" = rownames(data), data)
+      data <- cbind("_rowNames_" = rownames(data), data, stringsAsFactors = FALSE)
       dc <- c(c("_rowNames_" = openxlsx2_celltype[["character"]]), dc)
     }
 
@@ -349,7 +349,7 @@ write_data2 <- function(
 
   # create a data frame
   if (!is_data_frame) {
-    data <- as.data.frame(t(data))
+    data <- as.data.frame(t(data), stringsAsFactors = FALSE)
   }
 
   # TODO fits_in_dims does not handle "A1,B2" and instead converts it to the
@@ -937,7 +937,7 @@ write_data_table <- function(
         class(x[is_hyperlink]) <- c("character", "hyperlink")
       } else {
         # workaround for tibbles that break with the class assignment below
-        if (inherits(x, "tbl_df")) x <- as.data.frame(x)
+        if (inherits(x, "tbl_df")) x <- as.data.frame(x, stringsAsFactors = FALSE)
         # check should be in create_hyperlink and that apply should not be required either
         if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
           x[is_hyperlink] <- apply(
@@ -993,7 +993,7 @@ write_data_table <- function(
 
     ## write autoFilter, can only have a single filter per worksheet
     if (withFilter) { # TODO: replace ref calculation with wb_dims()
-      coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L))
+      coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L), stringsAsFactors = FALSE)
       ref <- stringi::stri_join(get_cell_refs(coords), collapse = ":")
 
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
@@ -1131,7 +1131,7 @@ write_data_table <- function(
 
     ## If zero rows, append an empty row (prevent XML from corrupting)
     if (nrow(x) == 0) {
-      x <- rbind(as.data.frame(x), matrix("", nrow = 1, ncol = nCol, dimnames = list(character(), colnames(x))))
+      x <- rbind(as.data.frame(x, stringsAsFactors = FALSE), matrix("", nrow = 1, ncol = nCol, dimnames = list(character(), colnames(x))))
       names(x) <- colNames
     }
 

@@ -390,7 +390,7 @@ split_dims <- function(dims, direction = "row") {
     if (direction == 2) direction <- "col"
   }
   direction <- match.arg(direction, choices = c("row", "col"))
-  if (direction == "row") df <- as.data.frame(t(df))
+  if (direction == "row") df <- as.data.frame(t(df), stringsAsFactors = FALSE)
   vapply(df, FUN = function(x) {
     fst <- x[1]
     snd <- x[length(x)]
@@ -1165,7 +1165,7 @@ known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
   }
 
   # prepare output
-  fml <- as.data.frame(t(fml))
+  fml <- as.data.frame(t(fml), stringsAsFactors = FALSE)
   names(fml) <- nms_x
   names(atr) <- nms_x
   names(lbl) <- nms_x
@@ -1298,7 +1298,7 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
 transpose_df <- function(x) {
   attribs <- attr(x, "c_cm")
   classes <- class(x[[1]])
-  x <- as.data.frame(t(x))
+  x <- as.data.frame(t(x), stringsAsFactors = FALSE)
   for (i in seq_along(x)) {
     class(x[[i]]) <- classes
   }

@@ -228,7 +228,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
 
   if (!is.null(choose)) {
     # change order
-    choose <- eval(parse(text = choose), data.frame(x = dat))[item_order]
+    choose <- eval(parse(text = choose), data.frame(x = dat, stringsAsFactors = FALSE))[item_order]
     hide <- as_xml_attr(!choose)
     sele <- as_xml_attr(choose)
   } else {

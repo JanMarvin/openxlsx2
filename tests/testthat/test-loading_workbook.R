@@ -188,13 +188,13 @@ test_that("additional wb tests", {
   wb1 <- wb_load(xlsxFile)
 
   # showFormula
-  exp <- data.frame(Var7 = "1/0", row.names = "2")
+  exp <- data.frame(Var7 = "1/0", row.names = "2", stringsAsFactors = FALSE)
   got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 8)
   expect_equal(exp, got, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 
   # detectDates
-  exp <- data.frame(Var5 = as.Date("2015-02-07"), row.names = "2")
+  exp <- data.frame(Var5 = as.Date("2015-02-07"), row.names = "2", stringsAsFactors = FALSE)
   got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 6)
   expect_equal(exp, got, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
@@ -202,7 +202,8 @@ test_that("additional wb tests", {
   # types
   # Var1 is requested as character
   exp <- data.frame(Var1 = c("TRUE", "TRUE", "TRUE", "FALSE"),
-                    Var3 = c(1.00, NaN, 1.34, NA))
+                    Var3 = c(1.00, NaN, 1.34, NA),
+                    stringsAsFactors = FALSE)
   got <- wb_to_df(wb1, cols = c(1, 4),
                   types = c("Var1" = 0, "Var3" = 1))[seq_len(4), ]
   expect_equal(exp, got, ignore_attr = TRUE)
@@ -440,8 +441,8 @@ test_that("Loading a workbook with property preserves it.", {
   wb2$set_properties(company = "ggg")
   expect_equal(wb2$get_properties()[["company"]], "ggg")
 
-  wb <- wb_workbook() |>
-    wb_add_worksheet() |>
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
     wb_set_properties(
       custom = list(
         Software    = "openxlsx2",
@@ -455,7 +456,7 @@ test_that("Loading a workbook with property preserves it.", {
   got <- wb$custom
   expect_equal(exp, got)
 
-  wb <- wb |> wb_set_properties(
+  wb <- wb %>% wb_set_properties(
     custom = list(
       Software    = "openxlsx2",
       Version     = "1.5.0.9000",

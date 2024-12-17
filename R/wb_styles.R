@@ -1286,6 +1286,7 @@ create_colors_xml <- function(
     ), pointer = FALSE
   )
 }
+
 #' @export
 #' @rdname create_colors_xml
 #' @usage NULL

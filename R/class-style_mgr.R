@@ -8,8 +8,8 @@
 #' # style <- style_mgr$new(wb)
 #' # style$initialize(wb)
 #'
-#' # wb$styles_mgr$get_numfmt() |> print()
-#' # wb$styles_mgr$next_numfmt_id() |> print()
+#' # wb$styles_mgr$get_numfmt() %>% print()
+#' # wb$styles_mgr$next_numfmt_id() %>% print()
 #' # wb$styles_mgr$get_numfmt_id("numFmt-166")
 #'
 #' # create new number format
@@ -129,7 +129,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$numfmt <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -142,7 +143,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$font <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -155,7 +157,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$fill <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -168,7 +171,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$border <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -181,7 +185,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$xf <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -195,7 +200,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$cellStyle <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -209,7 +215,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$cellStyleXf <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -222,7 +229,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         self$dxf <- data.frame(
           typ,
           id,
-          name
+          name,
+          stringsAsFactors = FALSE
         )
       }
 
@@ -249,7 +257,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
           self$tableStyle <- data.frame(
             typ,
             id,
-            name
+            name,
+            stringsAsFactors = FALSE
           )
         }
       }
@@ -533,7 +542,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         new_entry <- data.frame(
           typ = typ,
           id = id[length(id)],
-          name = style_name[sty]
+          name = style_name[sty],
+          stringsAsFactors = FALSE
         )
 
         if (is_numfmt) self$numfmt      <- rbind(self$numfmt, new_entry)

@@ -1229,8 +1229,8 @@ test_that("adding mips section works", {
   expect_equal(fmips, wb$get_mips())
 
 
-  wb <- wb_workbook() |>
-    wb_add_worksheet() |>
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
     wb_set_properties(
       custom = list(
         Software    = "openxlsx2",

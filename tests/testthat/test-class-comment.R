@@ -246,7 +246,8 @@ test_that("threaded comments work", {
     ref = c("A1", "A1"),
     displayName = c("Kirk", "Spock"),
     text = c("wow it works!", "fascinating"),
-    done = c("0", "")
+    done = c("0", ""),
+    stringsAsFactors = FALSE
   )
   got <- wb_get_thread(wb, dims = "A1")[, -1]
   # somehow the row ordering differs for parallel and non-parallel testthat runs
@@ -264,7 +265,8 @@ test_that("threaded comments work", {
     ref = "A1",
     displayName = "Kirk",
     text = "oops",
-    done = "0"
+    done = "0",
+    stringsAsFactors = FALSE
   )
   got <- wb_get_thread(wb, dims = "A1")[, -1]
   expect_equal(exp, got)
@@ -277,7 +279,8 @@ test_that("threaded comments work", {
     ref = "A1",
     displayName = "Scotty",
     text = "hmpf",
-    done = "0"
+    done = "0",
+    stringsAsFactors = FALSE
   )
   got <- wb_get_thread(wb, dims = "A1")[, -1]
   expect_equal(exp, got)

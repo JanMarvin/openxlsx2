@@ -749,7 +749,8 @@ wb_load <- function(
       colors  = empty_chr,
       style   = empty_chr,
       rels    = empty_chr,
-      relsEx  = empty_chr
+      relsEx  = empty_chr,
+      stringsAsFactors = FALSE
     )
 
     chartsXML_id        <- filename_id(chartsXML)

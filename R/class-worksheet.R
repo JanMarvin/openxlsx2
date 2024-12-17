@@ -488,7 +488,9 @@ wbWorksheet <- R6::R6Class(
         data.frame(
           string = values,
           min = cumsum(lengths) - lengths + 1,
-          max = cumsum(lengths))
+          max = cumsum(lengths),
+          stringsAsFactors = FALSE
+        )
       )
 
       # remove duplicates pre merge
