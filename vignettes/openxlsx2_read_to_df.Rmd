@@ -15,6 +15,10 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+# Check if the native pipe |> is not available
+if (!exists("|>", envir = globalenv())) {
+  `|>` <- function(lhs, rhs) openxlsx2::`%>%`(lhs, rhs)
+}
 ```
 
 ## Importing data

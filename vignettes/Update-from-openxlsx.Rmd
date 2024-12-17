@@ -10,6 +10,11 @@ vignette: >
 ```{r setup, include=FALSE}
 # library(openxlsx)
 library(openxlsx2)
+
+# Check if the native pipe |> is not available
+if (!exists("|>", envir = globalenv())) {
+  `|>` <- function(lhs, rhs) openxlsx2::`%>%`(lhs, rhs)
+}
 ```
 
 
