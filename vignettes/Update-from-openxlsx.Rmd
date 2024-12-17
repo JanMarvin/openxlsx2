@@ -12,7 +12,7 @@ vignette: >
 library(openxlsx2)
 
 # Check if the native pipe |> is not available
-if (!exists("|>", envir = globalenv())) {
+if (is.null(match("|>", names(.Primitive)))) {
   `|>` <- function(lhs, rhs) openxlsx2::`%>%`(lhs, rhs)
 }
 ```
