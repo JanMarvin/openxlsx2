@@ -2586,14 +2586,14 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(target) && is.null(names(target))) {
         if (nrow(x) > ncol(x)) {
-          target <- as.data.frame(as.matrix(target, nrow = nrow(x), ncol = ncol(x)))
+          target <- as.data.frame(as.matrix(target, nrow = nrow(x), ncol = ncol(x)), stringsAsFactors = FALSE)
         }
         names(target) <- nams
       }
 
       if (!is.null(tooltip) && is.null(names(tooltip))) {
         if (nrow(x) > ncol(x)) {
-          tooltip <- as.data.frame(as.matrix(tooltip, nrow = nrow(x), ncol = ncol(x)))
+          tooltip <- as.data.frame(as.matrix(tooltip, nrow = nrow(x), ncol = ncol(x)), stringsAsFactors = FALSE)
         }
         names(tooltip) <- nams
       }
@@ -4000,7 +4000,7 @@ wbWorkbook <- R6::R6Class(
       if (transpose) {
         to_cols <- seq.int(start_col, start_col + to_nrow)
         to_rows <- seq.int(start_row, start_row + to_ncol)
-        from_dims_df <- as.data.frame(t(from_dims_df))
+        from_dims_df <- as.data.frame(t(from_dims_df), stringsAsFactors = FALSE)
       }
 
       to_dims       <- rowcol_to_dims(to_rows, to_cols)
@@ -4015,7 +4015,7 @@ wbWorkbook <- R6::R6Class(
 
       # TODO improve this. It should use v or inlineStr from cc
       if (as_value) {
-        data <- as.data.frame(unclass(data))
+        data <- as.data.frame(unclass(data), stringsAsFactors = FALSE)
 
         if (transpose) {
           data <- t(data)
@@ -4031,10 +4031,12 @@ wbWorkbook <- R6::R6Class(
 
       to_cc <- cc[match(from_dims, cc$r), ]
       from_cells <- to_cc$r
-      to_cc[c("r", "row_r", "c_r")] <- cbind(
-        to_dims_f,
-        gsub("\\D+", "", to_dims_f),
-        int2col(col2int(to_dims_f))
+
+      to_cc[c("r", "row_r", "c_r")] <- data.frame(
+        r     = to_dims_f,
+        row_r = gsub("\\D+", "", to_dims_f),
+        c_r   = int2col(col2int(to_dims_f)),
+        stringsAsFactors = FALSE
       )
 
       if (as_ref) {
@@ -5433,7 +5435,7 @@ wbWorkbook <- R6::R6Class(
           sprintf(
             '<pane %s topLeftCell="%s" activePane="%s" state="frozen"/><selection pane="%s"/>',
             stringi::stri_join(attrs, collapse = " ", sep = " "),
-            get_cell_refs(data.frame(first_active_row, first_active_col)),
+            get_cell_refs(data.frame(first_active_row, first_active_col, stringsAsFactors = FALSE)),
             activePane,
             activePane
           )
@@ -5502,7 +5504,7 @@ wbWorkbook <- R6::R6Class(
 
       cmts <- list()
       if (length(cmmt) && length(self$comments) <= cmmt) {
-        cmts <- as.data.frame(do.call("rbind", self$comments[[cmmt]]))
+        cmts <- as.data.frame(do.call("rbind", self$comments[[cmmt]]), stringsAsFactors = FALSE)
         if (!is.null(dims)) cmts <- cmts[cmts$ref %in% dims, ]
         # print(cmts)
         cmts <- cmts[c("ref", "author", "comment")]
@@ -5666,7 +5668,8 @@ wbWorkbook <- R6::R6Class(
 
         tc <- cbind(
           rbindlist(xml_attr(self$threadComments[[thread_id]], "threadedComment")),
-          text = xml_value(self$threadComments[[thread_id]], "threadedComment", "text")
+          text = xml_value(self$threadComments[[thread_id]], "threadedComment", "text"),
+          stringsAsFactors = FALSE
         )
 
         # probably correclty ordered, but we could order these by date?
@@ -5703,7 +5706,8 @@ wbWorkbook <- R6::R6Class(
 
       tc <- cbind(
         rbindlist(xml_attr(self$threadComments[[thrd]], "threadedComment")),
-        text = xml_value(self$threadComments[[thrd]], "threadedComment", "text")
+        text = xml_value(self$threadComments[[thrd]], "threadedComment", "text"),
+        stringsAsFactors = FALSE
       )
 
       if (!is.null(dims) && any(grepl(":", dims)))
@@ -5828,7 +5832,7 @@ wbWorkbook <- R6::R6Class(
           if (!grepl("[A-Z]", substr(rule, 1, 2))) {
             ## formula looks like "operatorX" , attach top left cell to rule
             rule <- paste0(
-              get_cell_refs(data.frame(min(rows), min(cols))),
+              get_cell_refs(data.frame(min(rows), min(cols), stringsAsFactors = FALSE)),
               rule
             )
           } ## else, there is a letter in the formula and apply as is
@@ -6550,7 +6554,8 @@ wbWorkbook <- R6::R6Class(
         style   = styleplot_xml,
         rels    = chart1_rels_xml(next_chart),
         chartEx = "",
-        relsEx  = ""
+        relsEx  = "",
+        stringsAsFactors = FALSE
       )
 
       self$charts <- rbind(self$charts, chart)
@@ -7804,7 +7809,7 @@ wbWorkbook <- R6::R6Class(
 
       self$worksheets[[sheet]]$autoFilter <- sprintf(
         '<autoFilter ref="%s"/>',
-        paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)))), collapse = ":")
+        paste(get_cell_refs(data.frame("x" = c(rows, rows), "y" = c(min(cols), max(cols)), stringsAsFactors = FALSE)), collapse = ":")
       )
 
       invisible(self)
@@ -9940,7 +9945,7 @@ wbWorkbook <- R6::R6Class(
       # TODO can this be moved to the sheet data?
       sheet <- private$get_sheet_index(sheet)
       sqref <- stringi::stri_join(
-        get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol))),
+        get_cell_refs(data.frame(x = c(startRow, endRow), y = c(startCol, endCol), stringsAsFactors = FALSE)),
         collapse = ":"
       )
 

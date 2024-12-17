@@ -8,7 +8,8 @@ get_nr_from_definedName <- function(wb) {
 
   dn <- cbind(
     rbindlist(xml_attr(dn, "definedName")),
-    value =  xml_value(dn, "definedName")
+    value =  xml_value(dn, "definedName"),
+    stringsAsFactors = FALSE
   )
 
   if (!is.null(dn$value)) {

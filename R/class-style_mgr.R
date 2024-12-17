@@ -542,7 +542,8 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         new_entry <- data.frame(
           typ = typ,
           id = id[length(id)],
-          name = style_name[sty]
+          name = style_name[sty],
+          stringsAsFactors = FALSE
         )
 
         if (is_numfmt) self$numfmt      <- rbind(self$numfmt, new_entry)

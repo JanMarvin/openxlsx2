@@ -462,7 +462,8 @@ wb_to_df <- function(
                 lapply(hls, function(hl) {
                   c(hl$ref, ifelse(is.null(hl$target), hl$location, hl$target))
                 })
-        )
+        ),
+        stringsAsFactors = FALSE
       )
       cc$val[match(hyprlnks$V1, cc$r)] <- hyprlnks$V2
     }
