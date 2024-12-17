@@ -47,7 +47,8 @@ test_that("hyperlinks work", {
     "hLink" = "https://r-project.org",
     "hLink2" = LETTERS[1:20],
     "hLink3" = paste0("https://wikipedia.org/wiki/", LETTERS[1:20]),
-    "Percentage" = seq(0, 1, length.out = 20)
+    "Percentage" = seq(0, 1, length.out = 20),
+    stringsAsFactors = FALSE
   )
 
   # custom target for letters to their wikipedia page and a few dims

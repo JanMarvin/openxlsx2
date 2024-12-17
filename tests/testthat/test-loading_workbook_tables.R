@@ -24,7 +24,8 @@ test_that("Tables loaded correctly", {
 
   exp <- data.frame(
     tab_name = character(0),
-    tab_ref = character(0)
+    tab_ref = character(0),
+    stringsAsFactors = FALSE
   )
 
   expect_equal(wb_get_tables(wb, sheet = 1), exp, ignore_attr = TRUE)

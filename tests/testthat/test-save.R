@@ -190,7 +190,7 @@ test_that("writing NA, NaN and Inf", {
   expect_equal(exp, got)
 
   # distinguish between "NA" and NA_character_
-  x <- data.frame(x = c(NA, "NA"))
+  x <- data.frame(x = c(NA, "NA"), stringsAsFactors = FALSE)
   wb$add_worksheet("Test2")$add_data(x = x)$save(tmp)
 
   exp <- c(NA_character_, "NA")
@@ -291,7 +291,8 @@ test_that("write_xlsx with na.strings", {
 
   df <- data.frame(
     num = c(1, -99, 3, NA_real_),
-    char = c("hello", "99", "3", NA_character_)
+    char = c("hello", "99", "3", NA_character_),
+    stringsAsFactors = FALSE
   )
 
   test <- temp_xlsx()

@@ -41,7 +41,8 @@ test_that("writing formulas with cell metadata works", {
     r = "A1", row_r = "1", c_r = "A", c_s = "", c_t = "",
     c_cm = "1", c_ph = "", c_vm = "", v = "", f = "SUM(ABS(A2:A11))",
     f_t = "array", f_ref = "A1", f_ca = "", f_si = "", is = "",
-    typ = "14")
+    typ = "14",
+    stringsAsFactors = FALSE)
   got <- wb$worksheets[[1]]$sheet_data$cc[1, ]
   expect_equal(exp, got)
 
@@ -71,7 +72,8 @@ test_that("formual escaping works", {
 
   df_tmp <- data.frame(
     f = "'A&B'!A1",
-    g = "'A&amp;B'!A1"
+    g = "'A&amp;B'!A1",
+    stringsAsFactors = FALSE
   )
   class(df_tmp$f) <- c(class(df_tmp$f), "formula")
   class(df_tmp$g) <- c(class(df_tmp$g), "formula")
@@ -112,7 +114,8 @@ test_that("writing array vectors works", {
   df <- data.frame(
     formula       = fml(seq_len(10)),
     array_formula = fml(seq_len(10)),
-    character     = fml(seq_len(10))
+    character     = fml(seq_len(10)),
+    stringsAsFactors = FALSE
   )
 
   class(df$formula) <- c("formula", class(df$formula))
@@ -142,7 +145,8 @@ test_that("array formula detection works", {
 test_that("writing shared formulas works", {
   df <- data.frame(
     x = 1:5,
-    y = 1:5 * 2
+    y = 1:5 * 2,
+    stringsAsFactors = FALSE
   )
 
   wb <-  wb_workbook()$add_worksheet()$add_data(x = df)

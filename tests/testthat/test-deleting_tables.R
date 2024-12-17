@@ -19,7 +19,8 @@ test_that("Deleting a Table Object", {
 
   exp <- data.frame(
     tab_name = c("iris", "mtcars"),
-    tab_ref = c("A1:E151", "J1:T33")
+    tab_ref = c("A1:E151", "J1:T33"),
+    stringsAsFactors = FALSE
   )
 
   expect_equal(wb_get_tables(wb, sheet = 1), exp, ignore_attr = TRUE)
