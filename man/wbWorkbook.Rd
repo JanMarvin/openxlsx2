@@ -89,6 +89,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{externalLinksRels}}{externalLinksRels}
 
+\item{\code{featurePropertyBag}}{featurePropertyBag}
+
 \item{\code{headFoot}}{The header and footer}
 
 \item{\code{media}}{media}
