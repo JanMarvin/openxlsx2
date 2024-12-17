@@ -298,4 +298,3 @@ test_that("reading tables from file works", {
   got <- wb_to_df(tmp, named_region = "Table1")
   expect_equal(exp, got, ignore_attr = TRUE)
 })
-
