@@ -446,11 +446,7 @@ void wide_to_long(
       // there should be no unicode character in ref_str
       std::string ref_str = "";
       if (vtyp == array_formula || vtyp == cm_formula) {
-        if (!has_refs) {
-          ref_str = col + row;
-        } else {
-          ref_str = ref[static_cast<size_t>(i)];
-        }
+        ref_str = has_refs ? ref[static_cast<size_t>(i)] : col + row;
       }
 
       // factors can be numeric or string or both. tables require the
