@@ -1,6 +1,13 @@
 #include "openxlsx2.h"
 #include <algorithm>
 
+#include <arrow/api.h>
+#include <arrow/io/api.h>
+#include <arrow/ipc/api.h>
+#include <arrow/filesystem/api.h>
+#include <arrow/table.h>
+#include <parquet/arrow/writer.h>
+
 // For R-devel 4.3 character length on Windows was modified. This caused an
 // error when passing large character strings to file.exist() when called in
 // read_xml(). We prevent bailing, by checking if the input is to long to be
@@ -340,6 +347,93 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   }
 }
 
+// write xml_data structure into xml_data.parquet file
+void flush_to_parquet(std::vector<xml_col> xml_data, std::string tmpfile) {
+
+  // Step 2: Create Arrow Builders for each field in xml_col
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+
+  arrow::StringBuilder r_builder(pool), row_r_builder(pool), c_r_builder(pool),
+  c_s_builder(pool), c_t_builder(pool), c_cm_builder(pool), c_ph_builder(pool),
+  c_vm_builder(pool), v_builder(pool), f_builder(pool), f_t_builder(pool),
+  f_ref_builder(pool), f_ca_builder(pool), f_si_builder(pool), is_builder(pool),
+  typ_builder(pool);
+
+  for (const auto& col : xml_data) {
+    (void) r_builder.Append(col.r);
+    (void) row_r_builder.Append(col.row_r);
+    (void) c_r_builder.Append(col.c_r);
+    (void) c_s_builder.Append(col.c_s);
+    (void) c_t_builder.Append(col.c_t);
+    (void) c_cm_builder.Append(col.c_cm);
+    (void) c_ph_builder.Append(col.c_ph);
+    (void) c_vm_builder.Append(col.c_vm);
+    (void) v_builder.Append(col.v);
+    (void) f_builder.Append(col.f);
+    (void) f_t_builder.Append(col.f_t);
+    (void) f_ref_builder.Append(col.f_ref);
+    (void) f_ca_builder.Append(col.f_ca);
+    (void) f_si_builder.Append(col.f_si);
+    (void) is_builder.Append(col.is);
+    (void) typ_builder.Append(col.typ);
+  }
+
+  // Step 3: Finalize the Arrow Arrays
+  std::shared_ptr<arrow::Array> r_array, row_r_array, c_r_array, c_s_array,
+  c_t_array, c_cm_array, c_ph_array, c_vm_array, v_array,
+  f_array, f_t_array, f_ref_array, f_ca_array, f_si_array, is_array, typ_array;
+
+  (void) r_builder.Finish(&r_array);
+  (void) row_r_builder.Finish(&row_r_array);
+  (void) c_r_builder.Finish(&c_r_array);
+  (void) c_s_builder.Finish(&c_s_array);
+  (void) c_t_builder.Finish(&c_t_array);
+  (void) c_cm_builder.Finish(&c_cm_array);
+  (void) c_ph_builder.Finish(&c_ph_array);
+  (void) c_vm_builder.Finish(&c_vm_array);
+  (void) v_builder.Finish(&v_array);
+  (void) f_builder.Finish(&f_array);
+  (void) f_t_builder.Finish(&f_t_array);
+  (void) f_ref_builder.Finish(&f_ref_array);
+  (void) f_ca_builder.Finish(&f_ca_array);
+  (void) f_si_builder.Finish(&f_si_array);
+  (void) is_builder.Finish(&is_array);
+  (void) typ_builder.Finish(&typ_array);
+
+  // Step 4: Create Schema and Table
+  auto schema = arrow::schema({
+    arrow::field("r", arrow::utf8()),
+    arrow::field("row_r", arrow::utf8()),
+    arrow::field("c_r", arrow::utf8()),
+    arrow::field("c_s", arrow::utf8()),
+    arrow::field("c_t", arrow::utf8()),
+    arrow::field("c_cm", arrow::utf8()),
+    arrow::field("c_ph", arrow::utf8()),
+    arrow::field("c_vm", arrow::utf8()),
+    arrow::field("v", arrow::utf8()),
+    arrow::field("f", arrow::utf8()),
+    arrow::field("f_t", arrow::utf8()),
+    arrow::field("f_ref", arrow::utf8()),
+    arrow::field("f_ca", arrow::utf8()),
+    arrow::field("f_si", arrow::utf8()),
+    arrow::field("is", arrow::utf8()),
+    arrow::field("typ", arrow::utf8()),
+  });
+
+  auto table = arrow::Table::Make(schema, {r_array, row_r_array, c_r_array, c_s_array, c_t_array,
+                                  c_cm_array, c_ph_array, c_vm_array, v_array, f_array, f_t_array,
+                                  f_ref_array, f_ca_array, f_si_array, is_array, typ_array});
+
+  // Step 5: Write to Parquet
+  std::shared_ptr<arrow::io::FileOutputStream> outfile;
+  PARQUET_ASSIGN_OR_THROW(
+    outfile, arrow::io::FileOutputStream::Open(tmpfile)
+  );
+
+  PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 1024));
+
+}
+
 // function to apply on vector
 // @param x a character vector as input
 // [[Rcpp::export]]
@@ -367,7 +461,8 @@ void wide_to_long(
     std::string na_strings,
     bool inline_strings,
     std::string c_cm,
-    std::vector<std::string> dims
+    std::vector<std::string> dims,
+    std::string tmpfile
 ) {
 
   R_xlen_t n = static_cast<R_xlen_t>(z.nrow());
@@ -391,41 +486,30 @@ void wide_to_long(
 
   int32_t in_string_nums = string_nums;
 
-  // pointer magic. even though these are extracted, they just point to the
-  // memory in the data frame
-  Rcpp::CharacterVector zz_row_r = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
-  Rcpp::CharacterVector zz_c_cm  = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
-  Rcpp::CharacterVector zz_c_r   = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
-  Rcpp::CharacterVector zz_v     = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
-  Rcpp::CharacterVector zz_c_t   = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);
-  Rcpp::CharacterVector zz_is    = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
-  Rcpp::CharacterVector zz_f     = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
-  Rcpp::CharacterVector zz_f_t   = Rcpp::as<Rcpp::CharacterVector>(zz["f_t"]);
-  Rcpp::CharacterVector zz_f_ref = Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"]);
-  Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
-  Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
+  std::vector<xml_col> xml_cols(n * m);
 
   // Convert na_strings only once outside the loop.
   na_strings = inline_strings ? txt_to_is(na_strings, 0, 1, 1) : txt_to_si(na_strings, 0, 1, 1);
 
   R_xlen_t idx = 0;
 
-  SEXP blank_sexp      = Rf_mkChar("");
-  SEXP array_sexp      = Rf_mkChar("array");
-  SEXP inlineStr_sexp  = Rf_mkChar("inlineStr");
-  SEXP bool_sexp       = Rf_mkChar("b");
-  SEXP expr_sexp       = Rf_mkChar("e");
-  SEXP sharedStr_sexp  = Rf_mkChar("s");
-  SEXP string_sexp     = Rf_mkChar("str");
+  std::string blank_sexp      = "";
+  std::string array_sexp      = "array";
+  std::string inlineStr_sexp  = "inlineStr";
+  std::string bool_sexp       = "b";
+  std::string expr_sexp       = "e";
+  std::string sharedStr_sexp  = "s";
+  std::string string_sexp     = "str";
 
-  SEXP na_sexp         = Rf_mkChar("#N/A");
-  SEXP num_sexp        = Rf_mkChar("#NUM!");
-  SEXP value_sexp      = Rf_mkChar("#VALUE!");
-  SEXP na_strings_sexp = Rf_mkChar(na_strings.c_str());
+  std::string na_sexp         = "#N/A";
+  std::string num_sexp        = "#NUM!";
+  std::string value_sexp      = "#VALUE!";
+  std::string na_strings_sexp = na_strings;
 
 
   for (R_xlen_t i = 0; i < m; ++i) {
 
+    // FIXME somehow a logical can still appear as non character vector here
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
     const std::string& col = scols[static_cast<size_t>(i)];
     int8_t vtyp_i = static_cast<int8_t>(vtyps[static_cast<size_t>(i)]);
@@ -436,8 +520,7 @@ void wide_to_long(
 
       // if colname is provided, the first row is always a character
       int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;
-      SEXP vals_sexp = STRING_ELT(cvec, j);
-      const char* vals = CHAR(vals_sexp);
+      std::string vals_sexp = Rcpp::as<std::string>(cvec[j]);
 
       const std::string& row = srows[static_cast<size_t>(j)];
 
@@ -470,107 +553,109 @@ void wide_to_long(
       case hms_time:
       case numeric:
         // v
-        SET_STRING_ELT(zz_v, pos, vals_sexp);
+        xml_cols[pos].v = vals_sexp;
         break;
       case logical:
         // v and c_t = "b"
-        SET_STRING_ELT(zz_v,   pos, vals_sexp);
-        SET_STRING_ELT(zz_c_t, pos, bool_sexp);
+        xml_cols[pos].v =  vals_sexp;
+        xml_cols[pos].c_t =  bool_sexp;
         break;
       case factor:
       case character:
 
         // test if string can be written as number
-        if (string_nums && is_double(vals)) {
+        if (string_nums && is_double(vals_sexp.c_str())) {
           // v
-          SET_STRING_ELT(zz_v, pos, vals_sexp);
+          xml_cols[pos].v = vals_sexp;
           vtyp     = (string_nums == 1) ? string_num : numeric;
         } else {
           // check if we write sst or inlineStr
           if (inline_strings) {
               // is and c_t = "inlineStr"
-              SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
-              SET_STRING_ELT(zz_is,  pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
+              xml_cols[pos].c_t = inlineStr_sexp;
+              xml_cols[pos].is = txt_to_is(vals_sexp, 0, 1, 1);
             } else {
               // v and c_t = "s"
-              SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
-              SET_STRING_ELT(zz_v,   pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
+              xml_cols[pos].c_t = sharedStr_sexp;
+              xml_cols[pos].v = txt_to_si(vals_sexp, 0, 1, 1);
           }
         }
         break;
       case hyperlink:
       case formula:
         // f and c_t = "str";
-        SET_STRING_ELT(zz_c_t, pos, string_sexp);
-        SET_STRING_ELT(zz_f,   pos, vals_sexp);
+        xml_cols[pos].c_t = string_sexp;
+        xml_cols[pos].f = vals_sexp;
         break;
       case array_formula:
         // f, f_t = "array", and f_ref
-        SET_STRING_ELT(zz_f,     pos, vals_sexp);
-        SET_STRING_ELT(zz_f_t,   pos, array_sexp);
-        SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
+        xml_cols[pos].f = vals_sexp;
+        xml_cols[pos].f_t = array_sexp;
+        xml_cols[pos].f_ref = ref_str;
         break;
       case cm_formula:
         // c_cm, f, f_t = "array", and f_ref
-        SET_STRING_ELT(zz_c_cm,  pos, Rf_mkChar(c_cm.c_str()));
-        SET_STRING_ELT(zz_f,     pos, vals_sexp);
-        SET_STRING_ELT(zz_f_t,   pos, array_sexp);
-        SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
+        xml_cols[pos].c_cm  = c_cm;
+        xml_cols[pos].f     = vals_sexp;
+        xml_cols[pos].f_t   = array_sexp;
+        xml_cols[pos].f_ref = ref_str;
         break;
       }
 
-      if (vals_sexp == NA_STRING || strcmp(vals, "_openxlsx_NA") == 0) {
+      if ((cvec[j] == NA_STRING) || vals_sexp == "_openxlsx_NA") {
 
         if (na_missing) {
           // v = "#N/A"
-          SET_STRING_ELT(zz_v,   pos, na_sexp);
-          SET_STRING_ELT(zz_c_t, pos, expr_sexp);
+          xml_cols[pos].v = na_sexp;
+          xml_cols[pos].c_t = expr_sexp;
           // is = "" - required only if inline_strings
           // and vtyp = character || vtyp = factor
-          SET_STRING_ELT(zz_is,  pos, blank_sexp);
+          xml_cols[pos].is = blank_sexp;
         } else  {
           if (na_null) {
             // all three v, c_t, and is = "" - there should be nothing in this row
-            SET_STRING_ELT(zz_v,   pos, blank_sexp);
-            SET_STRING_ELT(zz_c_t, pos, blank_sexp);
-            SET_STRING_ELT(zz_is,  pos, blank_sexp);
+            xml_cols[pos].v = blank_sexp;
+            xml_cols[pos].c_t = blank_sexp;
+            xml_cols[pos].is = blank_sexp;
           } else {
             // c_t = "inlineStr" or "s"
-            SET_STRING_ELT(zz_c_t, pos, inline_strings  ? inlineStr_sexp  : sharedStr_sexp);
+            xml_cols[pos].c_t = inline_strings  ? inlineStr_sexp  : sharedStr_sexp;
             // for inlineStr is = na_strings else ""
-            SET_STRING_ELT(zz_is,  pos, inline_strings  ? na_strings_sexp : blank_sexp);
+            xml_cols[pos].is = inline_strings  ? na_strings_sexp : blank_sexp;
             // otherwise v = na_strings else ""
-            SET_STRING_ELT(zz_v,   pos, !inline_strings ? na_strings_sexp : blank_sexp);
+            xml_cols[pos].v = !inline_strings ? na_strings_sexp : blank_sexp;
           }
         }
 
-      } else if (strcmp(vals, "NaN") == 0) {
+      } else if (vals_sexp == "NaN") {
         // v = "#VALUE!"
-        SET_STRING_ELT(zz_v,   pos, value_sexp);
-        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-      } else if (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0) {
+        xml_cols[pos].v = value_sexp;
+        xml_cols[pos].c_t = expr_sexp;
+      } else if (vals_sexp == "-Inf" || vals_sexp == "Inf") {
         // v = "#NUM!"
-        SET_STRING_ELT(zz_v,   pos, num_sexp);
-        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
+        xml_cols[pos].v = num_sexp;
+        xml_cols[pos].c_t = expr_sexp;
       }
 
-      // typ = std::to_string(vtyp)
-      SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
+      // typ = std::to_string(vtyp);
+      xml_cols[pos].typ = std::to_string(vtyp);
 
       std::string cell_r = has_dims ? dims[static_cast<size_t>(idx)] : col + row;
-      SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r.c_str()));
+      xml_cols[pos].r = cell_r;
 
       if (has_dims) {
         // row_r = rm_colnum(r) and c_r = rm_rownum(r)
-        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r).c_str()));
-        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r).c_str()));
+        xml_cols[pos].row_r = rm_colnum(cell_r);
+        xml_cols[pos].c_r = rm_rownum(cell_r);
       } else {
         // row_r = row and c_r = col
-        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
-        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
+        xml_cols[pos].row_r = row;
+        xml_cols[pos].c_r = col;
       }
     } // n
   } // m
+
+  flush_to_parquet(xml_cols, tmpfile);
 }
 
 // simple helper function to create a data frame of type character

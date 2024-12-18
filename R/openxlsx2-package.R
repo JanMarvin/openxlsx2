@@ -10,6 +10,7 @@
 #'
 #' @import Rcpp
 #' @import R6
+#' @importFrom arrow read_parquet
 #' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg palette png rgb tiff
 #' @importFrom magrittr %>%
 #' @importFrom stringi stri_encode stri_extract_all_regex stri_extract_first_regex

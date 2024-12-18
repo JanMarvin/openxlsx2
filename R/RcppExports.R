@@ -44,8 +44,8 @@ is_charnum <- function(x) {
     .Call(`_openxlsx2_is_charnum`, x)
 }
 
-wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, refed, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims) {
-    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, refed, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims))
+wide_to_long <- function(z, vtyps, zz, ColNames, start_col, start_row, refed, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims, tmpfile) {
+    invisible(.Call(`_openxlsx2_wide_to_long`, z, vtyps, zz, ColNames, start_col, start_row, refed, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims, tmpfile))
 }
 
 #' @param colnames a vector of the names of the data frame
@@ -71,8 +71,8 @@ df_to_xml <- function(name, df_col) {
     .Call(`_openxlsx2_df_to_xml`, name, df_col)
 }
 
-loadvals <- function(sheet_data, doc) {
-    invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
+loadvals <- function(sheet_data, doc, tmpfile) {
+    invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc, tmpfile))
 }
 
 readXMLPtr <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {

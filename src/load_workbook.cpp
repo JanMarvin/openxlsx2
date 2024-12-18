@@ -178,7 +178,7 @@ Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
 // this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
-void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
+void loadvals(Rcpp::Environment sheet_data, XPtrXML doc, std::string tmpfile) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
@@ -340,5 +340,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   }
 
   sheet_data["row_attr"] = row_attributes;
-  sheet_data["cc"] = Rcpp::wrap(xml_cols);
+  // sheet_data["cc"] = Rcpp::wrap(xml_cols);
+  flush_to_parquet(xml_cols, tmpfile);
 }

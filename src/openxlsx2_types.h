@@ -23,6 +23,7 @@ typedef struct {
   std::string f_ca;
   std::string f_si;
   std::string is;    // inlineStr
+  std::string typ;  // openxlsx2 flag
 } xml_col;
 
 typedef std::vector<std::string> vec_string;

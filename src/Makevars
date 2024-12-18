@@ -1,1 +1,5 @@
 PKG_CPPFLAGS = -I. -I../inst/include/pugixml
+
+## arrow - requires apache-arrow
+PKG_CXXFLAGS += $(shell pkg-config --cflags arrow)
+PKG_LIBS += $(shell pkg-config --libs arrow parquet)

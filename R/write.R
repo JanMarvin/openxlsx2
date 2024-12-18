@@ -416,7 +416,8 @@ write_data2 <- function(
   rows_attr$r <- rownames(rtyp)
 
   # original cc data frame
-  cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
+  # cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
+  cc <- data.frame()
 
 
   sel <- which(dc == openxlsx2_celltype[["logical"]])
@@ -472,6 +473,8 @@ write_data2 <- function(
     clls <- paste0(colnames(rtyp[1, 1]), rownames(rtyp[1, 1]))
   }
 
+  tmpfile <- tempfile(fileext = ".parquert")
+
   wide_to_long(
     data,
     dc,
@@ -486,8 +489,11 @@ write_data2 <- function(
     na_strings     = na.strings,
     inline_strings = inline_strings,
     c_cm           = c_cm,
-    dims           = clls
+    dims           = clls,
+    tmpfile        = tmpfile
   )
+
+  cc <- as.data.frame(arrow::read_parquet(tmpfile))
 
   if (enforce) {
     # this is required for the worksheet dimension spanning the entire

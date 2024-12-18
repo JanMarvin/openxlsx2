@@ -986,7 +986,10 @@ wb_load <- function(
       wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
 
       # load the data. This function reads sheet_data and returns cc and row_attr
-      loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
+      tmpfile <- tempfile(fileext = ".parquert")
+      loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml, tmpfile)
+
+      wb$worksheets[[i]]$sheet_data$cc <- as.data.frame(arrow::read_parquet(tmpfile))
     }
   }
 
