@@ -820,6 +820,7 @@ write_data2 <- function(
 #' @param inline_strings optional write strings as inline strings
 #' @param total_row optional write total rows
 #' @param shared shared formula
+#' @param params optional list. contains data table filters in `choose`
 #' @noRd
 #' @keywords internal
 write_data_table <- function(
@@ -848,7 +849,8 @@ write_data_table <- function(
     inline_strings  = TRUE,
     total_row       = FALSE,
     enforce         = FALSE,
-    shared          = FALSE
+    shared          = FALSE,
+    params          = NULL
 ) {
 
   ## Input validating
@@ -1139,6 +1141,11 @@ write_data_table <- function(
     ref2 <- paste0(int2col(startCol + nCol - !rowNames), startRow + nRow)
     ref  <- paste(ref1, ref2, sep = ":")
 
+    if (is.list(params)) {
+      if (!is.null(params$choose))
+        withFilter <- params$choose
+    }
+
     ## create table.xml and assign an id to worksheet tables
     wb$buildTable(
       sheet             = sheet,
@@ -1396,6 +1403,7 @@ do_write_datatable <- function(
     inline_strings    = TRUE,
     total_row         = FALSE,
     shared            = FALSE,
+    params            = params,
     ...
 ) {
 
@@ -1426,6 +1434,7 @@ do_write_datatable <- function(
     na.strings      = na.strings,
     inline_strings  = inline_strings,
     total_row       = total_row,
-    shared          = shared
+    shared          = shared,
+    params          = params
   )
 }
