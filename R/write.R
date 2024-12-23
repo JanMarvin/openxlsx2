@@ -520,7 +520,7 @@ write_data2 <- function(
     cc$f_t              <- "shared"
     cc[1, "f_ref"]      <- dims
     cc[2:nrow(cc), "f"] <- ""
-    cc$f_si             <- max(int_si) + 1L
+    cc$f_si             <- max(int_si, -1L) + 1L
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {

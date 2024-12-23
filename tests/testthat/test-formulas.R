@@ -187,6 +187,13 @@ test_that("writing shared formulas works", {
   got <- unique(cc$f_si)
   expect_equal(exp, got)
 
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_formula(x = "1", dims = "A1:B1", shared = TRUE)
+
+  exp <- "shared"
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$f_t)
+  expect_equal(exp, got)
+
 })
 
 test_that("increase formula dims if required", {
