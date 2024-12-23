@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* Formulas that do not have a `A1` cell reference to increase, are now shareable too. `wb_add_formula(x = "1", dims = "A1:A2", shared = TRUE)`
+
+
+***************************************************************************
+
 # openxlsx2 1.12
 
 ## New features
