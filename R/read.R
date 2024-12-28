@@ -235,14 +235,16 @@ wb_to_df <- function(
   # If no dims are requested via named_region, simply construct them from min
   # and max columns and row found on worksheet
   # TODO it would be useful to have both named_region and dims?
+  has_dims <- TRUE
   if (missing(named_region) && missing(dims)) {
+    has_dims <- FALSE
 
     sd <- wb$worksheets[[sheet]]$sheet_data$cc[c("row_r", "c_r")]
-    sd$row <- as.integer(sd$row_r)
-    sd$col <- col2int(sd$c_r)
+    row <- range(as.integer(unique(sd$row_r)))
+    col <- range(col2int(unique(sd$c_r)))
 
-    dims <- paste0(int2col(min(sd$col)), min(sd$row), ":",
-                   int2col(max(sd$col)), max(sd$row))
+    dims <- paste0(int2col(col[1]), row[1], ":",
+                   int2col(col[2]), row[2])
 
   }
 
@@ -336,7 +338,7 @@ wb_to_df <- function(
   keep_rows <- keep_rows[keep_rows %in% rnams]
 
   # reduce data to selected cases only
-  if (length(keep_rows) && length(keep_cols))
+  if (has_dims && length(keep_rows) && length(keep_cols))
     cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
 
   cc$val <- NA_character_
@@ -656,7 +658,7 @@ wb_to_df <- function(
       fmls <- names(which(types[sel] == 6))
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
+      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(ifelse(i == "#NUM!", "NaN", i)))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv, origin = origin)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv, origin = origin)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
