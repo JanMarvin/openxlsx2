@@ -82,11 +82,11 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
       if (!is.null(full_cols)) full_cols <- seq_along(cols_out) - 1L
     } else {
       # somehow we have to make sure that all columns are covered
-      col_ints <- col2int(cols_out)
-      cols_out <- int2col(seq.int(from = min(col_ints), to = max(col_ints)))
+      col_ints <- range(col2int(cols_out))
+      cols_out <- int2col(seq.int(from = col_ints[1], to = col_ints[2]))
 
-      row_ints <- rows_out
-      rows_out <- seq.int(from = min(row_ints), to = max(row_ints))
+      row_ints <- range(rows_out)
+      rows_out <- seq.int(from = row_ints[1], to = row_ints[2])
     }
   }
 
@@ -156,34 +156,49 @@ dataframe_to_dims <- function(df, dim_break = FALSE) {
 #'
 #' @noRd
 guess_col_type <- function(tt) {
-
-  # all columns are character
+  # Initialize types vector with numeric type (default to 0 for character)
   types <- vector("numeric", NCOL(tt))
   names(types) <- names(tt)
 
-  # but some values are numeric
-  col_num <- vapply(tt, function(x) all(x == "n", na.rm = TRUE), NA)
-  types[names(col_num[col_num])] <- 1
+  # Function to check column type
+  check_col_type <- function(x, type_char) {
+    all(unique(x) == type_char, na.rm = TRUE)
+  }
 
-  # or even date
-  col_dte <- vapply(tt[!col_num], function(x) all(x == "d", na.rm = TRUE), NA)
-  types[names(col_dte[col_dte])] <- 2
+  # Identify the unique types present in the data frame
+  unique_types <- unique(unlist(lapply(tt, unique)))
+  unique_types[is.na(unique_types)] <- "n"
 
-  # or even posix
-  col_dte <- vapply(tt[!col_num], function(x) all(x == "p", na.rm = TRUE), NA)
-  types[names(col_dte[col_dte])] <- 3
+  # Check for each type and update types vector accordingly
+  if ("n" %in% unique_types) {
+    col_num <- vapply(tt, check_col_type, NA, type_char = "n")
+    types[col_num] <- 1
+  }
 
-  # there are bools as well
-  col_log <- vapply(tt[!col_num], function(x) all(x == "b", na.rm = TRUE), NA)
-  types[names(col_log[col_log])] <- 4
+  if ("d" %in% unique_types) {
+    col_dte <- vapply(tt, check_col_type, NA, type_char = "d")
+    types[col_dte & types == 0] <- 2
+  }
 
-  # or even hms
-  col_dte <- vapply(tt[!col_num], function(x) all(x == "h", na.rm = TRUE), NA)
-  types[names(col_dte[col_dte])] <- 5
+  if ("p" %in% unique_types) {
+    col_posix <- vapply(tt, check_col_type, NA, type_char = "p")
+    types[col_posix & types == 0] <- 3
+  }
 
-  # or formula
-  col_fml <- vapply(tt[!col_num], function(x) all(x == "f", na.rm = TRUE), NA)
-  types[names(col_fml[col_fml])] <- 6
+  if ("b" %in% unique_types) {
+    col_log <- vapply(tt, check_col_type, NA, type_char = "b")
+    types[col_log & types == 0] <- 4
+  }
+
+  if ("h" %in% unique_types) {
+    col_hms <- vapply(tt, check_col_type, NA, type_char = "h")
+    types[col_hms & types == 0] <- 5
+  }
+
+  if ("f" %in% unique_types) {
+    col_fml <- vapply(tt, check_col_type, NA, type_char = "f")
+    types[col_fml & types == 0] <- 6
+  }
 
   types
 }

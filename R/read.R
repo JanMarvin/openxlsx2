@@ -486,7 +486,7 @@ wb_to_df <- function(
   zz$cols <- match(cc$c_r, colnames(z)) - 1L
   zz$rows <- match(cc$row_r, rownames(z)) - 1L
 
-  zz <- zz[order(zz[, "cols"], zz[, "rows"]), ]
+  # zz <- zz[order(zz[, "cols"], zz[, "rows"]), ]
   if (any(zz$val == "", na.rm = TRUE)) zz <- zz[zz$val != "", ]
   long_to_wide(z, tt, zz)
 
@@ -658,7 +658,7 @@ wb_to_df <- function(
       fmls <- names(which(types[sel] == 6))
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(ifelse(i == "#NUM!", "NaN", i)))
+      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv, origin = origin)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv, origin = origin)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
