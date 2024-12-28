@@ -152,9 +152,26 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 }
 
 // [[Rcpp::export]]
-std::string ox_int_to_col(int32_t cell) {
-  uint32_t cell_u32 = static_cast<uint32_t>(cell);
-  return int_to_col(cell_u32);
+Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
+  R_xlen_t n = static_cast<R_xlen_t>(x.size());
+  Rcpp::CharacterVector colNames(n);
+  std::unordered_map<int, std::string> cache;
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    uint32_t num = static_cast<uint32_t>(x[i]);
+
+    // Check if the column name is already in the cache
+    if (cache.find(num) != cache.end()) {
+      colNames[i] = cache[num];
+    } else {
+      // Compute the column name and store it in the cache
+      std::string col_name = int_to_col(num);
+      cache[num] = col_name;
+      colNames[i] = col_name;
+    }
+  }
+
+  return colNames;
 }
 
 // provide a basic rbindlist for lists of named characters

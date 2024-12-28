@@ -16,8 +16,8 @@ col_to_int <- function(x) {
     .Call(`_openxlsx2_col_to_int`, x)
 }
 
-ox_int_to_col <- function(cell) {
-    .Call(`_openxlsx2_ox_int_to_col`, cell)
+ox_int_to_col <- function(x) {
+    .Call(`_openxlsx2_ox_int_to_col`, x)
 }
 
 rbindlist <- function(x) {
