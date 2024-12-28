@@ -216,11 +216,15 @@ wb_load <- function(
   ## feature property bag
   featureProperty   <- grep_xml("featurePropertyBag.xml$")
 
+  cleanup_dir <- function(data_only) {
+    grep_xml("media|vmlDrawing|customXml|embeddings|activeX|vbaProject", ignore.case = TRUE, invert = TRUE)
+  }
+
   ## remove all EXCEPT media and charts
-  on.exit(
+  if (!data_only) on.exit(
     unlink(
-      # TODO: this removes all files, the folders remain. grep instead grep_xml?
-      grep_xml("media|vmlDrawing|customXml|embeddings|activeX|vbaProject", ignore.case = TRUE, invert = TRUE),
+      # TODO: this removes all files, the folders remain
+      cleanup_dir(data_only),
       recursive = TRUE, force = TRUE
     ),
     add = TRUE
