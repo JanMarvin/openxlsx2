@@ -175,7 +175,10 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
-        cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_string(cc_v[i]).c_str());
+        if (std::string(cc_c_t[i]).empty())
+          cell.append_child("v").append_child(pugi::node_pcdata).set_value(std::string(cc_v[i]).c_str());
+        else
+          cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_string(cc_v[i]).c_str());
       }
     }
 
