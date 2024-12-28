@@ -52,7 +52,9 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Formulas that do not have a <code>A1</code> cell reference to increase, are now shareable too. <code>wb_add_formula(x = "1", dims = "A1:A2", shared = TRUE)</code>
+<ul><li>The first formula in a workbook can now be a shared formula. <a href="https://github.com/JanMarvin/openxlsx2/pull/1223" class="external-link">1223</a>
+</li>
+<li>Avoid passing ASCII strings through <code>Rcpp::String()</code>. Previously all <code>cc</code> columns were passed through <code>Rcpp::String()</code> to avoid encoding issues on non unicode systems. <a href="https://github.com/JanMarvin/openxlsx2/pull/1224" class="external-link">1224</a>
 </li>
 </ul><hr></div>
 </div>
