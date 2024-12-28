@@ -14,7 +14,7 @@ int2col <- function(x) {
     stop("x must be finite and numeric.")
   }
 
-  sapply(x, ox_int_to_col)
+  ox_int_to_col(x)
 }
 
 #' Convert Excel column to integer

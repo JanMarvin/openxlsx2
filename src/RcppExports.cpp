@@ -45,13 +45,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // ox_int_to_col
-std::string ox_int_to_col(int32_t cell);
-RcppExport SEXP _openxlsx2_ox_int_to_col(SEXP cellSEXP) {
+Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x);
+RcppExport SEXP _openxlsx2_ox_int_to_col(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int32_t >::type cell(cellSEXP);
-    rcpp_result_gen = Rcpp::wrap(ox_int_to_col(cell));
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(ox_int_to_col(x));
     return rcpp_result_gen;
 END_RCPP
 }

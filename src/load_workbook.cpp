@@ -98,7 +98,7 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 }
 
 
-Rcpp::DataFrame row_to_df(XPtrXML doc) {
+inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   auto ws = doc->child("worksheet").child("sheetData");
 
@@ -245,22 +245,11 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           single_xml_col.r = buffer;
 
           // get col name
-          std::string colrow = buffer;
-          colrow.erase(std::remove_if(colrow.begin(),
-                                      colrow.end(),
-                                      &isdigit),
-                                      colrow.end());
-          single_xml_col.c_r = colrow;
+          single_xml_col.c_r = rm_rownum(buffer);
           has_colname = true;
 
           // get colnum
-          colrow = buffer;
-          // remove numeric from string
-          colrow.erase(std::remove_if(colrow.begin(),
-                                      colrow.end(),
-                                      &isalpha),
-                                      colrow.end());
-          single_xml_col.row_r = colrow;
+          single_xml_col.row_r = rm_colnum(buffer);
 
           // if some cells of the workbook have colnames but other dont,
           // this will increase itr_cols and avoid duplicates in cc

@@ -118,40 +118,60 @@ SEXP openxlsx2_type(SEXP x) {
   return type;
 }
 
-
 // [[Rcpp::export]]
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 
   // This function converts the Excel column letter to an integer
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
-
-  std::string a;
+  std::unordered_map<std::string, int> col_map;
   Rcpp::IntegerVector colNums(n);
 
-  for (R_xlen_t i = 0; i < n; i++) {
-    a = x[i];
+  for (R_xlen_t i = 0; i < n; ++i) {
+    std::string a = Rcpp::as<std::string>(x[i]);
 
     // check if the value is digit only, if yes, add it and continue the loop
     // at the top. This avoids slow:
     // suppressWarnings(isTRUE(as.character(as.numeric(x)) == x))
-    if (std::all_of(a.begin(), a.end(), ::isdigit))
-    {
+    if (std::all_of(a.begin(), a.end(), ::isdigit)) {
       colNums[i] = std::stoi(a);
       continue;
     }
 
-    // return index from column name
-    colNums[i] = cell_to_colint(a);
+    // Check if the column name is already in the map
+    if (col_map.find(a) != col_map.end()) {
+      colNums[i] = col_map[a];
+    } else {
+      // Compute the integer value and store it in the map
+      int col_int = cell_to_colint(a);
+      col_map[a] = col_int;
+      colNums[i] = col_int;
+    }
   }
 
   return colNums;
-
 }
 
 // [[Rcpp::export]]
-std::string ox_int_to_col(int32_t cell) {
-  uint32_t cell_u32 = static_cast<uint32_t>(cell);
-  return int_to_col(cell_u32);
+Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
+  R_xlen_t n = static_cast<R_xlen_t>(x.size());
+  Rcpp::CharacterVector colNames(n);
+  std::unordered_map<int, std::string> cache;
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    uint32_t num = static_cast<uint32_t>(x[i]);
+
+    // Check if the column name is already in the cache
+    if (cache.find(num) != cache.end()) {
+      colNames[i] = cache[num];
+    } else {
+      // Compute the column name and store it in the cache
+      std::string col_name = int_to_col(num);
+      cache[num] = col_name;
+      colNames[i] = col_name;
+    }
+  }
+
+  return colNames;
 }
 
 // provide a basic rbindlist for lists of named characters
@@ -323,8 +343,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   R_xlen_t n = static_cast<R_xlen_t>(zz.nrow());
   R_xlen_t col = 0, row = 0;
 
-  Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::IntegerVector cols = zz["cols"];
+  Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::CharacterVector vals = zz["val"];
   Rcpp::CharacterVector typs = zz["typ"];
 

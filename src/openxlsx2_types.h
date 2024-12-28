@@ -85,22 +85,27 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
   Rcpp::CharacterVector is(no_init(n));        // <is> tag
 
   // struct to vector
+  // We have to convert utf8 inputs via Rcpp::String for non unicode R sessions
+  // Ideally there would be a function that calls Rcpp::String only if needed
   for (R_xlen_t i = 0; i < n; ++i) {
     size_t ii = static_cast<size_t>(i);
-    if (!x[ii].r.empty())     r[i]     = Rcpp::String(x[ii].r);
-    if (!x[ii].row_r.empty()) row_r[i] = Rcpp::String(x[ii].row_r);
-    if (!x[ii].c_r.empty())   c_r[i]   = Rcpp::String(x[ii].c_r);
-    if (!x[ii].c_s.empty())   c_s[i]   = Rcpp::String(x[ii].c_s);
-    if (!x[ii].c_t.empty())   c_t[i]   = Rcpp::String(x[ii].c_t);
-    if (!x[ii].c_cm.empty())  c_cm[i]  = Rcpp::String(x[ii].c_cm);
+    if (!x[ii].r.empty())     r[i]     = std::string(x[ii].r);
+    if (!x[ii].row_r.empty()) row_r[i] = std::string(x[ii].row_r);
+    if (!x[ii].c_r.empty())   c_r[i]   = std::string(x[ii].c_r);
+    if (!x[ii].c_s.empty())   c_s[i]   = std::string(x[ii].c_s);
+    if (!x[ii].c_t.empty())   c_t[i]   = std::string(x[ii].c_t);
+    if (!x[ii].c_cm.empty())  c_cm[i]  = std::string(x[ii].c_cm);
     if (!x[ii].c_ph.empty())  c_ph[i]  = Rcpp::String(x[ii].c_ph);
-    if (!x[ii].c_vm.empty())  c_vm[i]  = Rcpp::String(x[ii].c_vm);
-    if (!x[ii].v.empty())     v[i]     = Rcpp::String(x[ii].v);
+    if (!x[ii].c_vm.empty())  c_vm[i]  = std::string(x[ii].c_vm);
+    if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
+        if (x[ii].c_t.empty()) v[i]    = std::string(x[ii].v);
+        else                   v[i]    = Rcpp::String(x[ii].v);
+    }
     if (!x[ii].f.empty())     f[i]     = Rcpp::String(x[ii].f);
-    if (!x[ii].f_t.empty())   f_t[i]   = Rcpp::String(x[ii].f_t);
-    if (!x[ii].f_ref.empty()) f_ref[i] = Rcpp::String(x[ii].f_ref);
-    if (!x[ii].f_ca.empty())  f_ca[i]  = Rcpp::String(x[ii].f_ca);
-    if (!x[ii].f_si.empty())  f_si[i]  = Rcpp::String(x[ii].f_si);
+    if (!x[ii].f_t.empty())   f_t[i]   = std::string(x[ii].f_t);
+    if (!x[ii].f_ref.empty()) f_ref[i] = std::string(x[ii].f_ref);
+    if (!x[ii].f_ca.empty())  f_ca[i]  = std::string(x[ii].f_ca);
+    if (!x[ii].f_si.empty())  f_si[i]  = std::string(x[ii].f_si);
     if (!x[ii].is.empty())    is[i]    = Rcpp::String(x[ii].is);
   }
 

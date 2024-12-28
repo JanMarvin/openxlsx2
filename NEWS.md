@@ -2,7 +2,8 @@
 
 ## Fixes
 
-* Formulas that do not have a `A1` cell reference to increase, are now shareable too. `wb_add_formula(x = "1", dims = "A1:A2", shared = TRUE)`
+* The first formula in a workbook can now be a shared formula. [1223](https://github.com/JanMarvin/openxlsx2/pull/1223)
+* Avoid passing ASCII strings through `Rcpp::String()`. Previously all `cc` columns were passed through `Rcpp::String()` to avoid encoding issues on non unicode systems. [1224](https://github.com/JanMarvin/openxlsx2/pull/1224)
 
 
 ***************************************************************************
