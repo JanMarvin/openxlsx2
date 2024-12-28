@@ -245,13 +245,11 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           single_xml_col.r = buffer;
 
           // get col name
-          std::string colrow = buffer;
-          single_xml_col.c_r = rm_rownum(colrow);
+          single_xml_col.c_r = rm_rownum(buffer);
           has_colname = true;
 
           // get colnum
-          colrow = buffer;
-          single_xml_col.row_r = rm_colnum(colrow);
+          single_xml_col.row_r = rm_colnum(buffer);
 
           // if some cells of the workbook have colnames but other dont,
           // this will increase itr_cols and avoid duplicates in cc

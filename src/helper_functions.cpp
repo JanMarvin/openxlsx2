@@ -343,8 +343,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   R_xlen_t n = static_cast<R_xlen_t>(zz.nrow());
   R_xlen_t col = 0, row = 0;
 
-  Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::IntegerVector cols = zz["cols"];
+  Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::CharacterVector vals = zz["val"];
   Rcpp::CharacterVector typs = zz["typ"];
 

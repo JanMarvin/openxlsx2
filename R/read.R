@@ -432,7 +432,8 @@ wb_to_df <- function(
   }
 
   # remaining values are numeric?
-  if (any(sel <- is.na(cc$typ))) {
+  if (any(cc_tab %in% c("n", ""))) {
+    sel <- which(is.na(cc$typ))
     cc$val[sel] <- cc$v[sel]
     cc$typ[sel] <- "n"
   }
