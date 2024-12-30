@@ -213,8 +213,8 @@ do_write_comment <- function(
 
   if (!is.null(dims)) {
     ref <- dims
-    col <- col2int(dims_to_rowcol(dims)[[1]])
-    row <- as.integer(dims_to_rowcol(dims)[[2]])
+    col <- col2int(dims_to_rowcol(dims)[["col"]])
+    row <- as.integer(dims_to_rowcol(dims)[["row"]])
   } else {
     if (!is.numeric(col)) {
       col <- col2int(col)

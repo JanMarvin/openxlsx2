@@ -1766,8 +1766,8 @@ wbWorkbook <- R6::R6Class(
         ddims <- dims_to_rowcol(dims, as_integer = TRUE)
 
         dims <- rowcol_to_dims(
-          row = c(ddims[[2]], ddims[[2]] + 12L),
-          col = c(ddims[[1]], ddims[[1]] + 1L)
+          row = c(ddims[["row"]], ddims[["row"]] + 12L),
+          col = c(ddims[["col"]], ddims[["col"]] + 1L)
         )
       }
 
@@ -2117,8 +2117,8 @@ wbWorkbook <- R6::R6Class(
         ddims <- dims_to_rowcol(dims, as_integer = TRUE)
 
         dims <- rowcol_to_dims(
-          row = c(ddims[[2]], ddims[[2]] + 12L),
-          col = c(ddims[[1]], ddims[[1]] + 1L)
+          row = c(ddims[["row"]], ddims[["row"]] + 12L),
+          col = c(ddims[["col"]], ddims[["col"]] + 1L)
         )
       }
 
@@ -3810,8 +3810,8 @@ wbWorkbook <- R6::R6Class(
         }
 
         rowcol   <- dims_to_rowcol(ref)
-        ref_rows <- as.integer(rowcol[[2]])
-        ref      <- rowcol_to_dims(c(ref_rows, max(ref_rows) + 1L), rowcol[[1]])
+        ref_rows <- as.integer(rowcol[["row"]])
+        ref      <- rowcol_to_dims(c(ref_rows, max(ref_rows) + 1L), rowcol[["col"]])
       }
 
 
@@ -5336,8 +5336,8 @@ wbWorkbook <- R6::R6Class(
 
       ddims <- dims_to_rowcol(dims)
 
-      rows <- ddims[[2]]
-      cols <- ddims[[1]]
+      rows <- ddims[["row"]]
+      cols <- ddims[["col"]]
 
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$unmerge_cells(
@@ -5776,8 +5776,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       ddims <- dims_to_rowcol(dims, as_integer = TRUE)
-      rows <- ddims[[2]]
-      cols <- ddims[[1]]
+      rows <- ddims[["row"]]
+      cols <- ddims[["col"]]
 
       if (!is.null(style)) assert_class(style, "character")
       assert_class(type, "character")
@@ -5793,8 +5793,8 @@ wbWorkbook <- R6::R6Class(
         rows <- as.integer(rows)
       } else if (!is.null(dims)) {
         rowcol <- dims_to_rowcol(dims, as_integer = TRUE)
-        rows <- rowcol[[2]]
-        cols <- rowcol[[1]]
+        rows <- rowcol[["row"]]
+        cols <- rowcol[["col"]]
       }
 
       ## check valid rule
@@ -6657,18 +6657,18 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(dims)) {
         xy <- dims_to_rowcol(dims)
-        left <- col2int(xy[[1]][1]) - 1L
-        top  <- as.integer(xy[[2]][1]) - 1L
+        left <- col2int(xy[["col"]][1]) - 1L
+        top  <- as.integer(xy[["row"]][1]) - 1L
 
         # for A1:B2
         if (length(xy[[1]]) > 1) {
-          right  <- max(col2int(xy[[1]]))
+          right  <- max(col2int(xy[["col"]]))
         } else {
           right  <- left + 1L
         }
 
         if (length(xy[[2]]) > 1) {
-          bottom <- max(as.integer(xy[[2]]))
+          bottom <- max(as.integer(xy[["row"]]))
         } else {
           bottom <- top + 1L
         }
@@ -7937,8 +7937,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       rowcols <- dims_to_rowcol(dims, as_integer = TRUE)
-      rows <- rowcols[[2]]
-      cols <- rowcols[[1]]
+      rows <- rowcols[["row"]]
+      cols <- rowcols[["col"]]
 
       startCol <- min(cols)
       endCol <- max(cols)
@@ -8931,7 +8931,7 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(rows)) {
         if (is.character(rows)) # row2int
-          rows <- as.integer(dims_to_rowcol(rows)[[2]])
+          rows <- as.integer(dims_to_rowcol(rows)[["row"]])
 
         dims  <- wb_dims(rows, "A")
         cells <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))

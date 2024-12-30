@@ -15,19 +15,19 @@ test_that("rbindlist", {
 
 test_that("dims to col & row and back", {
 
-  exp <- list(c("A", "B"), c("1", "2"))
+  exp <- list(col = c("A", "B"), row = c("1", "2"))
   got <- dims_to_rowcol("A1:B2")
   expect_equal(exp, got)
 
-  exp <- list(1:2, 1:2)
+  exp <- list(col = 1:2, row = 1:2)
   got <- dims_to_rowcol("A1:B2", as_integer = TRUE)
   expect_equal(exp, got)
 
-  exp <- list(1:2, c(1L))
+  exp <- list(col = 1:2, row = c(1L))
   got <- dims_to_rowcol("A:B", as_integer = TRUE)
   expect_equal(exp, got)
 
-  exp <- list("A", c("1"))
+  exp <- list(col = "A", row = c("1"))
   got <- dims_to_rowcol("A:A", as_integer = FALSE)
   expect_equal(exp, got)
 
