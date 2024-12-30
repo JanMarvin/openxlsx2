@@ -1266,7 +1266,7 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
   if (fits) {
 
     # why oh why wasn't dims_to_rowcol()/rowcol_to_dims() created as a matching pair
-    dims <- rowcol_to_dims(row = dims[[2]], col = dims[[1]])
+    dims <- rowcol_to_dims(row = dims[["row"]], col = dims[["col"]])
 
   } else {
 
@@ -1288,7 +1288,7 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
   }
 
   rc <- dims_to_rowcol(dims)
-  if (max(as.integer(rc[[2]])) > 1048576 || max(col2int(rc[[1]])) > 16384)
+  if (max(as.integer(rc[["row"]])) > 1048576 || max(col2int(rc[["col"]])) > 16384)
     stop("Dimensions exceed worksheet")
 
   dims

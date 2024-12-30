@@ -408,7 +408,7 @@ write_data2 <- function(
   rows_attr <- vector("list", nrow(rtyp))
 
   # create <rows ...>
-  want_rows <- as.integer(dims_to_rowcol(dims)[[2]])
+  want_rows <- as.integer(dims_to_rowcol(dims)[["row"]])
   rows_attr <- empty_row_attr(n = length(want_rows))
   # number of rows might differ
   if (enforce) rows_attr <- empty_row_attr(n = nrow(rtyp))
@@ -873,8 +873,8 @@ write_data_table <- function(
   if (!is.null(dims)) {
     dims <- dims_to_rowcol(dims, as_integer = TRUE)
     # if dims = "K1,A1" startCol = "A" and startRow = "1" are selected
-    startCol <- min(dims[[1]])
-    startRow <- min(dims[[2]])
+    startCol <- min(dims[["col"]])
+    startRow <- min(dims[["row"]])
   }
 
   # avoid stoi error with NULL
@@ -1342,7 +1342,7 @@ do_write_formula <- function(
   # transpose match write_data_table
   if (array || enforce) {
     rc <- dims_to_rowcol(dims)
-    if (length(rc[[1]]) > length(rc[[2]])) {
+    if (length(rc[["col"]]) > length(rc[["row"]])) {
       dfx <- transpose_df(dfx)
     }
   }

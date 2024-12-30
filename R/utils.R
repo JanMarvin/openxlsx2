@@ -167,7 +167,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #' @param single argument indicating if [rowcol_to_dims()] returns a single cell dimension
 #' @returns
 #'   * A `dims` string for `_to_dim` i.e  "A1:A1"
-#'   * A list of rows and columns for `to_rowcol`
+#'   * A named list of rows and columns for `to_rowcol`
 #' @examples
 #' dims_to_rowcol("A1:J10")
 #' wb_dims(1:10, 1:10)
@@ -223,7 +223,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     rows_out <- unique(c(rows_out, rows))
   }
 
-  list(cols_out, rows_out)
+  setNames(list(cols_out, rows_out), c("col", "row"))
 }
 
 #' @rdname dims_helper
@@ -754,8 +754,8 @@ wb_dims <- function(..., select = NULL) {
     }
     # transform to
     from_row_and_col <- dims_to_rowcol(args$from_dims, as_integer = TRUE)
-    fcol <- from_row_and_col[[1]]
-    frow <- from_row_and_col[[2]]
+    fcol <- from_row_and_col[["col"]]
+    frow <- from_row_and_col[["row"]]
   } else {
     fcol <- args$from_col %||% 1L
     frow <- args$from_row %||% 1L

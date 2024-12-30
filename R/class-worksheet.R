@@ -522,8 +522,8 @@ wbWorksheet <- R6::R6Class(
 
       ddims <- dims_to_rowcol(dims)
 
-      rows <- ddims[[2]]
-      cols <- ddims[[1]]
+      rows <- ddims[["row"]]
+      cols <- ddims[["col"]]
 
       rows <- range(as.integer(rows))
       cols <- range(col2int(cols))

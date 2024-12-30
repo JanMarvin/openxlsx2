@@ -24,7 +24,7 @@ rowcol_to_dims(row, col, single = TRUE)
 \value{
 \itemize{
 \item A \code{dims} string for \verb{_to_dim} i.e  "A1:A1"
-\item A list of rows and columns for \code{to_rowcol}
+\item A named list of rows and columns for \code{to_rowcol}
 }
 }
 \description{
