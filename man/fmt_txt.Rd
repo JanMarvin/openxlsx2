@@ -18,7 +18,8 @@ fmt_txt(
   font = NULL,
   charset = NULL,
   outline = NULL,
-  vert_align = NULL
+  vert_align = NULL,
+  ...
 )
 
 \method{+}{fmt_txt}(x, y)
@@ -50,7 +51,7 @@ fmt_txt(
 
 \item{vert_align}{baseline, superscript, or subscript}
 
-\item{...}{additional arguments for default print}
+\item{...}{additional arguments}
 }
 \description{
 format strings independent of the cell style.

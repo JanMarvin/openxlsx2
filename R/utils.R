@@ -1080,6 +1080,7 @@ un_list <- function(x) {
 #' @param charset integer value from the table below
 #' @param outline TRUE or FALSE
 #' @param vert_align baseline, superscript, or subscript
+#' @param ... additional arguments
 #' @examples
 #' fmt_txt("bar", underline = TRUE)
 #' @export
@@ -1094,8 +1095,11 @@ fmt_txt <- function(
     font      = NULL,
     charset   = NULL,
     outline   = NULL,
-    vert_align = NULL
+    vert_align = NULL,
+    ...
 ) {
+
+  standardize_color_names(...)
 
   xml_b     <- NULL
   xml_i     <- NULL
@@ -1193,7 +1197,6 @@ fmt_txt <- function(
 #' @method as.character fmt_txt
 # FIXME review the `fmt_txt.Rd`
 # #' @param x an openxlsx2 fmt_txt string
-#' @param ... unused
 #' @examples
 #' as.character(fmt_txt(2))
 #' @export
@@ -1205,7 +1208,6 @@ as.character.fmt_txt <- function(x, ...) {
 #' @method print fmt_txt
 # FIXME review the `fmt_txt.Rd`
 # #' @param x an openxlsx2 fmt_txt string
-#' @param ... additional arguments for default print
 #' @export
 print.fmt_txt <- function(x, ...) {
   message("fmt_txt string: ")
