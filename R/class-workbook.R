@@ -6387,6 +6387,7 @@ wbWorkbook <- R6::R6Class(
       pic   <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:pic")
       grpSp <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:grpSp")
       grFrm <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:graphicFrame")
+      sp    <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:sp")
       clDt  <- xml_node(xml, "xdr:wsDr", "xdr:absoluteAnchor", "xdr:clientData")
 
       # include rvg graphic from specific position to one or two cell anchor
@@ -6453,6 +6454,7 @@ wbWorkbook <- R6::R6Class(
             pic,
             grpSp,
             grFrm,
+            sp,
             clDt
           ),
           xml_attributes = c(
