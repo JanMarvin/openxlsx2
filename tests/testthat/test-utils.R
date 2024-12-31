@@ -615,6 +615,11 @@ test_that("fmt_txt works", {
   got <- unclass(txt)
   expect_equal(exp, got)
 
+  expect_equal(
+    fmt_txt("foo", color = wb_color("green")),
+    fmt_txt("foo", colour = wb_colour("green"))
+  )
+
 })
 
 test_that("wb_dims(from_dims) positioning works", {
