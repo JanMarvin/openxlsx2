@@ -1345,35 +1345,35 @@ wb_upd_custom_pid <- function(wb) {
 #' @param cc_shared a subset of the full frame with shared formulas
 #' @noRd
 shared_as_fml <- function(cc, cc_shared) {
-    cc_shared <- cc_shared[order(as.integer(cc_shared$f_si)), ]
+  cc_shared <- cc_shared[order(as.integer(cc_shared$f_si)), ]
 
-    # carry forward the shared formula
-    cc_shared$f    <- ave2(cc_shared$f, cc_shared$f_si, carry_forward)
+  # carry forward the shared formula
+  cc_shared$f    <- ave2(cc_shared$f, cc_shared$f_si, carry_forward)
 
-    # calculate differences from the formula cell, to the shared cells
-    cc_shared$cols <- ave2(col2int(cc_shared$c_r), cc_shared$f_si, calc_distance)
-    cc_shared$rows <- ave2(as.integer(cc_shared$row_r), cc_shared$f_si, calc_distance)
+  # calculate differences from the formula cell, to the shared cells
+  cc_shared$cols <- ave2(col2int(cc_shared$c_r), cc_shared$f_si, calc_distance)
+  cc_shared$rows <- ave2(as.integer(cc_shared$row_r), cc_shared$f_si, calc_distance)
 
-    # begin updating the formulas. find a1 notion, get the next cell, update formula
-    cells <- find_a1_notation(cc_shared$f)
-    repls <- vector("list", length = length(cells))
+  # begin updating the formulas. find a1 notion, get the next cell, update formula
+  cells <- find_a1_notation(cc_shared$f)
+  repls <- vector("list", length = length(cells))
 
-    for (i in seq_along(cells)) {
-      repls[[i]] <- next_cell(cells[[i]], cc_shared$cols[i], cc_shared$rows[i])
-    }
+  for (i in seq_along(cells)) {
+    repls[[i]] <- next_cell(cells[[i]], cc_shared$cols[i], cc_shared$rows[i])
+  }
 
-    cc_shared$f     <- replace_a1_notation(cc_shared$f, repls)
-    cc_shared$cols  <- NULL
-    cc_shared$rows  <- NULL
-    cc_shared$f_t   <- ""
-    cc_shared$f_si  <- ""
-    cc_shared$f_ref <- ""
+  cc_shared$f     <- replace_a1_notation(cc_shared$f, repls)
+  cc_shared$cols  <- NULL
+  cc_shared$rows  <- NULL
+  cc_shared$f_t   <- ""
+  cc_shared$f_si  <- ""
+  cc_shared$f_ref <- ""
 
-    # reduce and assign
-    cc_shared <- cc_shared[which(cc_shared$r %in% cc$r), ]
+  # reduce and assign
+  cc_shared <- cc_shared[which(cc_shared$r %in% cc$r), ]
 
-    cc[match(cc_shared$r, cc$r), ] <- cc_shared
-    cc
+  cc[match(cc_shared$r, cc$r), ] <- cc_shared
+  cc
 }
 
 #' create a color used in create_shape
@@ -1644,7 +1644,7 @@ create_shape <- function(
   )
   text_align <- alignment_map[text_align]
 
-  standardize(...)
+  standardize_color_names(...)
 
   text <- fmt_txt2(text, text_color = text_color, text_transparency)
 
@@ -1655,9 +1655,9 @@ create_shape <- function(
     line_color <- sprintf('<a:ln>%s</a:ln>', line_color)
   }
 
-  xml <- sprintf('
-    <xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">
-    <xdr:absoluteAnchor>
+  xml <- sprintf(
+    '<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">
+     <xdr:absoluteAnchor>
       <xdr:pos x="0" y="0" />
       <xdr:ext cx="0" cy="0" />
       <xdr:sp macro="" textlink="">
@@ -1708,8 +1708,10 @@ create_shape <- function(
       </xdr:sp>
       <xdr:clientData />
      </xdr:absoluteAnchor>
-    </xdr:wsDr>',
-                 id, name, st_guid(), rotation * 60000, shape, fill_color, line_color, text_align[1], text)
+     </xdr:wsDr>',
+    id, name, st_guid(), rotation * 60000, shape,
+    fill_color, line_color, text_align[1], text
+  )
 
   read_xml(xml, pointer = FALSE)
 }
