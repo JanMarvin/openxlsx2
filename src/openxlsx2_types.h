@@ -98,8 +98,10 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
     if (!x[ii].c_ph.empty())  c_ph[i]  = Rcpp::String(x[ii].c_ph);
     if (!x[ii].c_vm.empty())  c_vm[i]  = std::string(x[ii].c_vm);
     if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
-        if (x[ii].c_t.empty()) v[i]    = std::string(x[ii].v);
-        else                   v[i]    = Rcpp::String(x[ii].v);
+        if (x[ii].c_t.empty() && x[ii].f_t.empty())
+          v[i] = std::string(x[ii].v);
+        else
+          v[i] = Rcpp::String(x[ii].v);
     }
     if (!x[ii].f.empty())     f[i]     = Rcpp::String(x[ii].f);
     if (!x[ii].f_t.empty())   f_t[i]   = std::string(x[ii].f_t);
