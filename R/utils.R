@@ -223,7 +223,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     rows_out <- unique(c(rows_out, rows))
   }
 
-  setNames(list(cols_out, rows_out), c("col", "row"))
+  list(col = cols_out, row = rows_out)
 }
 
 #' @rdname dims_helper

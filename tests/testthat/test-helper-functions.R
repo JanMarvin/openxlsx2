@@ -487,3 +487,31 @@ test_that("waiver works in hyperlink", {
   got <- unique(unname(unlist(wb$to_df(show_formula = TRUE, col_names = FALSE))))
   expect_equal(exp, got)
 })
+
+test_that("create_shape() works", {
+
+  ## heart
+  txt <- fmt_txt("openxlsx2 is the \n", bold = TRUE, size = 15) +
+    fmt_txt("best", underline = TRUE, bold = TRUE, size = 15) +
+    fmt_txt("\n!", bold = TRUE, size = 15)
+
+  heart <- create_shape(
+    shape = "heart", text = txt, text_align = "center",
+    fill_colour = wb_color("pink"), text_colour = wb_color("theme" = 1))
+
+  ## ribbon
+  txt <- fmt_txt("\nthe ") +
+    fmt_txt("very", underline = TRUE, font = "Courier", color = wb_color("gold")) +
+    fmt_txt(" best")
+
+  ribbon <- create_shape(shape = "ribbon", text = txt, text_align = "center")
+
+  wb <- wb_workbook()$add_worksheet(grid_lines = FALSE)$
+    add_drawing(dims = "B2:E11", xml = heart)$
+    add_drawing(dims = "B12:E14", xml = ribbon)
+
+  expect_equal(1L, length(wb$drawings))
+
+  expect_silent(create_shape(text = "foo", rotation = 20, fill_transparency = 50))
+
+})
