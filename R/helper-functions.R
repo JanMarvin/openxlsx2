@@ -1375,3 +1375,341 @@ shared_as_fml <- function(cc, cc_shared) {
     cc[match(cc_shared$r, cc$r), ] <- cc_shared
     cc
 }
+
+#' create a color used in create_shape
+#' @param color a [wb_color()] object
+#' @param transparency an integer value
+#' @noRd
+get_color <- function(color, transparency = 0) {
+
+  alignment_map <- c(
+    "0" =   "bg1",
+    "1" =   "tx1",
+    "2" =   "bg2",
+    "3" =   "tx2",
+    "4" =   "accent1",
+    "5" =   "accent2",
+    "6" =   "accent3",
+    "7" =   "accent4",
+    "8" =   "accent5",
+    "9" =   "accent6",
+    "10" =  "hlink",
+    "11" =  "folHlink",
+    "12" =  "phClr",
+    "13" =  "dk1",
+    "14" =  "lt1",
+    "15" =  "dk2",
+    "16" =  "lt2"
+  )
+
+  if (is_wbColour(color)) {
+    if ("rgb" %in% names(color)) {
+      color <- sprintf(
+        '<a:solidFill>
+        <a:srgbClr val="%s">
+          <a:alpha val="%s" />
+        </a:srgbClr>
+      </a:solidFill>',
+        substr(c(color["rgb"]), 3, 8),
+        min(99, (100 - transparency)) * 1000
+      )
+    } else if ("theme" %in% names(color)) {
+      color <- sprintf(
+        '<a:solidFill>
+        <a:schemeClr val="%s">
+          <a:alpha val="%s" />
+        </a:schemeClr>
+      </a:solidFill>',
+        alignment_map[color["theme"]],
+        min(99, (100 - transparency)) * 1000
+      )
+    } else {
+      warning("currently only rgb and theme colors are supported")
+      color <- ""
+    }
+  } else {
+    color <- ""
+  }
+  color
+}
+
+#' string styling used in create_shape()
+#'
+#' handles bold, italic, strike, size, font, charset
+#' unhandled charset, outline, vert_align
+#' @param txt input, character or [fmt_txt()]
+#' @param text_color a [wb_color()]
+#' @param transparency an integer value
+#' @noRd
+fmt_txt2 <- function(txt, text_color = "", transparency = 0) {
+  if (!inherits(txt, "fmt_txt")) {
+    txt <- fmt_txt(txt)
+  }
+
+  txts <- xml_node(txt, "r")
+
+  out <- NULL
+  for (txt in txts) { # no need to check for <b val="1"/>
+    bold      <- ifelse(grepl("<b/>", txt), "1", "")
+    italic    <- ifelse(grepl("<i/>", txt), "1", "")
+    strike    <- ifelse(grepl("<strike/>", txt), "sngStrike", "")
+    underline <- ifelse(grepl("<u/>", txt), "sng", "")
+
+    color     <- sapply(xml_attr(txt, "r", "rPr", "color"), "[")
+    if (length(color) == 0) {
+      color   <- get_color(text_color, transparency)
+    } else {
+      color     <- get_color(wb_color(color), transparency) # tint?
+    }
+
+    sz <- sapply(xml_attr(txt, "r", "rPr", "sz"), "[")
+    if (length(sz)) sz        <- as.integer(sz[["val"]]) * 100
+
+    font <- sapply(xml_attr(txt, "r", "rPr", "rFont"), "[")
+    charset <- sapply(xml_attr(txt, "r", "rPr", "charset"), "[")
+
+    if (length(charset) == 0) charset <- c(val = "0")
+    if (length(font)) {
+      font <- c(
+        sprintf('<a:latin typeface="%s" charset="%s" />', font[["val"]], charset[["val"]]),
+        sprintf('<a:cs typeface="%s" charset="%s" />', font[["val"]], charset[["val"]])
+      )
+    } else {
+      font <- NULL
+    }
+
+    rPr <- xml_node_create(
+      "a:rPr",
+      xml_attributes = c(
+        b = as_xml_attr(bold),
+        i = as_xml_attr(italic),
+        sz = as_xml_attr(sz),
+        strike = as_xml_attr(strike),
+        u  = as_xml_attr(underline)
+      ),
+      xml_children = c(color, font)
+    )
+
+
+    text <- xml_value(txt, "r", "t")
+    text <- xml_node_create("a:t", xml_children = text)
+    ar   <- xml_node_create("a:r", xml_children = c(rPr, text))
+
+    out <- c(out, ar)
+  }
+
+  paste0(out, collapse = "")
+}
+
+#' Helper to create a shape
+#' @param shape a shape (see details)
+#' @param name a name for the shape
+#' @param text a text written into the object. This can be a simple character or a [fmt_txt()]
+#' @param fill_color,text_color,line_color. a color for each, accepts only theme and rgb colors passed with [wb_color()]
+#' @param fill_transparency,text_transparency,line_transparency sets the alpha value of the shape, an integer value in the range 0 to 100
+#' @param text_align sets the alignment of the text. Can be 'left', 'center', 'right', 'justify', 'justifyLow', 'distributed', or 'thaiDistributed'
+#' @param rotation the rotation of the shape in degrees
+#' @param id an integer id (effect is unknown)
+#' @param ... additional arguments
+#' @returns a character containing the XML
+#' @seealso [wb_add_drawing()]
+#' @details Possible shapes are (from ST_ShapeType - Preset Shape Types):
+#' "line", "lineInv", "triangle", "rtTriangle", "rect", "diamond",
+#' "parallelogram", "trapezoid", "nonIsoscelesTrapezoid", "pentagon",
+#' "hexagon", "heptagon", "octagon", "decagon", "dodecagon", "star4",
+#' "star5", "star6", "star7", "star8", "star10", "star12", "star16",
+#' "star24", "star32", "roundRect", "round1Rect", "round2SameRect",
+#' "round2DiagRect", "snipRoundRect", "snip1Rect", "snip2SameRect",
+#' "snip2DiagRect", "plaque", "ellipse", "teardrop", "homePlate",
+#' "chevron", "pieWedge", "pie", "blockArc", "donut", "noSmoking",
+#' "rightArrow", "leftArrow", "upArrow", "downArrow", "stripedRightArrow",
+#' "notchedRightArrow", "bentUpArrow", "leftRightArrow", "upDownArrow",
+#' "leftUpArrow", "leftRightUpArrow", "quadArrow", "leftArrowCallout",
+#' "rightArrowCallout", "upArrowCallout", "downArrowCallout", "leftRightArrowCallout",
+#' "upDownArrowCallout", "quadArrowCallout", "bentArrow", "uturnArrow",
+#' "circularArrow", "leftCircularArrow", "leftRightCircularArrow",
+#' "curvedRightArrow", "curvedLeftArrow", "curvedUpArrow", "curvedDownArrow",
+#' "swooshArrow", "cube", "can", "lightningBolt", "heart", "sun",
+#' "moon", "smileyFace", "irregularSeal1", "irregularSeal2", "foldedCorner",
+#' "bevel", "frame", "halfFrame", "corner", "diagStripe", "chord",
+#' "arc", "leftBracket", "rightBracket", "leftBrace", "rightBrace",
+#' "bracketPair", "bracePair", "straightConnector1", "bentConnector2",
+#' "bentConnector3", "bentConnector4", "bentConnector5", "curvedConnector2",
+#' "curvedConnector3", "curvedConnector4", "curvedConnector5", "callout1",
+#' "callout2", "callout3", "accentCallout1", "accentCallout2", "accentCallout3",
+#' "borderCallout1", "borderCallout2", "borderCallout3", "accentBorderCallout1",
+#' "accentBorderCallout2", "accentBorderCallout3", "wedgeRectCallout",
+#' "wedgeRoundRectCallout", "wedgeEllipseCallout", "cloudCallout",
+#' "cloud", "ribbon", "ribbon2", "ellipseRibbon", "ellipseRibbon2",
+#' "leftRightRibbon", "verticalScroll", "horizontalScroll", "wave",
+#' "doubleWave", "plus", "flowChartProcess", "flowChartDecision",
+#' "flowChartInputOutput", "flowChartPredefinedProcess", "flowChartInternalStorage",
+#' "flowChartDocument", "flowChartMultidocument", "flowChartTerminator",
+#' "flowChartPreparation", "flowChartManualInput", "flowChartManualOperation",
+#' "flowChartConnector", "flowChartPunchedCard", "flowChartPunchedTape",
+#' "flowChartSummingJunction", "flowChartOr", "flowChartCollate",
+#' "flowChartSort", "flowChartExtract", "flowChartMerge", "flowChartOfflineStorage",
+#' "flowChartOnlineStorage", "flowChartMagneticTape", "flowChartMagneticDisk",
+#' "flowChartMagneticDrum", "flowChartDisplay", "flowChartDelay",
+#' "flowChartAlternateProcess", "flowChartOffpageConnector", "actionButtonBlank",
+#' "actionButtonHome", "actionButtonHelp", "actionButtonInformation",
+#' "actionButtonForwardNext", "actionButtonBackPrevious", "actionButtonEnd",
+#' "actionButtonBeginning", "actionButtonReturn", "actionButtonDocument",
+#' "actionButtonSound", "actionButtonMovie", "gear6", "gear9", "funnel",
+#' "mathPlus", "mathMinus", "mathMultiply", "mathDivide", "mathEqual",
+#' "mathNotEqual", "cornerTabs", "squareTabs", "plaqueTabs", "chartX",
+#' "chartStar", "chartPlus"
+#'
+#' @examples
+#'  wb <- wb_workbook()$add_worksheet()$
+#'    add_drawing(xml = create_shape())
+#' @export
+create_shape <- function(
+    shape = "rect",
+    name = "shape 1",
+    text = "",
+    fill_color = NULL,
+    fill_transparency = 0,
+    text_color = NULL,
+    text_transparency = 0,
+    line_color = fill_color,
+    line_transparency = 0,
+    text_align = "left",
+    rotation = 0,
+    id = 1,
+    ...
+) {
+
+  valid_align <- c("left", "center", "right", "justify", "justifyLow", "distributed",
+                   "thaiDistributed")
+  match.arg(text_align, valid_align)
+
+  valid_shapes <- c(
+    "line", "lineInv", "triangle", "rtTriangle", "rect", "diamond",
+    "parallelogram", "trapezoid", "nonIsoscelesTrapezoid", "pentagon",
+    "hexagon", "heptagon", "octagon", "decagon", "dodecagon", "star4",
+    "star5", "star6", "star7", "star8", "star10", "star12", "star16",
+    "star24", "star32", "roundRect", "round1Rect", "round2SameRect",
+    "round2DiagRect", "snipRoundRect", "snip1Rect", "snip2SameRect",
+    "snip2DiagRect", "plaque", "ellipse", "teardrop", "homePlate",
+    "chevron", "pieWedge", "pie", "blockArc", "donut", "noSmoking",
+    "rightArrow", "leftArrow", "upArrow", "downArrow", "stripedRightArrow",
+    "notchedRightArrow", "bentUpArrow", "leftRightArrow", "upDownArrow",
+    "leftUpArrow", "leftRightUpArrow", "quadArrow", "leftArrowCallout",
+    "rightArrowCallout", "upArrowCallout", "downArrowCallout", "leftRightArrowCallout",
+    "upDownArrowCallout", "quadArrowCallout", "bentArrow", "uturnArrow",
+    "circularArrow", "leftCircularArrow", "leftRightCircularArrow",
+    "curvedRightArrow", "curvedLeftArrow", "curvedUpArrow", "curvedDownArrow",
+    "swooshArrow", "cube", "can", "lightningBolt", "heart", "sun",
+    "moon", "smileyFace", "irregularSeal1", "irregularSeal2", "foldedCorner",
+    "bevel", "frame", "halfFrame", "corner", "diagStripe", "chord",
+    "arc", "leftBracket", "rightBracket", "leftBrace", "rightBrace",
+    "bracketPair", "bracePair", "straightConnector1", "bentConnector2",
+    "bentConnector3", "bentConnector4", "bentConnector5", "curvedConnector2",
+    "curvedConnector3", "curvedConnector4", "curvedConnector5", "callout1",
+    "callout2", "callout3", "accentCallout1", "accentCallout2", "accentCallout3",
+    "borderCallout1", "borderCallout2", "borderCallout3", "accentBorderCallout1",
+    "accentBorderCallout2", "accentBorderCallout3", "wedgeRectCallout",
+    "wedgeRoundRectCallout", "wedgeEllipseCallout", "cloudCallout",
+    "cloud", "ribbon", "ribbon2", "ellipseRibbon", "ellipseRibbon2",
+    "leftRightRibbon", "verticalScroll", "horizontalScroll", "wave",
+    "doubleWave", "plus", "flowChartProcess", "flowChartDecision",
+    "flowChartInputOutput", "flowChartPredefinedProcess", "flowChartInternalStorage",
+    "flowChartDocument", "flowChartMultidocument", "flowChartTerminator",
+    "flowChartPreparation", "flowChartManualInput", "flowChartManualOperation",
+    "flowChartConnector", "flowChartPunchedCard", "flowChartPunchedTape",
+    "flowChartSummingJunction", "flowChartOr", "flowChartCollate",
+    "flowChartSort", "flowChartExtract", "flowChartMerge", "flowChartOfflineStorage",
+    "flowChartOnlineStorage", "flowChartMagneticTape", "flowChartMagneticDisk",
+    "flowChartMagneticDrum", "flowChartDisplay", "flowChartDelay",
+    "flowChartAlternateProcess", "flowChartOffpageConnector", "actionButtonBlank",
+    "actionButtonHome", "actionButtonHelp", "actionButtonInformation",
+    "actionButtonForwardNext", "actionButtonBackPrevious", "actionButtonEnd",
+    "actionButtonBeginning", "actionButtonReturn", "actionButtonDocument",
+    "actionButtonSound", "actionButtonMovie", "gear6", "gear9", "funnel",
+    "mathPlus", "mathMinus", "mathMultiply", "mathDivide", "mathEqual",
+    "mathNotEqual", "cornerTabs", "squareTabs", "plaqueTabs", "chartX",
+    "chartStar", "chartPlus"
+  )
+  match.arg(shape, valid_shapes)
+
+  alignment_map <- c(
+    "left" = "l",
+    "center" = "ctr",
+    "right" = "r",
+    "justify" = "just",
+    "justifyLow" = "justLow",
+    "distributed" = "dist",
+    "thaiDistributed" = "thaiDist"
+  )
+  text_align <- alignment_map[text_align]
+
+  standardize(...)
+
+  text <- fmt_txt2(text, text_color = text_color, text_transparency)
+
+  line_color <- get_color(line_color, line_transparency)
+  fill_color <- get_color(fill_color, fill_transparency)
+
+  if (line_color != "") {
+    line_color <- sprintf('<a:ln>%s</a:ln>', line_color)
+  }
+
+  xml <- sprintf('
+    <xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">
+    <xdr:absoluteAnchor>
+      <xdr:pos x="0" y="0" />
+      <xdr:ext cx="0" cy="0" />
+      <xdr:sp macro="" textlink="">
+       <xdr:nvSpPr>
+        <xdr:cNvPr id="%s" name="%s" />
+         <a:extLst>
+          <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+           <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="%s" />
+          </a:ext>
+         </a:extLst>
+        <xdr:cNvSpPr />
+       </xdr:nvSpPr>
+       <xdr:spPr>
+        <a:xfrm rot="%s">
+         <a:off x="0" y="0" />
+         <a:ext cx="0" cy="0" />
+        </a:xfrm>
+        <a:prstGeom prst="%s">
+         <a:avLst />
+        </a:prstGeom>
+        %s
+        %s
+       </xdr:spPr>
+       <xdr:style>
+        <a:lnRef idx="2">
+         <a:schemeClr val="accent1">
+          <a:shade val="50000" />
+         </a:schemeClr>
+        </a:lnRef>
+        <a:fillRef idx="1">
+         <a:schemeClr val="accent1" />
+        </a:fillRef>
+        <a:effectRef idx="0">
+         <a:schemeClr val="accent1" />
+        </a:effectRef>
+        <a:fontRef idx="minor">
+         <a:schemeClr val="lt1" />
+        </a:fontRef>
+       </xdr:style>
+       <xdr:txBody>
+        <a:bodyPr vertOverflow="clip" horzOverflow="clip" rtlCol="0" anchor="t" />
+        <a:lstStyle />
+        <a:p>
+         <a:pPr algn="%s" />
+         %s
+        </a:p>
+       </xdr:txBody>
+      </xdr:sp>
+      <xdr:clientData />
+     </xdr:absoluteAnchor>
+    </xdr:wsDr>',
+                 id, name, st_guid(), rotation * 60000, shape, fill_color, line_color, text_align[1], text)
+
+  read_xml(xml, pointer = FALSE)
+}
