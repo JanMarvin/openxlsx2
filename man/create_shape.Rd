@@ -27,7 +27,7 @@ create_shape(
 
 \item{text}{a text written into the object. This can be a simple character or a \code{\link[=fmt_txt]{fmt_txt()}}}
 
-\item{fill_color, text_color, line_color.}{a color for each, accepts only theme and rgb colors passed with \code{\link[=wb_color]{wb_color()}}}
+\item{fill_color, text_color, line_color}{a color for each, accepts only theme and rgb colors passed with \code{\link[=wb_color]{wb_color()}}}
 
 \item{fill_transparency, text_transparency, line_transparency}{sets the alpha value of the shape, an integer value in the range 0 to 100}
 

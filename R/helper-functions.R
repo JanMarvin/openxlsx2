@@ -1505,7 +1505,7 @@ fmt_txt2 <- function(txt, text_color = "", transparency = 0) {
 #' @param shape a shape (see details)
 #' @param name a name for the shape
 #' @param text a text written into the object. This can be a simple character or a [fmt_txt()]
-#' @param fill_color,text_color,line_color. a color for each, accepts only theme and rgb colors passed with [wb_color()]
+#' @param fill_color,text_color,line_color a color for each, accepts only theme and rgb colors passed with [wb_color()]
 #' @param fill_transparency,text_transparency,line_transparency sets the alpha value of the shape, an integer value in the range 0 to 100
 #' @param text_align sets the alignment of the text. Can be 'left', 'center', 'right', 'justify', 'justifyLow', 'distributed', or 'thaiDistributed'
 #' @param rotation the rotation of the shape in degrees
