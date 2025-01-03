@@ -9,7 +9,7 @@ test_that("openxlsx2_types", {
   expect_equal(openxlsx2_celltype[["factor"]], openxlsx2_type(as.factor(1)))
 
   # even complex numbers
-  z <- complex(real = stats::rnorm(1), imaginary = stats::rnorm(1))
+  z <- complex(real = 0.9156691, imaginary = -0.5533739)
   expect_equal(openxlsx2_celltype[["character"]], openxlsx2_type(z))
 
   # wb_add_data_table() example: data frame with various types
