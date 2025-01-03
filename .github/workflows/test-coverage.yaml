@@ -30,6 +30,11 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
+      - name: Install development version of covr
+        run: |
+          pak::pkg_install("r-lib/covr")
+        shell: Rscript {0}
+
       - name: Test coverage
         run: |
           cov <- covr::package_coverage(
