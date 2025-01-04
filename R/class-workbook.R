@@ -9547,10 +9547,8 @@ wbWorkbook <- R6::R6Class(
       file
     ) {
 
-      # TODO file_ext2() ...
-      imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
-      imageType <- gsub("^\\.", "", imageType)
-      mediaNo <- length(self$media) + 1L
+      imageType <- file_ext2(file)
+      mediaNo   <- length(self$media) + 1L
 
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
