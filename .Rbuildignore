@@ -1,26 +1,25 @@
+# R project files
 ^.*\.Rproj$
-^\.Rproj\.user$
-cran-comments.md
-^revdep$
-^cran-comments\.md$
-^CRAN-RELEASE$
-^_pkgdown\.yml$
+^\.Rproj.user$
+
+# Documentation files
 ^docs$
 ^pkgdown$
+README.Rmd
+
+# Configuration files
 ^\.github$
 ^\.vscode$
-^\.pre-commit-config\.yaml$
-^img$
-^\.lintr$
-# temp MS files
+codecov.yml
+.lintr
+.covrignore
+
+# Temporary files
+.DS_Store
 \~\$.*\.[a-z]+$
-^codecov\.yml$
-^data-raw$
-^.covrignore$
-^doc$
-^Meta$
-^README\.Rmd$
 ^inst/img$
-^tests/testthat/_snaps$
-^tests/testthat/testfiles$
 vignettes/img/worksheet_styling.jpg
+
+# Test files
+^tests/testthat/_snaps/$
+^tests/testthat/testfiles/$

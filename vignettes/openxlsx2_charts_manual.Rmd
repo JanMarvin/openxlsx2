@@ -46,7 +46,7 @@ wb$add_worksheet("add_image")$add_image(file = myplot)
 
 You can include `{ggplot2}` plots similar to how you would include them with `openxlsx`. Call the plot first and afterwards use `wb_add_plot()`.
 
-```{r ggplot, purl = FALSE}
+```{r ggplot, purl = FALSE, fig.cap="ggplot2 output written into the worksheet"}
 if (requireNamespace("ggplot2")) {
 
 library(ggplot2)
