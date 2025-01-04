@@ -118,13 +118,23 @@ create_border <- function(
     ...
 ) {
 
+  # sml_CT_Border
   standardize(...)
+
+  assert_class(left_color,   "wbColour", or_null = TRUE)
+  assert_class(right_color,  "wbColour", or_null = TRUE)
+  assert_class(top_color,    "wbColour", or_null = TRUE)
+  assert_class(bottom_color, "wbColour", or_null = TRUE)
 
   if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
   if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
   if (!is.null(top_color))      top_color      <- xml_node_create("color", xml_attributes = top_color)
   if (!is.null(bottom_color))   bottom_color   <- xml_node_create("color", xml_attributes = bottom_color)
   if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
+
+  valid_borders <- c("none",  "thin",  "medium",  "dashed",  "dotted",  "thick",  "double",  "hair",  "mediumDashed",  "dashDot",  "mediumDashDot",  "dashDotDot",  "mediumDashDotDot", "slantDashDot", "")
+  borders       <- c(left, right, top, bottom, diagonal)
+  match.arg_wrapper(borders, valid_borders, several.ok = TRUE, fn_name = "create_border")
 
   # excel dies on style=\"\"
   if (!is.null(left))     left     <- c(style = left)
