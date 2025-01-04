@@ -26,15 +26,15 @@ create_font(
 \arguments{
 \item{b}{Logical, whether the font should be bold.}
 
-\item{charset}{Character, the character set to be used.}
+\item{charset}{Character, the character set to be used. The list of valid IDs can be found in the \strong{Details} section of \code{\link[=fmt_txt]{fmt_txt()}}.}
 
-\item{color}{Character, the RGB color of the font. Default is "FF000000".}
+\item{color}{A \code{\link[=wb_color]{wb_color()}}, the color of the font. Default is "FF000000".}
 
 \item{condense}{Logical, whether the font should be condensed.}
 
 \item{extend}{Logical, whether the font should be extended.}
 
-\item{family}{Character, the font family. Default is "2".}
+\item{family}{Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused}
 
 \item{i}{Logical, whether the font should be italic.}
 

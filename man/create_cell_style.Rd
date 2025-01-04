@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_cell_style}
 \alias{create_cell_style}
-\title{Helper to create a cell style}
+\title{Create cell style}
 \usage{
 create_cell_style(
   border_id = "",
@@ -28,43 +28,37 @@ create_cell_style(
 )
 }
 \arguments{
-\item{border_id}{Dummy parameter for the border ID.}
+\item{border_id, fill_id, font_id, num_fmt_id}{IDs for style elements.}
 
-\item{fill_id}{Dummy parameter for the fill ID.}
+\item{pivot_button}{Logical parameter for the pivot button.}
 
-\item{font_id}{Dummy parameter for the font ID.}
+\item{quote_prefix}{Logical parameter for the quote prefix. (This way a number in a character cell will not cause a warning).}
 
-\item{num_fmt_id}{A numFmt ID for a built-in style. The list of valid IDs and their corresponding formats can be found in the \strong{Details} section.}
-
-\item{pivot_button}{Dummy parameter for the pivot button.}
-
-\item{quote_prefix}{Dummy parameter for the quote prefix.}
-
-\item{xf_id}{Dummy parameter for the xf ID.}
+\item{xf_id}{Dummy parameter for the xf ID. (Used only with named format styles).}
 
 \item{horizontal}{Character, alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'.}
 
-\item{indent}{Dummy parameter for the indent.}
+\item{indent}{Integer parameter for the indent.}
 
-\item{justify_last_line}{Dummy parameter for justifying the last line.}
+\item{justify_last_line}{Logical for justifying the last line.}
 
-\item{reading_order}{Dummy parameter for reading order.}
+\item{reading_order}{Logical parameter for reading order. 0 (Left to right; default) or 1 (right to left).}
 
 \item{relative_indent}{Dummy parameter for relative indent.}
 
-\item{shrink_to_fit}{Dummy parameter for shrink to fit.}
+\item{shrink_to_fit}{Logical parameter for shrink to fit.}
 
-\item{text_rotation}{Dummy parameter for text rotation.}
+\item{text_rotation}{Integer parameter for text rotation (-180 to 180).}
 
 \item{vertical}{Character, alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'.}
 
-\item{wrap_text}{Dummy parameter for wrap text.}
+\item{wrap_text}{Logical parameter for wrap text. (Required for linebreaks).}
 
 \item{ext_lst}{Dummy parameter for extension list.}
 
-\item{hidden}{Dummy parameter for hidden.}
+\item{hidden}{Logical parameter for hidden.}
 
-\item{locked}{Dummy parameter for locked.}
+\item{locked}{Logical parameter for locked. (Impacts the cell only).}
 
 \item{...}{Reserved for additional arguments.}
 }
@@ -75,7 +69,7 @@ A formatted cell style object to be used in a spreadsheet.
 This function creates a cell style for a spreadsheet, including attributes such as borders, fills, fonts, and number formats.
 }
 \details{
-\tabular{ll}{
+It is possible to use a few built-in styles. The list of valid IDs and their corresponding formats is below.\tabular{ll}{
    "ID" \tab "numFmt" \cr
    "0" \tab "General" \cr
    "1" \tab "0" \cr
@@ -106,6 +100,22 @@ This function creates a cell style for a spreadsheet, including attributes such 
    "48" \tab "##0.0E+0" \cr
    "49" \tab "@" \cr
 }
+}
+\examples{
+foo_fill <- create_fill(patternType = "lightHorizontal",
+                        fgColor = wb_color("blue"),
+                        bgColor = wb_color("orange"))
+foo_font <- create_font(sz = 36, b = TRUE, color = wb_color("yellow"))
+
+wb <- wb_workbook()
+wb$styles_mgr$add(foo_fill, "foo")
+wb$styles_mgr$add(foo_font, "foo")
+
+foo_style <- create_cell_style(
+  fill_id = wb$styles_mgr$get_fill_id("foo"),
+  font_id = wb$styles_mgr$get_font_id("foo")
+)
+
 }
 \seealso{
 \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}

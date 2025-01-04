@@ -5,21 +5,21 @@
 \title{Create fill pattern}
 \usage{
 create_fill(
-  gradientFill = "",
-  patternType = "",
-  bgColor = NULL,
-  fgColor = NULL,
+  gradient_fill = "",
+  pattern_type = "",
+  bg_color = NULL,
+  fg_color = NULL,
   ...
 )
 }
 \arguments{
-\item{gradientFill}{Character, specifying complex gradient fills.}
+\item{gradient_fill}{Character, specifying complex gradient fills.}
 
-\item{patternType}{Character, specifying the fill pattern type. Valid values are "none" (default), "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625".}
+\item{pattern_type}{Character, specifying the fill pattern type. Valid values are "none" (default), "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625".}
 
-\item{bgColor}{Character, specifying the background color in hex8 format (alpha, red, green, blue) for pattern fills.}
+\item{bg_color}{Character, specifying the background color in hex8 format (alpha, red, green, blue) for pattern fills.}
 
-\item{fgColor}{Character, specifying the foreground color in hex8 format (alpha, red, green, blue) for pattern fills.}
+\item{fg_color}{Character, specifying the foreground color in hex8 format (alpha, red, green, blue) for pattern fills.}
 
 \item{...}{Additional arguments passed to other methods.}
 }
@@ -27,13 +27,13 @@ create_fill(
 A formatted fill pattern object to be used in a spreadsheet.
 }
 \description{
-This function creates fill patterns for a cell in a spreadsheet. Fill patterns can be simple solid colors or more complex gradient fills.
+This function creates fill patterns for a cell in a spreadsheet. Fill patterns can be simple solid colors or more complex gradient fills. For certain pattern types, two colors are needed.
 }
 \examples{
 # Create a solid fill pattern with foreground color
 fill <- create_fill(
-  patternType = "solid",
-  fgColor = wb_color(hex = "FFFF0000")
+  pattern_type = "solid",
+  fg_color = wb_color(hex = "FFFF0000")
 )
 
 }

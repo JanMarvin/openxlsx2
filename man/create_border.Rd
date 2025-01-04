@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_border}
 \alias{create_border}
-\title{Helper to create a border}
+\title{Create border format}
 \usage{
 create_border(
   diagonal_down = "",
@@ -22,43 +22,25 @@ create_border(
   top = NULL,
   top_color = NULL,
   vertical = "",
+  start_color = NULL,
+  end_color = NULL,
+  horizontal_color = NULL,
+  vertical_color = NULL,
   ...
 )
 }
 \arguments{
-\item{diagonal_down}{Logical, whether the diagonal border goes from the top left to the bottom right.}
+\item{diagonal_down, diagonal_up}{Logical, whether the diagonal border goes from the bottom left to the top right, or top left to bottom right.}
 
-\item{diagonal_up}{Logical, whether the diagonal border goes from the bottom left to the top right.}
+\item{outline}{Logical, whether the border is.}
 
-\item{outline}{Logical, whether the border should be an outline border.}
+\item{bottom, left, right, top, diagonal}{Character, the style of the border.}
 
-\item{bottom}{Character, the style of the bottom border.}
+\item{bottom_color, left_color, right_color, top_color, diagonal_color, start_color, end_color, horizontal_color, vertical_color}{a \code{\link[=wb_color]{wb_color()}}, the color of the border.}
 
-\item{bottom_color}{Character, the color of the bottom border created with \code{\link[=wb_color]{wb_color()}}.}
+\item{horizontal, vertical}{Character, the style of the inner border (only for dxf objects).}
 
-\item{diagonal}{Character, the style of the diagonal border.}
-
-\item{diagonal_color}{Character, the color of the diagonal border created with \code{\link[=wb_color]{wb_color()}}.}
-
-\item{end}{Logical, whether the border is the end border.}
-
-\item{horizontal}{Logical, whether the border is horizontal.}
-
-\item{left}{Character, the style of the left border.}
-
-\item{left_color}{Character, the color of the left border created with \code{\link[=wb_color]{wb_color()}}.}
-
-\item{right}{Character, the style of the right border.}
-
-\item{right_color}{Character, the color of the right border created with \code{\link[=wb_color]{wb_color()}}.}
-
-\item{start}{Logical, whether the border is the start border.}
-
-\item{top}{Character, the style of the top border.}
-
-\item{top_color}{Character, the color of the top border created with \code{\link[=wb_color]{wb_color()}}.}
-
-\item{vertical}{Logical, whether the border is vertical.}
+\item{start, end}{leading and trailing edge of a border.}
 
 \item{...}{Additional arguments passed to other methods.}
 }
