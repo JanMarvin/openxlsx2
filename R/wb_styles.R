@@ -247,9 +247,11 @@ create_font <- function(
     ...
 ) {
 
+  # sml_CT_RPrElt
   standardize(...)
 
   if (b != "") {
+    if (!as_xml_attr(b) %in% c("0", "1", "false", "true")) stop("b must be \"0\" or \"1\"", call. = FALSE)
     b <- xml_node_create("b", xml_attributes = c("val" = as_xml_attr(b)))
   }
 
@@ -259,22 +261,28 @@ create_font <- function(
 
   if (!is.null(color) && !all(color == "")) {
     # alt xml_attributes(theme:)
+    assert_class(color, "wbColour")
     color <- xml_node_create("color", xml_attributes = color)
   }
 
   if (condense != "") {
+    if (!as_xml_attr(condense) %in% c("0", "1", "false", "true")) stop("consense must be \"0\" or \"1\"", call. = FALSE)
     condense <- xml_node_create("condense", xml_attributes = c("val" = as_xml_attr(condense)))
   }
 
   if (extend != "") {
+    if (!as_xml_attr(extend) %in% c("0", "1", "false", "true")) stop("extend must be \"0\" or \"1\"", call. = FALSE)
     extend <- xml_node_create("extend", xml_attributes = c("val" = as_xml_attr(extend)))
   }
 
   if (family != "") {
+    if (as.integer(family) < 0 || as.integer(family) > 14)
+      stop("family needs to be in the range of 0 to 14", call. = FALSE)
     family <- xml_node_create("family", xml_attributes = c("val" = family))
   }
 
   if (i != "") {
+    if (!as_xml_attr(i) %in% c("0", "1", "false", "true")) stop("i must be \"0\" or \"1\"", call. = FALSE)
     i <- xml_node_create("i", xml_attributes = c("val" = as_xml_attr(i)))
   }
 
@@ -284,18 +292,23 @@ create_font <- function(
   }
 
   if (outline != "") {
+    if (!as_xml_attr(outline) %in% c("0", "1", "false", "true")) stop("outline must be \"0\" or \"1\"", call. = FALSE)
     outline <- xml_node_create("outline", xml_attributes = c("val" = as_xml_attr(outline)))
   }
 
   if (scheme != "") {
+    valid_scheme <- c("minor", "major", "none")
+    match.arg_wrapper(scheme, valid_scheme, fn_name = "create_font")
     scheme <- xml_node_create("scheme", xml_attributes = c("val" = scheme))
   }
 
   if (shadow != "") {
+    if (!as_xml_attr(shadow) %in% c("0", "1", "false", "true")) stop("shadow must be \"0\" or \"1\"", call. = FALSE)
     shadow <- xml_node_create("shadow", xml_attributes = c("val" = as_xml_attr(shadow)))
   }
 
   if (strike != "") {
+    if (!as_xml_attr(strike) %in% c("0", "1", "false", "true")) stop("strike must be \"0\" or \"1\"", call. = FALSE)
     strike <- xml_node_create("strike", xml_attributes = c("val" = as_xml_attr(strike)))
   }
 
@@ -304,10 +317,14 @@ create_font <- function(
   }
 
   if (u != "") {
+    valid_underlines <- c("single", "double", "singleAccounting", "doubleAccounting", "none")
+    match.arg_wrapper(u, valid_underlines, fn_name = "create_font")
     u <- xml_node_create("u", xml_attributes = c("val" = as_xml_attr(u)))
   }
 
   if (vert_align != "") {
+    valid_underlines <- c("baseline", "superscript", "subscript")
+    match.arg_wrapper(vert_align, valid_underlines, fn_name = "create_font")
     vert_align <- xml_node_create("vertAlign", xml_attributes = c("val" = as_xml_attr(vert_align)))
   }
 
