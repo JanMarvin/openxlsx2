@@ -1,6 +1,6 @@
 # R project files
 ^.*\.Rproj$
-^\.Rproj.user$
+^\.Rproj\.user$
 
 # Documentation files
 ^docs$
