@@ -160,17 +160,17 @@ guess_col_type <- function(tt) {
   types <- vector("numeric", NCOL(tt))
   names(types) <- names(tt)
 
+  # Identify the unique types present in the data frame
+  uu <- lapply(tt, unique)
+  unique_types <- unique(unlist(uu))
+  unique_types[is.na(unique_types)] <- "n"
+
   # Function to check column type
   check_col_type <- function(x, type_char) {
     all(unique(x) == type_char, na.rm = TRUE)
   }
 
   check_type <- function(x) vapply(uu, check_col_type, NA, type_char = x)
-
-  # Identify the unique types present in the data frame
-  uu <- lapply(tt, unique)
-  unique_types <- unique(unlist(uu))
-  unique_types[is.na(unique_types)] <- "n"
 
   # Check for each type and update types vector accordingly
   if ("n" %in% unique_types) {

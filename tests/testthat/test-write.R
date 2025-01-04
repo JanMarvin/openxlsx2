@@ -1060,7 +1060,7 @@ test_that("comma option works", {
   op <- options("openxlsx2.commaFormat" = "#.0")
   on.exit(options(op), add = TRUE)
 
-  dat <- data.frame(x = 1:10 + pi)
+  dat <- data.frame(x = seq(0, 10, length.out = 10))
   class(dat$x) <- c("comma", class(dat$x))
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = dat)
