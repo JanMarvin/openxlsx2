@@ -375,6 +375,8 @@ create_fill <- function(
 ) {
 
   standardize_color_names(...)
+  assert_class(bgColor, "wbColour", or_null = TRUE)
+  assert_class(fgColor, "wbColour", or_null = TRUE)
 
   if (!is.null(bgColor) && !all(bgColor == "")) {
     bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
@@ -387,6 +389,9 @@ create_fill <- function(
   # if gradient fill is specified we can not have patternFill too. otherwise
   # we end up with a solid black fill
   if (gradientFill == "") {
+    valid_pattern <- c("none", "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625")
+    match.arg_wrapper(patternType, valid_pattern, fn_name = "create_fill")
+
     patternFill <- xml_node_create("patternFill",
       xml_children   = c(fgColor, bgColor),
       xml_attributes = c(patternType = patternType)
