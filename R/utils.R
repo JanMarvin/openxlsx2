@@ -1366,6 +1366,12 @@ ave2 <- function(x, y, FUN) {
   x
 }
 
+# file_ext function to avoid a depencency on tools. if we ever rely on tools,
+# this can be replaced by tools::file_ext
+file_ext2 <- function(filepath) {
+  sub(".*\\.", "", basename2(filepath))
+}
+
 if (getRversion() < "4.0.0") {
   deparse1 <- function(expr, collapse = " ") {
     paste(deparse(expr), collapse = collapse)

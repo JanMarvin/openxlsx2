@@ -1433,7 +1433,7 @@ wb_load <- function(
     if (length(activeX)) {
 
       wb$activeX <- activeX
-      ax_sel <- tools::file_ext(activeX) == "xml"
+      ax_sel <- file_ext2(activeX) == "xml"
       ax_fls <- basename2(activeX[ax_sel])
 
       wb$append("Content_Types", '<Default Extension="bin" ContentType="application/vnd.ms-office.activeX"/>')

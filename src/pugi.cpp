@@ -1,7 +1,7 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control, bool pointer) {
 
   xmldoc *doc = new xmldoc;
   pugi::xml_parse_result result;
@@ -23,44 +23,22 @@ SEXP readXMLPtr(std::string path, bool isfile, bool escapes, bool declaration, b
     Rcpp::stop("xml import unsuccessful");
   }
 
-  XPtrXML ptr(doc, true);
-  ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
-  ptr.attr("escapes") = escapes;
-  ptr.attr("empty_tags") = empty_tags;
-  ptr.attr("skip_control") = skip_control;
-  return ptr;
-}
-
-// [[Rcpp::export]]
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control) {
-
-  pugi::xml_document doc;
-  pugi::xml_parse_result result;
-
-  // pugi::parse_default without escapes flag
-  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_eol;
-  if (escapes) pugi_parse_flags |= pugi::parse_escapes;
-  if (declaration) pugi_parse_flags |= pugi::parse_declaration;
-  if (whitespace) pugi_parse_flags |= pugi::parse_ws_pcdata_single;
-  if (!whitespace) pugi_parse_flags |= pugi::parse_trim_pcdata;
-
   uint32_t pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
   if (empty_tags) pugi_format_flags |= pugi::format_no_empty_element_tags;
   if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
 
-  if (isfile) {
-    result = doc.load_file(path.c_str(), pugi_parse_flags, pugi::encoding_utf8);
-  } else {
-    result = doc.load_string(path.c_str(), pugi_parse_flags);
-  }
-
-  if (!result) {
-    Rcpp::stop("xml import unsuccessful");
+  if (pointer) {
+    XPtrXML ptr(doc, true);
+    ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
+    ptr.attr("escapes") = escapes;
+    ptr.attr("empty_tags") = empty_tags;
+    ptr.attr("skip_control") = skip_control;
+    return ptr;
   }
 
   std::ostringstream oss;
-  doc.print(oss, " ", pugi_format_flags);
+  doc->print(oss, " ", pugi_format_flags);
   return  Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
