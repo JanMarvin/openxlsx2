@@ -420,14 +420,12 @@ create_fill <- function(
 #' @param pivot_button dummy
 #' @param quote_prefix dummy
 #' @param xf_id dummy
-#' @param horizontal dummy
 #' @param indent dummy
 #' @param justify_last_line dummy
 #' @param reading_order dummy
 #' @param relative_indent dummy
 #' @param shrink_to_fit dummy
 #' @param text_rotation dummy
-#' @param vertical dummy
 #' @param wrap_text dummy
 #' @param ext_lst dummy
 #' @param hidden dummy
@@ -492,6 +490,8 @@ create_cell_style <- function(
     locked            = "",
     ...
 ) {
+
+  # CT_Xf
   n <- length(num_fmt_id)
 
   arguments <- c(ls(), "is_cell_style_xf")
@@ -500,8 +500,8 @@ create_cell_style <- function(
 
   is_cell_style_xf <- isTRUE(args$is_cell_style_xf)
 
-  applyAlignment <- ""
-  if (any(horizontal != "") || any(text_rotation != "") || any(vertical != "")) applyAlignment <- "1"
+  applyAlignment <- "" # CT_CellAlignment
+  if (any(horizontal != "") || any(text_rotation != "") || any(vertical != "") || any(wrap_text != "") || any(indent != "") || any(relative_indent != "") || any(justify_last_line != "") || any(shrink_to_fit != "") || any(reading_order != "")) applyAlignment <- "1"
   if (is_cell_style_xf) applyAlignment <- "0"
 
   applyBorder <- ""
@@ -525,32 +525,56 @@ create_cell_style <- function(
   if (is_cell_style_xf) applyProtection <- "0"
 
 
+  if (nchar(horizontal)) {
+    valid_horizontal <- c("general", "left", "center", "right", "fill", "justify", "centerContinuous", "distributed")
+    match.arg_wrapper(horizontal, valid_horizontal, fn_name = "create_cell_style")
+  }
+
+  if (nchar(vertical)) {
+    valid_vertical <- c("top", "center", "bottom", "justify", "distributed")
+    match.arg_wrapper(vertical, valid_vertical, fn_name = "create_cell_style")
+  }
+
+  assert_xml_bool(applyAlignment)
+  assert_xml_bool(applyBorder)
+  assert_xml_bool(applyFill)
+  assert_xml_bool(applyFont)
+  assert_xml_bool(applyNumberFormat)
+  assert_xml_bool(applyProtection)
+  assert_xml_bool(pivot_button)
+  assert_xml_bool(quote_prefix)
+  assert_xml_bool(justify_last_line)
+  assert_xml_bool(shrink_to_fit)
+  assert_xml_bool(wrap_text)
+  assert_xml_bool(hidden)
+  assert_xml_bool(locked)
+
   df_cellXfs <- data.frame(
-    applyAlignment    = rep(applyAlignment, n),
-    applyBorder       = rep(applyBorder, n),
-    applyFill         = rep(applyFill, n),
-    applyFont         = rep(applyFont, n),
-    applyNumberFormat = rep(applyNumberFormat, n),
-    applyProtection   = rep(applyProtection, n),
-    borderId          = rep(as_xml_attr(border_id), n),
-    fillId            = rep(as_xml_attr(fill_id), n),
-    fontId            = rep(as_xml_attr(font_id), n),
-    numFmtId          = as_xml_attr(num_fmt_id),
-    pivotButton       = rep(as_xml_attr(pivot_button), n),
-    quotePrefix       = rep(as_xml_attr(quote_prefix), n),
-    xfId              = rep(as_xml_attr(xf_id), n),
+    applyAlignment    = rep(applyAlignment, n), # bool
+    applyBorder       = rep(applyBorder, n), # bool
+    applyFill         = rep(applyFill, n), # bool
+    applyFont         = rep(applyFont, n), # bool
+    applyNumberFormat = rep(applyNumberFormat, n), # bool
+    applyProtection   = rep(applyProtection, n), # bool
+    borderId          = rep(as_xml_attr(border_id), n), # int
+    fillId            = rep(as_xml_attr(fill_id), n), # int
+    fontId            = rep(as_xml_attr(font_id), n), # int
+    numFmtId          = as_xml_attr(num_fmt_id), # int
+    pivotButton       = rep(as_xml_attr(pivot_button), n), # bool
+    quotePrefix       = rep(as_xml_attr(quote_prefix), n), # bool
+    xfId              = rep(as_xml_attr(xf_id), n), # int
     horizontal        = rep(as_xml_attr(horizontal), n),
-    indent            = rep(as_xml_attr(indent), n),
-    justifyLastLine   = rep(as_xml_attr(justify_last_line), n),
-    readingOrder      = rep(as_xml_attr(reading_order), n),
-    relativeIndent    = rep(as_xml_attr(relative_indent), n),
-    shrinkToFit       = rep(as_xml_attr(shrink_to_fit), n),
-    textRotation      = rep(as_xml_attr(text_rotation), n),
+    indent            = rep(as_xml_attr(indent), n), # int
+    justifyLastLine   = rep(as_xml_attr(justify_last_line), n), # bool
+    readingOrder      = rep(as_xml_attr(reading_order), n), # int
+    relativeIndent    = rep(as_xml_attr(relative_indent), n), # int
+    shrinkToFit       = rep(as_xml_attr(shrink_to_fit), n), # bool
+    textRotation      = rep(as_xml_attr(text_rotation), n), # int
     vertical          = rep(as_xml_attr(vertical), n),
-    wrapText          = rep(as_xml_attr(wrap_text), n),
+    wrapText          = rep(as_xml_attr(wrap_text), n), # bool
     extLst            = rep(ext_lst, n),
-    hidden            = rep(as_xml_attr(hidden), n),
-    locked            = rep(as_xml_attr(locked), n),
+    hidden            = rep(as_xml_attr(hidden), n), # bool
+    locked            = rep(as_xml_attr(locked), n), # bool
     stringsAsFactors  = FALSE
   )
 
