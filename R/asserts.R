@@ -46,6 +46,17 @@ assert_named_region <- function(x) {
     stop("name cannot look like a cell reference.")
 }
 
+assert_xml_bool <- function(x) {
+  abort <- TRUE
+  if (length(x) && nchar(x)) {
+    abort <- !all(as_xml_attr(x) %in% c("0", "1", "false", "true"))
+  } else if (nchar(x) == 0) {
+    abort <- FALSE
+  }
+
+  if (abort) stop(sprintf("%s must be \"0\" or \"1\"", deparse(substitute(x))), call. = FALSE)
+}
+
 match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.frame()) {
   sx <- as.character(substitute(x, envir))
 
