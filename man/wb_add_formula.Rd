@@ -106,7 +106,7 @@ wb$add_worksheet()$
 
 # add shared formula
 wb$add_worksheet()$
- add_data(x = matrix(rnorm(5*5), ncol = 5, nrow = 5))$
+ add_data(x = matrix(1:25, ncol = 5, nrow = 5))$
  add_formula(x = "SUM($A2:A2)", dims = "A8:E12", shared = TRUE)
 
 # add a custom formula, first define it, then use it

@@ -364,7 +364,7 @@ knitr::include_graphics("img/cf_top_n.jpg")
 ```
 
 ```{r}
-wb$add_data("topN", data.frame(x = 1:10, y = rnorm(10)))
+wb$add_data("topN", data.frame(x = 1:10, y = sample(1:100, 10)))
 ```
 
 Highlight top 5 values in column `x`
@@ -399,7 +399,7 @@ knitr::include_graphics("img/cf_bottom_n.jpg")
 ```
 
 ```{r}
-wb$add_data("bottomN", data.frame(x = 1:10, y = rnorm(10)))
+wb$add_data("bottomN", data.frame(x = 1:10, y = sample(1:100, 10)))
 ```
 
 Highlight bottom 5 values in column `x`
