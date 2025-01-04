@@ -3283,7 +3283,8 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #'
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")$add_data("S1", mtcars)
-#' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin", inner_vcolor = c(rgb="FF808080"))
+#' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin",
+#'  inner_vcolor = wb_color(hex = "FF808080"))
 #' @family styles
 #' @export
 wb_add_border <- function(

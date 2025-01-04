@@ -3,12 +3,16 @@
 ## New features
 
 * It is now possible to create shapes using `create_shape()`. [1231](https://github.com/JanMarvin/openxlsx2/pull/1231)
+* Various input checks were added to the style helpers
 
 ## Fixes
 
 * The first formula in a workbook can now be a shared formula. [1223](https://github.com/JanMarvin/openxlsx2/pull/1223)
 * Avoid passing ASCII strings through `Rcpp::String()`. Previously all `cc` columns were passed through `Rcpp::String()` to avoid encoding issues on non unicode systems. [1224](https://github.com/JanMarvin/openxlsx2/pull/1224)
 * `fmt_txt()` is now indifferent about `color` and `colour`. [1229](https://github.com/JanMarvin/openxlsx2/pull/1229)
+
+## Breaking changes
+* Style helpers will accept colors only if provided via `wb_color()`. This broke a single example case that was still using `c(rgb = "FF808080")` this can be converted to `wb_color(hex = "FF808080")`.
 
 
 ***************************************************************************

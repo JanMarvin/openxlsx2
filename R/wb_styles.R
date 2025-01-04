@@ -121,10 +121,11 @@ create_border <- function(
   # sml_CT_Border
   standardize(...)
 
-  assert_class(left_color,   "wbColour", or_null = TRUE)
-  assert_class(right_color,  "wbColour", or_null = TRUE)
-  assert_class(top_color,    "wbColour", or_null = TRUE)
-  assert_class(bottom_color, "wbColour", or_null = TRUE)
+  assert_class(left_color,     "wbColour", or_null = TRUE)
+  assert_class(right_color,    "wbColour", or_null = TRUE)
+  assert_class(top_color,      "wbColour", or_null = TRUE)
+  assert_class(bottom_color,   "wbColour", or_null = TRUE)
+  assert_class(diagonal_color, "wbColour", or_null = TRUE)
 
   if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
   if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
