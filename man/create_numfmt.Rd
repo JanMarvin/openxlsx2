@@ -7,12 +7,23 @@
 create_numfmt(numFmtId, formatCode)
 }
 \arguments{
-\item{numFmtId}{an id, the list can be found in the \strong{Details} of \code{\link[=create_cell_style]{create_cell_style()}}}
+\item{numFmtId}{An ID representing the number format. The list of valid IDs can be found in the \strong{Details} section of \code{\link[=create_cell_style]{create_cell_style()}}.}
 
-\item{formatCode}{a format code}
+\item{formatCode}{A format code that specifies the display format for numbers. This can include custom formats for dates, times, and other numeric values.}
+}
+\value{
+A formatted number format object to be used in a spreadsheet.
 }
 \description{
-Create number format
+This function creates a number format for a cell in a spreadsheet. Number formats define how numeric values are displayed, including dates, times, currencies, percentages, and more.
+}
+\examples{
+# Create a number format for currency
+numfmt <- create_numfmt(
+  numFmtId = 164,
+  formatCode = "$#,##0.00"
+)
+
 }
 \seealso{
 \code{\link[=wb_add_numfmt]{wb_add_numfmt()}}

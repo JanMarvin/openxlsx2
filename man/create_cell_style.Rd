@@ -28,48 +28,51 @@ create_cell_style(
 )
 }
 \arguments{
-\item{border_id}{dummy}
+\item{border_id}{Dummy parameter for the border ID.}
 
-\item{fill_id}{dummy}
+\item{fill_id}{Dummy parameter for the fill ID.}
 
-\item{font_id}{dummy}
+\item{font_id}{Dummy parameter for the font ID.}
 
-\item{num_fmt_id}{a numFmt ID for a builtin style}
+\item{num_fmt_id}{A numFmt ID for a built-in style. The list of valid IDs and their corresponding formats can be found in the \strong{Details} section.}
 
-\item{pivot_button}{dummy}
+\item{pivot_button}{Dummy parameter for the pivot button.}
 
-\item{quote_prefix}{dummy}
+\item{quote_prefix}{Dummy parameter for the quote prefix.}
 
-\item{xf_id}{dummy}
+\item{xf_id}{Dummy parameter for the xf ID.}
 
-\item{horizontal}{alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'}
+\item{horizontal}{Character, alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'.}
 
-\item{indent}{dummy}
+\item{indent}{Dummy parameter for the indent.}
 
-\item{justify_last_line}{dummy}
+\item{justify_last_line}{Dummy parameter for justifying the last line.}
 
-\item{reading_order}{dummy}
+\item{reading_order}{Dummy parameter for reading order.}
 
-\item{relative_indent}{dummy}
+\item{relative_indent}{Dummy parameter for relative indent.}
 
-\item{shrink_to_fit}{dummy}
+\item{shrink_to_fit}{Dummy parameter for shrink to fit.}
 
-\item{text_rotation}{dummy}
+\item{text_rotation}{Dummy parameter for text rotation.}
 
-\item{vertical}{alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'}
+\item{vertical}{Character, alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'.}
 
-\item{wrap_text}{dummy}
+\item{wrap_text}{Dummy parameter for wrap text.}
 
-\item{ext_lst}{dummy}
+\item{ext_lst}{Dummy parameter for extension list.}
 
-\item{hidden}{dummy}
+\item{hidden}{Dummy parameter for hidden.}
 
-\item{locked}{dummy}
+\item{locked}{Dummy parameter for locked.}
 
-\item{...}{reserved for additional arguments}
+\item{...}{Reserved for additional arguments.}
+}
+\value{
+A formatted cell style object to be used in a spreadsheet.
 }
 \description{
-Helper to create a cell style
+This function creates a cell style for a spreadsheet, including attributes such as borders, fills, fonts, and number formats.
 }
 \details{
 \tabular{ll}{

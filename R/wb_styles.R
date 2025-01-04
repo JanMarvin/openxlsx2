@@ -74,27 +74,43 @@ import_styles <- function(x) {
   z
 }
 
-# TODO guessing here
 #' Helper to create a border
+#'
 #' @description
-#' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
-#' Border colors can be created with [wb_color()]
-#' @param diagonal_down x
-#' @param diagonal_up x
-#' @param outline x
-#' @param bottom X
-#' @param bottom_color,diagonal_color,left_color,right_color,top_color a color created with [wb_color()]
-#' @param diagonal X
-#' @param end x,
-#' @param horizontal x
-#' @param left x
-#' @param right x
-#' @param start x
-#' @param top x
-#' @param vertical x
-#' @param ... x
+#' This function creates border styles for a cell in a spreadsheet. Border styles can be any of the following: "none", "thin", "medium", "dashed", "dotted", "thick", "double", "hair", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot". Border colors can be created with [wb_color()].
+#'
+#' @param diagonal_down Logical, whether the diagonal border goes from the top left to the bottom right.
+#' @param diagonal_up Logical, whether the diagonal border goes from the bottom left to the top right.
+#' @param outline Logical, whether the border should be an outline border.
+#' @param bottom Character, the style of the bottom border.
+#' @param bottom_color Character, the color of the bottom border created with [wb_color()].
+#' @param diagonal Character, the style of the diagonal border.
+#' @param diagonal_color Character, the color of the diagonal border created with [wb_color()].
+#' @param end Logical, whether the border is the end border.
+#' @param horizontal Logical, whether the border is horizontal.
+#' @param left Character, the style of the left border.
+#' @param left_color Character, the color of the left border created with [wb_color()].
+#' @param right Character, the style of the right border.
+#' @param right_color Character, the color of the right border created with [wb_color()].
+#' @param start Logical, whether the border is the start border.
+#' @param top Character, the style of the top border.
+#' @param top_color Character, the color of the top border created with [wb_color()].
+#' @param vertical Logical, whether the border is vertical.
+#' @param ... Additional arguments passed to other methods.
+#'
+#' @return A formatted border object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_border()]
 #' @family style creating functions
+#'
+#' @examples
+#' # Create a border with a thick bottom and thin top
+#' border <- create_border(
+#'   bottom = "thick",
+#'   bottom_color = wb_color("FF0000"),
+#'   top = "thin",
+#'   top_color = wb_color("00FF00")
+#' )
 #'
 #' @export
 create_border <- function(
@@ -177,10 +193,25 @@ create_border <- function(
 }
 
 #' Create number format
-#' @param numFmtId an id, the list can be found in the **Details** of [create_cell_style()]
-#' @param formatCode a format code
+#'
+#' @description
+#' This function creates a number format for a cell in a spreadsheet. Number formats define how numeric values are displayed, including dates, times, currencies, percentages, and more.
+#'
+#' @param numFmtId An ID representing the number format. The list of valid IDs can be found in the **Details** section of [create_cell_style()].
+#' @param formatCode A format code that specifies the display format for numbers. This can include custom formats for dates, times, and other numeric values.
+#'
+#' @return A formatted number format object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_numfmt()]
 #' @family style creating functions
+#'
+#' @examples
+#' # Create a number format for currency
+#' numfmt <- create_numfmt(
+#'   numFmtId = 164,
+#'   formatCode = "$#,##0.00"
+#' )
+#'
 #' @export
 create_numfmt <- function(numFmtId, formatCode) {
 
@@ -201,26 +232,42 @@ create_numfmt <- function(numFmtId, formatCode) {
 }
 
 #' Create font format
-#' @param b bold
-#' @param charset charset
-#' @param color rgb color: default "FF000000"
-#' @param condense condense
-#' @param extend extend
-#' @param family font family: default "2"
-#' @param i italic
-#' @param name font name: default "Aptos Narrow"
-#' @param outline outline
-#' @param scheme font scheme: default "minor"
-#' @param shadow shadow
-#' @param strike strike
-#' @param sz font size: default "11",
-#' @param u underline
-#' @param vert_align vertical alignment
-#' @param ... ...
+#'
+#' @description
+#' This function creates font styles for a cell in a spreadsheet. It allows customization of various font properties including bold, italic, color, size, underline, and more.
+#'
+#' @param b Logical, whether the font should be bold.
+#' @param charset Character, the character set to be used.
+#' @param color Character, the RGB color of the font. Default is "FF000000".
+#' @param condense Logical, whether the font should be condensed.
+#' @param extend Logical, whether the font should be extended.
+#' @param family Character, the font family. Default is "2".
+#' @param i Logical, whether the font should be italic.
+#' @param name Character, the name of the font. Default is "Aptos Narrow".
+#' @param outline Logical, whether the font should have an outline.
+#' @param scheme Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".
+#' @param shadow Logical, whether the font should have a shadow.
+#' @param strike Logical, whether the font should have a strikethrough.
+#' @param sz Character, the size of the font. Default is "11".
+#' @param u Character, the underline style. Valid values are "single", "double", "singleAccounting", "doubleAccounting", "none".
+#' @param vert_align Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".
+#' @param ... Additional arguments passed to other methods.
+#'
+#' @return A formatted font object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_font()]
 #' @family style creating functions
+#'
 #' @examples
-#' font <- create_font()
+#' # Create a font with bold and italic styles
+#' font <- create_font(
+#'   b = TRUE,
+#'   i = TRUE,
+#'   color = wb_color(hex = "FF00FF00"),
+#'   name = "Arial",
+#'   sz = "12"
+#' )
+#'
 #' # openxml has the alpha value leading
 #' hex8 <- unlist(xml_attr(read_xml(font), "font", "color"))
 #' hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1, 2))
@@ -228,6 +275,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' # # write test color
 #' # col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
 #' # cat(col("Test"))
+#'
 #' @export
 create_font <- function(
     b          = "",
@@ -358,13 +406,26 @@ create_font <- function(
 
 #' Create fill pattern
 #'
-#' @param gradientFill complex fills
-#' @param patternType various: default is "none", but also "solid", or a color like "gray125"
-#' @param bgColor hex8 color with alpha, red, green, blue only for patternFill
-#' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
-#' @param ... ...
+#' @description
+#' This function creates fill patterns for a cell in a spreadsheet. Fill patterns can be simple solid colors or more complex gradient fills.
+#'
+#' @param gradientFill Character, specifying complex gradient fills.
+#' @param patternType Character, specifying the fill pattern type. Valid values are "none" (default), "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625".
+#' @param bgColor Character, specifying the background color in hex8 format (alpha, red, green, blue) for pattern fills.
+#' @param fgColor Character, specifying the foreground color in hex8 format (alpha, red, green, blue) for pattern fills.
+#' @param ... Additional arguments passed to other methods.
+#'
+#' @return A formatted fill pattern object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_fill()]
 #' @family style creating functions
+#'
+#' @examples
+#' # Create a solid fill pattern with foreground color
+#' fill <- create_fill(
+#'   patternType = "solid",
+#'   fgColor = wb_color(hex = "FFFF0000")
+#' )
 #'
 #' @export
 create_fill <- function(
@@ -411,29 +472,34 @@ create_fill <- function(
   return(fill)
 }
 
-# TODO can be further generalized with additional xf attributes and children
 #' Helper to create a cell style
 #'
-#' @param border_id dummy
-#' @param fill_id dummy
-#' @param font_id dummy
-#' @param num_fmt_id a numFmt ID for a builtin style
-#' @param pivot_button dummy
-#' @param quote_prefix dummy
-#' @param xf_id dummy
-#' @param indent dummy
-#' @param justify_last_line dummy
-#' @param reading_order dummy
-#' @param relative_indent dummy
-#' @param shrink_to_fit dummy
-#' @param text_rotation dummy
-#' @param wrap_text dummy
-#' @param ext_lst dummy
-#' @param hidden dummy
-#' @param locked dummy
-#' @param horizontal alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'
-#' @param vertical alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'
-#' @param ... reserved for additional arguments
+#' @description
+#' This function creates a cell style for a spreadsheet, including attributes such as borders, fills, fonts, and number formats.
+#'
+#' @param border_id Dummy parameter for the border ID.
+#' @param fill_id Dummy parameter for the fill ID.
+#' @param font_id Dummy parameter for the font ID.
+#' @param num_fmt_id A numFmt ID for a built-in style. The list of valid IDs and their corresponding formats can be found in the **Details** section.
+#' @param pivot_button Dummy parameter for the pivot button.
+#' @param quote_prefix Dummy parameter for the quote prefix.
+#' @param xf_id Dummy parameter for the xf ID.
+#' @param indent Dummy parameter for the indent.
+#' @param justify_last_line Dummy parameter for justifying the last line.
+#' @param reading_order Dummy parameter for reading order.
+#' @param relative_indent Dummy parameter for relative indent.
+#' @param shrink_to_fit Dummy parameter for shrink to fit.
+#' @param text_rotation Dummy parameter for text rotation.
+#' @param wrap_text Dummy parameter for wrap text.
+#' @param ext_lst Dummy parameter for extension list.
+#' @param hidden Dummy parameter for hidden.
+#' @param locked Dummy parameter for locked.
+#' @param horizontal Character, alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'.
+#' @param vertical Character, alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'.
+#' @param ... Reserved for additional arguments.
+#'
+#' @return A formatted cell style object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_cell_style()]
 #' @family style creating functions
 #'

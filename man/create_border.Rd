@@ -26,37 +26,57 @@ create_border(
 )
 }
 \arguments{
-\item{diagonal_down}{x}
+\item{diagonal_down}{Logical, whether the diagonal border goes from the top left to the bottom right.}
 
-\item{diagonal_up}{x}
+\item{diagonal_up}{Logical, whether the diagonal border goes from the bottom left to the top right.}
 
-\item{outline}{x}
+\item{outline}{Logical, whether the border should be an outline border.}
 
-\item{bottom}{X}
+\item{bottom}{Character, the style of the bottom border.}
 
-\item{bottom_color, diagonal_color, left_color, right_color, top_color}{a color created with \code{\link[=wb_color]{wb_color()}}}
+\item{bottom_color}{Character, the color of the bottom border created with \code{\link[=wb_color]{wb_color()}}.}
 
-\item{diagonal}{X}
+\item{diagonal}{Character, the style of the diagonal border.}
 
-\item{end}{x,}
+\item{diagonal_color}{Character, the color of the diagonal border created with \code{\link[=wb_color]{wb_color()}}.}
 
-\item{horizontal}{x}
+\item{end}{Logical, whether the border is the end border.}
 
-\item{left}{x}
+\item{horizontal}{Logical, whether the border is horizontal.}
 
-\item{right}{x}
+\item{left}{Character, the style of the left border.}
 
-\item{start}{x}
+\item{left_color}{Character, the color of the left border created with \code{\link[=wb_color]{wb_color()}}.}
 
-\item{top}{x}
+\item{right}{Character, the style of the right border.}
 
-\item{vertical}{x}
+\item{right_color}{Character, the color of the right border created with \code{\link[=wb_color]{wb_color()}}.}
 
-\item{...}{x}
+\item{start}{Logical, whether the border is the start border.}
+
+\item{top}{Character, the style of the top border.}
+
+\item{top_color}{Character, the color of the top border created with \code{\link[=wb_color]{wb_color()}}.}
+
+\item{vertical}{Logical, whether the border is vertical.}
+
+\item{...}{Additional arguments passed to other methods.}
+}
+\value{
+A formatted border object to be used in a spreadsheet.
 }
 \description{
-Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
-Border colors can be created with \code{\link[=wb_color]{wb_color()}}
+This function creates border styles for a cell in a spreadsheet. Border styles can be any of the following: "none", "thin", "medium", "dashed", "dotted", "thick", "double", "hair", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot". Border colors can be created with \code{\link[=wb_color]{wb_color()}}.
+}
+\examples{
+# Create a border with a thick bottom and thin top
+border <- create_border(
+  bottom = "thick",
+  bottom_color = wb_color("FF0000"),
+  top = "thin",
+  top_color = wb_color("00FF00")
+)
+
 }
 \seealso{
 \code{\link[=wb_add_border]{wb_add_border()}}
