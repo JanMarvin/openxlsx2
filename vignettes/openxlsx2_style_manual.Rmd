@@ -308,7 +308,7 @@ wb$add_border("S4", dims = "A2:K33")
 
 Below we show you two ways how to create styled tables with `openxlsx2` one using the high level functions to style worksheet areas and one using the bare metal approach of creating the identical table.
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, fig.cap="Tiny table with minimal styling"}
 knitr::include_graphics("img/styled_table.jpg")
 ```
 
