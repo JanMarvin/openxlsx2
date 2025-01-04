@@ -53,6 +53,7 @@
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>It is now possible to create shapes using <code><a href="../reference/create_shape.html">create_shape()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1231" class="external-link">1231</a>
 </li>
+<li>Various input checks were added to the style helpers</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
@@ -63,6 +64,10 @@
 <li>
 <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code> is now indifferent about <code>color</code> and <code>colour</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1229" class="external-link">1229</a>
 </li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>Style helpers will accept colors only if provided via <code><a href="../reference/wb_color.html">wb_color()</a></code>. This broke a single example case that was still using <code>c(rgb = "FF808080")</code> this can be converted to <code>wb_color(hex = "FF808080")</code>.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
