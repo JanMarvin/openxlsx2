@@ -251,7 +251,7 @@ create_font <- function(
   standardize(...)
 
   if (b != "") {
-    if (!as_xml_attr(b) %in% c("0", "1", "false", "true")) stop("b must be \"0\" or \"1\"", call. = FALSE)
+    assert_xml_bool(b)
     b <- xml_node_create("b", xml_attributes = c("val" = as_xml_attr(b)))
   }
 
@@ -266,12 +266,12 @@ create_font <- function(
   }
 
   if (condense != "") {
-    if (!as_xml_attr(condense) %in% c("0", "1", "false", "true")) stop("consense must be \"0\" or \"1\"", call. = FALSE)
+    assert_xml_bool(condense)
     condense <- xml_node_create("condense", xml_attributes = c("val" = as_xml_attr(condense)))
   }
 
   if (extend != "") {
-    if (!as_xml_attr(extend) %in% c("0", "1", "false", "true")) stop("extend must be \"0\" or \"1\"", call. = FALSE)
+    assert_xml_bool(extend)
     extend <- xml_node_create("extend", xml_attributes = c("val" = as_xml_attr(extend)))
   }
 
@@ -282,7 +282,7 @@ create_font <- function(
   }
 
   if (i != "") {
-    if (!as_xml_attr(i) %in% c("0", "1", "false", "true")) stop("i must be \"0\" or \"1\"", call. = FALSE)
+    assert_xml_bool(i)
     i <- xml_node_create("i", xml_attributes = c("val" = as_xml_attr(i)))
   }
 
@@ -292,7 +292,7 @@ create_font <- function(
   }
 
   if (outline != "") {
-    if (!as_xml_attr(outline) %in% c("0", "1", "false", "true")) stop("outline must be \"0\" or \"1\"", call. = FALSE)
+    assert_xml_bool(outline)
     outline <- xml_node_create("outline", xml_attributes = c("val" = as_xml_attr(outline)))
   }
 
@@ -303,12 +303,12 @@ create_font <- function(
   }
 
   if (shadow != "") {
-    if (!as_xml_attr(shadow) %in% c("0", "1", "false", "true")) stop("shadow must be \"0\" or \"1\"", call. = FALSE)
+    assert_xml_bool(shadow)
     shadow <- xml_node_create("shadow", xml_attributes = c("val" = as_xml_attr(shadow)))
   }
 
   if (strike != "") {
-    if (!as_xml_attr(strike) %in% c("0", "1", "false", "true")) stop("strike must be \"0\" or \"1\"", call. = FALSE)
+    assert_xml_bool(strike)
     strike <- xml_node_create("strike", xml_attributes = c("val" = as_xml_attr(strike)))
   }
 
