@@ -76,11 +76,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
     }
   }
 
-  if (pointer) {
-    z <- readXMLPtr(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
-  } else {
-    z <- readXML(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
-  }
+  z <- readXML(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control, pointer)
 
   z
 }

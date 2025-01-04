@@ -1293,7 +1293,7 @@ wbWorkbook <- R6::R6Class(
             if (all(nchar(self$drawings_rels[[new_drawing_rels]]))) {
 
               drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_rels]], "Relationship"))
-              fe <- unique(tools::file_ext(drels$Target))
+              fe <- unique(file_ext2(drels$Target))
 
               cte <- sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe)
               sel <- which(!cte %in% self$Content_Types)
@@ -2925,7 +2925,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       valid_extensions <- c("xlsx", "xlsm") # "xlsb"
-      file_extension   <- tolower(tools::file_ext(file))
+      file_extension   <- tolower(file_ext2(file))
 
       if (!file_extension %in% valid_extensions) {
         warning("The file extension '", file_extension,
@@ -3056,7 +3056,7 @@ wbWorkbook <- R6::R6Class(
         activeXDir     <- dir_create(tmpDir, "xl", "activeX")
         activeXRelsDir <- dir_create(tmpDir, "xl", "activeX", "_rels")
         for (fl in self$activeX) {
-          if (tools::file_ext(fl) == "rels")
+          if (file_ext2(fl) == "rels")
             file.copy(fl, activeXRelsDir, overwrite = TRUE)
           else
             file.copy(fl, activeXDir, overwrite = TRUE)
@@ -9547,10 +9547,8 @@ wbWorkbook <- R6::R6Class(
       file
     ) {
 
-      # TODO tools::file_ext() ...
-      imageType <- regmatches(file, gregexpr("\\.[a-zA-Z]*$", file))
-      imageType <- gsub("^\\.", "", imageType)
-      mediaNo <- length(self$media) + 1L
+      imageType <- file_ext2(file)
+      mediaNo   <- length(self$media) + 1L
 
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {

@@ -156,7 +156,7 @@ test_that("skipEmptyCols keeps empty named columns", {
 test_that("reading with pre defined types works", {
 
   dat <- data.frame(
-    numeric = rnorm(n = 5),
+    numeric = seq(-0.1, 0.1, by = 0.05),
     integer = sample(1:5, 5, TRUE),
     date = Sys.Date() - 0:4,
     datetime = Sys.time() - 0:4,
@@ -226,9 +226,10 @@ test_that("check_names works", {
 
 test_that("shared formulas are handled", {
 
+  mm <- matrix(1:5, ncol = 5, nrow = 5)
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_data(x = mm)$
     add_formula(x = "SUM($A2:A2) + B$1", dims = "A8:E12", shared = TRUE)
 
   exp <- structure(
@@ -244,7 +245,7 @@ test_that("shared formulas are handled", {
   # shared formula w/o A1 notation
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_data(x = mm)$
     add_formula(x = "TODAY()", dims = "A8:E12", shared = TRUE)
 
   exp <- rep("TODAY()", 9)
@@ -254,7 +255,7 @@ test_that("shared formulas are handled", {
   # a bunch of mixed shared formulas
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_data(x = mm)$
     add_formula(x = "SUM($A2:A2) + B$1", dims = "A8:E9", shared = TRUE)$
     add_formula(x = "SUM($A2:A2)", dims = "A10:E11", shared = TRUE)$
     add_formula(x = "A2", dims = "A12:E13", shared = TRUE)
@@ -269,7 +270,7 @@ test_that("shared formulas are handled", {
   # make sure that replacements work as expected
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = matrix(rnorm(5 * 5), ncol = 5, nrow = 5))$
+    add_data(x = mm)$
     add_formula(x = "A2 + B2", dims = "A12:E13", shared = TRUE)
 
   exp <- c("A2 + B2", "A3 + B3", "B2 + C2", "B3 + C3", "C2 + D2", "C3 + D3", "D2 + E2", "D3 + E3")

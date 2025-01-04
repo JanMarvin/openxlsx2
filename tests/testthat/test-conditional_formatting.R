@@ -312,7 +312,7 @@ test_that("type = 'topN' works", {
   wb <- my_workbook()
   wb$add_worksheet("topN")
   ## Top N
-  wb$add_data("topN", data.frame(x = 1:10, y = rnorm(10)))
+  wb$add_data("topN", data.frame(x = 1:10, y = sample(1:100, size = 10)))
   # Highlight top 5 values in column x
   wb$add_conditional_formatting(
     "topN",
@@ -345,7 +345,7 @@ test_that("type = 'bottomN' works", {
   wb <- my_workbook()
   wb$add_worksheet("bottomN")
   ## Bottom N
-  wb$add_data("bottomN", data.frame(x = 1:10, y = rnorm(10)))
+  wb$add_data("bottomN", data.frame(x = 1:10, y = sample(1:100, size = 10)))
   # Highlight bottom 5 values in column x
   wb$add_conditional_formatting(
     "bottomN",

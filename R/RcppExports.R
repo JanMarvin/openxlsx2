@@ -75,12 +75,8 @@ loadvals <- function(sheet_data, doc) {
     invisible(.Call(`_openxlsx2_loadvals`, sheet_data, doc))
 }
 
-readXMLPtr <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {
-    .Call(`_openxlsx2_readXMLPtr`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
-}
-
-readXML <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control) {
-    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control)
+readXML <- function(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control, pointer) {
+    .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace, empty_tags, skip_control, pointer)
 }
 
 is_xml <- function(str) {
