@@ -516,7 +516,9 @@ create_fill <- function(
 #' @family style creating functions
 #'
 #' @details
-#'  It is possible to use a few built-in styles. The list of valid IDs and their corresponding formats is below.
+#' A single cell style can make use of various other styles like border, fill, and font. These styles are independent of the cell style and must be registered with the style manager separately.
+#' This allows multiple cell styles to share a common font type, for instance. The used style elements are passed to the cell style via their IDs. An example of this can be seen below.
+#' The number format can be a custom one created by [create_numfmt()], or a built-in style from the formats table below.
 #'
 #'  | "ID" | "numFmt"                    |
 #'  |------|-----------------------------|
@@ -821,13 +823,11 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' Create a custom formatting style
 #'
 #' @description
-#' Create a new style to apply to worksheet cells. Created styles have to be
-#' assigned to a workbook to use them
+#' Create a new style to apply to worksheet cells. These styles are used in conditional formatting and in (pivot) table styles.
 #'
 #' @details
 #' It is possible to override border_color and border_style with \{left, right, top, bottom\}_color, \{left, right, top, bottom\}_style.
 #'
-# TODO maybe font_name,font_size could be documented together.
 #' @param font_name A name of a font. Note the font name is not validated.
 #'   If `font_name` is `NULL`, the workbook `base_font` is used. (Defaults to Calibri), see [wb_get_base_font()]
 #' @param font_color Color of text in cell.  A valid hex color beginning with "#"
@@ -857,7 +857,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' # change font color and background color
 #' style2 <- create_dxfs_style(
 #'   font_color = wb_color(hex = "FF9C0006"),
-#'   bgFill = wb_color(hex = "FFFFC7CE")
+#'   bg_fill = wb_color(hex = "FFFFC7CE")
 #' )
 #'
 #' # change font (type, size and color) and background
@@ -866,7 +866,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #'   font_name = "Aptos Narrow",
 #'   font_size = 11,
 #'   font_color = wb_color(hex = "FF9C0006"),
-#'   bgFill = wb_color(hex = "FFFFC7CE")
+#'   bg_fill = wb_color(hex = "FFFFC7CE")
 #' )
 #'
 #' ## See package vignettes for further examples
@@ -885,13 +885,17 @@ create_dxfs_style <- function(
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
-    text_underline = NULL, # "true" or "double"
+    text_underline = NULL,
     ...
 ) {
 
+  # TODO diagonal requires up or down
   arguments <- c(..., ls(),
                  "left_color", "left_style", "right_color", "right_style",
-                 "top_color", "top_style", "bottom_color", "bottom_style"
+                 "top_color", "top_style", "bottom_color", "bottom_style",
+                 "start_color", "start_style", "end_color", "end_style",
+                 "horizontal_color", "horizontal_style", "vertical_color", "vertical_style",
+                 "diagonal_color", "diagonal_style"
   )
   standardize(..., arguments = arguments)
 
@@ -933,24 +937,42 @@ create_dxfs_style <- function(
 
   # untested
   if (!is.null(border)) {
-    left_color   <- if (exists("left_color"))   left_color   else border_color
-    left_style   <- if (exists("left_style"))   left_style   else border_style
-    right_color  <- if (exists("right_color"))  right_color  else border_color
-    right_style  <- if (exists("right_style"))  right_style  else border_style
-    top_color    <- if (exists("top_color"))    top_color    else border_color
-    top_style    <- if (exists("top_style"))    top_style    else border_style
-    bottom_color <- if (exists("bottom_color")) bottom_color else border_color
-    bottom_style <- if (exists("bottom_style")) bottom_style else border_style
+    left_color       <- if (exists("left_color"))       left_color   else border_color
+    left_style       <- if (exists("left_style"))       left_style   else border_style
+    right_color      <- if (exists("right_color"))      right_color  else border_color
+    right_style      <- if (exists("right_style"))      right_style  else border_style
+    top_color        <- if (exists("top_color"))        top_color    else border_color
+    top_style        <- if (exists("top_style"))        top_style    else border_style
+    bottom_color     <- if (exists("bottom_color"))     bottom_color else border_color
+    bottom_style     <- if (exists("bottom_style"))     bottom_style else border_style
+    start_color      <- if (exists("start_color"))      start_color else border_color
+    start_style      <- if (exists("start_style"))      start_style else border_style
+    end_color        <- if (exists("end_color"))        end_color else border_color
+    end_style        <- if (exists("end_style"))        end_style else border_style
+    horizontal_color <- if (exists("horizontal_color")) horizontal_color else border_color
+    horizontal_style <- if (exists("horizontal_style")) horizontal_style else border_style
+    vertical_color   <- if (exists("vertical_color"))   vertical_color else border_color
+    vertical_style   <- if (exists("vertical_style"))   vertical_style else border_style
+    diagonal_color   <- if (exists("diagonal_color"))   diagonal_color else border_color
+    diagonal_style   <- if (exists("diagonal_style"))   diagonal_style else border_style
 
     border <- create_border(
-      left         = left_style,
-      left_color   = left_color,
-      right        = right_style,
-      right_color  = right_color,
-      top          = top_style,
-      top_color    = top_color,
-      bottom       = bottom_style,
-      bottom_color = bottom_color
+      left              = left_style,
+      left_color        = left_color,
+      right             = right_style,
+      right_color       = right_color,
+      top               = top_style,
+      top_color         = top_color,
+      bottom            = bottom_style,
+      bottom_color      = bottom_color,
+      start             = start_style,
+      start_color       = start_color,
+      end               = end_style,
+      end_color         = end_color,
+      horizontal        = horizontal_style,
+      horizontal_color  = horizontal_color,
+      vertical          = vertical_style,
+      vertical_color    = vertical_color
     )
   }
 

@@ -69,7 +69,9 @@ A formatted cell style object to be used in a spreadsheet.
 This function creates a cell style for a spreadsheet, including attributes such as borders, fills, fonts, and number formats.
 }
 \details{
-It is possible to use a few built-in styles. The list of valid IDs and their corresponding formats is below.\tabular{ll}{
+A single cell style can make use of various other styles like border, fill, and font. These styles are independent of the cell style and must be registered with the style manager separately.
+This allows multiple cell styles to share a common font type, for instance. The used style elements are passed to the cell style via their IDs. An example of this can be seen below.
+The number format can be a custom one created by \code{\link[=create_numfmt]{create_numfmt()}}, or a built-in style from the formats table below.\tabular{ll}{
    "ID" \tab "numFmt" \cr
    "0" \tab "General" \cr
    "1" \tab "0" \cr
