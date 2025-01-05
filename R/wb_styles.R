@@ -74,91 +74,122 @@ import_styles <- function(x) {
   z
 }
 
-# TODO guessing here
-#' Helper to create a border
+#' Create border format
+#'
 #' @description
-#' Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
-#' Border colors can be created with [wb_color()]
-#' @param diagonal_down x
-#' @param diagonal_up x
-#' @param outline x
-#' @param bottom X
-#' @param bottom_color,diagonal_color,left_color,right_color,top_color a color created with [wb_color()]
-#' @param diagonal X
-#' @param end x,
-#' @param horizontal x
-#' @param left x
-#' @param right x
-#' @param start x
-#' @param top x
-#' @param vertical x
-#' @param ... x
+#' This function creates border styles for a cell in a spreadsheet. Border styles can be any of the following: "none", "thin", "medium", "dashed", "dotted", "thick", "double", "hair", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot". Border colors can be created with [wb_color()].
+#'
+#' @param bottom,left,right,top,diagonal Character, the style of the border.
+#' @param bottom_color,left_color,right_color,top_color,diagonal_color,start_color,end_color,horizontal_color,vertical_color a [wb_color()], the color of the border.
+#' @param diagonal_down,diagonal_up Logical, whether the diagonal border goes from the bottom left to the top right, or top left to bottom right.
+#' @param outline Logical, whether the border is.
+#' @param horizontal,vertical Character, the style of the inner border (only for dxf objects).
+#' @param start,end leading and trailing edge of a border.
+#' @param ... Additional arguments passed to other methods.
+#'
+#' @return A formatted border object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_border()]
 #' @family style creating functions
 #'
+#' @examples
+#' # Create a border with a thick bottom and thin top
+#' border <- create_border(
+#'   bottom = "thick",
+#'   bottom_color = wb_color("FF0000"),
+#'   top = "thin",
+#'   top_color = wb_color("00FF00")
+#' )
+#'
 #' @export
 create_border <- function(
-    diagonal_down  = "",
-    diagonal_up    = "",
-    outline        = "",
-    bottom         = NULL,
-    bottom_color   = NULL,
-    diagonal       = NULL,
-    diagonal_color = NULL,
-    end            = "",
-    horizontal     = "",
-    left           = NULL,
-    left_color     = NULL,
-    right          = NULL,
-    right_color    = NULL,
-    start          = "",
-    top            = NULL,
-    top_color      = NULL,
-    vertical       = "",
+    diagonal_down    = "",
+    diagonal_up      = "",
+    outline          = "",
+    bottom           = NULL,
+    bottom_color     = NULL,
+    diagonal         = NULL,
+    diagonal_color   = NULL,
+    end              = "",
+    horizontal       = "",
+    left             = NULL,
+    left_color       = NULL,
+    right            = NULL,
+    right_color      = NULL,
+    start            = "",
+    top              = NULL,
+    top_color        = NULL,
+    vertical         = "",
+    start_color      = NULL,
+    end_color        = NULL,
+    horizontal_color = NULL,
+    vertical_color   = NULL,
     ...
 ) {
 
   # sml_CT_Border
   standardize(...)
 
-  assert_class(left_color,     "wbColour", or_null = TRUE)
-  assert_class(right_color,    "wbColour", or_null = TRUE)
-  assert_class(top_color,      "wbColour", or_null = TRUE)
-  assert_class(bottom_color,   "wbColour", or_null = TRUE)
-  assert_class(diagonal_color, "wbColour", or_null = TRUE)
+  assert_xml_bool(outline)
 
-  if (!is.null(left_color))     left_color     <- xml_node_create("color", xml_attributes = left_color)
-  if (!is.null(right_color))    right_color    <- xml_node_create("color", xml_attributes = right_color)
-  if (!is.null(top_color))      top_color      <- xml_node_create("color", xml_attributes = top_color)
-  if (!is.null(bottom_color))   bottom_color   <- xml_node_create("color", xml_attributes = bottom_color)
-  if (!is.null(diagonal_color)) diagonal_color <- xml_node_create("color", xml_attributes = diagonal_color)
+  assert_class(left_color,       "wbColour", or_null = TRUE)
+  assert_class(right_color,      "wbColour", or_null = TRUE)
+  assert_class(top_color,        "wbColour", or_null = TRUE)
+  assert_class(bottom_color,     "wbColour", or_null = TRUE)
+  assert_class(diagonal_color,   "wbColour", or_null = TRUE)
+  assert_class(start_color,      "wbColour", or_null = TRUE)
+  assert_class(end_color,        "wbColour", or_null = TRUE)
+  assert_class(horizontal_color, "wbColour", or_null = TRUE)
+  assert_class(vertical_color,   "wbColour", or_null = TRUE)
+
+  if (!is.null(left_color))       left_color       <- xml_node_create("color", xml_attributes = left_color)
+  if (!is.null(right_color))      right_color      <- xml_node_create("color", xml_attributes = right_color)
+  if (!is.null(top_color))        top_color        <- xml_node_create("color", xml_attributes = top_color)
+  if (!is.null(bottom_color))     bottom_color     <- xml_node_create("color", xml_attributes = bottom_color)
+  if (!is.null(diagonal_color))   diagonal_color   <- xml_node_create("color", xml_attributes = diagonal_color)
+  if (!is.null(start_color))      start_color      <- xml_node_create("color", xml_attributes = start_color)
+  if (!is.null(end_color))        end_color        <- xml_node_create("color", xml_attributes = end_color)
+  if (!is.null(horizontal_color)) horizontal_color <- xml_node_create("color", xml_attributes = horizontal_color)
+  if (!is.null(vertical_color))   vertical_color   <- xml_node_create("color", xml_attributes = vertical_color)
 
   valid_borders <- c("none",  "thin",  "medium",  "dashed",  "dotted",  "thick",  "double",  "hair",  "mediumDashed",  "dashDot",  "mediumDashDot",  "dashDotDot",  "mediumDashDotDot", "slantDashDot", "")
-  borders       <- c(left, right, top, bottom, diagonal)
+  borders       <- c(left, right, top, bottom, diagonal, start, end, horizontal, vertical)
   match.arg_wrapper(borders, valid_borders, several.ok = TRUE, fn_name = "create_border")
 
   # excel dies on style=\"\"
-  if (!is.null(left))     left     <- c(style = left)
-  if (!is.null(right))    right    <- c(style = right)
-  if (!is.null(top))      top      <- c(style = top)
-  if (!is.null(bottom))   bottom   <- c(style = bottom)
-  if (!is.null(diagonal)) diagonal <- c(style = diagonal)
+  if (!is.null(left))       left       <- c(style = left)
+  if (!is.null(right))      right      <- c(style = right)
+  if (!is.null(top))        top        <- c(style = top)
+  if (!is.null(bottom))     bottom     <- c(style = bottom)
+  if (!is.null(diagonal))   diagonal   <- c(style = diagonal)
+  if (!is.null(start))      start      <- c(style = start)
+  if (!is.null(end))        end        <- c(style = end)
+  if (!is.null(horizontal)) horizontal <- c(style = horizontal)
+  if (!is.null(vertical))   vertical   <- c(style = vertical)
 
-  left     <- xml_node_create("left", xml_children = left_color, xml_attributes = left)
-  right    <- xml_node_create("right", xml_children = right_color, xml_attributes = right)
-  top      <- xml_node_create("top", xml_children = top_color, xml_attributes = top)
-  bottom   <- xml_node_create("bottom", xml_children = bottom_color, xml_attributes = bottom)
-  diagonal <- xml_node_create("diagonal", xml_children = diagonal_color, xml_attributes = diagonal)
+  left       <- xml_node_create("left",       xml_children = left_color,       xml_attributes = left)
+  right      <- xml_node_create("right",      xml_children = right_color,      xml_attributes = right)
+  top        <- xml_node_create("top",        xml_children = top_color,        xml_attributes = top)
+  bottom     <- xml_node_create("bottom",     xml_children = bottom_color,     xml_attributes = bottom)
+  diagonal   <- xml_node_create("diagonal",   xml_children = diagonal_color,   xml_attributes = diagonal)
+  start      <- xml_node_create("start",      xml_children = diagonal_color,   xml_attributes = start)
+  end        <- xml_node_create("end",        xml_children = diagonal_color,   xml_attributes = end)
+  horizontal <- xml_node_create("horizontal", xml_children = horizontal_color, xml_attributes = horizontal)
+  vertical   <- xml_node_create("vertical",   xml_children = vertical_color,   xml_attributes = vertical)
 
-  if (left     == "<left/>")     left     <- ""
-  if (right    == "<right/>")    right    <- ""
-  if (top      == "<top/>")      top      <- ""
-  if (bottom   == "<bottom/>")   bottom   <- ""
-  if (diagonal == "<diagonal/>") diagonal <- ""
+  if (left       == "<left/>")       left       <- ""
+  if (right      == "<right/>")      right      <- ""
+  if (top        == "<top/>")        top        <- ""
+  if (bottom     == "<bottom/>")     bottom     <- ""
+  if (diagonal   == "<diagonal/>")   diagonal   <- ""
+  if (start      == "<start/>")      start      <- "" # in the ecma spec this is called <begin/>
+  if (end        == "<end/>")        end        <- ""
+  if (horizontal == "<horizontal/>") horizontal <- ""
+  if (vertical   == "<vertical/>")   vertical   <- ""
 
   df_border <- data.frame(
-    start            = start,
-    end              = end,
+    start            = as_xml_attr(start),
+    end              = as_xml_attr(end),
     left             = left,
     right            = right,
     top              = top,
@@ -168,7 +199,7 @@ create_border <- function(
     diagonal         = diagonal,
     vertical         = vertical,
     horizontal       = horizontal,
-    outline          = outline,      # unknown position in border
+    outline          = as_xml_attr(outline),      # unknown position in border
     stringsAsFactors = FALSE
   )
   border <- write_border(df_border)
@@ -177,10 +208,25 @@ create_border <- function(
 }
 
 #' Create number format
-#' @param numFmtId an id, the list can be found in the **Details** of [create_cell_style()]
-#' @param formatCode a format code
+#'
+#' @description
+#' This function creates a number format for a cell in a spreadsheet. Number formats define how numeric values are displayed, including dates, times, currencies, percentages, and more.
+#'
+#' @param numFmtId An ID representing the number format. The list of valid IDs can be found in the **Details** section of [create_cell_style()].
+#' @param formatCode A format code that specifies the display format for numbers. This can include custom formats for dates, times, and other numeric values.
+#'
+#' @return A formatted number format object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_numfmt()]
 #' @family style creating functions
+#'
+#' @examples
+#' # Create a number format for currency
+#' numfmt <- create_numfmt(
+#'   numFmtId = 164,
+#'   formatCode = "$#,##0.00"
+#' )
+#'
 #' @export
 create_numfmt <- function(numFmtId, formatCode) {
 
@@ -201,26 +247,42 @@ create_numfmt <- function(numFmtId, formatCode) {
 }
 
 #' Create font format
-#' @param b bold
-#' @param charset charset
-#' @param color rgb color: default "FF000000"
-#' @param condense condense
-#' @param extend extend
-#' @param family font family: default "2"
-#' @param i italic
-#' @param name font name: default "Aptos Narrow"
-#' @param outline outline
-#' @param scheme font scheme: default "minor"
-#' @param shadow shadow
-#' @param strike strike
-#' @param sz font size: default "11",
-#' @param u underline
-#' @param vert_align vertical alignment
-#' @param ... ...
+#'
+#' @description
+#' This function creates font styles for a cell in a spreadsheet. It allows customization of various font properties including bold, italic, color, size, underline, and more.
+#'
+#' @param b Logical, whether the font should be bold.
+#' @param charset Character, the character set to be used. The list of valid IDs can be found in the **Details** section of [fmt_txt()].
+#' @param color A [wb_color()], the color of the font. Default is "FF000000".
+#' @param condense Logical, whether the font should be condensed.
+#' @param extend Logical, whether the font should be extended.
+#' @param family Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused
+#' @param i Logical, whether the font should be italic.
+#' @param name Character, the name of the font. Default is "Aptos Narrow".
+#' @param outline Logical, whether the font should have an outline.
+#' @param scheme Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".
+#' @param shadow Logical, whether the font should have a shadow.
+#' @param strike Logical, whether the font should have a strikethrough.
+#' @param sz Character, the size of the font. Default is "11".
+#' @param u Character, the underline style. Valid values are "single", "double", "singleAccounting", "doubleAccounting", "none".
+#' @param vert_align Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".
+#' @param ... Additional arguments passed to other methods.
+#'
+#' @return A formatted font object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_font()]
 #' @family style creating functions
+#'
 #' @examples
-#' font <- create_font()
+#' # Create a font with bold and italic styles
+#' font <- create_font(
+#'   b = TRUE,
+#'   i = TRUE,
+#'   color = wb_color(hex = "FF00FF00"),
+#'   name = "Arial",
+#'   sz = "12"
+#' )
+#'
 #' # openxml has the alpha value leading
 #' hex8 <- unlist(xml_attr(read_xml(font), "font", "color"))
 #' hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1, 2))
@@ -228,6 +290,7 @@ create_numfmt <- function(numFmtId, formatCode) {
 #' # # write test color
 #' # col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
 #' # cat(col("Test"))
+#'
 #' @export
 create_font <- function(
     b          = "",
@@ -257,7 +320,7 @@ create_font <- function(
   }
 
   if (charset != "") {
-    charset <- xml_node_create("charset", xml_attributes = c("val" = charset))
+    charset <- xml_node_create("charset", xml_attributes = c("val" = as_xml_attr(charset)))
   }
 
   if (!is.null(color) && !all(color == "")) {
@@ -277,7 +340,7 @@ create_font <- function(
   }
 
   if (family != "") {
-    if (as.integer(family) < 0 || as.integer(family) > 14)
+    if (!family %in% as.character(0:14))
       stop("family needs to be in the range of 0 to 14", call. = FALSE)
     family <- xml_node_create("family", xml_attributes = c("val" = family))
   }
@@ -358,52 +421,65 @@ create_font <- function(
 
 #' Create fill pattern
 #'
-#' @param gradientFill complex fills
-#' @param patternType various: default is "none", but also "solid", or a color like "gray125"
-#' @param bgColor hex8 color with alpha, red, green, blue only for patternFill
-#' @param fgColor hex8 color with alpha, red, green, blue only for patternFill
-#' @param ... ...
+#' @description
+#' This function creates fill patterns for a cell in a spreadsheet. Fill patterns can be simple solid colors or more complex gradient fills. For certain pattern types, two colors are needed.
+#'
+#' @param gradient_fill Character, specifying complex gradient fills.
+#' @param pattern_type Character, specifying the fill pattern type. Valid values are "none" (default), "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625".
+#' @param bg_color Character, specifying the background color in hex8 format (alpha, red, green, blue) for pattern fills.
+#' @param fg_color Character, specifying the foreground color in hex8 format (alpha, red, green, blue) for pattern fills.
+#' @param ... Additional arguments passed to other methods.
+#'
+#' @return A formatted fill pattern object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_fill()]
 #' @family style creating functions
 #'
+#' @examples
+#' # Create a solid fill pattern with foreground color
+#' fill <- create_fill(
+#'   pattern_type = "solid",
+#'   fg_color = wb_color(hex = "FFFF0000")
+#' )
+#'
 #' @export
 create_fill <- function(
-    gradientFill = "",
-    patternType  = "",
-    bgColor      = NULL,
-    fgColor      = NULL,
+    gradient_fill = "",
+    pattern_type  = "",
+    bg_color      = NULL,
+    fg_color      = NULL,
     ...
 ) {
 
-  standardize_color_names(...)
-  assert_class(bgColor, "wbColour", or_null = TRUE)
-  assert_class(fgColor, "wbColour", or_null = TRUE)
+  standardize(...)
+  assert_class(bg_color, "wbColour", or_null = TRUE)
+  assert_class(fg_color, "wbColour", or_null = TRUE)
 
-  if (!is.null(bgColor) && !all(bgColor == "")) {
-    bgColor <- xml_node_create("bgColor", xml_attributes = bgColor)
+  if (!is.null(bg_color) && !all(bg_color == "")) {
+    bg_color <- xml_node_create("bgColor", xml_attributes = bg_color)
   }
 
-  if (!is.null(fgColor) && !all(fgColor == "")) {
-    fgColor <- xml_node_create("fgColor", xml_attributes = fgColor)
+  if (!is.null(fg_color) && !all(fg_color == "")) {
+    fg_color <- xml_node_create("fgColor", xml_attributes = fg_color)
   }
 
   # if gradient fill is specified we can not have patternFill too. otherwise
   # we end up with a solid black fill
-  if (gradientFill == "") {
+  if (gradient_fill == "") {
     valid_pattern <- c("none", "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625")
-    match.arg_wrapper(patternType, valid_pattern, fn_name = "create_fill")
+    match.arg_wrapper(pattern_type, valid_pattern, fn_name = "create_fill")
 
-    patternFill <- xml_node_create("patternFill",
-      xml_children   = c(fgColor, bgColor),
-      xml_attributes = c(patternType = patternType)
+    pattern_fill <- xml_node_create("patternFill",
+      xml_children   = c(fg_color, bg_color),
+      xml_attributes = c(patternType = pattern_type)
     )
   } else {
-    patternFill <- ""
+    pattern_fill <- ""
   }
 
   df_fill <- data.frame(
-    gradientFill     = gradientFill,
-    patternFill      = patternFill,
+    gradientFill     = gradient_fill,
+    patternFill      = pattern_fill,
     stringsAsFactors = FALSE
   )
   fill <- write_fill(df_fill)
@@ -411,33 +487,39 @@ create_fill <- function(
   return(fill)
 }
 
-# TODO can be further generalized with additional xf attributes and children
-#' Helper to create a cell style
+#' Create cell style
 #'
-#' @param border_id dummy
-#' @param fill_id dummy
-#' @param font_id dummy
-#' @param num_fmt_id a numFmt ID for a builtin style
-#' @param pivot_button dummy
-#' @param quote_prefix dummy
-#' @param xf_id dummy
-#' @param indent dummy
-#' @param justify_last_line dummy
-#' @param reading_order dummy
-#' @param relative_indent dummy
-#' @param shrink_to_fit dummy
-#' @param text_rotation dummy
-#' @param wrap_text dummy
-#' @param ext_lst dummy
-#' @param hidden dummy
-#' @param locked dummy
-#' @param horizontal alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'
-#' @param vertical alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'
-#' @param ... reserved for additional arguments
+#' @description
+#' This function creates a cell style for a spreadsheet, including attributes such as borders, fills, fonts, and number formats.
+#'
+#' @param border_id,fill_id,font_id,num_fmt_id IDs for style elements.
+#' @param pivot_button Logical parameter for the pivot button.
+#' @param quote_prefix Logical parameter for the quote prefix. (This way a number in a character cell will not cause a warning).
+#' @param xf_id Dummy parameter for the xf ID. (Used only with named format styles).
+#' @param indent Integer parameter for the indent.
+#' @param justify_last_line Logical for justifying the last line.
+#' @param reading_order Logical parameter for reading order. 0 (Left to right; default) or 1 (right to left).
+#' @param relative_indent Dummy parameter for relative indent.
+#' @param shrink_to_fit Logical parameter for shrink to fit.
+#' @param text_rotation Integer parameter for text rotation (-180 to 180).
+#' @param wrap_text Logical parameter for wrap text. (Required for linebreaks).
+#' @param ext_lst Dummy parameter for extension list.
+#' @param hidden Logical parameter for hidden.
+#' @param locked Logical parameter for locked. (Impacts the cell only).
+#' @param horizontal Character, alignment can be '', 'general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed'.
+#' @param vertical Character, alignment can be '', 'top', 'center', 'bottom', 'justify', 'distributed'.
+#' @param ... Reserved for additional arguments.
+#'
+#' @return A formatted cell style object to be used in a spreadsheet.
+#'
 #' @seealso [wb_add_cell_style()]
 #' @family style creating functions
 #'
 #' @details
+#' A single cell style can make use of various other styles like border, fill, and font. These styles are independent of the cell style and must be registered with the style manager separately.
+#' This allows multiple cell styles to share a common font type, for instance. The used style elements are passed to the cell style via their IDs. An example of this can be seen below.
+#' The number format can be a custom one created by [create_numfmt()], or a built-in style from the formats table below.
+#'
 #'  | "ID" | "numFmt"                    |
 #'  |------|-----------------------------|
 #'  | "0"  | "General"                   |
@@ -468,6 +550,22 @@ create_fill <- function(
 #'  | "47" | "mmss.0"                    |
 #'  | "48" | "##0.0E+0"                  |
 #'  | "49" | "@"                         |
+#'
+#' @examples
+#' foo_fill <- create_fill(patternType = "lightHorizontal",
+#'                         fgColor = wb_color("blue"),
+#'                         bgColor = wb_color("orange"))
+#' foo_font <- create_font(sz = 36, b = TRUE, color = wb_color("yellow"))
+#'
+#' wb <- wb_workbook()
+#' wb$styles_mgr$add(foo_fill, "foo")
+#' wb$styles_mgr$add(foo_font, "foo")
+#'
+#' foo_style <- create_cell_style(
+#'   fill_id = wb$styles_mgr$get_fill_id("foo"),
+#'   font_id = wb$styles_mgr$get_font_id("foo")
+#' )
+#'
 #' @export
 create_cell_style <- function(
     border_id         = "",
@@ -725,13 +823,11 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' Create a custom formatting style
 #'
 #' @description
-#' Create a new style to apply to worksheet cells. Created styles have to be
-#' assigned to a workbook to use them
+#' Create a new style to apply to worksheet cells. These styles are used in conditional formatting and in (pivot) table styles.
 #'
 #' @details
 #' It is possible to override border_color and border_style with \{left, right, top, bottom\}_color, \{left, right, top, bottom\}_style.
 #'
-# TODO maybe font_name,font_size could be documented together.
 #' @param font_name A name of a font. Note the font name is not validated.
 #'   If `font_name` is `NULL`, the workbook `base_font` is used. (Defaults to Calibri), see [wb_get_base_font()]
 #' @param font_color Color of text in cell.  A valid hex color beginning with "#"
@@ -761,7 +857,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #' # change font color and background color
 #' style2 <- create_dxfs_style(
 #'   font_color = wb_color(hex = "FF9C0006"),
-#'   bgFill = wb_color(hex = "FFFFC7CE")
+#'   bg_fill = wb_color(hex = "FFFFC7CE")
 #' )
 #'
 #' # change font (type, size and color) and background
@@ -770,7 +866,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 #'   font_name = "Aptos Narrow",
 #'   font_size = 11,
 #'   font_color = wb_color(hex = "FF9C0006"),
-#'   bgFill = wb_color(hex = "FFFFC7CE")
+#'   bg_fill = wb_color(hex = "FFFFC7CE")
 #' )
 #'
 #' ## See package vignettes for further examples
@@ -789,13 +885,17 @@ create_dxfs_style <- function(
     text_bold      = NULL,
     text_strike    = NULL,
     text_italic    = NULL,
-    text_underline = NULL, # "true" or "double"
+    text_underline = NULL,
     ...
 ) {
 
+  # TODO diagonal requires up or down
   arguments <- c(..., ls(),
                  "left_color", "left_style", "right_color", "right_style",
-                 "top_color", "top_style", "bottom_color", "bottom_style"
+                 "top_color", "top_style", "bottom_color", "bottom_style",
+                 "start_color", "start_style", "end_color", "end_style",
+                 "horizontal_color", "horizontal_style", "vertical_color", "vertical_style",
+                 "diagonal_color", "diagonal_style"
   )
   standardize(..., arguments = arguments)
 
@@ -837,24 +937,42 @@ create_dxfs_style <- function(
 
   # untested
   if (!is.null(border)) {
-    left_color   <- if (exists("left_color"))   left_color   else border_color
-    left_style   <- if (exists("left_style"))   left_style   else border_style
-    right_color  <- if (exists("right_color"))  right_color  else border_color
-    right_style  <- if (exists("right_style"))  right_style  else border_style
-    top_color    <- if (exists("top_color"))    top_color    else border_color
-    top_style    <- if (exists("top_style"))    top_style    else border_style
-    bottom_color <- if (exists("bottom_color")) bottom_color else border_color
-    bottom_style <- if (exists("bottom_style")) bottom_style else border_style
+    left_color       <- if (exists("left_color"))       left_color   else border_color
+    left_style       <- if (exists("left_style"))       left_style   else border_style
+    right_color      <- if (exists("right_color"))      right_color  else border_color
+    right_style      <- if (exists("right_style"))      right_style  else border_style
+    top_color        <- if (exists("top_color"))        top_color    else border_color
+    top_style        <- if (exists("top_style"))        top_style    else border_style
+    bottom_color     <- if (exists("bottom_color"))     bottom_color else border_color
+    bottom_style     <- if (exists("bottom_style"))     bottom_style else border_style
+    start_color      <- if (exists("start_color"))      start_color else border_color
+    start_style      <- if (exists("start_style"))      start_style else border_style
+    end_color        <- if (exists("end_color"))        end_color else border_color
+    end_style        <- if (exists("end_style"))        end_style else border_style
+    horizontal_color <- if (exists("horizontal_color")) horizontal_color else border_color
+    horizontal_style <- if (exists("horizontal_style")) horizontal_style else border_style
+    vertical_color   <- if (exists("vertical_color"))   vertical_color else border_color
+    vertical_style   <- if (exists("vertical_style"))   vertical_style else border_style
+    diagonal_color   <- if (exists("diagonal_color"))   diagonal_color else border_color
+    diagonal_style   <- if (exists("diagonal_style"))   diagonal_style else border_style
 
     border <- create_border(
-      left         = left_style,
-      left_color   = left_color,
-      right        = right_style,
-      right_color  = right_color,
-      top          = top_style,
-      top_color    = top_color,
-      bottom       = bottom_style,
-      bottom_color = bottom_color
+      left              = left_style,
+      left_color        = left_color,
+      right             = right_style,
+      right_color       = right_color,
+      top               = top_style,
+      top_color         = top_color,
+      bottom            = bottom_style,
+      bottom_color      = bottom_color,
+      start             = start_style,
+      start_color       = start_color,
+      end               = end_style,
+      end_color         = end_color,
+      horizontal        = horizontal_style,
+      horizontal_color  = horizontal_color,
+      vertical          = vertical_style,
+      vertical_color    = vertical_color
     )
   }
 

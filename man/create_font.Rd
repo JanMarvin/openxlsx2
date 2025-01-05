@@ -24,43 +24,54 @@ create_font(
 )
 }
 \arguments{
-\item{b}{bold}
+\item{b}{Logical, whether the font should be bold.}
 
-\item{charset}{charset}
+\item{charset}{Character, the character set to be used. The list of valid IDs can be found in the \strong{Details} section of \code{\link[=fmt_txt]{fmt_txt()}}.}
 
-\item{color}{rgb color: default "FF000000"}
+\item{color}{A \code{\link[=wb_color]{wb_color()}}, the color of the font. Default is "FF000000".}
 
-\item{condense}{condense}
+\item{condense}{Logical, whether the font should be condensed.}
 
-\item{extend}{extend}
+\item{extend}{Logical, whether the font should be extended.}
 
-\item{family}{font family: default "2"}
+\item{family}{Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused}
 
-\item{i}{italic}
+\item{i}{Logical, whether the font should be italic.}
 
-\item{name}{font name: default "Aptos Narrow"}
+\item{name}{Character, the name of the font. Default is "Aptos Narrow".}
 
-\item{outline}{outline}
+\item{outline}{Logical, whether the font should have an outline.}
 
-\item{scheme}{font scheme: default "minor"}
+\item{scheme}{Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".}
 
-\item{shadow}{shadow}
+\item{shadow}{Logical, whether the font should have a shadow.}
 
-\item{strike}{strike}
+\item{strike}{Logical, whether the font should have a strikethrough.}
 
-\item{sz}{font size: default "11",}
+\item{sz}{Character, the size of the font. Default is "11".}
 
-\item{u}{underline}
+\item{u}{Character, the underline style. Valid values are "single", "double", "singleAccounting", "doubleAccounting", "none".}
 
-\item{vert_align}{vertical alignment}
+\item{vert_align}{Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".}
 
-\item{...}{...}
+\item{...}{Additional arguments passed to other methods.}
+}
+\value{
+A formatted font object to be used in a spreadsheet.
 }
 \description{
-Create font format
+This function creates font styles for a cell in a spreadsheet. It allows customization of various font properties including bold, italic, color, size, underline, and more.
 }
 \examples{
-font <- create_font()
+# Create a font with bold and italic styles
+font <- create_font(
+  b = TRUE,
+  i = TRUE,
+  color = wb_color(hex = "FF00FF00"),
+  name = "Arial",
+  sz = "12"
+)
+
 # openxml has the alpha value leading
 hex8 <- unlist(xml_attr(read_xml(font), "font", "color"))
 hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1, 2))
@@ -68,6 +79,7 @@ hex8 <- paste0("#", substr(hex8, 3, 8), substr(hex8, 1, 2))
 # # write test color
 # col <- crayon::make_style(col2rgb(hex8, alpha = TRUE))
 # cat(col("Test"))
+
 }
 \seealso{
 \code{\link[=wb_add_font]{wb_add_font()}}

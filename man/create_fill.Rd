@@ -5,26 +5,37 @@
 \title{Create fill pattern}
 \usage{
 create_fill(
-  gradientFill = "",
-  patternType = "",
-  bgColor = NULL,
-  fgColor = NULL,
+  gradient_fill = "",
+  pattern_type = "",
+  bg_color = NULL,
+  fg_color = NULL,
   ...
 )
 }
 \arguments{
-\item{gradientFill}{complex fills}
+\item{gradient_fill}{Character, specifying complex gradient fills.}
 
-\item{patternType}{various: default is "none", but also "solid", or a color like "gray125"}
+\item{pattern_type}{Character, specifying the fill pattern type. Valid values are "none" (default), "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625".}
 
-\item{bgColor}{hex8 color with alpha, red, green, blue only for patternFill}
+\item{bg_color}{Character, specifying the background color in hex8 format (alpha, red, green, blue) for pattern fills.}
 
-\item{fgColor}{hex8 color with alpha, red, green, blue only for patternFill}
+\item{fg_color}{Character, specifying the foreground color in hex8 format (alpha, red, green, blue) for pattern fills.}
 
-\item{...}{...}
+\item{...}{Additional arguments passed to other methods.}
+}
+\value{
+A formatted fill pattern object to be used in a spreadsheet.
 }
 \description{
-Create fill pattern
+This function creates fill patterns for a cell in a spreadsheet. Fill patterns can be simple solid colors or more complex gradient fills. For certain pattern types, two colors are needed.
+}
+\examples{
+# Create a solid fill pattern with foreground color
+fill <- create_fill(
+  pattern_type = "solid",
+  fg_color = wb_color(hex = "FFFF0000")
+)
+
 }
 \seealso{
 \code{\link[=wb_add_fill]{wb_add_fill()}}

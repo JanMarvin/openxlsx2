@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_styles.R
 \name{create_border}
 \alias{create_border}
-\title{Helper to create a border}
+\title{Create border format}
 \usage{
 create_border(
   diagonal_down = "",
@@ -22,41 +22,43 @@ create_border(
   top = NULL,
   top_color = NULL,
   vertical = "",
+  start_color = NULL,
+  end_color = NULL,
+  horizontal_color = NULL,
+  vertical_color = NULL,
   ...
 )
 }
 \arguments{
-\item{diagonal_down}{x}
+\item{diagonal_down, diagonal_up}{Logical, whether the diagonal border goes from the bottom left to the top right, or top left to bottom right.}
 
-\item{diagonal_up}{x}
+\item{outline}{Logical, whether the border is.}
 
-\item{outline}{x}
+\item{bottom, left, right, top, diagonal}{Character, the style of the border.}
 
-\item{bottom}{X}
+\item{bottom_color, left_color, right_color, top_color, diagonal_color, start_color, end_color, horizontal_color, vertical_color}{a \code{\link[=wb_color]{wb_color()}}, the color of the border.}
 
-\item{bottom_color, diagonal_color, left_color, right_color, top_color}{a color created with \code{\link[=wb_color]{wb_color()}}}
+\item{horizontal, vertical}{Character, the style of the inner border (only for dxf objects).}
 
-\item{diagonal}{X}
+\item{start, end}{leading and trailing edge of a border.}
 
-\item{end}{x,}
-
-\item{horizontal}{x}
-
-\item{left}{x}
-
-\item{right}{x}
-
-\item{start}{x}
-
-\item{top}{x}
-
-\item{vertical}{x}
-
-\item{...}{x}
+\item{...}{Additional arguments passed to other methods.}
+}
+\value{
+A formatted border object to be used in a spreadsheet.
 }
 \description{
-Border styles can any of the following: "thin", "thick", "slantDashDot", "none", "mediumDashed", "mediumDashDot", "medium", "hair", "double", "dotted", "dashed", "dashedDotDot", "dashDot"
-Border colors can be created with \code{\link[=wb_color]{wb_color()}}
+This function creates border styles for a cell in a spreadsheet. Border styles can be any of the following: "none", "thin", "medium", "dashed", "dotted", "thick", "double", "hair", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot". Border colors can be created with \code{\link[=wb_color]{wb_color()}}.
+}
+\examples{
+# Create a border with a thick bottom and thin top
+border <- create_border(
+  bottom = "thick",
+  bottom_color = wb_color("FF0000"),
+  top = "thin",
+  top_color = wb_color("00FF00")
+)
+
 }
 \seealso{
 \code{\link[=wb_add_border]{wb_add_border()}}

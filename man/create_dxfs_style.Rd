@@ -61,8 +61,7 @@ or one of colors(). If \code{font_color} is NULL, the workbook base font colors 
 A dxfs style node
 }
 \description{
-Create a new style to apply to worksheet cells. Created styles have to be
-assigned to a workbook to use them
+Create a new style to apply to worksheet cells. These styles are used in conditional formatting and in (pivot) table styles.
 }
 \details{
 It is possible to override border_color and border_style with \{left, right, top, bottom\}_color, \{left, right, top, bottom\}_style.
@@ -74,7 +73,7 @@ style1 <- create_dxfs_style()
 # change font color and background color
 style2 <- create_dxfs_style(
   font_color = wb_color(hex = "FF9C0006"),
-  bgFill = wb_color(hex = "FFFFC7CE")
+  bg_fill = wb_color(hex = "FFFFC7CE")
 )
 
 # change font (type, size and color) and background
@@ -83,7 +82,7 @@ style3 <- create_dxfs_style(
   font_name = "Aptos Narrow",
   font_size = 11,
   font_color = wb_color(hex = "FF9C0006"),
-  bgFill = wb_color(hex = "FFFFC7CE")
+  bg_fill = wb_color(hex = "FFFFC7CE")
 )
 
 ## See package vignettes for further examples
