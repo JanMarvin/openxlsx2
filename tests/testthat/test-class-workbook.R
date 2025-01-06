@@ -87,8 +87,8 @@ test_that("merged cells are excluded from col width `auto` calculation", {
     set_col_widths(cols = "A:B", width = "auto")
 
   exp <- c(
-    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"5.711\"/>",
-    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
+    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"6.711\"/>",
+    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"5.711\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(exp, got)

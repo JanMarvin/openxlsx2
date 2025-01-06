@@ -2871,6 +2871,7 @@ wbWorkbook <- R6::R6Class(
         convert           = convert,
         types             = types,
         named_region      = named_region,
+        keep_attributes   = keep_attributes,
         check_names       = check_names,
         show_hyperlinks   = show_hyperlinks,
         ...               = ...
@@ -4802,7 +4803,7 @@ wbWorkbook <- R6::R6Class(
       base_font <- wb_get_base_font(self)
 
       if (any(widths == "auto")) {
-        df <- wb_to_df(self, sheet = sheet, cols = cols, colNames = FALSE)
+        df <- wb_to_df(self, sheet = sheet, cols = cols, col_names = FALSE, keep_attributes = TRUE)
         # exclude merged cells from width calculation.
         # adapted from wb_to_df(fill_merged_cells = TRUE)
         mc <- self$worksheets[[sheet]]$mergeCells
@@ -4822,7 +4823,19 @@ wbWorkbook <- R6::R6Class(
           }
         }
         # TODO format(x) might not be the way it is formatted in the xlsx file.
+
+        # With wb_to_df(col_names = FALSE) double values are not converted
+        # from character to double. This was resulting in very wide columns.
+        # To avoid this, we have to check character vectors for potentially
+        # unconverted numerics and have to apply something like format(as.numeric(...))
+        tt  <- attr(df, "tt")
+        sel <- tt == "n" & !is.na(df)
+
+        df[sel]   <- vapply(df[sel], function(x) format(as.numeric(x)), NA_character_)
         col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
+
+        # add one extra spacing
+        col_width <- col_width + 1L
       }
 
 
