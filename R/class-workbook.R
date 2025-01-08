@@ -8727,7 +8727,7 @@ wbWorkbook <- R6::R6Class(
         scheme     = "",
         shadow     = "",
         vert_align = "",
-        update     = FALSE,
+        update     = NULL,
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
@@ -8765,7 +8765,33 @@ wbWorkbook <- R6::R6Class(
 
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
 
-        if (update) {
+        if (length(update)) {
+          valid <- c(
+            "name", "color", "colour", "size", "bold", "italic", "outline", "strike",
+            "underline", "charset", "condense", "extend", "family", "scheme", "shadow",
+            "vert_align"
+          )
+          match.arg(update, valid, several.ok = TRUE)
+
+          font_properties <- c(
+            bold = "b",
+            charset = "charset",
+            color = "color",
+            condense = "condense",
+            extend = "extend",
+            family = "family",
+            italic = "i",
+            name = "name",
+            outline = "outline",
+            scheme = "scheme",
+            shadow = "shadow",
+            strike = "strike",
+            size = "sz",
+            underline = "u",
+            vert_align = "vertAlign"
+          )
+          sel <- font_properties[update]
+
           font_id  <- as.integer(sapply(xml_attr(xf_prev, "xf"), "[[", "fontId")) + 1L
           font_xml <- self$styles_mgr$styles$fonts[[font_id]]
 
@@ -8774,7 +8800,6 @@ wbWorkbook <- R6::R6Class(
           new_font <- read_font(read_xml(new_font))
 
           # update elements
-          sel <- new_font != ""
           old_font[sel] <- new_font[sel]
 
           # write as xml font

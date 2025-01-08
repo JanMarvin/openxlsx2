@@ -3367,7 +3367,7 @@ provide simple font function
   scheme = "",
   shadow = "",
   vert_align = "",
-  update = FALSE,
+  update = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }

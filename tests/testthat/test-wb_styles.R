@@ -914,3 +914,21 @@ test_that("dims work", {
   expect_setequal(wb$worksheets[[1]]$sheet_data$cc$c_s, "1")
 
 })
+
+test_that("update font works", {
+  wb <- wb_workbook() |>
+    wb_add_worksheet() |>
+    wb_add_data(x = letters) |>
+    wb_add_font(dims = wb_dims(x = letters), name = "Calibri", size = 20, update = c("name", "size", "scheme"))
+
+  exp <- "<font><color theme=\"1\"/><family val=\"2\"/><name val=\"Calibri\"/><sz val=\"20\"/></font>"
+  got <- wb$styles_mgr$styles$fonts[2]
+  expect_equal(exp, got)
+
+  # updates only the font color
+  wb$add_font(dims = wb_dims(x = letters), color = wb_color("orange"), update = c("color"))
+
+  exp <- "<font><color rgb=\"FFFFA500\"/><family val=\"2\"/><name val=\"Calibri\"/><sz val=\"20\"/></font>"
+  got <- wb$styles_mgr$styles$fonts[3]
+  expect_equal(exp, got)
+})
