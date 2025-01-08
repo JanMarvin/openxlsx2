@@ -23,7 +23,7 @@ wb_add_font(
   scheme = "",
   shadow = "",
   vert_align = "",
-  update = FALSE,
+  update = NULL,
   ...
 )
 }
