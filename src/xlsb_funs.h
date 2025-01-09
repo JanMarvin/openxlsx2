@@ -1894,6 +1894,26 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
       break;
     }
 
+    case PtgAreaErr:
+    case PtgAreaErr2:
+    case PtgAreaErr3:
+    {
+      if (debug) Rcpp::Rcout << "PtgAreaErr" <<std::endl;
+
+      uint32_t unused1 = 0, unused2 = 0, unused3 = 0;
+      unused1 = readbin(unused1, sas, swapit);
+      unused2 = readbin(unused2, sas, swapit);
+      unused3 = readbin(unused3, sas, swapit);
+
+      // could not reproduce this locally
+      fml_out += "#REF!";
+      fml_out += "\n";
+
+      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+      break;
+    }
+
     case PtgAreaErr3d:
     case PtgAreaErr3d2:
     case PtgAreaErr3d3:
