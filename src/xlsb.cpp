@@ -2382,8 +2382,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             stHeaderFirst << ": " << stFooterFirst << std::endl;
 
         out << "<headerFooter>" <<
-          "<oddHeader>" << stHeaderEven <<"</oddHeader>" <<
-          "<oddFooter>" << stFooterEven <<"</oddFooter>" <<
+          "<oddHeader>" << stHeader <<"</oddHeader>" <<
+          "<oddFooter>" << stFooter <<"</oddFooter>" <<
           "<firstHeader>" << stHeaderFirst <<"</firstHeader>" <<
           "<firstFooter>" << stFooterFirst <<"</firstFooter>" <<
           "<evenHeader>" << stHeaderEven <<"</evenHeader>" <<
