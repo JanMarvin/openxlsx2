@@ -2382,8 +2382,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             stHeaderFirst << ": " << stFooterFirst << std::endl;
 
         out << "<headerFooter>" <<
-          "<oddHeader>" << stHeaderEven <<"</oddHeader>" <<
-          "<oddFooter>" << stFooterEven <<"</oddFooter>" <<
+          "<oddHeader>" << stHeader <<"</oddHeader>" <<
+          "<oddFooter>" << stFooter <<"</oddFooter>" <<
           "<firstHeader>" << stHeaderFirst <<"</firstHeader>" <<
           "<firstFooter>" << stFooterFirst <<"</firstFooter>" <<
           "<evenHeader>" << stHeaderEven <<"</evenHeader>" <<
@@ -2490,7 +2490,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         if (fields->fBestFit)
           out << " bestFit=\"" <<  fields->fBestFit << "\"";
         if (fields->iOutLevel>0)
-          out << " outlineLevel=\"" <<  fields->iOutLevel << "\"";
+          out << " outlineLevel=\"" <<  (uint16_t)fields->iOutLevel << "\"";
         if (fields->fCollapsed)
           out << " collapsed=\"" <<  fields->fCollapsed << "\"";
 
