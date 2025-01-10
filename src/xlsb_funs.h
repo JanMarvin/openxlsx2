@@ -1045,6 +1045,19 @@ std::string typOperator(uint8_t oprtr) {
   return "unknown_operator";
 }
 
+
+std::string grbitSgnOperator(uint8_t oprtr) {
+
+  if (oprtr == 0x01) return "lessThan";
+  if (oprtr == 0x02) return "equal";
+  if (oprtr == 0x03) return "lessThanOrEqual";
+  if (oprtr == 0x04) return "greaterThan";
+  if (oprtr == 0x05) return "notEqual";
+  if (oprtr == 0x06) return "greaterThanOrEqual";
+
+  return "unknown_operator";
+}
+
 std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
   int32_t firstSheet = 0, lastSheet = 0;
   int32_t externalLink = 0; // TODO actually uint32?
@@ -1063,6 +1076,37 @@ std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
   out[2] = lastSheet;
 
   return out;
+}
+
+// first half little endian, second half big endian
+std::string guid_str(const std::vector<int32_t>& guid_ints) {
+
+  std::ostringstream guidStream;
+
+  guidStream << std::uppercase << std::hex << std::setfill('0');
+
+  guidStream << std::setw(2) << ((guid_ints[0] >> 24) & 0xFF)
+             << std::setw(2) << ((guid_ints[0] >> 16) & 0xFF)
+             << std::setw(2) << ((guid_ints[0] >> 8) & 0xFF)
+             << std::setw(2) << (guid_ints[0] & 0xFF) << "-";
+
+  guidStream << std::setw(2) << ((guid_ints[1] >> 8) & 0xFF)
+             << std::setw(2) << (guid_ints[1] & 0xFF) << "-";
+
+  guidStream << std::setw(2) << ((guid_ints[1] >> 24) & 0xFF)
+             << std::setw(2) << ((guid_ints[1] >> 16) & 0xFF) << "-";
+
+  guidStream << std::setw(2) << (guid_ints[2] & 0xFF)
+             << std::setw(2) << ((guid_ints[2] >> 8) & 0xFF) << "-"
+             << std::setw(2) << ((guid_ints[2] >> 16) & 0xFF)
+             << std::setw(2) << ((guid_ints[2] >> 24) & 0xFF)
+             << std::setw(2) << (guid_ints[3] & 0xFF)
+             << std::setw(2) << ((guid_ints[3] >> 8) & 0xFF)
+             << std::setw(2) << ((guid_ints[3] >> 16) & 0xFF)
+             << std::setw(2) << ((guid_ints[3] >> 24) & 0xFF)
+  ;
+
+  return guidStream.str();
 }
 
 // bool isOperator(const std::string& token) {

@@ -219,6 +219,58 @@ typedef struct {
   uint8_t reserved2 : 2;
 } PtgListFields;
 
+typedef struct {
+  bool fShowBrks : 1;
+  bool fDspFmlaSv : 1;
+  bool fDspGridSv : 1;
+  bool fDspRwColSv : 1;
+  bool fDspGutsSv : 1;
+  bool fDspZerosSv : 1;
+  bool fHorizontal : 1;
+  bool fVertical : 1;
+  bool fPrintRwCol : 1;
+  bool fPrintGrid : 1;
+  bool fFitToPage : 1;
+  bool fPrintArea : 1;
+  bool fOnePrintArea : 1;
+  bool fFilterMode : 1;
+  bool fEzFilter : 1;
+  bool reserved1 : 1;
+  bool reserved2 : 1;
+  bool fSplitV : 1;
+  bool fSplitH : 1;
+  uint8_t fHiddenRw : 2;
+  bool fHiddenCol : 1;
+  uint8_t hsState : 2;
+  bool reserved3 : 1;
+  bool fFilterUnique : 1;
+  bool fSheetLayoutView : 1;
+  bool fPageLayoutView : 1;
+  bool reserved4 : 1;
+  bool fRuler : 1;
+  bool reserved5 : 1;
+  bool reserved6 : 1;
+} BrtBeginUserShViewFields;
+
+typedef struct {
+  bool fIconic : 1;
+  bool fDspHScroll : 1;
+  bool fDspVScroll : 1;
+  bool fBotAdornment : 1;
+  bool fZoom : 1;
+  bool fDspFmlaBar : 1;
+  bool fDspStatus : 1;
+  uint8_t mdDspNote : 2;
+  uint8_t mdHideObj : 2;
+  bool fPrintIncl : 1;
+  bool fRowColIncl : 1;
+  bool fTimedUpdate : 1;
+  bool fAllMemChanges : 1;
+  bool fOnlySync : 1;
+  bool fPersonalView : 1;
+  uint16_t: 15;
+} BrtUserBookViewFields;
+
 enum PtgRowType
 {
   data = 0x00,
@@ -1219,6 +1271,15 @@ enum PtgStructure2
   PtgAttrSpaceSemi = 0x41,
   PtgAttrIfError = 0x80
 };
+
+std::string XLView(const uint32_t val) {
+  switch(val) {
+  case	0x00000000: return "normal";
+  case	0x00000001: return "pageBreakPreview";
+  case	0x00000002: return "pageLayout";
+  }
+  return "";
+}
 
 // #nocov start
 // copied from the website

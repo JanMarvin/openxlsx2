@@ -785,8 +785,64 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginCustomFilters14:
       case BrtBeginCustomRichFilters:
       {
-        Rcpp::warning("Custom Filter found. This is not handled.");
-        bin.seekg(size, bin.cur);
+        int32_t fAnd = 0;
+
+        // in xlsb it is flipped
+        fAnd = readbin(fAnd, bin, swapit) ^ 1;
+
+        out << "<customFilters" << std::endl;
+        if (fAnd) out << " and=\"" << fAnd << "\""; // and="1"
+        out << ">";
+
+        break;
+      }
+
+      case BrtCustomFilter:
+      case BrtCustomFilter14:
+      {
+        int8_t vts = 0, grbitSgn = 0;
+        double union_val = 0;
+        std::string vtsStringXls;
+
+        vts = readbin(vts, bin, swapit);
+        grbitSgn = readbin(grbitSgn, bin, swapit);
+
+        if (vts == 4) {
+          // a double
+          union_val = Xnum(bin, swapit);
+        } else if (vts == 8) {
+          // a bool
+          int8_t boolean = 0;
+          boolean = readbin(boolean, bin, swapit);
+          union_val = static_cast<double>(readbin(boolean, bin, swapit));
+          for (int8_t blk = 0; blk < 7; ++blk) {
+            readbin(boolean, bin, swapit);
+          }
+        } else {
+          // ignore
+          readbin(union_val, bin, swapit);
+          readbin(union_val, bin, swapit);
+        }
+
+        if (vts == 6) // a string
+          vtsStringXls = XLWideString(bin, swapit);
+
+        out << "<customFilter" << std::endl;
+        out << " operator=\"" << grbitSgnOperator(grbitSgn) << "\"";
+        if (vts == 6)
+          out << " val=\"" << vtsStringXls << "\"";
+        else
+          out << " val=\"" << union_val << "\"";
+        out << " />";
+
+        break;
+      }
+
+      case BrtEndCustomFilters:
+      case BrtEndCustomRichFilters:
+      {
+
+        out << "</customFilters>" << std::endl;
 
         break;
       }
@@ -1423,7 +1479,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
     bool first_extern_sheet = true;
     bool has_revision_record = false;
 
-    std::vector<std::string> defNams, xtis, reference_type;
+    std::vector<std::string> defNams, xtis, reference_type, customWorkbookView;
     defNams.push_back("<definedNames>");
     xtis.push_back("<xtis>");
 
@@ -1565,6 +1621,82 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
         if (debug) Rcpp::Rcout << "</workbookViews>" << std::endl;
         out << "</bookViews>" << std::endl;
         bin.seekg(size, bin.cur);
+        break;
+      }
+
+      case BrtUserBookView:
+      {
+        if (debug) Rcpp::Rcout << "<customWorkbookView>" << std::endl;
+
+        std::ostringstream cwv;
+
+        int32_t xLeft = 0, xRight = 0, yTop = 0, yBot = 0, iTabid = 0, iTabRatio = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, flags = 0;
+        int16_t wMergeInterval = 0;
+        std::string stName;
+
+        std::vector<int32_t> guids(4);
+
+        xLeft = readbin(xLeft, bin, swapit);
+        xRight = readbin(xRight, bin, swapit);
+        yTop = readbin(yTop, bin, swapit);
+        yBot = readbin(yBot, bin, swapit);
+        iTabid = readbin(iTabid, bin, swapit);
+        iTabRatio = readbin(iTabRatio, bin, swapit);
+        guids[0] = readbin(guid0, bin, swapit);
+        guids[1] = readbin(guid1, bin, swapit);
+        guids[2] = readbin(guid2, bin, swapit);
+        guids[3] = readbin(guid3, bin, swapit);
+
+        wMergeInterval = readbin(wMergeInterval, bin, swapit);
+
+        flags = readbin(flags, bin, swapit);
+
+        BrtUserBookViewFields *fields = (BrtUserBookViewFields*)&flags;
+
+        stName = XLWideString(bin, swapit);
+
+        std::string showComments;
+        if (fields->mdDspNote == 0) showComments = "commNone";
+        if (fields->mdDspNote == 1) showComments = "commIndAndComment";
+        if (fields->mdDspNote == 2) showComments = "commIndicator";
+
+        std::string showObjects;
+        if (fields->mdHideObj == 0) showObjects = "all";
+        if (fields->mdHideObj == 1) showObjects = "placeholders";
+        if (fields->mdHideObj == 2) showObjects = "none";
+
+        cwv << "<customWorkbookView" << std::endl;
+        cwv << " name=\"" << stName << "\"" << std::endl;
+        cwv << " guid=\"{" << guid_str(guids) << "}\"" << std::endl;
+        if (fields->fTimedUpdate) cwv << " autoUpdate=\"" << fields->fTimedUpdate << "\"" << std::endl;
+        if (fields->fTimedUpdate) cwv << " mergeInterval=\"" << wMergeInterval << "\"" << std::endl;
+        if (fields->fAllMemChanges) cwv << " changesSavedWin=\"" << fields->fAllMemChanges << "\"" << std::endl;
+        if (fields->fOnlySync) cwv << " onlySync=\"" << fields->fOnlySync << "\"" << std::endl;
+        if (fields->fPersonalView) cwv << " personalView=\"" << fields->fPersonalView << "\"" << std::endl;
+        if (!fields->fPrintIncl) cwv << " includePrintSettings=\"" << fields->fPrintIncl << "\"" << std::endl;
+        // wrong?
+        // if (!fields->fRowColIncl) cwv << " includeHiddenRowCol=\"" << fields->fRowColIncl << "\"" << std::endl;
+        if (fields->fZoom) cwv << " maximized=\"" << fields->fZoom << "\"" << std::endl;
+        if (fields->fIconic) cwv << " minimized=\"" << fields->fIconic << "\"" << std::endl;
+        if (!fields->fDspHScroll) cwv << " showHorizontalScroll=\"" << fields->fDspHScroll << "\"" << std::endl;
+        if (!fields->fDspVScroll) cwv << " showVerticalScroll=\"" << fields->fDspVScroll << "\"" << std::endl;
+        if (!fields->fBotAdornment) cwv << " showSheetTabs=\"" << fields->fBotAdornment << "\"" << std::endl;
+        if (xLeft > 0) cwv << " xWindow=\"" << xLeft << "\"" << std::endl;
+        if (yTop > 0) cwv << " yWindow=\"" << yTop << "\"" << std::endl;
+        if (xRight > 0) cwv << " windowWidth=\"" << xRight << "\"" << std::endl;
+        if ((yBot - yTop) > 0) cwv << " windowHeight=\"" << (yBot - yTop) << "\"" << std::endl;
+        if (iTabRatio != 600) cwv << " tabRatio=\"" << iTabRatio << "\"" << std::endl;
+        cwv << " activeSheetId=\"" << iTabid << "\"" << std::endl;
+        if (!fields->fDspFmlaBar) cwv << " showFormulaBar=\"" << fields->fDspFmlaBar << "\"" << std::endl;
+        if (!fields->fDspStatus) cwv << " showStatusbar=\"" << fields->fDspStatus << "\"" << std::endl;
+        if (showComments != "commIndicator") cwv << " showComments=\"" << showComments << "\"" << std::endl;
+        if (showObjects != "all") cwv << " showObjects=\"" << showObjects << "\"" << std::endl;
+        cwv << "/>" << std::endl;
+
+        // Rcpp::Rcout << xLeft << ": " << xRight << ": " << yTop << ": " << yBot << std::endl;
+
+        customWorkbookView.push_back(cwv.str());
+
         break;
       }
 
@@ -1941,6 +2073,17 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           }
         }
 
+        if (customWorkbookView.size()) {
+          out << "<customWorkbookViews>" << std::endl;
+          for (size_t i = 0; i < customWorkbookView.size(); ++i) {
+            if (debug)
+              Rcpp::Rcout << customWorkbookView[i] << std::endl;
+            out << customWorkbookView[i] << std::endl;
+          }
+          out << "</customWorkbookViews>" << std::endl;
+        }
+
+
         if (debug) Rcpp::Rcout << "</workbook>" << std::endl;
         out << "</workbook>" << std::endl;
         bin.seekg(size, bin.cur);
@@ -2289,7 +2432,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         if (colLeft > 0 || rwTop > 0)
           out << " topLeftCell=\"" << int_to_col(colLeft + 1) << std::to_string(rwTop + 1) << "\"";
         if (xlView)
-          out << " view=\"" << xlView << "\"";
+          out << " view=\"" << XLView(xlView) << "\"";
         if (fields->fWnProt)
           out << " windowProtection=\"" << fields->fWnProt << "\"";
         if (wScale)
@@ -3419,14 +3562,210 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         break;
       }
 
+
       case BrtBeginCustomFilters:
       case BrtBeginCustomFilters14:
       case BrtBeginCustomRichFilters:
       {
-        if (debug) Rcpp::Rcout << "BrtBeginCustom..." << std::endl;
-        Rcpp::warning("Custom Filter found. This is not handled.");
-        bin.seekg(size, bin.cur);
+        int32_t fAnd = 0;
 
+        // in xlsb it is flipped
+        fAnd = readbin(fAnd, bin, swapit) ^ 1;
+
+        out << "<customFilters" << std::endl;
+        if (fAnd) out << " and=\"" << fAnd << "\""; // and="1"
+        out << ">";
+
+        break;
+      }
+
+      case BrtCustomFilter:
+      case BrtCustomFilter14:
+      {
+        int8_t vts = 0, grbitSgn = 0;
+        double union_val = 0;
+        std::string vtsStringXls;
+
+        vts = readbin(vts, bin, swapit);
+        grbitSgn = readbin(grbitSgn, bin, swapit);
+
+        if (vts == 4) {
+          // a double
+          union_val = Xnum(bin, swapit);
+        } else if (vts == 8) {
+          // a bool
+          int8_t boolean = 0;
+          boolean = readbin(boolean, bin, swapit);
+          union_val = static_cast<double>(readbin(boolean, bin, swapit));
+          for (int8_t blk = 0; blk < 7; ++blk) {
+            readbin(boolean, bin, swapit);
+          }
+        } else {
+          // ignore
+          readbin(union_val, bin, swapit);
+          readbin(union_val, bin, swapit);
+        }
+
+        if (vts == 6) // a string
+          vtsStringXls = XLWideString(bin, swapit);
+
+        out << "<customFilter" << std::endl;
+        out << " operator=\"" << grbitSgnOperator(grbitSgn) << "\"";
+        if (vts == 6)
+          out << " val=\"" << vtsStringXls << "\"";
+        else
+          out << " val=\"" << union_val << "\"";
+        out << " />";
+
+        break;
+      }
+
+      case BrtEndCustomFilters:
+      case BrtEndCustomRichFilters:
+      {
+
+        out << "</customFilters>" << std::endl;
+
+        break;
+      }
+
+      case BrtBeginUserCsViews:
+      case BrtBeginUserShViews:
+      {
+        if (debug) Rcpp::Rcout << "BrtBeginUserXXViews" << std::endl;
+        out << "<customSheetViews>" << std::endl;
+        break;
+      }
+
+      case BrtBeginUserCsView:
+      {
+        if (debug) Rcpp::Rcout << "BrtBeginUserCsView" << std::endl;
+
+        int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, iTabId = 0, dwScale = 0, flags = 0;
+
+        guid0 = readbin(guid0, bin, swapit);
+        guid1 = readbin(guid1, bin, swapit);
+        guid2 = readbin(guid2, bin, swapit);
+        guid3 = readbin(guid3, bin, swapit);
+
+        iTabId = readbin(iTabId, bin, swapit);
+        dwScale = readbin(dwScale, bin, swapit);
+        flags = readbin(flags, bin, swapit);
+        // hsState
+        // fZoomToFit
+
+        out << "<customSheetView>" << std::endl;
+        break;
+      }
+
+      case BrtBeginUserShView:
+      {
+        if (debug) Rcpp::Rcout << "BrtBeginUserShView" << std::endl;
+
+        int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, iTabId = 0, dwScale = 0, icv = 0, flags = 0;
+
+        std::vector<int32_t> guid_vec(4);
+        guid_vec[0] = readbin(guid0, bin, swapit);
+        guid_vec[1] = readbin(guid1, bin, swapit);
+        guid_vec[2] = readbin(guid2, bin, swapit);
+        guid_vec[3] = readbin(guid3, bin, swapit);
+
+        iTabId = readbin(iTabId, bin, swapit);
+        if (iTabId < 1 || iTabId > 65535)
+          Rcpp::stop("iTabId out of range");
+
+        dwScale = readbin(dwScale, bin, swapit);
+        if (dwScale < 0 || dwScale > 400) // dialog sheet 0 else 10
+          Rcpp::stop("dwScale out of range");
+
+        icv = readbin(icv, bin, swapit);
+        if (icv > 64)
+          Rcpp::stop("icv out of range");
+
+        flags = readbin(flags, bin, swapit);
+
+        // rfxTopLeft
+        std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
+
+        BrtBeginUserShViewFields *fields = (BrtBeginUserShViewFields *)&flags;
+
+        out << "<customSheetView";
+        out << " guid=\"{"<< guid_str(guid_vec) << "}\"";
+        if (dwScale != 100)
+          out << " scale=\"" << dwScale << "\"";
+        if (icv != 64)
+          out << " colorId=\"" << (int32_t)icv << "\"";
+        if (fields->fShowBrks)
+          out << " showPageBreaks=\"" << (int16_t)fields->fShowBrks << "\"";
+        if (fields->fDspFmlaSv)
+          out << " showFormulas=\"" << (int16_t)fields->fDspFmlaSv << "\"";
+        if (!fields->fDspGridSv)
+          out << " showGridLines=\"" << (int16_t)fields->fDspGridSv << "\"";
+        if (!fields->fDspRwColSv)
+          out << " showRowCol=\"" << (int16_t)fields->fDspRwColSv << "\"";
+        if (!fields->fDspGutsSv)
+          out << " outlineSymbols=\"" << (int16_t)fields->fDspGutsSv << "\"";
+        if (!fields->fDspZerosSv)
+          out << " zeroValues=\"" << (int16_t)fields->fDspZerosSv << "\"";
+        if (fields->fFitToPage)
+          out << " fitToPage=\"" << (int16_t)fields->fFitToPage << "\"";
+        if (fields->fPrintArea)
+          out << " printArea=\"" << (int16_t)fields->fPrintArea << "\"";
+        if (fields->fFilterMode)
+          out << " filter=\"" << (int16_t)fields->fFilterMode << "\"";
+        if (fields->fEzFilter)
+          out << " showAutoFilter=\"" << (int16_t)fields->fEzFilter << "\"";
+        // if (iTabId) // not used?
+        //   out << " tabSelected=\"" << iTabId << "\"";
+        if (fields->fHiddenRw)
+          out << " hiddenRows=\"" << (int16_t)fields->fHiddenRw << "\"";
+        if (fields->fHiddenCol)
+          out << " hiddenColumns=\"" << (int16_t)fields->fHiddenCol << "\"";
+        if (fields->hsState)
+          out << " state=\"" << (int16_t)fields->hsState << "\"";
+        if (fields->fFilterUnique)
+          out << " filterUnique=\"" << (int16_t)fields->fFilterUnique << "\"";
+        if (fields->fSheetLayoutView)
+          out << " view=\"" << "pageBreakPreview" << "\"";
+        if (fields->fPageLayoutView)
+          out << " view=\"" << "pageLayout" << "\"";
+        if (!fields->fRuler)
+          out << " showRuler=\"" << (int16_t)fields->fRuler << "\"";
+        if (rfx[0] > 1 && rfx[2] > 0)
+          out << " topLeftCell=\"" << int_to_col(rfx[2] + 1) << std::to_string(rfx[0] + 1) << "\"";
+
+        out << ">" << std::endl;
+
+        // // order matters for <customSheetViews/>
+        // out << "<printOptions" << std::endl;
+        // if (fields->fHorizontal)
+        //   out << " horizontalCentered = \"" << (int16_t)fields->fHorizontal << "\"";
+        // if (fields->fVertical)
+        //   out << " verticalCentered = \"" << (int16_t)fields->fVertical << "\"";
+        // if (fields->fPrintRwCol)
+        //   out << " headings = \"" << (int16_t)fields->fPrintRwCol << "\"";
+        // if (fields->fDspGridSv)
+        //   out << " gridLines = \"" << (int16_t)fields->fDspGridSv << "\"";
+        // if (!fields->fPrintGrid)
+        //   out << " gridLinesSet = \"" << (int16_t)fields->fPrintGrid << "\"";
+        // out << " />" << std::endl;
+
+        break;
+      }
+
+      case BrtEndUserCsView:
+      case BrtEndUserShView:
+      {
+        if (debug) Rcpp::Rcout << "BrtEndUserXXView" << std::endl;
+        out << "</customSheetView>" << std::endl;
+        break;
+      }
+
+      case BrtEndUserCsViews:
+      case BrtEndUserShViews:
+      {
+        if (debug) Rcpp::Rcout << "BrtEndUserXXViews" << std::endl;
+        out << "</customSheetViews>" << std::endl;
         break;
       }
 
