@@ -90,7 +90,7 @@ We will work on problems when we have time or need.
 
 This package is licensed under the MIT license and
 is based on \href{https://github.com/ycphs/openxlsx}{\code{openxlsx}} (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022)
-and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine; COPYRIGHT 2006-2023). Both released under the MIT license.
+and \href{https://github.com/zeux/pugixml}{\code{pugixml}} (by Arseny Kapoulkine; COPYRIGHT 2006-2025). Both released under the MIT license.
 }
 }
 \examples{

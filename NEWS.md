@@ -12,6 +12,10 @@
 * `fmt_txt()` is now indifferent about `color` and `colour`. [1229](https://github.com/JanMarvin/openxlsx2/pull/1229)
 * Improve `set_col_widths(widths = "auto")`. This should avoid very wide columns for numeric columns. [1239](https://github.com/JanMarvin/openxlsx2/pull/1239)
 
+## Internal changes
+
+* Update of internal pugixml library
+
 ## Breaking changes
 * Style helpers will accept colors only if provided via `wb_color()`. This broke a single example case that was still using `c(rgb = "FF808080")` this can be converted to `wb_color(hex = "FF808080")`.
 

@@ -98,7 +98,7 @@
 #'
 #' This package is licensed under the MIT license and
 #' is based on [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and Philipp Schauberger; COPYRIGHT 2014-2022)
-#' and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2023). Both released under the MIT license.
+#' and [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine; COPYRIGHT 2006-2025). Both released under the MIT license.
 #' @keywords internal
 #' @examples
 #' # read xlsx or xlsm files
