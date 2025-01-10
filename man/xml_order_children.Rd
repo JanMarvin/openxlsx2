@@ -20,3 +20,7 @@ xml_order_children(xml_node, level, order, pointer = FALSE, ...)
 \description{
 order xml children in node
 }
+\examples{
+xml <- "<a><b/><c/><d/></a>"
+xml_order_children(xml, "a", c(3, 2, 1))
+}

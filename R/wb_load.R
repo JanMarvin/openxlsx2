@@ -1549,8 +1549,7 @@ wb_load <- function(
         cv_nms   <- xml_node_name(cvs[i], "customSheetView")
 
         ordr <- match(exp_nams, cv_nms)
-        ordr <- ordr[!is.na(ordr)] - 1L
-        ordr <- ordr
+        ordr <- ordr[!is.na(ordr)]
 
         cvs[i] <- xml_order_children(xml_node = cvs[i], level =  "customSheetView", order = ordr, pointer = FALSE)
 

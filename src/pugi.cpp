@@ -757,9 +757,6 @@ SEXP xml_order_children1(XPtrXML node, std::string child, const std::vector<int>
     uint32_t pugi_format_flags = pugi_format(node);
 
     pugi::xml_node root = node->child(child.c_str());
-    if (!root) {
-        Rcpp::stop("Root node <root> not found.");
-    }
 
     std::vector<pugi::xml_node> children;
     for (pugi::xml_node child : root.children()) {
