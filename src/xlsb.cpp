@@ -2524,15 +2524,14 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           stHeaderEven << ": " << stFooterEven << ": " <<
             stHeaderFirst << ": " << stFooterFirst << std::endl;
 
-        out << "<headerFooter>" <<
-          "<oddHeader>" << stHeader <<"</oddHeader>" <<
-          "<oddFooter>" << stFooter <<"</oddFooter>" <<
-          "<firstHeader>" << stHeaderFirst <<"</firstHeader>" <<
-          "<firstFooter>" << stFooterFirst <<"</firstFooter>" <<
-          "<evenHeader>" << stHeaderEven <<"</evenHeader>" <<
-          "<evenFooter>" << stHeaderEven <<"</evenFooter>" <<
-            // "<drawingHF>" <<  <<"</drawingHF>" <<
-        "</headerFooter>" << std::endl;
+        out << "<headerFooter differentOddEven=\"1\" differentFirst=\"0\" scaleWithDoc=\"0\" alignWithMargins=\"0\">" << std::endl;
+        if (!stHeader.empty()) out << "<oddHeader>" << stHeader <<"</oddHeader>" << std::endl;
+        if (!stFooter.empty()) out << "<oddFooter>" << stFooter <<"</oddFooter>" << std::endl;
+        if (!stHeaderEven.empty()) out << "<evenHeader>" << stHeaderEven <<"</evenHeader>" << std::endl;
+        if (!stFooterEven.empty()) out << "<evenFooter>" << stFooterEven <<"</evenFooter>" << std::endl;
+        if (!stHeaderFirst.empty()) out << "<firstHeader>" << stHeaderFirst <<"</firstHeader>" << std::endl;
+        if (!stFooterFirst.empty()) out << "<firstFooter>" << stFooterFirst <<"</firstFooter>" << std::endl;
+        out << "</headerFooter>" << std::endl;
 
         break;
       }
@@ -3736,19 +3735,19 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         out << ">" << std::endl;
 
-        // // order matters for <customSheetViews/>
-        // out << "<printOptions" << std::endl;
-        // if (fields->fHorizontal)
-        //   out << " horizontalCentered = \"" << (int16_t)fields->fHorizontal << "\"";
-        // if (fields->fVertical)
-        //   out << " verticalCentered = \"" << (int16_t)fields->fVertical << "\"";
-        // if (fields->fPrintRwCol)
-        //   out << " headings = \"" << (int16_t)fields->fPrintRwCol << "\"";
-        // if (fields->fDspGridSv)
-        //   out << " gridLines = \"" << (int16_t)fields->fDspGridSv << "\"";
-        // if (!fields->fPrintGrid)
-        //   out << " gridLinesSet = \"" << (int16_t)fields->fPrintGrid << "\"";
-        // out << " />" << std::endl;
+        // order matters for <customSheetViews/>
+        out << "<printOptions" << std::endl;
+        if (fields->fHorizontal)
+          out << " horizontalCentered = \"" << (int16_t)fields->fHorizontal << "\"";
+        if (fields->fVertical)
+          out << " verticalCentered = \"" << (int16_t)fields->fVertical << "\"";
+        if (fields->fPrintRwCol)
+          out << " headings = \"" << (int16_t)fields->fPrintRwCol << "\"";
+        if (fields->fDspGridSv)
+          out << " gridLines = \"" << (int16_t)fields->fDspGridSv << "\"";
+        if (!fields->fPrintGrid)
+          out << " gridLinesSet = \"" << (int16_t)fields->fPrintGrid << "\"";
+        out << " />" << std::endl;
 
         break;
       }

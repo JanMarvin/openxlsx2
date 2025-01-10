@@ -374,3 +374,28 @@ xml_rm_child <- function(xml_node, xml_child, level, which = 0, pointer = FALSE,
 
   return(z)
 }
+
+#' order xml children in node
+#' @param xml_node an xml structure
+#' @param level the xml root
+#' @param order the wanted order as numeric
+#' @param pointer pointer
+#' @param ... additional arguments passed to `read_xml()`
+#' @export
+xml_order_children <- function(xml_node, level, order, pointer = FALSE, ...) {
+
+  if (missing(xml_node))
+    stop("need xml_node")
+
+  if (missing(level))
+    stop("need level")
+
+  if (missing(order))
+    stop("need order")
+
+  if (!inherits(xml_node, "pugi_xml")) xml_node <- read_xml(xml_node, ...)
+  assert_class(level, "character")
+
+  xml_order_children1(node = xml_node, child = level, order = order, pointer = pointer)
+
+}

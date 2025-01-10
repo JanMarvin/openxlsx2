@@ -1538,6 +1538,30 @@ wb_load <- function(
   # correct sheet references and replace our replacement with it.
   if (!data_only && length(workbookBIN)) {
 
+    # we need to update the order of customSheetView children. Incorrect orders
+    # causes spreadsheet software to be unable to load and recover the file.
+    for (sheet in seq_along(wb$worksheets)) {
+      if (length(wb$worksheets[[sheet]]$customSheetViews) == 0) next
+      cvs <- xml_node(wb$worksheets[[sheet]]$customSheetViews, "customSheetViews", "customSheetView")
+
+      for (i in seq_along(cvs)) {
+        exp_nams <- c("pane", "selection", "rowBreaks", "colBreaks", "pageMargins", "printOptions", "pageSetup", "headerFooter", "autoFilter", "extLst")
+        cv_nms   <- xml_node_name(cvs[i], "customSheetView")
+
+        ordr <- match(exp_nams, cv_nms)
+        ordr <- ordr[!is.na(ordr)] - 1L
+        ordr <- ordr
+
+        cvs[i] <- xml_order_children(xml_node = cvs[i], level =  "customSheetView", order = ordr, pointer = FALSE)
+
+        # headerFooter cause issues. they are (a) not added to the correct node
+        # and (b) brick the entire XML structure
+        if ("headerFooter" %in% cv_nms) cvs[i] <- xml_rm_child(cvs[i], "headerFooter")
+      }
+
+      wb$worksheets[[sheet]]$customSheetViews <- xml_node_create("customSheetViews", xml_children = cvs)
+    }
+
     if (length(wb$workbook$xti)) {
       # create data frame containing sheet names for Xti entries
       xti <- rbindlist(xml_attr(wb$workbook$xti, "xti"))

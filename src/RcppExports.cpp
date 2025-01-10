@@ -583,6 +583,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// xml_order_children1
+SEXP xml_order_children1(XPtrXML node, std::string child, const std::vector<int>& order, bool pointer);
+RcppExport SEXP _openxlsx2_xml_order_children1(SEXP nodeSEXP, SEXP childSEXP, SEXP orderSEXP, SEXP pointerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type order(orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
+    rcpp_result_gen = Rcpp::wrap(xml_order_children1(node, child, order, pointer));
+    return rcpp_result_gen;
+END_RCPP
+}
 // xml_si_to_txt
 SEXP xml_si_to_txt(XPtrXML doc);
 RcppExport SEXP _openxlsx2_xml_si_to_txt(SEXP docSEXP) {
@@ -1015,6 +1029,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_remove_child1", (DL_FUNC) &_openxlsx2_xml_remove_child1, 4},
     {"_openxlsx2_xml_remove_child2", (DL_FUNC) &_openxlsx2_xml_remove_child2, 5},
     {"_openxlsx2_xml_remove_child3", (DL_FUNC) &_openxlsx2_xml_remove_child3, 6},
+    {"_openxlsx2_xml_order_children1", (DL_FUNC) &_openxlsx2_xml_order_children1, 4},
     {"_openxlsx2_xml_si_to_txt", (DL_FUNC) &_openxlsx2_xml_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
