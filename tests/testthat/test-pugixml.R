@@ -391,8 +391,11 @@ test_that("xml_order_children works", {
   got <- xml_order_children(xml, "a", c(3, 2, 1))
   expect_equal(exp, got)
 
+  got <- xml_order_children(xml, "a", c(3, 2, 1), pointer = TRUE)
+  expect_equal(TRUE, inherits(got, "pugi_xml"))
+
   expect_error(xml_order_children(xml, "b", c(3, 2, 1)), "level not found")
   expect_error(xml_order_children(xml, "a", c(2, 1)), "does not match the number of children")
   expect_error(xml_order_children(xml, "a", c(2, 1, 0)), "Invalid order index")
-
+  expect_error(xml_order_children(xml, c(2, 1, 0)), "need xml_node, level, and order")
 })
