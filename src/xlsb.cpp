@@ -8,7 +8,6 @@
 
 // [[Rcpp::export]]
 int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -19,7 +18,7 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_style_sheet = false;
 
-    while(!end_of_style_sheet) {
+    while (!end_of_style_sheet) {
       Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
@@ -4477,5 +4476,4 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
   } else {
     return -1;
   };
-
 }

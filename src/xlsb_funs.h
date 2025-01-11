@@ -1,10 +1,9 @@
 #ifndef XLSB_FUNS_H
 #define XLSB_FUNS_H
 
-#include <string>
-#include <fstream>
 #include <cstdint>
-
+#include <fstream>
+#include <string>
 
 /* We have no real way to test if the big endian stuff works. Some parts might,
  * others not. */
@@ -13,7 +12,6 @@
 // for swap_endian
 #include <type_traits>
 
-
 // detect if we need to swap. assuming that there is no big endian xlsb format,
 // we only need to swap little endian xlsb files on big endian systems
 bool is_big_endian() {
@@ -21,8 +19,8 @@ bool is_big_endian() {
   uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&num);
   return bytePtr[0] == 0;
 }
-#include <type_traits>
 #include <cstdint>
+#include <type_traits>
 
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
@@ -103,24 +101,21 @@ typename std::enable_if<
 // #nocov end
 
 template <typename T>
-T readbin( T t , std::istream& sas, bool swapit)
-{
-  if (!sas.read ((char*)&t, sizeof(t)))
+T readbin(T t, std::istream& sas, bool swapit) {
+  if (!sas.read((char*)&t, sizeof(t)))
     Rcpp::stop("readbin: a binary read error occurred");
-  if (swapit==0)
-    return(t);
+  if (swapit == 0)
+    return (t);
   else
-    return(swap_endian(t));
+    return (swap_endian(t));
 }
 
 template <typename T>
-inline std::string readstring(std::string &mystring, T& sas)
-{
-
+inline std::string readstring(std::string& mystring, T& sas) {
   if (!sas.read(&mystring[0], mystring.size()))
     Rcpp::stop("char: a binary read error occurred");
 
-  return(mystring);
+  return (mystring);
 }
 
 std::string escape_quote(const std::string& input) {
@@ -129,12 +124,12 @@ std::string escape_quote(const std::string& input) {
 
   for (char c : input) {
     switch (c) {
-    case '\"':
-      result += "\"\"";
-      break;
-    default:
-      result += c;
-    break;
+      case '\"':
+        result += "\"\"";
+        break;
+      default:
+        result += c;
+        break;
     }
   }
 
@@ -147,24 +142,24 @@ std::string escape_xml(const std::string& input) {
 
   for (char c : input) {
     switch (c) {
-    case '&':
-      result += "&amp;";
-      break;
-    case '\"':
-      result += "&quot;";
-      break;
-    case '\'':
-      result += "&apos;";
-      break;
-    case '<':
-      result += "&lt;";
-      break;
-    case '>':
-      result += "&gt;";
-      break;
-    default:
-      result += c;
-      break;
+      case '&':
+        result += "&amp;";
+        break;
+      case '\"':
+        result += "&quot;";
+        break;
+      case '\'':
+        result += "&apos;";
+        break;
+      case '<':
+        result += "&lt;";
+        break;
+      case '>':
+        result += "&gt;";
+        break;
+      default:
+        result += c;
+        break;
     }
   }
 
@@ -172,17 +167,16 @@ std::string escape_xml(const std::string& input) {
 }
 
 std::string wrap_xml(const std::string& str) {
-    if (!str.empty() && isspace(str[0])) {
-        return "<t xml:space=\"preserve\">" + str + "</t>";
-    } else {
-        return "<t>" + str + "</t>";
-    }
+  if (!str.empty() && isspace(str[0])) {
+    return "<t xml:space=\"preserve\">" + str + "</t>";
+  } else {
+    return "<t>" + str + "</t>";
+  }
 }
 
 std::string to_utf8(const std::u16string& u16str) {
-
   std::string utf8str;
-  utf8str.reserve(u16str.length() * 3); // Reserve enough space for UTF-8 characters
+  utf8str.reserve(u16str.length() * 3);  // Reserve enough space for UTF-8 characters
 
   for (std::size_t i = 0; i < u16str.length(); ++i) {
     char16_t u16char = u16str[i];
@@ -228,8 +222,7 @@ std::string to_utf8(const std::u16string& u16str) {
   return utf8str;
 }
 
-std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
-
+std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
   size_t size = mystring.size();
   std::u16string str;
   str.resize(size * 2);
@@ -243,7 +236,7 @@ std::string read_xlwidestring(std::string &mystring, std::istream& sas) {
   // mystring.resize(size);
   outstr.erase(std::remove(outstr.begin(), outstr.end(), '\0'), outstr.end());
 
-  return(outstr);
+  return (outstr);
 }
 
 std::string PtrStr(std::istream& sas, bool swapit) {
@@ -279,7 +272,6 @@ std::string XLNullableWideString(std::istream& sas, bool swapit) {
   return read_xlwidestring(str, sas);
 }
 
-
 // should really add a reliable function to get all these tricky bits
 // bit 1 from uint8_t
 // bit 2 from uint8_t
@@ -292,7 +284,6 @@ int32_t RECORD_ID(std::istream& sas, bool swapit) {
   var1 = readbin(var1, sas, swapit);
 
   if (var1 & 0x80) {
-
     var2 = readbin(var2, sas, swapit);
 
     // If the high bit is 1, then it's a two-byte record type
@@ -320,7 +311,6 @@ int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
 
   // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
 
-
   if (sar2 != 0 && sar3 != 0 && sar4 != 0) {
     int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
     return recordType;
@@ -346,8 +336,7 @@ int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
   return -1;
 }
 
-int32_t RECORD(int32_t &rid, int32_t &rsize, std::istream& sas, bool swapit) {
-
+int32_t RECORD(int32_t& rid, int32_t& rsize, std::istream& sas, bool swapit) {
   /* Record ID ---------------------------------------------------------------*/
   rid = RECORD_ID(sas, swapit);
 
@@ -364,7 +353,6 @@ std::string cell_style(int32_t style) {
   }
   return out;
 }
-
 
 std::string halign(int32_t style) {
   std::string out = "";
@@ -432,7 +420,6 @@ std::string valign(int32_t style) {
 }
 
 std::vector<std::pair<int, int>> StrRun(std::istream& sas, uint32_t dwSizeStrRun, bool swapit) {
-
   uint16_t ich = 0, ifnt = 0;
 
   // something?
@@ -449,100 +436,96 @@ std::vector<std::pair<int, int>> StrRun(std::istream& sas, uint32_t dwSizeStrRun
 
 // Function to get a safe substring from a UTF-8 string
 std::string utf8_substr(const std::string& str, int32_t start, int32_t length) {
-    size_t byte_pos = 0; // Byte position in the original string
-    size_t char_pos = 0; // Character position
+  size_t byte_pos = 0;  // Byte position in the original string
+  size_t char_pos = 0;  // Character position
 
-    // Find the byte position of the start character
-    while (char_pos < static_cast<size_t>(start) && byte_pos < str.size()) {
-        if ((str[byte_pos] & 0x80) == 0) {
-            // Single-byte character (ASCII)
-            byte_pos += 1;
-        } else if ((str[byte_pos] & 0xE0) == 0xC0) {
-            // Two-byte character
-            byte_pos += 2;
-        } else if ((str[byte_pos] & 0xF0) == 0xE0) {
-            // Three-byte character
-            byte_pos += 3;
-        } else if ((str[byte_pos] & 0xF8) == 0xF0) {
-            // Four-byte character
-            byte_pos += 4;
-        } else {
-            Rcpp::stop("Invalid UTF-8 encoding detected.");
-        }
-        ++char_pos;
+  // Find the byte position of the start character
+  while (char_pos < static_cast<size_t>(start) && byte_pos < str.size()) {
+    if ((str[byte_pos] & 0x80) == 0) {
+      // Single-byte character (ASCII)
+      byte_pos += 1;
+    } else if ((str[byte_pos] & 0xE0) == 0xC0) {
+      // Two-byte character
+      byte_pos += 2;
+    } else if ((str[byte_pos] & 0xF0) == 0xE0) {
+      // Three-byte character
+      byte_pos += 3;
+    } else if ((str[byte_pos] & 0xF8) == 0xF0) {
+      // Four-byte character
+      byte_pos += 4;
+    } else {
+      Rcpp::stop("Invalid UTF-8 encoding detected.");
     }
+    ++char_pos;
+  }
 
-    size_t start_byte_pos = byte_pos;
+  size_t start_byte_pos = byte_pos;
 
-    // Find the byte position of the end character
-    while (char_pos < static_cast<size_t>(start + length) && byte_pos < str.size()) {
-        if ((str[byte_pos] & 0x80) == 0) {
-            // Single-byte character (ASCII)
-            byte_pos += 1;
-        } else if ((str[byte_pos] & 0xE0) == 0xC0) {
-            // Two-byte character
-            byte_pos += 2;
-        } else if ((str[byte_pos] & 0xF0) == 0xE0) {
-            // Three-byte character
-            byte_pos += 3;
-        } else if ((str[byte_pos] & 0xF8) == 0xF0) {
-            // Four-byte character
-            byte_pos += 4;
-        } else {
-            Rcpp::stop("Invalid UTF-8 encoding detected.");
-        }
-        ++char_pos;
+  // Find the byte position of the end character
+  while (char_pos < static_cast<size_t>(start + length) && byte_pos < str.size()) {
+    if ((str[byte_pos] & 0x80) == 0) {
+      // Single-byte character (ASCII)
+      byte_pos += 1;
+    } else if ((str[byte_pos] & 0xE0) == 0xC0) {
+      // Two-byte character
+      byte_pos += 2;
+    } else if ((str[byte_pos] & 0xF0) == 0xE0) {
+      // Three-byte character
+      byte_pos += 3;
+    } else if ((str[byte_pos] & 0xF8) == 0xF0) {
+      // Four-byte character
+      byte_pos += 4;
+    } else {
+      Rcpp::stop("Invalid UTF-8 encoding detected.");
     }
+    ++char_pos;
+  }
 
-    return str.substr(start_byte_pos, byte_pos - start_byte_pos);
+  return str.substr(start_byte_pos, byte_pos - start_byte_pos);
 }
 
 std::string to_rich_text(const std::string& str, const std::vector<std::pair<int, int>>& str_runs) {
-    std::string result;
-    int32_t start = 0, len = 0;
+  std::string result;
+  int32_t start = 0, len = 0;
 
-    for (size_t str_run = 0; str_run < str_runs.size(); ++str_run) {
+  for (size_t str_run = 0; str_run < str_runs.size(); ++str_run) {
+    if (str_run == 0 && str_runs[0].first > 0) {
+      start = 0;
+      len = str_runs[str_run].first;
 
-        if (str_run == 0 && str_runs[0].first > 0) {
+      std::string part = utf8_substr(str, start, len);
 
-          start = 0;
-          len   = str_runs[str_run].first;
-
-          std::string part = utf8_substr(str, start, len);
-
-          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/>" + wrap_xml(escape_xml(part)) + "</r>";
-        }
-
-          start = str_runs[str_run].first;
-          if ((str_run + 1) < str_runs.size())
-            len = str_runs[str_run + 1].first - start;
-          else
-            len = static_cast<int32_t>(str.size()) - start;
-
-          std::string part = utf8_substr(str, start, len);
-
-          result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/>" + wrap_xml(escape_xml(part)) + "</r>";
+      result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/>" + wrap_xml(escape_xml(part)) + "</r>";
     }
 
-    return result;
+    start = str_runs[str_run].first;
+    if ((str_run + 1) < str_runs.size())
+      len = str_runs[str_run + 1].first - start;
+    else
+      len = static_cast<int32_t>(str.size()) - start;
+
+    std::string part = utf8_substr(str, start, len);
+
+    result += "<r><FONT_" + std::to_string(str_runs[str_run].second) + "/>" + wrap_xml(escape_xml(part)) + "</r>";
+  }
+
+  return result;
 }
 
 void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
-
   uint16_t ichFirst = 0, ichMom = 0, cchMom = 0, ifnt = 0, AB = 0;
   // uint32_t phrun = 0;
   for (uint8_t i = 0; i < dwPhoneticRun; ++i) {
     ichFirst = readbin(ichFirst, sas, swapit);
-    ichMom   = readbin(ichMom, sas, swapit);
-    cchMom   = readbin(cchMom, sas, swapit);
-    ifnt     = readbin(ifnt, sas, swapit);
-    AB       = readbin(AB, sas, swapit);  // phType (2) alcH (2) unused (12)
+    ichMom = readbin(ichMom, sas, swapit);
+    cchMom = readbin(cchMom, sas, swapit);
+    ifnt = readbin(ifnt, sas, swapit);
+    AB = readbin(AB, sas, swapit);  // phType (2) alcH (2) unused (12)
   }
 }
 
 std::string RichStr(std::istream& sas, bool swapit) {
-
-  uint8_t AB = 0; // , unk = 0
+  uint8_t AB = 0;  // , unk = 0
   bool A = 0, B = 0;
   AB = readbin(AB, sas, swapit);
 
@@ -558,7 +541,7 @@ std::string RichStr(std::istream& sas, bool swapit) {
 
   uint32_t dwSizeStrRun = 0, dwPhoneticRun = 0;
 
-  if (A) { //  || unk
+  if (A) {  //  || unk
     // Rcpp::Rcout << "a" << std::endl;
     // number of runs following
     dwSizeStrRun = readbin(dwSizeStrRun, sas, swapit);
@@ -580,12 +563,10 @@ std::string RichStr(std::istream& sas, bool swapit) {
     PhRun(sas, dwPhoneticRun, swapit);
   }
 
-  return(str);
-
+  return (str);
 }
 
 void ProductVersion(std::istream& sas, bool swapit, bool debug) {
-
   uint16_t version = 0, flags = 0;
   version = readbin(version, sas, swapit); // 3586 - x14?
   flags = readbin(flags, sas, swapit);     // 0
@@ -597,20 +578,18 @@ void ProductVersion(std::istream& sas, bool swapit, bool debug) {
 }
 
 std::vector<int32_t> UncheckedRfX(std::istream& sas, bool swapit) {
-
   std::vector<int32_t> out;
-  int32_t rwFirst= 0, rwLast= 0, colFirst= 0, colLast= 0;
+  int32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
 
   out.push_back(readbin(rwFirst, sas, swapit));
   out.push_back(readbin(rwLast, sas, swapit));
   out.push_back(readbin(colFirst, sas, swapit));
   out.push_back(readbin(colLast, sas, swapit));
 
-  return(out);
+  return (out);
 }
 
 std::vector<int32_t> UncheckedSqRfX(std::istream& sas, bool swapit) {
-
   std::vector<int32_t> out;
   int32_t crfx = 0;
   crfx = readbin(crfx, sas, swapit);
@@ -623,7 +602,6 @@ std::vector<int32_t> UncheckedSqRfX(std::istream& sas, bool swapit) {
 
   return out;
 }
-
 
 int32_t UncheckedCol(std::istream& sas, bool swapit) {
   int32_t col = 0;
@@ -670,7 +648,6 @@ std::vector<int32_t> ColRelShort(std::istream& sas, bool swapit) {
 }
 
 std::string Loc(std::istream& sas, bool swapit) {
-
   std::vector<int32_t> col;
   int32_t row = 0;
   row = UncheckedRw(sas, swapit);
@@ -692,7 +669,6 @@ std::string Loc(std::istream& sas, bool swapit) {
 
 // RgceLocRel
 std::string LocRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
-
   std::vector<int32_t> col_rel;
   int32_t row_rel = 0;
   row_rel = readbin(row_rel, sas, swapit);
@@ -731,7 +707,6 @@ std::string LocRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
 }
 
 std::string Area(std::istream& sas, bool swapit) {
-
   std::vector<int32_t> col0(3), col1(3);
   int32_t row0 = 0, row1 = 0;
   row0 = UncheckedRw(sas, swapit); // rowFirst
@@ -764,13 +739,12 @@ std::string Area(std::istream& sas, bool swapit) {
 }
 
 std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
-
   std::vector<int32_t> col_rel0(3), col_rel1(3);
   int32_t row_rel0 = 0, row_rel1 = 0;
-  row_rel0 = UncheckedRw(sas, swapit); // rowFirst
-  row_rel1 = UncheckedRw(sas, swapit); // rowLast
-  col_rel0 = ColRelShort(sas, swapit); // columnFirst
-  col_rel1 = ColRelShort(sas, swapit); // columnLast
+  row_rel0 = UncheckedRw(sas, swapit);  // rowFirst
+  row_rel1 = UncheckedRw(sas, swapit);  // rowLast
+  col_rel0 = ColRelShort(sas, swapit);  // columnFirst
+  col_rel1 = ColRelShort(sas, swapit);  // columnLast
 
   bool fColRel0 = col_rel0[1];
   bool fRwRel0  = col_rel0[2];
@@ -833,7 +807,6 @@ std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
 }
 
 std::vector<int32_t> Cell(std::istream& sas, bool swapit) {
-
   std::vector<int32_t> out(3);
 
   out[0] = UncheckedCol(sas, swapit);
@@ -841,15 +814,14 @@ std::vector<int32_t> Cell(std::istream& sas, bool swapit) {
   int32_t uint = 0;
   uint = readbin(uint, sas, swapit);
 
-  out[1] = uint & 0xFFFFFF;   // iStyleRef
-  out[2] = (uint & 0x02000000) >> 24; // fPhShow
+  out[1] = uint & 0xFFFFFF;            // iStyleRef
+  out[2] = (uint & 0x02000000) >> 24;  // fPhShow
   // unused
 
-  return(out);
+  return (out);
 }
 
 std::vector<std::string> dims_to_cells(int32_t firstRow, int32_t lastRow, int32_t firstCol, int32_t lastCol) {
-
   std::vector<int32_t> cols, rows;
   for (int32_t i = firstCol; i <= lastCol; ++i) {
     cols.push_back(i);
@@ -870,9 +842,7 @@ std::vector<std::string> dims_to_cells(int32_t firstRow, int32_t lastRow, int32_
 }
 
 std::vector<int32_t> brtColor(std::istream& sas, bool swapit) {
-
-  uint8_t AB = 0, xColorType = 0, index = 0,
-    bRed = 0, bGreen = 0, bBlue = 0, bAlpha = 0;
+  uint8_t AB = 0, xColorType = 0, index = 0, bRed = 0, bGreen = 0, bBlue = 0, bAlpha = 0;
   int16_t nTintAndShade = 0;
 
   AB = readbin(AB, sas, swapit);
@@ -984,12 +954,11 @@ static double Xnum(std::istream& sas, bool swapit) {
 }
 
 static double RkNumber(int32_t val) {
-
   double out;
-  if (val & 0x02) { // integer
+  if (val & 0x02) {  // integer
     int32_t tmp = val >> 2;
-    out = static_cast<double>(tmp);;
-  } else { // double
+    out = static_cast<double>(tmp);
+  } else {  // double
     uint64_t tmp = static_cast<uint32_t>(val) & 0xfffffffcU;
     tmp <<= 32;
     memcpy(&out, &tmp, sizeof(uint64_t));
@@ -1032,7 +1001,6 @@ std::string valType(uint8_t type) {
 }
 
 std::string typOperator(uint8_t oprtr) {
-
   if (oprtr == 0x0) return "between";
   if (oprtr == 0x1) return "notBetween";
   if (oprtr == 0x2) return "equal";
@@ -1044,7 +1012,6 @@ std::string typOperator(uint8_t oprtr) {
 
   return "unknown_operator";
 }
-
 
 std::string grbitSgnOperator(int8_t oprtr) {
 
@@ -1060,7 +1027,7 @@ std::string grbitSgnOperator(int8_t oprtr) {
 
 std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
   int32_t firstSheet = 0, lastSheet = 0;
-  int32_t externalLink = 0; // TODO actually uint32?
+  int32_t externalLink = 0;  // TODO actually uint32?
   externalLink = readbin(externalLink, sas, swapit);
   // scope
   // -2 workbook
@@ -1080,7 +1047,6 @@ std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
 
 // first half little endian, second half big endian
 std::string guid_str(const std::vector<int32_t>& guid_ints) {
-
   std::ostringstream guidStream;
 
   guidStream << std::uppercase << std::hex << std::setfill('0');
@@ -1117,31 +1083,31 @@ std::string guid_str(const std::vector<int32_t>& guid_ints) {
 //     token == "#" || token == "@";
 // }
 
-
 std::string array_elements(const std::vector<std::string>& elements, int32_t n, int32_t k) {
-    std::stringstream ss;
-    ss << "{";
-    for (int32_t i = 0; i < n; ++i) {
-        if (i > 0) ss << ";";
-        for (int32_t j = 0; j < k; ++j) {
-            if (j > 0) ss << ",";
-            size_t index = static_cast<size_t>(i * k + j);
-            if (index < elements.size()) {
-              // check if it needs escaping
-                ss << "\"";
-                ss << escape_quote(elements[index]);
-                ss << "\"";
-            }
-        }
+  std::stringstream ss;
+  ss << "{";
+  for (int32_t i = 0; i < n; ++i) {
+    if (i > 0)
+      ss << ";";
+    for (int32_t j = 0; j < k; ++j) {
+      if (j > 0)
+        ss << ",";
+      size_t index = static_cast<size_t>(i * k + j);
+      if (index < elements.size()) {
+        // check if it needs escaping
+        ss << "\"";
+        ss << escape_quote(elements[index]);
+        ss << "\"";
+      }
     }
-    ss << "}";
-    return ss.str();
+  }
+  ss << "}";
+  return ss.str();
 }
 
 #include <stack>
 
 std::string parseRPN(const std::string& expression) {
-
   std::istringstream iss(expression);
   std::string line;
   std::stack<std::string> formulaStack;
@@ -1171,24 +1137,24 @@ std::string parseRPN(const std::string& expression) {
     //     formulaStack.push(infixExpression);
     //   }
     // } else {
-      if (token.find("%s") != std::string::npos) {
-        size_t pos = token.rfind("%s");
-        while (pos != std::string::npos) {
-          if (!formulaStack.empty()) {
-            token.replace(pos, 2, formulaStack.top());
-            formulaStack.pop();
-          } else {
-            // some functions are actually empty like RAND(). Have to check if
-            // argument order is correct in this case
-            token.replace(pos, 2, "");
-          }
-          pos = token.rfind("%s");
+    if (token.find("%s") != std::string::npos) {
+      size_t pos = token.rfind("%s");
+      while (pos != std::string::npos) {
+        if (!formulaStack.empty()) {
+          token.replace(pos, 2, formulaStack.top());
+          formulaStack.pop();
+        } else {
+          // some functions are actually empty like RAND(). Have to check if
+          // argument order is correct in this case
+          token.replace(pos, 2, "");
         }
-        formulaStack.push(token);
-      } else {
-        // Rcpp::Rcout << "push to stack: " << token << std::endl;
-        formulaStack.push(token);
+        pos = token.rfind("%s");
       }
+      formulaStack.push(token);
+    } else {
+      // Rcpp::Rcout << "push to stack: " << token << std::endl;
+      formulaStack.push(token);
+    }
     // }
   }
 
@@ -1209,9 +1175,8 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
-    while(sas.tellg() < pos) {
-
     if (debug) Rcpp::Rcout << ".";
+  while (sas.tellg() < pos) {
 
     // 1
     uint8_t val2 = 0, controlbit = 0;
@@ -1219,7 +1184,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
     controlbit = (val1 & 0x80) >> 7;
     if (controlbit != 0) Rcpp::warning("controlbit unexpectedly not 0");
-    val1 &= 0x7F; // the remaining 7 bits form ptg
+    val1 &= 0x7F;  // the remaining 7 bits form ptg
     // for some Ptgs only the first 5 are of interest
     // and 6 and 7 contain DataType information
     if (debug) Rprintf("Formula: %d %d\n", val1, val2);
@@ -2351,7 +2316,7 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
 std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
-  uint32_t  cce= 0, cb= 0;
+  uint32_t cce = 0, cb = 0;
   std::vector<int32_t> ptgextra;
 
   if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
@@ -2368,7 +2333,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_
 
   fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
 
-  cb = readbin(cb, sas, swapit); // is there a control bit, even if CB is empty?
+  cb = readbin(cb, sas, swapit);  // is there a control bit, even if CB is empty?
 
   if (debug)
     Rcpp::Rcout << "cb: " << cb << std::endl;
@@ -2393,14 +2358,14 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_
     Rcpp::Rcout << fml_out << std::endl;
   }
 
-  std::string inflix =  parseRPN(fml_out);
+  std::string inflix = parseRPN(fml_out);
 
   return inflix;
 }
 
 std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
-  uint32_t  cce= 0, cb= 0;
+  uint32_t cce = 0, cb = 0;
   std::vector<int32_t> ptgextra;
 
   if (debug) Rcpp::Rcout << "CellParsedFormula: " << sas.tellg() << std::endl;
@@ -2409,7 +2374,7 @@ std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t
   if (cce >= 16385) Rcpp::stop("wrong cce size");
   if (debug) Rcpp::Rcout << "cce: " << cce << std::endl;
 
-  cb = readbin(cb, sas, swapit); // is there a control bit, even if CB is empty?
+  cb = readbin(cb, sas, swapit);  // is there a control bit, even if CB is empty?
 
   std::streampos pos = sas.tellg();
   pos += cce;
@@ -2438,11 +2403,9 @@ std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t
     Rcpp::Rcout << fml_out << std::endl;
   }
 
-  std::string inflix =  parseRPN(fml_out);
+  std::string inflix = parseRPN(fml_out);
 
   return inflix;
 }
-
-
 
 #endif
