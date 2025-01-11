@@ -2,7 +2,6 @@
 
 // [[Rcpp::export]]
 SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control, bool pointer) {
-
   xmldoc* doc = new xmldoc;
   pugi::xml_parse_result result;
 
@@ -153,7 +152,6 @@ SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
 
 // [[Rcpp::export]]
 SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::string child) {
-
   vec_string res;
   uint32_t pugi_format_flags = pugi_format(doc);
 
@@ -234,7 +232,6 @@ SEXP getXMLXPtr2val(XPtrXML doc, std::string level1, std::string child) {
 
 // [[Rcpp::export]]
 SEXP getXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::string child) {
-
   // returns a single vector, not a list of vectors!
   std::vector<std::string> x;
 

@@ -3,8 +3,7 @@
 
 // [[Rcpp::export]]
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
-
-  std::set<std::string> col_nams= {
+  std::set<std::string> col_nams{
     "bestFit",
     "collapsed",
     "customWidth",
@@ -290,7 +289,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
           // <v>
           if (val_name == v_str)  single_xml_col.v = val.text().get();
-
         }
 
         /* row is done */

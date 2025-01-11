@@ -39,7 +39,6 @@ SEXP openxlsx2_type(SEXP x) {
     SEXP Rclass = Rf_getAttrib(z, R_ClassSymbol);
 
     switch (TYPEOF(z)) {
-
     // logical
     case LGLSXP:
       if (Rf_isNull(Rclass)) {
@@ -267,7 +266,6 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
 // [[Rcpp::export]]
 SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill,
                 Rcpp::Nullable<Rcpp::IntegerVector> fcols) {
-
   R_xlen_t kk = static_cast<R_xlen_t>(cols.size());
   R_xlen_t nn = static_cast<R_xlen_t>(rows.size());
 
@@ -379,7 +377,6 @@ void wide_to_long(
     std::string c_cm,
     std::vector<std::string> dims
 ) {
-
   R_xlen_t n = static_cast<R_xlen_t>(z.nrow());
   R_xlen_t m = static_cast<R_xlen_t>(z.ncol());
   bool has_dims = static_cast<R_xlen_t>(dims.size()) == (n * m);
@@ -464,9 +461,6 @@ void wide_to_long(
       else
         string_nums = in_string_nums;
 
-      switch(vtyp)
-      {
-
       case currency:
       case short_date:
       case long_date:
@@ -489,6 +483,7 @@ void wide_to_long(
 
         // test if string can be written as number
         if (string_nums && is_double(vals)) {
+      switch (vtyp) {
           // v
           SET_STRING_ELT(zz_v, pos, vals_sexp);
           vtyp     = (string_nums == 1) ? string_num : numeric;

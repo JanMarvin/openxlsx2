@@ -101,7 +101,6 @@ std::string txt_to_xml(
     bool skip_control,
     std::string type
 ) {
-
   pugi::xml_document doc;
 
   uint32_t pugi_format_flags = pugi::format_indent;
