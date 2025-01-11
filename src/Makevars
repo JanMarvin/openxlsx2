@@ -1,1 +1,6 @@
-PKG_CPPFLAGS = -I. -I../inst/include/pugixml
+PKG_CPPFLAGS = -I. -isystem ../inst/include/pugixml \
+  -Wall -Wextra -Wpedantic \
+  -Wshadow -Wunused -Wconversion -Wsign-compare \
+  -Woverloaded-virtual -Wnon-virtual-dtor \
+  -Wcast-align -Wnull-dereference -Wdouble-promotion -Wformat=2 \
+  -Wno-cast-function-type-mismatch -Wno-ignored-attributes
