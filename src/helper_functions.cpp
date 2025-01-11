@@ -39,75 +39,73 @@ SEXP openxlsx2_type(SEXP x) {
     SEXP Rclass = Rf_getAttrib(z, R_ClassSymbol);
 
     switch (TYPEOF(z)) {
-    // logical
-    case LGLSXP:
-      if (Rf_isNull(Rclass)) {
-        type[i] = logical; // logical
-      } else {
-        type[i] = factor; // probably some custom class
-      };
-      break;
-
-      // character, formula, hyperlink, array_formula
-    case CPLXSXP:
-    case STRSXP:
-      if (Rf_inherits(z, "formula")) {
-        type[i] = formula;
-      } else if (Rf_inherits(z, "hyperlink")) {
-        type[i] = hyperlink;
-      } else if (Rf_inherits(z, "array_formula")) {
-        type[i] = array_formula;
-      } else if (Rf_inherits(z, "cm_formula")) {
-        type[i] = cm_formula;
-      } else {
-        type[i] = character;
-      }
-      break;
-
-      // raw, integer, numeric, Date, POSIXct, accounting,
-      //  percentage, scientific, comma
-    case RAWSXP:
-    case INTSXP:
-    case REALSXP: {
-      if (Rf_inherits(z, "Date")) {
-        type[i] = short_date;
-      } else if (Rf_inherits(z, "POSIXct")) {
-        type[i] = long_date;
-      } else if (Rf_inherits(z, "accounting")) {
-        type[i] = accounting;
-      } else if (Rf_inherits(z, "percentage")) {
-        type[i] = percentage;
-      } else if (Rf_inherits(z, "scientific")) {
-        type[i] = scientific;
-      } else if (Rf_inherits(z, "comma")) {
-        type[i] = comma;
-      } else if (Rf_inherits(z, "factor") || !Rf_isNull(Rf_getAttrib(z, Rf_install("labels")))) {
-        type[i] = factor;
-      } else if (Rf_inherits(z, "hms")) {
-        type[i] = hms_time;
-      } else if (Rf_inherits(z, "currency")) {
-        type[i] = currency;
-      } else {
+      // logical
+      case LGLSXP:
         if (Rf_isNull(Rclass)) {
-          type[i] = numeric; // numeric and integer
+          type[i] = logical;  // logical
         } else {
-          type[i] = factor; // probably some custom class
+          type[i] = factor;  // probably some custom class
+        };
+        break;
+
+        // character, formula, hyperlink, array_formula
+      case CPLXSXP:
+      case STRSXP:
+        if (Rf_inherits(z, "formula")) {
+          type[i] = formula;
+        } else if (Rf_inherits(z, "hyperlink")) {
+          type[i] = hyperlink;
+        } else if (Rf_inherits(z, "array_formula")) {
+          type[i] = array_formula;
+        } else if (Rf_inherits(z, "cm_formula")) {
+          type[i] = cm_formula;
+        } else {
+          type[i] = character;
         }
+        break;
+
+        // raw, integer, numeric, Date, POSIXct, accounting,
+        //  percentage, scientific, comma
+      case RAWSXP:
+      case INTSXP:
+      case REALSXP: {
+        if (Rf_inherits(z, "Date")) {
+          type[i] = short_date;
+        } else if (Rf_inherits(z, "POSIXct")) {
+          type[i] = long_date;
+        } else if (Rf_inherits(z, "accounting")) {
+          type[i] = accounting;
+        } else if (Rf_inherits(z, "percentage")) {
+          type[i] = percentage;
+        } else if (Rf_inherits(z, "scientific")) {
+          type[i] = scientific;
+        } else if (Rf_inherits(z, "comma")) {
+          type[i] = comma;
+        } else if (Rf_inherits(z, "factor") || !Rf_isNull(Rf_getAttrib(z, Rf_install("labels")))) {
+          type[i] = factor;
+        } else if (Rf_inherits(z, "hms")) {
+          type[i] = hms_time;
+        } else if (Rf_inherits(z, "currency")) {
+          type[i] = currency;
+        } else {
+          if (Rf_isNull(Rclass)) {
+            type[i] = numeric;  // numeric and integer
+          } else {
+            type[i] = factor;  // probably some custom class
+          }
+        }
+        break;
       }
-      break;
-    }
 
-    case VECSXP:
-      type[i] = list;
-      break;
+      case VECSXP:
+        type[i] = list;
+        break;
 
-
-    // whatever is not covered from above
-    default: {
-      type[i] = character;
-      break;
-    }
-
+      // whatever is not covered from above
+      default: {
+        type[i] = character;
+        break;
+      }
     }
   }
 
@@ -462,34 +460,34 @@ void wide_to_long(
         string_nums = in_string_nums;
 
       switch (vtyp) {
-      case currency:
-      case short_date:
-      case long_date:
-      case accounting:
-      case percentage:
-      case scientific:
-      case comma:
-      case hms_time:
-      case numeric:
-        // v
-        SET_STRING_ELT(zz_v, pos, vals_sexp);
-        break;
-      case logical:
-        // v and c_t = "b"
-        SET_STRING_ELT(zz_v,   pos, vals_sexp);
-        SET_STRING_ELT(zz_c_t, pos, bool_sexp);
-        break;
-      case factor:
-      case character:
-
-        // test if string can be written as number
-        if (string_nums && is_double(vals)) {
+        case currency:
+        case short_date:
+        case long_date:
+        case accounting:
+        case percentage:
+        case scientific:
+        case comma:
+        case hms_time:
+        case numeric:
           // v
           SET_STRING_ELT(zz_v, pos, vals_sexp);
-          vtyp     = (string_nums == 1) ? string_num : numeric;
-        } else {
-          // check if we write sst or inlineStr
-          if (inline_strings) {
+          break;
+        case logical:
+          // v and c_t = "b"
+          SET_STRING_ELT(zz_v,   pos, vals_sexp);
+          SET_STRING_ELT(zz_c_t, pos, bool_sexp);
+          break;
+        case factor:
+        case character:
+
+          // test if string can be written as number
+          if (string_nums && is_double(vals)) {
+            // v
+            SET_STRING_ELT(zz_v, pos, vals_sexp);
+            vtyp     = (string_nums == 1) ? string_num : numeric;
+          } else {
+            // check if we write sst or inlineStr
+            if (inline_strings) {
               // is and c_t = "inlineStr"
               SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
               SET_STRING_ELT(zz_is,  pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
@@ -497,28 +495,28 @@ void wide_to_long(
               // v and c_t = "s"
               SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
               SET_STRING_ELT(zz_v,   pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
+            }
           }
-        }
-        break;
-      case hyperlink:
-      case formula:
-        // f and c_t = "str";
-        SET_STRING_ELT(zz_c_t, pos, string_sexp);
-        SET_STRING_ELT(zz_f,   pos, vals_sexp);
-        break;
-      case array_formula:
-        // f, f_t = "array", and f_ref
-        SET_STRING_ELT(zz_f,     pos, vals_sexp);
-        SET_STRING_ELT(zz_f_t,   pos, array_sexp);
-        SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
-        break;
-      case cm_formula:
-        // c_cm, f, f_t = "array", and f_ref
-        SET_STRING_ELT(zz_c_cm,  pos, Rf_mkChar(c_cm.c_str()));
-        SET_STRING_ELT(zz_f,     pos, vals_sexp);
-        SET_STRING_ELT(zz_f_t,   pos, array_sexp);
-        SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
-        break;
+          break;
+        case hyperlink:
+        case formula:
+          // f and c_t = "str";
+          SET_STRING_ELT(zz_c_t, pos, string_sexp);
+          SET_STRING_ELT(zz_f,   pos, vals_sexp);
+          break;
+        case array_formula:
+          // f, f_t = "array", and f_ref
+          SET_STRING_ELT(zz_f,     pos, vals_sexp);
+          SET_STRING_ELT(zz_f_t,   pos, array_sexp);
+          SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
+          break;
+        case cm_formula:
+          // c_cm, f, f_t = "array", and f_ref
+          SET_STRING_ELT(zz_c_cm,  pos, Rf_mkChar(c_cm.c_str()));
+          SET_STRING_ELT(zz_f,     pos, vals_sexp);
+          SET_STRING_ELT(zz_f_t,   pos, array_sexp);
+          SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
+          break;
       }
 
       if (vals_sexp == NA_STRING || strcmp(vals, "_openxlsx_NA") == 0) {
