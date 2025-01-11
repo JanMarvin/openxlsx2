@@ -1,18 +1,16 @@
-#include "openxlsx2.h"
 #include <cctype>
+#include "openxlsx2.h"
 
 // converts sharedstrings xml tree to R-Character Vector
 // [[Rcpp::export]]
 SEXP xml_si_to_txt(XPtrXML doc) {
-
   auto sst = doc->child("sst");
   auto n = std::distance(sst.begin(), sst.end());
 
   Rcpp::CharacterVector res(Rcpp::no_init(n));
 
   auto i = 0;
-  for (auto si : doc->child("sst").children("si"))
-  {
+  for (auto si : doc->child("sst").children("si")) {
     // text to export
     std::string text = "";
 
@@ -24,7 +22,7 @@ SEXP xml_si_to_txt(XPtrXML doc) {
     // has r node with t node
     // linebreaks and spaces are handled in the nodes
     for (auto r : si.children("r")) {
-      for (auto t :r.children("t")) {
+      for (auto t : r.children("t")) {
         text += t.text().get();
       }
     }
@@ -38,12 +36,10 @@ SEXP xml_si_to_txt(XPtrXML doc) {
 }
 
 SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
-
   auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));
 
   for (auto i = 0; i < n; ++i) {
-
     std::string tmp = Rcpp::as<std::string>(vec[i]);
 
     if (tmp.compare("") == 0) {
@@ -58,8 +54,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       Rcpp::stop(type.c_str(), " xml import unsuccessful");
     }
 
-    for (auto is : doc.children(type.c_str()))
-    {
+    for (auto is : doc.children(type.c_str())) {
       // text to export
       std::string text = "";
 
@@ -76,7 +71,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       // t (Text)
       // linebreaks and spaces are handled in the nodes
       for (auto r : is.children("r")) {
-        for (auto t :r.children("t")) {
+        for (auto t : r.children("t")) {
           text += t.text().get();
         }
       }
@@ -84,7 +79,6 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       // push everything back
       res[i] = Rcpp::String(text);
     }
-
   }
 
   return res;
@@ -119,13 +113,12 @@ std::string txt_to_xml(
 
   // txt input beginning with "<r" is assumed to be a fmt_txt string
   if (text.rfind("<r>", 0) == 0 || text.rfind("<r/>", 0) == 0) {
-
     pugi::xml_document txt_node;
     pugi::xml_parse_result result = txt_node.load_string(text.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
     if (!result) Rcpp::stop("Could not parse xml in txt_to_xml()");
 
     for (auto is_n : txt_node.children())
-          is_node.append_copy(is_n);
+      is_node.append_copy(is_n);
 
   } else {
     // text to export

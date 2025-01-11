@@ -22,7 +22,7 @@ typedef struct {
   std::string f_ref;
   std::string f_ca;
   std::string f_si;
-  std::string is;    // inlineStr
+  std::string is;  // inlineStr
 } xml_col;
 
 typedef std::vector<std::string> vec_string;
@@ -61,8 +61,7 @@ enum celltype {
 // Whenever new fields are spotted they have to be added here
 namespace Rcpp {
 template <>
-inline SEXP wrap(const std::vector<xml_col> &x) {
-
+inline SEXP wrap(const std::vector<xml_col>& x) {
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
 
   // Vector structure identical to xml_col from openxlsx2_types.h
@@ -98,10 +97,10 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
     if (!x[ii].c_ph.empty())  c_ph[i]  = Rcpp::String(x[ii].c_ph);
     if (!x[ii].c_vm.empty())  c_vm[i]  = std::string(x[ii].c_vm);
     if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
-        if (x[ii].c_t.empty() && x[ii].f_t.empty())
-          v[i] = std::string(x[ii].v);
-        else
-          v[i] = Rcpp::String(x[ii].v);
+      if (x[ii].c_t.empty() && x[ii].f_t.empty())
+        v[i] = std::string(x[ii].v);
+      else
+        v[i] = Rcpp::String(x[ii].v);
     }
     if (!x[ii].f.empty())     f[i]     = Rcpp::String(x[ii].f);
     if (!x[ii].f_t.empty())   f_t[i]   = std::string(x[ii].f_t);
@@ -135,8 +134,7 @@ inline SEXP wrap(const std::vector<xml_col> &x) {
 }
 
 template <>
-inline SEXP wrap(const vec_string &x) {
-
+inline SEXP wrap(const vec_string& x) {
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
 
   Rcpp::CharacterVector z(no_init(n));
@@ -148,7 +146,7 @@ inline SEXP wrap(const vec_string &x) {
   return Rcpp::wrap(z);
 }
 
-}
+}  // namespace Rcpp
 
 // pugixml defines. This creates the xmlptr
 #include "pugixml.hpp"

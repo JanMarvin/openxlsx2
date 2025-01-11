@@ -1,5 +1,5 @@
-#include "openxlsx2.h"
 #include <set>
+#include "openxlsx2.h"
 
 // [[Rcpp::export]]
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
@@ -24,8 +24,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
-  {
+  for (R_xlen_t i = 0; i < kk; ++i) {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
 
@@ -34,7 +33,6 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   auto itr = 0;
   for (auto col : doc->children("col")) {
     for (auto attrs : col.attributes()) {
-
       std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
       auto find_res = col_nams.find(attr_name);
@@ -46,7 +44,6 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
         R_xlen_t mtc = std::distance(col_nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
-
     }
 
     // rownames as character vectors matching to <c s= ...>
@@ -63,10 +60,8 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   return df;
 }
 
-
 // [[Rcpp::export]]
 Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
-
   auto n = df_col.nrow();
   Rcpp::CharacterVector z(n);
 
@@ -97,9 +92,7 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
   return z;
 }
 
-
 inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
-
   auto ws = doc->child("worksheet").child("sheetData");
 
   std::set<std::string> row_nams {
@@ -125,8 +118,7 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
-  {
+  for (R_xlen_t i = 0; i < kk; ++i) {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
 
@@ -136,7 +128,6 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
   for (auto row : ws.children("row")) {
     bool has_rowname = false;
     for (auto attrs : row.attributes()) {
-
       std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
 
@@ -151,7 +142,6 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
         if (attr_name == "r") has_rowname = true;
       }
-
     }
 
     // some files have no row name in this case, we add one
@@ -179,7 +169,6 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 // this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
 void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
-
   auto ws = doc->child("worksheet").child("sheetData");
 
   // character
@@ -201,8 +190,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   const std::string vm_str = "vm";
   const std::string ref_str = "ref";
 
-
-
   /*****************************************************************************
    * Row information is returned as list of lists returning as much as possible.
    *
@@ -212,8 +199,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   row_attributes = row_to_df(doc);
 
   R_xlen_t idx = 0, itr_rows = 0;
-  for (auto worksheet: ws.children("row")) {
-
+  for (auto worksheet : ws.children("row")) {
     /* ---------------------------------------------------------------------- */
     /* read cval, and ctyp -------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
@@ -235,12 +221,10 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // typ: attribute ------------------------------------------------------
       bool has_colname = false;
       for (auto attr : col.attributes()) {
-
         buffer = attr.value();
         attr_name = attr.name();
 
         if (attr_name == r_str) {
-
           // get r attr e.g. "A1" and return colnames "A"
           single_xml_col.r = buffer;
 
@@ -254,7 +238,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           // if some cells of the workbook have colnames but other dont,
           // this will increase itr_cols and avoid duplicates in cc
           itr_cols = static_cast<uint32_t>(uint_col_to_int(single_xml_col.c_r) - 1);
-
         }
 
         if (attr_name == s_str) single_xml_col.c_s = buffer;
@@ -262,7 +245,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         if (attr_name == cm_str) single_xml_col.c_cm = buffer;
         if (attr_name == ph_str) single_xml_col.c_ph = buffer;
         if (attr_name == vm_str) single_xml_col.c_vm = buffer;
-
       }
 
       // some files have no colnames. in this case we need to add c_r and row_r
@@ -275,8 +257,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
       // val ------------------------------------------------------------------
       if (nn > 0) {
-        for (auto val: col.children()) {
-
+        for (auto val : col.children()) {
           val_name = val.name();
 
           // <is>
@@ -284,11 +265,10 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             std::ostringstream oss;
             val.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
             single_xml_col.is = oss.str();
-          } // </is>
+          }  // </is>
 
           // <f>
           if (val_name == f_str) {
-
             single_xml_col.f = val.text().get();
 
             // additional attributes to <f>
@@ -297,8 +277,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             //  * ref=
             //  * ca=
             //  * si=
-            for (auto cattr : val.attributes())
-            {
+            for (auto cattr : val.attributes()) {
               buffer = cattr.value();
               cattr_name = cattr.name();
               if (cattr_name == t_str) single_xml_col.f_t = buffer;
@@ -307,7 +286,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
               if (cattr_name == si_str) single_xml_col.f_si = buffer;
             }
 
-          } // </f>
+          }  // </f>
 
           // <v>
           if (val_name == v_str)  single_xml_col.v = val.text().get();
@@ -321,7 +300,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
       ++itr_cols;
     }
-
 
     /* ---------------------------------------------------------------------- */
 

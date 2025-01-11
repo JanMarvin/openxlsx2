@@ -1,9 +1,8 @@
-#include "openxlsx2.h"
 #include <fstream>
+#include "openxlsx2.h"
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
-
   Rcpp::CharacterVector sst(sharedStrings.length());
 
   for (auto i = 0; i < sharedStrings.length(); ++i) {
@@ -21,14 +20,12 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
   return sst;
 }
 
-
 // creates an xml row
 // data in xml is ordered row wise. therefore we need the row attributes and
 // the column data used in this row. This function uses both to create a single
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
 pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
-
   auto lastrow = 0; // integer value of the last row with column data
   auto thisrow = 0; // integer value of the current row with column data
   auto row_idx = 0; // the index of the row_attr file. this is != rowid
@@ -63,25 +60,19 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   Rcpp::CharacterVector row_r    = row_attr["r"];
 
   for (auto i = 0; i < cc.nrow(); ++i) {
-
     thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
 
     if (lastrow < thisrow) {
-
       // there might be entirely empty rows in between. this is the case for
       // loadExample. We check the rowid and write the line and skip until we
       // have every row and only then continue writing the column
       while (rowid < thisrow) {
-
-        rowid = std::stoi(Rcpp::as<std::string>(
-          row_r[row_idx]
-        ));
+        rowid = std::stoi(Rcpp::as<std::string>(row_r[row_idx]));
 
         row = doc.append_child("row");
         Rcpp::CharacterVector attrnams = row_attr.names();
 
         for (auto j = 0; j < row_attr.ncol(); ++j) {
-
           Rcpp::CharacterVector cv_s = "";
           cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
 
@@ -185,7 +176,6 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
     // <is><t> ... </t></is>
     if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
       if (!std::string(cc_is[i]).empty()) {
-
         pugi::xml_document is_node;
         pugi::xml_parse_result result = is_node.load_string(to_string(cc_is[i]).c_str(), pugi_parse_flags);
         if (!result) Rcpp::stop("loading inlineStr node while writing failed");
@@ -198,7 +188,6 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   return doc;
 }
 
-
 // TODO: convert to pugi
 // function that creates the xml worksheet
 // uses preparated data and writes it. It passes data to set_row() which will
@@ -210,7 +199,6 @@ XPtrXML write_worksheet(
     std::string post,
     Rcpp::Environment sheet_data
 ) {
-
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
 
@@ -219,8 +207,7 @@ XPtrXML write_worksheet(
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
   Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc_out"]);
 
-
-  xmldoc *doc = new xmldoc;
+  xmldoc* doc = new xmldoc;
   pugi::xml_parse_result result;
 
   pugi::xml_document xml_pr;
@@ -257,10 +244,7 @@ XPtrXML write_worksheet(
 }
 
 // [[Rcpp::export]]
-void write_xmlPtr(
-    XPtrXML doc,
-    std::string fl
-) {
+void write_xmlPtr(XPtrXML doc, std::string fl) {
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
   const bool success = doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
   if (!success) Rcpp::stop("could not save file");

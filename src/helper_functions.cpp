@@ -1,5 +1,5 @@
-#include "openxlsx2.h"
 #include <algorithm>
+#include "openxlsx2.h"
 
 // For R-devel 4.3 character length on Windows was modified. This caused an
 // error when passing large character strings to file.exist() when called in
@@ -16,12 +16,11 @@
 //' @noRd
 // [[Rcpp::export]]
 bool to_long(std::string path) {
- return path.size() > R_PATH_MAX;
+  return path.size() > R_PATH_MAX;
 }
 
 // [[Rcpp::export]]
 SEXP openxlsx2_type(SEXP x) {
-
   const SEXP names = Rf_getAttrib(x, R_NamesSymbol);
   R_xlen_t ncol = Rf_length(x);
 
@@ -29,7 +28,6 @@ SEXP openxlsx2_type(SEXP x) {
   if (!Rf_isNull(names)) type.attr("names") = names;
 
   for (R_xlen_t i = 0; i < ncol; ++i) {
-
     // check if dim != NULL
     SEXP z;
     if (Rf_isNull(names)) {
@@ -112,7 +110,6 @@ SEXP openxlsx2_type(SEXP x) {
     }
 
     }
-
   }
 
   return type;
@@ -120,7 +117,6 @@ SEXP openxlsx2_type(SEXP x) {
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
-
   // This function converts the Excel column letter to an integer
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
   std::unordered_map<std::string, int> col_map;
@@ -155,7 +151,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
   Rcpp::CharacterVector colNames(n);
-  std::unordered_map<uint32_t, std::string> cache; // Updated key type
+  std::unordered_map<uint32_t, std::string> cache;  // Updated key type
 
   for (R_xlen_t i = 0; i < n; ++i) {
     uint32_t num = static_cast<uint32_t>(x[i]);
@@ -177,7 +173,6 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
-
   R_xlen_t nn = static_cast<R_xlen_t>(x.size());
   std::vector<std::string> all_names;
 
@@ -196,8 +191,7 @@ SEXP rbindlist(Rcpp::List x) {
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
-  {
+  for (R_xlen_t i = 0; i < kk; ++i) {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
 
@@ -213,7 +207,6 @@ SEXP rbindlist(Rcpp::List x) {
 
       Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = Rcpp::String(values[j]);
     }
-
   }
 
   // 3. Create a data.frame
@@ -283,8 +276,7 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
-  {
+  for (R_xlen_t i = 0; i < kk; ++i) {
     if (fill)
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
     else
@@ -293,7 +285,6 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
 
   if (fill) {
     if (has_filled) {
-
       std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
       std::unordered_set<std::string> flls(flld.begin(), flld.end());
 
@@ -308,7 +299,7 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
         }
       }
 
-    } else { // insert cells into data frame
+    } else {  // insert cells into data frame
 
       std::vector<size_t> fcls;
       if (has_fcols) {
@@ -326,7 +317,7 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
       }
     }
 
-  } // else return data frame filled with NA_character_
+  }  // else return data frame filled with NA_character_
 
   // 3. Create a data.frame
   df.attr("row.names") = rows;
@@ -339,7 +330,6 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
-
   R_xlen_t n = static_cast<R_xlen_t>(zz.nrow());
   R_xlen_t col = 0, row = 0;
 
@@ -404,7 +394,7 @@ void wide_to_long(
     scols[i] = int_to_col(static_cast<size_t>(start_col) + i);
   }
 
-  bool has_refs  = refed.isNotNull();
+  bool has_refs = refed.isNotNull();
 
   std::vector<std::string> ref;
   if (has_refs) ref = Rcpp::as<std::vector<std::string>>(refed.get());
@@ -443,15 +433,12 @@ void wide_to_long(
   SEXP value_sexp      = Rf_mkChar("#VALUE!");
   SEXP na_strings_sexp = Rf_mkChar(na_strings.c_str());
 
-
   for (R_xlen_t i = 0; i < m; ++i) {
-
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
     const std::string& col = scols[static_cast<size_t>(i)];
     int8_t vtyp_i = static_cast<int8_t>(vtyps[static_cast<size_t>(i)]);
 
     for (R_xlen_t j = 0; j < n; ++j, ++idx) {
-
       checkInterrupt(idx);
 
       // if colname is provided, the first row is always a character
@@ -540,7 +527,6 @@ void wide_to_long(
       }
 
       if (vals_sexp == NA_STRING || strcmp(vals, "_openxlsx_NA") == 0) {
-
         if (na_missing) {
           // v = "#N/A"
           SET_STRING_ELT(zz_v,   pos, na_sexp);
@@ -589,8 +575,8 @@ void wide_to_long(
         SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
       }
-    } // n
-  } // m
+    }  // n
+  }  // m
 }
 
 // simple helper function to create a data frame of type character
@@ -622,7 +608,6 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::string> vec_attrs, std::vector<std::string> vec_chlds) {
-
   std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
   std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
 
@@ -635,7 +620,6 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
   std::set<std::string> nams(std::make_move_iterator(all_names.begin()),
                              std::make_move_iterator(all_names.end()));
 
-
   R_xlen_t nn = std::distance(xml->begin(), xml->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
@@ -644,8 +628,7 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
 
   // 1. create the list
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i)
-  {
+  for (R_xlen_t i = 0; i < kk; ++i) {
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
   }
 
@@ -654,7 +637,6 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
   auto itr = 0;
   for (auto xml_node : xml->children(vec_name.c_str())) {
     for (auto attrs : xml_node.attributes()) {
-
       std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
       auto find_res = nams.find(attr_name);
@@ -669,7 +651,6 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
     }
 
     for (auto cld : xml_node.children()) {
-
       std::string cld_name = cld.name();
       auto find_res = nams.find(cld_name);
 
@@ -688,7 +669,6 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
 
     rvec[itr] = std::to_string(itr);
     ++itr;
-
   }
 
   // 3. Create a data.frame
@@ -699,10 +679,8 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
   return df;
 }
 
-
 // [[Rcpp::export]]
 Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std::vector<std::string> vec_attrs, std::vector<std::string> vec_chlds) {
-
   int64_t n = df.nrow();
   Rcpp::CharacterVector z(n);
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
@@ -718,7 +696,6 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
     pugi::xml_node xml_node = doc.append_child(vec_name.c_str());
 
     for (auto j = 0; j < df.ncol(); ++j) {
-
       std::string attr_j = attrnams[static_cast<size_t>(j)];
 
       // mimic which
@@ -752,7 +729,6 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df[j])[i];
 
         if (cv_s[0] != "") {
-
           std::string child_i = Rcpp::as<std::string>(cv_s[0]);
 
           pugi::xml_document xml_child;
@@ -760,7 +736,6 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
           if (!result) Rcpp::stop("loading %s child node fail: %s", vec_name, cv_s);
 
           xml_node.append_copy(xml_child.first_child());
-
         }
       }
 
