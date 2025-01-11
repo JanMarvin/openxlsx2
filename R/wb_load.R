@@ -1538,6 +1538,36 @@ wb_load <- function(
   # correct sheet references and replace our replacement with it.
   if (!data_only && length(workbookBIN)) {
 
+    # we need to update the order of customSheetView children. Incorrect orders
+    # causes spreadsheet software to be unable to load and recover the file.
+    for (sheet in seq_along(wb$worksheets)) {
+      if (length(wb$worksheets[[sheet]]$customSheetViews) == 0) next
+
+      cvs <- xml_node(wb$worksheets[[sheet]]$customSheetViews, "customSheetViews", "customSheetView")
+
+       # chart sheets have a reduced custom view
+      exp_attr <- c(
+        "guid", "scale", "colorId", "showPageBreaks", "showFormulas",
+        "showGridLines", "showRowCol", "outlineSymbols", "zeroValues",
+        "fitToPage", "printArea", "filter", "showAutoFilter", "hiddenRows",
+        "hiddenColumns", "state", "filterUnique", "view", "showRuler",
+        "topLeftCell", "zoomToFit"
+      )
+      exp_nams <- c(
+        "pane", "selection", "rowBreaks", "colBreaks", "pageMargins",
+        "printOptions", "pageSetup", "headerFooter", "autoFilter", "extLst"
+      )
+      cv <- read_xml2df(read_xml(cvs), "customSheetView", vec_attrs = exp_attr, vec_chlds = exp_nams)
+
+      # headerFooter cause issues. they are (a) not added to the correct node
+      # and (b) brick the entire XML structure
+      cv$headerFooter <- ""
+
+      cvs <- write_df2xml(cv[c(exp_attr, exp_nams)], "customSheetView", vec_attrs = exp_attr, vec_chlds = exp_nams)
+
+      wb$worksheets[[sheet]]$customSheetViews <- xml_node_create("customSheetViews", xml_children = cvs)
+    }
+
     if (length(wb$workbook$xti)) {
       # create data frame containing sheet names for Xti entries
       xti <- rbindlist(xml_attr(wb$workbook$xti, "xti"))
