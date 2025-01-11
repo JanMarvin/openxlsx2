@@ -169,22 +169,22 @@ write_xml_file <- function(xml_content, escapes) {
 #'
 #' @examples
 #'   # add single node
-#'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
-#'     xml_attr <- c(qux = "quux")
-#'     # "<a foo=\"bar\" qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
-#'     xml_attr_mod(xml_node, xml_attr)
+#'   xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+#'   xml_attr <- c(qux = "quux")
+#'   # "<a foo=\"bar\" qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
+#'   xml_attr_mod(xml_node, xml_attr)
 #'
 #'   # update node and add node
-#'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
-#'     xml_attr <- c(foo = "baz", qux = "quux")
-#'     # "<a foo=\"baz\" qux=\"quux\">openxlsx2</a><b foo=\"baz\" qux=\"quux\"/>"
-#'     xml_attr_mod(xml_node, xml_attr)
+#'   xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+#'   xml_attr <- c(foo = "baz", qux = "quux")
+#'   # "<a foo=\"baz\" qux=\"quux\">openxlsx2</a><b foo=\"baz\"
+#'   #   qux=\"quux\"/>" '     xml_attr_mod(xml_node, xml_attr)
 #'
 #'   # remove node and add node
-#'     xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
-#'     xml_attr <- c(foo = "", qux = "quux")
-#'     # "<a qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
-#'     xml_attr_mod(xml_node, xml_attr)
+#'   xml_node <- "<a foo=\"bar\">openxlsx2</a><b />"
+#'   xml_attr <- c(foo = "", qux = "quux")
+#'   # "<a qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
+#'   xml_attr_mod(xml_node, xml_attr)
 #' @export
 xml_attr_mod <- function(xml_content, xml_attributes, escapes = FALSE, declaration = FALSE, remove_empty_attr = TRUE) {
     .Call(`_openxlsx2_xml_attr_mod`, xml_content, xml_attributes, escapes, declaration, remove_empty_attr)
@@ -214,7 +214,8 @@ xml_attr_mod <- function(xml_content, xml_attributes, escapes = FALSE, declarati
 #' xml_node_create(xml_name, xml_attributes = xml_attr)
 #'
 #' # "<a foo=\"baz\" qux=\"quux\">openxlsx</a>"
-#' xml_node_create(xml_name, xml_children = xml_child, xml_attributes = xml_attr)
+#' xml_node_create(xml_name, xml_children = xml_child, xml_attributes =
+#'   xml_attr)
 #' @export
 xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL, escapes = FALSE, declaration = FALSE) {
     .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes, escapes, declaration)

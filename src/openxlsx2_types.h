@@ -22,31 +22,31 @@ typedef struct {
   std::string f_ref;
   std::string f_ca;
   std::string f_si;
-  std::string is;    // inlineStr
+  std::string is;  // inlineStr
 } xml_col;
 
 typedef std::vector<std::string> vec_string;
 
 // matches openxlsx2_celltype in openxlsx2.R
 enum celltype {
-  short_date     = 0,
-  long_date      = 1,
-  numeric        = 2,
-  logical        = 3,
-  character      = 4,
-  formula        = 5,
-  accounting     = 6,
-  percentage     = 7,
-  scientific     = 8,
-  comma          = 9,
-  hyperlink      = 10,
-  array_formula  = 11,
-  factor         = 12,
-  string_num     = 13,
-  cm_formula     = 14,
-  hms_time       = 15,
-  currency       = 16,
-  list           = 17
+  short_date = 0,
+  long_date = 1,
+  numeric = 2,
+  logical = 3,
+  character = 4,
+  formula = 5,
+  accounting = 6,
+  percentage = 7,
+  scientific = 8,
+  comma = 9,
+  hyperlink = 10,
+  array_formula = 11,
+  factor = 12,
+  string_num = 13,
+  cm_formula = 14,
+  hms_time = 15,
+  currency = 16,
+  list = 17
 };
 
 // check for 1.0.8.0
@@ -61,82 +61,87 @@ enum celltype {
 // Whenever new fields are spotted they have to be added here
 namespace Rcpp {
 template <>
-inline SEXP wrap(const std::vector<xml_col> &x) {
-
+inline SEXP wrap(const std::vector<xml_col>& x) {
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
 
   // Vector structure identical to xml_col from openxlsx2_types.h
-  Rcpp::CharacterVector r(no_init(n));         // cell name: A1, A2 ...
-  Rcpp::CharacterVector row_r(no_init(n));     // row name: 1, 2, ..., 9999
+  Rcpp::CharacterVector r(no_init(n));      // cell name: A1, A2 ...
+  Rcpp::CharacterVector row_r(no_init(n));  // row name: 1, 2, ..., 9999
 
-  Rcpp::CharacterVector c_r(no_init(n));       // col name: A, B, ..., ZZ
-  Rcpp::CharacterVector c_s(no_init(n));       // cell style
-  Rcpp::CharacterVector c_t(no_init(n));       // cell type
+  Rcpp::CharacterVector c_r(no_init(n));  // col name: A, B, ..., ZZ
+  Rcpp::CharacterVector c_s(no_init(n));  // cell style
+  Rcpp::CharacterVector c_t(no_init(n));  // cell type
   Rcpp::CharacterVector c_cm(no_init(n));
   Rcpp::CharacterVector c_ph(no_init(n));
   Rcpp::CharacterVector c_vm(no_init(n));
 
-  Rcpp::CharacterVector v(no_init(n));         // <v> tag
-  Rcpp::CharacterVector f(no_init(n));         // <f> tag
-  Rcpp::CharacterVector f_t(no_init(n));       // <f t=""> attribute most likely shared
-  Rcpp::CharacterVector f_ref(no_init(n));     // <f ref=""> attribute most likely reference
-  Rcpp::CharacterVector f_ca(no_init(n));      // <f ca=""> attribute most likely conditional formatting
-  Rcpp::CharacterVector f_si(no_init(n));      // <f si=""> attribute most likely sharedString
-  Rcpp::CharacterVector is(no_init(n));        // <is> tag
+  Rcpp::CharacterVector v(no_init(n));  // <v> tag
+  Rcpp::CharacterVector f(no_init(n));  // <f> tag
+  Rcpp::CharacterVector f_t(
+      no_init(n));  // <f t=""> attribute most likely shared
+  Rcpp::CharacterVector f_ref(
+      no_init(n));  // <f ref=""> attribute most likely reference
+  Rcpp::CharacterVector f_ca(
+      no_init(n));  // <f ca=""> attribute most likely conditional formatting
+  Rcpp::CharacterVector f_si(
+      no_init(n));  // <f si=""> attribute most likely sharedString
+  Rcpp::CharacterVector is(no_init(n));  // <is> tag
 
   // struct to vector
   // We have to convert utf8 inputs via Rcpp::String for non unicode R sessions
   // Ideally there would be a function that calls Rcpp::String only if needed
   for (R_xlen_t i = 0; i < n; ++i) {
     size_t ii = static_cast<size_t>(i);
-    if (!x[ii].r.empty())     r[i]     = std::string(x[ii].r);
-    if (!x[ii].row_r.empty()) row_r[i] = std::string(x[ii].row_r);
-    if (!x[ii].c_r.empty())   c_r[i]   = std::string(x[ii].c_r);
-    if (!x[ii].c_s.empty())   c_s[i]   = std::string(x[ii].c_s);
-    if (!x[ii].c_t.empty())   c_t[i]   = std::string(x[ii].c_t);
-    if (!x[ii].c_cm.empty())  c_cm[i]  = std::string(x[ii].c_cm);
-    if (!x[ii].c_ph.empty())  c_ph[i]  = Rcpp::String(x[ii].c_ph);
-    if (!x[ii].c_vm.empty())  c_vm[i]  = std::string(x[ii].c_vm);
-    if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
-        if (x[ii].c_t.empty() && x[ii].f_t.empty())
-          v[i] = std::string(x[ii].v);
-        else
-          v[i] = Rcpp::String(x[ii].v);
+    if (!x[ii].r.empty())
+      r[i] = std::string(x[ii].r);
+    if (!x[ii].row_r.empty())
+      row_r[i] = std::string(x[ii].row_r);
+    if (!x[ii].c_r.empty())
+      c_r[i] = std::string(x[ii].c_r);
+    if (!x[ii].c_s.empty())
+      c_s[i] = std::string(x[ii].c_s);
+    if (!x[ii].c_t.empty())
+      c_t[i] = std::string(x[ii].c_t);
+    if (!x[ii].c_cm.empty())
+      c_cm[i] = std::string(x[ii].c_cm);
+    if (!x[ii].c_ph.empty())
+      c_ph[i] = Rcpp::String(x[ii].c_ph);
+    if (!x[ii].c_vm.empty())
+      c_vm[i] = std::string(x[ii].c_vm);
+    if (!x[ii].v.empty()) {  // can only be utf8 if c_t = "str"
+      if (x[ii].c_t.empty() && x[ii].f_t.empty())
+        v[i] = std::string(x[ii].v);
+      else
+        v[i] = Rcpp::String(x[ii].v);
     }
-    if (!x[ii].f.empty())     f[i]     = Rcpp::String(x[ii].f);
-    if (!x[ii].f_t.empty())   f_t[i]   = std::string(x[ii].f_t);
-    if (!x[ii].f_ref.empty()) f_ref[i] = std::string(x[ii].f_ref);
-    if (!x[ii].f_ca.empty())  f_ca[i]  = std::string(x[ii].f_ca);
-    if (!x[ii].f_si.empty())  f_si[i]  = std::string(x[ii].f_si);
-    if (!x[ii].is.empty())    is[i]    = Rcpp::String(x[ii].is);
+    if (!x[ii].f.empty())
+      f[i] = Rcpp::String(x[ii].f);
+    if (!x[ii].f_t.empty())
+      f_t[i] = std::string(x[ii].f_t);
+    if (!x[ii].f_ref.empty())
+      f_ref[i] = std::string(x[ii].f_ref);
+    if (!x[ii].f_ca.empty())
+      f_ca[i] = std::string(x[ii].f_ca);
+    if (!x[ii].f_si.empty())
+      f_si[i] = std::string(x[ii].f_si);
+    if (!x[ii].is.empty())
+      is[i] = Rcpp::String(x[ii].is);
   }
 
   // Assign and return a dataframe
-  return Rcpp::wrap(
-    Rcpp::DataFrame::create(
-      Rcpp::Named("r")     = r,
-      Rcpp::Named("row_r") = row_r,
-      Rcpp::Named("c_r")   = c_r,
-      Rcpp::Named("c_s")   = c_s,
-      Rcpp::Named("c_t")   = c_t,
-      Rcpp::Named("c_cm")  = c_cm,
-      Rcpp::Named("c_ph")  = c_ph,
-      Rcpp::Named("c_vm")  = c_vm,
-      Rcpp::Named("v")     = v,
-      Rcpp::Named("f")     = f,
-      Rcpp::Named("f_t")   = f_t,
-      Rcpp::Named("f_ref") = f_ref,
-      Rcpp::Named("f_ca")  = f_ca,
-      Rcpp::Named("f_si")  = f_si,
-      Rcpp::Named("is")    = is,
-      Rcpp::Named("stringsAsFactors") = false
-    )
-  );
+  return Rcpp::wrap(Rcpp::DataFrame::create(
+      Rcpp::Named("r") = r, Rcpp::Named("row_r") = row_r,
+      Rcpp::Named("c_r") = c_r, Rcpp::Named("c_s") = c_s,
+      Rcpp::Named("c_t") = c_t, Rcpp::Named("c_cm") = c_cm,
+      Rcpp::Named("c_ph") = c_ph, Rcpp::Named("c_vm") = c_vm,
+      Rcpp::Named("v") = v, Rcpp::Named("f") = f, Rcpp::Named("f_t") = f_t,
+      Rcpp::Named("f_ref") = f_ref, Rcpp::Named("f_ca") = f_ca,
+      Rcpp::Named("f_si") = f_si, Rcpp::Named("is") = is,
+      Rcpp::Named("stringsAsFactors") = false));
 }
 
 template <>
-inline SEXP wrap(const vec_string &x) {
-
+inline SEXP wrap(const vec_string& x) {
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
 
   Rcpp::CharacterVector z(no_init(n));
@@ -148,7 +153,7 @@ inline SEXP wrap(const vec_string &x) {
   return Rcpp::wrap(z);
 }
 
-}
+}  // namespace Rcpp
 
 // pugixml defines. This creates the xmlptr
 #include "pugixml.hpp"

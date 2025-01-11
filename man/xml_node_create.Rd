@@ -44,5 +44,6 @@ xml_attr <- c(foo = "baz", qux = "quux")
 xml_node_create(xml_name, xml_attributes = xml_attr)
 
 # "<a foo=\"baz\" qux=\"quux\">openxlsx</a>"
-xml_node_create(xml_name, xml_children = xml_child, xml_attributes = xml_attr)
+xml_node_create(xml_name, xml_children = xml_child, xml_attributes =
+  xml_attr)
 }
