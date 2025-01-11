@@ -1542,21 +1542,28 @@ wb_load <- function(
     # causes spreadsheet software to be unable to load and recover the file.
     for (sheet in seq_along(wb$worksheets)) {
       if (length(wb$worksheets[[sheet]]$customSheetViews) == 0) next
+
       cvs <- xml_node(wb$worksheets[[sheet]]$customSheetViews, "customSheetViews", "customSheetView")
 
-      for (i in seq_along(cvs)) {
-        exp_nams <- c("pane", "selection", "rowBreaks", "colBreaks", "pageMargins", "printOptions", "pageSetup", "headerFooter", "autoFilter", "extLst")
-        cv_nms   <- xml_node_name(cvs[i], "customSheetView")
+       # chart sheets have a reduced custom view
+      exp_attr <- c(
+        "guid", "scale", "colorId", "showPageBreaks", "showFormulas",
+        "showGridLines", "showRowCol", "outlineSymbols", "zeroValues",
+        "fitToPage", "printArea", "filter", "showAutoFilter", "hiddenRows",
+        "hiddenColumns", "state", "filterUnique", "view", "showRuler",
+        "topLeftCell", "zoomToFit"
+      )
+      exp_nams <- c(
+        "pane", "selection", "rowBreaks", "colBreaks", "pageMargins",
+        "printOptions", "pageSetup", "headerFooter", "autoFilter", "extLst"
+      )
+      cv <- read_xml2df(read_xml(cvs), "customSheetView", vec_attrs = exp_attr, vec_chlds = exp_nams)
 
-        ordr <- match(exp_nams, cv_nms)
-        ordr <- ordr[!is.na(ordr)]
+      # headerFooter cause issues. they are (a) not added to the correct node
+      # and (b) brick the entire XML structure
+      cv$headerFooter <- ""
 
-        cvs[i] <- xml_order_children(xml_node = cvs[i], level =  "customSheetView", order = ordr, pointer = FALSE)
-
-        # headerFooter cause issues. they are (a) not added to the correct node
-        # and (b) brick the entire XML structure
-        if ("headerFooter" %in% cv_nms) cvs[i] <- xml_rm_child(cvs[i], "headerFooter")
-      }
+      cvs <- write_df2xml(cv[c(exp_attr, exp_nams)], "customSheetView", vec_attrs = exp_attr, vec_chlds = exp_nams)
 
       wb$worksheets[[sheet]]$customSheetViews <- xml_node_create("customSheetViews", xml_children = cvs)
     }

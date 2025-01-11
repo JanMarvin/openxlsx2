@@ -244,10 +244,6 @@ xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
 }
 
-xml_order_children1 <- function(node, child, order, pointer) {
-    .Call(`_openxlsx2_xml_order_children1`, node, child, order, pointer)
-}
-
 xml_si_to_txt <- function(doc) {
     .Call(`_openxlsx2_xml_si_to_txt`, doc)
 }
