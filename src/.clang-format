@@ -1,0 +1,14 @@
+IndentWidth: 2
+ContinuationIndentWidth: 2        # Control the indentation width after a line break, such as in function arguments
+ColumnLimit: 100                  # Set the maximum line length to 100 characters
+BreakBeforeBraces: Attach         # Keep braces on the same line as the function declaration
+BinPackParameters: false          # Force each parameter to appear on its own line
+BinPackArguments: false           # Force each argument in calls to appear on its own line
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: true # Align equal signs in consecutive assignments
+AlignConsecutiveDeclarations: true # Align types and variables in consecutive declarations
+AlignTrailingComments: true       # Align trailing comments
+AllowShortFunctionsOnASingleLine: None # Break short functions into multiple lines
+Cpp11BracedListStyle: true        # Format braced initializer lists cleanly
+PenaltyBreakBeforeFirstCallParameter: 0 # Encourage breaking after the first parameter
+

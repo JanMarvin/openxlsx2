@@ -13,6 +13,7 @@ README.Rmd
 codecov.yml
 .lintr
 .covrignore
+^src/.clang-format$
 
 # Temporary files
 .DS_Store

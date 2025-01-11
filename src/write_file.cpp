@@ -8,9 +8,12 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 
   for (auto i = 0; i < sharedStrings.length(); ++i) {
     pugi::xml_document si;
-    std::string sharedString = Rcpp::as<std::string>(sharedStrings[i]);
+    std::string        sharedString = Rcpp::as<std::string>(sharedStrings[i]);
 
-    si.append_child("si").append_child("t").append_child(pugi::node_pcdata).set_value(sharedString.c_str());
+    si.append_child("si")
+      .append_child("t")
+      .append_child(pugi::node_pcdata)
+      .set_value(sharedString.c_str());
 
     std::ostringstream oss;
     si.print(oss, " ", pugi::format_raw);
@@ -20,7 +23,6 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 
   return sst;
 }
-
 
 // creates an xml row
 // data in xml is ordered row wise. therefore we need the row attributes and
@@ -35,12 +37,13 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   auto rowid   = 0; // integer value of the r field in row_attr
 
   pugi::xml_document doc;
-  pugi::xml_node row;
+  pugi::xml_node     row;
 
   std::string xml_preserver = " ";
 
   // non optional: treat input as valid at this stage
-  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
+  uint32_t pugi_parse_flags =
+    pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   // uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // we cannot access rows directly in the dataframe.
@@ -51,16 +54,16 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   Rcpp::CharacterVector cc_c_t   = cc["c_t"];
   Rcpp::CharacterVector cc_c_s   = cc["c_s"];
   Rcpp::CharacterVector cc_c_cm  = cc["c_cm"];
-  Rcpp::CharacterVector cc_c_ph  = cc["c_ph"];  // can be utf8
+  Rcpp::CharacterVector cc_c_ph  = cc["c_ph"]; // can be utf8
   Rcpp::CharacterVector cc_c_vm  = cc["c_vm"];
-  Rcpp::CharacterVector cc_f     = cc["f"];     // can be utf8
+  Rcpp::CharacterVector cc_f     = cc["f"]; // can be utf8
   Rcpp::CharacterVector cc_f_t   = cc["f_t"];
   Rcpp::CharacterVector cc_f_ref = cc["f_ref"];
   Rcpp::CharacterVector cc_f_ca  = cc["f_ca"];
   Rcpp::CharacterVector cc_f_si  = cc["f_si"];
-  Rcpp::CharacterVector cc_is    = cc["is"];    // can be utf8
+  Rcpp::CharacterVector cc_is    = cc["is"]; // can be utf8
 
-  Rcpp::CharacterVector row_r    = row_attr["r"];
+  Rcpp::CharacterVector row_r = row_attr["r"];
 
   for (auto i = 0; i < cc.nrow(); ++i) {
 
@@ -73,20 +76,18 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
       // have every row and only then continue writing the column
       while (rowid < thisrow) {
 
-        rowid = std::stoi(Rcpp::as<std::string>(
-          row_r[row_idx]
-        ));
+        rowid = std::stoi(Rcpp::as<std::string>(row_r[row_idx]));
 
-        row = doc.append_child("row");
+        row                            = doc.append_child("row");
         Rcpp::CharacterVector attrnams = row_attr.names();
 
         for (auto j = 0; j < row_attr.ncol(); ++j) {
 
           Rcpp::CharacterVector cv_s = "";
-          cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+          cv_s                       = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
 
           if (cv_s[0] != "") {
-            const std::string val_strl = Rcpp::as<std::string>(cv_s);
+            const std::string val_strl        = Rcpp::as<std::string>(cv_s);
             row.append_attribute(attrnams[j]) = val_strl.c_str();
           }
         }
@@ -100,19 +101,9 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
     lastrow = thisrow;
 
     if ( // skip blank cells entirely
-        cc_c_s[i]   == "" &&
-        cc_c_t[i]   == "" &&
-        cc_c_cm[i]  == "" &&
-        cc_c_ph[i]  == "" &&
-        cc_c_vm[i]  == "" &&
-        cc_v[i]     == "" &&
-        cc_f[i]     == "" &&
-        cc_f_t[i]   == "" &&
-        cc_f_ref[i] == "" &&
-        cc_f_ca[i]  == "" &&
-        cc_f_si[i]  == "" &&
-        cc_is[i]    == ""
-    ) {
+      cc_c_s[i] == "" && cc_c_t[i] == "" && cc_c_cm[i] == "" && cc_c_ph[i] == "" &&
+      cc_c_vm[i] == "" && cc_v[i] == "" && cc_f[i] == "" && cc_f_t[i] == "" && cc_f_ref[i] == "" &&
+      cc_f_ca[i] == "" && cc_f_si[i] == "" && cc_is[i] == "") {
       continue;
     }
 
@@ -150,7 +141,9 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
 
     // <f> ... </f>
     // f node: formula to be evaluated
-    if (!std::string(cc_f[i]).empty() || !std::string(cc_f_t[i]).empty() || !std::string(cc_f_si[i]).empty()) {
+    if (
+      !std::string(cc_f[i]).empty() || !std::string(cc_f_t[i]).empty() ||
+      !std::string(cc_f_si[i]).empty()) {
       pugi::xml_node f = cell.append_child("f");
       if (!std::string(cc_f_t[i]).empty()) {
         f.append_attribute("t") = std::string(cc_f_t[i]).c_str();
@@ -163,7 +156,7 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
       }
       if (!std::string(cc_f_si[i]).empty()) {
         f.append_attribute("si") = std::string(cc_f_si[i]).c_str();
-        f_si = true;
+        f_si                     = true;
       }
 
       f.append_child(pugi::node_pcdata).set_value(to_string(cc_f[i]).c_str());
@@ -176,9 +169,13 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
         if (std::string(cc_c_t[i]).empty() && std::string(cc_f_t[i]).empty())
-          cell.append_child("v").append_child(pugi::node_pcdata).set_value(std::string(cc_v[i]).c_str());
+          cell.append_child("v")
+            .append_child(pugi::node_pcdata)
+            .set_value(std::string(cc_v[i]).c_str());
         else
-          cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_string(cc_v[i]).c_str());
+          cell.append_child("v")
+            .append_child(pugi::node_pcdata)
+            .set_value(to_string(cc_v[i]).c_str());
       }
     }
 
@@ -186,9 +183,11 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
     if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
       if (!std::string(cc_is[i]).empty()) {
 
-        pugi::xml_document is_node;
-        pugi::xml_parse_result result = is_node.load_string(to_string(cc_is[i]).c_str(), pugi_parse_flags);
-        if (!result) Rcpp::stop("loading inlineStr node while writing failed");
+        pugi::xml_document     is_node;
+        pugi::xml_parse_result result =
+          is_node.load_string(to_string(cc_is[i]).c_str(), pugi_parse_flags);
+        if (!result)
+          Rcpp::stop("loading inlineStr node while writing failed");
 
         cell.append_copy(is_node.first_child());
       }
@@ -198,34 +197,29 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   return doc;
 }
 
-
 // TODO: convert to pugi
 // function that creates the xml worksheet
 // uses preparated data and writes it. It passes data to set_row() which will
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-XPtrXML write_worksheet(
-    std::string prior,
-    std::string post,
-    Rcpp::Environment sheet_data
-) {
+XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data) {
 
-  uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-
+  uint32_t pugi_parse_flags =
+    pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
-  Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc_out"]);
+  Rcpp::DataFrame cc       = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc_out"]);
 
-
-  xmldoc *doc = new xmldoc;
+  xmldoc                *doc = new xmldoc;
   pugi::xml_parse_result result;
 
   pugi::xml_document xml_pr;
   result = xml_pr.load_string(prior.c_str(), pugi_parse_flags);
-  if (!result) Rcpp::stop("loading prior while writing failed");
+  if (!result)
+    Rcpp::stop("loading prior while writing failed");
   pugi::xml_node worksheet = doc->append_copy(xml_pr.child("worksheet"));
 
   pugi::xml_node sheetData = worksheet.append_child("sheetData");
@@ -240,14 +234,15 @@ XPtrXML write_worksheet(
   if (!post.empty()) {
     pugi::xml_document xml_po;
     result = xml_po.load_string(post.c_str(), pugi_parse_flags);
-    if (!result) Rcpp::stop("loading post while writing failed");
+    if (!result)
+      Rcpp::stop("loading post while writing failed");
     for (auto po : xml_po.children())
       worksheet.append_copy(po);
   }
 
-  pugi::xml_node decl = doc->prepend_child(pugi::node_declaration);
-  decl.append_attribute("version") = "1.0";
-  decl.append_attribute("encoding") = "UTF-8";
+  pugi::xml_node decl                 = doc->prepend_child(pugi::node_declaration);
+  decl.append_attribute("version")    = "1.0";
+  decl.append_attribute("encoding")   = "UTF-8";
   decl.append_attribute("standalone") = "yes";
 
   XPtrXML ptr(doc, true);
@@ -257,11 +252,9 @@ XPtrXML write_worksheet(
 }
 
 // [[Rcpp::export]]
-void write_xmlPtr(
-    XPtrXML doc,
-    std::string fl
-) {
-  uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
+void write_xmlPtr(XPtrXML doc, std::string fl) {
+  uint32_t   pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
   const bool success = doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
-  if (!success) Rcpp::stop("could not save file");
+  if (!success)
+    Rcpp::stop("could not save file");
 }
