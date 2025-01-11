@@ -3,6 +3,13 @@
  * This file defines typedefs. R expects it to be called <pkgname>_types.h    *
  *                                                                            *
  ******************************************************************************/
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wshadow"
+#pragma GCC diagnostic ignored "-Wunused"
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-compare"
 
 /* create custom Rcpp::wrap function to be used with std::vector<xml_col> */
 #include <RcppCommon.h>
@@ -52,6 +59,8 @@ enum celltype {
 #else
 #include <Rcpp.h>
 #endif
+
+#pragma GCC diagnostic pop
 
 // custom wrap function
 // Converts the imported values from c++ std::vector<xml_col> to an R dataframe.

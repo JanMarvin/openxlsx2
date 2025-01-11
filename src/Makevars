@@ -1,1 +1,7 @@
-PKG_CPPFLAGS = -I. -I../inst/include/pugixml
+PKG_CPPFLAGS = -I. -isystem ../inst/include/pugixml \
+  -Wall \
+  -Wpedantic \
+  -Wshadow \
+  -Wunused \
+  -Wconversion \
+  -Wsign-compare
