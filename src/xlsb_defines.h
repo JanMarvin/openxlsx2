@@ -271,6 +271,14 @@ typedef struct {
   uint16_t: 15;
 } BrtUserBookViewFields;
 
+typedef struct {
+  bool fHFDiffOddEven: 1;
+  bool fHFDiffFirst: 1;
+  bool fHFScaleWithDoc: 1;
+  bool fHFAlignMargins: 1;
+  uint16_t reserved: 12;
+} BrtBeginHeaderFooterFields;
+
 enum PtgRowType
 {
   data = 0x00,

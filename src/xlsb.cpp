@@ -2519,12 +2519,20 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         std::string stHeaderFirst = XLNullableWideString(bin, swapit);
         std::string stFooterFirst = XLNullableWideString(bin, swapit);
 
+        BrtBeginHeaderFooterFields *fields = (BrtBeginHeaderFooterFields *)&flags;
+
         if (debug)
         Rcpp::Rcout << stHeader<< ": " << stFooter << ": " <<
           stHeaderEven << ": " << stFooterEven << ": " <<
             stHeaderFirst << ": " << stFooterFirst << std::endl;
 
-        out << "<headerFooter differentOddEven=\"1\" differentFirst=\"0\" scaleWithDoc=\"0\" alignWithMargins=\"0\">" << std::endl;
+        out << "<headerFooter" << std::endl;
+        if (fields->fHFDiffOddEven) out << " differentOddEven=\"" << fields->fHFDiffOddEven << "\"" << std::endl;
+        if (fields->fHFDiffFirst)  out << " differentFirst=\"" << fields->fHFDiffFirst << "\"" << std::endl;
+        if (fields->fHFScaleWithDoc)  out << " scaleWithDoc=\"" << fields->fHFScaleWithDoc << "\"" << std::endl;
+        if (fields->fHFAlignMargins)  out << " alignWithMargins=\"" << fields->fHFAlignMargins << "\"" << std::endl;
+        out << ">" << std::endl;
+
         if (!stHeader.empty()) out << "<oddHeader>" << stHeader <<"</oddHeader>" << std::endl;
         if (!stFooter.empty()) out << "<oddFooter>" << stFooter <<"</oddFooter>" << std::endl;
         if (!stHeaderEven.empty()) out << "<evenHeader>" << stHeaderEven <<"</evenHeader>" << std::endl;
