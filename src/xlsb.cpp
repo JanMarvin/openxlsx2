@@ -1088,10 +1088,11 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
           ref =  lref + ":" + rref;
         }
 
-        guid0 = readbin(guid0, bin, swapit);
-        guid1 = readbin(guid1, bin, swapit);
-        guid2 = readbin(guid2, bin, swapit);
-        guid3 = readbin(guid3, bin, swapit);
+        guid0 = readbin(guid0, bin, 0);
+        guid1 = readbin(guid1, bin, 0);
+        guid2 = readbin(guid2, bin, 0);
+        guid3 = readbin(guid3, bin, 0);
+
         out << "<comment";
         out << " ref=\"" << ref << "\"";
         out << " authorId=\"" << iauthor << "\"";
@@ -1642,10 +1643,10 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
         yBot = readbin(yBot, bin, swapit);
         iTabid = readbin(iTabid, bin, swapit);
         iTabRatio = readbin(iTabRatio, bin, swapit);
-        guids[0] = readbin(guid0, bin, swapit);
-        guids[1] = readbin(guid1, bin, swapit);
-        guids[2] = readbin(guid2, bin, swapit);
-        guids[3] = readbin(guid3, bin, swapit);
+        guids[0] = readbin(guid0, bin, 0);
+        guids[1] = readbin(guid1, bin, 0);
+        guids[2] = readbin(guid2, bin, 0);
+        guids[3] = readbin(guid3, bin, 0);
 
         wMergeInterval = readbin(wMergeInterval, bin, swapit);
 
@@ -3650,18 +3651,29 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, iTabId = 0, dwScale = 0, flags = 0;
 
-        guid0 = readbin(guid0, bin, swapit);
-        guid1 = readbin(guid1, bin, swapit);
-        guid2 = readbin(guid2, bin, swapit);
-        guid3 = readbin(guid3, bin, swapit);
+        guid0 = readbin(guid0, bin, 0);
+        guid1 = readbin(guid1, bin, 0);
+        guid2 = readbin(guid2, bin, 0);
+        guid3 = readbin(guid3, bin, 0);
 
         iTabId = readbin(iTabId, bin, swapit);
+        if (iTabId < 1 || iTabId > 65535)
+          Rcpp::stop("iTabId out of range");
+
         dwScale = readbin(dwScale, bin, swapit);
+        if (dwScale < 0 || dwScale > 400) // dialog sheet 0 else 10
+          Rcpp::stop("dwScale out of range");
+
         flags = readbin(flags, bin, swapit);
         // hsState
         // fZoomToFit
 
-        out << "<customSheetView>" << std::endl;
+        out << "<customSheetView" << std::endl;
+        out << " guid=\"{"<< guid_str(guid_vec) << "}\"";
+        if (dwScale != 100)
+          out << " scale=\"" << dwScale << "\"";
+        out << ">" << std::endl;
+
         break;
       }
 
@@ -3672,10 +3684,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, iTabId = 0, dwScale = 0, icv = 0, flags = 0;
 
         std::vector<int32_t> guid_vec(4);
-        guid_vec[0] = readbin(guid0, bin, swapit);
-        guid_vec[1] = readbin(guid1, bin, swapit);
-        guid_vec[2] = readbin(guid2, bin, swapit);
-        guid_vec[3] = readbin(guid3, bin, swapit);
+        guid_vec[0] = readbin(guid0, bin, 0);
+        guid_vec[1] = readbin(guid1, bin, 0);
+        guid_vec[2] = readbin(guid2, bin, 0);
+        guid_vec[3] = readbin(guid3, bin, 0);
 
         iTabId = readbin(iTabId, bin, swapit);
         if (iTabId < 1 || iTabId > 65535)
