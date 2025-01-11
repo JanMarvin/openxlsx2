@@ -155,7 +155,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
   Rcpp::CharacterVector colNames(n);
-  std::unordered_map<int, std::string> cache;
+  std::unordered_map<uint32_t, std::string> cache; // Updated key type
 
   for (R_xlen_t i = 0; i < n; ++i) {
     uint32_t num = static_cast<uint32_t>(x[i]);

@@ -1046,7 +1046,7 @@ std::string typOperator(uint8_t oprtr) {
 }
 
 
-std::string grbitSgnOperator(uint8_t oprtr) {
+std::string grbitSgnOperator(int8_t oprtr) {
 
   if (oprtr == 0x01) return "lessThan";
   if (oprtr == 0x02) return "equal";

@@ -1074,7 +1074,8 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtBeginComment:
       {
-        uint32_t iauthor = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0;
+        uint32_t iauthor = 0;
+        int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0;
         iauthor = readbin(iauthor, bin, swapit);
         std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
