@@ -27,583 +27,540 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
       RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
-      switch(x) {
-
-      case BrtBeginStyleSheet:
-      {
-        out << "<styleSheet>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-        // fills
-      case BrtBeginFmts:
-      {
-        out << "<numFmts>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtFmt:
-      {
-        out << "<numFmt";
-        // bin.seekg(size, bin.cur);
-        uint16_t ifmt = 0;
-        ifmt = readbin(ifmt, bin, swapit);
-
-        std::string stFmtCode = XLWideString(bin, swapit);
-
-        out << " numFmtId=\"" << ifmt << "\" formatCode=\"" << escape_xml(stFmtCode);
-        out << "\" />" << std::endl;
-        break;
-      }
-
-      case BrtEndFmts:
-      {
-        out << "</numFmts>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBeginFonts:
-      {
-        if (debug) Rcpp::Rcout << "<fonts>" << std::endl;
-        // bin.seekg(size, bin.cur);
-        uint32_t cfonts = 0;
-        cfonts = readbin(cfonts, bin, swapit);
-
-        out << "<fonts " <<
-          "count=\"" << cfonts <<
-            "\">" << std::endl;
-        break;
-      }
-
-      case BrtFont:
-      {
-        out << "<font>" << std::endl;
-        uint8_t uls = 0, bFamily = 0, bCharSet = 0, unused = 0, bFontScheme = 0;
-        uint16_t dyHeight = 0, grbit = 0, bls = 0, sss = 0;
-
-        dyHeight = readbin(dyHeight, bin , swapit) / 20; // twip
-        grbit = readbin(grbit, bin , swapit);
-        FontFlagsFields *fields = (FontFlagsFields *)&grbit;
-
-        bls = readbin(bls, bin , swapit);
-        // 0x0190 normal
-        // 0x02BC bold
-        sss = readbin(sss, bin , swapit);
-        // 0x0000 None
-        // 0x0001 Superscript
-        // 0x0002 Subscript
-        uls = readbin(uls, bin , swapit);
-        // 0x00 None
-        // 0x01 Single
-        // 0x02 Double
-        // 0x21 Single accounting
-        // 0x22 Double accounting
-        bFamily = readbin(bFamily, bin , swapit);
-        // 0x00 Not applicable
-        // 0x01 Roman
-        // 0x02 Swiss
-        // 0x03 Modern
-        // 0x04 Script
-        // 0x05 Decorative
-        bCharSet = readbin(bCharSet, bin , swapit);
-        // 0x00 ANSI_CHARSET English
-        // 0x01 DEFAULT_CHARSET System locale based
-        // 0x02 SYMBOL_CHARSET Symbol
-        // 0x4D MAC_CHARSET Macintosh
-        // 0x80 SHIFTJIS_CHARSET Japanese
-        // 0x81 HANGUL_CHARSET / HANGEUL_CHARSET Hangul (Hangeul) Korean
-        // 0x82 JOHAB_CHARSET Johab Korean
-        // 0x86 GB2312_CHARSET Simplified Chinese
-        // 0x88 CHINESEBIG5_CHARSET Traditional Chinese
-        // 0xA1 GREEK_CHARSET Greek
-        // 0xA2 TURKISH_CHARSET Turkish
-        // 0xA3 VIETNAMESE_CHARSET Vietnamese
-        // 0xB1 HEBREW_CHARSET Hebrew
-        // 0xB2 ARABIC_CHARSET Arabic
-        // 0xBA BALTIC_CHARSET Baltic
-        // 0xCC RUSSIAN_CHARSET Russian
-        // 0xDE THAI_CHARSET Thai
-        // 0xEE EASTEUROPE_CHARSET Eastern European
-        // 0xFF OEM_CHARSET OEM code page (based on system locale)
-        unused = readbin(unused, bin , swapit);
-
-        std::vector<int32_t> color = brtColor(bin, swapit);
-        // needs handling for rgb/hex colors
-        if (debug) Rf_PrintValue(Rcpp::wrap(color));
-
-        bFontScheme = readbin(bFontScheme, bin , swapit);
-        // 0x00 None
-        // 0x01 Major font scheme
-        // 0x02 Minor font scheme
-
-        std::string name = XLWideString(bin, swapit);
-
-        if (bls == 0x02BC)  out << "<b/>" << std::endl;
-        if (fields->fItalic) out << "<i/>" << std::endl;
-        if (fields->fStrikeout) out << "<strike/>" << std::endl;
-        // if (fields->fOutline) out << "<outline/>" << std::endl;
-
-        if (uls > 0) {
-          if (uls == 0x01) out << "<u val=\"single\" />" << std::endl;
-          if (uls == 0x02) out << "<u val=\"double\" />" << std::endl;
-          if (uls == 0x21) out << "<u val=\"singleAccounting\" />" << std::endl;
-          if (uls == 0x22) out << "<u val=\"doubleAccounting\" />" << std::endl;
+      switch (x) {
+        case BrtBeginStyleSheet: {
+          out << "<styleSheet>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-        out << "<sz val=\"" << dyHeight << "\" />" << std::endl;
-
-        // if (color[0] == 0x01) { // wrong but right?
-        //   Rcpp::Rcout << "<color theme=\"" << color[1] << "\" />" << std::endl;
-        // }
-
-        if (color[0] == 0x01) {
-          out << "<color indexed=\"" << color[1] << "\" />" << std::endl;
+          // fills
+        case BrtBeginFmts: {
+          out << "<numFmts>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-        if (color[0] == 0x02) {
-          out << "<color rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />" << std::endl;
+        case BrtFmt: {
+          out << "<numFmt";
+          // bin.seekg(size, bin.cur);
+          uint16_t ifmt = 0;
+          ifmt = readbin(ifmt, bin, swapit);
+
+          std::string stFmtCode = XLWideString(bin, swapit);
+
+          out << " numFmtId=\"" << ifmt << "\" formatCode=\"" << escape_xml(stFmtCode);
+          out << "\" />" << std::endl;
+          break;
         }
 
-        if (color[0] == 0x03) {
-
-          double tint = 0.0;
-          if (color[2] != 0) tint = (double)color[2]/32767;
-
-          std::stringstream stream;
-          stream << std::setprecision(16) << tint;
-
-          out << "<color theme=\"" << color[1] << "\" tint=\"" << stream.str() << "\" />";
+        case BrtEndFmts: {
+          out << "</numFmts>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-        if (color[1])
+        case BrtBeginFonts: {
+          if (debug) Rcpp::Rcout << "<fonts>" << std::endl;
+          // bin.seekg(size, bin.cur);
+          uint32_t cfonts = 0;
+          cfonts = readbin(cfonts, bin, swapit);
 
-        out << "<name val=\"" << name << "\" />" << std::endl;
-        if (bFamily > 0)
-          out << "<family val=\"" << (uint16_t)bFamily << "\" />" << std::endl;
-
-        if (bFontScheme == 1) {
-          out << "<scheme val=\"major\" />" << std::endl;
-        }
-        if (bFontScheme == 2) {
-          out << "<scheme val=\"minor\" />" << std::endl;
+          out << "<fonts " << "count=\"" << cfonts << "\">" << std::endl;
+          break;
         }
 
-        if (bCharSet > 0)
-          out << "<charset val=\"" << (uint16_t)bCharSet << "\" />" << std::endl;
+        case BrtFont: {
+          out << "<font>" << std::endl;
+          uint8_t uls = 0, bFamily = 0, bCharSet = 0, unused = 0, bFontScheme = 0;
+          uint16_t dyHeight = 0, grbit = 0, bls = 0, sss = 0;
 
-        out << "</font>" << std::endl;
-        break;
-      }
+          dyHeight = readbin(dyHeight, bin, swapit) / 20;  // twip
+          grbit = readbin(grbit, bin, swapit);
+          FontFlagsFields* fields = (FontFlagsFields*)&grbit;
 
-      case BrtEndFonts:
-      {
-        if (debug) Rcpp::Rcout << "</fonts>" << std::endl;
-        bin.seekg(size, bin.cur);
+          bls = readbin(bls, bin, swapit);
+          // 0x0190 normal
+          // 0x02BC bold
+          sss = readbin(sss, bin, swapit);
+          // 0x0000 None
+          // 0x0001 Superscript
+          // 0x0002 Subscript
+          uls = readbin(uls, bin, swapit);
+          // 0x00 None
+          // 0x01 Single
+          // 0x02 Double
+          // 0x21 Single accounting
+          // 0x22 Double accounting
+          bFamily = readbin(bFamily, bin, swapit);
+          // 0x00 Not applicable
+          // 0x01 Roman
+          // 0x02 Swiss
+          // 0x03 Modern
+          // 0x04 Script
+          // 0x05 Decorative
+          bCharSet = readbin(bCharSet, bin, swapit);
+          // 0x00 ANSI_CHARSET English
+          // 0x01 DEFAULT_CHARSET System locale based
+          // 0x02 SYMBOL_CHARSET Symbol
+          // 0x4D MAC_CHARSET Macintosh
+          // 0x80 SHIFTJIS_CHARSET Japanese
+          // 0x81 HANGUL_CHARSET / HANGEUL_CHARSET Hangul (Hangeul) Korean
+          // 0x82 JOHAB_CHARSET Johab Korean
+          // 0x86 GB2312_CHARSET Simplified Chinese
+          // 0x88 CHINESEBIG5_CHARSET Traditional Chinese
+          // 0xA1 GREEK_CHARSET Greek
+          // 0xA2 TURKISH_CHARSET Turkish
+          // 0xA3 VIETNAMESE_CHARSET Vietnamese
+          // 0xB1 HEBREW_CHARSET Hebrew
+          // 0xB2 ARABIC_CHARSET Arabic
+          // 0xBA BALTIC_CHARSET Baltic
+          // 0xCC RUSSIAN_CHARSET Russian
+          // 0xDE THAI_CHARSET Thai
+          // 0xEE EASTEUROPE_CHARSET Eastern European
+          // 0xFF OEM_CHARSET OEM code page (based on system locale)
+          unused = readbin(unused, bin, swapit);
 
-        out << "</fonts>" << std::endl;
-        break;
-      }
+          std::vector<int32_t> color = brtColor(bin, swapit);
+          // needs handling for rgb/hex colors
+          if (debug) Rf_PrintValue(Rcpp::wrap(color));
 
+          bFontScheme = readbin(bFontScheme, bin, swapit);
+          // 0x00 None
+          // 0x01 Major font scheme
+          // 0x02 Minor font scheme
 
-        // fills
-      case BrtBeginFills:
-      {
-        out << "<fills>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+          std::string name = XLWideString(bin, swapit);
 
-      case BrtFill:
-      {
-        uint32_t fls = 0, iGradientType = 0, cNumStop = 0;
-        double
-          xnumDegree = 0.0,
-          xnumFillToLeft = 0.0,
-          xnumFillToRight = 0.0,
-          xnumFillToTop = 0.0,
-          xnumFillToBottom = 0.0,
-          aPos = 0.0 // not used
-        ;
-        std::vector<int32_t> aColor; // not used
+          if (bls == 0x02BC)  out << "<b/>" << std::endl;
+          if (fields->fItalic) out << "<i/>" << std::endl;
+          if (fields->fStrikeout) out << "<strike/>" << std::endl;
+          // if (fields->fOutline) out << "<outline/>" << std::endl;
 
-        fls = readbin(fls, bin, swapit);
-        std::vector<int32_t> fgColor = brtColor(bin, swapit);
-        std::vector<int32_t> bgColor = brtColor(bin, swapit);
-        iGradientType = readbin(iGradientType, bin, swapit);
-        xnumDegree = Xnum(bin, swapit);
-        xnumFillToLeft = Xnum(bin, swapit);
-        xnumFillToRight = Xnum(bin, swapit);
-        xnumFillToTop = Xnum(bin, swapit);
-        xnumFillToBottom = Xnum(bin, swapit);
-        cNumStop = readbin(cNumStop, bin, swapit);
-
-        if (debug) {
-          Rcpp::Rcout << "unused gradinet filll colors" <<
-            xnumDegree << ": " << xnumFillToLeft << ": " << ": " <<
-            xnumFillToRight << ": " << xnumFillToTop << "; " <<
-            xnumFillToBottom << std::endl;
-        }
-
-        for (uint32_t i = 0; i < cNumStop; ++i) {
-          // gradient fill colors and positions
-          aColor = brtColor(bin, swapit);
-          aPos   = Xnum(bin, swapit);
-          if (debug) {
-            Rcpp::Rcout << "unused gradient Colors: " <<
-              to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) <<
-                ": " << aPos << std::endl;
+          if (uls > 0) {
+            if (uls == 0x01) out << "<u val=\"single\" />" << std::endl;
+            if (uls == 0x02) out << "<u val=\"double\" />" << std::endl;
+            if (uls == 0x21) out << "<u val=\"singleAccounting\" />" << std::endl;
+            if (uls == 0x22) out << "<u val=\"doubleAccounting\" />" << std::endl;
           }
+
+          out << "<sz val=\"" << dyHeight << "\" />" << std::endl;
+
+          // if (color[0] == 0x01) { // wrong but right?
+          //   Rcpp::Rcout << "<color theme=\"" << color[1] << "\" />" << std::endl;
+          // }
+
+          if (color[0] == 0x01) {
+            out << "<color indexed=\"" << color[1] << "\" />" << std::endl;
+          }
+
+          if (color[0] == 0x02) {
+            out << "<color rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />" << std::endl;
+          }
+
+          if (color[0] == 0x03) {
+            double tint = 0.0;
+            if (color[2] != 0) tint = (double)color[2] / 32767;
+
+            std::stringstream stream;
+            stream << std::setprecision(16) << tint;
+
+            out << "<color theme=\"" << color[1] << "\" tint=\"" << stream.str() << "\" />";
+          }
+
+          if (color[1])
+
+            out << "<name val=\"" << name << "\" />" << std::endl;
+          if (bFamily > 0)
+            out << "<family val=\"" << (uint16_t)bFamily << "\" />" << std::endl;
+
+          if (bFontScheme == 1) {
+            out << "<scheme val=\"major\" />" << std::endl;
+          }
+          if (bFontScheme == 2) {
+            out << "<scheme val=\"minor\" />" << std::endl;
+          }
+
+          if (bCharSet > 0)
+            out << "<charset val=\"" << (uint16_t)bCharSet << "\" />" << std::endl;
+
+          out << "</font>" << std::endl;
+          break;
         }
 
-        out << "<fill>" << std::endl;
+        case BrtEndFonts: {
+          if (debug) Rcpp::Rcout << "</fonts>" << std::endl;
+          bin.seekg(size, bin.cur);
 
-        if (fls != 0x00000028) {
-          out << "<patternFill";
-          out << " patternType=\"";
-          if (fls == 0) out << "none";
-          if (fls == 1) out << "solid";
-          if (fls == 2) out << "mediumGray";
-          if (fls == 3) out << "darkGray";
-          if (fls == 4) out << "lightGray";
-          if (fls == 5) out << "darkHorizontal";
-          if (fls == 6) out << "darkVertical";
-          if (fls == 7) out << "darkDown";
-          if (fls == 8) out << "darkUp";
-          if (fls == 9) out << "darkGrid";
-          if (fls == 10) out << "darkTrellis";
-          if (fls == 11) out << "lightHorizontal";
-          if (fls == 12) out << "lightVertical";
-          if (fls == 13) out << "lightDown";
-          if (fls == 14) out << "lightUp";
-          if (fls == 15) out << "lightGrid";
-          if (fls == 16) out << "lightTrellis";
-          if (fls == 17) out << "gray125";
-          if (fls == 18) out << "gray0625";
-          out << "\">" << std::endl;
-          // if FF000000 & FFFFFFFF they can be omitted
-
-          double bgtint = 0.0, fgtint = 0.0;
-          if (bgColor[2] != 0) bgtint = (double)bgColor[2]/32767;
-          if (fgColor[2] != 0) fgtint = (double)fgColor[2]/32767;
-
-          std::stringstream bgstream, fgstream;
-          bgstream << std::setprecision(16) << bgtint;
-          fgstream << std::setprecision(16) << fgtint;
-
-          if (fgColor[0] == 0x00)
-            out << "<fgColor auto=\"1\" />" << std::endl;
-          if (fgColor[0] == 0x01)
-            out << "<fgColor indexed=\"" << fgColor[1] << "\" />";
-          if (fgColor[0] == 0x02)
-            out << "<fgColor rgb=\"" << to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) << "\" />";
-          if (fgColor[0] == 0x03)
-            out << "<fgColor theme=\"" << fgColor[1] << "\" tint=\"" << fgstream.str() << "\" />";
-
-          if (bgColor[0] == 0x00)
-            out << "<bgColor auto=\"1\" />" << std::endl;
-          if (bgColor[0] == 0x01)
-            out << "<bgColor indexed=\"" << bgColor[1] << "\" />";
-          if (bgColor[0] == 0x02)
-            out << "<bgColor rgb=\"" << to_argb(bgColor[6], bgColor[3], bgColor[4], bgColor[5]) << "\" />";
-          if (bgColor[0] == 0x03)
-            out << "<bgColor theme=\"" << bgColor[1] << "\" tint=\"" << fgstream.str() << "\" />";
-
-          out << "</patternFill>" << std::endl;
-          out << "</fill>" << std::endl;
-        } else {
-          Rcpp::Rcout << "gradient fill not implemented" << std::endl;
+          out << "</fonts>" << std::endl;
+          break;
         }
 
-        break;
-      }
-
-      case BrtEndFills:
-      {
-        out << "</fills>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-        // borders
-      case BrtBeginBorders:
-      {
-        out << "<borders>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBorder:
-      {
-        out << "<border>" << std::endl;
-        // bool fBdrDiagDown = 0, fBdrDiagUp = 0;
-        uint8_t borderFlags = 0;
-        borderFlags = readbin(borderFlags, bin, swapit);
-
-        std::string top      = brtBorder("top", bin, swapit);
-        std::string bottom   = brtBorder("bottom", bin, swapit);
-        std::string left     = brtBorder("left", bin, swapit);
-        std::string right    = brtBorder("right", bin, swapit);
-        std::string diagonal = brtBorder("diagonal", bin, swapit);
-
-        // xml requires a different order a certain spreadsheet software
-        // is quite picky in this regard
-        out << left << right << top << bottom << diagonal;
-
-        out << "</border>" << std::endl;
-        // bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtEndBorders:
-      {
-        out << "</borders>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-        // cellStyleXfs
-      case BrtBeginCellStyleXFs:
-      {
-        out << "<cellStyleXfs>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtEndCellStyleXFs:
-      {
-        out << "</cellStyleXfs>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-        // cellXfs
-      case BrtBeginCellXFs:
-      {
-        out << "<cellXfs>" << std::endl;
-        bin.seekg(size, bin.cur);
-        // uint32_t cxfs = 0;
-        // cxfs = readbin(cxfs, bin, swapit);
-        break;
-      }
-
-      case BrtXF:
-      {
-        out << "<xf";
-
-        // bool is_cell_style_xf = false;
-
-        uint8_t trot = 0, indent = 0;
-        uint16_t ixfeParent = 0, iFmt = 0, iFont = 0, iFill = 0, ixBorder = 0;
-        uint32_t brtxf = 0;
-
-        ixfeParent = readbin(ixfeParent, bin, swapit);
-        iFmt = readbin(iFmt, bin, swapit);
-        iFont = readbin(iFont, bin, swapit);
-        iFill = readbin(iFill, bin, swapit);
-        ixBorder = readbin(ixBorder, bin, swapit);
-        trot = readbin(trot, bin, swapit);
-        indent = readbin(indent, bin, swapit);
-
-        if (indent > 250) {
-          Rcpp::stop("indent to big");
+        // fills
+        case BrtBeginFills: {
+          out << "<fills>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-        if (ixfeParent == 0xFFFF) {
-          // is_cell_style_xf = true;
-        } else {
-          out << " xfId=\"" << ixfeParent << "\"";
+        case BrtFill: {
+          uint32_t fls = 0, iGradientType = 0, cNumStop = 0;
+          double
+            xnumDegree = 0.0,
+            xnumFillToLeft = 0.0,
+            xnumFillToRight = 0.0,
+            xnumFillToTop = 0.0,
+            xnumFillToBottom = 0.0,
+            aPos = 0.0 // not used
+          ;
+          std::vector<int32_t> aColor;  // not used
+
+          fls = readbin(fls, bin, swapit);
+          std::vector<int32_t> fgColor = brtColor(bin, swapit);
+          std::vector<int32_t> bgColor = brtColor(bin, swapit);
+          iGradientType = readbin(iGradientType, bin, swapit);
+          xnumDegree = Xnum(bin, swapit);
+          xnumFillToLeft = Xnum(bin, swapit);
+          xnumFillToRight = Xnum(bin, swapit);
+          xnumFillToTop = Xnum(bin, swapit);
+          xnumFillToBottom = Xnum(bin, swapit);
+          cNumStop = readbin(cNumStop, bin, swapit);
+
+          if (debug) {
+            Rcpp::Rcout << "unused gradinet filll colors" <<
+              xnumDegree << ": " << xnumFillToLeft << ": " << ": " <<
+              xnumFillToRight << ": " << xnumFillToTop << "; " <<
+              xnumFillToBottom << std::endl;
+          }
+
+          for (uint32_t i = 0; i < cNumStop; ++i) {
+            // gradient fill colors and positions
+            aColor = brtColor(bin, swapit);
+            aPos   = Xnum(bin, swapit);
+            if (debug) {
+              Rcpp::Rcout << "unused gradient Colors: " <<
+                to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) <<
+                  ": " << aPos << std::endl;
+            }
+          }
+
+          out << "<fill>" << std::endl;
+
+          if (fls != 0x00000028) {
+            out << "<patternFill";
+            out << " patternType=\"";
+            if (fls == 0) out << "none";
+            if (fls == 1) out << "solid";
+            if (fls == 2) out << "mediumGray";
+            if (fls == 3) out << "darkGray";
+            if (fls == 4) out << "lightGray";
+            if (fls == 5) out << "darkHorizontal";
+            if (fls == 6) out << "darkVertical";
+            if (fls == 7) out << "darkDown";
+            if (fls == 8) out << "darkUp";
+            if (fls == 9) out << "darkGrid";
+            if (fls == 10) out << "darkTrellis";
+            if (fls == 11) out << "lightHorizontal";
+            if (fls == 12) out << "lightVertical";
+            if (fls == 13) out << "lightDown";
+            if (fls == 14) out << "lightUp";
+            if (fls == 15) out << "lightGrid";
+            if (fls == 16) out << "lightTrellis";
+            if (fls == 17) out << "gray125";
+            if (fls == 18) out << "gray0625";
+            out << "\">" << std::endl;
+            // if FF000000 & FFFFFFFF they can be omitted
+
+            double bgtint = 0.0, fgtint = 0.0;
+            if (bgColor[2] != 0) bgtint = (double)bgColor[2] / 32767;
+            if (fgColor[2] != 0) fgtint = (double)fgColor[2] / 32767;
+
+            std::stringstream bgstream, fgstream;
+            bgstream << std::setprecision(16) << bgtint;
+            fgstream << std::setprecision(16) << fgtint;
+
+            if (fgColor[0] == 0x00)
+              out << "<fgColor auto=\"1\" />" << std::endl;
+            if (fgColor[0] == 0x01)
+              out << "<fgColor indexed=\"" << fgColor[1] << "\" />";
+            if (fgColor[0] == 0x02)
+              out << "<fgColor rgb=\"" << to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) << "\" />";
+            if (fgColor[0] == 0x03)
+              out << "<fgColor theme=\"" << fgColor[1] << "\" tint=\"" << fgstream.str() << "\" />";
+
+            if (bgColor[0] == 0x00)
+              out << "<bgColor auto=\"1\" />" << std::endl;
+            if (bgColor[0] == 0x01)
+              out << "<bgColor indexed=\"" << bgColor[1] << "\" />";
+            if (bgColor[0] == 0x02)
+              out << "<bgColor rgb=\"" << to_argb(bgColor[6], bgColor[3], bgColor[4], bgColor[5]) << "\" />";
+            if (bgColor[0] == 0x03)
+              out << "<bgColor theme=\"" << bgColor[1] << "\" tint=\"" << fgstream.str() << "\" />";
+
+            out << "</patternFill>" << std::endl;
+            out << "</fill>" << std::endl;
+          } else {
+            Rcpp::Rcout << "gradient fill not implemented" << std::endl;
+          }
+
+          break;
         }
 
-        brtxf = readbin(brtxf, bin, swapit);
-        XFFields *fields = (XFFields *)&brtxf;
-        uint8_t xfgbit = fields->xfGrbitAtr;
+        case BrtEndFills: {
+          out << "</fills>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-        xfGrbitAtrFields *xfGrbitAtr = (xfGrbitAtrFields *)&xfgbit;
+          // borders
+        case BrtBeginBorders: {
+          out << "<borders>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-        out << " numFmtId=\"" << iFmt << "\"";
-        out << " fontId=\"" << iFont << "\"";
-        out << " fillId=\"" << iFill << "\"";
-        out << " borderId=\"" << ixBorder << "\"";
-        out << " applyNumberFormat=\""<< !xfGrbitAtr->bit1 <<"\"";
-        out << " applyFont=\""<< !xfGrbitAtr->bit2 << "\"";
-        out << " applyBorder=\"" << !xfGrbitAtr->bit4 << "\"";
-        out << " applyFill=\"" << !xfGrbitAtr->bit5 << "\"";
-        out << " applyAlignment=\""<< !xfGrbitAtr->bit3 << "\"";
-        out << " applyProtection=\""<< !xfGrbitAtr->bit6 << "\"";
+        case BrtBorder: {
+          out << "<border>" << std::endl;
+          // bool fBdrDiagDown = 0, fBdrDiagUp = 0;
+          uint8_t borderFlags = 0;
+          borderFlags = readbin(borderFlags, bin, swapit);
+
+          std::string top      = brtBorder("top", bin, swapit);
+          std::string bottom   = brtBorder("bottom", bin, swapit);
+          std::string left     = brtBorder("left", bin, swapit);
+          std::string right    = brtBorder("right", bin, swapit);
+          std::string diagonal = brtBorder("diagonal", bin, swapit);
+
+          // xml requires a different order a certain spreadsheet software
+          // is quite picky in this regard
+          out << left << right << top << bottom << diagonal;
+
+          out << "</border>" << std::endl;
+          // bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndBorders: {
+          out << "</borders>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+          // cellStyleXfs
+        case BrtBeginCellStyleXFs: {
+          out << "<cellStyleXfs>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndCellStyleXFs: {
+          out << "</cellStyleXfs>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+          // cellXfs
+        case BrtBeginCellXFs: {
+          out << "<cellXfs>" << std::endl;
+          bin.seekg(size, bin.cur);
+          // uint32_t cxfs = 0;
+          // cxfs = readbin(cxfs, bin, swapit);
+          break;
+        }
+
+        case BrtXF: {
+          out << "<xf";
+
+          // bool is_cell_style_xf = false;
+
+          uint8_t trot = 0, indent = 0;
+          uint16_t ixfeParent = 0, iFmt = 0, iFont = 0, iFill = 0, ixBorder = 0;
+          uint32_t brtxf = 0;
+
+          ixfeParent = readbin(ixfeParent, bin, swapit);
+          iFmt = readbin(iFmt, bin, swapit);
+          iFont = readbin(iFont, bin, swapit);
+          iFill = readbin(iFill, bin, swapit);
+          ixBorder = readbin(ixBorder, bin, swapit);
+          trot = readbin(trot, bin, swapit);
+          indent = readbin(indent, bin, swapit);
+
+          if (indent > 250) {
+            Rcpp::stop("indent to big");
+          }
+
+          if (ixfeParent == 0xFFFF) {
+            // is_cell_style_xf = true;
+          } else {
+            out << " xfId=\"" << ixfeParent << "\"";
+          }
+
+          brtxf = readbin(brtxf, bin, swapit);
+          XFFields* fields = (XFFields*)&brtxf;
+          uint8_t xfgbit = fields->xfGrbitAtr;
+
+          xfGrbitAtrFields* xfGrbitAtr = (xfGrbitAtrFields*)&xfgbit;
+
+          out << " numFmtId=\"" << iFmt << "\"";
+          out << " fontId=\"" << iFont << "\"";
+          out << " fillId=\"" << iFill << "\"";
+          out << " borderId=\"" << ixBorder << "\"";
+          out << " applyNumberFormat=\"" << !xfGrbitAtr->bit1 << "\"";
+          out << " applyFont=\"" << !xfGrbitAtr->bit2 << "\"";
+          out << " applyBorder=\"" << !xfGrbitAtr->bit4 << "\"";
+          out << " applyFill=\"" << !xfGrbitAtr->bit5 << "\"";
+          out << " applyAlignment=\"" << !xfGrbitAtr->bit3 << "\"";
+          out << " applyProtection=\"" << !xfGrbitAtr->bit6 << "\"";
 
 
-        if (fields->alc > 0 || fields->alcv > 0 || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
-          out << "><alignment";
-          out << halign(fields->alc);
-          out << valign(fields->alcv);
+          if (fields->alc > 0 || fields->alcv > 0 || indent || trot || fields->iReadingOrder || fields->fShrinkToFit || fields->fWrap || fields->fJustLast) {
+            out << "><alignment";
+            out << halign(fields->alc);
+            out << valign(fields->alcv);
 
-          if (fields->fWrap)
-            out << " wrapText=\"" << fields->fWrap <<"\"";
-          if (fields->fShrinkToFit)
-            out << " shrinkToFit=\"" << fields->fWrap <<"\"";
-          // something is not quite right here.
-          // I have a file which is left to right, but this here returns 2: right to left
-          if (fields->iReadingOrder)
-            out << " readingOrder=\"" << (uint16_t)fields->iReadingOrder <<"\"";
-          if (indent)
-            out << " indent=\"" << (uint16_t)indent/3 <<"\"";
-          if (fields->fJustLast)
-            out << " justifyLastLine=\"" << fields->fJustLast <<"\"";
-          if (trot)
-            out << " textRotation=\"" << (uint16_t)trot <<"\"";
+            if (fields->fWrap)
+              out << " wrapText=\"" << fields->fWrap << "\"";
+            if (fields->fShrinkToFit)
+              out << " shrinkToFit=\"" << fields->fWrap << "\"";
+            // something is not quite right here.
+            // I have a file which is left to right, but this here returns 2: right to left
+            if (fields->iReadingOrder)
+              out << " readingOrder=\"" << (uint16_t)fields->iReadingOrder << "\"";
+            if (indent)
+              out << " indent=\"" << (uint16_t)indent / 3 << "\"";
+            if (fields->fJustLast)
+              out << " justifyLastLine=\"" << fields->fJustLast << "\"";
+            if (trot)
+              out << " textRotation=\"" << (uint16_t)trot << "\"";
 
-          out << "/>";
-          out << "</xf>" << std::endl;
-        } else {
+            out << "/>";
+            out << "</xf>" << std::endl;
+          } else {
+            out << " />" << std::endl;
+          }
+
+          // bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndCellXFs: {
+          out << "</cellXfs>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        // cellStyles
+        case BrtBeginStyles: {
+          out << "<cellStyles>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtStyle: {
+          uint8_t iStyBuiltIn = 0, iLevel = 0;
+          uint16_t grbitObj1 = 0;
+          uint32_t ixf = 0;
+          ixf = readbin(ixf, bin, swapit);
+          grbitObj1 = readbin(grbitObj1, bin, swapit);
+          iStyBuiltIn = readbin(iStyBuiltIn, bin, swapit);
+          iLevel = readbin(iLevel, bin, swapit);
+          std::string stName = XLWideString(bin, swapit);
+
+          // StyleFlagsFields *fields = (StyleFlagsFields *)&grbitObj1;
+          out << "<cellStyle";
+          out << " name=\"" << escape_xml(stName) << "\"";
+          out << " xfId=\"" << ixf << "\"";
+          out << " builtinId=\"" << (int32_t)iStyBuiltIn << "\"";
           out << " />" << std::endl;
+
+          // bin.seekg(size, bin.cur);
+          break;
         }
 
-        // bin.seekg(size, bin.cur);
-        break;
+        case BrtEndStyles: {
+          out << "</cellStyles>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginColorPalette: {
+          out << "<colors>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginIndexedColors: {
+          out << "<indexedColors>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtIndexedColor: {
+          uint8_t bRed = 0, bGreen = 0, bBlue = 0, reserved = 0;
+          bRed = readbin(bRed, bin, swapit);
+          bGreen = readbin(bGreen, bin, swapit);
+          bBlue = readbin(bBlue, bin, swapit);
+          reserved = readbin(reserved, bin, swapit);
+
+          // std::vector<int32_t> color = brtColor(bin);
+          // if (color[0] == 0x02) {
+          out << "<rgbColor rgb=\"" << to_argb(reserved, bRed, bGreen, bRed) << std::dec << "\" />" << std::endl;
+          // }
+          break;
+        }
+
+        case BrtEndIndexedColors: {
+          out << "</indexedColors>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndColorPalette: {
+          out << "</colors>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginDXFs: {
+          uint32_t cdxfs = 0;
+          cdxfs = readbin(cdxfs, bin, swapit);
+
+          out << "<dxfs>" << std::endl;
+          break;
+        }
+
+          // This is a todo. the xfPropDataBlob is almost the entire styles part again
+          // case BrtDXF: {
+          //   uint16_t flags = 0, reserved = 0, cprops = 0;
+          //   flags = readbin(flags, bin, swapit);
+          //   reserved = readbin(reserved, bin, swapit);
+          //   cprops = readbin(cprops, bin, swapit);
+          //
+          //   out << "<dxfs>" << std::endl;
+          //  break;
+          // }
+
+        case BrtEndDXFs: {
+          out << "</dxfs>" << std::endl;
+          break;
+        }
+
+        case BrtEndStyleSheet: {
+          end_of_style_sheet = true;
+          out << "</styleSheet>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        default: {
+          if (debug) {
+            Rcpp::Rcout << "Unhandled Style: " << std::to_string(x) << ": " << std::to_string(size) << " @ "
+                        << bin.tellg() << std::endl;
+          }
+          bin.seekg(size, bin.cur);
+          break;
+        }
       }
-
-      case BrtEndCellXFs:
-      {
-        out << "</cellXfs>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      // cellStyles
-      case BrtBeginStyles:
-      {
-        out << "<cellStyles>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtStyle:
-      {
-
-        uint8_t iStyBuiltIn = 0, iLevel = 0;
-        uint16_t grbitObj1 = 0;
-        uint32_t ixf = 0;
-        ixf = readbin(ixf, bin, swapit);
-        grbitObj1 = readbin(grbitObj1, bin, swapit);
-        iStyBuiltIn = readbin(iStyBuiltIn, bin, swapit);
-        iLevel = readbin(iLevel, bin, swapit);
-        std::string stName = XLWideString(bin, swapit);
-
-        // StyleFlagsFields *fields = (StyleFlagsFields *)&grbitObj1;
-        out << "<cellStyle";
-        out << " name=\"" << escape_xml(stName) << "\"";
-        out << " xfId=\"" << ixf << "\"";
-        out << " builtinId=\"" << (int32_t)iStyBuiltIn << "\"";
-        out << " />" << std::endl;
-
-
-        // bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtEndStyles:
-      {
-        out << "</cellStyles>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBeginColorPalette:
-      {
-        out << "<colors>" <<std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBeginIndexedColors:
-      {
-        out << "<indexedColors>" <<std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtIndexedColor:
-      {
-        uint8_t bRed = 0, bGreen = 0, bBlue = 0, reserved = 0;
-        bRed = readbin(bRed, bin, swapit);
-        bGreen = readbin(bGreen, bin, swapit);
-        bBlue = readbin(bBlue, bin, swapit);
-        reserved = readbin(reserved, bin, swapit);
-
-        // std::vector<int32_t> color = brtColor(bin);
-        // if (color[0] == 0x02) {
-        out << "<rgbColor rgb=\"" <<
-          to_argb(reserved, bRed, bGreen, bRed) <<
-            std::dec << "\" />" << std::endl;
-        // }
-        break;
-      }
-
-      case BrtEndIndexedColors:
-      {
-        out << "</indexedColors>" <<std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtEndColorPalette:
-      {
-        out << "</colors>" <<std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBeginDXFs:
-      {
-        uint32_t cdxfs = 0;
-        cdxfs = readbin(cdxfs, bin, swapit);
-
-        out << "<dxfs>" << std::endl;
-        break;
-      }
-
-        // This is a todo. the xfPropDataBlob is almost the entire styles part again
-        // case BrtDXF:
-        // {
-        //   uint16_t flags = 0, reserved = 0, cprops = 0;
-        //   flags = readbin(flags, bin, swapit);
-        //   reserved = readbin(reserved, bin, swapit);
-        //   cprops = readbin(cprops, bin, swapit);
-        //
-        //   out << "<dxfs>" << std::endl;
-        //  break;
-        // }
-
-      case BrtEndDXFs:
-      {
-        out << "</dxfs>" << std::endl;
-        break;
-      }
-
-      case BrtEndStyleSheet:
-      {
-        end_of_style_sheet = true;
-        out << "</styleSheet>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      default:
-      {
-        if (debug) {
-        Rcpp::Rcout << "Unhandled Style: " << std::to_string(x) <<
-          ": " << std::to_string(size) <<
-            " @ " << bin.tellg() << std::endl;
-      }
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      }
-
     }
 
     out.close();
@@ -612,12 +569,10 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
   } else {
     return -1;
   };
-
 }
 
 // [[Rcpp::export]]
 int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -629,7 +584,7 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
     bool end_of_table = false;
     bool has_revision_record = false;
 
-    while(!end_of_table) {
+    while (!end_of_table) {
       Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
@@ -638,371 +593,343 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
       RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
-      switch(x) {
-
-      case BrtUID:
-      {
-        if (debug) Rcpp::Rcout << "<xr:uid>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBeginList:
-      {
-        if (debug) Rcpp::Rcout << "<table>" << std::endl;
-
-        std::vector<int32_t> rfxList = UncheckedRfX(bin, swapit);
-        std::string ref = int_to_col(rfxList[2] + 1) + std::to_string(rfxList[0] + 1) + ":" + int_to_col(rfxList[3] + 1) + std::to_string(rfxList[1] + 1);
-
-        if (debug) Rcpp::Rcout << "table ref: " << ref << std::endl;
-
-        uint32_t lt = 0, idList = 0, crwHeader = 0, crwTotals = 0, flags = 0;
-        lt = readbin(lt, bin, swapit);
-        idList = readbin(idList, bin, swapit);
-        crwHeader = readbin(crwHeader, bin, swapit);
-        crwTotals = readbin(crwTotals, bin, swapit);
-        flags = readbin(flags, bin, swapit);
-
-        uint32_t nDxfHeader = 0, nDxfData = 0, nDxfAgg = 0, nDxfBorder = 0, nDxfHeaderBorder = 0, nDxfAggBorder = 0, dwConnID = 0;
-
-        nDxfHeader = readbin(nDxfHeader, bin, swapit);
-        nDxfData = readbin(nDxfData, bin, swapit);
-        nDxfAgg = readbin(nDxfAgg, bin, swapit);
-        nDxfBorder = readbin(nDxfBorder, bin, swapit);
-        nDxfHeaderBorder = readbin(nDxfHeaderBorder, bin, swapit);
-        nDxfAggBorder = readbin(nDxfAggBorder, bin, swapit);
-        dwConnID = readbin(dwConnID, bin, swapit);
-
-        std::string stName = XLNullableWideString(bin, swapit);
-        std::string stDisplayName = XLNullableWideString(bin, swapit);
-        std::string stComment = XLNullableWideString(bin, swapit);
-        std::string stStyleHeader = XLNullableWideString(bin, swapit);
-        std::string stStyleData = XLNullableWideString(bin, swapit);
-        std::string stStyleAgg = XLNullableWideString(bin, swapit);
-        if (debug) {
-          Rcpp::Rcout << "table:" << std::endl;
-          Rcpp::Rcout << stName << std::endl;
-          Rcpp::Rcout << stDisplayName << std::endl;
-          Rcpp::Rcout << stComment << std::endl;
-          Rcpp::Rcout << stStyleHeader << std::endl;
-          Rcpp::Rcout << stStyleData << std::endl;
-          Rcpp::Rcout << stStyleAgg << std::endl;
+      switch (x) {
+        case BrtUID: {
+          if (debug) Rcpp::Rcout << "<xr:uid>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-        out << "<table xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" mc:Ignorable=\"xr xr3\"" <<
-          " id=\"" << idList <<
-          "\" name=\"" << stName <<
-            "\" displayName=\"" << stDisplayName <<
-              "\" ref=\"" << ref <<
-                "\" totalsRowShown=\"" << crwTotals <<
-              "\">" << std::endl;
+        case BrtBeginList: {
+          if (debug) Rcpp::Rcout << "<table>" << std::endl;
 
-        // if (debug) Rcpp::Rcout << bin.tellg() << std::endl;
-        break;
-      }
+          std::vector<int32_t> rfxList = UncheckedRfX(bin, swapit);
+          std::string ref = int_to_col(rfxList[2] + 1) + std::to_string(rfxList[0] + 1) + ":" + int_to_col(rfxList[3] + 1) + std::to_string(rfxList[1] + 1);
 
-      // this is used in worksheet as well. move it to function?
-      case BrtBeginAFilter:
-      {
-        if (debug) Rcpp::Rcout << "<autofilter>" << std::endl;
-        std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
+          if (debug) Rcpp::Rcout << "table ref: " << ref << std::endl;
 
-        std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
-        std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
+          uint32_t lt = 0, idList = 0, crwHeader = 0, crwTotals = 0, flags = 0;
+          lt = readbin(lt, bin, swapit);
+          idList = readbin(idList, bin, swapit);
+          crwHeader = readbin(crwHeader, bin, swapit);
+          crwTotals = readbin(crwTotals, bin, swapit);
+          flags = readbin(flags, bin, swapit);
 
-        std::string ref;
-        if (lref.compare(rref) == 0) {
-          ref = lref;
-        } else {
-          ref =  lref + ":" + rref;
-        }
+          uint32_t nDxfHeader = 0, nDxfData = 0, nDxfAgg = 0, nDxfBorder = 0, nDxfHeaderBorder = 0, nDxfAggBorder = 0, dwConnID = 0;
 
-        // ignoring filterColumn for now
-        // autofilter can consist of filterColumn, filters and filter
-        // maybe customFilter, dynamicFilter too
-        out << "<autoFilter ref=\"" << ref << "\">" << std::endl;
+          nDxfHeader = readbin(nDxfHeader, bin, swapit);
+          nDxfData = readbin(nDxfData, bin, swapit);
+          nDxfAgg = readbin(nDxfAgg, bin, swapit);
+          nDxfBorder = readbin(nDxfBorder, bin, swapit);
+          nDxfHeaderBorder = readbin(nDxfHeaderBorder, bin, swapit);
+          nDxfAggBorder = readbin(nDxfAggBorder, bin, swapit);
+          dwConnID = readbin(dwConnID, bin, swapit);
 
-        break;
-      }
-
-      case BrtBeginFilterColumn:
-      {
-        if (debug) Rcpp::Rcout << "<filterColumn>" << std::endl;
-
-        uint16_t flags = 0;
-        uint32_t dwCol = 0;
-        dwCol = readbin(dwCol, bin, swapit);
-        flags = readbin(flags, bin, swapit);
-        // fHideArrow
-        // fNoBtn
-
-        out << "<filterColumn colId=\"" << dwCol <<"\">" << std::endl;
-
-        break;
-      }
-
-      case BrtBeginFilters:
-      {
-        if (debug) Rcpp::Rcout << "<filters>" << std::endl;
-        // bin.seekg(size, bin.cur);
-
-        uint32_t fBlank = 0, unused = 0;
-        fBlank = readbin(fBlank, bin, swapit); // a 32bit flag, after all ... why not?
-        unused = readbin(unused, bin, swapit); // maybe calendarType?
-        out << "<filters blank=\"" << fBlank <<"\">" << std::endl;
-        break;
-      }
-
-      case BrtFilter:
-      {
-        std::string rgch = XLWideString(bin, swapit);
-        out << "<filter val=\"" << rgch << "\" />" << std::endl;
-        // bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtEndFilters:
-      {
-        if (debug) Rcpp::Rcout << "</filters>" << std::endl;
-        out << "</filters>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtColorFilter:
-      {
-        uint32_t dxfid = 0, fCellColor = 0;
-        dxfid = readbin(dxfid, bin, swapit);
-        fCellColor = readbin(fCellColor, bin, swapit);
-
-        out << "<colorFilter dxfId=\"" << dxfid << "\" cellColor=\""<< fCellColor<< "\"/>" << std::endl;
-
-        break;
-      }
-
-      case BrtBeginCustomFilters:
-      case BrtBeginCustomFilters14:
-      case BrtBeginCustomRichFilters:
-      {
-        int32_t fAnd = 0;
-
-        // in xlsb it is flipped
-        fAnd = readbin(fAnd, bin, swapit) ^ 1;
-
-        out << "<customFilters" << std::endl;
-        if (fAnd) out << " and=\"" << fAnd << "\""; // and="1"
-        out << ">";
-
-        break;
-      }
-
-      case BrtCustomFilter:
-      case BrtCustomFilter14:
-      {
-        int8_t vts = 0, grbitSgn = 0;
-        double union_val = 0;
-        std::string vtsStringXls;
-
-        vts = readbin(vts, bin, swapit);
-        grbitSgn = readbin(grbitSgn, bin, swapit);
-
-        if (vts == 4) {
-          // a double
-          union_val = Xnum(bin, swapit);
-        } else if (vts == 8) {
-          // a bool
-          int8_t boolean = 0;
-          boolean = readbin(boolean, bin, swapit);
-          union_val = static_cast<double>(readbin(boolean, bin, swapit));
-          for (int8_t blk = 0; blk < 7; ++blk) {
-            readbin(boolean, bin, swapit);
+          std::string stName = XLNullableWideString(bin, swapit);
+          std::string stDisplayName = XLNullableWideString(bin, swapit);
+          std::string stComment = XLNullableWideString(bin, swapit);
+          std::string stStyleHeader = XLNullableWideString(bin, swapit);
+          std::string stStyleData = XLNullableWideString(bin, swapit);
+          std::string stStyleAgg = XLNullableWideString(bin, swapit);
+          if (debug) {
+            Rcpp::Rcout << "table:" << std::endl;
+            Rcpp::Rcout << stName << std::endl;
+            Rcpp::Rcout << stDisplayName << std::endl;
+            Rcpp::Rcout << stComment << std::endl;
+            Rcpp::Rcout << stStyleHeader << std::endl;
+            Rcpp::Rcout << stStyleData << std::endl;
+            Rcpp::Rcout << stStyleAgg << std::endl;
           }
-        } else {
-          // ignore
-          readbin(union_val, bin, swapit);
-          readbin(union_val, bin, swapit);
+
+          out << "<table xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
+                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" "
+                 "xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" "
+                 "xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" mc:Ignorable=\"xr "
+                 "xr3\""
+              << " id=\"" << idList << "\" name=\"" << stName << "\" displayName=\"" << stDisplayName << "\" ref=\""
+              << ref << "\" totalsRowShown=\"" << crwTotals << "\">" << std::endl;
+
+          // if (debug) Rcpp::Rcout << bin.tellg() << std::endl;
+          break;
         }
 
-        if (vts == 6) // a string
-          vtsStringXls = XLWideString(bin, swapit);
+        // this is used in worksheet as well. move it to function?
+        case BrtBeginAFilter: {
+          if (debug) Rcpp::Rcout << "<autofilter>" << std::endl;
+          std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
-        out << "<customFilter" << std::endl;
-        out << " operator=\"" << grbitSgnOperator(grbitSgn) << "\"";
-        if (vts == 6)
-          out << " val=\"" << vtsStringXls << "\"";
-        else
-          out << " val=\"" << union_val << "\"";
-        out << " />";
+          std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
+          std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
 
-        break;
-      }
+          std::string ref;
+          if (lref.compare(rref) == 0) {
+            ref = lref;
+          } else {
+            ref = lref + ":" + rref;
+          }
 
-      case BrtEndCustomFilters:
-      case BrtEndCustomRichFilters:
-      {
+          // ignoring filterColumn for now
+          // autofilter can consist of filterColumn, filters and filter
+          // maybe customFilter, dynamicFilter too
+          out << "<autoFilter ref=\"" << ref << "\">" << std::endl;
 
-        out << "</customFilters>" << std::endl;
+          break;
+        }
 
-        break;
-      }
+        case BrtBeginFilterColumn: {
+          if (debug) Rcpp::Rcout << "<filterColumn>" << std::endl;
 
-      case BrtDynamicFilter:
-      {
-        Rcpp::warning("Dynamic Filter found. This is not handled.");
-        bin.seekg(size, bin.cur);
-        break;
-      }
+          uint16_t flags = 0;
+          uint32_t dwCol = 0;
+          dwCol = readbin(dwCol, bin, swapit);
+          flags = readbin(flags, bin, swapit);
+          // fHideArrow
+          // fNoBtn
 
-      case BrtIconFilter:
-      case BrtIconFilter14:
-      {
-        uint32_t iIconSet = 0, iIcon = 0;
-        iIconSet = readbin(iIconSet, bin, swapit);
-        iIcon = readbin(iIcon, bin, swapit);
+          out << "<filterColumn colId=\"" << dwCol << "\">" << std::endl;
 
-        std::string iconSet;
-        if (iIconSet) iconSet = to_iconset(iIconSet);
+          break;
+        }
 
-        out << "<iconFilter iconSet=\"" << iconSet << "\" iconId=\""<< iIcon<< "\"/>" << std::endl;
+        case BrtBeginFilters: {
+          if (debug) Rcpp::Rcout << "<filters>" << std::endl;
+          // bin.seekg(size, bin.cur);
 
-        break;
-      }
+          uint32_t fBlank = 0, unused = 0;
+          fBlank = readbin(fBlank, bin, swapit);  // a 32bit flag, after all ... why not?
+          unused = readbin(unused, bin, swapit);  // maybe calendarType?
+          out << "<filters blank=\"" << fBlank << "\">" << std::endl;
+          break;
+        }
 
-      case BrtEndFilterColumn:
-      {
-        if (debug) Rcpp::Rcout << "</filterColumn>" << std::endl;
-        out << "</filterColumn>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtFilter: {
+          std::string rgch = XLWideString(bin, swapit);
+          out << "<filter val=\"" << rgch << "\" />" << std::endl;
+          // bin.seekg(size, bin.cur);
+          break;
+        }
 
-      case BrtEndAFilter:
-      {
-        if (debug) Rcpp::Rcout << "</autofilter>" << std::endl;
-        out << "</autoFilter>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtEndFilters: {
+          if (debug) Rcpp::Rcout << "</filters>" << std::endl;
+          out << "</filters>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-      case BrtBeginListCols:
-      {
-        uint32_t nCols = 0;
-        nCols = readbin(nCols, bin, swapit);
-        out << "<tableColumns count=\"" << nCols << "\">" << std::endl;
-        // bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtColorFilter: {
+          uint32_t dxfid = 0, fCellColor = 0;
+          dxfid = readbin(dxfid, bin, swapit);
+          fCellColor = readbin(fCellColor, bin, swapit);
 
-      case BrtBeginListCol:
-      {
-        if (debug) Rcpp::Rcout << "<tableColumn>" << std::endl;
-        // bin.seekg(size, bin.cur);
-        // break;
+          out << "<colorFilter dxfId=\"" << dxfid << "\" cellColor=\"" << fCellColor << "\"/>" << std::endl;
 
-        uint32_t idField = 0, ilta = 0, nDxfHdr = 0, nDxfInsertRow = 0, nDxfAgg = 0, idqsif = 0;
+          break;
+        }
 
-        idField = readbin(idField, bin, swapit);
-        ilta = readbin(ilta, bin, swapit);
-        nDxfHdr = readbin(nDxfHdr, bin, swapit);
-        nDxfInsertRow = readbin(nDxfInsertRow, bin, swapit);
-        nDxfAgg = readbin(nDxfAgg, bin, swapit);
-        idqsif = readbin(idqsif, bin, swapit);
-        std::string stName = XLNullableWideString(bin, swapit);
-        std::string stCaption = XLNullableWideString(bin, swapit);
-        std::string stTotal = XLNullableWideString(bin, swapit);
-        if (debug) Rcpp::Rcout << stName << ": " << stCaption << ": " << stTotal<< std::endl;
-        std::string stStyleHeader = XLNullableWideString(bin, swapit);
-        std::string stStyleInsertRow = XLNullableWideString(bin, swapit);
-        std::string stStyleAgg = XLNullableWideString(bin, swapit);
-        if (debug) Rcpp::Rcout << stStyleHeader << ": " << stStyleInsertRow << ": " << stStyleAgg << std::endl;
+        case BrtBeginCustomFilters:
+        case BrtBeginCustomFilters14:
+        case BrtBeginCustomRichFilters: {
+          int32_t fAnd = 0;
 
-        out << "<tableColumn id=\"" << idField << "\" name=\"" << stCaption << "\">" << std::endl;
+          // in xlsb it is flipped
+          fAnd = readbin(fAnd, bin, swapit) ^ 1;
 
-        break;
-      }
+          out << "<customFilters" << std::endl;
+          if (fAnd) out << " and=\"" << fAnd << "\""; // and="1"
+          out << ">";
 
-      case BrtEndListCol:
-      {
-        out << "</tableColumn>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+          break;
+        }
 
-      case BrtEndListCols:
-      {
-        out << "</tableColumns>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtCustomFilter:
+        case BrtCustomFilter14: {
+          int8_t vts = 0, grbitSgn = 0;
+          double union_val = 0;
+          std::string vtsStringXls;
 
-      case BrtEndList:
-      {
-        end_of_table = true;
-        out << "</table>" << std::endl;
-        break;
-      }
+          vts = readbin(vts, bin, swapit);
+          grbitSgn = readbin(grbitSgn, bin, swapit);
 
-      case BrtListCCFmla:
-      {
-        // calculated column formula
-        uint8_t flags = 0;
-        std::string fml;
-        flags = readbin(flags, bin, swapit);
-        int32_t sharedFormula = false;
-        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+          if (vts == 4) {
+            // a double
+            union_val = Xnum(bin, swapit);
+          } else if (vts == 8) {
+            // a bool
+            int8_t boolean = 0;
+            boolean = readbin(boolean, bin, swapit);
+            union_val = static_cast<double>(readbin(boolean, bin, swapit));
+            for (int8_t blk = 0; blk < 7; ++blk) {
+              readbin(boolean, bin, swapit);
+            }
+          } else {
+            // ignore
+            readbin(union_val, bin, swapit);
+            readbin(union_val, bin, swapit);
+          }
 
-        // need to write this formula somehwere
-        // if (debug) Rcpp::Rcout << fml << std::endl;
-        if (debug) Rcpp::warning("Table formulas are not fully implemented.");
+          if (vts == 6)  // a string
+            vtsStringXls = XLWideString(bin, swapit);
 
-        out << "<calculatedColumnFormula>";
-        out << fml;
-        out << "</calculatedColumnFormula>" << std::endl;
+          out << "<customFilter" << std::endl;
+          out << " operator=\"" << grbitSgnOperator(grbitSgn) << "\"";
+          if (vts == 6)
+            out << " val=\"" << vtsStringXls << "\"";
+          else
+            out << " val=\"" << union_val << "\"";
+          out << " />";
 
-        break;
-      }
+          break;
+        }
 
-      case BrtTableStyleClient:
-      {
-        uint16_t flags = 0;
-        flags = readbin(flags, bin, swapit);
-        std::string stStyleName = XLNullableWideString(bin, swapit);
+        case BrtEndCustomFilters:
+        case BrtEndCustomRichFilters: {
+          out << "</customFilters>" << std::endl;
 
-        BrtTableStyleClientFields *fields = (BrtTableStyleClientFields*)&flags;
+          break;
+        }
 
-        out << "<tableStyleInfo name=\""<< stStyleName << "\"";
-        // out <<" showColHeaders=\"" << fields->fColumnHeaders << "\""; // not part of tableStyleInfo?
-        out <<" showFirstColumn=\"" << fields->fFirstColumn << "\"";
-        out <<" showLastColumn=\"" << fields->fLastColumn << "\"";
-        // out <<" showRowHeaders=\"" << fields->fRowHeaders << "\""; // not part of tableStyleInfo?
-        out <<" showRowStripes=\"" << fields->fRowStripes << "\"";
-        out <<" showColumnStripes=\"" << fields->fColumnStripes << "\"";
-        out << " />" << std::endl;
-        break;
-      }
+        case BrtDynamicFilter: {
+          Rcpp::warning("Dynamic Filter found. This is not handled.");
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-      case BrtRRChgCell:
-      case BrtRRDefName:
-      {
-        has_revision_record = true;
-        // -- have not seen this yet. if it appears, treat it as if a revision record was found --
-        // rgce.rgce or rgceOld.rgce in BrtRRDefName
-        if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
-        Rcpp::warning("Assuming revision record.");
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtIconFilter:
+        case BrtIconFilter14: {
+          uint32_t iIconSet = 0, iIcon = 0;
+          iIconSet = readbin(iIconSet, bin, swapit);
+          iIcon = readbin(iIcon, bin, swapit);
 
-      default:
-      {
-        if (debug) {
-        Rcpp::Rcout << std::to_string(x) <<
-          ": " << std::to_string(size) <<
-            " @ " << bin.tellg() << std::endl;
-      }
-        bin.seekg(size, bin.cur);
-        break;
-      }
+          std::string iconSet;
+          if (iIconSet) iconSet = to_iconset(iIconSet);
+
+          out << "<iconFilter iconSet=\"" << iconSet << "\" iconId=\"" << iIcon << "\"/>" << std::endl;
+
+          break;
+        }
+
+        case BrtEndFilterColumn: {
+          if (debug) Rcpp::Rcout << "</filterColumn>" << std::endl;
+          out << "</filterColumn>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndAFilter: {
+          if (debug) Rcpp::Rcout << "</autofilter>" << std::endl;
+          out << "</autoFilter>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginListCols: {
+          uint32_t nCols = 0;
+          nCols = readbin(nCols, bin, swapit);
+          out << "<tableColumns count=\"" << nCols << "\">" << std::endl;
+          // bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginListCol: {
+          if (debug) Rcpp::Rcout << "<tableColumn>" << std::endl;
+          // bin.seekg(size, bin.cur);
+          // break;
+
+          uint32_t idField = 0, ilta = 0, nDxfHdr = 0, nDxfInsertRow = 0, nDxfAgg = 0, idqsif = 0;
+
+          idField = readbin(idField, bin, swapit);
+          ilta = readbin(ilta, bin, swapit);
+          nDxfHdr = readbin(nDxfHdr, bin, swapit);
+          nDxfInsertRow = readbin(nDxfInsertRow, bin, swapit);
+          nDxfAgg = readbin(nDxfAgg, bin, swapit);
+          idqsif = readbin(idqsif, bin, swapit);
+          std::string stName = XLNullableWideString(bin, swapit);
+          std::string stCaption = XLNullableWideString(bin, swapit);
+          std::string stTotal = XLNullableWideString(bin, swapit);
+          if (debug) Rcpp::Rcout << stName << ": " << stCaption << ": " << stTotal<< std::endl;
+          std::string stStyleHeader = XLNullableWideString(bin, swapit);
+          std::string stStyleInsertRow = XLNullableWideString(bin, swapit);
+          std::string stStyleAgg = XLNullableWideString(bin, swapit);
+          if (debug) Rcpp::Rcout << stStyleHeader << ": " << stStyleInsertRow << ": " << stStyleAgg << std::endl;
+
+          out << "<tableColumn id=\"" << idField << "\" name=\"" << stCaption << "\">" << std::endl;
+
+          break;
+        }
+
+        case BrtEndListCol: {
+          out << "</tableColumn>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndListCols: {
+          out << "</tableColumns>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndList: {
+          end_of_table = true;
+          out << "</table>" << std::endl;
+          break;
+        }
+
+        case BrtListCCFmla: {
+          // calculated column formula
+          uint8_t flags = 0;
+          std::string fml;
+          flags = readbin(flags, bin, swapit);
+          int32_t sharedFormula = false;
+          fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+
+          // need to write this formula somehwere
+          // if (debug) Rcpp::Rcout << fml << std::endl;
+          if (debug) Rcpp::warning("Table formulas are not fully implemented.");
+
+          out << "<calculatedColumnFormula>";
+          out << fml;
+          out << "</calculatedColumnFormula>" << std::endl;
+
+          break;
+        }
+
+        case BrtTableStyleClient: {
+          uint16_t flags = 0;
+          flags = readbin(flags, bin, swapit);
+          std::string stStyleName = XLNullableWideString(bin, swapit);
+
+          BrtTableStyleClientFields* fields = (BrtTableStyleClientFields*)&flags;
+
+          out << "<tableStyleInfo name=\"" << stStyleName << "\"";
+          // out <<" showColHeaders=\"" << fields->fColumnHeaders << "\""; // not part of tableStyleInfo?
+          out << " showFirstColumn=\"" << fields->fFirstColumn << "\"";
+          out << " showLastColumn=\"" << fields->fLastColumn << "\"";
+          // out <<" showRowHeaders=\"" << fields->fRowHeaders << "\""; // not part of tableStyleInfo?
+          out << " showRowStripes=\"" << fields->fRowStripes << "\"";
+          out << " showColumnStripes=\"" << fields->fColumnStripes << "\"";
+          out << " />" << std::endl;
+          break;
+        }
+
+        case BrtRRChgCell:
+        case BrtRRDefName: {
+          has_revision_record = true;
+          // -- have not seen this yet. if it appears, treat it as if a revision record was found --
+          // rgce.rgce or rgceOld.rgce in BrtRRDefName
+          if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
+          Rcpp::warning("Assuming revision record.");
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        default: {
+          if (debug) {
+            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;
+          }
+          bin.seekg(size, bin.cur);
+          break;
+        }
       }
     }
 
@@ -1012,13 +939,10 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
   } else {
     return -1;
   };
-
 }
-
 
 // [[Rcpp::export]]
 int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1029,7 +953,7 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_comments = false;
 
-    while(!end_of_comments) {
+    while (!end_of_comments) {
       Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
@@ -1038,110 +962,99 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
       RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
-      switch(x) {
-
-      case BrtBeginComments:
-      {
-        out << "<comments xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" mc:Ignorable=\"xr\">" << std::endl;
-        break;
-      }
-
-      case BrtBeginCommentAuthors:
-      {
-        out << "<authors>" << std::endl;
-        break;
-      }
-
-      case BrtCommentAuthor:
-      {
-        std::string author = XLWideString(bin, swapit);
-        out << "<author>" << author << "</author>" << std::endl;
-        break;
-      }
-
-      case BrtEndCommentAuthors:
-      {
-        out << "</authors>" << std::endl;
-        break;
-      }
-
-      case BrtBeginCommentList:
-      {
-        out << "<commentList>" << std::endl;
-        break;
-      }
-
-      case BrtBeginComment:
-      {
-        uint32_t iauthor = 0;
-        int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0;
-        iauthor = readbin(iauthor, bin, swapit);
-        std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
-
-        std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
-        std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
-
-        std::string ref;
-        if (lref.compare(rref) == 0) {
-          ref = lref;
-        } else {
-          ref =  lref + ":" + rref;
+      switch (x) {
+        case BrtBeginComments: {
+          out << "<comments xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
+                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" "
+                 "xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" mc:Ignorable=\"xr\">"
+              << std::endl;
+          break;
         }
 
-        std::vector<int32_t> guids(4);
-        guids[0] = readbin(guid0, bin, 0);
-        guids[1] = readbin(guid1, bin, 0);
-        guids[2] = readbin(guid2, bin, 0);
-        guids[3] = readbin(guid3, bin, 0);
+        case BrtBeginCommentAuthors: {
+          out << "<authors>" << std::endl;
+          break;
+        }
 
-        out << "<comment";
-        out << " ref=\"" << ref << "\"";
-        out << " authorId=\"" << iauthor << "\"";
-        out << " shapeId=\"0\""; // always?
-        out << " >" << std::endl;
+        case BrtCommentAuthor: {
+          std::string author = XLWideString(bin, swapit);
+          out << "<author>" << author << "</author>" << std::endl;
+          break;
+        }
 
-        break;
-      }
+        case BrtEndCommentAuthors: {
+          out << "</authors>" << std::endl;
+          break;
+        }
 
-      case BrtEndComment:
-      {
-        out << "</comment>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtBeginCommentList: {
+          out << "<commentList>" << std::endl;
+          break;
+        }
 
-      case BrtEndCommentList:
-      {
-        out << "</commentList>" << std::endl;
-        break;
-      }
+        case BrtBeginComment: {
+          uint32_t iauthor = 0;
+          int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0;
+          iauthor = readbin(iauthor, bin, swapit);
+          std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
-      case BrtCommentText:
-      {
-        // we do not handle RichStr correctly. Ignore all formatting
-        std::string commentText = RichStr(bin, swapit);
-        // out << "<text><r><rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr><t>" << escape_xml(commentText) << "</t></r></text>" << std::endl;
-        out << "<text>" << commentText << "</text>" << std::endl;
-        break;
-      }
+          std::string lref = int_to_col(rfx[2] + 1) + std::to_string(rfx[0] + 1);
+          std::string rref = int_to_col(rfx[3] + 1) + std::to_string(rfx[1] + 1);
 
-      case BrtEndComments:
-      {
-        end_of_comments = true;
-        out << "</comments>" << std::endl;
-        break;
-      }
+          std::string ref;
+          if (lref.compare(rref) == 0) {
+            ref = lref;
+          } else {
+            ref = lref + ":" + rref;
+          }
 
-      default:
-      {
-        if (debug) {
-        Rcpp::Rcout << std::to_string(x) <<
-          ": " << std::to_string(size) <<
-            " @ " << bin.tellg() << std::endl;
-      }
-        bin.seekg(size, bin.cur);
-        break;
-      }
+          std::vector<int32_t> guids(4);
+          guids[0] = readbin(guid0, bin, 0);
+          guids[1] = readbin(guid1, bin, 0);
+          guids[2] = readbin(guid2, bin, 0);
+          guids[3] = readbin(guid3, bin, 0);
+
+          out << "<comment";
+          out << " ref=\"" << ref << "\"";
+          out << " authorId=\"" << iauthor << "\"";
+          out << " shapeId=\"0\"";  // always?
+          out << " >" << std::endl;
+
+          break;
+        }
+
+        case BrtEndComment: {
+          out << "</comment>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndCommentList: {
+          out << "</commentList>" << std::endl;
+          break;
+        }
+
+        case BrtCommentText: {
+          // we do not handle RichStr correctly. Ignore all formatting
+          std::string commentText = RichStr(bin, swapit);
+          // out << "<text><r><rPr><sz val=\"10\"/><color rgb=\"FF000000\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr><t>" << escape_xml(commentText) << "</t></r></text>" << std::endl;
+          out << "<text>" << commentText << "</text>" << std::endl;
+          break;
+        }
+
+        case BrtEndComments: {
+          end_of_comments = true;
+          out << "</comments>" << std::endl;
+          break;
+        }
+
+        default: {
+          if (debug) {
+            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;
+          }
+          bin.seekg(size, bin.cur);
+          break;
+        }
       }
     }
 
@@ -1151,11 +1064,10 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
   } else {
     return -1;
   };
-
 }
+
 // [[Rcpp::export]]
 int32_t externalreferences_bin(std::string filePath, std::string outPath, bool debug) {
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1168,7 +1080,7 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
     int32_t row = 0;
     bool end_of_external_reference = false;
 
-    while(!end_of_external_reference) {
+    while (!end_of_external_reference) {
       Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
@@ -1177,196 +1089,184 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
       RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
-      switch(x) {
+      switch (x) {
+        case BrtBeginSupBook: {
+          uint16_t sbt = 0;
+          sbt = readbin(sbt, bin, swapit);
+          // wb. 0x0000
+          // dde 0x0001
+          // ole 0x0002
 
-      case BrtBeginSupBook:
-      {
-        uint16_t sbt = 0;
-        sbt = readbin(sbt, bin, swapit);
-        // wb. 0x0000
-        // dde 0x0001
-        // ole 0x0002
+          std::string string1, string2;
+          string1 = XLWideString(bin, swapit);
 
-        std::string string1, string2;
-        string1 = XLWideString(bin, swapit);
+          if (sbt == 0x0000)
+            string2 = XLNullableWideString(bin, swapit);
+          else
+            string2 = XLWideString(bin, swapit);
 
-        if (sbt == 0x0000)
-          string2 = XLNullableWideString(bin, swapit);
-        else
-          string2 = XLWideString(bin, swapit);
+          if (debug) Rcpp::Rcout << string1 << ": " << string2 << std::endl;
 
-        if (debug) Rcpp::Rcout << string1 << ": " << string2 << std::endl;
+          // no begin externalSheet?
+          out << "<externalLink xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
+                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" "
+                 "xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" "
+                 "xmlns:xxl21=\"http://schemas.microsoft.com/office/spreadsheetml/2021/extlinks2021\" "
+                 "mc:Ignorable=\"x14 xxl21\">"
+              << std::endl;
 
-        // no begin externalSheet?
-        out << "<externalLink xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" xmlns:xxl21=\"http://schemas.microsoft.com/office/spreadsheetml/2021/extlinks2021\" mc:Ignorable=\"x14 xxl21\">" << std::endl;
+          // assume for now all external references are workbooks
+          out << "<externalBook xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\""
+              << string1 << "\">" << std::endl;
 
-        // assume for now all external references are workbooks
-        out << "<externalBook xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" << string1 << "\">" << std::endl;
-
-        break;
-      }
-
-      // looks like this file has case 5108:
-      // xxl21:absoluteUrl
-
-      case BrtSupTabs:
-      {
-        if (debug) Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
-        uint32_t cTab = 0;
-
-        cTab = readbin(cTab, bin, swapit);
-        if (cTab > 65535) Rcpp::stop("cTab to large");
-
-        out << "<sheetNames>" << std::endl;
-
-        for (uint32_t i = 0; i < cTab; ++i) {
-          std::string sheetName = XLWideString(bin, swapit);
-          out << "<sheetName val=\"" << escape_xml(sheetName) << "\" />" << std::endl;
+          break;
         }
 
-        out << "</sheetNames>" << std::endl;
+          // looks like this file has case 5108:
+          // xxl21:absoluteUrl
 
-        // just guessing
-        out << "<sheetDataSet>" << std::endl;
+        case BrtSupTabs: {
+          if (debug) Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
+          uint32_t cTab = 0;
 
-        break;
-      }
+          cTab = readbin(cTab, bin, swapit);
+          if (cTab > 65535) Rcpp::stop("cTab to large");
 
-      case BrtExternTableStart:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternTableStart>" << std::endl;
-        uint8_t flags = 0;
-        uint32_t iTab = 0;
-        iTab = readbin(iTab, bin, debug);
-        flags = readbin(flags, bin, debug);
+          out << "<sheetNames>" << std::endl;
 
-        first_row = true;
-        out << "<sheetData sheetId=\"" << iTab << "\">" << std::endl;
+          for (uint32_t i = 0; i < cTab; ++i) {
+            std::string sheetName = XLWideString(bin, swapit);
+            out << "<sheetName val=\"" << escape_xml(sheetName) << "\" />" << std::endl;
+          }
 
-        break;
-      }
+          out << "</sheetNames>" << std::endl;
 
-      case BrtExternRowHdr:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternRowHdr>" << std::endl;
+          // just guessing
+          out << "<sheetDataSet>" << std::endl;
 
-        row = UncheckedRw(bin, swapit);
-
-        // close open rows
-        if (!first_row) {
-          out << "</row>" <<std::endl;
-        } else {
-          first_row = false;
+          break;
         }
-        out << "<row r=\"" << row + 1 << "\">" << std::endl;
 
-        break;
-      }
+        case BrtExternTableStart: {
+          if (debug) Rcpp::Rcout << "<BrtExternTableStart>" << std::endl;
+          uint8_t flags = 0;
+          uint32_t iTab = 0;
+          iTab = readbin(iTab, bin, debug);
+          flags = readbin(flags, bin, debug);
 
-      case BrtExternCellBlank:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternCellBlank>" << std::endl;
+          first_row = true;
+          out << "<sheetData sheetId=\"" << iTab << "\">" << std::endl;
 
-        int32_t col = UncheckedCol(bin, swapit);
-        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" />" << std::endl;
+          break;
+        }
 
-        break;
-      }
+        case BrtExternRowHdr: {
+          if (debug) Rcpp::Rcout << "<BrtExternRowHdr>" << std::endl;
 
-      case BrtExternCellBool:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternCellBool>" << std::endl;
+          row = UncheckedRw(bin, swapit);
 
-        uint8_t value = 0;
-        int32_t col = UncheckedCol(bin, swapit);
-        value = readbin(value, bin, swapit);
-        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"b\">" << std::endl;
-        out << "<v>" << (uint16_t)value << "</v>" << std::endl;
-        out << "</cell>" << std::endl;
+          // close open rows
+          if (!first_row) {
+            out << "</row>" << std::endl;
+          } else {
+            first_row = false;
+          }
+          out << "<row r=\"" << row + 1 << "\">" << std::endl;
 
-        break;
-      }
+          break;
+        }
 
-      case BrtExternCellError:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternCellError>" << std::endl;
+        case BrtExternCellBlank: {
+          if (debug) Rcpp::Rcout << "<BrtExternCellBlank>" << std::endl;
 
-        std::string value;
-        int32_t col = UncheckedCol(bin, swapit);
-        value = BErr(bin, swapit);
-        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"e\">" << std::endl;
-        out << "<v>" << value << "</v>" << std::endl;
-        out << "</cell>" << std::endl;
+          int32_t col = UncheckedCol(bin, swapit);
+          out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" />" << std::endl;
 
-        break;
-      }
+          break;
+        }
 
-      case BrtExternCellReal:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternCellReal>" << std::endl;
+        case BrtExternCellBool: {
+          if (debug) Rcpp::Rcout << "<BrtExternCellBool>" << std::endl;
 
-        double value = 0;
-        int32_t col = UncheckedCol(bin, swapit);
-        value = Xnum(bin, swapit);
-        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\">" << std::endl;
-        out << "<v>" << value << "</v>" << std::endl;
-        out << "</cell>" << std::endl;
+          uint8_t value = 0;
+          int32_t col = UncheckedCol(bin, swapit);
+          value = readbin(value, bin, swapit);
+          out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"b\">" << std::endl;
+          out << "<v>" << (uint16_t)value << "</v>" << std::endl;
+          out << "</cell>" << std::endl;
 
-        break;
-      }
+          break;
+        }
 
-      case BrtExternCellString:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternCellString>" << std::endl;
+        case BrtExternCellError: {
+          if (debug) Rcpp::Rcout << "<BrtExternCellError>" << std::endl;
 
-        int32_t col = UncheckedCol(bin, swapit);
-        std::string value = XLWideString(bin, swapit);
-        out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"str\">" << std::endl;
-        out << "<v>" << value << "</v>" << std::endl;
-        out << "</cell>" << std::endl;
+          std::string value;
+          int32_t col = UncheckedCol(bin, swapit);
+          value = BErr(bin, swapit);
+          out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"e\">" << std::endl;
+          out << "<v>" << value << "</v>" << std::endl;
+          out << "</cell>" << std::endl;
 
-        break;
-      }
+          break;
+        }
 
-      case BrtExternTableEnd:
-      {
-        if (debug) Rcpp::Rcout << "<BrtExternTableEnd>" << std::endl;
+        case BrtExternCellReal: {
+          if (debug) Rcpp::Rcout << "<BrtExternCellReal>" << std::endl;
 
-        if (!first_row) out << "</row>" << std::endl;
-        out << "</sheetData>" << std::endl;
+          double value = 0;
+          int32_t col = UncheckedCol(bin, swapit);
+          value = Xnum(bin, swapit);
+          out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\">" << std::endl;
+          out << "<v>" << value << "</v>" << std::endl;
+          out << "</cell>" << std::endl;
 
-        break;
-      }
+          break;
+        }
 
-      case BrtEndSupBook:
-      {
-        end_of_external_reference = true;
-        out << "</sheetDataSet>" << std::endl;
-        out << "</externalBook>" << std::endl;
-        out << "</externalLink>" << std::endl;
-        break;
-      }
+        case BrtExternCellString: {
+          if (debug) Rcpp::Rcout << "<BrtExternCellString>" << std::endl;
 
-      case BrtACBegin:
-      case BrtExternalLinksAlternateUrls:
-      case BrtACEnd:
-      {
-        // unhandled
-        bin.seekg(size, bin.cur);
-        break;
-      }
+          int32_t col = UncheckedCol(bin, swapit);
+          std::string value = XLWideString(bin, swapit);
+          out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"str\">" << std::endl;
+          out << "<v>" << value << "</v>" << std::endl;
+          out << "</cell>" << std::endl;
 
-      default:
-      {
-        // if (debug) {
+          break;
+        }
 
-        Rcpp::Rcout << "Unhandled ER: " << std::to_string(x) <<
-          ": " << std::to_string(size) <<
-            " @ " << bin.tellg() << std::endl;
-      // }
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtExternTableEnd: {
+          if (debug) Rcpp::Rcout << "<BrtExternTableEnd>" << std::endl;
+
+          if (!first_row) out << "</row>" << std::endl;
+          out << "</sheetData>" << std::endl;
+
+          break;
+        }
+
+        case BrtEndSupBook: {
+          end_of_external_reference = true;
+          out << "</sheetDataSet>" << std::endl;
+          out << "</externalBook>" << std::endl;
+          out << "</externalLink>" << std::endl;
+          break;
+        }
+
+        case BrtACBegin:
+        case BrtExternalLinksAlternateUrls:
+        case BrtACEnd: {
+          // unhandled
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        default: {
+          Rcpp::Rcout << "Unhandled ER: " << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg()
+                      << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
       }
     }
 
@@ -1376,13 +1276,10 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
   } else {
     return -1;
   };
-
 }
-
 
 // [[Rcpp::export]]
 int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1393,7 +1290,7 @@ int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug)
     bin.seekg(0, std::ios_base::beg);
     bool end_of_shared_strings = false;
 
-    while(!end_of_shared_strings) {
+    while (!end_of_shared_strings) {
       Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
@@ -1402,58 +1299,46 @@ int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug)
       RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
 
-      switch(x) {
+      switch (x) {
+        case BrtBeginSst: {
+          uint32_t count = 0, uniqueCount = 0;
+          count = readbin(count, bin, swapit);
+          uniqueCount = readbin(uniqueCount, bin, swapit);
+          out << "<sst " << "count=\"" << count << "\" uniqueCount=\"" << uniqueCount << "\">" << std::endl;
+          break;
+        }
 
-      case BrtBeginSst:
-      {
-        uint32_t count= 0, uniqueCount= 0;
-        count = readbin(count, bin, swapit);
-        uniqueCount = readbin(uniqueCount, bin, swapit);
-        out << "<sst " <<
-          "count=\"" << count <<
-            "\" uniqueCount=\"" << uniqueCount <<
-              "\">" << std::endl;
-        break;
-      }
-
-      case BrtSSTItem:
-      {
-        std::string val;
-        std::streampos pos = bin.tellg();
-        pos += static_cast<std::streampos>(size);
-        val += RichStr(bin, swapit);
-        if(bin.tellg() < pos) {
-          // if (debug) {
+        case BrtSSTItem: {
+          std::string val;
+          std::streampos pos = bin.tellg();
+          pos += static_cast<std::streampos>(size);
+          val += RichStr(bin, swapit);
+          if (bin.tellg() < pos) {
+            // if (debug) {
             // some RichStr() behave different to what is documented. Not sure
             // if this is padding or something else. 12 bytes seems common
             size_t missing = static_cast<size_t>(pos - bin.tellg());
-            Rcpp::Rcout << "BrtSSTItem skipping ahead (bytes): " << missing  << std::endl;
-          // }
-          bin.seekg(pos, bin.beg);
+            Rcpp::Rcout << "BrtSSTItem skipping ahead (bytes): " << missing << std::endl;
+            // }
+            bin.seekg(pos, bin.beg);
+          }
+          // if (debug)
+          out << "<si>" << val << "</si>" << std::endl;
+          break;
         }
-        // if (debug)
-        out << "<si>" << val << "</si>" << std::endl;
-        break;
-      }
 
-      case BrtEndSst:
-      {
-        end_of_shared_strings = true;
-        out << "</sst>" << std::endl;
-        break;
-      }
+        case BrtEndSst: {
+          end_of_shared_strings = true;
+          out << "</sst>" << std::endl;
+          break;
+        }
 
-      default:
-      {
-        // if (debug) {
-        Rcpp::Rcout << std::to_string(x) <<
-          ": " << std::to_string(size) <<
-            " @ " << bin.tellg() << std::endl;
-      // }
-      Rcpp::stop("nonsense");
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        default: {
+          Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;
+          Rcpp::stop("nonsense");
+          bin.seekg(size, bin.cur);
+          break;
+        }
       }
     }
 
@@ -1463,12 +1348,10 @@ int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug)
   } else {
     return -1;
   };
-
 }
 
 // [[Rcpp::export]]
 int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1485,7 +1368,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
     defNams.push_back("<definedNames>");
     xtis.push_back("<xtis>");
 
-    while(!end_of_workbook) {
+    while (!end_of_workbook) {
       Rcpp::checkUserInterrupt();
 
       int32_t x = 0, size = 0;
@@ -1493,627 +1376,594 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
       if (debug) Rcpp::Rcout << "." << std::endl;
       RECORD(x, size, bin, swapit);
 
-      switch(x) {
+      switch (x) {
+        case BrtBeginBook: {
+          if (debug) Rcpp::Rcout << "<workbook>" << std::endl;
+          out << "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
+                 "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" "
+                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" "
+                 "xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\" "
+                 "xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" "
+                 "xmlns:xr6=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision6\" "
+                 "xmlns:xr10=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision10\" "
+                 "xmlns:xr2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/revision2\" mc:Ignorable=\"x15 xr "
+                 "xr6 xr10 xr2\">"
+              << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-      case BrtBeginBook:
-      {
-        if (debug) Rcpp::Rcout << "<workbook>" << std::endl;
-        out << "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr6=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision6\" xmlns:xr10=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision10\" xmlns:xr2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/revision2\" mc:Ignorable=\"x15 xr xr6 xr10 xr2\">" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtFileVersion: {
+          if (debug) Rcpp::Rcout << "<fileVersion>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-      case BrtFileVersion:
-      {
-        if (debug) Rcpp::Rcout << "<fileVersion>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtWbProp: {
+          if (debug) Rcpp::Rcout << "<workbookProperties>" << std::endl;
+          uint32_t flags = 0, dwThemeVersion = 0;
 
-      case BrtWbProp:
-      {
-        if (debug) Rcpp::Rcout << "<workbookProperties>" << std::endl;
-        uint32_t flags = 0, dwThemeVersion = 0;
+          flags = readbin(flags, bin, swapit);
+          dwThemeVersion = readbin(dwThemeVersion, bin, swapit);
+          std::string strName = XLWideString(bin, swapit);
 
-        flags = readbin(flags, bin, swapit);
-        dwThemeVersion = readbin(dwThemeVersion, bin, swapit);
-        std::string strName = XLWideString(bin, swapit);
+          BrtWbPropFields* fields = (BrtWbPropFields*)&flags;
 
-        BrtWbPropFields *fields = (BrtWbPropFields *)&flags;
+          out <<
+            "<workbookPr" <<
+            // " allowRefreshQuery=\"" <<  << "\" " <<
+            " autoCompressPictures=\"" << fields->fAutoCompressPictures << "\" " <<
+            " backupFile=\"" << fields->fBackup << "\" " <<
+            " checkCompatibility=\"" << fields->fCheckCompat << "\" " <<
+            " codeName=\"" << strName << "\" " <<
+            " date1904=\"" << fields->f1904 << "\" " <<
+            " defaultThemeVersion=\"" << dwThemeVersion << "\" " <<
+            " filterPrivacy=\"" << fields->fFilterPrivacy << "\" " <<
+            " hidePivotFieldList=\"" << fields->fHidePivotTableFList << "\" " <<
+            " promptedSolutions=\"" << fields->fBuggedUserAboutSolution << "\" " <<
+            " publishItems=\"" << fields->fPublishedBookItems << "\" " <<
+            " refreshAllConnections=\"" << fields->fRefreshAll << "\" " <<
+            " saveExternalLinkValues=\"" << fields->fNoSaveSup << "\" " <<
+            // " showBorderUnselectedTables=\"" <<  << "\" " <<
+            " showInkAnnotation=\"" << fields->fShowInkAnnotation << "\" " <<
+            " showObjects=\"" << (uint32_t)fields->mdDspObj << "\" " <<
+            " showPivotChartFilter=\"" << fields->fShowPivotChartFilter << "\" " <<
+            " updateLinks=\"" << (uint32_t)fields->grbitUpdateLinks << "\" " <<
+            "/>" << std::endl;
 
-        out <<
-          "<workbookPr" <<
-          // " allowRefreshQuery=\"" <<  << "\" " <<
-          " autoCompressPictures=\"" << fields->fAutoCompressPictures << "\" " <<
-          " backupFile=\"" << fields->fBackup << "\" " <<
-          " checkCompatibility=\"" << fields->fCheckCompat << "\" " <<
-          " codeName=\"" << strName << "\" " <<
-          " date1904=\"" << fields->f1904 << "\" " <<
-          " defaultThemeVersion=\"" << dwThemeVersion << "\" " <<
-          " filterPrivacy=\"" << fields->fFilterPrivacy << "\" " <<
-          " hidePivotFieldList=\"" << fields->fHidePivotTableFList << "\" " <<
-          " promptedSolutions=\"" << fields->fBuggedUserAboutSolution << "\" " <<
-          " publishItems=\"" << fields->fPublishedBookItems << "\" " <<
-          " refreshAllConnections=\"" << fields->fRefreshAll << "\" " <<
-          " saveExternalLinkValues=\"" << fields->fNoSaveSup << "\" " <<
-          // " showBorderUnselectedTables=\"" <<  << "\" " <<
-          " showInkAnnotation=\"" << fields->fShowInkAnnotation << "\" " <<
-          " showObjects=\"" << (uint32_t)fields->mdDspObj << "\" " <<
-          " showPivotChartFilter=\"" << fields->fShowPivotChartFilter << "\" " <<
-          " updateLinks=\"" << (uint32_t)fields->grbitUpdateLinks << "\" " <<
-          "/>" << std::endl;
 
-        break;
-      }
+          break;
+        }
 
-      case BrtACBegin:
-      {
-        if (debug) Rcpp::Rcout << "<BrtACBegin>" << std::endl;
-        // bin.seekg(size, bin.cur);
+        case BrtACBegin: {
+          if (debug) Rcpp::Rcout << "<BrtACBegin>" << std::endl;
+          // bin.seekg(size, bin.cur);
 
-        uint16_t cver = 0;
-        cver = readbin(cver, bin, swapit);
+          uint16_t cver = 0;
+          cver = readbin(cver, bin, swapit);
 
-        for (uint16_t i = 0; i < cver; ++i) {
+          for (uint16_t i = 0; i < cver; ++i) {
+            ProductVersion(bin, swapit, debug);
+          }
+          break;
+        }
+
+        case BrtAbsPath15: {
+          std::string absPath = XLWideString(bin, swapit);
+          if (debug) Rcpp::Rcout << absPath << std::endl;
+          break;
+        }
+
+        case BrtACEnd: {
+          if (debug) Rcpp::Rcout << "<BrtACEnd>" << std::endl;
+          break;
+        }
+
+        case BrtRevisionPtr: {
+          if (debug) Rcpp::Rcout << "<BrtRevisionPtr>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtUID: {
+          if (debug) Rcpp::Rcout << "<BrtUID>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginBookViews: {
+          if (debug) Rcpp::Rcout << "<workbookViews>" << std::endl;
+          out << "<bookViews>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBookView: {
+          if (debug) Rcpp::Rcout << "<workbookView>" << std::endl;
+          // bin.seekg(size, bin.cur);
+          uint8_t flags = 0;
+          int32_t xWn = 0, yWn = 0;
+          uint32_t dxWn = 0, dyWn = 0, iTabRatio = 0, itabFirst = 0, itabCur = 0;
+
+          xWn       = readbin(xWn, bin, swapit);
+          yWn       = readbin(yWn, bin, swapit);
+          dxWn      = readbin(dxWn, bin, swapit);
+          dyWn      = readbin(dyWn, bin, swapit);
+          iTabRatio = readbin(iTabRatio, bin, swapit);
+          itabFirst = readbin(itabFirst, bin, swapit);
+          itabCur   = readbin(itabCur, bin, swapit);
+          flags     = readbin(flags, bin, swapit);
+
+          out << "<workbookView xWindow=\"" << xWn << "\" yWindow=\"" << yWn << "\" windowWidth=\"" << dxWn
+              << "\" windowHeight=\"" << dyWn << "\" activeTab=\"" << itabCur << "\" />" << std::endl;
+          break;
+        }
+
+        case BrtEndBookViews: {
+          if (debug) Rcpp::Rcout << "</workbookViews>" << std::endl;
+          out << "</bookViews>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtUserBookView: {
+          if (debug) Rcpp::Rcout << "<customWorkbookView>" << std::endl;
+
+          std::ostringstream cwv;
+
+          int32_t xLeft = 0, xRight = 0, yTop = 0, yBot = 0, iTabid = 0, iTabRatio = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, flags = 0;
+          int16_t wMergeInterval = 0;
+          std::string stName;
+
+          xLeft = readbin(xLeft, bin, swapit);
+          xRight = readbin(xRight, bin, swapit);
+          yTop = readbin(yTop, bin, swapit);
+          yBot = readbin(yBot, bin, swapit);
+          iTabid = readbin(iTabid, bin, swapit);
+          iTabRatio = readbin(iTabRatio, bin, swapit);
+
+          std::vector<int32_t> guids(4);
+          guids[0] = readbin(guid0, bin, 0);
+          guids[1] = readbin(guid1, bin, 0);
+          guids[2] = readbin(guid2, bin, 0);
+          guids[3] = readbin(guid3, bin, 0);
+
+          wMergeInterval = readbin(wMergeInterval, bin, swapit);
+
+          flags = readbin(flags, bin, swapit);
+
+          BrtUserBookViewFields* fields = (BrtUserBookViewFields*)&flags;
+
+          stName = XLWideString(bin, swapit);
+
+          std::string showComments;
+          if (fields->mdDspNote == 0) showComments = "commNone";
+          if (fields->mdDspNote == 1) showComments = "commIndAndComment";
+          if (fields->mdDspNote == 2) showComments = "commIndicator";
+
+          std::string showObjects;
+          if (fields->mdHideObj == 0) showObjects = "all";
+          if (fields->mdHideObj == 1) showObjects = "placeholders";
+          if (fields->mdHideObj == 2) showObjects = "none";
+
+          cwv << "<customWorkbookView" << std::endl;
+          cwv << " name=\"" << stName << "\"" << std::endl;
+          cwv << " guid=\"{" << guid_str(guids) << "}\"" << std::endl;
+          if (fields->fTimedUpdate) cwv << " autoUpdate=\"" << fields->fTimedUpdate << "\"" << std::endl;
+          if (fields->fTimedUpdate) cwv << " mergeInterval=\"" << wMergeInterval << "\"" << std::endl;
+          if (fields->fAllMemChanges) cwv << " changesSavedWin=\"" << fields->fAllMemChanges << "\"" << std::endl;
+          if (fields->fOnlySync) cwv << " onlySync=\"" << fields->fOnlySync << "\"" << std::endl;
+          if (fields->fPersonalView) cwv << " personalView=\"" << fields->fPersonalView << "\"" << std::endl;
+          if (!fields->fPrintIncl) cwv << " includePrintSettings=\"" << fields->fPrintIncl << "\"" << std::endl;
+          // wrong?
+          // if (!fields->fRowColIncl) cwv << " includeHiddenRowCol=\"" << fields->fRowColIncl << "\"" << std::endl;
+          if (fields->fZoom) cwv << " maximized=\"" << fields->fZoom << "\"" << std::endl;
+          if (fields->fIconic) cwv << " minimized=\"" << fields->fIconic << "\"" << std::endl;
+          if (!fields->fDspHScroll) cwv << " showHorizontalScroll=\"" << fields->fDspHScroll << "\"" << std::endl;
+          if (!fields->fDspVScroll) cwv << " showVerticalScroll=\"" << fields->fDspVScroll << "\"" << std::endl;
+          if (!fields->fBotAdornment) cwv << " showSheetTabs=\"" << fields->fBotAdornment << "\"" << std::endl;
+          if (xLeft > 0) cwv << " xWindow=\"" << xLeft << "\"" << std::endl;
+          if (yTop > 0) cwv << " yWindow=\"" << yTop << "\"" << std::endl;
+          if (xRight > 0) cwv << " windowWidth=\"" << xRight << "\"" << std::endl;
+          if ((yBot - yTop) > 0) cwv << " windowHeight=\"" << (yBot - yTop) << "\"" << std::endl;
+          if (iTabRatio != 600) cwv << " tabRatio=\"" << iTabRatio << "\"" << std::endl;
+          cwv << " activeSheetId=\"" << iTabid << "\"" << std::endl;
+          if (!fields->fDspFmlaBar) cwv << " showFormulaBar=\"" << fields->fDspFmlaBar << "\"" << std::endl;
+          if (!fields->fDspStatus) cwv << " showStatusbar=\"" << fields->fDspStatus << "\"" << std::endl;
+          if (showComments != "commIndicator") cwv << " showComments=\"" << showComments << "\"" << std::endl;
+          if (showObjects != "all") cwv << " showObjects=\"" << showObjects << "\"" << std::endl;
+          cwv << "/>" << std::endl;
+
+          // Rcpp::Rcout << xLeft << ": " << xRight << ": " << yTop << ": " << yBot << std::endl;
+
+          customWorkbookView.push_back(cwv.str());
+
+          break;
+        }
+
+        case BrtBeginBundleShs: {
+          if (debug) Rcpp::Rcout << "<sheets>" << std::endl;
+          // unk = readbin(unk, bin, swapit);
+          // unk = readbin(unk, bin, swapit);
+          // uint32_t count, uniqueCount;
+          // count = readbin(count, bin, swapit);
+          // uniqueCount = readbin(uniqueCount, bin, swapit);
+          out << "<sheets>" << std::endl;
+          break;
+        }
+
+        case BrtBundleSh: {
+          if (debug) Rcpp::Rcout << "<sheet>" << std::endl;
+
+          uint32_t hsState = 0, iTabID = 0;  //  strRelID ???
+
+          hsState = readbin(hsState, bin, swapit);
+          iTabID = readbin(iTabID, bin, swapit);
+          std::string rid = XLNullableWideString(bin, swapit);
+
+          if (debug)
+            Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID << ": " << rid << std::endl;
+
+          std::string val = XLWideString(bin, swapit);
+
+          std::string visible;
+          if (hsState == 0) visible = "visible";
+          if (hsState == 1) visible = "hidden";
+          if (hsState == 2) visible = "veryHidden";
+
+          out << "<sheet r:id=\"" << rid << "\" state=\"" << visible<< "\" sheetId=\"" << iTabID<< "\" name=\"" << val << "\"/>" << std::endl;
+          break;
+        }
+
+        case BrtEndBundleShs: {
+          if (debug) Rcpp::Rcout << "</sheets>" << std::endl;
+          out << "</sheets>" << std::endl;
+          break;
+        }
+
+        case BrtCalcProp: {
+          if (debug) Rcpp::Rcout << "<calcPr>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtName: {
+          if (debug)  Rcpp::Rcout << "<BrtName>" << std::endl;
+          std::streampos end_pos = bin.tellg();
+          end_pos += static_cast<std::streampos>(size);
+
+          if (debug) Rcpp::Rcout << "BrtName endpos: "<< end_pos << std::endl;
+
+          uint8_t chKey = 0;
+          uint16_t BrtNameUint = 0, BrtNameUint2 = 0;
+          uint32_t itab = 0;
+          BrtNameUint = readbin(BrtNameUint, bin, swapit);
+          BrtNameUint2 = readbin(BrtNameUint2, bin, swapit);
+
+          BrtNameFields* fields = (BrtNameFields*)&BrtNameUint;
+          // BrtNameFields2 *fields2 = (BrtNameFields2 *)&BrtNameUint2;
+
+          // fHidden    - visible
+          // fFunc      - xml macro
+          // fOB        - vba macro
+          // fProc      - represents a macro
+          // fCalcExp   - rgce returns array
+          // fBuiltin   - builtin name
+          // fgrp       - FnGroupID if fProc == 0 then 0
+          // fPublished - published name
+          // fWorkbookParam  - DefinedName is workbook paramenter
+          // fFutureFunction - future function
+          // reserved        - 0
+
+          /* commented due to gcc 12 false positive warning */
+          // if (debug)
+          //   Rprintf(
+          //     "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+          //     fields->fHidden,
+          //     fields->fFunc,
+          //     fields->fOB,
+          //     fields->fProc,
+          //     fields->fCalcExp,
+          //     fields->fBuiltin,
+          //     fields->fgrp,
+          //     fields->fPublished,
+          //     fields2->fWorkbookParam,
+          //     fields2->fFutureFunction,
+          //     fields2->reserved
+          //   );
+
+          chKey = readbin(chKey, bin, swapit);
+          // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)
+
+          itab = readbin(itab, bin, swapit);
+
+          // XLNameWideString: XLWideString <= 255 characters
+          std::string name = XLWideString(bin, swapit);
+
+          // if ((size_t)bin.tellg() < end_pos) {
+          //   Rcpp::Rcout << "repositioning" << std::endl;
+          //   Rcpp::Rcout << end_pos << std::endl;
+          //   bin.seekg(end_pos, bin.beg);
+          // }
+
+          std::string fml = "", comment = "";
+
+          int32_t sharedFormula = false;
+          fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+
+          comment = XLNullableWideString(bin, swapit);
+
+          if (debug)
+            Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
+
+          if (fields->fProc && fml.compare("") != 0) {
+            /* -- something is wrong. error with some nhs macro xlsb file -- */
+            // must be NULL
+            if (debug) Rcpp::Rcout << 1 << std::endl;
+            std::string unusedstring1 = XLNullableWideString(bin, swapit);
+
+            // must be < 32768 characters
+            if (debug) Rcpp::Rcout << 2 << std::endl;
+            std::string description = XLNullableWideString(bin, swapit);
+            if (debug) Rcpp::Rcout << 3 << std::endl;
+            std::string helpTopic = XLNullableWideString(bin, swapit);
+
+            // must be NULL
+            if (debug) Rcpp::Rcout << 4 << std::endl;
+            std::string unusedstring2 = XLNullableWideString(bin, swapit);
+          }
+
+          if (bin.tellg() != end_pos) {
+            Rprintf("%d: %d", (int)bin.tellg(), (int)end_pos);
+            Rcpp::stop("repositioning");
+          }
+
+          if (fields->fBuiltin) {
+            // add the builtin xl name namespace
+            if (name.find("_xlnm.") == std::string::npos)
+              name = "_xlnm." + name;
+          }
+
+          std::string defNam = "<definedName name=\"" + name;
+
+          if (comment.size() > 0)
+            defNam += "\" comment=\"" + comment;
+
+          if (itab != 0xFFFFFFFF)
+            defNam += "\" localSheetId=\"" + std::to_string(itab);
+
+          if (fields->fHidden)
+            defNam += "\" hidden=\"" + std::to_string(fields->fHidden);
+
+          // lacks the formula for the defined name
+          defNam = defNam + "\">" + fml + "</definedName>";
+
+          defNams.push_back(defNam);
+
+          break;
+        }
+
+        case BrtBeginExternals: {
+          if (debug) Rcpp::Rcout << "<BrtBeginExternals>" << std::endl;
+          // bin.seekg(size, bin.cur);
+          break;
+        }
+
+          // part of Xti
+          // * BrtSupSelf self reference
+          // * BrtSupSame same sheet
+          // * BrtSupAddin addin XLL
+          // * BrtSupBookSrc external link
+        case BrtSupSelf: {
+          if (debug)
+            Rcpp::Rcout << "BrtSupSelf @" << bin.tellg() << std::endl;
+          // Rcpp::Rcout << "<internalReference type=\"0\"/>" << std::endl;
+          reference_type.push_back("0");
+          break;
+        }
+
+        case BrtSupSame: {
+          if (debug)
+            Rcpp::Rcout << "BrtSupSame @" << bin.tellg() << std::endl;
+          // Rcpp::Rcout << "<internalReference type=\"1\"/>" << std::endl;
+          reference_type.push_back("1");
+          break;
+        }
+
+        case BrtPlaceholderName: {
+          if (debug)
+            Rcpp::Rcout << "BrtPlaceholderName @" << bin.tellg() << std::endl;
+          std::string name = XLWideString(bin, swapit);
+          // Rcpp::Rcout << "<internalReference name=\""<< name << "\"/>" << std::endl;
+          break;
+        }
+
+        case BrtSupAddin: {
+          if (debug)
+            Rcpp::Rcout << "BrtSupAddin @" << bin.tellg() << std::endl;
+          // Rcpp::Rcout << "<internalReference type=\"2\"/>" << std::endl;
+          reference_type.push_back("2");
+          break;
+        }
+
+        case BrtSupBookSrc: {
+          if (first_extern_sheet) {
+            out << "<externalReferences>" << std::endl;
+            first_extern_sheet = false;
+          }
+
+          if (debug)
+            Rcpp::Rcout << "BrtSupBookSrc @" << bin.tellg() << std::endl;
+          // Rcpp::stop("BrtSupSelf");
+          std::string strRelID = XLNullableWideString(bin, swapit);
+          out << "<externalReference r:id=\"" << strRelID << "\"/>" << std::endl;
+          reference_type.push_back(strRelID);
+          break;
+        }
+
+        case BrtSupTabs: {
+          if (debug)
+            Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
+          uint32_t cTab = 0;
+
+          cTab = readbin(cTab, bin, swapit);
+          if (cTab > 65535) Rcpp::stop("cTab to large");
+
+          for (uint32_t i = 0; i < cTab; ++i) {
+            std::string sheetName = XLWideString(bin, swapit);
+            Rcpp::Rcout << "BrtSupTabs: " << sheetName << std::endl;
+          }
+
+          break;
+        }
+
+        case BrtExternSheet: {
+          if (debug) Rcpp::Rcout << "<BrtExternSheet>" << std::endl;
+          uint32_t cXti = 0;
+
+          cXti = readbin(cXti, bin, swapit);
+          if (cXti > 65535) Rcpp::stop("cXti to large");
+
+          std::vector<uint32_t> rgXti(cXti);
+          // Rcpp::Rcout << "reference_type: " << reference_type.size() << std::endl;
+          // Rcpp::Rcout << "reference_type: " << cXti << std::endl;
+          for (uint32_t i = 0; i < cXti; ++i) {
+            std::vector<int32_t> xti = Xti(bin, swapit);
+            if ((size_t)xti[0] > reference_type.size()) Rcpp::stop("references do not match");
+            std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
+              "\" firstSheet=\"" + std::to_string(xti[1]) +
+              "\" lastSheet=\"" +  std::to_string(xti[2]) +
+              "\" type=\"" +  reference_type[static_cast<size_t>(xti[0])] +
+              "\" />";
+            xtis.push_back(tmp);
+          }
+
+          break;
+        }
+
+        case BrtEndExternals: {
+          if (debug) Rcpp::Rcout << "</BrtEndExternals>" << std::endl;
+          if (!first_extern_sheet)
+            out << "</externalReferences>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtFRTBegin: {
+          if (debug) Rcpp::Rcout << "<ext>" << std::endl;
+
           ProductVersion(bin, swapit, debug);
-        }
-        break;
-
-      }
-
-      case BrtAbsPath15:
-      {
-        std::string absPath = XLWideString(bin, swapit);
-        if (debug) Rcpp::Rcout << absPath << std::endl;
-        break;
-      }
-
-      case BrtACEnd:
-      {
-        if (debug) Rcpp::Rcout << "<BrtACEnd>" << std::endl;
-        break;
-      }
-
-      case BrtRevisionPtr:
-      {
-        if (debug) Rcpp::Rcout << "<BrtRevisionPtr>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtUID:
-      {
-        if (debug) Rcpp::Rcout << "<BrtUID>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBeginBookViews:
-      {
-        if (debug) Rcpp::Rcout << "<workbookViews>" << std::endl;
-        out << "<bookViews>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtBookView:
-      {
-        if (debug) Rcpp::Rcout << "<workbookView>" << std::endl;
-        // bin.seekg(size, bin.cur);
-        uint8_t flags = 0;
-        int32_t xWn = 0, yWn = 0;
-        uint32_t dxWn = 0, dyWn = 0, iTabRatio = 0, itabFirst= 0, itabCur = 0;
-        xWn       = readbin(xWn, bin, swapit);
-        yWn       = readbin(yWn, bin, swapit);
-        dxWn      = readbin(dxWn, bin, swapit);
-        dyWn      = readbin(dyWn, bin, swapit);
-        iTabRatio = readbin(iTabRatio, bin, swapit);
-        itabFirst = readbin(itabFirst, bin, swapit);
-        itabCur   = readbin(itabCur, bin, swapit);
-        flags     = readbin(flags, bin, swapit);
-
-        out << "<workbookView xWindow=\"" << xWn << "\" yWindow=\"" << yWn <<
-          "\" windowWidth=\"" << dxWn<<"\" windowHeight=\"" << dyWn <<
-            "\" activeTab=\"" <<  itabCur << "\" />" << std::endl;
-        break;
-      }
-
-      case BrtEndBookViews:
-      {
-        if (debug) Rcpp::Rcout << "</workbookViews>" << std::endl;
-        out << "</bookViews>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtUserBookView:
-      {
-        if (debug) Rcpp::Rcout << "<customWorkbookView>" << std::endl;
-
-        std::ostringstream cwv;
-
-        int32_t xLeft = 0, xRight = 0, yTop = 0, yBot = 0, iTabid = 0, iTabRatio = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, flags = 0;
-        int16_t wMergeInterval = 0;
-        std::string stName;
-
-        xLeft = readbin(xLeft, bin, swapit);
-        xRight = readbin(xRight, bin, swapit);
-        yTop = readbin(yTop, bin, swapit);
-        yBot = readbin(yBot, bin, swapit);
-        iTabid = readbin(iTabid, bin, swapit);
-        iTabRatio = readbin(iTabRatio, bin, swapit);
-
-        std::vector<int32_t> guids(4);
-        guids[0] = readbin(guid0, bin, 0);
-        guids[1] = readbin(guid1, bin, 0);
-        guids[2] = readbin(guid2, bin, 0);
-        guids[3] = readbin(guid3, bin, 0);
-
-        wMergeInterval = readbin(wMergeInterval, bin, swapit);
-
-        flags = readbin(flags, bin, swapit);
-
-        BrtUserBookViewFields *fields = (BrtUserBookViewFields*)&flags;
-
-        stName = XLWideString(bin, swapit);
-
-        std::string showComments;
-        if (fields->mdDspNote == 0) showComments = "commNone";
-        if (fields->mdDspNote == 1) showComments = "commIndAndComment";
-        if (fields->mdDspNote == 2) showComments = "commIndicator";
-
-        std::string showObjects;
-        if (fields->mdHideObj == 0) showObjects = "all";
-        if (fields->mdHideObj == 1) showObjects = "placeholders";
-        if (fields->mdHideObj == 2) showObjects = "none";
-
-        cwv << "<customWorkbookView" << std::endl;
-        cwv << " name=\"" << stName << "\"" << std::endl;
-        cwv << " guid=\"{" << guid_str(guids) << "}\"" << std::endl;
-        if (fields->fTimedUpdate) cwv << " autoUpdate=\"" << fields->fTimedUpdate << "\"" << std::endl;
-        if (fields->fTimedUpdate) cwv << " mergeInterval=\"" << wMergeInterval << "\"" << std::endl;
-        if (fields->fAllMemChanges) cwv << " changesSavedWin=\"" << fields->fAllMemChanges << "\"" << std::endl;
-        if (fields->fOnlySync) cwv << " onlySync=\"" << fields->fOnlySync << "\"" << std::endl;
-        if (fields->fPersonalView) cwv << " personalView=\"" << fields->fPersonalView << "\"" << std::endl;
-        if (!fields->fPrintIncl) cwv << " includePrintSettings=\"" << fields->fPrintIncl << "\"" << std::endl;
-        // wrong?
-        // if (!fields->fRowColIncl) cwv << " includeHiddenRowCol=\"" << fields->fRowColIncl << "\"" << std::endl;
-        if (fields->fZoom) cwv << " maximized=\"" << fields->fZoom << "\"" << std::endl;
-        if (fields->fIconic) cwv << " minimized=\"" << fields->fIconic << "\"" << std::endl;
-        if (!fields->fDspHScroll) cwv << " showHorizontalScroll=\"" << fields->fDspHScroll << "\"" << std::endl;
-        if (!fields->fDspVScroll) cwv << " showVerticalScroll=\"" << fields->fDspVScroll << "\"" << std::endl;
-        if (!fields->fBotAdornment) cwv << " showSheetTabs=\"" << fields->fBotAdornment << "\"" << std::endl;
-        if (xLeft > 0) cwv << " xWindow=\"" << xLeft << "\"" << std::endl;
-        if (yTop > 0) cwv << " yWindow=\"" << yTop << "\"" << std::endl;
-        if (xRight > 0) cwv << " windowWidth=\"" << xRight << "\"" << std::endl;
-        if ((yBot - yTop) > 0) cwv << " windowHeight=\"" << (yBot - yTop) << "\"" << std::endl;
-        if (iTabRatio != 600) cwv << " tabRatio=\"" << iTabRatio << "\"" << std::endl;
-        cwv << " activeSheetId=\"" << iTabid << "\"" << std::endl;
-        if (!fields->fDspFmlaBar) cwv << " showFormulaBar=\"" << fields->fDspFmlaBar << "\"" << std::endl;
-        if (!fields->fDspStatus) cwv << " showStatusbar=\"" << fields->fDspStatus << "\"" << std::endl;
-        if (showComments != "commIndicator") cwv << " showComments=\"" << showComments << "\"" << std::endl;
-        if (showObjects != "all") cwv << " showObjects=\"" << showObjects << "\"" << std::endl;
-        cwv << "/>" << std::endl;
-
-        // Rcpp::Rcout << xLeft << ": " << xRight << ": " << yTop << ": " << yBot << std::endl;
-
-        customWorkbookView.push_back(cwv.str());
-
-        break;
-      }
-
-      case BrtBeginBundleShs:
-      {
-        if (debug) Rcpp::Rcout << "<sheets>" << std::endl;
-        // unk = readbin(unk, bin, swapit);
-        // unk = readbin(unk, bin, swapit);
-        // uint32_t count, uniqueCount;
-        // count = readbin(count, bin, swapit);
-        // uniqueCount = readbin(uniqueCount, bin, swapit);
-        out << "<sheets>" << std::endl;
-        break;
-      }
-
-      case BrtBundleSh:
-      {
-        if (debug) Rcpp::Rcout << "<sheet>" << std::endl;
-
-        uint32_t hsState = 0, iTabID = 0; //  strRelID ???
-
-        hsState = readbin(hsState, bin, swapit);
-        iTabID = readbin(iTabID, bin, swapit);
-        std::string rid = XLNullableWideString(bin, swapit);
-
-        if (debug)
-          Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID  << ": " << rid << std::endl;
-
-        std::string val = XLWideString(bin, swapit);
-
-        std::string visible;
-        if (hsState == 0) visible = "visible";
-        if (hsState == 1) visible = "hidden";
-        if (hsState == 2) visible = "veryHidden";
-
-        out << "<sheet r:id=\"" << rid << "\" state=\"" << visible<< "\" sheetId=\"" << iTabID<< "\" name=\"" << val << "\"/>" << std::endl;
-        break;
-      }
-
-      case BrtEndBundleShs:
-      {
-        if (debug) Rcpp::Rcout << "</sheets>" << std::endl;
-        out << "</sheets>" << std::endl;
-        break;
-      }
-
-      case BrtCalcProp:
-      {
-        if (debug) Rcpp::Rcout << "<calcPr>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtName:
-      {
-        if (debug)  Rcpp::Rcout << "<BrtName>" << std::endl;
-        std::streampos end_pos = bin.tellg();
-        end_pos += static_cast<std::streampos>(size);
-
-        if (debug) Rcpp::Rcout << "BrtName endpos: "<< end_pos << std::endl;
-
-        uint8_t chKey = 0;
-        uint16_t BrtNameUint = 0, BrtNameUint2 = 0;
-        uint32_t itab = 0;
-        BrtNameUint = readbin(BrtNameUint, bin, swapit);
-        BrtNameUint2 = readbin(BrtNameUint2, bin, swapit);
-
-        BrtNameFields *fields = (BrtNameFields *)&BrtNameUint;
-        // BrtNameFields2 *fields2 = (BrtNameFields2 *)&BrtNameUint2;
-
-        // fHidden    - visible
-        // fFunc      - xml macro
-        // fOB        - vba macro
-        // fProc      - represents a macro
-        // fCalcExp   - rgce returns array
-        // fBuiltin   - builtin name
-        // fgrp       - FnGroupID if fProc == 0 then 0
-        // fPublished - published name
-        // fWorkbookParam  - DefinedName is workbook paramenter
-        // fFutureFunction - future function
-        // reserved        - 0
-
-        /* commented due to gcc 12 false positive warning */
-        // if (debug)
-        //   Rprintf(
-        //     "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
-        //     fields->fHidden,
-        //     fields->fFunc,
-        //     fields->fOB,
-        //     fields->fProc,
-        //     fields->fCalcExp,
-        //     fields->fBuiltin,
-        //     fields->fgrp,
-        //     fields->fPublished,
-        //     fields2->fWorkbookParam,
-        //     fields2->fFutureFunction,
-        //     fields2->reserved
-        //   );
-
-        chKey = readbin(chKey, bin, swapit);
-        // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)
-
-        itab = readbin(itab, bin, swapit);
-
-        // XLNameWideString: XLWideString <= 255 characters
-        std::string name = XLWideString(bin, swapit);
-
-        // if ((size_t)bin.tellg() < end_pos) {
-        //   Rcpp::Rcout << "repositioning" << std::endl;
-        //   Rcpp::Rcout << end_pos << std::endl;
-        //   bin.seekg(end_pos, bin.beg);
-        // }
-
-        std::string fml = "", comment = "";
-
-        int32_t sharedFormula = false;
-        fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
-
-        comment = XLNullableWideString(bin, swapit);
-
-        if (debug)
-          Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
-
-        if (fields->fProc && fml.compare("") != 0) {
-
-          /* -- something is wrong. error with some nhs macro xlsb file -- */
-          // must be NULL
-          if (debug) Rcpp::Rcout << 1 << std::endl;
-          std::string unusedstring1 = XLNullableWideString(bin, swapit);
-
-          // must be < 32768 characters
-          if (debug) Rcpp::Rcout << 2 << std::endl;
-          std::string description = XLNullableWideString(bin, swapit);
-          if (debug) Rcpp::Rcout << 3 << std::endl;
-          std::string helpTopic = XLNullableWideString(bin, swapit);
-
-          // must be NULL
-          if (debug) Rcpp::Rcout << 4 << std::endl;
-          std::string unusedstring2 = XLNullableWideString(bin, swapit);
+          break;
         }
 
-        if (bin.tellg() != end_pos) {
-          Rprintf("%d: %d", (int)bin.tellg(), (int)end_pos);
-          Rcpp::stop("repositioning");
+        case BrtWorkBookPr15: {
+          if (debug) Rcpp::Rcout << "<BrtWorkBookPr15>" << std::endl;
+          bin.seekg(size, bin.cur);
+          // uint8_t fChartTrackingRefBased = 0;
+          // uint32_t FRTHeader = 0;
+          // FRTHeader = readbin(FRTHeader, bin, swapit);
+          // fChartTrackingRefBased = readbin(fChartTrackingRefBased, bin, 0) & 0x01;
+          break;
         }
 
-        if (fields->fBuiltin) {
-          // add the builtin xl name namespace
-          if (name.find("_xlnm.") == std::string::npos)
-            name = "_xlnm." + name;
+        case BrtBeginCalcFeatures: {
+          if (debug) Rcpp::Rcout << "<calcs>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-        std::string defNam = "<definedName name=\"" + name;
+        case BrtCalcFeature: {
+          if (debug) Rcpp::Rcout << "<calc>" << std::endl;
+          // bin.seekg(size, bin.cur);
+          uint32_t FRTHeader = 0;
+          FRTHeader = readbin(FRTHeader, bin, swapit);
+          std::string szName = XLWideString(bin, swapit);
 
-        if (comment.size() > 0)
-          defNam += "\" comment=\"" + comment;
-
-        if (itab != 0xFFFFFFFF)
-          defNam += "\" localSheetId=\"" + std::to_string(itab);
-
-        if (fields->fHidden)
-          defNam += "\" hidden=\"" + std::to_string(fields->fHidden);
-
-        // lacks the formula for the defined name
-        defNam = defNam + "\">" + fml +"</definedName>";
-
-        defNams.push_back(defNam);
-
-        break;
-      }
-
-      case BrtBeginExternals:
-      {
-        if (debug) Rcpp::Rcout << "<BrtBeginExternals>" << std::endl;
-        // bin.seekg(size, bin.cur);
-        break;
-      }
-
-        // part of Xti
-        // * BrtSupSelf self reference
-        // * BrtSupSame same sheet
-        // * BrtSupAddin addin XLL
-        // * BrtSupBookSrc external link
-      case BrtSupSelf:
-      {
-        if (debug)
-          Rcpp::Rcout << "BrtSupSelf @"<< bin.tellg() << std::endl;
-        // Rcpp::Rcout << "<internalReference type=\"0\"/>" << std::endl;
-        reference_type.push_back("0");
-        break;
-      }
-
-      case BrtSupSame:
-      {
-        if (debug)
-          Rcpp::Rcout << "BrtSupSame @"<< bin.tellg() << std::endl;
-        // Rcpp::Rcout << "<internalReference type=\"1\"/>" << std::endl;
-        reference_type.push_back("1");
-        break;
-      }
-
-      case BrtPlaceholderName:
-      {
-        if (debug)
-          Rcpp::Rcout << "BrtPlaceholderName @"<< bin.tellg() << std::endl;
-        std::string name = XLWideString(bin, swapit);
-        // Rcpp::Rcout << "<internalReference name=\""<< name << "\"/>" << std::endl;
-        break;
-      }
-
-      case BrtSupAddin:
-      {
-        if (debug)
-          Rcpp::Rcout << "BrtSupAddin @"<< bin.tellg() << std::endl;
-        // Rcpp::Rcout << "<internalReference type=\"2\"/>" << std::endl;
-        reference_type.push_back("2");
-        break;
-      }
-
-      case BrtSupBookSrc:
-      {
-        if (first_extern_sheet) {
-          out << "<externalReferences>" << std::endl;
-          first_extern_sheet = false;
+          if (debug) Rcpp::Rcout << FRTHeader << ": " << szName << std::endl;
+          break;
         }
 
-        if (debug)
-          Rcpp::Rcout << "BrtSupBookSrc @"<< bin.tellg() << std::endl;
-        // Rcpp::stop("BrtSupSelf");
-        std::string strRelID = XLNullableWideString(bin, swapit);
-        out << "<externalReference r:id=\""<< strRelID << "\"/>" << std::endl;
-        reference_type.push_back(strRelID);
-        break;
-      }
-
-      case BrtSupTabs:
-      {
-        if (debug)
-          Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
-        uint32_t cTab = 0;
-
-        cTab = readbin(cTab, bin, swapit);
-        if (cTab > 65535) Rcpp::stop("cTab to large");
-
-        for (uint32_t i = 0; i < cTab; ++i) {
-          std::string sheetName = XLWideString(bin, swapit);
-          Rcpp::Rcout << "BrtSupTabs: "<< sheetName << std::endl;
+        case BrtEndCalcFeatures: {
+          if (debug) Rcpp::Rcout << "</calcs>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-        break;
-      }
-
-      case BrtExternSheet:
-      {
-
-        if (debug) Rcpp::Rcout << "<BrtExternSheet>" << std::endl;
-        uint32_t cXti = 0;
-
-        cXti = readbin(cXti, bin, swapit);
-        if (cXti > 65535) Rcpp::stop("cXti to large");
-
-        std::vector<uint32_t> rgXti(cXti);
-        // Rcpp::Rcout << "reference_type: " << reference_type.size() << std::endl;
-        // Rcpp::Rcout << "reference_type: " << cXti << std::endl;
-        for (uint32_t i = 0; i < cXti; ++i) {
-          std::vector<int32_t> xti = Xti(bin, swapit);
-          if ((size_t)xti[0] > reference_type.size()) Rcpp::stop("references do not match");
-          std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
-            "\" firstSheet=\"" + std::to_string(xti[1]) +
-            "\" lastSheet=\"" +  std::to_string(xti[2]) +
-            "\" type=\"" +  reference_type[static_cast<size_t>(xti[0])] +
-            "\" />";
-          xtis.push_back(tmp);
+        case BrtFRTEnd: {
+          if (debug) Rcpp::Rcout << "</ext>" << std::endl;
+          break;
         }
 
-        break;
-      }
+          if (debug) Rcpp::Rcout << "<BrtWbFactoid>" << std::endl;
+        case BrtWbFactoid: {  // ???
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-      case BrtEndExternals:
-      {
-        if (debug) Rcpp::Rcout << "</BrtEndExternals>" << std::endl;
-        if (!first_extern_sheet)
-          out << "</externalReferences>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
+        case BrtFileRecover: {
+          if (debug) Rcpp::Rcout << "<fileRecovery>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
 
-      case BrtFRTBegin:
-      {
-        if (debug) Rcpp::Rcout << "<ext>" << std::endl;
+        case BrtEndBook: {
+          end_of_workbook = true;
 
-        ProductVersion(bin, swapit, debug);
-        break;
-      }
+          if (defNams.size() > 1) {
+            defNams.push_back("</definedNames>");
 
-      case BrtWorkBookPr15:
-      {
-        if (debug) Rcpp::Rcout << "<BrtWorkBookPr15>" << std::endl;
-        bin.seekg(size, bin.cur);
-        // uint8_t fChartTrackingRefBased = 0;
-        // uint32_t FRTHeader = 0;
-        // FRTHeader = readbin(FRTHeader, bin, swapit);
-        // fChartTrackingRefBased = readbin(fChartTrackingRefBased, bin, 0) & 0x01;
-        break;
-      }
-
-      case BrtBeginCalcFeatures:
-      {
-        if (debug) Rcpp::Rcout << "<calcs>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtCalcFeature:
-      {
-        if (debug) Rcpp::Rcout << "<calc>" << std::endl;
-        // bin.seekg(size, bin.cur);
-        uint32_t FRTHeader = 0;
-        FRTHeader = readbin(FRTHeader, bin, swapit);
-        std::string szName = XLWideString(bin, swapit);
-
-        if (debug) Rcpp::Rcout << FRTHeader << ": " << szName << std::endl;
-        break;
-      }
-
-      case BrtEndCalcFeatures:
-      {
-        if (debug) Rcpp::Rcout << "</calcs>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtFRTEnd:
-      {
-        if (debug) Rcpp::Rcout << "</ext>" << std::endl;
-        break;
-      }
-
-      case BrtWbFactoid:
-      { // ???
-        if (debug) Rcpp::Rcout << "<BrtWbFactoid>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtFileRecover:
-      {
-        if (debug) Rcpp::Rcout << "<fileRecovery>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtEndBook:
-      {
-        end_of_workbook = true;
-
-        if (defNams.size() > 1) {
-          defNams.push_back("</definedNames>");
-
-          for (size_t i = 0; i < defNams.size(); ++i) {
-            if (debug)
-              Rcpp::Rcout << defNams[i] << std::endl;
-            out << defNams[i] << std::endl;
+            for (size_t i = 0; i < defNams.size(); ++i) {
+              if (debug)
+                Rcpp::Rcout << defNams[i] << std::endl;
+              out << defNams[i] << std::endl;
+            }
           }
-        }
 
-        // custom xti output
-        if (xtis.size() > 1) {
-          xtis.push_back("</xtis>");
+          // custom xti output
+          if (xtis.size() > 1) {
+            xtis.push_back("</xtis>");
 
-          for (size_t i = 0; i < xtis.size(); ++i) {
-            if (debug) Rcpp::Rcout << xtis[i] << std::endl;
-            out << xtis[i] << std::endl;
+            for (size_t i = 0; i < xtis.size(); ++i) {
+              if (debug) Rcpp::Rcout << xtis[i] << std::endl;
+              out << xtis[i] << std::endl;
+            }
           }
-        }
 
-        if (customWorkbookView.size()) {
-          out << "<customWorkbookViews>" << std::endl;
-          for (size_t i = 0; i < customWorkbookView.size(); ++i) {
-            if (debug)
-              Rcpp::Rcout << customWorkbookView[i] << std::endl;
-            out << customWorkbookView[i] << std::endl;
+          if (customWorkbookView.size()) {
+            out << "<customWorkbookViews>" << std::endl;
+            for (size_t i = 0; i < customWorkbookView.size(); ++i) {
+              if (debug)
+                Rcpp::Rcout << customWorkbookView[i] << std::endl;
+              out << customWorkbookView[i] << std::endl;
+            }
+            out << "</customWorkbookViews>" << std::endl;
           }
-          out << "</customWorkbookViews>" << std::endl;
+
+
+          if (debug) Rcpp::Rcout << "</workbook>" << std::endl;
+          out << "</workbook>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
         }
 
-
-        if (debug) Rcpp::Rcout << "</workbook>" << std::endl;
-        out << "</workbook>" << std::endl;
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      case BrtRRChgCell:
-      case BrtRRDefName:
-      {
-        has_revision_record = true;
-        // -- have not seen this yet. if it appears, treat it as if a revision record was found --
-        // rgce.rgce or rgceOld.rgce in BrtRRDefName
-        if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
-        Rcpp::warning("Assuming revision record.");
-        bin.seekg(size, bin.cur);
-        break;
-      }
-
-      default:
-      {
-        if (debug) {
-          Rcpp::Rcout << std::to_string(x) <<
-            ": " << std::to_string(size) <<
-            " @ " << bin.tellg() << std::endl;
+        case BrtRRChgCell:
+        case BrtRRDefName: {
+          has_revision_record = true;
+          // -- have not seen this yet. if it appears, treat it as if a revision record was found --
+          // rgce.rgce or rgceOld.rgce in BrtRRDefName
+          if (debug) Rcpp::Rcout << "BrtRRChgCell or BrtRRDefName" << std::endl;
+          Rcpp::warning("Assuming revision record.");
+          bin.seekg(size, bin.cur);
+          break;
         }
-        bin.seekg(size, bin.cur);
-        break;
-      }
+
+        default: {
+          if (debug) {
+            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;
+          }
+          bin.seekg(size, bin.cur);
+          break;
+        }
       }
 
       if (debug) Rcpp::Rcout << "wb-loop: " << x << ": " << size << ": " << bin.tellg() << std::endl;
@@ -2125,14 +1975,10 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
   } else {
     return -1;
   };
-
 }
-
-
 
 // [[Rcpp::export]]
 int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
-
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -2161,7 +2007,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
     int32_t shared_cell_cntr = 0;
 
     // auto itr = 0;
-    while(!end_of_worksheet) {
+    while (!end_of_worksheet) {
       Rcpp::checkUserInterrupt();
 
       // uint8_t unk = 0, high = 0, low = 0;
