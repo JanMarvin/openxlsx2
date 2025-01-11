@@ -94,13 +94,7 @@ SEXP si_to_txt(Rcpp::CharacterVector si_vec) {
   return xml_to_txt(si_vec, "si");
 }
 
-std::string txt_to_xml(
-    std::string text,
-    bool no_escapes,
-    bool raw,
-    bool skip_control,
-    std::string type
-) {
+std::string txt_to_xml(std::string text, bool no_escapes, bool raw, bool skip_control, std::string type) {
   pugi::xml_document doc;
 
   uint32_t pugi_format_flags = pugi::format_indent;
@@ -123,7 +117,7 @@ std::string txt_to_xml(
     // text to export
     pugi::xml_node t_node = is_node.append_child("t");
 
-    if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size()-1)))) {
+    if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size() - 1)))) {
       t_node.append_attribute("xml:space").set_value("preserve");
     }
 
@@ -138,13 +132,11 @@ std::string txt_to_xml(
 }
 
 // [[Rcpp::export]]
-std::string txt_to_is(std::string text,
-                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
+std::string txt_to_is(std::string text, bool no_escapes = false, bool raw = true, bool skip_control = true) {
   return txt_to_xml(text, no_escapes, raw, skip_control, "is");
 }
 
 // [[Rcpp::export]]
-std::string txt_to_si(std::string text,
-                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
+std::string txt_to_si(std::string text, bool no_escapes = false, bool raw = true, bool skip_control = true) {
   return txt_to_xml(text, no_escapes, raw, skip_control, "si");
 }

@@ -461,6 +461,7 @@ void wide_to_long(
       else
         string_nums = in_string_nums;
 
+      switch (vtyp) {
       case currency:
       case short_date:
       case long_date:
@@ -483,7 +484,6 @@ void wide_to_long(
 
         // test if string can be written as number
         if (string_nums && is_double(vals)) {
-      switch (vtyp) {
           // v
           SET_STRING_ELT(zz_v, pos, vals_sexp);
           vtyp     = (string_nums == 1) ? string_num : numeric;
@@ -580,7 +580,6 @@ void wide_to_long(
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
-
   R_xlen_t kk = static_cast<R_xlen_t>(colnames.size());
 
   // 1. create the list
@@ -682,7 +681,7 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // openxml 2.8.1
-  std::vector<std::string>  attrnams = df.names();
+  std::vector<std::string> attrnams = df.names();
   std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
   std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
 

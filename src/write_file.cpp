@@ -26,10 +26,10 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
 pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
-  auto lastrow = 0; // integer value of the last row with column data
-  auto thisrow = 0; // integer value of the current row with column data
-  auto row_idx = 0; // the index of the row_attr file. this is != rowid
-  auto rowid   = 0; // integer value of the r field in row_attr
+  auto lastrow = 0;  // integer value of the last row with column data
+  auto thisrow = 0;  // integer value of the current row with column data
+  auto row_idx = 0;  // the index of the row_attr file. this is != rowid
+  auto rowid   = 0;  // integer value of the r field in row_attr
 
   pugi::xml_document doc;
   pugi::xml_node row;
@@ -194,13 +194,8 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-XPtrXML write_worksheet(
-    std::string prior,
-    std::string post,
-    Rcpp::Environment sheet_data
-) {
+XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data) {
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
-
 
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));

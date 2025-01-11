@@ -94,8 +94,7 @@ inline uint32_t cell_to_rowint(const std::string& str) {
 }
 
 static inline std::string str_toupper(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(),
-                 [](unsigned char c) { return std::toupper(c); });
+  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::toupper(c); });
   return s;
 }
 

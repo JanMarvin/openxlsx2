@@ -53,17 +53,16 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformat?view=openxml-2.8.1
 
   // openxml 2.8.1
-  std::set<std::string> nams{
-      "numFmtId", "fontId", "fillId", "borderId", "xfId", "applyNumberFormat",
-      "applyFont", "applyFill", "applyBorder", "applyAlignment",
-      "applyProtection", "pivotButton", "quotePrefix",
-      // child alignment
-      "horizontal", "indent", "justifyLastLine", "readingOrder",
-      "relativeIndent", "shrinkToFit", "textRotation", "vertical", "wrapText",
-      // child extLst
-      "extLst",
-      // child protection
-      "hidden", "locked"};
+  std::set<std::string> nams{"numFmtId", "fontId", "fillId", "borderId", "xfId", "applyNumberFormat", "applyFont",
+                             "applyFill", "applyBorder", "applyAlignment", "applyProtection", "pivotButton",
+                             "quotePrefix",
+                             // child alignment
+                             "horizontal", "indent", "justifyLastLine", "readingOrder", "relativeIndent", "shrinkToFit",
+                             "textRotation", "vertical", "wrapText",
+                             // child extLst
+                             "extLst",
+                             // child protection
+                             "hidden", "locked"};
 
   R_xlen_t nn = std::distance(xml_doc_xf->begin(), xml_doc_xf->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
@@ -102,8 +101,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
       std::string cld_name = cld.name();
 
       // check known names
-      if (cld_name ==  "alignment" || cld_name == "extLst" || cld_name == "protection") {
-
+      if (cld_name == "alignment" || cld_name == "extLst" || cld_name == "protection") {
         if (cld_name == "extLst") {
           R_xlen_t mtc = std::distance(nams.begin(), nams.find(cld_name));
           uint32_t pugi_format_flags = pugi::format_raw;
@@ -155,26 +153,13 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
   std::vector<std::string> attrnams = df_xf.names();
 
-  std::set<std::string> xf_nams{
-    "numFmtId",
-    "fontId",
-    "fillId",
-    "borderId",
-    "xfId",
-    "applyFont",
-    "applyFill",
-    "applyBorder",
-    "applyAlignment",
-    "applyNumberFormat",
-    "applyProtection",
-    "pivotButton",
-    "quotePrefix"
-  };
+  std::set<std::string> xf_nams{"numFmtId",        "fontId",      "fillId",      "borderId",       "xfId",
+                                "applyFont",       "applyFill",   "applyBorder", "applyAlignment", "applyNumberFormat",
+                                "applyProtection", "pivotButton", "quotePrefix"};
 
-  std::set<std::string> xf_nams_alignment{
-      "horizontal",   "indent",         "justifyLastLine",
-      "readingOrder", "relativeIndent", "shrinkToFit",
-      "textRotation", "vertical",       "wrapText"};
+  std::set<std::string> xf_nams_alignment{"horizontal",   "indent",         "justifyLastLine",
+                                          "readingOrder", "relativeIndent", "shrinkToFit",
+                                          "textRotation", "vertical",       "wrapText"};
 
   std::set<std::string> xf_nams_extLst{"extLst"};
 
@@ -282,11 +267,9 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
 
   // openxml 2.8.1
-  std::set<std::string> nams{"b", "charset", "color", "condense", "extend",
-                             "family", "i", "name", "outline",
+  std::set<std::string> nams{"b", "charset", "color", "condense", "extend", "family", "i", "name", "outline",
                              // TODO might contain child <localName ...>
-                             "scheme", "shadow", "strike", "sz", "u",
-                             "vertAlign"};
+                             "scheme", "shadow", "strike", "sz", "u", "vertAlign"};
 
   R_xlen_t nn = std::distance(xml_doc_font->begin(), xml_doc_font->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
@@ -463,9 +446,8 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
   // openxml 2.8.1
   std::set<std::string> nam_attrs{"diagonalDown", "diagonalUp", "outline"};
 
-  std::set<std::string> nam_chlds{"start",    "end",      "left",
-                                  "right",    "top",      "bottom",
-                                  "diagonal", "vertical", "horizontal"};
+  std::set<std::string> nam_chlds{"start",  "end",      "left",     "right",     "top",
+                                  "bottom", "diagonal", "vertical", "horizontal"};
 
   auto total_length = nam_attrs.size() + nam_chlds.size();
   std::vector<std::string> all_names(total_length);
@@ -473,8 +455,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
   std::copy(nam_attrs.begin(), nam_attrs.end(), all_names.begin());
   std::copy(nam_chlds.begin(), nam_chlds.end(), all_names.begin() + static_cast<R_xlen_t>(nam_attrs.size()));
 
-  std::set<std::string> nams(std::make_move_iterator(all_names.begin()),
-                             std::make_move_iterator(all_names.end()));
+  std::set<std::string> nams(std::make_move_iterator(all_names.begin()), std::make_move_iterator(all_names.end()));
 
   R_xlen_t nn = std::distance(xml_doc_border->begin(), xml_doc_border->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
@@ -547,9 +528,8 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
   // openxml 2.8.1
   std::vector<std::string> attrnams = df_border.names();
   std::set<std::string> nam_attrs{"diagonalDown", "diagonalUp", "outline"};
-  std::set<std::string> nam_chlds{"bottom",     "diagonal", "end",
-                                  "horizontal", "left",     "right",
-                                  "start",      "top",      "vertical"};
+  std::set<std::string> nam_chlds{"bottom", "diagonal", "end", "horizontal", "left",
+                                  "right",  "start",    "top", "vertical"};
 
   for (R_xlen_t i = 0; i < n; ++i) {
     pugi::xml_document doc;
@@ -707,9 +687,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
 
   // openxml 2.8.1
-  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden",
-                                  "iLevel",    "name",          "xfId",
-                                  "xr:uid"};
+  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId", "xr:uid"};
 
   std::set<std::string> nam_chlds{"extLst"};
 
@@ -719,8 +697,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
   std::copy(nam_attrs.begin(), nam_attrs.end(), all_names.begin());
   std::copy(nam_chlds.begin(), nam_chlds.end(), all_names.begin() + static_cast<R_xlen_t>(nam_attrs.size()));
 
-  std::set<std::string> nams(std::make_move_iterator(all_names.begin()),
-                             std::make_move_iterator(all_names.end()));
+  std::set<std::string> nams(std::make_move_iterator(all_names.begin()), std::make_move_iterator(all_names.end()));
 
   R_xlen_t nn = std::distance(xml_doc_cellStyle->begin(), xml_doc_cellStyle->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
@@ -791,8 +768,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // openxml 2.8.1
-  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden",
-                                  "iLevel",    "name",          "xfId"};
+  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId"};
   std::vector<std::string> attrnams = df_cellstyle.names();
   std::set<std::string> nam_chlds{"extLst"};
 
@@ -871,8 +847,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
   std::copy(nam_attrs.begin(), nam_attrs.end(), all_names.begin());
   std::copy(nam_chlds.begin(), nam_chlds.end(), all_names.begin() + static_cast<R_xlen_t>(nam_attrs.size()));
 
-  std::set<std::string> nams(std::make_move_iterator(all_names.begin()),
-                             std::make_move_iterator(all_names.end()));
+  std::set<std::string> nams(std::make_move_iterator(all_names.begin()), std::make_move_iterator(all_names.end()));
 
   R_xlen_t nn = std::distance(xml_doc_tableStyle->begin(), xml_doc_tableStyle->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
@@ -993,7 +968,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
           pugi::xml_parse_result result = tableStyleElement.load_string(font_i.c_str(), pugi_parse_flags);
           if (!result) Rcpp::stop("loading df_tablestyle node fail: %s", cv_s);
 
-          for (auto chld: tableStyleElement.children())
+          for (auto chld : tableStyleElement.children())
             tablestyle.append_copy(chld);
         }
       }
@@ -1015,8 +990,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
 
   // openxml 2.8.1
-  std::set<std::string> nams{"alignment", "border", "extLst",    "fill",
-                             "font",      "numFmt", "protection"};
+  std::set<std::string> nams{"alignment", "border", "extLst", "fill", "font", "numFmt", "protection"};
 
   R_xlen_t nn = std::distance(xml_doc_dxf->begin(), xml_doc_dxf->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());

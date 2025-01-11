@@ -599,7 +599,7 @@ SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool poi
 SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::string level2, bool pointer) {
   uint32_t pugi_format_flags = pugi_format(node);
 
-  for (auto cld: child->children()) {
+  for (auto cld : child->children()) {
     node->first_child().child(level1.c_str()).child(level2.c_str()).append_copy(cld);
   }
 
@@ -625,8 +625,9 @@ SEXP xml_remove_child1(XPtrXML node, std::string child, int32_t which, bool poin
   auto ctr = 0;
   for (pugi::xml_node cld = node->first_child().child(child.c_str()); cld;) {
     auto next = cld.next_sibling();
-    if (ctr == which || which < 0) cld.parent().remove_child(cld);
-     cld = next;
+    if (ctr == which || which < 0)
+      cld.parent().remove_child(cld);
+    cld = next;
     ++ctr;
   }
 
@@ -647,13 +648,14 @@ SEXP xml_remove_child1(XPtrXML node, std::string child, int32_t which, bool poin
 // @param escapes bool if escapes should be used
 // @export
 // [[Rcpp::export]]
-SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int32_t which,  bool pointer) {
+SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int32_t which, bool pointer) {
   uint32_t pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
-  for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(child.c_str()); cld; ) {
+  for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(child.c_str()); cld;) {
     auto next = cld.next_sibling();
-    if (ctr == which || which < 0)  cld.parent().remove_child(cld);
+    if (ctr == which || which < 0)
+      cld.parent().remove_child(cld);
     cld = next;
     ++ctr;
   }
@@ -680,9 +682,10 @@ SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std:
   uint32_t pugi_format_flags = pugi_format(node);
 
   auto ctr = 0;
-  for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(level2.c_str()).child(child.c_str()); cld; ) {
+  for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(level2.c_str()).child(child.c_str()); cld;) {
     auto next = cld.next_sibling();
-    if (ctr == which || which < 0) cld.parent().remove_child(cld);
+    if (ctr == which || which < 0)
+      cld.parent().remove_child(cld);
     cld = next;
     ++ctr;
   }

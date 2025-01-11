@@ -3,18 +3,8 @@
 
 // [[Rcpp::export]]
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
-  std::set<std::string> col_nams{
-    "bestFit",
-    "collapsed",
-    "customWidth",
-    "hidden",
-    "max",
-    "min",
-    "outlineLevel",
-    "phonetic",
-    "style",
-    "width"
-  };
+  std::set<std::string> col_nams{"bestFit", "collapsed",    "customWidth", "hidden", "max",
+                                 "min",     "outlineLevel", "phonetic",    "style",  "width"};
 
   R_xlen_t nn = std::distance(doc->begin(), doc->end());
   R_xlen_t kk = static_cast<R_xlen_t>(col_nams.size());
