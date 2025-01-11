@@ -6,7 +6,8 @@
  * This file defines typedefs. R expects it to be called <pkgname>_types.h    *
  *                                                                            *
  ******************************************************************************/
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
 /* create custom Rcpp::wrap function to be used with std::vector<xml_col> */
 #include <string>
 #include <vector>
@@ -60,6 +61,7 @@ enum celltype {
 #else
 #include <Rcpp.h>
 #endif
+#pragma clang diagnostic pop
 
 inline void xml_col::clear() {
   key = NA_REAL;
