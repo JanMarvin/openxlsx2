@@ -568,8 +568,8 @@ std::string RichStr(std::istream& sas, bool swapit) {
 
 void ProductVersion(std::istream& sas, bool swapit, bool debug) {
   uint16_t version = 0, flags = 0;
-  version = readbin(version, sas, swapit); // 3586 - x14?
-  flags = readbin(flags, sas, swapit);     // 0
+  version = readbin(version, sas, swapit);  // 3586 - x14?
+  flags = readbin(flags, sas, swapit);      // 0
 
   /* unused and commented due to a false positive in GCC12 reported on CRAN */
   // FRTVersionFields *fields = (FRTVersionFields *)&flags;
@@ -709,10 +709,10 @@ std::string LocRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
 std::string Area(std::istream& sas, bool swapit) {
   std::vector<int32_t> col0(3), col1(3);
   int32_t row0 = 0, row1 = 0;
-  row0 = UncheckedRw(sas, swapit); // rowFirst
-  row1 = UncheckedRw(sas, swapit); // rowLast
-  col0 = ColRelShort(sas, swapit); // columnFirst
-  col1 = ColRelShort(sas, swapit); // columnLast
+  row0 = UncheckedRw(sas, swapit);  // rowFirst
+  row1 = UncheckedRw(sas, swapit);  // rowLast
+  col0 = ColRelShort(sas, swapit);  // columnFirst
+  col1 = ColRelShort(sas, swapit);  // columnLast
 
   bool fColRel0 = col0[1];
   bool fRwRel0  = col0[2];
@@ -1175,9 +1175,9 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
-    if (debug) Rcpp::Rcout << ".";
-  while (sas.tellg() < pos) {
+  if (debug) Rcpp::Rcout << ".";
 
+  while (sas.tellg() < pos) {
     // 1
     uint8_t val2 = 0, controlbit = 0;
     val1 = readbin(val1, sas, swapit);
@@ -1189,915 +1189,852 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
     // and 6 and 7 contain DataType information
     if (debug) Rprintf("Formula: %d %d\n", val1, val2);
 
-    switch(val1) {
+    switch (val1) {
+      case PtgList_PtgSxName:
+      case PtgAttr: {
+        if (debug) Rcpp::Rcout << "reading eptg @ " << sas.tellg() << std::endl;
+        val2 = readbin(val2, sas, swapit); // full 8 bit forming eptg
+        if (debug) Rcpp::Rcout << "PtgAttr: " << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
+        switch(val2) {
 
-    case PtgList_PtgSxName:
-    case PtgAttr:
-    {
-      if (debug) Rcpp::Rcout << "reading eptg @ " << sas.tellg() << std::endl;
-      val2 = readbin(val2, sas, swapit); // full 8 bit forming eptg
-      if (debug) Rcpp::Rcout << "PtgAttr: " << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
+          case PtgList: {
+            RgbExtra typ = PtgExtraList;
+
+            if (debug) Rcpp::Rcout << "PtgList " << sas.tellg() << std::endl;
+            uint16_t ixti = 0, flags = 0;
+            uint32_t listIndex = 0;
+            uint16_t colFirst = 0, colLast = 0;
+
+            // ixti = location of table
+            ixti = readbin(ixti, sas, swapit);
+
+            // B:
+            // 0x00 columns consist of all columns in table
+            // 0x01 one column wide, only colFirst required
+            // 0x02 columns from colFirst to colLast
+            // rowType = PtgRowType()
+            // squareBracketSpace: spacing?
+            // commaSpace: comma space?
+            // unused
+            // type: PtgDataType()
+            // invalid: bool
+            // nonresident: bool
+            flags = readbin(flags, sas, swapit);
+
+            // table identifier: unused if invalid=1 || nonresident=1
+            listIndex = readbin(listIndex, sas, swapit);
+
+            // cols: unused if invalid = 1 || nonresident = 1 || columns = 0
+            colFirst  = ColShort(sas, swapit);
+            colLast   = ColShort(sas, swapit);
+
+            PtgListFields* fields = (PtgListFields*)&flags;
+
+            // if (debug)
+            // Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+            //   (uint32_t)fields->columns,
+            //   (uint32_t)fields->commaSpace,
+            //   (uint32_t)fields->invalid,
+            //   (uint32_t)fields->nonresident,
+            //   (uint32_t)fields->reserved2,
+            //   (uint32_t)fields->rowType,
+            //   (uint32_t)fields->squareBracketSpace,
+            //   (uint32_t)fields->type,
+            //   (uint32_t)fields->unused
+            // );
+
+            if (fields->nonresident)  // different workbook and invalid == 0
+              ptgextra.push_back(typ);
+
+            std::stringstream paddedStr;
+            paddedStr << std::setw(12) << std::setfill('0') << listIndex;  // << ixti;
+
+            // A1 notation cell
+            // something like this: Table1[[#This Row],[a]]
+            fml_out += "openxlsx2tab_" + paddedStr.str();
+
+            bool no_row_type = fields->invalid == 1 || fields->nonresident == 1;
+
+            fml_out += "[";
+
+            bool need_bracket = fields->columns > 0 ||
+                (fields->columns == 0 &&
+                  (fields->rowType == dataheaders ||
+                    fields->rowType == datatotals)
+                );
 
 
-      switch(val2) {
+            // if rowType == 0 no #Data etc is added
+            if (!no_row_type && fields->rowType) {
+              if (need_bracket) fml_out += "[";
+              if (fields->rowType == data)        fml_out += "";
+              if (fields->rowType == all)         fml_out += "#All";
+              if (fields->rowType == headers)     fml_out += "#Headers";
+              if (fields->rowType == data2)       fml_out += "#Data";
+              if (fields->rowType == dataheaders) fml_out += "#Headers],[#Data";
+              if (fields->rowType == totals)      fml_out += "#Totals";
+              if (fields->rowType == datatotals)  fml_out += "#Data],[#Totals";
+              if (fields->rowType == current)     fml_out += "#This Row";
+              if (need_bracket) fml_out += "]";
+              if (fields->columns > 0) fml_out += ",";
+            }
 
-      case PtgList:
-      {
-        RgbExtra typ = PtgExtraList;
+            // not sure what is supposed to happen in this case?
+            // have to replace colFirst with a variable name
+            if (!(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
+              // Rcpp::Rcout << "colFirst" << std::endl;
+              if (fields->columns > 1 || fields->rowType > data) fml_out += "[";
+              fml_out += "openxlsx2col_";
+              fml_out += std::to_string(listIndex);
+              fml_out += "_";
+              fml_out += std::to_string(colFirst);
+              if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
+            }
 
-        if (debug) Rcpp::Rcout << "PtgList " << sas.tellg() << std::endl;
-        uint16_t ixti = 0, flags = 0;
-        uint32_t listIndex = 0;
-        uint16_t colFirst = 0, colLast = 0;
+            // have to replace colLast with a variable name
+            if ((colFirst < colLast) && !(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
+              // Rcpp::Rcout << "colLast" << std::endl;
+              fml_out += ":[openxlsx2col_";
+              fml_out += std::to_string(listIndex);
+              fml_out += "_";
+              fml_out += std::to_string(colLast);
+              if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
+            }
 
-        // ixti = location of table
-        ixti = readbin(ixti, sas, swapit);
+            fml_out += "]";
+            fml_out += "\n";
 
-        // B:
-        // 0x00 columns consist of all columns in table
-        // 0x01 one column wide, only colFirst required
-        // 0x02 columns from colFirst to colLast
-        // rowType = PtgRowType()
-        // squareBracketSpace: spacing?
-        // commaSpace: comma space?
-        // unused
-        // type: PtgDataType()
-        // invalid: bool
-        // nonresident: bool
-        flags     = readbin(flags, sas, swapit);
+            // Do something with this, just ... what?
+            if (debug)
+              Rprintf("PtgList: %d, %d, %d, %d\n", ixti, listIndex, colFirst, colLast);
 
-        // table identifier: unused if invalid=1 || nonresident=1
-        listIndex = readbin(listIndex, sas, swapit);
+            // if (debug)
+            // Rcpp::warning("formulas with table references are not implemented.");
 
-        // cols: unused if invalid = 1 || nonresident = 1 || columns = 0
-        colFirst  = ColShort(sas, swapit);
-        colLast   = ColShort(sas, swapit);
+            break;
+          }
 
+          case PtgAttrSemi: {
+            // function is volatile and has to be calculated every time the
+            // workbook is opened
+            if (debug) Rcpp::Rcout << "PtgAttrSemi" << std::endl;
 
-        PtgListFields *fields = (PtgListFields *)&flags;
+            if ((val2  & 1) != 1) Rcpp::stop("wrong value");
+            // val2[1] == 1
+            // val2[2:8] == 0
+            uint16_t unused = 0;
+            unused = readbin(unused, sas, swapit);
+            // Rcpp::Rcout << unused << std::endl;
+            break;
+          }
 
-        // if (debug)
-        // Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
-        //   (uint32_t)fields->columns,
-        //   (uint32_t)fields->commaSpace,
-        //   (uint32_t)fields->invalid,
-        //   (uint32_t)fields->nonresident,
-        //   (uint32_t)fields->reserved2,
-        //   (uint32_t)fields->rowType,
-        //   (uint32_t)fields->squareBracketSpace,
-        //   (uint32_t)fields->type,
-        //   (uint32_t)fields->unused
-        // );
+          // beg control tokens. according to manual they can be ignored
+          case PtgAttrIf:
+          case PtgAttrIfError:
+          case PtgAttrGoTo: {
+            if (debug) Rcpp::Rcout << "PtgAttrIf" <<std::endl;
 
-        if (fields->nonresident) // different workbook and invalid == 0
+            uint16_t offset = 0;
+
+            offset = readbin(offset, sas, swapit);
+
+            break;
+          }
+
+          case PtgAttrChoose: {
+            if (debug) Rcpp::Rcout << "PtgAttrChoose" <<std::endl;
+
+            uint16_t cOffset = 0, rgOffset = 0;
+
+            cOffset = readbin(cOffset, sas, swapit);
+
+            // some offsets, currently unused
+            for (int16_t off = 0; off < (cOffset + 1); ++off) {
+              rgOffset = readbin(rgOffset, sas, swapit);
+              if (debug) Rcpp::Rcout << rgOffset << std::endl;
+            }
+
+            break;
+          }
+            // end control tokens
+
+          case PtgAttrSpace: {
+            uint8_t type = 0, cch = 0;
+
+            if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
+
+            // PtgAttrSpaceType
+            type = readbin(type, sas, swapit);
+            // 0-6 various different types where to add the whitespace
+            cch = readbin(cch, sas, swapit);
+
+            // hm, there is also " " as operator. genius move ...
+            // fml_out += "%s";
+            for (uint8_t i = 0; i < cch; ++i) {
+              fml_out += " ";
+            }
+            // fml_out += "%s";
+            // fml_out += "\n";
+
+            if (debug) Rprintf("AttrSpace: %d %d\n", type, cch);
+            break;
+          }
+
+          case PtgAttrSpaceSemi: {
+            // type: A PtgAttrSpaceType
+            uint8_t type = 0, cch = 0;
+            type = readbin(type, sas, swapit);
+            cch = readbin(cch, sas, swapit);
+
+            if (debug) Rprintf("PtgAttrSpaceSemi: %d %d\n", type, cch);
+            break;
+          }
+
+          case PtgAttrSum: {
+            if (debug) Rcpp::Rcout << "PtgAttrSum" << std::endl;
+            // val2[1:4] == 0
+            // val2[5]   == 1
+            // val2[6:8] == 0
+            uint16_t unused = 0;
+            unused = readbin(unused, sas, swapit);
+            // Rcpp::Rcout << unused << std::endl;
+            fml_out += "SUM(%s)";  // maybe attr because it is a single cell function?
+            fml_out += "\n";
+            break;
+          }
+
+          case PtgAttrBaxcel:
+          case PtgAttrBaxcel2: {
+            // val1[8]   == bitSemi if Rgce is volatile
+            // val2[1:4] == 0
+            // val2[5]   == 1
+            // val2[6:8] == 0
+
+            uint16_t unused = 0;
+            unused = readbin(unused, sas, swapit);
+            Rcpp::warning("PtgAttrBaxcel: unhandled formula thing");
+            break;
+          }
+
+          default: {
+            Rprintf("Undefined Formula_TWO: %d %d\n", val1, val2);
+            break;
+          }
+        }
+
+        break;
+      }
+
+      case PtgRange: {
+        if (debug) Rcpp::Rcout << ":" <<std::endl;
+        fml_out += "%s:%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgUnion: {
+        if (debug) Rcpp::Rcout << "," <<std::endl;
+        fml_out += "%s,%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgIsect: {
+        if (debug) Rcpp::Rcout << " " <<std::endl;
+        fml_out += "%s %s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgAdd: {
+        if (debug) Rcpp::Rcout << "+" <<std::endl;
+        fml_out += "%s+%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgSub: {
+        if (debug) Rcpp::Rcout << "-" <<std::endl;
+        fml_out += "%s-%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgMul: {
+        if (debug) Rcpp::Rcout << "*" <<std::endl;
+        fml_out += "%s*%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgDiv: {
+        if (debug) Rcpp::Rcout << "/" <<std::endl;
+        fml_out += "%s/%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgPercent: {
+        if (debug) Rcpp::Rcout << "%" <<std::endl;
+        fml_out += "%s%";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgPower: {
+        if (debug) Rcpp::Rcout << "^" <<std::endl;
+        fml_out += "%s^%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgConcat: {
+        if (debug) Rcpp::Rcout << "&" <<std::endl;
+        fml_out += "%s&amp;%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgEq: {
+        if (debug) Rcpp::Rcout << "=" <<std::endl;
+        fml_out += "%s=%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgGt: {
+        if (debug) Rcpp::Rcout << ">" <<std::endl;
+        fml_out += "%s&gt;%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgGe: {
+        if (debug) Rcpp::Rcout << ">=" <<std::endl;
+        fml_out += "%s&gt;=%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgLt: {
+        if (debug) Rcpp::Rcout << "<" <<std::endl;
+        fml_out += "%s&lt;%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgLe: {
+        if (debug) Rcpp::Rcout << "<=" <<std::endl;
+        fml_out += "%s&lt;=%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgNe: {
+        if (debug) Rcpp::Rcout << "!=" <<std::endl;
+        fml_out += "%s&lt;&gt;%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgUPlus: {
+        if (debug) Rcpp::Rcout << "+val" <<std::endl;
+        fml_out += "+%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgUMinus: {
+        if (debug) Rcpp::Rcout << "-val" <<std::endl;
+        fml_out += "-%s";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgParen: {
+        if (debug) Rcpp::Rcout << "()" <<std::endl;
+        fml_out += "(%s)";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgMissArg: {
+        if (debug) Rcpp::Rcout << "MISSING()" <<std::endl;
+        fml_out += " ";
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgInt: {
+        if (debug) Rcpp::Rcout << "PtgInt" <<std::endl;
+        uint16_t integer = 0;
+        integer = readbin(integer, sas, swapit);
+        // Rcpp::Rcout << integer << std::endl;
+        fml_out += std::to_string(integer);
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgNum: {
+        if (debug) Rcpp::Rcout << "PtgNum" <<std::endl;
+        double value = Xnum(sas, swapit);
+        fml_out += std::to_string(value);
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgStr: {
+        if (debug) Rcpp::Rcout << "PtgStr" <<std::endl;
+
+        std::string esc_quote = PtrStr(sas, swapit);
+        // Rcpp::Rcout << esc_quote << std::endl;
+        if (esc_quote == "\n") fml_out += '\"'; // + escape_quote(esc_quote) + "\"";
+        else fml_out += "\"" + escape_xml(escape_quote(esc_quote)) + "\"";
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgArray:
+      case PtgArray2:
+      case PtgArray3: {
+        if (debug) Rcpp::Rcout << "PtgArray" <<std::endl;
+
+        RgbExtra typ = PtgExtraArray;
+        ptgextra.push_back(typ);
+
+        // ptg_extra_array = true;
+        uint16_t unused2 = 0;
+        uint32_t unused1 = 0, unused3 = 0, unused4 = 0;
+        unused1 = readbin(unused1, sas, swapit);
+        unused2 = readbin(unused2, sas, swapit);
+        unused3 = readbin(unused3, sas, swapit);
+        unused4 = readbin(unused4, sas, swapit);
+
+        // TODO: this saves the spot for the array. the formula is still broken:
+        // in the formula parser the stack will remain in reverse order
+        // something like SUM(@array@) {"myarray"} will be returned. *sigh*
+        // NOTE: maybe it's better to push the formula to a string vector and find
+        // and replace @array@ with array information
+        fml_out += "@array@";
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgRef:
+      case PtgRef2:
+      case PtgRef3: {
+        if (debug) Rcpp::Rcout << "PtgRef" <<std::endl;
+        // uint8_t ptg8 = 0, ptg = 0, PtgDataType = 0, null = 0;
+        //
+        // 2
+        // Rprintf("PtgRef2: %d, %d, %d\n", ptg, PtgDataType, null);
+
+        // val1[6:7] == PtgDataType
+
+        fml_out += Loc(sas, swapit);
+        fml_out += "\n";
+
+        if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+        break;
+      }
+
+      case PtgRef3d:
+      case PtgRef3d2:
+      case PtgRef3d3: {
+        if (debug) Rcpp::Rcout << "PtgRef3d" <<std::endl;
+        // need_ptg_revextern = true;
+        RgbExtra typ = RevExtern;
+        if (has_revision_record)
           ptgextra.push_back(typ);
 
+        uint16_t ixti = 0;
+        if (debug) Rprintf("XtiIndex: %d\n", ixti);
+        ixti = readbin(ixti, sas, swapit);  // XtiIndex
+
         std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << listIndex; // << ixti;
+        paddedStr << std::setw(12) << std::setfill('0') << ixti;
 
         // A1 notation cell
-        // something like this: Table1[[#This Row],[a]]
-        fml_out += "openxlsx2tab_" + paddedStr.str();
-
-        bool no_row_type = fields->invalid == 1 || fields->nonresident == 1;
-
-        fml_out += "[";
-
-        bool need_bracket = fields->columns > 0 ||
-            (fields->columns == 0 &&
-              (fields->rowType == dataheaders ||
-                fields->rowType == datatotals)
-            );
-
-
-        // if rowType == 0 no #Data etc is added
-        if (!no_row_type && fields->rowType) {
-          if (need_bracket) fml_out += "[";
-          if (fields->rowType == data)        fml_out += "";
-          if (fields->rowType == all)         fml_out += "#All";
-          if (fields->rowType == headers)     fml_out += "#Headers";
-          if (fields->rowType == data2)       fml_out += "#Data";
-          if (fields->rowType == dataheaders) fml_out += "#Headers],[#Data";
-          if (fields->rowType == totals)      fml_out += "#Totals";
-          if (fields->rowType == datatotals)  fml_out += "#Data],[#Totals";
-          if (fields->rowType == current)     fml_out += "#This Row";
-          if (need_bracket) fml_out += "]";
-          if (fields->columns > 0) fml_out += ",";
-        }
-
-        // not sure what is supposed to happen in this case?
-        // have to replace colFirst with a variable name
-        if (!(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
-          // Rcpp::Rcout << "colFirst" << std::endl;
-          if (fields->columns > 1 || fields->rowType > data) fml_out += "[";
-          fml_out += "openxlsx2col_";
-          fml_out += std::to_string(listIndex);
-          fml_out += "_";
-          fml_out += std::to_string(colFirst);
-          if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
-        }
-
-        // have to replace colLast with a variable name
-        if ((colFirst < colLast) && !(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
-          // Rcpp::Rcout << "colLast" << std::endl;
-          fml_out += ":[openxlsx2col_";
-          fml_out += std::to_string(listIndex);
-          fml_out += "_";
-          fml_out += std::to_string(colLast);
-          if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
-        }
-
-        fml_out += "]";
+        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        fml_out += Loc(sas, swapit);
         fml_out += "\n";
 
-        // Do something with this, just ... what?
-        if (debug)
-        Rprintf("PtgList: %d, %d, %d, %d\n",
-            ixti, listIndex, colFirst, colLast);
-
-        // if (debug)
-        // Rcpp::warning("formulas with table references are not implemented.");
+        if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
 
         break;
       }
 
-      case PtgAttrSemi:
-      {
-        // function is volatile and has to be calculated every time the
-        // workbook is opened
-        if (debug) Rcpp::Rcout << "PtgAttrSemi" << std::endl;
+      case PtgRefN:
+      case PtgRefN2:
+      case PtgRefN3: {
+        if (debug) Rcpp::Rcout << "PtgRefN" <<std::endl;
 
-        if ((val2  & 1) != 1) Rcpp::stop("wrong value");
-        // val2[1] == 1
-        // val2[2:8] == 0
-        uint16_t unused = 0;
+        // A1 notation cell
+        fml_out += LocRel(sas, swapit, col, row);
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgArea:
+      case PtgArea2:
+      case PtgArea3: {
+        if (debug) Rcpp::Rcout << "PtgArea" <<std::endl;
+
+        // A1 notation cell
+        fml_out += Area(sas, swapit);
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgArea3d:
+      case PtgArea3d2:
+      case PtgArea3d3: {
+        if (debug) Rcpp::Rcout << "PtgArea3d" <<std::endl;
+
+        // need_ptg_revextern = true;
+        RgbExtra typ = RevExtern;
+        if (has_revision_record)
+          ptgextra.push_back(typ);
+
+        uint16_t ixti = 0;
+
+        ixti = readbin(ixti, sas, swapit);
+        if (debug) Rprintf("ixti in PtgArea3d: %d\n", ixti);
+
+        std::stringstream paddedStr;
+        paddedStr << std::setw(12) << std::setfill('0') << ixti;
+
+        // A1 notation cell
+        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        fml_out += Area(sas, swapit);
+        fml_out += "\n";
+
+        if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+        break;
+      }
+
+      case PtgAreaN:
+      case PtgAreaN2:
+      case PtgAreaN3: {
+        if (debug) Rcpp::Rcout << "PtgAreaN" <<std::endl;
+
+        // A1 notation cell
+        fml_out += AreaRel(sas, swapit, col, row);
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgMemArea:
+      case PtgMemArea2:
+      case PtgMemArea3: {
+        if (debug) Rcpp::Rcout << "PtgMemArea" <<std::endl;
+
+        // need_ptg_extra_mem = true;
+        RgbExtra typ = PtgExtraMem;
+        ptgextra.push_back(typ);
+
+        uint16_t cce = 0;
+        uint32_t unused = 0;
         unused = readbin(unused, sas, swapit);
-        // Rcpp::Rcout << unused << std::endl;
-        break;
-      }
+        cce = readbin(cce, sas, swapit);
+        // number of bytes for PtgExtraMem section?
 
-      // beg control tokens. according to manual they can be ignored
-      case PtgAttrIf:
-      case PtgAttrIfError:
-      case PtgAttrGoTo:
-      {
-        if (debug) Rcpp::Rcout << "PtgAttrIf" <<std::endl;
-
-        uint16_t offset = 0;
-
-        offset = readbin(offset, sas, swapit);
+        fml_out += "@mem@";
+        fml_out += "\n";
 
         break;
       }
 
-      case PtgAttrChoose:
-      {
-        if (debug) Rcpp::Rcout << "PtgAttrChoose" <<std::endl;
+      case PtgName:
+      case PtgName2:
+      case PtgName3: {
+        if (debug) Rcpp::Rcout << "PtgName" <<std::endl;
 
-        uint16_t cOffset = 0, rgOffset = 0;
+        // need_ptg_revnametabid = true;
+        RgbExtra typ = RevNameTabid;
+        if (has_revision_record)
+          ptgextra.push_back(typ);
 
-        cOffset = readbin(cOffset, sas, swapit);
+        uint32_t nameindex = 0;
+        nameindex = readbin(nameindex, sas, swapit);
+        // Rcpp::Rcout << nameindex << std::endl;
+        // fml_out += std::to_string(nameindex);
 
-        // some offsets, currently unused
-        for (int16_t off = 0; off < (cOffset + 1); ++off) {
-          rgOffset = readbin(rgOffset, sas, swapit);
-          if (debug) Rcpp::Rcout << rgOffset << std::endl;
+        std::stringstream paddedStr;
+        paddedStr << std::setw(12) << std::setfill('0') << nameindex;
+
+        fml_out += "openxlsx2defnam_" + paddedStr.str();
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgNameX:
+      case PtgNameX2:
+      case PtgNameX3: {
+        if (debug) Rcpp::Rcout << "PtgNameX" <<std::endl;
+
+        // need_ptg_revname = true;
+        RgbExtra typ = RevName;
+        if (has_revision_record)
+          ptgextra.push_back(typ);
+
+        // not yet found
+        uint16_t ixti = 0;
+        uint32_t nameindex = 0;
+        ixti = readbin(ixti, sas, swapit);
+        nameindex = readbin(nameindex, sas, swapit);
+        // Rcpp::Rcout << nameindex << std::endl;
+        // fml_out += std::to_string(ixti);
+        // fml_out += std::to_string(nameindex);
+
+        // copied from above, does this work?
+        std::stringstream paddedStr;
+        paddedStr << std::setw(12) << std::setfill('0') << nameindex;
+
+        fml_out += "openxlsx2defnam_" + paddedStr.str();
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgRefErr:
+      case PtgRefErr2:
+      case PtgRefErr3: {
+        if (debug) Rcpp::Rcout << "PtgRefErr" <<std::endl;
+
+        uint16_t unused2 = 0;
+        uint32_t unused1 = 0;
+
+        unused1 = readbin(unused1, sas, swapit);
+        unused2 = readbin(unused2, sas, swapit);
+
+        fml_out += "#REF!";
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgRefErr3d:
+      case PtgRefErr3d2:
+      case PtgRefErr3d3: {
+        if (debug) Rcpp::Rcout << "PtgRefErr3d" <<std::endl;
+
+        // need_ptg_revextern = true;
+        RgbExtra typ = RevExtern;
+        if (has_revision_record)
+          ptgextra.push_back(typ);
+
+        uint16_t ixti = 0, unused2 = 0;
+        uint32_t unused1 = 0;
+
+        ixti = readbin(ixti, sas, swapit);
+        unused1 = readbin(unused1, sas, swapit);
+        unused2 = readbin(unused2, sas, swapit);
+
+        std::stringstream paddedStr;
+        paddedStr << std::setw(12) << std::setfill('0') << ixti;
+
+        // A1 notation cell
+        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        fml_out += "#REF!";
+        fml_out += "\n";
+
+        if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+        break;
+      }
+
+      case PtgAreaErr:
+      case PtgAreaErr2:
+      case PtgAreaErr3: {
+        if (debug) Rcpp::Rcout << "PtgAreaErr" <<std::endl;
+
+        uint32_t unused1 = 0, unused2 = 0, unused3 = 0;
+        unused1 = readbin(unused1, sas, swapit);
+        unused2 = readbin(unused2, sas, swapit);
+        unused3 = readbin(unused3, sas, swapit);
+
+        // could not reproduce this locally
+        fml_out += "#REF!";
+        fml_out += "\n";
+
+        if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+        break;
+      }
+
+      case PtgAreaErr3d:
+      case PtgAreaErr3d2:
+      case PtgAreaErr3d3: {
+        if (debug) Rcpp::Rcout << "PtgAreaErr3d" <<std::endl;
+
+        // need_ptg_revextern = true;
+        RgbExtra typ = RevExtern;
+        if (has_revision_record)
+          ptgextra.push_back(typ);
+
+        uint16_t ixti = 0;
+        uint32_t unused1 = 0, unused2 = 0, unused3 = 0;
+
+        ixti = readbin(ixti, sas, swapit);
+        unused1 = readbin(unused1, sas, swapit);
+        unused2 = readbin(unused2, sas, swapit);
+        unused3 = readbin(unused3, sas, swapit);
+
+        std::stringstream paddedStr;
+        paddedStr << std::setw(12) << std::setfill('0') << ixti;
+
+        // A1 notation cell
+        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        fml_out += "#REF!";
+        fml_out += "\n";
+
+        if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
+
+        break;
+      }
+
+      case PtgFunc:
+      case PtgFunc2:
+      case PtgFunc3: {
+        if (debug) Rcpp::Rcout << "PtgFunc" <<std::endl;
+
+        uint16_t iftab = 0;
+        iftab = readbin(iftab, sas, swapit);
+
+        std::string fml = Ftab(iftab);
+
+        fml_out += fml;
+        fml_out += "\n";
+
+        break;
+      }
+
+      case PtgFuncVar:
+      case PtgFuncVar2:
+      case PtgFuncVar3: {
+        if (debug) Rcpp::Rcout << "PtgFuncVar" <<std::endl;
+
+        uint8_t cparams = 0, fCeFunc = 0;  // number of parameters
+        cparams = readbin(cparams, sas, swapit);
+
+        uint16_t tab = 0;
+        tab = readbin(tab, sas, swapit);
+        // tab[16] == fCeFunc bool
+        // tab[1:15] == tab
+
+        // TODO add a check that Ftab() returns only functions
+        // with variable number of  arguments
+        fCeFunc = (tab >> 15) & 0x0001;
+        tab &= 0x7FFF;
+        if (fCeFunc) {
+          fml_out += Cetab(tab);
+        } else {
+          fml_out += Ftab(tab);
         }
 
+        fml_out += "(";
+        if (cparams) fml_out += "%s"; // RAND() needs no argument
+        for (uint8_t i = 1; i < cparams; ++i) {
+          fml_out += ",%s";
+        }
+        fml_out += ")\n";
+
+        if (debug) Rprintf("PtgFuncVar: %d %d %d\n", cparams, tab, fCeFunc);
+
         break;
       }
-      // end control tokens
 
-      case PtgAttrSpace:
-      {
-        uint8_t type = 0, cch = 0;
+      case PtgErr: {
+        if (debug) Rcpp::Rcout << "PtgErr" <<std::endl;
 
-        if (((val2 >> 6) & 1) != 1) Rcpp::stop("wrong value");
+        fml_out += BErr(sas, swapit);
+        fml_out += "\n";
+        break;
+      }
 
-        // PtgAttrSpaceType
-        type = readbin(type, sas, swapit);
-        // 0-6 various different types where to add the whitespace
-        cch = readbin(cch, sas, swapit);
+      case PtgBool: {
+        if (debug) Rcpp::Rcout << "PtgBool" <<std::endl;
 
-        // hm, there is also " " as operator. genius move ...
-        // fml_out += "%s";
-        for (uint8_t i = 0; i < cch; ++i) {
-          fml_out += " ";
-        }
-        // fml_out += "%s";
+        int8_t boolean = 0;
+        boolean = readbin(boolean, sas, swapit);
+        fml_out += std::to_string(boolean);
+        fml_out += "\n";
+        break;
+      }
+
+      case PtgExp: {
+        if (debug) Rcpp::Rcout << "PtgExp" <<std::endl;
+
+        // this is a reference to the cell that contains the shared formula
+        int32_t ptg_row = UncheckedRw(sas, swapit) + 1;
+        if (debug) Rcpp::Rcout << "PtgExp: " << ptg_row << std::endl;
+        sharedFml = ptg_row;
+        break;
+      }
+
+      case PtgMemFunc:
+      case PtgMemFunc2:
+      case PtgMemFunc3: {
+        if (debug) Rcpp::Rcout << "PtgMemFunc" <<std::endl;
+
+        uint16_t cce = 0;
+        cce = readbin(cce, sas, swapit);  // count of bytes in the binary reference expression
+        break;
+      }
+
+      case PtgMemErr:
+      case PtgMemErr2:
+      case PtgMemErr3: {
+        if (debug) Rcpp::Rcout << "PtgMemErr" <<std::endl;
+
+        uint8_t unused1 = 0;
+        uint16_t unused2 = 0, cce = 0;
+
+        // Error txt is already in the value field
+        // fml_out += BErr(sas, swapit);
         // fml_out += "\n";
 
-        if (debug) Rprintf("AttrSpace: %d %d\n", type, cch);
+        std::string err_str = "";
+        err_str = BErr(sas, swapit);
+
+        if (debug) Rcpp::Rcout << "PtgMemErr: " << err_str << std::endl;
+
+        unused1 = readbin(unused1, sas, swapit);
+        unused2 = readbin(unused2, sas, swapit);
+        cce = readbin(cce, sas, swapit);  // count of bytes in the binary reference expression
+
         break;
       }
 
-      case PtgAttrSpaceSemi:
-      {
-        // type: A PtgAttrSpaceType
-        uint8_t type = 0, cch = 0;
-        type = readbin(type, sas, swapit);
-        cch = readbin(cch, sas, swapit);
+      case PtgMemNoMem:
+      case PtgMemNoMem2:
+      case PtgMemNoMem3: {
+        if (debug) Rcpp::Rcout << "PtgMemNoMem" <<std::endl;
 
-        if (debug) Rprintf("PtgAttrSpaceSemi: %d %d\n", type, cch);
-        break;
-      }
-
-      case PtgAttrSum:
-      {
-        if (debug) Rcpp::Rcout << "PtgAttrSum" << std::endl;
-        // val2[1:4] == 0
-        // val2[5]   == 1
-        // val2[6:8] == 0
-        uint16_t unused = 0;
+        uint32_t unused = 0;
         unused = readbin(unused, sas, swapit);
-        // Rcpp::Rcout << unused << std::endl;
-        fml_out += "SUM(%s)"; // maybe attr because it is a single cell function?
-        fml_out += "\n";
+
+        uint16_t cce = 0;
+        cce = readbin(cce, sas, swapit);  // count of bytes in the binary reference expression
+
         break;
       }
 
-      case PtgAttrBaxcel:
-      case PtgAttrBaxcel2:
-      {
-        // val1[8]   == bitSemi if Rgce is volatile
-        // val2[1:4] == 0
-        // val2[5]   == 1
-        // val2[6:8] == 0
-
-        uint16_t unused = 0;
-        unused = readbin(unused, sas, swapit);
-        Rcpp::warning("PtgAttrBaxcel: unhandled formula thing");
+      default: {
+        // if (debug)
+        Rcpp::warning("Undefined Formula: %d %d\n", val1, val2);
         break;
       }
-
-      default:{
-        Rprintf("Undefined Formula_TWO: %d %d\n", val1, val2);
-        break;
-      }
-      }
-
-      break;
     }
-
-    case PtgRange:
-    {
-      if (debug) Rcpp::Rcout << ":" <<std::endl;
-      fml_out += "%s:%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgUnion:
-    {
-      if (debug) Rcpp::Rcout << "," <<std::endl;
-      fml_out += "%s,%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgIsect:
-    {
-      if (debug) Rcpp::Rcout << " " <<std::endl;
-      fml_out += "%s %s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgAdd:
-    {
-      if (debug) Rcpp::Rcout << "+" <<std::endl;
-      fml_out += "%s+%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgSub:
-    {
-      if (debug) Rcpp::Rcout << "-" <<std::endl;
-      fml_out += "%s-%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgMul:
-    {
-      if (debug) Rcpp::Rcout << "*" <<std::endl;
-      fml_out += "%s*%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgDiv:
-    {
-      if (debug) Rcpp::Rcout << "/" <<std::endl;
-      fml_out +=  "%s/%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgPercent:
-    {
-      if (debug) Rcpp::Rcout << "%" <<std::endl;
-      fml_out +=  "%s%";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgPower:
-    {
-      if (debug) Rcpp::Rcout << "^" <<std::endl;
-      fml_out += "%s^%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgConcat:
-    {
-      if (debug) Rcpp::Rcout << "&" <<std::endl;
-      fml_out += "%s&amp;%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgEq:
-    {
-      if (debug) Rcpp::Rcout << "=" <<std::endl;
-      fml_out += "%s=%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgGt:
-    {
-      if (debug) Rcpp::Rcout << ">" <<std::endl;
-      fml_out += "%s&gt;%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgGe:
-    {
-      if (debug) Rcpp::Rcout << ">=" <<std::endl;
-      fml_out += "%s&gt;=%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgLt:
-    {
-      if (debug) Rcpp::Rcout << "<" <<std::endl;
-      fml_out += "%s&lt;%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgLe:
-    {
-      if (debug) Rcpp::Rcout << "<=" <<std::endl;
-      fml_out += "%s&lt;=%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgNe:
-    {
-      if (debug) Rcpp::Rcout << "!=" <<std::endl;
-      fml_out += "%s&lt;&gt;%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgUPlus:
-    {
-      if (debug) Rcpp::Rcout << "+val" <<std::endl;
-      fml_out += "+%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgUMinus:
-    {
-      if (debug) Rcpp::Rcout << "-val" <<std::endl;
-      fml_out += "-%s";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgParen:
-    {
-      if (debug) Rcpp::Rcout << "()" <<std::endl;
-      fml_out += "(%s)";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgMissArg:
-    {
-      if (debug) Rcpp::Rcout << "MISSING()" <<std::endl;
-      fml_out += " ";
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgInt:
-    {
-      if (debug) Rcpp::Rcout << "PtgInt" <<std::endl;
-      uint16_t integer = 0;
-      integer = readbin(integer, sas, swapit);
-      // Rcpp::Rcout << integer << std::endl;
-      fml_out += std::to_string(integer);
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgNum:
-    {
-      if (debug) Rcpp::Rcout << "PtgNum" <<std::endl;
-      double value = Xnum(sas, swapit);
-      fml_out += std::to_string(value);
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgStr:
-    {
-      if (debug) Rcpp::Rcout << "PtgStr" <<std::endl;
-
-      std::string esc_quote = PtrStr(sas, swapit);
-      // Rcpp::Rcout << esc_quote << std::endl;
-      if (esc_quote == "\n") fml_out += '\"'; // + escape_quote(esc_quote) + "\"";
-      else fml_out += "\"" + escape_xml(escape_quote(esc_quote)) + "\"";
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgArray:
-    case PtgArray2:
-    case PtgArray3:
-    {
-      if (debug) Rcpp::Rcout << "PtgArray" <<std::endl;
-
-      RgbExtra typ = PtgExtraArray;
-      ptgextra.push_back(typ);
-
-      // ptg_extra_array = true;
-      uint16_t unused2 = 0;
-      uint32_t unused1 = 0, unused3 = 0, unused4 = 0;
-      unused1 = readbin(unused1, sas, swapit);
-      unused2 = readbin(unused2, sas, swapit);
-      unused3 = readbin(unused3, sas, swapit);
-      unused4 = readbin(unused4, sas, swapit);
-
-      // TODO: this saves the spot for the array. the formula is still broken:
-      // in the formula parser the stack will remain in reverse order
-      // something like SUM(@array@) {"myarray"} will be returned. *sigh*
-      // NOTE: maybe it's better to push the formula to a string vector and find
-      // and replace @array@ with array information
-      fml_out += "@array@";
-      fml_out += "\n";
-
-      break;
-    }
-
-
-    case PtgRef:
-    case PtgRef2:
-    case PtgRef3:
-    {
-      if (debug) Rcpp::Rcout << "PtgRef" <<std::endl;
-      // uint8_t ptg8 = 0, ptg = 0, PtgDataType = 0, null = 0;
-      //
-      // 2
-      // Rprintf("PtgRef2: %d, %d, %d\n", ptg, PtgDataType, null);
-
-      // val1[6:7] == PtgDataType
-
-      fml_out +=  Loc(sas, swapit);
-      fml_out += "\n";
-
-      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
-
-      break;
-    }
-
-    case PtgRef3d:
-    case PtgRef3d2:
-    case PtgRef3d3:
-    {
-      if (debug) Rcpp::Rcout << "PtgRef3d" <<std::endl;
-      // need_ptg_revextern = true;
-      RgbExtra typ = RevExtern;
-      if (has_revision_record)
-        ptgextra.push_back(typ);
-
-      uint16_t ixti = 0;
-      ixti = readbin(ixti, sas, swapit); // XtiIndex
-      if (debug) Rprintf("XtiIndex: %d\n", ixti);
-
-      std::stringstream paddedStr;
-      paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-
-      // A1 notation cell
-      fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
-      fml_out += Loc(sas, swapit);
-      fml_out += "\n";
-
-      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
-
-      break;
-    }
-
-    case PtgRefN:
-    case PtgRefN2:
-    case PtgRefN3:
-    {
-      if (debug) Rcpp::Rcout << "PtgRefN" <<std::endl;
-
-      // A1 notation cell
-      fml_out += LocRel(sas, swapit, col, row);
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgArea:
-    case PtgArea2:
-    case PtgArea3:
-    {
-      if (debug) Rcpp::Rcout << "PtgArea" <<std::endl;
-
-      // A1 notation cell
-      fml_out += Area(sas, swapit);
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgArea3d:
-    case PtgArea3d2:
-    case PtgArea3d3:
-    {
-      if (debug) Rcpp::Rcout << "PtgArea3d" <<std::endl;
-
-      // need_ptg_revextern = true;
-      RgbExtra typ = RevExtern;
-      if (has_revision_record)
-        ptgextra.push_back(typ);
-
-      uint16_t ixti = 0;
-
-      ixti = readbin(ixti, sas, swapit);
-      if (debug) Rprintf("ixti in PtgArea3d: %d\n", ixti);
-
-      std::stringstream paddedStr;
-      paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-      // A1 notation cell
-      fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
-      fml_out += Area(sas, swapit);
-      fml_out += "\n";
-
-      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
-
-      break;
-    }
-
-    case PtgAreaN:
-    case PtgAreaN2:
-    case PtgAreaN3:
-    {
-      if (debug) Rcpp::Rcout << "PtgAreaN" <<std::endl;
-
-      // A1 notation cell
-      fml_out += AreaRel(sas, swapit, col, row);
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgMemArea:
-    case PtgMemArea2:
-    case PtgMemArea3:
-    {
-      if (debug) Rcpp::Rcout << "PtgMemArea" <<std::endl;
-
-      // need_ptg_extra_mem = true;
-      RgbExtra typ = PtgExtraMem;
-      ptgextra.push_back(typ);
-
-      uint16_t cce = 0;
-      uint32_t unused = 0;
-      unused = readbin(unused, sas, swapit);
-      cce = readbin(cce, sas, swapit);
-      // number of bytes for PtgExtraMem section?
-
-      fml_out += "@mem@";
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgName:
-    case PtgName2:
-    case PtgName3:
-    {
-      if (debug) Rcpp::Rcout << "PtgName" <<std::endl;
-
-      // need_ptg_revnametabid = true;
-      RgbExtra typ = RevNameTabid;
-      if (has_revision_record)
-        ptgextra.push_back(typ);
-
-      uint32_t nameindex = 0;
-      nameindex = readbin(nameindex, sas, swapit);
-      // Rcpp::Rcout << nameindex << std::endl;
-      // fml_out += std::to_string(nameindex);
-
-      std::stringstream paddedStr;
-      paddedStr << std::setw(12) << std::setfill('0') << nameindex;
-
-      fml_out += "openxlsx2defnam_" + paddedStr.str();
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgNameX:
-    case PtgNameX2:
-    case PtgNameX3:
-    {
-      if (debug) Rcpp::Rcout << "PtgNameX" <<std::endl;
-
-      // need_ptg_revname = true;
-      RgbExtra typ = RevName;
-      if (has_revision_record)
-        ptgextra.push_back(typ);
-
-      // not yet found
-      uint16_t ixti = 0;
-      uint32_t nameindex = 0;
-      ixti = readbin(ixti, sas, swapit);
-      nameindex = readbin(nameindex, sas, swapit);
-      // Rcpp::Rcout << nameindex << std::endl;
-      // fml_out += std::to_string(ixti);
-      // fml_out += std::to_string(nameindex);
-
-      // copied from above, does this work?
-      std::stringstream paddedStr;
-      paddedStr << std::setw(12) << std::setfill('0') << nameindex;
-
-      fml_out += "openxlsx2defnam_" + paddedStr.str();
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgRefErr:
-    case PtgRefErr2:
-    case PtgRefErr3:
-    {
-      if (debug) Rcpp::Rcout << "PtgRefErr" <<std::endl;
-
-      uint16_t unused2 = 0;
-      uint32_t unused1 = 0;
-
-      unused1 = readbin(unused1, sas, swapit);
-      unused2 = readbin(unused2, sas, swapit);
-
-      fml_out += "#REF!";
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgRefErr3d:
-    case PtgRefErr3d2:
-    case PtgRefErr3d3:
-    {
-      if (debug) Rcpp::Rcout << "PtgRefErr3d" <<std::endl;
-
-      // need_ptg_revextern = true;
-      RgbExtra typ = RevExtern;
-      if (has_revision_record)
-        ptgextra.push_back(typ);
-
-      uint16_t ixti = 0, unused2 = 0;
-      uint32_t unused1 = 0;
-
-      ixti = readbin(ixti, sas, swapit);
-      unused1 = readbin(unused1, sas, swapit);
-      unused2 = readbin(unused2, sas, swapit);
-
-      std::stringstream paddedStr;
-      paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-      // A1 notation cell
-      fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
-      fml_out += "#REF!";
-      fml_out += "\n";
-
-      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
-
-      break;
-    }
-
-    case PtgAreaErr:
-    case PtgAreaErr2:
-    case PtgAreaErr3:
-    {
-      if (debug) Rcpp::Rcout << "PtgAreaErr" <<std::endl;
-
-      uint32_t unused1 = 0, unused2 = 0, unused3 = 0;
-      unused1 = readbin(unused1, sas, swapit);
-      unused2 = readbin(unused2, sas, swapit);
-      unused3 = readbin(unused3, sas, swapit);
-
-      // could not reproduce this locally
-      fml_out += "#REF!";
-      fml_out += "\n";
-
-      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
-
-      break;
-    }
-
-    case PtgAreaErr3d:
-    case PtgAreaErr3d2:
-    case PtgAreaErr3d3:
-    {
-      if (debug) Rcpp::Rcout << "PtgAreaErr3d" <<std::endl;
-
-      // need_ptg_revextern = true;
-      RgbExtra typ = RevExtern;
-      if (has_revision_record)
-        ptgextra.push_back(typ);
-
-      uint16_t ixti = 0;
-      uint32_t unused1 = 0, unused2 = 0, unused3 = 0;
-
-      ixti = readbin(ixti, sas, swapit);
-      unused1 = readbin(unused1, sas, swapit);
-      unused2 = readbin(unused2, sas, swapit);
-      unused3 = readbin(unused3, sas, swapit);
-
-      std::stringstream paddedStr;
-      paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-      // A1 notation cell
-      fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
-      fml_out += "#REF!";
-      fml_out += "\n";
-
-      if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
-
-      break;
-    }
-
-    case PtgFunc:
-    case PtgFunc2:
-    case PtgFunc3:
-    {
-      if (debug) Rcpp::Rcout << "PtgFunc" <<std::endl;
-
-      uint16_t iftab = 0;
-      iftab = readbin(iftab, sas, swapit);
-
-      std::string fml = Ftab(iftab);
-
-      fml_out += fml;
-      fml_out += "\n";
-
-      break;
-    }
-
-    case PtgFuncVar:
-    case PtgFuncVar2:
-    case PtgFuncVar3:
-    {
-      if (debug) Rcpp::Rcout << "PtgFuncVar" <<std::endl;
-
-      uint8_t cparams = 0, fCeFunc = 0; // number of parameters
-      cparams = readbin(cparams, sas, swapit);
-
-      uint16_t tab = 0;
-      tab = readbin(tab, sas, swapit);
-      // tab[16] == fCeFunc bool
-      // tab[1:15] == tab
-
-      // TODO add a check that Ftab() returns only functions
-      // with variable number of  arguments
-      fCeFunc = (tab >> 15) & 0x0001;
-      tab &= 0x7FFF;
-      if (fCeFunc) {
-        fml_out += Cetab(tab);
-      } else {
-        fml_out += Ftab(tab);
-      }
-
-      fml_out += "(";
-      if (cparams) fml_out += "%s"; // RAND() needs no argument
-      for (uint8_t i = 1; i < cparams; ++i) {
-        fml_out += ",%s";
-      }
-      fml_out += ")\n";
-
-      if (debug) Rprintf("PtgFuncVar: %d %d %d\n", cparams, tab, fCeFunc);
-
-      break;
-    }
-
-    case PtgErr:
-    {
-      if (debug) Rcpp::Rcout << "PtgErr" <<std::endl;
-
-      fml_out += BErr(sas, swapit);
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgBool:
-    {
-      if (debug) Rcpp::Rcout << "PtgBool" <<std::endl;
-
-      int8_t boolean = 0;
-      boolean = readbin(boolean, sas, swapit);
-      fml_out += std::to_string(boolean);
-      fml_out += "\n";
-      break;
-    }
-
-    case PtgExp:
-    {
-      if (debug) Rcpp::Rcout << "PtgExp" <<std::endl;
-
-      // this is a reference to the cell that contains the shared formula
-      int32_t ptg_row = UncheckedRw(sas, swapit) + 1;
-      if (debug) Rcpp::Rcout << "PtgExp: " << ptg_row << std::endl;
-      sharedFml = ptg_row;
-      break;
-    }
-
-    case PtgMemFunc:
-    case PtgMemFunc2:
-    case PtgMemFunc3:
-    {
-      if (debug) Rcpp::Rcout << "PtgMemFunc" <<std::endl;
-
-      uint16_t cce = 0;
-      cce = readbin(cce, sas, swapit); // count of bytes in the binary reference expression
-      break;
-    }
-
-    case PtgMemErr:
-    case PtgMemErr2:
-    case PtgMemErr3:
-    {
-      if (debug) Rcpp::Rcout << "PtgMemErr" <<std::endl;
-
-      uint8_t unused1 = 0;
-      uint16_t unused2 = 0, cce = 0;
-
-      // Error txt is already in the value field
-      // fml_out += BErr(sas, swapit);
-      // fml_out += "\n";
-
-      std::string err_str = "";
-      err_str = BErr(sas, swapit);
-
-      if (debug) Rcpp::Rcout << "PtgMemErr: " << err_str << std::endl;
-
-      unused1 = readbin(unused1, sas, swapit);
-      unused2 = readbin(unused2, sas, swapit);
-      cce = readbin(cce, sas, swapit); // count of bytes in the binary reference expression
-
-      break;
-    }
-
-    case PtgMemNoMem:
-    case PtgMemNoMem2:
-    case PtgMemNoMem3:
-    {
-      if (debug) Rcpp::Rcout << "PtgMemNoMem" <<std::endl;
-
-      uint32_t unused = 0;
-      unused = readbin(unused, sas, swapit);
-
-      uint16_t cce = 0;
-      cce = readbin(cce, sas, swapit); // count of bytes in the binary reference expression
-
-      break;
-    }
-
-    default:
-    {
-      // if (debug)
-      Rcpp::warning("Undefined Formula: %d %d\n", val1, val2);
-      break;
-    }
-    }
-
   }
 
   if (sas.tellg() != pos) {
@@ -2115,193 +2052,177 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
   // std::vector<int32_t> ptgextra;
   // RgbExtra
   for (size_t cntr = 0; cntr < ptgextra.size(); ++cntr) {
-
     val1 = static_cast<int8_t>(ptgextra[cntr]);
 
+    if (debug) Rcpp::Rcout << cntr << ": " << (int32_t)val1 << std::endl;
 
-    if (debug)
-      Rcpp::Rcout << cntr << ": " << (int32_t)val1 << std::endl;
+    switch (val1) {
+      case PtgExtraCol: {
+        // need_ptg_extra_col = true;
+        if (debug) Rcpp::Rcout << "PtgExtraCol" << std::endl;
+        int32_t ptg_col = UncheckedCol(sas, swapit);
+        if (debug) Rcpp::Rcout << "cb PtgExp: " << int_to_col(ptg_col+1) << std::endl;
 
-    switch(val1) {
+        fml_out += int_to_col(ptg_col + 1);
+        fml_out += std::to_string(row);
+        fml_out += "\n";
+        break;
+      }
 
-    case PtgExtraCol:
-    { // PtgExtraCol
+      case PtgExtraArray: {
+        if (debug) Rcpp::Rcout << "PtgExtraArray" << std::endl;
 
-      // need_ptg_extra_col = true;
-      if (debug) Rcpp::Rcout << "PtgExtraCol" << std::endl;
-      int32_t ptg_col = UncheckedCol(sas, swapit);
-      if (debug) Rcpp::Rcout << "cb PtgExp: " << int_to_col(ptg_col+1) << std::endl;
+        int32_t rows = 0, cols = 0;
+        // actually its DRw() and DCol(), but it does not matter?
+        rows = UncheckedRw(sas, swapit);
+        cols = UncheckedCol(sas, swapit);
 
-      fml_out += int_to_col(ptg_col + 1);
-      fml_out += std::to_string(row);
-      fml_out += "\n";
-      break;
-    }
+        std::string array = "";
+        std::vector<std::string> array_elems;  // (cols*rows);
 
-    case PtgExtraArray:
-    {
-      if (debug) Rcpp::Rcout << "PtgExtraArray" << std::endl;
-      // PtgExtraArray
+        if (debug) Rcpp::Rcout << rows << ": " << cols << std::endl;
 
-      int32_t rows = 0, cols = 0;
-      // actually its DRw() and DCol(), but it does not matter?
-      rows = UncheckedRw(sas, swapit);
-      cols = UncheckedCol(sas, swapit);
+        // number of elements in row order: must be equal to rows * cols
+        for (int32_t rr = 0; rr < rows; ++rr) {
+          for (int32_t cc = 0; cc < cols; ++cc) {
+            // blob (it is actually called this way)
+            uint8_t reserved = 0;
+            reserved = readbin(reserved, sas, swapit);
 
-      std::string array = "";
-      std::vector<std::string> array_elems; // (cols*rows);
+            if (debug) Rcpp::Rcout << (int32_t)reserved << std::endl;
 
-      if (debug) Rcpp::Rcout << rows << ": " << cols << std::endl;
+            // SerBool
+            if (reserved == 0x02) {
+              if (debug) Rcpp::Rcout << "SerBool" << std::endl;
+              uint8_t f = 0;
+              f = readbin(f, sas, swapit);
 
-      // number of elements in row order: must be equal to rows * cols
-      for (int32_t rr = 0; rr < rows; ++rr) {
-        for (int32_t cc = 0; cc < cols; ++cc) {
+              if (debug) Rcpp::Rcout << (int32_t)f << std::endl;
+              array_elems.push_back(std::to_string((int32_t)f));
+            }
 
-          // blob (it is actually called this way)
-          uint8_t reserved = 0;
-          reserved = readbin(reserved, sas, swapit);
+            // SerErr
+            if (reserved == 0x04) {
+              if (debug) Rcpp::Rcout << "SerErr" << std::endl;
+              uint8_t reserved2 = 0;
+              uint16_t reserved3 = 0;
+              std::string strerr = BErr(sas, swapit);
+              reserved2 = readbin(reserved2, sas, swapit);
+              reserved3 = readbin(reserved3, sas, swapit);
 
-          if (debug) Rcpp::Rcout << (int32_t)reserved << std::endl;
+              if (debug) Rcpp::Rcout << strerr << std::endl;
+              array_elems.push_back(strerr);
+            }
 
-          // SerBool
-          if (reserved == 0x02) {
-            if (debug) Rcpp::Rcout << "SerBool" << std::endl;
-            uint8_t f = 0;
-            f = readbin(f, sas, swapit);
+            // SerNum
+            if (reserved == 0x00) {
+              if (debug) Rcpp::Rcout << "SerNum" << std::endl;
+              double xnum = 0.0;
+              xnum = Xnum(sas, swapit);
 
-            if (debug) Rcpp::Rcout << (int32_t)f << std::endl;
-            array_elems.push_back(std::to_string((int32_t)f));
-          }
+              std::stringstream stream;
+              stream << std::setprecision(16) << xnum;
 
-          // SerErr
-          if (reserved == 0x04) {
-            if (debug) Rcpp::Rcout << "SerErr" << std::endl;
-            uint8_t reserved2 = 0;
-            uint16_t reserved3 = 0;
-            std::string strerr = BErr(sas, swapit);
-            reserved2 = readbin(reserved2, sas, swapit);
-            reserved3 = readbin(reserved3, sas, swapit);
+              if (debug) Rcpp::Rcout << xnum << std::endl;
+              array_elems.push_back(stream.str());
+            }
 
-            if (debug) Rcpp::Rcout << strerr << std::endl;
-            array_elems.push_back(strerr);
-          }
+            // SerStr
+            if (reserved == 0x01) {
+              if (debug) Rcpp::Rcout << "SerStr" << std::endl;
+              uint16_t cch = 0;
+              cch = readbin(cch, sas, swapit);
+              std::string rgch(cch, '\0');
+              rgch = read_xlwidestring(rgch, sas);
 
-          // SerNum
-          if (reserved == 0x00) {
-            if (debug) Rcpp::Rcout << "SerNum" << std::endl;
-            double xnum = 0.0;
-            xnum = Xnum(sas, swapit);
-
-            std::stringstream stream;
-            stream << std::setprecision(16) << xnum;
-
-            if (debug) Rcpp::Rcout << xnum << std::endl;
-            array_elems.push_back(stream.str());
-          }
-
-          // SerStr
-          if (reserved == 0x01) {
-            if (debug) Rcpp::Rcout << "SerStr" << std::endl;
-            uint16_t cch = 0;
-            cch = readbin(cch, sas, swapit);
-            std::string rgch(cch, '\0');
-            rgch = read_xlwidestring(rgch, sas);
-
-            if (debug) Rcpp::Rcout << rgch << std::endl;
-            array_elems.push_back(rgch);
+              if (debug) Rcpp::Rcout << rgch << std::endl;
+              array_elems.push_back(rgch);
+            }
           }
         }
+
+        array += array_elements(array_elems, rows, cols);
+
+        size_t fi = fml_out.find("@array@");
+
+        if (fi != std::string::npos) {
+          if (debug) Rcpp::Rcout << "replacing @array@" << std::endl;
+          fml_out.replace(fi, 7, array);
+        } else {
+          if (debug) Rcpp::Rcout << "no  @array@" <<  fml_out << std::endl;
+          fml_out += array;
+          fml_out += "\n";
+        }
+
+        if (debug) Rcpp::Rcout << fml_out << std::endl;
+
+        break;
       }
 
-      array += array_elements(array_elems, rows, cols);
+      case PtgExtraMem: {
+        // not sure what this is good for
+        if (debug) Rcpp::Rcout << "PtgExtraMem: " << (int32_t)val1 << std::endl;
 
-      size_t fi = fml_out.find("@array@");
+        int32_t count = 0;
+        count = readbin(count, sas, swapit);
 
-      if (fi != std::string::npos) {
-        if (debug) Rcpp::Rcout << "replacing @array@" << std::endl;
-        fml_out.replace(fi, 7, array);
-      } else {
-        if (debug) Rcpp::Rcout << "no  @array@" <<  fml_out << std::endl;
-        fml_out += array;
-        fml_out += "\n";
+        for (int32_t cnt = 0; cnt < count; ++cnt) {
+          std::vector<int32_t> ucrfx = UncheckedRfX(sas, swapit);
+        }
+
+        break;
       }
 
-      if (debug) Rcpp::Rcout << fml_out << std::endl;
-
-      break;
-    }
-
-    case PtgExtraMem:
-    {
-      // not sure what this is good for
-      if (debug) Rcpp::Rcout << "PtgExtraMem: " << (int32_t)val1 << std::endl;
-
-      int32_t count = 0;
-      count = readbin(count, sas, swapit);
-
-      for (int32_t cnt = 0; cnt < count; ++cnt) {
-        std::vector<int32_t> ucrfx = UncheckedRfX(sas, swapit);
+      case RevNameTabid: {
+        // Rcpp::stop("Skip");
+        if (debug) Rcpp::Rcout << "RevNameTabid: " << (int32_t)val1 << std::endl;
+        sas.seekg(pos, sas.beg);
+        break;
       }
 
-      break;
-    }
+      case RevName: {
+        // Rcpp::stop("Skip");
+        if (debug) Rcpp::Rcout << "RevName: " << (int32_t)val1 << std::endl;
+        sas.seekg(pos, sas.beg);
+        break;
+      }
 
-    case RevNameTabid:
-    {
-      // Rcpp::stop("Skip");
-      if (debug) Rcpp::Rcout << "RevNameTabid: " << (int32_t)val1 << std::endl;
-      sas.seekg(pos, sas.beg);
-      break;
-    }
+      case PtgExtraList: {
+        // Rcpp::stop("Skip");
+        if (debug) Rcpp::Rcout << "PtgExtraList: " << (int32_t)val1 << std::endl;
+        sas.seekg(pos, sas.beg);
+        break;
+      }
 
-    case RevName:
-    {
-      // Rcpp::stop("Skip");
-      if (debug) Rcpp::Rcout << "RevName: " << (int32_t)val1 << std::endl;
-      sas.seekg(pos, sas.beg);
-      break;
-    }
+      case RevExtern: {  // do i need this?
+        if (debug) Rcpp::Rcout << "RevExtern" << std::endl;
 
-    case PtgExtraList:
-    {
-      // Rcpp::stop("Skip");
-      if (debug) Rcpp::Rcout << "PtgExtraList: " << (int32_t)val1 << std::endl;
-      sas.seekg(pos, sas.beg);
-      break;
-    }
+        sas.seekg(pos, sas.beg);
+        break;
 
-      // do i need this?
-    case RevExtern:
-    {
-      if (debug) Rcpp::Rcout << "RevExtern" << std::endl;
+        // I fear that I have to, but on another rainy day
+        // The issue I was tackling is an array in a reference
 
-      sas.seekg(pos, sas.beg);
-      break;
+        // uint16_t book = 0;
+        // book = readbin(book, sas, swapit);
+        // if ((book >> 8) & 0xFF == 0x01) {
+        //   if (book & 0xFF != 0x02)
+        //     Rcpp::stop("not two");
+        // } else {
+        //   uint8_t flags = 0;
+        //   flags = readbin(flags, sas, swapit);
+        //   std::string str(book, '\0');
+        //   return read_xlwidestring(str, sas);
+        //
+        // }
+      }
 
-      // I fear that I have to, but on another rainy day
-      // The issue I was tackling is an array in a reference
-
-      // uint16_t book = 0;
-      // book = readbin(book, sas, swapit);
-      // if ((book >> 8) & 0xFF == 0x01) {
-      //   if (book & 0xFF != 0x02)
-      //     Rcpp::stop("not two");
-      // } else {
-      //   uint8_t flags = 0;
-      //   flags = readbin(flags, sas, swapit);
-      //   std::string str(book, '\0');
-      //   return read_xlwidestring(str, sas);
-      //
-      // }
-    }
-
-    default :
-    {
-      // Rcpp::stop("Skip");
-      Rcpp::Rcout << "undefined cb: " << (int32_t)val1 << std::endl;
-      sas.seekg(pos, sas.beg);
-      break;
-    }
+      default: {
+        // Rcpp::stop("Skip");
+        Rcpp::Rcout << "undefined cb: " << (int32_t)val1 << std::endl;
+        sas.seekg(pos, sas.beg);
+        break;
+      }
     }
   }
 
@@ -2312,7 +2233,6 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
   return fml_out;
 }
-
 
 std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
