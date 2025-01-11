@@ -1,18 +1,16 @@
-#include "openxlsx2.h"
 #include <cctype>
+#include "openxlsx2.h"
 
 // converts sharedstrings xml tree to R-Character Vector
 // [[Rcpp::export]]
 SEXP xml_si_to_txt(XPtrXML doc) {
-
   auto sst = doc->child("sst");
   auto n = std::distance(sst.begin(), sst.end());
 
   Rcpp::CharacterVector res(Rcpp::no_init(n));
 
   auto i = 0;
-  for (auto si : doc->child("sst").children("si"))
-  {
+  for (auto si : doc->child("sst").children("si")) {
     // text to export
     std::string text = "";
 
@@ -24,7 +22,7 @@ SEXP xml_si_to_txt(XPtrXML doc) {
     // has r node with t node
     // linebreaks and spaces are handled in the nodes
     for (auto r : si.children("r")) {
-      for (auto t :r.children("t")) {
+      for (auto t : r.children("t")) {
         text += t.text().get();
       }
     }
@@ -38,12 +36,10 @@ SEXP xml_si_to_txt(XPtrXML doc) {
 }
 
 SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
-
   auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));
 
   for (auto i = 0; i < n; ++i) {
-
     std::string tmp = Rcpp::as<std::string>(vec[i]);
 
     if (tmp.compare("") == 0) {
@@ -58,8 +54,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       Rcpp::stop(type.c_str(), " xml import unsuccessful");
     }
 
-    for (auto is : doc.children(type.c_str()))
-    {
+    for (auto is : doc.children(type.c_str())) {
       // text to export
       std::string text = "";
 
@@ -76,7 +71,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       // t (Text)
       // linebreaks and spaces are handled in the nodes
       for (auto r : is.children("r")) {
-        for (auto t :r.children("t")) {
+        for (auto t : r.children("t")) {
           text += t.text().get();
         }
       }
@@ -84,7 +79,6 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       // push everything back
       res[i] = Rcpp::String(text);
     }
-
   }
 
   return res;
@@ -100,14 +94,7 @@ SEXP si_to_txt(Rcpp::CharacterVector si_vec) {
   return xml_to_txt(si_vec, "si");
 }
 
-std::string txt_to_xml(
-    std::string text,
-    bool no_escapes,
-    bool raw,
-    bool skip_control,
-    std::string type
-) {
-
+std::string txt_to_xml(std::string text, bool no_escapes, bool raw, bool skip_control, std::string type) {
   pugi::xml_document doc;
 
   uint32_t pugi_format_flags = pugi::format_indent;
@@ -119,19 +106,18 @@ std::string txt_to_xml(
 
   // txt input beginning with "<r" is assumed to be a fmt_txt string
   if (text.rfind("<r>", 0) == 0 || text.rfind("<r/>", 0) == 0) {
-
     pugi::xml_document txt_node;
     pugi::xml_parse_result result = txt_node.load_string(text.c_str(), pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_escapes);
     if (!result) Rcpp::stop("Could not parse xml in txt_to_xml()");
 
     for (auto is_n : txt_node.children())
-          is_node.append_copy(is_n);
+      is_node.append_copy(is_n);
 
   } else {
     // text to export
     pugi::xml_node t_node = is_node.append_child("t");
 
-    if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size()-1)))) {
+    if ((text.size() > 0) && (std::isspace(text.at(0)) || std::isspace(text.at(text.size() - 1)))) {
       t_node.append_attribute("xml:space").set_value("preserve");
     }
 
@@ -146,13 +132,11 @@ std::string txt_to_xml(
 }
 
 // [[Rcpp::export]]
-std::string txt_to_is(std::string text,
-                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
+std::string txt_to_is(std::string text, bool no_escapes = false, bool raw = true, bool skip_control = true) {
   return txt_to_xml(text, no_escapes, raw, skip_control, "is");
 }
 
 // [[Rcpp::export]]
-std::string txt_to_si(std::string text,
-                      bool no_escapes = false, bool raw = true, bool skip_control = true) {
+std::string txt_to_si(std::string text, bool no_escapes = false, bool raw = true, bool skip_control = true) {
   return txt_to_xml(text, no_escapes, raw, skip_control, "si");
 }

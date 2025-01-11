@@ -99,7 +99,6 @@ typedef struct {
   uint16_t unused : 10;
 } XFFields;
 
-
 typedef struct {
   bool fShowAutoBreaks : 1;
   uint8_t rserved1 : 2;
@@ -121,7 +120,7 @@ typedef struct {
 typedef struct {
   bool fFilterMode : 1;
   bool fCondFmtCalc : 1;
-  uint8_t reserved4 :6;
+  uint8_t reserved4 : 6;
 } BrtWsPropFields2;
 
 typedef struct {
@@ -189,8 +188,8 @@ typedef struct {
   bool fShowInputMsg : 1;
   bool fShowErrorMsg : 1;
   uint8_t typOperator : 4;
-  bool fDVMinFmla : 1; // only in 14
-  bool fDVMaxFmla : 1; // only in 14
+  bool fDVMinFmla : 1;  // only in 14
+  bool fDVMaxFmla : 1;  // only in 14
   uint8_t reserved : 6;
 } BrtDValFields;
 
@@ -268,38 +267,31 @@ typedef struct {
   bool fAllMemChanges : 1;
   bool fOnlySync : 1;
   bool fPersonalView : 1;
-  uint16_t: 15;
+  uint16_t : 15;
 } BrtUserBookViewFields;
 
 typedef struct {
-  bool fHFDiffOddEven: 1;
-  bool fHFDiffFirst: 1;
-  bool fHFScaleWithDoc: 1;
-  bool fHFAlignMargins: 1;
-  uint16_t reserved: 12;
+  bool fHFDiffOddEven : 1;
+  bool fHFDiffFirst : 1;
+  bool fHFScaleWithDoc : 1;
+  bool fHFAlignMargins : 1;
+  uint16_t reserved : 12;
 } BrtBeginHeaderFooterFields;
 
-enum PtgRowType
-{
+enum PtgRowType {
   data = 0x00,
-  all = 0x01,         // #All
-  headers = 0x02,     // #Headers
-  data2 = 0x04,       // #Data
+  all = 0x01,      // #All
+  headers = 0x02,  // #Headers
+  data2 = 0x04,    // #Data
   dataheaders = 0x06,
-  totals = 0x08,      // #Totals
+  totals = 0x08,  // #Totals
   datatotals = 0x0C,
-  current = 0x10      // #This Row
+  current = 0x10  // #This Row
 };
 
-enum PtgDataType
-{
-  reference = 0x1,
-  value = 0x2,
-  array = 0x3
-};
+enum PtgDataType { reference = 0x1, value = 0x2, array = 0x3 };
 
-enum RgbExtra
-{
+enum RgbExtra {
   PtgExtraArray = 0,
   PtgExtraMem = 1,
   PtgExtraCol = 2,
@@ -309,8 +301,7 @@ enum RgbExtra
   RevExtern = 6
 };
 
-enum RecordTypes
-{
+enum RecordTypes {
   BrtRowHdr = 0,
   BrtCellBlank = 1,
   BrtCellRk = 2,
@@ -1175,8 +1166,7 @@ enum RecordTypes
   BrtPivotCacheAutoRefresh = 5132
 };
 
-enum PtgTypes
-{
+enum PtgTypes {
   PtgExp = 0x01,
   PtgAdd = 0x03,
   PtgSub = 0x04,
@@ -1264,8 +1254,7 @@ enum PtgTypes
   PtgAreaErr3d3 = 0x7D
 };
 
-enum PtgStructure2
-{
+enum PtgStructure2 {
   PtgList = 0x19,
   PtgSxName = 0x1D,
   PtgAttrSemi = 0x01,

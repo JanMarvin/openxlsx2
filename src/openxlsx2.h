@@ -23,8 +23,7 @@ template <typename T>
 static inline std::string int_to_col(T cell) {
   std::string col_name = "";
 
-  while (cell > 0)
-  {
+  while (cell > 0) {
     auto modulo = (cell - 1) % 26;
     col_name = (char)('A' + modulo) + col_name;
     cell = (cell - modulo) / 26;
@@ -37,8 +36,7 @@ static inline std::string int_to_col(T cell) {
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
 static inline bool is_double(std::string x) {
-
-  char *endp;
+  char* endp;
   double res;
 
   res = R_strtod(x.c_str(), &endp);
@@ -56,7 +54,6 @@ static inline bool has_cell(const std::string& str, const std::unordered_set<std
 
 // driver function for col_to_int
 static inline uint32_t uint_col_to_int(std::string& a) {
-
   char A = 'A';
   int32_t aVal = (int)A - 1;
   uint32_t sum = 0;
@@ -97,9 +94,7 @@ inline uint32_t cell_to_rowint(const std::string& str) {
 }
 
 static inline std::string str_toupper(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(),
-                 [](unsigned char c){ return std::toupper(c); }
-  );
+  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::toupper(c); });
   return s;
 }
 
