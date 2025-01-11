@@ -42,20 +42,20 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
 
   // we cannot access rows directly in the dataframe.
   // Have to extract the columns and use these
-  Rcpp::CharacterVector cc_row_r = cc["row_r"]; // 1
-  Rcpp::CharacterVector cc_r     = cc["r"];     // A1
-  Rcpp::CharacterVector cc_v     = cc["v"];     // can be utf8
+  Rcpp::CharacterVector cc_row_r = cc["row_r"];  // 1
+  Rcpp::CharacterVector cc_r     = cc["r"];      // A1
+  Rcpp::CharacterVector cc_v     = cc["v"];      // can be utf8
   Rcpp::CharacterVector cc_c_t   = cc["c_t"];
   Rcpp::CharacterVector cc_c_s   = cc["c_s"];
   Rcpp::CharacterVector cc_c_cm  = cc["c_cm"];
-  Rcpp::CharacterVector cc_c_ph  = cc["c_ph"];  // can be utf8
+  Rcpp::CharacterVector cc_c_ph  = cc["c_ph"];   // can be utf8
   Rcpp::CharacterVector cc_c_vm  = cc["c_vm"];
-  Rcpp::CharacterVector cc_f     = cc["f"];     // can be utf8
+  Rcpp::CharacterVector cc_f     = cc["f"];      // can be utf8
   Rcpp::CharacterVector cc_f_t   = cc["f_t"];
   Rcpp::CharacterVector cc_f_ref = cc["f_ref"];
   Rcpp::CharacterVector cc_f_ca  = cc["f_ca"];
   Rcpp::CharacterVector cc_f_si  = cc["f_si"];
-  Rcpp::CharacterVector cc_is    = cc["is"];    // can be utf8
+  Rcpp::CharacterVector cc_is    = cc["is"];     // can be utf8
 
   Rcpp::CharacterVector row_r    = row_attr["r"];
 
