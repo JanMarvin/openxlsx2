@@ -176,3 +176,27 @@ test_that("loading custom sheet view in xlsb files works", {
   got <- wb$worksheets[[1]]$customSheetViews
   expect_equal(exp, got)
 })
+
+test_that("xlsb formula line breaks are handled", {
+
+  skip_online_checks()
+
+  fl <- testfile_path("line_break.xlsb")
+
+  fml <- "IF(A1 = 1,\"Value \n\"&A1,)"
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = 1)$
+    add_formula(x = fml, dims = "B1")$
+    add_cell_style(dims = "B1", wrap_text = TRUE)$
+    set_row_heights(rows = 1, heights = 30)
+
+  wb2 <- wb_load("/tmp/line_break.xlsb", debug = F)
+  exp <- "IF( A1= 1,\"Value \n\"&A1, )"
+  fml2 <- wb2$to_df(show_formula = TRUE, col_names = FALSE)[1, "B"]
+  expect_equal(exp,  fml2)
+
+  fml  <- gsub(" ", "", fml)
+  fml2 <- gsub(" ", "", fml2)
+
+  expect_equal(fml, fml2)
+})
