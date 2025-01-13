@@ -1789,6 +1789,12 @@ wb_load <- function(
       }
     }
 
+    # remove defined names without value. these are not valid and are probably
+    # remnants of xti
+    if (length(dfn_nms <- wb$workbook$definedNames)) {
+      wb$workbook$definedNames <- dfn_nms[xml_value(dfn_nms, "definedName") != ""]
+    }
+
     # create valid rich text strings in shared strings table
     if (any(sel <- grepl("<FONT_\\d+/>", wb$sharedStrings))) {
 
