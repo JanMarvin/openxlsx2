@@ -127,6 +127,9 @@ std::string escape_quote(const std::string& input) {
       case '\"':
         result += "\"\"";
         break;
+      case '\n':
+        result += "&#xA;";
+        break;
       default:
         result += c;
         break;
@@ -1107,6 +1110,32 @@ std::string array_elements(const std::vector<std::string>& elements, int32_t n, 
 
 #include <stack>
 
+// undo the newline escaping
+std::string replaceXmlEscapesWithNewline(const std::string& input) {
+    std::string output = input;
+    std::string search1 = "&#xA;";
+    std::string search2 = "&amp;#xA;";
+    std::string replacement = "\n";
+
+    size_t pos = 0;
+
+    // Replace "&#xA;"
+    while ((pos = output.find(search1, pos)) != std::string::npos) {
+        output.replace(pos, search1.length(), replacement);
+        pos += replacement.length();
+    }
+
+    pos = 0;
+
+    // Replace "&amp;#xA;"
+    while ((pos = output.find(search2, pos)) != std::string::npos) {
+        output.replace(pos, search2.length(), replacement);
+        pos += replacement.length();
+    }
+
+    return output;
+}
+
 std::string parseRPN(const std::string& expression) {
   std::istringstream iss(expression);
   std::string line;
@@ -1118,25 +1147,6 @@ std::string parseRPN(const std::string& expression) {
     }
     std::string token = line;
     // Rcpp::Rcout << token << std::endl;
-
-    // if (isOperator(token)) {
-    //
-    //   if (formulaStack.size() == 1) {
-    //     std::string operand1 = formulaStack.top();
-    //     formulaStack.pop();
-    //     // uminus & uplus
-    //     std::string infixExpression = token + operand1;
-    //     formulaStack.push(infixExpression);
-    //   } else if (formulaStack.size() >= 2) {
-    //     // Rcpp::Rcout << "Formula stacksize is: " << formulaStack.size() << std::endl;
-    //     std::string operand2 = formulaStack.top();
-    //     formulaStack.pop();
-    //     std::string operand1 = formulaStack.top();
-    //     formulaStack.pop();
-    //     std::string infixExpression = operand1 + token + operand2;
-    //     formulaStack.push(infixExpression);
-    //   }
-    // } else {
     if (token.find("%s") != std::string::npos) {
       size_t pos = token.rfind("%s");
       while (pos != std::string::npos) {
@@ -1155,7 +1165,6 @@ std::string parseRPN(const std::string& expression) {
       // Rcpp::Rcout << "push to stack: " << token << std::endl;
       formulaStack.push(token);
     }
-    // }
   }
 
   std::string parsedFormula;
@@ -1168,7 +1177,7 @@ std::string parseRPN(const std::string& expression) {
     formulaStack.pop();
   }
 
-  return parsedFormula;
+  return replaceXmlEscapesWithNewline(parsedFormula);
 }
 
 std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {

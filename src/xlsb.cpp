@@ -1606,12 +1606,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
           std::string val = XLWideString(bin, swapit);
 
-          std::string visible;
-          if (hsState == 0) visible = "visible";
-          if (hsState == 1) visible = "hidden";
-          if (hsState == 2) visible = "veryHidden";
-
-          out << "<sheet r:id=\"" << rid << "\" state=\"" << visible<< "\" sheetId=\"" << iTabID<< "\" name=\"" << val << "\"/>" << std::endl;
+          out << "<sheet r:id=\"" << rid << "\" state=\"" << HSState(hsState)<< "\" sheetId=\"" << iTabID<< "\" name=\"" << val << "\"/>" << std::endl;
           break;
         }
 
@@ -3527,7 +3522,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           if (fields->fHiddenCol)
             out << " hiddenColumns=\"" << (int16_t)fields->fHiddenCol << "\"";
           if (fields->hsState)
-            out << " state=\"" << (int16_t)fields->hsState << "\"";
+            out << " state=\"" << HSState(fields->hsState) << "\"";
           if (fields->fFilterUnique)
             out << " filterUnique=\"" << (int16_t)fields->fFilterUnique << "\"";
           if (fields->fSheetLayoutView)
