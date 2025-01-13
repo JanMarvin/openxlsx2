@@ -1110,6 +1110,32 @@ std::string array_elements(const std::vector<std::string>& elements, int32_t n, 
 
 #include <stack>
 
+// undo the newline escaping
+std::string replaceXmlEscapesWithNewline(const std::string& input) {
+    std::string output = input;
+    std::string search1 = "&#xA;";
+    std::string search2 = "&amp;#xA;";
+    std::string replacement = "\n";
+
+    size_t pos = 0;
+
+    // Replace "&#xA;"
+    while ((pos = output.find(search1, pos)) != std::string::npos) {
+        output.replace(pos, search1.length(), replacement);
+        pos += replacement.length();
+    }
+
+    pos = 0;
+
+    // Replace "&amp;#xA;"
+    while ((pos = output.find(search2, pos)) != std::string::npos) {
+        output.replace(pos, search2.length(), replacement);
+        pos += replacement.length();
+    }
+
+    return output;
+}
+
 std::string parseRPN(const std::string& expression) {
   std::istringstream iss(expression);
   std::string line;
@@ -1151,15 +1177,7 @@ std::string parseRPN(const std::string& expression) {
     formulaStack.pop();
   }
 
-  // undo the newline escaping
-  std::string have = "&amp;#xA;", want = "\n";
-  size_t pos = 0;
-  while ((pos = parsedFormula.find(have, pos)) != std::string::npos) {
-    parsedFormula.replace(pos, have.length(), want);
-    pos += want.length();
-  }
-
-  return parsedFormula;
+  return replaceXmlEscapesWithNewline(parsedFormula);
 }
 
 std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
