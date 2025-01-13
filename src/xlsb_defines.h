@@ -1274,6 +1274,12 @@ std::string XLView(const uint32_t val) {
   case	0x00000000: return "normal";
   case	0x00000001: return "pageBreakPreview";
   case	0x00000002: return "pageLayout";
+template <typename T>
+std::string HSState(const T val) {
+  switch(val) {
+    case 0: return "visible";
+    case 1: return "hidden";
+    case 2: return "veryHidden";
   }
   return "";
 }
