@@ -190,7 +190,7 @@ test_that("xlsb formula line breaks are handled", {
     add_cell_style(dims = "B1", wrap_text = TRUE)$
     set_row_heights(rows = 1, heights = 30)
 
-  wb2 <- wb_load("/tmp/line_break.xlsb", debug = F)
+  wb2 <- wb_load(fl)
   exp <- "IF( A1= 1,\"Value \n\"&A1, )"
   fml2 <- wb2$to_df(show_formula = TRUE, col_names = FALSE)[1, "B"]
   expect_equal(exp,  fml2)
