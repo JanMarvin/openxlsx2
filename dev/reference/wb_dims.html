@@ -131,7 +131,7 @@ data with column names, and without row names. as the code is more clean.</p>
 <code>from_col/from_row</code> correspond to the coordinates at the top left of <code>x</code> including column and row names if present.</p>
 <p>These use cases are provided without <code>from_row / from_col</code>, but they work also with <code>from_row / from_col</code>.</p><ol><li><p>provide the full grid with <code>wb_dims(x = mtcars)</code></p></li>
 <li><p>provide the data grid <code>wb_dims(x = mtcars, select = "data")</code></p></li>
-<li><p>provide the <code>dims</code> of column names <code>wb_dims(x = mtcars, select = "col_names)</code></p></li>
+<li><p>provide the <code>dims</code> of column names <code>wb_dims(x = mtcars, select = "col_names")</code></p></li>
 <li><p>provide the <code>dims</code> of row names  <code>wb_dims(x = mtcars, row_names = TRUE, select = "row_names")</code></p></li>
 <li><p>provide the <code>dims</code> of a row span <code>wb_dims(x = mtcars, rows = 1:10)</code> selects
 the first 10 data rows of <code>mtcars</code> (ignoring column names)</p></li>
