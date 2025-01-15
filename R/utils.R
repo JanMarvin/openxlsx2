@@ -505,7 +505,7 @@ determine_select_valid <- function(args, select = NULL) {
 #'
 #' 1. provide the full grid with `wb_dims(x = mtcars)`
 #' 2. provide the data grid `wb_dims(x = mtcars, select = "data")`
-#' 3. provide the `dims` of column names `wb_dims(x = mtcars, select = "col_names)`
+#' 3. provide the `dims` of column names `wb_dims(x = mtcars, select = "col_names")`
 #' 4. provide the `dims` of row names  `wb_dims(x = mtcars, row_names = TRUE, select = "row_names")`
 #' 5. provide the `dims` of a row span `wb_dims(x = mtcars, rows = 1:10)` selects
 #'    the first 10 data rows of `mtcars` (ignoring column names)
