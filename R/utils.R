@@ -1099,7 +1099,7 @@ fmt_txt <- function(
     ...
 ) {
 
-  standardize_color_names(...)
+  standardize(...)
 
   xml_b     <- NULL
   xml_i     <- NULL

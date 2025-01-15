@@ -1644,7 +1644,7 @@ create_shape <- function(
   )
   text_align <- alignment_map[text_align]
 
-  standardize_color_names(...)
+  standardize(...)
 
   text <- fmt_txt2(text, text_color = text_color, text_transparency)
 

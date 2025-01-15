@@ -7386,7 +7386,7 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      standardize_color_names(...)
+      standardize(...)
 
       sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
@@ -8197,7 +8197,7 @@ wbWorkbook <- R6::R6Class(
       # cc <- wb$worksheets[[sheet]]$sheet_data$cc
       # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
 
-      standardize_color_names(...)
+      standardize(...)
 
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
@@ -8604,7 +8604,7 @@ wbWorkbook <- R6::R6Class(
       cc <- cc[cc$r %in% dims, ]
       styles <- unique(cc[["c_s"]])
 
-      standardize_color_names(...)
+      standardize(...)
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
