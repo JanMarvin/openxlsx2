@@ -266,6 +266,9 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             //  * ref=
             //  * ca=
             //  * si=
+
+            // TODO: there are more formula attributes: aca, dt2D, dtr, del1, del2, r1, r2, bx
+            // maybe read formula attributes as a nested data frame?
             for (auto cattr : val.attributes()) {
               buffer = cattr.value();
               cattr_name = cattr.name();
