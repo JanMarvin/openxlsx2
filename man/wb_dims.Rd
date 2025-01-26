@@ -71,7 +71,7 @@ These use cases are provided without \code{from_row / from_col}, but they work a
 \enumerate{
 \item provide the full grid with \code{wb_dims(x = mtcars)}
 \item provide the data grid \code{wb_dims(x = mtcars, select = "data")}
-\item provide the \code{dims} of column names \verb{wb_dims(x = mtcars, select = "col_names")}
+\item provide the \code{dims} of column names \code{wb_dims(x = mtcars, select = "col_names")}
 \item provide the \code{dims} of row names  \code{wb_dims(x = mtcars, row_names = TRUE, select = "row_names")}
 \item provide the \code{dims} of a row span \code{wb_dims(x = mtcars, rows = 1:10)} selects
 the first 10 data rows of \code{mtcars} (ignoring column names)
