@@ -15,9 +15,6 @@ wbSheetData <- R6::R6Class(
     #' @field cc cc
     cc = NULL,
 
-    #' @field cc_out cc_out
-    cc_out = NULL,
-
     #' @description
     #' Creates a new `wbSheetData` object
     #' @return a `wbSheetData` object

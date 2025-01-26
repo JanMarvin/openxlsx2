@@ -15,8 +15,11 @@
 ## Internal changes
 
 * Update of internal pugixml library
+* Switch to `f_attr` to handle more formula attributes
+* Remove the use of `cc_out` when writing output files
 
 ## Breaking changes
+
 * Style helpers will accept colors only if provided via `wb_color()`. This broke a single example case that was still using `c(rgb = "FF808080")` this can be converted to `wb_color(hex = "FF808080")`.
 
 
