@@ -42,20 +42,17 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
 
   // we cannot access rows directly in the dataframe.
   // Have to extract the columns and use these
-  Rcpp::CharacterVector cc_row_r = cc["row_r"];  // 1
-  Rcpp::CharacterVector cc_r     = cc["r"];      // A1
-  Rcpp::CharacterVector cc_v     = cc["v"];      // can be utf8
-  Rcpp::CharacterVector cc_c_t   = cc["c_t"];
-  Rcpp::CharacterVector cc_c_s   = cc["c_s"];
-  Rcpp::CharacterVector cc_c_cm  = cc["c_cm"];
-  Rcpp::CharacterVector cc_c_ph  = cc["c_ph"];   // can be utf8
-  Rcpp::CharacterVector cc_c_vm  = cc["c_vm"];
-  Rcpp::CharacterVector cc_f     = cc["f"];      // can be utf8
-  Rcpp::CharacterVector cc_f_t   = cc["f_t"];
-  Rcpp::CharacterVector cc_f_ref = cc["f_ref"];
-  Rcpp::CharacterVector cc_f_ca  = cc["f_ca"];
-  Rcpp::CharacterVector cc_f_si  = cc["f_si"];
-  Rcpp::CharacterVector cc_is    = cc["is"];     // can be utf8
+  Rcpp::CharacterVector cc_row_r  = cc["row_r"];  // 1
+  Rcpp::CharacterVector cc_r      = cc["r"];      // A1
+  Rcpp::CharacterVector cc_v      = cc["v"];      // can be utf8
+  Rcpp::CharacterVector cc_c_t    = cc["c_t"];
+  Rcpp::CharacterVector cc_c_s    = cc["c_s"];
+  Rcpp::CharacterVector cc_c_cm   = cc["c_cm"];
+  Rcpp::CharacterVector cc_c_ph   = cc["c_ph"];   // can be utf8
+  Rcpp::CharacterVector cc_c_vm   = cc["c_vm"];
+  Rcpp::CharacterVector cc_f      = cc["f"];      // can be utf8
+  Rcpp::CharacterVector cc_f_attr = cc["f_attr"];
+  Rcpp::CharacterVector cc_is     = cc["is"];     // can be utf8
 
   Rcpp::CharacterVector row_r    = row_attr["r"];
 
@@ -91,18 +88,15 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
     lastrow = thisrow;
 
     if ( // skip blank cells entirely
-        cc_c_s[i]   == "" &&
-        cc_c_t[i]   == "" &&
-        cc_c_cm[i]  == "" &&
-        cc_c_ph[i]  == "" &&
-        cc_c_vm[i]  == "" &&
-        cc_v[i]     == "" &&
-        cc_f[i]     == "" &&
-        cc_f_t[i]   == "" &&
-        cc_f_ref[i] == "" &&
-        cc_f_ca[i]  == "" &&
-        cc_f_si[i]  == "" &&
-        cc_is[i]    == ""
+        cc_c_s[i]    == "" &&
+        cc_c_t[i]    == "" &&
+        cc_c_cm[i]   == "" &&
+        cc_c_ph[i]   == "" &&
+        cc_c_vm[i]   == "" &&
+        cc_v[i]      == "" &&
+        cc_f[i]      == "" &&
+        cc_f_attr[i] == "" &&
+        cc_is[i]     == ""
     ) {
       continue;
     }
@@ -141,23 +135,33 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
 
     // <f> ... </f>
     // f node: formula to be evaluated
-    if (!std::string(cc_f[i]).empty() || !std::string(cc_f_t[i]).empty() || !std::string(cc_f_si[i]).empty()) {
+    if (!std::string(cc_f[i]).empty() || !std::string(cc_f_attr[i]).empty()) {
+      // Fix Most Vexing Parse
+      std::istringstream attr_stream((std::string(cc_f_attr[i])));
       pugi::xml_node f = cell.append_child("f");
-      if (!std::string(cc_f_t[i]).empty()) {
-        f.append_attribute("t") = std::string(cc_f_t[i]).c_str();
-      }
-      if (!std::string(cc_f_ref[i]).empty()) {
-        f.append_attribute("ref") = std::string(cc_f_ref[i]).c_str();
-      }
-      if (!std::string(cc_f_ca[i]).empty()) {
-        f.append_attribute("ca") = std::string(cc_f_ca[i]).c_str();
-      }
-      if (!std::string(cc_f_si[i]).empty()) {
-        f.append_attribute("si") = std::string(cc_f_si[i]).c_str();
-        f_si = true;
+
+      // Parse attributes from f_attr
+      std::string key_value;
+      while (std::getline(attr_stream, key_value, ' ')) {
+          auto pos = key_value.find('=');
+          if (pos != std::string::npos) {
+              std::string key = key_value.substr(0, pos);
+              std::string value = key_value.substr(pos + 1);
+
+              // Remove quotes from value
+              if (!value.empty() && value.front() == '\"' && value.back() == '\"') {
+                  value = value.substr(1, value.size() - 2);
+              }
+
+              // Append attribute to <f>
+              f.append_attribute(key.c_str()) = value.c_str();
+          }
       }
 
-      f.append_child(pugi::node_pcdata).set_value(to_string(cc_f[i]).c_str());
+      // Add the content of <f>
+      if (!std::string(cc_f[i]).empty()) {
+          f.append_child(pugi::node_pcdata).set_value(std::string(cc_f[i]).c_str());
+      }
     }
 
     // v node: value stored from evaluated formula
@@ -166,7 +170,7 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
-        if (std::string(cc_c_t[i]).empty() && std::string(cc_f_t[i]).empty())
+        if (std::string(cc_c_t[i]).empty() && std::string(cc_f_attr[i]).empty())
           cell.append_child("v").append_child(pugi::node_pcdata).set_value(std::string(cc_v[i]).c_str());
         else
           cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_string(cc_v[i]).c_str());

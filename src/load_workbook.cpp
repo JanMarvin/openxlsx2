@@ -171,13 +171,10 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   const std::string s_str = "s";
   const std::string t_str = "t";
   const std::string v_str = "v";
-  const std::string ca_str = "ca";
   const std::string cm_str = "cm";
   const std::string is_str = "is";
   const std::string ph_str = "ph";
-  const std::string si_str = "si";
   const std::string vm_str = "vm";
-  const std::string ref_str = "ref";
 
   /*****************************************************************************
    * Row information is returned as list of lists returning as much as possible.
@@ -256,25 +253,17 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             single_xml_col.is = oss.str();
           }  // </is>
 
-          // <f>
-          if (val_name == f_str) {
+
+          if (val_name == f_str) {  // <f>
+            // Store the content of <f> as single_xml_col.f
             single_xml_col.f = val.text().get();
 
-            // additional attributes to <f>
-            // This currently handles
-            //  * t=
-            //  * ref=
-            //  * ca=
-            //  * si=
-            for (auto cattr : val.attributes()) {
-              buffer = cattr.value();
-              cattr_name = cattr.name();
-              if (cattr_name == t_str) single_xml_col.f_t = buffer;
-              if (cattr_name == ref_str) single_xml_col.f_ref = buffer;
-              if (cattr_name == ca_str) single_xml_col.f_ca = buffer;
-              if (cattr_name == si_str) single_xml_col.f_si = buffer;
+            // Serialize the attributes of <f> as single_xml_col.f_attr
+            std::ostringstream attr_stream;
+            for (auto f_attr : val.attributes()) {
+              attr_stream << f_attr.name() << "=\"" << f_attr.value() << "\" ";
             }
-
+            single_xml_col.f_attr = attr_stream.str();
           }  // </f>
 
           // <v>

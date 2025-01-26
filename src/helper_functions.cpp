@@ -388,6 +388,7 @@ void wide_to_long(
   for (size_t i = 0; i < static_cast<size_t>(m); ++i) {
     scols[i] = int_to_col(static_cast<size_t>(start_col) + i);
   }
+  std::string f_attr;
 
   bool has_refs = refed.isNotNull();
 
@@ -398,17 +399,16 @@ void wide_to_long(
 
   // pointer magic. even though these are extracted, they just point to the
   // memory in the data frame
-  Rcpp::CharacterVector zz_row_r = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
-  Rcpp::CharacterVector zz_c_cm  = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
-  Rcpp::CharacterVector zz_c_r   = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
-  Rcpp::CharacterVector zz_v     = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
-  Rcpp::CharacterVector zz_c_t   = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);
-  Rcpp::CharacterVector zz_is    = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
-  Rcpp::CharacterVector zz_f     = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
-  Rcpp::CharacterVector zz_f_t   = Rcpp::as<Rcpp::CharacterVector>(zz["f_t"]);
-  Rcpp::CharacterVector zz_f_ref = Rcpp::as<Rcpp::CharacterVector>(zz["f_ref"]);
-  Rcpp::CharacterVector zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
-  Rcpp::CharacterVector zz_r     = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
+  Rcpp::CharacterVector zz_row_r  = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
+  Rcpp::CharacterVector zz_c_cm   = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
+  Rcpp::CharacterVector zz_c_r    = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
+  Rcpp::CharacterVector zz_v      = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
+  Rcpp::CharacterVector zz_c_t    = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);
+  Rcpp::CharacterVector zz_is     = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
+  Rcpp::CharacterVector zz_f      = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
+  Rcpp::CharacterVector zz_f_attr = Rcpp::as<Rcpp::CharacterVector>(zz["f_attr"]);
+  Rcpp::CharacterVector zz_typ    = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
+  Rcpp::CharacterVector zz_r      = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
   // Convert na_strings only once outside the loop.
   na_strings = inline_strings ? txt_to_is(na_strings, 0, 1, 1) : txt_to_si(na_strings, 0, 1, 1);
@@ -416,7 +416,6 @@ void wide_to_long(
   R_xlen_t idx = 0;
 
   SEXP blank_sexp      = Rf_mkChar("");
-  SEXP array_sexp      = Rf_mkChar("array");
   SEXP inlineStr_sexp  = Rf_mkChar("inlineStr");
   SEXP bool_sexp       = Rf_mkChar("b");
   SEXP expr_sexp       = Rf_mkChar("e");
@@ -506,16 +505,18 @@ void wide_to_long(
           break;
         case array_formula:
           // f, f_t = "array", and f_ref
-          SET_STRING_ELT(zz_f,     pos, vals_sexp);
-          SET_STRING_ELT(zz_f_t,   pos, array_sexp);
-          SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
+          f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
+
+          SET_STRING_ELT(zz_f,      pos, vals_sexp);
+          SET_STRING_ELT(zz_f_attr, pos, Rf_mkChar(f_attr.c_str()));
           break;
         case cm_formula:
           // c_cm, f, f_t = "array", and f_ref
-          SET_STRING_ELT(zz_c_cm,  pos, Rf_mkChar(c_cm.c_str()));
-          SET_STRING_ELT(zz_f,     pos, vals_sexp);
-          SET_STRING_ELT(zz_f_t,   pos, array_sexp);
-          SET_STRING_ELT(zz_f_ref, pos, Rf_mkChar(ref_str.c_str()));
+          f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
+
+          SET_STRING_ELT(zz_c_cm,   pos, Rf_mkChar(c_cm.c_str()));
+          SET_STRING_ELT(zz_f,      pos, vals_sexp);
+          SET_STRING_ELT(zz_f_attr, pos, Rf_mkChar(f_attr.c_str()));
           break;
       }
 

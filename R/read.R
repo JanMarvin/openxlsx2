@@ -440,12 +440,14 @@ wb_to_df <- function(
 
   if (show_formula) {
 
-    if (any(cc$f_t == "shared")) {
+    if (any(grepl("shared", cc$f_attr))) {
+
+      f_t <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))$t
       # depending on the sheet, this might require updates to many cells
       # TODO reduce this to cells, that are part of `cc`. Currently we
       # might waste time, updating cells that are not visible to the user
       cc_shared <- wb$worksheets[[sheet]]$sheet_data$cc
-      cc_shared <- cc_shared[cc_shared$f_t == "shared", ]
+      cc_shared <- cc_shared[f_t == "shared", ]
       cc <- shared_as_fml(cc, cc_shared)
     }
 

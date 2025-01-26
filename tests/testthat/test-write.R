@@ -9,8 +9,7 @@ test_that("write_formula", {
          c_t = "", c_cm = "",
          c_ph = "", c_vm = "",
          v = "", f = "SUM(C2:C11*D2:D11)",
-         f_t = "array", f_ref = "E2",
-         f_ca = "", f_si = "",
+         f_attr = "t=\"array\" ref=\"E2\"",
          is = "", typ = "11"),
     row.names = 23L, class = "data.frame")
 
@@ -24,7 +23,7 @@ test_that("write_formula", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
-  expect_equal(exp[1:16], got[1:16])
+  expect_equal(exp[1:13], got[1:13])
 
 
   rownames(exp) <- 1L
@@ -139,9 +138,9 @@ test_that("update_cells", {
   exp <- structure(
     list(c_t = c("", "str", "str"),
          f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\")"),
-         f_t = c("array", "", "")),
+         f_attr = c("t=\"array\" ref=\"E2\"", "", "")),
     row.names = c("23", "110", "111"), class = "data.frame")
-  got <- wb$worksheets[[1]]$sheet_data$cc[c(5, 8, 11), c("c_t", "f", "f_t")]
+  got <- wb$worksheets[[1]]$sheet_data$cc[c(5, 8, 11), c("c_t", "f", "f_attr")]
   expect_equal(exp, got)
 
   ### write logical
@@ -232,10 +231,7 @@ test_that("update cell(s)", {
                         c_vm = c("", "", "", "", "", ""),
                         v = c("", "", "", "", "", ""),
                         f = c("", "", "", "", "", ""),
-                        f_t = c("", "", "", "", "", ""),
-                        f_ref = c("", "", "", "", "", ""),
-                        f_ca = c("", "", "", "", "", ""),
-                        f_si = c("", "", "", "", "", ""),
+                        f_attr = c("", "", "", "", "", ""),
                         is = c("", "", "", "", "", ""),
                         typ = c("4", "4", "4", "4", "4", "4")),
                    row.names = 1:6,

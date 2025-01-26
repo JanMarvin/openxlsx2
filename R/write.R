@@ -97,17 +97,18 @@ inner_update <- function(
   }
 
   replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
-                   "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ")
+                   "f", "f_attr", "is", "typ")
 
   sel <- match(x$r, cc$r)
 
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
   # values with the formula. If the entire cc is replaced with x, we can skip.
-  if (length(sf <- cc$f_si[sel & cc$f_t[sel] == "shared" & cc$f_ref[sel] != ""]) && !all(cc$r %in% x$r)) {
+  ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
+  if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
 
     # collect all the shared formulas that we have to convert
-    sel_fsi <- cc$f_si %in% unique(sf)
+    sel_fsi <- ff$si %in% unique(sf)
 
     cc_shared <- cc[sel_fsi, , drop = FALSE]
 
@@ -508,7 +509,11 @@ write_data2 <- function(
     ## only the reference cell has a formula
     ## only the reference cell has the formula reference
 
-    uni_si <- unique(wb$worksheets[[sheetno]]$sheet_data$cc$f_si)
+
+    uni_attrs <- unique(wb$worksheets[[sheetno]]$sheet_data$cc$f_attr)
+    f_xml     <- paste0("<f ", uni_attrs, "/>")
+    uni_si    <- unique(rbindlist(xml_attr(f_xml, "f"))$si)
+
     int_si <- as.integer(
       replace(
         uni_si,
@@ -517,10 +522,12 @@ write_data2 <- function(
       )
     )
 
-    cc$f_t              <- "shared"
-    cc[1, "f_ref"]      <- dims
+    int_si <- max(int_si, -1L) + 1L
+
+    cc$f_attr           <- sprintf("t=\"%s\"", "shared")
+    cc[1, "f_attr"]     <- paste(cc[1, "f_attr"], sprintf("ref=\"%s\"", dims))
     cc[2:nrow(cc), "f"] <- ""
-    cc$f_si             <- max(int_si, -1L) + 1L
+    cc$f_attr           <- paste(cc$f_attr, sprintf("si=\"%s\"", int_si))
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {

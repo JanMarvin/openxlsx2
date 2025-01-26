@@ -2544,7 +2544,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             for (size_t i = 0; i < colvec.size(); ++i) {
               out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
               out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
-              out << "<f ref=\"" << colvec[i].f_ref << "\" ca=\"" << colvec[i].f_ca << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
+              out << "<f " << colvec[i].f_attr << ">" << colvec[i].f << "</f>" << std::endl;
               out << "</c>" << std::endl;
             }
 
@@ -2863,18 +2863,20 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml = shared_cells.find(fml);
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
-            column.f_t = fml_type;
+            column.f_attr = "t=\"" + fml_type + "\"";
+            if (fields->fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
+
             if (sfml != shared_cells.end())
-              column.f_si = std::to_string(sfml->second);
+              column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
-              column.f_si = std::to_string(sfml1->second);
+              column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
+            if (fields->fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
             column.f = fml;
           }
           if (cell[1]) column.c_s = std::to_string(cell[1]);
           column.c_t = "b";
           column.c_r = a1;
-          if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
           colvec.push_back(column);
 
           break;
@@ -2912,18 +2914,20 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml = shared_cells.find(fml);
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
-            column.f_t = fml_type;
+            column.f_attr = "t=\"" + fml_type + "\"";
+            if (fields->fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
+
             if (sfml != shared_cells.end())
-              column.f_si = std::to_string(sfml->second);
+              column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
-              column.f_si = std::to_string(sfml1->second);
+              column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
+            if (fields->fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
             column.f = fml;
           }
           if (cell[1]) column.c_s = std::to_string(cell[1]);
           column.c_t = "e";
           column.c_r = a1;
-          if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
           colvec.push_back(column);
 
           break;
@@ -2967,18 +2971,20 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml = shared_cells.find(fml);
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
-            column.f_t = fml_type;
+            column.f_attr = "t=\"" + fml_type + "\"";
+            if (fields->fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
+
             if (sfml != shared_cells.end())
-              column.f_si = std::to_string(sfml->second);
+              column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
-              column.f_si = std::to_string(sfml1->second);
+              column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
+            if (fields->fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
             column.f = fml;
           }
           if (cell[1]) column.c_s = std::to_string(cell[1]);
           // column.c_t = "e";
           column.c_r = a1;
-          if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
           colvec.push_back(column);
 
           break;
@@ -3017,19 +3023,21 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml = shared_cells.find(fml);
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
-            column.f_t = fml_type;
+            column.f_attr = "t=\"" + fml_type + "\"";
+            if (fields->fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
+
             if (sfml != shared_cells.end())
-              column.f_si = std::to_string(sfml->second);
+              column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
-              column.f_si = std::to_string(sfml1->second);
+              column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
+            if (fields->fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(fields->fAlwaysCalc) + "\"";
             column.f = fml;
           }
           column.v = val;
           if (cell[1]) column.c_s = std::to_string(cell[1]);
           column.c_t = "str";
           column.c_r = a1;
-          if (fields->fAlwaysCalc) column.f_ca = std::to_string(fields->fAlwaysCalc);
           colvec.push_back(column);
 
           break;
@@ -3066,9 +3074,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // add to the last colvec element
           auto last = colvec.size() - 1L;
           colvec[last].f = fml;
-          colvec[last].f_t = "array";
-          colvec[last].f_ref = ref;
-          colvec[last].f_si = "";
+          colvec[last].f_attr = "t=\"array\"";
+          colvec[last].f_attr += " ref=\"" + ref + "\"";
+          // colvec[last].f_attr += "si=\"\"";
 
           break;
         }
@@ -3112,9 +3120,15 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // add to the last colvec element
           auto last = colvec.size() - 1L;
           colvec[last].f = fml;
-          colvec[last].f_t = fml_type;  // not sure how many cells share array type
-          colvec[last].f_ref = ref;
-          colvec[last].f_si = std::to_string(shared_cell_cntr);
+
+          // TODO do we need to store more attributes?
+          // Rcpp::Rcout << colvec[last].f_attr << std::endl;
+          std::string bak = colvec[last].f_attr;
+
+          colvec[last].f_attr = "t=\""+ fml_type + "\"";  // not sure how many cells share array type
+          colvec[last].f_attr += " ref=\"" + ref + "\"";
+          if (bak == "ca=\"1\"") colvec[last].f_attr += " " + bak;
+          colvec[last].f_attr += " si=\"" + std::to_string(shared_cell_cntr) + "\"";
 
           ++shared_cell_cntr;
 
@@ -3130,7 +3144,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             for (size_t i = 0; i < colvec.size(); ++i) {
               out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
               out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
-              out << "<f ref=\"" << colvec[i].f_ref << "\" ca=\"" << colvec[i].f_ca << "\" si=\""<< colvec[i].f_si << "\" t=\"" << colvec[i].f_t << "\" >" << colvec[i].f << "</f>" << std::endl;
+              out << "<f " << colvec[i].f_attr << " >" << colvec[i].f << "</f>" << std::endl;
               out << "</c>" << std::endl;
             }
 
