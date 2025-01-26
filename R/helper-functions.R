@@ -1345,6 +1345,10 @@ wb_upd_custom_pid <- function(wb) {
 #' @param cc_shared a subset of the full frame with shared formulas
 #' @noRd
 shared_as_fml <- function(cc, cc_shared) {
+
+  ff <- rbindlist(xml_attr(paste0("<f ", cc_shared$f_attr, "/>"), "f"))
+  cc_shared$f_si <- ff$si
+
   cc_shared <- cc_shared[order(as.integer(cc_shared$f_si)), ]
 
   # carry forward the shared formula
@@ -1362,12 +1366,11 @@ shared_as_fml <- function(cc, cc_shared) {
     repls[[i]] <- next_cell(cells[[i]], cc_shared$cols[i], cc_shared$rows[i])
   }
 
-  cc_shared$f     <- replace_a1_notation(cc_shared$f, repls)
-  cc_shared$cols  <- NULL
-  cc_shared$rows  <- NULL
-  cc_shared$f_t   <- ""
-  cc_shared$f_si  <- ""
-  cc_shared$f_ref <- ""
+  cc_shared$f      <- replace_a1_notation(cc_shared$f, repls)
+  cc_shared$cols   <- NULL
+  cc_shared$rows   <- NULL
+  cc_shared$f_attr <- ""
+  cc_shared$f_si   <- NULL
 
   # reduce and assign
   cc_shared <- cc_shared[which(cc_shared$r %in% cc$r), ]

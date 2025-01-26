@@ -8,7 +8,7 @@ test_that("load various formulas", {
   cc <- wb$worksheets[[1]]$sheet_data$cc
 
   expect_identical(cc[1, "c_cm"], "1")
-  expect_identical(cc[1, "f_t"], "array")
+  expect_identical(cc[1, "f_attr"], "t=\"array\" ref=\"A1\" ") # FIXME: why the trailing whitespace?
 
   tmp <- temp_xlsx()
   expect_silent(wb$save(tmp))
@@ -40,7 +40,7 @@ test_that("writing formulas with cell metadata works", {
   exp <- data.frame(
     r = "A1", row_r = "1", c_r = "A", c_s = "", c_t = "",
     c_cm = "1", c_ph = "", c_vm = "", v = "", f = "SUM(ABS(A2:A11))",
-    f_t = "array", f_ref = "A1", f_ca = "", f_si = "", is = "",
+    f_attr = "t=\"array\" ref=\"A1\"", is = "",
     typ = "14",
     stringsAsFactors = FALSE)
   got <- wb$worksheets[[1]]$sheet_data$cc[1, ]
@@ -62,8 +62,8 @@ test_that("setting ref works", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
 
-  exp <- "H1:J3"
-  got <- cc[cc$r == "H1", "f_ref"]
+  exp <- "t=\"array\" ref=\"H1:J3\""
+  got <- cc[cc$r == "H1", "f_attr"]
   expect_equal(exp, got)
 
 })
@@ -105,9 +105,10 @@ test_that("writing array vectors works", {
 
   ## check
   cc <- wb$worksheets[[1]]$sheet_data$cc
+  ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
 
-  exp <- c("B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "B11")
-  got <- cc[cc$f_t == "array", c("f_ref")]
+  exp <- sprintf("t=\"array\" ref=\"%s\"", c("B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "B11"))
+  got <- cc[ff$t == "array", c("f_attr")]
   expect_equal(exp, got)
 
   ### write array formula as data frame class
@@ -125,9 +126,10 @@ test_that("writing array vectors works", {
 
   ## check
   cc <- wb$worksheets[[2]]$sheet_data$cc
+  ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
 
-  exp <- c("C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12")
-  got <- cc[cc$f_t == "array", c("f_ref")]
+  exp <- sprintf("t=\"array\" ref=\"%s\"", c("C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12"))
+  got <- cc[ff$t == "array", c("f_attr")]
   expect_equal(exp, got)
 
 })
@@ -136,9 +138,10 @@ test_that("array formula detection works", {
   wb <- wb_workbook()$add_worksheet()$
     add_formula(dims = "A1", x = "{1+1}")
   cc <- wb$worksheets[[1]]$sheet_data$cc
+  ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
 
-  exp <- "A1"
-  got <- cc[cc$f_t == "array", "f_ref"]
+  exp <- sprintf("t=\"array\" ref=\"%s\"", "A1")
+  got <- cc[ff$t == "array", "f_attr"]
   expect_equal(exp, got)
 })
 
@@ -165,8 +168,8 @@ test_that("writing shared formulas works", {
   got <- cc$f
   expect_equal(exp, got)
 
-  exp <- c("shared")
-  got <- unique(cc$f_t)
+  exp <- c("t=\"shared\" ref=\"C2:C6\" si=\"0\"", "t=\"shared\" si=\"0\"")
+  got <- unique(cc$f_attr)
   expect_equal(exp, got)
 
   wb$add_formula(
@@ -183,15 +186,15 @@ test_that("writing shared formulas works", {
   got <- cc$f
   expect_equal(exp, got)
 
-  exp <- c("1")
-  got <- unique(cc$f_si)
+  exp <- c("t=\"shared\" ref=\"D2:D6\" si=\"1\"", "t=\"shared\" si=\"1\"")
+  got <- unique(cc$f_attr)
   expect_equal(exp, got)
 
   wb <- wb_workbook()$add_worksheet()
   wb$add_formula(x = "1", dims = "A1:B1", shared = TRUE)
 
-  exp <- "shared"
-  got <- unique(wb$worksheets[[1]]$sheet_data$cc$f_t)
+  exp <- c("t=\"shared\" ref=\"A1:B1\" si=\"0\"", "t=\"shared\" si=\"0\"")
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$f_attr)
   expect_equal(exp, got)
 
 })

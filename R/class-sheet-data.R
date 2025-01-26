@@ -42,7 +42,7 @@ wb_sheet_data <- function() {
 empty_sheet_data_cc <- function(n) {
   create_char_dataframe(
     colnames = c("r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
-                 "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is", "typ"),
+                 "v", "f", "f_attr", "is", "typ"),
     n = n
   )
 }

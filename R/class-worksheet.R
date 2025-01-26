@@ -634,11 +634,11 @@ wbWorksheet <- R6::R6Class(
 
       if (numbers)
         cc[sel & cc$c_t %in% c("b", "e", "n", ""),
-          c("c_t", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+          c("c_t", "v", "f", "f_attr", "is")] <- ""
 
       if (characters)
         cc[sel & cc$c_t %in% c("inlineStr", "s", "str"),
-          c("c_t", "c_ph", "v", "f", "f_t", "f_ref", "f_ca", "f_si", "is")] <- ""
+          c("c_t", "c_ph", "v", "f", "f_attr", "is")] <- ""
 
       if (styles)
         cc[sel, c("c_s", "c_cm", "c_vm")] <- ""
