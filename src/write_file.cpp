@@ -204,7 +204,7 @@ XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment s
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
-  Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc_out"]);
+  Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc"]);
 
   xmldoc* doc = new xmldoc;
   pugi::xml_parse_result result;

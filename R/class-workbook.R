@@ -9790,7 +9790,6 @@ wbWorkbook <- R6::R6Class(
 
           cc <- ws$sheet_data$cc
 
-
           if (!is.null(cc)) {
             cc$r <- stringi::stri_join(cc$c_r, cc$row_r)
             # prepare data for output
@@ -9803,12 +9802,13 @@ wbWorkbook <- R6::R6Class(
             ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
 
             cc_rows <- ws$sheet_data$row_attr$r
-            cc_out <- cc[cc$row_r %in% cc_rows, c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")]
+            # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
+            cc <- cc[cc$row_r %in% cc_rows, ]
 
-            ws$sheet_data$cc_out <- cc_out[order(as.integer(cc_out[, "row_r"]), col2int(cc_out[, "c_r"])), ]
+            ws$sheet_data$cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
           } else {
             ws$sheet_data$row_attr <- NULL
-            ws$sheet_data$cc_out <- NULL
+            ws$sheet_data$cc <- NULL
           }
 
           # create entire sheet prior to writing it
