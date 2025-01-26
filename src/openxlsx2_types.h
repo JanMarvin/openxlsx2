@@ -82,38 +82,38 @@ inline SEXP wrap(const std::vector<xml_col>& x) {
   // Ideally there would be a function that calls Rcpp::String only if needed
   for (R_xlen_t i = 0; i < n; ++i) {
     size_t ii = static_cast<size_t>(i);
-    if (!x[ii].r.empty())      r[i]     = std::string(x[ii].r);
-    if (!x[ii].row_r.empty())  row_r[i] = std::string(x[ii].row_r);
-    if (!x[ii].c_r.empty())    c_r[i]   = std::string(x[ii].c_r);
-    if (!x[ii].c_s.empty())    c_s[i]   = std::string(x[ii].c_s);
-    if (!x[ii].c_t.empty())    c_t[i]   = std::string(x[ii].c_t);
-    if (!x[ii].c_cm.empty())   c_cm[i]  = std::string(x[ii].c_cm);
-    if (!x[ii].c_ph.empty())   c_ph[i]  = Rcpp::String(x[ii].c_ph);
-    if (!x[ii].c_vm.empty())   c_vm[i]  = std::string(x[ii].c_vm);
+    if (!x[ii].r.empty())      r[i]      = std::string(x[ii].r);
+    if (!x[ii].row_r.empty())  row_r[i]  = std::string(x[ii].row_r);
+    if (!x[ii].c_r.empty())    c_r[i]    = std::string(x[ii].c_r);
+    if (!x[ii].c_s.empty())    c_s[i]    = std::string(x[ii].c_s);
+    if (!x[ii].c_t.empty())    c_t[i]    = std::string(x[ii].c_t);
+    if (!x[ii].c_cm.empty())   c_cm[i]   = std::string(x[ii].c_cm);
+    if (!x[ii].c_ph.empty())   c_ph[i]   = Rcpp::String(x[ii].c_ph);
+    if (!x[ii].c_vm.empty())   c_vm[i]   = std::string(x[ii].c_vm);
     if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
       if (x[ii].c_t.empty() && x[ii].f_attr.empty())
         v[i] = std::string(x[ii].v);
       else
         v[i] = Rcpp::String(x[ii].v);
     }
-    if (!x[ii].f.empty())      f[i]     = Rcpp::String(x[ii].f);
-    if (!x[ii].f_attr.empty()) f_attr[i]   = std::string(x[ii].f_attr);
-    if (!x[ii].is.empty())     is[i]    = Rcpp::String(x[ii].is);
+    if (!x[ii].f.empty())      f[i]      = Rcpp::String(x[ii].f);
+    if (!x[ii].f_attr.empty()) f_attr[i] = std::string(x[ii].f_attr);
+    if (!x[ii].is.empty())     is[i]     = Rcpp::String(x[ii].is);
   }
 
   // Assign and return a dataframe
   return Rcpp::wrap(
     Rcpp::DataFrame::create(
-      Rcpp::Named("r")     = r,
-      Rcpp::Named("row_r") = row_r,
-      Rcpp::Named("c_r")   = c_r,
-      Rcpp::Named("c_s")   = c_s,
-      Rcpp::Named("c_t")   = c_t,
-      Rcpp::Named("c_cm")  = c_cm,
-      Rcpp::Named("c_ph")  = c_ph,
-      Rcpp::Named("c_vm")  = c_vm,
-      Rcpp::Named("v")     = v,
-      Rcpp::Named("f")     = f,
+      Rcpp::Named("r")      = r,
+      Rcpp::Named("row_r")  = row_r,
+      Rcpp::Named("c_r")    = c_r,
+      Rcpp::Named("c_s")    = c_s,
+      Rcpp::Named("c_t")    = c_t,
+      Rcpp::Named("c_cm")   = c_cm,
+      Rcpp::Named("c_ph")   = c_ph,
+      Rcpp::Named("c_vm")   = c_vm,
+      Rcpp::Named("v")      = v,
+      Rcpp::Named("f")      = f,
       Rcpp::Named("f_attr") = f_attr,
       Rcpp::Named("is")     = is,
       Rcpp::Named("stringsAsFactors") = false
