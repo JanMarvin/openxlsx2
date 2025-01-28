@@ -527,7 +527,7 @@ write_data2 <- function(
     cc[["f_attr"]]      <- sprintf("t=\"%s\"", "shared")
     cc[1, "f_attr"]     <- paste(cc[1, "f_attr"], sprintf("ref=\"%s\"", dims))
     cc[["f_attr"]]      <- paste(cc[["f_attr"]], sprintf("si=\"%s\"", int_si))
-    cc[2:nrow(cc), "f"] <- ""
+    cc[2:nrow(cc), "f"] <- rep("", length(2:nrow(cc)))
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
