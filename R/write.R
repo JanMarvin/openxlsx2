@@ -90,14 +90,10 @@ inner_update <- function(
     na.strings <- NULL
   }
 
-  if (removeCellStyle) {
-    cell_style <- "c_s"
-  } else {
-    cell_style <- NULL
+  replacement <- names(cc)
+  if (!removeCellStyle) {
+    replacement <- replacement[-which(replacement == "c_s")]
   }
-
-  replacement <- c("r", cell_style, "c_t", "c_cm", "c_ph", "c_vm", "v",
-                   "f", "f_attr", "is", "typ")
 
   sel <- match(x$r, cc$r)
 
@@ -148,9 +144,10 @@ inner_update <- function(
 initialize_cell <- function(wb, sheet, new_cells) {
 
   sheet_id <- wb$validate_sheet(sheet)
+  nms <- names(wb$worksheets[[sheet_id]]$sheet_data$cc)
 
   # create artificial cc for the missing cells
-  x <- empty_sheet_data_cc(n = length(new_cells))
+  x <- create_char_dataframe(n = length(new_cells), colnames = nms)
   x$r     <- new_cells
   x$row_r <- gsub("[[:upper:]]", "", new_cells)
   x$c_r   <- gsub("[[:digit:]]", "", new_cells)
@@ -417,8 +414,11 @@ write_data2 <- function(
   rows_attr$r <- rownames(rtyp)
 
   # original cc data frame
-  cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data))
+  cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data), slim = TRUE)
 
+  if (any(dc == openxlsx2_celltype[["cm_formula"]])) {
+    cc$c_cm <- ""
+  }
 
   sel <- which(dc == openxlsx2_celltype[["logical"]])
   for (i in sel) {
@@ -524,13 +524,14 @@ write_data2 <- function(
 
     int_si <- max(int_si, -1L) + 1L
 
-    cc$f_attr           <- sprintf("t=\"%s\"", "shared")
+    cc[["f_attr"]]      <- sprintf("t=\"%s\"", "shared")
     cc[1, "f_attr"]     <- paste(cc[1, "f_attr"], sprintf("ref=\"%s\"", dims))
+    cc[["f_attr"]]      <- paste(cc[["f_attr"]], sprintf("si=\"%s\"", int_si))
     cc[2:nrow(cc), "f"] <- ""
-    cc$f_attr           <- paste(cc$f_attr, sprintf("si=\"%s\"", int_si))
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
+    # message("write_cell()")
 
     wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")
 

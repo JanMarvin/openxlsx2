@@ -397,10 +397,14 @@ void wide_to_long(
 
   int32_t in_string_nums = string_nums;
 
+  bool has_cm = zz.containsElementNamed("c_cm");
+
   // pointer magic. even though these are extracted, they just point to the
   // memory in the data frame
+  Rcpp::CharacterVector zz_c_cm;
+
   Rcpp::CharacterVector zz_row_r  = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
-  Rcpp::CharacterVector zz_c_cm   = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
+  if (has_cm) zz_c_cm   = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
   Rcpp::CharacterVector zz_c_r    = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
   Rcpp::CharacterVector zz_v      = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
   Rcpp::CharacterVector zz_c_t    = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);

@@ -160,6 +160,8 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   auto ws = doc->child("worksheet").child("sheetData");
 
+  bool has_cm = false, has_ph = false, has_vm = false;
+
   // character
   Rcpp::DataFrame row_attributes;
 
@@ -228,9 +230,18 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
         if (attr_name == s_str) single_xml_col.c_s = buffer;
         if (attr_name == t_str) single_xml_col.c_t = buffer;
-        if (attr_name == cm_str) single_xml_col.c_cm = buffer;
-        if (attr_name == ph_str) single_xml_col.c_ph = buffer;
-        if (attr_name == vm_str) single_xml_col.c_vm = buffer;
+        if (attr_name == cm_str) {
+          has_cm = true;
+          single_xml_col.c_cm = buffer;
+        }
+        if (attr_name == ph_str) {
+          has_ph = true;
+          single_xml_col.c_ph = buffer;
+        }
+        if (attr_name == vm_str) {
+          has_vm = true;
+          single_xml_col.c_vm = buffer;
+        }
       }
 
       // some files have no colnames. in this case we need to add c_r and row_r
@@ -283,6 +294,8 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     ++itr_rows;
   }
 
+  // Rcpp::Rcout << has_cm << ": " << has_ph << ": " << has_vm << std::endl;
+
   sheet_data["row_attr"] = row_attributes;
-  sheet_data["cc"] = Rcpp::wrap(xml_cols);
+  sheet_data["cc"] = xml_cols_to_df(xml_cols, has_cm, has_ph, has_vm);
 }
