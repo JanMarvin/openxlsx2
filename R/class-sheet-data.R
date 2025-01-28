@@ -36,10 +36,16 @@ wb_sheet_data <- function() {
 
 # Consider making some helpers for the cc stuff.
 
-empty_sheet_data_cc <- function(n) {
+empty_sheet_data_cc <- function(n, slim = TRUE) {
+  nms <- c(
+    "r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
+    "v", "f", "f_attr", "is", "typ")
+  if (slim)
+    nms <- c(
+      "r", "row_r", "c_r", "c_s", "c_t",
+      "v", "f", "f_attr", "is", "typ")
   create_char_dataframe(
-    colnames = c("r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
-                 "v", "f", "f_attr", "is", "typ"),
+    colnames = nms,
     n = n
   )
 }
