@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/JanMarvin/openxlsx2/workflows/R-CMD-check/badge.svg)](https://github.com/JanMarvin/openxlsx2/actions)
+[![R-CMD-check](https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml)
 [![codecov](https://codecov.io/gh/JanMarvin/openxlsx2/branch/main/graph/badge.svg?token=HEZ7rXcZNq)](https://app.codecov.io/gh/JanMarvin/openxlsx2)
 [![r-universe](https://janmarvin.r-universe.dev/badges/openxlsx2)](https://janmarvin.r-universe.dev/openxlsx2)
 [![CRAN
