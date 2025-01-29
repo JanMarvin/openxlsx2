@@ -9788,9 +9788,9 @@ wbWorkbook <- R6::R6Class(
           prior <- ws$get_prior_sheet_data()
           post <- ws$get_post_sheet_data()
 
-          cc <- ws$sheet_data$cc
+          if (!is.null(ws$sheet_data$cc)) {
 
-          if (!is.null(cc)) {
+            cc <- ws$sheet_data$cc
             cc$r <- stringi::stri_join(cc$c_r, cc$row_r)
             # prepare data for output
 
@@ -9819,6 +9819,7 @@ wbWorkbook <- R6::R6Class(
           )
           ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
           write_xmlPtr(doc = sheet_xml, fl = ws_file)
+          rm(sheet_xml)
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {
