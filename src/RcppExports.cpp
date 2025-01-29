@@ -854,14 +854,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_worksheet
-XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data);
+XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment& sheet_data);
 RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type prior(priorSEXP);
     Rcpp::traits::input_parameter< std::string >::type post(postSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Environment& >::type sheet_data(sheet_dataSEXP);
     rcpp_result_gen = Rcpp::wrap(write_worksheet(prior, post, sheet_data));
     return rcpp_result_gen;
 END_RCPP
