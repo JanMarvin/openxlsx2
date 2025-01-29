@@ -22,7 +22,7 @@ test_that("write_formula", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
-  expect_equal(exp[1:10], got[1:10])
+  expect_equal(exp[1:9], got[1:9])
 
 
   rownames(exp) <- 1L
@@ -36,7 +36,7 @@ test_that("write_formula", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
-  expect_equal(exp[1:10], got[1:10])
+  expect_equal(exp[1:9], got[1:9])
 
 })
 
@@ -228,8 +228,7 @@ test_that("update cell(s)", {
                         v = c("", "", "", "", "", ""),
                         f = c("", "", "", "", "", ""),
                         f_attr = c("", "", "", "", "", ""),
-                        is = c("", "", "", "", "", ""),
-                        typ = c("4", "4", "4", "4", "4", "4")),
+                        is = c("", "", "", "", "", "")),
                    row.names = 1:6,
                    class = "data.frame")
   got <- head(wb$worksheets[[1]]$sheet_data$cc)
@@ -327,10 +326,6 @@ test_that("write character numerics with a correct cell style", {
   got <- wb$styles_mgr$styles$cellXfs[2]
   expect_equal(got, NA_character_)
 
-  exp <- c("4", "4", "4", "4", "4")
-  got <- wb$worksheets[[1]]$sheet_data$cc$typ
-  expect_equal(exp, got)
-
   ## string numerics correctly flagged
   options("openxlsx2.string_nums" = 1)
 
@@ -351,18 +346,6 @@ test_that("write character numerics with a correct cell style", {
   got <- wb$styles_mgr$styles$cellXfs[2]
   expect_equal(exp, got)
 
-  exp <- c("4", "13", "4", "4", "13")
-  got <- wb$worksheets[[1]]$sheet_data$cc$typ
-  expect_equal(exp, got)
-
-  exp <- c("13", "2", "4")
-  got <- wb$worksheets[[2]]$sheet_data$cc$typ
-  expect_equal(exp, got)
-
-  exp <- c("2", "13", "2", "13")
-  got <- wb$worksheets[[3]]$sheet_data$cc$typ
-  expect_equal(exp, got)
-
   ## write string numerics as numerics (on the fly conversion)
   options("openxlsx2.string_nums" = 2)
 
@@ -373,9 +356,6 @@ test_that("write character numerics with a correct cell style", {
   got <- wb$styles_mgr$styles$cellXfs[2]
   expect_equal(got, NA_character_)
 
-  exp <- c("4", "2", "4", "4", "2")
-  got <- wb$worksheets[[1]]$sheet_data$cc$typ
-  expect_equal(exp, got)
 })
 
 test_that("writing as shared string works", {

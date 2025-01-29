@@ -413,11 +413,15 @@ write_data2 <- function(
 
   rows_attr$r <- rownames(rtyp)
 
+
+  string_nums <- getOption("openxlsx2.string_nums", default = 0)
+
   # original cc data frame
   has_cm <- if (any(dc == openxlsx2_celltype[["cm_formula"]])) "c_cm" else NULL
+  has_typ <- if (string_nums) "typ" else NULL
   nms <- c(
     "r", "row_r", "c_r", "c_s", "c_t", has_cm,
-    "v", "f", "f_attr", "is", "typ"
+    "v", "f", "f_attr", "is", has_typ
   )
   cc <- create_char_dataframe(
     colnames = nms,
@@ -442,8 +446,6 @@ write_data2 <- function(
       data[sel] <- lapply(data[sel], stringi::stri_encode, from = from_enc, to = "UTF-8")
     }
   }
-
-  string_nums <- getOption("openxlsx2.string_nums", default = 0)
 
   na_missing <- FALSE
   na_null    <- FALSE
@@ -622,6 +624,7 @@ write_data2 <- function(
           quotePrefix = "1",
           numFmtId = "49"
         )
+        cc$typ <- NULL
       }
     }
 
