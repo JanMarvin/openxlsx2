@@ -398,10 +398,12 @@ void wide_to_long(
   int32_t in_string_nums = string_nums;
 
   bool has_cm = zz.containsElementNamed("c_cm");
+  bool has_typ = zz.containsElementNamed("typ");
 
   // pointer magic. even though these are extracted, they just point to the
   // memory in the data frame
   Rcpp::CharacterVector zz_c_cm;
+  Rcpp::CharacterVector zz_typ;
 
   Rcpp::CharacterVector zz_row_r  = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
   if (has_cm) zz_c_cm   = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
@@ -411,7 +413,7 @@ void wide_to_long(
   Rcpp::CharacterVector zz_is     = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
   Rcpp::CharacterVector zz_f      = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
   Rcpp::CharacterVector zz_f_attr = Rcpp::as<Rcpp::CharacterVector>(zz["f_attr"]);
-  Rcpp::CharacterVector zz_typ    = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
+  if (has_typ) zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
   Rcpp::CharacterVector zz_r      = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
 
   // Convert na_strings only once outside the loop.
@@ -559,7 +561,7 @@ void wide_to_long(
       }
 
       // typ = std::to_string(vtyp)
-      SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
+      if (has_typ) SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
 
       std::string cell_r = has_dims ? dims[static_cast<size_t>(idx)] : col + row;
       SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r.c_str()));

@@ -266,8 +266,7 @@ test_that("write cells without data", {
       v = c("", "", "", ""),
       f = c("", "", "", ""),
       f_attr = c("", "", "", ""),
-      is = c("", "", "", ""),
-      typ = c("3", "3", "3", "3")
+      is = c("", "", "", "")
     ),
     row.names = c(NA, 4L),
     class = "data.frame")
