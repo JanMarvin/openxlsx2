@@ -9778,40 +9778,43 @@ wbWorkbook <- R6::R6Class(
           }
         } else {
           ## Write worksheets
-          ws <- self$worksheets[[i]]
-          hasHL <- length(ws$hyperlinks) > 0
+          # ws <- self$worksheets[[i]]
+          hasHL <- length(self$worksheets[[i]]$hyperlinks) > 0
 
-          prior <- ws$get_prior_sheet_data()
-          post <- ws$get_post_sheet_data()
+          prior <- self$worksheets[[i]]$get_prior_sheet_data()
+          post <-  self$worksheets[[i]]$get_post_sheet_data()
 
-          if (!is.null(ws$sheet_data$cc)) {
+          if (!is.null(self$worksheets[[i]]$sheet_data$cc)) {
 
-            cc <- ws$sheet_data$cc
-            cc$r <- stringi::stri_join(cc$c_r, cc$row_r)
+            self$worksheets[[i]]$sheet_data$cc$r <- with(
+              self$worksheets[[i]]$sheet_data$cc,
+              stringi::stri_join(c_r, row_r)
+            )
+            cc <- self$worksheets[[i]]$sheet_data$cc
             # prepare data for output
 
             # there can be files, where row_attr is incomplete because a row
             # is lacking any attributes (presumably was added before saving)
             # still row_attr is what we want!
 
-            rows_attr <- ws$sheet_data$row_attr
-            ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
+            rows_attr <- self$worksheets[[i]]$sheet_data$row_attr
+            self$worksheets[[i]]$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
 
-            cc_rows <- ws$sheet_data$row_attr$r
+            cc_rows <- self$worksheets[[i]]$sheet_data$row_attr$r
             # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
             cc <- cc[cc$row_r %in% cc_rows, ]
 
-            ws$sheet_data$cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
+            self$worksheets[[i]]$sheet_data$cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
           } else {
-            ws$sheet_data$row_attr <- NULL
-            ws$sheet_data$cc <- NULL
+            self$worksheets[[i]]$sheet_data$row_attr <- NULL
+            self$worksheets[[i]]$sheet_data$cc <- NULL
           }
 
           # create entire sheet prior to writing it
           sheet_xml <- write_worksheet(
             prior = prior,
             post = post,
-            sheet_data = ws$sheet_data
+            sheet_data = self$worksheets[[i]]$sheet_data
           )
           ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
           write_xmlPtr(doc = sheet_xml, fl = ws_file)

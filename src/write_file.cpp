@@ -202,7 +202,7 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data) {
+XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment &sheet_data) {
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
   // sheet_data will be in order, just need to check for row_heights
