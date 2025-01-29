@@ -414,11 +414,15 @@ write_data2 <- function(
   rows_attr$r <- rownames(rtyp)
 
   # original cc data frame
-  cc <- empty_sheet_data_cc(n = nrow(data) * ncol(data), slim = TRUE)
-
-  if (any(dc == openxlsx2_celltype[["cm_formula"]])) {
-    cc$c_cm <- ""
-  }
+  has_cm <- if (any(dc == openxlsx2_celltype[["cm_formula"]])) "c_cm" else NULL
+  nms <- c(
+    "r", "row_r", "c_r", "c_s", "c_t", has_cm,
+    "v", "f", "f_attr", "is", "typ"
+  )
+  cc <- create_char_dataframe(
+    colnames = nms,
+    n = nrow(data) * ncol(data)
+  )
 
   sel <- which(dc == openxlsx2_celltype[["logical"]])
   for (i in sel) {
@@ -527,7 +531,7 @@ write_data2 <- function(
     cc[["f_attr"]]      <- sprintf("t=\"%s\"", "shared")
     cc[1, "f_attr"]     <- paste(cc[1, "f_attr"], sprintf("ref=\"%s\"", dims))
     cc[["f_attr"]]      <- paste(cc[["f_attr"]], sprintf("si=\"%s\"", int_si))
-    cc[2:nrow(cc), "f"] <- rep("", length(2:nrow(cc)))
+    cc[2:nrow(cc), "f"] <- ""
   }
 
   if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {

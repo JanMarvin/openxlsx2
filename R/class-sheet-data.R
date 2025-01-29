@@ -34,22 +34,6 @@ wb_sheet_data <- function() {
 
 # helpers -----------------------------------------------------------------
 
-# Consider making some helpers for the cc stuff.
-
-empty_sheet_data_cc <- function(n, slim = TRUE) {
-  nms <- c(
-    "r", "row_r", "c_r", "c_s", "c_t", "c_cm", "c_ph", "c_vm",
-    "v", "f", "f_attr", "is", "typ")
-  if (slim)
-    nms <- c(
-      "r", "row_r", "c_r", "c_s", "c_t",
-      "v", "f", "f_attr", "is", "typ")
-  create_char_dataframe(
-    colnames = nms,
-    n = n
-  )
-}
-
 empty_row_attr <- function(n) {
   create_char_dataframe(
     colnames = c("collapsed", "customFormat", "customHeight", "x14ac:dyDescent",
