@@ -6,8 +6,7 @@ test_that("write_formula", {
   # array formula for a single cell
   exp <- structure(
     list(r = "E2", row_r = "2", c_r = "E", c_s = "",
-         c_t = "", c_cm = "",
-         c_ph = "", c_vm = "",
+         c_t = "",
          v = "", f = "SUM(C2:C11*D2:D11)",
          f_attr = "t=\"array\" ref=\"E2\"",
          is = "", typ = "11"),
@@ -23,7 +22,7 @@ test_that("write_formula", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
-  expect_equal(exp[1:13], got[1:13])
+  expect_equal(exp[1:10], got[1:10])
 
 
   rownames(exp) <- 1L
@@ -37,7 +36,7 @@ test_that("write_formula", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
-  expect_equal(exp[1:11], got[1:11])
+  expect_equal(exp[1:10], got[1:10])
 
 })
 
@@ -226,9 +225,6 @@ test_that("update cell(s)", {
                         c_r = c("B", "C", "D", "E", "F", "G"),
                         c_s = c("1", "1", "1", "1", "1", "1"),
                         c_t = c("", "", "", "", "", ""),
-                        c_cm = c("", "", "", "", "", ""),
-                        c_ph = c("", "", "", "", "", ""),
-                        c_vm = c("", "", "", "", "", ""),
                         v = c("", "", "", "", "", ""),
                         f = c("", "", "", "", "", ""),
                         f_attr = c("", "", "", "", "", ""),

@@ -638,10 +638,10 @@ wbWorksheet <- R6::R6Class(
 
       if (characters)
         cc[sel & cc$c_t %in% c("inlineStr", "s", "str"),
-          c("c_t", "c_ph", "v", "f", "f_attr", "is")] <- ""
+          names(cc) %in% c("c_t", "c_ph", "v", "f", "f_attr", "is")] <- ""
 
       if (styles)
-        cc[sel, c("c_s", "c_cm", "c_vm")] <- ""
+        cc[sel, names(cc) %in% c("c_s", "c_cm", "c_vm")] <- ""
 
       self$sheet_data$cc <- cc
 

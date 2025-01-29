@@ -40,6 +40,12 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   // uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
+  bool has_cm = cc.containsElementNamed("c_cm");
+  bool has_ph = cc.containsElementNamed("c_ph");
+  bool has_vm = cc.containsElementNamed("c_vm");
+
+  Rcpp::CharacterVector cc_c_cm, cc_c_ph, cc_c_vm;
+
   // we cannot access rows directly in the dataframe.
   // Have to extract the columns and use these
   Rcpp::CharacterVector cc_row_r  = cc["row_r"];  // 1
@@ -47,9 +53,9 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
   Rcpp::CharacterVector cc_v      = cc["v"];      // can be utf8
   Rcpp::CharacterVector cc_c_t    = cc["c_t"];
   Rcpp::CharacterVector cc_c_s    = cc["c_s"];
-  Rcpp::CharacterVector cc_c_cm   = cc["c_cm"];
-  Rcpp::CharacterVector cc_c_ph   = cc["c_ph"];   // can be utf8
-  Rcpp::CharacterVector cc_c_vm   = cc["c_vm"];
+  if (has_cm) cc_c_cm   = cc["c_cm"];
+  if (has_ph) cc_c_ph   = cc["c_ph"];
+  if (has_vm) cc_c_vm   = cc["c_vm"];
   Rcpp::CharacterVector cc_f      = cc["f"];      // can be utf8
   Rcpp::CharacterVector cc_f_attr = cc["f_attr"];
   Rcpp::CharacterVector cc_is     = cc["is"];     // can be utf8
@@ -87,16 +93,16 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
     // update lastrow
     lastrow = thisrow;
 
-    if ( // skip blank cells entirely
-        cc_c_s[i]    == "" &&
-        cc_c_t[i]    == "" &&
-        cc_c_cm[i]   == "" &&
-        cc_c_ph[i]   == "" &&
-        cc_c_vm[i]   == "" &&
-        cc_v[i]      == "" &&
-        cc_f[i]      == "" &&
-        cc_f_attr[i] == "" &&
-        cc_is[i]     == ""
+    if (
+      cc_c_s[i].empty() &&
+      cc_c_t[i].empty() &&
+      (!has_cm || (has_cm && cc_c_cm[i].empty())) &&
+      (!has_ph || (has_ph && cc_c_ph[i].empty())) &&
+      (!has_vm || (has_vm && cc_c_vm[i].empty())) &&
+      cc_v[i].empty() &&
+      cc_f[i].empty() &&
+      cc_f_attr[i].empty() &&
+      cc_is[i].empty()
     ) {
       continue;
     }
@@ -118,15 +124,15 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
       cell.append_attribute("t") = std::string(cc_c_t[i]).c_str();
 
     // CellMetaIndex: suppress curly brackets in spreadsheet software
-    if (!std::string(cc_c_cm[i]).empty())
+    if (has_cm && !std::string(cc_c_cm[i]).empty())
       cell.append_attribute("cm") = std::string(cc_c_cm[i]).c_str();
 
     // phonetics spelling
-    if (!std::string(cc_c_ph[i]).empty())
-      cell.append_attribute("ph") = to_string(cc_c_ph[i]).c_str();
+    if (has_ph && !std::string(cc_c_ph[i]).empty())
+      cell.append_attribute("ph") = std::string(cc_c_ph[i]).c_str();
 
     // suppress curly brackets in spreadsheet software
-    if (!std::string(cc_c_vm[i]).empty())
+    if (has_vm && !std::string(cc_c_vm[i]).empty())
       cell.append_attribute("vm") = std::string(cc_c_vm[i]).c_str();
 
     // append nodes <c r="A1" ...><v>...</v></c>

@@ -39,7 +39,7 @@ test_that("writing formulas with cell metadata works", {
 
   exp <- data.frame(
     r = "A1", row_r = "1", c_r = "A", c_s = "", c_t = "",
-    c_cm = "1", c_ph = "", c_vm = "", v = "", f = "SUM(ABS(A2:A11))",
+    c_cm = "1", v = "", f = "SUM(ABS(A2:A11))",
     f_attr = "t=\"array\" ref=\"A1\"", is = "",
     typ = "14",
     stringsAsFactors = FALSE)
@@ -146,6 +146,7 @@ test_that("array formula detection works", {
 })
 
 test_that("writing shared formulas works", {
+  # somehow this test is failing in Rstudio and I do not know why
   df <- data.frame(
     x = 1:5,
     y = 1:5 * 2,
