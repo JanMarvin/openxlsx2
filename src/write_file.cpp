@@ -25,13 +25,13 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
 // the column data used in this row. This function uses both to create a single
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
-pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) {
+
+void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFrame &cc) {
   auto lastrow = 0;  // integer value of the last row with column data
   auto thisrow = 0;  // integer value of the current row with column data
   auto row_idx = 0;  // the index of the row_attr file. this is != rowid
   auto rowid   = 0;  // integer value of the r field in row_attr
 
-  pugi::xml_document doc;
   pugi::xml_node row;
 
   std::string xml_preserver = " ";
@@ -194,8 +194,6 @@ pugi::xml_document xml_sheet_data(Rcpp::DataFrame row_attr, Rcpp::DataFrame cc) 
       }
     }
   }
-
-  return doc;
 }
 
 // TODO: convert to pugi
@@ -223,10 +221,7 @@ XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment s
   pugi::xml_node sheetData = worksheet.append_child("sheetData");
 
   if (cc.size() > 0) {
-    pugi::xml_document xml_sd;
-    xml_sd = xml_sheet_data(row_attr, cc);
-    for (auto sd : xml_sd.children())
-      sheetData.append_copy(sd);
+    xml_sheet_data(sheetData, row_attr, cc);
   }
 
   if (!post.empty()) {
