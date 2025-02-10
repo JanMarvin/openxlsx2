@@ -8252,7 +8252,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ### single
-      if(ncol(df) == 1 && nrow(df) > 1) {
+      if (ncol(df) == 1 && nrow(df) > 1) {
         # create borders
         top_single <- create_border(
           top = top_border, top_color = top_color,
@@ -8261,9 +8261,9 @@ wbWorkbook <- R6::R6Class(
           right = right_border, right_color = right_color
         )
 
-        middle_single <- create_border(
+        bottom_single <- create_border(
           top = inner_hgrid, top_color = inner_hcolor,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
+          bottom = bottom_border, bottom_color = bottom_color,
           left = left_border, left_color = left_color,
           right = right_border, right_color = right_color
         )
@@ -8292,9 +8292,9 @@ wbWorkbook <- R6::R6Class(
 
         if (nrow(df) >= 3) {
           # create border
-          bottom_single <- create_border(
+          middle_single <- create_border(
             top = inner_hgrid, top_color = inner_hcolor,
-            bottom = bottom_border, bottom_color = bottom_color,
+            bottom = inner_hgrid, bottom_color = inner_hcolor,
             left = left_border, left_color = left_color,
             right = right_border, right_color = right_color
           )
