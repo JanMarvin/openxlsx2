@@ -4,6 +4,7 @@
 
 * It is now possible to create shapes using `create_shape()`. [1231](https://github.com/JanMarvin/openxlsx2/pull/1231)
 * Various input checks were added to the style helpers
+* `write_xlsx()` now accepts `wb_set_base_font()` arguments to set the base font (size, color, name) for the entire workbook. [1262](https://github.com/JanMarvin/openxlsx2/pull/1262)
 
 ## Fixes
 

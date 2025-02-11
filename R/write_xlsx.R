@@ -301,7 +301,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
 
   # Set base font if any parameters were provided
-  if (length(font_args) > 0) {
+  if (length(font_args)) {
     font_args$wb <- wb
     wb <- do.call(wb_set_base_font, font_args)
   }
