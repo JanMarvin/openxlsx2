@@ -411,26 +411,26 @@ test_that("write_xlsx works with colour", {
 test_that("write_xlsx with base font settings", {
   tmp <- temp_xlsx()
   df <- data.frame(a = 1:5, b = letters[1:5])
-  
+
   # Test with font size
   expect_silent(write_xlsx(df, tmp, font_size = 14))
-  
+
   # Test with font color
   expect_silent(write_xlsx(df, tmp, font_color = wb_color(theme = "2")))
-  
+
   # Test with font name
   expect_silent(write_xlsx(df, tmp, font_name = "Arial"))
-  
+
   # Test with all font parameters
-  expect_silent(write_xlsx(df, tmp, 
+  expect_silent(write_xlsx(df, tmp,
     font_size = 12,
     font_color = wb_color(theme = "1"),
     font_name = "Calibri"
   ))
-  
+
   # Load and verify font settings
-  wb <- write_xlsx(df, tmp, 
-    font_size = 16,    
+  wb <- write_xlsx(df, tmp,
+    font_size = 16,
     font_color = wb_color(auto = TRUE),
     font_name = "Times New Roman"
   )

@@ -41,7 +41,7 @@
 #' write_xlsx(l, temp_xlsx(), col_widths = 20)
 #' write_xlsx(l, temp_xlsx(), col_widths = list(100, 200, 300))
 #' write_xlsx(l, temp_xlsx(), col_widths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
-#' 
+#'
 #' # set base font color to automatic so LibreOffice dark mode works as expected
 #' write_xlsx(l, temp_xlsx(), font_color = wb_color(auto = TRUE))
 #' @export
