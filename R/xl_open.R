@@ -98,8 +98,8 @@ chooseExcelApp <- function() {
   m <- c(
     `Libreoffice/OpenOffice` = "soffice",
     `Calligra Sheets` = "calligrasheets",
-    `Gnumeric` = "gnumeric"
-    ,`ONLYOFFICE` = "onlyoffice-desktopeditors"
+    `Gnumeric` = "gnumeric",
+    `ONLYOFFICE` = "onlyoffice-desktopeditors"
   )
 
   prog <- Sys.which(m)
