@@ -16,6 +16,7 @@
 #' @inheritDotParams wb_freeze_pane first_active_row first_active_col first_row first_col
 #' @inheritDotParams wb_set_col_widths widths
 #' @inheritDotParams wb_save overwrite
+#' @inheritDotParams wb_set_base_font font_size font_color font_name
 #' @return A workbook object
 #' @examples
 #' ## write to working directory
@@ -40,6 +41,9 @@
 #' write_xlsx(l, temp_xlsx(), col_widths = 20)
 #' write_xlsx(l, temp_xlsx(), col_widths = list(100, 200, 300))
 #' write_xlsx(l, temp_xlsx(), col_widths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
+#'
+#' # set base font color to automatic so LibreOffice dark mode works as expected
+#' write_xlsx(l, temp_xlsx(), font_color = wb_color(auto = TRUE))
 #' @export
 write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
@@ -53,7 +57,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     "col.names", "row.names", "col_names", "row_names", "table_style",
     "table_name", "with_filter", "first_active_row", "first_active_col",
     "first_row", "first_col", "col_widths", "na.strings",
-    "overwrite", "title", "subject", "category"
+    "overwrite", "title", "subject", "category",
+    "font_size", "font_color", "font_name"
   )
 
   params <- list(...)
@@ -130,6 +135,11 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
 
   #---wb_save---#
   #   overwrite = TRUE
+
+  #---wb_set_base_font---#
+  ## font_size = 11,
+  ## font_color = wb_color(theme = "1"),
+  ## font_name = "Aptos Narrow"
 
   if (!is.logical(as_table)) {
     stop("as_table must be a logical.")
@@ -274,8 +284,27 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
       na_strings()
     }
 
+  # Get base font parameters if provided
+  font_args <- list()
+  if ("font_size" %in% names(params)) {
+    font_args$font_size <- params$font_size
+  }
+  if ("font_color" %in% names(params)) {
+    font_args$font_color <- params$font_color
+  }
+  if ("font_name" %in% names(params)) {
+    font_args$font_name <- params$font_name
+  }
+
+
   ## create new Workbook object
   wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
+
+  # Set base font if any parameters were provided
+  if (length(font_args)) {
+    font_args$wb <- wb
+    wb <- do.call(wb_set_base_font, font_args)
+  }
 
 
   ## If a list is supplied write to individual worksheets using names if available
