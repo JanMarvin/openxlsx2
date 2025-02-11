@@ -14,8 +14,8 @@
 #' path), and if it finds anything, sets `options('openxlsx2.excelApp')` to the
 #' program chosen by the user via a menu (if many are present, otherwise it
 #' will set the only available). Currently searched for apps are
-#' Libreoffice/Openoffice (`soffice` bin), Gnumeric (`gnumeric`) and Calligra
-#' Sheets (`calligrasheets`).
+#' Libreoffice/Openoffice (`soffice` bin), Gnumeric (`gnumeric`), Calligra
+#' Sheets (`calligrasheets`) and ONLYOFFICE (`onlyoffice-desktopeditors`).
 #'
 #' @param x A path to the Excel (xls/xlsx) file or wbWorkbook object.
 #' @param interactive If `FALSE` will throw a warning and not open the path.
@@ -98,7 +98,8 @@ chooseExcelApp <- function() {
   m <- c(
     `Libreoffice/OpenOffice` = "soffice",
     `Calligra Sheets` = "calligrasheets",
-    `Gnumeric` = "gnumeric"
+    `Gnumeric` = "gnumeric",
+    `ONLYOFFICE` = "onlyoffice-desktopeditors"
   )
 
   prog <- Sys.which(m)

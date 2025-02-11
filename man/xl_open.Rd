@@ -33,8 +33,8 @@ applications (unless \code{options('openxlsx2.excelApp')} is set to the app bin
 path), and if it finds anything, sets \code{options('openxlsx2.excelApp')} to the
 program chosen by the user via a menu (if many are present, otherwise it
 will set the only available). Currently searched for apps are
-Libreoffice/Openoffice (\code{soffice} bin), Gnumeric (\code{gnumeric}) and Calligra
-Sheets (\code{calligrasheets}).
+Libreoffice/Openoffice (\code{soffice} bin), Gnumeric (\code{gnumeric}), Calligra
+Sheets (\code{calligrasheets}) and ONLYOFFICE (\code{onlyoffice-desktopeditors}).
 }
 \examples{
 \donttest{
