@@ -74,7 +74,7 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="wb_workbook.html">wb_workbook</a></code>, <code><a href="wb_add_worksheet.html">wb_add_worksheet</a></code>, <code><a href="wb_add_data_table.html">wb_add_data_table</a></code>, <code><a href="wb_add_data.html">wb_add_data</a></code>, <code><a href="wb_freeze_pane.html">wb_freeze_pane</a></code>, <code><a href="col_widths-wb.html">wb_set_col_widths</a></code>, <code><a href="wb_save.html">wb_save</a></code></p><dl><dt><code>creator</code></dt>
+<dd><p>Arguments passed on to <code><a href="wb_workbook.html">wb_workbook</a></code>, <code><a href="wb_add_worksheet.html">wb_add_worksheet</a></code>, <code><a href="wb_add_data_table.html">wb_add_data_table</a></code>, <code><a href="wb_add_data.html">wb_add_data</a></code>, <code><a href="wb_freeze_pane.html">wb_freeze_pane</a></code>, <code><a href="col_widths-wb.html">wb_set_col_widths</a></code>, <code><a href="wb_save.html">wb_save</a></code>, <code><a href="base_font-wb.html">wb_set_base_font</a></code></p><dl><dt><code>creator</code></dt>
 <dd><p>Creator of the workbook (your name). Defaults to login username or <code>options("openxlsx2.creator")</code> if set.</p></dd>
 
     <dt><code>sheet</code></dt>
@@ -133,6 +133,15 @@ software. See <strong>Details</strong> for general information on column widths.
     <dt><code>overwrite</code></dt>
 <dd><p>If <code>FALSE</code>, will not overwrite when <code>file</code> already exists.</p></dd>
 
+    <dt><code>font_size</code></dt>
+<dd><p>Font size</p></dd>
+
+    <dt><code>font_color</code></dt>
+<dd><p>Font color</p></dd>
+
+    <dt><code>font_name</code></dt>
+<dd><p>Name of a font</p></dd>
+
 
 </dl></dd>
 
@@ -171,6 +180,9 @@ styled as dates and datetimes respectively.</p>
 <span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_widths <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">300</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, col_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># set base font color to automatic so LibreOffice dark mode works as expected</span></span></span>
+<span class="r-in"><span><span class="fu">write_xlsx</span><span class="op">(</span><span class="va">l</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, font_color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>auto <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
