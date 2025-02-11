@@ -28,6 +28,7 @@ LastModifiedBy
 Libreoffice
 MIP
 OEM
+ONLYOFFICE
 ORCID
 Openoffice
 POSIXct
@@ -425,4 +426,5 @@ xlsb
 xlsm
 xlsx
 yWindow
+yaml
 yy
