@@ -14,7 +14,7 @@ write_xlsx(x, file, as_table = FALSE, ...)
 \item{as_table}{If \code{TRUE}, will write as a data table, instead of data.}
 
 \item{...}{
-  Arguments passed on to \code{\link[=wb_workbook]{wb_workbook}}, \code{\link[=wb_add_worksheet]{wb_add_worksheet}}, \code{\link[=wb_add_data_table]{wb_add_data_table}}, \code{\link[=wb_add_data]{wb_add_data}}, \code{\link[=wb_freeze_pane]{wb_freeze_pane}}, \code{\link[=wb_set_col_widths]{wb_set_col_widths}}, \code{\link[=wb_save]{wb_save}}
+  Arguments passed on to \code{\link[=wb_workbook]{wb_workbook}}, \code{\link[=wb_add_worksheet]{wb_add_worksheet}}, \code{\link[=wb_add_data_table]{wb_add_data_table}}, \code{\link[=wb_add_data]{wb_add_data}}, \code{\link[=wb_freeze_pane]{wb_freeze_pane}}, \code{\link[=wb_set_col_widths]{wb_set_col_widths}}, \code{\link[=wb_save]{wb_save}}, \code{\link[=wb_set_base_font]{wb_set_base_font}}
   \describe{
     \item{\code{creator}}{Creator of the workbook (your name). Defaults to login username or \code{options("openxlsx2.creator")} if set.}
     \item{\code{sheet}}{A name for the new worksheet}
@@ -41,6 +41,9 @@ automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxl
 sets the default width is 8.43, as this is the standard in some spreadsheet
 software. See \strong{Details} for general information on column widths.}
     \item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{file} already exists.}
+    \item{\code{font_size}}{Font size}
+    \item{\code{font_color}}{Font color}
+    \item{\code{font_name}}{Name of a font}
   }}
 }
 \value{
@@ -76,4 +79,7 @@ write_xlsx(l, temp_xlsx(),
 write_xlsx(l, temp_xlsx(), col_widths = 20)
 write_xlsx(l, temp_xlsx(), col_widths = list(100, 200, 300))
 write_xlsx(l, temp_xlsx(), col_widths = list(rep(10, 5), rep(8, 11), rep(5, 5)))
+
+# set base font color to automatic so LibreOffice dark mode works as expected
+write_xlsx(l, temp_xlsx(), font_color = wb_color(auto = TRUE))
 }
