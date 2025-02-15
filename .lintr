@@ -1,6 +1,5 @@
 linters: linters_with_defaults(
   line_length_linter = NULL,               # we have many long lines
-  cyclocomp_linter = NULL,                 #
   commented_code_linter = NULL,            #
   object_name_linter = NULL,               # more camel case
   object_length_linter = NULL,

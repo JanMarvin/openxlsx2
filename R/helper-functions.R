@@ -356,7 +356,7 @@ getFile <- function(xlsxFile) {
     xlsxFile <- tmpFile
   }
 
-  return(xlsxFile)
+  xlsxFile
 }
 
 # Rotate the 15-bit integer by n bits to the
@@ -759,7 +759,7 @@ top_half <- function(x) {
   if (twosided(x)) {
     out <- rep(FALSE, length(x))
     out[seq_len(which(x == TRUE)[1] - 1L)] <- TRUE
-    return(out)
+    out
   } else {
     stop("not twosided")
   }
@@ -771,7 +771,7 @@ bottom_half <- function(x) {
   if (twosided(x)) {
     out <- rep(TRUE, length(x))
     out[seq_len(rev(which(x == TRUE))[1])] <- FALSE
-    return(out)
+    out
   } else {
     stop("not twosided")
   }
@@ -861,9 +861,9 @@ solve_merge <- function(have, want) {
 basename2 <- function(path) {
   is_to_long <- vapply(path, to_long, NA)
   if (any(is_to_long)) {
-    return(gsub(".*[\\/]", "", path))
+    gsub(".*[\\/]", "", path)
   } else {
-    return(basename(path))
+    basename(path)
   }
 }
 

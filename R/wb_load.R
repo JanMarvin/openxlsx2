@@ -1076,7 +1076,7 @@ wb_load <- function(
       } else {
         xml <- character()
       }
-      return(xml)
+      xml
     })
 
     wb$worksheets_rels <- xml
