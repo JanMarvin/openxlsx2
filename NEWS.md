@@ -1,4 +1,4 @@
-# openxlsx2 (development version)
+# openxlsx2 1.13
 
 ## New features
 
@@ -19,6 +19,7 @@
 * Switch to `f_attr` to handle more formula attributes
 * Remove the use of `cc_out` when writing output files
 * Refactoring of `wb_add_border()` (@pteridin)
+* Trim internal `cc` data frame to only a selected set of columns
 
 ## Breaking changes
 

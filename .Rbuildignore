@@ -5,6 +5,7 @@
 # Documentation files
 ^docs$
 ^pkgdown$
+_pkgdown.yml
 README.Rmd
 
 # Configuration files
@@ -21,5 +22,5 @@ codecov.yml
 vignettes/img/worksheet_styling.jpg
 
 # Test files
-^tests/testthat/_snaps/$
-^tests/testthat/testfiles/$
+^tests/testthat/_snaps$
+^tests/testthat/testfiles$
