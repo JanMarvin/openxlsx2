@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Add charts to a workbook • openxlsx2</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -20,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +43,7 @@
 <li><a class="dropdown-item" href="../articles/conditional-formatting.html">Add conditional formatting to a workbook</a></li>
     <li><a class="dropdown-item" href="../articles/openxlsx2_charts_manual.html">Add charts to a workbook</a></li>
     <li><a class="dropdown-item" href="../articles/openxlsx2_formulas_manual.html">Add formulas to a workbook</a></li>
-    <li><a class="dropdown-item" href="../articles/openxlsx2_read_to_df.html">openxlsx2 read to data frame manual</a></li>
+    <li><a class="dropdown-item" href="../articles/openxlsx2_read_to_df.html">openxlsx2 read to data frame</a></li>
     <li><a class="dropdown-item" href="../articles/openxlsx2_style_manual.html">Add styling to a workbook</a></li>
     <li><a class="dropdown-item" href="../articles/Update-from-openxlsx.html">Upgrade from openxlsx</a></li>
   </ul>
@@ -69,11 +75,10 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Add charts to a workbook</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Add charts to a workbook</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.12/vignettes/openxlsx2_charts_manual.Rmd" class="external-link"><code>vignettes/openxlsx2_charts_manual.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/vignettes/openxlsx2_charts_manual.Rmd" class="external-link"><code>vignettes/openxlsx2_charts_manual.Rmd</code></a></small>
       <div class="d-none name"><code>openxlsx2_charts_manual.Rmd</code></div>
     </div>
 
@@ -133,10 +138,12 @@ afterwards use <code><a href="../reference/wb_add_plot.html">wb_add_plot()</a></
 <span>  <span class="fu">add_plot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">3.5</span>, file_type <span class="op">=</span> <span class="st">"png"</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; Loading required namespace: ggplot2</span></span>
-<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span></code></pre></div>
-<p><img src="openxlsx2_charts_manual_files/figure-html/ggplot-1.png" width="700"></p>
+<span><span class="co">#&gt; Loading required namespace: ggplot2</span></span></code></pre></div>
+<div class="figure">
+<img src="openxlsx2_charts_manual_files/figure-html/ggplot-1.png" alt="ggplot2 output written into the worksheet" width="700"><p class="caption">
+ggplot2 output written into the worksheet
+</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="add-plot-via-rvg">Add plot via <code>{rvg}</code><a class="anchor" aria-label="anchor" href="#add-plot-via-rvg"></a>
