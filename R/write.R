@@ -983,7 +983,7 @@ write_data_table <- function(
     if (transpose) x <- transpose_df(x)
   }
 
-  if (is.vector(x) || is.factor(x) || inherits(x, "Date") || inherits(x, "POSIXt")) {
+  if (is.vector(x) || is.factor(x) || inherits(x, "Date") || inherits(x, "POSIXt") || inherits(x, "glue")) {
     colNames <- FALSE
   } ## this will go to coerce.default and rowNames will be ignored
 
