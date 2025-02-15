@@ -48,9 +48,7 @@ genClientData <- function(col, row, visible, height, width) {
     txt <- paste0(txt, "<x:Visible/>")
   }
 
-  txt <- paste0(txt, "</x:ClientData>")
-
-  return(txt)
+  paste0(txt, "</x:ClientData>")
 }
 
 # # TODO this should be merged with the one above for type Note
@@ -96,7 +94,7 @@ genClientDataFC <- function(left, top, right, bottom, link, range, type, checked
   # - BottomRow
   # - BottomOffset
 
-  txt <- sprintf(
+  sprintf(
     '<x:ClientData ObjectType="%s">
     <x:MoveWithCells/><x:SizeWithCells/>
     <x:Anchor>%s, 0, %s, 0, %s, 0, %s, 0</x:Anchor>
@@ -118,8 +116,6 @@ genClientDataFC <- function(left, top, right, bottom, link, range, type, checked
     as_binary(checked),
     drop
   )
-
-  return(txt)
 }
 
 # This is just a list to remember possible combinations
@@ -499,7 +495,7 @@ gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, border, 
                       </x14:dataBar></x14:cfRule><xm:sqref>%s</xm:sqref></x14:conditionalFormatting>', xml, values[[1]], values[[2]], posColor, negColor, negColor, sqref)
   }
 
-  return(xml)
+  xml
 }
 
 genSlicerCachesExtLst <- function(i) {
@@ -1089,12 +1085,10 @@ drawings <- function(drawings, drawing_id) {
     )
   )
 
-  return(
-    xml_append_child1(
-      node    = read_xml(drawings),
-      child   = read_xml(drawing),
-      pointer = FALSE)
-  )
+  xml_append_child1(
+    node    = read_xml(drawings),
+    child   = read_xml(drawing),
+    pointer = FALSE)
 }
 
 chart1_rels_xml <- function(x) {
@@ -1116,7 +1110,7 @@ drawings_rels <- function(drawings, x) {
 
   rel_len <- length(xml_node(drawings, "Relationship"))
 
-  drawings <- c(
+  c(
     drawings,
     sprintf(
       "<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart%s.xml\"/>",
@@ -1124,8 +1118,6 @@ drawings_rels <- function(drawings, x) {
       x
     )
   )
-
-  return(drawings)
 }
 
 formCntrlDrawing <- function(type, len) {

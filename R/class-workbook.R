@@ -45,11 +45,11 @@ fun_tab_cols <- function(tab_cols) {
 }
 
 validRow <- function(summary_row) {
-  return(tolower(summary_row) %in% c("above", "below"))
+  tolower(summary_row) %in% c("above", "below")
 }
 
 validCol <- function(summary_col) {
-  return(tolower(summary_col) %in% c("left", "right"))
+  tolower(summary_col) %in% c("left", "right")
 }
 
 lcr <- function(var) {
@@ -9850,7 +9850,7 @@ wbWorkbook <- R6::R6Class(
         } ## end of is_chartsheet[i]
       } ## end of loop through nSheets
 
-      return(ct)
+      ct
     },
 
     # old add_named_region()

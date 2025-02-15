@@ -241,9 +241,7 @@ create_numfmt <- function(numFmtId, formatCode) {
     formatCode       = as_xml_attr(formatCode),
     stringsAsFactors = FALSE
   )
-  numfmt <- write_numfmt(df_numfmt)
-
-  return(numfmt)
+  write_numfmt(df_numfmt)
 }
 
 #' Create font format
