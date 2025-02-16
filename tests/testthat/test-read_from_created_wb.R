@@ -287,7 +287,7 @@ test_that("reading with blank rows works (#1272)", {
 
   rr <- wb$worksheets[[1]]$sheet_data$row_attr
 
-  rr <- openxlsx2:::create_char_dataframe(names(rr), n = 2)
+  rr <- create_char_dataframe(names(rr), n = 2)
   rr$r <- as.character(2:3)
 
   wb$worksheets[[1]]$sheet_data$row_attr <- rbind(
@@ -296,6 +296,8 @@ test_that("reading with blank rows works (#1272)", {
     stringAsFactors = FALSE
   )
 
-  wb$to_df(dims = "A2:E3", col_names = FALSE)
+  got <- wb$to_df(dims = "A2:E3", col_names = FALSE)
+
+  expect_equal(c(2L, 5L), dim(got))
 
 })
