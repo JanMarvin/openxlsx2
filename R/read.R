@@ -253,6 +253,7 @@ wb_to_df <- function(
   sst <- attr(wb$sharedStrings, "text")
 
   rnams <- row_attr$r
+  rnams <- rnams[rnams %in% unique(cc$row_r)] # avoid blank row interference
 
   numfmt_date <- numfmt_is_date(wb$styles_mgr$styles$numFmts)
   xlsx_date_style <- style_is_date(wb$styles_mgr$styles$cellXfs, numfmt_date)
