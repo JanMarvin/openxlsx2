@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.12.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.13.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,8 +49,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+<hr></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.13" id="openxlsx2-113">openxlsx2 1.13<a class="anchor" aria-label="anchor" href="#openxlsx2-113"></a></h2><p class="text-muted">CRAN release: 2025-02-15</p>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-1-13">New features<a class="anchor" aria-label="anchor" href="#new-features-1-13"></a></h3>
 <ul><li>It is now possible to create shapes using <code><a href="../reference/create_shape.html">create_shape()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1231" class="external-link">1231</a>
 </li>
 <li>Various input checks were added to the style helpers</li>
@@ -58,7 +61,7 @@
 <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> now accepts <code><a href="../reference/base_font-wb.html">wb_set_base_font()</a></code> arguments to set the base font (size, color, name) for the entire workbook. (<a href="https://github.com/JanMarvin/openxlsx2/pull/1262" class="external-link">1262</a>, <a href="https://github.com/uhkeller" class="external-link">@uhkeller</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-13">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-13"></a></h3>
 <ul><li>The first formula in a workbook can now be a shared formula. <a href="https://github.com/JanMarvin/openxlsx2/pull/1223" class="external-link">1223</a>
 </li>
 <li>Avoid passing ASCII strings through <code>Rcpp::String()</code>. Previously all <code>cc</code> columns were passed through <code>Rcpp::String()</code> to avoid encoding issues on non unicode systems. <a href="https://github.com/JanMarvin/openxlsx2/pull/1224" class="external-link">1224</a>
@@ -70,14 +73,15 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<h3 id="internal-changes-1-13">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-13"></a></h3>
 <ul><li>Update of internal pugixml library</li>
 <li>Switch to <code>f_attr</code> to handle more formula attributes</li>
 <li>Remove the use of <code>cc_out</code> when writing output files</li>
 <li>Refactoring of <code><a href="../reference/wb_add_border.html">wb_add_border()</a></code> (<a href="https://github.com/pteridin" class="external-link">@pteridin</a>)</li>
+<li>Trim internal <code>cc</code> data frame to only a selected set of columns</li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-1-13">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-13"></a></h3>
 <ul><li>Style helpers will accept colors only if provided via <code><a href="../reference/wb_color.html">wb_color()</a></code>. This broke a single example case that was still using <code>c(rgb = "FF808080")</code> this can be converted to <code>wb_color(hex = "FF808080")</code>.</li>
 </ul><hr></div>
 </div>
