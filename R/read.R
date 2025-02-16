@@ -341,8 +341,13 @@ wb_to_df <- function(
   if (has_dims && length(keep_rows) && length(keep_cols))
     cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
 
-  cc$val <- NA_character_
-  cc$typ <- NA_character_
+  if (nrow(cc) == 0) {
+    cc$val <- character()
+    cc$typ <- character()
+  } else {
+    cc$val <- NA_character_
+    cc$typ <- NA_character_
+  }
 
   cc_tab <- unique(cc$c_t)
 
@@ -402,7 +407,11 @@ wb_to_df <- function(
 
     # if a cell is t="s" the content is a sst and not da date
     if (detect_dates && missing(types)) {
-      cc$is_string <- FALSE
+      if (nrow(cc) == 0) {
+        cc$is_string <- logical()
+      } else {
+        cc$is_string <- FALSE
+      }
       if (!is.null(cc$c_t))
         cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
 
@@ -481,8 +490,13 @@ wb_to_df <- function(
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
-  zz$cols <- NA_integer_
-  zz$rows <- NA_integer_
+  if (nrow(zz) == 0) {
+    zz$cols <- integer()
+    zz$rows <- integer()
+  } else {
+    zz$cols <- NA_integer_
+    zz$rows <- NA_integer_
+  }
   # we need to create the correct col and row position as integer starting at 0. Because we allow
   # to select specific rows and columns, we must make sure that our zz cols and rows matches the
   # z data frame.
