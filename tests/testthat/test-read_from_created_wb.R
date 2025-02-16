@@ -278,3 +278,24 @@ test_that("shared formulas are handled", {
   expect_equal(exp, got)
 
 })
+
+test_that("reading with blank rows works (#1272)", {
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(dims = "A1", x = 1)$
+    add_data(dims = "A4:E4", x = rep(1, 5))
+
+  rr <- wb$worksheets[[1]]$sheet_data$row_attr
+
+  rr <- openxlsx2:::create_char_dataframe(names(rr), n = 2)
+  rr$r <- as.character(2:3)
+
+  wb$worksheets[[1]]$sheet_data$row_attr <- rbind(
+    wb$worksheets[[1]]$sheet_data$row_attr,
+    rr,
+    stringAsFactors = FALSE
+  )
+
+  wb$to_df(dims = "A2:E3", col_names = FALSE)
+
+})
