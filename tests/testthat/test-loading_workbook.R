@@ -267,6 +267,17 @@ test_that("test headerFooter", {
 
 })
 
+test_that("linebreaks in header footer work", {
+  tmp <- temp_xlsx()
+  wb <- wb_workbook()$add_worksheet()$
+    set_header_footer(header = c("One\nTwo\nThree", NA, NA))
+  wb$save(tmp)
+
+  wb <- wb_load(tmp)
+  exp <- "One\nTwo\nThree"
+  got <- wb$worksheets[[1]]$headerFooter$oddHeader[1]
+  expect_equal(exp, got)
+})
 
 test_that("load workbook with chartsheet", {
 
