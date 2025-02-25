@@ -622,6 +622,12 @@ test_that("fmt_txt works", {
 
 })
 
+test_that("protect against blank string in fmt_txt()", {
+  exp <- "<r><rPr/><t/></r><r><rPr/><t>a+b</t></r>"
+  got <- unclass(fmt_txt(x = "", size = 12) + fmt_txt(x = "a+b"))
+  expect_equal(exp, got)
+})
+
 test_that("wb_dims(from_dims) positioning works", {
 
   mm <- matrix(1:4, 2, 2)

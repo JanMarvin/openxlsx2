@@ -1146,20 +1146,26 @@ fmt_txt <- function(
   xml_t_attr <- if (grepl("(^\\s+)|(\\s+$)", x)) c("xml:space" = "preserve") else NULL
   xml_t <- xml_node_create("t", xml_children = replace_legal_chars(x), xml_attributes = xml_t_attr)
 
+  rPr_clds <- c(
+    xml_b,
+    xml_i,
+    xml_u,
+    xml_strk,
+    xml_sz,
+    xml_color,
+    xml_font,
+    xml_chrst,
+    xml_otln,
+    xml_vrtln
+  )
+
+  if (nchar(x) == 0) {
+    rPr_clds <- NULL
+  }
+
   xml_rpr <- xml_node_create(
     "rPr",
-    xml_children = c(
-      xml_b,
-      xml_i,
-      xml_u,
-      xml_strk,
-      xml_sz,
-      xml_color,
-      xml_font,
-      xml_chrst,
-      xml_otln,
-      xml_vrtln
-    )
+    xml_children = rPr_clds
   )
 
   out <- xml_node_create(
