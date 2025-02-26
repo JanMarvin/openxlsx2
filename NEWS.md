@@ -1,5 +1,13 @@
 # openxlsx2 (development version)
 
+## Fixes
+
+* Input validation has been added to `fmt_txt()`, similar to how it has been added to the `create_*()` family a while ago.
+
+## Breaking changes
+
+* Single vector character classes will be treated as vector input. This extends the handling of `glue`, added in the previous release, and covers now all `character` classes, including `fmt_txt()`.
+
 
 ***************************************************************************
 
