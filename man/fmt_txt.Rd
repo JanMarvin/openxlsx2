@@ -19,6 +19,10 @@ fmt_txt(
   charset = NULL,
   outline = NULL,
   vert_align = NULL,
+  family = NULL,
+  shadow = NULL,
+  condense = NULL,
+  extend = NULL,
   ...
 )
 
@@ -31,25 +35,21 @@ fmt_txt(
 \arguments{
 \item{x, y}{an openxlsx2 fmt_txt string}
 
-\item{bold}{bold}
-
-\item{italic}{italic}
-
-\item{underline}{underline}
-
-\item{strike}{strike}
+\item{bold, italic, underline, strike}{logical defaulting to \code{FALSE}}
 
 \item{size}{the font size}
 
-\item{color}{a wbColor color for the font}
+\item{color}{a \code{\link[=wb_color]{wb_color()}} for the font}
 
 \item{font}{the font name}
 
 \item{charset}{integer value from the table below}
 
-\item{outline}{TRUE or FALSE}
+\item{outline, shadow, condense, extend}{logical defaulting to \code{NULL}}
 
-\item{vert_align}{baseline, superscript, or subscript}
+\item{vert_align}{any of \code{baseline}, \code{superscript}, or \code{subscript}}
+
+\item{family}{a font family}
 
 \item{...}{additional arguments}
 }
@@ -58,7 +58,8 @@ format strings independent of the cell style.
 }
 \details{
 The result is an xml string. It is possible to paste multiple \code{fmt_txt()}
-strings together to create a string with differing styles.
+strings together to create a string with differing styles. It is possible to
+supply different underline styles to \code{underline}.
 
 Using \code{fmt_txt(charset = 161)} will give the Greek Character Set\tabular{ll}{
    charset \tab "Character Set" \cr
@@ -90,4 +91,7 @@ Though be aware that \code{fmt_txt("sum:") + (2 + 2)} is different to \code{fmt_
 fmt_txt("bar", underline = TRUE)
 fmt_txt("foo ", bold = TRUE) + fmt_txt("bar")
 as.character(fmt_txt(2))
+}
+\seealso{
+\code{\link[=create_font]{create_font()}}
 }

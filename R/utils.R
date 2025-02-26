@@ -1039,10 +1039,10 @@ un_list <- function(x) {
 # `fmt_txt()` ------------------------------------------------------------------
 #' format strings independent of the cell style.
 #'
-#'
 #' @details
 #' The result is an xml string. It is possible to paste multiple `fmt_txt()`
-#' strings together to create a string with differing styles.
+#' strings together to create a string with differing styles. It is possible to
+#' supply different underline styles to `underline`.
 #'
 #' Using `fmt_txt(charset = 161)` will give the Greek Character Set
 #'
@@ -1068,39 +1068,44 @@ un_list <- function(x) {
 #'  | 238    | "EASTEUROPE_CHARSET" |
 #'  | 255    | "OEM_CHARSET"        |
 #'
-# FIXME review the `fmt_txt.Rd`
 # #' @param x a string or part of a string
-#' @param bold bold
-#' @param italic italic
-#' @param underline underline
-#' @param strike strike
+#' @param bold,italic,underline,strike logical defaulting to `FALSE`
 #' @param size the font size
-#' @param color a wbColor color for the font
+#' @param color a [wb_color()] for the font
 #' @param font the font name
 #' @param charset integer value from the table below
-#' @param outline TRUE or FALSE
-#' @param vert_align baseline, superscript, or subscript
+#' @param vert_align any of `baseline`, `superscript`, or `subscript`
+#' @param family a font family
+#' @param outline,shadow,condense,extend logical defaulting to `NULL`
 #' @param ... additional arguments
+#' @seealso [create_font()]
 #' @examples
 #' fmt_txt("bar", underline = TRUE)
 #' @export
 fmt_txt <- function(
     x,
-    bold      = FALSE,
-    italic    = FALSE,
-    underline = FALSE,
-    strike    = FALSE,
-    size      = NULL,
-    color     = NULL,
-    font      = NULL,
-    charset   = NULL,
-    outline   = NULL,
+    bold       = FALSE,
+    italic     = FALSE,
+    underline  = FALSE,
+    strike     = FALSE,
+    size       = NULL,
+    color      = NULL,
+    font       = NULL,
+    charset    = NULL,
+    outline    = NULL,
     vert_align = NULL,
+    family     = NULL,
+    shadow     = NULL,
+    condense   = NULL,
+    extend     = NULL,
     ...
 ) {
 
+  # TODO: align argument order with `create_font()`
+
   standardize(...)
 
+  # CT_RPrElt
   xml_b     <- NULL
   xml_i     <- NULL
   xml_u     <- NULL
@@ -1111,44 +1116,97 @@ fmt_txt <- function(
   xml_chrst <- NULL
   xml_otln  <- NULL
   xml_vrtln <- NULL
+  xml_fmly  <- NULL
+  xml_sdw   <- NULL
+  xml_cdns  <- NULL
+  xml_extnd <- NULL
 
-  if (bold) {
-    xml_b <-  xml_node_create("b")
+  # For boolean elements like bold, italic, and strike: the default is a node
+  # without any value. Like <b/>, not <b val="1"/>. If FALSE, we do not add a
+  # node. That's what the isTRUE() and !isFALSE() checks make sure.
+
+  if (length(bold)) {
+    assert_xml_bool(bold)
+    if (isTRUE(bold)) bold <- ""
+    if (!isFALSE(bold))
+      xml_b <-  xml_node_create("b", xml_attributes = c(val = as_xml_attr(bold)))
   }
-  if (italic) {
-    xml_i <-  xml_node_create("i")
+  if (length(italic)) {
+    assert_xml_bool(italic)
+    if (isTRUE(italic)) italic <- ""
+    if (!isFALSE(italic))
+      xml_i <-  xml_node_create("i", xml_attributes = c(val = as_xml_attr(italic)))
   }
-  if (underline) {
-    xml_u <-  xml_node_create("u")
+  if (length(underline)) {
+    if (is.character(underline)) {
+      valid_underlines <- c("single", "double", "singleAccounting", "doubleAccounting", "none")
+      match.arg_wrapper(underline, valid_underlines, fn_name = "fmt_txt")
+    } else {
+      assert_xml_bool(strike)
+      underline <- as.logical(underline) # if a numeric is passed
+      if (underline) underline <- ""
+    }
+    if (!isFALSE(underline))
+      xml_u <-  xml_node_create("u", xml_attributes = c(val = as_xml_attr(underline)))
   }
-  if (strike) {
-    xml_strk <- xml_node_create("strike")
+  if (length(strike)) {
+    assert_xml_bool(strike)
+    if (isTRUE(strike)) strike <- ""
+    if (!isFALSE(strike))
+      xml_strk <- xml_node_create("strike", xml_attributes = c(val = as_xml_attr(strike)))
   }
   if (length(size)) {
     xml_sz <- xml_node_create("sz", xml_attributes = c(val = as_xml_attr(size)))
   }
-  if (inherits(color, "wbColour")) {
+  if (length(color)) {
+    assert_color(color)
     xml_color <- xml_node_create("color", xml_attributes = color)
   }
   if (length(font)) {
-    xml_font <- xml_node_create("rFont", xml_attributes = c(val = font))
+    xml_font <- xml_node_create("rFont", xml_attributes = c(val = as_xml_attr(font)))
   }
   if (length(charset)) {
-    xml_chrst <- xml_node_create("charset", xml_attributes = c("val" = charset))
+    xml_chrst <- xml_node_create("charset", xml_attributes = c(val = as_xml_attr(charset)))
   }
   if (length(outline)) {
-    xml_otln <- xml_node_create("outline", xml_attributes = c("val" = as_xml_attr(outline)))
+    assert_xml_bool(outline)
+    if (isTRUE(outline)) outline <- ""
+    xml_otln <- xml_node_create("outline", xml_attributes = c(val = as_xml_attr(outline)))
   }
   if (length(vert_align)) {
-    xml_vrtln <- xml_node_create("vertAlign", xml_attributes = c("val" = as_xml_attr(vert_align)))
+    valid_aligns <- c("baseline", "superscript", "subscript")
+    match.arg_wrapper(vert_align, valid_aligns, fn_name = "fmt_txt")
+    xml_vrtln <- xml_node_create("vertAlign", xml_attributes = c(val = as_xml_attr(vert_align)))
+  }
+  if (length(family)) {
+    if (!family %in% as.character(0:14))
+      stop("family needs to be in the range of 0 to 14", call. = FALSE)
+    xml_fmly <- xml_node_create("family", xml_attributes = c(val = as_xml_attr(family)))
+  }
+  if (length(shadow)) {
+    assert_xml_bool(shadow)
+    if (isTRUE(shadow)) shadow <- ""
+    xml_sdw <- xml_node_create("shadow", xml_attributes = c(val = as_xml_attr(shadow)))
+  }
+  if (length(condense)) {
+    assert_xml_bool(condense)
+    if (isTRUE(condense)) condense <- ""
+    xml_cdns <- xml_node_create("condense", xml_attributes = c(val = as_xml_attr(condense)))
+  }
+  if (length(extend)) {
+    assert_xml_bool(extend)
+    if (isTRUE(extend)) extend <- ""
+    xml_extnd <- xml_node_create("extend", xml_attributes = c(val = as_xml_attr(extend)))
   }
 
   xml_t_attr <- if (grepl("(^\\s+)|(\\s+$)", x)) c("xml:space" = "preserve") else NULL
   xml_t <- xml_node_create("t", xml_children = replace_legal_chars(x), xml_attributes = xml_t_attr)
 
-  xml_rpr <- xml_node_create(
-    "rPr",
-    xml_children = c(
+  rPr_clds <- NULL
+  # ommit all run properties, if x is "", this causes broken output in certain
+  # spreadsheet applications
+  if (nchar(x)) {
+    rPr_clds <- c(
       xml_b,
       xml_i,
       xml_u,
@@ -1158,8 +1216,17 @@ fmt_txt <- function(
       xml_font,
       xml_chrst,
       xml_otln,
-      xml_vrtln
+      xml_vrtln,
+      xml_fmly,
+      xml_sdw,
+      xml_cdns,
+      xml_extnd
     )
+  }
+
+  xml_rpr <- xml_node_create(
+    "rPr",
+    xml_children = rPr_clds
   )
 
   out <- xml_node_create(

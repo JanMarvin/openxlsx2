@@ -536,7 +536,7 @@ test_that("string formating", {
   expect_equal(exp, got)
 
   exp <- structure(
-    "<r><rPr><i/><strike/><rFont val=\"Arial\"/><charset/><outline val=\"1\"/><vertAlign val=\"5\"/></rPr><t>test</t></r>",
+    "<r><rPr><i/><strike/><rFont val=\"Arial\"/><charset/><outline/><vertAlign val=\"baseline\"/></rPr><t>test</t></r>",
     class = c("character", "fmt_txt")
   )
   got <- fmt_txt(
@@ -546,7 +546,7 @@ test_that("string formating", {
     font = "Arial",
     charset = "",
     outline = TRUE,
-    vert_align = 5
+    vert_align = "baseline"
   )
   expect_equal(exp, got)
 
@@ -618,6 +618,58 @@ test_that("fmt_txt works", {
   expect_equal(
     fmt_txt("foo", color = wb_color("green")),
     fmt_txt("foo", colour = wb_colour("green"))
+  )
+
+})
+
+test_that("protect against blank string in fmt_txt()", {
+  exp <- "<r><rPr/><t/></r><r><rPr/><t>a+b</t></r>"
+  got <- unclass(fmt_txt(x = "", size = 12) + fmt_txt(x = "a+b"))
+  expect_equal(exp, got)
+})
+
+test_that("fmt_txt() input validation works", {
+
+  exp <- "<r><rPr><b/><i/><u val=\"double\"/><strike/><sz val=\"12\"/><color rgb=\"FF0000FF\"/><rFont val=\"Times New Roman\"/><charset val=\"1\"/><outline/><vertAlign val=\"baseline\"/><family val=\"2\"/><shadow/><condense/><extend/></rPr><t>foo bar</t></r>"
+  fmt_str <- fmt_txt(
+    x = "foo bar",
+    bold = TRUE,
+    italic = TRUE,
+    strike = TRUE,
+    size = 12,
+    color = wb_color("blue"),
+    font = "Times New Roman",
+    charset = 1,
+    outline = TRUE,
+    family = 2,
+    shadow = TRUE,
+    condense = TRUE,
+    vert_align = "baseline",
+    underline = "double",
+    extend = TRUE
+  )
+  got <- unclass(fmt_str)
+  expect_equal(exp, got)
+
+  expect_error(
+    fmt_txt(
+      x = "foo bar",
+      color = "blue",
+      font = "Times New Roman",
+      condense = 0,
+      vert_align = "top"
+    ),
+    "color must be class wbColour"
+  )
+
+  expect_error(
+    fmt_txt(
+      x = "foo bar",
+      font = "Times New Roman",
+      condense = 0,
+      vert_align = "top"
+    ),
+    "Use any of 'baseline', 'superscript', 'subscript'"
   )
 
 })
