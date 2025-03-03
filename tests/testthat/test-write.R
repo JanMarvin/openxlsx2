@@ -1488,3 +1488,54 @@ test_that("writing without pugixml works", {
   expect_silent(wb <- wb_load(temp))
 
 })
+
+test_that("writing tables with filters works", {
+
+  exp <- mtcars[mtcars$cyl %in% c(4, 8) & mtcars$am != 1 & mtcars$vs == 1, ]
+
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data_table(
+      x = mtcars,
+      params = list(
+        choose = c(cyl = "x %in% c(4, 8)",
+                   am = c("x != 1"),
+                   vs = c("x == 1")
+                   )
+        )
+      )
+
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  wb <- write_xlsx(
+      x = mtcars,
+      as_table = TRUE,
+      params = list(
+        choose = c(cyl = "x %in% c(4, 8)",
+                   am = c("x != 1"),
+                   vs = c("x == 1")
+        )
+      )
+    )
+
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  choose <- c(city = "x %in% c(\"Berlin\", \"Paris\")")
+
+  df <- data.frame(
+    city = c("berlin", "Berlin", "BERLIN", "Hamburg", "Paris", "Lyon"),
+    cnty = c(1, 1, 1, 1, 2, 2)
+  )
+
+  # create workbook
+  wb <- wb_workbook() %>%
+    wb_add_worksheet() %>%
+    wb_add_data_table(x = df, params = list(choose = choose))
+
+  exp <- c("berlin", "Berlin", "BERLIN", "Paris")
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)$city
+  expect_equal(exp, got)
+
+})
