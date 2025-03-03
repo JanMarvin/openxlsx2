@@ -2921,6 +2921,7 @@ wbWorkbook <- R6::R6Class(
 
       assert_class(file, "character")
       assert_class(overwrite, "logical")
+      assert_class(flush, "logical")
 
       if (file.exists(file) & !overwrite) {
         stop("File already exists!")
