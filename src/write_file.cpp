@@ -103,6 +103,21 @@ void xml_sheet_data_slim(
         }
       }
 
+
+    if (
+      cc_c_s[i].empty() &&
+      cc_c_t[i].empty() &&
+      (!has_cm || (has_cm && cc_c_cm[i].empty())) &&
+      (!has_ph || (has_ph && cc_c_ph[i].empty())) &&
+      (!has_vm || (has_vm && cc_c_vm[i].empty())) &&
+      cc_v[i].empty() &&
+      cc_f[i].empty() &&
+      cc_f_attr[i].empty() &&
+      cc_is[i].empty()
+    ) {
+      continue;
+    }
+
       // create node <c>
       file << "<c";
 
@@ -140,7 +155,7 @@ void xml_sheet_data_slim(
       if (!to_string(cc_f[i]).empty() || !to_string(cc_f_attr[i]).empty()) {
         file << "<f";
         if (!to_string(cc_f_attr[i]).empty()) {
-          file << to_string(cc_f_attr[i]).c_str();
+          file << " " << to_string(cc_f_attr[i]).c_str();
         }
         file << ">";
 
