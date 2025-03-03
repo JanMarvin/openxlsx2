@@ -54,7 +54,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="cn">NULL</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="cn">NULL</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="cn">NULL</span>, flush <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -76,10 +76,28 @@
 <dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
 <dd><p>Deprecated argument. Please use <code>file</code> in new code.</p></dd>
 
+
+<dt id="arg-flush">flush<a class="anchor" aria-label="anchor" href="#arg-flush"></a></dt>
+<dd><p>Experimental, streams the worksheet file to disk</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>the <code>wbWorkbook</code> object, invisibly</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>When saving a <code>wbWorkbook</code> to a file, memory usage may spike
+depending on the worksheet size. This happens because the entire XML
+structure is created in memory before writing to disk. The memory
+required depends on worksheet size, as XML files consist of character
+data and include additional overhead for validity checks.</p>
+<p>The <code>flush</code> argument streams worksheet XML data directly to disk,
+avoiding the need to build the full XML tree in memory. This reduces
+memory usage but skips some XML validity checks. It also bypasses
+the <code>pugixml</code> functions that <code>openxlsx2</code> uses, omitting certain
+preliminary sanity checks before writing. As the name suggests,
+the output is simply flushed to disk.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
