@@ -20,6 +20,201 @@ Rcpp::CharacterVector set_sst(Rcpp::CharacterVector sharedStrings) {
   return sst;
 }
 
+// write xml by streaming to files. this takes whatever input we provide and
+// dumps it into the file. no xml checking, no unicode checking
+void xml_sheet_data_slim(
+    Rcpp::DataFrame row_attr,
+    Rcpp::DataFrame cc,
+    std::string prior,
+    std::string post,
+    std::string fl
+) {
+
+  bool has_cm = cc.containsElementNamed("c_cm");
+  bool has_ph = cc.containsElementNamed("c_ph");
+  bool has_vm = cc.containsElementNamed("c_vm");
+
+  std::ofstream file(fl);
+  if (!file.is_open()) Rcpp::stop("could not open output file");
+
+  auto lastrow = 0;  // integer value of the last row with column data
+  auto thisrow = 0;  // integer value of the current row with column data
+  auto row_idx = 0;  // the index of the row_attr file. this is != rowid
+  auto rowid   = 0;  // integer value of the r field in row_attr
+
+  std::string xml_preserver = " ";
+
+  file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+  file << prior;
+
+  Rcpp::CharacterVector cc_c_cm, cc_c_ph, cc_c_vm;
+
+  if (cc.nrow() && cc.ncol()) {
+    // we cannot access rows directly in the dataframe.
+    // Have to extract the columns and use these
+    Rcpp::CharacterVector cc_row_r  = cc["row_r"];  // 1
+    Rcpp::CharacterVector cc_r      = cc["r"];      // A1
+    Rcpp::CharacterVector cc_v      = cc["v"];
+    Rcpp::CharacterVector cc_c_t    = cc["c_t"];
+    Rcpp::CharacterVector cc_c_s    = cc["c_s"];
+    if (has_cm) cc_c_cm  = cc["c_cm"];
+    if (has_ph) cc_c_ph  = cc["c_ph"];
+    if (has_vm) cc_c_vm  = cc["c_vm"];
+    Rcpp::CharacterVector cc_f      = cc["f"];
+    Rcpp::CharacterVector cc_f_attr = cc["f_attr"];
+    Rcpp::CharacterVector cc_is     = cc["is"];
+
+    Rcpp::CharacterVector row_r     = row_attr["r"];
+
+    file << "<sheetData>";
+    for (auto i = 0; i < cc.nrow(); ++i) {
+      thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
+
+      if (lastrow < thisrow) {
+        // there might be entirely empty rows in between. this is the case for
+        // loadExample. We check the rowid and write the line and skip until we
+        // have every row and only then continue writing the column
+        while (rowid < thisrow) {
+
+          rowid = std::stoi(Rcpp::as<std::string>(
+            row_r[row_idx]
+          ));
+
+          if (row_idx) file << "</row>";
+          file << "<row";
+          Rcpp::CharacterVector attrnams = row_attr.names();
+
+          for (auto j = 0; j < row_attr.ncol(); ++j) {
+            Rcpp::CharacterVector cv_s = "";
+            cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+
+            if (cv_s[0] != "") {
+              const std::string val_strl = Rcpp::as<std::string>(cv_s);
+              file << " " << attrnams[j] << "=\"" << val_strl.c_str() << "\"";
+            }
+          }
+          file << ">";  // end <r ...>
+
+          // read the next row_idx when visiting again
+          ++row_idx;
+        }
+      }
+
+      if (
+        cc_c_s[i].empty() &&
+        cc_c_t[i].empty() &&
+        (!has_cm || (has_cm && cc_c_cm[i].empty())) &&
+        (!has_ph || (has_ph && cc_c_ph[i].empty())) &&
+        (!has_vm || (has_vm && cc_c_vm[i].empty())) &&
+        cc_v[i].empty() &&
+        cc_f[i].empty() &&
+        cc_f_attr[i].empty() &&
+        cc_is[i].empty()
+      ) {
+        continue;
+      }
+
+      // create node <c>
+      file << "<c";
+
+      // Every cell consists of a typ and a val list. Certain functions have an
+      // additional attr list.
+
+      // append attributes <c r="A1" ...>
+      file << " r" << "=\"" << to_string(cc_r[i]).c_str() << "\"";
+
+      if (!to_string(cc_c_s[i]).empty())
+        file << " s" << "=\"" << to_string(cc_c_s[i]).c_str() << "\"";
+
+      // assign type if not <v> aka numeric
+      if (!to_string(cc_c_t[i]).empty())
+        file << " t" << "=\"" << to_string(cc_c_t[i]).c_str() << "\"";
+
+      // CellMetaIndex: suppress curly brackets in spreadsheet software
+      if (has_cm && !to_string(cc_c_cm[i]).empty())
+        file << " cm" << "=\"" << to_string(cc_c_cm[i]).c_str() << "\"";
+
+      // phonetics spelling
+      if (has_ph && !to_string(cc_c_ph[i]).empty())
+        file << " ph" << "=\"" << to_string(cc_c_ph[i]).c_str() << "\"";
+
+      // suppress curly brackets in spreadsheet software
+      if (has_vm && !to_string(cc_c_vm[i]).empty())
+        file << " vm" << "=\"" << to_string(cc_c_vm[i]).c_str() << "\"";
+
+      file << ">";  // end <c ...>
+
+      bool f_si = false;
+
+      // <f> ... </f>
+      // f node: formula to be evaluated
+      if (!to_string(cc_f[i]).empty() || !to_string(cc_f_attr[i]).empty()) {
+        file << "<f";
+        if (!to_string(cc_f_attr[i]).empty()) {
+          file << " " << to_string(cc_f_attr[i]).c_str();
+        }
+        file << ">";
+
+        file << to_string(cc_f[i]).c_str();
+
+        file << "</f>";
+      }
+
+      // v node: value stored from evaluated formula
+      if (!to_string(cc_v[i]).empty()) {
+        if (!f_si & (to_string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
+          // this looks strange
+          file << "<v xml:space=\"preserve\">";
+          file << " ";
+          file << "</v>";
+        } else {
+          file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
+        }
+      }
+
+      // <is><t> ... </t></is>
+      if (to_string(cc_c_t[i]).compare("inlineStr") == 0) {
+        if (!to_string(cc_is[i]).empty()) {
+          file << to_string(cc_is[i]).c_str();
+        }
+      }
+
+      file << "</c>";
+
+      // update lastrow
+      lastrow = thisrow;
+    }
+
+    file << "</row>";
+    file << "</sheetData>";
+  } else {
+    file << "<sheetData/>";
+  }
+
+  file << post;
+  file << "</worksheet>";
+
+  file.close();
+}
+
+// export worksheet without pugixml
+// this should be way quicker, uses far less memory, but also skips all of the checks pugi does
+//
+// [[Rcpp::export]]
+void write_worksheet_slim(
+    Rcpp::Environment sheet_data,
+    std::string prior,
+    std::string post,
+    std::string fl
+){
+  // sheet_data will be in order, just need to check for row_heights
+  // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
+  Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
+  Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc"]);
+
+  xml_sheet_data_slim(row_attr, cc, prior, post, fl);
+}
+
 // creates an xml row
 // data in xml is ordered row wise. therefore we need the row attributes and
 // the column data used in this row. This function uses both to create a single

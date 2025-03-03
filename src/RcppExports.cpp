@@ -853,6 +853,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// write_worksheet_slim
+void write_worksheet_slim(Rcpp::Environment sheet_data, std::string prior, std::string post, std::string fl);
+RcppExport SEXP _openxlsx2_write_worksheet_slim(SEXP sheet_dataSEXP, SEXP priorSEXP, SEXP postSEXP, SEXP flSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
+    Rcpp::traits::input_parameter< std::string >::type prior(priorSEXP);
+    Rcpp::traits::input_parameter< std::string >::type post(postSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fl(flSEXP);
+    write_worksheet_slim(sheet_data, prior, post, fl);
+    return R_NilValue;
+END_RCPP
+}
 // write_worksheet
 XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data);
 RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP) {
@@ -1039,6 +1052,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_read_colors", (DL_FUNC) &_openxlsx2_read_colors, 1},
     {"_openxlsx2_write_colors", (DL_FUNC) &_openxlsx2_write_colors, 1},
     {"_openxlsx2_set_sst", (DL_FUNC) &_openxlsx2_set_sst, 1},
+    {"_openxlsx2_write_worksheet_slim", (DL_FUNC) &_openxlsx2_write_worksheet_slim, 4},
     {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
     {"_openxlsx2_write_xmlPtr", (DL_FUNC) &_openxlsx2_write_xmlPtr, 2},
     {"_openxlsx2_styles_bin", (DL_FUNC) &_openxlsx2_styles_bin, 3},

@@ -1470,5 +1470,21 @@ test_that("guarding against overwriting shared formula reference works", {
   exp <- c("1", "2", "B1 + 1", "C1 + 1")
   got <- unname(unlist(wb$to_df(show_formula = TRUE, col_names = FALSE)))
   expect_equal(exp, got)
+})
+
+test_that("writing without pugixml works", {
+
+  temp <- temp_xlsx()
+  expect_silent(write_xlsx(x = mtcars, file = temp, flush = TRUE))
+  expect_silent(wb <- wb_load(temp))
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+
+  expect_silent(wb_save(wb = wb, file = temp, flush = TRUE))
+  expect_silent(wb <- wb_load(temp))
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+
+  expect_silent(wb$save(file = temp, flush = TRUE))
+  expect_silent(wb <- wb_load(temp))
 
 })

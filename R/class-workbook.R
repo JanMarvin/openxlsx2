@@ -2910,8 +2910,9 @@ wbWorkbook <- R6::R6Class(
     #' @param file The path to save the workbook to
     #' @param overwrite If `FALSE`, will not overwrite when `path` exists
     #' @param path Deprecated argument previously used for file. Please use file in new code.
+    #' @param flush Experimental, streams the worksheet file to disk
     #' @return The `wbWorkbook` object invisibly
-    save = function(file = self$path, overwrite = TRUE, path = NULL) {
+    save = function(file = self$path, overwrite = TRUE, path = NULL, flush = FALSE) {
 
       if (!is.null(path)) {
         .Deprecated(old = "wb_save(path)", new = "wb_save(file)", package = "openxlsx2")
@@ -2920,6 +2921,7 @@ wbWorkbook <- R6::R6Class(
 
       assert_class(file, "character")
       assert_class(overwrite, "logical")
+      assert_class(flush, "logical")
 
       if (file.exists(file) & !overwrite) {
         stop("File already exists!")
@@ -3435,7 +3437,8 @@ wbWorkbook <- R6::R6Class(
         xlchartsDir,
         xlchartsRelsDir,
         xlworksheetsDir,
-        xlworksheetsRelsDir
+        xlworksheetsRelsDir,
+        use_pugixml_export = isFALSE(flush)
       )
 
       ## write sharedStrings.xml
@@ -9643,7 +9646,8 @@ wbWorkbook <- R6::R6Class(
       xlchartsDir,
       xlchartsRelsDir,
       xlworksheetsDir,
-      xlworksheetsRelsDir
+      xlworksheetsRelsDir,
+      use_pugixml_export
     ) {
 
       ## write charts
@@ -9778,44 +9782,68 @@ wbWorkbook <- R6::R6Class(
           }
         } else {
           ## Write worksheets
-          ws <- self$worksheets[[i]]
-          hasHL <- length(ws$hyperlinks) > 0
+          # ws <- self$worksheets[[i]]
+          hasHL <- length(self$worksheets[[i]]$hyperlinks) > 0
 
-          prior <- ws$get_prior_sheet_data()
-          post <- ws$get_post_sheet_data()
+          prior <- self$worksheets[[i]]$get_prior_sheet_data()
+          post <-  self$worksheets[[i]]$get_post_sheet_data()
 
-          if (!is.null(ws$sheet_data$cc)) {
+          if (use_pugixml_export) {
+            # failsaves. check that all rows and cells
+            # are available and in the correct order
+            if (!is.null(self$worksheets[[i]]$sheet_data$cc)) {
 
-            cc <- ws$sheet_data$cc
-            cc$r <- stringi::stri_join(cc$c_r, cc$row_r)
-            # prepare data for output
+              self$worksheets[[i]]$sheet_data$cc$r <- with(
+                self$worksheets[[i]]$sheet_data$cc,
+                stringi::stri_join(c_r, row_r)
+              )
+              cc <- self$worksheets[[i]]$sheet_data$cc
+              # prepare data for output
 
-            # there can be files, where row_attr is incomplete because a row
-            # is lacking any attributes (presumably was added before saving)
-            # still row_attr is what we want!
+              # there can be files, where row_attr is incomplete because a row
+              # is lacking any attributes (presumably was added before saving)
+              # still row_attr is what we want!
 
-            rows_attr <- ws$sheet_data$row_attr
-            ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
+              rows_attr <- self$worksheets[[i]]$sheet_data$row_attr
+              self$worksheets[[i]]$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
 
-            cc_rows <- ws$sheet_data$row_attr$r
-            # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
-            cc <- cc[cc$row_r %in% cc_rows, ]
+              cc_rows <- self$worksheets[[i]]$sheet_data$row_attr$r
+              # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
+              cc <- cc[cc$row_r %in% cc_rows, ]
 
-            ws$sheet_data$cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
-          } else {
-            ws$sheet_data$row_attr <- NULL
-            ws$sheet_data$cc <- NULL
+              self$worksheets[[i]]$sheet_data$cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
+              rm(cc)
+            } else {
+              self$worksheets[[i]]$sheet_data$row_attr <- NULL
+              self$worksheets[[i]]$sheet_data$cc <- NULL
+            }
           }
 
-          # create entire sheet prior to writing it
-          sheet_xml <- write_worksheet(
-            prior = prior,
-            post = post,
-            sheet_data = ws$sheet_data
-          )
           ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
-          write_xmlPtr(doc = sheet_xml, fl = ws_file)
-          rm(sheet_xml)
+
+          if (use_pugixml_export) {
+
+            # create entire sheet prior to writing it
+            sheet_xml <- write_worksheet(
+              prior      = prior,
+              post       = post,
+              sheet_data = self$worksheets[[i]]$sheet_data
+            )
+            write_xmlPtr(doc = sheet_xml, fl = ws_file)
+
+          } else {
+
+            if (grepl("</worksheet>", prior))
+              prior <- substr(prior, 1, nchar(prior) - 13) # remove " </worksheet>"
+
+            write_worksheet_slim(
+              sheet_data = self$worksheets[[i]]$sheet_data,
+              prior      = prior,
+              post       = post,
+              fl         = ws_file
+            )
+
+          }
 
           ## write worksheet rels
           if (length(self$worksheets_rels[[i]])) {

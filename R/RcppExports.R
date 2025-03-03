@@ -340,6 +340,10 @@ set_sst <- function(sharedStrings) {
     .Call(`_openxlsx2_set_sst`, sharedStrings)
 }
 
+write_worksheet_slim <- function(sheet_data, prior, post, fl) {
+    invisible(.Call(`_openxlsx2_write_worksheet_slim`, sheet_data, prior, post, fl))
+}
+
 write_worksheet <- function(prior, post, sheet_data) {
     .Call(`_openxlsx2_write_worksheet`, prior, post, sheet_data)
 }

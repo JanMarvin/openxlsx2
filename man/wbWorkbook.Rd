@@ -1102,7 +1102,7 @@ The \code{wbWorkbook} object invisibly
 \subsection{Method \code{save()}}{
 Save the workbook
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(file = self$path, overwrite = TRUE, path = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$save(file = self$path, overwrite = TRUE, path = NULL, flush = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1113,6 +1113,8 @@ Save the workbook
 \item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{path} exists}
 
 \item{\code{path}}{Deprecated argument previously used for file. Please use file in new code.}
+
+\item{\code{flush}}{Experimental, streams the worksheet file to disk}
 }
 \if{html}{\out{</div>}}
 }
