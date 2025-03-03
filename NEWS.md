@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* A new experimental `flush` argument has been introduced to `wb_save()`, allowing a custom XML streaming function for worksheets to help prevent memory spikes. This feature has only been tested within `openxlsx2` and not extensively with spreadsheet software. Since it bypasses certain failsafe mechanisms, including XML validity checks, it should only be used as a last-resort solution. [1255](https://github.com/JanMarvin/openxlsx2/pull/1255)
+
 ## Fixes
 
 * Input validation has been added to `fmt_txt()`, similar to how it has been added to the `create_*()` family a while ago.
