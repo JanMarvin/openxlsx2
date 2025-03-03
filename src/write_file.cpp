@@ -36,10 +36,10 @@ void xml_sheet_data_slim(
 
   std::ofstream file(fl);
 
-  auto lastrow = 0; // integer value of the last row with column data
-  auto thisrow = 0; // integer value of the current row with column data
-  auto row_idx = 0; // the index of the row_attr file. this is != rowid
-  auto rowid   = 0; // integer value of the r field in row_attr
+  auto lastrow = 0;  // integer value of the last row with column data
+  auto thisrow = 0;  // integer value of the current row with column data
+  auto row_idx = 0;  // the index of the row_attr file. this is != rowid
+  auto rowid = 0;    // integer value of the r field in row_attr
 
   std::string xml_preserver = " ";
 
@@ -68,11 +68,9 @@ void xml_sheet_data_slim(
 
     file << "<sheetData>";
     for (auto i = 0; i < cc.nrow(); ++i) {
-
       thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
 
       if (lastrow < thisrow) {
-
         // there might be entirely empty rows in between. this is the case for
         // loadExample. We check the rowid and write the line and skip until we
         // have every row and only then continue writing the column
@@ -87,7 +85,6 @@ void xml_sheet_data_slim(
           Rcpp::CharacterVector attrnams = row_attr.names();
 
           for (auto j = 0; j < row_attr.ncol(); ++j) {
-
             Rcpp::CharacterVector cv_s = "";
             cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
 
@@ -96,27 +93,26 @@ void xml_sheet_data_slim(
               file << " " << attrnams[j] << "=\"" << val_strl.c_str() << "\"";
             }
           }
-          file << ">"; // end <r ...>
+          file << ">";  // end <r ...>
 
           // read the next row_idx when visiting again
           ++row_idx;
         }
       }
 
-
-    if (
-      cc_c_s[i].empty() &&
-      cc_c_t[i].empty() &&
-      (!has_cm || (has_cm && cc_c_cm[i].empty())) &&
-      (!has_ph || (has_ph && cc_c_ph[i].empty())) &&
-      (!has_vm || (has_vm && cc_c_vm[i].empty())) &&
-      cc_v[i].empty() &&
-      cc_f[i].empty() &&
-      cc_f_attr[i].empty() &&
-      cc_is[i].empty()
-    ) {
-      continue;
-    }
+      if (
+        cc_c_s[i].empty() &&
+        cc_c_t[i].empty() &&
+        (!has_cm || (has_cm && cc_c_cm[i].empty())) &&
+        (!has_ph || (has_ph && cc_c_ph[i].empty())) &&
+        (!has_vm || (has_vm && cc_c_vm[i].empty())) &&
+        cc_v[i].empty() &&
+        cc_f[i].empty() &&
+        cc_f_attr[i].empty() &&
+        cc_is[i].empty()
+      ) {
+        continue;
+      }
 
       // create node <c>
       file << "<c";
@@ -146,7 +142,7 @@ void xml_sheet_data_slim(
       if (has_vm && !to_string(cc_c_vm[i]).empty())
         file << " vm" << "=\"" << to_string(cc_c_vm[i]).c_str() << "\"";
 
-      file << ">"; // end <c ...>
+      file << ">";  // end <c ...>
 
       bool f_si = false;
 
@@ -195,12 +191,10 @@ void xml_sheet_data_slim(
     file << "<sheetData/>";
   }
 
-
   file << post;
   file << "</worksheet>";
 
   file.close();
-
 }
 
 // export worksheet without pugixml
@@ -231,7 +225,7 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
   auto lastrow = 0;  // integer value of the last row with column data
   auto thisrow = 0;  // integer value of the current row with column data
   auto row_idx = 0;  // the index of the row_attr file. this is != rowid
-  auto rowid   = 0;  // integer value of the r field in row_attr
+  auto rowid = 0;    // integer value of the r field in row_attr
 
   pugi::xml_node row;
 
