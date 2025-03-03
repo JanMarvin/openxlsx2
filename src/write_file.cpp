@@ -35,11 +35,12 @@ void xml_sheet_data_slim(
   bool has_vm = cc.containsElementNamed("c_vm");
 
   std::ofstream file(fl);
+  if (!file.is_open()) Rcpp::stop("could not open output file");
 
   auto lastrow = 0;  // integer value of the last row with column data
   auto thisrow = 0;  // integer value of the current row with column data
   auto row_idx = 0;  // the index of the row_attr file. this is != rowid
-  auto rowid = 0;    // integer value of the r field in row_attr
+  auto rowid   = 0;  // integer value of the r field in row_attr
 
   std::string xml_preserver = " ";
 
@@ -64,7 +65,6 @@ void xml_sheet_data_slim(
     Rcpp::CharacterVector cc_is     = cc["is"];
 
     Rcpp::CharacterVector row_r     = row_attr["r"];
-
 
     file << "<sheetData>";
     for (auto i = 0; i < cc.nrow(); ++i) {
@@ -225,7 +225,7 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
   auto lastrow = 0;  // integer value of the last row with column data
   auto thisrow = 0;  // integer value of the current row with column data
   auto row_idx = 0;  // the index of the row_attr file. this is != rowid
-  auto rowid = 0;    // integer value of the r field in row_attr
+  auto rowid   = 0;  // integer value of the r field in row_attr
 
   pugi::xml_node row;
 
@@ -397,7 +397,7 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment &sheet_data) {
+XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment sheet_data) {
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
   // sheet_data will be in order, just need to check for row_heights

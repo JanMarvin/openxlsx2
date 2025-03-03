@@ -1475,22 +1475,16 @@ test_that("guarding against overwriting shared formula reference works", {
 test_that("writing without pugixml works", {
 
   temp <- temp_xlsx()
-  expect_silent(write_xlsx(x = mtcars, file = temp))
+  expect_silent(write_xlsx(x = mtcars, file = temp, flush = TRUE))
   expect_silent(wb <- wb_load(temp))
 
-  temp <- temp_xlsx()
-  options("openxlsx2.export_with_pugi" = FALSE)
-  expect_silent(write_xlsx(x = mtcars, file = temp))
-  expect_silent(wb <- wb_load(temp))
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
 
-  temp <- temp_xlsx()
-  options("openxlsx2.export_with_pugi" = TRUE)
-  expect_silent(write_xlsx(x = mtcars, file = temp))
+  expect_silent(wb_save(wb = wb, file = temp, flush = TRUE))
   expect_silent(wb <- wb_load(temp))
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
 
-  temp <- temp_xlsx()
-  options("openxlsx2.export_with_pugi" = NULL)
-  expect_silent(write_xlsx(x = mtcars, file = temp))
+  expect_silent(wb$save(file = temp, flush = TRUE))
   expect_silent(wb <- wb_load(temp))
 
 })
