@@ -2910,8 +2910,9 @@ wbWorkbook <- R6::R6Class(
     #' @param file The path to save the workbook to
     #' @param overwrite If `FALSE`, will not overwrite when `path` exists
     #' @param path Deprecated argument previously used for file. Please use file in new code.
+    #' @param flush Experimental, streams the worksheet file to disk
     #' @return The `wbWorkbook` object invisibly
-    save = function(file = self$path, overwrite = TRUE, path = NULL) {
+    save = function(file = self$path, overwrite = TRUE, path = NULL, flush = FALSE) {
 
       if (!is.null(path)) {
         .Deprecated(old = "wb_save(path)", new = "wb_save(file)", package = "openxlsx2")
@@ -3435,7 +3436,8 @@ wbWorkbook <- R6::R6Class(
         xlchartsDir,
         xlchartsRelsDir,
         xlworksheetsDir,
-        xlworksheetsRelsDir
+        xlworksheetsRelsDir,
+        use_pugixml_export = isFALSE(flush)
       )
 
       ## write sharedStrings.xml
@@ -9643,7 +9645,8 @@ wbWorkbook <- R6::R6Class(
       xlchartsDir,
       xlchartsRelsDir,
       xlworksheetsDir,
-      xlworksheetsRelsDir
+      xlworksheetsRelsDir,
+      use_pugixml_export
     ) {
 
       ## write charts
@@ -9783,8 +9786,6 @@ wbWorkbook <- R6::R6Class(
 
           prior <- self$worksheets[[i]]$get_prior_sheet_data()
           post <-  self$worksheets[[i]]$get_post_sheet_data()
-
-          use_pugixml_export <- getOption("openxlsx2.export_with_pugi", default = TRUE)
 
           if (use_pugixml_export) {
             # failsaves. check that all rows and cells

@@ -58,7 +58,8 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     "table_name", "with_filter", "first_active_row", "first_active_col",
     "first_row", "first_col", "col_widths", "na.strings",
     "overwrite", "title", "subject", "category",
-    "font_size", "font_color", "font_name"
+    "font_size", "font_color", "font_name",
+    "flush"
   )
 
   params <- list(...)
@@ -296,6 +297,12 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     font_args$font_name <- params$font_name
   }
 
+  # Flush stream file to disk
+  flush <- FALSE
+  if ("flush" %in% names(params)) {
+    flush <- params$flush
+  }
+
 
   ## create new Workbook object
   wb <- wb_workbook(creator = creator, title = title, subject = subject, category = category)
@@ -479,7 +486,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
   }
 
   if (!missing(file))
-    wb_save(wb, file = file, overwrite = overwrite)
+    wb_save(wb, file = file, overwrite = overwrite, flush = flush)
 
   invisible(wb)
 }

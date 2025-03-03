@@ -67,10 +67,24 @@ wb_workbook <- function(
 
 #' Save a workbook to file
 #'
+#' @details When saving a `wbWorkbook` to a file, memory usage may spike
+#' depending on the worksheet size. This happens because the entire XML
+#' structure is created in memory before writing to disk. The memory
+#' required depends on worksheet size, as XML files consist of character
+#' data and include additional overhead for validity checks.
+#'
+#' The `flush` argument streams worksheet XML data directly to disk,
+#' avoiding the need to build the full XML tree in memory. This reduces
+#' memory usage but skips some XML validity checks. It also bypasses
+#' the `pugixml` functions that `openxlsx2` uses, omitting certain
+#' preliminary sanity checks before writing. As the name suggests,
+#' the output is simply flushed to disk.
+#'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param file A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `file` already exists.
 #' @param path Deprecated argument. Please use `file` in new code.
+#' @param flush Experimental, streams the worksheet file to disk
 #'
 #' @export
 #' @family workbook wrappers
@@ -86,9 +100,9 @@ wb_workbook <- function(
 #' \donttest{
 #' wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
 #' }
-wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL) {
+wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE) {
   assert_workbook(wb)
-  wb$clone()$save(file = file, overwrite = overwrite, path = path)
+  wb$clone()$save(file = file, overwrite = overwrite, path = path, flush = flush)
 }
 
 # add data ----------------------------------------------------------------

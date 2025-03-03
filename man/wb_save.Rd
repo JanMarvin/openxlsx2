@@ -4,7 +4,7 @@
 \alias{wb_save}
 \title{Save a workbook to file}
 \usage{
-wb_save(wb, file = NULL, overwrite = TRUE, path = NULL)
+wb_save(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
@@ -14,12 +14,28 @@ wb_save(wb, file = NULL, overwrite = TRUE, path = NULL)
 \item{overwrite}{If \code{FALSE}, will not overwrite when \code{file} already exists.}
 
 \item{path}{Deprecated argument. Please use \code{file} in new code.}
+
+\item{flush}{Experimental, streams the worksheet file to disk}
 }
 \value{
 the \code{wbWorkbook} object, invisibly
 }
 \description{
 Save a workbook to file
+}
+\details{
+When saving a \code{wbWorkbook} to a file, memory usage may spike
+depending on the worksheet size. This happens because the entire XML
+structure is created in memory before writing to disk. The memory
+required depends on worksheet size, as XML files consist of character
+data and include additional overhead for validity checks.
+
+The \code{flush} argument streams worksheet XML data directly to disk,
+avoiding the need to build the full XML tree in memory. This reduces
+memory usage but skips some XML validity checks. It also bypasses
+the \code{pugixml} functions that \code{openxlsx2} uses, omitting certain
+preliminary sanity checks before writing. As the name suggests,
+the output is simply flushed to disk.
 }
 \examples{
 ## Create a new workbook and add a worksheet
