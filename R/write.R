@@ -90,9 +90,15 @@ inner_update <- function(
     na.strings <- NULL
   }
 
-  replacement <- names(cc)
-  # c_cm must not be available in cc
-  if ("c_cm" %in% names(x)) replacement <- names(x)
+  # prepare required columns
+  all_cols <- unique(names(x), names(cc))
+
+  if (any("c_cm" %in% all_cols)) has_cm <- "c_cm" else has_cm <- NULL
+  if (any("c_ph" %in% all_cols)) has_ph <- "c_ph" else has_ph <- NULL
+  if (any("c_vm" %in% all_cols)) has_vm <- "c_vm" else has_vm <- NULL
+
+  replacement <- c("r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
+                   "v", "f", "f_attr", "is")
 
   if (!removeCellStyle) {
     replacement <- replacement[-which(replacement == "c_s")]
