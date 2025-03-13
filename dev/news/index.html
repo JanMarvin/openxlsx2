@@ -57,6 +57,8 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>Input validation has been added to <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code>, similar to how it has been added to the <code>create_*()</code> family a while ago.</li>
 <li>Aligned with the standard, <code>openxlsx2</code> now uses a <code>baseColWith</code> of <code>8</code> (previously <code>8.43</code>). The standard required an integer and we provided a float. This fixes an issue with third party software. <a href="https://github.com/JanMarvin/openxlsx2/pull/1284" class="external-link">1284</a> Files with the previously incorrect <code>baseColWidth</code> can be loaded and saved and the fix will be applied.</li>
+<li>Fixed a bug, where it was impossible to add data to a worksheet with a <code>cm</code> formula. This is a regression that was introduced in the internal changes in the previous release. This restores writing <code>cm</code> formulas as well. <a href="https://github.com/JanMarvin/openxlsx2/pull/1287" class="external-link">1287</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
