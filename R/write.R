@@ -90,7 +90,16 @@ inner_update <- function(
     na.strings <- NULL
   }
 
-  replacement <- names(cc)
+  # prepare required columns
+  all_cols <- unique(names(x), names(cc))
+
+  if (any("c_cm" %in% all_cols)) has_cm <- "c_cm" else has_cm <- NULL
+  if (any("c_ph" %in% all_cols)) has_ph <- "c_ph" else has_ph <- NULL
+  if (any("c_vm" %in% all_cols)) has_vm <- "c_vm" else has_vm <- NULL
+
+  replacement <- c("r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
+                   "v", "f", "f_attr", "is")
+
   if (!removeCellStyle) {
     replacement <- replacement[-which(replacement == "c_s")]
   }
@@ -117,6 +126,18 @@ inner_update <- function(
     )
     warning(msg, call. = FALSE)
 
+  }
+
+  # columns in cc and x can differ make sure that all elements are available
+  if (any(!replacement %in% names(x))) {
+    mss <- replacement[!replacement %in% names(x)]
+    for (ms in mss) x[ms] <- rep("", nrow(x))
+    x <- x[replacement]
+  }
+  if (any(!replacement %in% names(cc))) {
+    mss <- replacement[!replacement %in% names(cc)]
+    for (ms in mss) cc[ms] <- rep("", nrow(cc))
+    cc <- cc[replacement]
   }
 
   cc[sel, replacement] <- x[replacement]
