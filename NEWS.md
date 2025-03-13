@@ -2,12 +2,14 @@
 
 ## New features
 
-* A new experimental `flush` argument has been introduced to `wb_save()`, allowing a custom XML streaming function for worksheets to help prevent memory spikes. This feature has only been tested within `openxlsx2` and not extensively with spreadsheet software. Since it bypasses certain failsafe mechanisms, including XML validity checks, it should only be used as a last-resort solution. [1255](https://github.com/JanMarvin/openxlsx2/pull/1255)
+* A new experimental `flush` argument has been introduced to `wb_save()`, allowing a custom XML streaming function for worksheets to help prevent memory spikes. This feature has only been tested within `openxlsx2` and not extensively with spreadsheet software. Since it bypasses certain fail-safe mechanisms, including XML validity checks, it should only be used as a last-resort solution. [1255](https://github.com/JanMarvin/openxlsx2/pull/1255)
+  This expects all inputs to be UTF-8, therefore it might not work with R running in different locale sessions, if non ASCII characters are used.
 
 ## Fixes
 
 * Input validation has been added to `fmt_txt()`, similar to how it has been added to the `create_*()` family a while ago.
 * Aligned with the standard, `openxlsx2` now uses a `baseColWith` of `8` (previously `8.43`). The standard required an integer and we provided a float. This fixes an issue with third party software. [1284](https://github.com/JanMarvin/openxlsx2/pull/1284)
+  Files with the previously incorrect `baseColWidth` can be loaded and saved and the fix will be applied.
 
 ## Breaking changes
 
