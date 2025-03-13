@@ -929,7 +929,11 @@ wb_load <- function(
         # wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts")
         wb$worksheets[[i]]$webPublishItems <- xml_node(worksheet_xml, "worksheet", "webPublishItems")
 
-        wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
+        # check if file loaded was written with incorrect baseColWidth by openxlsx2 <= 1.13
+        sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
+        if (length(sheetFormatPr) && sheetFormatPr == "<sheetFormatPr baseColWidth=\"8.43\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>")
+          sheetFormatPr <- "<sheetFormatPr baseColWidth=\"8\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>"
+        wb$worksheets[[i]]$sheetFormatPr <- sheetFormatPr
 
         # extract freezePane from sheetViews. This intends to match our freeze
         # pane approach. Though I do not really like it. This blindly shovels
