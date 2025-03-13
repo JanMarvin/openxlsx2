@@ -91,6 +91,9 @@ inner_update <- function(
   }
 
   replacement <- names(cc)
+  # c_cm must not be available in cc
+  if ("c_cm" %in% names(x)) replacement <- names(x)
+
   if (!removeCellStyle) {
     replacement <- replacement[-which(replacement == "c_s")]
   }
@@ -117,6 +120,18 @@ inner_update <- function(
     )
     warning(msg, call. = FALSE)
 
+  }
+
+  # columns in cc and x can differ make sure that all elements are available
+  if (any(!replacement %in% names(x))) {
+    mss <- replacement[!replacement %in% names(x)]
+    for (ms in mss) x[ms] <- rep("", nrow(x))
+    x <- x[replacement]
+  }
+  if (any(!replacement %in% names(cc))) {
+    mss <- replacement[!replacement %in% names(cc)]
+    for (ms in mss) cc[ms] <- rep("", nrow(cc))
+    cc <- cc[replacement]
   }
 
   cc[sel, replacement] <- x[replacement]
