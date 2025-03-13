@@ -215,7 +215,7 @@ wbWorksheet <- R6::R6Class(
       self$sheetPr               <- tabColor
       self$dimension             <- '<dimension ref="A1"/>'
       self$sheetViews            <- character()
-      self$sheetFormatPr         <- '<sheetFormatPr baseColWidth="8.43" defaultRowHeight="16" x14ac:dyDescent="0.2"/>'
+      self$sheetFormatPr         <- '<sheetFormatPr baseColWidth="8" defaultRowHeight="16" x14ac:dyDescent="0.2"/>'
       self$cols_attr             <- character()
       self$autoFilter            <- character()
       self$mergeCells            <- character()

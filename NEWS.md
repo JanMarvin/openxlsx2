@@ -7,6 +7,7 @@
 ## Fixes
 
 * Input validation has been added to `fmt_txt()`, similar to how it has been added to the `create_*()` family a while ago.
+* Aligned with the standard, `openxlsx2` now uses a `baseColWith` of `8` (previously `8.43`). The standard required an integer and we provided a float. This fixes an issue with third party software. [1284](https://github.com/JanMarvin/openxlsx2/pull/1284)
 
 ## Breaking changes
 
