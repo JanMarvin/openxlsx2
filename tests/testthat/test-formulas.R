@@ -231,3 +231,16 @@ test_that("registering formulas works", {
   expect_equal(wb$get_named_regions()$name, c("YESTERDAY", "YSTRDY"))
 
 })
+
+test_that("writing cm formulas and writing to sheets with cm formulas works", {
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_data(x = c(1, 1), dims = "D1:D2")
+  wb$add_data(x = c(1, 1), dims = "D4:E4")
+  expect_warning(wb$add_formula(dims = "G1", x = "MMULT(D4:E4,D1:D2)", cm = TRUE))
+
+  expect_equal("1", wb$worksheets[[1]]$sheet_data$cc$c_cm[2])
+
+  expect_silent(wb$add_data(x = 1))
+
+})
