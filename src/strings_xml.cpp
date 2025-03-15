@@ -43,7 +43,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
     std::string tmp = Rcpp::as<std::string>(vec[i]);
 
     if (tmp.compare("") == 0) {
-      res[i] = NA_STRING;
+      res[i] = "";
       continue;
     }
 
