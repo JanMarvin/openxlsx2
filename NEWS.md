@@ -1,4 +1,4 @@
-# openxlsx2 (development version)
+# openxlsx2 1.14
 
 ## New features
 
@@ -7,10 +7,10 @@
 
 ## Fixes
 
-* Input validation has been added to `fmt_txt()`, similar to how it has been added to the `create_*()` family a while ago.
-* Aligned with the standard, `openxlsx2` now uses a `baseColWith` of `8` (previously `8.43`). The standard required an integer and we provided a float. This fixes an issue with third party software. [1284](https://github.com/JanMarvin/openxlsx2/pull/1284)
+* Input validation has been added to `fmt_txt()`, similar to how it has been added to the `create_*()` family a while ago. [1280](https://github.com/JanMarvin/openxlsx2/pull/1280)
+* Aligned with the standard, `openxlsx2` now uses a `baseColWith` of `8` (previously `8.43`). The standard requires an integer and we provided a float. This fixes an issue with third party software. [1284](https://github.com/JanMarvin/openxlsx2/pull/1284)
   Files with the previously incorrect `baseColWidth` can be loaded and saved and the fix will be applied.
-* Fixed a bug, where it was impossible to add data to a worksheet with a `cm` formula. This is a regression that was introduced in the internal changes in the previous release. This restores writing `cm` formulas as well. [1287](https://github.com/JanMarvin/openxlsx2/pull/1287)
+* Fixed a bug, where it was impossible to add data to a worksheet with a `cm` formula. This is a regression that was introduced with the internal changes in the previous release. The fix also restores writing `cm` formulas. [1287](https://github.com/JanMarvin/openxlsx2/pull/1287)
 
 ## Breaking changes
 
