@@ -33,35 +33,35 @@ wb_add_font(
 
 \item{dims}{the cell range}
 
-\item{name}{Font name: default "Aptos Narrow"}
+\item{name}{Font name: default \code{"Aptos Narrow"}.}
 
-\item{color}{An object created by \code{\link[=wb_color]{wb_color()}}}
+\item{color}{A \code{\link[=wb_color]{wb_color()}}, the color of the font. Default is "FF000000".}
 
-\item{size}{Font size: default "11",}
+\item{size}{Font size: default is \code{11}.}
 
-\item{bold}{bold, "single" or "double", default: ""}
+\item{bold}{Logical, whether the font should be bold.}
 
-\item{italic}{italic}
+\item{italic}{Logical, whether the font should be italic.}
 
-\item{outline}{outline}
+\item{outline}{Logical, whether the font should have an outline.}
 
-\item{strike}{strike}
+\item{strike}{Logical, whether the font should have a strikethrough.}
 
-\item{underline}{underline}
+\item{underline}{underline, "single" or "double", default: ""}
 
-\item{charset}{charset}
+\item{charset}{Character, the character set to be used. The list of valid IDs can be found in the \strong{Details} section of \code{\link[=fmt_txt]{fmt_txt()}}.}
 
-\item{condense}{condense}
+\item{condense}{Logical, whether the font should be condensed.}
 
-\item{extend}{extend}
+\item{extend}{Logical, whether the font should be extended.}
 
-\item{family}{font family}
+\item{family}{Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused}
 
-\item{scheme}{font scheme}
+\item{scheme}{Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".}
 
-\item{shadow}{shadow}
+\item{shadow}{Logical, whether the font should have a shadow.}
 
-\item{vert_align}{vertical alignment}
+\item{vert_align}{Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".}
 
 \item{...}{...}
 }
