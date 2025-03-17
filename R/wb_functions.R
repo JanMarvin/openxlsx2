@@ -217,9 +217,6 @@ numfmt_is_date <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
-  # third party library uses upper case format code
-  numFmt_df$fC <- tolower(numFmt_df$fC)
-
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -228,8 +225,11 @@ numfmt_is_date <- function(numFmt) {
 
   date_fmts <- c(
     "yy", "yyyy",
+    "YY", "YYYY",
     "m", "mm", "mmm", "mmmm", "mmmmm",
-    "d", "dd", "ddd", "dddd"
+    "M", "MM", "MMM", "MMMM", "MMMMM",
+    "d", "dd", "ddd", "dddd",
+    "D", "DD", "DDD", "DDDD"
   )
   date_or_fmt <- paste0(date_fmts, collapse = "|")
   maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$fC)
@@ -250,9 +250,6 @@ numfmt_is_posix <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
-  # third party library uses upper case format code
-  numFmt_df$fC <- tolower(numFmt_df$fC)
-
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -264,7 +261,8 @@ numfmt_is_posix <- function(numFmt) {
     # "m", "mm", "mmm", "mmmm", "mmmmm",
     # "d", "dd", "ddd", "dddd",
     "h", "hh", ":m", ":mm", ":s", ":ss",
-    "am", "pm", "a", "p"
+    "H", "HH", ":M", ":MM", ":S", ":SS",
+    "AM", "PM", "A", "P"
   )
   posix_or_fmt <- paste0(posix_fmts, collapse = "|")
   maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$fC)
@@ -285,9 +283,6 @@ numfmt_is_hms <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
-  # third party library uses upper case format code
-  numFmt_df$fC <- tolower(numFmt_df$fC)
-
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -296,10 +291,13 @@ numfmt_is_hms <- function(numFmt) {
 
   hms_fmts <- c(
     "?!^yy$", "?!^yyyy$",
+    "?!^YY$", "?!^YYYY$",
     "?!^mmm$", "?!^mmmm$", "?!^mmmmm$",
+    "?!^MMM$", "?!^MMMM$", "?!^MMMMM$",
     "?!^d$", "?!^dd$", "?!^ddd$", "?!^dddd$",
+    "?!^D$", "?!^DD$", "?!^DDD$", "?!^DDDD$",
     "h", "hh", ":m", ":mm", ":s", ":ss",
-    "am", "pm", "a", "p"
+    "AM", "PM", "A", "P"
   )
   hms_or_fmt <- paste0(hms_fmts, collapse = "|")
   maybe_hms <- grepl(pattern = hms_or_fmt, x = numFmt_df$fC)
