@@ -3413,21 +3413,21 @@ wb_add_fill <- function(
 #' @param wb A Workbook object
 #' @param sheet the worksheet
 #' @param dims the cell range
-#' @param name Font name: default "Aptos Narrow"
-#' @param color An object created by [wb_color()]
-#' @param size Font size: default "11",
-#' @param bold bold, "single" or "double", default: ""
-#' @param italic italic
-#' @param outline outline
-#' @param strike strike
-#' @param underline underline
-#' @param family font family
-#' @param charset charset
-#' @param condense condense
-#' @param scheme font scheme
-#' @param shadow shadow
-#' @param extend extend
-#' @param vert_align vertical alignment
+#' @param name Font name: default `"Aptos Narrow"`.
+#' @param color A [wb_color()], the color of the font. Default is "FF000000".
+#' @param size Font size: default is `11`.
+#' @param bold Logical, whether the font should be bold.
+#' @param italic Logical, whether the font should be italic.
+#' @param outline Logical, whether the font should have an outline.
+#' @param strike Logical, whether the font should have a strikethrough.
+#' @param underline underline, "single" or "double", default: ""
+#' @param family Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused
+#' @param charset Character, the character set to be used. The list of valid IDs can be found in the **Details** section of [fmt_txt()].
+#' @param condense Logical, whether the font should be condensed.
+#' @param scheme Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".
+#' @param shadow Logical, whether the font should have a shadow.
+#' @param extend Logical, whether the font should be extended.
+#' @param vert_align Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".
 #' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
