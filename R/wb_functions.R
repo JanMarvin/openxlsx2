@@ -225,8 +225,11 @@ numfmt_is_date <- function(numFmt) {
 
   date_fmts <- c(
     "yy", "yyyy",
+    "YY", "YYYY",
     "m", "mm", "mmm", "mmmm", "mmmmm",
-    "d", "dd", "ddd", "dddd"
+    "M", "MM", "MMM", "MMMM", "MMMMM",
+    "d", "dd", "ddd", "dddd",
+    "D", "DD", "DDD", "DDDD"
   )
   date_or_fmt <- paste0(date_fmts, collapse = "|")
   maybe_dates <- grepl(pattern = date_or_fmt, x = numFmt_df$fC)
@@ -258,6 +261,7 @@ numfmt_is_posix <- function(numFmt) {
     # "m", "mm", "mmm", "mmmm", "mmmmm",
     # "d", "dd", "ddd", "dddd",
     "h", "hh", ":m", ":mm", ":s", ":ss",
+    "H", "HH", ":M", ":MM", ":S", ":SS",
     "AM", "PM", "A", "P"
   )
   posix_or_fmt <- paste0(posix_fmts, collapse = "|")
@@ -287,8 +291,11 @@ numfmt_is_hms <- function(numFmt) {
 
   hms_fmts <- c(
     "?!^yy$", "?!^yyyy$",
+    "?!^YY$", "?!^YYYY$",
     "?!^mmm$", "?!^mmmm$", "?!^mmmmm$",
+    "?!^MMM$", "?!^MMMM$", "?!^MMMMM$",
     "?!^d$", "?!^dd$", "?!^ddd$", "?!^dddd$",
+    "?!^D$", "?!^DD$", "?!^DDD$", "?!^DDDD$",
     "h", "hh", ":m", ":mm", ":s", ":ss",
     "AM", "PM", "A", "P"
   )
