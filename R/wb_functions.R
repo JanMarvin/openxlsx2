@@ -297,6 +297,7 @@ numfmt_is_hms <- function(numFmt) {
     "?!^d$", "?!^dd$", "?!^ddd$", "?!^dddd$",
     "?!^D$", "?!^DD$", "?!^DDD$", "?!^DDDD$",
     "h", "hh", ":m", ":mm", ":s", ":ss",
+    "H", "HH", ":M", ":MM", ":S", ":SS",
     "AM", "PM", "A", "P"
   )
   hms_or_fmt <- paste0(hms_fmts, collapse = "|")
