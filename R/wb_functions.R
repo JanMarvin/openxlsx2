@@ -217,6 +217,9 @@ numfmt_is_date <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  # third party library uses upper case format code
+  numFmt_df$fC <- tolower(numFmt_df$fC)
+
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -247,6 +250,9 @@ numfmt_is_posix <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  # third party library uses upper case format code
+  numFmt_df$fC <- tolower(numFmt_df$fC)
+
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -258,7 +264,7 @@ numfmt_is_posix <- function(numFmt) {
     # "m", "mm", "mmm", "mmmm", "mmmmm",
     # "d", "dd", "ddd", "dddd",
     "h", "hh", ":m", ":mm", ":s", ":ss",
-    "AM", "PM", "A", "P"
+    "am", "pm", "a", "p"
   )
   posix_or_fmt <- paste0(posix_fmts, collapse = "|")
   maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$fC)
@@ -279,6 +285,9 @@ numfmt_is_hms <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  # third party library uses upper case format code
+  numFmt_df$fC <- tolower(numFmt_df$fC)
+
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -290,7 +299,7 @@ numfmt_is_hms <- function(numFmt) {
     "?!^mmm$", "?!^mmmm$", "?!^mmmmm$",
     "?!^d$", "?!^dd$", "?!^ddd$", "?!^dddd$",
     "h", "hh", ":m", ":mm", ":s", ":ss",
-    "AM", "PM", "A", "P"
+    "am", "pm", "a", "p"
   )
   hms_or_fmt <- paste0(hms_fmts, collapse = "|")
   maybe_hms <- grepl(pattern = hms_or_fmt, x = numFmt_df$fC)
