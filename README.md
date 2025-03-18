@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml)
+[![R-CMD-check.yaml](https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml)
 [![codecov](https://codecov.io/gh/JanMarvin/openxlsx2/branch/main/graph/badge.svg?token=HEZ7rXcZNq)](https://app.codecov.io/gh/JanMarvin/openxlsx2)
 [![r-universe](https://janmarvin.r-universe.dev/badges/openxlsx2)](https://janmarvin.r-universe.dev/openxlsx2)
 [![CRAN
@@ -78,9 +78,10 @@ variants how to work with `openxlsx2`.
   software.
 
 Many examples how to work with `openxlsx2` are in our [manual
-pages](https://janmarvin.github.io/openxlsx2/reference/index.html) and
-in our [vignettes](https://janmarvin.github.io/openxlsx2/articles/). You
-can find them under:
+pages](https://janmarvin.github.io/openxlsx2/reference/index.html), the
+[book](https://janmarvin.github.io/ox2-book/) and in our
+[vignettes](https://janmarvin.github.io/openxlsx2/articles/). You can
+find them under:
 
 ``` r
 vignette(package = "openxlsx2")
