@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>format strings independent of the cell style.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.13/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
       <div class="d-none name"><code>fmt_txt.Rd</code></div>
     </div>
 
@@ -66,6 +66,10 @@
 <span>  charset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outline <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vert_align <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  family <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shadow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  condense <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  extend <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -87,20 +91,8 @@
 <dd><p>an openxlsx2 fmt_txt string</p></dd>
 
 
-<dt id="arg-bold">bold<a class="anchor" aria-label="anchor" href="#arg-bold"></a></dt>
-<dd><p>bold</p></dd>
-
-
-<dt id="arg-italic">italic<a class="anchor" aria-label="anchor" href="#arg-italic"></a></dt>
-<dd><p>italic</p></dd>
-
-
-<dt id="arg-underline">underline<a class="anchor" aria-label="anchor" href="#arg-underline"></a></dt>
-<dd><p>underline</p></dd>
-
-
-<dt id="arg-strike">strike<a class="anchor" aria-label="anchor" href="#arg-strike"></a></dt>
-<dd><p>strike</p></dd>
+<dt id="arg-bold-italic-underline-strike">bold, italic, underline, strike<a class="anchor" aria-label="anchor" href="#arg-bold-italic-underline-strike"></a></dt>
+<dd><p>logical defaulting to <code>FALSE</code></p></dd>
 
 
 <dt id="arg-size">size<a class="anchor" aria-label="anchor" href="#arg-size"></a></dt>
@@ -108,7 +100,7 @@
 
 
 <dt id="arg-color">color<a class="anchor" aria-label="anchor" href="#arg-color"></a></dt>
-<dd><p>a wbColor color for the font</p></dd>
+<dd><p>a <code><a href="wb_color.html">wb_color()</a></code> for the font</p></dd>
 
 
 <dt id="arg-font">font<a class="anchor" aria-label="anchor" href="#arg-font"></a></dt>
@@ -119,12 +111,16 @@
 <dd><p>integer value from the table below</p></dd>
 
 
-<dt id="arg-outline">outline<a class="anchor" aria-label="anchor" href="#arg-outline"></a></dt>
-<dd><p>TRUE or FALSE</p></dd>
+<dt id="arg-outline-shadow-condense-extend">outline, shadow, condense, extend<a class="anchor" aria-label="anchor" href="#arg-outline-shadow-condense-extend"></a></dt>
+<dd><p>logical defaulting to <code>NULL</code></p></dd>
 
 
 <dt id="arg-vert-align">vert_align<a class="anchor" aria-label="anchor" href="#arg-vert-align"></a></dt>
-<dd><p>baseline, superscript, or subscript</p></dd>
+<dd><p>any of <code>baseline</code>, <code>superscript</code>, or <code>subscript</code></p></dd>
+
+
+<dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
+<dd><p>a font family</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -134,9 +130,14 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The result is an xml string. It is possible to paste multiple <code>fmt_txt()</code>
-strings together to create a string with differing styles.</p>
+strings together to create a string with differing styles. It is possible to
+supply different underline styles to <code>underline</code>.</p>
 <p>Using <code>fmt_txt(charset = 161)</code> will give the Greek Character Set</p><table class="table table"><tr><td>charset</td><td>"Character Set"</td></tr><tr><td>0</td><td>"ANSI_CHARSET"</td></tr><tr><td>1</td><td>"DEFAULT_CHARSET"</td></tr><tr><td>2</td><td>"SYMBOL_CHARSET"</td></tr><tr><td>77</td><td>"MAC_CHARSET"</td></tr><tr><td>128</td><td>"SHIFTJIS_CHARSET"</td></tr><tr><td>129</td><td>"HANGUL_CHARSET"</td></tr><tr><td>130</td><td>"JOHAB_CHARSET"</td></tr><tr><td>134</td><td>"GB2312_CHARSET"</td></tr><tr><td>136</td><td>"CHINESEBIG5_CHARSET"</td></tr><tr><td>161</td><td>"GREEK_CHARSET"</td></tr><tr><td>162</td><td>"TURKISH_CHARSET"</td></tr><tr><td>163</td><td>"VIETNAMESE_CHARSET"</td></tr><tr><td>177</td><td>"HEBREW_CHARSET"</td></tr><tr><td>178</td><td>"ARABIC_CHARSET"</td></tr><tr><td>186</td><td>"BALTIC_CHARSET"</td></tr><tr><td>204</td><td>"RUSSIAN_CHARSET"</td></tr><tr><td>222</td><td>"THAI_CHARSET"</td></tr><tr><td>238</td><td>"EASTEUROPE_CHARSET"</td></tr><tr><td>255</td><td>"OEM_CHARSET"</td></tr></table><p>You can join additional objects into fmt_txt() objects using "+".
 Though be aware that <code>fmt_txt("sum:") + (2 + 2)</code> is different to <code>fmt_txt("sum:") + 2 + 2</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="create_font.html">create_font()</a></code></p></div>
     </div>
 
     <div class="section level2">
