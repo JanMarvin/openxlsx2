@@ -624,10 +624,10 @@ wb_load <- function(
     sst_attr <- xml_attr(sst, "sst")
     uniqueCount <- as.character(sst_attr[[1]]["uniqueCount"])
     vals <- xml_node(sst, "sst", "si")
-    text <- xml_si_to_txt(sst)
+    # text <- xml_si_to_txt(sst)
 
     attr(vals, "uniqueCount") <- uniqueCount
-    attr(vals, "text") <- text
+    # attr(vals, "text") <- text
     wb$sharedStrings <- vals
   }
 

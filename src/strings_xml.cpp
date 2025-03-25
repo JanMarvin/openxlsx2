@@ -2,6 +2,7 @@
 #include "openxlsx2.h"
 
 // converts sharedstrings xml tree to R-Character Vector
+// TODO remove or add argument to still use this
 // [[Rcpp::export]]
 SEXP xml_si_to_txt(XPtrXML doc) {
   auto sst = doc->child("sst");
