@@ -9,7 +9,8 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   R_xlen_t nn = std::distance(doc->begin(), doc->end());
   R_xlen_t kk = static_cast<R_xlen_t>(col_nams.size());
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -34,9 +35,6 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
     }
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }
@@ -103,7 +101,8 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
   R_xlen_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
   R_xlen_t kk = static_cast<R_xlen_t>(row_nams.size());
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -140,9 +139,6 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
       R_xlen_t mtc = std::distance(row_nams.begin(), find_res);
       Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::to_string(itr + 1);
     }
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }

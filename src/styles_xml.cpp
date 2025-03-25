@@ -67,7 +67,8 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
   R_xlen_t nn = std::distance(xml_doc_xf->begin(), xml_doc_xf->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -128,9 +129,6 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
       }
 
     }  // end aligment, extLst, protection
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }
@@ -275,7 +273,8 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -305,9 +304,6 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
       }
 
     }  // end aligment, extLst, protection
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }
@@ -366,7 +362,8 @@ Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
   R_xlen_t nn = std::distance(xml_doc_numfmt->begin(), xml_doc_numfmt->end());
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -391,9 +388,6 @@ Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
       }
     }
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }
@@ -461,7 +455,8 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -504,8 +499,6 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
       }
     }
 
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
     ++itr;
   }
 
@@ -602,7 +595,8 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -631,9 +625,6 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
       }
 
     }  // end aligment, extLst, protection
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }
@@ -703,7 +694,8 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -746,8 +738,6 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
       }
     }
 
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
     ++itr;
   }
 
@@ -853,7 +843,8 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -897,8 +888,6 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
       }
     }
 
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
     ++itr;
   }
 
@@ -996,7 +985,8 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -1025,9 +1015,6 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
       }
 
     }  // end aligment, extLst, protection
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }
@@ -1087,7 +1074,8 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -1116,9 +1104,6 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
       }
 
     }  // end aligment, extLst, protection
-
-    // rownames as character vectors matching to <c s= ...>
-    rvec[itr] = std::to_string(itr);
 
     ++itr;
   }

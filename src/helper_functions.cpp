@@ -623,7 +623,8 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
   R_xlen_t kk = static_cast<R_xlen_t>(nams.size());
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  Rcpp::CharacterVector rvec(nn);
+  Rcpp::IntegerVector rvec(nn);
+  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -666,7 +667,6 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
       }
     }
 
-    rvec[itr] = std::to_string(itr);
     ++itr;
   }
 
