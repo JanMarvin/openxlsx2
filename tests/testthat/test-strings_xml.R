@@ -142,3 +142,10 @@ test_that("strings_xml", {
   expect_equal(got, exp)
 
 })
+
+test_that("strings are equal", {
+  exp <- sample(LETTERS[1:3], size = 20, replace = TRUE)
+  exp_is <- vapply(exp, txt_to_is, NA_character_, USE.NAMES = FALSE)
+  got <- is_to_txt(exp_is)
+  expect_equal(exp, got)
+})

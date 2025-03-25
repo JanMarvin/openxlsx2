@@ -1358,8 +1358,6 @@ wb_load <- function(
         authorsInds <- as.integer(comments_attr$authorId) + 1
         authors <- authors[authorsInds]
 
-        text <- xml_node(comments, "comment", "text")
-
         comments <- lapply(comments, function(x) {
           text <- xml_node(x, "comment", "text")
           if (all(xml_node_name(x, "comment", "text") == "t")) {

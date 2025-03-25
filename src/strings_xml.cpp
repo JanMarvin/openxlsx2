@@ -39,12 +39,20 @@ SEXP xml_si_to_txt(XPtrXML doc) {
 SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
   auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));
+  std::unordered_map<std::string, std::string> cache;
 
   for (auto i = 0; i < n; ++i) {
     std::string tmp = Rcpp::as<std::string>(vec[i]);
 
-    if (tmp.compare("") == 0) {
+    // Check if we have already processed this XML string
+    if (cache.find(tmp) != cache.end()) {
+      res[i] = cache[tmp];
+      continue;
+    }
+
+    if (tmp.empty()) {
       res[i] = "";
+      cache[tmp] = "";
       continue;
     }
 
@@ -55,15 +63,12 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
       Rcpp::stop(type.c_str(), " xml import unsuccessful");
     }
 
+    std::string text;
     for (auto is : doc.children(type.c_str())) {
-      // text to export
-      std::string text = "";
-
       // has only t node
       for (auto t : is.children("t")) {
         text = t.text().get();
       }
-
       // has r node with t node
       // phoneticPr (Phonetic Properties)
       // r (Rich Text Run)
@@ -76,10 +81,11 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
           text += t.text().get();
         }
       }
-
-      // push everything back
-      res[i] = Rcpp::String(text);
     }
+
+    // Store result in cache
+    cache[tmp] = text;
+    res[i] = Rcpp::String(text);
   }
 
   return res;
