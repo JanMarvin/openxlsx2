@@ -244,3 +244,38 @@ test_that("writing cm formulas and writing to sheets with cm formulas works", {
   expect_silent(wb$add_data(x = 1))
 
 })
+
+test_that("formula with names work as documented", {
+
+  v1 <- rep("https://CRAN.R-project.org/", 4)
+  names(v1) <- paste0("Hyperlink", 1:4) # Optional: names will be used as display text
+  class(v1) <- "hyperlink"
+
+  v2 <- rep("https://CRAN.R-project.org/", 4)
+  class(v2) <- "hyperlink"
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_data(x = v1, dims = "A1")
+  wb$add_data(x = v2, dims = "B1")
+
+
+  exp <- data.frame(
+    A = c(
+      "=HYPERLINK(\"https://CRAN.R-project.org/\", \"Hyperlink1\")",
+      "=HYPERLINK(\"https://CRAN.R-project.org/\", \"Hyperlink2\")",
+      "=HYPERLINK(\"https://CRAN.R-project.org/\", \"Hyperlink3\")",
+      "=HYPERLINK(\"https://CRAN.R-project.org/\", \"Hyperlink4\")"
+    ),
+    B = c(
+      "=HYPERLINK(\"https://CRAN.R-project.org/\")",
+      "=HYPERLINK(\"https://CRAN.R-project.org/\")",
+      "=HYPERLINK(\"https://CRAN.R-project.org/\")",
+      "=HYPERLINK(\"https://CRAN.R-project.org/\")"
+    )
+  )
+  class(exp$A) <- c("character", "formula")
+  class(exp$B) <- c("character", "formula")
+  got <- wb$to_df(show_formula = TRUE, col_names = FALSE)
+  expect_equal(exp, got)
+
+})

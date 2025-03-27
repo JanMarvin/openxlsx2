@@ -968,7 +968,11 @@ write_data_table <- function(
       if (is.null(dim(x))) {
         colNames <- FALSE
         if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
-          x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
+          if (length(names(x))) {
+            x[is_hyperlink] <- create_hyperlink(text = names(x[is_hyperlink]), file = x[is_hyperlink])
+          } else {
+            x[is_hyperlink] <- create_hyperlink(text = x[is_hyperlink])
+          }
         }
         class(x[is_hyperlink]) <- c("character", "hyperlink")
       } else {
