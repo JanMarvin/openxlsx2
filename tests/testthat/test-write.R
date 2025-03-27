@@ -136,7 +136,7 @@ test_that("update_cells", {
 
   exp <- structure(
     list(c_t = c("", "str", "str"),
-         f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\")"),
+         f = c("SUM(C2:C11*D2:D11)", "C3 + D3", "=HYPERLINK(\"https://www.google.com\", \"google\")"),
          f_attr = c("t=\"array\" ref=\"E2\"", "", "")),
     row.names = c("23", "110", "111"), class = "data.frame")
   got <- wb$worksheets[[1]]$sheet_data$cc[c(5, 8, 11), c("c_t", "f", "f_attr")]
