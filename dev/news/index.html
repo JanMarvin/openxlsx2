@@ -49,7 +49,12 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
-<hr></div>
+<div class="section level3">
+<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<ul><li>Previously, when loading a workbook, the included styles were broken down, with XML styles converted into data frame objects. However, these results were only used to generate a sequence.</li>
+<li>Similarly, if available, the entire shared strings table was converted to text upon loading. Now, this conversion is postponed until explicitly requested. Both approaches have their advantages: reading shared strings on load is useful when they are extensively shared across worksheets and multiple worksheets are retrieved via <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, while delaying conversion saves memory and computation time when not required. However, in the latter case, shared strings across multiple worksheets will need to be converted each time they are accessed. The impact of this change should be monitored.</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.14" id="openxlsx2-114">openxlsx2 1.14<a class="anchor" aria-label="anchor" href="#openxlsx2-114"></a></h2><p class="text-muted">CRAN release: 2025-03-20</p>
 <div class="section level3">
