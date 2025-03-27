@@ -1062,10 +1062,10 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   old_len <- length(as.character(wb_new$sharedStrings))
 
   wb_new$sharedStrings <- c(as.character(wb_new$sharedStrings), sst_old)
-  sst  <- xml_node_create("sst", xml_children = wb_new$sharedStrings)
-  text <- xml_si_to_txt(read_xml(sst))
+  # sst  <- xml_node_create("sst", xml_children = wb_new$sharedStrings)
+  # text <- xml_si_to_txt(read_xml(sst))
   attr(wb_new$sharedStrings, "uniqueCount") <- as.character(length(text))
-  attr(wb_new$sharedStrings, "text") <- text
+  # attr(wb_new$sharedStrings, "text") <- text
 
 
   sheet_id <- wb_new$validate_sheet(new)

@@ -250,7 +250,7 @@ wb_to_df <- function(
 
   row_attr  <- wb$worksheets[[sheet]]$sheet_data$row_attr
   cc  <- wb$worksheets[[sheet]]$sheet_data$cc
-  sst <- attr(wb$sharedStrings, "text")
+  sst <- wb$sharedStrings
 
   rnams <- row_attr$r
   rnams <- rnams[rnams %in% unique(cc$row_r)] # avoid blank row interference
@@ -368,7 +368,7 @@ wb_to_df <- function(
   # test is sst
   if (any(cc_tab %in% c("s"))) {
     sel <- cc$c_t %in% c("s")
-    cc$val[sel] <- sst[as.numeric(cc$v[sel]) + 1]
+    cc$val[sel] <- si_to_txt(sst[as.numeric(cc$v[sel]) + 1])
     cc$typ[sel] <- "s"
   }
 

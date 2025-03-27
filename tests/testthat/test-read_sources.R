@@ -109,13 +109,13 @@ test_that("encoding", {
     exp <- structure(
       c("<si><t xml:space=\"preserve\">€</t></si>",
         "<si><t xml:space=\"preserve\">ä</t></si>"),
-      uniqueCount = "2", text = c("€", "ä")
+      uniqueCount = "2"#, text = c("€", "ä")
     )
   } else {
     exp <- structure(
       c("<si><t xml:space=\"preserve\">\200</t></si>",
         "<si><t xml:space=\"preserve\">ä</t></si>"),
-      uniqueCount = "2", text = c("\200", "ä")
+      uniqueCount = "2"#, text = c("\200", "ä")
     )
   }
 

@@ -624,10 +624,10 @@ wb_load <- function(
     sst_attr <- xml_attr(sst, "sst")
     uniqueCount <- as.character(sst_attr[[1]]["uniqueCount"])
     vals <- xml_node(sst, "sst", "si")
-    text <- xml_si_to_txt(sst)
+    # text <- xml_si_to_txt(sst)
 
     attr(vals, "uniqueCount") <- uniqueCount
-    attr(vals, "text") <- text
+    # attr(vals, "text") <- text
     wb$sharedStrings <- vals
   }
 
@@ -1357,8 +1357,6 @@ wb_load <- function(
         refs <- comments_attr$ref
         authorsInds <- as.integer(comments_attr$authorId) + 1
         authors <- authors[authorsInds]
-
-        text <- xml_node(comments, "comment", "text")
 
         comments <- lapply(comments, function(x) {
           text <- xml_node(x, "comment", "text")
