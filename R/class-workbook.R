@@ -4923,6 +4923,11 @@ wbWorkbook <- R6::R6Class(
       rows <- rows[ok]
       sheet <- private$get_sheet_index(sheet)
 
+      # check if additional rows are required
+      has_rows <- sort(as.integer(self$worksheets[[sheet]]$sheet_data$row_attr$r))
+      missing_rows <- rows[!rows %in% has_rows]
+      if (length(missing_rows)) private$do_cell_init(sheet, paste0("A", sort(missing_rows)))
+
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
 

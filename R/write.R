@@ -173,7 +173,7 @@ initialize_cell <- function(wb, sheet, new_cells) {
   x$row_r <- gsub("[[:upper:]]", "", new_cells)
   x$c_r   <- gsub("[[:digit:]]", "", new_cells)
 
-  rows <- x$row_r
+  rows <- unique(x$row_r)
   cells_needed <- new_cells
 
   inner_update(wb, sheet_id, x, rows, cells_needed)

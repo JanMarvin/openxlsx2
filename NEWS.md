@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## Fixes
+
+* Grouping of rows does no longer require the groups to be initialized in the worksheet. [1303](https://github.com/JanMarvin/openxlsx2/pull/1303)
+
 ## Internal changes
 
 * Previously, when loading a workbook, the included styles were broken down, with XML styles converted into data frame objects. However, these results were only used to generate a sequence.
