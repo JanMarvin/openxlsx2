@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.13.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.14.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,7 +109,7 @@
 <li>The first one is to simply work with R objects. It is possible to read (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html"><code>read_xlsx()</code></a>) and write (<a href="https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html"><code>write_xlsx()</code></a>) data from and to files. We offer a number of options in the commands to support various features of the openxml format, including reading and writing named ranges and tables. Furthermore, there are several ways to read certain information of an openxml spreadsheet without having opened it in a spreadsheet software before, e.g. to get the contained sheet names or tables.</li>
 <li>As a second variant <code>openxlsx2</code> offers the work with so called <a href="https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html"><code>wbWorkbook</code></a> objects. Here an openxml file is read into a corresponding <code>wbWorkbook</code> object (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_load.html"><code>wb_load()</code></a>) or a new one is created (<a href="https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html"><code>wb_workbook()</code></a>). Afterwards the object can be further modified using various functions. For example, worksheets can be added or removed, the layout of cells or entire worksheets can be changed, and cells can be modified (overwritten or rewritten). Afterwards the <code>wbWorkbook</code> objects can be written as openxml files and processed by suitable spreadsheet software.</li>
 </ul>
-<p>Many examples how to work with <code>openxlsx2</code> are in our <a href="https://janmarvin.github.io/openxlsx2/reference/index.html">manual pages</a> and in our <a href="https://janmarvin.github.io/openxlsx2/articles/">vignettes</a>. You can find them under:</p>
+<p>Many examples how to work with <code>openxlsx2</code> are in our <a href="https://janmarvin.github.io/openxlsx2/reference/index.html">manual pages</a>, the <a href="https://janmarvin.github.io/ox2-book/" class="external-link">book</a> and in our <a href="https://janmarvin.github.io/openxlsx2/articles/">vignettes</a>. You can find them under:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -223,7 +223,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml" class="external-link"><img src="https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml" class="external-link"><img src="https://github.com/JanMarvin/openxlsx2/actions/workflows/check-standard.yaml/badge.svg" alt="R-CMD-check.yaml"></a></li>
 <li><a href="https://app.codecov.io/gh/JanMarvin/openxlsx2" class="external-link"><img src="https://codecov.io/gh/JanMarvin/openxlsx2/branch/main/graph/badge.svg?token=HEZ7rXcZNq" alt="codecov"></a></li>
 <li><a href="https://janmarvin.r-universe.dev/openxlsx2" class="external-link"><img src="https://janmarvin.r-universe.dev/badges/openxlsx2" alt="r-universe"></a></li>
 <li><a href="https://cran.r-project.org/package=openxlsx2" class="external-link"><img src="https://www.r-pkg.org/badges/version/openxlsx2" alt="CRAN status"></a></li>
