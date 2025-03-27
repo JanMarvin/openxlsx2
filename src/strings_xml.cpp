@@ -39,20 +39,21 @@ SEXP xml_si_to_txt(XPtrXML doc) {
 SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
   auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));
-  std::unordered_map<std::string, std::string> cache;
+  std::unordered_map<std::string, Rcpp::String> cache;  // Cache Rcpp::String directly
 
   for (auto i = 0; i < n; ++i) {
     std::string tmp = Rcpp::as<std::string>(vec[i]);
 
     // Check if we have already processed this XML string
-    if (cache.find(tmp) != cache.end()) {
-      res[i] = cache[tmp];
+    auto it = cache.find(tmp);
+    if (it != cache.end()) {
+      res[i] = it->second;  // Direct assignment from cache
       continue;
     }
 
     if (tmp.empty()) {
       res[i] = "";
-      cache[tmp] = "";
+      cache[tmp] = Rcpp::String("");  // Cache the Rcpp::String directly
       continue;
     }
 
@@ -84,8 +85,9 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
     }
 
     // Store result in cache
-    cache[tmp] = text;
-    res[i] = Rcpp::String(text);
+    Rcpp::String rcpp_text = Rcpp::String(text);
+    cache[tmp] = rcpp_text;
+    res[i] = rcpp_text;
   }
 
   return res;
