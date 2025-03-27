@@ -318,3 +318,16 @@ test_that("hierarchical grouping works", {
   )
   expect_equal(wb$worksheets[[1]]$cols_attr, exp)
 })
+
+test_that("grouping works independent of initialized cells", {
+  start <- 1
+  end   <- 4
+
+  wb <- wb_workbook()$add_worksheet()$
+    group_rows(rows = start:end)$
+    group_cols(cols = start:end)
+
+  exp <- as.character(1:4)
+  got <- wb$worksheets[[1]]$sheet_data$row_attr$r
+  expect_equal(exp, got)
+})
