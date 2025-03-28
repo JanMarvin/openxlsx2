@@ -382,3 +382,22 @@ test_that("background colors work", {
   expect_match(wb$vml[[1]], "fillcolor=\"#00FF00\"")
 
 })
+
+test_that("wb_get_comment works", {
+  wb <- wb_workbook()$
+    add_worksheet()
+
+  # Add a comment to cell A1
+  wb$add_comment(
+    dims = "B2",
+    comment = "This is a sample comment."
+  )
+
+  exp <- data.frame(ref = "B2",
+                    author = "janmarvingarbuszus",
+                    comment = "janmarvingarbuszus: \n This is a sample comment.",
+                    cmmt_id = 1L,
+                    stringsAsFactors = FALSE)
+  got <- wb$get_comment(dims = "B2")
+  expect_equal(exp, got)
+})

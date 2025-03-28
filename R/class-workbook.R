@@ -5525,7 +5525,15 @@ wbWorkbook <- R6::R6Class(
 
       cmts <- list()
       if (length(cmmt) && length(self$comments) <= cmmt) {
-        cmts <- as.data.frame(do.call("rbind", self$comments[[cmmt]]), stringsAsFactors = FALSE)
+        cmts <- do.call(rbind, lapply(self$comments[[cmmt]], function(x) {
+          data.frame(
+            ref = x$ref,
+            author = x$author,
+            comment = paste0(x$comment, collapse = " "),
+            stringsAsFactors = FALSE
+          )
+        }))
+
         if (!is.null(dims)) cmts <- cmts[cmts$ref %in% dims, ]
         # print(cmts)
         cmts <- cmts[c("ref", "author", "comment")]
@@ -5535,7 +5543,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      invisible(cmts)
+      cmts
     },
 
     #' @description Remove comment
