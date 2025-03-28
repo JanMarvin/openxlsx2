@@ -5537,9 +5537,11 @@ wbWorkbook <- R6::R6Class(
         if (!is.null(dims)) cmts <- cmts[cmts$ref %in% dims, ]
         # print(cmts)
         cmts <- cmts[c("ref", "author", "comment")]
-        if (nrow(cmts)) {
+        if (NROW(cmts)) {
           cmts$comment <- as_fmt_txt(cmts$comment)
           cmts$cmmt_id <- cmmt
+        } else {
+          return(NULL)
         }
       }
 
