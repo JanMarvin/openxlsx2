@@ -312,4 +312,3 @@ test_that("normalizing spreadsheet formulas works", {
   got <- wb$to_df(show_formula = TRUE, col_names = FALSE, start_row = 2, cols = "D")$D
   expect_equal(exp, got)
 })
-
