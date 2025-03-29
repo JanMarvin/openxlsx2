@@ -312,6 +312,9 @@ write_data2 <- function(
       data[fmls],
       function(val) {
         val <- replaceXMLEntities(val)
+        # replace localized separators ";" used e.g. in German formulas must be ","
+        # otherwise the semicolon will interfere with the XML formulas
+        val <- gsub('(;)(?=(?:[^"\']*(["\'])[^"\']*\\2)*[^"\']*$)', ',', val, perl = TRUE)
         vapply(val, function(x) xml_value(xml_node_create("fml", x, escapes = TRUE), "fml"), "")
       }
     )
