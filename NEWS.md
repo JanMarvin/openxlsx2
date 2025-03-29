@@ -1,8 +1,13 @@
 # openxlsx2 (development version)
 
+## New features
+
+* A normalization function was added for separators in formulas. In English locales, formulas require a comma as argument separator, locales that use the comma a decimal separator, a semicolon is used as argument separator. We added a check to replace semicolons added in formulas, because these were hard to spot and if overlooked could brick the XML worksheet.
+
 ## Fixes
 
 * Grouping of rows does no longer require the groups to be initialized in the worksheet. [1303](https://github.com/JanMarvin/openxlsx2/pull/1303)
+* Fix another case where `cc` was unintentionally shorten when applying a `cm` formula. Not sure if the cause for this is in the `cm` formula or in some other place.
 
 ## Internal changes
 

@@ -100,8 +100,12 @@ inner_update <- function(
   replacement <- c("r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
                    "v", "f", "f_attr", "is")
 
-  if (!removeCellStyle) {
-    replacement <- replacement[-which(replacement == "c_s")]
+  if (removeCellStyle) {
+    # use c_s from cc
+    replacementX  <- replacement
+  } else {
+    # use c_s from x
+    replacementX  <- replacement[-which(replacement == "c_s")]
   }
 
   sel <- match(x$r, cc$r)
@@ -140,7 +144,8 @@ inner_update <- function(
     cc <- cc[replacement]
   }
 
-  cc[sel, replacement] <- x[replacement]
+  # c_s is either used from X or from cc
+  cc[sel, replacementX] <- x[replacementX]
 
   # avoid missings in cc
   if (anyNA(cc))
@@ -312,6 +317,9 @@ write_data2 <- function(
       data[fmls],
       function(val) {
         val <- replaceXMLEntities(val)
+        # replace localized separators ";" used e.g. in German formulas must be ","
+        # otherwise the semicolon will interfere with the XML formulas
+        val <- gsub('(;)(?=(?:[^"\']*(["\'])[^"\']*\\2)*[^"\']*$)', ',', val, perl = TRUE)
         vapply(val, function(x) xml_value(xml_node_create("fml", x, escapes = TRUE), "fml"), "")
       }
     )

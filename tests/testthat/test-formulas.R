@@ -86,6 +86,8 @@ test_that("formual escaping works", {
 
   expect_warning(wb$add_formula(dims = "A4", x = "SUM('A&B'!A1)", cm = TRUE))
 
+  expect_silent(wb$save(temp_xlsx()))
+
   exp <- c("'A&amp;B'!A1", "'A&amp;B'!A1", "'A&amp;B'!A1", "SUM('A&amp;B'!A1)", "SUM('A&amp;B'!A1)")
   got <- wb$worksheets[[2]]$sheet_data$cc$f
   expect_equal(exp, got)
@@ -278,4 +280,35 @@ test_that("formula with names work as documented", {
   got <- wb$to_df(show_formula = TRUE, col_names = FALSE)
   expect_equal(exp, got)
 
+})
+
+test_that("normalizing spreadsheet formulas works", {
+  fml <- c(
+    'SUM(A1;B1; C1)',
+    'SUM(A1,B1,C1)',
+    '"Hello;
+  World" & 1',
+    'TEXT(TODAY(),"MM/DD/YY")',
+    'IF((SUM(A1,B1) & "a;b")<>"",(SUM(A1,B1) & "a;b");"")',
+    '',
+    '  SUM(A1;B1;C1)  '
+  )
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = matrix(1:9, 3, 3), col_names = FALSE)$
+    add_formula(x = fml, dims = "D2")
+
+  exp <- structure(
+    c("SUM(A1,B1, C1)",
+      "SUM(A1,B1,C1)",
+      "\"Hello;\n  World\" & 1",
+      "TEXT(TODAY(),\"MM/DD/YY\")",
+      "IF((SUM(A1,B1) & \"a;b\")<>\"\",(SUM(A1,B1) & \"a;b\"),\"\")",
+      NA,
+      "  SUM(A1,B1,C1)  "
+    ),
+    class = c("character", "formula")
+  )
+  got <- wb$to_df(show_formula = TRUE, col_names = FALSE, start_row = 2, cols = "D")$D
+  expect_equal(exp, got)
 })
