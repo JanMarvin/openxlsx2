@@ -50,9 +50,14 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>A normalization function was added for separators in formulas. In English locales, formulas require a comma as argument separator, locales that use the comma a decimal separator, a semicolon is used as argument separator. We added a check to replace semicolons added in formulas, because these were hard to spot and if overlooked could brick the XML worksheet.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>Grouping of rows does no longer require the groups to be initialized in the worksheet. <a href="https://github.com/JanMarvin/openxlsx2/pull/1303" class="external-link">1303</a>
 </li>
+<li>Fix another case where <code>cc</code> was unintentionally shorten when applying a <code>cm</code> formula. Not sure if the cause for this is in the <code>cm</code> formula or in some other place.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
