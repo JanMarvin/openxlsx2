@@ -86,6 +86,8 @@ test_that("formual escaping works", {
 
   expect_warning(wb$add_formula(dims = "A4", x = "SUM('A&B'!A1)", cm = TRUE))
 
+  expect_silent(wb$save(temp_xlsx()))
+
   exp <- c("'A&amp;B'!A1", "'A&amp;B'!A1", "'A&amp;B'!A1", "SUM('A&amp;B'!A1)", "SUM('A&amp;B'!A1)")
   got <- wb$worksheets[[2]]$sheet_data$cc$f
   expect_equal(exp, got)

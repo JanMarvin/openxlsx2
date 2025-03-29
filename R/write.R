@@ -100,8 +100,12 @@ inner_update <- function(
   replacement <- c("r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
                    "v", "f", "f_attr", "is")
 
-  if (!removeCellStyle) {
-    replacement <- replacement[-which(replacement == "c_s")]
+  if (removeCellStyle) {
+    # use c_s from cc
+    replacementX  <- replacement
+  } else {
+    # use c_s from x
+    replacementX  <- replacement[-which(replacement == "c_s")]
   }
 
   sel <- match(x$r, cc$r)
@@ -140,7 +144,8 @@ inner_update <- function(
     cc <- cc[replacement]
   }
 
-  cc[sel, replacement] <- x[replacement]
+  # c_s is either used from X or from cc
+  cc[sel, replacementX] <- x[replacementX]
 
   # avoid missings in cc
   if (anyNA(cc))
