@@ -1649,7 +1649,22 @@ create_shape <- function(
 
   standardize(...)
 
-  text <- fmt_txt2(text, text_color = text_color, text_transparency)
+  if (!is_xml(text)) {
+    # if not a a14:m node
+    text <- fmt_txt2(text, text_color = text_color, text_transparency)
+    mc_beg <- ""
+    mc_end <- ""
+  } else {
+    # we need some markup compability
+    mc_beg <- c(
+      '<mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+      <mc:Choice xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" Requires="a14">'
+    )
+    mc_end <- c(
+      '</mc:Choice>
+      </mc:AlternateContent>'
+    )
+  }
 
   line_color <- get_color(line_color, line_transparency)
   fill_color <- get_color(fill_color, fill_transparency)
@@ -1663,6 +1678,7 @@ create_shape <- function(
      <xdr:absoluteAnchor>
       <xdr:pos x="0" y="0" />
       <xdr:ext cx="0" cy="0" />
+      %s
       <xdr:sp macro="" textlink="">
        <xdr:nvSpPr>
         <xdr:cNvPr id="%s" name="%s" />
@@ -1709,11 +1725,14 @@ create_shape <- function(
         </a:p>
        </xdr:txBody>
       </xdr:sp>
+      %s
       <xdr:clientData />
      </xdr:absoluteAnchor>
      </xdr:wsDr>',
-    id, name, st_guid(), rotation * 60000, shape,
-    fill_color, line_color, text_align[1], text
+     mc_beg,
+     id, name, st_guid(), rotation * 60000, shape,
+     fill_color, line_color, text_align[1], text,
+     mc_end
   )
 
   read_xml(xml, pointer = FALSE)
