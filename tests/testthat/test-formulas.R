@@ -312,3 +312,21 @@ test_that("normalizing spreadsheet formulas works", {
   got <- wb$to_df(show_formula = TRUE, col_names = FALSE, start_row = 2, cols = "D")$D
   expect_equal(exp, got)
 })
+
+test_that("cm works more like array", {
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = cars)$
+    add_data(dims = "D1", x = "Unique Values of Speed")
+
+  expect_warning(
+    wb$add_formula(
+      dims = wb_dims(x = unique(cars$speed), from_dims = "D2"),
+      x = paste0("_xlfn.UNIQUE(", wb_dims(x = cars, cols = "speed"), ")"),
+      cm = TRUE
+    ),
+    "modifications with cm formulas are experimental"
+  )
+
+  got <- table(wb$worksheets[[1]]$sheet_data$cc$f)[["_xlfn.UNIQUE(A2:A51)"]]
+  expect_equal(1L, got)
+})

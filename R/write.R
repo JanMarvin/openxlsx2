@@ -1310,7 +1310,7 @@ do_write_formula <- function(
     dims <- wb_dims(start_row, start_col)
   }
 
-  if (array || enforce) {
+  if ((array || cm) || enforce) {
     dfx <- data.frame("X" = x, stringsAsFactors = FALSE)
   } else {
     # if dims a single cell and x > dfx, increase dfx
@@ -1388,7 +1388,7 @@ do_write_formula <- function(
   }
 
   # transpose match write_data_table
-  if (array || enforce) {
+  if ((array || cm) || enforce) {
     rc <- dims_to_rowcol(dims)
     if (length(rc[["col"]]) > length(rc[["row"]])) {
       dfx <- transpose_df(dfx)
