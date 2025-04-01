@@ -985,12 +985,17 @@ write_data_table <- function(
         class(x[is_hyperlink]) <- c("character", "hyperlink")
       } else {
         # workaround for tibbles that break with the class assignment below
-        if (inherits(x, "tbl_df")) x <- as.data.frame(x, stringsAsFactors = FALSE)
+        # if (inherits(x, "tbl_df")) x <- as.data.frame(x, stringsAsFactors = FALSE)
+        if (inherits(x, "tbl_df")) class(x) <- "data.frame"
+
         # check should be in create_hyperlink and that apply should not be required either
         if (!any(grepl("=([\\s]*?)HYPERLINK\\(", x[is_hyperlink], perl = TRUE))) {
-          x[is_hyperlink] <- apply(
-            x[is_hyperlink], 1,
-            FUN = function(str) create_hyperlink(text = str)
+          x[is_hyperlink] <- lapply(
+            names(x[is_hyperlink]),
+            FUN = function(str) {
+              if (is.null(names(x[[str]]))) create_hyperlink(text = x[[str]])
+              else create_hyperlink(text = names(x[[str]]), file = x[[str]])
+            }
           )
         }
         class(x[, is_hyperlink]) <- c("character", "hyperlink")
