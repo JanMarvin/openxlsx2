@@ -330,3 +330,30 @@ test_that("cm works more like array", {
   got <- table(wb$worksheets[[1]]$sheet_data$cc$f)[["_xlfn.UNIQUE(A2:A51)"]]
   expect_equal(1L, got)
 })
+
+test_that("named hyperlinks work", {
+  v <- rep("https://CRAN.R-project.org/", 2)
+  names(v) <- paste0("Hyperlink", 1:2)
+  class(v) <- "hyperlink"
+
+  df <- data.frame(v = I(v), x = 1:2, row.names = NULL,
+                   stringsAsFactors = FALSE)  # Use I() to prevent flattening
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = df, dims = "A1")
+
+  exp <- structure(
+    list(
+      v = structure(
+        c("=HYPERLINK(\"https://CRAN.R-project.org/\", \"Hyperlink1\")",
+          "=HYPERLINK(\"https://CRAN.R-project.org/\", \"Hyperlink2\")"),
+        class = c("character", "formula")
+      ),
+      x = c(1, 2)
+    ),
+    row.names = 2:3,
+    class = "data.frame"
+  )
+  got <- wb$to_df(show_formula = TRUE)
+  expect_equal(exp, got)
+})
