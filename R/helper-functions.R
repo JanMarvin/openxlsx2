@@ -1649,7 +1649,7 @@ create_shape <- function(
 
   standardize(...)
 
-  if (!is_xml(text)) {
+  if (!is_xml(text) || inherits(text, "fmt_txt")) {
     # if not a a14:m node
     text <- fmt_txt2(text, text_color = text_color, text_transparency)
     mc_beg <- ""
