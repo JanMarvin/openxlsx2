@@ -978,7 +978,7 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
 
         case BrtCommentAuthor: {
           std::string author = XLWideString(bin, swapit);
-          out << "<author>" << author << "</author>" << std::endl;
+          out << "<author>" << escape_xml(author) << "</author>" << std::endl;
           break;
         }
 
@@ -1230,7 +1230,7 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
           int32_t col = UncheckedCol(bin, swapit);
           std::string value = XLWideString(bin, swapit);
           out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"str\">" << std::endl;
-          out << "<v>" << value << "</v>" << std::endl;
+          out << "<v>" << escape_xml(value) << "</v>" << std::endl;
           out << "</cell>" << std::endl;
 
           break;
