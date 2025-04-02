@@ -1660,6 +1660,7 @@ wb_load <- function(
           # want can be zero
           if (ref %in% seq_along(extSheets)) {
 
+            if (want == 0) next
             sheetName <- extSheets[[ref]][[want]]
             if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
               want <- xti$lastSheet[sel][i]
@@ -1712,7 +1713,7 @@ wb_load <- function(
             }
 
 
-            if (!wb$is_chartsheet[[i]])
+            if (!wb$is_chartsheet[[j]])
               wb$worksheets[[j]]$dataValidations <-
                 stringi::stri_replace_all_fixed(
                   wb$worksheets[[j]]$dataValidations,
