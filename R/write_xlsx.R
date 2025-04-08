@@ -265,6 +265,10 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     if (anyNA(colWidths)) colWidths[is.na(colWidths)] <- 8.43
   }
 
+  table_name <- NULL
+  if ("table_name" %in% names(params)) {
+    table_name <- params$table_name
+  }
 
   tableStyle <- "TableStyleLight9"
   if ("table_style" %in% names(params)) {
@@ -375,6 +379,10 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     as_table <- rep_len(as_table, length.out = nSheets)
   }
 
+  if (!is.null(table_name) && length(table_name) != nSheets) {
+    table_name <- c(table_name, paste0(table_name[1], seq_len(nSheets)[-nSheets]))
+  }
+
   if (length(tableStyle) != nSheets) {
     tableStyle <- rep_len(tableStyle, length.out = nSheets)
   }
@@ -398,7 +406,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
         col_names   = colNames[[i]],
         row_names   = rowNames[[i]],
         table_style = tableStyle[[i]],
-        table_name  = NULL,
+        table_name  = table_name[[i]],
         with_filter = withFilter[[i]],
         na.strings  = na.strings,
         total_row   = totalRow
