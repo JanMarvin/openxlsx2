@@ -449,3 +449,25 @@ test_that("glue is supported", {
 
   expect_equal("foo", wb_to_df(wb, col_names = FALSE)$A)
 })
+
+test_that("table names work in write_xlsx", {
+  wb <- write_xlsx(list(data = cars), as_table = TRUE, table_style = "TableStyleLight18", table_name = "tblcars")
+
+  exp <- "tblcars"
+  got <- wb$get_named_regions(tables = TRUE)$name
+  expect_equal(exp, got)
+
+
+  wb <- write_xlsx(list(cars = cars, mtcars = mtcars), as_table = TRUE, table_style = "TableStyleLight18", table_name = "tblcars")
+
+  exp <- c("tblcars", "tblcars1")
+  got <- wb$get_named_regions(tables = TRUE)$name
+  expect_equal(exp, got)
+
+
+  wb <- write_xlsx(list(cars = cars, mtcars = mtcars), as_table = TRUE, table_style = "TableStyleLight18", table_name = c("tblcars", "tblmtcars"))
+
+  exp <- c("tblcars", "tblmtcars")
+  got <- wb$get_named_regions(tables = TRUE)$name
+  expect_equal(exp, got)
+})
