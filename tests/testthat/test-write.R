@@ -1488,3 +1488,11 @@ test_that("writing without pugixml works", {
   expect_silent(wb <- wb_load(temp))
 
 })
+
+test_that("writing Inf, -Inf and NaN works", {
+  x <- c("Inf", "-Inf", "NaN")
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = x)
+  got <- wb$to_df(col_names = FALSE)$A
+  expect_equal(x, got)
+})

@@ -550,11 +550,11 @@ void wide_to_long(
           }
         }
 
-      } else if (strcmp(vals, "NaN") == 0) {
+      } else if (vtyp == numeric && strcmp(vals, "NaN") == 0) {
         // v = "#VALUE!"
         SET_STRING_ELT(zz_v,   pos, value_sexp);
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-      } else if (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0) {
+      } else if (vtyp == numeric && (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0)) {
         // v = "#NUM!"
         SET_STRING_ELT(zz_v,   pos, num_sexp);
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
