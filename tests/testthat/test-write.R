@@ -1495,4 +1495,14 @@ test_that("writing Inf, -Inf and NaN works", {
     add_data(x = x)
   got <- wb$to_df(col_names = FALSE)$A
   expect_equal(x, got)
+
+  # labelled vector with Inf, -Inf, and NaN
+  lbl <- c("INF", "-INF", "NAN")
+  ff <- structure(c(Inf, -Inf, NaN),
+                  labels = c(INF = Inf, `-INF` = -Inf, NAN = NaN),
+                  class = c("haven_labelled", "double"))
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = ff, col_names = FALSE)
+  got <- wb$to_df(col_names = FALSE)$A
+  expect_equal(lbl, got)
 })

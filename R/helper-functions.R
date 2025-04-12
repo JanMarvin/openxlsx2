@@ -688,9 +688,9 @@ to_string <- function(x) {
   lbls <- attr(x, "labels")
   chr  <- as.character(x)
   if (!is.null(lbls) && !is.null(names(lbls))) {
-    lbls <- lbls[match(x, lbls)]
-    sel_l <- which(!is.na(lbls))
-    if (length(sel_l)) chr[sel_l] <- names(lbls[!is.na(lbls)])
+    idx <- match(x, lbls)
+    has_label <- !is.na(idx)
+    chr[has_label] <- names(lbls)[idx[has_label]]
   }
   chr
 }
