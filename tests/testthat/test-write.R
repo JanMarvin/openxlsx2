@@ -1498,13 +1498,11 @@ test_that("writing Inf, -Inf and NaN works", {
 
   # labelled vector with Inf, -Inf, and NaN
   lbl <- c("INF", "-INF", "NAN")
-  df <- data.frame(
-    ff = structure(c(Inf, -Inf, NaN),
-                   labels = c(INF = Inf, `-INF` = -Inf, NAN = NaN),
-                   # "vctrs_vctr", breaks if labelled is not loaded
-                   class = c("haven_labelled", "double")
-    )
-  )
+  df <- structure(
+    list(ff = structure(c(Inf, -Inf, NaN),
+                        labels = c(INF = Inf, `-INF` = -Inf, NAN = NaN),
+                        class = c("haven_labelled", "double"))
+         ), class = "data.frame", row.names = c(NA, -3L))
   wb <- wb_workbook()$add_worksheet()$
     add_data(x = df, col_names = FALSE)
   got <- wb$to_df(col_names = FALSE)$A
@@ -1512,11 +1510,13 @@ test_that("writing Inf, -Inf and NaN works", {
 
   # And Something confusing
   lbl <- c("INF", "#NUM!", "NaN")
-  ff <- structure(c(Inf, -Inf, NaN),
-                  labels = c(INF = Inf, `NaN` = NaN),
-                  class = c("haven_labelled", "numeric"))
+  df <- structure(
+    list(ff = structure(c(Inf, -Inf, NaN),
+                        labels = c(INF = Inf, `NaN` = NaN),
+                        class = c("haven_labelled", "double"))
+         ), class = "data.frame", row.names = c(NA, -3L))
   wb <- wb_workbook()$add_worksheet()$
-    add_data(x = ff, col_names = FALSE)
+    add_data(x = df, col_names = FALSE)
   got <- wb$to_df(col_names = FALSE)$A
   expect_equal(lbl, got)
 })
