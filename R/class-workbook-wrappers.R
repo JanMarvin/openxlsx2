@@ -139,7 +139,9 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALS
 #' not get picked up by `read_xlsx()`. This is because only the formula is written
 #' and left to Excel to evaluate the formula when the file is opened in Excel.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`.
-#' If the data frame contains this string, the output will be broken.
+#' If the data frame contains this string, the output will be broken. Similar
+#' factor labels `"_openxlsx_Inf"`, `"_openxlsx_nInf"`, and `"_openxlsx_NaN"`
+#' are reserved.
 #'
 #' Supported classes are data frames, matrices and vectors of various types and
 #' everything that can be converted into a data frame with `as.data.frame()`.

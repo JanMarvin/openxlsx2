@@ -702,11 +702,10 @@ to_string <- function(x) {
   # Only replace specials where no label was used
   chr[is.infinite(x_num) & x_num > 0 & !used_label] <- "_openxlsx_Inf"
   chr[is.infinite(x_num) & x_num < 0 & !used_label] <- "_openxlsx_nInf"
-  chr[is.nan(x_num)               & !used_label] <- "_openxlsx_NaN"
+  chr[is.nan(x_num)                  & !used_label] <- "_openxlsx_NaN"
 
   chr
 }
-
 
 # get the next free relationship id
 get_next_id <- function(x, increase = 1L) {
