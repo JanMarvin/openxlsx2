@@ -3210,7 +3210,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #'
 #' # assign style to a1
 #' wb$set_cell_style(dims = "A1", style = numfmt)
-#' @return A Workbook object
+#' @return A named vector with cell style index positions
 #' @export
 wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
   assert_workbook(wb)
