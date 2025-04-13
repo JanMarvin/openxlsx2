@@ -184,7 +184,9 @@ uses the special <code>#N/A</code> value within the workbook.</p></dd>
 not get picked up by <code><a href="wb_to_df.html">read_xlsx()</a></code>. This is because only the formula is written
 and left to Excel to evaluate the formula when the file is opened in Excel.
 The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>.
-If the data frame contains this string, the output will be broken.</p>
+If the data frame contains this string, the output will be broken. Similar
+factor labels <code>"_openxlsx_Inf"</code>, <code>"_openxlsx_nInf"</code>, and <code>"_openxlsx_NaN"</code>
+are reserved.</p>
 <p>Supported classes are data frames, matrices and vectors of various types and
 everything that can be converted into a data frame with <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>.
 Everything else that the user wants to write should either be converted into

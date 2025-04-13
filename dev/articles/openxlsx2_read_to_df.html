@@ -113,17 +113,17 @@ our function to read the workbook into R</p>
 <code class="sourceCode R"><span><span class="co"># import workbook</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/openxlsx2/">openxlsx2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
+<span><span class="co">#&gt; 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
+<span><span class="co">#&gt; 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
+<span><span class="co">#&gt; 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
+<span><span class="co">#&gt; 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
+<span><span class="co">#&gt; 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
+<span><span class="co">#&gt; 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
 <p>The output is created as a data frame and contains data types date,
 logical, numeric and character. The function to import the file to R,
 <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> provides similar options as the
@@ -173,17 +173,17 @@ returned.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># do not try to identify dates in the data</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, detect_dates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4  Var5         Var6    Var7       Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 45075 3209324 This #DIV/0! 0.06059028</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 45069         &lt;NA&gt;       0 0.58538194</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 44958         &lt;NA&gt; #VALUE! 0.95905093</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!    NA         &lt;NA&gt;       2 0.72561343</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 44987         &lt;NA&gt;     2.7 0.36525463</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 45284         &lt;NA&gt;      25         NA</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 45285         &lt;NA&gt;       3         NA</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 45138         &lt;NA&gt;     122         NA</span></span></code></pre></div>
+<span><span class="co">#&gt;     Var1 Var2 &lt;NA&gt;  Var3  Var4  Var5         Var6    Var7       Var8</span></span>
+<span><span class="co">#&gt; 3   TRUE    1   NA     1     a 45075 3209324 This #DIV/0! 0.06059028</span></span>
+<span><span class="co">#&gt; 4   TRUE   NA   NA #NUM!     b 45069         &lt;NA&gt;       0 0.58538194</span></span>
+<span><span class="co">#&gt; 5   TRUE    2   NA  1.34     c 44958         &lt;NA&gt; #VALUE! 0.95905093</span></span>
+<span><span class="co">#&gt; 6  FALSE    2   NA  &lt;NA&gt; #NUM!    NA         &lt;NA&gt;       2 0.72561343</span></span>
+<span><span class="co">#&gt; 7  FALSE    3   NA  1.56     e    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span></span>
+<span><span class="co">#&gt; 8  FALSE    1   NA   1.7     f 44987         &lt;NA&gt;     2.7 0.36525463</span></span>
+<span><span class="co">#&gt; 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span></span>
+<span><span class="co">#&gt; 10 FALSE    2   NA    23     h 45284         &lt;NA&gt;      25         NA</span></span>
+<span><span class="co">#&gt; 11 FALSE    3   NA  67.3     i 45285         &lt;NA&gt;       3         NA</span></span>
+<span><span class="co">#&gt; 12    NA    1   NA   123  &lt;NA&gt; 45138         &lt;NA&gt;     122         NA</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="show_formula---show-formulas-instead-of-results">
@@ -198,17 +198,17 @@ underlying functions to see what is going on in the sheet. Using
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># return the underlying Excel formula instead of their values</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, show_formula <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6            Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This            E3/0 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;              C4 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt;         #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;           C6+E6 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;           C8+E8 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;    SUM(C10,E10)     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt; PRODUCT(C11,E3)     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;         E12-C12     &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6            Var7     Var8</span></span>
+<span><span class="co">#&gt; 3   TRUE    1   NA     1     a 2023-05-29 3209324 This            E3/0 01:27:15</span></span>
+<span><span class="co">#&gt; 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;              C4 14:02:57</span></span>
+<span><span class="co">#&gt; 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt;         #VALUE! 23:01:02</span></span>
+<span><span class="co">#&gt; 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;           C6+E6 17:24:53</span></span>
+<span><span class="co">#&gt; 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;           C8+E8 08:45:58</span></span>
+<span><span class="co">#&gt; 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;    SUM(C10,E10)     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt; PRODUCT(C11,E3)     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;         E12-C12     &lt;NA&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="dims---read-specific-dimension">
@@ -248,17 +248,17 @@ argument</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read selected cols</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A:B"</span>, <span class="st">"G"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    NA  Var1       Var5</span></span>
-<span><span class="co">#&gt; 3  NA  TRUE 2023-05-29</span></span>
-<span><span class="co">#&gt; 4  NA  TRUE 2023-05-23</span></span>
-<span><span class="co">#&gt; 5  NA  TRUE 2023-02-01</span></span>
-<span><span class="co">#&gt; 6  NA FALSE       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 7  NA FALSE       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  NA FALSE 2023-03-02</span></span>
-<span><span class="co">#&gt; 9  NA    NA       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 NA FALSE 2023-12-24</span></span>
-<span><span class="co">#&gt; 11 NA FALSE 2023-12-25</span></span>
-<span><span class="co">#&gt; 12 NA    NA 2023-07-31</span></span></code></pre></div>
+<span><span class="co">#&gt;    &lt;NA&gt;  Var1       Var5</span></span>
+<span><span class="co">#&gt; 3    NA  TRUE 2023-05-29</span></span>
+<span><span class="co">#&gt; 4    NA  TRUE 2023-05-23</span></span>
+<span><span class="co">#&gt; 5    NA  TRUE 2023-02-01</span></span>
+<span><span class="co">#&gt; 6    NA FALSE       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7    NA FALSE       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8    NA FALSE 2023-03-02</span></span>
+<span><span class="co">#&gt; 9    NA    NA       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10   NA FALSE 2023-12-24</span></span>
+<span><span class="co">#&gt; 11   NA FALSE 2023-12-25</span></span>
+<span><span class="co">#&gt; 12   NA    NA 2023-07-31</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="rows---read-selected-rows">
@@ -269,9 +269,9 @@ vectors</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read selected rows</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Var1 Var2 NA  Var3  Var4       Var5 Var6 Var7     Var8</span></span>
-<span><span class="co">#&gt; 4  TRUE   NA NA #NUM!     b 2023-05-23   NA    0 14:02:57</span></span>
-<span><span class="co">#&gt; 6 FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;   NA    2 17:24:53</span></span></code></pre></div>
+<span><span class="co">#&gt;    Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5 Var6 Var7     Var8</span></span>
+<span><span class="co">#&gt; 4  TRUE   NA   NA #NUM!     b 2023-05-23   NA    0 14:02:57</span></span>
+<span><span class="co">#&gt; 6 FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;   NA    2 17:24:53</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="convert---convert-input-to-guessed-type">
@@ -292,7 +292,7 @@ above.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># convert characters to numerics and date (logical too?)</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2   NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
+<span><span class="co">#&gt;     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
 <span><span class="co">#&gt; 3   TRUE    1 &lt;NA&gt;     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
 <span><span class="co">#&gt; 4   TRUE &lt;NA&gt; &lt;NA&gt; #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
 <span><span class="co">#&gt; 5   TRUE    2 &lt;NA&gt;  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
@@ -320,13 +320,13 @@ completely empty</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># erase empty rows from dataset</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, sheet <span class="op">=</span> <span class="fl">1</span>, skip_empty_rows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA Var3  Var4       Var5 Var6 Var7     Var8</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA &lt;NA&gt; #NUM!       &lt;NA&gt; &lt;NA&gt;    2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA 1.56     e       &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA  1.7     f 2023-03-02 &lt;NA&gt;  2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA   23     h 2023-12-24 &lt;NA&gt;   25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA 67.3     i 2023-12-25 &lt;NA&gt;    3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA  123  &lt;NA&gt; 2023-07-31 &lt;NA&gt;  122     &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;     Var1 Var2 &lt;NA&gt; Var3  Var4       Var5 Var6 Var7     Var8</span></span>
+<span><span class="co">#&gt; 6  FALSE    2   NA &lt;NA&gt; #NUM!       &lt;NA&gt; &lt;NA&gt;    2 17:24:53</span></span>
+<span><span class="co">#&gt; 7  FALSE    3   NA 1.56     e       &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8  FALSE    1   NA  1.7     f 2023-03-02 &lt;NA&gt;  2.7 08:45:58</span></span>
+<span><span class="co">#&gt; 10 FALSE    2   NA   23     h 2023-12-24 &lt;NA&gt;   25     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 11 FALSE    3   NA 67.3     i 2023-12-25 &lt;NA&gt;    3     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12    NA    1   NA  123  &lt;NA&gt; 2023-07-31 &lt;NA&gt;  122     &lt;NA&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="skip_empty_cols---remove-empty-columns">
@@ -418,17 +418,17 @@ strings can be passed as character vector via
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># na strings</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, na.strings <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
-<span><span class="co">#&gt; 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
-<span><span class="co">#&gt; 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
-<span><span class="co">#&gt; 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
-<span><span class="co">#&gt; 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
-<span><span class="co">#&gt; 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
-<span><span class="co">#&gt; 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
+<span><span class="co">#&gt; 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
+<span><span class="co">#&gt; 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>
+<span><span class="co">#&gt; 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span></span>
+<span><span class="co">#&gt; 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span></span>
+<span><span class="co">#&gt; 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span></span>
+<span><span class="co">#&gt; 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
