@@ -331,21 +331,21 @@ test_that("get & set cell style(s)", {
 
   # get style from b1 to assign it to a1
   numfmt <- wb$get_cell_style(dims = "B1")
-  expect_equal(numfmt, "1")
+  expect_equal(numfmt, c(B1 = "1"))
 
   # assign style to a1
   pre <- wb$get_cell_style(dims = "A1")
-  expect_equal(pre, "")
+  expect_equal(pre, c(A1 = ""))
 
   expect_silent(wb$set_cell_style(dims = "A1", style = numfmt))
 
   post <- wb$get_cell_style(dims = "A1")
-  expect_equal(post, "1")
+  expect_equal(post, c(A1 = "1"))
 
   s_a1_b1 <- wb$get_cell_style(dims = "A1:B1")
   expect_silent(wb$set_cell_style(dims = "A2:B2", style = s_a1_b1))
   s_a2_b2 <- wb$get_cell_style(dims = "A2:B2")
-  expect_equal(s_a1_b1, s_a2_b2)
+  expect_equal(unname(s_a1_b1), unname(s_a2_b2))
 
 })
 
@@ -368,14 +368,14 @@ test_that("get_cell_styles()", {
                top_border = "")
 
   got <- wb$get_cell_style(dims = "B2")
-  expect_equal(got, "1")
+  expect_equal(got, c(B2 = "1"))
 
   exp <- "<xf applyFont=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"1\" numFmtId=\"0\" xfId=\"0\"/>"
   got <- get_cell_styles(wb, 1, "B2")
   expect_equal(got, exp)
 
   got <- wb$get_cell_style(dims = "B3")
-  expect_equal(got, "3")
+  expect_equal(got, c(B3 = "3"))
 
   exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"/>"
   got <- get_cell_styles(wb, 1, "B3")

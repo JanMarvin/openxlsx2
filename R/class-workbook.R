@@ -8905,7 +8905,12 @@ wbWorkbook <- R6::R6Class(
         temp <- self
 
       sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% wanted_dims
-      temp$worksheets[[sheet]]$sheet_data$cc$c_s[sel]
+
+      sty <- temp$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+
+      x <- sty$c_s
+      names(x) <- sty$r
+      x
     },
 
     #' @description set sheet style

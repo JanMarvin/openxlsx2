@@ -33,7 +33,7 @@ wb_set_cell_style_across(
 \item{rows}{The rows the style will be applied to}
 }
 \value{
-A Workbook object
+A named vector with cell style index positions
 }
 \description{
 Setting a style across only impacts cells that are not yet part of a workbook. The effect is similar to setting the cell style for all cells in a row independently, though much quicker and less memory consuming.
