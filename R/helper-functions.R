@@ -681,30 +681,42 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
   df_to_xml("Relationship", df_col = wxr[c("Id", "Type", "Target", "TargetMode")])
 }
 
-#' convert objects with attribute labels into strings
-#' @param x an object to convert
+#' Convert objects with attribute labels into strings. This allows special
+#' type of labelled vectors, that assign labels to Inf/-Inf/NaN.
+#' @param x a labelled vector to convert
+#' @returns a character vector
 #' @noRd
 to_string <- function(x) {
   lbls <- attr(x, "labels")
-  x_num <- suppressWarnings(as.numeric(as.character(x)))  # safely convert to numeric
-  chr  <- as.character(x)
+  x_chr <- as.character(x)
+  x_num <- suppressWarnings(as.numeric(x_chr))
 
   has_labels <- !is.null(lbls) && !is.null(names(lbls))
-  used_label <- logical(length(x))  # default to FALSE
+  used_label <- logical(length(x))
 
   if (has_labels) {
     idx <- match(x, lbls)
     has_label <- !is.na(idx)
     used_label <- has_label
-    chr[has_label] <- names(lbls)[idx[has_label]]
+    x_chr[has_label] <- names(lbls)[idx[has_label]]
   }
 
-  # Only replace specials where no label was used
-  chr[is.infinite(x_num) & x_num > 0 & !used_label] <- "_openxlsx_Inf"
-  chr[is.infinite(x_num) & x_num < 0 & !used_label] <- "_openxlsx_nInf"
-  chr[is.nan(x_num)                  & !used_label] <- "_openxlsx_NaN"
+  # It is possible to assign labels to Inf, -Inf, and NaN. We have to
+  # distinguish between a numeric Inf/-Inf/NaN and a label. The label
+  # should be written as character, otherwise as #NUM! or #VALUE!
+  if (any(!used_label)) {
+    ul <- which(!used_label)
 
-  chr
+    inf_pos <- is.infinite(x_num[ul]) & x_num[ul] > 0
+    inf_neg <- is.infinite(x_num[ul]) & x_num[ul] < 0
+    is_nan  <- is.nan(x_num[ul])
+
+    x_chr[ul[inf_pos]] <- "_openxlsx_Inf"
+    x_chr[ul[inf_neg]] <- "_openxlsx_nInf"
+    x_chr[ul[is_nan]]  <- "_openxlsx_NaN"
+  }
+
+  x_chr
 }
 
 # get the next free relationship id

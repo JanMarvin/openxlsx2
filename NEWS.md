@@ -9,7 +9,7 @@
 * Grouping of rows does no longer require the groups to be initialized in the worksheet. [1303](https://github.com/JanMarvin/openxlsx2/pull/1303)
 * Fix another case where `cc` was unintentionally shorten when applying a `cm` formula. Not sure if the cause for this is in the `cm` formula or in some other place.
 * `write_xlsx()` now handles `table_name` as documented. [1314](https://github.com/JanMarvin/openxlsx2/pull/1314)
-* Writing the character strings `"Inf"`, `"-Inf"`, and `"NaN"` is now possible.
+* Writing the character strings `"Inf"`, `"-Inf"`, and `"NaN"` is now possible. [1317](https://github.com/JanMarvin/openxlsx2/pull/1317)
 
 ## Internal changes
 
