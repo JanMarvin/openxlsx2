@@ -686,12 +686,24 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
 #' @noRd
 to_string <- function(x) {
   lbls <- attr(x, "labels")
+  x_num <- suppressWarnings(as.numeric(as.character(x)))  # safely convert to numeric
   chr  <- as.character(x)
-  if (!is.null(lbls) && !is.null(names(lbls))) {
-    lbls <- lbls[match(x, lbls)]
-    sel_l <- which(!is.na(lbls))
-    if (length(sel_l)) chr[sel_l] <- names(lbls[!is.na(lbls)])
+
+  has_labels <- !is.null(lbls) && !is.null(names(lbls))
+  used_label <- logical(length(x))  # default to FALSE
+
+  if (has_labels) {
+    idx <- match(x, lbls)
+    has_label <- !is.na(idx)
+    used_label <- has_label
+    chr[has_label] <- names(lbls)[idx[has_label]]
   }
+
+  # Only replace specials where no label was used
+  chr[is.infinite(x_num) & x_num > 0 & !used_label] <- "_openxlsx_Inf"
+  chr[is.infinite(x_num) & x_num < 0 & !used_label] <- "_openxlsx_nInf"
+  chr[is.nan(x_num)                  & !used_label] <- "_openxlsx_NaN"
+
   chr
 }
 

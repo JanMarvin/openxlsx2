@@ -1488,3 +1488,35 @@ test_that("writing without pugixml works", {
   expect_silent(wb <- wb_load(temp))
 
 })
+
+test_that("writing Inf, -Inf and NaN works", {
+  x <- c("Inf", "-Inf", "NaN")
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = x)
+  got <- wb$to_df(col_names = FALSE)$A
+  expect_equal(x, got)
+
+  # labelled vector with Inf, -Inf, and NaN
+  lbl <- c("INF", "-INF", "NAN")
+  df <- structure(
+    list(ff = structure(c(Inf, -Inf, NaN),
+                        labels = c(INF = Inf, `-INF` = -Inf, NAN = NaN),
+                        class = c("haven_labelled", "double"))
+         ), class = "data.frame", row.names = c(NA, -3L))
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = df, col_names = FALSE)
+  got <- wb$to_df(col_names = FALSE)$A
+  expect_equal(lbl, got)
+
+  # And Something confusing
+  lbl <- c("INF", "#NUM!", "NaN")
+  df <- structure(
+    list(ff = structure(c(Inf, -Inf, NaN),
+                        labels = c(INF = Inf, `NaN` = NaN),
+                        class = c("haven_labelled", "double"))
+         ), class = "data.frame", row.names = c(NA, -3L))
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = df, col_names = FALSE)
+  got <- wb$to_df(col_names = FALSE)$A
+  expect_equal(lbl, got)
+})
