@@ -550,11 +550,12 @@ void wide_to_long(
           }
         }
 
-      } else if (vtyp == numeric && strcmp(vals, "NaN") == 0) {
+      } else if ((vtyp == numeric && strcmp(vals, "NaN") == 0) || (vtyp == factor && strcmp(vals, "_openxlsx_NaN") == 0)) {
         // v = "#VALUE!"
         SET_STRING_ELT(zz_v,   pos, value_sexp);
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-      } else if (vtyp == numeric && (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0)) {
+      } else if ((vtyp == numeric && (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0)) ||
+                 (vtyp == factor  && (strcmp(vals, "_openxlsx_nInf") == 0 || strcmp(vals, "_openxlsx_Inf") == 0))) {
         // v = "#NUM!"
         SET_STRING_ELT(zz_v,   pos, num_sexp);
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
