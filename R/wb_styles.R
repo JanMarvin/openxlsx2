@@ -228,7 +228,7 @@ create_border <- function(
 #' )
 #'
 #' @export
-create_numfmt <- function(numFmtId, formatCode) {
+create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
 
   # in dates a slash does not indicate a fraction, but can be used to
   # separate year, month, day
