@@ -464,6 +464,7 @@ create_fill <- function(
   # if gradient fill is specified we can not have patternFill too. otherwise
   # we end up with a solid black fill
   if (gradient_fill == "") {
+    if (pattern_type == "") pattern_type <- "none"
     valid_pattern <- c("none", "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis", "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis", "gray125", "gray0625")
     match.arg_wrapper(pattern_type, valid_pattern, fn_name = "create_fill")
 
