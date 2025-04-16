@@ -1288,44 +1288,6 @@ is_dims  <- function(x) {
   grepl("^[A-Z]+[0-9]+(:[A-Z]+[0-9]+)?$", x)
 }
 
-#' check if non consecutive dims is equal sized: "A1:A4,B1:B4"
-#' @param dims dims
-#' @param check check if all the same size
-#' @param cols return columns index
-#' @keywords internal
-#' @noRd
-get_dims <- function(dims, check = FALSE, cols = FALSE, rows = FALSE) {
-
-  if (check || rows) {
-    rows <- unique(
-      lapply(dims, FUN = function(dim) {
-        dimensions <- strsplit(dim, ":")[[1]]
-        as.integer(gsub("[[:upper:]]", "", dimensions))
-      })
-    )
-  }
-
-  if (check) {
-    return(length(rows) == 1)
-  }
-
-  if (cols) {
-    cols <- unique(
-      lapply(dims, FUN = function(dim) {
-        dimensions <- strsplit(dim, ":")[[1]]
-        col2int(gsub("[[:digit:]]", "", dimensions))
-      })
-    )
-
-    cols <- lapply(cols, function(icols) seq.int(min(icols), max(icols)))
-
-    return(unique(unlist(cols)))
-  }
-
-  return(rows)
-
-}
-
 #' the function to find the cell
 #' this function is used with `show_formula` in [wb_to_df()]
 #' @param string the formula

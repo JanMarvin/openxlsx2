@@ -32,6 +32,16 @@ needed_cells <- function(range) {
     .Call(`_openxlsx2_needed_cells`, range)
 }
 
+#' check if non consecutive dims is equal sized: "A1:A4,B1:B4"
+#' @param dims dims
+#' @param check check if all the same size
+#' @param cols return columns index
+#' @keywords internal
+#' @noRd
+get_dims <- function(dims, check = FALSE, cols = FALSE, rows_flag = FALSE) {
+    .Call(`_openxlsx2_get_dims`, dims, check, cols, rows_flag)
+}
+
 dims_to_row_col_fill <- function(dims) {
     .Call(`_openxlsx2_dims_to_row_col_fill`, dims)
 }

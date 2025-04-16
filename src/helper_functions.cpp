@@ -260,6 +260,62 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
   return Rcpp::wrap(cells);
 }
 
+//' check if non consecutive dims is equal sized: "A1:A4,B1:B4"
+//' @param dims dims
+//' @param check check if all the same size
+//' @param cols return columns index
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export]]
+SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false, bool rows_flag = false) {
+  std::set<int32_t> unique_rows;
+  std::set<int32_t> unique_cols;
+  std::vector<std::vector<int32_t>> row_pairs;
+
+  for (int i = 0; i < dims.size(); ++i) {
+    std::string dim = Rcpp::as<std::string>(dims[i]);
+
+    // Use needed_cells to expand
+    Rcpp::CharacterVector cells = needed_cells(dim);
+    if (cells.size() == 0) continue;
+
+    std::string left = Rcpp::as<std::string>(cells[0]);
+    std::string right = Rcpp::as<std::string>(cells[cells.size() - 1]);
+
+    int32_t r1 = cell_to_rowint(left);
+    int32_t r2 = cell_to_rowint(right);
+    int32_t c1 = cell_to_colint(left);
+    int32_t c2 = cell_to_colint(right);
+
+    if (check || rows_flag) {
+      row_pairs.push_back({r1, r2});
+      unique_rows.insert(r1);
+      unique_rows.insert(r2);
+    }
+
+    if (cols) {
+      if (c1 > c2) std::swap(c1, c2);
+      for (int c = c1; c <= c2; ++c)
+        unique_cols.insert(c);
+    }
+  }
+
+  if (check) {
+    return Rcpp::wrap(unique_rows.size() == 1);
+  }
+
+  if (cols) {
+    std::vector<int32_t> out_cols(unique_cols.begin(), unique_cols.end());
+    return Rcpp::wrap(out_cols);
+  }
+
+  // rows_flag is true or default: return list of row ranges
+  Rcpp::List out;
+  for (const auto& pair : row_pairs)
+    out.push_back(pair);
+  return out;
+}
+
 // [[Rcpp::export]]
 SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims) {
   size_t n = dims.size();
