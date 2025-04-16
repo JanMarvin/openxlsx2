@@ -42,8 +42,8 @@ get_dims <- function(dims, check = FALSE, cols = FALSE, rows_flag = FALSE) {
     .Call(`_openxlsx2_get_dims`, dims, check, cols, rows_flag)
 }
 
-dims_to_row_col_fill <- function(dims) {
-    .Call(`_openxlsx2_dims_to_row_col_fill`, dims)
+dims_to_row_col_fill <- function(dims, fills = FALSE) {
+    .Call(`_openxlsx2_dims_to_row_col_fill`, dims, fills)
 }
 
 dims_to_df <- function(rows, cols, filled, fill, fcols) {

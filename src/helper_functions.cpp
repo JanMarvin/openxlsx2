@@ -220,7 +220,7 @@ SEXP copy(SEXP x) {
 }
 
 // [[Rcpp::export]]
-Rcpp::CharacterVector needed_cells(const std::string& range) {
+std::vector<std::string> needed_cells(const std::string& range) {
   std::vector<std::string> cells;
 
   // Parse the input range
@@ -257,7 +257,7 @@ Rcpp::CharacterVector needed_cells(const std::string& range) {
     }
   }
 
-  return Rcpp::wrap(cells);
+  return cells;
 }
 
 //' check if non consecutive dims is equal sized: "A1:A4,B1:B4"
@@ -276,27 +276,30 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
     std::string dim = Rcpp::as<std::string>(dims[i]);
 
     // Use needed_cells to expand
-    Rcpp::CharacterVector cells = needed_cells(dim);
+    std::vector<std::string> cells = needed_cells(dim);
     if (cells.size() == 0) continue;
 
-    std::string left = Rcpp::as<std::string>(cells[0]);
-    std::string right = Rcpp::as<std::string>(cells[cells.size() - 1]);
+    std::string left = cells[0];
+    std::string right = cells[cells.size() - 1];
 
     int32_t r1 = cell_to_rowint(left);
     int32_t r2 = cell_to_rowint(right);
     int32_t c1 = cell_to_colint(left);
     int32_t c2 = cell_to_colint(right);
 
-    if (check || rows_flag) {
-      row_pairs.push_back({r1, r2});
+
+    if (check) {
       unique_rows.insert(r1);
       unique_rows.insert(r2);
-    }
+    } else {
+      if (rows_flag)
+        row_pairs.push_back({r1, r2});
 
-    if (cols) {
-      if (c1 > c2) std::swap(c1, c2);
-      for (int c = c1; c <= c2; ++c)
-        unique_cols.insert(c);
+      if (cols) {
+        if (c1 > c2) std::swap(c1, c2);
+        for (int c = c1; c <= c2; ++c)
+          unique_cols.insert(c);
+      }
     }
   }
 
@@ -317,7 +320,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
 }
 
 // [[Rcpp::export]]
-SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims) {
+SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
   size_t n = dims.size();
   std::vector<int32_t> rows;
   std::vector<int32_t> cols;
@@ -334,11 +337,11 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims) {
       Rcpp::stop("dims are inf:-inf");
     }
 
-    Rcpp::CharacterVector fill_tmp = needed_cells(dim);
-    std::vector<std::string> fill_vec = Rcpp::as<std::vector<std::string>>(fill_tmp);
+    std::vector<std::string> fill_vec = needed_cells(dim);
 
     // Append all cell strings to fill
-    fill.insert(fill.end(), fill_vec.begin(), fill_vec.end());
+    if (fills)
+      fill.insert(fill.end(), fill_vec.begin(), fill_vec.end());
 
     // Get the first and last cell in the fill
     std::string l_cell = fill_vec.front();
@@ -372,14 +375,21 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims) {
   std::sort(cols.begin(), cols.end());
   cols.erase(std::unique(cols.begin(), cols.end()), cols.end());
 
-  std::sort(fill.begin(), fill.end());
-  fill.erase(std::unique(fill.begin(), fill.end()), fill.end());
+  // std::sort(fill.begin(), fill.end());
+  // fill.erase(std::unique(fill.begin(), fill.end()), fill.end());
 
-  return Rcpp::List::create(
-    Rcpp::Named("rows") = rows,
-    Rcpp::Named("cols") = cols,
-    Rcpp::Named("fill") = fill
-  );
+  if (fills)
+    return Rcpp::List::create(
+      Rcpp::Named("rows") = rows,
+      Rcpp::Named("cols") = cols,
+      Rcpp::Named("fill") = fill
+    );
+  else
+    return Rcpp::List::create(
+      Rcpp::Named("rows") = rows,
+      Rcpp::Named("cols") = cols,
+      Rcpp::Named("fill") = R_NilValue
+    );
 }
 
 // provide a basic rbindlist for lists of named characters

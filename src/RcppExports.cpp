@@ -78,7 +78,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // needed_cells
-Rcpp::CharacterVector needed_cells(const std::string& range);
+std::vector<std::string> needed_cells(const std::string& range);
 RcppExport SEXP _openxlsx2_needed_cells(SEXP rangeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -103,13 +103,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // dims_to_row_col_fill
-SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims);
-RcppExport SEXP _openxlsx2_dims_to_row_col_fill(SEXP dimsSEXP) {
+SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills);
+RcppExport SEXP _openxlsx2_dims_to_row_col_fill(SEXP dimsSEXP, SEXP fillsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dims(dimsSEXP);
-    rcpp_result_gen = Rcpp::wrap(dims_to_row_col_fill(dims));
+    Rcpp::traits::input_parameter< bool >::type fills(fillsSEXP);
+    rcpp_result_gen = Rcpp::wrap(dims_to_row_col_fill(dims, fills));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1017,7 +1018,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_needed_cells", (DL_FUNC) &_openxlsx2_needed_cells, 1},
     {"_openxlsx2_get_dims", (DL_FUNC) &_openxlsx2_get_dims, 4},
-    {"_openxlsx2_dims_to_row_col_fill", (DL_FUNC) &_openxlsx2_dims_to_row_col_fill, 1},
+    {"_openxlsx2_dims_to_row_col_fill", (DL_FUNC) &_openxlsx2_dims_to_row_col_fill, 2},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 5},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_is_charnum", (DL_FUNC) &_openxlsx2_is_charnum, 1},

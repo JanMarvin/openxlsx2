@@ -43,7 +43,7 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
     full_cols <- full_cols - min(full_cols) # is always a zero offset
 
   } else {
-    ll <- dims_to_row_col_fill(dims)
+    ll <- dims_to_row_col_fill(dims, fill)
 
     filled   <- ll$fill
     cols_out <- int2col(ll$col)
