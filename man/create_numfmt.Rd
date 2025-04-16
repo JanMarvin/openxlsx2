@@ -4,7 +4,7 @@
 \alias{create_numfmt}
 \title{Create number format}
 \usage{
-create_numfmt(numFmtId, formatCode)
+create_numfmt(numFmtId = 164, formatCode = "#,##0.00")
 }
 \arguments{
 \item{numFmtId}{An ID representing the number format. The list of valid IDs can be found in the \strong{Details} section of \code{\link[=create_cell_style]{create_cell_style()}}.}

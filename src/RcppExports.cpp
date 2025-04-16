@@ -89,16 +89,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_dims
-SEXP get_dims(Rcpp::CharacterVector dims, bool check, bool cols, bool rows_flag);
-RcppExport SEXP _openxlsx2_get_dims(SEXP dimsSEXP, SEXP checkSEXP, SEXP colsSEXP, SEXP rows_flagSEXP) {
+SEXP get_dims(Rcpp::CharacterVector dims, bool check, bool cols, bool rows);
+RcppExport SEXP _openxlsx2_get_dims(SEXP dimsSEXP, SEXP checkSEXP, SEXP colsSEXP, SEXP rowsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dims(dimsSEXP);
     Rcpp::traits::input_parameter< bool >::type check(checkSEXP);
     Rcpp::traits::input_parameter< bool >::type cols(colsSEXP);
-    Rcpp::traits::input_parameter< bool >::type rows_flag(rows_flagSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_dims(dims, check, cols, rows_flag));
+    Rcpp::traits::input_parameter< bool >::type rows(rowsSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_dims(dims, check, cols, rows));
     return rcpp_result_gen;
 END_RCPP
 }

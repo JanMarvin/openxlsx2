@@ -239,7 +239,7 @@ std::vector<std::string> needed_cells(const std::string& range) {
   }
 
   // Extract column and row numbers from start and end cells
-  uint32_t startRow, endRow;
+  int32_t startRow, endRow;
   int32_t startCol = 0, endCol = 0;
 
   startCol = cell_to_colint(startCell);
@@ -250,7 +250,7 @@ std::vector<std::string> needed_cells(const std::string& range) {
 
   // Generate spreadsheet cell references
   for (int32_t col = startCol; col <= endCol; ++col) {
-    for (uint32_t row = startRow; row <= endRow; ++row) {
+    for (int32_t row = startRow; row <= endRow; ++row) {
       std::string cell = int_to_col(col);
       cell += std::to_string(row);
       cells.push_back(cell);
@@ -267,7 +267,7 @@ std::vector<std::string> needed_cells(const std::string& range) {
 //' @keywords internal
 //' @noRd
 // [[Rcpp::export]]
-SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false, bool rows_flag = false) {
+SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false, bool rows = false) {
   std::set<int32_t> unique_rows;
   std::set<int32_t> unique_cols;
   std::vector<std::vector<int32_t>> row_pairs;
@@ -292,7 +292,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
       unique_rows.insert(r1);
       unique_rows.insert(r2);
     } else {
-      if (rows_flag)
+      if (rows)
         row_pairs.push_back({r1, r2});
 
       if (cols) {
@@ -312,7 +312,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
     return Rcpp::wrap(out_cols);
   }
 
-  // rows_flag is true or default: return list of row ranges
+  // rows is true or default: return list of row ranges
   Rcpp::List out;
   for (const auto& pair : row_pairs)
     out.push_back(pair);
@@ -321,12 +321,12 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
 
 // [[Rcpp::export]]
 SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
-  size_t n = dims.size();
+  R_xlen_t n = dims.size();
   std::vector<int32_t> rows;
   std::vector<int32_t> cols;
   std::vector<std::string> fill;
 
-  for (size_t i = 0; i < n; ++i) {
+  for (R_xlen_t i = 0; i < n; ++i) {
     std::string dim = Rcpp::as<std::string>(dims[i]);
 
     if (dim.find(":") == std::string::npos) {

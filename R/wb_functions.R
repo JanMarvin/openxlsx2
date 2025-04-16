@@ -39,27 +39,25 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
 
     rows_out  <- unlist(full_rows)
     rows_out  <- seq.int(rows_out[1], rows_out[2])
-    cols_out  <- int2col(full_cols)
+    cols_out  <- full_cols
     full_cols <- full_cols - min(full_cols) # is always a zero offset
 
   } else {
     ll <- dims_to_row_col_fill(dims, fill)
 
     filled   <- ll$fill
-    cols_out <- int2col(ll$col)
+    cols_out <- ll$col
     rows_out <- ll$row
   }
 
   if (has_dim_sep) {
     if (empty_rm) {
-      cols_out  <- int2col(sort(col2int(cols_out)))
-      rows_out  <- sort(rows_out)
       # with empty_rm the dataframe will contain only needed columns
       if (!is.null(full_cols)) full_cols <- seq_along(cols_out) - 1L
     } else {
       # somehow we have to make sure that all columns are covered
-      col_ints <- range(col2int(cols_out))
-      cols_out <- int2col(seq.int(from = col_ints[1], to = col_ints[2]))
+      col_ints <- range(cols_out)
+      cols_out <- seq.int(from = col_ints[1], to = col_ints[2])
 
       row_ints <- range(rows_out)
       rows_out <- seq.int(from = row_ints[1], to = row_ints[2])
@@ -68,7 +66,7 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
 
   dims_to_df(
     rows   = rows_out,
-    cols   = cols_out,
+    cols   = int2col(cols_out),
     filled = filled,
     fill   = fill,
     fcols  = full_cols

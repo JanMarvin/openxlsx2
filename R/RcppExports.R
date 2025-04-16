@@ -38,8 +38,8 @@ needed_cells <- function(range) {
 #' @param cols return columns index
 #' @keywords internal
 #' @noRd
-get_dims <- function(dims, check = FALSE, cols = FALSE, rows_flag = FALSE) {
-    .Call(`_openxlsx2_get_dims`, dims, check, cols, rows_flag)
+get_dims <- function(dims, check = FALSE, cols = FALSE, rows = FALSE) {
+    .Call(`_openxlsx2_get_dims`, dims, check, cols, rows)
 }
 
 dims_to_row_col_fill <- function(dims, fills = FALSE) {

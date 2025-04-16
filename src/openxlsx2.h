@@ -88,9 +88,9 @@ static inline std::string rm_colnum(const std::string& str) {
 }
 
 // Function to keep only digits in a string
-inline uint32_t cell_to_rowint(const std::string& str) {
+inline int32_t cell_to_rowint(const std::string& str) {
   std::string result = rm_colnum(str);
-  return static_cast<uint32_t>(std::stoi(result));
+  return std::stoi(result);
 }
 
 static inline std::string str_toupper(std::string s) {

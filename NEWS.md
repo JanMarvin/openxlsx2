@@ -15,6 +15,7 @@
 
 * Previously, when loading a workbook, the included styles were broken down, with XML styles converted into data frame objects. However, these results were only used to generate a sequence.
 * Similarly, if available, the entire shared strings table was converted to text upon loading. Now, this conversion is postponed until explicitly requested. Both approaches have their advantages: reading shared strings on load is useful when they are extensively shared across worksheets and multiple worksheets are retrieved via `wb_to_df()`, while delaying conversion saves memory and computation time when not required. However, in the latter case, shared strings across multiple worksheets will need to be converted each time they are accessed. The impact of this change should be monitored.
+* `dims_to_dataframe()` was improved to better handle many combined dims like "A1:B1,A3:D4"
 
 
 ***************************************************************************
