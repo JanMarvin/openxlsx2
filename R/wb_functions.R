@@ -43,35 +43,11 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
     full_cols <- full_cols - min(full_cols) # is always a zero offset
 
   } else {
+    ll <- dims_to_row_col_fill(dims)
 
-    for (dim in dims) {
-
-      if (!grepl(":", dim)) {
-        dim <- paste0(dim, ":", dim)
-      }
-
-      if (length(dims) > 1)
-        filled <- c(filled, needed_cells(dim))
-
-      if (identical(dim, "Inf:-Inf")) {
-        # This should probably be fixed elsewhere?
-        stop("dims are inf:-inf")
-      } else {
-        dimensions <- strsplit(dim, ":")[[1]]
-
-        rows <- as.numeric(gsub("[[:upper:]]", "", dimensions))
-        if (all(is.na(rows))) rows <- c(1, 1048576)
-        rows <- seq.int(rows[1], rows[2])
-
-        rows_out <- unique(c(rows_out, rows))
-
-        # TODO seq.wb_columns?  make a wb_cols vector?
-        cols <- gsub("[[:digit:]]", "", dimensions)
-        cols <- int2col(seq.int(col2int(cols[1]), col2int(cols[2])))
-
-        cols_out <- unique(c(cols_out, cols))
-      }
-    }
+    filled   <- ll$fill
+    cols_out <- int2col(ll$col)
+    rows_out <- ll$row
   }
 
   if (has_dim_sep) {

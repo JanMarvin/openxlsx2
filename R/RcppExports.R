@@ -32,6 +32,10 @@ needed_cells <- function(range) {
     .Call(`_openxlsx2_needed_cells`, range)
 }
 
+dims_to_row_col_fill <- function(dims) {
+    .Call(`_openxlsx2_dims_to_row_col_fill`, dims)
+}
+
 dims_to_df <- function(rows, cols, filled, fill, fcols) {
     .Call(`_openxlsx2_dims_to_df`, rows, cols, filled, fill, fcols)
 }
