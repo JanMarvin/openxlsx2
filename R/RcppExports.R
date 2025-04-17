@@ -28,8 +28,8 @@ copy <- function(x) {
     .Call(`_openxlsx2_copy`, x)
 }
 
-needed_cells <- function(range) {
-    .Call(`_openxlsx2_needed_cells`, range)
+needed_cells <- function(range, all = TRUE) {
+    .Call(`_openxlsx2_needed_cells`, range, all)
 }
 
 #' check if non consecutive dims is equal sized: "A1:A4,B1:B4"

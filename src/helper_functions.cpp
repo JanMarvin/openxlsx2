@@ -220,7 +220,7 @@ SEXP copy(SEXP x) {
 }
 
 // [[Rcpp::export]]
-std::vector<std::string> needed_cells(const std::string& range) {
+std::vector<std::string> needed_cells(const std::string& range, bool all = true) {
   std::vector<std::string> cells;
 
   // Parse the input range
@@ -246,6 +246,12 @@ std::vector<std::string> needed_cells(const std::string& range) {
     } else {
       Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
     }
+  }
+
+  if (!all) {
+    cells.push_back(startCell);
+    cells.push_back(endCell);
+    return(cells);
   }
 
   // Extract column and row numbers from start and end cells
@@ -286,7 +292,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
     std::string dim = Rcpp::as<std::string>(dims[i]);
 
     // Use needed_cells to expand
-    std::vector<std::string> cells = needed_cells(dim);
+    std::vector<std::string> cells = needed_cells(dim, false);
     if (cells.size() == 0) continue;
 
     std::string left = cells[0];
@@ -347,7 +353,7 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
       Rcpp::stop("dims are inf:-inf");
     }
 
-    std::vector<std::string> fill_vec = needed_cells(dim);
+    std::vector<std::string> fill_vec = needed_cells(dim, fills);
 
     // Append all cell strings to fill
     if (fills)
@@ -388,18 +394,11 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
   // std::sort(fill.begin(), fill.end());
   // fill.erase(std::unique(fill.begin(), fill.end()), fill.end());
 
-  if (fills)
-    return Rcpp::List::create(
-      Rcpp::Named("rows") = rows,
-      Rcpp::Named("cols") = cols,
-      Rcpp::Named("fill") = fill
-    );
-  else
-    return Rcpp::List::create(
-      Rcpp::Named("rows") = rows,
-      Rcpp::Named("cols") = cols,
-      Rcpp::Named("fill") = R_NilValue
-    );
+  return Rcpp::List::create(
+    Rcpp::Named("rows") = rows,
+    Rcpp::Named("cols") = cols,
+    Rcpp::Named("fill") = fills ? Rcpp::wrap(fill) : R_NilValue
+  );
 }
 
 // provide a basic rbindlist for lists of named characters
