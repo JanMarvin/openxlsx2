@@ -235,7 +235,17 @@ std::vector<std::string> needed_cells(const std::string& range) {
   }
 
   if (!validate_dims(startCell) || !validate_dims(endCell)) {
-    Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
+    if (is_column_only(startCell) && is_column_only(endCell)) {
+      // Check if both start and end are pure columns like "A" or "P"
+      startCell += "1";
+      endCell   += "1048576";
+    } else if (is_row_only(startCell) && is_row_only(endCell)) {
+      // Check if both start and end are pure rows like "3"
+      startCell = "A"   + startCell;
+      endCell   = "XFD" + endCell;
+    } else {
+      Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
+    }
   }
 
   // Extract column and row numbers from start and end cells

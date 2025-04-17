@@ -105,6 +105,20 @@ static inline int32_t cell_to_colint(const std::string& str) {
   return static_cast<int32_t>(uint_col_to_int(result));
 }
 
+static inline bool is_column_only(const std::string& s) {
+  for (char c : s) {
+    if (!std::isalpha(c)) return false;
+  }
+  return !s.empty();
+}
+
+static inline bool is_row_only(const std::string& s) {
+  for (char c : s) {
+    if (!std::isdigit(c)) return false;
+  }
+  return !s.empty();
+}
+
 static inline bool validate_dims(const std::string& input) {
   bool has_col = false;
   bool has_row = false;
