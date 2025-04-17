@@ -220,7 +220,7 @@ SEXP copy(SEXP x) {
 }
 
 // [[Rcpp::export]]
-std::vector<std::string> needed_cells(const std::string& range) {
+std::vector<std::string> needed_cells(const std::string& range, bool all = true) {
   std::vector<std::string> cells;
 
   // Parse the input range
@@ -235,7 +235,23 @@ std::vector<std::string> needed_cells(const std::string& range) {
   }
 
   if (!validate_dims(startCell) || !validate_dims(endCell)) {
-    Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
+    if (is_column_only(startCell) && is_column_only(endCell)) {
+      // Check if both start and end are pure columns like "A" or "P"
+      startCell += "1";
+      endCell   += "1048576";
+    } else if (is_row_only(startCell) && is_row_only(endCell)) {
+      // Check if both start and end are pure rows like "3"
+      startCell = "A"   + startCell;
+      endCell   = "XFD" + endCell;
+    } else {
+      Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
+    }
+  }
+
+  if (!all) {
+    cells.push_back(startCell);
+    cells.push_back(endCell);
+    return(cells);
   }
 
   // Extract column and row numbers from start and end cells
@@ -276,7 +292,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
     std::string dim = Rcpp::as<std::string>(dims[i]);
 
     // Use needed_cells to expand
-    std::vector<std::string> cells = needed_cells(dim);
+    std::vector<std::string> cells = needed_cells(dim, false);
     if (cells.size() == 0) continue;
 
     std::string left = cells[0];
@@ -337,7 +353,7 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
       Rcpp::stop("dims are inf:-inf");
     }
 
-    std::vector<std::string> fill_vec = needed_cells(dim);
+    std::vector<std::string> fill_vec = needed_cells(dim, fills);
 
     // Append all cell strings to fill
     if (fills)
@@ -378,18 +394,11 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
   // std::sort(fill.begin(), fill.end());
   // fill.erase(std::unique(fill.begin(), fill.end()), fill.end());
 
-  if (fills)
-    return Rcpp::List::create(
-      Rcpp::Named("rows") = rows,
-      Rcpp::Named("cols") = cols,
-      Rcpp::Named("fill") = fill
-    );
-  else
-    return Rcpp::List::create(
-      Rcpp::Named("rows") = rows,
-      Rcpp::Named("cols") = cols,
-      Rcpp::Named("fill") = R_NilValue
-    );
+  return Rcpp::List::create(
+    Rcpp::Named("rows") = rows,
+    Rcpp::Named("cols") = cols,
+    Rcpp::Named("fill") = fills ? Rcpp::wrap(fill) : R_NilValue
+  );
 }
 
 // provide a basic rbindlist for lists of named characters
@@ -429,13 +438,14 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
 
     } else {  // insert cells into data frame
 
-      std::vector<size_t> fcls;
+      std::unordered_set<size_t> allowed_cols;
       if (has_fcols) {
-        fcls = Rcpp::as<std::vector<size_t>>(fcols.get());
+        std::vector<size_t> fcls = Rcpp::as<std::vector<size_t>>(fcols.get());
+        allowed_cols.insert(fcls.begin(), fcls.end());
       }
 
       for (R_xlen_t i = 0; i < kk; ++i) {
-        if (has_fcols && std::find(fcls.begin(), fcls.end(), i) == fcls.end())
+        if (has_fcols && !allowed_cols.count(i))
           continue;
         Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
         std::string coli = Rcpp::as<std::string>(cols[i]);

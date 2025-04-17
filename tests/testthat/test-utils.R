@@ -738,6 +738,10 @@ test_that("dims are quick", {
 
   expect_equal(ddims, edims)
 
+  expect_silent(dims_to_dataframe("A:C"))
+  expect_silent(dims_to_dataframe("3:3"))
+  expect_error(dims_to_dataframe("A:3"))
+
 })
 
 test_that("wb_dims does not try to validate column names", {

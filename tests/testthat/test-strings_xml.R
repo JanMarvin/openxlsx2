@@ -1,12 +1,5 @@
 test_that("strings_xml", {
 
-  # some sst string
-  si <- "<sst><si><t>foo</t></si><si><r><rPr><b/></rPr><t>bar</t></r></si></sst>"
-  expect_equal(
-    xml_si_to_txt(read_xml(si)),
-    c("foo", "bar")
-  )
-
   txt <- "foo"
   expect_equal(
     txt_to_si(txt, raw = TRUE, skip_control = FALSE),

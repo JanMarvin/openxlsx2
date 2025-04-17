@@ -156,6 +156,7 @@ void xml_sheet_data_slim(
         file << ">";
 
         file << to_string(cc_f[i]).c_str();
+        if (!f_si && to_string(cc_f[i]).find("\"si\"=") != std::string::npos) f_si = true;
 
         file << "</f>";
       }
@@ -356,6 +357,7 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
 
               // Append attribute to <f>
               f.append_attribute(key.c_str()) = value.c_str();
+              if (key == "si") f_si = true;
           }
       }
 

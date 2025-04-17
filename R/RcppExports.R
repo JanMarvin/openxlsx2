@@ -28,8 +28,8 @@ copy <- function(x) {
     .Call(`_openxlsx2_copy`, x)
 }
 
-needed_cells <- function(range) {
-    .Call(`_openxlsx2_needed_cells`, range)
+needed_cells <- function(range, all = TRUE) {
+    .Call(`_openxlsx2_needed_cells`, range, all)
 }
 
 #' check if non consecutive dims is equal sized: "A1:A4,B1:B4"
@@ -256,10 +256,6 @@ xml_remove_child2 <- function(node, child, level1, which, pointer) {
 
 xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
-}
-
-xml_si_to_txt <- function(doc) {
-    .Call(`_openxlsx2_xml_si_to_txt`, doc)
 }
 
 is_to_txt <- function(is_vec) {

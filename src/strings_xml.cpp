@@ -1,41 +1,6 @@
 #include <cctype>
 #include "openxlsx2.h"
 
-// converts sharedstrings xml tree to R-Character Vector
-// TODO remove or add argument to still use this
-// [[Rcpp::export]]
-SEXP xml_si_to_txt(XPtrXML doc) {
-  auto sst = doc->child("sst");
-  auto n = std::distance(sst.begin(), sst.end());
-
-  Rcpp::CharacterVector res(Rcpp::no_init(n));
-
-  auto i = 0;
-  for (auto si : doc->child("sst").children("si")) {
-    // text to export
-    std::string text = "";
-
-    // has only t node
-    for (auto t : si.children("t")) {
-      text = t.text().get();
-    }
-
-    // has r node with t node
-    // linebreaks and spaces are handled in the nodes
-    for (auto r : si.children("r")) {
-      for (auto t : r.children("t")) {
-        text += t.text().get();
-      }
-    }
-
-    // push everything back
-    res[i] = Rcpp::String(text);
-    ++i;
-  }
-
-  return res;
-}
-
 SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
   auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));

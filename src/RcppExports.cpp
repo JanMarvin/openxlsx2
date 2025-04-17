@@ -78,13 +78,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // needed_cells
-std::vector<std::string> needed_cells(const std::string& range);
-RcppExport SEXP _openxlsx2_needed_cells(SEXP rangeSEXP) {
+std::vector<std::string> needed_cells(const std::string& range, bool all);
+RcppExport SEXP _openxlsx2_needed_cells(SEXP rangeSEXP, SEXP allSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type range(rangeSEXP);
-    rcpp_result_gen = Rcpp::wrap(needed_cells(range));
+    Rcpp::traits::input_parameter< bool >::type all(allSEXP);
+    rcpp_result_gen = Rcpp::wrap(needed_cells(range, all));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -609,17 +610,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// xml_si_to_txt
-SEXP xml_si_to_txt(XPtrXML doc);
-RcppExport SEXP _openxlsx2_xml_si_to_txt(SEXP docSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_si_to_txt(doc));
-    return rcpp_result_gen;
-END_RCPP
-}
 // is_to_txt
 SEXP is_to_txt(Rcpp::CharacterVector is_vec);
 RcppExport SEXP _openxlsx2_is_to_txt(SEXP is_vecSEXP) {
@@ -1016,7 +1006,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_ox_int_to_col", (DL_FUNC) &_openxlsx2_ox_int_to_col, 1},
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
-    {"_openxlsx2_needed_cells", (DL_FUNC) &_openxlsx2_needed_cells, 1},
+    {"_openxlsx2_needed_cells", (DL_FUNC) &_openxlsx2_needed_cells, 2},
     {"_openxlsx2_get_dims", (DL_FUNC) &_openxlsx2_get_dims, 4},
     {"_openxlsx2_dims_to_row_col_fill", (DL_FUNC) &_openxlsx2_dims_to_row_col_fill, 2},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 5},
@@ -1056,7 +1046,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_remove_child1", (DL_FUNC) &_openxlsx2_xml_remove_child1, 4},
     {"_openxlsx2_xml_remove_child2", (DL_FUNC) &_openxlsx2_xml_remove_child2, 5},
     {"_openxlsx2_xml_remove_child3", (DL_FUNC) &_openxlsx2_xml_remove_child3, 6},
-    {"_openxlsx2_xml_si_to_txt", (DL_FUNC) &_openxlsx2_xml_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_txt_to_is", (DL_FUNC) &_openxlsx2_txt_to_is, 4},
