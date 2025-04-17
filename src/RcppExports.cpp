@@ -78,13 +78,39 @@ BEGIN_RCPP
 END_RCPP
 }
 // needed_cells
-Rcpp::CharacterVector needed_cells(const std::string& range);
+std::vector<std::string> needed_cells(const std::string& range);
 RcppExport SEXP _openxlsx2_needed_cells(SEXP rangeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type range(rangeSEXP);
     rcpp_result_gen = Rcpp::wrap(needed_cells(range));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_dims
+SEXP get_dims(Rcpp::CharacterVector dims, bool check, bool cols, bool rows);
+RcppExport SEXP _openxlsx2_get_dims(SEXP dimsSEXP, SEXP checkSEXP, SEXP colsSEXP, SEXP rowsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< bool >::type check(checkSEXP);
+    Rcpp::traits::input_parameter< bool >::type cols(colsSEXP);
+    Rcpp::traits::input_parameter< bool >::type rows(rowsSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_dims(dims, check, cols, rows));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dims_to_row_col_fill
+SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills);
+RcppExport SEXP _openxlsx2_dims_to_row_col_fill(SEXP dimsSEXP, SEXP fillsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< bool >::type fills(fillsSEXP);
+    rcpp_result_gen = Rcpp::wrap(dims_to_row_col_fill(dims, fills));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -991,6 +1017,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_rbindlist", (DL_FUNC) &_openxlsx2_rbindlist, 1},
     {"_openxlsx2_copy", (DL_FUNC) &_openxlsx2_copy, 1},
     {"_openxlsx2_needed_cells", (DL_FUNC) &_openxlsx2_needed_cells, 1},
+    {"_openxlsx2_get_dims", (DL_FUNC) &_openxlsx2_get_dims, 4},
+    {"_openxlsx2_dims_to_row_col_fill", (DL_FUNC) &_openxlsx2_dims_to_row_col_fill, 2},
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 5},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_is_charnum", (DL_FUNC) &_openxlsx2_is_charnum, 1},
