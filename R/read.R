@@ -403,18 +403,22 @@ wb_to_df <- function(
 
     # if a cell is t="s" the content is a sst and not da date
     if (detect_dates && missing(types)) {
-      cc$is_string <- FALSE
-      if (!is.null(cc$c_t))
-        cc$is_string <- cc$c_t %in% c("s", "str", "b", "inlineStr")
+      uccs <- unique(cc$c_s)
+      ucct <- unique(cc$c_t)
 
-      if (any(sel <- cc$c_s %in% xlsx_date_style)) {
-        sel <- sel & !cc$is_string & cc$v != ""
+      cc$is_string <- FALSE
+      strings <-  c("s", "str", "b", "inlineStr")
+      if (!is.null(cc$c_t) && any(ucct %in% strings))
+        cc$is_string <- cc$c_t %in% strings
+
+      if (any(uccs %in% xlsx_date_style)) {
+        sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != ""
         cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel], origin = origin)))
         cc$typ[sel]  <- "d"
       }
 
-      if (any(sel <- cc$c_s %in% xlsx_hms_style)) {
-        sel <- sel & !cc$is_string & cc$v != ""
+      if (any(uccs %in% xlsx_hms_style)) {
+        sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != ""
         if (isNamespaceLoaded("hms")) {
           # if hms is loaded, we have to avoid applying convert_hms() twice
           cc$val[sel] <- cc$v[sel]
@@ -424,8 +428,8 @@ wb_to_df <- function(
         cc$typ[sel]  <- "h"
       }
 
-      if (any(sel <- cc$c_s %in% xlsx_posix_style)) {
-        sel <- sel & !cc$is_string & cc$v != ""
+      if (any(uccs %in% xlsx_posix_style)) {
+        sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != ""
         cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel], origin = origin)))
         cc$typ[sel]  <- "p"
       }
