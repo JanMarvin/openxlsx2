@@ -438,13 +438,14 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
 
     } else {  // insert cells into data frame
 
-      std::vector<size_t> fcls;
+      std::unordered_set<size_t> allowed_cols;
       if (has_fcols) {
-        fcls = Rcpp::as<std::vector<size_t>>(fcols.get());
+        std::vector<size_t> fcls = Rcpp::as<std::vector<size_t>>(fcols.get());
+        allowed_cols.insert(fcls.begin(), fcls.end());
       }
 
       for (R_xlen_t i = 0; i < kk; ++i) {
-        if (has_fcols && std::find(fcls.begin(), fcls.end(), i) == fcls.end())
+        if (has_fcols && !allowed_cols.count(i))
           continue;
         Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
         std::string coli = Rcpp::as<std::string>(cols[i]);
