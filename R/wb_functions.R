@@ -46,8 +46,8 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
     ll <- dims_to_row_col_fill(dims, fill)
 
     filled   <- ll$fill
-    cols_out <- ll$col
-    rows_out <- ll$row
+    cols_out <- ll$cols
+    rows_out <- ll$rows
   }
 
   if (has_dim_sep) {
