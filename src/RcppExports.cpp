@@ -610,17 +610,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// xml_si_to_txt
-SEXP xml_si_to_txt(XPtrXML doc);
-RcppExport SEXP _openxlsx2_xml_si_to_txt(SEXP docSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_si_to_txt(doc));
-    return rcpp_result_gen;
-END_RCPP
-}
 // is_to_txt
 SEXP is_to_txt(Rcpp::CharacterVector is_vec);
 RcppExport SEXP _openxlsx2_is_to_txt(SEXP is_vecSEXP) {
@@ -1057,7 +1046,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_remove_child1", (DL_FUNC) &_openxlsx2_xml_remove_child1, 4},
     {"_openxlsx2_xml_remove_child2", (DL_FUNC) &_openxlsx2_xml_remove_child2, 5},
     {"_openxlsx2_xml_remove_child3", (DL_FUNC) &_openxlsx2_xml_remove_child3, 6},
-    {"_openxlsx2_xml_si_to_txt", (DL_FUNC) &_openxlsx2_xml_si_to_txt, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_txt_to_is", (DL_FUNC) &_openxlsx2_txt_to_is, 4},
