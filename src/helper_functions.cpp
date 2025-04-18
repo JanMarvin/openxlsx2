@@ -394,11 +394,18 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
   // std::sort(fill.begin(), fill.end());
   // fill.erase(std::unique(fill.begin(), fill.end()), fill.end());
 
-  return Rcpp::List::create(
-    Rcpp::Named("rows") = rows,
-    Rcpp::Named("cols") = cols,
-    Rcpp::Named("fill") = fills ? Rcpp::wrap(fill) : R_NilValue
-  );
+  if (fills)
+    return Rcpp::List::create(
+      Rcpp::Named("rows") = rows,
+      Rcpp::Named("cols") = cols,
+      Rcpp::Named("fill") = fill
+    );
+  else
+    return Rcpp::List::create(
+      Rcpp::Named("rows") = rows,
+      Rcpp::Named("cols") = cols,
+      Rcpp::Named("fill") = R_NilValue
+    );
 }
 
 // provide a basic rbindlist for lists of named characters
