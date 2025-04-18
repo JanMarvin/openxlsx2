@@ -55,8 +55,8 @@ test_that("setting ref works", {
   m2 <- matrix(7:12, nrow = 2)
 
   wb <- wb_workbook()$add_worksheet()$
-    add_data(x = m1, startCol = 1)$
-    add_data(x = m2, startCol = 4)$
+    add_data(x = m1, start_col = 1)$
+    add_data(x = m2, start_col = 4)$
     add_formula(dims = "H1:J3", x = "MMULT(A2:B4, D2:F3)", array = TRUE)
 
   cc <- wb$worksheets[[1]]$sheet_data$cc

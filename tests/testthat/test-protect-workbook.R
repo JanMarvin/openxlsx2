@@ -11,11 +11,11 @@ test_that("Protect Workbook", {
 
   # this creates a corrupted workbook:
   # 1) this nulls the reference
-  wb$protect(protect = FALSE, password = "abcdefghij", lockStructure = TRUE, lockWindows = TRUE)
+  wb$protect(protect = FALSE, password = "abcdefghij", lock_structure = TRUE, lock_windows = TRUE)
   expect_null(wb$workbook$workbookProtection)
 
   # 2) this creates the reference, but at the wrong position (at the end, not at 6)
-  wb$protect(password = "abcdefghij", lockStructure = TRUE)
+  wb$protect(password = "abcdefghij", lock_structure = TRUE)
 
   names(wb$workbook)
 })

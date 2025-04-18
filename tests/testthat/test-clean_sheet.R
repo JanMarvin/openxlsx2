@@ -18,7 +18,7 @@ test_that("clean_sheet", {
 
   # remove characters
   wb$worksheets[[1]]$clean_sheet(characters = TRUE)
-  expect_true(is.na(wb_to_df(wb, dims = "B2", colNames = FALSE)))
+  expect_true(is.na(wb_to_df(wb, dims = "B2", col_names = FALSE)))
 
   xlsx <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb <- wb_load(xlsx)

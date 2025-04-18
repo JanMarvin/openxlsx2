@@ -101,9 +101,9 @@ test_that("print options work", {
   temp <- temp_xlsx()
 
   wb <- wb_workbook() %>%
-    wb_add_worksheet(gridLines = FALSE) %>%
+    wb_add_worksheet(grid_lines = FALSE) %>%
     wb_add_data(x = iris) %>%
-    wb_add_worksheet(gridLines = TRUE) %>%
+    wb_add_worksheet(grid_lines = TRUE) %>%
     wb_add_data(x = mtcars)
 
   exp <- character()
@@ -125,7 +125,7 @@ test_that("print options work", {
 test_that("ignore_error works", {
 
   wb <- wb_workbook()$add_worksheet()
-  wb$add_data(dims = "B1", x = t(c(1, 2, 3)), colNames = FALSE)
+  wb$add_data(dims = "B1", x = t(c(1, 2, 3)), col_names = FALSE)
   wb$add_formula(dims = "A1", x = "SUM(B1:C1)")
 
   # 1

@@ -341,13 +341,13 @@ test_that("data validation", {
   # some more options
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
-    add_data(x = c(-1:1), colNames = FALSE)$
+    add_data(x = c(-1:1), col_names = FALSE)$
     # whole numbers are fine
     add_data_validation(dims = "A1:A3", type = "whole",
                         operator = "greaterThan", value = c(0),
-                        errorStyle = "information", errorTitle = "ERROR!",
+                        error_style = "information", error_title = "ERROR!",
                         error = "Some error ocurred!",
-                        promptTitle = "PROMPT!",
+                        prompt_title = "PROMPT!",
                         prompt = "Choose something!"
     )
 
@@ -358,7 +358,7 @@ test_that("data validation", {
   # add custom data
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
-    add_data(x = data.frame(x = 1, y = 2), colNames = FALSE)$
+    add_data(x = data.frame(x = 1, y = 2), col_names = FALSE)$
     # whole numbers are fine
     add_data_validation(dims = "A1:A3", type = "custom", value = "A1=B1")
 
@@ -673,7 +673,7 @@ test_that("add_chartsheet works", {
   wb <- wb_workbook()$
     add_worksheet("A & B")$
     add_data(x = mtcars)$
-    add_chartsheet(tabColour = "red")
+    add_chartsheet(tab_colour = "red")
 
   dat <- wb_data(wb, 1, dims = "A1:E6")
 
@@ -752,7 +752,7 @@ test_that("various image functions work as expected", {
     add_worksheet()$
     add_image(file = img, width = 6, height = 5, dims = NULL)$
     add_worksheet()$
-    add_image(dims = "B2", file = img, rowOffset = 90000, colOffset = 90000)$
+    add_image(dims = "B2", file = img, row_offset = 90000, col_offset = 90000)$
     add_worksheet()$
     add_image(dims = "B2:K8", file = img)
 
@@ -773,7 +773,7 @@ test_that("various image functions work as expected", {
   expect_equal(exp, got)
 
   expect_warning(
-    wb$add_worksheet()$add_image(file = img, width = 6, height = 5, dims = NULL, startRow = 2, startCol = 2),
+    wb$add_worksheet()$add_image(file = img, width = 6, height = 5, dims = NULL, start_row = 2, start_col = 2),
     "'start_col/start_row' is deprecated."
   )
 
@@ -806,7 +806,7 @@ test_that("start_col/start_row works as expected", {
   expect_equal(exp, got)
 
   img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, startRow = 5), "'start_col/start_row' is deprecated.")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, start_row = 5), "'start_col/start_row' is deprecated.")
 
   exp <- "<xdr:from><xdr:col>0</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>4</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
   got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
@@ -821,7 +821,7 @@ test_that("start_col/start_row works as expected", {
   expect_equal(exp, got)
 
   img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, startCol = 5), "'start_col/start_row' is deprecated.")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, start_col = 5), "'start_col/start_row' is deprecated.")
 
   exp <- "<xdr:from><xdr:col>4</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>0</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
   got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
@@ -837,7 +837,7 @@ test_that("start_col/start_row works as expected", {
 
 
   img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
-  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, startCol = 5, startRow = 5), "'start_col/start_row' is deprecated.")
+  expect_warning(wb <- wb_workbook()$add_worksheet()$add_image(file = img, start_col = 5, start_row = 5), "'start_col/start_row' is deprecated.")
 
   exp <- "<xdr:from><xdr:col>4</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>4</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
   got <- xml_node(wb$drawings[[1]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
@@ -907,7 +907,7 @@ test_that("numfmt in pivot tables works", {
   ## Create the workbook and the pivot table
   wb <- wb_workbook()$
     add_worksheet("Data")$
-    add_data(x = df, startCol = 1, startRow = 2)
+    add_data(x = df, start_col = 1, start_row = 2)
 
   df <- wb_data(wb, 1, dims = "A2:D10")
   wb$

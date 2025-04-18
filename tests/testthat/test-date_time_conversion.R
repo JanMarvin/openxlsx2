@@ -45,7 +45,7 @@ test_that("convert hms works", {
 
   x <- structure(43994, units = "secs", class = c("hms", "difftime"))
 
-  wb <- wb_workbook()$add_worksheet()$add_data(x = x, colNames = FALSE)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x, col_names = FALSE)
 
   exp <- data.frame(
     r = "A1", row_r = "1", c_r = "A", c_s = "1", c_t = "",
@@ -55,7 +55,7 @@ test_that("convert hms works", {
   got <- wb$worksheets[[1]]$sheet_data$cc
   expect_equal(exp, got)
 
-  z <- wb_to_df(wb, colNames = FALSE, keep_attributes = TRUE)
+  z <- wb_to_df(wb, col_names = FALSE, keep_attributes = TRUE)
   expect_equal(z$A, "12:13:14")
   expect_equal(attr(z, "tt")$A, "h")
 

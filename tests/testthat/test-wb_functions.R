@@ -30,14 +30,14 @@ test_that("wb_to_df", {
   expect_equal(int2col(seq_along(got)), names(got))
 
   # do not try to identify dates in the data
-  got <- wb_to_df(wb1, detectDates = FALSE)
+  got <- wb_to_df(wb1, detect_dates = FALSE)
   expect_equal(convert_to_excel_date(df = exp["Var5"], date1904 = FALSE),
                got["Var5"])
 
   expect_error(convertToExcelDate(df = exp["Var5"], date1904 = FALSE), "defunct")
 
   # return the underlying Excel formula instead of their values
-  got <- wb_to_df(wb1, showFormula = TRUE)
+  got <- wb_to_df(wb1, show_formula = TRUE)
   expect_equal(got$Var7[1], "1/0")
 
   # read dimension without colNames
@@ -85,7 +85,7 @@ test_that("wb_to_df", {
   expect_equal(test, got, ignore_attr = TRUE)
 
   # start in row 5
-  got <- wb_to_df(wb1, startRow = 5, colNames = FALSE)
+  got <- wb_to_df(wb1, start_row = 5, col_names = FALSE)
   test <- exp[4:10, ]
   names(test) <- int2col(seq_along(test))
   test[c("D", "G", "H")] <- lapply(test[c("D", "G", "H")], as.numeric)

@@ -7,8 +7,8 @@ test_that("wb_workbook() is a wrapper", {
   ts <- Sys.time()
   expect_identical(formals(wbWorkbook$public_methods$initialize), formals(wb_workbook))
   expect_identical(
-    wbWorkbook$new(datetimeCreated = ts),
-    wb_workbook(datetimeCreated = ts)
+    wbWorkbook$new(datetime_created = ts),
+    wb_workbook(datetime_created = ts)
   )
 })
 
@@ -183,7 +183,7 @@ test_that("wb_page_setup() is a wrapper", {
 # wb_set_base_font() ----------------------------------------------------------
 
 test_that("wb_set_base_font() is a wrapper", {
-  params <- list(fontColour = "red", fontSize = 20)
+  params <- list(font_colour = "red", font_size = 20)
   expect_wrapper("set_base_font", params = params)
 })
 
@@ -212,7 +212,7 @@ test_that("wb_get_bookview() is a wrapper", {
 })
 
 test_that("wb_set_bookview() is a wrapper", {
-  params <- list(activeTab = "1")
+  params <- list(active_tab = "1")
   expect_wrapper("set_bookview", params = params)
 })
 
@@ -292,7 +292,7 @@ test_that("wb_get_tables(), wb_remove_tables() are wrappers", {
   wb <- wb_workbook()
   wb$add_worksheet(sheet = "Sheet 1")
   wb$add_data_table(sheet = "Sheet 1", x = iris)
-  wb$add_data_table(sheet = 1, x = mtcars, tableName = "mtcars", startCol = 10)
+  wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
   expect_wrapper("get_tables", wb = wb, params = list(sheet = 1))
   expect_wrapper("remove_tables", wb = wb, params = list(sheet = 1, table = "mtcars"))
 })
@@ -457,7 +457,7 @@ test_that("wb_update_table() is a wrapper", {
 
 test_that("wb_copy_cells() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)$add_data(x = "1")
-  dat <- wb_data(wb, 1, dims = "A1", colNames = FALSE)
+  dat <- wb_data(wb, 1, dims = "A1", col_names = FALSE)
   expect_wrapper("copy_cells",     wb = wb, params = list(sheet = 1, data = dat, dims = "B1"))
 })
 
@@ -726,7 +726,7 @@ test_that("wb_set_sheetview() is a wrapper", {
   expect_wrapper(
     "set_sheetview",
     wb = wb,
-    params = list(rightToLeft = TRUE)
+    params = list(right_to_left = TRUE)
   )
 })
 
