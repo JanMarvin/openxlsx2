@@ -82,7 +82,7 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
   auto ws = doc->child("worksheet").child("sheetData");
 
-  std::set<std::string> row_nams {
+  std::vector<std::string> row_nams = {
     "r",
     "spans",
     "s",
@@ -97,10 +97,12 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
     "thickBot",
     "thickTop"
   };
+  std::unordered_map<std::string, R_xlen_t> name_to_index;
+  for (R_xlen_t i = 0; i < row_nams.size(); ++i)
+    name_to_index[row_nams[i]] = i;
 
   R_xlen_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
   R_xlen_t kk = static_cast<R_xlen_t>(row_nams.size());
-
   Rcpp::IntegerVector rvec(nn);
   std::iota(rvec.begin(), rvec.end(), 0);
 
@@ -112,35 +114,30 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   // 2. fill the list
   // <row ...>
-  auto itr = 0;
+  R_xlen_t row_idx = 0;
   for (auto row : ws.children("row")) {
     bool has_rowname = false;
+
     for (auto attrs : row.attributes()) {
       std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
 
-      // mimic which
-      auto find_res = row_nams.find(attr_name);
-
-      // check if name is already known
-      if (row_nams.count(attr_name) == 0) {
-        Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
-      } else {
-        R_xlen_t mtc = std::distance(row_nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+      auto it = name_to_index.find(attr_name);
+      if (it != name_to_index.end()) {
+        Rcpp::CharacterVector col = df[it->second];
+        col[row_idx] = attr_value;
         if (attr_name == "r") has_rowname = true;
+      } else {
+        Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
       }
     }
 
-    // some files have no row name in this case, we add one
     if (!has_rowname) {
-      std::string attr_name = "r";
-      auto find_res = row_nams.find(attr_name);
-      R_xlen_t mtc = std::distance(row_nams.begin(), find_res);
-      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::to_string(itr + 1);
+      Rcpp::CharacterVector col = df[name_to_index["r"]];
+      col[row_idx] = std::to_string(row_idx + 1);
     }
 
-    ++itr;
+    ++row_idx;
   }
 
   // 3. Create a data.frame
