@@ -515,3 +515,20 @@ test_that("create_shape() works", {
   expect_silent(create_shape(text = "foo", rotation = 20, fill_transparency = 50))
 
 })
+
+test_that("get_dims works", {
+  got <- get_dims(c("A1:A5", "B1:B5"), check = TRUE)
+  expect_true(got)
+
+  exp <- list(rows = list(c(1L, 5L)), cols = 1:2)
+  got <- get_dims(c("A1:A5", "B1:B5"), check = FALSE)
+  expect_equal(exp, got)
+
+
+  got <- get_dims(c("A1:A5", "B2:B6"), check = TRUE)
+  expect_false(got)
+
+  exp <- list(rows = list(c(1L, 5L), c(2L, 6L)), cols = 1:2)
+  got <- get_dims(c("A1:A5", "B2:B6"), check = FALSE)
+  expect_equal(exp, got)
+})
