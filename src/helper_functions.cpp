@@ -464,7 +464,7 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
       }
 
       for (R_xlen_t i = 0; i < kk; ++i) {
-        if (has_fcols && !allowed_cols.count(i))
+        if (has_fcols && !allowed_cols.count(static_cast<size_t>(i)))
           continue;
         Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
         std::string coli = Rcpp::as<std::string>(cols[i]);
@@ -487,22 +487,28 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
-  R_xlen_t n = static_cast<R_xlen_t>(zz.nrow());
-  R_xlen_t col = 0, row = 0;
-
+  R_xlen_t n = zz.nrow();
   Rcpp::IntegerVector cols = zz["cols"];
   Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::CharacterVector vals = zz["val"];
   Rcpp::CharacterVector typs = zz["typ"];
 
-  for (R_xlen_t i = 0; i < n; ++i) {
-    col = cols[i];
-    row = rows[i];
+  // Cache all column vectors to avoid repeated coercion
+  std::vector<Rcpp::CharacterVector> z_cols(static_cast<size_t>(z.size()));
+  std::vector<Rcpp::CharacterVector> tt_cols(static_cast<size_t>(tt.size()));
 
-    // need to check for missing values
+  for (R_xlen_t j = 0; j < z.size(); ++j) {
+    z_cols[static_cast<size_t>(j)] = z[j];
+    tt_cols[static_cast<size_t>(j)] = tt[j];
+  }
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    int32_t col = cols[i];
+    int32_t row = rows[i];
+
     if (row != NA_INTEGER && col != NA_INTEGER) {
-      SET_STRING_ELT(Rcpp::as<Rcpp::CharacterVector>(z[col]), row, STRING_ELT(vals, i));
-      SET_STRING_ELT(Rcpp::as<Rcpp::CharacterVector>(tt[col]), row, STRING_ELT(typs, i));
+      SET_STRING_ELT(z_cols[static_cast<size_t>(col)], row, STRING_ELT(vals, i));
+      SET_STRING_ELT(tt_cols[static_cast<size_t>(col)], row, STRING_ELT(typs, i));
     }
   }
 }
