@@ -2,10 +2,10 @@ test_that("fill merged cells", {
   wb <- wb_workbook()
   wb$add_worksheet("sheet1")
   wb$add_data(1, data.frame("A" = 1, "B" = 2))
-  wb$add_data(1, 2, startRow = 2, startCol = 2)
-  wb$add_data(1, 3, startRow = 2, startCol = 3)
-  wb$add_data(1, 4, startRow = 2, startCol = 4)
-  wb$add_data(1, t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+  wb$add_data(1, 2, start_row = 2, start_col = 2)
+  wb$add_data(1, 3, start_row = 2, start_col = 3)
+  wb$add_data(1, 4, start_row = 2, start_col = 4)
+  wb$add_data(1, t(matrix(1:4, 4, 4)), start_row = 3, start_col = 1, col_names = FALSE)
 
   wb$merge_cells(1, wb_dims(rows = 1, cols = 2:4))
   wb$merge_cells(1, wb_dims(rows = 3, cols = 2:4))
@@ -51,7 +51,7 @@ test_that("merge and unmerge cells", {
 test_that("fill merged NA cells", {
   wb <- wb_workbook()
   wb$add_worksheet("sheet1")
-  wb$add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+  wb$add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)), start_row = 3, start_col = 1, col_names = FALSE)
 
   wb$merge_cells(1, dims = wb_dims(rows = 1:4, cols = 4))
 
@@ -59,13 +59,13 @@ test_that("fill merged NA cells", {
   wb_save(wb, tmp_file)
 
   r1 <- t(matrix(c(1:3, NA_real_), 4, 4))
-  expect_equal(as.matrix(read_xlsx(tmp_file, fillMergedCells = FALSE,
-                                   rowNames = FALSE, colNames = FALSE)),
+  expect_equal(as.matrix(read_xlsx(tmp_file, fill_merged_cells = FALSE,
+                                   row_names = FALSE, col_names = FALSE)),
                r1,
                ignore_attr = TRUE)
 
-  expect_equal(as.matrix(read_xlsx(tmp_file, fillMergedCells = TRUE,
-                                   rowNames = FALSE, colNames = FALSE)),
+  expect_equal(as.matrix(read_xlsx(tmp_file, fill_merged_cells = TRUE,
+                                   row_names = FALSE, col_names = FALSE)),
                r1,
                ignore_attr = TRUE)
 })

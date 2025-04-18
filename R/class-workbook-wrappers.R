@@ -2566,7 +2566,7 @@ wb_add_data_validation <- function(
     type           = type,
     operator       = operator,
     value          = value,
-    allowBlank     = allow_blank,
+    allow_blank    = allow_blank,
     show_input_msg = show_input_msg,
     show_error_msg = show_error_msg,
     error_style    = error_style,
@@ -3686,7 +3686,7 @@ wb_add_cell_style <- function(
     text_rotation       = text_rotation,
     vertical            = vertical,
     wrap_text           = wrap_text,
-    xfId                = xf_id,
+    xf_id               = xf_id,
     ...                 = ...
   )
 }

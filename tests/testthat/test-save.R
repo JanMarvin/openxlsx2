@@ -45,7 +45,7 @@ test_that("creating hyperlinks", {
   expect_equal(linkString, linkString2)
 
   # write file without errors
-  wb$add_formula(sheet, x = linkString, startCol = 1, startRow = 1)
+  wb$add_formula(sheet, x = linkString, start_col = 1, start_row = 1)
   expect_silent(wb_save(wb, tempFile, overwrite = TRUE))
 
   # TODO: add a check that the written xlsx file contains linkString
@@ -75,15 +75,15 @@ test_that("write_data2", {
 
   expect_equal(
     mtcars,
-    wb_to_df(wb1, "sheet1", rowNames = TRUE),
+    wb_to_df(wb1, "sheet1", row_names = TRUE),
     ignore_attr = TRUE
   )
 
-  expect_equal(cars, wb_to_df(wb1, "sheet2", colNames = FALSE), ignore_attr = TRUE)
+  expect_equal(cars, wb_to_df(wb1, "sheet2", col_names = FALSE), ignore_attr = TRUE)
 
   expect_equal(
     letters,
-    as.character(wb_to_df(wb1, "sheet3", colNames = FALSE))
+    as.character(wb_to_df(wb1, "sheet3", col_names = FALSE))
   )
 
   expect_equal(
@@ -101,43 +101,44 @@ test_that("write xlsx", {
   tmp <- temp_xlsx()
   df <- data.frame(a = 1:26, b = letters)
 
-  expect_silent(write_xlsx(df, tmp, tabColour = "#4F81BD"))
-  expect_error(write_xlsx(df, tmp, asTable = "YES"))
-  expect_error(write_xlsx(df, tmp, sheetName = paste0(letters, letters, collapse = "")))
+  ## FIXME these are not actually tests. They simply check that no error is printed
+  expect_silent(write_xlsx(df, tmp, tab_colour = "#4F81BD"))
+  expect_error(write_xlsx(df, tmp, as_table = "YES"))
+  expect_error(write_xlsx(df, tmp, sheet_name = paste0(letters, letters, collapse = "")))
   expect_error(write_xlsx(df, tmp, zoom = "FULL"))
   expect_silent(write_xlsx(df, tmp, zoom = 200))
-  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, sheetName = c("Sheet1", "Sheet2")))
+  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, sheet_name = c("Sheet1", "Sheet2")))
   expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), file = tmp))
-  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, tabColour = "#4F81BD"))
+  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, tab_colour = "#4F81BD"))
   l <- list(letters)
   names(l) <- paste0(letters, letters, collapse = "")
   expect_warning(write_xlsx(l, tmp))
-  expect_error(write_xlsx(df, tmp, gridLines = "YES"))
-  expect_silent(write_xlsx(df, tmp, gridLines = FALSE))
+  expect_error(write_xlsx(df, tmp, grid_lines = "YES"))
+  expect_silent(write_xlsx(df, tmp, grid_lines = FALSE))
   expect_error(write_xlsx(df, tmp, overwrite = FALSE))
   expect_error(write_xlsx(df, tmp, overwrite = "NO"))
-  expect_silent(write_xlsx(df, tmp, withFilter = FALSE))
-  expect_silent(write_xlsx(df, tmp, withFilter = TRUE))
-  expect_error(write_xlsx(df, tmp, withFilter = "NO"))
-  expect_silent(write_xlsx(df, tmp, startRow = 2))
-  expect_error(write_xlsx(df, tmp, startRow = -1))
-  expect_silent(write_xlsx(df, tmp, startCol = "A"))
-  expect_silent(write_xlsx(df, tmp, startCol = "2"))
-  expect_silent(write_xlsx(df, tmp, startCol = 2))
-  expect_error(write_xlsx(df, tmp, startCol = -1))
+  expect_silent(write_xlsx(df, tmp, with_filter = FALSE))
+  expect_silent(write_xlsx(df, tmp, with_filter = TRUE))
+  expect_error(write_xlsx(df, tmp, with_filter = "NO"))
+  expect_silent(write_xlsx(df, tmp, start_row = 2))
+  expect_error(write_xlsx(df, tmp, start_row = -1))
+  expect_silent(write_xlsx(df, tmp, start_col = "A"))
+  expect_silent(write_xlsx(df, tmp, start_col = "2"))
+  expect_silent(write_xlsx(df, tmp, start_col = 2))
+  expect_error(write_xlsx(df, tmp, start_col = -1))
   expect_error(write_xlsx(df, tmp, col.names = "NO"))
   expect_silent(write_xlsx(df, tmp, col.names = TRUE))
-  expect_error(write_xlsx(df, tmp, colNames = "NO"))
-  expect_silent(write_xlsx(df, tmp, colNames = TRUE))
+  expect_error(write_xlsx(df, tmp, col_names = "NO"))
+  expect_silent(write_xlsx(df, tmp, col_names = TRUE))
   expect_error(write_xlsx(df, tmp, row.names = "NO"))
   expect_silent(write_xlsx(df, tmp, row.names = TRUE))
-  expect_error(write_xlsx(df, tmp, rowNames = "NO"))
-  expect_silent(write_xlsx(df, tmp, rowNames = TRUE))
-  expect_silent(write_xlsx(df, tmp, colWidths = "auto"))
-  expect_silent(write_xlsx(list(df, df), tmp, firstActiveCol = 2, firstActiveRow = 2))
-  expect_silent(write_xlsx(list(df, df), tmp, firstCol = FALSE, firstRow = FALSE))
-  expect_silent(write_xlsx(list(df, df), tmp, firstCol = TRUE, firstRow = TRUE))
-  expect_silent(write_xlsx(df, tmp, asTable = TRUE, tableStyle = "TableStyleLight9"))
+  expect_error(write_xlsx(df, tmp, row_names = "NO"))
+  expect_silent(write_xlsx(df, tmp, row_names = TRUE))
+  expect_silent(write_xlsx(df, tmp, col_widths = "auto"))
+  expect_silent(write_xlsx(list(df, df), tmp, first_active_col = 2, first_active_row = 2))
+  expect_silent(write_xlsx(list(df, df), tmp, first_col = FALSE, first_row = FALSE))
+  expect_silent(write_xlsx(list(df, df), tmp, first_col = TRUE, first_row = TRUE))
+  expect_silent(write_xlsx(df, tmp, as_table = TRUE, table_style = "TableStyleLight9"))
 
 })
 
@@ -147,28 +148,28 @@ test_that("example", {
   tmp <- temp_xlsx()
 
   # write to working directory
-  expect_silent(write_xlsx(iris, file = tmp, colNames = TRUE))
+  expect_silent(write_xlsx(iris, file = tmp, col_names = TRUE))
 
   expect_silent(
     write_xlsx(iris,
                file = tmp,
-               colNames = TRUE
+               col_names = TRUE
     )
   )
 
   ## Lists elements are written to individual worksheets, using list names as sheet names if available
   l <- list("IRIS" = iris, "MTCATS" = mtcars, matrix(runif(1000), ncol = 5))
-  write_xlsx(l, tmp, colWidths = c(NA, "auto", "auto"))
+  write_xlsx(l, tmp, col_widths = c(NA, "auto", "auto"))
 
   expect_silent(write_xlsx(l, tmp,
-                           startCol = c(1, 2, 3), startRow = 2,
-                           asTable = c(TRUE, TRUE, FALSE), withFilter = c(TRUE, FALSE, FALSE)
+                           start_col = c(1, 2, 3), start_row = 2,
+                           as_table = c(TRUE, TRUE, FALSE), with_filter = c(TRUE, FALSE, FALSE)
   ))
 
   # specify column widths for multiple sheets
-  expect_silent(write_xlsx(l, tmp, colWidths = 20))
-  expect_silent(write_xlsx(l, tmp, colWidths = list(100, 200, 300)))
-  expect_silent(write_xlsx(l, tmp, colWidths = list(rep(10, 5), rep(8, 11), rep(5, 5))))
+  expect_silent(write_xlsx(l, tmp, col_widths = 20))
+  expect_silent(write_xlsx(l, tmp, col_widths = list(100, 200, 300)))
+  expect_silent(write_xlsx(l, tmp, col_widths = list(rep(10, 5), rep(8, 11), rep(5, 5))))
 
 })
 
@@ -244,7 +245,7 @@ test_that("write cells without data", {
   dat <- as.data.frame(matrix(NA, 2, 2))
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = dat, startRow = 2, startCol = 2, na.strings = NULL, colNames = FALSE)
+    add_data(x = dat, start_row = 2, start_col = 2, na.strings = NULL, col_names = FALSE)
 
   wb$worksheets[[1]]$sheet_data$cc$c_t <- ""
 
@@ -331,14 +332,14 @@ test_that("escaping of inlinestrings works", {
     save(temp)
 
   exp <- "A & B"
-  got <- wb_to_df(wb, colNames = FALSE)$A
+  got <- wb_to_df(wb, col_names = FALSE)$A
   expect_equal(exp, got)
 
-  got <- wb_to_df(temp, colNames = FALSE)$A
+  got <- wb_to_df(temp, col_names = FALSE)$A
   expect_equal(exp, got)
 
   wb2 <- wb_load(temp)
-  got <- wb_to_df(wb2, colNames = FALSE)$A
+  got <- wb_to_df(wb2, col_names = FALSE)$A
   expect_equal(exp, got)
 
 })
@@ -357,7 +358,7 @@ test_that("write_xlsx() freezing rows works", {
 
   tmp <- temp_xlsx()
 
-  wb <- write_xlsx(list(mtcars, mtcars), tmp, firstRow = TRUE, firstCol = TRUE, tab_color = wb_color("green"))
+  wb <- write_xlsx(list(mtcars, mtcars), tmp, first_row = TRUE, first_col = TRUE, tab_color = wb_color("green"))
 
   # tabColor
   exp <- c(
@@ -381,7 +382,7 @@ test_that("write_xlsx() freezing rows works", {
   )
   expect_equal(exp, got)
 
-  wb <- write_xlsx(list(mtcars, mtcars), tmp, firstActiveRow = 4, firstActiveCol = 3)
+  wb <- write_xlsx(list(mtcars, mtcars), tmp, first_active_row = 4, first_active_col = 3)
 
   # firstActiveCol/firstActiveRow
   exp <- c(
@@ -400,7 +401,7 @@ test_that("write_xlsx works with colour", {
 
   tmp <- temp_xlsx()
 
-  wb <- write_xlsx(mtcars, tmp, tabColour = "green")
+  wb <- write_xlsx(mtcars, tmp, tab_colour = "green")
 
   exp <- "<sheetPr><tabColor rgb=\"FF00FF00\"/></sheetPr>"
   got <- wb$worksheets[[1]]$sheetPr

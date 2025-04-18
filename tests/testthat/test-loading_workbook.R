@@ -189,13 +189,13 @@ test_that("additional wb tests", {
 
   # showFormula
   exp <- data.frame(Var7 = "1/0", row.names = "2", stringsAsFactors = FALSE)
-  got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 8)
+  got <- wb_to_df(wb1, show_formula = TRUE, rows = 1:2, cols = 8)
   expect_equal(exp, got, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 
   # detectDates
   exp <- data.frame(Var5 = as.Date("2015-02-07"), row.names = "2", stringsAsFactors = FALSE)
-  got <- wb_to_df(wb1, showFormula = TRUE, rows = 1:2, cols = 6)
+  got <- wb_to_df(wb1, show_formula = TRUE, rows = 1:2, cols = 6)
   expect_equal(exp, got, ignore_attr = TRUE)
   expect_equal(names(exp), names(got))
 
@@ -226,10 +226,10 @@ test_that("test headerFooter", {
     'Sheet 1',
     header = header,
     footer = footer,
-    evenHeader = evenHeader,
-    evenFooter = evenFooter,
-    firstHeader = firstHeader,
-    firstFooter = firstFooter
+    even_header = evenHeader,
+    even_footer = evenFooter,
+    first_header = firstHeader,
+    first_footer = firstFooter
   )
 
   # Modified headers and footers to make them Arial 8
@@ -245,10 +245,10 @@ test_that("test headerFooter", {
     'Sheet 2',
     header = header,
     footer = footer,
-    evenHeader = evenHeader,
-    evenFooter = evenFooter,
-    firstHeader = firstHeader,
-    firstFooter = firstFooter
+    even_header = evenHeader,
+    even_footer = evenFooter,
+    first_header = firstHeader,
+    first_footer = firstFooter
   )
   wb$add_data(sheet = 1, 1:400)
   wb$add_data(sheet = 2, 1:400)

@@ -13,7 +13,7 @@ test_that("wb_clone_sheet_style", {
 
   # clone style to sheet with data
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)$add_worksheet("copy")$add_data(x = mtcars, startRow = 5, startCol = 2)
+  wb <- wb_load(fl)$add_worksheet("copy")$add_data(x = mtcars, start_row = 5, start_col = 2)
   wb <- wb_clone_sheet_style(wb, "SUM", "copy")
   expect_equal(c(36, 13), dim(wb$worksheets[[2]]$sheet_data$row_attr))
 
@@ -110,7 +110,7 @@ test_that("test add_fill()", {
 
   # every_nth_col/row
   wb <- wb_workbook()
-  wb$add_worksheet("S1", gridLines = FALSE)$add_data("S1", matrix(1:20, 4, 5))
+  wb$add_worksheet("S1", grid_lines = FALSE)$add_data("S1", matrix(1:20, 4, 5))
   wb$add_fill("S1", dims = "A1:E6", color = wb_colour(hex = "FFFFFF00"), every_nth_col = 2)
   wb$add_fill("S1", dims = "A1:E6", color = wb_colour(hex = "FF00FF00"), every_nth_row = 2)
 
@@ -230,7 +230,7 @@ test_that("test add_cell_style()", {
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_data("S1", mtcars)
-  expect_silent(wb$add_cell_style("S1", dims = "A1:A33", textRotation = "45"))
+  expect_silent(wb$add_cell_style("S1", dims = "A1:A33", text_rotation = "45"))
   expect_silent(wb$add_cell_style("S1", dims = "F1:F33", horizontal = "center"))
 
   # check xf
@@ -250,7 +250,7 @@ test_that("test add_cell_style()", {
 
 
   wb <- wb_workbook()
-  wb$add_worksheet("S1")$add_cell_style("S1", dims = "A1:A33", textRotation = "45")
+  wb$add_worksheet("S1")$add_cell_style("S1", dims = "A1:A33", text_rotation = "45")
 
   exp <- rep("1", 33)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
@@ -259,23 +259,23 @@ test_that("test add_cell_style()", {
   ###
   exp <- "<xf applyAlignment=\"1\" applyBorder=\"1\" applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" applyProtection=\"1\" borderId=\"1\" fillId=\"1\" fontId=\"1\" numFmtId=\"1\" pivotButton=\"0\" quotePrefix=\"0\" xfId=\"1\"><alignment horizontal=\"left\" indent=\"1\" justifyLastLine=\"1\" readingOrder=\"1\" relativeIndent=\"1\" shrinkToFit=\"1\" textRotation=\"1\" vertical=\"top\" wrapText=\"1\"/><protection hidden=\"1\" locked=\"1\"/><extLst><ext><foo/></ext></extLst></xf>"
   got <- create_cell_style(
-    borderId = "1",
-    fillId = "1",
-    fontId = "1",
-    numFmtId = "1",
-    pivotButton = "0",
-    quotePrefix = "0",
-    xfId = "1",
+    border_id = "1",
+    fill_id = "1",
+    font_id = "1",
+    num_fmt_id = "1",
+    pivot_button = "0",
+    quote_prefix = "0",
+    xf_id = "1",
     horizontal = "left",
     indent = "1",
-    justifyLastLine = "1",
-    readingOrder = "1",
-    relativeIndent = "1",
-    shrinkToFit = "1",
-    textRotation = "1",
+    justify_last_line = "1",
+    reading_order = "1",
+    relative_indent = "1",
+    shrink_to_fit = "1",
+    text_rotation = "1",
     vertical = "top",
-    wrapText = "1",
-    extLst = "<extLst><ext><foo/></ext></extLst>",
+    wrap_text = "1",
+    ext_lst = "<extLst><ext><foo/></ext></extLst>",
     hidden = "1",
     locked = "1"
   )
@@ -352,12 +352,12 @@ test_that("get & set cell style(s)", {
 test_that("get_cell_styles()", {
 
   wb <- wb_workbook()$
-    add_worksheet(gridLines = FALSE)$
+    add_worksheet(grid_lines = FALSE)$
     # add title
     add_data(dims = "B2", x = "MTCARS Title")$
     add_font(dims = "B2", bold = "1", size = "16")$           # style 1
     # add data
-    add_data(x = head(mtcars), startCol = 2, startRow = 3)$
+    add_data(x = head(mtcars), start_col = 2, start_row = 3)$
     add_fill(dims = "B3:L3", color = wb_colour("turquoise"))$ # style 2 unused
     add_font(dims = "B3:L3", color = wb_colour("white"))$     # style 3
     add_border(dims = "B9:L9",
@@ -382,10 +382,10 @@ test_that("get_cell_styles()", {
   expect_equal(got, exp)
 
   wb$add_cell_style(dims = "B3:L3",
-                    textRotation = "45",
+                    text_rotation = "45",
                     horizontal = "center",
                     vertical = "center",
-                    wrapText = "1")
+                    wrap_text = "1")
 
   exp <- "<xf applyFill=\"1\" applyFont=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"2\" numFmtId=\"0\" xfId=\"0\"><alignment horizontal=\"center\" textRotation=\"45\" vertical=\"center\" wrapText=\"1\"/></xf>"
   got <- get_cell_styles(wb, 1, "B3")
@@ -399,8 +399,8 @@ test_that("applyCellStyle works", {
     add_worksheet()$
     add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
     add_data(dims = "C3", x = Sys.Date())$
-    add_data(dims = "E3", x = Sys.Date(), applyCellStyle = FALSE)$
-    add_data(dims = "E5", x = Sys.Date(), removeCellStyle = TRUE)$
+    add_data(dims = "E3", x = Sys.Date(), apply_cell_style = FALSE)$
+    add_data(dims = "E5", x = Sys.Date(), remove_cell_style = TRUE)$
     add_data(dims = "A1", x = Sys.Date())
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
@@ -415,9 +415,9 @@ test_that("style names are xml", {
 
   wb <- wb_workbook() %>%
     wb_add_worksheet("test") %>%
-    wb_add_data(x = "Title", startCol = 1, startRow = 1) %>%
+    wb_add_data(x = "Title", start_col = 1, start_row = 1) %>%
     wb_add_font(dims = "A1", bold = "1", size = "14") %>%
-    wb_add_data(x = sheet, colNames = TRUE, startCol = 1, startRow = 2, removeCellStyle = TRUE) %>%
+    wb_add_data(x = sheet, col_names = TRUE, start_col = 1, start_row = 2, remove_cell_style = TRUE) %>%
     wb_add_cell_style(dims = "B2:F2", horizontal = "right") %>%
     wb_add_font(dims = "A2:F2", bold = "1", size = "11") %>%
     wb_add_numfmt(dims = "B3:D8", numfmt = 2) %>%
@@ -502,16 +502,16 @@ test_that("add numfmt is no longer slow", {
   mm <- matrix(NA, ncol = 26, nrow = 10000)
   expect_silent(
     wb_workbook()$add_worksheet()$
-      add_data(x = mm, colNames = FALSE, na.strings = NULL)$
+      add_data(x = mm, col_names = FALSE, na.strings = NULL)$
       add_fill(dims = "A1:Z10000", color = wb_color("yellow"))
   )
 
   expect_silent(
     wb_workbook()$add_worksheet()$
-      add_data(dims = "A1", x = 1, colNames = FALSE)$
-      add_data(dims = "A10000", x = 1, colNames = FALSE)$
-      add_data(dims = "Z1", x = 5, colNames = FALSE)$
-      add_data(dims = "Z10000", x = 5, colNames = FALSE)$
+      add_data(dims = "A1", x = 1, col_names = FALSE)$
+      add_data(dims = "A10000", x = 1, col_names = FALSE)$
+      add_data(dims = "Z1", x = 5, col_names = FALSE)$
+      add_data(dims = "Z10000", x = 5, col_names = FALSE)$
       add_fill(dims = "A1:Z10000", color = wb_color("yellow"))
   )
 
@@ -539,15 +539,15 @@ test_that("create_tablestyle() works", {
   options("openxlsx2_seed" = NULL)
   got <- create_tablestyle(
     name               = "red_table",
-    wholeTable         = 8,
-    headerRow          = 7,
-    totalRow           = 6,
-    firstColumn        = 5,
-    lastColumn         = 4,
-    firstRowStripe     = 3,
-    secondRowStripe    = 2,
-    firstColumnStripe  = 1,
-    secondColumnStripe = 0
+    whole_table         = 8,
+    header_row          = 7,
+    total_row           = 6,
+    first_column        = 5,
+    last_column         = 4,
+    first_row_stripe     = 3,
+    second_row_stripe    = 2,
+    first_column_stripe  = 1,
+    second_column_stripe = 0
   )
   expect_equal(exp, got)
 
@@ -557,7 +557,7 @@ test_that("wb_add_cell_style works with logical and numeric", {
 
   wb <- wb_workbook()$add_worksheet()
 
-  wb$add_cell_style(wrapText = TRUE, textRotation = 45)
+  wb$add_cell_style(wrap_text = TRUE, text_rotation = 45)
 
   exp <- "<xf borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"><alignment textRotation=\"45\" wrapText=\"1\"/></xf>"
   got <- wb$styles_mgr$styles$cellXfs[2]
@@ -751,15 +751,15 @@ test_that("wb_add_dxfs_style() works", {
     wb_add_dxfs_style(
       name = "nay",
       font_color = wb_color(hex = "FF9C0006"),
-      bgFill = wb_color(hex = "FFFFC7CE")
+      bg_fill = wb_color(hex = "FFFFC7CE")
     ) %>%
     wb_add_dxfs_style(
       name = "yay",
       font_color = wb_color(hex = "FF006100"),
-      bgFill = wb_color(hex = "FFC6EFCE")
+      bg_fill = wb_color(hex = "FFC6EFCE")
     ) %>%
     wb_add_data(x = -5:5) %>%
-    wb_add_data(x = LETTERS[1:11], startCol = 2) %>%
+    wb_add_data(x = LETTERS[1:11], start_col = 2) %>%
     wb_add_conditional_formatting(
       dims = wb_dims(cols = 1, rows = 1:11),
       rule = "!=0",
@@ -788,12 +788,12 @@ test_that("wb_add_dxfs_style() works", {
     wb_add_dxfs_style(
       name = "nay",
       font_color = wb_color(hex = "FF9C0006"),
-      bgFill = wb_color(hex = "FFFFC7CE")
+      bg_fill = wb_color(hex = "FFFFC7CE")
     ) %>%
     wb_add_dxfs_style(
       name = "nay",
       font_color = wb_color(hex = "FF006100"),
-      bgFill = wb_color(hex = "FFC6EFCE")
+      bg_fill = wb_color(hex = "FFC6EFCE")
     ),
     "dxfs style names should be unique"
   )
@@ -801,8 +801,8 @@ test_that("wb_add_dxfs_style() works", {
 })
 
 test_that("initialized styles remain available", {
-  foo_fill <- create_fill(patternType = "solid",
-                          fgColor = wb_color("blue"))
+  foo_fill <- create_fill(pattern_type = "solid",
+                          fg_color = wb_color("blue"))
   foo_font <- create_font(sz = 36, b = TRUE, color = wb_color("yellow"))
 
   wb <- wb_workbook()
@@ -895,7 +895,7 @@ test_that("dims work", {
 
   wb <- wb_workbook()$add_worksheet()
 
-  new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FF334E6F"))
+  new_fill <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FF334E6F"))
   wb$styles_mgr$add(new_fill, "new_fill")
 
   xf <- create_cell_style(fill_id = wb$styles_mgr$get_fill_id("new_fill"))
