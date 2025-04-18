@@ -5325,7 +5325,7 @@ wbWorkbook <- R6::R6Class(
         if (length(cols) > 2 && any(diff(cols) != 1))
           warning("cols > 2, will create range from min to max.")
 
-        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+        if (getOption("openxlsx2.soon_deprecated", default = TRUE))
           .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
 
         dims <- rowcol_to_dims(rows, cols)
@@ -5349,7 +5349,7 @@ wbWorkbook <- R6::R6Class(
         if (length(cols) > 2 && any(diff(cols) != 1))
           warning("cols > 2, will create range from min to max.")
 
-        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+        if (getOption("openxlsx2.soon_deprecated", default = TRUE))
           .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
 
         dims <- rowcol_to_dims(rows, cols)
@@ -5800,7 +5800,7 @@ wbWorkbook <- R6::R6Class(
         if (length(cols) > 2 && any(diff(cols) != 1))
           warning("cols > 2, will create range from min to max.")
 
-        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
+        if (getOption("openxlsx2.soon_deprecated", default = TRUE))
           .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
 
         dims <- rowcol_to_dims(rows, cols)

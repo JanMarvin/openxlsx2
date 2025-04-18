@@ -1,8 +1,8 @@
 #' Internal comment functions
 #'
 #' Users are advised to use [wb_add_comment()] and [wb_remove_comment()].
-#' `write_comment()` and `remove_comment()` are now deprecated. openxlsx2 will stop
-#' exporting it at some point in the future. Use the replacement functions.
+#' `write_comment()` and `remove_comment()` are now defunct. Use the
+#' replacement functions.
 #' @name comment_internal
 NULL
 
@@ -25,17 +25,7 @@ write_comment <- function(
     color   = NULL,
     file    = NULL
 ) {
-  .Deprecated("wb_add_comment()", package = "openxlsx2", old = "write_comment()")
-  do_write_comment(
-    wb,
-    sheet,
-    col,
-    row,
-    comment,
-    dims,
-    color,
-    file
-  )
+  .Defunct("wb_add_comment()", package = "openxlsx2", msg = "write_comment() is defunct")
 }
 
 #' @rdname comment_internal
@@ -51,15 +41,7 @@ remove_comment <- function(
     gridExpand = TRUE,
     dims       = NULL
 ) {
-  .Deprecated("wb_remove_comment()", package = "openxlsx2", old = "remove_comment()")
-  do_remove_comment(
-    wb,
-    sheet,
-    col,
-    row,
-    gridExpand,
-    dims
-  )
+  .Defunct("wb_remove_comment()", package = "openxlsx2", msg = "remove_comment() is defunct")
 }
 
 #' Convert to Excel data
@@ -70,7 +52,7 @@ remove_comment <- function(
 #' @keywords internal
 #' @export
 convertToExcelDate <- function(df, date1904 = FALSE) {
-  stop("convertToExcelDate() is defunct and will be removed in new version. Use convert_to_excel_date().", call. = FALSE)
+  .Defunct("convert_to_excel_date()", package = "openxlsx2", msg = "convertToExcelDate() is defunct")
 }
 
 #' Write an object to a worksheet
@@ -101,33 +83,13 @@ write_data <-  function(
     enforce           = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_data()", package = "openxlsx2", old = "write_data()")
-  do_write_data(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    dims = dims,
-    start_col         = start_col,
-    start_row         = start_col,
-    array             = array,
-    col_names         = col_names,
-    row_names         = row_names,
-    with_filter       = with_filter,
-    sep               = sep,
-    name              = name,
-    apply_cell_style  = apply_cell_style,
-    remove_cell_style = remove_cell_style,
-    na.strings        = na.strings,
-    inline_strings    = inline_strings,
-    enforce           = enforce,
-    ...
-  )
+  .Defunct("wb_add_data()", package = "openxlsx2", msg = "write_data() is defunct")
 }
 
 #' Write to a worksheet as an Excel table
 #'
 #' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
-#' This function is deprecated and may not be exported in the future.
+#' This function is defunct.
 #' @inheritParams wb_add_data_table
 #' @inherit wb_add_data_table details
 #' @export
@@ -156,39 +118,14 @@ write_datatable <- function(
     total_row         = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_data_table()", package = "openxlsx2", old = "write_datatable()")
-  do_write_datatable(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    dims = dims,
-    start_col         = start_col,
-    start_row         = start_row,
-    col_names         = col_names,
-    row_names         = row_names,
-    table_style       = table_style,
-    table_name        = table_name,
-    with_filter       = with_filter,
-    sep               = sep,
-    first_column      = first_column,
-    last_column       = last_column,
-    banded_rows       = banded_rows,
-    banded_cols       = banded_cols,
-    apply_cell_style  = apply_cell_style,
-    remove_cell_style = remove_cell_style,
-    na.strings        = na.strings,
-    inline_strings    = inline_strings,
-    total_row         = total_row,
-    ...
-
-  )
+  .Defunct("wb_add_data_table()", package = "openxlsx2", msg = "write_datatable() is defunct")
 }
 
 #' Write a character vector as an Excel Formula
 #'
 #' Write a a character vector containing Excel formula to a worksheet.
 #' Use [wb_add_formula()] or `add_formula()` in new code. This function is
-#' deprecated and may be defunct.
+#' defunct.
 #'
 #' @inheritParams wb_add_formula
 #' @export
@@ -207,20 +144,5 @@ write_formula <- function(
     enforce           = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_formula()", package = "openxlsx2", old = "write_formula()")
-
-  do_write_formula(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    dims = dims,
-    start_col = start_col,
-    start_row = start_row,
-    array = array,
-    cm = cm,
-    apply_cell_style = apply_cell_style,
-    remove_cell_style = remove_cell_style,
-    enforce = enforce,
-    ...
-  )
+  .Defunct("wb_add_formula()", package = "openxlsx2", msg = "write_formula() is defunct")
 }

@@ -134,7 +134,7 @@ test_that("cloning comments works", {
 
   tmp <- temp_xlsx()
 
-  c1 <- create_comment(text = "this is a comment",  author = "")
+  expect_warning(c1 <- create_comment(text = "this is a comment",  author = ""), "deprecated")
 
   # cloning comments from loaded worksheet did not work
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)$save(tmp)

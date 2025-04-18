@@ -761,14 +761,12 @@ test_that("wb_add_dxfs_style() works", {
     wb_add_data(x = -5:5) %>%
     wb_add_data(x = LETTERS[1:11], startCol = 2) %>%
     wb_add_conditional_formatting(
-      cols = 1,
-      rows = 1:11,
+      dims = wb_dims(cols = 1, rows = 1:11),
       rule = "!=0",
       style = "nay"
     ) %>%
     wb_add_conditional_formatting(
-      cols = 1,
-      rows = 1:11,
+      dims = wb_dims(cols = 1, rows = 1:11),
       rule = "==0",
       style = "yay"
     )

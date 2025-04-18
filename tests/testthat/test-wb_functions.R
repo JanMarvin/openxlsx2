@@ -243,10 +243,10 @@ test_that("fillMergedCells works with dims", {
              start_row = 3, start_col = 1, col_names = FALSE)
 
   # merge rows 1 and 2 in each column
-  wb$merge_cells(1, rows = 1:2, cols = 1)
-  wb$merge_cells(1, rows = 1:2, cols = 2)
-  wb$merge_cells(1, rows = 1:2, cols = 3)
-  wb$merge_cells(1, rows = 1:2, cols = 4)
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 1))
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 2))
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 3))
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 4))
 
   # read from second column and fill merged cells
   got <- wb_to_df(wb, dims = "A2:D4", fill_merged_cells = TRUE)
