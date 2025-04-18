@@ -4,51 +4,15 @@
 \alias{openxlsx2-deprecated}
 \title{Deprecated functions in package \emph{openxlsx2}}
 \description{
-These functions are provided for compatibility with older versions of \code{openxlsx2},
-and may be defunct as soon as the next release. This guide helps you update your
+While \code{openxlsx2} strives to keep its API semi-stable, as development
+continues, there are inevitably changes. This guide helps you update your
 code to the latest standards.
-
-As of openxlsx2 v1.0, API change should be minimal.
 }
-\section{Internal functions}{
-These functions are used internally by openxlsx2. It is no longer advertised
-to use them in scripts. They originate from openxlsx, but do not fit openxlsx2's API.
-
-You should be able to modify
-\itemize{
-\item \code{\link[=delete_data]{delete_data()}} -> \code{\link[=wb_clean_sheet]{wb_clean_sheet()}}
-\item \code{\link[=write_data]{write_data()}} -> \code{\link[=wb_add_data]{wb_add_data()}}
-\item \code{\link[=write_datatable]{write_datatable()}} -> \code{\link[=wb_add_data_table]{wb_add_data_table()}}
-\item \code{\link[=write_comment]{write_comment()}} -> \code{\link[=wb_add_comment]{wb_add_comment()}}
-\item \code{\link[=remove_comment]{remove_comment()}} -> \code{\link[=wb_remove_comment]{wb_remove_comment()}}
-\item \code{\link[=write_formula]{write_formula()}} -> \code{\link[=wb_add_formula]{wb_add_formula()}}
-}
-
-You should be able to change those with minimal changes
-}
-
-\section{Deprecated functions}{
-First of all, you can set an option that will add warnings when using deprecated
-functions.
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{options("openxlsx2.soon_deprecated" = TRUE)
-}\if{html}{\out{</div>}}
-}
-
 \section{Argument changes}{
 For consistency, arguments were renamed to snake_case for the 0.8 release.
 It is now recommended to use \code{dims} (the cell range) in favor of \code{row}, \code{col}, \code{start_row}, \code{start_col}
 
 See \code{\link[=wb_dims]{wb_dims()}} as it provides many options on how to provide cell range
-}
-
-\section{Functions with a new name}{
-These functions were renamed for consistency.
-\itemize{
-\item \code{\link[=convertToExcelDate]{convertToExcelDate()}} -> \code{\link[=convert_to_excel_date]{convert_to_excel_date()}}
-\item \code{\link[=wb_grid_lines]{wb_grid_lines()}} -> \code{\link[=wb_set_grid_lines]{wb_set_grid_lines()}}
-\item \code{\link[=create_comment]{create_comment()}} -> \code{\link[=wb_comment]{wb_comment()}}
-}
 }
 
 \section{Deprecated usage}{

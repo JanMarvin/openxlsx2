@@ -11,7 +11,7 @@ test_that("TRUE, FALSE, NA", {
   x$f_na <- sample(c(FALSE, NA), size = 150, replace = TRUE)
   x$tf_na <- sample(c(TRUE, FALSE, NA), size = 150, replace = TRUE)
 
-  wb <- write_xlsx(x, file = fileName, colNames = TRUE)
+  wb <- write_xlsx(x, file = fileName, col_names = TRUE)
 
   y <- read_xlsx(fileName, sheet = 1, na.strings = "#N/A")
   expect_equal(x, y, ignore_attr = TRUE)

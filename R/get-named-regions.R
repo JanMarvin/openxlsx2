@@ -88,7 +88,7 @@ wb_get_named_regions <- function(wb, tables = FALSE, x = NULL) {
   }
 
   if (!inherits(wb, "wbWorkbook")) {
-    if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
+    if (getOption("openxlsx2.soon_deprecated", default = TRUE)) {
       warning(
         "Using `wb_get_named_regions()` on an xlsx file is deprecated.\n",
         "Use `wb_load(file)$get_named_regions()` instead.",

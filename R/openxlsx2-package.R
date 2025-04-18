@@ -187,35 +187,9 @@ openxlsx2_celltype <- c(
 #' Deprecated functions in package *openxlsx2*
 #'
 #' @description
-#' These functions are provided for compatibility with older versions of `openxlsx2`,
-#' and may be defunct as soon as the next release. This guide helps you update your
+#' While `openxlsx2` strives to keep its API semi-stable, as development
+#' continues, there are inevitably changes. This guide helps you update your
 #' code to the latest standards.
-#'
-#' As of openxlsx2 v1.0, API change should be minimal.
-#'
-#' # Internal functions
-#'
-#' These functions are used internally by openxlsx2. It is no longer advertised
-#' to use them in scripts. They originate from openxlsx, but do not fit openxlsx2's API.
-#'
-#' You should be able to modify
-#' * [delete_data()] -> [wb_clean_sheet()]
-#' * [write_data()] -> [wb_add_data()]
-#' * [write_datatable()] -> [wb_add_data_table()]
-#' * [write_comment()] -> [wb_add_comment()]
-#' * [remove_comment()] -> [wb_remove_comment()]
-#' * [write_formula()] -> [wb_add_formula()]
-#'
-#' You should be able to change those with minimal changes
-#'
-#' # Deprecated functions
-#'
-#' First of all, you can set an option that will add warnings when using deprecated
-#' functions.
-#'
-#' ```
-#' options("openxlsx2.soon_deprecated" = TRUE)
-#' ```
 #'
 #' # Argument changes
 #'
@@ -223,14 +197,6 @@ openxlsx2_celltype <- c(
 #' It is now recommended to use `dims` (the cell range) in favor of `row`, `col`, `start_row`, `start_col`
 #'
 #' See [wb_dims()] as it provides many options on how to provide cell range
-#'
-#' # Functions with a new name
-#'
-#' These functions were renamed for consistency.
-#' * [convertToExcelDate()] -> [convert_to_excel_date()]
-#' * [wb_grid_lines()] -> [wb_set_grid_lines()]
-#' * [create_comment()] -> [wb_comment()]
-#'
 #'
 #' # Deprecated usage
 #'
@@ -249,4 +215,35 @@ openxlsx2_celltype <- c(
 #'
 #' @seealso [.Deprecated]
 #' @name openxlsx2-deprecated
+NULL
+
+#' Defunct functions in package *openxlsx2*
+#'
+#' @description
+#' These functions were provided for compatibility with older versions of `openxlsx2`,
+#' and are now defunct. This guide helps you update your code to the latest standards.
+#'
+#' As of openxlsx2 v1.0, API change should be minimal.
+#'
+#' # Internal functions
+#'
+#' These functions are used internally by openxlsx2. They originate from openxlsx, but
+#' do not fit openxlsx2's API.
+#'
+#' You should be able to modify
+#' * [delete_data()] -> [wb_clean_sheet()]
+#' * [write_data()] -> [wb_add_data()]
+#' * [write_datatable()] -> [wb_add_data_table()]
+#' * [write_comment()] -> [wb_add_comment()]
+#' * [remove_comment()] -> [wb_remove_comment()]
+#' * [write_formula()] -> [wb_add_formula()]
+#'
+#' These functions were renamed for consistency.
+#' * [convertToExcelDate()] -> [convert_to_excel_date()]
+#' * [wb_grid_lines()] -> [wb_set_grid_lines()]
+#' * [create_comment()] -> [wb_comment()]
+#'
+#'
+#' @seealso [.Defunct]
+#' @name openxlsx2-defunct
 NULL

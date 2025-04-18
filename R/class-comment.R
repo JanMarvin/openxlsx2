@@ -181,9 +181,7 @@ create_comment <- function(text,
   width = 2,
   height = 4) {
   #
-  if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
-    .Deprecated("wb_comment()", old = "create_comment()")
-  }
+  .Deprecated("wb_comment()", old = "create_comment()")
   wb_comment(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1])
 }
 

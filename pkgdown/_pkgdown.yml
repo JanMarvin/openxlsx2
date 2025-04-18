@@ -176,9 +176,10 @@ reference:
   contents:
   - openxlsx2_options
 
-- title: Deprecated
+- title: Deprecated and Defunct
   contents:
   - openxlsx2-deprecated
+  - openxlsx2-defunct
 
 redirects:
   - ["articles/openxlsx2_basic_manual.html", "articles/openxlsx2.html"]

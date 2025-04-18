@@ -33,21 +33,21 @@
 #' wb$styles_mgr$add(new_font, "arial")
 #'
 #' ## create and add new fill
-#' new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FF00224B"))
+#' new_fill <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FF00224B"))
 #' wb$styles_mgr$add(new_fill, "blue")
 #'
 #' # create new style with numfmt enabled
 #' head_xf <- create_cell_style(
 #'   horizontal = "center",
-#'   textRotation = "45",
-#'   numFmtId = "0",
-#'   fontId = wb$styles_mgr$get_font_id("arial_huge"),
-#'   fillId = wb$styles_mgr$get_fill_id("blue")
+#'   text_rotation = "45",
+#'   num_fmt_id = "0",
+#'   font_id = wb$styles_mgr$get_font_id("arial_huge"),
+#'   fill_id = wb$styles_mgr$get_fill_id("blue")
 #' )
 #'
 #' new_xf <- create_cell_style(
-#'   numFmtId = wb$styles_mgr$get_numfmt_id("test"),
-#'   fontId = wb$styles_mgr$get_font_id("arial")
+#'   num_fmt_id = wb$styles_mgr$get_numfmt_id("test"),
+#'   font_id = wb$styles_mgr$get_font_id("arial")
 #' )
 #'
 #' ## add new styles
@@ -634,7 +634,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF9C0006"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFC7CE"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFFFC7CE"))
 
         builtinId <- "27"
 
@@ -644,7 +644,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF006100"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFC6EFCE"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFC6EFCE"))
 
         builtinId <- "26"
 
@@ -654,7 +654,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF9C5700"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFEB9C"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFFFEB9C"))
 
         builtinId <- "28"
 
@@ -664,7 +664,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(b = TRUE, sz = font_size, color = wb_color(hex = "FFFA7D00"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFF2F2F2"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFF2F2F2"))
 
         border_xml <- create_border(
           left = "thin",  left_color = wb_color(hex = "FF7F7F7F"),
@@ -680,7 +680,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 0), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFA5A5A5"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFA5A5A5"))
 
         border_xml <- create_border(
           left = "double",  left_color = wb_color(hex = "FF3F3F3F"),
@@ -696,7 +696,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(i = TRUE, sz = font_size, color = wb_color(hex = "FF7F7F7F"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         builtinId <- "53"
       }
@@ -705,7 +705,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(hex = "FF3F3F76"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFCC99"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFFFCC99"))
 
         border_xml <- create_border(
           left = "thin",  left_color = wb_color(hex = "FF7F7F7F"),
@@ -721,7 +721,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(hex = "FFFA7D00"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         border_xml <- create_border(
           left = NULL,
@@ -737,7 +737,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFFFFFCC"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFFFFFCC"))
 
         border_xml <- create_border(
           left = "thin",  left_color = wb_color(hex = "FFB2B2B2"),
@@ -754,7 +754,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(b = TRUE, sz = font_size, color = wb_color(hex = "FF3F3F3F"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FFF2F2F2"))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FFF2F2F2"))
 
         border_xml <- create_border(
           left = "thin",  left_color = wb_color(hex = "FF3F3F3F"),
@@ -770,7 +770,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(sz = font_size, color = wb_color(hex = "FFFF0000"), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         builtinId <- "11"
       }
@@ -779,7 +779,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(b = TRUE, sz = 15, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         border_xml <- create_border(
           left = NULL,
@@ -795,7 +795,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(b = TRUE, sz = 13, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         border_xml <- create_border(
           left = NULL,
@@ -811,7 +811,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         border_xml <- create_border(
           left = NULL,
@@ -827,7 +827,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(b = TRUE, sz = 11, color = wb_color(theme = 3), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         builtinId <- "19"
       }
@@ -844,7 +844,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         font_xml <- create_font(b = TRUE, sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
-        fill_xml <- create_fill(patternType = "none")
+        fill_xml <- create_fill(pattern_type = "none")
 
         border_xml <- create_border(
           left = NULL,
@@ -863,7 +863,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 0), name = font_name, family = "2", scheme = "minor")
 
         theme_id <- as.integer(accent_id) + 3L
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(theme = theme_id))
 
         if (accent_id == "1") builtinId <- "29"
         if (accent_id == "2") builtinId <- "33"
@@ -880,7 +880,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
         theme_id <- as.integer(accent_id) + 3L
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.79998168889431442"), bgColor = wb_color(indexed = 65))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(theme = theme_id, tint = "0.79998168889431442"), bg_color = wb_color(indexed = 65))
 
         if (accent_id == "1") builtinId <- "30"
         if (accent_id == "2") builtinId <- "34"
@@ -897,7 +897,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
         theme_id <- as.integer(accent_id) + 3L
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.59999389629810485"), bgColor = wb_color(indexed = 65))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(theme = theme_id, tint = "0.59999389629810485"), bg_color = wb_color(indexed = 65))
 
         if (accent_id == "1") builtinId <- "31"
         if (accent_id == "2") builtinId <- "35"
@@ -914,7 +914,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
         theme_id <- as.integer(accent_id) + 3L
-        fill_xml <- create_fill(patternType = "solid", fgColor = wb_color(theme = theme_id, tint = "0.39997558519241921"), bgColor = wb_color(indexed = 65))
+        fill_xml <- create_fill(pattern_type = "solid", fg_color = wb_color(theme = theme_id, tint = "0.39997558519241921"), bg_color = wb_color(indexed = 65))
 
         if (accent_id == "1") builtinId <- "32"
         if (accent_id == "2") builtinId <- "36"

@@ -551,9 +551,9 @@ create_fill <- function(
 #'  | "49" | "@"                         |
 #'
 #' @examples
-#' foo_fill <- create_fill(patternType = "lightHorizontal",
-#'                         fgColor = wb_color("blue"),
-#'                         bgColor = wb_color("orange"))
+#' foo_fill <- create_fill(pattern_type = "lightHorizontal",
+#'                         fg_color = wb_color("blue"),
+#'                         bg_color = wb_color("orange"))
 #' foo_font <- create_font(sz = 36, b = TRUE, color = wb_color("yellow"))
 #'
 #' wb <- wb_workbook()
@@ -929,7 +929,7 @@ create_dxfs_style <- function(
     } else {
       pattern_type  <- ""
     }
-    fill <- create_fill(patternType = pattern_type, bgColor = bg_fill, fgColor = fg_color, gradientFill = gradient_fill)
+    fill <- create_fill(pattern_type = pattern_type, bg_color = bg_fill, fg_color = fg_color, gradient_fill = gradient_fill)
   } else {
     fill <- NULL
   }
