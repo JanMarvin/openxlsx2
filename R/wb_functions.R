@@ -34,11 +34,11 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
   # condition 2) either "A1:B5" or separator, but unequal size or "A1:A2,A4:A6,B1:B5"
   if (has_dim_sep && get_dims(dims, check = TRUE)) {
 
-    full_rows <- get_dims(dims, rows = TRUE)
-    full_cols <- sort(get_dims(dims, cols = TRUE))
+    ldims     <- get_dims(dims, rows = TRUE)
+    full_rows <- ldims$rows[[1]]
+    full_cols <- ldims$cols
 
-    rows_out  <- unlist(full_rows)
-    rows_out  <- seq.int(rows_out[1], rows_out[2])
+    rows_out  <- seq.int(full_rows[1], full_rows[2])
     cols_out  <- full_cols
     full_cols <- full_cols - min(full_cols) # is always a zero offset
 

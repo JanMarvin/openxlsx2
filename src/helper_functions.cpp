@@ -284,14 +284,14 @@ std::vector<std::string> needed_cells(const std::string& range, bool all = true)
 //' @noRd
 // [[Rcpp::export]]
 SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false, bool rows = false) {
-  std::set<int32_t> unique_rows;
-  std::set<int32_t> unique_cols;
-  std::vector<std::vector<int32_t>> row_pairs;
+  std::set<int32_t> unique_row_values;                   // For check
+  std::set<int32_t> unique_cols;                         // Unique columns
+  std::set<std::pair<int32_t, int32_t>> row_range_set;   // Unique row ranges
+  bool first = true;
 
   for (int i = 0; i < dims.size(); ++i) {
     std::string dim = Rcpp::as<std::string>(dims[i]);
 
-    // Use needed_cells to expand
     std::vector<std::string> cells = needed_cells(dim, false);
     if (cells.size() == 0) continue;
 
@@ -303,35 +303,47 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false,
     int32_t c1 = cell_to_colint(left);
     int32_t c2 = cell_to_colint(right);
 
+    if (r1 > r2) std::swap(r1, r2);
+    if (c1 > c2) std::swap(c1, c2);
 
     if (check) {
-      unique_rows.insert(r1);
-      unique_rows.insert(r2);
-    } else {
-      if (rows)
-        row_pairs.push_back({r1, r2});
+      std::set<int32_t> current_rows;
+      for (int32_t r = r1; r <= r2; ++r)
+        current_rows.insert(r);
 
-      if (cols) {
-        if (c1 > c2) std::swap(c1, c2);
-        for (int c = c1; c <= c2; ++c)
-          unique_cols.insert(c);
+      if (first) {
+        unique_row_values = current_rows;
+        first = false;
+      } else {
+        if (current_rows != unique_row_values)
+          return Rcpp::wrap(false); // fail fast
       }
+    } else {
+      // Always collect both rows and cols if not checking
+      row_range_set.insert({r1, r2});
+      for (int32_t c = c1; c <= c2; ++c)
+        unique_cols.insert(c);
     }
   }
 
   if (check) {
-    return Rcpp::wrap(unique_rows.size() == 1);
+    return Rcpp::wrap(true);
   }
 
-  if (cols) {
-    std::vector<int32_t> out_cols(unique_cols.begin(), unique_cols.end());
-    return Rcpp::wrap(out_cols);
-  }
-
-  // rows is true or default: return list of row ranges
+  // rows and cols result
   Rcpp::List out;
-  for (const auto& pair : row_pairs)
-    out.push_back(pair);
+
+  // Rows: list of unique ranges [r1, r2]
+  Rcpp::List out_rows;
+  for (const auto& pair : row_range_set) {
+    out_rows.push_back(Rcpp::IntegerVector::create(pair.first, pair.second));
+  }
+  out["rows"] = out_rows;
+
+  // Cols: sorted vector
+  std::vector<int32_t> out_cols(unique_cols.begin(), unique_cols.end());
+  out["cols"] = out_cols;
+
   return out;
 }
 
