@@ -279,11 +279,10 @@ std::vector<std::string> needed_cells(const std::string& range, bool all = true)
 //' check if non consecutive dims is equal sized: "A1:A4,B1:B4"
 //' @param dims dims
 //' @param check check if all the same size
-//' @param cols return columns index
 //' @keywords internal
 //' @noRd
 // [[Rcpp::export]]
-SEXP get_dims(Rcpp::CharacterVector dims, bool check = false, bool cols = false, bool rows = false) {
+SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
   std::set<int32_t> unique_row_values;                   // For check
   std::set<int32_t> unique_cols;                         // Unique columns
   std::set<std::pair<int32_t, int32_t>> row_range_set;   // Unique row ranges

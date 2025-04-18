@@ -34,7 +34,7 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
   # condition 2) either "A1:B5" or separator, but unequal size or "A1:A2,A4:A6,B1:B5"
   if (has_dim_sep && get_dims(dims, check = TRUE)) {
 
-    ldims     <- get_dims(dims, rows = TRUE)
+    ldims     <- get_dims(dims)
     full_rows <- ldims$rows[[1]]
     full_cols <- ldims$cols
 
