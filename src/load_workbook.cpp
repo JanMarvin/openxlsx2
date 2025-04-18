@@ -98,8 +98,8 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
     "thickTop"
   };
   std::unordered_map<std::string, R_xlen_t> name_to_index;
-  for (R_xlen_t i = 0; i < row_nams.size(); ++i)
-    name_to_index[row_nams[i]] = i;
+  for (size_t i = 0; i < row_nams.size(); ++i)
+    name_to_index[row_nams[i]] = static_cast<R_xlen_t>(i);
 
   R_xlen_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
   R_xlen_t kk = static_cast<R_xlen_t>(row_nams.size());
