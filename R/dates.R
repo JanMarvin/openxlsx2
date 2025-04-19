@@ -29,53 +29,43 @@
 #' x <- 0.50918982
 #' convert_hms(x)
 convert_date <- function(x, origin = "1900-01-01", ...) {
-
-  # use as.integer to only get the integer part of a number.
-  # in openxml dates are integers only.
-  x <- as.integer(x)
-  notNa <- !is.na(x)
-  earlyDate <- x < 60
-
-  if (origin == "1900-01-01") {
-    x[notNa] <- x[notNa] - 2
-    x[earlyDate & notNa] <- x[earlyDate & notNa] + 1
-  }
-
-  as.Date(x, origin = origin, ...)
+  out <- date_to_unix(x, origin = origin)
+  out <- as.double(out)
+  .Date(out)
 }
 
 #' @rdname convert_date
 #' @export
 convert_datetime <- function(x, origin = "1900-01-01", ...) {
-  x <- as.numeric(x)
-  date <- convert_date(x, origin)
-
-  x <- x * 86400
-  rem <- x %% 86400
-
-  hours <- as.integer(floor(rem / 3600))
-  minutes_fraction <- rem %% 3600
-  minutes_whole <- as.integer(floor(minutes_fraction / 60))
-  secs <- minutes_fraction %% 60
-
-  y <- sprintf("%02d:%02d:%06.3f", hours, minutes_whole, secs)
-  notNA <- !is.na(x)
-  date_time <- rep(NA, length(x))
-  date_time[notNA] <- as.POSIXct(paste(date[notNA], y[notNA]), ...)
-
-  .POSIXct(date_time)
+  out <- date_to_unix(x, origin = origin, datetime = TRUE)
+  out <- as.double(out)
+  tz <- list(...)$tx
+  .POSIXct(out, tz)
 }
 
 #' @rdname convert_date
 #' @export
 convert_hms <- function(x) {
   if (isNamespaceLoaded("hms")) {
-    x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
+    x <- convert_datetime(x, origin = "1970-01-01", tx = "UTC")
     class(x) <- c("hms", "difftime")
   } else {
     x <- convert_datetime(x, origin = "1970-01-01")
     x <- format(x, format = "%H:%M:%S")
   }
+  x
+}
+
+
+
+date_conv_fun     <- function(x) {
+  x <- as.double(x)
+  class(x) <- c("Date")
+  x
+}
+datetime_conv_fun <- function(x) {
+  x <- as.double(x)
+  class(x) <- c("POSIXct", "POSIXt")
   x
 }
 
@@ -152,32 +142,6 @@ as_POSIXlt_hms <- function(x) {
   z
 }
 
-# `convert_to_excel_date()` ---------------------------
-#' convert back to an Excel Date
-#' @param df dataframe
-#' @param date1904 take different origin
-#' @examples
-#'  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
-#'  wb1 <- wb_load(xlsxFile)
-#'  df <- wb_to_df(wb1)
-#'  # conversion is done on dataframes only
-#'  convert_to_excel_date(df = df["Var5"], date1904 = FALSE)
-#' @export
-convert_to_excel_date <- function(df, date1904 = FALSE) {
-
-  is_date <- vapply(
-    df,
-    function(x) {
-      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "hms")
-    },
-    NA
-  )
-
-  df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
-
-  df
-}
-
 # `convert_to_excel_date()` helpers -----------------------------------
 #' conversion helper function
 #' @param x a date, posixct or hms object
@@ -233,4 +197,30 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
   }
 
   z
+}
+
+# `convert_to_excel_date()` ---------------------------
+#' convert back to an Excel Date
+#' @param df dataframe
+#' @param date1904 take different origin
+#' @examples
+#'  xlsxFile <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+#'  wb1 <- wb_load(xlsxFile)
+#'  df <- wb_to_df(wb1)
+#'  # conversion is done on dataframes only
+#'  convert_to_excel_date(df = df["Var5"], date1904 = FALSE)
+#' @export
+convert_to_excel_date <- function(df, date1904 = FALSE) {
+
+  is_date <- vapply(
+    df,
+    function(x) {
+      inherits(x, "Date") || inherits(x, "POSIXct") || inherits(x, "hms")
+    },
+    NA
+  )
+
+  df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
+
+  df
 }

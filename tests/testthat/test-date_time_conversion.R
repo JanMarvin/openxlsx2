@@ -125,3 +125,10 @@ test_that("date 1904 workbooks to df work", {
   expect_equal(exp, got)
 
 })
+
+test_that("both origins work", {
+  expect_equal(
+    convert_date(40729),
+    convert_date(39267, origin = "1904-01-01")
+  )
+})

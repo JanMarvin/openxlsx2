@@ -413,7 +413,7 @@ wb_to_df <- function(
 
       if (any(uccs %in% xlsx_date_style)) {
         sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel], origin = origin)))
+        cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
         cc$typ[sel]  <- "d"
       }
 
@@ -430,7 +430,7 @@ wb_to_df <- function(
 
       if (any(uccs %in% xlsx_posix_style)) {
         sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel], origin = origin)))
+        cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
         cc$typ[sel]  <- "p"
       }
     }
@@ -617,8 +617,8 @@ wb_to_df <- function(
 
   if (missing(types)) {
     types <- guess_col_type(tt)
-    date_conv     <- as.Date
-    datetime_conv <- as.POSIXct
+    date_conv     <- function(x) .Date(as.double(x))
+    datetime_conv <- function(x) .POSIXct(as.double(x))
   } else {
     # TODO check if guessing only if !all() is possible
     if (any(xlsx_cols_names %in% names(types))) {
@@ -667,8 +667,8 @@ wb_to_df <- function(
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv, origin = origin)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv, origin = origin)
+      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
+      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
       if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
 
