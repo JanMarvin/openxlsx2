@@ -413,7 +413,10 @@ wb_to_df <- function(
 
       if (any(uccs %in% xlsx_date_style)) {
         sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != ""
-        cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
+        if (convert)
+          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
+        else
+          cc$val[sel] <- as.character(convert_date(cc$v[sel]))
         cc$typ[sel]  <- "d"
       }
 
@@ -430,7 +433,10 @@ wb_to_df <- function(
 
       if (any(uccs %in% xlsx_posix_style)) {
         sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != ""
-        cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
+        if (convert)
+          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
+        else
+          cc$val[sel] <- as.character(convert_datetime(cc$v[sel]))
         cc$typ[sel]  <- "p"
       }
     }
@@ -617,8 +623,8 @@ wb_to_df <- function(
 
   if (missing(types)) {
     types <- guess_col_type(tt)
-    date_conv     <- function(x) .Date(as.double(x))
-    datetime_conv <- function(x) .POSIXct(as.double(x))
+    date_conv     <- function(x) as.Date(.POSIXct(as.double(x), "UTC"), tz = "UTC", origin = "1970-01-01")
+    datetime_conv <- function(x) .POSIXct(as.double(x), "UTC")
   } else {
     # TODO check if guessing only if !all() is possible
     if (any(xlsx_cols_names %in% names(types))) {

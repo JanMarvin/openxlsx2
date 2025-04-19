@@ -29,7 +29,7 @@
 #' x <- 0.50918982
 #' convert_hms(x)
 convert_date <- function(x, origin = "1900-01-01", ...) {
-  out <- date_to_unix(x, origin = origin)
+  out <- date_to_unix(x, origin = origin, datetime = FALSE)
   out <- as.double(out)
   .Date(out)
 }
@@ -39,7 +39,7 @@ convert_date <- function(x, origin = "1900-01-01", ...) {
 convert_datetime <- function(x, origin = "1900-01-01", ...) {
   out <- date_to_unix(x, origin = origin, datetime = TRUE)
   out <- as.double(out)
-  tz <- list(...)$tx
+  tz <- ifelse(!is.null(tz <- list(...)$tz), tz, "UTC")
   .POSIXct(out, tz)
 }
 
@@ -47,25 +47,12 @@ convert_datetime <- function(x, origin = "1900-01-01", ...) {
 #' @export
 convert_hms <- function(x) {
   if (isNamespaceLoaded("hms")) {
-    x <- convert_datetime(x, origin = "1970-01-01", tx = "UTC")
+    x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
     class(x) <- c("hms", "difftime")
   } else {
     x <- convert_datetime(x, origin = "1970-01-01")
     x <- format(x, format = "%H:%M:%S")
   }
-  x
-}
-
-
-
-date_conv_fun     <- function(x) {
-  x <- as.double(x)
-  class(x) <- c("Date")
-  x
-}
-datetime_conv_fun <- function(x) {
-  x <- as.double(x)
-  class(x) <- c("POSIXct", "POSIXt")
   x
 }
 

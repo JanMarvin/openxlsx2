@@ -20,23 +20,25 @@ test_that("convert to date", {
 
 test_that("convert to datetime", {
   x <- 43037 + 2 / 1440
-  res <- convert_datetime(x, tx = Sys.timezone())
-  exp <- as.POSIXct("2017-10-29 00:02:00", tz = Sys.timezone())
+  res <- convert_datetime(x, tz = Sys.timezone())
+  exp <- as.POSIXct(1509235320, tz = Sys.timezone(), origin = "1970-01-01")
   expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2 / 1440 + 1 / 86400
-  res <- convert_datetime(x, tx = Sys.timezone())
-  exp <- as.POSIXct("2017-10-29 00:02:01", tz = Sys.timezone())
+  res <- convert_datetime(x, tz = Sys.timezone())
+  exp <- as.POSIXct(1509235321, tz = Sys.timezone(), origin = "1970-01-01")
   expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2.50 / 1440
-  res <- convert_datetime(x, tx = Sys.timezone())
-  exp <- as.POSIXct("2017-10-29 00:02:30", tz = Sys.timezone())
+  res <- convert_datetime(x, tz = Sys.timezone())
+  exp <- as.POSIXct(1509235350, tz = Sys.timezone(), origin = "1970-01-01")
   expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2 / 1440 + 12.12 / 86400
-  x_datetime <- convert_datetime(x, tx = "UTC")
+  x_datetime <- convert_datetime(x, tz = "UTC")
   attr(x_datetime, "tzone") <- "UTC"
+  exp <- as.POSIXct("2017-10-29 00:02:12", tz = "UTC", origin = "1970-01-01")
+  expect_equal(res, exp, ignore_attr = "tzone")
 })
 
 test_that("convert hms works", {

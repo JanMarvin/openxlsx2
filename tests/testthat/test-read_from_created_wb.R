@@ -159,7 +159,7 @@ test_that("reading with pre defined types works", {
     numeric = seq(-0.1, 0.1, by = 0.05),
     integer = sample(1:5, 5, TRUE),
     date = Sys.Date() - 0:4,
-    datetime = Sys.time() - 0:4,
+    datetime = as.POSIXct(Sys.time() - 0:4, tz = "UTC"),
     character = letters[1:5],
     stringsAsFactors = FALSE
   )
