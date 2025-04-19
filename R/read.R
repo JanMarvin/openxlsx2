@@ -416,7 +416,7 @@ wb_to_df <- function(
         if (convert)
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
         else
-          cc$val[sel] <- as.character(convert_date(cc$v[sel]))
+          cc$val[sel] <- as.character(convert_date(cc$v[sel], origin = origin))
         cc$typ[sel]  <- "d"
       }
 
@@ -436,7 +436,7 @@ wb_to_df <- function(
         if (convert)
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
         else
-          cc$val[sel] <- as.character(convert_datetime(cc$v[sel]))
+          cc$val[sel] <- as.character(convert_datetime(cc$v[sel], origin = origin))
         cc$typ[sel]  <- "p"
       }
     }
@@ -655,8 +655,8 @@ wb_to_df <- function(
       stop("no variable from `types` found in data")
     }
 
-    date_conv     <- convert_date
-    datetime_conv <- convert_datetime
+    date_conv     <- function(x) convert_date(x, origin = origin)
+    datetime_conv <- function(x) convert_datetime(x, origin = origin)
   }
 
   # could make it optional or explicit

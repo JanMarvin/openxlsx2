@@ -134,3 +134,28 @@ test_that("both origins work", {
     convert_date(39267, origin = "1904-01-01")
   )
 })
+
+test_that("date 1904 works as expected", {
+  set.seed(123)
+  vpos <- as.POSIXct(Sys.time() + sample(runif(5)*1e6, 20, T), tz = "UTC")
+  vdte <- as.Date(vpos)
+  df <- data.frame(
+    int = 1:20,
+    dte = vdte,
+    pos = vpos,
+    var1 = unname(convert_to_excel_date(as.data.frame(vdte), date1904 = TRUE)),
+    var2 = unname(convert_to_excel_date(as.data.frame(vpos), date1904 = TRUE))
+  )
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$workbook$workbookPr <- '<workbookPr date1904="true"/>'
+  wb$add_data(x = df)
+
+  got <- wb$to_df(types = c(var1 = "Date", var2 = "POSIXct"))
+  expect_equal(df[c("dte", "pos")], got[c("var1", "var2")], ignore_attr = TRUE)
+
+  got <- wb$to_df(convert = FALSE)
+  expect_equal(as.character(df$dte), got[["dte"]])
+  # ignore rounding differences
+  expect_equal(as.Date(df$pos), as.Date(got[["pos"]], tz = "UTC"))
+})
