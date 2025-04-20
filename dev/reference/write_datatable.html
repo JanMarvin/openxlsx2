@@ -204,7 +204,14 @@ are reserved for internal functions. If you need these. You have to wrap
 the input string in <code><a href="fmt_txt.html">fmt_txt()</a></code>.</p>
 <p>The columns of <code>x</code> with class Date/POSIXt, currency, accounting, hyperlink,
 percentage are automatically styled as dates, currency, accounting,
-hyperlinks, percentages respectively.</p>
+hyperlinks, percentages respectively. When writing POSIXt, the users local
+timezone should not matter. The openxml standard does not have a timezone
+and the conversion from the local timezone should happen internally, so that
+date and time are converted, but the timezone is dropped. This conversion
+could cause a minor precision loss. The datetime in R and in spreadsheets
+might differ by 1 second, caused by floating point precision. When read from
+the worksheet, starting with <code>openxlsx2</code> release <code>1.15</code> the datetime is
+returned in <code>"UTC"</code>.</p>
 <p>Functions <code><a href="wb_add_data.html">wb_add_data()</a></code> and <code><a href="wb_add_data_table.html">wb_add_data_table()</a></code> behave quite similar. The
 distinction is that the latter creates a table in the worksheet that can be
 used for different kind of formulas and can be sorted independently, though

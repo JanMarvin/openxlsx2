@@ -55,7 +55,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Grouping of rows does no longer require the groups to be initialized in the worksheet. <a href="https://github.com/JanMarvin/openxlsx2/pull/1303" class="external-link">1303</a>
+<ul><li>Grouping of rows does no longer require the rows to be initialized in the worksheet. <a href="https://github.com/JanMarvin/openxlsx2/pull/1303" class="external-link">1303</a>
 </li>
 <li>Fix another case where <code>cc</code> was unintentionally shorten when applying a <code>cm</code> formula. Not sure if the cause for this is in the <code>cm</code> formula or in some other place.</li>
 <li>
@@ -70,6 +70,15 @@
 <li>Similarly, if available, the entire shared strings table was converted to text upon loading. Now, this conversion is postponed until explicitly requested. Both approaches have their advantages: reading shared strings on load is useful when they are extensively shared across worksheets and multiple worksheets are retrieved via <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, while delaying conversion saves memory and computation time when not required. However, in the latter case, shared strings across multiple worksheets will need to be converted each time they are accessed. The impact of this change should be monitored.</li>
 <li>
 <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code> was improved to better handle many combined dims like “A1:B1,A3:D4”</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>Improved performance when reading .xlsx files containing a large number of datetime variables. Datetime columns are now consistently returned as <code>POSIXct</code> objects in the UTC timezone. <a href="https://github.com/JanMarvin/openxlsx2/pull/1331" class="external-link">1331</a>
+<ul><li>
+<strong>Reason:</strong> Standardizing datetime representation to UTC simplifies internal handling and eliminates complexities related to local timezones and Daylight Saving Time during data import, leading to performance benefits.</li>
+<li>
+<strong>Impact:</strong> Previously, datetimes were returned in the system’s local timezone (<code><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone()</a></code>). Users will now receive datetimes in UTC (same date and time, but different timezone). If local time representation is needed, explicit conversion using functions like <code>lubridate::force_tz()</code> is required after reading the data.</li>
+</ul></li>
 </ul><hr></div>
 </div>
     <div class="section level2">
