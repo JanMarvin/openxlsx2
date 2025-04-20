@@ -206,7 +206,7 @@ test_that("handle 29Feb1900", {
 
   dates <- c("1900-02-28", "1900-03-01")
   as_date <- as.Date(dates)
-  as_posix <- as.POSIXct(dates)
+  as_posix <- as.POSIXct(dates, tz = "UTC")
 
   exp <- c(59, 61)
   got <- conv_to_excel_date(as_date)

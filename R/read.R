@@ -34,6 +34,10 @@
 #' Opening, saving and closing the file in a spreadsheet software will resolve
 #' this.
 #'
+#' Prior to release `1.15`, datetime variables (yyyy-mm-dd hh:mm:ss) were
+#' imported in the users current timezone (`Sys.timezone()`). This was
+#' changed. All datetime variables are now imported with timezone `"UTC"`.
+#'
 #' @seealso [wb_get_named_regions()]
 #'
 #' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.
@@ -413,7 +417,10 @@ wb_to_df <- function(
 
       if (any(uccs %in% xlsx_date_style)) {
         sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_date(cc$v[sel], origin = origin)))
+        if (convert)
+          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
+        else
+          cc$val[sel] <- as.character(convert_date(cc$v[sel], origin = origin))
         cc$typ[sel]  <- "d"
       }
 
@@ -430,7 +437,10 @@ wb_to_df <- function(
 
       if (any(uccs %in% xlsx_posix_style)) {
         sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != ""
-        cc$val[sel] <- suppressWarnings(as.character(convert_datetime(cc$v[sel], origin = origin)))
+        if (convert)
+          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
+        else
+          cc$val[sel] <- as.character(convert_datetime(cc$v[sel], origin = origin))
         cc$typ[sel]  <- "p"
       }
     }
@@ -617,8 +627,8 @@ wb_to_df <- function(
 
   if (missing(types)) {
     types <- guess_col_type(tt)
-    date_conv     <- as.Date
-    datetime_conv <- as.POSIXct
+    date_conv     <- function(x) as.Date(.POSIXct(as.double(x), "UTC"), tz = "UTC", origin = "1970-01-01")
+    datetime_conv <- function(x) .POSIXct(as.double(x), "UTC")
   } else {
     # TODO check if guessing only if !all() is possible
     if (any(xlsx_cols_names %in% names(types))) {
@@ -649,8 +659,8 @@ wb_to_df <- function(
       stop("no variable from `types` found in data")
     }
 
-    date_conv     <- convert_date
-    datetime_conv <- convert_datetime
+    date_conv     <- function(x) convert_date(x, origin = origin)
+    datetime_conv <- function(x) convert_datetime(x, origin = origin)
   }
 
   # could make it optional or explicit
@@ -667,8 +677,8 @@ wb_to_df <- function(
       # convert "#NUM!" to "NaN" -- then converts to NaN
       # maybe consider this an option to instead return NA?
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv, origin = origin)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv, origin = origin)
+      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
+      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
       if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
 

@@ -72,6 +72,27 @@ So where the documentation uses a 'color', the function should also accept a 'co
 However, this is not indicated by the autocompletion.
 }
 
+\subsection{Numeric Precision}{
+
+R typically uses IEEE 754 double-precision floating-point
+numbers. When \code{openxlsx2} writes these R numeric values to a spreadsheet,
+it stores them using double precision (and shortens if possible) within
+the file structure. However, spreadsheet software operates with, displays,
+and performs calculations using only about 15 significant decimal digits.
+If spreadsheet software encounters a number with higher precision (like one
+written by \code{openxlsx2}), it will typically round that number to 15
+significant digits for its internal use and display. Conversely, when
+reading numeric data from an xlsx/xlsm file, \code{openxlsx2} reads the stored
+double-precision value. However, potential discrepancies can still arise.
+If the number was originally created or calculated within Excel and
+exceeded 15 digits, Excel may have already rounded it before saving.
+Additionally, subtle rounding differences can sometimes occur during the
+XML-to-numeric conversion when reading the file into R. Expect minor
+variations, especially in the least significant digits, and avoid direct
+equality (\code{==}) comparisons; check for differences within a small
+tolerance instead.
+}
+
 \subsection{Authors and contributions}{
 
 For a full list of all authors that have made this package possible and for whom we are grateful, please see:

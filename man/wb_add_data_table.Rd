@@ -111,7 +111,14 @@ the input string in \code{fmt_txt()}.
 
 The columns of \code{x} with class Date/POSIXt, currency, accounting, hyperlink,
 percentage are automatically styled as dates, currency, accounting,
-hyperlinks, percentages respectively.
+hyperlinks, percentages respectively. When writing POSIXt, the users local
+timezone should not matter. The openxml standard does not have a timezone
+and the conversion from the local timezone should happen internally, so that
+date and time are converted, but the timezone is dropped. This conversion
+could cause a minor precision loss. The datetime in R and in spreadsheets
+might differ by 1 second, caused by floating point precision. When read from
+the worksheet, starting with \code{openxlsx2} release \code{1.15} the datetime is
+returned in \code{"UTC"}.
 
 Functions \code{\link[=wb_add_data]{wb_add_data()}} and \code{\link[=wb_add_data_table]{wb_add_data_table()}} behave quite similar. The
 distinction is that the latter creates a table in the worksheet that can be

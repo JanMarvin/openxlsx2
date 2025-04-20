@@ -168,6 +168,10 @@ via \code{\link[=wb_add_formula]{wb_add_formula()}}. This is because only the fo
 to be evaluated when the file is opened in a spreadsheet software.
 Opening, saving and closing the file in a spreadsheet software will resolve
 this.
+
+Prior to release \code{1.15}, datetime variables (yyyy-mm-dd hh:mm:ss) were
+imported in the users current timezone (\code{Sys.timezone()}). This was
+changed. All datetime variables are now imported with timezone \code{"UTC"}.
 }
 \examples{
 ###########################################################################
