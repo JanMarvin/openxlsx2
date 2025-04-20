@@ -89,7 +89,6 @@ bentUpArrow
 blankRow
 blockArc
 bookview
-bool
 borderCallout
 bracePair
 bracketPair
@@ -106,10 +105,8 @@ chartX
 chartsheet
 chartsheets
 circularArrow
-cloneable
 cloudCallout
 codecov
-coercible
 colNames
 colOffset
 colname
@@ -142,8 +139,6 @@ dashDot
 dashDotDot
 databar
 dateAxis
-datetime
-datetimes
 dcterms
 de
 decrypt
@@ -222,6 +217,7 @@ gridLines
 halfFrame
 hasDrawing
 hdpi
+hh
 hms
 homePlate
 horizontalScroll
@@ -316,7 +312,6 @@ posixt
 pre
 printTitleCols
 printTitleRows
-priori
 pugi
 pugixml
 quadArrow
@@ -383,7 +378,7 @@ textLength
 th
 thaiDistributed
 timelineCaches
-tooltip
+timezones
 totalLabel
 totalRow
 totalsRowCount
@@ -427,3 +422,4 @@ xlsx
 yWindow
 yaml
 yy
+yyyy

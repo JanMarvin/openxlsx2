@@ -159,7 +159,14 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALS
 #'
 #' The columns of `x` with class Date/POSIXt, currency, accounting, hyperlink,
 #' percentage are automatically styled as dates, currency, accounting,
-#' hyperlinks, percentages respectively.
+#' hyperlinks, percentages respectively. When writing POSIXt, the users local
+#' timezone should not matter. The openxml standard does not have a timezone
+#' and the conversion from the local timezone should happen internally, so that
+#' date and time are converted, but the timezone is dropped. This conversion
+#' could cause a minor precision loss. The datetime in R and in spreadsheets
+#' might differ by 1 second, caused by floating point precision. When read from
+#' the worksheet, starting with `openxlsx2` release `1.15` the datetime is
+#' returned in `"UTC"`.
 #'
 #' Functions [wb_add_data()] and [wb_add_data_table()] behave quite similar. The
 #' distinction is that the latter creates a table in the worksheet that can be
