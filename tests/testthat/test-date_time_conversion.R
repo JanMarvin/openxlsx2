@@ -20,23 +20,25 @@ test_that("convert to date", {
 
 test_that("convert to datetime", {
   x <- 43037 + 2 / 1440
-  res <- convert_datetime(x, tx = Sys.timezone())
-  exp <- as.POSIXct("2017-10-29 00:02:00", tz = Sys.timezone())
+  res <- convert_datetime(x, tz = Sys.timezone())
+  exp <- as.POSIXct(1509235320, tz = Sys.timezone(), origin = "1970-01-01")
   expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2 / 1440 + 1 / 86400
-  res <- convert_datetime(x, tx = Sys.timezone())
-  exp <- as.POSIXct("2017-10-29 00:02:01", tz = Sys.timezone())
+  res <- convert_datetime(x, tz = Sys.timezone())
+  exp <- as.POSIXct(1509235321, tz = Sys.timezone(), origin = "1970-01-01")
   expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2.50 / 1440
-  res <- convert_datetime(x, tx = Sys.timezone())
-  exp <- as.POSIXct("2017-10-29 00:02:30", tz = Sys.timezone())
+  res <- convert_datetime(x, tz = Sys.timezone())
+  exp <- as.POSIXct(1509235350, tz = Sys.timezone(), origin = "1970-01-01")
   expect_equal(res, exp, ignore_attr = "tzone")
 
   x <- 43037 + 2 / 1440 + 12.12 / 86400
-  x_datetime <- convert_datetime(x, tx = "UTC")
+  x_datetime <- convert_datetime(x, tz = "UTC")
   attr(x_datetime, "tzone") <- "UTC"
+  exp <- as.POSIXct("2017-10-29 00:02:12", tz = "UTC", origin = "1970-01-01")
+  expect_equal(res, exp, ignore_attr = "tzone")
 })
 
 test_that("convert hms works", {
@@ -124,4 +126,36 @@ test_that("date 1904 workbooks to df work", {
 
   expect_equal(exp, got)
 
+})
+
+test_that("both origins work", {
+  expect_equal(
+    convert_date(40729),
+    convert_date(39267, origin = "1904-01-01")
+  )
+})
+
+test_that("date 1904 works as expected", {
+  set.seed(123)
+  vpos <- as.POSIXct(Sys.time() + sample(runif(5) * 1e6, 20, TRUE), tz = "UTC")
+  vdte <- as.Date(vpos)
+  df <- data.frame(
+    int = 1:20,
+    dte = vdte,
+    pos = vpos,
+    var1 = unname(convert_to_excel_date(as.data.frame(vdte), date1904 = TRUE)),
+    var2 = unname(convert_to_excel_date(as.data.frame(vpos), date1904 = TRUE))
+  )
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$workbook$workbookPr <- '<workbookPr date1904="true"/>'
+  wb$add_data(x = df)
+
+  got <- wb$to_df(types = c(var1 = "Date", var2 = "POSIXct"))
+  expect_equal(df[c("dte", "pos")], got[c("var1", "var2")], ignore_attr = TRUE)
+
+  got <- wb$to_df(convert = FALSE)
+  expect_equal(as.character(df$dte), got[["dte"]])
+  # ignore rounding differences
+  expect_equal(as.Date(df$pos), as.Date(got[["pos"]], tz = "UTC"))
 })

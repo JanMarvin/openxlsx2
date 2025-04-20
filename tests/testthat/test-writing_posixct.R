@@ -28,8 +28,8 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   op <- options("openxlsx2.datetimeFormat" = "dd/mm/yy hh:mm")
   on.exit(options(op), add = TRUE)
 
-  tstart1 <- as.POSIXct("12/03/2018 08:30", format = "%d/%m/%Y %H:%M")
-  tstart2 <- as.POSIXct("10/03/2018 08:30", format = "%d/%m/%Y %H:%M")
+  tstart1 <- as.POSIXct("12/03/2018 08:30", format = "%d/%m/%Y %H:%M", tz = "UTC")
+  tstart2 <- as.POSIXct("10/03/2018 08:30", format = "%d/%m/%Y %H:%M", tz = "UTC")
   TimeDT1 <- c(NA, 0, 10, 30, 60, 120, 240, 720, 1440) * 60 + tstart1
   TimeDT2 <- c(0, 10, 30, 60, 120, 240, 720, NA, 1440) * 60 + tstart2
 

@@ -11,6 +11,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// date_to_unix
+Rcpp::CharacterVector date_to_unix(Rcpp::CharacterVector x, std::string origin, bool datetime);
+RcppExport SEXP _openxlsx2_date_to_unix(SEXP xSEXP, SEXP originSEXP, SEXP datetimeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< std::string >::type origin(originSEXP);
+    Rcpp::traits::input_parameter< bool >::type datetime(datetimeSEXP);
+    rcpp_result_gen = Rcpp::wrap(date_to_unix(x, origin, datetime));
+    return rcpp_result_gen;
+END_RCPP
+}
 // to_long
 bool to_long(std::string path);
 RcppExport SEXP _openxlsx2_to_long(SEXP pathSEXP) {
@@ -998,6 +1011,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_openxlsx2_date_to_unix", (DL_FUNC) &_openxlsx2_date_to_unix, 3},
     {"_openxlsx2_to_long", (DL_FUNC) &_openxlsx2_to_long, 1},
     {"_openxlsx2_openxlsx2_type", (DL_FUNC) &_openxlsx2_openxlsx2_type, 1},
     {"_openxlsx2_col_to_int", (DL_FUNC) &_openxlsx2_col_to_int, 1},
