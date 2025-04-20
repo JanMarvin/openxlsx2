@@ -649,9 +649,9 @@ write_data2 <- function(
         wb$add_cell_style(
           sheet = sheetno,
           dims = dim_sel,
-          applyNumberFormat = "1",
-          quotePrefix = "1",
-          numFmtId = "49"
+          apply_number_format = "1",
+          quote_prefix = "1",
+          num_fmt_id = "49"
         )
         cc$typ <- NULL
       }

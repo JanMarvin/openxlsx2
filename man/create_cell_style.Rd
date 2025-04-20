@@ -104,9 +104,9 @@ The number format can be a custom one created by \code{\link[=create_numfmt]{cre
 }
 }
 \examples{
-foo_fill <- create_fill(patternType = "lightHorizontal",
-                        fgColor = wb_color("blue"),
-                        bgColor = wb_color("orange"))
+foo_fill <- create_fill(pattern_type = "lightHorizontal",
+                        fg_color = wb_color("blue"),
+                        bg_color = wb_color("orange"))
 foo_font <- create_font(sz = 36, b = TRUE, color = wb_color("yellow"))
 
 wb <- wb_workbook()

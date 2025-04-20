@@ -119,7 +119,7 @@ wb$styles_mgr$add(new_border, "new_border")
 
 
 # create a fill style and assign it to the workbook
-new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "FF334E6F"))
+new_fill <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "FF334E6F"))
 wb$styles_mgr$add(new_fill, "new_fill")
 
 # create a font style and assign it to the workbook
@@ -507,8 +507,8 @@ dx6 <- create_dxfs_style(
 dx7 <- create_dxfs_style(
   font_color = wb_color("white"),
   text_bold = TRUE,
-  bgFill = wb_color("red"),
-  fgColor = wb_color("red")
+  bg_fill = wb_color("red"),
+  fg_color = wb_color("red")
 )
 
 dx8 <- create_dxfs_style(
