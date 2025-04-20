@@ -1038,23 +1038,10 @@ wbWorksheet <- R6::R6Class(
         )
       )
 
-      if (type == "date") {
-        value <- as.integer(value) + origin
-      }
+      date1904 <- ifelse(origin == "1904-01-01", TRUE, FALSE)
 
-      if (type == "time") {
-        t <- format(value[1], "%z")
-        offSet <-
-          suppressWarnings(
-            ifelse(substr(t, 1, 1) == "+", 1L, -1L) * (
-              as.integer(substr(t, 2, 3)) + as.integer(substr(t, 4, 5)) / 60
-            ) / 24
-          )
-        if (is.na(offSet)) {
-          offSet[i] <- 0
-        }
-
-        value <- as.numeric(as.POSIXct(value)) / 86400 + origin + offSet
+      if (type == "date" || type == "time") {
+        value <- conv_to_excel_date(value, date1904 = date1904)
       }
 
       form <- sapply(

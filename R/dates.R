@@ -115,6 +115,7 @@ parseOffset <- function(tz) {
 #' @noRd
 as_POSIXct_utc <- function(x) {
   z <- as.POSIXct(x, tz = "UTC")
+  # this should be superfluous?
   attr(z, "tzone") <- "UTC"
   z
 }
@@ -151,7 +152,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
           as_POSIXlt_hms(x)
       })
     }
-    x <- as.POSIXct(x)
+    x <- as.POSIXct(x, tz = "UTC")
   }
 
   if (!inherits(x, "Date") && !inherits(x, "POSIXct")) {

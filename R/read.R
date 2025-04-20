@@ -34,6 +34,10 @@
 #' Opening, saving and closing the file in a spreadsheet software will resolve
 #' this.
 #'
+#' Prior to release `1.15`, datetime variables (yyyy-mm-dd hh:mm:ss) were
+#' imported in the users current timezone (`Sys.timezone()`). This was
+#' changed. All datetime variables are now imported with timezone `"UTC"`.
+#'
 #' @seealso [wb_get_named_regions()]
 #'
 #' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.
