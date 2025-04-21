@@ -1,5 +1,5 @@
-#include <Rcpp.h>
 #include <string>
+#include "openxlsx2.h"
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector date_to_unix(Rcpp::CharacterVector x, std::string origin = "1900-01-01", bool datetime = true) {
