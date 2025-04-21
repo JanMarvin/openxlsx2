@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## Maintenance
+
+* Legacy `create_comment()` is now deprecated in favor of `wb_comment()`.
+
 ## New features
 
 * A normalization function was added for separators in formulas. In English locales, formulas require a comma as argument separator, locales that use the comma a decimal separator, a semicolon is used as argument separator. We added a check to replace semicolons added in formulas, because these were hard to spot and if overlooked could brick the XML worksheet.

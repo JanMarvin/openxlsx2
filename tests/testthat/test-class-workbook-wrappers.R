@@ -465,7 +465,7 @@ test_that("wb_copy_cells() is a wrapper", {
 
 test_that("wb_add_comment() is a wrapper", {
 
-  c1 <- create_comment(text = "this is a comment", author = "")
+  c1 <- wb_comment(text = "this is a comment", author = "")
 
   wb <- wb_workbook()$add_worksheet()
   expect_wrapper(
@@ -503,7 +503,7 @@ test_that("wb_get_comment() is a wrapper", {
 
 test_that("wb_remove_comment() is a wrapper", {
 
-  c1 <- create_comment(text = "this is a comment", author = "")
+  c1 <- wb_comment(text = "this is a comment", author = "")
 
   wb <- wb_workbook()$
     add_worksheet()$
