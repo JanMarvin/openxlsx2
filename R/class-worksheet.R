@@ -523,10 +523,13 @@ wbWorksheet <- R6::R6Class(
       ddims <- dims_to_rowcol(dims)
 
       rows <- ddims[["row"]]
-      cols <- ddims[["col"]]
+      cols <- col2int(ddims[["col"]])
+
+      if (length(cols) > 2 && any(diff(cols) != 1))
+        warning("cols > 2, will create range from min to max.")
 
       rows <- range(as.integer(rows))
-      cols <- range(col2int(cols))
+      cols <- range(cols)
 
       sqref <- paste0(int2col(cols), rows)
       sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
@@ -582,8 +585,13 @@ wbWorksheet <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     unmerge_cells = function(rows = NULL, cols = NULL) {
 
+      cols <- col2int(cols)
+
+      if (length(cols) > 2 && any(diff(cols) != 1))
+        warning("cols > 2, will create range from min to max.")
+
       rows <- range(as.integer(rows))
-      cols <- range(col2int(cols))
+      cols <- range(cols)
 
       sqref <- paste0(int2col(cols), rows)
       sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")

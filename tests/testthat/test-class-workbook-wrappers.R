@@ -59,7 +59,7 @@ test_that("wb_save() is a wrapper", {
 
 test_that("wb_merge_cells(), wb_unmerge_cells() are wrappers", {
   wb <- wb_workbook()$add_worksheet("sheet")
-  params <- list(sheet = "sheet", rows = 1:2, cols = 2)
+  params <- list(sheet = "sheet", dims = wb_dims(rows = 1:2, cols = 2))
   expect_wrapper("merge_cells", wb = wb, params = params)
   expect_wrapper("unmerge_cells", wb = wb, params = params)
 })
@@ -575,7 +575,7 @@ test_that("wb_add_form_control() is a wrapper", {
 
 test_that("wb_add_conditional_formatting() is a wrapper", {
   wb <- wb_workbook()$add_worksheet(1)
-  params <- list(sheet = 1, cols = 1, rows = 1, type = "topN")
+  params <- list(sheet = 1, dims = wb_dims(cols = 1, rows = 1), type = "topN")
   expect_wrapper(
     "add_conditional_formatting",
     wb = wb,

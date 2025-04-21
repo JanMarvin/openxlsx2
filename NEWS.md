@@ -3,6 +3,7 @@
 ## Maintenance
 
 * Legacy `create_comment()` is now deprecated in favor of `wb_comment()`.
+* Usage of `rows` and `cols` is now deprecated in favor of `wb_dims(rows = ..., cols = ...)`.
 
 ## New features
 

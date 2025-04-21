@@ -7,10 +7,10 @@ test_that("fill merged cells", {
   wb$add_data(1, 4, startRow = 2, startCol = 4)
   wb$add_data(1, t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
 
-  wb$merge_cells(1, rows = 1, cols = 2:4)
-  wb$merge_cells(1, rows = 3, cols = 2:4)
-  wb$merge_cells(1, rows = 4, cols = 2:4)
-  wb$merge_cells(1, rows = 5, cols = 2:4)
+  wb$merge_cells(1, wb_dims(rows = 1, cols = 2:4))
+  wb$merge_cells(1, wb_dims(rows = 3, cols = 2:4))
+  wb$merge_cells(1, wb_dims(rows = 4, cols = 2:4))
+  wb$merge_cells(1, wb_dims(rows = 5, cols = 2:4))
 
   tmp_file <- temp_xlsx()
   wb_save(wb, tmp_file)
@@ -39,11 +39,11 @@ test_that("fill merged cells", {
 
 test_that("merge and unmerge cells", {
 
-  wb <- wb_workbook()$add_worksheet()$merge_cells(rows = 1:2, cols = 1:2)
+  wb <- wb_workbook()$add_worksheet()$merge_cells(dims = wb_dims(rows = 1:2, cols = 1:2))
 
-  expect_error(wb$merge_cells(rows = 1:2, cols = 1:2), "Remove existing merge first.")
-  expect_silent(wb$unmerge_cells(rows = 1:2, cols = 1:2))
-  expect_silent(wb$merge_cells(rows = 1:2, cols = 1:2))
+  expect_error(wb$merge_cells(dims = wb_dims(rows = 1:2, cols = 1:2)), "Remove existing merge first.")
+  expect_silent(wb$unmerge_cells(dims = wb_dims(rows = 1:2, cols = 1:2)))
+  expect_silent(wb$merge_cells(dims = wb_dims(rows = 1:2, cols = 1:2)))
 
 })
 
@@ -52,7 +52,7 @@ test_that("fill merged NA cells", {
   wb$add_worksheet("sheet1")
   wb$add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
 
-  wb$merge_cells(1, rows = 1:4, cols = 4)
+  wb$merge_cells(1, wb_dims(rows = 1:4, cols = 4))
 
   tmp_file <- temp_xlsx()
   wb_save(wb, tmp_file)
