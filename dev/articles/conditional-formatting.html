@@ -471,6 +471,9 @@ Databar conditional formatting
 <span>  type <span class="op">=</span> <span class="st">"bottomN"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rank <span class="op">=</span> <span class="fl">20</span>, percent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in wb$add_conditional_formatting("bottomN", cols = 2, rows = 2:11, : 'cols/rows' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'dims' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated") and help("openxlsx2-deprecated").</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"logical operators"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
