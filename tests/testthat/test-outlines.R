@@ -40,7 +40,7 @@ test_that("group rows", {
 
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
-    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, colNames = FALSE)$
+    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, col_names = FALSE)$
     group_rows("Sheet 1", 1:4)
 
   got <- wb$worksheets[[1]]$sheet_data$row_attr$outlineLevel
@@ -51,7 +51,7 @@ test_that("group rows", {
 
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
-    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, colNames = FALSE)$
+    add_data(x = cbind(rep(NA, 4)), na.strings = NULL, col_names = FALSE)$
     group_rows("Sheet 1", 1:4, collapsed = TRUE)
 
   got <- wb$worksheets[[1]]$sheet_data$row_attr$collapsed
@@ -185,7 +185,7 @@ test_that("with outlinePr", {
 
   wb <- wb_workbook()
   wb$add_worksheet("AirPass")
-  wb$add_data("AirPass", t2, rowNames = TRUE)
+  wb$add_data("AirPass", t2, row_names = TRUE)
 
   wb$worksheets[[1]]$sheetPr <-
     xml_node_create(

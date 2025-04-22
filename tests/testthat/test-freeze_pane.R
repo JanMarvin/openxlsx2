@@ -1,44 +1,44 @@
 test_that("Freeze Panes", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$freeze_pane(1, firstActiveRow = 3, firstActiveCol = 3)
+  wb$freeze_pane(1, first_active_row = 3, first_active_col = 3)
   expected <- "<pane ySplit=\"2\" xSplit=\"2\" topLeftCell=\"C3\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$freeze_pane(1, firstActiveRow = 1, firstActiveCol = 3)
+  wb$freeze_pane(1, first_active_row = 1, first_active_col = 3)
   expected <- "<pane xSplit=\"2\" topLeftCell=\"C1\" activePane=\"topRight\" state=\"frozen\"/><selection pane=\"topRight\"/>"
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$freeze_pane(1, firstActiveRow = 2, firstActiveCol = 1)
+  wb$freeze_pane(1, first_active_row = 2, first_active_col = 1)
   expected <- "<pane ySplit=\"1\" topLeftCell=\"A2\" activePane=\"bottomLeft\" state=\"frozen\"/><selection pane=\"bottomLeft\"/>"
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$freeze_pane(1, firstActiveRow = 2, firstActiveCol = 4)
+  wb$freeze_pane(1, first_active_row = 2, first_active_col = 4)
   expected <- "<pane ySplit=\"1\" xSplit=\"3\" topLeftCell=\"D2\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$freeze_pane(1, firstCol = TRUE)
+  wb$freeze_pane(1, first_col = TRUE)
   expected <- "<pane xSplit=\"1\" topLeftCell=\"B1\" activePane=\"topRight\" state=\"frozen\"/>"
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$freeze_pane(1, firstRow = TRUE)
+  wb$freeze_pane(1, first_row = TRUE)
 
   expected <- "<pane ySplit=\"1\" topLeftCell=\"A2\" activePane=\"bottomLeft\" state=\"frozen\"/>"
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$freeze_pane(1, firstRow = TRUE, firstCol = TRUE)
+  wb$freeze_pane(1, first_row = TRUE, first_col = TRUE)
 
   expected <- "<pane ySplit=\"1\" xSplit=\"1\" topLeftCell=\"B2\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
   expect_equal(wb$worksheets[[1]]$freezePane, expected)
@@ -54,13 +54,13 @@ test_that("Freeze Panes", {
   wb$add_worksheet("Sheet 6")
   wb$add_worksheet("Sheet 7")
 
-  wb$freeze_pane(sheet = 1, firstActiveRow = 3, firstActiveCol = 3)
-  wb$freeze_pane(sheet = 2, firstActiveRow = 1, firstActiveCol = 3)
-  wb$freeze_pane(sheet = 3, firstActiveRow = 2, firstActiveCol = 1)
-  wb$freeze_pane(sheet = 4, firstActiveRow = 2, firstActiveCol = 4)
-  wb$freeze_pane(sheet = 5, firstCol = TRUE)
-  wb$freeze_pane(sheet = 6, firstRow = TRUE)
-  wb$freeze_pane(sheet = 7, firstRow = TRUE, firstCol = TRUE)
+  wb$freeze_pane(sheet = 1, first_active_row = 3, first_active_col = 3)
+  wb$freeze_pane(sheet = 2, first_active_row = 1, first_active_col = 3)
+  wb$freeze_pane(sheet = 3, first_active_row = 2, first_active_col = 1)
+  wb$freeze_pane(sheet = 4, first_active_row = 2, first_active_col = 4)
+  wb$freeze_pane(sheet = 5, first_col = TRUE)
+  wb$freeze_pane(sheet = 6, first_row = TRUE)
+  wb$freeze_pane(sheet = 7, first_row = TRUE, first_col = TRUE)
 
 
   expected <- "<pane ySplit=\"2\" xSplit=\"2\" topLeftCell=\"C3\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"

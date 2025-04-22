@@ -30,14 +30,14 @@ test_that("wb_to_df", {
   expect_equal(int2col(seq_along(got)), names(got))
 
   # do not try to identify dates in the data
-  got <- wb_to_df(wb1, detectDates = FALSE)
+  got <- wb_to_df(wb1, detect_dates = FALSE)
   expect_equal(convert_to_excel_date(df = exp["Var5"], date1904 = FALSE),
                got["Var5"])
 
   expect_error(convertToExcelDate(df = exp["Var5"], date1904 = FALSE), "defunct")
 
   # return the underlying Excel formula instead of their values
-  got <- wb_to_df(wb1, showFormula = TRUE)
+  got <- wb_to_df(wb1, show_formula = TRUE)
   expect_equal(got$Var7[1], "1/0")
 
   # read dimension without colNames
@@ -85,7 +85,7 @@ test_that("wb_to_df", {
   expect_equal(test, got, ignore_attr = TRUE)
 
   # start in row 5
-  got <- wb_to_df(wb1, startRow = 5, colNames = FALSE)
+  got <- wb_to_df(wb1, start_row = 5, col_names = FALSE)
   test <- exp[4:10, ]
   names(test) <- int2col(seq_along(test))
   test[c("D", "G", "H")] <- lapply(test[c("D", "G", "H")], as.numeric)
@@ -243,10 +243,10 @@ test_that("fillMergedCells works with dims", {
              start_row = 3, start_col = 1, col_names = FALSE)
 
   # merge rows 1 and 2 in each column
-  wb$merge_cells(1, rows = 1:2, cols = 1)
-  wb$merge_cells(1, rows = 1:2, cols = 2)
-  wb$merge_cells(1, rows = 1:2, cols = 3)
-  wb$merge_cells(1, rows = 1:2, cols = 4)
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 1))
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 2))
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 3))
+  wb$merge_cells(1, wb_dims(rows = 1:2, cols = 4))
 
   # read from second column and fill merged cells
   got <- wb_to_df(wb, dims = "A2:D4", fill_merged_cells = TRUE)

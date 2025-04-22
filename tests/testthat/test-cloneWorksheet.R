@@ -100,7 +100,7 @@ test_that("copy cells", {
   got <- wb_data(wb, sheet = 4, dims = "A20:D23", col_names = FALSE, show_formula = TRUE)[[1]]
   expect_equal(exp, got)
 
-  got <- wb_data(wb, sheet = 5, dims = "A20:D23", colNames = FALSE)
+  got <- wb_data(wb, sheet = 5, dims = "A20:D23", col_names = FALSE)
   expect_equal(unlist(dat), unlist(got), ignore_attr = TRUE)
 
   got <- wb_data(wb, sheet = 6, dims = "A20:D23", col_names = FALSE)
@@ -134,7 +134,7 @@ test_that("cloning comments works", {
 
   tmp <- temp_xlsx()
 
-  c1 <- create_comment(text = "this is a comment",  author = "")
+  c1 <- wb_comment(text = "this is a comment", author = "")
 
   # cloning comments from loaded worksheet did not work
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)$save(tmp)
@@ -277,7 +277,7 @@ test_that("cloning column and row styles works", {
     add_worksheet()$add_data(x = head(mtcars))$
     add_worksheet()$add_data(x = head(iris))
 
-  new_fill <- create_fill(patternType = "solid", fgColor = wb_color(hex = "yellow"))
+  new_fill <- create_fill(pattern_type = "solid", fg_color = wb_color(hex = "yellow"))
 
   wb$styles_mgr$add(new_fill, "new_fill")
   new_cellxfs <- create_cell_style(

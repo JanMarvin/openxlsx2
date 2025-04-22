@@ -164,29 +164,6 @@ wb_comment <- function(
   invisible(wbComment$new(text = text, author = author, style = style, width = width, height = height, visible = visible))
 }
 
-#' Create a comment
-#'
-#' Use [wb_comment()] in new code. See [openxlsx2-deprecated]
-#'
-#' @inheritParams wb_comment
-#' @param author A string, by default, will use "user"
-#' @param visible Default: `TRUE`. Is the comment visible by default?
-#' @keywords internal
-#' @returns a `wbComment` object
-#' @export
-create_comment <- function(text,
-  author = Sys.info()[["user"]],
-  style = NULL,
-  visible = TRUE,
-  width = 2,
-  height = 4) {
-  #
-  if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
-    .Deprecated("wb_comment()", old = "create_comment()")
-  }
-  wb_comment(text = text, author = author, style = style, visible = visible, width = width[1], height = height[1])
-}
-
 do_write_comment <- function(
     wb,
     sheet,

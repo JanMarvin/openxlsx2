@@ -5,35 +5,35 @@ test_that("class wbComment works", {
 })
 
 test_that("wb_comment and create_comment are the same except for the different defaults", {
-  c1 <- create_comment("x1", author = "")
+  expect_warning(c1 <- create_comment("x1", author = ""), "deprecated")
   c1_wb <- wb_comment("x1", visible = TRUE, author = "")
   expect_equal(c1, c1_wb)
   # create_comment drops multiple widths and heights silently.
   # wb_comment errors in this case
-  expect_silent(create_comment(text = "x", author = "", width = c(1, 2)))
+  expect_warning(create_comment(text = "x", author = "", width = c(1, 2)), "deprecated")
   expect_error(wb_comment(text = "x", author = "", width = c(1, 2)), "width must be a single")
 
 })
 
 test_that("create_comment() works", {
   # error checking
-  expect_silent(create_comment("hi", width = 1))
-  expect_silent(create_comment("hi", width = 1L))
-  expect_silent(create_comment("hi", width = c(1, 2)))
-  expect_silent(create_comment("hi", width = 1:2))
+  expect_warning(create_comment("hi", width = 1), "deprecated")
+  expect_warning(create_comment("hi", width = 1L), "deprecated")
+  expect_warning(create_comment("hi", width = c(1, 2)), "deprecated")
+  expect_warning(create_comment("hi", width = 1:2), "deprecated")
   expect_error(wb_comment("hi", width = 1:2), regexp = "width must be a")
 
-  expect_silent(create_comment("hi", height = 1))
-  expect_silent(create_comment("hi", height = 1L))
-  expect_silent(create_comment("hi", height = 1:2))
+  expect_warning(create_comment("hi", height = 1), "deprecated")
+  expect_warning(create_comment("hi", height = 1L), "deprecated")
+  expect_warning(create_comment("hi", height = 1:2), "deprecated")
   expect_error(wb_comment("hi", height = 1:2))
-  expect_error(create_comment("hi", visible = NULL))
-  expect_error(create_comment("hi", visible = c(TRUE, FALSE)))
+  expect_warning(expect_error(create_comment("hi", visible = NULL)), "deprecated")
+  expect_warning(expect_error(create_comment("hi", visible = c(TRUE, FALSE))), "deprecated")
 
-  expect_error(create_comment("hi", author = 1))
-  expect_error(create_comment("hi", author = c("a", "a")))
+  expect_warning(expect_error(create_comment("hi", author = 1)), "deprecated")
+  expect_warning(expect_error(create_comment("hi", author = c("a", "a"))), "deprecated")
 
-  expect_s3_class(create_comment("Hello"), "wbComment")
+  expect_warning(expect_s3_class(create_comment("Hello"), "wbComment"), "deprecated")
 })
 
 
@@ -43,17 +43,17 @@ test_that("comments", {
   wb$add_worksheet("Sheet 1")
 
   # write comment without author
-  c1 <- create_comment(text = "this is a comment", author = "")
+  c1 <- wb_comment(text = "this is a comment", author = "")
   wb <- wb_add_comment(wb, 1, dims = "B10", comment = c1)
 
   # Write another comment with author information
-  c2 <- create_comment(text = "this is another comment", author = "Marco Polo")
+  c2 <- wb_comment(text = "this is another comment", author = "Marco Polo")
   wb <- wb_add_comment(wb, 1, dims = "C10", comment = c2)
 
   # write a styled comment with system author
   s1 <- create_font(b = "true", color = wb_colour(hex = "FFFF0000"), sz = "12")
   s2 <- create_font(color = wb_colour(hex = "FF000000"), sz = "9")
-  c3 <- create_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
+  c3 <- wb_comment(text = c("This Part Bold red\n\n", "This part black"), style = c(s1, s2))
 
   expect_silent(wb$add_comment(1, dims = "F1", comment = c3))
 
@@ -74,7 +74,7 @@ test_that("comments", {
   wb$add_worksheet()
 
   # write comment without author
-  c1 <- create_comment(text = "this is a comment", author = "", visible = FALSE)
+  c1 <- wb_comment(text = "this is a comment", author = "")
   wb$add_comment(dims = "B10", comment = c1)
 
   expect_silent(wb$save(tmp))
@@ -97,7 +97,7 @@ test_that("load comments", {
   unlink(tempd, recursive = TRUE)
 
   ## add a new comment to a workbook that has comments
-  c1 <- create_comment(text = "this is a comment", author = "")
+  expect_warning(c1 <- create_comment(text = "this is a comment", author = ""), "deprecated")
   expect_silent(wb$add_comment(5, dims = "B10", comment = c1))
 
   wb$save(temp)
@@ -113,7 +113,7 @@ test_that("load comments", {
 
 test_that("wb_add_comment", {
 
-  c1 <- create_comment(text = "this is a comment", author = "")
+  expect_warning(c1 <- create_comment(text = "this is a comment", author = ""), "deprecated")
 
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)
 
@@ -155,7 +155,7 @@ test_that("wb_add_comment() works without supplying a wbComment object.", {
 
 test_that("wb_remove_comment", {
 
-  c1 <- create_comment(text = "this is a comment", author = "")
+  expect_warning(c1 <- create_comment(text = "this is a comment", author = ""), "deprecated")
   wb <- wb_workbook()$
     add_worksheet()$
     add_comment(dims = "A1", comment = c1)$
@@ -179,8 +179,10 @@ test_that("wb_remove_comment", {
 
 test_that("print comment", {
 
-  c2 <- create_comment(text = "this is another comment",
-                       author = "Marco Polo")
+  expect_warning(
+    c2 <- create_comment(text = "this is another comment",
+                       author = "Marco Polo"),
+    "deprecated")
   got <- capture_output(print(c2), print = TRUE)
   exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\n\n\n\n\nFont name: Aptos Narrow\nFont size: 11\nFont color: #000000\n\n"
   expect_equal(got, exp)
@@ -190,7 +192,7 @@ test_that("print comment", {
 test_that("removing comment sheet works", {
 
   temp <- temp_xlsx()
-  c1 <- create_comment(text = "this is a comment", author = "")
+  expect_warning(c1 <- create_comment(text = "this is a comment", author = ""), "deprecated")
 
   wb <- wb_workbook()$
     add_worksheet("Sheet 1")$
@@ -206,7 +208,7 @@ test_that("fmt_txt in comment", {
 
   tmp <- temp_xlsx()
   txt <- fmt_txt("Hello ", bold = TRUE) + fmt_txt("World")
-  c1 <- create_comment(text = txt, author = "bla")
+  expect_warning(c1 <- create_comment(text = txt, author = "bla"), "deprecated")
 
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "B10", comment = c1)
   expect_silent(wb$save(tmp))

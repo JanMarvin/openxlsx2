@@ -12,7 +12,7 @@ test_that("get_base_font works", {
     )
   )
 
-  wb$set_base_font(fontSize = 9, fontName = "Arial", fontColour = wb_colour("red"))
+  wb$set_base_font(font_size = 9, font_name = "Arial", font_colour = wb_colour("red"))
   expect_equal(
     wb$get_base_font(),
     list(

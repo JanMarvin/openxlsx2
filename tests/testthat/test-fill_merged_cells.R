@@ -2,22 +2,22 @@ test_that("fill merged cells", {
   wb <- wb_workbook()
   wb$add_worksheet("sheet1")
   wb$add_data(1, data.frame("A" = 1, "B" = 2))
-  wb$add_data(1, 2, startRow = 2, startCol = 2)
-  wb$add_data(1, 3, startRow = 2, startCol = 3)
-  wb$add_data(1, 4, startRow = 2, startCol = 4)
-  wb$add_data(1, t(matrix(1:4, 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+  wb$add_data(1, 2, start_row = 2, start_col = 2)
+  wb$add_data(1, 3, start_row = 2, start_col = 3)
+  wb$add_data(1, 4, start_row = 2, start_col = 4)
+  wb$add_data(1, t(matrix(1:4, 4, 4)), start_row = 3, start_col = 1, col_names = FALSE)
 
-  wb$merge_cells(1, rows = 1, cols = 2:4)
-  wb$merge_cells(1, rows = 3, cols = 2:4)
-  wb$merge_cells(1, rows = 4, cols = 2:4)
-  wb$merge_cells(1, rows = 5, cols = 2:4)
+  wb$merge_cells(1, wb_dims(rows = 1, cols = 2:4))
+  wb$merge_cells(1, wb_dims(rows = 3, cols = 2:4))
+  wb$merge_cells(1, wb_dims(rows = 4, cols = 2:4))
+  wb$merge_cells(1, wb_dims(rows = 5, cols = 2:4))
 
   tmp_file <- temp_xlsx()
   wb_save(wb, tmp_file)
 
   # in openxlsx X3 and X4 because of name fixing
-  expect_equal(names(read_xlsx(tmp_file, fillMergedCells = FALSE)), c("A", "B", NA_character_, NA_character_))
-  expect_equal(names(read_xlsx(tmp_file, fillMergedCells = TRUE)), c("A", "B", "B", "B"))
+  expect_equal(names(read_xlsx(tmp_file, fill_merged_cells = FALSE)), c("A", "B", NA_character_, NA_character_))
+  expect_equal(names(read_xlsx(tmp_file, fill_merged_cells = TRUE)), c("A", "B", "B", "B"))
 
   r1 <- data.frame("A" = rep(1, 5), "B" = rep(2, 5), "NA1" = rep(3, 5), "NA2" = rep(4, 5))
   rnams <- as.character(seq(2, length.out = nrow(r1)))
@@ -29,42 +29,42 @@ test_that("fill merged cells", {
   r2_1 <- r2[1:5, 1:3]
   names(r2_1) <- c("A", "B", "B")
 
-  expect_equal(read_xlsx(tmp_file, fillMergedCells = FALSE), r1, ignore_attr = TRUE)
-  expect_equal(read_xlsx(tmp_file, fillMergedCells = TRUE), r2, ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, fill_merged_cells = FALSE), r1, ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, fill_merged_cells = TRUE), r2, ignore_attr = TRUE)
 
-  expect_equal(read_xlsx(tmp_file, cols = 1:3, fillMergedCells = TRUE), r2_1, ignore_attr = TRUE)
-  expect_equal(read_xlsx(tmp_file, rows = 1:3, fillMergedCells = TRUE), r2[1:2, ], ignore_attr = TRUE)
-  expect_equal(read_xlsx(tmp_file, cols = 1:3, rows = 1:4, fillMergedCells = TRUE), r2_1[1:3, ], ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, cols = 1:3, fill_merged_cells = TRUE), r2_1, ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, rows = 1:3, fill_merged_cells = TRUE), r2[1:2, ], ignore_attr = TRUE)
+  expect_equal(read_xlsx(tmp_file, cols = 1:3, rows = 1:4, fill_merged_cells = TRUE), r2_1[1:3, ], ignore_attr = TRUE)
 })
 
 test_that("merge and unmerge cells", {
 
-  wb <- wb_workbook()$add_worksheet()$merge_cells(rows = 1:2, cols = 1:2)
+  wb <- wb_workbook()$add_worksheet()$merge_cells(dims = wb_dims(rows = 1:2, cols = 1:2))
 
-  expect_error(wb$merge_cells(rows = 1:2, cols = 1:2), "Remove existing merge first.")
-  expect_silent(wb$unmerge_cells(rows = 1:2, cols = 1:2))
-  expect_silent(wb$merge_cells(rows = 1:2, cols = 1:2))
+  expect_error(wb$merge_cells(dims = wb_dims(rows = 1:2, cols = 1:2)), "Remove existing merge first.")
+  expect_silent(wb$unmerge_cells(dims = wb_dims(rows = 1:2, cols = 1:2)))
+  expect_silent(wb$merge_cells(dims = wb_dims(rows = 1:2, cols = 1:2)))
 
 })
 
 test_that("fill merged NA cells", {
   wb <- wb_workbook()
   wb$add_worksheet("sheet1")
-  wb$add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)), startRow = 3, startCol = 1, colNames = FALSE)
+  wb$add_data(1, t(matrix(c(1:3, NA_real_), 4, 4)), start_row = 3, start_col = 1, col_names = FALSE)
 
-  wb$merge_cells(1, rows = 1:4, cols = 4)
+  wb$merge_cells(1, wb_dims(rows = 1:4, cols = 4))
 
   tmp_file <- temp_xlsx()
   wb_save(wb, tmp_file)
 
   r1 <- t(matrix(c(1:3, NA_real_), 4, 4))
-  expect_equal(as.matrix(read_xlsx(tmp_file, fillMergedCells = FALSE,
-                                   rowNames = FALSE, colNames = FALSE)),
+  expect_equal(as.matrix(read_xlsx(tmp_file, fill_merged_cells = FALSE,
+                                   row_names = FALSE, col_names = FALSE)),
                r1,
                ignore_attr = TRUE)
 
-  expect_equal(as.matrix(read_xlsx(tmp_file, fillMergedCells = TRUE,
-                                   rowNames = FALSE, colNames = FALSE)),
+  expect_equal(as.matrix(read_xlsx(tmp_file, fill_merged_cells = TRUE,
+                                   row_names = FALSE, col_names = FALSE)),
                r1,
                ignore_attr = TRUE)
 })

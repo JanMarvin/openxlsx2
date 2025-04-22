@@ -2,9 +2,9 @@ my_workbook <- function() {
   # Make the workbook each time so wbWorkbook$debug() is easier to access within
   # each test
   wb <- wb_workbook()
-  negStyle <- create_dxfs_style(font_color = wb_colour(hex = "FF9C0006"), bgFill = wb_colour(hex = "FFFFC7CE"))
+  negStyle <- create_dxfs_style(font_color = wb_colour(hex = "FF9C0006"), bg_fill = wb_colour(hex = "FFFFC7CE"))
   wb$styles_mgr$add(negStyle, "negStyle")
-  posStyle <- create_dxfs_style(font_color = wb_colour(hex = "FF006100"), bgFill = wb_colour(hex = "FFC6EFCE"))
+  posStyle <- create_dxfs_style(font_color = wb_colour(hex = "FF006100"), bg_fill = wb_colour(hex = "FFC6EFCE"))
   wb$styles_mgr$add(posStyle, "posStyle")
   invisible(wb)
 }
@@ -41,18 +41,16 @@ test_that("type = 'expression' work", {
 
   ## rule applies to all each cell in range
   wb$add_data("cellIs", -5:5)
-  wb$add_data("cellIs", LETTERS[1:11], startCol = 2)
+  wb$add_data("cellIs", LETTERS[1:11], start_col = 2)
   wb$add_conditional_formatting(
     sheet = "cellIs",
-    cols = 1,
-    rows = 1:11,
+    dims = wb_dims(cols = 1, rows = 1:11),
     rule = "!=0",
     style = "negStyle"
   )
   wb$add_conditional_formatting(
     sheet = "cellIs",
-    cols = 1,
-    rows = 1:11,
+    dims = wb_dims(cols = 1, rows = 1:11),
     rule = "==0",
     style = "posStyle"
   )
@@ -68,18 +66,16 @@ test_that("type = 'expression' work", {
   wb$add_worksheet("Moving Row")
   ## highlight row dependent on first cell in row
   wb$add_data("Moving Row", -5:5)
-  wb$add_data("Moving Row", LETTERS[1:11], startCol = 2)
+  wb$add_data("Moving Row", LETTERS[1:11], start_col = 2)
   wb$add_conditional_formatting(
     "Moving Row",
-    cols = 1:2,
-    rows = 1:11,
+    dims = wb_dims(cols = 1:2, rows = 1:11),
     rule = "$A1<0",
     style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Moving Row",
-    cols = 1:2,
-    rows = 1:11,
+    dims = wb_dims(cols = 1:2, rows = 1:11),
     rule = "$A1>0",
     style = "posStyle"
   )
@@ -93,18 +89,16 @@ test_that("type = 'expression' work", {
   wb$add_worksheet("Moving Col")
   ## highlight column dependent on first cell in column
   wb$add_data("Moving Col", -5:5)
-  wb$add_data("Moving Col", LETTERS[1:11], startCol = 2)
+  wb$add_data("Moving Col", LETTERS[1:11], start_col = 2)
   wb$add_conditional_formatting(
     "Moving Col",
-    cols = 1:2,
-    rows = 1:11,
+    dims = wb_dims(cols = 1:2, rows = 1:11),
     rule = "A$1<0",
     style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Moving Col",
-    cols = 1:2,
-    rows = 1:11,
+    dims = wb_dims(cols = 1:2, rows = 1:11),
     rule = "A$1>0",
     style = "posStyle"
   )
@@ -118,18 +112,16 @@ test_that("type = 'expression' work", {
   wb$add_worksheet("Dependent on")
   ## highlight entire range cols X rows dependent only on cell A1
   wb$add_data("Dependent on", -5:5)
-  wb$add_data("Dependent on", LETTERS[1:11], startCol = 2)
+  wb$add_data("Dependent on", LETTERS[1:11], start_col = 2)
   wb$add_conditional_formatting(
     "Dependent on",
-    cols = 1:2,
-    rows = 1:11,
+    dims = wb_dims(cols = 1:2, rows = 1:11),
     rule = "$A$1<0",
     style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Dependent on",
-    cols = 1:2,
-    rows = 1:11,
+    dims = wb_dims(cols = 1:2, rows = 1:11),
     rule = "$A$1>0",
     style = "posStyle"
   )
@@ -142,18 +134,16 @@ test_that("type = 'expression' work", {
 
 
   ## highlight cells in column 1 based on value in column 2
-  wb$add_data("Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
+  wb$add_data("Dependent on", data.frame(x = 1:10, y = runif(10)), start_row = 15)
   wb$add_conditional_formatting(
     "Dependent on",
-    cols = 1,
-    rows = 16:25,
+    dims = wb_dims(cols = 1, rows = 16:25),
     rule = "B16<0.5",
     style = "negStyle"
   )
   wb$add_conditional_formatting(
     "Dependent on",
-    cols = 1,
-    rows = 16:25,
+    dims = wb_dims(cols = 1, rows = 16:25),
     rule = "B16>=0.5",
     style = "posStyle"
   )
@@ -174,7 +164,7 @@ test_that("type = 'duplicated' works", {
   wb$add_worksheet("Duplicates")
   ## highlight duplicates using default style
   wb$add_data("Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
-  wb$add_conditional_formatting("Duplicates", cols = 1, rows = 1:10, type = "duplicated")
+  wb$add_conditional_formatting("Duplicates", dims = wb_dims(cols = 1, rows = 1:10), type = "duplicated")
 
   exp <- c(`A1:A10` = '<cfRule type="duplicateValues" dxfId="2" priority="1"/>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -189,8 +179,7 @@ test_that("type = 'containsText' works", {
   wb$add_data("containsText", sapply(1:10, fn))
   wb$add_conditional_formatting(
     "containsText",
-    cols = 1,
-    rows = 1:10,
+    dims = wb_dims(cols = 1, rows = 1:10),
     type = "containsText",
     rule = "A"
   )
@@ -209,8 +198,7 @@ test_that("type = 'notContainsText' works", {
   wb$add_data("notcontainsText", x = sapply(1:10, fn))
   wb$add_conditional_formatting(
     "notcontainsText",
-    cols = 1,
-    rows = 1:10,
+    dims = wb_dims(cols = 1, rows = 1:10),
     type = "notContainsText",
     rule = "A"
   )
@@ -226,7 +214,7 @@ test_that("type = 'beginsWith' works", {
   ## cells begins with text
   fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
   wb$add_data("beginsWith", sapply(1:100, fn))
-  wb$add_conditional_formatting("beginsWith", cols = 1, rows = 1:100, type = "beginsWith", rule = "A")
+  wb$add_conditional_formatting("beginsWith", dims = wb_dims(cols = 1, rows = 1:100), type = "beginsWith", rule = "A")
 
   exp <- c(`A1:A100` = '<cfRule type="beginsWith" dxfId="2" priority="1" operator="beginsWith" text="A"><formula>LEFT(A1,LEN("A"))="A"</formula></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -241,8 +229,7 @@ test_that("type = 'endsWith' works", {
   wb$add_data("endsWith", sapply(1:100, fn))
   wb$add_conditional_formatting(
     "endsWith",
-    cols = 1,
-    rows = 1:100,
+    dims = wb_dims(cols = 1, rows = 1:100),
     type = "endsWith",
     rule = "A"
   )
@@ -258,13 +245,12 @@ test_that("type = 'colorScale' works", {
   wb$add_worksheet("colourScale", zoom = 30)
   ## colourscale colours cells based on cell value
   df <- read_xlsx(testfile_path("readTest.xlsx"), sheet = 4)
-  wb$add_data("colourScale", df, colNames = FALSE) ## write data.frame
+  wb$add_data("colourScale", df, col_names = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale",
-    cols = c(1, ncol(df)),
-    rows = seq_len(nrow(df)),
+    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
     style = c("black", "white"),
     rule = c(0, 255),
     type = "colorScale"
@@ -282,7 +268,7 @@ test_that("type = 'databar' works", {
   wb$add_worksheet("databar")
   ## Databars
   wb$add_data("databar", -5:5)
-  wb$add_conditional_formatting("databar", cols = 1, rows = 1:11, type = "dataBar") ## Default colours
+  wb$add_conditional_formatting("databar", dims = wb_dims(cols = 1, rows = 1:11), type = "dataBar") ## Default colours
 
   exp <- c(`A1:A11` = '<cfRule type="dataBar" priority="1"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FF638EC6"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>')
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -297,8 +283,7 @@ test_that("type = 'between' works", {
   wb$add_data("between", -5:5)
   wb$add_conditional_formatting(
     "between",
-    cols = 1,
-    rows = 1:11,
+    dims = wb_dims(cols = 1, rows = 1:11),
     type = "between",
     rule = c(-2, 2)
   )
@@ -316,8 +301,7 @@ test_that("type = 'topN' works", {
   # Highlight top 5 values in column x
   wb$add_conditional_formatting(
     "topN",
-    cols = 1,
-    rows = 2:11,
+    dims = wb_dims(cols = 1, rows = 2:11),
     style = "posStyle",
     type = "topN",
     params = list(rank = 5)
@@ -326,8 +310,7 @@ test_that("type = 'topN' works", {
   # Highlight top 20 percentage in column y
   wb$add_conditional_formatting(
     "topN",
-    cols = 2,
-    rows = 2:11,
+    dims = wb_dims(cols = 2, rows = 2:11),
     style = "posStyle",
     type = "topN",
     params = list(rank = 20, percent = TRUE)
@@ -349,8 +332,7 @@ test_that("type = 'bottomN' works", {
   # Highlight bottom 5 values in column x
   wb$add_conditional_formatting(
     "bottomN",
-    cols = 1,
-    rows = 2:11,
+    dims = wb_dims(cols = 1, rows = 2:11),
     style = "negStyle",
     type = "bottomN",
     params = list(rank = 5)
@@ -359,8 +341,7 @@ test_that("type = 'bottomN' works", {
   # Highlight bottom 20 percentage in column y
   wb$add_conditional_formatting(
     "bottomN",
-    cols = 2,
-    rows = 2:11,
+    dims = wb_dims(cols = 2, rows = 2:11),
     style = "negStyle",
     type = "bottomN",
     params = list(rank = 20, percent = TRUE)
@@ -383,8 +364,7 @@ test_that("type as logical operators work", {
   wb$add_data("logical operators", 1:10)
   wb$add_conditional_formatting(
     "logical operators",
-    cols = 1,
-    rows = 1:10,
+    dims = wb_dims(cols = 1, rows = 1:10),
     rule = "OR($A1=1,$A1=3,$A1=5,$A1=7)"
   )
 
@@ -401,13 +381,12 @@ test_that("colorScale", {
   wb$add_worksheet("colourScale1", zoom = 30)
   ## colourscale colours cells based on cell value
   df <- read_xlsx(testfile_path("readTest.xlsx"), sheet = 5)
-  wb$add_data("colourScale1", df, colNames = FALSE) ## write data.frame
+  wb$add_data("colourScale1", df, col_names = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale1",
-    cols = c(1, ncol(df)),
-    rows = seq_len(nrow(df)),
+    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
     style = c("black", "white"),
     type = "colorScale"
   )
@@ -419,13 +398,12 @@ test_that("colorScale", {
 
   ### two colors and rule
   wb$add_worksheet("colourScale2", zoom = 30)
-  wb$add_data("colourScale2", df, colNames = FALSE) ## write data.frame
+  wb$add_data("colourScale2", df, col_names = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale2",
-    cols = c(1, ncol(df)),
-    rows = seq_len(nrow(df)),
+    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
     style = c("blue", "red"),
     rule = c(1, 255),
     type = "colorScale"
@@ -438,13 +416,12 @@ test_that("colorScale", {
 
   ### three colors
   wb$add_worksheet("colourScale3", zoom = 30)
-  wb$add_data("colourScale3", df, colNames = FALSE) ## write data.frame
+  wb$add_data("colourScale3", df, col_names = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale3",
-    cols = c(1, ncol(df)),
-    rows = seq_len(nrow(df)),
+    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
     style = c("red", "green", "blue"),
     type = "colorScale"
   )
@@ -459,13 +436,12 @@ test_that("colorScale", {
 
   ### three colors and rule
   wb$add_worksheet("colourScale4", zoom = 30)
-  wb$add_data("colourScale4", df, colNames = FALSE) ## write data.frame
+  wb$add_data("colourScale4", df, col_names = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale4",
-    cols = c(1, ncol(df)),
-    rows = seq_len(nrow(df)),
+    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
     style = c("red", "green", "blue"),
     rule = c(1, 155, 255),
     type = "colorScale"
@@ -483,21 +459,19 @@ test_that("extend dataBar tests", {
   wb <- wb_workbook()
   wb$add_worksheet("databar")
   ## Databars
-  wb$add_data("databar", -5:5, startCol = 1)
+  wb$add_data("databar", -5:5, start_col = 1)
   wb <- wb_add_conditional_formatting(
     wb,
     "databar",
-    cols = 1,
-    rows = 1:11,
+    dims = wb_dims(cols = 1, rows = 1:11),
     type = "dataBar"
   ) ## Default colours
 
-  wb$add_data("databar", -5:5, startCol = 3)
+  wb$add_data("databar", -5:5, start_col = 3)
   wb <- wb_add_conditional_formatting(
     wb,
     "databar",
-    cols = 3,
-    rows = 1:11,
+    dims = wb_dims(cols = 3, rows = 1:11),
     type = "dataBar",
     params = list(
       showValue = FALSE,
@@ -505,23 +479,21 @@ test_that("extend dataBar tests", {
     )
   ) ## Default colours
 
-  wb$add_data("databar", -5:5, startCol = 5)
+  wb$add_data("databar", -5:5, start_col = 5)
   wb <- wb_add_conditional_formatting(
     wb,
     "databar",
-    cols = 5,
-    rows = 1:11,
+    dims = wb_dims(cols = 5, rows = 1:11),
     type = "dataBar",
     style = c("#a6a6a6"),
     params = list(showValue = FALSE)
   )
 
-  wb$add_data("databar", -5:5, startCol = 7)
+  wb$add_data("databar", -5:5, start_col = 7)
   wb <- wb_add_conditional_formatting(
     wb,
     "databar",
-    cols = 7,
-    rows = 1:11,
+    dims = wb_dims(cols = 7, rows = 1:11),
     type = "dataBar",
     style = c("red"),
     params = list(
@@ -530,12 +502,11 @@ test_that("extend dataBar tests", {
     )
   )
 
-  wb$add_data("databar", -5:5, startCol = 9)
+  wb$add_data("databar", -5:5, start_col = 9)
   wb <- wb_add_conditional_formatting(
     wb,
     "databar",
-    cols = 9,
-    rows = 1:11,
+    dims = wb_dims(cols = 9, rows = 1:11),
     type = "dataBar",
     style = c("#a6a6a6", "#a6a6a6"),
     params = list(showValue = TRUE, gradient = FALSE)
@@ -544,10 +515,9 @@ test_that("extend dataBar tests", {
 
   # chained test with rule
   wb$
-    add_data(x = -5:5, startCol = 11)$
+    add_data(x = -5:5, start_col = 11)$
     add_conditional_formatting(
-      cols = 11,
-      rows = 1:11,
+      dims = wb_dims(cols = 11, rows = 1:11),
       type = "dataBar",
       rule = c(0, 5),
       style = c("#a6a6a6", "#a6a6a6"),
@@ -582,12 +552,11 @@ test_that("wb_conditional_formatting", {
   wb <- wb_workbook()
   wb$add_worksheet("databar")
   ## Databars
-  wb$add_data("databar", -5:5, startCol = 1)
+  wb$add_data("databar", -5:5, start_col = 1)
   wb <- wb_add_conditional_formatting(
     wb,
     "databar",
-    cols = 1,
-    rows = 1:11,
+    dims = wb_dims(cols = 1, rows = 1:11),
     type = "dataBar"
   )
 
@@ -627,8 +596,8 @@ test_that("uniqueValues works", {
 
   wb <- wb_workbook()
   wb$add_worksheet()
-  wb$add_data(x = c(1:4, 1:2), colNames = FALSE)
-  wb$add_conditional_formatting(cols = 1, rows = 1:6, type = "uniqueValues")
+  wb$add_data(x = c(1:4, 1:2), col_names = FALSE)
+  wb$add_conditional_formatting(dims = wb_dims(cols = 1, rows = 1:6), type = "uniqueValues")
 
   exp <- "<cfRule type=\"uniqueValues\" dxfId=\"0\" priority=\"1\"/>"
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
@@ -640,20 +609,18 @@ test_that("iconSet works", {
 
   wb <- wb_workbook()
   wb$add_worksheet()
-  wb$add_data(x = c(100, 50, 30), colNames = FALSE)
-  wb$add_conditional_formatting(cols = 1,
-                                rows = 1:6,
+  wb$add_data(x = c(100, 50, 30), col_names = FALSE)
+  wb$add_conditional_formatting(dims = wb_dims(cols = 1, rows = 1:6),
                                 rule = c(-67, -33, 0, 33, 67),
                                 type = "iconSet",
                                 params = list(
                                   percent = FALSE,
                                   iconSet = "5Arrows",
                                   reverse = TRUE)
-                                )
+  )
 
-  wb$add_data(x = c(100, 50, 30), colNames = FALSE, startCol = 2)
-  wb$add_conditional_formatting(cols = 2,
-                                rows = 1:6,
+  wb$add_data(x = c(100, 50, 30), col_names = FALSE, start_col = 2)
+  wb$add_conditional_formatting(dims = wb_dims(cols = 2, rows = 1:6),
                                 rule = c(-67, -33, 0, 33, 67),
                                 type = "iconSet",
                                 params = list(
@@ -677,10 +644,10 @@ test_that("containsErrors works", {
 
   wb <- wb_workbook()
   wb$add_worksheet()
-  wb$add_data(x = c(1, NaN), colNames = FALSE)
-  wb$add_data(x = c(1, NaN), colNames = FALSE, startCol = 2)
-  wb$add_conditional_formatting(cols = 1, rows = 1:3, type = "containsErrors")
-  wb$add_conditional_formatting(cols = 2, rows = 1:3, type = "notContainsErrors")
+  wb$add_data(x = c(1, NaN), col_names = FALSE)
+  wb$add_data(x = c(1, NaN), col_names = FALSE, start_col = 2)
+  wb$add_conditional_formatting(dims = wb_dims(cols = 1, rows = 1:3), type = "containsErrors")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 2, rows = 1:3), type = "notContainsErrors")
 
   exp <- c(
     "<cfRule type=\"containsErrors\" dxfId=\"0\" priority=\"2\"><formula>ISERROR(A1:A3)</formula></cfRule>",
@@ -697,8 +664,8 @@ test_that("containsBlanks works", {
   wb$add_worksheet()
   wb$add_data(x = c(NA, 1, 2, ""), col_names = FALSE, na.strings = NULL)
   wb$add_data(x = c(NA, 1, 2, ""), col_names = FALSE, na.strings = NULL, start_col = 2)
-  wb$add_conditional_formatting(cols = 1, rows = 1:4, type = "containsBlanks")
-  wb$add_conditional_formatting(cols = 2, rows = 1:4, type = "notContainsBlanks")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 1, rows = 1:4), type = "containsBlanks")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 2, rows = 1:4), type = "notContainsBlanks")
 
   exp <- c(
     "<cfRule type=\"containsBlanks\" dxfId=\"0\" priority=\"2\"><formula>LEN(TRIM(A1:A4))=0</formula></cfRule>",
@@ -713,8 +680,7 @@ test_that("warning on cols > 2 and dims", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
   expect_warning(
     wb$add_conditional_formatting(
-      rows = seq_len(nrow(mtcars)),
-      cols = c(2, 4, 6),
+      dims = wb_dims(rows = seq_len(nrow(mtcars)), cols = c(2, 4, 6)),
       type = "between",
       rule = c(2, 4)
     ),
@@ -740,22 +706,22 @@ test_that("un_list works", {
 
   dat <- matrix(sample(0:2, 10L, TRUE), 5, 2)
 
-  wb <- wb_workbook()$add_worksheet()$add_data(x = dat, colNames = FALSE)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = dat, col_names = FALSE)
 
-  negStyle <- create_dxfs_style(font_color = wb_color(hex = "FF9C0006"), bgFill = wb_color(hex = "FFFFC7CE"))
-  neuStyle <- create_dxfs_style(font_color = wb_color("red"), bgFill = wb_color("orange"))
-  posStyle <- create_dxfs_style(font_color = wb_color(hex = "FF006100"), bgFill = wb_color(hex = "FFC6EFCE"))
+  negStyle <- create_dxfs_style(font_color = wb_color(hex = "FF9C0006"), bg_fill = wb_color(hex = "FFFFC7CE"))
+  neuStyle <- create_dxfs_style(font_color = wb_color("red"), bg_fill = wb_color("orange"))
+  posStyle <- create_dxfs_style(font_color = wb_color(hex = "FF006100"), bg_fill = wb_color(hex = "FFC6EFCE"))
   wb$styles_mgr$add(negStyle, "negStyle")
   wb$styles_mgr$add(neuStyle, "neuStyle")
   wb$styles_mgr$add(posStyle, "posStyle")
 
-  wb$add_conditional_formatting(cols = 1:2, rows = 1:5, rule = "==2", style = "negStyle")
-  wb$add_conditional_formatting(cols = 1:2, rows = 1:5, rule = "==1", style = "neuStyle")
-  wb$add_conditional_formatting(cols = 1:2, rows = 1:5, rule = "==0", style = "posStyle")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 1:2, rows = 1:5), rule = "==2", style = "negStyle")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 1:2, rows = 1:5), rule = "==1", style = "neuStyle")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 1:2, rows = 1:5), rule = "==0", style = "posStyle")
 
-  wb$add_conditional_formatting(cols = 5:6, rows = 1:5, rule = "==2", style = "negStyle")
-  wb$add_conditional_formatting(cols = 5:6, rows = 1:5, rule = "==1", style = "neuStyle")
-  wb$add_conditional_formatting(cols = 5:6, rows = 1:5, rule = "==0", style = "posStyle")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 5:6, rows = 1:5), rule = "==2", style = "negStyle")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 5:6, rows = 1:5), rule = "==1", style = "neuStyle")
+  wb$add_conditional_formatting(dims = wb_dims(cols = 5:6, rows = 1:5), rule = "==0", style = "posStyle")
 
   pre_save <- wb$worksheets[[1]]$conditionalFormatting
 
@@ -777,12 +743,12 @@ test_that("conditional formatting with gradientFill works", {
    </gradientFill>",
     pointer = FALSE)
 
-  gf_style <- create_dxfs_style(gradientFill = gf)
+  gf_style <- create_dxfs_style(gradient_fill = gf)
 
   wb <- wb_workbook()$
     add_worksheet()$
     add_data(x = 1)$
-    add_conditional_formatting(cols = 1, rows = 1, rule = "==1", style = "gf_style")$
+    add_conditional_formatting(dims = wb_dims(cols = 1, rows = 1), rule = "==1", style = "gf_style")$
     add_style(gf_style)
 
   exp <- "<dxf><fill><gradientFill degree=\"45\"><stop position=\"0\"><color rgb=\"FFFFC000\"/></stop><stop position=\"1\"><color rgb=\"FF00B0F0\"/></stop></gradientFill></fill></dxf>"
@@ -806,32 +772,28 @@ test_that("escaping conditional formatting works", {
     add_worksheet()$
     add_data(x = "A & B")$
     add_conditional_formatting(
-      cols = 1,
-      rows = 1:10,
+      dims = wb_dims(cols = 1, rows = 1:10),
       type = "containsText",
       rule = "A & B"
     )$
     add_worksheet()$
     add_data(x = "A == B")$
     add_conditional_formatting(
-      cols = 1,
-      rows = 1:10,
+      dims = wb_dims(cols = 1, rows = 1:10),
       type = "containsText",
       rule = "A == B"
     )$
     add_worksheet()$
     add_data(x = "A <> B")$
     add_conditional_formatting(
-      cols = 1,
-      rows = 1:10,
+      dims = wb_dims(cols = 1, rows = 1:10),
       type = "containsText",
       rule = "A <> B"
     )$
     add_worksheet()$
     add_data(x = "A != B")$
     add_conditional_formatting(
-      cols = 1,
-      rows = 1:10,
+      dims = wb_dims(cols = 1, rows = 1:10),
       type = "notContainsText",
       rule = "A <> B"
     )
@@ -853,16 +815,14 @@ test_that("escaping conditional formatting works", {
     add_worksheet()$
     add_data(x = "A <> B")$
     add_conditional_formatting(
-      cols = 1,
-      rows = 1:10,
+      dims = wb_dims(cols = 1, rows = 1:10),
       type = "beginsWith",
       rule = "A <"
     )$
     add_worksheet()$
     add_data(x = "A <> B")$
     add_conditional_formatting(
-      cols = 1,
-      rows = 1:10,
+      dims = wb_dims(cols = 1, rows = 1:10),
       type = "endsWith",
       rule = "> B"
     )
@@ -938,7 +898,7 @@ test_that("conditional formatting works with slicers/timelines", {
       10
     )
 
-    wb$add_data(x = x, sheet = "pivot", colNames = FALSE, dims = wb_dims(x = x, from_row = 30))
+    wb$add_data(x = x, sheet = "pivot", col_names = FALSE, dims = wb_dims(x = x, from_row = 30))
     wb$add_conditional_formatting(
       dims = wb_dims(x = x, from_row = 30, cols = 1),
       rule = c(.1, 0.1, 1),

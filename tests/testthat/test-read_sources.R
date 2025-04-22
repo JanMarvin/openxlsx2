@@ -149,7 +149,7 @@ test_that("reading charts", {
 
   which(wb$get_sheet_names() == "Uebersicht_Quoten")
   expect_warning(
-    wb$add_image(19, file = img, startRow = 5, startCol = 3, width = 6, height = 5),
+    wb$add_image(19, file = img, start_row = 5, start_col = 3, width = 6, height = 5),
     "'start_col/start_row' is deprecated."
   )
 
@@ -317,7 +317,7 @@ test_that("reading xml escapes works", {
   expect_equal(exp, got)
 
 
-  df <- wb_to_df(wb, showFormula = TRUE)
+  df <- wb_to_df(wb, show_formula = TRUE)
 
   exp <- c("US & Canada", "B2")
   got <- df$colB

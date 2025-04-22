@@ -5321,13 +5321,7 @@ wbWorkbook <- R6::R6Class(
       rows <- list(...)[["rows"]]
 
       if (!is.null(rows) && !is.null(cols)) {
-
-        if (length(cols) > 2 && any(diff(cols) != 1))
-          warning("cols > 2, will create range from min to max.")
-
-        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
-          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
-
+        .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dims(rows, cols)
       }
 
@@ -5345,13 +5339,7 @@ wbWorkbook <- R6::R6Class(
       rows <- list(...)[["rows"]]
 
       if (!is.null(rows) && !is.null(cols)) {
-
-        if (length(cols) > 2 && any(diff(cols) != 1))
-          warning("cols > 2, will create range from min to max.")
-
-        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
-          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
-
+        .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dims(rows, cols)
       }
 
@@ -5796,19 +5784,16 @@ wbWorkbook <- R6::R6Class(
       rows <- list(...)[["rows"]]
 
       if (!is.null(rows) && !is.null(cols)) {
-
-        if (length(cols) > 2 && any(diff(cols) != 1))
-          warning("cols > 2, will create range from min to max.")
-
-        if (getOption("openxlsx2.soon_deprecated", default = FALSE))
-          .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
-
+        .Deprecated(old = "cols/rows", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dims(rows, cols)
       }
 
       ddims <- dims_to_rowcol(dims, as_integer = TRUE)
       rows <- ddims[["row"]]
       cols <- ddims[["col"]]
+
+      if (length(cols) > 2 && any(diff(cols) != 1))
+        warning("cols > 2, will create range from min to max.")
 
       if (!is.null(style)) assert_class(style, "character")
       assert_class(type, "character")
