@@ -80,6 +80,11 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' Prior to release `1.15`, datetime variables (yyyy-mm-dd hh:mm:ss) were
 #' imported in the users current timezone (`Sys.timezone()`). This was
 #' changed. All datetime variables are now imported with timezone `"UTC"`.
+#' If date detection is enabled, but fails, fails (e.g., in a mixed column
+#' of strings/numerics and dates), the date might appear as a unix time
+#' stamp. This can be converted using [as.POSIXct()] If date detection is
+#' disabled, dates might appear as spreadsheet date that can be converted
+#' with [convert_date()], [convert_datetime] or [convert_hms()].
 #'
 #' @seealso [wb_get_named_regions()]
 #'

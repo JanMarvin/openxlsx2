@@ -172,6 +172,11 @@ this.
 Prior to release \code{1.15}, datetime variables (yyyy-mm-dd hh:mm:ss) were
 imported in the users current timezone (\code{Sys.timezone()}). This was
 changed. All datetime variables are now imported with timezone \code{"UTC"}.
+If date detection is enabled, but fails, fails (e.g., in a mixed column
+of strings/numerics and dates), the date might appear as a unix time
+stamp. This can be converted using \code{\link[=as.POSIXct]{as.POSIXct()}} If date detection is
+disabled, dates might appear as spreadsheet date that can be converted
+with \code{\link[=convert_date]{convert_date()}}, \link{convert_datetime} or \code{\link[=convert_hms]{convert_hms()}}.
 }
 \examples{
 ###########################################################################
