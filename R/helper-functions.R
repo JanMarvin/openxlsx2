@@ -1323,7 +1323,7 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
 transpose_df <- function(x) {
   attribs <- attr(x, "c_cm")
   classes <- class(x[[1]])
-  x[[1]] <- unclass(x[[1]])
+  x[] <- lapply(x[], unclass)
   x <- as.data.frame(t(x), stringsAsFactors = FALSE)
   for (i in seq_along(x)) {
     class(x[[i]]) <- classes

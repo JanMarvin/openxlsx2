@@ -48,7 +48,7 @@ test_that("Maintaining Named Regions on Load", {
 
   # nonsense
   # df1 is a single value and this single value is now used as rowName
-  expect_warning(df1 <- read_xlsx(wb, named_region = "region1", row_names = TRUE))
+  df1 <- read_xlsx(wb, named_region = "region1", row_names = TRUE)
   expect_s3_class(df1, "data.frame")
   expect_equal(nrow(df1), 0)
   expect_equal(ncol(df1), 0)

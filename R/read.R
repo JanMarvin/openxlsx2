@@ -77,14 +77,17 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' Opening, saving and closing the file in a spreadsheet software will resolve
 #' this.
 #'
-#' Prior to release `1.15`, datetime variables (yyyy-mm-dd hh:mm:ss) were
-#' imported in the users current timezone (`Sys.timezone()`). This was
-#' changed. All datetime variables are now imported with timezone `"UTC"`.
-#' If date detection is enabled, but fails, fails (e.g., in a mixed column
-#' of strings/numerics and dates), the date might appear as a unix time
-#' stamp. This can be converted using [as.POSIXct()] If date detection is
-#' disabled, dates might appear as spreadsheet date that can be converted
-#' with [convert_date()], [convert_datetime] or [convert_hms()].
+#' Before release 1.15, datetime variables (in 'yyyy-mm-dd hh:mm:ss' format)
+#' were imported using the user's local system timezone (`Sys.timezone()`).
+#' This behavior has been updated. Now, all datetime variables are imported
+#' with the timezone set to "UTC".
+#' If automatic date detection and conversion are enabled but the conversion
+#' is unsuccessful (for instance, in a column containing a mix of data types
+#' like strings, numbers, and dates), the dates will be displayed as a Unix
+#' timestamp. These can be transformed using the [as.POSIXct()] function.
+#' If date detection is disabled, dates will show up as a spreadsheet date
+#' format. To convert these, you can use the functions [convert_date()],
+#' [convert_datetime()], or [convert_hms()].
 #'
 #' @seealso [wb_get_named_regions()]
 #'

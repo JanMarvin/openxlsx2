@@ -184,7 +184,7 @@ test_that("date conversion works", {
 
   # conversion works for rownames
   df <- data.frame(
-    x = x,
+    x = as.Date(paste0("2025-0", 1:4, "-01")),
     y = 1:4
   )
   wb <- wb_workbook()$add_worksheet()
