@@ -1,3 +1,46 @@
+# Internal function to convert data frame from character to whatever is required
+convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_character = FALSE) {
+  sel <- !is.na(names(types))
+
+  if (any(sel)) {
+    nums <- names(which(types[sel] == 1))
+    dtes <- names(which(types[sel] == 2))
+    poxs <- names(which(types[sel] == 3))
+    logs <- names(which(types[sel] == 4))
+    difs <- names(which(types[sel] == 5))
+    fmls <- names(which(types[sel] == 6))
+    # convert "#NUM!" to "NaN" -- then converts to NaN
+    # maybe consider this an option to instead return NA?
+
+    if (as_character) {
+      date_conv_c     <- function(...) as.character(date_conv(...))
+      datetime_conv_c <- function(...) as.character(datetime_conv(...))
+      hms_conv_c      <- function(...) as.character(hms_conv(...))
+
+      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.character(as.numeric(replace(i, i == "#NUM!", "NaN"))))
+      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv_c)
+      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv_c)
+      if (length(logs)) z[logs] <- lapply(z[logs], function(i) as.character(as.logical(i)))
+      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv_c)
+    } else {
+      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
+      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
+      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
+      if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
+      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
+    }
+
+    for (i in seq_along(z)) { # convert df to class formula
+      if (names(z)[i] %in% fmls) class(z[[i]]) <- c(class(z[[i]]), "formula")
+    }
+
+  } else {
+    warning("could not convert. All missing in row used for variable names")
+  }
+
+  z
+}
+
 # `wb_to_df()` ----------------------------------------
 #' Create a data frame from a Workbook
 #'
@@ -596,39 +639,34 @@ wb_to_df <- function(
   xlsx_cols_names <- colnames(z)
   names(xlsx_cols_names) <- xlsx_cols_names
 
-  # if colNames, then change tt too
+
+  date_conv     <- function(x) as.Date(.POSIXct(as.double(x), "UTC"), tz = "UTC", origin = "1970-01-01")
+  datetime_conv <- function(x) .POSIXct(as.double(x), "UTC")
+  hms_conv      <- convert_hms
+
+  # if colNames, then change tt too. rownames will be converted later. If column name row
+  # is in z/tt, the column name guessing will fail below
   if (col_names) {
     # select first row as colnames, but do not yet assign. it might contain
     # missing values and if assigned, convert below might break with unambiguous
     # names.
+
     nams <- names(xlsx_cols_names)
-    xlsx_cols_names  <- z[1, ]
+    if (convert)
+      xlsx_cols_names <- convert_df(z[1, , drop = FALSE], guess_col_type(tt[1, , drop = FALSE]), date_conv, datetime_conv, hms_conv, as_character = TRUE)
+    else
+      xlsx_cols_names <- z[1, , drop = FALSE]
     names(xlsx_cols_names) <- nams
 
     z  <- z[-1, , drop = FALSE]
     tt <- tt[-1, , drop = FALSE]
   }
 
-  if (row_names) {
-    rownames(z)  <- z[, 1]
-    rownames(tt) <- z[, 1]
-    xlsx_cols_names <- xlsx_cols_names[-1]
-
-    z  <- z[, -1, drop = FALSE]
-    tt <- tt[, -1, drop = FALSE]
-  }
-
   # # faster guess_col_type alternative? to avoid tt
   # types <- ftable(cc$row_r ~ cc$c_r ~ cc$typ)
 
-  date_conv     <- NULL
-  datetime_conv <- NULL
-  hms_conv      <- convert_hms
-
   if (missing(types)) {
     types <- guess_col_type(tt)
-    date_conv     <- function(x) as.Date(.POSIXct(as.double(x), "UTC"), tz = "UTC", origin = "1970-01-01")
-    datetime_conv <- function(x) .POSIXct(as.double(x), "UTC")
   } else {
     # TODO check if guessing only if !all() is possible
     if (any(xlsx_cols_names %in% names(types))) {
@@ -659,36 +697,24 @@ wb_to_df <- function(
       stop("no variable from `types` found in data")
     }
 
+    # avoid multiple conversion
     date_conv     <- function(x) convert_date(x, origin = origin)
     datetime_conv <- function(x) convert_datetime(x, origin = origin)
   }
 
   # could make it optional or explicit
   if (convert) {
-    sel <- !is.na(names(types))
+    z <- convert_df(z, types, date_conv, datetime_conv, hms_conv)
+  }
 
-    if (any(sel)) {
-      nums <- names(which(types[sel] == 1))
-      dtes <- names(which(types[sel] == 2))
-      poxs <- names(which(types[sel] == 3))
-      logs <- names(which(types[sel] == 4))
-      difs <- names(which(types[sel] == 5))
-      fmls <- names(which(types[sel] == 6))
-      # convert "#NUM!" to "NaN" -- then converts to NaN
-      # maybe consider this an option to instead return NA?
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
-      if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
-      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
+  # column names were picked earlier
+  if (row_names) {
+    rownames(z)  <- z[, 1]
+    rownames(tt) <- z[, 1]
+    xlsx_cols_names <- xlsx_cols_names[-1]
 
-      for (i in seq_along(z)) { # convert df to class formula
-        if (names(z)[i] %in% fmls) class(z[[i]]) <- c(class(z[[i]]), "formula")
-      }
-
-    } else {
-      warning("could not convert. All missing in row used for variable names")
-    }
+    z  <- z[, -1, drop = FALSE]
+    tt <- tt[, -1, drop = FALSE]
   }
 
   if (col_names) {
