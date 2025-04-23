@@ -159,3 +159,38 @@ test_that("date 1904 works as expected", {
   # ignore rounding differences
   expect_equal(as.Date(df$pos), as.Date(got[["pos"]], tz = "UTC"))
 })
+
+test_that("date conversion works", {
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_data(dims = "A1:D1", x = as.Date(paste0("2025-0", 1:4, "-01")), col_names = FALSE)
+  wb$add_data(dims = "A2:D4", x = matrix(1:12, 3, 4), col_names = FALSE)
+
+  # column name is converted date, column is numeric
+  df <- wb$to_df()
+  expect_true(is.numeric(df$`2025-01-01`))
+
+  # column name is converted date, column is character
+  df <- wb$to_df(convert = FALSE)
+  expect_true(is.character(df$`2025-01-01`))
+
+  # column name is spreadsheet date, column is numeric
+  df <- wb$to_df(convert = TRUE, detect_dates = FALSE)
+  expect_true(is.numeric(df$`45658`))
+
+  # column name is spreadsheet date, column is character
+  df <- wb$to_df(convert = FALSE, detect_dates = FALSE)
+  expect_true(is.character(df$`45658`))
+
+  # conversion works for rownames
+  df <- data.frame(
+    x = as.Date(paste0("2025-0", 1:4, "-01")),
+    y = 1:4
+  )
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_data(x = df)
+  df <- wb$to_df(row_names = TRUE)
+  exp <- c("2025-01-01", "2025-02-01", "2025-03-01", "2025-04-01")
+  got <- rownames(df)
+  expect_equal(exp, got)
+})

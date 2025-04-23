@@ -169,9 +169,17 @@ to be evaluated when the file is opened in a spreadsheet software.
 Opening, saving and closing the file in a spreadsheet software will resolve
 this.
 
-Prior to release \code{1.15}, datetime variables (yyyy-mm-dd hh:mm:ss) were
-imported in the users current timezone (\code{Sys.timezone()}). This was
-changed. All datetime variables are now imported with timezone \code{"UTC"}.
+Before release 1.15, datetime variables (in 'yyyy-mm-dd hh:mm:ss' format)
+were imported using the user's local system timezone (\code{Sys.timezone()}).
+This behavior has been updated. Now, all datetime variables are imported
+with the timezone set to "UTC".
+If automatic date detection and conversion are enabled but the conversion
+is unsuccessful (for instance, in a column containing a mix of data types
+like strings, numbers, and dates), the dates will be displayed as a Unix
+timestamp. These can be transformed using the \code{\link[=as.POSIXct]{as.POSIXct()}} function.
+If date detection is disabled, dates will show up as a spreadsheet date
+format. To convert these, you can use the functions \code{\link[=convert_date]{convert_date()}},
+\code{\link[=convert_datetime]{convert_datetime()}}, or \code{\link[=convert_hms]{convert_hms()}}.
 }
 \examples{
 ###########################################################################
