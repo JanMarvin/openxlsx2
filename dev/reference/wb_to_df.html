@@ -267,9 +267,17 @@ via <code><a href="wb_add_formula.html">wb_add_formula()</a></code>. This is bec
 to be evaluated when the file is opened in a spreadsheet software.
 Opening, saving and closing the file in a spreadsheet software will resolve
 this.</p>
-<p>Prior to release <code>1.15</code>, datetime variables (yyyy-mm-dd hh:mm:ss) were
-imported in the users current timezone (<code><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone()</a></code>). This was
-changed. All datetime variables are now imported with timezone <code>"UTC"</code>.</p>
+<p>Before release 1.15, datetime variables (in 'yyyy-mm-dd hh:mm:ss' format)
+were imported using the user's local system timezone (<code><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone()</a></code>).
+This behavior has been updated. Now, all datetime variables are imported
+with the timezone set to "UTC".
+If automatic date detection and conversion are enabled but the conversion
+is unsuccessful (for instance, in a column containing a mix of data types
+like strings, numbers, and dates), the dates will be displayed as a Unix
+timestamp. These can be transformed using the <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> function.
+If date detection is disabled, dates will show up as a spreadsheet date
+format. To convert these, you can use the functions <code><a href="convert_date.html">convert_date()</a></code>,
+<code><a href="convert_date.html">convert_datetime()</a></code>, or <code><a href="convert_date.html">convert_hms()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
