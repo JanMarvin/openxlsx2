@@ -1315,10 +1315,15 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
   dims
 }
 
-# transpose single column or row data frames to wide/long. keeps attributes and class
+# transpose single column or row data frames to wide/long. keeps attributes and
+# class.
+# The magic of t(). A Date can be something like a numeric with a
+# format attached. After t(x) it will be a string "yyyy-mm-dd".
+# Therefore unclass first and apply the class afterwards.
 transpose_df <- function(x) {
   attribs <- attr(x, "c_cm")
   classes <- class(x[[1]])
+  x[[1]] <- unclass(x[[1]])
   x <- as.data.frame(t(x), stringsAsFactors = FALSE)
   for (i in seq_along(x)) {
     class(x[[i]]) <- classes
