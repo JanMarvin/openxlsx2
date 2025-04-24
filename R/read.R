@@ -21,13 +21,13 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv_c)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv_c)
       if (length(logs)) z[logs] <- lapply(z[logs], function(i) as.character(as.logical(i)))
-      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv_c)
+      if (length(difs)) z[difs] <- lapply(z[difs], hms_conv_c)
     } else {
       if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
-      if (isNamespaceLoaded("hms")) z[difs] <- lapply(z[difs], hms_conv)
+      if (length(difs)) z[difs] <- lapply(z[difs], hms_conv)
     }
 
     for (i in seq_along(z)) { # convert df to class formula
@@ -477,11 +477,11 @@ wb_to_df <- function(
 
       if (any(uccs %in% xlsx_hms_style)) {
         sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != ""
-        if (isNamespaceLoaded("hms")) {
+        if (convert) {
           # if hms is loaded, we have to avoid applying convert_hms() twice
           cc$val[sel] <- cc$v[sel]
         } else {
-          cc$val[sel] <- suppressWarnings(as.character(convert_hms(cc$v[sel])))
+          cc$val[sel] <- as.character(convert_hms(cc$v[sel]))
         }
         cc$typ[sel]  <- "h"
       }
@@ -713,6 +713,36 @@ wb_to_df <- function(
   # could make it optional or explicit
   if (convert) {
     z <- convert_df(z, types, date_conv, datetime_conv, hms_conv)
+
+    ## this reduces the difference to releases < 1.15. If in mixed columns
+    ## conversion to date fails and a character frame is returned, we return
+    ## a character instead of the unix time stamp as character.
+    if (detect_dates) {
+      date_conv_c     <- function(...) as.character(date_conv(...))
+      datetime_conv_c <- function(...) as.character(datetime_conv(...))
+      hms_conv_c      <- function(...) as.character(hms_conv(...))
+
+      sel <- !is.na(names(types))
+      # update only if types is character
+      chrs <- names(which(types[sel] == 0))
+
+      for (chr in chrs) {
+        sel <- tt[[chr]] == "d" & !is.na(z[[chr]])
+        if (length(sel)) {
+          z[[chr]][sel] <- vapply(z[[chr]][sel], date_conv_c, NA_character_)
+        }
+
+        sel <- tt[[chr]] == "p" & !is.na(z[[chr]])
+        if (length(sel)) {
+          z[[chr]][sel] <- vapply(z[[chr]][sel], datetime_conv_c, NA_character_)
+        }
+
+        sel <- tt[[chr]] == "h" & !is.na(z[[chr]])
+        if (length(sel)) {
+          z[[chr]][sel] <- vapply(z[[chr]][sel], hms_conv_c, NA_character_)
+        }
+      }
+    }
   }
 
   # column names were picked earlier

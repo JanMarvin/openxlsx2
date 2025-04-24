@@ -194,3 +194,52 @@ test_that("date conversion works", {
   got <- rownames(df)
   expect_equal(exp, got)
 })
+
+test_that("conversion works", {
+
+  wb <- wb_workbook()$add_worksheet()
+  # row 1 column name
+  wb$add_data(dims = "A1", x = "Var1")
+  wb$add_data(dims = "B1", x = "Var2")
+  wb$add_data(dims = "C1", x = "Var3")
+  # row 2 character
+  wb$add_data(dims = "A2", x = "2024-01-31")
+  wb$add_data(dims = "B2", x = "2024-01-31")
+  wb$add_data(dims = "C2", x = "2024-01-31")
+  # various dates
+  wb$add_data(dims = "A3", x = as.Date("2024-02-01"))
+  wb$add_data(dims = "B3", x = structure(1234, units = "secs", class = c("hms", "difftime")))
+  wb$add_data(dims = "C3", x = as.POSIXct("2024-04-25 08:47:03", tz = "UTC"))
+
+  exp <- structure(
+    list(
+      Var1 = c("2024-01-31", "2024-02-01"),
+      Var2 = c("2024-01-31", "00:20:34"),
+      Var3 = c("2024-01-31", "2024-04-25 08:47:03")
+    ), row.names = 2:3, class = "data.frame")
+  got <- wb$to_df()
+  expect_equal(exp, got)
+
+  got <- wb$to_df(convert = FALSE)
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(
+      `2024-01-31` = structure(19754, class = "Date"),
+      `2024-01-31` = "00:20:34",
+      `2024-01-31` = structure(1714034823, class = c("POSIXct", "POSIXt"), tzone = "UTC")
+    ), row.names = 3L, class = "data.frame")
+
+  got <- wb$to_df(start_row = 2)
+  expect_equal(exp, got)
+
+  exp <- structure(
+    list(
+      `2024-01-31` = "2024-02-01",
+      `2024-01-31` = "00:20:34",
+      `2024-01-31` = "2024-04-25 08:47:03"
+    ), row.names = 3L, class = "data.frame")
+  got <- wb$to_df(start_row = 2, convert = FALSE)
+  expect_equal(exp, got)
+
+})
