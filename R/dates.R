@@ -29,7 +29,9 @@
 #' x <- 0.50918982
 #' convert_hms(x)
 convert_date <- function(x, origin = "1900-01-01", ...) {
-  out <- date_to_unix(x, origin = origin, datetime = FALSE)
+  sel <- is_charnum(x)
+  out <- x
+  out[sel] <- date_to_unix(x[sel], origin = origin, datetime = FALSE)
   out <- as.double(out)
   .Date(out)
 }
@@ -37,7 +39,9 @@ convert_date <- function(x, origin = "1900-01-01", ...) {
 #' @rdname convert_date
 #' @export
 convert_datetime <- function(x, origin = "1900-01-01", ...) {
-  out <- date_to_unix(x, origin = origin, datetime = TRUE)
+  sel <- is_charnum(x)
+  out <- x
+  out[sel] <- date_to_unix(x[sel], origin = origin, datetime = TRUE)
   out <- as.double(out)
   tz <- ifelse(!is.null(tz <- list(...)$tz), tz, "UTC")
   .POSIXct(out, tz)
