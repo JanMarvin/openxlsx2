@@ -242,4 +242,11 @@ test_that("conversion works", {
   got <- wb$to_df(start_row = 2, convert = FALSE)
   expect_equal(exp, got)
 
+  exp <- structure(c(NA, 19838), class = "Date")
+  expect_warning(got <- wb$to_df(types = c(Var3 = "Date")), "coercion")
+  expect_equal(exp, got$Var3)
+
+  exp <- structure(c(NA, 1706745600), class = c("POSIXct", "POSIXt"), tzone = "UTC")
+  expect_warning(got <- wb$to_df(types = c(Var1 = "POSIXct")), "coercion")
+  expect_equal(exp, got$Var1)
 })
