@@ -83,11 +83,12 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' with the timezone set to "UTC".
 #' If automatic date detection and conversion are enabled but the conversion
 #' is unsuccessful (for instance, in a column containing a mix of data types
-#' like strings, numbers, and dates), the dates will be displayed as a Unix
-#' timestamp. These can be transformed using the [as.POSIXct()] function.
+#' like strings, numbers, and dates) dates might be displayed as a Unix
+#' timestamp. Usually they are converted to character for character columns.
 #' If date detection is disabled, dates will show up as a spreadsheet date
 #' format. To convert these, you can use the functions [convert_date()],
-#' [convert_datetime()], or [convert_hms()].
+#' [convert_datetime()], or [convert_hms()]. If types are specified, date
+#' detection is disabled.
 #'
 #' @seealso [wb_get_named_regions()]
 #'
