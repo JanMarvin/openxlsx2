@@ -175,11 +175,12 @@ This behavior has been updated. Now, all datetime variables are imported
 with the timezone set to "UTC".
 If automatic date detection and conversion are enabled but the conversion
 is unsuccessful (for instance, in a column containing a mix of data types
-like strings, numbers, and dates), the dates will be displayed as a Unix
-timestamp. These can be transformed using the \code{\link[=as.POSIXct]{as.POSIXct()}} function.
+like strings, numbers, and dates) dates might be displayed as a Unix
+timestamp. Usually they are converted to character for character columns.
 If date detection is disabled, dates will show up as a spreadsheet date
 format. To convert these, you can use the functions \code{\link[=convert_date]{convert_date()}},
-\code{\link[=convert_datetime]{convert_datetime()}}, or \code{\link[=convert_hms]{convert_hms()}}.
+\code{\link[=convert_datetime]{convert_datetime()}}, or \code{\link[=convert_hms]{convert_hms()}}. If types are specified, date
+detection is disabled.
 }
 \examples{
 ###########################################################################
