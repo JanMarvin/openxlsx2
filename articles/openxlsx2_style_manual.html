@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Add styling to a workbook</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.14/vignettes/openxlsx2_style_manual.Rmd" class="external-link"><code>vignettes/openxlsx2_style_manual.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/vignettes/openxlsx2_style_manual.Rmd" class="external-link"><code>vignettes/openxlsx2_style_manual.Rmd</code></a></small>
       <div class="d-none name"><code>openxlsx2_style_manual.Rmd</code></div>
     </div>
 
@@ -179,7 +179,7 @@ The example below, with increased column width.
 <span></span>
 <span></span>
 <span><span class="co"># create a fill style and assign it to the workbook</span></span>
-<span><span class="va">new_fill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_fill.html">create_fill</a></span><span class="op">(</span>patternType <span class="op">=</span> <span class="st">"solid"</span>, fgColor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF334E6F"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">new_fill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_fill.html">create_fill</a></span><span class="op">(</span>pattern_type <span class="op">=</span> <span class="st">"solid"</span>, fg_color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span>hex <span class="op">=</span> <span class="st">"FF334E6F"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="va">styles_mgr</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">new_fill</span>, <span class="st">"new_fill"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a font style and assign it to the workbook</span></span>
@@ -586,8 +586,8 @@ any other table style.</p>
 <span><span class="va">dx7</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span></span>
 <span>  font_color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  text_bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bgFill <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"red"</span><span class="op">)</span>,</span>
-<span>  fgColor <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"red"</span><span class="op">)</span></span>
+<span>  bg_fill <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"red"</span><span class="op">)</span>,</span>
+<span>  fg_color <span class="op">=</span> <span class="fu"><a href="../reference/wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"red"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">dx8</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_dxfs_style.html">create_dxfs_style</a></span><span class="op">(</span></span>

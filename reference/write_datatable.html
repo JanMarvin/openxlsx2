@@ -9,7 +9,7 @@ This function is deprecated and may not be exported in the future."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ This function is deprecated and may not be exported in the future."><meta proper
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Write to a worksheet as an Excel table</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.14/R/deprecate.R" class="external-link"><code>R/deprecate.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/deprecate.R" class="external-link"><code>R/deprecate.R</code></a></small>
       <div class="d-none name"><code>write_datatable.Rd</code></div>
     </div>
 
@@ -187,7 +187,9 @@ uses the special <code>#N/A</code> value within the workbook.</p></dd>
 not get picked up by <code><a href="wb_to_df.html">read_xlsx()</a></code>. This is because only the formula is written
 and left to Excel to evaluate the formula when the file is opened in Excel.
 The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>.
-If the data frame contains this string, the output will be broken.</p>
+If the data frame contains this string, the output will be broken. Similar
+factor labels <code>"_openxlsx_Inf"</code>, <code>"_openxlsx_nInf"</code>, and <code>"_openxlsx_NaN"</code>
+are reserved.</p>
 <p>Supported classes are data frames, matrices and vectors of various types and
 everything that can be converted into a data frame with <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>.
 Everything else that the user wants to write should either be converted into
@@ -202,7 +204,14 @@ are reserved for internal functions. If you need these. You have to wrap
 the input string in <code><a href="fmt_txt.html">fmt_txt()</a></code>.</p>
 <p>The columns of <code>x</code> with class Date/POSIXt, currency, accounting, hyperlink,
 percentage are automatically styled as dates, currency, accounting,
-hyperlinks, percentages respectively.</p>
+hyperlinks, percentages respectively. When writing POSIXt, the users local
+timezone should not matter. The openxml standard does not have a timezone
+and the conversion from the local timezone should happen internally, so that
+date and time are converted, but the timezone is dropped. This conversion
+could cause a minor precision loss. The datetime in R and in spreadsheets
+might differ by 1 second, caused by floating point precision. When read from
+the worksheet, starting with <code>openxlsx2</code> release <code>1.15</code> the datetime is
+returned in <code>"UTC"</code>.</p>
 <p>Functions <code><a href="wb_add_data.html">wb_add_data()</a></code> and <code><a href="wb_add_data_table.html">wb_add_data_table()</a></code> behave quite similar. The
 distinction is that the latter creates a table in the worksheet that can be
 used for different kind of formulas and can be sorted independently, though

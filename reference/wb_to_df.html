@@ -13,7 +13,7 @@ packages."><meta property="og:image" content="https://janmarvin.github.io/openxl
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@ packages."><meta property="og:image" content="https://janmarvin.github.io/openxl
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Create a data frame from a Workbook</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.14/R/read.R" class="external-link"><code>R/read.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/read.R" class="external-link"><code>R/read.R</code></a></small>
       <div class="d-none name"><code>wb_to_df.Rd</code></div>
     </div>
 
@@ -267,6 +267,18 @@ via <code><a href="wb_add_formula.html">wb_add_formula()</a></code>. This is bec
 to be evaluated when the file is opened in a spreadsheet software.
 Opening, saving and closing the file in a spreadsheet software will resolve
 this.</p>
+<p>Before release 1.15, datetime variables (in 'yyyy-mm-dd hh:mm:ss' format)
+were imported using the user's local system timezone (<code><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone()</a></code>).
+This behavior has been updated. Now, all datetime variables are imported
+with the timezone set to "UTC".
+If automatic date detection and conversion are enabled but the conversion
+is unsuccessful (for instance, in a column containing a mix of data types
+like strings, numbers, and dates) dates might be displayed as a Unix
+timestamp. Usually they are converted to character for character columns.
+If date detection is disabled, dates will show up as a spreadsheet date
+format. To convert these, you can use the functions <code><a href="convert_date.html">convert_date()</a></code>,
+<code><a href="convert_date.html">convert_datetime()</a></code>, or <code><a href="convert_date.html">convert_hms()</a></code>. If types are specified, date
+detection is disabled.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -282,17 +294,17 @@ this.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># import workbook</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># do not convert first row to column names</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -311,31 +323,31 @@ this.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># do not try to identify dates in the data</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, detect_dates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4  Var5         Var6    Var7       Var8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 45075 3209324 This #DIV/0! 0.06059028</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 45069         &lt;NA&gt;       0 0.58538194</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 44958         &lt;NA&gt; #VALUE! 0.95905093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!    NA         &lt;NA&gt;       2 0.72561343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 44987         &lt;NA&gt;     2.7 0.36525463</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 45284         &lt;NA&gt;      25         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 45285         &lt;NA&gt;       3         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 45138         &lt;NA&gt;     122         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4  Var5         Var6    Var7       Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1   NA     1     a 45075 3209324 This #DIV/0! 0.06059028</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA   NA #NUM!     b 45069         &lt;NA&gt;       0 0.58538194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2   NA  1.34     c 44958         &lt;NA&gt; #VALUE! 0.95905093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2   NA  &lt;NA&gt; #NUM!    NA         &lt;NA&gt;       2 0.72561343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3   NA  1.56     e    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1   NA   1.7     f 44987         &lt;NA&gt;     2.7 0.36525463</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;    NA         &lt;NA&gt;    &lt;NA&gt;         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 45284         &lt;NA&gt;      25         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 45285         &lt;NA&gt;       3         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 45138         &lt;NA&gt;     122         NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># return the underlying Excel formula instead of their values</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, show_formula <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6            Var7     Var8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This            E3/0 01:27:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;              C4 14:02:57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt;         #VALUE! 23:01:02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;           C6+E6 17:24:53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;           C8+E8 08:45:58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;    SUM(C10,E10)     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt; PRODUCT(C11,E3)     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;         E12-C12     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6            Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1   NA     1     a 2023-05-29 3209324 This            E3/0 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;              C4 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt;         #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;           C6+E6 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;           C8+E8 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;            &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;    SUM(C10,E10)     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt; PRODUCT(C11,E3)     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;         E12-C12     &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># read dimension without colNames</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -347,27 +359,27 @@ this.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># read selected cols</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A:B"</span>, <span class="st">"G"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    NA  Var1       Var5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  NA  TRUE 2023-05-29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  NA  TRUE 2023-05-23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  NA  TRUE 2023-02-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  NA FALSE       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  NA FALSE       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  NA FALSE 2023-03-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  NA    NA       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 NA FALSE 2023-12-24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 NA FALSE 2023-12-25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 NA    NA 2023-07-31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;NA&gt;  Var1       Var5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    NA  TRUE 2023-05-29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    NA  TRUE 2023-05-23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    NA  TRUE 2023-02-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    NA FALSE       &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    NA FALSE       &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    NA FALSE 2023-03-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    NA    NA       &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   NA FALSE 2023-12-24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   NA FALSE 2023-12-25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   NA    NA 2023-07-31</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># read selected rows</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Var1 Var2 NA  Var3  Var4       Var5 Var6 Var7     Var8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  TRUE   NA NA #NUM!     b 2023-05-23   NA    0 14:02:57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;   NA    2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5 Var6 Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  TRUE   NA   NA #NUM!     b 2023-05-23   NA    0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;   NA    2 17:24:53</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># convert characters to numerics and date (logical too?)</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2   NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 &lt;NA&gt;     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE &lt;NA&gt; &lt;NA&gt; #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 &lt;NA&gt;  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
@@ -381,16 +393,16 @@ this.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># erase empty rows from dataset</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, skip_empty_rows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># erase empty columns from dataset</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, skip_empty_cols <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -441,17 +453,17 @@ this.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># na string</span></span></span>
 <span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, na.strings <span class="op">=</span> <span class="st">"a"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1  &lt;NA&gt; 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1   NA     1  &lt;NA&gt; 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###########################################################################</span></span></span>
 <span class="r-in"><span><span class="co"># Named regions</span></span></span>
@@ -471,17 +483,17 @@ this.</p>
 <span class="r-in"><span><span class="co"># read_xlsx() and wb_read()</span></span></span>
 <span class="r-in"><span><span class="va">example_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"openxlsx2_example.xlsx"</span>, package <span class="op">=</span> <span class="st">"openxlsx2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">read_xlsx</span><span class="op">(</span>file <span class="op">=</span> <span class="va">example_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 NA  Var3  Var4       Var5         Var6    Var7     Var8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2 NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2 NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3 NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1 NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2 NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3 NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1 NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2   NA  1.34     c 2023-02-01         &lt;NA&gt; #VALUE! 23:01:02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2   NA  &lt;NA&gt; #NUM!       &lt;NA&gt;         &lt;NA&gt;       2 17:24:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3   NA  1.56     e       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1   NA   1.7     f 2023-03-02         &lt;NA&gt;     2.7 08:45:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA   NA  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
 <span class="r-in"><span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu">wb_read</span><span class="op">(</span>file <span class="op">=</span> <span class="va">example_file</span>, sheet <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu">wb_read</span><span class="op">(</span>file <span class="op">=</span> <span class="va">example_file</span>, sheet <span class="op">=</span> <span class="fl">1</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
 </code></pre></div>

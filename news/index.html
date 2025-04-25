@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,11 +44,50 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.14/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.14" id="openxlsx2-114">openxlsx2 1.14<a class="anchor" aria-label="anchor" href="#openxlsx2-114"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.15" id="openxlsx2-115">openxlsx2 1.15<a class="anchor" aria-label="anchor" href="#openxlsx2-115"></a></h2><p class="text-muted">CRAN release: 2025-04-25</p>
+<div class="section level3">
+<h3 id="maintenance-1-15">Maintenance<a class="anchor" aria-label="anchor" href="#maintenance-1-15"></a></h3>
+<ul><li>Legacy <code><a href="../reference/create_comment.html">create_comment()</a></code> is now deprecated in favor of <code><a href="../reference/wb_comment.html">wb_comment()</a></code>.</li>
+<li>Usage of <code>rows</code> and <code>cols</code> is now deprecated in favor of <code>wb_dims(rows = ..., cols = ...)</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-1-15">New features<a class="anchor" aria-label="anchor" href="#new-features-1-15"></a></h3>
+<ul><li>A normalization function was added for separators in formulas. In English locales, formulas require a comma as argument separator, locales that use the comma a decimal separator, a semicolon is used as argument separator. We added a check to replace semicolons added in formulas, because these were hard to spot and if overlooked could brick the XML worksheet.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-15">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-15"></a></h3>
+<ul><li>Grouping of rows does no longer require the rows to be initialized in the worksheet. <a href="https://github.com/JanMarvin/openxlsx2/pull/1303" class="external-link">1303</a>
+</li>
+<li>Fix another case where <code>cc</code> was unintentionally shorten when applying a <code>cm</code> formula. Not sure if the cause for this is in the <code>cm</code> formula or in some other place.</li>
+<li>
+<code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> now handles <code>table_name</code> as documented. <a href="https://github.com/JanMarvin/openxlsx2/pull/1314" class="external-link">1314</a>
+</li>
+<li>Writing the character strings <code>"Inf"</code>, <code>"-Inf"</code>, and <code>"NaN"</code> is now possible. <a href="https://github.com/JanMarvin/openxlsx2/pull/1317" class="external-link">1317</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-1-15">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-15"></a></h3>
+<ul><li>Previously, when loading a workbook, the included styles were broken down, with XML styles converted into data frame objects. However, these results were only used to generate a sequence.</li>
+<li>Similarly, if available, the entire shared strings table was converted to text upon loading. Now, this conversion is postponed until explicitly requested. Both approaches have their advantages: reading shared strings on load is useful when they are extensively shared across worksheets and multiple worksheets are retrieved via <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, while delaying conversion saves memory and computation time when not required. However, in the latter case, shared strings across multiple worksheets will need to be converted each time they are accessed. The impact of this change should be monitored.</li>
+<li>
+<code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code> was improved to better handle many combined dims like “A1:B1,A3:D4”</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-1-15">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-15"></a></h3>
+<ul><li>Improved performance when reading .xlsx files containing a large number of datetime variables. Datetime columns are now consistently returned as <code>POSIXct</code> objects in the UTC timezone. <a href="https://github.com/JanMarvin/openxlsx2/pull/1331" class="external-link">1331</a>
+<ul><li>
+<strong>Reason:</strong> Standardizing datetime representation to UTC simplifies internal handling and eliminates complexities related to local timezones and Daylight Saving Time during data import, leading to performance benefits.</li>
+<li>
+<strong>Impact:</strong> Previously, datetimes were returned in the system’s local timezone (<code><a href="https://rdrr.io/r/base/timezones.html" class="external-link">Sys.timezone()</a></code>). Users will now receive datetimes in UTC (same date and time, but different timezone). If local time representation is needed, explicit conversion using functions like <code>lubridate::force_tz()</code> is required after reading the data.</li>
+</ul></li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.14" id="openxlsx2-114">openxlsx2 1.14<a class="anchor" aria-label="anchor" href="#openxlsx2-114"></a></h2><p class="text-muted">CRAN release: 2025-03-20</p>
 <div class="section level3">
 <h3 id="new-features-1-14">New features<a class="anchor" aria-label="anchor" href="#new-features-1-14"></a></h3>
 <ul><li>A new experimental <code>flush</code> argument has been introduced to <code><a href="../reference/wb_save.html">wb_save()</a></code>, allowing a custom XML streaming function for worksheets to help prevent memory spikes. This feature has only been tested within <code>openxlsx2</code> and not extensively with spreadsheet software. Since it bypasses certain fail-safe mechanisms, including XML validity checks, it should only be used as a last-resort solution. <a href="https://github.com/JanMarvin/openxlsx2/pull/1255" class="external-link">1255</a> This expects all inputs to be UTF-8, therefore it might not work with R running in different locale sessions, if non ASCII characters are used.</li>
