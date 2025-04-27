@@ -13,7 +13,7 @@ packages."><meta property="og:image" content="https://janmarvin.github.io/openxl
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.14.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.15.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -273,11 +273,12 @@ This behavior has been updated. Now, all datetime variables are imported
 with the timezone set to "UTC".
 If automatic date detection and conversion are enabled but the conversion
 is unsuccessful (for instance, in a column containing a mix of data types
-like strings, numbers, and dates), the dates will be displayed as a Unix
-timestamp. These can be transformed using the <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> function.
+like strings, numbers, and dates) dates might be displayed as a Unix
+timestamp. Usually they are converted to character for character columns.
 If date detection is disabled, dates will show up as a spreadsheet date
 format. To convert these, you can use the functions <code><a href="convert_date.html">convert_date()</a></code>,
-<code><a href="convert_date.html">convert_datetime()</a></code>, or <code><a href="convert_date.html">convert_hms()</a></code>.</p>
+<code><a href="convert_date.html">convert_datetime()</a></code>, or <code><a href="convert_date.html">convert_hms()</a></code>. If types are specified, date
+detection is disabled.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
