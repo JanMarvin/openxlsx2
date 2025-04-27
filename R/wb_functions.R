@@ -13,6 +13,10 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
   if (inherits(dims, "data.frame"))
     dims <- unlist(dims)
 
+  if (any(grepl("$", dims))) {
+    dims <- gsub("\\$", "", dims)
+  }
+
   has_dim_sep <- FALSE
   if (any(grepl(";", dims))) {
     dims <- unlist(strsplit(dims, ";"))
