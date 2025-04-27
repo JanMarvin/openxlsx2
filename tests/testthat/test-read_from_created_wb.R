@@ -301,3 +301,18 @@ test_that("reading with blank rows works (#1272)", {
   expect_equal(c(2L, 5L), dim(got))
 
 })
+
+test_that("worksheet exists", {
+
+  wb <- wb_workbook()$
+    add_worksheet("foo")$
+    add_worksheet("bar")$
+    add_worksheet("foo&bar")$
+    add_data(x = matrix(1:4, 2, ))
+
+  expect_error(wb$to_df(sheet = "fOo"), "sheet not found")
+  expect_error(wb$to_df(sheet = "Bar"), "sheet not found")
+  expect_message(wb$to_df(sheet = "foo"), "sheet found, but contains no data")
+  expect_silent(wb$to_df(sheet = "foo&bar", dims = "A1:B3"))
+
+})

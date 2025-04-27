@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Reading dims with dollar signs is now possible `wb$to_df(dims = "A$1:A$5")` and incorrectly selected sheets now throw a warning instead of an incorrect "sheet found, but contains no data" message.
+
 
 ***************************************************************************
 

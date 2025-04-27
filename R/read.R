@@ -272,6 +272,10 @@ wb_to_df <- function(
     sheet <- wb_validate_sheet(wb, sheet)
   }
 
+  if (is.na(sheet)) {
+    stop("sheet not found. available sheets are: \n", paste0(wb$get_sheet_names(), collapse = ", "))
+  }
+
   # the sheet has no data
   if (is.null(wb$worksheets[[sheet]]$sheet_data$cc) ||
       nrow(wb$worksheets[[sheet]]$sheet_data$cc) == 0) {
