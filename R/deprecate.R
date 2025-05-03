@@ -244,3 +244,42 @@ write_formula <- function(
     ...
   )
 }
+
+#' Delete data
+#'
+#' This function is deprecated. Use [wb_clean_sheet()].
+#' @param wb workbook
+#' @param sheet sheet to clean
+#' @param cols numeric column vector
+#' @param rows numeric row vector
+#' @export
+#' @keywords internal
+delete_data <- function(wb, sheet, cols, rows) {
+
+  .Deprecated(old = "delete_data", new = "wb_clean_sheet", package = "openxlsx2")
+
+  sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
+
+  cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
+
+  if (is.numeric(cols)) {
+    sel <- cc$row_r %in% as.character(as.integer(rows)) & cc$c_r %in% int2col(cols)
+  } else {
+    sel <- cc$row_r %in% as.character(as.integer(rows)) & cc$c_r %in% cols
+  }
+
+  # clean selected entries of cc
+  clean <- names(cc)[!names(cc) %in% c("r", "row_r", "c_r")]
+  cc[sel, clean] <- ""
+
+  wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
+
+}
+
+#' @rdname wb_set_grid_lines
+#' @export
+wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
+  assert_workbook(wb)
+  .Deprecated(old = "wb_grid_lines", new = "wb_set_grid_lines", package = "openxlsx2")
+  wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
+}
