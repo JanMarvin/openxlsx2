@@ -907,7 +907,7 @@ wb_read <- function(
 #' @export
 wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   assert_workbook(wb)
-  sheetno <- wb_validate_sheet(wb, sheet)
+  sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
   sheetname <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
 
   if (missing(dims)) {

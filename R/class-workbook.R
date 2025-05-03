@@ -2577,7 +2577,7 @@ wbWorkbook <- R6::R6Class(
       col_names   = FALSE
     ) {
 
-      sheet <- self$validate_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!grepl(":", dims)) col_names <- FALSE
 
@@ -2736,7 +2736,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object
     remove_hyperlink = function(sheet = current_sheet(), dims = NULL) {
 
-      sheet <- self$validate_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       # get all hyperlinks
       hls    <- self$worksheets[[sheet]]$hyperlinks
@@ -3772,7 +3772,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       id <- as.character(last_table_id(self) + 1) # otherwise will start at 0 for table 1 length indicates the last known
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
       # get the next highest rid
       rid <- 1
       if (!all(identical(self$worksheets_rels[[sheet]], character()))) {
@@ -4013,7 +4013,7 @@ wbWorkbook <- R6::R6Class(
 
       to_dims_f <- unname(unlist(to_dims_df_f))
 
-      from_sheet <- wb_validate_sheet(self, from_sheet)
+      from_sheet <- private$get_sheet_index(from_sheet)
       from_dims  <- as.character(unlist(from_dims_df))
       cc <- self$worksheets[[from_sheet]]$sheet_data$cc
 
@@ -5505,7 +5505,7 @@ wbWorkbook <- R6::R6Class(
       dims  = NULL
     ) {
 
-      sheet_id <- self$validate_sheet(sheet)
+      sheet_id <- private$get_sheet_index(sheet)
       cmmt <- self$worksheets[[sheet_id]]$relships$comments
 
       if (!is.null(dims) && any(grepl(":", dims)))
@@ -5593,7 +5593,7 @@ wbWorkbook <- R6::R6Class(
         if (is.null(person_id)) stop("no person id found")
       }
 
-      sheet <- self$validate_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       wb_cmt <- wb_get_comment(self, sheet, dims)
 
       if (length(cmt <- wb_cmt$comment)) {
@@ -5720,7 +5720,7 @@ wbWorkbook <- R6::R6Class(
     #' @return A data frame containing threads
     get_thread = function(sheet = current_sheet(), dims = NULL) {
 
-      sheet <- self$validate_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       thrd <- self$worksheets[[sheet]]$relships$threadedComment
 
       tc <- cbind(
@@ -6961,7 +6961,7 @@ wbWorkbook <- R6::R6Class(
         properties = NULL
     ) {
 
-      sheet <- wb_validate_sheet(self, sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       if (!protect) {
         # initializes as character()
@@ -9344,7 +9344,7 @@ wbWorkbook <- R6::R6Class(
 
     #' @description description set active sheet
     set_active_sheet = function(sheet = current_sheet()) {
-      sheet <- self$validate_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
       self$set_bookview(active_tab = sheet - 1L)
     },
 
@@ -9366,7 +9366,7 @@ wbWorkbook <- R6::R6Class(
     #' @description set selected sheet
     set_selected = function(sheet = current_sheet()) {
 
-      sheet <- self$validate_sheet(sheet)
+      sheet <- private$get_sheet_index(sheet)
 
       for (i in seq_along(self$sheet_names)) {
         xml_attr <- ifelse(i == sheet, TRUE, FALSE)

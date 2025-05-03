@@ -1077,7 +1077,7 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
 
   }
 
-  sheet_id <- wb_old$validate_sheet(old)
+  sheet_id <- wb_old$clone()$.__enclos_env__$private$get_sheet_index(old)
   cc <- wb_old$worksheets[[sheet_id]]$sheet_data$cc
   sst_ids  <- as.integer(cc$v[cc$c_t == "s"]) + 1
   sst_uni  <- sort(unique(sst_ids))
@@ -1089,7 +1089,7 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   attr(wb_new$sharedStrings, "uniqueCount") <- as.character(length(wb_new$sharedStrings))
 
 
-  sheet_id <- wb_new$validate_sheet(new)
+  sheet_id <- wb_new$clone()$.__enclos_env__$private$get_sheet_index(new)
   cc <- wb_new$worksheets[[sheet_id]]$sheet_data$cc
   # order ids and add new offset
   ids <- as.integer(cc$v[cc$c_t == "s"]) + 1L

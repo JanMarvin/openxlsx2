@@ -74,7 +74,7 @@ wb_check_overwrite_tables <- function(
   ## check not overwriting another table
   if (!is.null(wb$tables)) {
     tableSheets <- wb$tables$tab_sheet
-    sheetNo <- wb_validate_sheet(wb, sheet)
+    sheetNo <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
 
     to_check <- tableSheets %in% sheetNo & wb$tables$tab_act == 1
 

@@ -351,7 +351,7 @@ delete_data <- function(wb, sheet, cols, rows) {
 
   .Deprecated(old = "delete_data", new = "wb_clean_sheet", package = "openxlsx2")
 
-  sheet_id <- wb_validate_sheet(wb, sheet)
+  sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
 
   cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
 
