@@ -169,7 +169,7 @@ inner_update <- function(
 #' @noRd
 initialize_cell <- function(wb, sheet, new_cells) {
 
-  sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
+  sheet_id <- wb$.__enclos_env__$private$get_sheet_index(sheet)
   nms <- names(wb$worksheets[[sheet_id]]$sheet_data$cc)
 
   # create artificial cc for the missing cells
@@ -204,7 +204,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
   if (missing(na.strings))
     na.strings <- substitute()
 
-  sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
+  sheet_id <- wb$.__enclos_env__$private$get_sheet_index(sheet)
 
   dims <- dims_to_dataframe(cell, fill = TRUE)
   rows <- rownames(dims)
@@ -371,7 +371,7 @@ write_data2 <- function(
     }
   }
 
-  sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
+  sheetno <- wb$.__enclos_env__$private$get_sheet_index(sheet)
   # message("sheet no: ", sheetno)
 
   # create a data frame
