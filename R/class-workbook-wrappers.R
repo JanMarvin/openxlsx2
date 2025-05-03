@@ -2257,14 +2257,6 @@ wb_set_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print =
   wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
 }
 
-#' @rdname wb_set_grid_lines
-#' @export
-wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
-  assert_workbook(wb)
-  .Deprecated(old = "wb_grid_lines", new = "wb_set_grid_lines", package = "openxlsx2")
-  wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
-}
-
 # TODO hide gridlines?
 
 # worksheet order ---------------------------------------------------------

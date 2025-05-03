@@ -186,7 +186,7 @@ do_write_comment <- function(
   }
 
   rPr <- gsub("font>", "rPr>", rPr)
-  sheet <- wb_validate_sheet(wb, sheet)
+  sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
 
   if (!is.null(dims)) {
     ref <- dims
@@ -389,7 +389,7 @@ do_remove_comment <- function(
   # TODO add as method; wbWorkbook$remove_comment()
   assert_workbook(wb)
 
-  sheet <- wb_validate_sheet(wb, sheet)
+  sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
 
   if (!is.null(col) && !is.null(row)) {
     # col2int checks for numeric
