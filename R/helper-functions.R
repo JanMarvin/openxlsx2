@@ -106,7 +106,12 @@ col2hex <- function(my.col) {
 #' @param envir parent frame for use in assert
 #' @param msg return message
 #' @noRd
-validate_color <- function(color = NULL, or_null = FALSE, envir = parent.frame(), msg = NULL) {
+validate_color <- function(
+  color = NULL, or_null = FALSE,
+  envir = parent.frame(), msg = NULL,
+  format = c("ARGB", "RGBA")
+){
+  format <- match.arg(format)
   sx <- as.character(substitute(color, envir))
 
   if (identical(color, "none") && or_null) {
@@ -125,6 +130,13 @@ validate_color <- function(color = NULL, or_null = FALSE, envir = parent.frame()
 
   # remove any # from color strings
   color <- gsub("^#", "", toupper(color))
+
+  # if the format is RGBA (R's default), switch first two with last two characters
+  if(format == "RGBA"){
+    s <- nchar(color) == 8
+    alpha <- substring(color[s], 7, 8)
+    color[s] <- paste0(alpha, substring(color[s], 1, 6))
+    }
 
   ## create a total size of 8 in ARGB format
   color <- stringi::stri_pad_left(str = color, width = 8, pad = "F")

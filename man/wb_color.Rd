@@ -11,27 +11,40 @@ wb_color(
   indexed = NULL,
   hex = NULL,
   theme = NULL,
-  tint = NULL
+  tint = NULL,
+  format = c("ARGB", "RGBA")
 )
 }
 \arguments{
-\item{name}{A name of a color known to R either as name or RGB/ARGB value.}
+\item{name}{A name of a color known to R either as name or RGB/ARGB/RGBA value.}
 
 \item{auto}{A boolean.}
 
 \item{indexed}{An indexed color value. This color has to be provided by the workbook.}
 
-\item{hex}{A rgb color either a ARGB hex value or RGB hex value With or without leading "#".}
+\item{hex}{A rgb color a RGB/ARGB/RGBA hex value with or without leading "#".}
 
 \item{theme}{A zero based index referencing a value in the theme.}
 
 \item{tint}{A tint value applied. Range from -1 (dark) to 1 (light).}
+
+\item{format}{A colour format, one of ARGB (default) or RGBA.}
 }
 \value{
 a \code{wbColour} object
 }
 \description{
 Creates a \code{wbColour} object.
+}
+\details{
+The \strong{format} of the hex color representation  can be either RGB, ARGB, or RGBA.
+These hex formats differ only in a way how they encode the transparency value alpha,
+ARGB expecting the alpha value before the RGB values (default in spreadsheets),
+RGBA expects the alpha value after the RGB values (default in R),
+and RGB is not encoding transparency at all.
+If the colors some from functions such as \code{adjustcolor} that provide color in the
+RGBA format, it is necessary to specify the \code{format = "RGBA"} when calling the
+\code{wb_color()} function.
 }
 \seealso{
 \code{\link[=wb_get_base_colors]{wb_get_base_colors()}} \code{\link[grDevices:colors]{grDevices::colors()}}
