@@ -136,7 +136,7 @@ validate_color <- function(
     s <- nchar(color) == 8
     alpha <- substring(color[s], 7, 8)
     color[s] <- paste0(alpha, substring(color[s], 1, 6))
-    }
+  }
 
   ## create a total size of 8 in ARGB format
   color <- stringi::stri_pad_left(str = color, width = 8, pad = "F")
