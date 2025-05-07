@@ -30,7 +30,7 @@ wb_color <- function(
     tint = NULL,
     format = c("ARGB", "RGBA")
   ) {
-  format = match.arg(format)
+  format <- match.arg(format)
 
   if (!is.null(name)) hex <-  validate_color(name, format = format)
   if (!is.null(hex))  hex <-  validate_color(hex, format = format)

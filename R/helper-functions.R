@@ -110,7 +110,7 @@ validate_color <- function(
   color = NULL, or_null = FALSE,
   envir = parent.frame(), msg = NULL,
   format = c("ARGB", "RGBA")
-){
+) {
   format <- match.arg(format)
   sx <- as.character(substitute(color, envir))
 
@@ -132,7 +132,7 @@ validate_color <- function(
   color <- gsub("^#", "", toupper(color))
 
   # if the format is RGBA (R's default), switch first two with last two characters
-  if(format == "RGBA"){
+  if (format == "RGBA") {
     s <- nchar(color) == 8
     alpha <- substring(color[s], 7, 8)
     color[s] <- paste0(alpha, substring(color[s], 1, 6))
