@@ -60,7 +60,8 @@
 <span>  indexed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hex <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tint <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  tint <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ARGB"</span>, <span class="st">"RGBA"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -69,7 +70,7 @@
 
 
 <dl><dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>A name of a color known to R either as name or RGB/ARGB value.</p></dd>
+<dd><p>A name of a color known to R either as name or RGB/ARGB/RGBA value.</p></dd>
 
 
 <dt id="arg-auto">auto<a class="anchor" aria-label="anchor" href="#arg-auto"></a></dt>
@@ -81,7 +82,7 @@
 
 
 <dt id="arg-hex">hex<a class="anchor" aria-label="anchor" href="#arg-hex"></a></dt>
-<dd><p>A rgb color either a ARGB hex value or RGB hex value With or without leading "#".</p></dd>
+<dd><p>A rgb color a RGB/ARGB/RGBA hex value with or without leading "#".</p></dd>
 
 
 <dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>
@@ -91,10 +92,25 @@
 <dt id="arg-tint">tint<a class="anchor" aria-label="anchor" href="#arg-tint"></a></dt>
 <dd><p>A tint value applied. Range from -1 (dark) to 1 (light).</p></dd>
 
+
+<dt id="arg-format">format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
+<dd><p>A colour format, one of ARGB (default) or RGBA.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>a <code>wbColour</code> object</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The <strong>format</strong> of the hex color representation  can be either RGB, ARGB, or RGBA.
+These hex formats differ only in a way how they encode the transparency value alpha,
+ARGB expecting the alpha value before the RGB values (default in spreadsheets),
+RGBA expects the alpha value after the RGB values (default in R),
+and RGB is not encoding transparency at all.
+If the colors some from functions such as <code>adjustcolor</code> that provide color in the
+RGBA format, it is necessary to specify the <code>format = "RGBA"</code> when calling the
+<code>wb_color()</code> function.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
