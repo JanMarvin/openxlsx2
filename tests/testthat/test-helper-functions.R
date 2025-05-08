@@ -430,6 +430,18 @@ test_that("validate_colors() works", {
   got <- validate_color(col)
   expect_equal(exp, got)
 
+  # switch from RGBA to ARGB format
+  col <- c("#000000FF", adjustcolor("black"), "#000000", "black")
+  exp <- c("FF000000", "FF000000", "FF000000", "FF000000")
+  got <- validate_color(col, format = "RGBA")
+  expect_equal(got, exp)
+
+  # handle non-standard input (too short, missing hash)
+  # short input is padded with F, this might not be the desired color
+  col <- c("000000", "#000000", "#00", "00")
+  exp <- c("FF000000", "FF000000", "FFFFFF00", "FFFFFF00")
+  got <- validate_color(col)
+  expect_equal(got, exp)
 })
 
 test_that("basename2() works", {
