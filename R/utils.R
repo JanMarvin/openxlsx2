@@ -189,8 +189,9 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
   rows_out <- NULL
   for (dim in dims) {
     dimensions <- unlist(strsplit(dim, ":"))
-    cols <- gsub("[[:digit:]]", "", dimensions)
-    rows <- gsub("[[:upper:]]", "", dimensions)
+    tmp <- dims_split(dimensions)
+    cols <- tmp[["cols"]]
+    rows <- tmp[["rows"]]
 
     # if "A:B"
     if (any(rows == "")) rows[rows == ""] <- "1"
