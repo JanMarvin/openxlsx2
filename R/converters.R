@@ -51,7 +51,6 @@ col2int <- function(x) {
   col_to_int(x)
 }
 
-
 #' Return Excel cell coordinates from (x,y) coordinates
 #'
 #' @param cellCoords A data.frame with two columns coordinate pairs.
@@ -73,8 +72,6 @@ get_cell_refs <- function(cellCoords) {
   l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])
 }
-
-
 
 #' calculate the required column width
 #'

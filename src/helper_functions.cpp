@@ -916,3 +916,20 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
 
   return z;
 }
+
+// [[Rcpp::export]]
+Rcpp::List dims_split(Rcpp::CharacterVector dims) {
+  R_xlen_t n = dims.length();
+  Rcpp::CharacterVector rows(n), cols(n);
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    const std::string dim = Rcpp::as<std::string>(dims[i]);
+    rows[i] = rm_colnum(dim);
+    cols[i] = rm_rownum(dim);
+  }
+
+  return Rcpp::List::create(
+    Rcpp::Named("rows") = rows,
+    Rcpp::Named("cols") = cols
+  );
+}

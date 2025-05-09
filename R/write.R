@@ -66,8 +66,7 @@ inner_update <- function(
     # create missing cells
     cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
     cc_missing$r     <- missing_cells
-    cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
-    cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
+    cc_missing[c("row_r", "c_r")] <- dims_split(cc_missing$r)
 
     # assign to cc
     cc <- rbind(cc, cc_missing)
@@ -110,26 +109,28 @@ inner_update <- function(
 
   sel <- match(x$r, cc$r)
 
-  # to avoid bricking the worksheet, we make sure that we do not overwrite the
-  # reference cell of a shared formula. To be on the save side, we replace all
-  # values with the formula. If the entire cc is replaced with x, we can skip.
-  ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
-  if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
+  if (any(cc$f_attr != "")) {
+    # to avoid bricking the worksheet, we make sure that we do not overwrite the
+    # reference cell of a shared formula. To be on the save side, we replace all
+    # values with the formula. If the entire cc is replaced with x, we can skip.
+    ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
+    if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
 
-    # collect all the shared formulas that we have to convert
-    sel_fsi <- ff$si %in% unique(sf)
+      # collect all the shared formulas that we have to convert
+      sel_fsi <- ff$si %in% unique(sf)
 
-    cc_shared <- cc[sel_fsi, , drop = FALSE]
+      cc_shared <- cc[sel_fsi, , drop = FALSE]
 
-    cc <- shared_as_fml(cc, cc_shared)
+      cc <- shared_as_fml(cc, cc_shared)
 
-    msg <- paste0(
-      "A shared formula reference cell was overwritten. To protect the",
-      " spreadsheet formulas, the impacted cells were converted from shared",
-      " formulas to normal formulas."
-    )
-    warning(msg, call. = FALSE)
+      msg <- paste0(
+        "A shared formula reference cell was overwritten. To protect the",
+        " spreadsheet formulas, the impacted cells were converted from shared",
+        " formulas to normal formulas."
+      )
+      warning(msg, call. = FALSE)
 
+    }
   }
 
   # columns in cc and x can differ make sure that all elements are available
@@ -175,8 +176,7 @@ initialize_cell <- function(wb, sheet, new_cells) {
   # create artificial cc for the missing cells
   x <- create_char_dataframe(n = length(new_cells), colnames = nms)
   x$r     <- new_cells
-  x$row_r <- gsub("[[:upper:]]", "", new_cells)
-  x$c_r   <- gsub("[[:digit:]]", "", new_cells)
+  x[c("row_r", "c_r")] <- dims_split(x$r)
 
   rows <- unique(x$row_r)
   cells_needed <- new_cells

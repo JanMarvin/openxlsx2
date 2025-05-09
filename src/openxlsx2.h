@@ -69,8 +69,9 @@ static inline uint32_t uint_col_to_int(std::string& a) {
 
 static inline std::string rm_rownum(const std::string& str) {
   std::string result;
+  result.reserve(str.length());
   for (char c : str) {
-    if (!std::isdigit(c)) {
+    if (!std::isdigit(static_cast<unsigned char>(c))) {
       result += c;
     }
   }
@@ -79,8 +80,9 @@ static inline std::string rm_rownum(const std::string& str) {
 
 static inline std::string rm_colnum(const std::string& str) {
   std::string result;
+  result.reserve(str.length());
   for (char c : str) {
-    if (std::isdigit(c)) {
+    if (std::isdigit(static_cast<unsigned char>(c))) {
       result += c;
     }
   }
