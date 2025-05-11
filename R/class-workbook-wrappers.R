@@ -3252,6 +3252,7 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid
 #'   the border style, if `NULL` no border is drawn.
 #'   See [create_border()] for possible border styles
+#' @param overwrite If exsisting borders should be overwritten
 #' @param ... additional arguments
 #' @seealso [create_border()]
 #' @examples
@@ -3318,6 +3319,7 @@ wb_add_border <- function(
     inner_hcolor   = NULL,
     inner_vgrid    = NULL,
     inner_vcolor   = NULL,
+    overwrite      = FALSE,
     ...
 ) {
   assert_workbook(wb)
@@ -3336,6 +3338,7 @@ wb_add_border <- function(
     inner_hcolor  = inner_hcolor,
     inner_vgrid   = inner_vgrid,
     inner_vcolor  = inner_vcolor,
+    overwrite     = overwrite,
     ...           = ...
   )
 

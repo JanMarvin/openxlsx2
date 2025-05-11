@@ -176,3 +176,28 @@ test_that("reading xf node extLst works", {
   df_xf$extLst <- "<extLst></foo/></extLst>"
   expect_error(write_xf(df_xf), "failed to load xf child")
 })
+
+test_that("overwriting borders works", {
+
+  # A1:B10, C1:D10
+  wb <- wb_workbook()$add_worksheet()$
+    add_border(dims = "A1:B10")$
+    add_border(dims = "C1:D10")
+
+  # A1:D1, and another at A4:D4
+  wb$add_border(dims = "A1:D1", overwrite = TRUE)
+  exp <- c(A1 = "13", B1 = "15", C1 = "16", D1 = "14")
+  got <- wb$get_cell_style(dims = "A1:D1")
+  expect_equal(exp, got)
+
+  wb$add_border(dims = "A4:D4", top_border = NULL, overwrite = TRUE)
+  exp <- c(A4 = "17", B4 = "19", C4 = "20", D4 = "18")
+  got <- wb$get_cell_style(dims = "A4:D4")
+  expect_equal(exp, got)
+
+  wb$add_worksheet()$
+    add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  expect_silent(wb$add_border(dims = "C3:E5", overwrite = TRUE))
+
+})

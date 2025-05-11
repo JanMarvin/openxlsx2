@@ -8191,6 +8191,7 @@ wbWorkbook <- R6::R6Class(
     #' @param dims dimensions on the worksheet e.g. "A1", "A1:A5", "A1:H5"
     #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
     #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
+    #' @param overwrite overwrite
     #' @return The `wbWorkbook`, invisibly
     add_border = function(
       sheet         = current_sheet(),
@@ -8207,6 +8208,7 @@ wbWorkbook <- R6::R6Class(
       inner_hcolor  = NULL,
       inner_vgrid   = NULL,
       inner_vcolor  = NULL,
+      overwrite     = FALSE,
       ...
     ) {
 
@@ -8259,6 +8261,8 @@ wbWorkbook <- R6::R6Class(
         # determine dim
         dim_full_single <- df[1, 1]
 
+        if (overwrite) full_single <- overwrite_border(self, dims = dim_full_single, new_border = full_single)
+
         # determine name
         sfull_single <- paste0(smp, "full_single")
 
@@ -8291,6 +8295,11 @@ wbWorkbook <- R6::R6Class(
         dim_top_single <- df[1, 1]
         dim_bottom_single <- df[nrow(df), 1]
 
+        if (overwrite) {
+          top_single    <- overwrite_border(self, dims = dim_top_single, new_border = top_single)
+          bottom_single <- overwrite_border(self, dims = dim_bottom_single, new_border = bottom_single)
+        }
+
         # determine names
         stop_single <- paste0(smp, "full_single")
         sbottom_single <- paste0(smp, "bottom_single")
@@ -8322,8 +8331,10 @@ wbWorkbook <- R6::R6Class(
           mid <- df[, 1]
           dim_middle_single <- mid[!mid %in% c(dim_top_single, dim_bottom_single)]
 
+          if (overwrite) middle_single <- overwrite_border(self, dims = dim_middle_single, new_border = dim_middle_single)
+
           # determine names
-          smiddle_single <- paste0(smp, "middle_single")
+          smiddle_single <- paste0(smp, "middle_single", seq_len(length(middle_single)))
 
           # add middle single
           self$styles_mgr$add(middle_single, smiddle_single)
@@ -8351,13 +8362,18 @@ wbWorkbook <- R6::R6Class(
           right = right_border, right_color = right_color
         )
 
-        # determine names
-        sleft_single <- paste0(smp, "left_single")
-        sright_single <- paste0(smp, "right_single")
-
         # determine dims
         dim_left_single <- df[1, 1]
         dim_right_single <- df[1, ncol(df)]
+
+        if (overwrite) {
+          left_single  <- overwrite_border(self, dims = dim_left_single, new_border = left_single)
+          right_single <- overwrite_border(self, dims = dim_right_single, new_border = right_single)
+        }
+
+        # determine names
+        sleft_single <- paste0(smp, "left_single", seq_len(length(left_single)))
+        sright_single <- paste0(smp, "right_single", seq_len(length(right_single)))
 
         # add left single
         self$styles_mgr$add(left_single, sleft_single)
@@ -8375,8 +8391,6 @@ wbWorkbook <- R6::R6Class(
 
         # add single center piece(s)
         if (ncol(df) >= 3) {
-          scenter_single <- paste0(smp, "center_single")
-
           center_single <- create_border(
             top = top_border, top_color = top_color,
             bottom = bottom_border, bottom_color = bottom_color,
@@ -8386,6 +8400,10 @@ wbWorkbook <- R6::R6Class(
 
           ctr <- df[1, ]
           dim_center_single <- ctr[!ctr %in% c(dim_left_single, dim_right_single)]
+
+          if (overwrite) center_single <- overwrite_border(self, dims = dim_center_single, new_border = center_single)
+
+          scenter_single <- paste0(smp, "center_single", seq_len(length(center_single)))
 
           # add center single
           self$styles_mgr$add(center_single, scenter_single)
@@ -8428,17 +8446,24 @@ wbWorkbook <- R6::R6Class(
           right = right_border, right_color = right_color
         )
 
-        # determine names
-        stop_left <- paste0(smp, "top_left")
-        stop_right <- paste0(smp, "top_right")
-        sbottom_left <- paste0(smp, "bottom_left")
-        sbottom_right <- paste0(smp, "bottom_right")
-
         # determine dims
         dim_top_left     <- df[1, 1]
         dim_bottom_left  <- df[nrow(df), 1]
         dim_top_right    <- df[1, ncol(df)]
         dim_bottom_right <- df[nrow(df), ncol(df)]
+
+        if (overwrite) {
+          top_left     <- overwrite_border(self, dims = dim_top_left, new_border = top_left)
+          bottom_left  <- overwrite_border(self, dims = dim_bottom_left, new_border = bottom_left)
+          top_right    <- overwrite_border(self, dims = dim_top_right, new_border = top_right)
+          bottom_right <- overwrite_border(self, dims = dim_bottom_right, new_border = bottom_right)
+        }
+
+        # determine names
+        stop_left <- paste0(smp, "top_left", seq_len(length(top_left)))
+        sbottom_left <- paste0(smp, "bottom_left", seq_len(length(bottom_left)))
+        stop_right <- paste0(smp, "top_right", seq_len(length(top_right)))
+        sbottom_right <- paste0(smp, "bottom_right", seq_len(length(bottom_right)))
 
         # add top left
         self$styles_mgr$add(top_left, stop_left)
@@ -8486,15 +8511,20 @@ wbWorkbook <- R6::R6Class(
           right = right_border, right_color = right_color
         )
 
-        # determine names
-        smiddle_left <- paste0(smp, "middle_left")
-        smiddle_right <- paste0(smp, "middle_right")
-
         # determine dims
         top_mid <- df[, 1]
         bottom_mid <- df[, ncol(df)]
         dim_middle_left <- top_mid[!top_mid %in% c(dim_top_left, dim_bottom_left)]
         dim_middle_right <- bottom_mid[!bottom_mid %in% c(dim_top_right, dim_bottom_right)]
+
+        if (overwrite) {
+          middle_left  <- overwrite_border(self, dims = dim_middle_left, new_border = middle_left)
+          middle_right <- overwrite_border(self, dims = dim_middle_right, new_border = middle_right)
+        }
+
+        # determine names
+        smiddle_left <- paste0(smp, "middle_left", seq_len(length(middle_left)))
+        smiddle_right <- paste0(smp, "middle_right", seq_len(length(middle_right)))
 
         # add middle left
         self$styles_mgr$add(middle_left, smiddle_left)
@@ -8528,15 +8558,20 @@ wbWorkbook <- R6::R6Class(
           right = inner_vgrid, right_color = inner_vcolor
         )
 
-        # determine names
-        stop_center <- paste0(smp, "top_center")
-        sbottom_center <- paste0(smp, "bottom_center")
-
         # determine dims
         top_ctr <- df[1, ]
         bottom_ctr <- df[nrow(df), ]
         dim_top_center <- top_ctr[!top_ctr %in% c(dim_top_left, dim_top_right)]
         dim_bottom_center <- bottom_ctr[!bottom_ctr %in% c(dim_bottom_left, dim_bottom_right)]
+
+        if (overwrite) {
+          top_center    <- overwrite_border(self, dims = dim_top_center, new_border = top_center)
+          bottom_center <- overwrite_border(self, dims = dim_bottom_center, new_border = bottom_center)
+        }
+
+        # determine names
+        stop_center <- paste0(smp, "top_center", seq_len(length(top_center)))
+        sbottom_center <- paste0(smp, "bottom_center", seq_len(length(bottom_center)))
 
         # add top center
         self$styles_mgr$add(top_center, stop_center)
@@ -8562,15 +8597,17 @@ wbWorkbook <- R6::R6Class(
           right = inner_vgrid, right_color = inner_vcolor
         )
 
-        # determine name
-        sinner_cell <- paste0(smp, "inner_cell")
-
         # determine dims
         t_row <- 1
         b_row <- nrow(df)
         l_row <- 1
         r_row <- ncol(df)
         dim_inner_cell <- as.character(unlist(df[c(-t_row, -b_row), c(-l_row, -r_row)]))
+
+        if (overwrite) inner_cell <- overwrite_border(self, dims = dim_inner_cell, new_border = inner_cell)
+
+        # determine name
+        sinner_cell <- paste0(smp, "inner_cell", seq_len(length(inner_cell)))
 
         # add inner cells
         self$styles_mgr$add(inner_cell, sinner_cell)
