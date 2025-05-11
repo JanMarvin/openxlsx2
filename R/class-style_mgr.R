@@ -310,7 +310,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param name name
     get_numfmt_id = function(name) {
       numfmt <- self$numfmt
-      id <- numfmt$id[numfmt$name == name]
+      id <- numfmt$id[match(name, numfmt$name)]
       if (length(id)) id else NULL
     },
 
@@ -318,7 +318,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param name name
     get_font_id = function(name) {
       font <- self$font
-      id <- font$id[font$name == name]
+      id <- font$id[match(name, font$name)]
       if (length(id)) id else NULL
     },
 
@@ -326,7 +326,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param name name
     get_fill_id = function(name) {
       fill <- self$fill
-      id <- fill$id[fill$name == name]
+      id <- fill$id[match(name, fill$name)]
       if (length(id)) id else NULL
     },
 
@@ -334,7 +334,7 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @param name name
     get_border_id = function(name) {
       border <- self$border
-      id <- border$id[border$name == name]
+      id <- border$id[match(name, border$name)]
       if (length(id)) id else NULL
     },
 
