@@ -1000,7 +1000,7 @@ overwrite_border <- function(wb, sheet = current_sheet(), dims = "A1", new_borde
   get_border <- c_s$borderId
   borders <- read_border(read_xml(wb$styles_mgr$styles$borders))[get_border, ]
 
-  # TODO not sure why ...
+  # While an update was requested, the original cell might have been borderless
   borders[is.na(borders)] <- ""
 
   new_border <- read_border(read_xml(new_border))

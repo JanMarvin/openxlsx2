@@ -177,6 +177,7 @@ test_that("reading xf node extLst works", {
   expect_error(write_xf(df_xf), "failed to load xf child")
 })
 
+## FIXME silent tests should be replaced with something better
 test_that("overwriting borders works", {
 
   # A1:B10, C1:D10
@@ -199,5 +200,39 @@ test_that("overwriting borders works", {
     add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
 
   expect_silent(wb$add_border(dims = "C3:E5", overwrite = TRUE))
+
+  ## check single cell
+  wb$add_worksheet()$
+    add_border(dims = "B2:B4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  # to update the inner cell, both the style and the color must be NULL
+  expect_silent(
+    wb$add_border(dims = "B3",
+                  top_border = NULL, left_border = NULL, right_border = NULL, bottom_border = "double", bottom_color = wb_color("blue"),
+                  overwrite = TRUE)
+  )
+
+  # update it a second time
+  expect_silent(
+    wb$add_border(dims = "B3:B3",
+                  bottom_border = NULL, left_border = NULL, right_border = NULL, top_border = "dashed", top_color = wb_color("red"),
+                  overwrite = TRUE)
+  )
+
+  # horizontal overlap
+  wb$add_worksheet()$
+    add_border(dims = "B2:E2", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  expect_silent(
+    wb$add_border(dims = "C2:F2", bottom_border = "dashed", left_border = "dashed", right_border = "dashed", top_border = "dashed", overwrite = TRUE)
+  )
+
+  # vertical overlap
+  wb$add_worksheet()$
+    add_border(dims = "B2:B5", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  expect_silent(
+    wb$add_border(dims = "B3:B6", bottom_border = "dashed", left_border = "dashed", right_border = "dashed", top_border = "dashed", overwrite = TRUE)
+  )
 
 })
