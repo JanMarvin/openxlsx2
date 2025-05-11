@@ -20,6 +20,7 @@ wb_add_border(
   inner_hcolor = NULL,
   inner_vgrid = NULL,
   inner_vcolor = NULL,
+  overwrite = FALSE,
   ...
 )
 }
@@ -34,6 +35,8 @@ wb_add_border(
 
 \item{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}{the border style, if \code{NULL} no border is drawn.
 See \code{\link[=create_border]{create_border()}} for possible border styles}
+
+\item{overwrite}{If exsisting borders should be overwritten}
 
 \item{...}{additional arguments}
 }

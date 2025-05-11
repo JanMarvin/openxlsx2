@@ -987,6 +987,36 @@ create_dxfs_style <- function(
 
 }
 
+#' Helper function used to overwrite borders styles
+#' picks a style from a worksheet dimension and adds the required border
+#' @noRd
+overwrite_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) {
+
+  XFs <- wb$get_cell_style(sheet = sheet, dims = dims)
+  # access the ids in a data frame
+  c_s <- read_xf(read_xml(wb$styles_mgr$styles$cellXfs))[XFs, ]
+
+  ## the current border for the cell
+  get_border <- c_s$borderId
+  borders <- read_border(read_xml(wb$styles_mgr$styles$borders))[get_border, ]
+
+  # TODO not sure why ...
+  borders[is.na(borders)] <- ""
+
+  new_border <- read_border(read_xml(new_border))
+
+  ## update the exisisting style
+  sel <- which(new_border != "")
+  borders[, sel] <- new_border[, sel]
+
+  nms <- c(
+    "start", "end", "left", "right", "top", "bottom", "diagonalDown",
+    "diagonalUp", "diagonal", "vertical", "horizontal", "outline"
+  )
+
+  write_border(borders[nms])
+}
+
 ## The functions below are only partially covered, but span over 300+ LOC ##
 
 # nocov start
