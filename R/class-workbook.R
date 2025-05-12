@@ -8220,6 +8220,16 @@ wbWorkbook <- R6::R6Class(
 
       standardize(...)
 
+      if (is.null(bottom_color)) bottom_border <- NULL
+      if (is.null(left_color)) left_border <- NULL
+      if (is.null(right_color)) right_border <- NULL
+      if (is.null(top_color)) top_border <- NULL
+
+      if (is.null(bottom_border)) bottom_color <- NULL
+      if (is.null(left_border)) left_color <- NULL
+      if (is.null(right_border)) right_color <- NULL
+      if (is.null(top_border)) top_color <- NULL
+
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
