@@ -6,6 +6,10 @@
 * Add `format` argument to `wb_color()`/`wb_colour()`. This allows setting the input format to `RGBA`. ([1341](https://github.com/JanMarvin/openxlsx2/pull/1341), @J-Moravec)
 * Add `overwrite` argument to `wb_add_border()`. This way it is possible to preserve intersecting borders. [1343](https://github.com/JanMarvin/openxlsx2/pull/1343)
 
+## Breaking changes
+
+* Nulling a color or border style in `wb_add_border()` now automatically nulls the corresponding color/border style. [1343](https://github.com/JanMarvin/openxlsx2/pull/1343)
+
 
 ***************************************************************************
 
