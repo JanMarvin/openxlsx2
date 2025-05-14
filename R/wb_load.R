@@ -230,6 +230,7 @@ wb_load <- function(
     add = TRUE
   )
 
+  file_names <- basename2(xmlFiles)
   file_folders <- unique(basename(dirname(xmlFiles)))
   known <- c(
     basename(xmlDir), "_rels", "activeX", "charts", "chartsheets",
@@ -835,7 +836,7 @@ wb_load <- function(
   ##* ----------------------------------------------------------------------------------------------*##
 
   ## xl\worksheets
-  file_names <- basename(sheets$Target)
+  sheet_names <- basename(sheets$Target)
 
   # nSheets contains all sheets. worksheets and chartsheets. For this loop we
   # only need worksheets. We can not loop over import_sheets, because some
@@ -1029,7 +1030,7 @@ wb_load <- function(
     ## haveRels is boolean vector where i-the element is TRUE/FALSE if sheet has a rels sheet
 
     if (length(chartSheetsXML) == 0) {
-      allRels <- file.path(dirname(sheetRelsXML[1]), paste0(file_names, ".rels"))
+      allRels <- file.path(dirname(sheetRelsXML[1]), paste0(sheet_names, ".rels"))
       haveRels <- allRels %in% sheetRelsXML
     } else {
       haveRels <- rep(FALSE, length(wb$worksheets))
@@ -1037,9 +1038,9 @@ wb_load <- function(
 
       for (i in seq_len(nSheets)) {
         if (sheets$typ[i] == "chartsheet") {
-          rels_file <- file.path(xmlDir, "xl", "chartsheets", "_rels", paste0(file_names[i], ".rels"))
+          rels_file <- file.path(xmlDir, "xl", "chartsheets", "_rels", paste0(sheet_names[i], ".rels"))
         } else {
-          rels_file <- file.path(xmlDir, "xl", "worksheets", "_rels", paste0(file_names[i], ".rels"))
+          rels_file <- file.path(xmlDir, "xl", "worksheets", "_rels", paste0(sheet_names[i], ".rels"))
         }
         if (file.exists(rels_file)) {
           allRels[i] <- rels_file
@@ -1057,9 +1058,22 @@ wb_load <- function(
         if (length(xml) == 0) return(character())
 
         xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
+        xml_relship$typ <- basename(xml_relship$Type)
+        xml_relship$base <- basename2(xml_relship$Target)
+
+        # silently remove empty drawing/vml references created by openxlsx
+        if (any(missing_rels <- is.na(match(xml_relship$base, file_names) & !xml_relship$typ == "hyperlink"))) {
+          relship_missing <- which(missing_rels)
+          if (debug) warning(
+            "relationship missing in input file: ",  paste0(xml_relship$Target[relship_missing], collapse = ", "),
+            call. = FALSE
+          )
+          xml_relship <- xml_relship[-relship_missing, ]
+        }
+
         # print(xml_relship)
-        if (any(basename(xml_relship$Type) %in% c("comments", "table"))) { #  %% length(tablesBIN)
-          sel <- basename(xml_relship$Type) %in% c("comments", "table")
+        if (any(xml_relship$typ %in% c("comments", "table"))) { #  %% length(tablesBIN)
+          sel <- xml_relship$typ %in% c("comments", "table")
           # message("table")
           # print(gsub(".bin", ".xml", xml_relship$Target[sel]))
           # message("---")
@@ -1071,7 +1085,7 @@ wb_load <- function(
         # we do not ship this binary blob, therefore spreadsheet software may
         # stumble over this non existent reference. In the future we might want
         # to check if the references are valid pre file saving.
-        sel_row <- !grepl("printerSettings|binaryIndex", basename2(xml_relship$Target))
+        sel_row <- !grepl("printerSettings|binaryIndex", xml_relship$base)
         sel_col <- c("Id", "Type", "Target", "TargetMode")
         # return as xml
         xml <- df_to_xml("Relationship", xml_relship[sel_row, sel_col])
