@@ -250,7 +250,7 @@ test_that("type = 'colorScale' works", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("black", "white"),
     rule = c(0, 255),
     type = "colorScale"
@@ -386,7 +386,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale1",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("black", "white"),
     type = "colorScale"
   )
@@ -403,7 +403,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale2",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("blue", "red"),
     rule = c(1, 255),
     type = "colorScale"
@@ -421,7 +421,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale3",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("red", "green", "blue"),
     type = "colorScale"
   )
@@ -441,7 +441,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale4",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("red", "green", "blue"),
     rule = c(1, 155, 255),
     type = "colorScale"
@@ -678,13 +678,12 @@ test_that("containsBlanks works", {
 
 test_that("warning on cols > 2 and dims", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
-  expect_warning(
+  expect_silent(
     wb$add_conditional_formatting(
       dims = wb_dims(rows = seq_len(nrow(mtcars)), cols = c(2, 4, 6)),
       type = "between",
       rule = c(2, 4)
-    ),
-    "cols > 2, will create range from min to max."
+    )
   )
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
