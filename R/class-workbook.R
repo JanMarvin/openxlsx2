@@ -5804,26 +5804,15 @@ wbWorkbook <- R6::R6Class(
       rows <- ddims[["row"]]
       cols <- ddims[["col"]]
 
-      if (length(cols) > 2 && any(diff(cols) != 1))
+      if (length(cols) > 2 && any(diff(cols) != 1)) {
         warning("cols > 2, will create range from min to max.")
+      }
 
       if (!is.null(style)) assert_class(style, "character")
       assert_class(type, "character")
       assert_class(params, "list")
 
       type <- match.arg(type)
-
-      ## rows and cols
-      if (!is.null(cols) && !is.null(rows)) {
-        if (!is.numeric(cols)) {
-          cols <- col2int(cols)
-        }
-        rows <- as.integer(rows)
-      } else if (!is.null(dims)) {
-        rowcol <- dims_to_rowcol(dims, as_integer = TRUE)
-        rows <- rowcol[["row"]]
-        cols <- rowcol[["col"]]
-      }
 
       ## check valid rule
       dxfId <- NULL
