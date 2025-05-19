@@ -536,3 +536,17 @@ test_that("openxlsx2 until release 1.13 used a float for baseColWidth", {
   expect_equal(fix, got)
 
 })
+
+test_that("loading and saving named sheet views works", {
+
+  fl <- testfile_path("named_sv.xlsx")
+  tmp <- temp_xlsx()
+
+  wb <- wb_load(fl)
+  expect_equal(1, length(wb$namedSheetViews))
+  expect_silent(wb$save(tmp))
+
+  wb1 <- wb_load(tmp)
+  expect_equal(wb$namedSheetViews, wb1$namedSheetViews)
+
+})
