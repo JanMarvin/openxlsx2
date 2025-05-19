@@ -216,6 +216,8 @@ wb_load <- function(
   ## feature property bag
   featureProperty   <- grep_xml("featurePropertyBag.xml$")
 
+  namedSheetViewsXML <- grep_xml("namedSheetViews/namedSheetView[0-9]+.xml$")
+
   cleanup_dir <- function(data_only) {
     grep_xml("media|vmlDrawing|customXml|embeddings|activeX|vbaProject", ignore.case = TRUE, invert = TRUE)
   }
@@ -236,10 +238,10 @@ wb_load <- function(
     basename(xmlDir), "_rels", "activeX", "charts", "chartsheets",
     "ctrlProps", "customXml", "docMetadata", "docProps", "drawings",
     "embeddings", "externalLinks", "featurePropertyBag", "media",
-    "persons", "pivotCache", "pivotTables", "printerSettings",
-    "queryTables", "richData", "slicerCaches", "slicers", "tables",
-    "theme", "threadedComments", "timelineCaches", "timelines",
-    "worksheets", "xl", "[trash]"
+    "namedSheetViews", "persons", "pivotCache", "pivotTables",
+    "printerSettings", "queryTables", "richData", "slicerCaches",
+    "slicers", "tables", "theme", "threadedComments", "timelineCaches",
+    "timelines", "worksheets", "xl", "[trash]"
   )
   unknown <- file_folders[!file_folders %in% known]
   # nocov start
@@ -1911,6 +1913,19 @@ wb_load <- function(
     wb$richData <- rd
   }
 
+  ## namedSheetView
+  # This is new in openxlsx2 1.16 and probably not yet entire correct
+  if (!data_only && length(namedSheetViewsXML)) {
+    wb$namedSheetViews <- read_xml_files(namedSheetViewsXML)
+    for (namedSheetView in seq_along(namedSheetViewsXML)) {
+      wb$append("Content_Types",
+                sprintf(
+                  '<Override PartName="/xl/namedSheetViews/namedSheetView%s.xml" ContentType="application/vnd.ms-excel.namedsheetviews+xml"/>',
+                  namedSheetView
+                )
+      )
+    }
+  }
 
   # final cleanup
   if (length(workbookBIN)) {

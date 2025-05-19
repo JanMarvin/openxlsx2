@@ -303,6 +303,9 @@ wbWorkbook <- R6::R6Class(
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
 
+    #' @field namedSheetViews namedSheetViews
+    namedSheetViews = character(),
+
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param title,subject,category,keywords,comments,manager,company workbook properties
@@ -3417,6 +3420,15 @@ wbWorkbook <- R6::R6Class(
           )
         }
       }
+
+      if (length(self$namedSheetViews)) {
+        namedSheetViewsDir <- dir_create(tmpDir, "xl", "namedSheetViews")
+
+        for (i in seq_along(self$namedSheetViews)) {
+          write_file(body = self$namedSheetViews[i], fl = file.path(namedSheetViewsDir, sprintf("namedSheetView%i.xml", i)))
+        }
+      }
+
 
       ## media (copy file from origin to destination)
       # TODO replace with seq_along()
