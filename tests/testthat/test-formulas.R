@@ -273,7 +273,8 @@ test_that("formula with names work as documented", {
       "=HYPERLINK(\"https://CRAN.R-project.org/\")",
       "=HYPERLINK(\"https://CRAN.R-project.org/\")",
       "=HYPERLINK(\"https://CRAN.R-project.org/\")"
-    )
+    ),
+    stringsAsFactors = FALSE
   )
   class(exp$A) <- c("character", "formula")
   class(exp$B) <- c("character", "formula")
