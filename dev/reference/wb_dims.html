@@ -117,6 +117,8 @@ If <code>row_names = TRUE</code>, <code>wb_dims()</code> will increment <code>fr
 but it works best if <code>x</code> has named dimensions (<code>data.frame</code>, <code>matrix</code>), and those parameters are not specified.
 data with column names, and without row names. as the code is more clean.</p>
 <p>In the <code>add_data()</code> / <code>add_font()</code> example, if writing the data with row names</p>
+<p>While it is possible to construct dimensions from decreasing rows and columns, the output will always order the rows top to bottom. So
+<code>wb_dims(rows = 3:1, cols = 3:1)</code> will not result in <code>"C3:A1"</code> and if passed to functions, it will return the same as <code>"C1:A3"</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="using-wb-dims-without-an-x-object">Using <code>wb_dims()</code> without an <code>x</code> object<a class="anchor" aria-label="anchor" href="#using-wb-dims-without-an-x-object"></a></h2>
