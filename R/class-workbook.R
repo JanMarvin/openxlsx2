@@ -5802,8 +5802,8 @@ wbWorkbook <- R6::R6Class(
 
       # as_integer returns a range, but we want to know all columns
       ddims <- dims_to_rowcol(dims, as_integer = FALSE)
-      rows <- as.integer(ddims[["row"]])
-      cols <- col2int(ddims[["col"]])
+      rows <- sort(as.integer(ddims[["row"]]))
+      cols <- sort(col2int(ddims[["col"]]))
 
       if (!is.null(style)) assert_class(style, "character")
       assert_class(type, "character")
