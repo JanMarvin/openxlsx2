@@ -13,7 +13,7 @@ cf_create_colorscale <- function(priority, formula, values) {
     # lengths, if these aren't checked somewhere already?
     if (length(formula) == 2L) {
       cf_rule <- sprintf(
-        '<cfRule type="colorScale" priority="1">
+        '<cfRule type="colorScale" priority="%s">
           <colorScale>
             <cfvo type="min"/>
             <cfvo type="max"/>
@@ -21,12 +21,13 @@ cf_create_colorscale <- function(priority, formula, values) {
             <color rgb="%s"/>
           </colorScale>
         </cfRule>',
+        priority,
         formula[[1]],
         formula[[2]]
       )
     } else if (length(formula) == 3L) {
       cf_rule <- sprintf(
-        '<cfRule type="colorScale" priority="1">
+        '<cfRule type="colorScale" priority="%s">
           <colorScale>
             <cfvo type="min"/>
             <cfvo type="percentile" val="50"/>
@@ -36,6 +37,7 @@ cf_create_colorscale <- function(priority, formula, values) {
             <color rgb="%s"/>
           </colorScale>
         </cfRule>',
+        priority,
         formula[[1]],
         formula[[2]],
         formula[[3]]
@@ -44,7 +46,7 @@ cf_create_colorscale <- function(priority, formula, values) {
   } else {
     if (length(formula) == 2L && length(values) == 2L) {
       cf_rule <- sprintf(
-        '<cfRule type="colorScale" priority="1">
+        '<cfRule type="colorScale" priority="%s">
           <colorScale>
             <cfvo type="num" val="%s"/>
             <cfvo type="num" val="%s"/>
@@ -52,6 +54,7 @@ cf_create_colorscale <- function(priority, formula, values) {
             <color rgb="%s"/>
           </colorScale>
         </cfRule>',
+        priority,
         values[[1]],
         values[[2]],
         formula[[1]],
@@ -59,7 +62,7 @@ cf_create_colorscale <- function(priority, formula, values) {
       )
     } else if (length(formula) == 3L && length(values) == 3L) {
       cf_rule <- sprintf(
-        '<cfRule type="colorScale" priority="1">
+        '<cfRule type="colorScale" priority="%s">
           <colorScale>
             <cfvo type="num" val="%s"/>
             <cfvo type="num" val="%s"/>
@@ -69,6 +72,7 @@ cf_create_colorscale <- function(priority, formula, values) {
             <color rgb="%s"/>
           </colorScale>
         </cfRule>',
+        priority,
         values[[1]],
         values[[2]],
         values[[3]],
@@ -201,7 +205,7 @@ cf_create_duplicated_values <- function(priority, dxfId) {
     '<cfRule type="duplicateValues" dxfId="%s" priority="%s"/>',
     # cfRule
     dxfId,
-    priority,
+    priority
   )
 
   cf_rule
@@ -228,7 +232,7 @@ cf_create_contains_text <- function(priority, dxfId, sqref, values) {
 
 #' @rdname cf_rules
 #' @noRd
-cf_create_not_contains_text <- function(priority,dxfId, sqref, values) {
+cf_create_not_contains_text <- function(priority, dxfId, sqref, values) {
   cf_rule <- sprintf(
     '<cfRule type="notContainsText" dxfId="%s" priority="%s" operator="notContains" text="%s">
       <formula>ISERROR(SEARCH("%s", %s))</formula>
@@ -247,7 +251,7 @@ cf_create_not_contains_text <- function(priority,dxfId, sqref, values) {
 
 #' @rdname cf_rules
 #' @noRd
-cf_begins_with <- function(priority,dxfId, sqref, values) {
+cf_begins_with <- function(priority, dxfId, sqref, values) {
   cf_rule <- sprintf(
     '<cfRule type="beginsWith" dxfId="%s" priority="%s" operator="beginsWith" text="%s">
       <formula>LEFT(%s,LEN("%s"))="%s"</formula>
@@ -289,12 +293,13 @@ cf_ends_with <- function(priority, dxfId, sqref, values) {
 #' @noRd
 cf_between <- function(priority, dxfId, formula) {
   cf_rule <- sprintf(
-    '<cfRule type="cellIs" dxfId="%s" priority="1" operator="between">
+    '<cfRule type="cellIs" dxfId="%s" priority="%s" operator="between">
       <formula>%s</formula>
       <formula>%s</formula>
     </cfRule>',
     # cfRule
     dxfId,
+    priority,
     # formula
     formula[1],
     formula[2]
@@ -307,9 +312,10 @@ cf_between <- function(priority, dxfId, formula) {
 #' @noRd
 cf_top_n <- function(priority, dxfId, values) {
   cf_rule <- sprintf(
-    '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s"/>',
+    '<cfRule type="top10" dxfId="%s" priority="%s" rank="%s" percent="%s"/>',
     # cfRule
     dxfId,
+    priority,
     values$rank,
     values$percent
   )
@@ -321,9 +327,10 @@ cf_top_n <- function(priority, dxfId, values) {
 #' @noRd
 cf_bottom_n <- function(priority, dxfId, values) {
   cf_rule <- sprintf(
-    '<cfRule type="top10" dxfId="%s" priority="1" rank="%s" percent="%s" bottom="1"/>',
+    '<cfRule type="top10" dxfId="%s" priority="%s" rank="%s" percent="%s" bottom="1"/>',
     # cfRule
     dxfId,
+    priority,
     values$rank,
     values$percent
   )

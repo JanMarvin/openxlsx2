@@ -10011,13 +10011,13 @@ wbWorkbook <- R6::R6Class(
       nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
       dxfId <- max(dxfId, 0L)
 
-
-      priority <- max(
-      as.integer(
-        openxlsx2:::rbindlist(
-          xml_attr(wb$worksheets[[1]]$conditionalFormatting, "cfRule")
-        )$priority
-      ), 0) + 1L
+      priority <- max(0,
+        as.integer(
+          openxlsx2:::rbindlist(
+            xml_attr(self$worksheets[[sheet]]$conditionalFormatting, "cfRule")
+          )$priority
+        )
+      ) + 1L
 
       # big switch statement
       cfRule <- switch(
