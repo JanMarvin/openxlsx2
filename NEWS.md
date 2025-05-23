@@ -3,6 +3,7 @@
 ## New features
 
 * Reading dims with dollar signs is now possible `wb$to_df(dims = "A$1:A$5")` and incorrectly selected sheets now throw a warning instead of an incorrect "sheet found, but contains no data" message.
+* Slightly adjusted `wb_dims()` to create regions from decreasing consecutive columns and rows. [1353](https://github.com/JanMarvin/openxlsx2/pull/1353)
 
 
 ***************************************************************************
