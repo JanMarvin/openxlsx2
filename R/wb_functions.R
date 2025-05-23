@@ -1,5 +1,7 @@
 #' Create dataframe from dimensions
 #'
+#' Non consecutive decreasing dims will return an increasing data frame.
+#'
 #' @param dims Character vector of expected dimension.
 #' @param fill If `TRUE`, fills the dataframe with variables
 #' @param empty_rm Logical if empty columns and rows should be included

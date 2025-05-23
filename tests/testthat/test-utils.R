@@ -817,4 +817,13 @@ test_that("dims are the same", {
     rev(unname(unlist(two)))
   )
 
+  # this is a probably exclusively internal handler that can be used to create
+  # non consecutive dims for wb_add_fill(). At the moment it does not appear to
+  # be required to keep the column and row ordering of each of the pieces.
+  # This might also be non trivial for something like "B3:A1,A5:C6"
+  # (is it up/down and left/right?)
+  exp <- dims_to_dataframe("B1:C2,B5:C8", fill = FALSE)
+  got <- dims_to_dataframe("C1:B2,C5:B8", fill = FALSE)
+  expect_equal(exp, got)
+
 })
