@@ -10008,82 +10008,71 @@ wbWorkbook <- R6::R6Class(
         collapse = ":"
       )
 
-      ## Increment priority of conditional formatting rule
-      for (i in rev(seq_along(self$worksheets[[sheet]]$conditionalFormatting))) {
-        priority <- reg_match0(
-          self$worksheets[[sheet]]$conditionalFormatting[[i]],
-          '(?<=priority=")[0-9]+'
-        )
-        priority_new <- as.integer(priority) + 1L
-        priority_pattern <- sprintf('priority="%s"', priority)
-        priority_new <- sprintf('priority="%s"', priority_new)
-
-        ## now replace
-        self$worksheets[[sheet]]$conditionalFormatting[[i]] <- gsub(
-          priority_pattern,
-          priority_new,
-          self$worksheets[[sheet]]$conditionalFormatting[[i]],
-          fixed = TRUE
-        )
-      }
-
       nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
       dxfId <- max(dxfId, 0L)
+
+
+      priority <- max(
+      as.integer(
+        openxlsx2:::rbindlist(
+          xml_attr(wb$worksheets[[1]]$conditionalFormatting, "cfRule")
+        )$priority
+      ), 0) + 1L
 
       # big switch statement
       cfRule <- switch(
         type,
 
         ## colorScale ----
-        colorScale = cf_create_colorscale(formula, values),
+        colorScale = cf_create_colorscale(priority, formula, values),
 
         ## dataBar ----
-        dataBar = cf_create_databar(self$worksheets[[sheet]]$extLst, formula, params, sqref, values),
+        dataBar = cf_create_databar(priority, self$worksheets[[sheet]]$extLst, formula, params, sqref, values),
 
         ## expression ----
-        expression = cf_create_expression(dxfId, formula),
+        expression = cf_create_expression(priority, dxfId, formula),
 
         ## duplicatedValues ----
-        duplicatedValues = cf_create_duplicated_values(dxfId),
+        duplicatedValues = cf_create_duplicated_values(priority, dxfId),
 
         ## containsText ----
-        containsText = cf_create_contains_text(dxfId, sqref, values),
+        containsText = cf_create_contains_text(priority, dxfId, sqref, values),
 
         ## notContainsText ----
-        notContainsText = cf_create_not_contains_text(dxfId, sqref, values),
+        notContainsText = cf_create_not_contains_text(priority, dxfId, sqref, values),
 
         ## beginsWith ----
-        beginsWith = cf_begins_with(dxfId, sqref, values),
+        beginsWith = cf_begins_with(priority, dxfId, sqref, values),
 
         ## endsWith ----
-        endsWith = cf_ends_with(dxfId, sqref, values),
+        endsWith = cf_ends_with(priority, dxfId, sqref, values),
 
         ## between ----
-        between = cf_between(dxfId, formula),
+        between = cf_between(priority, dxfId, formula),
 
         ## topN ----
-        topN = cf_top_n(dxfId, values),
+        topN = cf_top_n(priority, dxfId, values),
 
         ## bottomN ----
-        bottomN = cf_bottom_n(dxfId, values),
+        bottomN = cf_bottom_n(priority, dxfId, values),
 
         ## uniqueValues ---
-        uniqueValues = cf_unique_values(dxfId),
+        uniqueValues = cf_unique_values(priority, dxfId),
 
         ## iconSet ----
-        iconSet = cf_icon_set(self$worksheets[[sheet]]$extLst, sqref, values, params),
+        iconSet = cf_icon_set(priority, self$worksheets[[sheet]]$extLst, sqref, values, params),
 
         ## containsErrors ----
-        containsErrors = cf_iserror(dxfId, sqref),
+        containsErrors = cf_iserror(priority, dxfId, sqref),
 
         ## notContainsErrors ----
-        notContainsErrors = cf_isnoerror(dxfId, sqref),
+        notContainsErrors = cf_isnoerror(priority, dxfId, sqref),
 
         ## containsBlanks ----
-        containsBlanks = cf_isblank(dxfId, sqref),
+        containsBlanks = cf_isblank(priority, dxfId, sqref),
 
         ## notContainsBlanks ----
-        notContainsBlanks = cf_isnoblank(dxfId, sqref),
+        notContainsBlanks = cf_isnoblank(priority, dxfId, sqref),
 
         # do we have a match.arg() anywhere or will it just be showned in this switch()?
         stop("type `", type, "` is not a valid formatting rule")
