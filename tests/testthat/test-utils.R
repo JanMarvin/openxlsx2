@@ -407,7 +407,7 @@ test_that("wb_dims() corner cases work", {
   got <- wb_dims(rows = c(1, 30), cols = c(2, 4)) # expect B1,D1,B30,D30
   expect_equal(exp, got)
 
-  exp <- "B1:B2,D1:D2"
+  exp <- "B2:B1,D2:D1"
   got <- wb_dims(rows = c(2, 1), cols = c(2, 4))  # expect B2,D2,B1,D1
   expect_equal(exp, got)
 
@@ -790,15 +790,15 @@ test_that("wb_dims does not try to validate column names", {
 
 test_that("wb_dims handles decreasing consecutive columns and rows", {
 
-  exp <- wb_dims(rows = 1:3, cols = c(1:3, 8:10))
+  exp <- "A3:A1,B3:B1,C3:C1,H3:H1,I3:I1,J3:J1"
   got <- wb_dims(rows = 3:1, cols = c(1:3, 8:10))
   expect_equal(exp, got)
 
-  exp <- wb_dims(rows = 1:3, cols = c(1:3, 10:8))
+  exp <- "A3:A1,B3:B1,C3:C1,J3:J1,I3:I1,H3:H1"
   got <- wb_dims(rows = 3:1, cols = c(1:3, 10:8))
   expect_equal(exp, got)
 
-  exp <- wb_dims(rows = 1:3, cols = c(3:1, 10:8))
+  exp <- "C3:C1,B3:B1,A3:A1,J3:J1,I3:I1,H3:H1"
   got <- wb_dims(rows = 3:1, cols = c(3:1, 10:8))
   expect_equal(exp, got)
 
@@ -826,4 +826,11 @@ test_that("dims are the same", {
   got <- dims_to_dataframe("C1:B2,C5:B8", fill = FALSE)
   expect_equal(exp, got)
 
+})
+
+test_that("reverse rows and cols work", {
+  expect_equal("A1:C3", wb_dims(rows = 1:3, cols = 1:3))
+  expect_equal("C3:A1", wb_dims(rows = 3:1, cols = 3:1))
+  expect_equal("C1:A3", wb_dims(rows = 1:3, cols = 3:1))
+  expect_equal("A3:C1", wb_dims(rows = 3:1, cols = 1:3))
 })

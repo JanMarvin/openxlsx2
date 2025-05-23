@@ -236,11 +236,21 @@ rowcol_to_dims <- function(row, col, single = TRUE) {
   row     <- as.integer(row)
   col_int <- col2int(col)
 
-  min_col <- int2col(min(col_int))
-  max_col <- int2col(max(col_int))
+  if (col_int[1] < col[length(col_int)]) {
+    min_col <- int2col(min(col_int))
+    max_col <- int2col(max(col_int))
+  } else {
+    min_col <- int2col(max(col_int))
+    max_col <- int2col(min(col_int))
+  }
 
-  min_row <- min(row)
-  max_row <- max(row)
+  if (row[1] < row[length(row)]) {
+    min_row <- min(row)
+    max_row <- max(row)
+  } else {
+    min_row <- max(row)
+    max_row <- min(row)
+  }
 
   # we will always return something like "A1:A1", even for single cells
   if (single) {
