@@ -54,6 +54,9 @@ but it works best if \code{x} has named dimensions (\code{data.frame}, \code{mat
 data with column names, and without row names. as the code is more clean.
 
 In the \code{add_data()} / \code{add_font()} example, if writing the data with row names
+
+While it is possible to construct dimensions from decreasing rows and columns, the output will always order the rows top to bottom. So
+\code{wb_dims(rows = 3:1, cols = 3:1)} will not result in \code{"C3:A1"} and if passed to functions, it will return the same as \code{"C1:A3"}.
 }
 \section{Using \code{wb_dims()} without an \code{x} object}{
 \itemize{

@@ -208,8 +208,8 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
     if (length(dimensions) == 2) {
       # needs integer to create sequence
-      cols <- int2col(seq.int(min(cols_int), max(cols_int)))
-      rows_int <- seq.int(min(rows_int), max(rows_int))
+      cols <- int2col(seq.int(cols_int[1], cols_int[2]))
+      rows_int <- seq.int(rows_int[1], rows_int[2])
     }
 
     if (as_integer) {
@@ -556,6 +556,9 @@ determine_select_valid <- function(args, select = NULL) {
 #'  data with column names, and without row names. as the code is more clean.
 #'
 #' In the `add_data()` / `add_font()` example, if writing the data with row names
+#'
+#' While it is possible to construct dimensions from decreasing rows and columns, the output will always order the rows top to bottom. So
+#' `wb_dims(rows = 3:1, cols = 3:1)` will not result in `"C3:A1"` and if passed to functions, it will return the same as `"C1:A3"`.
 #'
 #' @param ... construct `dims` arguments, from rows/cols vectors or objects that
 #'   can be coerced to data frame. `x`, `rows`, `cols`, `from_row`, `from_col`, `from_dims`
@@ -912,7 +915,7 @@ wb_dims <- function(..., select = NULL) {
   col_span <- col_span + (fcol - 1L)
 
   # return single cells (A1 or A1,B1)
-  if ((length(row_span) == 1 || any(diff(row_span) != 1L)) && (length(col_span) == 1 || any(diff(col_span) != 1L))) {
+  if ((length(row_span) == 1 || any(abs(diff(row_span)) != 1L)) && (length(col_span) == 1 || any(abs(diff(col_span)) != 1L))) {
 
     # A1
     row_start <- row_span
@@ -920,10 +923,10 @@ wb_dims <- function(..., select = NULL) {
 
     dims <- NULL
 
-    if (any(diff(row_span) != 1L)) {
+    if (any(abs(diff(row_span)) != 1L)) {
       for (row_start in row_span) {
         cdims <- NULL
-        if (any(diff(col_span) != 1L)) {
+        if (any(abs(diff(col_span)) != 1L)) {
           for (col_start in col_span) {
             tmp  <- rowcol_to_dim(row_start, col_start)
             cdims <- c(cdims, tmp)
@@ -934,7 +937,7 @@ wb_dims <- function(..., select = NULL) {
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(diff(col_span) != 1L)) {
+      if (any(abs(diff(col_span)) != 1L)) {
         for (col_start in col_span) {
           tmp  <- rowcol_to_dim(row_span, col_start)
           dims <- c(dims, tmp)
@@ -947,10 +950,10 @@ wb_dims <- function(..., select = NULL) {
   } else { # return range "A1:A7" or "A1:A7,B1:B7"
 
     dims <- NULL
-    if (any(diff(row_span) != 1L)) {
+    if (any(abs(diff(row_span)) != 1L)) {
       for (row_start in row_span) {
         cdims <- NULL
-        if (any(diff(col_span) != 1L)) {
+        if (any(abs(diff(col_span)) != 1L)) {
           for (col_start in col_span) {
             tmp  <- rowcol_to_dims(row_start, col_start)
             cdims <- c(cdims, tmp)
@@ -961,7 +964,7 @@ wb_dims <- function(..., select = NULL) {
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(diff(col_span) != 1L)) {
+      if (any(abs(diff(col_span)) != 1L)) {
         for (col_start in col_span) {
           tmp  <- rowcol_to_dims(row_span, col_start)
           dims <- c(dims, tmp)

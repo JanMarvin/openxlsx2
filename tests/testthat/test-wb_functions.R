@@ -569,3 +569,14 @@ test_that("writing formula dataframes works", {
   expect_equal(exp, got)
 
 })
+
+test_that("dims order is respected", {
+  wb <- write_xlsx(x = mtcars)
+  exp <- wb$to_df(dims = "C1:A4,D1:E4")
+  got <- mtcars[1:3, c(3:1, 4:5)]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  rc <- dims_to_rowcol("C3:A1")
+  expect_equal(rc$col, c("C", "B", "A"))
+  expect_equal(rc$row, c("3", "2", "1"))
+})

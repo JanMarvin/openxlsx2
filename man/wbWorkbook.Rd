@@ -153,6 +153,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 worksheet names.}
 
 \item{\code{path}}{path}
+
+\item{\code{namedSheetViews}}{namedSheetViews}
 }
 \if{html}{\out{</div>}}
 }

@@ -407,7 +407,7 @@ test_that("wb_dims() corner cases work", {
   got <- wb_dims(rows = c(1, 30), cols = c(2, 4)) # expect B1,D1,B30,D30
   expect_equal(exp, got)
 
-  exp <- "B2,D2,B1,D1"
+  exp <- "B1:B2,D1:D2"
   got <- wb_dims(rows = c(2, 1), cols = c(2, 4))  # expect B2,D2,B1,D1
   expect_equal(exp, got)
 
@@ -784,6 +784,22 @@ test_that("wb_dims does not try to validate column names", {
   for (i in seq_along(df)) {
     got[i] <- wb_dims(x = df, cols = colnames(df)[i], rows = 1)
   }
+  expect_equal(exp, got)
+
+})
+
+test_that("wb_dims handles decreasing consecutive columns and rows", {
+
+  exp <- wb_dims(rows = 1:3, cols = c(1:3, 8:10))
+  got <- wb_dims(rows = 3:1, cols = c(1:3, 8:10))
+  expect_equal(exp, got)
+
+  exp <- wb_dims(rows = 1:3, cols = c(1:3, 10:8))
+  got <- wb_dims(rows = 3:1, cols = c(1:3, 10:8))
+  expect_equal(exp, got)
+
+  exp <- wb_dims(rows = 1:3, cols = c(3:1, 10:8))
+  got <- wb_dims(rows = 3:1, cols = c(3:1, 10:8))
   expect_equal(exp, got)
 
 })
