@@ -14,7 +14,7 @@ dims_to_dataframe(dims, fill = FALSE, empty_rm = FALSE)
 \item{empty_rm}{Logical if empty columns and rows should be included}
 }
 \description{
-Create dataframe from dimensions
+Non consecutive decreasing dims will return an increasing data frame.
 }
 \examples{
 dims_to_dataframe("A1:B2")
