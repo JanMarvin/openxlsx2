@@ -283,140 +283,189 @@ std::vector<std::string> needed_cells(const std::string& range, bool all = true)
 //' @noRd
 // [[Rcpp::export]]
 SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
-  std::set<int32_t> unique_row_values;                   // For check
-  std::set<int32_t> unique_cols;                         // Unique columns
-  std::set<std::pair<int32_t, int32_t>> row_range_set;   // Unique row ranges
-  bool first = true;
+  std::set<int32_t> unique_row_values_for_check;
+  bool first_dim_for_check = true;
+
+  std::vector<Rcpp::IntegerVector> out_row_vectors;
+  std::set<std::vector<int>> seen_rows; // To track unique rows
+  std::vector<int32_t> ordered_unique_cols;
+  std::set<int32_t> seen_cols_globally;
 
   for (int i = 0; i < dims.size(); ++i) {
-    std::string dim = Rcpp::as<std::string>(dims[i]);
+    std::string dim_str = Rcpp::as<std::string>(dims[i]);
 
-    std::vector<std::string> cells = needed_cells(dim, false);
-    if (cells.size() == 0) continue;
+    std::vector<std::string> cells = needed_cells(dim_str, false);
 
-    std::string left = cells[0];
-    std::string right = cells[cells.size() - 1];
+    if (cells.empty()) {
+      // Rcpp::Rcout << "Warning: Skipping empty or invalid dimension string: " << dim_str << std::endl;
+      continue;
+    }
 
-    int32_t r1 = cell_to_rowint(left);
-    int32_t r2 = cell_to_rowint(right);
-    int32_t c1 = cell_to_colint(left);
-    int32_t c2 = cell_to_colint(right);
+    std::string left_cell_str = cells[0];
+    std::string right_cell_str = cells.back();
 
-    if (r1 > r2) std::swap(r1, r2);
-    if (c1 > c2) std::swap(c1, c2);
+    // Get original row and column numbers without initial swapping
+    int32_t r1_orig = cell_to_rowint(left_cell_str);
+    int32_t r2_orig = cell_to_rowint(right_cell_str);
+    int32_t c1_orig = cell_to_colint(left_cell_str);
+    int32_t c2_orig = cell_to_colint(right_cell_str);
 
     if (check) {
-      std::set<int32_t> current_rows;
-      for (int32_t r = r1; r <= r2; ++r)
-        current_rows.insert(r);
+      int32_t r_start_for_check = std::min(r1_orig, r2_orig);
+      int32_t r_end_for_check = std::max(r1_orig, r2_orig);
 
-      if (first) {
-        unique_row_values = current_rows;
-        first = false;
+      std::set<int32_t> current_dim_rows_set;
+      if (r_start_for_check > 0 && r_end_for_check > 0) { // Ensure valid range
+        for (int32_t r = r_start_for_check; r <= r_end_for_check; ++r) {
+          current_dim_rows_set.insert(r);
+        }
+      }
+
+
+      if (first_dim_for_check) {
+        unique_row_values_for_check = current_dim_rows_set;
+        first_dim_for_check = false;
       } else {
-        if (current_rows != unique_row_values)
-          return Rcpp::wrap(false); // fail fast
+        if (current_dim_rows_set != unique_row_values_for_check) {
+          return Rcpp::wrap(false); // Fail fast: sets of rows are different
+        }
       }
     } else {
-      // Always collect both rows and cols if not checking
-      row_range_set.insert({r1, r2});
-      for (int32_t c = c1; c <= c2; ++c)
-        unique_cols.insert(c);
+      // If not checking, collect unique rows and columns preserving specified order.
+
+      // Rows: store the (r1_orig, r2_orig) pair if not seen before.
+      std::vector<int> current_row = {r1_orig, r2_orig};
+      if (seen_rows.find(current_row) == seen_rows.end()) {
+        out_row_vectors.push_back(Rcpp::IntegerVector::create(r1_orig, r2_orig));
+        seen_rows.insert(current_row);
+      }
+
+      // Columns: iterate from c1_orig to c2_orig (or vice-versa based on their values)
+      // and add to ordered_unique_cols if not seen globally.
+      // This preserves the scan direction for newly added columns.
+      if (c1_orig > 0 && c2_orig > 0) { // Ensure valid column indices
+          if (c1_orig <= c2_orig) {
+            for (int32_t c = c1_orig; c <= c2_orig; ++c) {
+              if (seen_cols_globally.find(c) == seen_cols_globally.end()) {
+                ordered_unique_cols.push_back(c);
+                seen_cols_globally.insert(c);
+              }
+            }
+          } else { // c1_orig > c2_orig, iterate downwards
+            for (int32_t c = c1_orig; c >= c2_orig; --c) {
+              if (seen_cols_globally.find(c) == seen_cols_globally.end()) {
+                ordered_unique_cols.push_back(c);
+                seen_cols_globally.insert(c);
+              }
+            }
+          }
+      }
     }
-  }
+  } // dims
 
   if (check) {
     return Rcpp::wrap(true);
   }
 
-  // rows and cols result
-  Rcpp::List out;
+  Rcpp::List result_list;
+  result_list["rows"] = Rcpp::wrap(out_row_vectors);
+  result_list["cols"] = Rcpp::wrap(ordered_unique_cols);
 
-  // Rows: list of unique ranges [r1, r2]
-  Rcpp::List out_rows;
-  for (const auto& pair : row_range_set) {
-    out_rows.push_back(Rcpp::IntegerVector::create(pair.first, pair.second));
-  }
-  out["rows"] = out_rows;
-
-  // Cols: sorted vector
-  std::vector<int32_t> out_cols(unique_cols.begin(), unique_cols.end());
-  out["cols"] = out_cols;
-
-  return out;
+  return result_list;
 }
 
 // [[Rcpp::export]]
 SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
   R_xlen_t n = dims.size();
-  std::vector<int32_t> rows;
-  std::vector<int32_t> cols;
-  std::vector<std::string> fill;
+
+  std::vector<int32_t> ordered_rows_final;
+  std::vector<int32_t> ordered_cols_final;
+  std::vector<std::string> fill_final;
+
+  std::set<int32_t> seen_rows_globally;
+  std::set<int32_t> seen_cols_globally;
 
   for (R_xlen_t i = 0; i < n; ++i) {
-    std::string dim = Rcpp::as<std::string>(dims[i]);
+    std::string dim_str = Rcpp::as<std::string>(dims[i]);
 
-    if (dim.find(":") == std::string::npos) {
-      dim += ":" + dim;
+    // If a single cell is given (e.g., "A1"), treat it as a range "A1:A1"
+    if (dim_str.find(':') == std::string::npos) {
+      dim_str += ":" + dim_str;
     }
 
-    if (dim == "Inf:-Inf") {
+    if (dim_str == "Inf:-Inf") {
       Rcpp::stop("dims are inf:-inf");
     }
 
-    std::vector<std::string> fill_vec = needed_cells(dim, fills);
+    std::vector<std::string> cells_from_needed = needed_cells(dim_str, fills);
 
-    // Append all cell strings to fill
-    if (fills)
-      fill.insert(fill.end(), fill_vec.begin(), fill_vec.end());
-
-    // Get the first and last cell in the fill
-    std::string l_cell = fill_vec.front();
-    std::string r_cell = fill_vec.back();
-
-    int32_t l_row = cell_to_rowint(l_cell);
-    int32_t l_col = cell_to_colint(l_cell);
-
-    int32_t r_row = cell_to_rowint(r_cell);
-    int32_t r_col = cell_to_colint(r_cell);
-
-    // Ensure ascending order
-    if (l_row > r_row) std::swap(l_row, r_row);
-    if (l_col > r_col) std::swap(l_col, r_col);
-
-    std::vector<int32_t> row_seq;
-    std::vector<int32_t> col_seq;
-
-    for (int32_t row = l_row; row <= r_row; ++row) {
-      rows.push_back(row);
+    if (cells_from_needed.empty()) {
+        // Rcpp::Rcout << "Warning: needed_cells returned empty for dim: " << dim_str << std::endl;
+        continue; // Skip if no cells are derived
     }
 
-    for (int32_t col = l_col; col <= r_col; ++col) {
-      cols.push_back(col);
+    // If fills is true, append all cells returned by needed_cells to fill_final.
+    // The order in fill_final depends on the order returned by needed_cells.
+    if (fills) {
+      fill_final.insert(fill_final.end(), cells_from_needed.begin(), cells_from_needed.end());
     }
-  }
 
-  std::sort(rows.begin(), rows.end());
-  rows.erase(std::unique(rows.begin(), rows.end()), rows.end());
+    std::string l_cell_str = cells_from_needed.front();
+    std::string r_cell_str = cells_from_needed.back();
 
-  std::sort(cols.begin(), cols.end());
-  cols.erase(std::unique(cols.begin(), cols.end()), cols.end());
+    int32_t l_row_orig = cell_to_rowint(l_cell_str);
+    int32_t r_row_orig = cell_to_rowint(r_cell_str);
+    int32_t l_col_orig = cell_to_colint(l_cell_str);
+    int32_t r_col_orig = cell_to_colint(r_cell_str);
 
-  // std::sort(fill.begin(), fill.end());
-  // fill.erase(std::unique(fill.begin(), fill.end()), fill.end());
+    // Collect rows, preserving order and ensuring uniqueness
+    if (l_row_orig <= r_row_orig) { // Iterate forwards
+      for (int32_t r = l_row_orig; r <= r_row_orig; ++r) {
+        if (r > 0 && seen_rows_globally.find(r) == seen_rows_globally.end()) {
+          ordered_rows_final.push_back(r);
+          seen_rows_globally.insert(r);
+        }
+      }
+    } else { // Iterate backwards (l_row_orig > r_row_orig)
+      for (int32_t r = l_row_orig; r >= r_row_orig; --r) {
+        if (r > 0 && seen_rows_globally.find(r) == seen_rows_globally.end()) {
+          ordered_rows_final.push_back(r);
+          seen_rows_globally.insert(r);
+        }
+      }
+    }
 
-  if (fills)
+    // Collect columns, preserving order and ensuring uniqueness
+    if (l_col_orig <= r_col_orig) { // Iterate forwards
+      for (int32_t c = l_col_orig; c <= r_col_orig; ++c) {
+        if (c > 0 && seen_cols_globally.find(c) == seen_cols_globally.end()) {
+          ordered_cols_final.push_back(c);
+          seen_cols_globally.insert(c);
+        }
+      }
+    } else { // Iterate backwards (l_col_orig > r_col_orig)
+      for (int32_t c = l_col_orig; c >= r_col_orig; --c) {
+        if (c > 0 && seen_cols_globally.find(c) == seen_cols_globally.end()) {
+          ordered_cols_final.push_back(c);
+          seen_cols_globally.insert(c);
+        }
+      }
+    }
+  } // End of loop over dims
+
+  if (fills) {
     return Rcpp::List::create(
-      Rcpp::Named("rows") = rows,
-      Rcpp::Named("cols") = cols,
-      Rcpp::Named("fill") = fill
+      Rcpp::Named("rows") = ordered_rows_final,
+      Rcpp::Named("cols") = ordered_cols_final,
+      Rcpp::Named("fill") = fill_final
     );
-  else
+  } else {
     return Rcpp::List::create(
-      Rcpp::Named("rows") = rows,
-      Rcpp::Named("cols") = cols,
+      Rcpp::Named("rows") = ordered_rows_final,
+      Rcpp::Named("cols") = ordered_cols_final,
       Rcpp::Named("fill") = R_NilValue
     );
+  }
 }
 
 // provide a basic rbindlist for lists of named characters

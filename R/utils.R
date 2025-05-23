@@ -208,8 +208,8 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
     if (length(dimensions) == 2) {
       # needs integer to create sequence
-      cols <- int2col(seq.int(min(cols_int), max(cols_int)))
-      rows_int <- seq.int(min(rows_int), max(rows_int))
+      cols <- int2col(seq.int(cols_int[1], cols_int[2]))
+      rows_int <- seq.int(rows_int[1], rows_int[2])
     }
 
     if (as_integer) {
