@@ -224,49 +224,49 @@ std::vector<std::string> needed_cells(const std::string& range, bool all = true)
   std::vector<std::string> cells;
 
   // Parse the input range
-  std::string startCell, endCell;
+  std::string startCellStr, endCellStr;
   size_t colonPos = range.find(':');
   if (colonPos != std::string::npos) {
-    startCell = range.substr(0, colonPos);
-    endCell = range.substr(colonPos + 1);
+    startCellStr = range.substr(0, colonPos);
+    endCellStr = range.substr(colonPos + 1);
   } else {
-    startCell = range;
-    endCell = range;
+    startCellStr = range;
+    endCellStr = range;
   }
 
-  if (!validate_dims(startCell) || !validate_dims(endCell)) {
-    if (is_column_only(startCell) && is_column_only(endCell)) {
+  if (!validate_dims(startCellStr) || !validate_dims(endCellStr)) {
+    if (is_column_only(startCellStr) && is_column_only(endCellStr)) {
       // Check if both start and end are pure columns like "A" or "P"
-      startCell += "1";
-      endCell   += "1048576";
-    } else if (is_row_only(startCell) && is_row_only(endCell)) {
+      startCellStr += "1";
+      endCellStr   += "1048576";
+    } else if (is_row_only(startCellStr) && is_row_only(endCellStr)) {
       // Check if both start and end are pure rows like "3"
-      startCell = "A"   + startCell;
-      endCell   = "XFD" + endCell;
+      startCellStr = "A"   + startCellStr;
+      endCellStr   = "XFD" + endCellStr;
     } else {
       Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
     }
   }
 
   if (!all) {
-    cells.push_back(startCell);
-    cells.push_back(endCell);
+    cells.push_back(startCellStr);
+    cells.push_back(endCellStr);
     return(cells);
   }
 
   // Extract column and row numbers from start and end cells
-  int32_t startRow, endRow;
-  int32_t startCol = 0, endCol = 0;
+  int32_t startRow = cell_to_rowint(startCellStr);
+  int32_t endRow   = cell_to_rowint(endCellStr);
+  int32_t startCol = cell_to_colint(startCellStr);
+  int32_t endCol   = cell_to_colint(endCellStr);
 
-  startCol = cell_to_colint(startCell);
-  endCol   = cell_to_colint(endCell);
+  // Determine the iteration directions
+  int32_t rowStep = (startRow <= endRow) ? 1 : -1;
+  int32_t colStep = (startCol <= endCol) ? 1 : -1;
 
-  startRow = cell_to_rowint(startCell);
-  endRow   = cell_to_rowint(endCell);
-
-  // Generate spreadsheet cell references
-  for (int32_t col = startCol; col <= endCol; ++col) {
-    for (int32_t row = startRow; row <= endRow; ++row) {
+  // Generate spreadsheet cell references respecting the input order
+  for (int32_t col = startCol; (colStep > 0) ? (col <= endCol) : (col >= endCol); col += colStep) {
+    for (int32_t row = startRow; (rowStep > 0) ? (row <= endRow) : (row >= endRow); row += rowStep) {
       std::string cell = int_to_col(col);
       cell += std::to_string(row);
       cells.push_back(cell);

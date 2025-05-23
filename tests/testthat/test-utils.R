@@ -803,3 +803,18 @@ test_that("wb_dims handles decreasing consecutive columns and rows", {
   expect_equal(exp, got)
 
 })
+
+test_that("dims are the same", {
+  blank  <- dims_to_dataframe("C3:A1", fill = FALSE)
+  filled <- dims_to_dataframe("C3:A1", fill = TRUE)
+  expect_equal(dimnames(blank), dimnames(filled))
+
+  one <- dims_to_dataframe("A1:C3", fill = TRUE)
+  two <- dims_to_dataframe("C3:A1", fill = TRUE)
+
+  expect_equal(
+    unname(unlist(one)),
+    rev(unname(unlist(two)))
+  )
+
+})
