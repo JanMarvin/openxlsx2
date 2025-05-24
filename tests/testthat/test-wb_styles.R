@@ -772,8 +772,8 @@ test_that("wb_add_dxfs_style() works", {
     )
 
   exp <- c(
-    `A1:A11` = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"2\"><formula>A1&lt;&gt;0</formula></cfRule>",
-    `A1:A11` = "<cfRule type=\"expression\" dxfId=\"1\" priority=\"1\"><formula>A1=0</formula></cfRule>"
+    `A1:A11` = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"1\"><formula>A1&lt;&gt;0</formula></cfRule>",
+    `A1:A11` = "<cfRule type=\"expression\" dxfId=\"1\" priority=\"2\"><formula>A1=0</formula></cfRule>"
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_equal(exp, got)

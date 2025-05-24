@@ -4063,6 +4063,7 @@ wb_add_form_control <- function(
 #' @details
 #' Conditional formatting `type` accept different parameters. Unless noted,
 #' unlisted parameters are ignored.
+#' If an expression is pointing to a cell `"A1=1"`, this cell reference is fluid and not fixed like `"$A$1=1"`. It will behave similar to a formula, when `dims` is spanning multiple columns or rows (A1, A2, A3 ... in vertical direction, A1, B1, C1 ... in horizontal direction). If `dims` is a non consecutive range ("A1:B2,D1:F2"), the expression is applied to each range. For the second `dims` range it will be evaluated again as `"A1=1"`.
 #' \describe{
 #'   \item{`expression`}{
 #'     `[style]`\cr A `Style` object\cr\cr

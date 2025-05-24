@@ -56,8 +56,8 @@ test_that("type = 'expression' work", {
   )
 
   exp <- c(
-    `A1:A11` = '<cfRule type="expression" dxfId="0" priority="2"><formula>A1&lt;&gt;0</formula></cfRule>',
-    `A1:A11` = '<cfRule type="expression" dxfId="1" priority="1"><formula>A1=0</formula></cfRule>'
+    `A1:A11` = '<cfRule type="expression" dxfId="0" priority="1"><formula>A1&lt;&gt;0</formula></cfRule>',
+    `A1:A11` = '<cfRule type="expression" dxfId="1" priority="2"><formula>A1=0</formula></cfRule>'
   )
 
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -81,8 +81,8 @@ test_that("type = 'expression' work", {
   )
 
   exp <- c(
-    `A1:B11` = '<cfRule type="expression" dxfId="0" priority="2"><formula>$A1&lt;0</formula></cfRule>',
-    `A1:B11` = '<cfRule type="expression" dxfId="1" priority="1"><formula>$A1&gt;0</formula></cfRule>'
+    `A1:B11` = '<cfRule type="expression" dxfId="0" priority="1"><formula>$A1&lt;0</formula></cfRule>',
+    `A1:B11` = '<cfRule type="expression" dxfId="1" priority="2"><formula>$A1&gt;0</formula></cfRule>'
   )
   expect_identical(exp, wb$worksheets[[2]]$conditionalFormatting)
 
@@ -104,8 +104,8 @@ test_that("type = 'expression' work", {
   )
 
   exp <- c(
-    `A1:B11` = '<cfRule type="expression" dxfId="0" priority="2"><formula>A$1&lt;0</formula></cfRule>',
-    `A1:B11` = '<cfRule type="expression" dxfId="1" priority="1"><formula>A$1&gt;0</formula></cfRule>'
+    `A1:B11` = '<cfRule type="expression" dxfId="0" priority="1"><formula>A$1&lt;0</formula></cfRule>',
+    `A1:B11` = '<cfRule type="expression" dxfId="1" priority="2"><formula>A$1&gt;0</formula></cfRule>'
   )
   expect_identical(exp, wb$worksheets[[3]]$conditionalFormatting)
 
@@ -127,8 +127,8 @@ test_that("type = 'expression' work", {
   )
 
   exp <- c(
-    `A1:B11` = '<cfRule type="expression" dxfId="0" priority="2"><formula>$A$1&lt;0</formula></cfRule>',
-    `A1:B11` = '<cfRule type="expression" dxfId="1" priority="1"><formula>$A$1&gt;0</formula></cfRule>'
+    `A1:B11` = '<cfRule type="expression" dxfId="0" priority="1"><formula>$A$1&lt;0</formula></cfRule>',
+    `A1:B11` = '<cfRule type="expression" dxfId="1" priority="2"><formula>$A$1&gt;0</formula></cfRule>'
   )
   expect_identical(exp, wb$worksheets[[4]]$conditionalFormatting)
 
@@ -149,10 +149,10 @@ test_that("type = 'expression' work", {
   )
 
   exp <- c(
-    `A1:B11`  = '<cfRule type="expression" dxfId="0" priority="4"><formula>$A$1&lt;0</formula></cfRule>',
-    `A1:B11`  = '<cfRule type="expression" dxfId="1" priority="3"><formula>$A$1&gt;0</formula></cfRule>',
-    `A16:A25` = '<cfRule type="expression" dxfId="0" priority="2"><formula>B16&lt;0.5</formula></cfRule>',
-    `A16:A25` = '<cfRule type="expression" dxfId="1" priority="1"><formula>B16&gt;=0.5</formula></cfRule>'
+    `A1:B11`  = '<cfRule type="expression" dxfId="0" priority="1"><formula>$A$1&lt;0</formula></cfRule>',
+    `A1:B11`  = '<cfRule type="expression" dxfId="1" priority="2"><formula>$A$1&gt;0</formula></cfRule>',
+    `A16:A25` = '<cfRule type="expression" dxfId="0" priority="3"><formula>B16&lt;0.5</formula></cfRule>',
+    `A16:A25` = '<cfRule type="expression" dxfId="1" priority="4"><formula>B16&gt;=0.5</formula></cfRule>'
   )
   expect_identical(exp, wb$worksheets[[4]]$conditionalFormatting)
 
@@ -250,7 +250,7 @@ test_that("type = 'colorScale' works", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("black", "white"),
     rule = c(0, 255),
     type = "colorScale"
@@ -317,8 +317,8 @@ test_that("type = 'topN' works", {
   )
 
   exp <- c(
-    `A2:A11` = '<cfRule type="top10" dxfId="1" priority="2" rank="5" percent="0"/>',
-    `B2:B11` = '<cfRule type="top10" dxfId="1" priority="1" rank="20" percent="1"/>'
+    `A2:A11` = '<cfRule type="top10" dxfId="1" priority="1" rank="5" percent="0"/>',
+    `B2:B11` = '<cfRule type="top10" dxfId="1" priority="2" rank="20" percent="1"/>'
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)
@@ -348,8 +348,8 @@ test_that("type = 'bottomN' works", {
   )
 
   exp <- c(
-    `A2:A11` = "<cfRule type=\"top10\" dxfId=\"0\" priority=\"2\" rank=\"5\" percent=\"0\" bottom=\"1\"/>",
-    `B2:B11` = "<cfRule type=\"top10\" dxfId=\"0\" priority=\"1\" rank=\"20\" percent=\"1\" bottom=\"1\"/>"
+    `A2:A11` = "<cfRule type=\"top10\" dxfId=\"0\" priority=\"1\" rank=\"5\" percent=\"0\" bottom=\"1\"/>",
+    `B2:B11` = "<cfRule type=\"top10\" dxfId=\"0\" priority=\"2\" rank=\"20\" percent=\"1\" bottom=\"1\"/>"
   )
 
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -386,7 +386,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale1",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("black", "white"),
     type = "colorScale"
   )
@@ -403,7 +403,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale2",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("blue", "red"),
     rule = c(1, 255),
     type = "colorScale"
@@ -421,7 +421,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale3",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("red", "green", "blue"),
     type = "colorScale"
   )
@@ -441,7 +441,7 @@ test_that("colorScale", {
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
   wb$add_conditional_formatting(
     "colourScale4",
-    dims = wb_dims(cols = c(1, ncol(df)), rows = seq_len(nrow(df))),
+    dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
     style = c("red", "green", "blue"),
     rule = c(1, 155, 255),
     type = "colorScale"
@@ -524,12 +524,12 @@ test_that("extend dataBar tests", {
       params = list(showValue = TRUE, gradient = FALSE)
     )
 
-  exp <- c(`A1:A11` = "<cfRule type=\"dataBar\" priority=\"6\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF638EC6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>",
-           `C1:C11` = "<cfRule type=\"dataBar\" priority=\"5\"><dataBar showValue=\"0\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF638EC6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40001}</x14:id></ext></extLst></cfRule>",
-           `E1:E11` = "<cfRule type=\"dataBar\" priority=\"4\"><dataBar showValue=\"0\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40002}</x14:id></ext></extLst></cfRule>",
-           `G1:G11` = "<cfRule type=\"dataBar\" priority=\"3\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFFF0000\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40003}</x14:id></ext></extLst></cfRule>",
-           `I1:I11` = "<cfRule type=\"dataBar\" priority=\"2\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40004}</x14:id></ext></extLst></cfRule>",
-           `K1:K11` = "<cfRule type=\"dataBar\" priority=\"1\"><dataBar showValue=\"1\"><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"5\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40005}</x14:id></ext></extLst></cfRule>"
+  exp <- c(`A1:A11` = "<cfRule type=\"dataBar\" priority=\"1\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF638EC6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>",
+           `C1:C11` = "<cfRule type=\"dataBar\" priority=\"2\"><dataBar showValue=\"0\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FF638EC6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40001}</x14:id></ext></extLst></cfRule>",
+           `E1:E11` = "<cfRule type=\"dataBar\" priority=\"3\"><dataBar showValue=\"0\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40002}</x14:id></ext></extLst></cfRule>",
+           `G1:G11` = "<cfRule type=\"dataBar\" priority=\"4\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFFF0000\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40003}</x14:id></ext></extLst></cfRule>",
+           `I1:I11` = "<cfRule type=\"dataBar\" priority=\"5\"><dataBar showValue=\"1\"><cfvo type=\"min\"/><cfvo type=\"max\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40004}</x14:id></ext></extLst></cfRule>",
+           `K1:K11` = "<cfRule type=\"dataBar\" priority=\"6\"><dataBar showValue=\"1\"><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"5\"/><color rgb=\"FFA6A6A6\"/></dataBar><extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40005}</x14:id></ext></extLst></cfRule>"
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_equal(exp, got)
@@ -632,8 +632,8 @@ test_that("iconSet works", {
                                 )
 
   exp <- c(
-    "<cfRule type=\"iconSet\" priority=\"2\"><iconSet iconSet=\"5Arrows\" reverse=\"1\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>",
-    "<cfRule type=\"iconSet\" priority=\"1\"><iconSet iconSet=\"5Arrows\" showValue=\"0\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>"
+    "<cfRule type=\"iconSet\" priority=\"1\"><iconSet iconSet=\"5Arrows\" reverse=\"1\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>",
+    "<cfRule type=\"iconSet\" priority=\"2\"><iconSet iconSet=\"5Arrows\" showValue=\"0\"><cfvo type=\"num\" val=\"-67\"/><cfvo type=\"num\" val=\"-33\"/><cfvo type=\"num\" val=\"0\"/><cfvo type=\"num\" val=\"33\"/><cfvo type=\"num\" val=\"67\"/></iconSet></cfRule>"
   )
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
   expect_equal(exp, got)
@@ -650,8 +650,8 @@ test_that("containsErrors works", {
   wb$add_conditional_formatting(dims = wb_dims(cols = 2, rows = 1:3), type = "notContainsErrors")
 
   exp <- c(
-    "<cfRule type=\"containsErrors\" dxfId=\"0\" priority=\"2\"><formula>ISERROR(A1:A3)</formula></cfRule>",
-    "<cfRule type=\"notContainsErrors\" dxfId=\"1\" priority=\"1\"><formula>NOT(ISERROR(B1:B3))</formula></cfRule>"
+    "<cfRule type=\"containsErrors\" dxfId=\"0\" priority=\"1\"><formula>ISERROR(A1:A3)</formula></cfRule>",
+    "<cfRule type=\"notContainsErrors\" dxfId=\"1\" priority=\"2\"><formula>NOT(ISERROR(B1:B3))</formula></cfRule>"
   )
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
   expect_equal(exp, got)
@@ -668,8 +668,8 @@ test_that("containsBlanks works", {
   wb$add_conditional_formatting(dims = wb_dims(cols = 2, rows = 1:4), type = "notContainsBlanks")
 
   exp <- c(
-    "<cfRule type=\"containsBlanks\" dxfId=\"0\" priority=\"2\"><formula>LEN(TRIM(A1:A4))=0</formula></cfRule>",
-    "<cfRule type=\"notContainsBlanks\" dxfId=\"1\" priority=\"1\"><formula>LEN(TRIM(B1:B4))>0</formula></cfRule>"
+    "<cfRule type=\"containsBlanks\" dxfId=\"0\" priority=\"1\"><formula>LEN(TRIM(A1:A4))=0</formula></cfRule>",
+    "<cfRule type=\"notContainsBlanks\" dxfId=\"1\" priority=\"2\"><formula>LEN(TRIM(B1:B4))>0</formula></cfRule>"
   )
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting)
   expect_equal(exp, got)
@@ -678,13 +678,12 @@ test_that("containsBlanks works", {
 
 test_that("warning on cols > 2 and dims", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
-  expect_warning(
+  expect_silent(
     wb$add_conditional_formatting(
       dims = wb_dims(rows = seq_len(nrow(mtcars)), cols = c(2, 4, 6)),
       type = "between",
       rule = c(2, 4)
-    ),
-    "cols > 2, will create range from min to max."
+    )
   )
 
   wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
@@ -859,15 +858,15 @@ test_that("remove conditional formatting works", {
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_equal(exp, got)
 
-  exp <- c(`A1:A3` = "<cfRule type=\"expression\" dxfId=\"3\" priority=\"1\"><formula>A1&lt;2</formula></cfRule>")
+  exp <- c(`A1:A3` = "<cfRule type=\"expression\" dxfId=\"3\" priority=\"2\"><formula>A1&lt;2</formula></cfRule>")
   got <- wb$worksheets[[2]]$conditionalFormatting
   expect_equal(exp, got)
 
-  exp <- c(`A1:A3` = "<cfRule type=\"expression\" dxfId=\"5\" priority=\"1\"><formula>A1&lt;2</formula></cfRule>")
+  exp <- c(`A1:A3` = "<cfRule type=\"expression\" dxfId=\"5\" priority=\"2\"><formula>A1&lt;2</formula></cfRule>")
   got <- wb$worksheets[[3]]$conditionalFormatting
   expect_equal(exp, got)
 
-  exp <- c(`A1:A4` = "<cfRule type=\"expression\" dxfId=\"6\" priority=\"2\"><formula>A1&gt;2</formula></cfRule>")
+  exp <- c(`A1:A4` = "<cfRule type=\"expression\" dxfId=\"6\" priority=\"1\"><formula>A1&gt;2</formula></cfRule>")
   got <- wb$worksheets[[4]]$conditionalFormatting
   expect_equal(exp, got)
 })
