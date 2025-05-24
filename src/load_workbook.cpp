@@ -161,15 +161,15 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   std::vector<xml_col> xml_cols;
 
   // we check against these
-  const std::string f_str = "f";
-  const std::string r_str = "r";
-  const std::string s_str = "s";
-  const std::string t_str = "t";
-  const std::string v_str = "v";
-  const std::string cm_str = "cm";
-  const std::string is_str = "is";
-  const std::string ph_str = "ph";
-  const std::string vm_str = "vm";
+  constexpr std::string_view f_str = "f";
+  constexpr std::string_view r_str = "r";
+  constexpr std::string_view s_str = "s";
+  constexpr std::string_view t_str = "t";
+  constexpr std::string_view v_str = "v";
+  constexpr std::string_view cm_str = "cm";
+  constexpr std::string_view is_str = "is";
+  constexpr std::string_view ph_str = "ph";
+  constexpr std::string_view vm_str = "vm";
 
   /*****************************************************************************
    * Row information is returned as list of lists returning as much as possible.
@@ -221,19 +221,19 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           itr_cols = static_cast<uint32_t>(uint_col_to_int(single_xml_col.c_r) - 1);
         }
 
-        if (attr_name == s_str) single_xml_col.c_s = buffer;
-        if (attr_name == t_str) single_xml_col.c_t = buffer;
+        if (attr_name == s_str) single_xml_col.c_s = attr.value();
+        if (attr_name == t_str) single_xml_col.c_t = attr.value();
         if (attr_name == cm_str) {
           has_cm = true;
-          single_xml_col.c_cm = buffer;
+          single_xml_col.c_cm = attr.value();
         }
         if (attr_name == ph_str) {
           has_ph = true;
-          single_xml_col.c_ph = buffer;
+          single_xml_col.c_ph = attr.value();
         }
         if (attr_name == vm_str) {
           has_vm = true;
-          single_xml_col.c_vm = buffer;
+          single_xml_col.c_vm = attr.value();
         }
       }
 

@@ -1,3 +1,6 @@
+#ifndef OPENXLSX2_TYPES_H_
+#define OPENXLSX2_TYPES_H_
+
 /******************************************************************************
  *                                                                            *
  * This file defines typedefs. R expects it to be called <pkgname>_types.h    *
@@ -10,16 +13,16 @@
 typedef struct {
   std::string r;
   std::string row_r;
-  std::string c_r;     // CellReference
-  std::string c_s;     // StyleIndex
-  std::string c_t;     // DataType
-  std::string c_cm;    // CellMetaIndex
-  std::string c_ph;    // ShowPhonetic
-  std::string c_vm;    // ValueMetaIndex
-  std::string v;       // CellValue
-  std::string f;       // CellFormula
+  std::string c_r;
+  std::string_view c_s;
+  std::string_view c_t;
+  std::string_view c_cm;
+  std::string_view c_ph;
+  std::string_view c_vm;
+  std::string_view v;
+  std::string_view f;
   std::string f_attr;
-  std::string is;      // inlineStr
+  std::string_view is;
 } xml_col;
 
 typedef std::vector<std::string> vec_string;
@@ -53,6 +56,8 @@ enum celltype {
 #include <Rcpp.h>
 #endif
 
+#include <string_view>
+
 // custom wrap function
 // Converts the imported values from c++ std::vector<xml_col> to an R dataframe.
 // Whenever new fields are spotted they have to be added here
@@ -71,6 +76,13 @@ inline SEXP wrap(const vec_string& x) {
   return Rcpp::wrap(z);
 }
 
+
+template <>
+inline std::string_view as(SEXP s) {
+  const char* ptr = Rcpp::String(s).get_cstring();
+  return std::string_view(ptr);
+}
+
 }  // namespace Rcpp
 
 // pugixml defines. This creates the xmlptr
@@ -78,3 +90,5 @@ inline SEXP wrap(const vec_string& x) {
 
 typedef pugi::xml_document xmldoc;
 typedef Rcpp::XPtr<xmldoc> XPtrXML;
+
+#endif // OPENXLSX2_TYPES_H_

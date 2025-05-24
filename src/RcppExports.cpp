@@ -91,12 +91,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // needed_cells
-std::vector<std::string> needed_cells(const std::string& range, bool all);
+std::vector<std::string> needed_cells(std::string_view range, bool all);
 RcppExport SEXP _openxlsx2_needed_cells(SEXP rangeSEXP, SEXP allSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::string& >::type range(rangeSEXP);
+    Rcpp::traits::input_parameter< std::string_view >::type range(rangeSEXP);
     Rcpp::traits::input_parameter< bool >::type all(allSEXP);
     rcpp_result_gen = Rcpp::wrap(needed_cells(range, all));
     return rcpp_result_gen;

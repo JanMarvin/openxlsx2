@@ -116,17 +116,19 @@ SEXP openxlsx2_type(SEXP x) {
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
   // This function converts the Excel column letter to an integer
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
-  std::unordered_map<std::string, int> col_map;
+  std::unordered_map<std::string_view, int> col_map;
   Rcpp::IntegerVector colNums(n);
 
   for (R_xlen_t i = 0; i < n; ++i) {
-    std::string a = Rcpp::as<std::string>(x[i]);
+    std::string_view a = Rcpp::as<std::string_view>(x[i]);
 
     // check if the value is digit only, if yes, add it and continue the loop
     // at the top. This avoids slow:
     // suppressWarnings(isTRUE(as.character(as.numeric(x)) == x))
     if (std::all_of(a.begin(), a.end(), ::isdigit)) {
-      colNums[i] = std::stoi(a);
+      // Potential issue: std::stoi might not directly accept std::string_view
+      // We need to convert it to std::string.
+      colNums[i] = std::stoi(std::string(a));
       continue;
     }
 
@@ -135,6 +137,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
       colNums[i] = col_map[a];
     } else {
       // Compute the integer value and store it in the map
+      // Assuming cell_to_colint accepts std::string_view or we adapt it.
       int col_int = cell_to_colint(a);
       col_map[a] = col_int;
       colNums[i] = col_int;
@@ -220,13 +223,13 @@ SEXP copy(SEXP x) {
 }
 
 // [[Rcpp::export]]
-std::vector<std::string> needed_cells(const std::string& range, bool all = true) {
+std::vector<std::string> needed_cells(std::string_view range, bool all = true) {
   std::vector<std::string> cells;
 
   // Parse the input range
-  std::string startCellStr, endCellStr;
+  std::string_view startCellStr, endCellStr;
   size_t colonPos = range.find(':');
-  if (colonPos != std::string::npos) {
+  if (colonPos != std::string_view::npos) {
     startCellStr = range.substr(0, colonPos);
     endCellStr = range.substr(colonPos + 1);
   } else {
@@ -237,21 +240,29 @@ std::vector<std::string> needed_cells(const std::string& range, bool all = true)
   if (!validate_dims(startCellStr) || !validate_dims(endCellStr)) {
     if (is_column_only(startCellStr) && is_column_only(endCellStr)) {
       // Check if both start and end are pure columns like "A" or "P"
-      startCellStr += "1";
-      endCellStr   += "1048576";
+      std::string start_str(startCellStr);
+      std::string end_str(endCellStr);
+      start_str += "1";
+      end_str   += "1048576";
+      startCellStr = start_str;
+      endCellStr   = end_str;
     } else if (is_row_only(startCellStr) && is_row_only(endCellStr)) {
       // Check if both start and end are pure rows like "3"
-      startCellStr = "A"   + startCellStr;
-      endCellStr   = "XFD" + endCellStr;
+      std::string start_str("A");
+      std::string end_str("XFD");
+      start_str += std::string(startCellStr);
+      end_str   += std::string(endCellStr);
+      startCellStr = start_str;
+      endCellStr   = end_str;
     } else {
       Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
     }
   }
 
   if (!all) {
-    cells.push_back(startCellStr);
-    cells.push_back(endCellStr);
-    return(cells);
+    cells.emplace_back(startCellStr);
+    cells.emplace_back(endCellStr);
+    return cells;
   }
 
   // Extract column and row numbers from start and end cells

@@ -139,7 +139,7 @@ std::string escape_quote(const std::string& input) {
   return result;
 }
 
-std::string escape_xml(const std::string& input) {
+std::string escape_xml(std::string_view input) {
   std::string result;
   result.reserve(input.length());
 

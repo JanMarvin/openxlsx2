@@ -53,27 +53,17 @@ static inline bool has_cell(const std::string& str, const std::unordered_set<std
 }
 
 // driver function for col_to_int
-static inline uint32_t uint_col_to_int(std::string& a) {
-  char A = 'A';
-  int32_t aVal = (int)A - 1;
-  uint32_t sum = 0;
-  size_t k = a.length();
-
-  for (size_t j = 0; j < k; ++j) {
-    sum *= 26;
-    sum += static_cast<uint32_t>(a[j] - aVal);
+static inline uint32_t uint_col_to_int(std::string_view sv) {
+  uint32_t col = 0;
+  for (char c : sv) {
+    col = col * 26 + (c - 'A' + 1);
   }
-
-  return sum;
+  return col;
 }
 
-static inline std::string rm_rownum(const std::string& str) {
+static inline std::string rm_rownum(std::string_view sv) {
   std::string result;
-  for (char c : str) {
-    if (!std::isdigit(c)) {
-      result += c;
-    }
-  }
+  std::remove_copy_if(sv.begin(), sv.end(), std::back_inserter(result), ::isdigit);
   return result;
 }
 
@@ -87,39 +77,44 @@ static inline std::string rm_colnum(const std::string& str) {
   return result;
 }
 
-// Function to keep only digits in a string
-inline int32_t cell_to_rowint(const std::string& str) {
-  std::string result = rm_colnum(str);
-  return std::stoi(result);
+static inline int32_t cell_to_rowint(std::string_view str) {
+  std::string row_part;
+  for (char c : str) {
+    if (std::isdigit(c)) {
+      row_part += c;
+    }
+  }
+  return row_part.empty() ? 0 : std::stoi(row_part);
 }
 
-static inline std::string str_toupper(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::toupper(c); });
-  return s;
+// Helper function to convert to uppercase
+static inline std::string str_toupper(std::string_view sv) {
+  std::string result;
+  std::transform(sv.begin(), sv.end(), std::back_inserter(result), ::toupper);
+  return result;
+}
+// Function to remove digits from a string and convert to column integer
+static inline int32_t cell_to_colint(std::string_view sv) {
+  std::string result_rm = rm_rownum(sv);
+  std::string result_upper = str_toupper(result_rm);
+  return static_cast<int32_t>(uint_col_to_int(result_upper));
 }
 
-// Function to remove digits from a string
-static inline int32_t cell_to_colint(const std::string& str) {
-  std::string result = rm_rownum(str);
-  result = str_toupper(result);
-  return static_cast<int32_t>(uint_col_to_int(result));
-}
-
-static inline bool is_column_only(const std::string& s) {
+static inline bool is_column_only(std::string_view s) {
   for (char c : s) {
     if (!std::isalpha(c)) return false;
   }
   return !s.empty();
 }
 
-static inline bool is_row_only(const std::string& s) {
+static inline bool is_row_only(std::string_view s) {
   for (char c : s) {
     if (!std::isdigit(c)) return false;
   }
   return !s.empty();
 }
 
-static inline bool validate_dims(const std::string& input) {
+static inline bool validate_dims(std::string_view input) {
   bool has_col = false;
   bool has_row = false;
 
@@ -157,8 +152,6 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   Rcpp::CharacterVector is(Rcpp::no_init(n));        // <is> tag
 
   // struct to vector
-  // We have to convert utf8 inputs via Rcpp::String for non unicode R sessions
-  // Ideally there would be a function that calls Rcpp::String only if needed
   for (R_xlen_t i = 0; i < n; ++i) {
     size_t ii = static_cast<size_t>(i);
     if (!x[ii].r.empty())      r[i]      = std::string(x[ii].r);
@@ -166,145 +159,35 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
     if (!x[ii].c_r.empty())    c_r[i]    = std::string(x[ii].c_r);
     if (!x[ii].c_s.empty())    c_s[i]    = std::string(x[ii].c_s);
     if (!x[ii].c_t.empty())    c_t[i]    = std::string(x[ii].c_t);
-    if (has_cm && !x[ii].c_cm.empty())   c_cm[i]   = std::string(x[ii].c_cm);
-    if (has_ph && !x[ii].c_ph.empty())   c_ph[i]   = Rcpp::String(x[ii].c_ph);
-    if (has_vm && !x[ii].c_vm.empty())   c_vm[i]   = std::string(x[ii].c_vm);
-    if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
+    if (has_cm && !x[ii].c_cm.empty())   c_cm[i]   = Rcpp::String(std::string(x[ii].c_cm));
+    if (has_ph && !x[ii].c_ph.empty())   c_ph[i]   = Rcpp::String(std::string(x[ii].c_ph));
+    if (has_vm && !x[ii].c_vm.empty())   c_vm[i]   = Rcpp::String(std::string(x[ii].c_vm));
+    if (!x[ii].v.empty()) {
       if (x[ii].c_t.empty() && x[ii].f_attr.empty())
-        v[i] = std::string(x[ii].v);
+        v[i] = Rcpp::String(std::string(x[ii].v));
       else
-        v[i] = Rcpp::String(x[ii].v);
+        v[i] = Rcpp::String(std::string(x[ii].v));
     }
-    if (!x[ii].f.empty())      f[i]      = Rcpp::String(x[ii].f);
     if (!x[ii].f_attr.empty()) f_attr[i] = std::string(x[ii].f_attr);
-    if (!x[ii].is.empty())     is[i]     = Rcpp::String(x[ii].is);
+    if (!x[ii].f.empty())      f[i]      = Rcpp::String(std::string(x[ii].f));
+    if (!x[ii].is.empty())     is[i]     = Rcpp::String(std::string(x[ii].is));
   }
 
   // Assign and return a dataframe
-  if (has_cm && has_ph && has_vm) {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("c_cm")   = c_cm,
-        Rcpp::Named("c_ph")   = c_ph,
-        Rcpp::Named("c_vm")   = c_vm,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  } else if (has_cm && has_ph && !has_vm) {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("c_cm")   = c_cm,
-        Rcpp::Named("c_ph")   = c_ph,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  } else if (has_cm && !has_ph && has_vm) {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("c_cm")   = c_cm,
-        Rcpp::Named("c_vm")   = c_vm,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  } else if (!has_cm && has_ph && has_vm) {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("c_ph")   = c_ph,
-        Rcpp::Named("c_vm")   = c_vm,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  } else if (has_cm && !has_ph && !has_vm) {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("c_cm")   = c_cm,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  } else if (!has_cm && has_ph && !has_vm) {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("c_ph")   = c_ph,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  } else if (!has_cm && !has_ph && has_vm) {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("c_vm")   = c_vm,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  } else {
-    return
-      Rcpp::DataFrame::create(
-        Rcpp::Named("r")      = r,
-        Rcpp::Named("row_r")  = row_r,
-        Rcpp::Named("c_r")    = c_r,
-        Rcpp::Named("c_s")    = c_s,
-        Rcpp::Named("c_t")    = c_t,
-        Rcpp::Named("v")      = v,
-        Rcpp::Named("f")      = f,
-        Rcpp::Named("f_attr") = f_attr,
-        Rcpp::Named("is")     = is,
-        Rcpp::Named("stringsAsFactors") = false
-      );
-  }
+  Rcpp::List df_cols;
+  df_cols["r"] = r;
+  df_cols["row_r"] = row_r;
+  df_cols["c_r"] = c_r;
+  df_cols["c_s"] = c_s;
+  df_cols["c_t"] = c_t;
+  if (has_cm) df_cols["c_cm"] = c_cm;
+  if (has_ph) df_cols["c_ph"] = c_ph;
+  if (has_vm) df_cols["c_vm"] = c_vm;
+  df_cols["v"] = v;
+  df_cols["f"] = f;
+  df_cols["f_attr"] = f_attr;
+  df_cols["is"] = is;
+  df_cols["stringsAsFactors"] = Rcpp::wrap(false);
 
+  return Rcpp::DataFrame(df_cols);
 }
