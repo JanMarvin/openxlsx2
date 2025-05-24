@@ -130,7 +130,8 @@ The default style has <code>font_color = "FF9C0006"</code> and <code>bg_fill = "
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>openxml uses the alpha channel first then RGB, whereas the usual default is RGBA.</p>
 <p>Conditional formatting <code>type</code> accept different parameters. Unless noted,
-unlisted parameters are ignored.</p><dl><dt><code>expression</code></dt>
+unlisted parameters are ignored.
+If an expression is pointing to a cell <code>A1=1</code>, this cell reference is fluid and not fixed like <code>$A$1</code>. It will behave similar to a formula, when <code>dims</code> is spanning multiple columns or rows (A1, A2, A3 ... in vertical direction, A1, B1, C1 ... in horizontal direction). If <code>dims</code> is a non consecutive range ("A1:B2,D1:F2"), the expression is applied to each range. For the second <code>dims</code> range it will be evaluated again as <code>"A1=1"</code>.</p><dl><dt><code>expression</code></dt>
 <dd><p><code>[style]</code><br> A <code>Style</code> object<br><br><code>[rule]</code><br> An Excel expression (as a character). Valid operators are: <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>==</code>, <code>!=</code></p></dd>
 
 <dt><code>colorScale</code></dt>

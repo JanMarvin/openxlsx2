@@ -60,6 +60,8 @@
 <ul><li>
 <code>dims</code> will now respect the order in which they are sorted. So <code>"B2:A1"</code> will no longer equal <code>"A1:B2"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1353" class="external-link">1353</a>
 </li>
+<li>Conditional formatting allows now for non consecutive dims such as <code>"A1:B2,C2:D3"</code>. This causes a change in previous behavior, where the outer cells of a dimension were used to construct the range to which the conditional formatting was applied. <a href="https://github.com/JanMarvin/openxlsx2/pull/1347" class="external-link">1347</a>
+</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
