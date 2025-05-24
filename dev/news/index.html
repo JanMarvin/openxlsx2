@@ -54,6 +54,11 @@
 <ul><li>Reading dims with dollar signs is now possible <code>wb$to_df(dims = "A$1:A$5")</code> and incorrectly selected sheets now throw a warning instead of an incorrect “sheet found, but contains no data” message.</li>
 <li>Slightly adjusted <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to create regions from decreasing consecutive columns and rows. <a href="https://github.com/JanMarvin/openxlsx2/pull/1353" class="external-link">1353</a>
 </li>
+<li>Reading dims with dollar signs is now possible <code>wb$to_df(dims = "A$1:A$5")</code> and incorrectly selected sheets now throw a warning instead of an incorrect “sheet found, but contains no data” message. <a href="https://github.com/JanMarvin/openxlsx2/pull/1338" class="external-link">1338</a>
+</li>
+<li>Add <code>format</code> argument to <code><a href="../reference/wb_color.html">wb_color()</a></code>/<code><a href="../reference/wb_color.html">wb_colour()</a></code>. This allows setting the input format to <code>RGBA</code>. (<a href="https://github.com/JanMarvin/openxlsx2/pull/1341" class="external-link">1341</a>, <a href="https://github.com/J-Moravec" class="external-link">@J-Moravec</a>)</li>
+<li>Add <code>update</code> argument to <code><a href="../reference/wb_add_border.html">wb_add_border()</a></code>. This way it is possible to preserve intersecting borders. <a href="https://github.com/JanMarvin/openxlsx2/pull/1343" class="external-link">1343</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
@@ -61,6 +66,8 @@
 <code>dims</code> will now respect the order in which they are sorted. So <code>"B2:A1"</code> will no longer equal <code>"A1:B2"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1353" class="external-link">1353</a>
 </li>
 <li>Conditional formatting allows now for non consecutive dims such as <code>"A1:B2,C2:D3"</code>. This causes a change in previous behavior, where the outer cells of a dimension were used to construct the range to which the conditional formatting was applied. <a href="https://github.com/JanMarvin/openxlsx2/pull/1347" class="external-link">1347</a>
+</li>
+<li>Nulling a color or border style in <code><a href="../reference/wb_add_border.html">wb_add_border()</a></code> now automatically nulls the corresponding color/border style. <a href="https://github.com/JanMarvin/openxlsx2/pull/1343" class="external-link">1343</a>
 </li>
 </ul><hr></div>
 </div>
