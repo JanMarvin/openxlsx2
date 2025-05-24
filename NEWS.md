@@ -4,10 +4,14 @@
 
 * Reading dims with dollar signs is now possible `wb$to_df(dims = "A$1:A$5")` and incorrectly selected sheets now throw a warning instead of an incorrect "sheet found, but contains no data" message.
 * Slightly adjusted `wb_dims()` to create regions from decreasing consecutive columns and rows. [1353](https://github.com/JanMarvin/openxlsx2/pull/1353)
+* Reading dims with dollar signs is now possible `wb$to_df(dims = "A$1:A$5")` and incorrectly selected sheets now throw a warning instead of an incorrect "sheet found, but contains no data" message. [1338](https://github.com/JanMarvin/openxlsx2/pull/1338)
+* Add `format` argument to `wb_color()`/`wb_colour()`. This allows setting the input format to `RGBA`. ([1341](https://github.com/JanMarvin/openxlsx2/pull/1341), @J-Moravec)
+* Add `update` argument to `wb_add_border()`. This way it is possible to preserve intersecting borders. [1343](https://github.com/JanMarvin/openxlsx2/pull/1343)
 
 ## Breaking changes
 * `dims` will now respect the order in which they are sorted. So `"B2:A1"` will no longer equal `"A1:B2"`. [1353](https://github.com/JanMarvin/openxlsx2/pull/1353)
 * Conditional formatting allows now for non consecutive dims such as `"A1:B2,C2:D3"`. This causes a change in previous behavior, where the outer cells of a dimension were used to construct the range to which the conditional formatting was applied. [1347](https://github.com/JanMarvin/openxlsx2/pull/1347)
+* Nulling a color or border style in `wb_add_border()` now automatically nulls the corresponding color/border style. [1343](https://github.com/JanMarvin/openxlsx2/pull/1343)
 
 
 ***************************************************************************

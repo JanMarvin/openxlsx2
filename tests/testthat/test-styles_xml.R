@@ -176,3 +176,63 @@ test_that("reading xf node extLst works", {
   df_xf$extLst <- "<extLst></foo/></extLst>"
   expect_error(write_xf(df_xf), "failed to load xf child")
 })
+
+## FIXME silent tests should be replaced with something better
+test_that("updating borders works", {
+
+  # A1:B10, C1:D10
+  wb <- wb_workbook()$add_worksheet()$
+    add_border(dims = "A1:B10")$
+    add_border(dims = "C1:D10")
+
+  # A1:D1, and another at A4:D4
+  wb$add_border(dims = "A1:D1", update = TRUE)
+  exp <- c(A1 = "13", B1 = "15", C1 = "16", D1 = "14")
+  got <- wb$get_cell_style(dims = "A1:D1")
+  expect_equal(exp, got)
+
+  wb$add_border(dims = "A4:D4", top_border = NULL, update = TRUE)
+  exp <- c(A4 = "17", B4 = "19", C4 = "20", D4 = "18")
+  got <- wb$get_cell_style(dims = "A4:D4")
+  expect_equal(exp, got)
+
+  wb$add_worksheet()$
+    add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  expect_silent(wb$add_border(dims = "C3:E5", update = TRUE))
+
+  ## check single cell
+  wb$add_worksheet()$
+    add_border(dims = "B2:B4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  # to update the inner cell, both the style and the color must be NULL
+  expect_silent(
+    wb$add_border(dims = "B3",
+                  top_border = NULL, left_border = NULL, right_border = NULL, bottom_border = "double", bottom_color = wb_color("blue"),
+                  update = TRUE)
+  )
+
+  # update it a second time
+  expect_silent(
+    wb$add_border(dims = "B3:B3",
+                  bottom_border = NULL, left_border = NULL, right_border = NULL, top_border = "dashed", top_color = wb_color("red"),
+                  update = TRUE)
+  )
+
+  # horizontal overlap
+  wb$add_worksheet()$
+    add_border(dims = "B2:E2", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  expect_silent(
+    wb$add_border(dims = "C2:F2", bottom_border = "dashed", left_border = "dashed", right_border = "dashed", top_border = "dashed", update = TRUE)
+  )
+
+  # vertical overlap
+  wb$add_worksheet()$
+    add_border(dims = "B2:B5", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")
+
+  expect_silent(
+    wb$add_border(dims = "B3:B6", bottom_border = "dashed", left_border = "dashed", right_border = "dashed", top_border = "dashed", update = TRUE)
+  )
+
+})

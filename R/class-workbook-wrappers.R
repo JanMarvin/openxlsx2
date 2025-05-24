@@ -3252,6 +3252,7 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid
 #'   the border style, if `NULL` no border is drawn.
 #'   See [create_border()] for possible border styles
+#' @param update Logical. Defaults to FALSE. If TRUE, and the border style includes NULL entries, existing borders may be updated with new ones. When overlapping cells (e.g., squares intersect), existing borders will be preserved where possible.
 #' @param ... additional arguments
 #' @seealso [create_border()]
 #' @examples
@@ -3300,6 +3301,10 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #' wb$add_worksheet("S1")$add_data("S1", mtcars)
 #' wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin",
 #'  inner_vcolor = wb_color(hex = "FF808080"))
+#'
+#' wb$add_worksheet()$
+#'   add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")$
+#'   add_border(dims = "C3:E5", update = TRUE)
 #' @family styles
 #' @export
 wb_add_border <- function(
@@ -3318,6 +3323,7 @@ wb_add_border <- function(
     inner_hcolor   = NULL,
     inner_vgrid    = NULL,
     inner_vcolor   = NULL,
+    update         = FALSE,
     ...
 ) {
   assert_workbook(wb)
@@ -3336,6 +3342,7 @@ wb_add_border <- function(
     inner_hcolor  = inner_hcolor,
     inner_vgrid   = inner_vgrid,
     inner_vcolor  = inner_vcolor,
+    update        = update,
     ...           = ...
   )
 

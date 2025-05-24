@@ -20,6 +20,7 @@ wb_add_border(
   inner_hcolor = NULL,
   inner_vgrid = NULL,
   inner_vcolor = NULL,
+  update = FALSE,
   ...
 )
 }
@@ -34,6 +35,8 @@ wb_add_border(
 
 \item{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}{the border style, if \code{NULL} no border is drawn.
 See \code{\link[=create_border]{create_border()}} for possible border styles}
+
+\item{update}{Logical. Defaults to FALSE. If TRUE, and the border style includes NULL entries, existing borders may be updated with new ones. When overlapping cells (e.g., squares intersect), existing borders will be preserved where possible.}
 
 \item{...}{additional arguments}
 }
@@ -86,6 +89,10 @@ wb <- wb_workbook()
 wb$add_worksheet("S1")$add_data("S1", mtcars)
 wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin",
  inner_vcolor = wb_color(hex = "FF808080"))
+
+wb$add_worksheet()$
+  add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")$
+  add_border(dims = "C3:E5", update = TRUE)
 }
 \seealso{
 \code{\link[=create_border]{create_border()}}
