@@ -59,7 +59,7 @@ openxml uses the alpha channel first then RGB, whereas the usual default is RGBA
 
 Conditional formatting \code{type} accept different parameters. Unless noted,
 unlisted parameters are ignored.
-If an expression is pointing to a cell \code{A1=1}, this cell reference is fluid and not fixed like \verb{$A$1}. It will behave similar to a formula, when \code{dims} is spanning multiple columns or rows (A1, A2, A3 ... in vertical direction, A1, B1, C1 ... in horizontal direction). If \code{dims} is a non consecutive range ("A1:B2,D1:F2"), the expression is applied to each range. For the second \code{dims} range it will be evaluated again as \code{"A1=1"}.
+If an expression is pointing to a cell \code{"A1=1"}, this cell reference is fluid and not fixed like \code{"$A$1=1"}. It will behave similar to a formula, when \code{dims} is spanning multiple columns or rows (A1, A2, A3 ... in vertical direction, A1, B1, C1 ... in horizontal direction). If \code{dims} is a non consecutive range ("A1:B2,D1:F2"), the expression is applied to each range. For the second \code{dims} range it will be evaluated again as \code{"A1=1"}.
 \describe{
 \item{\code{expression}}{
 \verb{[style]}\cr A \code{Style} object\cr\cr

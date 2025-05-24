@@ -987,10 +987,10 @@ create_dxfs_style <- function(
 
 }
 
-#' Helper function used to overwrite borders styles
+#' Helper function used to update borders styles
 #' picks a style from a worksheet dimension and adds the required border
 #' @noRd
-overwrite_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) {
+update_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) {
 
   XFs <- wb$get_cell_style(sheet = sheet, dims = dims)
   # access the ids in a data frame

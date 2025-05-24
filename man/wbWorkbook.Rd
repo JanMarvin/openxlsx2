@@ -3270,7 +3270,7 @@ create borders for cell region
   inner_hcolor = NULL,
   inner_vgrid = NULL,
   inner_vcolor = NULL,
-  overwrite = FALSE,
+  update = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -3286,7 +3286,7 @@ create borders for cell region
 
 \item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
 
-\item{\code{overwrite}}{overwrite}
+\item{\code{update}}{update}
 
 \item{\code{...}}{additional arguments}
 }
