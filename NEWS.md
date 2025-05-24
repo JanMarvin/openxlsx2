@@ -7,6 +7,7 @@
 
 ## Breaking changes
 * `dims` will now respect the order in which they are sorted. So `"B2:A1"` will no longer equal `"A1:B2"`. [1353](https://github.com/JanMarvin/openxlsx2/pull/1353)
+* Conditional formatting allows now for non consecutive dims such as `"A1:B2,C2:D3"`. This causes a change in previous behavior, where the outer cells of a dimension were used to construct the range to which the conditional formatting was applied. [1347](https://github.com/JanMarvin/openxlsx2/pull/1347)
 
 
 ***************************************************************************
