@@ -79,6 +79,7 @@ but <code>wb_add_font()</code> gives you more control.</p>
 <span>  scheme <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  shadow <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  vert_align <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  update <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -159,6 +160,10 @@ but <code>wb_add_font()</code> gives you more control.</p>
 <dd><p>Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".</p></dd>
 
 
+<dt id="arg-update">update<a class="anchor" aria-label="anchor" href="#arg-update"></a></dt>
+<dd><p>Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with <code><a href="fmt_txt.html">fmt_txt()</a></code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>...</p></dd>
 
@@ -190,6 +195,9 @@ not all have to be set. Usually <code>name</code>, <code>size</code> and <code>c
 <span class="r-in"><span><span class="co"># With chaining</span></span></span>
 <span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"S1"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span><span class="st">"S1"</span>, <span class="va">mtcars</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, name <span class="op">=</span> <span class="st">"Arial"</span>, color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"4"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Update the font color</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span><span class="op">$</span><span class="fu">add_font</span><span class="op">(</span><span class="st">"S1"</span>, <span class="st">"A1:K1"</span>, color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span><span class="st">"orange"</span><span class="op">)</span>, update <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"color"</span><span class="op">)</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -201,7 +209,7 @@ not all have to be set. Usually <code>name</code>, <code>size</code> and <code>c
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
