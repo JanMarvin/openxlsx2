@@ -3470,7 +3470,7 @@ wb_add_font <- function(
       scheme     = "",
       shadow     = "",
       vert_align = "",
-      update     = NULL,
+      update     = FALSE,
       ...
 ) {
   assert_workbook(wb)

@@ -8727,7 +8727,7 @@ wbWorkbook <- R6::R6Class(
         scheme     = "",
         shadow     = "",
         vert_align = "",
-        update     = NULL,
+        update     = FALSE,
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
@@ -8765,14 +8765,14 @@ wbWorkbook <- R6::R6Class(
 
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
 
-        if (length(update)) {
+        if (is.character(update) || (is.logical(update) && isTRUE(update))) {
           valid <- c(
             "name", "color", "colour", "size", "bold", "italic", "outline", "strike",
             "underline", "charset", "condense", "extend", "family", "scheme", "shadow",
             "vert_align"
           )
           # update == TRUE: the user wants everything updated
-          if (length(update) == 1 && isTRUE(update)) {
+          if (is.logical(update) && isTRUE(update)) {
            update <- valid[-which(valid == "colour")]
           }
           match.arg(update, valid, several.ok = TRUE)
