@@ -8771,6 +8771,10 @@ wbWorkbook <- R6::R6Class(
             "underline", "charset", "condense", "extend", "family", "scheme", "shadow",
             "vert_align"
           )
+          # update == TRUE: the user wants everything updated
+          if (length(update) == 1 && isTRUE(update)) {
+           update <- valid[-which(valid == "colour")]
+          }
           match.arg(update, valid, several.ok = TRUE)
 
           font_properties <- c(
@@ -8792,7 +8796,7 @@ wbWorkbook <- R6::R6Class(
           )
           sel <- font_properties[update]
 
-          font_id  <- as.integer(sapply(xml_attr(xf_prev, "xf"), "[[", "fontId")) + 1L
+          font_id  <- as.integer(vapply(xml_attr(xf_prev, "xf"), "[[", "fontId", FUN.VALUE = NA_character_)) + 1L
           font_xml <- self$styles_mgr$styles$fonts[[font_id]]
 
           # read as data frame with xml elements

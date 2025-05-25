@@ -64,7 +64,7 @@ wb_add_font(
 
 \item{vert_align}{Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".}
 
-\item{update}{update}
+\item{update}{Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with \code{\link[=fmt_txt]{fmt_txt()}}.}
 
 \item{...}{...}
 }
@@ -86,6 +86,9 @@ not all have to be set. Usually \code{name}, \code{size} and \code{color} should
 # With chaining
  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+
+# Update the font color
+ wb$add_font("S1", "A1:K1", color = wb_color("orange"), update = c("color"))
 }
 \seealso{
 Other styles: 

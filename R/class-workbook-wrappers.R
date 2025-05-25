@@ -3436,7 +3436,7 @@ wb_add_fill <- function(
 #' @param shadow Logical, whether the font should have a shadow.
 #' @param extend Logical, whether the font should be extended.
 #' @param vert_align Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".
-#' @param update update
+#' @param update Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with [fmt_txt()].
 #' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
@@ -3444,6 +3444,9 @@ wb_add_fill <- function(
 #' # With chaining
 #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
 #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+#'
+#' # Update the font color
+#'  wb$add_font("S1", "A1:K1", color = wb_color("orange"), update = c("color"))
 #' @return A `wbWorkbook`, invisibly
 #' @family styles
 #' @export
