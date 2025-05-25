@@ -612,7 +612,7 @@ create_cell_style <- function(
 
   applyFont <- ""
   if (any(font_id != "")) applyFont <- "1"
-  if (is_cell_style_xf && isTRUE(font_id > "1")) applyFont <- "0"
+  if (is_cell_style_xf && isTRUE(font_id == "")) applyFont <- "0"
 
   applyNumberFormat <- ""
   if (any(num_fmt_id != "")) applyNumberFormat <- "1"

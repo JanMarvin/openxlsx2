@@ -3436,6 +3436,7 @@ wb_add_fill <- function(
 #' @param shadow Logical, whether the font should have a shadow.
 #' @param extend Logical, whether the font should be extended.
 #' @param vert_align Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".
+#' @param update Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with [fmt_txt()].
 #' @param ... ...
 #' @examples
 #'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
@@ -3443,6 +3444,9 @@ wb_add_fill <- function(
 #' # With chaining
 #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
 #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+#'
+#' # Update the font color
+#'  wb$add_font("S1", "A1:K1", color = wb_color("orange"), update = c("color"))
 #' @return A `wbWorkbook`, invisibly
 #' @family styles
 #' @export
@@ -3466,6 +3470,7 @@ wb_add_font <- function(
       scheme     = "",
       shadow     = "",
       vert_align = "",
+      update     = FALSE,
       ...
 ) {
   assert_workbook(wb)
@@ -3488,6 +3493,7 @@ wb_add_font <- function(
     scheme     = scheme,
     shadow     = shadow,
     vert_align = vert_align,
+    update     = update,
     ...        = ...
   )
 }
@@ -3705,10 +3711,25 @@ wb_add_cell_style <- function(
 #' @param wb A `wbWorkbook` object
 #' @param sheet A worksheet
 #' @param dims A cell range
-#' @param name The named style name.
+#' @param name The named style name. Builtin styles are `Normal`, `Bad`, `Good`, `Neutral`, `Calculation`, `Check Cell`, `Explanatory Text`,  `Input`, `Linked Cell`, `Note`, `Output`, `Warning Text`, `Heading 1`, `Heading 2`, `Heading 3`, `Heading 4`, `Title`, `Total`, `$x% - Accent$y` (for x in 20, 40, 60 and y in 1:6), `Accent$y` (for y in 1:6), `Comma`, `Comma [0]`, `Currency`, `Currency [0]`, `Per cent`
 #' @family styles
 #' @param font_name,font_size optional else the default of the theme
 #' @return The `wbWorkbook`, invisibly
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()
+#' name <- "Normal"
+#' dims <- "A1"
+#' wb$add_data(dims = dims, x = name)
+#'
+#' name <- "Bad"
+#' dims <- "B1"
+#' wb$add_named_style(dims = dims, name = name)
+#' wb$add_data(dims = dims, x = name)
+#'
+#' name <- "Good"
+#' dims <- "C1"
+#' wb$add_named_style(dims = dims, name = name)
+#' wb$add_data(dims = dims, x = name)
 #' @export
 wb_add_named_style <- function(
     wb,
