@@ -20,7 +20,7 @@ wb_add_named_style(
 
 \item{dims}{A cell range}
 
-\item{name}{The named style name.}
+\item{name}{The named style name. Builtin styles are \code{Normal}, \code{Bad}, \code{Good}, \code{Neutral}, \code{Calculation}, \verb{Check Cell}, \verb{Explanatory Text},  \code{Input}, \verb{Linked Cell}, \code{Note}, \code{Output}, \verb{Warning Text}, \verb{Heading 1}, \verb{Heading 2}, \verb{Heading 3}, \verb{Heading 4}, \code{Title}, \code{Total}, \verb{$x\% - Accent$y} (for x in 20, 40, 60 and y in 1:6), \code{Accent$y} (for y in 1:6), \code{Comma}, \code{Comma [0]}, \code{Currency}, \code{Currency [0]}, \verb{Per cent}}
 
 \item{font_name, font_size}{optional else the default of the theme}
 }
@@ -31,6 +31,22 @@ The \code{wbWorkbook}, invisibly
 Set the styling to a named style for a cell region. Use \code{\link[=wb_add_cell_style]{wb_add_cell_style()}}
 to style a cell region with custom parameters.
 A named style is the one in spreadsheet software, like "Normal", "Warning".
+}
+\examples{
+wb <- wb_workbook()$add_worksheet()
+name <- "Normal"
+dims <- "A1"
+wb$add_data(dims = dims, x = name)
+
+name <- "Bad"
+dims <- "B1"
+wb$add_named_style(dims = dims, name = name)
+wb$add_data(dims = dims, x = name)
+
+name <- "Good"
+dims <- "C1"
+wb$add_named_style(dims = dims, name = name)
+wb$add_data(dims = dims, x = name)
 }
 \seealso{
 Other styles: 

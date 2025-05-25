@@ -3711,10 +3711,25 @@ wb_add_cell_style <- function(
 #' @param wb A `wbWorkbook` object
 #' @param sheet A worksheet
 #' @param dims A cell range
-#' @param name The named style name.
+#' @param name The named style name. Builtin styles are `Normal`, `Bad`, `Good`, `Neutral`, `Calculation`, `Check Cell`, `Explanatory Text`,  `Input`, `Linked Cell`, `Note`, `Output`, `Warning Text`, `Heading 1`, `Heading 2`, `Heading 3`, `Heading 4`, `Title`, `Total`, `$x% - Accent$y` (for x in 20, 40, 60 and y in 1:6), `Accent$y` (for y in 1:6), `Comma`, `Comma [0]`, `Currency`, `Currency [0]`, `Per cent`
 #' @family styles
 #' @param font_name,font_size optional else the default of the theme
 #' @return The `wbWorkbook`, invisibly
+#' @examples
+#' wb <- wb_workbook()$add_worksheet()
+#' name <- "Normal"
+#' dims <- "A1"
+#' wb$add_data(dims = dims, x = name)
+#'
+#' name <- "Bad"
+#' dims <- "B1"
+#' wb$add_named_style(dims = dims, name = name)
+#' wb$add_data(dims = dims, x = name)
+#'
+#' name <- "Good"
+#' dims <- "C1"
+#' wb$add_named_style(dims = dims, name = name)
+#' wb$add_data(dims = dims, x = name)
 #' @export
 wb_add_named_style <- function(
     wb,
