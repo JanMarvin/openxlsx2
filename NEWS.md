@@ -7,6 +7,7 @@
 * Reading dims with dollar signs is now possible `wb$to_df(dims = "A$1:A$5")` and incorrectly selected sheets now throw a warning instead of an incorrect "sheet found, but contains no data" message. [1338](https://github.com/JanMarvin/openxlsx2/pull/1338)
 * Add `format` argument to `wb_color()`/`wb_colour()`. This allows setting the input format to `RGBA`. ([1341](https://github.com/JanMarvin/openxlsx2/pull/1341), @J-Moravec)
 * Add `update` argument to `wb_add_border()`. This way it is possible to preserve intersecting borders. [1343](https://github.com/JanMarvin/openxlsx2/pull/1343)
+* Add `update` argument to `wb_add_font()`. This way it is possible to update font elements. [1153](https://github.com/JanMarvin/openxlsx2/pull/1153)
 
 ## Breaking changes
 * `dims` will now respect the order in which they are sorted. So `"B2:A1"` will no longer equal `"A1:B2"`. [1353](https://github.com/JanMarvin/openxlsx2/pull/1353)
