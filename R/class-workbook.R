@@ -4219,7 +4219,7 @@ wbWorkbook <- R6::R6Class(
       name    <- xml_attr(current, "a:clrScheme")[[1]][["name"]]
 
       nodes  <- xml_node_name(current, "a:clrScheme")
-      childs <- xml_node_name(current, "a:clrScheme", nodes[1])
+      childs <- xml_node_name(current, "a:clrScheme", "*")
 
       rgbs <- vapply(
         seq_along(nodes),

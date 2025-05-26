@@ -1085,9 +1085,10 @@ drawings <- function(drawings, drawing_id) {
     )
   )
 
-  xml_append_child1(
+  xml_append_child_path(
     node    = read_xml(drawings),
     child   = read_xml(drawing),
+    path    = character(),
     pointer = FALSE)
 }
 
