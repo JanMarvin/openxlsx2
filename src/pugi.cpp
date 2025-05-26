@@ -69,7 +69,7 @@ Rcpp::LogicalVector is_xml(std::string str) {
 
 // [[Rcpp::export]]
 SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<std::string> path) {
-  std::vector<pugi::xml_node> nodes = { *doc }; // Start from the root node
+  std::vector<pugi::xml_node> nodes = {*doc};  // Start from the root node
   std::vector<pugi::xml_node> next_nodes;
 
   for (const auto& tag : path) {
@@ -267,7 +267,7 @@ SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
   }
 
   // Prepare result list
-  R_xlen_t n = std::max<R_xlen_t>(1, current_nodes.size());
+  R_xlen_t n = std::max(static_cast<R_xlen_t>(1), static_cast<R_xlen_t>(current_nodes.size()));
   Rcpp::List out(n);
   R_xlen_t i = 0;
 
@@ -566,7 +566,7 @@ SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::str
 
     if (which < 0 || ctr == which) {
       current.remove_child(cld);
-      if (which >= 0) break; // only remove one if specified
+      if (which >= 0) break;  // only remove one if specified
     }
 
     cld = next;
