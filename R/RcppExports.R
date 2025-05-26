@@ -209,16 +209,8 @@ xml_append_child_path <- function(node, child, path, pointer) {
     .Call(`_openxlsx2_xml_append_child_path`, node, child, path, pointer)
 }
 
-xml_remove_child1 <- function(node, child, which, pointer) {
-    .Call(`_openxlsx2_xml_remove_child1`, node, child, which, pointer)
-}
-
-xml_remove_child2 <- function(node, child, level1, which, pointer) {
-    .Call(`_openxlsx2_xml_remove_child2`, node, child, level1, which, pointer)
-}
-
-xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
-    .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
+xml_remove_child_path <- function(node, child, path, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child_path`, node, child, path, which, pointer)
 }
 
 is_to_txt <- function(is_vec) {

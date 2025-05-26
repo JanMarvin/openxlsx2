@@ -443,48 +443,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// xml_remove_child1
-SEXP xml_remove_child1(XPtrXML node, std::string child, int32_t which, bool pointer);
-RcppExport SEXP _openxlsx2_xml_remove_child1(SEXP nodeSEXP, SEXP childSEXP, SEXP whichSEXP, SEXP pointerSEXP) {
+// xml_remove_child_path
+SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::string> path, int32_t which, bool pointer);
+RcppExport SEXP _openxlsx2_xml_remove_child_path(SEXP nodeSEXP, SEXP childSEXP, SEXP pathSEXP, SEXP whichSEXP, SEXP pointerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
     Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type path(pathSEXP);
     Rcpp::traits::input_parameter< int32_t >::type which(whichSEXP);
     Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_remove_child1(node, child, which, pointer));
-    return rcpp_result_gen;
-END_RCPP
-}
-// xml_remove_child2
-SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int32_t which, bool pointer);
-RcppExport SEXP _openxlsx2_xml_remove_child2(SEXP nodeSEXP, SEXP childSEXP, SEXP level1SEXP, SEXP whichSEXP, SEXP pointerSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< int32_t >::type which(whichSEXP);
-    Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_remove_child2(node, child, level1, which, pointer));
-    return rcpp_result_gen;
-END_RCPP
-}
-// xml_remove_child3
-SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int32_t which, bool pointer);
-RcppExport SEXP _openxlsx2_xml_remove_child3(SEXP nodeSEXP, SEXP childSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP whichSEXP, SEXP pointerSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
-    Rcpp::traits::input_parameter< int32_t >::type which(whichSEXP);
-    Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_remove_child3(node, child, level1, level2, which, pointer));
+    rcpp_result_gen = Rcpp::wrap(xml_remove_child_path(node, child, path, which, pointer));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -912,9 +882,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 5},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
     {"_openxlsx2_xml_append_child_path", (DL_FUNC) &_openxlsx2_xml_append_child_path, 4},
-    {"_openxlsx2_xml_remove_child1", (DL_FUNC) &_openxlsx2_xml_remove_child1, 4},
-    {"_openxlsx2_xml_remove_child2", (DL_FUNC) &_openxlsx2_xml_remove_child2, 5},
-    {"_openxlsx2_xml_remove_child3", (DL_FUNC) &_openxlsx2_xml_remove_child3, 6},
+    {"_openxlsx2_xml_remove_child_path", (DL_FUNC) &_openxlsx2_xml_remove_child_path, 5},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_txt_to_is", (DL_FUNC) &_openxlsx2_txt_to_is, 4},
