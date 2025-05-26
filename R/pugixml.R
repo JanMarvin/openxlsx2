@@ -109,17 +109,10 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
   }
   if (is.null(lvl)) lvl <- character()
 
-  z <- NULL
-
   if (!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml, ...)
 
-
-  if (inherits(xml, "pugi_xml")) {
-    z <- getXMLXPtrPath(xml, lvl)
-  }
-
-  z
+  getXMLXPtrPath(xml, lvl)
 }
 
 #' @rdname pugixml
@@ -155,16 +148,10 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
 
   if (is.null(lvl)) lvl <- character()
 
-  z <- NULL
-
   if (!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml, ...)
 
-  if (inherits(xml, "pugi_xml")) {
-    z <- getXMLXPtrValPath(xml, lvl)
-  }
-
-  z
+  getXMLXPtrValPath(xml, lvl)
 }
 
 #' @rdname pugixml
@@ -190,16 +177,10 @@ xml_attr <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL,  ...) {
 
   if (is.null(lvl)) lvl <- character()
 
-  z <- NULL
-
   if (!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml, ...)
 
-  if (inherits(xml, "pugi_xml")) {
-    z <- getXMLXPtrAttrPath(xml, lvl)
-  }
-
-  z
+  getXMLXPtrAttrPath(xml, lvl)
 }
 
 #' print pugi_xml
@@ -312,9 +293,7 @@ xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, ...) {
 
   if (missing(level)) level <- character()
 
-  z <- xml_append_child_path(xml_node, xml_child, level, pointer)
-
-  z
+  xml_append_child_path(xml_node, xml_child, level, pointer)
 }
 
 
@@ -349,17 +328,7 @@ xml_rm_child <- function(xml_node, xml_child, level, which = 0, pointer = FALSE,
 
   which <- which - 1
 
-  if (missing(level)) {
-    z <- xml_remove_child1(xml_node, xml_child, which, pointer)
-  } else {
+  if (missing(level)) level <- character()
 
-    if (length(level) == 1)
-      z <- xml_remove_child2(xml_node, xml_child, level[[1]], which, pointer)
-
-    if (length(level) == 2)
-      z <- xml_remove_child3(xml_node, xml_child, level[[1]], level[[2]], which, pointer)
-
-  }
-
-  return(z)
+  xml_remove_child_path(xml_node, xml_child, level, which, pointer)
 }

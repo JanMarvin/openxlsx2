@@ -563,86 +563,42 @@ SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string>
   }
 }
 
-// xml_remove_child1
-// @param node xml_node a child is removed from
-// @param child the xml_node to remove
-// @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
-// @export
 // [[Rcpp::export]]
-SEXP xml_remove_child1(XPtrXML node, std::string child, int32_t which, bool pointer) {
+SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::string> path, int32_t which, bool pointer) {
   uint32_t pugi_format_flags = pugi_format(node);
 
-  auto ctr = 0;
-  for (pugi::xml_node cld = node->first_child().child(child.c_str()); cld;) {
-    auto next = cld.next_sibling();
-    if (ctr == which || which < 0)
-      cld.parent().remove_child(cld);
+  pugi::xml_node current = node->first_child();
+
+  // Allow first path element to match current node
+  for (size_t i = 0; i < path.size(); ++i) {
+    const std::string& tag = path[i];
+
+    if (i == 0 && std::string(current.name()) == tag) {
+      continue;
+    }
+
+    current = current.child(tag.c_str());
+    if (!current) {
+      Rcpp::stop("Invalid path: node <%s> not found", tag);
+    }
+  }
+
+  // Iterate through children to remove
+  int32_t ctr = 0;
+  for (pugi::xml_node cld = current.child(child.c_str()); cld;) {
+    pugi::xml_node next = cld.next_sibling(child.c_str());
+
+    if (which < 0 || ctr == which) {
+      current.remove_child(cld);
+      if (which >= 0) break; // only remove one if specified
+    }
+
     cld = next;
     ++ctr;
   }
 
   if (pointer) {
-    return (node);
-  } else {
-    std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
-  }
-}
-
-// xml_remove_child2
-// @param node xml_node a child is removed from
-// @param child the xml_node to remove
-// @param level1 level the child will be removed from
-// @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
-// @export
-// [[Rcpp::export]]
-SEXP xml_remove_child2(XPtrXML node, std::string child, std::string level1, int32_t which, bool pointer) {
-  uint32_t pugi_format_flags = pugi_format(node);
-
-  auto ctr = 0;
-  for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(child.c_str()); cld;) {
-    auto next = cld.next_sibling();
-    if (ctr == which || which < 0)
-      cld.parent().remove_child(cld);
-    cld = next;
-    ++ctr;
-  }
-
-  if (pointer) {
-    return (node);
-  } else {
-    std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
-  }
-}
-
-// xml_remove_child3
-// @param node xml_node a child is removed from
-// @param child the xml_node to remove
-// @param level1 level the child will be removed from
-// @param level2 level the child will be removed from
-// @param pointer bool if pointer should be returned
-// @param escapes bool if escapes should be used
-// @export
-// [[Rcpp::export]]
-SEXP xml_remove_child3(XPtrXML node, std::string child, std::string level1, std::string level2, int32_t which, bool pointer) {
-  uint32_t pugi_format_flags = pugi_format(node);
-
-  auto ctr = 0;
-  for (pugi::xml_node cld = node->first_child().child(level1.c_str()).child(level2.c_str()).child(child.c_str()); cld;) {
-    auto next = cld.next_sibling();
-    if (ctr == which || which < 0)
-      cld.parent().remove_child(cld);
-    cld = next;
-    ++ctr;
-  }
-
-  if (pointer) {
-    return (node);
+    return node;
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
