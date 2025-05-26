@@ -310,19 +310,11 @@ xml_add_child <- function(xml_node, xml_child, level, pointer = FALSE, ...) {
 
   xml_child <- read_xml(xml_child, ...)
 
-  if (missing(level)) {
-    z <- xml_append_child1(xml_node, xml_child, pointer)
-  } else {
+  if (missing(level)) level <- character()
 
-    if (length(level) == 1)
-      z <- xml_append_child2(xml_node, xml_child, level[[1]], pointer)
+  z <- xml_append_child_path(xml_node, xml_child, level, pointer)
 
-    if (length(level) == 2)
-      z <- xml_append_child3(xml_node, xml_child, level[[1]], level[[2]], pointer)
-
-  }
-
-  return(z)
+  z
 }
 
 

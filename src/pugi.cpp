@@ -526,68 +526,36 @@ Rcpp::CharacterVector xml_node_create(
   return Rcpp::wrap(Rcpp::String(oss.str()));
 }
 
-// xml_append_child1
-// @param node xml_node a child is appended to
-// @param child the xml_node appended to node
-// @param pointer bool if pointer should be returned
-// @export
 // [[Rcpp::export]]
-SEXP xml_append_child1(XPtrXML node, XPtrXML child, bool pointer) {
+SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string> path, bool pointer) {
   uint32_t pugi_format_flags = pugi_format(node);
 
-  for (auto cld : child->children()) {
-    node->first_child().append_copy(cld);
+  // Start from the first child (consistent with your previous design)
+  pugi::xml_node current = node->first_child();
+
+  // Traverse path — allow first path element to match current node name
+  for (size_t i = 0; i < path.size(); ++i) {
+    const std::string& tag = path[i];
+
+    if (i == 0 && std::string(current.name()) == tag) {
+      // First path element matches current node — don't descend
+      continue;
+    }
+
+    current = current.child(tag.c_str());
+    if (!current) {
+      Rcpp::stop("Invalid path: node <%s> not found", tag);
+    }
   }
 
+  // Append children
+  for (pugi::xml_node cld : child->children()) {
+    current.append_copy(cld);
+  }
+
+  // Return
   if (pointer) {
-    return (node);
-  } else {
-    std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
-  }
-}
-
-// xml_append_child2
-// @param node xml_node a child is appended to
-// @param child the xml_node appended to node
-// @param level1 level the child will be added to
-// @param pointer bool if pointer should be returned
-// @export
-// [[Rcpp::export]]
-SEXP xml_append_child2(XPtrXML node, XPtrXML child, std::string level1, bool pointer) {
-  uint32_t pugi_format_flags = pugi_format(node);
-
-  for (auto cld : child->children()) {
-    node->first_child().child(level1.c_str()).append_copy(cld);
-  }
-
-  if (pointer) {
-    return (node);
-  } else {
-    std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
-  }
-}
-
-// xml_append_child3
-// @param node xml_node a child is appended to
-// @param child the xml_node appended to node
-// @param level1 level the child will be added to
-// @param level2 level the child will be added to
-// @param pointer bool if pointer should be returned
-// @export
-// [[Rcpp::export]]
-SEXP xml_append_child3(XPtrXML node, XPtrXML child, std::string level1, std::string level2, bool pointer) {
-  uint32_t pugi_format_flags = pugi_format(node);
-
-  for (auto cld : child->children()) {
-    node->first_child().child(level1.c_str()).child(level2.c_str()).append_copy(cld);
-  }
-
-  if (pointer) {
-    return (node);
+    return node;
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);

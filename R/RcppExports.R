@@ -205,16 +205,8 @@ xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL
     .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes, escapes, declaration)
 }
 
-xml_append_child1 <- function(node, child, pointer) {
-    .Call(`_openxlsx2_xml_append_child1`, node, child, pointer)
-}
-
-xml_append_child2 <- function(node, child, level1, pointer) {
-    .Call(`_openxlsx2_xml_append_child2`, node, child, level1, pointer)
-}
-
-xml_append_child3 <- function(node, child, level1, level2, pointer) {
-    .Call(`_openxlsx2_xml_append_child3`, node, child, level1, level2, pointer)
+xml_append_child_path <- function(node, child, path, pointer) {
+    .Call(`_openxlsx2_xml_append_child_path`, node, child, path, pointer)
 }
 
 xml_remove_child1 <- function(node, child, which, pointer) {

@@ -91,50 +91,54 @@ test_that("xml_append_child", {
   xml_node <- read_xml("<node><child1/><child2/></node>")
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&</new_child></node>"
-  expect_equal(xml_append_child1(xml_node, xml_child, pointer = FALSE), exp)
+  level <- character()
+  expect_equal(xml_append_child_path(xml_node, xml_child, level, pointer = FALSE), exp)
 
   # xml_node sets the flags for both
   xml_node <- read_xml("<node><child1/><child2/></node>", escapes = TRUE)
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&amp;</new_child></node>"
-  expect_equal(xml_append_child1(xml_node, xml_child, pointer = FALSE), exp)
+  level <- character()
+  expect_equal(xml_append_child_path(xml_node, xml_child, level, pointer = FALSE), exp)
 
 
   xml_node <- "<a><b/></a>"
   xml_child <- read_xml("<c/>")
+  level <- character()
 
-  xml_node <- xml_append_child1(read_xml(xml_node), xml_child, pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node), xml_child, level, pointer = FALSE)
   expect_equal(xml_node, "<a><b/><c/></a>")
 
-  xml_node <- xml_append_child2(read_xml(xml_node), xml_child, level1 = "b", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "b"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c/></b><c/></a>")
 
-  xml_node <- xml_append_child3(read_xml(xml_node), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node), read_xml("<d/>"), c(level1 = "b", level2 = "c"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c><d/></c></b><c/></a>")
 
 
   # check that escapes does not throw a warning
   xml_node <- "<a><b/></a>"
   xml_child <- read_xml("<c>a&b</c>", escapes = FALSE)
+  level <- character()
 
-  xml_node <- xml_append_child1(read_xml(xml_node, escapes = TRUE), xml_child, pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node, escapes = TRUE), xml_child, level, pointer = FALSE)
   expect_equal(xml_node, "<a><b/><c>a&amp;b</c></a>")
 
-  xml_node <- xml_append_child2(read_xml(xml_node, escapes = TRUE), xml_child, level1 = "b", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node, escapes = TRUE), xml_child, c(level1 = "b"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c>a&amp;b</c></b><c>a&amp;b</c></a>")
 
-  xml_node <- xml_append_child3(read_xml(xml_node, escapes = TRUE), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node, escapes = TRUE), read_xml("<d/>"), c(level1 = "b", level2 = "c"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c>a&amp;b<d/></c></b><c>a&amp;b</c></a>")
 
   # check that pointer is valid
-  expect_s3_class(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml")
-  expect_s3_class(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, level, pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, level, pointer = TRUE), "pugi_xml")
 
-  expect_s3_class(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml")
-  expect_s3_class(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a"), pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a"), pointer = TRUE), "pugi_xml")
 
-  expect_s3_class(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml")
-  expect_s3_class(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a", level2 = "b"), pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a", level2 = "b"), pointer = TRUE), "pugi_xml")
 
 })
 
