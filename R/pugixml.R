@@ -122,11 +122,9 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
 #' @export
 xml_node_name <- function(xml, level1 = NULL, level2 = NULL, ...) {
   lvl <- c(level1, level2)
+  if (is.null(lvl)) lvl <- character()
   if (!inherits(xml, "pugi_xml")) xml <- read_xml(xml, ...)
-  if (length(lvl) == 0) z <- getXMLXPtrName1(xml)
-  if (length(lvl) == 1) z <- getXMLXPtrName2(xml, level1)
-  if (length(lvl) == 2) z <- getXMLXPtrName3(xml, level1, level2)
-  z
+  getXMLXPtrNamePath(xml, lvl)
 }
 
 #' xml_value
