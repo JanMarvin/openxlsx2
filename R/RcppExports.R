@@ -112,24 +112,8 @@ getXMLXPtrName3 <- function(doc, level1, level2) {
     .Call(`_openxlsx2_getXMLXPtrName3`, doc, level1, level2)
 }
 
-getXMLXPtr0 <- function(doc) {
-    .Call(`_openxlsx2_getXMLXPtr0`, doc)
-}
-
-getXMLXPtr1 <- function(doc, child) {
-    .Call(`_openxlsx2_getXMLXPtr1`, doc, child)
-}
-
-getXMLXPtr2 <- function(doc, level1, child) {
-    .Call(`_openxlsx2_getXMLXPtr2`, doc, level1, child)
-}
-
-getXMLXPtr3 <- function(doc, level1, level2, child) {
-    .Call(`_openxlsx2_getXMLXPtr3`, doc, level1, level2, child)
-}
-
-unkgetXMLXPtr3 <- function(doc, level1, child) {
-    .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
+getXMLXPtrPath <- function(doc, path) {
+    .Call(`_openxlsx2_getXMLXPtrPath`, doc, path)
 }
 
 getXMLPtr1con <- function(doc) {

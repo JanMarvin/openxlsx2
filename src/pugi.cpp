@@ -107,82 +107,62 @@ SEXP getXMLXPtrName3(XPtrXML doc, std::string level1, std::string level2) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtr0(XPtrXML doc) {
+SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
   vec_string res;
   uint32_t pugi_format_flags = pugi_format(doc);
 
-  for (auto worksheet : doc->children()) {
-    std::ostringstream oss;
-    worksheet.print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
-  }
-
-  return Rcpp::wrap(res);
-}
-
-// [[Rcpp::export]]
-SEXP getXMLXPtr1(XPtrXML doc, std::string child) {
-  vec_string res;
-  uint32_t pugi_format_flags = pugi_format(doc);
-
-  for (auto cld : doc->children(child.c_str())) {
-    std::ostringstream oss;
-    cld.print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
-  }
-
-  return Rcpp::wrap(res);
-}
-
-// [[Rcpp::export]]
-SEXP getXMLXPtr2(XPtrXML doc, std::string level1, std::string child) {
-  vec_string res;
-  uint32_t pugi_format_flags = pugi_format(doc);
-
-  for (auto lvl1 : doc->children(level1.c_str())) {
-    for (auto cld : lvl1.children(child.c_str())) {
-      std::ostringstream oss;
-      cld.print(oss, " ", pugi_format_flags);
-      res.push_back(Rcpp::String(oss.str()));
+  // Validate tag names: no empty strings allowed
+  for (const std::string& tag : path) {
+    if (tag.empty()) {
+      Rcpp::stop("Tag names cannot be empty strings");
     }
   }
 
-  return Rcpp::wrap(res);
-}
+  // Return whole document if no path is specified
+  if (path.empty()) {
+    std::ostringstream oss;
+    doc->print(oss, " ", pugi_format_flags);
+    res.push_back(Rcpp::String(oss.str()));
+    return Rcpp::wrap(res);
+  }
 
-// [[Rcpp::export]]
-SEXP getXMLXPtr3(XPtrXML doc, std::string level1, std::string level2, std::string child) {
-  vec_string res;
-  uint32_t pugi_format_flags = pugi_format(doc);
+  // Step 1: start from top-level nodes that match path[0] or wildcard
+  std::vector<pugi::xml_node> current_nodes;
+  if (path[0] == "*") {
+    for (pugi::xml_node node : doc->children()) {
+      current_nodes.push_back(node);
+    }
+  } else {
+    for (pugi::xml_node node : doc->children(path[0].c_str())) {
+      current_nodes.push_back(node);
+    }
+  }
 
-  for (auto lvl1 : doc->children(level1.c_str())) {
-    for (auto lvl2 : lvl1.children(level2.c_str())) {
-      for (auto cld : lvl2.children(child.c_str())) {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        res.push_back(Rcpp::String(oss.str()));
+  // Step 2: traverse remaining path
+  for (size_t i = 1; i < path.size(); ++i) {
+    const std::string& tag = path[i];
+    std::vector<pugi::xml_node> next_nodes;
+
+    for (const pugi::xml_node& node : current_nodes) {
+      if (tag == "*") {
+        for (pugi::xml_node child : node.children()) {
+          next_nodes.push_back(child);
+        }
+      } else {
+        for (pugi::xml_node child : node.children(tag.c_str())) {
+          next_nodes.push_back(child);
+        }
       }
     }
+
+    current_nodes = std::move(next_nodes);
   }
 
-  return Rcpp::wrap(res);
-}
-
-// level2 is wildcard. (for border only color nodes are imported.
-// Do not know why :'( )
-// [[Rcpp::export]]
-SEXP unkgetXMLXPtr3(XPtrXML doc, std::string level1, std::string child) {
-  vec_string res;
-  uint32_t pugi_format_flags = pugi_format(doc);
-
-  for (auto lvl1 : doc->children(level1.c_str())) {
-    for (auto lvl2 : lvl1.children()) {
-      for (auto cld : lvl2.children(child.c_str())) {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        res.push_back(Rcpp::String(oss.str()));
-      }
-    }
+  // Step 3: serialize final result
+  for (const pugi::xml_node& node : current_nodes) {
+    std::ostringstream oss;
+    node.print(oss, " ", pugi_format_flags);
+    res.push_back(Rcpp::String(oss.str()));
   }
 
   return Rcpp::wrap(res);

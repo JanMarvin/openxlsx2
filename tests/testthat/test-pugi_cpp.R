@@ -36,16 +36,17 @@ test_that("xml_node", {
 
   exp <- xml_str
   expect_equal("a", getXMLXPtrName1(xml))
-  expect_equal(exp, getXMLXPtr0(xml))
-  expect_equal(exp, getXMLXPtr1(xml, "a"))
+  expect_equal(exp, getXMLXPtrPath(xml, character()))
+  expect_equal(exp, getXMLXPtrPath(xml, "a"))
 
   exp <- "<b><c><d><e/></d></c></b>"
-  expect_equal(exp, getXMLXPtr2(xml, "a", "b"))
+  expect_equal(exp, getXMLXPtrPath(xml, c("a", "b")))
 
   exp <- "<c><d><e/></d></c>"
-  expect_equal(exp, getXMLXPtr3(xml, "a", "b", "c"))
+  expect_equal(exp, getXMLXPtrPath(xml, c("a", "b", "c")))
+
   # bit cheating, this test returns the same, but not the actual feature of "*"
-  expect_equal(exp, unkgetXMLXPtr3(xml, "a", "c"))
+  expect_equal(exp, getXMLXPtrPath(xml, c("a", "*", "c")))
 
 })
 
