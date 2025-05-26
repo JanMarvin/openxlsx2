@@ -181,7 +181,7 @@ test_that("is_xml", {
 test_that("getXMLXPtrContent", {
 
   xml <- "<xml><a/><a/><b/></xml>"
-  got <- getXMLXPtrContent(read_xml(xml), character())
+  got <- xml_node(xml, "*", "*")
   exp <- c("<a/>", "<a/>", "<b/>")
   expect_equal(got, exp)
 

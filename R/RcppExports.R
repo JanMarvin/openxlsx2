@@ -108,10 +108,6 @@ getXMLXPtrPath <- function(doc, path) {
     .Call(`_openxlsx2_getXMLXPtrPath`, doc, path)
 }
 
-getXMLXPtrContent <- function(doc, path) {
-    .Call(`_openxlsx2_getXMLXPtrContent`, doc, path)
-}
-
 getXMLXPtrValPath <- function(doc, path) {
     .Call(`_openxlsx2_getXMLXPtrValPath`, doc, path)
 }
