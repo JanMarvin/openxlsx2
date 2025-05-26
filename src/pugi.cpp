@@ -185,42 +185,60 @@ SEXP getXMLPtr1con(XPtrXML doc) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtr1val(XPtrXML doc, std::string child) {
-  // returns a single vector, not a list of vectors!
-  std::vector<std::string> x;
+SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
+  std::vector<std::string> values;
 
-  for (auto worksheet : doc->children(child.c_str())) {
-    x.push_back(Rcpp::String(worksheet.text().get()));
-  }
-
-  return Rcpp::wrap(x);
-}
-
-// [[Rcpp::export]]
-SEXP getXMLXPtr2val(XPtrXML doc, std::string level1, std::string child) {
-  // returns a single vector, not a list of vectors!
-  std::vector<std::string> x;
-
-  for (auto worksheet : doc->children(level1.c_str())) {
-    for (auto col : worksheet.children(child.c_str())) {
-      x.push_back(Rcpp::String(col.text().get()));
+  // Validate: no empty tag names
+  for (const std::string& tag : path) {
+    if (tag.empty()) {
+      Rcpp::stop("Tag names cannot be empty strings");
     }
   }
 
-  return Rcpp::wrap(x);
-}
-
-// [[Rcpp::export]]
-SEXP getXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::string child) {
-  // returns a single vector, not a list of vectors!
-  std::vector<std::string> x;
-
-  for (auto worksheet : doc->child(level1.c_str()).children(level2.c_str())) {
-    for (auto col : worksheet.children(child.c_str()))
-      x.push_back(Rcpp::String(col.text().get()));
+  // If no path, return empty vector — or optionally, entire document text
+  if (path.empty()) {
+    return Rcpp::wrap(values);
   }
 
-  return Rcpp::wrap(x);
+  // Step 1: start from top-level nodes matching path[0] or wildcard
+  std::vector<pugi::xml_node> current_nodes;
+  if (path[0] == "*") {
+    for (pugi::xml_node node : doc->children()) {
+      current_nodes.push_back(node);
+    }
+  } else {
+    for (pugi::xml_node node : doc->children(path[0].c_str())) {
+      current_nodes.push_back(node);
+    }
+  }
+
+  // Step 2: traverse the path
+  for (size_t i = 1; i < path.size(); ++i) {
+    const std::string& tag = path[i];
+    std::vector<pugi::xml_node> next_nodes;
+
+    for (const pugi::xml_node& node : current_nodes) {
+      if (tag == "*") {
+        for (pugi::xml_node child : node.children()) {
+          next_nodes.push_back(child);
+        }
+      } else {
+        for (pugi::xml_node child : node.children(tag.c_str())) {
+          next_nodes.push_back(child);
+        }
+      }
+    }
+
+    current_nodes = std::move(next_nodes);
+  }
+
+  // Step 3: extract .text().get() values
+  for (const pugi::xml_node& node : current_nodes) {
+    const char* text = node.text().get();
+    values.push_back(std::string(text));
+  }
+
+  return Rcpp::wrap(values);
 }
 
 // [[Rcpp::export]]

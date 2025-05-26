@@ -153,15 +153,15 @@ xml_value <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
   if (!all(is.character(lvl)))
     stop("levels must be character vectors")
 
+  if (is.null(lvl)) lvl <- character()
+
   z <- NULL
 
   if (!inherits(xml, "pugi_xml"))
     xml <- read_xml(xml, ...)
 
   if (inherits(xml, "pugi_xml")) {
-    if (length(lvl) == 1) z <- getXMLXPtr1val(xml, level1)
-    if (length(lvl) == 2) z <- getXMLXPtr2val(xml, level1, level2)
-    if (length(lvl) == 3) z <- getXMLXPtr3val(xml, level1, level2, level3)
+    z <- getXMLXPtrValPath(xml, lvl)
   }
 
   z

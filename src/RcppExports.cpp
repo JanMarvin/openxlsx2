@@ -349,45 +349,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// getXMLXPtr1val
-SEXP getXMLXPtr1val(XPtrXML doc, std::string child);
-RcppExport SEXP _openxlsx2_getXMLXPtr1val(SEXP docSEXP, SEXP childSEXP) {
+// getXMLXPtrValPath
+SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path);
+RcppExport SEXP _openxlsx2_getXMLXPtrValPath(SEXP docSEXP, SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLXPtr1val(doc, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXMLXPtr2val
-SEXP getXMLXPtr2val(XPtrXML doc, std::string level1, std::string child);
-RcppExport SEXP _openxlsx2_getXMLXPtr2val(SEXP docSEXP, SEXP level1SEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLXPtr2val(doc, level1, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXMLXPtr3val
-SEXP getXMLXPtr3val(XPtrXML doc, std::string level1, std::string level2, std::string child);
-RcppExport SEXP _openxlsx2_getXMLXPtr3val(SEXP docSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLXPtr3val(doc, level1, level2, child));
-    return rcpp_result_gen;
-END_RCPP
-}
 // getXMLXPtr1attr
 SEXP getXMLXPtr1attr(XPtrXML doc, std::string child);
 RcppExport SEXP _openxlsx2_getXMLXPtr1attr(SEXP docSEXP, SEXP childSEXP) {

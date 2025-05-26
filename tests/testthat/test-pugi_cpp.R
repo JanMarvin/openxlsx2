@@ -56,15 +56,15 @@ test_that("xml_value", {
 
   xml_str <- "<a>1</a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr1val(xml, "a"))
+  expect_equal(exp, getXMLXPtrValPath(xml, "a"))
 
   xml_str <- "<a><b>1</b></a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr2val(xml, "a", "b"))
+  expect_equal(exp, getXMLXPtrValPath(xml, c("a", "b")))
 
   xml_str <- "<a><b><c>1</c></b></a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr3val(xml, "a", "b", "c"))
+  expect_equal(exp, getXMLXPtrValPath(xml, c("a", "b", "c")))
 
 })
 
