@@ -242,93 +242,78 @@ SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtr1attr(XPtrXML doc, std::string child) {
-  auto children = doc->children(child.c_str());
+SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
+  std::vector<pugi::xml_node> current_nodes;
 
-  R_xlen_t n = std::distance(children.begin(), children.end());
-
-  // for a childless single line node the distance might be zero
-  if (n == 0) n++;
-  Rcpp::List z(n);
-
-  auto itr = 0;
-  for (auto chld : children) {
-    Rcpp::CharacterVector res;
-    std::vector<std::string> nam;
-
-    for (auto attrs : chld.attributes()) {
-      nam.push_back(Rcpp::String(attrs.name()));
-      res.push_back(Rcpp::String(attrs.value()));
+  // Validate: no empty tag names
+  for (const std::string& tag : path) {
+    if (tag.empty()) {
+      Rcpp::stop("Tag names cannot be empty strings");
     }
-
-    // assign names
-    res.attr("names") = nam;
-
-    z[itr] = res;
-    ++itr;
   }
 
-  return Rcpp::wrap(z);
-}
-
-// [[Rcpp::export]]
-Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child) {
-  auto worksheet = doc->child(level1.c_str()).children(child.c_str());
-  R_xlen_t n = std::distance(worksheet.begin(), worksheet.end());
-  Rcpp::List z(n);
-
-  auto itr = 0;
-  for (auto ws : worksheet) {
-    R_xlen_t w_n = std::distance(ws.attributes_begin(), ws.attributes_end());
-
-    Rcpp::CharacterVector res(w_n);
-    Rcpp::CharacterVector nam(w_n);
-
-    auto attr_itr = 0;
-    for (auto attr : ws.attributes()) {
-      nam[attr_itr] = Rcpp::String(attr.name());
-      res[attr_itr] = Rcpp::String(attr.value());
-      ++attr_itr;
+  // Handle root case (like getXMLXPtr1attr with no children)
+  if (path.empty()) {
+    for (pugi::xml_node node : doc->children()) {
+      current_nodes.push_back(node);
+    }
+  } else {
+    // First level
+    if (path[0] == "*") {
+      for (pugi::xml_node node : doc->children()) {
+        current_nodes.push_back(node);
+      }
+    } else {
+      for (pugi::xml_node node : doc->children(path[0].c_str())) {
+        current_nodes.push_back(node);
+      }
     }
 
-    // assign names
-    res.attr("names") = nam;
+    // Traverse further
+    for (size_t i = 1; i < path.size(); ++i) {
+      const std::string& tag = path[i];
+      std::vector<pugi::xml_node> next_nodes;
 
-    z[itr] = res;
-    ++itr;
+      for (const auto& node : current_nodes) {
+        if (tag == "*") {
+          for (pugi::xml_node child : node.children()) {
+            next_nodes.push_back(child);
+          }
+        } else {
+          for (pugi::xml_node child : node.children(tag.c_str())) {
+            next_nodes.push_back(child);
+          }
+        }
+      }
+
+      current_nodes = std::move(next_nodes);
+    }
   }
 
-  return z;
-}
+  // Prepare result list
+  R_xlen_t n = std::max<R_xlen_t>(1, current_nodes.size());
+  Rcpp::List out(n);
+  R_xlen_t i = 0;
 
-// [[Rcpp::export]]
-SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::string child) {
-  auto worksheet = doc->child(level1.c_str()).child(level2.c_str()).children(child.c_str());
-  R_xlen_t n = std::distance(worksheet.begin(), worksheet.end());
-  Rcpp::List z(n);
+  for (const auto& node : current_nodes) {
+    std::vector<std::string> attr_names;
+    Rcpp::CharacterVector attr_values;
 
-  auto itr = 0;
-  for (auto ws : worksheet) {
-    R_xlen_t w_n = std::distance(ws.attributes_begin(), ws.attributes_end());
-
-    Rcpp::CharacterVector res(w_n);
-    Rcpp::CharacterVector nam(w_n);
-
-    auto attr_itr = 0;
-    for (auto attr : ws.attributes()) {
-      nam[attr_itr] = Rcpp::String(attr.name());
-      res[attr_itr] = Rcpp::String(attr.value());
-      ++attr_itr;
+    for (auto attr : node.attributes()) {
+      attr_names.push_back(Rcpp::String(attr.name()));
+      attr_values.push_back(Rcpp::String(attr.value()));
     }
 
-    // assign names
-    res.attr("names") = nam;
-
-    z[itr] = res;
-    ++itr;
+    attr_values.attr("names") = attr_names;
+    out[i++] = attr_values;
   }
 
-  return z;
+  // Fallback for zero matches: add empty element
+  if (current_nodes.empty()) {
+    out[0] = Rcpp::CharacterVector(0);
+  }
+
+  return out;
 }
 
 // [[Rcpp::export]]
