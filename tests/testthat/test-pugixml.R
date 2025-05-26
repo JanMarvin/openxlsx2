@@ -98,7 +98,7 @@ test_that("xml_node", {
   expect_error(xml_node(x, 1))
 
   expect_equal(xml_node(x, "a", "b"), "<b/>")
-
+  expect_equal(xml_node(x, c("a", "b")), "<b/>")
 
   expect_equal(xml_node("<a><b/></a>", "a"), xml)
 

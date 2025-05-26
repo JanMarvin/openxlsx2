@@ -107,6 +107,7 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
     if (!all(is.character(lvl)))
       stop("levels must be character vectors")
   }
+  if (is.null(lvl)) lvl <- character()
 
   z <- NULL
 
@@ -115,11 +116,7 @@ xml_node <- function(xml, level1 = NULL, level2 = NULL, level3 = NULL, ...) {
 
 
   if (inherits(xml, "pugi_xml")) {
-    if (length(lvl) == 0) z <- getXMLXPtr0(xml)
-    if (length(lvl) == 1) z <- getXMLXPtr1(xml, level1)
-    if (length(lvl) == 2) z <- getXMLXPtr2(xml, level1, level2)
-    if (length(lvl) == 3) z <- getXMLXPtr3(xml, level1, level2, level3)
-    if (length(lvl) == 3 && level2 == "*") z <- unkgetXMLXPtr3(xml, level1, level3)
+    z <- getXMLXPtrPath(xml, lvl)
   }
 
   z
