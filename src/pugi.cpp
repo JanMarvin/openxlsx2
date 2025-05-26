@@ -68,38 +68,30 @@ Rcpp::LogicalVector is_xml(std::string str) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtrName1(XPtrXML doc) {
-  vec_string res;
+SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<std::string> path) {
+  std::vector<pugi::xml_node> nodes = { *doc }; // Start from the root node
+  std::vector<pugi::xml_node> next_nodes;
 
-  for (auto lvl0 : doc->children()) {
-    res.push_back(lvl0.name());
-  }
-
-  return Rcpp::wrap(res);
-}
-
-// [[Rcpp::export]]
-SEXP getXMLXPtrName2(XPtrXML doc, std::string level1) {
-  vec_string res;
-
-  for (auto lvl0 : doc->children(level1.c_str())) {
-    for (auto lvl1 : lvl0.children()) {
-      res.push_back(lvl1.name());
-    }
-  }
-
-  return Rcpp::wrap(res);
-}
-
-// [[Rcpp::export]]
-SEXP getXMLXPtrName3(XPtrXML doc, std::string level1, std::string level2) {
-  vec_string res;
-
-  for (auto lvl0 : doc->children(level1.c_str())) {
-    for (auto lvl1 : lvl0.children()) {
-      for (auto lvl2 : lvl1.children()) {
-        res.push_back(lvl2.name());
+  for (const auto& tag : path) {
+    next_nodes.clear();
+    for (const auto& node : nodes) {
+      if (tag == "*") {
+        for (auto ch : node.children()) {
+          next_nodes.push_back(ch);
+        }
+      } else {
+        for (auto ch : node.children(tag.c_str())) {
+          next_nodes.push_back(ch);
+        }
       }
+    }
+    nodes = next_nodes;
+  }
+
+  vec_string res;
+  for (const auto& node : nodes) {
+    for (auto ch : node.children()) {
+      res.push_back(ch.name());
     }
   }
 

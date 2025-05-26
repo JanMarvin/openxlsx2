@@ -100,16 +100,8 @@ is_xml <- function(str) {
     .Call(`_openxlsx2_is_xml`, str)
 }
 
-getXMLXPtrName1 <- function(doc) {
-    .Call(`_openxlsx2_getXMLXPtrName1`, doc)
-}
-
-getXMLXPtrName2 <- function(doc, level1) {
-    .Call(`_openxlsx2_getXMLXPtrName2`, doc, level1)
-}
-
-getXMLXPtrName3 <- function(doc, level1, level2) {
-    .Call(`_openxlsx2_getXMLXPtrName3`, doc, level1, level2)
+getXMLXPtrNamePath <- function(doc, path) {
+    .Call(`_openxlsx2_getXMLXPtrNamePath`, doc, path)
 }
 
 getXMLXPtrPath <- function(doc, path) {

@@ -35,7 +35,7 @@ test_that("xml_node", {
   xml <- read_xml(xml_str)
 
   exp <- xml_str
-  expect_equal("a", getXMLXPtrName1(xml))
+  expect_equal("a", getXMLXPtrNamePath(xml, character()))
   expect_equal(exp, getXMLXPtrPath(xml, character()))
   expect_equal(exp, getXMLXPtrPath(xml, "a"))
 
