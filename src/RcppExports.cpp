@@ -356,42 +356,20 @@ BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-// getXMLXPtr1attr
-SEXP getXMLXPtr1attr(XPtrXML doc, std::string child);
-RcppExport SEXP _openxlsx2_getXMLXPtr1attr(SEXP docSEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLXPtr1attr(doc, child));
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(getXMLXPtrValPath(doc, path));
     return rcpp_result_gen;
 END_RCPP
 }
-// getXMLXPtr2attr
-Rcpp::List getXMLXPtr2attr(XPtrXML doc, std::string level1, std::string child);
-RcppExport SEXP _openxlsx2_getXMLXPtr2attr(SEXP docSEXP, SEXP level1SEXP, SEXP childSEXP) {
+// getXMLXPtrAttrPath
+SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path);
+RcppExport SEXP _openxlsx2_getXMLXPtrAttrPath(SEXP docSEXP, SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLXPtr2attr(doc, level1, child));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getXMLXPtr3attr
-SEXP getXMLXPtr3attr(XPtrXML doc, std::string level1, std::string level2, std::string child);
-RcppExport SEXP _openxlsx2_getXMLXPtr3attr(SEXP docSEXP, SEXP level1SEXP, SEXP level2SEXP, SEXP childSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::string >::type level1(level1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type level2(level2SEXP);
-    Rcpp::traits::input_parameter< std::string >::type child(childSEXP);
-    rcpp_result_gen = Rcpp::wrap(getXMLXPtr3attr(doc, level1, level2, child));
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(getXMLXPtrAttrPath(doc, path));
     return rcpp_result_gen;
 END_RCPP
 }

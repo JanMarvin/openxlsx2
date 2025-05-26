@@ -74,15 +74,15 @@ test_that("xml_attr", {
 
   xml_str <- "<a a=\"1\"/>"
   xml <- read_xml(xml_str)
-  expect_equal(getXMLXPtr1attr(xml, "a"), exp)
+  expect_equal(getXMLXPtrAttrPath(xml, "a"), exp)
 
   xml_str <- "<b><a a=\"1\"/></b>"
   xml <- read_xml(xml_str)
-  expect_equal(getXMLXPtr2attr(xml, "b", "a"), exp)
+  expect_equal(getXMLXPtrAttrPath(xml, c("b", "a")), exp)
 
   xml_str <- "<c><b><a a=\"1\"/></b></c>"
   xml <- read_xml(xml_str)
-  expect_equal(getXMLXPtr3attr(xml, "c", "b", "a"), exp)
+  expect_equal(getXMLXPtrAttrPath(xml, c("c", "b", "a")), exp)
 
 })
 
