@@ -329,7 +329,7 @@ SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
 
   // Fallback for zero matches: add empty element
   if (current_nodes.empty()) {
-    out[0] = Rcpp::CharacterVector(0);
+    out = Rcpp::List();
   }
 
   return out;
