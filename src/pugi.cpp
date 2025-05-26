@@ -161,16 +161,43 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLPtr1con(XPtrXML doc) {
+SEXP getXMLXPtrContent(XPtrXML doc, std::vector<std::string> path) {
   vec_string res;
   uint32_t pugi_format_flags = pugi_format(doc);
 
-  for (auto node : doc->children()) {
-    for (auto cld : node.children()) {
-      std::ostringstream oss;
-      cld.print(oss, " ", pugi_format_flags);
-      res.push_back(Rcpp::String(oss.str()));
+  std::function<void(pugi::xml_node, size_t)> traverse;
+  traverse = [&](pugi::xml_node node, size_t depth) {
+    if (depth == path.size()) {
+      for (auto cld : node.children()) {
+        std::ostringstream oss;
+        cld.print(oss, " ", pugi_format_flags);
+        res.push_back(Rcpp::String(oss.str()));
+      }
+      return;
     }
+
+    const std::string& tag = path[depth];
+
+    if (tag == "*") {
+      for (auto child : node.children()) {
+        traverse(child, depth + 1);
+      }
+    } else if (tag == "") {
+      pugi::xml_node first = node.first_child();
+      if (first) traverse(first, depth + 1);
+    } else {
+      for (auto child : node.children(tag.c_str())) {
+        traverse(child, depth + 1);
+      }
+    }
+  };
+
+  // If path is empty: go to first child and descend
+  if (path.empty()) {
+    pugi::xml_node first = doc->first_child();
+    if (first) traverse(first, 0);
+  } else {
+    traverse(*doc, 0);
   }
 
   return Rcpp::wrap(res);

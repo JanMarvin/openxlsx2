@@ -1005,7 +1005,7 @@ wbWorksheet <- R6::R6Class(
       if (l_name == "x14:dataValidations") {
 
         outer <- xml_attr(ext, "ext")
-        inner <- getXMLPtr1con(read_xml(ext))
+        inner <- getXMLXPtrContent(read_xml(ext), character())
 
         xdv <- grepl(l_name, inner)
         inner <- xml_attr_mod(
