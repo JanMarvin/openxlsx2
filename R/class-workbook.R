@@ -5355,15 +5355,9 @@ wbWorkbook <- R6::R6Class(
         dims <- rowcol_to_dims(rows, cols)
       }
 
-      ddims <- dims_to_rowcol(dims)
-
-      rows <- ddims[["row"]]
-      cols <- ddims[["col"]]
-
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$unmerge_cells(
-        rows   = rows,
-        cols   = cols
+        dims = dims
       )
       invisible(self)
     },

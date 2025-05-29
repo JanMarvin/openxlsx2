@@ -520,60 +520,63 @@ wbWorksheet <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(dims = NULL, solve = FALSE, direction = NULL) {
 
-      ddims <- dims_to_rowcol(dims)
+      if (any(grepl(";", dims)))
+        dims <- unlist(strsplit(dims, ";"))
 
-      rows <- ddims[["row"]]
-      cols <- col2int(ddims[["col"]])
-
-      if (length(cols) > 2 && any(diff(cols) != 1))
-        warning("cols > 2, will create range from min to max.")
-
-      rows <- range(as.integer(rows))
-      cols <- range(cols)
-
-      sqref <- paste0(int2col(cols), rows)
-      sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
+      if (any(grepl(",", dims)))
+        dims <- unlist(strsplit(dims, ","))
 
       current <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
-
-      # regmatch0 will return character(0) when x is NULL
-      if (length(current)) {
-
-        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+      if (length(current))
         current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
-        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
 
-        # Error if merge intersects
-        if (any(intersects)) {
-          if (solve) {
-            refs <- NULL
-            for (i in current) {
-              got <- solve_merge(i, sqref)
-              refs <- c(refs, got)
-            }
-            # replace all merged Cells
-            if (all(is.na(refs))) {
-              self$mergeCells <- character()
+      for (dim in dims) {
+
+        ddims <- dims_to_rowcol(dim)
+        cols <- range(col2int(ddims[["col"]]))
+        rows <- range(as.integer(ddims[["row"]]))
+
+        sqref <- paste0(int2col(cols), rows)
+        sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
+
+        # regmatch0 will return character(0) when x is NULL
+        if (length(current)) {
+
+          new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+          intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
+
+          # Error if merge intersects
+          if (any(intersects)) {
+            if (solve) {
+              refs <- NULL
+              for (i in current) {
+                got <- solve_merge(i, sqref)
+                refs <- c(refs, got)
+              }
+              # replace all merged Cells
+              if (all(is.na(refs))) {
+                self$mergeCells <- character()
+              } else {
+                self$mergeCells <- sprintf('<mergeCell ref="%s"/>', refs[!is.na(refs)])
+              }
             } else {
-              self$mergeCells <- sprintf('<mergeCell ref="%s"/>', refs[!is.na(refs)])
+              msg <- sprintf(
+                "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
+                stringi::stri_join(current[intersects], collapse = "\n\t\t")
+              )
+              stop(msg, call. = FALSE)
             }
-          } else {
-            msg <- sprintf(
-              "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
-              stringi::stri_join(current[intersects], collapse = "\n\t\t")
-            )
-            stop(msg, call. = FALSE)
           }
         }
-      }
 
-      if (!is.null(direction)) {
-        if (direction == "row") direction <- 1
-        if (direction == "col") direction <- 2
-        sqref <- split_dims(sqref, direction = direction)
-      }
+        if (!is.null(direction)) {
+          if (direction == "row") direction <- 1
+          if (direction == "col") direction <- 2
+          sqref <- split_dims(sqref, direction = direction)
+        }
 
-      self$append("mergeCells", sprintf('<mergeCell ref="%s"/>', sqref))
+        self$append("mergeCells", sprintf('<mergeCell ref="%s"/>', sqref))
+      }
 
       invisible(self)
 
@@ -581,30 +584,35 @@ wbWorksheet <- R6::R6Class(
 
     #' @description
     #' Removes cell merging for a sheet
-    #' @param rows,cols Row and column specifications.
+    #' @param dims dimension specifications.
     #' @return The `wbWorkbook` object, invisibly
-    unmerge_cells = function(rows = NULL, cols = NULL) {
+    unmerge_cells = function(dims = NULL) {
 
-      cols <- col2int(cols)
+      if (any(grepl(";", dims)))
+        dims <- unlist(strsplit(dims, ";"))
 
-      if (length(cols) > 2 && any(diff(cols) != 1))
-        warning("cols > 2, will create range from min to max.")
+      if (any(grepl(",", dims)))
+        dims <- unlist(strsplit(dims, ","))
 
-      rows <- range(as.integer(rows))
-      cols <- range(cols)
+      for (dim in dims) {
 
-      sqref <- paste0(int2col(cols), rows)
-      sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
+        ddims <- dims_to_rowcol(dim)
+        cols <- range(col2int(ddims[["col"]]))
+        rows <- range(as.integer(ddims[["row"]]))
 
-      current <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
+        sqref <- paste0(int2col(cols), rows)
+        sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
 
-      if (!is.null(current)) {
-        new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+        current       <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
         current_cells <- lapply(current, function(x) unname(unlist(dims_to_dataframe(x, fill = TRUE))))
-        intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
 
-        # Remove intersection
-        self$mergeCells <- self$mergeCells[!intersects]
+        if (!is.null(current)) {
+          new_merge     <- unname(unlist(dims_to_dataframe(sqref, fill = TRUE)))
+          intersects    <- vapply(current_cells, function(x) any(x %in% new_merge), NA)
+
+          # Remove intersection
+          self$mergeCells <- self$mergeCells[!intersects]
+        }
       }
 
       invisible(self)
@@ -625,7 +633,9 @@ wbWorksheet <- R6::R6Class(
       if (NROW(cc) == 0) return(invisible(self))
       sel <- rep(TRUE, nrow(cc))
 
+      orig_dims <- NULL
       if (!is.null(dims)) {
+        orig_dims <- dims
         ddims <- dims_to_dataframe(dims, fill = TRUE)
         rows <- rownames(ddims)
         cols <- colnames(ddims)
@@ -654,10 +664,10 @@ wbWorksheet <- R6::R6Class(
       self$sheet_data$cc <- cc
 
       if (merged_cells) {
-        if (is.null(dims)) {
+        if (is.null(orig_dims)) {
           self$mergeCells <- character(0)
         } else {
-          self$unmerge_cells(cols = cols, rows = rows)
+          self$unmerge_cells(dims = orig_dims)
         }
       }
 
