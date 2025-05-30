@@ -383,7 +383,7 @@ test_that("Overwrite and delete named regions", {
   wb$add_data(1, iris[1:11, ], start_col = 1, start_row = 1, name = "iris")
   exp <- data.frame(
     name   = "iris",
-    value  = "'Sheet 1'!A1:E12",
+    value  = "'Sheet 1'!$A$1:$E$12",
     sheets = "Sheet 1",
     coords = "A1:E12",
     id     = 1L,
