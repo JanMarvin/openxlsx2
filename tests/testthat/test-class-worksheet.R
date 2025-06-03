@@ -278,3 +278,37 @@ test_that("updating page header / footer works", {
 
   expect_error(wb$set_header_footer(header = c("foo", "bar")), "must have length 3 where elements correspond to positions: left, center, right.")
 })
+
+test_that("set_grid_lines() works", {
+
+  wb <- wb_workbook()
+
+  exp <- "<sheetViews><sheetView showGridLines=\"0\" showRowColHeaders=\"1\" tabSelected=\"1\" workbookViewId=\"0\" zoomScale=\"100\"/></sheetViews>"
+  wb$add_worksheet(grid_lines = FALSE)
+  got <- wb$worksheets[[1]]$sheetViews
+  expect_equal(exp, got)
+
+  # Show grid lines
+  wb$set_grid_lines(print = FALSE, show = TRUE)
+  exp <- "<sheetViews><sheetView showGridLines=\"1\" showRowColHeaders=\"1\" tabSelected=\"1\" workbookViewId=\"0\" zoomScale=\"100\"/></sheetViews>"
+  got <- wb$worksheets[[1]]$sheetViews
+  expect_equal(exp, got)
+
+  exp <- "<sheetViews><sheetView showGridLines=\"0\" showRowColHeaders=\"1\" tabSelected=\"1\" workbookViewId=\"0\" zoomScale=\"100\"/></sheetViews>"
+  wb$set_grid_lines(print = FALSE, show = FALSE)
+  got <- wb$worksheets[[1]]$sheetViews
+  expect_equal(exp, got)
+  wb$worksheets[[1]]$sheetViews
+
+  # Show grid lines
+  wb$set_grid_lines(print = TRUE, show = FALSE)
+  exp <- "<printOptions gridLines=\"1\" gridLinesSet=\"1\"/>"
+  got <- wb$worksheets[[1]]$printOptions
+  expect_equal(exp, got)
+
+  exp <- "<printOptions gridLines=\"0\" gridLinesSet=\"0\"/>"
+  wb$set_grid_lines(print = FALSE, show = FALSE)
+  got <- wb$worksheets[[1]]$printOptions
+  expect_equal(exp, got)
+
+})
