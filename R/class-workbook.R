@@ -7865,9 +7865,7 @@ wbWorkbook <- R6::R6Class(
       assert_class(print, "logical")
 
       ## show
-      sv <- self$worksheets[[sheet]]$sheetViews
-      sv <- xml_attr_mod(sv, c(showGridLines = as_xml_attr(show)))
-      self$worksheets[[sheet]]$sheetViews <- sv
+      self$worksheets[[sheet]]$set_sheetview(show_grid_lines = as_xml_attr(show))
 
       ## print
       self$worksheets[[sheet]]$set_print_options(gridLines = as_xml_attr(print), gridLinesSet = as_xml_attr(print))
