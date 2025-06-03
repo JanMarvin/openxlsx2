@@ -59,7 +59,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     "first_row", "first_col", "col_widths", "na.strings",
     "overwrite", "title", "subject", "category",
     "font_size", "font_color", "font_name",
-    "flush"
+    "flush", "widths"
   )
 
   params <- list(...)
@@ -257,6 +257,12 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     } else {
       stop("Argument row.names must be TRUE or FALSE")
     }
+  }
+
+  # unable to add col_widths to the roxygen2 array in ..., therefore
+  # accept widths as well. #1361
+  if ("widths" %in% names(params)) {
+    params$col_widths <- params$widths
   }
 
   colWidths <- NULL
