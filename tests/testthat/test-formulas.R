@@ -331,3 +331,35 @@ test_that("cm works more like array", {
   got <- table(wb$worksheets[[1]]$sheet_data$cc$f)[["_xlfn.UNIQUE(A2:A51)"]]
   expect_equal(1L, got)
 })
+
+test_that("reading shared formulas with dims works", {
+  wb <- wb_workbook()$add_worksheet()
+
+  wb$sharedStrings <- structure(
+    c("<si><t>a</t></si>", "<si><t>z</t></si>", "<si><t>.</t></si>"),
+    uniqueCount = "3")
+
+  wb$worksheets[[1]]$sheet_data$cc <- structure(
+    list(r = c("A1", "A2", "B2", "C2", "D2", "E2", "A3", "B3", "C3", "D3", "E3", "A4", "B4", "C4", "D4", "E4", "A5", "B5", "C5", "D5", "E5"),
+         row_r = c("1", "2", "2", "2", "2", "2", "3", "3", "3", "3", "3", "4", "4", "4", "4", "4", "5", "5", "5", "5", "5"),
+         c_r = c("A", "A", "B", "C", "D", "E", "A", "B", "C", "D", "E", "A", "B", "C", "D", "E", "A", "B", "C", "D", "E"),
+         c_s = c("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
+         c_t = c("s", "s", "s", "s", "s", "s", "s", "", "", "", "s", "", "", "", "", "s", "s", "s", "s", "s", "s"),
+         v = c("0", "2", "2", "2", "2", "2", "2", "2", "1", "6", "2", "3", "5", "6", "12", "2", "2", "2", "2", "2", "1"),
+         f = c("", "", "", "", "", "", "", "", "", "", "", "", "A4+B3", "B4+C3", "", "", "", "", "", "", ""),
+         f_attr = c("", "", "", "", "", "", "", "", "", "", "", "", "", "t=\"shared\" ref=\"C4:D4\" si=\"0\" ", "t=\"shared\" si=\"0\" ", "", "", "", "", "", ""),
+         is = c("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+    ), class = "data.frame", row.names = c(NA, -21L)
+  )
+
+  ## Example 1: incorrect result
+  ## actual answer:
+  exp <- wb_to_df(wb, col_name=FALSE, show_formula=TRUE)[3:4, 1:4]
+  got <- wb_to_df(wb, dim="A3:D4", col_name=FALSE, show_formula=TRUE)
+  expect_equal(exp, got)
+
+  ## Example 2: error
+  got <- wb_to_df(wb, dim="B3:D4", col_name=FALSE, show_formula=TRUE)
+  expect_equal(exp[, -1], got)
+
+})
