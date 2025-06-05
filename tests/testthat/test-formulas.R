@@ -354,12 +354,12 @@ test_that("reading shared formulas with dims works", {
 
   ## Example 1: incorrect result
   ## actual answer:
-  exp <- wb_to_df(wb, col_name=FALSE, show_formula=TRUE)[3:4, 1:4]
-  got <- wb_to_df(wb, dim="A3:D4", col_name=FALSE, show_formula=TRUE)
+  exp <- wb_to_df(wb, col_name = FALSE, show_formula = TRUE)[3:4, 1:4]
+  got <- wb_to_df(wb, dim = "A3:D4", col_name = FALSE, show_formula = TRUE)
   expect_equal(exp, got)
 
   ## Example 2: error
-  got <- wb_to_df(wb, dim="B3:D4", col_name=FALSE, show_formula=TRUE)
+  got <- wb_to_df(wb, dim = "B3:D4", col_name = FALSE, show_formula = TRUE)
   expect_equal(exp[, -1], got)
 
 })

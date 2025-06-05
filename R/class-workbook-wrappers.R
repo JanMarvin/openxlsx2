@@ -3303,7 +3303,8 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #'  inner_vcolor = wb_color(hex = "FF808080"))
 #'
 #' wb$add_worksheet()$
-#'   add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")$
+#'   add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick",
+#'     right_border = "thick", top_border = "thick")$
 #'   add_border(dims = "C3:E5", update = TRUE)
 #' @family styles
 #' @export
