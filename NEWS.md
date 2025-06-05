@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Internal changes
+
+* The provided pugixml functions allow now for a deeper nesting of nodes including wildcards. Previously the nesting was restricted to three levels. This limit has been lifted. [1356](https://github.com/JanMarvin/openxlsx2/pull/1356)
+
+
+***************************************************************************
+
 # openxlsx2 1.16
 
 ## New features
