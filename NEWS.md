@@ -11,6 +11,7 @@
 
 ## Fixes
 * `wb_add_data()` now uses `wb_add_named_region()` internally. This prevents non fixed named regions.
+* Fixed a bug in `wb_to_df()` where `show_formula` in combination with shared formulas and specified `dims`, would result in incorrect returns or errors. [1366](https://github.com/JanMarvin/openxlsx2/pull/1366)
 
 ## Breaking changes
 * `dims` will now respect the order in which they are sorted. So `"B2:A1"` will no longer equal `"A1:B2"`. [1353](https://github.com/JanMarvin/openxlsx2/pull/1353)

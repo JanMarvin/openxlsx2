@@ -1407,13 +1407,13 @@ shared_as_fml <- function(cc, cc_shared) {
   cc_shared$f      <- replace_a1_notation(cc_shared$f, repls)
   cc_shared$cols   <- NULL
   cc_shared$rows   <- NULL
-  cc_shared$f_attr <- ""
+  cc_shared$f_attr <- rep("", nrow(cc_shared))
   cc_shared$f_si   <- NULL
 
   # reduce and assign
   cc_shared <- cc_shared[which(cc_shared$r %in% cc$r), ]
 
-  cc[match(cc_shared$r, cc$r), ] <- cc_shared
+  cc[match(cc_shared$r, cc$r), names(cc_shared)] <- cc_shared
   cc
 }
 

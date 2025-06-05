@@ -91,7 +91,8 @@ wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin",
  inner_vcolor = wb_color(hex = "FF808080"))
 
 wb$add_worksheet()$
-  add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick", right_border = "thick", top_border = "thick")$
+  add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick",
+    right_border = "thick", top_border = "thick")$
   add_border(dims = "C3:E5", update = TRUE)
 }
 \seealso{
