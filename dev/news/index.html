@@ -66,6 +66,8 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> now uses <code><a href="../reference/named_region-wb.html">wb_add_named_region()</a></code> internally. This prevents non fixed named regions.</li>
+<li>Fixed a bug in <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> where <code>show_formula</code> in combination with shared formulas and specified <code>dims</code>, would result in incorrect returns or errors. <a href="https://github.com/JanMarvin/openxlsx2/pull/1366" class="external-link">1366</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
