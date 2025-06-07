@@ -45,11 +45,13 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
   z <- NULL
   xml <- unclass(xml)
 
-  isvml <- grepl("^.vml$", xml)
 
   isfile <- FALSE
-  if (length(xml) == 1 && !to_long(xml) && file.exists(xml))
+  isvml <- FALSE
+  if (length(xml) == 1 && !to_long(xml) && file.exists(xml)) {
     isfile <- TRUE
+    isvml <- endsWith(xml, ".vml")
+  }
 
   if (!isfile)
     xml <- stringi::stri_join(xml, collapse = "")
