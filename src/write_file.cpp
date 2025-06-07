@@ -65,6 +65,7 @@ void xml_sheet_data_slim(
     Rcpp::CharacterVector cc_is     = cc["is"];
 
     Rcpp::CharacterVector row_r     = row_attr["r"];
+    Rcpp::CharacterVector attrnams  = row_attr.names();
 
     file << "<sheetData>";
     for (auto i = 0; i < cc.nrow(); ++i) {
@@ -82,7 +83,6 @@ void xml_sheet_data_slim(
 
           if (row_idx) file << "</row>";
           file << "<row";
-          Rcpp::CharacterVector attrnams = row_attr.names();
 
           for (auto j = 0; j < row_attr.ncol(); ++j) {
             Rcpp::CharacterVector cv_s = "";
@@ -257,6 +257,7 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
   Rcpp::CharacterVector cc_is     = cc["is"];     // can be utf8
 
   Rcpp::CharacterVector row_r    = row_attr["r"];
+  Rcpp::CharacterVector attrnams = row_attr.names();
 
   for (auto i = 0; i < cc.nrow(); ++i) {
     thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
@@ -269,7 +270,6 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
         rowid = std::stoi(Rcpp::as<std::string>(row_r[row_idx]));
 
         row = doc.append_child("row");
-        Rcpp::CharacterVector attrnams = row_attr.names();
 
         for (auto j = 0; j < row_attr.ncol(); ++j) {
           Rcpp::CharacterVector cv_s = "";
