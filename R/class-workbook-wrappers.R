@@ -3154,10 +3154,11 @@ wb_clean_sheet <- function(
 #' To open xlsx files, see [xl_open()].
 #'
 #' @param wb a [wbWorkbook] object
+#' @param flush if the flush option should be used
 #' @export
-wb_open <- function(wb) {
+wb_open <- function(wb, flush = FALSE) {
   assert_workbook(wb)
-  wb$open()
+  wb$open(flush = flush)
 }
 
 #' Set the default style in a workbook

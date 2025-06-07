@@ -1130,7 +1130,7 @@ The \code{wbWorkbook} object invisibly
 \subsection{Method \code{open()}}{
 open wbWorkbook in Excel.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$open(interactive = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$open(interactive = NA, flush = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1139,6 +1139,8 @@ open wbWorkbook in Excel.
 \item{\code{interactive}}{If \code{FALSE} will throw a warning and not open the path.
 This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses
 the value returned from \code{\link[base:interactive]{base::interactive()}}}
+
+\item{\code{flush}}{flush}
 }
 \if{html}{\out{</div>}}
 }

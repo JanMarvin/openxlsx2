@@ -4,10 +4,12 @@
 \alias{wb_open}
 \title{Preview a workbook in a spreadsheet software}
 \usage{
-wb_open(wb)
+wb_open(wb, flush = FALSE)
 }
 \arguments{
 \item{wb}{a \link{wbWorkbook} object}
+
+\item{flush}{if the flush option should be used}
 }
 \description{
 You can also use the shorter \code{wb$open()} as a replacement.

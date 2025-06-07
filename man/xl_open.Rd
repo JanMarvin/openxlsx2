@@ -6,11 +6,11 @@
 \alias{xl_open.default}
 \title{Open an xlsx file or a \code{wbWorkbook} object}
 \usage{
-xl_open(x, interactive = NA)
+xl_open(x, interactive = NA, flush = FALSE)
 
-\method{xl_open}{wbWorkbook}(x, interactive = NA)
+\method{xl_open}{wbWorkbook}(x, interactive = NA, flush = FALSE)
 
-\method{xl_open}{default}(x, interactive = NA)
+\method{xl_open}{default}(x, interactive = NA, flush = FALSE)
 }
 \arguments{
 \item{x}{A path to the Excel (xls/xlsx) file or wbWorkbook object.}
@@ -18,6 +18,9 @@ xl_open(x, interactive = NA)
 \item{interactive}{If \code{FALSE} will throw a warning and not open the path.
 This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses the
 value returned from \code{\link[base:interactive]{base::interactive()}}}
+
+\item{flush}{If \code{TRUE} the \code{flush} argument of \code{\link[=wb_save]{wb_save()}} will be used to
+create the output file. Applies only to workbooks.}
 }
 \description{
 This function tries to open a Microsoft Excel (xls/xlsx) file or,

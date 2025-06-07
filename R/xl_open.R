@@ -21,6 +21,8 @@
 #' @param interactive If `FALSE` will throw a warning and not open the path.
 #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses the
 #'   value returned from [base::interactive()]
+#' @param flush If `TRUE` the `flush` argument of [wb_save()] will be used to
+#' create the output file. Applies only to workbooks.
 #' @examples
 #' \donttest{
 #' if (interactive()) {
@@ -36,22 +38,22 @@
 #' }
 #' }
 #' @export
-xl_open <- function(x, interactive = NA) {
+xl_open <- function(x, interactive = NA, flush = FALSE) {
   # The only function to accept a workbook or a file.
   UseMethod("xl_open")
 }
 
 #' @rdname xl_open
 #' @export
-xl_open.wbWorkbook <- function(x, interactive = NA) {
+xl_open.wbWorkbook <- function(x, interactive = NA, flush = FALSE) {
   assert_workbook(x)
   has_macros <- isTRUE(length(x$vbaProject) > 0)
-  xl_open(x$clone()$save(temp_xlsx(macros = has_macros))$path, interactive = interactive)
+  xl_open(x$clone()$save(temp_xlsx(macros = has_macros), flush = flush)$path, interactive = interactive)
 }
 
 #' @rdname xl_open
 #' @export
-xl_open.default <- function(x, interactive = NA) {
+xl_open.default <- function(x, interactive = NA, flush = FALSE) {
   stopifnot(file.exists(x))
 
   # nocov start
