@@ -113,7 +113,7 @@ inner_update <- function(
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
   # values with the formula. If the entire cc is replaced with x, we can skip.
-  if (!all(cc$f_attr != "")) {
+  if (!all(cc$f_attr == "")) {
     ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
     if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
 
