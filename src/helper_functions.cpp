@@ -172,25 +172,27 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
 SEXP rbindlist(Rcpp::List x) {
   R_xlen_t nn = static_cast<R_xlen_t>(x.size());
 
-  // Use unordered_map to map column names to indices
-  std::unordered_map<std::string, R_xlen_t> name_to_index;
-  std::vector<std::string> col_names;
-
-  // Collect all unique names and build index
+  // a: Collect unique names into unordered_set
+  std::unordered_set<std::string> name_set;
   for (R_xlen_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
     Rcpp::CharacterVector names_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
-
     for (const auto& name : names_i) {
-      std::string key = Rcpp::as<std::string>(name);
-      if (name_to_index.find(key) == name_to_index.end()) {
-        name_to_index[key] = col_names.size();
-        col_names.push_back(std::move(key));
-      }
+      name_set.insert(Rcpp::as<std::string>(name));
     }
   }
 
-  R_xlen_t kk = col_names.size();
+  // b: Sort names into vector
+  std::vector<std::string> sorted_names(name_set.begin(), name_set.end());
+  std::sort(sorted_names.begin(), sorted_names.end());
+
+  // c: Build name → index map from sorted names
+  std::unordered_map<std::string, R_xlen_t> name_to_index;
+  for (R_xlen_t i = 0; i < sorted_names.size(); ++i) {
+    name_to_index[sorted_names[i]] = i;
+  }
+
+  R_xlen_t kk = sorted_names.size();
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -215,7 +217,7 @@ SEXP rbindlist(Rcpp::List x) {
 
   // 3. Create a data.frame
   df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, nn);
-  df.attr("names") = col_names;
+  df.attr("names") = sorted_names;
   df.attr("class") = "data.frame";
 
   return df;
