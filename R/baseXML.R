@@ -1085,10 +1085,10 @@ drawings <- function(drawings, drawing_id) {
     )
   )
 
-  xml_append_child1(
-    node    = read_xml(drawings),
-    child   = read_xml(drawing),
-    pointer = FALSE)
+  xml_add_child(
+    xml_node  = drawings,
+    xml_child = drawing,
+    pointer   = FALSE)
 }
 
 chart1_rels_xml <- function(x) {

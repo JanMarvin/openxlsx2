@@ -35,17 +35,18 @@ test_that("xml_node", {
   xml <- read_xml(xml_str)
 
   exp <- xml_str
-  expect_equal("a", getXMLXPtrName1(xml))
-  expect_equal(exp, getXMLXPtr0(xml))
-  expect_equal(exp, getXMLXPtr1(xml, "a"))
+  expect_equal("a", getXMLXPtrNamePath(xml, character()))
+  expect_equal(exp, getXMLXPtrPath(xml, character()))
+  expect_equal(exp, getXMLXPtrPath(xml, "a"))
 
   exp <- "<b><c><d><e/></d></c></b>"
-  expect_equal(exp, getXMLXPtr2(xml, "a", "b"))
+  expect_equal(exp, getXMLXPtrPath(xml, c("a", "b")))
 
   exp <- "<c><d><e/></d></c>"
-  expect_equal(exp, getXMLXPtr3(xml, "a", "b", "c"))
+  expect_equal(exp, getXMLXPtrPath(xml, c("a", "b", "c")))
+
   # bit cheating, this test returns the same, but not the actual feature of "*"
-  expect_equal(exp, unkgetXMLXPtr3(xml, "a", "c"))
+  expect_equal(exp, getXMLXPtrPath(xml, c("a", "*", "c")))
 
 })
 
@@ -55,15 +56,15 @@ test_that("xml_value", {
 
   xml_str <- "<a>1</a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr1val(xml, "a"))
+  expect_equal(exp, getXMLXPtrValPath(xml, "a"))
 
   xml_str <- "<a><b>1</b></a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr2val(xml, "a", "b"))
+  expect_equal(exp, getXMLXPtrValPath(xml, c("a", "b")))
 
   xml_str <- "<a><b><c>1</c></b></a>"
   xml <- read_xml(xml_str)
-  expect_equal(exp, getXMLXPtr3val(xml, "a", "b", "c"))
+  expect_equal(exp, getXMLXPtrValPath(xml, c("a", "b", "c")))
 
 })
 
@@ -73,15 +74,15 @@ test_that("xml_attr", {
 
   xml_str <- "<a a=\"1\"/>"
   xml <- read_xml(xml_str)
-  expect_equal(getXMLXPtr1attr(xml, "a"), exp)
+  expect_equal(getXMLXPtrAttrPath(xml, "a"), exp)
 
   xml_str <- "<b><a a=\"1\"/></b>"
   xml <- read_xml(xml_str)
-  expect_equal(getXMLXPtr2attr(xml, "b", "a"), exp)
+  expect_equal(getXMLXPtrAttrPath(xml, c("b", "a")), exp)
 
   xml_str <- "<c><b><a a=\"1\"/></b></c>"
   xml <- read_xml(xml_str)
-  expect_equal(getXMLXPtr3attr(xml, "c", "b", "a"), exp)
+  expect_equal(getXMLXPtrAttrPath(xml, c("c", "b", "a")), exp)
 
 })
 
@@ -90,50 +91,54 @@ test_that("xml_append_child", {
   xml_node <- read_xml("<node><child1/><child2/></node>")
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&</new_child></node>"
-  expect_equal(xml_append_child1(xml_node, xml_child, pointer = FALSE), exp)
+  level <- character()
+  expect_equal(xml_append_child_path(xml_node, xml_child, level, pointer = FALSE), exp)
 
   # xml_node sets the flags for both
   xml_node <- read_xml("<node><child1/><child2/></node>", escapes = TRUE)
   xml_child <- read_xml("<new_child>&</new_child>")
   exp <- "<node><child1/><child2/><new_child>&amp;</new_child></node>"
-  expect_equal(xml_append_child1(xml_node, xml_child, pointer = FALSE), exp)
+  level <- character()
+  expect_equal(xml_append_child_path(xml_node, xml_child, level, pointer = FALSE), exp)
 
 
   xml_node <- "<a><b/></a>"
   xml_child <- read_xml("<c/>")
+  level <- character()
 
-  xml_node <- xml_append_child1(read_xml(xml_node), xml_child, pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node), xml_child, level, pointer = FALSE)
   expect_equal(xml_node, "<a><b/><c/></a>")
 
-  xml_node <- xml_append_child2(read_xml(xml_node), xml_child, level1 = "b", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "b"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c/></b><c/></a>")
 
-  xml_node <- xml_append_child3(read_xml(xml_node), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node), read_xml("<d/>"), c(level1 = "b", level2 = "c"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c><d/></c></b><c/></a>")
 
 
   # check that escapes does not throw a warning
   xml_node <- "<a><b/></a>"
   xml_child <- read_xml("<c>a&b</c>", escapes = FALSE)
+  level <- character()
 
-  xml_node <- xml_append_child1(read_xml(xml_node, escapes = TRUE), xml_child, pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node, escapes = TRUE), xml_child, level, pointer = FALSE)
   expect_equal(xml_node, "<a><b/><c>a&amp;b</c></a>")
 
-  xml_node <- xml_append_child2(read_xml(xml_node, escapes = TRUE), xml_child, level1 = "b", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node, escapes = TRUE), xml_child, c(level1 = "b"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c>a&amp;b</c></b><c>a&amp;b</c></a>")
 
-  xml_node <- xml_append_child3(read_xml(xml_node, escapes = TRUE), read_xml("<d/>"), level1 = "b", level2 = "c", pointer = FALSE)
+  xml_node <- xml_append_child_path(read_xml(xml_node, escapes = TRUE), read_xml("<d/>"), c(level1 = "b", level2 = "c"), pointer = FALSE)
   expect_equal(xml_node, "<a><b><c>a&amp;b<d/></c></b><c>a&amp;b</c></a>")
 
   # check that pointer is valid
-  expect_s3_class(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml")
-  expect_s3_class(xml_append_child1(read_xml(xml_node), xml_child, pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, level, pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, level, pointer = TRUE), "pugi_xml")
 
-  expect_s3_class(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml")
-  expect_s3_class(xml_append_child2(read_xml(xml_node), xml_child, level1 = "a", pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a"), pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a"), pointer = TRUE), "pugi_xml")
 
-  expect_s3_class(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml")
-  expect_s3_class(xml_append_child3(read_xml(xml_node), xml_child, level1 = "a", level2 = "b", pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a", level2 = "b"), pointer = TRUE), "pugi_xml")
+  expect_s3_class(xml_append_child_path(read_xml(xml_node), xml_child, c(level1 = "a", level2 = "b"), pointer = TRUE), "pugi_xml")
 
 })
 
@@ -173,10 +178,10 @@ test_that("is_xml", {
 
 })
 
-test_that("getXMLPtr1con", {
+test_that("getXMLXPtrContent", {
 
   xml <- "<xml><a/><a/><b/></xml>"
-  got <- getXMLPtr1con(read_xml(xml))
+  got <- xml_node(xml, "*", "*")
   exp <- c("<a/>", "<a/>", "<b/>")
   expect_equal(got, exp)
 

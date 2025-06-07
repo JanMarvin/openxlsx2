@@ -100,64 +100,20 @@ is_xml <- function(str) {
     .Call(`_openxlsx2_is_xml`, str)
 }
 
-getXMLXPtrName1 <- function(doc) {
-    .Call(`_openxlsx2_getXMLXPtrName1`, doc)
+getXMLXPtrNamePath <- function(doc, path) {
+    .Call(`_openxlsx2_getXMLXPtrNamePath`, doc, path)
 }
 
-getXMLXPtrName2 <- function(doc, level1) {
-    .Call(`_openxlsx2_getXMLXPtrName2`, doc, level1)
+getXMLXPtrPath <- function(doc, path) {
+    .Call(`_openxlsx2_getXMLXPtrPath`, doc, path)
 }
 
-getXMLXPtrName3 <- function(doc, level1, level2) {
-    .Call(`_openxlsx2_getXMLXPtrName3`, doc, level1, level2)
+getXMLXPtrValPath <- function(doc, path) {
+    .Call(`_openxlsx2_getXMLXPtrValPath`, doc, path)
 }
 
-getXMLXPtr0 <- function(doc) {
-    .Call(`_openxlsx2_getXMLXPtr0`, doc)
-}
-
-getXMLXPtr1 <- function(doc, child) {
-    .Call(`_openxlsx2_getXMLXPtr1`, doc, child)
-}
-
-getXMLXPtr2 <- function(doc, level1, child) {
-    .Call(`_openxlsx2_getXMLXPtr2`, doc, level1, child)
-}
-
-getXMLXPtr3 <- function(doc, level1, level2, child) {
-    .Call(`_openxlsx2_getXMLXPtr3`, doc, level1, level2, child)
-}
-
-unkgetXMLXPtr3 <- function(doc, level1, child) {
-    .Call(`_openxlsx2_unkgetXMLXPtr3`, doc, level1, child)
-}
-
-getXMLPtr1con <- function(doc) {
-    .Call(`_openxlsx2_getXMLPtr1con`, doc)
-}
-
-getXMLXPtr1val <- function(doc, child) {
-    .Call(`_openxlsx2_getXMLXPtr1val`, doc, child)
-}
-
-getXMLXPtr2val <- function(doc, level1, child) {
-    .Call(`_openxlsx2_getXMLXPtr2val`, doc, level1, child)
-}
-
-getXMLXPtr3val <- function(doc, level1, level2, child) {
-    .Call(`_openxlsx2_getXMLXPtr3val`, doc, level1, level2, child)
-}
-
-getXMLXPtr1attr <- function(doc, child) {
-    .Call(`_openxlsx2_getXMLXPtr1attr`, doc, child)
-}
-
-getXMLXPtr2attr <- function(doc, level1, child) {
-    .Call(`_openxlsx2_getXMLXPtr2attr`, doc, level1, child)
-}
-
-getXMLXPtr3attr <- function(doc, level1, level2, child) {
-    .Call(`_openxlsx2_getXMLXPtr3attr`, doc, level1, level2, child)
+getXMLXPtrAttrPath <- function(doc, path) {
+    .Call(`_openxlsx2_getXMLXPtrAttrPath`, doc, path)
 }
 
 printXPtr <- function(doc, indent, raw, attr_indent) {
@@ -237,28 +193,12 @@ xml_node_create <- function(xml_name, xml_children = NULL, xml_attributes = NULL
     .Call(`_openxlsx2_xml_node_create`, xml_name, xml_children, xml_attributes, escapes, declaration)
 }
 
-xml_append_child1 <- function(node, child, pointer) {
-    .Call(`_openxlsx2_xml_append_child1`, node, child, pointer)
+xml_append_child_path <- function(node, child, path, pointer) {
+    .Call(`_openxlsx2_xml_append_child_path`, node, child, path, pointer)
 }
 
-xml_append_child2 <- function(node, child, level1, pointer) {
-    .Call(`_openxlsx2_xml_append_child2`, node, child, level1, pointer)
-}
-
-xml_append_child3 <- function(node, child, level1, level2, pointer) {
-    .Call(`_openxlsx2_xml_append_child3`, node, child, level1, level2, pointer)
-}
-
-xml_remove_child1 <- function(node, child, which, pointer) {
-    .Call(`_openxlsx2_xml_remove_child1`, node, child, which, pointer)
-}
-
-xml_remove_child2 <- function(node, child, level1, which, pointer) {
-    .Call(`_openxlsx2_xml_remove_child2`, node, child, level1, which, pointer)
-}
-
-xml_remove_child3 <- function(node, child, level1, level2, which, pointer) {
-    .Call(`_openxlsx2_xml_remove_child3`, node, child, level1, level2, which, pointer)
+xml_remove_child_path <- function(node, child, path, which, pointer) {
+    .Call(`_openxlsx2_xml_remove_child_path`, node, child, path, which, pointer)
 }
 
 is_to_txt <- function(is_vec) {
