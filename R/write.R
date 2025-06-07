@@ -113,23 +113,25 @@ inner_update <- function(
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
   # values with the formula. If the entire cc is replaced with x, we can skip.
-  ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
-  if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
+  if (!all(cc$f_attr == "")) {
+    ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
+    if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
 
-    # collect all the shared formulas that we have to convert
-    sel_fsi <- ff$si %in% unique(sf)
+      # collect all the shared formulas that we have to convert
+      sel_fsi <- ff$si %in% unique(sf)
 
-    cc_shared <- cc[sel_fsi, , drop = FALSE]
+      cc_shared <- cc[sel_fsi, , drop = FALSE]
 
-    cc <- shared_as_fml(cc, cc_shared)
+      cc <- shared_as_fml(cc, cc_shared)
 
-    msg <- paste0(
-      "A shared formula reference cell was overwritten. To protect the",
-      " spreadsheet formulas, the impacted cells were converted from shared",
-      " formulas to normal formulas."
-    )
-    warning(msg, call. = FALSE)
+      msg <- paste0(
+        "A shared formula reference cell was overwritten. To protect the",
+        " spreadsheet formulas, the impacted cells were converted from shared",
+        " formulas to normal formulas."
+      )
+      warning(msg, call. = FALSE)
 
+    }
   }
 
   # columns in cc and x can differ make sure that all elements are available

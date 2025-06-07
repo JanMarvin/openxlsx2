@@ -3746,9 +3746,10 @@ wbWorkbook <- R6::R6Class(
     #' @param interactive If `FALSE` will throw a warning and not open the path.
     #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses
     #'   the value returned from [base::interactive()]
+    #' @param flush flush
     #' @return The `wbWorkbook`, invisibly
-    open = function(interactive = NA) {
-      xl_open(self, interactive = interactive)
+    open = function(interactive = NA, flush = FALSE) {
+      xl_open(self, interactive = interactive, flush = flush)
       invisible(self)
     },
 
@@ -9922,7 +9923,8 @@ wbWorkbook <- R6::R6Class(
               # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
               cc <- cc[cc$row_r %in% cc_rows, ]
 
-              self$worksheets[[i]]$sheet_data$cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
+              sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
+              self$worksheets[[i]]$sheet_data$cc <- cc[order(sort_key), ]
               rm(cc)
             } else {
               self$worksheets[[i]]$sheet_data$row_attr <- NULL
