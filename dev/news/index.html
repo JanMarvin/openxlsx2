@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.15.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.16.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,15 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<ul><li>The provided pugixml functions allow now for a deeper nesting of nodes including wildcards. Previously the nesting was restricted to three levels. This limit has been lifted. <a href="https://github.com/JanMarvin/openxlsx2/pull/1356" class="external-link">1356</a>
+</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.16" id="openxlsx2-116">openxlsx2 1.16<a class="anchor" aria-label="anchor" href="#openxlsx2-116"></a></h2><p class="text-muted">CRAN release: 2025-06-05</p>
+<div class="section level3">
+<h3 id="new-features-1-16">New features<a class="anchor" aria-label="anchor" href="#new-features-1-16"></a></h3>
 <ul><li>Reading dims with dollar signs is now possible <code>wb$to_df(dims = "A$1:A$5")</code> and incorrectly selected sheets now throw a warning instead of an incorrect “sheet found, but contains no data” message.</li>
 <li>Slightly adjusted <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to create regions from decreasing consecutive columns and rows. <a href="https://github.com/JanMarvin/openxlsx2/pull/1353" class="external-link">1353</a>
 </li>
@@ -63,14 +71,14 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-16">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-16"></a></h3>
 <ul><li>
 <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code> now uses <code><a href="../reference/named_region-wb.html">wb_add_named_region()</a></code> internally. This prevents non fixed named regions.</li>
 <li>Fixed a bug in <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> where <code>show_formula</code> in combination with shared formulas and specified <code>dims</code>, would result in incorrect returns or errors. <a href="https://github.com/JanMarvin/openxlsx2/pull/1366" class="external-link">1366</a>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-1-16">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-16"></a></h3>
 <ul><li>
 <code>dims</code> will now respect the order in which they are sorted. So <code>"B2:A1"</code> will no longer equal <code>"A1:B2"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1353" class="external-link">1353</a>
 </li>
