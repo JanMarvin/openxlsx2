@@ -1453,7 +1453,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           cver = readbin(cver, bin, swapit);
 
           for (uint16_t i = 0; i < cver; ++i) {
-            ProductVersion(bin, swapit, debug);
+            ProductVersion(bin, swapit, debug, false);  // reserved can be 0 or 1
           }
           break;
         }
@@ -1862,7 +1862,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
         case BrtFRTBegin: {
           if (debug) Rcpp::Rcout << "<ext>" << std::endl;
 
-          ProductVersion(bin, swapit, debug);
+          ProductVersion(bin, swapit, debug, true);  // reserved must be 0
           break;
         }
 
@@ -4133,7 +4133,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             "<ext uri=\"{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">" <<
               std::endl;
 
-          ProductVersion(bin, swapit, debug);
+          ProductVersion(bin, swapit, debug, true);  // reserved must be 0
 
           break;
         }

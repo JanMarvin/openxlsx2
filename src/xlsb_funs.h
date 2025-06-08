@@ -569,7 +569,7 @@ std::string RichStr(std::istream& sas, bool swapit) {
   return (str);
 }
 
-void ProductVersion(std::istream& sas, bool swapit, bool debug) {
+void ProductVersion(std::istream& sas, bool swapit, bool debug, bool frt) {
   uint16_t version = 0, flags = 0;
   version = readbin(version, sas, swapit);  // 3586 - x14?
   flags = readbin(flags, sas, swapit);      // 0
@@ -577,7 +577,7 @@ void ProductVersion(std::istream& sas, bool swapit, bool debug) {
   FRTVersionUnion view_flags;
   view_flags.raw_flags = flags;
 
-  if (view_flags.fields.reserved != 0) Rcpp::stop("product version reserved not 0");
+  if (frt && view_flags.fields.reserved != 0) Rcpp::stop("product version reserved not 0 but %d", (int32_t)view_flags.fields.reserved);
   if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, view_flags.fields.product, view_flags.fields.reserved);
 }
 
