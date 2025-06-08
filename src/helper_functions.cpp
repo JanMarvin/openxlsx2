@@ -170,21 +170,25 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
-  R_xlen_t nn = static_cast<R_xlen_t>(x.size());
-  std::vector<std::string> all_names;
+  R_xlen_t nn = x.size();
 
-  // get unique names and create set
+  std::set<std::string> unique_names_set;
   for (R_xlen_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
-    std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
-    std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
+    Rcpp::CharacterVector names_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
+    for (const auto& name : names_i) {
+      unique_names_set.insert(Rcpp::as<std::string>(name));
+    }
   }
 
-  std::sort(all_names.begin(), all_names.end());
-  std::set<std::string> unique_names(std::make_move_iterator(all_names.begin()),
-                                     std::make_move_iterator(all_names.end()));
+  std::vector<std::string> final_names(unique_names_set.begin(), unique_names_set.end());
+  R_xlen_t kk = final_names.size();
 
-  R_xlen_t kk = static_cast<R_xlen_t>(unique_names.size());
+  std::unordered_map<std::string, R_xlen_t> name_to_idx;
+  name_to_idx.reserve(kk);
+  for (R_xlen_t i = 0; i < kk; ++i) {
+    name_to_idx[final_names[i]] = i;
+  }
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -195,20 +199,22 @@ SEXP rbindlist(Rcpp::List x) {
   for (R_xlen_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
 
-    std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
-    std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
+    Rcpp::CharacterVector current_vec = x[i];
+    Rcpp::CharacterVector current_names = current_vec.attr("names");
 
-    for (size_t j = 0; j < names.size(); ++j) {
-      auto find_res = unique_names.find(names[j]);
-      R_xlen_t mtc = std::distance(unique_names.begin(), find_res);
-
-      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = Rcpp::String(values[j]);
+    for (R_xlen_t j = 0; j < current_vec.size(); ++j) {
+      // Find the column index for the current name using the map.
+      auto it = name_to_idx.find(Rcpp::as<std::string>(current_names[j]));
+      if (it != name_to_idx.end()) {
+        R_xlen_t col_idx = it->second;
+        Rcpp::as<Rcpp::CharacterVector>(df[col_idx])[i] = current_vec[j];
+      }
     }
   }
 
   // 3. Create a data.frame
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, nn);
-  df.attr("names") = unique_names;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
+  df.attr("names") = Rcpp::CharacterVector(final_names.begin(), final_names.end());
   df.attr("class") = "data.frame";
 
   return df;

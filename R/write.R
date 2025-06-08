@@ -73,7 +73,8 @@ inner_update <- function(
     cc <- rbind(cc, cc_missing)
 
     # order cc (not really necessary, will be done when saving)
-    cc <- cc[order(as.integer(cc[, "row_r"]), col2int(cc[, "c_r"])), ]
+    sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
+    cc <- cc[order(sort_key), ]
 
     # update dimensions (only required if new cols and rows are added) ------
     all_rows <- as.numeric(unique(cc$row_r))
