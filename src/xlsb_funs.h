@@ -569,15 +569,16 @@ std::string RichStr(std::istream& sas, bool swapit) {
   return (str);
 }
 
-void ProductVersion(std::istream& sas, bool swapit, bool debug) {
+void ProductVersion(std::istream& sas, bool swapit, bool debug, bool frt) {
   uint16_t version = 0, flags = 0;
   version = readbin(version, sas, swapit);  // 3586 - x14?
   flags = readbin(flags, sas, swapit);      // 0
 
-  /* unused and commented due to a false positive in GCC12 reported on CRAN */
-  // FRTVersionFields *fields = (FRTVersionFields *)&flags;
-  // if (fields->reserved != 0) Rcpp::stop("product version reserved not 0");
-  // if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, fields->product, fields->reserved);
+  FRTVersionUnion view_flags;
+  view_flags.raw_flags = flags;
+
+  if (frt && view_flags.fields.reserved != 0) Rcpp::stop("product version reserved not 0 but %d", (int32_t)view_flags.fields.reserved);
+  if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, view_flags.fields.product, view_flags.fields.reserved);
 }
 
 std::vector<int32_t> UncheckedRfX(std::istream& sas, bool swapit) {
@@ -814,11 +815,11 @@ std::vector<int32_t> Cell(std::istream& sas, bool swapit) {
 
   out[0] = UncheckedCol(sas, swapit);
 
-  int32_t uint = 0;
-  uint = readbin(uint, sas, swapit);
+  int32_t unk1 = 0;
+  unk1 = readbin(unk1, sas, swapit);
 
-  out[1] = uint & 0xFFFFFF;            // iStyleRef
-  out[2] = (uint & 0x02000000) >> 24;  // fPhShow
+  out[1] = unk1 & 0xFFFFFF;            // iStyleRef
+  out[2] = (unk1 & 0x02000000) >> 24;  // fPhShow
   // unused
 
   return (out);
@@ -1237,22 +1238,23 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
             colFirst  = ColShort(sas, swapit);
             colLast   = ColShort(sas, swapit);
 
-            PtgListFields* fields = (PtgListFields*)&flags;
+            PtgListUnion view_flags;
+            view_flags.raw_flags = flags;
 
-            // if (debug)
-            // Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
-            //   (uint32_t)fields->columns,
-            //   (uint32_t)fields->commaSpace,
-            //   (uint32_t)fields->invalid,
-            //   (uint32_t)fields->nonresident,
-            //   (uint32_t)fields->reserved2,
-            //   (uint32_t)fields->rowType,
-            //   (uint32_t)fields->squareBracketSpace,
-            //   (uint32_t)fields->type,
-            //   (uint32_t)fields->unused
-            // );
+            if (debug)
+            Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+              (uint32_t)view_flags.fields.columns,
+              (uint32_t)view_flags.fields.commaSpace,
+              (uint32_t)view_flags.fields.invalid,
+              (uint32_t)view_flags.fields.nonresident,
+              (uint32_t)view_flags.fields.reserved2,
+              (uint32_t)view_flags.fields.rowType,
+              (uint32_t)view_flags.fields.squareBracketSpace,
+              (uint32_t)view_flags.fields.type,
+              (uint32_t)view_flags.fields.unused
+            );
 
-            if (fields->nonresident)  // different workbook and invalid == 0
+            if (view_flags.fields.nonresident)  // different workbook and invalid == 0
               ptgextra.push_back(typ);
 
             std::stringstream paddedStr;
@@ -1262,52 +1264,52 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
             // something like this: Table1[[#This Row],[a]]
             fml_out += "openxlsx2tab_" + paddedStr.str();
 
-            bool no_row_type = fields->invalid == 1 || fields->nonresident == 1;
+            bool no_row_type = view_flags.fields.invalid == 1 || view_flags.fields.nonresident == 1;
 
             fml_out += "[";
 
-            bool need_bracket = fields->columns > 0 ||
-                (fields->columns == 0 &&
-                  (fields->rowType == dataheaders ||
-                    fields->rowType == datatotals)
+            bool need_bracket = view_flags.fields.columns > 0 ||
+                (view_flags.fields.columns == 0 &&
+                  (view_flags.fields.rowType == dataheaders ||
+                    view_flags.fields.rowType == datatotals)
                 );
 
 
             // if rowType == 0 no #Data etc is added
-            if (!no_row_type && fields->rowType) {
+            if (!no_row_type && view_flags.fields.rowType) {
               if (need_bracket) fml_out += "[";
-              if (fields->rowType == data)        fml_out += "";
-              if (fields->rowType == all)         fml_out += "#All";
-              if (fields->rowType == headers)     fml_out += "#Headers";
-              if (fields->rowType == data2)       fml_out += "#Data";
-              if (fields->rowType == dataheaders) fml_out += "#Headers],[#Data";
-              if (fields->rowType == totals)      fml_out += "#Totals";
-              if (fields->rowType == datatotals)  fml_out += "#Data],[#Totals";
-              if (fields->rowType == current)     fml_out += "#This Row";
+              if (view_flags.fields.rowType == data)        fml_out += "";
+              if (view_flags.fields.rowType == all)         fml_out += "#All";
+              if (view_flags.fields.rowType == headers)     fml_out += "#Headers";
+              if (view_flags.fields.rowType == data2)       fml_out += "#Data";
+              if (view_flags.fields.rowType == dataheaders) fml_out += "#Headers],[#Data";
+              if (view_flags.fields.rowType == totals)      fml_out += "#Totals";
+              if (view_flags.fields.rowType == datatotals)  fml_out += "#Data],[#Totals";
+              if (view_flags.fields.rowType == current)     fml_out += "#This Row";
               if (need_bracket) fml_out += "]";
-              if (fields->columns > 0) fml_out += ",";
+              if (view_flags.fields.columns > 0) fml_out += ",";
             }
 
             // not sure what is supposed to happen in this case?
             // have to replace colFirst with a variable name
-            if (!(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
+            if (!(view_flags.fields.invalid == 1 || view_flags.fields.nonresident == 1 || view_flags.fields.columns == 0)) {
               // Rcpp::Rcout << "colFirst" << std::endl;
-              if (fields->columns > 1 || fields->rowType > data) fml_out += "[";
+              if (view_flags.fields.columns > 1 || view_flags.fields.rowType > data) fml_out += "[";
               fml_out += "openxlsx2col_";
               fml_out += std::to_string(listIndex);
               fml_out += "_";
               fml_out += std::to_string(colFirst);
-              if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
+              if (view_flags.fields.columns > 1 || view_flags.fields.rowType > data) fml_out  += "]";
             }
 
             // have to replace colLast with a variable name
-            if ((colFirst < colLast) && !(fields->invalid == 1 || fields->nonresident == 1 || fields->columns == 0)) {
+            if ((colFirst < colLast) && !(view_flags.fields.invalid == 1 || view_flags.fields.nonresident == 1 || view_flags.fields.columns == 0)) {
               // Rcpp::Rcout << "colLast" << std::endl;
               fml_out += ":[openxlsx2col_";
               fml_out += std::to_string(listIndex);
               fml_out += "_";
               fml_out += std::to_string(colLast);
-              if (fields->columns > 1 || fields->rowType > data) fml_out  += "]";
+              if (view_flags.fields.columns > 1 || view_flags.fields.rowType > data) fml_out  += "]";
             }
 
             fml_out += "]";
@@ -1932,7 +1934,8 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
       case PtgFuncVar3: {
         if (debug) Rcpp::Rcout << "PtgFuncVar" <<std::endl;
 
-        uint8_t cparams = 0, fCeFunc = 0;  // number of parameters
+        uint8_t cparams = 0;  // number of parameters
+        bool fCeFunc = 0;
         cparams = readbin(cparams, sas, swapit);
 
         uint16_t tab = 0;
