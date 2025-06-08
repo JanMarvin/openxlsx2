@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <string_view>
 #include "openxlsx2.h"
 
 // For R-devel 4.3 character length on Windows was modified. This caused an
@@ -167,48 +168,77 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
   return colNames;
 }
 
+// Custom hash for SEXP (pointing to a CHARSXP)
+struct SexpHash {
+  // The operator() makes this struct "callable" like a function.
+  std::size_t operator()(SEXP s) const {
+    // CHAR(s) returns a const char* pointer to the string's content.
+    // We can hash this efficiently without creating a std::string.
+    // std::hash<std::string_view> is a good choice for C-style strings.
+    return std::hash<std::string_view>()(CHAR(s));
+  }
+};
+
+// Custom equality for SEXP (pointing to a CHARSXP)
+struct SexpEqual {
+  bool operator()(SEXP a, SEXP b) const {
+    // For CHARSXPs, we can compare them with strcmp.
+    // strcmp returns 0 if the C-style strings are identical.
+    return strcmp(CHAR(a), CHAR(b)) == 0;
+  }
+};
+
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
-  R_xlen_t nn = static_cast<R_xlen_t>(x.size());
-  std::vector<std::string> all_names;
+  R_xlen_t nn = x.size();
 
-  // get unique names and create set
+  std::set<std::string> unique_names_set;
   for (R_xlen_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
-    std::vector<std::string> name_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
-    std::unique_copy(name_i.begin(), name_i.end(), std::back_inserter(all_names));
+    Rcpp::CharacterVector names_i = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
+    for (const auto& name : names_i) {
+      unique_names_set.insert(Rcpp::as<std::string>(name));
+    }
   }
 
-  std::sort(all_names.begin(), all_names.end());
-  std::set<std::string> unique_names(std::make_move_iterator(all_names.begin()),
-                                     std::make_move_iterator(all_names.end()));
+  Rcpp::CharacterVector final_names_vec(unique_names_set.begin(), unique_names_set.end());
+  R_xlen_t kk = final_names_vec.size();
 
-  R_xlen_t kk = static_cast<R_xlen_t>(unique_names.size());
+  std::unordered_map<SEXP, R_xlen_t, SexpHash, SexpEqual> name_sexp_to_idx;
+  name_sexp_to_idx.reserve(kk);
+  for (R_xlen_t i = 0; i < kk; ++i) {
+    name_sexp_to_idx[final_names_vec[i]] = i;
+  }
 
   // 1. create the list
   Rcpp::List df(kk);
+  std::vector<Rcpp::CharacterVector> out_cols;
+  out_cols.reserve(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    Rcpp::CharacterVector new_col(Rcpp::no_init(nn));
+    df[i] = new_col;
+    out_cols.push_back(new_col);
   }
 
   for (R_xlen_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
 
-    std::vector<std::string> values = Rcpp::as<std::vector<std::string>>(x[i]);
-    std::vector<std::string> names = Rcpp::as<Rcpp::CharacterVector>(x[i]).attr("names");
+    Rcpp::CharacterVector current_vec = x[i];
+    Rcpp::CharacterVector current_names = current_vec.attr("names");
 
-    for (size_t j = 0; j < names.size(); ++j) {
-      auto find_res = unique_names.find(names[j]);
-      R_xlen_t mtc = std::distance(unique_names.begin(), find_res);
-
-      Rcpp::as<Rcpp::CharacterVector>(df[mtc])[i] = Rcpp::String(values[j]);
+    for (R_xlen_t j = 0; j < current_vec.size(); ++j) {
+      auto it = name_sexp_to_idx.find(STRING_ELT(current_names, j));
+      if (it != name_sexp_to_idx.end()) {
+        R_xlen_t col_idx = it->second;
+        out_cols[col_idx][i] = STRING_ELT(current_vec, j);
+      }
     }
   }
 
   // 3. Create a data.frame
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, nn);
-  df.attr("names") = unique_names;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
+  df.attr("names") = final_names_vec;
   df.attr("class") = "data.frame";
 
   return df;
