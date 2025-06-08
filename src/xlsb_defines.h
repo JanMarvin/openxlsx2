@@ -274,8 +274,8 @@ typedef struct {
 } BrtDValFields;
 
 union BrtDValUnion {
-    int32_t raw_flags;
-    BrtDValFields fields;
+  uint32_t raw_flags;
+  BrtDValFields fields;
 };
 
 typedef struct {
@@ -352,7 +352,7 @@ typedef struct {
 } BrtBeginUserShViewFields;
 
 union BrtBeginUserShViewUnion {
-  uint32_t raw_flags;
+  int32_t raw_flags;
   BrtBeginUserShViewFields fields;
 };
 
@@ -376,8 +376,8 @@ typedef struct {
 } BrtUserBookViewFields;
 
 union BrtUserBookViewUnion {
-    int32_t raw_flags;
-    BrtUserBookViewFields fields;
+  int32_t raw_flags;
+  BrtUserBookViewFields fields;
 };
 
 typedef struct {
