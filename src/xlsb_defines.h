@@ -9,6 +9,11 @@ typedef struct {
   uint16_t unused : 13;
 } StyleFlagsFields;
 
+union StyleFlagsUnion {
+  uint16_t raw_flags;
+  StyleFlagsFields fields;
+};
+
 typedef struct {
   bool bit1 : 1;
   bool bit2 : 1;
@@ -18,17 +23,32 @@ typedef struct {
   bool bit6 : 1;
 } xfGrbitAtrFields;
 
+union xfGrbitAtrUnion {
+  uint8_t raw_flags;
+  xfGrbitAtrFields fields;
+};
+
 typedef struct {
   bool reserved : 1;
   bool fAlwaysCalc : 1;
   uint16_t unused : 14;
 } GrbitFmlaFields;
 
+union GrbitFmlaUnion {
+  uint16_t raw_flags;
+  GrbitFmlaFields fields;
+};
+
 typedef struct {
   uint16_t col : 14;
   bool fColRel : 1;
   bool fRwRel : 1;
 } ColRelShortFields;
+
+union ColRelShortUnion {
+  uint16_t raw_flags;
+  ColRelShortFields fields;
+};
 
 typedef struct {
   bool fExtraAsc : 1;
@@ -42,6 +62,11 @@ typedef struct {
   bool fReserved : 1;
 } BrtRowHdrFields;
 
+union BrtRowHdrUnion {
+  uint16_t raw_flags;
+  BrtRowHdrFields fields;
+};
+
 typedef struct {
   bool fHidden : 1;
   bool fUserSet : 1;
@@ -54,6 +79,11 @@ typedef struct {
   uint8_t reserved2 : 3;
 } BrtColInfoFields;
 
+union BrtColInfoUnion {
+  uint16_t raw_flags;
+  BrtColInfoFields fields;
+};
+
 typedef struct {
   bool fHidden : 1;
   bool fFunc : 1;
@@ -65,11 +95,21 @@ typedef struct {
   bool fPublished : 1;
 } BrtNameFields;
 
+union BrtNameUnion {
+  uint16_t raw_flags;
+  BrtNameFields fields;
+};
+
 typedef struct {
   bool fWorkbookParam : 1;
   bool fFutureFunction : 1;
   uint16_t reserved : 14;
 } BrtNameFields2;
+
+union BrtName2Union {
+  uint16_t raw_flags;
+  BrtNameFields2 fields;
+};
 
 typedef struct {
   bool unused1 : 1;
@@ -82,6 +122,11 @@ typedef struct {
   bool fExtend : 1;
   uint8_t unused3 : 8;
 } FontFlagsFields;
+
+union FontFlagsUnion {
+  uint16_t raw_flags;
+  FontFlagsFields fields;
+};
 
 typedef struct {
   uint8_t alc : 3;
@@ -98,6 +143,11 @@ typedef struct {
   uint8_t xfGrbitAtr : 6;
   uint16_t unused : 10;
 } XFFields;
+
+union XFUnion {
+  uint32_t raw_flags;
+  XFFields fields;
+};
 
 typedef struct {
   bool fShowAutoBreaks : 1;
@@ -117,11 +167,21 @@ typedef struct {
   bool fAltFormulaEntry : 1;
 } BrtWsPropFields1;
 
+union BrtWsProp1Union {
+  uint16_t raw_flags;
+  BrtWsPropFields1 fields;
+};
+
 typedef struct {
   bool fFilterMode : 1;
   bool fCondFmtCalc : 1;
   uint8_t reserved4 : 6;
 } BrtWsPropFields2;
+
+union BrtWsProp2Union {
+  uint8_t raw_flags;
+  BrtWsPropFields2 fields;
+};
 
 typedef struct {
   bool fWnProt : 1;
@@ -138,6 +198,11 @@ typedef struct {
   uint8_t reserved1 : 5;
 } BrtBeginWsViewFields;
 
+union BrtBeginWsViewUnion {
+  uint16_t raw_flags;
+  BrtBeginWsViewFields fields;
+};
+
 typedef struct {
   bool fFirstColumn : 1;
   bool fLastColumn : 1;
@@ -148,6 +213,11 @@ typedef struct {
   uint16_t reserved : 10;
 } BrtTableStyleClientFields;
 
+union BrtTableStyleClientUnion {
+  uint16_t raw_flags;
+  BrtTableStyleClientFields fields;
+};
+
 typedef struct {
   bool reserved3 : 1;
   bool fStopTrue : 1;
@@ -156,6 +226,11 @@ typedef struct {
   bool fPercent : 1;
   uint16_t reserved4 : 11;
 } BrtBeginCFRuleFields;
+
+union BrtBeginCFRuleUnion {
+  uint16_t raw_flags;
+  BrtBeginCFRuleFields fields;
+};
 
 typedef struct {
   bool f1904 : 1;
@@ -178,6 +253,11 @@ typedef struct {
   uint16_t unused : 13;
 } BrtWbPropFields;
 
+union BrtWbPropUnion {
+  uint32_t raw_flags;
+  BrtWbPropFields fields;
+};
+
 typedef struct {
   uint8_t valType : 4;
   uint8_t errStyle : 3;
@@ -193,10 +273,20 @@ typedef struct {
   uint8_t reserved : 6;
 } BrtDValFields;
 
+union BrtDValUnion {
+    int32_t raw_flags;
+    BrtDValFields fields;
+};
+
 typedef struct {
   uint16_t product : 15;
   bool reserved : 1;
 } FRTVersionFields;
+
+union FRTVersionUnion {
+  uint16_t raw_flags;
+  FRTVersionFields fields;
+};
 
 typedef struct {
   bool fRef : 1;
@@ -205,6 +295,11 @@ typedef struct {
   bool fRelID : 1;
   uint32_t reserved : 28;
 } FRTHeaderFields;
+
+union FRTHeaderUnion {
+  uint32_t raw_flags;
+  FRTHeaderFields fields;
+};
 
 typedef struct {
   uint8_t columns : 2;
@@ -217,6 +312,11 @@ typedef struct {
   bool nonresident : 1;
   uint8_t reserved2 : 2;
 } PtgListFields;
+
+union PtgListUnion {
+  uint16_t raw_flags;
+  PtgListFields fields;
+};
 
 typedef struct {
   bool fShowBrks : 1;
@@ -251,6 +351,11 @@ typedef struct {
   bool reserved6 : 1;
 } BrtBeginUserShViewFields;
 
+union BrtBeginUserShViewUnion {
+  uint32_t raw_flags;
+  BrtBeginUserShViewFields fields;
+};
+
 typedef struct {
   bool fIconic : 1;
   bool fDspHScroll : 1;
@@ -270,6 +375,11 @@ typedef struct {
   uint16_t : 15;
 } BrtUserBookViewFields;
 
+union BrtUserBookViewUnion {
+    int32_t raw_flags;
+    BrtUserBookViewFields fields;
+};
+
 typedef struct {
   bool fHFDiffOddEven : 1;
   bool fHFDiffFirst : 1;
@@ -277,6 +387,11 @@ typedef struct {
   bool fHFAlignMargins : 1;
   uint16_t reserved : 12;
 } BrtBeginHeaderFooterFields;
+
+union BrtBeginHeaderFooterUnion {
+  uint16_t raw_flags;
+  BrtBeginHeaderFooterFields fields;
+};
 
 enum PtgRowType {
   data = 0x00,
