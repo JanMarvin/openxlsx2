@@ -182,12 +182,12 @@ SEXP rbindlist(Rcpp::List x) {
   }
 
   std::vector<std::string> final_names(unique_names_set.begin(), unique_names_set.end());
-  R_xlen_t kk = final_names.size();
+  R_xlen_t kk = static_cast<R_xlen_t>(final_names.size());
 
   std::unordered_map<std::string, R_xlen_t> name_to_idx;
-  name_to_idx.reserve(kk);
+  name_to_idx.reserve(static_cast<uint64_t>(kk));
   for (R_xlen_t i = 0; i < kk; ++i) {
-    name_to_idx[final_names[i]] = i;
+    name_to_idx[final_names[static_cast<uint64_t>(i)]] = i;
   }
 
   // 1. create the list
