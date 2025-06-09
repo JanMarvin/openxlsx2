@@ -1,1 +1,1 @@
-PKG_CPPFLAGS = -I. -I../inst/include/pugixml -DUSE_RCPP_STRING
+PKG_CPPFLAGS = -I. -I../inst/include/pugixml

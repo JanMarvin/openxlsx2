@@ -53,6 +53,13 @@ enum celltype {
 #include <Rcpp.h>
 #endif
 
+
+#if defined(USE_RCPP_STRING)
+// Already defined, nothing to do.
+#elif R_VERSION < R_Version(4, 2, 0)
+#define USE_RCPP_STRING
+#endif
+
 #ifdef USE_RCPP_STRING
 using as_string = Rcpp::String;
 #else
