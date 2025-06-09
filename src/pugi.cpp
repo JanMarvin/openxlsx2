@@ -38,7 +38,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
 
   std::ostringstream oss;
   doc->print(oss, " ", pugi_format_flags);
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  return Rcpp::wrap(as_string(oss.str()));
 }
 
 inline uint32_t pugi_format(XPtrXML doc) {
@@ -114,7 +114,7 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
   if (path.empty()) {
     std::ostringstream oss;
     doc->print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
+    res.push_back(as_string(oss.str()));
     return Rcpp::wrap(res);
   }
 
@@ -154,7 +154,7 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
   for (const pugi::xml_node& node : current_nodes) {
     std::ostringstream oss;
     node.print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
+    res.push_back(as_string(oss.str()));
   }
 
   return Rcpp::wrap(res);
@@ -309,7 +309,7 @@ SEXP printXPtr(XPtrXML doc, std::string indent, bool raw, bool attr_indent) {
   std::ostringstream oss;
   doc->print(oss, indent.c_str(), pugi_format_flags);
 
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  return Rcpp::wrap(as_string(oss.str()));
 }
 
 // [[Rcpp::export]]
@@ -420,7 +420,7 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content,
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags);
 
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  return Rcpp::wrap(as_string(oss.str()));
 }
 
 //' create xml_node from R objects
@@ -502,7 +502,7 @@ Rcpp::CharacterVector xml_node_create(
   std::ostringstream oss;
   doc.print(oss, " ", pugi_format_flags);
 
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  return Rcpp::wrap(as_string(oss.str()));
 }
 
 // [[Rcpp::export]]
@@ -538,7 +538,7 @@ SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string>
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
+    return Rcpp::wrap(as_string(oss.str()));
   }
 }
 
@@ -581,6 +581,6 @@ SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::str
   } else {
     std::ostringstream oss;
     node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
+    return Rcpp::wrap(as_string(oss.str()));
   }
 }

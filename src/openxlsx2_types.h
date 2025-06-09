@@ -53,6 +53,12 @@ enum celltype {
 #include <Rcpp.h>
 #endif
 
+#ifdef USE_RCPP_STRING
+using as_string = Rcpp::String;
+#else
+using as_string = std::string;
+#endif
+
 // custom wrap function
 // Converts the imported values from c++ std::vector<xml_col> to an R dataframe.
 // Whenever new fields are spotted they have to be added here
@@ -65,7 +71,7 @@ inline SEXP wrap(const vec_string& x) {
   Rcpp::CharacterVector z(no_init(n));
 
   for (R_xlen_t i = 0; i < n; ++i) {
-    z[i] = Rcpp::String(x[static_cast<size_t>(i)]);
+    z[i] = as_string(x[static_cast<size_t>(i)]);
   }
 
   return Rcpp::wrap(z);

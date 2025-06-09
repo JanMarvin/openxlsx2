@@ -10,7 +10,7 @@ std::string txt_to_si(std::string txt, bool no_escapes, bool raw, bool skip_cont
 
 // helper function to access element from Rcpp::Character Vector as string
 inline std::string to_string(Rcpp::Vector<16>::Proxy x) {
-  return Rcpp::String(x);
+  return as_string(x);
 }
 
 inline void checkInterrupt(R_xlen_t iteration, R_xlen_t frequency = 10000) {
@@ -157,8 +157,8 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   Rcpp::CharacterVector is(Rcpp::no_init(n));        // <is> tag
 
   // struct to vector
-  // We have to convert utf8 inputs via Rcpp::String for non unicode R sessions
-  // Ideally there would be a function that calls Rcpp::String only if needed
+  // We have to convert utf8 inputs via as_string for non unicode R sessions
+  // Ideally there would be a function that calls as_string only if needed
   for (R_xlen_t i = 0; i < n; ++i) {
     size_t ii = static_cast<size_t>(i);
     if (!x[ii].r.empty())      r[i]      = std::string(x[ii].r);
@@ -167,17 +167,17 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
     if (!x[ii].c_s.empty())    c_s[i]    = std::string(x[ii].c_s);
     if (!x[ii].c_t.empty())    c_t[i]    = std::string(x[ii].c_t);
     if (has_cm && !x[ii].c_cm.empty())   c_cm[i]   = std::string(x[ii].c_cm);
-    if (has_ph && !x[ii].c_ph.empty())   c_ph[i]   = Rcpp::String(x[ii].c_ph);
+    if (has_ph && !x[ii].c_ph.empty())   c_ph[i]   = as_string(x[ii].c_ph);
     if (has_vm && !x[ii].c_vm.empty())   c_vm[i]   = std::string(x[ii].c_vm);
     if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
       if (x[ii].c_t.empty() && x[ii].f_attr.empty())
         v[i] = std::string(x[ii].v);
       else
-        v[i] = Rcpp::String(x[ii].v);
+        v[i] = as_string(x[ii].v);
     }
-    if (!x[ii].f.empty())      f[i]      = Rcpp::String(x[ii].f);
+    if (!x[ii].f.empty())      f[i]      = as_string(x[ii].f);
     if (!x[ii].f_attr.empty()) f_attr[i] = std::string(x[ii].f_attr);
-    if (!x[ii].is.empty())     is[i]     = Rcpp::String(x[ii].is);
+    if (!x[ii].is.empty())     is[i]     = as_string(x[ii].is);
   }
 
   // Assign and return a dataframe

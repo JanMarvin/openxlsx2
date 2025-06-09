@@ -4,7 +4,7 @@
 SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
   auto n = vec.length();
   Rcpp::CharacterVector res(Rcpp::no_init(n));
-  std::unordered_map<std::string, Rcpp::String> cache;  // Cache Rcpp::String directly
+  std::unordered_map<std::string, as_string> cache;  // Cache as_string directly
 
   for (auto i = 0; i < n; ++i) {
     std::string tmp = Rcpp::as<std::string>(vec[i]);
@@ -18,7 +18,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
 
     if (tmp.empty()) {
       res[i] = "";
-      cache[tmp] = Rcpp::String("");  // Cache the Rcpp::String directly
+      cache[tmp] = as_string("");  // Cache the as_string directly
       continue;
     }
 
@@ -50,7 +50,7 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
     }
 
     // Store result in cache
-    Rcpp::String rcpp_text = Rcpp::String(text);
+    as_string rcpp_text = as_string(text);
     cache[tmp] = rcpp_text;
     res[i] = rcpp_text;
   }

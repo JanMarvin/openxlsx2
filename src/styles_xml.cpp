@@ -108,7 +108,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
           uint32_t pugi_format_flags = pugi::format_raw;
           std::ostringstream oss;
           cld.print(oss, " ", pugi_format_flags);
-          Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = Rcpp::String(oss.str());
+          Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = as_string(oss.str());
         } else {
           for (auto attrs : cld.attributes()) {
             std::string attr_name = attrs.name();
