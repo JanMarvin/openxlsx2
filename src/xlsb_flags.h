@@ -397,7 +397,7 @@ struct BrtBeginUserShView {
     XL_CONSTEXPR FlagProxy reserved4() const           { return FlagProxy(raw_flags, 1 << 28); }
     XL_CONSTEXPR FlagProxy fRuler() const              { return FlagProxy(raw_flags, 1 << 29); }
     XL_CONSTEXPR FlagProxy reserved5() const           { return FlagProxy(raw_flags, 1 << 30); }
-    XL_CONSTEXPR FlagProxy reserved6() const           { return FlagProxy(raw_flags, 1 << 31); }
+    XL_CONSTEXPR FlagProxy reserved6() const           { return FlagProxy(raw_flags, 1u << 31); }
 };
 
 // --- Conversion for BrtUserBookViewUnion ---

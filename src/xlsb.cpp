@@ -1515,7 +1515,8 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
           std::ostringstream cwv;
 
-          int32_t xLeft = 0, xRight = 0, yTop = 0, yBot = 0, iTabid = 0, iTabRatio = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, flags = 0;
+          uint32_t flags = 0;
+          int32_t xLeft = 0, xRight = 0, yTop = 0, yBot = 0, iTabid = 0, iTabRatio = 0, guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0;
           int16_t wMergeInterval = 0;
           std::string stName;
 
@@ -3463,7 +3464,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         case BrtBeginUserShView: {
           if (debug) Rcpp::Rcout << "BrtBeginUserShView" << std::endl;
 
-          int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, iTabId = 0, dwScale = 0, icv = 0, flags = 0;
+          uint32_t flags = 0;
+          int32_t guid0 = 0, guid1 = 0, guid2 = 0, guid3 = 0, iTabId = 0, dwScale = 0, icv = 0;
 
           std::vector<int32_t> guids(4);
           guids[0] = readbin(guid0, bin, 0);
