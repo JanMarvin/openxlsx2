@@ -577,7 +577,7 @@ void ProductVersion(std::istream& sas, bool swapit, bool debug, bool frt) {
   FRTVersionUnion view_flags;
   view_flags.raw_flags = flags;
 
-  if (frt && view_flags.fields.reserved != 0) Rcpp::stop("product version reserved not 0 but %d", (int32_t)view_flags.fields.reserved);
+  if (frt && (int32_t)view_flags.fields.reserved != 0) Rcpp::stop("product version reserved not 0 but %d", (int32_t)view_flags.fields.reserved);
   if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, view_flags.fields.product, view_flags.fields.reserved);
 }
 
