@@ -48,6 +48,16 @@ struct ValueProxy {
     }
 };
 
+// --- Conversion for StyleFlagsUnion ---
+struct PaneFlags {
+  const uint8_t raw_flags;
+
+  explicit PaneFlags(uint8_t initial_flags = 0) : raw_flags(initial_flags) {}
+
+  XL_CONSTEXPR FlagProxy fFrozen() const    { return FlagProxy(raw_flags, 1 << 0); }
+  XL_CONSTEXPR FlagProxy fFrozenNoSplit() const   { return FlagProxy(raw_flags, 1 << 1); }
+  XL_CONSTEXPR ValueProxy<uint8_t> reserved() const { return ValueProxy<uint8_t>(raw_flags, 2, 6); }
+};
 
 // --- Conversion for StyleFlagsUnion ---
 struct StyleFlags {
@@ -58,6 +68,7 @@ struct StyleFlags {
     XL_CONSTEXPR FlagProxy fBuiltIn() const  { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fHidden() const   { return FlagProxy(raw_flags, 1 << 1); }
     XL_CONSTEXPR FlagProxy fCustom() const   { return FlagProxy(raw_flags, 1 << 2); }
+    XL_CONSTEXPR ValueProxy<uint16_t> unused() const { return ValueProxy<uint16_t>(raw_flags, 3, 13); }
 };
 
 // --- Conversion for xfGrbitAtrUnion ---
@@ -93,6 +104,27 @@ struct ColRelShort {
     XL_CONSTEXPR ValueProxy<uint16_t> col() const { return ValueProxy<uint16_t>(raw_flags, 0, 14); }
     XL_CONSTEXPR FlagProxy fColRel() const        { return FlagProxy(raw_flags, 1 << 14); }
     XL_CONSTEXPR FlagProxy fRwRel() const         { return FlagProxy(raw_flags, 1 << 15); }
+};
+
+// --- Conversion for BrtBeginCsView ---
+struct BrtBeginCsView {
+  const uint16_t raw_flags;
+
+  explicit BrtBeginCsView(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+
+  XL_CONSTEXPR FlagProxy fSelected() const        { return FlagProxy(raw_flags, 1 << 0); }
+  XL_CONSTEXPR ValueProxy<uint16_t> unused() const { return ValueProxy<uint16_t>(raw_flags, 1, 15); }
+};
+
+// --- Conversion for BrtOleObject ---
+struct BrtOleObject {
+  const uint16_t raw_flags;
+
+  explicit BrtOleObject(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+
+  XL_CONSTEXPR FlagProxy fLinked() const        { return FlagProxy(raw_flags, 1 << 0); }
+  XL_CONSTEXPR FlagProxy fAutoLoad() const         { return FlagProxy(raw_flags, 1 << 1); }
+  XL_CONSTEXPR ValueProxy<uint16_t> reserved() const { return ValueProxy<uint16_t>(raw_flags, 2, 14); }
 };
 
 // --- Conversion for BrtRowHdrUnion ---

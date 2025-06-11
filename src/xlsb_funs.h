@@ -635,15 +635,12 @@ std::vector<int32_t> ColRelShort(std::istream& sas, bool swapit) {
   uint16_t tmp = 0;
   tmp = readbin(tmp, sas, swapit);
 
-  int16_t col = 0, fColRel = 0, fRwRel = 0;
-  col     = static_cast<int16_t>((tmp & 0x3FFF));
-  fColRel = (tmp >> 14) & 0x0001;
-  fRwRel  = (tmp >> 15) & 0x0001;
+  struct ColRelShort view_flags(tmp);
 
   std::vector<int32_t> out(3);
-  out[0] = col;
-  out[1] = fColRel;
-  out[2] = fRwRel;
+  out[0] = view_flags.col();
+  out[1] = view_flags.fColRel();
+  out[2] = view_flags.fRwRel();
 
   return out;
 }
