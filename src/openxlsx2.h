@@ -1,3 +1,6 @@
+#ifndef OPENXLSX2_H
+#define OPENXLSX2_H
+
 #include "openxlsx2_types.h"
 
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x);
@@ -308,3 +311,5 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   }
 
 }
+
+#endif

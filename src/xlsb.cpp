@@ -3,6 +3,7 @@
 #include "openxlsx2.h"
 #include "xlsb_defines.h"
 #include "xlsb_funs.h"
+#include "xlsb_flags.h"
 
 #include <iomanip>
 
@@ -78,9 +79,7 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
           dyHeight = readbin(dyHeight, bin, swapit) / 20;  // twip
           grbit = readbin(grbit, bin, swapit);
 
-          FontFlagsUnion view_flags;
-          view_flags.raw_flags = grbit;
-
+          FontFlags view_flags(grbit);
 
           bls = readbin(bls, bin, swapit);
           // 0x0190 normal
@@ -136,9 +135,9 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
           std::string name = XLWideString(bin, swapit);
 
           if (bls == 0x02BC)  out << "<b/>" << std::endl;
-          if (view_flags.fields.fItalic) out << "<i/>" << std::endl;
-          if (view_flags.fields.fStrikeout) out << "<strike/>" << std::endl;
-          // if (view_flags.fields.fOutline) out << "<outline/>" << std::endl;
+          if (view_flags.fItalic()) out << "<i/>" << std::endl;
+          if (view_flags.fStrikeout()) out << "<strike/>" << std::endl;
+          // if (view_flags.fOutline) out << "<outline/>" << std::endl;
 
           if (uls > 0) {
             if (uls == 0x01) out << "<u val=\"single\" />" << std::endl;
@@ -400,43 +399,41 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
 
           brtxf = readbin(brtxf, bin, swapit);
 
-          XFUnion view_flags;
-          view_flags.raw_flags = brtxf;
+          XF view_flags(brtxf);
 
-          uint8_t xfgbit = view_flags.fields.xfGrbitAtr;
+          uint8_t xfgbit = view_flags.xfGrbitAtr();
 
-          xfGrbitAtrUnion view_flags2;
-          view_flags2.raw_flags = xfgbit;
+          xfGrbitAtr view_flags2(xfgbit);
 
           out << " numFmtId=\"" << iFmt << "\"";
           out << " fontId=\"" << iFont << "\"";
           out << " fillId=\"" << iFill << "\"";
           out << " borderId=\"" << ixBorder << "\"";
-          out << " applyNumberFormat=\"" << !view_flags2.fields.bit1 << "\"";
-          out << " applyFont=\"" << !view_flags2.fields.bit2 << "\"";
-          out << " applyBorder=\"" << !view_flags2.fields.bit4 << "\"";
-          out << " applyFill=\"" << !view_flags2.fields.bit5 << "\"";
-          out << " applyAlignment=\"" << !view_flags2.fields.bit3 << "\"";
-          out << " applyProtection=\"" << !view_flags2.fields.bit6 << "\"";
+          out << " applyNumberFormat=\"" << !view_flags2.bit1() << "\"";
+          out << " applyFont=\"" << !view_flags2.bit2() << "\"";
+          out << " applyBorder=\"" << !view_flags2.bit4() << "\"";
+          out << " applyFill=\"" << !view_flags2.bit5() << "\"";
+          out << " applyAlignment=\"" << !view_flags2.bit3() << "\"";
+          out << " applyProtection=\"" << !view_flags2.bit6() << "\"";
 
 
-          if (view_flags.fields.alc > 0 || view_flags.fields.alcv > 0 || indent || trot || view_flags.fields.iReadingOrder || view_flags.fields.fShrinkToFit || view_flags.fields.fWrap || view_flags.fields.fJustLast) {
+          if (view_flags.alc() > 0 || view_flags.alcv() > 0 || indent || trot || view_flags.iReadingOrder() || view_flags.fShrinkToFit() || view_flags.fWrap() || view_flags.fJustLast()) {
             out << "><alignment";
-            out << halign(view_flags.fields.alc);
-            out << valign(view_flags.fields.alcv);
+            out << halign(view_flags.alc());
+            out << valign(view_flags.alcv());
 
-            if (view_flags.fields.fWrap)
-              out << " wrapText=\"" << view_flags.fields.fWrap << "\"";
-            if (view_flags.fields.fShrinkToFit)
-              out << " shrinkToFit=\"" << view_flags.fields.fWrap << "\"";
+            if (view_flags.fWrap())
+              out << " wrapText=\"" << view_flags.fWrap() << "\"";
+            if (view_flags.fShrinkToFit())
+              out << " shrinkToFit=\"" << view_flags.fWrap() << "\"";
             // something is not quite right here.
             // I have a file which is left to right, but this here returns 2: right to left
-            if (view_flags.fields.iReadingOrder)
-              out << " readingOrder=\"" << (uint16_t)view_flags.fields.iReadingOrder << "\"";
+            if (view_flags.iReadingOrder())
+              out << " readingOrder=\"" << (uint16_t)view_flags.iReadingOrder() << "\"";
             if (indent)
               out << " indent=\"" << (uint16_t)indent / 3 << "\"";
-            if (view_flags.fields.fJustLast)
-              out << " justifyLastLine=\"" << view_flags.fields.fJustLast << "\"";
+            if (view_flags.fJustLast())
+              out << " justifyLastLine=\"" << view_flags.fJustLast() << "\"";
             if (trot)
               out << " textRotation=\"" << (uint16_t)trot << "\"";
 
@@ -906,17 +903,15 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
           flags = readbin(flags, bin, swapit);
           std::string stStyleName = XLNullableWideString(bin, swapit);
 
-          BrtTableStyleClientUnion view_flags;
-          view_flags.raw_flags = flags;
-
+          struct BrtTableStyleClient view_flags(flags);
 
           out << "<tableStyleInfo name=\"" << stStyleName << "\"";
-          // out <<" showColHeaders=\"" << view_flags.fields.fColumnHeaders << "\"";  // not part of tableStyleInfo?
-          out << " showFirstColumn=\"" << view_flags.fields.fFirstColumn << "\"";
-          out << " showLastColumn=\"" << view_flags.fields.fLastColumn << "\"";
-          // out <<" showRowHeaders=\"" << view_flags.fields.fRowHeaders << "\"";  // not part of tableStyleInfo?
-          out << " showRowStripes=\"" << view_flags.fields.fRowStripes << "\"";
-          out << " showColumnStripes=\"" << view_flags.fields.fColumnStripes << "\"";
+          // out <<" showColHeaders=\"" << view_flags.fColumnHeaders << "\"";  // not part of tableStyleInfo?
+          out << " showFirstColumn=\"" << view_flags.fFirstColumn() << "\"";
+          out << " showLastColumn=\"" << view_flags.fLastColumn() << "\"";
+          // out <<" showRowHeaders=\"" << view_flags.fRowHeaders << "\"";  // not part of tableStyleInfo?
+          out << " showRowStripes=\"" << view_flags.fRowStripes() << "\"";
+          out << " showColumnStripes=\"" << view_flags.fColumnStripes() << "\"";
           out << " />" << std::endl;
           break;
         }
@@ -1416,29 +1411,28 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           dwThemeVersion = readbin(dwThemeVersion, bin, swapit);
           std::string strName = XLWideString(bin, swapit);
 
-          BrtWbPropUnion view_flags;
-          view_flags.raw_flags = flags;
+          struct BrtWbProp view_flags(flags);
 
           out <<
             "<workbookPr" <<
             // " allowRefreshQuery=\"" <<  << "\" " <<
-            " autoCompressPictures=\"" << view_flags.fields.fAutoCompressPictures << "\" " <<
-            " backupFile=\"" << view_flags.fields.fBackup << "\" " <<
-            " checkCompatibility=\"" << view_flags.fields.fCheckCompat << "\" " <<
+            " autoCompressPictures=\"" << view_flags.fAutoCompressPictures() << "\" " <<
+            " backupFile=\"" << view_flags.fBackup() << "\" " <<
+            " checkCompatibility=\"" << view_flags.fCheckCompat() << "\" " <<
             " codeName=\"" << strName << "\" " <<
-            " date1904=\"" << view_flags.fields.f1904 << "\" " <<
+            " date1904=\"" << view_flags.f1904() << "\" " <<
             " defaultThemeVersion=\"" << dwThemeVersion << "\" " <<
-            " filterPrivacy=\"" << view_flags.fields.fFilterPrivacy << "\" " <<
-            " hidePivotFieldList=\"" << view_flags.fields.fHidePivotTableFList << "\" " <<
-            " promptedSolutions=\"" << view_flags.fields.fBuggedUserAboutSolution << "\" " <<
-            " publishItems=\"" << view_flags.fields.fPublishedBookItems << "\" " <<
-            " refreshAllConnections=\"" << view_flags.fields.fRefreshAll << "\" " <<
-            " saveExternalLinkValues=\"" << view_flags.fields.fNoSaveSup << "\" " <<
+            " filterPrivacy=\"" << view_flags.fFilterPrivacy() << "\" " <<
+            " hidePivotFieldList=\"" << view_flags.fHidePivotTableFList() << "\" " <<
+            " promptedSolutions=\"" << view_flags.fBuggedUserAboutSolution() << "\" " <<
+            " publishItems=\"" << view_flags.fPublishedBookItems() << "\" " <<
+            " refreshAllConnections=\"" << view_flags.fRefreshAll() << "\" " <<
+            " saveExternalLinkValues=\"" << view_flags.fNoSaveSup() << "\" " <<
             // " showBorderUnselectedTables=\"" <<  << "\" " <<
-            " showInkAnnotation=\"" << view_flags.fields.fShowInkAnnotation << "\" " <<
-            " showObjects=\"" << (uint32_t)view_flags.fields.mdDspObj << "\" " <<
-            " showPivotChartFilter=\"" << view_flags.fields.fShowPivotChartFilter << "\" " <<
-            " updateLinks=\"" << (uint32_t)view_flags.fields.grbitUpdateLinks << "\" " <<
+            " showInkAnnotation=\"" << view_flags.fShowInkAnnotation() << "\" " <<
+            " showObjects=\"" << (uint32_t)view_flags.mdDspObj() << "\" " <<
+            " showPivotChartFilter=\"" << view_flags.fShowPivotChartFilter() << "\" " <<
+            " updateLinks=\"" << (uint32_t)view_flags.grbitUpdateLinks() <<  "\" " <<
             "/>" << std::endl;
 
 
@@ -1541,46 +1535,44 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           wMergeInterval = readbin(wMergeInterval, bin, swapit);
 
           flags = readbin(flags, bin, swapit);
-          BrtUserBookViewUnion view_flags;
-          view_flags.raw_flags = flags;
-
+          struct BrtUserBookView view_flags(flags);
 
           stName = XLWideString(bin, swapit);
 
           std::string showComments;
-          if (view_flags.fields.mdDspNote == 0) showComments = "commNone";
-          if (view_flags.fields.mdDspNote == 1) showComments = "commIndAndComment";
-          if (view_flags.fields.mdDspNote == 2) showComments = "commIndicator";
+          if (view_flags.mdDspNote() == 0) showComments = "commNone";
+          if (view_flags.mdDspNote() == 1) showComments = "commIndAndComment";
+          if (view_flags.mdDspNote() == 2) showComments = "commIndicator";
 
           std::string showObjects;
-          if (view_flags.fields.mdHideObj == 0) showObjects = "all";
-          if (view_flags.fields.mdHideObj == 1) showObjects = "placeholders";
-          if (view_flags.fields.mdHideObj == 2) showObjects = "none";
+          if (view_flags.mdHideObj() == 0) showObjects = "all";
+          if (view_flags.mdHideObj() == 1) showObjects = "placeholders";
+          if (view_flags.mdHideObj() == 2) showObjects = "none";
 
           cwv << "<customWorkbookView" << std::endl;
           cwv << " name=\"" << stName << "\"" << std::endl;
           cwv << " guid=\"{" << guid_str(guids) << "}\"" << std::endl;
-          if (view_flags.fields.fTimedUpdate) cwv << " autoUpdate=\"" << view_flags.fields.fTimedUpdate << "\"" << std::endl;
-          if (view_flags.fields.fTimedUpdate) cwv << " mergeInterval=\"" << wMergeInterval << "\"" << std::endl;
-          if (view_flags.fields.fAllMemChanges) cwv << " changesSavedWin=\"" << view_flags.fields.fAllMemChanges << "\"" << std::endl;
-          if (view_flags.fields.fOnlySync) cwv << " onlySync=\"" << view_flags.fields.fOnlySync << "\"" << std::endl;
-          if (view_flags.fields.fPersonalView) cwv << " personalView=\"" << view_flags.fields.fPersonalView << "\"" << std::endl;
-          if (!view_flags.fields.fPrintIncl) cwv << " includePrintSettings=\"" << view_flags.fields.fPrintIncl << "\"" << std::endl;
+          if (view_flags.fTimedUpdate()) cwv << " autoUpdate=\"" << view_flags.fTimedUpdate() << "\"" << std::endl;
+          if (view_flags.fTimedUpdate()) cwv << " mergeInterval=\"" << wMergeInterval << "\"" << std::endl;
+          if (view_flags.fAllMemChanges()) cwv << " changesSavedWin=\"" << view_flags.fAllMemChanges() << "\"" << std::endl;
+          if (view_flags.fOnlySync()) cwv << " onlySync=\"" << view_flags.fOnlySync() << "\"" << std::endl;
+          if (view_flags.fPersonalView()) cwv << " personalView=\"" << view_flags.fPersonalView() << "\"" << std::endl;
+          if (!view_flags.fPrintIncl()) cwv << " includePrintSettings=\"" << view_flags.fPrintIncl() << "\"" << std::endl;
           // wrong?
-          // if (!view_flags.fields.fRowColIncl) cwv << " includeHiddenRowCol=\"" << view_flags.fields.fRowColIncl << "\"" << std::endl;
-          if (view_flags.fields.fZoom) cwv << " maximized=\"" << view_flags.fields.fZoom << "\"" << std::endl;
-          if (view_flags.fields.fIconic) cwv << " minimized=\"" << view_flags.fields.fIconic << "\"" << std::endl;
-          if (!view_flags.fields.fDspHScroll) cwv << " showHorizontalScroll=\"" << view_flags.fields.fDspHScroll << "\"" << std::endl;
-          if (!view_flags.fields.fDspVScroll) cwv << " showVerticalScroll=\"" << view_flags.fields.fDspVScroll << "\"" << std::endl;
-          if (!view_flags.fields.fBotAdornment) cwv << " showSheetTabs=\"" << view_flags.fields.fBotAdornment << "\"" << std::endl;
+          // if (!view_flags.fRowColIncl) cwv << " includeHiddenRowCol=\"" << view_flags.fRowColIncl << "\"" << std::endl;
+          if (view_flags.fZoom()) cwv << " maximized=\"" << view_flags.fZoom() << "\"" << std::endl;
+          if (view_flags.fIconic()) cwv << " minimized=\"" << view_flags.fIconic() << "\"" << std::endl;
+          if (!view_flags.fDspHScroll()) cwv << " showHorizontalScroll=\"" << view_flags.fDspHScroll() << "\"" << std::endl;
+          if (!view_flags.fDspVScroll()) cwv << " showVerticalScroll=\"" << view_flags.fDspVScroll() << "\"" << std::endl;
+          if (!view_flags.fBotAdornment()) cwv << " showSheetTabs=\"" << view_flags.fBotAdornment() << "\"" << std::endl;
           if (xLeft > 0) cwv << " xWindow=\"" << xLeft << "\"" << std::endl;
           if (yTop > 0) cwv << " yWindow=\"" << yTop << "\"" << std::endl;
           if (xRight > 0) cwv << " windowWidth=\"" << xRight << "\"" << std::endl;
           if ((yBot - yTop) > 0) cwv << " windowHeight=\"" << (yBot - yTop) << "\"" << std::endl;
           if (iTabRatio != 600) cwv << " tabRatio=\"" << iTabRatio << "\"" << std::endl;
           cwv << " activeSheetId=\"" << iTabid << "\"" << std::endl;
-          if (!view_flags.fields.fDspFmlaBar) cwv << " showFormulaBar=\"" << view_flags.fields.fDspFmlaBar << "\"" << std::endl;
-          if (!view_flags.fields.fDspStatus) cwv << " showStatusbar=\"" << view_flags.fields.fDspStatus << "\"" << std::endl;
+          if (!view_flags.fDspFmlaBar()) cwv << " showFormulaBar=\"" << view_flags.fDspFmlaBar() << "\"" << std::endl;
+          if (!view_flags.fDspStatus()) cwv << " showStatusbar=\"" << view_flags.fDspStatus() << "\"" << std::endl;
           if (showComments != "commIndicator") cwv << " showComments=\"" << showComments << "\"" << std::endl;
           if (showObjects != "all") cwv << " showObjects=\"" << showObjects << "\"" << std::endl;
           cwv << "/>" << std::endl;
@@ -1646,13 +1638,8 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           BrtNameUint = readbin(BrtNameUint, bin, swapit);
           BrtNameUint2 = readbin(BrtNameUint2, bin, swapit);
 
-          // BrtNameFields* fields = (BrtNameFields*)&BrtNameUint;
-          // BrtNameFields2 *fields2 = (BrtNameFields2 *)&BrtNameUint2;
-          BrtNameUnion view_flags;
-          view_flags.raw_flags = BrtNameUint;
-
-          BrtName2Union view_flags2;
-          view_flags2.raw_flags = BrtNameUint2;
+          struct BrtName view_flags(BrtNameUint);
+          BrtName2 view_flags2(BrtNameUint2);
 
           // fHidden    - visible
           // fFunc      - xml macro
@@ -1669,17 +1656,17 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           if (debug)
             Rprintf(
               "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
-              view_flags.fields.fHidden,
-              view_flags.fields.fFunc,
-              view_flags.fields.fOB,
-              view_flags.fields.fProc,
-              view_flags.fields.fCalcExp,
-              view_flags.fields.fBuiltin,
-              view_flags.fields.fgrp,
-              view_flags.fields.fPublished,
-              view_flags2.fields.fWorkbookParam,
-              view_flags2.fields.fFutureFunction,
-              view_flags2.fields.reserved
+              (int32_t)view_flags.fHidden(),
+              (int32_t)view_flags.fFunc(),
+              (int32_t)view_flags.fOB(),
+              (int32_t)view_flags.fProc(),
+              (int32_t)view_flags.fCalcExp(),
+              (int32_t)view_flags.fBuiltin(),
+              (int32_t)view_flags.fgrp(),
+              (int32_t)view_flags.fPublished(),
+              (int32_t)view_flags2.fWorkbookParam(),
+              (int32_t)view_flags2.fFutureFunction(),
+              (int32_t)view_flags2.reserved()
             );
 
           chKey = readbin(chKey, bin, swapit);
@@ -1706,7 +1693,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           if (debug)
             Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
 
-          if (view_flags.fields.fProc && fml.compare("") != 0) {
+          if (view_flags.fProc() && fml.compare("") != 0) {
             /* -- something is wrong. error with some nhs macro xlsb file -- */
             // must be NULL
             if (debug) Rcpp::Rcout << 1 << std::endl;
@@ -1728,7 +1715,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
             Rcpp::stop("repositioning");
           }
 
-          if (view_flags.fields.fBuiltin) {
+          if (view_flags.fBuiltin()) {
             // add the builtin xl name namespace
             if (name.find("_xlnm.") == std::string::npos)
               name = "_xlnm." + name;
@@ -1742,8 +1729,8 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           if (itab != 0xFFFFFFFF)
             defNam += "\" localSheetId=\"" + std::to_string(itab);
 
-          if (view_flags.fields.fHidden)
-            defNam += "\" hidden=\"" + std::to_string(view_flags.fields.fHidden);
+          if (view_flags.fHidden())
+            defNam += "\" hidden=\"" + std::to_string(view_flags.fHidden());
 
           // lacks the formula for the defined name
           defNam = defNam + "\">" + fml + "</definedName>";
@@ -2249,42 +2236,41 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           wScalePLV = readbin(wScalePLV, bin, swapit);
           iWbkView = readbin(iWbkView, bin, swapit);
 
-          BrtBeginWsViewUnion view_flags;
-          view_flags.raw_flags = flags;
+          struct BrtBeginWsView view_flags(flags);
 
           out << "<sheetView";
           // careful, without the following nothing goes
           out << " workbookViewId=\"" << iWbkView << "\"";
           if (icvHdr)
             out << " colorId=\"" << (int32_t)icvHdr << "\"";
-          if (!view_flags.fields.fDefaultHdr)
-            out << " defaultGridColor=\"" << view_flags.fields.fDefaultHdr << "\"";
-          if (view_flags.fields.fRightToLeft) {
-            Rcpp::Rcout << "rightToLeft=\"" << view_flags.fields.fRightToLeft << "\"" << std::endl;
-            out << " rightToLeft=\"" << view_flags.fields.fRightToLeft << "\"";
+          if (!view_flags.fDefaultHdr())
+            out << " defaultGridColor=\"" << view_flags.fDefaultHdr() << "\"";
+          if (view_flags.fRightToLeft()) {
+            Rcpp::Rcout << "rightToLeft=\"" << view_flags.fRightToLeft() << "\"" << std::endl;
+            out << " rightToLeft=\"" << view_flags.fRightToLeft() << "\"";
           }
-          if (view_flags.fields.fDspFmla)
-            out << " showFormulas=\"" << view_flags.fields.fDspFmla << "\"";
-          if (!view_flags.fields.fDspGrid)
-            out << " showGridLines=\"" << view_flags.fields.fDspGrid << "\"";
-          if (!view_flags.fields.fDspGuts)
-            out << " showOutlineSymbols=\"" << view_flags.fields.fDspGuts << "\"";
-          if (!view_flags.fields.fDspRwCol)
-            out << " showRowColHeaders=\"" << view_flags.fields.fDspRwCol << "\"";
-          if (view_flags.fields.fDspRuler)
-            out << " showRuler=\"" << view_flags.fields.fDspRuler << "\"";
-          if (view_flags.fields.fWhitespaceHidden)
-            out << " showWhiteSpace=\"" << view_flags.fields.fWhitespaceHidden << "\"";
-          if (view_flags.fields.fDspZeros)
-            out << " showZeros=\"" << view_flags.fields.fDspZeros << "\"";
-          if (view_flags.fields.fSelected)
-            out << " tabSelected=\"" << view_flags.fields.fSelected << "\"";
+          if (view_flags.fDspFmla())
+            out << " showFormulas=\"" << view_flags.fDspFmla() << "\"";
+          if (!view_flags.fDspGrid())
+            out << " showGridLines=\"" << view_flags.fDspGrid() << "\"";
+          if (!view_flags.fDspGuts())
+            out << " showOutlineSymbols=\"" << view_flags.fDspGuts() << "\"";
+          if (!view_flags.fDspRwCol())
+            out << " showRowColHeaders=\"" << view_flags.fDspRwCol() << "\"";
+          if (view_flags.fDspRuler())
+            out << " showRuler=\"" << view_flags.fDspRuler() << "\"";
+          if (view_flags.fWhitespaceHidden())
+            out << " showWhiteSpace=\"" << view_flags.fWhitespaceHidden() << "\"";
+          if (view_flags.fDspZeros())
+            out << " showZeros=\"" << view_flags.fDspZeros() << "\"";
+          if (view_flags.fSelected())
+            out << " tabSelected=\"" << view_flags.fSelected() << "\"";
           if (colLeft > 0 || rwTop > 0)
             out << " topLeftCell=\"" << int_to_col(colLeft + 1) << std::to_string(rwTop + 1) << "\"";
           if (xlView)
             out << " view=\"" << XLView(xlView) << "\"";
-          if (view_flags.fields.fWnProt)
-            out << " windowProtection=\"" << view_flags.fields.fWnProt << "\"";
+          if (view_flags.fWnProt())
+            out << " windowProtection=\"" << view_flags.fWnProt() << "\"";
           if (wScale)
             out << " zoomScale=\"" << wScale << "\"";
           if (wScaleNormal)
@@ -2367,8 +2353,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           std::string stHeaderFirst = XLNullableWideString(bin, swapit);
           std::string stFooterFirst = XLNullableWideString(bin, swapit);
 
-          BrtBeginHeaderFooterUnion view_flags;
-          view_flags.raw_flags = flags;
+          struct BrtBeginHeaderFooter view_flags(flags);
 
           if (debug)
           Rcpp::Rcout << stHeader<< ": " << stFooter << ": " <<
@@ -2376,10 +2361,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
               stHeaderFirst << ": " << stFooterFirst << std::endl;
 
           out << "<headerFooter" << std::endl;
-          if (view_flags.fields.fHFDiffOddEven) out << " differentOddEven=\"" << view_flags.fields.fHFDiffOddEven << "\"" << std::endl;
-          if (view_flags.fields.fHFDiffFirst)  out << " differentFirst=\"" << view_flags.fields.fHFDiffFirst << "\"" << std::endl;
-          if (view_flags.fields.fHFScaleWithDoc)  out << " scaleWithDoc=\"" << view_flags.fields.fHFScaleWithDoc << "\"" << std::endl;
-          if (view_flags.fields.fHFAlignMargins)  out << " alignWithMargins=\"" << view_flags.fields.fHFAlignMargins << "\"" << std::endl;
+          if (view_flags.fHFDiffOddEven()) out << " differentOddEven=\"" << view_flags.fHFDiffOddEven() << "\"" << std::endl;
+          if (view_flags.fHFDiffFirst())  out << " differentFirst=\"" << view_flags.fHFDiffFirst() << "\"" << std::endl;
+          if (view_flags.fHFScaleWithDoc())  out << " scaleWithDoc=\"" << view_flags.fHFScaleWithDoc() << "\"" << std::endl;
+          if (view_flags.fHFAlignMargins())  out << " alignWithMargins=\"" << view_flags.fHFAlignMargins() << "\"" << std::endl;
           out << ">" << std::endl;
 
           if (!stHeader.empty()) out << "<oddHeader>" << stHeader <<"</oddHeader>" << std::endl;
@@ -2468,8 +2453,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           ixfe = readbin(ixfe, bin, swapit);
           colinfo = readbin(colinfo, bin, swapit);
 
-          BrtColInfoUnion view_flags;
-          view_flags.raw_flags = colinfo;
+          struct BrtColInfo view_flags(colinfo);
 
           out << "<col" << " min=\"" << colFirst << "\" max =\"" << colLast << "\"";
 
@@ -2477,16 +2461,16 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             out << " style=\"" <<  ixfe << "\"";
 
           out << " width=\"" <<  (double)coldx/256 << "\"";
-          if (view_flags.fields.fHidden)
-            out << " hidden=\"" <<  view_flags.fields.fHidden << "\"";
-          if (view_flags.fields.fUserSet)
-            out << " customWidth=\"" <<  view_flags.fields.fUserSet << "\"";
-          if (view_flags.fields.fBestFit)
-            out << " bestFit=\"" <<  view_flags.fields.fBestFit << "\"";
-          if (view_flags.fields.iOutLevel>0)
-            out << " outlineLevel=\"" <<  (uint16_t)view_flags.fields.iOutLevel << "\"";
-          if (view_flags.fields.fCollapsed)
-            out << " collapsed=\"" <<  view_flags.fields.fCollapsed << "\"";
+          if (view_flags.fHidden())
+            out << " hidden=\"" <<  view_flags.fHidden() << "\"";
+          if (view_flags.fUserSet())
+            out << " customWidth=\"" <<  view_flags.fUserSet() << "\"";
+          if (view_flags.fBestFit())
+            out << " bestFit=\"" <<  view_flags.fBestFit() << "\"";
+          if (view_flags.iOutLevel()>0)
+            out << " outlineLevel=\"" <<  (uint16_t)view_flags.iOutLevel() << "\"";
+          if (view_flags.fCollapsed())
+            out << " collapsed=\"" <<  view_flags.fCollapsed() << "\"";
 
           out << " />" << std::endl;
           break;
@@ -2595,8 +2579,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t rwoheaderfields = 0;
           rwoheaderfields = readbin(rwoheaderfields, bin, swapit);
 
-          BrtRowHdrUnion view_flags;
-          view_flags.raw_flags = rwoheaderfields;
+          struct BrtRowHdr view_flags(rwoheaderfields);
 
           // fExtraAsc = 1
           // fExtraDsc = 1
@@ -2644,29 +2627,29 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           out << "<row r=\"";  //  << bin.tellg()
           out << rw + 1 << "\"";
 
-          if (view_flags.fields.fUnsynced != 0) {
+          if (view_flags.fUnsynced() != 0) {
             // Rcpp::Rcout << " ht=\"" << miyRw/20 << "\"" << std::endl;
             out << " ht=\"" << miyRw/20 << "\"";
-            out << " customHeight=\"" << view_flags.fields.fUnsynced << "\"";
+            out << " customHeight=\"" << view_flags.fUnsynced() << "\"";
           }
 
           if (ccolspan)
             out << " spans=\"" << spans << "\"";
 
-          if (view_flags.fields.iOutLevel > 0) {
-            out << " outlineLevel=\"" << (uint16_t)view_flags.fields.iOutLevel << "\"";
+          if (view_flags.iOutLevel() > 0) {
+            out << " outlineLevel=\"" << (uint16_t)view_flags.iOutLevel() << "\"";
           }
 
-          if (view_flags.fields.fCollapsed) {
-            out << " collapsed=\"" << view_flags.fields.fCollapsed << "\"";
+          if (view_flags.fCollapsed()) {
+            out << " collapsed=\"" << view_flags.fCollapsed() << "\"";
           }
 
-          if (view_flags.fields.fDyZero) {
-            out << " hidden=\"" << view_flags.fields.fDyZero << "\"";
+          if (view_flags.fDyZero()) {
+            out << " hidden=\"" << view_flags.fDyZero() << "\"";
           }
 
-          if (view_flags.fields.fGhostDirty) {
-            out << " customFormat=\"" << view_flags.fields.fGhostDirty << "\"";
+          if (view_flags.fGhostDirty()) {
+            out << " customFormat=\"" << view_flags.fGhostDirty() << "\"";
           }
 
           if (ixfe > 0) {
@@ -2867,8 +2850,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmlaUnion view_flags;
-          view_flags.raw_flags = grbitFlags;
+          GrbitFmla view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -2882,14 +2864,14 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
             column.f_attr = "t=\"" + fml_type + "\"";
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += " ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
 
             if (sfml != shared_cells.end())
               column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
               column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += "ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
             column.f = fml;
           }
           if (cell[1]) column.c_s = std::to_string(cell[1]);
@@ -2916,8 +2898,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmlaUnion view_flags;
-          view_flags.raw_flags = grbitFlags;
+          GrbitFmla view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -2931,14 +2912,14 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
             column.f_attr = "t=\"" + fml_type + "\"";
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += " ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
 
             if (sfml != shared_cells.end())
               column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
               column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += "ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
             column.f = fml;
           }
           if (cell[1]) column.c_s = std::to_string(cell[1]);
@@ -2965,8 +2946,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmlaUnion view_flags;
-          view_flags.raw_flags = grbitFlags;
+          GrbitFmla view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -2984,14 +2964,14 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
             column.f_attr = "t=\"" + fml_type + "\"";
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += " ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
 
             if (sfml != shared_cells.end())
               column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
               column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += "ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
             column.f = fml;
           }
           if (cell[1]) column.c_s = std::to_string(cell[1]);
@@ -3018,8 +2998,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmlaUnion view_flags;
-          view_flags.raw_flags = grbitFlags;
+          GrbitFmla view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -3032,14 +3011,14 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           auto sfml1 = shared_cells.find(a0);
           if ((fml.empty() || sfml != shared_cells.end()) && sfml1 != shared_cells.end()) {
             column.f_attr = "t=\"" + fml_type + "\"";
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += " ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += " ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
 
             if (sfml != shared_cells.end())
               column.f_attr += " si=\"" + std::to_string(sfml->second) + "\"";
             else
               column.f_attr += " si=\"" + std::to_string(sfml1->second) + "\"";
           } else {
-            if (view_flags.fields.fAlwaysCalc) column.f_attr += "ca=\"" + std::to_string(view_flags.fields.fAlwaysCalc) + "\"";
+            if (view_flags.fAlwaysCalc()) column.f_attr += "ca=\"" + std::to_string(view_flags.fAlwaysCalc()) + "\"";
             column.f = fml;
           }
           column.v = val;
@@ -3509,8 +3488,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // rfxTopLeft
           std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
-          BrtBeginUserShViewUnion view_flags;
-          view_flags.raw_flags = flags;
+          struct BrtBeginUserShView view_flags(flags);
 
           out << "<customSheetView";
           out << " guid=\"{"<< guid_str(guids) << "}\"";
@@ -3518,42 +3496,42 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             out << " scale=\"" << dwScale << "\"";
           if (icv != 64)
             out << " colorId=\"" << (int32_t)icv << "\"";
-          if (view_flags.fields.fShowBrks)
-            out << " showPageBreaks=\"" << (int16_t)view_flags.fields.fShowBrks << "\"";
-          if (view_flags.fields.fDspFmlaSv)
-            out << " showFormulas=\"" << (int16_t)view_flags.fields.fDspFmlaSv << "\"";
-          if (!view_flags.fields.fDspGridSv)
-            out << " showGridLines=\"" << (int16_t)view_flags.fields.fDspGridSv << "\"";
-          if (!view_flags.fields.fDspRwColSv)
-            out << " showRowCol=\"" << (int16_t)view_flags.fields.fDspRwColSv << "\"";
-          if (!view_flags.fields.fDspGutsSv)
-            out << " outlineSymbols=\"" << (int16_t)view_flags.fields.fDspGutsSv << "\"";
-          if (!view_flags.fields.fDspZerosSv)
-            out << " zeroValues=\"" << (int16_t)view_flags.fields.fDspZerosSv << "\"";
-          if (view_flags.fields.fFitToPage)
-            out << " fitToPage=\"" << (int16_t)view_flags.fields.fFitToPage << "\"";
-          if (view_flags.fields.fPrintArea)
-            out << " printArea=\"" << (int16_t)view_flags.fields.fPrintArea << "\"";
-          if (view_flags.fields.fFilterMode)
-            out << " filter=\"" << (int16_t)view_flags.fields.fFilterMode << "\"";
-          if (view_flags.fields.fEzFilter)
-            out << " showAutoFilter=\"" << (int16_t)view_flags.fields.fEzFilter << "\"";
+          if (view_flags.fShowBrks())
+            out << " showPageBreaks=\"" << (int16_t)view_flags.fShowBrks() << "\"";
+          if (view_flags.fDspFmlaSv())
+            out << " showFormulas=\"" << (int16_t)view_flags.fDspFmlaSv() << "\"";
+          if (!view_flags.fDspGridSv())
+            out << " showGridLines=\"" << (int16_t)view_flags.fDspGridSv() << "\"";
+          if (!view_flags.fDspRwColSv())
+            out << " showRowCol=\"" << (int16_t)view_flags.fDspRwColSv() << "\"";
+          if (!view_flags.fDspGutsSv())
+            out << " outlineSymbols=\"" << (int16_t)view_flags.fDspGutsSv() << "\"";
+          if (!view_flags.fDspZerosSv())
+            out << " zeroValues=\"" << (int16_t)view_flags.fDspZerosSv() << "\"";
+          if (view_flags.fFitToPage())
+            out << " fitToPage=\"" << (int16_t)view_flags.fFitToPage() << "\"";
+          if (view_flags.fPrintArea())
+            out << " printArea=\"" << (int16_t)view_flags.fPrintArea() << "\"";
+          if (view_flags.fFilterMode())
+            out << " filter=\"" << (int16_t)view_flags.fFilterMode() << "\"";
+          if (view_flags.fEzFilter())
+            out << " showAutoFilter=\"" << (int16_t)view_flags.fEzFilter() << "\"";
           // if (iTabId) // not used?
           //   out << " tabSelected=\"" << iTabId << "\"";
-          if (view_flags.fields.fHiddenRw)
-            out << " hiddenRows=\"" << (int16_t)view_flags.fields.fHiddenRw << "\"";
-          if (view_flags.fields.fHiddenCol)
-            out << " hiddenColumns=\"" << (int16_t)view_flags.fields.fHiddenCol << "\"";
-          if (view_flags.fields.hsState)
-            out << " state=\"" << HSState(view_flags.fields.hsState) << "\"";
-          if (view_flags.fields.fFilterUnique)
-            out << " filterUnique=\"" << (int16_t)view_flags.fields.fFilterUnique << "\"";
-          if (view_flags.fields.fSheetLayoutView)
+          if (view_flags.fHiddenRw())
+            out << " hiddenRows=\"" << (int16_t)view_flags.fHiddenRw() << "\"";
+          if (view_flags.fHiddenCol())
+            out << " hiddenColumns=\"" << (int16_t)view_flags.fHiddenCol() << "\"";
+          if (view_flags.hsState())
+            out << " state=\"" << HSState(view_flags.hsState()) << "\"";
+          if (view_flags.fFilterUnique())
+            out << " filterUnique=\"" << (int16_t)view_flags.fFilterUnique() << "\"";
+          if (view_flags.fSheetLayoutView())
             out << " view=\"" << "pageBreakPreview" << "\"";
-          if (view_flags.fields.fPageLayoutView)
+          if (view_flags.fPageLayoutView())
             out << " view=\"" << "pageLayout" << "\"";
-          if (!view_flags.fields.fRuler)
-            out << " showRuler=\"" << (int16_t)view_flags.fields.fRuler << "\"";
+          if (!view_flags.fRuler())
+            out << " showRuler=\"" << (int16_t)view_flags.fRuler() << "\"";
           if (rfx[0] > 1 && rfx[2] > 0)
             out << " topLeftCell=\"" << int_to_col(rfx[2] + 1) << std::to_string(rfx[0] + 1) << "\"";
 
@@ -3561,16 +3539,16 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           // order matters for <customSheetViews/>
           out << "<printOptions" << std::endl;
-          if (view_flags.fields.fHorizontal)
-            out << " horizontalCentered = \"" << (int16_t)view_flags.fields.fHorizontal << "\"";
-          if (view_flags.fields.fVertical)
-            out << " verticalCentered = \"" << (int16_t)view_flags.fields.fVertical << "\"";
-          if (view_flags.fields.fPrintRwCol)
-            out << " headings = \"" << (int16_t)view_flags.fields.fPrintRwCol << "\"";
-          if (view_flags.fields.fDspGridSv)
-            out << " gridLines = \"" << (int16_t)view_flags.fields.fDspGridSv << "\"";
-          if (!view_flags.fields.fPrintGrid)
-            out << " gridLinesSet = \"" << (int16_t)view_flags.fields.fPrintGrid << "\"";
+          if (view_flags.fHorizontal())
+            out << " horizontalCentered = \"" << (int16_t)view_flags.fHorizontal() << "\"";
+          if (view_flags.fVertical())
+            out << " verticalCentered = \"" << (int16_t)view_flags.fVertical() << "\"";
+          if (view_flags.fPrintRwCol())
+            out << " headings = \"" << (int16_t)view_flags.fPrintRwCol() << "\"";
+          if (view_flags.fDspGridSv())
+            out << " gridLines = \"" << (int16_t)view_flags.fDspGridSv() << "\"";
+          if (!view_flags.fPrintGrid())
+            out << " gridLinesSet = \"" << (int16_t)view_flags.fPrintGrid() << "\"";
           out << " />" << std::endl;
 
           break;
@@ -3709,8 +3687,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           flags = readbin(flags, bin, swapit);
 
-          BrtDValUnion view_flags;
-          view_flags.raw_flags = flags;
+          struct BrtDVal view_flags(flags);
 
           sqrfx          = UncheckedSqRfX(bin, swapit);
           strErrorTitle  = XLNullableWideString(bin, swapit);
@@ -3733,11 +3710,11 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           }
 
           out << "<dataValidation " <<
-          "type=\"" << valType(view_flags.fields.valType) << "\" " <<
-          "operator=\"" << typOperator(view_flags.fields.typOperator) << "\" " <<
-          "allowBlank=\"" << (bool)view_flags.fields.fAllowBlank << "\" " <<
-          "showInputMessage=\"" << (bool)view_flags.fields.fShowInputMsg << "\" " <<
-          "showErrorMessage=\"" << (bool)view_flags.fields.fShowErrorMsg << "\" " <<
+          "type=\"" << valType(view_flags.valType()) << "\" " <<
+          "operator=\"" << typOperator(view_flags.typOperator()) << "\" " <<
+          "allowBlank=\"" << (bool)view_flags.fAllowBlank() << "\" " <<
+          "showInputMessage=\"" << (bool)view_flags.fShowInputMsg() << "\" " <<
+          "showErrorMessage=\"" << (bool)view_flags.fShowErrorMsg() << "\" " <<
           "sqref=\"" << sqref << "\" >" <<
           "<formula1>" << formula1 << "</formula1>" <<
           "<formula2>" << formula2 << "</formula2>" <<
@@ -3801,9 +3778,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           flags_frt = readbin(flags_frt, bin, swapit);
 
-          FRTHeaderFields *fields_frt = (FRTHeaderFields *)&flags_frt;
+          FRTHeader view_flags(flags_frt);
 
-          if (fields_frt->fRef) { // but must be 0
+          if (view_flags.fRef()) { // but must be 0
             // Rcpp::Rcout << "fRef" << std::endl;
             uint32_t cref = 0;
             cref = readbin(cref, bin, swapit);
@@ -3817,7 +3794,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           }
 
-          if (fields_frt->fSqref) { // must be 1
+          if (view_flags.fSqref()) { // must be 1
             // Rcpp::Rcout << "fSqref" << std::endl;
             uint32_t csqref = 0;
             csqref = readbin(csqref, bin, swapit);
@@ -3847,7 +3824,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           }
 
-          if (fields_frt->fFormula) { // 0 or 1
+          if (view_flags.fFormula()) { // 0 or 1
             // Rcpp::Rcout << "fFormula" << std::endl;
             uint32_t cformula = 0;
             cformula = readbin(cformula, bin, swapit);
@@ -3864,7 +3841,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           }
 
-          if (fields_frt->fRelID) { // 0
+          if (view_flags.fRelID()) { // 0
             // Rcpp::Rcout << "fRelID" << std::endl;
             std::string relId = LPWideString(bin, swapit);
           }
@@ -3875,23 +3852,22 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           flags = readbin(flags, bin, swapit);
 
-          BrtDValUnion view_flags;
-          view_flags.raw_flags = flags;
+          struct BrtDVal view_flags2(flags);
 
-          // if (debug)
-          // Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
-          //   (uint32_t)view_flags.fields.valType,
-          //   (uint32_t)view_flags.fields.errStyle,
-          //   (uint32_t)view_flags.fields.unused,
-          //   (uint32_t)view_flags.fields.fAllowBlank,
-          //   (uint32_t)view_flags.fields.fSuppressCombo,
-          //   (uint32_t)view_flags.fields.mdImeMode,
-          //   (uint32_t)view_flags.fields.fShowInputMsg,
-          //   (uint32_t)view_flags.fields.fShowErrorMsg,
-          //   (uint32_t)view_flags.fields.typOperator,
-          //   (uint32_t)view_flags.fields.fDVMinFmla,
-          //   (uint32_t)view_flags.fields.fDVMaxFmla
-          // );
+          if (debug)
+          Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+            (uint32_t)view_flags2.valType(),
+            (uint32_t)view_flags2.errStyle(),
+            (uint32_t)view_flags2.unused(),
+            (uint32_t)view_flags2.fAllowBlank(),
+            (uint32_t)view_flags2.fSuppressCombo(),
+            (uint32_t)view_flags2.mdImeMode(),
+            (uint32_t)view_flags2.fShowInputMsg(),
+            (uint32_t)view_flags2.fShowErrorMsg(),
+            (uint32_t)view_flags2.typOperator(),
+            (uint32_t)view_flags2.fDVMinFmla(),
+            (uint32_t)view_flags2.fDVMaxFmla()
+          );
 
           strErrorTitle  = XLNullableWideString(bin, swapit);
           strError       = XLNullableWideString(bin, swapit);
@@ -3899,11 +3875,11 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           strPrompt      = XLNullableWideString(bin, swapit);
 
           out << "<x14:dataValidation " <<
-          "type=\"" << valType(view_flags.fields.valType) << "\" " <<
-          "operator=\"" << typOperator(view_flags.fields.typOperator) << "\" " <<
-          "allowBlank=\"" << (bool)view_flags.fields.fAllowBlank << "\" " <<
-          "showInputMessage=\"" << (bool)view_flags.fields.fShowInputMsg << "\" " <<
-          "showErrorMessage=\"" << (bool)view_flags.fields.fShowErrorMsg << "\" " <<
+          "type=\"" << valType(view_flags2.valType()) << "\" " <<
+          "operator=\"" << typOperator(view_flags2.typOperator()) << "\" " <<
+          "allowBlank=\"" << (bool)view_flags2.fAllowBlank() << "\" " <<
+          "showInputMessage=\"" << (bool)view_flags2.fShowInputMsg() << "\" " <<
+          "showErrorMessage=\"" << (bool)view_flags2.fShowErrorMsg() << "\" " <<
           // "xr:uid=\"{00000000-0002-0000-0200-000000000000}\" " <<
           ">";
 
@@ -4015,8 +3991,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
           }
 
-          BrtBeginCFRuleUnion view_flags;
-          view_flags.raw_flags = flags;
+          struct BrtBeginCFRule view_flags(flags);
 
           std::stringstream cfRule;
           cfRule << "<cfRule";
@@ -4027,10 +4002,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           cfRule << " dxfId=\"" << dxfId << "\"";
           cfRule << " priority=\"" << iPri << "\"";
           cfRule << " operator=\"" << iParam << "\"";
-          cfRule << " stopIfTrue=\"" << view_flags.fields.fStopTrue << "\"";
-          cfRule << " percent=\"" << view_flags.fields.fPercent << "\"";
-          cfRule << " aboveAverage=\"" << view_flags.fields.fAbove << "\"";
-          cfRule << " bottom=\"" << view_flags.fields.fBottom << "\"";
+          cfRule << " stopIfTrue=\"" << view_flags.fStopTrue() << "\"";
+          cfRule << " percent=\"" << view_flags.fPercent() << "\"";
+          cfRule << " aboveAverage=\"" << view_flags.fAbove() << "\"";
+          cfRule << " bottom=\"" << view_flags.fBottom() << "\"";
           // rank="" ???
           // stdDev="" ??
           // timePeriod="" ??
