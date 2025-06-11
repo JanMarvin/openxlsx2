@@ -1669,17 +1669,17 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           if (debug)
             Rprintf(
               "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
-              view_flags.fields.fHidden,
-              view_flags.fields.fFunc,
-              view_flags.fields.fOB,
-              view_flags.fields.fProc,
-              view_flags.fields.fCalcExp,
-              view_flags.fields.fBuiltin,
-              view_flags.fields.fgrp,
-              view_flags.fields.fPublished,
-              view_flags2.fields.fWorkbookParam,
-              view_flags2.fields.fFutureFunction,
-              view_flags2.fields.reserved
+              (int32_t)view_flags.fields.fHidden,
+              (int32_t)view_flags.fields.fFunc,
+              (int32_t)view_flags.fields.fOB,
+              (int32_t)view_flags.fields.fProc,
+              (int32_t)view_flags.fields.fCalcExp,
+              (int32_t)view_flags.fields.fBuiltin,
+              (int32_t)view_flags.fields.fgrp,
+              (int32_t)view_flags.fields.fPublished,
+              (int32_t)view_flags2.fields.fWorkbookParam,
+              (int32_t)view_flags2.fields.fFutureFunction,
+              (int32_t)view_flags2.fields.reserved
             );
 
           chKey = readbin(chKey, bin, swapit);
