@@ -14,91 +14,91 @@
 #endif
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfBuiltIn : 1;
-  uint16_tfHidden : 1;
-  uint16_tfCustom : 1;
+  uint16_t fBuiltIn : 1;
+  uint16_t fHidden : 1;
+  uint16_t fCustom : 1;
   uint16_t unused : 13;
 } StyleFlagsFields;
 static_assert(sizeof(StyleFlagsFields) == 2, "StyleFlagsFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tbit1 : 1;
-  uint16_tbit2 : 1;
-  uint16_tbit3 : 1;
-  uint16_tbit4 : 1;
-  uint16_tbit5 : 1;
-  uint16_tbit6 : 1;
+  uint16_t bit1 : 1;
+  uint16_t bit2 : 1;
+  uint16_t bit3 : 1;
+  uint16_t bit4 : 1;
+  uint16_t bit5 : 1;
+  uint16_t bit6 : 1;
 } xfGrbitAtrFields;
 static_assert(sizeof(xfGrbitAtrFields) == 1, "xfGrbitAtrFields must be 1 byte");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_treserved : 1;
-  uint16_tfAlwaysCalc : 1;
+  uint16_t reserved : 1;
+  uint16_t fAlwaysCalc : 1;
   uint16_t unused : 14;
 } GrbitFmlaFields;
 static_assert(sizeof(GrbitFmlaFields) == 2, "GrbitFmlaFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
   uint16_t col : 14;
-  uint16_tfColRel : 1;
-  uint16_tfRwRel : 1;
+  uint16_t fColRel : 1;
+  uint16_t fRwRel : 1;
 } ColRelShortFields;
 static_assert(sizeof(ColRelShortFields) == 2, "ColRelShortFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfExtraAsc : 1;
-  uint16_tfExtraDsc : 1;
+  uint16_t fExtraAsc : 1;
+  uint16_t fExtraDsc : 1;
   uint8_t reserved1 : 6;
   uint8_t iOutLevel : 3;
-  uint16_tfCollapsed : 1;
-  uint16_tfDyZero : 1;
-  uint16_tfUnsynced : 1;
-  uint16_tfGhostDirty : 1;
-  uint16_tfReserved : 1;
+  uint16_t fCollapsed : 1;
+  uint16_t fDyZero : 1;
+  uint16_t fUnsynced : 1;
+  uint16_t fGhostDirty : 1;
+  uint16_t fReserved : 1;
 } BrtRowHdrFields;
 static_assert(sizeof(BrtRowHdrFields) == 2, "BrtRowHdrFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfHidden : 1;
-  uint16_tfUserSet : 1;
-  uint16_tfBestFit : 1;
-  uint16_tfPhonetic : 1;
+  uint16_t fHidden : 1;
+  uint16_t fUserSet : 1;
+  uint16_t fBestFit : 1;
+  uint16_t fPhonetic : 1;
   uint8_t reserved1 : 4;
   uint8_t iOutLevel : 3;
-  uint16_tunused : 1;
-  uint16_tfCollapsed : 1;
+  uint16_t unused : 1;
+  uint16_t fCollapsed : 1;
   uint8_t reserved2 : 3;
 } BrtColInfoFields;
 static_assert(sizeof(BrtColInfoFields) == 2, "BrtColInfoFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfHidden : 1;
-  uint16_tfFunc : 1;
-  uint16_tfOB : 1;
-  uint16_tfProc : 1;
-  uint16_tfCalcExp : 1;
-  uint16_tfBuiltin : 1;
+  uint16_t fHidden : 1;
+  uint16_t fFunc : 1;
+  uint16_t fOB : 1;
+  uint16_t fProc : 1;
+  uint16_t fCalcExp : 1;
+  uint16_t fBuiltin : 1;
   uint16_t fgrp : 9;
-  uint16_tfPublished : 1;
+  uint16_t fPublished : 1;
 } BrtNameFields;
 static_assert(sizeof(BrtNameFields) == 2, "BrtNameFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfWorkbookParam : 1;
-  uint16_tfFutureFunction : 1;
+  uint16_t fWorkbookParam : 1;
+  uint16_t fFutureFunction : 1;
   uint16_t reserved : 14;
 } BrtNameFields2;
 static_assert(sizeof(BrtNameFields2) == 2, "BrtNameFields2 must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tunused1 : 1;
-  uint16_tfItalic : 1;
-  uint16_tunused2 : 1;
-  uint16_tfStrikeout : 1;
-  uint16_tfOutline : 1;
-  uint16_tfShadow : 1;
-  uint16_tfCondense : 1;
-  uint16_tfExtend : 1;
+  uint16_t unused1 : 1;
+  uint16_t fItalic : 1;
+  uint16_t unused2 : 1;
+  uint16_t fStrikeout : 1;
+  uint16_t fOutline : 1;
+  uint16_t fShadow : 1;
+  uint16_t fCondense : 1;
+  uint16_t fExtend : 1;
   uint8_t unused3 : 8;
 } FontFlagsFields;
 static_assert(sizeof(FontFlagsFields) == 2, "FontFlagsFields must be 2 bytes");
@@ -106,101 +106,101 @@ static_assert(sizeof(FontFlagsFields) == 2, "FontFlagsFields must be 2 bytes");
 typedef struct OPENXLSX2_PACKED {
   uint8_t alc : 3;
   uint8_t alcv : 3;
-  uint16_tfWrap : 1;
-  uint16_tfJustLast : 1;
-  uint16_tfShrinkToFit : 1;
-  uint16_tfMergeCell : 1;
+  uint16_t fWrap : 1;
+  uint16_t fJustLast : 1;
+  uint16_t fShrinkToFit : 1;
+  uint16_t fMergeCell : 1;
   uint8_t iReadingOrder : 2;
-  uint16_tfLocked : 1;
-  uint16_tfHidden : 1;
-  uint16_tfSxButton : 1;
-  uint16_tf123Prefix : 1;
+  uint16_t fLocked : 1;
+  uint16_t fHidden : 1;
+  uint16_t fSxButton : 1;
+  uint16_t f123Prefix : 1;
   uint8_t xfGrbitAtr : 6;
   uint16_t unused : 10;
 } XFFields;
 static_assert(sizeof(XFFields) == 4, "XFFields must be 4 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfShowAutoBreaks : 1;
+  uint16_t fShowAutoBreaks : 1;
   uint8_t rserved1 : 2;
-  uint16_tfPublish : 1;
-  uint16_tfDialog : 1;
-  uint16_tfApplyStyles : 1;
-  uint16_tfRowSumsBelow : 1;
-  uint16_tfColSumsRight : 1;
-  uint16_tfFitToPage : 1;
+  uint16_t fPublish : 1;
+  uint16_t fDialog : 1;
+  uint16_t fApplyStyles : 1;
+  uint16_t fRowSumsBelow : 1;
+  uint16_t fColSumsRight : 1;
+  uint16_t fFitToPage : 1;
   uint8_t reserved2 : 1;
-  uint16_tfShowOutlineSymbols : 1;
+  uint16_t fShowOutlineSymbols : 1;
   uint8_t reserved3 : 1;
-  uint16_tfSyncHoriz : 1;
-  uint16_tfSyncVert : 1;
-  uint16_tfAltExprEval : 1;
-  uint16_tfAltFormulaEntry : 1;
+  uint16_t fSyncHoriz : 1;
+  uint16_t fSyncVert : 1;
+  uint16_t fAltExprEval : 1;
+  uint16_t fAltFormulaEntry : 1;
 } BrtWsPropFields1;
 static_assert(sizeof(BrtWsPropFields1) == 2, "BrtWsPropFields1 must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfFilterMode : 1;
-  uint16_tfCondFmtCalc : 1;
+  uint16_t fFilterMode : 1;
+  uint16_t fCondFmtCalc : 1;
   uint8_t reserved4 : 6;
 } BrtWsPropFields2;
 static_assert(sizeof(BrtWsPropFields2) == 1, "BrtWsPropFields2 must be 1 byte");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfWnProt : 1;
-  uint16_tfDspFmla : 1;
-  uint16_tfDspGrid : 1;
-  uint16_tfDspRwCol : 1;
-  uint16_tfDspZeros : 1;
-  uint16_tfRightToLeft : 1;
-  uint16_tfSelected : 1;
-  uint16_tfDspRuler : 1;
-  uint16_tfDspGuts : 1;
-  uint16_tfDefaultHdr : 1;
-  uint16_tfWhitespaceHidden : 1;
+  uint16_t fWnProt : 1;
+  uint16_t fDspFmla : 1;
+  uint16_t fDspGrid : 1;
+  uint16_t fDspRwCol : 1;
+  uint16_t fDspZeros : 1;
+  uint16_t fRightToLeft : 1;
+  uint16_t fSelected : 1;
+  uint16_t fDspRuler : 1;
+  uint16_t fDspGuts : 1;
+  uint16_t fDefaultHdr : 1;
+  uint16_t fWhitespaceHidden : 1;
   uint8_t reserved1 : 5;
 } BrtBeginWsViewFields;
 static_assert(sizeof(BrtBeginWsViewFields) == 2, "BrtBeginWsViewFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfFirstColumn : 1;
-  uint16_tfLastColumn : 1;
-  uint16_tfRowStripes : 1;
-  uint16_tfColumnStripes : 1;
-  uint16_tfRowHeaders : 1;
-  uint16_tfColumnHeaders : 1;
+  uint16_t fFirstColumn : 1;
+  uint16_t fLastColumn : 1;
+  uint16_t fRowStripes : 1;
+  uint16_t fColumnStripes : 1;
+  uint16_t fRowHeaders : 1;
+  uint16_t fColumnHeaders : 1;
   uint16_t reserved : 10;
 } BrtTableStyleClientFields;
 static_assert(sizeof(BrtTableStyleClientFields) == 2, "BrtTableStyleClientFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_treserved3 : 1;
-  uint16_tfStopTrue : 1;
-  uint16_tfAbove : 1;
-  uint16_tfBottom : 1;
-  uint16_tfPercent : 1;
+  uint16_t reserved3 : 1;
+  uint16_t fStopTrue : 1;
+  uint16_t fAbove : 1;
+  uint16_t fBottom : 1;
+  uint16_t fPercent : 1;
   uint16_t reserved4 : 11;
 } BrtBeginCFRuleFields;
 static_assert(sizeof(BrtBeginCFRuleFields) == 2, "BrtBeginCFRuleFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tf1904 : 1;
-  uint16_treserved1 : 1;
-  uint16_tfHideBorderUnselLists : 1;
-  uint16_tfFilterPrivacy : 1;
-  uint16_tfBuggedUserAboutSolution : 1;
-  uint16_tfShowInkAnnotation : 1;
-  uint16_tfBackup : 1;
-  uint16_tfNoSaveSup : 1;
+  uint16_t f1904 : 1;
+  uint16_t reserved1 : 1;
+  uint16_t fHideBorderUnselLists : 1;
+  uint16_t fFilterPrivacy : 1;
+  uint16_t fBuggedUserAboutSolution : 1;
+  uint16_t fShowInkAnnotation : 1;
+  uint16_t fBackup : 1;
+  uint16_t fNoSaveSup : 1;
   uint8_t grbitUpdateLinks : 2;
-  uint16_tfHidePivotTableFList : 1;
-  uint16_tfPublishedBookItems : 1;
-  uint16_tfCheckCompat : 1;
+  uint16_t fHidePivotTableFList : 1;
+  uint16_t fPublishedBookItems : 1;
+  uint16_t fCheckCompat : 1;
   uint8_t mdDspObj : 2;
-  uint16_tfShowPivotChartFilter : 1;
-  uint16_tfAutoCompressPictures : 1;
-  uint16_treserved2 : 1;
-  uint16_tfRefreshAll : 1;
+  uint16_t fShowPivotChartFilter : 1;
+  uint16_t fAutoCompressPictures : 1;
+  uint16_t reserved2 : 1;
+  uint16_t fRefreshAll : 1;
   uint16_t unused : 13;
 } BrtWbPropFields;
 static_assert(sizeof(BrtWbPropFields) == 4, "BrtWbPropFields must be 4 bytes");
@@ -208,30 +208,30 @@ static_assert(sizeof(BrtWbPropFields) == 4, "BrtWbPropFields must be 4 bytes");
 typedef struct OPENXLSX2_PACKED {
   uint8_t valType : 4;
   uint8_t errStyle : 3;
-  uint16_tunused : 1;
-  uint16_tfAllowBlank : 1;
-  uint16_tfSuppressCombo : 1;
+  uint16_t unused : 1;
+  uint16_t fAllowBlank : 1;
+  uint16_t fSuppressCombo : 1;
   uint8_t mdImeMode : 8;
-  uint16_tfShowInputMsg : 1;
-  uint16_tfShowErrorMsg : 1;
+  uint16_t fShowInputMsg : 1;
+  uint16_t fShowErrorMsg : 1;
   uint8_t typOperator : 4;
-  uint16_tfDVMinFmla : 1;
-  uint16_tfDVMaxFmla : 1;
+  uint16_t fDVMinFmla : 1;
+  uint16_t fDVMaxFmla : 1;
   uint8_t reserved : 6;
 } BrtDValFields;
 static_assert(sizeof(BrtDValFields) == 4, "BrtDValFields must be 4 bytes");
 
 typedef struct OPENXLSX2_PACKED {
   uint16_t product : 15;
-  uint16_treserved : 1;
+  uint16_t reserved : 1;
 } FRTVersionFields;
 static_assert(sizeof(FRTVersionFields) == 2, "FRTVersionFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfRef : 1;
-  uint16_tfSqref : 1;
-  uint16_tfFormula : 1;
-  uint16_tfRelID : 1;
+  uint16_t fRef : 1;
+  uint16_t fSqref : 1;
+  uint16_t fFormula : 1;
+  uint16_t fRelID : 1;
   uint32_t reserved : 28;
 } FRTHeaderFields;
 static_assert(sizeof(FRTHeaderFields) == 4, "FRTHeaderFields must be 4 bytes");
@@ -239,76 +239,76 @@ static_assert(sizeof(FRTHeaderFields) == 4, "FRTHeaderFields must be 4 bytes");
 typedef struct OPENXLSX2_PACKED {
   uint8_t columns : 2;
   uint8_t rowType : 5;
-  uint16_tsquareBracketSpace : 1;
-  uint16_tcommaSpace : 1;
-  uint16_tunused : 1;
+  uint16_t squareBracketSpace : 1;
+  uint16_t commaSpace : 1;
+  uint16_t unused : 1;
   uint8_t type : 2;
-  uint16_tinvalid : 1;
-  uint16_tnonresident : 1;
+  uint16_t invalid : 1;
+  uint16_t nonresident : 1;
   uint8_t reserved2 : 2;
 } PtgListFields;
 static_assert(sizeof(PtgListFields) == 2, "PtgListFields must be 2 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfShowBrks : 1;
-  uint16_tfDspFmlaSv : 1;
-  uint16_tfDspGridSv : 1;
-  uint16_tfDspRwColSv : 1;
-  uint16_tfDspGutsSv : 1;
-  uint16_tfDspZerosSv : 1;
-  uint16_tfHorizontal : 1;
-  uint16_tfVertical : 1;
-  uint16_tfPrintRwCol : 1;
-  uint16_tfPrintGrid : 1;
-  uint16_tfFitToPage : 1;
-  uint16_tfPrintArea : 1;
-  uint16_tfOnePrintArea : 1;
-  uint16_tfFilterMode : 1;
-  uint16_tfEzFilter : 1;
-  uint16_treserved1 : 1;
-  uint16_treserved2 : 1;
-  uint16_tfSplitV : 1;
-  uint16_tfSplitH : 1;
+  uint16_t fShowBrks : 1;
+  uint16_t fDspFmlaSv : 1;
+  uint16_t fDspGridSv : 1;
+  uint16_t fDspRwColSv : 1;
+  uint16_t fDspGutsSv : 1;
+  uint16_t fDspZerosSv : 1;
+  uint16_t fHorizontal : 1;
+  uint16_t fVertical : 1;
+  uint16_t fPrintRwCol : 1;
+  uint16_t fPrintGrid : 1;
+  uint16_t fFitToPage : 1;
+  uint16_t fPrintArea : 1;
+  uint16_t fOnePrintArea : 1;
+  uint16_t fFilterMode : 1;
+  uint16_t fEzFilter : 1;
+  uint16_t reserved1 : 1;
+  uint16_t reserved2 : 1;
+  uint16_t fSplitV : 1;
+  uint16_t fSplitH : 1;
   uint8_t fHiddenRw : 2;
-  uint16_tfHiddenCol : 1;
+  uint16_t fHiddenCol : 1;
   uint8_t hsState : 2;
-  uint16_treserved3 : 1;
-  uint16_tfFilterUnique : 1;
-  uint16_tfSheetLayoutView : 1;
-  uint16_tfPageLayoutView : 1;
-  uint16_treserved4 : 1;
-  uint16_tfRuler : 1;
-  uint16_treserved5 : 1;
-  uint16_treserved6 : 1;
+  uint16_t reserved3 : 1;
+  uint16_t fFilterUnique : 1;
+  uint16_t fSheetLayoutView : 1;
+  uint16_t fPageLayoutView : 1;
+  uint16_t reserved4 : 1;
+  uint16_t fRuler : 1;
+  uint16_t reserved5 : 1;
+  uint16_t reserved6 : 1;
 } BrtBeginUserShViewFields;
 static_assert(sizeof(BrtBeginUserShViewFields) == 4, "BrtBeginUserShViewFields must be 4 bytes");
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfIconic : 1;
-  uint16_tfDspHScroll : 1;
-  uint16_tfDspVScroll : 1;
-  uint16_tfBotAdornment : 1;
-  uint16_tfZoom : 1;
-  uint16_tfDspFmlaBar : 1;
-  uint16_tfDspStatus : 1;
+  uint16_t fIconic : 1;
+  uint16_t fDspHScroll : 1;
+  uint16_t fDspVScroll : 1;
+  uint16_t fBotAdornment : 1;
+  uint16_t fZoom : 1;
+  uint16_t fDspFmlaBar : 1;
+  uint16_t fDspStatus : 1;
   uint8_t mdDspNote : 2;
   uint8_t mdHideObj : 2;
-  uint16_tfPrintIncl : 1;
-  uint16_tfRowColIncl : 1;
-  uint16_tfTimedUpdate : 1;
-  uint16_tfAllMemChanges : 1;
-  uint16_tfOnlySync : 1;
-  uint16_tfPersonalView : 1;
+  uint16_t fPrintIncl : 1;
+  uint16_t fRowColIncl : 1;
+  uint16_t fTimedUpdate : 1;
+  uint16_t fAllMemChanges : 1;
+  uint16_t fOnlySync : 1;
+  uint16_t fPersonalView : 1;
   uint16_t : 15;
 } BrtUserBookViewFields;
 static_assert(sizeof(BrtUserBookViewFields) == 4, "BrtUserBookViewFields must be 4 bytes for bit_cast (check definition if fails)");
 
 
 typedef struct OPENXLSX2_PACKED {
-  uint16_tfHFDiffOddEven : 1;
-  uint16_tfHFDiffFirst : 1;
-  uint16_tfHFScaleWithDoc : 1;
-  uint16_tfHFAlignMargins : 1;
+  uint16_t fHFDiffOddEven : 1;
+  uint16_t fHFDiffFirst : 1;
+  uint16_t fHFScaleWithDoc : 1;
+  uint16_t fHFAlignMargins : 1;
   uint16_t reserved : 12;
 } BrtBeginHeaderFooterFields;
 static_assert(sizeof(BrtBeginHeaderFooterFields) == 2, "BrtBeginHeaderFooterFields must be 2 bytes");
