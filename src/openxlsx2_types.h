@@ -1,3 +1,6 @@
+#ifndef OPENXLSX2_TYPES_H
+#define OPENXLSX2_TYPES_H
+
 /******************************************************************************
  *                                                                            *
  * This file defines typedefs. R expects it to be called <pkgname>_types.h    *
@@ -78,3 +81,5 @@ inline SEXP wrap(const vec_string& x) {
 
 typedef pugi::xml_document xmldoc;
 typedef Rcpp::XPtr<xmldoc> XPtrXML;
+
+#endif
