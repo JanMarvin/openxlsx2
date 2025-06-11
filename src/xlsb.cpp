@@ -137,7 +137,10 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
           if (bls == 0x02BC)  out << "<b/>" << std::endl;
           if (view_flags.fItalic()) out << "<i/>" << std::endl;
           if (view_flags.fStrikeout()) out << "<strike/>" << std::endl;
-          // if (view_flags.fOutline) out << "<outline/>" << std::endl;
+          if (view_flags.fOutline()) out << "<outline/>" << std::endl;
+          if (view_flags.fShadow()) out << "<shadow/>" << std::endl;
+          if (view_flags.fCondense()) out << "<condense/>" << std::endl;
+          if (view_flags.fExtend()) out << "<extend/>" << std::endl;
 
           if (uls > 0) {
             if (uls == 0x01) out << "<u val=\"single\" />" << std::endl;
@@ -470,14 +473,21 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
           iLevel = readbin(iLevel, bin, swapit);
           std::string stName = XLWideString(bin, swapit);
 
-          // StyleFlagsUnion view_flags;
+          StyleFlags view_flags(grbitObj1);
+
           out << "<cellStyle";
           out << " name=\"" << escape_xml(stName) << "\"";
           out << " xfId=\"" << ixf << "\"";
-          out << " builtinId=\"" << (int32_t)iStyBuiltIn << "\"";
+          if (view_flags.fBuiltIn())
+            out << " builtinId=\"" << (int32_t)iStyBuiltIn << "\"";
+          if (iStyBuiltIn >= 1 && iStyBuiltIn <= 2)
+            out << " iLevel=\"" << (int32_t)iLevel << "\"";
+          if (view_flags.fHidden())
+            out << " hidden=\"" << (int32_t)view_flags.fHidden() << "\"";
+          if (view_flags.fCustom())
+            out << " customBuiltin=\"" << (int32_t)view_flags.fCustom() << "\"";
           out << " />" << std::endl;
 
-          // bin.seekg(size, bin.cur);
           break;
         }
 
@@ -1654,6 +1664,9 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           // fFutureFunction - future function
           // reserved        - 0
 
+          if (view_flags2.reserved() != 0)
+            Rcpp::stop("reserved not 0");
+
           if (debug)
             Rprintf(
               "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
@@ -2144,7 +2157,6 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtBeginCsView: {
           if (debug) Rcpp::Rcout << "<sheetView>: " << bin.tellg() << std::endl;
-          bool fSelected = false;
           uint16_t flags = 0;
           uint32_t wScale = 0, iWbkView = 0;
 
@@ -2152,15 +2164,15 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           wScale = readbin(wScale, bin, swapit);
           iWbkView = readbin(iWbkView, bin, swapit);
 
-          fSelected = flags & 0x8000;
+          struct BrtBeginCsView view_flags(flags);
 
           out << "<sheetView";
           // careful, without the following nothing goes
           out << " workbookViewId=\"" << iWbkView << "\"";
           if (wScale)
             out << " zoomScale=\"" << wScale << "\"";
-          if (fSelected)
-            out << " tabSelected=\"" << fSelected << "\"";
+          if (view_flags.fSelected())
+            out << " tabSelected=\"" << view_flags.fSelected() << "\"";
           out << " zoomToFit=\"1\"";
 
           out << ">" << std::endl;
@@ -2190,17 +2202,14 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           if (pnnAct == 0x00000002) pnn = "bottomLeft";
           if (pnnAct == 0x00000003) pnn = "topLeft";
 
-          bool fFrozen = flags & 0x01;
-          bool fFrozenNoSplit = (flags >> 1) & 0x01;
-
-          // Rprintf("Frozen: %d / %d / %d\n", fFrozen, fFrozenNoSplit, flags);
+          PaneFlags view_flags(flags);
 
           std::string state;
-          if (fFrozen && fFrozenNoSplit)
+          if (view_flags.fFrozen() && view_flags.fFrozenNoSplit())
             state = "frozen";
-          else if (fFrozen && !fFrozenNoSplit)
+          else if (view_flags.fFrozen() && !view_flags.fFrozenNoSplit())
             state = "frozenSplit";
-          else if (!fFrozen && !fFrozenNoSplit)
+          else if (!view_flags.fFrozen() && !view_flags.fFrozenNoSplit())
             state = "split";
 
           out << "<pane";
@@ -3642,12 +3651,13 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           dwOleUpdate = readbin(dwOleUpdate, bin, swapit);
           shapeId = readbin(shapeId, bin, swapit);
           flags = readbin(flags, bin, swapit);
-          bool fLinked = (flags & 0x8000) != 0;
+
+          struct BrtOleObject view_flags(flags);
 
           std::string strProgID = XLNullableWideString(bin, swapit);
 
           int32_t sharedFormula = false;
-          if (fLinked) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+          if (view_flags.fLinked()) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
 
           std::string stRelID = XLNullableWideString(bin, swapit);
           out << "<oleObject progId=\"" << strProgID << "\" shapeId=\"" << shapeId << "\" r:id=\"" << stRelID << "\" />" << std::endl;
