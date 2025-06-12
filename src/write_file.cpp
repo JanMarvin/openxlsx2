@@ -121,26 +121,26 @@ void xml_sheet_data_slim(
       // additional attr list.
 
       // append attributes <c r="A1" ...>
-      file << " r" << "=\"" << to_string(cc_r[i]).c_str() << "\"";
+      file << " r" << "=\"" << std::string(cc_r[i]).c_str() << "\"";
 
       if (!cc_c_s[i].empty())
-        file << " s" << "=\"" << to_string(cc_c_s[i]).c_str() << "\"";
+        file << " s" << "=\"" << std::string(cc_c_s[i]).c_str() << "\"";
 
       // assign type if not <v> aka numeric
       if (!cc_c_t[i].empty())
-        file << " t" << "=\"" << to_string(cc_c_t[i]).c_str() << "\"";
+        file << " t" << "=\"" << std::string(cc_c_t[i]).c_str() << "\"";
 
       // CellMetaIndex: suppress curly brackets in spreadsheet software
       if (has_cm && !cc_c_cm[i].empty())
-        file << " cm" << "=\"" << to_string(cc_c_cm[i]).c_str() << "\"";
+        file << " cm" << "=\"" << std::string(cc_c_cm[i]).c_str() << "\"";
 
       // phonetics spelling
       if (has_ph && !cc_c_ph[i].empty())
-        file << " ph" << "=\"" << to_string(cc_c_ph[i]).c_str() << "\"";
+        file << " ph" << "=\"" << std::string(cc_c_ph[i]).c_str() << "\"";
 
       // suppress curly brackets in spreadsheet software
       if (has_vm && !cc_c_vm[i].empty())
-        file << " vm" << "=\"" << to_string(cc_c_vm[i]).c_str() << "\"";
+        file << " vm" << "=\"" << std::string(cc_c_vm[i]).c_str() << "\"";
 
       file << ">";  // end <c ...>
 
@@ -151,30 +151,33 @@ void xml_sheet_data_slim(
       if (!cc_f[i].empty() || !cc_f_attr[i].empty()) {
         file << "<f";
         if (!cc_f_attr[i].empty()) {
-          file << " " << to_string(cc_f_attr[i]).c_str();
+          file << " " << std::string(cc_f_attr[i]).c_str();
         }
         file << ">";
 
         file << to_string(cc_f[i]).c_str();
-        if (!f_si && to_string(cc_f[i]).find("\"si\"=") != std::string::npos) f_si = true;
+        if (!f_si && std::string(cc_f[i]).find("\"si\"=") != std::string::npos) f_si = true;
 
         file << "</f>";
       }
 
       // v node: value stored from evaluated formula
       if (!cc_v[i].empty()) {
-        if (!f_si & (to_string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
+        if (!f_si & (std::string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
           // this looks strange
           file << "<v xml:space=\"preserve\">";
           file << " ";
           file << "</v>";
         } else {
-          file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
+          if (cc_c_t[i].empty() && cc_f_attr[i].empty())
+            file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
+          else
+            file << "<v>" << std::string(cc_v[i]).c_str() << "</v>";
         }
       }
 
       // <is><t> ... </t></is>
-      if (to_string(cc_c_t[i]).compare("inlineStr") == 0) {
+      if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
         if (!cc_is[i].empty()) {
           file << to_string(cc_is[i]).c_str();
         }
@@ -363,13 +366,13 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
 
       // Add the content of <f>
       if (!cc_f[i].empty()) {
-          f.append_child(pugi::node_pcdata).set_value(std::string(cc_f[i]).c_str());
+          f.append_child(pugi::node_pcdata).set_value(to_string(cc_f[i]).c_str());
       }
     }
 
     // v node: value stored from evaluated formula
     if (!cc_v[i].empty()) {
-      if (!f_si & (to_string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
+      if (!f_si & (std::string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
