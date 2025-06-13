@@ -659,7 +659,7 @@ void wide_to_long(
     const std::string& col = scols[static_cast<size_t>(i)];
     int8_t vtyp_i = static_cast<int8_t>(vtyps[static_cast<size_t>(i)]);
 
-    for (R_xlen_t j = 0; j < n; ++j, ++idx) {
+    for (R_xlen_t j = 0; j < n; ++j) {
       checkInterrupt(idx);
 
       // if colname is provided, the first row is always a character
@@ -785,7 +785,7 @@ void wide_to_long(
       // typ = std::to_string(vtyp)
       if (has_typ) SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
 
-      std::string cell_r = has_dims ? dims[static_cast<size_t>(idx)] : col + row;
+      std::string cell_r = has_dims ? dims[static_cast<size_t>(idx - 1L)] : col + row;
       SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r.c_str()));
 
       if (has_dims) {

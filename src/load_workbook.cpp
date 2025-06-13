@@ -199,7 +199,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     uint32_t itr_cols = 0;
     for (auto col : worksheet.children("c")) {
       checkInterrupt(idx);
-      ++idx;
 
       // contains all values of a col
       xml_col single_xml_col;

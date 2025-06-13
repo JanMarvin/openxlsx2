@@ -572,7 +572,7 @@ void ProductVersion(std::istream& sas, bool swapit, bool debug, bool frt) {
   version = readbin(version, sas, swapit);  // 3586 - x14?
   flags = readbin(flags, sas, swapit);      // 0
 
-  FRTVersion view_flags(flags);
+  FRTVersionFlags view_flags(flags);
 
   if (frt && view_flags.reserved() != 0) Rcpp::stop("product version reserved not 0 but %d", (int32_t)view_flags.reserved());
   if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, (int32_t)view_flags.product(), (int32_t)view_flags.reserved());
@@ -635,7 +635,7 @@ std::vector<int32_t> ColRelShort(std::istream& sas, bool swapit) {
   uint16_t tmp = 0;
   tmp = readbin(tmp, sas, swapit);
 
-  struct ColRelShort view_flags(tmp);
+  ColRelShortFlags view_flags(tmp);
 
   std::vector<int32_t> out(3);
   out[0] = view_flags.col();
@@ -1232,7 +1232,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
             colFirst  = ColShort(sas, swapit);
             colLast   = ColShort(sas, swapit);
 
-            struct PtgList view_flags(flags);
+            PtgListFlags view_flags(flags);
 
             if (debug)
             Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
