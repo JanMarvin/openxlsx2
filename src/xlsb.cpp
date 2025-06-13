@@ -19,8 +19,9 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_style_sheet = false;
 
+    R_xlen_t idx = 0;
     while (!end_of_style_sheet) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
       int32_t x = 0, size = 0;
 
@@ -598,8 +599,9 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
     bool end_of_table = false;
     bool has_revision_record = false;
 
+    R_xlen_t idx = 0;
     while (!end_of_table) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
       int32_t x = 0, size = 0;
 
@@ -967,8 +969,9 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
     bin.seekg(0, std::ios_base::beg);
     bool end_of_comments = false;
 
+    R_xlen_t idx = 0;
     while (!end_of_comments) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
       int32_t x = 0, size = 0;
 
@@ -1094,8 +1097,9 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
     int32_t row = 0;
     bool end_of_external_reference = false;
 
+    R_xlen_t idx = 0;
     while (!end_of_external_reference) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
       int32_t x = 0, size = 0;
 
@@ -1304,8 +1308,9 @@ int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug)
     bin.seekg(0, std::ios_base::beg);
     bool end_of_shared_strings = false;
 
+    R_xlen_t idx = 0;
     while (!end_of_shared_strings) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
       int32_t x = 0, size = 0;
 
@@ -1382,8 +1387,9 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
     defNams.push_back("<definedNames>");
     xtis.push_back("<xtis>");
 
+    R_xlen_t idx = 0;
     while (!end_of_workbook) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
       int32_t x = 0, size = 0;
 
@@ -2018,8 +2024,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
     int32_t shared_cell_cntr = 0;
 
     // auto itr = 0;
+    R_xlen_t idx = 0;
     while (!end_of_worksheet) {
-      Rcpp::checkUserInterrupt();
+      checkInterrupt(idx);
 
       // uint8_t unk = 0, high = 0, low = 0;
       // uint16_t tmp = 0;
