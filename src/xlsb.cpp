@@ -402,11 +402,11 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
 
           brtxf = readbin(brtxf, bin, swapit);
 
-          XF view_flags(brtxf);
+          XFFlags view_flags(brtxf);
 
           uint8_t xfgbit = view_flags.xfGrbitAtr();
 
-          xfGrbitAtr view_flags2(xfgbit);
+          xfGrbitAtrFlags view_flags2(xfgbit);
 
           out << " numFmtId=\"" << iFmt << "\"";
           out << " fontId=\"" << iFont << "\"";
@@ -913,7 +913,7 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
           flags = readbin(flags, bin, swapit);
           std::string stStyleName = XLNullableWideString(bin, swapit);
 
-          struct BrtTableStyleClient view_flags(flags);
+          BrtTableStyleClientFlags view_flags(flags);
 
           out << "<tableStyleInfo name=\"" << stStyleName << "\"";
           // out <<" showColHeaders=\"" << view_flags.fColumnHeaders << "\"";  // not part of tableStyleInfo?
@@ -1421,7 +1421,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           dwThemeVersion = readbin(dwThemeVersion, bin, swapit);
           std::string strName = XLWideString(bin, swapit);
 
-          struct BrtWbProp view_flags(flags);
+          BrtWbPropFlags view_flags(flags);
 
           out <<
             "<workbookPr" <<
@@ -1546,7 +1546,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           wMergeInterval = readbin(wMergeInterval, bin, swapit);
 
           flags = readbin(flags, bin, swapit);
-          struct BrtUserBookView view_flags(flags);
+          BrtUserBookViewFlags view_flags(flags);
 
           stName = XLWideString(bin, swapit);
 
@@ -1649,8 +1649,8 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           BrtNameUint = readbin(BrtNameUint, bin, swapit);
           BrtNameUint2 = readbin(BrtNameUint2, bin, swapit);
 
-          struct BrtName view_flags(BrtNameUint);
-          BrtName2 view_flags2(BrtNameUint2);
+          BrtNameFlags view_flags(BrtNameUint);
+          BrtName2Flags view_flags2(BrtNameUint2);
 
           // fHidden    - visible
           // fFunc      - xml macro
@@ -2164,7 +2164,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           wScale = readbin(wScale, bin, swapit);
           iWbkView = readbin(iWbkView, bin, swapit);
 
-          struct BrtBeginCsView view_flags(flags);
+          BrtBeginCsViewFlags view_flags(flags);
 
           out << "<sheetView";
           // careful, without the following nothing goes
@@ -2246,7 +2246,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           wScalePLV = readbin(wScalePLV, bin, swapit);
           iWbkView = readbin(iWbkView, bin, swapit);
 
-          struct BrtBeginWsView view_flags(flags);
+          BrtBeginWsViewFlags view_flags(flags);
 
           out << "<sheetView";
           // careful, without the following nothing goes
@@ -2363,7 +2363,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           std::string stHeaderFirst = XLNullableWideString(bin, swapit);
           std::string stFooterFirst = XLNullableWideString(bin, swapit);
 
-          struct BrtBeginHeaderFooter view_flags(flags);
+          BrtBeginHeaderFooterFlags view_flags(flags);
 
           if (debug)
           Rcpp::Rcout << stHeader<< ": " << stFooter << ": " <<
@@ -2463,7 +2463,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           ixfe = readbin(ixfe, bin, swapit);
           colinfo = readbin(colinfo, bin, swapit);
 
-          struct BrtColInfo view_flags(colinfo);
+          BrtColInfoFlags view_flags(colinfo);
 
           out << "<col" << " min=\"" << colFirst << "\" max =\"" << colLast << "\"";
 
@@ -2589,7 +2589,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t rwoheaderfields = 0;
           rwoheaderfields = readbin(rwoheaderfields, bin, swapit);
 
-          struct BrtRowHdr view_flags(rwoheaderfields);
+          BrtRowHdrFlags view_flags(rwoheaderfields);
 
           // fExtraAsc = 1
           // fExtraDsc = 1
@@ -2860,7 +2860,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmla view_flags(grbitFlags);
+          GrbitFmlaFlags view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -2908,7 +2908,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmla view_flags(grbitFlags);
+          GrbitFmlaFlags view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -2956,7 +2956,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmla view_flags(grbitFlags);
+          GrbitFmlaFlags view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -3008,7 +3008,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
 
-          GrbitFmla view_flags(grbitFlags);
+          GrbitFmlaFlags view_flags(grbitFlags);
 
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
@@ -3499,7 +3499,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // rfxTopLeft
           std::vector<int32_t> rfx = UncheckedRfX(bin, swapit);
 
-          struct BrtBeginUserShView view_flags(flags);
+          BrtBeginUserShViewFlags view_flags(flags);
 
           out << "<customSheetView";
           out << " guid=\"{"<< guid_str(guids) << "}\"";
@@ -3652,7 +3652,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           shapeId = readbin(shapeId, bin, swapit);
           flags = readbin(flags, bin, swapit);
 
-          struct BrtOleObject view_flags(flags);
+          BrtOleObjectFlags view_flags(flags);
 
           std::string strProgID = XLNullableWideString(bin, swapit);
 
@@ -3699,7 +3699,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           flags = readbin(flags, bin, swapit);
 
-          struct BrtDVal view_flags(flags);
+          BrtDValFlags view_flags(flags);
 
           sqrfx          = UncheckedSqRfX(bin, swapit);
           strErrorTitle  = XLNullableWideString(bin, swapit);
@@ -3790,7 +3790,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           flags_frt = readbin(flags_frt, bin, swapit);
 
-          FRTHeader view_flags(flags_frt);
+          FRTHeaderFlags view_flags(flags_frt);
 
           if (view_flags.fRef()) { // but must be 0
             // Rcpp::Rcout << "fRef" << std::endl;
@@ -3864,7 +3864,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           flags = readbin(flags, bin, swapit);
 
-          struct BrtDVal view_flags2(flags);
+          BrtDValFlags view_flags2(flags);
 
           if (debug)
           Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
@@ -4003,7 +4003,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
           }
 
-          struct BrtBeginCFRule view_flags(flags);
+          BrtBeginCFRuleFlags view_flags(flags);
 
           std::stringstream cfRule;
           cfRule << "<cfRule";

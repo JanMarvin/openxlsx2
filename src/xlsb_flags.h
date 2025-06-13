@@ -72,10 +72,10 @@ struct StyleFlags {
 };
 
 // --- Conversion for xfGrbitAtrUnion ---
-struct xfGrbitAtr {
+struct xfGrbitAtrFlags {
     const uint8_t raw_flags;
 
-    explicit xfGrbitAtr(uint8_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit xfGrbitAtrFlags(uint8_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy bit1() const { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy bit2() const { return FlagProxy(raw_flags, 1 << 1); }
@@ -86,20 +86,20 @@ struct xfGrbitAtr {
 };
 
 // --- Conversion for GrbitFmlaUnion ---
-struct GrbitFmla {
+struct GrbitFmlaFlags {
     const uint16_t raw_flags;
 
-    explicit GrbitFmla(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit GrbitFmlaFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy reserved() const    { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fAlwaysCalc() const { return FlagProxy(raw_flags, 1 << 1); }
 };
 
 // --- Conversion for ColRelShortUnion ---
-struct ColRelShort {
+struct ColRelShortFlags {
     const uint16_t raw_flags;
 
-    explicit ColRelShort(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit ColRelShortFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR ValueProxy<uint16_t> col() const { return ValueProxy<uint16_t>(raw_flags, 0, 14); }
     XL_CONSTEXPR FlagProxy fColRel() const        { return FlagProxy(raw_flags, 1 << 14); }
@@ -107,20 +107,20 @@ struct ColRelShort {
 };
 
 // --- Conversion for BrtBeginCsView ---
-struct BrtBeginCsView {
+struct BrtBeginCsViewFlags {
   const uint16_t raw_flags;
 
-  explicit BrtBeginCsView(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+  explicit BrtBeginCsViewFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
   XL_CONSTEXPR FlagProxy fSelected() const        { return FlagProxy(raw_flags, 1 << 0); }
   XL_CONSTEXPR ValueProxy<uint16_t> unused() const { return ValueProxy<uint16_t>(raw_flags, 1, 15); }
 };
 
 // --- Conversion for BrtOleObject ---
-struct BrtOleObject {
+struct BrtOleObjectFlags {
   const uint16_t raw_flags;
 
-  explicit BrtOleObject(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+  explicit BrtOleObjectFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
   XL_CONSTEXPR FlagProxy fLinked() const        { return FlagProxy(raw_flags, 1 << 0); }
   XL_CONSTEXPR FlagProxy fAutoLoad() const         { return FlagProxy(raw_flags, 1 << 1); }
@@ -128,10 +128,10 @@ struct BrtOleObject {
 };
 
 // --- Conversion for BrtRowHdrUnion ---
-struct BrtRowHdr {
+struct BrtRowHdrFlags {
     const uint16_t raw_flags;
 
-    explicit BrtRowHdr(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtRowHdrFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fExtraAsc() const   { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fExtraDsc() const   { return FlagProxy(raw_flags, 1 << 1); }
@@ -145,10 +145,10 @@ struct BrtRowHdr {
 };
 
 // --- Conversion for BrtColInfoUnion ---
-struct BrtColInfo {
+struct BrtColInfoFlags {
     const uint16_t raw_flags;
 
-    explicit BrtColInfo(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtColInfoFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fHidden() const    { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fUserSet() const   { return FlagProxy(raw_flags, 1 << 1); }
@@ -162,10 +162,10 @@ struct BrtColInfo {
 };
 
 // --- Conversion for BrtNameUnion ---
-struct BrtName {
+struct BrtNameFlags {
     const uint16_t raw_flags;
 
-    explicit BrtName(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtNameFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fHidden() const    { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fFunc() const      { return FlagProxy(raw_flags, 1 << 1); }
@@ -178,10 +178,10 @@ struct BrtName {
 };
 
 // --- Conversion for BrtName2Union ---
-struct BrtName2 {
+struct BrtName2Flags {
     const uint16_t raw_flags;
 
-    explicit BrtName2(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtName2Flags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fWorkbookParam() const { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fFutureFunction() const { return FlagProxy(raw_flags, 1 << 1); }
@@ -205,10 +205,10 @@ struct FontFlags {
 };
 
 // --- Conversion for XFUnion ---
-struct XF {
+struct XFFlags {
     const uint32_t raw_flags;
 
-    explicit XF(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit XFFlags(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR ValueProxy<uint8_t> alc() const          { return ValueProxy<uint8_t>(raw_flags, 0, 3); }
     XL_CONSTEXPR ValueProxy<uint8_t> alcv() const         { return ValueProxy<uint8_t>(raw_flags, 3, 3); }
@@ -226,10 +226,10 @@ struct XF {
 };
 
 // --- Conversion for BrtWsProp1Union ---
-struct BrtWsProp1 {
+struct BrtWsProp1Flags {
     const uint16_t raw_flags;
 
-    explicit BrtWsProp1(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtWsProp1Flags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fShowAutoBreaks() const    { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR ValueProxy<uint8_t> rserved1() const { return ValueProxy<uint8_t>(raw_flags, 1, 2); }
@@ -249,10 +249,10 @@ struct BrtWsProp1 {
 };
 
 // --- Conversion for BrtWsProp2Union ---
-struct BrtWsProp2 {
+struct BrtWsProp2Flags {
     const uint8_t raw_flags;
 
-    explicit BrtWsProp2(uint8_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtWsProp2Flags(uint8_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fFilterMode() const    { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fCondFmtCalc() const   { return FlagProxy(raw_flags, 1 << 1); }
@@ -260,10 +260,10 @@ struct BrtWsProp2 {
 };
 
 // --- Conversion for BrtBeginWsViewUnion ---
-struct BrtBeginWsView {
+struct BrtBeginWsViewFlags {
     const uint16_t raw_flags;
 
-    explicit BrtBeginWsView(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtBeginWsViewFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fWnProt() const           { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fDspFmla() const          { return FlagProxy(raw_flags, 1 << 1); }
@@ -280,10 +280,10 @@ struct BrtBeginWsView {
 };
 
 // --- Conversion for BrtTableStyleClientUnion ---
-struct BrtTableStyleClient {
+struct BrtTableStyleClientFlags {
     const uint16_t raw_flags;
 
-    explicit BrtTableStyleClient(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtTableStyleClientFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fFirstColumn() const    { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fLastColumn() const     { return FlagProxy(raw_flags, 1 << 1); }
@@ -295,10 +295,10 @@ struct BrtTableStyleClient {
 };
 
 // --- Conversion for BrtBeginCFRuleUnion ---
-struct BrtBeginCFRule {
+struct BrtBeginCFRuleFlags {
     const uint16_t raw_flags;
 
-    explicit BrtBeginCFRule(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtBeginCFRuleFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy reserved3() const  { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fStopTrue() const  { return FlagProxy(raw_flags, 1 << 1); }
@@ -309,10 +309,10 @@ struct BrtBeginCFRule {
 };
 
 // --- Conversion for BrtWbPropUnion ---
-struct BrtWbProp {
+struct BrtWbPropFlags {
     const uint32_t raw_flags;
 
-    explicit BrtWbProp(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtWbPropFlags(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy f1904() const                { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy reserved1() const            { return FlagProxy(raw_flags, 1 << 1); }
@@ -335,10 +335,10 @@ struct BrtWbProp {
 };
 
 // --- Conversion for BrtDValUnion ---
-struct BrtDVal {
+struct BrtDValFlags {
     const uint32_t raw_flags;
 
-    explicit BrtDVal(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtDValFlags(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR ValueProxy<uint8_t> valType() const       { return ValueProxy<uint8_t>(raw_flags, 0, 4); }
     XL_CONSTEXPR ValueProxy<uint8_t> errStyle() const      { return ValueProxy<uint8_t>(raw_flags, 4, 3); }
@@ -355,20 +355,20 @@ struct BrtDVal {
 };
 
 // --- Conversion for FRTVersionUnion ---
-struct FRTVersion {
+struct FRTVersionFlags {
     const uint16_t raw_flags;
 
-    explicit FRTVersion(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit FRTVersionFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR ValueProxy<uint16_t> product() const { return ValueProxy<uint16_t>(raw_flags, 0, 15); }
     XL_CONSTEXPR FlagProxy reserved() const { return FlagProxy(raw_flags, 1 << 15); }
 };
 
 // --- Conversion for FRTHeaderUnion ---
-struct FRTHeader {
+struct FRTHeaderFlags {
     const uint32_t raw_flags;
 
-    explicit FRTHeader(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit FRTHeaderFlags(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fRef() const     { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fSqref() const   { return FlagProxy(raw_flags, 1 << 1); }
@@ -378,10 +378,10 @@ struct FRTHeader {
 };
 
 // --- Conversion for PtgListUnion ---
-struct PtgList {
+struct PtgListFlags {
     const uint16_t raw_flags;
 
-    explicit PtgList(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit PtgListFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR ValueProxy<uint8_t> columns() const          { return ValueProxy<uint8_t>(raw_flags, 0, 2); }
     XL_CONSTEXPR ValueProxy<uint8_t> rowType() const          { return ValueProxy<uint8_t>(raw_flags, 2, 5); }
@@ -395,10 +395,10 @@ struct PtgList {
 };
 
 // --- Conversion for BrtBeginUserShViewUnion ---
-struct BrtBeginUserShView {
+struct BrtBeginUserShViewFlags {
     const uint32_t raw_flags;
 
-    explicit BrtBeginUserShView(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtBeginUserShViewFlags(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fShowBrks() const           { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fDspFmlaSv() const          { return FlagProxy(raw_flags, 1 << 1); }
@@ -433,10 +433,10 @@ struct BrtBeginUserShView {
 };
 
 // --- Conversion for BrtUserBookViewUnion ---
-struct BrtUserBookView {
+struct BrtUserBookViewFlags {
     const uint32_t raw_flags;
 
-    explicit BrtUserBookView(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtUserBookViewFlags(uint32_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fIconic() const       { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fDspHScroll() const   { return FlagProxy(raw_flags, 1 << 1); }
@@ -457,10 +457,10 @@ struct BrtUserBookView {
 };
 
 // --- Conversion for BrtBeginHeaderFooterUnion ---
-struct BrtBeginHeaderFooter {
+struct BrtBeginHeaderFooterFlags {
     const uint16_t raw_flags;
 
-    explicit BrtBeginHeaderFooter(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
+    explicit BrtBeginHeaderFooterFlags(uint16_t initial_flags = 0) : raw_flags(initial_flags) {}
 
     XL_CONSTEXPR FlagProxy fHFDiffOddEven() const  { return FlagProxy(raw_flags, 1 << 0); }
     XL_CONSTEXPR FlagProxy fHFDiffFirst() const    { return FlagProxy(raw_flags, 1 << 1); }
