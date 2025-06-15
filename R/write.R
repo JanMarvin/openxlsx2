@@ -620,7 +620,7 @@ write_data2 <- function(
     }
 
     if (any(dc == openxlsx2_celltype[["character"]])) {
-      if (any(sel <- cc$typ == openxlsx2_celltype[["string_nums"]])) {
+      if (any(cc$typ == openxlsx2_celltype[["string_nums"]])) {
 
         # # we cannot select every cell like this, because it is terribly slow.
         # dim_sel <- paste0(cc$r[sel], collapse = ";")
