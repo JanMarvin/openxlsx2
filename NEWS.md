@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## Fixes
+
+* `wb_to_df()` no longer converts column names to scientific notation. This fixes a regression (from the UTC change). The conversion occurred, if the cell that is used as column name, is of type numeric. Similar to the default in R `10000` would convert to `1e+05`. While such conversions might still happen in numeric values, they should not occur in the column names.
+
 ## Internal changes
 
 * The provided pugixml functions allow now for a deeper nesting of nodes including wildcards. Previously the nesting was restricted to three levels. This limit has been lifted. [1356](https://github.com/JanMarvin/openxlsx2/pull/1356)
