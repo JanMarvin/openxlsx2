@@ -50,6 +50,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> no longer converts column names to scientific notation. This fixes a regression (from the UTC change). The conversion occurred, if the cell that is used as column name, is of type numeric. Similar to the default in R <code>10000</code> would convert to <code>1e+05</code>. While such conversions might still happen in numeric values, they should not occur in the column names.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
 <ul><li>The provided pugixml functions allow now for a deeper nesting of nodes including wildcards. Previously the nesting was restricted to three levels. This limit has been lifted. <a href="https://github.com/JanMarvin/openxlsx2/pull/1356" class="external-link">1356</a>
 </li>
