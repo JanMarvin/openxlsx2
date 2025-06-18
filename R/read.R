@@ -1,6 +1,12 @@
 # Internal function to convert data frame from character to whatever is required
-convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_character = FALSE) {
+convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_character = FALSE, col_names = FALSE) {
   sel <- !is.na(names(types))
+
+  if (col_names) {
+    # avoid scientific notation in column names
+    op <- default_save_opt()
+    on.exit(options(op), add = TRUE)
+  }
 
   if (any(sel)) {
     nums <- names(which(types[sel] == 1))
@@ -667,7 +673,7 @@ wb_to_df <- function(
 
     nams <- names(xlsx_cols_names)
     if (convert)
-      xlsx_cols_names <- convert_df(z[1, , drop = FALSE], guess_col_type(tt[1, , drop = FALSE]), date_conv, datetime_conv, hms_conv, as_character = TRUE)
+      xlsx_cols_names <- convert_df(z[1, , drop = FALSE], guess_col_type(tt[1, , drop = FALSE]), date_conv, datetime_conv, hms_conv, as_character = TRUE, col_names = TRUE)
     else
       xlsx_cols_names <- z[1, , drop = FALSE]
     names(xlsx_cols_names) <- nams

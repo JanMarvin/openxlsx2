@@ -316,3 +316,17 @@ test_that("worksheet exists", {
   expect_silent(wb$to_df(sheet = "foo&bar", dims = "A1:B3"))
 
 })
+
+test_that("no scientific notation in column name", {
+  df <- data.frame(
+    x = 1,
+    y = 1000000000000000
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)
+  wb$add_data(x = 1000000000000000, dims = "B1")
+
+  exp <- c("x", "1000000000000000")
+  got <- names(wb_to_df(wb))
+  expect_equal(exp, got)
+})
