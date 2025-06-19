@@ -39,11 +39,11 @@ static inline std::string int_to_col(T cell) {
 // similar to is.numeric(x)
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
-static inline bool is_double(std::string x) {
+static inline bool is_double(const char* x) {
   char* endp;
   double res;
 
-  res = R_strtod(x.c_str(), &endp);
+  res = R_strtod(x, &endp);
 
   if (strlen(endp) == 0 && std::isfinite(res)) {
     return 1;
