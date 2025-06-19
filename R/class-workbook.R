@@ -3461,7 +3461,6 @@ wbWorkbook <- R6::R6Class(
             length(self$sharedStrings),
             attr(self$sharedStrings, "uniqueCount")
           ),
-          #body = stringi::stri_join(set_sst(attr(self$sharedStrings, "text")), collapse = "", sep = " "),
           body = stringi::stri_join(self$sharedStrings, collapse = "", sep = ""),
           tail = "</sst>",
           fl = file.path(xlDir, "sharedStrings.xml")
