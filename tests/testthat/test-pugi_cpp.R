@@ -142,14 +142,6 @@ test_that("xml_append_child", {
 
 })
 
-
-test_that("set_sst", {
-
-  exp <- "<si><t>a</t></si>"
-  expect_equal(exp, set_sst("a"))
-
-})
-
 test_that("col2int and int2col", {
 
   test <- "B"

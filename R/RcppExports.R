@@ -289,10 +289,6 @@ write_colors <- function(df_colors) {
     .Call(`_openxlsx2_write_colors`, df_colors)
 }
 
-set_sst <- function(sharedStrings) {
-    .Call(`_openxlsx2_set_sst`, sharedStrings)
-}
-
 write_worksheet_slim <- function(sheet_data, prior, post, fl) {
     invisible(.Call(`_openxlsx2_write_worksheet_slim`, sheet_data, prior, post, fl))
 }

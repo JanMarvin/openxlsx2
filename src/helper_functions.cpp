@@ -573,7 +573,7 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x) {
   Rcpp::LogicalVector out(x.size());
   for (R_xlen_t i = 0; i < x.size(); ++i) {
-    out[i] = is_double(Rcpp::as<std::string>(x[i]));
+    out[i] = is_double(x[i]);
   }
   return out;
 }
