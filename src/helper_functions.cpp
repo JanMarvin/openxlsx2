@@ -971,3 +971,47 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
 
   return z;
 }
+
+// [[Rcpp::export]]
+Rcpp::NumericVector as_numeric(Rcpp::Nullable<Rcpp::RObject> input) {
+  if (input.isNull()) {
+    return Rcpp::NumericVector(0);
+  }
+
+  Rcpp::RObject obj(input);
+
+  if (Rf_isLogical(obj)) {
+    // Handle logical input directly
+    Rcpp::LogicalVector lv(obj);
+    Rcpp::NumericVector num(lv.size());
+    for (R_xlen_t i = 0; i < lv.size(); ++i) {
+      if (lv[i] == NA_LOGICAL) {
+        num[i] = NA_REAL;
+      } else {
+        num[i] = lv[i] ? 1.0 : 0.0;
+      }
+    }
+    return num;
+  }
+
+  if (Rf_isNumeric(obj)) {
+    Rcpp::NumericVector num(obj);
+    return num;
+  }
+
+  if (!Rf_isString(obj)) {
+    Rcpp::stop("unhandled input");
+  }
+
+  // Handle character input
+  Rcpp::CharacterVector str(obj);
+  Rcpp::NumericVector num(str.size());
+  for (R_xlen_t i = 0; i < str.size(); ++i) {
+    if (str[i] == NA_STRING) {
+      num[i] = NA_REAL;
+    }
+    num[i] = as_double(str[i]);
+  }
+
+  return num;
+}

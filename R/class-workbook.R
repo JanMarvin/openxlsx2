@@ -15,7 +15,7 @@ table_ids <- function(wb) {
   if (!all(identical(unlist(wb$worksheets_rels), character()))) {
     relship <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
     relship$typ <- basename(relship$Type)
-    relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+    relship$tid <- as_numeric(gsub("\\D+", "", relship$Target))
 
     z <- sort(relship$tid[relship$typ == "table"])
   }
@@ -4842,11 +4842,11 @@ wbWorkbook <- R6::R6Class(
         # With wb_to_df(col_names = FALSE) double values are not converted
         # from character to double. This was resulting in very wide columns.
         # To avoid this, we have to check character vectors for potentially
-        # unconverted numerics and have to apply something like format(as.numeric(...))
+        # unconverted numerics and have to apply something like format(as_numeric(...))
         tt  <- attr(df, "tt")
         sel <- tt == "n" & !is.na(df)
 
-        df[sel]   <- vapply(df[sel], function(x) format(as.numeric(x)), NA_character_)
+        df[sel]   <- vapply(df[sel], function(x) format(as_numeric(x)), NA_character_)
         col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
 
         # add one extra spacing
@@ -4860,7 +4860,7 @@ wbWorkbook <- R6::R6Class(
       # create empty cols
       col_df <- wb_create_columns(self, sheet, cols)
 
-      select <- as.numeric(col_df$min) %in% cols
+      select <- as_numeric(col_df$min) %in% cols
       col_df$width[select] <- as_xml_attr(widths)
       col_df$hidden[select] <- tolower(hidden)
       col_df$bestFit[select] <- bestFit
@@ -5060,7 +5060,7 @@ wbWorkbook <- R6::R6Class(
           xml_rels$type   <- basename(xml_rels$Type)
           xml_rels$target <- basename(xml_rels$Target)
           xml_rels$target[xml_rels$type == "hyperlink"] <- ""
-          xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+          xml_rels$target_ind <- as_numeric(gsub("\\D+", "", xml_rels$target))
         }
 
         # Removing these is probably a bad idea
@@ -6429,7 +6429,7 @@ wbWorkbook <- R6::R6Class(
 
           dims_list <- strsplit(dims, ":")[[1]]
           cols <- col2int(dims_list)
-          rows <- as.numeric(gsub("\\D+", "", dims_list))
+          rows <- as_numeric(gsub("\\D+", "", dims_list))
           if (length(col_offset) != 2) col_offset <- rep(col_offset, 2)
           if (length(row_offset) != 2) row_offset <- rep(row_offset, 2)
 
@@ -6456,7 +6456,7 @@ wbWorkbook <- R6::R6Class(
           xdr_typ <- "xdr:oneCellAnchor"
 
           cols <- col2int(dims)
-          rows <- as.numeric(gsub("\\D+", "", dims))
+          rows <- as_numeric(gsub("\\D+", "", dims))
 
           anchor <- paste0(
             "<xdr:from>",
@@ -6946,8 +6946,8 @@ wbWorkbook <- R6::R6Class(
         "workbookProtection",
         xml_attributes = c(
           hashPassword = password,
-          lockStructure = toString(as.numeric(lock_structure)),
-          lockWindows = toString(as.numeric(lock_windows))
+          lockStructure = toString(as_numeric(lock_structure)),
+          lockWindows = toString(as_numeric(lock_windows))
         )
       )
 
@@ -7415,7 +7415,7 @@ wbWorkbook <- R6::R6Class(
       ## scale ----
       if (!is.null(scale)) {
         scale <- scale %||% attrs$scale
-        scale <- as.numeric(scale)
+        scale <- as_numeric(scale)
         if ((scale < 10) || (scale > 400)) {
           message("Scale must be between 10 and 400. Scale was: ", scale)
           scale <- if (scale < 10) 10 else if (scale > 400) 400
@@ -9445,7 +9445,7 @@ wbWorkbook <- R6::R6Class(
     get_active_sheet = function() {
       at <- rbindlist(xml_attr(self$workbook$bookViews, "bookViews", "workbookView"))$activeTab
       # return c index as R index
-      as.numeric(at) + 1
+      as_numeric(at) + 1
     },
 
     #' @description description set active sheet
@@ -9916,13 +9916,13 @@ wbWorkbook <- R6::R6Class(
               # still row_attr is what we want!
 
               rows_attr <- self$worksheets[[i]]$sheet_data$row_attr
-              self$worksheets[[i]]$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
+              self$worksheets[[i]]$sheet_data$row_attr <- rows_attr[order(as_numeric(rows_attr[, "r"])), ]
 
               cc_rows <- self$worksheets[[i]]$sheet_data$row_attr$r
               # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
               cc <- cc[cc$row_r %in% cc_rows, ]
 
-              sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
+              sort_key <- as_numeric(cc$row_r) * 16384L + col2int(cc$c_r)
               self$worksheets[[i]]$sheet_data$cc <- cc[order(sort_key), ]
               rm(cc)
             } else {
@@ -9970,7 +9970,7 @@ wbWorkbook <- R6::R6Class(
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               if (ncol(relship) && nrow(relship)) {
                 relship$typ <- basename(relship$Type)
-                relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+                relship$tid <- as_numeric(gsub("\\D+", "", relship$Target))
 
                 relship$typ <- relship$tid <- NULL
                 if (is.null(relship$TargetMode)) relship$TargetMode <- ""

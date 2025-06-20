@@ -1331,12 +1331,12 @@ next_cell <- function(cell, cols = 0L, rows = 0L) {
     fixed_col1 <- match[2]
     col1 <- match[3]
     fixed_row1 <- match[4]
-    row1 <- as.numeric(match[5])
+    row1 <- as_numeric(match[5])
 
     fixed_col2 <- match[7]
     col2 <- match[8]
     fixed_row2 <- match[9]
-    row2 <- as.numeric(match[10])
+    row2 <- as_numeric(match[10])
 
     if (is.na(col2)) {
 

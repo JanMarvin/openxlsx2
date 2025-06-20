@@ -438,8 +438,8 @@ wbWorksheet <- R6::R6Class(
         return(empty_cols_attr())
 
       col_df <- col_to_df(read_xml(self$cols_attr))
-      col_df$min <- as.numeric(col_df$min)
-      col_df$max <- as.numeric(col_df$max)
+      col_df$min <- as_numeric(col_df$min)
+      col_df$max <- as_numeric(col_df$max)
 
       max_col <- max(col_df$max)
 

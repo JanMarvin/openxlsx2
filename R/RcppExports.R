@@ -80,6 +80,10 @@ write_df2xml <- function(df, vec_name, vec_attrs, vec_chlds) {
     .Call(`_openxlsx2_write_df2xml`, df, vec_name, vec_attrs, vec_chlds)
 }
 
+as_numeric <- function(input) {
+    .Call(`_openxlsx2_as_numeric`, input)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }

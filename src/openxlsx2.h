@@ -2,6 +2,7 @@
 #define OPENXLSX2_H
 
 #include "openxlsx2_types.h"
+#include "fast_float.h"
 
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x);
 
@@ -36,20 +37,43 @@ static inline std::string int_to_col(T cell) {
   return col_name;
 }
 
+static inline double as_double(const char* x) {
+  if (std::strcmp(x, "Inf") == 0 || std::strcmp(x, "+Inf") == 0) {
+    return R_PosInf;
+  } else if (std::strcmp(x, "-Inf") == 0) {
+    return R_NegInf;
+  } else if (std::strcmp(x, "NaN") == 0) {
+    return R_NaN;
+  }
+  if (strcasecmp(x, "inf") == 0 || strcasecmp(x, "+inf") == 0 ||
+      strcasecmp(x, "-inf") == 0 || strcasecmp(x, "nan") == 0) {
+    return NA_REAL;
+  }
+  double dbl;
+  auto result = fast_float::from_chars(x, x + std::strlen(x), dbl);
+  if (result.ec == std::errc() && result.ptr == (x + std::strlen(x)))
+    return dbl;
+  return NA_REAL;
+}
+
 // similar to is.numeric(x)
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
 static inline bool is_double(const char* x) {
-  char* endp;
-  double res;
-
-  res = R_strtod(x, &endp);
-
-  if (strlen(endp) == 0 && std::isfinite(res)) {
-    return 1;
+  if (std::strcmp(x, "Inf") == 0 || std::strcmp(x, "+Inf") == 0) {
+    return true;
+  } else if (std::strcmp(x, "-Inf") == 0) {
+    return true;
+  } else if (std::strcmp(x, "NaN") == 0) {
+    return true;
   }
-
-  return 0;
+  if (strcasecmp(x, "inf") == 0 || strcasecmp(x, "+inf") == 0 ||
+      strcasecmp(x, "-inf") == 0 || strcasecmp(x, "nan") == 0) {
+    return false;
+  }
+  double dbl;
+  auto result = fast_float::from_chars(x, x + std::strlen(x), dbl);
+  return result.ec == std::errc() && result.ptr == (x + std::strlen(x));
 }
 
 static inline bool has_cell(const std::string& str, const std::unordered_set<std::string>& vec) {

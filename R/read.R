@@ -23,13 +23,13 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
       datetime_conv_c <- function(...) as.character(datetime_conv(...))
       hms_conv_c      <- function(...) as.character(hms_conv(...))
 
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.character(as.numeric(replace(i, i == "#NUM!", "NaN"))))
+      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.character(as_numeric(replace(i, i == "#NUM!", "NaN"))))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv_c)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv_c)
       if (length(logs)) z[logs] <- lapply(z[logs], function(i) as.character(as.logical(i)))
       if (length(difs)) z[difs] <- lapply(z[difs], hms_conv_c)
     } else {
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
+      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as_numeric(replace(i, i == "#NUM!", "NaN")))
       if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
       if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
       if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
@@ -338,7 +338,7 @@ wb_to_df <- function(
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
 
-  maxRow <- max(as.numeric(keep_rows))
+  maxRow <- max(as_numeric(keep_rows))
   maxCol <- max(col2int(keep_cols))
 
   if (start_row > 1) {
@@ -416,7 +416,7 @@ wb_to_df <- function(
   # bool
   if (any(cc_tab == "b")) {
     sel <- cc$c_t %in% "b"
-    cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
+    cc$val[sel] <- as.logical(as_numeric(cc$v[sel]))
     cc$typ[sel] <- "b"
   }
   # text in v
@@ -434,7 +434,7 @@ wb_to_df <- function(
   # test is sst
   if (any(cc_tab %in% c("s"))) {
     sel <- cc$c_t %in% c("s")
-    cc$val[sel] <- si_to_txt(sst[as.numeric(cc$v[sel]) + 1])
+    cc$val[sel] <- si_to_txt(sst[as_numeric(cc$v[sel]) + 1])
     cc$typ[sel] <- "s"
   }
 
