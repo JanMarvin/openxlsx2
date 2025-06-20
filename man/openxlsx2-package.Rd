@@ -188,6 +188,7 @@ Other contributors:
   \item Olivier Roy [contributor]
   \item  openxlsx authors (openxlsx package) [copyright holder]
   \item Arseny Kapoulkine (Author of included pugixml code) [contributor, copyright holder]
+  \item  fast_float authors (Authors of included fast_float code) [copyright holder]
 }
 
 }
