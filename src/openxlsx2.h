@@ -37,22 +37,53 @@ static inline std::string int_to_col(T cell) {
   return col_name;
 }
 
+// Use a portable likely/unlikely attribute if not on C++20
+#if defined(__GNUC__) || defined(__clang__)
+#define LIKELY(x) __builtin_expect(!!(x), 1)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#define LIKELY(x) (x)
+#define UNLIKELY(x) (x)
+#endif
+
 static inline double as_double(const char* x) {
-  if (std::strcmp(x, "Inf") == 0 || std::strcmp(x, "+Inf") == 0) {
-    return R_PosInf;
-  } else if (std::strcmp(x, "-Inf") == 0) {
-    return R_NegInf;
-  } else if (std::strcmp(x, "NaN") == 0) {
-    return R_NaN;
+  const size_t len = std::strlen(x);
+
+  switch (len) {
+  case 3:
+    // Check for "Inf" or "NaN"
+    if (x[0] == 'I') {
+      if (UNLIKELY(std::memcmp(x, "Inf", 3) == 0)) return R_PosInf;
+    } else if (x[0] == 'N') {
+      if (UNLIKELY(std::memcmp(x, "NaN", 3) == 0)) return R_NaN;
+    } else if (UNLIKELY(strcasecmp(x, "inf") == 0)) {
+      return NA_REAL;
+    } else if (UNLIKELY(strcasecmp(x, "nan") == 0)) {
+      return NA_REAL;
+    }
+    break;
+  case 4:
+    // Check for "+Inf" or "-Inf"
+    if (x[1] == 'I' || x[1] == 'i') { // Quick check for 'I'
+      if (x[0] == '+') {
+        if (UNLIKELY(std::memcmp(x, "+Inf", 4) == 0)) return R_PosInf;
+        if (UNLIKELY(strcasecmp(x, "+inf") == 0)) return NA_REAL;
+      } else if (x[0] == '-') {
+        if (UNLIKELY(std::memcmp(x, "-Inf", 4) == 0)) return R_NegInf;
+        if (UNLIKELY(strcasecmp(x, "-inf") == 0)) return NA_REAL;
+      }
+    }
+    break;
   }
-  if (strcasecmp(x, "inf") == 0 || strcasecmp(x, "+inf") == 0 ||
-      strcasecmp(x, "-inf") == 0 || strcasecmp(x, "nan") == 0) {
-    return NA_REAL;
-  }
+
+  // --- High-performance numeric parsing ---
   double dbl;
-  auto result = fast_float::from_chars(x, x + std::strlen(x), dbl);
-  if (result.ec == std::errc() && result.ptr == (x + std::strlen(x)))
+  const char* const end = x + len;
+  auto result = fast_float::from_chars(x, end, dbl);
+  if (LIKELY(result.ec == std::errc() && result.ptr == end)) {
     return dbl;
+  }
+
   return NA_REAL;
 }
 
@@ -60,20 +91,41 @@ static inline double as_double(const char* x) {
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
 static inline bool is_double(const char* x) {
-  if (std::strcmp(x, "Inf") == 0 || std::strcmp(x, "+Inf") == 0) {
-    return true;
-  } else if (std::strcmp(x, "-Inf") == 0) {
-    return true;
-  } else if (std::strcmp(x, "NaN") == 0) {
-    return true;
+  const size_t len = std::strlen(x);
+
+  switch (len) {
+  case 3:
+    if (x[0] == 'I') {
+      if (UNLIKELY(std::memcmp(x, "Inf", 3) == 0)) return true;
+      if (UNLIKELY(strcasecmp(x, "inf") == 0)) return false;
+    } else if (x[0] == 'N') {
+      if (UNLIKELY(std::memcmp(x, "NaN", 3) == 0)) return true;
+      if (UNLIKELY(strcasecmp(x, "nan") == 0)) return false;
+    }
+    break;
+  case 4:
+    if ((x[0] == '+' || x[0] == '-') && (x[1] == 'I' || x[1] == 'i')) {
+      if (x[0] == '+') {
+        if (UNLIKELY(std::memcmp(x, "+Inf", 4) == 0)) return true;
+        if (UNLIKELY(strcasecmp(x, "+inf") == 0)) return false;
+      } else { // Must be '-'
+        if (UNLIKELY(std::memcmp(x, "-Inf", 4) == 0)) return true;
+        if (UNLIKELY(strcasecmp(x, "-inf") == 0)) return false;
+      }
+    }
+    break;
   }
-  if (strcasecmp(x, "inf") == 0 || strcasecmp(x, "+inf") == 0 ||
-      strcasecmp(x, "-inf") == 0 || strcasecmp(x, "nan") == 0) {
-    return false;
-  }
+
+  // --- High-performance numeric parsing ---
   double dbl;
-  auto result = fast_float::from_chars(x, x + std::strlen(x), dbl);
-  return result.ec == std::errc() && result.ptr == (x + std::strlen(x));
+  const char* const end = x + len;
+  auto result = fast_float::from_chars(x, end, dbl);
+
+  if (LIKELY(result.ec == std::errc() && result.ptr == end)) {
+    return true;
+  }
+
+  return false;
 }
 
 static inline bool has_cell(const std::string& str, const std::unordered_set<std::string>& vec) {
