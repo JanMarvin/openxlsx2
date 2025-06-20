@@ -381,47 +381,47 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @description get next numfmt id
     next_numfmt_id = function() {
       # TODO check: first free custom format begins at 165?
-      invisible(as.character(max(as.numeric(self$numfmt$id), 164) + 1))
+      invisible(as.character(max(as_numeric(self$numfmt$id), 164) + 1))
     },
 
     #' @description get next font id
     next_font_id = function() {
-      invisible(as.character(max(as.numeric(self$font$id), 0) + 1))
+      invisible(as.character(max(as_numeric(self$font$id), 0) + 1))
     },
 
     #' @description get next fill id
     next_fill_id = function() {
-      invisible(as.character(max(as.numeric(self$fill$id), 0) + 1))
+      invisible(as.character(max(as_numeric(self$fill$id), 0) + 1))
     },
 
     #' @description get next border id
     next_border_id = function() {
-      invisible(as.character(max(as.numeric(self$border$id), 0) + 1))
+      invisible(as.character(max(as_numeric(self$border$id), 0) + 1))
     },
 
     #' @description get next xf id
     next_xf_id = function() {
-      invisible(as.character(max(as.numeric(self$xf$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$xf$id), -1) + 1))
     },
 
     #' @description get next xf id
     next_cellstyle_id = function() {
-      invisible(as.character(max(as.numeric(self$cellStyle$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$cellStyle$id), -1) + 1))
     },
 
     #' @description get next xf id
     next_cellstylexf_id = function() {
-      invisible(as.character(max(as.numeric(self$cellStyleXf$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$cellStyleXf$id), -1) + 1))
     },
 
     #' @description get next dxf id
     next_dxf_id = function() {
-      invisible(as.character(max(as.numeric(self$dxf$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$dxf$id), -1) + 1))
     },
 
     #' @description get next tableStyle id
     next_tableStyle_id = function() {
-      invisible(as.character(max(as.numeric(self$tableStyle$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$tableStyle$id), -1) + 1))
     },
 
     #' @description get named style ids

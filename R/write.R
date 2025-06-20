@@ -50,7 +50,7 @@ inner_update <- function(
     row_attr <- rbind(row_attr, row_attr_missing)
 
     # order
-    row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
+    row_attr <- row_attr[order(as_numeric(row_attr$r)), ]
 
     wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
     # provide output
@@ -73,11 +73,11 @@ inner_update <- function(
     cc <- rbind(cc, cc_missing)
 
     # order cc (not really necessary, will be done when saving)
-    sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
+    sort_key <- as_numeric(cc$row_r) * 16384L + col2int(cc$c_r)
     cc <- cc[order(sort_key), ]
 
     # update dimensions (only required if new cols and rows are added) ------
-    all_rows <- as.numeric(unique(cc$row_r))
+    all_rows <- as_numeric(unique(cc$row_r))
     all_cols <- col2int(unique(cc$c_r))
 
     min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))

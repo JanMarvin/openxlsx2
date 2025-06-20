@@ -86,7 +86,7 @@ wb_check_overwrite_tables <- function(
       exTable$rows <- lapply(
         exTable$tab_ref,
         function(rectCoords) {
-          as.numeric(unlist(regmatches(rectCoords, gregexpr("[0-9]+", rectCoords))))
+          as_numeric(unlist(regmatches(rectCoords, gregexpr("[0-9]+", rectCoords))))
         }
       )
       exTable$cols <- lapply(
@@ -158,8 +158,8 @@ wb_create_columns <- function(wb, sheet, cols) {
     col_df <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
 
   # found a few cols, but not all required cols. create the missing columns
-  if (!all(cols %in% as.numeric(col_df$min))) {
-    beg <- max(as.numeric(col_df$min)) + 1
+  if (!all(cols %in% as_numeric(col_df$min))) {
+    beg <- max(as_numeric(col_df$min)) + 1
     end <- max(cols)
 
     # new columns
@@ -168,7 +168,7 @@ wb_create_columns <- function(wb, sheet, cols) {
     # rbind only the missing columns. avoiding dups
     sel <- !new_cols$min %in% col_df$min
     col_df <- rbind(col_df, new_cols[sel, ])
-    col_df <- col_df[order(as.numeric(col_df[, "min"])), ]
+    col_df <- col_df[order(as_numeric(col_df[, "min"])), ]
   }
 
   col_df

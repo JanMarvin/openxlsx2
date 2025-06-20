@@ -108,7 +108,7 @@ calc_col_width <- function(base_font, col_width) {
 
   # Note: cannot reproduce the exact values with MS365 on Mac. Nevertheless, these values are closer
   # to the expected widths
-  widths <- trunc((as.numeric(col_width) * mdw + 5) / mdw * 256) / 256
+  widths <- trunc((as_numeric(col_width) * mdw + 5) / mdw * 256) / 256
   widths <- round(widths, 3)
 
   if (any(sel <- widths > getOption("openxlsx2.maxWidth", 250))) {

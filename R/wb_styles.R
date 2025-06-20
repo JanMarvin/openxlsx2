@@ -794,7 +794,7 @@ set_cellstyle <- function(
 styles_on_sheet <- function(wb, sheet) {
   sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
   z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
-  as.numeric(z)
+  as_numeric(z)
 }
 
 #' get xml node for a specific style of a cell. function for internal use
@@ -810,7 +810,7 @@ get_cell_styles <- function(wb, sheet, cell) {
     if (cellstyle == "") {
       tmp <- wb$styles_mgr$styles$cellXfs[1]
     } else {
-      tmp <- wb$styles_mgr$styles$cellXfs[as.numeric(cellstyle) + 1]
+      tmp <- wb$styles_mgr$styles$cellXfs[as_numeric(cellstyle) + 1]
     }
 
     out <- c(out, tmp)
