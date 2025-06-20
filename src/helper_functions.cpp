@@ -980,6 +980,14 @@ Rcpp::NumericVector as_numeric(Rcpp::Nullable<Rcpp::RObject> input) {
 
   Rcpp::RObject obj(input);
 
+  if (obj.inherits("Date") || obj.inherits("POSIXct")) {
+    Rcpp::NumericVector tmp(obj);
+    Rcpp::NumericVector num = clone(tmp);
+    num.attr("class") = R_NilValue;
+    num.attr("tzone") = R_NilValue;
+    return num;
+  }
+
   if (Rf_isLogical(obj)) {
     // Handle logical input directly
     Rcpp::LogicalVector lv(obj);

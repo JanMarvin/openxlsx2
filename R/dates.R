@@ -130,7 +130,7 @@ as_POSIXct_utc <- function(x) {
 as_POSIXlt_hms <- function(x) {
   z <- as.POSIXlt("1970-01-01")
   units(x) <- "secs"
-  z$sec <- as.numeric(x)
+  z$sec <- as_numeric(x)
   z
 }
 
@@ -174,7 +174,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
     tz <- format(x, "%z")
     offSet <- parseOffset(tz)
 
-    z <- as.numeric(x) / 86400L + origin + offSet
+    z <- as_numeric(x) / 86400L + origin + offSet
 
     # Excel ships a date 29Feb1900 due to initial backward comparability
     # with previous spreadsheet software.
