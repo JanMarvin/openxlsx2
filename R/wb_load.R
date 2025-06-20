@@ -508,7 +508,7 @@ wb_load <- function(
     ## order they appear here gives order of worksheets in xlsx file
     sheets$typ <- basename(sheets$Type)
     sheets$target <- stringi::stri_join(xmlDir, xl_path, sheets$Target)
-    sheets$id <- as.numeric(sheets$sheetId)
+    sheets$id <- as_numeric(sheets$sheetId)
 
     if (is.null(sheets$state)) sheets$state <- "visible"
     sheets$state[sheets$state == ""] <- "visible"
@@ -1539,7 +1539,7 @@ wb_load <- function(
 
   ## queryTables
   if (!data_only && length(queryTablesXML) > 0) {
-    ids <- as.numeric(regmatches(queryTablesXML, regexpr("[0-9]+(?=\\.xml)", queryTablesXML, perl = TRUE)))
+    ids <- as_numeric(regmatches(queryTablesXML, regexpr("[0-9]+(?=\\.xml)", queryTablesXML, perl = TRUE)))
     wb$queryTables <- unapply(queryTablesXML[order(ids)], read_xml, pointer = FALSE)
     cts <- c(cts,
       sprintf('<Override PartName="/xl/queryTables/queryTable%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.queryTable+xml"/>', seq_along(queryTablesXML))
@@ -1572,7 +1572,7 @@ wb_load <- function(
       # TODO provide a function that creates a wb_rels data frame
       wb_rels <- rbindlist(xml_attr(wxr, "Relationship"))
       wb_rels$typ <- basename(wb_rels$Type)
-      wb_rels$id  <- as.numeric(gsub("\\D", "", wb_rels$Id))
+      wb_rels$id  <- as_numeric(gsub("\\D", "", wb_rels$Id))
       next_rid <- max(wb_rels$id) + 1
 
       wxr <- c(wxr,
