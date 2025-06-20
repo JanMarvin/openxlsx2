@@ -38,12 +38,15 @@ static inline std::string int_to_col(T cell) {
 }
 
 // Use a portable likely/unlikely attribute if not on C++20
-#if defined(__GNUC__) || defined(__clang__)
-#define LIKELY(x) __builtin_expect(!!(x), 1)
-#define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#if __cplusplus >= 202002L
+#  define LIKELY(x) (x) [[likely]]
+#  define UNLIKELY(x) (x) [[unlikely]]
+#elif defined(__GNUC__) || defined(__clang__)
+#  define LIKELY(x) __builtin_expect(!!(x), 1)
+#  define UNLIKELY(x) __builtin_expect(!!(x), 0)
 #else
-#define LIKELY(x) (x)
-#define UNLIKELY(x) (x)
+#  define LIKELY(x) (x)
+#  define UNLIKELY(x) (x)
 #endif
 
 static inline double as_double(const char* x) {
