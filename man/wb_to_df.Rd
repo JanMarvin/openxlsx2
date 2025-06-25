@@ -248,5 +248,5 @@ df1 <- wb_read(file = example_file, sheet = 1)
 df2 <- wb_read(file = example_file, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
 }
 \seealso{
-\code{\link[=wb_get_named_regions]{wb_get_named_regions()}}
+\code{\link[=wb_get_named_regions]{wb_get_named_regions()}}, \link[openxlsx2:openxlsx2-package]{openxlsx2}
 }

@@ -96,7 +96,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' [convert_datetime()], or [convert_hms()]. If types are specified, date
 #' detection is disabled.
 #'
-#' @seealso [wb_get_named_regions()]
+#' @seealso [wb_get_named_regions()], \link[openxlsx2:openxlsx2-package]{openxlsx2}
 #'
 #' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.
 #' @param sheet Either sheet name or index. When missing the first sheet in the workbook is selected.

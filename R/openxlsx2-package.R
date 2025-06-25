@@ -100,6 +100,34 @@
 #' equality (`==`) comparisons; check for differences within a small
 #' tolerance instead.
 #'
+#' ## Supported files
+#'
+#' Supported input files include `xlsx`, `xlsm`, and `xlsb`. The `xlsx` and
+#' `xlsm` formats are fully supported. The key difference between these two
+#' formats is that `xlsm` files may contain a binary blob that stores VBA
+#' code, while `xlsx` files do not.
+#'
+#' Support for the `xlsb` format is more limited. A custom parser is used to
+#' convert the binary format into a pseudo-XML structure that can be loaded
+#' into a [`wbWorkbook`]. This allows `xlsb` files to be handled similarly to
+#' other workbook formats. However, the parser does not fully implement the
+#' entire `xlsb` specification. It provides functionality to read worksheets
+#' into data frames and to save the content as an `xlsx` or `xlsm` file for
+#' comparison of values and formulas. Some components, such as pivot tables
+#' and conditional formatting, are not currently parsed. Writing `xlsb` files
+#' is not supported, and big endian support is very limited. At present,
+#' there are no plans to extend support for `xlsb` files further, due to the
+#' complexity of the format. It is recommended to use spreadsheet software to
+#' convert files to or from the `xlsb` format when necessary.
+#'
+#' The XML-based formats (`xlsx` and `xlsm`) are fully supported. Loading,
+#' modifying, and saving these files with minimal unintended changes is a
+#' core project goal. Nevertheless, the XML format can be fragile. Modifying
+#' cells that interact with formulas, named objects such as tables or
+#' regions, slicers, or pivot tables can lead to unexpected behavior. It is
+#' therefore strongly advised to keep backups of important files and to
+#' regularly verify the output using appropriate spreadsheet software.
+#'
 #' ## Authors and contributions
 #'
 #' For a full list of all authors that have made this package possible and for whom we are grateful, please see:
