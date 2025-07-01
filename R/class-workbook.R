@@ -1617,7 +1617,7 @@ wbWorkbook <- R6::R6Class(
       if (missing(pivot_table)) pivot_table <- NULL
       if (missing(params))      params <- NULL
 
-      if (any(duplicated(c(if_not_missing(filter), if_not_missing(rows), if_not_missing(cols))))) {
+      if (anyDuplicated(c(if_not_missing(filter), if_not_missing(rows), if_not_missing(cols))) > 0) {
         stop("duplicated variable in filter, rows, and cols detected.")
       }
 
@@ -2608,7 +2608,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       max_id <- max(rel_ids, 0)
-      if (!is.null(nams) && any(!nams %in% names(x)))
+      if (!is.null(nams) && !all(nams %in% names(x)))
         stop("some selected columns are not part of `dims`")
 
       if (!is.null(target) && !any(names(target) %in% nams)) {
@@ -4540,7 +4540,7 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(heights)) {
         if (length(rows) > length(heights)) {
-          heights <- rep(heights, length.out = length(rows))
+          heights <- rep_len(heights, length(rows))
         }
 
         if (length(heights) > length(rows)) {
@@ -4656,7 +4656,7 @@ wbWorkbook <- R6::R6Class(
 
       # all collapsed = TRUE
       hidden <- all(collapsed)
-      collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(cols))
+      collapsed <- rep_len(as.character(as.integer(collapsed)), length(cols))
 
       # Remove duplicates
       ok <- !duplicated(cols)
@@ -4791,7 +4791,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(widths) < length(cols)) {
-        widths <- rep(widths, length.out = length(cols))
+        widths <- rep_len(widths, length(cols))
       }
       compatible_length <- length(cols) %% length(hidden) == 0
 
@@ -4802,12 +4802,12 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(hidden) < length(cols)) {
-        hidden <- rep(hidden, length.out = length(cols))
+        hidden <- rep_len(hidden, length(cols))
       }
 
       # TODO add bestFit option?
-      bestFit <- rep("1", length.out = length(cols))
-      customWidth <- rep("1", length.out = length(cols))
+      bestFit <- rep_len("1", length(cols))
+      customWidth <- rep_len("1", length(cols))
 
       ## Remove duplicates
       ok <- !duplicated(cols)
@@ -4926,7 +4926,7 @@ wbWorkbook <- R6::R6Class(
 
       # all collapsed = TRUE
       hidden <- all(collapsed)
-      collapsed <- rep(as.character(as.integer(collapsed)), length.out = length(rows))
+      collapsed <- rep_len(as.character(as.integer(collapsed)), length(rows))
 
       # Remove duplicates
       ok <- !duplicated(rows)
@@ -7225,7 +7225,7 @@ wbWorkbook <- R6::R6Class(
           old_names <- rbindlist(xml_attr(props, "property"))$name
 
           # TODO add update or remove option
-          if (any(duplicated(c(old_names, new_names)))) {
+          if (anyDuplicated(c(old_names, new_names)) > 0) {
             message("File has duplicated custom section")
             cstm <- self$custom
             idxs <- which(old_names %in% new_names)
@@ -9475,7 +9475,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
 
       for (i in seq_along(self$sheet_names)) {
-        xml_attr <- ifelse(i == sheet, TRUE, FALSE)
+        xml_attr <- i == sheet
         self$worksheets[[i]]$set_sheetview(tab_selected = xml_attr)
       }
 
@@ -9561,7 +9561,7 @@ wbWorkbook <- R6::R6Class(
       if (nchar(sheet) > 31) {
         warning("Fixing: shortening sheet name to 31 characters.")
         sheet <- stringi::stri_sub(sheet, 1, 31)
-        if (any(duplicated(c(sheet, self$sheet_names))))
+        if (anyDuplicated(c(sheet, self$sheet_names)) > 0)
           stop(
             "Cannot shorten sheet name to a unique string. ",
             "Please provide a unique sheetname with maximum 31 characters."
@@ -9695,7 +9695,7 @@ wbWorkbook <- R6::R6Class(
     },
 
     get_drawingsref = function() {
-      has_drawing <- which(grepl("drawings", self$worksheets_rels))
+      has_drawing <- grep("drawings", self$worksheets_rels)
 
       rlshp <- NULL
       for (i in has_drawing) {

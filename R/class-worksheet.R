@@ -1056,7 +1056,7 @@ wbWorksheet <- R6::R6Class(
         )
       )
 
-      date1904 <- ifelse(origin == "1904-01-01", TRUE, FALSE)
+      date1904 <- origin == "1904-01-01"
 
       if (type == "date" || type == "time") {
         value <- conv_to_excel_date(value, date1904 = date1904)

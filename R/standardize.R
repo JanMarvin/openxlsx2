@@ -12,7 +12,7 @@ standardize_color_names <- function(..., return = FALSE) {
   }
   got <- names(args)
   # can be Color or color
-  got_color <- which(grepl("colour", tolower(got)))
+  got_color <- grep("colour", tolower(got))
 
   if (length(got_color)) {
     for (got_col in got_color) {
@@ -51,7 +51,7 @@ standardize_case_names <- function(..., return = FALSE, arguments = NULL) {
 
   regex <- "(\\G(?!^)|\\b[a-zA-Z][a-z]*)([A-Z][a-z]*|\\d+)"
 
-  got_camel_cases <- which(grepl(regex, got, perl = TRUE))
+  got_camel_cases <- grep(regex, got, perl = TRUE)
 
   if (length(got_camel_cases)) {
     for (got_camel_case in got_camel_cases) {

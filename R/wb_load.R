@@ -108,7 +108,7 @@ wb_load <- function(
 
   # There is one known file in #1194. this file has lower case folders, while
   # the references in the file are the usual camel case.
-  needs_lower <- ifelse(any(grepl("\\[content_types\\].xml$", xmlFiles)), TRUE, FALSE)
+  needs_lower <- any(grepl("\\[content_types\\].xml$", xmlFiles))
 
   grep_xml <- function(pattern, perl = TRUE, value = TRUE, to_lower = needs_lower, ...) {
     # targets xmlFiles; has presents
@@ -525,7 +525,7 @@ wb_load <- function(
 
       # remove GoogleSheets "metadata" binary blob
       ext <- xml_node(extLst, "extLst", "ext")
-      sel <- which(grepl("GoogleSheets", ext))
+      sel <- grep("GoogleSheets", ext)
 
       if (length(sel))
         extLst <- xml_rm_child(extLst, "ext", which = sel)
@@ -1120,7 +1120,7 @@ wb_load <- function(
         wb_rels$typ <- basename(wb_rels$Type)
 
         # for hyperlinks, we take the relationship id
-        if (length(wb_rels$typ == "hyperlink")) {
+        if (any(wb_rels$typ == "hyperlink")) {
           wb_rels$tid[wb_rels$typ == "hyperlink"] <- as.integer(
             gsub("\\D+", "", basename2(wb_rels$Id[wb_rels$typ == "hyperlink"]))
           )

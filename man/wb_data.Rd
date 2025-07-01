@@ -11,8 +11,7 @@ wb_data(wb, sheet = current_sheet(), dims, ...)
   x,
   i,
   j,
-  drop = ifelse((missing(j) && length(i) > 1) || (!missing(i) && length(j) > 1), FALSE,
-    TRUE)
+  drop = !((missing(j) && length(i) > 1) || (!missing(i) && length(j) > 1))
 )
 }
 \arguments{
