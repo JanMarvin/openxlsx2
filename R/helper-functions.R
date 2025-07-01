@@ -716,7 +716,7 @@ to_string <- function(x) {
   # It is possible to assign labels to Inf, -Inf, and NaN. We have to
   # distinguish between a numeric Inf/-Inf/NaN and a label. The label
   # should be written as character, otherwise as #NUM! or #VALUE!
-  if (any(!used_label)) {
+  if (!all(used_label)) {
     ul <- which(!used_label)
 
     inf_pos <- is.infinite(x_num[ul]) & x_num[ul] > 0

@@ -136,12 +136,12 @@ inner_update <- function(
   }
 
   # columns in cc and x can differ make sure that all elements are available
-  if (any(!replacement %in% names(x))) {
+  if (!all(replacement %in% names(x))) {
     mss <- replacement[!replacement %in% names(x)]
     for (ms in mss) x[ms] <- rep("", nrow(x))
     x <- x[replacement]
   }
-  if (any(!replacement %in% names(cc))) {
+  if (!all(replacement %in% names(cc))) {
     mss <- replacement[!replacement %in% names(cc)]
     for (ms in mss) cc[ms] <- rep("", nrow(cc))
     cc <- cc[replacement]
@@ -919,7 +919,7 @@ write_data_table <- function(
              " Modify na with na.strings")
       x[1, ] <- NA
     }
-    if (any(duplicated(tolower(colnames(x))))) {
+    if (anyDuplicated(tolower(colnames(x))) > 0) {
       warning("tables cannot have duplicated column names")
       colnames(x) <- fix_pt_names(colnames(x))
     }

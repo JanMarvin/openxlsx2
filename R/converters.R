@@ -41,7 +41,7 @@ col2int <- function(x) {
   if (any(grepl(":", x))) {
     # loop through x until all ":" are replaced with integer sequences
     while (any(grepl(":", x))) {
-      rng <- which(grepl(":", x))[1]
+      rng <- grep(":", x)[1]
       spl <- strsplit(x[rng], ":")[[1]]
       # Replace "A:Z" with integer sequence. This changes the length of x
       x <- append(x[-rng], seq.int(col_to_int(spl[1]), col_to_int(spl[2])), after = rng - 1)

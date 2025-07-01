@@ -701,7 +701,7 @@ wb_to_df <- function(
         types[types == "formula"]   <- 6
       }
 
-      if (any(!names(types) %in% xlsx_cols_names)) {
+      if (!all(names(types) %in% xlsx_cols_names)) {
         warning("variable from `types` not found in data")
         types <- types[names(types) %in% xlsx_cols_names]
       }
@@ -937,7 +937,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
 #' @param drop drop
 #' @rdname wb_data
 #' @export
-"[.wb_data" <- function(x, i, j, drop = ifelse((missing(j) && length(i) > 1) || (!missing(i) && length(j) > 1), FALSE, TRUE)) {
+"[.wb_data" <- function(x, i, j, drop = !((missing(j) && length(i) > 1) || (!missing(i) && length(j) > 1))) {
 
   sheet <- attr(x, "sheet")
   dd    <- attr(x, "dims")
