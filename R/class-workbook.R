@@ -1617,7 +1617,7 @@ wbWorkbook <- R6::R6Class(
       if (missing(pivot_table)) pivot_table <- NULL
       if (missing(params))      params <- NULL
 
-      if (anyDuplicated(c(if_not_missing(filter), if_not_missing(rows), if_not_missing(cols))) > 0) {
+      if (anyDuplicated(c(if_not_missing(filter), if_not_missing(rows), if_not_missing(cols)))) {
         stop("duplicated variable in filter, rows, and cols detected.")
       }
 
@@ -7225,7 +7225,7 @@ wbWorkbook <- R6::R6Class(
           old_names <- rbindlist(xml_attr(props, "property"))$name
 
           # TODO add update or remove option
-          if (anyDuplicated(c(old_names, new_names)) > 0) {
+          if (anyDuplicated(c(old_names, new_names))) {
             message("File has duplicated custom section")
             cstm <- self$custom
             idxs <- which(old_names %in% new_names)
@@ -9561,7 +9561,7 @@ wbWorkbook <- R6::R6Class(
       if (nchar(sheet) > 31) {
         warning("Fixing: shortening sheet name to 31 characters.")
         sheet <- stringi::stri_sub(sheet, 1, 31)
-        if (anyDuplicated(c(sheet, self$sheet_names)) > 0)
+        if (anyDuplicated(c(sheet, self$sheet_names)))
           stop(
             "Cannot shorten sheet name to a unique string. ",
             "Please provide a unique sheetname with maximum 31 characters."

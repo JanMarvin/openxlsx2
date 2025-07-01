@@ -919,7 +919,7 @@ write_data_table <- function(
              " Modify na with na.strings")
       x[1, ] <- NA
     }
-    if (anyDuplicated(tolower(colnames(x))) > 0) {
+    if (anyDuplicated(tolower(colnames(x)))) {
       warning("tables cannot have duplicated column names")
       colnames(x) <- fix_pt_names(colnames(x))
     }
