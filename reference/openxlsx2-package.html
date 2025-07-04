@@ -15,7 +15,7 @@ or chains, openxlsx2 allows to break many new ground."><meta property="og:image"
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@ or chains, openxlsx2 allows to break many new ground."><meta property="og:image"
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>xlsx reading, writing and editing.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.16/R/openxlsx2-package.R" class="external-link"><code>R/openxlsx2-package.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/openxlsx2-package.R" class="external-link"><code>R/openxlsx2-package.R</code></a></small>
       <div class="d-none name"><code>openxlsx2-package.Rd</code></div>
     </div>
 
@@ -140,6 +140,35 @@ XML-to-numeric conversion when reading the file into R. Expect minor
 variations, especially in the least significant digits, and avoid direct
 equality (<code>==</code>) comparisons; check for differences within a small
 tolerance instead.</p>
+</div>
+
+<div class="section">
+<h3 id="supported-files">Supported files<a class="anchor" aria-label="anchor" href="#supported-files"></a></h3>
+
+
+<p>Supported input files include <code>xlsx</code>, <code>xlsm</code>, and <code>xlsb</code>. The <code>xlsx</code> and
+<code>xlsm</code> formats are fully supported. The key difference between these two
+formats is that <code>xlsm</code> files may contain a binary blob that stores VBA
+code, while <code>xlsx</code> files do not.</p>
+<p>Support for the <code>xlsb</code> format is more limited. A custom parser is used to
+convert the binary format into a pseudo-XML structure that can be loaded
+into a <code><a href="wbWorkbook.html">wbWorkbook</a></code>. This allows <code>xlsb</code> files to be handled similarly to
+other workbook formats. However, the parser does not fully implement the
+entire <code>xlsb</code> specification. It provides functionality to read worksheets
+into data frames and to save the content as an <code>xlsx</code> or <code>xlsm</code> file for
+comparison of values and formulas. Some components, such as pivot tables
+and conditional formatting, are not currently parsed. Writing <code>xlsb</code> files
+is not supported, and big endian support is very limited. At present,
+there are no plans to extend support for <code>xlsb</code> files further, due to the
+complexity of the format. It is recommended to use spreadsheet software to
+convert files to or from the <code>xlsb</code> format when necessary.</p>
+<p>The XML-based formats (<code>xlsx</code> and <code>xlsm</code>) are fully supported. Loading,
+modifying, and saving these files with minimal unintended changes is a
+core project goal. Nevertheless, the XML format can be fragile. Modifying
+cells that interact with formulas, named objects such as tables or
+regions, slicers, or pivot tables can lead to unexpected behavior. It is
+therefore strongly advised to keep backups of important files and to
+regularly verify the output using appropriate spreadsheet software.</p>
 </div>
 
 <div class="section">

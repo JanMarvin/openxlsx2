@@ -9,7 +9,7 @@ To open xlsx files, see xl_open()."><meta property="og:image" content="https://j
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ To open xlsx files, see xl_open()."><meta property="og:image" content="https://j
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Preview a workbook in a spreadsheet software</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.16/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_open.Rd</code></div>
     </div>
 
@@ -57,7 +57,7 @@ To open xlsx files, see <code><a href="xl_open.html">xl_open()</a></code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_open</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_open</span><span class="op">(</span><span class="va">wb</span>, flush <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -66,6 +66,10 @@ To open xlsx files, see <code><a href="xl_open.html">xl_open()</a></code>.</p>
 
 <dl><dt id="arg-wb">wb<a class="anchor" aria-label="anchor" href="#arg-wb"></a></dt>
 <dd><p>a <a href="wbWorkbook.html">wbWorkbook</a> object</p></dd>
+
+
+<dt id="arg-flush">flush<a class="anchor" aria-label="anchor" href="#arg-flush"></a></dt>
+<dd><p>if the flush option should be used</p></dd>
 
 </dl></div>
 
