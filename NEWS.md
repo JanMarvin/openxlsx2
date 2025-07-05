@@ -1,3 +1,8 @@
+# openxlsx2 (development version)
+
+
+***************************************************************************
+
 # openxlsx2 1.17
 
 ## Fixes
@@ -8,6 +13,7 @@
 
 * The provided pugixml functions allow now for a deeper nesting of nodes including wildcards. Previously the nesting was restricted to three levels. This limit has been lifted. [1356](https://github.com/JanMarvin/openxlsx2/pull/1356)
 * Cleanups to `xlsb` and other c++ parts of the code. Avoid a few `to_string()` and `std::string()` casts.
+
 
 ***************************************************************************
 
