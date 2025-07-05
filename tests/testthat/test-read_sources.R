@@ -503,8 +503,7 @@ test_that("blank inlineStr can be treated as na.string", {
   expect_true(inherits(df$date, "POSIXct"))
 })
 
-
-test_that("blank inlineStr can be treated as na.string", {
+test_that("read file with data types", {
   skip_online_checks()
   xlsxFile <- testfile_path("richData_datatypes.xlsx")
   wb <- wb_load(xlsxFile)
