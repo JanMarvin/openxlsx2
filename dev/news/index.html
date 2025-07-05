@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.16.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.17.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,15 +49,19 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+<hr></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.17" id="openxlsx2-117">openxlsx2 1.17<a class="anchor" aria-label="anchor" href="#openxlsx2-117"></a></h2><p class="text-muted">CRAN release: 2025-07-04</p>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-17">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-17"></a></h3>
 <ul><li>
 <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> no longer converts column names to scientific notation. This fixes a regression (from the UTC change). The conversion occurred, if the cell that is used as column name, is of type numeric. Similar to the default in R <code>10000</code> would convert to <code>1e+05</code>. While such conversions might still happen in numeric values, they should not occur in the column names.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-changes-development-version">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<h3 id="internal-changes-1-17">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-17"></a></h3>
 <ul><li>The provided pugixml functions allow now for a deeper nesting of nodes including wildcards. Previously the nesting was restricted to three levels. This limit has been lifted. <a href="https://github.com/JanMarvin/openxlsx2/pull/1356" class="external-link">1356</a>
 </li>
+<li>Cleanups to <code>xlsb</code> and other c++ parts of the code. Avoid a few <code>to_string()</code> and <code>std::string()</code> casts.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
