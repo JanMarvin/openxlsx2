@@ -502,3 +502,29 @@ test_that("blank inlineStr can be treated as na.string", {
   df <- wb_to_df(xlsxFile, row_names = TRUE)
   expect_true(inherits(df$date, "POSIXct"))
 })
+
+
+test_that("blank inlineStr can be treated as na.string", {
+  skip_online_checks()
+  xlsxFile <- testfile_path("richData_datatypes.xlsx")
+  wb <- wb_load(xlsxFile)
+
+  exp <- c(rdarray = 3376L, richValueRel = 0L, richValueRelrels = 0L,
+           rdrichvalue = 33859L, rdrichvaluestr = 6173L, rdRichValueTypes = 6397L,
+           rdValWebImg = 676L, rdValWebImgrels = 2617L, rdpropertybag = 19287L,
+           rdpropertybagStr = 5995L, richStyles = 1480L)
+  got <- vapply(wb$richData, nchar, NA_integer_)
+  expect_equal(exp, got)
+
+  expect_equal(18, length(wb$Content_Types))
+
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  wb <- wb_load(tmp)
+
+  got <- vapply(wb$richData, nchar, NA_integer_)
+  expect_equal(exp, got)
+
+  expect_equal(18, length(wb$Content_Types))
+
+})
