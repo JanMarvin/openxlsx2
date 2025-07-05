@@ -3372,7 +3372,16 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(self$richData)) {
         richDataDir <- dir_create(tmpDir, "xl", "richData")
-        if (length(self$richData$richValueRel)) {
+        if (nchar(self$richData$rdarray)) {
+          write_file(
+            body = self$richData$rdarray,
+            fl = file.path(
+              richDataDir,
+              "rdarray.xml"
+            )
+          )
+        }
+        if (nchar(self$richData$richValueRel)) {
           write_file(
             body = self$richData$richValueRel,
             fl = file.path(
@@ -3381,7 +3390,7 @@ wbWorkbook <- R6::R6Class(
             )
           )
         }
-        if (length(self$richData$rdrichvalue)) {
+        if (nchar(self$richData$rdrichvalue)) {
           write_file(
             body = self$richData$rdrichvalue,
             fl = file.path(
@@ -3390,7 +3399,7 @@ wbWorkbook <- R6::R6Class(
             )
           )
         }
-        if (length(self$richData$rdrichvaluestr)) {
+        if (nchar(self$richData$rdrichvaluestr)) {
           write_file(
             body = self$richData$rdrichvaluestr,
             fl = file.path(
@@ -3399,7 +3408,7 @@ wbWorkbook <- R6::R6Class(
             )
           )
         }
-        if (length(self$richData$rdRichValueTypes)) {
+        if (nchar(self$richData$rdRichValueTypes)) {
           write_file(
             body = self$richData$rdRichValueTypes,
             fl = file.path(
@@ -3408,8 +3417,53 @@ wbWorkbook <- R6::R6Class(
             )
           )
         }
-
-        if (length(self$richData$richValueRelrels)) {
+        if (nchar(self$richData$rdValWebImg)) {
+          write_file(
+            body = self$richData$rdValWebImg,
+            fl = file.path(
+              richDataDir,
+              "rdRichValueWebImage.xml"
+            )
+          )
+        }
+        if (nchar(self$richData$rdValWebImgrels)) {
+          richDataRelDir <- dir_create(tmpDir, "xl", "richData", "_rels")
+          write_file(
+            body = self$richData$rdValWebImgrels,
+            fl = file.path(
+              richDataRelDir,
+              "rdRichValueWebImage.xml.rels"
+            )
+          )
+        }
+        if (nchar(self$richData$rdpropertybag)) {
+          write_file(
+            body = self$richData$rdpropertybag,
+            fl = file.path(
+              richDataDir,
+              "rdsupportingpropertybag.xml"
+            )
+          )
+        }
+        if (nchar(self$richData$rdpropertybagStr)) {
+          write_file(
+            body = self$richData$rdpropertybagStr,
+            fl = file.path(
+              richDataDir,
+              "rdsupportingpropertybagstructure.xml"
+            )
+          )
+        }
+        if (nchar(self$richData$richStyles)) {
+          write_file(
+            body = self$richData$richStyles,
+            fl = file.path(
+              richDataDir,
+              "richStyles.xml"
+            )
+          )
+        }
+        if (nchar(self$richData$richValueRelrels)) {
           richDataRelDir <- dir_create(tmpDir, "xl", "richData", "_rels")
           write_file(
             body = self$richData$richValueRelrels,
