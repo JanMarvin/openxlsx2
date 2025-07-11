@@ -6156,12 +6156,12 @@ wbWorkbook <- R6::R6Class(
 
           if (!is.null(dims)) {
             if (any(sel <- cf$sqref %in% dims)) {
-              cf <- cf[!sel, , drop = FALSE]
+              cf <- cf[!sel, ]
             }
           } else if (first) {
-              cf <- cf[-1, , drop = FALSE]
+              cf <- cf[-1, ]
           } else if (last) {
-              cf <- cf[-length(cf), , drop = FALSE]
+              cf <- cf[-nrow(cf), ]
           }
 
           if (nrow(cf) == 0) cf <- character()
