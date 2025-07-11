@@ -6152,15 +6152,23 @@ wbWorkbook <- R6::R6Class(
 
         cf <- self$worksheets[[sheet]]$conditionalFormatting
 
-        if (!is.null(dims)) {
-          if (any(sel <- names(cf) %in% dims)) {
-            self$worksheets[[sheet]]$conditionalFormatting <- cf[!sel]
+        if (is.data.frame(cf)) {
+
+          if (!is.null(dims)) {
+            if (any(sel <- cf$sqref %in% dims)) {
+              cf <- cf[!sel, , drop = FALSE]
+            }
+          } else if (first) {
+              cf <- cf[-1, , drop = FALSE]
+          } else if (last) {
+              cf <- cf[-length(cf), , drop = FALSE]
           }
-        } else if (first) {
-            self$worksheets[[sheet]]$conditionalFormatting <- cf[-1]
-        } else if (last) {
-            self$worksheets[[sheet]]$conditionalFormatting <- cf[-length(cf)]
+
+          if (nrow(cf) == 0) cf <- character()
         }
+
+        self$worksheets[[sheet]]$conditionalFormatting <- cf
+
       }
 
       invisible(self)
@@ -10153,16 +10161,18 @@ wbWorkbook <- R6::R6Class(
         collapse = ":"
       )
 
-      nms <- c(names(self$worksheets[[sheet]]$conditionalFormatting), sqref)
       dxfId <- max(dxfId, 0L)
 
-      priority <- max(0,
-        as.integer(
+      prty <- 0
+
+      if (is.data.frame(self$worksheets[[sheet]]$conditionalFormatting))
+        prty <- as.integer(
           openxlsx2:::rbindlist(
-            xml_attr(self$worksheets[[sheet]]$conditionalFormatting, "cfRule")
+            xml_attr(self$worksheets[[sheet]]$conditionalFormatting$cf, "cfRule")
           )$priority
         )
-      ) + 1L
+
+      priority <- max(0, prty) + 1L
 
       # big switch statement
       cfRule <- switch(
@@ -10230,8 +10240,18 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(cfRule)) {
-        private$append_sheet_field(sheet, "conditionalFormatting", read_xml(cfRule, pointer = FALSE))
-        names(self$worksheets[[sheet]]$conditionalFormatting) <- nms
+
+        cfc <- data.frame(pivot = "", sqref = sqref, cf = read_xml(cfRule, pointer = FALSE))
+        cfs <- self$worksheets[[sheet]]$conditionalFormatting
+
+        sel <- c("sqref", "cf")
+        if (is.data.frame(cfs))
+          sel <- names(cfs)
+
+        self$worksheets[[sheet]]$conditionalFormatting <- rbind(
+          cfs,
+          cfc[sel] # pick names with or without pivot
+        )
       }
       invisible(self)
     },

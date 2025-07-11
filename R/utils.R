@@ -1032,23 +1032,6 @@ read_xml_files <- function(x) {
          USE.NAMES = FALSE)
 }
 
-#' unlist modifies names
-#' @param x a cf list
-#' @noRd
-un_list <- function(x) {
-
-  # TODO can use `lengths()` when depending on R 4.0
-  names <- vapply(x, length, NA_integer_)
-  nams <- NULL
-  for (i in seq_along(names)) {
-    nam <- rep(names(names[i]), names[i])
-    nams <- c(nams, nam)
-  }
-  x <- unlist(x, use.names = FALSE)
-  names(x) <- nams
-  x
-}
-
 # `fmt_txt()` ------------------------------------------------------------------
 #' format strings independent of the cell style.
 #'

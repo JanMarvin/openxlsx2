@@ -320,21 +320,22 @@ wbWorksheet <- R6::R6Class(
 
         # conditionalFormatting
         if (length(self$conditionalFormatting)) {
-          nms <- names(self$conditionalFormatting)
-          paste(
-            vapply(
-              unique(nms),
-              function(i) {
-                paste0(
-                  sprintf('<conditionalFormatting sqref="%s">', i),
-                  pxml(self$conditionalFormatting[nms == i]),
-                  "</conditionalFormatting>"
-                )
-              },
-              NA_character_
-            ),
-            collapse = ""
-          )
+
+          cfs_xml <- NULL
+          for (i in seq_len(nrow(self$conditionalFormatting))) {
+            cf_xml <- xml_node_create("conditionalFormatting",
+              xml_attributes = c(
+                sqref = self$conditionalFormatting$sqref[i],
+                pivot = self$conditionalFormatting$pivot[i]
+              ),
+              xml_children = c(
+                self$conditionalFormatting$cf[i]
+              )
+            )
+            cfs_xml <- c(cfs_xml, cf_xml)
+          }
+          paste0(cfs_xml, collapse = "")
+
         },
 
         # dataValidations
