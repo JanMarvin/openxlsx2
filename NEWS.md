@@ -1,5 +1,13 @@
 # openxlsx2 (development version)
 
+## Fixes
+
+* Support loading and saving workbooks with conditional formatting in pivot tables. [1397](https://github.com/JanMarvin/openxlsx2/pull/1397)
+
+## Internal Changes
+
+* The conditional formatting structure was changed to a data frame. This allows handling pivot attributes. [1397](https://github.com/JanMarvin/openxlsx2/pull/1397)
+
 
 ***************************************************************************
 

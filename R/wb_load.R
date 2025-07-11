@@ -991,7 +991,7 @@ wb_load <- function(
           nms <- rbindlist(xml_attr(cfs, "conditionalFormatting"))
           cf <- xml_node(cfs, "conditionalFormatting", "cfRule")
 
-          # xlsb does not support conditional formatting
+          # our xlsb parser does not support conditional formatting
           if (!identical(cf, character())) {
             conditionalFormatting <- data.frame(
               nms, cf, stringsAsFactors = FALSE
