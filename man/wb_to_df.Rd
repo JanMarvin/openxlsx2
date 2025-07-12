@@ -9,7 +9,7 @@
 wb_to_df(
   file,
   sheet,
-  start_row = 1,
+  start_row = NULL,
   start_col = NULL,
   row_names = FALSE,
   col_names = TRUE,
@@ -37,7 +37,7 @@ wb_to_df(
 read_xlsx(
   file,
   sheet,
-  start_row = 1,
+  start_row = NULL,
   start_col = NULL,
   row_names = FALSE,
   col_names = TRUE,
@@ -58,7 +58,7 @@ read_xlsx(
 wb_read(
   file,
   sheet = 1,
-  start_row = 1,
+  start_row = NULL,
   start_col = NULL,
   row_names = FALSE,
   col_names = TRUE,

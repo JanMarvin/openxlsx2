@@ -199,7 +199,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 wb_to_df <- function(
     file,
     sheet,
-    start_row         = 1,
+    start_row         = NULL,
     start_col         = NULL,
     row_names         = FALSE,
     col_names         = TRUE,
@@ -220,7 +220,7 @@ wb_to_df <- function(
     named_region,
     keep_attributes   = FALSE,
     check_names       = FALSE,
-    show_hyperlinks = FALSE,
+    show_hyperlinks   = FALSE,
     ...
 ) {
 
@@ -309,6 +309,15 @@ wb_to_df <- function(
     row <- range(as.integer(unique(sd$row_r)))
     col <- range(col2int(unique(sd$c_r)))
 
+    if (!is.null(start_row) && as.integer(start_row) < row[1])
+      row[1] <- start_row
+
+    if (!is.null(start_col) && col2int(start_col) < col[1])
+      col[1] <- start_col
+
+    if (row[1] > row[2]) row[2] <- row[1]
+    if (col[1] > col[2]) col[2] <- col[1]
+
     dims <- paste0(int2col(col[1]), row[1], ":",
                    int2col(col[2]), row[2])
 
@@ -341,7 +350,7 @@ wb_to_df <- function(
   maxRow <- max(as.numeric(keep_rows))
   maxCol <- max(col2int(keep_cols))
 
-  if (start_row > 1) {
+  if (!is.null(start_row)) {
     keep_rows <- as.character(seq(start_row, maxRow))
     if (start_row <= maxRow) {
       z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
@@ -793,7 +802,7 @@ wb_to_df <- function(
 read_xlsx <- function(
   file,
   sheet,
-  start_row         = 1,
+  start_row         = NULL,
   start_col         = NULL,
   row_names         = FALSE,
   col_names         = TRUE,
@@ -847,7 +856,7 @@ read_xlsx <- function(
 wb_read <- function(
   file,
   sheet           = 1,
-  start_row       = 1,
+  start_row       = NULL,
   start_col       = NULL,
   row_names       = FALSE,
   col_names       = TRUE,

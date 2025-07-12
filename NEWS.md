@@ -8,6 +8,15 @@
 
 * The conditional formatting structure was changed to a data frame. This allows handling pivot attributes. [1397](https://github.com/JanMarvin/openxlsx2/pull/1397)
 
+## Breaking changes
+
+* The default value of `start_row` in `wb_to_df()`, `read_xlsx()`, and `wb_read()` has been changed from `1` to `NULL`. Reading with `start_row`/`start_col` will now fill the data frame, even if the actual data starts later.
+```R
+wb <- wb_workbook()$add_worksheet()$add_data(x = head(cars), dims = "D4")
+# previously this would return a data frame of 6 x 2 and now it returns 10 x 5
+wb$to_df(start_col = 1, start_row = 1, col_names = FALSE)
+```
+
 
 ***************************************************************************
 
@@ -41,6 +50,7 @@
 * Fixed a bug in `wb_to_df()` where `show_formula` in combination with shared formulas and specified `dims`, would result in incorrect returns or errors. [1366](https://github.com/JanMarvin/openxlsx2/pull/1366)
 
 ## Breaking changes
+
 * `dims` will now respect the order in which they are sorted. So `"B2:A1"` will no longer equal `"A1:B2"`. [1353](https://github.com/JanMarvin/openxlsx2/pull/1353)
 * Conditional formatting allows now for non consecutive dims such as `"A1:B2,C2:D3"`. This causes a change in previous behavior, where the outer cells of a dimension were used to construct the range to which the conditional formatting was applied. [1347](https://github.com/JanMarvin/openxlsx2/pull/1347)
 * Nulling a color or border style in `wb_add_border()` now automatically nulls the corresponding color/border style. [1343](https://github.com/JanMarvin/openxlsx2/pull/1343)
