@@ -330,3 +330,39 @@ test_that("no scientific notation in column name", {
   got <- names(wb_to_df(wb))
   expect_equal(exp, got)
 })
+
+test_that("reading with start_col/start_row works", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = head(cars), dims = "D4")
+
+  ## start_col & start_row
+  df <- wb$to_df(start_row = 1, start_col = 1, col_names = FALSE)
+
+  exp <- list(
+    c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+    c("A", "B", "C", "D", "E")
+  )
+  got <- dimnames(df)
+  expect_equal(exp, got)
+
+  ## start_row
+  df <- wb$to_df(start_row = 1, col_names = FALSE)
+
+  exp <- list(
+    c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+    c("D", "E")
+  )
+  got <- dimnames(df)
+  expect_equal(exp, got)
+
+  ## start_col
+  df <- wb$to_df(start_col = 1, col_names = FALSE)
+
+  exp <- list(
+    c("4", "5", "6", "7", "8", "9", "10"),
+    c("A", "B", "C", "D", "E")
+  )
+  got <- dimnames(df)
+  expect_equal(exp, got)
+
+})

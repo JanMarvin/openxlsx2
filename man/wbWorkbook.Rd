@@ -989,7 +989,7 @@ to_df
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$to_df(
   sheet,
-  start_row = 1,
+  start_row = NULL,
   start_col = NULL,
   row_names = FALSE,
   col_names = TRUE,
