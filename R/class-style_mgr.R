@@ -66,9 +66,10 @@
 #' # wb_open(wb)
 #'
 #' @noRd
-style_mgr <- R6::R6Class("wbStylesMgr", {
+style_mgr <- R6::R6Class(
+  "wbStylesMgr",
 
-  public <- list(
+  public = list(
 
     #' @field numfmt numfmt-ids
     numfmt = NULL,
@@ -424,21 +425,6 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       invisible(as.character(max(as.numeric(self$tableStyle$id), -1) + 1))
     },
 
-    #' @description get named style ids
-    #' @param name name
-    getstyle_ids = function(name) {
-      cellstyle_id     <- as.integer(self$get_cellStyle_id(name)) + 1L
-      cellstyles_xfid  <- as.integer(rbindlist(xml_attr(self$styles$cellStyles[cellstyle_id], "cellStyle"))[["xfId"]]) + 1L
-      cellstylexfs_ids <- rbindlist(xml_attr(self$styles$cellStyleXfs[cellstyles_xfid], "xf"))
-      cellstylexfs_ids$titleId   <- cellstyle_id - 1L
-      vars <- c("borderId", "fillId", "fontId", "numFmtId", "titleId")
-      for (var in vars) {
-        if (is.null(cellstylexfs_ids[[var]])) cellstylexfs_ids[var] <- "0"
-      }
-      cellstylexfs_ids <- sapply(cellstylexfs_ids[vars], as.integer)
-      cellstylexfs_ids
-    },
-
     ### adds
     #' @description
     #' add entry
@@ -559,6 +545,27 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       }
 
       invisible(self)
+    }
+
+  ),
+
+  ## private ----
+
+  private = list(
+
+    #' @description get named style ids
+    #' @param name name
+    getstyle_ids = function(name) {
+      cellstyle_id     <- as.integer(self$get_cellStyle_id(name)) + 1L
+      cellstyles_xfid  <- as.integer(rbindlist(xml_attr(self$styles$cellStyles[cellstyle_id], "cellStyle"))[["xfId"]]) + 1L
+      cellstylexfs_ids <- rbindlist(xml_attr(self$styles$cellStyleXfs[cellstyles_xfid], "xf"))
+      cellstylexfs_ids$titleId   <- cellstyle_id - 1L
+      vars <- c("borderId", "fillId", "fontId", "numFmtId", "titleId")
+      for (var in vars) {
+        if (is.null(cellstylexfs_ids[[var]])) cellstylexfs_ids[var] <- "0"
+      }
+      cellstylexfs_ids <- sapply(cellstylexfs_ids[vars], as.integer)
+      cellstylexfs_ids
     },
 
     #' @param wb wbWorkbook
@@ -993,5 +1000,4 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
       invisible(self)
     }
   )
-
-})
+)

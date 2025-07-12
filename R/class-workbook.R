@@ -9169,9 +9169,9 @@ wbWorkbook <- R6::R6Class(
       if (is.null(font_size)) font_size <- self$get_base_font()$size$val
 
       # if required initialize the cell style
-      self$styles_mgr$init_named_style(name, font_name, font_size)
+      self$styles_mgr$.__enclos_env__$private$init_named_style(name, font_name, font_size)
 
-      ids <- self$styles_mgr$getstyle_ids(name)
+      ids <- self$styles_mgr$.__enclos_env__$private$getstyle_ids(name)
 
       border_id <- ids[["borderId"]]
       fill_id   <- ids[["fillId"]]
