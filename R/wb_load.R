@@ -1282,15 +1282,25 @@ wb_load <- function(
 
       drw_len <- max(as.integer(gsub("\\D+", "", basename(drawingsXML))))
 
-      wb$drawings      <- rep(list(""), drw_len) # vector("list", drw_len)
-      wb$drawings_rels <- rep(list(""), drw_len) # vector("list", drw_len)
+      wb$drawings      <- rep_len(list(""), drw_len) # vector("list", drw_len)
+      wb$drawings_rels <- rep_len(list(""), drw_len) # vector("list", drw_len)
 
 
       for (drw in drawingsXML) {
 
         drw_file <- as.integer(gsub("\\D+", "", basename(drw)))
 
-        wb$drawings[drw_file] <- read_xml(drw, pointer = FALSE)
+        tmp_drw <- read_xml(drw, pointer = FALSE)
+
+        ## fix broken xml missing id attribute - issue #1401
+        faulty_xml <- '<a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main"/>'
+        fixed_xml <- sprintf('<a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="%s"/>', st_guid())
+
+        if (grepl(faulty_xml, drw_file)) {
+          tmp_drw <- gsub(faulty_xml, fixed_xml, tmp_drw)
+        }
+
+        wb$drawings[drw_file] <- tmp_drw
       }
 
       for (drw_rel in drawingRelsXML) {
