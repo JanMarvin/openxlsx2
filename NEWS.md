@@ -3,6 +3,7 @@
 ## Fixes
 
 * Support loading and saving workbooks with conditional formatting in pivot tables. [1397](https://github.com/JanMarvin/openxlsx2/pull/1397)
+* Fix a missing `id` attribute in drawings XML code. Older files can fixed with loading and saving again. [1402](https://github.com/JanMarvin/openxlsx2/pull/1402)
 
 ## Internal Changes
 

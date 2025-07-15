@@ -1060,7 +1060,7 @@ drawings <- function(drawings, drawing_id) {
           <xdr:cNvPr id="2" name="Chart %s">
           <a:extLst>
             <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
-            <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" />
+            <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="%s"/>
             </a:ext>
           </a:extLst>
           </xdr:cNvPr>
@@ -1081,6 +1081,7 @@ drawings <- function(drawings, drawing_id) {
         <xdr:clientData />
       </xdr:absoluteAnchor>',
       drawing_id,
+      st_guid(),
       rel_len + 1L
     )
   )
