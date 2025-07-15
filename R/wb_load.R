@@ -1296,7 +1296,7 @@ wb_load <- function(
         faulty_xml <- '<a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main"/>'
         fixed_xml <- sprintf('<a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="%s"/>', st_guid())
 
-        if (grepl(faulty_xml, drw_file)) {
+        if (grepl(faulty_xml, tmp_drw)) {
           tmp_drw <- gsub(faulty_xml, fixed_xml, tmp_drw)
         }
 
