@@ -298,3 +298,27 @@ test_that("reading tables from file works", {
   got <- wb_to_df(tmp, named_region = "Table1")
   expect_equal(exp, got, ignore_attr = TRUE)
 })
+
+test_that("remove_tables works", {
+
+  df_h <- head(mtcars)
+  df_t <- tail(mtcars)
+  df_s <- mtcars[sample(seq_len(nrow(mtcars)), 6), ]
+
+  dims_h <- wb_dims(x = df_h)
+  dims_s <- wb_dims(x = df_s, from_dims = dims_h, below = 3)
+  dims_t <- wb_dims(x = df_t, from_dims = dims_s, below = 3)
+
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data_table(x = df_h, dims = dims_h)$
+    add_data(x = df_s, dims = dims_s)$
+    add_data_table(x = df_t, dims = dims_t)
+
+  expect_error(wb$remove_tables(table = "foo"), "does not exist")
+
+  expect_silent(wb$remove_tables())
+
+  expect_true(all(grepl("_deleted", wb$tables$tab_name)))
+
+})
