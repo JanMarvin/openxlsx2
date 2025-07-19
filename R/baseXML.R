@@ -1214,11 +1214,11 @@ formCntrlDrawing <- function(type, len) {
           </mc:AlternateContent>
           </xdr:wsDr>',
           len,
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12)
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]")
           ), pointer = FALSE
       )
       } else if (type == "Radio") {
@@ -1313,11 +1313,11 @@ formCntrlDrawing <- function(type, len) {
             </mc:AlternateContent>
             </xdr:wsDr>',
           len,
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12)
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]")
           ), pointer = FALSE
       )
       } else if (type == "Drop") {
@@ -1384,10 +1384,10 @@ formCntrlDrawing <- function(type, len) {
             </mc:AlternateContent>
             </xdr:wsDr>',
           len,
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12),
-          random_string(length = 12)
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]"),
+          random_string(length = 12, pattern = "[A-F0-9]")
           ), pointer = FALSE
       )
       }
