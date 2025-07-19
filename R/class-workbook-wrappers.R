@@ -2703,6 +2703,7 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 #' @export
 wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = TRUE) {
   assert_workbook(wb)
+  if (missing(table)) table <- substitute()
   wb$clone()$remove_tables(sheet = sheet, table = table, remove_data = remove_data)
 }
 

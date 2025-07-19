@@ -7838,47 +7838,51 @@ wbWorkbook <- R6::R6Class(
     #' @param remove_data removes the data as well
     #' @return The `wbWorkbook` object
     remove_tables = function(sheet = current_sheet(), table, remove_data = TRUE) {
-      if (length(table) != 1) {
-        stop("table argument must be length 1")
-      }
 
       ## delete table object and all data in it
       sheet <- private$get_sheet_index(sheet)
 
-      if (!table %in% self$tables$tab_name) {
+      if (missing(table)) {
+        table <- self$tables$tab_name
+      } else  if (!table %in% self$tables$tab_name) {
+        if (length(table) < 1) {
+          stop("table argument must be at least 1")
+        }
         stop(sprintf("table '%s' does not exist.\n
                      Call `wb_get_tables()` to get existing table names", table),
              call. = FALSE)
       }
 
-      ## delete table object (by flagging as deleted)
-      inds <- self$tables$tab_sheet %in% sheet & self$tables$tab_name %in% table
-      table_name_original <- self$tables$tab_name[inds]
-      refs <- self$tables$tab_ref[inds]
+      for (tbl in table) {
+        ## delete table object (by flagging as deleted)
+        inds <- self$tables$tab_sheet %in% sheet & self$tables$tab_name %in% tbl
+        table_name_original <- self$tables$tab_name[inds]
+        refs <- self$tables$tab_ref[inds]
 
-      self$tables$tab_name[inds] <- paste0(table_name_original, "_openxlsx_deleted")
-      self$tables$tab_ref[inds] <- ""
-      self$tables$tab_sheet[inds] <- 0
-      self$tables$tab_xml[inds] <- ""
-      self$tables$tab_act[inds] <- 0
+        self$tables$tab_name[inds] <- paste0(table_name_original, "_openxlsx_deleted")
+        self$tables$tab_ref[inds] <- ""
+        self$tables$tab_sheet[inds] <- 0
+        self$tables$tab_xml[inds] <- ""
+        self$tables$tab_act[inds] <- 0
 
-      ## delete reference from worksheet to table
-      worksheet_table_names <- attr(self$worksheets[[sheet]]$tableParts, "tableName")
-      to_remove <- which(worksheet_table_names == table_name_original)
+        ## delete reference from worksheet to table
+        worksheet_table_names <- attr(self$worksheets[[sheet]]$tableParts, "tableName")
+        to_remove <- which(worksheet_table_names == table_name_original)
 
-      # (1) remove the rId from worksheet_rels
-      rm_tab_rId <- rbindlist(xml_attr(self$worksheets[[sheet]]$tableParts[to_remove], "tablePart"))["r:id"]
-      ws_rels <- self$worksheets_rels[[sheet]]
-      is_rm_table <- grepl(rm_tab_rId, ws_rels)
-      self$worksheets_rels[[sheet]] <- ws_rels[!is_rm_table]
+        # (1) remove the rId from worksheet_rels
+        rm_tab_rId <- rbindlist(xml_attr(self$worksheets[[sheet]]$tableParts[to_remove], "tablePart"))["r:id"]
+        ws_rels <- self$worksheets_rels[[sheet]]
+        is_rm_table <- grepl(rm_tab_rId, ws_rels)
+        self$worksheets_rels[[sheet]] <- ws_rels[!is_rm_table]
 
-      # (2) remove the rId from tableParts
-      self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
-      attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
+        # (2) remove the rId from tableParts
+        self$worksheets[[sheet]]$tableParts <- self$worksheets[[sheet]]$tableParts[-to_remove]
+        attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
 
-      ## now delete data
-      if (remove_data)
-        self$clean_sheet(sheet = sheet, dims = refs)
+        ## now delete data
+        if (remove_data)
+          self$clean_sheet(sheet = sheet, dims = refs)
+      }
 
       invisible(self)
     },
