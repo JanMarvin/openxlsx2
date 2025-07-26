@@ -1,5 +1,14 @@
 # openxlsx2 1.18
 
+## Breaking changes
+
+* The `magrittr` package is no longer imported by `openxlsx2`. Users that rely on the `magrittr` pipe operator `%>%` should load the package manually. [1409](https://github.com/JanMarvin/openxlsx2/pull/1409)
+
+
+***************************************************************************
+
+# openxlsx2 1.18
+
 ## New features
 
 * Add `bg_color` argument to `wb_add_fill()` to actually make use of various `pattern` types.
