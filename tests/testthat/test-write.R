@@ -319,9 +319,9 @@ test_that("write character numerics with a correct cell style", {
   op <- options("openxlsx2.string_nums" = 0)
   on.exit(options(op), add = TRUE)
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
 
   got <- wb$styles_mgr$styles$cellXfs[2]
   expect_equal(got, NA_character_)
@@ -329,18 +329,18 @@ test_that("write character numerics with a correct cell style", {
   ## string numerics correctly flagged
   options("openxlsx2.string_nums" = 1)
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5")) %>%
-    wb_add_worksheet() %>%
-    wb_add_data(dims = "A1", x = "1992") %>%
-    wb_add_data(dims = "A2", x = 1992) %>%
-    wb_add_data(dims = "A3", x = "1992.a") %>%
-    wb_add_worksheet() %>%
-    wb_add_data(dims = "A1", x = 1e5) %>%
-    wb_add_data(dims = "A2", x = "1e5") %>%
-    wb_add_data(dims = "A3", x = 1e+05) %>%
-    wb_add_data(dims = "A4", x = "1e+05")
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))$
+    add_worksheet()$
+    add_data(dims = "A1", x = "1992")$
+    add_data(dims = "A2", x = 1992)$
+    add_data(dims = "A3", x = "1992.a")$
+    add_worksheet()$
+    add_data(dims = "A1", x = 1e5)$
+    add_data(dims = "A2", x = "1e5")$
+    add_data(dims = "A3", x = 1e+05)$
+    add_data(dims = "A4", x = "1e+05")
 
   exp <- "<xf applyNumberFormat=\"1\" borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"49\" quotePrefix=\"1\" xfId=\"0\"/>"
   got <- wb$styles_mgr$styles$cellXfs[2]
@@ -349,9 +349,9 @@ test_that("write character numerics with a correct cell style", {
   ## write string numerics as numerics (on the fly conversion)
   options("openxlsx2.string_nums" = 2)
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c("One", "2", "Three", "1.7976931348623157E+309", "2.5"))
 
   got <- wb$styles_mgr$styles$cellXfs[2]
   expect_equal(got, NA_character_)
@@ -457,9 +457,9 @@ test_that("writing pivot with escaped characters works", {
     amount = c(7, 5, 3, 2.5, 6, 1, 17)
   )
 
-  wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = example_df)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = example_df)
   df <- wb_data(wb)
-  wb <- wb %>% wb_add_pivot_table(df, dims = "A3", rows = "location", data = "amount")
+  wb$add_pivot_table(df, dims = "A3", rows = "location", data = "amount")
 
   cf <- xml_node(wb$pivotDefinitions, "pivotCacheDefinition", "cacheFields", "cacheField")[1]
 
@@ -471,10 +471,10 @@ test_that("writing pivot with escaped characters works", {
 
 test_that("writing slicers works", {
 
-  wb <- wb_workbook() %>%
+  wb <- wb_workbook()$
     ### Sheet 1
-    wb_add_worksheet() %>%
-    wb_add_data(x = mtcars)
+    add_worksheet()$
+    add_data(x = mtcars)
 
   df <- wb_data(wb, sheet = 1)
 
@@ -515,9 +515,9 @@ test_that("writing slicers works", {
   expect_equal(grep("slicer2.xml", wb$Content_Types), 25L)
 
   ## test error
-  wb <- wb_workbook() %>%
-  wb_add_worksheet() %>%
-    wb_add_data(x = mtcars)
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = mtcars)
 
   df <- wb_data(wb, sheet = 1)
 
@@ -1412,23 +1412,23 @@ test_that("writing list with sep works", {
     row.names = c(NA, -5L)
   )
 
-  wb <- wb_workbook() %>%
+  wb <- wb_workbook()$
     # basic
-    wb_add_worksheet() %>%
-    wb_add_data(
+    add_worksheet()$
+    add_data(
       x = df
-    ) %>%
-    wb_add_worksheet() %>%
-    wb_add_data_table(
+    )$
+    add_worksheet()$
+    add_data_table(
       x = df
-    ) %>%
+    )$
     # with different sep
-    wb_add_worksheet() %>%
-    wb_add_data(
+    add_worksheet()$
+    add_data(
       x = df, sep = "_"
-    ) %>%
-    wb_add_worksheet() %>%
-    wb_add_data_table(
+    )$
+    add_worksheet()$
+    add_data_table(
       x = df, sep = "_"
     )
 

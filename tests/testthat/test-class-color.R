@@ -31,10 +31,10 @@ test_that("tabColour can be wb_colour()", {
 
 test_that("treat color and colour equally", {
 
-  wb_color <- wb_workbook() %>%
-    wb_add_worksheet(tab_color = "green") %>%
-    wb_add_fill(color = wb_color("blue")) %>%
-    wb_add_border(
+  wb_color <- wb_workbook()$
+    add_worksheet(tab_color = "green")$
+    add_fill(color = wb_color("blue"))$
+    add_border(
       dims   = "G12:H13",
       left_color   = wb_color("red"),
       right_color  = wb_color("blue"),
@@ -42,10 +42,10 @@ test_that("treat color and colour equally", {
       bottom_color = wb_color("yellow")
     )
 
-  wb_colour <- wb_workbook() %>%
-    wb_add_worksheet(tab_colour = "green") %>%
-    wb_add_fill(colour = wb_colour("blue")) %>%
-    wb_add_border(
+  wb_colour <- wb_workbook()$
+    add_worksheet(tab_colour = "green")$
+    add_fill(colour = wb_colour("blue"))$
+    add_border(
       dims   = "G12:H13",
       left_colour   = wb_colour("red"),
       right_colour  = wb_colour("blue"),

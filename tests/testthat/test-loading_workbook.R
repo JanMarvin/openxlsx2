@@ -452,9 +452,9 @@ test_that("Loading a workbook with property preserves it.", {
   wb2$set_properties(company = "ggg")
   expect_equal(wb2$get_properties()[["company"]], "ggg")
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_set_properties(
+  wb <- wb_workbook()$
+    add_worksheet()$
+    set_properties(
       custom = list(
         Software    = "openxlsx2",
         Version     = 1.5,
@@ -467,7 +467,7 @@ test_that("Loading a workbook with property preserves it.", {
   got <- wb$custom
   expect_equal(exp, got)
 
-  wb <- wb %>% wb_set_properties(
+  wb$set_properties(
     custom = list(
       Software    = "openxlsx2",
       Version     = "1.5.0.9000",
