@@ -94,7 +94,7 @@ wb$add_worksheet("add_drawing")$
 
 ## Add `{mschart}` plots
 
-If you want native open xml charts, have a look at `{mschart}`. Create one of the chart files and pass it to the workbook with `wb_add_mschart()`. There are two options possible. 
+If you want native open xml charts, have a look at `{mschart}`. Create one of the chart files and pass it to the workbook with `wb_add_mschart()`. There are two options possible.
 1. Either the default `{mschart}` output identical to the one in `{officer}`. Passing a data object and let `{mschart}` prepare the data. In this case `wb_add_mschart()` will add a new data region.
 2. Passing a `wb_data()` object to `{mschart}`. This object contains references to the data on the worksheet and allows using data "as is".
 
@@ -151,16 +151,15 @@ line_plot <- ms_linechart(
 )
 
 # add the charts to the data
-wb <- wb %>%
-  wb_add_mschart(dims = "F4:L20", graph = scatter_plot) %>%
-  wb_add_mschart(dims = "F21:L37", graph = bar_plot) %>%
-  wb_add_mschart(dims = "M4:S20", graph = area_plot) %>%
-  wb_add_mschart(dims = "M21:S37", graph = line_plot)
+wb$
+  add_mschart(dims = "F4:L20", graph = scatter_plot)$
+  add_mschart(dims = "F21:L37", graph = bar_plot)$
+  add_mschart(dims = "M4:S20", graph = area_plot)$
+  add_mschart(dims = "M21:S37", graph = line_plot)
 
 # add chartsheet
-wb <- wb %>%
-  wb_add_chartsheet() %>%
-  wb_add_mschart(graph = scatter_plot)
-
+wb$
+  add_chartsheet()$
+  add_mschart(graph = scatter_plot)
 }
 ```

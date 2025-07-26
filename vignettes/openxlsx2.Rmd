@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+modern_r <- getRversion() >= "4.1.0"
 ```
 
 Welcome to the basic manual to `openxlsx2`. In this manual you will learn how to use `openxlsx2` to import data from xlsx-files to R as well as how to export data from R to xlsx, and how to import and modify these openxml workbooks in R. This package is based on the work of many contributors to `openxlsx`. It was mostly rewritten using `pugixml` and `R6` making use of modern technology, providing a fresh and easy to use R package.
@@ -23,7 +24,7 @@ Over the years many people have worked on the tricky task to handle xls and xlsx
 
 ### First steps
 
-First let's assume that you have a working installation of `openxlsx2` otherwise run the lines below to install the latest CRAN release: 
+First let's assume that you have a working installation of `openxlsx2` otherwise run the lines below to install the latest CRAN release:
 
 ```{r, eval = FALSE}
 install.packages("openxlsx2")
@@ -45,10 +46,10 @@ wb <- wb_load("your_file.xlsx")
 
 We usually name workbook objects `wb` in our documentation, but this is no obligation, you can name your workbook object whatever you like to call them.
 
-If you do not have a workbook yet, it is possible to create one. In the next line we will use three wrapper functions `wb_workbook()`, `wb_add_worksheet()`, and `wb_add_data()`. The wrapper functions are piped together using the classic `magrittr` pipe operator `%>%`, but similarly you can use the `R`'s native pipe operator `|>`. [^nopipe] We assume that you have a dataset `your_data`, either a vector, a matrix or a data frame and want to write this in a worksheet:
+If you do not have a workbook yet, it is possible to create one. In the next line we will use three wrapper functions `wb_workbook()`, `wb_add_worksheet()`, and `wb_add_data()`. The wrapper functions are piped together using the native `R` pipe operator `|>`, but similarly you can use the classic `magrittr` pipe operator `%>%`. [^nopipe] We assume that you have a dataset `your_data`, either a vector, a matrix or a data frame and want to write this in a worksheet:
 
 ```{r, eval = FALSE}
-wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = your_data)
+wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_data(x = your_data)
 ```
 
 [^nopipe]: Basically a pipe operator allows to write code from left to right. Without pipes the code would look like this:
@@ -59,8 +60,8 @@ wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = your_data)
 Okay, now you have a workbook object, but what have we actually done? Let's work along the pipe syntax: (1) first we have created the workbook object `wb_worbkook()`, (2) next we have assigned it a worksheet `wb_add_worksheet()`, and (3) we have written data onto the worksheet.
 
 Let's try this with actual data. We use the `mtcars` dataset. In the code we switch the fictional `your_data` with `mtcars`:
-```{r}
-wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
+```{r, eval = modern_r}
+wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_data(x = mtcars)
 ```
 
 Let's see what the output looks like:
@@ -70,8 +71,8 @@ wb
 
 The output looks a little cryptic, it simply tells the name of the worksheet: `wb_add_worksheet()` created a default worksheet name `"Sheet 1"`. In the code above you can see that we do not use `sheet` to tell `wb_add_data()` where it should write the data. This is because internally we use a waiver `current_sheet()` so that we do not have to write `sheet = "Sheet 1"` whenever we work on the same worksheet. Basically the current sheet is updated whenever a new worksheet is added to the workbook.
 
-```{r}
-wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
+```{r, eval = modern_r}
+wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_worksheet() |> wb_add_data(x = mtcars)
 ```
 
 This will create two sheets `"Sheet 1"` and `"Sheet 2"` and the data will be written to the second sheet.
@@ -81,26 +82,26 @@ wb
 
 So how can we access the data on the sheet? Either with `wb_to_df()` our internal handler to read from workbooks (this is the underlying function for `wb_read()` and `read_xlsx()` which are mere aliases for `wb_to_df()`). So lets have a look at the top of the output:
 
-```{r}
-wb %>% wb_to_df() %>% head()
+```{r, eval = modern_r}
+wb |> wb_to_df() |> head()
 ```
 
 Ah! The output is on the second sheet. We need either `sheet = 2` or `sheet = "Sheet 2"`. We go with the second variant, because the sheet index position and their name might differ.
 
-```{r}
-wb %>% wb_to_df(sheet = "Sheet 2") %>% head()
+```{r, eval = modern_r}
+wb |> wb_to_df(sheet = "Sheet 2") |> head()
 ```
 
 This looks like the head of the `mtcars` dataset. So we have successfully read from the workbook. Now you want to export the workbook to a file:
 
 ```{r, eval = FALSE}
-wb %>% wb_save(file = "my_first_worksheet.xlsx")
+wb |> wb_save(file = "my_first_worksheet.xlsx")
 ```
 
 Alternatively you can directly open it in a spreadsheet software (if you have one installed):
 
 ```{r, eval = FALSE}
-wb %>% wb_open()
+wb |> wb_open()
 ```
 
 Once again, lets try this with the `USPersonalExpenditure` dataset:
@@ -113,13 +114,13 @@ wb_add_data(wb, "USexp", USPersonalExpenditure)
 ```{r, echo = FALSE}
 wb <- wb_workbook()
 wb_add_worksheet(wb, sheet = "USexp")
-wb_add_data(wb, "USexp", USPersonalExpenditure) %>% try()
+wb_add_data(wb, "USexp", USPersonalExpenditure) |> try()
 ```
 
 Dang! What did we do? We've added a worksheet, but wait, did we? No, you have to assign wrapper functions to an object for them to have an effect. Wrapper functions do not alter the workbook objects they are executed on. You can check that the workbook has no worksheets:
 
-```{r}
-wb %>% wb_get_sheet_names()
+```{r, eval = modern_r}
+wb |> wb_get_sheet_names()
 ```
 
 Once we assign a sheet, this changes, and the data was correctly written:
