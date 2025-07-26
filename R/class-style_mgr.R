@@ -8,9 +8,9 @@
 #' # style <- style_mgr$new(wb)
 #' # style$initialize(wb)
 #'
-#' # wb$styles_mgr$get_numfmt() %>% print()
-#' # wb$styles_mgr$next_numfmt_id() %>% print()
-#' # wb$styles_mgr$get_numfmt_id("numFmt-166")
+#' # print(wb$styles_mgr$get_numfmt())
+#' # print(wb$styles_mgr$next_numfmt_id())
+#' # print(wb$styles_mgr$get_numfmt_id("numFmt-166")
 #'
 #' # create new number format
 #' new_numfmt <- create_numfmt(numFmtId = wb$styles_mgr$next_numfmt_id(), formatCode = "#,#")

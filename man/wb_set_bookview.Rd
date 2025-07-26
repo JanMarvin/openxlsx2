@@ -73,23 +73,25 @@ The Workbook object
 Get and Set the workbook position, size and filter
 }
 \examples{
- wb <- wb_workbook() \%>\% wb_add_worksheet()
+ wb <- wb_workbook()
+ wb <- wb_add_worksheet(wb)
 
  # set the first and second bookview (horizontal split)
- wb <- wb \%>\%
-   wb_set_bookview(
+ wb <- wb_set_bookview(wb,
      window_height = 17600, window_width = 15120,
-     x_window = 15120, y_window = 760) \%>\%
-   wb_set_bookview(
+     x_window = 15120, y_window = 760)
+ wb <- wb_set_bookview(wb,
      window_height = 17600, window_width = 15040,
      x_window = 0, y_window = 760, view = 2
    )
 
- wb \%>\% wb_get_bookview()
+ wb_get_bookview(wb)
 
  # remove the first view
- wb \%>\% wb_remove_bookview(view = 1) \%>\% wb_get_bookview()
+ wb <- wb_remove_bookview(wb, view = 1)
+ wb_get_bookview(wb)
 
  # keep only the first view
- wb \%>\% wb_remove_bookview(view = -1) \%>\% wb_get_bookview()
+ wb <- wb_remove_bookview(wb, view = -1)
+ wb_get_bookview(wb)
 }

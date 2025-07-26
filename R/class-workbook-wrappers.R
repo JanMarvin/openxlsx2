@@ -224,7 +224,7 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALS
 #'
 #' # read dataset with inlinestr
 #' wb_to_df(wb2)
-#' wb2 <- wb2 %>% wb_add_data(sheet = 1, mtcars, dims = wb_dims(4, 4))
+#' wb2 <- wb_add_data(wb2, sheet = 1, mtcars, dims = wb_dims(4, 4))
 #' wb_to_df(wb2)
 wb_add_data <- function(
     wb,
@@ -444,17 +444,18 @@ wb_add_data_table <- function(
 #' @param slicer,timeline Any additional column name(s) of `x` used as slicer/timeline
 #' @seealso [wb_data()]
 #' @examples
-#' wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb)
+#' wb <- wb_add_data(wb, x = mtcars)
 #'
 #' df <- wb_data(wb, sheet = 1)
 #'
-#' wb <- wb %>%
-#'   # default pivot table
-#'   wb_add_pivot_table(df, dims = "A3",
+#' # default pivot table
+#' wb <- wb_add_pivot_table(wb, x = df, dims = "A3",
 #'     filter = "am", rows = "cyl", cols = "gear", data = "disp"
-#'   ) %>%
+#'   )
 #'   # with parameters
-#'   wb_add_pivot_table(df,
+#' wb <- wb_add_pivot_table(wb, x = df,
 #'     filter = "am", rows = "cyl", cols = "gear", data = "disp",
 #'     params = list(no_style = TRUE, numfmt = c(formatCode = "##0.0"))
 #'   )
@@ -1511,14 +1512,14 @@ wb_add_drawing <- function(
 #' scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
 #' scatter <- chart_settings(scatter, scatterstyle = "marker")
 #'
-#' wb <- wb_workbook() %>%
-#'  wb_add_worksheet() %>%
-#'  wb_add_mschart(dims = "F4:L20", graph = scatter)
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb)
+#' wb <- wb_add_mschart(wb, dims = "F4:L20", graph = scatter)
 #'
 #' ## Add mschart to worksheet and use available data
-#' wb <- wb_workbook() %>%
-#'   wb_add_worksheet() %>%
-#'   wb_add_data(x = mtcars, dims = "B2")
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb)
+#' wb <- wb_add_data(wb, x = mtcars, dims = "B2")
 #'
 #' # create wb_data object
 #' dat <- wb_data(wb, 1, dims = "B2:E6")
@@ -1532,8 +1533,7 @@ wb_add_drawing <- function(
 #' )
 #'
 #' # add the scatterplot to the data
-#' wb <- wb %>%
-#'   wb_add_mschart(dims = "F4:L20", graph = data_plot)
+#' wb <- wb_add_mschart(wb, dims = "F4:L20", graph = data_plot)
 #' }
 #' @seealso [wb_data()] [wb_add_chart_xml()] [wb_add_image] [wb_add_mschart()] [wb_add_plot]
 #' @export
@@ -1729,25 +1729,27 @@ wb_remove_bookview <- function(wb, view = NULL) {
 #' @param ... additional arguments
 #' @return The Workbook object
 #' @examples
-#'  wb <- wb_workbook() %>% wb_add_worksheet()
+#'  wb <- wb_workbook()
+#'  wb <- wb_add_worksheet(wb)
 #'
 #'  # set the first and second bookview (horizontal split)
-#'  wb <- wb %>%
-#'    wb_set_bookview(
+#'  wb <- wb_set_bookview(wb,
 #'      window_height = 17600, window_width = 15120,
-#'      x_window = 15120, y_window = 760) %>%
-#'    wb_set_bookview(
+#'      x_window = 15120, y_window = 760)
+#'  wb <- wb_set_bookview(wb,
 #'      window_height = 17600, window_width = 15040,
 #'      x_window = 0, y_window = 760, view = 2
 #'    )
 #'
-#'  wb %>% wb_get_bookview()
+#'  wb_get_bookview(wb)
 #'
 #'  # remove the first view
-#'  wb %>% wb_remove_bookview(view = 1) %>% wb_get_bookview()
+#'  wb <- wb_remove_bookview(wb, view = 1)
+#'  wb_get_bookview(wb)
 #'
 #'  # keep only the first view
-#'  wb %>% wb_remove_bookview(view = -1) %>% wb_get_bookview()
+#'  wb <- wb_remove_bookview(wb, view = -1)
+#'  wb_get_bookview(wb)
 #' @export
 wb_set_bookview <- function(
     wb,
@@ -3183,7 +3185,8 @@ wb_open <- function(wb, flush = FALSE) {
 #' yellow_b <- wb_color(hex = "FFFFEB9C")
 #'
 #' yellow <- create_dxfs_style(font_color = yellow_f, bg_fill = yellow_b)
-#' wb <- wb_workbook() %>% wb_add_style(yellow)
+#' wb <- wb_workbook()
+#' wb <- wb_add_style(wb, yellow)
 #' @export
 wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   assert_workbook(wb)
@@ -3233,10 +3236,10 @@ wb_set_cell_style <- function(wb, sheet = current_sheet(), dims, style) {
 #' @examples
 #'
 #' # set style across a workbook
-#' wb <- wb_workbook() %>%
-#'   wb_add_worksheet() %>%
-#'   wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%
-#'   wb_set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb)
+#' wb <- wb_add_fill(wb, dims = "C3", color = wb_color("yellow"))
+#' wb <- wb_set_cell_style_across(wb, style = "C3", cols = "C:D", rows = 3:4)
 #' @export
 wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = NULL, rows = NULL) {
   assert_workbook(wb)
@@ -3259,7 +3262,9 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #' @param ... additional arguments
 #' @seealso [create_border()]
 #' @examples
-#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>%  wb_add_data("S1", mtcars)
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb, "S1")
+#' wb <- wb_add_data(wb, "S1", mtcars)
 #' wb <- wb_add_border(wb, 1, dims = "A1:K1",
 #'  left_border = NULL, right_border = NULL,
 #'  top_border = NULL, bottom_border = "double")
@@ -3385,23 +3390,26 @@ wb_add_border <- function(
 #' @param bg_color (optional) background [wb_color()]
 #' @param ... ...
 #' @examples
-#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#' wb <- wb %>% wb_add_fill("S1", dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
-#' wb <- wb %>% wb_add_fill("S1", dims = "B22:D27", color = wb_color(hex = "FF00FF00"))
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb, "S1")
+#' wb <- wb_add_data(wb, "S1", mtcars)
+#' wb <- wb_add_fill(wb, "S1", dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
+#' wb <- wb_add_fill(wb, "S1", dims = "B22:D27", color = wb_color(hex = "FF00FF00"))
 #'
-#' wb <- wb %>%  wb_add_worksheet("S2") %>% wb_add_data("S2", mtcars)
+#' wb <- wb_add_worksheet(wb, "S2")
+#' wb <- wb_add_data(wb, "S2", mtcars)
 #'
 #' gradient_fill1 <- '<gradientFill degree="90">
 #' <stop position="0"><color rgb="FF92D050"/></stop>
 #' <stop position="1"><color rgb="FF0070C0"/></stop>
 #' </gradientFill>'
-#' wb <- wb %>% wb_add_fill("S2", dims = "A2:K5", gradient_fill = gradient_fill1)
+#' wb <- wb_add_fill(wb, "S2", dims = "A2:K5", gradient_fill = gradient_fill1)
 #'
 #' gradient_fill2 <- '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
 #' <stop position="0"><color theme="0"/></stop>
 #' <stop position="1"><color theme="4"/></stop>
 #' </gradientFill>'
-#' wb <- wb %>% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
+#' wb <- wb_add_fill(wb, "S2", dims = "A7:K10", gradient_fill = gradient_fill2)
 #' @return The `wbWorkbook` object, invisibly
 #' @family styles
 #' @export
@@ -3460,8 +3468,10 @@ wb_add_fill <- function(
 #' @param update Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with [fmt_txt()].
 #' @param ... ...
 #' @examples
-#'  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#'  wb %>% wb_add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
+#'  wb <- wb_workbook()
+#'  wb <- wb_add_worksheet(wb, "S1")
+#'  wb <- wb_add_data(wb, "S1", mtcars)
+#'  wb <- wb_add_font(wb, "S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
 #' # With chaining
 #'  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
 #'  wb$add_font("S1", "A1:K1", name = "Arial", color = wb_color(theme = "4"))
@@ -3580,8 +3590,10 @@ wb_add_font <- function(
 #' - `*`: Repeat character to fill the cell width.
 #'
 #' @examples
-#' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
-#' wb %>% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb, "S1")
+#' wb <- wb_add_data(wb, "S1", mtcars)
+#' wb <- wb_add_numfmt(wb, "S1", dims = "F1:F33", numfmt = "#.0")
 #' # Chaining
 #' wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
 #' wb$add_numfmt("S1", "A1:A33", numfmt = 1)
@@ -3638,12 +3650,12 @@ wb_add_numfmt <- function(
 #' @param xf_id xf ID to apply
 #' @param ... additional arguments
 #' @examples
-#' wb <- wb_workbook() %>%
-#'   wb_add_worksheet("S1") %>%
-#'   wb_add_data("S1", x = mtcars)
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb, "S1")
+#' wb <- wb_add_data(wb, "S1", x = mtcars)
 #'
-#' wb %>%
-#'   wb_add_cell_style(
+#' wb <- wb_add_cell_style(
+#'     wb,
 #'     dims = "A1:K1",
 #'     text_rotation = "45",
 #'     horizontal = "center",
@@ -3793,9 +3805,10 @@ wb_add_named_style <- function(
 #' @family workbook styling functions
 #' @return The Workbook object, invisibly
 #' @examples
-#' wb <- wb_workbook() %>%
-#'   wb_add_worksheet() %>%
-#'   wb_add_dxfs_style(
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb)
+#' wb <- wb_add_dxfs_style(
+#'    wb,
 #'    name = "nay",
 #'    font_color = wb_color(hex = "FF9C0006"),
 #'    bg_fill = wb_color(hex = "FFFFC7CE")
@@ -4003,10 +4016,9 @@ wb_get_person <- function(wb, name = NULL) {
 #' pid <- wb$get_person(name = "someone who likes to edit workbooks")$id
 #'
 #' # write a comment to a thread, reply to one and solve some
-#' wb <- wb %>%
-#'   wb_add_thread(dims = "A1", comment = "wow it works!", person_id = pid) %>%
-#'   wb_add_thread(dims = "A2", comment = "indeed", person_id = pid, resolve = TRUE) %>%
-#'   wb_add_thread(dims = "A1", comment = "so cool", person_id = pid, reply = TRUE)
+#' wb <- wb_add_thread(wb, dims = "A1", comment = "wow it works!", person_id = pid)
+#' wb <- wb_add_thread(wb, dims = "A2", comment = "indeed", person_id = pid, resolve = TRUE)
+#' wb <- wb_add_thread(wb, dims = "A1", comment = "so cool", person_id = pid, reply = TRUE)
 #' @export
 wb_add_thread <- function(
     wb,
@@ -4065,8 +4077,9 @@ wb_get_thread <- function(
 #' @param checked A logical indicating if the Checkbox or Radio button is checked
 #' @returns The `wbWorkbook` object, invisibly.
 #' @examples
-#' wb <- wb_workbook() %>% wb_add_worksheet() %>%
-#'   wb_add_form_control()
+#' wb <- wb_workbook()
+#' wb <- wb_add_worksheet(wb)
+#' wb <- wb_add_form_control(wb)
 #' # Add
 #' wb$add_form_control(dims = "C5", type = "Radio", checked = TRUE)
 #' @export
@@ -4245,10 +4258,10 @@ wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
 #' @seealso [create_sparklines()]
 #' @examples
 #'  sl <- create_sparklines("Sheet 1", dims = "A3:K3", sqref = "L3")
-#'  wb <- wb_workbook() %>%
-#'    wb_add_worksheet() %>%
-#'    wb_add_data(x = mtcars) %>%
-#'    wb_add_sparklines(sparklines = sl)
+#'  wb <- wb_workbook()
+#'  wb <- wb_add_worksheet(wb)
+#'  wb <- wb_add_data(wb, x = mtcars)
+#'  wb <- wb_add_sparklines(wb, sparklines = sl)
 #' @export
 wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   assert_workbook(wb)

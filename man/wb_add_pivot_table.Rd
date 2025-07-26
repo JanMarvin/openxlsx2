@@ -114,17 +114,18 @@ Miscellaneous:
 }
 }
 \examples{
-wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\% wb_add_data(x = mtcars)
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb)
+wb <- wb_add_data(wb, x = mtcars)
 
 df <- wb_data(wb, sheet = 1)
 
-wb <- wb \%>\%
-  # default pivot table
-  wb_add_pivot_table(df, dims = "A3",
+# default pivot table
+wb <- wb_add_pivot_table(wb, x = df, dims = "A3",
     filter = "am", rows = "cyl", cols = "gear", data = "disp"
-  ) \%>\%
+  )
   # with parameters
-  wb_add_pivot_table(df,
+wb <- wb_add_pivot_table(wb, x = df,
     filter = "am", rows = "cyl", cols = "gear", data = "disp",
     params = list(no_style = TRUE, numfmt = c(formatCode = "##0.0"))
   )

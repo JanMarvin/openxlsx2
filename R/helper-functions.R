@@ -950,7 +950,7 @@ get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
 
   st_ids <- NULL
   if (missing(dims)) {
-    st_ids <- styles_on_sheet(wb = wb, sheet = sheet) %>% as.character()
+    st_ids <- as.character(styles_on_sheet(wb = wb, sheet = sheet))
     xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
     xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
   } else {

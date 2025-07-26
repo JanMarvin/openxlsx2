@@ -49,8 +49,8 @@
 #' *Wrapper Function Method*: Utilizes the `wb` family of functions that support
 #'  piping to streamline operations.
 #' ``` r
-#' wb <- wb_workbook(creator = "My name here") %>%
-#'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
+#' wb <- wb_workbook(creator = "My name here") |>
+#'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) |>
 #'   wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
 #' ```
 #' *Chaining Method*: Directly modifies the object through a series of chained

@@ -50,10 +50,10 @@ numfmt <- wb$get_cell_style(dims = "B1")
 wb$set_cell_style(dims = "A1", style = numfmt)
 
 # set style across a workbook
-wb <- wb_workbook() \%>\%
-  wb_add_worksheet() \%>\%
-  wb_add_fill(dims = "C3", color = wb_color("yellow")) \%>\%
-  wb_set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb)
+wb <- wb_add_fill(wb, dims = "C3", color = wb_color("yellow"))
+wb <- wb_set_cell_style_across(wb, style = "C3", cols = "C:D", rows = 3:4)
 }
 \seealso{
 Other styles: 

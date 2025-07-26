@@ -49,7 +49,9 @@ See \code{\link[=create_border]{create_border()}} for possible border styles}
 wb wrapper to create borders for cell regions.
 }
 \examples{
-wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\%  wb_add_data("S1", mtcars)
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "S1")
+wb <- wb_add_data(wb, "S1", mtcars)
 wb <- wb_add_border(wb, 1, dims = "A1:K1",
  left_border = NULL, right_border = NULL,
  top_border = NULL, bottom_border = "double")

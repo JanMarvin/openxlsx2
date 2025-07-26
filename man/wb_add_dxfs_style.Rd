@@ -60,9 +60,10 @@ The Workbook object, invisibly
 These styles are used with conditional formatting and custom table styles.
 }
 \examples{
-wb <- wb_workbook() \%>\%
-  wb_add_worksheet() \%>\%
-  wb_add_dxfs_style(
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb)
+wb <- wb_add_dxfs_style(
+   wb,
    name = "nay",
    font_color = wb_color(hex = "FF9C0006"),
    bg_fill = wb_color(hex = "FFFFC7CE")

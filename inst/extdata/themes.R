@@ -29,9 +29,11 @@ names(themes) <- nms
 
 themes <- themes[order(names(themes))]
 
-names(themes) %>% dput()
+dput(names(themes))
 
 saveRDS(themes, "inst/extdata/themes.rds")
 
 
-# themes$`Office Theme` %>% stringi::stri_unescape_unicode() %>%  as_xml()
+# x <- themes$`Office Theme`
+# x <- stringi::stri_unescape_unicode(x)
+# as_xml(x)

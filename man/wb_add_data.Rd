@@ -160,7 +160,7 @@ wb2 <- wb_load(xlsxFile)
 
 # read dataset with inlinestr
 wb_to_df(wb2)
-wb2 <- wb2 \%>\% wb_add_data(sheet = 1, mtcars, dims = wb_dims(4, 4))
+wb2 <- wb_add_data(wb2, sheet = 1, mtcars, dims = wb_dims(4, 4))
 wb_to_df(wb2)
 }
 \seealso{
