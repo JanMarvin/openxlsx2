@@ -21,6 +21,9 @@ wb_add_border(
   inner_vgrid = NULL,
   inner_vcolor = NULL,
   update = FALSE,
+  diagonal_up = NULL,
+  diagonal_down = NULL,
+  diagonal_color = NULL,
   ...
 )
 }
@@ -37,6 +40,8 @@ wb_add_border(
 See \code{\link[=create_border]{create_border()}} for possible border styles}
 
 \item{update}{Logical. Defaults to FALSE. If TRUE, and the border style includes NULL entries, existing borders may be updated with new ones. When overlapping cells (e.g., squares intersect), existing borders will be preserved where possible.}
+
+\item{diagonal_up, diagonal_down, diagonal_color}{(optional) arguments for diagonal border lines. If set, up and down must be a unique style (there can be only one) and the color must be a \code{\link[=wb_color]{wb_color()}} object}
 
 \item{...}{additional arguments}
 }
@@ -94,6 +99,14 @@ wb$add_worksheet()$
   add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick",
     right_border = "thick", top_border = "thick")$
   add_border(dims = "C3:E5", update = TRUE)
+
+wb$add_worksheet()$
+  add_border(
+    dims = "B2:D4",
+    diagonal_up = "thin",
+    diagonal_down = "thin",
+    diagonal_color = wb_color("red")
+  )
 }
 \seealso{
 \code{\link[=create_border]{create_border()}}

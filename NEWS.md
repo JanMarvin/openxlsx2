@@ -3,6 +3,7 @@
 ## New features
 
 * Add `bg_color` argument to `wb_add_fill()` to actually make use of various `pattern` types.
+* Add arguments to create diagonal borders in `wb_add_border()`.
 
 ## Fixes
 

@@ -3255,6 +3255,7 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #'   the border style, if `NULL` no border is drawn.
 #'   See [create_border()] for possible border styles
 #' @param update Logical. Defaults to FALSE. If TRUE, and the border style includes NULL entries, existing borders may be updated with new ones. When overlapping cells (e.g., squares intersect), existing borders will be preserved where possible.
+#' @param diagonal_up,diagonal_down,diagonal_color (optional) arguments for diagonal border lines. If set, up and down must be a unique style (there can be only one) and the color must be a [wb_color()] object
 #' @param ... additional arguments
 #' @seealso [create_border()]
 #' @examples
@@ -3308,6 +3309,14 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #'   add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick",
 #'     right_border = "thick", top_border = "thick")$
 #'   add_border(dims = "C3:E5", update = TRUE)
+#'
+#' wb$add_worksheet()$
+#'   add_border(
+#'     dims = "B2:D4",
+#'     diagonal_up = "thin",
+#'     diagonal_down = "thin",
+#'     diagonal_color = wb_color("red")
+#'   )
 #' @family styles
 #' @export
 wb_add_border <- function(
@@ -3327,26 +3336,32 @@ wb_add_border <- function(
     inner_vgrid    = NULL,
     inner_vcolor   = NULL,
     update         = FALSE,
+    diagonal_up    = NULL,
+    diagonal_down  = NULL,
+    diagonal_color = NULL,
     ...
 ) {
   assert_workbook(wb)
   wb$clone()$add_border(
-    sheet         = sheet,
-    dims          = dims,
-    bottom_color  = bottom_color,
-    left_color    = left_color,
-    right_color   = right_color,
-    top_color     = top_color,
-    bottom_border = bottom_border,
-    left_border   = left_border,
-    right_border  = right_border,
-    top_border    = top_border,
-    inner_hgrid   = inner_hgrid,
-    inner_hcolor  = inner_hcolor,
-    inner_vgrid   = inner_vgrid,
-    inner_vcolor  = inner_vcolor,
-    update        = update,
-    ...           = ...
+    sheet          = sheet,
+    dims           = dims,
+    bottom_color   = bottom_color,
+    left_color     = left_color,
+    right_color    = right_color,
+    top_color      = top_color,
+    bottom_border  = bottom_border,
+    left_border    = left_border,
+    right_border   = right_border,
+    top_border     = top_border,
+    inner_hgrid    = inner_hgrid,
+    inner_hcolor   = inner_hcolor,
+    inner_vgrid    = inner_vgrid,
+    inner_vcolor   = inner_vcolor,
+    update         = update,
+    diagonal_up    = diagonal_up,
+    diagonal_down  = diagonal_down,
+    diagonal_color = diagonal_color,
+    ...            = ...
   )
 
 }

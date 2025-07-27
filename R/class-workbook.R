@@ -8250,23 +8250,27 @@ wbWorkbook <- R6::R6Class(
     #' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor a color, either something openxml knows or some RGB color
     #' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid the border style, if NULL no border is drawn. See create_border for possible border styles
     #' @param update update
+    #' @param diagonal_up,diagonal_down,diagonal_color (optional) arguments for diagonal border lines
     #' @return The `wbWorkbook`, invisibly
     add_border = function(
-      sheet         = current_sheet(),
-      dims          = "A1",
-      bottom_color  = wb_color(hex = "FF000000"),
-      left_color    = wb_color(hex = "FF000000"),
-      right_color   = wb_color(hex = "FF000000"),
-      top_color     = wb_color(hex = "FF000000"),
-      bottom_border = "thin",
-      left_border   = "thin",
-      right_border  = "thin",
-      top_border    = "thin",
-      inner_hgrid   = NULL,
-      inner_hcolor  = NULL,
-      inner_vgrid   = NULL,
-      inner_vcolor  = NULL,
-      update        = FALSE,
+      sheet          = current_sheet(),
+      dims           = "A1",
+      bottom_color   = wb_color(hex = "FF000000"),
+      left_color     = wb_color(hex = "FF000000"),
+      right_color    = wb_color(hex = "FF000000"),
+      top_color      = wb_color(hex = "FF000000"),
+      bottom_border  = "thin",
+      left_border    = "thin",
+      right_border   = "thin",
+      top_border     = "thin",
+      inner_hgrid    = NULL,
+      inner_hcolor   = NULL,
+      inner_vgrid    = NULL,
+      inner_vcolor   = NULL,
+      update         = FALSE,
+      diagonal_up    = NULL,
+      diagonal_down  = NULL,
+      diagonal_color = NULL,
       ...
     ) {
 
@@ -8287,6 +8291,34 @@ wbWorkbook <- R6::R6Class(
       if (is.null(left_border)) left_color <- NULL
       if (is.null(right_border)) right_color <- NULL
       if (is.null(top_border)) top_color <- NULL
+
+      ## creating diagonals is a bit tricky with create_border(), therefore we ease it
+      ## by allowing a slightly different initializiation. diagonal is the style, up/down
+      ## is an XML bool and color is the color.
+      if (!is.null(diagonal_up) && !is.null(diagonal_down)) {
+        diagonal <- unique(c(diagonal_up, diagonal_down))
+        if (length(diagonal) > 1) {
+          stop("there can be only a single diagonal style per cell", call. = FALSE)
+        }
+        diagonal_up     <- TRUE
+        diagonal_down   <- TRUE
+      } else if (!is.null(diagonal_up) && is.null(diagonal_down)) {
+          diagonal      <- diagonal_up
+          diagonal_up   <- TRUE
+          diagonal_down <- ""
+      } else if (!is.null(diagonal_down) && is.null(diagonal_up)) {
+          diagonal      <- diagonal_down
+          diagonal_up   <- ""
+          diagonal_down <- TRUE
+      } else {
+          diagonal      <- NULL
+          diagonal_up   <- ""
+          diagonal_down <- ""
+      }
+
+      if (!is.null(diagonal_color)) {
+        assert_color(diagonal_color)
+      }
 
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
@@ -8323,7 +8355,9 @@ wbWorkbook <- R6::R6Class(
           top = top_border, top_color = top_color,
           bottom = bottom_border, bottom_color = bottom_color,
           left = left_border, left_color = left_color,
-          right = right_border, right_color = right_color
+          right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         # determine dim
@@ -8349,14 +8383,18 @@ wbWorkbook <- R6::R6Class(
           top = top_border, top_color = top_color,
           bottom = inner_hgrid, bottom_color = inner_hcolor,
           left = left_border, left_color = left_color,
-          right = right_border, right_color = right_color
+          right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         bottom_single <- create_border(
           top = inner_hgrid, top_color = inner_hcolor,
           bottom = bottom_border, bottom_color = bottom_color,
           left = left_border, left_color = left_color,
-          right = right_border, right_color = right_color
+          right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         # determine dims
@@ -8392,7 +8430,9 @@ wbWorkbook <- R6::R6Class(
             top = inner_hgrid, top_color = inner_hcolor,
             bottom = inner_hgrid, bottom_color = inner_hcolor,
             left = left_border, left_color = left_color,
-            right = right_border, right_color = right_color
+            right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
           )
 
           # determine dims
@@ -8420,14 +8460,18 @@ wbWorkbook <- R6::R6Class(
           top = top_border, top_color = top_color,
           bottom = bottom_border, bottom_color = bottom_color,
           left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor
+          right = inner_vgrid, right_color = inner_vcolor,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         right_single <- create_border(
           top = top_border, top_color = top_color,
           bottom = bottom_border, bottom_color = bottom_color,
           left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color
+          right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         # determine dims
@@ -8463,7 +8507,9 @@ wbWorkbook <- R6::R6Class(
             top = top_border, top_color = top_color,
             bottom = bottom_border, bottom_color = bottom_color,
             left = inner_vgrid, left_color = inner_vcolor,
-            right = inner_vgrid, right_color = inner_vcolor
+            right = inner_vgrid, right_color = inner_vcolor,
+            diagonal = diagonal, diagonal_down = diagonal_down,
+            diagonal_up = diagonal_up, diagonal_color = diagonal_color
           )
 
           # determine dims
@@ -8492,28 +8538,36 @@ wbWorkbook <- R6::R6Class(
           top = top_border, top_color = top_color,
           bottom = inner_hgrid, bottom_color = inner_hcolor,
           left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor
+          right = inner_vgrid, right_color = inner_vcolor,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         top_right <- create_border(
           top = top_border, top_color = top_color,
           bottom = inner_hgrid, bottom_color = inner_hcolor,
           left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color
+          right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         bottom_left <- create_border(
           top = inner_hgrid, top_color = inner_hcolor,
           bottom = bottom_border, bottom_color = bottom_color,
           left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor
+          right = inner_vgrid, right_color = inner_vcolor,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         bottom_right <- create_border(
           top = inner_hgrid, top_color = inner_hcolor,
           bottom = bottom_border, bottom_color = bottom_color,
           left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color
+          right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         # determine dims
@@ -8571,14 +8625,18 @@ wbWorkbook <- R6::R6Class(
           top = inner_hgrid, top_color = inner_hcolor,
           bottom = inner_hgrid, bottom_color = inner_hcolor,
           left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor
+          right = inner_vgrid, right_color = inner_vcolor,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         middle_right <- create_border(
           top = inner_hgrid, top_color = inner_hcolor,
           bottom = inner_hgrid, bottom_color = inner_hcolor,
           left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color
+          right = right_border, right_color = right_color,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         # determine dims
@@ -8618,14 +8676,18 @@ wbWorkbook <- R6::R6Class(
           top = top_border, top_color = top_color,
           bottom = inner_hgrid, bottom_color = inner_hcolor,
           left = inner_vgrid, left_color = inner_vcolor,
-          right = inner_vgrid, right_color = inner_vcolor
+          right = inner_vgrid, right_color = inner_vcolor,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         bottom_center <- create_border(
           top = inner_hgrid, top_color = inner_hcolor,
           bottom = bottom_border, bottom_color = bottom_color,
           left = inner_vgrid, left_color = inner_vcolor,
-          right = inner_vgrid, right_color = inner_vcolor
+          right = inner_vgrid, right_color = inner_vcolor,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         # determine dims
@@ -8664,7 +8726,9 @@ wbWorkbook <- R6::R6Class(
           top = inner_hgrid, top_color = inner_hcolor,
           bottom = inner_hgrid, bottom_color = inner_hcolor,
           left = inner_vgrid, left_color = inner_vcolor,
-          right = inner_vgrid, right_color = inner_vcolor
+          right = inner_vgrid, right_color = inner_vcolor,
+          diagonal = diagonal, diagonal_down = diagonal_down,
+          diagonal_up = diagonal_up, diagonal_color = diagonal_color
         )
 
         # determine dims
