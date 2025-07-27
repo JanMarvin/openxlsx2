@@ -271,7 +271,7 @@ test_that("threaded comments work", {
   got <- wb_get_thread(wb, dims = "A1")[, -1]
   expect_equal(exp, got)
 
-  wb <- wb$add_worksheet()$
+  wb$add_worksheet()$
     add_thread(dims = "A1", comment = "hmpf", person_id = scotty_id)
 
   exp <- data.frame(

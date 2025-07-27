@@ -20,7 +20,7 @@ test_that("wb_clone_sheet_style", {
   # clone style on cloned and cleaned worksheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
-  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb <- wb_clean_sheet(wb, sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
   wb <- wb_clone_sheet_style(wb, "SUM", "clone")
 
   # sort for this test, does not matter later, because we will sort prior to saving
