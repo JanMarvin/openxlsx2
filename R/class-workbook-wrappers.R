@@ -3367,6 +3367,7 @@ wb_add_border <- function(
 #' @param gradient_fill a gradient fill xml pattern.
 #' @param every_nth_col which col should be filled
 #' @param every_nth_row which row should be filled
+#' @param bg_color (optional) background [wb_color()]
 #' @param ... ...
 #' @examples
 #' wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
@@ -3398,6 +3399,7 @@ wb_add_fill <- function(
     gradient_fill = "",
     every_nth_col = 1,
     every_nth_row = 1,
+    bg_color      = NULL,
     ...
 ) {
   assert_workbook(wb)
@@ -3409,6 +3411,7 @@ wb_add_fill <- function(
     gradient_fill = gradient_fill,
     every_nth_col = every_nth_col,
     every_nth_row = every_nth_row,
+    bg_color      = bg_color,
     ...           = ...
   )
 }

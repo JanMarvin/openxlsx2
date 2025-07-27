@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Add `bg_color` argument to `wb_add_fill()` to actually make use of various `pattern` types.
+
 ## Fixes
 
 * Support loading and saving workbooks with conditional formatting in pivot tables. [1397](https://github.com/JanMarvin/openxlsx2/pull/1397)

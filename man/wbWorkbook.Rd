@@ -3312,6 +3312,7 @@ provide simple fill function
   gradient_fill = "",
   every_nth_col = 1,
   every_nth_row = 1,
+  bg_color = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -3336,6 +3337,8 @@ provide simple fill function
 \item{\code{every_nth_col}}{which col should be filled}
 
 \item{\code{every_nth_row}}{which row should be filled}
+
+\item{\code{bg_color}}{(optional) background \code{\link[=wb_color]{wb_color()}}}
 
 \item{\code{...}}{additional arguments}
 }

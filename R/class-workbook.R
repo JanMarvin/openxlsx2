@@ -8700,6 +8700,7 @@ wbWorkbook <- R6::R6Class(
     #' @param gradient_fill a gradient fill xml pattern.
     #' @param every_nth_col which col should be filled
     #' @param every_nth_row which row should be filled
+    #' @param bg_color (optional) background [wb_color()]
     #' @return The `wbWorksheetObject`, invisibly
     add_fill = function(
         sheet         = current_sheet(),
@@ -8709,6 +8710,7 @@ wbWorkbook <- R6::R6Class(
         gradient_fill = "",
         every_nth_col = 1,
         every_nth_row = 1,
+        bg_color      = NULL,
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
@@ -8734,7 +8736,8 @@ wbWorkbook <- R6::R6Class(
         new_fill <- create_fill(
           gradient_fill = gradient_fill,
           pattern_type = pattern,
-          fg_color = color
+          fg_color = color,
+          bg_color = bg_color
         )
         self$styles_mgr$add(new_fill, new_fill)
 
