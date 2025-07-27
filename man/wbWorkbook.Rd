@@ -3273,6 +3273,9 @@ create borders for cell region
   inner_vgrid = NULL,
   inner_vcolor = NULL,
   update = FALSE,
+  diagonal_up = NULL,
+  diagonal_down = NULL,
+  diagonal_color = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -3289,6 +3292,8 @@ create borders for cell region
 \item{\code{left_border, right_border, top_border, bottom_border, inner_hgrid, inner_vgrid}}{the border style, if NULL no border is drawn. See create_border for possible border styles}
 
 \item{\code{update}}{update}
+
+\item{\code{diagonal_up, diagonal_down, diagonal_color}}{(optional) arguments for diagonal border lines}
 
 \item{\code{...}}{additional arguments}
 }
@@ -3312,6 +3317,7 @@ provide simple fill function
   gradient_fill = "",
   every_nth_col = 1,
   every_nth_row = 1,
+  bg_color = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -3336,6 +3342,8 @@ provide simple fill function
 \item{\code{every_nth_col}}{which col should be filled}
 
 \item{\code{every_nth_row}}{which row should be filled}
+
+\item{\code{bg_color}}{(optional) background \code{\link[=wb_color]{wb_color()}}}
 
 \item{\code{...}}{additional arguments}
 }

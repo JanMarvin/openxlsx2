@@ -194,8 +194,8 @@ create_border <- function(
     right            = right,
     top              = top,
     bottom           = bottom,
-    diagonalDown     = diagonal_down,
-    diagonalUp       = diagonal_up,
+    diagonalDown     = as_xml_attr(diagonal_down),
+    diagonalUp       = as_xml_attr(diagonal_up),
     diagonal         = diagonal,
     vertical         = vertical,
     horizontal       = horizontal,
@@ -1005,7 +1005,7 @@ update_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) 
 
   new_border <- read_border(read_xml(new_border))
 
-  ## update the exisisting style
+  ## update the existing style
   sel <- which(new_border != "")
   borders[, sel] <- new_border[, sel]
 

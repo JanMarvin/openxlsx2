@@ -936,3 +936,39 @@ test_that("update font works", {
   got <- wb$styles_mgr$styles$fonts[3]
   expect_equal(exp, got)
 })
+
+test_that("adding bg_color and diagonal borders work", {
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "B2:D4",
+             color = wb_color("white"),
+             bg_color = wb_color("black"),
+             pattern = "lightUp")$
+    add_border(
+      dims = "B6:D8",
+      diagonal_up = "dashed",
+      diagonal_down = "dashed",
+      diagonal_color = wb_color("red")
+    )
+
+  expect_error(
+    wb$add_worksheet()$
+      add_border(
+      dims = "B6:D8",
+      diagonal_up = "dashed",
+      diagonal_down = "thin",
+      diagonal_color = wb_color("red")
+    ),
+    "there can be only a single diagonal style per cell"
+  )
+
+  exp <- "<border diagonalDown=\"1\" diagonalUp=\"1\"><start><color rgb=\"FFFF0000\"/></start><end><color rgb=\"FFFF0000\"/></end><left style=\"thin\"><color rgb=\"FF000000\"/></left><top style=\"thin\"><color rgb=\"FF000000\"/></top><diagonal style=\"dashed\"><color rgb=\"FFFF0000\"/></diagonal></border>"
+  got <- wb$styles_mgr$styles$borders[2]
+  expect_equal(exp, got)
+
+  exp <- "<fill><patternFill patternType=\"lightUp\"><fgColor rgb=\"FFFFFFFF\"/><bgColor rgb=\"FF000000\"/></patternFill></fill>"
+  got <- wb$styles_mgr$styles$fills[3]
+  expect_equal(exp, got)
+
+})

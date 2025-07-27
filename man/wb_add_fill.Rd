@@ -13,6 +13,7 @@ wb_add_fill(
   gradient_fill = "",
   every_nth_col = 1,
   every_nth_row = 1,
+  bg_color = NULL,
   ...
 )
 }
@@ -36,6 +37,8 @@ wb_add_fill(
 \item{every_nth_col}{which col should be filled}
 
 \item{every_nth_row}{which row should be filled}
+
+\item{bg_color}{(optional) background \code{\link[=wb_color]{wb_color()}}}
 
 \item{...}{...}
 }
