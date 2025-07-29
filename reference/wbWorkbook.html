@@ -79,7 +79,7 @@ Note that the documentation is more complete in each of the wrapper functions.
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,7 +116,7 @@ Note that the documentation is more complete in each of the wrapper functions.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Workbook class</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.17/R/class-workbook.R" class="external-link"><code>R/class-workbook.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook.R" class="external-link"><code>R/class-workbook.R</code></a></small>
       <div class="d-none name"><code>wbWorkbook.Rd</code></div>
     </div>
 
@@ -1410,7 +1410,7 @@ STDEVP, SUM, VAR, VARP</p>
 <h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">to_df</span><span class="op">(</span></span>
 <span>  <span class="va">sheet</span>,</span>
-<span>  start_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  start_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  start_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  col_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -4233,6 +4233,9 @@ are removed.</p></dd>
 <span>  inner_vgrid <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inner_vcolor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  update <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  diagonal_up <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  diagonal_down <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  diagonal_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -4259,6 +4262,10 @@ are removed.</p></dd>
 <dd><p>update</p></dd>
 
 
+<dt><code>diagonal_up, diagonal_down, diagonal_color</code></dt>
+<dd><p>(optional) arguments for diagonal border lines</p></dd>
+
+
 <dt><code>...</code></dt>
 <dd><p>additional arguments</p></dd>
 
@@ -4282,6 +4289,7 @@ are removed.</p></dd>
 <span>  gradient_fill <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  every_nth_col <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  every_nth_row <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  bg_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -4318,6 +4326,10 @@ are removed.</p></dd>
 
 <dt><code>every_nth_row</code></dt>
 <dd><p>which row should be filled</p></dd>
+
+
+<dt><code>bg_color</code></dt>
+<dd><p>(optional) background <code><a href="wb_color.html">wb_color()</a></code></p></dd>
 
 
 <dt><code>...</code></dt>
