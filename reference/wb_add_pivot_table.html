@@ -50,7 +50,7 @@ in the openxlsx2 book."><meta property="og:image" content="https://janmarvin.git
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add a pivot table to a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.18/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_pivot_table.Rd</code></div>
     </div>
 
@@ -220,17 +220,18 @@ we misunderstood how the parameter should be used).</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="wb_add_data.html">wb_add_data</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_add_data.html">wb_add_data</a></span><span class="op">(</span><span class="va">wb</span>, x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_data.html">wb_data</a></span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="co"># default pivot table</span></span></span>
-<span class="r-in"><span>  <span class="fu">wb_add_pivot_table</span><span class="op">(</span><span class="va">df</span>, dims <span class="op">=</span> <span class="st">"A3"</span>,</span></span>
+<span class="r-in"><span><span class="co"># default pivot table</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_pivot_table</span><span class="op">(</span><span class="va">wb</span>, x <span class="op">=</span> <span class="va">df</span>, dims <span class="op">=</span> <span class="st">"A3"</span>,</span></span>
 <span class="r-in"><span>    filter <span class="op">=</span> <span class="st">"am"</span>, rows <span class="op">=</span> <span class="st">"cyl"</span>, cols <span class="op">=</span> <span class="st">"gear"</span>, data <span class="op">=</span> <span class="st">"disp"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="co"># with parameters</span></span></span>
-<span class="r-in"><span>  <span class="fu">wb_add_pivot_table</span><span class="op">(</span><span class="va">df</span>,</span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_pivot_table</span><span class="op">(</span><span class="va">wb</span>, x <span class="op">=</span> <span class="va">df</span>,</span></span>
 <span class="r-in"><span>    filter <span class="op">=</span> <span class="st">"am"</span>, rows <span class="op">=</span> <span class="st">"cyl"</span>, cols <span class="op">=</span> <span class="st">"gear"</span>, data <span class="op">=</span> <span class="st">"disp"</span>,</span></span>
 <span class="r-in"><span>    params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>no_style <span class="op">=</span> <span class="cn">TRUE</span>, numfmt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>formatCode <span class="op">=</span> <span class="st">"##0.0"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
