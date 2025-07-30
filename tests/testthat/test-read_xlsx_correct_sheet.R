@@ -1,7 +1,7 @@
 test_that("read_xlsx correct sheet", {
 
   fl <- testfile_path("readTest.xlsx")
-  sheet_names <- wb_load(fl)$get_sheet_names() %>% unname()
+  sheet_names <- unname(wb_load(fl)$get_sheet_names())
 
   expected_sheet_names <- c(
     "Sheet1", "Sheet2", "Sheet 3",

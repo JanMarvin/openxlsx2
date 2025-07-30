@@ -94,9 +94,9 @@ worksheet_lock_properties <- function() {
 #' *Wrapper Function Method*: Utilizes the `wb` family of functions that support
 #'  piping to streamline operations.
 #' ``` r
-#' wb <- wb_workbook(creator = "My name here") %>%
-#'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
-#'   wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
+#' wb <- wb_workbook(creator = "My name here")
+#' wb <- wb_add_worksheet(wb, sheet = "Expenditure", grid_lines = FALSE)
+#' wb <- wb_add_data(wb, x = USPersonalExpenditure, row_names = TRUE)
 #' ```
 #' *Chaining Method*: Directly modifies the object through a series of chained
 #'  function calls.
@@ -122,8 +122,8 @@ worksheet_lock_properties <- function() {
 #' wb$add_worksheet("sheet")
 #' # add some data
 #' wb$add_data("sheet", cars)
-#' # Add data with piping in a different location
-#' wb <- wb %>% wb_add_data(x = cars, dims = wb_dims(from_dims = "D4"))
+#' # Add data in a different location
+#' wb <- wb_add_data(wb, x = cars, dims = wb_dims(from_dims = "D4"))
 #' # open it in your default spreadsheet software
 #' if (interactive()) wb$open()
 #' ```

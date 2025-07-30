@@ -18,10 +18,10 @@ Add sparklines to a worksheet
 }
 \examples{
  sl <- create_sparklines("Sheet 1", dims = "A3:K3", sqref = "L3")
- wb <- wb_workbook() \%>\%
-   wb_add_worksheet() \%>\%
-   wb_add_data(x = mtcars) \%>\%
-   wb_add_sparklines(sparklines = sl)
+ wb <- wb_workbook()
+ wb <- wb_add_worksheet(wb)
+ wb <- wb_add_data(wb, x = mtcars)
+ wb <- wb_add_sparklines(wb, sparklines = sl)
 }
 \seealso{
 \code{\link[=create_sparklines]{create_sparklines()}}

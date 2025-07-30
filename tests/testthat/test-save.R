@@ -444,9 +444,9 @@ test_that("write_xlsx with base font settings", {
 test_that("glue is supported", {
   x <- structure("foo", class = c("glue", "character"))
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_data(x = x)
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = x)
 
   expect_equal("foo", wb_to_df(wb, col_names = FALSE)$A)
 })

@@ -760,9 +760,9 @@ test_that("wb_add_style() is a wrapper", {
 
 test_that("wb_add_style() is a wrapper", {
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_fill(dims = "C3", color = wb_color("yellow"))
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "C3", color = wb_color("yellow"))
 
   expect_wrapper(
     "set_cell_style_across",

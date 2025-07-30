@@ -20,7 +20,7 @@ test_that("wb_clone_sheet_style", {
   # clone style on cloned and cleaned worksheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
-  wb <- wb$clean_sheet(sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
+  wb <- wb_clean_sheet(wb, sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
   wb <- wb_clone_sheet_style(wb, "SUM", "clone")
 
   # sort for this test, does not matter later, because we will sort prior to saving
@@ -287,7 +287,7 @@ test_that("add_style", {
 
   # without name
   num <- create_numfmt(numFmtId = "165", formatCode = "#.#")
-  wb <- wb_workbook() %>% wb_add_style(num)
+  wb <- wb_workbook()$add_style(num)
 
   exp <- num
   got <- wb$styles_mgr$styles$numFmts
@@ -300,7 +300,7 @@ test_that("add_style", {
   expect_equal(exp, got)
 
   # with name
-  wb <- wb_workbook() %>% wb_add_style(num, "num")
+  wb <- wb_workbook()$add_style(num, "num")
 
   exp <- num
   got <- wb$styles_mgr$styles$numFmts
@@ -413,18 +413,18 @@ test_that("applyCellStyle works", {
 test_that("style names are xml", {
   sheet <- mtcars[1:6, 1:6]
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet("test") %>%
-    wb_add_data(x = "Title", start_col = 1, start_row = 1) %>%
-    wb_add_font(dims = "A1", bold = "1", size = "14") %>%
-    wb_add_data(x = sheet, col_names = TRUE, start_col = 1, start_row = 2, remove_cell_style = TRUE) %>%
-    wb_add_cell_style(dims = "B2:F2", horizontal = "right") %>%
-    wb_add_font(dims = "A2:F2", bold = "1", size = "11") %>%
-    wb_add_numfmt(dims = "B3:D8", numfmt = 2) %>%
-    wb_add_font(dims = "B3:D8", italic = "1", size = "11") %>%
-    wb_add_fill(dims = "B3:D8", color = wb_colour("orange")) %>%
-    wb_add_fill(dims = "C5", color = wb_colour("black")) %>%
-    wb_add_font(dims = "C5", color = wb_colour("white"))
+  wb <- wb_workbook()$
+    add_worksheet("test")$
+    add_data(x = "Title", start_col = 1, start_row = 1)$
+    add_font(dims = "A1", bold = "1", size = "14")$
+    add_data(x = sheet, col_names = TRUE, start_col = 1, start_row = 2, remove_cell_style = TRUE)$
+    add_cell_style(dims = "B2:F2", horizontal = "right")$
+    add_font(dims = "A2:F2", bold = "1", size = "11")$
+    add_numfmt(dims = "B3:D8", numfmt = 2)$
+    add_font(dims = "B3:D8", italic = "1", size = "11")$
+    add_fill(dims = "B3:D8", color = wb_colour("orange"))$
+    add_fill(dims = "C5", color = wb_colour("black"))$
+    add_font(dims = "C5", color = wb_colour("white"))
 
   exp <- list(
     numFmts = NULL,
@@ -484,14 +484,14 @@ test_that("add numfmt is no longer slow", {
     stringsAsFactors = FALSE
   )
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet()
+  wb <- wb_workbook()$
+    add_worksheet()
 
   # just a tiny test to check that this does not run forever
   expect_silent(
-    wb <- wb %>%
-      wb_add_data(x = out) %>%
-      wb_add_numfmt(dims = "C1:C44882", numfmt = "#.0")
+    wb$
+      add_data(x = out)$
+      add_numfmt(dims = "C1:C44882", numfmt = "#.0")
   )
 
   expect_silent(
@@ -519,11 +519,11 @@ test_that("add numfmt is no longer slow", {
 
 test_that("logical and numeric work too", {
 
-  wb <- wb_workbook() %>% wb_add_worksheet("S1") %>% wb_add_data("S1", mtcars)
+  wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
 
-  wb2 <- wb %>% wb_add_font("S1", "A1:K1", name = "Arial", bold = "1", size = "14")
+  wb2 <- wb_add_font(wb, "S1", "A1:K1", name = "Arial", bold = "1", size = "14")
 
-  wb3 <- wb %>% wb_add_font("S1", "A2:K2", name = "Arial", bold = TRUE, size = 14)
+  wb3 <- wb_add_font(wb, "S1", "A2:K2", name = "Arial", bold = TRUE, size = 14)
 
   expect_equal(
     wb2$styles_mgr$styles$fonts,
@@ -746,26 +746,26 @@ test_that("wb_add_named_style() works", {
 })
 
 test_that("wb_add_dxfs_style() works", {
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_dxfs_style(
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_dxfs_style(
       name = "nay",
       font_color = wb_color(hex = "FF9C0006"),
       bg_fill = wb_color(hex = "FFFFC7CE")
-    ) %>%
-    wb_add_dxfs_style(
+    )$
+    add_dxfs_style(
       name = "yay",
       font_color = wb_color(hex = "FF006100"),
       bg_fill = wb_color(hex = "FFC6EFCE")
-    ) %>%
-    wb_add_data(x = -5:5) %>%
-    wb_add_data(x = LETTERS[1:11], start_col = 2) %>%
-    wb_add_conditional_formatting(
+    )$
+    add_data(x = -5:5)$
+    add_data(x = LETTERS[1:11], start_col = 2)$
+    add_conditional_formatting(
       dims = wb_dims(cols = 1, rows = 1:11),
       rule = "!=0",
       style = "nay"
-    ) %>%
-    wb_add_conditional_formatting(
+    )$
+    add_conditional_formatting(
       dims = wb_dims(cols = 1, rows = 1:11),
       rule = "==0",
       style = "yay"
@@ -787,14 +787,14 @@ test_that("wb_add_dxfs_style() works", {
   expect_equal(exp, got)
 
   expect_warning(
-    wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_dxfs_style(
+    wb_workbook()$
+    add_worksheet()$
+    add_dxfs_style(
       name = "nay",
       font_color = wb_color(hex = "FF9C0006"),
       bg_fill = wb_color(hex = "FFFFC7CE")
-    ) %>%
-    wb_add_dxfs_style(
+    )$
+    add_dxfs_style(
       name = "nay",
       font_color = wb_color(hex = "FF006100"),
       bg_fill = wb_color(hex = "FFC6EFCE")
@@ -840,10 +840,10 @@ test_that("initialized styles remain available", {
 
 test_that("apply styles across columns and rows", {
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_fill(dims = "C3", color = wb_color("yellow")) %>%
-    wb_set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_fill(dims = "C3", color = wb_color("yellow"))$
+    set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
 
   exp <- c(
     "<col min=\"1\" max=\"2\" width=\"8.43\"/>",

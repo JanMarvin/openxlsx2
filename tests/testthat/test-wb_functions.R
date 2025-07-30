@@ -258,11 +258,11 @@ test_that("fillMergedCells works with dims", {
 
 test_that("improve date detection", {
 
-  df <- wb_workbook() %>%
-    wb_add_worksheet("Rawdata") %>%
-    wb_add_data(x = Sys.Date(), col_names = FALSE) %>%
-    wb_add_numfmt(numfmt = "[$-1070000]d/mm/yyyy;@") %>%
-    wb_to_df(col_names = FALSE)
+  df <- wb_workbook()$
+    add_worksheet("Rawdata")$
+    add_data(x = Sys.Date(), col_names = FALSE)$
+    add_numfmt(numfmt = "[$-1070000]d/mm/yyyy;@")$
+    to_df(col_names = FALSE)
 
   exp <- Sys.Date()
   got <- df$A

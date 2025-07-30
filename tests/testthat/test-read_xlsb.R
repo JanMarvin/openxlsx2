@@ -78,7 +78,7 @@ test_that("worksheets with real world formulas", {
 
   exp <- c("Control", "EPRR Core Standards", "Deep dive",
            "Interoperable capabilities ", "Lookups", "Calculations")
-  got <- wb$get_sheet_names() %>% names()
+  got <- names(wb$get_sheet_names())
   expect_equal(exp, got)
 
   xlsxFile <- testfile_path("array_fml.xlsb")

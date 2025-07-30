@@ -99,7 +99,7 @@ wb_to_df(file, convert = FALSE)
 Even though `openxlsx2` imports everything as requested, sometimes it might be helpful to remove empty lines from the data. These might be either left empty intentional or empty because they are were formatted, but the cell value was removed afterwards. This was added mostly for backward comparability, but the default has been changed to `FALSE`. The behavior has changed a bit as well. Previously empty cells were removed prior to the conversion to R data frames, now they are removed after the conversion and are removed only if they are completely empty
 ```{r}
 # erase empty rows from dataset
-wb_to_df(file, sheet = 1, skip_empty_rows = TRUE) %>% tail()
+tail(wb_to_df(file, sheet = 1, skip_empty_rows = TRUE))
 ```
 
 ### `skip_empty_cols` - remove empty columns

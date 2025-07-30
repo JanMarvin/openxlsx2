@@ -24,7 +24,8 @@ yellow_f <- wb_color(hex = "FF9C6500")
 yellow_b <- wb_color(hex = "FFFFEB9C")
 
 yellow <- create_dxfs_style(font_color = yellow_f, bg_fill = yellow_b)
-wb <- wb_workbook() \%>\% wb_add_style(yellow)
+wb <- wb_workbook()
+wb <- wb_add_style(wb, yellow)
 }
 \seealso{
 \itemize{

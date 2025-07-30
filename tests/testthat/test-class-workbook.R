@@ -602,8 +602,7 @@ test_that("add_drawing works", {
   )
 
   # add the scatterplots to the data
-  wb <- wb %>%
-    wb_add_mschart(dims = "F4:L20", graph = scatter_plot)
+  wb$add_mschart(dims = "F4:L20", graph = scatter_plot)
 
   expect_equal(NROW(wb$charts), 1L)
 
@@ -727,13 +726,13 @@ test_that("multiple charts on a sheet work as expected", {
   )
   scatter <- chart_settings(scatter, scatterstyle = "marker")
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_mschart(dims = "F4:L20", graph = scatter) %>%
-    wb_add_mschart(dims = "F24:L40", graph = scatter) %>%
-    wb_add_worksheet() %>%
-    wb_add_mschart(dims = "F4:L20", graph = scatter) %>%
-    wb_add_mschart(dims = "F24:L40", graph = scatter)
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_mschart(dims = "F4:L20", graph = scatter)$
+    add_mschart(dims = "F24:L40", graph = scatter)$
+    add_worksheet()$
+    add_mschart(dims = "F4:L20", graph = scatter)$
+    add_mschart(dims = "F24:L40", graph = scatter)
 
   exp <- c(TRUE, TRUE)
   got <- grepl(pattern = "<c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId1\"/>", wb$drawings)
@@ -757,19 +756,19 @@ test_that("various image functions work as expected", {
     add_image(dims = "B2:K8", file = img)
 
   exp <- c("xdr:absoluteAnchor", "xdr:oneCellAnchor", "xdr:twoCellAnchor")
-  got <- wb$drawings %>% xml_node_name(level1 = "xdr:wsDr")
+  got <- xml_node_name(wb$drawings, level1 = "xdr:wsDr")
   expect_equal(exp, got)
 
   exp <- "<xdr:from><xdr:col>1</xdr:col><xdr:colOff>90000</xdr:colOff><xdr:row>1</xdr:row><xdr:rowOff>90000</xdr:rowOff></xdr:from>"
-  got <- wb$drawings[[2]] %>% xml_node("xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
+  got <- xml_node(wb$drawings[[2]], "xdr:wsDr", "xdr:oneCellAnchor", "xdr:from")
   expect_equal(exp, got)
 
   exp <- "<xdr:from><xdr:col>1</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>1</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>"
-  got <- wb$drawings[[3]] %>% xml_node("xdr:wsDr", "xdr:twoCellAnchor", "xdr:from")
+  got <- xml_node(wb$drawings[[3]], "xdr:wsDr", "xdr:twoCellAnchor", "xdr:from")
   expect_equal(exp, got)
 
   exp <- "<xdr:to><xdr:col>11</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>8</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>"
-  got <- wb$drawings[[3]] %>% xml_node("xdr:wsDr", "xdr:twoCellAnchor", "xdr:to")
+  got <- xml_node(wb$drawings[[3]], "xdr:wsDr", "xdr:twoCellAnchor", "xdr:to")
   expect_equal(exp, got)
 
   expect_warning(
@@ -994,7 +993,7 @@ test_that("numfmt in pivot tables works", {
 
 test_that("sort_item with pivot tables works", {
 
-wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = mtcars)
+wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
 
 df <- wb_data(wb, sheet = 1)
 
@@ -1229,9 +1228,9 @@ test_that("adding mips section works", {
   expect_equal(fmips, wb$get_mips())
 
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_set_properties(
+  wb <- wb_workbook()$
+    add_worksheet()$
+    set_properties(
       custom = list(
         Software    = "openxlsx2",
         Version     = 1.5,
@@ -1256,7 +1255,7 @@ test_that("adding mips section works", {
 test_that("handling mips in docMetadata works", {
   tmp <- temp_xlsx()
   xml <- '<clbl:labelList xmlns:clbl=\"http://schemas.microsoft.com/office/2020/mipLabelMetadata\"><clbl:label foo="bar"/></clbl:labelList>'
-  wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_mips(xml = xml)
+  wb <- wb_workbook()$add_worksheet()$add_mips(xml = xml)
   wb$docMetadata
   wb$save(tmp)
   rm(wb)
@@ -1266,18 +1265,17 @@ test_that("handling mips in docMetadata works", {
 })
 
 test_that("using and removing secondary bookviews works", {
-  wb <- wb_workbook() %>% wb_add_worksheet()
+  wb <- wb_workbook()$add_worksheet()
 
   # set the first and second bookview (horizontal split)
-  wb <- wb %>%
-    wb_set_bookview(window_height = 17600, window_width = 15120, x_window = 15120, y_window = 760) %>%
-    wb_set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, view = 2)
+  wb$set_bookview(window_height = 17600, window_width = 15120, x_window = 15120, y_window = 760)
+  wb$set_bookview(window_height = 17600, window_width = 15040, x_window = 0, y_window = 760, view = 2)
 
   exp <- structure(
     list(windowHeight = c("17600", "17600"), windowWidth = c("15120", "15040"),
          xWindow = c("15120", "0"), yWindow = c("760", "760")),
     row.names = c(NA, 2L), class = "data.frame")
-  got <- wb %>% wb_get_bookview()
+  got <- wb$get_bookview()
   expect_equal(exp, got)
 
   # remove the first view
@@ -1285,7 +1283,7 @@ test_that("using and removing secondary bookviews works", {
     list(windowHeight = c("17600"), windowWidth = c("15040"),
          xWindow = c("0"), yWindow = c("760")),
     row.names = c(NA, 1L), class = "data.frame")
-  got <- wb %>% wb_remove_bookview(view = 1) %>% wb_get_bookview()
+  got <- wb_remove_bookview(wb, view = 1)$get_bookview()
   expect_equal(exp, got)
 
   # keep only the first view
@@ -1293,16 +1291,16 @@ test_that("using and removing secondary bookviews works", {
     list(windowHeight = c("17600"), windowWidth = c("15120"),
          xWindow = c("15120"), yWindow = c("760")),
     row.names = c(NA, 1L), class = "data.frame")
-  got <- wb %>% wb_remove_bookview(view = -1) %>% wb_get_bookview()
+  got <- wb_remove_bookview(wb, view = -1)$get_bookview()
   expect_equal(exp, got)
 
-  wb <- wb_workbook() %>% wb_add_worksheet()
+  wb <- wb_workbook()$add_worksheet()
   exp <- structure(list(), row.names = c(NA, 1L), names = character(0), class = "data.frame")
-  got <- wb %>% wb_remove_bookview(view = 1) %>% wb_get_bookview()
+  got <- wb_remove_bookview(wb, view = 1)$get_bookview()
   expect_equal(exp, got)
 
   expect_error(
-    wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_set_bookview(view = 3),
+    wb <- wb_workbook()$add_worksheet()$set_bookview(view = 3),
     "There is more than one workbook view missing. Available: 1. Requested: 3"
   )
 

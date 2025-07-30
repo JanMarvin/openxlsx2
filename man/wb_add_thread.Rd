@@ -53,10 +53,9 @@ wb$add_person(name = "someone who likes to edit workbooks")
 pid <- wb$get_person(name = "someone who likes to edit workbooks")$id
 
 # write a comment to a thread, reply to one and solve some
-wb <- wb \%>\%
-  wb_add_thread(dims = "A1", comment = "wow it works!", person_id = pid) \%>\%
-  wb_add_thread(dims = "A2", comment = "indeed", person_id = pid, resolve = TRUE) \%>\%
-  wb_add_thread(dims = "A1", comment = "so cool", person_id = pid, reply = TRUE)
+wb <- wb_add_thread(wb, dims = "A1", comment = "wow it works!", person_id = pid)
+wb <- wb_add_thread(wb, dims = "A2", comment = "indeed", person_id = pid, resolve = TRUE)
+wb <- wb_add_thread(wb, dims = "A1", comment = "so cool", person_id = pid, reply = TRUE)
 }
 \seealso{
 \code{\link[=wb_add_comment]{wb_add_comment()}} \code{\link{person-wb}}

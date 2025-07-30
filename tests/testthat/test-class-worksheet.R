@@ -100,11 +100,11 @@ test_that("print options work", {
 
   temp <- temp_xlsx()
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet(grid_lines = FALSE) %>%
-    wb_add_data(x = iris) %>%
-    wb_add_worksheet(grid_lines = TRUE) %>%
-    wb_add_data(x = mtcars)
+  wb <- wb_workbook()$
+    add_worksheet(grid_lines = FALSE)$
+    add_data(x = iris)$
+    add_worksheet(grid_lines = TRUE)$
+    add_data(x = mtcars)
 
   exp <- character()
   got <- wb$worksheets[[1]]$printOptions
@@ -191,16 +191,16 @@ test_that("tab_color works", {
 })
 
 test_that("setting and loading header/footer attributes works", {
-  wb <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_set_header_footer(
+  wb <- wb_workbook()$
+    add_worksheet()$
+    set_header_footer(
       header             = c(NA, "Header", NA),
       scale_with_doc     = TRUE,
       align_with_margins = TRUE
-    ) %>%
-    wb_page_setup(orientation = "landscape", fit_to_width = 1) %>%
-    wb_set_sheetview(view = "pageLayout", zoom_scale = 40) %>%
-    wb_add_data(x = as.data.frame(matrix(1:500, ncol = 25)))
+    )$
+    page_setup(orientation = "landscape", fit_to_width = 1)$
+    set_sheetview(view = "pageLayout", zoom_scale = 40)$
+    add_data(x = as.data.frame(matrix(1:500, ncol = 25)))
 
   temp <- temp_xlsx()
   wb$save(temp)

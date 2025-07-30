@@ -40,8 +40,9 @@ You can add Form Control to a cell. The three supported types are a Checkbox,
 a Radio button, or a Drop menu.
 }
 \examples{
-wb <- wb_workbook() \%>\% wb_add_worksheet() \%>\%
-  wb_add_form_control()
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb)
+wb <- wb_add_form_control(wb)
 # Add
 wb$add_form_control(dims = "C5", type = "Radio", checked = TRUE)
 }

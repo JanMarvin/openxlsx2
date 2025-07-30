@@ -187,17 +187,17 @@ test_that("cloning from workbooks works", {
   wb_in <- wb_load(fl)
 
   wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in)
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(got, c("NOT_SUM", "SUM"))
 
   wb$clone_worksheet(old = "SUM", new = "SUM_clone")
   exp <- c("NOT_SUM", "SUM", "SUM_clone")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   wb$clone_worksheet(old = "SUM", new = "SUM2", from = wb_in)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   ## clone table
@@ -206,13 +206,13 @@ test_that("cloning from workbooks works", {
 
   wb$clone_worksheet(old = "tab", new = "tab", from = wb_in)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   # clone it twice
   expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in))
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   ## clone a chart
@@ -223,18 +223,18 @@ test_that("cloning from workbooks works", {
   scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
   scatter <- chart_settings(scatter, scatterstyle = "marker")
 
-  wb_ms <- wb_workbook() %>%
-    wb_add_worksheet("chart") %>%
-    wb_add_mschart(dims = "F4:L20", graph = scatter)
+  wb_ms <- wb_workbook()$
+    add_worksheet("chart")$
+    add_mschart(dims = "F4:L20", graph = scatter)
 
   wb$clone_worksheet(old = "chart", new = "chart_1", from = wb_ms)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   wb$clone_worksheet(old = "chart", new = "chart_2", from = wb_ms)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   ## clone images
@@ -247,12 +247,12 @@ test_that("cloning from workbooks works", {
 
   wb$clone_worksheet(old = "Sheet 1", new = "img", from = wb_img)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   wb$clone_worksheet(old = "Sheet 1", new = "img2", from = wb_img)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   ## clone drawing, borders function and shared strings
@@ -263,7 +263,7 @@ test_that("cloning from workbooks works", {
     "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
   )
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2", "test")
-  got <- wb$get_sheet_names() %>% unname()
+  got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
 })

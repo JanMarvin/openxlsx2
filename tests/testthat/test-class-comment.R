@@ -117,9 +117,9 @@ test_that("wb_add_comment", {
 
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)
 
-  wb2 <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_comment(dims = "A1", comment = c1)
+  wb2 <- wb_workbook()$
+    add_worksheet()$
+    add_comment(dims = "A1", comment = c1)
 
   expect_equal(wb$comments, wb2$comments)
 
@@ -140,9 +140,9 @@ test_that("wb_add_comment() works without supplying a wbComment object.", {
   wb <- wb_workbook()$add_worksheet()$add_comment(comment = "this is a comment", dims = "A1")
 
   c2 <- wb_comment(text = "this is a comment")
-  wb2 <- wb_workbook() %>%
-    wb_add_worksheet() %>%
-    wb_add_comment(dims = "A1", comment =  c2)
+  wb2 <- wb_workbook()$
+    add_worksheet()$
+    add_comment(dims = "A1", comment =  c2)
   # wb_comment() defaults and comment = "text" defaults are the same.
   expect_equal(wb$comments, wb2$comments)
 
@@ -162,14 +162,13 @@ test_that("wb_remove_comment", {
     remove_comment(dims = "A1")
 
   # deprecated col / row code
-  wb2 <- wb_workbook() %>% wb_add_worksheet()
+  wb2 <- wb_workbook()$add_worksheet()
   expect_warning(
-    wb2 <- wb2 %>%
-      wb_add_comment(col = "A", row = 1, comment = c1),
+    wb2$add_comment(col = "A", row = 1, comment = c1),
     "'col/row' is deprecated."
   )
   expect_warning(
-    wb2 <- wb2 %>% wb_remove_comment(col = "A", row = 1),
+    wb2$remove_comment(col = "A", row = 1),
     "'col/row/gridExpand' is deprecated."
   )
 
@@ -239,10 +238,10 @@ test_that("threaded comments work", {
   scotty_id <- wb$get_person(name = "Scotty")$id
 
   # write a comment to a thread, reply to one and solve some
-  wb <- wb %>%
-    wb_add_thread(dims = "A1", comment = "wow it works!", person_id = kirk_id) %>%
-    wb_add_thread(dims = "A2", comment = "indeed", person_id = uhura_id, resolve = TRUE) %>%
-    wb_add_thread(dims = "A1", comment = "fascinating", person_id = spock_id, reply = TRUE)
+  wb$
+    add_thread(dims = "A1", comment = "wow it works!", person_id = kirk_id)$
+    add_thread(dims = "A2", comment = "indeed", person_id = uhura_id, resolve = TRUE)$
+    add_thread(dims = "A1", comment = "fascinating", person_id = spock_id, reply = TRUE)
 
   exp <- data.frame(
     ref = c("A1", "A1"),
@@ -260,8 +259,7 @@ test_that("threaded comments work", {
   expect_equal(exp, got)
 
   # start a new thread
-  wb <- wb %>%
-    wb_add_thread(dims = "A1", comment = "oops", person_id = kirk_id)
+  wb$add_thread(dims = "A1", comment = "oops", person_id = kirk_id)
 
   exp <- data.frame(
     ref = "A1",
@@ -273,9 +271,8 @@ test_that("threaded comments work", {
   got <- wb_get_thread(wb, dims = "A1")[, -1]
   expect_equal(exp, got)
 
-  wb <- wb %>%
-    wb_add_worksheet() %>%
-    wb_add_thread(dims = "A1", comment = "hmpf", person_id = scotty_id)
+  wb$add_worksheet()$
+    add_thread(dims = "A1", comment = "hmpf", person_id = scotty_id)
 
   exp <- data.frame(
     ref = "A1",
@@ -293,7 +290,7 @@ test_that("thread option works", {
 
   wb <- wb_workbook()$add_worksheet()
   wb$add_person(name = "Kirk")
-  wb <- wb %>% wb_add_thread(comment = "works")
+  wb$add_thread(comment = "works")
 
   exp <- "works"
   got <- wb_get_thread(wb)$text

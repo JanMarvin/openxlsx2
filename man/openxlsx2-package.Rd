@@ -38,8 +38,8 @@ Interaction with \code{openxlsx2} objects can occur through two primary methods:
 \emph{Wrapper Function Method}: Utilizes the \code{wb} family of functions that support
 piping to streamline operations.
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{wb <- wb_workbook(creator = "My name here") \%>\%
-  wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) \%>\%
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{wb <- wb_workbook(creator = "My name here") |>
+  wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) |>
   wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
 }\if{html}{\out{</div>}}
 

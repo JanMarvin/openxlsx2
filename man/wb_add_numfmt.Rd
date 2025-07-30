@@ -96,8 +96,10 @@ Custom currency format with parentheses for negative values and dashes for zero 
 }
 }
 \examples{
-wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
-wb \%>\% wb_add_numfmt("S1", dims = "F1:F33", numfmt = "#.0")
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "S1")
+wb <- wb_add_data(wb, "S1", mtcars)
+wb <- wb_add_numfmt(wb, "S1", dims = "F1:F33", numfmt = "#.0")
 # Chaining
 wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
 wb$add_numfmt("S1", "A1:A33", numfmt = 1)

@@ -102,12 +102,12 @@ The \code{wbWorkbook} object, invisibly
 Add cell style to a cell region
 }
 \examples{
-wb <- wb_workbook() \%>\%
-  wb_add_worksheet("S1") \%>\%
-  wb_add_data("S1", x = mtcars)
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "S1")
+wb <- wb_add_data(wb, "S1", x = mtcars)
 
-wb \%>\%
-  wb_add_cell_style(
+wb <- wb_add_cell_style(
+    wb,
     dims = "A1:K1",
     text_rotation = "45",
     horizontal = "center",

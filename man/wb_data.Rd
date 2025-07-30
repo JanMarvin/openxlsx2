@@ -39,9 +39,9 @@ A data frame of class \code{wb_data}.
 provide wb_data object as mschart input
 }
 \examples{
- wb <- wb_workbook() \%>\%
-   wb_add_worksheet() \%>\%
-   wb_add_data(x = mtcars, dims = "B2")
+ wb <- wb_workbook()
+ wb <- wb_add_worksheet(wb)
+ wb <- wb_add_data(wb, x = mtcars, dims = "B2")
 
  wb_data(wb, 1, dims = "B2:E6")
 }

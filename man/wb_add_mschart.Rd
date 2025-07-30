@@ -38,14 +38,14 @@ require(mschart)
 scatter <- ms_scatterchart(data = iris, x = "Sepal.Length", y = "Sepal.Width", group = "Species")
 scatter <- chart_settings(scatter, scatterstyle = "marker")
 
-wb <- wb_workbook() \%>\%
- wb_add_worksheet() \%>\%
- wb_add_mschart(dims = "F4:L20", graph = scatter)
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb)
+wb <- wb_add_mschart(wb, dims = "F4:L20", graph = scatter)
 
 ## Add mschart to worksheet and use available data
-wb <- wb_workbook() \%>\%
-  wb_add_worksheet() \%>\%
-  wb_add_data(x = mtcars, dims = "B2")
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb)
+wb <- wb_add_data(wb, x = mtcars, dims = "B2")
 
 # create wb_data object
 dat <- wb_data(wb, 1, dims = "B2:E6")
@@ -59,8 +59,7 @@ data_plot <- ms_scatterchart(
 )
 
 # add the scatterplot to the data
-wb <- wb \%>\%
-  wb_add_mschart(dims = "F4:L20", graph = data_plot)
+wb <- wb_add_mschart(wb, dims = "F4:L20", graph = data_plot)
 }
 }
 \seealso{

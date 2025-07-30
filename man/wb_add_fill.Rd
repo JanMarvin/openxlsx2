@@ -49,23 +49,26 @@ The \code{wbWorkbook} object, invisibly
 Add fill to a cell region.
 }
 \examples{
-wb <- wb_workbook() \%>\% wb_add_worksheet("S1") \%>\% wb_add_data("S1", mtcars)
-wb <- wb \%>\% wb_add_fill("S1", dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
-wb <- wb \%>\% wb_add_fill("S1", dims = "B22:D27", color = wb_color(hex = "FF00FF00"))
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "S1")
+wb <- wb_add_data(wb, "S1", mtcars)
+wb <- wb_add_fill(wb, "S1", dims = "D5:J23", color = wb_color(hex = "FFFFFF00"))
+wb <- wb_add_fill(wb, "S1", dims = "B22:D27", color = wb_color(hex = "FF00FF00"))
 
-wb <- wb \%>\%  wb_add_worksheet("S2") \%>\% wb_add_data("S2", mtcars)
+wb <- wb_add_worksheet(wb, "S2")
+wb <- wb_add_data(wb, "S2", mtcars)
 
 gradient_fill1 <- '<gradientFill degree="90">
 <stop position="0"><color rgb="FF92D050"/></stop>
 <stop position="1"><color rgb="FF0070C0"/></stop>
 </gradientFill>'
-wb <- wb \%>\% wb_add_fill("S2", dims = "A2:K5", gradient_fill = gradient_fill1)
+wb <- wb_add_fill(wb, "S2", dims = "A2:K5", gradient_fill = gradient_fill1)
 
 gradient_fill2 <- '<gradientFill type="path" left="0.2" right="0.8" top="0.2" bottom="0.8">
 <stop position="0"><color theme="0"/></stop>
 <stop position="1"><color theme="4"/></stop>
 </gradientFill>'
-wb <- wb \%>\% wb_add_fill("S2", dims = "A7:K10", gradient_fill = gradient_fill2)
+wb <- wb_add_fill(wb, "S2", dims = "A7:K10", gradient_fill = gradient_fill2)
 }
 \seealso{
 Other styles: 

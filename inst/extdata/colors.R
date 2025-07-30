@@ -22,6 +22,6 @@ names(clrs) <- nms
 
 colors <- clrs
 
-names(colors) %>% dput()
+dput(names(colors))
 
 saveRDS(colors, "inst/extdata/colors.rds")

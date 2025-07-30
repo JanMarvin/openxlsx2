@@ -47,8 +47,8 @@ test_that("add_data_table() writes over tables", {
 
 test_that("zero row data table works", {
 
-  wb <- wb_workbook() %>%
-    wb_add_worksheet()
+  wb <- wb_workbook()$
+    add_worksheet()
 
   expect_warning(
     wb$add_data_table(x = data.frame(a = NA, b = NA)[0, ]),
@@ -141,8 +141,8 @@ test_that("Existing Table Names", {
 test_that("custom table styles work", {
 
   # at the moment we have no interface to add custom table styles
-  wb <- wb_workbook() %>%
-    wb_add_worksheet()
+  wb <- wb_workbook()$
+    add_worksheet()
 
   # create dxf elements to be used in the table style
   tabCol1 <- create_dxfs_style(bg_fill = wb_color(theme = 7))

@@ -11,7 +11,6 @@
 #' @import Rcpp
 #' @import R6
 #' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg palette png rgb tiff
-#' @importFrom magrittr %>%
 #' @importFrom stringi stri_encode stri_extract_all_regex stri_extract_first_regex
 #'   stri_join stri_match_first_regex stri_order stri_opts_collator stri_pad_left
 #'   stri_rand_strings stri_read_lines stri_replace_all_fixed stri_replace_all_regex
@@ -49,8 +48,8 @@
 #' *Wrapper Function Method*: Utilizes the `wb` family of functions that support
 #'  piping to streamline operations.
 #' ``` r
-#' wb <- wb_workbook(creator = "My name here") %>%
-#'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) %>%
+#' wb <- wb_workbook(creator = "My name here") |>
+#'   wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) |>
 #'   wb_add_data(x = USPersonalExpenditure, row_names = TRUE)
 #' ```
 #' *Chaining Method*: Directly modifies the object through a series of chained
