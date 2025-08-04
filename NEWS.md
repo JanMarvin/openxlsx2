@@ -1,4 +1,4 @@
-# openxlsx2 1.19
+# openxlsx2 (development version)
 
 ## Breaking changes
 
