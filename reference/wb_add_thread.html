@@ -48,7 +48,7 @@ be tied to a person created by wb_add_person()."><meta property="og:image" conte
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add threaded comments to a cell in a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.18/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_thread.Rd</code></div>
     </div>
 
@@ -143,9 +143,10 @@ it and get the values with <code><a href="person-wb.html">wb_get_person()</a></c
 <span class="r-in"><span><span class="va">pid</span> <span class="op">&lt;-</span> <span class="va">wb</span><span class="op">$</span><span class="fu">get_person</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"someone who likes to edit workbooks"</span><span class="op">)</span><span class="op">$</span><span class="va">id</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># write a comment to a thread, reply to one and solve some</span></span></span>
-<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_thread</span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, comment <span class="op">=</span> <span class="st">"wow it works!"</span>, person_id <span class="op">=</span> <span class="va">pid</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_thread</span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="st">"A2"</span>, comment <span class="op">=</span> <span class="st">"indeed"</span>, person_id <span class="op">=</span> <span class="va">pid</span>, resolve <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">wb_add_thread</span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="st">"A1"</span>, comment <span class="op">=</span> <span class="st">"so cool"</span>, person_id <span class="op">=</span> <span class="va">pid</span>, reply <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_add_thread</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1"</span>, comment <span class="op">=</span> <span class="st">"wow it works!"</span>, person_id <span class="op">=</span> <span class="va">pid</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_add_thread</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A2"</span>, comment <span class="op">=</span> <span class="st">"indeed"</span>, person_id <span class="op">=</span> <span class="va">pid</span>, resolve <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">wb_add_thread</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A1"</span>, comment <span class="op">=</span> <span class="st">"so cool"</span>, person_id <span class="op">=</span> <span class="va">pid</span>, reply <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
