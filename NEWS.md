@@ -1,4 +1,4 @@
-# openxlsx2 1.18
+# openxlsx2 1.19
 
 ## Breaking changes
 
