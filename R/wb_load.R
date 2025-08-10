@@ -987,14 +987,21 @@ wb_load <- function(
         # need to expand the names. multiple conditions can be combined in one conditionalFormatting
         cfs <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
         if (length(cfs)) {
+          nms <- rbindlist(xml_attr(cfs, "conditionalFormatting"))$sqref
 
-          nms <- rbindlist(xml_attr(cfs, "conditionalFormatting"))
-          cf <- xml_node(cfs, "conditionalFormatting", "cfRule")
+          ## one sqref can contain multiple conditional formating rules
+          nm <- NULL
+          cf <- NULL
+          for (cfi in seq_along(cfs)) {
+            tmp <- xml_node(cfs[cfi], "conditionalFormatting", "cfRule")
+            cf <- c(cf, tmp)
+            nm <- c(nm, rep_len(nms[i], length(tmp)))
+          }
 
           # our xlsb parser does not support conditional formatting
           if (!identical(cf, character())) {
             conditionalFormatting <- data.frame(
-              nms, cf, stringsAsFactors = FALSE
+              nm, cf, stringsAsFactors = FALSE
             )
             wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
           }
