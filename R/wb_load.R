@@ -157,6 +157,8 @@ wb_load <- function(
   embeddings        <- grep_xml("xl/embeddings")
   activeX           <- grep_xml("xl/activeX")
 
+  python            <- grep_xml("xl/python.xml$")
+
   # comments
   commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
   commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
@@ -836,6 +838,19 @@ wb_load <- function(
       '<Override PartName="/xl/featurePropertyBag/featurePropertyBag.xml" ContentType="application/vnd.ms-excel.featurepropertybag+xml"/>'
     )
     wb$featurePropertyBag <- read_xml(featureProperty, pointer = FALSE)
+  }
+
+  if (!data_only && length(python)) {
+    wb$append(
+      "Content_Types",
+      '<Override PartName="/xl/python.xml" ContentType="application/vnd.ms-excel.python+xml"/>'
+    )
+    wb$append(
+      "workbook.xml.rels",
+      '<Relationship Id="rId7" Type="http://schemas.microsoft.com/office/2023/09/relationships/Python" Target="python.xml"/>'
+    )
+
+    wb$python <- read_xml(python, pointer = FALSE)
   }
 
 
