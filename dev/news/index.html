@@ -50,6 +50,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>Add <code>type</code> argument to <code><a href="../reference/wb_dims.html">wb_dims()</a></code>. This allows setting the type of the dimension. The default is a relative reference, but it can be fully fixed <code>"all"</code>, rows fixed <code>"row"</code>, or columns fixed <code>"col"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1417" class="external-link">1417</a>
+</li>
+</ul></div>
+<div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
 <ul><li>The <code>magrittr</code> package is no longer imported by <code>openxlsx2</code>. Users that rely on the <code>magrittr</code> pipe operator <code>%&gt;%</code> should load the package manually. <a href="https://github.com/JanMarvin/openxlsx2/pull/1409" class="external-link">1409</a>
 </li>
