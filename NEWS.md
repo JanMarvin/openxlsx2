@@ -4,6 +4,10 @@
 
 * Add `type` argument to `wb_dims()`. This allows setting the type of the dimension. The default is a relative reference, but it can be fully fixed `"all"`, rows fixed `"row"`, or columns fixed `"col"`. [1417](https://github.com/JanMarvin/openxlsx2/pull/1417)
 
+## Fixes
+
+* Fixed a regression, where the changes of the internal structure of the conditional formatting resulted in un-loadable files. Unfortunately the issue is even worse. If a cell in a worksheet contains more than one conditional formatting including an expression, the cell to the reference gets shuffeled around. If a single cell shares multiple condtional formatting with expressions, it will try to dynamically extend the references. If it failed, it failed because it was not possible to extend the cells to the same size. If it worked, it was very likely shuffling the references around.
+
 ## Breaking changes
 
 * The `magrittr` package is no longer imported by `openxlsx2`. Users that rely on the `magrittr` pipe operator `%>%` should load the package manually. [1409](https://github.com/JanMarvin/openxlsx2/pull/1409)

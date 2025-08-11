@@ -1121,3 +1121,16 @@ test_that("cf for pivot tables works", {
   expect_equal(exp, got)
 
 })
+
+
+test_that("combined cells with uneven cf work", {
+
+  skip_online_checks()
+
+  wb <- wb_load(testfile_path("gh_issue_1419.xlsx"))
+
+  exp <- c("A1", "A1", "A1", "A1", "A1", "A1", "A2", "A2", "A2")
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_equal(exp, got)
+
+})
