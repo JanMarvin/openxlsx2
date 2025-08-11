@@ -55,6 +55,10 @@
 </li>
 </ul></div>
 <div class="section level3">
+<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<ul><li>Fixed a regression, where the changes of the internal structure of the conditional formatting resulted in un-loadable files. Unfortunately the issue is even worse. If a cell in a worksheet contains more than one conditional formatting including an expression, the cell to the reference gets shuffeled around. If a single cell shares multiple condtional formatting with expressions, it will try to dynamically extend the references. If it failed, it failed because it was not possible to extend the cells to the same size. If it worked, it was very likely shuffling the references around.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
 <ul><li>The <code>magrittr</code> package is no longer imported by <code>openxlsx2</code>. Users that rely on the <code>magrittr</code> pipe operator <code>%&gt;%</code> should load the package manually. <a href="https://github.com/JanMarvin/openxlsx2/pull/1409" class="external-link">1409</a>
 </li>
