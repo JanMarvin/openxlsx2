@@ -209,6 +209,9 @@ wbWorkbook <- R6::R6Class(
     #' @field featurePropertyBag featurePropertyBag
     featurePropertyBag = NULL,
 
+    #' @field python python
+    python = NULL,
+
     #' @field headFoot The header and footer
     headFoot = NULL,
 
@@ -3653,6 +3656,15 @@ wbWorkbook <- R6::R6Class(
           body = self$metadata,
           tail = "",
           fl = file.path(xlDir, "metadata.xml")
+        )
+      }
+
+      if (length(self$python)) {
+        write_file(
+          head = "",
+          body = self$python,
+          tail = "",
+          fl = file.path(xlDir, "python.xml")
         )
       }
 

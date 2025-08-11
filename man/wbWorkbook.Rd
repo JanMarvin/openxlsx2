@@ -91,6 +91,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{featurePropertyBag}}{featurePropertyBag}
 
+\item{\code{python}}{python}
+
 \item{\code{headFoot}}{The header and footer}
 
 \item{\code{media}}{media}

@@ -157,6 +157,8 @@ wb_load <- function(
   embeddings        <- grep_xml("xl/embeddings")
   activeX           <- grep_xml("xl/activeX")
 
+  python            <- grep_xml("xl/python.xml$")
+
   # comments
   commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
   commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
@@ -838,6 +840,19 @@ wb_load <- function(
     wb$featurePropertyBag <- read_xml(featureProperty, pointer = FALSE)
   }
 
+  if (!data_only && length(python)) {
+    wb$append(
+      "Content_Types",
+      '<Override PartName="/xl/python.xml" ContentType="application/vnd.ms-excel.python+xml"/>'
+    )
+    wb$append(
+      "workbook.xml.rels",
+      '<Relationship Id="rId7" Type="http://schemas.microsoft.com/office/2023/09/relationships/Python" Target="python.xml"/>'
+    )
+
+    wb$python <- read_xml(python, pointer = FALSE)
+  }
+
 
   ##* ----------------------------------------------------------------------------------------------*##
   ### BEGIN READING IN WORKSHEET DATA
@@ -987,14 +1002,22 @@ wb_load <- function(
         # need to expand the names. multiple conditions can be combined in one conditionalFormatting
         cfs <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
         if (length(cfs)) {
-
           nms <- rbindlist(xml_attr(cfs, "conditionalFormatting"))
-          cf <- xml_node(cfs, "conditionalFormatting", "cfRule")
+
+          ## one sqref can contain multiple conditional formating rules
+          nm <- NULL
+          cf <- NULL
+          for (cfi in seq_along(cfs)) {
+            tmp_cf <- xml_node(cfs[cfi], "conditionalFormatting", "cfRule")
+            cf <- c(cf, tmp_cf)
+            tmp_nm <- nms[cfi, , drop = FALSE]
+            nm <- rbind2(nm, tmp_nm[rep_len(1, length(tmp_cf)), , drop = FALSE])
+          }
 
           # our xlsb parser does not support conditional formatting
           if (!identical(cf, character())) {
             conditionalFormatting <- data.frame(
-              nms, cf, stringsAsFactors = FALSE
+              nm, cf, stringsAsFactors = FALSE
             )
             wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
           }

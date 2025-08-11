@@ -1407,6 +1407,15 @@ calc_distance <- function(x) {
   x - x[1]
 }
 
+# safer rbind
+rbind2 <- function(df1, df2) {
+  if (is.null(df1)) return(df2)
+  nms <- unique(c(names(df1), names(df2)))
+  df1[setdiff(nms, names(df1))] <- ""
+  df2[setdiff(nms, names(df2))] <- ""
+  rbind(df1[nms], df2[nms])
+}
+
 # ave function to avoid a dependency on stats. if we ever rely on stats,
 # this can be replaced by stats::ave
 ave2 <- function(x, y, FUN) {
