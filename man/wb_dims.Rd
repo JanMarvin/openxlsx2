@@ -155,4 +155,10 @@ wb_dims_vs <- wb_dims(x = mtcars, cols = "vs", select = "x")
 wb$add_fill(dims = wb_dims_vs, fill = wb_color("yellow"))
 wb$add_conditional_formatting(dims = wb_dims(x = mtcars, cols = "mpg"), type = "dataBar")
 # wb_open(wb)
+
+# fix relative ranges
+wb_dims(x = mtcars) # equal to none: A1:K33
+wb_dims(x = mtcars, type = "all") # $A$1:$K$33
+wb_dims(x = mtcars, type = "row") # A$1:K$33
+wb_dims(x = mtcars, type = "col") # $A1:$K33
 }
