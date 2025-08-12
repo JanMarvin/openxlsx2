@@ -240,7 +240,7 @@ rowcol_to_dim <- function(row, col, type = NULL) {
 
   # we will always return something like "A1"
   if (!is.null(type)) {
-    match.arg(type, c("all", "col", "row"))
+    match.arg(type, c("all", "col", "row", "none"))
     if (type == "all")
       return(stringi::stri_join("$", min_col, "$", min_row))
     if (type == "col")
@@ -254,7 +254,17 @@ rowcol_to_dim <- function(row, col, type = NULL) {
 
 # begin - end
 rc_to_dims <- function(cb, rb, ce, re, type = NULL) {
-  stringi::stri_join(rowcol_to_dim(rb, cb, type), ":", rowcol_to_dim(re, ce, type))
+  if (is.null(type) || length(type) == 1) {
+    sell <- 1
+    selr <- 1
+  } else if (length(type) == 2) {
+    sell <- 1
+    selr <- 2
+  }
+  typel <- type[sell]
+  typer <- type[selr]
+
+  stringi::stri_join(rowcol_to_dim(rb, cb, typel), ":", rowcol_to_dim(re, ce, typer))
 }
 
 #' @rdname dims_helper
@@ -287,7 +297,7 @@ rowcol_to_dims <- function(row, col, single = TRUE, type = NULL) {
   if (single) {
     return(rc_to_dims(min_col, min_row, max_col, max_row, type = type))
   } else {
-    return(paste0(vapply(int2col(col_int), FUN = function(x) rc_to_dims(x, min_row, x, max_row), ""), collapse = ","))
+    return(paste0(vapply(int2col(col_int), FUN = function(x) rc_to_dims(x, min_row, x, max_row, type = type), ""), collapse = ","))
   }
 
 }
