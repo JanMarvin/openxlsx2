@@ -3,6 +3,7 @@
 ## New features
 
 * Add `type` argument to `wb_dims()`. This allows setting the type of the dimension. The default is a relative reference, but it can be fully fixed `"all"`, rows fixed `"row"`, or columns fixed `"col"`. [1417](https://github.com/JanMarvin/openxlsx2/pull/1417)
+* Initial support for files with webextensions. [1422](https://github.com/JanMarvin/openxlsx2/pull/1422)
 
 ## Fixes
 
