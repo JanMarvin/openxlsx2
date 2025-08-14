@@ -93,6 +93,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{python}}{python}
 
+\item{\code{webextensions}}{webextensions}
+
 \item{\code{headFoot}}{The header and footer}
 
 \item{\code{media}}{media}

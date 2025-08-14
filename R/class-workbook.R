@@ -212,6 +212,9 @@ wbWorkbook <- R6::R6Class(
     #' @field python python
     python = NULL,
 
+    #' @field webextensions webextensions
+    webextensions = NULL,
+
     #' @field headFoot The header and footer
     headFoot = NULL,
 
@@ -3069,6 +3072,18 @@ wbWorkbook <- R6::R6Class(
             file.copy(fl, activeXRelsDir, overwrite = TRUE)
           else
             file.copy(fl, activeXDir, overwrite = TRUE)
+        }
+      }
+
+      if (length(self$webextensions)) {
+        # we have to split webextensions into webextensions and webextensions/_rels
+        webextensionsDir     <- dir_create(tmpDir, "xl", "webextensions")
+        webextensionsRelsDir <- dir_create(tmpDir, "xl", "webextensions", "_rels")
+        for (fl in self$webextensions) {
+          if (file_ext2(fl) == "rels")
+            file.copy(fl, webextensionsRelsDir, overwrite = TRUE)
+          else
+            file.copy(fl, webextensionsDir, overwrite = TRUE)
         }
       }
 

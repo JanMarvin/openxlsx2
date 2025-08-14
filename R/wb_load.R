@@ -156,8 +156,9 @@ wb_load <- function(
   calcChainXML      <- grep_xml("xl/calcChain.xml")
   embeddings        <- grep_xml("xl/embeddings")
   activeX           <- grep_xml("xl/activeX")
-
   python            <- grep_xml("xl/python.xml$")
+  webextensions     <- grep_xml("xl/webextensions")
+
 
   # comments
   commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
@@ -227,7 +228,7 @@ wb_load <- function(
   namedSheetViewsXML <- grep_xml("namedSheetViews/namedSheetView[0-9]+.xml$")
 
   cleanup_dir <- function(data_only) {
-    grep_xml("media|vmlDrawing|customXml|embeddings|activeX|vbaProject", ignore.case = TRUE, invert = TRUE)
+    grep_xml("media|vmlDrawing|customXml|embeddings|activeX|vbaProject|webextensions", ignore.case = TRUE, invert = TRUE)
   }
 
   ## remove all EXCEPT media and charts
@@ -249,7 +250,7 @@ wb_load <- function(
     "namedSheetViews", "persons", "pivotCache", "pivotTables",
     "printerSettings", "queryTables", "richData", "slicerCaches",
     "slicers", "tables", "theme", "threadedComments", "timelineCaches",
-    "timelines", "worksheets", "xl", "[trash]"
+    "timelines", "worksheets", "webextensions", "xl", "[trash]"
   )
   unknown <- file_folders[!file_folders %in% known]
   # nocov start
@@ -1499,6 +1500,19 @@ wb_load <- function(
 
       wb$append("Content_Types", '<Default Extension="bin" ContentType="application/vnd.ms-office.activeX"/>')
       wb$append("Content_Types", sprintf('<Override PartName="/xl/activeX/%s" ContentType="application/vnd.ms-office.activeX+xml"/>', ax_fls))
+    }
+
+    ## xl\webextensions
+    if (length(webextensions)) {
+      wb$webextensions <- webextensions
+      wx_sel <- file_ext2(webextensions) == "xml"
+      wx_fls <- basename2(webextensions[wx_sel])
+
+      # theres one taskpane for every webextension
+      if ("taskpanes.xml" %in% wx_fls)
+        wb$append("Content_Types", '<Override PartName="/xl/webextensions/taskpanes.xml" ContentType="application/vnd.ms-office.webextensiontaskpanes+xml"/>')
+
+      wb$append("Content_Types", sprintf('<Override PartName="/xl/webextensions/%s" ContentType="application/vnd.ms-office.webextension+xml"/>', wx_fls[grep("webextension",  wx_fls)]))
     }
 
   } else {
