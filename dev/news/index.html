@@ -51,14 +51,15 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>Add <code>type</code> argument to <code><a href="../reference/wb_dims.html">wb_dims()</a></code>. This allows setting the type of the dimension. The default is a relative reference, but it can be fully fixed <code>"all"</code>, rows fixed <code>"row"</code>, or columns fixed <code>"col"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1417" class="external-link">1417</a>
+<ul><li>Add <code>fix</code> argument to <code><a href="../reference/wb_dims.html">wb_dims()</a></code>. This allows setting the type of the dimension. The default is a relative reference, but it can be fully fixed <code>"all"</code>, rows fixed <code>"row"</code>, or columns fixed <code>"col"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1417" class="external-link">1417</a>
 </li>
-<li>Initial support for files with webextensions. <a href="https://github.com/JanMarvin/openxlsx2/pull/1422" class="external-link">1422</a>
+<li>Initial support for files with webextensions. <a href="https://github.com/JanMarvin/openxlsx2/pull/1423" class="external-link">1422</a>
 </li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Fixed a regression, where the changes of the internal structure of the conditional formatting resulted in un-loadable files. Unfortunately the issue is even worse. If a cell in a worksheet contains more than one conditional formatting including an expression, the cell to the reference gets shuffeled around. If a single cell shares multiple condtional formatting with expressions, it will try to dynamically extend the references. If it failed, it failed because it was not possible to extend the cells to the same size. If it worked, it was very likely shuffling the references around.</li>
+<ul><li>Fixed a regression where changes to the internal structure of conditional formatting prevented files from loading. Unfortunately, the issue turned out to be more severe. When a worksheet cell contains multiple conditional formatting rules with expressions, the cell references may get shuffled. In cases where a single cell is linked to multiple conditional formatting rules with expressions, the system attempts to dynamically extend the references. If this process fails, it’s because the cell ranges cannot be extended to the same size. If it succeeds, the references are still likely to be shuffled. <a href="https://github.com/JanMarvin/openxlsx2/pull/1420" class="external-link">1420</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
