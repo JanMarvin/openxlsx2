@@ -158,7 +158,8 @@ wb$add_conditional_formatting(dims = wb_dims(x = mtcars, cols = "mpg"), type = "
 
 # fix relative ranges
 wb_dims(x = mtcars) # equal to none: A1:K33
-wb_dims(x = mtcars, type = "all") # $A$1:$K$33
-wb_dims(x = mtcars, type = "row") # A$1:K$33
-wb_dims(x = mtcars, type = "col") # $A1:$K33
+wb_dims(x = mtcars, fix = "all") # $A$1:$K$33
+wb_dims(x = mtcars, fix = "row") # A$1:K$33
+wb_dims(x = mtcars, fix = "col") # $A1:$K33
+wb_dims(x = mtcars, fix = c("col", "row")) # $A1:K$33
 }

@@ -2,12 +2,12 @@
 
 ## New features
 
-* Add `type` argument to `wb_dims()`. This allows setting the type of the dimension. The default is a relative reference, but it can be fully fixed `"all"`, rows fixed `"row"`, or columns fixed `"col"`. [1417](https://github.com/JanMarvin/openxlsx2/pull/1417)
-* Initial support for files with webextensions. [1422](https://github.com/JanMarvin/openxlsx2/pull/1422)
+* Add `fix` argument to `wb_dims()`. This allows setting the type of the dimension. The default is a relative reference, but it can be fully fixed `"all"`, rows fixed `"row"`, or columns fixed `"col"`. [1417](https://github.com/JanMarvin/openxlsx2/pull/1417)
+* Initial support for files with webextensions. [1422](https://github.com/JanMarvin/openxlsx2/pull/1423)
 
 ## Fixes
 
-* Fixed a regression, where the changes of the internal structure of the conditional formatting resulted in un-loadable files. Unfortunately the issue is even worse. If a cell in a worksheet contains more than one conditional formatting including an expression, the cell to the reference gets shuffeled around. If a single cell shares multiple condtional formatting with expressions, it will try to dynamically extend the references. If it failed, it failed because it was not possible to extend the cells to the same size. If it worked, it was very likely shuffling the references around.
+* Fixed a regression where changes to the internal structure of conditional formatting prevented files from loading. Unfortunately, the issue turned out to be more severe. When a worksheet cell contains multiple conditional formatting rules with expressions, the cell references may get shuffled. In cases where a single cell is linked to multiple conditional formatting rules with expressions, the system attempts to dynamically extend the references. If this process fails, it’s because the cell ranges cannot be extended to the same size. If it succeeds, the references are still likely to be shuffled. [1420](https://github.com/JanMarvin/openxlsx2/pull/1420)
 
 ## Breaking changes
 
