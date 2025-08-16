@@ -254,7 +254,6 @@ linebreaks
 linters
 listDataValidation
 localName
-magrittr
 mailto
 manualMax
 manualMin
@@ -405,6 +404,7 @@ vm
 vml
 wb
 wbWorkbook
+webextensions
 wedgeEllipseCallout
 wedgeRectCallout
 wedgeRoundRectCallout

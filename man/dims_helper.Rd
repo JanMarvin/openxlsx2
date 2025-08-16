@@ -8,7 +8,7 @@
 \usage{
 dims_to_rowcol(x, as_integer = FALSE)
 
-rowcol_to_dims(row, col, single = TRUE, type = NULL)
+rowcol_to_dims(row, col, single = TRUE, fix = NULL)
 }
 \arguments{
 \item{x}{a dimension object "A1" or "A1:A1"}
@@ -21,7 +21,7 @@ rowcol_to_dims(row, col, single = TRUE, type = NULL)
 
 \item{single}{argument indicating if \code{\link[=rowcol_to_dims]{rowcol_to_dims()}} returns a single cell dimension}
 
-\item{type}{setting the type of the reference. Per default, no type is set. Options are
+\item{fix}{setting the type of the reference. Per default, no type is set. Options are
 \code{"all"}, \code{"row"}, and \code{"col"}}
 }
 \value{

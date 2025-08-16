@@ -165,7 +165,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
 #' @param row a numeric vector of rows
 #' @param col a numeric or character vector of cols
 #' @param single argument indicating if [rowcol_to_dims()] returns a single cell dimension
-#' @param type setting the type of the reference. Per default, no type is set. Options are
+#' @param fix setting the type of the reference. Per default, no type is set. Options are
 #' `"all"`, `"row"`, and `"col"`
 #' @returns
 #'   * A `dims` string for `_to_dim` i.e  "A1:A1"
@@ -231,7 +231,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
 #' @rdname dims_helper
 #' @noRd
-rowcol_to_dim <- function(row, col, type = NULL) {
+rowcol_to_dim <- function(row, col, fix = NULL) {
   # no assert for col. will output character anyways
   # assert_class(row, "numeric") - complains if integer
   col_int <- col2int(col)
@@ -239,13 +239,13 @@ rowcol_to_dim <- function(row, col, type = NULL) {
   min_row <- min(row)
 
   # we will always return something like "A1"
-  if (!is.null(type)) {
-    match.arg(type, c("all", "col", "row", "none"))
-    if (type == "all")
+  if (!is.null(fix)) {
+    match.arg(fix, c("all", "col", "row", "none"))
+    if (fix == "all")
       return(stringi::stri_join("$", min_col, "$", min_row))
-    if (type == "col")
+    if (fix == "col")
       return(stringi::stri_join("$", min_col, min_row))
-    if (type == "row")
+    if (fix == "row")
       return(stringi::stri_join(min_col, "$", min_row))
   }
 
@@ -253,23 +253,23 @@ rowcol_to_dim <- function(row, col, type = NULL) {
 }
 
 # begin - end
-rc_to_dims <- function(cb, rb, ce, re, type = NULL) {
-  if (is.null(type) || length(type) == 1) {
+rc_to_dims <- function(cb, rb, ce, re, fix = NULL) {
+  if (is.null(fix) || length(fix) == 1) {
     sell <- 1
     selr <- 1
-  } else if (length(type) == 2) {
+  } else if (length(fix) == 2) {
     sell <- 1
     selr <- 2
   }
-  typel <- type[sell]
-  typer <- type[selr]
+  fixl <- fix[sell]
+  fixr <- fix[selr]
 
-  stringi::stri_join(rowcol_to_dim(rb, cb, typel), ":", rowcol_to_dim(re, ce, typer))
+  stringi::stri_join(rowcol_to_dim(rb, cb, fixl), ":", rowcol_to_dim(re, ce, fixr))
 }
 
 #' @rdname dims_helper
 #' @export
-rowcol_to_dims <- function(row, col, single = TRUE, type = NULL) {
+rowcol_to_dims <- function(row, col, single = TRUE, fix = NULL) {
 
   # no assert for col. will output character anyways
   # assert_class(row, "numeric") - complains if integer
@@ -295,9 +295,9 @@ rowcol_to_dims <- function(row, col, single = TRUE, type = NULL) {
 
   # we will always return something like "A1:A1", even for single cells
   if (single) {
-    return(rc_to_dims(min_col, min_row, max_col, max_row, type = type))
+    return(rc_to_dims(min_col, min_row, max_col, max_row, fix = fix))
   } else {
-    return(paste0(vapply(int2col(col_int), FUN = function(x) rc_to_dims(x, min_row, x, max_row, type = type), ""), collapse = ","))
+    return(paste0(vapply(int2col(col_int), FUN = function(x) rc_to_dims(x, min_row, x, max_row, fix = fix), ""), collapse = ","))
   }
 
 }
@@ -667,9 +667,10 @@ determine_select_valid <- function(args, select = NULL) {
 #'
 #' # fix relative ranges
 #' wb_dims(x = mtcars) # equal to none: A1:K33
-#' wb_dims(x = mtcars, type = "all") # $A$1:$K$33
-#' wb_dims(x = mtcars, type = "row") # A$1:K$33
-#' wb_dims(x = mtcars, type = "col") # $A1:$K33
+#' wb_dims(x = mtcars, fix = "all") # $A$1:$K$33
+#' wb_dims(x = mtcars, fix = "row") # A$1:K$33
+#' wb_dims(x = mtcars, fix = "col") # $A1:$K33
+#' wb_dims(x = mtcars, fix = c("col", "row")) # $A1:K$33
 wb_dims <- function(..., select = NULL) {
   args <- list(...)
   len <- length(args)
@@ -681,7 +682,7 @@ wb_dims <- function(..., select = NULL) {
   # nams cannot be NULL now
   nams <- names(args) %||% rep("", len)
   valid_arg_nams <- c("x", "rows", "cols", "from_row", "from_col", "from_dims", "row_names", "col_names",
-                      "left", "right", "above", "below", "select", "type")
+                      "left", "right", "above", "below", "select", "fix")
   any_args_named <- any(nzchar(nams))
   # unused, but can be used, if we need to check if any, but not all
   # Check if valid args were provided if any argument is named.
@@ -972,22 +973,22 @@ wb_dims <- function(..., select = NULL) {
         cdims <- NULL
         if (any(abs(diff(col_span)) != 1L)) {
           for (col_start in col_span) {
-            tmp  <- rowcol_to_dim(row_start, col_start, args$type)
+            tmp  <- rowcol_to_dim(row_start, col_start, args$fix)
             cdims <- c(cdims, tmp)
           }
         } else {
-          cdims <- rowcol_to_dim(row_start, col_span, args$type)
+          cdims <- rowcol_to_dim(row_start, col_span, args$fix)
         }
         dims <- c(dims, cdims)
       }
     } else {
       if (any(abs(diff(col_span)) != 1L)) {
         for (col_start in col_span) {
-          tmp  <- rowcol_to_dim(row_span, col_start, args$type)
+          tmp  <- rowcol_to_dim(row_span, col_start, args$fix)
           dims <- c(dims, tmp)
         }
       } else {
-        dims <- rowcol_to_dim(row_span, col_span, args$type)
+        dims <- rowcol_to_dim(row_span, col_span, args$fix)
       }
     }
 
@@ -999,22 +1000,22 @@ wb_dims <- function(..., select = NULL) {
         cdims <- NULL
         if (any(abs(diff(col_span)) != 1L)) {
           for (col_start in col_span) {
-            tmp  <- rowcol_to_dims(row_start, col_start, type = args$type)
+            tmp  <- rowcol_to_dims(row_start, col_start, fix = args$fix)
             cdims <- c(cdims, tmp)
           }
         } else {
-          cdims <- rowcol_to_dims(row_start, col_span, type = args$type)
+          cdims <- rowcol_to_dims(row_start, col_span, fix = args$fix)
         }
         dims <- c(dims, cdims)
       }
     } else {
       if (any(abs(diff(col_span)) != 1L)) {
         for (col_start in col_span) {
-          tmp  <- rowcol_to_dims(row_span, col_start, type = args$type)
+          tmp  <- rowcol_to_dims(row_span, col_start, fix = args$fix)
           dims <- c(dims, tmp)
         }
       } else {
-        dims <- rowcol_to_dims(row_span, col_span, type = args$type)
+        dims <- rowcol_to_dims(row_span, col_span, fix = args$fix)
       }
     }
   }
