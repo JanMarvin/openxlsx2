@@ -2760,7 +2760,7 @@ wbWorkbook <- R6::R6Class(
         } else {
           # get cells in dims, get required cells, replace these and reduce refs
           ddims <- dims_to_dataframe(dims = dims, fill = TRUE)
-          sel <- which(hls_df$ref %in% unname(unlist(ddims)))
+          sel <- which(hls_df$ref %in% unlist(ddims, use.names = FALSE))
           self$worksheets[[sheet]]$hyperlinks <- hls_df$ref[-sel]
           refs <- hls_df$ref[sel]
         }
@@ -4104,7 +4104,7 @@ wbWorkbook <- R6::R6Class(
       to_dims_df_i  <- dims_to_dataframe(to_dims, fill = FALSE)
       to_dims_df_f  <- dims_to_dataframe(to_dims, fill = TRUE)
 
-      to_dims_f <- unname(unlist(to_dims_df_f))
+      to_dims_f <- unlist(to_dims_df_f, use.names = FALSE)
 
       from_sheet <- private$get_sheet_index(from_sheet)
       from_dims  <- as.character(unlist(from_dims_df))
@@ -5596,7 +5596,7 @@ wbWorkbook <- R6::R6Class(
       cmmt <- self$worksheets[[sheet_id]]$relships$comments
 
       if (!is.null(dims) && any(grepl(":", dims)))
-        dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+        dims <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
 
       cmts <- list()
       if (length(cmmt) && length(self$comments) <= cmmt) {
@@ -5817,7 +5817,7 @@ wbWorkbook <- R6::R6Class(
       )
 
       if (!is.null(dims) && any(grepl(":", dims)))
-        dims <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+        dims <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
 
       if (!is.null(dims)) {
         tc <- tc[tc$ref %in% dims, ]
@@ -8813,10 +8813,10 @@ wbWorkbook <- R6::R6Class(
       cols <- (seq_len(ncol(did)) %% every_nth_col) == 0
       rows <- (seq_len(nrow(did)) %% every_nth_row) == 0
 
-      dims <- unname(unlist(did[rows, cols, drop = FALSE]))
+      dims <- unlist(did[rows, cols, drop = FALSE], use.names = FALSE)
 
-      cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc <- cc[cc$r %in% dims, ]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -8883,13 +8883,11 @@ wbWorkbook <- R6::R6Class(
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims)
+      private$do_cell_init(sheet, dims, keep = TRUE)
+      dims <- private$get_last_dims()
 
-      did <- dims_to_dataframe(dims, fill = TRUE)
-      dims <- unname(unlist(did))
-
-      cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc <- cc[cc$r %in% dims, ]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -8983,13 +8981,11 @@ wbWorkbook <- R6::R6Class(
         numfmt
     ) {
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims)
+      private$do_cell_init(sheet, dims, keep = TRUE)
+      dims <- private$get_last_dims()
 
-      did <- dims_to_dataframe(dims, fill = TRUE)
-      dims <- unname(unlist(did))
-
-      cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc <- cc[cc$r %in% dims, ]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       if (inherits(numfmt, "character")) {
@@ -9088,13 +9084,11 @@ wbWorkbook <- R6::R6Class(
       standardize_case_names(...)
 
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims)
+      private$do_cell_init(sheet, dims, keep = TRUE)
+      dims <- private$get_last_dims()
 
-      did <- dims_to_dataframe(dims, fill = TRUE)
-      dims <- unname(unlist(did))
-
-      cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc <- cc[cc$r %in% dims, ]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       for (style in styles) {
@@ -9148,7 +9142,7 @@ wbWorkbook <- R6::R6Class(
       # workbook. Since we need to return the values in the corret order, we
       # initiate a cell, if needed. Because the initiation of a cell alters the
       # workbook, we do it on a clone.
-      wanted_dims <- unname(unlist(dims))
+      wanted_dims <- unlist(dims, use.names = FALSE)
       need_dims   <- wanted_dims[!wanted_dims %in% self$worksheets[[sheet]]$sheet_data$cc$r]
       if (length(need_dims)) # could be enough to pass wanted_dims
         temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
@@ -9169,8 +9163,8 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
 
-      if (length(dims) == 1 && grepl(":|;|,", dims))
-        dims <- dims_to_dataframe(dims, fill = TRUE)
+      private$do_cell_init(sheet, dims, keep = TRUE)
+      dims <- private$get_last_dims()
       sheet <- private$get_sheet_index(sheet)
 
       if (all(grepl("[A-Za-z]", style))) {
@@ -9183,12 +9177,7 @@ wbWorkbook <- R6::R6Class(
         styid <- style
       }
 
-      private$do_cell_init(sheet, dims)
-
-      # if a range is passed (e.g. "A1:B2") we need to get every cell
-      dims <- unname(unlist(dims))
-
-      sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
 
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
 
@@ -9219,7 +9208,7 @@ wbWorkbook <- R6::R6Class(
           rows <- as.integer(dims_to_rowcol(rows)[["row"]])
 
         dims  <- wb_dims(rows, "A")
-        cells <- unname(unlist(dims_to_dataframe(dims, fill = TRUE)))
+        cells <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
         cc    <- self$worksheets[[sheet]]$sheet_data$cc
 
         cells <- cells[!cells %in% cc$r]
@@ -9824,6 +9813,13 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
       invisible(self)
+    },
+
+    last_dims = character(),
+    get_last_dims = function() {
+      x <- private$last_dims
+      private$last_dims <- character()
+      x
     },
 
     add_media = function(
@@ -10521,7 +10517,7 @@ wbWorkbook <- R6::R6Class(
     ## @param sheet sheet
     ## @param dims dims
     ## @keywords internal
-    do_cell_init = function(sheet = current_sheet(), dims) {
+    do_cell_init = function(sheet = current_sheet(), dims, keep = FALSE) {
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -10536,6 +10532,8 @@ wbWorkbook <- R6::R6Class(
           dims = dims
         )
 
+        if (keep) private$last_dims <- self$worksheets[[sheet]]$sheet_data$cc$r
+
       } else {
         # there are some cells already available, we have to create the missing cells
 
@@ -10543,15 +10541,16 @@ wbWorkbook <- R6::R6Class(
         if (length(need_cells) == 1 && grepl(":|;|,", need_cells))
           need_cells <- dims_to_dataframe(dims, fill = TRUE)
 
-        exp_cells <- unname(unlist(need_cells[need_cells != ""]))
+        exp_cells <- unlist(need_cells[need_cells != ""], use.names = FALSE)
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
         # initialize cell
-        if (!all(exp_cells %in% got_cells)) {
+        if (!all(is.na(exp_cells)) && anyNA(match(exp_cells, got_cells))) {
             missing_cells <- exp_cells[!exp_cells %in% got_cells]
             self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
         }
 
+        if (keep) private$last_dims <- exp_cells
       }
 
       invisible(self)

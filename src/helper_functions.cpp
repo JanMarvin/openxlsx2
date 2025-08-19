@@ -476,7 +476,10 @@ SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
 
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
-SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Nullable<Rcpp::CharacterVector> filled, bool fill,
+SEXP dims_to_df(Rcpp::IntegerVector rows,
+                Rcpp::CharacterVector cols,
+                Rcpp::Nullable<Rcpp::CharacterVector> filled,
+                bool fill,
                 Rcpp::Nullable<Rcpp::IntegerVector> fcols) {
   R_xlen_t kk = static_cast<R_xlen_t>(cols.size());
   R_xlen_t nn = static_cast<R_xlen_t>(rows.size());
@@ -484,53 +487,59 @@ SEXP dims_to_df(Rcpp::IntegerVector rows, Rcpp::CharacterVector cols, Rcpp::Null
   bool has_fcols  = fcols.isNotNull();
   bool has_filled = filled.isNotNull();
 
-  // 1. create the list
+  // precompute strings for rows and cols
+  std::vector<std::string> row_strs(static_cast<size_t>(nn));
+  for (R_xlen_t j = 0; j < nn; ++j)
+    row_strs[static_cast<size_t>(j)] = std::to_string(rows[j]);
+
+  std::vector<std::string> col_strs(static_cast<size_t>(kk));
+  for (R_xlen_t i = 0; i < kk; ++i)
+    col_strs[static_cast<size_t>(i)] = Rcpp::as<std::string>(cols[i]);
+
+  // prepare filtering sets if needed
+  std::unordered_set<std::string> flls;
+  if (has_filled) {
+    std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
+    flls.reserve(flld.size() * 2);
+    flls.insert(flld.begin(), flld.end());
+  }
+
+  std::unordered_set<R_xlen_t> allowed_cols;
+  if (has_fcols) {
+    std::vector<R_xlen_t> fcls = Rcpp::as<std::vector<R_xlen_t>>(fcols.get());
+    allowed_cols.insert(fcls.begin(), fcls.end());
+  }
+
+  // allocate output list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    if (fill)
-      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
-    else
+    if (fill) {
+      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, Rf_mkChar("")));
+    } else {
       SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
+    }
   }
 
   if (fill) {
-    if (has_filled) {
-      std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
-      std::unordered_set<std::string> flls(flld.begin(), flld.end());
+    for (R_xlen_t i = 0; i < kk; ++i) {
+      if (has_fcols && !allowed_cols.count(i))
+        continue;
 
-      // with has_filled we always have to run this loop
-      for (R_xlen_t i = 0; i < kk; ++i) {
-        Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-        std::string coli = Rcpp::as<std::string>(cols[i]);
-        for (R_xlen_t j = 0; j < nn; ++j) {
-          std::string cell = coli + std::to_string(rows[j]);
-          if (has_cell(cell, flls))
-            cvec[j] = cell;
-        }
-      }
+      Rcpp::CharacterVector cvec = df[i];
+      const std::string& coli = col_strs[static_cast<size_t>(i)];
 
-    } else {  // insert cells into data frame
+      for (R_xlen_t j = 0; j < nn; ++j) {
+        std::string cell;
+        cell.reserve(coli.size() + row_strs[static_cast<size_t>(j)].size());
+        cell.append(coli).append(row_strs[static_cast<size_t>(j)]);
 
-      std::unordered_set<size_t> allowed_cols;
-      if (has_fcols) {
-        std::vector<size_t> fcls = Rcpp::as<std::vector<size_t>>(fcols.get());
-        allowed_cols.insert(fcls.begin(), fcls.end());
-      }
-
-      for (R_xlen_t i = 0; i < kk; ++i) {
-        if (has_fcols && !allowed_cols.count(static_cast<size_t>(i)))
-          continue;
-        Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(df[i]);
-        std::string coli = Rcpp::as<std::string>(cols[i]);
-        for (R_xlen_t j = 0; j < nn; ++j) {
-          cvec[j] = coli + std::to_string(rows[j]);
-        }
+        if (!has_filled || flls.find(cell) != flls.end())
+          cvec[j] = cell;
       }
     }
+  }
 
-  }  // else return data frame filled with NA_character_
-
-  // 3. Create a data.frame
+  // set df attributes
   df.attr("row.names") = rows;
   df.attr("names") = cols;
   df.attr("class") = "data.frame";

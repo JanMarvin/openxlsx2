@@ -212,7 +212,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
   dims <- dims_to_dataframe(cell, fill = TRUE)
   rows <- rownames(dims)
 
-  cells_needed <- unname(unlist(dims))
+  cells_needed <- unlist(dims, use.names = FALSE)
 
   inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle, na.strings)
 }
