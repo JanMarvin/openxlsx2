@@ -8350,7 +8350,7 @@ wbWorkbook <- R6::R6Class(
       df <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
-      private$do_cell_init(sheet, dims)
+      private$do_cell_init(sheet, dims = dims, df = df)
 
       ### border creation
 
@@ -8805,15 +8805,17 @@ wbWorkbook <- R6::R6Class(
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims)
 
       # dim in dataframe can contain various styles. go cell by cell.
       did <- dims_to_dataframe(dims, fill = TRUE)
       # select a few cols and rows to fill
       cols <- (seq_len(ncol(did)) %% every_nth_col) == 0
       rows <- (seq_len(nrow(did)) %% every_nth_row) == 0
+      did <- did[rows, cols, drop = FALSE]
 
-      dims <- unlist(did[rows, cols, drop = FALSE], use.names = FALSE)
+      private$do_cell_init(sheet, dims = dims, df = did)
+      dims <- unlist(did, use.names = FALSE)
+
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
@@ -8883,8 +8885,7 @@ wbWorkbook <- R6::R6Class(
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims, keep = TRUE)
-      dims <- private$get_last_dims()
+      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
@@ -8981,8 +8982,7 @@ wbWorkbook <- R6::R6Class(
         numfmt
     ) {
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims, keep = TRUE)
-      dims <- private$get_last_dims()
+      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
@@ -9084,8 +9084,7 @@ wbWorkbook <- R6::R6Class(
       standardize_case_names(...)
 
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims, keep = TRUE)
-      dims <- private$get_last_dims()
+      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
@@ -9145,7 +9144,7 @@ wbWorkbook <- R6::R6Class(
       wanted_dims <- unlist(dims, use.names = FALSE)
       need_dims   <- wanted_dims[!wanted_dims %in% self$worksheets[[sheet]]$sheet_data$cc$r]
       if (length(need_dims)) # could be enough to pass wanted_dims
-        temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, dims)
+        temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, need_dims)
       else
         temp <- self
 
@@ -9163,8 +9162,7 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
 
-      private$do_cell_init(sheet, dims, keep = TRUE)
-      dims <- private$get_last_dims()
+      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
       if (all(grepl("[A-Za-z]", style))) {
@@ -9813,13 +9811,6 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       self$worksheets_rels[[sheet]] <- c(self$worksheets_rels[[sheet]], value)
       invisible(self)
-    },
-
-    last_dims = character(),
-    get_last_dims = function() {
-      x <- private$last_dims
-      private$last_dims <- character()
-      x
     },
 
     add_media = function(
@@ -10517,29 +10508,50 @@ wbWorkbook <- R6::R6Class(
     ## @param sheet sheet
     ## @param dims dims
     ## @keywords internal
-    do_cell_init = function(sheet = current_sheet(), dims, keep = FALSE) {
+    # there are three ways to initialize cells. 1) simply call do_cell_init,
+    # 2) call do_cell_init with keep = TRUE, this will return the dims as
+    # character vector. 3) pass a dims_to_dataframe() object as dims. This
+    # will prevent creating an additional dataframe.
+    # For most functions, 2) is the quickest solution. Create dims from a
+    # single call to dims_to_dataframe(). But it is not possible to always
+    # return a vector (every n_th col/row or in border cases), where the
+    # dims_to_dataframe call has to happen in the function. In this case, we
+    # should at least minimize the calls to dims_to_dataframe(fill). These
+    # are costly with large dataframes.
+    do_cell_init = function(sheet = current_sheet(), dims, df = NULL, keep = FALSE) {
 
       sheet <- private$get_sheet_index(sheet)
 
       if (is.null(self$worksheets[[sheet]]$sheet_data$cc)) {
         # everythings missing, we can safely write data
 
+        if (!is.null(df)) {
+          df_dims <- df
+          df_dims[] <- lapply(df_dims, FUN = function(x) rep_len(NA_character_, length(x)))
+          dims <- dims
+        } else {
+          df_dims <- dims_to_dataframe(dims)
+        }
+
         self$add_data(
           sheet = sheet,
-          x = dims_to_dataframe(dims),
+          x = df_dims,
           na.strings = NULL,
           col_names = FALSE,
           dims = dims
         )
 
-        if (keep) private$last_dims <- self$worksheets[[sheet]]$sheet_data$cc$r
+        if (keep) return(self$worksheets[[sheet]]$sheet_data$cc$r)
 
       } else {
         # there are some cells already available, we have to create the missing cells
 
         need_cells <- dims
-        if (length(need_cells) == 1 && grepl(":|;|,", need_cells))
+        if (is.null(df) && length(need_cells) == 1 && grepl(":|;|,", need_cells)) {
           need_cells <- dims_to_dataframe(dims, fill = TRUE)
+        } else if (!is.null(df)) {
+          need_cells <- df
+        }
 
         exp_cells <- unlist(need_cells[need_cells != ""], use.names = FALSE)
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
@@ -10550,7 +10562,7 @@ wbWorkbook <- R6::R6Class(
             self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
         }
 
-        if (keep) private$last_dims <- exp_cells
+        if (keep) return(exp_cells)
       }
 
       invisible(self)
