@@ -456,87 +456,74 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         typ <- NULL
         id  <- NULL
 
-        is_numfmt <- any(xml_node_name(style[sty]) == "numFmt")
-        is_font   <- any(xml_node_name(style[sty]) == "font")
-        is_fill   <- any(xml_node_name(style[sty]) == "fill")
-        is_border <- any(xml_node_name(style[sty]) == "border")
-        is_xf     <- any(xml_node_name(style[sty]) == "xf")
-        is_celSty <- any(xml_node_name(style[sty]) == "cellStyle")
-        is_dxf    <- any(xml_node_name(style[sty]) == "dxf")
-        is_tabSty <- any(xml_node_name(style[sty]) == "tableStyle")
+        sty_fmt <- xml_node_name(style[sty])
+
+        is_numfmt <- any(sty_fmt == "numFmt")
+        is_font   <- any(sty_fmt == "font")
+        is_fill   <- any(sty_fmt == "fill")
+        is_border <- any(sty_fmt == "border")
+        is_xf     <- any(sty_fmt == "xf")
+        is_celSty <- any(sty_fmt == "cellStyle")
+        is_dxf    <- any(sty_fmt == "dxf")
+        is_tabSty <- any(sty_fmt == "tableStyle")
 
         is_xf_fr  <- isTRUE(attr(style, "cellStyleXf"))
 
-        if (skip_duplicates && is_numfmt && style_name[sty] %in% self$numfmt$name) next
-        if (skip_duplicates && is_font   && style_name[sty] %in% self$font$name) next
-        if (skip_duplicates && is_fill   && style_name[sty] %in% self$fill$name) next
-        if (skip_duplicates && is_border && style_name[sty] %in% self$border$name) next
-        if (skip_duplicates && is_xf     && style_name[sty] %in% self$xf$name) next
-        if (skip_duplicates && is_celSty && style_name[sty] %in% self$cellStyle$name) next
-        if (skip_duplicates && is_xf_fr  && style_name[sty] %in% self$cellStyleXf$name) next
-        if (skip_duplicates && is_dxf    && style_name[sty] %in% self$dxf$name) next
-        if (skip_duplicates && is_tabSty && style_name[sty] %in% self$tableStyle$name) next
-
         if (is_numfmt) {
+          if (skip_duplicates && style_name[sty] %in% self$numfmt$name) next
           typ <- "numFmt"
           id  <- unname(unlist(xml_attr(style[sty], "numFmt"))["numFmtId"])
           self$styles$numFmts <- c(self$styles$numFmts, style[sty])
-        }
-
-        if (is_font) {
+        } else if (is_font) {
+          if (skip_duplicates && style_name[sty] %in% self$font$name) next
           typ <- "font"
           fonts <- c(self$styles$fonts, style[sty])
           id  <- rownames(read_font(read_xml(fonts)))
           self$styles$fonts <- fonts
-        }
-
-        if (is_fill) {
+        } else if (is_fill) {
+          if (skip_duplicates && style_name[sty] %in% self$fill$name) next
           typ <- "fill"
           fills <- c(self$styles$fills, style[sty])
           id  <- rownames(read_fill(read_xml(fills)))
           self$styles$fills <- fills
-        }
-
-        if (is_border) {
+        } else if (is_border) {
+          if (skip_duplicates && style_name[sty] %in% self$border$name) next
           typ <- "border"
           borders <- c(self$styles$borders, style[sty])
           id  <- rownames(read_border(read_xml(borders)))
           self$styles$borders <- borders
-        }
-
-        if (is_xf) {
+        } else if (is_xf) {
+          if (skip_duplicates && style_name[sty] %in% self$xf$name) next
           typ <- "xf"
           xfs <- c(self$styles$cellXfs, style[sty])
           id  <- rownames(read_xf(read_xml(xfs)))
           self$styles$cellXfs <- xfs
-        }
-
-        if (is_celSty) {
+        } else if (is_celSty) {
+          if (skip_duplicates && style_name[sty] %in% self$cellStyle$name) next
           typ <- "cellStyle"
           cellStyles <- c(self$styles$cellStyles, style[sty])
           id  <- rownames(read_cellStyle(read_xml(cellStyles)))
           self$styles$cellStyles <- cellStyles
-        }
-
-        if (is_xf_fr) {
-          typ <- "xf"
-          xfs <- c(self$styles$cellStyleXfs, style[sty])
-          id  <- rownames(read_xf(read_xml(xfs)))
-          self$styles$cellStyleXfs <- xfs
-        }
-
-        if (is_dxf) {
+        } else if (is_dxf) {
+          if (skip_duplicates && style_name[sty] %in% self$dxf$name) next
           typ <- "dxf"
           dxfs <- c(self$styles$dxfs, style[sty])
           id  <- rownames(read_dxf(read_xml(dxfs)))
           self$styles$dxfs <- dxfs
-        }
-
-        if (is_tabSty) {
+        } else if (is_tabSty) {
+          if (skip_duplicates && style_name[sty] %in% self$tableStyle$name) next
           typ <- "tableStyle"
           tableStyles <- c(self$styles$tableStyles, style[sty])
           id  <- rownames(read_tableStyle(read_xml(tableStyles)))
           self$styles$tableStyles <- tableStyles
+        }
+
+        if (is_xf_fr) {
+          if (skip_duplicates && style_name[sty] %in% self$cellStyleXf$name) next
+          typ <- "xf"
+          xfs <- c(self$styles$cellStyleXfs, style[sty])
+          id  <- rownames(read_xf(read_xml(xfs)))
+          self$styles$cellStyleXfs <- xfs
         }
 
         new_entry <- data.frame(
@@ -547,14 +534,14 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
         )
 
         if (is_numfmt) self$numfmt      <- rbind(self$numfmt, new_entry)
-        if (is_font)   self$font        <- rbind(self$font, new_entry)
-        if (is_fill)   self$fill        <- rbind(self$fill, new_entry)
-        if (is_border) self$border      <- rbind(self$border, new_entry)
-        if (is_xf)     self$xf          <- rbind(self$xf, new_entry)
-        if (is_celSty) self$cellStyle   <- rbind(self$cellStyle, new_entry)
+        else if (is_font)   self$font        <- rbind(self$font, new_entry)
+        else if (is_fill)   self$fill        <- rbind(self$fill, new_entry)
+        else if (is_border) self$border      <- rbind(self$border, new_entry)
+        else if (is_xf)     self$xf          <- rbind(self$xf, new_entry)
+        else if (is_celSty) self$cellStyle   <- rbind(self$cellStyle, new_entry)
+        else if (is_dxf)    self$dxf         <- rbind(self$dxf, new_entry)
+        else if (is_tabSty) self$tableStyle  <- rbind(self$tableStyle, new_entry)
         if (is_xf_fr)  self$cellStyleXf <- rbind(self$cellStyleXf, new_entry)
-        if (is_dxf)    self$dxf         <- rbind(self$dxf, new_entry)
-        if (is_tabSty) self$tableStyle  <- rbind(self$tableStyle, new_entry)
 
       }
 
