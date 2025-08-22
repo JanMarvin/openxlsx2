@@ -1044,7 +1044,7 @@ get_relship_id <- function(obj, x) {
   relship <- rbindlist(xml_attr(obj, "Relationship"))
   relship$typ <- basename(relship$Type)
   relship <- relship[relship$typ == x, ]
-  unname(unlist(relship[c("Id")]))
+  unlist(relship[c("Id")], use.names = FALSE)
 }
 
 #' filename_id returns an integer vector with the file name as name
