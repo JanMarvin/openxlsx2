@@ -60,6 +60,8 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>Fixed a regression where changes to the internal structure of conditional formatting prevented files from loading. Unfortunately, the issue turned out to be more severe. When a worksheet cell contains multiple conditional formatting rules with expressions, the cell references may get shuffled. In cases where a single cell is linked to multiple conditional formatting rules with expressions, the system attempts to dynamically extend the references. If this process fails, it’s because the cell ranges cannot be extended to the same size. If it succeeds, the references are still likely to be shuffled. <a href="https://github.com/JanMarvin/openxlsx2/pull/1420" class="external-link">1420</a>
 </li>
+<li>Optimize certain style functions by preventing duplicate creation of the <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code> object. Previously, it was being generated twice; running it only once improves performance specifically when applied to large cell ranges. <a href="https://github.com/JanMarvin/openxlsx2/pull/1425" class="external-link">1425</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
