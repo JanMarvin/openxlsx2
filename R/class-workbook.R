@@ -10557,8 +10557,8 @@ wbWorkbook <- R6::R6Class(
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
         # initialize cell
-        if (!all(is.na(exp_cells)) && anyNA(match(exp_cells, got_cells))) {
-            missing_cells <- exp_cells[!exp_cells %in% got_cells]
+        if (!all(is.na(exp_cells)) && anyNA(sel <- match(exp_cells, got_cells))) {
+            missing_cells <- exp_cells[is.na(sel)]
             self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
         }
 
