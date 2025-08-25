@@ -9,7 +9,7 @@ vector. Exported for user convenience."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ vector. Exported for user convenience."><meta property="og:image" content="https
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Helper functions to work with <code>dims</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.18/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
       <div class="d-none name"><code>dims_helper.Rd</code></div>
     </div>
 
@@ -59,7 +59,7 @@ vector. Exported for user convenience.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dims_to_rowcol</span><span class="op">(</span><span class="va">x</span>, as_integer <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span>, single <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">rowcol_to_dims</span><span class="op">(</span><span class="va">row</span>, <span class="va">col</span>, single <span class="op">=</span> <span class="cn">TRUE</span>, fix <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -84,6 +84,11 @@ vector. Exported for user convenience.</p>
 
 <dt id="arg-single">single<a class="anchor" aria-label="anchor" href="#arg-single"></a></dt>
 <dd><p>argument indicating if <code>rowcol_to_dims()</code> returns a single cell dimension</p></dd>
+
+
+<dt id="arg-fix">fix<a class="anchor" aria-label="anchor" href="#arg-fix"></a></dt>
+<dd><p>setting the type of the reference. Per default, no type is set. Options are
+<code>"all"</code>, <code>"row"</code>, and <code>"col"</code></p></dd>
 
 </dl></div>
     <div class="section level2">

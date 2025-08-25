@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add data to a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.18/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_data.Rd</code></div>
     </div>
 
@@ -297,7 +297,7 @@ is less flexible than basic cell regions.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
-<span class="r-in"><span><span class="va">wb2</span> <span class="op">&lt;-</span> <span class="va">wb2</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">wb_add_data</span><span class="op">(</span>sheet <span class="op">=</span> <span class="fl">1</span>, <span class="va">mtcars</span>, dims <span class="op">=</span> <span class="fu"><a href="wb_dims.html">wb_dims</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wb2</span> <span class="op">&lt;-</span> <span class="fu">wb_add_data</span><span class="op">(</span><span class="va">wb2</span>, sheet <span class="op">=</span> <span class="fl">1</span>, <span class="va">mtcars</span>, dims <span class="op">=</span> <span class="fu"><a href="wb_dims.html">wb_dims</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">wb2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt; Var3  Var4       Var5         Var6    Var7     Var8 &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1 &lt;NA&gt;    1     a 2023-05-29 3209324 This #DIV/0! 01:27:15 &lt;NA&gt;</span>
