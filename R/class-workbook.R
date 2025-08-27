@@ -9175,7 +9175,10 @@ wbWorkbook <- R6::R6Class(
         styid <- style
       }
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      # in openxlsx2 < 1.19
+      # sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
+      # in 1.19 switched to match, but the match result was unsorted
+      sel <- sort(match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r))
 
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
 

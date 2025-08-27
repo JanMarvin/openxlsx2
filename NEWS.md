@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* The speedup of the style functions caused a bug, where adding borders on a cell range with different cell styles, assigned the inner cell styles in an arbitrary order. [1431](https://github.com/JanMarvin/openxlsx2/pull/1431)
+
+
+***************************************************************************
+
 # openxlsx2 1.19
 
 ## New features
