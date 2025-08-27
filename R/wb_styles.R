@@ -680,53 +680,92 @@ create_cell_style <- function(
   cellXfs
 }
 
+# identify unique styles first, apply the changes only
+# to each unique style, write the unique style and return
+# as many unique styles as required.
+unique_apply <- function(x, FUN, ...) {
+  uniq_x <- unique(x)
+  processed <- FUN(uniq_x, ...)
+  names(processed) <- uniq_x
+  unname(processed[x])
+}
+
 #' internal function to set border to a style
 #' @param xf_node some xf node
 #' @param border_id some numeric value as character
 #' @noRd
-set_border <- function(xf_node, border_id) {
+.set_border <- function(xf_node, border_id) {
   z <- read_xf(read_xml(xf_node))
   z$applyBorder <- "1"
   z$borderId <- as_xml_attr(border_id)
   write_xf(z)
 }
 
+#' @param xf_node some xf node
+#' @param border_id some numeric value as character
+#' @noRd
+set_border <- function(xf_node, border_id) {
+  unique_apply(xf_node, .set_border, border_id)
+}
+
 #' internal function to set fill to a style
 #' @param xf_node some xf node
 #' @param fill_id some numeric value as character
 #' @noRd
-set_fill <- function(xf_node, fill_id) {
+.set_fill <- function(xf_node, fill_id) {
   z <- read_xf(read_xml(xf_node))
   z$applyFill <- "1"
   z$fillId <- as_xml_attr(fill_id)
   write_xf(z)
 }
 
+#' @param xf_node some xf node
+#' @param fill_id some numeric value as character
+#' @noRd
+set_fill <- function(xf_node, fill_id) {
+  unique_apply(xf_node, .set_fill, fill_id)
+}
+
 #' internal function to set font to a style
 #' @param xf_node some xf node
 #' @param font_id some numeric value as character
 #' @noRd
-set_font <- function(xf_node, font_id) {
+.set_font <- function(xf_node, font_id) {
   z <- read_xf(read_xml(xf_node))
   z$applyFont <- "1"
   z$fontId <- as_xml_attr(font_id)
   write_xf(z)
 }
 
+#' @param xf_node some xf node
+#' @param font_id some numeric value as character
+#' @noRd
+set_font <- function(xf_node, font_id) {
+  unique_apply(xf_node, .set_font, font_id)
+}
+
 #' internal function to set numfmt to a style
 #' @param xf_node some xf node
-#' @param numfmt_id some numeric value as character
+#' @param numfmt some numeric value as character
 #' @noRd
-set_numfmt <- function(xf_node, numfmt) {
+.set_numfmt <- function(xf_node, numfmt) {
   z <- read_xf(read_xml(xf_node))
   z$applyNumberFormat <- "1"
   z$numFmtId <- as_xml_attr(numfmt)
   write_xf(z)
 }
 
+#' internal function to set numfmt to a style
+#' @param xf_node some xf node
+#' @param numfmt some numeric value as character
+#' @noRd
+set_numfmt <- function(xf_node, numfmt) {
+  unique_apply(xf_node, .set_numfmt, numfmt)
+}
+
 #' internal function to set cellstyle
 #' @noRd
-set_cellstyle <- function(
+.set_cellstyle <- function(
   xf_node,
   applyAlignment,
   applyBorder,
@@ -783,6 +822,65 @@ set_cellstyle <- function(
   if (!is.null(xfId))              z$xfId              <- as_xml_attr(xfId)
 
   write_xf(z)
+}
+
+set_cellstyle <- function(
+  xf_node,
+  applyAlignment,
+  applyBorder,
+  applyFill,
+  applyFont,
+  applyNumberFormat,
+  applyProtection,
+  borderId,
+  extLst,
+  fillId,
+  fontId,
+  hidden,
+  horizontal,
+  indent,
+  justifyLastLine,
+  locked,
+  numFmtId,
+  pivotButton,
+  quotePrefix,
+  readingOrder,
+  relativeIndent,
+  shrinkToFit,
+  textRotation,
+  vertical,
+  wrapText,
+  xfId
+) {
+  unique_apply(
+    xf_node,
+    .set_cellstyle,
+    applyAlignment,
+    applyBorder,
+    applyFill,
+    applyFont,
+    applyNumberFormat,
+    applyProtection,
+    borderId,
+    extLst,
+    fillId,
+    fontId,
+    hidden,
+    horizontal,
+    indent,
+    justifyLastLine,
+    locked,
+    numFmtId,
+    pivotButton,
+    quotePrefix,
+    readingOrder,
+    relativeIndent,
+    shrinkToFit,
+    textRotation,
+    vertical,
+    wrapText,
+    xfId
+  )
 }
 
 #' Get all styles on a sheet
