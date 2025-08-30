@@ -7961,13 +7961,15 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$set_sheetview(show_grid_lines = as_xml_attr(show))
 
       ## print
-      # if print == FALSE, print options must be removed. Otherwise print options
-      # will be ignored in some spreadsheet software
-      if (isFALSE(print)) {
-        self$worksheets[[sheet]]$printOptions <- character()
-      } else {
-        self$worksheets[[sheet]]$set_print_options(gridLines = as_xml_attr(print), gridLinesSet = as_xml_attr(print))
-      }
+      # if print == FALSE, gridLinesSet must be removed. Otherwise print options
+      # will be ignored in some spreadsheet software. This is contrary to the
+      # ECMA specification.
+      print_grid_lines <- print
+      print_grid_lines_set <- if (as_xml_attr(print) == "0") NULL else print
+      self$worksheets[[sheet]]$set_print_options(
+        gridLines = as_xml_attr(print_grid_lines),
+        gridLinesSet = as_xml_attr(print_grid_lines_set)
+      )
 
       invisible(self)
     },
