@@ -306,7 +306,7 @@ test_that("set_grid_lines() works", {
   got <- wb$worksheets[[1]]$printOptions
   expect_equal(exp, got)
 
-  exp <- "<printOptions gridLines=\"0\" gridLinesSet=\"0\"/>"
+  exp <- "<printOptions gridLines=\"0\"/>"
   wb$set_grid_lines(print = FALSE, show = FALSE)
   got <- wb$worksheets[[1]]$printOptions
   expect_equal(exp, got)
