@@ -7961,7 +7961,13 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$set_sheetview(show_grid_lines = as_xml_attr(show))
 
       ## print
-      self$worksheets[[sheet]]$set_print_options(gridLines = as_xml_attr(print), gridLinesSet = as_xml_attr(print))
+      # if print == FALSE, print options must be removed. Otherwise print options
+      # will be ignored in some spreadsheet software
+      if (isFALSE(print)) {
+        self$worksheets[[sheet]]$printOptions <- character()
+      } else {
+        self$worksheets[[sheet]]$set_print_options(gridLines = as_xml_attr(print), gridLinesSet = as_xml_attr(print))
+      }
 
       invisible(self)
     },
