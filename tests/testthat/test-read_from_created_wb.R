@@ -366,3 +366,25 @@ test_that("reading with start_col/start_row works", {
   expect_equal(exp, got)
 
 })
+
+test_that("factors are treated as character", {
+  ffs <- factor(x = c(2, 1), levels = c(1, 2), labels = c("cars", "mtcars"))
+
+  wb <- wb_workbook()
+
+  fun <- function(x, y) {
+    wb$add_worksheet(sheet = x)
+    wb$add_data(sheet = x, x = y)
+  }
+
+  Map(f = fun, x = ffs, y = list(mtcars, cars))
+
+  exp <- c("mtcars", "cars")
+  got <- unname(wb$get_sheet_names())
+  expect_equal(exp, got)
+
+  exp <- c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")
+  got <- names(wb$to_df(sheet = ffs[[1]]))
+  expect_equal(exp, got)
+
+})

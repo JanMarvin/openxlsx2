@@ -9763,6 +9763,10 @@ wbWorkbook <- R6::R6Class(
         return(NA_integer_)
       }
 
+      if (is.factor(sheet)) {
+        sheet <- as.character(sheet)
+      }
+
       if (is.character(sheet)) {
         sheet <- tolower(sheet)
         m1 <- match(sheet, tolower(self$sheet_names))

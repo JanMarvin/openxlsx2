@@ -274,6 +274,10 @@ wb_to_df <- function(
     sheet <- 1
   }
 
+  if (is.factor(sheet)) {
+    sheet <- as.character(sheet)
+  }
+
   if (is.character(sheet)) {
     sheet <- wb_validate_sheet(wb, sheet)
   }
