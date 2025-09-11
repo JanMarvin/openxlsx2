@@ -10,11 +10,11 @@ test_that("standardize works", {
 
   camelCase <- NULL
   camel_case <- NULL
-  standardize_case_names(camelCase = "green")
+  expect_warning(standardize_case_names(camelCase = "green"), "deprecate")
   expect_equal(get("camel_case"), "green")
 
   tab_color <- NULL
-  standardize(tabColour = "green")
+  expect_warning(standardize(tabColour = "green"), "deprecate")
   expect_equal(get("tab_color"), "green")
 
 })
