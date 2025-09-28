@@ -1331,7 +1331,7 @@ find_a1_notation <- function(string) {
 
 #' the function to replace the next cell
 #' this function is used with `show_formula` in [wb_to_df()]
-#' @param cell the cell from a shared formula [find_a1_notation()]
+#' @param cell the cell from a shared formula find_a1_notation()
 #' @param cols,rows an integer where to move the cell
 #' @family internal
 #' @noRd
@@ -1381,7 +1381,7 @@ next_cell <- function(cell, cols = 0L, rows = 0L) {
 #' the replacement function for shared formulas
 #' this function is used with `show_formula` in [wb_to_df()]
 #' @param string the formula
-#' @param replacements the replacements, from [next_cell()]
+#' @param replacements the replacements, from next_cell()
 #' @family internal
 #' @noRd
 replace_a1_notation <- function(strings, replacements) {

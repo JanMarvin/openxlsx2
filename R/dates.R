@@ -28,7 +28,7 @@
 #' ## 12:13:14
 #' x <- 0.50918982
 #' convert_hms(x)
-convert_date <- function(x, origin = "1900-01-01", ...) {
+convert_date <- function(x, origin = "1900-01-01") {
   sel <- is_charnum(x)
   out <- x
   out[sel] <- date_to_unix(x[sel], origin = origin, datetime = FALSE)
