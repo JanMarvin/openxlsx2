@@ -6,7 +6,7 @@
 \alias{convert_hms}
 \title{Convert from Excel date, datetime or hms number to R Date type}
 \usage{
-convert_date(x, origin = "1900-01-01", ...)
+convert_date(x, origin = "1900-01-01")
 
 convert_datetime(x, origin = "1900-01-01", ...)
 
