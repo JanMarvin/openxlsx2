@@ -56,7 +56,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">convert_date</span><span class="op">(</span><span class="va">x</span>, origin <span class="op">=</span> <span class="st">"1900-01-01"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">convert_datetime</span><span class="op">(</span><span class="va">x</span>, origin <span class="op">=</span> <span class="st">"1900-01-01"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">convert_datetime</span><span class="op">(</span><span class="va">x</span>, origin <span class="op">=</span> <span class="st">"1900-01-01"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">convert_hms</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -73,25 +73,8 @@
 <dd><p>date. Default value is for Windows Excel 2010</p></dd>
 
 
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">base::as.Date.character</a></code></p><dl><dt><code>format</code></dt>
-<dd><p>a <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></code> string.  If not specified when
-    converting from a character representation, it will try
-    <code>tryFormats</code> one by one on the first non-<code>NA</code> element, and
-    give an error if none works.  Otherwise, the processing is via
-    <code><a href="https://rdrr.io/r/base/strptime.html" class="external-link">strptime</a>()</code> whose help page describes available
-    conversion specifications.</p></dd>
-
-    <dt><code>tryFormats</code></dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></code> vector of <code>format</code>
-    strings to try if <code>format</code> is not specified.</p></dd>
-
-    <dt><code>optional</code></dt>
-<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></code> indicating to return <code>NA</code>
-    (instead of signalling an error) if the format guessing does not succeed.</p></dd>
-
-
-</dl></dd>
+<dt id="arg-tz">tz<a class="anchor" aria-label="anchor" href="#arg-tz"></a></dt>
+<dd><p>A timezone, defaults to "UTC"</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -101,6 +84,7 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Excel stores dates as number of days from some origin day</p>
+<p>Setting the timezone in <code>convert_datetime()</code> will alter the value. If users expect a datetime value in a specific timezone, they should try e.g. <code>lubridate::force_tz</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
