@@ -2688,6 +2688,9 @@ set_page_setup() this function is intended to supersede page_setup(), but is not
   summary_row = NULL,
   summary_col = NULL,
   tab_color = NULL,
+  horizontal_centered = NULL,
+  vertical_centered = NULL,
+  print_headings = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -2752,6 +2755,12 @@ set_page_setup() this function is intended to supersede page_setup(), but is not
 \item{\code{summary_col}}{summaryCol}
 
 \item{\code{tab_color}}{tabColor}
+
+\item{\code{horizontal_centered}}{horizontal_centered}
+
+\item{\code{vertical_centered}}{vertical_centered}
+
+\item{\code{print_headings}}{print_headings}
 
 \item{\code{...}}{additional arguments}
 }

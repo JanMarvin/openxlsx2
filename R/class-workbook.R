@@ -7449,6 +7449,9 @@ wbWorkbook <- R6::R6Class(
     #' @param summary_row summaryRow
     #' @param summary_col summaryCol
     #' @param tab_color tabColor
+    #' @param horizontal_centered horizontal_centered
+    #' @param vertical_centered vertical_centered
+    #' @param print_headings print_headings
     #' @param ... additional arguments
     #' @return The `wbWorkbook` object, invisibly
     set_page_setup = function(
@@ -7486,6 +7489,10 @@ wbWorkbook <- R6::R6Class(
       summary_col           = NULL,
       # tabColor properties
       tab_color             = NULL,
+      # print options
+      horizontal_centered   = NULL,
+      vertical_centered     = NULL,
+      print_headings        = NULL,
       ...
     ) {
 
@@ -7677,6 +7684,12 @@ wbWorkbook <- R6::R6Class(
         )
 
       }
+
+      self$worksheets[[sheet]]$set_print_options(
+        horizontalCentered = horizontal_centered,
+        verticalCentered = vertical_centered,
+        headings = print_headings
+      )
 
       invisible(self)
     },
