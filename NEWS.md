@@ -3,10 +3,12 @@
 ## New features
 
 * If a sheet name is a factor, it will be treated as character. [1436](https://github.com/JanMarvin/openxlsx2/pull/1436)
+* Export `wb_set_page_setup()` and include a few more print options.
 
 ## Fixes
 
 * The speedup of the style functions caused a bug, where adding borders on a cell range with different cell styles, assigned the inner cell styles in an arbitrary order. [1431](https://github.com/JanMarvin/openxlsx2/pull/1431)
+* The `...` argument of `convert_date()`/`convert_datetime()` has been removed. The description was updated to reflect this change.
 
 
 ***************************************************************************

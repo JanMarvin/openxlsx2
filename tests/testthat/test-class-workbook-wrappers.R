@@ -173,6 +173,13 @@ test_that("wb_set_last_modified_by() is a wrapper", {
   expect_wrapper("set_last_modified_by", params = list(name = "myself"))
 })
 
+# wb_set_page_setup() -------------------------------------------------------------
+
+test_that("wb_set_page_setup() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  expect_wrapper("set_page_setup", wb = wb, params = list(sheet = "a"))
+})
+
 # wb_page_setup() -------------------------------------------------------------
 
 test_that("wb_page_setup() is a wrapper", {

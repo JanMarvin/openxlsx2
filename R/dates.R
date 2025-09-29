@@ -8,8 +8,9 @@
 #' @seealso [wb_add_data()]
 #' @param x A vector of integers
 #' @param origin date. Default value is for Windows Excel 2010
-#' @inheritDotParams base::as.Date.character
+#' @param tz A timezone, defaults to "UTC"
 #' @return A date, datetime, or hms.
+#' @details Setting the timezone in [convert_datetime()] will alter the value. If users expect a datetime value in a specific timezone, they should try e.g. `lubridate::force_tz`.
 #' @export
 #' @examples
 #' # date --
@@ -38,12 +39,11 @@ convert_date <- function(x, origin = "1900-01-01") {
 
 #' @rdname convert_date
 #' @export
-convert_datetime <- function(x, origin = "1900-01-01", ...) {
+convert_datetime <- function(x, origin = "1900-01-01", tz = "UTC") {
   sel <- is_charnum(x)
   out <- x
   out[sel] <- date_to_unix(x[sel], origin = origin, datetime = TRUE)
   out <- as.double(out)
-  tz <- ifelse(!is.null(tz <- list(...)$tz), tz, "UTC")
   .POSIXct(out, tz)
 }
 
