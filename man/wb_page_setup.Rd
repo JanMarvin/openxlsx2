@@ -2,8 +2,48 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_page_setup}
 \alias{wb_page_setup}
+\alias{wb_set_page_setup}
 \title{Set page margins, orientation and print scaling of a worksheet}
 \usage{
+wb_set_page_setup(
+  wb,
+  sheet = current_sheet(),
+  black_and_white = NULL,
+  cell_comments = NULL,
+  copies = NULL,
+  draft = NULL,
+  errors = NULL,
+  first_page_number = NULL,
+  id = NULL,
+  page_order = NULL,
+  paper_height = NULL,
+  paper_width = NULL,
+  hdpi = NULL,
+  vdpi = NULL,
+  use_first_page_number = NULL,
+  use_printer_defaults = NULL,
+  orientation = NULL,
+  scale = NULL,
+  left = 0.7,
+  right = 0.7,
+  top = 0.75,
+  bottom = 0.75,
+  header = 0.3,
+  footer = 0.3,
+  fit_to_width = FALSE,
+  fit_to_height = FALSE,
+  paper_size = NULL,
+  print_title_rows = NULL,
+  print_title_cols = NULL,
+  summary_row = NULL,
+  summary_col = NULL,
+  tab_color = NULL,
+  horizontal_centered = NULL,
+  vertical_centered = NULL,
+  print_headings = NULL,
+  ...
+)
+
 wb_page_setup(
   wb,
   sheet = current_sheet(),
@@ -30,6 +70,30 @@ wb_page_setup(
 
 \item{sheet}{A name or index of a worksheet}
 
+\item{black_and_white}{black and white mode}
+
+\item{cell_comments}{show cell comments}
+
+\item{copies}{Amount of copies}
+
+\item{draft}{Draft mode}
+
+\item{errors}{Show errors}
+
+\item{first_page_number}{The first page number}
+
+\item{id}{id (unknown)}
+
+\item{page_order}{Page order}
+
+\item{paper_height, paper_width}{paper size}
+
+\item{hdpi, vdpi}{horizontal and vertical dpi}
+
+\item{use_first_page_number}{Number on first page}
+
+\item{use_printer_defaults}{Use printer defaults}
+
 \item{orientation}{Page orientation. One of "portrait" or "landscape"}
 
 \item{scale}{Print scaling. Numeric value between 10 and 400}
@@ -48,6 +112,12 @@ wb_page_setup(
 
 \item{summary_col}{Location of summary columns in groupings. One of "Right" or "Left".}
 
+\item{tab_color}{The tab color}
+
+\item{horizontal_centered, vertical_centered}{center print output vertical or horizontal}
+
+\item{print_headings}{print headings}
+
 \item{...}{additional arguments}
 }
 \description{
@@ -55,6 +125,8 @@ Set page margins, orientation and print scaling.
 }
 \details{
 When adding fitting to width and height manual adjustment of the scaling factor is required. Setting \code{fit_to_width} and \code{fit_to_height} only tells spreadsheet software that the scaling was applied, but not which scaling was applied.
+
+\code{\link[=wb_page_setup]{wb_page_setup()}} provides a subset of \code{\link[=wb_set_page_setup]{wb_set_page_setup()}}. The former will soon become deprecated.
 
 \code{paper_size} is an integer corresponding to:\tabular{ll}{
    size \tab "paper type" \cr
@@ -179,10 +251,10 @@ wb$add_data_table(1, x = iris[1:30, ])
 wb$add_data_table(2, x = iris[1:30, ], dims = c("C5"))
 
 ## landscape page scaled to 50\%
-wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
+wb$set_page_setup(sheet = 1, orientation = "landscape", scale = 50)
 
 ## portrait page scales to 300\% with 0.5in left and right margins
-wb$page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+wb$set_page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
 
 
 ## print titles
@@ -192,6 +264,6 @@ wb$add_worksheet("print_title_cols")
 wb$add_data("print_title_rows", rbind(iris, iris, iris, iris))
 wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), row_names = TRUE)
 
-wb$page_setup(sheet = "print_title_rows", print_title_rows = 1) ## first row
-wb$page_setup(sheet = "print_title_cols", print_title_cols = 1, print_title_rows = 1)
+wb$set_page_setup(sheet = "print_title_rows", print_title_rows = 1) ## first row
+wb$set_page_setup(sheet = "print_title_cols", print_title_cols = 1, print_title_rows = 1)
 }

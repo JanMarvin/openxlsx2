@@ -1920,10 +1920,26 @@ wb_set_header_footer <- function(
 #' @param print_title_rows,print_title_cols Rows / columns to repeat at top of page when printing. Integer vector.
 #' @param summary_row Location of summary rows in groupings. One of "Above" or "Below".
 #' @param summary_col Location of summary columns in groupings. One of "Right" or "Left".
+#' @param black_and_white black and white mode
+#' @param cell_comments show cell comments
+#' @param copies Amount of copies
+#' @param draft Draft mode
+#' @param errors Show errors
+#' @param first_page_number The first page number
+#' @param id id (unknown)
+#' @param page_order Page order
+#' @param paper_height,paper_width paper size
+#' @param use_first_page_number Number on first page
+#' @param use_printer_defaults Use printer defaults
+#' @param hdpi,vdpi horizontal and vertical dpi
+#' @param tab_color The tab color
+#' @param horizontal_centered,vertical_centered center print output vertical or horizontal
+#' @param print_headings print headings
 #' @param ... additional arguments
-#' @export
 #' @details
 #'  When adding fitting to width and height manual adjustment of the scaling factor is required. Setting `fit_to_width` and `fit_to_height` only tells spreadsheet software that the scaling was applied, but not which scaling was applied.
+#'
+#' [wb_page_setup()] provides a subset of [wb_set_page_setup()]. The former will soon become deprecated.
 #'
 #' `paper_size` is an integer corresponding to:
 #'
@@ -2049,10 +2065,10 @@ wb_set_header_footer <- function(
 #' wb$add_data_table(2, x = iris[1:30, ], dims = c("C5"))
 #'
 #' ## landscape page scaled to 50%
-#' wb$page_setup(sheet = 1, orientation = "landscape", scale = 50)
+#' wb$set_page_setup(sheet = 1, orientation = "landscape", scale = 50)
 #'
 #' ## portrait page scales to 300% with 0.5in left and right margins
-#' wb$page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
+#' wb$set_page_setup(sheet = 2, orientation = "portrait", scale = 300, left = 0.5, right = 0.5)
 #'
 #'
 #' ## print titles
@@ -2062,8 +2078,98 @@ wb_set_header_footer <- function(
 #' wb$add_data("print_title_rows", rbind(iris, iris, iris, iris))
 #' wb$add_data("print_title_cols", x = rbind(mtcars, mtcars, mtcars), row_names = TRUE)
 #'
-#' wb$page_setup(sheet = "print_title_rows", print_title_rows = 1) ## first row
-#' wb$page_setup(sheet = "print_title_cols", print_title_cols = 1, print_title_rows = 1)
+#' wb$set_page_setup(sheet = "print_title_rows", print_title_rows = 1) ## first row
+#' wb$set_page_setup(sheet = "print_title_cols", print_title_cols = 1, print_title_rows = 1)
+#' @name wb_page_setup
+#' @export
+wb_set_page_setup <- function(
+      wb,
+      sheet                 = current_sheet(),
+      # page properties
+      black_and_white       = NULL,
+      cell_comments         = NULL,
+      copies                = NULL,
+      draft                 = NULL,
+      errors                = NULL,
+      first_page_number     = NULL,
+      id                    = NULL, # useful and should the user be able to set this by accident?
+      page_order            = NULL,
+      paper_height          = NULL,
+      paper_width           = NULL,
+      hdpi                  = NULL,
+      vdpi                  = NULL,
+      use_first_page_number = NULL,
+      use_printer_defaults  = NULL,
+      orientation           = NULL,
+      scale                 = NULL,
+      left                  = 0.7,
+      right                 = 0.7,
+      top                   = 0.75,
+      bottom                = 0.75,
+      header                = 0.3,
+      footer                = 0.3,
+      fit_to_width          = FALSE,
+      fit_to_height         = FALSE,
+      paper_size            = NULL,
+      # outline properties
+      print_title_rows      = NULL,
+      print_title_cols      = NULL,
+      summary_row           = NULL,
+      summary_col           = NULL,
+      # tabColor properties
+      tab_color             = NULL,
+      # print options
+      horizontal_centered   = NULL,
+      vertical_centered     = NULL,
+      print_headings        = NULL,
+      ...
+) {
+  assert_workbook(wb)
+  wb$clone()$set_page_setup(
+      sheet                 = sheet,
+      # page properties
+      black_and_white       = black_and_white,
+      cell_comments         = cell_comments,
+      copies                = copies,
+      draft                 = draft,
+      errors                = errors,
+      first_page_number     = first_page_number,
+      id                    = id, # useful and should the user be able to set this by accident?
+      page_order            = page_order,
+      paper_height          = paper_height,
+      paper_width           = paper_width,
+      hdpi                  = hdpi,
+      vdpi                  = vdpi,
+      use_first_page_number = use_first_page_number,
+      use_printer_defaults  = use_printer_defaults,
+      orientation           = orientation,
+      scale                 = scale,
+      left                  = left,
+      right                 = right,
+      top                   = top,
+      bottom                = bottom,
+      header                = header,
+      footer                = footer,
+      fit_to_width          = fit_to_width,
+      fit_to_height         = fit_to_height,
+      paper_size            = paper_size,
+      # outline properties
+      print_title_rows      = print_title_rows,
+      print_title_cols      = print_title_cols,
+      summary_row           = summary_row,
+      summary_col           = summary_col,
+      # tabColor properties
+      tab_color             = tab_color,
+      # print options
+      horizontal_centered   = horizontal_centered,
+      vertical_centered     = vertical_centered,
+      print_headings        = print_headings,
+      ...
+  )
+}
+
+#' @rdname wb_page_setup
+#' @export
 wb_page_setup <- function(
     wb,
     sheet            = current_sheet(),
@@ -2151,7 +2257,6 @@ wb_protect_worksheet <- function(
     password   = NULL,
     properties = NULL
 ) {
-
   assert_workbook(wb)
   wb$clone(deep = TRUE)$protect_worksheet(
     sheet      = sheet,

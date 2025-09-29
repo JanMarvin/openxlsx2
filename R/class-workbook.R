@@ -7590,6 +7590,13 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      ## print options ----
+      self$worksheets[[sheet]]$set_print_options(
+        horizontalCentered = horizontal_centered,
+        verticalCentered = vertical_centered,
+        headings = print_headings
+      )
+
       ## update sheetPr ----
       xml <- self$worksheets[[sheet]]$sheetPr
 
@@ -7685,12 +7692,6 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      self$worksheets[[sheet]]$set_print_options(
-        horizontalCentered = horizontal_centered,
-        verticalCentered = vertical_centered,
-        headings = print_headings
-      )
-
       invisible(self)
     },
 
@@ -7734,6 +7735,13 @@ wbWorkbook <- R6::R6Class(
       standardize_case_names(...)
 
       sheet <- private$get_sheet_index(sheet)
+
+      if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
+        .Deprecated(
+          new = "wb_set_page_setup",
+          old = "wb_page_setup"
+        )
+      }
 
       self$set_page_setup(
         sheet            = sheet,

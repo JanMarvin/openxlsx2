@@ -3,6 +3,7 @@
 ## New features
 
 * If a sheet name is a factor, it will be treated as character. [1436](https://github.com/JanMarvin/openxlsx2/pull/1436)
+* Export `wb_set_page_setup()` and include a few more print options.
 
 ## Fixes
 
