@@ -8,7 +8,7 @@
 \usage{
 convert_date(x, origin = "1900-01-01")
 
-convert_datetime(x, origin = "1900-01-01", ...)
+convert_datetime(x, origin = "1900-01-01", tz = "UTC")
 
 convert_hms(x)
 }
@@ -17,20 +17,7 @@ convert_hms(x)
 
 \item{origin}{date. Default value is for Windows Excel 2010}
 
-\item{...}{
-  Arguments passed on to \code{\link[base:as.Date]{base::as.Date.character}}
-  \describe{
-    \item{\code{format}}{a \code{\link[base]{character}} string.  If not specified when
-    converting from a character representation, it will try
-    \code{tryFormats} one by one on the first non-\code{NA} element, and
-    give an error if none works.  Otherwise, the processing is via
-    \code{\link[base]{strptime}()} whose help page describes available
-    conversion specifications.}
-    \item{\code{tryFormats}}{\code{\link[base]{character}} vector of \code{format}
-    strings to try if \code{format} is not specified.}
-    \item{\code{optional}}{\code{\link[base]{logical}} indicating to return \code{NA}
-    (instead of signalling an error) if the format guessing does not succeed.}
-  }}
+\item{tz}{A timezone, defaults to "UTC"}
 }
 \value{
 A date, datetime, or hms.
@@ -40,6 +27,8 @@ Convert from Excel date number to R Date type
 }
 \details{
 Excel stores dates as number of days from some origin day
+
+Setting the timezone in \code{\link[=convert_datetime]{convert_datetime()}} will alter the value. If users expect a datetime value in a specific timezone, they should try e.g. \code{lubridate::force_tz}.
 }
 \examples{
 # date --

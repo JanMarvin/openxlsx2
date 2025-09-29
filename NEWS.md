@@ -8,6 +8,7 @@
 ## Fixes
 
 * The speedup of the style functions caused a bug, where adding borders on a cell range with different cell styles, assigned the inner cell styles in an arbitrary order. [1431](https://github.com/JanMarvin/openxlsx2/pull/1431)
+* The `...` argument of `convert_date()`/`convert_datetime()` has been removed. The description was updated to reflect this change.
 
 
 ***************************************************************************
