@@ -50,13 +50,20 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<ul><li>Improve date detection to ignore numfmt ‘GENERAL’</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.20" id="openxlsx2-120">openxlsx2 1.20<a class="anchor" aria-label="anchor" href="#openxlsx2-120"></a></h2><p class="text-muted">CRAN release: 2025-09-29</p>
+<div class="section level3">
+<h3 id="new-features-1-20">New features<a class="anchor" aria-label="anchor" href="#new-features-1-20"></a></h3>
 <ul><li>If a sheet name is a factor, it will be treated as character. <a href="https://github.com/JanMarvin/openxlsx2/pull/1436" class="external-link">1436</a>
 </li>
 <li>Export <code><a href="../reference/wb_page_setup.html">wb_set_page_setup()</a></code> and include a few more print options.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-20">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-20"></a></h3>
 <ul><li>The speedup of the style functions caused a bug, where adding borders on a cell range with different cell styles, assigned the inner cell styles in an arbitrary order. <a href="https://github.com/JanMarvin/openxlsx2/pull/1431" class="external-link">1431</a>
 </li>
 <li>The <code>...</code> argument of <code><a href="../reference/convert_date.html">convert_date()</a></code>/<code><a href="../reference/convert_date.html">convert_datetime()</a></code> has been removed. The description was updated to reflect this change.</li>
