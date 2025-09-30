@@ -250,3 +250,20 @@ test_that("conversion works", {
   expect_warning(got <- wb$to_df(types = c(Var1 = "POSIXct")), "coercion")
   expect_equal(exp, got$Var1)
 })
+
+test_that("Ignoring 'GENERAL' numfmt works", {
+
+  # inspired by https://stackoverflow.com/q/25158969
+  df <- data.frame(
+    date = Sys.Date() - seq_len(5),
+    num = seq_len(5)
+  )
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = df)$
+    add_numfmt(dims = "B2:B6", numfmt = "GENERAL")
+
+  got <- wb$to_df()
+  expect_equal(df, got, ignore_attr = TRUE)
+
+})
