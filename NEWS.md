@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* Improve date detection to ignore numfmt 'GENERAL'
+
+
+***************************************************************************
+
 # openxlsx2 1.20
 
 ## New features

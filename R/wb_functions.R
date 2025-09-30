@@ -197,6 +197,7 @@ numfmt_is_date <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  numFmt_df$fC[tolower(numFmt_df$fC) == "general"] <- ""
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -230,6 +231,7 @@ numfmt_is_posix <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  numFmt_df$fC[tolower(numFmt_df$fC) == "general"] <- ""
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -263,6 +265,7 @@ numfmt_is_hms <- function(numFmt) {
   numFmt_df <- read_numfmt(read_xml(numFmt))
   # we have to drop any square bracket part
   numFmt_df$fC <- gsub("\\[[^\\]]*]", "", numFmt_df$formatCode, perl = TRUE)
+  numFmt_df$fC[tolower(numFmt_df$fC) == "general"] <- ""
   num_fmts <- c(
     "#", as.character(0:9)
   )
@@ -334,6 +337,9 @@ style_is_hms <- function(cellXfs, numfmt_date) {
   numfmt_date <- c(numfmt_date, date_numfmts)
 
   cellXfs_df <- read_xf(read_xml(cellXfs))
+  # # TODO this might not work as expected in xlsb
+  # # if the number format is not applied, ignore it
+  # cellXfs_df <- cellXfs_df[cellXfs_df$applyNumberFormat %in% c("1", "true"), ]
   z <- rownames(cellXfs_df[cellXfs_df$numFmtId %in% numfmt_date, ])
   if (length(z) == 0) z <- NA
   z
