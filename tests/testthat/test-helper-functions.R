@@ -424,15 +424,15 @@ test_that("fix_pt_names() works", {
 
 test_that("validate_colors() works", {
 
-  col <- c("FF0000FF", "#0000FF", "000FF", "#FF000FF", "blue")
+  col <- c("FF0000FF", "#0000FF", "000FF", "#FF000FF", "blue", "00F", "#00f", "00FF", "#00FF")
 
-  exp <- c("FF0000FF", "FF0000FF", "FFF000FF", "FFF000FF", "FF0000FF")
+  exp <- c("FF0000FF", "FF0000FF", "FFF000FF", "FFF000FF", "FF0000FF", "FF0000FF", "FF0000FF", "0000FFFF", "0000FFFF")
   got <- validate_color(col)
   expect_equal(exp, got)
 
   # switch from RGBA to ARGB format
-  col <- c("#000000FF", adjustcolor("black"), "#000000", "black")
-  exp <- c("FF000000", "FF000000", "FF000000", "FF000000")
+  col <- c("#000000FF", adjustcolor("black"), "#000000", "black", "#000", "000", "#0000", "0000")
+  exp <- c("FF000000", "FF000000", "FF000000", "FF000000", "FF000000", "FF000000", "00000000", "00000000")
   got <- validate_color(col, format = "RGBA")
   expect_equal(got, exp)
 
