@@ -131,7 +131,10 @@ validate_color <- function(
   # remove any # from color strings
   color <- gsub("^#", "", toupper(color))
 
-  # if the format is RGBA (R's default), switch first two with last two characters
+  # Expand 3-digit or 4-digit hex codes to 6-digit or 8-digit
+  color <- gsub("^([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])?$", "\\1\\1\\2\\2\\3\\3\\4\\4", color)
+
+  # if the format is RGBA (R's default), move last two characters to the start
   if (format == "RGBA") {
     s <- nchar(color) == 8
     alpha <- substring(color[s], 7, 8)
