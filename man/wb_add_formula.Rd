@@ -88,6 +88,14 @@ are accessible via the named region manager and can be removed with
 \code{\link[=wb_remove_named_region]{wb_remove_named_region()}}. Contrary to other formulas, custom formulas must
 be registered with the workbook before they can be used (see the example
 below).
+
+If a function that normally works in spreadsheet software does not behave
+as expected when written using \code{\link[=wb_add_formula]{wb_add_formula()}}, e.g., if spurious
+\code{@} symbols appear in the formula, it is likely that the formula is either
+an array formula or requires a future function prefix. In modern spreadsheet
+software, it is no longer straightforward to detect whether a formula is an
+array formula, since this hidden in cell metadata (cm). Therefore, a formula
+like \code{SUM(1+(A1:A2))} will not be displayed as \code{{SUM(1+(A1:A2))}}.
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
