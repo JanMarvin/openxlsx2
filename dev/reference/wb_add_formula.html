@@ -165,6 +165,13 @@ are accessible via the named region manager and can be removed with
 <code><a href="named_region-wb.html">wb_remove_named_region()</a></code>. Contrary to other formulas, custom formulas must
 be registered with the workbook before they can be used (see the example
 below).</p>
+<p>If a function that normally works in spreadsheet software does not behave
+as expected when written using <code>wb_add_formula()</code>, e.g., if spurious
+<code>@</code> symbols appear in the formula, it is likely that the formula is either
+an array formula or requires a future function prefix. In modern spreadsheet
+software, it is no longer straightforward to detect whether a formula is an
+array formula, since this hidden in cell metadata (cm). Therefore, a formula
+like <code>SUM(1+(A1:A2))</code> will not be displayed as <code>{SUM(1+(A1:A2))}</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
