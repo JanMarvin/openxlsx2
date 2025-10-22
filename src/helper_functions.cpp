@@ -1055,52 +1055,64 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 
 // [[Rcpp::export]]
 Rcpp::NumericVector as_numeric(Rcpp::Nullable<Rcpp::RObject> input) {
-  if (input.isNull()) {
+  if (input.isNull())
     return Rcpp::NumericVector(0);
+
+  SEXP obj = input.get();
+
+  switch (TYPEOF(obj)) {
+  case REALSXP: {
+    // Already numeric
+    return Rcpp::NumericVector(obj);
   }
 
-  Rcpp::RObject obj(input);
-
-  if (obj.inherits("Date") || obj.inherits("POSIXct")) {
-    Rcpp::NumericVector tmp(obj);
-    Rcpp::NumericVector num = clone(tmp);
+  case INTSXP: {
+    // Handle Date/POSIXct specially
+    if (Rf_inherits(obj, "Date") || Rf_inherits(obj, "POSIXct")) {
+    Rcpp::NumericVector num(obj);
     num.attr("class") = R_NilValue;
     num.attr("tzone") = R_NilValue;
     return num;
   }
 
-  if (Rf_isNumeric(obj)) {
-    Rcpp::NumericVector num(obj);
-    return num;
+    // Integer → double
+    const R_xlen_t n = XLENGTH(obj);
+    Rcpp::NumericVector out(n);
+    const int* src = INTEGER(obj);
+    double* dst = REAL(out);
+    for (R_xlen_t i = 0; i < n; ++i)
+      dst[i] = (src[i] == NA_INTEGER) ? NA_REAL : static_cast<double>(src[i]);
+    return out;
   }
 
-  if (Rf_isLogical(obj)) {
-    // Handle logical input directly
-    Rcpp::LogicalVector lv(obj);
-    Rcpp::NumericVector num(lv.size());
-    for (R_xlen_t i = 0; i < lv.size(); ++i) {
-      if (lv[i] == NA_LOGICAL) {
-        num[i] = NA_REAL;
-      } else {
-        num[i] = lv[i] ? 1.0 : 0.0;
+  case LGLSXP: {
+    const R_xlen_t n = XLENGTH(obj);
+    Rcpp::NumericVector out(n);
+    const int* src = LOGICAL(obj);
+    double* dst = REAL(out);
+    for (R_xlen_t i = 0; i < n; ++i)
+      dst[i] = (src[i] == NA_LOGICAL) ? NA_REAL : (src[i] ? 1.0 : 0.0);
+    return out;
+  }
+
+  case STRSXP: {
+    const R_xlen_t n = XLENGTH(obj);
+    Rcpp::NumericVector out(n);
+    double* dst = REAL(out);
+
+    for (R_xlen_t i = 0; i < n; ++i) {
+      SEXP s = STRING_ELT(obj, i);
+      if (s == NA_STRING) {
+        dst[i] = NA_REAL;
+        continue;
       }
+      const char* str = CHAR(s);
+      dst[i] = as_double(str);
     }
-    return num;
+    return out;
   }
 
-  if (Rf_isString(obj)) {
-    // Handle character input
-    Rcpp::CharacterVector str(obj);
-    Rcpp::NumericVector num(str.size());
-    for (R_xlen_t i = 0; i < str.size(); ++i) {
-      if (str[i] == NA_STRING) {
-        num[i] = NA_REAL;
-      } else {
-        num[i] = as_double(str[i]);
-      }
-    }
-    return num;
+  default:
+    Rcpp::stop("unhandled R object type");
   }
-
-  Rcpp::stop("unhandled R object type");
 }
