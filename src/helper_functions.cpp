@@ -669,9 +669,20 @@ void wide_to_long(
     vtyp_sexp_cache[type_id] = Rf_mkChar(std::to_string(type_id).c_str());
   }
 
+  std::vector<SEXP> srows_sexp(static_cast<size_t>(n));
+  for (size_t j = 0; j < static_cast<size_t>(n); ++j) {
+    srows_sexp[j] = Rf_mkChar(srows[j].c_str());
+  }
+
+  std::vector<SEXP> scols_sexp(static_cast<size_t>(m));
+  for (size_t i = 0; i < static_cast<size_t>(m); ++i) {
+    scols_sexp[i] = Rf_mkChar(scols[i].c_str());
+  }
+
   for (R_xlen_t i = 0; i < m; ++i) {
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
     const std::string& col = scols[static_cast<size_t>(i)];
+    const SEXP col_sexp = scols_sexp[static_cast<size_t>(i)];
     int8_t vtyp_i = static_cast<int8_t>(vtyps[static_cast<size_t>(i)]);
 
     for (R_xlen_t j = 0; j < n; ++j) {
@@ -683,6 +694,7 @@ void wide_to_long(
       const char* vals = CHAR(vals_sexp);
 
       const std::string& row = srows[static_cast<size_t>(j)];
+      const SEXP row_sexp = srows_sexp[static_cast<size_t>(j)];
 
       R_xlen_t pos = (j * m) + i;
 
@@ -809,8 +821,8 @@ void wide_to_long(
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r).c_str()));
       } else {
         // row_r = row and c_r = col
-        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
-        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
+        SET_STRING_ELT(zz_row_r, pos, row_sexp);
+        SET_STRING_ELT(zz_c_r, pos, col_sexp);
       }
     }  // n
   }  // m
