@@ -683,6 +683,11 @@ void wide_to_long(
   SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
 
   R_xlen_t iter_count = 0;
+  const int MAX_VTYP_ID = CELLTYPE_MAX;  // enum celltype
+  std::vector<SEXP> vtyp_sexp_cache(MAX_VTYP_ID + 1);
+  for (int type_id = 0; type_id <= MAX_VTYP_ID; ++type_id) {
+    vtyp_sexp_cache[type_id] = Rf_mkChar(std::to_string(type_id).c_str());
+  }
 
   // --- 4. Main Wide-to-Long Loop ---
   for (R_xlen_t i = 0; i < m; ++i) {
@@ -802,9 +807,7 @@ void wide_to_long(
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       }
 
-      if (has_typ) {
-        SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
-      }
+      if (has_typ) SET_STRING_ELT(zz_typ, pos, vtyp_sexp_cache[vtyp]);
     }
   }
 }

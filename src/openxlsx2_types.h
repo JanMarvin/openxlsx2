@@ -52,7 +52,8 @@ enum celltype {
   cm_formula     = 14,
   hms_time       = 15,
   currency       = 16,
-  list           = 17
+  list           = 17,
+  CELLTYPE_MAX  // always the last
 };
 
 // check for 1.0.8.0
