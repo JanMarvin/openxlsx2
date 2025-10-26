@@ -663,6 +663,12 @@ void wide_to_long(
   SEXP value_sexp      = Rf_mkChar("#VALUE!");
   SEXP na_strings_sexp = Rf_mkChar(na_strings.c_str());
 
+  const int MAX_VTYP_ID = 18; // enum celltype
+  std::vector<SEXP> vtyp_sexp_cache(MAX_VTYP_ID + 1);
+  for (int type_id = 0; type_id <= MAX_VTYP_ID; ++type_id) {
+    vtyp_sexp_cache[type_id] = Rf_mkChar(std::to_string(type_id).c_str());
+  }
+
   for (R_xlen_t i = 0; i < m; ++i) {
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
     const std::string& col = scols[static_cast<size_t>(i)];
@@ -792,7 +798,7 @@ void wide_to_long(
       }
 
       // typ = std::to_string(vtyp)
-      if (has_typ) SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
+      if (has_typ) SET_STRING_ELT(zz_typ, pos, vtyp_sexp_cache[vtyp]);
 
       std::string cell_r = has_dims ? dims[static_cast<size_t>(idx - 1L)] : col + row;
       SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r.c_str()));
