@@ -58,8 +58,8 @@ columns to a character vector e.g.
 \cr\cr
 \cr\strong{The below options correspond to Excel table options:}
 \cr
-\if{html}{\figure{tableoptions.png}{options: width="40\%" alt="Figure: table_options.png"}}
-\if{latex}{\figure{tableoptions.pdf}{options: width=7cm}}}
+\if{html}{\figure{tableoptions.png}{options: width="320px" alt="Figure: table_options.png"}}
+\if{latex}{\figure{tableoptions.pdf}{options: width=265px}}}
 
 \item{first_column}{logical. If \code{TRUE}, the first column is bold.}
 
