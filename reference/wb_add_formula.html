@@ -9,7 +9,7 @@ In wb_add_formula(), you can provide the formula as a character vector."><meta p
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.20</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ In wb_add_formula(), you can provide the formula as a character vector."><meta p
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add a formula to a cell range in a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.20/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_formula.Rd</code></div>
     </div>
 
@@ -165,6 +165,13 @@ are accessible via the named region manager and can be removed with
 <code><a href="named_region-wb.html">wb_remove_named_region()</a></code>. Contrary to other formulas, custom formulas must
 be registered with the workbook before they can be used (see the example
 below).</p>
+<p>If a function that normally works in spreadsheet software does not behave
+as expected when written using <code>wb_add_formula()</code>, e.g., if spurious
+<code>@</code> symbols appear in the formula, it is likely that the formula is either
+an array formula or requires a future function prefix. In modern spreadsheet
+software, it is no longer straightforward to detect whether a formula is an
+array formula, since this hidden in cell metadata (cm). Therefore, a formula
+like <code>SUM(1+(A1:A2))</code> will not be displayed as <code>{SUM(1+(A1:A2))}</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
