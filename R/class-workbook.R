@@ -2945,6 +2945,10 @@ wbWorkbook <- R6::R6Class(
         call. = FALSE)
       }
 
+      if (file_extension == "xlsm" && is.null(self$vbaProject)) {
+        self$Content_Types[grepl('<Override PartName="/xl/workbook.xml" ', self$Content_Types)] <- '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.ms-excel.sheet.macroEnabled.main+xml"/>'
+      }
+
       ## temp directory to save XML files prior to compressing
       tmpDir <- file.path(tempfile(pattern = "workbookTemp_"))
       on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
