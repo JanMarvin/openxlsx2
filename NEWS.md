@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* It is now possible to save a newly created workbook as `.xlsm` and it will open in spreadsheet software. [1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
+
+
+***************************************************************************
+
 # openxlsx2 1.21
 
 ## Fixes

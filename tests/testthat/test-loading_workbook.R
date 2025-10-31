@@ -550,3 +550,19 @@ test_that("loading and saving named sheet views works", {
   expect_equal(wb$namedSheetViews, wb1$namedSheetViews)
 
 })
+
+test_that("saving a workbook as xlsm", {
+
+  fl <- temp_xlsx(macros = TRUE)
+  write_xlsx(x = cars, file = fl)
+
+  tmpdir <- tempdir()
+  ct <- "[Content_Types].xml"
+  unzip(fl, files = ct, exdir = tmpdir)
+  tmpxml <- read_xml(file.path(tmpdir, ct), pointer = FALSE)
+  expect_true(grepl(pattern = "macroEnabled", tmpxml))
+
+  wb <- wb_load(fl)
+  expect_true(grepl(pattern = "macroEnabled", paste0(wb$Content_Types, collapse = "")))
+
+})
