@@ -68,8 +68,8 @@ inner_update <- function(
     cc <- cc[order(sort_key), ]
 
     # update dimensions (only required if new cols and rows are added) ------
-    all_rows <- as.numeric(unique(cc$row_r))
-    all_cols <- col2int(unique(cc$c_r))
+    all_rows <- as.numeric(collapse::funique(cc$row_r))
+    all_cols <- col2int(collapse::funique(cc$c_r))
 
     min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
     max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
@@ -79,7 +79,7 @@ inner_update <- function(
   }
 
   # prepare required columns
-  all_cols <- unique(c(names(x), names(cc)))
+  all_cols <- collapse::funique(c(names(x), names(cc)))
 
   if (any("c_cm" %in% all_cols)) has_cm <- "c_cm" else has_cm <- NULL
   if (any("c_ph" %in% all_cols)) has_ph <- "c_ph" else has_ph <- NULL
@@ -96,7 +96,7 @@ inner_update <- function(
     replacementX  <- replacement[-which(replacement == "c_s")]
   }
 
-  sel <- match(x$r, cc$r)
+  sel <- collapse::fmatch(x$r, cc$r)
 
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
@@ -106,7 +106,7 @@ inner_update <- function(
     if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
 
       # collect all the shared formulas that we have to convert
-      sel_fsi <- ff$si %in% unique(sf)
+      sel_fsi <- ff$si %in% collapse::funique(sf)
 
       cc_shared <- cc[sel_fsi, , drop = FALSE]
 
@@ -168,7 +168,7 @@ initialize_cell <- function(wb, sheet, new_cells) {
   x$row_r <- gsub("[[:upper:]]", "", new_cells)
   x$c_r   <- gsub("[[:digit:]]", "", new_cells)
 
-  rows <- unique(x$row_r)
+  rows <- collapse::funique(x$row_r)
   cells_needed <- new_cells
 
   inner_update(wb, sheet_id, x, rows, cells_needed)
@@ -458,7 +458,7 @@ write_data2 <- function(
 
     clls <- lapply(unlist(strsplit(dims, dim_sep)), FUN = function(x) {
       nc <- needed_cells(x)
-      len <- length(unique(col2int(nc)))
+      len <- length(collapse::funique(col2int(nc)))
 
       if (length(nc) > 1) {
         matrix(nc, ncol = len, byrow = FALSE)
@@ -512,9 +512,9 @@ write_data2 <- function(
     ## only the reference cell has the formula reference
 
 
-    uni_attrs <- unique(wb$worksheets[[sheetno]]$sheet_data$cc$f_attr)
+    uni_attrs <- collapse::funique(wb$worksheets[[sheetno]]$sheet_data$cc$f_attr)
     f_xml     <- paste0("<f ", uni_attrs, "/>")
-    uni_si    <- unique(rbindlist(xml_attr(f_xml, "f"))$si)
+    uni_si    <- collapse::funique(rbindlist(xml_attr(f_xml, "f"))$si)
 
     int_si <- as.integer(
       replace(
@@ -750,7 +750,7 @@ write_data2 <- function(
     wb$sharedStrings <- stringi::stri_unique(c(wb$sharedStrings, cc_sst))
 
     sel <- grepl("<si>", cc$v)
-    cc$v[sel] <- as.character(match(cc$v[sel], wb$sharedStrings) - 1L)
+    cc$v[sel] <- as.character(collapse::fmatch(cc$v[sel], wb$sharedStrings) - 1L)
 
     text        <- si_to_txt(wb$sharedStrings)
     uniqueCount <- length(wb$sharedStrings)

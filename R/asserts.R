@@ -62,7 +62,7 @@ match_oneof <- function(x, y, or_null = FALSE, several = FALSE, envir = parent.f
 
   if (or_null && is.null(x)) return(NULL)
 
-  m <- match(x, y, nomatch = NA_integer_)
+  m <- collapse::fmatch(x, y, nomatch = NA_integer_)
   m <- m[!is.na(m)]
   if (!several) m <- m[1]
 
