@@ -1,7 +1,19 @@
 
 #' Create a new Workbook object
 #'
-#' Initialize a [wbWorkbook] object. You can set workbook properties as well.
+#' This function initializes and returns a [wbWorkbook] object,
+#' which is the core structure for building and modifying openxml files
+#' (`.xlsx`) in `openxlsx2`.
+#'
+#' You can define various metadata properties at creation, such as the
+#' `creator`, `title`, `subject`, and timestamps. You can also
+#' specify a workbook theme.
+#'
+#' The returned [wb_workbook()] object is an [R6::R6Class()] instance.
+#' Once created, the standard workflow is to immediately add a worksheet
+#' using [wb_add_worksheet()]. From there, you can populate the sheet with data
+#' ([wb_add_data()]), or formulas ([wb_add_formula()]), and apply styling
+#' or other elements.
 #'
 #' `theme` can be one of
 #' "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
@@ -34,6 +46,10 @@
 #'   subject  = "Expense Report - 2022 Q1",
 #'   category = "sales"
 #' )
+#'
+#' ## Cloning a workbook
+#' wb1 <- wb_workbook()
+#' wb2 <- wb1$clone(deep = TRUE)
 wb_workbook <- function(
   creator           = NULL,
   title             = NULL,

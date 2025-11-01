@@ -37,9 +37,21 @@ See \strong{Details} for options.}
 A \code{wbWorkbook} object
 }
 \description{
-Initialize a \link{wbWorkbook} object. You can set workbook properties as well.
+This function initializes and returns a \link{wbWorkbook} object,
+which is the core structure for building and modifying openxml files
+(\code{.xlsx}) in \code{openxlsx2}.
 }
 \details{
+You can define various metadata properties at creation, such as the
+\code{creator}, \code{title}, \code{subject}, and timestamps. You can also
+specify a workbook theme.
+
+The returned \code{\link[=wb_workbook]{wb_workbook()}} object is an \code{\link[R6:R6Class]{R6::R6Class()}} instance.
+Once created, the standard workflow is to immediately add a worksheet
+using \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}. From there, you can populate the sheet with data
+(\code{\link[=wb_add_data]{wb_add_data()}}), or formulas (\code{\link[=wb_add_formula]{wb_add_formula()}}), and apply styling
+or other elements.
+
 \code{theme} can be one of
 "Atlas", "Badge", "Berlin", "Celestial", "Crop", "Depth", "Droplet",
 "Facet", "Feathered", "Gallery", "Headlines", "Integral", "Ion",
@@ -59,6 +71,10 @@ wb <- wb_workbook(
   subject  = "Expense Report - 2022 Q1",
   category = "sales"
 )
+
+## Cloning a workbook
+wb1 <- wb_workbook()
+wb2 <- wb1$clone(deep = TRUE)
 }
 \seealso{
 Other workbook wrappers: 
