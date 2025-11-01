@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecate.R
 \name{delete_data}
 \alias{delete_data}
-\title{Delete data}
+\title{Defunct: Delete data}
 \usage{
 delete_data(wb, sheet, cols, rows)
 }

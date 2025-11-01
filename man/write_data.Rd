@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecate.R
 \name{write_data}
 \alias{write_data}
-\title{Write an object to a worksheet}
+\title{Defunct: Write an object to a worksheet}
 \usage{
 write_data(
   wb,

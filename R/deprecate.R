@@ -82,7 +82,7 @@ remove_comment <- function(
   )
 }
 
-#' Convert to Excel data
+#' Defunct: Convert to Excel data
 #'
 #' Use [convert_to_excel_date()].
 #' @usage NULL
@@ -93,7 +93,7 @@ convertToExcelDate <- function(df, date1904 = FALSE) {
   stop("convertToExcelDate() is defunct and will be removed in new version. Use convert_to_excel_date().", call. = FALSE)
 }
 
-#' Write an object to a worksheet
+#' Defunct: Write an object to a worksheet
 #'
 #' Use [wb_add_data()] or [write_xlsx()] in new code.
 #'
@@ -121,30 +121,10 @@ write_data <-  function(
     enforce           = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_data()", package = "openxlsx2", old = "write_data()")
-  do_write_data(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    dims = dims,
-    start_col         = start_col,
-    start_row         = start_col,
-    array             = array,
-    col_names         = col_names,
-    row_names         = row_names,
-    with_filter       = with_filter,
-    sep               = sep,
-    name              = name,
-    apply_cell_style  = apply_cell_style,
-    remove_cell_style = remove_cell_style,
-    na.strings        = na.strings,
-    inline_strings    = inline_strings,
-    enforce           = enforce,
-    ...
-  )
+  .Defunct("wb_add_data()", package = "openxlsx2")
 }
 
-#' Write to a worksheet as an Excel table
+#' Defunct: Write to a worksheet as an Excel table
 #'
 #' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
 #' This function is deprecated and may not be exported in the future.
@@ -176,35 +156,10 @@ write_datatable <- function(
     total_row         = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_data_table()", package = "openxlsx2", old = "write_datatable()")
-  do_write_datatable(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    dims = dims,
-    start_col         = start_col,
-    start_row         = start_row,
-    col_names         = col_names,
-    row_names         = row_names,
-    table_style       = table_style,
-    table_name        = table_name,
-    with_filter       = with_filter,
-    sep               = sep,
-    first_column      = first_column,
-    last_column       = last_column,
-    banded_rows       = banded_rows,
-    banded_cols       = banded_cols,
-    apply_cell_style  = apply_cell_style,
-    remove_cell_style = remove_cell_style,
-    na.strings        = na.strings,
-    inline_strings    = inline_strings,
-    total_row         = total_row,
-    ...
-
-  )
+  .Defunct("wb_add_data_table()", package = "openxlsx2")
 }
 
-#' Write a character vector as an Excel Formula
+#' Defunct: Write a character vector as an Excel Formula
 #'
 #' Write a a character vector containing Excel formula to a worksheet.
 #' Use [wb_add_formula()] or `add_formula()` in new code. This function is
@@ -227,25 +182,10 @@ write_formula <- function(
     enforce           = FALSE,
     ...
 ) {
-  .Deprecated("wb_add_formula()", package = "openxlsx2", old = "write_formula()")
-
-  do_write_formula(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    dims = dims,
-    start_col = start_col,
-    start_row = start_row,
-    array = array,
-    cm = cm,
-    apply_cell_style = apply_cell_style,
-    remove_cell_style = remove_cell_style,
-    enforce = enforce,
-    ...
-  )
+  .Defunct("wb_add_formula()", package = "openxlsx2")
 }
 
-#' Delete data
+#' Defunct: Delete data
 #'
 #' This function is deprecated. Use [wb_clean_sheet()].
 #' @param wb workbook
@@ -255,31 +195,12 @@ write_formula <- function(
 #' @export
 #' @keywords internal
 delete_data <- function(wb, sheet, cols, rows) {
-
-  .Deprecated(old = "delete_data", new = "wb_clean_sheet", package = "openxlsx2")
-
-  sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
-
-  cc <- wb$worksheets[[sheet_id]]$sheet_data$cc
-
-  if (is.numeric(cols)) {
-    sel <- cc$row_r %in% as.character(as.integer(rows)) & cc$c_r %in% int2col(cols)
-  } else {
-    sel <- cc$row_r %in% as.character(as.integer(rows)) & cc$c_r %in% cols
-  }
-
-  # clean selected entries of cc
-  clean <- names(cc)[!names(cc) %in% c("r", "row_r", "c_r")]
-  cc[sel, clean] <- ""
-
-  wb$worksheets[[sheet_id]]$sheet_data$cc <- cc
-
+  .Defunct(new = "wb_clean_sheet", package = "openxlsx2")
 }
 
 #' @rdname wb_set_grid_lines
 #' @export
 wb_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print = show) {
   assert_workbook(wb)
-  .Deprecated(old = "wb_grid_lines", new = "wb_set_grid_lines", package = "openxlsx2")
-  wb$clone()$set_grid_lines(sheet = sheet, show = show, print = print)
+  .Defunct(new = "wb_set_grid_lines", package = "openxlsx2")
 }

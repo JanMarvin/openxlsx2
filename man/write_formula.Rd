@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecate.R
 \name{write_formula}
 \alias{write_formula}
-\title{Write a character vector as an Excel Formula}
+\title{Defunct: Write a character vector as an Excel Formula}
 \usage{
 write_formula(
   wb,

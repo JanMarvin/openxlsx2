@@ -21,6 +21,9 @@ To fix this code, simply assign the workbook
 wb <- wb_add_fill(wb, dims = wb_dims(x = mtcars))
 ```
 
+* Previously deprecated functions `write_data()`, `write_datatable()`, `write_formula()` are now defunct.
+
+
 ***************************************************************************
 
 # openxlsx2 1.21
