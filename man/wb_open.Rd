@@ -4,10 +4,14 @@
 \alias{wb_open}
 \title{Preview a workbook in a spreadsheet software}
 \usage{
-wb_open(wb, flush = FALSE)
+wb_open(wb, interactive = NA, flush = FALSE)
 }
 \arguments{
 \item{wb}{a \link{wbWorkbook} object}
+
+\item{interactive}{If \code{FALSE} will throw a warning and not open the path.
+This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses
+the value returned from \code{\link[base:interactive]{base::interactive()}}}
 
 \item{flush}{if the flush option should be used}
 }

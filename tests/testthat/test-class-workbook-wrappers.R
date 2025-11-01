@@ -384,16 +384,18 @@ test_that("wb_clean_sheet() is a wrapper", {
 })
 
 ## disable test bailing in covr in GitHub action
-# # wb_open() ---------------------------------------------------------------
-#
-# test_that("wb_open() is a wrapper", {
-#   wb <- wb_workbook()$add_worksheet("a")
-#   expect_error(
-#     expect_wrapper("open", wb = wb),
-#     "wbWorkbook$open$path vs wb_open$path",
-#     fixed = TRUE
-#   )
-# })
+# wb_open() ---------------------------------------------------------------
+
+test_that("wb_open() is a wrapper", {
+  wb <- wb_workbook()$add_worksheet("a")
+  expect_warning(
+    expect_warning(
+      expect_wrapper("open", wb = wb, params = list(interactive = FALSE)),
+      "will not open file when not interactive"
+    ),
+    "will not open file when not interactive"
+  )
+})
 
 # wb_add_data(), wb_add_data_table(), wb_add_formula() --------------------
 
