@@ -4298,9 +4298,7 @@ wbWorkbook <- R6::R6Class(
     #' @param plot plot
     get_base_colors = function(xml = FALSE, plot = TRUE) {
 
-      if (is.null(self$theme)) self$theme <- genBaseTheme()
-
-      current <- xml_node(self$theme, "a:theme", "a:themeElements", "a:clrScheme")
+      current <- xml_node(if (is.null(self$theme)) genBaseTheme() else self$theme, "a:theme", "a:themeElements", "a:clrScheme")
       name    <- xml_attr(current, "a:clrScheme")[[1]][["name"]]
 
       nodes  <- xml_node_name(current, "a:clrScheme")

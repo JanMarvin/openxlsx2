@@ -4,6 +4,10 @@
 
 * It is now possible to save a newly created workbook as `.xlsm` and it will open in spreadsheet software. [1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
 
+## Breaking changes
+
+* Wrapper functions were never intended to alter workbooks. This is now tested and various functions that were unintentionally altering workbooks were corrected.
+
 
 ***************************************************************************
 

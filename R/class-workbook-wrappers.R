@@ -342,7 +342,7 @@ wb_add_data_table <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_data_table(
+  wb$clone(deep = TRUE)$add_data_table(
     sheet             = sheet,
     x                 = x,
     dims              = dims,
@@ -618,7 +618,7 @@ wb_add_slicer <- function(
   assert_workbook(wb)
   if (missing(params)) params <- substitute()
 
-  wb$clone()$add_slicer(
+  wb$clone(deep = TRUE)$add_slicer(
     x           = x,
     sheet       = sheet,
     dims        = dims,
@@ -655,7 +655,7 @@ wb_add_timeline <- function(
   assert_workbook(wb)
   if (missing(params)) params <- substitute()
 
-  wb$clone()$add_timeline(
+  wb$clone(deep = TRUE)$add_timeline(
     x           = x,
     sheet       = sheet,
     dims        = dims,
@@ -781,7 +781,7 @@ wb_add_formula <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_formula(
+  wb$clone(deep = TRUE)$add_formula(
     sheet             = sheet,
     x                 = x,
     dims              = dims,
@@ -836,7 +836,7 @@ wb_add_hyperlink <- function(
 
   assert_workbook(wb)
 
-  wb$clone()$add_hyperlink(
+  wb$clone(deep = TRUE)$add_hyperlink(
     sheet       = sheet,
     dims        = dims,
     target      = target,
@@ -1004,7 +1004,7 @@ wb_add_chartsheet <- function(
   ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_chartsheet(
+  wb$clone(deep = TRUE)$add_chartsheet(
     sheet       = sheet,
     tab_color   = tab_color,
     zoom        = zoom,
@@ -1297,13 +1297,13 @@ NULL
 wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
   assert_workbook(wb)
   assert_class(heights, c("numeric", "integer"), or_null = TRUE, arg_nm = "heights")
-  wb$clone()$set_row_heights(sheet = sheet, rows, heights, hidden)
+  wb$clone(deep = TRUE)$set_row_heights(sheet = sheet, rows, heights, hidden)
 }
 #' @rdname row_heights-wb
 #' @export
 wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
-  wb$clone()$remove_row_heights(sheet = sheet, rows = rows)
+  wb$clone(deep = TRUE)$remove_row_heights(sheet = sheet, rows = rows)
 }
 
 #' Modify column widths of a worksheet
@@ -1368,7 +1368,7 @@ NULL
 #' @export
 wb_set_col_widths <- function(wb, sheet = current_sheet(), cols, widths = 8.43, hidden = FALSE) {
   assert_workbook(wb)
-  wb$clone()$set_col_widths(
+  wb$clone(deep = TRUE)$set_col_widths(
     sheet  = sheet,
     cols   = cols,
     widths = widths,
@@ -1444,7 +1444,7 @@ wb_add_plot <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_plot(
+  wb$clone(deep = TRUE)$add_plot(
     sheet      = sheet,
     dims       = dims,
     width      = width,
@@ -1494,7 +1494,7 @@ wb_add_drawing <- function(
   ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_drawing(
+  wb$clone(deep = TRUE)$add_drawing(
     sheet      = sheet,
     dims       = dims,
     xml        = xml,
@@ -1555,7 +1555,7 @@ wb_add_mschart <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_mschart(
+  wb$clone(deep = TRUE)$add_mschart(
     sheet      = sheet,
     dims       = dims,
     graph      = graph,
@@ -1630,7 +1630,7 @@ wb_set_base_font <- function(
   ...
 ) {
   assert_workbook(wb)
-  wb$clone()$set_base_font(
+  wb$clone(deep = TRUE)$set_base_font(
     font_size   = font_size,
     font_color  = font_color,
     font_name   = font_name,
@@ -2133,7 +2133,7 @@ wb_set_page_setup <- function(
       ...
 ) {
   assert_workbook(wb)
-  wb$clone()$set_page_setup(
+  wb$clone(deep = TRUE)$set_page_setup(
       sheet                 = sheet,
       # page properties
       black_and_white       = black_and_white,
@@ -2199,7 +2199,7 @@ wb_page_setup <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$page_setup(
+  wb$clone(deep = TRUE)$page_setup(
     sheet            = sheet,
     orientation      = orientation,
     scale            = scale,
@@ -2578,13 +2578,13 @@ NULL
 #' @export
 wb_add_filter <- function(wb, sheet = current_sheet(), rows, cols) {
   assert_workbook(wb)
-  wb$clone()$add_filter(sheet = sheet, rows = rows, cols = cols)
+  wb$clone(deep = TRUE)$add_filter(sheet = sheet, rows = rows, cols = cols)
 }
 #' @rdname filter-wb
 #' @export
 wb_remove_filter <- function(wb, sheet = current_sheet()) {
   assert_workbook(wb)
-  wb$clone()$remove_filter(sheet = sheet)
+  wb$clone(deep = TRUE)$remove_filter(sheet = sheet)
 }
 
 
@@ -2783,7 +2783,6 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 }
 
 
-
 #' Remove a data table from a worksheet
 #'
 #' Remove Excel tables in a workbook using its name.
@@ -2819,7 +2818,7 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 wb_remove_tables <- function(wb, sheet = current_sheet(), table, remove_data = TRUE) {
   assert_workbook(wb)
   if (missing(table)) table <- substitute()
-  wb$clone()$remove_tables(sheet = sheet, table = table, remove_data = remove_data)
+  wb$clone(deep = TRUE)$remove_tables(sheet = sheet, table = table, remove_data = remove_data)
 }
 
 
@@ -2870,7 +2869,7 @@ NULL
 #' @rdname grouping-wb
 wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-  wb$clone()$group_cols(
+  wb$clone(deep = TRUE)$group_cols(
     sheet     = sheet,
     cols      = cols,
     collapsed = collapsed,
@@ -2882,7 +2881,7 @@ wb_group_cols <- function(wb, sheet = current_sheet(), cols, collapsed = FALSE, 
 #' @rdname grouping-wb
 wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
   assert_workbook(wb)
-  wb$clone()$ungroup_cols(sheet = sheet, cols = cols)
+  wb$clone(deep = TRUE)$ungroup_cols(sheet = sheet, cols = cols)
 }
 
 
@@ -2911,7 +2910,7 @@ wb_ungroup_cols <- function(wb, sheet = current_sheet(), cols) {
 #' wb$group_rows("AirPass", rows = grp_rows)
 wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, levels = NULL) {
   assert_workbook(wb)
-  wb$clone()$group_rows(
+  wb$clone(deep = TRUE)$group_rows(
     sheet     = sheet,
     rows      = rows,
     collapsed = collapsed,
@@ -2923,7 +2922,7 @@ wb_group_rows <- function(wb, sheet = current_sheet(), rows, collapsed = FALSE, 
 #' @rdname grouping-wb
 wb_ungroup_rows <- function(wb, sheet = current_sheet(), rows) {
   assert_workbook(wb)
-  wb$clone()$ungroup_rows(sheet = sheet, rows = rows)
+  wb$clone(deep = TRUE)$ungroup_rows(sheet = sheet, rows = rows)
 }
 
 
@@ -3181,7 +3180,7 @@ wb_add_image <- function(
   ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_image(
+  wb$clone(deep = TRUE)$add_image(
     sheet      = sheet,
     dims       = dims,
     file       = file,
@@ -3217,7 +3216,7 @@ wb_add_chart_xml <- function(
   ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_chart_xml(
+  wb$clone(deep = TRUE)$add_chart_xml(
     sheet      = sheet,
     xml        = xml,
     dims       = dims,
@@ -3305,7 +3304,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   assert_workbook(wb)
   # deparse this name, otherwise it will remain "style"
   if (is.null(style_name)) style_name <- deparse(substitute(style))
-  wb$clone()$add_style(style, style_name)
+  wb$clone(deep = TRUE)$add_style(style, style_name)
 }
 
 #' Apply styling to a cell region
@@ -3460,7 +3459,7 @@ wb_add_border <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_border(
+  wb$clone(deep = TRUE)$add_border(
     sheet          = sheet,
     dims           = dims,
     bottom_color   = bottom_color,
@@ -3539,7 +3538,7 @@ wb_add_fill <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_fill(
+  wb$clone(deep = TRUE)$add_fill(
     sheet         = sheet,
     dims          = dims,
     color         = color,
@@ -3618,7 +3617,7 @@ wb_add_font <- function(
       ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_font(
+  wb$clone(deep = TRUE)$add_font(
     sheet      = sheet,
     dims       = dims,
     name       = name,
@@ -3721,7 +3720,7 @@ wb_add_numfmt <- function(
     numfmt
 ) {
   assert_workbook(wb)
-  wb$clone()$add_numfmt(
+  wb$clone(deep = TRUE)$add_numfmt(
     sheet  = sheet,
     dims   = dims,
     numfmt = numfmt
@@ -3817,7 +3816,7 @@ wb_add_cell_style <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_cell_style(
+  wb$clone(deep = TRUE)$add_cell_style(
     sheet               = sheet,
     dims                = dims,
     apply_alignment     = apply_alignment,
@@ -3887,7 +3886,7 @@ wb_add_named_style <- function(
 ) {
   assert_workbook(wb)
   assert_class(name, "character")
-  wb$clone()$add_named_style(
+  wb$clone(deep = TRUE)$add_named_style(
     sheet = sheet,
     dims = dims,
     name = name,
@@ -3946,7 +3945,7 @@ wb_add_dxfs_style <- function(
 ) {
 
   assert_workbook(wb)
-  wb$clone()$add_dxfs_style(
+  wb$clone(deep = TRUE)$add_dxfs_style(
     name           = name,
     font_name      = font_name,
     font_size      = font_size,
@@ -4020,7 +4019,7 @@ wb_add_comment <- function(
 
   assert_comment(comment)
 
-  wb$clone()$add_comment(
+  wb$clone(deep = TRUE)$add_comment(
     sheet   = sheet,
     dims    = dims,
     comment = comment,
@@ -4149,7 +4148,7 @@ wb_add_thread <- function(
   }
 
   assert_workbook(wb)
-  wb$clone()$add_thread(
+  wb$clone(deep = TRUE)$add_thread(
     sheet     = sheet,
     dims      = dims,
     comment   = comment,
@@ -4207,7 +4206,7 @@ wb_add_form_control <- function(
     checked = FALSE
 ) {
   assert_workbook(wb)
-  wb$clone()$add_form_control(
+  wb$clone(deep = TRUE)$add_form_control(
       sheet   = sheet,
       dims    = dims,
       type    = type,
@@ -4319,7 +4318,7 @@ wb_add_conditional_formatting <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_conditional_formatting(
+  wb$clone(deep = TRUE)$add_conditional_formatting(
     sheet  = sheet,
     dims   = dims,
     rule   = rule,
@@ -4360,7 +4359,7 @@ wb_remove_conditional_formatting <- function(
 #' @export
 wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
   assert_workbook(wb)
-  wb$clone()$clone_sheet_style(from, to)
+  wb$clone(deep = TRUE)$clone_sheet_style(from, to)
 }
 
 #' Add sparklines to a worksheet
@@ -4415,7 +4414,7 @@ wb_add_ignore_error <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$add_ignore_error(
+  wb$clone(deep = TRUE)$add_ignore_error(
     sheet                 = sheet,
     dims                  = dims,
     calculated_column     = calculated_column,
@@ -4498,7 +4497,7 @@ wb_set_sheetview <- function(
     ...
 ) {
   assert_workbook(wb)
-  wb$clone()$set_sheetview(
+  wb$clone(deep = TRUE)$set_sheetview(
     sheet                        = sheet,
     color_id                     = color_id,
     default_grid_color           = default_grid_color,
