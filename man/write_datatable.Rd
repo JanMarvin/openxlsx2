@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecate.R
 \name{write_datatable}
 \alias{write_datatable}
-\title{Write to a worksheet as an Excel table}
+\title{Defunct: Write to a worksheet as an Excel table}
 \usage{
 write_datatable(
   wb,
