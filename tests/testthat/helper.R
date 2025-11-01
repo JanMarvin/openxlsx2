@@ -148,6 +148,9 @@ expect_wrapper <- function(
     wb_fun <- wb$clone(deep = TRUE)
     wb_method <- wb$clone(deep = TRUE)
 
+    # take pre-call deep copies for immutability check
+    wb_fun_pre    <- wb_fun$clone(deep = TRUE)
+
     # be careful and report when we failed to run these
 
 
@@ -206,6 +209,20 @@ expect_wrapper <- function(
       ignore_attr        = ignore_attr,
       ignore_formula_env = TRUE
     )
+
+    bad_mut_fun <- waldo::compare(
+      wb_fun, wb_fun_pre,
+      x_arg = paste0(fun, " post"), y_arg = paste0(fun, " pre"),
+      ignore_attr = ignore_attr
+    )
+
+    if (length(bad_mut_fun)) {
+      testthat::fail(c(
+        sprintf("%s altered its input workbook", fun),
+        bad_mut_fun
+      ))
+      return(invisible())
+    }
 
     if (length(bad)) {
       testthat::fail(bad)
