@@ -456,7 +456,7 @@ wbWorkbook <- R6::R6Class(
         themes <- readRDS(thm_rds)
 
         if (is.character(theme)) {
-          sel <- match(theme, names(themes))
+          sel <- collapse::fmatch(theme, names(themes))
           err <- is.na(sel)
         } else {
           sel <- theme
@@ -1319,7 +1319,7 @@ wbWorkbook <- R6::R6Class(
             if (all(nchar(self$drawings_rels[[new_drawing_rels]]))) {
 
               drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_rels]], "Relationship"))
-              fe <- unique(file_ext2(drels$Target))
+              fe <- collapse::funique(file_ext2(drels$Target))
 
               cte <- sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe)
               sel <- which(!cte %in% self$Content_Types)
@@ -1400,7 +1400,7 @@ wbWorkbook <- R6::R6Class(
         # only if styles are present
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
-          new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s, names(new_sty))])
+          new_s   <- unname(new_sty[collapse::fmatch(self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s <- new_s
           rm(style, new_s, new_sty)
@@ -1411,7 +1411,7 @@ wbWorkbook <- R6::R6Class(
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
           cols    <- self$worksheets[[newSheetIndex]]$unfold_cols()
-          new_s   <- unname(new_sty[match(cols$style, names(new_sty))])
+          new_s   <- unname(new_sty[collapse::fmatch(cols$style, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           cols$style <- new_s
           self$worksheets[[newSheetIndex]]$fold_cols(cols)
@@ -1422,7 +1422,7 @@ wbWorkbook <- R6::R6Class(
         # only if styles are present
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
-          new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s, names(new_sty))])
+          new_s   <- unname(new_sty[collapse::fmatch(self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s <- new_s
           rm(style, new_s, new_sty)
@@ -3634,7 +3634,7 @@ wbWorkbook <- R6::R6Class(
       ## write [Content_type]
       write_file(
         head = '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">',
-        body = pxml(unique(ct)),
+        body = pxml(collapse::funique(ct)),
         tail = "</Types>",
         fl = file.path(tmpDir, "[Content_Types].xml")
       )
@@ -4204,7 +4204,7 @@ wbWorkbook <- R6::R6Class(
       # initialize dims we write to as empty cells
       private$do_cell_init(sheet, to_dims)
 
-      to_cc <- cc[match(from_dims, cc$r), ]
+      to_cc <- cc[collapse::fmatch(from_dims, cc$r), ]
       from_cells <- to_cc$r
 
       to_cc[c("r", "row_r", "c_r")] <- data.frame(
@@ -4224,7 +4224,7 @@ wbWorkbook <- R6::R6Class(
       to_cc[is.na(to_cc)] <- ""
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc[match(to_dims_f, cc$r), ] <- to_cc
+      cc[collapse::fmatch(to_dims_f, cc$r), ] <- to_cc
 
       self$worksheets[[sheet]]$sheet_data$cc <- cc
 
@@ -4253,7 +4253,7 @@ wbWorkbook <- R6::R6Class(
           old <- from_dims_df[has_hl]
           new <- to_dims_df_f[has_hl]
 
-          for (hls in match(hyperlink_in_wb, old)) {
+          for (hls in collapse::fmatch(hyperlink_in_wb, old)) {
 
             # prepare the updated link
             need_clone <- hyperlink_in_wb[hls]
@@ -4425,7 +4425,7 @@ wbWorkbook <- R6::R6Class(
         colors <- readRDS(clr_rds)
 
         if (is.character(theme)) {
-          sel <- match(theme, names(colors))
+          sel <- collapse::fmatch(theme, names(colors))
           err <- is.na(sel)
         } else {
           sel <- theme
@@ -4700,7 +4700,7 @@ wbWorkbook <- R6::R6Class(
       private$do_row_init(sheet, rows)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
-      sel <- match(as.character(as.integer(rows)), row_attr$r)
+      sel <- collapse::fmatch(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
 
       if (!is.null(heights)) {
@@ -4738,7 +4738,7 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      sel <- match(as.character(as.integer(rows)), row_attr$r)
+      sel <- collapse::fmatch(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
       row_attr[sel, "ht"] <- ""
       row_attr[sel, "customHeight"] <- ""
@@ -4780,7 +4780,7 @@ wbWorkbook <- R6::R6Class(
           if (is.list(x)) lapply(x, col2int)
           else col2int(x)
         })
-        unis <- unique(unlist(cols))
+        unis <- collapse::funique(unlist(cols))
         levels <- vector("character", length(unis))
 
         lvls <- names(cols)
@@ -5066,7 +5066,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.list(rows)) {
-        unis <- unique(unlist(rows))
+        unis <- collapse::funique(unlist(rows))
         levels <- vector("character", length(unis))
 
         lvls <- names(rows)
@@ -6029,11 +6029,11 @@ wbWorkbook <- R6::R6Class(
       }
 
       cols <- tapply(cols, cumsum(c(1, diff(cols) != 1)), function(g) {
-        range(g)
+        collapse::frange(g)
       })
 
       rows <- tapply(rows, cumsum(c(1, diff(rows) != 1)), function(g) {
-        range(g)
+        collapse::frange(g)
       })
 
       orig_rule <- rule
@@ -6238,7 +6238,7 @@ wbWorkbook <- R6::R6Class(
             },
 
             between = {
-              rule <- range(rule)
+              rule <- collapse::frange(rule)
             },
 
             topN = {
@@ -7377,7 +7377,7 @@ wbWorkbook <- R6::R6Class(
         category = "cp:category"
       )
       # use names
-      names(properties) <- names(name_replace)[match(names(properties), name_replace)]
+      names(properties) <- names(name_replace)[collapse::fmatch(names(properties), name_replace)]
 
 
       if (!is.null(self$app$Company)) {
@@ -7910,7 +7910,7 @@ wbWorkbook <- R6::R6Class(
           stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(print_title_cols))
+        cols <- int2col(collapse::frange(print_title_cols))
         private$create_named_region(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
@@ -7927,8 +7927,8 @@ wbWorkbook <- R6::R6Class(
           stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(print_title_cols))
-        rows <- range(print_title_rows)
+        cols <- int2col(collapse::frange(print_title_cols))
+        rows <- collapse::frange(print_title_rows)
 
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
@@ -8726,9 +8726,9 @@ wbWorkbook <- R6::R6Class(
       dims <- unlist(did, use.names = FALSE)
 
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
 
@@ -8801,9 +8801,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
 
@@ -8907,9 +8907,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       if (!is.null(numfmt) && inherits(numfmt, "character")) {
 
@@ -9013,9 +9013,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -9105,7 +9105,7 @@ wbWorkbook <- R6::R6Class(
       # in openxlsx2 < 1.19
       # sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
       # in 1.19 switched to match, but the match result was unsorted
-      sel <- sort(match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r))
+      sel <- sort(collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r))
 
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
 
@@ -9693,8 +9693,8 @@ wbWorkbook <- R6::R6Class(
 
       if (is.character(sheet)) {
         sheet <- tolower(sheet)
-        m1 <- match(sheet, tolower(self$sheet_names))
-        m2 <- match(sheet, tolower(private$original_sheet_names))
+        m1 <- collapse::fmatch(sheet, tolower(self$sheet_names))
+        m2 <- collapse::fmatch(sheet, tolower(private$original_sheet_names))
 
         bad <- is.na(m1) & is.na(m2)
 
@@ -9772,7 +9772,7 @@ wbWorkbook <- R6::R6Class(
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
         self$Content_Types <-
-          unique(c(
+          collapse::funique(c(
             sprintf(
               '<Default Extension="%s" ContentType="image/%s"/>',
               imageType,

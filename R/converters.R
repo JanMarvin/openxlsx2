@@ -54,7 +54,7 @@ int2col <- function(x) {
 }
 
 check_range <- function(x) {
-  r <- suppressWarnings(range(as.numeric(x), na.rm = TRUE))
+  r <- suppressWarnings(collapse::frange(as.numeric(x), na.rm = TRUE))
   any(r < 1 | r > 16384)
 }
 
@@ -154,7 +154,7 @@ row2int <- function(x) {
 
   if (anyNA(rows)) stop("missings not allowed in rows", call. = FALSE)
 
-  rr <- range(rows, na.rm = TRUE)
+  rr <- collapse::frange(rows, na.rm = TRUE)
 
   if (any(rr < 1L | rr > 1048576L))
     stop("Row exceeds valid range", call. = FALSE)
