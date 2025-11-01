@@ -154,6 +154,20 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
   return(res)
 }
 
+## create a cell style format for specific types at the end of the existing
+# styles. gets the reference an passes it on.
+get_data_class_dims <- function(dc, openxlsx2_celltype, rtyp, colNames, data_class) {
+  sel <- dc == openxlsx2_celltype[[data_class]]
+  # sel = TRUE
+  sel_cols <- names(rtyp[sel])
+  sel_rows <- rownames(rtyp)
+
+  # ignore first row if colNames
+  if (colNames) sel_rows <- sel_rows[-1]
+
+  dataframe_to_dims(rtyp[rownames(rtyp) %in% sel_rows, sel_cols, drop = FALSE])
+}
+
 # dims helpers -----------------------------------------------------------------
 #' Helper functions to work with `dims`
 #'

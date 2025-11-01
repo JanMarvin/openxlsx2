@@ -574,25 +574,11 @@ write_data2 <- function(
 
   if (applyCellStyle) {
 
-    ## create a cell style format for specific types at the end of the existing
-    # styles. gets the reference an passes it on.
-    get_data_class_dims <- function(data_class) {
-      sel <- dc == openxlsx2_celltype[[data_class]]
-      # sel = TRUE
-      sel_cols <- names(rtyp[sel])
-      sel_rows <- rownames(rtyp)
-
-      # ignore first row if colNames
-      if (colNames) sel_rows <- sel_rows[-1]
-
-      dataframe_to_dims(rtyp[rownames(rtyp) %in% sel_rows, sel_cols, drop = FALSE])
-    }
-
     # if hyperlinks are found, Excel sets something like the following font
     # blue with underline
     if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
 
-      dim_sel <- get_data_class_dims("hyperlink")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "hyperlink")
       # message("hyperlink: ", dim_sel)
 
       # get hyperlink color from template
@@ -624,7 +610,7 @@ write_data2 <- function(
 
         # # we cannot select every cell like this, because it is terribly slow.
         # dim_sel <- paste0(cc$r[sel], collapse = ";")
-        dim_sel <- get_data_class_dims("character")
+        dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "character")
         # message("character: ", dim_sel)
 
         wb$add_cell_style(
@@ -644,7 +630,7 @@ write_data2 <- function(
 
         numfmt_numeric <- getOption("openxlsx2.numFmt")
 
-        dim_sel <- get_data_class_dims("numeric")
+        dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "numeric")
         # message("numeric: ", dim_sel)
 
         wb$add_numfmt(
@@ -657,7 +643,7 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["short_date"]])) { # Date
       numfmt_dt <- getOption("openxlsx2.dateFormat", 14)
 
-      dim_sel <- get_data_class_dims("short_date")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "short_date")
       # message("short_date: ", dim_sel)
 
       wb$add_numfmt(
@@ -669,7 +655,7 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["long_date"]])) {
       numfmt_posix <- getOption("openxlsx2.datetimeFormat", default = 22)
 
-      dim_sel <- get_data_class_dims("long_date")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "long_date")
       # message("long_date: ", dim_sel)
 
       wb$add_numfmt(
@@ -681,7 +667,7 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["hms_time"]])) {
       numfmt_hms <- getOption("openxlsx2.hmsFormat", default = 21)
 
-      dim_sel <- get_data_class_dims("hms_time")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "hms_time")
       # message("hms: ", dim_sel)
 
       wb$add_numfmt(
@@ -695,7 +681,7 @@ write_data2 <- function(
       ## For vignette: Builtin style for USD
       #"_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* &quot;-&quot;??_ ;_-@_ "
 
-      dim_sel <- get_data_class_dims("currency")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "currency")
       # message("currency: ", dim_sel)
 
       wb$add_numfmt(
@@ -706,7 +692,7 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["accounting"]])) { # accounting
       numfmt_accounting <- getOption("openxlsx2.accountingFormat", default = 4)
 
-      dim_sel <- get_data_class_dims("accounting")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "accounting")
       # message("accounting: ", dim_sel)
 
       wb$add_numfmt(
@@ -717,7 +703,7 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["percentage"]])) { # percentage
       numfmt_percentage <- getOption("openxlsx2.percentageFormat", default = 10)
 
-      dim_sel <- get_data_class_dims("percentage")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "percentage")
       # message("percentage: ", dim_sel)
 
       wb$add_numfmt(
@@ -729,7 +715,7 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["scientific"]])) {
       numfmt_scientific <- getOption("openxlsx2.scientificFormat", default = 48)
 
-      dim_sel <- get_data_class_dims("scientific")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "scientific")
       # message("scientific: ", dim_sel)
 
       wb$add_numfmt(
@@ -741,7 +727,7 @@ write_data2 <- function(
     if (any(dc == openxlsx2_celltype[["comma"]])) {
       numfmt_comma <- getOption("openxlsx2.commaFormat", default = 3)
 
-      dim_sel <- get_data_class_dims("comma")
+      dim_sel <- get_data_class_dims(dc, openxlsx2_celltype, rtyp, colNames, "comma")
       # message("comma: ", dim_sel)
 
       wb$add_numfmt(
