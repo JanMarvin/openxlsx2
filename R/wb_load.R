@@ -267,7 +267,7 @@ wb_load <- function(
   )
 
   file_names <- basename2(xmlFiles)
-  file_folders <- unique(basename(dirname(xmlFiles)))
+  file_folders <- collapse::funique(basename(dirname(xmlFiles)))
   known <- c(
     basename(xmlDir), "_rels", "activeX", "charts", "chartsheets",
     "ctrlProps", "customXml", "docMetadata", "docProps", "drawings",
@@ -757,7 +757,7 @@ wb_load <- function(
   ## xl\media
   if (!data_only && length(media)) {
     mediaNames <- regmatches(media, regexpr("image[0-9]+\\.[a-z]+$", media))
-    fileTypes <- unique(gsub("image[0-9]+\\.", "", mediaNames))
+    fileTypes <- collapse::funique(gsub("image[0-9]+\\.", "", mediaNames))
 
     contentNodes <- sprintf('<Default Extension="%s" ContentType="image/%s"/>', fileTypes, fileTypes)
     contentNodes[fileTypes == "emf"] <- '<Default Extension="emf" ContentType="image/x-emf"/>'
@@ -979,7 +979,7 @@ wb_load <- function(
 
             freezePane <- paste0(
               vapply(
-                unique(xml_nams),
+                collapse::funique(xml_nams),
                 function(x) {
                   xml <- xml_node(sheetViews, "sheetViews", "sheetView", x)
                   paste(xml, collapse = "")
@@ -1409,7 +1409,7 @@ wb_load <- function(
         SST      <- c(comments)
 
         matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
-        matches <- unique(unlist(matches))
+        matches <- collapse::funique(unlist(matches))
 
         values  <- as.integer(gsub("\\D+", "", matches))
 
@@ -1493,7 +1493,7 @@ wb_load <- function(
     if (length(embeddings)) {
 
       # get the embedded files extensions
-      files <- unique(gsub(".+\\.(\\w+)$", "\\1", embeddings))
+      files <- collapse::funique(gsub(".+\\.(\\w+)$", "\\1", embeddings))
 
       # get the required ContentTypes
       extensions <- rbindlist(xml_attr(content_type, "Types", "Default"))
@@ -1891,7 +1891,7 @@ wb_load <- function(
       SST      <- c(wb$sharedStrings)
 
       matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
-      matches <- unique(unlist(matches))
+      matches <- collapse::funique(unlist(matches))
 
       values  <- as.integer(gsub("\\D+", "", matches))
 
