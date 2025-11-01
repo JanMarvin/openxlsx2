@@ -211,7 +211,7 @@ test_that("increase formula dims if required", {
     add_data(x = matrix(1:4, 2, 2))
 
   wb1 <- wb_add_formula(wb, dims = "C2", x = fml)
-  wb2 <- wb_add_formula(wb, dims = "C2:D2", x = fml)
+  wb2 <- wb_add_formula(wb, dims = "C2:C3", x = fml)
 
   expect_equal(
     wb1$worksheets[[1]]$sheet_data$cc,
