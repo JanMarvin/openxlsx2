@@ -3,11 +3,23 @@
 ## Fixes
 
 * It is now possible to save a newly created workbook as `.xlsm` and it will open in spreadsheet software. [1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
+* Add missing `interactive` argument to `wb_open()`.
 
 ## Breaking changes
 
-* Wrapper functions were never intended to alter workbooks. This is now tested and various functions that were unintentionally altering workbooks were corrected.
-
+* Wrapper functions were never intended to alter workbooks. This is now tested and various functions that were unintentionally altering workbooks were corrected. [1454](https://github.com/JanMarvin/openxlsx2/pull/1454)
+```R
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb)
+```
+Previously we were sloppy in our testing so this might have worked unintentionally
+```R
+wb_add_fill(wb, dims = wb_dims(x = mtcars))
+```
+To fix this code, simply assign the workbook
+```R
+wb <- wb_add_fill(wb, dims = wb_dims(x = mtcars))
+```
 
 ***************************************************************************
 

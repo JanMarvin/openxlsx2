@@ -3269,11 +3269,14 @@ wb_clean_sheet <- function(
 #' To open xlsx files, see [xl_open()].
 #'
 #' @param wb a [wbWorkbook] object
+#' @param interactive If `FALSE` will throw a warning and not open the path.
+#'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses
+#'   the value returned from [base::interactive()]
 #' @param flush if the flush option should be used
 #' @export
-wb_open <- function(wb, flush = FALSE) {
+wb_open <- function(wb, interactive = NA, flush = FALSE) {
   assert_workbook(wb)
-  wb$open(flush = flush)
+  wb$open(interactive = interactive, flush = flush)
 }
 
 #' Set the default style in a workbook
