@@ -310,8 +310,8 @@ wb_to_df <- function(
     has_dims <- FALSE
 
     sd <- wb$worksheets[[sheet]]$sheet_data$cc[c("row_r", "c_r")]
-    row <- range(as.integer(unique(sd$row_r)))
-    col <- range(col2int(unique(sd$c_r)))
+    row <- collapse::frange(as.integer(collapse::funique(sd$row_r)))
+    col <- collapse::frange(col2int(collapse::funique(sd$c_r)))
 
     if (!is.null(start_row) && as.integer(start_row) < row[1])
       row[1] <- start_row
@@ -332,7 +332,7 @@ wb_to_df <- function(
   sst <- wb$sharedStrings
 
   rnams <- row_attr$r
-  rnams <- rnams[rnams %in% unique(cc$row_r)] # avoid blank row interference
+  rnams <- rnams[rnams %in% collapse::funique(cc$row_r)] # avoid blank row interference
 
   numfmt_date <- numfmt_is_date(wb$styles_mgr$styles$numFmts)
   xlsx_date_style <- style_is_date(wb$styles_mgr$styles$cellXfs, numfmt_date)
@@ -397,8 +397,8 @@ wb_to_df <- function(
       tt <- tt[keep_cols]
     }
 
-    z  <- z[, match(keep_cols, colnames(z)), drop = FALSE]
-    tt <- tt[, match(keep_cols, colnames(tt)), drop = FALSE]
+    z  <- z[, collapse::fmatch(keep_cols, colnames(z)), drop = FALSE]
+    tt <- tt[, collapse::fmatch(keep_cols, colnames(tt)), drop = FALSE]
   }
 
   if (!is.null(cols)) {
@@ -411,8 +411,8 @@ wb_to_df <- function(
       tt[keep_col] <- NA_integer_
     }
 
-    z  <- z[, match(keep_cols, colnames(z)), drop = FALSE]
-    tt <- tt[, match(keep_cols, colnames(tt)), drop = FALSE]
+    z  <- z[, collapse::fmatch(keep_cols, colnames(z)), drop = FALSE]
+    tt <- tt[, collapse::fmatch(keep_cols, colnames(tt)), drop = FALSE]
   }
 
   keep_rows <- keep_rows[keep_rows %in% rnams]
@@ -424,7 +424,7 @@ wb_to_df <- function(
   cc$val <- rep_len(NA_character_, nrow(cc))
   cc$typ <- rep_len(NA_integer_, nrow(cc))
 
-  cc_tab <- unique(cc$c_t)
+  cc_tab <- collapse::funique(cc$c_t)
 
   # bool
   if (any(cc_tab == "b")) {
@@ -482,8 +482,8 @@ wb_to_df <- function(
 
     # if a cell is t="s" the content is a sst and not da date
     if (detect_dates && missing(types)) {
-      uccs <- unique(cc$c_s)
-      ucct <- unique(cc$c_t)
+      uccs <- collapse::funique(cc$c_s)
+      ucct <- collapse::funique(cc$c_t)
 
       cc$is_string <- FALSE
       strings <-  c("s", "str", "b", "inlineStr")
@@ -561,7 +561,7 @@ wb_to_df <- function(
         ),
         stringsAsFactors = FALSE
       )
-      cc$val[match(hyprlnks$V1, cc$r)] <- hyprlnks$V2
+      cc$val[collapse::fmatch(hyprlnks$V1, cc$r)] <- hyprlnks$V2
     }
 
   }
@@ -577,8 +577,8 @@ wb_to_df <- function(
   # we need to create the correct col and row position as integer starting at 0. Because we allow
   # to select specific rows and columns, we must make sure that our zz cols and rows matches the
   # z data frame.
-  zz$cols <- match(cc$c_r, colnames(z)) - 1L
-  zz$rows <- match(cc$row_r, rownames(z)) - 1L
+  zz$cols <- collapse::fmatch(cc$c_r, colnames(z)) - 1L
+  zz$rows <- collapse::fmatch(cc$row_r, rownames(z)) - 1L
 
   # zz <- zz[order(zz[, "cols"], zz[, "rows"]), ]
   if (any(zz$val == "", na.rm = TRUE)) zz <- zz[zz$val != "", ]
@@ -720,7 +720,7 @@ wb_to_df <- function(
       }
 
       # assign types the correct column name "A", "B" etc.
-      names(types) <- names(xlsx_cols_names[match(names(types), xlsx_cols_names)])
+      names(types) <- names(xlsx_cols_names[collapse::fmatch(names(types), xlsx_cols_names)])
 
       # replace predefined types in guessed column types
       guess <- guess_col_type(tt)
@@ -960,7 +960,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
   has_colnames <- as.integer(nrow(dd) - nrow(x))
 
   if (missing(j) && is.character(i)) {
-    j <- match(i, colnames(x))
+    j <- collapse::fmatch(i, colnames(x))
     i <- seq_len(nrow(x))
   }
 
