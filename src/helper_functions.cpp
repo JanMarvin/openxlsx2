@@ -554,11 +554,11 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   Rcpp::IntegerVector cols = zz["cols"];
   Rcpp::IntegerVector rows = zz["rows"];
   Rcpp::CharacterVector vals = zz["val"];
-  Rcpp::CharacterVector typs = zz["typ"];
+  Rcpp::IntegerVector typs = zz["typ"];
 
   // Cache all column vectors to avoid repeated coercion
   std::vector<Rcpp::CharacterVector> z_cols(static_cast<size_t>(z.size()));
-  std::vector<Rcpp::CharacterVector> tt_cols(static_cast<size_t>(tt.size()));
+  std::vector<Rcpp::IntegerVector> tt_cols(static_cast<size_t>(tt.size()));
 
   for (R_xlen_t j = 0; j < z.size(); ++j) {
     z_cols[static_cast<size_t>(j)] = z[j];
@@ -571,7 +571,7 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 
     if (row != NA_INTEGER && col != NA_INTEGER) {
       SET_STRING_ELT(z_cols[static_cast<size_t>(col)], row, STRING_ELT(vals, i));
-      SET_STRING_ELT(tt_cols[static_cast<size_t>(col)], row, STRING_ELT(typs, i));
+      INTEGER(tt_cols[static_cast<size_t>(col)])[row] = INTEGER(typs)[i];
     }
   }
 }
@@ -832,6 +832,25 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
   df.attr("class") = "data.frame";
 
   return df;
+}
+
+// [[Rcpp::export]]
+Rcpp::DataFrame create_int_dataframe(const Rcpp::DataFrame& char_df) {
+  int32_t n_rows = char_df.nrow();
+  int32_t n_cols = static_cast<int32_t>(char_df.ncol());
+
+  Rcpp::CharacterVector col_names = char_df.names();
+  Rcpp::List int_list(n_cols);
+
+  for (int32_t i = 0; i < n_cols; ++i) {
+    SET_VECTOR_ELT(int_list, i, Rcpp::IntegerVector(n_rows, NA_INTEGER));
+  }
+
+  int_list.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -n_rows);
+  int_list.attr("names") = col_names;
+  int_list.attr("class") = "data.frame";
+
+  return int_list;
 }
 
 // TODO styles_xml.cpp should be converted to use these functions

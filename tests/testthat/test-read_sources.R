@@ -95,7 +95,7 @@ test_that("encoding", {
 
   exp <- structure(list("hähä" = "ÄÖÜ", "höhö" = "äöüß"),
                    row.names = 2L, class = "data.frame",
-                   tt = structure(list("hähä" = "s", "höhö" = "s"),
+                   tt = structure(list("hähä" = 0L, "höhö" = 0L),
                                   row.names = 2L, class = "data.frame"),
                    types = c(A = 0, B = 0))
 

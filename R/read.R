@@ -346,7 +346,7 @@ wb_to_df <- function(
 
   # create temporary data frame. hard copy required
   z  <- dims_to_dataframe(dims, empty_rm = TRUE)
-  tt <- copy(z)
+  tt <- create_int_dataframe(z)
 
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
@@ -391,7 +391,7 @@ wb_to_df <- function(
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 
       z[keep_col]  <- NA_character_
-      tt[keep_col] <- NA_character_
+      tt[keep_col] <- NA_integer_
 
       z  <- z[keep_cols]
       tt <- tt[keep_cols]
@@ -408,7 +408,7 @@ wb_to_df <- function(
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 
       z[keep_col] <- NA_character_
-      tt[keep_col] <- NA_character_
+      tt[keep_col] <- NA_integer_
     }
 
     z  <- z[, match(keep_cols, colnames(z)), drop = FALSE]
@@ -421,8 +421,8 @@ wb_to_df <- function(
   if (has_dims && length(keep_rows) && length(keep_cols))
     cc <- cc[cc$row_r %in% keep_rows & cc$c_r %in% keep_cols, ]
 
-  cc$val <- NA_character_
-  cc$typ <- NA_character_
+  cc$val <- rep_len(NA_character_, nrow(cc))
+  cc$typ <- rep_len(NA_integer_, nrow(cc))
 
   cc_tab <- unique(cc$c_t)
 
@@ -430,25 +430,25 @@ wb_to_df <- function(
   if (any(cc_tab == "b")) {
     sel <- cc$c_t %in% "b"
     cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
-    cc$typ[sel] <- "b"
+    cc$typ[sel] <- 4L
   }
   # text in v
   if (any(cc_tab %in% c("str", "e"))) {
     sel <- cc$c_t %in% c("str", "e")
     cc$val[sel] <- replaceXMLEntities(cc$v[sel])
-    cc$typ[sel] <- "s"
+    cc$typ[sel] <- 0L
   }
   # text in t
   if (any(cc_tab %in% c("inlineStr"))) {
     sel <- cc$c_t %in% c("inlineStr")
     cc$val[sel] <- is_to_txt(cc$is[sel])
-    cc$typ[sel] <- "s"
+    cc$typ[sel] <- 0L
   }
   # test is sst
   if (any(cc_tab %in% c("s"))) {
     sel <- cc$c_t %in% c("s")
     cc$val[sel] <- si_to_txt(sst[as.numeric(cc$v[sel]) + 1])
-    cc$typ[sel] <- "s"
+    cc$typ[sel] <- 0L
   }
 
   has_na_string <- FALSE
@@ -457,7 +457,7 @@ wb_to_df <- function(
     sel <- cc$val %in% na.strings
     if (any(sel)) {
       cc$val[sel] <- NA_character_
-      cc$typ[sel] <- "na_string"
+      cc$typ[sel] <- -1L
       has_na_string <- TRUE
     }
   }
@@ -470,7 +470,7 @@ wb_to_df <- function(
     sel <- cc$v %in% na.numbers
     if (any(sel)) {
       cc$val[sel] <- NA_character_
-      cc$typ[sel] <- "na_number"
+      cc$typ[sel] <- -2L
       has_na_number <- TRUE
     }
   }
@@ -496,7 +496,7 @@ wb_to_df <- function(
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
         else
           cc$val[sel] <- as.character(convert_date(cc$v[sel], origin = origin))
-        cc$typ[sel]  <- "d"
+        cc$typ[sel]  <- 2L
       }
 
       if (any(uccs %in% xlsx_hms_style)) {
@@ -507,7 +507,7 @@ wb_to_df <- function(
         } else {
           cc$val[sel] <- as.character(convert_hms(cc$v[sel]))
         }
-        cc$typ[sel]  <- "h"
+        cc$typ[sel]  <- 5L
       }
 
       if (any(uccs %in% xlsx_posix_style)) {
@@ -516,7 +516,7 @@ wb_to_df <- function(
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
         else
           cc$val[sel] <- as.character(convert_datetime(cc$v[sel], origin = origin))
-        cc$typ[sel]  <- "p"
+        cc$typ[sel]  <- 3L
       }
     }
   }
@@ -525,7 +525,7 @@ wb_to_df <- function(
   if (any(cc_tab %in% c("n", ""))) {
     sel <- which(is.na(cc$typ))
     cc$val[sel] <- cc$v[sel]
-    cc$typ[sel] <- "n"
+    cc$typ[sel] <- 1L
   }
 
   if (show_formula) {
@@ -544,7 +544,7 @@ wb_to_df <- function(
 
     sel <- cc$f != ""
     cc$val[sel] <- replaceXMLEntities(cc$f[sel])
-    cc$typ[sel] <- "f"
+    cc$typ[sel] <- 6L
 
   }
 
@@ -567,8 +567,8 @@ wb_to_df <- function(
   }
 
   # convert "na_string" to missing
-  if (has_na_string) cc$typ[cc$typ == "na_string"] <- NA
-  if (has_na_number) cc$typ[cc$typ == "na_number"] <- NA
+  if (has_na_string) cc$typ[cc$typ == -1] <- NA_integer_
+  if (has_na_number) cc$typ[cc$typ == -2] <- NA_integer_
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]
@@ -752,17 +752,17 @@ wb_to_df <- function(
       chrs <- names(which(types[sel] == 0))
 
       for (chr in chrs) {
-        sel <- tt[[chr]] == "d" & !is.na(z[[chr]])
+        sel <- tt[[chr]] == 2L & !is.na(z[[chr]])
         if (length(sel)) {
           z[[chr]][sel] <- vapply(z[[chr]][sel], date_conv_c, NA_character_)
         }
 
-        sel <- tt[[chr]] == "p" & !is.na(z[[chr]])
+        sel <- tt[[chr]] == 3L & !is.na(z[[chr]])
         if (length(sel)) {
           z[[chr]][sel] <- vapply(z[[chr]][sel], datetime_conv_c, NA_character_)
         }
 
-        sel <- tt[[chr]] == "h" & !is.na(z[[chr]])
+        sel <- tt[[chr]] == 5L & !is.na(z[[chr]])
         if (length(sel)) {
           z[[chr]][sel] <- vapply(z[[chr]][sel], hms_conv_c, NA_character_)
         }

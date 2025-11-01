@@ -4927,7 +4927,7 @@ wbWorkbook <- R6::R6Class(
         # To avoid this, we have to check character vectors for potentially
         # unconverted numerics and have to apply something like format(as.numeric(...))
         tt  <- attr(df, "tt")
-        sel <- tt == "n" & !is.na(df)
+        sel <- tt == 1L & !is.na(df)
 
         df[sel]   <- vapply(df[sel], function(x) format(as.numeric(x)), NA_character_)
         col_width <- vapply(df, function(x) max(nchar(format(x))), NA_real_)
