@@ -215,7 +215,7 @@ test_that("writing NA, NaN and Inf", {
   wb$add_worksheet("Test2")$add_data_table(x = x, na.strings = "N/A")$save(tmp)
   wb$add_worksheet("Test3")$add_data(x = x, na.strings = "N/A")$save(tmp)
 
-  exp <- c(NA, "s", "s", "s")
+  exp <- c(NA, 0L, 0L, 0L)
   got <- unname(unlist(attr(wb_to_df(tmp, "Test1", keep_attributes = TRUE), "tt")))
   expect_equal(exp, got)
 
@@ -226,7 +226,7 @@ test_that("writing NA, NaN and Inf", {
   wb$clone_worksheet("Test1", "Clone1")$add_data(x = x, na.strings = NULL)$save(tmp)
   wb$clone_worksheet("Test3", "Clone3")$add_data(x = x, na.strings = "N/A")$save(tmp)
 
-  exp <- c(NA, "s", "s", "s")
+  exp <- c(NA, 0L, 0L, 0L)
   got <- unname(unlist(attr(wb_to_df(tmp, "Test1", keep_attributes = TRUE), "tt")))
   expect_equal(exp, got)
 

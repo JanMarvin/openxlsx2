@@ -143,7 +143,7 @@ guess_col_type <- function(tt) {
   # Identify the unique types present in the data frame
   uu <- lapply(tt, unique)
   unique_types <- unique(unlist(uu))
-  unique_types[is.na(unique_types)] <- "n"
+  unique_types[is.na(unique_types)] <- 1L
 
   # Function to check column type
   check_col_type <- function(x, type_char) {
@@ -153,34 +153,34 @@ guess_col_type <- function(tt) {
   check_type <- function(x) vapply(uu, check_col_type, NA, type_char = x)
 
   # Check for each type and update types vector accordingly
-  if ("n" %in% unique_types) {
-    col_num <- check_type("n")
-    types[col_num] <- 1
+  if (1L %in% unique_types) {
+    col_num <- check_type(1L)
+    types[col_num] <- 1L
   }
 
-  if ("d" %in% unique_types) {
-    col_dte <- check_type("d")
-    types[col_dte & types == 0] <- 2
+  if (2L %in% unique_types) {
+    col_dte <- check_type(2L)
+    types[col_dte & types == 0] <- 2L
   }
 
-  if ("p" %in% unique_types) {
-    col_posix <- check_type("p")
-    types[col_posix & types == 0] <- 3
+  if (3L %in% unique_types) {
+    col_posix <- check_type(3L)
+    types[col_posix & types == 0] <- 3L
   }
 
-  if ("b" %in% unique_types) {
-    col_log <- check_type("b")
-    types[col_log & types == 0] <- 4
+  if (4L %in% unique_types) {
+    col_log <- check_type(4L)
+    types[col_log & types == 0] <- 4L
   }
 
-  if ("h" %in% unique_types) {
-    col_hms <- check_type("h")
-    types[col_hms & types == 0] <- 5
+  if (5L %in% unique_types) {
+    col_hms <- check_type(5L)
+    types[col_hms & types == 0] <- 5L
   }
 
-  if ("f" %in% unique_types) {
-    col_fml <- check_type("f")
-    types[col_fml & types == 0] <- 6
+  if (6L %in% unique_types) {
+    col_fml <- check_type(6L)
+    types[col_fml & types == 0] <- 6L
   }
 
   types

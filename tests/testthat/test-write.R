@@ -246,7 +246,7 @@ test_that("write_rownames", {
     row.names = 1:2,
     class = "data.frame",
     tt = structure(
-      list(A = c(NA, "s"), B = c("s", "n")),
+      list(A = c(NA, 0L), B = c(0L, 1L)),
       row.names = 1:2,
       class = "data.frame"),
     types = c(A = 0, B = 0)
@@ -259,7 +259,7 @@ test_that("write_rownames", {
     row.names = 1:2,
     class = "data.frame",
     tt = structure(
-      list(A = c("s", "s"), B = c("s", "n")),
+      list(A = c(0L, 0L), B = c(0L, 1L)),
       row.names = 1:2,
       class = "data.frame"),
     types = c(A = 0, B = 0)
