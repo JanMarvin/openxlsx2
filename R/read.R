@@ -425,7 +425,7 @@ wb_to_df <- function(
   if (!is.null(rows)) {
     keep_rows <- as.character(as.integer(rows))
 
-    if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
+    if (!anyNA(sel <- collapse::fmatch(keep_rows, rownames(z)))) {
       z  <- z[sel, , drop = FALSE]
       tt <- tt[sel, , drop = FALSE]
     } else {

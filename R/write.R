@@ -102,7 +102,7 @@ inner_update <- function(
     replacementX  <- replacement[-which(replacement == "c_s")]
   }
 
-  sel <- match(x$r, cc$r)
+  sel <- collapse::fmatch(x$r, cc$r)
 
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
@@ -755,7 +755,7 @@ write_data2 <- function(
     wb$sharedStrings <- stringi::stri_unique(c(wb$sharedStrings, cc_sst))
 
     sel <- grepl("<si>", cc$v)
-    cc$v[sel] <- as.character(match(cc$v[sel], wb$sharedStrings) - 1L)
+    cc$v[sel] <- as.character(collapse::fmatch(cc$v[sel], wb$sharedStrings) - 1L)
 
     text        <- si_to_txt(wb$sharedStrings)
     uniqueCount <- length(wb$sharedStrings)

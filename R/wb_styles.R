@@ -1625,7 +1625,7 @@ get_numfmt_style <- function(wb, cc) {
   )
 
   # 1. Calculate the match indices
-  idx <- match(cc$c_s, styles$style_id)
+  idx <- collapse::fmatch(cc$c_s, styles$style_id)
 
   # 2. Only map values where a match was found
   # This prevents errors if idx contains NAs

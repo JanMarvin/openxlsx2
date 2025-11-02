@@ -943,7 +943,7 @@ wb_dims <- function(..., select = NULL) {
   # if cols is a column name from x
   if (!is.null(x) && is.character(cols_sel) && any(cols_sel %in% names(x))) {
     names(cols_all) <- names(x)
-    cols_sel <- match(cols_sel, names(cols_all))
+    cols_sel <- collapse::fmatch(cols_sel, names(cols_all))
   }
 
   # reduce to required length

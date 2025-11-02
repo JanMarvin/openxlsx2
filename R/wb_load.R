@@ -1100,7 +1100,7 @@ wb_load <- function(
         xml_relship$base <- basename2(xml_relship$Target)
 
         # silently remove empty drawing/vml references created by openxlsx
-        if (any(missing_rels <- is.na(match(xml_relship$base, file_names) & !xml_relship$typ == "hyperlink"))) {
+        if (any(missing_rels <- is.na(collapse::fmatch(xml_relship$base, file_names) & !xml_relship$typ == "hyperlink"))) {
           relship_missing <- which(missing_rels)
           if (debug) warning(
             "relationship missing in input file: ",  paste0(xml_relship$Target[relship_missing], collapse = ", "),
@@ -1607,7 +1607,7 @@ wb_load <- function(
     hasRels <- tmp %in% basename(tableRelsXML)
 
     ## order tableRelsXML
-    tableRelsXML <- tableRelsXML[match(tmp[hasRels], basename(tableRelsXML))]
+    tableRelsXML <- tableRelsXML[collapse::fmatch(tmp[hasRels], basename(tableRelsXML))]
 
     ##
     wb$tables.xml.rels <- character(length = length(tablesXML))
