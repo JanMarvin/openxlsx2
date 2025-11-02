@@ -1048,42 +1048,50 @@ Rcpp::NumericVector as_numeric(Rcpp::Nullable<Rcpp::RObject> input) {
   SEXP obj = input.get();
 
   switch (TYPEOF(obj)) {
+
+  case INTSXP:
   case REALSXP: {
-    // Already numeric
-    return Rcpp::NumericVector(obj);
-  }
-
-  case INTSXP: {
     // Handle Date/POSIXct specially
-    if (Rf_inherits(obj, "Date") || Rf_inherits(obj, "POSIXct")) {
     Rcpp::NumericVector num(obj);
-    num.attr("class") = R_NilValue;
-    num.attr("tzone") = R_NilValue;
-    return num;
-  }
+    if (Rf_inherits(obj, "Date") || Rf_inherits(obj, "POSIXct")) {
+      Rcpp::NumericVector out = Rcpp::clone(num);
+      out.attr("class") = R_NilValue;
+      out.attr("tzone") = R_NilValue;
+      return out;
+    }
 
-    // Integer → double
-    const R_xlen_t n = XLENGTH(obj);
+    // If already REALSXP, just return as-is
+    if (TYPEOF(obj) == REALSXP)
+      return num;
+
+    // Integer → double conversion
+    R_xlen_t n = XLENGTH(obj);
     Rcpp::NumericVector out(n);
     const int* src = INTEGER(obj);
     double* dst = REAL(out);
+
     for (R_xlen_t i = 0; i < n; ++i)
       dst[i] = (src[i] == NA_INTEGER) ? NA_REAL : static_cast<double>(src[i]);
+
     return out;
   }
 
   case LGLSXP: {
-    const R_xlen_t n = XLENGTH(obj);
+    // Logical → numeric (TRUE=1, FALSE=0, NA=NA)
+    R_xlen_t n = XLENGTH(obj);
     Rcpp::NumericVector out(n);
     const int* src = LOGICAL(obj);
     double* dst = REAL(out);
+
     for (R_xlen_t i = 0; i < n; ++i)
       dst[i] = (src[i] == NA_LOGICAL) ? NA_REAL : (src[i] ? 1.0 : 0.0);
+
     return out;
   }
 
   case STRSXP: {
-    const R_xlen_t n = XLENGTH(obj);
+    // Character → numeric via as_double()
+    R_xlen_t n = XLENGTH(obj);
     Rcpp::NumericVector out(n);
     double* dst = REAL(out);
 
@@ -1091,15 +1099,16 @@ Rcpp::NumericVector as_numeric(Rcpp::Nullable<Rcpp::RObject> input) {
       SEXP s = STRING_ELT(obj, i);
       if (s == NA_STRING) {
         dst[i] = NA_REAL;
-        continue;
+      } else {
+        const char* str = CHAR(s);
+        dst[i] = as_double(str);
       }
-      const char* str = CHAR(s);
-      dst[i] = as_double(str);
     }
+
     return out;
   }
 
   default:
-    Rcpp::stop("unhandled R object type");
+    Rcpp::stop("Unhandled R object type in as_numeric()");
   }
 }
