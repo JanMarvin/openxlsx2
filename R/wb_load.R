@@ -158,7 +158,7 @@ wb_load <- function(
   vbaProject        <- grep_xml("vbaProject\\.bin$")
   metadataXML       <- grep_xml("metadata\\.xml$")
 
-  xmlDirs <- unique(dirname(xmlFiles))
+  xmlDirs <- collapse::funique(dirname(xmlFiles))
 
   # Drawings & Media
   drawingsXML <- drawingRelsXML <- vmlDrawingXML <- vmlDrawingRelsXML <- media <- character(0)

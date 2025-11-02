@@ -200,7 +200,7 @@ guess_col_type <- function(tt) {
 
   uu <- lapply(tt, unique)
 
-  unique_types <- unique(unlist(uu))
+  unique_types <- collapse::funique(unlist(uu))
   unique_types[is.na(unique_types)] <- 1L
 
   check_col_type <- function(u, type_char) {

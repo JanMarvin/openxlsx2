@@ -170,7 +170,7 @@ headerFooterSub <- function(x) {
 
 
 write_comment_xml <- function(comment_list, file_name) {
-  authors <- unique(sapply(comment_list, "[[", "author"))
+  authors <- collapse::funique(sapply(comment_list, "[[", "author"))
   xml <- '<comments xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">'
   xml <- c(xml, paste0("<authors>", paste(sprintf("<author>%s</author>", authors), collapse = ""), "</authors><commentList>"))
 
@@ -212,7 +212,7 @@ write_comment_xml <- function(comment_list, file_name) {
 
 pxml <- function(x) {
   ## TODO does this break anything? Why is unique called? lengths are off, if non unique values are found.
-  # paste(unique(unlist(x)), collapse = "")
+  # paste(collapse::funique(unlist(x)), collapse = "")
   paste(unlist(x), collapse = "")
 }
 
@@ -1174,7 +1174,7 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   sheet_id <- wb_old$clone()$.__enclos_env__$private$get_sheet_index(old)
   cc <- wb_old$worksheets[[sheet_id]]$sheet_data$cc
   sst_ids  <- as.integer(cc$v[cc$c_t == "s"]) + 1
-  sst_uni  <- sort(unique(sst_ids))
+  sst_uni  <- sort(collapse::funique(sst_ids))
   sst_old <- wb_old$sharedStrings[sst_uni]
 
   old_len <- length(as.character(wb_new$sharedStrings))

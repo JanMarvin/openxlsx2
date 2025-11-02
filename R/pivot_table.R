@@ -250,7 +250,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
     item <- sapply(
       seq_along(vals),
       # # TODO this sets the order of the pivot elements
-      # c(seq_along(unique(data[[x]])) - 1L, "default"),
+      # c(seq_along(collapse::funique(data[[x]])) - 1L, "default"),
       function(val) {
         if (vals[val] == "default")
           xml_node_create("item", xml_attributes = c(t = vals[val]))
@@ -272,7 +272,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
 row_col_items <- function(data, z, var) {
   var <- abs(var)
   item <- sapply(
-    c(seq_along(unique(data[, var])) - 1L, "grand"),
+    c(seq_along(collapse::funique(data[, var])) - 1L, "grand"),
     function(val) {
       if (val == "0") {
         xml_node_create("i", xml_children = xml_node_create("x"))

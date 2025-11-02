@@ -1308,7 +1308,7 @@ wbWorkbook <- R6::R6Class(
             if (all(nchar(self$drawings_rels[[new_drawing_rels]]))) {
 
               drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_rels]], "Relationship"))
-              fe <- unique(file_ext2(drels$Target))
+              fe <- collapse::funique(file_ext2(drels$Target))
 
               cte <- sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe)
               sel <- which(!cte %in% self$Content_Types)
@@ -3615,7 +3615,7 @@ wbWorkbook <- R6::R6Class(
       ## write [Content_type]
       write_file(
         head = '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">',
-        body = pxml(unique(ct)),
+        body = pxml(collapse::funique(ct)),
         tail = "</Types>",
         fl = file.path(tmpDir, "[Content_Types].xml")
       )
@@ -4767,7 +4767,7 @@ wbWorkbook <- R6::R6Class(
           if (is.list(x)) lapply(x, col2int)
           else col2int(x)
         })
-        unis <- unique(unlist(cols))
+        unis <- collapse::funique(unlist(cols))
         levels <- vector("character", length(unis))
 
         lvls <- names(cols)
@@ -5053,7 +5053,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.list(rows)) {
-        unis <- unique(unlist(rows))
+        unis <- collapse::funique(unlist(rows))
         levels <- vector("character", length(unis))
 
         lvls <- names(rows)
@@ -8640,7 +8640,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
 
@@ -8715,7 +8715,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
 
@@ -8821,7 +8821,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       if (!is.null(numfmt) && inherits(numfmt, "character")) {
 
@@ -8927,7 +8927,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -9673,7 +9673,7 @@ wbWorkbook <- R6::R6Class(
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
         self$Content_Types <-
-          unique(c(
+          collapse::funique(c(
             sprintf(
               '<Default Extension="%s" ContentType="image/%s"/>',
               imageType,

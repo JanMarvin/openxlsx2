@@ -513,7 +513,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
         stringsAsFactors = FALSE
       )
 
-      self[[tab_nm]] <- unique(rbind(self[[tab_nm]], new_entry))
+      self[[tab_nm]] <- collapse::funique(rbind(self[[tab_nm]], new_entry))
       invisible(self)
     },
 
