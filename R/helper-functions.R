@@ -170,7 +170,7 @@ headerFooterSub <- function(x) {
 
 
 write_comment_xml <- function(comment_list, file_name) {
-  authors <- unique(sapply(comment_list, "[[", "author"))
+  authors <- collapse::funique(sapply(comment_list, "[[", "author"))
   xml <- '<comments xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">'
   xml <- c(xml, paste0("<authors>", paste(sprintf("<author>%s</author>", authors), collapse = ""), "</authors><commentList>"))
 

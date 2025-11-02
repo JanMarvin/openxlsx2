@@ -1432,7 +1432,7 @@ calc_distance <- function(x) {
 # safer rbind
 rbind2 <- function(df1, df2) {
   if (is.null(df1)) return(df2)
-  nms <- unique(c(names(df1), names(df2)))
+  nms <- collapse::funique(c(names(df1), names(df2)))
   df1[setdiff(nms, names(df1))] <- ""
   df2[setdiff(nms, names(df2))] <- ""
   rbind(df1[nms], df2[nms])

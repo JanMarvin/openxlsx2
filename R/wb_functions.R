@@ -200,7 +200,7 @@ guess_col_type <- function(tt) {
 
   # Identify the unique types present in the data frame
   uu <- lapply(tt, unique)
-  unique_types <- unique(unlist(uu))
+  unique_types <- collapse::funique(unlist(uu))
   unique_types[is.na(unique_types)] <- 1L
 
   # Function to check column type
