@@ -80,8 +80,8 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
   }
 
   if (any(grep("-|\\+", dims)) && !is.null(cc)) {
-    rows <- range(row2int(cc$row_r))
-    cols <- int2col(range(col2int(cc$c_r)))
+    rows <- collapse::frange(row2int(cc$row_r))
+    cols <- int2col(collapse::frange(col2int(cc$c_r)))
 
     dims <- vapply(dims, function(x) expand_dims(x, cols, rows), "")
   }
@@ -120,10 +120,10 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
       if (!is.null(full_cols)) full_cols <- seq_along(cols_out) - 1L
     } else {
       # somehow we have to make sure that all columns are covered
-      col_ints <- range(cols_out)
+      col_ints <- collapse::frange(cols_out)
       cols_out <- seq.int(from = col_ints[1], to = col_ints[2])
 
-      row_ints <- range(rows_out)
+      row_ints <- collapse::frange(rows_out)
       rows_out <- seq.int(from = row_ints[1], to = row_ints[2])
     }
   }
