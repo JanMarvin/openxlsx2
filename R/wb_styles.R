@@ -791,7 +791,7 @@ set_cellstyle <- function(
 #' @export
 styles_on_sheet <- function(wb, sheet) {
   sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
-  z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
+  z <- collapse::funique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
   as.numeric(z)
 }
 

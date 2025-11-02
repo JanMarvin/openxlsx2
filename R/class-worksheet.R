@@ -495,7 +495,7 @@ wbWorksheet <- R6::R6Class(
       )
 
       # remove duplicates pre merge
-      col_df <- unique(col_df)
+      col_df <- collapse::funique(col_df)
 
       # merge with string variable, drop empty string and clean up
       col_df <- merge(out, col_df, by = "string", all.x = TRUE)

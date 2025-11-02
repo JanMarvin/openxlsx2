@@ -1302,7 +1302,7 @@ wbWorkbook <- R6::R6Class(
             if (all(nchar(self$drawings_rels[[new_drawing_rels]]))) {
 
               drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_rels]], "Relationship"))
-              fe <- unique(file_ext2(drels$Target))
+              fe <- collapse::funique(file_ext2(drels$Target))
 
               cte <- sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe)
               sel <- which(!cte %in% self$Content_Types)
@@ -4710,7 +4710,7 @@ wbWorkbook <- R6::R6Class(
           if (is.list(x)) lapply(x, col2int)
           else col2int(x)
         })
-        unis <- unique(unlist(cols))
+        unis <- collapse::funique(unlist(cols))
         levels <- vector("character", length(unis))
 
         lvls <- names(cols)
@@ -4981,7 +4981,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.list(rows)) {
-        unis <- unique(unlist(rows))
+        unis <- collapse::funique(unlist(rows))
         levels <- vector("character", length(unis))
 
         lvls <- names(rows)
@@ -8360,7 +8360,7 @@ wbWorkbook <- R6::R6Class(
       ## by allowing a slightly different initializiation. diagonal is the style, up/down
       ## is an XML bool and color is the color.
       if (!is.null(diagonal_up) && !is.null(diagonal_down)) {
-        diagonal <- unique(c(diagonal_up, diagonal_down))
+        diagonal <- collapse::funique(c(diagonal_up, diagonal_down))
         if (length(diagonal) > 1) {
           stop("there can be only a single diagonal style per cell", call. = FALSE)
         }
@@ -8856,7 +8856,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
 
@@ -8926,7 +8926,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
 
@@ -9023,7 +9023,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       if (inherits(numfmt, "character")) {
 
@@ -9125,7 +9125,7 @@ wbWorkbook <- R6::R6Class(
 
       sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -9867,7 +9867,7 @@ wbWorkbook <- R6::R6Class(
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
         self$Content_Types <-
-          unique(c(
+          collapse::funique(c(
             sprintf(
               '<Default Extension="%s" ContentType="image/%s"/>',
               imageType,

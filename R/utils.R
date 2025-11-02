@@ -215,8 +215,8 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
       rows <- as.character(rows_int)
     }
 
-    cols_out <- unique(c(cols_out, cols))
-    rows_out <- unique(c(rows_out, rows))
+    cols_out <- collapse::funique(c(cols_out, cols))
+    rows_out <- collapse::funique(c(rows_out, rows))
   }
 
   list(col = cols_out, row = rows_out)
@@ -1415,7 +1415,7 @@ calc_distance <- function(x) {
 # safer rbind
 rbind2 <- function(df1, df2) {
   if (is.null(df1)) return(df2)
-  nms <- unique(c(names(df1), names(df2)))
+  nms <- collapse::funique(c(names(df1), names(df2)))
   df1[setdiff(nms, names(df1))] <- ""
   df2[setdiff(nms, names(df2))] <- ""
   rbind(df1[nms], df2[nms])
