@@ -856,7 +856,7 @@ wbWorksheet <- R6::R6Class(
         iE_df <- data.frame(sqref = dims, stringsAsFactors = FALSE)
       }
 
-      sel <- match(dims, iE_df$sqref)
+      sel <- collapse::fmatch(dims, iE_df$sqref)
 
       if (calculatedColumn) {
         if (is.null(iE_df[["calculatedColumn"]])) iE_df$calculatedColumn <- ""

@@ -765,7 +765,7 @@ to_string <- function(x) {
   used_label <- logical(length(x))
 
   if (has_labels) {
-    idx <- match(x, lbls)
+    idx <- collapse::fmatch(x, lbls)
     has_label <- !is.na(idx)
     used_label <- has_label
     x_chr[has_label] <- names(lbls)[idx[has_label]]
@@ -1009,7 +1009,7 @@ get_cellstyle <- function(wb, sheet = current_sheet(), dims) {
   st_ids <- NULL
   if (missing(dims)) {
     st_ids <- as.character(styles_on_sheet(wb = wb, sheet = sheet))
-    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_ids <- collapse::fmatch(st_ids, wb$styles_mgr$xf$id)
     xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
   } else {
     xf_xml <- get_cell_styles(wb = wb, sheet = sheet, cell = dims)
@@ -1024,7 +1024,7 @@ get_colstyle <- function(wb, sheet = current_sheet()) {
   if (length(wb$worksheets[[sheet]]$cols_attr)) {
     cols <- wb$worksheets[[sheet]]$unfold_cols()
     st_ids <- cols$style[cols$style != ""]
-    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_ids <- collapse::fmatch(st_ids, wb$styles_mgr$xf$id)
     xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
   } else {
     xf_xml <- NA_character_
@@ -1039,7 +1039,7 @@ get_rowstyle <- function(wb, sheet = current_sheet()) {
   if (!is.null(wb$worksheets[[sheet]]$sheet_data$row_attr)) {
     rows <- wb$worksheets[[sheet]]$sheet_data$row_attr
     st_ids <- rows$s[rows$s != ""]
-    xf_ids <- match(st_ids, wb$styles_mgr$xf$id)
+    xf_ids <- collapse::fmatch(st_ids, wb$styles_mgr$xf$id)
     xf_xml <- wb$styles_mgr$styles$cellXfs[xf_ids]
   } else {
     xf_xml <- NA_character_
@@ -1122,7 +1122,7 @@ set_cellstyles <- function(wb, style) {
     names(st_ids) <- names(style)
     out <- attr(style, "st_ids")
 
-    want <- match(out, names(st_ids))
+    want <- collapse::fmatch(out, names(st_ids))
     st_ids <- st_ids[want]
   }
 
@@ -1168,7 +1168,7 @@ clone_shared_strings <- function(wb_old, old, wb_new, new) {
   cc <- wb_new$worksheets[[sheet_id]]$sheet_data$cc
   # order ids and add new offset
   ids <- as.integer(cc$v[cc$c_t == "s"]) + 1L
-  new_ids <- match(ids, sst_uni) + old_len - 1L
+  new_ids <- collapse::fmatch(ids, sst_uni) + old_len - 1L
   new_ids <- as.character(new_ids)
   new_ids[is.na(new_ids)] <- ""
   cc$v[cc$c_t == "s"] <- new_ids

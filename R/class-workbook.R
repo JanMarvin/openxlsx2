@@ -450,7 +450,7 @@ wbWorkbook <- R6::R6Class(
         themes <- readRDS(thm_rds)
 
         if (is.character(theme)) {
-          sel <- match(theme, names(themes))
+          sel <- collapse::fmatch(theme, names(themes))
           err <- is.na(sel)
         } else {
           sel <- theme
@@ -4197,7 +4197,7 @@ wbWorkbook <- R6::R6Class(
           old <- from_dims_df[has_hl]
           new <- to_dims_df_f[has_hl]
 
-          for (hls in match(hyperlink_in_wb, old)) {
+          for (hls in collapse::fmatch(hyperlink_in_wb, old)) {
 
             # prepare the updated link
             need_clone <- hyperlink_in_wb[hls]
@@ -4369,7 +4369,7 @@ wbWorkbook <- R6::R6Class(
         colors <- readRDS(clr_rds)
 
         if (is.character(theme)) {
-          sel <- match(theme, names(colors))
+          sel <- collapse::fmatch(theme, names(colors))
           err <- is.na(sel)
         } else {
           sel <- theme
@@ -4650,7 +4650,7 @@ wbWorkbook <- R6::R6Class(
       private$do_cell_init(sheet, dims)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
-      sel <- match(as.character(as.integer(rows)), row_attr$r)
+      sel <- collapse::fmatch(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
 
       if (!is.null(heights)) {
@@ -4688,7 +4688,7 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      sel <- match(as.character(as.integer(rows)), row_attr$r)
+      sel <- collapse::fmatch(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
       row_attr[sel, "ht"] <- ""
       row_attr[sel, "customHeight"] <- ""
@@ -8585,7 +8585,7 @@ wbWorkbook <- R6::R6Class(
       dims <- unlist(did, use.names = FALSE)
 
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- collapse::funique(cc[["c_s"]])
 
@@ -8660,7 +8660,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- collapse::funique(cc[["c_s"]])
 
@@ -8766,7 +8766,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- collapse::funique(cc[["c_s"]])
 
@@ -8872,7 +8872,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      sel <- collapse::fmatch(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- collapse::funique(cc[["c_s"]])
 
@@ -9551,8 +9551,8 @@ wbWorkbook <- R6::R6Class(
 
       if (is.character(sheet)) {
         sheet <- tolower(sheet)
-        m1 <- match(sheet, tolower(self$sheet_names))
-        m2 <- match(sheet, tolower(private$original_sheet_names))
+        m1 <- collapse::fmatch(sheet, tolower(self$sheet_names))
+        m2 <- collapse::fmatch(sheet, tolower(private$original_sheet_names))
 
         bad <- is.na(m1) & is.na(m2)
 
