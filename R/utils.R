@@ -29,7 +29,7 @@ paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
 
 # opposite of %in%
 `%out%` <- function(x, table) {
-  match(x, table, nomatch = 0L) == 0L
+  collapse::fmatch(x, table, nomatch = 0L) == 0L
 }
 
 #' helper function to create temporary directory for testing purpose
@@ -919,7 +919,7 @@ wb_dims <- function(..., select = NULL) {
   # if cols is a column name from x
   if (!is.null(x) && is.character(cols_sel) && any(cols_sel %in% names(x))) {
     names(cols_all) <- names(x)
-    cols_sel <- match(cols_sel, names(cols_all))
+    cols_sel <- collapse::fmatch(cols_sel, names(cols_all))
     if (length(cols_sel) == 0) {
       warning("selected column not found in `x`.")
       cols_sel <- cols_all
