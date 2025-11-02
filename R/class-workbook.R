@@ -5963,11 +5963,11 @@ wbWorkbook <- R6::R6Class(
       }
 
       cols <- tapply(cols, cumsum(c(1, diff(cols) != 1)), function(g) {
-        range(g)
+        collapse::frange(g)
       })
 
       rows <- tapply(rows, cumsum(c(1, diff(rows) != 1)), function(g) {
-        range(g)
+        collapse::frange(g)
       })
 
       orig_rule <- rule
@@ -6172,7 +6172,7 @@ wbWorkbook <- R6::R6Class(
             },
 
             between = {
-              rule <- range(rule)
+              rule <- collapse::frange(rule)
             },
 
             topN = {
@@ -7787,7 +7787,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         cols <- int2col(range(print_title_cols))
-        rows <- range(print_title_rows)
+        rows <- collapse::frange(print_title_rows)
 
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
