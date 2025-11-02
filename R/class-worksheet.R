@@ -534,8 +534,8 @@ wbWorksheet <- R6::R6Class(
       for (dim in dims) {
 
         ddims <- dims_to_rowcol(dim)
-        cols <- range(col2int(ddims[["col"]]))
-        rows <- range(as.integer(ddims[["row"]]))
+        cols <- collapse::frange(col2int(ddims[["col"]]))
+        rows <- collapse::frange(as.integer(ddims[["row"]]))
 
         sqref <- paste0(int2col(cols), rows)
         sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
@@ -598,8 +598,8 @@ wbWorksheet <- R6::R6Class(
       for (dim in dims) {
 
         ddims <- dims_to_rowcol(dim)
-        cols <- range(col2int(ddims[["col"]]))
-        rows <- range(as.integer(ddims[["row"]]))
+        cols <- collapse::frange(col2int(ddims[["col"]]))
+        rows <- collapse::frange(as.integer(ddims[["row"]]))
 
         sqref <- paste0(int2col(cols), rows)
         sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
