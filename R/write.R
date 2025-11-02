@@ -109,7 +109,7 @@ inner_update <- function(
     replacementX  <- replacement[-which(replacement == "c_s")]
   }
 
-  sel <- match(x$r, cc$r)
+  sel <- collapse::fmatch(x$r, cc$r)
 
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
