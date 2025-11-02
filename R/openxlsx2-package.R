@@ -10,6 +10,7 @@
 #'
 #' @import Rcpp
 #' @import R6
+#' @importFrom collapse fmatch frange funique
 #' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg palette png rgb tiff
 #' @importFrom stringi stri_encode stri_extract_all_regex stri_extract_first_regex
 #'   stri_join stri_match_first_regex stri_order stri_opts_collator stri_pad_left
