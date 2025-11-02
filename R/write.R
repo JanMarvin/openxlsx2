@@ -92,7 +92,7 @@ inner_update <- function(
   }
 
   # prepare required columns
-  all_cols <- unique(names(x), names(cc))
+  all_cols <- unique(c(names(x), names(cc)))
 
   if (any("c_cm" %in% all_cols)) has_cm <- "c_cm" else has_cm <- NULL
   if (any("c_ph" %in% all_cols)) has_ph <- "c_ph" else has_ph <- NULL
