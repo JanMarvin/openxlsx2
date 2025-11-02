@@ -21,6 +21,7 @@ Depends:
 Imports:
     R6,
     Rcpp,
+    collapse,
     grDevices,
     stringi,
     utils
