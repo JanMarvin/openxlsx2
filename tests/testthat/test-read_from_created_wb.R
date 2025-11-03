@@ -388,3 +388,38 @@ test_that("factors are treated as character", {
   expect_equal(exp, got)
 
 })
+
+test_that("wb_to_df respects the row order", {
+
+  ## select rows 1 and 2 while the column names are in row 2
+  got <- wb_workbook() |>
+    wb_add_worksheet() |>
+    wb_add_data(
+      x = letters,
+      dims = "A2:Z2",
+      col_names = FALSE
+    ) |>
+    wb_add_data(
+      x = 1:26,
+      dims = "A1:Z1",
+      col_names = FALSE
+    ) |>
+    wb_to_df(
+      rows = 2:1
+    )
+
+  exp <- data.frame(t(1:26))
+  names(exp) <- letters
+
+  expect_equal(exp, got)
+
+  ## select arbitrary row order of input matrix
+  mm <- as.data.frame(matrix(1:6, nrow = 6, ncol = 6))
+  names(mm) <- LETTERS[1:6]
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mm, col_names = FALSE)
+
+  exp <- mm[c(2, 3, 1, 5, 6, 4), ]
+  got <- wb$to_df(rows = c(2, 3, 1, 5, 6, 4), col_names = FALSE)
+
+  expect_equal(exp, got)
+})

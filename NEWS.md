@@ -5,6 +5,10 @@
 * It is now possible to save a newly created workbook as `.xlsm` and it will open in spreadsheet software. [1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
 * Add missing `interactive` argument to `wb_open()`.
 
+## Internal Changes
+
+* The `tt` data frame that is created with `wb_to_df()` to support column type guessing is now using integer columns instead of characters. This should reduce the memory footprint of the function. [1459](https://github.com/JanMarvin/openxlsx2/pull/1459)
+
 ## Breaking changes
 
 * Wrapper functions were never intended to alter workbooks. This is now tested and various functions that were unintentionally altering workbooks were corrected. [1454](https://github.com/JanMarvin/openxlsx2/pull/1454)
@@ -22,7 +26,7 @@ wb <- wb_add_fill(wb, dims = wb_dims(x = mtcars))
 ```
 
 * Previously deprecated functions `write_data()`, `write_datatable()`, `write_formula()` are now defunct.
-
+* If a `row` vector is passed to `wb_to_df()`, this will set the order of the output. The behavior is now matching the one of `cols`. [1460](https://github.com/JanMarvin/openxlsx2/pull/1460)
 
 ***************************************************************************
 
