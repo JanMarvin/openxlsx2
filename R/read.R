@@ -357,8 +357,9 @@ wb_to_df <- function(
   if (!is.null(start_row)) {
     keep_rows <- as.character(seq(start_row, maxRow))
     if (start_row <= maxRow) {
-      z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
-      tt <- tt[rownames(tt) %in% keep_rows, , drop = FALSE]
+      sel <- rownames(z) %in% keep_rows
+      z  <- z[sel, , drop = FALSE]
+      tt <- tt[sel, , drop = FALSE]
     } else {
       keep_rows <- as.character(start_row)
       z  <- z[keep_rows, , drop = FALSE]
@@ -372,23 +373,24 @@ wb_to_df <- function(
   if (!is.null(rows)) {
     keep_rows <- as.character(as.integer(rows))
 
-    if (all(keep_rows %in% rownames(z))) {
-      z  <- z[rownames(z) %in% keep_rows, , drop = FALSE]
-      tt <- tt[rownames(tt) %in% keep_rows, , drop = FALSE]
+    if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
+      z  <- z[sel, , drop = FALSE]
+      tt <- tt[sel, , drop = FALSE]
     } else {
       z  <- z[keep_rows, , drop = FALSE]
       tt <- tt[keep_rows, , drop = FALSE]
 
-      rownames(z)  <- as.integer(keep_rows)
-      rownames(tt) <- as.integer(keep_rows)
+      ints <- as.integer(keep_rows)
+      rownames(z)  <- ints
+      rownames(tt) <- ints
     }
   }
 
   if (!is.null(start_col)) {
     keep_cols <- int2col(seq(col2int(start_col), maxCol))
 
-    if (!all(keep_cols %in% colnames(z))) {
-      keep_col <- keep_cols[!keep_cols %in% colnames(z)]
+    if (!all(sel <- keep_cols %in% colnames(z))) {
+      keep_col <- keep_cols[!sel]
 
       z[keep_col]  <- NA_character_
       tt[keep_col] <- NA_integer_
@@ -397,8 +399,9 @@ wb_to_df <- function(
       tt <- tt[keep_cols]
     }
 
-    z  <- z[, match(keep_cols, colnames(z)), drop = FALSE]
-    tt <- tt[, match(keep_cols, colnames(tt)), drop = FALSE]
+    sel <- match(keep_cols, colnames(z))
+    z  <- z[, sel, drop = FALSE]
+    tt <- tt[, sel, drop = FALSE]
   }
 
   if (!is.null(cols)) {
@@ -411,8 +414,9 @@ wb_to_df <- function(
       tt[keep_col] <- NA_integer_
     }
 
-    z  <- z[, match(keep_cols, colnames(z)), drop = FALSE]
-    tt <- tt[, match(keep_cols, colnames(tt)), drop = FALSE]
+    sel <- match(keep_cols, colnames(z))
+    z  <- z[, sel, drop = FALSE]
+    tt <- tt[, sel, drop = FALSE]
   }
 
   keep_rows <- keep_rows[keep_rows %in% rnams]
