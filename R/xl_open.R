@@ -1,3 +1,57 @@
+chooseExcelApp <- function() {
+
+  # nocov start
+  m <- c(
+    `Libreoffice/OpenOffice` = "soffice",
+    `Calligra Sheets` = "calligrasheets",
+    `Gnumeric` = "gnumeric",
+    `ONLYOFFICE` = "onlyoffice-desktopeditors"
+  )
+
+  prog <- Sys.which(m)
+  names(prog) <- names(m)
+  availProg <- prog["" != prog]
+  nApps <- length(availProg)
+
+  if (0 == nApps) {
+    stop(
+      "No applications (detected) available.\n",
+      "Set options('openxlsx2.excelApp'), instead."
+    )
+  }
+
+  ## TODO previously openxlsx/openxlsx2 were messaging this. Still needed?
+  # message("Only ", names(availProg), " found")
+  # unnprog <- unname(availProg)
+  # message(sprintf("Setting options(openxlsx2.excelApp = '%s')", unnprog))
+  if (1 == nApps) {
+    unnprog <- unname(availProg)
+    options(openxlsx2.excelApp = unnprog)
+    return(invisible(unnprog))
+  }
+
+  if (1 < nApps) {
+    if (!interactive()) {
+      stop(
+        "Cannot choose a spreadsheet file opener non-interactively.\n",
+        "Set options('openxlsx2.excelApp'), instead."
+      )
+    }
+    res <- menu(names(availProg), title = "Spreadsheet software available")
+    unnprog <- unname(availProg[res])
+    if (res > 0L) {
+      message(sprintf("Setting options(openxlsx2.excelApp = '%s')", unnprog))
+      options(openxlsx2.excelApp = unnprog)
+    }
+    return(invisible(unname(unnprog)))
+  }
+  # nocov end
+
+  stop("Unexpected error in openxlsx2:::chooseExcelApp()") # nocov
+
+}
+
+
 #' Open an xlsx file or a `wbWorkbook` object
 #'
 #' @description
@@ -86,62 +140,12 @@ xl_open.default <- function(x, interactive = NA, flush = FALSE) {
     },
     Darwin = {
       # system2('/Applications/LibreOffice.app/Contents/MacOS/soffice', shQuote(file), wait = FALSE)
-      # system2('open', paste0("-a numbers", shQuote(file)))
-      system2('open', shQuote(file))
+      if (!is.null(getOption("openxlsx2.excelApp")))
+        system2('open', paste0("-a \"", getOption("openxlsx2.excelApp"), "\" ", shQuote(file)))
+      else
+        system2('open', shQuote(file))
     },
     stop("Operating system not handled: ", toString(userSystem))
   )
   # nocov end
-}
-
-
-chooseExcelApp <- function() {
-
-  # nocov start
-  m <- c(
-    `Libreoffice/OpenOffice` = "soffice",
-    `Calligra Sheets` = "calligrasheets",
-    `Gnumeric` = "gnumeric",
-    `ONLYOFFICE` = "onlyoffice-desktopeditors"
-  )
-
-  prog <- Sys.which(m)
-  names(prog) <- names(m)
-  availProg <- prog["" != prog]
-  nApps <- length(availProg)
-
-  if (0 == nApps) {
-    stop(
-      "No applications (detected) available.\n",
-      "Set options('openxlsx.excelApp'), instead."
-    )
-  }
-
-  if (1 == nApps) {
-    message("Only ", names(availProg), " found")
-    unnprog <- unname(availProg)
-    message(sprintf("Setting options(openxlsx2.excelApp = '%s')", unnprog))
-    options(openxlsx2.excelApp = unnprog)
-    return(invisible(unnprog))
-  }
-
-  if (1 < nApps) {
-    if (!interactive()) {
-      stop(
-        "Cannot choose a spreadsheet file opener non-interactively.\n",
-        "Set options('openxlsx.excelApp'), instead."
-      )
-    }
-    res <- menu(names(availProg), title = "Spreadsheet software available")
-    unnprog <- unname(availProg[res])
-    if (res > 0L) {
-      message(sprintf("Setting options(openxlsx2.excelApp = '%s')", unnprog))
-      options(openxlsx2.excelApp = unnprog)
-    }
-    return(invisible(unname(unnprog)))
-  }
-  # nocov end
-
-  stop("Unexpected error in openxlsx2::chooseExcelApp()") # nocov
-
 }
