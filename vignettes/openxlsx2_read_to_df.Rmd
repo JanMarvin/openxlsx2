@@ -56,7 +56,7 @@ wb_to_df(file, detect_dates = FALSE)
 ### `show_formula` - show formulas instead of results
 Sometimes things might feel off. This can be because the openxml files are not updating formula results in the sheets unless they are opened in software that provides such functionality as certain tabular calculation software. Therefore the user might be interested in the underlying functions to see what is going on in the sheet. Using `show_formula` this is possible
 ```{r}
-# return the underlying Excel formula instead of their values
+# return the underlying spreadsheet formula instead of their values
 wb_to_df(file, show_formula = TRUE)
 ```
 
@@ -67,7 +67,7 @@ Sometimes the entire worksheet contains to much data, in such case we provide fu
 wb_to_df(file, dims = "A2:C5", col_names = FALSE)
 ```
 
-Alternatively, if you don't know the Excel sheet's address, you can use `wb_dims()` to specify the dimension. See below or in`?wb_dims` for more details.
+Alternatively, if you don't know the spreadsheet's A1 notation, you can use `wb_dims()` to specify the dimension. See below or in`?wb_dims` for more details.
 
 ```{r}
 # read dimension without column names with `wb_dims()`

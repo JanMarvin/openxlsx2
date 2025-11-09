@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_get_tables}
 \alias{wb_get_tables}
-\title{List Excel tables in a worksheet}
+\title{List tables in a worksheet}
 \usage{
 wb_get_tables(wb, sheet = current_sheet())
 }
@@ -15,7 +15,7 @@ wb_get_tables(wb, sheet = current_sheet())
 A character vector of table names on the specified sheet
 }
 \description{
-List Excel tables in a worksheet
+List tables in a worksheet
 }
 \examples{
 

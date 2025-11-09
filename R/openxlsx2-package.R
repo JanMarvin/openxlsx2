@@ -91,8 +91,8 @@
 #' significant digits for its internal use and display. Conversely, when
 #' reading numeric data from an xlsx/xlsm file, `openxlsx2` reads the stored
 #' double-precision value. However, potential discrepancies can still arise.
-#' If the number was originally created or calculated within Excel and
-#' exceeded 15 digits, Excel may have already rounded it before saving.
+#' If the number was originally created or calculated within spreadsheet
+#' software and exceeded 15 digits, it may have already rounded before saving.
 #' Additionally, subtle rounding differences can sometimes occur during the
 #' XML-to-numeric conversion when reading the file into R. Expect minor
 #' variations, especially in the least significant digits, and avoid direct
@@ -184,7 +184,7 @@
 #' * `options("openxlsx2.borderStyle" = "thin")`
 #' * `options("openxlsx2.dateFormat" = "mm/dd/yyyy")`
 #' * `options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")`
-#' * `options("openxlsx2.maxWidth" = NULL)` (Maximum width allowed in Excel is 250)
+#' * `options("openxlsx2.maxWidth" = NULL)` (Maximum width allowed in OOXML is 250)
 #' * `options("openxlsx2.minWidth" = NULL)`
 #' * `options("openxlsx2.numFmt" = NULL)`
 #' * `options("openxlsx2.paperSize" = 9)` corresponds to a A4 paper size

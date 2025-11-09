@@ -84,8 +84,8 @@ written by \code{openxlsx2}), it will typically round that number to 15
 significant digits for its internal use and display. Conversely, when
 reading numeric data from an xlsx/xlsm file, \code{openxlsx2} reads the stored
 double-precision value. However, potential discrepancies can still arise.
-If the number was originally created or calculated within Excel and
-exceeded 15 digits, Excel may have already rounded it before saving.
+If the number was originally created or calculated within spreadsheet
+software and exceeded 15 digits, it may have already rounded before saving.
 Additionally, subtle rounding differences can sometimes occur during the
 XML-to-numeric conversion when reading the file into R. Expect minor
 variations, especially in the least significant digits, and avoid direct

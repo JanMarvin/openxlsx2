@@ -310,7 +310,7 @@ Creates a new \code{wbWorkbook} object
 
 \item{\code{datetime_created}}{The datetime (as \code{POSIXt}) the workbook is
 created.  Defaults to the current \code{Sys.time()} when the workbook object
-is created, not when the Excel files are saved.}
+is created, not when the \code{\link[=wb_workbook]{wb_workbook()}} files are saved.}
 
 \item{\code{datetime_modified}}{The datetime (as \code{POSIXt}) that should be recorded
 as last modification date. Defaults to the creation date.}
@@ -1040,9 +1040,9 @@ to_df
 
 \item{\code{skip_hidden_cols}}{If TRUE, hidden columns are skipped.}
 
-\item{\code{rows}}{A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.}
+\item{\code{rows}}{A numeric vector specifying which rows in the spreadsheet to read. If NULL, all rows are read.}
 
-\item{\code{cols}}{A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.}
+\item{\code{cols}}{A numeric vector specifying which columns in the spreadsheet to read. If NULL, all columns are read.}
 
 \item{\code{detect_dates}}{If TRUE, attempt to recognize dates and perform conversion.}
 
@@ -1054,7 +1054,7 @@ to_df
 
 \item{\code{dims}}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
-\item{\code{show_formula}}{If TRUE, the underlying Excel formulas are shown.}
+\item{\code{show_formula}}{If TRUE, the underlying spreadsheet formulas are shown.}
 
 \item{\code{convert}}{If TRUE, a conversion to dates and numerics is attempted.}
 
@@ -1132,7 +1132,7 @@ The \code{wbWorkbook} object invisibly
 \if{html}{\out{<a id="method-wbWorkbook-open"></a>}}
 \if{latex}{\out{\hypertarget{method-wbWorkbook-open}{}}}
 \subsection{Method \code{open()}}{
-open wbWorkbook in Excel.
+open wbWorkbook in spreadsheet software
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$open(interactive = NA, flush = FALSE)}\if{html}{\out{</div>}}
 }

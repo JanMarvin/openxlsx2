@@ -13,7 +13,7 @@ Typically, this is done in the \code{.Rprofile} startup file
 \item \code{options("openxlsx2.borderStyle" = "thin")}
 \item \code{options("openxlsx2.dateFormat" = "mm/dd/yyyy")}
 \item \code{options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")}
-\item \code{options("openxlsx2.maxWidth" = NULL)} (Maximum width allowed in Excel is 250)
+\item \code{options("openxlsx2.maxWidth" = NULL)} (Maximum width allowed in OOXML is 250)
 \item \code{options("openxlsx2.minWidth" = NULL)}
 \item \code{options("openxlsx2.numFmt" = NULL)}
 \item \code{options("openxlsx2.paperSize" = 9)} corresponds to a A4 paper size

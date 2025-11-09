@@ -2,7 +2,7 @@
 % Please edit documentation in R/converters.R
 \name{col2int}
 \alias{col2int}
-\title{Convert Excel column to integer}
+\title{Convert spreadsheet column to integer}
 \usage{
 col2int(x)
 }
@@ -13,7 +13,8 @@ col2int(x)
 An integer column label (or \code{NULL} if \code{x} is \code{NULL})
 }
 \description{
-Converts an Excel column label to an integer.
+Converts a spreadsheet column in \code{A1} notation to an integer.
+\code{"A"} is \code{1}, \code{"B"} is \code{2}, ..., \code{"Z"} is \code{26} and \code{"AA"} is \code{27}.
 }
 \examples{
 col2int(LETTERS)

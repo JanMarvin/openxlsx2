@@ -2,7 +2,7 @@
 % Please edit documentation in R/converters.R
 \name{int2col}
 \alias{int2col}
-\title{Convert integer to Excel column}
+\title{Convert integer to spreadsheet column}
 \usage{
 int2col(x)
 }
@@ -10,7 +10,8 @@ int2col(x)
 \item{x}{A numeric vector.}
 }
 \description{
-Converts an integer to an Excel column label.
+Converts an integer to a spreadsheet column in \code{A1} notation.
+\code{1} is \code{"A"}, \code{2} is \code{"B"}, ..., \code{26} is \code{"Z"} and \code{27} is \code{"AA"}.
 }
 \examples{
 int2col(1:10)

@@ -63,7 +63,7 @@ If an expression is pointing to a cell \code{"A1=1"}, this cell reference is flu
 \describe{
 \item{\code{expression}}{
 \verb{[style]}\cr A \code{Style} object\cr\cr
-\verb{[rule]}\cr An Excel expression (as a character). Valid operators are: \code{<}, \code{<=}, \code{>}, \code{>=}, \code{==}, \code{!=}
+\verb{[rule]}\cr A formula expression (as a character). Valid operators are: \code{<}, \code{<=}, \code{>}, \code{>=}, \code{==}, \code{!=}
 }
 \item{\code{colorScale}}{
 \verb{[style]}\cr A \code{character} vector of valid colors with length \code{2} or \code{3}\cr\cr

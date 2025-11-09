@@ -82,7 +82,7 @@ remove_comment <- function(
   )
 }
 
-#' Defunct: Convert to Excel data
+#' Defunct: Convert to spreadsheet data
 #'
 #' Use [convert_to_excel_date()].
 #' @usage NULL
@@ -124,9 +124,9 @@ write_data <-  function(
   .Defunct("wb_add_data()", package = "openxlsx2")
 }
 
-#' Defunct: Write to a worksheet as an Excel table
+#' Defunct: Write to a worksheet as a spreadsheet table
 #'
-#' Write to a worksheet and format as an Excel table. Use [wb_add_data_table()] in new code.
+#' Write to a worksheet and format as a spreadsheet table. Use [wb_add_data_table()] in new code.
 #' This function is deprecated and may not be exported in the future.
 #' @inheritParams wb_add_data_table
 #' @inherit wb_add_data_table details
@@ -159,9 +159,9 @@ write_datatable <- function(
   .Defunct("wb_add_data_table()", package = "openxlsx2")
 }
 
-#' Defunct: Write a character vector as an Excel Formula
+#' Defunct: Write a character vector as a spreadsheet Formula
 #'
-#' Write a a character vector containing Excel formula to a worksheet.
+#' Write a a character vector containing spreadsheet formula to a worksheet.
 #' Use [wb_add_formula()] or `add_formula()` in new code. This function is
 #' deprecated and may be defunct.
 #'

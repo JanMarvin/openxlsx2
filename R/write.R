@@ -166,7 +166,7 @@ inner_update <- function(
 #'
 #' @param wb the workbook you want to update
 #' @param sheet the sheet you want to update
-#' @param new_cells the cell you want to update in Excel connotation e.g. "A1"
+#' @param new_cells the cell you want to update in spreadsheet connotation e.g. "A1"
 #'
 #' @keywords internal
 #' @noRd
@@ -194,7 +194,7 @@ initialize_cell <- function(wb, sheet, new_cells) {
 #' @param x cc dataframe of the updated cells
 #' @param wb the workbook you want to update
 #' @param sheet the sheet you want to update
-#' @param cell the cell you want to update in Excel connotation e.g. "A1"
+#' @param cell the cell you want to update in spreadsheet connotation e.g. "A1"
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
 #' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
@@ -332,7 +332,7 @@ write_data2 <- function(
                              stringi::stri_join(unlist(wb$workbook), collapse = ""),
                              ignore.case = TRUE)
 
-  # TODO need to tell excel that we have a date, apply some kind of numFmt
+  # TODO need to tell spreadsheet software that we have a date, apply some kind of numFmt
   data <- convert_to_excel_date(df = data, date1904 = hconvert_date1904)
 
   # backward compatible
@@ -588,8 +588,8 @@ write_data2 <- function(
       dataframe_to_dims(rtyp[rownames(rtyp) %in% sel_rows, sel_cols, drop = FALSE])
     }
 
-    # if hyperlinks are found, Excel sets something like the following font
-    # blue with underline
+    # if hyperlinks are found, spreadsheet software sets something like the
+    # following font: blue with underline
     if (any(dc == openxlsx2_celltype[["hyperlink"]])) {
 
       dim_sel <- get_data_class_dims("hyperlink")
@@ -814,9 +814,9 @@ write_data2 <- function(
 
 # `write_data_table()` ---------------------------------------------------------
 # `write_data_table()` an internal driver function to `write_data` and `write_data_table` ----
-#' Write to a worksheet as an Excel table
+#' Write to a worksheet as a spreadsheet table
 #'
-#' Write to a worksheet and format as an Excel table
+#' Write to a worksheet and format as a spreadsheet table
 #'
 #' @param wb A Workbook object containing a worksheet.
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
@@ -827,7 +827,7 @@ write_data2 <- function(
 #' @param array A bool if the function written is of type array
 #' @param colNames If `TRUE`, column names of x are written.
 #' @param rowNames If `TRUE`, row names of x are written.
-#' @param tableStyle Any excel table style name or "none" (see "formatting" vignette).
+#' @param tableStyle Any table style name or "none" (see "formatting" vignette).
 #' @param tableName name of table in workbook. The table name must be unique.
 #' @param withFilter If `TRUE`, columns with have filters in the first row.
 #' @param sep Only applies to list columns. The separator used to collapse list columns to a character vector e.g. sapply(x$list_column, paste, collapse = sep).

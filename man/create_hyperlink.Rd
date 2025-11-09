@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper-functions.R
 \name{create_hyperlink}
 \alias{create_hyperlink}
-\title{Create Excel hyperlink string}
+\title{Create spreadsheet hyperlink string}
 \usage{
 create_hyperlink(sheet, row = 1, col = 1, text = NULL, file = NULL)
 }
@@ -15,11 +15,11 @@ create_hyperlink(sheet, row = 1, col = 1, text = NULL, file = NULL)
 
 \item{text}{Display text}
 
-\item{file}{Hyperlink or Excel file name to point to. If \code{NULL}, hyperlink is internal.}
+\item{file}{Hyperlink or xlsx file name to point to. If \code{NULL}, hyperlink is internal.}
 }
 \description{
 Wrapper to create internal hyperlink string to pass to \code{\link[=wb_add_formula]{wb_add_formula()}}.
-Either link to external URLs or local files or straight to cells of local Excel sheets.
+Either link to external URLs or local files or straight to cells of local xlsx sheets.
 
 Note that for an external URL, only \code{file} and \code{text} should be supplied.
 You can supply \code{dims} to \code{wb_add_formula()} to control the location of the link.

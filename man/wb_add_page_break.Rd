@@ -24,8 +24,6 @@ wb$add_data(sheet = 1, x = iris)
 wb$add_page_break(sheet = 1, row = 10)
 wb$add_page_break(sheet = 1, row = 20)
 wb$add_page_break(sheet = 1, col = 2)
-
-## In Excel: View tab -> Page Break Preview
 }
 \seealso{
 \code{\link[=wb_add_worksheet]{wb_add_worksheet()}}

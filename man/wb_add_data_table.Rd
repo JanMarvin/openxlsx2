@@ -79,12 +79,13 @@ uses the special \verb{#N/A} value within the workbook.}
 \item{...}{additional arguments}
 }
 \description{
-Add data to a worksheet and format as an Excel table.
+Add data to a worksheet and format as an spreadsheet table.
 }
 \details{
 Formulae written using \code{\link[=wb_add_formula]{wb_add_formula()}} to a Workbook object will
 not get picked up by \code{read_xlsx()}. This is because only the formula is written
-and left to Excel to evaluate the formula when the file is opened in Excel.
+into the worksheet and it will be evaluated once the file is opened in
+spreadsheet software.
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
 If the data frame contains this string, the output will be broken. Similar
 factor labels \code{"_openxlsx_Inf"}, \code{"_openxlsx_nInf"}, and \code{"_openxlsx_NaN"}

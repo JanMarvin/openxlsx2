@@ -104,7 +104,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' @param row_names If `TRUE`, the first col of data will be used as row names.
 #' @param dims Character string of type "A1:B2" as optional dimensions to be imported.
 #' @param detect_dates If `TRUE`, attempt to recognize dates and perform conversion.
-#' @param show_formula If `TRUE`, the underlying Excel formulas are shown.
+#' @param show_formula If `TRUE`, the underlying spreadsheet formulas are shown.
 #' @param convert If `TRUE`, a conversion to dates and numerics is attempted.
 #' @param skip_empty_cols If `TRUE`, empty columns are skipped.
 #' @param skip_empty_rows If `TRUE`, empty rows are skipped.
@@ -146,7 +146,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' # do not try to identify dates in the data
 #' wb_to_df(wb1, detect_dates = FALSE)
 #'
-#' # return the underlying Excel formula instead of their values
+#' # return the underlying spreadsheet formula instead of their values
 #' wb_to_df(wb1, show_formula = TRUE)
 #'
 #' # read dimension without colNames
@@ -804,7 +804,7 @@ wb_to_df <- function(
 
 # `read_xlsx()` -----------------------------------------------------------------
 # Ignored by roxygen2 when combining documentation
-# #' Read from an Excel file or Workbook object
+# #' Read from an input file or Workbook object
 #' @rdname wb_to_df
 #' @export
 read_xlsx <- function(

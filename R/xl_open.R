@@ -17,7 +17,8 @@
 #' Libreoffice/Openoffice (`soffice` bin), Gnumeric (`gnumeric`), Calligra
 #' Sheets (`calligrasheets`) and ONLYOFFICE (`onlyoffice-desktopeditors`).
 #'
-#' @param x A path to the Excel (xls/xlsx) file or wbWorkbook object.
+#' @param x A path to a spreadsheet file or wbWorkbook object. This can be any
+#'   file type that can be opened in the corresponding software.
 #' @param interactive If `FALSE` will throw a warning and not open the path.
 #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses the
 #'   value returned from [base::interactive()]
@@ -127,11 +128,11 @@ chooseExcelApp <- function() {
   if (1 < nApps) {
     if (!interactive()) {
       stop(
-        "Cannot choose an Excel file opener non-interactively.\n",
+        "Cannot choose a spreadsheet file opener non-interactively.\n",
         "Set options('openxlsx.excelApp'), instead."
       )
     }
-    res <- menu(names(availProg), title = "Excel Apps availables")
+    res <- menu(names(availProg), title = "Spreadsheet software available")
     unnprog <- unname(availProg[res])
     if (res > 0L) {
       message(sprintf("Setting options(openxlsx2.excelApp = '%s')", unnprog))
