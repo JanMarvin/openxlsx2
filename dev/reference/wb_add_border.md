@@ -1,0 +1,151 @@
+# Modify borders in a cell region of a worksheet
+
+wb wrapper to create borders for cell regions.
+
+## Usage
+
+``` r
+wb_add_border(
+  wb,
+  sheet = current_sheet(),
+  dims = "A1",
+  bottom_color = wb_color(hex = "FF000000"),
+  left_color = wb_color(hex = "FF000000"),
+  right_color = wb_color(hex = "FF000000"),
+  top_color = wb_color(hex = "FF000000"),
+  bottom_border = "thin",
+  left_border = "thin",
+  right_border = "thin",
+  top_border = "thin",
+  inner_hgrid = NULL,
+  inner_hcolor = NULL,
+  inner_vgrid = NULL,
+  inner_vcolor = NULL,
+  update = FALSE,
+  diagonal_up = NULL,
+  diagonal_down = NULL,
+  diagonal_color = NULL,
+  ...
+)
+```
+
+## Arguments
+
+- wb:
+
+  A `wbWorkbook`
+
+- sheet:
+
+  A worksheet
+
+- dims:
+
+  Cell range in the worksheet e.g. "A1", "A1:A5", "A1:H5"
+
+- bottom_color, left_color, right_color, top_color, inner_hcolor,
+  inner_vcolor:
+
+  a color, either something openxml knows or some RGB color
+
+- left_border, right_border, top_border, bottom_border, inner_hgrid,
+  inner_vgrid:
+
+  the border style, if `NULL` no border is drawn. See
+  [`create_border()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_border.md)
+  for possible border styles
+
+- update:
+
+  Logical. Defaults to FALSE. If TRUE, and the border style includes
+  NULL entries, existing borders may be updated with new ones. When
+  overlapping cells (e.g., squares intersect), existing borders will be
+  preserved where possible.
+
+- diagonal_up, diagonal_down, diagonal_color:
+
+  (optional) arguments for diagonal border lines. If set, up and down
+  must be a unique style (there can be only one) and the color must be a
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
+  object
+
+- ...:
+
+  additional arguments
+
+## See also
+
+[`create_border()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_border.md)
+
+Other styles:
+[`wb_add_cell_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_cell_style.md),
+[`wb_add_fill()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_fill.md),
+[`wb_add_font()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_font.md),
+[`wb_add_named_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_named_style.md),
+[`wb_add_numfmt()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_numfmt.md),
+[`wb_cell_style`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_cell_style.md)
+
+## Examples
+
+``` r
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, "S1")
+wb <- wb_add_data(wb, "S1", mtcars)
+wb <- wb_add_border(wb, 1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb <- wb_add_border(wb, 1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
+wb <- wb_add_border(wb, 1, dims = "C2:C5")
+wb <- wb_add_border(wb, 1, dims = "G2:H3")
+
+wb <- wb_add_border(wb, 1, dims = "G12:H13",
+ left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+ top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
+wb <- wb_add_border(wb, 1, dims = "A20:C23")
+wb <- wb_add_border(wb, 1, dims = "B12:D14",
+ left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+ bottom_color = wb_color(hex = "FFFF0000"))
+wb <- wb_add_border(wb, 1, dims = "D28:E28")
+
+# With chaining
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A1:K1",
+ left_border = NULL, right_border = NULL,
+ top_border = NULL, bottom_border = "double")
+wb$add_border(1, dims = "A5",
+ left_border = "dotted", right_border = "dotted",
+ top_border = "hair", bottom_border = "thick")
+wb$add_border(1, dims = "C2:C5")
+wb$add_border(1, dims = "G2:H3")
+wb$add_border(1, dims = "G12:H13",
+ left_color = wb_color(hex = "FF9400D3"), right_color = wb_color(hex = "FF4B0082"),
+ top_color = wb_color(hex = "FF0000FF"), bottom_color = wb_color(hex = "FF00FF00"))
+wb$add_border(1, dims = "A20:C23")
+wb$add_border(1, dims = "B12:D14",
+ left_color = wb_color(hex = "FFFFFF00"), right_color = wb_color(hex = "FFFF7F00"),
+ bottom_color = wb_color(hex = "FFFF0000"))
+wb$add_border(1, dims = "D28:E28")
+# if (interactive()) wb$open()
+
+wb <- wb_workbook()
+wb$add_worksheet("S1")$add_data("S1", mtcars)
+wb$add_border(1, dims = "A2:K33", inner_vgrid = "thin",
+ inner_vcolor = wb_color(hex = "FF808080"))
+
+wb$add_worksheet()$
+  add_border(dims = "B2:D4", bottom_border = "thick", left_border = "thick",
+    right_border = "thick", top_border = "thick")$
+  add_border(dims = "C3:E5", update = TRUE)
+
+wb$add_worksheet()$
+  add_border(
+    dims = "B2:D4",
+    diagonal_up = "thin",
+    diagonal_down = "thin",
+    diagonal_color = wb_color("red")
+  )
+```

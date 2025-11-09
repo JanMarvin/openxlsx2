@@ -1,0 +1,355 @@
+# Upgrade from openxlsx
+
+## Basic read and write functions
+
+Welcome to the `openxlsx2` update vignette. In this vignette we will
+take some common code examples from `openxlsx` and show you how similar
+results can be replicated in `openxlsx2`. Thank you for taking a look,
+and let’s get started. While previous `openxlsx` functions used the `.`
+in function calls, as well as camelCase, we have tried to switch to
+snake_case (this is still a work in progress, there may still be
+function arguments that use camelCase).
+
+### Read xlsx or xlsm files
+
+The basic read function changed from `read.xlsx` to `read_xlsx`. Using a
+default xlsx file included in the package:
+
+``` r
+file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+```
+
+The old syntax looked like this:
+
+``` r
+# read in openxlsx
+openxlsx::read.xlsx(xlsxFile = file)
+```
+
+This has changed to this:
+
+``` r
+# read in openxlsx2
+openxlsx2::read_xlsx(file = file)
+```
+
+    ##     Var1 Var2 <NA>  Var3  Var4       Var5         Var6    Var7     Var8
+    ## 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15
+    ## 4   TRUE   NA   NA #NUM!     b 2023-05-23         <NA>       0 14:02:57
+    ## 5   TRUE    2   NA  1.34     c 2023-02-01         <NA> #VALUE! 23:01:02
+    ## 6  FALSE    2   NA  <NA> #NUM!       <NA>         <NA>       2 17:24:53
+    ## 7  FALSE    3   NA  1.56     e       <NA>         <NA>    <NA>     <NA>
+    ## 8  FALSE    1   NA   1.7     f 2023-03-02         <NA>     2.7 08:45:58
+    ## 9     NA   NA   NA  <NA>  <NA>       <NA>         <NA>    <NA>     <NA>
+    ## 10 FALSE    2   NA    23     h 2023-12-24         <NA>      25     <NA>
+    ## 11 FALSE    3   NA  67.3     i 2023-12-25         <NA>       3     <NA>
+    ## 12    NA    1   NA   123  <NA> 2023-07-31         <NA>     122     <NA>
+
+As you can see, we return the spreadsheet return codes (e.g., `#NUM`) in
+openxlsx2. Another thing to see above, we return the cell row as rowname
+for the data frame returned. `openxlsx2` should return a data frame of
+the selected size, even if it empty. If you preferred
+`openxlsx::readWorkbook()` this has become
+[`wb_read()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.md).
+All of these are wrappers for the newly introduced function
+[`wb_to_df()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.md)
+which provides the most options.
+[`read_xlsx()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.md)
+and
+[`wb_read()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.md)
+were created for backward comparability.
+
+## Write xlsx files
+
+Basic writing in `openxlsx2` behaves identical to `openxlsx`. Though be
+aware that `overwrite` is an optional parameter in `openxlsx2` and just
+like in other functions like `base::write.csv()` if you write onto an
+existing file name, this file will be replaced.
+
+Setting the output to some temporary xlsx file
+
+``` r
+output <- temp_xlsx()
+```
+
+The previous write function looks like this:
+
+``` r
+# write in openxlsx
+openxlsx::write.xlsx(iris, file = output, colNames = TRUE)
+```
+
+The new function looks quite similar:
+
+``` r
+# write in openxlsx2
+openxlsx2::write_xlsx(iris, file = output, col_names = TRUE)
+```
+
+## Basic workbook functions
+
+Workbook functions have been renamed to begin with `wb_` there are
+plenty of these in the package, therefore looking at the man pages seems
+to be the fastest way. Yet, it all begins with loading the workbook.
+
+### Loading a workbook
+
+A major feature in `openxlsx` are workbooks. Obviously they remain a
+central piece in `openxlsx2`. Previous you would load them with:
+
+``` r
+wb <- openxlsx::loadWorkbook(file = file)
+```
+
+In `openxlsx2` loading was changed to:
+
+``` r
+wb <- wb_load(file = file)
+```
+
+There are plenty of functions to interact with workbooks and we will not
+describe every single one here. A detailed list can be found over at
+[our
+references](https://janmarvin.github.io/openxlsx2/reference/index.html)
+
+### Styles
+
+One of the biggest user facing change was the removal of the
+`stylesObject`. In the following section we use code from
+[`openxlsx::addStyle()`](https://ycphs.github.io/openxlsx/reference/addStyle.html)
+
+``` r
+# openxlsx
+## Create a new workbook
+wb <- createWorkbook(creator = "My name here")
+addWorksheet(wb, "Expenditure", gridLines = FALSE)
+writeData(wb, sheet = 1, USPersonalExpenditure, rowNames = TRUE)
+
+## style for body
+bodyStyle <- createStyle(border = "TopBottom", borderColor = "#4F81BD")
+addStyle(wb, sheet = 1, bodyStyle, rows = 2:6, cols = 1:6, gridExpand = TRUE)
+
+## set column width for row names column
+setColWidths(wb, 1, cols = 1, widths = 21)
+```
+
+In `openxlsx2` the same code looks something like this:
+
+``` r
+# openxlsx2 chained
+border_color <- wb_color(hex = "4F81BD")
+wb <- wb_workbook(creator = "My name here")$
+  add_worksheet("Expenditure", grid_lines = FALSE)$
+  add_data(x = USPersonalExpenditure, row_names = TRUE)$
+  add_border( # add the outer and inner border
+    dims = "A1:F6",
+    top_border = "thin", top_color = border_color,
+    bottom_border = "thin", bottom_color = border_color,
+    inner_hgrid = "thin", inner_hcolor = border_color,
+    left_border = "", right_border = ""
+  )$
+  set_col_widths( # set column width
+    cols = 1:6,
+    widths = c(20, rep(10, 5))
+  )$ # remove the value in A1
+  add_data(dims = "A1", x = "")
+```
+
+The code above uses chaining. If you prefer piping, we provide the
+chained functions with the prefix `wb_` so
+[`wb_add_worksheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_worksheet.md),
+[`wb_add_data()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_data.md),
+[`wb_add_border()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_border.md)
+and
+[`wb_set_col_widths()`](https://janmarvin.github.io/openxlsx2/dev/reference/col_widths-wb.md)
+would be the functions to use with pipes `%>%` or `|>`.
+
+With pipes the code from above becomes
+
+``` r
+# openxlsx2 with pipes
+border_color <- wb_color(hex = "4F81BD")
+wb <- wb_workbook(creator = "My name here") |>
+  wb_add_worksheet(sheet = "Expenditure", grid_lines = FALSE) |>
+  wb_add_data(x = USPersonalExpenditure, row_names = TRUE) |>
+  wb_add_border( # add the outer and inner border
+    dims = "A1:F6",
+    top_border = "thin", top_color = border_color,
+    bottom_border = "thin", bottom_color = border_color,
+    inner_hgrid = "thin", inner_hcolor = border_color,
+    left_border = "", right_border = ""
+  ) |>
+  wb_set_col_widths( # set column width
+    cols = 1:6,
+    widths = c(20, rep(10, 5))
+  ) |> # remove the value in A1
+  wb_add_data(dims = "A1", x = "")
+```
+
+Be aware that chains modify an object in place and pipes do not.
+
+``` r
+# openxlsx2
+wbp <- wb_workbook() |> wb_add_worksheet()
+wbc <- wb_workbook()$add_worksheet()
+
+# need to assign wbp
+wbp <- wbp |> wb_add_data(x = iris)
+wbc$add_data(x = iris)
+```
+
+You can re-use styles with
+[`wb_get_cell_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_cell_style.md)
+and
+[`wb_set_cell_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_cell_style.md).
+Abandoning `stylesObject` in `openxlsx2` has the huge benefit that we
+can import and export a spreadsheet without changing any cell style. It
+is still possible to modify a cell style with
+[`wb_add_border()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_border.md),
+[`wb_add_fill()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_fill.md),
+[`wb_add_font()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_font.md)
+and
+[`wb_add_numfmt()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_numfmt.md).
+
+Additional examples regarding styles can be found in the styles
+vignette.
+
+### Conditional formatting
+
+See
+[`vignette("conditional-formatting")`](https://janmarvin.github.io/openxlsx2/dev/articles/conditional-formatting.md)
+for extended examples on formatting.
+
+Here is a minimal example:
+
+``` r
+# openxlsx2 with chains
+wb <- wb_workbook()$
+  add_worksheet("a")$
+  add_data(x = 1:4, col_names = FALSE)$
+  add_conditional_formatting(dims = "A1:A4", rule = ">2")
+
+# openxlsx2 with pipes
+wb <- wb_workbook() |>
+  wb_add_worksheet("a") |>
+  wb_add_data(x = 1:4, col_names = FALSE) |>
+  wb_add_conditional_formatting(dims = "A1:A4", rule = ">2")
+```
+
+### Data validation
+
+Similarly, data validation has been updated and improved. This
+`openxlsx` code for data validation
+
+``` r
+# openxlsx
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+writeDataTable(wb, 1, x = iris[1:30, ])
+dataValidation(wb, 1,
+  col = 1:3, rows = 2:31, type = "whole",
+  operator = "between", value = c(1, 9)
+)
+```
+
+looks in `openxlsx2` something like this:
+
+``` r
+# openxlsx2 with chains
+wb <- wb_workbook()$
+  add_worksheet("Sheet 1")$
+  add_data_table(1, x = iris[1:30, ])$
+  add_data_validation(1,
+    dims = wb_dims(rows = 2:31, cols = 1:3),
+    # alternatively, dims can also be "A2:C31" if you know the span in your workbook.
+    type = "whole",
+    operator = "between",
+    value = c(1, 9)
+  )
+
+# openxlsx2 with pipes
+wb <- wb_workbook() |>
+  wb_add_worksheet("Sheet 1") |>
+  wb_add_data_table(1, x = iris[1:30, ]) |>
+  wb_add_data_validation(
+    sheet = 1,
+    dims = "A2:C31", # alternatively, dims = wb_dims(rows = 2:31, cols = 1:3)
+    type = "whole",
+    operator = "between",
+    value = c(1, 9)
+  )
+```
+
+### Saving
+
+Saving has been switched from `saveWorkbook()` to
+[`wb_save()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_save.md)
+and opening a workbook has been switched from `openXL()` to
+[`wb_open()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_open.md).
+
+## Why `openxlsx2`?
+
+Originally, `openxlsx2` was started as a private branch of `openxlsx` to
+include the pugixml library and provide a fully functional XML parser
+for `openxlsx`. At that time, it became clear that the home-written
+`openxlsx` XML parser was limited in its ability to reliably parse XML
+files, leading to some problems with broken and unreadable xlsx files.
+Once the inclusion of pugixml was addressed, a new internal structure
+was created, and this structure required changes to most of the old
+`openxlsx` functions. This was accompanied by the change from `methods`
+to `R6` and the possibility of chaining and piping functions.
+
+Working with the styles object of `openxlsx` it became clear that while
+it is a great idea, it does not work well enough for our needs and that
+files loaded and modified by `openxlsx` never look the same. There are
+always things that look a little off because the style objects do not
+work perfectly. Likewise, there are a lot of edge cases in `openxlsx`
+that assume a file structure in xlsx objects that is a simplified
+approximation of what is actually going on. For example, `openxlsx`
+assumes that each sheet is accompanied by a drawing. While this works in
+many cases, it does not match the definition of the format in the
+openxml standard. There may be worksheets with multiple drawings, and
+there should be no drawing folder if no drawings are included.
+Unfortunately, many of these things are deeply embedded in the
+`openxlsx` code, and the more development that took place in
+`openxlsx2`, the more things differed between the fork from its origin.
+At some point the fork was called an independent project and the
+previously privately developed branch was made public.
+
+You could say that this went hand in hand with the modification of the
+actual project goal. Before, it was about creating a similar looking
+xlsx file and being able to partially edit it. Now it was about writing
+an identical xlsx file and just being able to change everything.
+
+Since then most of the internal functions of `openxlsx` have been
+cleaned up, fixed and mostly rewritten. The package has developed new
+ways to handle styles with the styles manager, it provides a full range
+of style options that would be hard or impossible to include in
+`openxlsx`. We have included support for native graphs with `mschart`
+and feature the creation of pivot tables. We support more conditional
+formatting options, we have improved the support for data validation, we
+have sparklines and form control objects. In addition many of the quirks
+of the old package have been ironed out. We have switched to a
+consistent and stable API build on `dims` and we provide multiple
+vignettes to document our code and plenty of functions to interact with
+the `openxml` format. We provide basic `xlsb` support and with
+[`msoc`](https://github.com/JanMarvin/msoc) we have created a package
+encrypt and decrypt `openxml` files.
+
+## Invitation to contribute
+
+We have put a lot of work into `openxls2` to make it useful for our
+needs, improving what we found useful about `openxlsx` and removing what
+we didn’t need. We do not claim to be omniscient about all the things
+you can do with spreadsheet software, nor do we claim to be omniscient
+about all the things you can do in `openxlsx2`. The package is still
+under active development, though we have reached a semi stable API that
+will not change until the next major release.
+
+We are quite fond of our little package and invite others to try it out
+and comment on what they like and of course what they think we are
+missing or if something doesn’t work. `openxlsx2` is a complex piece of
+software that certainly does not work bug-free, even if we did our best.
+If you want to contribute to the development of `openxlsx2`, please be
+our guest on our Github. Join or open a discussion, post or fix issues
+or write us a mail.
