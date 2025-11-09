@@ -297,11 +297,6 @@ wb_add_data <- function(
 #' @param sep Only applies to list columns. The separator used to collapse list
 #'   columns to a character vector e.g.
 #'   `sapply(x$list_column, paste, collapse = sep)`.
-#' \cr\cr
-#' \cr**The below options correspond to Excel table options:**
-#' \cr
-#' \if{html}{\figure{tableoptions.png}{options: alt="Figure: table_options.png"}}
-#' \if{latex}{\figure{tableoptions.pdf}{options: width=265px}}
 #' @param first_column logical. If `TRUE`, the first column is bold.
 #' @param last_column logical. If `TRUE`, the last column is bold.
 #' @param banded_rows logical. If `TRUE`, rows are color banded.

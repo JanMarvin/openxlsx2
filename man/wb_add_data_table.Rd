@@ -54,12 +54,7 @@ wb_add_data_table(
 
 \item{sep}{Only applies to list columns. The separator used to collapse list
 columns to a character vector e.g.
-\code{sapply(x$list_column, paste, collapse = sep)}.
-\cr\cr
-\cr\strong{The below options correspond to Excel table options:}
-\cr
-\if{html}{\figure{tableoptions.png}{options: alt="Figure: table_options.png"}}
-\if{latex}{\figure{tableoptions.pdf}{options: width=265px}}}
+\code{sapply(x$list_column, paste, collapse = sep)}.}
 
 \item{first_column}{logical. If \code{TRUE}, the first column is bold.}
 
