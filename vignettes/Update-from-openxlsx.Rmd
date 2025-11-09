@@ -213,7 +213,7 @@ wb <- wb_workbook()$
   add_data_table(1, x = iris[1:30, ])$
   add_data_validation(1,
     dims = wb_dims(rows = 2:31, cols = 1:3),
-    # alternatively, dims can also be "A2:C31" if you know the span in your Excel workbook.
+    # alternatively, dims can also be "A2:C31" if you know the span in your workbook.
     type = "whole",
     operator = "between",
     value = c(1, 9)

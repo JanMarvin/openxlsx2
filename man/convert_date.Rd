@@ -4,7 +4,7 @@
 \alias{convert_date}
 \alias{convert_datetime}
 \alias{convert_hms}
-\title{Convert from Excel date, datetime or hms number to R Date type}
+\title{Convert from spreadsheet date, datetime or hms number to R Date type}
 \usage{
 convert_date(x, origin = "1900-01-01")
 
@@ -15,7 +15,7 @@ convert_hms(x)
 \arguments{
 \item{x}{A vector of integers}
 
-\item{origin}{date. Default value is for Windows Excel 2010}
+\item{origin}{date. There are two options, 1900 or 1904. The default is what spreadsheet software usually uses}
 
 \item{tz}{A timezone, defaults to "UTC"}
 }
@@ -23,10 +23,10 @@ convert_hms(x)
 A date, datetime, or hms.
 }
 \description{
-Convert from Excel date number to R Date type
+Convert from spreadsheet date number to R Date type
 }
 \details{
-Excel stores dates as number of days from some origin day
+Spreadsheet software stores dates as number of days from some origin day
 
 Setting the timezone in \code{\link[=convert_datetime]{convert_datetime()}} will alter the value. If users expect a datetime value in a specific timezone, they should try e.g. \code{lubridate::force_tz}.
 }

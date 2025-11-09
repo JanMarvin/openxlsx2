@@ -114,7 +114,7 @@ Blank cells will be returned as \code{NA}.}
 
 \item{dims}{Character string of type "A1:B2" as optional dimensions to be imported.}
 
-\item{show_formula}{If \code{TRUE}, the underlying Excel formulas are shown.}
+\item{show_formula}{If \code{TRUE}, the underlying spreadsheet formulas are shown.}
 
 \item{convert}{If \code{TRUE}, a conversion to dates and numerics is attempted.}
 
@@ -197,7 +197,7 @@ wb_to_df(wb1, col_names = FALSE)
 # do not try to identify dates in the data
 wb_to_df(wb1, detect_dates = FALSE)
 
-# return the underlying Excel formula instead of their values
+# return the underlying spreadsheet formula instead of their values
 wb_to_df(wb1, show_formula = TRUE)
 
 # read dimension without colNames

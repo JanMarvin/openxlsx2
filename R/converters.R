@@ -1,9 +1,10 @@
 
 # columns -----------------------------------------------------------------
 
-#' Convert integer to Excel column
+#' Convert integer to spreadsheet column
 #'
-#' Converts an integer to an Excel column label.
+#' Converts an integer to a spreadsheet column in `A1` notation.
+#' `1` is `"A"`, `2` is `"B"`, ..., `26` is `"Z"` and `27` is `"AA"`.
 #'
 #' @param x A numeric vector.
 #' @export
@@ -17,9 +18,10 @@ int2col <- function(x) {
   ox_int_to_col(x)
 }
 
-#' Convert Excel column to integer
+#' Convert spreadsheet column to integer
 #'
-#' Converts an Excel column label to an integer.
+#' Converts a spreadsheet column in `A1` notation to an integer.
+#' `"A"` is `1`, `"B"` is `2`, ..., `"Z"` is `26` and `"AA"` is `27`.
 #'
 #' @param x A character vector
 #' @return An integer column label (or `NULL` if `x` is `NULL`)
@@ -52,10 +54,11 @@ col2int <- function(x) {
 }
 
 
-#' Return Excel cell coordinates from (x,y) coordinates
+## TODO replace with `wb_dims(rows = ..., cols = ...)`
+#' Return spreadsheet cell coordinates from (x,y) coordinates
 #'
 #' @param cellCoords A data.frame with two columns coordinate pairs.
-#' @return Excel alphanumeric cell reference
+#' @return spreadsheet alphanumeric cell reference
 #' @examples
 #' get_cell_refs(data.frame(1, 2))
 #' # "B1"
@@ -73,7 +76,6 @@ get_cell_refs <- function(cellCoords) {
   l <- int2col(unlist(cellCoords[, 2]))
   paste0(l, cellCoords[, 1])
 }
-
 
 
 #' calculate the required column width
@@ -102,9 +104,9 @@ calc_col_width <- function(base_font, col_width) {
   mdw <- font_width_tab$Width[sel]
 
   # formula from openxml.spreadsheet.column documentation. The formula returns exactly the expected
-  # value, but the output in excel is still off. Therefore round to create even numbers. In my tests
-  # the results were close to the initial col_width sizes. Character width is still bad, numbers are
-  # way larger, therefore characters cells are to wide. Not sure if we need improve this.
+  # value, but the output in spreadsheet software is still off. Therefore round to create even numbers.
+  # In my tests the results were close to the initial col_width sizes. Character width is still bad,
+  # numbers are way larger, therefore characters cells are to wide. Not sure if we need improve this.
 
   # Note: cannot reproduce the exact values with MS365 on Mac. Nevertheless, these values are closer
   # to the expected widths

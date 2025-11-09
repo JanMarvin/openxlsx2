@@ -21,7 +21,7 @@ In \code{wb_remove_filter()}, you may supply a vector of worksheets.}
 \item{cols}{columns to add filter to.}
 }
 \description{
-Add or remove excel column filters to a worksheet
+Add or remove spreadsheet column filters to a worksheet
 }
 \details{
 Adds filters to worksheet columns, same as \code{with_filter = TRUE} in \code{\link[=wb_add_data]{wb_add_data()}}

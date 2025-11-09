@@ -19,7 +19,8 @@ wb_validate_sheet <- function(wb, sheet) {
 wb_validate_table_name <- function(wb, tableName) {
   assert_workbook(wb)
   # returns the new tableName -- basically just lowercase
-  tableName <- tolower(tableName) ## Excel forces named regions to lowercase
+  ## spreadsheet software forces named regions to lowercase
+  tableName <- tolower(tableName)
 
   # TODO set these to warnings? trim and peplace bad characters with
 

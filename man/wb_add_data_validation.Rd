@@ -58,7 +58,7 @@ Default "stop" (cancel), else "information" (prompt popup) or
 \item{...}{additional arguments}
 }
 \description{
-Add Excel data validation to cells
+Add spreadsheet data validation to cells
 }
 \examples{
 wb <- wb_workbook()

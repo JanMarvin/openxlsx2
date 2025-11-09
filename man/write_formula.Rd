@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecate.R
 \name{write_formula}
 \alias{write_formula}
-\title{Defunct: Write a character vector as an Excel Formula}
+\title{Defunct: Write a character vector as a spreadsheet Formula}
 \usage{
 write_formula(
   wb,
@@ -46,7 +46,7 @@ Add this, if you see "@" inserted into your formulas.}
 \item{...}{additional arguments}
 }
 \description{
-Write a a character vector containing Excel formula to a worksheet.
+Write a a character vector containing spreadsheet formula to a worksheet.
 Use \code{\link[=wb_add_formula]{wb_add_formula()}} or \code{add_formula()} in new code. This function is
 deprecated and may be defunct.
 }

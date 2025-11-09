@@ -1,13 +1,13 @@
 # `convert_date()` ------------------------------------------------
-#' Convert from Excel date, datetime or hms number to R Date type
+#' Convert from spreadsheet date, datetime or hms number to R Date type
 #'
-#' Convert from Excel date number to R Date type
+#' Convert from spreadsheet date number to R Date type
 #'
-#' Excel stores dates as number of days from some origin day
+#' Spreadsheet software stores dates as number of days from some origin day
 #'
 #' @seealso [wb_add_data()]
 #' @param x A vector of integers
-#' @param origin date. Default value is for Windows Excel 2010
+#' @param origin date. There are two options, 1900 or 1904. The default is what spreadsheet software usually uses
 #' @param tz A timezone, defaults to "UTC"
 #' @return A date, datetime, or hms.
 #' @details Setting the timezone in [convert_datetime()] will alter the value. If users expect a datetime value in a specific timezone, they should try e.g. `lubridate::force_tz`.
@@ -65,8 +65,8 @@ convert_hms <- function(x) {
 #'
 #' Return the date origin used internally by an xlsx or xlsm file
 #'
-#' Excel stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
-#' checks the date origin being used in an Excel file and returns is so it can be used in [convert_date()]
+#' Spreadsheet software stores dates as the number of days from either 1904-01-01 or 1900-01-01. This function
+#' checks the date origin being used in an workbook file and returns is so it can be used in [convert_date()]
 #'
 #' @param xlsxFile An xlsx or xlsm file or a wbWorkbook object.
 #' @param origin return the origin instead of the character string.

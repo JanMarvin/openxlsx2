@@ -21,7 +21,7 @@ but will keep the data in the worksheet.}
 The \code{wbWorkbook}, invisibly
 }
 \description{
-Remove Excel tables in a workbook using its name.
+Remove tables in a workbook using its name.
 }
 \examples{
 wb <- wb_workbook()

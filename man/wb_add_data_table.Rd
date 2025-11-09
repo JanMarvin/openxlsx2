@@ -54,12 +54,7 @@ wb_add_data_table(
 
 \item{sep}{Only applies to list columns. The separator used to collapse list
 columns to a character vector e.g.
-\code{sapply(x$list_column, paste, collapse = sep)}.
-\cr\cr
-\cr\strong{The below options correspond to Excel table options:}
-\cr
-\if{html}{\figure{tableoptions.png}{options: alt="Figure: table_options.png"}}
-\if{latex}{\figure{tableoptions.pdf}{options: width=265px}}}
+\code{sapply(x$list_column, paste, collapse = sep)}.}
 
 \item{first_column}{logical. If \code{TRUE}, the first column is bold.}
 
@@ -84,12 +79,13 @@ uses the special \verb{#N/A} value within the workbook.}
 \item{...}{additional arguments}
 }
 \description{
-Add data to a worksheet and format as an Excel table.
+Add data to a worksheet and format as an spreadsheet table.
 }
 \details{
 Formulae written using \code{\link[=wb_add_formula]{wb_add_formula()}} to a Workbook object will
 not get picked up by \code{read_xlsx()}. This is because only the formula is written
-and left to Excel to evaluate the formula when the file is opened in Excel.
+into the worksheet and it will be evaluated once the file is opened in
+spreadsheet software.
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
 If the data frame contains this string, the output will be broken. Similar
 factor labels \code{"_openxlsx_Inf"}, \code{"_openxlsx_nInf"}, and \code{"_openxlsx_NaN"}

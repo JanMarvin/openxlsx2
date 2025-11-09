@@ -136,7 +136,7 @@ worksheet_lock_properties <- function() {
 #' @param sheet The name of the sheet
 #' @param datetime_created The datetime (as `POSIXt`) the workbook is
 #'   created.  Defaults to the current `Sys.time()` when the workbook object
-#'   is created, not when the Excel files are saved.
+#'   is created, not when the [wb_workbook()] files are saved.
 #' @param datetime_modified The datetime (as `POSIXt`) that should be recorded
 #'   as last modification date. Defaults to the creation date.
 #' @param ... additional arguments
@@ -2806,7 +2806,7 @@ wbWorkbook <- R6::R6Class(
     #' @param row_names If TRUE, the first col of data will be used as row names.
     #' @param dims Character string of type "A1:B2" as optional dimensions to be imported.
     #' @param detect_dates If TRUE, attempt to recognize dates and perform conversion.
-    #' @param show_formula If TRUE, the underlying Excel formulas are shown.
+    #' @param show_formula If TRUE, the underlying spreadsheet formulas are shown.
     #' @param convert If TRUE, a conversion to dates and numerics is attempted.
     #' @param skip_empty_cols If TRUE, empty columns are skipped.
     #' @param skip_empty_rows If TRUE, empty rows are skipped.
@@ -2814,8 +2814,8 @@ wbWorkbook <- R6::R6Class(
     #' @param skip_hidden_rows If TRUE, hidden rows are skipped.
     #' @param start_row first row to begin looking for data.
     #' @param start_col first column to begin looking for data.
-    #' @param rows A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.
-    #' @param cols A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.
+    #' @param rows A numeric vector specifying which rows in the spreadsheet to read. If NULL, all rows are read.
+    #' @param cols A numeric vector specifying which columns in the spreadsheet to read. If NULL, all columns are read.
     #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
     #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
     #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
@@ -3825,7 +3825,7 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    #' @description open wbWorkbook in Excel.
+    #' @description open wbWorkbook in spreadsheet software
     #' @details minor helper wrapping xl_open which does the entire same thing
     #' @param interactive If `FALSE` will throw a warning and not open the path.
     #'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses
@@ -5924,7 +5924,7 @@ wbWorkbook <- R6::R6Class(
 
             expression = {
               # TODO should we bother to do any conversions or require the text
-              # entered to be exactly as an Excel expression would be written?
+              # entered to be exactly as an spreadsheet expression would be written?
               msg <- "When type == 'expression', "
 
               if (!is.character(orig_rule) || length(orig_rule) != 1L) {

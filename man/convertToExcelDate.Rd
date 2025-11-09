@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecate.R
 \name{convertToExcelDate}
 \alias{convertToExcelDate}
-\title{Defunct: Convert to Excel data}
+\title{Defunct: Convert to spreadsheet data}
 \arguments{
 \item{df}{dataframe}
 

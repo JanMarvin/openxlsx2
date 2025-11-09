@@ -436,7 +436,7 @@ wb$add_worksheet("logical operators")
 knitr::include_graphics("img/cf_logical_operators.jpg")
 ```
 
-You can use Excels logical Operators
+You can use logical Operators in spreadsheet formulas
 
 ```{r}
 wb$add_data("logical operators", 1:10)

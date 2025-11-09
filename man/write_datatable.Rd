@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecate.R
 \name{write_datatable}
 \alias{write_datatable}
-\title{Defunct: Write to a worksheet as an Excel table}
+\title{Defunct: Write to a worksheet as a spreadsheet table}
 \usage{
 write_datatable(
   wb,
@@ -54,12 +54,7 @@ write_datatable(
 
 \item{sep}{Only applies to list columns. The separator used to collapse list
 columns to a character vector e.g.
-\code{sapply(x$list_column, paste, collapse = sep)}.
-\cr\cr
-\cr\strong{The below options correspond to Excel table options:}
-\cr
-\if{html}{\figure{tableoptions.png}{options: alt="Figure: table_options.png"}}
-\if{latex}{\figure{tableoptions.pdf}{options: width=265px}}}
+\code{sapply(x$list_column, paste, collapse = sep)}.}
 
 \item{first_column}{logical. If \code{TRUE}, the first column is bold.}
 
@@ -84,13 +79,14 @@ uses the special \verb{#N/A} value within the workbook.}
 \item{...}{additional arguments}
 }
 \description{
-Write to a worksheet and format as an Excel table. Use \code{\link[=wb_add_data_table]{wb_add_data_table()}} in new code.
+Write to a worksheet and format as a spreadsheet table. Use \code{\link[=wb_add_data_table]{wb_add_data_table()}} in new code.
 This function is deprecated and may not be exported in the future.
 }
 \details{
 Formulae written using \code{\link[=wb_add_formula]{wb_add_formula()}} to a Workbook object will
 not get picked up by \code{read_xlsx()}. This is because only the formula is written
-and left to Excel to evaluate the formula when the file is opened in Excel.
+into the worksheet and it will be evaluated once the file is opened in
+spreadsheet software.
 The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
 If the data frame contains this string, the output will be broken. Similar
 factor labels \code{"_openxlsx_Inf"}, \code{"_openxlsx_nInf"}, and \code{"_openxlsx_NaN"}

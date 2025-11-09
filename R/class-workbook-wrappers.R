@@ -153,7 +153,8 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALS
 #' @export
 #' @details Formulae written using [wb_add_formula()] to a Workbook object will
 #' not get picked up by `read_xlsx()`. This is because only the formula is written
-#' and left to Excel to evaluate the formula when the file is opened in Excel.
+#' into the worksheet and it will be evaluated once the file is opened in
+#' spreadsheet software.
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`.
 #' If the data frame contains this string, the output will be broken. Similar
 #' factor labels `"_openxlsx_Inf"`, `"_openxlsx_nInf"`, and `"_openxlsx_NaN"`
@@ -286,7 +287,7 @@ wb_add_data <- function(
 
 #' Add a data table to a worksheet
 #'
-#' Add data to a worksheet and format as an Excel table.
+#' Add data to a worksheet and format as an spreadsheet table.
 #'
 #' @inherit wb_add_data details
 #' @inheritParams wb_add_data
@@ -297,11 +298,6 @@ wb_add_data <- function(
 #' @param sep Only applies to list columns. The separator used to collapse list
 #'   columns to a character vector e.g.
 #'   `sapply(x$list_column, paste, collapse = sep)`.
-#' \cr\cr
-#' \cr**The below options correspond to Excel table options:**
-#' \cr
-#' \if{html}{\figure{tableoptions.png}{options: alt="Figure: table_options.png"}}
-#' \if{latex}{\figure{tableoptions.pdf}{options: width=265px}}
 #' @param first_column logical. If `TRUE`, the first column is bold.
 #' @param last_column logical. If `TRUE`, the last column is bold.
 #' @param banded_rows logical. If `TRUE`, rows are color banded.
@@ -1329,7 +1325,7 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' @details
 #' The global min and max column width for "auto" columns is set by (default values show):
 #' * `options("openxlsx2.minWidth" = 3)`
-#' * `options("openxlsx2.maxWidth" = 250)` Maximum width allowed in Excel
+#' * `options("openxlsx2.maxWidth" = 250)` Maximum width allowed in OOXML
 #'
 #' NOTE: The calculation of column widths can be slow for large worksheets.
 #'
@@ -2543,7 +2539,7 @@ wb_remove_named_region <- function(wb, sheet = current_sheet(), name = NULL) {
 
 #' Add/remove column filters in a worksheet
 #'
-#' Add or remove excel column filters to a worksheet
+#' Add or remove spreadsheet column filters to a worksheet
 #'
 #' Adds filters to worksheet columns, same as `with_filter = TRUE` in [wb_add_data()]
 #' [wb_add_data_table()] automatically adds filters to first row of a table.
@@ -2608,7 +2604,7 @@ wb_remove_filter <- function(wb, sheet = current_sheet()) {
 
 #' Add data validation to cells in a worksheet
 #'
-#' Add Excel data validation to cells
+#' Add spreadsheet data validation to cells
 #'
 #' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
@@ -2771,15 +2767,13 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 #' wb$add_page_break(sheet = 1, row = 10)
 #' wb$add_page_break(sheet = 1, row = 20)
 #' wb$add_page_break(sheet = 1, col = 2)
-#'
-#' ## In Excel: View tab -> Page Break Preview
 wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_page_break(sheet = sheet, row = row, col = col)
 }
 
 
-#' List Excel tables in a worksheet
+#' List tables in a worksheet
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
@@ -2801,7 +2795,7 @@ wb_get_tables <- function(wb, sheet = current_sheet()) {
 
 #' Remove a data table from a worksheet
 #'
-#' Remove Excel tables in a workbook using its name.
+#' Remove tables in a workbook using its name.
 #'
 #' @param wb A Workbook object
 #' @param sheet A name or index of a worksheet
@@ -4260,7 +4254,7 @@ wb_add_form_control <- function(
 #' \describe{
 #'   \item{`expression`}{
 #'     `[style]`\cr A `Style` object\cr\cr
-#'     `[rule]`\cr An Excel expression (as a character). Valid operators are: `<`, `<=`, `>`, `>=`, `==`, `!=`
+#'     `[rule]`\cr A formula expression (as a character). Valid operators are: `<`, `<=`, `>`, `>=`, `==`, `!=`
 #'   }
 #'   \item{`colorScale`}{
 #'     `[style]`\cr A `character` vector of valid colors with length `2` or `3`\cr\cr

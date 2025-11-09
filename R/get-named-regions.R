@@ -58,7 +58,7 @@ get_named_regions_tab <- function(wb) {
 
 #' @rdname named_region-wb
 #' @param tables Should included both data tables and named regions in the result?
-#' @param x Deprecated. Use `wb`. For Excel input use [wb_load()] to first load
+#' @param x Deprecated. Use `wb`. For workbook input use [wb_load()] to first load
 #'   the xlsx file as a workbook.
 #' @seealso [wb_get_tables()]
 #' @returns A data frame with the all named regions in `wb`. Or `NULL`, if none are found.

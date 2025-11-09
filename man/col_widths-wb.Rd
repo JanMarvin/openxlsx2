@@ -38,7 +38,7 @@ Remove / set worksheet column widths to specified width or "auto".
 The global min and max column width for "auto" columns is set by (default values show):
 \itemize{
 \item \code{options("openxlsx2.minWidth" = 3)}
-\item \code{options("openxlsx2.maxWidth" = 250)} Maximum width allowed in Excel
+\item \code{options("openxlsx2.maxWidth" = 250)} Maximum width allowed in OOXML
 }
 
 NOTE: The calculation of column widths can be slow for large worksheets.
