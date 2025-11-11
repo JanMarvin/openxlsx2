@@ -59,7 +59,8 @@
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">rows</span>,</span>
 <span>  heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  hide_blanks <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_remove_row_heights</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></span></code></pre></div>
@@ -87,6 +88,10 @@
 
 <dt id="arg-hidden">hidden<a class="anchor" aria-label="anchor" href="#arg-hidden"></a></dt>
 <dd><p>Option to hide rows. A logical vector of length 1 or length of <code>rows</code></p></dd>
+
+
+<dt id="arg-hide-blanks">hide_blanks<a class="anchor" aria-label="anchor" href="#arg-hide-blanks"></a></dt>
+<dd><p>Option to hide blank (uninitialized) rows. These rows are not only empty, they must not be part of the worksheet.</p></dd>
 
 </dl></div>
     <div class="section level2">

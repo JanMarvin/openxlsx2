@@ -2,6 +2,13 @@
 
 ## openxlsx2 (development version)
 
+### New features
+
+- Add `hide_blanks` argument to
+  [`wb_set_row_heights()`](https://janmarvin.github.io/openxlsx2/dev/reference/row_heights-wb.md).
+  This allows hiding all blank rows in a worksheet.
+  [1464](https://github.com/JanMarvin/openxlsx2/pull/1464)
+
 ### Fixes
 
 - It is now possible to save a newly created workbook as `.xlsm` and it

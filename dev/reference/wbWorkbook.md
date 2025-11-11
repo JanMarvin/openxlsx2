@@ -2144,7 +2144,8 @@ Sets a row height for a sheet
       sheet = current_sheet(),
       rows,
       heights = NULL,
-      hidden = FALSE
+      hidden = FALSE,
+      hide_blanks = NULL
     )
 
 #### Arguments
@@ -2164,6 +2165,10 @@ Sets a row height for a sheet
 - `hidden`:
 
   hidden
+
+- `hide_blanks`:
+
+  hide_blanks
 
 #### Returns
 

@@ -10,7 +10,8 @@ wb_set_row_heights(
   sheet = current_sheet(),
   rows,
   heights = NULL,
-  hidden = FALSE
+  hidden = FALSE,
+  hide_blanks = NULL
 )
 
 wb_remove_row_heights(wb, sheet = current_sheet(), rows)
@@ -41,6 +42,11 @@ wb_remove_row_heights(wb, sheet = current_sheet(), rows)
 - hidden:
 
   Option to hide rows. A logical vector of length 1 or length of `rows`
+
+- hide_blanks:
+
+  Option to hide blank (uninitialized) rows. These rows are not only
+  empty, they must not be part of the worksheet.
 
 ## See also
 
