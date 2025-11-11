@@ -331,3 +331,31 @@ test_that("grouping works independent of initialized cells", {
   got <- wb$worksheets[[1]]$sheet_data$row_attr$r
   expect_equal(exp, got)
 })
+
+test_that("hide_blanks works", {
+  x <- matrix(NA, nrow = 20, ncol = 20)
+
+  wb <- openxlsx2::wb_workbook() |>
+    wb_add_worksheet(sheet = "Sheet1") |>
+    wb_add_data(
+      x = x,
+      dims = "A1",
+      col_names = FALSE,
+      row_names = FALSE,
+      na.strings = NULL
+    ) |>
+    wb_set_row_heights(hide_blanks = TRUE)
+
+  exp <- "<sheetFormatPr baseColWidth=\"8\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\" zeroHeight=\"1\"/>"
+  got <- wb$worksheets[[1]]$sheetFormatPr
+  expect_equal(exp, got)
+
+
+  wb <- wb |>
+    wb_set_row_heights(hide_blanks = FALSE)
+  got <- wb$worksheets[[1]]$sheetFormatPr
+
+  exp <- "<sheetFormatPr baseColWidth=\"8\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>"
+  got <- wb$worksheets[[1]]$sheetFormatPr
+  expect_equal(exp, got)
+})

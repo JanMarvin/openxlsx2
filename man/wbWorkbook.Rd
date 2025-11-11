@@ -1554,7 +1554,8 @@ Sets a row height for a sheet
   sheet = current_sheet(),
   rows,
   heights = NULL,
-  hidden = FALSE
+  hidden = FALSE,
+  hide_blanks = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -1568,6 +1569,8 @@ Sets a row height for a sheet
 \item{\code{heights}}{heights}
 
 \item{\code{hidden}}{hidden}
+
+\item{\code{hide_blanks}}{hide_blanks}
 }
 \if{html}{\out{</div>}}
 }

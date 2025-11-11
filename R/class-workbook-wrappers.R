@@ -1281,6 +1281,7 @@ wb_freeze_pane <- function(
 #' @param rows Indices of rows to set / remove (if any) custom height.
 #' @param heights Heights to set `rows` to specified in a spreadsheet column height units.
 #' @param hidden Option to hide rows. A logical vector of length 1 or length of `rows`
+#' @param hide_blanks Option to hide blank (uninitialized) rows. These rows are not only empty, they must not be part of the worksheet.
 #' @name row_heights-wb
 #' @family workbook wrappers
 #' @family worksheet content functions
@@ -1306,10 +1307,10 @@ wb_freeze_pane <- function(
 NULL
 #' @rdname row_heights-wb
 #' @export
-wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
+wb_set_row_heights <- function(wb, sheet = current_sheet(), rows, heights = NULL, hidden = FALSE, hide_blanks = NULL) {
   assert_workbook(wb)
-  assert_class(heights, c("numeric", "integer"), or_null = TRUE, arg_nm = "heights")
-  wb$clone(deep = TRUE)$set_row_heights(sheet = sheet, rows, heights, hidden)
+  if (missing(rows)) rows <- substitute()
+  wb$clone(deep = TRUE)$set_row_heights(sheet = sheet, rows = rows, heights = heights, hidden = hidden, hide_blanks = hide_blanks)
 }
 #' @rdname row_heights-wb
 #' @export
