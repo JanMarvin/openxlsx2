@@ -4602,12 +4602,26 @@ wbWorkbook <- R6::R6Class(
     #' @param rows rows
     #' @param heights heights
     #' @param hidden hidden
+    #' @param hide_blanks hide_blanks
     #' @return The `wbWorkbook` object, invisibly
-    set_row_heights = function(sheet = current_sheet(), rows, heights = NULL, hidden = FALSE) {
+    set_row_heights = function(sheet = current_sheet(), rows, heights = NULL, hidden = FALSE, hide_blanks = NULL) {
       sheet <- private$get_sheet_index(sheet)
       assert_class(heights, c("numeric", "integer"), or_null = TRUE, arg_nm = "heights")
 
       # TODO move to wbWorksheet method
+
+      ## hide empty rows per default
+      if (!is.null(hide_blanks)) {
+        if (!hide_blanks) hide_blanks <- NULL
+        self$worksheets[[sheet]]$sheetFormatPr <- xml_attr_mod(
+          self$worksheets[[sheet]]$sheetFormatPr,
+          xml_attributes = c(zeroHeight = as_xml_attr(hide_blanks))
+        )
+
+        if (missing(rows)) {
+          return(invisible(self))
+        }
+      }
 
       # create all A columns so that row_attr is available.
       # Someone thought that it would be a splendid idea, if
@@ -4633,12 +4647,6 @@ wbWorkbook <- R6::R6Class(
         row_attr[sel, "ht"] <- as_xml_attr(heights)
         row_attr[sel, "customHeight"] <- "1"
       }
-
-      ## hide empty rows per default
-      # xml_attr_mod(
-      #   wb$worksheets[[1]]$sheetFormatPr,
-      #   xml_attributes = c(zeroHeight = "1")
-      # )
 
       if (hidden) {
         row_attr[sel, "hidden"] <- "1"
