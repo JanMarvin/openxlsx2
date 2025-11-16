@@ -3,6 +3,7 @@
 ## New features
 
 * Add `hide_blanks` argument to `wb_set_row_heights()`. This allows hiding all blank rows in a worksheet. [1464](https://github.com/JanMarvin/openxlsx2/pull/1464)
+* Extend `"-"` and `"+"` to min and max column or row, when reading with `wb_to_df()` and `dims` like `"A1:++"`. [1466](https://github.com/JanMarvin/openxlsx2/pull/1466)
 
 ## Fixes
 
