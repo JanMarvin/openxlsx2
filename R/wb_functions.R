@@ -1,6 +1,6 @@
 #' Expand cell reference -/+ with min or max column and row
 expand_ref <- function(dims, clim, rlim) {
-  m <- regexec("^([A-Z]+|[+-]*)([0-9]+|[+-]*)$", dims)
+  m <- regexec("^([A-Z]+|[+-])([0-9]+|[+-])$", dims)
   parts <- regmatches(dims, m)[[1]]
 
   col <- parts[2]
