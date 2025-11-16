@@ -1,4 +1,8 @@
 #' Expand cell reference -/+ with min or max column and row
+#' @param dims dims
+#' @param clim,rlim range for columns and rows
+#' @keywords internal
+#' @noRd
 expand_ref <- function(dims, clim, rlim) {
   m <- regexec("^([A-Z]+|[+-])([0-9]+|[+-])$", dims)
   parts <- regmatches(dims, m)[[1]]
@@ -24,6 +28,10 @@ expand_ref <- function(dims, clim, rlim) {
 }
 
 #' Expand cell ranges -/+ with min or max column and row
+#' @param dims dims
+#' @param clim,rlim range for columns and rows
+#' @keywords internal
+#' @noRd
 expand_range <- function(dims, clim, rlim) {
   ends <- strsplit(dims, ":", fixed = TRUE)[[1]]
   left  <- expand_ref(ends[1], clim, rlim)
@@ -31,7 +39,11 @@ expand_range <- function(dims, clim, rlim) {
   paste0(left, ":", right)
 }
 
-#
+#' Expand dims
+#' @param dims dims
+#' @param clim,rlim range for columns and rows
+#' @keywords internal
+#' @noRd
 expand_dims <- function(dims, clim, rlim) {
   if (any(grepl(":", dims))) {
     return(expand_range(dims, clim, rlim))
