@@ -345,7 +345,7 @@ wb_to_df <- function(
   xlsx_posix_style <- style_is_posix(wb$styles_mgr$styles$cellXfs, numfmt_posix)
 
   # create temporary data frame. hard copy required
-  z  <- dims_to_dataframe(dims, empty_rm = TRUE)
+  z  <- dims_to_dataframe(dims, empty_rm = TRUE, cc = cc)
   tt <- create_int_dataframe(z)
 
   keep_cols <- colnames(z)
