@@ -10,15 +10,15 @@ expand_ref <- function(dims, clim, rlim) {
   col <- parts[2]
   row <- parts[3]
 
-  if (grepl("\\-", col)) {
-    col <- gsub("\\-", clim[1], col)
+  if (grepl("-", col)) {
+    col <- gsub("-", clim[1], col)
   }
   if (grepl("\\+", col)) {
     col <- gsub("\\+", clim[2], col)
   }
 
-  if (grepl("\\-", row)) {
-    row <- gsub("\\-", rlim[1], row)
+  if (grepl("-", row)) {
+    row <- gsub("-", rlim[1], row)
   }
   if (grepl("\\+", row)) {
     row <- gsub("\\+", rlim[2], row)
@@ -83,7 +83,7 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
     has_dim_sep <- TRUE
   }
 
-  if (any(grepl("-|+", dims)) && !is.null(cc)) {
+  if (any(grep("-|\\+", dims)) && !is.null(cc)) {
     rows <- range(as.integer(unique(cc$row_r)))
     cols <- int2col(range(col2int(unique(cc$c_r))))
 

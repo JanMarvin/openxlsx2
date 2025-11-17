@@ -446,3 +446,21 @@ test_that("expanding dims works", {
   got <- wb$to_df(dims = "B-:+7")
   expect_equal(exp, got)
 })
+
+test_that("reading all cols or rows works", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(
+    x = 1
+  )
+
+  exp <- c(1L, 16384L)
+  # better dims = "-4:+5"
+  got <- wb_to_df(wb, dims = "4:5")
+  expect_equal(exp, dim(got))
+
+  exp <- c(1048575L, 3L)
+  # better dims = "A-:B+"
+  got <- wb_to_df(wb, dims = "A:C")
+  expect_equal(exp, dim(got))
+
+})
