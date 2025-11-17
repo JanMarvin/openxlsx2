@@ -96,6 +96,12 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' [convert_datetime()], or [convert_hms()]. If types are specified, date
 #' detection is disabled.
 #'
+#' You can use wildcards for all available columns or rows in `dims` by using
+#' `+` and `-`. For example, `dims = "A-:+9"` will read everything from the
+#' first row in column A through the last column in row 9. This makes it
+#' unnecessary to update dimensions when working with files whose sizes change
+#' frequently.
+#'
 #' @seealso [wb_get_named_regions()], \link[openxlsx2:openxlsx2-package]{openxlsx2}
 #'
 #' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.
@@ -178,6 +184,9 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #'
 #' # na string
 #' wb_to_df(wb1, na.strings = "a")
+#'
+#' # read names from row two and data starting from row 4
+#' wb_to_df(wb1, dims = "B2:C2,B4:C+")
 #'
 #' ###########################################################################
 #' # Named regions
