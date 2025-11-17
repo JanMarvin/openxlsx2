@@ -1,3 +1,56 @@
+#' Expand cell reference -/+ with min or max column and row
+#' @param dims dims
+#' @param clim,rlim range for columns and rows
+#' @keywords internal
+#' @noRd
+expand_ref <- function(dims, clim, rlim) {
+  m <- regexec("^([A-Z]+|[+-])([0-9]+|[+-])$", dims)
+  parts <- regmatches(dims, m)[[1]]
+
+  col <- parts[2]
+  row <- parts[3]
+
+  if (grepl("-", col)) {
+    col <- gsub("-", clim[1], col)
+  }
+  if (grepl("\\+", col)) {
+    col <- gsub("\\+", clim[2], col)
+  }
+
+  if (grepl("-", row)) {
+    row <- gsub("-", rlim[1], row)
+  }
+  if (grepl("\\+", row)) {
+    row <- gsub("\\+", rlim[2], row)
+  }
+
+  paste0(col, row)
+}
+
+#' Expand cell ranges -/+ with min or max column and row
+#' @param dims dims
+#' @param clim,rlim range for columns and rows
+#' @keywords internal
+#' @noRd
+expand_range <- function(dims, clim, rlim) {
+  ends <- strsplit(dims, ":", fixed = TRUE)[[1]]
+  left  <- expand_ref(ends[1], clim, rlim)
+  right <- expand_ref(ends[2], clim, rlim)
+  paste0(left, ":", right)
+}
+
+#' Expand dims
+#' @param dims dims
+#' @param clim,rlim range for columns and rows
+#' @keywords internal
+#' @noRd
+expand_dims <- function(dims, clim, rlim) {
+  if (any(grepl(":", dims))) {
+    return(expand_range(dims, clim, rlim))
+  }
+  expand_ref(dims, clim, rlim)
+}
+
 #' Create dataframe from dimensions
 #'
 #' Non consecutive decreasing dims will return an increasing data frame.
@@ -5,11 +58,12 @@
 #' @param dims Character vector of expected dimension.
 #' @param fill If `TRUE`, fills the dataframe with variables
 #' @param empty_rm Logical if empty columns and rows should be included
+#' @param cc A reference `cc` frame
 #' @examples
 #' dims_to_dataframe("A1:B2")
 #' @keywords internal
 #' @export
-dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
+dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
 
   # in R 4.4.0 grepl(",", data.frame(x = paste0("K",))) == TRUE
   if (inherits(dims, "data.frame"))
@@ -27,6 +81,13 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE) {
   if (any(grepl(",", dims))) {
     dims <- unlist(strsplit(dims, ","))
     has_dim_sep <- TRUE
+  }
+
+  if (any(grep("-|\\+", dims)) && !is.null(cc)) {
+    rows <- range(as.integer(unique(cc$row_r)))
+    cols <- int2col(range(col2int(unique(cc$c_r))))
+
+    dims <- vapply(dims, function(x) expand_dims(x, cols, rows), "")
   }
 
   # this is only required, if dims is not equal sized

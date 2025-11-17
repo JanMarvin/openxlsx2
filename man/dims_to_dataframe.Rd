@@ -4,7 +4,7 @@
 \alias{dims_to_dataframe}
 \title{Create dataframe from dimensions}
 \usage{
-dims_to_dataframe(dims, fill = FALSE, empty_rm = FALSE)
+dims_to_dataframe(dims, fill = FALSE, empty_rm = FALSE, cc = NULL)
 }
 \arguments{
 \item{dims}{Character vector of expected dimension.}
@@ -12,6 +12,8 @@ dims_to_dataframe(dims, fill = FALSE, empty_rm = FALSE)
 \item{fill}{If \code{TRUE}, fills the dataframe with variables}
 
 \item{empty_rm}{Logical if empty columns and rows should be included}
+
+\item{cc}{A reference \code{cc} frame}
 }
 \description{
 Non consecutive decreasing dims will return an increasing data frame.

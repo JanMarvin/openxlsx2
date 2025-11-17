@@ -423,3 +423,44 @@ test_that("wb_to_df respects the row order", {
 
   expect_equal(exp, got)
 })
+
+test_that("expanding dims works", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(dims = "B3", x = matrix(1:25, 5, 5),
+             col_names = FALSE)
+
+  exp <- wb$to_df()
+  got <- wb$to_df(dims = "--:++")
+  expect_equal(exp, got)
+
+  got <- wb$to_df(dims = "B3:++")
+  expect_equal(exp, got)
+
+  got <- wb$to_df(dims = "--:F7")
+  expect_equal(exp, got)
+
+  got <- wb$to_df(dims = "B-:+7")
+  expect_equal(exp, got)
+
+  got <- wb$to_df(dims = "B-:+7")
+  expect_equal(exp, got)
+})
+
+test_that("reading all cols or rows works", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(
+    x = 1
+  )
+
+  exp <- c(1L, 16384L)
+  # better dims = "-4:+5"
+  got <- wb_to_df(wb, dims = "4:5")
+  expect_equal(exp, dim(got))
+
+  exp <- c(1048575L, 3L)
+  # better dims = "A-:B+"
+  got <- wb_to_df(wb, dims = "A:C")
+  expect_equal(exp, dim(got))
+
+})

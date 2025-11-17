@@ -181,6 +181,12 @@ If date detection is disabled, dates will show up as a spreadsheet date
 format. To convert these, you can use the functions \code{\link[=convert_date]{convert_date()}},
 \code{\link[=convert_datetime]{convert_datetime()}}, or \code{\link[=convert_hms]{convert_hms()}}. If types are specified, date
 detection is disabled.
+
+You can use wildcards for all available columns or rows in \code{dims} by using
+\code{+} and \code{-}. For example, \code{dims = "A-:+9"} will read everything from the
+first row in column A through the last column in row 9. This makes it
+unnecessary to update dimensions when working with files whose sizes change
+frequently.
 }
 \examples{
 ###########################################################################
@@ -229,6 +235,9 @@ wb_to_df(wb1, start_row = 5, col_names = FALSE)
 
 # na string
 wb_to_df(wb1, na.strings = "a")
+
+# read names from row two and data starting from row 4
+wb_to_df(wb1, dims = "B2:C2,B4:C+")
 
 ###########################################################################
 # Named regions
