@@ -245,6 +245,12 @@ or
 [`convert_hms()`](https://janmarvin.github.io/openxlsx2/dev/reference/convert_date.md).
 If types are specified, date detection is disabled.
 
+You can use wildcards for all available columns or rows in `dims` by
+using `+` and `-`. For example, `dims = "A-:+9"` will read everything
+from the first row in column A through the last column in row 9. This
+makes it unnecessary to update dimensions when working with files whose
+sizes change frequently.
+
 ## See also
 
 [`wb_get_named_regions()`](https://janmarvin.github.io/openxlsx2/dev/reference/named_region-wb.md),
@@ -430,6 +436,19 @@ wb_to_df(wb1, na.strings = "a")
 #> 10 FALSE    2   NA    23     h 2023-12-24         <NA>      25     <NA>
 #> 11 FALSE    3   NA  67.3     i 2023-12-25         <NA>       3     <NA>
 #> 12    NA    1   NA   123  <NA> 2023-07-31         <NA>     122     <NA>
+
+# read names from row two and data starting from row 4
+wb_to_df(wb1, dims = "B2:C2,B4:C+")
+#>     Var1 Var2
+#> 4   TRUE   NA
+#> 5   TRUE    2
+#> 6  FALSE    2
+#> 7  FALSE    3
+#> 8  FALSE    1
+#> 9     NA   NA
+#> 10 FALSE    2
+#> 11 FALSE    3
+#> 12    NA    1
 
 ###########################################################################
 # Named regions

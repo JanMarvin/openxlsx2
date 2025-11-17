@@ -279,6 +279,11 @@ If date detection is disabled, dates will show up as a spreadsheet date
 format. To convert these, you can use the functions <code><a href="convert_date.html">convert_date()</a></code>,
 <code><a href="convert_date.html">convert_datetime()</a></code>, or <code><a href="convert_date.html">convert_hms()</a></code>. If types are specified, date
 detection is disabled.</p>
+<p>You can use wildcards for all available columns or rows in <code>dims</code> by using
+<code>+</code> and <code>-</code>. For example, <code>dims = "A-:+9"</code> will read everything from the
+first row in column A through the last column in row 9. This makes it
+unnecessary to update dimensions when working with files whose sizes change
+frequently.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -464,6 +469,19 @@ detection is disabled.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2   NA    23     h 2023-12-24         &lt;NA&gt;      25     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3   NA  67.3     i 2023-12-25         &lt;NA&gt;       3     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1   NA   123  &lt;NA&gt; 2023-07-31         &lt;NA&gt;     122     &lt;NA&gt;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># read names from row two and data starting from row 4</span></span></span>
+<span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, dims <span class="op">=</span> <span class="st">"B2:C2,B4:C+"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   TRUE    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FALSE    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FALSE    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FALSE    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FALSE    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FALSE    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA    1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###########################################################################</span></span></span>
 <span class="r-in"><span><span class="co"># Named regions</span></span></span>

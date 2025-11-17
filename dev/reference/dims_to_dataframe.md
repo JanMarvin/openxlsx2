@@ -5,7 +5,7 @@ Non consecutive decreasing dims will return an increasing data frame.
 ## Usage
 
 ``` r
-dims_to_dataframe(dims, fill = FALSE, empty_rm = FALSE)
+dims_to_dataframe(dims, fill = FALSE, empty_rm = FALSE, cc = NULL)
 ```
 
 ## Arguments
@@ -21,6 +21,10 @@ dims_to_dataframe(dims, fill = FALSE, empty_rm = FALSE)
 - empty_rm:
 
   Logical if empty columns and rows should be included
+
+- cc:
+
+  A reference `cc` frame
 
 ## Examples
 
