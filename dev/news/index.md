@@ -20,6 +20,10 @@
   [1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
 - Add missing `interactive` argument to
   [`wb_open()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_open.md).
+- [`wb_remove_comment()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_comment.md)
+  did not work if not every sheet had comments and if these comments
+  were ordered like the sheets.
+  [1468](https://github.com/JanMarvin/openxlsx2/pull/1468)
 
 ### Internal Changes
 
