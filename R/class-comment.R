@@ -390,6 +390,7 @@ do_remove_comment <- function(
   assert_workbook(wb)
 
   sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
+  comment_id <- wb$worksheets[[sheet]]$relships$comments
 
   if (!is.null(col) && !is.null(row)) {
     # col2int checks for numeric
@@ -414,12 +415,40 @@ do_remove_comment <- function(
     comb <- unlist(dims_to_dataframe(dims, fill = TRUE))
   }
 
-  toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
+  toKeep <- !sapply(wb$comments[[comment_id]], "[[", "ref") %in% comb
 
-  # FIXME: if all comments are removed we should drop to wb$comments <- list()
-  wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
+  wb$comments[[comment_id]] <- wb$comments[[comment_id]][toKeep]
 
-}
+  # # TODO
+  # if (length(wb$comments[[comment_id]]) == 0) {
+  #   wb$worksheets[[sheet]]$relships$comments <- integer()
+
+  #   # remove it from wb$worksheets_rels[[sheet]]
+  #   wb$worksheets_rels[[sheet]] <- wb$worksheets_rels[[sheet]][!grepl(sprintf("comments%s.xml", comment_id), wb$worksheets_rels[[sheet]])]
+
+  #   # remove it from wb$Content_Types
+  #   wb$Content_Types <- wb$Content_Types[!grepl(sprintf("comments%s.xml", comment_id), wb$Content_Types)]
+
+  #   # remove if vml is no longer needed (how to detect if needed?)
+  #   vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
+  #   wb$worksheets_rels[[sheet]] <- wb$worksheets_rels[[sheet]][!grepl(sprintf("vmlDrawing%s.vml", vml_id), wb$worksheets_rels[[sheet]])]
+
+  #   wb$worksheets[[sheet]]$relships$vmlDrawing <- integer()
+  #   wb$worksheets[[sheet]]$legacyDrawing <- character() # could get the rel id from worksheets to be 100% sure
+
+  #   wb$vml[[vml_id]] <- list()
+  #   # endif
+  # }
+
+  # # # FIXME: if all comments are removed we should drop to wb$comments <- list()
+  # if (sum(vapply(wb$comments, function(x)ifelse(length(nchar(x)) == 0, 0L, nchar(x)), NA_integer_)) == 0)
+  #   wb$comments <- list()
+
+  # # same for vml
+  # if (sum(vapply(wb$vml, function(x)ifelse(length(nchar(x)) == 0, 0L, nchar(x)), NA_integer_)) == 0)
+  #   wb$vml <- list()
+
+} # void
 
 as_fmt_txt <- function(x) {
   vapply(x, function(y) {

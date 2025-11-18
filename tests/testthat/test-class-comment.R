@@ -387,3 +387,25 @@ test_that("wb_get_comment works", {
   got <- wb$get_comment(dims = "B2")
   expect_equal(1L, nrow(got))
 })
+
+test_that("removing comment from second sheet works", {
+
+  temp <- temp_xlsx()
+
+  c1 <- wb_comment(text = "this is a comment", author = "")
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_worksheet("Sheet 2")$
+    add_comment(dims = "B10", comment = c1)$
+    remove_comment(dims = "B10")
+
+  # TODO in an ideal world we would not have these warnings
+  expect_warning(
+    expect_warning(
+      wb$save(temp),
+      "is missing"
+    ),
+    "is missing"
+  )
+})
