@@ -390,6 +390,7 @@ do_remove_comment <- function(
   assert_workbook(wb)
 
   sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
+  comment_id <- wb$worksheets[[sheet]]$relships$comments
 
   if (!is.null(col) && !is.null(row)) {
     # col2int checks for numeric
@@ -414,12 +415,26 @@ do_remove_comment <- function(
     comb <- unlist(dims_to_dataframe(dims, fill = TRUE))
   }
 
-  toKeep <- !sapply(wb$comments[[sheet]], "[[", "ref") %in% comb
+  toKeep <- !sapply(wb$comments[[comment_id]], "[[", "ref") %in% comb
+
+  wb$comments[[comment_id]] <- wb$comments[[comment_id]][toKeep]
+
+  # TODO
+  # remove it from wb$worksheets_rels[[sheet]]
+  # remove it from wb$Content_Types
+  # remove vmlDrawing (how to detect if needed?)
+  # if (length(wb$comments[[comment_id]]) == 0) {
+  #   wb$worksheets[[sheet]]$relships$comments <- integer()
+  #
+  #   wb$worksheets_rels[[sheet]] <- ...
+  #   wb$Content_Types <- wb$Content_Types[!grepl(sprintf("comments%s.xml", comment_id), wb$Content_Types)]
+  # }
 
   # FIXME: if all comments are removed we should drop to wb$comments <- list()
-  wb$comments[[sheet]] <- wb$comments[[sheet]][toKeep]
+  # if (sum(vapply(wb$comments, function(x)ifelse(length(nchar(x)) == 0, 0L, nchar(x)), NA_integer_)) == 0)
+  #   wb$comments <- list()
 
-}
+} # void
 
 as_fmt_txt <- function(x) {
   vapply(x, function(y) {

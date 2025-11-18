@@ -9,6 +9,7 @@
 
 * It is now possible to save a newly created workbook as `.xlsm` and it will open in spreadsheet software. [1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
 * Add missing `interactive` argument to `wb_open()`.
+* `wb_remove_comment()` did not work if not every sheet had comments and if these comments were ordered like the sheets. [1468](https://github.com/JanMarvin/openxlsx2/pull/1468)
 
 ## Internal Changes
 
