@@ -10298,7 +10298,7 @@ wbWorkbook <- R6::R6Class(
 
       if (is.data.frame(self$worksheets[[sheet]]$conditionalFormatting))
         prty <- as.integer(
-          openxlsx2:::rbindlist(
+          rbindlist(
             xml_attr(self$worksheets[[sheet]]$conditionalFormatting$cf, "cfRule")
           )$priority
         )

@@ -57,7 +57,6 @@ test_that("Load and saving a file with Threaded Comments works", {
 
 test_that("Read and save file with inlineStr", {
 
-  ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
   fl <- testfile_path("inlineStr.xlsx")
   wb <- wb_load(fl)
   wb_df <- wb_read(wb)

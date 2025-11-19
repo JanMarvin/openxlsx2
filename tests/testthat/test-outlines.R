@@ -335,7 +335,7 @@ test_that("grouping works independent of initialized cells", {
 test_that("hide_blanks works", {
   x <- matrix(NA, nrow = 20, ncol = 20)
 
-  wb <- openxlsx2::wb_workbook() |>
+  wb <- wb_workbook() |>
     wb_add_worksheet(sheet = "Sheet1") |>
     wb_add_data(
       x = x,

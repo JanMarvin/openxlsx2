@@ -378,6 +378,74 @@ do_write_comment <- function(
   invisible(wb)
 }
 
+# Comments are embedded in vml code. Unfortunately not only comments, but
+# other shapes as well. Therefore we have to identify comments in vml and
+# cannot remove the vml file entirely.
+# Comments are assumed to be type t202. They can share a o:shapelayout and
+# a v.shapetype. We have to remove these only if no comment is left. Next
+# we can remove the shape that matches the dims. If nothing remains in vml
+# return an empty list.
+vml_rm_note <- function(x, dims) {
+
+  xnms <- xml_node_name(x, "xml")
+  stopifnot(xnms %in% c("v:shape", "o:shapelayout", "v:shapetype"))
+
+  # FIXME openxlsx2 blows up shapetype and shapelayout, this should be avoided
+  dedup <- function(x, xml_nam) {
+    dups <- which(duplicated(xml_node(x, "xml", xml_nam)))
+    if (length(dups)) {
+      for (i in rev(dups)) {
+        x <- xml_rm_child(
+          x, xml_child = xml_nam, which = i
+        )
+      }
+    }
+    x
+  }
+
+  x <- dedup(x, "v:shapetype")
+  x <- dedup(x, "o:shapelayout")
+
+  shapetype <- rbindlist(xml_attr(x, "xml", "v:shapetype"))
+
+  shps <- xml_node(x, c("xml", "v:shape"))
+
+  shapes <- rbindlist(xml_attr(shps, "v:shape"))
+  shapes$rows <- xml_value(shps, c("v:shape", "x:ClientData", "x:Row"))
+  shapes$cols <- xml_value(shps, c("v:shape", "x:ClientData", "x:Column"))
+  shapes$dims <- paste0(
+    int2col(as.numeric(shapes$cols) + 1),
+    as.numeric(shapes$rows) + 1
+  )
+
+  sel <- which(shapes$dims == dims & shapes$type == "#_x0000_t202")
+  if (length(sel) == 0) {
+    warning("no comment to remove in cell ", dims, call. = FALSE)
+    return(x)
+  }
+
+  x <- xml_rm_child(
+    x, xml_child = "v:shape", which = sel
+  )
+
+  # if no comment is left, remove the comment shapetype
+  if (nrow(shapes[-sel, ]) == 0) {
+    sel <- which(shapetype$id == "_x0000_t202")
+
+    x <- xml_rm_child(
+      x, xml_child = "v:shapetype", which = sel
+    )
+  }
+
+  # if only the shapelayout is left, vml is empty
+  xnam <- xml_node_name(x, "xml")
+  if (length(xnam) == 0 || (length(xnam) == 1L &&  xnam == "o:shapelayout")) {
+    x <- list()
+  }
+
+  x
+}
+
 do_remove_comment <- function(
     wb,
     sheet,
@@ -419,34 +487,38 @@ do_remove_comment <- function(
 
   wb$comments[[comment_id]] <- wb$comments[[comment_id]][toKeep]
 
-  # # TODO
-  # if (length(wb$comments[[comment_id]]) == 0) {
-  #   wb$worksheets[[sheet]]$relships$comments <- integer()
+  # remove vml
+  vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
+  wb$vml[[vml_id]] <- vml_rm_note(wb$vml[[vml_id]], dims = dims)
 
-  #   # remove it from wb$worksheets_rels[[sheet]]
-  #   wb$worksheets_rels[[sheet]] <- wb$worksheets_rels[[sheet]][!grepl(sprintf("comments%s.xml", comment_id), wb$worksheets_rels[[sheet]])]
+  # check if there are comments left on sheet
+  if (length(wb$comments[[comment_id]]) == 0) {
+    wb$worksheets[[sheet]]$relships$comments <- integer()
 
-  #   # remove it from wb$Content_Types
-  #   wb$Content_Types <- wb$Content_Types[!grepl(sprintf("comments%s.xml", comment_id), wb$Content_Types)]
+    # remove it from wb$worksheets_rels[[sheet]]
+    wb$worksheets_rels[[sheet]] <- wb$worksheets_rels[[sheet]][!grepl(sprintf("comments%s.xml", comment_id), wb$worksheets_rels[[sheet]])]
 
-  #   # remove if vml is no longer needed (how to detect if needed?)
-  #   vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
-  #   wb$worksheets_rels[[sheet]] <- wb$worksheets_rels[[sheet]][!grepl(sprintf("vmlDrawing%s.vml", vml_id), wb$worksheets_rels[[sheet]])]
+    # remove it from wb$Content_Types
+    wb$Content_Types <- wb$Content_Types[!grepl(sprintf("comments%s.xml", comment_id), wb$Content_Types)]
 
-  #   wb$worksheets[[sheet]]$relships$vmlDrawing <- integer()
-  #   wb$worksheets[[sheet]]$legacyDrawing <- character() # could get the rel id from worksheets to be 100% sure
+    # remove vml if no longer needed
+    if (identical(wb$vml[[vml_id]], list())) {
+      wb$worksheets_rels[[sheet]] <- wb$worksheets_rels[[sheet]][!grepl(sprintf("vmlDrawing%s.vml", vml_id), wb$worksheets_rels[[sheet]])]
 
-  #   wb$vml[[vml_id]] <- list()
-  #   # endif
-  # }
+      wb$worksheets[[sheet]]$relships$vmlDrawing <- integer()
+      wb$worksheets[[sheet]]$legacyDrawing <- character() # could get the rel id from worksheets to be 100% sure
+    }
 
-  # # # FIXME: if all comments are removed we should drop to wb$comments <- list()
-  # if (sum(vapply(wb$comments, function(x)ifelse(length(nchar(x)) == 0, 0L, nchar(x)), NA_integer_)) == 0)
-  #   wb$comments <- list()
+    # endif
+  }
 
-  # # same for vml
-  # if (sum(vapply(wb$vml, function(x)ifelse(length(nchar(x)) == 0, 0L, nchar(x)), NA_integer_)) == 0)
-  #   wb$vml <- list()
+  test_nchar <- function(x) ifelse(length(nchar(x)) == 0, 0L, 1L)
+
+  if (sum(vapply(wb$comments, test_nchar, NA_integer_)) == 0)
+    wb$comments <- list()
+
+  if (sum(vapply(wb$vml, test_nchar, NA_integer_)) == 0)
+    wb$vml <- list()
 
 } # void
 
