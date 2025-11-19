@@ -378,7 +378,7 @@ test_that("wb_get_comment works", {
   expect_equal(exp, got)
 
   wb$remove_comment(dims = "B2")
-  expect_equal(NULL, wb$get_comment(dims = "B2"))
+  expect_equal(list(), wb$get_comment(dims = "B2"))
 
   wb$add_comment(
     dims = "B2",
@@ -400,12 +400,22 @@ test_that("removing comment from second sheet works", {
     add_comment(dims = "B10", comment = c1)$
     remove_comment(dims = "B10")
 
-  # TODO in an ideal world we would not have these warnings
-  expect_warning(
-    expect_warning(
-      wb$save(temp),
-      "is missing"
-    ),
-    "is missing"
-  )
+  expect_silent(wb$save(temp))
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet 1")$
+    add_worksheet("Sheet 2")$
+    add_comment(dims = "B10", comment = c1)$
+    add_comment(dims = "D10", comment = c1)$
+    add_comment(dims = "B12", comment = c1)
+
+  wb$remove_comment(sheet = "Sheet 2", dims = "B10")
+  wb$remove_comment(sheet = "Sheet 2", dims = "D10")
+  expect_warning(wb$remove_comment(sheet = "Sheet 2", dims = "G12"), "no comment to remove")
+  wb$remove_comment(sheet = "Sheet 2", dims = "B12")
+
+  expect_silent(wb$save(temp))
+  expect_equal(list(), wb$comments)
+  expect_equal(list(), wb$vml)
+
 })
