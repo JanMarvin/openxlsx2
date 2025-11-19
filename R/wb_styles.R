@@ -3,7 +3,7 @@
 # internal function used in wb_load
 # @param x character string containing styles.xml
 import_styles <- function(x) {
-  sxml <- openxlsx2::read_xml(x)
+  sxml <- read_xml(x)
 
   z <- NULL
 
