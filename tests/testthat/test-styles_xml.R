@@ -236,3 +236,26 @@ test_that("updating borders works", {
   )
 
 })
+
+test_that("create_font() works", {
+  got <- create_font(
+    b = TRUE, # Boolean
+    charset = "1", # Numeric-as-string
+    color = wb_color(hex = "FFDDAA00"), # wbColour object (ARGB yellow)
+    condense = TRUE, # Boolean
+    extend = TRUE, # Boolean
+    family = "10", # Numeric-as-string (must be 0-14)
+    i = TRUE, # Boolean
+    name = "Impact", # String
+    outline = TRUE, # Boolean
+    scheme = "major", # From 'minor', 'major', 'none'
+    shadow = TRUE, # Boolean
+    strike = TRUE, # Boolean
+    sz = 36, # Font size
+    u = "double", # From valid underline list
+    vert_align = "superscript" # From valid alignment list
+  )
+
+  exp <- "<font><b val=\"1\"/><charset val=\"1\"/><color rgb=\"FFDDAA00\"/><condense val=\"1\"/><extend val=\"1\"/><family val=\"10\"/><i val=\"1\"/><name val=\"Impact\"/><outline val=\"1\"/><scheme val=\"major\"/><shadow val=\"1\"/><strike val=\"1\"/><sz val=\"36\"/><u val=\"double\"/><vertAlign val=\"superscript\"/></font>"
+  expect_equal(exp, got)
+})
