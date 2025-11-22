@@ -293,7 +293,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
   bool first_dim_for_check = true;
 
   std::vector<Rcpp::IntegerVector> out_row_vectors;
-  std::set<std::vector<int>> seen_rows; // To track unique rows
+  std::set<std::vector<int32_t>> seen_rows; // To track unique rows
   std::vector<int32_t> ordered_unique_cols;
   std::set<int32_t> seen_cols_globally;
 
@@ -307,10 +307,10 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
       continue;
     }
 
-    std::string left_cell_str = cells[0];
+    std::string left_cell_str  = cells.front();
     std::string right_cell_str = cells.back();
 
-    // Get original row and column numbers without initial swapping
+    // Get original row and column numbers
     int32_t r1_orig = cell_to_rowint(left_cell_str);
     int32_t r2_orig = cell_to_rowint(right_cell_str);
     int32_t c1_orig = cell_to_colint(left_cell_str);
@@ -318,18 +318,23 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
 
     if (check) {
       int32_t r_start_for_check = std::min(r1_orig, r2_orig);
-      int32_t r_end_for_check = std::max(r1_orig, r2_orig);
+      int32_t r_end_for_check   = std::max(r1_orig, r2_orig);
 
-      std::set<int32_t> current_dim_rows_set;
-      if (r_start_for_check > 0 && r_end_for_check > 0) { // Ensure valid range
-        for (int32_t r = r_start_for_check; r <= r_end_for_check; ++r) {
-          current_dim_rows_set.insert(r);
-        }
+      // Early exit if invalid range detected
+      if (r_start_for_check <= 0 || r_end_for_check <= 0) {
+          // If the logic should ignore invalid ranges, use 'continue' instead of 'return true/false'
+          continue;
       }
 
+      // Build the set of rows for the current dimension
+      std::set<int32_t> current_dim_rows_set;
+      for (int32_t r = r_start_for_check; r <= r_end_for_check; ++r) {
+        current_dim_rows_set.insert(r);
+      }
 
+      // Compare with the first dimension's set
       if (first_dim_for_check) {
-        unique_row_values_for_check = current_dim_rows_set;
+        unique_row_values_for_check = std::move(current_dim_rows_set);
         first_dim_for_check = false;
       } else {
         if (current_dim_rows_set != unique_row_values_for_check) {
@@ -339,43 +344,43 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
     } else {
       // If not checking, collect unique rows and columns preserving specified order.
 
-      // Rows: store the (r1_orig, r2_orig) pair if not seen before.
-      std::vector<int> current_row = {r1_orig, r2_orig};
+      // 1. Rows: store the (r1_orig, r2_orig) pair if not seen before.
+      // Note: This relies on the pair {r1, r2} being treated as unique, even if {r2, r1} is seen later.
+      std::vector<int32_t> current_row = {r1_orig, r2_orig};
       if (seen_rows.find(current_row) == seen_rows.end()) {
         out_row_vectors.push_back(Rcpp::IntegerVector::create(r1_orig, r2_orig));
-        seen_rows.insert(current_row);
+        seen_rows.insert(std::move(current_row));
       }
 
-      // Columns: iterate from c1_orig to c2_orig (or vice-versa based on their values)
-      // and add to ordered_unique_cols if not seen globally.
-      // This preserves the scan direction for newly added columns.
-      if (c1_orig > 0 && c2_orig > 0) { // Ensure valid column indices
-          if (c1_orig <= c2_orig) {
-            for (int32_t c = c1_orig; c <= c2_orig; ++c) {
-              if (seen_cols_globally.find(c) == seen_cols_globally.end()) {
-                ordered_unique_cols.push_back(c);
-                seen_cols_globally.insert(c);
-              }
+      // 2. Columns: iterate from c1_orig to c2_orig, respecting order and collecting unique values.
+      if (c1_orig > 0 && c2_orig > 0) {
+        int32_t step = (c1_orig <= c2_orig) ? 1 : -1;
+        int32_t current_c = c1_orig;
+
+        while (true) {
+            // Check if column is new
+            if (seen_cols_globally.find(current_c) == seen_cols_globally.end()) {
+                ordered_unique_cols.push_back(current_c);
+                seen_cols_globally.insert(current_c);
             }
-          } else { // c1_orig > c2_orig, iterate downwards
-            for (int32_t c = c1_orig; c >= c2_orig; --c) {
-              if (seen_cols_globally.find(c) == seen_cols_globally.end()) {
-                ordered_unique_cols.push_back(c);
-                seen_cols_globally.insert(c);
-              }
-            }
-          }
+
+            // Break condition
+            if (current_c == c2_orig) break;
+
+            current_c += step;
+        }
       }
     }
-  } // dims
+  } // End of dims loop
 
   if (check) {
     return Rcpp::wrap(true);
   }
 
-  Rcpp::List result_list;
-  result_list["rows"] = Rcpp::wrap(out_row_vectors);
-  result_list["cols"] = Rcpp::wrap(ordered_unique_cols);
+  Rcpp::List result_list = Rcpp::List::create(
+    Rcpp::Named("rows") = Rcpp::wrap(out_row_vectors),
+    Rcpp::Named("cols") = Rcpp::wrap(ordered_unique_cols)
+  );
 
   return result_list;
 }
