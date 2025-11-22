@@ -725,8 +725,31 @@ void wide_to_long(
       const char* vals = CHAR(vals_sexp);
 
       const std::string& row = srows[static_cast<size_t>(j)];
+      std::string cell_r_str;
+      SEXP cell_r_sexp;
 
       R_xlen_t pos = (j * m) + i;
+
+      if (has_dims) {
+          // Option 1: dims provided
+          cell_r_str = dims[static_cast<size_t>(idx - 1L)];
+          cell_r_sexp = Rf_mkChar(cell_r_str.c_str());
+
+          SET_STRING_ELT(zz_r, pos, cell_r_sexp);
+          SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r_str).c_str()));
+          SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r_str).c_str()));
+      } else {
+          // Option 2: No dims
+          const std::string& col_str = scols[static_cast<size_t>(i)];
+          const std::string& row_str = srows[static_cast<size_t>(j)];
+
+          cell_r_str = col_str + row_str;
+          cell_r_sexp = Rf_mkChar(cell_r_str.c_str());
+
+          SET_STRING_ELT(zz_r, pos, cell_r_sexp);
+          SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row_str.c_str()));
+          SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col_str.c_str()));
+      }
 
       // there should be no unicode character in ref_str
       std::string ref_str = "";
@@ -842,18 +865,6 @@ void wide_to_long(
       // typ = std::to_string(vtyp)
       if (has_typ) SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
 
-      std::string cell_r = has_dims ? dims[static_cast<size_t>(idx - 1L)] : col + row;
-      SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r.c_str()));
-
-      if (has_dims) {
-        // row_r = rm_colnum(r) and c_r = rm_rownum(r)
-        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r).c_str()));
-        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r).c_str()));
-      } else {
-        // row_r = row and c_r = col
-        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
-        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
-      }
     }  // n
   }  // m
 }
