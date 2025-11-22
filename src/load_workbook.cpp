@@ -9,9 +9,6 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   R_xlen_t nn = std::distance(doc->begin(), doc->end());
   R_xlen_t kk = static_cast<R_xlen_t>(col_nams.size());
 
-  Rcpp::IntegerVector rvec(nn);
-  std::iota(rvec.begin(), rvec.end(), 0);
-
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
@@ -40,7 +37,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   }
 
   // 3. Create a data.frame
-  df.attr("row.names") = rvec;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);;
   df.attr("names") = col_nams;
   df.attr("class") = "data.frame";
 
@@ -71,8 +68,6 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   R_xlen_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
   R_xlen_t kk = static_cast<R_xlen_t>(row_nams.size());
-  Rcpp::IntegerVector rvec(nn);
-  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -109,7 +104,7 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
   }
 
   // 3. Create a data.frame
-  df.attr("row.names") = rvec;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
   df.attr("names") = row_nams;
   df.attr("class") = "data.frame";
 
