@@ -367,9 +367,8 @@ write_data2 <- function(
       # out <- c(nrow(data), seq_len(nrow(data))[-nrow(data)])
       # data <- data[out, , drop = FALSE]
 
-      # this is painfully slow, but still somehow the fastest way.
-      data[nrow(data) + 1L, ] <- colnames(data)
-      data <- data[c(nrow(data), seq_len(nrow(data) - 1L)), , drop = FALSE]
+      res_matrix <- rbind(colnames(data), as.matrix(data))
+      data <- as.data.frame(res_matrix, stringsAsFactors = FALSE)
 
     }
   }

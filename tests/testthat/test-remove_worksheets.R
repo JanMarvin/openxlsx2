@@ -94,7 +94,6 @@ test_that("removing leading chartsheets works", {
   ###
   skip_if_not_installed("mschart")
 
-  require(mschart)
   wb <- wb_workbook()$
     add_worksheet()$
     add_data(x = mtcars)
@@ -103,7 +102,7 @@ test_that("removing leading chartsheets works", {
   dat <- wb_data(wb, 1)
 
   # call ms_scatterplot
-  data_plot <- ms_scatterchart(
+  data_plot <- mschart::ms_scatterchart(
     data = dat,
     x = "mpg",
     y = c("disp", "hp"),

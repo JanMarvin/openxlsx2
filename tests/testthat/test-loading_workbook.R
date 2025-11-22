@@ -468,7 +468,7 @@ test_that("Loading a workbook with property preserves it.", {
 
   wb$set_properties(
     custom = list(
-      Software    = "openxlsx2",
+      # Software    = "openxlsx2",
       Version     = "1.5.0.9000",
       ReleaseDate = as.Date("2024-03-31"),
       CRAN        = FALSE,

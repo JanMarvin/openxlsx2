@@ -7325,7 +7325,7 @@ wbWorkbook <- R6::R6Class(
 
           # TODO add update or remove option
           if (anyDuplicated(c(old_names, new_names))) {
-            message("File has duplicated custom section")
+            # message("File has duplicated custom section")
             cstm <- self$custom
             idxs <- which(old_names %in% new_names)
             # remove all duplicates in reverse order

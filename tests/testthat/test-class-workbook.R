@@ -517,18 +517,17 @@ test_that("add_drawing works", {
   skip_if_not_installed("rvg")
   skip_if_not_installed("ggplot2")
 
-  require(rvg)
-  require(ggplot2)
-
   tmp <- tempfile(fileext = "drawing.xml")
 
   ## rvg example
-  dml_xlsx(file =  tmp, fonts = list(sans = "Bradley Hand"))
+  rvg::dml_xlsx(file =  tmp, fonts = list(sans = "Bradley Hand"))
   print(
-    ggplot(data = iris,
-           mapping = aes(x = Sepal.Length, y = Petal.Width)) +
-      geom_point() + labs(title = "With font Bradley Hand") +
-      theme_minimal(base_family = "sans", base_size = 18)
+    ggplot2::ggplot(
+      data = iris,
+      mapping = ggplot2::aes(x = Sepal.Length, y = Petal.Width)) +
+      ggplot2::geom_point() +
+      ggplot2::labs(title = "With font Bradley Hand") +
+      ggplot2::theme_minimal(base_family = "sans", base_size = 18)
   )
   dev.off()
 
@@ -551,8 +550,6 @@ test_that("add_drawing works", {
 test_that("add_drawing works", {
 
   skip_if_not_installed("mschart")
-
-  require(mschart)
 
   # write data starting at B2
   wb <- wb_workbook()$add_worksheet()$
@@ -594,7 +591,7 @@ test_that("add_drawing works", {
   expect_equal(exp, dat)
 
   # call ms_scatterplot
-  scatter_plot <- ms_scatterchart(
+  scatter_plot <- mschart::ms_scatterchart(
     data = dat,
     x = "mpg",
     y = c("disp", "hp"),
@@ -606,8 +603,8 @@ test_that("add_drawing works", {
 
   expect_equal(NROW(wb$charts), 1L)
 
-  chart_01 <- ms_linechart(
-    data = us_indus_prod,
+  chart_01 <- mschart::ms_linechart(
+    data = mschart::us_indus_prod,
     x = "date", y = "value",
     group = "type"
   )
@@ -645,7 +642,7 @@ test_that("add_drawing works", {
   wb <- wb_workbook()$
     add_worksheet()$add_data(x = mtcars)
 
-  scatter_plot <- ms_scatterchart(
+  scatter_plot <- mschart::ms_scatterchart(
     data = wb_data(wb),
     x = "mpg",
     y = c("disp", "hp")
@@ -667,8 +664,6 @@ test_that("add_chartsheet works", {
 
   skip_if_not_installed("mschart")
 
-  require(mschart)
-
   wb <- wb_workbook()$
     add_worksheet("A & B")$
     add_data(x = mtcars)$
@@ -677,7 +672,7 @@ test_that("add_chartsheet works", {
   dat <- wb_data(wb, 1, dims = "A1:E6")
 
   # call ms_scatterplot
-  data_plot <- ms_scatterchart(
+  data_plot <- mschart::ms_scatterchart(
     data = dat,
     x = "mpg",
     y = c("disp", "hp"),
@@ -695,7 +690,7 @@ test_that("add_chartsheet works", {
   # add new worksheet and replace chart on chartsheet
   wb$add_worksheet()$add_data(x = mtcars)
   dat <- wb_data(wb, dims = "A1:E1;A7:E15")
-  data_plot <- ms_scatterchart(
+  data_plot <- mschart::ms_scatterchart(
     data = dat,
     x = "mpg",
     y = c("disp", "hp"),
@@ -715,16 +710,14 @@ test_that("multiple charts on a sheet work as expected", {
 
   skip_if_not_installed("mschart")
 
-  require(mschart)
-
   ## Add mschart to worksheet (adds data and chart)
-  scatter <- ms_scatterchart(
+  scatter <- mschart::ms_scatterchart(
     data = iris,
     x = "Sepal.Length",
     y = "Sepal.Width",
     group = "Species"
   )
-  scatter <- chart_settings(scatter, scatterstyle = "marker")
+  scatter <- mschart::chart_settings(scatter, scatterstyle = "marker")
 
   wb <- wb_workbook()$
     add_worksheet()$
@@ -1215,7 +1208,7 @@ test_that("adding mips section works", {
 
   wb <- wb_load(tmp)
 
-  expect_message(wb$add_mips(xml = fmips), "File has duplicated custom section")
+  wb$add_mips(xml = fmips)
   expect_equal(fmips, wb$get_mips())
 
 
