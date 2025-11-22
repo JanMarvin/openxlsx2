@@ -229,54 +229,72 @@ SEXP copy(SEXP x) {
 std::vector<std::string> needed_cells(const std::string& range, bool all = true) {
   std::vector<std::string> cells;
 
-  // Parse the input range
+  // --- 1. Parsing and Normalization ---
+
   std::string startCellStr, endCellStr;
   size_t colonPos = range.find(':');
+
   if (colonPos != std::string::npos) {
     startCellStr = range.substr(0, colonPos);
-    endCellStr = range.substr(colonPos + 1);
+    endCellStr   = range.substr(colonPos + 1);
   } else {
     startCellStr = range;
-    endCellStr = range;
+    endCellStr   = range;
   }
 
+  // NOTE: Assuming validate_dims, is_column_only, is_row_only are robust external functions.
   if (!validate_dims(startCellStr) || !validate_dims(endCellStr)) {
     if (is_column_only(startCellStr) && is_column_only(endCellStr)) {
-      // Check if both start and end are pure columns like "A" or "P"
+      // Expand column range (e.g., "A:B") to max rows
       startCellStr += "1";
-      endCellStr   += "1048576";
+      endCellStr   += "1048576";  // Max row count for modern XLSX
     } else if (is_row_only(startCellStr) && is_row_only(endCellStr)) {
-      // Check if both start and end are pure rows like "3"
+      // Expand row range (e.g., "3:5") to max columns
       startCellStr = "A"   + startCellStr;
-      endCellStr   = "XFD" + endCellStr;
+      endCellStr   = "XFD" + endCellStr;  // Max column name for modern XLSX
     } else {
       Rcpp::stop("Invalid input: dims must be something like A1 or A1:B2.");
     }
   }
 
+  // --- 2. Quick Exit for Boundary Cells ---
+
   if (!all) {
+    cells.reserve(2);
     cells.push_back(startCellStr);
     cells.push_back(endCellStr);
-    return(cells);
+    return cells;
   }
 
-  // Extract column and row numbers from start and end cells
+  // --- 3. Cell Generation ---
+
   int32_t startRow = cell_to_rowint(startCellStr);
   int32_t endRow   = cell_to_rowint(endCellStr);
   int32_t startCol = cell_to_colint(startCellStr);
   int32_t endCol   = cell_to_colint(endCellStr);
 
-  // Determine the iteration directions
   int32_t rowStep = (startRow <= endRow) ? 1 : -1;
   int32_t colStep = (startCol <= endCol) ? 1 : -1;
 
-  // Generate spreadsheet cell references respecting the input order
-  for (int32_t col = startCol; (colStep > 0) ? (col <= endCol) : (col >= endCol); col += colStep) {
-    for (int32_t row = startRow; (rowStep > 0) ? (row <= endRow) : (row >= endRow); row += rowStep) {
-      std::string cell = int_to_col(col);
+  // Estimate capacity to avoid reallocations
+  size_t rowCount = static_cast<size_t>(std::abs(endRow - startRow)) + 1;
+  size_t colCount = static_cast<size_t>(std::abs(endCol - startCol)) + 1;
+  cells.reserve(rowCount * colCount);
+
+  for (int32_t col = startCol; ; col += colStep) {
+
+    std::string colStr = int_to_col(col);
+
+    for (int32_t row = startRow; ; row += rowStep) {
+
+      std::string cell = colStr;
       cell += std::to_string(row);
-      cells.push_back(cell);
+      cells.push_back(std::move(cell));
+
+      if (row == endRow) break;
     }
+
+    if (col == endCol) break;
   }
 
   return cells;
