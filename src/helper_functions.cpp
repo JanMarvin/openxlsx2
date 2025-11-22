@@ -657,47 +657,41 @@ void wide_to_long(
   R_xlen_t m = static_cast<R_xlen_t>(z.ncol());
   bool has_dims = static_cast<R_xlen_t>(dims.size()) == (n * m);
 
+  // --- 1. Pre-calculate Column/Row Strings ---
   std::vector<std::string> srows(static_cast<size_t>(n));
   for (size_t j = 0; j < static_cast<size_t>(n); ++j) {
     srows[j] = std::to_string(static_cast<size_t>(start_row) + j);
   }
-
   std::vector<std::string> scols(static_cast<size_t>(m));
   for (size_t i = 0; i < static_cast<size_t>(m); ++i) {
     scols[i] = int_to_col(static_cast<size_t>(start_col) + i);
   }
-  std::string f_attr;
 
+  // --- 2. Rcpp/C API Setup ---
   bool has_refs = refed.isNotNull();
-
   std::vector<std::string> ref;
   if (has_refs) ref = Rcpp::as<std::vector<std::string>>(refed.get());
-
   int32_t in_string_nums = string_nums;
-
   bool has_cm = zz.containsElementNamed("c_cm");
   bool has_typ = zz.containsElementNamed("typ");
 
-  // pointer magic. even though these are extracted, they just point to the
-  // memory in the data frame
-  Rcpp::CharacterVector zz_c_cm;
-  Rcpp::CharacterVector zz_typ;
-
   Rcpp::CharacterVector zz_row_r  = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
-  if (has_cm) zz_c_cm   = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
   Rcpp::CharacterVector zz_c_r    = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
   Rcpp::CharacterVector zz_v      = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
   Rcpp::CharacterVector zz_c_t    = Rcpp::as<Rcpp::CharacterVector>(zz["c_t"]);
   Rcpp::CharacterVector zz_is     = Rcpp::as<Rcpp::CharacterVector>(zz["is"]);
   Rcpp::CharacterVector zz_f      = Rcpp::as<Rcpp::CharacterVector>(zz["f"]);
   Rcpp::CharacterVector zz_f_attr = Rcpp::as<Rcpp::CharacterVector>(zz["f_attr"]);
-  if (has_typ) zz_typ   = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
   Rcpp::CharacterVector zz_r      = Rcpp::as<Rcpp::CharacterVector>(zz["r"]);
+  Rcpp::CharacterVector zz_c_cm;
+  if (has_cm) zz_c_cm = Rcpp::as<Rcpp::CharacterVector>(zz["c_cm"]);
+  Rcpp::CharacterVector zz_typ;
+  if (has_typ) zz_typ = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
 
-  // Convert na_strings only once outside the loop.
-  na_strings = inline_strings ? txt_to_is(na_strings, 0, 1, 1) : txt_to_si(na_strings, 0, 1, 1);
-
-  R_xlen_t idx = 0;
+  // --- 3. Pre-convert ALL constant/pre-calculated strings to SEXP (Optimization) ---
+  std::string final_na_string_content = inline_strings ?
+    txt_to_is(na_strings, 0, 1, 1) :
+    txt_to_si(na_strings, 0, 1, 1);
 
   SEXP blank_sexp      = Rf_mkChar("");
   SEXP inlineStr_sexp  = Rf_mkChar("inlineStr");
@@ -705,67 +699,65 @@ void wide_to_long(
   SEXP expr_sexp       = Rf_mkChar("e");
   SEXP sharedStr_sexp  = Rf_mkChar("s");
   SEXP string_sexp     = Rf_mkChar("str");
-
   SEXP na_sexp         = Rf_mkChar("#N/A");
   SEXP num_sexp        = Rf_mkChar("#NUM!");
   SEXP value_sexp      = Rf_mkChar("#VALUE!");
-  SEXP na_strings_sexp = Rf_mkChar(na_strings.c_str());
+  SEXP na_strings_sexp = Rf_mkChar(final_na_string_content.c_str());
+  SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
 
+  R_xlen_t pos;
+  R_xlen_t iter_count = 0;
+
+  // --- 4. Main Wide-to-Long Loop ---
   for (R_xlen_t i = 0; i < m; ++i) {
     Rcpp::CharacterVector cvec = Rcpp::as<Rcpp::CharacterVector>(z[i]);
     const std::string& col = scols[static_cast<size_t>(i)];
     int8_t vtyp_i = static_cast<int8_t>(vtyps[static_cast<size_t>(i)]);
 
     for (R_xlen_t j = 0; j < n; ++j) {
-      checkInterrupt(idx);
 
-      // if colname is provided, the first row is always a character
+      // Calculate pos (Row-Major)
+      pos = (j * m) + i;
+      checkInterrupt(iter_count);
+
+      // Variables for this cell
       int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;
       SEXP vals_sexp = STRING_ELT(cvec, j);
       const char* vals = CHAR(vals_sexp);
-
       const std::string& row = srows[static_cast<size_t>(j)];
+
       std::string cell_r_str;
       SEXP cell_r_sexp;
 
-      R_xlen_t pos = (j * m) + i;
-
+      // --- Coordinate Assignment ---
       if (has_dims) {
-          // Option 1: dims provided
-          cell_r_str = dims[static_cast<size_t>(idx - 1L)];
+          R_xlen_t col_pos = (i * n) + j;
+          cell_r_str = dims[static_cast<size_t>(col_pos)];
           cell_r_sexp = Rf_mkChar(cell_r_str.c_str());
-
           SET_STRING_ELT(zz_r, pos, cell_r_sexp);
           SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r_str).c_str()));
           SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r_str).c_str()));
       } else {
-          // Option 2: No dims
-          const std::string& col_str = scols[static_cast<size_t>(i)];
-          const std::string& row_str = srows[static_cast<size_t>(j)];
-
-          cell_r_str = col_str + row_str;
+          cell_r_str = col + row;
           cell_r_sexp = Rf_mkChar(cell_r_str.c_str());
-
           SET_STRING_ELT(zz_r, pos, cell_r_sexp);
-          SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row_str.c_str()));
-          SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col_str.c_str()));
+          SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
+          SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
       }
 
-      // there should be no unicode character in ref_str
       std::string ref_str = "";
       if (vtyp == array_formula || vtyp == cm_formula) {
         ref_str = has_refs ? ref[static_cast<size_t>(i)] : col + row;
       }
 
-      // factors can be numeric or string or both. tables require the
-      // column name to be character and once we have overwritten for
-      // a factor, we have to reset string_nums.
       if (!(ColNames && j == 0) && vtyp == factor)
         string_nums = 1;
       else
         string_nums = in_string_nums;
 
+      // --- Data Type Switch (Braces fix applied) ---
       switch (vtyp) {
+        // ... (numeric/logical cases) ...
         case currency:
         case short_date:
         case long_date:
@@ -775,30 +767,22 @@ void wide_to_long(
         case comma:
         case hms_time:
         case numeric:
-          // v
           SET_STRING_ELT(zz_v, pos, vals_sexp);
           break;
         case logical:
-          // v and c_t = "b"
           SET_STRING_ELT(zz_v,   pos, vals_sexp);
           SET_STRING_ELT(zz_c_t, pos, bool_sexp);
           break;
         case factor:
         case character:
-
-          // test if string can be written as number
           if (string_nums && is_double(vals)) {
-            // v
             SET_STRING_ELT(zz_v, pos, vals_sexp);
             vtyp     = (string_nums == 1) ? string_num : numeric;
           } else {
-            // check if we write sst or inlineStr
             if (inline_strings) {
-              // is and c_t = "inlineStr"
               SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
               SET_STRING_ELT(zz_is,  pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
             } else {
-              // v and c_t = "s"
               SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
               SET_STRING_ELT(zz_v,   pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
             }
@@ -806,67 +790,55 @@ void wide_to_long(
           break;
         case hyperlink:
         case formula:
-          // f and c_t = "str";
           SET_STRING_ELT(zz_c_t, pos, string_sexp);
           SET_STRING_ELT(zz_f,   pos, vals_sexp);
           break;
-        case array_formula:
-          // f, f_t = "array", and f_ref
-          f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
-
+        case array_formula: {
+          std::string f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
+          SET_STRING_ELT(zz_f, pos, vals_sexp);
+          SET_STRING_ELT(zz_f_attr, pos, Rf_mkChar(f_attr.c_str()));
+          break;
+        }
+        case cm_formula: {
+          std::string f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
+          SET_STRING_ELT(zz_c_cm,   pos, c_cm_sexp_const);
           SET_STRING_ELT(zz_f,      pos, vals_sexp);
           SET_STRING_ELT(zz_f_attr, pos, Rf_mkChar(f_attr.c_str()));
           break;
-        case cm_formula:
-          // c_cm, f, f_t = "array", and f_ref
-          f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
-
-          SET_STRING_ELT(zz_c_cm,   pos, Rf_mkChar(c_cm.c_str()));
-          SET_STRING_ELT(zz_f,      pos, vals_sexp);
-          SET_STRING_ELT(zz_f_attr, pos, Rf_mkChar(f_attr.c_str()));
-          break;
+        }
       }
 
+      // --- NA/Error Value Handling ---
       if (vals_sexp == NA_STRING || strcmp(vals, "_openxlsx_NA") == 0) {
         if (na_missing) {
-          // v = "#N/A"
-          SET_STRING_ELT(zz_v,   pos, na_sexp);
+          SET_STRING_ELT(zz_v, pos, na_sexp);
           SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-          // is = "" - required only if inline_strings
-          // and vtyp = character || vtyp = factor
-          SET_STRING_ELT(zz_is,  pos, blank_sexp);
-        } else  {
+          SET_STRING_ELT(zz_is, pos, blank_sexp);
+        } else {
           if (na_null) {
-            // all three v, c_t, and is = "" - there should be nothing in this row
-            SET_STRING_ELT(zz_v,   pos, blank_sexp);
+            SET_STRING_ELT(zz_v, pos, blank_sexp);
             SET_STRING_ELT(zz_c_t, pos, blank_sexp);
-            SET_STRING_ELT(zz_is,  pos, blank_sexp);
+            SET_STRING_ELT(zz_is, pos, blank_sexp);
           } else {
-            // c_t = "inlineStr" or "s"
-            SET_STRING_ELT(zz_c_t, pos, inline_strings  ? inlineStr_sexp  : sharedStr_sexp);
-            // for inlineStr is = na_strings else ""
-            SET_STRING_ELT(zz_is,  pos, inline_strings  ? na_strings_sexp : blank_sexp);
-            // otherwise v = na_strings else ""
-            SET_STRING_ELT(zz_v,   pos, !inline_strings ? na_strings_sexp : blank_sexp);
+            SET_STRING_ELT(zz_c_t, pos, inline_strings ? inlineStr_sexp : sharedStr_sexp);
+            SET_STRING_ELT(zz_is, pos, inline_strings ? na_strings_sexp : blank_sexp);
+            SET_STRING_ELT(zz_v, pos, !inline_strings ? na_strings_sexp : blank_sexp);
           }
         }
-
       } else if ((vtyp == numeric && strcmp(vals, "NaN") == 0) || (vtyp == factor && strcmp(vals, "_openxlsx_NaN") == 0)) {
-        // v = "#VALUE!"
-        SET_STRING_ELT(zz_v,   pos, value_sexp);
+        SET_STRING_ELT(zz_v, pos, value_sexp);
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       } else if ((vtyp == numeric && (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0)) ||
-                 (vtyp == factor  && (strcmp(vals, "_openxlsx_nInf") == 0 || strcmp(vals, "_openxlsx_Inf") == 0))) {
-        // v = "#NUM!"
-        SET_STRING_ELT(zz_v,   pos, num_sexp);
+                 (vtyp == factor && (strcmp(vals, "_openxlsx_nInf") == 0 || strcmp(vals, "_openxlsx_Inf") == 0))) {
+        SET_STRING_ELT(zz_v, pos, num_sexp);
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       }
 
-      // typ = std::to_string(vtyp)
-      if (has_typ) SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
-
-    }  // n
-  }  // m
+      if (has_typ) {
+          SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
+      }
+    }
+  }
 }
 
 // simple helper function to create a data frame of type character
