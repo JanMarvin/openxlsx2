@@ -6,7 +6,7 @@
 // read_xml(). We prevent bailing, by checking if the input is to long to be
 // a path.
 // Most likely this is only required until the dust has settled in R-devel, but
-// CRAN checks must succed on R-devel too.
+// CRAN checks must succeed on R-devel too.
 #ifndef R_PATH_MAX
 #define R_PATH_MAX PATH_MAX
 #endif
