@@ -999,3 +999,36 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
 
   return z;
 }
+
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
+  auto n = df_col.nrow();
+  Rcpp::CharacterVector z(n);
+  Rcpp::CharacterVector attrnams = df_col.names();
+
+  for (auto i = 0; i < n; ++i) {
+    pugi::xml_document doc;
+
+    pugi::xml_node col = doc.append_child(name.c_str());
+
+    for (auto j = 0; j < df_col.ncol(); ++j) {
+      Rcpp::CharacterVector cv_s = "";
+      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_col[j])[i];
+
+      // only write attributes where cv_s has a value
+      if (cv_s[0] != "") {
+        // Rf_PrintValue(cv_s);
+        const std::string val_strl = Rcpp::as<std::string>(cv_s);
+        col.append_attribute(attrnams[j]) = val_strl.c_str();
+      }
+    }
+
+    std::ostringstream oss;
+    doc.print(oss, " ", pugi::format_raw);
+
+    z[i] = oss.str();
+  }
+
+  return z;
+}
