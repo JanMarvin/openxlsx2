@@ -510,14 +510,11 @@ SEXP dims_to_df(Rcpp::IntegerVector rows,
     allowed_cols.insert(fcls.begin(), fcls.end());
   }
 
-  // allocate output list
+  SEXP default_val = fill ? Rf_mkChar("") : NA_STRING;
+
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    if (fill) {
-      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, Rf_mkChar("")));
-    } else {
-      SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, NA_STRING));
-    }
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, default_val));
   }
 
   if (fill) {
@@ -529,12 +526,15 @@ SEXP dims_to_df(Rcpp::IntegerVector rows,
       const std::string& coli = col_strs[static_cast<size_t>(i)];
 
       for (R_xlen_t j = 0; j < nn; ++j) {
-        std::string cell;
-        cell.reserve(coli.size() + row_strs[static_cast<size_t>(j)].size());
-        cell.append(coli).append(row_strs[static_cast<size_t>(j)]);
+        const std::string& row_str = row_strs[static_cast<size_t>(j)];
 
-        if (!has_filled || flls.find(cell) != flls.end())
-          cvec[j] = cell;
+        std::string cell = coli;
+        cell += row_str;
+
+        // Check against the set
+        if (!has_filled || flls.count(cell)) {
+            cvec[j] = cell;
+        }
       }
     }
   }
