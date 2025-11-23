@@ -9,9 +9,6 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   R_xlen_t nn = std::distance(doc->begin(), doc->end());
   R_xlen_t kk = static_cast<R_xlen_t>(col_nams.size());
 
-  Rcpp::IntegerVector rvec(nn);
-  std::iota(rvec.begin(), rvec.end(), 0);
-
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
@@ -40,43 +37,11 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   }
 
   // 3. Create a data.frame
-  df.attr("row.names") = rvec;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
   df.attr("names") = col_nams;
   df.attr("class") = "data.frame";
 
   return df;
-}
-
-// [[Rcpp::export]]
-Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
-  auto n = df_col.nrow();
-  Rcpp::CharacterVector z(n);
-
-  for (auto i = 0; i < n; ++i) {
-    pugi::xml_document doc;
-    Rcpp::CharacterVector attrnams = df_col.names();
-
-    pugi::xml_node col = doc.append_child(name.c_str());
-
-    for (auto j = 0; j < df_col.ncol(); ++j) {
-      Rcpp::CharacterVector cv_s = "";
-      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_col[j])[i];
-
-      // only write attributes where cv_s has a value
-      if (cv_s[0] != "") {
-        // Rf_PrintValue(cv_s);
-        const std::string val_strl = Rcpp::as<std::string>(cv_s);
-        col.append_attribute(attrnams[j]) = val_strl.c_str();
-      }
-    }
-
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
-
-    z[i] = oss.str();
-  }
-
-  return z;
 }
 
 inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
@@ -103,8 +68,6 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 
   R_xlen_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
   R_xlen_t kk = static_cast<R_xlen_t>(row_nams.size());
-  Rcpp::IntegerVector rvec(nn);
-  std::iota(rvec.begin(), rvec.end(), 0);
 
   // 1. create the list
   Rcpp::List df(kk);
@@ -141,7 +104,7 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
   }
 
   // 3. Create a data.frame
-  df.attr("row.names") = rvec;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
   df.attr("names") = row_nams;
   df.attr("class") = "data.frame";
 
@@ -263,7 +226,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             val.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
             single_xml_col.is = oss.str();
           }  // </is>
-
 
           if (val_name == f_str) {  // <f>
             // Store the content of <f> as single_xml_col.f

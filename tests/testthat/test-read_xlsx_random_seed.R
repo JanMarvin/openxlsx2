@@ -14,13 +14,13 @@ test_that("wb_add_mschart() does not alter the seed", {
 
   skip_if_not_installed("mschart")
 
-  require(mschart)
-
   rs <- .Random.seed
 
   ### Scatter
-  scatter <- ms_scatterchart(data = iris, x = "Sepal.Length",
-                             y = "Sepal.Width", group = "Species")
+  scatter <- mschart::ms_scatterchart(
+    data = iris, x = "Sepal.Length",
+    y = "Sepal.Width", group = "Species"
+  )
 
   wb <- wb_workbook()$
     add_worksheet()$add_mschart(graph = scatter)$

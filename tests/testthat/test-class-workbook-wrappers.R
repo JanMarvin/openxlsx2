@@ -838,12 +838,10 @@ test_that("wb_add_mschart() is a wrapper", {
 
   skip_if_not_installed("mschart")
 
-  require(mschart)
-
   ### Scatter
-  scatter <- ms_scatterchart(data = iris, x = "Sepal.Length",
+  scatter <- mschart::ms_scatterchart(data = iris, x = "Sepal.Length",
                              y = "Sepal.Width", group = "Species")
-  scatter <- chart_settings(scatter, scatterstyle = "marker")
+  scatter <- mschart::chart_settings(scatter, scatterstyle = "marker")
 
   wb <- wb_workbook()$add_worksheet()
 
