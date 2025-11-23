@@ -1,3 +1,22 @@
+as_posix_with_tz <- function(x, tz = "UTC") {
+  if (inherits(x, "POSIXct")) {
+    .POSIXct(x = x, tz = tz)
+  } else if (inherits(x, "Date")) {
+    .POSIXct(x = unclass(x) * 86400, tz = tz)
+  }  else {
+    as.POSIXct(x = x, tz = tz)
+  }
+}
+
+#' as.POSIXct helper for R < 4.3.0
+#' in these old R versions, no tz attribute is used
+as_POSIXct <- function(x, tz) {
+  if (getRversion() >= "4.3")
+    as.POSIXct(x, tz)
+  else
+    as_posix_with_tz(x, tz)
+}
+
 # `convert_date()` ------------------------------------------------
 #' Convert from spreadsheet date, datetime or hms number to R Date type
 #'
@@ -118,9 +137,7 @@ parseOffset <- function(tz) {
 #' @param x something as.POSIXct can convert
 #' @noRd
 as_POSIXct_utc <- function(x) {
-  z <- as.POSIXct(x, tz = "UTC")
-  # this should be superfluous?
-  attr(z, "tzone") <- "UTC"
+  z <- as_POSIXct(x, tz = "UTC")
   z
 }
 
@@ -156,7 +173,7 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
           as_POSIXlt_hms(x)
       })
     }
-    x <- as.POSIXct(x, tz = "UTC")
+    x <- as_POSIXct(x, tz = "UTC")
   }
 
   if (!inherits(x, "Date") && !inherits(x, "POSIXct")) {
