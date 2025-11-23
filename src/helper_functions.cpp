@@ -232,7 +232,7 @@ SEXP rbindlist(Rcpp::List x) {
         R_xlen_t col_idx = it->second;
 
         // Optimized assignment using pre-fetched vector reference
-        output_cols[col_idx][i] = current_vec[j];
+        output_cols[static_cast<size_t>(col_idx)][i] = current_vec[j];
       }
     }
   }
@@ -705,7 +705,6 @@ void wide_to_long(
   SEXP na_strings_sexp = Rf_mkChar(final_na_string_content.c_str());
   SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
 
-  R_xlen_t pos;
   R_xlen_t iter_count = 0;
 
   // --- 4. Main Wide-to-Long Loop ---
@@ -717,7 +716,7 @@ void wide_to_long(
     for (R_xlen_t j = 0; j < n; ++j) {
 
       // Calculate pos (Row-Major)
-      pos = (j * m) + i;
+      R_xlen_t pos = (j * m) + i;
       checkInterrupt(iter_count);
 
       // Variables for this cell
@@ -726,28 +725,25 @@ void wide_to_long(
       const char* vals = CHAR(vals_sexp);
       const std::string& row = srows[static_cast<size_t>(j)];
 
-      std::string cell_r_str;
-      SEXP cell_r_sexp;
-
       // --- Coordinate Assignment ---
       if (has_dims) {
-          R_xlen_t col_pos = (i * n) + j;
-          cell_r_str = dims[static_cast<size_t>(col_pos)];
-          cell_r_sexp = Rf_mkChar(cell_r_str.c_str());
-          SET_STRING_ELT(zz_r, pos, cell_r_sexp);
-          SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r_str).c_str()));
-          SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r_str).c_str()));
+        R_xlen_t col_pos = (i * n) + j;
+        const std::string& cell_r_str = dims[static_cast<size_t>(col_pos)];
+        SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
+        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r_str).c_str()));
+        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r_str).c_str()));
       } else {
-          cell_r_str = col + row;
-          cell_r_sexp = Rf_mkChar(cell_r_str.c_str());
-          SET_STRING_ELT(zz_r, pos, cell_r_sexp);
-          SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
-          SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
+        const std::string& cell_r_str = col + row;
+        SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
+        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
+        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
       }
 
       std::string ref_str = "";
+      std::string f_attr = "";
       if (vtyp == array_formula || vtyp == cm_formula) {
         ref_str = has_refs ? ref[static_cast<size_t>(i)] : col + row;
+        f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
       }
 
       if (!(ColNames && j == 0) && vtyp == factor)
@@ -755,7 +751,7 @@ void wide_to_long(
       else
         string_nums = in_string_nums;
 
-      // --- Data Type Switch (Braces fix applied) ---
+      // --- Data Type Switch ---
       switch (vtyp) {
         // ... (numeric/logical cases) ...
         case currency:
@@ -793,19 +789,15 @@ void wide_to_long(
           SET_STRING_ELT(zz_c_t, pos, string_sexp);
           SET_STRING_ELT(zz_f,   pos, vals_sexp);
           break;
-        case array_formula: {
-          std::string f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
+        case array_formula:
           SET_STRING_ELT(zz_f, pos, vals_sexp);
           SET_STRING_ELT(zz_f_attr, pos, Rf_mkChar(f_attr.c_str()));
           break;
-        }
-        case cm_formula: {
-          std::string f_attr = "t=\"array\" ref=\"" + ref_str + "\"";
+        case cm_formula:
           SET_STRING_ELT(zz_c_cm,   pos, c_cm_sexp_const);
           SET_STRING_ELT(zz_f,      pos, vals_sexp);
           SET_STRING_ELT(zz_f_attr, pos, Rf_mkChar(f_attr.c_str()));
           break;
-        }
       }
 
       // --- NA/Error Value Handling ---
@@ -835,7 +827,7 @@ void wide_to_long(
       }
 
       if (has_typ) {
-          SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
+        SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
       }
     }
   }
