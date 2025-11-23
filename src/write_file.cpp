@@ -21,7 +21,7 @@ void xml_sheet_data_slim(
   auto lastrow = 0;  // integer value of the last row with column data
   auto thisrow = 0;  // integer value of the current row with column data
   auto row_idx = 0;  // the index of the row_attr file. this is != rowid
-  auto rowid   = 0;  // integer value of the r field in row_attr
+  auto rowid = 0;    // integer value of the r field in row_attr
 
   std::string xml_preserver = " ";
 
@@ -57,10 +57,7 @@ void xml_sheet_data_slim(
         // loadExample. We check the rowid and write the line and skip until we
         // have every row and only then continue writing the column
         while (rowid < thisrow) {
-
-          rowid = std::stoi(Rcpp::as<std::string>(
-            row_r[row_idx]
-          ));
+          rowid = std::stoi(Rcpp::as<std::string>(row_r[row_idx]));
 
           if (row_idx) file << "</row>";
           file << "<row";
@@ -206,11 +203,11 @@ void write_worksheet_slim(
 // row and passes it to write_worksheet_xml_2 which will create the entire
 // sheet_data part for this worksheet
 
-void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFrame &cc) {
+void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFrame& cc) {
   auto lastrow = 0;  // integer value of the last row with column data
   auto thisrow = 0;  // integer value of the current row with column data
   auto row_idx = 0;  // the index of the row_attr file. this is != rowid
-  auto rowid   = 0;  // integer value of the r field in row_attr
+  auto rowid = 0;    // integer value of the r field in row_attr
 
   pugi::xml_node row;
 
@@ -329,25 +326,26 @@ void xml_sheet_data(pugi::xml_node &doc, Rcpp::DataFrame &row_attr, Rcpp::DataFr
       // Parse attributes from f_attr
       std::string key_value;
       while (std::getline(attr_stream, key_value, ' ')) {
-          auto pos = key_value.find('=');
-          if (pos != std::string::npos) {
-              std::string key = key_value.substr(0, pos);
-              std::string value = key_value.substr(pos + 1);
+        auto pos = key_value.find('=');
+        if (pos != std::string::npos) {
+          std::string key = key_value.substr(0, pos);
+          std::string value = key_value.substr(pos + 1);
 
-              // Remove quotes from value
-              if (!value.empty() && value.front() == '\"' && value.back() == '\"') {
-                  value = value.substr(1, value.size() - 2);
-              }
-
-              // Append attribute to <f>
-              f.append_attribute(key.c_str()) = value.c_str();
-              if (key == "si") f_si = true;
+          // Remove quotes from value
+          if (!value.empty() && value.front() == '\"' && value.back() == '\"') {
+            value = value.substr(1, value.size() - 2);
           }
+
+          // Append attribute to <f>
+          f.append_attribute(key.c_str()) = value.c_str();
+          if (key == "si")
+            f_si = true;
+        }
       }
 
       // Add the content of <f>
       if (!cc_f[i].empty()) {
-          f.append_child(pugi::node_pcdata).set_value(to_string(cc_f[i]).c_str());
+        f.append_child(pugi::node_pcdata).set_value(to_string(cc_f[i]).c_str());
       }
     }
 

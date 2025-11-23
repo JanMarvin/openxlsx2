@@ -16,7 +16,7 @@ inline std::string to_string(Rcpp::Vector<16>::Proxy x) {
   return Rcpp::String(x);
 }
 
-inline void checkInterrupt(R_xlen_t &iteration, R_xlen_t frequency = 10000) {
+inline void checkInterrupt(R_xlen_t& iteration, R_xlen_t frequency = 10000) {
   if (iteration % frequency == 0) {
     Rcpp::checkUserInterrupt();
   }
@@ -203,28 +203,40 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   Rcpp::CharacterVector df_names;
 
   // Base columns
-  df_list.push_back(r);      df_names.push_back("r");
-  df_list.push_back(row_r);  df_names.push_back("row_r");
-  df_list.push_back(c_r);    df_names.push_back("c_r");
-  df_list.push_back(c_s);    df_names.push_back("c_s");
-  df_list.push_back(c_t);    df_names.push_back("c_t");
+  df_list.push_back(r);
+  df_names.push_back("r");
+  df_list.push_back(row_r);
+  df_names.push_back("row_r");
+  df_list.push_back(c_r);
+  df_names.push_back("c_r");
+  df_list.push_back(c_s);
+  df_names.push_back("c_s");
+  df_list.push_back(c_t);
+  df_names.push_back("c_t");
 
   // Conditional columns
   if (has_cm) {
-    df_list.push_back(c_cm); df_names.push_back("c_cm");
+    df_list.push_back(c_cm);
+    df_names.push_back("c_cm");
   }
   if (has_ph) {
-    df_list.push_back(c_ph); df_names.push_back("c_ph");
+    df_list.push_back(c_ph);
+    df_names.push_back("c_ph");
   }
   if (has_vm) {
-    df_list.push_back(c_vm); df_names.push_back("c_vm");
+    df_list.push_back(c_vm);
+    df_names.push_back("c_vm");
   }
 
   // Content columns
-  df_list.push_back(v);      df_names.push_back("v");
-  df_list.push_back(f);      df_names.push_back("f");
-  df_list.push_back(f_attr); df_names.push_back("f_attr");
-  df_list.push_back(is);     df_names.push_back("is");
+  df_list.push_back(v);
+  df_names.push_back("v");
+  df_list.push_back(f);
+  df_names.push_back("f");
+  df_list.push_back(f_attr);
+  df_names.push_back("f_attr");
+  df_list.push_back(is);
+  df_names.push_back("is");
 
   df_list.attr("names") = df_names;
   df_list.attr("class") = "data.frame";

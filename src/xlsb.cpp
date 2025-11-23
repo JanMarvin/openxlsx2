@@ -2,8 +2,8 @@
 
 #include "openxlsx2.h"
 #include "xlsb_defines.h"
-#include "xlsb_funs.h"
 #include "xlsb_flags.h"
+#include "xlsb_funs.h"
 
 #include <iomanip>
 
@@ -3416,7 +3416,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             readbin(union_val, bin, swapit);
           }
 
-          if (vts == 6) // a string
+          if (vts == 6)  // a string
             vtsStringXls = XLWideString(bin, swapit);
 
           out << "<customFilter" << std::endl;
@@ -3432,7 +3432,6 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtEndCustomFilters:
         case BrtEndCustomRichFilters: {
-
           out << "</customFilters>" << std::endl;
 
           break;
@@ -3461,7 +3460,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             Rcpp::stop("iTabId out of range");
 
           dwScale = readbin(dwScale, bin, swapit);
-          if (dwScale < 0 || dwScale > 400) // dialog sheet 0 else 10
+          if (dwScale < 0 || dwScale > 400)  // dialog sheet 0 else 10
             Rcpp::stop("dwScale out of range");
 
           flags = readbin(flags, bin, swapit);
@@ -3469,7 +3468,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // fZoomToFit
 
           out << "<customSheetView" << std::endl;
-          out << " guid=\"{"<< guid_str(guids) << "}\"";
+          out << " guid=\"{" << guid_str(guids) << "}\"";
           if (dwScale != 100)
             out << " scale=\"" << dwScale << "\"";
           out << ">" << std::endl;
@@ -3494,7 +3493,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             Rcpp::stop("iTabId out of range");
 
           dwScale = readbin(dwScale, bin, swapit);
-          if (dwScale < 0 || dwScale > 400) // dialog sheet 0 else 10
+          if (dwScale < 0 || dwScale > 400)  // dialog sheet 0 else 10
             Rcpp::stop("dwScale out of range");
 
           icv = readbin(icv, bin, swapit);
@@ -3509,7 +3508,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           BrtBeginUserShViewFlags view_flags(flags);
 
           out << "<customSheetView";
-          out << " guid=\"{"<< guid_str(guids) << "}\"";
+          out << " guid=\"{" << guid_str(guids) << "}\"";
           if (dwScale != 100)
             out << " scale=\"" << dwScale << "\"";
           if (icv != 64)
@@ -3838,12 +3837,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
               /* end move this to function -------------------------------------*/
 
               frt_sqrefs.push_back(sqref);
-
             }
-
           }
 
-          if (view_flags.fFormula()) { // 0 or 1
+          if (view_flags.fFormula()) {  // 0 or 1
             // Rcpp::Rcout << "fFormula" << std::endl;
             uint32_t cformula = 0;
             cformula = readbin(cformula, bin, swapit);
@@ -3857,10 +3854,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
               frt_fmls.push_back(frt_fml);
               // Rcpp::Rcout << frt_fmls[cfml] << std::endl;
             }
-
           }
 
-          if (view_flags.fRelID()) { // 0
+          if (view_flags.fRelID()) {  // 0
             // Rcpp::Rcout << "fRelID" << std::endl;
             std::string relId = LPWideString(bin, swapit);
           }
@@ -4059,9 +4055,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
-
         case BrtEndCFRule: {
-
           if (debug) Rcpp::Rcout << "</cfRule>" << std::endl;
           // Rcpp::Rcout << "</cfRule>" << std::endl;
 
@@ -4112,12 +4106,11 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtEndColBrk:
         case BrtEndRwBrk: {
-
           if (debug) Rcpp::Rcout << "<BrtEnd..Brk>" << std::endl;
 
           break;
         }
-        // end unhandled page breaks
+          // end unhandled page breaks
 
         case BrtFRTBegin: {
           if (debug) Rcpp::Rcout << "BrtFRTBegin" << std::endl;
@@ -4140,7 +4133,6 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         }
 
         case BrtEndSheet: {
-
           if (hlinks.size() > 1) {
             // did not see BrtBeginHL or BrtEndHL, likely I'm just blind
             hlinks.push_back("</hyperlinks>");

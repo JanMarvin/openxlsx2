@@ -37,7 +37,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   }
 
   // 3. Create a data.frame
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
   df.attr("names") = col_nams;
   df.attr("class") = "data.frame";
 
@@ -226,7 +226,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
             val.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
             single_xml_col.is = oss.str();
           }  // </is>
-
 
           if (val_name == f_str) {  // <f>
             // Store the content of <f> as single_xml_col.f

@@ -921,7 +921,6 @@ std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
 
   out << "<" << type << " style = \"" << as_border_style(dg) << "\"";
   if (dg > 0) {
-
     double tint = 0.0;
     if (color[2] != 0) tint = (double)color[2]/32767;
 
@@ -1012,7 +1011,6 @@ std::string typOperator(uint8_t oprtr) {
 }
 
 std::string grbitSgnOperator(int8_t oprtr) {
-
   if (oprtr == 0x01) return "lessThan";
   if (oprtr == 0x02) return "equal";
   if (oprtr == 0x03) return "lessThanOrEqual";
@@ -1107,28 +1105,28 @@ std::string array_elements(const std::vector<std::string>& elements, int32_t n, 
 
 // undo the newline escaping
 std::string replaceXmlEscapesWithNewline(const std::string& input) {
-    std::string output = input;
-    std::string search1 = "&#xA;";
-    std::string search2 = "&amp;#xA;";
-    std::string replacement = "\n";
+  std::string output = input;
+  std::string search1 = "&#xA;";
+  std::string search2 = "&amp;#xA;";
+  std::string replacement = "\n";
 
-    size_t pos = 0;
+  size_t pos = 0;
 
-    // Replace "&#xA;"
-    while ((pos = output.find(search1, pos)) != std::string::npos) {
-        output.replace(pos, search1.length(), replacement);
-        pos += replacement.length();
-    }
+  // Replace "&#xA;"
+  while ((pos = output.find(search1, pos)) != std::string::npos) {
+    output.replace(pos, search1.length(), replacement);
+    pos += replacement.length();
+  }
 
-    pos = 0;
+  pos = 0;
 
-    // Replace "&amp;#xA;"
-    while ((pos = output.find(search2, pos)) != std::string::npos) {
-        output.replace(pos, search2.length(), replacement);
-        pos += replacement.length();
-    }
+  // Replace "&amp;#xA;"
+  while ((pos = output.find(search2, pos)) != std::string::npos) {
+    output.replace(pos, search2.length(), replacement);
+    pos += replacement.length();
+  }
 
-    return output;
+  return output;
 }
 
 std::string parseRPN(const std::string& expression) {
@@ -1200,7 +1198,6 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         val2 = readbin(val2, sas, swapit); // full 8 bit forming eptg
         if (debug) Rcpp::Rcout << "PtgAttr: " << std::hex << (int)val1 << ": "<< (int)val2 << std::dec << std::endl;
         switch(val2) {
-
           case PtgList: {
             RgbExtra typ = PtgExtraList;
 
@@ -1266,7 +1263,6 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
                   (view_flags.rowType() == dataheaders ||
                     view_flags.rowType() == datatotals)
                 );
-
 
             // if rowType == 0 no #Data etc is added
             if (!no_row_type && view_flags.rowType()) {
