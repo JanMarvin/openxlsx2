@@ -35,7 +35,7 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
 
   # In R 3.6 combining two POSIXct vectors makes them loose their timezone
   df <- data.frame(
-    timeval = as_POSIXct(c(TimeDT1, TimeDT2), tz = "UTC"), # fix for R 3.6
+    timeval = .POSIXct(c(TimeDT1, TimeDT2), tz = "UTC"), # fix for R 3.6
     timetxt = format(c(TimeDT1, TimeDT2), "%Y-%m-%d %H:%M"),
     stringsAsFactors = FALSE
   )
