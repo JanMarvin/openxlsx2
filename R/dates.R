@@ -119,7 +119,6 @@ parseOffset <- function(tz) {
 #' @noRd
 as_POSIXct_utc <- function(x) {
   z <- as.POSIXct(x, tz = "UTC")
-  # this should be superfluous?
   attr(z, "tzone") <- "UTC"
   z
 }

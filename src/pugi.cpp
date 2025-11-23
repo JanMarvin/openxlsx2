@@ -279,8 +279,8 @@ SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
 
     R_xlen_t j = 0;
     for (auto attr = node.attributes_begin(); attr != node.attributes_end(); ++attr, ++j) {
-      attr_names[j] = attr->name();
-      attr_values[j] = attr->value();
+      attr_names[j] = Rcpp::String(attr->name());
+      attr_values[j] = Rcpp::String(attr->value());
     }
 
     attr_values.attr("names") = attr_names;

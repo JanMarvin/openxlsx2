@@ -375,7 +375,8 @@ test_that("type = 'topN' works", {
     cf = c(
       '<cfRule type="top10" dxfId="1" priority="1" rank="5" percent="0"/>',
       '<cfRule type="top10" dxfId="1" priority="2" rank="20" percent="1"/>'
-    )
+    ),
+    stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
   expect_save(wb)

@@ -137,7 +137,7 @@ test_that("both origins work", {
 
 test_that("date 1904 works as expected", {
   set.seed(123)
-  vpos <- as.POSIXct(Sys.time() + sample(runif(5) * 1e6, 20, TRUE), tz = "UTC")
+  vpos <- .POSIXct(Sys.time() + sample(runif(5) * 1e6, 20, TRUE), tz = "UTC")
   vdte <- as.Date(vpos)
   df <- data.frame(
     int = 1:20,
