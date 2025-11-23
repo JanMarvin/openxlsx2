@@ -10372,7 +10372,7 @@ wbWorkbook <- R6::R6Class(
 
       if (length(cfRule)) {
 
-        cfc <- data.frame(pivot = "", sqref = sqref, cf = read_xml(cfRule, pointer = FALSE))
+        cfc <- data.frame(pivot = "", sqref = sqref, cf = read_xml(cfRule, pointer = FALSE), stringsAsFactors = FALSE)
         cfs <- self$worksheets[[sheet]]$conditionalFormatting
 
         sel <- c("sqref", "cf")
