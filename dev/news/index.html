@@ -69,6 +69,8 @@
 <h3 id="internal-changes-development-version">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
 <ul><li>The <code>tt</code> data frame that is created with <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> to support column type guessing is now using integer columns instead of characters. This should reduce the memory footprint of the function. <a href="https://github.com/JanMarvin/openxlsx2/pull/1459" class="external-link">1459</a>
 </li>
+<li>Cleanups in <code>C++</code> code. This should not impact the user.</li>
+<li>Fixed test issues with <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> in R &lt; 4.3.0. In these older R versions <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> dropped the timezone argument. In addition another round of <code>stringsAsFactors = FALSE</code> makes the tests run again unter R 3.6.0 (given one uses <code>CXX_STD=CXX11</code> in <code>src/Makevars</code>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
