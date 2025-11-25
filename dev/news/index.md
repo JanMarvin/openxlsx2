@@ -40,6 +40,10 @@
   timezone argument. In addition another round of
   `stringsAsFactors = FALSE` makes the tests run again unter R 3.6.0
   (given one uses `CXX_STD=CXX11` in `src/Makevars`).
+- Removed `zip` dependency. We now use
+  [`utils::zip()`](https://rdrr.io/r/utils/zip.html) when writing the
+  xlsx/xlsm output file.
+  [1475](https://github.com/JanMarvin/openxlsx2/pull/1475)
 
 ### Breaking changes
 

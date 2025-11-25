@@ -71,6 +71,8 @@
 </li>
 <li>Cleanups in <code>C++</code> code. This should not impact the user.</li>
 <li>Fixed test issues with <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> in R &lt; 4.3.0. In these older R versions <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> dropped the timezone argument. In addition another round of <code>stringsAsFactors = FALSE</code> makes the tests run again unter R 3.6.0 (given one uses <code>CXX_STD=CXX11</code> in <code>src/Makevars</code>).</li>
+<li>Removed <code>zip</code> dependency. We now use <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> when writing the xlsx/xlsm output file. <a href="https://github.com/JanMarvin/openxlsx2/pull/1475" class="external-link">1475</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
