@@ -23,8 +23,7 @@ Imports:
     Rcpp,
     grDevices,
     stringi,
-    utils,
-    zip
+    utils
 LinkingTo:
     Rcpp
 Suggests:

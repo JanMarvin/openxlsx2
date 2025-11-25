@@ -3803,16 +3803,21 @@ wbWorkbook <- R6::R6Class(
         6L
 
       ## zip it
-      zip::zip(
-        zipfile = tmpFile,
-        files = list.files(tmpDir, full.names = FALSE),
-        recurse = TRUE,
-        compression_level = compr_level,
-        include_directories = FALSE,
-        # change the working directory for this
-        root = tmpDir,
-        # change default to match historical zipr
-        mode = "cherry-pick"
+      # zip::zip(
+      #   zipfile = tmpFile,
+      #   files = list.files(tmpDir, full.names = FALSE),
+      #   recurse = TRUE,
+      #   compression_level = compr_level,
+      #   include_directories = FALSE,
+      #   # change the working directory for this
+      #   root = tmpDir,
+      #   # change default to match historical zipr
+      #   mode = "cherry-pick"
+      # )
+      zip_output(
+        zip_path = tmpFile,
+        source_dir = tmpDir,
+        compression_level = compr_level
       )
 
       # Copy file; stop if failed

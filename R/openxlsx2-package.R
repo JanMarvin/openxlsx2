@@ -15,8 +15,7 @@
 #'   stri_join stri_match_first_regex stri_order stri_opts_collator stri_pad_left
 #'   stri_rand_strings stri_read_lines stri_replace_all_fixed stri_replace_all_regex
 #'   stri_split_fixed stri_sub stri_unescape_unicode stri_unique
-#' @importFrom utils download.file head menu read.csv unzip
-#' @importFrom zip zip
+#' @importFrom utils download.file head menu read.csv unzip zip
 #'
 #' @seealso
 #' * `browseVignettes("openxlsx2")`
