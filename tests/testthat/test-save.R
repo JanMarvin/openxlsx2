@@ -6,7 +6,6 @@ test_that("test return values for wb_save", {
   expect_error(wb_save(wb, tempFile, overwrite = FALSE))
 
   expect_identical(tempFile, wb_save(wb, tempFile)$path)
-  file.remove(tempFile)
 })
 
 # regression test for a typo
@@ -92,7 +91,6 @@ test_that("write_data2", {
     ignore_attr = TRUE
   )
 
-  file.remove(file)
 })
 
 
