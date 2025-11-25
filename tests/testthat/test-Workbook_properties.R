@@ -59,7 +59,6 @@ test_that("Workbook properties", {
   res <- wb_get_creators(wb)
   expect_identical(res, creators)
 
-  file.remove(temp_file)
 })
 
 test_that("escaping in wbWorkbooks genBaseCore works as expected", {

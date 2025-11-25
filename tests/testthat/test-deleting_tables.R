@@ -96,7 +96,6 @@ test_that("Deleting a Table Object", {
 
 
   expect_equal(wb_get_tables(wb, sheet = 1), exp[2, ], ignore_attr = TRUE)
-  file.remove(temp)
 })
 
 test_that("Save and load Table Deletion", {
@@ -124,7 +123,6 @@ test_that("Save and load Table Deletion", {
   wb_save(wb, temp_file)
   wb <- wb_load(file = temp_file)
   expect_null(wb$tables)
-  file.remove(temp_file)
 
 
 
@@ -151,7 +149,6 @@ test_that("Save and load Table Deletion", {
 
   expect_equal(wb$worksheets[[1]]$tableParts, "<tablePart r:id=\"rId2\"/>", ignore_attr = TRUE) ## rId reset
   expect_equal(unname(attr(wb$worksheets[[1]]$tableParts, "tableName")), "mtcars")
-  file.remove(temp_file)
 
 
 

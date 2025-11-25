@@ -34,5 +34,4 @@ test_that("Reading protected Workbook", {
   n2 <- names(wb$workbook)[names(wb$workbook) != "apps"]
   expect_equal(n1, n2)
 
-  file.remove(temp_file)
 })

@@ -23,7 +23,6 @@ test_that("names", {
 
   wb$add_worksheet("S1")
   expect_warning(wb$set_sheet_names(new = paste(rep("a", 32), collapse = "")), "31 characters")
-  file.remove(tmp)
 
   wb <- wb_workbook()
   expect_warning(wb$add_worksheet(paste(rep("a", 32), collapse = "")), "31 characters")
