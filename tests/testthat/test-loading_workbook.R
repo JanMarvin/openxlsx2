@@ -507,7 +507,7 @@ test_that("failing to unzip works as expected", {
   tmp <- temp_xlsx()
   writeLines("", tmp)
   tmp_zip <- tempfile(fileext = ".zip")
-  zip::zip(zipfile = tmp_zip, files = basename(tmp), root = dirname(tmp))
+  zip_output(zip_path = tmp_zip, source_dir = tempdir(), source_files = tmp, compression_level = 1)
   expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
 
 })

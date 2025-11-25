@@ -16,6 +16,7 @@
 * The `tt` data frame that is created with `wb_to_df()` to support column type guessing is now using integer columns instead of characters. This should reduce the memory footprint of the function. [1459](https://github.com/JanMarvin/openxlsx2/pull/1459)
 * Cleanups in `C++` code. This should not impact the user.
 * Fixed test issues with `as.POSIXct()` in R < 4.3.0. In these older R versions `as.POSIXct()` dropped the timezone argument. In addition another round of `stringsAsFactors = FALSE` makes the tests run again unter R 3.6.0 (given one uses `CXX_STD=CXX11` in `src/Makevars`).
+* Removed `zip` dependency. We now use `utils::zip()` when writing the xlsx/xlsm output file. [1475](https://github.com/JanMarvin/openxlsx2/pull/1475)
 
 ## Breaking changes
 

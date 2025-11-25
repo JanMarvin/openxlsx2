@@ -1446,3 +1446,13 @@ if (getRversion() < "4.0.0") {
     paste(deparse(expr), collapse = collapse)
   }
 }
+
+zip_output <- function(zip_path, source_dir, source_files = NULL, compression_level = 9) {
+  original_wd <- getwd()
+  on.exit(setwd(original_wd))
+  abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
+  setwd(source_dir)
+  zip_flags <- paste0("-r", compression_level, "Xq")
+  if (is.null(source_files)) source_files <- list.files(source_dir, full.names = FALSE)
+  utils::zip(zipfile = abs_zip_path, files = source_files, flags = zip_flags)
+}
