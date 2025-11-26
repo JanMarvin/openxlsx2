@@ -1449,6 +1449,16 @@ if (getRversion() < "4.0.0") {
 
 zip_output <- function(zip_path, source_dir, source_files = NULL, compression_level = 9) {
 
+  # on Windows we might have an Rtools folder somewhere with a zip.exe ...
+  if (Sys.getenv("R_ZIPCMD") == "" && Sys.info()$sysname == "Windows") {
+    env <- Sys.getenv()
+    env <- env[grepl("^RTOOLS[A-Z0-9_]+_HOME$", env)]
+    maybe_zip <- file.path(env, "usr", "bin", "zip.exe")
+    if (any(zip_here <- file.exists(maybe_zip)))
+    Sys.setenv("R_ZIPCMD" = maybe_zip[zip_here][1])
+    on.exit(Sys.setenv("R_ZIPCMD" = ""))
+  }
+
   if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD") != "") {
     original_wd <- getwd()
     on.exit(setwd(original_wd))
