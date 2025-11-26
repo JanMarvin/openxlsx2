@@ -70,8 +70,8 @@
 <ul><li>The <code>tt</code> data frame that is created with <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> to support column type guessing is now using integer columns instead of characters. This should reduce the memory footprint of the function. <a href="https://github.com/JanMarvin/openxlsx2/pull/1459" class="external-link">1459</a>
 </li>
 <li>Cleanups in <code>C++</code> code. This should not impact the user.</li>
-<li>Fixed test issues with <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> in R &lt; 4.3.0. In these older R versions <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> dropped the timezone argument. In addition another round of <code>stringsAsFactors = FALSE</code> makes the tests run again unter R 3.6.0 (given one uses <code>CXX_STD=CXX11</code> in <code>src/Makevars</code>).</li>
-<li>Removed <code>zip</code> dependency. We now use <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> when writing the xlsx/xlsm output file. <a href="https://github.com/JanMarvin/openxlsx2/pull/1475" class="external-link">1475</a>
+<li>Fixed test issues with <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> in R &lt; 4.3.0. In these older R versions <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> dropped the timezone argument. In addition another round of <code>stringsAsFactors = FALSE</code> makes the tests run again under R 3.6.0 (given one uses <code>CXX_STD=CXX11</code> in <code>src/Makevars</code>).</li>
+<li>The <code>zip</code> dependency is only a fallback for when no system zip tool is available. The default is to use <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> when writing the xlsx/xlsm output file. This allows to use a system zip file that usually are tweaked for performance. <a href="https://github.com/JanMarvin/openxlsx2/pull/1475" class="external-link">1475</a>
 </li>
 </ul></div>
 <div class="section level3">

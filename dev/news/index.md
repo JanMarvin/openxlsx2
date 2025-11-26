@@ -38,11 +38,13 @@
   4.3.0. In these older R versions
   [`as.POSIXct()`](https://rdrr.io/r/base/as.POSIXlt.html) dropped the
   timezone argument. In addition another round of
-  `stringsAsFactors = FALSE` makes the tests run again unter R 3.6.0
+  `stringsAsFactors = FALSE` makes the tests run again under R 3.6.0
   (given one uses `CXX_STD=CXX11` in `src/Makevars`).
-- Removed `zip` dependency. We now use
+- The `zip` dependency is only a fallback for when no system zip tool is
+  available. The default is to use
   [`utils::zip()`](https://rdrr.io/r/utils/zip.html) when writing the
-  xlsx/xlsm output file.
+  xlsx/xlsm output file. This allows to use a system zip file that
+  usually are tweaked for performance.
   [1475](https://github.com/JanMarvin/openxlsx2/pull/1475)
 
 ### Breaking changes

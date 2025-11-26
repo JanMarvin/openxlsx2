@@ -62,5 +62,9 @@ options. Typically, this is done in the `.Rprofile` startup file
   and
   [`wb_add_data_table()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_data_table.md).
 
+- `options("openxlsx2.zip_flags")` custom zip flags passed to
+  [`utils::zip()`](https://rdrr.io/r/utils/zip.html) required when using
+  a custom zip tool
+
 - `options("openxlsx2.compression_level" = 6)` compression level for the
   output file. Increasing compression and time consumed from 1-9.
