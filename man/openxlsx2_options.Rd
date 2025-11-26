@@ -35,6 +35,7 @@ to a cell with \code{\link[=wb_add_thread]{wb_add_thread()}}
 will be converted. \code{"1"} will be written as \code{1}
 \item \code{options("openxlsx2.na.strings" = "#N/A")} consulted by \code{write_xlsx()},
 \code{wb_add_data()} and \code{wb_add_data_table()}.
+\item \code{options("openxlsx2.zip_flags")} custom zip flags passed to \code{utils::zip()} required when using a custom zip tool
 \item \code{options("openxlsx2.compression_level" = 6)} compression level for the output file. Increasing compression and time consumed from 1-9.
 }
 }
