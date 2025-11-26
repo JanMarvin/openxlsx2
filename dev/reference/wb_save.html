@@ -100,7 +100,9 @@ preliminary sanity checks before writing. As the name suggests,
 the output is simply flushed to disk.</p>
 <p>Per default the <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> function is used when creating the output.
 This relies on the existence of a valid zip program. As a fallback it is
-possible to use the <code>zip</code> package.</p>
+possible to use the <code>zip</code> package. This package is no longer in <code>Imports</code>
+and has to be installed separately. In addition it is possible to use
+<code>p7zip</code> via <code>R_ZIPCMD</code> pointing to the executable.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

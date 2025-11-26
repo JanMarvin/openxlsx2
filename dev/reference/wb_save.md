@@ -52,7 +52,9 @@ flushed to disk.
 Per default the [`utils::zip()`](https://rdrr.io/r/utils/zip.html)
 function is used when creating the output. This relies on the existence
 of a valid zip program. As a fallback it is possible to use the `zip`
-package.
+package. This package is no longer in `Imports` and has to be installed
+separately. In addition it is possible to use `p7zip` via `R_ZIPCMD`
+pointing to the executable.
 
 ## See also
 
