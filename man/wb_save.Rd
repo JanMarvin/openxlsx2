@@ -36,6 +36,10 @@ memory usage but skips some XML validity checks. It also bypasses
 the \code{pugixml} functions that \code{openxlsx2} uses, omitting certain
 preliminary sanity checks before writing. As the name suggests,
 the output is simply flushed to disk.
+
+Per default the \code{\link[utils:zip]{utils::zip()}} function is used when creating the output.
+This relies on the existence of a valid zip program. As a fallback it is
+possible to use the \code{zip} package.
 }
 \examples{
 ## Create a new workbook and add a worksheet

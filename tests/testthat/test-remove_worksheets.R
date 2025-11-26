@@ -72,8 +72,7 @@ test_that("removing leading chartsheets works", {
     remove_worksheet(1)
 
   wb$save(tmp)
-  tmp_dir <- paste0(tempdir(), "/openxlsx2_unzip")
-  dir.create(tmp_dir)
+  tmp_dir <- temp_dir("openxlsx2_unzip")
   unzip(tmp, exdir = tmp_dir)
 
   exp <- c("sheet1.xml", "sheet2.xml", "sheet3.xml")
@@ -118,8 +117,7 @@ test_that("removing leading chartsheets works", {
   wb$remove_worksheet(2)
 
   wb$save(tmp)
-  tmp_dir <- paste0(tempdir(), "/openxlsx2_unzip")
-  dir.create(tmp_dir)
+  tmp_dir <- temp_dir("openxlsx2_unzip")
   unzip(tmp, exdir = tmp_dir)
 
   got <- dir(paste0(tmp_dir, "/xl/worksheets"), pattern = "*.xml")

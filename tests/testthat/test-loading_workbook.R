@@ -504,10 +504,11 @@ test_that("failing to unzip works as expected", {
   expect_silent(wb <- wb_load(tmp))
 
   # zip file
-  tmp <- temp_xlsx()
+  tmp_dir <- temp_dir()
+  tmp <- tempfile(tmpdir = tmp_dir, fileext = ".txt")
   writeLines("", tmp)
   tmp_zip <- tempfile(fileext = ".zip")
-  zip_output(zip_path = tmp_zip, source_dir = tempdir(), source_files = tmp, compression_level = 1)
+  zip_output(zip_path = tmp_zip, source_dir = tmp_dir, source_files = tmp, compression_level = 1)
   expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
 
 })
@@ -555,7 +556,7 @@ test_that("saving a workbook as xlsm", {
   fl <- temp_xlsx(macros = TRUE)
   write_xlsx(x = cars, file = fl)
 
-  tmpdir <- tempdir()
+  tmpdir <- temp_dir()
   ct <- "[Content_Types].xml"
   unzip(fl, files = ct, exdir = tmpdir)
   tmpxml <- read_xml(file.path(tmpdir, ct), pointer = FALSE)

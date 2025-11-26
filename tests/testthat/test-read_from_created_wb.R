@@ -37,7 +37,7 @@ test_that("Reading from new workbook", {
 })
 
 test_that("Reading NAs and NaN values", {
-  fileName <- file.path(tempdir(), "NaN.xlsx")
+  fileName <- temp_xlsx("NaN")
   na.string <- "*"
 
   wb <- wb_workbook()
