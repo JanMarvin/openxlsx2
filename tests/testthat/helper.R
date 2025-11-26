@@ -1066,7 +1066,7 @@ dns_lookup <- function(host = "captive.apple.com") {
     socketConnection(host, port = 80, open = "r+", timeout = 2),
     silent = TRUE
   )
-  on.exit(close(con))
+  on.exit(close(con), add = TRUE)
 
   if (inherits(con, "try-error")) return(FALSE)
 
