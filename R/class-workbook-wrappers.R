@@ -96,6 +96,10 @@ wb_workbook <- function(
 #' preliminary sanity checks before writing. As the name suggests,
 #' the output is simply flushed to disk.
 #'
+#' Per default the [utils::zip()] function is used when creating the output.
+#' This relies on the existence of a valid zip program. As a fallback it is
+#' possible to use the `zip` package.
+#'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param file A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `file` already exists.
