@@ -205,6 +205,7 @@
 #'    will be converted. `"1"` will be written as `1`
 #' * `options("openxlsx2.na.strings" = "#N/A")` consulted by `write_xlsx()`,
 #'   `wb_add_data()` and `wb_add_data_table()`.
+#' * `options("openxlsx2.zip_flags")` custom zip flags passed to `utils::zip()` required when using a custom zip tool
 #' * `options("openxlsx2.compression_level" = 6)` compression level for the output file. Increasing compression and time consumed from 1-9.
 #' @name openxlsx2_options
 NULL

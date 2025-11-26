@@ -33,7 +33,8 @@ Suggests:
     rmarkdown,
     rvg,
     testthat (>= 3.0.0),
-    waldo
+    waldo,
+    zip
 VignetteBuilder:
     knitr
 Encoding: UTF-8
