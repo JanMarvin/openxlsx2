@@ -1,6 +1,6 @@
 test_that("TRUE, FALSE, NA", {
   curr_wd <- getwd()
-  fileName <- file.path(tempdir(), "T_F_NA.xlsx")
+  fileName <- temp_xlsx("T_F_NA")
 
   x <- iris
   x$Species <- as.character(x$Species)
