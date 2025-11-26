@@ -1455,22 +1455,13 @@ zip_output <- function(zip_path, source_dir, source_files = NULL, compression_le
     abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
     setwd(source_dir)
     zip_flags <- paste0("-r", compression_level, "Xq")
-
-    if (grepl("7z", Sys.getenv("R_ZIPCMD"))) {
-      # use 7z flags
-      zip_flags <- paste0("-r -mx=", compression_level, " -bb0 -mtc=off -mta=off")
-    }
-
-    if (!is.null(getOption("openxlsx2.zip_flags"))) {
-      # use custom flags
-      zip_flags <- getOption("openxlsx2.zip_flags")
-    }
-
+    opt_flags <- getOption("openxlsx2.zip_flags")
+    if (!is.null(opt_flags)) zip_flags <- opt_flags
     if (is.null(source_files)) source_files <- list.files(source_dir, full.names = FALSE)
     res <- utils::zip(zipfile = abs_zip_path, files = source_files, flags = zip_flags)
     if (res) stop("zipping failed")
   } else {
-    requireNamespace("zip")
+    suppressMessages(requireNamespace("zip"))
     zip::zip(
       zipfile = zip_path,
       files = list.files(source_dir, full.names = FALSE),
