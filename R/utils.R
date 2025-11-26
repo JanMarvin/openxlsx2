@@ -1447,21 +1447,42 @@ if (getRversion() < "4.0.0") {
   }
 }
 
+p7zip <- function(zip_path, source_dir, compression_level = 9) {
+  original_wd <- getwd()
+  on.exit(setwd(original_wd), add = TRUE)
+  abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
+  setwd(source_dir)
+  # default: quiet, suppress all output similar to -r9Xq
+  zip_args <- sprintf("a -tzip -r -bb0 -bso0 -sns- -mx=%s", compression_level)
+  zip_args <- getOption("openxlsx2.zip_flags", default = zip_args)
+  zip_args <- c(zip_args, abs_zip_path, list.files(source_dir, full.names = FALSE))
+  system2(Sys.getenv("R_ZIPCMD"), args = zip_args)
+}
+
 zip_output <- function(zip_path, source_dir, source_files = NULL, compression_level = 9) {
 
   # on Windows we might have an Rtools folder somewhere with a zip.exe ...
-  if (Sys.getenv("R_ZIPCMD") == "" && Sys.info()$sysname == "Windows") {
+  if (Sys.getenv("R_ZIPCMD") == "" && Sys.info()[["sysname"]] == "Windows") {
     env <- Sys.getenv()
-    env <- env[grepl("^RTOOLS[A-Z0-9_]+_HOME$", env)]
+    env <- env[grepl("^RTOOLS[A-Z0-9_]+_HOME$", names(env))]
     maybe_zip <- file.path(env, "usr", "bin", "zip.exe")
     if (any(zip_here <- file.exists(maybe_zip)))
-    Sys.setenv("R_ZIPCMD" = maybe_zip[zip_here][1])
-    on.exit(Sys.setenv("R_ZIPCMD" = ""))
+      Sys.setenv("R_ZIPCMD" = maybe_zip[zip_here][1])
+    on.exit(Sys.setenv("R_ZIPCMD" = ""), add = TRUE)
+  }
+
+  if (grepl("7z", Sys.getenv("R_ZIPCMD"))) {
+    p7zip(
+      zip_path = zip_path,
+      source_dir = source_dir,
+      compression_level = compression_level
+    )
+    return(NULL)
   }
 
   if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD") != "") {
     original_wd <- getwd()
-    on.exit(setwd(original_wd))
+    on.exit(setwd(original_wd), add = TRUE)
     abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
     setwd(source_dir)
     zip_flags <- paste0("-r", compression_level, "Xq")

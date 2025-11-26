@@ -39,7 +39,9 @@ the output is simply flushed to disk.
 
 Per default the \code{\link[utils:zip]{utils::zip()}} function is used when creating the output.
 This relies on the existence of a valid zip program. As a fallback it is
-possible to use the \code{zip} package.
+possible to use the \code{zip} package. This package is no longer in \code{Imports}
+and has to be installed separately. In addition it is possible to use
+\code{p7zip} via \code{R_ZIPCMD} pointing to the executable.
 }
 \examples{
 ## Create a new workbook and add a worksheet

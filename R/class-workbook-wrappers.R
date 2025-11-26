@@ -98,7 +98,9 @@ wb_workbook <- function(
 #'
 #' Per default the [utils::zip()] function is used when creating the output.
 #' This relies on the existence of a valid zip program. As a fallback it is
-#' possible to use the `zip` package.
+#' possible to use the `zip` package. This package is no longer in `Imports`
+#' and has to be installed separately. In addition it is possible to use
+#' `p7zip` via `R_ZIPCMD` pointing to the executable.
 #'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param file A path to save the workbook to
