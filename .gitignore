@@ -15,13 +15,13 @@ Rprof.out
 src/*.o
 src/*.so
 src/*.dll
-src-i386/*.dll
-src-i386/*.so
 src-i386/*.o
+src-i386/*.so
+src-i386/*.dll
 src-i386/*.cpp
-src-x64/*.dll
-src-x64/*.so
 src-x64/*.o
+src-x64/*.so
+src-x64/*.dll
 src-x64/*.cpp
 
 # Documentation files
@@ -38,5 +38,6 @@ docs/reference/*.html
 tests/testthat/_snaps
 tests/testthat/testfiles
 
-# Ignored directories
-inst/doc
+# Vignettes
+vignettes/*.R
+vignettes/*.html
