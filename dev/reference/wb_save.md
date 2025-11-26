@@ -49,6 +49,11 @@ memory usage but skips some XML validity checks. It also bypasses the
 sanity checks before writing. As the name suggests, the output is simply
 flushed to disk.
 
+Per default the [`utils::zip()`](https://rdrr.io/r/utils/zip.html)
+function is used when creating the output. This relies on the existence
+of a valid zip program. As a fallback it is possible to use the `zip`
+package.
+
 ## See also
 
 Other workbook wrappers:
