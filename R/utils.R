@@ -1447,6 +1447,21 @@ if (getRversion() < "4.0.0") {
   }
 }
 
+# Windows ships bsdtar since Windows 10, Apple has an older bsdtar
+bsdtar <- function(zip_path, source_dir, compression_level = 9) {
+  original_wd <- getwd()
+  on.exit(setwd(original_wd), add = TRUE)
+  abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
+  setwd(source_dir)
+  tar_args <- paste0(
+    "-a -c -f ", abs_zip_path, " --options zip:compression-level=",
+    compression_level, " --no-acls --no-xattrs --no-fflags --format=zip")
+  opt_flags <- getOption("openxlsx2.zip_flags")
+  if (!is.null(opt_flags)) tar_args <- opt_flags
+  tar_args <- c(tar_args, list.files(source_dir, full.names = FALSE))
+  system2(Sys.which("tar"), args = tar_args)
+}
+
 p7zip <- function(zip_path, source_dir, compression_level = 9) {
   original_wd <- getwd()
   on.exit(setwd(original_wd), add = TRUE)
@@ -1463,6 +1478,16 @@ zip_output <- function(zip_path, source_dir, source_files = NULL, compression_le
 
   # on Windows we might have an Rtools folder somewhere with a zip.exe ...
   if (Sys.getenv("R_ZIPCMD") == "" && Sys.info()[["sysname"]] == "Windows") {
+
+    if (grepl("WINDOWS", Sys.which("tar"))) {
+      bsdtar(
+        zip_path = zip_path,
+        source_dir = source_dir,
+        compression_level = compression_level
+      )
+      return(NULL)
+    }
+
     env <- Sys.getenv()
     env <- env[grepl("^RTOOLS[A-Z0-9_]+_HOME$", names(env))]
     maybe_zip <- file.path(env, "usr", "bin", "zip.exe")
