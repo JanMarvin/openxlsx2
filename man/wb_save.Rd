@@ -38,10 +38,12 @@ preliminary sanity checks before writing. As the name suggests,
 the output is simply flushed to disk.
 
 Per default the \code{\link[utils:zip]{utils::zip()}} function is used when creating the output.
-This relies on the existence of a valid zip program. As a fallback it is
-possible to use the \code{zip} package. This package is no longer in \code{Imports}
-and has to be installed separately. In addition it is possible to use
-\code{p7zip} via \code{R_ZIPCMD} pointing to the executable.
+This relies on the existence of a valid zip program. In addition it is
+possible to use \code{p7zip} via \code{R_ZIPCMD} pointing to the executable. On Windows
+if no Rtools in found, the local tar command will be used. If this is not yet
+available, the zip executable from any Rtools installation will be picked. As
+a fallback it is possible to use the \code{zip} package. This package is no longer
+in \code{Imports} and has to be installed separately.
 }
 \examples{
 ## Create a new workbook and add a worksheet
