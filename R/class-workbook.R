@@ -2978,8 +2978,12 @@ wbWorkbook <- R6::R6Class(
       docPropsDir     <- dir_create(tmpDir, "docProps")
       xlDir           <- dir_create(tmpDir, "xl")
       xlrelsDir       <- dir_create(tmpDir, "xl", "_rels")
-      xlTablesDir     <- dir_create(tmpDir, "xl", "tables")
-      xlTablesRelsDir <- dir_create(xlTablesDir, "_rels")
+      if (length(self$tables)) {
+        xlTablesDir     <- dir_create(tmpDir, "xl", "tables")
+      }
+      if (length(self$tables.xml.rels)) {
+        xlTablesRelsDir <- dir_create(xlTablesDir, "_rels")
+      }
 
       if (length(self$media)) {
         xlmediaDir <- dir_create(tmpDir, "xl", "media")
@@ -3008,11 +3012,21 @@ wbWorkbook <- R6::R6Class(
 
       ## will always have drawings
       xlworksheetsDir     <- dir_create(tmpDir, "xl", "worksheets")
-      xlworksheetsRelsDir <- dir_create(tmpDir, "xl", "worksheets", "_rels")
-      xldrawingsDir       <- dir_create(tmpDir, "xl", "drawings")
-      xldrawingsRelsDir   <- dir_create(tmpDir, "xl", "drawings", "_rels")
-      xlchartsDir         <- dir_create(tmpDir, "xl", "charts")
-      xlchartsRelsDir     <- dir_create(tmpDir, "xl", "charts", "_rels")
+      if (sum(sapply(self$worksheets_rels, length))) {
+        xlworksheetsRelsDir <- dir_create(tmpDir, "xl", "worksheets", "_rels")
+      }
+      if (length(self$drawings) || length(self$vml)) {
+        xldrawingsDir       <- dir_create(tmpDir, "xl", "drawings")
+      }
+      if (length(self$drawings_rels) || length(self$vml_rels)) {
+        xldrawingsRelsDir   <- dir_create(tmpDir, "xl", "drawings", "_rels")
+      }
+      if (length(self$charts)) {
+        xlchartsDir         <- dir_create(tmpDir, "xl", "charts")
+      }
+      if (length(self$charts)) {
+        xlchartsRelsDir     <- dir_create(tmpDir, "xl", "charts", "_rels")
+      }
 
       ## xl/comments.xml
       if (nComments > 0 | nVML > 0) {
@@ -9949,12 +9963,6 @@ wbWorkbook <- R6::R6Class(
 
       ## write charts
       if (NROW(self$charts) && any(self$charts != "")) {
-
-        if (!file.exists(xlchartsDir)) {
-          dir.create(xlchartsDir, recursive = TRUE)
-          if (any(self$charts$rels != "") || any(self$charts$relsEx != ""))
-            dir.create(xlchartsRelsDir, recursive = TRUE)
-        }
 
         for (crt in seq_len(nrow(self$charts))) {
 
