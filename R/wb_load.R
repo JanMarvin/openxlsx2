@@ -2063,6 +2063,5 @@ wb_load <- function(
     wb$workbook$xti <- NULL
   }
 
-
-  return(wb)
+  wb
 }

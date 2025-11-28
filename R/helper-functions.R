@@ -87,7 +87,7 @@ create_hyperlink <- function(sheet, row = 1, col = 1, text = NULL, file = NULL) 
     }
   }
 
-  return(str)
+  str
 }
 
 # `col2hex()` -----------------------------------------------------------------

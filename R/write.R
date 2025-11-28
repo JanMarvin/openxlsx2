@@ -809,7 +809,7 @@ write_data2 <- function(
   }
   ### End update calcChain
 
-  return(wb)
+  wb
 }
 
 # `write_data_table()` ---------------------------------------------------------
@@ -1188,7 +1188,7 @@ write_data_table <- function(
 
   ### End: Only in datatable ---------------------------------------------------
 
-  return(wb)
+  wb
 }
 
 # `do_write_data()` ---------------------------------------------------------------
