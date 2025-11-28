@@ -316,7 +316,7 @@ test_that("writeData() forces evaluation of x (#264)", {
 test_that("write character numerics with a correct cell style", {
 
   ## current default
-  op <- options("openxlsx2.string_nums" = 0)
+  op <- options("openxlsx2.string_nums" = NULL)
   on.exit(options(op), add = TRUE)
 
   wb <- wb_workbook()$
