@@ -34,7 +34,8 @@ expect_equal_workbooks <- function(object, expected, ..., ignore_fields = NULL) 
   }
 
   testthat::succeed()
-  return(invisible())
+
+  invisible()
 }
 
 # expect_wrapper helper --------------------
@@ -231,7 +232,8 @@ expect_wrapper <- function(
   }
 
   testthat::succeed()
-  return(invisible())
+
+  invisible()
 }
 
 # `expect_pseudo_wrapper()` -------
@@ -291,7 +293,8 @@ expect_pseudo_wrapper <- function(
   }
 
   testthat::succeed()
-  return(invisible())
+
+  invisible()
 }
 
 # Miscellaneous helpers for testthat -----------

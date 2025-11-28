@@ -424,6 +424,7 @@ XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment s
 
 // [[Rcpp::export]]
 void write_xmlPtr(XPtrXML doc, std::string fl) {
+  check_xptr_validity(doc);
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
   const bool success = doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
   if (!success) Rcpp::stop("could not save file");

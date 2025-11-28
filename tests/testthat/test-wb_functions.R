@@ -395,7 +395,7 @@ test_that("dims with separator work", {
     df[c("5", "6"), c("G", "H")]
   )
 
-  for (i in seq_len(length(ll)))
+  for (i in seq_along(ll))
     names(ll[[i]]) <- c("V1", "V2")
 
   exp <- data.frame(

@@ -202,9 +202,8 @@ create_border <- function(
     outline          = as_xml_attr(outline),      # unknown position in border
     stringsAsFactors = FALSE
   )
-  border <- write_border(df_border)
 
-  return(border)
+  write_border(df_border)
 }
 
 #' Create number format
@@ -414,7 +413,7 @@ create_font <- function(
     font <- ""
   }
 
-  return(font)
+  font
 }
 
 #' Create fill pattern
@@ -481,9 +480,8 @@ create_fill <- function(
     patternFill      = pattern_fill,
     stringsAsFactors = FALSE
   )
-  fill <- write_fill(df_fill)
 
-  return(fill)
+  write_fill(df_fill)
 }
 
 #' Create cell style

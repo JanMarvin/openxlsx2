@@ -50,6 +50,9 @@ bool has_it(Rcpp::DataFrame df_xf, std::set<std::string> xf_nams, R_xlen_t row) 
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
+
+  check_xptr_validity(xml_doc_xf);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cellformat?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -262,6 +265,9 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
+
+  check_xptr_validity(xml_doc_font);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -354,6 +360,9 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
+
+  check_xptr_validity(xml_doc_numfmt);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -435,6 +444,9 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
+
+  check_xptr_validity(xml_doc_border);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -586,6 +598,9 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
+
+  check_xptr_validity(xml_doc_fill);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -675,6 +690,9 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
+
+  check_xptr_validity(xml_doc_cellStyle);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -824,6 +842,9 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
+
+  check_xptr_validity(xml_doc_tableStyle);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.border?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -976,6 +997,9 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
+
+  check_xptr_validity(xml_doc_dxf);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.font?view=openxml-2.8.1
 
   // openxml 2.8.1
@@ -1065,6 +1089,9 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
+
+  check_xptr_validity(xml_doc_colors);
+
   // https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colors?view=openxml-2.8.1
 
   // openxml 2.8.1

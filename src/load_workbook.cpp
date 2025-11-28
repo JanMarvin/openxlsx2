@@ -3,6 +3,9 @@
 
 // [[Rcpp::export]]
 Rcpp::DataFrame col_to_df(XPtrXML doc) {
+
+  check_xptr_validity(doc);
+
   std::set<std::string> col_nams{"bestFit", "collapsed",    "customWidth", "hidden", "max",
                                  "min",     "outlineLevel", "phonetic",    "style",  "width"};
 
@@ -45,6 +48,9 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
 }
 
 inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
+
+  check_xptr_validity(doc);
+
   auto ws = doc->child("worksheet").child("sheetData");
 
   std::vector<std::string> row_nams = {
@@ -114,6 +120,9 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
 // this function imports the data from the dataset and returns row_attr and cc
 // [[Rcpp::export]]
 void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
+
+  check_xptr_validity(doc);
+
   auto ws = doc->child("worksheet").child("sheetData");
 
   bool has_cm = false, has_ph = false, has_vm = false;

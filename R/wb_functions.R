@@ -152,6 +152,7 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
 #' @export
 dataframe_to_dims <- function(df, dim_break = FALSE) {
 
+  tmp <- NULL
   if (dim_break) {
 
     dims <- dims_to_dataframe(dataframe_to_dims(df, dim_break = FALSE), fill = TRUE)
@@ -169,7 +170,7 @@ dataframe_to_dims <- function(df, dim_break = FALSE) {
 
     out <- dims[matrix == 1]
 
-    return(paste0(out, collapse = ","))
+    tmp <- paste0(out, collapse = ",")
 
   } else {
 
@@ -185,10 +186,9 @@ dataframe_to_dims <- function(df, dim_break = FALSE) {
     } else {
       tmp <- con_dims(col2int(cols), rows)
     }
-
-    return(tmp)
-
   }
+
+  tmp
 }
 
 #' function to estimate the column type.

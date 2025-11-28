@@ -875,6 +875,9 @@ Rcpp::DataFrame create_int_dataframe(const Rcpp::DataFrame& char_df) {
 
 // [[Rcpp::export]]
 Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::string> vec_attrs, std::vector<std::string> vec_chlds) {
+
+  check_xptr_validity(xml);
+
   std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
   std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
 

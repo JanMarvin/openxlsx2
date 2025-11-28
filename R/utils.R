@@ -151,7 +151,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
     assign(".Random.seed", seed, globalenv())
   }
 
-  return(res)
+  res
 }
 
 # dims helpers -----------------------------------------------------------------
@@ -295,9 +295,9 @@ rowcol_to_dims <- function(row, col, single = TRUE, fix = NULL) {
 
   # we will always return something like "A1:A1", even for single cells
   if (single) {
-    return(rc_to_dims(min_col, min_row, max_col, max_row, fix = fix))
+    rc_to_dims(min_col, min_row, max_col, max_row, fix = fix)
   } else {
-    return(paste0(vapply(int2col(col_int), FUN = function(x) rc_to_dims(x, min_row, x, max_row, fix = fix), ""), collapse = ","))
+    paste0(vapply(int2col(col_int), FUN = function(x) rc_to_dims(x, min_row, x, max_row, fix = fix), ""), collapse = ",")
   }
 
 }

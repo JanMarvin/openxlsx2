@@ -42,6 +42,9 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
 }
 
 inline uint32_t pugi_format(XPtrXML doc) {
+
+  check_xptr_validity(doc);
+
   bool escapes = Rcpp::as<bool>(doc.attr("escapes"));
   bool empty_tags = Rcpp::as<bool>(doc.attr("empty_tags"));
   bool skip_control = Rcpp::as<bool>(doc.attr("skip_control"));
@@ -69,6 +72,9 @@ Rcpp::LogicalVector is_xml(std::string str) {
 
 // [[Rcpp::export]]
 SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<std::string> path) {
+
+  check_xptr_validity(doc);
+
   std::vector<pugi::xml_node> nodes = {*doc};  // Start from the root node
   std::vector<pugi::xml_node> next_nodes;
 
@@ -100,6 +106,9 @@ SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<std::string> path) {
 
 // [[Rcpp::export]]
 SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
+
+  check_xptr_validity(doc);
+
   vec_string res;
   uint32_t pugi_format_flags = pugi_format(doc);
 
@@ -162,6 +171,9 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
 
 // [[Rcpp::export]]
 SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
+
+  check_xptr_validity(doc);
+
   std::vector<std::string> values;
 
   // Validate: no empty tag names
@@ -219,6 +231,9 @@ SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
 
 // [[Rcpp::export]]
 SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
+
+  check_xptr_validity(doc);
+
   std::vector<pugi::xml_node> current_nodes;
 
   // Validate: no empty tag names
@@ -297,6 +312,9 @@ SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
 
 // [[Rcpp::export]]
 SEXP printXPtr(XPtrXML doc, std::string indent, bool raw, bool attr_indent) {
+
+  check_xptr_validity(doc);
+
   // pugi::parse_default without escapes flag
   uint32_t pugi_format_flags = pugi_format(doc);
   if (!raw) {
@@ -375,11 +393,13 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 //'     xml_attr_mod(xml_node, xml_attr)
 //' @export
 // [[Rcpp::export]]
-Rcpp::CharacterVector xml_attr_mod(std::string xml_content,
-                                   Rcpp::CharacterVector xml_attributes,
-                                   bool escapes = false,
-                                   bool declaration = false,
-                                   bool remove_empty_attr = true) {
+Rcpp::CharacterVector xml_attr_mod(
+  std::string xml_content,
+  Rcpp::CharacterVector xml_attributes,
+  bool escapes = false,
+  bool declaration = false,
+  bool remove_empty_attr = true
+) {
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
@@ -451,10 +471,11 @@ Rcpp::CharacterVector xml_attr_mod(std::string xml_content,
 //' @export
 // [[Rcpp::export]]
 Rcpp::CharacterVector xml_node_create(
-    std::string xml_name,
-    Rcpp::Nullable<Rcpp::CharacterVector> xml_children = R_NilValue,
-    Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes = R_NilValue,
-    bool escapes = false, bool declaration = false) {
+  std::string xml_name,
+  Rcpp::Nullable<Rcpp::CharacterVector> xml_children = R_NilValue,
+  Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes = R_NilValue,
+  bool escapes = false, bool declaration = false
+) {
   pugi::xml_document doc;
 
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
@@ -507,6 +528,10 @@ Rcpp::CharacterVector xml_node_create(
 
 // [[Rcpp::export]]
 SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string> path, bool pointer) {
+
+  check_xptr_validity(node);
+  check_xptr_validity(child);
+
   uint32_t pugi_format_flags = pugi_format(node);
 
   // Start from the first child (consistent with your previous design)
@@ -544,6 +569,9 @@ SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string>
 
 // [[Rcpp::export]]
 SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::string> path, int32_t which, bool pointer) {
+
+  check_xptr_validity(node);
+
   uint32_t pugi_format_flags = pugi_format(node);
 
   pugi::xml_node current = node->first_child();
