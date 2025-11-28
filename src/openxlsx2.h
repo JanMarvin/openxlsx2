@@ -3,6 +3,13 @@
 
 #include "openxlsx2_types.h"
 
+
+inline void check_xptr_validity(XPtrXML doc) {
+  if (doc.get() == nullptr) {
+    Rcpp::stop("The XML pointer is invalid.");
+  }
+}
+
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x);
 
 SEXP si_to_txt(XPtrXML doc);
