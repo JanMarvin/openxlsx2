@@ -92,5 +92,17 @@ wb$add_worksheet(sheet = "My first worksheet")
 ## Save workbook to working directory
 # \donttest{
 wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
+
+## do not use bsdtar, will try to use utils::zip
+# Sys.setenv("OPENXLSX2_NO_BSDTAR" = "1")
+
+## do not use utils::zip
+# Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = "1")
+
+## use 7zip on Windows this works, on Mac not
+# Sys.setenv("R_ZIPCMD" = "C:\Program Files\7zip\7z.exe")
+
+# if the last one is left blank the fallback is zip::zip
+openxlsx2::write_xlsx(x = cars, temp_xlsx())
 # }
 ```

@@ -140,6 +140,18 @@ in <code>Imports</code> and has to be installed separately.</p>
 <span class="r-in"><span><span class="co">## Save workbook to working directory</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## do not use bsdtar, will try to use utils::zip</span></span></span>
+<span class="r-in"><span><span class="co"># Sys.setenv("OPENXLSX2_NO_BSDTAR" = "1")</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## do not use utils::zip</span></span></span>
+<span class="r-in"><span><span class="co"># Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = "1")</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## use 7zip on Windows this works, on Mac not</span></span></span>
+<span class="r-in"><span><span class="co"># Sys.setenv("R_ZIPCMD" = "C:\Program Files\7zip\7z.exe")</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># if the last one is left blank the fallback is zip::zip</span></span></span>
+<span class="r-in"><span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="write_xlsx.html">write_xlsx</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cars</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
