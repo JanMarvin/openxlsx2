@@ -96,13 +96,24 @@ wb_workbook <- function(
 #' preliminary sanity checks before writing. As the name suggests,
 #' the output is simply flushed to disk.
 #'
-#' Per default the [utils::zip()] function is used when creating the output.
-#' This relies on the existence of a valid zip program. In addition it is
-#' possible to use `p7zip` via `R_ZIPCMD` pointing to the executable. On Windows
-#' if no Rtools in found, the local tar command will be used. If this is not yet
-#' available, the zip executable from any Rtools installation will be picked. As
-#' a fallback it is possible to use the `zip` package. This package is no longer
-#' in `Imports` and has to be installed separately.
+#' By default, the [utils::zip()] function is used to create output files.
+#' This requires a working zip utility to be available on the system. A valid
+#' zip program must be found either via `Sys.which("zip")` or through the
+#' `R_ZIPCMD` environment variable.
+#'
+#' On Windows, a suitable zip tool is typically provided by Rtools. If
+#' `R_ZIPCMD` is not set, `openxlsx2` will automatically use the first detected
+#' Rtools installation. If no zip utility is available, `bsdtar` can be used as
+#' an alternative. On Windows this is shipped as `tar.exe`; on Mac and Linux
+#' it is usually available as `bsdtar` (often requiring installation of the
+#' `archive` package).
+#'
+#' A further fallback—primarily for older Windows systems—is to point
+#' `R_ZIPCMD` to `7z.exe`. This approach has not been extensively tested and is
+#' not reliable with 7-Zip on macOS.
+#'
+#' As an additional fallback, the `zip` package can be used. It is no longer
+#' listed in `Imports` and must be installed separately if needed.
 #'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param file A path to save the workbook to
@@ -124,11 +135,11 @@ wb_workbook <- function(
 #' \donttest{
 #' wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
 #'
-#' ## do not use bsdtar, will try to use utils::zip
-#' # Sys.setenv("OPENXLSX2_NO_BSDTAR" = "1")
+#' ## do not use utils::zip, will try to use bsdtar
+#' # options("openxlsx2.no_utils_zip" = TRUE)
 #'
-#' ## do not use utils::zip
-#' # Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = "1")
+#' ## if the above is set as well, do not use bsdtar
+#' # options("openxlsx2.no_bsdtar" = TRUE)
 #'
 #' ## use 7zip on Windows this works, on Mac not
 #' # Sys.setenv("R_ZIPCMD" = "C:\\Program Files\\7zip\\7z.exe")

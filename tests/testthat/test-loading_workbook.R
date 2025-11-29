@@ -512,14 +512,13 @@ test_that("failing to unzip works as expected", {
   expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
 
   skip_if_not_installed("zip")
-  op <- options("openxlsx2.debug" = TRUE)
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = TRUE
+  )
   on.exit(options(op), add = TRUE)
-  ox2_no_bsdtar <- Sys.getenv("OPENXLSX2_NO_BSDTAR")
-  ox2_no_utils_zip <- Sys.getenv("OPENXLSX2_NO_UTILS_ZIP")
-  Sys.setenv("OPENXLSX2_NO_BSDTAR" = "1")
-  Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = "1")
-  on.exit(Sys.setenv("OPENXLSX2_NO_BSDTAR" = ox2_no_bsdtar), add = TRUE)
-  on.exit(Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = ox2_no_utils_zip), add = TRUE)
+
   expect_message(write_xlsx(x = mtcars, temp_xlsx()), "zip::zip")
 
 })
