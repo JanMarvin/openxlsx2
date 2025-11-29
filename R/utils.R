@@ -46,17 +46,11 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 #' @noRd
 temp_dir <- function(pattern = "file") {
 
-  tmpDir <- file.path(tempfile(pattern))
-  if (dir.exists(tmpDir)) {
-    unlink(tmpDir, recursive = TRUE, force = TRUE)
+  base <- tempdir()
+  repeat {
+    path <- file.path(base, paste0(pattern, "_", basename(tempfile())))
+    if (dir.create(path, showWarnings = FALSE)) return(path)
   }
-
-  success <- dir.create(path = tmpDir, recursive = FALSE)
-  if (!success) { # nocov start
-    stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
-  } # nocov end
-
-  tmpDir
 }
 
 default_save_opt <- function() {
