@@ -67,7 +67,7 @@ test_that("write_data2", {
   wb$add_worksheet("sheet4")
   write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
-  file <- tempfile(fileext = ".xlsx")
+  file <- temp_xlsx()
   wb_save(wb, file)
 
   wb1 <- wb_load(file)

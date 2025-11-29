@@ -236,7 +236,7 @@ wb_load <- function(
     unlink(
       # TODO: this removes all files, the folders remain
       cleanup_dir(data_only),
-      recursive = TRUE, force = TRUE
+      recursive = TRUE
     ),
     add = TRUE
   )

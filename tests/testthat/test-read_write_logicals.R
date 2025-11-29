@@ -36,5 +36,4 @@ test_that("TRUE, FALSE, NA", {
   expect_equal(is.na(x$tf_na), is.na(y$tf_na))
 
   expect_equal(object = getwd(), curr_wd)
-  unlink(fileName, recursive = TRUE, force = TRUE)
 })
