@@ -142,7 +142,7 @@ wb_workbook <- function(
 #' # options("openxlsx2.no_bsdtar" = TRUE)
 #'
 #' ## use 7zip on Windows this works, on Mac not
-#' # Sys.setenv("R_ZIPCMD" = "C:\\Program Files\\7zip\\7z.exe")
+#' # Sys.setenv("R_ZIPCMD" = "C:\\Program Files\\7-Zip\\7z.exe")
 #'
 #' # if the last one is left blank the fallback is zip::zip
 #' openxlsx2::write_xlsx(x = cars, temp_xlsx())

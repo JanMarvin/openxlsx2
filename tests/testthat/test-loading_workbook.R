@@ -511,6 +511,61 @@ test_that("failing to unzip works as expected", {
   zip_output(zip_path = tmp_zip, source_dir = tmp_dir, compression_level = 1)
   expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
 
+})
+
+test_that("test utils::zip", {
+
+  skip_if(Sys.which("zip") == "")
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = FALSE,
+    "openxlsx2.no_bsdtar" = FALSE
+  )
+  on.exit(options(op), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "utils::zip")
+
+})
+
+test_that("test (bsd)tar", {
+
+  skip_if(
+    (.Platform$OS.type == "windows" && Sys.which("tar") == "") ||
+    (.Platform$OS.type == "unix" && Sys.which("bsdtar") == "")
+  )
+
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = FALSE
+  )
+  on.exit(options(op), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "bsdtar")
+
+})
+
+test_that("test 7zip", {
+
+  skip_if(!file.exists("C:\\Program Files\\7-zip\\7z.exe"))
+
+  r_zipcmd <- Sys.getenv("R_ZIPCMD")
+  Sys.setenv("R_ZIPCMD" = "C:\\Program Files\\7-Zip\\7z.exe")
+  on.exit(Sys.setenv("R_ZIPCMD" = r_zipcmd), add = TRUE)
+
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = TRUE
+  )
+  on.exit(options(op), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "7z")
+
+})
+
+test_that("saving using zip::zip", {
+
   skip_if_not_installed("zip")
   op <- options(
     "openxlsx2.debug" = TRUE,
