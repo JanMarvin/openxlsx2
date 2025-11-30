@@ -98,13 +98,21 @@ memory usage but skips some XML validity checks. It also bypasses
 the <code>pugixml</code> functions that <code>openxlsx2</code> uses, omitting certain
 preliminary sanity checks before writing. As the name suggests,
 the output is simply flushed to disk.</p>
-<p>Per default the <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> function is used when creating the output.
-This relies on the existence of a valid zip program. In addition it is
-possible to use <code>p7zip</code> via <code>R_ZIPCMD</code> pointing to the executable. On Windows
-if no Rtools in found, the local tar command will be used. If this is not yet
-available, the zip executable from any Rtools installation will be picked. As
-a fallback it is possible to use the <code>zip</code> package. This package is no longer
-in <code>Imports</code> and has to be installed separately.</p>
+<p>By default, the <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> function is used to create output files.
+This requires a working zip utility to be available on the system. A valid
+zip program must be found either via <code>Sys.which("zip")</code> or through the
+<code>R_ZIPCMD</code> environment variable.</p>
+<p>On Windows, a suitable zip tool is typically provided by Rtools. If
+<code>R_ZIPCMD</code> is not set, <code>openxlsx2</code> will automatically use the first detected
+Rtools installation. If no zip utility is available, <code>bsdtar</code> can be used as
+an alternative. On Windows this is shipped as <code>tar.exe</code>; on Mac and Linux
+it is usually available as <code>bsdtar</code> (often requiring installation of the
+<code>archive</code> package).</p>
+<p>A further fallback—primarily for older Windows systems—is to point
+<code>R_ZIPCMD</code> to <code>7z.exe</code>. This approach has not been extensively tested and is
+not reliable with 7-Zip on macOS.</p>
+<p>As an additional fallback, the <code>zip</code> package can be used. It is no longer
+listed in <code>Imports</code> and must be installed separately if needed.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -141,14 +149,14 @@ in <code>Imports</code> and has to be installed separately.</p>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## do not use bsdtar, will try to use utils::zip</span></span></span>
-<span class="r-in"><span><span class="co"># Sys.setenv("OPENXLSX2_NO_BSDTAR" = "1")</span></span></span>
+<span class="r-in"><span><span class="co">## do not use utils::zip, will try to use bsdtar</span></span></span>
+<span class="r-in"><span><span class="co"># options("openxlsx2.no_utils_zip" = TRUE)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## do not use utils::zip</span></span></span>
-<span class="r-in"><span><span class="co"># Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = "1")</span></span></span>
+<span class="r-in"><span><span class="co">## if the above is set as well, do not use bsdtar</span></span></span>
+<span class="r-in"><span><span class="co"># options("openxlsx2.no_bsdtar" = TRUE)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## use 7zip on Windows this works, on Mac not</span></span></span>
-<span class="r-in"><span><span class="co"># Sys.setenv("R_ZIPCMD" = "C:\Program Files\7zip\7z.exe")</span></span></span>
+<span class="r-in"><span><span class="co"># Sys.setenv("R_ZIPCMD" = "C:\Program Files\7-Zip\7z.exe")</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># if the last one is left blank the fallback is zip::zip</span></span></span>
 <span class="r-in"><span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="write_xlsx.html">write_xlsx</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cars</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
