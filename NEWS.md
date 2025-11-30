@@ -2,40 +2,40 @@
 
 ## New features
 
-* Add `hide_blanks` argument to `wb_set_row_heights()`. This allows hiding all blank rows in a worksheet. [1464](https://github.com/JanMarvin/openxlsx2/pull/1464)
-* Extend `"-"` and `"+"` to min and max column or row, when reading with `wb_to_df()` and `dims` like `"A1:++"`. [1466](https://github.com/JanMarvin/openxlsx2/pull/1466)
+* Added a `hide_blanks` argument to `wb_set_row_heights()`, allowing all blank rows in a worksheet to be hidden. [#1464](https://github.com/JanMarvin/openxlsx2/pull/1464)
+* Extended `"-"` and `"+"` to represent minimum and maximum columns or rows when reading with `wb_to_df()` using `dims` such as `"A1:++"`. [#1466](https://github.com/JanMarvin/openxlsx2/pull/1466)
 
 ## Fixes
 
-* It is now possible to save a newly created workbook as `.xlsm` and it will open in spreadsheet software. [1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
-* Add missing `interactive` argument to `wb_open()`.
-* `wb_remove_comment()` did not work if not every sheet had comments and if these comments were ordered like the sheets. [1468](https://github.com/JanMarvin/openxlsx2/pull/1468)
+* Newly created workbooks can now be saved as `.xlsm` files that open correctly in spreadsheet software. [#1453](https://github.com/JanMarvin/openxlsx2/pull/1453)
+* Added the missing `interactive` argument to `wb_open()`.
+* Fixed an issue where `wb_remove_comment()` failed if not every sheet had comments and the comments matched the sheet ordering. [#1468](https://github.com/JanMarvin/openxlsx2/pull/1468)
 
 ## Internal Changes
 
-* The `tt` data frame that is created with `wb_to_df()` to support column type guessing is now using integer columns instead of characters. This should reduce the memory footprint of the function. [1459](https://github.com/JanMarvin/openxlsx2/pull/1459)
-* Cleanups in `C++` code. This should not impact the user.
-* Fixed test issues with `as.POSIXct()` in R < 4.3.0. In these older R versions `as.POSIXct()` dropped the timezone argument. In addition another round of `stringsAsFactors = FALSE` makes the tests run again under R 3.6.0 (given one uses `CXX_STD=CXX11` in `src/Makevars`).
-* The `zip` dependency is only a fallback for when no system zip tool is available. The default is to use `utils::zip()` when writing the xlsx/xlsm output file. This allows to use a system zip file that usually are tweaked for performance. [1475](https://github.com/JanMarvin/openxlsx2/pull/1475)
+* `wb_to_df()` now uses integer columns in the `tt` data frame (used for type guessing), reducing memory usage. [#1459](https://github.com/JanMarvin/openxlsx2/pull/1459)
+* General C++ cleanups (no user-facing impact).
+* Fixed test issues with `as.POSIXct()` on R < 4.3.0, where time zones were dropped. Additional `stringsAsFactors = FALSE` updates ensure tests run on R 3.6.0 (when using `CXX_STD=CXX11` in `src/Makevars`).
+* The `zip` package is now only used as a fallback when no system zip tool is available. By default, `utils::zip()` is used, enabling use of optimized system-level zip tools. [#1475](https://github.com/JanMarvin/openxlsx2/pull/1475)
 
 ## Breaking changes
 
-* Wrapper functions were never intended to alter workbooks. This is now tested and various functions that were unintentionally altering workbooks were corrected. [1454](https://github.com/JanMarvin/openxlsx2/pull/1454)
+* Wrapper functions were never intended to mutate workbook objects. Tests now enforce this, and functions that previously modified workbooks implicitly have been corrected. Users must explicitly assign wrapper results to apply modifications. [#1454](https://github.com/JanMarvin/openxlsx2/pull/1454)
+
 ```R
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb)
-```
-Previously we were sloppy in our testing so this might have worked unintentionally
-```R
+
+# Previously mutated wb implicitly
 wb_add_fill(wb, dims = wb_dims(x = mtcars))
-```
-To fix this code, simply assign the workbook
-```R
+
+# Going forward, explicit assignment is required
 wb <- wb_add_fill(wb, dims = wb_dims(x = mtcars))
 ```
 
-* Previously deprecated functions `write_data()`, `write_datatable()`, `write_formula()` are now defunct.
-* If a `row` vector is passed to `wb_to_df()`, this will set the order of the output. The behavior is now matching the one of `cols`. [1460](https://github.com/JanMarvin/openxlsx2/pull/1460)
+* Deprecated functions `write_data()`, `write_datatable()`, and `write_formula()` are now defunct.
+* Passing a row vector to `wb_to_df()` now determines output order, matching the behavior of the cols argument. [1460](https://github.com/JanMarvin/openxlsx2/pull/1460)
+
 
 ***************************************************************************
 
