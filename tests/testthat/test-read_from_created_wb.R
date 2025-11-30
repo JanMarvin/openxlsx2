@@ -82,7 +82,7 @@ test_that("Reading NAs and NaN values", {
   )
 
   expect_equal(read_xlsx(fileName), exp, ignore_attr = TRUE)
-  unlink(fileName, recursive = TRUE, force = TRUE)
+  unlink(fileName, recursive = TRUE)
 })
 
 test_that("dims != rows & cols", {

@@ -511,15 +511,69 @@ test_that("failing to unzip works as expected", {
   zip_output(zip_path = tmp_zip, source_dir = tmp_dir, compression_level = 1)
   expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
 
-  skip_if_not_installed("zip")
-  op <- options("openxlsx2.debug" = TRUE)
+})
+
+test_that("test utils::zip", {
+
+  skip_if(Sys.which("zip") == "")
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = FALSE,
+    "openxlsx2.no_bsdtar" = FALSE
+  )
   on.exit(options(op), add = TRUE)
-  ox2_no_bsdtar <- Sys.getenv("OPENXLSX2_NO_BSDTAR")
-  ox2_no_utils_zip <- Sys.getenv("OPENXLSX2_NO_UTILS_ZIP")
-  Sys.setenv("OPENXLSX2_NO_BSDTAR" = "1")
-  Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = "1")
-  on.exit(Sys.setenv("OPENXLSX2_NO_BSDTAR" = ox2_no_bsdtar), add = TRUE)
-  on.exit(Sys.setenv("OPENXLSX2_NO_UTILS_ZIP" = ox2_no_utils_zip), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "utils::zip")
+
+})
+
+test_that("test (bsd)tar", {
+
+  skip_if(
+    (.Platform$OS.type == "windows" && Sys.which("tar") == "") ||
+    (.Platform$OS.type == "unix" && Sys.which("bsdtar") == "")
+  )
+
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = FALSE
+  )
+  on.exit(options(op), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "bsdtar")
+
+})
+
+test_that("test 7zip", {
+
+  skip_if(!file.exists("C:\\Program Files\\7-zip\\7z.exe"))
+
+  r_zipcmd <- Sys.getenv("R_ZIPCMD")
+  Sys.setenv("R_ZIPCMD" = "C:\\Program Files\\7-Zip\\7z.exe")
+  on.exit(Sys.setenv("R_ZIPCMD" = r_zipcmd), add = TRUE)
+
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = TRUE
+  )
+  on.exit(options(op), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "7z")
+
+})
+
+test_that("saving using zip::zip", {
+
+  skip_if_not_installed("zip")
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = TRUE
+  )
+  on.exit(options(op), add = TRUE)
+
   expect_message(write_xlsx(x = mtcars, temp_xlsx()), "zip::zip")
 
 })

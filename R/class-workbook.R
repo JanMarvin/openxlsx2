@@ -2950,17 +2950,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## temp directory to save XML files prior to compressing
-      tmpDir <- file.path(tempfile(pattern = "workbookTemp_"))
+      tmpDir <- temp_dir(pattern = "workbookTemp_")
       on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
-
-      if (file.exists(tmpDir)) {
-        unlink(tmpDir, recursive = TRUE, force = TRUE)
-      }
-
-      success <- dir.create(path = tmpDir, recursive = FALSE)
-      if (!success) { # nocov start
-        stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
-      } # nocov end
 
       private$preSaveCleanUp()
 

@@ -46,17 +46,11 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 #' @noRd
 temp_dir <- function(pattern = "file") {
 
-  tmpDir <- file.path(tempfile(pattern))
-  if (dir.exists(tmpDir)) {
-    unlink(tmpDir, recursive = TRUE, force = TRUE)
+  base <- tempdir()
+  repeat {
+    path <- file.path(base, paste0(pattern, "_", basename(tempfile())))
+    if (dir.create(path, showWarnings = FALSE)) return(path)
   }
-
-  success <- dir.create(path = tmpDir, recursive = FALSE)
-  if (!success) { # nocov start
-    stop(sprintf("Failed to create temporary directory '%s'", tmpDir))
-  } # nocov end
-
-  tmpDir
 }
 
 default_save_opt <- function() {
@@ -1447,7 +1441,21 @@ if (getRversion() < "4.0.0") {
   }
 }
 
-## bsdtar seems to be the best solution
+## the R solution
+utilszip <- function(zip_path, source_dir, compression_level = 9) {
+  if (!is.null(getOption("openxlsx2.debug"))) message("utils::zip")
+  original_wd <- getwd()
+  on.exit(setwd(original_wd), add = TRUE)
+  abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
+  setwd(source_dir)
+  zip_flags <- paste0("-r", compression_level, "Xq")
+  opt_flags <- getOption("openxlsx2.zip_flags")
+  if (!is.null(opt_flags)) zip_flags <- opt_flags
+  source_files <- list.files(source_dir, full.names = FALSE)
+  utils::zip(zipfile = abs_zip_path, files = source_files, flags = zip_flags)
+}
+
+## bsdtar seems to be the best fallback solution
 # Windows ships bsdtar since Windows 10, Apple has an older bsdtar
 # On Linux it should be available if libarchive is installed
 bsdtar <- function(zip_path, source_dir, compression_level = 9) {
@@ -1469,20 +1477,6 @@ bsdtar <- function(zip_path, source_dir, compression_level = 9) {
   system2(command, args = tar_args)
 }
 
-## the R solution
-utilszip <- function(zip_path, source_dir, compression_level = 9) {
-  if (!is.null(getOption("openxlsx2.debug"))) message("utils::zip")
-  original_wd <- getwd()
-  on.exit(setwd(original_wd), add = TRUE)
-  abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
-  setwd(source_dir)
-  zip_flags <- paste0("-r", compression_level, "Xq")
-  opt_flags <- getOption("openxlsx2.zip_flags")
-  if (!is.null(opt_flags)) zip_flags <- opt_flags
-  source_files <- list.files(source_dir, full.names = FALSE)
-  utils::zip(zipfile = abs_zip_path, files = source_files, flags = zip_flags)
-}
-
 ## as an alternative solution
 p7zip <- function(zip_path, source_dir, compression_level = 9) {
   if (!is.null(getOption("openxlsx2.debug"))) message("7zip")
@@ -1499,19 +1493,19 @@ p7zip <- function(zip_path, source_dir, compression_level = 9) {
 
 ## the previous solution
 zipzip <- function(zip_path, source_dir, compression_level = 9) {
-    if (!is.null(getOption("openxlsx2.debug"))) message("zip::zip")
-    suppressMessages(requireNamespace("zip"))
-    zip::zip(
-      zipfile = zip_path,
-      files = list.files(source_dir, full.names = FALSE),
-      recurse = TRUE,
-      compression_level = compression_level,
-      include_directories = FALSE,
-      # change the working directory for this
-      root = source_dir,
-      # change default to match historical zipr
-      mode = "cherry-pick"
-    )
+  if (!is.null(getOption("openxlsx2.debug"))) message("zip::zip")
+  suppressMessages(requireNamespace("zip"))
+  zip::zip(
+    zipfile = zip_path,
+    files = list.files(source_dir, full.names = FALSE),
+    recurse = TRUE,
+    compression_level = compression_level,
+    include_directories = FALSE,
+    # change the working directory for this
+    root = source_dir,
+    # change default to match historical zipr
+    mode = "cherry-pick"
+  )
 }
 
 ## previously we were relying on the zip package for R. There is nothing wrong
@@ -1521,9 +1515,20 @@ zipzip <- function(zip_path, source_dir, compression_level = 9) {
 # available. And there are several cases where it is not
 zip_output <- function(zip_path, source_dir, compression_level = 9) {
 
-  if (Sys.getenv("OPENXLSX2_NO_BSDTAR") != "1") {
-    if (grepl("WINDOWS", Sys.which("tar")) || Sys.which("bsdtar") != "") {
-      res <- bsdtar(
+  # on Windows we might have an Rtools folder somewhere with a zip.exe ...
+  if (.Platform$OS.type == "windows" && Sys.getenv("R_ZIPCMD") == "") {
+    # Windows 10 pre 2017, Windows 7 or older
+    env <- Sys.getenv()
+    env <- env[grepl("^RTOOLS[A-Z0-9_]+_HOME$", names(env))]
+    maybe_zip <- file.path(env, "usr", "bin", "zip.exe")
+    if (any(zip_here <- file.exists(maybe_zip)))
+      Sys.setenv("R_ZIPCMD" = maybe_zip[zip_here][1])
+    on.exit(Sys.setenv("R_ZIPCMD" = ""), add = TRUE)
+  }
+
+  if (!isTRUE(getOption("openxlsx2.no_utils_zip"))) {
+    if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD") != "") {
+      res <- utilszip(
         zip_path = zip_path,
         source_dir = source_dir,
         compression_level = compression_level
@@ -1532,22 +1537,9 @@ zip_output <- function(zip_path, source_dir, compression_level = 9) {
     }
   }
 
-  if (Sys.getenv("OPENXLSX2_NO_RTOOLS") != "1") {
-    # on Windows we might have an Rtools folder somewhere with a zip.exe ...
-    if (Sys.getenv("R_ZIPCMD") == "" && Sys.info()[["sysname"]] == "Windows") {
-      # Windows 10 pre 2017, Windows 7 or older
-      env <- Sys.getenv()
-      env <- env[grepl("^RTOOLS[A-Z0-9_]+_HOME$", names(env))]
-      maybe_zip <- file.path(env, "usr", "bin", "zip.exe")
-      if (any(zip_here <- file.exists(maybe_zip)))
-        Sys.setenv("R_ZIPCMD" = maybe_zip[zip_here][1])
-      on.exit(Sys.setenv("R_ZIPCMD" = ""), add = TRUE)
-    }
-  }
-
-  if (Sys.getenv("OPENXLSX2_NO_UTILS_ZIP") != "1") {
-    if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD") != "") {
-      res <- utilszip(
+  if (!isTRUE(getOption("openxlsx2.no_bsdtar"))) {
+    if (grepl("WINDOWS", Sys.which("tar")) || Sys.which("bsdtar") != "") {
+      res <- bsdtar(
         zip_path = zip_path,
         source_dir = source_dir,
         compression_level = compression_level
