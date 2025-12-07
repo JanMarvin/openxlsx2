@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Check valid ranges and inputs in `col2int()` and `int2row()`. [#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
+
 
 ***************************************************************************
 

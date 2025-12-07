@@ -219,6 +219,14 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     rows_out <- unique(c(rows_out, rows))
   }
 
+  # TODO maybe this should be a row2int function that
+  # can be used wherever we use col2int.
+  # this is here, so that the range check for column
+  # and rows returns identical errors
+  rr <- range(as.integer(rows_out), na.rm = TRUE)
+  if (any(rr < 1 | rr > 1048576))
+    stop("Row exceeds valid range")
+
   list(col = cols_out, row = rows_out)
 }
 
@@ -763,7 +771,10 @@ wb_dims <- function(..., select = NULL) {
     is_lwr_one <- FALSE
     # cols_arg could be name(s) in x or must indicate a positive integer
     if (is.null(args$x) || (!is.null(args$x) && !all(cols_arg %in% names(args$x))))
-      is_lwr_one <- min(col2int(cols_arg)) < 1L
+      is_lwr_one <- if (is.numeric(cols_arg))
+          min(cols_arg) < 1L
+        else
+          min(col2int(cols_arg)) < 1L
 
     if (is_lwr_one)
       stop("You must supply positive values to `cols`")
