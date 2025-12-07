@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Save a workbook to file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.21/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_save.Rd</code></div>
     </div>
 
@@ -98,6 +98,21 @@ memory usage but skips some XML validity checks. It also bypasses
 the <code>pugixml</code> functions that <code>openxlsx2</code> uses, omitting certain
 preliminary sanity checks before writing. As the name suggests,
 the output is simply flushed to disk.</p>
+<p>By default, the <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> function is used to create output files.
+This requires a working zip utility to be available on the system. A valid
+zip program must be found either via <code>Sys.which("zip")</code> or through the
+<code>R_ZIPCMD</code> environment variable.</p>
+<p>On Windows, a suitable zip tool is typically provided by Rtools. If
+<code>R_ZIPCMD</code> is not set, <code>openxlsx2</code> will automatically use the first detected
+Rtools installation. If no zip utility is available, <code>bsdtar</code> can be used as
+an alternative. On Windows this is shipped as <code>tar.exe</code>; on Mac and Linux
+it is usually available as <code>bsdtar</code> (often requiring installation of the
+<code>archive</code> package).</p>
+<p>A further fallback—primarily for older Windows systems—is to point
+<code>R_ZIPCMD</code> to <code>7z.exe</code>. This approach has not been extensively tested and is
+not reliable with 7-Zip on macOS.</p>
+<p>As an additional fallback, the <code>zip</code> package can be used. It is no longer
+listed in <code>Imports</code> and must be installed separately if needed.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -107,21 +122,21 @@ the output is simply flushed to disk.</p>
 <code><a href="creators-wb.html">creators-wb</a></code>,
 <code><a href="grouping-wb.html">grouping-wb</a></code>,
 <code><a href="row_heights-wb.html">row_heights-wb</a></code>,
-<code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
-<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
-<code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
-<code><a href="wb_add_hyperlink.html">wb_add_hyperlink</a>()</code>,
-<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
-<code><a href="wb_add_slicer.html">wb_add_slicer</a>()</code>,
-<code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
+<code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code>,
+<code><a href="wb_add_data.html">wb_add_data()</a></code>,
+<code><a href="wb_add_data_table.html">wb_add_data_table()</a></code>,
+<code><a href="wb_add_formula.html">wb_add_formula()</a></code>,
+<code><a href="wb_add_hyperlink.html">wb_add_hyperlink()</a></code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code>,
+<code><a href="wb_add_slicer.html">wb_add_slicer()</a></code>,
+<code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code>,
 <code><a href="wb_base_colors.html">wb_base_colors</a></code>,
-<code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
-<code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
-<code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
-<code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
-<code><a href="wb_workbook.html">wb_workbook</a>()</code></p></div>
+<code><a href="wb_clone_worksheet.html">wb_clone_worksheet()</a></code>,
+<code><a href="wb_copy_cells.html">wb_copy_cells()</a></code>,
+<code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells()</a></code>,
+<code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by()</a></code>,
+<code><a href="wb_workbook.html">wb_workbook()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -133,6 +148,18 @@ the output is simply flushed to disk.</p>
 <span class="r-in"><span><span class="co">## Save workbook to working directory</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## do not use utils::zip, will try to use bsdtar</span></span></span>
+<span class="r-in"><span><span class="co"># options("openxlsx2.no_utils_zip" = TRUE)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## if the above is set as well, do not use bsdtar</span></span></span>
+<span class="r-in"><span><span class="co"># options("openxlsx2.no_bsdtar" = TRUE)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## use 7zip on Windows this works, on Mac not</span></span></span>
+<span class="r-in"><span><span class="co"># Sys.setenv("R_ZIPCMD" = "C:\Program Files\7-Zip\7z.exe")</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># if the last one is left blank the fallback is zip::zip</span></span></span>
+<span class="r-in"><span><span class="fu">openxlsx2</span><span class="fu">::</span><span class="fu"><a href="write_xlsx.html">write_xlsx</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cars</span>, <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
@@ -145,7 +172,7 @@ the output is simply flushed to disk.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

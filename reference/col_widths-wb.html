@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Modify column widths of a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.21/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>col_widths-wb.Rd</code></div>
     </div>
 
@@ -96,7 +96,7 @@ If <code>TRUE</code>, the columns are hidden.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The global min and max column width for "auto" columns is set by (default values show):</p><ul><li><p><code>options("openxlsx2.minWidth" = 3)</code></p></li>
-<li><p><code>options("openxlsx2.maxWidth" = 250)</code> Maximum width allowed in Excel</p></li>
+<li><p><code>options("openxlsx2.maxWidth" = 250)</code> Maximum width allowed in OOXML</p></li>
 </ul><p>NOTE: The calculation of column widths can be slow for large worksheets.</p>
 <p>NOTE: The <code>hidden</code> parameter may conflict with the one set in <code><a href="grouping-wb.html">wb_group_cols()</a></code>;
 changing one will update the other.</p>
@@ -113,37 +113,37 @@ that the output will have consistent column widths.</p>
 <code><a href="creators-wb.html">creators-wb</a></code>,
 <code><a href="grouping-wb.html">grouping-wb</a></code>,
 <code><a href="row_heights-wb.html">row_heights-wb</a></code>,
-<code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
-<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
-<code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
-<code><a href="wb_add_hyperlink.html">wb_add_hyperlink</a>()</code>,
-<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
-<code><a href="wb_add_slicer.html">wb_add_slicer</a>()</code>,
-<code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
+<code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code>,
+<code><a href="wb_add_data.html">wb_add_data()</a></code>,
+<code><a href="wb_add_data_table.html">wb_add_data_table()</a></code>,
+<code><a href="wb_add_formula.html">wb_add_formula()</a></code>,
+<code><a href="wb_add_hyperlink.html">wb_add_hyperlink()</a></code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code>,
+<code><a href="wb_add_slicer.html">wb_add_slicer()</a></code>,
+<code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code>,
 <code><a href="wb_base_colors.html">wb_base_colors</a></code>,
-<code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
-<code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
-<code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
-<code><a href="wb_save.html">wb_save</a>()</code>,
-<code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
-<code><a href="wb_workbook.html">wb_workbook</a>()</code></p>
+<code><a href="wb_clone_worksheet.html">wb_clone_worksheet()</a></code>,
+<code><a href="wb_copy_cells.html">wb_copy_cells()</a></code>,
+<code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells()</a></code>,
+<code><a href="wb_save.html">wb_save()</a></code>,
+<code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by()</a></code>,
+<code><a href="wb_workbook.html">wb_workbook()</a></code></p>
 <p>Other worksheet content functions:
 <code><a href="filter-wb.html">filter-wb</a></code>,
 <code><a href="grouping-wb.html">grouping-wb</a></code>,
 <code><a href="named_region-wb.html">named_region-wb</a></code>,
 <code><a href="row_heights-wb.html">row_heights-wb</a></code>,
-<code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting</a>()</code>,
-<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
-<code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
-<code><a href="wb_add_hyperlink.html">wb_add_hyperlink</a>()</code>,
-<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
-<code><a href="wb_add_slicer.html">wb_add_slicer</a>()</code>,
-<code><a href="wb_add_thread.html">wb_add_thread</a>()</code>,
-<code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code></p></div>
+<code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code>,
+<code><a href="wb_add_data.html">wb_add_data()</a></code>,
+<code><a href="wb_add_data_table.html">wb_add_data_table()</a></code>,
+<code><a href="wb_add_formula.html">wb_add_formula()</a></code>,
+<code><a href="wb_add_hyperlink.html">wb_add_hyperlink()</a></code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code>,
+<code><a href="wb_add_slicer.html">wb_add_slicer()</a></code>,
+<code><a href="wb_add_thread.html">wb_add_thread()</a></code>,
+<code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -179,7 +179,7 @@ that the output will have consistent column widths.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

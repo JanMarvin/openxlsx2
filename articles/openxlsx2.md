@@ -1,0 +1,416 @@
+# openxlsx2 basic manual
+
+Welcome to the basic manual to `openxlsx2`. In this manual you will
+learn how to use `openxlsx2` to import data from xlsx-files to R as well
+as how to export data from R to xlsx, and how to import and modify these
+openxml workbooks in R. This package is based on the work of many
+contributors to `openxlsx`. It was mostly rewritten using `pugixml` and
+`R6` making use of modern technology, providing a fresh and easy to use
+R package.
+
+Over the years many people have worked on the tricky task to handle xls
+and xlsx files. Notably `openxlsx`, but there are countless other
+R-packages as well as third party libraries or calculation software
+capable of handling such files. Please feel free to use and test your
+files with other software and or let us know about your experience. Open
+an issue on github or write us a mail.
+
+### First steps
+
+First let’s assume that you have a working installation of `openxlsx2`
+otherwise run the lines below to install the latest CRAN release:
+
+``` r
+install.packages("openxlsx2")
+```
+
+Now we load the library:
+
+``` r
+library(openxlsx2)
+```
+
+### Handling workbooks
+
+The foundation of `openxlsx2` is a workbook object. You can think of
+this object as a workbook loaded in a spreadsheet software. We import
+the entire thing. Every sheet, every chart, image, column, formula
+style, conditional formatting, pivot table and whatever else a
+spreadsheet file is allowed to carry. Therefore if you have a file that
+you want to work with, you can load it with:
+
+``` r
+wb <- wb_load("your_file.xlsx")
+```
+
+We usually name workbook objects `wb` in our documentation, but this is
+no obligation, you can name your workbook object whatever you like to
+call them.
+
+If you do not have a workbook yet, it is possible to create one. In the
+next line we will use three wrapper functions
+[`wb_workbook()`](https://janmarvin.github.io/openxlsx2/reference/wb_workbook.md),
+[`wb_add_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.md),
+and
+[`wb_add_data()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_data.md).
+The wrapper functions are piped together using the native `R` pipe
+operator `|>`, but similarly you can use the classic `magrittr` pipe
+operator `%>%`. [¹](#fn1) We assume that you have a dataset `your_data`,
+either a vector, a matrix or a data frame and want to write this in a
+worksheet:
+
+``` r
+wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_data(x = your_data)
+```
+
+Okay, now you have a workbook object, but what have we actually done?
+Let’s work along the pipe syntax: (1) first we have created the workbook
+object `wb_worbkook()`, (2) next we have assigned it a worksheet
+[`wb_add_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.md),
+and (3) we have written data onto the worksheet.
+
+Let’s try this with actual data. We use the `mtcars` dataset. In the
+code we switch the fictional `your_data` with `mtcars`:
+
+``` r
+wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_data(x = mtcars)
+```
+
+Let’s see what the output looks like:
+
+``` r
+wb
+#> A Workbook object.
+#>  
+#> Worksheets:
+#>  Sheets: Sheet 1 
+#>  Write order: 1
+```
+
+The output looks a little cryptic, it simply tells the name of the
+worksheet:
+[`wb_add_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.md)
+created a default worksheet name `"Sheet 1"`. In the code above you can
+see that we do not use `sheet` to tell
+[`wb_add_data()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_data.md)
+where it should write the data. This is because internally we use a
+waiver
+[`current_sheet()`](https://janmarvin.github.io/openxlsx2/reference/waivers.md)
+so that we do not have to write `sheet = "Sheet 1"` whenever we work on
+the same worksheet. Basically the current sheet is updated whenever a
+new worksheet is added to the workbook.
+
+``` r
+wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_worksheet() |> wb_add_data(x = mtcars)
+```
+
+This will create two sheets `"Sheet 1"` and `"Sheet 2"` and the data
+will be written to the second sheet.
+
+``` r
+wb
+#> A Workbook object.
+#>  
+#> Worksheets:
+#>  Sheets: Sheet 1, Sheet 2 
+#>  Write order: 1, 2
+```
+
+So how can we access the data on the sheet? Either with
+[`wb_to_df()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md)
+our internal handler to read from workbooks (this is the underlying
+function for
+[`wb_read()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md)
+and
+[`read_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md)
+which are mere aliases for
+[`wb_to_df()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md)).
+So lets have a look at the top of the output:
+
+``` r
+wb |> wb_to_df() |> head()
+#> sheet found, but contains no data
+#> NULL
+```
+
+Ah! The output is on the second sheet. We need either `sheet = 2` or
+`sheet = "Sheet 2"`. We go with the second variant, because the sheet
+index position and their name might differ.
+
+``` r
+wb |> wb_to_df(sheet = "Sheet 2") |> head()
+#>    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+#> 2 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+#> 3 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+#> 4 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+#> 5 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+#> 6 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+#> 7 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+```
+
+This looks like the head of the `mtcars` dataset. So we have
+successfully read from the workbook. Now you want to export the workbook
+to a file:
+
+``` r
+wb |> wb_save(file = "my_first_worksheet.xlsx")
+```
+
+Alternatively you can directly open it in a spreadsheet software (if you
+have one installed):
+
+``` r
+wb |> wb_open()
+```
+
+Once again, lets try this with the `USPersonalExpenditure` dataset:
+
+``` r
+wb <- wb_workbook()
+wb_add_worksheet(wb, sheet = "USexp")
+wb_add_data(wb, "USexp", USPersonalExpenditure)
+```
+
+    #> Error : Can't add data to a workbook with no worksheet.
+    #> Did you forget to add a worksheet with `wb_add_worksheet()`?
+
+Dang! What did we do? We’ve added a worksheet, but wait, did we? No, you
+have to assign wrapper functions to an object for them to have an
+effect. Wrapper functions do not alter the workbook objects they are
+executed on. You can check that the workbook has no worksheets:
+
+``` r
+wb |> wb_get_sheet_names()
+#> named character(0)
+```
+
+Once we assign a sheet, this changes, and the data was correctly
+written:
+
+``` r
+wb <- wb_workbook()
+wb <- wb_add_worksheet(wb, sheet = "USexp")
+wb <- wb_add_data(wb, "USexp", USPersonalExpenditure)
+wb_get_sheet_names(wb)
+#>   USexp 
+#> "USexp"
+wb_to_df(wb)
+#>     1940   1945  1950 1955  1960
+#> 2 22.200 44.500 59.60 73.2 86.80
+#> 3 10.500 15.500 29.00 36.5 46.20
+#> 4  3.530  5.760  9.71 14.0 21.10
+#> 5  1.040  1.980  2.45  3.4  5.40
+#> 6  0.341  0.974  1.80  2.6  3.64
+```
+
+Now you’re probably thinking, I don’t want to assign the workbook object
+all the time and all the `wb_` functions are a little tedious to type.
+There is an alternative for you and it is called chaining. Since the
+workbook is a `R6` object internally, you can make use of chains.
+Basically every function that starts with `wb_` should have a underlying
+function of the same name without the prefix. So our data writing
+example from above can be written as:
+
+``` r
+wb <- wb_workbook()$add_worksheet("USexp")$add_data(x = USPersonalExpenditure)
+wb$to_df()
+#>     1940   1945  1950 1955  1960
+#> 2 22.200 44.500 59.60 73.2 86.80
+#> 3 10.500 15.500 29.00 36.5 46.20
+#> 4  3.530  5.760  9.71 14.0 21.10
+#> 5  1.040  1.980  2.45  3.4  5.40
+#> 6  0.341  0.974  1.80  2.6  3.64
+```
+
+Whether you use wrapper functions or chain functions is up to you and
+personal preference. There is just one thing to remember, the
+documentation is exclusively written for the wrapper function. So if you
+want to know the arguments for the `wb$add_data()` part, you have to
+lookup the wrapper functions man page
+[`?wb_add_data`](https://janmarvin.github.io/openxlsx2/reference/wb_add_data.md).
+
+### Importing as workbook
+
+In addition to importing directly from xlsx or xlsm files, `openxlsx2`
+provides the `wbWorkbook` class used for importing and modifying entire
+openxml files in `R`. This `workbook` class is the heart of `openxlsx2`
+and probably the reason why you are reading this manual in the first
+place.
+
+Importing a file into a workbook looks like this:
+
+``` r
+# the file we are going to load
+file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+# loading the file into the workbook
+wb <- wb_load(file = file)
+```
+
+The additional options
+[`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md)
+provides are for internal use: `sheet` loads only a selected sheet from
+the workbook and `data_only` reads only the data parts from a workbook
+and ignores any additional graphics or pivot tables. Both functions
+create workbook objects that can only be used to read data, and we do
+not recommend end users to use them. Especially not if they intend to
+re-export the workbook afterwards.
+
+Once a workbook is imported, we provide several functions to interact
+with and modify it (the
+[`wb_to_df()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md)
+function mentioned above works the same way for an imported workbook).
+It is possible to add new sheets and remove sheets, as well as to add or
+remove data. R-plots can be inserted and also the style of the workbook
+can be changed, new fonts, background colors and number formats. There
+is a wealth of options explained in the man pages and the additional
+style vignette (more vignettes to follow).
+
+## Exporting data
+
+### Exporting data frames or vectors
+
+If you want to export a data frame from R, you can use
+[`write_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/write_xlsx.md)
+which will create an xlsx file. This file can be tweaked further. See
+[`?write_xlsx`](https://janmarvin.github.io/openxlsx2/reference/write_xlsx.md)
+to see all the options. (further explanation and examples will follow).
+
+``` r
+write_xlsx(x = mtcars, file = "mtcars.xlsx")
+```
+
+### Exporting a `wbWorkbook`
+
+Imported workbooks can be saved as xlsx or xlsm files with the wrapper
+[`wb_save()`](https://janmarvin.github.io/openxlsx2/reference/wb_save.md)
+or with `wb$save()`. Both functions take the filename and an optional
+`overwrite` option. If the latter is set, an optional guard is provided
+to check if the file you want to write already exists. But be careful,
+this is optional. The default is to save the file and replace an
+existing file. Of course, on Windows, files that are locked (for
+example, if they were opened by another process) will not be replaced.
+
+``` r
+# replace the existing file
+wb$save("mtcars.xlsx")
+
+# do not overwrite the existing file
+try(wb$save("mtcars.xlsx", overwrite = FALSE))
+```
+
+## `dims`/ `wb_dims()`
+
+In `openxlsx2` functions that interact with worksheet cells are using
+`dims` as argument and require the users to provide these. `dims` are
+cells or cell ranges in A1 notation. The single argument `dims` hereby
+replaces `col`/`row`, `cols`/`rows` and `xy`. Since A1 notation is
+rather simple in the first few columns it might get confusing after the
+26. Therefore we provide a wrapper to construct it:
+
+``` r
+# various options
+wb_dims(from_row = 4)
+#> [1] "A4"
+
+wb_dims(rows = 4, cols = 4)
+#> [1] "D4"
+wb_dims(rows = 4, cols = "D")
+#> [1] "D4"
+
+wb_dims(rows = 4:10, cols = 5:9)
+#> [1] "E4:I10"
+
+wb_dims(rows = 4:10, cols = "A:D") # same as below
+#> [1] "A4:D10"
+wb_dims(rows = seq_len(7), cols = seq_len(4), from_row = 4)
+#> [1] "A4:D10"
+# 10 rows and 15 columns from indice B2.
+wb_dims(rows = 1:10, cols = 1:15, from_col = "B", from_row = 2)
+#> [1] "B2:P11"
+
+# data + col names
+wb_dims(x = mtcars)
+#> [1] "A1:K33"
+# only data
+wb_dims(x = mtcars, select = "data")
+#> [1] "A2:K33"
+
+# The dims of the values of a column in `x`
+wb_dims(x = mtcars, cols = "cyl")
+#> [1] "B2:B33"
+# a column in `x` with the column name
+wb_dims(x = mtcars, cols = "cyl", select = "x")
+#> [1] "B1:B33"
+# rows in `x`
+wb_dims(x = mtcars)
+#> [1] "A1:K33"
+
+# in a wb chain
+wb <- wb_workbook()$
+  add_worksheet()$
+  add_data(x = mtcars)$
+  add_fill(
+    dims = wb_dims(x = mtcars, rows = 1:5), # only 1st 5 rows of x data
+    color = wb_color("yellow")
+  )$
+  add_fill(
+    dims = wb_dims(x = mtcars, select = "col_names"), # only column names
+    color = wb_color("cyan2")
+  )
+
+# or if the data's first coord needs to be located in B2.
+
+wb_dims_custom <- function(...) {
+  wb_dims(x = mtcars, from_col = "B", from_row = 2, ...)
+}
+wb <- wb_workbook()$
+  add_worksheet()$
+  add_data(x = mtcars, dims = wb_dims_custom())$
+  add_fill(
+    dims = wb_dims_custom(rows = 1:5),
+    color = wb_color("yellow")
+  )$
+  add_fill(
+    dims = wb_dims_custom(select = "col_names"),
+    color = wb_color("cyan2")
+  )
+```
+
+## A note on speed and memory usage
+
+The current state of `openxlsx2` is that it is reasonably fast. That is,
+it works well with reasonably large input data when reading or writing.
+It may not work well with data that tests the limits of the `openxml`
+specification. Things may slow down on the R side of things, and
+performance and usability will depend on the speed and size of the local
+operating system’s CPU and memory.
+
+Note that there are at least two cases where `openxlsx2` constructs
+potentially large data frames (i) when loading, `openxlsx2` usually
+needs to read the entire input file into pugixml and convert it into
+long data frame(s), and
+[`wb_to_df()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md)
+converts one long data frame into two data frames that construct the
+output object and (ii) when adding data to the workbook, `openxlsx2`
+reshapes the input data frame into a long data frame and stores it in
+the workbook, and writes the entire worksheet into a pugixml file that
+is written when it is complete. Applying cell styles, date conversions
+etc. will further slow down the process and finally the sheets will be
+zipped to provide the xlsx output.
+
+Therefore, if you are faced with an unreasonably large dataset, either
+give yourself enough time, use another package to write the xlsx output
+(`openxlsx2` was not written with the intention of working with maximum
+memory efficiency), and by all means use other ways to store data
+(binary file formats or a database). However, we are always happy to
+improve, so if you have found a way to improve what we are currently
+doing, please let us know and open an issue or a pull request.
+
+------------------------------------------------------------------------
+
+1.  Basically a pipe operator allows to write code from left to right.
+    Without pipes the code would look like this:
+
+    ``` downlit
+    wb <- wb_add_data(wb_add_worksheet(wb_workbook()), x = your_data)
+    ```

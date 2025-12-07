@@ -6,7 +6,7 @@ options(&quot;openxlsx2.borderColor&quot; = &quot;black&quot;)
 options(&quot;openxlsx2.borderStyle&quot; = &quot;thin&quot;)
 options(&quot;openxlsx2.dateFormat&quot; = &quot;mm/dd/yyyy&quot;)
 options(&quot;openxlsx2.datetimeFormat&quot; = &quot;yyyy-mm-dd hh:mm:ss&quot;)
-options(&quot;openxlsx2.maxWidth&quot; = NULL) (Maximum width allowed in Excel is 250)
+options(&quot;openxlsx2.maxWidth&quot; = NULL) (Maximum width allowed in OOXML is 250)
 options(&quot;openxlsx2.minWidth&quot; = NULL)
 options(&quot;openxlsx2.numFmt&quot; = NULL)
 options(&quot;openxlsx2.paperSize&quot; = 9) corresponds to a A4 paper size
@@ -28,6 +28,7 @@ options(&quot;openxlsx2.string_nums&quot; = TRUE) numerics in character columns
 will be converted. &quot;1&quot; will be written as 1
 options(&quot;openxlsx2.na.strings&quot; = &quot;#N/A&quot;) consulted by write_xlsx(),
 wb_add_data() and wb_add_data_table().
+options(&quot;openxlsx2.zip_flags&quot;) custom zip flags passed to utils::zip() required when using a custom zip tool
 options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the output file. Increasing compression and time consumed from 1-9.
 
 "><meta property="og:description" content="The openxlsx2 package allows the user to set global options to simplify formatting:
@@ -37,7 +38,7 @@ options(&quot;openxlsx2.borderColor&quot; = &quot;black&quot;)
 options(&quot;openxlsx2.borderStyle&quot; = &quot;thin&quot;)
 options(&quot;openxlsx2.dateFormat&quot; = &quot;mm/dd/yyyy&quot;)
 options(&quot;openxlsx2.datetimeFormat&quot; = &quot;yyyy-mm-dd hh:mm:ss&quot;)
-options(&quot;openxlsx2.maxWidth&quot; = NULL) (Maximum width allowed in Excel is 250)
+options(&quot;openxlsx2.maxWidth&quot; = NULL) (Maximum width allowed in OOXML is 250)
 options(&quot;openxlsx2.minWidth&quot; = NULL)
 options(&quot;openxlsx2.numFmt&quot; = NULL)
 options(&quot;openxlsx2.paperSize&quot; = 9) corresponds to a A4 paper size
@@ -59,6 +60,7 @@ options(&quot;openxlsx2.string_nums&quot; = TRUE) numerics in character columns
 will be converted. &quot;1&quot; will be written as 1
 options(&quot;openxlsx2.na.strings&quot; = &quot;#N/A&quot;) consulted by write_xlsx(),
 wb_add_data() and wb_add_data_table().
+options(&quot;openxlsx2.zip_flags&quot;) custom zip flags passed to utils::zip() required when using a custom zip tool
 options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the output file. Increasing compression and time consumed from 1-9.
 
 "><meta property="og:image" content="https://janmarvin.github.io/openxlsx2/logo.png"></head><body>
@@ -69,7 +71,7 @@ options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the o
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,7 +108,7 @@ options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the o
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Options consulted by openxlsx2</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.21/R/openxlsx2-package.R" class="external-link"><code>R/openxlsx2-package.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/openxlsx2-package.R" class="external-link"><code>R/openxlsx2-package.R</code></a></small>
       <div class="d-none name"><code>openxlsx2_options.Rd</code></div>
     </div>
 
@@ -117,7 +119,7 @@ Typically, this is done in the <code>.Rprofile</code> startup file</p><ul><li><p
 <li><p><code>options("openxlsx2.borderStyle" = "thin")</code></p></li>
 <li><p><code>options("openxlsx2.dateFormat" = "mm/dd/yyyy")</code></p></li>
 <li><p><code>options("openxlsx2.datetimeFormat" = "yyyy-mm-dd hh:mm:ss")</code></p></li>
-<li><p><code>options("openxlsx2.maxWidth" = NULL)</code> (Maximum width allowed in Excel is 250)</p></li>
+<li><p><code>options("openxlsx2.maxWidth" = NULL)</code> (Maximum width allowed in OOXML is 250)</p></li>
 <li><p><code>options("openxlsx2.minWidth" = NULL)</code></p></li>
 <li><p><code>options("openxlsx2.numFmt" = NULL)</code></p></li>
 <li><p><code>options("openxlsx2.paperSize" = 9)</code> corresponds to a A4 paper size</p></li>
@@ -139,6 +141,7 @@ to a cell with <code><a href="wb_add_thread.html">wb_add_thread()</a></code></p>
 will be converted. <code>"1"</code> will be written as <code>1</code></p></li>
 <li><p><code>options("openxlsx2.na.strings" = "#N/A")</code> consulted by <code><a href="write_xlsx.html">write_xlsx()</a></code>,
 <code><a href="wb_add_data.html">wb_add_data()</a></code> and <code><a href="wb_add_data_table.html">wb_add_data_table()</a></code>.</p></li>
+<li><p><code>options("openxlsx2.zip_flags")</code> custom zip flags passed to <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> required when using a custom zip tool</p></li>
 <li><p><code>options("openxlsx2.compression_level" = 6)</code> compression level for the output file. Increasing compression and time consumed from 1-9.</p></li>
 </ul></div>
 
@@ -152,7 +155,7 @@ will be converted. <code>"1"</code> will be written as <code>1</code></p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

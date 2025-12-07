@@ -1,0 +1,4 @@
+# License
+
+    YEAR: 2021-2025
+    COPYRIGHT HOLDER: openxlsx2 authors

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Modify row heights of a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.21/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>row_heights-wb.Rd</code></div>
     </div>
 
@@ -59,7 +59,8 @@
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">rows</span>,</span>
 <span>  heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  hide_blanks <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">wb_remove_row_heights</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">rows</span><span class="op">)</span></span></code></pre></div>
@@ -88,6 +89,10 @@
 <dt id="arg-hidden">hidden<a class="anchor" aria-label="anchor" href="#arg-hidden"></a></dt>
 <dd><p>Option to hide rows. A logical vector of length 1 or length of <code>rows</code></p></dd>
 
+
+<dt id="arg-hide-blanks">hide_blanks<a class="anchor" aria-label="anchor" href="#arg-hide-blanks"></a></dt>
+<dd><p>Option to hide blank (uninitialized) rows. These rows are not only empty, they must not be part of the worksheet.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -96,37 +101,37 @@
 <code><a href="col_widths-wb.html">col_widths-wb</a></code>,
 <code><a href="creators-wb.html">creators-wb</a></code>,
 <code><a href="grouping-wb.html">grouping-wb</a></code>,
-<code><a href="wb_add_chartsheet.html">wb_add_chartsheet</a>()</code>,
-<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
-<code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
-<code><a href="wb_add_hyperlink.html">wb_add_hyperlink</a>()</code>,
-<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
-<code><a href="wb_add_slicer.html">wb_add_slicer</a>()</code>,
-<code><a href="wb_add_worksheet.html">wb_add_worksheet</a>()</code>,
+<code><a href="wb_add_chartsheet.html">wb_add_chartsheet()</a></code>,
+<code><a href="wb_add_data.html">wb_add_data()</a></code>,
+<code><a href="wb_add_data_table.html">wb_add_data_table()</a></code>,
+<code><a href="wb_add_formula.html">wb_add_formula()</a></code>,
+<code><a href="wb_add_hyperlink.html">wb_add_hyperlink()</a></code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code>,
+<code><a href="wb_add_slicer.html">wb_add_slicer()</a></code>,
+<code><a href="wb_add_worksheet.html">wb_add_worksheet()</a></code>,
 <code><a href="wb_base_colors.html">wb_base_colors</a></code>,
-<code><a href="wb_clone_worksheet.html">wb_clone_worksheet</a>()</code>,
-<code><a href="wb_copy_cells.html">wb_copy_cells</a>()</code>,
-<code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code>,
-<code><a href="wb_save.html">wb_save</a>()</code>,
-<code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by</a>()</code>,
-<code><a href="wb_workbook.html">wb_workbook</a>()</code></p>
+<code><a href="wb_clone_worksheet.html">wb_clone_worksheet()</a></code>,
+<code><a href="wb_copy_cells.html">wb_copy_cells()</a></code>,
+<code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells()</a></code>,
+<code><a href="wb_save.html">wb_save()</a></code>,
+<code><a href="wb_set_last_modified_by.html">wb_set_last_modified_by()</a></code>,
+<code><a href="wb_workbook.html">wb_workbook()</a></code></p>
 <p>Other worksheet content functions:
 <code><a href="col_widths-wb.html">col_widths-wb</a></code>,
 <code><a href="filter-wb.html">filter-wb</a></code>,
 <code><a href="grouping-wb.html">grouping-wb</a></code>,
 <code><a href="named_region-wb.html">named_region-wb</a></code>,
-<code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting</a>()</code>,
-<code><a href="wb_add_data.html">wb_add_data</a>()</code>,
-<code><a href="wb_add_data_table.html">wb_add_data_table</a>()</code>,
-<code><a href="wb_add_formula.html">wb_add_formula</a>()</code>,
-<code><a href="wb_add_hyperlink.html">wb_add_hyperlink</a>()</code>,
-<code><a href="wb_add_pivot_table.html">wb_add_pivot_table</a>()</code>,
-<code><a href="wb_add_slicer.html">wb_add_slicer</a>()</code>,
-<code><a href="wb_add_thread.html">wb_add_thread</a>()</code>,
-<code><a href="wb_freeze_pane.html">wb_freeze_pane</a>()</code>,
-<code><a href="wb_merge_cells.html">wb_merge_cells</a>()</code></p></div>
+<code><a href="wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code>,
+<code><a href="wb_add_data.html">wb_add_data()</a></code>,
+<code><a href="wb_add_data_table.html">wb_add_data_table()</a></code>,
+<code><a href="wb_add_formula.html">wb_add_formula()</a></code>,
+<code><a href="wb_add_hyperlink.html">wb_add_hyperlink()</a></code>,
+<code><a href="wb_add_pivot_table.html">wb_add_pivot_table()</a></code>,
+<code><a href="wb_add_slicer.html">wb_add_slicer()</a></code>,
+<code><a href="wb_add_thread.html">wb_add_thread()</a></code>,
+<code><a href="wb_freeze_pane.html">wb_freeze_pane()</a></code>,
+<code><a href="wb_merge_cells.html">wb_merge_cells()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -159,7 +164,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

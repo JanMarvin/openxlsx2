@@ -79,7 +79,7 @@ Note that the documentation is more complete in each of the wrapper functions.
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,7 +116,7 @@ Note that the documentation is more complete in each of the wrapper functions.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Workbook class</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.21/R/class-workbook.R" class="external-link"><code>R/class-workbook.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook.R" class="external-link"><code>R/class-workbook.R</code></a></small>
       <div class="d-none name"><code>wbWorkbook.Rd</code></div>
     </div>
 
@@ -526,7 +526,7 @@ worksheet names.</p></dd>
 <dt><code>datetime_created</code></dt>
 <dd><p>The datetime (as <code>POSIXt</code>) the workbook is
 created.  Defaults to the current <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time()</a></code> when the workbook object
-is created, not when the Excel files are saved.</p></dd>
+is created, not when the <code><a href="wb_workbook.html">wb_workbook()</a></code> files are saved.</p></dd>
 
 
 <dt><code>datetime_modified</code></dt>
@@ -1483,11 +1483,11 @@ STDEVP, SUM, VAR, VARP</p>
 
 
 <dt><code>rows</code></dt>
-<dd><p>A numeric vector specifying which rows in the Excel file to read. If NULL, all rows are read.</p></dd>
+<dd><p>A numeric vector specifying which rows in the spreadsheet to read. If NULL, all rows are read.</p></dd>
 
 
 <dt><code>cols</code></dt>
-<dd><p>A numeric vector specifying which columns in the Excel file to read. If NULL, all columns are read.</p></dd>
+<dd><p>A numeric vector specifying which columns in the spreadsheet to read. If NULL, all columns are read.</p></dd>
 
 
 <dt><code>detect_dates</code></dt>
@@ -1511,7 +1511,7 @@ STDEVP, SUM, VAR, VARP</p>
 
 
 <dt><code>show_formula</code></dt>
-<dd><p>If TRUE, the underlying Excel formulas are shown.</p></dd>
+<dd><p>If TRUE, the underlying spreadsheet formulas are shown.</p></dd>
 
 
 <dt><code>convert</code></dt>
@@ -1615,7 +1615,7 @@ STDEVP, SUM, VAR, VARP</p>
 
 </div><p></p><hr><a id="method-wbWorkbook-open"></a><div class="section">
 <h3 id="method-open-">Method <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">open()</a></code><a class="anchor" aria-label="anchor" href="#method-open-"></a></h3>
-<p>open wbWorkbook in Excel.</p><div class="section">
+<p>open wbWorkbook in spreadsheet software</p><div class="section">
 <h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>interactive <span class="op">=</span> <span class="cn">NA</span>, flush <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -2122,7 +2122,8 @@ character substitutions.</p>
 <span>  sheet <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">rows</span>,</span>
 <span>  heights <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  hidden <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  hide_blanks <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -2142,6 +2143,10 @@ character substitutions.</p>
 
 <dt><code>hidden</code></dt>
 <dd><p>hidden</p></dd>
+
+
+<dt><code>hide_blanks</code></dt>
+<dd><p>hide_blanks</p></dd>
 
 
 </dl><p></p></div>
@@ -5223,7 +5228,7 @@ These styles are used with conditional formatting and custom table styles</p><di
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
