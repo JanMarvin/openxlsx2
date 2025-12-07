@@ -846,3 +846,16 @@ test_that("wb_dims() type works", {
   expect_equal("A1:$K33", wb_dims(x = mtcars, fix = c("none", "col")))
   expect_equal("$A1:K$33", wb_dims(x = mtcars, fix = c("col", "row")))
 })
+
+test_that("fuzzing wb_dims", {
+
+  expect_error(wb_dims(cols = list(1), rows = 2), "Input must be a vector type")
+  expect_error(wb_dims(cols = 2, rows = list(1)), "Input must be a vector type")
+  expect_error(wb_dims(cols = NA, rows = 2), "NAs are not supported in wb_dims()")
+  expect_error(wb_dims(cols = 2, rows = NA), "NAs are not supported in wb_dims()")
+  expect_error(wb_dims(cols = as.factor(2), rows = 1), "factors are not supported in wb_dims()")
+  expect_error(wb_dims(cols = 1, rows = as.factor(2)), "factors are not supported in wb_dims()")
+  expect_error(wb_dims(rows = 2e6, cols = 1), "Row exceeds valid range")
+  expect_error(wb_dims(rows = 1, cols = 2e5), "Column exceeds valid range")
+
+})

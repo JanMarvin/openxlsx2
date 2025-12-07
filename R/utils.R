@@ -185,6 +185,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
   rows_out <- NULL
   for (dim in dims) {
     dimensions <- unlist(strsplit(dim, ":"))
+    dimensions <- gsub("\\$", "", dimensions)
     cols <- gsub("[[:digit:]]", "", dimensions)
     rows <- gsub("[[:upper:]]", "", dimensions)
 
@@ -731,6 +732,19 @@ wb_dims <- function(..., select = NULL) {
   rows_arg <- args$rows
   cols_arg <- args$cols
 
+  if (anyNA(rows_arg) || anyNA(cols_arg)) {
+    stop("NAs are not supported in wb_dims()")
+  }
+
+  if ((!is.null(rows_arg) && !is.atomic(rows_arg)) ||
+      (!is.null(cols_arg) && !is.atomic(cols_arg))) {
+    stop("Input must be a vector type")
+  }
+
+  if (is.factor(rows_arg) || is.factor(cols_arg)) {
+    stop("factors are not supported in wb_dims()")
+  }
+
   if (n_unnamed_args == 1 && len > 1 && !"rows" %in% nams) {
     message("Assuming the first unnamed argument to be `rows`.")
     rows_pos <- which(nams == "")[1]
@@ -1024,6 +1038,9 @@ wb_dims <- function(..., select = NULL) {
       }
     }
   }
+
+  # final check if any column or row exceeds the valid ranges
+  dims_to_rowcol(dims, as_integer = TRUE)
 
   paste0(dims, collapse = ",")
 }

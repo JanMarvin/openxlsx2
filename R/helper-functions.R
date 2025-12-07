@@ -1324,7 +1324,7 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
   }
 
   # final check if any column or row exceeds the valid ranges
-  dims_to_rowcol(dims)
+  dims_to_rowcol(dims, as_integer = TRUE)
 
   dims
 }
