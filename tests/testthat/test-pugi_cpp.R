@@ -161,7 +161,7 @@ test_that("col2int and int2col", {
   expect_equal(col2int(integer()), integer())
   expect_equal(col2int(character()), integer())
   expect_equal(col2int(NULL), NULL)
-  expect_error(col2int(""), "Error in conversion from column to integer")
+  expect_error(col2int(""), "Empty string in conversion from column to integer")
   expect_error(col2int("_"), "found non alphabetic character in column to integer conversion")
   expect_error(col2int(" "), "found non alphabetic character in column to integer conversion")
   expect_error(col2int("   "), "found non alphabetic character in column to integer conversion")
