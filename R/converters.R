@@ -11,6 +11,8 @@
 #' @examples
 #' int2col(1:10)
 int2col <- function(x) {
+  if (is.null(x)) return(NULL)
+
   if (!is.numeric(x) || any(is.infinite(x))) {
     stop("x must be finite and numeric.")
   }
@@ -31,8 +33,11 @@ int2col <- function(x) {
 col2int <- function(x) {
   if (is.null(x)) return(NULL)
 
-  if (is.numeric(x) || is.factor(x))
+  if (is.numeric(x) || is.factor(x)) {
+    if (any(as.numeric(x) < 1L | as.numeric(x) > 16384, na.rm = TRUE))
+      stop("Column exceeds valid range", call. = FALSE)
     return(as.integer(x))
+  }
 
   if (!is.character(x)) {
     stop("x must be character")

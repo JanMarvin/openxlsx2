@@ -1323,9 +1323,8 @@ fits_in_dims <- function(x, dims, startCol, startRow) {
 
   }
 
-  rc <- dims_to_rowcol(dims)
-  if (max(as.integer(rc[["row"]])) > 1048576 || max(col2int(rc[["col"]])) > 16384)
-    stop("Dimensions exceed worksheet")
+  # final check if any column or row exceeds the valid ranges
+  dims_to_rowcol(dims, as_integer = TRUE)
 
   dims
 }

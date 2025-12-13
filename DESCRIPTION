@@ -1,7 +1,7 @@
 Type: Package
 Package: openxlsx2
 Title: Read, Write and Edit 'xlsx' Files
-Version: 1.22
+Version: 1.22.0.9000
 Language: en-US
 Authors@R: c(
   person("Jordan Mark", "Barbone", email = "jmbarbone@gmail.com", role = "aut", comment = c(ORCID = "0000-0001-9788-3628")),
@@ -41,3 +41,4 @@ Encoding: UTF-8
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
+Config/testthat/parallel: true

@@ -997,19 +997,19 @@ test_that("dimension limits work", {
   dims <- paste0(int2col(max_c), max_r + 1L)
   expect_error(
     wb_workbook()$add_worksheet()$add_data(x = 1, dims = dims),
-    "Dimensions exceed worksheet"
+    "Row exceeds valid range"
   )
 
-  dims <- paste0(int2col(max_c + 1L), max_r)
+  dims <- paste0("XFE", max_r)
   expect_error(
     wb_workbook()$add_worksheet()$add_data(x = 1, dims = dims),
-    "Dimensions exceed worksheet"
+    "Column exceeds valid range"
   )
 
-  dims <- paste0(int2col(max_c + 1L), max_r + 1L)
+  dims <- paste0("XFD", 0)
   expect_error(
     wb_workbook()$add_worksheet()$add_data(x = 1, dims = dims),
-    "Dimensions exceed worksheet"
+    "Row exceeds valid range"
   )
 
 })
