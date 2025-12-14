@@ -9,6 +9,13 @@
   and `int2row()`.
   [\#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
 
+### Fixes
+
+- It is now possible to add filters via
+  [`write_xlsx()`](https://janmarvin.github.io/openxlsx2/dev/reference/write_xlsx.md)
+  without tables.
+  [\#1495](https://github.com/JanMarvin/openxlsx2/pull/1495)
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.22
