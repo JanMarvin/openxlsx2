@@ -151,15 +151,30 @@ test_that("col2int and int2col", {
   expect_equal(test, that)
 
   test <- "AABWAWD"
-  x <- col2int(test)
-  that <- int2col(x)
+  expect_error(col2int(test), "Column exceeds valid range")
+  expect_error(int2col(322116630L), "Column exceeds valid range")
 
-  expect_equal(test, that)
+  expect_error(col_to_int(test), "Column exceeds valid range")
+  expect_error(ox_int_to_col(322116630L), "Column exceeds valid range")
 
-  x <- col_to_int(test)
-  that <- ox_int_to_col(x)
+  ## fuzzing input
+  expect_equal(col2int(integer()), integer())
+  expect_equal(col2int(character()), integer())
+  expect_equal(col2int(NULL), NULL)
+  expect_error(col2int(""), "Empty string in conversion from column to integer")
+  expect_error(col2int("_"), "found non alphabetic character in column to integer conversion")
+  expect_error(col2int(" "), "found non alphabetic character in column to integer conversion")
+  expect_error(col2int("   "), "found non alphabetic character in column to integer conversion")
+  expect_error(col2int(NA_character_), "x contains NA")
+  expect_error(col2int(16385L), "Column exceeds valid range")
+  expect_error(col2int(0L), "Column exceeds valid range")
+  expect_error(col2int(-1L), "Column exceeds valid range")
 
-  expect_equal(test, that)
+  expect_error(int2col(-1), "Column exceeds valid range")
+  expect_error(int2col(0), "Column exceeds valid range")
+  expect_error(int2col(16385), "Column exceeds valid range")
+  expect_equal(int2col(NULL), NULL)
+  expect_equal(int2col(integer()), character())
 
 })
 

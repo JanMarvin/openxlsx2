@@ -185,6 +185,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
   rows_out <- NULL
   for (dim in dims) {
     dimensions <- unlist(strsplit(dim, ":"))
+    dimensions <- gsub("\\$", "", dimensions)
     cols <- gsub("[[:digit:]]", "", dimensions)
     rows <- gsub("[[:upper:]]", "", dimensions)
 
@@ -218,6 +219,14 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     cols_out <- unique(c(cols_out, cols))
     rows_out <- unique(c(rows_out, rows))
   }
+
+  # TODO maybe this should be a row2int function that
+  # can be used wherever we use col2int.
+  # this is here, so that the range check for column
+  # and rows returns identical errors
+  rr <- range(as.integer(rows_out), na.rm = TRUE)
+  if (any(rr < 1 | rr > 1048576))
+    stop("Row exceeds valid range")
 
   list(col = cols_out, row = rows_out)
 }
@@ -723,6 +732,19 @@ wb_dims <- function(..., select = NULL) {
   rows_arg <- args$rows
   cols_arg <- args$cols
 
+  if (anyNA(rows_arg) || anyNA(cols_arg)) {
+    stop("NAs are not supported in wb_dims()")
+  }
+
+  if ((!is.null(rows_arg) && !is.atomic(rows_arg)) ||
+      (!is.null(cols_arg) && !is.atomic(cols_arg))) {
+    stop("Input must be a vector type")
+  }
+
+  if (is.factor(rows_arg) || is.factor(cols_arg)) {
+    stop("factors are not supported in wb_dims()")
+  }
+
   if (n_unnamed_args == 1 && len > 1 && !"rows" %in% nams) {
     message("Assuming the first unnamed argument to be `rows`.")
     rows_pos <- which(nams == "")[1]
@@ -763,7 +785,10 @@ wb_dims <- function(..., select = NULL) {
     is_lwr_one <- FALSE
     # cols_arg could be name(s) in x or must indicate a positive integer
     if (is.null(args$x) || (!is.null(args$x) && !all(cols_arg %in% names(args$x))))
-      is_lwr_one <- min(col2int(cols_arg)) < 1L
+      is_lwr_one <- if (is.numeric(cols_arg))
+          min(cols_arg) < 1L
+        else
+          min(col2int(cols_arg)) < 1L
 
     if (is_lwr_one)
       stop("You must supply positive values to `cols`")
@@ -1013,6 +1038,9 @@ wb_dims <- function(..., select = NULL) {
       }
     }
   }
+
+  # final check if any column or row exceeds the valid ranges
+  dims_to_rowcol(dims, as_integer = TRUE)
 
   paste0(dims, collapse = ",")
 }

@@ -3,6 +3,9 @@
 
 #include "openxlsx2_types.h"
 
+#define MAX_OOXML_COL_INT 16384
+#define MAX_OOXML_ROW_INT 1048576
+
 
 inline void check_xptr_validity(XPtrXML doc) {
   if (doc.get() == nullptr) {
@@ -33,6 +36,9 @@ inline void checkInterrupt(R_xlen_t& iteration, R_xlen_t frequency = 10000) {
 template <typename T>
 static inline std::string int_to_col(T cell) {
   std::string col_name = "";
+
+  if (cell == 0 || cell > MAX_OOXML_COL_INT)
+    Rcpp::stop("Column exceeds valid range");
 
   while (cell > 0) {
     auto modulo = (cell - 1) % 26;
@@ -70,10 +76,17 @@ static inline uint32_t uint_col_to_int(std::string& a) {
   uint32_t sum = 0;
   size_t k = a.length();
 
+  if (!std::all_of(a.begin(), a.end(), ::isalpha)) {
+    Rcpp::stop("found non alphabetic character in column to integer conversion");
+  }
+
   for (size_t j = 0; j < k; ++j) {
     sum *= 26;
     sum += static_cast<uint32_t>(a[j] - aVal);
   }
+
+  if (sum == 0 || sum > MAX_OOXML_COL_INT)
+    Rcpp::stop("Column exceeds valid range");
 
   return sum;
 }
@@ -101,7 +114,11 @@ static inline std::string rm_colnum(const std::string& str) {
 // Function to keep only digits in a string
 inline int32_t cell_to_rowint(const std::string& str) {
   std::string result = rm_colnum(str);
-  return std::stoi(result);
+  int32_t res = std::stoi(result);
+  if (res < 1 || res > MAX_OOXML_ROW_INT)
+    Rcpp::stop("Row exceeds valid range");
+
+  return res;
 }
 
 static inline std::string str_toupper(std::string s) {

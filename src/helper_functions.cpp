@@ -122,6 +122,8 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
   for (R_xlen_t i = 0; i < n; ++i) {
     std::string a = Rcpp::as<std::string>(x[i]);
 
+    if (a.empty()) Rcpp::stop("Empty string in conversion from column to integer");
+
     // check if the value is digit only, if yes, add it and continue the loop
     // at the top. This avoids slow:
     // suppressWarnings(isTRUE(as.character(as.numeric(x)) == x))
