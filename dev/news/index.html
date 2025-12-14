@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.21.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.22.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,44 +51,52 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>Add <code>hide_blanks</code> argument to <code><a href="../reference/row_heights-wb.html">wb_set_row_heights()</a></code>. This allows hiding all blank rows in a worksheet. <a href="https://github.com/JanMarvin/openxlsx2/pull/1464" class="external-link">1464</a>
+<ul><li>Check valid ranges and inputs in <code><a href="../reference/col2int.html">col2int()</a></code> and <code>int2row()</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1491" class="external-link">#1491</a>
 </li>
-<li>Extend <code>"-"</code> and <code>"+"</code> to min and max column or row, when reading with <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> and <code>dims</code> like <code>"A1:++"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1466" class="external-link">1466</a>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.22" id="openxlsx2-122">openxlsx2 1.22<a class="anchor" aria-label="anchor" href="#openxlsx2-122"></a></h2><p class="text-muted">CRAN release: 2025-12-07</p>
+<div class="section level3">
+<h3 id="new-features-1-22">New features<a class="anchor" aria-label="anchor" href="#new-features-1-22"></a></h3>
+<ul><li>Added a <code>hide_blanks</code> argument to <code><a href="../reference/row_heights-wb.html">wb_set_row_heights()</a></code>, allowing all blank rows in a worksheet to be hidden. <a href="https://github.com/JanMarvin/openxlsx2/pull/1464" class="external-link">#1464</a>
+</li>
+<li>Extended <code>"-"</code> and <code>"+"</code> to represent minimum and maximum columns or rows when reading with <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> using <code>dims</code> such as <code>"A1:++"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1466" class="external-link">#1466</a>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>It is now possible to save a newly created workbook as <code>.xlsm</code> and it will open in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/1453" class="external-link">1453</a>
+<h3 id="fixes-1-22">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-22"></a></h3>
+<ul><li>Newly created workbooks can now be saved as <code>.xlsm</code> files that open correctly in spreadsheet software. <a href="https://github.com/JanMarvin/openxlsx2/pull/1453" class="external-link">#1453</a>
 </li>
-<li>Add missing <code>interactive</code> argument to <code><a href="../reference/wb_open.html">wb_open()</a></code>.</li>
-<li>
-<code><a href="../reference/wb_add_comment.html">wb_remove_comment()</a></code> did not work if not every sheet had comments and if these comments were ordered like the sheets. <a href="https://github.com/JanMarvin/openxlsx2/pull/1468" class="external-link">1468</a>
-</li>
-</ul></div>
-<div class="section level3">
-<h3 id="internal-changes-development-version">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
-<ul><li>The <code>tt</code> data frame that is created with <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> to support column type guessing is now using integer columns instead of characters. This should reduce the memory footprint of the function. <a href="https://github.com/JanMarvin/openxlsx2/pull/1459" class="external-link">1459</a>
-</li>
-<li>Cleanups in <code>C++</code> code. This should not impact the user.</li>
-<li>Fixed test issues with <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> in R &lt; 4.3.0. In these older R versions <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> dropped the timezone argument. In addition another round of <code>stringsAsFactors = FALSE</code> makes the tests run again under R 3.6.0 (given one uses <code>CXX_STD=CXX11</code> in <code>src/Makevars</code>).</li>
-<li>The <code>zip</code> dependency is only a fallback for when no system zip tool is available. The default is to use <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> when writing the xlsx/xlsm output file. This allows to use a system zip file that usually are tweaked for performance. <a href="https://github.com/JanMarvin/openxlsx2/pull/1475" class="external-link">1475</a>
+<li>Added the missing <code>interactive</code> argument to <code><a href="../reference/wb_open.html">wb_open()</a></code>.</li>
+<li>Fixed an issue where <code><a href="../reference/wb_add_comment.html">wb_remove_comment()</a></code> failed if not every sheet had comments and the comments matched the sheet ordering. <a href="https://github.com/JanMarvin/openxlsx2/pull/1468" class="external-link">#1468</a>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li>Wrapper functions were never intended to alter workbooks. This is now tested and various functions that were unintentionally altering workbooks were corrected. <a href="https://github.com/JanMarvin/openxlsx2/pull/1454" class="external-link">1454</a>
+<h3 id="internal-changes-1-22">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-22"></a></h3>
+<ul><li>
+<code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> now uses integer columns in the <code>tt</code> data frame (used for type guessing), reducing memory usage. <a href="https://github.com/JanMarvin/openxlsx2/pull/1459" class="external-link">#1459</a>
+</li>
+<li>General C++ cleanups (no user-facing impact).</li>
+<li>Fixed test issues with <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct()</a></code> on R &lt; 4.3.0, where time zones were dropped. Additional <code>stringsAsFactors = FALSE</code> updates ensure tests run on R 3.6.0 (when using <code>CXX_STD=CXX11</code> in <code>src/Makevars</code>).</li>
+<li>The <code>zip</code> package is now only used as a fallback when no system zip tool is available. By default, <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> is used, enabling use of optimized system-level zip tools. <a href="https://github.com/JanMarvin/openxlsx2/pull/1475" class="external-link">#1475</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-1-22">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-22"></a></h3>
+<ul><li>Wrapper functions were never intended to mutate workbook objects. Tests now enforce this, and functions that previously modified workbooks implicitly have been corrected. Users must explicitly assign wrapper results to apply modifications. <a href="https://github.com/JanMarvin/openxlsx2/pull/1454" class="external-link">#1454</a>
 </li>
 </ul><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></code></pre></div>
-<p>Previously we were sloppy in our testing so this might have worked unintentionally</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>To fix this code, simply assign the workbook</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<ul><li>Previously deprecated functions <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code>, <code><a href="../reference/write_formula.html">write_formula()</a></code> are now defunct.</li>
-<li>If a <code>row</code> vector is passed to <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, this will set the order of the output. The behavior is now matching the one of <code>cols</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1460" class="external-link">1460</a>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Previously mutated wb implicitly</span></span>
+<span><span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Going forward, explicit assignment is required</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_fill.html">wb_add_fill</a></span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<ul><li>Deprecated functions <code><a href="../reference/write_data.html">write_data()</a></code>, <code><a href="../reference/write_datatable.html">write_datatable()</a></code>, and <code><a href="../reference/write_formula.html">write_formula()</a></code> are now defunct.</li>
+<li>Passing a row vector to <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> now determines output order, matching the behavior of the cols argument. <a href="https://github.com/JanMarvin/openxlsx2/pull/1460" class="external-link">1460</a>
 </li>
 </ul><hr></div>
 </div>
@@ -159,7 +167,7 @@
 <div class="section level3">
 <h3 id="breaking-changes-1-18">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-18"></a></h3>
 <ul><li>The default value of <code>start_row</code> in <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>, <code><a href="../reference/wb_to_df.html">read_xlsx()</a></code>, and <code><a href="../reference/wb_to_df.html">wb_read()</a></code> has been changed from <code>1</code> to <code>NULL</code>. Reading with <code>start_row</code>/<code>start_col</code> will now fill the data frame, even if the actual data starts later.</li>
-</ul><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+</ul><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"D4"</span><span class="op">)</span></span>
 <span><span class="co"># previously this would return a data frame of 6 x 2 and now it returns 10 x 5</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">to_df</span><span class="op">(</span>start_col <span class="op">=</span> <span class="fl">1</span>, start_row <span class="op">=</span> <span class="fl">1</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -444,7 +452,7 @@
 <h3 id="new-features-1-6">New features<a class="anchor" aria-label="anchor" href="#new-features-1-6"></a></h3>
 <ul><li><p>Helper to read sensitivity labels from files and apply them to workbooks. <a href="https://github.com/JanMarvin/openxlsx2/pull/983" class="external-link">983</a></p></li>
 <li><p>It is now possible to pass non consecutive dims like <code>"A1:B1,C2:D2"</code> to various style helpers like <code><a href="../reference/wb_add_fill.html">wb_add_fill()</a></code>. In addition it is now possible to write a data set into a predefined dims region using <code>enforce = TRUE</code>. This handles either <code>","</code> or <code>";"</code> as cell separator. <a href="https://github.com/JanMarvin/openxlsx2/pull/993" class="external-link">993</a></p></li>
-</ul><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+</ul><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># force a dataset into a specific cell dimension</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"I2:J2;A1:B2;G5:H6"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span>, <span class="fl">4</span>, <span class="fl">2</span><span class="op">)</span>, enforce <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -453,7 +461,7 @@
 <h3 id="fixes-1-6">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-6"></a></h3>
 <ul><li><p>Allow writing data frames with zero rows. <a href="https://github.com/JanMarvin/openxlsx2/pull/987" class="external-link">987</a></p></li>
 <li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> has been improved and is safer on 0-length inputs. In particular, it will error for a case where a <code>cols</code> doesn’t exist in <code>x</code> (<a href="https://github.com/JanMarvin/openxlsx2/pull/990" class="external-link">990</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>).</p></li>
-</ul><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+</ul><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Previously created a wrong dims</span></span>
 <span><span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, cols <span class="op">=</span> <span class="st">"non-existent-col"</span><span class="op">)</span></span>
 <span><span class="co"># Now errors</span></span></code></pre></div>
@@ -471,7 +479,7 @@
 <li><p><code><a href="../reference/wb_dims.html">wb_dims()</a></code> now accepts <code>from_dims</code> to specify a starting cell <a href="https://github.com/JanMarvin/openxlsx2/pull/960" class="external-link">960</a>.</p></li>
 <li><p>You can now set <code>options(openxlsx2.na.strings)</code> to a value to have a default value for <code>na.strings</code> in <code><a href="../reference/wb_add_data.html">wb_add_data()</a></code>, <code><a href="../reference/wb_add_data_table.html">wb_add_data_table()</a></code>, and <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> <a href="https://github.com/JanMarvin/openxlsx2/pull/968" class="external-link">968</a>.</p></li>
 <li><p>The direction vectors are written is now controlled via <code>dims</code>. Previously it was required to transpose a vector to write it horizontally: <code>wb_add_data(x = t(letters), col_names = FALSE)</code>. Now the direction is defined by <code>dims</code>. The default is still to write vectors vertically, but for a horizontal vector it is possible to write <code>wb_add_data(x = letters, dims = "A1:Z1")</code>. This change impacts vectors, hyperlinks and formulas and basically everything that is not a two dimensional <code>x</code> object.</p></li>
-</ul><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+</ul><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># before (workaround needed)</span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_data</span><span class="op">(</span>dims <span class="op">=</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># now (listens to dims)</span></span>

@@ -21,12 +21,12 @@ Source:
 [`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/main/inst/CITATION)
 
 (2025). openxlsx2: Read, Write and Edit 'xlsx' Files. R package version
-1.21.0.9000. URL https://github.com/JanMarvin/openxlsx2.
+1.22.0.9000. URL https://github.com/JanMarvin/openxlsx2.
 
     @Manual{,
       title = {openxlsx2: Read, Write and Edit 'xlsx' Files},
       year = {2025},
-      note = {R package version 1.21.0.9000},
+      note = {R package version 1.22.0.9000},
       url = {https://janmarvin.github.io/openxlsx2/},
     }
 
