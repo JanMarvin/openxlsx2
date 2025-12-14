@@ -1,47 +1,29 @@
 #include "openxlsx2.h"
 
 // helper function to check if row contains any of the expected types
-bool has_it(Rcpp::DataFrame df_xf, std::set<std::string> xf_nams, R_xlen_t row) {
-  bool has_it = false;
+bool has_it(const Rcpp::DataFrame& df, const std::unordered_set<std::string>& xf_nams, R_xlen_t row) {
 
-  // names as vector and set. because set is ordered, we have to change the
-  // order of the data frame columns as well.
-  std::vector<std::string> df_nms = df_xf.names();
-  std::set<std::string> df_names(df_nms.begin(), df_nms.end());
-  std::vector<std::string> xf_names(xf_nams.begin(), xf_nams.end());
+  Rcpp::CharacterVector col_names = df.names();
+  R_xlen_t ncol = df.size();
 
-  Rcpp::CharacterVector sel_chr;
-  Rcpp::IntegerVector sel_int;
-  Rcpp::DataFrame df_tmp;
+  for (R_xlen_t j = 0; j < ncol; ++j) {
+    std::string name = Rcpp::as<std::string>(col_names[j]);
 
-  sel_chr = Rcpp::wrap(df_names);
-  df_tmp = df_xf[sel_chr];
+    // skip columns we don't care about
+    if (xf_nams.find(name) == xf_nams.end())
+      continue;
 
-  // get the position of the xf_nams in the sorted df_xf data frame
-  std::vector<R_xlen_t> idx;
-  for (size_t i = 0; i < xf_names.size(); ++i) {
-    std::string xf_name = xf_names[i];
-    if (df_names.count(xf_name) > 0) {
-      auto res = df_names.find(xf_name);
-      R_xlen_t mtc = std::distance(df_names.begin(), res);
-      idx.push_back(mtc);
-    }
+    // only handle character columns
+    if (TYPEOF(df[j]) != STRSXP)
+      continue;
+
+    Rcpp::CharacterVector col = df[j];
+
+    if (!Rcpp::CharacterVector::is_na(col[row]) && col[row] != "")
+      return true;
   }
 
-  // get a subset of the original data frame
-  sel_int = Rcpp::wrap(idx);
-  df_tmp = df_tmp[sel_int];
-
-  // check every column of the selected row
-  for (auto ii = 0; ii < df_tmp.ncol(); ++ii) {
-    std::string cv_tmp;
-    cv_tmp = Rcpp::as<Rcpp::CharacterVector>(df_tmp[ii])[row];
-    if (!cv_tmp.empty()) {
-      has_it = true;
-    }
-  }
-
-  return has_it;
+  return false;
 }
 
 // we modify CellStyleFormats. Not CellStyles. The latter are pre defined sets,
@@ -158,13 +140,13 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
                                 "applyFont",       "applyFill",   "applyBorder", "applyAlignment", "applyNumberFormat",
                                 "applyProtection", "pivotButton", "quotePrefix"};
 
-  std::set<std::string> xf_nams_alignment{"horizontal",   "indent",         "justifyLastLine",
-                                          "readingOrder", "relativeIndent", "shrinkToFit",
-                                          "textRotation", "vertical",       "wrapText"};
+  std::unordered_set<std::string> xf_nams_alignment{"horizontal",   "indent",         "justifyLastLine",
+                                                    "readingOrder", "relativeIndent", "shrinkToFit",
+                                                    "textRotation", "vertical",       "wrapText"};
 
-  std::set<std::string> xf_nams_extLst{"extLst"};
+  std::unordered_set<std::string> xf_nams_extLst{"extLst"};
 
-  std::set<std::string> xf_nams_protection{"hidden", "locked"};
+  std::unordered_set<std::string> xf_nams_protection{"hidden", "locked"};
 
   for (R_xlen_t i = 0; i < n; ++i) {
     pugi::xml_document doc;
