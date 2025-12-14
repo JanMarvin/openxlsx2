@@ -4,6 +4,10 @@
 
 * Check valid ranges and inputs in `col2int()` and `int2row()`. [#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
 
+## Fixes
+
+* It is now possible to add filters via `write_xlsx()` without tables. [#1495](https://github.com/JanMarvin/openxlsx2/pull/1495)
+
 
 ***************************************************************************
 
