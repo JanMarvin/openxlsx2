@@ -1,5 +1,7 @@
 test_that("test return values for wb_save", {
   tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
+
   wb <- wb_add_worksheet(wb_workbook(), "name")
   expect_identical(tempFile, wb_save(wb, tempFile)$path)
   expect_error(wb_save(wb, tempFile), NA)
@@ -14,6 +16,7 @@ test_that("regression test for #248", {
   # Basic data frame
   df <- data.frame(number = 1:3, percent = 4:6 / 100)
   tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
 
   # no formatting
   expect_silent(write_xlsx(df, tempFile, overwrite = TRUE))
@@ -29,6 +32,8 @@ test_that("creating hyperlinks", {
 
   # prepare a file
   tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
+
   sheet <- "test"
   wb <- wb_add_worksheet(wb_workbook(), sheet)
   img <- "D:/somepath/somepicture.png"
@@ -68,6 +73,8 @@ test_that("write_data2", {
   write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
   file <- temp_xlsx()
+  on.exit(unlink(file), add = TRUE)
+
   wb_save(wb, file)
 
   wb1 <- wb_load(file)
@@ -97,6 +104,8 @@ test_that("write_data2", {
 test_that("write xlsx", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   df <- data.frame(a = 1:26, b = letters)
 
   wb <- write_xlsx(df, tmp, tab_colour = "#4F81BD")
@@ -282,6 +291,7 @@ test_that("write xlsx", {
 test_that("example", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   # write to working directory
   expect_silent(write_xlsx(iris, file = tmp, col_names = TRUE))
@@ -312,6 +322,8 @@ test_that("example", {
 test_that("writing NA, NaN and Inf", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb <- wb_workbook()
 
   x <- data.frame(x = c(NA, Inf, -Inf, NaN))
@@ -344,6 +356,8 @@ test_that("writing NA, NaN and Inf", {
 test_that("writing NA, NaN and Inf", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb <- wb_workbook()
 
   x <- data.frame(x = c(NA, Inf, -Inf, NaN))
@@ -376,7 +390,10 @@ test_that("writing NA, NaN and Inf", {
 test_that("write cells without data", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   tmp_dir <- temp_dir()
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
 
   dat <- as.data.frame(matrix(NA, 2, 2))
   wb <- wb_workbook()$
@@ -426,6 +443,8 @@ test_that("write_xlsx with na.strings", {
   )
 
   test <- temp_xlsx()
+  on.exit(unlink(test), add = TRUE)
+
   write_xlsx(df, file = test)
 
   exp <- df
@@ -454,6 +473,8 @@ test_that("write & load file with chartsheet", {
       xml_attributes = c(rgb = "FF00FF00")))
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   expect_silent(wb$save(temp))
   expect_silent(wb2 <- wb_load(temp))
 
@@ -462,6 +483,8 @@ test_that("write & load file with chartsheet", {
 test_that("escaping of inlinestrings works", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   wb <- wb_workbook()$
     add_worksheet("Test")$
     add_data(dims = "A1", x = "A & B")$
@@ -483,6 +506,8 @@ test_that("escaping of inlinestrings works", {
 test_that("write_xlsx() works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   write_xlsx(mtcars, tmp, sheet_name = "test")
   exp <- c(test = "test")
   got <- wb_load(tmp)$get_sheet_names()
@@ -493,6 +518,7 @@ test_that("write_xlsx() works", {
 test_that("write_xlsx() freezing rows works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb <- write_xlsx(list(mtcars, mtcars), tmp, first_row = TRUE, first_col = TRUE, tab_color = wb_color("green"))
 
@@ -536,6 +562,7 @@ test_that("write_xlsx() freezing rows works", {
 test_that("write_xlsx works with colour", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb <- write_xlsx(mtcars, tmp, tab_colour = "green")
 
@@ -547,6 +574,8 @@ test_that("write_xlsx works with colour", {
 
 test_that("write_xlsx with base font settings", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   df <- data.frame(a = 1:5, b = letters[1:5])
 
   # Test with font size

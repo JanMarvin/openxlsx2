@@ -75,6 +75,8 @@ test_that("Deleting a Table Object", {
   ## wb_remove_tables clears table object and all data
   wb$add_data_table(sheet = 1, x = iris, table_name = "iris", start_col = 1)
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   wb_save(wb, temp)
   expect_equal(wb$worksheets[[1]]$tableParts, c("<tablePart r:id=\"rId2\"/>", "<tablePart r:id=\"rId3\"/>"), ignore_attr = TRUE)
   expect_equal(attr(wb$worksheets[[1]]$tableParts, "tableName"), c("mtcars", "iris"))
@@ -100,6 +102,7 @@ test_that("Deleting a Table Object", {
 
 test_that("Save and load Table Deletion", {
   temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file), add = TRUE)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
@@ -140,7 +143,6 @@ test_that("Save and load Table Deletion", {
   wb$remove_tables(sheet = 1, table = "iris")
   expect_equal(wb$tables$tab_name, c("iris_openxlsx_deleted", "mtcars"))
 
-  temp_file <- temp_xlsx()
   wb$save(temp_file)
   wb <- wb_load(file = temp_file)
 
@@ -164,7 +166,6 @@ test_that("Save and load Table Deletion", {
   wb$remove_tables(sheet = 1, table = "mtcars")
   expect_equal(wb$tables$tab_name, c("iris_openxlsx_deleted", "mtcars_openxlsx_deleted", "mtcars2"))
 
-  temp_file <- temp_xlsx()
   wb_save(wb, temp_file)
   wb <- wb_load(file = temp_file)
 
@@ -173,8 +174,6 @@ test_that("Save and load Table Deletion", {
   expect_length(wb$worksheets[[1]]$tableParts, 0)
   expect_equal(wb$worksheets[[2]]$tableParts, "<tablePart r:id=\"rId1\"/>", ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[2]]$tableParts, "tableName")), "mtcars2")
-  unlink(temp_file)
-
 
   ## write tables back in
   wb$add_data_table(sheet = "Sheet 1", x = iris, table_name = "iris")
@@ -208,5 +207,4 @@ test_that("Save and load Table Deletion", {
   expect_equal(wb$worksheets[[2]]$tableParts, c("<tablePart r:id=\"rId1\"/>"), ignore_attr = TRUE)
   expect_equal(unname(attr(wb$worksheets[[2]]$tableParts, "tableName")), "mtcars2")
 
-  unlink(temp_file)
 })

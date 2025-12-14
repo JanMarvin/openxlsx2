@@ -68,6 +68,8 @@ test_that("test options", {
 
   ops <- options()
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb_workbook()$add_worksheet("Sheet 1")$add_data("Sheet 1", cars)
   ops2 <- options()
 
@@ -660,6 +662,8 @@ test_that("removing slicers works", {
   wb$remove_slicer(sheet = "pivot")
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   expect_silent(wb$save(temp)) # no warning, all files written as expected
 
 })
@@ -752,6 +756,8 @@ test_that("removing timelines works", {
   wb$remove_timeline(sheet = "pivot")
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   expect_silent(wb$save(temp)) # no warning, all files written as expected
 
 })
@@ -786,6 +792,8 @@ test_that("writing na.strings = NULL works", {
 
   # write na.strings = na_strings()
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   write_xlsx(matrix(NA, 2, 2), tmp)
   wb <- wb_load(tmp)
 
@@ -794,7 +802,6 @@ test_that("writing na.strings = NULL works", {
   expect_equal(exp, got)
 
   # write na.strings = ""
-  tmp <- temp_xlsx()
   write_xlsx(matrix(NA, 2, 2), tmp, na.strings = "")
   wb <- wb_load(tmp)
 
@@ -803,7 +810,6 @@ test_that("writing na.strings = NULL works", {
   expect_equal(exp, got)
 
   # write na.strings = NULL
-  tmp <- temp_xlsx()
   write_xlsx(matrix(NA, 2, 2), tmp, na.strings = NULL)
   wb <- wb_load(tmp)
 
@@ -831,6 +837,8 @@ test_that("write data.table class", {
   )
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   expect_silent(write_xlsx(dt, tmp))
   expect_equal(dt, read_xlsx(tmp), ignore_attr = TRUE)
 
@@ -850,6 +858,8 @@ test_that("write tibble class", {
   )
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   expect_silent(write_xlsx(tbl, tmp))
   expect_equal(tbl, read_xlsx(tmp), ignore_attr = TRUE)
 
@@ -947,6 +957,8 @@ test_that("writing in specific encoding works", {
   loc_str <- stringi::stri_encode(enc_str, from = "UTF-8", to = "CP1251")
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb <- wb_workbook()$add_worksheet("sheet")$add_data("sheet", x = loc_str)
   wb$save(tmp)
   expect_silent(wb2 <- wb_load(tmp))
@@ -959,6 +971,7 @@ test_that("writing in specific encoding works", {
   # expect_equal(enc_str, got)
 
   tmp <- tempfile()
+  on.exit(unlink(tmp), add = TRUE)
   write_file(head = "<a>", body = loc_str, tail = "</a>", fl = tmp)
   # got <- xml_value(tmp, "a")
   exp <- loc_str
@@ -972,6 +985,8 @@ test_that("writing in specific encoding works", {
 test_that("writing NULL works silently", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   x <- NULL
 
   expect_silent(write_xlsx(x, tmp))
@@ -1304,6 +1319,7 @@ test_that("sheet is a valid argument in write_xlsx", {
 test_that("skipping entirely blank cells works", {
 
   tp <- temp_xlsx()
+  on.exit(unlink(tp), add = TRUE)
 
   mm <- matrix(1:9, 3, 3)
   mm[diag(mm)] <- NA
@@ -1324,6 +1340,8 @@ test_that("skipping entirely blank cells works", {
 test_that("saving images with address works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
   url <- "https://en.wikipedia.org/wiki/Albert_Einstein"
 
@@ -1475,6 +1493,8 @@ test_that("guarding against overwriting shared formula reference works", {
 test_that("writing without pugixml works", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   expect_silent(write_xlsx(x = mtcars, file = temp, flush = TRUE))
   expect_silent(wb <- wb_load(temp))
 

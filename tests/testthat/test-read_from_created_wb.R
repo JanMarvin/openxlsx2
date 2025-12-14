@@ -126,6 +126,8 @@ test_that("read startCol", {
 
 test_that("reading with multiple sections in freezePane works", {
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   wb <- wb_workbook()$add_worksheet()
   wb$worksheets[[1]]$freezePane <- "<pane xSplit=\"7320\" ySplit=\"1640\"/><selection pane=\"topRight\"/><selection pane=\"bottomLeft\"/><selection pane=\"bottomRight\" activeCell=\"C5\" sqref=\"C5\"/>"
   wb$save(temp)
@@ -178,6 +180,8 @@ test_that("reading with pre defined types works", {
 test_that("wb_load contains path", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb_workbook()$add_worksheet()$add_worksheet()$save(tmp)
   wb_load(tmp)$remove_worksheet()$save()
 

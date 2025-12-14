@@ -86,6 +86,8 @@ test_that("strings_xml", {
   )
 
   amp <- temp_xlsx()
+  on.exit(unlink(amp), add = TRUE)
+
   wb <- wb_workbook()$
     add_worksheet()$
     add_data(dims = "A1", x = "A & B")$

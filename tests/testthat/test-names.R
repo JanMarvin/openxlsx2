@@ -1,5 +1,6 @@
 test_that("names", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_worksheet("S2 & S3")$add_worksheet("S3 <> S4")

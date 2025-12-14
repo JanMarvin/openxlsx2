@@ -42,6 +42,7 @@ test_that("sparkline waivers work", {
 test_that("old and new data validations", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_workbook()$
     add_worksheet()$
@@ -99,6 +100,7 @@ test_that("set_sheetview", {
 test_that("print options work", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_workbook()$
     add_worksheet(grid_lines = FALSE)$
@@ -203,6 +205,8 @@ test_that("setting and loading header/footer attributes works", {
     add_data(x = as.data.frame(matrix(1:500, ncol = 25)))
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   wb$save(temp)
   rm(wb)
 

@@ -16,6 +16,7 @@ test_that("wb_comment() works", {
 
 test_that("comments", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
 
@@ -45,7 +46,6 @@ test_that("comments", {
   expect_silent(wb_save(wb, tmp))
 
   # write on second sheet
-  tmp <- temp_xlsx()
   wb <- wb_workbook()
   wb$add_worksheet()
   wb$add_worksheet()
@@ -64,9 +64,12 @@ test_that("load comments", {
   wb <- wb_load(fl)
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   wb$save(temp)
 
   tempd <- temp_dir("comment_ext")
+
   unzip(temp, exdir = tempd)
   comments <- dir(path = paste0(tempd, "/xl"), pattern = "comment")
 
@@ -166,6 +169,8 @@ test_that("print comment", {
 test_that("removing comment sheet works", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   c1 <- wb_comment(text = "this is a comment", author = "")
 
   wb <- wb_workbook()$
@@ -181,6 +186,8 @@ test_that("removing comment sheet works", {
 test_that("fmt_txt in comment", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   txt <- fmt_txt("Hello ", bold = TRUE) + fmt_txt("World")
   c1 <- wb_comment(text = txt, author = "bla")
 
@@ -391,6 +398,7 @@ test_that("wb_get_comment works", {
 test_that("removing comment from second sheet works", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   c1 <- wb_comment(text = "this is a comment", author = "")
 

@@ -483,6 +483,8 @@ test_that("test random_string", {
 test_that("temp_dir works", {
 
   out <- temp_dir("temp_dir_works")
+  on.exit(unlink(out, recursive = TRUE), add = TRUE)
+
   expect_true(dir.exists(out))
 
 })

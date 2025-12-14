@@ -1,5 +1,7 @@
 test_that("Deleting worksheets", {
   tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
+
   genWS <- function(wb, sheetName) {
     wb$add_worksheet(sheetName)
     wb$add_data_table(sheetName, data.frame("X" = sprintf("This is sheet: %s", sheetName)), col_names = TRUE)
@@ -68,11 +70,16 @@ test_that("removing leading chartsheets works", {
   # only chartsheets remain. Though that is currently not implemented.
   fl <- testfile_path("mtcars_chart.xlsx")
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb <- wb_load(fl)$
     remove_worksheet(1)
 
   wb$save(tmp)
+
   tmp_dir <- temp_dir("openxlsx2_unzip")
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+
   unzip(tmp, exdir = tmp_dir)
 
   exp <- c("sheet1.xml", "sheet2.xml", "sheet3.xml")

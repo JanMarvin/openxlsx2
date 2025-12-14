@@ -138,6 +138,7 @@ test_that("encoding", {
 test_that("reading charts", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_load(testfile_path("unemployment-nrw202208.xlsx"))
 
@@ -208,6 +209,7 @@ test_that("load file with xml namespace", {
 test_that("reading file with macro and custom xml", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_load(testfile_path("gh_issue_416.xlsm"))
   wb$save(temp)
@@ -225,6 +227,7 @@ test_that("reading file with macro and custom xml", {
 test_that("load file with connection", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_load(testfile_path("connection.xlsx"))
 
@@ -244,6 +247,7 @@ test_that("load file with connection", {
 test_that("calcChain is updated", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   fl <- testfile_path("overwrite_formula.xlsx")
 
@@ -281,6 +285,7 @@ test_that("read workbook with chart extension", {
 test_that("reading of formControl works", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_load(testfile_path("form_control.xlsx"))
 
@@ -365,6 +370,8 @@ test_that("reading slicer for tables works", {
 test_that("hyperlinks work", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb_load(testfile_path("Single_hyperlink.xlsx"))$save(tmp)
 
   temp_uzip <- temp_dir("unzip_openxlsx2")
@@ -380,6 +387,8 @@ test_that("hyperlinks work", {
 test_that("reading richData content works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   expect_silent(wb_load(testfile_path("pic_in_cell.xlsx"))$save(tmp))
 
 })
@@ -387,6 +396,8 @@ test_that("reading richData content works", {
 test_that("reading timeline works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   fl  <- testfile_path("timeline.xlsx")
 
   wb <- wb_load(fl)
@@ -484,6 +495,7 @@ test_that("loading d3p1 file works", {
 test_that("loading file with featurePropertyBag works", {
   fl  <- testfile_path("checkboxes.xlsx")
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   expect_silent(wb <- wb_load(fl))
   expect_silent(wb$save(tmp))
@@ -516,6 +528,8 @@ test_that("read file with data types", {
   expect_equal(18, length(wb$Content_Types))
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb$save(tmp)
   wb <- wb_load(tmp)
 

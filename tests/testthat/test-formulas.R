@@ -11,6 +11,8 @@ test_that("load various formulas", {
   expect_identical(cc[1, "f_attr"], "t=\"array\" ref=\"A1\" ") # FIXME: why the trailing whitespace?
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   expect_silent(wb$save(tmp))
 
   wb1 <- wb_load(tmp)
@@ -86,7 +88,9 @@ test_that("formual escaping works", {
 
   expect_warning(wb$add_formula(dims = "A4", x = "SUM('A&B'!A1)", cm = TRUE))
 
-  expect_silent(wb$save(temp_xlsx()))
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  expect_silent(wb$save(tmp))
 
   exp <- c("'A&amp;B'!A1", "'A&amp;B'!A1", "'A&amp;B'!A1", "SUM('A&amp;B'!A1)", "SUM('A&amp;B'!A1)")
   got <- wb$worksheets[[2]]$sheet_data$cc$f

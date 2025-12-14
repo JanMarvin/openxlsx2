@@ -22,6 +22,7 @@ test_that("Protect Workbook", {
 
 test_that("Reading protected Workbook", {
   temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file), add = TRUE)
 
   wb <- wb_workbook()
   wb$add_worksheet("s1")
