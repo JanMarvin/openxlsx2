@@ -829,6 +829,8 @@ test_that("initialized styles remain available", {
   expect_equal(exp, got)
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb$save(tmp)
   wb <- wb_load(tmp)
 

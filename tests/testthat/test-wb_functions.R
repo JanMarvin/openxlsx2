@@ -292,6 +292,7 @@ test_that("skip hidden columns and rows works", {
 
 test_that("test that skip_hidden_cols works with data_only", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   mm <- matrix(1, 3, 3)
   mm[2, ] <- 2

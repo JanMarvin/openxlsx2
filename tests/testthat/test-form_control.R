@@ -1,6 +1,7 @@
 test_that("add_form_control works", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_workbook()$
     # Checkbox

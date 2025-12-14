@@ -90,6 +90,8 @@ test_that("wb_page_setup example", {
   expect_equal(exp, wb$workbook$definedNames)
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   expect_silent(wb_save(wb, tmp, overwrite = TRUE))
 
   # survives write and load

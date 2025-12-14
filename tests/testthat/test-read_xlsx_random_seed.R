@@ -2,6 +2,8 @@ test_that("read_xlsx() does not change random seed", {
   rs <- .Random.seed
   expect_identical(rs, .Random.seed)
   tf <- temp_xlsx()
+  on.exit(unlink(tf), add = TRUE)
+
   expect_identical(rs, .Random.seed)
   write_xlsx(data.frame(a = 1), tf)
   expect_identical(rs, .Random.seed)

@@ -153,7 +153,7 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     sheetName <- as.character(params$sheet_name %||% params$sheet)
 
     if (any(nchar(params$sheet_name) > 31)) {
-      stop("sheet_name too long! Max length is 31 characters.")
+      stop("sheet_name to long! Max length is 31 characters.")
     }
 
     if (inherits(x, "list") && (length(sheetName) == length(x))) {
@@ -194,8 +194,11 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     }
   }
 
+  # withFilter was broken for non table output, but worked in table output
+  # Now we add it for tables and disable it otherwise
+  withFilter <- FALSE
+  if (any(as_table)) withFilter <- as_table
 
-  withFilter <- TRUE
   if ("with_filter" %in% names(params)) {
     if (is.logical(params$with_filter)) {
       withFilter <- params$with_filter
@@ -239,7 +242,6 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
       stop("Argument col.names must be TRUE or FALSE")
     }
   }
-
 
   rowNames <- FALSE
   if ("row_names" %in% names(params)) {
@@ -420,14 +422,15 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
     } else {
       # TODO add_data()?
       do_write_data(
-        wb = wb,
-        sheet = i,
-        x = x[[i]],
-        start_col  = startCol[[i]],
-        start_row  = startRow[[i]],
-        col_names  = colNames[[i]],
-        row_names  = rowNames[[i]],
-        na.strings = na.strings
+        wb          = wb,
+        sheet       = i,
+        x           = x[[i]],
+        start_col   = startCol[[i]],
+        start_row   = startRow[[i]],
+        col_names   = colNames[[i]],
+        row_names   = rowNames[[i]],
+        with_filter = withFilter[[i]],
+        na.strings  = na.strings
       )
     }
 

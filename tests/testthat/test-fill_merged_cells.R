@@ -13,6 +13,8 @@ test_that("fill merged cells", {
   wb$merge_cells(1, wb_dims(rows = 5, cols = 2:4))
 
   tmp_file <- temp_xlsx()
+  on.exit(unlink(tmp_file), add = TRUE)
+
   wb_save(wb, tmp_file)
 
   # in openxlsx X3 and X4 because of name fixing
@@ -55,6 +57,8 @@ test_that("fill merged NA cells", {
   wb$merge_cells(1, wb_dims(rows = 1:4, cols = 4))
 
   tmp_file <- temp_xlsx()
+  on.exit(unlink(tmp_file), add = TRUE)
+
   wb_save(wb, tmp_file)
 
   r1 <- t(matrix(c(1:3, NA_real_), 4, 4))

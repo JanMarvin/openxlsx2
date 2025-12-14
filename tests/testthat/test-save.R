@@ -1,5 +1,7 @@
 test_that("test return values for wb_save", {
   tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
+
   wb <- wb_add_worksheet(wb_workbook(), "name")
   expect_identical(tempFile, wb_save(wb, tempFile)$path)
   expect_error(wb_save(wb, tempFile), NA)
@@ -14,6 +16,7 @@ test_that("regression test for #248", {
   # Basic data frame
   df <- data.frame(number = 1:3, percent = 4:6 / 100)
   tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
 
   # no formatting
   expect_silent(write_xlsx(df, tempFile, overwrite = TRUE))
@@ -29,6 +32,8 @@ test_that("creating hyperlinks", {
 
   # prepare a file
   tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
+
   sheet <- "test"
   wb <- wb_add_worksheet(wb_workbook(), sheet)
   img <- "D:/somepath/somepicture.png"
@@ -68,6 +73,8 @@ test_that("write_data2", {
   write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
   file <- temp_xlsx()
+  on.exit(unlink(file), add = TRUE)
+
   wb_save(wb, file)
 
   wb1 <- wb_load(file)
@@ -97,46 +104,186 @@ test_that("write_data2", {
 test_that("write xlsx", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   df <- data.frame(a = 1:26, b = letters)
 
-  ## FIXME these are not actually tests. They simply check that no error is printed
-  expect_silent(write_xlsx(df, tmp, tab_colour = "#4F81BD"))
-  expect_error(write_xlsx(df, tmp, as_table = "YES"))
-  expect_error(write_xlsx(df, tmp, sheet_name = paste0(letters, letters, collapse = "")))
-  expect_error(write_xlsx(df, tmp, zoom = "FULL"))
-  expect_silent(write_xlsx(df, tmp, zoom = 200))
-  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, sheet_name = c("Sheet1", "Sheet2")))
-  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), file = tmp))
-  expect_silent(write_xlsx(x = list("S1" = df, "S2" = df), tmp, tab_colour = "#4F81BD"))
+  wb <- write_xlsx(df, tmp, tab_colour = "#4F81BD")
+  exp <- "<sheetPr><tabColor rgb=\"FF4F81BD\"/></sheetPr>"
+  got <- wb$worksheets[[1]]$sheetPr
+  expect_equal(got, exp)
+
+  expect_error(write_xlsx(df, tmp, as_table = "YES"), "as_table must be a logical")
+
+  expect_error(write_xlsx(df, tmp, sheet_name = paste0(letters, letters, collapse = "")),
+               "sheet_name to long! Max length is 31 characters")
+
+  expect_error(write_xlsx(df, tmp, zoom = "FULL"), "zoom must be numeric")
+
+  wb <- write_xlsx(df, tmp, zoom = 200)
+  got <- xml_attr(wb$worksheets[[1]]$sheetViews, "sheetViews", "sheetView")[[1]][["zoomScale"]]
+  expect_equal(got, "200")
+
+  wb <- write_xlsx(x = list("S1" = df, "S2" = df), tmp, sheet_name = c("Sheet1", "Sheet2"))
+  exp <- c("Sheet1", "Sheet2")
+  got <- unname(wb$get_sheet_names())
+  expect_equal(got, exp)
+
+  wb <- write_xlsx(x = list("S1" = df, "S2" = df), file = tmp)
+  exp <- c("S1", "S2")
+  got <- unname(wb$get_sheet_names())
+  expect_equal(got, exp)
+
+  wb <- write_xlsx(x = list("S1" = df, "S2" = df), tmp, tab_colour = "#4F81BD")
+  exp <- "<sheetPr><tabColor rgb=\"FF4F81BD\"/></sheetPr>"
+  got <- unique(vapply(wb$worksheets, function(x) x$sheetPr, NA_character_))
+  expect_equal(got, exp)
+
   l <- list(letters)
   names(l) <- paste0(letters, letters, collapse = "")
-  expect_warning(write_xlsx(l, tmp))
-  expect_error(write_xlsx(df, tmp, grid_lines = "YES"))
-  expect_silent(write_xlsx(df, tmp, grid_lines = FALSE))
-  expect_error(write_xlsx(df, tmp, overwrite = FALSE))
-  expect_error(write_xlsx(df, tmp, overwrite = "NO"))
-  expect_silent(write_xlsx(df, tmp, with_filter = FALSE))
-  expect_silent(write_xlsx(df, tmp, with_filter = TRUE))
-  expect_error(write_xlsx(df, tmp, with_filter = "NO"))
-  expect_silent(write_xlsx(df, tmp, start_row = 2))
-  expect_error(write_xlsx(df, tmp, start_row = -1))
-  expect_silent(write_xlsx(df, tmp, start_col = "A"))
-  expect_silent(write_xlsx(df, tmp, start_col = "2"))
-  expect_silent(write_xlsx(df, tmp, start_col = 2))
-  expect_error(write_xlsx(df, tmp, start_col = -1))
-  expect_error(write_xlsx(df, tmp, col.names = "NO"))
-  expect_silent(write_xlsx(df, tmp, col.names = TRUE))
-  expect_error(write_xlsx(df, tmp, col_names = "NO"))
-  expect_silent(write_xlsx(df, tmp, col_names = TRUE))
-  expect_error(write_xlsx(df, tmp, row.names = "NO"))
-  expect_silent(write_xlsx(df, tmp, row.names = TRUE))
-  expect_error(write_xlsx(df, tmp, row_names = "NO"))
-  expect_silent(write_xlsx(df, tmp, row_names = TRUE))
-  expect_silent(write_xlsx(df, tmp, col_widths = "auto"))
-  expect_silent(write_xlsx(list(df, df), tmp, first_active_col = 2, first_active_row = 2))
-  expect_silent(write_xlsx(list(df, df), tmp, first_col = FALSE, first_row = FALSE))
-  expect_silent(write_xlsx(list(df, df), tmp, first_col = TRUE, first_row = TRUE))
-  expect_silent(write_xlsx(df, tmp, as_table = TRUE, table_style = "TableStyleLight9"))
+  expect_warning(write_xlsx(l, tmp), "Truncating list names to 31 characters")
+
+  expect_error(write_xlsx(df, tmp, grid_lines = "YES"), "Argument grid_lines must be TRUE or FALSE")
+
+  wb <- write_xlsx(df, tmp, grid_lines = FALSE)
+  got <- xml_attr(wb$worksheets[[1]]$sheetViews, "sheetViews", "sheetView")[[1]][["showGridLines"]]
+  expect_equal(got, "0")
+
+  expect_error(write_xlsx(df, tmp, overwrite = FALSE), "File already exists!")
+
+  expect_error(write_xlsx(df, tmp, overwrite = "NO"), "Argument overwrite must be TRUE or FALSE")
+
+  # no filter in sheet
+  wb_nf <- write_xlsx(df, with_filter = FALSE)
+  exp <- character()
+  got <- wb_nf$worksheets[[1]]$autoFilter
+  expect_equal(got, exp)
+
+  # filter in sheet
+  wb_wf <- write_xlsx(df, with_filter = TRUE)
+  exp <- "<autoFilter ref=\"A1:B27\"/>"
+  got <- wb_wf$worksheets[[1]]$autoFilter
+  expect_equal(got, exp)
+
+  # no filter in table
+  wb_nf <- write_xlsx(df, as_table = TRUE, with_filter = FALSE)
+  exp <- character()
+  got <- wb_nf$worksheets[[1]]$autoFilter
+  expect_equal(got, exp)
+
+  exp <- character()
+  got <- xml_node(wb_nf$tables$tab_xml, "table", "autoFilter")
+  expect_equal(got, exp)
+
+  # filter in table
+  wb_wf <- write_xlsx(df, as_table = TRUE, with_filter = TRUE)
+  exp <- character()
+  got <- wb_wf$worksheets[[1]]$autoFilter
+  expect_equal(got, exp)
+
+  exp <- "<autoFilter ref=\"A1:B27\"/>"
+  got <- xml_node(wb_wf$tables$tab_xml, "table", "autoFilter")
+  expect_equal(got, exp)
+
+  expect_error(write_xlsx(df, tmp, with_filter = "NO"), "Argument with_filter must be TRUE or FALSE")
+
+  wb <- write_xlsx(df, start_row = 2)
+  got <- min(as.numeric(wb$worksheets[[1]]$sheet_data$cc$row_r))
+  expect_equal(got, 2.0)
+
+  expect_error(write_xlsx(df, start_row = -1), "start_row must be a positive integer")
+
+  wb <- write_xlsx(df, start_col = "B")
+  got <- min(wb$worksheets[[1]]$sheet_data$cc$c_r)
+  expect_equal(got, "B")
+
+  wb <- write_xlsx(df, start_col = "2")
+  got <- min(wb$worksheets[[1]]$sheet_data$cc$c_r)
+  expect_equal(got, "B")
+
+  wb <- write_xlsx(df, start_col = 2)
+  got <- min(wb$worksheets[[1]]$sheet_data$cc$c_r)
+  expect_equal(got, "B")
+
+  expect_error(write_xlsx(df, start_col = -1), "Column exceeds valid range")
+
+  expect_error(write_xlsx(df, tmp, col.names = "NO"), "Argument col.names must be TRUE or FALSE")
+
+  wb1 <- write_xlsx(df, col.names = TRUE)
+  wb2 <- write_xlsx(df, col_names = TRUE)
+
+  expect_equal(
+    wb1$worksheets[[1]]$sheet_data$cc,
+    wb2$worksheets[[1]]$sheet_data$cc
+  )
+
+  got <- wb1$to_df(dims = "A1:B1", col_names = FALSE)
+  got <- unname(unlist(got[1, ]))
+  expect_equal(got, c("a", "b"))
+
+  wb1 <- write_xlsx(df, col.names = FALSE)
+  wb2 <- write_xlsx(df, col_names = FALSE)
+
+  expect_equal(
+    wb1$worksheets[[1]]$sheet_data$cc,
+    wb2$worksheets[[1]]$sheet_data$cc
+  )
+
+  got <- wb1$to_df(dims = "A1:B1", col_names = FALSE)
+  expect_equal(got$A, 1.0)
+  expect_equal(got$B, "a")
+
+  expect_error(write_xlsx(df, tmp, col_names = "NO"), "Argument col_names must be TRUE or FALSE")
+  expect_error(write_xlsx(df, tmp, row.names = "NO"), "Argument row.names must be TRUE or FALSE")
+  expect_error(write_xlsx(df, tmp, row_names = "NO"), "Argument row_names must be TRUE or FALSE")
+
+  wb1 <- write_xlsx(df, row.names = TRUE)
+  wb2 <- write_xlsx(df, row_names = TRUE)
+  expect_equal(wb1$to_df(), wb2$to_df())
+
+  exp <- as.character(1:26)
+  got <- wb1$to_df()[, 1]
+  expect_equal(exp, got)
+
+  wb <- write_xlsx(df, col_widths = "auto")
+  exp <- c(
+    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"3.711\"/>",
+    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"2.711\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+  wb <- write_xlsx(list(df, df), first_active_col = 2, first_active_row = 2)
+  exp <- "<pane ySplit=\"1\" xSplit=\"1\" topLeftCell=\"B2\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
+  got <- wb$worksheets[[1]]$freezePane
+  expect_equal(exp, got)
+
+  got <- wb$worksheets[[2]]$freezePane
+  expect_equal(exp, got)
+
+  wb <- write_xlsx(list(df, df), first_col = FALSE, first_row = FALSE)
+  exp <- character()
+  got <- wb$worksheets[[1]]$freezePane
+  expect_equal(exp, got)
+
+  wb <- write_xlsx(list(df, df), first_col = TRUE, first_row = TRUE)
+  exp <- "<pane ySplit=\"1\" xSplit=\"1\" topLeftCell=\"B2\" activePane=\"bottomRight\" state=\"frozen\"/><selection pane=\"bottomRight\"/>"
+  got <- wb$worksheets[[1]]$freezePane
+  expect_equal(exp, got)
+
+  wb <- write_xlsx(list(df, df), first_col = TRUE, first_row = FALSE)
+  exp <- "<pane xSplit=\"1\" topLeftCell=\"B1\" activePane=\"topRight\" state=\"frozen\"/>"
+  got <- wb$worksheets[[1]]$freezePane
+  expect_equal(exp, got)
+
+  wb <- write_xlsx(list(df, df), first_col = FALSE, first_row = TRUE)
+  exp <- "<pane ySplit=\"1\" topLeftCell=\"A2\" activePane=\"bottomLeft\" state=\"frozen\"/>"
+  got <- wb$worksheets[[1]]$freezePane
+  expect_equal(exp, got)
+
+  wb <- write_xlsx(df, as_table = TRUE, table_style = "TableStyleLight9")
+  got <- xml_attr(wb$tables$tab_xml, "table", "tableStyleInfo")[[1]][["name"]]
+  expect_equal(got, "TableStyleLight9")
 
 })
 
@@ -144,6 +291,7 @@ test_that("write xlsx", {
 test_that("example", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   # write to working directory
   expect_silent(write_xlsx(iris, file = tmp, col_names = TRUE))
@@ -174,6 +322,8 @@ test_that("example", {
 test_that("writing NA, NaN and Inf", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb <- wb_workbook()
 
   x <- data.frame(x = c(NA, Inf, -Inf, NaN))
@@ -206,6 +356,8 @@ test_that("writing NA, NaN and Inf", {
 test_that("writing NA, NaN and Inf", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb <- wb_workbook()
 
   x <- data.frame(x = c(NA, Inf, -Inf, NaN))
@@ -238,7 +390,10 @@ test_that("writing NA, NaN and Inf", {
 test_that("write cells without data", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   tmp_dir <- temp_dir()
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
 
   dat <- as.data.frame(matrix(NA, 2, 2))
   wb <- wb_workbook()$
@@ -288,6 +443,8 @@ test_that("write_xlsx with na.strings", {
   )
 
   test <- temp_xlsx()
+  on.exit(unlink(test), add = TRUE)
+
   write_xlsx(df, file = test)
 
   exp <- df
@@ -316,6 +473,8 @@ test_that("write & load file with chartsheet", {
       xml_attributes = c(rgb = "FF00FF00")))
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   expect_silent(wb$save(temp))
   expect_silent(wb2 <- wb_load(temp))
 
@@ -324,6 +483,8 @@ test_that("write & load file with chartsheet", {
 test_that("escaping of inlinestrings works", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   wb <- wb_workbook()$
     add_worksheet("Test")$
     add_data(dims = "A1", x = "A & B")$
@@ -345,6 +506,8 @@ test_that("escaping of inlinestrings works", {
 test_that("write_xlsx() works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   write_xlsx(mtcars, tmp, sheet_name = "test")
   exp <- c(test = "test")
   got <- wb_load(tmp)$get_sheet_names()
@@ -355,6 +518,7 @@ test_that("write_xlsx() works", {
 test_that("write_xlsx() freezing rows works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb <- write_xlsx(list(mtcars, mtcars), tmp, first_row = TRUE, first_col = TRUE, tab_color = wb_color("green"))
 
@@ -398,6 +562,7 @@ test_that("write_xlsx() freezing rows works", {
 test_that("write_xlsx works with colour", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb <- write_xlsx(mtcars, tmp, tab_colour = "green")
 
@@ -409,6 +574,8 @@ test_that("write_xlsx works with colour", {
 
 test_that("write_xlsx with base font settings", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   df <- data.frame(a = 1:5, b = letters[1:5])
 
   # Test with font size

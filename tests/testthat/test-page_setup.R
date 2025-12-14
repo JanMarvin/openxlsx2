@@ -48,6 +48,7 @@ test_that("Page setup", {
 test_that("page_breaks", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")

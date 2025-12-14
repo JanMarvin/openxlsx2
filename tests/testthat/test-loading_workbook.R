@@ -37,6 +37,7 @@ test_that("Loading multiple pivot tables: loadPivotTables.xlsx works", {
 test_that("Load and saving a file with Threaded Comments works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   ## loadThreadComment.xlsx is a simple xlsx file that uses Threaded Comment.
   fl <- testfile_path("loadThreadComment.xlsx")
@@ -84,6 +85,8 @@ test_that("Read and save file with inlineStr", {
   expect_equal(df, df_wb_read)
 
   tmp_xlsx <- temp_xlsx()
+  on.exit(unlink(tmp_xlsx), add = TRUE)
+
   # Check that wb can be saved without error and reimported
   expect_identical(tmp_xlsx, wb_save(wb, file = tmp_xlsx)$path)
   wb_df_re <- wb_read(wb_load(tmp_xlsx))
@@ -149,6 +152,7 @@ test_that("sheet visibility", {
   # example is rather slow (lots of hidden cols)
   fl <- testfile_path("ColorTabs3.xlsx")
   tmp_dir <- temp_xlsx()
+  on.exit(unlink(tmp_dir), add = TRUE)
 
   exp_sheets <- c("Nums", "Chars", "hidden")
   exp_vis <- c("visible", "visible", "hidden")
@@ -253,6 +257,8 @@ test_that("test headerFooter", {
   wb$add_data(sheet = 2, 1:400)
 
   tmp1 <- temp_xlsx()
+  on.exit(unlink(tmp1), add = TRUE)
+
   # Save workbook
   wb_save(wb, tmp1, overwrite = TRUE)
   # Load workbook and save again
@@ -268,6 +274,8 @@ test_that("test headerFooter", {
 
 test_that("linebreaks in header footer work", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb <- wb_workbook()$add_worksheet()$
     set_header_footer(header = c("One\nTwo\nThree", NA, NA))
   wb$save(tmp)
@@ -304,7 +312,11 @@ test_that("Content Types is not modified", {
   # temporary because otherwise they are applied over and over and over again during saving
   wb <- wb_load(file = testfile_path("loadExample.xlsx"))
   pre <- wb$Content_Types
-  wb$save(temp_xlsx())
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  wb$save(tmp)
   post <- wb$Content_Types
   expect_equal(pre, post)
 
@@ -312,6 +324,7 @@ test_that("Content Types is not modified", {
 
 test_that("Sheet not found", {
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   wb <- wb_workbook()$
     add_worksheet("Test")$
@@ -414,6 +427,8 @@ test_that("sheetView is not switched", {
 test_that("Loading a workbook with property preserves it.", {
   wb <- wb_workbook(title = "x", creator = "y", subject = "z", category = "aa", keywords = "ab", comments = "ac", manager = "ad", company = "ae")$add_worksheet()
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb$save(file = tmp)
 
   wb2 <- wb_load(tmp)
@@ -496,6 +511,8 @@ test_that("failing to unzip works as expected", {
 
   # try to read from single file
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   writeLines("", tmp)
   expect_error(wb <- wb_load(tmp), "Unable to open and load file")
 
@@ -505,9 +522,16 @@ test_that("failing to unzip works as expected", {
 
   # zip file
   tmp_dir <- temp_dir()
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+
   tmp <- tempfile(tmpdir = tmp_dir, fileext = ".txt")
+  on.exit(unlink(tmp), add = TRUE)
+
   writeLines("", tmp)
+
   tmp_zip <- tempfile(fileext = ".zip")
+  on.exit(unlink(tmp_zip), add = TRUE)
+
   zip_output(zip_path = tmp_zip, source_dir = tmp_dir, compression_level = 1)
   expect_error(wb <- wb_load(tmp_zip), "File does not appear to be xlsx, xlsm or xlsb")
 
@@ -523,7 +547,10 @@ test_that("test utils::zip", {
   )
   on.exit(options(op), add = TRUE)
 
-  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "utils::zip")
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, tmp), "utils::zip")
 
 })
 
@@ -541,7 +568,10 @@ test_that("test (bsd)tar", {
   )
   on.exit(options(op), add = TRUE)
 
-  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "bsdtar")
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, tmp), "bsdtar")
 
 })
 
@@ -560,7 +590,10 @@ test_that("test 7zip", {
   )
   on.exit(options(op), add = TRUE)
 
-  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "7z")
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, tmp), "7z")
 
 })
 
@@ -574,7 +607,10 @@ test_that("saving using zip::zip", {
   )
   on.exit(options(op), add = TRUE)
 
-  expect_message(write_xlsx(x = mtcars, temp_xlsx()), "zip::zip")
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, tmp), "zip::zip")
 
 })
 
@@ -588,6 +624,8 @@ test_that("file with [trash] folder works", {
 test_that("openxlsx2 until release 1.13 used a float for baseColWidth", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   was <- "<sheetFormatPr baseColWidth=\"8.43\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>"
   fix <- "<sheetFormatPr baseColWidth=\"8\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>"
 
@@ -606,6 +644,7 @@ test_that("loading and saving named sheet views works", {
 
   fl <- testfile_path("named_sv.xlsx")
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb <- wb_load(fl)
   expect_equal(1, length(wb$namedSheetViews))
@@ -622,6 +661,8 @@ test_that("saving a workbook as xlsm", {
   write_xlsx(x = cars, file = fl)
 
   tmpdir <- temp_dir()
+  on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
+
   ct <- "[Content_Types].xml"
   unzip(fl, files = ct, exdir = tmpdir)
   tmpxml <- read_xml(file.path(tmpdir, ct), pointer = FALSE)

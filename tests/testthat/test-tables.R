@@ -258,6 +258,7 @@ test_that("tables cannot have duplicated column names", {
 test_that("make sure that table id is unique", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb <- write_xlsx(x = list(head(mtcars), head(iris)), as_table = TRUE)
 
@@ -292,6 +293,8 @@ test_that("wb_get_named_regions, works with removed tables", {
 
 test_that("reading tables from file works", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   exp <- head(mtcars)
   write_xlsx(x = exp, file = tmp, as_table = TRUE)
 

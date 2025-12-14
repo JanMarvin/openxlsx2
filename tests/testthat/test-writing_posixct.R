@@ -48,6 +48,8 @@ test_that("Writing mixed EDT/EST Posixct with write_data & write_datatable", {
   wb$add_data_table("write_datatable", df, start_col = 2, start_row = 3)
 
   xlsxFile <- temp_xlsx()
+  on.exit(unlink(xlsxFile), add = TRUE)
+
   wb_save(wb, xlsxFile, TRUE)
 
   wb_s1 <- wb_to_df(xlsxFile, sheet = "write_data")

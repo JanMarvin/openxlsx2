@@ -167,6 +167,7 @@ test_that("$set_sheet_names() and $get_sheet_names() work", {
 test_that("data validation", {
 
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
 
   df <- data.frame(
     "d" = as.Date("2016-01-01") + -5:5,
@@ -1201,6 +1202,7 @@ test_that("adding mips section works", {
   expect_equal(fmips, wb$get_mips())
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   wb$save(tmp)
 
@@ -1247,6 +1249,8 @@ test_that("adding mips section works", {
 
 test_that("handling mips in docMetadata works", {
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   xml <- '<clbl:labelList xmlns:clbl=\"http://schemas.microsoft.com/office/2020/mipLabelMetadata\"><clbl:label foo="bar"/></clbl:labelList>'
   wb <- wb_workbook()$add_worksheet()$add_mips(xml = xml)
   wb$docMetadata

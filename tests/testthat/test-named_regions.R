@@ -25,6 +25,8 @@ test_that("Maintaining Named Regions on Load", {
 
   ## save file for testing
   out_file <- temp_xlsx()
+  on.exit(unlink(out_file), add = TRUE)
+
   wb_save(wb, out_file, overwrite = TRUE)
 
   expect_equal(
@@ -142,6 +144,7 @@ test_that("Load names from an Excel file with funky non-region names", {
 
 test_that("Missing rows in named regions", {
   temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file), add = TRUE)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
@@ -167,8 +170,8 @@ test_that("Missing rows in named regions", {
       rows = 1:(5 + 2),
       cols = 1:2
     ),
-  "'cols/rows' is deprecated."
-)
+    "'cols/rows' is deprecated."
+  )
 
   ## iris region is rows 1:6 & cols 1:2
   ## iris2 region is rows 1:7 & cols 1:2
@@ -215,12 +218,12 @@ test_that("Missing rows in named regions", {
   x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_rows = FALSE)
   expect_equal(dim(x), c(6, 2))
 
-  unlink(temp_file)
 })
 
 
 test_that("Missing columns in named regions", {
   temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file), add = TRUE)
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
@@ -292,12 +295,12 @@ test_that("Missing columns in named regions", {
   x <- read_xlsx(file = temp_file, named_region = "iris2", col_names = TRUE, skip_empty_cols = FALSE)
   expect_equal(dim(x), c(4, 3))
 
-  unlink(temp_file)
 })
 
 
 test_that("Matching Substrings breaks reading named regions", {
   temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file), add = TRUE)
 
   wb <- wb_workbook()
   wb$add_worksheet("table")
@@ -339,7 +342,6 @@ test_that("Matching Substrings breaks reading named regions", {
   expect_equal(head(t1, 3), read_xlsx(file = wb, named_region = "t1"), ignore_attr = TRUE)
   expect_equal(head(t2, 3), read_xlsx(file = wb, named_region = "t22", row_names = TRUE), ignore_attr = TRUE)
 
-  unlink(temp_file)
 })
 
 
@@ -365,6 +367,7 @@ test_that("Read namedRegion from specific sheet", {
 
 test_that("Overwrite and delete named regions", {
   temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file), add = TRUE)
 
   wb <- wb_workbook()
   expect_null(wb_get_named_regions(wb))
@@ -452,6 +455,8 @@ test_that("load table", {
 test_that("wb_named_regions() is not too noisy in its deprecation. (#764)", {
   wb <- wb_workbook()$add_worksheet()
   temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file), add = TRUE)
+
   wb$save(temp_file)
   # unacceptable input only possible after 1.0
   expect_error(expect_warning(wb_get_named_regions(temp_file, x = 1)))
@@ -460,7 +465,6 @@ test_that("wb_named_regions() is not too noisy in its deprecation. (#764)", {
   op <- options("openxlsx2.soon_deprecated" = FALSE)
   on.exit(options(op), add = TRUE)
   wb <- wb_workbook()$add_worksheet()
-  temp_file <- temp_xlsx()
   wb$save(temp_file)
   expect_no_warning(wb_get_named_regions(temp_file))
   expect_warning(wb_get_named_regions(x = temp_file))

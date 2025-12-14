@@ -86,6 +86,8 @@ test_that("Freeze Panes", {
 
   # check that pre and post saving match
   temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+
   wb$save(temp)
 
   wb2 <- wb_load(temp)

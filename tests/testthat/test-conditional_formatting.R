@@ -13,6 +13,7 @@ expect_save <- function(wb) {
   # Quick function to check original saving.
   assert_workbook(wb)
   path <- temp_xlsx()
+  on.exit(unlink(path), add = TRUE)
 
   testthat::expect_silent(wb_save(wb, path))
   testthat::expect_silent(wb1 <- wb_load(path))
@@ -793,6 +794,7 @@ test_that("warning on cols > 2 and dims", {
 test_that("un_list works", {
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
   dat <- matrix(sample(0:2, 10L, TRUE), 5, 2)
 
@@ -1107,6 +1109,8 @@ test_that("cf for pivot tables works", {
   expect_equal(exp, got)
 
   tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
   wb$save(tmp)
 
   wb1 <- wb_load(tmp)
