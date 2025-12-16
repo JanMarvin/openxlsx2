@@ -48,11 +48,11 @@ void xml_sheet_data_slim(
     Rcpp::CharacterVector row_r     = row_attr["r"];
     Rcpp::CharacterVector attrnams  = row_attr.names();
 
-    int32_t n_attr_cols = row_attr.ncol();
+    R_xlen_t n_attr_cols = row_attr.ncol();
     std::vector<Rcpp::CharacterVector> row_attr_cols;
-    row_attr_cols.reserve(n_attr_cols);
+    row_attr_cols.reserve(static_cast<size_t>(n_attr_cols));
 
-    for (int32_t j = 0; j < n_attr_cols; ++j) {
+    for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
       row_attr_cols.push_back(row_attr[j]);
     }
 
@@ -70,8 +70,8 @@ void xml_sheet_data_slim(
           if (row_idx) file << "</row>";
           file << "<row";
 
-          for (auto j = 0; j < n_attr_cols; ++j) {
-            Rcpp::String s = row_attr_cols[j][row_idx];
+          for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
+            Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
 
             if (s != "") {
               file << " " << attrnams[j] << "=\"" << s.get_cstring() << "\"";
@@ -246,11 +246,11 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
   Rcpp::CharacterVector row_r    = row_attr["r"];
   Rcpp::CharacterVector attrnams = row_attr.names();
 
-  int32_t n_attr_cols = row_attr.ncol();
+  R_xlen_t n_attr_cols = row_attr.ncol();
   std::vector<Rcpp::CharacterVector> row_attr_cols;
-  row_attr_cols.reserve(n_attr_cols);
+  row_attr_cols.reserve(static_cast<size_t>(n_attr_cols));
 
-  for (int32_t j = 0; j < n_attr_cols; ++j) {
+  for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
     row_attr_cols.push_back(row_attr[j]);
   }
 
@@ -266,8 +266,8 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
 
         row = doc.append_child("row");
 
-        for (auto j = 0; j < n_attr_cols; ++j) {
-          Rcpp::String s = row_attr_cols[j][row_idx];
+        for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
+          Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
 
           if (s != "") {
              row.append_attribute(static_cast<const char*>(attrnams[j])) = s.get_cstring();
