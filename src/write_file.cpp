@@ -48,27 +48,33 @@ void xml_sheet_data_slim(
     Rcpp::CharacterVector row_r     = row_attr["r"];
     Rcpp::CharacterVector attrnams  = row_attr.names();
 
+    int32_t n_attr_cols = row_attr.ncol();
+    std::vector<Rcpp::CharacterVector> row_attr_cols;
+    row_attr_cols.reserve(n_attr_cols);
+
+    for (int32_t j = 0; j < n_attr_cols; ++j) {
+      row_attr_cols.push_back(row_attr[j]);
+    }
+
     file << "<sheetData>";
     for (auto i = 0; i < cc.nrow(); ++i) {
-      thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
+      thisrow = std::atoi(static_cast<const char*>(cc_row_r[i]));
 
       if (lastrow < thisrow) {
         // there might be entirely empty rows in between. this is the case for
         // loadExample. We check the rowid and write the line and skip until we
         // have every row and only then continue writing the column
         while (rowid < thisrow) {
-          rowid = std::stoi(Rcpp::as<std::string>(row_r[row_idx]));
+          rowid = std::atoi(static_cast<const char*>(row_r[row_idx]));
 
           if (row_idx) file << "</row>";
           file << "<row";
 
-          for (auto j = 0; j < row_attr.ncol(); ++j) {
-            Rcpp::CharacterVector cv_s = "";
-            cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+          for (auto j = 0; j < n_attr_cols; ++j) {
+            Rcpp::String s = row_attr_cols[j][row_idx];
 
-            if (cv_s[0] != "") {
-              const std::string val_strl = Rcpp::as<std::string>(cv_s);
-              file << " " << attrnams[j] << "=\"" << val_strl.c_str() << "\"";
+            if (s != "") {
+              file << " " << attrnams[j] << "=\"" << s.get_cstring() << "\"";
             }
           }
           file << ">";  // end <r ...>
@@ -99,26 +105,26 @@ void xml_sheet_data_slim(
       // additional attr list.
 
       // append attributes <c r="A1" ...>
-      file << " r" << "=\"" << std::string(cc_r[i]).c_str() << "\"";
+      file << " r" << "=\"" << static_cast<const char*>(cc_r[i]) << "\"";
 
       if (!cc_c_s[i].empty())
-        file << " s" << "=\"" << std::string(cc_c_s[i]).c_str() << "\"";
+        file << " s" << "=\"" << static_cast<const char*>(cc_c_s[i]) << "\"";
 
       // assign type if not <v> aka numeric
       if (!cc_c_t[i].empty())
-        file << " t" << "=\"" << std::string(cc_c_t[i]).c_str() << "\"";
+        file << " t" << "=\"" << static_cast<const char*>(cc_c_t[i]) << "\"";
 
       // CellMetaIndex: suppress curly brackets in spreadsheet software
       if (has_cm && !cc_c_cm[i].empty())
-        file << " cm" << "=\"" << std::string(cc_c_cm[i]).c_str() << "\"";
+        file << " cm" << "=\"" << static_cast<const char*>(cc_c_cm[i]) << "\"";
 
       // phonetics spelling
       if (has_ph && !cc_c_ph[i].empty())
-        file << " ph" << "=\"" << std::string(cc_c_ph[i]).c_str() << "\"";
+        file << " ph" << "=\"" << static_cast<const char*>(cc_c_ph[i]) << "\"";
 
       // suppress curly brackets in spreadsheet software
       if (has_vm && !cc_c_vm[i].empty())
-        file << " vm" << "=\"" << std::string(cc_c_vm[i]).c_str() << "\"";
+        file << " vm" << "=\"" << static_cast<const char*>(cc_c_vm[i]) << "\"";
 
       file << ">";  // end <c ...>
 
@@ -129,7 +135,7 @@ void xml_sheet_data_slim(
       if (!cc_f[i].empty() || !cc_f_attr[i].empty()) {
         file << "<f";
         if (!cc_f_attr[i].empty()) {
-          file << " " << std::string(cc_f_attr[i]).c_str();
+          file << " " << static_cast<const char*>(cc_f_attr[i]);
         }
         file << ">";
 
@@ -150,7 +156,7 @@ void xml_sheet_data_slim(
           if (cc_c_t[i].empty() && cc_f_attr[i].empty())
             file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
           else
-            file << "<v>" << std::string(cc_v[i]).c_str() << "</v>";
+            file << "<v>" << static_cast<const char*>(cc_v[i]) << "</v>";
         }
       }
 
@@ -240,25 +246,31 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
   Rcpp::CharacterVector row_r    = row_attr["r"];
   Rcpp::CharacterVector attrnams = row_attr.names();
 
+  int32_t n_attr_cols = row_attr.ncol();
+  std::vector<Rcpp::CharacterVector> row_attr_cols;
+  row_attr_cols.reserve(n_attr_cols);
+
+  for (int32_t j = 0; j < n_attr_cols; ++j) {
+    row_attr_cols.push_back(row_attr[j]);
+  }
+
   for (auto i = 0; i < cc.nrow(); ++i) {
-    thisrow = std::stoi(Rcpp::as<std::string>(cc_row_r[i]));
+    thisrow = std::atoi(static_cast<const char*>(cc_row_r[i]));
 
     if (lastrow < thisrow) {
       // there might be entirely empty rows in between. this is the case for
       // loadExample. We check the rowid and write the line and skip until we
       // have every row and only then continue writing the column
       while (rowid < thisrow) {
-        rowid = std::stoi(Rcpp::as<std::string>(row_r[row_idx]));
+        rowid = std::atoi(static_cast<const char*>(row_r[row_idx]));
 
         row = doc.append_child("row");
 
-        for (auto j = 0; j < row_attr.ncol(); ++j) {
-          Rcpp::CharacterVector cv_s = "";
-          cv_s = Rcpp::as<Rcpp::CharacterVector>(row_attr[j])[row_idx];
+        for (auto j = 0; j < n_attr_cols; ++j) {
+          Rcpp::String s = row_attr_cols[j][row_idx];
 
-          if (cv_s[0] != "") {
-            const std::string val_strl = Rcpp::as<std::string>(cv_s);
-            row.append_attribute(attrnams[j]) = val_strl.c_str();
+          if (s != "") {
+             row.append_attribute(static_cast<const char*>(attrnams[j])) = s.get_cstring();
           }
         }
 
@@ -291,26 +303,26 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
     // additional attr list.
 
     // append attributes <c r="A1" ...>
-    cell.append_attribute("r") = std::string(cc_r[i]).c_str();
+    cell.append_attribute("r") = static_cast<const char*>(cc_r[i]);
 
     if (!cc_c_s[i].empty())
-      cell.append_attribute("s") = std::string(cc_c_s[i]).c_str();
+      cell.append_attribute("s") = static_cast<const char*>(cc_c_s[i]);
 
     // assign type if not <v> aka numeric
     if (!cc_c_t[i].empty())
-      cell.append_attribute("t") = std::string(cc_c_t[i]).c_str();
+      cell.append_attribute("t") = static_cast<const char*>(cc_c_t[i]);
 
     // CellMetaIndex: suppress curly brackets in spreadsheet software
     if (has_cm && !cc_c_cm[i].empty())
-      cell.append_attribute("cm") = std::string(cc_c_cm[i]).c_str();
+      cell.append_attribute("cm") = static_cast<const char*>(cc_c_cm[i]);
 
     // phonetics spelling
     if (has_ph && !cc_c_ph[i].empty())
-      cell.append_attribute("ph") = std::string(cc_c_ph[i]).c_str();
+      cell.append_attribute("ph") = static_cast<const char*>(cc_c_ph[i]);
 
     // suppress curly brackets in spreadsheet software
     if (has_vm && !cc_c_vm[i].empty())
-      cell.append_attribute("vm") = std::string(cc_c_vm[i]).c_str();
+      cell.append_attribute("vm") = static_cast<const char*>(cc_c_vm[i]);
 
     // append nodes <c r="A1" ...><v>...</v></c>
 
@@ -356,7 +368,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
         if (cc_c_t[i].empty() && cc_f_attr[i].empty())
-          cell.append_child("v").append_child(pugi::node_pcdata).set_value(std::string(cc_v[i]).c_str());
+          cell.append_child("v").append_child(pugi::node_pcdata).set_value(static_cast<const char*>(cc_v[i]));
         else
           cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_string(cc_v[i]).c_str());
       }
