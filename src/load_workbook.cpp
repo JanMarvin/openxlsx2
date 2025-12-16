@@ -141,15 +141,15 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   }
 
   // we check against these
-  const std::string f_str = "f";
-  const std::string r_str = "r";
-  const std::string s_str = "s";
-  const std::string t_str = "t";
-  const std::string v_str = "v";
-  const std::string cm_str = "cm";
-  const std::string is_str = "is";
-  const std::string ph_str = "ph";
-  const std::string vm_str = "vm";
+  const char* const f_str = "f";
+  const char* const r_str = "r";
+  const char* const s_str = "s";
+  const char* const t_str = "t";
+  const char* const v_str = "v";
+  const char* const cm_str = "cm";
+  const char* const is_str = "is";
+  const char* const ph_str = "ph";
+  const char* const vm_str = "vm";
 
   /*****************************************************************************
    * Row information is returned as list of lists returning as much as possible.
@@ -158,6 +158,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
    * tags and attributes.
    ****************************************************************************/
   row_attributes = row_to_df(doc);
+  xml_col single_xml_col;
 
   R_xlen_t idx = 0, itr_rows = 0;
   for (auto worksheet : ws.children("row")) {
@@ -165,15 +166,12 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
     /* read cval, and ctyp -------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
 
-    // buffer is string buf is SEXP
-    std::string buffer, attr_name, val_name;
-
     uint32_t itr_cols = 0;
     for (auto col : worksheet.children("c")) {
       checkInterrupt(idx);
 
       // contains all values of a col
-      xml_col single_xml_col;
+      single_xml_col.clear();
 
       // get number of children and attributes
       auto nn = std::distance(col.children().begin(), col.children().end());
@@ -181,38 +179,36 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // typ: attribute ------------------------------------------------------
       bool has_colname = false;
       for (auto attr : col.attributes()) {
-        buffer = attr.value();
-        attr_name = attr.name();
 
-        if (attr_name == r_str) {
+        if (std::strcmp(attr.name(), r_str) == 0) {
           // get r attr e.g. "A1" and return colnames "A"
-          single_xml_col.r = buffer;
+          single_xml_col.r = attr.value();
 
           // get col name
-          single_xml_col.c_r = rm_rownum(buffer);
+          single_xml_col.c_r = rm_rownum(attr.value());
           has_colname = true;
 
           // get colnum
-          single_xml_col.row_r = rm_colnum(buffer);
+          single_xml_col.row_r = rm_colnum(attr.value());
 
           // if some cells of the workbook have colnames but other dont,
           // this will increase itr_cols and avoid duplicates in cc
           itr_cols = static_cast<uint32_t>(uint_col_to_int(single_xml_col.c_r) - 1);
         }
 
-        if (attr_name == s_str) single_xml_col.c_s = buffer;
-        if (attr_name == t_str) single_xml_col.c_t = buffer;
-        if (attr_name == cm_str) {
+        else if (std::strcmp(attr.name(), s_str) == 0) single_xml_col.c_s = attr.value();
+        else if (std::strcmp(attr.name(), t_str) == 0) single_xml_col.c_t = attr.value();
+        else if (std::strcmp(attr.name(), cm_str) == 0) {
           has_cm = true;
-          single_xml_col.c_cm = buffer;
+          single_xml_col.c_cm = attr.value();
         }
-        if (attr_name == ph_str) {
+        else if (std::strcmp(attr.name(), ph_str) == 0) {
           has_ph = true;
-          single_xml_col.c_ph = buffer;
+          single_xml_col.c_ph = attr.value();
         }
-        if (attr_name == vm_str) {
+        else if (std::strcmp(attr.name(), vm_str) == 0) {
           has_vm = true;
-          single_xml_col.c_vm = buffer;
+          single_xml_col.c_vm = attr.value();
         }
       }
 
@@ -227,35 +223,36 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // val ------------------------------------------------------------------
       if (nn > 0) {
         for (auto val : col.children()) {
-          val_name = val.name();
+
+          // <v> -- the default
+          if (std::strcmp(val.name(), v_str) == 0)  single_xml_col.v = val.text().get();
 
           // <is>
-          if (val_name == is_str) {
+          else if (std::strcmp(val.name(), is_str) == 0) {
             std::ostringstream oss;
             val.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
             single_xml_col.is = oss.str();
           }  // </is>
 
-          if (val_name == f_str) {  // <f>
+          else if (std::strcmp(val.name(), f_str) == 0) {  // <f>
             // Store the content of <f> as single_xml_col.f
             single_xml_col.f = val.text().get();
 
             // Serialize the attributes of <f> as single_xml_col.f_attr
-            std::ostringstream attr_stream;
             for (auto f_attr : val.attributes()) {
-              attr_stream << f_attr.name() << "=\"" << f_attr.value() << "\" ";
+              single_xml_col.f_attr.append(f_attr.name());
+              single_xml_col.f_attr.append("=\"");
+              single_xml_col.f_attr.append(f_attr.value());
+              single_xml_col.f_attr.append("\" ");
             }
-            single_xml_col.f_attr = attr_stream.str();
           }  // </f>
 
-          // <v>
-          if (val_name == v_str)  single_xml_col.v = val.text().get();
         }
 
         /* row is done */
       }
 
-      xml_cols.push_back(single_xml_col);
+      xml_cols.push_back(std::move(single_xml_col));
 
       ++itr_cols;
     }

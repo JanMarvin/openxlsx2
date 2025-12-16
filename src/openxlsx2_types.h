@@ -10,7 +10,7 @@
 /* create custom Rcpp::wrap function to be used with std::vector<xml_col> */
 #include <RcppCommon.h>
 
-typedef struct {
+struct xml_col {
   std::string r;
   std::string row_r;
   std::string c_r;     // CellReference
@@ -23,7 +23,13 @@ typedef struct {
   std::string f;       // CellFormula
   std::string f_attr;
   std::string is;      // inlineStr
-} xml_col;
+
+  void clear() {
+      r.clear(); row_r.clear(); c_r.clear(); c_s.clear(); c_t.clear();
+      c_cm.clear(); c_ph.clear(); c_vm.clear();
+      v.clear(); f.clear(); f_attr.clear(); is.clear();
+    }
+};
 
 typedef std::vector<std::string> vec_string;
 
