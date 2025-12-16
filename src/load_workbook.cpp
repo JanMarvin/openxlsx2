@@ -255,7 +255,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         /* row is done */
       }
 
-      xml_cols.push_back(single_xml_col);
+      xml_cols.push_back(std::move(single_xml_col));
 
       ++itr_cols;
     }
