@@ -52,7 +52,7 @@ test_that("zero row data table works", {
 
   expect_warning(
     wb$add_data_table(x = data.frame(a = NA, b = NA)[0, ]),
-    "Found data table with zero rows, adding one. Modify na with na.strings"
+    "Found data table with zero rows, adding one. Modify na with `na`"
   )
 
   exp <- "A1:B2"

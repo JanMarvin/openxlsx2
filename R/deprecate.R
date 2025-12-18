@@ -116,7 +116,7 @@ write_data <-  function(
     name              = NULL,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na                = na_strings(),
     inline_strings    = TRUE,
     enforce           = FALSE,
     ...
@@ -151,7 +151,7 @@ write_datatable <- function(
     banded_cols       = FALSE,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na                = na_strings(),
     inline_strings    = TRUE,
     total_row         = FALSE,
     ...

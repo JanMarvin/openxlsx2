@@ -1437,7 +1437,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sep sep
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #' @param na Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @param enforce enforce that selected dims is filled. For this to work, `dims` must match `x`
@@ -1456,20 +1456,24 @@ wbWorkbook <- R6::R6Class(
         sep               = ", ",
         apply_cell_style  = TRUE,
         remove_cell_style = FALSE,
-        na.strings        = na_strings(),
+        na                = na_strings(),
         inline_strings    = TRUE,
         enforce           = FALSE,
         ...
       ) {
 
-      standardize(...)
+      args <- list(...)
+      if ("na.strings" %in% names(args)) na <- list(...)[["na.strings"]]
+
+      arguments <- c("na.strings")
+      standardize(..., arguments = arguments)
       if (missing(x)) stop("`x` is missing")
       if (length(self$sheet_names) == 0) {
         stop(
           "Can't add data to a workbook with no worksheet.\n",
           "Did you forget to add a worksheet with `wb_add_worksheet()`?",
           call. = FALSE
-          )
+        )
       }
 
       do_write_data(
@@ -1487,7 +1491,7 @@ wbWorkbook <- R6::R6Class(
         sep               = sep,
         apply_cell_style  = apply_cell_style,
         remove_cell_style = remove_cell_style,
-        na.strings        = na.strings,
+        na                = na,
         inline_strings    = inline_strings,
         enforce           = enforce
       )
@@ -1510,7 +1514,7 @@ wbWorkbook <- R6::R6Class(
     #' @param banded_cols bandedCols
     #' @param apply_cell_style applyCellStyle
     #' @param remove_cell_style if writing into existing cells, should the cell style be removed?
-    #' @param na.strings Value used for replacing `NA` values from `x`. Default
+    #' @param na Value used for replacing `NA` values from `x`. Default
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @param total_row write total rows to table
@@ -1534,13 +1538,17 @@ wbWorkbook <- R6::R6Class(
         banded_cols       = FALSE,
         apply_cell_style  = TRUE,
         remove_cell_style = FALSE,
-        na.strings        = na_strings(),
+        na                = na_strings(),
         inline_strings    = TRUE,
         total_row         = FALSE,
         ...
     ) {
 
-      standardize(...)
+      args <- list(...)
+      if ("na.strings" %in% names(args)) na <- list(...)[["na.strings"]]
+
+      arguments <- c("na.strings")
+      standardize(..., arguments = arguments)
       if (missing(x)) stop("`x` is missing")
       if (length(self$sheet_names) == 0) {
         stop(
@@ -1569,7 +1577,7 @@ wbWorkbook <- R6::R6Class(
         banded_cols       = banded_cols,
         apply_cell_style  = apply_cell_style,
         remove_cell_style = remove_cell_style,
-        na.strings        = na.strings,
+        na                = na,
         inline_strings    = inline_strings,
         total_row         = total_row
       )
@@ -2818,8 +2826,10 @@ wbWorkbook <- R6::R6Class(
     #' @param cols A numeric vector specifying which columns in the spreadsheet to read. If NULL, all columns are read.
     #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
     #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
-    #' @param na.strings A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.
-    #' @param na.numbers A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.
+    #' @param na A character vector of strings which are to be interpreted as `NA`.
+    #'   Blank cells will be returned as `NA`. Or a named list `list(strings = ..., numbers = ...)`
+    #'   of a character and a numeric vector of digits which are to be interpreted as `NA`.
+    #'   Blank cells will be returned as `NA`.
     #' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
     #' @param check_names If TRUE then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.
@@ -2838,8 +2848,7 @@ wbWorkbook <- R6::R6Class(
       rows              = NULL,
       cols              = NULL,
       detect_dates      = TRUE,
-      na.strings        = "#N/A",
-      na.numbers        = NA,
+      na                = "#N/A",
       fill_merged_cells = FALSE,
       dims,
       show_formula      = FALSE,
@@ -2856,7 +2865,8 @@ wbWorkbook <- R6::R6Class(
       if (missing(dims)) dims <- substitute()
       if (missing(named_region)) named_region <- substitute()
 
-      standardize_case_names(...)
+      arguments <- c("na.strings", "na.numbers")
+      standardize_case_names(..., arguments = arguments)
 
       wb_to_df(
         file              = self,
@@ -2872,8 +2882,7 @@ wbWorkbook <- R6::R6Class(
         rows              = rows,
         cols              = cols,
         detect_dates      = detect_dates,
-        na.strings        = na.strings,
-        na.numbers        = na.numbers,
+        na                = na,
         fill_merged_cells = fill_merged_cells,
         dims              = dims,
         show_formula      = show_formula,
@@ -10574,7 +10583,7 @@ wbWorkbook <- R6::R6Class(
         self$add_data(
           sheet = sheet,
           x = df_dims,
-          na.strings = NULL,
+          na = NULL,
           col_names = FALSE,
           dims = dims
         )

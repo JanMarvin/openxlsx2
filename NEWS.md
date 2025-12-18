@@ -3,7 +3,8 @@
 ## New features
 
 * Check valid ranges and inputs in `col2int()` and `int2row()`. [#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
-* With `validate_dims()`, a new validation helper for `dims` has been added. 
+* With `validate_dims()`, a new validation helper for `dims` has been added.
+* The argument `na` replaces `na.strings` and `na.numbers` in read and write functions. Per default this is either a waiver in write functions or a character vector in read functions. If strings and numbers should be passed to a read function `na = list(strings = ..., numbers = ...)` should be used. The previous default values remain for the foreseeable future.
 
 ## Fixes
 
