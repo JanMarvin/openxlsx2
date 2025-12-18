@@ -58,6 +58,31 @@ col2int <- function(x) {
   col_to_int(x)
 }
 
+#' Converter spreadsheet row to integer
+#'
+#' Converts character row to integer and checks that the range is valid
+#' @param x a dimension
+#' @noRd
+#' @examples
+#' row2int("A1")
+row2int <- function(x) {
+
+  if (is.null(x)) return(NULL)
+  if (length(x) == 0) return(integer())
+
+  rows <- gsub("[[:alpha:]]", "", x)
+  rows <- as.integer(rows)
+
+  if (anyNA(rows)) stop("missings not allowed in rows", call. = FALSE)
+
+  rr <- range(rows, na.rm = TRUE)
+
+  if (any(rr < 1L | rr > 1048576L))
+    stop("Row exceeds valid range", call. = FALSE)
+
+  rows
+}
+
 
 ## TODO replace with `wb_dims(rows = ..., cols = ...)`
 #' Return spreadsheet cell coordinates from (x,y) coordinates

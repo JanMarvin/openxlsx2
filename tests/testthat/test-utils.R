@@ -53,6 +53,21 @@ test_that("dims to col & row and back", {
 
 })
 
+test_that("validate_dims() works", {
+  expect_error(validate_dims(1), "must be class character")
+  expect_true(validate_dims("$A1:B3"))
+  expect_true(validate_dims("A1:B3,$A$1:$B2"))
+  expect_true(validate_dims("A:B"))
+  expect_true(validate_dims("1:2"))
+  expect_error(validate_dims(""), "Unexpected blank strings in dims validtion detected")
+  expect_error(validate_dims("A1:B3,A1:B2,A1500000"), "Row exceeds valid range")
+  expect_error(validate_dims("ZZZ1:B3"), "Column exceeds valid range")
+  expect_true(validate_dims(c("A1", "B1:C2")))
+  expect_true(validate_dims("$A$1,B$5"))
+  expect_error(validate_dims("a1:b10"), "dims contains invalid character")
+  expect_error(validate_dims("A1-B10"), "dims contains invalid character")
+})
+
 test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
 
   # Acceptable inputs

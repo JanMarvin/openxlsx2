@@ -190,8 +190,10 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     rows <- gsub("[[:upper:]]", "", dimensions)
 
     # if "A:B"
+    # FIXME this seems poorly handled. A:B should return c(1, 1041048576)
     if (any(rows == "")) rows[rows == ""] <- "1"
 
+    # FIXME "1:1" seems to be entirely unhandled
     if (any(cols == "")) {
       stop(
         "A dims string passed to `dims_to_rowcol()` contained no alphabetic column",
@@ -201,7 +203,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
     # convert cols to integer
     cols_int <- col2int(cols)
-    rows_int <- as.integer(rows)
+    rows_int <- row2int(rows)
 
     if (length(dimensions) == 2) {
       # needs integer to create sequence
@@ -220,15 +222,38 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     rows_out <- unique(c(rows_out, rows))
   }
 
-  # TODO maybe this should be a row2int function that
-  # can be used wherever we use col2int.
-  # this is here, so that the range check for column
-  # and rows returns identical errors
-  rr <- range(as.integer(rows_out), na.rm = TRUE)
-  if (any(rr < 1 | rr > 1048576))
-    stop("Row exceeds valid range")
-
   list(col = cols_out, row = rows_out)
+}
+
+
+#' @rdname dims_helper
+#' @export
+validate_dims <- function(x) {
+
+  assert_class(x, "character")
+
+  dims <- gsub("\\$", "", x)
+
+  if (any(grepl("[^A-Z0-9,;:]", dims)))
+    stop("dims contains invalid character", call. = FALSE)
+
+  if (length(dims) == 1 && inherits(dims, "character")) {
+    if (grepl(";", dims)) dims <- unlist(strsplit(dims, ";"))
+    if (grepl(",", dims)) dims <- unlist(strsplit(dims, ","))
+  }
+
+  for (dim in dims) {
+    if (any(dim == "" | length(dim) == 0)) {
+      stop("Unexpected blank strings in dims validtion detected", call. = FALSE)
+    }
+
+    dm <- unlist(strsplit(dim, ":"))
+    cols <- if (any(grepl("[[:alpha:]]", dm))) col2int(dm) else c(1, 16384)
+    rows <- if (any(grepl("[[:digit:]]", dm))) row2int(dm) else c(1, 1048576)
+  }
+
+  # should be TRUE, otherwise the functions above would have thrown an error
+  all(is.numeric(cols) & is.numeric(rows))
 }
 
 
@@ -254,6 +279,7 @@ rowcol_to_dim <- function(row, col, fix = NULL) {
 
   stringi::stri_join(min_col, min_row)
 }
+
 
 # begin - end
 rc_to_dims <- function(cb, rb, ce, re, fix = NULL) {
@@ -1040,7 +1066,7 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # final check if any column or row exceeds the valid ranges
-  dims_to_rowcol(dims, as_integer = TRUE)
+  validate_dims(dims)
 
   paste0(dims, collapse = ",")
 }
