@@ -9,6 +9,9 @@ test_that("Loading readTest.xlsx Sheet 1", {
 
   # in r/testthat-helpers.R
   expect_equal(expected_shared_strings(), sst)
+
+  expect_warning(wb <- wb_load(xlsx_file = fl), "Use \'file\' instead.")
+  expect_warning(df <- wb_to_df(xlsx_file = fl), "Use \'file\' instead.")
 })
 
 test_that("Loading multiple pivot tables: loadPivotTables.xlsx works", {

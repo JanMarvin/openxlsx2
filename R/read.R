@@ -256,11 +256,11 @@ wb_to_df <- function(
     #   warning(msg, call. = FALSE)
     # }
 
-    if ("na.strings" %in% names(args)) na_strings <- list(...)[["na.strings"]]
-    if ("na.numbers" %in% names(args)) na_numbers <- list(...)[["na.numbers"]]
+    if ("na.strings" %in% names(args)) na_strings <- args[["na.strings"]]
+    if ("na.numbers" %in% names(args)) na_numbers <- args[["na.numbers"]]
   }
 
-  xlsx_file <- list(...)$xlsx_file
+  xlsx_file <- args$xlsx_file
   if (!is.null(xlsx_file)) {
     .Deprecated(old = "xlsx_file", new = "file", package = "openxlsx2")
     file <- xlsx_file %||% file

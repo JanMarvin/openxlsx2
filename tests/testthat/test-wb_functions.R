@@ -581,3 +581,15 @@ test_that("dims order is respected", {
   expect_equal(rc$col, c("C", "B", "A"))
   expect_equal(rc$row, c("3", "2", "1"))
 })
+
+test_that("convert works", {
+
+    path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
+    df_u <- wb_to_df(path, convert = FALSE)
+
+    path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
+    df_c <- wb_to_df(path, convert = TRUE)
+
+    expect_equal(dim(df_u), dim(df_c))
+
+})
