@@ -820,6 +820,10 @@ test_that("writing na.strings = NULL works", {
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$is[3:6])
   expect_equal(exp, got)
 
+
+  wb <- write_xlsx(matrix(NA, 2, 2), na = "N/A")
+  expect_equal(unique(unlist(wb$to_df())), "N/A")
+
 })
 
 # write third party data.frame classes
