@@ -8,6 +8,8 @@
   [`col2int()`](https://janmarvin.github.io/openxlsx2/dev/reference/col2int.md)
   and `int2row()`.
   [\#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
+- With `validate_dims()`, a new validation helper for `dims` has been
+  added.
 
 ### Fixes
 
@@ -15,6 +17,11 @@
   [`write_xlsx()`](https://janmarvin.github.io/openxlsx2/dev/reference/write_xlsx.md)
   without tables.
   [\#1495](https://github.com/JanMarvin/openxlsx2/pull/1495)
+
+### Internal Changes
+
+- C++ functions used in loading and writing files have seen another
+  round of cleanups.
 
 ------------------------------------------------------------------------
 
