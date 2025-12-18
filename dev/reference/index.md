@@ -372,6 +372,7 @@ A curated list of XML functions used in openxlsx2.
   `openxlsx2` waivers
 
 - [`dims_to_rowcol()`](https://janmarvin.github.io/openxlsx2/dev/reference/dims_helper.md)
+  [`validate_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/dims_helper.md)
   [`rowcol_to_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/dims_helper.md)
   :
 

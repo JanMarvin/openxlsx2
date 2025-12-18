@@ -8,6 +8,8 @@ column vector. Exported for user convenience.
 ``` r
 dims_to_rowcol(x, as_integer = FALSE)
 
+validate_dims(x)
+
 rowcol_to_dims(row, col, single = TRUE, fix = NULL)
 ```
 

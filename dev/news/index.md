@@ -8,8 +8,9 @@
   [`col2int()`](https://janmarvin.github.io/openxlsx2/dev/reference/col2int.md)
   and `int2row()`.
   [\#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
-- With `validate_dims()`, a new validation helper for `dims` has been
-  added.
+- With
+  [`validate_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/dims_helper.md),
+  a new validation helper for `dims` has been added.
 
 ### Fixes
 
