@@ -65,3 +65,13 @@ test_that("unknown font works", {
   wb$set_base_font(font_name = "Roboto")
   expect_silent(wb$set_col_widths(cols = c(1, 4, 6, 7, 9), widths = c(16, 15, 12, 18, 33)))
 })
+
+test_that("row2int works", {
+  expect_error(row2int(c("1", NA_character_, "3")), "missings not allowed in rows")
+  expect_error(row2int("A"), "missings not allowed in rows")
+  expect_equal(row2int(NULL), NULL)
+  expect_equal(row2int(character()), integer())
+  expect_error(row2int("-1"), "Row exceeds valid range")
+  expect_error(row2int("1500000"), "Row exceeds valid range")
+  expect_equal(row2int(as.character(1:26)), 1:26)
+})
