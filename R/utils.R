@@ -190,8 +190,10 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     rows <- gsub("[[:upper:]]", "", dimensions)
 
     # if "A:B"
+    # FIXME this seems poorly handled. A:B should return c(1, 1041048576)
     if (any(rows == "")) rows[rows == ""] <- "1"
 
+    # FIXME "1:1" seems to be entirely unhandled
     if (any(cols == "")) {
       stop(
         "A dims string passed to `dims_to_rowcol()` contained no alphabetic column",
@@ -201,7 +203,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
     # convert cols to integer
     cols_int <- col2int(cols)
-    rows_int <- as.integer(rows)
+    rows_int <- row2int(rows)
 
     if (length(dimensions) == 2) {
       # needs integer to create sequence
@@ -219,14 +221,6 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
     cols_out <- unique(c(cols_out, cols))
     rows_out <- unique(c(rows_out, rows))
   }
-
-  # TODO maybe this should be a row2int function that
-  # can be used wherever we use col2int.
-  # this is here, so that the range check for column
-  # and rows returns identical errors
-  rr <- range(as.integer(rows_out), na.rm = TRUE)
-  if (any(rr < 1 | rr > 1048576))
-    stop("Row exceeds valid range")
 
   list(col = cols_out, row = rows_out)
 }
@@ -1069,7 +1063,7 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # final check if any column or row exceeds the valid ranges
-  dims_to_rowcol(dims, as_integer = TRUE)
+  validate_dims(dims)
 
   paste0(dims, collapse = ",")
 }
