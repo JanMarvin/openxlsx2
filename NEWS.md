@@ -3,11 +3,15 @@
 ## New features
 
 * Check valid ranges and inputs in `col2int()` and `int2row()`. [#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
+* With `validate_dims()`, a new validation helper for `dims` has been added. 
 
 ## Fixes
 
 * It is now possible to add filters via `write_xlsx()` without tables. [#1495](https://github.com/JanMarvin/openxlsx2/pull/1495)
 
+## Internal Changes
+
+* C++ functions used in loading and writing files have seen another round of cleanups.
 
 ***************************************************************************
 
