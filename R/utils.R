@@ -234,9 +234,12 @@ validate_dims <- function(x) {
 
   dims <- gsub("\\$", "", x)
 
-  if (length(x) == 1 && inherits(x, "character")) {
-    if (grepl(";", x)) dims <- unlist(strsplit(x, ";"))
-    if (grepl(",", x)) dims <- unlist(strsplit(x, ","))
+  if (any(grepl("[^A-Z0-9,;:]", dims)))
+    stop("dims contains invalid character", call. = FALSE)
+
+  if (length(dims) == 1 && inherits(dims, "character")) {
+    if (grepl(";", dims)) dims <- unlist(strsplit(dims, ";"))
+    if (grepl(",", dims)) dims <- unlist(strsplit(dims, ","))
   }
 
   for (dim in dims) {
