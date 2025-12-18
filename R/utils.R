@@ -233,6 +233,34 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
 
 #' @rdname dims_helper
+#' @export
+validate_dims <- function(x) {
+
+  assert_class(x, "character")
+
+  dims <- gsub("\\$", "", x)
+
+  if (length(x) == 1 && inherits(x, "character")) {
+    if (grepl(";", x)) dims <- unlist(strsplit(x, ";"))
+    if (grepl(",", x)) dims <- unlist(strsplit(x, ","))
+  }
+
+  for (dim in dims) {
+    if (any(dim == "" | length(dim) == 0)) {
+      stop("Unexpected blank strings in dims validtion detected", call. = FALSE)
+    }
+
+    dm <- unlist(strsplit(dim, ":"))
+    cols <- if (any(grepl("[[:alpha:]]", dm))) col2int(dm) else c(1, 16384)
+    rows <- if (any(grepl("[[:digit:]]", dm))) row2int(dm) else c(1, 1048576)
+  }
+
+  # should be TRUE, otherwise the functions above would have thrown an error
+  all(is.numeric(cols) & is.numeric(rows))
+}
+
+
+#' @rdname dims_helper
 #' @noRd
 rowcol_to_dim <- function(row, col, fix = NULL) {
   # no assert for col. will output character anyways
@@ -254,6 +282,7 @@ rowcol_to_dim <- function(row, col, fix = NULL) {
 
   stringi::stri_join(min_col, min_row)
 }
+
 
 # begin - end
 rc_to_dims <- function(cb, rb, ce, re, fix = NULL) {
