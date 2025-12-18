@@ -67,4 +67,12 @@ test_that("na option works", {
   wb$add_data(x = dd, row_names = TRUE)
   res2 <- wb$to_df(row_names = TRUE, na.strings = "N/A")
   expect_equal(res2, dd)
+
+})
+
+test_that("na option works", {
+  op <- options("openxlsx2.na" = "_openxlsx_NULL")
+  on.exit(options(op), add = TRUE)
+  wb <- write_xlsx(matrix(NA, 2, 2))
+  expect_equal(unique(wb$worksheets[[1]]$sheet_data$cc$c_t), c("inlineStr", ""))
 })

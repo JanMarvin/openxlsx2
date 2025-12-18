@@ -190,6 +190,9 @@ wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALS
 #' If the data frame contains this string, the output will be broken. Similar
 #' factor labels `"_openxlsx_Inf"`, `"_openxlsx_nInf"`, and `"_openxlsx_NaN"`
 #' are reserved.
+#' The `na` string `"_openxlsx_NULL"` is a special that will be treated as NULL.
+#' So that setting the option `options("openxlsx2.na" = "_openxlsx_NULL")` will
+#' behave similar to `na = NULL`.
 #'
 #' Supported classes are data frames, matrices and vectors of various types and
 #' everything that can be converted into a data frame with `as.data.frame()`.

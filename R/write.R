@@ -228,8 +228,10 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param sep the separator string used in collapse
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
-#' contains this string, the output will be broken.
-#'
+#' contains this string, the output will be broken. Similar the `na` string
+#' `"_openxlsx_NULL"` is a special that will be treated as NULL. So that setting
+#' the option `options("openxlsx2.na" = "_openxlsx_NULL")` will behave similar to
+#' `na = NULL`.
 #' @examples
 #' # create a workbook and add some sheets
 #' wb <- wb_workbook()
@@ -453,6 +455,10 @@ write_data2 <- function(
     na <- ""
     na_missing <- TRUE
   } else if (is.null(na)) {
+    na <- ""
+    na_null    <- TRUE
+  } else if (na == "_openxlsx_NULL") {
+    # special so that we can have a NULL option
     na <- ""
     na_null    <- TRUE
   }

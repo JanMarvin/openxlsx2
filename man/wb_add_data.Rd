@@ -81,6 +81,9 @@ The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
 If the data frame contains this string, the output will be broken. Similar
 factor labels \code{"_openxlsx_Inf"}, \code{"_openxlsx_nInf"}, and \code{"_openxlsx_NaN"}
 are reserved.
+The \code{na} string \code{"_openxlsx_NULL"} is a special that will be treated as NULL.
+So that setting the option \code{options("openxlsx2.na" = "_openxlsx_NULL")} will
+behave similar to \code{na = NULL}.
 
 Supported classes are data frames, matrices and vectors of various types and
 everything that can be converted into a data frame with \code{as.data.frame()}.
