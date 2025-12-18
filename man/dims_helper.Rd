@@ -3,10 +3,13 @@
 \name{dims_helper}
 \alias{dims_helper}
 \alias{dims_to_rowcol}
+\alias{validate_dims}
 \alias{rowcol_to_dims}
 \title{Helper functions to work with \code{dims}}
 \usage{
 dims_to_rowcol(x, as_integer = FALSE)
+
+validate_dims(x)
 
 rowcol_to_dims(row, col, single = TRUE, fix = NULL)
 }
