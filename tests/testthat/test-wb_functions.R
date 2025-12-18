@@ -584,12 +584,29 @@ test_that("dims order is respected", {
 
 test_that("convert works", {
 
-    path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
-    df_u <- wb_to_df(path, convert = FALSE)
+  df <- data.frame(
+    is_active  = c(TRUE, FALSE, TRUE, NA, FALSE),
+    count      = c(10L, 25L, NA, 7L, 15L),
+    measure    = c(1.23, NA, 4.56, 7.89, 0.01),
+    event_date = as.Date(c("2023-01-01", "2023-02-15", NA, "2023-05-20", "2023-12-31")),
+    timestamp  = as.POSIXct(c("2023-01-01 10:00:00", NA, "2023-03-10 14:30:00",
+                              "2023-06-01 08:15:00", "2023-12-25 12:00:00"), tz = "UTC"),
+    daily_time = structure(c(30600, 35100, NA, 40500, 43200), units = "secs", class = c("hms", "difftime")),
+    category   = c("A", "B", "C", NA, "E"),
+    stringsAsFactors = FALSE
+  )
 
-    path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
-    df_c <- wb_to_df(path, convert = TRUE)
+  wb <- write_xlsx(x = df)
 
-    expect_equal(dim(df_u), dim(df_c))
+  df_u <- wb_to_df(wb, convert = FALSE)
+  df_c <- wb_to_df(wb, convert = TRUE)
+
+  expect_equal(dim(df_u), dim(df_c))
+  expect_equal(is.na(df_u), is.na(df_c))
+
+  df_u <- wb_to_df(wb, convert = FALSE, col_names = TRUE, rows = 2)
+  df_c <- wb_to_df(wb, convert = TRUE, col_names = TRUE, rows = 2)
+
+  expect_equal(dim(df_u), dim(df_c))
 
 })

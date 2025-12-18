@@ -528,7 +528,7 @@ wb_to_df <- function(
         cc$is_string <- cc$c_t %in% strings
 
       if (any(uccs %in% xlsx_date_style)) {
-        sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != ""
+        sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
         if (convert)
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
         else
@@ -537,7 +537,7 @@ wb_to_df <- function(
       }
 
       if (any(uccs %in% xlsx_hms_style)) {
-        sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != ""
+        sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
         if (convert) {
           # if hms is loaded, we have to avoid applying convert_hms() twice
           cc$val[sel] <- cc$v[sel]
@@ -548,7 +548,7 @@ wb_to_df <- function(
       }
 
       if (any(uccs %in% xlsx_posix_style)) {
-        sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != ""
+        sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
         if (convert)
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
         else
