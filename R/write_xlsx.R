@@ -293,10 +293,10 @@ write_xlsx <- function(x, file, as_table = FALSE, ...) {
       params$na.strings
     } else if ("na" %in% names(params)) {
       params$na
-    } else if (!is.null(getOption("openxlsx2.na.strings"))) {
-      getOption("openxlsx2.na.strings")
     } else if (!is.null(getOption("openxlsx2.na"))) {
       getOption("openxlsx2.na")
+    } else if (!is.null(getOption("openxlsx2.na.strings"))) {
+      getOption("openxlsx2.na.strings")
     } else {
       na_strings()
     }
