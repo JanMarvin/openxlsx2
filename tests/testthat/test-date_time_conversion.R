@@ -267,3 +267,10 @@ test_that("Ignoring 'GENERAL' numfmt works", {
   expect_equal(df, got, ignore_attr = TRUE)
 
 })
+
+test_that("date_to_unix() works", {
+  # in code we will do this: .POSIXct(as.double(exp), "UTC")
+  exp <- c("2110752000.000000", NA_character_, "-186180656.000000")
+  got <- date_to_unix(c("49999", "#VALUE!", "23414.1313"))
+  expect_equal(got, exp)
+})

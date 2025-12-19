@@ -130,9 +130,9 @@ Often the creator of the worksheet has used a lot of creativity and the data doe
 wb_to_df(file, start_row = 5, col_names = FALSE)
 ```
 
-### `na.strings` - define missing values
-There is the "#N/A" string, but often the user will be faced with custom missing values and other values we are not interested. Such strings can be passed as character vector via `na.strings`
+### `na` - define missing values
+There is the "#N/A" string, but often the user will be faced with custom missing values and other values we are not interested. Such strings can be passed as character vector via `na`
 ```{r}
 # na strings
-wb_to_df(file, na.strings = "")
+wb_to_df(file, na = "")
 ```

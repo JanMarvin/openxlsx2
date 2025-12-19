@@ -83,7 +83,7 @@ wbComment <- R6::R6Class(
 #'
 #' Creates a `wbComment` object. Use with [wb_add_comment()] to add to a worksheet location.
 #'
-#' @param text Comment text. Character vector. or a [fmt_txt()] string.
+#' @param text Comment text. Character vector or a [fmt_txt()] string.
 #' @param author Author of comment. A string. By default, will look at `options("openxlsx2.creator")`.
 #'   Otherwise, will check the system username.
 #' @param style A Style object or list of style objects the same length as comment vector.
