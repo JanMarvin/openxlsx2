@@ -1505,11 +1505,9 @@ to_df
 
 - `na`:
 
-  A character vector of strings which are to be interpreted as `NA`.
-  Blank cells will be returned as `NA`. Or a named list
-  `list(strings = ..., numbers = ...)` of a character and a numeric
-  vector of digits which are to be interpreted as `NA`. Blank cells will
-  be returned as `NA`.
+  Defines values to be treated as NA. Can be a character vector of
+  strings or a named list: list(strings = ..., numbers = ...). Blank
+  cells are always converted to `NA`.
 
 - `fill_merged_cells`:
 

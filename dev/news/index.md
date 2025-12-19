@@ -17,7 +17,7 @@
   functions or a character vector in read functions. If strings and
   numbers should be passed to a read function
   `na = list(strings = ..., numbers = ...)` should be used. In addition
-  the a matching option was added `option("openxlsx2.na")`. The previous
+  a matching option was added `option("openxlsx2.na")`. The previous
   default values and option remain for the foreseeable future.
   [\#1499](https://github.com/JanMarvin/openxlsx2/pull/1499)
 

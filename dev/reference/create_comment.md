@@ -22,7 +22,7 @@ create_comment(
 
 - text:
 
-  Comment text. Character vector. or a
+  Comment text. Character vector or a
   [`fmt_txt()`](https://janmarvin.github.io/openxlsx2/dev/reference/fmt_txt.md)
   string.
 

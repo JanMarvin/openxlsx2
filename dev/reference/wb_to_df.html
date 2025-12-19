@@ -189,10 +189,8 @@ If <code>NULL</code>, all columns are read.</p></dd>
 
 
 <dt id="arg-na">na<a class="anchor" aria-label="anchor" href="#arg-na"></a></dt>
-<dd><p>A character vector of strings which are to be interpreted as <code>NA</code>.
-Blank cells will be returned as <code>NA</code>. Or a named list <code>list(strings = ..., numbers = ...)</code>
-of a character and a numeric vector of digits which are to be interpreted as <code>NA</code>.
-Blank cells will be returned as <code>NA</code>.</p></dd>
+<dd><p>Defines values to be treated as NA. Can be a character vector of strings
+or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to <code>NA</code>.</p></dd>
 
 
 <dt id="arg-fill-merged-cells">fill_merged_cells<a class="anchor" aria-label="anchor" href="#arg-fill-merged-cells"></a></dt>
