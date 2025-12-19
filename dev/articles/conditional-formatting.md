@@ -112,6 +112,8 @@ wb$add_conditional_formatting(
 
 ``` r
 wb$add_data("Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
+#> Warning in standardize_case_names(rtns, return = TRUE, arguments = arguments):
+#> unused arguments (start_row)
 wb$add_conditional_formatting(
   "Dependent on",
   dims = "A16:A25",

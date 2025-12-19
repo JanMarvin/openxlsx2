@@ -11,6 +11,15 @@
 - With
   [`validate_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/dims_helper.md),
   a new validation helper for `dims` has been added.
+  [\#1498](https://github.com/JanMarvin/openxlsx2/pull/1498)
+- The argument `na` replaces `na.strings` and `na.numbers` in read and
+  write functions. Per default this is either a waiver in write
+  functions or a character vector in read functions. If strings and
+  numbers should be passed to a read function
+  `na = list(strings = ..., numbers = ...)` should be used. In addition
+  the a matching option was added `option("openxlsx2.na")`. The previous
+  default values and option remain for the foreseeable future.
+  [\#1499](https://github.com/JanMarvin/openxlsx2/pull/1499)
 
 ### Fixes
 

@@ -27,7 +27,7 @@ write_datatable(
   banded_cols = FALSE,
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
-  na.strings = na_strings(),
+  na = na_strings(),
   inline_strings = TRUE,
   total_row = FALSE,
   ...
@@ -112,10 +112,10 @@ write_datatable(
 
   keep the cell style?
 
-- na.strings:
+- na:
 
   Value used for replacing `NA` values from `x`. Default looks if
-  `options(openxlsx2.na.strings)` is set. Otherwise
+  `options("openxlsx2.na")` is set. Otherwise
   [`na_strings()`](https://janmarvin.github.io/openxlsx2/dev/reference/waivers.md)
   uses the special `#N/A` value within the workbook.
 
@@ -142,7 +142,10 @@ will be evaluated once the file is opened in spreadsheet software. The
 string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
 contains this string, the output will be broken. Similar factor labels
 `"_openxlsx_Inf"`, `"_openxlsx_nInf"`, and `"_openxlsx_NaN"` are
-reserved.
+reserved. The `na` string `"_openxlsx_NULL"` is a special that will be
+treated as NULL. So that setting the option
+`options("openxlsx2.na" = "_openxlsx_NULL")` will behave similar to
+`na = NULL`.
 
 Supported classes are data frames, matrices and vectors of various types
 and everything that can be converted into a data frame with

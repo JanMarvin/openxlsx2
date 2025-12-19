@@ -69,7 +69,7 @@
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  na <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  enforce <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -138,9 +138,9 @@ columns to a character vector e.g. <code>sapply(x$list_column, paste, collapse =
 <dd><p>keep the cell style?</p></dd>
 
 
-<dt id="arg-na-strings">na.strings<a class="anchor" aria-label="anchor" href="#arg-na-strings"></a></dt>
+<dt id="arg-na">na<a class="anchor" aria-label="anchor" href="#arg-na"></a></dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
-looks if <code>options(openxlsx2.na.strings)</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
+looks if <code>options("openxlsx2.na")</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
 uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 

@@ -816,7 +816,7 @@ add data
       sep = ", ",
       apply_cell_style = TRUE,
       remove_cell_style = FALSE,
-      na.strings = na_strings(),
+      na = na_strings(),
       inline_strings = TRUE,
       enforce = FALSE,
       ...
@@ -876,7 +876,7 @@ add data
 
   if writing into existing cells, should the cell style be removed?
 
-- `na.strings`:
+- `na`:
 
   Value used for replacing `NA` values from `x`. Default
   [`na_strings()`](https://janmarvin.github.io/openxlsx2/dev/reference/waivers.md)
@@ -925,7 +925,7 @@ add a data table
       banded_cols = FALSE,
       apply_cell_style = TRUE,
       remove_cell_style = FALSE,
-      na.strings = na_strings(),
+      na = na_strings(),
       inline_strings = TRUE,
       total_row = FALSE,
       ...
@@ -1001,7 +1001,7 @@ add a data table
 
   if writing into existing cells, should the cell style be removed?
 
-- `na.strings`:
+- `na`:
 
   Value used for replacing `NA` values from `x`. Default
   [`na_strings()`](https://janmarvin.github.io/openxlsx2/dev/reference/waivers.md)
@@ -1437,8 +1437,7 @@ to_df
       rows = NULL,
       cols = NULL,
       detect_dates = TRUE,
-      na.strings = "#N/A",
-      na.numbers = NA,
+      na = "#N/A",
       fill_merged_cells = FALSE,
       dims,
       show_formula = FALSE,
@@ -1504,15 +1503,13 @@ to_df
 
   If TRUE, attempt to recognize dates and perform conversion.
 
-- `na.strings`:
+- `na`:
 
-  A character vector of strings which are to be interpreted as NA. Blank
-  cells will be returned as NA.
-
-- `na.numbers`:
-
-  A numeric vector of digits which are to be interpreted as NA. Blank
-  cells will be returned as NA.
+  A character vector of strings which are to be interpreted as `NA`.
+  Blank cells will be returned as `NA`. Or a named list
+  `list(strings = ..., numbers = ...)` of a character and a numeric
+  vector of digits which are to be interpreted as `NA`. Blank cells will
+  be returned as `NA`.
 
 - `fill_merged_cells`:
 
