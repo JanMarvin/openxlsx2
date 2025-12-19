@@ -126,10 +126,8 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #'   If no sheet is selected, the first appearance will be selected. See [wb_get_named_regions()]
 #' @param types A named numeric indicating, the type of the data.
 #'   Names must match the returned data. See **Details** for more.
-#' @param na A character vector of strings which are to be interpreted as `NA`.
-#'   Blank cells will be returned as `NA`. Or a named list `list(strings = ..., numbers = ...)`
-#'   of a character and a numeric vector of digits which are to be interpreted as `NA`.
-#'   Blank cells will be returned as `NA`.
+#' @param na Defines values to be treated as NA. Can be a character vector of strings
+#' or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to `NA`.
 #' @param fill_merged_cells If `TRUE`, the value in a merged cell is given to all cells within the merge.
 #' @param keep_attributes If `TRUE` additional attributes are returned.
 #'   (These are used internally to define a cell type.)
@@ -250,7 +248,7 @@ wb_to_df <- function(
     # # Its a little premature to activate this
     # if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
     #   msg <- paste0(
-    #     "na.strings and na.number should be combined in na as named list,",
+    #     "na.strings and na.numbers should be combined in a named list,",
     #     "`wb_to_df(na = list(strings = '#N/A', numbers = 999)`"
     #   )
     #   warning(msg, call. = FALSE)

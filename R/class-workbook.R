@@ -2826,10 +2826,8 @@ wbWorkbook <- R6::R6Class(
     #' @param cols A numeric vector specifying which columns in the spreadsheet to read. If NULL, all columns are read.
     #' @param named_region Character string with a named_region (defined name or table). If no sheet is selected, the first appearance will be selected.
     #' @param types A named numeric indicating, the type of the data. 0: character, 1: numeric, 2: date, 3: posixt, 4:logical. Names must match the returned data
-    #' @param na A character vector of strings which are to be interpreted as `NA`.
-    #'   Blank cells will be returned as `NA`. Or a named list `list(strings = ..., numbers = ...)`
-    #'   of a character and a numeric vector of digits which are to be interpreted as `NA`.
-    #'   Blank cells will be returned as `NA`.
+    #' @param na Defines values to be treated as NA. Can be a character vector of strings
+    #' or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to `NA`.
     #' @param fill_merged_cells If TRUE, the value in a merged cell is given to all cells within the merge.
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
     #' @param check_names If TRUE then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.

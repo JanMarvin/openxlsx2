@@ -454,10 +454,7 @@ write_data2 <- function(
   if (is_na_strings(na)) {
     na <- ""
     na_missing <- TRUE
-  } else if (is.null(na)) {
-    na <- ""
-    na_null    <- TRUE
-  } else if (na == "_openxlsx_NULL") {
+  } else if (is.null(na) || na == "_openxlsx_NULL") {
     # special so that we can have a NULL option
     na <- ""
     na_null    <- TRUE

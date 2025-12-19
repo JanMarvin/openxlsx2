@@ -1045,10 +1045,8 @@ to_df
 
 \item{\code{detect_dates}}{If TRUE, attempt to recognize dates and perform conversion.}
 
-\item{\code{na}}{A character vector of strings which are to be interpreted as \code{NA}.
-Blank cells will be returned as \code{NA}. Or a named list \code{list(strings = ..., numbers = ...)}
-of a character and a numeric vector of digits which are to be interpreted as \code{NA}.
-Blank cells will be returned as \code{NA}.}
+\item{\code{na}}{Defines values to be treated as NA. Can be a character vector of strings
+or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to \code{NA}.}
 
 \item{\code{fill_merged_cells}}{If TRUE, the value in a merged cell is given to all cells within the merge.}
 

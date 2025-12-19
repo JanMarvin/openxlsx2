@@ -14,7 +14,7 @@ create_comment(
 )
 }
 \arguments{
-\item{text}{Comment text. Character vector. or a \code{\link[=fmt_txt]{fmt_txt()}} string.}
+\item{text}{Comment text. Character vector or a \code{\link[=fmt_txt]{fmt_txt()}} string.}
 
 \item{author}{A string, by default, will use "user"}
 

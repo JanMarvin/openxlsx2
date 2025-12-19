@@ -101,10 +101,8 @@ If \code{NULL}, all columns are read.}
 
 \item{detect_dates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
 
-\item{na}{A character vector of strings which are to be interpreted as \code{NA}.
-Blank cells will be returned as \code{NA}. Or a named list \code{list(strings = ..., numbers = ...)}
-of a character and a numeric vector of digits which are to be interpreted as \code{NA}.
-Blank cells will be returned as \code{NA}.}
+\item{na}{Defines values to be treated as NA. Can be a character vector of strings
+or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to \code{NA}.}
 
 \item{fill_merged_cells}{If \code{TRUE}, the value in a merged cell is given to all cells within the merge.}
 
