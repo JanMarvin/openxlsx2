@@ -126,9 +126,9 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #'   If no sheet is selected, the first appearance will be selected. See [wb_get_named_regions()]
 #' @param types A named numeric indicating, the type of the data.
 #'   Names must match the returned data. See **Details** for more.
-#' @param na.strings A character vector of strings which are to be interpreted as `NA`.
-#'   Blank cells will be returned as `NA`.
-#' @param na.numbers A numeric vector of digits which are to be interpreted as `NA`.
+#' @param na A character vector of strings which are to be interpreted as `NA`.
+#'   Blank cells will be returned as `NA`. Or a named list `list(strings = ..., numbers = ...)`
+#'   of a character and a numeric vector of digits which are to be interpreted as `NA`.
 #'   Blank cells will be returned as `NA`.
 #' @param fill_merged_cells If `TRUE`, the value in a merged cell is given to all cells within the merge.
 #' @param keep_attributes If `TRUE` additional attributes are returned.
@@ -183,7 +183,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' wb_to_df(wb1, start_row = 5, col_names = FALSE)
 #'
 #' # na string
-#' wb_to_df(wb1, na.strings = "a")
+#' wb_to_df(wb1, na = "a")
 #'
 #' # read names from row two and data starting from row 4
 #' wb_to_df(wb1, dims = "B2:C2,B4:C+")
@@ -219,8 +219,7 @@ wb_to_df <- function(
     rows              = NULL,
     cols              = NULL,
     detect_dates      = TRUE,
-    na.strings        = "#N/A",
-    na.numbers        = NA,
+    na                = "#N/A",
     fill_merged_cells = FALSE,
     dims,
     show_formula      = FALSE,
@@ -233,10 +232,35 @@ wb_to_df <- function(
     ...
 ) {
 
+  arguments <- c(ls(), "na.strings", "na.numbers", "xlsx_file")
+  standardize_case_names(..., arguments = arguments)
 
-  xlsx_file <- list(...)$xlsx_file
-  standardize_case_names(...)
+  na_strings <- NULL
+  na_numbers <- NA
+  if (is.character(na)) {
+    na_strings <- na
+  }
+  if (is.list(na)) {
+    na_strings <- na$strings
+    na_numbers <- na$numbers %||% NA
+  }
 
+  args <- list(...)
+  if (any(c("na.strings", "na.numbers") %in% names(args))) {
+    # # Its a little premature to activate this
+    # if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
+    #   msg <- paste0(
+    #     "na.strings and na.number should be combined in na as named list,",
+    #     "`wb_to_df(na = list(strings = '#N/A', numbers = 999)`"
+    #   )
+    #   warning(msg, call. = FALSE)
+    # }
+
+    if ("na.strings" %in% names(args)) na_strings <- args[["na.strings"]]
+    if ("na.numbers" %in% names(args)) na_numbers <- args[["na.numbers"]]
+  }
+
+  xlsx_file <- args$xlsx_file
   if (!is.null(xlsx_file)) {
     .Deprecated(old = "xlsx_file", new = "file", package = "openxlsx2")
     file <- xlsx_file %||% file
@@ -466,8 +490,8 @@ wb_to_df <- function(
 
   has_na_string <- FALSE
   # convert missings
-  if (!all(is.na(na.strings))) {
-    sel <- cc$val %in% na.strings
+  if (!all(is.na(na_strings))) {
+    sel <- cc$val %in% na_strings
     if (any(sel)) {
       cc$val[sel] <- NA_character_
       cc$typ[sel] <- -1L
@@ -478,9 +502,9 @@ wb_to_df <- function(
   has_na_number <- FALSE
   # convert missings.
   # at this stage we only have characters.
-  na.numbers <- as.character(na.numbers)
-  if (!all(is.na(na.numbers))) {
-    sel <- cc$v %in% na.numbers
+  na_numbers <- as.character(na_numbers)
+  if (!all(is.na(na_numbers))) {
+    sel <- cc$v %in% na_numbers
     if (any(sel)) {
       cc$val[sel] <- NA_character_
       cc$typ[sel] <- -2L
@@ -504,7 +528,7 @@ wb_to_df <- function(
         cc$is_string <- cc$c_t %in% strings
 
       if (any(uccs %in% xlsx_date_style)) {
-        sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != ""
+        sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
         if (convert)
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
         else
@@ -513,7 +537,7 @@ wb_to_df <- function(
       }
 
       if (any(uccs %in% xlsx_hms_style)) {
-        sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != ""
+        sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
         if (convert) {
           # if hms is loaded, we have to avoid applying convert_hms() twice
           cc$val[sel] <- cc$v[sel]
@@ -524,7 +548,7 @@ wb_to_df <- function(
       }
 
       if (any(uccs %in% xlsx_posix_style)) {
-        sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != ""
+        sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
         if (convert)
           cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
         else
@@ -620,7 +644,10 @@ wb_to_df <- function(
             file            = wb,
             sheet           = sheet,
             dims            = filler,
-            na.strings      = na.strings,
+            na              = list(
+              strings = na_strings,
+              numbers = na_numbers
+            ),
             convert         = FALSE,
             col_names       = FALSE,
             detect_dates    = detect_dates,
@@ -829,8 +856,7 @@ read_xlsx <- function(
   cols              = NULL,
   detect_dates      = TRUE,
   named_region,
-  na.strings        = "#N/A",
-  na.numbers        = NA,
+  na                = "#N/A",
   fill_merged_cells = FALSE,
   check_names       = FALSE,
   show_hyperlinks   = FALSE,
@@ -858,8 +884,7 @@ read_xlsx <- function(
     cols              = cols,
     detect_dates      = detect_dates,
     named_region      = named_region,
-    na.strings        = na.strings,
-    na.numbers        = na.numbers,
+    na                = na,
     fill_merged_cells = fill_merged_cells,
     check_names       = check_names,
     show_hyperlinks   = show_hyperlinks,
@@ -883,8 +908,7 @@ wb_read <- function(
   cols            = NULL,
   detect_dates    = TRUE,
   named_region,
-  na.strings      = "NA",
-  na.numbers      = NA,
+  na              = "NA",
   check_names     = FALSE,
   show_hyperlinks = FALSE,
   ...
@@ -911,8 +935,7 @@ wb_read <- function(
     cols            = cols,
     detect_dates    = detect_dates,
     named_region    = named_region,
-    na.strings      = na.strings,
-    na.numbers      = na.numbers,
+    na              = na,
     check_names     = check_names,
     show_hyperlinks = show_hyperlinks,
     ...             = ...

@@ -19,7 +19,7 @@ wb_add_data(
   sep = ", ",
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
-  na.strings = na_strings(),
+  na = na_strings(),
   inline_strings = TRUE,
   enforce = FALSE,
   ...
@@ -56,8 +56,8 @@ columns to a character vector e.g. \code{sapply(x$list_column, paste, collapse =
 
 \item{remove_cell_style}{keep the cell style?}
 
-\item{na.strings}{Value used for replacing \code{NA} values from \code{x}. Default
-looks if \code{options(openxlsx2.na.strings)} is set. Otherwise \code{\link[=na_strings]{na_strings()}}
+\item{na}{Value used for replacing \code{NA} values from \code{x}. Default
+looks if \code{options("openxlsx2.na")} is set. Otherwise \code{\link[=na_strings]{na_strings()}}
 uses the special \verb{#N/A} value within the workbook.}
 
 \item{inline_strings}{write characters as inline strings}
@@ -81,6 +81,9 @@ The string \code{"_openxlsx_NA"} is reserved for \code{openxlsx2}.
 If the data frame contains this string, the output will be broken. Similar
 factor labels \code{"_openxlsx_Inf"}, \code{"_openxlsx_nInf"}, and \code{"_openxlsx_NaN"}
 are reserved.
+The \code{na} string \code{"_openxlsx_NULL"} is a special that will be treated as NULL.
+So that setting the option \code{options("openxlsx2.na" = "_openxlsx_NULL")} will
+behave similar to \code{na = NULL}.
 
 Supported classes are data frames, matrices and vectors of various types and
 everything that can be converted into a data frame with \code{as.data.frame()}.

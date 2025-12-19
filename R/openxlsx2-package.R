@@ -203,7 +203,7 @@
 #' * `options("openxlsx2.scientificFormat" = 48)`
 #' * `options("openxlsx2.string_nums" = TRUE)` numerics in character columns
 #'    will be converted. `"1"` will be written as `1`
-#' * `options("openxlsx2.na.strings" = "#N/A")` consulted by `write_xlsx()`,
+#' * `options("openxlsx2.na" = "#N/A")` consulted by `write_xlsx()`,
 #'   `wb_add_data()` and `wb_add_data_table()`.
 #' * `options("openxlsx2.zip_flags")` custom zip flags passed to `utils::zip()` required when using a custom zip tool
 #' * `options("openxlsx2.compression_level" = 6)` compression level for the output file. Increasing compression and time consumed from 1-9.

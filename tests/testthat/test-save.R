@@ -459,6 +459,9 @@ test_that("write_xlsx with na.strings", {
   got <- read_xlsx(test, na.strings = "N/A", na.numbers = -99)
   expect_equal(exp, got, ignore_attr = TRUE)
 
+  got <- read_xlsx(test, na = list(strings = "N/A", numbers = -99))
+  expect_equal(exp, got, ignore_attr = TRUE)
+
 })
 
 test_that("write & load file with chartsheet", {

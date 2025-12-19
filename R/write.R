@@ -9,8 +9,6 @@
 #' @param cells_needed the cells needed
 #' @param colNames has colNames (only in update_cell)
 #' @param removeCellStyle remove the cell style (only in update_cell)
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   `na_strings()` uses the special `#N/A` value within the workbook.
 #' @keywords internal
 #' @noRd
 inner_update <- function(
@@ -20,8 +18,7 @@ inner_update <- function(
     rows,
     cells_needed,
     colNames = FALSE,
-    removeCellStyle = FALSE,
-    na.strings = na_strings()
+    removeCellStyle = FALSE
 ) {
 
   cells_needed <- cells_needed[cells_needed != ""]
@@ -85,10 +82,6 @@ inner_update <- function(
 
     # i know, i know, i'm lazy
     wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
-  }
-
-  if (is_na_strings(na.strings)) {
-    na.strings <- NULL
   }
 
   # prepare required columns
@@ -197,15 +190,11 @@ initialize_cell <- function(wb, sheet, new_cells) {
 #' @param cell the cell you want to update in spreadsheet connotation e.g. "A1"
 #' @param colNames if TRUE colNames are passed down
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings optional na.strings argument. if missing #N/A is used. If NULL no cell value is written, if character or numeric this is written (even if NA is part of numeric data)
 #'
 #' @keywords internal
 #' @noRd
 update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
-                        removeCellStyle = FALSE, na.strings) {
-
-  if (missing(na.strings))
-    na.strings <- substitute()
+                        removeCellStyle = FALSE) {
 
   sheet_id <- wb$.__enclos_env__$private$get_sheet_index(sheet)
 
@@ -214,7 +203,7 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 
   cells_needed <- unlist(dims, use.names = FALSE)
 
-  inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle, na.strings)
+  inner_update(wb, sheet_id, x, rows, cells_needed, colNames, removeCellStyle)
 }
 
 #' dummy function to write data
@@ -228,8 +217,8 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param startCol col to place it
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle keep the cell style?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   looks if `options(openxlsx2.na.strings)` is set. Otherwise [na_strings()]
+#' @param na Value used for replacing `NA` values from `x`. Default
+#'   looks if `options("openxlsx2.na")` is set. Otherwise [na_strings()]
 #'   uses the special `#N/A` value within the workbook.
 #' @param data_table logical. if `TRUE` and `rowNames = TRUE`, do not write the cell containing  `"_rowNames_"`
 #' @param inline_strings write characters as inline strings
@@ -239,8 +228,10 @@ update_cell <- function(x, wb, sheet, cell, colNames = FALSE,
 #' @param sep the separator string used in collapse
 #' @details
 #' The string `"_openxlsx_NA"` is reserved for `openxlsx2`. If the data frame
-#' contains this string, the output will be broken.
-#'
+#' contains this string, the output will be broken. Similar the `na` string
+#' `"_openxlsx_NULL"` is a special that will be treated as NULL. So that setting
+#' the option `options("openxlsx2.na" = "_openxlsx_NULL")` will behave similar to
+#' `na = NULL`.
 #' @examples
 #' # create a workbook and add some sheets
 #' wb <- wb_workbook()
@@ -268,7 +259,7 @@ write_data2 <- function(
     startCol        = 1,
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
-    na.strings      = na_strings(),
+    na              = na_strings(),
     data_table      = FALSE,
     inline_strings  = TRUE,
     dims            = NULL,
@@ -460,11 +451,15 @@ write_data2 <- function(
   na_missing <- FALSE
   na_null    <- FALSE
 
-  if (is_na_strings(na.strings)) {
-    na.strings <- ""
+  if (is_na_strings(na)) {
+    na <- ""
     na_missing <- TRUE
-  } else if (is.null(na.strings)) {
-    na.strings <- ""
+  } else if (is.null(na)) {
+    na <- ""
+    na_null    <- TRUE
+  } else if (na == "_openxlsx_NULL") {
+    # special so that we can have a NULL option
+    na <- ""
     na_null    <- TRUE
   }
 
@@ -500,7 +495,7 @@ write_data2 <- function(
     string_nums    = string_nums,
     na_null        = na_null,
     na_missing     = na_missing,
-    na_strings     = na.strings,
+    na_strings     = na,
     inline_strings = inline_strings,
     c_cm           = c_cm,
     dims           = clls
@@ -565,8 +560,7 @@ write_data2 <- function(
       sheet = sheetno,
       cell = dims,
       colNames = colNames,
-      removeCellStyle = removeCellStyle,
-      na.strings = na.strings
+      removeCellStyle = removeCellStyle
     )
   }
 
@@ -839,8 +833,8 @@ write_data2 <- function(
 #' @param name If not NULL, a named region is defined.
 #' @param applyCellStyle apply styles when writing on the sheet
 #' @param removeCellStyle if writing into existing cells, should the cell style be removed?
-#' @param na.strings Value used for replacing `NA` values from `x`. Default
-#'   looks if `options(openxlsx2.na.strings)` is set. Otherwise [na_strings()]
+#' @param na Value used for replacing `NA` values from `x`. Default
+#'   looks if `options("openxlsx2.na")` is set. Otherwise [na_strings()]
 #'   uses the special `#N/A` value within the workbook.
 #' @param inline_strings optional write strings as inline strings
 #' @param total_row optional write total rows
@@ -869,7 +863,7 @@ write_data_table <- function(
     applyCellStyle  = TRUE,
     removeCellStyle = FALSE,
     data_table      = FALSE,
-    na.strings      = na_strings(),
+    na              = na_strings(),
     inline_strings  = TRUE,
     total_row       = FALSE,
     enforce         = FALSE,
@@ -909,14 +903,15 @@ write_data_table <- function(
 
   # overwrite na.strings if nothing was provided
   # with whatever is in the option if not set to default
-  if (is_na_strings(na.strings) && !is.null(getOption("openxlsx2.na.strings"))) {
-    na.strings <- getOption("openxlsx2.na.strings")
+  opt_na <- getOption("openxlsx2.na") %||% getOption("openxlsx2.na.strings")
+  if (is_na_strings(na) && !is.null(opt_na)) {
+    na <- opt_na
   }
 
   if (data_table) {
     if (nrow(x) < 1) {
       warning("Found data table with zero rows, adding one.",
-             " Modify na with na.strings")
+             " Modify na with `na`")
       x[1, ] <- NA
     }
     if (anyDuplicated(tolower(colnames(x)))) {
@@ -1082,7 +1077,7 @@ write_data_table <- function(
     startCol        = startCol,
     applyCellStyle  = applyCellStyle,
     removeCellStyle = removeCellStyle,
-    na.strings      = na.strings,
+    na              = na,
     data_table      = data_table,
     inline_strings  = inline_strings,
     dims            = if (enforce) odims else dims,
@@ -1135,7 +1130,7 @@ write_data_table <- function(
         startCol        = startCol,
         applyCellStyle  = applyCellStyle,
         removeCellStyle = removeCellStyle,
-        na.strings      = na.strings,
+        na              = na,
         data_table      = data_table,
         inline_strings  = inline_strings,
         dims            = NULL,
@@ -1208,7 +1203,7 @@ do_write_data <- function(
     name              = NULL,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na                = na_strings(),
     inline_strings    = TRUE,
     enforce           = FALSE,
     shared            = FALSE,
@@ -1239,7 +1234,7 @@ do_write_data <- function(
     applyCellStyle  = apply_cell_style,
     removeCellStyle = remove_cell_style,
     data_table      = FALSE,
-    na.strings      = na.strings,
+    na              = na,
     inline_strings  = inline_strings,
     enforce         = enforce,
     shared          = shared
@@ -1421,7 +1416,7 @@ do_write_datatable <- function(
     banded_cols       = FALSE,
     apply_cell_style  = TRUE,
     remove_cell_style = FALSE,
-    na.strings        = na_strings(),
+    na                = na_strings(),
     inline_strings    = TRUE,
     total_row         = FALSE,
     shared            = FALSE,
@@ -1452,7 +1447,7 @@ do_write_datatable <- function(
     data_table      = TRUE,
     applyCellStyle  = apply_cell_style,
     removeCellStyle = remove_cell_style,
-    na.strings      = na.strings,
+    na              = na,
     inline_strings  = inline_strings,
     total_row       = total_row,
     shared          = shared

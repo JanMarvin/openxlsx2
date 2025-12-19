@@ -29,8 +29,8 @@ percentage. (A zoom value smaller than 10 will default to 10.)}
     \item{\code{start_row}}{A vector specifying the starting row to write \code{x} to.}
     \item{\code{col_names}}{If \code{TRUE}, column names of \code{x} are written.}
     \item{\code{row_names}}{If \code{TRUE}, the row names of \code{x} are written.}
-    \item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
-looks if \code{options(openxlsx2.na.strings)} is set. Otherwise \code{\link[=na_strings]{na_strings()}}
+    \item{\code{na}}{Value used for replacing \code{NA} values from \code{x}. Default
+looks if \code{options("openxlsx2.na")} is set. Otherwise \code{\link[=na_strings]{na_strings()}}
 uses the special \verb{#N/A} value within the workbook.}
     \item{\code{first_active_row}}{Top row of active region}
     \item{\code{first_active_col}}{Furthest left column of active region}

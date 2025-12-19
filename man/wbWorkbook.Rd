@@ -539,7 +539,7 @@ add data
   sep = ", ",
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
-  na.strings = na_strings(),
+  na = na_strings(),
   inline_strings = TRUE,
   enforce = FALSE,
   ...
@@ -575,7 +575,7 @@ add data
 
 \item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
 
-\item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
+\item{\code{na}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
@@ -613,7 +613,7 @@ add a data table
   banded_cols = FALSE,
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
-  na.strings = na_strings(),
+  na = na_strings(),
   inline_strings = TRUE,
   total_row = FALSE,
   ...
@@ -657,7 +657,7 @@ add a data table
 
 \item{\code{remove_cell_style}}{if writing into existing cells, should the cell style be removed?}
 
-\item{\code{na.strings}}{Value used for replacing \code{NA} values from \code{x}. Default
+\item{\code{na}}{Value used for replacing \code{NA} values from \code{x}. Default
 \code{na_strings()} uses the special \verb{#N/A} value within the workbook.}
 
 \item{\code{inline_strings}}{write characters as inline strings}
@@ -1004,8 +1004,7 @@ to_df
   rows = NULL,
   cols = NULL,
   detect_dates = TRUE,
-  na.strings = "#N/A",
-  na.numbers = NA,
+  na = "#N/A",
   fill_merged_cells = FALSE,
   dims,
   show_formula = FALSE,
@@ -1046,9 +1045,10 @@ to_df
 
 \item{\code{detect_dates}}{If TRUE, attempt to recognize dates and perform conversion.}
 
-\item{\code{na.strings}}{A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.}
-
-\item{\code{na.numbers}}{A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.}
+\item{\code{na}}{A character vector of strings which are to be interpreted as \code{NA}.
+Blank cells will be returned as \code{NA}. Or a named list \code{list(strings = ..., numbers = ...)}
+of a character and a numeric vector of digits which are to be interpreted as \code{NA}.
+Blank cells will be returned as \code{NA}.}
 
 \item{\code{fill_merged_cells}}{If TRUE, the value in a merged cell is given to all cells within the merge.}
 
