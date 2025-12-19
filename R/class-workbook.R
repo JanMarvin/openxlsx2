@@ -1463,7 +1463,7 @@ wbWorkbook <- R6::R6Class(
       ) {
 
       args <- list(...)
-      if ("na.strings" %in% names(args)) na <- list(...)[["na.strings"]]
+      if ("na.strings" %in% names(args)) na <- args[["na.strings"]]
 
       arguments <- c("na.strings")
       standardize(..., arguments = arguments)
@@ -1545,7 +1545,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       args <- list(...)
-      if ("na.strings" %in% names(args)) na <- list(...)[["na.strings"]]
+      if ("na.strings" %in% names(args)) na <- args[["na.strings"]]
 
       arguments <- c("na.strings")
       standardize(..., arguments = arguments)
