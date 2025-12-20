@@ -30,6 +30,7 @@ wb_to_df(
   keep_attributes = FALSE,
   check_names = FALSE,
   show_hyperlinks = FALSE,
+  apply_numfmts = FALSE,
   ...
 )
 
@@ -125,6 +126,8 @@ If no sheet is selected, the first appearance will be selected. See \code{\link[
 
 \item{show_hyperlinks}{If \code{TRUE} instead of the displayed text, hyperlink targets are shown.}
 
+\item{apply_numfmts}{If \code{TRUE} numeric formats are applied if detected.}
+
 \item{...}{additional arguments}
 }
 \description{
@@ -181,6 +184,10 @@ You can use wildcards for all available columns or rows in \code{dims} by using
 first row in column A through the last column in row 9. This makes it
 unnecessary to update dimensions when working with files whose sizes change
 frequently.
+
+The function to apply numeric formats was not extensively tested for numeric
+equality with spreadsheet software. There might be differences and the function
+is lacking support for builtin styles.
 }
 \examples{
 ###########################################################################

@@ -2832,6 +2832,7 @@ wbWorkbook <- R6::R6Class(
     #' @param keep_attributes If TRUE additional attributes are returned. (These are used internally to define a cell type.)
     #' @param check_names If TRUE then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.
     #' @param show_hyperlinks If `TRUE` instead of the displayed text, hyperlink targets are shown.
+    #' @param apply_numfmts If `TRUE` numeric formats are applied if detected.
     #' @return a data frame
     to_df = function(
       sheet,
@@ -2856,6 +2857,7 @@ wbWorkbook <- R6::R6Class(
       keep_attributes   = FALSE,
       check_names       = FALSE,
       show_hyperlinks   = FALSE,
+      apply_numfmts     = FALSE,
       ...
     ) {
 
@@ -2890,6 +2892,7 @@ wbWorkbook <- R6::R6Class(
         keep_attributes   = keep_attributes,
         check_names       = check_names,
         show_hyperlinks   = show_hyperlinks,
+        apply_numfmts     = apply_numfmts,
         ...               = ...
       )
     },
@@ -4850,7 +4853,6 @@ wbWorkbook <- R6::R6Class(
       invisible(self)
     },
 
-    # TODO wb_group_rows() and group_cols() are very similiar.  Can problem turn
     #' @description Set column widths
     #' @param cols cols
     #' @param widths Width of columns
@@ -4914,7 +4916,9 @@ wbWorkbook <- R6::R6Class(
       base_font <- wb_get_base_font(self)
 
       if (any(widths == "auto")) {
-        df <- wb_to_df(self, sheet = sheet, cols = cols, col_names = FALSE, keep_attributes = TRUE)
+        df <- wb_to_df(
+          self, sheet = sheet, cols = cols, col_names = FALSE, keep_attributes = TRUE, apply_numfmts = TRUE
+        )
         # exclude merged cells from width calculation.
         # adapted from wb_to_df(fill_merged_cells = TRUE)
         mc <- self$worksheets[[sheet]]$mergeCells
@@ -4967,7 +4971,7 @@ wbWorkbook <- R6::R6Class(
 
     ## rows ----
 
-    # TODO groupRows() and groupCols() are very similiar.  Can problem turn
+    # TODO wb_group_rows() and group_cols() are very similiar. Can probably turn
     # these into some wrappers for another method
 
     #' @description Group rows

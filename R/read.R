@@ -102,6 +102,10 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' unnecessary to update dimensions when working with files whose sizes change
 #' frequently.
 #'
+#' The function to apply numeric formats was not extensively tested for numeric
+#' equality with spreadsheet software. There might be differences and the function
+#' is lacking support for builtin styles.
+#'
 #' @seealso [wb_get_named_regions()], \link[openxlsx2:openxlsx2-package]{openxlsx2}
 #'
 #' @param file An xlsx file, [wbWorkbook] object or URL to xlsx file.
@@ -133,6 +137,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #'   (These are used internally to define a cell type.)
 #' @param check_names If `TRUE` then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.
 #' @param show_hyperlinks If `TRUE` instead of the displayed text, hyperlink targets are shown.
+#' @param apply_numfmts If `TRUE` numeric formats are applied if detected.
 #' @param ... additional arguments
 #'
 #' @examples
@@ -227,6 +232,7 @@ wb_to_df <- function(
     keep_attributes   = FALSE,
     check_names       = FALSE,
     show_hyperlinks   = FALSE,
+    apply_numfmts     = FALSE,
     ...
 ) {
 
@@ -242,6 +248,8 @@ wb_to_df <- function(
     na_strings <- na$strings
     na_numbers <- na$numbers %||% NA
   }
+
+  if (apply_numfmts) convert <- FALSE
 
   args <- list(...)
   if (any(c("na.strings", "na.numbers") %in% names(args))) {
@@ -604,6 +612,23 @@ wb_to_df <- function(
   # convert "na_string" to missing
   if (has_na_string) cc$typ[cc$typ == -1] <- NA_integer_
   if (has_na_number) cc$typ[cc$typ == -2] <- NA_integer_
+
+  if (apply_numfmts) {
+
+    cc <- get_numfmt_style(wb, cc)
+
+    # ooxml_format expects numeric, character or date/posixct
+    sel <- cc$num_fmt != "" & cc$typ %in% c(1L, 4L) & !cc$c_t %in% c("b", "e")
+    if (any(sel)) {
+      cc$val[sel] <- ooxml_format(as.numeric(cc$val[sel]), cc$num_fmt[sel])
+      cc$typ[sel] <- 0L
+    }
+    sel <- cc$num_fmt != "" & cc$typ %in% c(0L, 2L, 3L, 5L) & !cc$c_t %in% c("b", "e")
+    if (any(sel)) {
+      cc$val[sel] <- ooxml_format(cc$val[sel], cc$num_fmt[sel])
+      cc$typ[sel] <- 0L
+    }
+  }
 
   # prepare to create output object z
   zz <- cc[c("val", "typ")]

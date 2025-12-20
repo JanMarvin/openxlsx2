@@ -1014,6 +1014,7 @@ to_df
   keep_attributes = FALSE,
   check_names = FALSE,
   show_hyperlinks = FALSE,
+  apply_numfmts = FALSE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -1065,6 +1066,8 @@ or a named list: list(strings = ..., numbers = ...). Blank cells are always conv
 \item{\code{check_names}}{If TRUE then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.}
 
 \item{\code{show_hyperlinks}}{If \code{TRUE} instead of the displayed text, hyperlink targets are shown.}
+
+\item{\code{apply_numfmts}}{If \code{TRUE} numeric formats are applied if detected.}
 
 \item{\code{...}}{additional arguments}
 }

@@ -71,9 +71,26 @@ replaceXMLEntities <- function(x) {
 }
 
 # for dateFormats
-escape_forward_slashes <- function(string) {
-  if (!grepl("\\\\/", string)) {
-    string <- gsub("/", "\\\\/", string)
+escape_format_code <- function(formatCode) {
+
+  formatCode <- replace_legal_chars(replaceXMLEntities(formatCode))
+
+  # Check if it's a date/time format
+  is_date_time <- grepl("(y{2,4}|m{1,4}|d{1,2}|h{1,2}|s{1,2})", tolower(formatCode))
+
+  if (is_date_time && grepl("/", formatCode)) {
+    # Use a placeholder for AM/PM
+    has_ampm <- grepl("AM/PM", formatCode, ignore.case = TRUE)
+    has_ap   <- grepl("A/P", formatCode, ignore.case = TRUE)
+
+    if (has_ampm) formatCode <- gsub("AM/PM", "@@AMPM@@", formatCode, ignore.case = TRUE)
+    if (has_ap)   formatCode <- gsub("A/P", "@@AP@@", formatCode, ignore.case = TRUE)
+
+    formatCode <- gsub("(?<!\\\\)/", "\\\\/", formatCode, perl = TRUE)
+
+    if (has_ampm) formatCode <- gsub("@@AMPM@@", "AM/PM", formatCode)
+    if (has_ap)   formatCode <- gsub("@@AP@@", "A/P", formatCode)
   }
-  string
+
+  formatCode
 }
