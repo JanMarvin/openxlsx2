@@ -1058,15 +1058,52 @@ test_that("date and time formatting works", {
   expect_identical(got, "01/05/25")
 
   # Formatting a time
-  got <- ooxml_format("2025-01-05T13:45:30", "hh:mm:ss AM/PM")
+  got <- ooxml_format("2025-01-05 13:45:30", "hh:mm:ss AM/PM")
   expect_identical(got, "01:45:30 PM")
 
-  got <- ooxml_format("2025-01-05T13:45:30", "HH:mm:ss")
+  got <- ooxml_format("2025-01-05 13:45:30", "HH:mm:ss")
   expect_identical(got, "13:45:30")
 
   # Formatting combined date and time
-  got <- ooxml_format("2025-01-05T13:45:30", "yy-mmm-dd HH:mm:ss")
+  got <- ooxml_format("2025-01-05 13:45:30", "yy-mmm-dd HH:mm:ss")
   expect_identical(got, "25-Jan-05 13:45:30")
+
+  got <- ooxml_format(as.POSIXct("1900-01-12 08:17:47", "UTC"), "[h]:mm:ss")
+  expect_equal(got, "296:17:47")
+
+  got <- ooxml_format("1900-01-12 08:17:47", "[h]:mm:ss")
+  expect_equal(got, "296:17:47")
+
+})
+
+testthat::test_that("comprehensive duration works", {
+  # The original 296 hours test
+  val <- as.POSIXct("1900-01-12 08:17:47", tz = "UTC")
+
+  # Total Hours
+  expect_equal(ooxml_format(val, "[h]:mm:ss"), "296:17:47")
+
+  # Total Minutes
+  # (12 days * 1440) + (8 * 60) + 17 = 17777
+  expect_equal(ooxml_format(val, "[m]:ss"), "17777:47")
+
+  # Total Seconds
+  # (17777 * 60) + 47 = 1066667
+  expect_equal(ooxml_format(val, "[s]"), "1066667")
+
+  # Mixed format (Excel supports this)
+  expect_equal(ooxml_format(val, "[h] \"hours and\" m \"minutes\""), "296 hours and 17 minutes")
+
+  expect_equal(ooxml_format("1900-01-12 08:17:47", "[h] \"hours and\" m \"minutes\""), "296 hours and 17 minutes")
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = as.POSIXct("1900-01-12 08:17:47"))$
+    add_numfmt(numfmt = "[h] \"hours and\" m \"minutes\"")
+
+  exp <- "296 hours and 17 minutes"
+  got <- wb$to_df(apply_numfmts = TRUE, col_names = FALSE)$A
+  expect_equal(got, exp)
 
 })
 
@@ -1132,7 +1169,7 @@ test_that("special formatting works", {
   expect_identical(got, "€ 0.00")
 
   got <- ooxml_format(0.5, "#.##%")
-  expect_identical(got, "50.00%")
+  expect_identical(got, "50%")
 
   got <- ooxml_format(1.75, "#%")
   expect_identical(got, "175%")
@@ -1247,4 +1284,90 @@ test_that("escaped numfmt works", {
   got <- wb_to_df(wb, apply_numfmts = TRUE, col_names = FALSE)
   expect_equal(got, exp)
 
+})
+
+test_that("day names work", {
+  val <- "2025-01-05" # This is a Sunday
+  expect_identical(ooxml_format(val, "ddd"), "Sun")
+  expect_identical(ooxml_format(val, "dddd"), "Sunday")
+})
+
+test_that("zero vs placeholder difference", {
+  expect_identical(ooxml_format(5, "0.00"), "5.00")
+  expect_identical(ooxml_format(5, "#.##"), "5")
+  expect_identical(ooxml_format(5.4, "#.00"), "5.40")
+  expect_identical(ooxml_format(0.4, "#.00"), ".40")
+  expect_identical(ooxml_format(0.4, "0.00"), "0.40")
+})
+
+test_that("escaped literals", {
+  # The 'm' should be a literal 'm', not a month
+  expect_identical(ooxml_format(123, "\\m#"), "m123")
+})
+
+test_that("padded durations", {
+  expect_equal(ooxml_format(1 / 24, "[hh]:mm"), "01:00")
+  expect_equal(ooxml_format("1899-12-31 01:00:00", "[hh]:mm"), "01:00")
+  expect_equal(ooxml_format(pi, "[hh]:mm"), "75:23")
+})
+
+test_that("duration minute ambiguity", {
+  # In a standard date, 'm' is a month
+  expect_identical(ooxml_format("2025-01-05", "yyyy m d"), "2025 1 5")
+
+  # Inside a duration context, 'm' must be minutes
+  # 1900-01-12 08:17:47 is 296 hours and 17 minutes
+  val <- "1900-01-12 08:17:47"
+  expect_equal(ooxml_format(val, "[h] m"), "296 17")
+  expect_equal(ooxml_format(val, "[h] mm"), "296 17")
+})
+
+test_that("conditional bracket formatting", {
+  # Format: if < 1000, show as is; if >= 1000, show in thousands with a 'k'
+  fmt <- "[<1000]#,##0;[>=1000]#,##0,\"k\""
+
+  expect_identical(ooxml_format(500, fmt), "500")
+  expect_identical(ooxml_format(1500, fmt), "2k")
+
+  # Color-based conditionals (the colors are usually stripped or ignored in text output)
+  fmt_color <- "[Red][<100]0;[Blue][>=100]0"
+  expect_identical(ooxml_format(50, fmt_color), "50")
+  expect_identical(ooxml_format(150, fmt_color), "150")
+
+
+  fmt <- "[<1000]#,##0;[>=1000]#,##0,\"k\""
+  fmt_color <- "[Red][<100]0;[Blue][>=100]0"
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = c(500, 1500, 50, 150))$
+    add_numfmt(dims = "A1:A2", numfmt = fmt)$
+    add_numfmt(dims = "A3:A4", numfmt = fmt_color)
+
+  exp <- c("500", "2k", "50", "150")
+  got <- wb$to_df(apply_numfmts = TRUE, col_names = FALSE)$A
+
+  expect_equal(got, exp)
+
+})
+
+test_that("mandatory and optional fractional zeros", {
+  # Trigger: num_parts > 1 and nchar(frac_str) > mandatory_frac_len
+  # Format '0.0#' has 1 mandatory zero.
+  # Value 5.40 -> should trim the trailing 0 because it's in a '#' position.
+  expect_identical(ooxml_format(5.4, "0.0#"), "5.4")
+
+  # Value 5.45 -> should keep the 5 because it's not a zero.
+  expect_identical(ooxml_format(5.45, "0.0#"), "5.45")
+
+  # Value 5.00 -> should keep one zero because of the '0' in '0.0#'
+  expect_identical(ooxml_format(5, "0.0#"), "5.0")
+})
+
+test_that("conditional else branch", {
+  # Format: If <100, show 'Small'; If <200, show 'Medium'; otherwise show the number.
+  # The last section "0.00" has no brackets and triggers the 'else' logic.
+  fmt <- "[<100]\"Small\";[<200]\"Medium\";0.00"
+
+  # Hits the 'else' section (target_fmt <- sec)
+  expect_identical(ooxml_format(250, fmt), "250.00")
 })
