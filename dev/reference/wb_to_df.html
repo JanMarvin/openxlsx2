@@ -87,6 +87,7 @@ packages.</p>
 <span>  keep_attributes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_numfmts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -232,6 +233,10 @@ If no sheet is selected, the first appearance will be selected. See <code><a hre
 <dd><p>If <code>TRUE</code> instead of the displayed text, hyperlink targets are shown.</p></dd>
 
 
+<dt id="arg-apply-numfmts">apply_numfmts<a class="anchor" aria-label="anchor" href="#arg-apply-numfmts"></a></dt>
+<dd><p>If <code>TRUE</code> numeric formats are applied if detected.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments</p></dd>
 
@@ -276,6 +281,9 @@ detection is disabled.</p>
 first row in column A through the last column in row 9. This makes it
 unnecessary to update dimensions when working with files whose sizes change
 frequently.</p>
+<p>The function to apply numeric formats was not extensively tested for numeric
+equality with spreadsheet software. There might be differences and the function
+is lacking support for builtin styles.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -32,6 +32,7 @@ wb_to_df(
   keep_attributes = FALSE,
   check_names = FALSE,
   show_hyperlinks = FALSE,
+  apply_numfmts = FALSE,
   ...
 )
 
@@ -183,6 +184,10 @@ wb_read(
 
   If `TRUE` instead of the displayed text, hyperlink targets are shown.
 
+- apply_numfmts:
+
+  If `TRUE` numeric formats are applied if detected.
+
 - ...:
 
   additional arguments
@@ -243,6 +248,10 @@ using `+` and `-`. For example, `dims = "A-:+9"` will read everything
 from the first row in column A through the last column in row 9. This
 makes it unnecessary to update dimensions when working with files whose
 sizes change frequently.
+
+The function to apply numeric formats was not extensively tested for
+numeric equality with spreadsheet software. There might be differences
+and the function is lacking support for builtin styles.
 
 ## See also
 

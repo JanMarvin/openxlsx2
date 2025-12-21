@@ -1447,6 +1447,7 @@ to_df
       keep_attributes = FALSE,
       check_names = FALSE,
       show_hyperlinks = FALSE,
+      apply_numfmts = FALSE,
       ...
     )
 
@@ -1551,6 +1552,10 @@ to_df
 - `show_hyperlinks`:
 
   If `TRUE` instead of the displayed text, hyperlink targets are shown.
+
+- `apply_numfmts`:
+
+  If `TRUE` numeric formats are applied if detected.
 
 - `...`:
 
