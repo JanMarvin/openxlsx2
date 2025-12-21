@@ -1622,78 +1622,123 @@ process_literals <- function(fmt, value = NULL) {
 
 # --- Helper: Date and Time Formatter ---
 format_date_time <- function(value, format_code) {
-  # 1. Force character strings back to UTC POSIXct
-  # This ensures convert_to_excel_date returns a numeric serial
-  dt_val <- if (inherits(value, "POSIXct") || inherits(value, "Date")) {
-    value
-  } else if (is.character(value)) {
-    # We use UTC specifically to match your requirements
-    as.POSIXct(value, tz = "UTC")
-  } else {
-    value
+
+  # 1. Determine if this is a calendar date or a pure duration
+  # If it contains brackets or is numeric, it's likely a duration.
+  is_duration_fmt <- grepl("\\[", format_code)
+
+  # Coerce dt_val ONLY if we aren't dealing with a pure numeric duration
+  # to avoid the format() crash you are seeing.
+  dt_val <- NA
+  if (!is.numeric(value)) {
+    dt_val <- if (inherits(value, "POSIXct") || inherits(value, "Date")) {
+      value
+    } else if (is.character(value)) {
+      # Try to parse, but keep as NA if it's just a time string
+      tryCatch(as.POSIXct(value, tz = "UTC"), error = function(e) NA)
+    }
   }
 
   res <- format_code
 
-  # --- Handle Elapsed Units [h], [m], [s] ---
-  if (grepl("\\[h\\]|\\[m\\]|\\[s\\]", res, ignore.case = TRUE)) {
-    # Pass the OBJECT, not the character string, to your helper
-    excel_res <- convert_to_excel_date(list(v = dt_val))
+  # 2. Handle Elapsed Units [h], [m], [s]
+  # We do this first and use FIXED matching to avoid regex/bracket confusion
+  if (is_duration_fmt) {
+
+    if (is.character(value)) {
+      value <- as.POSIXct(value, "UTC")
+    }
+
+    if (inherits(dt_val, "POSIXct")) {
+      origin <- as.POSIXct("1899-12-31", tz = "UTC")
+      value <- as.numeric(difftime(dt_val, origin, units = "days"))
+    }
+
+    excel_res <- convert_to_excel_date(list(v = value))
     serial_num <- excel_res[[1]]
 
-    # Check if we got a number (if conversion failed, serial_num might be a string)
     if (is.numeric(serial_num)) {
-      if (grepl("\\[h\\]", res, ignore.case = TRUE)) {
-        total_hrs <- floor((serial_num * 24) + 1e-7)
-        res <- gsub("\\[h\\]", as.character(total_hrs), res, ignore.case = TRUE)
-      }
-      if (grepl("\\[m\\]", res, ignore.case = TRUE)) {
-        total_mins <- floor((serial_num * 1440) + 1e-7)
-        res <- gsub("\\[m\\]", as.character(total_mins), res, ignore.case = TRUE)
-      }
-      if (grepl("\\[s\\]", res, ignore.case = TRUE)) {
-        total_secs <- floor((serial_num * 86400) + 1e-7)
-        res <- gsub("\\[s\\]", as.character(total_secs), res, ignore.case = TRUE)
+      # Literal tags for durations. Must be greedy (hh before h).
+      tags <- c("[hh]", "[h]", "[HH]", "[H]", "[mm]", "[m]", "[MM]", "[M]", "[ss]", "[s]", "[SS]", "[S]")
+      for (tag in tags) {
+        if (grepl(tag, res, fixed = TRUE)) {
+          val_str <- ""
+          unit <- tolower(substr(tag, 2, 2))
+          if (unit == "h") {
+            val <- floor((serial_num * 24) + 1e-7)
+            val_str <- if (nchar(tag) > 3) sprintf("%02d", val) else as.character(val)
+          } else if (unit == "m") {
+            val <- floor((serial_num * 1440) + 1e-7)
+            val_str <- if (nchar(tag) > 3) sprintf("%02d", val) else as.character(val)
+          } else if (unit == "s") {
+            val <- floor((serial_num * 86400) + 1e-7)
+            val_str <- if (nchar(tag) > 3) sprintf("%02d", val) else as.character(val)
+          }
+          res <- gsub(tag, val_str, res, fixed = TRUE)
+        }
       }
     }
   }
 
-  # --- Protect Minutes (m/mm) ---
-  has_elapsed_h <- grepl("\\[h\\]", format_code, ignore.case = TRUE)
+  # 3. Calendar & Clock Formatting
+  # ONLY run if we have a valid date and the format isn't purely elapsed seconds/minutes
+  if (!all(is.na(dt_val))) {
 
-  res <- gsub("(?<=[Hh\\d]):mm", ":_MINP_", res, perl = TRUE)
-  res <- gsub("(?<=[Hh\\d]):m", ":_MIN_", res, perl = TRUE)
-  res <- gsub("mm(?=:ss|s)", "_MINP_", res, perl = TRUE)
-  res <- gsub("m(?=:ss|s)", "_MIN_", res, perl = TRUE)
+    # Standard Date Parts
+    res <- gsub("yyyy", format(dt_val, "%Y"), res, ignore.case = TRUE)
+    res <- gsub("yy", format(dt_val, "%y"), res, ignore.case = TRUE)
+    res <- gsub("dddd", format(dt_val, "%A"), res, ignore.case = TRUE)
+    res <- gsub("ddd", format(dt_val, "%a"), res, ignore.case = TRUE)
+    res <- gsub("dd", format(dt_val, "%d"), res, ignore.case = TRUE)
+    res <- gsub("\\bd\\b", as.numeric(format(dt_val, "%d")), res, perl = TRUE, ignore.case = TRUE)
 
-  if (has_elapsed_h) {
-     res <- gsub("\\bmm\\b(?!(.*_MIN))", "_MINP_", res, perl = TRUE)
-     res <- gsub("\\bm\\b(?!(.*_MIN))", "_MIN_", res, perl = TRUE)
+    # Minute Protection logic
+    res <- gsub("(?<=[Hh\\d]):mm", ":_MINP_", res, perl = TRUE)
+    res <- gsub("(?<=[Hh\\d]):m", ":_MIN_", res, perl = TRUE)
+    res <- gsub("mm(?=:ss|s)", "_MINP_", res, perl = TRUE)
+    res <- gsub("m(?=:ss|s)", "_MIN_", res, perl = TRUE)
+
+    # Contextual minutes for durations
+    if (is_duration_fmt) {
+      res <- gsub("\\bmm\\b(?!(.*_MIN))", "_MINP_", res, perl = TRUE)
+      res <- gsub("\\bm\\b(?!(.*_MIN))", "_MIN_", res, perl = TRUE)
+    }
+
+    # Months
+    res <- gsub("mmmmm", substr(format(dt_val, "%B"), 1, 1), res, ignore.case = TRUE)
+    res <- gsub("mmmm", format(dt_val, "%B"), res, ignore.case = TRUE)
+    res <- gsub("mmm", format(dt_val, "%b"), res, ignore.case = TRUE)
+    res <- gsub("mm", format(dt_val, "%m"), res, ignore.case = TRUE)
+    res <- gsub("\\bm\\b", as.numeric(format(dt_val, "%m")), res, perl = TRUE, ignore.case = TRUE)
+
+    # Restore Minutes
+    res <- gsub("_MINP_", format(dt_val, "%M"), res)
+    res <- gsub("_MIN_", as.numeric(format(dt_val, "%M")), res)
+
+    # Clock Time
+    is_12h <- grepl("AM/PM|A/P", res, ignore.case = TRUE)
+    # \\bh\\b boundary is vital to not overwrite the 296 we just put in
+    res <- gsub("hh", format(dt_val, if (is_12h) "%I" else "%H"), res, ignore.case = TRUE)
+    res <- gsub("\\bh\\b", as.numeric(format(dt_val, if (is_12h) "%I" else "%H")), res, perl = TRUE, ignore.case = TRUE)
+    res <- gsub("ss", format(dt_val, "%S"), res, ignore.case = TRUE)
+    res <- gsub("AM/PM", format(dt_val, "%p"), res, ignore.case = TRUE)
+    res <- gsub("A/P", substr(format(dt_val, "%p"), 1, 1), res, ignore.case = TRUE)
+
+  } else if (is.numeric(value) || is_duration_fmt) {
+    # If we have a numeric value but no valid dt_val (like 3600),
+    # handle the remaining :mm:ss or m using serial math to avoid the prettyNum crash.
+    excel_res <- convert_to_excel_date(list(v = value))
+    s <- excel_res[[1]]
+
+    # Simple replacement for clock-parts in durations when no calendar date exists
+    mins <- sprintf("%02d", floor((s * 1440) %% 60 + 1e-7))
+    secs <- sprintf("%02d", floor((s * 86400) %% 60 + 1e-7))
+
+    res <- gsub(":mm", paste0(":", mins), res, ignore.case = TRUE)
+    res <- gsub(":ss", paste0(":", secs), res, ignore.case = TRUE)
+    # Handle single m if it's the only thing left
+    res <- gsub("\\bm\\b", as.numeric(mins), res, perl = TRUE)
   }
-
-  # --- Standard Components ---
-  res <- gsub("yyyy", format(dt_val, "%Y"), res, ignore.case = TRUE)
-  res <- gsub("yy", format(dt_val, "%y"), res, ignore.case = TRUE)
-  res <- gsub("dd", format(dt_val, "%d"), res, ignore.case = TRUE)
-  res <- gsub("\\bd\\b", as.numeric(format(dt_val, "%d")), res, perl = TRUE, ignore.case = TRUE)
-
-  res <- gsub("mmmmm", substr(format(dt_val, "%B"), 1, 1), res, ignore.case = TRUE)
-  res <- gsub("mmmm", format(dt_val, "%B"), res, ignore.case = TRUE)
-  res <- gsub("mmm", format(dt_val, "%b"), res, ignore.case = TRUE)
-  res <- gsub("mm", format(dt_val, "%m"), res, ignore.case = TRUE)
-  res <- gsub("\\bm\\b", as.numeric(format(dt_val, "%m")), res, perl = TRUE, ignore.case = TRUE)
-
-  # Restore Minutes
-  res <- gsub("_MINP_", format(dt_val, "%M"), res)
-  res <- gsub("_MIN_", as.numeric(format(dt_val, "%M")), res)
-
-  # Hours / Seconds / AM-PM
-  is_12h <- grepl("AM/PM|A/P", res, ignore.case = TRUE)
-  res <- gsub("hh", format(dt_val, if (is_12h) "%I" else "%H"), res, ignore.case = TRUE)
-  res <- gsub("\\bh\\b", as.numeric(format(dt_val, if (is_12h) "%I" else "%H")), res, perl = TRUE, ignore.case = TRUE)
-  res <- gsub("ss", format(dt_val, "%S"), res, ignore.case = TRUE)
-  res <- gsub("AM/PM", format(dt_val, "%p"), res, ignore.case = TRUE)
-  res <- gsub("A/P", substr(format(dt_val, "%p"), 1, 1), res, ignore.case = TRUE)
 
   process_literals(res)
 }
@@ -1726,12 +1771,55 @@ format_number <- function(value, format_code) {
     m <- gregexpr(",+$", int_pat, perl = TRUE)
     if (m[[1]][1] != -1) value <- value / (1000 ^ nchar(regmatches(int_pat, m)[[1]]))
 
+    # Calculate mandatory integer digits
     mandatory_int <- nchar(gsub("[^0]", "", gsub(",", "", int_pat)))
     precision <- nchar(gsub("[^0#]", "", frac_pat))
 
     rounded_val <- abs(round(value, precision))
-    fmt_str <- paste0("%0", mandatory_int + ifelse(precision > 0, precision + 1, 0), ".", precision, "f")
-    formatted_num <- sprintf(fmt_str, rounded_val)
+
+    # If mandatory_int is 0 and the value is < 1, the integer part should be blank
+    int_part_val <- floor(rounded_val)
+    if (mandatory_int == 0 && int_part_val == 0) {
+      formatted_int <- ""
+    } else {
+      # Standard padding
+      formatted_int <- sprintf(paste0("%0", mandatory_int, "d"), as.integer(int_part_val))
+    }
+
+    # Handle the fractional part
+    if (precision > 0) {
+      # Use a simple %f to get the decimals, then strip the leading "0" or "1" before the dot
+      raw_frac <- sprintf(paste0("%.", precision, "f"), rounded_val)
+      formatted_frac <- gsub("^.*\\.", ".", raw_frac)
+
+      # Apply your existing # trailing-zero-stripping logic to formatted_frac here...
+
+      formatted_num <- paste0(formatted_int, formatted_frac)
+    } else {
+      formatted_num <- formatted_int
+    }
+
+    if (grepl("#", frac_pat)) {
+      # If the entire fractional pattern is #, and there's no fractional value, remove the decimal point too
+      if (!grepl("0", frac_pat) && (rounded_val %% 1 == 0)) {
+        formatted_num <- gsub("\\.0+$", "", formatted_num)
+      } else {
+        # Otherwise, only remove the zeros that correspond to the # positions
+        # This is a simple way: if frac_pat is '0.0#', we keep one zero but drop the second
+        # For now, a common robust approach is trimming trailing zeros if they aren't 'mandatory'
+        num_parts <- strsplit(formatted_num, "\\.")[[1]]
+        if (length(num_parts) > 1) {
+          # Calculate how many zeros are mandatory (the '0's in frac_pat)
+          mandatory_frac_len <- nchar(gsub("[^0]", "", frac_pat))
+          # Trim trailing zeros but keep up to mandatory_frac_len
+          frac_str <- num_parts[2]
+          while (nchar(frac_str) > mandatory_frac_len && substr(frac_str, nchar(frac_str), nchar(frac_str)) == "0") {
+            frac_str <- substr(frac_str, 1, nchar(frac_str) - 1)
+          }
+          formatted_num <- if (nchar(frac_str) > 0) paste0(num_parts[1], ".", frac_str) else num_parts[1]
+        }
+      }
+    }
 
     if (grepl(",", int_pat)) {
       num_parts <- strsplit(formatted_num, "\\.")[[1]]
@@ -1811,17 +1899,15 @@ format_fraction <- function(value, format_code) {
 # --- Main Function ---
 ooxml_format <- function(value, format_code) {
 
-  # Standardize input lengths (recycles shorter vector to match longer)
+  # Standardize input lengths
   max_len <- max(length(value), length(format_code))
   value <- rep_len(value, max_len)
   format_code <- rep_len(format_code, max_len)
 
-  # Use mapply to apply the logic to each pair of value and format_code
-  # SIMPLIFY = TRUE will return a character vector
   results <- mapply(function(v, f) {
 
     # Pre-processing
-    f <- gsub("&quot;", "\"", f)
+    f <- replaceXMLEntities(f)
     sections <- split_ooxml_sections(f)
     n_sec <- length(sections)
 
@@ -1830,32 +1916,58 @@ ooxml_format <- function(value, format_code) {
     is_dt_str <- is.character(v) && grepl("^\\d{4}-\\d{2}-\\d{2}", v)
     is_dt_obj <- inherits(v, "Date") || inherits(v, "POSIXct")
 
-    # 1. Section Selection Logic
+    # --- 1. NEW Section Selection Logic (Condition Picker) ---
     target_fmt <- ""
-    if (is_numeric) {
-      if (v > 0 || (v == 0 && n_sec < 3)) {
-        target_fmt <- sections[1]
-      } else if (v < 0) {
-        if (n_sec >= 2) {
-          target_fmt <- sections[2]
-          v <- abs(v)
+    condition_matched <- FALSE
+
+    # Check for conditional brackets like [<1500]
+    if (is_numeric && any(grepl("^\\[[<>=!]+[0-9.]+\\]", sections))) {
+      for (sec in sections) {
+        if (grepl("^\\[([<>=!]+[0-9.]+)\\]", sec)) {
+          cond_str <- gsub("^\\[([<>=!]+[0-9.]+)\\].*", "\\1", sec)
+          # Evaluate condition: e.g., "1200 < 1500"
+          if (eval(parse(text = paste(v, cond_str)))) {
+            target_fmt <- sec
+            condition_matched <- TRUE
+            break
+          }
         } else {
-          target_fmt <- sections[1]
+          # This is the "else" section (no condition brackets)
+          target_fmt <- sec
+          condition_matched <- TRUE
+          break
         }
-      } else {
-        if (!grepl("[#0]", sections[3])) return(process_literals(sections[3]))
-        target_fmt <- sections[3]
       }
-    } else if (is_dt_str || is_dt_obj) {
-      target_fmt <- sections[1]
-    } else {
-      # Text handling
-      if (n_sec >= 4) return(process_literals(sections[4], v))
-      if (grepl("@", sections[1])) return(process_literals(sections[1], v))
-      return(as.character(v))
     }
 
-    # 1. Currency Extraction
+    # Fallback to standard Positive; Negative; Zero; Text logic
+    if (!condition_matched) {
+      if (is_numeric) {
+        if (v > 0 || (v == 0 && n_sec < 3)) {
+          target_fmt <- sections[1]
+        } else if (v < 0) {
+          if (n_sec >= 2) {
+            target_fmt <- sections[2]
+            v <- abs(v) # Excel treats negative section as absolute value
+          } else {
+            target_fmt <- sections[1]
+          }
+        } else {
+          if (n_sec >= 3 && !grepl("[#0]", sections[3])) return(process_literals(sections[3]))
+          target_fmt <- if (n_sec >= 3) sections[3] else sections[1]
+        }
+      } else if (is_dt_str || is_dt_obj) {
+        target_fmt <- sections[1]
+      } else {
+        # Text handling
+        if (n_sec >= 4) return(process_literals(sections[4], v))
+        if (grepl("@", sections[1])) return(process_literals(sections[1], v))
+        return(as.character(v))
+      }
+    }
+
+    # --- 2. Metadata Cleanup ---
+    # Currency Extraction
     curr_matches <- regmatches(target_fmt, gregexpr("\\[\\$(.*?)-.*?\\]", target_fmt))[[1]]
     if (length(curr_matches) > 0) {
       for (m in curr_matches) {
@@ -1864,19 +1976,18 @@ ooxml_format <- function(value, format_code) {
       }
     }
 
-    # 2. Alignment & Metadata Cleanup
-    # Replace '* ' with a single space to preserve "£ 12,345"
     target_fmt <- gsub("\\* ", " ", target_fmt)
     target_fmt <- gsub("\\*.", "", target_fmt)
-    # Remove underscores (gap markers)
     target_fmt <- gsub("(?<!\\\\)_.", "", target_fmt, perl = TRUE)
 
-    # STRATEGIC FIX: Protect [h], [m], [s] from being deleted
+    # UPDATED: Strip Conditions ([<1500]) and Colors ([Red])
+    # but PROTECT Durations ([h], [m], [s])
+    # Logic: Remove brackets that DON'T contain h, m, or s.
     target_fmt <- gsub("\\[(?!(?:h|m|s|H|M|S))[^\\]]+\\]", "", target_fmt, perl = TRUE)
 
-    # 3. Final Routing
-    # A. Dates/Times
-    if (is_dt_str || is_dt_obj || (grepl("[ymdhs]", target_fmt, ignore.case = TRUE) && !grepl("[#0]", target_fmt))) {
+    # --- 3. Final Routing ---
+    # A. Dates/Times (Include checks for duration brackets)
+    if (is_dt_str || is_dt_obj || (grepl("[ymdhs\\[]", target_fmt, ignore.case = TRUE) && !grepl("[#0]", target_fmt))) {
       return(format_date_time(v, target_fmt))
     }
 
@@ -1888,13 +1999,15 @@ ooxml_format <- function(value, format_code) {
     # C. Percentages
     if (grepl("%", target_fmt)) {
       val_pct <- if (is_numeric) v * 100 else v
+      # Strip the % for the number part, then add it back
       res <- format_number(val_pct, gsub("%", "", target_fmt))
       return(paste0(res, "%"))
     }
 
     # D. Standard Numbers
     res <- format_number(v, target_fmt)
-    if (is_numeric && v < 0 && n_sec == 1 && !grepl("[\\(\\)-]", res)) {
+    # Re-apply negative sign if we didn't have a specific negative section
+    if (is_numeric && v < 0 && !condition_matched && n_sec == 1 && !grepl("[\\(\\)-]", res)) {
       res <- paste0("-", res)
     }
 
