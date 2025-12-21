@@ -22,9 +22,9 @@
   [\#1499](https://github.com/JanMarvin/openxlsx2/pull/1499)
 - It is now possible to apply numeric formats via
   `wb_to_df(apply_numfmts = TRUE)` to preview numeric formats. The
-  function is still experimental and incomplete. There is no support for
-  builtin styles yet. But this should improve setting the automatic
-  column width for worksheets with numeric styles.
+  function is still experimental and incomplete. There is limited
+  support for builtin styles. But this should improve setting the
+  automatic column width for worksheets with numeric styles.
   [\#1501](https://github.com/JanMarvin/openxlsx2/pull/1501)
 
 ### Fixes
