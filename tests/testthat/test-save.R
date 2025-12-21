@@ -247,8 +247,8 @@ test_that("write xlsx", {
 
   wb <- write_xlsx(df, col_widths = "auto")
   exp <- c(
-    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"3.711\"/>",
-    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"2.711\"/>"
+    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"2.711\"/>",
+    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"1.711\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(got, exp)

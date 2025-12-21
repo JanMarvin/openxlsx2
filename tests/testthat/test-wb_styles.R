@@ -1190,7 +1190,8 @@ test_that("apply_numfmts works", {
 
   wb <- wb_workbook()$
     add_worksheet()$
-    add_data(x = df)
+    add_data(x = df)$
+    set_col_widths(cols = seq_along(df), widths = "auto")
 
   wb$add_numfmt(dims = wb_dims(x = df, cols = "count"), numfmt = "$0")
   wb$add_numfmt(dims = wb_dims(x = df, cols = "measure"), numfmt = "0.0")
@@ -1198,6 +1199,9 @@ test_that("apply_numfmts works", {
   wb$add_numfmt(dims = wb_dims(x = df, cols = "timestamp"), numfmt = "yy-mmm-dd HH:mm:ss")
   wb$add_numfmt(dims = wb_dims(x = df, cols = "daily_time"), numfmt = "hh:mm:ss AM/PM")
   wb$add_numfmt(dims = wb_dims(x = df, cols = "category"), numfmt = "cat: @")
+
+  wb$
+    set_col_widths(cols = seq_along(df), widths = "auto")
 
   exp <- structure(
     list(
