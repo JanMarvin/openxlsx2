@@ -187,7 +187,7 @@ frequently.
 
 The function to apply numeric formats was not extensively tested for numeric
 equality with spreadsheet software. There might be differences and the function
-is lacking support for builtin styles.
+has limited support for builtin styles.
 }
 \examples{
 ###########################################################################
