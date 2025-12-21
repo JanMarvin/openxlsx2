@@ -1526,6 +1526,10 @@ get_numfmt_style <- function(wb, cc) {
     )
   )
 
+  if (nrow(numfmts) == 0) {
+    return(cc)
+  }
+
   styles <- merge(
     styles,
     numfmts,
