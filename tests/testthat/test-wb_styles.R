@@ -285,6 +285,14 @@ test_that("test add_cell_style()", {
 
 test_that("add_style", {
 
+  exp <- "<numFmt numFmtId=\"200\" formatCode=\"hh:mm:ss AM/PM\"/>"
+  got <- create_numfmt(numFmtId = 200, formatCode = "hh:mm:ss AM/PM")
+  expect_equal(got, exp)
+
+  exp <- "<numFmt numFmtId=\"200\" formatCode=\"hh:mm:ss A/P\"/>"
+  got <- create_numfmt(numFmtId = 200, formatCode = "hh:mm:ss A/P")
+  expect_equal(got, exp)
+
   # without name
   num <- create_numfmt(numFmtId = "165", formatCode = "#.#")
   wb <- wb_workbook()$add_style(num)
@@ -1015,5 +1023,221 @@ test_that("adding borders works", {
            G10 = "16", H10 = "8")
   got <- wb$get_cell_style(dims = "A1:H10")
   expect_equal(exp, got)
+
+})
+
+# Formatting a number
+test_that("number formatting works", {
+
+  got <- ooxml_format(1234.5678, "#,##0.00")
+  expect_identical(got, "1,234.57")
+
+  got <- ooxml_format(pi, "#,##0")
+  expect_identical(got, "3")
+
+  got <- ooxml_format(123456, "$#,##0")
+  expect_identical(got, "$123,456")
+
+  got <- ooxml_format(pi, "0,000")
+  expect_identical(got, "0,003")
+
+  got <- ooxml_format(123456789, "#,###,,")
+  expect_identical(got, "123")
+
+})
+
+test_that("date and time formatting works", {
+
+  got <- ooxml_format("2025-01-05", "yyyy-mm-dd")
+  expect_identical(got, "2025-01-05")
+
+  got <- ooxml_format("2025-01-05", "m/d/yyyy")
+  expect_identical(got, "1/5/2025")
+
+  got <- ooxml_format("2025-01-05", "mm/dd/yy")
+  expect_identical(got, "01/05/25")
+
+  # Formatting a time
+  got <- ooxml_format("2025-01-05T13:45:30", "hh:mm:ss AM/PM")
+  expect_identical(got, "01:45:30 PM")
+
+  got <- ooxml_format("2025-01-05T13:45:30", "HH:mm:ss")
+  expect_identical(got, "13:45:30")
+
+  # Formatting combined date and time
+  got <- ooxml_format("2025-01-05T13:45:30", "yy-mmm-dd HH:mm:ss")
+  expect_identical(got, "25-Jan-05 13:45:30")
+
+})
+
+test_that("special formatting works", {
+
+  # Formatting a fraction
+  got <- ooxml_format(0.75, "# ?/?")
+  expect_identical(got, "3/4")
+
+  got <- ooxml_format(1.75, "# ?/?")
+  expect_identical(got, "1 3/4")
+
+  got <- ooxml_format(-1234.56, "(#,###.00)")
+  expect_identical(got, "(1,234.56)")
+
+  fmt <- '#,###.00_);[Red](#,###.00);0.00;"gross receipts for "@'
+  exp <- "<numFmt numFmtId=\"164\" formatCode=\"#,###.00_);[Red](#,###.00);0.00;&quot;gross receipts for &quot;@\"/>"
+  got <- create_numfmt(formatCode = fmt)
+  expect_identical(got, exp)
+
+  got <- ooxml_format(1234.5678, fmt)
+  expect_identical(got, "1,234.57")
+
+  got <- ooxml_format(-1234.5678, fmt)
+  expect_identical(got, "(1,234.57)")
+
+  got <- ooxml_format(0, fmt)
+  expect_identical(got, "0.00")
+
+  got <- ooxml_format("a", fmt)
+  expect_identical(got, "gross receipts for a")
+
+  # Formatting a text
+  got <- ooxml_format("Hello", "Hello @")
+  expect_identical(got, "Hello Hello")
+
+  fmt <- "_-[$£-809]* #,##0.00_-;\\-[$£-809]* #,##0.00_-;_-[$£-809]* &quot;-&quot;??_-;_-@_-"
+  got <- ooxml_format(1234.5678, fmt) # currency symbol is tabbed into the front, so at least one whitespace after currency symbol
+  expect_identical(got, "£ 1,234.57")
+
+  got <- ooxml_format(-1234.5678, fmt)
+  expect_identical(got, "-£ 1,234.57")
+
+  fmt <- "_- [$£-809]* #,##0.00_-;\\- [$£-809]* #,##0.00_-; [Red]-[$£-809]* &quot;-&quot;??_-;_-@_-"
+
+  got <- ooxml_format(12345.13456, fmt) # same tabbed currency
+  expect_identical(got, "£ 12,345.13")
+
+  got <- ooxml_format(-12345.13456, fmt)
+  expect_identical(got, "- £ 12,345.13")
+
+  got <- ooxml_format(0, fmt) # no leading minus here
+  expect_identical(got, "-£ -")
+
+  fmt <- "[$€-2] #,##0.00_);[Red]([$€-2] #,##0.00)"
+  got <- ooxml_format(12345.13456, fmt)
+  expect_identical(got, "€ 12,345.13")
+
+  got <- ooxml_format(-12345.13456, fmt)
+  expect_identical(got, "(€ 12,345.13)")
+
+  got <- ooxml_format(0, fmt)
+  expect_identical(got, "€ 0.00")
+
+  got <- ooxml_format(0.5, "#.##%")
+  expect_identical(got, "50.00%")
+
+  got <- ooxml_format(1.75, "#%")
+  expect_identical(got, "175%")
+
+  got <- ooxml_format(-1234.57, "$ #,##0")
+  expect_identical(got, "-$ 1,235")
+
+  got <- ooxml_format(.POSIXct(72901, "UTC"), "hh:mm:ss A/P")
+  expect_identical(got, "08:15:01 P")
+
+  got <- ooxml_format(0, "#,##0; -#,##0; \"Nil\"")
+  expect_equal(got, "Nil")
+
+  got <- ooxml_format(5, "# ?/?")
+  expect_equal(got, "5")
+
+  got <- ooxml_format(1.25, "?/?")
+  expect_equal(got, "5/4")
+
+  got <- ooxml_format(0.66, "?/?")
+  expect_equal(got, "2/3")
+
+})
+
+test_that("", {
+  exp <- c(
+    "4.00", "4.00", "7.00", "7.00", "8.00", "9.00", "10.00", "10.00",
+    "10.00", "11.00", "11.00", "12.00", "12.00", "12.00", "12.00",
+    "13.00", "13.00", "13.00", "13.00", "14.00", "14.00", "14.00",
+    "14.00", "15.00", "15.00", "15.00", "16.00", "16.00", "17.00",
+    "17.00", "17.00", "18.00", "18.00", "18.00", "18.00", "19.00",
+    "19.00", "19.00", "20.00", "20.00", "20.00", "20.00", "20.00",
+    "22.00", "23.00", "24.00", "24.00", "24.00", "24.00", "25.00"
+  )
+  got <- ooxml_format(cars$speed, "#,##0.00")
+  expect_identical(got, exp)
+
+  got <- ooxml_format(cars$speed, rep_len("#,##0.00", nrow(cars)))
+  expect_identical(got, exp)
+})
+
+test_that("apply_numfmts works", {
+  df <- data.frame(
+    is_active  = c(TRUE, FALSE, TRUE, NA, FALSE),
+    count      = c(10L, 25L, NA, 7L, 15L),
+    measure    = c(1.23, NA, 4.56, 7.89, 0.01),
+    event_date = as.Date(c("2023-01-01", "2023-02-15", NA, "2023-05-20", "2023-12-31")),
+    timestamp  = as.POSIXct(c("2023-01-01 10:00:00", NA, "2023-03-10 14:30:00",
+                              "2023-06-01 08:15:00", "2023-12-25 12:00:00"), tz = "UTC"),
+    # Manual hms without loading the library:
+    daily_time = structure(c(30600, 35100, NA, 40500, 43200), units = "secs", class = c("hms", "difftime")),
+    category   = c("A", "B", "C", NA, "E"),
+    stringsAsFactors = FALSE
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = df)
+
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "count"), numfmt = "$0")
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "measure"), numfmt = "0.0")
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "event_date"), numfmt = "m/d/yyyy")
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "timestamp"), numfmt = "yy-mmm-dd HH:mm:ss")
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "daily_time"), numfmt = "hh:mm:ss AM/PM")
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "category"), numfmt = "cat: @")
+
+  exp <- structure(
+    list(
+      is_active = c("TRUE", "FALSE", "TRUE", NA, "FALSE"),
+      count = c("$10", "$25", NA, "$7", "$15"),
+      measure = c("1.2", NA, "4.6", "7.9", "0.0"),
+      event_date = c("1/1/2023", "2/15/2023", NA, "5/20/2023", "12/31/2023"),
+      timestamp = c("23-Jan-01 10:00:00", NA, "23-Mar-10 14:30:00", "23-Jun-01 08:15:00", "23-Dec-25 12:00:00"),
+      daily_time = c("08:30:00 AM", "09:45:00 AM", NA, "11:15:00 AM", "12:00:00 PM"),
+      category = c("cat: A", "cat: B", "cat: C", NA, "cat: E")
+    ),
+    row.names = 2:6,
+    class = "data.frame"
+  )
+  got <- wb$to_df(apply_numfmts = TRUE)
+  expect_equal(got, exp)
+})
+
+test_that("escaped numfmt works", {
+
+  fmt  <- "_- [$£-809]* #,##0.00_-;\\- [$£-809]* #,##0.00_-; [Red]-[$£-809]* &quot;-&quot;??_-;_-@_-"
+  fmt2 <- "_-[$£-809]* #,##0.00_-;\\-[$£-809]* #,##0.00_-;_-[$£-809]* &quot;-&quot;??_-;_-@_-"
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(dims = "A1", x = -1234.5678)$
+    add_data(dims = "A2", x = -1234.5678)$
+    add_data(dims = "A3", x = 0)$
+    add_numfmt(dims = "A1", numfmt = fmt)$
+    add_numfmt(dims = "A2", numfmt = fmt2)$
+    add_numfmt(dims = "A3", numfmt = fmt)
+
+  exp <- structure(
+    list(
+      A = c("- £ 1,234.57", "-£ 1,234.57", "-£ -")
+    ),
+    row.names = c(NA, 3L),
+    class = "data.frame"
+  )
+  got <- wb_to_df(wb, apply_numfmts = TRUE, col_names = FALSE)
+  expect_equal(got, exp)
 
 })
