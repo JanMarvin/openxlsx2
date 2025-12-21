@@ -1155,6 +1155,9 @@ test_that("special formatting works", {
   got <- ooxml_format(0.66, "?/?")
   expect_equal(got, "2/3")
 
+  got <- ooxml_format(123456789, "0.00E+00")
+  expect_equal(got, "1.23E+08")
+
 })
 
 test_that("", {

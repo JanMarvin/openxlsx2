@@ -1491,6 +1491,50 @@ create_colors_xml <- function(
 #' @usage NULL
 create_colours_xml <- create_colors_xml
 
+# OOXML builtin formats
+## in spreadsheet software the accounting style is shown with the symbol of the
+## local currency and its either in front or behind the digits. We cannot do this
+## therefore the symbol is dropped.
+builtin_fmts_df <- data.frame(
+  numFmtId = c(
+    # 0,
+    1, 2, 3, 4, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+    37, 38, 39, 40, 44, 45, 46, 47, 48, 49
+  ),
+  formatCode = c(
+    # "General",                               # 0
+    "0",                                     # 1
+    "0.00",                                  # 2
+    "#,##0",                                 # 3
+    "#,##0.00",                              # 4
+    "0%",                                    # 9
+    "0.00%",                                 # 10
+    "0.00E+00",                              # 11
+    "# ?/?",                                 # 12
+    "# ??/??",                               # 13
+    "mm-dd-yy",                              # 14
+    "d-mmm-yy",                              # 15
+    "d-mmm",                                 # 16
+    "mmm-yy",                                # 17
+    "h:mm AM/PM",                            # 18
+    "h:mm:ss AM/PM",                         # 19
+    "h:mm",                                  # 20
+    "h:mm:ss",                               # 21
+    "m/d/yy h:mm",                           # 22
+    "#,##0 ;(#,##0)",                        # 37
+    "#,##0 ;[Red](#,##0)",                   # 38
+    "#,##0.00;(#,##0.00)",                   # 39
+    "#,##0.00;[Red](#,##0.00)",              # 40
+    "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)", # 44 (Accounting)
+    "mm:ss",                                 # 45
+    "[h]:mm:ss",                             # 46
+    "mmss.0",                                # 47
+    "##0.0E+0",                              # 48
+    "@"                                      # 49 (Text)
+  ),
+  stringsAsFactors = FALSE
+)
+
 # nocov end
 
 # style helper used in wb_to_df()
@@ -1526,9 +1570,7 @@ get_numfmt_style <- function(wb, cc) {
     )
   )
 
-  if (nrow(numfmts) == 0) {
-    return(cc)
-  }
+  numfmts <- rbind(numfmts, builtin_fmts_df)
 
   styles <- merge(
     styles,
@@ -1629,33 +1671,44 @@ format_date_time <- function(value, format_code) {
 
 # --- Helper: Number Formatter ---
 format_number <- function(value, format_code) {
-  mask_regex <- "[#0,\\.]+"
-  matches <- gregexpr(mask_regex, format_code)[[1]]
+  is_scientific <- grepl("E\\+", format_code, ignore.case = TRUE)
 
+  mask_regex <- "[#0,\\.E\\+]+"
+  matches <- gregexpr(mask_regex, format_code)[[1]]
   if (matches[1] == -1) return(process_literals(format_code))
 
   match_idx <- matches[length(matches)]
   match_len <- attr(matches, "match.length")[length(matches)]
   num_pattern <- substr(format_code, match_idx, match_idx + match_len - 1)
 
-  parts <- strsplit(num_pattern, "\\.")[[1]]
-  int_pat <- parts[1]
-  frac_pat <- if (length(parts) > 1) parts[2] else ""
+  if (is_scientific) {
+    prec_match <- regmatches(num_pattern, regexec("\\.(.*?)E", num_pattern, ignore.case = TRUE))
+    precision <- if (length(prec_match[[1]]) > 1) nchar(prec_match[[1]][2]) else 0
 
-  m <- gregexpr(",+$", int_pat, perl = TRUE)
-  if (m[[1]][1] != -1) value <- value / (1000 ^ nchar(regmatches(int_pat, m)[[1]]))
+    formatted_num <- sprintf(paste0("%.", precision, "E"), value)
 
-  mandatory_int <- nchar(gsub("[^0]", "", gsub(",", "", int_pat)))
-  precision <- nchar(gsub("[^0#]", "", frac_pat))
+    # OOXML usually uses uppercase 'E+'
+    formatted_num <- gsub("e", "E", formatted_num)
+  } else {
+    parts <- strsplit(num_pattern, "\\.")[[1]]
+    int_pat <- parts[1]
+    frac_pat <- if (length(parts) > 1) parts[2] else ""
 
-  rounded_val <- abs(round(value, precision))
-  fmt_str <- paste0("%0", mandatory_int + ifelse(precision > 0, precision + 1, 0), ".", precision, "f")
-  formatted_num <- sprintf(fmt_str, rounded_val)
+    m <- gregexpr(",+$", int_pat, perl = TRUE)
+    if (m[[1]][1] != -1) value <- value / (1000 ^ nchar(regmatches(int_pat, m)[[1]]))
 
-  if (grepl(",", int_pat)) {
-    num_parts <- strsplit(formatted_num, "\\.")[[1]]
-    num_parts[1] <- gsub("(?<=\\d)(?=(\\d{3})+$)", ",", num_parts[1], perl = TRUE)
-    formatted_num <- paste(num_parts, collapse = ".")
+    mandatory_int <- nchar(gsub("[^0]", "", gsub(",", "", int_pat)))
+    precision <- nchar(gsub("[^0#]", "", frac_pat))
+
+    rounded_val <- abs(round(value, precision))
+    fmt_str <- paste0("%0", mandatory_int + ifelse(precision > 0, precision + 1, 0), ".", precision, "f")
+    formatted_num <- sprintf(fmt_str, rounded_val)
+
+    if (grepl(",", int_pat)) {
+      num_parts <- strsplit(formatted_num, "\\.")[[1]]
+      num_parts[1] <- gsub("(?<=\\d)(?=(\\d{3})+$)", ",", num_parts[1], perl = TRUE)
+      formatted_num <- paste(num_parts, collapse = ".")
+    }
   }
 
   prefix <- substr(format_code, 1, match_idx - 1)

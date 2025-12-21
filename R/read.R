@@ -104,7 +104,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #'
 #' The function to apply numeric formats was not extensively tested for numeric
 #' equality with spreadsheet software. There might be differences and the function
-#' is lacking support for builtin styles.
+#' has limited support for builtin styles.
 #'
 #' @seealso [wb_get_named_regions()], \link[openxlsx2:openxlsx2-package]{openxlsx2}
 #'
