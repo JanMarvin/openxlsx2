@@ -1058,15 +1058,50 @@ test_that("date and time formatting works", {
   expect_identical(got, "01/05/25")
 
   # Formatting a time
-  got <- ooxml_format("2025-01-05T13:45:30", "hh:mm:ss AM/PM")
+  got <- ooxml_format("2025-01-05 13:45:30", "hh:mm:ss AM/PM")
   expect_identical(got, "01:45:30 PM")
 
-  got <- ooxml_format("2025-01-05T13:45:30", "HH:mm:ss")
+  got <- ooxml_format("2025-01-05 13:45:30", "HH:mm:ss")
   expect_identical(got, "13:45:30")
 
   # Formatting combined date and time
-  got <- ooxml_format("2025-01-05T13:45:30", "yy-mmm-dd HH:mm:ss")
+  got <- ooxml_format("2025-01-05 13:45:30", "yy-mmm-dd HH:mm:ss")
   expect_identical(got, "25-Jan-05 13:45:30")
+
+  got <- ooxml_format(as.POSIXct("1900-01-12 08:17:47"), "[h]:mm:ss")
+  expect_equal(got, "296:17:47")
+
+  got <- ooxml_format("1900-01-12 08:17:47", "[h]:mm:ss")
+  expect_equal(got, "296:17:47")
+
+})
+
+testthat::test_that("comprehensive duration works", {
+  # The original 296 hours test
+  val <- as.POSIXct("1900-01-12 08:17:47", tz = "UTC")
+
+  # Total Hours
+  expect_equal(ooxml_format(val, "[h]:mm:ss"), "296:17:47")
+
+  # Total Minutes
+  # (12 days * 1440) + (8 * 60) + 17 = 17777
+  expect_equal(ooxml_format(val, "[m]:ss"), "17777:47")
+
+  # Total Seconds
+  # (17777 * 60) + 47 = 1066667
+  expect_equal(ooxml_format(val, "[s]"), "1066667")
+
+  # Mixed format (Excel supports this)
+  expect_equal(ooxml_format(val, "[h] \"hours and\" m \"minutes\""), "296 hours and 17 minutes")
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = as.POSIXct("1900-01-12 08:17:47"))$
+    add_numfmt(numfmt = "[h] \"hours and\" m \"minutes\"")
+
+  exp <- "296 hours and 17 minutes"
+  got <- wb$to_df(apply_numfmts = TRUE, col_names = FALSE)$A
+  expect_equal(got, exp)
 
 })
 

@@ -1622,32 +1622,61 @@ process_literals <- function(fmt, value = NULL) {
 
 # --- Helper: Date and Time Formatter ---
 format_date_time <- function(value, format_code) {
-  # Convert string/date to POSIXct
+  # 1. Force character strings back to UTC POSIXct
+  # This ensures convert_to_excel_date returns a numeric serial
   dt_val <- if (inherits(value, "POSIXct") || inherits(value, "Date")) {
     value
-  } else if (grepl("T", value)) {
-    as.POSIXct(value, format = "%Y-%m-%dT%H:%M:%S")
+  } else if (is.character(value)) {
+    # We use UTC specifically to match your requirements
+    as.POSIXct(value, tz = "UTC")
   } else {
-    as.POSIXct(value)
+    value
   }
 
   res <- format_code
 
-  # Year
-  res <- gsub("yyyy", format(dt_val, "%Y"), res, ignore.case = TRUE)
-  res <- gsub("yy", format(dt_val, "%y"), res, ignore.case = TRUE)
+  # --- Handle Elapsed Units [h], [m], [s] ---
+  if (grepl("\\[h\\]|\\[m\\]|\\[s\\]", res, ignore.case = TRUE)) {
+    # Pass the OBJECT, not the character string, to your helper
+    excel_res <- convert_to_excel_date(list(v = dt_val))
+    serial_num <- excel_res[[1]]
 
-  # Day
-  res <- gsub("dd", format(dt_val, "%d"), res, ignore.case = TRUE)
-  res <- gsub("\\bd\\b", as.numeric(format(dt_val, "%d")), res, perl = TRUE, ignore.case = TRUE)
+    # Check if we got a number (if conversion failed, serial_num might be a string)
+    if (is.numeric(serial_num)) {
+      if (grepl("\\[h\\]", res, ignore.case = TRUE)) {
+        total_hrs <- floor((serial_num * 24) + 1e-7)
+        res <- gsub("\\[h\\]", as.character(total_hrs), res, ignore.case = TRUE)
+      }
+      if (grepl("\\[m\\]", res, ignore.case = TRUE)) {
+        total_mins <- floor((serial_num * 1440) + 1e-7)
+        res <- gsub("\\[m\\]", as.character(total_mins), res, ignore.case = TRUE)
+      }
+      if (grepl("\\[s\\]", res, ignore.case = TRUE)) {
+        total_secs <- floor((serial_num * 86400) + 1e-7)
+        res <- gsub("\\[s\\]", as.character(total_secs), res, ignore.case = TRUE)
+      }
+    }
+  }
 
-  # Protect Minutes (m/mm) if they follow h/hh or precede s/ss
-  res <- gsub("(?<=[Hh]):mm", ":_MINP_", res, perl = TRUE)
-  res <- gsub("(?<=[Hh]):m", ":_MIN_", res, perl = TRUE)
+  # --- Protect Minutes (m/mm) ---
+  has_elapsed_h <- grepl("\\[h\\]", format_code, ignore.case = TRUE)
+
+  res <- gsub("(?<=[Hh\\d]):mm", ":_MINP_", res, perl = TRUE)
+  res <- gsub("(?<=[Hh\\d]):m", ":_MIN_", res, perl = TRUE)
   res <- gsub("mm(?=:ss|s)", "_MINP_", res, perl = TRUE)
   res <- gsub("m(?=:ss|s)", "_MIN_", res, perl = TRUE)
 
-  # Months (m/mm/mmm/mmmm/mmmmm)
+  if (has_elapsed_h) {
+     res <- gsub("\\bmm\\b(?!(.*_MIN))", "_MINP_", res, perl = TRUE)
+     res <- gsub("\\bm\\b(?!(.*_MIN))", "_MIN_", res, perl = TRUE)
+  }
+
+  # --- Standard Components ---
+  res <- gsub("yyyy", format(dt_val, "%Y"), res, ignore.case = TRUE)
+  res <- gsub("yy", format(dt_val, "%y"), res, ignore.case = TRUE)
+  res <- gsub("dd", format(dt_val, "%d"), res, ignore.case = TRUE)
+  res <- gsub("\\bd\\b", as.numeric(format(dt_val, "%d")), res, perl = TRUE, ignore.case = TRUE)
+
   res <- gsub("mmmmm", substr(format(dt_val, "%B"), 1, 1), res, ignore.case = TRUE)
   res <- gsub("mmmm", format(dt_val, "%B"), res, ignore.case = TRUE)
   res <- gsub("mmm", format(dt_val, "%b"), res, ignore.case = TRUE)
@@ -1826,13 +1855,24 @@ ooxml_format <- function(value, format_code) {
       return(as.character(v))
     }
 
-    # 2. Meta Cleanup
-    target_fmt <- gsub("\\[(?!\\$)[^\\]]+\\]", "", target_fmt, perl = TRUE)
-    curr_match <- regmatches(target_fmt, regexec("\\[\\$(.*?)-.*?\\]", target_fmt))
-    if (length(curr_match[[1]]) > 1) {
-      symbol <- trimws(curr_match[[1]][2])
-      target_fmt <- gsub("\\[\\$.*?\\-.*?\\]", symbol, target_fmt)
+    # 1. Currency Extraction
+    curr_matches <- regmatches(target_fmt, gregexpr("\\[\\$(.*?)-.*?\\]", target_fmt))[[1]]
+    if (length(curr_matches) > 0) {
+      for (m in curr_matches) {
+        symbol <- gsub("^\\[\\$|\\-.*$", "", m)
+        target_fmt <- gsub(m, symbol, target_fmt, fixed = TRUE)
+      }
     }
+
+    # 2. Alignment & Metadata Cleanup
+    # Replace '* ' with a single space to preserve "£ 12,345"
+    target_fmt <- gsub("\\* ", " ", target_fmt)
+    target_fmt <- gsub("\\*.", "", target_fmt)
+    # Remove underscores (gap markers)
+    target_fmt <- gsub("(?<!\\\\)_.", "", target_fmt, perl = TRUE)
+
+    # STRATEGIC FIX: Protect [h], [m], [s] from being deleted
+    target_fmt <- gsub("\\[(?!(?:h|m|s|H|M|S))[^\\]]+\\]", "", target_fmt, perl = TRUE)
 
     # 3. Final Routing
     # A. Dates/Times
