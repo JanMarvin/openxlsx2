@@ -361,6 +361,9 @@ A curated list of XML functions used in openxlsx2.
 - [`convert_to_excel_date()`](https://janmarvin.github.io/openxlsx2/dev/reference/convert_to_excel_date.md)
   : convert back to an Excel Date
 
+- [`apply_numfmt()`](https://janmarvin.github.io/openxlsx2/dev/reference/apply_numfmt.md)
+  : Format Values using OOXML (Spreadsheet) Number Format Codes
+
 - [`temp_xlsx()`](https://janmarvin.github.io/openxlsx2/dev/reference/temp_xlsx.md)
   : helper function to create temporary directory for testing purpose
 

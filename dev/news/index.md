@@ -33,6 +33,11 @@
   [`write_xlsx()`](https://janmarvin.github.io/openxlsx2/dev/reference/write_xlsx.md)
   without tables.
   [\#1495](https://github.com/JanMarvin/openxlsx2/pull/1495)
+- Improve hms detection in cases where a hms style was mistaken as a
+  datetime. This also fixes a case, where a hms value exceeds a day. In
+  this case, spreadsheet software will handle it as a datetime starting
+  in 1900-01-01. With format `"[h]:mm:ss"` the value `42.5` becomes a
+  `1900-02-11 12:00:00`.
 
 ### Internal Changes
 
