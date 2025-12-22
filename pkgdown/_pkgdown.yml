@@ -162,6 +162,7 @@ reference:
   - col2int
   - fmt_txt
   - starts_with("convert_")
+  - apply_numfmt
   - temp_xlsx
   - waivers
   - dims_helper
