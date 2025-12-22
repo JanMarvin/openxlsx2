@@ -298,6 +298,7 @@ numfmt_is_posix <- function(numFmt) {
   )
   num_or_fmt <- paste0(num_fmts, collapse = "|")
   maybe_num <- grepl(pattern = num_or_fmt, x = numFmt_df$fC)
+  has_date <- grepl("y|d", numFmt_df$fC, ignore.case = TRUE)
 
   posix_fmts <- c(
     # "yy", "yyyy",
@@ -310,7 +311,7 @@ numfmt_is_posix <- function(numFmt) {
   posix_or_fmt <- paste0(posix_fmts, collapse = "|")
   maybe_posix <- grepl(pattern = posix_or_fmt, x = numFmt_df$fC)
 
-  z <- numFmt_df$numFmtId[maybe_posix & !maybe_num]
+  z <- numFmt_df$numFmtId[maybe_posix & has_date & !maybe_num]
   if (length(z) == 0) z <- NULL
   z
 }

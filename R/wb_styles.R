@@ -1634,6 +1634,10 @@ format_date_time <- function(value, format_code) {
     dt_val <- if (inherits(value, "POSIXct") || inherits(value, "Date")) {
       value
     } else if (is.character(value)) {
+      # for a hms format we need to add a date
+      if (grepl("^\\d{1,2}:\\d{2}", value)) {
+        value <- paste("1900-01-01", value)
+      }
       # Try to parse, but keep as NA if it's just a time string
       tryCatch(as.POSIXct(value, tz = "UTC"), error = function(e) NA)
     }
@@ -1899,6 +1903,10 @@ format_fraction <- function(value, format_code) {
 # --- Main Function ---
 ooxml_format <- function(value, format_code) {
 
+  if (inherits(value, "hms") || inherits(value, "difftime")) {
+    value <- convert_datetime(value)
+  }
+
   # Standardize input lengths
   max_len <- max(length(value), length(format_code))
   value <- rep_len(value, max_len)
@@ -1913,7 +1921,10 @@ ooxml_format <- function(value, format_code) {
 
     # Type Detection
     is_numeric <- is.numeric(v)
-    is_dt_str <- is.character(v) && grepl("^\\d{4}-\\d{2}-\\d{2}", v)
+    is_dt_str <- is.character(v) && (
+      grepl("^\\d{4}-\\d{2}-\\d{2}", v) ||  # Date check
+      grepl("^\\d{1,2}:\\d{2}:\\d{2}", v)   # Time check
+    )
     is_dt_obj <- inherits(v, "Date") || inherits(v, "POSIXct")
 
     # --- 1. NEW Section Selection Logic (Condition Picker) ---

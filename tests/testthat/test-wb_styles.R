@@ -1061,8 +1061,21 @@ test_that("date and time formatting works", {
   got <- ooxml_format("2025-01-05 13:45:30", "hh:mm:ss AM/PM")
   expect_identical(got, "01:45:30 PM")
 
-  got <- ooxml_format("2025-01-05 13:45:30", "HH:mm:ss")
+  got <- ooxml_format("2025-01-05 13:45:30", "hh:mm:ss")
   expect_identical(got, "13:45:30")
+
+  got <- ooxml_format("13:45:30", "hh:mm:ss AM/PM")
+  expect_identical(got, "01:45:30 PM")
+
+  got <- ooxml_format("13:45:30", "hh:mm:ss")
+  expect_identical(got, "13:45:30")
+
+  x <- structure(42.5, class = c("hms", "difftime"))
+  got <- ooxml_format(x, "hh:mm:ss")
+  expect_identical(got, "12:00:00")
+
+  got <- ooxml_format(x, "YYYY-MM-DD hh:mm:ss")
+  expect_identical(got, "1900-02-11 12:00:00")
 
   # Formatting combined date and time
   got <- ooxml_format("2025-01-05 13:45:30", "yy-mmm-dd HH:mm:ss")
@@ -1370,4 +1383,38 @@ test_that("conditional else branch", {
 
   # Hits the 'else' section (target_fmt <- sec)
   expect_identical(ooxml_format(250, fmt), "250.00")
+})
+
+test_that("extensive hms works", {
+  df <- data.frame(
+    daily_time = structure(c(3061200, 3511200, NA, 4051200, 4321200), units = "secs", class = c("hms", "difftime")),
+    stringsAsFactors = FALSE
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet(zoom = 130)$
+    add_data(x = df)
+
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "daily_time"), numfmt = "hh:mm:ss")
+
+  exp <- structure(
+    list(
+      daily_time = structure(c(-2206014000, -2205564000, NA, -2205024000, -2204754000), class = c("POSIXct", "POSIXt"), tzone = "UTC")
+    ),
+    row.names = 2:6,
+    class = "data.frame"
+  )
+  got <- wb$to_df()
+  expect_equal(got, exp)
+
+  exp <- structure(
+    list(
+      daily_time = c("10:20:00", "15:20:00", NA, "21:20:00", "00:20:00")
+    ),
+    row.names = 2:6,
+    class = "data.frame"
+  )
+  got <- wb$to_df(apply_numfmts = TRUE)
+  expect_equal(got, exp)
+
 })
