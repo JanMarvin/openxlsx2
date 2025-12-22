@@ -2047,7 +2047,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
   return fml_out;
 }
 
-std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
+std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t row, std::streampos pos, std::vector<int32_t> &ptgextra) {
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
@@ -2272,7 +2272,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_
 
   if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
-  fml_out = rgcb(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+  fml_out = rgcb(fml_out, sas, swapit, debug, row, pos, ptgextra);
 
   if (debug) {
     Rcpp::Rcout << "...fml..." << std::endl;
@@ -2317,7 +2317,7 @@ std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t
 
   if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
-  fml_out = rgcb(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+  fml_out = rgcb(fml_out, sas, swapit, debug, row, pos, ptgextra);
 
   if (debug) {
     Rcpp::Rcout << "...fml..." << std::endl;
