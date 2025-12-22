@@ -1029,49 +1029,62 @@ test_that("adding borders works", {
 # Formatting a number
 test_that("number formatting works", {
 
-  got <- ooxml_format(1234.5678, "#,##0.00")
+  got <- apply_numfmt(1234.5678, "#,##0.00")
   expect_identical(got, "1,234.57")
 
-  got <- ooxml_format(pi, "#,##0")
+  got <- apply_numfmt(pi, "#,##0")
   expect_identical(got, "3")
 
-  got <- ooxml_format(123456, "$#,##0")
+  got <- apply_numfmt(123456, "$#,##0")
   expect_identical(got, "$123,456")
 
-  got <- ooxml_format(pi, "0,000")
+  got <- apply_numfmt(pi, "0,000")
   expect_identical(got, "0,003")
 
-  got <- ooxml_format(123456789, "#,###,,")
+  got <- apply_numfmt(123456789, "#,###,,")
   expect_identical(got, "123")
 
 })
 
 test_that("date and time formatting works", {
 
-  got <- ooxml_format("2025-01-05", "yyyy-mm-dd")
+  got <- apply_numfmt("2025-01-05", "yyyy-mm-dd")
   expect_identical(got, "2025-01-05")
 
-  got <- ooxml_format("2025-01-05", "m/d/yyyy")
+  got <- apply_numfmt("2025-01-05", "m/d/yyyy")
   expect_identical(got, "1/5/2025")
 
-  got <- ooxml_format("2025-01-05", "mm/dd/yy")
+  got <- apply_numfmt("2025-01-05", "mm/dd/yy")
   expect_identical(got, "01/05/25")
 
   # Formatting a time
-  got <- ooxml_format("2025-01-05 13:45:30", "hh:mm:ss AM/PM")
+  got <- apply_numfmt("2025-01-05 13:45:30", "hh:mm:ss AM/PM")
   expect_identical(got, "01:45:30 PM")
 
-  got <- ooxml_format("2025-01-05 13:45:30", "HH:mm:ss")
+  got <- apply_numfmt("2025-01-05 13:45:30", "hh:mm:ss")
   expect_identical(got, "13:45:30")
 
+  got <- apply_numfmt("13:45:30", "hh:mm:ss AM/PM")
+  expect_identical(got, "01:45:30 PM")
+
+  got <- apply_numfmt("13:45:30", "hh:mm:ss")
+  expect_identical(got, "13:45:30")
+
+  x <- structure(42.5, class = c("hms", "difftime"))
+  got <- apply_numfmt(x, "hh:mm:ss")
+  expect_identical(got, "12:00:00")
+
+  got <- apply_numfmt(x, "YYYY-MM-DD hh:mm:ss")
+  expect_identical(got, "1900-02-11 12:00:00")
+
   # Formatting combined date and time
-  got <- ooxml_format("2025-01-05 13:45:30", "yy-mmm-dd HH:mm:ss")
+  got <- apply_numfmt("2025-01-05 13:45:30", "yy-mmm-dd HH:mm:ss")
   expect_identical(got, "25-Jan-05 13:45:30")
 
-  got <- ooxml_format(as.POSIXct("1900-01-12 08:17:47", "UTC"), "[h]:mm:ss")
+  got <- apply_numfmt(as.POSIXct("1900-01-12 08:17:47", "UTC"), "[h]:mm:ss")
   expect_equal(got, "296:17:47")
 
-  got <- ooxml_format("1900-01-12 08:17:47", "[h]:mm:ss")
+  got <- apply_numfmt("1900-01-12 08:17:47", "[h]:mm:ss")
   expect_equal(got, "296:17:47")
 
 })
@@ -1081,20 +1094,20 @@ testthat::test_that("comprehensive duration works", {
   val <- as.POSIXct("1900-01-12 08:17:47", tz = "UTC")
 
   # Total Hours
-  expect_equal(ooxml_format(val, "[h]:mm:ss"), "296:17:47")
+  expect_equal(apply_numfmt(val, "[h]:mm:ss"), "296:17:47")
 
   # Total Minutes
   # (12 days * 1440) + (8 * 60) + 17 = 17777
-  expect_equal(ooxml_format(val, "[m]:ss"), "17777:47")
+  expect_equal(apply_numfmt(val, "[m]:ss"), "17777:47")
 
   # Total Seconds
   # (17777 * 60) + 47 = 1066667
-  expect_equal(ooxml_format(val, "[s]"), "1066667")
+  expect_equal(apply_numfmt(val, "[s]"), "1066667")
 
   # Mixed format (Excel supports this)
-  expect_equal(ooxml_format(val, "[h] \"hours and\" m \"minutes\""), "296 hours and 17 minutes")
+  expect_equal(apply_numfmt(val, "[h] \"hours and\" m \"minutes\""), "296 hours and 17 minutes")
 
-  expect_equal(ooxml_format("1900-01-12 08:17:47", "[h] \"hours and\" m \"minutes\""), "296 hours and 17 minutes")
+  expect_equal(apply_numfmt("1900-01-12 08:17:47", "[h] \"hours and\" m \"minutes\""), "296 hours and 17 minutes")
 
   wb <- wb_workbook()$
     add_worksheet()$
@@ -1110,13 +1123,13 @@ testthat::test_that("comprehensive duration works", {
 test_that("special formatting works", {
 
   # Formatting a fraction
-  got <- ooxml_format(0.75, "# ?/?")
+  got <- apply_numfmt(0.75, "# ?/?")
   expect_identical(got, "3/4")
 
-  got <- ooxml_format(1.75, "# ?/?")
+  got <- apply_numfmt(1.75, "# ?/?")
   expect_identical(got, "1 3/4")
 
-  got <- ooxml_format(-1234.56, "(#,###.00)")
+  got <- apply_numfmt(-1234.56, "(#,###.00)")
   expect_identical(got, "(1,234.56)")
 
   fmt <- '#,###.00_);[Red](#,###.00);0.00;"gross receipts for "@'
@@ -1124,75 +1137,75 @@ test_that("special formatting works", {
   got <- create_numfmt(formatCode = fmt)
   expect_identical(got, exp)
 
-  got <- ooxml_format(1234.5678, fmt)
+  got <- apply_numfmt(1234.5678, fmt)
   expect_identical(got, "1,234.57")
 
-  got <- ooxml_format(-1234.5678, fmt)
+  got <- apply_numfmt(-1234.5678, fmt)
   expect_identical(got, "(1,234.57)")
 
-  got <- ooxml_format(0, fmt)
+  got <- apply_numfmt(0, fmt)
   expect_identical(got, "0.00")
 
-  got <- ooxml_format("a", fmt)
+  got <- apply_numfmt("a", fmt)
   expect_identical(got, "gross receipts for a")
 
   # Formatting a text
-  got <- ooxml_format("Hello", "Hello @")
+  got <- apply_numfmt("Hello", "Hello @")
   expect_identical(got, "Hello Hello")
 
   fmt <- "_-[$£-809]* #,##0.00_-;\\-[$£-809]* #,##0.00_-;_-[$£-809]* &quot;-&quot;??_-;_-@_-"
-  got <- ooxml_format(1234.5678, fmt) # currency symbol is tabbed into the front, so at least one whitespace after currency symbol
+  got <- apply_numfmt(1234.5678, fmt) # currency symbol is tabbed into the front, so at least one whitespace after currency symbol
   expect_identical(got, "£ 1,234.57")
 
-  got <- ooxml_format(-1234.5678, fmt)
+  got <- apply_numfmt(-1234.5678, fmt)
   expect_identical(got, "-£ 1,234.57")
 
   fmt <- "_- [$£-809]* #,##0.00_-;\\- [$£-809]* #,##0.00_-; [Red]-[$£-809]* &quot;-&quot;??_-;_-@_-"
 
-  got <- ooxml_format(12345.13456, fmt) # same tabbed currency
+  got <- apply_numfmt(12345.13456, fmt) # same tabbed currency
   expect_identical(got, "£ 12,345.13")
 
-  got <- ooxml_format(-12345.13456, fmt)
+  got <- apply_numfmt(-12345.13456, fmt)
   expect_identical(got, "- £ 12,345.13")
 
-  got <- ooxml_format(0, fmt) # no leading minus here
+  got <- apply_numfmt(0, fmt) # no leading minus here
   expect_identical(got, "-£ -")
 
   fmt <- "[$€-2] #,##0.00_);[Red]([$€-2] #,##0.00)"
-  got <- ooxml_format(12345.13456, fmt)
+  got <- apply_numfmt(12345.13456, fmt)
   expect_identical(got, "€ 12,345.13")
 
-  got <- ooxml_format(-12345.13456, fmt)
+  got <- apply_numfmt(-12345.13456, fmt)
   expect_identical(got, "(€ 12,345.13)")
 
-  got <- ooxml_format(0, fmt)
+  got <- apply_numfmt(0, fmt)
   expect_identical(got, "€ 0.00")
 
-  got <- ooxml_format(0.5, "#.##%")
+  got <- apply_numfmt(0.5, "#.##%")
   expect_identical(got, "50%")
 
-  got <- ooxml_format(1.75, "#%")
+  got <- apply_numfmt(1.75, "#%")
   expect_identical(got, "175%")
 
-  got <- ooxml_format(-1234.57, "$ #,##0")
+  got <- apply_numfmt(-1234.57, "$ #,##0")
   expect_identical(got, "-$ 1,235")
 
-  got <- ooxml_format(.POSIXct(72901, "UTC"), "hh:mm:ss A/P")
+  got <- apply_numfmt(.POSIXct(72901, "UTC"), "hh:mm:ss A/P")
   expect_identical(got, "08:15:01 P")
 
-  got <- ooxml_format(0, "#,##0; -#,##0; \"Nil\"")
+  got <- apply_numfmt(0, "#,##0; -#,##0; \"Nil\"")
   expect_equal(got, "Nil")
 
-  got <- ooxml_format(5, "# ?/?")
+  got <- apply_numfmt(5, "# ?/?")
   expect_equal(got, "5")
 
-  got <- ooxml_format(1.25, "?/?")
+  got <- apply_numfmt(1.25, "?/?")
   expect_equal(got, "5/4")
 
-  got <- ooxml_format(0.66, "?/?")
+  got <- apply_numfmt(0.66, "?/?")
   expect_equal(got, "2/3")
 
-  got <- ooxml_format(123456789, "0.00E+00")
+  got <- apply_numfmt(123456789, "0.00E+00")
   expect_equal(got, "1.23E+08")
 
 })
@@ -1207,10 +1220,10 @@ test_that("", {
     "19.00", "19.00", "20.00", "20.00", "20.00", "20.00", "20.00",
     "22.00", "23.00", "24.00", "24.00", "24.00", "24.00", "25.00"
   )
-  got <- ooxml_format(cars$speed, "#,##0.00")
+  got <- apply_numfmt(cars$speed, "#,##0.00")
   expect_identical(got, exp)
 
-  got <- ooxml_format(cars$speed, rep_len("#,##0.00", nrow(cars)))
+  got <- apply_numfmt(cars$speed, rep_len("#,##0.00", nrow(cars)))
   expect_identical(got, exp)
 })
 
@@ -1288,51 +1301,51 @@ test_that("escaped numfmt works", {
 
 test_that("day names work", {
   val <- "2025-01-05" # This is a Sunday
-  expect_identical(ooxml_format(val, "ddd"), "Sun")
-  expect_identical(ooxml_format(val, "dddd"), "Sunday")
+  expect_identical(apply_numfmt(val, "ddd"), "Sun")
+  expect_identical(apply_numfmt(val, "dddd"), "Sunday")
 })
 
 test_that("zero vs placeholder difference", {
-  expect_identical(ooxml_format(5, "0.00"), "5.00")
-  expect_identical(ooxml_format(5, "#.##"), "5")
-  expect_identical(ooxml_format(5.4, "#.00"), "5.40")
-  expect_identical(ooxml_format(0.4, "#.00"), ".40")
-  expect_identical(ooxml_format(0.4, "0.00"), "0.40")
+  expect_identical(apply_numfmt(5, "0.00"), "5.00")
+  expect_identical(apply_numfmt(5, "#.##"), "5")
+  expect_identical(apply_numfmt(5.4, "#.00"), "5.40")
+  expect_identical(apply_numfmt(0.4, "#.00"), ".40")
+  expect_identical(apply_numfmt(0.4, "0.00"), "0.40")
 })
 
 test_that("escaped literals", {
   # The 'm' should be a literal 'm', not a month
-  expect_identical(ooxml_format(123, "\\m#"), "m123")
+  expect_identical(apply_numfmt(123, "\\m#"), "m123")
 })
 
 test_that("padded durations", {
-  expect_equal(ooxml_format(1 / 24, "[hh]:mm"), "01:00")
-  expect_equal(ooxml_format("1899-12-31 01:00:00", "[hh]:mm"), "01:00")
-  expect_equal(ooxml_format(pi, "[hh]:mm"), "75:23")
+  expect_equal(apply_numfmt(1 / 24, "[hh]:mm"), "01:00")
+  expect_equal(apply_numfmt("1899-12-31 01:00:00", "[hh]:mm"), "01:00")
+  expect_equal(apply_numfmt(pi, "[hh]:mm"), "75:23")
 })
 
 test_that("duration minute ambiguity", {
   # In a standard date, 'm' is a month
-  expect_identical(ooxml_format("2025-01-05", "yyyy m d"), "2025 1 5")
+  expect_identical(apply_numfmt("2025-01-05", "yyyy m d"), "2025 1 5")
 
   # Inside a duration context, 'm' must be minutes
   # 1900-01-12 08:17:47 is 296 hours and 17 minutes
   val <- "1900-01-12 08:17:47"
-  expect_equal(ooxml_format(val, "[h] m"), "296 17")
-  expect_equal(ooxml_format(val, "[h] mm"), "296 17")
+  expect_equal(apply_numfmt(val, "[h] m"), "296 17")
+  expect_equal(apply_numfmt(val, "[h] mm"), "296 17")
 })
 
 test_that("conditional bracket formatting", {
   # Format: if < 1000, show as is; if >= 1000, show in thousands with a 'k'
   fmt <- "[<1000]#,##0;[>=1000]#,##0,\"k\""
 
-  expect_identical(ooxml_format(500, fmt), "500")
-  expect_identical(ooxml_format(1500, fmt), "2k")
+  expect_identical(apply_numfmt(500, fmt), "500")
+  expect_identical(apply_numfmt(1500, fmt), "2k")
 
   # Color-based conditionals (the colors are usually stripped or ignored in text output)
   fmt_color <- "[Red][<100]0;[Blue][>=100]0"
-  expect_identical(ooxml_format(50, fmt_color), "50")
-  expect_identical(ooxml_format(150, fmt_color), "150")
+  expect_identical(apply_numfmt(50, fmt_color), "50")
+  expect_identical(apply_numfmt(150, fmt_color), "150")
 
 
   fmt <- "[<1000]#,##0;[>=1000]#,##0,\"k\""
@@ -1354,13 +1367,13 @@ test_that("mandatory and optional fractional zeros", {
   # Trigger: num_parts > 1 and nchar(frac_str) > mandatory_frac_len
   # Format '0.0#' has 1 mandatory zero.
   # Value 5.40 -> should trim the trailing 0 because it's in a '#' position.
-  expect_identical(ooxml_format(5.4, "0.0#"), "5.4")
+  expect_identical(apply_numfmt(5.4, "0.0#"), "5.4")
 
   # Value 5.45 -> should keep the 5 because it's not a zero.
-  expect_identical(ooxml_format(5.45, "0.0#"), "5.45")
+  expect_identical(apply_numfmt(5.45, "0.0#"), "5.45")
 
   # Value 5.00 -> should keep one zero because of the '0' in '0.0#'
-  expect_identical(ooxml_format(5, "0.0#"), "5.0")
+  expect_identical(apply_numfmt(5, "0.0#"), "5.0")
 })
 
 test_that("conditional else branch", {
@@ -1369,5 +1382,39 @@ test_that("conditional else branch", {
   fmt <- "[<100]\"Small\";[<200]\"Medium\";0.00"
 
   # Hits the 'else' section (target_fmt <- sec)
-  expect_identical(ooxml_format(250, fmt), "250.00")
+  expect_identical(apply_numfmt(250, fmt), "250.00")
+})
+
+test_that("extensive hms works", {
+  df <- data.frame(
+    daily_time = structure(c(3061200, 3511200, NA, 4051200, 4321200), units = "secs", class = c("hms", "difftime")),
+    stringsAsFactors = FALSE
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet(zoom = 130)$
+    add_data(x = df)
+
+  wb$add_numfmt(dims = wb_dims(x = df, cols = "daily_time"), numfmt = "hh:mm:ss")
+
+  exp <- structure(
+    list(
+      daily_time = structure(c(-2206014000, -2205564000, NA, -2205024000, -2204754000), class = c("POSIXct", "POSIXt"), tzone = "UTC")
+    ),
+    row.names = 2:6,
+    class = "data.frame"
+  )
+  got <- wb$to_df()
+  expect_equal(got, exp)
+
+  exp <- structure(
+    list(
+      daily_time = c("10:20:00", "15:20:00", NA, "21:20:00", "00:20:00")
+    ),
+    row.names = 2:6,
+    class = "data.frame"
+  )
+  got <- wb$to_df(apply_numfmts = TRUE)
+  expect_equal(got, exp)
+
 })

@@ -54,8 +54,11 @@ convert_hms <- function(x) {
     x <- convert_datetime(x, origin = "1970-01-01", tz = "UTC")
     class(x) <- c("hms", "difftime")
   } else {
-    x <- convert_datetime(x, origin = "1970-01-01")
-    x <- format(x, format = "%H:%M:%S")
+    x <- convert_datetime(x)
+    if (all(x < as.POSIXct("1900-01-02 00:00:00", tz = "UTC"), na.rm = TRUE))
+      x <- format(x, format = "%H:%M:%S")
+    else
+      x
   }
   x
 }

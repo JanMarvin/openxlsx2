@@ -617,15 +617,15 @@ wb_to_df <- function(
 
     cc <- get_numfmt_style(wb, cc)
 
-    # ooxml_format expects numeric, character or date/posixct
+    # apply_numfmt expects numeric, character or date/posixct
     sel <- cc$num_fmt != "" & cc$typ %in% c(1L, 4L) & !cc$c_t %in% c("b", "e")
     if (any(sel)) {
-      cc$val[sel] <- ooxml_format(as.numeric(cc$val[sel]), cc$num_fmt[sel])
+      cc$val[sel] <- apply_numfmt(as.numeric(cc$val[sel]), cc$num_fmt[sel])
       cc$typ[sel] <- 0L
     }
     sel <- cc$num_fmt != "" & cc$typ %in% c(0L, 2L, 3L, 5L) & !cc$c_t %in% c("b", "e")
     if (any(sel)) {
-      cc$val[sel] <- ooxml_format(cc$val[sel], cc$num_fmt[sel])
+      cc$val[sel] <- apply_numfmt(cc$val[sel], cc$num_fmt[sel])
       cc$typ[sel] <- 0L
     }
   }
