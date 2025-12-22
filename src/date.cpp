@@ -3,7 +3,7 @@
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector date_to_unix(Rcpp::CharacterVector x, std::string origin = "1900-01-01", bool datetime = true) {
-  R_xlen_t n = x.size();
+  R_xlen_t n = Rf_xlength(x);
   Rcpp::CharacterVector result(n);
 
   double epoch_offset_days;  // Days from the specified origin epoch to 1970-01-01

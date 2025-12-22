@@ -22,7 +22,7 @@ bool to_long(std::string path) {
 // [[Rcpp::export]]
 SEXP openxlsx2_type(SEXP x) {
   const SEXP names = Rf_getAttrib(x, R_NamesSymbol);
-  R_xlen_t ncol = Rf_length(x);
+  R_xlen_t ncol = Rf_xlength(x);
 
   Rcpp::IntegerVector type(ncol);
   if (!Rf_isNull(names)) type.attr("names") = names;
@@ -115,7 +115,7 @@ SEXP openxlsx2_type(SEXP x) {
 // [[Rcpp::export]]
 Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
   // This function converts the Excel column letter to an integer
-  R_xlen_t n = static_cast<R_xlen_t>(x.size());
+  R_xlen_t n = Rf_xlength(x);
   std::unordered_map<std::string, int> col_map;
   Rcpp::IntegerVector colNums(n);
 
@@ -148,7 +148,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
-  R_xlen_t n = static_cast<R_xlen_t>(x.size());
+  R_xlen_t n = Rf_xlength(x);
   Rcpp::CharacterVector colNames(n);
   std::unordered_map<uint32_t, std::string> cache;  // Updated key type
 
@@ -172,7 +172,7 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
 // provide a basic rbindlist for lists of named characters
 // [[Rcpp::export]]
 SEXP rbindlist(Rcpp::List x) {
-  R_xlen_t nn = x.size();
+  R_xlen_t nn = Rf_xlength(x);
 
   // --- 1. Collect all unique names ---
   std::set<std::string> unique_names_set;
@@ -183,7 +183,7 @@ SEXP rbindlist(Rcpp::List x) {
     if (!Rf_isNewList(x[i]) && !Rf_isVector(x[i])) continue;
     if (Rcpp::as<Rcpp::List>(x[i]).hasAttribute("names")) {
       Rcpp::CharacterVector names_i = Rcpp::as<Rcpp::List>(x[i]).attr("names");
-      for (int j = 0; j < names_i.size(); ++j) {
+      for (R_xlen_t j = 0; j < Rf_xlength(names_i); ++j) {
         unique_names_set.insert(Rcpp::as<std::string>(names_i[j]));
       }
     }
@@ -223,7 +223,7 @@ SEXP rbindlist(Rcpp::List x) {
 
     Rcpp::CharacterVector current_names = current_vec.attr("names");
 
-    for (R_xlen_t j = 0; j < current_vec.size(); ++j) {
+    for (R_xlen_t j = 0; j < Rf_xlength(current_vec); ++j) {
       // Get the column name and find its index (O(1) average lookup)
       std::string current_name = Rcpp::as<std::string>(current_names[j]);
       auto it = name_to_idx.find(current_name);
@@ -338,7 +338,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
   std::vector<int32_t> ordered_unique_cols;
   std::set<int32_t> seen_cols_globally;
 
-  for (int i = 0; i < dims.size(); ++i) {
+  for (R_xlen_t i = 0; i < Rf_xlength(dims); ++i) {
     std::string dim_str = Rcpp::as<std::string>(dims[i]);
 
     std::vector<std::string> cells = needed_cells(dim_str, false);
@@ -428,7 +428,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
 
 // [[Rcpp::export]]
 SEXP dims_to_row_col_fill(Rcpp::CharacterVector dims, bool fills = false) {
-  R_xlen_t n = dims.size();
+  R_xlen_t n = Rf_xlength(dims);
 
   std::vector<int32_t> ordered_rows_final;
   std::vector<int32_t> ordered_cols_final;
@@ -527,8 +527,8 @@ SEXP dims_to_df(Rcpp::IntegerVector rows,
                 Rcpp::Nullable<Rcpp::CharacterVector> filled,
                 bool fill,
                 Rcpp::Nullable<Rcpp::IntegerVector> fcols) {
-  R_xlen_t kk = static_cast<R_xlen_t>(cols.size());
-  R_xlen_t nn = static_cast<R_xlen_t>(rows.size());
+  R_xlen_t kk = Rf_xlength(cols);
+  R_xlen_t nn = Rf_xlength(rows);
 
   bool has_fcols = fcols.isNotNull();
   bool has_filled = filled.isNotNull();
@@ -836,7 +836,7 @@ void wide_to_long(
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n) {
-  R_xlen_t kk = static_cast<R_xlen_t>(colnames.size());
+  R_xlen_t kk = Rf_xlength(colnames);
 
   // 1. create the list
   Rcpp::List df(kk);
