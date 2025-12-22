@@ -1963,119 +1963,128 @@ apply_numfmt <- function(value, format_code) {
   value <- rep_len(value, max_len)
   format_code <- rep_len(format_code, max_len)
 
-  results <- mapply(function(v, f) {
+  results <- character(max_len)
 
-    # Pre-processing
-    f <- replaceXMLEntities(f)
+  unique_fmts <- unique(format_code)
+
+  for (fmt_raw in unique_fmts) {
+    idx <- which(format_code == fmt_raw)
+    v_subset <- value[idx]
+
+    # --- Pre-processing ---
+    f <- replaceXMLEntities(fmt_raw)
     sections <- split_ooxml_sections(f)
     n_sec <- length(sections)
 
-    # Type Detection
-    is_numeric <- is.numeric(v)
-    is_dt_str <- is.character(v) && (
-      grepl("^\\d{4}-\\d{2}-\\d{2}", v) ||  # Date check
-      grepl("^\\d{1,2}:\\d{2}:\\d{2}", v)   # Time check
-    )
-    is_dt_obj <- inherits(v, "Date") || inherits(v, "POSIXct")
+    # Pre-clean metadata for each section
+    sections_cleaned <- lapply(sections, function(target_fmt) {
+      # Currency Extraction
+      curr_matches <- regmatches(target_fmt, gregexpr("\\[\\$(.*?)-.*?\\]", target_fmt))[[1]]
+      if (length(curr_matches) > 0) {
+        for (m in curr_matches) {
+          symbol <- gsub("^\\[\\$|\\-.*$", "", m)
+          target_fmt <- gsub(m, symbol, target_fmt, fixed = TRUE)
+        }
+      }
 
-    # --- 1. NEW Section Selection Logic (Condition Picker) ---
-    target_fmt <- ""
-    condition_matched <- FALSE
+      target_fmt <- gsub("\\* ", " ", target_fmt)
+      target_fmt <- gsub("\\*.", "", target_fmt)
+      target_fmt <- gsub("(?<!\\\\)_.", "", target_fmt, perl = TRUE)
 
-    # Check for conditional brackets like [<1500]
-    if (is_numeric && any(grepl("^\\[[<>=!]+[0-9.]+\\]", sections))) {
-      for (sec in sections) {
-        if (grepl("^\\[([<>=!]+[0-9.]+)\\]", sec)) {
-          cond_str <- gsub("^\\[([<>=!]+[0-9.]+)\\].*", "\\1", sec)
-          # Evaluate condition: e.g., "1200 < 1500"
-          if (eval(parse(text = paste(v, cond_str)))) {
-            target_fmt <- sec
+      # Strip Conditions ([<1500]) and Colors ([Red]) but PROTECT Durations ([h], [m], [s])
+      target_fmt <- gsub("\\[(?!(?:h|m|s|H|M|S))[^\\]]+\\]", "", target_fmt, perl = TRUE)
+      target_fmt
+    })
+
+    # --- Value Processing ---
+    results[idx] <- vapply(v_subset, function(v) {
+      if (is.na(v)) return(NA_character_)
+
+      # Type Detection
+      is_numeric <- is.numeric(v)
+      is_dt_obj <- inherits(v, "Date") || inherits(v, "POSIXct")
+      is_dt_str <- !is_numeric && !is_dt_obj && is.character(v) && (
+        grepl("^\\d{4}-\\d{2}-\\d{2}", v) || grepl("^\\d{1,2}:\\d{2}:\\d{2}", v)
+      )
+
+      target_fmt <- ""
+      condition_matched <- FALSE
+      sec_idx <- 1
+
+      # 1. Section Selection Logic
+      if (is_numeric && any(grepl("^\\[[<>=!]+[0-9.]+\\]", sections))) {
+        for (i in seq_along(sections)) {
+          sec <- sections[[i]]
+          if (grepl("^\\[([<>=!]+[0-9.]+)\\]", sec)) {
+            cond_str <- gsub("^\\[([<>=!]+[0-9.]+)\\].*", "\\1", sec)
+            if (eval(parse(text = paste(v, cond_str)))) {
+              sec_idx <- i
+              condition_matched <- TRUE
+              break
+            }
+          } else {
+            sec_idx <- i
             condition_matched <- TRUE
             break
           }
-        } else {
-          # This is the "else" section (no condition brackets)
-          target_fmt <- sec
-          condition_matched <- TRUE
-          break
         }
       }
-    }
 
-    # Fallback to standard Positive; Negative; Zero; Text logic
-    if (!condition_matched) {
-      if (is_numeric) {
-        if (v > 0 || (v == 0 && n_sec < 3)) {
-          target_fmt <- sections[1]
-        } else if (v < 0) {
-          if (n_sec >= 2) {
-            target_fmt <- sections[2]
-            v <- abs(v) # Excel treats negative section as absolute value
+      if (!condition_matched) {
+        if (is_numeric) {
+          if (v > 0 || (v == 0 && n_sec < 3)) {
+            sec_idx <- 1
+          } else if (v < 0) {
+            if (n_sec >= 2) {
+              sec_idx <- 2
+              v <- abs(v)
+            } else {
+              sec_idx <- 1
+            }
           } else {
-            target_fmt <- sections[1]
+            if (n_sec >= 3 && !grepl("[#0]", sections[[3]])) return(process_literals(sections_cleaned[[3]]))
+            sec_idx <- if (n_sec >= 3) 3 else 1
           }
+        } else if (is_dt_str || is_dt_obj) {
+          sec_idx <- 1
         } else {
-          if (n_sec >= 3 && !grepl("[#0]", sections[3])) return(process_literals(sections[3]))
-          target_fmt <- if (n_sec >= 3) sections[3] else sections[1]
+          if (n_sec >= 4) return(process_literals(sections_cleaned[[4]], v))
+          if (grepl("@", sections[[1]])) return(process_literals(sections_cleaned[[1]], v))
+          return(as.character(v))
         }
-      } else if (is_dt_str || is_dt_obj) {
-        target_fmt <- sections[1]
-      } else {
-        # Text handling
-        if (n_sec >= 4) return(process_literals(sections[4], v))
-        if (grepl("@", sections[1])) return(process_literals(sections[1], v))
-        return(as.character(v))
       }
-    }
 
-    # --- 2. Metadata Cleanup ---
-    # Currency Extraction
-    curr_matches <- regmatches(target_fmt, gregexpr("\\[\\$(.*?)-.*?\\]", target_fmt))[[1]]
-    if (length(curr_matches) > 0) {
-      for (m in curr_matches) {
-        symbol <- gsub("^\\[\\$|\\-.*$", "", m)
-        target_fmt <- gsub(m, symbol, target_fmt, fixed = TRUE)
+      # Use the pre-cleaned section
+      target_fmt <- sections_cleaned[[sec_idx]]
+      orig_sec <- sections[[sec_idx]]
+
+      # 3. Final Routing
+      # A. Dates/Times
+      if (is_dt_str || is_dt_obj || (grepl("[ymdhs\\[]", orig_sec, ignore.case = TRUE) && !grepl("[#0]", orig_sec))) {
+        return(format_date_time(v, target_fmt))
       }
-    }
 
-    target_fmt <- gsub("\\* ", " ", target_fmt)
-    target_fmt <- gsub("\\*.", "", target_fmt)
-    target_fmt <- gsub("(?<!\\\\)_.", "", target_fmt, perl = TRUE)
+      # B. Fractions
+      if (grepl("/[\\?\\d]", target_fmt) && is_numeric) {
+        return(format_fraction(v, target_fmt))
+      }
 
-    # UPDATED: Strip Conditions ([<1500]) and Colors ([Red])
-    # but PROTECT Durations ([h], [m], [s])
-    # Logic: Remove brackets that DON'T contain h, m, or s.
-    target_fmt <- gsub("\\[(?!(?:h|m|s|H|M|S))[^\\]]+\\]", "", target_fmt, perl = TRUE)
+      # C. Percentages
+      if (grepl("%", target_fmt)) {
+        val_pct <- if (is_numeric) v * 100 else v
+        res <- format_number(val_pct, gsub("%", "", target_fmt))
+        return(paste0(res, "%"))
+      }
 
-    # --- 3. Final Routing ---
-    # A. Dates/Times (Include checks for duration brackets)
-    if (is_dt_str || is_dt_obj || (grepl("[ymdhs\\[]", target_fmt, ignore.case = TRUE) && !grepl("[#0]", target_fmt))) {
-      return(format_date_time(v, target_fmt))
-    }
+      # D. Standard Numbers
+      res <- format_number(v, target_fmt)
+      if (is_numeric && v < 0 && !condition_matched && n_sec == 1 && !grepl("[\\(\\)-]", res)) {
+        res <- paste0("-", res)
+      }
 
-    # B. Fractions
-    if (grepl("/[\\?\\d]", target_fmt) && is_numeric) {
-      return(format_fraction(v, target_fmt))
-    }
-
-    # C. Percentages
-    if (grepl("%", target_fmt)) {
-      val_pct <- if (is_numeric) v * 100 else v
-      # Strip the % for the number part, then add it back
-      res <- format_number(val_pct, gsub("%", "", target_fmt))
-      return(paste0(res, "%"))
-    }
-
-    # D. Standard Numbers
-    res <- format_number(v, target_fmt)
-    # Re-apply negative sign if we didn't have a specific negative section
-    if (is_numeric && v < 0 && !condition_matched && n_sec == 1 && !grepl("[\\(\\)-]", res)) {
-      res <- paste0("-", res)
-    }
-
-   res
-
-  }, value, format_code, SIMPLIFY = TRUE, USE.NAMES = FALSE)
+      res
+    }, character(1))
+  }
 
   results
 }
