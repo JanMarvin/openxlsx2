@@ -5250,7 +5250,16 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## remove sheet
-      sn <- apply_reg_match0(self$workbook$sheets, pat = '(?<= name=")[^"]+')
+      sn <- unlist(
+        regmatches(
+          self$workbook$sheets,
+          gregexpr('(?<= name=")[^"]+',
+            self$workbook$sheets,
+            perl = TRUE
+          )
+        ),
+        use.names = FALSE
+      )
       self$workbook$sheets <- self$workbook$sheets[!sn %in% sheet_names]
 
       ## Reset rIds

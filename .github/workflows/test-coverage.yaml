@@ -25,6 +25,9 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Install bsdtar
+        run: sudo apt-get install -y libarchive-tools
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::covr, any::xml2

@@ -122,7 +122,7 @@ wb_check_overwrite_tables <- function(
 
 
 validate_cf_params <- function(params) {
-  bad <- names(params) %out% c("border", "gradient", "iconSet", "percent", "rank", "reverse", "showValue")
+  bad <- !names(params) %in% c("border", "gradient", "iconSet", "percent", "rank", "reverse", "showValue")
   if (any(bad)) {
     stop("Invalid parameters: ", toString(names(params)[bad]))
   }
