@@ -811,8 +811,19 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # in case the user mixes up column and row
+  if (is.character(rows_arg) && !is.null(args$x)) {
+    is_rows_a_colname <- rows_arg %in% colnames(args$x)
+    if (any(is_rows_a_colname)) {
+      stop(
+        "`rows` is the incorrect argument in this case\n",
+        "Use `cols` instead. Subsetting rows by name is not supported.",
+        call. = FALSE
+      )
+    }
+  }
+
   if (is.character(rows_arg) && !all(is_charnum(rows_arg))) {
-    stop("`rows` is character and contains nothing that can be interpreted as number.")
+    stop("`rows` is character and contains nothing that can be interpreted as number.", call. = FALSE)
   }
 
   if (!is.null(rows_arg) && (min(as.integer(rows_arg)) < 1L)) {

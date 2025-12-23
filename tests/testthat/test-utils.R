@@ -321,7 +321,7 @@ test_that("`wb_dims()` works when Supplying an object `x`.", {
   # using non-existing character column doesn't work
   expect_error(wb_dims(x = mtcars, cols = "A"), "`cols` must be an integer or an existing column name of `x`.")
   expect_equal(wb_dims(x = mtcars, cols = c("hp", "vs")), "D2:D33,H2:H33")
-  expect_error(expect_warning(wb_dims(x = mtcars, rows = "hp")), "`rows` is character and contains nothing that can be interpreted as number.")
+  expect_error(expect_warning(wb_dims(x = mtcars, rows = "hp")), "`rows` is the incorrect argument in this case\nUse `cols` instead. Subsetting rows by name is not supported.")
   # Access only row / col name
   expect_no_message(wb_dims(x = mtcars, select = "col_names"))
   # to write without column names, specify `from_row = 0` (or -1 of what you wanted)
@@ -875,6 +875,14 @@ test_that("fuzzing wb_dims", {
   expect_error(wb_dims(cols = 1, rows = as.factor(2)), "factors are not supported in wb_dims()")
   expect_error(wb_dims(rows = 2e6, cols = 1), "Row exceeds valid range")
   expect_error(wb_dims(rows = 1, cols = 2e5), "Column exceeds valid range")
+  expect_error(
+    wb_dims(x = data.frame(A = 1:3, B = 4:6), rows = "A"),
+    regexp = "Subsetting rows by name is not supported"
+  )
+  expect_error(
+    wb_dims(x = data.frame(A = 1:3, B = 4:6), rows = "Z"),
+    regexp = "contains nothing that can be interpreted as number"
+  )
 
 })
 
