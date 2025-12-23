@@ -883,7 +883,30 @@ test_that("fuzzing wb_dims", {
     wb_dims(x = data.frame(A = 1:3, B = 4:6), rows = "Z"),
     regexp = "contains nothing that can be interpreted as number"
   )
+  expect_error(
+    wb_dims(x = mtcars, left = 1, below = 1),
+    regexp = "can only be one direction"
+  )
 
+})
+
+test_that("wb_dims warns when coordinates are out of bounds", {
+
+  expect_silent(wb_dims(from_row = integer(0)))
+  expect_silent(wb_dims(from_col = character(0)))
+
+  # Start at Column B (2), but move 5 columns to the left.
+  # Result: 2 - 5 = -3. This triggers the (fcol < 1) check.
+  expect_warning(
+    wb_dims(from_col = 2, left = 5),
+    regexp = "columns cannot be left of column A"
+  )
+
+  # Similarly for rows:
+  expect_warning(
+    wb_dims(from_row = 2, above = 5),
+    regexp = "rows cannot be above of row 1"
+  )
 })
 
 test_that("as_binary", {

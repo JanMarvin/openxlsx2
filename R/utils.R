@@ -848,36 +848,38 @@ wb_dims <- function(..., select = NULL) {
     height_x <- 1
   }
 
-  if (!is.null(left)) {
-    fcol <- min(fcol) - left - width_x + 1L
-    frow <- min(frow)
-  } else if (!is.null(right)) {
-    fcol <- max(fcol) + right
-    frow <- min(frow)
-  } else if (!is.null(above)) {
-    fcol <- min(fcol)
-    frow <- min(frow) - above - height_x + 1L
-  } else if (!is.null(below)) {
-    fcol <- min(fcol)
-    frow <- max(frow) + below
-  } else {
-    fcol <- max(fcol)
-    frow <- max(frow)
+  if (length(fcol) && length(frow)) {
+    if (!is.null(left)) {
+      fcol <- min(fcol) - left - width_x + 1L
+      frow <- min(frow)
+    } else if (!is.null(right)) {
+      fcol <- max(fcol) + right
+      frow <- min(frow)
+    } else if (!is.null(above)) {
+      fcol <- min(fcol)
+      frow <- min(frow) - above - height_x + 1L
+    } else if (!is.null(below)) {
+      fcol <- min(fcol)
+      frow <- max(frow) + below
+    } else {
+      fcol <- max(fcol)
+      frow <- max(frow)
+    }
   }
-  if (length(fcol) == 0) {
-    fcol <- 1
+
+  # max() on empty returns -Inf, which is caught by < 1
+  if (length(fcol) == 0 || fcol < 1) {
+    if (length(fcol) > 0) {
+      warning("columns cannot be left of column A (integer position 1). resetting", call. = FALSE)
+    }
+    fcol <- 1L
   }
-  if (length(frow) == 0) {
-    frow <- 1
-  }
-  # guard against negative values
-  if (fcol < 1) {
-    warning("columns cannot be left of column A (integer position 1). resetting")
-    fcol <- 1
-  }
-  if (frow < 1) {
-    warning("rows cannot be above of row 1 (integer position 1). resetting")
-    frow <- 1
+
+  if (length(frow) == 0 || frow < 1) {
+    if (length(frow) > 0) {
+      warning("rows cannot be above of row 1 (integer position 1). resetting", call. = FALSE)
+    }
+    frow <- 1L
   }
 
   # After this point, all unnamed problems are solved ;)
