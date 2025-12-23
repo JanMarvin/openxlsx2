@@ -23,7 +23,7 @@ paste_c <- function(..., sep = "", collapse = " ") {
   stringi::stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
 }
 
-if (!exists("%||%", envir = baseenv())) {
+if (getRversion() < "4.4.0") {
   `%||%` <- function(x, y) if (is.null(x)) y else x
 }
 

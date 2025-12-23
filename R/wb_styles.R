@@ -154,7 +154,7 @@ create_border <- function(
 
   valid_borders <- c("none",  "thin",  "medium",  "dashed",  "dotted",  "thick",  "double",  "hair",  "mediumDashed",  "dashDot",  "mediumDashDot",  "dashDotDot",  "mediumDashDotDot", "slantDashDot", "")
   borders       <- c(left, right, top, bottom, diagonal, start, end, horizontal, vertical)
-  match.arg_wrapper(borders, valid_borders, several.ok = TRUE, fn_name = "create_border")
+  match.arg_wrapper(borders, valid_borders, fn_name = "create_border")
 
   # excel dies on style=\"\"
   if (!is.null(left))       left       <- c(style = left)

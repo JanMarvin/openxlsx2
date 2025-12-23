@@ -895,6 +895,8 @@ test_that("fuzzing wb_dims", {
   res <- wb_dims(x = mtcars[1:3, 1:3], row_names = TRUE, select = "data")
   expect_equal(res, "B2:D4")
 
+  expect_equal(wb_dims(cols = c(1, 3), rows = 1), c("A1,C1"))
+
 })
 
 test_that("wb_dims warns when coordinates are out of bounds", {
