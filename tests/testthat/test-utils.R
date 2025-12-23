@@ -887,6 +887,13 @@ test_that("fuzzing wb_dims", {
     wb_dims(x = mtcars, left = 1, below = 1),
     regexp = "can only be one direction"
   )
+  expect_error(
+    wb_dims(x = data.frame(A = 1:3, B = 4:6), cols = c("A", "Z")),
+    regexp = "The following were not found: `Z`"
+  )
+
+  res <- wb_dims(x = mtcars[1:3, 1:3], row_names = TRUE, select = "data")
+  expect_equal(res, "B2:D4")
 
 })
 

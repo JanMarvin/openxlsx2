@@ -405,12 +405,19 @@ check_wb_dims_args <- function(args, select = NULL) {
     }
   }
 
-  if (is.character(args$cols) && x_has_colnames && !all(args$cols %in% colnames(args$x))) {
+  if (is.character(args$cols) && x_has_colnames) {
     # Checking whether cols is character, and error if it is not the col names of x
-    stop(
-      "`cols` must be an integer or an existing column name of `x`, not ", args$cols,
-      call. = FALSE
-    )
+    missing_cols <- args$cols[!(args$cols %in% colnames(args$x))]
+
+    if (length(missing_cols) > 0) {
+      missing_label <- paste0("`", missing_cols, "`", collapse = ", ")
+
+      stop(
+        "`cols` must be an integer or an existing column name of `x`. \n",
+        "The following were not found: ", missing_label,
+        call. = FALSE
+      )
+    }
   }
 
   invisible(NULL)
@@ -933,10 +940,6 @@ wb_dims <- function(..., select = NULL) {
   if (!is.null(x) && is.character(cols_sel) && any(cols_sel %in% names(x))) {
     names(cols_all) <- names(x)
     cols_sel <- match(cols_sel, names(cols_all))
-    if (length(cols_sel) == 0) {
-      warning("selected column not found in `x`.")
-      cols_sel <- cols_all
-    }
   }
 
   # reduce to required length
