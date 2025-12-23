@@ -23,12 +23,8 @@ paste_c <- function(..., sep = "", collapse = " ") {
   stringi::stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
 }
 
-`%||%` <- function(x, y) if (is.null(x)) y else x
-`%|||%` <- function(x, y) if (length(x)) x else y
-
-# opposite of %in%
-`%out%` <- function(x, table) {
-  match(x, table, nomatch = 0L) == 0L
+if (!exists("%||%", envir = baseenv())) {
+  `%||%` <- function(x, y) if (is.null(x)) y else x
 }
 
 #' helper function to create temporary directory for testing purpose
