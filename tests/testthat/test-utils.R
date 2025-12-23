@@ -894,9 +894,16 @@ test_that("fuzzing wb_dims", {
 
   res <- wb_dims(x = mtcars[1:3, 1:3], row_names = TRUE, select = "data")
   expect_equal(res, "B2:D4")
-
   expect_equal(wb_dims(cols = c(1, 3), rows = 1), c("A1,C1"))
-
+  expect_error(wb_dims(list(1, 2), from_row = 1), "The first argument must either be named or be a vector.")
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, select = "data"), "B2:L33")
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, select = "col_names"), "B1:L1")
+  expect_equal(wb_dims(x = mtcars, row_names = TRUE, cols = c(1, 3), select = "data"), "B2:B33,D2:D33")
+  expect_equal(wb_dims(rows = c(1, 3), cols = c(1, 3)), "A1,C1,A3,C3")
+  expect_equal(wb_dims(rows = 1:2, cols = c(1, 3)), "A1:A2,C1:C2")
+  expect_equal(wb_dims(rows = c(1, 3), cols = 1:2), "A1:B1,A3:B3")
+  expect_equal(wb_dims(rows = 1:2, cols = 1:2), "A1:B2")
+  expect_equal(wb_dims(rows = 2:3, cols = 2:3), "B2:C3")
 })
 
 test_that("wb_dims warns when coordinates are out of bounds", {
