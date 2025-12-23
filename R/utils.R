@@ -79,7 +79,7 @@ dir_create <- function(..., warn = TRUE, recurse = FALSE) {
 
 as_binary <- function(x) {
   # To be used within a function
-  if (any(x %out% list(0, 1, FALSE, TRUE))) {
+  if (any(!x %in% list(0, 1, FALSE, TRUE))) {
     stop(deparse(x), " must be 0, 1, FALSE, or TRUE", call. = FALSE)
   }
 
