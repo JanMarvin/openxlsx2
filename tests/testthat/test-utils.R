@@ -366,7 +366,7 @@ test_that("`wb_dims()` handles row_names = TRUE consistenly.", {
 })
 
 test_that("wb_dims() errors clearly with bad `select`.", {
-  expect_error(wb_dims(x = mtcars, select = c("bad", "col_names")), "accepts a single")
+  expect_error(wb_dims(x = mtcars, select = c("bad", "col_names")), "is an invalid value for")
   expect_error(wb_dims(2, 10, select = "col_names"), "Can't supply `select` when `x` is absent")
 
   expect_error(wb_dims(x = mtcars, col_names = FALSE, select = "col_names"), "col_names = TRUE")

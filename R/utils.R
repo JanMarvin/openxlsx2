@@ -420,57 +420,34 @@ check_wb_dims_args <- function(args, select = NULL) {
 # It also provides a more informative error message in case it fails.
 match.arg_wrapper <- function(arg,
                               choices,
-                              several.ok = FALSE,
                               fn_name = NULL,
                               arg_name = NULL) {
   # Check valid argument names
   # partial matching accepted
   fn_name <- fn_name %||% "fn_name"
 
-  if (!several.ok) {
-    if (length(arg) != 1) {
+  invalid_args <- arg[arg != "" & !arg %in% choices]
 
-      valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
-      if (is.null(arg_name)) {
-        # validating arguments passed as ...
-        msg <- c(
-          "`", fn_name, "()` accepts a single argument\n",
-          "Use one of ", valid_arg_nams
-        )
-      } else {
-        # validating value of argument
-        msg <- c(
-          "`", arg_name, "` accepts a single value in `", fn_name, "()`\n",
-          "Use one of ", valid_arg_nams
-        )
-      }
-
-      stop(msg,  call. = FALSE)
-    }
-  }
-
-  invalid_args <- !arg %in% choices
-  if (any(invalid_args)) {
-    invalid_arg_nams <- paste0("`", arg[invalid_args], "`", collapse = ", ")
-    multi <- length(invalid_arg_nams) > 0
-
+  if (length(invalid_args) > 0) {
     valid_arg_nams <- paste0("'", choices[choices != ""], "'", collapse = ", ")
 
+    invalid_labels <- paste0("`", invalid_args, "`", collapse = ", ")
+
     if (is.null(arg_name)) {
-      # validating arguments passed as ...
-      arg_msg <- ""
-      plural_sentence <- ifelse(multi, " is an invalid argument for `", " are invalid arguments for `")
-
+      msg_start <- ifelse(length(invalid_args) > 1, " are invalid arguments", " is an invalid argument")
+      stop(
+        invalid_labels, msg_start, " for `", fn_name, "()`\n",
+        "Use any of ", valid_arg_nams,
+        call. = FALSE
+      )
     } else {
-      # validating value of argument
-      arg_msg <- c(arg_name, "` in `")
-      plural_sentence <- ifelse(multi, " is an invalid value for `", " are invalid values for `")
+      msg_start <- ifelse(length(invalid_args) > 1, " are invalid values", " is an invalid value")
+      stop(
+        invalid_labels, msg_start, " for `", arg_name, "` in `", fn_name, "()`\n",
+        "Use any of ", valid_arg_nams,
+        call. = FALSE
+      )
     }
-
-    stop(
-      invalid_arg_nams, plural_sentence, arg_msg, fn_name, "()`: ", "\n", "Use any of ", valid_arg_nams,
-      call. = FALSE
-    )
   }
   arg
 }
@@ -496,39 +473,33 @@ determine_select_valid <- function(args, select = NULL) {
   }
 
   select <- select %||% default_select
-  valid_cases_choices <- names(valid_cases)
+
+  # Validate that the string is one of the 4 allowed names
   match.arg_wrapper(
     select,
-    choices = valid_cases_choices,
-    several.ok = FALSE,
+    choices = names(valid_cases),
     fn_name = "wb_dims",
     arg_name = "select"
   )
 
+  # Check if the specific case is valid for the current input x
   if (isFALSE(valid_cases[[select]])) {
-
-    if (isFALSE(args$row_names %||% FALSE) && identical(select, "row_names")) {
       # If the default for row_names ever changes in openxlsx2, this would need adjustment.
+    if (identical(select, "row_names")) {
       stop(
         "`select` can't be \"row_names\" if `x` doesn't have row names.\n",
         "Use `row_names = TRUE` inside `wb_dims()` to ensure row names are preserved.",
         call. = FALSE
       )
-    } else if (isFALSE(args$col_names %||% TRUE) && identical(select, "col_names")) {
       # If the default for col_names ever changes in openxlsx2, this would need adjustment.
+    } else if (identical(select, "col_names")) {
       stop(
         "`select` can't be \"col_names\" if `x` doesn't have column names.\n",
         "Use `col_names = TRUE` inside `wb_dims()` to ensure column names are preserved.",
         call. = FALSE
       )
-    } else {
-      # this is probably redundant now?
-      stop(
-        "You provided a bad value to `select` in `wb_dims()`.\n ",
-        "Please review. see `?wb_dims`.",
-        call. = FALSE
-      )
     }
+    # Removed the 'else' stop as it is unreachable
   }
 
   select
@@ -709,7 +680,7 @@ wb_dims <- function(..., select = NULL) {
     if (any(c("start_col", "start_row") %in% nams)) {
       stop("Use `from_row` / `from_col` instead of `start_row` / `start_col`")
     }
-    match.arg_wrapper(arg = nams, choices = c(valid_arg_nams, ""), several.ok = TRUE, fn_name = "wb_dims")
+    match.arg_wrapper(arg = nams, choices = c(valid_arg_nams, ""), fn_name = "wb_dims")
   }
   # After this point, no need to search for invalid arguments!
 
@@ -828,12 +799,6 @@ wb_dims <- function(..., select = NULL) {
 
   if (!is.null(rows_arg) && (min(as.integer(rows_arg)) < 1L)) {
     stop("You must supply positive values to `rows`.")
-  }
-
-  # Just keeping this as a safeguard
-  has_some_unnamed_args <- !all(nzchar(nams))
-  if (has_some_unnamed_args) {
-    stop("Internal error, all arguments should be named after this point.")
   }
 
   if (length(args$from_col) > 1 || length(args$from_row) > 1 ||
