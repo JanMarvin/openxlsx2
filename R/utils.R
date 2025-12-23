@@ -18,9 +18,8 @@ naToNULLList <- function(x) {
 # useful for replacing multiple x <- paste(x, new) where the length is checked
 # multiple times.  This combines all elements in ... and removes anything that
 # is zero length.  Much faster than multiple if/else (re)assignments
-paste_c <- function(..., sep = "", collapse = " ", unlist = FALSE) {
+paste_c <- function(..., sep = "", collapse = " ") {
   x <- c(...)
-  if (unlist) x <- unlist(x, use.names = FALSE)
   stringi::stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
 }
 
