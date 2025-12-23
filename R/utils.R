@@ -392,19 +392,6 @@ check_wb_dims_args <- function(args, select = NULL) {
 
   x_has_colnames <- !is.null(colnames(args$x))
 
-  if (is.character(args$rows) && !is.null(args$rows) && x_has_colnames) {
-    # Not checking whether it's a row name, not supported.
-    is_rows_a_colname <- args$rows %in% colnames(args$x)
-
-    if (any(is_rows_a_colname)) {
-      stop(
-        "`rows` is the incorrect argument in this case\n",
-        "Use `cols` instead. Subsetting rows by name is not supported.",
-        call. = FALSE
-      )
-    }
-  }
-
   if (is.character(args$cols) && x_has_colnames) {
     # Checking whether cols is character, and error if it is not the col names of x
     missing_cols <- args$cols[!(args$cols %in% colnames(args$x))]
