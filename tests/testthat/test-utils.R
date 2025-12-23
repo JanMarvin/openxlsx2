@@ -876,3 +876,8 @@ test_that("fuzzing wb_dims", {
   expect_error(wb_dims(rows = 1, cols = 2e5), "Column exceeds valid range")
 
 })
+
+test_that("as_binary", {
+  expect_error(as_binary(7), "must be 0, 1, FALSE, or TRUE")
+  expect_error(as_binary("-7"), "must be 0, 1, FALSE, or TRUE")
+})
