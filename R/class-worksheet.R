@@ -521,11 +521,8 @@ wbWorksheet <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(dims = NULL, solve = FALSE, direction = NULL) {
 
-      if (any(grepl(";", dims)))
-        dims <- unlist(strsplit(dims, ";"))
-
-      if (any(grepl(",", dims)))
-        dims <- unlist(strsplit(dims, ","))
+      if (any(grepl(",|;", dims)))
+        dims <- unlist(strsplit(dims, split = "[,;]"))
 
       current <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
       if (length(current))

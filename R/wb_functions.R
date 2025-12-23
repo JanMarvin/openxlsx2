@@ -74,12 +74,8 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
   }
 
   has_dim_sep <- FALSE
-  if (any(grepl(";", dims))) {
-    dims <- unlist(strsplit(dims, ";"))
-    has_dim_sep <- TRUE
-  }
-  if (any(grepl(",", dims))) {
-    dims <- unlist(strsplit(dims, ","))
+  if (any(grepl(",|;", dims))) {
+    dims <- unlist(strsplit(dims, split = "[,;]"))
     has_dim_sep <- TRUE
   }
 

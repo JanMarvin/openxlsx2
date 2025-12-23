@@ -57,6 +57,7 @@ test_that("validate_dims() works", {
   expect_error(validate_dims(1), "must be class character")
   expect_true(validate_dims("$A1:B3"))
   expect_true(validate_dims("A1:B3,$A$1:$B2"))
+  expect_true(validate_dims("A1:B3;$A$1:$B2"))
   expect_true(validate_dims("A:B"))
   expect_true(validate_dims("1:2"))
   expect_error(validate_dims(""), "Unexpected blank strings in dims validtion detected")

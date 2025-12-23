@@ -169,8 +169,7 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 
   dims <- x
   if (length(x) == 1 && inherits(x, "character")) {
-    if (grepl(";", x)) dims <- unlist(strsplit(x, ";"))
-    if (grepl(",", x)) dims <- unlist(strsplit(x, ","))
+    if (any(grepl(",|;", x))) dims <- unlist(strsplit(dims, split = "[,;]"))
   }
 
   cols_out <- NULL
@@ -230,8 +229,7 @@ validate_dims <- function(x) {
     stop("dims contains invalid character", call. = FALSE)
 
   if (length(dims) == 1 && inherits(dims, "character")) {
-    if (grepl(";", dims)) dims <- unlist(strsplit(dims, ";"))
-    if (grepl(",", dims)) dims <- unlist(strsplit(dims, ","))
+    if (any(grepl(",|;", dims))) dims <- unlist(strsplit(dims, split = "[,;]"))
   }
 
   for (dim in dims) {
