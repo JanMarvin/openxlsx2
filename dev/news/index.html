@@ -64,11 +64,12 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>It is now possible to add filters via <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> without tables. <a href="https://github.com/JanMarvin/openxlsx2/pull/1495" class="external-link">#1495</a>
 </li>
-<li>Improve hms detection in cases where a hms style was mistaken as a datetime. This also fixes a case, where a hms value exceeds a day. In this case, spreadsheet software will handle it as a datetime starting in 1900-01-01. With format <code>"[h]:mm:ss"</code> the value <code>42.5</code> becomes a <code>1900-02-11 12:00:00</code>.</li>
+<li>Improve time detection in cases where a time style was mistaken as a datetime. This also fixes a case, where a time value exceeds a day. In this case, spreadsheet software will handle it as a datetime starting in 1900-01-01. With format <code>"[h]:mm:ss"</code> the value <code>42.5</code> now becomes <code>1900-02-11 12:00:00</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
 <ul><li>C++ functions used in loading and writing files have seen another round of cleanups.</li>
+<li>Cleanups in <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to increase coverage and to be more precise in error messages.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
