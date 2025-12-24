@@ -856,7 +856,7 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
 
 // [[Rcpp::export]]
 Rcpp::DataFrame create_int_dataframe(const Rcpp::DataFrame& char_df) {
-  int32_t n_rows = char_df.nrow();
+  R_xlen_t n_rows = char_df.nrow();
   int32_t n_cols = static_cast<int32_t>(char_df.ncol());
 
   Rcpp::CharacterVector col_names = char_df.names();
