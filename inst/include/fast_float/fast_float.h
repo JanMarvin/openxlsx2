@@ -161,7 +161,7 @@
 #endif
 
 #define FASTFLOAT_VERSION_MAJOR 8
-#define FASTFLOAT_VERSION_MINOR 1
+#define FASTFLOAT_VERSION_MINOR 2
 #define FASTFLOAT_VERSION_PATCH 0
 
 #define FASTFLOAT_STRINGIZE_IMPL(x) #x
@@ -507,6 +507,52 @@ leading_zeroes(uint64_t input_num) {
 #endif
 }
 
+/* Helper C++14 constexpr generic implementation of countr_zero for 32-bit */
+fastfloat_really_inline FASTFLOAT_CONSTEXPR14 int
+countr_zero_generic_32(uint32_t input_num) {
+  if (input_num == 0) {
+    return 32;
+  }
+  int last_bit = 0;
+  if (!(input_num & 0x0000FFFF)) {
+    input_num >>= 16;
+    last_bit |= 16;
+  }
+  if (!(input_num & 0x00FF)) {
+    input_num >>= 8;
+    last_bit |= 8;
+  }
+  if (!(input_num & 0x0F)) {
+    input_num >>= 4;
+    last_bit |= 4;
+  }
+  if (!(input_num & 0x3)) {
+    input_num >>= 2;
+    last_bit |= 2;
+  }
+  if (!(input_num & 0x1)) {
+    last_bit |= 1;
+  }
+  return last_bit;
+}
+
+/* count trailing zeroes for 32-bit integers */
+fastfloat_really_inline FASTFLOAT_CONSTEXPR20 int
+countr_zero_32(uint32_t input_num) {
+  if (cpp20_and_in_constexpr()) {
+    return countr_zero_generic_32(input_num);
+  }
+#ifdef FASTFLOAT_VISUAL_STUDIO
+  unsigned long trailing_zero = 0;
+  if (_BitScanForward(&trailing_zero, input_num)) {
+    return (int)trailing_zero;
+  }
+  return 32;
+#else
+  return input_num == 0 ? 32 : __builtin_ctz(input_num);
+#endif
+}
+
 // slow emulation routine for 32-bit
 fastfloat_really_inline constexpr uint64_t emulu(uint32_t x, uint32_t y) {
   return x * (uint64_t)y;
@@ -551,8 +597,8 @@ full_multiplication(uint64_t a, uint64_t b) {
   // But MinGW on ARM64 doesn't have native support for 64-bit multiplications
   answer.high = __umulh(a, b);
   answer.low = a * b;
-#elif defined(FASTFLOAT_32BIT) ||                                              \
-    (defined(_WIN64) && !defined(__clang__) && !defined(_M_ARM64))
+#elif defined(FASTFLOAT_32BIT) || (defined(_WIN64) && !defined(__clang__) &&   \
+                                   !defined(_M_ARM64) && !defined(__GNUC__))
   answer.low = _umul128(a, b, &answer.high); // _umul128 not available on ARM64
 #elif defined(FASTFLOAT_64BIT) && defined(__SIZEOF_INT128__)
   __uint128_t r = ((__uint128_t)a) * b;
@@ -1311,6 +1357,9 @@ static_assert(std::is_same<equiv_uint_t<std::float64_t>, uint64_t>::value,
 static_assert(
     std::numeric_limits<std::float64_t>::is_iec559,
     "std::float64_t must fulfill the requirements of IEC 559 (IEEE 754)");
+
+template <>
+struct binary_format<std::float64_t> : public binary_format<double> {};
 #endif // __STDCPP_FLOAT64_T__
 
 #ifdef __STDCPP_FLOAT32_T__
@@ -1319,6 +1368,9 @@ static_assert(std::is_same<equiv_uint_t<std::float32_t>, uint32_t>::value,
 static_assert(
     std::numeric_limits<std::float32_t>::is_iec559,
     "std::float32_t must fulfill the requirements of IEC 559 (IEEE 754)");
+
+template <>
+struct binary_format<std::float32_t> : public binary_format<float> {};
 #endif // __STDCPP_FLOAT32_T__
 
 #ifdef __STDCPP_FLOAT16_T__
@@ -1390,7 +1442,6 @@ constexpr chars_format adjust_for_feature_macros(chars_format fmt) {
       ;
 }
 } // namespace detail
-
 } // namespace fast_float
 
 #endif
@@ -1458,6 +1509,20 @@ FASTFLOAT_CONSTEXPR20 inline double
 integer_times_pow10(uint64_t mantissa, int decimal_exponent) noexcept;
 FASTFLOAT_CONSTEXPR20 inline double
 integer_times_pow10(int64_t mantissa, int decimal_exponent) noexcept;
+
+/**
+ * This function is a template overload of `integer_times_pow10()`
+ * that returns a floating-point value of type `T` that is one of
+ * supported floating-point types (e.g. `double`, `float`).
+ */
+template <typename T>
+FASTFLOAT_CONSTEXPR20
+    typename std::enable_if<is_supported_float_type<T>::value, T>::type
+    integer_times_pow10(uint64_t mantissa, int decimal_exponent) noexcept;
+template <typename T>
+FASTFLOAT_CONSTEXPR20
+    typename std::enable_if<is_supported_float_type<T>::value, T>::type
+    integer_times_pow10(int64_t mantissa, int decimal_exponent) noexcept;
 
 /**
  * from_chars for integer types.
@@ -1980,6 +2045,94 @@ parse_int_string(UC const *p, UC const *pend, T &value,
   bool const has_leading_zeros = p > start_num;
 
   UC const *const start_digits = p;
+
+  FASTFLOAT_IF_CONSTEXPR17((std::is_same<T, std::uint8_t>::value)) {
+    const size_t len = (size_t)(pend - p);
+    if (len == 0) {
+      if (has_leading_zeros) {
+        value = 0;
+        answer.ec = std::errc();
+        answer.ptr = p;
+      } else {
+        answer.ec = std::errc::invalid_argument;
+        answer.ptr = first;
+      }
+      return answer;
+    }
+
+    uint32_t digits;
+
+#if FASTFLOAT_HAS_IS_CONSTANT_EVALUATED && FASTFLOAT_HAS_BIT_CAST
+    if (std::is_constant_evaluated()) {
+      uint8_t str[4]{};
+      for (size_t j = 0; j < 4 && j < len; ++j) {
+        str[j] = static_cast<uint8_t>(p[j]);
+      }
+      digits = std::bit_cast<uint32_t>(str);
+    }
+#else
+    if (false) {
+    }
+#endif
+    else if (len >= 4) {
+      ::memcpy(&digits, p, 4);
+    } else {
+      uint32_t b0 = static_cast<uint8_t>(p[0]);
+      uint32_t b1 = (len > 1) ? static_cast<uint8_t>(p[1]) : 0xFFu;
+      uint32_t b2 = (len > 2) ? static_cast<uint8_t>(p[2]) : 0xFFu;
+      uint32_t b3 = 0xFFu;
+#if FASTFLOAT_IS_BIG_ENDIAN
+      digits = (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
+#else
+      digits = b0 | (b1 << 8) | (b2 << 16) | (b3 << 24);
+#endif
+    }
+
+    uint32_t magic =
+        ((digits + 0x46464646u) | (digits - 0x30303030u)) & 0x80808080u;
+    uint32_t tz = (uint32_t)countr_zero_32(magic); // 7, 15, 23, 31, or 32
+    uint32_t nd = (tz == 32) ? 4 : (tz >> 3);
+    nd = (uint32_t)std::min((size_t)nd, len);
+    if (nd == 0) {
+      if (has_leading_zeros) {
+        value = 0;
+        answer.ec = std::errc();
+        answer.ptr = p;
+        return answer;
+      }
+      answer.ec = std::errc::invalid_argument;
+      answer.ptr = first;
+      return answer;
+    }
+    if (nd > 3) {
+      const UC *q = p + nd;
+      size_t rem = len - nd;
+      while (rem) {
+        if (*q < UC('0') || *q > UC('9'))
+          break;
+        ++q;
+        --rem;
+      }
+      answer.ec = std::errc::result_out_of_range;
+      answer.ptr = q;
+      return answer;
+    }
+
+    digits ^= 0x30303030u;
+    digits <<= ((4 - nd) * 8);
+
+    uint32_t check = ((digits >> 24) & 0xff) | ((digits >> 8) & 0xff00) |
+                     ((digits << 8) & 0xff0000);
+    if (check > 0x00020505) {
+      answer.ec = std::errc::result_out_of_range;
+      answer.ptr = p + nd;
+      return answer;
+    }
+    value = (uint8_t)((0x640a01 * digits) >> 24);
+    answer.ec = std::errc();
+    answer.ptr = p + nd;
+    return answer;
+  }
 
   uint64_t i = 0;
   if (base == 10) {
@@ -3654,11 +3807,8 @@ constexpr static uint64_t powers_of_ten_uint64[] = {1UL,
 // this algorithm is not even close to optimized, but it has no practical
 // effect on performance: in order to have a faster algorithm, we'd need
 // to slow down performance for faster algorithms, and this is still fast.
-template <typename UC>
 fastfloat_really_inline FASTFLOAT_CONSTEXPR14 int32_t
-scientific_exponent(parsed_number_string_t<UC> &num) noexcept {
-  uint64_t mantissa = num.mantissa;
-  int32_t exponent = int32_t(num.exponent);
+scientific_exponent(uint64_t mantissa, int32_t exponent) noexcept {
   while (mantissa >= 10000) {
     mantissa /= 10000;
     exponent += 4;
@@ -4014,7 +4164,7 @@ inline FASTFLOAT_CONSTEXPR20 adjusted_mantissa negative_digit_comp(
     FASTFLOAT_ASSERT(real_digits.pow2(uint32_t(-pow2_exp)));
   }
 
-  // compare digits, and use it to director rounding
+  // compare digits, and use it to direct rounding
   int ord = real_digits.compare(theor_digits);
   adjusted_mantissa answer = am;
   round<T>(answer, [ord](adjusted_mantissa &a, int32_t shift) {
@@ -4035,7 +4185,7 @@ inline FASTFLOAT_CONSTEXPR20 adjusted_mantissa negative_digit_comp(
   return answer;
 }
 
-// parse the significant digits as a big integer to unambiguously round the
+// parse the significant digits as a big integer to unambiguously round
 // the significant digits. here, we are trying to determine how to round
 // an extended float representation close to `b+h`, halfway between `b`
 // (the float rounded-down) and `b+u`, the next positive float. this
@@ -4054,7 +4204,8 @@ digit_comp(parsed_number_string_t<UC> &num, adjusted_mantissa am) noexcept {
   // remove the invalid exponent bias
   am.power2 -= invalid_am_bias;
 
-  int32_t sci_exp = scientific_exponent(num);
+  int32_t sci_exp =
+      scientific_exponent(num.mantissa, static_cast<int32_t>(num.exponent));
   size_t max_digits = binary_format<T>::max_digits();
   size_t digits = 0;
   bigint bigmant;
@@ -4414,44 +4565,79 @@ from_chars(UC const *first, UC const *last, T &value, int base) noexcept {
   return from_chars_advanced(first, last, value, options);
 }
 
-FASTFLOAT_CONSTEXPR20 inline double
-integer_times_pow10(uint64_t mantissa, int decimal_exponent) noexcept {
-  double value;
+template <typename T>
+FASTFLOAT_CONSTEXPR20
+    typename std::enable_if<is_supported_float_type<T>::value, T>::type
+    integer_times_pow10(uint64_t mantissa, int decimal_exponent) noexcept {
+  T value;
   if (clinger_fast_path_impl(mantissa, decimal_exponent, false, value))
     return value;
 
   adjusted_mantissa am =
-      compute_float<binary_format<double>>(decimal_exponent, mantissa);
+      compute_float<binary_format<T>>(decimal_exponent, mantissa);
   to_float(false, am, value);
   return value;
 }
 
-FASTFLOAT_CONSTEXPR20 inline double
-integer_times_pow10(int64_t mantissa, int decimal_exponent) noexcept {
+template <typename T>
+FASTFLOAT_CONSTEXPR20
+    typename std::enable_if<is_supported_float_type<T>::value, T>::type
+    integer_times_pow10(int64_t mantissa, int decimal_exponent) noexcept {
   const bool is_negative = mantissa < 0;
   const uint64_t m = static_cast<uint64_t>(is_negative ? -mantissa : mantissa);
 
-  double value;
+  T value;
   if (clinger_fast_path_impl(m, decimal_exponent, is_negative, value))
     return value;
 
-  adjusted_mantissa am =
-      compute_float<binary_format<double>>(decimal_exponent, m);
+  adjusted_mantissa am = compute_float<binary_format<T>>(decimal_exponent, m);
   to_float(is_negative, am, value);
   return value;
 }
 
+FASTFLOAT_CONSTEXPR20 inline double
+integer_times_pow10(uint64_t mantissa, int decimal_exponent) noexcept {
+  return integer_times_pow10<double>(mantissa, decimal_exponent);
+}
+
+FASTFLOAT_CONSTEXPR20 inline double
+integer_times_pow10(int64_t mantissa, int decimal_exponent) noexcept {
+  return integer_times_pow10<double>(mantissa, decimal_exponent);
+}
+
 // the following overloads are here to avoid surprising ambiguity for int,
 // unsigned, etc.
+template <typename T, typename Int>
+FASTFLOAT_CONSTEXPR20
+    typename std::enable_if<is_supported_float_type<T>::value &&
+                                std::is_integral<Int>::value &&
+                                !std::is_signed<Int>::value,
+                            T>::type
+    integer_times_pow10(Int mantissa, int decimal_exponent) noexcept {
+  return integer_times_pow10<T>(static_cast<uint64_t>(mantissa),
+                                decimal_exponent);
+}
+
+template <typename T, typename Int>
+FASTFLOAT_CONSTEXPR20
+    typename std::enable_if<is_supported_float_type<T>::value &&
+                                std::is_integral<Int>::value &&
+                                std::is_signed<Int>::value,
+                            T>::type
+    integer_times_pow10(Int mantissa, int decimal_exponent) noexcept {
+  return integer_times_pow10<T>(static_cast<int64_t>(mantissa),
+                                decimal_exponent);
+}
+
 template <typename Int>
-FASTFLOAT_CONSTEXPR20 inline typename std::enable_if<
+FASTFLOAT_CONSTEXPR20 typename std::enable_if<
     std::is_integral<Int>::value && !std::is_signed<Int>::value, double>::type
 integer_times_pow10(Int mantissa, int decimal_exponent) noexcept {
   return integer_times_pow10(static_cast<uint64_t>(mantissa), decimal_exponent);
 }
 
 template <typename Int>
-FASTFLOAT_CONSTEXPR20 inline typename std::enable_if<
+FASTFLOAT_CONSTEXPR20 typename std::enable_if<
     std::is_integral<Int>::value && std::is_signed<Int>::value, double>::type
 integer_times_pow10(Int mantissa, int decimal_exponent) noexcept {
   return integer_times_pow10(static_cast<int64_t>(mantissa), decimal_exponent);
