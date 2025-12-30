@@ -78,7 +78,7 @@ test_that("test add_border()", {
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double")
 
-  exp <- c("1", "3", "3", "3", "3", "3", "3", "3", "3", "3", "2")
+  exp <- c("1", "2", "2", "2", "2", "2", "2", "2", "2", "2", "3")
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
   expect_equal(exp, got)
 
@@ -970,7 +970,7 @@ test_that("adding bg_color and diagonal borders work", {
       diagonal_down = "thin",
       diagonal_color = wb_color("red")
     ),
-    "there can be only a single diagonal style per cell"
+    "Only a single diagonal style per cell allowed"
   )
 
   exp <- "<border diagonalDown=\"1\" diagonalUp=\"1\"><start><color rgb=\"FFFF0000\"/></start><end><color rgb=\"FFFF0000\"/></end><left style=\"thin\"><color rgb=\"FF000000\"/></left><top style=\"thin\"><color rgb=\"FF000000\"/></top><diagonal style=\"dashed\"><color rgb=\"FFFF0000\"/></diagonal></border>"
@@ -1007,20 +1007,20 @@ test_that("adding borders works", {
   expect_equal(exp, got)
 
   wb$add_border(dims = "A1:H10")
-  exp <- c(A1 = "5", B1 = "13", C1 = "13", D1 = "13", E1 = "14", F1 = "14",
-           G1 = "14", H1 = "6", A2 = "9", B2 = "17", C2 = "17", D2 = "17",
-           E2 = "18", F2 = "18", G2 = "18", H2 = "11", A3 = "9", B3 = "17",
-           C3 = "17", D3 = "17", E3 = "18", F3 = "18", G3 = "18", H3 = "11",
-           A4 = "9", B4 = "17", C4 = "17", D4 = "17", E4 = "18", F4 = "18",
-           G4 = "18", H4 = "11", A5 = "9", B5 = "17", C5 = "17", D5 = "17",
-           E5 = "18", F5 = "18", G5 = "18", H5 = "11", A6 = "10", B6 = "19",
-           C6 = "19", D6 = "19", E6 = "20", F6 = "20", G6 = "20", H6 = "12",
-           A7 = "10", B7 = "19", C7 = "19", D7 = "19", E7 = "20", F7 = "20",
-           G7 = "20", H7 = "12", A8 = "10", B8 = "19", C8 = "19", D8 = "19",
-           E8 = "20", F8 = "20", G8 = "20", H8 = "12", A9 = "10", B9 = "19",
-           C9 = "19", D9 = "19", E9 = "20", F9 = "20", G9 = "20", H9 = "12",
-           A10 = "7", B10 = "15", C10 = "15", D10 = "15", E10 = "16", F10 = "16",
-           G10 = "16", H10 = "8")
+  exp <- c(A1 = "5", B1 = "6", C1 = "6", D1 = "6", E1 = "7", F1 = "7",
+           G1 = "7", H1 = "8", A2 = "9", B2 = "11", C2 = "11", D2 = "11",
+           E2 = "12", F2 = "12", G2 = "12", H2 = "15", A3 = "9", B3 = "11",
+           C3 = "11", D3 = "11", E3 = "12", F3 = "12", G3 = "12", H3 = "15",
+           A4 = "9", B4 = "11", C4 = "11", D4 = "11", E4 = "12", F4 = "12",
+           G4 = "12", H4 = "15", A5 = "9", B5 = "11", C5 = "11", D5 = "11",
+           E5 = "12", F5 = "12", G5 = "12", H5 = "15", A6 = "10", B6 = "13",
+           C6 = "13", D6 = "13", E6 = "14", F6 = "14", G6 = "14", H6 = "16",
+           A7 = "10", B7 = "13", C7 = "13", D7 = "13", E7 = "14", F7 = "14",
+           G7 = "14", H7 = "16", A8 = "10", B8 = "13", C8 = "13", D8 = "13",
+           E8 = "14", F8 = "14", G8 = "14", H8 = "16", A9 = "10", B9 = "13",
+           C9 = "13", D9 = "13", E9 = "14", F9 = "14", G9 = "14", H9 = "16",
+           A10 = "17", B10 = "18", C10 = "18", D10 = "18", E10 = "19", F10 = "19",
+           G10 = "19", H10 = "20")
   got <- wb$get_cell_style(dims = "A1:H10")
   expect_equal(exp, got)
 

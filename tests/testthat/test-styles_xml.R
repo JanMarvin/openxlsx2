@@ -187,12 +187,12 @@ test_that("updating borders works", {
 
   # A1:D1, and another at A4:D4
   wb$add_border(dims = "A1:D1", update = TRUE)
-  exp <- c(A1 = "13", B1 = "15", C1 = "16", D1 = "14")
+  exp <- c(A1 = "13", B1 = "14", C1 = "15", D1 = "16")
   got <- wb$get_cell_style(dims = "A1:D1")
   expect_equal(exp, got)
 
   wb$add_border(dims = "A4:D4", top_border = NULL, update = TRUE)
-  exp <- c(A4 = "17", B4 = "19", C4 = "20", D4 = "18")
+  exp <- c(A4 = "17", B4 = "18", C4 = "19", D4 = "20")
   got <- wb$get_cell_style(dims = "A4:D4")
   expect_equal(exp, got)
 
