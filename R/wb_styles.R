@@ -697,6 +697,16 @@ set_fill <- function(xf_node, fill_id) {
   write_xf(z)
 }
 
+#' internal function to remove fill from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_fill <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFill <- ""
+  z$fillId <- "0"
+  write_xf(z)
+}
+
 #' internal function to set font to a style
 #' @param xf_node some xf node
 #' @param font_id some numeric value as character

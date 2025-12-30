@@ -8870,17 +8870,22 @@ wbWorkbook <- R6::R6Class(
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
-
-        new_fill <- create_fill(
-          gradient_fill = gradient_fill,
-          pattern_type = pattern,
-          fg_color = color,
-          bg_color = bg_color
-        )
-        self$styles_mgr$add(new_fill, new_fill)
-
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
-        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(new_fill))
+
+        if (!is.null(color)) {
+          new_fill <- create_fill(
+            gradient_fill = gradient_fill,
+            pattern_type = pattern,
+            fg_color = color,
+            bg_color = bg_color
+          )
+          self$styles_mgr$add(new_fill, new_fill)
+
+          n_fill_id <- self$styles_mgr$get_fill_id(new_fill)
+          xf_new_fill <- set_fill(xf_prev, n_fill_id)
+        } else {
+          xf_new_fill <- remove_fill(xf_prev)
+        }
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
         s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
         self$set_cell_style(sheet, dim, s_id)
