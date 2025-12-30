@@ -729,6 +729,16 @@ set_numfmt <- function(xf_node, numfmt) {
   write_xf(z)
 }
 
+#' internal function to remove numfmt from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_numfmt <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyNumberFormat <- ""
+  z$numFmtId <- "0"
+  write_xf(z)
+}
+
 #' internal function to set cellstyle
 #' @noRd
 set_cellstyle <- function(

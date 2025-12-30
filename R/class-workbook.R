@@ -9038,7 +9038,7 @@ wbWorkbook <- R6::R6Class(
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
-      if (inherits(numfmt, "character")) {
+      if (!is.null(numfmt) && inherits(numfmt, "character")) {
 
         for (style in styles) {
           dim <- cc[cc$c_s == style, "r"]
@@ -9057,10 +9057,14 @@ wbWorkbook <- R6::R6Class(
         }
 
       } else { # format is numeric
+
         for (style in styles) {
           dim <- cc[cc$c_s == style, "r"]
           xf_prev <- get_cell_styles(self, sheet, dim[[1]])
-          xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
+          if (is.null(numfmt))
+            xf_new_numfmt <- remove_numfmt(xf_prev)
+          else
+            xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
           self$set_cell_style(sheet, dim, s_id)
