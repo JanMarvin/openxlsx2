@@ -718,6 +718,16 @@ set_font <- function(xf_node, font_id) {
   write_xf(z)
 }
 
+#' internal function to remove font from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_font <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFont <- ""
+  z$fontId <- "0"
+  write_xf(z)
+}
+
 #' internal function to set numfmt to a style
 #' @param xf_node some xf node
 #' @param numfmt_id some numeric value as character

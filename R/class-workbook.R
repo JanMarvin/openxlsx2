@@ -8946,74 +8946,78 @@ wbWorkbook <- R6::R6Class(
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
 
-        new_font <- create_font(
-          b = bold,
-          charset = charset,
-          color = color,
-          condense = condense,
-          extend = extend,
-          family = family,
-          i = italic,
-          name = name,
-          outline = outline,
-          scheme = scheme,
-          shadow = shadow,
-          strike = strike,
-          sz = size,
-          u = underline,
-          vert_align = vert_align
-        )
-
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
 
-        if (is.character(update) || (is.logical(update) && isTRUE(update))) {
-          valid <- c(
-            "name", "color", "colour", "size", "bold", "italic", "outline", "strike",
-            "underline", "charset", "condense", "extend", "family", "scheme", "shadow",
-            "vert_align"
+        if (!is.null(update)) {
+          new_font <- create_font(
+            b = bold,
+            charset = charset,
+            color = color,
+            condense = condense,
+            extend = extend,
+            family = family,
+            i = italic,
+            name = name,
+            outline = outline,
+            scheme = scheme,
+            shadow = shadow,
+            strike = strike,
+            sz = size,
+            u = underline,
+            vert_align = vert_align
           )
-          # update == TRUE: the user wants everything updated
-          if (is.logical(update) && isTRUE(update)) {
-           update <- valid[-which(valid == "colour")]
+
+          if (is.character(update) || (is.logical(update) && isTRUE(update))) {
+            valid <- c(
+              "name", "color", "colour", "size", "bold", "italic", "outline", "strike",
+              "underline", "charset", "condense", "extend", "family", "scheme", "shadow",
+              "vert_align"
+            )
+            # update == TRUE: the user wants everything updated
+            if (is.logical(update) && isTRUE(update)) {
+            update <- valid[-which(valid == "colour")]
+            }
+            match.arg(update, valid, several.ok = TRUE)
+
+            font_properties <- c(
+              bold = "b",
+              charset = "charset",
+              color = "color",
+              condense = "condense",
+              extend = "extend",
+              family = "family",
+              italic = "i",
+              name = "name",
+              outline = "outline",
+              scheme = "scheme",
+              shadow = "shadow",
+              strike = "strike",
+              size = "sz",
+              underline = "u",
+              vert_align = "vertAlign"
+            )
+            sel <- font_properties[update]
+
+            font_id  <- as.integer(vapply(xml_attr(xf_prev, "xf"), "[[", "fontId", FUN.VALUE = NA_character_)) + 1L
+            font_xml <- self$styles_mgr$styles$fonts[[font_id]]
+
+            # read as data frame with xml elements
+            old_font <- read_font(read_xml(font_xml))
+            new_font <- read_font(read_xml(new_font))
+
+            # update elements
+            old_font[sel] <- new_font[sel]
+
+            # write as xml font
+            new_font <- write_font(old_font)
           }
-          match.arg(update, valid, several.ok = TRUE)
 
-          font_properties <- c(
-            bold = "b",
-            charset = "charset",
-            color = "color",
-            condense = "condense",
-            extend = "extend",
-            family = "family",
-            italic = "i",
-            name = "name",
-            outline = "outline",
-            scheme = "scheme",
-            shadow = "shadow",
-            strike = "strike",
-            size = "sz",
-            underline = "u",
-            vert_align = "vertAlign"
-          )
-          sel <- font_properties[update]
-
-          font_id  <- as.integer(vapply(xml_attr(xf_prev, "xf"), "[[", "fontId", FUN.VALUE = NA_character_)) + 1L
-          font_xml <- self$styles_mgr$styles$fonts[[font_id]]
-
-          # read as data frame with xml elements
-          old_font <- read_font(read_xml(font_xml))
-          new_font <- read_font(read_xml(new_font))
-
-          # update elements
-          old_font[sel] <- new_font[sel]
-
-          # write as xml font
-          new_font <- write_font(old_font)
+          self$styles_mgr$add(new_font, new_font)
+          n_font_id <- self$styles_mgr$get_font_id(new_font)
+          xf_new_font <- set_font(xf_prev, n_font_id)
+        } else {
+          xf_new_font <- remove_font(xf_prev)
         }
-
-        self$styles_mgr$add(new_font, new_font)
-
-        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(new_font))
 
         self$styles_mgr$add(xf_new_font, xf_new_font)
         s_id <- self$styles_mgr$get_xf_id(xf_new_font)
