@@ -50,6 +50,8 @@
   [`wb_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_dims.md)
   to increase coverage and to be more precise in error messages.
 - Internal border logic was cleaned up.
+- Styles are now cached, to reduce overhead when adding them to the
+  workbook. [\#1513](https://github.com/JanMarvin/openxlsx2/pull/1513)
 
 ------------------------------------------------------------------------
 
