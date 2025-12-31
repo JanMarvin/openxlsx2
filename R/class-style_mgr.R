@@ -66,9 +66,9 @@
 #' # wb_open(wb)
 #'
 #' @noRd
-style_mgr <- R6::R6Class("wbStylesMgr", {
+style_mgr <- R6::R6Class("wbStylesMgr",
 
-  public <- list(
+  public = list(
 
     #' @field numfmt numfmt-ids
     numfmt = NULL,
@@ -317,65 +317,49 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
     #' @description get font id by name
     #' @param name name
     get_font_id = function(name) {
-      font <- self$font
-      id <- font$id[match(name, font$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$font, name)
     },
 
     #' @description get fill id by name
     #' @param name name
     get_fill_id = function(name) {
-      fill <- self$fill
-      id <- fill$id[match(name, fill$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$fill, name)
     },
 
     #' @description get border id by name
     #' @param name name
     get_border_id = function(name) {
-      border <- self$border
-      id <- border$id[match(name, border$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$border, name)
     },
 
     #' @description get xf id by name
     #' @param name name
     get_xf_id = function(name) {
-      xf <- self$xf
-      id <- xf$id[match(name, xf$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$xf, name)
     },
 
     #' @description get cellstyle id by name
     #' @param name name
     get_cellStyle_id = function(name) {
-      cellstyle <- self$cellStyle
-      id <- cellstyle$id[match(name, cellstyle$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$cellStyle, name)
     },
 
     #' @description get cellstyleXf id by name
     #' @param name name
     get_cellStyleXf_id = function(name) {
-      cellstylexf <- self$cellStyleXf
-      id <- cellstylexf$id[match(name, cellstylexf$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$cellStyleXf, name)
     },
 
     #' @description get dxf id by name
     #' @param name name
     get_dxf_id = function(name) {
-      dxf <- self$dxf
-      id <- dxf$id[match(name, dxf$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$dxf, name)
     },
 
     #' @description get tableStyle id by name
     #' @param name name
     get_tableStyle_id = function(name) {
-      tableStyle <- self$tableStyles
-      id <- tableStyle$id[match(name, tableStyle$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$tableStyle, name)
     },
 
     #' @description get next numfmt id
@@ -458,14 +442,14 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
         sty_fmt <- xml_node_name(style[sty])
 
-        is_numfmt <- any(sty_fmt == "numFmt")
-        is_font   <- any(sty_fmt == "font")
-        is_fill   <- any(sty_fmt == "fill")
-        is_border <- any(sty_fmt == "border")
-        is_xf     <- any(sty_fmt == "xf")
-        is_celSty <- any(sty_fmt == "cellStyle")
-        is_dxf    <- any(sty_fmt == "dxf")
-        is_tabSty <- any(sty_fmt == "tableStyle")
+        is_numfmt <- sty_fmt == "numFmt"
+        is_font   <- sty_fmt == "font"
+        is_fill   <- sty_fmt == "fill"
+        is_border <- sty_fmt == "border"
+        is_xf     <- sty_fmt == "xf"
+        is_celSty <- sty_fmt == "cellStyle"
+        is_dxf    <- sty_fmt == "dxf"
+        is_tabSty <- sty_fmt == "tableStyle"
 
         is_xf_fr  <- isTRUE(attr(style, "cellStyleXf"))
 
@@ -979,6 +963,15 @@ style_mgr <- R6::R6Class("wbStylesMgr", {
 
       invisible(self)
     }
+  ),
+
+  private = list(
+
+    get_id = function(df, name) {
+      id <- df$id[match(name, df$name)]
+      if (length(id)) id else NULL
+    }
+
   )
 
-})
+)
