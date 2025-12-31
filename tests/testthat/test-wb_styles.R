@@ -56,9 +56,7 @@ test_that("test add_border()", {
 
   # check xf
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
-           "<xf applyBorder=\"1\" borderId=\"1\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
-           "<xf applyBorder=\"1\" borderId=\"2\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
-           "<xf applyBorder=\"1\" borderId=\"3\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>"
+           "<xf applyBorder=\"1\" borderId=\"1\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>"
   )
   got <- wb$styles_mgr$styles$cellXfs
 
@@ -66,8 +64,6 @@ test_that("test add_border()", {
 
   # check borders
   exp <- c("<border><left/><right/><top/><bottom/><diagonal/></border>",
-           "<border><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom></border>",
-           "<border><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom></border>",
            "<border><bottom style=\"double\"><color rgb=\"FF000000\"/></bottom></border>"
   )
   got <- wb$styles_mgr$styles$borders
@@ -78,8 +74,8 @@ test_that("test add_border()", {
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_border(1, dims = "A1:K1", left_border = NULL, right_border = NULL, top_border = NULL, bottom_border = "double")
 
-  exp <- c("1", "2", "2", "2", "2", "2", "2", "2", "2", "2", "3")
-  got <- wb$worksheets[[1]]$sheet_data$cc$c_s
+  exp <- "1"
+  got <- unique(wb$worksheets[[1]]$sheet_data$cc$c_s)
   expect_equal(exp, got)
 
 })

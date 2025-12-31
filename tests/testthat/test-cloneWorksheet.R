@@ -310,11 +310,11 @@ test_that("cloning column and row styles works", {
   wb$clone_worksheet(old = "Sheet 1", "mtcars", from = wb_mtcars)
   wb$clone_worksheet(old = "Sheet 2", "iris", from = wb_mtcars)
 
-  exp <- "<col min=\"11\" max=\"11\" style=\"2\" width=\"8.43\"/>"
+  exp <- "<col min=\"11\" max=\"11\" style=\"1\" width=\"8.43\"/>"
   got <- wb$worksheets[[2]]$cols_attr[2]
   expect_equal(exp, got)
 
-  exp <- "3"
+  exp <- "1"
   got <- wb$worksheets[[2]]$sheet_data$row_attr[2, "s"]
   expect_equal(exp, got)
 

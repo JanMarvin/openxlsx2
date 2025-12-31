@@ -191,7 +191,7 @@ test_that("type = 'duplicated' works", {
 
   exp <- data.frame(
     sqref = "A1:A10",
-    cf = '<cfRule type="duplicateValues" dxfId="2" priority="1"/>',
+    cf = '<cfRule type="duplicateValues" dxfId="0" priority="1"/>',
     stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -214,7 +214,7 @@ test_that("type = 'containsText' works", {
   # TODO remove identing from xml
   exp <- data.frame(
     sqref = "A1:A10",
-    cf = '<cfRule type="containsText" dxfId="2" priority="1" operator="containsText" text="A"><formula>NOT(ISERROR(SEARCH("A", A1)))</formula></cfRule>',
+    cf = '<cfRule type="containsText" dxfId="0" priority="1" operator="containsText" text="A"><formula>NOT(ISERROR(SEARCH("A", A1)))</formula></cfRule>',
     stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -236,7 +236,7 @@ test_that("type = 'notContainsText' works", {
 
   exp <- data.frame(
     sqref = "A1:A10",
-    cf = '<cfRule type="notContainsText" dxfId="2" priority="1" operator="notContains" text="A"><formula>ISERROR(SEARCH("A", A1))</formula></cfRule>',
+    cf = '<cfRule type="notContainsText" dxfId="0" priority="1" operator="notContains" text="A"><formula>ISERROR(SEARCH("A", A1))</formula></cfRule>',
     stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -253,7 +253,7 @@ test_that("type = 'beginsWith' works", {
 
   exp <- data.frame(
     sqref = "A1:A100",
-    cf = '<cfRule type="beginsWith" dxfId="2" priority="1" operator="beginsWith" text="A"><formula>LEFT(A1,LEN("A"))="A"</formula></cfRule>',
+    cf = '<cfRule type="beginsWith" dxfId="0" priority="1" operator="beginsWith" text="A"><formula>LEFT(A1,LEN("A"))="A"</formula></cfRule>',
     stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -275,7 +275,7 @@ test_that("type = 'endsWith' works", {
 
   exp <- data.frame(
     sqref = "A1:A100",
-    cf = '<cfRule type="endsWith" dxfId="2" priority="1" operator="endsWith" text="A"><formula>RIGHT(A1,LEN("A"))="A"</formula></cfRule>',
+    cf = '<cfRule type="endsWith" dxfId="0" priority="1" operator="endsWith" text="A"><formula>RIGHT(A1,LEN("A"))="A"</formula></cfRule>',
     stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -341,7 +341,7 @@ test_that("type = 'between' works", {
 
   exp <- data.frame(
     sqref = "A1:A11",
-    cf = '<cfRule type="cellIs" dxfId="2" priority="1" operator="between"><formula>-2</formula><formula>2</formula></cfRule>',
+    cf = '<cfRule type="cellIs" dxfId="0" priority="1" operator="between"><formula>-2</formula><formula>2</formula></cfRule>',
     stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -433,7 +433,7 @@ test_that("type as logical operators work", {
 
   exp <- data.frame(
     sqref = "A1:A10",
-    cf = "<cfRule type=\"expression\" dxfId=\"2\" priority=\"1\"><formula>OR($A1=1,$A1=3,$A1=5,$A1=7)</formula></cfRule>",
+    cf = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"1\"><formula>OR($A1=1,$A1=3,$A1=5,$A1=7)</formula></cfRule>",
     stringsAsFactors = FALSE
   )
   expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
@@ -743,7 +743,7 @@ test_that("containsErrors works", {
 
   exp <- c(
     "<cfRule type=\"containsErrors\" dxfId=\"0\" priority=\"1\"><formula>ISERROR(A1:A3)</formula></cfRule>",
-    "<cfRule type=\"notContainsErrors\" dxfId=\"1\" priority=\"2\"><formula>NOT(ISERROR(B1:B3))</formula></cfRule>"
+    "<cfRule type=\"notContainsErrors\" dxfId=\"0\" priority=\"2\"><formula>NOT(ISERROR(B1:B3))</formula></cfRule>"
   )
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting$cf)
   expect_equal(exp, got)
@@ -761,7 +761,7 @@ test_that("containsBlanks works", {
 
   exp <- c(
     "<cfRule type=\"containsBlanks\" dxfId=\"0\" priority=\"1\"><formula>LEN(TRIM(A1:A4))=0</formula></cfRule>",
-    "<cfRule type=\"notContainsBlanks\" dxfId=\"1\" priority=\"2\"><formula>LEN(TRIM(B1:B4))>0</formula></cfRule>"
+    "<cfRule type=\"notContainsBlanks\" dxfId=\"0\" priority=\"2\"><formula>LEN(TRIM(B1:B4))>0</formula></cfRule>"
   )
   got <- as.character(wb$worksheets[[1]]$conditionalFormatting$cf)
   expect_equal(exp, got)
@@ -900,7 +900,7 @@ test_that("escaping conditional formatting works", {
 
   exp <- data.frame(
     sqref = "A1:A10",
-    cf = "<cfRule type=\"containsText\" dxfId=\"1\" priority=\"1\" operator=\"containsText\" text=\"A == B\"><formula>NOT(ISERROR(SEARCH(\"A == B\", A1)))</formula></cfRule>",
+    cf = "<cfRule type=\"containsText\" dxfId=\"0\" priority=\"1\" operator=\"containsText\" text=\"A == B\"><formula>NOT(ISERROR(SEARCH(\"A == B\", A1)))</formula></cfRule>",
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[2]]$conditionalFormatting
@@ -908,7 +908,7 @@ test_that("escaping conditional formatting works", {
 
   exp <- data.frame(
     sqref = "A1:A10",
-    cf = "<cfRule type=\"containsText\" dxfId=\"2\" priority=\"1\" operator=\"containsText\" text=\"A &lt;&gt; B\"><formula>NOT(ISERROR(SEARCH(\"A &lt;&gt; B\", A1)))</formula></cfRule>",
+    cf = "<cfRule type=\"containsText\" dxfId=\"0\" priority=\"1\" operator=\"containsText\" text=\"A &lt;&gt; B\"><formula>NOT(ISERROR(SEARCH(\"A &lt;&gt; B\", A1)))</formula></cfRule>",
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[3]]$conditionalFormatting
@@ -965,7 +965,7 @@ test_that("remove conditional formatting works", {
 
   exp <- data.frame(
     sqref = "A1:A3",
-    cf = "<cfRule type=\"expression\" dxfId=\"3\" priority=\"2\"><formula>A1&lt;2</formula></cfRule>",
+    cf = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"2\"><formula>A1&lt;2</formula></cfRule>",
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[2]]$conditionalFormatting
@@ -973,7 +973,7 @@ test_that("remove conditional formatting works", {
 
   exp <- data.frame(
     sqref = "A1:A3",
-    cf = "<cfRule type=\"expression\" dxfId=\"5\" priority=\"2\"><formula>A1&lt;2</formula></cfRule>",
+    cf = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"2\"><formula>A1&lt;2</formula></cfRule>",
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[3]]$conditionalFormatting
@@ -981,7 +981,7 @@ test_that("remove conditional formatting works", {
 
   exp <- data.frame(
     sqref = "A1:A4",
-    cf = "<cfRule type=\"expression\" dxfId=\"6\" priority=\"1\"><formula>A1&gt;2</formula></cfRule>",
+    cf = "<cfRule type=\"expression\" dxfId=\"0\" priority=\"1\"><formula>A1&gt;2</formula></cfRule>",
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[4]]$conditionalFormatting
