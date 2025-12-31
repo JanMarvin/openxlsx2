@@ -59,6 +59,8 @@
 </li>
 <li>It is now possible to apply numeric formats via <code>wb_to_df(apply_numfmts = TRUE)</code> to preview numeric formats. The function is still experimental and incomplete. There is limited support for builtin styles. But this should improve setting the automatic column width for worksheets with numeric styles. <a href="https://github.com/JanMarvin/openxlsx2/pull/1501" class="external-link">#1501</a>
 </li>
+<li>Removal of <code>border</code>, <code>fill</code>, <code>font</code> and <code>numfmt</code> is possible setting these to <code>NULL</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1511" class="external-link">#1511</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
@@ -70,6 +72,7 @@
 <h3 id="internal-changes-development-version">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
 <ul><li>C++ functions used in loading and writing files have seen another round of cleanups.</li>
 <li>Cleanups in <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to increase coverage and to be more precise in error messages.</li>
+<li>Internal border logic was cleaned up.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">

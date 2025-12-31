@@ -3,6 +3,8 @@
 Add number formatting to a cell region. You can use a number format
 created by
 [`create_numfmt()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_numfmt.md).
+Setting `numfmt` to `NULL` removes the style and resets the cell to the
+workbook default.
 
 ## Usage
 

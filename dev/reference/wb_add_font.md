@@ -132,7 +132,8 @@ A `wbWorkbook`, invisibly
 
 `wb_add_font()` provides all the options openxml accepts for a font
 node, not all have to be set. Usually `name`, `size` and `color` should
-be what the user wants.
+be what the user wants. Setting `update` to `NULL` removes the style and
+resets the cell to the workbook default.
 
 ## See also
 

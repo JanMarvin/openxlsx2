@@ -26,6 +26,9 @@
   support for builtin styles. But this should improve setting the
   automatic column width for worksheets with numeric styles.
   [\#1501](https://github.com/JanMarvin/openxlsx2/pull/1501)
+- Removal of `border`, `fill`, `font` and `numfmt` is possible setting
+  these to `NULL`.
+  [\#1511](https://github.com/JanMarvin/openxlsx2/pull/1511)
 
 ### Fixes
 
@@ -46,6 +49,7 @@
 - Cleanups in
   [`wb_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_dims.md)
   to increase coverage and to be more precise in error messages.
+- Internal border logic was cleaned up.
 
 ------------------------------------------------------------------------
 
