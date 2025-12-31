@@ -1427,7 +1427,7 @@ test_that("removing fill works", {
   wb$add_fill(dims = "A2:B2", color = NULL)
 
   styles <- wb$get_cell_style(dims = "A2:B2")
-  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) + 1]
 
   xml_df <- rbindlist(xml_attr(xml, "xf"))
   expect_true(is.null(xml_df$applyFill))
@@ -1444,7 +1444,7 @@ test_that("removing numfmt works", {
   wb$add_numfmt(dims = "A2:B2", numfmt = NULL)
 
   styles <- wb$get_cell_style(dims = "A2:B2")
-  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) + 1]
 
   xml_df <- rbindlist(xml_attr(xml, "xf"))
   expect_true(is.null(xml_df$applyNumberFormat))
@@ -1461,7 +1461,7 @@ test_that("removing font works", {
   wb$add_font(dims = "A2:B2", update = NULL)
 
   styles <- wb$get_cell_style(dims = "A2:B2")
-  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) + 1]
 
   xml_df <- rbindlist(xml_attr(xml, "xf"))
   expect_true(is.null(xml_df$applyFont))
@@ -1478,7 +1478,7 @@ test_that("removing border works", {
   wb$add_border(dims = "A2:B2", update = NULL)
 
   styles <- wb$get_cell_style(dims = "A2:B2")
-  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) + 1]
 
   xml_df <- rbindlist(xml_attr(xml, "xf"))
   expect_true(is.null(xml_df$applyBorder))
