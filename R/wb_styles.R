@@ -686,6 +686,16 @@ set_border <- function(xf_node, border_id) {
   write_xf(z)
 }
 
+#' internal function to remove border from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_border <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyBorder <- ""
+  z$borderId <- "0"
+  write_xf(z)
+}
+
 #' internal function to set fill to a style
 #' @param xf_node some xf node
 #' @param fill_id some numeric value as character

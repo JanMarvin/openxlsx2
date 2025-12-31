@@ -8378,38 +8378,44 @@ wbWorkbook <- R6::R6Class(
         target_dims <- as.character(unlist(df[row_idx, col_idx]))
         if (length(target_dims) == 0) return(NULL)
 
-        is_extreme_top    <- any(row_idx == 1)
-        is_extreme_bottom <- any(row_idx == nr)
-        is_extreme_left   <- any(col_idx == 1)
-        is_extreme_right  <- any(col_idx == nc)
-
-        border_obj <- create_border(
-          top          = if (is_extreme_top)    sides$top$b    else inner_hgrid,
-          top_color    = if (is_extreme_top)    sides$top$c    else inner_hcolor,
-          bottom       = if (is_extreme_bottom) sides$bottom$b else inner_hgrid,
-          bottom_color = if (is_extreme_bottom) sides$bottom$c else inner_hcolor,
-          left         = if (is_extreme_left)   sides$left$b   else inner_vgrid,
-          left_color   = if (is_extreme_left)   sides$left$c   else inner_vcolor,
-          right        = if (is_extreme_right)  sides$right$b  else inner_vgrid,
-          right_color  = if (is_extreme_right)  sides$right$c  else inner_vcolor,
-          diagonal = diag_val, diagonal_down = d_down,
-          diagonal_up = d_up, diagonal_color = diagonal_color
-        )
-
-        if (update) {
-          border_obj <- update_border(self, dims = target_dims, new_border = border_obj)
-        }
-
-        n_styles <- length(border_obj)
-        s_names  <- paste0(smp, tag, seq_len(n_styles))
-
-        border_obj <- unname(border_obj)
-
-        self$styles_mgr$add(border_obj, s_names)
-
         xf_prev <- get_cell_styles(self, sheet, target_dims)
-        b_ids   <- self$styles_mgr$get_border_id(s_names)
-        xf_new  <- set_border(xf_prev, b_ids)
+
+        if (is.null(update)) {
+          xf_new <- remove_border(xf_prev)
+
+        } else {
+          is_ext_t <- any(row_idx == 1)
+          is_ext_b <- any(row_idx == nr)
+          is_ext_l <- any(col_idx == 1)
+          is_ext_r <- any(col_idx == nc)
+
+          border_obj <- create_border(
+            top          = if (is_ext_t) sides$top$b    else inner_hgrid,
+            top_color    = if (is_ext_t) sides$top$c    else inner_hcolor,
+            bottom       = if (is_ext_b) sides$bottom$b else inner_hgrid,
+            bottom_color = if (is_ext_b) sides$bottom$c else inner_hcolor,
+            left         = if (is_ext_l) sides$left$b   else inner_vgrid,
+            left_color   = if (is_ext_l) sides$left$c   else inner_vcolor,
+            right        = if (is_ext_r) sides$right$b  else inner_vgrid,
+            right_color  = if (is_ext_r) sides$right$c  else inner_vcolor,
+            diagonal     = diag_val,
+            diagonal_down = d_down,
+            diagonal_up   = d_up,
+            diagonal_color = diagonal_color
+          )
+
+          if (isTRUE(update)) {
+            border_obj <- update_border(self, sheet = sheet, dims = target_dims, new_border = border_obj)
+          }
+
+          n_styles <- length(border_obj)
+          s_names  <- paste0(smp, tag, seq_len(n_styles))
+          border_obj <- unname(border_obj)
+
+          self$styles_mgr$add(border_obj, s_names)
+          b_ids  <- self$styles_mgr$get_border_id(s_names)
+          xf_new <- set_border(xf_prev, b_ids)
+        }
 
         self$styles_mgr$add(xf_new, xf_new)
         self$set_cell_style(sheet, target_dims, self$styles_mgr$get_xf_id(xf_new))
