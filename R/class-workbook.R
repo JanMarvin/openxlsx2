@@ -8421,8 +8421,8 @@ wbWorkbook <- R6::R6Class(
         self$set_cell_style(sheet, target_dims, self$styles_mgr$get_xf_id(xf_new))
       }
 
-      rows_mid <- if(nr > 2) 2:(nr-1) else integer(0)
-      cols_mid <- if(nc > 2) 2:(nc-1) else integer(0)
+      rows_mid <- if (nr > 2) 2:(nr - 1) else integer(0)
+      cols_mid <- if (nc > 2) 2:(nc - 1) else integer(0)
 
       grid_map <- list(
         top_l    = list(r = 1,  c = 1),
