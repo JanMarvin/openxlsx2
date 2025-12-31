@@ -47,6 +47,7 @@ See \code{\link[=create_border]{create_border()}} for possible border styles}
 }
 \description{
 wb wrapper to create borders for cell regions.
+Setting \code{update} to \code{NULL} removes the style and resets the cell to the workbook default.
 }
 \examples{
 wb <- wb_workbook()

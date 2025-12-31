@@ -686,6 +686,16 @@ set_border <- function(xf_node, border_id) {
   write_xf(z)
 }
 
+#' internal function to remove border from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_border <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyBorder <- ""
+  z$borderId <- "0"
+  write_xf(z)
+}
+
 #' internal function to set fill to a style
 #' @param xf_node some xf node
 #' @param fill_id some numeric value as character
@@ -694,6 +704,16 @@ set_fill <- function(xf_node, fill_id) {
   z <- read_xf(read_xml(xf_node))
   z$applyFill <- "1"
   z$fillId <- as_xml_attr(fill_id)
+  write_xf(z)
+}
+
+#' internal function to remove fill from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_fill <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFill <- ""
+  z$fillId <- "0"
   write_xf(z)
 }
 
@@ -708,6 +728,16 @@ set_font <- function(xf_node, font_id) {
   write_xf(z)
 }
 
+#' internal function to remove font from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_font <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyFont <- ""
+  z$fontId <- "0"
+  write_xf(z)
+}
+
 #' internal function to set numfmt to a style
 #' @param xf_node some xf node
 #' @param numfmt_id some numeric value as character
@@ -716,6 +746,16 @@ set_numfmt <- function(xf_node, numfmt) {
   z <- read_xf(read_xml(xf_node))
   z$applyNumberFormat <- "1"
   z$numFmtId <- as_xml_attr(numfmt)
+  write_xf(z)
+}
+
+#' internal function to remove numfmt from a style
+#' @param xf_node some xf node
+#' @noRd
+remove_numfmt <- function(xf_node) {
+  z <- read_xf(read_xml(xf_node))
+  z$applyNumberFormat <- ""
+  z$numFmtId <- "0"
   write_xf(z)
 }
 

@@ -21,6 +21,7 @@ The \code{wbWorkbook} object, invisibly.
 \description{
 Add number formatting to a cell region. You can use a number format created
 by \code{\link[=create_numfmt]{create_numfmt()}}.
+Setting \code{numfmt} to \code{NULL} removes the style and resets the cell to the workbook default.
 }
 \details{
 The list of number formats ID is located in the \strong{Details} section of \code{\link[=create_cell_style]{create_cell_style()}}.

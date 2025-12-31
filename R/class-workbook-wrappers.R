@@ -3409,6 +3409,8 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #' Modify borders in a cell region of a worksheet
 #'
 #' wb wrapper to create borders for cell regions.
+#' Setting `update` to `NULL` removes the style and resets the cell to the workbook default.
+#'
 #' @param wb A `wbWorkbook`
 #' @param sheet A worksheet
 #' @param dims Cell range in the worksheet e.g. "A1", "A1:A5", "A1:H5"
@@ -3534,6 +3536,7 @@ wb_add_border <- function(
 #' Modify the background fill color in a cell region
 #'
 #' Add fill to a cell region.
+#' Setting `color` to `NULL` removes the style and resets the cell to the workbook default.
 #'
 #' @param wb a workbook
 #' @param sheet the worksheet
@@ -3607,6 +3610,8 @@ wb_add_fill <- function(
 #'
 #' `wb_add_font()` provides all the options openxml accepts for a font node,
 #' not all have to be set. Usually `name`, `size` and `color` should be what the user wants.
+#' Setting `update` to `NULL` removes the style and resets the cell to the workbook default.
+#'
 #' @param wb A Workbook object
 #' @param sheet the worksheet
 #' @param dims the cell range
@@ -3693,6 +3698,7 @@ wb_add_font <- function(
 #'
 #' Add number formatting to a cell region. You can use a number format created
 #' by [create_numfmt()].
+#' Setting `numfmt` to `NULL` removes the style and resets the cell to the workbook default.
 #'
 #' @param wb A Workbook
 #' @param sheet the worksheet

@@ -8346,481 +8346,108 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      # TODO merge styles and if a style is already present, only add the newly
-      # created border style
-
-      # cc <- wb$worksheets[[sheet]]$sheet_data$cc
-      # df_s <- as.data.frame(lapply(df, function(x) cc$c_s[cc$r %in% x]))
-
       standardize(...)
 
-      if (is.null(bottom_color)) bottom_border <- NULL
-      if (is.null(left_color)) left_border <- NULL
-      if (is.null(right_color)) right_border <- NULL
-      if (is.null(top_color)) top_border <- NULL
+      # Ensure if style is NULL, color is NULL and vice versa
+      sides <- list(
+        top    = list(b = top_border,    c = top_color),
+        bottom = list(b = bottom_border, c = bottom_color),
+        left   = list(b = left_border,   c = left_color),
+        right  = list(b = right_border,  c = right_color)
+      )
+      sides <- lapply(sides, function(x) if (is.null(x$b) || is.null(x$c)) list(b = NULL, c = NULL) else x)
 
-      if (is.null(bottom_border)) bottom_color <- NULL
-      if (is.null(left_border)) left_color <- NULL
-      if (is.null(right_border)) right_color <- NULL
-      if (is.null(top_border)) top_color <- NULL
+      diag_styles <- unique(c(diagonal_up, diagonal_down))
+      diag_styles <- diag_styles[!is.null(diag_styles)]
+      if (length(diag_styles) > 1) stop("Only a single diagonal style per cell allowed", call. = FALSE)
 
-      ## creating diagonals is a bit tricky with create_border(), therefore we ease it
-      ## by allowing a slightly different initializiation. diagonal is the style, up/down
-      ## is an XML bool and color is the color.
-      if (!is.null(diagonal_up) && !is.null(diagonal_down)) {
-        diagonal <- unique(c(diagonal_up, diagonal_down))
-        if (length(diagonal) > 1) {
-          stop("there can be only a single diagonal style per cell", call. = FALSE)
-        }
-        diagonal_up     <- TRUE
-        diagonal_down   <- TRUE
-      } else if (!is.null(diagonal_up) && is.null(diagonal_down)) {
-          diagonal      <- diagonal_up
-          diagonal_up   <- TRUE
-          diagonal_down <- ""
-      } else if (!is.null(diagonal_down) && is.null(diagonal_up)) {
-          diagonal      <- diagonal_down
-          diagonal_up   <- ""
-          diagonal_down <- TRUE
-      } else {
-          diagonal      <- NULL
-          diagonal_up   <- ""
-          diagonal_down <- ""
-      }
+      diag_val <- if (length(diag_styles) == 1) diag_styles else NULL
+      d_up     <- if (!is.null(diagonal_up)) TRUE else ""
+      d_down   <- if (!is.null(diagonal_down)) TRUE else ""
+      if (!is.null(diagonal_color)) assert_color(diagonal_color)
 
-      if (!is.null(diagonal_color)) {
-        assert_color(diagonal_color)
-      }
-
-      df <- dims_to_dataframe(dims, fill = TRUE)
+      df    <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
-
       private$do_cell_init(sheet, dims = dims, df = df)
 
-      ### border creation
+      smp   <- random_string()
+      nr    <- nrow(df)
+      nc    <- ncol(df)
 
-      #
-      # /* top_single    */
-      # /* middle_single */
-      # /* bottom_single */
-      #
+      apply_logic <- function(row_idx, col_idx, tag) {
+        target_dims <- as.character(unlist(df[row_idx, col_idx]))
+        if (length(target_dims) == 0) return(NULL)
 
-      # /* left_single --- center_single --- right_single */
+        xf_prev <- get_cell_styles(self, sheet, target_dims)
 
-      #
-      # /* top_left   --- top_center   ---  top_right */
-      # /*  -                                    -    */
-      # /*  -                                    -    */
-      # /*  -                                    -    */
-      # /* left_middle                   right_middle */
-      # /*  -                                    -    */
-      # /*  -                                    -    */
-      # /*  -                                    -    */
-      # /* left_bottom - bottom_center - bottom_right */
-      #
+        if (is.null(update)) {
+          xf_new <- remove_border(xf_prev)
 
-      smp <- random_string()
-      ### full-single
-      if (ncol(df) == 1 && nrow(df) == 1) {
-        # create border
-        full_single <- create_border(
-          top = top_border, top_color = top_color,
-          bottom = bottom_border, bottom_color = bottom_color,
-          left = left_border, left_color = left_color,
-          right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
+        } else {
+          is_ext_t <- any(row_idx == 1)
+          is_ext_b <- any(row_idx == nr)
+          is_ext_l <- any(col_idx == 1)
+          is_ext_r <- any(col_idx == nc)
 
-        # determine dim
-        dim_full_single <- df[1, 1]
-
-        if (update) full_single <- update_border(self, dims = dim_full_single, new_border = full_single)
-
-        # determine name
-        sfull_single <- paste0(smp, "full_single")
-
-        # add border
-        self$styles_mgr$add(full_single, sfull_single)
-        xf_prev <- get_cell_styles(self, sheet, dims)
-        xf_full_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sfull_single))
-        self$styles_mgr$add(xf_full_single, xf_full_single)
-        self$set_cell_style(sheet, dims, self$styles_mgr$get_xf_id(xf_full_single))
-      }
-
-      ### single
-      if (ncol(df) == 1 && nrow(df) > 1) {
-        # create borders
-        top_single <- create_border(
-          top = top_border, top_color = top_color,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
-          left = left_border, left_color = left_color,
-          right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        bottom_single <- create_border(
-          top = inner_hgrid, top_color = inner_hcolor,
-          bottom = bottom_border, bottom_color = bottom_color,
-          left = left_border, left_color = left_color,
-          right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        # determine dims
-        dim_top_single <- df[1, 1]
-        dim_bottom_single <- df[nrow(df), 1]
-
-        if (update) {
-          top_single    <- update_border(self, dims = dim_top_single, new_border = top_single)
-          bottom_single <- update_border(self, dims = dim_bottom_single, new_border = bottom_single)
-        }
-
-        # determine names
-        stop_single <- paste0(smp, "full_single")
-        sbottom_single <- paste0(smp, "bottom_single")
-
-        # add top single
-        self$styles_mgr$add(top_single, stop_single)
-        xf_prev <- get_cell_styles(self, sheet, dim_top_single)
-        xf_top_single <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_single))
-        self$styles_mgr$add(xf_top_single, xf_top_single)
-        self$set_cell_style(sheet, dim_top_single, self$styles_mgr$get_xf_id(xf_top_single))
-
-        # add bottom single
-        self$styles_mgr$add(bottom_single, sbottom_single)
-        xf_prev <- get_cell_styles(self, sheet, dim_bottom_single)
-        xf_bottom_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_single))
-        self$styles_mgr$add(xf_bottom_single, xf_bottom_single)
-        self$set_cell_style(sheet, dim_bottom_single, self$styles_mgr$get_xf_id(xf_bottom_single))
-
-        if (nrow(df) >= 3) {
-          # create border
-          middle_single <- create_border(
-            top = inner_hgrid, top_color = inner_hcolor,
-            bottom = inner_hgrid, bottom_color = inner_hcolor,
-            left = left_border, left_color = left_color,
-            right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
+          border_obj <- create_border(
+            top          = if (is_ext_t) sides$top$b    else inner_hgrid,
+            top_color    = if (is_ext_t) sides$top$c    else inner_hcolor,
+            bottom       = if (is_ext_b) sides$bottom$b else inner_hgrid,
+            bottom_color = if (is_ext_b) sides$bottom$c else inner_hcolor,
+            left         = if (is_ext_l) sides$left$b   else inner_vgrid,
+            left_color   = if (is_ext_l) sides$left$c   else inner_vcolor,
+            right        = if (is_ext_r) sides$right$b  else inner_vgrid,
+            right_color  = if (is_ext_r) sides$right$c  else inner_vcolor,
+            diagonal     = diag_val,
+            diagonal_down = d_down,
+            diagonal_up   = d_up,
+            diagonal_color = diagonal_color
           )
 
-          # determine dims
-          mid <- df[, 1]
-          dim_middle_single <- mid[!mid %in% c(dim_top_single, dim_bottom_single)]
+          if (isTRUE(update)) {
+            border_obj <- update_border(self, sheet = sheet, dims = target_dims, new_border = border_obj)
+          }
 
-          if (update) middle_single <- update_border(self, dims = dim_middle_single, new_border = middle_single)
+          n_styles <- length(border_obj)
+          s_names  <- paste0(smp, tag, seq_len(n_styles))
+          border_obj <- unname(border_obj)
 
-          # determine names
-          smiddle_single <- paste0(smp, "middle_single", seq_along(middle_single))
-
-          # add middle single
-          self$styles_mgr$add(middle_single, smiddle_single)
-          xf_prev <- get_cell_styles(self, sheet, dim_middle_single)
-          xf_middle_single <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_single))
-          self$styles_mgr$add(xf_middle_single, xf_middle_single)
-          self$set_cell_style(sheet, dim_middle_single, self$styles_mgr$get_xf_id(xf_middle_single))
+          self$styles_mgr$add(border_obj, s_names)
+          b_ids  <- self$styles_mgr$get_border_id(s_names)
+          xf_new <- set_border(xf_prev, b_ids)
         }
+
+        self$styles_mgr$add(xf_new, xf_new)
+        self$set_cell_style(sheet, target_dims, self$styles_mgr$get_xf_id(xf_new))
       }
 
-      # create left and right single row pieces
-      if (ncol(df) >= 2 && nrow(df) == 1) {
-        # create borders
-        left_single <- create_border(
-          top = top_border, top_color = top_color,
-          bottom = bottom_border, bottom_color = bottom_color,
-          left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
+      rows_mid <- if (nr > 2) 2:(nr - 1) else integer(0)
+      cols_mid <- if (nc > 2) 2:(nc - 1) else integer(0)
 
-        right_single <- create_border(
-          top = top_border, top_color = top_color,
-          bottom = bottom_border, bottom_color = bottom_color,
-          left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
+      grid_map <- list(
+        top_l    = list(r = 1,  c = 1),
+        top_mid  = list(r = 1,  c = cols_mid),
+        top_r    = list(r = 1,  c = nc),
+        mid_l    = list(r = rows_mid, c = 1),
+        core     = list(r = rows_mid, c = cols_mid),
+        mid_r    = list(r = rows_mid, c = nc),
+        bot_l    = list(r = nr, c = 1),
+        bot_mid  = list(r = nr, c = cols_mid),
+        bot_r    = list(r = nr, c = nc)
+      )
 
-        # determine dims
-        dim_left_single <- df[1, 1]
-        dim_right_single <- df[1, ncol(df)]
+      # Track processed cells to avoid double-styling (e.g., if nr=1, top_l is the same as bot_l)
+      processed_cells <- character(0)
 
-        if (update) {
-          left_single  <- update_border(self, dims = dim_left_single, new_border = left_single)
-          right_single <- update_border(self, dims = dim_right_single, new_border = right_single)
+      for (tag in names(grid_map)) {
+        zone <- grid_map[[tag]]
+        z_dims <- as.character(unlist(df[zone$r, zone$c]))
+
+        # Only process if zone exists and hasn't been handled by a previous tag
+        if (length(z_dims) > 0 && !any(z_dims %in% processed_cells)) {
+          apply_logic(zone$r, zone$c, tag)
+          processed_cells <- c(processed_cells, z_dims)
         }
-
-        # determine names
-        sleft_single <- paste0(smp, "left_single")
-        sright_single <- paste0(smp, "right_single")
-
-        # add left single
-        self$styles_mgr$add(left_single, sleft_single)
-        xf_prev <- get_cell_styles(self, sheet, dim_left_single)
-        xf_left_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sleft_single))
-        self$styles_mgr$add(xf_left_single, xf_left_single)
-        self$set_cell_style(sheet, dim_left_single, self$styles_mgr$get_xf_id(xf_left_single))
-
-        # add right single
-        self$styles_mgr$add(right_single, sright_single)
-        xf_prev <- get_cell_styles(self, sheet, dim_right_single)
-        xf_right_single <- set_border(xf_prev, self$styles_mgr$get_border_id(sright_single))
-        self$styles_mgr$add(xf_right_single, xf_right_single)
-        self$set_cell_style(sheet, dim_right_single, self$styles_mgr$get_xf_id(xf_right_single))
-
-        # add single center piece(s)
-        if (ncol(df) >= 3) {
-          center_single <- create_border(
-            top = top_border, top_color = top_color,
-            bottom = bottom_border, bottom_color = bottom_color,
-            left = inner_vgrid, left_color = inner_vcolor,
-            right = inner_vgrid, right_color = inner_vcolor,
-            diagonal = diagonal, diagonal_down = diagonal_down,
-            diagonal_up = diagonal_up, diagonal_color = diagonal_color
-          )
-
-          # determine dims
-          ctr <- df[1, ]
-          dim_center_single <- ctr[!ctr %in% c(dim_left_single, dim_right_single)]
-
-          if (update) center_single <- update_border(self, dims = dim_center_single, new_border = center_single)
-
-          # determine names
-          scenter_single <- paste0(smp, "center_single", seq_along(center_single))
-
-          # add center single
-          self$styles_mgr$add(center_single, scenter_single)
-          xf_prev <- get_cell_styles(self, sheet, dim_center_single)
-          xf_center_single <- set_border(xf_prev, self$styles_mgr$get_border_id(scenter_single))
-          self$styles_mgr$add(xf_center_single, xf_center_single)
-          self$set_cell_style(sheet, dim_center_single, self$styles_mgr$get_xf_id(xf_center_single))
-        }
-
-      }
-
-      # create left & right - top & bottom corners pieces
-      if (ncol(df) >= 2 && nrow(df) >= 2) {
-        # create borders
-        top_left <- create_border(
-          top = top_border, top_color = top_color,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
-          left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        top_right <- create_border(
-          top = top_border, top_color = top_color,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
-          left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        bottom_left <- create_border(
-          top = inner_hgrid, top_color = inner_hcolor,
-          bottom = bottom_border, bottom_color = bottom_color,
-          left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        bottom_right <- create_border(
-          top = inner_hgrid, top_color = inner_hcolor,
-          bottom = bottom_border, bottom_color = bottom_color,
-          left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        # determine dims
-        dim_top_left     <- df[1, 1]
-        dim_bottom_left  <- df[nrow(df), 1]
-        dim_top_right    <- df[1, ncol(df)]
-        dim_bottom_right <- df[nrow(df), ncol(df)]
-
-        if (update) {
-          top_left     <- update_border(self, dims = dim_top_left, new_border = top_left)
-          bottom_left  <- update_border(self, dims = dim_bottom_left, new_border = bottom_left)
-          top_right    <- update_border(self, dims = dim_top_right, new_border = top_right)
-          bottom_right <- update_border(self, dims = dim_bottom_right, new_border = bottom_right)
-        }
-
-        # determine names
-        stop_left <- paste0(smp, "top_left")
-        sbottom_left <- paste0(smp, "bottom_left")
-        stop_right <- paste0(smp, "top_right")
-        sbottom_right <- paste0(smp, "bottom_right")
-
-        # add top left
-        self$styles_mgr$add(top_left, stop_left)
-        xf_prev <- get_cell_styles(self, sheet, dim_top_left)
-        xf_top_left <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_left))
-        self$styles_mgr$add(xf_top_left, xf_top_left)
-        self$set_cell_style(sheet, dim_top_left, self$styles_mgr$get_xf_id(xf_top_left))
-
-        # add top right
-        self$styles_mgr$add(top_right, stop_right)
-        xf_prev <- get_cell_styles(self, sheet, dim_top_right)
-        xf_top_right <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_right))
-        self$styles_mgr$add(xf_top_right, xf_top_right)
-        self$set_cell_style(sheet, dim_top_right, self$styles_mgr$get_xf_id(xf_top_right))
-
-        # add bottom left
-        self$styles_mgr$add(bottom_left, sbottom_left)
-        xf_prev <- get_cell_styles(self, sheet, dim_bottom_left)
-        xf_bottom_left <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_left))
-        self$styles_mgr$add(xf_bottom_left, xf_bottom_left)
-        self$set_cell_style(sheet, dim_bottom_left, self$styles_mgr$get_xf_id(xf_bottom_left))
-
-        # add bottom right
-        self$styles_mgr$add(bottom_right, sbottom_right)
-        xf_prev <- get_cell_styles(self, sheet, dim_bottom_right)
-        xf_bottom_right <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_right))
-        self$styles_mgr$add(xf_bottom_right, xf_bottom_right)
-        self$set_cell_style(sheet, dim_bottom_right, self$styles_mgr$get_xf_id(xf_bottom_right))
-      }
-
-      # create left and right middle pieces
-      if (ncol(df) >= 2 && nrow(df) >= 3) {
-        # create borders
-        middle_left <- create_border(
-          top = inner_hgrid, top_color = inner_hcolor,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
-          left = left_border, left_color = left_color,
-          right = inner_vgrid, right_color = inner_vcolor,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        middle_right <- create_border(
-          top = inner_hgrid, top_color = inner_hcolor,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
-          left = inner_vgrid, left_color = inner_vcolor,
-          right = right_border, right_color = right_color,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        # determine dims
-        top_mid <- df[, 1]
-        bottom_mid <- df[, ncol(df)]
-        dim_middle_left <- top_mid[!top_mid %in% c(dim_top_left, dim_bottom_left)]
-        dim_middle_right <- bottom_mid[!bottom_mid %in% c(dim_top_right, dim_bottom_right)]
-
-        if (update) {
-          middle_left  <- update_border(self, dims = dim_middle_left, new_border = middle_left)
-          middle_right <- update_border(self, dims = dim_middle_right, new_border = middle_right)
-        }
-
-        # determine names
-        smiddle_left <- paste0(smp, "middle_left", seq_along(middle_left))
-        smiddle_right <- paste0(smp, "middle_right", seq_along(middle_right))
-
-        # add middle left
-        self$styles_mgr$add(middle_left, smiddle_left)
-        xf_prev <- get_cell_styles(self, sheet, dim_middle_left)
-        xf_middle_left <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_left))
-        self$styles_mgr$add(xf_middle_left, xf_middle_left)
-        self$set_cell_style(sheet, dim_middle_left, self$styles_mgr$get_xf_id(xf_middle_left))
-
-        # add middle right
-        self$styles_mgr$add(middle_right, smiddle_right)
-        xf_prev <- get_cell_styles(self, sheet, dim_middle_right)
-        xf_middle_right <- set_border(xf_prev, self$styles_mgr$get_border_id(smiddle_right))
-        self$styles_mgr$add(xf_middle_right, xf_middle_right)
-        self$set_cell_style(sheet, dim_middle_right, self$styles_mgr$get_xf_id(xf_middle_right))
-      }
-
-      # create top and bottom center pieces
-      if (ncol(df) >= 3 & nrow(df) >= 2) {
-        # create borders
-        top_center <- create_border(
-          top = top_border, top_color = top_color,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
-          left = inner_vgrid, left_color = inner_vcolor,
-          right = inner_vgrid, right_color = inner_vcolor,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        bottom_center <- create_border(
-          top = inner_hgrid, top_color = inner_hcolor,
-          bottom = bottom_border, bottom_color = bottom_color,
-          left = inner_vgrid, left_color = inner_vcolor,
-          right = inner_vgrid, right_color = inner_vcolor,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        # determine dims
-        top_ctr <- df[1, ]
-        bottom_ctr <- df[nrow(df), ]
-        dim_top_center <- top_ctr[!top_ctr %in% c(dim_top_left, dim_top_right)]
-        dim_bottom_center <- bottom_ctr[!bottom_ctr %in% c(dim_bottom_left, dim_bottom_right)]
-
-        if (update) {
-          top_center    <- update_border(self, dims = dim_top_center, new_border = top_center)
-          bottom_center <- update_border(self, dims = dim_bottom_center, new_border = bottom_center)
-        }
-
-        # determine names
-        stop_center <- paste0(smp, "top_center", seq_along(top_center))
-        sbottom_center <- paste0(smp, "bottom_center", seq_along(bottom_center))
-
-        # add top center
-        self$styles_mgr$add(top_center, stop_center)
-        xf_prev <- get_cell_styles(self, sheet, dim_top_center)
-        xf_top_center <- set_border(xf_prev, self$styles_mgr$get_border_id(stop_center))
-        self$styles_mgr$add(xf_top_center, xf_top_center)
-        self$set_cell_style(sheet, dim_top_center, self$styles_mgr$get_xf_id(xf_top_center))
-
-        # add bottom center
-        self$styles_mgr$add(bottom_center, sbottom_center)
-        xf_prev <- get_cell_styles(self, sheet, dim_bottom_center)
-        xf_bottom_center <- set_border(xf_prev, self$styles_mgr$get_border_id(sbottom_center))
-        self$styles_mgr$add(xf_bottom_center, xf_bottom_center)
-        self$set_cell_style(sheet, dim_bottom_center, self$styles_mgr$get_xf_id(xf_bottom_center))
-      }
-
-      if (nrow(df) > 2 && ncol(df) > 2) {
-        # create border
-        inner_cell <- create_border(
-          top = inner_hgrid, top_color = inner_hcolor,
-          bottom = inner_hgrid, bottom_color = inner_hcolor,
-          left = inner_vgrid, left_color = inner_vcolor,
-          right = inner_vgrid, right_color = inner_vcolor,
-          diagonal = diagonal, diagonal_down = diagonal_down,
-          diagonal_up = diagonal_up, diagonal_color = diagonal_color
-        )
-
-        # determine dims
-        t_row <- 1
-        b_row <- nrow(df)
-        l_row <- 1
-        r_row <- ncol(df)
-        dim_inner_cell <- as.character(unlist(df[c(-t_row, -b_row), c(-l_row, -r_row)]))
-
-        if (update) inner_cell <- update_border(self, dims = dim_inner_cell, new_border = inner_cell)
-
-        # determine name
-        sinner_cell <- paste0(smp, "inner_cell", seq_along(inner_cell))
-
-        # add inner cells
-        self$styles_mgr$add(inner_cell, sinner_cell)
-        xf_prev <- get_cell_styles(self, sheet, dim_inner_cell)
-        xf_inner_cell <- set_border(xf_prev, self$styles_mgr$get_border_id(sinner_cell))
-        self$styles_mgr$add(xf_inner_cell, xf_inner_cell)
-        self$set_cell_style(sheet, dim_inner_cell, self$styles_mgr$get_xf_id(xf_inner_cell))
       }
 
       invisible(self)
@@ -8870,17 +8497,22 @@ wbWorkbook <- R6::R6Class(
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
-
-        new_fill <- create_fill(
-          gradient_fill = gradient_fill,
-          pattern_type = pattern,
-          fg_color = color,
-          bg_color = bg_color
-        )
-        self$styles_mgr$add(new_fill, new_fill)
-
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
-        xf_new_fill <- set_fill(xf_prev, self$styles_mgr$get_fill_id(new_fill))
+
+        if (!is.null(color)) {
+          new_fill <- create_fill(
+            gradient_fill = gradient_fill,
+            pattern_type = pattern,
+            fg_color = color,
+            bg_color = bg_color
+          )
+          self$styles_mgr$add(new_fill, new_fill)
+
+          n_fill_id <- self$styles_mgr$get_fill_id(new_fill)
+          xf_new_fill <- set_fill(xf_prev, n_fill_id)
+        } else {
+          xf_new_fill <- remove_fill(xf_prev)
+        }
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
         s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
         self$set_cell_style(sheet, dim, s_id)
@@ -8941,74 +8573,78 @@ wbWorkbook <- R6::R6Class(
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
 
-        new_font <- create_font(
-          b = bold,
-          charset = charset,
-          color = color,
-          condense = condense,
-          extend = extend,
-          family = family,
-          i = italic,
-          name = name,
-          outline = outline,
-          scheme = scheme,
-          shadow = shadow,
-          strike = strike,
-          sz = size,
-          u = underline,
-          vert_align = vert_align
-        )
-
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
 
-        if (is.character(update) || (is.logical(update) && isTRUE(update))) {
-          valid <- c(
-            "name", "color", "colour", "size", "bold", "italic", "outline", "strike",
-            "underline", "charset", "condense", "extend", "family", "scheme", "shadow",
-            "vert_align"
+        if (!is.null(update)) {
+          new_font <- create_font(
+            b = bold,
+            charset = charset,
+            color = color,
+            condense = condense,
+            extend = extend,
+            family = family,
+            i = italic,
+            name = name,
+            outline = outline,
+            scheme = scheme,
+            shadow = shadow,
+            strike = strike,
+            sz = size,
+            u = underline,
+            vert_align = vert_align
           )
-          # update == TRUE: the user wants everything updated
-          if (is.logical(update) && isTRUE(update)) {
-           update <- valid[-which(valid == "colour")]
+
+          if (is.character(update) || (is.logical(update) && isTRUE(update))) {
+            valid <- c(
+              "name", "color", "colour", "size", "bold", "italic", "outline", "strike",
+              "underline", "charset", "condense", "extend", "family", "scheme", "shadow",
+              "vert_align"
+            )
+            # update == TRUE: the user wants everything updated
+            if (is.logical(update) && isTRUE(update)) {
+            update <- valid[-which(valid == "colour")]
+            }
+            match.arg(update, valid, several.ok = TRUE)
+
+            font_properties <- c(
+              bold = "b",
+              charset = "charset",
+              color = "color",
+              condense = "condense",
+              extend = "extend",
+              family = "family",
+              italic = "i",
+              name = "name",
+              outline = "outline",
+              scheme = "scheme",
+              shadow = "shadow",
+              strike = "strike",
+              size = "sz",
+              underline = "u",
+              vert_align = "vertAlign"
+            )
+            sel <- font_properties[update]
+
+            font_id  <- as.integer(vapply(xml_attr(xf_prev, "xf"), "[[", "fontId", FUN.VALUE = NA_character_)) + 1L
+            font_xml <- self$styles_mgr$styles$fonts[[font_id]]
+
+            # read as data frame with xml elements
+            old_font <- read_font(read_xml(font_xml))
+            new_font <- read_font(read_xml(new_font))
+
+            # update elements
+            old_font[sel] <- new_font[sel]
+
+            # write as xml font
+            new_font <- write_font(old_font)
           }
-          match.arg(update, valid, several.ok = TRUE)
 
-          font_properties <- c(
-            bold = "b",
-            charset = "charset",
-            color = "color",
-            condense = "condense",
-            extend = "extend",
-            family = "family",
-            italic = "i",
-            name = "name",
-            outline = "outline",
-            scheme = "scheme",
-            shadow = "shadow",
-            strike = "strike",
-            size = "sz",
-            underline = "u",
-            vert_align = "vertAlign"
-          )
-          sel <- font_properties[update]
-
-          font_id  <- as.integer(vapply(xml_attr(xf_prev, "xf"), "[[", "fontId", FUN.VALUE = NA_character_)) + 1L
-          font_xml <- self$styles_mgr$styles$fonts[[font_id]]
-
-          # read as data frame with xml elements
-          old_font <- read_font(read_xml(font_xml))
-          new_font <- read_font(read_xml(new_font))
-
-          # update elements
-          old_font[sel] <- new_font[sel]
-
-          # write as xml font
-          new_font <- write_font(old_font)
+          self$styles_mgr$add(new_font, new_font)
+          n_font_id <- self$styles_mgr$get_font_id(new_font)
+          xf_new_font <- set_font(xf_prev, n_font_id)
+        } else {
+          xf_new_font <- remove_font(xf_prev)
         }
-
-        self$styles_mgr$add(new_font, new_font)
-
-        xf_new_font <- set_font(xf_prev, self$styles_mgr$get_font_id(new_font))
 
         self$styles_mgr$add(xf_new_font, xf_new_font)
         s_id <- self$styles_mgr$get_xf_id(xf_new_font)
@@ -9033,7 +8669,7 @@ wbWorkbook <- R6::R6Class(
       cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
-      if (inherits(numfmt, "character")) {
+      if (!is.null(numfmt) && inherits(numfmt, "character")) {
 
         for (style in styles) {
           dim <- cc[cc$c_s == style, "r"]
@@ -9052,10 +8688,14 @@ wbWorkbook <- R6::R6Class(
         }
 
       } else { # format is numeric
+
         for (style in styles) {
           dim <- cc[cc$c_s == style, "r"]
           xf_prev <- get_cell_styles(self, sheet, dim[[1]])
-          xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
+          if (is.null(numfmt))
+            xf_new_numfmt <- remove_numfmt(xf_prev)
+          else
+            xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
           self$set_cell_style(sheet, dim, s_id)
