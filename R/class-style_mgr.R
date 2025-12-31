@@ -106,6 +106,9 @@ style_mgr <- R6::R6Class("wbStylesMgr",
     #' @field styles styles as xml
     styles = NULL,
 
+    #' @field style_cache style_cache
+    style_cache = NULL,
+
     #' @description
     #' Creates a new `wbStylesMgr` object
     #' @param numfmt numfmt
@@ -431,16 +434,43 @@ style_mgr <- R6::R6Class("wbStylesMgr",
     #' @param skip_duplicates should duplicates be added?
     add = function(style, style_name, skip_duplicates = TRUE) {
 
-      # make sure that style and style_name length are equal
       if (length(style) != length(style_name))
         stop("style length and name do not match")
 
+      # Initialize a fast lookup cache if it doesn't exist
+      if (is.null(self$style_cache)) self$style_cache <- new.env(hash = TRUE, parent = emptyenv())
+
       for (sty in seq_along(style)) {
+
+        sty_xml <- style[sty]
+        sty_fmt <- xml_node_name(sty_xml)
+
+        if (skip_duplicates && exists(sty_xml, envir = self$style_cache)) {
+
+          id_val <- get(sty_xml, envir = self$style_cache)
+
+          new_entry <- data.frame(
+            typ = sty_fmt,
+            id = id_val,
+            name = style_name[sty],
+            stringsAsFactors = FALSE
+          )
+
+          # Register the name mapping so get_id functions work
+          if (sty_fmt == "numFmt")           self$numfmt      <- rbind(self$numfmt, new_entry)
+          else if (sty_fmt == "font")        self$font        <- rbind(self$font, new_entry)
+          else if (sty_fmt == "fill")        self$fill        <- rbind(self$fill, new_entry)
+          else if (sty_fmt == "border")      self$border      <- rbind(self$border, new_entry)
+          else if (sty_fmt == "xf")          self$xf          <- rbind(self$xf, new_entry)
+          else if (sty_fmt == "cellStyle")   self$cellStyle   <- rbind(self$cellStyle, new_entry)
+          else if (sty_fmt == "dxf")         self$dxf         <- rbind(self$dxf, new_entry)
+          else if (sty_fmt == "tableStyle")  self$tableStyle  <- rbind(self$tableStyle, new_entry)
+
+          next
+        }
 
         typ <- NULL
         id  <- NULL
-
-        sty_fmt <- xml_node_name(style[sty])
 
         is_numfmt <- sty_fmt == "numFmt"
         is_font   <- sty_fmt == "font"
@@ -456,48 +486,48 @@ style_mgr <- R6::R6Class("wbStylesMgr",
         if (is_numfmt) {
           if (skip_duplicates && style_name[sty] %in% self$numfmt$name) next
           typ <- "numFmt"
-          id  <- unname(unlist(xml_attr(style[sty], "numFmt"))["numFmtId"])
-          self$styles$numFmts <- c(self$styles$numFmts, style[sty])
+          id  <- unname(unlist(xml_attr(sty_xml, "numFmt"))["numFmtId"])
+          self$styles$numFmts <- c(self$styles$numFmts, sty_xml)
         } else if (is_font) {
           if (skip_duplicates && style_name[sty] %in% self$font$name) next
           typ <- "font"
-          fonts <- c(self$styles$fonts, style[sty])
+          fonts <- c(self$styles$fonts, sty_xml)
           id  <- rownames(read_font(read_xml(fonts)))
           self$styles$fonts <- fonts
         } else if (is_fill) {
           if (skip_duplicates && style_name[sty] %in% self$fill$name) next
           typ <- "fill"
-          fills <- c(self$styles$fills, style[sty])
+          fills <- c(self$styles$fills, sty_xml)
           id  <- rownames(read_fill(read_xml(fills)))
           self$styles$fills <- fills
         } else if (is_border) {
           if (skip_duplicates && style_name[sty] %in% self$border$name) next
           typ <- "border"
-          borders <- c(self$styles$borders, style[sty])
+          borders <- c(self$styles$borders, sty_xml)
           id  <- rownames(read_border(read_xml(borders)))
           self$styles$borders <- borders
         } else if (is_xf) {
           if (skip_duplicates && style_name[sty] %in% self$xf$name) next
           typ <- "xf"
-          xfs <- c(self$styles$cellXfs, style[sty])
+          xfs <- c(self$styles$cellXfs, sty_xml)
           id  <- rownames(read_xf(read_xml(xfs)))
           self$styles$cellXfs <- xfs
         } else if (is_celSty) {
           if (skip_duplicates && style_name[sty] %in% self$cellStyle$name) next
           typ <- "cellStyle"
-          cellStyles <- c(self$styles$cellStyles, style[sty])
+          cellStyles <- c(self$styles$cellStyles, sty_xml)
           id  <- rownames(read_cellStyle(read_xml(cellStyles)))
           self$styles$cellStyles <- cellStyles
         } else if (is_dxf) {
           if (skip_duplicates && style_name[sty] %in% self$dxf$name) next
           typ <- "dxf"
-          dxfs <- c(self$styles$dxfs, style[sty])
+          dxfs <- c(self$styles$dxfs, sty_xml)
           id  <- rownames(read_dxf(read_xml(dxfs)))
           self$styles$dxfs <- dxfs
         } else if (is_tabSty) {
           if (skip_duplicates && style_name[sty] %in% self$tableStyle$name) next
           typ <- "tableStyle"
-          tableStyles <- c(self$styles$tableStyles, style[sty])
+          tableStyles <- c(self$styles$tableStyles, sty_xml)
           id  <- rownames(read_tableStyle(read_xml(tableStyles)))
           self$styles$tableStyles <- tableStyles
         }
@@ -505,17 +535,22 @@ style_mgr <- R6::R6Class("wbStylesMgr",
         if (is_xf_fr) {
           if (skip_duplicates && style_name[sty] %in% self$cellStyleXf$name) next
           typ <- "xf"
-          xfs <- c(self$styles$cellStyleXfs, style[sty])
+          xfs <- c(self$styles$cellStyleXfs, sty_xml)
           id  <- rownames(read_xf(read_xml(xfs)))
           self$styles$cellStyleXfs <- xfs
         }
 
+        final_id <- id[length(id)]
+
         new_entry <- data.frame(
           typ = typ,
-          id = id[length(id)],
+          id = final_id,
           name = style_name[sty],
           stringsAsFactors = FALSE
         )
+
+        # Store the actual ID in the cache
+        assign(sty_xml, final_id, envir = self$style_cache)
 
         if (is_numfmt) self$numfmt      <- rbind(self$numfmt, new_entry)
         else if (is_font)   self$font        <- rbind(self$font, new_entry)
