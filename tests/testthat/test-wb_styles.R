@@ -1418,3 +1418,69 @@ test_that("extensive hms works", {
   expect_equal(got, exp)
 
 })
+
+test_that("removing fill works", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = head(mtcars))
+  wb$add_border(dims = wb_dims(x = head(mtcars), select = "data"))
+
+  wb$add_fill(dims = "A1:B2", color = wb_color("blue"))
+  wb$add_fill(dims = "A2:B2", color = NULL)
+
+  styles <- wb$get_cell_style(dims = "A2:B2")
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+
+  xml_df <- rbindlist(xml_attr(xml, "xf"))
+  expect_true(is.null(xml_df$applyFill))
+  expect_equal(unique(xml_df$fillId), "0")
+})
+
+test_that("removing numfmt works", {
+  ddims <- wb_dims(x = head(mtcars), select = "data")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = head(mtcars))
+  wb$add_border(dims = ddims)
+
+  wb$add_fill(dims = ddims, color = wb_color("yellow"))
+  wb$add_numfmt(dims = ddims, numfmt = "0.00%")
+  wb$add_numfmt(dims = "A2:B2", numfmt = NULL)
+
+  styles <- wb$get_cell_style(dims = "A2:B2")
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+
+  xml_df <- rbindlist(xml_attr(xml, "xf"))
+  expect_true(is.null(xml_df$applyNumberFormat))
+  expect_equal(unique(xml_df$numFmtId), "0")
+})
+
+test_that("removing font works", {
+  ddims <- wb_dims(x = head(mtcars), select = "data")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = head(mtcars))
+
+  wb$add_border(dims = ddims)
+  wb$add_fill(dims = ddims, color = wb_color("yellow"))
+  wb$add_font(dims = ddims, name = "Arial", size = 16)
+  wb$add_font(dims = "A2:B2", update = NULL)
+
+  styles <- wb$get_cell_style(dims = "A2:B2")
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+
+  xml_df <- rbindlist(xml_attr(xml, "xf"))
+  expect_true(is.null(xml_df$applyFont))
+  expect_equal(unique(xml_df$fontId), "0")
+})
+
+test_that("removing border works", {
+  ddims <- wb_dims(x = head(mtcars), select = "data")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = head(mtcars))
+
+  wb$add_border(dims = ddims)
+  wb$add_fill(dims = ddims, color = wb_color("yellow"))
+  wb$add_font(dims = ddims, name = "Arial", size = 16)
+  wb$add_border(dims = "A2:B2", update = NULL)
+
+  styles <- wb$get_cell_style(dims = "A2:B2")
+  xml <- wb$styles_mgr$styles$cellXfs[as.numeric(styles) +1]
+
+  xml_df <- rbindlist(xml_attr(xml, "xf"))
+  expect_true(is.null(xml_df$applyBorder))
+  expect_equal(unique(xml_df$borderId), "0")
+})
