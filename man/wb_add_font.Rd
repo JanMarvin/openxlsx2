@@ -79,6 +79,7 @@ but \code{wb_add_font()} gives you more control.
 \details{
 \code{wb_add_font()} provides all the options openxml accepts for a font node,
 not all have to be set. Usually \code{name}, \code{size} and \code{color} should be what the user wants.
+Setting \code{update} to \code{NULL} removes the style and resets the cell to the workbook default.
 }
 \examples{
  wb <- wb_workbook()

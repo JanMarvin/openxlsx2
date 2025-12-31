@@ -47,6 +47,7 @@ The \code{wbWorkbook} object, invisibly
 }
 \description{
 Add fill to a cell region.
+Setting \code{color} to \code{NULL} removes the style and resets the cell to the workbook default.
 }
 \examples{
 wb <- wb_workbook()
