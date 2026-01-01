@@ -931,10 +931,12 @@ test_that("as_binary", {
 })
 
 test_that("wb_dims with vectors is no long slow", {
-  sidx <- function(n) cbind(
-    row = round(rbeta(n, 2, 2) * 99 + 1),
-    col = round(rbeta(n, 1.5, 1.5) * 99 + 1)
-  )
+  sidx <- function(n) {
+    cbind(
+      row = round(rbeta(n, 2, 2) * 99 + 1),
+      col = round(rbeta(n, 1.5, 1.5) * 99 + 1)
+    )
+  }
   idx <- sidx(10000)
 
   expect_silent(wb_dims(rows = idx[, "row"], cols = idx[, "col"]))
