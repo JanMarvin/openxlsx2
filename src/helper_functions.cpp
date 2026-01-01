@@ -330,100 +330,80 @@ std::vector<std::string> needed_cells(const std::string& range, bool all = true)
 //' @noRd
 // [[Rcpp::export]]
 SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
-  std::set<int32_t> unique_row_values_for_check;
-  bool first_dim_for_check = true;
+  R_xlen_t n_dims = dims.size();
+  if (n_dims == 0)
+    return R_NilValue;
 
+  // Output containers
   std::vector<Rcpp::IntegerVector> out_row_vectors;
-  std::set<std::vector<int32_t>> seen_rows;  // To track unique rows
+  std::set<std::pair<int32_t, int32_t>> seen_rows;
   std::vector<int32_t> ordered_unique_cols;
   std::set<int32_t> seen_cols_globally;
 
-  for (R_xlen_t i = 0; i < Rf_xlength(dims); ++i) {
-    std::string dim_str = Rcpp::as<std::string>(dims[i]);
+  // Logic for 'check'
+  int32_t first_min_r = -1, first_max_r = -1;
+  bool check_failed = false;
 
+  for (R_xlen_t i = 0; i < n_dims; ++i) {
+    std::string dim_str = Rcpp::as<std::string>(dims[i]);
     std::vector<std::string> cells = needed_cells(dim_str, false);
 
-    if (cells.empty()) {
-      // Rcpp::Rcout << "Warning: Skipping empty or invalid dimension string: " << dim_str << std::endl;
+    if (cells.empty())
       continue;
+
+    std::string left_cell = cells.front();
+    std::string right_cell = cells.back();
+
+    int32_t r1 = cell_to_rowint(left_cell);
+    int32_t r2 = cell_to_rowint(right_cell);
+    int32_t c1 = cell_to_colint(left_cell);
+    int32_t c2 = cell_to_colint(right_cell);
+
+    int32_t r_min = std::min(r1, r2);
+    int32_t r_max = std::max(r1, r2);
+
+    if (check || i > 0) {
+      if (i == 0) {
+        first_min_r = r_min;
+        first_max_r = r_max;
+      } else if (r_min != first_min_r || r_max != first_max_r) {
+        if (check)
+          return Rcpp::wrap(false);  // Return early if only checking
+        check_failed = true;
+      }
     }
 
-    std::string left_cell_str = cells.front();
-    std::string right_cell_str = cells.back();
-
-    // Get original row and column numbers
-    int32_t r1_orig = cell_to_rowint(left_cell_str);
-    int32_t r2_orig = cell_to_rowint(right_cell_str);
-    int32_t c1_orig = cell_to_colint(left_cell_str);
-    int32_t c2_orig = cell_to_colint(right_cell_str);
-
-    if (check) {
-      int32_t r_start_for_check = std::min(r1_orig, r2_orig);
-      int32_t r_end_for_check = std::max(r1_orig, r2_orig);
-
-      // Early exit if invalid range detected
-      if (r_start_for_check <= 0 || r_end_for_check <= 0) {
-        // If the logic should ignore invalid ranges, use 'continue' instead of 'return true/false'
-        continue;
+    if (!check) {
+      // Rows: Pair is much faster than Vector in a set
+      if (seen_rows.find({r1, r2}) == seen_rows.end()) {
+        out_row_vectors.push_back(Rcpp::IntegerVector::create(r1, r2));
+        seen_rows.insert({r1, r2});
       }
 
-      // Build the set of rows for the current dimension
-      std::set<int32_t> current_dim_rows_set;
-      for (int32_t r = r_start_for_check; r <= r_end_for_check; ++r) {
-        current_dim_rows_set.insert(r);
-      }
-
-      // Compare with the first dimension's set
-      if (first_dim_for_check) {
-        unique_row_values_for_check = std::move(current_dim_rows_set);
-        first_dim_for_check = false;
-      } else {
-        if (current_dim_rows_set != unique_row_values_for_check) {
-          return Rcpp::wrap(false);  // Fail fast: sets of rows are different
-        }
-      }
-    } else {
-      // If not checking, collect unique rows and columns preserving specified order.
-
-      // 1. Rows: store the (r1_orig, r2_orig) pair if not seen before.
-      // Note: This relies on the pair {r1, r2} being treated as unique, even if {r2, r1} is seen later.
-      std::vector<int32_t> current_row = {r1_orig, r2_orig};
-      if (seen_rows.find(current_row) == seen_rows.end()) {
-        out_row_vectors.push_back(Rcpp::IntegerVector::create(r1_orig, r2_orig));
-        seen_rows.insert(std::move(current_row));
-      }
-
-      // 2. Columns: iterate from c1_orig to c2_orig, respecting order and collecting unique values.
-      if (c1_orig > 0 && c2_orig > 0) {
-        int32_t step = (c1_orig <= c2_orig) ? 1 : -1;
-        int32_t current_c = c1_orig;
-
-        while (true) {
-          // Check if column is new
-          if (seen_cols_globally.find(current_c) == seen_cols_globally.end()) {
-            ordered_unique_cols.push_back(current_c);
-            seen_cols_globally.insert(current_c);
+      // Columns: Sequential collection
+      if (c1 > 0 && c2 > 0) {
+        int32_t step = (c1 <= c2) ? 1 : -1;
+        for (int32_t curr_c = c1;; curr_c += step) {
+          if (seen_cols_globally.find(curr_c) == seen_cols_globally.end()) {
+            ordered_unique_cols.push_back(curr_c);
+            seen_cols_globally.insert(curr_c);
           }
-
-            // Break condition
-            if (current_c == c2_orig) break;
-
-          current_c += step;
+          if (curr_c == c2)
+            break;
         }
       }
     }
-  }  // End of dims loop
-
-  if (check) {
-    return Rcpp::wrap(true);
   }
 
-  Rcpp::List result_list = Rcpp::List::create(
-    Rcpp::Named("rows") = Rcpp::wrap(out_row_vectors),
-    Rcpp::Named("cols") = Rcpp::wrap(ordered_unique_cols)
-  );
+  if (check)
+    return Rcpp::wrap(true);
 
-  return result_list;
+  Rcpp::List res = Rcpp::List::create(Rcpp::Named("rows") = Rcpp::wrap(out_row_vectors),
+                                      Rcpp::Named("cols") = Rcpp::wrap(ordered_unique_cols));
+
+  // Attach the check result as an attribute so R can use it
+  res.attr("is_equal_sized") = !check_failed;
+  return res;
 }
 
 // [[Rcpp::export]]
