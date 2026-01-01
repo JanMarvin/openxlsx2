@@ -69,8 +69,8 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
   if (inherits(dims, "data.frame"))
     dims <- unlist(dims)
 
-  if (any(grepl("$", dims))) {
-    dims <- gsub("\\$", "", dims)
+  if (any(grepl("$", dims, fixed = TRUE))) {
+    dims <- gsub("$", "", dims, fixed = TRUE)
   }
 
   has_dim_sep <- FALSE
@@ -80,8 +80,8 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
   }
 
   if (any(grep("-|\\+", dims)) && !is.null(cc)) {
-    rows <- range(as.integer(unique(cc$row_r)))
-    cols <- int2col(range(col2int(unique(cc$c_r))))
+    rows <- range(row2int(cc$row_r))
+    cols <- int2col(range(col2int(cc$c_r)))
 
     dims <- vapply(dims, function(x) expand_dims(x, cols, rows), "")
   }
@@ -95,9 +95,10 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
   # condition 1) contains dims separator, but all dims are of
   # equal size: "A1:A5,B1:B5"
   # condition 2) either "A1:B5" or separator, but unequal size or "A1:A2,A4:A6,B1:B5"
-  if (has_dim_sep && get_dims(dims, check = TRUE)) {
+  ldims <- get_dims(dims, check = FALSE)
+  is_equal <- attr(ldims, "is_equal_sized")
 
-    ldims     <- get_dims(dims)
+  if (has_dim_sep && is_equal) {
     full_rows <- ldims$rows[[1]]
     full_cols <- ldims$cols
 

@@ -18,6 +18,8 @@
 * C++ functions used in loading and writing files have seen another round of cleanups.
 * Cleanups in `wb_dims()` to increase coverage and to be more precise in error messages.
 * Internal border logic was cleaned up.
+* Cleanups for `dims_to_dataframe()` and `do_cell_init()`. Both are used extensively in the package. [#1515](https://github.com/JanMarvin/openxlsx2/pull/1515)
+
 
 ***************************************************************************
 

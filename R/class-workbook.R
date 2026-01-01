@@ -10213,8 +10213,7 @@ wbWorkbook <- R6::R6Class(
 
         if (!is.null(df)) {
           df_dims <- df
-          df_dims[] <- lapply(df_dims, FUN = function(x) rep_len(NA_character_, length(x)))
-          dims <- dims
+          df_dims[] <- NA_character_
         } else {
           df_dims <- dims_to_dataframe(dims)
         }
@@ -10239,13 +10238,14 @@ wbWorkbook <- R6::R6Class(
           need_cells <- df
         }
 
-        exp_cells <- unlist(need_cells[need_cells != ""], use.names = FALSE)
+        exp_cells <- unlist(need_cells, use.names = FALSE)
+        exp_cells <- exp_cells[!is.na(exp_cells) & exp_cells != ""]
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
-        # initialize cell
-        if (!all(is.na(exp_cells)) && anyNA(sel <- match(exp_cells, got_cells))) {
-            missing_cells <- exp_cells[is.na(sel)]
-            self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
+        missing_cells <- exp_cells[!(exp_cells %in% got_cells)]
+
+        if (length(missing_cells) > 0) {
+          self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
         }
 
         if (keep) return(exp_cells)
