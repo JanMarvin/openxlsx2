@@ -50,6 +50,10 @@
   [`wb_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_dims.md)
   to increase coverage and to be more precise in error messages.
 - Internal border logic was cleaned up.
+- Cleanups for
+  [`dims_to_dataframe()`](https://janmarvin.github.io/openxlsx2/dev/reference/dims_to_dataframe.md)
+  and `do_cell_init()`. Both are used extensively in the package.
+  [\#1515](https://github.com/JanMarvin/openxlsx2/pull/1515)
 
 ------------------------------------------------------------------------
 
