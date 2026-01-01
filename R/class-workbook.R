@@ -8357,7 +8357,7 @@ wbWorkbook <- R6::R6Class(
       )
       sides <- lapply(sides, function(x) if (is.null(x$b) || is.null(x$c)) list(b = NULL, c = NULL) else x)
 
-      diag_styles <- unique(c(diagonal_up, diagonal_down))
+      diag_styles <- union(diagonal_up, diagonal_down)
       diag_styles <- diag_styles[!is.null(diag_styles)]
       if (length(diag_styles) > 1) stop("Only a single diagonal style per cell allowed", call. = FALSE)
 

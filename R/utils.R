@@ -209,8 +209,8 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
       rows <- as.character(rows_int)
     }
 
-    cols_out <- unique(c(cols_out, cols))
-    rows_out <- unique(c(rows_out, rows))
+    cols_out <- union(cols_out, cols)
+    rows_out <- union(rows_out, rows)
   }
 
   list(col = cols_out, row = rows_out)
