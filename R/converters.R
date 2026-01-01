@@ -70,8 +70,8 @@ row2int <- function(x) {
   if (is.null(x)) return(NULL)
   if (length(x) == 0) return(integer())
 
-  rows <- gsub("[[:alpha:]]", "", x)
-  rows <- as.integer(rows)
+  rows <- as.integer(chartr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                            "                          ", x))
 
   if (anyNA(rows)) stop("missings not allowed in rows", call. = FALSE)
 

@@ -929,8 +929,9 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # reduce to required length
-  col_span <- cols_all[cols_all %in% cols_sel]
-  row_span <- rows_all[rows_all %in% rows_sel]
+  # intersect() is faster than %in% for long vectors
+  col_span <- if (is.null(cols_sel)) cols_all else intersect(cols_all, cols_sel)
+  row_span <- if (is.null(rows_sel)) rows_all else intersect(rows_all, rows_sel)
 
   # if required add column name and row name
   if (col_names) row_span <- c(max(min(row_span, 1), 1L), row_span + 1L)
@@ -961,8 +962,13 @@ wb_dims <- function(..., select = NULL) {
   row_span <- row_span + (frow - 1L)
   col_span <- col_span + (fcol - 1L)
 
+  # precompute non-consecutive checks (avoid repeated diff())
+  rows_nonconsec <- length(row_span) > 1L && any(abs(diff(row_span)) != 1L)
+  cols_nonconsec <- length(col_span) > 1L && any(abs(diff(col_span)) != 1L)
+
   # return single cells (A1 or A1,B1)
-  if ((length(row_span) == 1 || any(abs(diff(row_span)) != 1L)) && (length(col_span) == 1 || any(abs(diff(col_span)) != 1L))) {
+  if ((length(row_span) == 1 || rows_nonconsec) &&
+      (length(col_span) == 1 || cols_nonconsec)) {
 
     # A1
     row_start <- row_span
@@ -970,10 +976,10 @@ wb_dims <- function(..., select = NULL) {
 
     dims <- NULL
 
-    if (any(abs(diff(row_span)) != 1L)) {
+    if (rows_nonconsec) {
       for (row_start in row_span) {
         cdims <- NULL
-        if (any(abs(diff(col_span)) != 1L)) {
+        if (cols_nonconsec) {
           for (col_start in col_span) {
             tmp  <- rowcol_to_dim(row_start, col_start, args$fix)
             cdims <- c(cdims, tmp)
@@ -984,7 +990,7 @@ wb_dims <- function(..., select = NULL) {
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(abs(diff(col_span)) != 1L)) {
+      if (cols_nonconsec) {
         for (col_start in col_span) {
           tmp  <- rowcol_to_dim(row_span, col_start, args$fix)
           dims <- c(dims, tmp)
@@ -997,10 +1003,10 @@ wb_dims <- function(..., select = NULL) {
   } else { # return range "A1:A7" or "A1:A7,B1:B7"
 
     dims <- NULL
-    if (any(abs(diff(row_span)) != 1L)) {
+    if (rows_nonconsec) {
       for (row_start in row_span) {
         cdims <- NULL
-        if (any(abs(diff(col_span)) != 1L)) {
+        if (cols_nonconsec) {
           for (col_start in col_span) {
             tmp  <- rowcol_to_dims(row_start, col_start, fix = args$fix)
             cdims <- c(cdims, tmp)
@@ -1011,7 +1017,7 @@ wb_dims <- function(..., select = NULL) {
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(abs(diff(col_span)) != 1L)) {
+      if (cols_nonconsec) {
         for (col_start in col_span) {
           tmp  <- rowcol_to_dims(row_span, col_start, fix = args$fix)
           dims <- c(dims, tmp)
