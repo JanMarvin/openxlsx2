@@ -458,7 +458,7 @@ wb_to_df <- function(
     tt <- tt[, sel, drop = FALSE]
   }
 
-  keep_rows <- keep_rows[keep_rows %in% rnams]
+  keep_rows <- intersect(keep_rows, rnams)
 
   # reduce data to selected cases only
   if (has_dims && length(keep_rows) && length(keep_cols))
