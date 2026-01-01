@@ -533,59 +533,55 @@ SEXP dims_to_df(Rcpp::IntegerVector rows,
   bool has_fcols = fcols.isNotNull();
   bool has_filled = filled.isNotNull();
 
-  // precompute strings for rows and cols
   std::vector<std::string> row_strs(static_cast<size_t>(nn));
-  for (R_xlen_t j = 0; j < nn; ++j)
+  for (R_xlen_t j = 0; j < nn; ++j) {
     row_strs[static_cast<size_t>(j)] = std::to_string(rows[j]);
-
-  std::vector<std::string> col_strs(static_cast<size_t>(kk));
-  for (R_xlen_t i = 0; i < kk; ++i)
-    col_strs[static_cast<size_t>(i)] = Rcpp::as<std::string>(cols[i]);
-
-  // prepare filtering sets if needed
-  std::unordered_set<std::string> flls;
-  if (has_filled) {
-    std::vector<std::string> flld = Rcpp::as<std::vector<std::string>>(filled.get());
-    flls.reserve(flld.size() * 2);
-    flls.insert(flld.begin(), flld.end());
   }
 
-  std::unordered_set<R_xlen_t> allowed_cols;
+  std::vector<bool> col_mask(static_cast<size_t>(kk), !has_fcols);
   if (has_fcols) {
-    std::vector<R_xlen_t> fcls = Rcpp::as<std::vector<R_xlen_t>>(fcols.get());
-    allowed_cols.insert(fcls.begin(), fcls.end());
-  }
-
-  SEXP default_val = fill ? Rf_mkChar("") : NA_STRING;
-
-  Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn, default_val));
-  }
-
-  if (fill) {
-    for (R_xlen_t i = 0; i < kk; ++i) {
-      if (has_fcols && !allowed_cols.count(i))
-        continue;
-
-      Rcpp::CharacterVector cvec = df[i];
-      const std::string& coli = col_strs[static_cast<size_t>(i)];
-
-      for (R_xlen_t j = 0; j < nn; ++j) {
-        const std::string& row_str = row_strs[static_cast<size_t>(j)];
-
-        std::string cell = coli;
-        cell += row_str;
-
-        // Check against the set
-        if (!has_filled || flls.count(cell)) {
-          cvec[j] = cell;
-        }
+    Rcpp::IntegerVector fcls(fcols.get());
+    for (int idx : fcls) {
+      if (idx >= 0 && idx < kk) {
+        col_mask[static_cast<size_t>(idx)] = true;
       }
     }
   }
 
-  // set df attributes
+  std::unordered_set<std::string> filled_set;
+  if (has_filled) {
+    Rcpp::CharacterVector flld(filled.get());
+    filled_set.reserve(static_cast<size_t>(flld.size()));
+    for (R_xlen_t i = 0; i < flld.size(); ++i) {
+      filled_set.insert(Rcpp::as<std::string>(flld[i]));
+    }
+  }
+
+  Rcpp::List df(kk);
+  SEXP default_val = fill ? Rf_mkChar("") : NA_STRING;
+
+  for (R_xlen_t i = 0; i < kk; ++i) {
+    Rcpp::CharacterVector cvec(nn, default_val);
+
+    if (fill && col_mask[static_cast<size_t>(i)]) {
+      const char* col_name = CHAR(STRING_ELT(cols, i));
+      size_t col_len = strlen(col_name);
+
+      for (R_xlen_t j = 0; j < nn; ++j) {
+        const std::string& row_str = row_strs[static_cast<size_t>(j)];
+
+        char buffer[32];
+        memcpy(buffer, col_name, col_len);
+        memcpy(buffer + col_len, row_str.c_str(), row_str.size() + 1);
+
+        if (!has_filled || filled_set.count(buffer)) {
+          cvec[j] = Rf_mkChar(buffer);
+        }
+      }
+    }
+    df[i] = cvec;
+  }
+
   df.attr("row.names") = rows;
   df.attr("names") = cols;
   df.attr("class") = "data.frame";
