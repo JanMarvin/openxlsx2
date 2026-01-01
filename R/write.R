@@ -38,7 +38,7 @@ inner_update <- function(
   if (!all(rows %in% rows_in_wb)) {
     # message("row(s) not in workbook")
 
-    missing_rows <- rows[!rows %in% rows_in_wb]
+    missing_rows <- setdiff(rows, rows_in_wb)
 
     # new row_attr
     row_attr_missing <- empty_row_attr(n = length(missing_rows))
@@ -58,7 +58,7 @@ inner_update <- function(
   if (!all(cells_needed %in% cells_in_wb)) {
     # message("cell(s) not in workbook")
 
-    missing_cells <- cells_needed[!cells_needed %in% cells_in_wb]
+    missing_cells <- setdiff(cells_needed, cells_in_wb)
 
     # create missing cells
     cc_missing <- create_char_dataframe(names(cc), length(missing_cells))

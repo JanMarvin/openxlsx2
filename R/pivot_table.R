@@ -208,7 +208,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
     if (is.character(item_order)) {
       # add remaining items
       if (length(item_order) < length(dat)) {
-        item_order <- c(item_order, dat[!dat %in% item_order])
+        item_order <- c(item_order, setdiff(dat, item_order))
       }
 
       item_order <- match(item_order, dat)
@@ -217,7 +217,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
       # add remaining items
       if (length(item_order) < length(dat)) {
         vals <- seq_along(dat)
-        item_order <- c(item_order, vals[!vals %in% item_order])
+        item_order <- c(item_order, setdiff(vals, item_order))
       }
     }
 

@@ -209,8 +209,8 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
       rows <- as.character(rows_int)
     }
 
-    cols_out <- unique(c(cols_out, cols))
-    rows_out <- unique(c(rows_out, rows))
+    cols_out <- union(cols_out, cols)
+    rows_out <- union(rows_out, rows)
   }
 
   list(col = cols_out, row = rows_out)
@@ -220,27 +220,26 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 #' @rdname dims_helper
 #' @export
 validate_dims <- function(x) {
-
   assert_class(x, "character")
-
   dims <- gsub("\\$", "", x)
 
-  if (any(grepl("[^A-Z0-9,;:]", dims)))
+  if (any(dims == ""))
+    stop("Unexpected blank strings in dims validation detected", call. = FALSE)
+
+  dims <- unlist(strsplit(dims, "[,;]"))
+
+  if (any(grepl("[^A-Z0-9:]", dims)))
     stop("dims contains invalid character", call. = FALSE)
 
-  if (length(dims) == 1 && inherits(dims, "character")) {
-    if (any(grepl(",|;", dims))) dims <- unlist(strsplit(dims, split = "[,;]"))
-  }
+  dm_list <- strsplit(dims, ":")
 
-  for (dim in dims) {
-    if (any(dim == "" | length(dim) == 0)) {
-      stop("Unexpected blank strings in dims validtion detected", call. = FALSE)
-    }
+  all_parts <- unlist(dm_list)
 
-    dm <- unlist(strsplit(dim, ":"))
-    cols <- if (any(grepl("[[:alpha:]]", dm))) col2int(dm) else c(1, 16384)
-    rows <- if (any(grepl("[[:digit:]]", dm))) row2int(dm) else c(1, 1048576)
-  }
+  has_alpha <- grepl("[[:alpha:]]", all_parts)
+  has_digit <- grepl("[[:digit:]]", all_parts)
+
+  cols <- if (any(has_alpha)) col2int(all_parts) else c(1, 16384)
+  rows <- if (any(has_digit)) row2int(all_parts) else c(1, 1048576)
 
   # should be TRUE, otherwise the functions above would have thrown an error
   all(is.numeric(cols) & is.numeric(rows))
@@ -930,8 +929,9 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # reduce to required length
-  col_span <- cols_all[cols_all %in% cols_sel]
-  row_span <- rows_all[rows_all %in% rows_sel]
+  # intersect() is faster than %in% for long vectors
+  col_span <- if (is.null(cols_sel)) cols_all else intersect(cols_all, cols_sel)
+  row_span <- if (is.null(rows_sel)) rows_all else intersect(rows_all, rows_sel)
 
   # if required add column name and row name
   if (col_names) row_span <- c(max(min(row_span, 1), 1L), row_span + 1L)
@@ -962,8 +962,13 @@ wb_dims <- function(..., select = NULL) {
   row_span <- row_span + (frow - 1L)
   col_span <- col_span + (fcol - 1L)
 
+  # precompute non-consecutive checks (avoid repeated diff())
+  rows_nonconsec <- length(row_span) > 1L && any(abs(diff(row_span)) != 1L)
+  cols_nonconsec <- length(col_span) > 1L && any(abs(diff(col_span)) != 1L)
+
   # return single cells (A1 or A1,B1)
-  if ((length(row_span) == 1 || any(abs(diff(row_span)) != 1L)) && (length(col_span) == 1 || any(abs(diff(col_span)) != 1L))) {
+  if ((length(row_span) == 1 || rows_nonconsec) &&
+      (length(col_span) == 1 || cols_nonconsec)) {
 
     # A1
     row_start <- row_span
@@ -971,10 +976,10 @@ wb_dims <- function(..., select = NULL) {
 
     dims <- NULL
 
-    if (any(abs(diff(row_span)) != 1L)) {
+    if (rows_nonconsec) {
       for (row_start in row_span) {
         cdims <- NULL
-        if (any(abs(diff(col_span)) != 1L)) {
+        if (cols_nonconsec) {
           for (col_start in col_span) {
             tmp  <- rowcol_to_dim(row_start, col_start, args$fix)
             cdims <- c(cdims, tmp)
@@ -985,7 +990,7 @@ wb_dims <- function(..., select = NULL) {
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(abs(diff(col_span)) != 1L)) {
+      if (cols_nonconsec) {
         for (col_start in col_span) {
           tmp  <- rowcol_to_dim(row_span, col_start, args$fix)
           dims <- c(dims, tmp)
@@ -998,10 +1003,10 @@ wb_dims <- function(..., select = NULL) {
   } else { # return range "A1:A7" or "A1:A7,B1:B7"
 
     dims <- NULL
-    if (any(abs(diff(row_span)) != 1L)) {
+    if (rows_nonconsec) {
       for (row_start in row_span) {
         cdims <- NULL
-        if (any(abs(diff(col_span)) != 1L)) {
+        if (cols_nonconsec) {
           for (col_start in col_span) {
             tmp  <- rowcol_to_dims(row_start, col_start, fix = args$fix)
             cdims <- c(cdims, tmp)
@@ -1012,7 +1017,7 @@ wb_dims <- function(..., select = NULL) {
         dims <- c(dims, cdims)
       }
     } else {
-      if (any(abs(diff(col_span)) != 1L)) {
+      if (cols_nonconsec) {
         for (col_start in col_span) {
           tmp  <- rowcol_to_dims(row_span, col_start, fix = args$fix)
           dims <- c(dims, tmp)

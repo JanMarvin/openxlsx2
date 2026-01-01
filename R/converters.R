@@ -20,6 +20,11 @@ int2col <- function(x) {
   ox_int_to_col(x)
 }
 
+check_range <- function(x) {
+  r <- suppressWarnings(range(as.numeric(x), na.rm = TRUE))
+  any(r < 1 | r > 16384)
+}
+
 #' Convert spreadsheet column to integer
 #'
 #' Converts a spreadsheet column in `A1` notation to an integer.
@@ -32,15 +37,15 @@ int2col <- function(x) {
 #' col2int(LETTERS)
 col2int <- function(x) {
   if (is.null(x)) return(NULL)
+  if (!is.atomic(x)) {
+    stop("x must be character")
+  }
+  if (length(x) == 0) return(integer())
 
   if (is.numeric(x) || is.factor(x)) {
-    if (any(as.numeric(x) < 1L | as.numeric(x) > 16384, na.rm = TRUE))
+    if (check_range(x))
       stop("Column exceeds valid range", call. = FALSE)
     return(as.integer(x))
-  }
-
-  if (!is.character(x)) {
-    stop("x must be character")
   }
 
   if (anyNA(x)) stop("x contains NA")
@@ -70,8 +75,8 @@ row2int <- function(x) {
   if (is.null(x)) return(NULL)
   if (length(x) == 0) return(integer())
 
-  rows <- gsub("[[:alpha:]]", "", x)
-  rows <- as.integer(rows)
+  rows <- as.integer(chartr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                            "                          ", x))
 
   if (anyNA(rows)) stop("missings not allowed in rows", call. = FALSE)
 

@@ -60,7 +60,7 @@ test_that("validate_dims() works", {
   expect_true(validate_dims("A1:B3;$A$1:$B2"))
   expect_true(validate_dims("A:B"))
   expect_true(validate_dims("1:2"))
-  expect_error(validate_dims(""), "Unexpected blank strings in dims validtion detected")
+  expect_error(validate_dims(""), "Unexpected blank strings in dims validation detected")
   expect_error(validate_dims("A1:B3,A1:B2,A1500000"), "Row exceeds valid range")
   expect_error(validate_dims("ZZZ1:B3"), "Column exceeds valid range")
   expect_true(validate_dims(c("A1", "B1:C2")))
@@ -928,4 +928,16 @@ test_that("wb_dims warns when coordinates are out of bounds", {
 test_that("as_binary", {
   expect_error(as_binary(7), "must be 0, 1, FALSE, or TRUE")
   expect_error(as_binary("-7"), "must be 0, 1, FALSE, or TRUE")
+})
+
+test_that("wb_dims with vectors is no long slow", {
+  sidx <- function(n) {
+    cbind(
+      row = round(rbeta(n, 2, 2) * 99 + 1),
+      col = round(rbeta(n, 1.5, 1.5) * 99 + 1)
+    )
+  }
+  idx <- sidx(10000)
+
+  expect_silent(wb_dims(rows = idx[, "row"], cols = idx[, "col"]))
 })

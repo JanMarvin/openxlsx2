@@ -1830,7 +1830,7 @@ wbWorkbook <- R6::R6Class(
       # test that slicer is initalized in wb$pivotDefinitions.
       pt  <- self$worksheets[[sheet]]$relships$pivotTable
       ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
-      pt  <- pt[which(ptl$name == pivot_table)]
+      pt  <- pt[ptl$name == pivot_table]
 
       fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
       names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
@@ -2170,7 +2170,7 @@ wbWorkbook <- R6::R6Class(
       # test that slicer is initalized in wb$pivotDefinitions.
       pt  <- self$worksheets[[sheet]]$relships$pivotTable
       ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
-      pt  <- pt[which(ptl$name == pivot_table)]
+      pt  <- pt[ptl$name == pivot_table]
 
       fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
       names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
@@ -4028,7 +4028,7 @@ wbWorkbook <- R6::R6Class(
       xml <- wb_tabs$tab_xml
       tab_nams <- xml_node_name(xml, "table")
       known_xml <- c("autoFilter", "tableColumns", "tableStyleInfo")
-      tab_unks <- tab_nams[!tab_nams %in% known_xml]
+      tab_unks <- setdiff(tab_nams, known_xml)
       if (length(tab_unks)) {
         msg <- paste(
           "Found unknown table xml nodes. These are lost using update_table: ",
@@ -5025,7 +5025,7 @@ wbWorkbook <- R6::R6Class(
 
       # check if additional rows are required
       has_rows <- sort(as.integer(self$worksheets[[sheet]]$sheet_data$row_attr$r))
-      missing_rows <- rows[!rows %in% has_rows]
+      missing_rows <- setdiff(rows, has_rows)
       if (length(missing_rows)) private$do_cell_init(sheet, paste0("A", sort(missing_rows)))
 
       # fetch the row_attr data.frame
@@ -7420,7 +7420,7 @@ wbWorkbook <- R6::R6Class(
     #'   are removed.
     remove_creators = function(creators) {
       old <- strsplit(self$get_properties()[["creator"]], ";")[[1]]
-      old <- old[which(!old %in% creators)]
+      old <- setdiff(old, creators)
       self$set_properties(creator = old)
     },
 
@@ -8357,7 +8357,7 @@ wbWorkbook <- R6::R6Class(
       )
       sides <- lapply(sides, function(x) if (is.null(x$b) || is.null(x$c)) list(b = NULL, c = NULL) else x)
 
-      diag_styles <- unique(c(diagonal_up, diagonal_down))
+      diag_styles <- union(diagonal_up, diagonal_down)
       diag_styles <- diag_styles[!is.null(diag_styles)]
       if (length(diag_styles) > 1) stop("Only a single diagonal style per cell allowed", call. = FALSE)
 
@@ -9552,7 +9552,7 @@ wbWorkbook <- R6::R6Class(
     # this may ahve been removes
     updateSharedStrings = function(uNewStr) {
       ## Function will return named list of references to new strings
-      uStr <- uNewStr[which(!uNewStr %in% self$sharedStrings)]
+      uStr <- setdiff(uNewStr, self$sharedStrings)
       uCount <- attr(self$sharedStrings, "uniqueCount")
       self$append("sharedStrings", uStr)
 
@@ -10242,7 +10242,7 @@ wbWorkbook <- R6::R6Class(
         exp_cells <- exp_cells[!is.na(exp_cells) & exp_cells != ""]
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
-        missing_cells <- exp_cells[!(exp_cells %in% got_cells)]
+        missing_cells <- setdiff(exp_cells, got_cells)
 
         if (length(missing_cells) > 0) {
           self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
