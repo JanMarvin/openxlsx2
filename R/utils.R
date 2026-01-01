@@ -220,27 +220,26 @@ dims_to_rowcol <- function(x, as_integer = FALSE) {
 #' @rdname dims_helper
 #' @export
 validate_dims <- function(x) {
-
   assert_class(x, "character")
-
   dims <- gsub("\\$", "", x)
 
-  if (any(grepl("[^A-Z0-9,;:]", dims)))
+  if (any(dims == ""))
+    stop("Unexpected blank strings in dims validation detected", call. = FALSE)
+
+  dims <- unlist(strsplit(dims, "[,;]"))
+
+  if (any(grepl("[^A-Z0-9:]", dims)))
     stop("dims contains invalid character", call. = FALSE)
 
-  if (length(dims) == 1 && inherits(dims, "character")) {
-    if (any(grepl(",|;", dims))) dims <- unlist(strsplit(dims, split = "[,;]"))
-  }
+  dm_list <- strsplit(dims, ":")
 
-  for (dim in dims) {
-    if (any(dim == "" | length(dim) == 0)) {
-      stop("Unexpected blank strings in dims validtion detected", call. = FALSE)
-    }
+  all_parts <- unlist(dm_list)
 
-    dm <- unlist(strsplit(dim, ":"))
-    cols <- if (any(grepl("[[:alpha:]]", dm))) col2int(dm) else c(1, 16384)
-    rows <- if (any(grepl("[[:digit:]]", dm))) row2int(dm) else c(1, 1048576)
-  }
+  has_alpha <- grepl("[[:alpha:]]", all_parts)
+  has_digit <- grepl("[[:digit:]]", all_parts)
+
+  cols <- if (any(has_alpha)) col2int(all_parts) else c(1, 16384)
+  rows <- if (any(has_digit)) row2int(all_parts) else c(1, 1048576)
 
   # should be TRUE, otherwise the functions above would have thrown an error
   all(is.numeric(cols) & is.numeric(rows))
