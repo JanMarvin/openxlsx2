@@ -7420,7 +7420,7 @@ wbWorkbook <- R6::R6Class(
     #'   are removed.
     remove_creators = function(creators) {
       old <- strsplit(self$get_properties()[["creator"]], ";")[[1]]
-      old <- old[!old %in% creators]
+      old <- setdiff(old, creators)
       self$set_properties(creator = old)
     },
 
@@ -9552,7 +9552,7 @@ wbWorkbook <- R6::R6Class(
     # this may ahve been removes
     updateSharedStrings = function(uNewStr) {
       ## Function will return named list of references to new strings
-      uStr <- uNewStr[!uNewStr %in% self$sharedStrings]
+      uStr <- setdiff(uNewStr, self$sharedStrings)
       uCount <- attr(self$sharedStrings, "uniqueCount")
       self$append("sharedStrings", uStr)
 
