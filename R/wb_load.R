@@ -252,7 +252,7 @@ wb_load <- function(
     "slicers", "tables", "theme", "threadedComments", "timelineCaches",
     "timelines", "worksheets", "webextensions", "xl", "[trash]"
   )
-  unknown <- file_folders[!file_folders %in% known]
+  unknown <- setdiff(file_folders, known)
   # nocov start
   if (length(unknown)) {
     message <- paste0(

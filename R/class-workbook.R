@@ -4028,7 +4028,7 @@ wbWorkbook <- R6::R6Class(
       xml <- wb_tabs$tab_xml
       tab_nams <- xml_node_name(xml, "table")
       known_xml <- c("autoFilter", "tableColumns", "tableStyleInfo")
-      tab_unks <- tab_nams[!tab_nams %in% known_xml]
+      tab_unks <- setdiff(tab_nams, known_xml)
       if (length(tab_unks)) {
         msg <- paste(
           "Found unknown table xml nodes. These are lost using update_table: ",
@@ -5025,7 +5025,7 @@ wbWorkbook <- R6::R6Class(
 
       # check if additional rows are required
       has_rows <- sort(as.integer(self$worksheets[[sheet]]$sheet_data$row_attr$r))
-      missing_rows <- rows[!rows %in% has_rows]
+      missing_rows <- setdiff(rows, has_rows)
       if (length(missing_rows)) private$do_cell_init(sheet, paste0("A", sort(missing_rows)))
 
       # fetch the row_attr data.frame
@@ -10242,7 +10242,7 @@ wbWorkbook <- R6::R6Class(
         exp_cells <- exp_cells[!is.na(exp_cells) & exp_cells != ""]
         got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
-        missing_cells <- exp_cells[!(exp_cells %in% got_cells)]
+        missing_cells <- setdiff(exp_cells, got_cells)
 
         if (length(missing_cells) > 0) {
           self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
