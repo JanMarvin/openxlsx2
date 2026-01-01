@@ -1830,7 +1830,7 @@ wbWorkbook <- R6::R6Class(
       # test that slicer is initalized in wb$pivotDefinitions.
       pt  <- self$worksheets[[sheet]]$relships$pivotTable
       ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
-      pt  <- pt[which(ptl$name == pivot_table)]
+      pt  <- pt[ptl$name == pivot_table]
 
       fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
       names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
@@ -2170,7 +2170,7 @@ wbWorkbook <- R6::R6Class(
       # test that slicer is initalized in wb$pivotDefinitions.
       pt  <- self$worksheets[[sheet]]$relships$pivotTable
       ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
-      pt  <- pt[which(ptl$name == pivot_table)]
+      pt  <- pt[ptl$name == pivot_table]
 
       fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
       names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
@@ -7420,7 +7420,7 @@ wbWorkbook <- R6::R6Class(
     #'   are removed.
     remove_creators = function(creators) {
       old <- strsplit(self$get_properties()[["creator"]], ";")[[1]]
-      old <- old[which(!old %in% creators)]
+      old <- old[!old %in% creators]
       self$set_properties(creator = old)
     },
 
@@ -9552,7 +9552,7 @@ wbWorkbook <- R6::R6Class(
     # this may ahve been removes
     updateSharedStrings = function(uNewStr) {
       ## Function will return named list of references to new strings
-      uStr <- uNewStr[which(!uNewStr %in% self$sharedStrings)]
+      uStr <- uNewStr[!uNewStr %in% self$sharedStrings]
       uCount <- attr(self$sharedStrings, "uniqueCount")
       self$append("sharedStrings", uStr)
 
