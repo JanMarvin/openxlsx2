@@ -534,9 +534,9 @@ test_that("get_dims works", {
   got <- get_dims(c("A1:A5", "B1:B5"), check = TRUE)
   expect_true(got)
 
-  exp <- structure(list(rows = list(c(1L, 5L)), cols = 1:2), is_equal_sized = FALSE)
+  exp <- structure(list(rows = list(c(1L, 5L)), cols = 1:2), is_equal_sized = TRUE)
   got <- get_dims(c("A1:A5", "B1:B5"), check = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   got <- get_dims(c("A1:A5", "B2:B6"), check = TRUE)
@@ -544,5 +544,48 @@ test_that("get_dims works", {
 
   exp <- structure(list(rows = list(c(1L, 5L), c(2L, 6L)), cols = 1:2), is_equal_sized = FALSE)
   got <- get_dims(c("A1:A5", "B2:B6"), check = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
+})
+
+test_that("dims_to_dataframe works", {
+  exp <- structure(
+    list(A = c("A1", "A2", "A3"), B = c("", "", ""), C = c("C1", "C2", "C3")),
+    row.names = c(NA, 3L), class = "data.frame"
+  )
+  got <- dims_to_dataframe("A1:A3,C1:C3", fill = TRUE, empty_rm = FALSE)
+  expect_equal(got, exp)
+
+  exp <- structure(list(A = c("A1", "A2", "A3", "A4", "A5")),
+                 row.names = c(NA, 5L), class = "data.frame")
+  got <- dims_to_dataframe("A1:A5,", fill = TRUE)
+  expect_equal(got, exp)
+
+  df <- dims_to_dataframe("A1:B2", fill = TRUE)
+  exp <- dims_to_dataframe("A1:B2")
+  got <- dims_to_dataframe(df)
+  expect_equal(got, exp)
+
+  got <- dims_to_dataframe("$A$1:$B2")
+  expect_equal(got, exp)
+
+  exp <- dims_to_dataframe("A1:C2")[c("A", "C")]
+  got <- dims_to_dataframe("A1:A2,C1:C2", empty_rm = TRUE)
+  expect_equal(got, exp)
+
+  ## +1
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(dims = "A1,C10", x = c(1, 1), enforce = TRUE)
+
+  cc_ref <- wb$worksheets[[1]]$sheet_data$cc
+
+  res <- dims_to_dataframe(dims = "+1", cc = cc_ref)
+  expect_equal(dimnames(res), list("1", "C"))
+
+  exp <- dims_to_dataframe("A1:A2")
+  got <- dims_to_dataframe("A1:A2,A1:A2", empty_rm = TRUE)
+  expect_equal(got, exp)
+
+  exp <- dims_to_dataframe("A1:B2")
+  got <- dims_to_dataframe("A1:A2,B1:B2", empty_rm = TRUE)
+  expect_equal(got, exp)
 })

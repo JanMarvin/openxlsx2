@@ -343,6 +343,7 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
   // Logic for 'check'
   int32_t first_min_r = -1, first_max_r = -1;
   bool check_failed = false;
+  bool reference_set = false;
 
   for (R_xlen_t i = 0; i < n_dims; ++i) {
     std::string dim_str = Rcpp::as<std::string>(dims[i]);
@@ -362,13 +363,13 @@ SEXP get_dims(Rcpp::CharacterVector dims, bool check = false) {
     int32_t r_min = std::min(r1, r2);
     int32_t r_max = std::max(r1, r2);
 
-    if (check || i > 0) {
-      if (i == 0) {
-        first_min_r = r_min;
-        first_max_r = r_max;
-      } else if (r_min != first_min_r || r_max != first_max_r) {
-        if (check)
-          return Rcpp::wrap(false);  // Return early if only checking
+    if (!reference_set) {
+      first_min_r = r_min;
+      first_max_r = r_max;
+      reference_set = true;
+    } else {
+      if (r_min != first_min_r || r_max != first_max_r) {
+        if (check) return Rcpp::wrap(false);
         check_failed = true;
       }
     }
