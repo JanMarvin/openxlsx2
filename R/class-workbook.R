@@ -1465,7 +1465,7 @@ wbWorkbook <- R6::R6Class(
       args <- list(...)
       if ("na.strings" %in% names(args)) na <- args[["na.strings"]]
 
-      arguments <- c("na.strings")
+      arguments <- c(ls(), "na.strings")
       standardize(..., arguments = arguments)
       if (missing(x)) stop("`x` is missing")
       if (length(self$sheet_names) == 0) {
@@ -1547,7 +1547,7 @@ wbWorkbook <- R6::R6Class(
       args <- list(...)
       if ("na.strings" %in% names(args)) na <- args[["na.strings"]]
 
-      arguments <- c("na.strings")
+      arguments <- c(ls(), "na.strings")
       standardize(..., arguments = arguments)
       if (missing(x)) stop("`x` is missing")
       if (length(self$sheet_names) == 0) {
