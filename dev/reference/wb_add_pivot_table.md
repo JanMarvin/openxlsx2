@@ -218,4 +218,5 @@ wb <- wb_add_pivot_table(wb, x = df,
     filter = "am", rows = "cyl", cols = "gear", data = "disp",
     params = list(no_style = TRUE, numfmt = c(formatCode = "##0.0"))
   )
+#> Warning: unused arguments (numfmt)
 ```
