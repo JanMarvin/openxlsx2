@@ -158,6 +158,8 @@ worksheet names.}
 
 \item{\code{path}}{path}
 
+\item{\code{tmpDir}}{tmpDir}
+
 \item{\code{namedSheetViews}}{namedSheetViews}
 }
 \if{html}{\out{</div>}}

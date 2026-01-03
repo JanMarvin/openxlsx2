@@ -46,6 +46,10 @@
 #' some array formulas are not yet correct, conditional formatting and data
 #' validation are not implemented, nor are pivot tables and slicers.
 #'
+#' The loaded workbook provides a finalizer that will be invoked after the first
+#' `gc()` call and will cause removal of a loaded temporary files. These files
+#' are not tracked across workbooks.
+#'
 #' @param file A path to an existing .xlsx, .xlsm or .xlsb file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #'   sheet will be loaded. This can be a numeric, a string or `NULL`.
@@ -105,6 +109,7 @@ wb_load <- function(
 
   wb <- wb_workbook()
   wb$path <- file
+  wb$tmpDir <- xmlDir
 
   # There is one known file in #1194. this file has lower case folders, while
   # the references in the file are the usual camel case.

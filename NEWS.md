@@ -20,6 +20,10 @@
 * Internal border logic was cleaned up.
 * Cleanups for `dims_to_dataframe()` and `do_cell_init()`. Both are used extensively in the package. [#1515](https://github.com/JanMarvin/openxlsx2/pull/1515)
 
+## Breaking changes
+
+* The `wbWorkbook` class now provides a `finalizer` that will clean up temporary objects that belong to an input file and were extracted during `wb_load()`. Note: these objects are not tracked across clones of a workbook.
+
 
 ***************************************************************************
 
