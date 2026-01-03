@@ -351,9 +351,9 @@ create_pivot_table <- function(
     "data_on_rows", "data_position", "disable_field_list", "downfill", "edit_data",
     "enable_drill", "enable_field_properties", "enable_wizard", "error_caption",
     "field_list_sort_ascending", "field_print_titles", "grand_total_caption",
-    "grid_drop_zones", "immersive", "indent", "item_print_titles",
+    "grid_drop_zones", "hide_values_row", "immersive", "indent", "item_print_titles",
     "mdx_subqueries", "merge_item", "missing_caption", "multiple_field_filters",
-    "name", "no_style", "numfmt", "outline", "outline_data", "page_over_then_down",
+    "name", "no_style", "numfmts", "outline", "outline_data", "page_over_then_down",
     "page_style", "page_wrap", "preserve_formatting", "print_drill",
     "published", "row_grand_totals", "row_header_caption", "show_calc_mbrs",
     "show_col_headers", "show_col_stripes", "show_data_as", "show_data_drop_down",
@@ -632,11 +632,11 @@ create_pivot_table <- function(
     "pivotTableStyleInfo",
     xml_attributes = c(
       name           = table_style,
-      showRowHeaders = showRowHeaders,
-      showColHeaders = showColHeaders,
-      showRowStripes = showRowStripes,
-      showColStripes = showColStripes,
-      showLastColumn = showLastColumn
+      showRowHeaders = as_xml_attr(showRowHeaders),
+      showColHeaders = as_xml_attr(showColHeaders),
+      showRowStripes = as_xml_attr(showRowStripes),
+      showColStripes = as_xml_attr(showColStripes),
+      showLastColumn = as_xml_attr(showLastColumn)
     )
   )
 
@@ -695,20 +695,25 @@ create_pivot_table <- function(
   ptd16 <- xml_node_create(
     "xpdl:pivotTableDefinition16",
     xml_attributes = c(
-      EnabledSubtotalsDefault = EnabledSubtotalsDefault,
-      SubtotalsOnTopDefault   = SubtotalsOnTopDefault
+      EnabledSubtotalsDefault = as_xml_attr(EnabledSubtotalsDefault),
+      SubtotalsOnTopDefault   = as_xml_attr(SubtotalsOnTopDefault)
     )
   )
+
+  hideValuesRow <- "1"
+  if (!is.null(params$hide_values_row))
+    hideValuesRow <- params$hide_values_row
 
   extLst <- sprintf(
     '<extLst>
     <ext uri="{962EF5D1-5CA2-4c93-8EF4-DBF5C05439D2}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-    <x14:pivotTableDefinition hideValuesRow="1" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main" />
+    <x14:pivotTableDefinition hideValuesRow="%s" xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main" />
     </ext>
     <ext uri="{747A6164-185A-40DC-8AA5-F01512510D54}" xmlns:xpdl="http://schemas.microsoft.com/office/spreadsheetml/2016/pivotdefaultlayout">
     %s
     </ext>
     </extLst>',
+    as_xml_attr(hideValuesRow),
     ptd16
   )
 

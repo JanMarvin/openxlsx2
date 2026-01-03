@@ -908,10 +908,10 @@ test_that("numfmt in pivot tables works", {
                     filter = c("Location", "Status"), data = "Units")$
     add_pivot_table(df, dims = "A3", rows = "Plant",
                     filter = c("Location", "Status"), data = "Units",
-                    params = list(numfmt = c(formatCode = "#,###0"), sort_row = "ascending"))$
+                    params = list(numfmts = c(formatCode = "#,###0"), sort_row = "ascending"))$
     add_pivot_table(df, dims = "A3", rows = "Plant",
                     filter = c("Location", "Status"), data = "Units",
-                    params = list(numfmt = c(numfmt = 10), sort_row = "descending"))
+                    params = list(numfmts = c(numfmt = 10), sort_row = "descending"))
 
   exp <- c(
     "<dataField name=\"Sum of Units\" fld=\"3\" baseField=\"0\" baseItem=\"0\"/>",
@@ -954,8 +954,8 @@ test_that("numfmt in pivot tables works", {
   expect_error(
     wb$add_pivot_table(df, dims = "A3", rows = "cyl", cols = "gear",
                        data = c("vs", "am"),
-                       params = list(numfmt = c(numfmt = 10))),
-    "length of numfmt and data does not match"
+                       params = list(numfmts = c(numfmt = 10))),
+    "length of numfmts and data does not match"
   )
 
   ### add sortType only to those pivot fields that are sorted
@@ -1312,4 +1312,187 @@ test_that("finalize works", {
   rm(wb)
   gc()
   expect_false(dir.exists(tmpstr))
+})
+
+test_that("pivot tables with formulas work", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = 1)
+
+  wb <- wb_add_pivot_table(
+      wb,
+      df,
+      dims = "A3",
+      cols = NULL,
+      rows = "vs",
+      # For this case, the formula must return a single value
+      data = c("disp", "cyl", "=cyl/disp" = "Field1", "=Field1 * _xlfn.MAX(am)" = "Rand"),
+      param = list(
+        numfmts = c(
+          formatCode = c("#,##0.0"),
+          formatCode = c("#,##0.0"),
+          formatCode = c("0.0%"),
+          formatCode = c("0.0%")
+        )
+      )
+    )
+
+  expect_true(grepl("_xlfn.MAX", wb$pivotDefinitions))
+
+})
+
+test_that("pivot tables downfill works", {
+  wb <- wb_workbook()$add_worksheet("Pivot Examples")$add_data(x = mtcars)
+  df <- wb_data(wb, sheet = 1)
+  wb$add_pivot_table(
+    df,
+    dims = "B2",
+    rows = c("cyl", "vs"),
+    data = "mpg",
+    param = list(compact = FALSE, downfill = TRUE)
+  )
+  expect_true(grepl("fillDownLabels", wb$pivotTables))
+})
+
+test_that("pivot tables downfill works", {
+  wb <- wb_workbook()$add_worksheet("Pivot Examples")$add_data(x = mtcars)
+  df <- wb_data(wb, sheet = 1)
+  wb$add_pivot_table(
+    df,
+    dims = "B2",
+    rows = c("cyl", "vs"),
+    data = "mpg",
+    param = list(compact = FALSE, downfill = TRUE)
+  )
+  expect_true(grepl("fillDownLabels", wb$pivotTables))
+})
+
+test_that("disabling subtotals works", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+  pt <- wb_data(wb)
+
+  # so how am I supposed to order this?
+  wb$
+    add_pivot_table(
+      pt,
+      cols = c("am", "carb"),
+      data = "disp",
+      params = list(
+        subtotal_top = FALSE,
+        default_subtotal = FALSE,
+        rowGrandTotals = FALSE,
+        colGrandTotals = FALSE,
+        compact = FALSE,
+        compact_data = FALSE,
+        outline = FALSE
+      )
+    )
+
+  expect_true(grepl("subtotalTop=\"0\"", wb$pivotTables))
+  expect_true(grepl("defaultSubtotal=\"0\"", wb$pivotTables))
+
+})
+
+test_that("data caption works", {
+
+  wb <- wb_workbook()$add_worksheet("DataSheet")$add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = "DataSheet")
+
+  wb$add_pivot_table(
+    df,
+    dims = "A3",
+    rows = "cyl",
+    cols = "gear",
+    data = c("disp", "hp"),
+    params = list(
+      apply_alignment_formats    = TRUE,
+      apply_number_formats       = TRUE,
+      apply_border_formats       = TRUE,
+      apply_font_formats         = TRUE,
+      apply_pattern_formats      = TRUE,
+      apply_width_height_formats = TRUE,
+      auto_format_id             = 4099,
+      data_caption = "My Metrics",      # only in compact_data
+      row_header_caption = "Cylinders", # w/o compact_data = FALSE
+      col_header_caption = "Gears",     # w/o compact_data = FALSE
+      # compact_data = FALSE,
+      compact = FALSE
+    )
+  )
+
+  expect_true(grepl("applyAlignmentFormats=\"1\"", wb$pivotTables))
+  expect_true(grepl("applyNumberFormats=\"1\"", wb$pivotTables))
+  expect_true(grepl("applyBorderFormats=\"1\"", wb$pivotTables))
+  expect_true(grepl("applyFontFormats=\"1\"", wb$pivotTables))
+  expect_true(grepl("applyPatternFormats=\"1\"", wb$pivotTables))
+  expect_true(grepl("applyWidthHeightFormats=\"1\"", wb$pivotTables))
+  expect_true(grepl("autoFormatId=\"4099\"", wb$pivotTables))
+
+  expect_true(grepl("dataCaption=\"My Metrics\"", wb$pivotTables))
+  expect_true(grepl("rowHeaderCaption=\"Cylinders\"", wb$pivotTables))
+  expect_true(grepl("colHeaderCaption=\"Gears\"", wb$pivotTables))
+
+})
+
+test_that("data caption works", {
+
+  wb <- wb_workbook()$add_worksheet("DataSheet")$add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = "DataSheet")
+
+  wb$add_pivot_table(
+    df,
+    dims = "A3",
+    rows = "cyl",
+    cols = "gear",
+    data = c("disp", "hp"),
+    params = list(
+      indent = FALSE,
+      show_row_headers = FALSE,
+      show_col_headers = FALSE,
+      show_row_stripes = FALSE,
+      show_col_stripes = FALSE,
+      show_last_column = FALSE,
+      item_print_titles = FALSE,
+      multiple_field_filters = FALSE,
+      col_grand_totals = FALSE,
+      row_grand_totals = FALSE,
+      outline = FALSE,
+      outline_data = FALSE
+    )
+  )
+
+
+  expect_true(grepl("showRowHeaders=\"0\"", wb$pivotTables))
+  expect_true(grepl("showColHeaders=\"0\"", wb$pivotTables))
+  expect_true(grepl("showRowStripes=\"0\"", wb$pivotTables))
+  expect_true(grepl("showColStripes=\"0\"", wb$pivotTables))
+  expect_true(grepl("showLastColumn=\"0\"", wb$pivotTables))
+  expect_true(grepl("itemPrintTitles=\"0\"", wb$pivotTables))
+  expect_true(grepl("colGrandTotals=\"0\"", wb$pivotTables))
+  expect_true(grepl("rowGrandTotals=\"0\"", wb$pivotTables))
+
+})
+
+test_that("standardize warning works", {
+
+  wb <- wb_workbook()$add_worksheet("DataSheet")$add_data(x = mtcars)
+
+  df <- wb_data(wb, sheet = "DataSheet")
+
+  expect_warning(
+    wb$add_pivot_table(
+      df,
+      dims = "A3",
+      rows = "cyl",
+      cols = "gear",
+      data = c("disp", "hp"),
+      params = list(
+        numfmt = "#.0"
+      )
+    ),
+    "unused arguments"
+  )
 })

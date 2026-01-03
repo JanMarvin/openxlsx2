@@ -1655,9 +1655,9 @@ wbWorkbook <- R6::R6Class(
       }
 
       numfmts <- NULL
-      if (!is.null(numfmt <- params$numfmt)) {
+      if (!is.null(numfmt <- params$numfmts)) {
         if (length(numfmt) != length(data))
-          stop("length of numfmt and data does not match")
+          stop("length of numfmts and data does not match")
 
         for (i in seq_along(numfmt)) {
           if (names(numfmt)[i] == "formatCode") {
