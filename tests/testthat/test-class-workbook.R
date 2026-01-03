@@ -1302,3 +1302,14 @@ test_that("using and removing secondary bookviews works", {
   )
 
 })
+
+test_that("finalize works", {
+  fl <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+  wb <- wb_load(file = fl)
+
+  tmpstr <- wb$tmpDir
+  expect_true(dir.exists(tmpstr))
+  rm(wb)
+  gc()
+  expect_false(dir.exists(tmpstr))
+})

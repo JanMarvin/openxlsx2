@@ -309,6 +309,9 @@ wbWorkbook <- R6::R6Class(
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
 
+    #' @field tmpDir tmpDir
+    tmpDir = NULL,
+
     #' @field namedSheetViews namedSheetViews
     namedSheetViews = character(),
 
@@ -9344,6 +9347,12 @@ wbWorkbook <- R6::R6Class(
       }
 
       value
+    },
+
+    # Cleans up temporary files extracted during wb_load()
+    finalize = function() {
+      if (!is.null(self$tmpDir) && dir.exists(self$tmpDir))
+        unlink(self$tmpDir, recursive = TRUE)
     },
 
     pappend = function(field, value = NULL) {
