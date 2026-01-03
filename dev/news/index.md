@@ -55,6 +55,14 @@
   and `do_cell_init()`. Both are used extensively in the package.
   [\#1515](https://github.com/JanMarvin/openxlsx2/pull/1515)
 
+### Breaking changes
+
+- The `wbWorkbook` class now provides a `finalizer` that will clean up
+  temporary objects that belong to an input file and were extracted
+  during
+  [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md).
+  Note: these objects are not tracked across clones of a workbook.
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.22

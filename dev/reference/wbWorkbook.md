@@ -260,6 +260,10 @@ rather than `?wbWorkbook`).
 
   path
 
+- `tmpDir`:
+
+  tmpDir
+
 - `namedSheetViews`:
 
   namedSheetViews

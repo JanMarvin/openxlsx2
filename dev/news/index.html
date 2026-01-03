@@ -75,6 +75,10 @@
 <li>Internal border logic was cleaned up.</li>
 <li>Cleanups for <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code> and <code>do_cell_init()</code>. Both are used extensively in the package. <a href="https://github.com/JanMarvin/openxlsx2/pull/1515" class="external-link">#1515</a>
 </li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>The <code>wbWorkbook</code> class now provides a <code>finalizer</code> that will clean up temporary objects that belong to an input file and were extracted during <code><a href="../reference/wb_load.html">wb_load()</a></code>. Note: these objects are not tracked across clones of a workbook.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
