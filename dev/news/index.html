@@ -79,6 +79,7 @@
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
 <ul><li>The <code>wbWorkbook</code> class now provides a <code>finalizer</code> that will clean up temporary objects that belong to an input file and were extracted during <code><a href="../reference/wb_load.html">wb_load()</a></code>. Note: these objects are not tracked across clones of a workbook.</li>
+<li>Style manager helpers that return style ids, check now if a selected style is available.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">

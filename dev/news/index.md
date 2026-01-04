@@ -62,6 +62,8 @@
   during
   [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md).
   Note: these objects are not tracked across clones of a workbook.
+- Style manager helpers that return style ids, check now if a selected
+  style is available.
 
 ------------------------------------------------------------------------
 
