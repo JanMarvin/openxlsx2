@@ -852,7 +852,6 @@ test_that("apply styles across columns and rows", {
     set_cell_style_across(style = "C3", cols = "C:D", rows = 3:4)
 
   exp <- c(
-    "<col min=\"1\" max=\"2\" width=\"8.43\"/>",
     "<col min=\"3\" max=\"4\" style=\"1\" width=\"8.43\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
@@ -872,7 +871,6 @@ test_that("apply styles across columns and rows", {
   wb$set_cell_style_across(style = wb_get_cell_style(wb, sheet = 1, dims = "C3"), cols = "C:D", rows = 3:4)
 
   exp <- c(
-    "<col min=\"1\" max=\"2\" width=\"8.43\"/>",
     "<col min=\"3\" max=\"4\" style=\"1\" width=\"8.43\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
@@ -1479,4 +1477,65 @@ test_that("removing border works", {
   xml_df <- rbindlist(xml_attr(xml, "xf"))
   expect_true(is.null(xml_df$applyBorder))
   expect_equal(unique(xml_df$borderId), "0")
+})
+
+test_that("wb_set_col_widths() works", {
+  wb <- wb_workbook()$add_worksheet()$
+    set_col_widths(cols = 2:7, width = "auto")
+  exp <- character()
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+
+  wb$add_data(x = cars, dims = "B2")$
+    set_col_widths(cols = 1:4, width = "auto")
+
+  exp <- c(
+    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"5.711\"/>",
+    "<col min=\"3\" max=\"3\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+
+  wb <- wb_workbook()$add_worksheet()$
+    set_col_widths(cols = 2:3, width = 6)
+
+  exp <- "<col min=\"2\" max=\"3\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"6.711\"/>"
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$set_col_widths(cols = 1:4, width = 4)
+  wb$set_col_widths(cols = 7:8, width = 4)
+
+  exp <- c(
+    "<col min=\"1\" max=\"4\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>",
+    "<col min=\"7\" max=\"8\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$set_col_widths(cols = 3:7, width = 5)
+  wb$set_col_widths(cols = 2:8, width = 4)
+
+  exp <- "<col min=\"2\" max=\"8\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+})
+
+test_that("adding the same numfmts twice works", {
+  wb1 <- wb_workbook()$add_worksheet()
+  wb1$styles_mgr$add("<numFmt numFmtId=\"900\" formatCode=\"0.0\"/>", "foo")
+  wb1$styles_mgr$add("<numFmt numFmtId=\"900\" formatCode=\"0.0\"/>", "foo")
+
+  exp <- "<numFmt numFmtId=\"900\" formatCode=\"0.0\"/>"
+  got <- wb1$styles_mgr$styles$numFmts
+  expect_equal(got, exp)
+
+  got <- nrow(wb1$styles_mgr$numfmt)
+  expect_equal(got, 1L)
 })

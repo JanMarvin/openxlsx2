@@ -34,7 +34,6 @@ test_that("wb_set_col_widths works", {
   expect_silent(wb$set_col_widths("test", cols = "Y", widths = 22))
   expect_equal(
     c("<col min=\"1\" max=\"11\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.141\"/>",
-      "<col min=\"12\" max=\"24\" width=\"8.43\"/>",
       "<col min=\"25\" max=\"25\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"22.711\"/>"),
     wb$worksheets[[1]]$cols_attr
   )

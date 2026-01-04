@@ -4919,6 +4919,12 @@ wbWorkbook <- R6::R6Class(
       base_font <- wb_get_base_font(self)
 
       if (any(widths == "auto")) {
+
+        if (is.null(self$worksheets[[sheet]]$sheet_data$cc)) {
+          # sheet has no data
+          return(invisible(self))
+        }
+
         df <- wb_to_df(
           self, sheet = sheet, cols = cols, col_names = FALSE, apply_numfmts = TRUE
         )
@@ -4941,9 +4947,24 @@ wbWorkbook <- R6::R6Class(
           }
         }
 
-        col_width <- vapply(df, function(x) max(nchar(x), na.rm = TRUE), NA_real_)
+        col_width <- vapply(df, function(x) {
+          nn <- nchar(x)
+          if (all(is.na(nn))) NA_real_  # default width
+          else max(nn, na.rm = TRUE)
+        },
+        NA_real_
+        )
       }
 
+      # all are equal sized. we ignore cells which have NA
+      if (anyNA(col_width)) {
+        sel <- !is.na(col_width)
+        col_width <- col_width[sel]
+        cols <- cols[sel]
+        hidden <- hidden[sel]
+        bestFit <- bestFit[sel]
+        customWidth <- customWidth[sel]
+      }
 
       # https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column
       widths <- calc_col_width(base_font = base_font, col_width = col_width)

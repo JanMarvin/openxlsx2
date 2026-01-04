@@ -485,7 +485,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
 
         if (!is.na(match_idx)) {
           # Found duplicate: Use existing ID
-          ids[sty] <- if (sty_fmt == "numFmt") xml_attr(store_xml[match_idx], "numFmtId") else as.character(match_idx - 1)
+          ids[sty] <- if (sty_fmt == "numFmt") unlist(xml_attr(store_xml[match_idx], "numFmt"))[["numFmtId"]] else as.character(match_idx - 1)
         } else {
           # New XML: Add to store and cache
           store_xml   <- c(store_xml, sty_node)
@@ -509,7 +509,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
         stringsAsFactors = FALSE
       )
 
-      self[[tab_nm]] <- rbind(self[[tab_nm]], new_entry)
+      self[[tab_nm]] <- unique(rbind(self[[tab_nm]], new_entry))
       invisible(self)
     },
 
