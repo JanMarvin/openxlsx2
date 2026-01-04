@@ -23,6 +23,7 @@
 ## Breaking changes
 
 * The `wbWorkbook` class now provides a `finalizer` that will clean up temporary objects that belong to an input file and were extracted during `wb_load()`. Note: these objects are not tracked across clones of a workbook.
+* Style manager helpers that return style ids, check now if a selected style is available.
 
 
 ***************************************************************************

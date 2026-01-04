@@ -1539,3 +1539,18 @@ test_that("adding the same numfmts twice works", {
   got <- nrow(wb1$styles_mgr$numfmt)
   expect_equal(got, 1L)
 })
+
+test_that("checking  the same numfmts twice works", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_warning(
+    wb$styles_mgr$get_xf_id(name = "my_awesome_style"),
+    "Could not find style\\(s\\): my_awesome_style"
+  )
+  wb$styles_mgr$add("<numFmt numFmtId=\"900\" formatCode=\"0.0\"/>", "foo")
+  wb$styles_mgr$get_numfmt_id(name = "foo")
+  expect_warning(
+    wb$styles_mgr$get_numfmt_id(name = c("foo", "my_awesome_style")),
+    "Could not find style\\(s\\): my_awesome_style"
+  )
+
+})

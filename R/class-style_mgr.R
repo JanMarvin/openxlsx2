@@ -309,9 +309,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
     #' @description get numfmt id by name
     #' @param name name
     get_numfmt_id = function(name) {
-      numfmt <- self$numfmt
-      id <- numfmt$id[match(name, numfmt$name)]
-      if (length(id)) id else NULL
+      private$get_id(self$numfmt, name)
     },
 
     #' @description get font id by name
@@ -411,7 +409,13 @@ style_mgr <- R6::R6Class("wbStylesMgr",
     #' @description get named style ids
     #' @param name name
     getstyle_ids = function(name) {
-      cellstyle_id     <- as.integer(self$get_cellStyle_id(name)) + 1L
+
+      id <- if (!is.null(self$cellStyle$name) && name %in% self$cellStyle$name)
+        as.integer(self$get_cellStyle_id(name))
+      else
+        0
+
+      cellstyle_id     <- id + 1L
       cellstyles_xfid  <- as.integer(rbindlist(xml_attr(self$styles$cellStyles[cellstyle_id], "cellStyle"))[["xfId"]]) + 1L
       cellstylexfs_ids <- rbindlist(xml_attr(self$styles$cellStyleXfs[cellstyles_xfid], "xf"))
       cellstylexfs_ids$titleId   <- cellstyle_id - 1L
@@ -569,9 +573,8 @@ style_mgr <- R6::R6Class("wbStylesMgr",
 
       # we probably should only have unique named styles. check if style is found.
       # if yes, abort style initialization.
-      got <- self$get_cellStyle_id(name)
 
-      if (!is.null(got) && !is.na(got))
+      if (!is.null(self$cellStyle) && any(name %in% self$cellStyle$name))
         return(invisible(self))
 
       font_xml <- NULL
@@ -949,8 +952,12 @@ style_mgr <- R6::R6Class("wbStylesMgr",
   private = list(
 
     get_id = function(df, name) {
-      id <- df$id[match(name, df$name)]
-      if (length(id)) id else NULL
+      sel <- match(name, df$name)
+      if (length(sel) == 0 || anyNA(sel)) {
+        warning("Could not find style(s): ", paste(name[is.na(sel)], collapse = ", "), call. = FALSE)
+        if (all(is.na(sel))) return(NULL)
+      }
+      df$id[sel]
     }
 
   )

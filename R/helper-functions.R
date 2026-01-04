@@ -1051,6 +1051,11 @@ set_cellstyles <- function(wb, style) {
 
     xf_xml <- write_xf(xf_df) # can be NULL
 
+    if (length(xf_xml) == 0) {
+      # TODO: why was this NULL in the first place? dxf?
+      xf_xml <- wb$styles_mgr$styles$cellXfs[[1]]
+    }
+
     if (length(xf_xml))
       wb$styles_mgr$add(xf_xml, session_id)
   }

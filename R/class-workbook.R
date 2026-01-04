@@ -5928,9 +5928,14 @@ wbWorkbook <- R6::R6Class(
 
       ## check valid rule
       dxfId <- NULL
-      if (!is.null(style)) dxfId <- self$styles_mgr$get_dxf_id(style)
-      params <- validate_cf_params(params)
       values <- NULL
+      params <- validate_cf_params(params)
+
+      # A style was explicitly requested
+      # For colorScale the style is a vector of colors, either an R string like "blue" or a wb_color() object
+      if (type != "colorScale" && !is.null(style) && !is.null(self$styles_mgr$dxf) && any(style %in% self$styles_mgr$dxf$name)) {
+        dxfId <- self$styles_mgr$get_dxf_id(style)
+      }
 
       sel <- c("expression", "duplicatedValues", "containsText", "notContainsText", "beginsWith",
                "endsWith", "between", "topN", "bottomN", "uniqueValues", "iconSet",
@@ -5941,7 +5946,6 @@ wbWorkbook <- R6::R6Class(
         self$styles_mgr$add(style, smp)
         dxfId <- self$styles_mgr$get_dxf_id(smp)
       }
-
 
       cols <- tapply(cols, cumsum(c(1, diff(cols) != 1)), function(g) {
         range(g)
@@ -5955,7 +5959,6 @@ wbWorkbook <- R6::R6Class(
 
       for (row in rows) {
         for (col in cols) {
-
 
           switch(
             type,
@@ -9040,10 +9043,8 @@ wbWorkbook <- R6::R6Class(
         ...            = ...
       )
 
-      got <- self$styles_mgr$get_dxf_id(name)
-
-      if (!is.null(got) && !is.na(got))
-        warning("dxfs style names should be unique")
+      if (!is.null(self$styles_mgr$dxf) && any(name %in% self$styles_mgr$dxf$name))
+        warning("dxfs style names should be unique", call. = FALSE)
 
       self$add_style(xml_style, name)
 
