@@ -584,7 +584,7 @@ test_that("outdec = \",\" works", {
     widths = c(16, 15, 12, 18, 33)
   )
 
-  exp <- c("16.711", "8.43", "15.711", "8.43", "12.711", "18.711", "8.43", "33.711")
+  exp <- c("16.711", "15.711", "12.711", "18.711", "33.711")
   got <- rbindlist(xml_attr(wb$worksheets[[1]]$cols_attr, "col"))$width
   expect_equal(exp, got)
 

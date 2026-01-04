@@ -442,33 +442,20 @@ wbWorksheet <- R6::R6Class(
       col_df$min <- as.numeric(col_df$min)
       col_df$max <- as.numeric(col_df$max)
 
-      max_col <- max(col_df$max)
-
-      # always begin at 1, even if 1 is not in the dataset. fold_cols requires this
-      key <- seq(1, max_col)
-
-      # merge against this data frame
-      tmp_col_df <- data.frame(
-        key = key,
-        stringsAsFactors = FALSE
-      )
-
-      out <- NULL
-      for (i in seq_len(nrow(col_df))) {
+      out_list <- lapply(seq_len(nrow(col_df)), function(i) {
         z <- col_df[i, ]
         keys <- seq.int(z$min, z$max)
 
+        # Repeat this row for every column index in the min-max range
         out_tmp <- z[rep(1L, length(keys)), ]
-        out_tmp$key <- keys
-        out <- rbind(out, out_tmp)
-      }
+        out_tmp$min <- as.character(keys)
+        out_tmp$max <- as.character(keys)
+        out_tmp
+      })
 
-      # merge and convert to character, remove key
-      col_df <- merge(x = tmp_col_df, y = out, by = "key", all.x = TRUE)
-      col_df$min <- as.character(col_df$key)
-      col_df$max <- as.character(col_df$key)
+      col_df <- do.call(rbind, out_list)
+
       col_df[is.na(col_df)] <- ""
-      col_df$key <- NULL
 
       col_df
     },
@@ -479,36 +466,32 @@ wbWorksheet <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     fold_cols = function(col_df) {
 
-      # remove min and max columns and create merge identifier: string
-      col_df <- col_df[-which(names(col_df) %in% c("min", "max"))]
-      col_df$string <- apply(col_df, 1, paste, collapse = "")
+      col_df <- col_df[order(as.numeric(col_df$min)), ]
 
-      # run length
-      out <- with(
-        rle(col_df$string),
-        data.frame(
-          string = values,
-          min = cumsum(lengths) - lengths + 1,
-          max = cumsum(lengths),
-          stringsAsFactors = FALSE
-        )
+      prop_cols <- setdiff(names(col_df), c("min", "max"))
+      col_df$string <- apply(col_df[prop_cols], 1, paste, collapse = "|")
+
+      # for a new group either min increases by more than one or the string changes
+      is_new_group <- c(
+        TRUE,
+        diff(as.numeric(col_df$min)) != 1 |
+        col_df$string[-1] != col_df$string[-nrow(col_df)]
       )
 
-      # remove duplicates pre merge
-      col_df <- unique(col_df)
+      starts <- which(is_new_group)
+      ends <- c(starts[-1] - 1, nrow(col_df))
 
-      # merge with string variable, drop empty string and clean up
-      col_df <- merge(out, col_df, by = "string", all.x = TRUE)
-      col_df <- col_df[col_df$string != "", ]
-      col_df$string <- NULL
+      sel <- c(
+        "min", "max", "bestFit", "collapsed", "customWidth",
+        "hidden", "outlineLevel", "phonetic", "style", "width"
+      )
 
-      # order and return
-      col_df <- col_df[order(col_df$min), ]
-      col_df$min <- as.character(col_df$min)
-      col_df$max <- as.character(col_df$max)
+      final_df <- col_df[starts, sel]
 
-      # assign as xml-nodes
-      self$cols_attr <- df_to_xml("col", col_df)
+      final_df$min <- as.character(col_df$min[starts])
+      final_df$max <- as.character(col_df$max[ends])
+
+      self$cols_attr <- df_to_xml("col", final_df)
 
       invisible(self)
     },
