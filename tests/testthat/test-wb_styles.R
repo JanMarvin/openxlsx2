@@ -1526,3 +1526,16 @@ test_that("wb_set_col_widths() works", {
   expect_equal(got, exp)
 
 })
+
+test_that("adding the same numfmts twice works", {
+  wb1 <- wb_workbook()$add_worksheet()
+  wb1$styles_mgr$add("<numFmt numFmtId=\"900\" formatCode=\"0.0\"/>", "foo")
+  wb1$styles_mgr$add("<numFmt numFmtId=\"900\" formatCode=\"0.0\"/>", "foo")
+
+  exp <- "<numFmt numFmtId=\"900\" formatCode=\"0.0\"/>"
+  got <- wb1$styles_mgr$styles$numFmts
+  expect_equal(got, exp)
+
+  got <- nrow(wb1$styles_mgr$numfmt)
+  expect_equal(got, 1L)
+})
