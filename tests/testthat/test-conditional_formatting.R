@@ -284,10 +284,10 @@ test_that("type = 'endsWith' works", {
 
 test_that("type = 'colorScale' works", {
 
-  wb <- my_workbook()
+  wb <- wb_workbook()
   wb$add_worksheet("colourScale", zoom = 30)
   ## colourscale colours cells based on cell value
-  df <- read_xlsx(testfile_path("readTest.xlsx"), sheet = 4)
+  df <- read_xlsx(testfile_path("readTest.xlsx"), sheet = 5)
   wb$add_data("colourScale", df, col_names = FALSE) ## write data.frame
   ## rule is a vector or colours of length 2 or 3 (any hex colour or any of colours())
   ## If rule is NULL, min and max of cells is used. Rule must be the same length as style or NULL.
@@ -302,11 +302,11 @@ test_that("type = 'colorScale' works", {
   wb <- wb_set_row_heights(wb, "colourScale", rows = seq_len(nrow(df)), heights = 7.5)
 
   exp <- data.frame(
-    sqref = "A1:E5",
+    sqref = "A1:KK271",
     cf = '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="num" val="0"/><cfvo type="num" val="255"/><color rgb="FF000000"/><color rgb="FFFFFFFF"/></colorScale></cfRule>',
     stringsAsFactors = FALSE
   )
-  expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting)
+  expect_identical(wb$worksheets[[1]]$conditionalFormatting, exp)
   expect_save(wb)
 })
 
@@ -454,7 +454,7 @@ test_that("colorScale", {
   wb$add_conditional_formatting(
     "colourScale1",
     dims = wb_dims(cols = seq_along(df), rows = seq_len(nrow(df))),
-    style = c("black", "white"),
+    style = c("black", "white"), # there are no styles like this in the workbook, these are just colors
     type = "colorScale"
   )
   wb$set_col_widths("colourScale1", cols = seq_along(df), widths = 2)
