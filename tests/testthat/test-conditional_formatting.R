@@ -742,20 +742,43 @@ test_that("wb_conditional_formatting - data bar: `axisPosition` works as it shou
   wb <- wb_workbook()
   wb$add_worksheet("dataBar")
   example_df <- data.frame(a = sample(c(1, 2, -2, -10, -50, 2, 25, 40, 5, -30)))
-  
+
   # middle
   wb$add_data("dataBar", example_df, dims = "A1")
-  wb <- wb_add_conditional_formatting(wb, dims = "A2:A11", type = "dataBar", style = c("#001affff", "#ffccccff"), params = list(axisPosition = "middle"))
+  wb <- wb_add_conditional_formatting(
+    wb,
+    dims = "A2:A11",
+    type = "dataBar",
+    style = c("#001affff", "#ffccccff"),
+    params = list(axisPosition = "middle")
+  )
   # none
   wb$add_data("dataBar", example_df, dims = "B1")
-  wb <- wb_add_conditional_formatting(wb, dims = "B2:B11", type = "dataBar", style = c("#001affff", "#ffccccff"), params = list(axisPosition = "none"))
+  wb <- wb_add_conditional_formatting(
+    wb,
+    dims = "B2:B11",
+    type = "dataBar",
+    style = c("#001affff", "#ffccccff"),
+    params = list(axisPosition = "none")
+  )
   # automatic
   wb$add_data("dataBar", example_df, dims = "C1")
-  wb <- wb_add_conditional_formatting(wb, dims = "C2:C11", type = "dataBar", style = c("#001affff", "#ffccccff"), params = list(axisPosition = "automatic"))
+  wb <- wb_add_conditional_formatting(
+    wb,
+    dims = "C2:C11",
+    type = "dataBar",
+    style = c("#001affff", "#ffccccff"),
+    params = list(axisPosition = "automatic")
+  )
   # automatic (default)
   wb$add_data("dataBar", example_df, dims = "D1")
-  wb <- wb_add_conditional_formatting(wb, dims = "D2:D11", type = "dataBar", style = c("#001affff", "#ffccccff"))
-  
+  wb <- wb_add_conditional_formatting(
+    wb,
+    dims = "D2:D11",
+    type = "dataBar",
+    style = c("#001affff", "#ffccccff")
+  )
+
   exp <- data.frame(
     sqref = c("A2:A11", "B2:B11", "C2:C11", "D2:D11"),
     cf = c(
