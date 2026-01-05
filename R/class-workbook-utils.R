@@ -120,27 +120,36 @@ wb_check_overwrite_tables <- function(
   invisible(wb)
 }
 
-
 validate_cf_params <- function(params) {
-  bad <- !names(params) %in% c("border", "gradient", "iconSet", "percent", "rank", "reverse", "showValue", "axisPosition")
+  allowed <- c(
+    "border", "gradient", "iconSet", "percent", "rank", "reverse", "showValue",
+    "axisPosition", "axisColor", "direction", "minLength", "maxLength",
+    "negativeBarColorSameAsPositive", "negativeBarBorderColorSameAsPositive",
+    "fillColor", "borderColor", "negFillColor", "negBorderColor"
+  )
+
+  bad <- !names(params) %in% allowed
   if (any(bad)) {
     stop("Invalid parameters: ", toString(names(params)[bad]))
   }
 
   # assign default values
-  params$showValue <- if (is.null(params$showValue)) 1L else as_binary(params$showValue)
-  params$gradient  <- if (is.null(params$gradient))  1L else as_binary(params$gradient)
-  params$border    <- if (is.null(params$border))    1L else as_binary(params$border)
-  params$percent   <- if (is.null(params$percent))   0L else as_binary(params$percent)
+  params$showValue    <- if (is.null(params$showValue)) 1L else as_binary(params$showValue)
+  params$gradient     <- if (is.null(params$gradient))  1L else as_binary(params$gradient)
+  params$border       <- if (is.null(params$border))    1L else as_binary(params$border)
+  params$percent      <- if (is.null(params$percent))   0L else as_binary(params$percent)
+  params$reverse      <- if (is.null(params$reverse))   0L else as_binary(params$reverse)
 
-  # special check for rank
-  params$rank <- params$rank %||% 5L
+  params$rank      <- as.integer(params$rank      %||% 5L)
+  params$minLength <- as.integer(params$minLength %||% 0L)
+  params$maxLength <- as.integer(params$maxLength %||% 100L)
 
-  if (!is_integer_ish(params$rank)) {
-    stop("params$rank must be an integer")
-  }
+  if (!is_integer_ish(params$rank))      stop("params$rank must be an integer")
+  if (!is_integer_ish(params$minLength)) stop("params$minLength must be an integer")
+  if (!is_integer_ish(params$maxLength)) stop("params$maxLength must be an integer")
 
-  params$rank <- as.integer(params$rank)
+  params$axisPosition <- params$axisPosition %||% "automatic"
+  params$direction    <- params$direction    %||% "context"
 
   params
 }

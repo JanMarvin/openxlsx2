@@ -595,7 +595,6 @@ test_that("extend dataBar tests", {
     params = list(showValue = TRUE, gradient = FALSE)
   )
 
-
   # chained test with rule
   wb$
     add_data(x = -5:5, start_col = 11)$
@@ -616,105 +615,105 @@ test_that("extend dataBar tests", {
       '<cfRule type="dataBar" priority="4"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FFFF0000"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40003}</x14:id></ext></extLst></cfRule>',
       '<cfRule type="dataBar" priority="5"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FFA6A6A6"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40004}</x14:id></ext></extLst></cfRule>',
       '<cfRule type="dataBar" priority="6"><dataBar showValue="1"><cfvo type="num" val="0"/><cfvo type="num" val="5"/><color rgb="FFA6A6A6"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40005}</x14:id></ext></extLst></cfRule>'
-    )
+    ),
+    stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- read_xml(
     '
     <ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{78C0D931-6437-407d-A8EE-F0AAD7539E65}">
-    <x14:conditionalFormattings
-      xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
+     <x14:conditionalFormattings xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
       <x14:conditionalFormatting>
-        <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40000}">
-          <x14:dataBar minLength="0" maxLength="100" border="1" gradient="1" axisPosition="automatic" negativeBarBorderColorSameAsPositive="0">
-            <x14:cfvo type="autoMin"/>
-            <x14:cfvo type="autoMax"/>
-            <x14:borderColor rgb="FF638EC6"/>
-            <x14:negativeFillColor rgb="FFFF0000"/>
-            <x14:negativeBorderColor rgb="FFFF0000"/>
-            <x14:axisColor rgb="FF000000"/>
-          </x14:dataBar>
-        </x14:cfRule>
-        <xm:sqref>A1:A11</xm:sqref>
+       <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40000}">
+        <x14:dataBar minLength="0" maxLength="100" border="1" negativeBarBorderColorSameAsPositive="0">
+         <x14:cfvo type="autoMin" />
+         <x14:cfvo type="autoMax" />
+         <x14:borderColor rgb="FF638EC6" />
+         <x14:negativeFillColor rgb="FFFF0000" />
+         <x14:negativeBorderColor rgb="FFFF0000" />
+         <x14:axisColor rgb="FF000000" />
+        </x14:dataBar>
+       </x14:cfRule>
+       <xm:sqref>A1:A11</xm:sqref>
       </x14:conditionalFormatting>
       <x14:conditionalFormatting>
-        <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40001}">
-          <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" axisPosition="automatic" negativeBarBorderColorSameAsPositive="0">
-            <x14:cfvo type="autoMin"/>
-            <x14:cfvo type="autoMax"/>
-            <x14:borderColor rgb="FF638EC6"/>
-            <x14:negativeFillColor rgb="FFFF0000"/>
-            <x14:negativeBorderColor rgb="FFFF0000"/>
-            <x14:axisColor rgb="FF000000"/>
-          </x14:dataBar>
-        </x14:cfRule>
-        <xm:sqref>C1:C11</xm:sqref>
+       <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40001}">
+        <x14:dataBar minLength="0" maxLength="100" showValue="0" border="1" gradient="0" negativeBarBorderColorSameAsPositive="0">
+         <x14:cfvo type="autoMin" />
+         <x14:cfvo type="autoMax" />
+         <x14:borderColor rgb="FF638EC6" />
+         <x14:negativeFillColor rgb="FFFF0000" />
+         <x14:negativeBorderColor rgb="FFFF0000" />
+         <x14:axisColor rgb="FF000000" />
+        </x14:dataBar>
+       </x14:cfRule>
+       <xm:sqref>C1:C11</xm:sqref>
       </x14:conditionalFormatting>
       <x14:conditionalFormatting>
-        <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40002}">
-          <x14:dataBar minLength="0" maxLength="100" border="1" gradient="1" axisPosition="automatic" negativeBarBorderColorSameAsPositive="0">
-            <x14:cfvo type="autoMin"/>
-            <x14:cfvo type="autoMax"/>
-            <x14:borderColor rgb="FFA6A6A6"/>
-            <x14:negativeFillColor rgb="FFFF0000"/>
-            <x14:negativeBorderColor rgb="FFFF0000"/>
-            <x14:axisColor rgb="FF000000"/>
-          </x14:dataBar>
-        </x14:cfRule>
-        <xm:sqref>E1:E11</xm:sqref>
+       <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40002}">
+        <x14:dataBar minLength="0" maxLength="100" showValue="0" border="1" negativeBarBorderColorSameAsPositive="0">
+         <x14:cfvo type="autoMin" />
+         <x14:cfvo type="autoMax" />
+         <x14:borderColor rgb="FFA6A6A6" />
+         <x14:negativeFillColor rgb="FFFF0000" />
+         <x14:negativeBorderColor rgb="FFFF0000" />
+         <x14:axisColor rgb="FF000000" />
+        </x14:dataBar>
+       </x14:cfRule>
+       <xm:sqref>E1:E11</xm:sqref>
       </x14:conditionalFormatting>
       <x14:conditionalFormatting>
-        <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40003}">
-          <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" axisPosition="automatic" negativeBarBorderColorSameAsPositive="0">
-            <x14:cfvo type="autoMin"/>
-            <x14:cfvo type="autoMax"/>
-            <x14:borderColor rgb="FFFF0000"/>
-            <x14:negativeFillColor rgb="FFFF0000"/>
-            <x14:negativeBorderColor rgb="FFFF0000"/>
-            <x14:axisColor rgb="FF000000"/>
-          </x14:dataBar>
-        </x14:cfRule>
-        <xm:sqref>G1:G11</xm:sqref>
+       <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40003}">
+        <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" negativeBarBorderColorSameAsPositive="0">
+         <x14:cfvo type="autoMin" />
+         <x14:cfvo type="autoMax" />
+         <x14:borderColor rgb="FFFF0000" />
+         <x14:negativeFillColor rgb="FFFF0000" />
+         <x14:negativeBorderColor rgb="FFFF0000" />
+         <x14:axisColor rgb="FF000000" />
+        </x14:dataBar>
+       </x14:cfRule>
+       <xm:sqref>G1:G11</xm:sqref>
       </x14:conditionalFormatting>
       <x14:conditionalFormatting>
-        <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40004}">
-          <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" axisPosition="automatic" negativeBarBorderColorSameAsPositive="0">
-            <x14:cfvo type="autoMin"/>
-            <x14:cfvo type="autoMax"/>
-            <x14:borderColor rgb="FFA6A6A6"/>
-            <x14:negativeFillColor rgb="FFA6A6A6"/>
-            <x14:negativeBorderColor rgb="FFA6A6A6"/>
-            <x14:axisColor rgb="FF000000"/>
-          </x14:dataBar>
-        </x14:cfRule>
-        <xm:sqref>I1:I11</xm:sqref>
+       <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40004}">
+        <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" negativeBarBorderColorSameAsPositive="0">
+         <x14:cfvo type="autoMin" />
+         <x14:cfvo type="autoMax" />
+         <x14:borderColor rgb="FFA6A6A6" />
+         <x14:negativeFillColor rgb="FFA6A6A6" />
+         <x14:negativeBorderColor rgb="FFA6A6A6" />
+         <x14:axisColor rgb="FF000000" />
+        </x14:dataBar>
+       </x14:cfRule>
+       <xm:sqref>I1:I11</xm:sqref>
       </x14:conditionalFormatting>
       <x14:conditionalFormatting>
-        <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40005}">
-          <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" axisPosition="automatic" negativeBarBorderColorSameAsPositive="0">
-            <x14:cfvo type="num">
-              <xm:f>0</xm:f>
-            </x14:cfvo>
-            <x14:cfvo type="num">
-              <xm:f>5</xm:f>
-            </x14:cfvo>
-            <x14:borderColor rgb="FFA6A6A6"/>
-            <x14:negativeFillColor rgb="FFA6A6A6"/>
-            <x14:negativeBorderColor rgb="FFA6A6A6"/>
-            <x14:axisColor rgb="FF000000"/>
-          </x14:dataBar>
-        </x14:cfRule>
-        <xm:sqref>K1:K11</xm:sqref>
+       <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40005}">
+        <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" negativeBarBorderColorSameAsPositive="0">
+         <x14:cfvo type="num">
+          <xm:f>0</xm:f>
+         </x14:cfvo>
+         <x14:cfvo type="num">
+          <xm:f>5</xm:f>
+         </x14:cfvo>
+         <x14:borderColor rgb="FFA6A6A6" />
+         <x14:negativeFillColor rgb="FFA6A6A6" />
+         <x14:negativeBorderColor rgb="FFA6A6A6" />
+         <x14:axisColor rgb="FF000000" />
+        </x14:dataBar>
+       </x14:cfRule>
+       <xm:sqref>K1:K11</xm:sqref>
       </x14:conditionalFormatting>
-    </x14:conditionalFormattings>
-  </ext>
-  ',
+     </x14:conditionalFormattings>
+    </ext>
+    ',
     pointer = FALSE
   )
   got <- wb$worksheets[[1]]$extLst
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("wb_conditional_formatting", {
@@ -786,7 +785,8 @@ test_that("wb_conditional_formatting - data bar: `axisPosition` works as it shou
       '<cfRule type="dataBar" priority="2"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FFCCCCFF"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40001}</x14:id></ext></extLst></cfRule>',
       '<cfRule type="dataBar" priority="3"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FFCCCCFF"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40002}</x14:id></ext></extLst></cfRule>',
       '<cfRule type="dataBar" priority="4"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FFCCCCFF"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40003}</x14:id></ext></extLst></cfRule>'
-    )
+    ),
+    stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_equal(exp, got)
