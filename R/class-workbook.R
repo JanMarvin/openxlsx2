@@ -5902,7 +5902,8 @@ wbWorkbook <- R6::R6Class(
           gradient  = TRUE,
           border    = TRUE,
           percent   = FALSE,
-          rank      = 5L
+          rank      = 5L,
+          axisPosition = "automatic"
         ),
         ...
     ) {

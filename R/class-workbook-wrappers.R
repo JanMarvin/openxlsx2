@@ -4306,7 +4306,8 @@ wb_add_form_control <- function(
 #'     `[rule]`\cr A `numeric` vector specifying the range of the databar colors. Must be equal length to `style`\cr\cr
 #'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
 #'     `[params$gradient]`\cr If `FALSE` color gradient is removed. Default `TRUE`\cr\cr
-#'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE`
+#'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE` \cr\cr
+#'     `[params$axisPosition]`\cr A `string` specifying the data bar's axis position. Must be equal to one of the following values: `"automatic"` (default, variable position based on negative values), `"middle"` (cell midpoint), `"none"` (negative bars shown in same direction as positive bars). \cr\cr
 #'   }
 #'   \item{`duplicatedValues` / `uniqueValues` / `containsErrors`}{
 #'     `[style]`\cr A `Style` object
@@ -4367,7 +4368,8 @@ wb_add_conditional_formatting <- function(
       gradient  = TRUE,
       border    = TRUE,
       percent   = FALSE,
-      rank      = 5L
+      rank      = 5L,
+      axisPosition = "automatic"
     ),
     ...
 ) {

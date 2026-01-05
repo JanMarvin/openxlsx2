@@ -114,6 +114,7 @@ cf_create_databar <- function(priority, extLst, formula, params, sqref, values) 
   showValue <- as.integer(params$showValue %||% 1L)
   gradient  <- as.integer(params$gradient  %||% 1L)
   border    <- as.integer(params$border    %||% 1L)
+  axisPosition <- params$axisPosition %||% "automatic"
 
   newExtLst <- gen_databar_extlst(
     guid      = guid,
@@ -122,7 +123,8 @@ cf_create_databar <- function(priority, extLst, formula, params, sqref, values) 
     negColor  = negColor,
     values    = values,
     border    = border,
-    gradient  = gradient
+    gradient  = gradient,
+    axisPosition  = axisPosition
   )
 
   cf_rule_extLst <- sprintf(

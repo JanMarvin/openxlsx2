@@ -479,8 +479,9 @@ genBaseTheme <- function() {
   ) # read_xml
 }
 
-gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, border, gradient) {
-  xml <- sprintf('<x14:cfRule type="dataBar" id="{%s}"><x14:dataBar minLength="0" maxLength="100" border="%s" gradient = "%s" negativeBarBorderColorSameAsPositive="0">', guid, border, gradient)
+gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, border, gradient, axisPosition) {
+
+  xml <- sprintf('<x14:cfRule type="dataBar" id="{%s}"><x14:dataBar minLength="0" maxLength="100" border="%s" gradient = "%s" axisPosition="%s" negativeBarBorderColorSameAsPositive="0">', guid, border, gradient, axisPosition)
 
   if (is.null(values)) {
     xml <- sprintf('<x14:conditionalFormatting>
