@@ -162,7 +162,7 @@
 
 #define FASTFLOAT_VERSION_MAJOR 8
 #define FASTFLOAT_VERSION_MINOR 2
-#define FASTFLOAT_VERSION_PATCH 1
+#define FASTFLOAT_VERSION_PATCH 2
 
 #define FASTFLOAT_STRINGIZE_IMPL(x) #x
 #define FASTFLOAT_STRINGIZE(x) FASTFLOAT_STRINGIZE_IMPL(x)
@@ -1579,6 +1579,11 @@ fastfloat_really_inline constexpr uint64_t byteswap(uint64_t val) {
          (val & 0x000000000000FF00) << 40 | (val & 0x00000000000000FF) << 56;
 }
 
+fastfloat_really_inline constexpr uint32_t byteswap_32(uint32_t val) {
+  return (val >> 24) | ((val >> 8) & 0x0000FF00u) | ((val << 8) & 0x00FF0000u) |
+         (val << 24);
+}
+
 // Read 8 UC into a u64. Truncates UC if not char.
 template <typename UC>
 fastfloat_really_inline FASTFLOAT_CONSTEXPR20 uint64_t
@@ -2070,7 +2075,7 @@ parse_int_string(UC const *p, UC const *pend, T &value,
       }
       digits = std::bit_cast<uint32_t>(str);
 #if FASTFLOAT_IS_BIG_ENDIAN
-      digits = byteswap(digits);
+      digits = byteswap_32(digits);
 #endif
     }
 #else
@@ -2080,18 +2085,14 @@ parse_int_string(UC const *p, UC const *pend, T &value,
     else if (len >= 4) {
       ::memcpy(&digits, p, 4);
 #if FASTFLOAT_IS_BIG_ENDIAN
-      digits = byteswap(digits);
+      digits = byteswap_32(digits);
 #endif
     } else {
       uint32_t b0 = static_cast<uint8_t>(p[0]);
       uint32_t b1 = (len > 1) ? static_cast<uint8_t>(p[1]) : 0xFFu;
       uint32_t b2 = (len > 2) ? static_cast<uint8_t>(p[2]) : 0xFFu;
       uint32_t b3 = 0xFFu;
-#if FASTFLOAT_IS_BIG_ENDIAN
-      digits = (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
-#else
       digits = b0 | (b1 << 8) | (b2 << 16) | (b3 << 24);
-#endif
     }
 
     uint32_t magic =
