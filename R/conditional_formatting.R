@@ -93,6 +93,8 @@ cf_create_colorscale <- function(priority, formula, values) {
 #' @param sqref sqref
 #' @noRd
 cf_create_databar <- function(priority, extLst, formula, params, sqref, values) {
+
+  # TODO why is priority passed to this function?
   if (length(formula) == 2L) {
     negColor <- formula[[1]]
     posColor <- formula[[2]]
@@ -112,17 +114,14 @@ cf_create_databar <- function(priority, extLst, formula, params, sqref, values) 
   )
 
   showValue <- as.integer(params$showValue %||% 1L)
-  gradient  <- as.integer(params$gradient  %||% 1L)
-  border    <- as.integer(params$border    %||% 1L)
 
   newExtLst <- gen_databar_extlst(
-    guid      = guid,
-    sqref     = sqref,
-    posColor  = posColor,
-    negColor  = negColor,
-    values    = values,
-    border    = border,
-    gradient  = gradient
+    guid = guid,
+    sqref = sqref,
+    posColor = posColor,
+    negColor = negColor,
+    values = values,
+    params = params
   )
 
   cf_rule_extLst <- sprintf(

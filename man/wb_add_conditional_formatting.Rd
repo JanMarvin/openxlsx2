@@ -16,7 +16,7 @@ wb_add_conditional_formatting(
     "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
     "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
-    5L),
+    5L, axisPosition = "automatic"),
   ...
 )
 
@@ -74,7 +74,10 @@ If an expression is pointing to a cell \code{"A1=1"}, this cell reference is flu
 \verb{[rule]}\cr A \code{numeric} vector specifying the range of the databar colors. Must be equal length to \code{style}\cr\cr
 \verb{[params$showValue]}\cr If \code{FALSE} the cell value is hidden. Default \code{TRUE}\cr\cr
 \verb{[params$gradient]}\cr If \code{FALSE} color gradient is removed. Default \code{TRUE}\cr\cr
-\verb{[params$border]}\cr If \code{FALSE} the border around the database is hidden. Default \code{TRUE}
+\verb{[params$border]}\cr If \code{FALSE} the border around the database is hidden. Default \code{TRUE} \cr\cr
+\verb{[params$direction]}\cr A \code{string} the direction in which the databar points. Must be equal to one of the following values: \code{"context"} (default), \code{"leftToRight"}, \code{"rightToLeft"}. \cr\cr
+\verb{[params$\{axisColor,borderColor,negativeBarColorSameAsPositive,negativeBarBorderColorSameAsPositive\}]} Colors and bools configuring the style of the border.
+\verb{[params$axisPosition]}\cr A \code{string} specifying the data bar's axis position. Must be equal to one of the following values: \code{"automatic"} (default, variable position based on negative values), \code{"middle"} (cell midpoint), \code{"none"} (negative bars shown in same direction as positive bars). \cr\cr
 }
 \item{\code{duplicatedValues} / \code{uniqueValues} / \code{containsErrors}}{
 \verb{[style]}\cr A \code{Style} object

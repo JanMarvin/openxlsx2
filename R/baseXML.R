@@ -479,23 +479,81 @@ genBaseTheme <- function() {
   ) # read_xml
 }
 
-gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, border, gradient) {
-  xml <- sprintf('<x14:cfRule type="dataBar" id="{%s}"><x14:dataBar minLength="0" maxLength="100" border="%s" gradient = "%s" negativeBarBorderColorSameAsPositive="0">', guid, border, gradient)
+gen_databar_extlst <- function(guid, sqref, posColor, negColor, values, params) {
+
+  showValue    <- params$showValue %||% 1L
+  gradient     <- params$gradient  %||% 1L
+  border       <- params$border    %||% 1L
+  minLength    <- params$minLength %||% 0L
+  maxLength    <- params$maxLength %||% 100L
+  direction    <- params$direction %||% "context"
+  axisPosition <- params$axisPosition %||% "automatic"
+
+  negBarSame    <- params$negativeBarColorSameAsPositive %||% 0L
+  negBorderSame <- params$negativeBarBorderColorSameAsPositive %||% 0L
+
+  # Attributes are only included if they differ from the XLSX defaults.
+  # openxlsx2 defaults are not equal to XLSX defaults
+  databar_attrs <- c(
+    "minLength"    = if (as.integer(minLength) != 10L) as_xml_attr(minLength),
+    "maxLength"    = if (as.integer(maxLength) != 90L) as_xml_attr(maxLength),
+    "showValue"    = if (as.integer(showValue) != 1L) as_xml_attr(showValue),
+    "border"       = if (as.integer(border) != 0L) as_xml_attr(border),
+    "gradient"     = if (as.integer(gradient) != 1L) as_xml_attr(gradient),
+    "direction"    = if (direction != "context") direction,
+    "axisPosition" = if (axisPosition != "automatic") axisPosition,
+    "negativeBarColorSameAsPositive"       = if (as.integer(negBarSame) != 0L) as_xml_attr(negBarSame),
+    "negativeBarBorderColorSameAsPositive" = if (as.integer(negBorderSame) != 1L) as_xml_attr(negBorderSame)
+  )
 
   if (is.null(values)) {
-    xml <- sprintf('<x14:conditionalFormatting>
-                      %s
-                      <x14:cfvo type="autoMin"/><x14:cfvo type="autoMax"/><x14:borderColor rgb="%s"/><x14:negativeFillColor rgb="%s"/><x14:negativeBorderColor rgb="%s"/><x14:axisColor rgb="FF000000"/>
-                      </x14:dataBar></x14:cfRule><xm:sqref>%s</xm:sqref></x14:conditionalFormatting>', xml, posColor, negColor, negColor, sqref)
+    cfvo_xml <- c('<x14:cfvo type="autoMin"/>', '<x14:cfvo type="autoMax"/>')
   } else {
-    xml <- sprintf('<x14:conditionalFormatting>
-                      %s
-                      <x14:cfvo type="num"><xm:f>%s</xm:f></x14:cfvo><x14:cfvo type="num"><xm:f>%s</xm:f></x14:cfvo>
-                      <x14:borderColor rgb="%s"/><x14:negativeFillColor rgb="%s"/><x14:negativeBorderColor rgb="%s"/><x14:axisColor rgb="FF000000"/>
-                      </x14:dataBar></x14:cfRule><xm:sqref>%s</xm:sqref></x14:conditionalFormatting>', xml, values[[1]], values[[2]], posColor, negColor, negColor, sqref)
+    cfvo_xml <- c(
+      sprintf('<x14:cfvo type="num"><xm:f>%s</xm:f></x14:cfvo>', values[[1]]),
+      sprintf('<x14:cfvo type="num"><xm:f>%s</xm:f></x14:cfvo>', values[[2]])
+    )
   }
 
-  xml
+  # TODO only with priority == ???
+  # fill_xml <- sprintf('<x14:fillColor rgb="%s"/>', params$fillColor %||% posColor)
+  fill_xml <- ""
+
+  border_xml <- if (as.integer(border) == 1L) {
+    sprintf('<x14:borderColor rgb="%s"/>', params$borderColor %||% posColor)
+  }
+
+  neg_fill_xml <- if (as.integer(negBarSame) == 0L) {
+    sprintf('<x14:negativeFillColor rgb="%s"/>', params$negFillColor %||% negColor)
+  }
+
+  neg_border_xml <- if (as.integer(negBorderSame) == 0L && as.integer(border) == 1L) {
+    sprintf('<x14:negativeBorderColor rgb="%s"/>', params$negBorderColor %||% negColor)
+  }
+
+  axis_xml <- if (axisPosition != "none") {
+    sprintf('<x14:axisColor rgb="%s"/>', params$axisColor %||% "FF000000")
+  }
+
+  databar_node <- xml_node_create(
+    "x14:dataBar",
+    xml_attributes = databar_attrs,
+    xml_children   = c(cfvo_xml, fill_xml, border_xml, neg_fill_xml, neg_border_xml, axis_xml)
+  )
+
+  cf_rule_node <- xml_node_create(
+    "x14:cfRule",
+    xml_attributes = c(type = "dataBar", id = sprintf("{%s}", guid)),
+    xml_children   = c(databar_node)
+  )
+
+  xml_node_create(
+    "x14:conditionalFormatting",
+    xml_children = c(
+      cf_rule_node,
+      sprintf("<xm:sqref>%s</xm:sqref>", sqref)
+    )
+  )
 }
 
 genSlicerCachesExtLst <- function(i) {
