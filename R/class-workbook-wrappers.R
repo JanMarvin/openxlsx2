@@ -4307,6 +4307,8 @@ wb_add_form_control <- function(
 #'     `[params$showValue]`\cr If `FALSE` the cell value is hidden. Default `TRUE`\cr\cr
 #'     `[params$gradient]`\cr If `FALSE` color gradient is removed. Default `TRUE`\cr\cr
 #'     `[params$border]`\cr If `FALSE` the border around the database is hidden. Default `TRUE` \cr\cr
+#'     `[params$direction]`\cr A `string` the direction in which the databar points. Must be equal to one of the following values: `"context"` (default), `"leftToRight"`, `"rightToLeft"`. \cr\cr
+#'     `[params${axisColor,borderColor,negativeBarColorSameAsPositive,negativeBarBorderColorSameAsPositive}]` Colors and bools configuring the style of the border.
 #'     `[params$axisPosition]`\cr A `string` specifying the data bar's axis position. Must be equal to one of the following values: `"automatic"` (default, variable position based on negative values), `"middle"` (cell midpoint), `"none"` (negative bars shown in same direction as positive bars). \cr\cr
 #'   }
 #'   \item{`duplicatedValues` / `uniqueValues` / `containsErrors`}{

@@ -716,6 +716,158 @@ test_that("extend dataBar tests", {
   expect_equal(got, exp)
 })
 
+test_that("test more databar parameters", {
+  vec <- -5:5
+
+  dim1 <- wb_dims(x = vec)
+  dim2 <- wb_dims(x = vec, from_dims = dim1, right = 2)
+  dim3 <- wb_dims(x = vec, from_dims = dim2, right = 2)
+  dim4 <- wb_dims(x = vec, from_dims = dim3, right = 2)
+  dim5 <- wb_dims(x = vec, from_dims = dim4, right = 2)
+  dim6 <- wb_dims(x = vec, from_dims = dim5, right = 2)
+  dim7 <- wb_dims(x = vec, from_dims = dim6, right = 2)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = vec, dims = dim1)$
+    add_conditional_formatting(
+      dims = dim1, type = "dataBar", params = list(border = FALSE)
+    )
+
+  wb$add_data(x = vec, dims = dim2)$
+    add_conditional_formatting(
+      dims = dim2, type = "dataBar", style = "#0000FF", params = list(negativeBarColorSameAsPositive = TRUE)
+    )
+
+  wb$add_data(x = vec, dims = dim3)$
+    add_conditional_formatting(
+      dims = dim3, type = "dataBar", params = list(axisPosition = "none")
+    )
+
+  wb$add_data(x = vec, dims = dim4)$
+    add_conditional_formatting(
+      dims = dim4, type = "dataBar", params = list(axisPosition = "middle", axisColor = "FF00FF00")
+    )
+
+  wb$add_data(x = vec, dims = dim5)$
+    add_conditional_formatting(
+      dims = dim5, type = "dataBar", params = list(direction = "rightToLeft", gradient = FALSE)
+    )
+
+  wb$add_data(x = vec, dims = dim6)$
+    add_conditional_formatting(
+      dims = dim6, type = "dataBar", style = c("#0000FF", "#FF0000"),
+      params = list(border = TRUE, negativeBarBorderColorSameAsPositive = TRUE)
+    )
+
+  wb$add_data(x = vec, dims = dim7)$
+    add_conditional_formatting(
+      dims = dim7, type = "dataBar",
+      params = list(minLength = 10, maxLength = 90)
+    )
+
+  exp <- read_xml('
+<ext xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" uri="{78C0D931-6437-407d-A8EE-F0AAD7539E65}">
+ <x14:conditionalFormattings xmlns:xm="http://schemas.microsoft.com/office/excel/2006/main">
+  <x14:conditionalFormatting>
+   <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40000}">
+    <x14:dataBar minLength="0" maxLength="100" negativeBarBorderColorSameAsPositive="0">
+     <x14:cfvo type="autoMin" />
+     <x14:cfvo type="autoMax" />
+     <x14:negativeFillColor rgb="FFFF0000" />
+     <x14:axisColor rgb="FF000000" />
+    </x14:dataBar>
+   </x14:cfRule>
+   <xm:sqref>A1:A11</xm:sqref>
+  </x14:conditionalFormatting>
+  <x14:conditionalFormatting>
+   <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40001}">
+    <x14:dataBar minLength="0" maxLength="100" border="1" negativeBarColorSameAsPositive="1" negativeBarBorderColorSameAsPositive="0">
+     <x14:cfvo type="autoMin" />
+     <x14:cfvo type="autoMax" />
+     <x14:borderColor rgb="FF0000FF" />
+     <x14:negativeBorderColor rgb="FFFF0000" />
+     <x14:axisColor rgb="FF000000" />
+    </x14:dataBar>
+   </x14:cfRule>
+   <xm:sqref>C1:C11</xm:sqref>
+  </x14:conditionalFormatting>
+  <x14:conditionalFormatting>
+   <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40002}">
+    <x14:dataBar minLength="0" maxLength="100" border="1" axisPosition="none" negativeBarBorderColorSameAsPositive="0">
+     <x14:cfvo type="autoMin" />
+     <x14:cfvo type="autoMax" />
+     <x14:borderColor rgb="FF638EC6" />
+     <x14:negativeFillColor rgb="FFFF0000" />
+     <x14:negativeBorderColor rgb="FFFF0000" />
+    </x14:dataBar>
+   </x14:cfRule>
+   <xm:sqref>E1:E11</xm:sqref>
+  </x14:conditionalFormatting>
+  <x14:conditionalFormatting>
+   <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40003}">
+    <x14:dataBar minLength="0" maxLength="100" border="1" axisPosition="middle" negativeBarBorderColorSameAsPositive="0">
+     <x14:cfvo type="autoMin" />
+     <x14:cfvo type="autoMax" />
+     <x14:borderColor rgb="FF638EC6" />
+     <x14:negativeFillColor rgb="FFFF0000" />
+     <x14:negativeBorderColor rgb="FFFF0000" />
+     <x14:axisColor rgb="FF00FF00" />
+    </x14:dataBar>
+   </x14:cfRule>
+   <xm:sqref>G1:G11</xm:sqref>
+  </x14:conditionalFormatting>
+  <x14:conditionalFormatting>
+   <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40004}">
+    <x14:dataBar minLength="0" maxLength="100" border="1" gradient="0" direction="rightToLeft" negativeBarBorderColorSameAsPositive="0">
+     <x14:cfvo type="autoMin" />
+     <x14:cfvo type="autoMax" />
+     <x14:borderColor rgb="FF638EC6" />
+     <x14:negativeFillColor rgb="FFFF0000" />
+     <x14:negativeBorderColor rgb="FFFF0000" />
+     <x14:axisColor rgb="FF000000" />
+    </x14:dataBar>
+   </x14:cfRule>
+   <xm:sqref>I1:I11</xm:sqref>
+  </x14:conditionalFormatting>
+  <x14:conditionalFormatting>
+   <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40005}">
+    <x14:dataBar minLength="0" maxLength="100" border="1">
+     <x14:cfvo type="autoMin" />
+     <x14:cfvo type="autoMax" />
+     <x14:borderColor rgb="FFFF0000" />
+     <x14:negativeFillColor rgb="FF0000FF" />
+     <x14:axisColor rgb="FF000000" />
+    </x14:dataBar>
+   </x14:cfRule>
+   <xm:sqref>K1:K11</xm:sqref>
+  </x14:conditionalFormatting>
+  <x14:conditionalFormatting>
+   <x14:cfRule type="dataBar" id="{F7189283-14F7-4DE0-9601-54DE9DB40006}">
+    <x14:dataBar border="1" negativeBarBorderColorSameAsPositive="0">
+     <x14:cfvo type="autoMin" />
+     <x14:cfvo type="autoMax" />
+     <x14:borderColor rgb="FF638EC6" />
+     <x14:negativeFillColor rgb="FFFF0000" />
+     <x14:negativeBorderColor rgb="FFFF0000" />
+     <x14:axisColor rgb="FF000000" />
+    </x14:dataBar>
+   </x14:cfRule>
+   <xm:sqref>M1:M11</xm:sqref>
+  </x14:conditionalFormatting>
+ </x14:conditionalFormattings>
+</ext>
+', pointer = FALSE)
+  got <- wb$worksheets[[1]]$extLst
+  expect_equal(got, exp)
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_error(
+    wb$add_conditional_formatting(type = "dataBar", params = list(icon_set = TRUE)),
+    "Invalid parameters: icon_set"
+  )
+})
+
 test_that("wb_conditional_formatting", {
   wb <- wb_workbook()
   wb$add_worksheet("databar")

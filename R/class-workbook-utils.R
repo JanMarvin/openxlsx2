@@ -125,12 +125,12 @@ validate_cf_params <- function(params) {
     "border", "gradient", "iconSet", "percent", "rank", "reverse", "showValue",
     "axisPosition", "axisColor", "direction", "minLength", "maxLength",
     "negativeBarColorSameAsPositive", "negativeBarBorderColorSameAsPositive",
-    "fillColor", "borderColor", "negFillColor", "negBorderColor"
-  )
+    "borderColor", "negFillColor", "negBorderColor"
+  ) # "fillColor" is currently not supported
 
   bad <- !names(params) %in% allowed
   if (any(bad)) {
-    stop("Invalid parameters: ", toString(names(params)[bad]))
+    stop("Invalid parameters: ", toString(names(params)[bad]), call. = FALSE)
   }
 
   # assign default values
@@ -141,12 +141,8 @@ validate_cf_params <- function(params) {
   params$reverse      <- if (is.null(params$reverse))   0L else as_binary(params$reverse)
 
   params$rank      <- as.integer(params$rank      %||% 5L)
-  params$minLength <- as.integer(params$minLength %||% 0L)
-  params$maxLength <- as.integer(params$maxLength %||% 100L)
-
-  if (!is_integer_ish(params$rank))      stop("params$rank must be an integer")
-  if (!is_integer_ish(params$minLength)) stop("params$minLength must be an integer")
-  if (!is_integer_ish(params$maxLength)) stop("params$maxLength must be an integer")
+  params$minLength <- as.integer(params$minLength %||% 0L)   # Could not make this work
+  params$maxLength <- as.integer(params$maxLength %||% 100L) # Could not make this work
 
   params$axisPosition <- params$axisPosition %||% "automatic"
   params$direction    <- params$direction    %||% "context"
