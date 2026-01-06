@@ -29,6 +29,9 @@
 - Removal of `border`, `fill`, `font` and `numfmt` is possible setting
   these to `NULL`.
   [\#1511](https://github.com/JanMarvin/openxlsx2/pull/1511)
+- Extend conditional formatting for databars.
+  ([\#1523](https://github.com/JanMarvin/openxlsx2/pull/1523),
+  [@balthasars](https://github.com/balthasars))
 
 ### Fixes
 

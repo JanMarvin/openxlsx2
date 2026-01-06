@@ -2809,7 +2809,7 @@ Add conditional formatting
         "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
         "between", "topN", "bottomN"),
       params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
-        5L),
+        5L, axisPosition = "automatic"),
       ...
     )
 
