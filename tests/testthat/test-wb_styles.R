@@ -1554,3 +1554,10 @@ test_that("checking  the same numfmts twice works", {
   )
 
 })
+
+test_that("applying styles works", {
+  xl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
+  exp <- "96.55\u00a0%"
+  got <- wb_to_df(xl, apply_numfmts = TRUE, dims = "I7", col_names = FALSE)[["I"]]
+  expect_equal(got, exp)
+})

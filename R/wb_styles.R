@@ -1600,7 +1600,7 @@ get_numfmt_style <- function(wb, cc) {
 
   # in an xlsx file created by LibreOffice there were duplicates in
   # numFmtId for some reason
-  sel <- !duplicated(styles$numFmtId) & styles$applyNumberFormat %in% c("1", "true")
+  sel <- !duplicated(styles[c("numFmtId", "style_id")]) & styles$applyNumberFormat %in% c("1", "true")
   styles <- styles[sel, c("style_id", "numFmtId")]
 
   numfmts <- rbindlist(
