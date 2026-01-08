@@ -1,18 +1,17 @@
 on:
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       which:
-        type: choice
-        description: Which dependents to check
-        options:
-        - strong
-        - most
+        description: 'Which dependents'
+        default: 'most'
 
-name: Reverse dependency check
+name: Reverse dependency check v1.1
 
 jobs:
   revdep_check:
-    name: Reverse check ${{ inputs.which }} dependents
-    uses: r-devel/recheck/.github/workflows/recheck.yml@v1
+    uses: JanMarvin/recheck/.github/workflows/recheck.yml@v1.1
     with:
-      which: ${{ inputs.which }}
+      # If manual, use input. If PR, default to 'most'.
+      which: ${{ github.event.inputs.which || 'most' }}
