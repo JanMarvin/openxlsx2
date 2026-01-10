@@ -95,14 +95,21 @@ If <code>TRUE</code>, the columns are hidden.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The global min and max column width for "auto" columns is set by (default values show):</p><ul><li><p><code>options("openxlsx2.minWidth" = 3)</code></p></li>
-<li><p><code>options("openxlsx2.maxWidth" = 250)</code> Maximum width allowed in OOXML</p></li>
-</ul><p>NOTE: The calculation of column widths can be slow for large worksheets.</p>
-<p>NOTE: The <code>hidden</code> parameter may conflict with the one set in <code><a href="grouping-wb.html">wb_group_cols()</a></code>;
-changing one will update the other.</p>
-<p>NOTE: The default column width varies by spreadsheet software, operating system,
-and DPI settings used. Setting <code>widths</code> to specific value also is no guarantee
-that the output will have consistent column widths.</p>
+    <p>The global minimum and maximum column width for "auto" columns are controlled by:</p><ul><li><p><code>options("openxlsx2.minWidth" = 3)</code></p></li>
+<li><p><code>options("openxlsx2.maxWidth" = 250)</code> (the maximum width allowed in OOXML)</p></li>
+</ul><p>Automatic column width calculation is a heuristic that may not be accurate
+in all scenarios. Known limitations include issues with wrapped text,
+merged cells, and font styles with variable kerning. The underlying logic
+primarily assumes a monospace font and provides limited support for specific
+number formats. As a safeguard to avoid very narrow columns, widths
+calculated below the <code>openxlsx2.minWidth</code> (or if unset, below 4) threshold
+are slightly increased.</p>
+<p>Be aware that calculating widths can be computationally slow for large
+worksheets. Additionally, the <code>hidden</code> parameter is linked with settings in
+<code><a href="grouping-wb.html">wb_group_cols()</a></code>, so changing one will update the other. Because default
+column widths are influenced by the specific spreadsheet software, operating
+system, and DPI settings, even providing specific values for <code>widths</code> does
+not guarantee perfectly consistent output across all environments.</p>
 <p>For automatic text wrapping of columns use
 <a href="wb_add_cell_style.html">wb_add_cell_style(wrap_text = TRUE)</a></p>
     </div>

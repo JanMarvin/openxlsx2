@@ -44,6 +44,8 @@
   this case, spreadsheet software will handle it as a datetime starting
   in 1900-01-01. With format `"[h]:mm:ss"` the value `42.5` now becomes
   `1900-02-11 12:00:00`.
+- Avoid very narrow column widths with
+  `wb_set_col_widths(..., widths = "auto")`.
 
 ### Internal Changes
 

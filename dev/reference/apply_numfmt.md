@@ -55,6 +55,10 @@ by semicolons (Positive; Negative; Zero; Text).
 - **Literals:** Handles escaped characters (`\\`), quoted text
   (`"text"`), and the text placeholder (`@`).
 
+Rounding is based on the R function
+[`round()`](https://rdrr.io/r/base/Round.html) and does not match
+spreadsheet software behavior.
+
 ## Examples
 
 ``` r
