@@ -1379,6 +1379,15 @@ test_that("conditional else branch", {
   expect_identical(apply_numfmt(250, fmt), "250.00")
 })
 
+test_that("rounding works similar to R", {
+  exp <- sprintf("%.1f", round(seq(from = 0, to = 1, by = .05), digits = 1))
+  got <- apply_numfmt(seq(from = 0, to = 1, by = .05), "0.0")
+  expect_equal(got, exp)
+
+  got <- apply_numfmt(-0.05, "0.0")
+  expect_equal(got, "-0.0")
+})
+
 test_that("extensive hms works", {
   df <- data.frame(
     daily_time = structure(c(3061200, 3511200, NA, 4051200, 4321200), units = "secs", class = c("hms", "difftime")),

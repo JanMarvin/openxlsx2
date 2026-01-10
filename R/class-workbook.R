@@ -4949,8 +4949,13 @@ wbWorkbook <- R6::R6Class(
 
         col_width <- vapply(df, function(x) {
           nn <- nchar(x)
-          if (all(is.na(nn))) NA_real_  # default width
-          else max(nn, na.rm = TRUE)
+          if (all(is.na(nn))) {
+            NA_real_  # default width
+          } else {
+            mm <- max(nn, na.rm = TRUE)
+            minW <- getOption("openxlsx2.minWidth", 4)
+            if (mm < minW) min(c(mm + 2, minW)) else mm # avoid very small column widths
+          }
         },
         NA_real_
         )
