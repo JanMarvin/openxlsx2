@@ -13,6 +13,7 @@
 
 * It is now possible to add filters via `write_xlsx()` without tables. [#1495](https://github.com/JanMarvin/openxlsx2/pull/1495)
 * Improve time detection in cases where a time style was mistaken as a datetime. This also fixes a case, where a time value exceeds a day. In this case, spreadsheet software will handle it as a datetime starting in 1900-01-01. With format `"[h]:mm:ss"` the value `42.5` now becomes `1900-02-11 12:00:00`.
+* Avoid very narrow column widths with `wb_set_col_widths(..., widths = "auto")`.
 
 ## Internal Changes
 
