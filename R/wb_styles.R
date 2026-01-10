@@ -1975,6 +1975,9 @@ format_fraction <- function(value, format_code) {
 #'     text (`"text"`), and the text placeholder (`@`).
 #' }
 #'
+#' Rounding is based on the R function `round()` and does not match spreadsheet
+#' software behavior.
+#'
 #' @return A character vector of formatted strings.
 #'
 #' @examples

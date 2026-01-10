@@ -43,6 +43,9 @@ to select the appropriate formatting section.
 \item \bold{Literals:} Handles escaped characters (\verb{\\\\}), quoted
 text (\code{"text"}), and the text placeholder (\code{@}).
 }
+
+Rounding is based on the R function \code{round()} and does not match spreadsheet
+software behavior.
 }
 \examples{
 # Numeric formatting
