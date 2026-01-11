@@ -173,9 +173,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // contains all values of a col
       single_xml_col.clear();
 
-      // get number of children and attributes
-      auto nn = std::distance(col.children().begin(), col.children().end());
-
       // typ: attribute ------------------------------------------------------
       bool has_colname = false;
       for (auto attr : col.attributes()) {
@@ -221,7 +218,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       }
 
       // val ------------------------------------------------------------------
-      if (nn > 0) {
+      if (col.first_child()) {
         for (auto val : col.children()) {
 
           // <v> -- the default
