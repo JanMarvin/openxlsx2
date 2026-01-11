@@ -58,7 +58,7 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -267,7 +267,7 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -359,7 +359,7 @@ Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -455,7 +455,7 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -598,7 +598,7 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -700,7 +700,7 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -852,7 +852,7 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -997,7 +997,7 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -1089,7 +1089,7 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list

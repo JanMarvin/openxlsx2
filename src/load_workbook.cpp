@@ -15,7 +15,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -78,7 +78,7 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
