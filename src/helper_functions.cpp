@@ -202,7 +202,7 @@ SEXP rbindlist(Rcpp::List x) {
   // --- 3. Allocate final DataFrame list ---
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // Pre-fetch references to the output vectors for fast assignment
@@ -818,7 +818,7 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(n)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(n));
   }
 
   Rcpp::IntegerVector rvec = Rcpp::IntegerVector::create(NA_INTEGER, n);
@@ -879,7 +879,7 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list

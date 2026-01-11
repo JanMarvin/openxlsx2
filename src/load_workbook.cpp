@@ -15,7 +15,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -78,7 +78,7 @@ inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
   // 1. create the list
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(Rcpp::no_init(nn)));
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
   }
 
   // 2. fill the list
@@ -173,9 +173,6 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // contains all values of a col
       single_xml_col.clear();
 
-      // get number of children and attributes
-      auto nn = std::distance(col.children().begin(), col.children().end());
-
       // typ: attribute ------------------------------------------------------
       bool has_colname = false;
       for (auto attr : col.attributes()) {
@@ -221,7 +218,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       }
 
       // val ------------------------------------------------------------------
-      if (nn > 0) {
+      if (col.first_child()) {
         for (auto val : col.children()) {
 
           // <v> -- the default

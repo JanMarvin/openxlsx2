@@ -170,24 +170,23 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   // --- 1. Initialization ---
 
   // Base columns
-  Rcpp::CharacterVector r      = Rcpp::CharacterVector(Rcpp::no_init(n));
-  Rcpp::CharacterVector row_r  = Rcpp::CharacterVector(Rcpp::no_init(n));
-  Rcpp::CharacterVector c_r    = Rcpp::CharacterVector(Rcpp::no_init(n));
-  Rcpp::CharacterVector c_s    = Rcpp::CharacterVector(Rcpp::no_init(n));
-  Rcpp::CharacterVector c_t    = Rcpp::CharacterVector(Rcpp::no_init(n));
+  Rcpp::CharacterVector r      = Rcpp::CharacterVector(n);
+  Rcpp::CharacterVector row_r  = Rcpp::CharacterVector(n);
+  Rcpp::CharacterVector c_r    = Rcpp::CharacterVector(n);
+  Rcpp::CharacterVector c_s    = Rcpp::CharacterVector(n);
+  Rcpp::CharacterVector c_t    = Rcpp::CharacterVector(n);
 
   // Content columns
-  Rcpp::CharacterVector v      = Rcpp::CharacterVector(Rcpp::no_init(n));
-  Rcpp::CharacterVector f      = Rcpp::CharacterVector(Rcpp::no_init(n));
-  Rcpp::CharacterVector f_attr = Rcpp::CharacterVector(Rcpp::no_init(n));
-  Rcpp::CharacterVector is     = Rcpp::CharacterVector(Rcpp::no_init(n));
+  Rcpp::CharacterVector v      = Rcpp::CharacterVector(n);
+  Rcpp::CharacterVector f      = Rcpp::CharacterVector(n);
+  Rcpp::CharacterVector f_attr = Rcpp::CharacterVector(n);
+  Rcpp::CharacterVector is     = Rcpp::CharacterVector(n);
 
   // Conditional columns (only allocate if needed)
   Rcpp::CharacterVector c_cm, c_ph, c_vm;
-  if (has_cm) c_cm = Rcpp::CharacterVector(Rcpp::no_init(n));
-  if (has_ph) c_ph = Rcpp::CharacterVector(Rcpp::no_init(n));
-  if (has_vm) c_vm = Rcpp::CharacterVector(Rcpp::no_init(n));
-
+  if (has_cm) c_cm             = Rcpp::CharacterVector(n);
+  if (has_ph) c_ph             = Rcpp::CharacterVector(n);
+  if (has_vm) c_vm             = Rcpp::CharacterVector(n);
 
   // --- 2. Fill Vectors ---
 

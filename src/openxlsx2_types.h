@@ -71,7 +71,7 @@ template <>
 inline SEXP wrap(const vec_string& x) {
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
 
-  Rcpp::CharacterVector z(no_init(n));
+  Rcpp::CharacterVector z(n);
 
   for (R_xlen_t i = 0; i < n; ++i) {
     z[i] = Rcpp::String(x[static_cast<size_t>(i)]);

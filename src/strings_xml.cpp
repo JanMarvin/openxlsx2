@@ -3,7 +3,7 @@
 
 SEXP xml_to_txt(Rcpp::CharacterVector vec, std::string type) {
   auto n = vec.length();
-  Rcpp::CharacterVector res(Rcpp::no_init(n));
+  Rcpp::CharacterVector res(n);
   std::unordered_map<std::string, Rcpp::String> cache;  // Cache Rcpp::String directly
 
   for (auto i = 0; i < n; ++i) {
