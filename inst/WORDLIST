@@ -143,6 +143,7 @@ darkVertical
 dashDot
 dashDotDot
 databar
+databars
 dateAxis
 dcterms
 de
@@ -174,6 +175,7 @@ externalptr
 fanfold
 featurePropertyBag
 fileType
+finalizer
 firstColumn
 firstFooter
 firstHeader
@@ -229,6 +231,7 @@ horizontalScroll
 irregularSeal
 jpeg
 justifyLow
+kerning
 lastColumn
 lastModifiedBy
 leftArrow
@@ -276,6 +279,7 @@ minAxisType
 mips
 mmm
 mmss
+monospace
 mschart
 namedSheetViews
 nestings
@@ -383,6 +387,7 @@ th
 thaiDistributed
 timelineCaches
 timezones
+tmpDir
 totalLabel
 totalRow
 totalsRowCount
