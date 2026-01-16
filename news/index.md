@@ -2,6 +2,8 @@
 
 ## openxlsx2 1.23
 
+CRAN release: 2026-01-16
+
 ### New features
 
 - Check valid ranges and inputs in
