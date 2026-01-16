@@ -3,6 +3,7 @@
 ## Fixes
 
 * Fix UBSAN error triggered by a test added in 1.23
+* Avoid `format(dt_val, "%p")` in `apply_numfmt()`
 
 
 ***************************************************************************
