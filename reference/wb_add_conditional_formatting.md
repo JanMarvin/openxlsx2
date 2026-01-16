@@ -17,7 +17,7 @@ wb_add_conditional_formatting(
     "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
     "between", "topN", "bottomN"),
   params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
-    5L),
+    5L, axisPosition = "automatic"),
   ...
 )
 
@@ -124,7 +124,21 @@ horizontal direction). If `dims` is a non consecutive range
   If `FALSE` color gradient is removed. Default `TRUE`  
     
   `[params$border]`  
-  If `FALSE` the border around the database is hidden. Default `TRUE`
+  If `FALSE` the border around the database is hidden. Default `TRUE`  
+    
+  `[params$direction]`  
+  A `string` the direction in which the databar points. Must be equal to
+  one of the following values: `"context"` (default), `"leftToRight"`,
+  `"rightToLeft"`.  
+    
+  `[params${axisColor,borderColor,negativeBarColorSameAsPositive,negativeBarBorderColorSameAsPositive}]`
+  Colors and bools configuring the style of the border.
+  `[params$axisPosition]`  
+  A `string` specifying the data bar's axis position. Must be equal to
+  one of the following values: `"automatic"` (default, variable position
+  based on negative values), `"middle"` (cell midpoint), `"none"`
+  (negative bars shown in same direction as positive bars).  
+    
 
 - `duplicatedValues` / `uniqueValues` / `containsErrors`:
 

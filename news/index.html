@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,11 +44,48 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.22" id="openxlsx2-122">openxlsx2 1.22<a class="anchor" aria-label="anchor" href="#openxlsx2-122"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.23" id="openxlsx2-123">openxlsx2 1.23<a class="anchor" aria-label="anchor" href="#openxlsx2-123"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-23">New features<a class="anchor" aria-label="anchor" href="#new-features-1-23"></a></h3>
+<ul><li>Check valid ranges and inputs in <code><a href="../reference/col2int.html">col2int()</a></code> and <code>int2row()</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1491" class="external-link">#1491</a>
+</li>
+<li>With <code><a href="../reference/dims_helper.html">validate_dims()</a></code>, a new validation helper for <code>dims</code> has been added. <a href="https://github.com/JanMarvin/openxlsx2/pull/1498" class="external-link">#1498</a>
+</li>
+<li>The argument <code>na</code> replaces <code>na.strings</code> and <code>na.numbers</code> in read and write functions. Per default this is either a waiver in write functions or a character vector in read functions. If strings and numbers should be passed to a read function <code>na = list(strings = ..., numbers = ...)</code> should be used. In addition a matching option was added <code>option("openxlsx2.na")</code>. The previous default values and option remain for the foreseeable future. <a href="https://github.com/JanMarvin/openxlsx2/pull/1499" class="external-link">#1499</a>
+</li>
+<li>It is now possible to apply numeric formats via <code>wb_to_df(apply_numfmts = TRUE)</code> to preview numeric formats. The function is still experimental and incomplete. There is limited support for builtin styles. But this should improve setting the automatic column width for worksheets with numeric styles. <a href="https://github.com/JanMarvin/openxlsx2/pull/1501" class="external-link">#1501</a>
+</li>
+<li>Removal of <code>border</code>, <code>fill</code>, <code>font</code> and <code>numfmt</code> is possible setting these to <code>NULL</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1511" class="external-link">#1511</a>
+</li>
+<li>Extend conditional formatting for databars. (<a href="https://github.com/JanMarvin/openxlsx2/pull/1523" class="external-link">#1523</a>, <a href="https://github.com/balthasars" class="external-link">@balthasars</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-23">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-23"></a></h3>
+<ul><li>It is now possible to add filters via <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> without tables. <a href="https://github.com/JanMarvin/openxlsx2/pull/1495" class="external-link">#1495</a>
+</li>
+<li>Improve time detection in cases where a time style was mistaken as a datetime. This also fixes a case, where a time value exceeds a day. In this case, spreadsheet software will handle it as a datetime starting in 1900-01-01. With format <code>"[h]:mm:ss"</code> the value <code>42.5</code> now becomes <code>1900-02-11 12:00:00</code>.</li>
+<li>Avoid very narrow column widths with <code>wb_set_col_widths(..., widths = "auto")</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-1-23">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-23"></a></h3>
+<ul><li>C++ functions used in loading and writing files have seen another round of cleanups.</li>
+<li>Cleanups in <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to increase coverage and to be more precise in error messages.</li>
+<li>Internal border logic was cleaned up.</li>
+<li>Cleanups for <code><a href="../reference/dims_to_dataframe.html">dims_to_dataframe()</a></code> and <code>do_cell_init()</code>. Both are used extensively in the package. <a href="https://github.com/JanMarvin/openxlsx2/pull/1515" class="external-link">#1515</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-1-23">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-23"></a></h3>
+<ul><li>The <code>wbWorkbook</code> class now provides a <code>finalizer</code> that will clean up temporary objects that belong to an input file and were extracted during <code><a href="../reference/wb_load.html">wb_load()</a></code>. Note: these objects are not tracked across clones of a workbook.</li>
+<li>Style manager helpers that return style ids, check now if a selected style is available.</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.22" id="openxlsx2-122">openxlsx2 1.22<a class="anchor" aria-label="anchor" href="#openxlsx2-122"></a></h2><p class="text-muted">CRAN release: 2025-12-07</p>
 <div class="section level3">
 <h3 id="new-features-1-22">New features<a class="anchor" aria-label="anchor" href="#new-features-1-22"></a></h3>
 <ul><li>Added a <code>hide_blanks</code> argument to <code><a href="../reference/row_heights-wb.html">wb_set_row_heights()</a></code>, allowing all blank rows in a worksheet to be hidden. <a href="https://github.com/JanMarvin/openxlsx2/pull/1464" class="external-link">#1464</a>

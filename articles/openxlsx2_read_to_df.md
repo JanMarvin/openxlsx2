@@ -326,15 +326,15 @@ wb_to_df(file, start_row = 5, col_names = FALSE)
 #> 12    NA  1 NA 123.00  <NA> 2023-07-31 NA     122     <NA>
 ```
 
-### `na.strings` - define missing values
+### `na` - define missing values
 
 There is the “#N/A” string, but often the user will be faced with custom
 missing values and other values we are not interested. Such strings can
-be passed as character vector via `na.strings`
+be passed as character vector via `na`
 
 ``` r
 # na strings
-wb_to_df(file, na.strings = "")
+wb_to_df(file, na = "")
 #>     Var1 Var2 <NA>  Var3  Var4       Var5         Var6    Var7     Var8
 #> 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15
 #> 4   TRUE   NA   NA #NUM!     b 2023-05-23         <NA>       0 14:02:57

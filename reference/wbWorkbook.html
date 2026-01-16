@@ -79,7 +79,7 @@ Note that the documentation is more complete in each of the wrapper functions.
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,7 +116,7 @@ Note that the documentation is more complete in each of the wrapper functions.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Workbook class</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/R/class-workbook.R" class="external-link"><code>R/class-workbook.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook.R" class="external-link"><code>R/class-workbook.R</code></a></small>
       <div class="d-none name"><code>wbWorkbook.Rd</code></div>
     </div>
 
@@ -367,6 +367,10 @@ worksheet names.</p></dd>
 
 <dt><code>path</code></dt>
 <dd><p>path</p></dd>
+
+
+<dt><code>tmpDir</code></dt>
+<dd><p>tmpDir</p></dd>
 
 
 <dt><code>namedSheetViews</code></dt>
@@ -810,7 +814,7 @@ as last modification date. Defaults to the creation date.</p></dd>
 <span>  sep <span class="op">=</span> <span class="st">", "</span>,</span>
 <span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  na <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  enforce <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -871,7 +875,7 @@ as last modification date. Defaults to the creation date.</p></dd>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
 
 
-<dt><code>na.strings</code></dt>
+<dt><code>na</code></dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
 <code><a href="waivers.html">na_strings()</a></code> uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
@@ -917,7 +921,7 @@ as last modification date. Defaults to the creation date.</p></dd>
 <span>  banded_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  na <span class="op">=</span> <span class="fu"><a href="../reference/waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  total_row <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -994,7 +998,7 @@ as last modification date. Defaults to the creation date.</p></dd>
 <dd><p>if writing into existing cells, should the cell style be removed?</p></dd>
 
 
-<dt><code>na.strings</code></dt>
+<dt><code>na</code></dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
 <code><a href="waivers.html">na_strings()</a></code> uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
@@ -1429,8 +1433,7 @@ STDEVP, SUM, VAR, VARP</p>
 <span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  detect_dates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
-<span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  na <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
 <span>  fill_merged_cells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">dims</span>,</span>
 <span>  show_formula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -1440,6 +1443,7 @@ STDEVP, SUM, VAR, VARP</p>
 <span>  keep_attributes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_numfmts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -1494,12 +1498,9 @@ STDEVP, SUM, VAR, VARP</p>
 <dd><p>If TRUE, attempt to recognize dates and perform conversion.</p></dd>
 
 
-<dt><code>na.strings</code></dt>
-<dd><p>A character vector of strings which are to be interpreted as NA. Blank cells will be returned as NA.</p></dd>
-
-
-<dt><code>na.numbers</code></dt>
-<dd><p>A numeric vector of digits which are to be interpreted as NA. Blank cells will be returned as NA.</p></dd>
+<dt><code>na</code></dt>
+<dd><p>Defines values to be treated as NA. Can be a character vector of strings
+or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to <code>NA</code>.</p></dd>
 
 
 <dt><code>fill_merged_cells</code></dt>
@@ -1536,6 +1537,10 @@ STDEVP, SUM, VAR, VARP</p>
 
 <dt><code>show_hyperlinks</code></dt>
 <dd><p>If <code>TRUE</code> instead of the displayed text, hyperlink targets are shown.</p></dd>
+
+
+<dt><code>apply_numfmts</code></dt>
+<dd><p>If <code>TRUE</code> numeric formats are applied if detected.</p></dd>
 
 
 <dt><code>...</code></dt>
@@ -2781,7 +2786,7 @@ are repeated across length of <code>cols</code></p></dd>
 <span>    <span class="st">"notContainsBlanks"</span>, <span class="st">"containsText"</span>, <span class="st">"notContainsText"</span>, <span class="st">"beginsWith"</span>, <span class="st">"endsWith"</span>,</span>
 <span>    <span class="st">"between"</span>, <span class="st">"topN"</span>, <span class="st">"bottomN"</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">TRUE</span>, percent <span class="op">=</span> <span class="cn">FALSE</span>, rank <span class="op">=</span></span>
-<span>    <span class="fl">5L</span><span class="op">)</span>,</span>
+<span>    <span class="fl">5L</span>, axisPosition <span class="op">=</span> <span class="st">"automatic"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>

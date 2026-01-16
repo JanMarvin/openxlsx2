@@ -22,8 +22,7 @@ wb_to_df(
   rows = NULL,
   cols = NULL,
   detect_dates = TRUE,
-  na.strings = "#N/A",
-  na.numbers = NA,
+  na = "#N/A",
   fill_merged_cells = FALSE,
   dims,
   show_formula = FALSE,
@@ -33,6 +32,7 @@ wb_to_df(
   keep_attributes = FALSE,
   check_names = FALSE,
   show_hyperlinks = FALSE,
+  apply_numfmts = FALSE,
   ...
 )
 
@@ -49,8 +49,7 @@ read_xlsx(
   cols = NULL,
   detect_dates = TRUE,
   named_region,
-  na.strings = "#N/A",
-  na.numbers = NA,
+  na = "#N/A",
   fill_merged_cells = FALSE,
   check_names = FALSE,
   show_hyperlinks = FALSE,
@@ -70,8 +69,7 @@ wb_read(
   cols = NULL,
   detect_dates = TRUE,
   named_region,
-  na.strings = "NA",
-  na.numbers = NA,
+  na = "NA",
   check_names = FALSE,
   show_hyperlinks = FALSE,
   ...
@@ -137,15 +135,11 @@ wb_read(
 
   If `TRUE`, attempt to recognize dates and perform conversion.
 
-- na.strings:
+- na:
 
-  A character vector of strings which are to be interpreted as `NA`.
-  Blank cells will be returned as `NA`.
-
-- na.numbers:
-
-  A numeric vector of digits which are to be interpreted as `NA`. Blank
-  cells will be returned as `NA`.
+  Defines values to be treated as NA. Can be a character vector of
+  strings or a named list: list(strings = ..., numbers = ...). Blank
+  cells are always converted to `NA`.
 
 - fill_merged_cells:
 
@@ -189,6 +183,10 @@ wb_read(
 - show_hyperlinks:
 
   If `TRUE` instead of the displayed text, hyperlink targets are shown.
+
+- apply_numfmts:
+
+  If `TRUE` numeric formats are applied if detected.
 
 - ...:
 
@@ -250,6 +248,10 @@ using `+` and `-`. For example, `dims = "A-:+9"` will read everything
 from the first row in column A through the last column in row 9. This
 makes it unnecessary to update dimensions when working with files whose
 sizes change frequently.
+
+The function to apply numeric formats was not extensively tested for
+numeric equality with spreadsheet software. There might be differences
+and the function has limited support for builtin styles.
 
 ## See also
 
@@ -424,7 +426,7 @@ wb_to_df(wb1, start_row = 5, col_names = FALSE)
 #> 12    NA  1 NA 123.00  <NA> 2023-07-31 NA     122     <NA>
 
 # na string
-wb_to_df(wb1, na.strings = "a")
+wb_to_df(wb1, na = "a")
 #>     Var1 Var2 <NA>  Var3  Var4       Var5         Var6    Var7     Var8
 #> 3   TRUE    1   NA     1  <NA> 2023-05-29 3209324 This #DIV/0! 01:27:15
 #> 4   TRUE   NA   NA #NUM!     b 2023-05-23         <NA>       0 14:02:57

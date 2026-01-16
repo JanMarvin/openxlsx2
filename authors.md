@@ -18,15 +18,15 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/v1.22/inst/CITATION)
+[`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/main/inst/CITATION)
 
-(2025). openxlsx2: Read, Write and Edit 'xlsx' Files. R package version
-1.22. URL https://github.com/JanMarvin/openxlsx2.
+(2026). openxlsx2: Read, Write and Edit 'xlsx' Files. R package version
+1.23. URL https://github.com/JanMarvin/openxlsx2.
 
     @Manual{,
       title = {openxlsx2: Read, Write and Edit 'xlsx' Files},
-      year = {2025},
-      note = {R package version 1.22},
+      year = {2026},
+      note = {R package version 1.23},
       url = {https://janmarvin.github.io/openxlsx2/},
     }
 
@@ -34,6 +34,7 @@ Source:
 
     Adam Slomko
     Alexander Walker
+    Balthasar Sagar
     Ben Escoto
     Blake Boswell
     B. Thieurmel

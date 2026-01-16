@@ -9,7 +9,7 @@ You can find more details in vignette("conditional-formatting").'><meta property
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ You can find more details in vignette("conditional-formatting").'><meta property
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add conditional formatting to cells in a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_conditional_formatting.Rd</code></div>
     </div>
 
@@ -68,7 +68,7 @@ You can find more details in <code><a href="../articles/conditional-formatting.h
 <span>    <span class="st">"notContainsBlanks"</span>, <span class="st">"containsText"</span>, <span class="st">"notContainsText"</span>, <span class="st">"beginsWith"</span>, <span class="st">"endsWith"</span>,</span>
 <span>    <span class="st">"between"</span>, <span class="st">"topN"</span>, <span class="st">"bottomN"</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>showValue <span class="op">=</span> <span class="cn">TRUE</span>, gradient <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">TRUE</span>, percent <span class="op">=</span> <span class="cn">FALSE</span>, rank <span class="op">=</span></span>
-<span>    <span class="fl">5L</span><span class="op">)</span>,</span>
+<span>    <span class="fl">5L</span>, axisPosition <span class="op">=</span> <span class="st">"automatic"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -138,7 +138,8 @@ If an expression is pointing to a cell <code>"A1=1"</code>, this cell reference 
 <dd><p><code>[style]</code><br> A <code>character</code> vector of valid colors with length <code>2</code> or <code>3</code><br><br><code>[rule]</code><br><code>NULL</code> or a <code>character</code> vector of valid colors of equal length to <code>styles</code></p></dd>
 
 <dt><code>dataBar</code></dt>
-<dd><p><code>[style]</code><br> A <code>character</code> vector of valid colors with length <code>2</code> or <code>3</code><br><br><code>[rule]</code><br> A <code>numeric</code> vector specifying the range of the databar colors. Must be equal length to <code>style</code><br><br><code>[params$showValue]</code><br> If <code>FALSE</code> the cell value is hidden. Default <code>TRUE</code><br><br><code>[params$gradient]</code><br> If <code>FALSE</code> color gradient is removed. Default <code>TRUE</code><br><br><code>[params$border]</code><br> If <code>FALSE</code> the border around the database is hidden. Default <code>TRUE</code></p></dd>
+<dd><p><code>[style]</code><br> A <code>character</code> vector of valid colors with length <code>2</code> or <code>3</code><br><br><code>[rule]</code><br> A <code>numeric</code> vector specifying the range of the databar colors. Must be equal length to <code>style</code><br><br><code>[params$showValue]</code><br> If <code>FALSE</code> the cell value is hidden. Default <code>TRUE</code><br><br><code>[params$gradient]</code><br> If <code>FALSE</code> color gradient is removed. Default <code>TRUE</code><br><br><code>[params$border]</code><br> If <code>FALSE</code> the border around the database is hidden. Default <code>TRUE</code> <br><br><code>[params$direction]</code><br> A <code>string</code> the direction in which the databar points. Must be equal to one of the following values: <code>"context"</code> (default), <code>"leftToRight"</code>, <code>"rightToLeft"</code>. <br><br><code>[params${axisColor,borderColor,negativeBarColorSameAsPositive,negativeBarBorderColorSameAsPositive}]</code> Colors and bools configuring the style of the border.
+<code>[params$axisPosition]</code><br> A <code>string</code> specifying the data bar's axis position. Must be equal to one of the following values: <code>"automatic"</code> (default, variable position based on negative values), <code>"middle"</code> (cell midpoint), <code>"none"</code> (negative bars shown in same direction as positive bars). <br><br></p></dd>
 
 <dt><code>duplicatedValues</code> / <code>uniqueValues</code> / <code>containsErrors</code></dt>
 <dd><p><code>[style]</code><br> A <code>Style</code> object</p></dd>

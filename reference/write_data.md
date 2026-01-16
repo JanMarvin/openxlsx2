@@ -24,7 +24,7 @@ write_data(
   name = NULL,
   apply_cell_style = TRUE,
   remove_cell_style = FALSE,
-  na.strings = na_strings(),
+  na = na_strings(),
   inline_strings = TRUE,
   enforce = FALSE,
   ...
@@ -93,10 +93,10 @@ write_data(
 
   keep the cell style?
 
-- na.strings:
+- na:
 
   Value used for replacing `NA` values from `x`. Default looks if
-  `options(openxlsx2.na.strings)` is set. Otherwise
+  `options("openxlsx2.na")` is set. Otherwise
   [`na_strings()`](https://janmarvin.github.io/openxlsx2/reference/waivers.md)
   uses the special `#N/A` value within the workbook.
 

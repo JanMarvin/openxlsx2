@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Defunct: Write an object to a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/R/deprecate.R" class="external-link"><code>R/deprecate.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/deprecate.R" class="external-link"><code>R/deprecate.R</code></a></small>
       <div class="d-none name"><code>write_data.Rd</code></div>
     </div>
 
@@ -69,7 +69,7 @@
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  na <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  enforce <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -138,9 +138,9 @@ columns to a character vector e.g. <code>sapply(x$list_column, paste, collapse =
 <dd><p>keep the cell style?</p></dd>
 
 
-<dt id="arg-na-strings">na.strings<a class="anchor" aria-label="anchor" href="#arg-na-strings"></a></dt>
+<dt id="arg-na">na<a class="anchor" aria-label="anchor" href="#arg-na"></a></dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
-looks if <code>options(openxlsx2.na.strings)</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
+looks if <code>options("openxlsx2.na")</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
 uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 

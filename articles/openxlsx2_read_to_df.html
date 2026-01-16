@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,7 +77,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>openxlsx2 read to data frame</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/vignettes/openxlsx2_read_to_df.Rmd" class="external-link"><code>vignettes/openxlsx2_read_to_df.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/vignettes/openxlsx2_read_to_df.Rmd" class="external-link"><code>vignettes/openxlsx2_read_to_df.Rmd</code></a></small>
       <div class="d-none name"><code>openxlsx2_read_to_df.Rmd</code></div>
     </div>
 
@@ -406,16 +406,15 @@ else. To define the row where to begin reading, define it via the
 <span><span class="co">#&gt; 12    NA  1 NA 123.00  &lt;NA&gt; 2023-07-31 NA     122     &lt;NA&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="na-strings---define-missing-values">
-<code>na.strings</code> - define missing values<a class="anchor" aria-label="anchor" href="#na-strings---define-missing-values"></a>
+<h3 id="na---define-missing-values">
+<code>na</code> - define missing values<a class="anchor" aria-label="anchor" href="#na---define-missing-values"></a>
 </h3>
 <p>There is the “#N/A” string, but often the user will be faced with
 custom missing values and other values we are not interested. Such
-strings can be passed as character vector via
-<code>na.strings</code></p>
+strings can be passed as character vector via <code>na</code></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># na strings</span></span>
-<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, na.strings <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, na <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span></span>
 <span><span class="co">#&gt; 3   TRUE    1   NA     1     a 2023-05-29 3209324 This #DIV/0! 01:27:15</span></span>
 <span><span class="co">#&gt; 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span></span>

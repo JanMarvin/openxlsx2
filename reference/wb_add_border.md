@@ -1,6 +1,7 @@
 # Modify borders in a cell region of a worksheet
 
-wb wrapper to create borders for cell regions.
+wb wrapper to create borders for cell regions. Setting `update` to
+`NULL` removes the style and resets the cell to the workbook default.
 
 ## Usage
 

@@ -45,22 +45,30 @@ wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 
 ## Details
 
-The global min and max column width for "auto" columns is set by
-(default values show):
+The global minimum and maximum column width for "auto" columns are
+controlled by:
 
 - `options("openxlsx2.minWidth" = 3)`
 
-- `options("openxlsx2.maxWidth" = 250)` Maximum width allowed in OOXML
+- `options("openxlsx2.maxWidth" = 250)` (the maximum width allowed in
+  OOXML)
 
-NOTE: The calculation of column widths can be slow for large worksheets.
+Automatic column width calculation is a heuristic that may not be
+accurate in all scenarios. Known limitations include issues with wrapped
+text, merged cells, and font styles with variable kerning. The
+underlying logic primarily assumes a monospace font and provides limited
+support for specific number formats. As a safeguard to avoid very narrow
+columns, widths calculated below the `openxlsx2.minWidth` (or if unset,
+below 4) threshold are slightly increased.
 
-NOTE: The `hidden` parameter may conflict with the one set in
-[`wb_group_cols()`](https://janmarvin.github.io/openxlsx2/reference/grouping-wb.md);
-changing one will update the other.
-
-NOTE: The default column width varies by spreadsheet software, operating
-system, and DPI settings used. Setting `widths` to specific value also
-is no guarantee that the output will have consistent column widths.
+Be aware that calculating widths can be computationally slow for large
+worksheets. Additionally, the `hidden` parameter is linked with settings
+in
+[`wb_group_cols()`](https://janmarvin.github.io/openxlsx2/reference/grouping-wb.md),
+so changing one will update the other. Because default column widths are
+influenced by the specific spreadsheet software, operating system, and
+DPI settings, even providing specific values for `widths` does not
+guarantee perfectly consistent output across all environments.
 
 For automatic text wrapping of columns use [wb_add_cell_style(wrap_text
 =

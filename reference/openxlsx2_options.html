@@ -26,7 +26,7 @@ options(&quot;openxlsx2.percentageFormat&quot; = 10)
 options(&quot;openxlsx2.scientificFormat&quot; = 48)
 options(&quot;openxlsx2.string_nums&quot; = TRUE) numerics in character columns
 will be converted. &quot;1&quot; will be written as 1
-options(&quot;openxlsx2.na.strings&quot; = &quot;#N/A&quot;) consulted by write_xlsx(),
+options(&quot;openxlsx2.na&quot; = &quot;#N/A&quot;) consulted by write_xlsx(),
 wb_add_data() and wb_add_data_table().
 options(&quot;openxlsx2.zip_flags&quot;) custom zip flags passed to utils::zip() required when using a custom zip tool
 options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the output file. Increasing compression and time consumed from 1-9.
@@ -58,7 +58,7 @@ options(&quot;openxlsx2.percentageFormat&quot; = 10)
 options(&quot;openxlsx2.scientificFormat&quot; = 48)
 options(&quot;openxlsx2.string_nums&quot; = TRUE) numerics in character columns
 will be converted. &quot;1&quot; will be written as 1
-options(&quot;openxlsx2.na.strings&quot; = &quot;#N/A&quot;) consulted by write_xlsx(),
+options(&quot;openxlsx2.na&quot; = &quot;#N/A&quot;) consulted by write_xlsx(),
 wb_add_data() and wb_add_data_table().
 options(&quot;openxlsx2.zip_flags&quot;) custom zip flags passed to utils::zip() required when using a custom zip tool
 options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the output file. Increasing compression and time consumed from 1-9.
@@ -71,7 +71,7 @@ options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the o
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,7 +108,7 @@ options(&quot;openxlsx2.compression_level&quot; = 6) compression level for the o
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Options consulted by openxlsx2</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/R/openxlsx2-package.R" class="external-link"><code>R/openxlsx2-package.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/openxlsx2-package.R" class="external-link"><code>R/openxlsx2-package.R</code></a></small>
       <div class="d-none name"><code>openxlsx2_options.Rd</code></div>
     </div>
 
@@ -139,7 +139,7 @@ to a cell with <code><a href="wb_add_thread.html">wb_add_thread()</a></code></p>
 <li><p><code>options("openxlsx2.scientificFormat" = 48)</code></p></li>
 <li><p><code>options("openxlsx2.string_nums" = TRUE)</code> numerics in character columns
 will be converted. <code>"1"</code> will be written as <code>1</code></p></li>
-<li><p><code>options("openxlsx2.na.strings" = "#N/A")</code> consulted by <code><a href="write_xlsx.html">write_xlsx()</a></code>,
+<li><p><code>options("openxlsx2.na" = "#N/A")</code> consulted by <code><a href="write_xlsx.html">write_xlsx()</a></code>,
 <code><a href="wb_add_data.html">wb_add_data()</a></code> and <code><a href="wb_add_data_table.html">wb_add_data_table()</a></code>.</p></li>
 <li><p><code>options("openxlsx2.zip_flags")</code> custom zip flags passed to <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> required when using a custom zip tool</p></li>
 <li><p><code>options("openxlsx2.compression_level" = 6)</code> compression level for the output file. Increasing compression and time consumed from 1-9.</p></li>

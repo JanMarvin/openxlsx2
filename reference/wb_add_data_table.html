@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add a data table to a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a></small>
       <div class="d-none name"><code>wb_add_data_table.Rd</code></div>
     </div>
 
@@ -73,7 +73,7 @@
 <span>  banded_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  apply_cell_style <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  remove_cell_style <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  na <span class="op">=</span> <span class="fu"><a href="waivers.html">na_strings</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  inline_strings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  total_row <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -158,9 +158,9 @@ columns to a character vector e.g.
 <dd><p>keep the cell style?</p></dd>
 
 
-<dt id="arg-na-strings">na.strings<a class="anchor" aria-label="anchor" href="#arg-na-strings"></a></dt>
+<dt id="arg-na">na<a class="anchor" aria-label="anchor" href="#arg-na"></a></dt>
 <dd><p>Value used for replacing <code>NA</code> values from <code>x</code>. Default
-looks if <code>options(openxlsx2.na.strings)</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
+looks if <code>options("openxlsx2.na")</code> is set. Otherwise <code><a href="waivers.html">na_strings()</a></code>
 uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
 
@@ -185,7 +185,10 @@ spreadsheet software.
 The string <code>"_openxlsx_NA"</code> is reserved for <code>openxlsx2</code>.
 If the data frame contains this string, the output will be broken. Similar
 factor labels <code>"_openxlsx_Inf"</code>, <code>"_openxlsx_nInf"</code>, and <code>"_openxlsx_NaN"</code>
-are reserved.</p>
+are reserved.
+The <code>na</code> string <code>"_openxlsx_NULL"</code> is a special that will be treated as NULL.
+So that setting the option <code>options("openxlsx2.na" = "_openxlsx_NULL")</code> will
+behave similar to <code>na = NULL</code>.</p>
 <p>Supported classes are data frames, matrices and vectors of various types and
 everything that can be converted into a data frame with <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>.
 Everything else that the user wants to write should either be converted into

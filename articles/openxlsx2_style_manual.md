@@ -424,7 +424,7 @@ wb <- wb_workbook()$add_worksheet()$add_data(x = txt)
 As shown above it is possible to combine multiple styles together into a
 longer string. It is even possible to use
 [`fmt_txt()`](https://janmarvin.github.io/openxlsx2/reference/fmt_txt.md)
-as `na.strings`:
+as `na`:
 
 ``` r
 df <- mtcars
@@ -432,7 +432,7 @@ df[df < 4] <- NA
 
 na_red <- fmt_txt("N/A", color = wb_color("red"), italic = TRUE, bold = TRUE)
 
-wb <- wb_workbook()$add_worksheet()$add_data(x = df, na.strings = na_red)
+wb <- wb_workbook()$add_worksheet()$add_data(x = df, na = na_red)
 ```
 
 ## Create custom table styles

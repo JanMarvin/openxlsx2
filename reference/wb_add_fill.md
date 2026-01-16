@@ -1,6 +1,7 @@
 # Modify the background fill color in a cell region
 
-Add fill to a cell region.
+Add fill to a cell region. Setting `color` to `NULL` removes the style
+and resets the cell to the workbook default.
 
 ## Usage
 

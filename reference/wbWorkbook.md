@@ -260,6 +260,10 @@ rather than `?wbWorkbook`).
 
   path
 
+- `tmpDir`:
+
+  tmpDir
+
 - `namedSheetViews`:
 
   namedSheetViews
@@ -816,7 +820,7 @@ add data
       sep = ", ",
       apply_cell_style = TRUE,
       remove_cell_style = FALSE,
-      na.strings = na_strings(),
+      na = na_strings(),
       inline_strings = TRUE,
       enforce = FALSE,
       ...
@@ -876,7 +880,7 @@ add data
 
   if writing into existing cells, should the cell style be removed?
 
-- `na.strings`:
+- `na`:
 
   Value used for replacing `NA` values from `x`. Default
   [`na_strings()`](https://janmarvin.github.io/openxlsx2/reference/waivers.md)
@@ -925,7 +929,7 @@ add a data table
       banded_cols = FALSE,
       apply_cell_style = TRUE,
       remove_cell_style = FALSE,
-      na.strings = na_strings(),
+      na = na_strings(),
       inline_strings = TRUE,
       total_row = FALSE,
       ...
@@ -1001,7 +1005,7 @@ add a data table
 
   if writing into existing cells, should the cell style be removed?
 
-- `na.strings`:
+- `na`:
 
   Value used for replacing `NA` values from `x`. Default
   [`na_strings()`](https://janmarvin.github.io/openxlsx2/reference/waivers.md)
@@ -1437,8 +1441,7 @@ to_df
       rows = NULL,
       cols = NULL,
       detect_dates = TRUE,
-      na.strings = "#N/A",
-      na.numbers = NA,
+      na = "#N/A",
       fill_merged_cells = FALSE,
       dims,
       show_formula = FALSE,
@@ -1448,6 +1451,7 @@ to_df
       keep_attributes = FALSE,
       check_names = FALSE,
       show_hyperlinks = FALSE,
+      apply_numfmts = FALSE,
       ...
     )
 
@@ -1504,15 +1508,11 @@ to_df
 
   If TRUE, attempt to recognize dates and perform conversion.
 
-- `na.strings`:
+- `na`:
 
-  A character vector of strings which are to be interpreted as NA. Blank
-  cells will be returned as NA.
-
-- `na.numbers`:
-
-  A numeric vector of digits which are to be interpreted as NA. Blank
-  cells will be returned as NA.
+  Defines values to be treated as NA. Can be a character vector of
+  strings or a named list: list(strings = ..., numbers = ...). Blank
+  cells are always converted to `NA`.
 
 - `fill_merged_cells`:
 
@@ -1556,6 +1556,10 @@ to_df
 - `show_hyperlinks`:
 
   If `TRUE` instead of the displayed text, hyperlink targets are shown.
+
+- `apply_numfmts`:
+
+  If `TRUE` numeric formats are applied if detected.
 
 - `...`:
 
@@ -2805,7 +2809,7 @@ Add conditional formatting
         "notContainsBlanks", "containsText", "notContainsText", "beginsWith", "endsWith",
         "between", "topN", "bottomN"),
       params = list(showValue = TRUE, gradient = TRUE, border = TRUE, percent = FALSE, rank =
-        5L),
+        5L, axisPosition = "automatic"),
       ...
     )
 

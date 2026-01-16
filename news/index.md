@@ -1,6 +1,80 @@
 # Changelog
 
+## openxlsx2 1.23
+
+### New features
+
+- Check valid ranges and inputs in
+  [`col2int()`](https://janmarvin.github.io/openxlsx2/reference/col2int.md)
+  and `int2row()`.
+  [\#1491](https://github.com/JanMarvin/openxlsx2/pull/1491)
+- With
+  [`validate_dims()`](https://janmarvin.github.io/openxlsx2/reference/dims_helper.md),
+  a new validation helper for `dims` has been added.
+  [\#1498](https://github.com/JanMarvin/openxlsx2/pull/1498)
+- The argument `na` replaces `na.strings` and `na.numbers` in read and
+  write functions. Per default this is either a waiver in write
+  functions or a character vector in read functions. If strings and
+  numbers should be passed to a read function
+  `na = list(strings = ..., numbers = ...)` should be used. In addition
+  a matching option was added `option("openxlsx2.na")`. The previous
+  default values and option remain for the foreseeable future.
+  [\#1499](https://github.com/JanMarvin/openxlsx2/pull/1499)
+- It is now possible to apply numeric formats via
+  `wb_to_df(apply_numfmts = TRUE)` to preview numeric formats. The
+  function is still experimental and incomplete. There is limited
+  support for builtin styles. But this should improve setting the
+  automatic column width for worksheets with numeric styles.
+  [\#1501](https://github.com/JanMarvin/openxlsx2/pull/1501)
+- Removal of `border`, `fill`, `font` and `numfmt` is possible setting
+  these to `NULL`.
+  [\#1511](https://github.com/JanMarvin/openxlsx2/pull/1511)
+- Extend conditional formatting for databars.
+  ([\#1523](https://github.com/JanMarvin/openxlsx2/pull/1523),
+  [@balthasars](https://github.com/balthasars))
+
+### Fixes
+
+- It is now possible to add filters via
+  [`write_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/write_xlsx.md)
+  without tables.
+  [\#1495](https://github.com/JanMarvin/openxlsx2/pull/1495)
+- Improve time detection in cases where a time style was mistaken as a
+  datetime. This also fixes a case, where a time value exceeds a day. In
+  this case, spreadsheet software will handle it as a datetime starting
+  in 1900-01-01. With format `"[h]:mm:ss"` the value `42.5` now becomes
+  `1900-02-11 12:00:00`.
+- Avoid very narrow column widths with
+  `wb_set_col_widths(..., widths = "auto")`.
+
+### Internal Changes
+
+- C++ functions used in loading and writing files have seen another
+  round of cleanups.
+- Cleanups in
+  [`wb_dims()`](https://janmarvin.github.io/openxlsx2/reference/wb_dims.md)
+  to increase coverage and to be more precise in error messages.
+- Internal border logic was cleaned up.
+- Cleanups for
+  [`dims_to_dataframe()`](https://janmarvin.github.io/openxlsx2/reference/dims_to_dataframe.md)
+  and `do_cell_init()`. Both are used extensively in the package.
+  [\#1515](https://github.com/JanMarvin/openxlsx2/pull/1515)
+
+### Breaking changes
+
+- The `wbWorkbook` class now provides a `finalizer` that will clean up
+  temporary objects that belong to an input file and were extracted
+  during
+  [`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md).
+  Note: these objects are not tracked across clones of a workbook.
+- Style manager helpers that return style ids, check now if a selected
+  style is available.
+
+------------------------------------------------------------------------
+
 ## openxlsx2 1.22
+
+CRAN release: 2025-12-07
 
 ### New features
 

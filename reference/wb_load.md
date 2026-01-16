@@ -83,6 +83,11 @@ missing some functions: some array formulas are not yet correct,
 conditional formatting and data validation are not implemented, nor are
 pivot tables and slicers.
 
+The loaded workbook provides a finalizer that will be invoked after the
+first [`gc()`](https://rdrr.io/r/base/gc.html) call and will cause
+removal of a loaded temporary files. These files are not tracked across
+workbooks.
+
 ## Examples
 
 ``` r

@@ -11,7 +11,7 @@ modified, read from, and be written back into a xlsx file."><meta property="og:i
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@ modified, read from, and be written back into a xlsx file."><meta property="og:i
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Load an existing .xlsx, .xlsm or .xlsb file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/R/wb_load.R" class="external-link"><code>R/wb_load.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/wb_load.R" class="external-link"><code>R/wb_load.R</code></a></small>
       <div class="d-none name"><code>wb_load.Rd</code></div>
     </div>
 
@@ -128,6 +128,9 @@ parsing into pseudo xml files is of course slower than reading directly from
 the binary file. Our implementation is also still missing some functions:
 some array formulas are not yet correct, conditional formatting and data
 validation are not implemented, nor are pivot tables and slicers.</p>
+<p>The loaded workbook provides a finalizer that will be invoked after the first
+<code><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc()</a></code> call and will cause removal of a loaded temporary files. These files
+are not tracked across workbooks.</p>
     </div>
 
     <div class="section level2">

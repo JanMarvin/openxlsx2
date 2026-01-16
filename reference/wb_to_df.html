@@ -13,7 +13,7 @@ packages."><meta property="og:image" content="https://janmarvin.github.io/openxl
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@ packages."><meta property="og:image" content="https://janmarvin.github.io/openxl
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Create a data frame from a Workbook</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.22/R/read.R" class="external-link"><code>R/read.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/read.R" class="external-link"><code>R/read.R</code></a></small>
       <div class="d-none name"><code>wb_to_df.Rd</code></div>
     </div>
 
@@ -77,8 +77,7 @@ packages.</p>
 <span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  detect_dates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
-<span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  na <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
 <span>  fill_merged_cells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">dims</span>,</span>
 <span>  show_formula <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -88,6 +87,7 @@ packages.</p>
 <span>  keep_attributes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  apply_numfmts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -104,8 +104,7 @@ packages.</p>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  detect_dates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">named_region</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
-<span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  na <span class="op">=</span> <span class="st">"#N/A"</span>,</span>
 <span>  fill_merged_cells <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -125,8 +124,7 @@ packages.</p>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  detect_dates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">named_region</span>,</span>
-<span>  na.strings <span class="op">=</span> <span class="st">"NA"</span>,</span>
-<span>  na.numbers <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  na <span class="op">=</span> <span class="st">"NA"</span>,</span>
 <span>  check_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show_hyperlinks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -191,14 +189,9 @@ If <code>NULL</code>, all columns are read.</p></dd>
 <dd><p>If <code>TRUE</code>, attempt to recognize dates and perform conversion.</p></dd>
 
 
-<dt id="arg-na-strings">na.strings<a class="anchor" aria-label="anchor" href="#arg-na-strings"></a></dt>
-<dd><p>A character vector of strings which are to be interpreted as <code>NA</code>.
-Blank cells will be returned as <code>NA</code>.</p></dd>
-
-
-<dt id="arg-na-numbers">na.numbers<a class="anchor" aria-label="anchor" href="#arg-na-numbers"></a></dt>
-<dd><p>A numeric vector of digits which are to be interpreted as <code>NA</code>.
-Blank cells will be returned as <code>NA</code>.</p></dd>
+<dt id="arg-na">na<a class="anchor" aria-label="anchor" href="#arg-na"></a></dt>
+<dd><p>Defines values to be treated as NA. Can be a character vector of strings
+or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to <code>NA</code>.</p></dd>
 
 
 <dt id="arg-fill-merged-cells">fill_merged_cells<a class="anchor" aria-label="anchor" href="#arg-fill-merged-cells"></a></dt>
@@ -238,6 +231,10 @@ If no sheet is selected, the first appearance will be selected. See <code><a hre
 
 <dt id="arg-show-hyperlinks">show_hyperlinks<a class="anchor" aria-label="anchor" href="#arg-show-hyperlinks"></a></dt>
 <dd><p>If <code>TRUE</code> instead of the displayed text, hyperlink targets are shown.</p></dd>
+
+
+<dt id="arg-apply-numfmts">apply_numfmts<a class="anchor" aria-label="anchor" href="#arg-apply-numfmts"></a></dt>
+<dd><p>If <code>TRUE</code> numeric formats are applied if detected.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -284,6 +281,9 @@ detection is disabled.</p>
 first row in column A through the last column in row 9. This makes it
 unnecessary to update dimensions when working with files whose sizes change
 frequently.</p>
+<p>The function to apply numeric formats was not extensively tested for numeric
+equality with spreadsheet software. There might be differences and the function
+has limited support for builtin styles.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -457,7 +457,7 @@ frequently.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12    NA  1 NA 123.00  &lt;NA&gt; 2023-07-31 NA     122     &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># na string</span></span></span>
-<span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, na.strings <span class="op">=</span> <span class="st">"a"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">wb_to_df</span><span class="op">(</span><span class="va">wb1</span>, na <span class="op">=</span> <span class="st">"a"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Var1 Var2 &lt;NA&gt;  Var3  Var4       Var5         Var6    Var7     Var8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   TRUE    1   NA     1  &lt;NA&gt; 2023-05-29 3209324 This #DIV/0! 01:27:15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4   TRUE   NA   NA #NUM!     b 2023-05-23         &lt;NA&gt;       0 14:02:57</span>
