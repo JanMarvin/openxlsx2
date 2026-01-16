@@ -1,5 +1,9 @@
 # openxlsx2 1.23.1
 
+## Fixes
+
+* Fix UBSAN error triggered by a test added in 1.23
+
 
 ***************************************************************************
 
