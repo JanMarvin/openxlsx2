@@ -1570,3 +1570,19 @@ test_that("applying styles works", {
   got <- wb_to_df(xl, apply_numfmts = TRUE, dims = "I7", col_names = FALSE)[["I"]]
   expect_equal(got, exp)
 })
+
+test_that("apply_numfmt handles AM/PM regardless of system locale", {
+  orig_locale <- Sys.getlocale("LC_TIME")
+  tryCatch({
+    Sys.setlocale("LC_TIME", "en_GB.UTF-8")
+  }, error = function(e) {
+    skip("Target locale en_GB.UTF-8 not available on this system")
+  })
+  on.exit(Sys.setlocale("LC_TIME", orig_locale), add = TRUE)
+
+  got <- apply_numfmt("13:45:30", "hh:mm:ss AM/PM")
+  expect_identical(got, "01:45:30 PM")
+
+  got_short <- apply_numfmt("13:45:30", "hh:mm:ss A/P")
+  expect_identical(got_short, "01:45:30 P")
+})

@@ -589,3 +589,7 @@ test_that("dims_to_dataframe works", {
   got <- dims_to_dataframe("A1:A2,B1:B2", empty_rm = TRUE)
   expect_equal(got, exp)
 })
+
+test_that("ox_int_to_col works with -1, fixes UB error", {
+  expect_error(ox_int_to_col(-1), "Column exceeds valid range")
+})
