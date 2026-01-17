@@ -1461,6 +1461,11 @@ if (getRversion() < "4.0.0") {
 ## the R solution
 utilszip <- function(zip_path, source_dir, compression_level = 9) {
   if (!is.null(getOption("openxlsx2.debug"))) message("utils::zip")
+  zip_tool <- if (Sys.getenv("R_ZIPCMD", "zip") != "") {
+    Sys.getenv("R_ZIPCMD", "zip")
+  } else {
+    Sys.which("zip")
+  }
   original_wd <- getwd()
   on.exit(setwd(original_wd), add = TRUE)
   abs_zip_path <- normalizePath(zip_path, mustWork = FALSE)
@@ -1469,7 +1474,10 @@ utilszip <- function(zip_path, source_dir, compression_level = 9) {
   opt_flags <- getOption("openxlsx2.zip_flags")
   if (!is.null(opt_flags)) zip_flags <- opt_flags
   source_files <- list.files(source_dir, full.names = FALSE)
-  utils::zip(zipfile = abs_zip_path, files = source_files, flags = zip_flags)
+  utils::zip(
+    zipfile = abs_zip_path, files = source_files,
+    flags = zip_flags, zip = zip_tool
+  )
 }
 
 ## bsdtar seems to be the best fallback solution
@@ -1544,7 +1552,7 @@ zip_output <- function(zip_path, source_dir, compression_level = 9) {
   }
 
   if (!isTRUE(getOption("openxlsx2.no_utils_zip"))) {
-    if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD") != "") {
+    if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD", "zip") != "") {
       res <- utilszip(
         zip_path = zip_path,
         source_dir = source_dir,
