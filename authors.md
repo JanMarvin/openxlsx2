@@ -18,15 +18,15 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/v1.23/inst/CITATION)
+[`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/main/inst/CITATION)
 
 (2026). openxlsx2: Read, Write and Edit 'xlsx' Files. R package version
-1.23. URL https://github.com/JanMarvin/openxlsx2.
+1.23.1. URL https://github.com/JanMarvin/openxlsx2.
 
     @Manual{,
       title = {openxlsx2: Read, Write and Edit 'xlsx' Files},
       year = {2026},
-      note = {R package version 1.23},
+      note = {R package version 1.23.1},
       url = {https://janmarvin.github.io/openxlsx2/},
     }
 
