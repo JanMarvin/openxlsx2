@@ -1761,12 +1761,25 @@ format_date_time <- function(value, format_code) {
 
     # Clock Time
     is_12h <- grepl("AM/PM|A/P", res, ignore.case = TRUE)
-    # \\bh\\b boundary is vital to not overwrite the 296 we just put in
-    res <- gsub("hh", format(dt_val, if (is_12h) "%I" else "%H"), res, ignore.case = TRUE)
-    res <- gsub("\\bh\\b", as.numeric(format(dt_val, if (is_12h) "%I" else "%H")), res, perl = TRUE, ignore.case = TRUE)
+    hour_val <- as.numeric(format(dt_val, "%H"))
+
+    # Determine AM/PM manually to bypass locale issues
+    am_pm <- if (hour_val >= 12) "PM" else "AM"
+
+    # 12-hour conversion
+    h12 <- hour_val %% 12
+    if (h12 == 0) h12 <- 12
+
+    # Replace HH/H
+    res <- gsub("hh", sprintf("%02d", if (is_12h) h12 else hour_val), res, ignore.case = TRUE)
+    res <- gsub("\\bh\\b", as.character(if (is_12h) h12 else hour_val), res, perl = TRUE, ignore.case = TRUE)
+
+    # Replace Seconds
     res <- gsub("ss", format(dt_val, "%S"), res, ignore.case = TRUE)
-    res <- gsub("AM/PM", format(dt_val, "%p"), res, ignore.case = TRUE)
-    res <- gsub("A/P", substr(format(dt_val, "%p"), 1, 1), res, ignore.case = TRUE)
+
+    # Replace AM/PM tokens with our locale-independent string
+    res <- gsub("AM/PM", am_pm, res, ignore.case = TRUE)
+    res <- gsub("A/P", substr(am_pm, 1, 1), res, ignore.case = TRUE)
 
   } else if (is.numeric(value) || is_duration_fmt) {
     # If we have a numeric value but no valid dt_val (like 3600),

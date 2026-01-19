@@ -37,7 +37,7 @@ template <typename T>
 static inline std::string int_to_col(T cell) {
   std::string col_name = "";
 
-  if (cell == 0 || cell > MAX_OOXML_COL_INT)
+  if (cell <= 0 || cell > MAX_OOXML_COL_INT)
     Rcpp::stop("Column exceeds valid range");
 
   while (cell > 0) {

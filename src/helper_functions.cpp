@@ -153,6 +153,7 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
   std::unordered_map<uint32_t, std::string> cache;  // Updated key type
 
   for (R_xlen_t i = 0; i < n; ++i) {
+    if (x[i] <= 0) Rcpp::stop("Column exceeds valid range");
     uint32_t num = static_cast<uint32_t>(x[i]);
 
     // Check if the column name is already in the cache
