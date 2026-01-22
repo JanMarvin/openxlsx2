@@ -5110,7 +5110,7 @@ wbWorkbook <- R6::R6Class(
       # check if additional rows are required
       has_rows <- sort(as.integer(self$worksheets[[sheet]]$sheet_data$row_attr$r))
       missing_rows <- setdiff(rows, has_rows)
-      if (length(missing_rows)) private$do_cell_init(sheet, paste0("A", sort(missing_rows)))
+      if (length(missing_rows)) private$do_row_init(sheet, sort(missing_rows))
 
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
@@ -10356,6 +10356,31 @@ wbWorkbook <- R6::R6Class(
           stringi::stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
           "</externalReferences>"
         )
+      }
+
+      invisible(self)
+    },
+
+    do_row_init = function(sheet = current_sheet(), rows) {
+
+      sheet_id <- private$get_sheet_index(sheet)
+
+      rows <- unique(as.character(rows))
+
+      row_attr <- self$worksheets[[sheet_id]]$sheet_data$row_attr
+      rows_in_wb <- row_attr$r
+
+      if (!all(rows %in% rows_in_wb)) {
+
+        missing_rows <- setdiff(rows, rows_in_wb)
+
+        row_attr_missing <- empty_row_attr(n = length(missing_rows))
+        row_attr_missing$r <- missing_rows
+
+        row_attr <- rbind(row_attr, row_attr_missing)
+        row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
+
+        self$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
       }
 
       invisible(self)

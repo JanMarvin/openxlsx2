@@ -26,6 +26,9 @@ inner_update <- function(
 
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
   cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
+  if (is.null(cc)) {
+    cc <- x
+  }
   row_attr <- wb$worksheets[[sheet_id]]$sheet_data$row_attr
 
   # workbooks contain only entries for values currently present.
@@ -39,19 +42,9 @@ inner_update <- function(
     # message("row(s) not in workbook")
 
     missing_rows <- setdiff(rows, rows_in_wb)
-
-    # new row_attr
-    row_attr_missing <- empty_row_attr(n = length(missing_rows))
-    row_attr_missing$r <- missing_rows
-
-    row_attr <- rbind(row_attr, row_attr_missing)
-
-    # order
-    row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
-
-    wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
+    wb$.__enclos_env__$private$do_row_init(sheet = sheet_id, rows = missing_rows)
     # provide output
-    rows_in_wb <- row_attr$r
+    rows_in_wb <- wb$worksheets[[sheet_id]]$sheet_data$row_attr$r
 
   }
 
@@ -538,7 +531,8 @@ write_data2 <- function(
     cc[2:nrow(cc), "f"] <- ""
   }
 
-  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
+  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc) &&
+      is.null(wb$worksheets[[sheetno]]$sheet_data$row_attr)) {
     # message("write_cell()")
 
     wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")
