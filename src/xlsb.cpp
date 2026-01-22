@@ -1034,7 +1034,7 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
           out << "<comment";
           out << " ref=\"" << ref << "\"";
           out << " authorId=\"" << iauthor << "\"";
-          out << " shapeId=\"0\"";  // always?
+          // out << " shapeId=\"0\"";  // always?
           out << " >" << std::endl;
 
           break;
@@ -1429,6 +1429,16 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
           BrtWbPropFlags view_flags(flags);
 
+          std::string showObjects;
+          if (view_flags.mdDspObj() == 0) showObjects = "all";
+          if (view_flags.mdDspObj() == 1) showObjects = "placeholders";
+          if (view_flags.mdDspObj() == 2) showObjects = "none";
+
+          std::string updateLinks;
+          if (view_flags.grbitUpdateLinks() == 0) updateLinks = "userSet";
+          if (view_flags.grbitUpdateLinks() == 1) updateLinks = "never";
+          if (view_flags.grbitUpdateLinks() == 2) updateLinks = "always";
+
           out <<
             "<workbookPr" <<
             // " allowRefreshQuery=\"" <<  << "\" " <<
@@ -1445,12 +1455,11 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
             " refreshAllConnections=\"" << view_flags.fRefreshAll() << "\" " <<
             " saveExternalLinkValues=\"" << view_flags.fNoSaveSup() << "\" " <<
             // " showBorderUnselectedTables=\"" <<  << "\" " <<
-            " showInkAnnotation=\"" << view_flags.fShowInkAnnotation() << "\" " <<
-            " showObjects=\"" << (uint32_t)view_flags.mdDspObj() << "\" " <<
-            " showPivotChartFilter=\"" << view_flags.fShowPivotChartFilter() << "\" " <<
-            " updateLinks=\"" << (uint32_t)view_flags.grbitUpdateLinks() <<  "\" " <<
-            "/>" << std::endl;
-
+            " showInkAnnotation=\"" << view_flags.fShowInkAnnotation() << "\" ";
+            if (showObjects != "all") out << " showObjects=\"" << showObjects << "\"";
+            out << " showPivotChartFilter=\"" << view_flags.fShowPivotChartFilter() << "\" ";
+            if (updateLinks != "userSet") out << " updateLinks=\"" << updateLinks <<  "\" ";
+            out << "/>" << std::endl;
 
           break;
         }

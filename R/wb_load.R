@@ -123,7 +123,12 @@ wb_load <- function(
 
   ## We have found a zip file, but it must not necessarily be a spreadsheet
   ContentTypesXML   <- grep_xml("\\[Content_Types\\].xml$")
-  worksheetsXML     <- grep_xml("/worksheets/sheet[0-9]+")
+  # TODO:
+  # sheet name number can be left out: "sheet.xml", an integer "sheet1.xml" or a hex
+  # The same logic applies probably to all the other numbers as well. BUT this has
+  # only been seen in a single xlsx file (the one with the x namespace). Presumably
+  # this breaks logics like: as.integer(gsub("\\D+", "", basename(xlsx)))
+  worksheetsXML     <- grep_xml("/worksheets/sheet[0-9a-fA-F]*\\.(xml|bin)$")
 
   if ((length(ContentTypesXML) == 0 || length(worksheetsXML) == 0) && !debug) {
     msg <- paste("File does not appear to be xlsx, xlsm or xlsb: ", file)
@@ -178,7 +183,7 @@ wb_load <- function(
   chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
   chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+.xml.rels")
   chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+.xml.rels")
-  chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9]+")
+  chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9a-fA-F]*\\.(xml|bin)$")
 
   # tables
   tablesBIN         <- grep_xml("tables/table[0-9]+.bin$")
@@ -273,7 +278,8 @@ wb_load <- function(
   # modifications for xlsb
   if (length(workbookBIN)) {
 
-    if (file.info(file)$size > 100000) {
+    threshold <- 10 * 1024^2 # 10MB
+    if (file.info(file)$size > threshold) {
       message("importing larger workbook. please wait a moment")
     }
 
@@ -490,31 +496,40 @@ wb_load <- function(
     sheets$id <- as.numeric(sheets$sheetId)
 
     if (is.null(sheets$state)) sheets$state <- "visible"
-    is_visible <- sheets$state %in% c("", "true", "visible")
+    sheets$state[sheets$state == ""] <- "visible"
 
     ## add worksheets to wb
     # TODO only loop over import_sheets
     for (i in seq_len(nrow(sheets))) {
       if (sheets$typ[i] == "chartsheet") {
-        wb$add_chartsheet(sheet = sheets$name[i], visible = is_visible[i])
+        wb$add_chartsheet(sheet = sheets$name[i], visible = sheets$state[i])
       } else if (sheets$typ[i] == "worksheet") {
         content_type <- read_xml(ContentTypesXML)
         override <- xml_attr(content_type, "Types", "Override")
         overrideAttr <- as.data.frame(do.call("rbind", override), stringsAsFactors = FALSE)
         xmls <- basename(unlist(overrideAttr$PartName))
         drawings <- grep("drawing", xmls, value = TRUE)
-        wb$add_worksheet(sheets$name[i], visible = is_visible[i], has_drawing = !is.na(drawings[i]))
+        wb$add_worksheet(sheets$name[i], visible = sheets$state[i], has_drawing = !is.na(drawings[i]))
       }
     }
 
     ## replace sheetId
-    for (i in seq_len(nSheets)) {
-      wb$workbook$sheets[[i]] <- gsub(
-        sprintf(' sheetId="%s"', i),
-        sprintf(' sheetId="%s"', sheets$sheetId[i]),
-        wb$workbook$sheets[[i]]
-      )
-    }
+    tmp_patterns <- sprintf(' sheetId="%s"', seq_len(nSheets))
+    tmp_repls    <- sprintf(' sheetId="ID.%s"', sheets$sheetId)
+
+    wb$workbook$sheets <- stri_replace_all_fixed(
+      str            = wb$workbook$sheets,
+      pattern        = tmp_patterns,
+      replacement    = tmp_repls,
+      vectorize_all  = FALSE
+    )
+
+    wb$workbook$sheets <- stri_replace_all_fixed(
+      str            = wb$workbook$sheets,
+      pattern        = ' sheetId="ID.',
+      replacement    = ' sheetId="',
+      vectorize_all  = FALSE
+    )
 
     ## additional workbook attributes
     revisionPtr <- xml_node(workbook_xml, "workbook", "xr:revisionPtr")
@@ -1158,6 +1173,7 @@ wb_load <- function(
       vmldr <- integer()
 
       if (ncol(wb_rels)) {
+        # TODO this assumes arabic numbers in names and will break with hex numbers
         # since target can be any hyperlink, we have to expect various things here like uint64
         wb_rels$tid <- suppressWarnings(as.integer(gsub("\\D+", "", basename2(wb_rels$Target))))
         wb_rels$typ <- basename(wb_rels$Type)

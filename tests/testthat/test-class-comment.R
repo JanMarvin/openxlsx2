@@ -161,7 +161,7 @@ test_that("print comment", {
   c2 <- wb_comment(text = "this is another comment",
                    author = "Marco Polo")
   got <- capture_output(print(c2), print = TRUE)
-  exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\n\n\n\n\nFont name: Aptos Narrow\nFont size: 11\nFont color: #000000\n\n"
+  exp <- "Author: Marco Polo\nText:\n Marco Polo:\nthis is another comment\n\nStyle:\nFont name: Aptos Narrow\nFont size: 11\nFont color: #000000"
   expect_equal(got, exp)
 
 })

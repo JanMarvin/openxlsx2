@@ -176,7 +176,7 @@ write_comment_xml <- function(comment_list, file_name) {
 
   for (i in seq_along(comment_list)) {
     authorInd <- which(authors == comment_list[[i]]$author) - 1L
-    xml <- c(xml, sprintf('<comment ref="%s" authorId="%s" shapeId="0"><text>', comment_list[[i]]$ref, authorInd))
+    xml <- c(xml, sprintf('<comment ref="%s" authorId="%s"><text>', comment_list[[i]]$ref, authorInd)) #  shapeId="0"
 
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
@@ -1531,8 +1531,8 @@ fmt_txt2 <- function(txt, text_color = "", transparency = 0) {
       xml_attributes = c(
         b = as_xml_attr(bold),
         i = as_xml_attr(italic),
-        sz = as_xml_attr(sz),
         strike = as_xml_attr(strike),
+        sz = as_xml_attr(sz),
         u  = as_xml_attr(underline)
       ),
       xml_children = c(color, font)
@@ -1726,12 +1726,13 @@ create_shape <- function(
       %s
       <xdr:sp macro="" textlink="">
        <xdr:nvSpPr>
-        <xdr:cNvPr id="%s" name="%s" />
+        <xdr:cNvPr id="%s" name="%s">
          <a:extLst>
           <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
            <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="%s" />
           </a:ext>
          </a:extLst>
+        </xdr:cNvPr>
         <xdr:cNvSpPr />
        </xdr:nvSpPr>
        <xdr:spPr>

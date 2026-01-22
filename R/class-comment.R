@@ -63,10 +63,9 @@ wbComment <- R6::R6Class(
       for (i in seq_along(s)) {
         styleShow <- c(
           styleShow,
-          sprintf("Font name: %s\n", unlist(xml_attr(s[[i]], "font", "name"), use.names = FALSE)), ## Font name
+          sprintf("Font name: %s\n", unlist(xml_attr(s[[i]], "font", "rFont"), use.names = FALSE)), ## Font name
           sprintf("Font size: %s\n", unlist(xml_attr(s[[i]], "font", "sz"), use.names = FALSE)), ## Font size
-          sprintf("Font color: %s\n", gsub("^FF", "#", unlist(xml_attr(s[[i]], "font", "color"), use.names = FALSE))), ## Font color
-          "\n\n"
+          sprintf("Font color: %s\n", gsub("^FF", "#", unlist(xml_attr(s[[i]], "font", "color"), use.names = FALSE))) ## Font color
         )
       }
 
@@ -161,6 +160,15 @@ wb_comment <- function(
     )
   }
 
+  # rPr font attributes are slightly different compared to the default
+  df_font <- read_font(read_xml(style))
+  df_font$name <- gsub("^<name", "^<rFont", df_font$name)
+  sel <- c(
+    "name", "charset", "family", "b", "i", "strike", "outline", "shadow",
+    "condense", "extend", "color", "sz", "u", "vertAlign", "scheme"
+  )
+  style <- write_font(df_font[sel])
+
   invisible(wbComment$new(text = text, author = author, style = style, width = width, height = height, visible = visible))
 }
 
@@ -179,6 +187,7 @@ do_write_comment <- function(
   assert_workbook(wb)
   assert_comment(comment)
 
+  # FIXME this should be replaced with fmt_txt()
   if (is.null(comment$style)) {
     rPr <- create_font()
   } else {
@@ -186,6 +195,7 @@ do_write_comment <- function(
   }
 
   rPr <- gsub("font>", "rPr>", rPr)
+  rPr <- gsub("font/>", "rPr/>", rPr)
   sheet <- wb$.__enclos_env__$private$get_sheet_index(sheet)
 
   if (!is.null(dims)) {
