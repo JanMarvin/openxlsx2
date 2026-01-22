@@ -640,3 +640,19 @@ test_that("table names work in write_xlsx", {
   got <- wb$get_named_regions(tables = TRUE)$name
   expect_equal(exp, got)
 })
+
+test_that("utilszip works with empty R_ZIPCMD", {
+  skip_if(Sys.which("zip") == "", "zip not found")
+
+  old_zip <- Sys.getenv("R_ZIPCMD", unset = NA)
+  Sys.setenv(R_ZIPCMD = "")
+  on.exit(if (is.na(old_zip)) Sys.unsetenv("R_ZIPCMD") else Sys.setenv(R_ZIPCMD = old_zip), add = TRUE)
+
+  tmp <- temp_xlsx()
+  write_xlsx(mtcars, tmp)
+
+  expect_true(file.exists(tmp))
+  expect_true(file.size(tmp) > 0)
+
+  unlink(tmp)
+})
