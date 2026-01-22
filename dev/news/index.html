@@ -53,6 +53,10 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>In certain environments a zip tool is available via <code>Sys.which("zip")</code>, but <code>Sys.getenv("R_ZIPCMD")</code> is not configured. When writing, we would detect the first and continue trying <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code>, but never passed <code>Sys.which("zip")</code>. This has been corrected. <a href="https://github.com/JanMarvin/openxlsx2/pull/1533" class="external-link">#1533</a>
 </li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-development-version">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<ul><li>Cleanup and remove <code>waldo</code> from <code>testthat</code> helper functions</li>
 </ul><hr></div>
 </div>
     <div class="section level2">

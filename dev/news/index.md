@@ -11,6 +11,10 @@
   `Sys.which("zip")`. This has been corrected.
   [\#1533](https://github.com/JanMarvin/openxlsx2/pull/1533)
 
+### Internal Changes
+
+- Cleanup and remove `waldo` from `testthat` helper functions
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.23.1
