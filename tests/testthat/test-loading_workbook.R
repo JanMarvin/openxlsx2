@@ -1,14 +1,35 @@
 
-test_that("Loading readTest.xlsx Sheet 1", {
+test_that("Loading loadExample.xlsx", {
 
-  fl <- testfile_path("readTest.xlsx")
+  fl <- testfile_path("loadExample.xlsx")
   wb <- wb_load(fl)
 
   sst <- wb$sharedStrings
   attr(sst, "text") <- NULL
 
+  exp <- structure(
+    c(
+      "<si><t>Species</t></si>", "<si><t>setosa</t></si>",
+      "<si><t>versicolor</t></si>", "<si><t>virginica</t></si>", "<si><t>mpg</t></si>",
+      "<si><t>cyl</t></si>", "<si><t>disp</t></si>", "<si><t>hp</t></si>",
+      "<si><t>drat</t></si>", "<si><t>wt</t></si>", "<si><t>qsec</t></si>",
+      "<si><t>vs</t></si>", "<si><t>am</t></si>", "<si><t>gear</t></si>",
+      "<si><t>carb</t></si>", "<si><t>Row Labels</t></si>", "<si><t>Grand Total</t></si>",
+      "<si><r><rPr><b/><i/><u/><sz val=\"11\"/><color rgb=\"FFFF0000\"/><rFont val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></rPr><t>Some</t></r><r><rPr><b/><i/><u/><sz val=\"11\"/><color theme=\"4\"/><rFont val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></rPr><t xml:space=\"preserve\"> text.</t></r></si>",
+      "<si><t>Sepal Length</t></si>", "<si><t>Sepal Width</t></si>",
+      "<si><t>Petal Length</t></si>", "<si><t>Petal Width</t></si>",
+      "<si><t>IrisSample!A1</t></si>", "<si><t>Irrational_number</t></si>",
+      "<si><t>Decimal_fractions</t></si>", "<si><t>IrisSample!A2</t></si>",
+      "<si><t>Sum of Sepal Length</t></si>", "<si><t>Sum of Sepal Width</t></si>",
+      "<si><t>Sum of Petal Length</t></si>", "<si><t>Sum of Petal Width</t></si>",
+      "<si><t>Average of mpg</t></si>", "<si><t>Max of wt</t></si>",
+      "<si><t>Min of wt</t></si>"
+    ),
+    uniqueCount = "33"
+  )
+
   # in r/testthat-helpers.R
-  expect_equal(expected_shared_strings(), sst)
+  expect_equal(sst, exp)
 
   expect_warning(wb <- wb_load(xlsx_file = fl), "Use \'file\' instead.")
   expect_warning(df <- wb_to_df(xlsx_file = fl), "Use \'file\' instead.")

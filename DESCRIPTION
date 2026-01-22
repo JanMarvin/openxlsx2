@@ -33,7 +33,6 @@ Suggests:
     rmarkdown,
     rvg,
     testthat (>= 3.0.0),
-    waldo,
     zip
 VignetteBuilder:
     knitr
