@@ -37,7 +37,7 @@ test_that("wb_remove_worksheet() is a wrapper", {
 # does not work as expected
 test_that("wb_to_df() is a wrapper", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = iris)
-  expect_pseudo_wrapper("to_df")
+  expect_wrapper("to_df")
 })
 
 # wb_load() ---------------------------------------------------------------
