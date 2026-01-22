@@ -5882,6 +5882,8 @@ wbWorkbook <- R6::R6Class(
 
       tc$dT <- as.POSIXct(tc$dT, format = "%Y-%m-%dT%H:%M:%SZ")
 
+      if (is.null(tc$done)) tc$done <- rep_len("", nrow(tc))
+
       tc[c("dT", "ref", "displayName", "text", "done")]
     },
 
