@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.22.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.23.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,24 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<ul><li>In certain environments a zip tool is available via <code>Sys.which("zip")</code>, but <code>Sys.getenv("R_ZIPCMD")</code> is not configured. When writing, we would detect the first and continue trying <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code>, but never passed <code>Sys.which("zip")</code>. This has been corrected. <a href="https://github.com/JanMarvin/openxlsx2/pull/1533" class="external-link">#1533</a>
+</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.23.1" id="openxlsx2-1231">openxlsx2 1.23.1<a class="anchor" aria-label="anchor" href="#openxlsx2-1231"></a></h2><p class="text-muted">CRAN release: 2026-01-19</p>
+<div class="section level3">
+<h3 id="fixes-1-23-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-23-1"></a></h3>
+<ul><li>Fix UBSAN error triggered by a test added in 1.23</li>
+<li>Avoid <code>format(dt_val, "%p")</code> in <code><a href="../reference/apply_numfmt.html">apply_numfmt()</a></code>
+</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.23" id="openxlsx2-123">openxlsx2 1.23<a class="anchor" aria-label="anchor" href="#openxlsx2-123"></a></h2><p class="text-muted">CRAN release: 2026-01-16</p>
+<div class="section level3">
+<h3 id="new-features-1-23">New features<a class="anchor" aria-label="anchor" href="#new-features-1-23"></a></h3>
 <ul><li>Check valid ranges and inputs in <code><a href="../reference/col2int.html">col2int()</a></code> and <code>int2row()</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1491" class="external-link">#1491</a>
 </li>
 <li>With <code><a href="../reference/dims_helper.html">validate_dims()</a></code>, a new validation helper for <code>dims</code> has been added. <a href="https://github.com/JanMarvin/openxlsx2/pull/1498" class="external-link">#1498</a>
@@ -64,14 +81,14 @@
 <li>Extend conditional formatting for databars. (<a href="https://github.com/JanMarvin/openxlsx2/pull/1523" class="external-link">#1523</a>, <a href="https://github.com/balthasars" class="external-link">@balthasars</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-23">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-23"></a></h3>
 <ul><li>It is now possible to add filters via <code><a href="../reference/write_xlsx.html">write_xlsx()</a></code> without tables. <a href="https://github.com/JanMarvin/openxlsx2/pull/1495" class="external-link">#1495</a>
 </li>
 <li>Improve time detection in cases where a time style was mistaken as a datetime. This also fixes a case, where a time value exceeds a day. In this case, spreadsheet software will handle it as a datetime starting in 1900-01-01. With format <code>"[h]:mm:ss"</code> the value <code>42.5</code> now becomes <code>1900-02-11 12:00:00</code>.</li>
 <li>Avoid very narrow column widths with <code>wb_set_col_widths(..., widths = "auto")</code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-changes-development-version">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
+<h3 id="internal-changes-1-23">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-23"></a></h3>
 <ul><li>C++ functions used in loading and writing files have seen another round of cleanups.</li>
 <li>Cleanups in <code><a href="../reference/wb_dims.html">wb_dims()</a></code> to increase coverage and to be more precise in error messages.</li>
 <li>Internal border logic was cleaned up.</li>
@@ -79,7 +96,7 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-1-23">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-23"></a></h3>
 <ul><li>The <code>wbWorkbook</code> class now provides a <code>finalizer</code> that will clean up temporary objects that belong to an input file and were extracted during <code><a href="../reference/wb_load.html">wb_load()</a></code>. Note: these objects are not tracked across clones of a workbook.</li>
 <li>Style manager helpers that return style ids, check now if a selected style is available.</li>
 </ul><hr></div>
