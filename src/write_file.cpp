@@ -30,20 +30,28 @@ void xml_sheet_data_slim(
 
   Rcpp::CharacterVector cc_c_cm, cc_c_ph, cc_c_vm;
 
-  if (cc.nrow() && cc.ncol()) {
-    // we cannot access rows directly in the dataframe.
-    // Have to extract the columns and use these
-    Rcpp::CharacterVector cc_row_r  = cc["row_r"];  // 1
-    Rcpp::CharacterVector cc_r      = cc["r"];      // A1
-    Rcpp::CharacterVector cc_v      = cc["v"];
-    Rcpp::CharacterVector cc_c_t    = cc["c_t"];
-    Rcpp::CharacterVector cc_c_s    = cc["c_s"];
-    if (has_cm) cc_c_cm  = cc["c_cm"];
-    if (has_ph) cc_c_ph  = cc["c_ph"];
-    if (has_vm) cc_c_vm  = cc["c_vm"];
-    Rcpp::CharacterVector cc_f      = cc["f"];
-    Rcpp::CharacterVector cc_f_attr = cc["f_attr"];
-    Rcpp::CharacterVector cc_is     = cc["is"];
+  if ((cc.nrow() > 0 && cc.ncol() > 0) || (row_attr.nrow() > 0)) {
+
+    // We must handle the case where cc might be empty but row_attr isn't
+    bool cc_exists = (cc.nrow() > 0 && cc.ncol() > 0);
+
+    Rcpp::CharacterVector cc_row_r, cc_r, cc_v, cc_c_t, cc_c_s, cc_f, cc_f_attr, cc_is;
+
+    if (cc_exists) {
+        // we cannot access rows directly in the dataframe.
+        // Have to extract the columns and use these
+        cc_row_r  = cc["row_r"]; // 1
+        cc_r      = cc["r"]; // A1
+        cc_v      = cc["v"];
+        cc_c_t    = cc["c_t"];
+        cc_c_s    = cc["c_s"];
+        if (has_cm) cc_c_cm  = cc["c_cm"];
+        if (has_ph) cc_c_ph  = cc["c_ph"];
+        if (has_vm) cc_c_vm  = cc["c_vm"];
+        cc_f      = cc["f"];
+        cc_f_attr = cc["f_attr"];
+        cc_is     = cc["is"];
+    }
 
     Rcpp::CharacterVector row_r     = row_attr["r"];
     Rcpp::CharacterVector attrnams  = row_attr.names();
@@ -57,120 +65,135 @@ void xml_sheet_data_slim(
     }
 
     file << "<sheetData>";
-    for (auto i = 0; i < cc.nrow(); ++i) {
-      thisrow = std::atoi(static_cast<const char*>(cc_row_r[i]));
+    if (cc_exists) {
+      for (auto i = 0; i < cc.nrow(); ++i) {
+        thisrow = std::atoi(static_cast<const char*>(cc_row_r[i]));
 
-      if (lastrow < thisrow) {
-        // there might be entirely empty rows in between. this is the case for
-        // loadExample. We check the rowid and write the line and skip until we
-        // have every row and only then continue writing the column
-        while (rowid < thisrow) {
-          rowid = std::atoi(static_cast<const char*>(row_r[row_idx]));
+        if (lastrow < thisrow) {
+          // there might be entirely empty rows in between. this is the case for
+          // loadExample. We check the rowid and write the line and skip until we
+          // have every row and only then continue writing the column
+          while (rowid < thisrow) {
+            rowid = std::atoi(static_cast<const char*>(row_r[row_idx]));
 
-          if (row_idx) file << "</row>";
-          file << "<row";
+            if (row_idx) file << "</row>";
+            file << "<row";
 
-          for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
-            Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
+            for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
+              Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
 
-            if (s != "") {
-              file << " " << attrnams[j] << "=\"" << s.get_cstring() << "\"";
+              if (s != "") {
+                file << " " << attrnams[j] << "=\"" << s.get_cstring() << "\"";
+              }
             }
+            file << ">";  // end <r ...>
+
+            // read the next row_idx when visiting again
+            ++row_idx;
           }
-          file << ">";  // end <r ...>
-
-          // read the next row_idx when visiting again
-          ++row_idx;
         }
+
+        if (
+          cc_c_s[i].empty() &&
+          cc_c_t[i].empty() &&
+          (!has_cm || (has_cm && cc_c_cm[i].empty())) &&
+          (!has_ph || (has_ph && cc_c_ph[i].empty())) &&
+          (!has_vm || (has_vm && cc_c_vm[i].empty())) &&
+          cc_v[i].empty() &&
+          cc_f[i].empty() &&
+          cc_f_attr[i].empty() &&
+          cc_is[i].empty()
+        ) {
+          continue;
+        }
+
+        // create node <c>
+        file << "<c";
+
+        // Every cell consists of a typ and a val list. Certain functions have an
+        // additional attr list.
+
+        // append attributes <c r="A1" ...>
+        file << " r" << "=\"" << static_cast<const char*>(cc_r[i]) << "\"";
+
+        if (!cc_c_s[i].empty())
+          file << " s" << "=\"" << static_cast<const char*>(cc_c_s[i]) << "\"";
+
+        // assign type if not <v> aka numeric
+        if (!cc_c_t[i].empty())
+          file << " t" << "=\"" << static_cast<const char*>(cc_c_t[i]) << "\"";
+
+        // CellMetaIndex: suppress curly brackets in spreadsheet software
+        if (has_cm && !cc_c_cm[i].empty())
+          file << " cm" << "=\"" << static_cast<const char*>(cc_c_cm[i]) << "\"";
+
+        // phonetics spelling
+        if (has_ph && !cc_c_ph[i].empty())
+          file << " ph" << "=\"" << static_cast<const char*>(cc_c_ph[i]) << "\"";
+
+        // suppress curly brackets in spreadsheet software
+        if (has_vm && !cc_c_vm[i].empty())
+          file << " vm" << "=\"" << static_cast<const char*>(cc_c_vm[i]) << "\"";
+
+        file << ">";  // end <c ...>
+
+        bool f_si = false;
+
+        // <f> ... </f>
+        // f node: formula to be evaluated
+        if (!cc_f[i].empty() || !cc_f_attr[i].empty()) {
+          file << "<f";
+          if (!cc_f_attr[i].empty()) {
+            file << " " << static_cast<const char*>(cc_f_attr[i]);
+          }
+          file << ">";
+
+          file << to_string(cc_f[i]).c_str();
+          if (!f_si && std::string(cc_f[i]).find("\"si\"=") != std::string::npos) f_si = true;
+
+          file << "</f>";
+        }
+
+        // v node: value stored from evaluated formula
+        if (!cc_v[i].empty()) {
+          if (!f_si & (std::string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
+            // this looks strange
+            file << "<v xml:space=\"preserve\">";
+            file << " ";
+            file << "</v>";
+          } else {
+            if (cc_c_t[i].empty() && cc_f_attr[i].empty())
+              file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
+            else
+              file << "<v>" << static_cast<const char*>(cc_v[i]) << "</v>";
+          }
+        }
+
+        // <is><t> ... </t></is>
+        if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
+          if (!cc_is[i].empty()) {
+            file << to_string(cc_is[i]).c_str();
+          }
+        }
+
+        file << "</c>";
+
+        // update lastrow
+        lastrow = thisrow;
       }
+    }
 
-      if (
-        cc_c_s[i].empty() &&
-        cc_c_t[i].empty() &&
-        (!has_cm || (has_cm && cc_c_cm[i].empty())) &&
-        (!has_ph || (has_ph && cc_c_ph[i].empty())) &&
-        (!has_vm || (has_vm && cc_c_vm[i].empty())) &&
-        cc_v[i].empty() &&
-        cc_f[i].empty() &&
-        cc_f_attr[i].empty() &&
-        cc_is[i].empty()
-      ) {
-        continue;
-      }
+    // writes row without matching cc
+    while (row_idx < row_attr.nrow()) {
+        if (row_idx > 0 || cc.nrow() > 0) file << "</row>";
 
-      // create node <c>
-      file << "<c";
-
-      // Every cell consists of a typ and a val list. Certain functions have an
-      // additional attr list.
-
-      // append attributes <c r="A1" ...>
-      file << " r" << "=\"" << static_cast<const char*>(cc_r[i]) << "\"";
-
-      if (!cc_c_s[i].empty())
-        file << " s" << "=\"" << static_cast<const char*>(cc_c_s[i]) << "\"";
-
-      // assign type if not <v> aka numeric
-      if (!cc_c_t[i].empty())
-        file << " t" << "=\"" << static_cast<const char*>(cc_c_t[i]) << "\"";
-
-      // CellMetaIndex: suppress curly brackets in spreadsheet software
-      if (has_cm && !cc_c_cm[i].empty())
-        file << " cm" << "=\"" << static_cast<const char*>(cc_c_cm[i]) << "\"";
-
-      // phonetics spelling
-      if (has_ph && !cc_c_ph[i].empty())
-        file << " ph" << "=\"" << static_cast<const char*>(cc_c_ph[i]) << "\"";
-
-      // suppress curly brackets in spreadsheet software
-      if (has_vm && !cc_c_vm[i].empty())
-        file << " vm" << "=\"" << static_cast<const char*>(cc_c_vm[i]) << "\"";
-
-      file << ">";  // end <c ...>
-
-      bool f_si = false;
-
-      // <f> ... </f>
-      // f node: formula to be evaluated
-      if (!cc_f[i].empty() || !cc_f_attr[i].empty()) {
-        file << "<f";
-        if (!cc_f_attr[i].empty()) {
-          file << " " << static_cast<const char*>(cc_f_attr[i]);
+        file << "<row";
+        for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
+            Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
+            if (s != "") file << " " << attrnams[j] << "=\"" << s.get_cstring() << "\"";
         }
         file << ">";
-
-        file << to_string(cc_f[i]).c_str();
-        if (!f_si && std::string(cc_f[i]).find("\"si\"=") != std::string::npos) f_si = true;
-
-        file << "</f>";
-      }
-
-      // v node: value stored from evaluated formula
-      if (!cc_v[i].empty()) {
-        if (!f_si & (std::string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
-          // this looks strange
-          file << "<v xml:space=\"preserve\">";
-          file << " ";
-          file << "</v>";
-        } else {
-          if (cc_c_t[i].empty() && cc_f_attr[i].empty())
-            file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
-          else
-            file << "<v>" << static_cast<const char*>(cc_v[i]) << "</v>";
-        }
-      }
-
-      // <is><t> ... </t></is>
-      if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
-        if (!cc_is[i].empty()) {
-          file << to_string(cc_is[i]).c_str();
-        }
-      }
-
-      file << "</c>";
-
-      // update lastrow
-      lastrow = thisrow;
+        row_idx++;
     }
 
     file << "</row>";
@@ -385,6 +408,17 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
       }
     }
   }
+  // write rows without matching cc
+  while (row_idx < row_attr.nrow()) {
+    row = doc.append_child("row");
+    for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
+      Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
+      if (s != "") {
+        row.append_attribute(static_cast<const char*>(attrnams[j])) = s.get_cstring();
+      }
+    }
+    row_idx++;
+  }
 }
 
 // TODO: convert to pugi
@@ -411,7 +445,7 @@ XPtrXML write_worksheet(std::string prior, std::string post, Rcpp::Environment s
 
   pugi::xml_node sheetData = worksheet.append_child("sheetData");
 
-  if (cc.size() > 0) {
+  if (cc.nrow() > 0 || row_attr.nrow() > 0) {
     xml_sheet_data(sheetData, row_attr, cc);
   }
 
