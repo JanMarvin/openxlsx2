@@ -60,7 +60,7 @@ test_that("test add_border()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check borders
   exp <- c("<border><left/><right/><top/><bottom/><diagonal/></border>",
@@ -68,7 +68,7 @@ test_that("test add_border()", {
   )
   got <- wb$styles_mgr$styles$borders
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -76,7 +76,7 @@ test_that("test add_border()", {
 
   exp <- "1"
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$c_s)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -92,7 +92,7 @@ test_that("test add_fill()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # check fill
@@ -102,7 +102,7 @@ test_that("test add_fill()", {
   )
   got <- wb$styles_mgr$styles$fills
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # every_nth_col/row
   wb <- wb_workbook()
@@ -117,21 +117,21 @@ test_that("test add_fill()", {
   )
   got <- wb$styles_mgr$styles$fills
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>",
            "<xf applyFill=\"1\" borderId=\"0\" fillId=\"2\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>",
            "<xf applyFill=\"1\" borderId=\"0\" fillId=\"3\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"/>")
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("", "1", "", "1", "", "2", "2", "2", "2", "2", "", "1", "",
            "1", "", "2", "2", "2", "2", "2", "", "1", "", "1", "", "2",
            "2", "2", "2", "2")
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -139,7 +139,7 @@ test_that("test add_fill()", {
 
   exp <- rep("1", 8)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -156,30 +156,30 @@ test_that("test add_font()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # check font
   exp <- c(
     "<font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Aptos Narrow\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
-    "<font><color rgb=\"FFFFFF00\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>"
+    "<font><sz val=\"11\"/><color rgb=\"FFFFFF00\"/><name val=\"Aptos Narrow\"/></font>"
   )
   got <- wb$styles_mgr$styles$fonts
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "",
            "", "", "", "", "", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_workbook()
   wb$add_worksheet("S1")$add_font("S1", dims = "A1:K1", color = wb_colour(hex = "FFFFFF00"))
 
   exp <- rep("1", 11)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -197,20 +197,20 @@ test_that("test add_numfmt()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   # check numfmt
   exp <- "<numFmt numFmtId=\"165\" formatCode=\"#.0\"/>"
   got <- wb$styles_mgr$styles$numFmts
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
            "", "", "2", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -218,7 +218,7 @@ test_that("test add_numfmt()", {
 
   exp <- rep("1", 33)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -236,13 +236,13 @@ test_that("test add_cell_style()", {
   )
   got <- wb$styles_mgr$styles$cellXfs
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # check the actual styles
   exp <- c("1", "", "", "", "", "2", "", "", "", "", "", "1", "", "",
            "", "", "2", "", "", "")
   got <- head(wb$worksheets[[1]]$sheet_data$cc$c_s, 20)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb <- wb_workbook()
@@ -250,7 +250,7 @@ test_that("test add_cell_style()", {
 
   exp <- rep("1", 33)
   got <- wb$worksheets[[1]]$sheet_data$cc$c_s
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   ###
   exp <- "<xf applyAlignment=\"1\" applyBorder=\"1\" applyFill=\"1\" applyFont=\"1\" applyNumberFormat=\"1\" applyProtection=\"1\" borderId=\"1\" fillId=\"1\" fontId=\"1\" numFmtId=\"1\" pivotButton=\"0\" quotePrefix=\"0\" xfId=\"1\"><alignment horizontal=\"left\" indent=\"1\" justifyLastLine=\"1\" readingOrder=\"1\" relativeIndent=\"1\" shrinkToFit=\"1\" textRotation=\"1\" vertical=\"top\" wrapText=\"1\"/><protection hidden=\"1\" locked=\"1\"/><extLst><ext><foo/></ext></extLst></xf>"
@@ -275,7 +275,7 @@ test_that("test add_cell_style()", {
     hidden = "1",
     locked = "1"
   )
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -295,26 +295,26 @@ test_that("add_style", {
 
   exp <- num
   got <- wb$styles_mgr$styles$numFmts
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- structure(list(typ = "numFmt", id = "165", name = "num"),
                    row.names = c(NA, -1L),
                    class = "data.frame")
   got <- wb$styles_mgr$numfmt
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # with name
   wb <- wb_workbook()$add_style(num, "num")
 
   exp <- num
   got <- wb$styles_mgr$styles$numFmts
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- structure(list(typ = "numFmt", id = "165", name = "num"),
                    row.names = c(NA, -1L),
                    class = "data.frame")
   got <- wb$styles_mgr$numfmt
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -410,12 +410,15 @@ test_that("applyCellStyle works", {
   cc <- wb$worksheets[[1]]$sheet_data$cc
   exp <- c("3", "2", "1", "3")
   got <- cc[cc$r %in% c("A1", "C3", "E3", "E5"), "c_s"]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
 test_that("style names are xml", {
   sheet <- mtcars[1:6, 1:6]
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
 
   wb <- wb_workbook()$
     add_worksheet("test")$
@@ -430,14 +433,16 @@ test_that("style names are xml", {
     add_fill(dims = "C5", color = wb_colour("black"))$
     add_font(dims = "C5", color = wb_colour("white"))
 
+  wb$save(tmp)
+
   exp <- list(
     numFmts = NULL,
     fonts = c(
       "<font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Aptos Narrow\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
-      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Aptos Narrow\"/><sz val=\"14\"/></font>",
-      "<font><b val=\"1\"/><color rgb=\"FF000000\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>",
-      "<font><color rgb=\"FF000000\"/><i val=\"1\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>",
-      "<font><color rgb=\"FFFFFFFF\"/><name val=\"Aptos Narrow\"/><sz val=\"11\"/></font>"
+      "<font><b val=\"1\"/><sz val=\"14\"/><color rgb=\"FF000000\"/><name val=\"Aptos Narrow\"/></font>",
+      "<font><b val=\"1\"/><sz val=\"11\"/><color rgb=\"FF000000\"/><name val=\"Aptos Narrow\"/></font>",
+      "<font><i val=\"1\"/><sz val=\"11\"/><color rgb=\"FF000000\"/><name val=\"Aptos Narrow\"/></font>",
+      "<font><sz val=\"11\"/><color rgb=\"FFFFFFFF\"/><name val=\"Aptos Narrow\"/></font>"
     ),
     fills = c(
       "<fill><patternFill patternType=\"none\"/></fill>",
@@ -465,7 +470,7 @@ test_that("style names are xml", {
     extLst = NULL
   )
   got <- wb$styles_mgr$styles
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -553,7 +558,7 @@ test_that("create_tablestyle() works", {
     first_column_stripe  = 1,
     second_column_stripe = 0
   )
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -565,7 +570,7 @@ test_that("wb_add_cell_style works with logical and numeric", {
 
   exp <- "<xf borderId=\"0\" fillId=\"0\" fontId=\"0\" numFmtId=\"0\" xfId=\"0\"><alignment textRotation=\"45\" wrapText=\"1\"/></xf>"
   got <- wb$styles_mgr$styles$cellXfs[2]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -578,7 +583,7 @@ test_that("wb_add_named_style() works", {
 
   exp <- "<cellStyle name=\"Title\" xfId=\"1\" builtinId=\"15\"/>"
   got <- wb$styles_mgr$styles$cellStyles[2]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_workbook()$
     add_worksheet()$
@@ -588,7 +593,7 @@ test_that("wb_add_named_style() works", {
 
   exp <- 2
   got <- length(wb$styles_mgr$styles$cellStyles)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   ### run all named styles for coverage
@@ -745,7 +750,7 @@ test_that("wb_add_named_style() works", {
     "Currency", "Currency [0]", "Per cent"
   )
   got <- wb$styles_mgr$cellStyle$name
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -784,11 +789,11 @@ test_that("wb_add_dxfs_style() works", {
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("nay", "yay")
   got <- wb$styles_mgr$dxf$name
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_warning(
     wb_workbook()$
@@ -830,7 +835,7 @@ test_that("initialized styles remain available", {
 
   exp <- c("xf-0", "foo")
   got <- wb$styles_mgr$xf$name
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   tmp <- temp_xlsx()
   on.exit(unlink(tmp), add = TRUE)
@@ -840,7 +845,7 @@ test_that("initialized styles remain available", {
 
   exp <- c("xf-0", "xf-1")
   got <- wb$styles_mgr$xf$name
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -855,7 +860,7 @@ test_that("apply styles across columns and rows", {
     "<col min=\"3\" max=\"4\" style=\"1\" width=\"8.43\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- data.frame(
     customFormat = c("1", "1"),
@@ -864,7 +869,7 @@ test_that("apply styles across columns and rows", {
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$sheet_data$row_attr[c("customFormat", "r", "s")]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # same as above but use cell style id
   wb <- wb_workbook()$add_worksheet()$add_fill(dims = "C3", color = wb_color("yellow"))
@@ -874,7 +879,7 @@ test_that("apply styles across columns and rows", {
     "<col min=\"3\" max=\"4\" style=\"1\" width=\"8.43\"/>"
   )
   got <- wb$worksheets[[1]]$cols_attr
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -884,18 +889,18 @@ test_that("create_colors_xml() works", {
 
   exp <- "<a:clrScheme name=\"Base R\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/></a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/></a:lt1><a:dk2><a:srgbClr val=\"00008B\"/></a:dk2><a:lt2><a:srgbClr val=\"D3D3D3\"/></a:lt2><a:accent1><a:srgbClr val=\"DF536B\"/></a:accent1><a:accent2><a:srgbClr val=\"61D04F\"/></a:accent2><a:accent3><a:srgbClr val=\"2297E6\"/></a:accent3><a:accent4><a:srgbClr val=\"28E2E5\"/></a:accent4><a:accent5><a:srgbClr val=\"CD0BBC\"/></a:accent5><a:accent6><a:srgbClr val=\"F5C710\"/></a:accent6><a:hlink><a:srgbClr val=\"0000FF\"/></a:hlink><a:folHlink><a:srgbClr val=\"A020F0\"/></a:folHlink></a:clrScheme>"
   got <- create_colors_xml()
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   got <- create_colours_xml()
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_workbook()$set_base_colors(xml = got)
   got <- wb$get_base_colors(xml = TRUE, plot = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb <- wb_workbook()$set_base_colours(xml = got)
   got <- wb$get_base_colours(xml = TRUE, plot = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -924,21 +929,23 @@ test_that("dims work", {
 })
 
 test_that("update font works", {
+
   wb <- wb_workbook() |>
     wb_add_worksheet() |>
     wb_add_data(x = letters) |>
     wb_add_font(dims = wb_dims(x = letters), name = "Calibri", size = 20, update = c("name", "size", "scheme"))
 
-  exp <- "<font><color theme=\"1\"/><family val=\"2\"/><name val=\"Calibri\"/><sz val=\"20\"/></font>"
+  exp <- "<font><sz val=\"20\"/><color theme=\"1\"/><name val=\"Calibri\"/><family val=\"2\"/></font>"
   got <- wb$styles_mgr$styles$fonts[2]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # updates only the font color
   wb$add_font(dims = wb_dims(x = letters), color = wb_color("orange"), update = c("color"))
 
-  exp <- "<font><color rgb=\"FFFFA500\"/><family val=\"2\"/><name val=\"Calibri\"/><sz val=\"20\"/></font>"
+  exp <- "<font><sz val=\"20\"/><color rgb=\"FFFFA500\"/><name val=\"Calibri\"/><family val=\"2\"/></font>"
   got <- wb$styles_mgr$styles$fonts[3]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
+
 })
 
 test_that("adding bg_color and diagonal borders work", {
@@ -969,11 +976,11 @@ test_that("adding bg_color and diagonal borders work", {
 
   exp <- "<border diagonalDown=\"1\" diagonalUp=\"1\"><start><color rgb=\"FFFF0000\"/></start><end><color rgb=\"FFFF0000\"/></end><left style=\"thin\"><color rgb=\"FF000000\"/></left><top style=\"thin\"><color rgb=\"FF000000\"/></top><diagonal style=\"dashed\"><color rgb=\"FFFF0000\"/></diagonal></border>"
   got <- wb$styles_mgr$styles$borders[2]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<fill><patternFill patternType=\"lightUp\"><fgColor rgb=\"FFFFFFFF\"/><bgColor rgb=\"FF000000\"/></patternFill></fill>"
   got <- wb$styles_mgr$styles$fills[3]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -998,7 +1005,7 @@ test_that("adding borders works", {
            F9 = "4", G9 = "4", H9 = "4", A10 = "2", B10 = "2", C10 = "2",
            D10 = "2", E10 = "4", F10 = "4", G10 = "4", H10 = "4")
   got <- wb$get_cell_style(dims = "A1:H10")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$add_border(dims = "A1:H10")
   exp <- c(A1 = "5", B1 = "6", C1 = "6", D1 = "6", E1 = "7", F1 = "7",
@@ -1016,7 +1023,7 @@ test_that("adding borders works", {
            A10 = "17", B10 = "18", C10 = "18", D10 = "18", E10 = "19", F10 = "19",
            G10 = "19", H10 = "20")
   got <- wb$get_cell_style(dims = "A1:H10")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 

@@ -254,7 +254,7 @@ genBasePic <- function(imageNo, next_id, address_id) {
         </xdr:cNvPicPr>
       </xdr:nvPicPr>
       <xdr:blipFill>
-        <a:blip r:embed="%s"></a:blip>
+        <a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="%s"></a:blip>
         <a:stretch>
           <a:fillRect/>
         </a:stretch>

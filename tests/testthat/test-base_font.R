@@ -104,11 +104,11 @@ test_that("hyperlink font size works", {
     add_formula(x = create_hyperlink(text = "foo", file = "bar"))
 
   exp <- c(
-    "<font><color theme=\"1\"/><family val=\"2\"/><name val=\"Monaco\"/><scheme val=\"minor\"/><sz val=\"13\"/></font>",
-    "<font><color theme=\"10\"/><name val=\"Monaco\"/><sz val=\"13\"/><u val=\"single\"/></font>"
+    "<font><sz val=\"13\"/><color theme=\"1\"/><name val=\"Monaco\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
+    "<font><u val=\"single\"/><sz val=\"13\"/><color theme=\"10\"/><name val=\"Monaco\"/></font>"
   )
   got <- wb$styles_mgr$styles$fonts
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 

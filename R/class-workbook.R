@@ -550,6 +550,9 @@ wbWorkbook <- R6::R6Class(
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
 
+      if (visible == "true") visible <- "visible"
+      else if (visible == "false") visible <- "hidden"
+
       # set up so that a single error can be reported on fail
       fail <- FALSE
       msg <- NULL
@@ -2017,12 +2020,12 @@ wbWorkbook <- R6::R6Class(
                   <a:graphic><a:graphicData uri=\"http://schemas.microsoft.com/office/drawing/2010/slicer\"><sle:slicer xmlns:sle=\"http://schemas.microsoft.com/office/drawing/2010/slicer\" name=\"%s\"/></a:graphicData></a:graphic>
                 </xdr:graphicFrame>
               </mc:Choice>
-              <mc:Fallback><xdr:sp macro=\"\" textlink=\"\"><xdr:nvSpPr><xdr:cNvPr id=\"0\" name=\"\"/><xdr:cNvSpPr><a:spLocks noTextEdit=\"1\"/></xdr:cNvSpPr></xdr:nvSpPr><xdr:spPr><a:xfrm><a:off x=\"6959600\" y=\"2794000\"/><a:ext cx=\"1828800\" cy=\"2428869\"/></a:xfrm><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom><a:solidFill><a:prstClr val=\"white\"/></a:solidFill><a:ln w=\"1\"><a:solidFill><a:prstClr val=\"green\"/></a:solidFill></a:ln></xdr:spPr><xdr:txBody><a:bodyPr vertOverflow=\"clip\" horzOverflow=\"clip\"/><a:lstStyle/><a:p><a:r><a:rPr lang=\"en-GB\" sz=\"1100\"/><a:t>This shape represents a slicer. Slicers are supported in Excel 2010 or later.\n\nIf the shape was modified in an earlier version of Excel, or if the workbook was saved in Excel 2003 or earlier, the slicer cannot be used.</a:t></a:r></a:p></xdr:txBody></xdr:sp></mc:Fallback>
+              <mc:Fallback><xdr:sp macro=\"\" textlink=\"\"><xdr:nvSpPr><xdr:cNvPr id=\"0\" name=\"%s\"/><xdr:cNvSpPr><a:spLocks noTextEdit=\"1\"/></xdr:cNvSpPr></xdr:nvSpPr><xdr:spPr><a:xfrm><a:off x=\"6959600\" y=\"2794000\"/><a:ext cx=\"1828800\" cy=\"2428869\"/></a:xfrm><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom><a:solidFill><a:prstClr val=\"white\"/></a:solidFill><a:ln w=\"1\"><a:solidFill><a:prstClr val=\"green\"/></a:solidFill></a:ln></xdr:spPr><xdr:txBody><a:bodyPr vertOverflow=\"clip\" horzOverflow=\"clip\"/><a:lstStyle/><a:p><a:r><a:rPr lang=\"en-GB\" sz=\"1100\"/><a:t>This shape represents a slicer. Slicers are supported in Excel 2010 or later.\n\nIf the shape was modified in an earlier version of Excel, or if the workbook was saved in Excel 2003 or earlier, the slicer cannot be used.</a:t></a:r></a:p></xdr:txBody></xdr:sp></mc:Fallback>
             </mc:AlternateContent>
             <xdr:clientData/>
           </xdr:absoluteAnchor>
         </xdr:wsDr>
-        ', uni_name, uni_name
+        ', uni_name, uni_name, uni_name
       ), pointer = FALSE)
 
 
@@ -3829,6 +3832,10 @@ wbWorkbook <- R6::R6Class(
       # Copy file; stop if failed
       if (!file.copy(from = tmpFile, to = file, overwrite = overwrite, copy.mode = FALSE)) {
         stop("Failed to save workbook")
+      }
+
+      if (!is.null(getOption("openxlsx2.ooxml_validator"))) {
+        system2(path.expand(getOption("openxlsx2.ooxml_validator")), file)
       }
 
       # (re)assign file path (if successful)
@@ -6639,6 +6646,23 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
+      cNvPr_id <- rbindlist(
+        c(
+          # the first two should match (both are from slicers and timelines)
+          xml_attr(self$drawings[[sheet_drawing]], c("xdr:wsDr", "*", "mc:AlternateContent", "mc:Choice", "xdr:graphicFrame", "xdr:nvGraphicFramePr", "xdr:cNvPr")),
+          xml_attr(self$drawings[[sheet_drawing]], c("xdr:wsDr", "*", "mc:AlternateContent", "mc:Fallback", "xdr:sp", "xdr:nvSpPr", "xdr:cNvPr")),
+          # other drawings (shapes)
+          xml_attr(self$drawings[[sheet_drawing]], c("xdr:wsDr", "*", "*", "*", "xdr:cNvPr"))
+        )
+      )
+
+      draw_id <- max(as.integer(cNvPr_id$id) + 1L, 0)
+
+      # the id should be unique
+      pattern <- '(<xdr:cNvPr id=)"[0-9]+"'
+      replacement <- paste0('\\1"', draw_id, '"')
+      xml <- gsub(pattern, replacement, xml)
+
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.
       drawings <- self$drawings[[sheet_drawing]]
@@ -8669,7 +8693,12 @@ wbWorkbook <- R6::R6Class(
             old_font[sel] <- new_font[sel]
 
             # write as xml font
-            new_font <- write_font(old_font)
+
+            sel <- c(
+              "b", "i", "strike", "condense", "extend", "outline", "shadow",
+              "u", "vertAlign", "sz", "color", "name", "family", "charset", "scheme"
+            )
+            new_font <- write_font(old_font[sel])
           }
 
           self$styles_mgr$add(new_font, new_font)

@@ -404,7 +404,11 @@ create_font <- function(
     vertAlign        = vert_align,
     stringsAsFactors = FALSE
   )
-  font <- write_font(df_font)
+  sel <- c(
+    "b", "i", "strike", "condense", "extend", "outline", "shadow",
+    "u", "vertAlign", "sz", "color", "name", "family", "charset", "scheme"
+  )
+  font <- write_font(df_font[sel])
 
   if (font == "<font/>") {
     font <- ""

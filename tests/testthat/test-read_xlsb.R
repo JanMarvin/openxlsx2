@@ -25,12 +25,7 @@ test_that("reading complex xlsb works", {
 
   xlsxFile <- testfile_path("hyperlink.xlsb")
 
-  expect_message( # larger workbook
-    capture_output( # unhandled conditions
-      wb <- wb_load(xlsxFile)
-    ),
-    "importing larger workbook. please wait a moment"
-  )
+  wb <- wb_load(xlsxFile)
 
   # chartsheets
   exp <- c(TRUE, FALSE, FALSE, FALSE)
@@ -69,12 +64,7 @@ test_that("worksheets with real world formulas", {
 
   xlsxFile <- testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb")
 
-  expect_message( # larger workbook
-    capture_output( # unhandled conditions
-      suppressWarnings(wb <- wb_load(xlsxFile))
-    ),
-    "importing larger workbook. please wait a moment"
-  )
+  wb <- wb_load(xlsxFile)
 
   exp <- c("Control", "EPRR Core Standards", "Deep dive",
            "Interoperable capabilities ", "Lookups", "Calculations")

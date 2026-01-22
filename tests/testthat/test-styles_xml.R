@@ -256,6 +256,6 @@ test_that("create_font() works", {
     vert_align = "superscript" # From valid alignment list
   )
 
-  exp <- "<font><b val=\"1\"/><charset val=\"1\"/><color rgb=\"FFDDAA00\"/><condense val=\"1\"/><extend val=\"1\"/><family val=\"10\"/><i val=\"1\"/><name val=\"Impact\"/><outline val=\"1\"/><scheme val=\"major\"/><shadow val=\"1\"/><strike val=\"1\"/><sz val=\"36\"/><u val=\"double\"/><vertAlign val=\"superscript\"/></font>"
-  expect_equal(exp, got)
+  exp <- "<font><b val=\"1\"/><i val=\"1\"/><strike val=\"1\"/><condense val=\"1\"/><extend val=\"1\"/><outline val=\"1\"/><shadow val=\"1\"/><u val=\"double\"/><vertAlign val=\"superscript\"/><sz val=\"36\"/><color rgb=\"FFDDAA00\"/><name val=\"Impact\"/><family val=\"10\"/><charset val=\"1\"/><scheme val=\"major\"/></font>"
+  expect_equal(got, exp)
 })
