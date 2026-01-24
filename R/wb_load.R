@@ -514,21 +514,12 @@ wb_load <- function(
     }
 
     ## replace sheetId
-    tmp_patterns <- sprintf(' sheetId="%s"', seq_len(nSheets))
-    tmp_repls    <- sprintf(' sheetId="ID.%s"', sheets$sheetId)
-
-    wb$workbook$sheets <- stri_replace_all_fixed(
-      str            = wb$workbook$sheets,
-      pattern        = tmp_patterns,
-      replacement    = tmp_repls,
-      vectorize_all  = FALSE
-    )
-
-    wb$workbook$sheets <- stri_replace_all_fixed(
-      str            = wb$workbook$sheets,
-      pattern        = ' sheetId="ID.',
-      replacement    = ' sheetId="',
-      vectorize_all  = FALSE
+    wb$workbook$sheets <- mapply(
+      FUN = function(x, y) xml_attr_mod(x, xml_attributes = c(sheetId = as.character(y))),
+      x = wb$workbook$sheets,
+      y = sheets$sheetId,
+      SIMPLIFY = FALSE,
+      USE.NAMES = FALSE
     )
 
     ## additional workbook attributes
