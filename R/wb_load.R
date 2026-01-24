@@ -135,106 +135,111 @@ wb_load <- function(
     stop(msg)
   }
 
-  # relsXML           <- grep_xml("_rels/.rels$")
-
+  # Fundamental workbook components
   appXML            <- grep_xml("app.xml$")
   coreXML           <- grep_xml("core.xml$")
   customXML         <- grep_xml("custom.xml$")
-
-  customXmlDir      <- grep_xml("customXml/")
-  docMetadataXML    <- grep_xml("docMetadata/")
-
-  workbookBIN       <- grep_xml("workbook.bin$")
   workbookXML       <- grep_xml("workbook.xml$")
-  workbookBINRels   <- grep_xml("workbook.bin.rels")
+  workbookBIN       <- grep_xml("workbook.bin$")
   workbookXMLRels   <- grep_xml("workbook.xml.rels")
-
-  drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
-
-  stylesBIN         <- grep_xml("styles.bin$")
+  workbookBINRels   <- grep_xml("workbook.bin.rels")
   stylesXML         <- grep_xml("styles.xml$")
-  sharedStringsBIN  <- grep_xml("sharedStrings.bin$")
+  stylesBIN         <- grep_xml("styles.bin$")
   sharedStringsXML  <- grep_xml("sharedStrings.xml$")
-  metadataXML       <- grep_xml("metadata.xml$")
+  sharedStringsBIN  <- grep_xml("sharedStrings.bin$")
   themeXML          <- grep_xml("theme[0-9]+.xml$")
-  drawingRelsXML    <- grep_xml("drawing[0-9]+.xml.rels$")
-  sheetRelsBIN      <- grep_xml("sheet[0-9]+.bin.rels$")
-  sheetRelsXML      <- grep_xml("sheet[0-9]+.xml.rels$")
-  media             <- grep_xml("image[0-9]+.[a-z]+$")
-  vmlDrawingXML     <- grep_xml("drawings/vmlDrawing[0-9]+\\.vml$")
-  vmlDrawingRelsXML <- grep_xml("vmlDrawing[0-9]+.vml.rels$")
-  calcChainXML      <- grep_xml("xl/calcChain.xml")
-  embeddings        <- grep_xml("xl/embeddings")
-  activeX           <- grep_xml("xl/activeX")
-  python            <- grep_xml("xl/python.xml$")
-  webextensions     <- grep_xml("xl/webextensions")
-
-
-  # comments
-  commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
-  commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
-  personXML         <- grep_xml("xl/persons/person.xml$")
-  threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
-
-  # charts
-  chartsXML         <- grep_xml("xl/charts/chart[0-9]+\\.xml$")
-  chartExsXML       <- grep_xml("xl/charts/chartEx[0-9]+\\.xml$")
-  chartsXML_colors  <- grep_xml("xl/charts/colors[0-9]+\\.xml$")
-  chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
-  chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+.xml.rels")
-  chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+.xml.rels")
-  chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9a-fA-F]*\\.(xml|bin)$")
-
-  # tables
-  tablesBIN         <- grep_xml("tables/table[0-9]+.bin$")
-  tablesXML         <- grep_xml("tables/table[0-9]+.xml$")
-  tableRelsXML      <- grep_xml("table[0-9]+.xml.rels$")
-  queryTablesXML    <- grep_xml("queryTable[0-9]+.xml$")
-
-  # connections
-  connectionsXML    <- grep_xml("connections.xml$")
-  extLinksBIN       <- grep_xml("externalLink[0-9]+.bin$")
-  extLinksXML       <- grep_xml("externalLink[0-9]+.xml$")
-  extLinksRelsBIN   <- grep_xml("externalLink[0-9]+.bin.rels$")
-  extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
-
-  # form control
-  ctrlPropsXML      <- grep_xml("ctrlProps/ctrlProp[0-9]+.xml")
-
-  # pivot tables
-  pivotTableXML     <- grep_xml("pivotTable[0-9]+.xml$")
-  pivotTableRelsXML <- grep_xml("pivotTable[0-9]+.xml.rels$")
-  pivotDefXML       <- grep_xml("pivotCacheDefinition[0-9]+.xml$")
-  pivotDefRelsXML   <- grep_xml("pivotCacheDefinition[0-9]+.xml.rels$")
-  pivotCacheRecords <- grep_xml("pivotCacheRecords[0-9]+.xml$")
-
-  # rich data
-  rdarray           <- grep_xml("richData/rdarray.xml")
-  rdrichvalue       <- grep_xml("richData/rdrichvalue.xml")
-  rdrichvaluestr    <- grep_xml("richData/rdrichvaluestructure.xml")
-  rdRichValueTypes  <- grep_xml("richData/rdRichValueTypes.xml")
-  rdValWebImg       <- grep_xml("richData/rdRichValueWebImage.xml")
-  rdValWebImgrels   <- grep_xml("richData/_rels/rdRichValueWebImage.xml.rels")
-  rdpropertybag     <- grep_xml("richData/rdsupportingpropertybag.xml")
-  rdpropertybagStr  <- grep_xml("richData/rdsupportingpropertybagstructure.xml")
-  richStyles        <- grep_xml("richData/richStyles.xml")
-  richValueRel      <- grep_xml("richData/richValueRel.xml")
-  richValueRelrels  <- grep_xml("richData/_rels/richValueRel.xml.rels")
-
-  ## slicers
-  slicerXML         <- grep_xml("slicer[0-9]+.xml$")
-  slicerCachesXML   <- grep_xml("slicerCache[0-9]+.xml$")
-
-  ## timelines
-  timelineXML         <- grep_xml("timeline[0-9]+.xml$")
-  timelineCachesXML   <- grep_xml("timelineCache[0-9]+.xml$")
-
-  ## VBA Macro
   vbaProject        <- grep_xml("vbaProject\\.bin$")
+  metadataXML       <- grep_xml("metadata.xml$")
 
-  ## feature property bag
-  featureProperty   <- grep_xml("featurePropertyBag.xml$")
+  xmlDirs <- unique(dirname(xmlFiles))
 
+  # Drawings & Media
+  drawingsXML <- drawingRelsXML <- vmlDrawingXML <- vmlDrawingRelsXML <- media <- character(0)
+  if (any(grepl("xl/drawings|xl/media", xmlDirs))) {
+    drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
+    drawingRelsXML    <- grep_xml("drawing[0-9]+.xml.rels$")
+    vmlDrawingXML     <- grep_xml("drawings/vmlDrawing[0-9]+\\.vml$")
+    vmlDrawingRelsXML <- grep_xml("vmlDrawing[0-9]+.vml.rels$")
+    media             <- grep_xml("image[0-9]+.[a-z]+$")
+  }
+
+  # Comments, Persons & Relationships
+  sheetRelsXML <- sheetRelsBIN <- commentsXML <- commentsBIN <- personXML <- threadCommentsXML <- character(0)
+  if (any(grepl("xl/worksheets/_rels|xl/comments|xl/threadedComments|xl/persons", xmlDirs))) {
+    sheetRelsXML      <- grep_xml("sheet[0-9]+.xml.rels$")
+    sheetRelsBIN      <- grep_xml("sheet[0-9]+.bin.rels$")
+    commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
+    commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
+    personXML         <- grep_xml("xl/persons/person.xml$")
+    threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
+  }
+
+  # Charts & Chartsheets
+  chartsXML <- chartExsXML <- chartsXML_colors <- chartsXML_styles <- chartsRels <- chartExsRels <- chartSheetsXML <- character(0)
+  if (any(grepl("xl/charts|xl/chartsheets", xmlDirs))) {
+    chartsXML         <- grep_xml("xl/charts/chart[0-9]+\\.xml$")
+    chartExsXML       <- grep_xml("xl/charts/chartEx[0-9]+\\.xml$")
+    chartsXML_colors  <- grep_xml("xl/charts/colors[0-9]+\\.xml$")
+    chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
+    chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+.xml.rels")
+    chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+.xml.rels")
+    chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9a-fA-F]*\\.(xml|bin)$")
+  }
+
+  # Tables, Connections & External Links
+  tablesXML <- tablesBIN <- tableRelsXML <- queryTablesXML <- connectionsXML <- extLinksXML <- extLinksBIN <- extLinksRelsXML <- extLinksRelsBIN <- character(0)
+  if (any(grepl("xl/tables|xl/queryTables|xl/externalLinks", xmlDirs))) {
+    tablesXML         <- grep_xml("tables/table[0-9]+.xml$")
+    tablesBIN         <- grep_xml("tables/table[0-9]+.bin$")
+    tableRelsXML      <- grep_xml("table[0-9]+.xml.rels$")
+    queryTablesXML    <- grep_xml("queryTable[0-9]+.xml$")
+    connectionsXML    <- grep_xml("connections.xml$")
+    extLinksXML       <- grep_xml("externalLink[0-9]+.xml$")
+    extLinksBIN       <- grep_xml("externalLink[0-9]+.bin$")
+    extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
+    extLinksRelsBIN   <- grep_xml("externalLink[0-9]+.bin.rels$")
+  }
+
+  # Pivot Tables, Slicers & Timelines
+  pivotTableXML <- pivotTableRelsXML <- pivotDefXML <- pivotDefRelsXML <- pivotCacheRecords <- slicerXML <- slicerCachesXML <- timelineXML <- timelineCachesXML <- character(0)
+  if (any(grepl("xl/pivotTables|xl/pivotCache|xl/slicers|xl/timelines", xmlDirs))) {
+    pivotTableXML     <- grep_xml("pivotTable[0-9]+.xml$")
+    pivotTableRelsXML <- grep_xml("pivotTable[0-9]+.xml.rels$")
+    pivotDefXML       <- grep_xml("pivotCacheDefinition[0-9]+.xml$")
+    pivotDefRelsXML   <- grep_xml("pivotCacheDefinition[0-9]+.xml.rels$")
+    pivotCacheRecords <- grep_xml("pivotCacheRecords[0-9]+.xml$")
+    slicerXML         <- grep_xml("slicer[0-9]+.xml$")
+    slicerCachesXML   <- grep_xml("slicerCache[0-9]+.xml$")
+    timelineXML       <- grep_xml("timeline[0-9]+.xml$")
+    timelineCachesXML <- grep_xml("timelineCache[0-9]+.xml$")
+  }
+
+  # Rich Data
+  rdarray <- rdrichvalue <- rdrichvaluestr <- rdRichValueTypes <- rdValWebImg <- rdValWebImgrels <- rdpropertybag <- rdpropertybagStr <- richStyles <- richValueRel <- richValueRelrels <- character(0)
+  if (any(grepl("xl/richData", xmlDirs))) {
+    rdarray           <- grep_xml("richData/rdarray.xml")
+    rdrichvalue       <- grep_xml("richData/rdrichvalue.xml")
+    rdrichvaluestr    <- grep_xml("richData/rdrichvaluestructure.xml")
+    rdRichValueTypes  <- grep_xml("richData/rdRichValueTypes.xml")
+    rdValWebImg       <- grep_xml("richData/rdRichValueWebImage.xml")
+    rdValWebImgrels   <- grep_xml("richData/_rels/rdRichValueWebImage.xml.rels")
+    rdpropertybag     <- grep_xml("richData/rdsupportingpropertybag.xml")
+    rdpropertybagStr  <- grep_xml("richData/rdsupportingpropertybagstructure.xml")
+    richStyles        <- grep_xml("richData/richStyles.xml")
+    richValueRel      <- grep_xml("richData/richValueRel.xml")
+    richValueRelrels  <- grep_xml("richData/_rels/richValueRel.xml.rels")
+  }
+
+  # Misc / Singletons
+  customXmlDir       <- grep_xml("customXml/")
+  docMetadataXML     <- grep_xml("docMetadata/")
+  calcChainXML       <- grep_xml("xl/calcChain.xml")
+  embeddings         <- grep_xml("xl/embeddings")
+  activeX            <- grep_xml("xl/activeX")
+  python             <- grep_xml("xl/python.xml$")
+  webextensions      <- grep_xml("xl/webextensions")
+  ctrlPropsXML       <- grep_xml("ctrlProps/ctrlProp[0-9]+.xml")
+  featureProperty    <- grep_xml("featurePropertyBag.xml$")
   namedSheetViewsXML <- grep_xml("namedSheetViews/namedSheetView[0-9]+.xml$")
 
   cleanup_dir <- function(data_only) {
