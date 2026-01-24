@@ -1031,30 +1031,25 @@ wb_load <- function(
       ws$cols_attr  <- xml_node(worksheet_xml, "worksheet", "cols", "col")
       ws$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
 
+      ## Fix headers/footers
+      # TODO think about improving headerFooter
+      if (length(ws$headerFooter)) {
+        # get attributes
+        hf_attrs <- rbindlist(xml_attr(ws$headerFooter, "headerFooter"))
+
+        if (!is.null(hf_attrs$alignWithMargins))
+          ws$align_with_margins <- as.logical(as.integer(hf_attrs$alignWithMargins))
+
+        if (!is.null(hf_attrs$scaleWithDoc))
+          ws$scale_with_doc     <- as.logical(as.integer(hf_attrs$scaleWithDoc))
+
+        ws$headerFooter       <- getHeaderFooterNode(ws$headerFooter)
+      }
+
       # load the data. This function reads sheet_data and returns cc and row_attr
       loadvals(ws$sheet_data, worksheet_xml)
     }
   }
-
-  ## Fix headers/footers
-  # TODO think about improving headerFooter
-  for (i in seq_len(nSheets)) {
-    if (sheets$typ[i] == "worksheet") {
-      if (length(wb$worksheets[[i]]$headerFooter)) {
-        # get attributes
-        hf_attrs <- rbindlist(xml_attr(wb$worksheets[[i]]$headerFooter, "headerFooter"))
-
-        if (!is.null(hf_attrs$alignWithMargins))
-          wb$worksheets[[i]]$align_with_margins <- as.logical(as.integer(hf_attrs$alignWithMargins))
-
-        if (!is.null(hf_attrs$scaleWithDoc))
-          wb$worksheets[[i]]$scale_with_doc     <- as.logical(as.integer(hf_attrs$scaleWithDoc))
-
-        wb$worksheets[[i]]$headerFooter       <- getHeaderFooterNode(wb$worksheets[[i]]$headerFooter)
-      }
-    }
-  }
-
 
   ##* ----------------------------------------------------------------------------------------------*##
   ### READING IN WORKSHEET DATA COMPLETE
