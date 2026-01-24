@@ -915,66 +915,57 @@ wb_load <- function(
     if (sheets$typ[i] == "chartsheet") {
       if (data_only) stop("Requested sheet is a chartsheet. No data to return")
       chartsheet_xml <- read_xml(sheets$target[i])
-      wb$worksheets[[i]]$sheetPr <- xml_node(chartsheet_xml, "chartsheet", "sheetPr")
-      wb$worksheets[[i]]$sheetViews    <- xml_node(chartsheet_xml, "chartsheet", "sheetViews")
-      wb$worksheets[[i]]$sheetProtection    <- xml_node(chartsheet_xml, "chartsheet", "sheetProtection")
-      wb$worksheets[[i]]$customSheetViews    <- xml_node(chartsheet_xml, "chartsheet", "customSheetViews")
-      wb$worksheets[[i]]$pageMargins <- xml_node(chartsheet_xml, "chartsheet", "pageMargins")
-      wb$worksheets[[i]]$pageSetup <- xml_node(chartsheet_xml, "chartsheet", "pageSetup")
-      wb$worksheets[[i]]$headerFooter <- xml_node(chartsheet_xml, "chartsheet", "headerFooter")
-      wb$worksheets[[i]]$drawing <- xml_node(chartsheet_xml, "chartsheet", "drawing")
-      wb$worksheets[[i]]$drawingHF <- xml_node(chartsheet_xml, "chartsheet", "drawingHF")
-      wb$worksheets[[i]]$picture <- xml_node(chartsheet_xml, "chartsheet", "picture")
-      wb$worksheets[[i]]$webPublishItems <- xml_node(chartsheet_xml, "chartsheet", "webPublishItems")
+
+      ws <- wb$worksheets[[i]]
+
+      nodes <- c("sheetPr", "sheetViews", "sheetProtection", "customSheetViews",
+                "pageMargins", "pageSetup", "headerFooter", "drawing",
+                "drawingHF", "picture", "webPublishItems")
+
+      for (node in nodes) {
+        ws[[node]] <- xml_node(chartsheet_xml, "chartsheet", node)
+      }
+
     } else {
       worksheet_xml <- read_xml(sheets$target[i])
+
+      ws <- wb$worksheets[[i]]
+
       if (!data_only) {
-        wb$worksheets[[i]]$autoFilter <- xml_node(worksheet_xml, "worksheet", "autoFilter")
-        wb$worksheets[[i]]$cellWatches <- xml_node(worksheet_xml, "worksheet", "cellWatches")
-        wb$worksheets[[i]]$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks", "brk")
-        # wb$worksheets[[i]]$cols <- xml_node(worksheet_xml, "worksheet", "cols")
-        # wb$worksheets[[i]]$conditionalFormatting <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
-        wb$worksheets[[i]]$controls <- xml_node(worksheet_xml, "worksheet", "controls")
-        wb$worksheets[[i]]$customProperties <- xml_node(worksheet_xml, "worksheet", "customProperties")
-        wb$worksheets[[i]]$customSheetViews <- xml_node(worksheet_xml, "worksheet", "customSheetViews")
-        wb$worksheets[[i]]$dataConsolidate <- xml_node(worksheet_xml, "worksheet", "dataConsolidate")
-        # wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations")
-        # wb$worksheets[[i]]$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
-        # has <drawing> a child <legacyDrawing> ?
-        wb$worksheets[[i]]$drawing <- xml_node(worksheet_xml, "worksheet", "drawing")
-        wb$worksheets[[i]]$drawingHF <- xml_node(worksheet_xml, "worksheet", "drawingHF")
-        wb$worksheets[[i]]$legacyDrawing <- xml_node(worksheet_xml, "worksheet", "legacyDrawing")
-        wb$worksheets[[i]]$legacyDrawingHF <- xml_node(worksheet_xml, "worksheet", "legacyDrawingHF")
-        # wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
-        wb$worksheets[[i]]$headerFooter <- xml_node(worksheet_xml, "worksheet", "headerFooter")
-        # wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks")
-        wb$worksheets[[i]]$ignoredErrors <- xml_node(worksheet_xml, "worksheet", "ignoredErrors")
-        # wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells")
-        wb$worksheets[[i]]$oleObjects <- xml_node(worksheet_xml, "worksheet", "oleObjects")
-        wb$worksheets[[i]]$pageMargins <- xml_node(worksheet_xml, "worksheet", "pageMargins")
-        wb$worksheets[[i]]$pageSetup <- xml_node(worksheet_xml, "worksheet", "pageSetup")
-        wb$worksheets[[i]]$phoneticPr <- xml_node(worksheet_xml, "worksheet", "phoneticPr")
-        wb$worksheets[[i]]$picture <- xml_node(worksheet_xml, "worksheet", "picture")
-        wb$worksheets[[i]]$printOptions <- xml_node(worksheet_xml, "worksheet", "printOptions")
-        wb$worksheets[[i]]$protectedRanges <- xml_node(worksheet_xml, "worksheet", "protectedRanges")
-        wb$worksheets[[i]]$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks", "brk")
-        wb$worksheets[[i]]$scenarios <- xml_node(worksheet_xml, "worksheet", "scenarios")
-        wb$worksheets[[i]]$sheetCalcPr <- xml_node(worksheet_xml, "worksheet", "sheetCalcPr")
-        # wb$worksheets[[i]]$sheetData <- xml_node(worksheet_xml, "worksheet", "sheetData")
-        # wb$worksheets[[i]]$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
-        wb$worksheets[[i]]$sheetPr <- xml_node(worksheet_xml, "worksheet", "sheetPr")
-        wb$worksheets[[i]]$sheetProtection <- xml_node(worksheet_xml, "worksheet", "sheetProtection")
-        # wb$worksheets[[i]]$sheetViews <- xml_node(worksheet_xml, "worksheet", "sheetViews")
-        wb$worksheets[[i]]$smartTags <- xml_node(worksheet_xml, "worksheet", "smartTags")
-        wb$worksheets[[i]]$sortState <- xml_node(worksheet_xml, "worksheet", "sortState")
-        # wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts")
-        wb$worksheets[[i]]$webPublishItems <- xml_node(worksheet_xml, "worksheet", "webPublishItems")
+        # List of nodes that follow a standard extraction pattern
+        standard_nodes <- c(
+          "autoFilter", "cellWatches", "controls", "customProperties",
+          "customSheetViews", "dataConsolidate", "drawing", "drawingHF",
+          "legacyDrawing", "legacyDrawingHF", "headerFooter", "ignoredErrors",
+          "oleObjects", "pageMargins", "pageSetup", "phoneticPr", "picture",
+          "printOptions", "protectedRanges", "scenarios", "sheetCalcPr",
+          "sheetPr", "sheetProtection", "smartTags", "sortState", "webPublishItems"
+        )
+
+        for (node in standard_nodes) {
+          ws[[node]] <- xml_node(worksheet_xml, "worksheet", node)
+        }
+
+        ws$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks", "brk")
+        ws$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks", "brk")
+
+        # ws$cols <- xml_node(worksheet_xml, "worksheet", "cols")
+        # ws$conditionalFormatting <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
+        # ws$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations")
+        # ws$dimension <- xml_node(worksheet_xml, "worksheet", "dimension")
+        # ws$extLst <- xml_node(worksheet_xml, "worksheet", "extLst")
+        # ws$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks")
+        # ws$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells")
+        # ws$sheetData <- xml_node(worksheet_xml, "worksheet", "sheetData")
+        # ws$sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
+        # ws$sheetViews <- xml_node(worksheet_xml, "worksheet", "sheetViews")
+        # ws$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts")
 
         # check if file loaded was written with incorrect baseColWidth by openxlsx2 <= 1.13
         sheetFormatPr <- xml_node(worksheet_xml, "worksheet", "sheetFormatPr")
         if (length(sheetFormatPr) && sheetFormatPr == "<sheetFormatPr baseColWidth=\"8.43\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>")
           sheetFormatPr <- "<sheetFormatPr baseColWidth=\"8\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>"
-        wb$worksheets[[i]]$sheetFormatPr <- sheetFormatPr
+        ws$sheetFormatPr <- sheetFormatPr
 
         # extract freezePane from sheetViews. This intends to match our freeze
         # pane approach. Though I do not really like it. This blindly shovels
@@ -1007,16 +998,16 @@ wb_load <- function(
               )
             }
 
-            wb$worksheets[[i]]$freezePane <- freezePane
+            ws$freezePane <- freezePane
           }
 
         }
-        wb$worksheets[[i]]$sheetViews <- sheetViews
+        ws$sheetViews <- sheetViews
 
-        wb$worksheets[[i]]$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
-        wb$worksheets[[i]]$extLst <- xml_node(worksheet_xml, "worksheet", "extLst", "ext")
-        wb$worksheets[[i]]$tableParts <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
-        wb$worksheets[[i]]$hyperlinks <- xml_node(worksheet_xml, "worksheet", "hyperlinks", "hyperlink")
+        ws$dataValidations <- xml_node(worksheet_xml, "worksheet", "dataValidations", "dataValidation")
+        ws$extLst          <- xml_node(worksheet_xml, "worksheet", "extLst", "ext")
+        ws$tableParts      <- xml_node(worksheet_xml, "worksheet", "tableParts", "tablePart")
+        ws$hyperlinks      <- xml_node(worksheet_xml, "worksheet", "hyperlinks", "hyperlink")
 
         # need to expand the names. multiple conditions can be combined in one conditionalFormatting
         cfs <- xml_node(worksheet_xml, "worksheet", "conditionalFormatting")
@@ -1035,21 +1026,18 @@ wb_load <- function(
 
           # our xlsb parser does not support conditional formatting
           if (!identical(cf, character())) {
-            conditionalFormatting <- data.frame(
-              nm, cf, stringsAsFactors = FALSE
-            )
-            wb$worksheets[[i]]$conditionalFormatting <- conditionalFormatting
+            ws$conditionalFormatting <- data.frame(nm, cf, stringsAsFactors = FALSE)
           }
         }
 
       } ## end !data_only
 
-      wb$worksheets[[i]]$dimension  <- xml_node(worksheet_xml, "worksheet", "dimension")
-      wb$worksheets[[i]]$cols_attr  <- xml_node(worksheet_xml, "worksheet", "cols", "col")
-      wb$worksheets[[i]]$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
+      ws$dimension  <- xml_node(worksheet_xml, "worksheet", "dimension")
+      ws$cols_attr  <- xml_node(worksheet_xml, "worksheet", "cols", "col")
+      ws$mergeCells <- xml_node(worksheet_xml, "worksheet", "mergeCells", "mergeCell")
 
       # load the data. This function reads sheet_data and returns cc and row_attr
-      loadvals(wb$worksheets[[i]]$sheet_data, worksheet_xml)
+      loadvals(ws$sheet_data, worksheet_xml)
     }
   }
 
