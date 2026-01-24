@@ -484,13 +484,13 @@ wb_to_df <- function(
     cc$typ[sel] <- 0L
   }
   # text in t
-  if (any(cc_tab %in% c("inlineStr"))) {
+  if (any(cc_tab == "inlineStr")) {
     sel <- cc$c_t %in% c("inlineStr")
     cc$val[sel] <- is_to_txt(cc$is[sel])
     cc$typ[sel] <- 0L
   }
   # test is sst
-  if (any(cc_tab %in% c("s"))) {
+  if (any(cc_tab == "s")) {
     sel <- cc$c_t %in% c("s")
     cc$val[sel] <- si_to_txt(sst[as.numeric(cc$v[sel]) + 1])
     cc$typ[sel] <- 0L
@@ -619,13 +619,15 @@ wb_to_df <- function(
 
     cc <- get_numfmt_style(wb, cc)
 
+    not_blank_or_bool_error <- cc$num_fmt != "" & !cc$c_t %in% c("b", "e")
+
     # apply_numfmt expects numeric, character or date/posixct
-    sel <- cc$num_fmt != "" & cc$typ %in% c(1L, 4L) & !cc$c_t %in% c("b", "e")
+    sel <- not_blank_or_bool_error & cc$typ %in% c(1L, 4L)
     if (any(sel)) {
       cc$val[sel] <- apply_numfmt(as.numeric(cc$val[sel]), cc$num_fmt[sel])
       cc$typ[sel] <- 0L
     }
-    sel <- cc$num_fmt != "" & cc$typ %in% c(0L, 2L, 3L, 5L) & !cc$c_t %in% c("b", "e")
+    sel <- not_blank_or_bool_error & cc$typ %in% c(0L, 2L, 3L, 5L)
     if (any(sel)) {
       cc$val[sel] <- apply_numfmt(cc$val[sel], cc$num_fmt[sel])
       cc$typ[sel] <- 0L
@@ -633,14 +635,16 @@ wb_to_df <- function(
   }
 
   # prepare to create output object z
-  zz <- cc[c("val", "typ")]
-  zz$cols <- NA_integer_
-  zz$rows <- NA_integer_
   # we need to create the correct col and row position as integer starting at 0. Because we allow
   # to select specific rows and columns, we must make sure that our zz cols and rows matches the
   # z data frame.
-  zz$cols <- match(cc$c_r, colnames(z)) - 1L
-  zz$rows <- match(cc$row_r, rownames(z)) - 1L
+  zz <- data.frame(
+    val  = cc$val,
+    typ  = cc$typ,
+    cols = match(cc$c_r, colnames(z)) - 1L,
+    rows = match(cc$row_r, rownames(z)) - 1L,
+    stringsAsFactors = FALSE
+  )
 
   # zz <- zz[order(zz[, "cols"], zz[, "rows"]), ]
   if (any(zz$val == "", na.rm = TRUE)) zz <- zz[zz$val != "", ]
@@ -817,17 +821,18 @@ wb_to_df <- function(
       chrs <- names(which(types[sel] == 0))
 
       for (chr in chrs) {
-        sel <- tt[[chr]] == 2L & !is.na(z[[chr]])
+        not_na_chr <- !is.na(z[[chr]])
+        sel <- tt[[chr]] == 2L & not_na_chr
         if (length(sel)) {
           z[[chr]][sel] <- vapply(z[[chr]][sel], date_conv_c, NA_character_)
         }
 
-        sel <- tt[[chr]] == 3L & !is.na(z[[chr]])
+        sel <- tt[[chr]] == 3L & not_na_chr
         if (length(sel)) {
           z[[chr]][sel] <- vapply(z[[chr]][sel], datetime_conv_c, NA_character_)
         }
 
-        sel <- tt[[chr]] == 5L & !is.na(z[[chr]])
+        sel <- tt[[chr]] == 5L & not_na_chr
         if (length(sel)) {
           z[[chr]][sel] <- vapply(z[[chr]][sel], hms_conv_c, NA_character_)
         }
