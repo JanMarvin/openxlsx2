@@ -374,27 +374,82 @@ getFile <- function(xlsxFile) {
   xlsxFile
 }
 
-# Rotate the 15-bit integer by n bits to the
-hashPassword <- function(password) {
-  # password limited to 15 characters
-  # TODO add warning about password length
-  chars <- strsplit(substr(password, 1L, 15L), "")[[1]]
+hashPassword <- function(password, sha = 512, spin_count = 100000) {
 
-  # See OpenOffice's documentation of the Excel format: http://www.openoffice.org/sc/excelfileformat.pdf
-  # Start from the last character and for each character
-  # - XOR hash with the ASCII character code
-  # - rotate hash (16 bits) one bit to the left
-  # Finally, XOR hash with 0xCE4B and XOR with password length
-  # Output as hex (uppercase)
-  rotate16bit <- function(hash, n = 1) {
-    bitwOr(bitwAnd(bitwShiftR(hash, 15 - n), 0x01), bitwAnd(bitwShiftL(hash, n), 0x7fff))
+  legacy <- getOption("openxlsx2.legacy_password", FALSE)
+
+  if (!legacy && !is.null(sha) && requireNamespace("openssl", quietly = TRUE)) {
+
+    salt <- openssl::rand_bytes(16)
+
+    password_utf16le_raw <- iconv(
+      enc2utf8(password),
+      to = "UTF-16LE",
+      toRaw = TRUE
+    )[[1]]
+
+    if (sha == 1) {
+      openssl_sha <- function(x) as.raw(openssl::sha1(x))
+      algo <- "SHA-1"
+    } else if (sha == 256) {
+      openssl_sha <- function(x) as.raw(openssl::sha256(x))
+      algo <- "SHA-256"
+    } else if (sha == 384) {
+      openssl_sha <- function(x) as.raw(openssl::sha384(x))
+      algo <- "SHA-384"
+    } else { # sha == 512
+      openssl_sha <- function(x) as.raw(openssl::sha512(x))
+      algo <- "SHA-512"
+    }
+
+    hashed_password <- openssl_sha(c(salt, password_utf16le_raw))
+
+    if (spin_count > 0) {
+      for (i in 0:(spin_count - 1)) {
+        index_bytes <- writeBin(as.integer(i), raw(), size = 4, endian = "little")
+        hashed_password <- openssl_sha(c(hashed_password, index_bytes))
+      }
+    }
+
+    list(
+      hash = openssl::base64_encode(hashed_password),
+      salt = openssl::base64_encode(salt),
+      spin = as.integer(spin_count),
+      algo = algo
+    )
+
+  } else {
+
+    # TODO warn on legacy password usage
+
+    if (nchar(password) > 15) {
+      warning("Excel password protection only uses the first 15 characters.", call. = FALSE)
+      password <- substr(password, 1, 15)
+    }
+
+    chars <- as.integer(charToRaw(password))
+    hash <- 0L
+
+    # Process characters in reverse (per specification)
+    for (char in rev(chars)) {
+      hash <- bitwXor(hash, char)
+      # 16-bit left rotation
+      hash <- bitwOr(
+        bitwAnd(bitwShiftL(hash, 1), 0x7FFF),
+        bitwShiftR(bitwAnd(hash, 0x4000), 14)
+      )
+    }
+
+    hash <- bitwXor(bitwXor(hash, length(chars)), 0xCE4B)
+    hash <- toupper(as.character(as.hexmode(hash)))
+
+    list(
+      hash = hash,
+      salt = "",
+      spin = "",
+      algo = ""
+    )
   }
-  hash <- Reduce(function(char, h) {
-    h <- bitwXor(h, as.integer(charToRaw(char)))
-    rotate16bit(h, 1)
-  }, chars, 0, right = TRUE)
-  hash <- bitwXor(bitwXor(hash, length(chars)), 0xCE4B)
-  format(as.hexmode(hash), upper.case = TRUE)
 }
 
 # Helper to split a cell range into rows or columns

@@ -28,7 +28,24 @@ more of the following: \code{"selectLockedCells"}, \code{"selectUnlockedCells"},
 \code{"sort"}, \code{"autoFilter"}, \code{"pivotTables"}, \code{"objects"}, \code{"scenarios"}}
 }
 \description{
-Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection. Certain features require applying unlocking of initialized cells in the worksheet and across columns and/or rows.
+Protect or unprotect a worksheet from modifications by the user in the
+graphical user interface. Replaces an existing protection. Certain features
+require applying unlocking of initialized cells in the worksheet and across
+columns and/or rows. While passwords can be unicode characters, spreadsheet
+software is often unable to process these. Therefore using ascii characters
+is recommended.
+}
+\details{
+This protection only adds XML strings to the workbook. It will not ecnrypt
+the file. For a full file encryption have a look at the \code{msoc} package.
+
+If the \code{openssl} package is installed, a SHA based password hash will be
+used. The legacy implementation not using \code{openssl} is prune to collions.
+}
+\note{
+The cryptographic hashing implementation used here has not been
+independently reviewed for security. It should not be used for
+production-level security or sensitive data without formal auditing.
 }
 \examples{
 wb <- wb_workbook()
@@ -45,10 +62,13 @@ wb$protect_worksheet(
 wb$protect_worksheet(
   "S1",
   protect = TRUE,
-   c(formatCells = FALSE, formatColumns = FALSE,
+  properties = c(formatCells = FALSE, formatColumns = FALSE,
                  insertColumns = TRUE, deleteColumns = TRUE)
 )
 
 # Remove the protection
 wb$protect_worksheet("S1", protect = FALSE)
+}
+\seealso{
+\link{wb_protect}
 }

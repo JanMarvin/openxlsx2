@@ -7089,29 +7089,51 @@ wbWorkbook <- R6::R6Class(
       }
 
       # match.arg() doesn't handle numbers too well
+      # TODO: why should we allow password to be ""?
       type <- as_xml_attr(type)
-      password <- if (is.null(password)) "" else hashPassword(password)
+      if (is.null(password)) {
+        password <- list(algo = "", hash = "", salt = "", spin = "")
+      } else {
+        password <- hashPassword(password, sha = 512)
+      }
 
       # TODO: Shall we parse the existing protection settings and preserve all
       # unchanged attributes?
 
       if (file_sharing) {
-        self$workbook$fileSharing <- xml_node_create(
-          "fileSharing",
-          xml_attributes = c(
-            userName = username,
-            readOnlyRecommended = if (read_only_recommended | type == "2") "1",
-            reservationPassword = password
+        if (password$algo == "") {
+          self$workbook$fileSharing <- xml_node_create(
+            "fileSharing",
+            xml_attributes = c(
+              userName = username,
+              readOnlyRecommended = if (read_only_recommended | type == "2") "1",
+              reservationPassword = password$hash
+            )
           )
-        )
+        } else {
+          self$workbook$fileSharing <- xml_node_create(
+            "fileSharing",
+            xml_attributes = c(
+              userName = username,
+              readOnlyRecommended = if (read_only_recommended | type == "2") "1",
+              algorithmName = password$algo,
+              spinCount = password$spin,
+              hashValue = password$hash,
+              saltValue = password$salt
+            )
+          )
+        }
       }
 
       self$workbook$workbookProtection <- xml_node_create(
         "workbookProtection",
         xml_attributes = c(
-          hashPassword = password,
           lockStructure = toString(as.numeric(lock_structure)),
-          lockWindows = toString(as.numeric(lock_windows))
+          lockWindows = toString(as.numeric(lock_windows)),
+          algorithmName = password$algo,
+          hashPassword = password$hash,
+          saltValue = password$salt,
+          spinCount = password$spin
         )
       )
 
@@ -7162,8 +7184,23 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      if (!is.null(password))
-        properties <- c(properties, password = hashPassword(password))
+      if (!is.null(password)) {
+
+        password <- hashPassword(password, sha = 512)
+
+        if (password$algo == "") {
+          ppproperties <- c(password = password$hash)
+        } else {
+          ppproperties <- c(
+            algorithmName = password$algo,
+            spinCount = password$spin,
+            hashValue = password$hash,
+            saltValue = password$salt
+          )
+        }
+
+        properties <- c(properties, ppproperties)
+      }
 
       self$worksheets[[sheet]]$sheetProtection <- xml_node_create(
         "sheetProtection",

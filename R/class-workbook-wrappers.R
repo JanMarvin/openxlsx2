@@ -2278,7 +2278,22 @@ wb_page_setup <- function(
 
 #' Protect a worksheet from modifications
 #'
-#' Protect or unprotect a worksheet from modifications by the user in the graphical user interface. Replaces an existing protection. Certain features require applying unlocking of initialized cells in the worksheet and across columns and/or rows.
+#' Protect or unprotect a worksheet from modifications by the user in the
+#' graphical user interface. Replaces an existing protection. Certain features
+#' require applying unlocking of initialized cells in the worksheet and across
+#' columns and/or rows. While passwords can be unicode characters, spreadsheet
+#' software is often unable to process these. Therefore using ascii characters
+#' is recommended.
+#'
+#' This protection only adds XML strings to the workbook. It will not ecnrypt
+#' the file. For a full file encryption have a look at the `msoc` package.
+#'
+#' If the `openssl` package is installed, a SHA based password hash will be
+#' used. The legacy implementation not using `openssl` is prune to collions.
+#' @note
+#' The cryptographic hashing implementation used here has not been
+#' independently reviewed for security. It should not be used for
+#' production-level security or sensitive data without formal auditing.
 #'
 #' @param wb A workbook object
 #' @param sheet A name or index of a worksheet
@@ -2289,6 +2304,7 @@ wb_page_setup <- function(
 #'   `"formatCells"`, `"formatColumns"`, `"formatRows"`, `"insertColumns"`,
 #'   `"insertRows"`, `"insertHyperlinks"`, `"deleteColumns"`, `"deleteRows"`,
 #'   `"sort"`, `"autoFilter"`, `"pivotTables"`, `"objects"`, `"scenarios"`
+#' @seealso [wb_protect]
 #' @export
 #' @examples
 #' wb <- wb_workbook()
@@ -2305,7 +2321,7 @@ wb_page_setup <- function(
 #' wb$protect_worksheet(
 #'   "S1",
 #'   protect = TRUE,
-#'    c(formatCells = FALSE, formatColumns = FALSE,
+#'   properties = c(formatCells = FALSE, formatColumns = FALSE,
 #'                  insertColumns = TRUE, deleteColumns = TRUE)
 #' )
 #'
@@ -2331,7 +2347,19 @@ wb_protect_worksheet <- function(
 #' Protect a workbook from modifications
 #'
 #' Protect or unprotect a workbook from modifications by the user in the
-#' graphical user interface. Replaces an existing protection.
+#' graphical user interface. Replaces an existing protection. While
+#' passwords can be unicode characters, spreadsheet software is often
+#' unable to process these. Therefore using ascii characters is recommended.
+#'
+#' This protection only adds XML strings to the workbook. It will not ecnrypt
+#' the file. For a full file encryption have a look at the `msoc` package.
+#'
+#' If the `openssl` package is installed, a SHA based password hash will be
+#' used. The legacy implementation not using `openssl` is prune to collions.
+#' @note
+#' The cryptographic hashing implementation used here has not been
+#' independently reviewed for security. It should not be used for
+#' production-level security or sensitive data without formal auditing.
 #'
 #' @param wb A Workbook object
 #' @param protect Whether to protect or unprotect the sheet (default `TRUE`)
@@ -2355,6 +2383,7 @@ wb_protect_worksheet <- function(
 #' * `4` xlsx enforces read-only
 #' * `8` xlsx is locked for annotation
 #'
+#' @seealso [wb_protect_worksheet]
 #' @export
 #' @examples
 #' wb <- wb_workbook()
