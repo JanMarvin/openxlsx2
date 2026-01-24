@@ -509,12 +509,7 @@ wb_load <- function(
       if (sheets$typ[i] == "chartsheet") {
         wb$add_chartsheet(sheet = sheets$name[i], visible = sheets$state[i])
       } else if (sheets$typ[i] == "worksheet") {
-        content_type <- read_xml(ContentTypesXML)
-        override <- xml_attr(content_type, "Types", "Override")
-        overrideAttr <- as.data.frame(do.call("rbind", override), stringsAsFactors = FALSE)
-        xmls <- basename(unlist(overrideAttr$PartName))
-        drawings <- grep("drawing", xmls, value = TRUE)
-        wb$add_worksheet(sheets$name[i], visible = sheets$state[i], has_drawing = !is.na(drawings[i]))
+        wb$add_worksheet(sheets$name[i], visible = sheets$state[i])
       }
     }
 
@@ -1373,10 +1368,6 @@ wb_load <- function(
       }
 
     }
-
-    # remove drawings from Content_Types. These drawings are the old imported drawings.
-    # we will add drawings only when writing and will use the sheet to create them.
-    wb$Content_Types <- wb$Content_Types[!grepl("drawings/drawing", wb$Content_Types)]
 
     ## vmlDrawing and comments
     if (length(commentsXML)) {
