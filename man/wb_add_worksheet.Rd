@@ -52,7 +52,7 @@ skip a position.}
 
 \item{visible}{If \code{FALSE}, sheet is hidden else visible.}
 
-\item{has_drawing}{If \code{TRUE} prepare a drawing output (TODO does this work?)}
+\item{has_drawing}{\emph{defunct}}
 
 \item{paper_size}{An integer corresponding to a paper size. See \code{\link[=wb_page_setup]{wb_page_setup()}} for
 details.}

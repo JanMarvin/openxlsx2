@@ -709,6 +709,8 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
+      if (!isFALSE(has_drawing)) message("argument \"has_drawing\" was removed")
+
       standardize(...)
 
       visible <- tolower(as.character(visible))
@@ -873,20 +875,12 @@ wbWorkbook <- R6::R6Class(
 
 
       ## update content_tyes
-      ## add a drawing.xml for the worksheet
-      if (has_drawing) {
-        self$append("Content_Types", c(
-          sprintf('<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>', newSheetIndex),
-          sprintf('<Override PartName="/xl/drawings/drawing%s.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', newSheetIndex)
-        ))
-      } else {
-        self$append("Content_Types",
-          sprintf(
-            '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
-            newSheetIndex
-          )
+      self$append("Content_Types",
+        sprintf(
+          '<Override PartName="/xl/worksheets/sheet%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>',
+          newSheetIndex
         )
-      }
+      )
 
       ## Update xl/rels
       self$append("workbook.xml.rels",

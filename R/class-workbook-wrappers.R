@@ -1091,7 +1091,7 @@ wb_add_chartsheet <- function(
 #'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
 #'   skip a position.
 #' @param visible If `FALSE`, sheet is hidden else visible.
-#' @param has_drawing If `TRUE` prepare a drawing output (TODO does this work?)
+#' @param has_drawing _defunct_
 #' @param paper_size An integer corresponding to a paper size. See [wb_page_setup()] for
 #'   details.
 #' @param orientation One of "portrait" or "landscape"
