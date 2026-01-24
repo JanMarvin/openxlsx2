@@ -1,7 +1,10 @@
 # Protect a workbook from modifications
 
 Protect or unprotect a workbook from modifications by the user in the
-graphical user interface. Replaces an existing protection.
+graphical user interface. Replaces an existing protection. While
+passwords can be unicode characters, spreadsheet software is often
+unable to process these. Therefore using ascii characters is
+recommended.
 
 ## Usage
 
@@ -65,6 +68,14 @@ wb_protect(
 
 ## Details
 
+This protection only adds XML strings to the workbook. It will not
+ecnrypt the file. For a full file encryption have a look at the `msoc`
+package.
+
+If the `openssl` package is installed, a SHA based password hash will be
+used. The legacy implementation not using `openssl` is prune to
+collions.
+
 Lock types:
 
 - `1` xlsx with password (default)
@@ -74,6 +85,16 @@ Lock types:
 - `4` xlsx enforces read-only
 
 - `8` xlsx is locked for annotation
+
+## Note
+
+The cryptographic hashing implementation used here has not been
+independently reviewed for security. It should not be used for
+production-level security or sensitive data without formal auditing.
+
+## See also
+
+[wb_protect_worksheet](https://janmarvin.github.io/openxlsx2/dev/reference/wb_protect_worksheet.md)
 
 ## Examples
 

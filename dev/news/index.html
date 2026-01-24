@@ -50,6 +50,10 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>Provide new SHA base password hash based on <code>openssl</code>. This will be used if <code>openssl</code> is installed, otherwise the legacy implementation will be used.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>In certain environments a zip tool is available via <code>Sys.which("zip")</code>, but <code>Sys.getenv("R_ZIPCMD")</code> is not configured. When writing, we would detect the first and continue trying <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code>, but never passed <code>Sys.which("zip")</code>. This has been corrected. <a href="https://github.com/JanMarvin/openxlsx2/pull/1533" class="external-link">#1533</a>
 </li>

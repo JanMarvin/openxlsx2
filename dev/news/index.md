@@ -2,6 +2,12 @@
 
 ## openxlsx2 (development version)
 
+### New features
+
+- Provide new SHA base password hash based on `openssl`. This will be
+  used if `openssl` is installed, otherwise the legacy implementation
+  will be used.
+
 ### Fixes
 
 - In certain environments a zip tool is available via
