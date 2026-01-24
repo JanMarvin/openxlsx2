@@ -1901,6 +1901,7 @@ wb_load <- function(
       stringsAsFactors = FALSE
     )
 
+    ## These rIds will become unique in preSaveCleanup()
     if (length(richValueRel)) {
       cts <- c(cts,
         '<Override PartName="/xl/richData/richValueRel.xml" ContentType="application/vnd.ms-excel.richvaluerel+xml"/>'
