@@ -696,3 +696,10 @@ test_that("saving a workbook as xlsm", {
   expect_true(grepl(pattern = "macroEnabled", paste0(wb$Content_Types, collapse = "")))
 
 })
+
+test_that("has_drawings is defunct", {
+  expect_message(
+    wb_workbook()$add_worksheet(has_drawing = TRUE),
+    "argument \"has_drawing\" was removed"
+  )
+})

@@ -709,7 +709,7 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
 
-      if (has_drawing) message("argument \"has_drawing\" was removed")
+      if (!isFALSE(has_drawing)) message("argument \"has_drawing\" was removed")
 
       standardize(...)
 
