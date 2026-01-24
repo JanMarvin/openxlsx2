@@ -325,9 +325,11 @@ wb_to_df <- function(
     stop("sheet not found. available sheets are: \n", paste0(wb$get_sheet_names(), collapse = ", "))
   }
 
+  ws <- wb$worksheets[[sheet]]
+
   # the sheet has no data
-  if (is.null(wb$worksheets[[sheet]]$sheet_data$cc) ||
-      nrow(wb$worksheets[[sheet]]$sheet_data$cc) == 0) {
+  if (is.null(ws$sheet_data$cc) ||
+      nrow(ws$sheet_data$cc) == 0) {
     # TODO do we need more checks or do we need to initialize a new cc object?
     message("sheet found, but contains no data")
     return(NULL)
@@ -337,7 +339,7 @@ wb_to_df <- function(
   # # third party applications are known to require it. Maybe make using
   # # dimensions an optional parameter?
   # if (missing(dims))
-  #   dims <- getXML1attr_one(wb$worksheets[[sheet]]$dimension,
+  #   dims <- getXML1attr_one(ws$dimension,
   #                           "dimension",
   #                           "ref")
 
@@ -348,7 +350,7 @@ wb_to_df <- function(
   if (missing(named_region) && missing(dims)) {
     has_dims <- FALSE
 
-    sd <- wb$worksheets[[sheet]]$sheet_data$cc[c("row_r", "c_r")]
+    sd <- ws$sheet_data$cc[c("row_r", "c_r")]
     row <- range(as.integer(unique(sd$row_r)))
     col <- range(col2int(unique(sd$c_r)))
 
@@ -366,8 +368,8 @@ wb_to_df <- function(
 
   }
 
-  row_attr  <- wb$worksheets[[sheet]]$sheet_data$row_attr
-  cc  <- wb$worksheets[[sheet]]$sheet_data$cc
+  row_attr  <- ws$sheet_data$row_attr
+  cc  <- ws$sheet_data$cc
   sst <- wb$sharedStrings
 
   rnams <- row_attr$r
@@ -578,7 +580,7 @@ wb_to_df <- function(
       # depending on the sheet, this might require updates to many cells
       # TODO reduce this to cells, that are part of `cc`. Currently we
       # might waste time, updating cells that are not visible to the user
-      cc_shared <- wb$worksheets[[sheet]]$sheet_data$cc
+      cc_shared <- ws$sheet_data$cc
       cc_shared$shared_fml <- rbindlist(xml_attr(paste0("<f ", cc_shared$f_attr, "/>"), "f"))$t
       cc_shared <- cc_shared[cc_shared$shared_fml == "shared", ]
 
@@ -593,7 +595,7 @@ wb_to_df <- function(
 
   if (show_hyperlinks) {
 
-    if (length(wb$worksheets[[sheet]]$hyperlinks)) {
+    if (length(ws$hyperlinks)) {
 
       hls <- wb_to_hyperlink(wb, sheet)
       hyprlnks <- as.data.frame(
@@ -647,7 +649,7 @@ wb_to_df <- function(
   # backward compatible option. get the mergedCells dimension and fill it with
   # the value of the first cell in the range. do the same for tt.
   if (fill_merged_cells) {
-    mc <- wb$worksheets[[sheet]]$mergeCells
+    mc <- ws$mergeCells
     if (length(mc)) {
 
       mc <- unlist(xml_attr(mc, "mergeCell"))
@@ -701,7 +703,7 @@ wb_to_df <- function(
   }
 
   if (skip_hidden_cols) {
-    col_attr <- wb$worksheets[[sheet]]$unfold_cols()
+    col_attr <- ws$unfold_cols()
     sel <- col_attr$hidden == "1" | col_attr$hidden == "true"
     if (any(sel)) {
       hide     <- col2int(keep_cols) %in% as.integer(col_attr$min[sel])
