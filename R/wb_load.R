@@ -518,7 +518,7 @@ wb_load <- function(
       FUN = function(x, y) xml_attr_mod(x, xml_attributes = c(sheetId = as.character(y))),
       x = wb$workbook$sheets,
       y = sheets$sheetId,
-      SIMPLIFY = FALSE,
+      SIMPLIFY = TRUE,
       USE.NAMES = FALSE
     )
 
