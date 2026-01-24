@@ -427,3 +427,30 @@ test_that("removing comment from second sheet works", {
   expect_equal(list(), wb$vml)
 
 })
+
+test_that("get_comment works", {
+
+  c1 <- wb_comment(text = "this is a comment", author = "")
+  c2 <- wb_comment(text = "this too", author = "")
+
+  wb <- wb_workbook()$
+    add_worksheet("s1")$
+    add_comment(dims = "A1", comment = c1)$
+    add_worksheet("s2")$
+    add_comment(dims = "A1", comment = c2)
+
+  exp <- data.frame(
+    ref = "A1", author = "", comment = "this is a comment", cmmt_id = 1L,
+    stringsAsFactors = FALSE
+  )
+  got <- wb$get_comment(sheet = "s1", dims = "A1")
+  expect_equal(got, exp)
+
+  exp <- data.frame(
+    ref = "A1", author = "", comment = "this too", cmmt_id = 2L,
+    stringsAsFactors = FALSE
+  )
+  got <- wb$get_comment(sheet = "s2", dims = "A1")
+  expect_equal(got, exp)
+
+})
