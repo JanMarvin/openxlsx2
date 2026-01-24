@@ -80,7 +80,7 @@ wb_add_worksheet(
 
 - has_drawing:
 
-  If `TRUE` prepare a drawing output (TODO does this work?)
+  *defunct*
 
 - paper_size:
 
