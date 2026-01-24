@@ -5651,7 +5651,7 @@ wbWorkbook <- R6::R6Class(
         dims <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
 
       cmts <- list()
-      if (length(cmmt) && length(self$comments) <= cmmt) {
+      if (length(cmmt) && length(self$comments) >= cmmt) {
         cmts <- do.call(rbind, lapply(self$comments[[cmmt]], function(x) {
           data.frame(
             ref = x$ref,
