@@ -2,7 +2,7 @@
 
 ## New features
 
-* Provide new password hasher based on `openssl`. This will be used if `openssl` is installed, otherwise the legacy implementation will be used.
+* Provide new SHA base password hash based on `openssl`. This will be used if `openssl` is installed, otherwise the legacy implementation will be used.
 
 ## Fixes
 

@@ -596,10 +596,10 @@ test_that("ox_int_to_col works with -1, fixes UB error", {
 
 test_that("hashing passwords works", {
 
-  hp <- hashPassword("openxlsx2")
+  hp <- hashPassword("openxlsx2", sha = NULL)
 
   verifyPassword <- function(attempted_password, stored_hash) {
-    res <- hashPassword(attempted_password)
+    res <- hashPassword(attempted_password, sha = NULL)
     identical(res$hash, stored_hash)
   }
 
@@ -639,22 +639,22 @@ test_that("hashing passwords works", {
   }
 
 
-  hp <- hashPasswordSHA("openxlsx2", sha = 1, spin_count = 100) # 100k slows this down quite a bit
+  hp <- hashPassword("openxlsx2", sha = 1, spin_count = 100) # 100k slows this down quite a bit
 
   expect_true(verifyPasswordSHA("openxlsx2", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
   expect_false(verifyPasswordSHA("openxlsx", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
 
-  hp <- hashPasswordSHA("openxlsx2", sha = 256, spin_count = 100) # 100k slows this down quite a bit
+  hp <- hashPassword("openxlsx2", sha = 256, spin_count = 100) # 100k slows this down quite a bit
 
   expect_true(verifyPasswordSHA("openxlsx2", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
   expect_false(verifyPasswordSHA("openxlsx", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
 
-  hp <- hashPasswordSHA("openxlsx2", sha = 384, spin_count = 100) # 100k slows this down quite a bit
+  hp <- hashPassword("openxlsx2", sha = 384, spin_count = 100) # 100k slows this down quite a bit
 
   expect_true(verifyPasswordSHA("openxlsx2", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
   expect_false(verifyPasswordSHA("openxlsx", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
 
-  hp <- hashPasswordSHA("openxlsx2", sha = 512, spin_count = 100) # 100k slows this down quite a bit
+  hp <- hashPassword("openxlsx2", sha = 512, spin_count = 100) # 100k slows this down quite a bit
 
   expect_true(verifyPasswordSHA("openxlsx2", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
   expect_false(verifyPasswordSHA("openxlsx", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))

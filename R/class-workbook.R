@@ -7094,10 +7094,7 @@ wbWorkbook <- R6::R6Class(
       if (is.null(password)) {
         password <- list(algo = "", hash = "", salt = "", spin = "")
       } else {
-        if (isFALSE(getOption("openxlsx2.legacy_password", FALSE)))
-          password <- hashPasswordSHA(password, sha = 512)
-        if (is.null(password) || is.character(password))
-          password <- hashPassword(password)
+        password <- hashPassword(password, sha = 512)
       }
 
       # TODO: Shall we parse the existing protection settings and preserve all
@@ -7189,10 +7186,7 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(password)) {
 
-        if (isFALSE(getOption("openxlsx2.legacy_password", FALSE)))
-          password <- hashPasswordSHA(password, sha = 512)
-        if (is.null(password) || is.character(password))
-          password <- hashPassword(password)
+        password <- hashPassword(password, sha = 512)
 
         if (password$algo == "") {
           ppproperties <- c(password = password$hash)
