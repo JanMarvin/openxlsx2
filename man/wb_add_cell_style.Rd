@@ -37,69 +37,74 @@ wb_add_cell_style(
 )
 }
 \arguments{
-\item{wb}{a workbook}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{the worksheet}
+\item{sheet}{The name or index of the worksheet. Defaults to the current sheet.}
 
-\item{dims}{the cell range}
+\item{dims}{A character string defining the cell range (e.g., "A1:K1").}
 
-\item{apply_alignment}{logical apply alignment}
+\item{apply_alignment, apply_font, apply_fill, apply_border, apply_number_format, apply_protection}{Logical; explicitly flags whether the spreadsheet software should
+apply the corresponding style category.}
 
-\item{apply_border}{logical apply border}
+\item{font_id, fill_id, border_id, num_fmt_id}{Optional; direct integer IDs
+referencing existing style sub-nodes.}
 
-\item{apply_fill}{logical apply fill}
+\item{hidden}{Logical; if \code{TRUE}, formulas are hidden when the sheet
+is protected.}
 
-\item{apply_font}{logical apply font}
+\item{horizontal}{Horizontal alignment. One of "general", "left", "center",
+"right", "fill", "justify", "centerContinuous", or "distributed".}
 
-\item{apply_number_format}{logical apply number format}
+\item{indent}{Numeric; the indentation level for the cell content.}
 
-\item{apply_protection}{logical apply protection}
+\item{locked}{Logical; if \code{TRUE}, the cell cannot be edited when the
+sheet is protected.}
 
-\item{border_id}{border ID to apply}
+\item{shrink_to_fit}{Logical; automatically reduces font size to fit the
+column width.}
 
-\item{ext_lst}{extension list something like \verb{<extLst>...</extLst>}}
+\item{text_rotation}{Degrees of rotation (0 to 180).}
 
-\item{fill_id}{fill ID to apply}
+\item{vertical}{Vertical alignment. One of "top", "center", "bottom",
+"justify", or "distributed".}
 
-\item{font_id}{font ID to apply}
+\item{wrap_text}{Logical; enables line wrapping within the cell.}
 
-\item{hidden}{logical cell is hidden}
-
-\item{horizontal}{align content horizontal ('general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed')}
-
-\item{indent}{logical indent content}
-
-\item{justify_last_line}{logical justify last line}
-
-\item{locked}{logical cell is locked}
-
-\item{num_fmt_id}{number format ID to apply}
-
-\item{pivot_button}{unknown}
-
-\item{quote_prefix}{unknown}
-
-\item{reading_order}{reading order left to right}
-
-\item{relative_indent}{relative indentation}
-
-\item{shrink_to_fit}{logical shrink to fit}
-
-\item{text_rotation}{degrees of text rotation}
-
-\item{vertical}{vertical alignment of content ('top', 'center', 'bottom', 'justify', 'distributed')}
-
-\item{wrap_text}{wrap text in cell}
-
-\item{xf_id}{xf ID to apply}
-
-\item{...}{additional arguments}
+\item{...}{Additional arguments.}
 }
 \value{
+The \link{wbWorkbook} object, invisibly.
+
 The \code{wbWorkbook} object, invisibly
 }
 \description{
-Add cell style to a cell region
+The \code{wb_add_cell_style()} function provides direct access to the cell-level
+formatting record (the \code{xf} node) within a \code{wbWorkbook}. It is primarily
+used to control text alignment (horizontal and vertical), text rotation,
+indentation, and cell protection (locking and hiding).
+}
+\details{
+While functions like \code{\link[=wb_add_font]{wb_add_font()}} or \code{\link[=wb_add_fill]{wb_add_fill()}} target specific
+sub-nodes of a style, \code{wb_add_cell_style()} manages the properties that
+govern how content is positioned within the cell boundaries and how it
+behaves when a worksheet is protected.
+
+This function also allows for the direct assignment of style element IDs
+(e.g., \code{font_id}, \code{fill_id}). This is an advanced feature that allows
+users to map pre-existing styles in the workbook's style catalog to specific
+cells.
+
+Alignment and Text Control:
+Options such as \code{wrap_text}, \code{shrink_to_fit}, and \code{text_rotation} are
+essential for managing high-density data or creating stylized headers.
+The \code{text_rotation} parameter accepts values in degrees (0–180), where
+values above 90 represent downward-slanting text.
+
+Protection:
+The \code{locked} and \code{hidden} parameters only take effect when worksheet
+protection is enabled (see \code{\link[=wb_protect_worksheet]{wb_protect_worksheet()}}). By default, all
+cells in a spreadsheet are "locked," but this has no impact until the
+sheet is protected.
 }
 \examples{
 wb <- wb_workbook()

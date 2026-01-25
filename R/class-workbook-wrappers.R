@@ -4104,38 +4104,60 @@ wb_add_numfmt <- function(
 
 #' Modify the style in a cell region
 #'
-#' Add cell style to a cell region
-#' @param wb a workbook
-#' @param sheet the worksheet
-#' @param dims the cell range
-#' @param ext_lst extension list something like `<extLst>...</extLst>`
-#' @param hidden logical cell is hidden
-#' @param horizontal align content horizontal ('general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed')
-#' @param indent logical indent content
-#' @param justify_last_line logical justify last line
-#' @param locked logical cell is locked
-#' @param pivot_button unknown
-#' @param quote_prefix unknown
-#' @param reading_order reading order left to right
-#' @param relative_indent relative indentation
-#' @param shrink_to_fit logical shrink to fit
-#' @param text_rotation degrees of text rotation
-#' @param vertical vertical alignment of content ('top', 'center', 'bottom', 'justify', 'distributed')
-#' @param wrap_text wrap text in cell
-## alignments
-#' @param apply_alignment logical apply alignment
-#' @param apply_border logical apply border
-#' @param apply_fill logical apply fill
-#' @param apply_font logical apply font
-#' @param apply_number_format logical apply number format
-#' @param apply_protection logical apply protection
-## ids
-#' @param border_id border ID to apply
-#' @param fill_id fill ID to apply
-#' @param font_id font ID to apply
-#' @param num_fmt_id number format ID to apply
-#' @param xf_id xf ID to apply
-#' @param ... additional arguments
+#' @description
+#' The `wb_add_cell_style()` function provides direct access to the cell-level
+#' formatting record (the `xf` node) within a `wbWorkbook`. It is primarily
+#' used to control text alignment (horizontal and vertical), text rotation,
+#' indentation, and cell protection (locking and hiding).
+#'
+#' @details
+#' While functions like [wb_add_font()] or [wb_add_fill()] target specific
+#' sub-nodes of a style, `wb_add_cell_style()` manages the properties that
+#' govern how content is positioned within the cell boundaries and how it
+#' behaves when a worksheet is protected.
+#'
+#' This function also allows for the direct assignment of style element IDs
+#' (e.g., `font_id`, `fill_id`). This is an advanced feature that allows
+#' users to map pre-existing styles in the workbook's style catalog to specific
+#' cells.
+#'
+#' Alignment and Text Control:
+#' Options such as `wrap_text`, `shrink_to_fit`, and `text_rotation` are
+#' essential for managing high-density data or creating stylized headers.
+#' The `text_rotation` parameter accepts values in degrees (0–180), where
+#' values above 90 represent downward-slanting text.
+#'
+#' Protection:
+#' The `locked` and `hidden` parameters only take effect when worksheet
+#' protection is enabled (see [wb_protect_worksheet()]). By default, all
+#' cells in a spreadsheet are "locked," but this has no impact until the
+#' sheet is protected.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1:K1").
+#' @param horizontal Horizontal alignment. One of "general", "left", "center",
+#'   "right", "fill", "justify", "centerContinuous", or "distributed".
+#' @param vertical Vertical alignment. One of "top", "center", "bottom",
+#'   "justify", or "distributed".
+#' @param text_rotation Degrees of rotation (0 to 180).
+#' @param wrap_text Logical; enables line wrapping within the cell.
+#' @param shrink_to_fit Logical; automatically reduces font size to fit the
+#'   column width.
+#' @param indent Numeric; the indentation level for the cell content.
+#' @param locked Logical; if `TRUE`, the cell cannot be edited when the
+#'   sheet is protected.
+#' @param hidden Logical; if `TRUE`, formulas are hidden when the sheet
+#'   is protected.
+#' @param font_id,fill_id,border_id,num_fmt_id Optional; direct integer IDs
+#'   referencing existing style sub-nodes.
+#' @param apply_alignment,apply_font,apply_fill,apply_border,apply_number_format,apply_protection
+#'   Logical; explicitly flags whether the spreadsheet software should
+#'   apply the corresponding style category.
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
 #' @examples
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb, "S1")
