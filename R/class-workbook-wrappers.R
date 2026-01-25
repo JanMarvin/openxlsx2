@@ -2968,12 +2968,39 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 
 #' Add a page break to a worksheet
 #'
-#' Insert page breaks into a worksheet
+#' @description
+#' The `wb_add_page_break()` function allows you to manually insert horizontal
+#' or vertical page breaks into a worksheet. These breaks determine where the
+#' spreadsheet software starts a new page when printing or generating a PDF.
 #'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param row,col Either a row number of column number.  One must be `NULL`
-#' @export
+#' @details
+#' Manual page breaks override the automatic breaks calculated by the software
+#' based on margins and paper size.
+#'
+#' * Row Breaks: When a `row` is specified, the horizontal break is placed
+#'     *above* the specified row. For example, setting `row = 10` ensures that
+#'     Row 10 starts on a new page.
+#' * Column Breaks: When a `col` is specified, the vertical break is placed
+#'     to the *left* of that column. For example, `col = "B"` (or `2`) ensures
+#'     Column B is the first column on the next vertical page.
+#'
+#' You must provide either a `row` or a `col` index, but not both in a single
+#' call. To create a page intersection (both horizontal and vertical), call
+#' the function twice.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param row Integer; the row number where the horizontal page break should
+#'   be inserted.
+#' @param col Integer or character; the column number or name (e.g., "B")
+#'   where the vertical page break should be inserted.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * Manual breaks are visible in "Page Break Preview" mode within most
+#'     spreadsheet applications.
+#'
 #' @seealso [wb_add_worksheet()]
 #' @examples
 #' wb <- wb_workbook()
@@ -2983,6 +3010,7 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 #' wb$add_page_break(sheet = 1, row = 10)
 #' wb$add_page_break(sheet = 1, row = 20)
 #' wb$add_page_break(sheet = 1, col = 2)
+#' @export
 wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_page_break(sheet = sheet, row = row, col = col)

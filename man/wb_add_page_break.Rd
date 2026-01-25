@@ -7,15 +7,48 @@
 wb_add_page_break(wb, sheet = current_sheet(), row = NULL, col = NULL)
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{A name or index of a worksheet}
+\item{sheet}{The name or index of the worksheet. Defaults to the current sheet.}
 
-\item{row, col}{Either a row number of column number.  One must be \code{NULL}}
+\item{row}{Integer; the row number where the horizontal page break should
+be inserted.}
+
+\item{col}{Integer or character; the column number or name (e.g., "B")
+where the vertical page break should be inserted.}
+}
+\value{
+The \link{wbWorkbook} object, invisibly.
 }
 \description{
-Insert page breaks into a worksheet
+The \code{wb_add_page_break()} function allows you to manually insert horizontal
+or vertical page breaks into a worksheet. These breaks determine where the
+spreadsheet software starts a new page when printing or generating a PDF.
 }
+\details{
+Manual page breaks override the automatic breaks calculated by the software
+based on margins and paper size.
+\itemize{
+\item Row Breaks: When a \code{row} is specified, the horizontal break is placed
+\emph{above} the specified row. For example, setting \code{row = 10} ensures that
+Row 10 starts on a new page.
+\item Column Breaks: When a \code{col} is specified, the vertical break is placed
+to the \emph{left} of that column. For example, \code{col = "B"} (or \code{2}) ensures
+Column B is the first column on the next vertical page.
+}
+
+You must provide either a \code{row} or a \code{col} index, but not both in a single
+call. To create a page intersection (both horizontal and vertical), call
+the function twice.
+}
+\section{Notes}{
+
+\itemize{
+\item Manual breaks are visible in "Page Break Preview" mode within most
+spreadsheet applications.
+}
+}
+
 \examples{
 wb <- wb_workbook()
 wb$add_worksheet("Sheet 1")
