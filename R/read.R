@@ -139,7 +139,7 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' @param fill_merged_cells Logical; if TRUE, propagates the top-left value of a
 #'   merged range to all cells in that range.
 #' @param dims A character string defining the range. Supports wildcards
-#'   (e.g., "A1:++" or "A-:+").
+#'   (e.g., "A1:++" or "A-:+5").
 #' @param named_region A character string referring to a defined name or spreadsheet Table.
 #' @param show_formula Logical; if TRUE, returns the formula strings instead of
 #'   calculated values.

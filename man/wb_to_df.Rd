@@ -102,7 +102,7 @@ defining values to treat as \code{NA}.}
 merged range to all cells in that range.}
 
 \item{dims}{A character string defining the range. Supports wildcards
-(e.g., "A1:++" or "A-:+").}
+(e.g., "A1:++" or "A-:+5").}
 
 \item{show_formula}{Logical; if TRUE, returns the formula strings instead of
 calculated values.}
