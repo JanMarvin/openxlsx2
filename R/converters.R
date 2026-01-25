@@ -1,15 +1,48 @@
 
 # columns -----------------------------------------------------------------
 
-#' Convert integer to spreadsheet column
+#' Convert integers to spreadsheet column notation
 #'
-#' Converts an integer to a spreadsheet column in `A1` notation.
-#' `1` is `"A"`, `2` is `"B"`, ..., `26` is `"Z"` and `27` is `"AA"`.
+#' @description
+#' `int2col()` performs the inverse operation of [col2int()], transforming numeric
+#' column indices into their corresponding spreadsheet-style character labels
+#' (e.g., 1 to "A", 28 to "AB"). This is essential for converting calculated
+#' indices back into a format compatible with spreadsheet cell referencing.
 #'
-#' @param x A numeric vector.
-#' @export
+#' @details
+#' The function accepts a numeric vector and maps each integer to its positional
+#' representation in a base-26 derived system. This mapping follows standard
+#' spreadsheet conventions where the sequence progresses from "A" through "Z",
+#' followed by "AA", "AB", and so forth.
+#'
+#' Validation is performed to ensure the input is numeric and finite. In accordance
+#' with the Office Open XML specification used by most spreadsheet software, the
+#' maximum supported column index is 16,384, which corresponds to the column
+#' label "XFD". Inputs exceeding this range may result in coordinates that are
+#' incompatible with standard spreadsheet applications.
+#'
+#' @param x A numeric vector representing the column indices to be converted.
+#'
+#' @return A character vector of spreadsheet column labels. Returns `NULL`
+#'   if the input `x` is `NULL`.
+#'
+#' @section Notes:
+#' * Non-integer numeric values will typically be coerced or truncated; however,
+#'     infinite values will trigger an error to prevent invalid coordinate
+#'     generation.
+#' @seealso [col2int()]
+#'
 #' @examples
+#' # Convert a single index
+#' int2col(27)
+#'
+#' # Convert a sequence of indices
 #' int2col(1:10)
+#'
+#' # Handle large column indices
+#' int2col(c(702, 703, 16384))
+#'
+#' @export
 int2col <- function(x) {
   if (is.null(x)) return(NULL)
 
@@ -25,16 +58,57 @@ check_range <- function(x) {
   any(r < 1 | r > 16384)
 }
 
-#' Convert spreadsheet column to integer
+#' Convert spreadsheet column notation to integers
 #'
-#' Converts a spreadsheet column in `A1` notation to an integer.
-#' `"A"` is `1`, `"B"` is `2`, ..., `"Z"` is `26` and `"AA"` is `27`.
+#' @description
+#' `col2int()` transforms spreadsheet-style column identifiers (e.g., "A", "B", "AA")
+#' into their corresponding integer indices. This utility is fundamental for
+#' programmatic data manipulation, where "A" is mapped to 1, "B" to 2, and "ZZ"
+#' to 702.
 #'
-#' @param x A character vector
-#' @return An integer column label (or `NULL` if `x` is `NULL`)
-#' @export
+#' @details
+#' The function is designed to handle various input formats encountered during
+#' spreadsheet data processing. In addition to single column labels, it supports
+#' range notation using the colon operator (e.g., "A:C"). When a range is
+#' detected, the function internally expands the notation into a complete
+#' sequence of integers (e.g., 1, 2, 3). This behavior is particularly useful
+#' when passing column selections to functions like [wb_to_df()] or [wb_read()].
+#'
+#' Input validation ensures that only atomic vectors are processed. If the input
+#' is already numeric or a factor, the function ensures the values fall within
+#' the valid spreadsheet column range before coercion to integers. Note that
+#' the presence of `NA` values in the input will trigger an error to maintain
+#' data integrity during index calculation.
+#'
+#' @param x A character vector of column labels, a numeric vector of indices,
+#'   or a factor. Supports range notation like "A:Z".
+#'
+#' @return An integer vector representing the column indices. Returns `NULL`
+#'   if the input `x` is `NULL`, or an empty integer vector if the length of
+#'   `x` is zero.
+#'
+#' @section Notes:
+#' * Range expansion via `:` is performed iteratively until all sequences are
+#'     resolved into individual integer components.
+#' * In compliance with spreadsheet software standards, the function validates
+#'     that indices do not exceed the maximum allowable column limit.
+#'
+#' @seealso [int2col()]
+#'
 #' @examples
-#' col2int(LETTERS)
+#' # Convert standard labels
+#' col2int(c("A", "B", "Z"))
+#'
+#' # Convert ranges to integer sequences
+#' col2int("A:C")
+#'
+#' # Mix individual columns and ranges
+#' col2int(c("A", "C:E", "G"))
+#'
+#' # Handle numeric inputs
+#' col2int(c(1, 2, 26))
+#'
+#' @export
 col2int <- function(x) {
   if (is.null(x)) return(NULL)
   if (!is.atomic(x)) {
