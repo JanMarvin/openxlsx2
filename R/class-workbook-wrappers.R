@@ -4978,27 +4978,62 @@ wb_add_ignore_error <- function(
 
 #' Modify the default view of a worksheet
 #'
-#' This helps set a worksheet's appearance, such as the zoom, whether to show grid lines
+#' @description
+#' The `wb_set_sheetview()` function controls the visual presentation of a
+#' worksheet. It allows you to toggle UI elements like grid lines, row/column
+#' headers, and formula visibility, as well as setting the zoom level and
+#' view mode (e.g., Normal vs. Page Layout).
 #'
-#' @param wb A Workbook object
-#' @param sheet sheet
-#' @param color_id,default_grid_color Integer: A color, default is 64
-#' @param right_to_left Logical: if `TRUE` column ordering is right  to left
-#' @param show_formulas Logical: if `TRUE` cell formulas are shown
-#' @param show_grid_lines Logical: if `TRUE` the worksheet grid is shown
-#' @param show_outline_symbols Logical: if `TRUE` outline symbols are shown
-#' @param show_row_col_headers Logical: if `TRUE` row and column headers are shown
-#' @param show_ruler Logical: if `TRUE` a ruler is shown in page layout view
-#' @param show_white_space Logical: if `TRUE` margins are shown in page layout view
-#' @param show_zeros Logical: if `FALSE` cells containing zero are shown blank if `show_formulas = FALSE`
-#' @param tab_selected Integer: zero vector indicating the selected tab
-#' @param top_left_cell Cell: the cell shown in the top left corner / or top right with rightToLeft
-#' @param view View: "normal", "pageBreakPreview" or "pageLayout"
-#' @param window_protection Logical: if `TRUE` the panes are protected
-#' @param workbook_view_id integer: Pointing to some other view inside the workbook
+#' @details
+#' Sheet views are saved properties that tell the spreadsheet application
+#' how to render the sheet upon opening. These settings are specific to the
+#' worksheet and do not affect the actual data or styles of the cells.
+#'
+#' Common Use Cases:
+#' * Zooming: Use `zoom_scale` to make large datasets more readable or
+#'     to provide a high-level dashboard view.
+#' * Clean Layouts: For reports or dashboards, setting `show_grid_lines = FALSE`
+#'     and `show_row_col_headers = FALSE` creates a cleaner, application-like
+#'     interface.
+#' * Audit Mode: Setting `show_formulas = TRUE` is helpful for debugging
+#'     complex spreadsheets by displaying the formulas directly in the cells.
+#' * Right-to-Left: Essential for spreadsheets in languages like Arabic
+#'     or Hebrew.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param color_id,default_grid_color Integer; internal color index for grid
+#'   lines. Default is 64 (automatic).
+#' @param right_to_left Logical; if `TRUE`, column ordering is right-to-left.
+#' @param show_formulas Logical; if `TRUE`, cells display their formulas
+#'   instead of calculated values.
+#' @param show_grid_lines Logical; if `TRUE` (default), the worksheet grid
+#'   lines are visible.
+#' @param show_outline_symbols Logical; if `TRUE`, shows symbols for grouped
+#'   rows or columns.
+#' @param show_row_col_headers Logical; if `TRUE`, shows the letters (columns)
+#'   and numbers (rows) at the edges of the sheet.
+#' @param show_ruler Logical; if `TRUE`, a ruler is shown in "Page Layout" view.
+#' @param show_white_space Logical; if `TRUE`, margins and page gaps are shown
+#'   in "Page Layout" view.
+#' @param show_zeros Logical; if `FALSE`, cells containing a value of zero
+#'   appear blank.
+#' @param tab_selected Integer; a zero-based index indicating if this sheet
+#'   tab is selected.
+#' @param top_left_cell Character; the address of the cell that should be
+#'   positioned in the top-left corner of the view (e.g., "B10").
+#' @param view Character; the view mode. One of `"normal"`, `"pageBreakPreview"`,
+#'   or `"pageLayout"`.
+#' @param window_protection Logical; if `TRUE`, the panes within the sheet
+#'   view are protected.
+#' @param workbook_view_id Integer; links the sheet view to a specific
+#'   global workbook view.
 #' @param zoom_scale,zoom_scale_normal,zoom_scale_page_layout_view,zoom_scale_sheet_layout_view
-#'   Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
-#' @param ... additional arguments
+#'   Integer; the zoom percentage (between 10 and 400).
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()
 #'
