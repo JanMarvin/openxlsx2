@@ -20,33 +20,55 @@ wb_add_image(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{A name or index of a worksheet}
+\item{sheet}{The name or index of the worksheet to receive the image.
+Defaults to the current sheet.}
 
-\item{dims}{Dimensions where to plot. Default absolute anchor, single cell (eg. "A1")
-oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor}
+\item{dims}{A character string defining the placement. A single cell (e.g., "A1")
+uses a one-cell anchor; a range (e.g., "A1:D4") uses a two-cell anchor.}
 
-\item{file}{An image file. Valid file types are:\code{ "jpeg"}, \code{"png"}, \code{"bmp"}}
+\item{file}{The path to the image file. Supported formats are JPEG, PNG, and BMP.}
 
-\item{width}{Width of figure.}
+\item{width, height}{The numeric width and height of the image.}
 
-\item{height}{Height of figure.}
+\item{row_offset, col_offset}{Offset vectors for fine-tuning the position within
+the anchor cell(s).}
 
-\item{row_offset}{offset vector for one or two cell anchor within cell (row)}
+\item{units}{The units for \code{width} and \code{height}. Must be one of \code{"in"} (inches),
+\code{"cm"} (centimeters), or \code{"px"} (pixels).}
 
-\item{col_offset}{offset vector for one or two cell anchor within cell (column)}
+\item{dpi}{The resolution (dots per inch) used for conversion when \code{units}
+is set to \code{"px"}. Defaults to 300.}
 
-\item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
+\item{address}{An optional character string specifying a URL, file path, or
+"mailto:" link to be opened when the image is clicked.}
 
-\item{dpi}{Image resolution used for conversion between units.}
-
-\item{address}{An optional character string specifying an external URL, relative or absolute path to a file, or "mailto:" string (e.g. "mailto:example@example.com") that will be opened when the image is clicked.}
-
-\item{...}{additional arguments}
+\item{...}{Additional arguments. Includes support for legacy \code{start_row} and
+\code{start_col} parameters.}
 }
 \description{
-Insert an image into a worksheet
+The \code{wb_add_image()} function embeds external image files into a worksheet. It
+supports standard raster formats and provides granular control over positioning
+through a variety of anchoring methods. Images can be anchored to absolute
+positions, individual cells, or defined ranges, and can optionally function
+as clickable hyperlinks.
+}
+\details{
+Image placement is determined by the \code{dims} argument and internal anchoring
+logic. If a single cell is provided (e.g., "A1"), the image is placed using a
+one-cell anchor where the top-left corner is fixed to the cell. If a range
+is provided (e.g., "A1:D4"), a two-cell anchor is utilized, which can cause
+the image to scale with the underlying rows and columns.
+
+Position offsets (\code{row_offset} and \code{col_offset}) allow for sub-cell precision
+by shifting the image from its anchor point. Internally, all dimensions are
+converted to English Metric Units (EMUs), where 1 inch equals 914,400 EMUs,
+ensuring high-fidelity rendering across different display scales.
+
+Supported file types include \code{"jpeg"}, \code{"png"}, and \code{"bmp"}. If an \code{address}
+is provided, the function creates a relationship to an external target or
+email, transforming the image into a functional hyperlink.
 }
 \examples{
 img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")

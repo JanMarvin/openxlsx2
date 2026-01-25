@@ -3278,21 +3278,47 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 
 #' Insert an image into a worksheet
 #'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param dims Dimensions where to plot. Default absolute anchor, single cell (eg. "A1")
-#'   oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor
-#' @param file An image file. Valid file types are:` "jpeg"`, `"png"`, `"bmp"`
-#' @param width Width of figure.
-#' @param height Height of figure.
-#' @param row_offset offset vector for one or two cell anchor within cell (row)
-#' @param col_offset offset vector for one or two cell anchor within cell (column)
-#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
-#' @param dpi Image resolution used for conversion between units.
-#' @param address An optional character string specifying an external URL, relative or absolute path to a file, or "mailto:" string (e.g. "mailto:example@@example.com") that will be opened when the image is clicked.
-#' @param ... additional arguments
-#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_mschart()] [wb_add_plot()]
-#' @export
+#' @description
+#' The `wb_add_image()` function embeds external image files into a worksheet. It
+#' supports standard raster formats and provides granular control over positioning
+#' through a variety of anchoring methods. Images can be anchored to absolute
+#' positions, individual cells, or defined ranges, and can optionally function
+#' as clickable hyperlinks.
+#'
+#' @details
+#' Image placement is determined by the `dims` argument and internal anchoring
+#' logic. If a single cell is provided (e.g., "A1"), the image is placed using a
+#' one-cell anchor where the top-left corner is fixed to the cell. If a range
+#' is provided (e.g., "A1:D4"), a two-cell anchor is utilized, which can cause
+#' the image to scale with the underlying rows and columns.
+#'
+#' Position offsets (`row_offset` and `col_offset`) allow for sub-cell precision
+#' by shifting the image from its anchor point. Internally, all dimensions are
+#' converted to English Metric Units (EMUs), where 1 inch equals 914,400 EMUs,
+#' ensuring high-fidelity rendering across different display scales.
+#'
+#' Supported file types include `"jpeg"`, `"png"`, and `"bmp"`. If an `address`
+#' is provided, the function creates a relationship to an external target or
+#' email, transforming the image into a functional hyperlink.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet to receive the image.
+#'   Defaults to the current sheet.
+#' @param dims A character string defining the placement. A single cell (e.g., "A1")
+#'   uses a one-cell anchor; a range (e.g., "A1:D4") uses a two-cell anchor.
+#' @param file The path to the image file. Supported formats are JPEG, PNG, and BMP.
+#' @param width,height The numeric width and height of the image.
+#' @param row_offset,col_offset Offset vectors for fine-tuning the position within
+#'   the anchor cell(s).
+#' @param units The units for `width` and `height`. Must be one of `"in"` (inches),
+#'   `"cm"` (centimeters), or `"px"` (pixels).
+#' @param dpi The resolution (dots per inch) used for conversion when `units`
+#'   is set to `"px"`. Defaults to 300.
+#' @param address An optional character string specifying a URL, file path, or
+#'   "mailto:" link to be opened when the image is clicked.
+#' @param ... Additional arguments. Includes support for legacy `start_row` and
+#'   `start_col` parameters.
+#'
 #' @examples
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 #'
@@ -3303,6 +3329,8 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 #'   add_image(dims = "B2", file = img)$
 #'   add_worksheet()$
 #'   add_image(dims = "G3", file = img, width = 15, height = 12, units = "cm")
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_mschart()] [wb_add_plot()]
+#' @export
 wb_add_image <- function(
   wb,
   sheet      = current_sheet(),
