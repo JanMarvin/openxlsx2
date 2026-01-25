@@ -7,6 +7,7 @@
 - Provide new SHA base password hash based on `openssl`. This will be
   used if `openssl` is installed, otherwise the legacy implementation
   will be used.
+  [\#1538](https://github.com/JanMarvin/openxlsx2/pull/1538)
 
 ### Fixes
 
@@ -16,10 +17,13 @@
   [`utils::zip()`](https://rdrr.io/r/utils/zip.html), but never passed
   `Sys.which("zip")`. This has been corrected.
   [\#1533](https://github.com/JanMarvin/openxlsx2/pull/1533)
+- Fix reading uninitialized cells
+  [\#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
 
 ### Internal Changes
 
 - Cleanup and remove `waldo` from `testthat` helper functions
+- Update many manual pages
 
 ------------------------------------------------------------------------
 
