@@ -4843,9 +4843,16 @@ wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
 
 #' Add sparklines to a worksheet
 #'
-#' @param wb A `wbWorkbook`
-#' @param sheet sheet to add the sparklines to
-#' @param sparklines sparklines object created with [create_sparklines()]
+#' @description
+#' `wb_add_sparklines()` takes the XML definitions created by [create_sparklines()]
+#' and embeds them into the specified worksheet of a `wbWorkbook`.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet where the sparklines will
+#'   be rendered. Defaults to the current sheet.
+#' @param sparklines A character vector of sparkline XML strings generated
+#'   by [create_sparklines()].
+#'
 #' @seealso [create_sparklines()]
 #' @examples
 #'  sl <- create_sparklines("Sheet 1", dims = "A3:K3", sqref = "L3")

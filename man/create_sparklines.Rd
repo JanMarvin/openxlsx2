@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper-functions.R
 \name{create_sparklines}
 \alias{create_sparklines}
-\title{Create sparklines object}
+\title{Create a sparklines object}
 \usage{
 create_sparklines(
   sheet = current_sheet(),
@@ -38,78 +38,66 @@ create_sparklines(
 )
 }
 \arguments{
-\item{sheet}{sheet}
+\item{sheet}{The name of the worksheet where the data originates.}
 
-\item{dims}{Cell range of cells used to create the sparklines}
+\item{dims}{A character string defining the source data range (e.g., "A1:E1").}
 
-\item{sqref}{Cell range of the destination of the sparklines.}
+\item{sqref}{A character string defining the destination cell(s) (e.g., "F1").}
 
-\item{type}{Either \code{NULL}, \code{stacked} or \code{column}}
+\item{type}{The type of sparkline: \code{NULL} (line), \code{"column"}, or \code{"stacked"}.}
 
-\item{negative}{negative}
+\item{negative}{Logical; highlight negative data points.}
 
-\item{display_empty_cells_as}{Either \code{gap}, \code{span} or \code{zero}}
+\item{display_empty_cells_as}{How to handle gaps in data: \code{"gap"},
+\code{"span"} (connect points), or \code{"zero"}.}
 
-\item{markers}{markers add marker to line}
+\item{markers}{Logical; highlight all data points (Line type only).}
 
-\item{high}{highlight highest value}
+\item{high, low, first, last}{Logical; highlight the maximum, minimum,
+first, or last data points in the series.}
 
-\item{low}{highlight lowest value}
+\item{color_series, color_negative, color_axis, color_markers, color_first, }{color_last,color_high,color_low \code{\link[=wb_color]{wb_color()}} objects defining the colors
+for various sparkline elements.}
 
-\item{first}{highlight first value}
+\item{manual_max, manual_min}{Numeric; optional fixed values for the y-axis.}
 
-\item{last}{highlight last value}
+\item{line_weight}{Numeric; the thickness of the line (Line type only).}
 
-\item{color_series}{colorSeries}
+\item{display_x_axis}{Logical; show a horizontal axis (useful for win/loss).}
 
-\item{color_negative}{colorNegative}
+\item{direction}{The data orientation: \code{"row"} (default) or \code{"col"}.
+If \code{NULL}, the function attempts to infer direction from the dimensions.}
 
-\item{color_axis}{colorAxis}
-
-\item{color_markers}{colorMarkers}
-
-\item{color_first}{colorFirst}
-
-\item{color_last}{colorLast}
-
-\item{color_high}{colorHigh}
-
-\item{color_low}{colorLow}
-
-\item{manual_max}{manualMax}
-
-\item{manual_min}{manualMin}
-
-\item{line_weight}{lineWeight}
-
-\item{date_axis}{dateAxis}
-
-\item{display_x_axis}{displayXAxis}
-
-\item{display_hidden}{displayHidden}
-
-\item{min_axis_type}{minAxisType}
-
-\item{max_axis_type}{maxAxisType}
-
-\item{right_to_left}{rightToLeft}
-
-\item{direction}{Either \code{NULL}, \code{row} (or \code{1}) or \code{col} (or \code{2}). Should
-sparklines be created in the row or column direction? Defaults to \code{NULL}.
-When \code{NULL} the direction is inferred from \code{dims} in cases where \code{dims}
-spans a single row or column and defaults to \code{row} otherwise.}
-
-\item{...}{additional arguments}
+\item{...}{Additional arguments.}
 }
 \value{
-A string containing XML code
+A character string containing the XML structure for the sparkline group.
 }
 \description{
-Create a sparkline to be added a workbook with \code{\link[=wb_add_sparklines]{wb_add_sparklines()}}
+\code{create_sparklines()} defines a set of sparklines. Compact, word-sized graphics
+that reside within a single cell. These are ideal for showing trends in a
+series of values, such as seasonal increases or decreases, or economic cycles,
+directly alongside the data.
 }
 \details{
-Colors are all predefined to be rgb. Maybe theme colors can be
-used too.
+Sparklines are added to a workbook in "groups." A group shares the same
+visual properties (type, colors, line weight, and axis settings). Within a
+group, multiple individual sparklines are defined by pairing a data range
+(\code{dims}) with a destination cell (\code{sqref}).
+
+Types of Sparklines:
+\itemize{
+\item \code{NULL} (Default): A standard line chart.
+\item \code{"column"}: A small column chart.
+\item \code{"stacked"}: Often referred to as a "Win/Loss" chart, where each data point
+is represented by a block indicating a positive or negative value.
+}
+
+Directionality:
+The \code{direction} argument determines how the \code{dims} range is parsed. If you
+provide a multi-cell range like "A1:E10" as data for 10 sparklines,
+\code{direction = "row"} will treat each row as a separate data series, while
+\code{direction = "col"} will treat each column as a series.
 }
 \examples{
 # create multiple sparklines
