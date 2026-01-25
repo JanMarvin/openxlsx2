@@ -1498,24 +1498,49 @@ wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
 # images ------------------------------------------------------------------
 
 
-#' Insert the current plot into a worksheet
+#' Insert the current R plot into a worksheet
 #'
-#' The current plot is saved to a temporary image file using
-#' [grDevices::dev.copy()] This file is then written to the workbook using
-#' [wb_add_image()].
+#' @description
+#' The `wb_add_worksheet()` function captures the active R graphics device and
+#' embeds the displayed plot into a worksheet. This is achieved by copying the
+#' current plot to a temporary image file via [grDevices::dev.copy()] and
+#' subsequently invoking [wb_add_image()] to handle the workbook integration.
 #'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @param row_offset,col_offset Offset for column and row
-#' @param width Width of figure. Defaults to `6` in.
-#' @param height Height of figure . Defaults to `4` in.
-#' @param file_type File type of image
-#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
-#' @param dpi Image resolution
-#' @param ... additional arguments
-#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()]
-#' @export
+#' @details
+#' Because this function relies on the active graphics device, a plot must be
+#' currently displayed in the R session (e.g., in the Plots pane or a separate
+#' window) for the capture to succeed. The function supports various file
+#' formats for the intermediate transition, including `"png"`, `"jpeg"`,
+#' `"tiff"`, and `"bmp"`.
+#'
+#' Positioning is managed through the spreadsheet coordinate system. Using a
+#' single cell in `dims` (e.g., "A1") establishes a one-cell anchor where the
+#' plot maintains its absolute dimensions. Providing a range (e.g., "A1:E10")
+#' creates a two-cell anchor, which may result in the plot resizing if columns
+#' or rows within that range are adjusted in spreadsheet software.
+#'
+#' For programmatic control over the output quality, the `dpi` argument
+#' influences the resolution of the captured device. Users working with
+#' high-resolution displays or requiring print-quality outputs should adjust
+#' the `dpi` and `units` accordingly.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet where the plot will be
+#'   inserted. Defaults to the current sheet.
+#' @param dims A character string defining the anchor point or range (e.g.,
+#'   "A1" or "A1:D4").
+#' @param width,height The numeric dimensions of the exported plot. Defaults
+#'   to 6x4 inches.
+#' @param row_offset,col_offset Numeric vectors for sub-cell positioning
+#'   offsets.
+#' @param file_type The image format for the temporary capture. Supported
+#'   types include `"png"`, `"jpeg"`, `"tiff"`, and `"bmp"`.
+#' @param units The measurement units for `width` and `height`. Must be
+#'   one of `"in"`, `"cm"`, or `"px"`.
+#' @param dpi The resolution in dots per inch for the image conversion.
+#' @param ... Additional arguments. Supports the deprecated `start_row`
+#'   and `start_col` parameters for backward compatibility.
+#'
 #' @examples
 #' if (requireNamespace("ggplot2") && interactive()) {
 #' ## Create a new workbook
@@ -1541,6 +1566,8 @@ wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
 #' wb$add_plot(1, dims = "J2", width = 16, height = 10, file_type = "png", units = "cm")
 #'
 #' }
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()]
+#' @export
 wb_add_plot <- function(
     wb,
     sheet      = current_sheet(),

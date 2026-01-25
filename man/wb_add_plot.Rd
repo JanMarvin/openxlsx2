@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_plot}
 \alias{wb_add_plot}
-\title{Insert the current plot into a worksheet}
+\title{Insert the current R plot into a worksheet}
 \usage{
 wb_add_plot(
   wb,
@@ -19,30 +19,54 @@ wb_add_plot(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{A name or index of a worksheet}
+\item{sheet}{The name or index of the worksheet where the plot will be
+inserted. Defaults to the current sheet.}
 
-\item{dims}{Worksheet dimension, single cell ("A1") or cell range ("A1:D4")}
+\item{dims}{A character string defining the anchor point or range (e.g.,
+"A1" or "A1:D4").}
 
-\item{width}{Width of figure. Defaults to \code{6} in.}
+\item{width, height}{The numeric dimensions of the exported plot. Defaults
+to 6x4 inches.}
 
-\item{height}{Height of figure . Defaults to \code{4} in.}
+\item{row_offset, col_offset}{Numeric vectors for sub-cell positioning
+offsets.}
 
-\item{row_offset, col_offset}{Offset for column and row}
+\item{file_type}{The image format for the temporary capture. Supported
+types include \code{"png"}, \code{"jpeg"}, \code{"tiff"}, and \code{"bmp"}.}
 
-\item{file_type}{File type of image}
+\item{units}{The measurement units for \code{width} and \code{height}. Must be
+one of \code{"in"}, \code{"cm"}, or \code{"px"}.}
 
-\item{units}{Units of width and height. Can be \code{"in"}, \code{"cm"} or \code{"px"}}
+\item{dpi}{The resolution in dots per inch for the image conversion.}
 
-\item{dpi}{Image resolution}
-
-\item{...}{additional arguments}
+\item{...}{Additional arguments. Supports the deprecated \code{start_row}
+and \code{start_col} parameters for backward compatibility.}
 }
 \description{
-The current plot is saved to a temporary image file using
-\code{\link[grDevices:dev2]{grDevices::dev.copy()}} This file is then written to the workbook using
-\code{\link[=wb_add_image]{wb_add_image()}}.
+The \code{wb_add_worksheet()} function captures the active R graphics device and
+embeds the displayed plot into a worksheet. This is achieved by copying the
+current plot to a temporary image file via \code{\link[grDevices:dev2]{grDevices::dev.copy()}} and
+subsequently invoking \code{\link[=wb_add_image]{wb_add_image()}} to handle the workbook integration.
+}
+\details{
+Because this function relies on the active graphics device, a plot must be
+currently displayed in the R session (e.g., in the Plots pane or a separate
+window) for the capture to succeed. The function supports various file
+formats for the intermediate transition, including \code{"png"}, \code{"jpeg"},
+\code{"tiff"}, and \code{"bmp"}.
+
+Positioning is managed through the spreadsheet coordinate system. Using a
+single cell in \code{dims} (e.g., "A1") establishes a one-cell anchor where the
+plot maintains its absolute dimensions. Providing a range (e.g., "A1:E10")
+creates a two-cell anchor, which may result in the plot resizing if columns
+or rows within that range are adjusted in spreadsheet software.
+
+For programmatic control over the output quality, the \code{dpi} argument
+influences the resolution of the captured device. Users working with
+high-resolution displays or requiring print-quality outputs should adjust
+the \code{dpi} and \code{units} accordingly.
 }
 \examples{
 if (requireNamespace("ggplot2") && interactive()) {
