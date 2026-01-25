@@ -198,44 +198,40 @@ guess_col_type <- function(tt) {
   types <- vector("numeric", NCOL(tt))
   names(types) <- names(tt)
 
-  # Identify the unique types present in the data frame
   uu <- lapply(tt, unique)
+
   unique_types <- unique(unlist(uu))
   unique_types[is.na(unique_types)] <- 1L
 
-  # Function to check column type
-  check_col_type <- function(x, type_char) {
-    all(unique(x) == type_char, na.rm = TRUE)
+  check_col_type <- function(u, type_char) {
+    all(u == type_char, na.rm = TRUE)
   }
 
-  check_type <- function(x) vapply(uu, check_col_type, NA, type_char = x)
+  check_type <- function(type_char) {
+    vapply(uu, check_col_type, FALSE, type_char = type_char)
+  }
 
   # Check for each type and update types vector accordingly
   if (1L %in% unique_types) {
     col_num <- check_type(1L)
     types[col_num] <- 1L
   }
-
   if (2L %in% unique_types) {
     col_dte <- check_type(2L)
     types[col_dte & types == 0] <- 2L
   }
-
   if (3L %in% unique_types) {
     col_posix <- check_type(3L)
     types[col_posix & types == 0] <- 3L
   }
-
   if (4L %in% unique_types) {
     col_log <- check_type(4L)
     types[col_log & types == 0] <- 4L
   }
-
   if (5L %in% unique_types) {
     col_hms <- check_type(5L)
     types[col_hms & types == 0] <- 5L
   }
-
   if (6L %in% unique_types) {
     col_fml <- check_type(6L)
     types[col_fml & types == 0] <- 6L
