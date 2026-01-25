@@ -4270,27 +4270,43 @@ wb_add_named_style <- function(
   )
 }
 
-#' Set a dxfs styling for the workbook
+#' Set a dxfs style for the workbook
 #'
-#' These styles are used with conditional formatting and custom table styles.
+#' @description
+#' The `wb_add_dxfs_style()` function defines a "Differential Formatting" (DXF)
+#' style within a `wbWorkbook`. Unlike standard styles (XFs), which are assigned
+#' directly to cells, DXF styles are used as templates for dynamic formatting
+#' features such as conditional formatting rules and custom table styles.
 #'
-#' @param wb A Workbook object.
-#' @param name the style name
-#' @param font_name the font name
-#' @param font_size the font size
-#' @param font_color the font color (a `wb_color()` object)
-#' @param num_fmt the number format
-#' @param border logical if borders are applied
-#' @param border_color the border color
-#' @param border_style the border style
-#' @param bg_fill any background fill
-#' @param gradient_fill any gradient fill
-#' @param text_bold logical if text is bold
-#' @param text_italic logical if text is italic
-#' @param text_underline logical if text is underlined
-#' @param ... additional arguments passed to [create_dxfs_style()]
-#' @family workbook styling functions
-#' @return The Workbook object, invisibly
+#' @details
+#' DXF styles are differential because they usually only define a subset of cell
+#' properties (e.g., just the font color or a background fill). When a conditional
+#' formatting rule is triggered, the properties defined in the DXF style are
+#' layered on top of the cell's existing base style.
+#'
+#' This function acts as a wrapper around [create_dxfs_style()], allowing you
+#' to bundle font, border, fill, and number format attributes into a named
+#' style that can be referenced later by its `name`.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param name A unique character string to identify the DXF style.
+#' @param font_name Character; the font name.
+#' @param font_size Numeric; the font size.
+#' @param font_color A [wb_color()] object for the font.
+#' @param num_fmt The number format string or ID.
+#' @param border Logical; if `TRUE`, applies borders to the style.
+#' @param border_color A [wb_color()] object for the borders.
+#' @param border_style Character; the border style (e.g., "thin", "thick").
+#'   Defaults to the "openxlsx2.borderStyle" option.
+#' @param bg_fill A [wb_color()] object for the background fill.
+#' @param gradient_fill An optional XML string for a gradient fill pattern.
+#' @param text_bold Logical; if `TRUE`, applies bold formatting.
+#' @param text_italic Logical; if `TRUE`, applies italic formatting.
+#' @param text_underline Logical; if `TRUE`, applies underline formatting.
+#' @param ... Additional arguments passed to [create_dxfs_style()].
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
 #' @examples
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb)
@@ -4300,6 +4316,7 @@ wb_add_named_style <- function(
 #'    font_color = wb_color(hex = "FF9C0006"),
 #'    bg_fill = wb_color(hex = "FFFFC7CE")
 #'   )
+#' @family workbook styling functions
 #' @export
 wb_add_dxfs_style <- function(
   wb,
