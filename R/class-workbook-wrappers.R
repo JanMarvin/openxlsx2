@@ -1642,14 +1642,51 @@ wb_add_drawing <- function(
   )
 }
 
-#' Add mschart object to a worksheet
+#' Add an mschart object to a worksheet
 #'
-#' @param wb a workbook
-#' @param sheet the sheet on which the graph will appear
-#' @param dims the dimensions where the sheet will appear
-#' @param graph mschart object
-#' @param col_offset,row_offset offsets for column and row
-#' @param ... additional arguments
+#' @description
+#' The `wb_add_mschart()` function allows for the seamless integration of native
+#' charts created via the `mschart` package into a worksheet. Unlike static
+#' images or plots, these are dynamic, native spreadsheet charts that remain
+#' editable and can utilize data already present in the workbook or data
+#' provided directly at creation.
+#'
+#' @details
+#' The function acts as a bridge between the `ms_chart` objects and the
+#' spreadsheet's internal XML drawing structure. It interprets the chart settings
+#' and data series to generate the necessary DrawingML.
+#'
+#' There are two primary workflows for adding charts:
+#' 1. External Data: If the `graph` object contains a standard data frame,
+#'    `wb_add_mschart()` automatically writes this data to the worksheet
+#'    before rendering the chart.
+#' 2. Internal Data: If the `graph` object is initialized using a `wb_data`
+#'    object (created via [wb_data()]), the chart will directly reference the
+#'    existing cell ranges in the worksheet. This is the preferred method for
+#'    maintaining a single source of truth for your data.
+#'
+#' The chart is positioned using the `dims` argument. A single cell anchor
+#' (e.g., "A1") will place the top-left corner of the chart, while a range
+#' (e.g., "E5:L20") will scale the chart to fit that specific area.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet where the chart will be
+#'   placed. Defaults to the current sheet.
+#' @param dims A character string defining the chart's position or range
+#'   (e.g., "A1" or "F4:L20").
+#' @param graph An `ms_chart` object created with the `mschart` package.
+#' @param col_offset,row_offset Numeric values for fine-tuning the chart's
+#'   displacement from its anchor point.
+#' @param ... Additional arguments.
+#'
+#' @section Notes:
+#' * This function requires the `mschart` package to be installed.
+#' * Native charts are highly dependent on the calculation engine of the
+#'     spreadsheet software; if the underlying data changes, the chart will
+#'     update automatically when the file is opened.
+#' * The function generates unique internal IDs for the chart axes to ensure
+#'     compliance with the OpenXML specification.
+#'
 #' @examples
 #' if (requireNamespace("mschart")) {
 #' require(mschart)

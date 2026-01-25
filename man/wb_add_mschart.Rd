@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_mschart}
 \alias{wb_add_mschart}
-\title{Add mschart object to a worksheet}
+\title{Add an mschart object to a worksheet}
 \usage{
 wb_add_mschart(
   wb,
@@ -15,21 +15,60 @@ wb_add_mschart(
 )
 }
 \arguments{
-\item{wb}{a workbook}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{the sheet on which the graph will appear}
+\item{sheet}{The name or index of the worksheet where the chart will be
+placed. Defaults to the current sheet.}
 
-\item{dims}{the dimensions where the sheet will appear}
+\item{dims}{A character string defining the chart's position or range
+(e.g., "A1" or "F4:L20").}
 
-\item{graph}{mschart object}
+\item{graph}{An \code{ms_chart} object created with the \code{mschart} package.}
 
-\item{col_offset, row_offset}{offsets for column and row}
+\item{col_offset, row_offset}{Numeric values for fine-tuning the chart's
+displacement from its anchor point.}
 
-\item{...}{additional arguments}
+\item{...}{Additional arguments.}
 }
 \description{
-Add mschart object to a worksheet
+The \code{wb_add_mschart()} function allows for the seamless integration of native
+charts created via the \code{mschart} package into a worksheet. Unlike static
+images or plots, these are dynamic, native spreadsheet charts that remain
+editable and can utilize data already present in the workbook or data
+provided directly at creation.
 }
+\details{
+The function acts as a bridge between the \code{ms_chart} objects and the
+spreadsheet's internal XML drawing structure. It interprets the chart settings
+and data series to generate the necessary DrawingML.
+
+There are two primary workflows for adding charts:
+\enumerate{
+\item External Data: If the \code{graph} object contains a standard data frame,
+\code{wb_add_mschart()} automatically writes this data to the worksheet
+before rendering the chart.
+\item Internal Data: If the \code{graph} object is initialized using a \code{wb_data}
+object (created via \code{\link[=wb_data]{wb_data()}}), the chart will directly reference the
+existing cell ranges in the worksheet. This is the preferred method for
+maintaining a single source of truth for your data.
+}
+
+The chart is positioned using the \code{dims} argument. A single cell anchor
+(e.g., "A1") will place the top-left corner of the chart, while a range
+(e.g., "E5:L20") will scale the chart to fit that specific area.
+}
+\section{Notes}{
+
+\itemize{
+\item This function requires the \code{mschart} package to be installed.
+\item Native charts are highly dependent on the calculation engine of the
+spreadsheet software; if the underlying data changes, the chart will
+update automatically when the file is opened.
+\item The function generates unique internal IDs for the chart axes to ensure
+compliance with the OpenXML specification.
+}
+}
+
 \examples{
 if (requireNamespace("mschart")) {
 require(mschart)
