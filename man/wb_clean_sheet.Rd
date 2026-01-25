@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_clean_sheet}
 \alias{wb_clean_sheet}
-\title{Remove all values in a worksheet}
+\title{Clear content and formatting from a worksheet}
 \usage{
 wb_clean_sheet(
   wb,
@@ -16,25 +16,60 @@ wb_clean_sheet(
 )
 }
 \arguments{
-\item{wb}{A Workbook object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{sheet to clean}
+\item{sheet}{The name or index of the worksheet to clean. Defaults to the
+current sheet.}
 
-\item{dims}{spreadsheet dimensions (optional)}
+\item{dims}{Optional character string defining a cell range (e.g., "A1:G20").
+If \code{NULL}, the entire worksheet is cleaned.}
 
-\item{numbers}{remove all numbers}
+\item{numbers}{Logical; if \code{TRUE}, removes all numeric values, booleans,
+and error codes.}
 
-\item{characters}{remove all characters}
+\item{characters}{Logical; if \code{TRUE}, removes all text strings (shared,
+inline, or formula-based strings).}
 
-\item{styles}{remove all styles}
+\item{styles}{Logical; if \code{TRUE}, removes all cell styles and resets
+formatting to default.}
 
-\item{merged_cells}{remove all merged_cells}
+\item{merged_cells}{Logical; if \code{TRUE}, unmerges all cells (or those
+within \code{dims}).}
 
-\item{hyperlinks}{remove all hyperlinks}
+\item{hyperlinks}{Logical; if \code{TRUE}, removes hyperlinks from the specified
+region.}
 }
 \value{
-A Workbook object
+The \link{wbWorkbook} object, invisibly.
 }
 \description{
-Remove content of a worksheet completely, or a region if specifying \code{dims}.
+The \code{wb_clean_sheet()} function removes data, formulas, and formatting from
+a worksheet. It can be used to wipe an entire sheet clean or to target
+specific cell regions (\code{dims}). This is particularly useful when you want
+to reuse an existing sheet structure but replace the data or reset the styling.
 }
+\details{
+Unlike deleting a worksheet, cleaning a sheet preserves the sheet's
+existence, name, and properties (like tab color or sheet views) while
+emptying the cell-level data.
+
+Selective Removal:
+By toggling the logical arguments, you can choose exactly what to discard.
+For example, you can remove data but keep the cell styles (borders, fills),
+or vice-versa.
+\itemize{
+\item Numbers/Characters: Targeting these specifically allows you to clear
+constants while potentially leaving other elements intact.
+\item Styles: Resets cells to the workbook's default appearance.
+\item Merged Cells: Unmerges ranges; if \code{dims} is provided, only merges
+within that range are broken.
+}
+}
+\section{Notes}{
+
+\itemize{
+\item Currently, this function does not remove objects like images, charts,
+comments, or pivot tables.
+}
+}
+

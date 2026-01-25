@@ -3509,19 +3509,52 @@ wb_add_chart_xml <- function(
 }
 
 
-#' Remove all values in a worksheet
+#' Clear content and formatting from a worksheet
 #'
-#' Remove content of a worksheet completely, or a region if specifying `dims`.
+#' @description
+#' The `wb_clean_sheet()` function removes data, formulas, and formatting from
+#' a worksheet. It can be used to wipe an entire sheet clean or to target
+#' specific cell regions (`dims`). This is particularly useful when you want
+#' to reuse an existing sheet structure but replace the data or reset the styling.
 #'
-#' @param wb A Workbook object
-#' @param sheet sheet to clean
-#' @param dims spreadsheet dimensions (optional)
-#' @param numbers remove all numbers
-#' @param characters remove all characters
-#' @param styles remove all styles
-#' @param merged_cells remove all merged_cells
-#' @param hyperlinks remove all hyperlinks
-#' @return A Workbook object
+#' @details
+#' Unlike deleting a worksheet, cleaning a sheet preserves the sheet's
+#' existence, name, and properties (like tab color or sheet views) while
+#' emptying the cell-level data.
+#'
+#' Selective Removal:
+#' By toggling the logical arguments, you can choose exactly what to discard.
+#' For example, you can remove data but keep the cell styles (borders, fills),
+#' or vice-versa.
+#'
+#' * Numbers/Characters: Targeting these specifically allows you to clear
+#'     constants while potentially leaving other elements intact.
+#' * Styles: Resets cells to the workbook's default appearance.
+#' * Merged Cells: Unmerges ranges; if `dims` is provided, only merges
+#'     within that range are broken.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet to clean. Defaults to the
+#'   current sheet.
+#' @param dims Optional character string defining a cell range (e.g., "A1:G20").
+#'   If `NULL`, the entire worksheet is cleaned.
+#' @param numbers Logical; if `TRUE`, removes all numeric values, booleans,
+#'   and error codes.
+#' @param characters Logical; if `TRUE`, removes all text strings (shared,
+#'   inline, or formula-based strings).
+#' @param styles Logical; if `TRUE`, removes all cell styles and resets
+#'   formatting to default.
+#' @param merged_cells Logical; if `TRUE`, unmerges all cells (or those
+#'   within `dims`).
+#' @param hyperlinks Logical; if `TRUE`, removes hyperlinks from the specified
+#'   region.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * Currently, this function does not remove objects like images, charts,
+#'     comments, or pivot tables.
+#'
 #' @export
 wb_clean_sheet <- function(
     wb,
