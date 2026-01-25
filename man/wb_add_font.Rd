@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_font}
 \alias{wb_add_font}
-\title{Modify font in a cell region}
+\title{Modify font properties in a cell region}
 \usage{
 wb_add_font(
   wb,
@@ -28,59 +28,93 @@ wb_add_font(
 )
 }
 \arguments{
-\item{wb}{A Workbook object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{the worksheet}
+\item{sheet}{The name or index of the worksheet. Defaults to the current sheet.}
 
-\item{dims}{the cell range}
+\item{dims}{A character string defining the cell range (e.g., "A1:K1").}
 
-\item{name}{Font name: default \code{"Aptos Narrow"}.}
+\item{name}{Character; the font name. Defaults to "Aptos Narrow".}
 
-\item{color}{A \code{\link[=wb_color]{wb_color()}}, the color of the font. Default is "FF000000".}
+\item{color}{A \code{\link[=wb_color]{wb_color()}} object or hex string defining the font color.
+Defaults to black ("FF000000").}
 
-\item{size}{Font size: default is \code{11}.}
+\item{size}{Numeric; the font size. Defaults to 11.}
 
-\item{bold}{Logical, whether the font should be bold.}
+\item{bold}{Logical; applies bold formatting if \code{TRUE}.}
 
-\item{italic}{Logical, whether the font should be italic.}
+\item{italic}{Logical; applies italic formatting if \code{TRUE}.}
 
-\item{outline}{Logical, whether the font should have an outline.}
+\item{outline}{Logical; applies an outline effect to the text.}
 
-\item{strike}{Logical, whether the font should have a strikethrough.}
+\item{strike}{Logical; applies a strikethrough effect.}
 
-\item{underline}{underline, "single" or "double", default: ""}
+\item{underline}{Character; the underline style, such as "single" or "double".}
 
-\item{charset}{Character, the character set to be used. The list of valid IDs can be found in the \strong{Details} section of \code{\link[=fmt_txt]{fmt_txt()}}.}
+\item{charset}{Character; the character set ID. See \code{\link[=fmt_txt]{fmt_txt()}} for details.}
 
-\item{condense}{Logical, whether the font should be condensed.}
+\item{condense}{Logical; whether the font should be condensed.}
 
-\item{extend}{Logical, whether the font should be extended.}
+\item{extend}{Logical; whether the font should be extended.}
 
-\item{family}{Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused}
+\item{family}{Character; the font family index (e.g., "1" for Roman, "2" for Swiss).}
 
-\item{scheme}{Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".}
+\item{scheme}{Character; the font scheme. One of "minor", "major", or "none".}
 
-\item{shadow}{Logical, whether the font should have a shadow.}
+\item{shadow}{Logical; applies a shadow effect to the text.}
 
-\item{vert_align}{Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".}
+\item{vert_align}{Character; vertical alignment. Options are "baseline",
+"superscript", or "subscript".}
 
-\item{update}{Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with \code{\link[=fmt_txt]{fmt_txt()}}.}
+\item{update}{Logical or character vector. Controls whether to overwrite
+the entire font style or only update specific properties.}
 
-\item{...}{...}
+\item{...}{Additional arguments.}
 }
 \value{
+The \link{wbWorkbook} object, invisibly.
+
 A \code{wbWorkbook}, invisibly
 }
 \description{
-Modify the font in a cell region with more precision
-You can specify the font in a cell with other cell styling functions,
-but \code{wb_add_font()} gives you more control.
+The \code{wb_add_font()} function provides granular control over the visual
+appearance of text within a specified cell region. While other styling
+functions include basic font options, \code{wb_add_font()} exposes the full range
+of font attributes supported by the OpenXML specification, allowing for
+precise adjustments to typeface, sizing, color, and emphasis.
 }
 \details{
-\code{wb_add_font()} provides all the options openxml accepts for a font node,
-not all have to be set. Usually \code{name}, \code{size} and \code{color} should be what the user wants.
-Setting \code{update} to \code{NULL} removes the style and resets the cell to the workbook default.
+This function operates on the font node of a cell's style. It is particularly
+powerful when used with the \code{update} argument, which allows users to modify
+specific attributes (like color) while preserving other existing font properties
+(like bold or font name).
+
+For common tasks, adjusting \code{name}, \code{size}, and \code{color} is sufficient.
+However, the function also supports advanced properties like \code{vert_align}
+(for subscripts/superscripts), \code{family} (font categories), and \code{scheme}
+(theme-based font sets).
+
+Note on Updates:
+\itemize{
+\item If \code{update = FALSE} (default), the function applies the new font
+definition as a complete replacement for the existing font style.
+\item If \code{update} is a character vector (e.g., \code{c("color", "size")}), only those
+specific attributes are modified, and all other existing font properties
+are retained.
+\item Setting \code{update = NULL} removes the custom font style entirely, reverting
+the cells to the workbook's default font.
 }
+}
+\section{Notes}{
+
+\itemize{
+\item This function modifies the cell-level style and does not alter rich text
+strings created with \code{\link[=fmt_txt]{fmt_txt()}}.
+\item Font styles are pooled in the workbook's style manager to ensure efficiency
+and XML compliance.
+}
+}
+
 \examples{
  wb <- wb_workbook()
  wb <- wb_add_worksheet(wb, "S1")

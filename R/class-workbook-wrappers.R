@@ -3866,36 +3866,67 @@ wb_add_fill <- function(
   )
 }
 
-#' Modify font in a cell region
+#' Modify font properties in a cell region
 #'
-#' Modify the font in a cell region with more precision
-#' You can specify the font in a cell with other cell styling functions,
-#' but `wb_add_font()` gives you more control.
+#' @description
+#' The `wb_add_font()` function provides granular control over the visual
+#' appearance of text within a specified cell region. While other styling
+#' functions include basic font options, `wb_add_font()` exposes the full range
+#' of font attributes supported by the OpenXML specification, allowing for
+#' precise adjustments to typeface, sizing, color, and emphasis.
 #'
-#' `wb_add_font()` provides all the options openxml accepts for a font node,
-#' not all have to be set. Usually `name`, `size` and `color` should be what the user wants.
-#' Setting `update` to `NULL` removes the style and resets the cell to the workbook default.
+#' @details
+#' This function operates on the font node of a cell's style. It is particularly
+#' powerful when used with the `update` argument, which allows users to modify
+#' specific attributes (like color) while preserving other existing font properties
+#' (like bold or font name).
 #'
-#' @param wb A Workbook object
-#' @param sheet the worksheet
-#' @param dims the cell range
-#' @param name Font name: default `"Aptos Narrow"`.
-#' @param color A [wb_color()], the color of the font. Default is "FF000000".
-#' @param size Font size: default is `11`.
-#' @param bold Logical, whether the font should be bold.
-#' @param italic Logical, whether the font should be italic.
-#' @param outline Logical, whether the font should have an outline.
-#' @param strike Logical, whether the font should have a strikethrough.
-#' @param underline underline, "single" or "double", default: ""
-#' @param family Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused
-#' @param charset Character, the character set to be used. The list of valid IDs can be found in the **Details** section of [fmt_txt()].
-#' @param condense Logical, whether the font should be condensed.
-#' @param scheme Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".
-#' @param shadow Logical, whether the font should have a shadow.
-#' @param extend Logical, whether the font should be extended.
-#' @param vert_align Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".
-#' @param update Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with [fmt_txt()].
-#' @param ... ...
+#' For common tasks, adjusting `name`, `size`, and `color` is sufficient.
+#' However, the function also supports advanced properties like `vert_align`
+#' (for subscripts/superscripts), `family` (font categories), and `scheme`
+#' (theme-based font sets).
+#'
+#' Note on Updates:
+#' * If `update = FALSE` (default), the function applies the new font
+#'   definition as a complete replacement for the existing font style.
+#' * If `update` is a character vector (e.g., `c("color", "size")`), only those
+#'   specific attributes are modified, and all other existing font properties
+#'   are retained.
+#' * Setting `update = NULL` removes the custom font style entirely, reverting
+#'   the cells to the workbook's default font.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1:K1").
+#' @param name Character; the font name. Defaults to "Aptos Narrow".
+#' @param color A [wb_color()] object or hex string defining the font color.
+#'   Defaults to black ("FF000000").
+#' @param size Numeric; the font size. Defaults to 11.
+#' @param bold Logical; applies bold formatting if `TRUE`.
+#' @param italic Logical; applies italic formatting if `TRUE`.
+#' @param outline Logical; applies an outline effect to the text.
+#' @param strike Logical; applies a strikethrough effect.
+#' @param underline Character; the underline style, such as "single" or "double".
+#' @param family Character; the font family index (e.g., "1" for Roman, "2" for Swiss).
+#' @param charset Character; the character set ID. See [fmt_txt()] for details.
+#' @param condense Logical; whether the font should be condensed.
+#' @param scheme Character; the font scheme. One of "minor", "major", or "none".
+#' @param shadow Logical; applies a shadow effect to the text.
+#' @param extend Logical; whether the font should be extended.
+#' @param vert_align Character; vertical alignment. Options are "baseline",
+#'   "superscript", or "subscript".
+#' @param update Logical or character vector. Controls whether to overwrite
+#'   the entire font style or only update specific properties.
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * This function modifies the cell-level style and does not alter rich text
+#'     strings created with [fmt_txt()].
+#' * Font styles are pooled in the workbook's style manager to ensure efficiency
+#'     and XML compliance.
+#'
 #' @examples
 #'  wb <- wb_workbook()
 #'  wb <- wb_add_worksheet(wb, "S1")
