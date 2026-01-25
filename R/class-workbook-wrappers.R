@@ -1032,14 +1032,38 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
 
 #' Add a chartsheet to a workbook
 #'
-#' A chartsheet is a special type of sheet that handles charts output. You must
-#' add a chart to the sheet. Otherwise, this will break the workbook.
+#' @description
+#' The `wb_add_chartsheet()` function appends a specialized chartsheet to a
+#' `wbWorkbook` object. Unlike standard worksheets, which contain a grid of cells,
+#' a chartsheet is dedicated exclusively to the display of a single, full-page
+#' chart.
 #'
-#' @param wb A Workbook object to attach the new chartsheet
-#' @param sheet A name for the new chartsheet
-#' @inheritParams wb_add_worksheet
+#' @details
+#' A chartsheet is a distinct sheet type in the OpenXML specification. It
+#' does not support standard cell data, grid lines, or typical worksheet
+#' features. Its primary purpose is to provide a high-level, focused view of a
+#' graphical representation.
+#'
+#' **Important:** A chartsheet must contain a chart object to be
+#' valid. Adding a chartsheet without subsequently attaching a chart via
+#' [wb_add_mschart()] will result in a corrupt workbook
+#' that may fail to open in spreadsheet software.
+#'
+#' Like standard worksheets, chartsheets support visual customization such as
+#' `tab_color`, `zoom` levels, and various `visible` states.
+#'
+#' @param wb A [wbWorkbook] object to which the new chartsheet will be attached.
+#' @param sheet A character string for the chartsheet name. Defaults to a
+#'   sequentially generated name (e.g., "Sheet 1").
+#' @param tab_color The color of the sheet tab. Accepts a [wb_color()] object,
+#'   a standard R color name, or a hex color code.
+#' @param zoom The zoom level as a percentage; a numeric value between 10 and 400.
+#' @param visible The visibility state of the sheet. Options include "visible",
+#'   "hidden", or "veryHidden".
+#' @param ... Additional arguments passed to internal configuration methods.
+#'
 #' @family workbook wrappers
-#' @seealso [wb_add_mschart()]
+#' @seealso [wb_add_mschart()], [wb_add_worksheet()]
 #' @export
 wb_add_chartsheet <- function(
   wb,
