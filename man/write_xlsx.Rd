@@ -32,10 +32,12 @@ a standard R color name, or a hex color code (e.g., "#4F81BD").}
     \item{\code{na}}{Value used for replacing \code{NA} values from \code{x}. Default
 looks if \code{options("openxlsx2.na")} is set. Otherwise \code{\link[=na_strings]{na_strings()}}
 uses the special \verb{#N/A} value within the workbook.}
-    \item{\code{first_active_row}}{Top row of active region}
-    \item{\code{first_active_col}}{Furthest left column of active region}
-    \item{\code{first_row}}{If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})}
-    \item{\code{first_col}}{If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})}
+    \item{\code{first_active_row}}{The index of the first row that should remain
+scrollable. Rows above this will be frozen.}
+    \item{\code{first_active_col}}{The index or character label of the first column
+that should remain scrollable. Columns to the left will be frozen.}
+    \item{\code{first_row}}{Logical; if \code{TRUE}, freezes the first row of the worksheet.}
+    \item{\code{first_col}}{Logical; if \code{TRUE}, freezes the first column of the worksheet.}
     \item{\code{widths}}{Width to set \code{cols} to specified column width or \code{"auto"} for
 automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxlsx2
 sets the default width is 8.43, as this is the standard in some spreadsheet
