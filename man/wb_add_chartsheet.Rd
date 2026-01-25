@@ -18,15 +18,16 @@ wb_add_chartsheet(
 
 \item{sheet}{A name for the new chartsheet}
 
-\item{tab_color}{Color of the sheet tab. A  \code{\link[=wb_color]{wb_color()}},  a valid color (belonging to
-\code{grDevices::colors()}) or a valid hex color beginning with "#".}
+\item{tab_color}{The color of the worksheet tab. Accepts a \code{\link[=wb_color]{wb_color()}} object,
+a standard R color name, or a hex color code (e.g., "#4F81BD").}
 
-\item{zoom}{The sheet zoom level, a numeric between 10 and 400 as a
-percentage. (A zoom value smaller than 10 will default to 10.)}
+\item{zoom}{The sheet zoom level as a percentage; a numeric value between
+10 and 400. Values below 10 default to 10.}
 
-\item{visible}{If \code{FALSE}, sheet is hidden else visible.}
+\item{visible}{The visibility state of the sheet. One of "visible", "hidden",
+or "veryHidden".}
 
-\item{...}{Additional arguments}
+\item{...}{Additional arguments passed to internal sheet configuration methods.}
 }
 \description{
 A chartsheet is a special type of sheet that handles charts output. You must
