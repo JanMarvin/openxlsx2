@@ -54,11 +54,11 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' The `wb_to_df()` function is the primary interface for extracting data from
 #' spreadsheet files into R. It interprets the underlying XML structure of a
 #' worksheet to reconstruct a data frame, handling cell types, dimensions, and
-#' formatting according to user specification. While `read_xlsx()`` and
-#' `wb_read()`` are available as streamlined internal wrappers for users
+#' formatting according to user specification. While `read_xlsx()` and
+#' `wb_read()` are available as streamlined internal wrappers for users
 #' accustomed to other spreadsheet packages, wb_to_df() serves as the
-#' foundational function #' and provides the most comprehensive access to the
-#' package's data extraction and #' configuration parameters.
+#' foundational function and provides the most comprehensive access to the
+#' package's data extraction and configuration parameters.
 #'
 #' @details
 #' The function extracts data based on a defined range or the total data extent
