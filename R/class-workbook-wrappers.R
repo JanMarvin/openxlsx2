@@ -2533,6 +2533,7 @@ wb_protect_worksheet <- function(
 #' @seealso [wb_protect_worksheet]
 #' @export
 #' @examples
+#' \donttest{
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' wb_protect(wb, protect = TRUE, password = "Password", lock_structure = TRUE)
@@ -2550,7 +2551,7 @@ wb_protect_worksheet <- function(
 #'   username = "Test",
 #'   read_only_recommended = TRUE
 #' )
-#'
+#' }
 wb_protect <- function(
     wb,
     protect               = TRUE,

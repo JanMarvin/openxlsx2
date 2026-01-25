@@ -68,6 +68,7 @@ independently reviewed for security. It should not be used for
 production-level security or sensitive data without formal auditing.
 }
 \examples{
+\donttest{
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 wb_protect(wb, protect = TRUE, password = "Password", lock_structure = TRUE)
@@ -85,7 +86,7 @@ wb <- wb_protect(
   username = "Test",
   read_only_recommended = TRUE
 )
-
+}
 }
 \seealso{
 \link{wb_protect_worksheet}
