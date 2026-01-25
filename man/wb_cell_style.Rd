@@ -5,7 +5,7 @@
 \alias{wb_get_cell_style}
 \alias{wb_set_cell_style}
 \alias{wb_set_cell_style_across}
-\title{Apply styling to a cell region}
+\title{Get or set cell style indices}
 \usage{
 wb_get_cell_style(wb, sheet = current_sheet(), dims)
 
@@ -20,11 +20,11 @@ wb_set_cell_style_across(
 )
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook} object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{sheet}
+\item{sheet}{The name or index of the worksheet. Defaults to the current sheet.}
 
-\item{dims}{A cell range in the worksheet}
+\item{dims}{A character string defining the cell range (e.g., "A1" or "A1:C10").}
 
 \item{style}{A style or a cell with a certain style}
 
@@ -33,17 +33,51 @@ wb_set_cell_style_across(
 \item{rows}{The rows the style will be applied to}
 }
 \value{
+\itemize{
+\item For \code{wb_get_cell_style()}: A named vector where names are cell addresses
+(e.g., "A1") and values are the integer style indices.
+\item For \code{wb_set_cell_style()}: The \link{wbWorkbook} object, invisibly.
+}
+
 A named vector with cell style index positions
 }
 \description{
-Setting a style across only impacts cells that are not yet part of a workbook. The effect is similar to setting the cell style for all cells in a row independently, though much quicker and less memory consuming.
+The \code{wb_get_cell_style()} and \code{wb_set_cell_style()} functions provide a
+direct way to manage the internal style index (XF ID) of a cell. This is
+particularly useful for "copy-pasting" the formatting from one cell to
+another or for applying pre-defined styles at scale without the overhead
+of creating new XML nodes for every cell.
 }
+\details{
+In the OpenXML format, formatting is not stored inside every cell. Instead,
+a workbook maintains a centralized style table, and each cell simply holds
+an integer index (the Cell Style ID) pointing to a record in that table.
+
+\code{wb_get_cell_style()} retrieves these indices for a specified range. If
+a cell has not been explicitly styled, the function returns the index for
+the default style.
+
+\code{wb_set_cell_style()} applies a specific index or style definition to a
+range. This is significantly faster and more memory-efficient than using high-level
+wrappers like \code{wb_add_font()} when applying the exact same style to thousands
+of individual cells.
+}
+\section{Notes}{
+
+\itemize{
+\item These functions are the most efficient way to handle repetitive styling
+tasks in large worksheets.
+\item If \code{style} is a character string that is not a cell dimension, it is
+looked up in the workbook's Style Manager.
+}
+}
+
 \examples{
-# set a style in b1
+# set a style in B1
 wb <- wb_workbook()$add_worksheet()$
   add_numfmt(dims = "B1", numfmt = "#,0")
 
-# get style from b1 to assign it to a1
+# get style from B1 to assign it to A1
 numfmt <- wb$get_cell_style(dims = "B1")
 
 # assign style to a1
