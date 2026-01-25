@@ -2,20 +2,38 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_open}
 \alias{wb_open}
-\title{Preview a workbook in a spreadsheet software}
+\title{Preview a workbook in spreadsheet software}
 \usage{
 wb_open(wb, interactive = NA, flush = FALSE)
 }
 \arguments{
-\item{wb}{a \link{wbWorkbook} object}
+\item{wb}{A \link{wbWorkbook} object to be previewed.}
 
-\item{interactive}{If \code{FALSE} will throw a warning and not open the path.
-This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses
-the value returned from \code{\link[base:interactive]{base::interactive()}}}
+\item{interactive}{Logical; determines if the file should be opened. When
+\code{NA} (the default), it inherits the value from \code{\link[base:interactive]{base::interactive()}}. If
+\code{FALSE}, a warning is issued and the file is not opened.}
 
-\item{flush}{if the flush option should be used}
+\item{flush}{Logical; if \code{TRUE}, the \code{flush} argument is passed to the internal
+save call. This controls the XML processing method used when writing the
+temporary file. For a detailed discussion on the performance and memory
+implications of this parameter, see \code{\link[=wb_save]{wb_save()}}.}
+}
+\value{
+The \link{wbWorkbook} object, invisibly.
 }
 \description{
-You can also use the shorter \code{wb$open()} as a replacement.
-To open xlsx files, see \code{\link[=xl_open]{xl_open()}}.
+\code{wb_open()} provides a convenient interface to immediately view the contents
+of a \code{wbWorkbook} object within a spreadsheet application. This function
+serves as a high-level wrapper for \code{\link[=xl_open]{xl_open()}}, allowing users to inspect
+the results of programmatic workbook construction without explicitly
+managing file paths.
+}
+\details{
+The function operates by creating a temporary copy of the workbook on the
+local file system and subsequently invoking the system's default handler
+or a specified spreadsheet application. For users utilizing the R6
+interface, \code{wb$open()} is available as a shorter alias for this function.
+}
+\seealso{
+\code{\link[=xl_open]{xl_open()}}, \code{\link[=wb_save]{wb_save()}}
 }

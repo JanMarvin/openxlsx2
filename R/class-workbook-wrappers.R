@@ -3456,16 +3456,33 @@ wb_clean_sheet <- function(
   )
 }
 
-#' Preview a workbook in a spreadsheet software
+#' Preview a workbook in spreadsheet software
 #'
-#' You can also use the shorter `wb$open()` as a replacement.
-#' To open xlsx files, see [xl_open()].
+#' @description
+#' `wb_open()` provides a convenient interface to immediately view the contents
+#' of a `wbWorkbook` object within a spreadsheet application. This function
+#' serves as a high-level wrapper for [xl_open()], allowing users to inspect
+#' the results of programmatic workbook construction without explicitly
+#' managing file paths.
 #'
-#' @param wb a [wbWorkbook] object
-#' @param interactive If `FALSE` will throw a warning and not open the path.
-#'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses
-#'   the value returned from [base::interactive()]
-#' @param flush if the flush option should be used
+#' @details
+#' The function operates by creating a temporary copy of the workbook on the
+#' local file system and subsequently invoking the system's default handler
+#' or a specified spreadsheet application. For users utilizing the R6
+#' interface, `wb$open()` is available as a shorter alias for this function.
+#'
+#' @param wb A [wbWorkbook] object to be previewed.
+#' @param interactive Logical; determines if the file should be opened. When
+#'   `NA` (the default), it inherits the value from [base::interactive()]. If
+#'   `FALSE`, a warning is issued and the file is not opened.
+#' @param flush Logical; if `TRUE`, the `flush` argument is passed to the internal
+#'   save call. This controls the XML processing method used when writing the
+#'   temporary file. For a detailed discussion on the performance and memory
+#'   implications of this parameter, see [wb_save()].
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @seealso [xl_open()], [wb_save()]
 #' @export
 wb_open <- function(wb, interactive = NA, flush = FALSE) {
   assert_workbook(wb)
