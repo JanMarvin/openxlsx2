@@ -538,14 +538,14 @@ wb_to_df <- function(
   origin <- get_date_origin(wb)
 
   # dates
-  if (!is.null(cc$c_s)) {
+  if (NROW(cc) && !is.null(cc$c_s)) {
 
     # if a cell is t="s" the content is a sst and not da date
     if (detect_dates && missing(types)) {
       uccs <- unique(cc$c_s)
       ucct <- unique(cc$c_t)
 
-      cc$is_string <- FALSE
+      cc$is_string <- rep_len(FALSE, nrow(cc))
       strings <-  c("s", "str", "b", "inlineStr")
       if (!is.null(cc$c_t) && any(ucct %in% strings))
         cc$is_string <- cc$c_t %in% strings

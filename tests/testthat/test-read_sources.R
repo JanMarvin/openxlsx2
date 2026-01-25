@@ -539,3 +539,29 @@ test_that("read file with data types", {
   expect_equal(18, length(wb$Content_Types))
 
 })
+
+test_that("reading unintialized cells", {
+  fl <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
+  wb <- wb_load(file = fl)
+
+  got <- rownames(wb$to_df(dims = "A12", col_names = FALSE))
+  expect_equal(got, "12")
+
+  got <- rownames(wb$to_df(dims = "A+", col_names = FALSE))
+  expect_equal(got, "12")
+
+  got <- rownames(wb$to_df(dims = "Z3:AA3", col_names = FALSE))
+  expect_equal(got, "3")
+
+
+  wb <- wb_workbook()$add_worksheet()$add_data(dims = "B2", x = mtcars)
+
+  got <- rownames(wb$to_df(dims = "A12", col_names = FALSE))
+  expect_equal(got, "12")
+
+  got <- rownames(wb$to_df(dims = "A+", col_names = FALSE))
+  expect_equal(got, "34")
+
+  got <- rownames(wb$to_df(dims = "Z3:AA3", col_names = FALSE))
+  expect_equal(got, "3")
+})
