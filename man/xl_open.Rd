@@ -4,7 +4,7 @@
 \alias{xl_open}
 \alias{xl_open.wbWorkbook}
 \alias{xl_open.default}
-\title{Open an xlsx file or a \code{wbWorkbook} object}
+\title{Open a file or workbook object in spreadsheet software}
 \usage{
 xl_open(x, interactive = NA, flush = FALSE)
 
@@ -13,32 +13,41 @@ xl_open(x, interactive = NA, flush = FALSE)
 \method{xl_open}{default}(x, interactive = NA, flush = FALSE)
 }
 \arguments{
-\item{x}{A path to a spreadsheet file or wbWorkbook object. This can be any
-file type that can be opened in the corresponding software.}
+\item{x}{A character string specifying the path to a spreadsheet file or
+a \link{wbWorkbook} object.}
 
-\item{interactive}{If \code{FALSE} will throw a warning and not open the path.
-This can be manually set to \code{TRUE}, otherwise when \code{NA} (default) uses the
-value returned from \code{\link[base:interactive]{base::interactive()}}}
+\item{interactive}{Logical; if \code{FALSE}, the function will not attempt to
+launch the application. Defaults to the result of \code{\link[base:interactive]{base::interactive()}}.}
 
-\item{flush}{If \code{TRUE} the \code{flush} argument of \code{\link[=wb_save]{wb_save()}} will be used to
-create the output file. Applies only to workbooks.}
+\item{flush}{Logical; if \code{TRUE}, the workbook is written to the temporary
+location using the stream-based XML parser. See \code{\link[=wb_save]{wb_save()}} for details.}
 }
 \description{
-This function tries to open a Microsoft Excel (xls/xlsx) file or,
-an \link{wbWorkbook} with the proper application, in a portable manner.
+\code{xl_open()} is a portable utility designed to open spreadsheet files (such
+as .xlsx or .xls) or \link{wbWorkbook} objects using the appropriate application
+based on the host operating system. It handles the nuances of background
+execution to ensure the R interpreter remains unblocked.
+}
+\details{
+The method for identifying and launching the software varies by platform:
 
-On Windows it uses \code{base::shell.exec()} (Windows only function) to
-determine the appropriate program.
+\strong{Windows} utilizes \code{shell.exec()} to trigger the file association
+registered with the operating system.
 
-On Mac, (c) it uses system default handlers, given the file type.
+\strong{macOS} utilizes the system \code{open} command, which respects default
+application handlers for the file type. Users can override the default by
+setting \code{options("openxlsx2.excelApp")}.
 
-On Linux, it searches (via \code{which}) for available xls/xlsx reader
-applications (unless \code{options('openxlsx2.excelApp')} is set to the app bin
-path), and if it finds anything, sets \code{options('openxlsx2.excelApp')} to the
-program chosen by the user via a menu (if many are present, otherwise it
-will set the only available). Currently searched for apps are
-Libreoffice/Openoffice (\code{soffice} bin), Gnumeric (\code{gnumeric}), Calligra
-Sheets (\code{calligrasheets}) and ONLYOFFICE (\code{onlyoffice-desktopeditors}).
+\strong{Linux} attempts to locate common spreadsheet utilities in the system
+path, including LibreOffice (\code{soffice}), Gnumeric (\code{gnumeric}), Calligra
+Sheets (\code{calligrasheets}), and ONLYOFFICE (\code{onlyoffice-desktopeditors}).
+If multiple applications are found during an interactive session, a menu is
+presented to the user to define their preference, which is then stored in
+\code{options("openxlsx2.excelApp")}.
+
+For \code{wbWorkbook} objects, the function automatically clones the workbook,
+detects the presence of macros (VBA) to determine the appropriate temporary
+file extension, and saves the content to a temporary location before opening.
 }
 \examples{
 \donttest{

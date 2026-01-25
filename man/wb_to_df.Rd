@@ -74,121 +74,135 @@ wb_read(
 )
 }
 \arguments{
-\item{file}{An xlsx file, \link{wbWorkbook} object or URL to xlsx file.}
+\item{file}{A workbook file path, a \link{wbWorkbook} object, or a valid URL.}
 
-\item{sheet}{Either sheet name or index. When missing the first sheet in the workbook is selected.}
+\item{sheet}{The name or index of the worksheet to read. Defaults to the first sheet.}
 
-\item{start_row}{first row to begin looking for data.}
+\item{start_row, start_col}{Optional numeric values specifying the first row or column
+to begin data discovery.}
 
-\item{start_col}{first column to begin looking for data.}
+\item{row_names}{Logical; if TRUE, uses the first column of the selection as row names.}
 
-\item{row_names}{If \code{TRUE}, the first col of data will be used as row names.}
+\item{col_names}{Logical; if TRUE, uses the first row of the selection as column headers.}
 
-\item{col_names}{If \code{TRUE}, the first row of data will be used as column names.}
+\item{skip_empty_rows, skip_empty_cols}{Logical; if TRUE, filters out rows or
+columns containing only missing values.}
 
-\item{skip_empty_rows}{If \code{TRUE}, empty rows are skipped.}
+\item{skip_hidden_rows, skip_hidden_cols}{Logical; if TRUE, excludes rows or
+columns marked as hidden in the worksheet metadata.}
 
-\item{skip_empty_cols}{If \code{TRUE}, empty columns are skipped.}
+\item{rows, cols}{Optional numeric vectors specifying the exact indices to read.}
 
-\item{skip_hidden_rows}{If \code{TRUE}, hidden rows are skipped.}
+\item{detect_dates}{Logical; if TRUE, identifies date and datetime styles for conversion.}
 
-\item{skip_hidden_cols}{If \code{TRUE}, hidden columns are skipped.}
+\item{na}{A character vector or a named list (e.g., \code{list(strings = "", numbers = -99)})
+defining values to treat as \code{NA}.}
 
-\item{rows}{A numeric vector specifying which rows in the xlsx file to read.
-If \code{NULL}, all rows are read.}
+\item{fill_merged_cells}{Logical; if TRUE, propagates the top-left value of a
+merged range to all cells in that range.}
 
-\item{cols}{A numeric vector specifying which columns in the xlsx file to read.
-If \code{NULL}, all columns are read.}
+\item{dims}{A character string defining the range. Supports wildcards
+(e.g., "A1:++" or "A-:+5").}
 
-\item{detect_dates}{If \code{TRUE}, attempt to recognize dates and perform conversion.}
+\item{show_formula}{Logical; if TRUE, returns the formula strings instead of
+calculated values.}
 
-\item{na}{Defines values to be treated as NA. Can be a character vector of strings
-or a named list: list(strings = ..., numbers = ...). Blank cells are always converted to \code{NA}.}
+\item{convert}{Logical; if TRUE, attempts to coerce columns to appropriate R classes.}
 
-\item{fill_merged_cells}{If \code{TRUE}, the value in a merged cell is given to all cells within the merge.}
+\item{types}{A named vector (numeric or character) to explicitly define column types.}
 
-\item{dims}{Character string of type "A1:B2" as optional dimensions to be imported.}
+\item{named_region}{A character string referring to a defined name or spreadsheet Table.}
 
-\item{show_formula}{If \code{TRUE}, the underlying spreadsheet formulas are shown.}
+\item{keep_attributes}{Logical; if TRUE, attaches metadata such as the internal
+type table (tt) and types as attributes to the output.}
 
-\item{convert}{If \code{TRUE}, a conversion to dates and numerics is attempted.}
+\item{check_names}{Logical; if TRUE, ensures column names are syntactically
+valid R names via \code{\link[=make.names]{make.names()}}.}
 
-\item{types}{A named numeric indicating, the type of the data.
-Names must match the returned data. See \strong{Details} for more.}
+\item{show_hyperlinks}{Logical; if TRUE, replaces cell values with their
+underlying hyperlink targets.}
 
-\item{named_region}{Character string with a \code{named_region} (defined name or table).
-If no sheet is selected, the first appearance will be selected. See \code{\link[=wb_get_named_regions]{wb_get_named_regions()}}}
+\item{apply_numfmts}{Logical; if TRUE, applies spreadsheet number formatting
+and returns strings.}
 
-\item{keep_attributes}{If \code{TRUE} additional attributes are returned.
-(These are used internally to define a cell type.)}
-
-\item{check_names}{If \code{TRUE} then the names of the variables in the data frame are checked to ensure that they are syntactically valid variable names.}
-
-\item{show_hyperlinks}{If \code{TRUE} instead of the displayed text, hyperlink targets are shown.}
-
-\item{apply_numfmts}{If \code{TRUE} numeric formats are applied if detected.}
-
-\item{...}{additional arguments}
+\item{...}{Additional arguments passed to internal methods.}
 }
 \description{
-Simple function to create a \code{data.frame} from a sheet in workbook. Simple as
-in it was simply written down. \code{read_xlsx()} and \code{wb_read()} are just
-internal wrappers of \code{wb_to_df()} intended for people coming from other
-packages.
+The \code{wb_to_df()} function is the primary interface for extracting data from
+spreadsheet files into R. It interprets the underlying XML structure of a
+worksheet to reconstruct a data frame, handling cell types, dimensions, and
+formatting according to user specification. While \code{read_xlsx()} and
+\code{wb_read()} are available as streamlined internal wrappers for users
+accustomed to other spreadsheet packages, wb_to_df() serves as the
+foundational function and provides the most comprehensive access to the
+package's data extraction and configuration parameters.
 }
 \details{
-The returned data frame will have named rows matching the rows of the
-worksheet. With \code{col_names = FALSE} the returned data frame will have
-column names matching the columns of the worksheet. Otherwise the first
-row is selected as column name.
+The function extracts data based on a defined range or the total data extent
+of a worksheet. If \code{col_names = TRUE}, the first row of the selection is
+treated as the header; otherwise, spreadsheet column letters are used. If
+\code{row_names = TRUE}, the first column of the selected range is assigned to
+the data frame's row names.
 
-Depending if the R package \code{hms} is loaded, \code{wb_to_df()} returns
-\code{hms} variables or string variables in the \code{hh:mm:ss} format.
+Dimension selection is highly flexible. The \code{dims} argument supports standard
+"A1:B2" notation as well as dynamic wildcards for rows and columns. Using
+\verb{++} or \verb{--} allows ranges to adapt to the spreadsheet's content. For
+instance, \code{dims = "A2:C+"} reads from A2 to the last available row in
+column C, while \code{dims = "A-:+9"} reads from the first populated row in
+column A to the last column in row 9. If neither \code{dims} nor \code{named_region}
+is provided, the function automatically calculates the range based on the
+minimum and maximum populated cells, modified by \code{start_row} and \code{start_col}.
 
-The \code{types} argument can be a named numeric or a character string of the
-matching R variable type. Either \code{c(foo = 1)} or \code{c(foo = "numeric")}.
+Type conversion is governed by an internal guessing engine. If \code{detect_dates}
+is enabled, serial dates are converted to R Date or POSIXct objects. All
+datetimes are standardized to UTC. The function's handling of time variables
+depends on the presence of the \code{hms} package; if loaded, \code{wb_to_df()} returns
+\code{hms} variables. Otherwise, they are returned as string variables in
+\code{hh:mm:ss} format. Users can provide explicit column types via the \code{types}
+argument using numeric codes: 0 (character), 1 (numeric), 2 (Date), 3 (POSIXct),
+4 (logical), 5 (hms), and 6 (formula).
+
+Regarding formulas, it is important to note that \code{wb_to_df()} will not
+automatically evaluate formulas added to a workbook object via
+\code{\link[=wb_add_formula]{wb_add_formula()}}. In the underlying spreadsheet XML, only the formula
+expression is written; the resulting value is typically generated by the
+spreadsheet software's calculation engine when the file is opened and saved.
+Consequently, reading a newly added formula cell without prior evaluation in
+external software will result in an empty value unless \code{show_formula = TRUE}
+is used to retrieve the formula string itself.
+
+If \code{keep_attributes} is TRUE, the data frame is returned with additional
+metadata. This includes the internal type-guessing table (\code{tt}), which
+identifies the derived type for every cell in the range, and the specific
+\code{types} vector used for conversion. These attributes are useful for
+debugging or for applications requiring precise knowledge of the
+spreadsheet's original cell metadata.
+
+Specialized spreadsheet features include the ability to extract hyperlink
+targets (\code{show_hyperlinks = TRUE}) instead of display text. For complex
+layouts, \code{fill_merged_cells} propagates the value of a top-left merged cell
+to all cells within the merge range. The \code{na} argument supports sophisticated
+missing value definitions, accepting either a character vector or a named
+list to differentiate between string and numeric \code{NA} types.
+}
+\section{Notes}{
+
+Recent versions of \code{openxlsx2} have introduced several changes to the
+\code{wb_to_df()} API:
 \itemize{
-\item 0: character
-\item 1: numeric
-\item 2: Date
-\item 3: POSIXct (datetime)
-\item 4: logical
+\item Legacy arguments such as \code{na.strings} and \code{na.numbers} are no longer part
+of the public API and have been consolidated into the \code{na} argument.
+\item As of version 1.15, all datetime variables are imported with the
+timezone set to "UTC" to prevent system-specific local timezone shifts.
+\item The function now supports reverse-order or specific-order imports when
+a numeric vector is passed to the \code{rows} argument.
 }
 
-If no type is specified, the column types are derived based on all cells
-in a column within the selected data range, excluding potential column
-names. If \code{keep_attr} is \code{TRUE}, the derived column types can be inspected
-as an attribute of the data frame.
-
-\code{wb_to_df()} will not pick up formulas added to a workbook object
-via \code{\link[=wb_add_formula]{wb_add_formula()}}. This is because only the formula is written and left
-to be evaluated when the file is opened in a spreadsheet software.
-Opening, saving and closing the file in a spreadsheet software will resolve
-this.
-
-Before release 1.15, datetime variables (in 'yyyy-mm-dd hh:mm:ss' format)
-were imported using the user's local system timezone (\code{Sys.timezone()}).
-This behavior has been updated. Now, all datetime variables are imported
-with the timezone set to "UTC".
-If automatic date detection and conversion are enabled but the conversion
-is unsuccessful (for instance, in a column containing a mix of data types
-like strings, numbers, and dates) dates might be displayed as a Unix
-timestamp. Usually they are converted to character for character columns.
-If date detection is disabled, dates will show up as a spreadsheet date
-format. To convert these, you can use the functions \code{\link[=convert_date]{convert_date()}},
-\code{\link[=convert_datetime]{convert_datetime()}}, or \code{\link[=convert_hms]{convert_hms()}}. If types are specified, date
-detection is disabled.
-
-You can use wildcards for all available columns or rows in \code{dims} by using
-\code{+} and \code{-}. For example, \code{dims = "A-:+9"} will read everything from the
-first row in column A through the last column in row 9. This makes it
-unnecessary to update dimensions when working with files whose sizes change
-frequently.
-
-The function to apply numeric formats was not extensively tested for numeric
-equality with spreadsheet software. There might be differences and the function
-has limited support for builtin styles.
+For extensive real-world examples and advanced usage patterns, consult
+the package vignettes—specifically "openxlsx2 read to data frame"—and
+the dedicated chapter in the \code{openxlsx2} book for real-life case studies.
 }
+
 \examples{
 ###########################################################################
 # numerics, dates, missings, bool and string
@@ -256,7 +270,4 @@ example_file <- system.file("extdata", "openxlsx2_example.xlsx", package = "open
 read_xlsx(file = example_file)
 df1 <- wb_read(file = example_file, sheet = 1)
 df2 <- wb_read(file = example_file, sheet = 1, rows = c(1, 3, 5), cols = 1:3)
-}
-\seealso{
-\code{\link[=wb_get_named_regions]{wb_get_named_regions()}}, \link[openxlsx2:openxlsx2-package]{openxlsx2}
 }

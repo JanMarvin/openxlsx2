@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_freeze_pane}
 \alias{wb_freeze_pane}
-\title{Freeze pane of a worksheet}
+\title{Freeze panes of a worksheet}
 \usage{
 wb_freeze_pane(
   wb,
@@ -15,27 +15,60 @@ wb_freeze_pane(
 )
 }
 \arguments{
-\item{wb}{A workbook object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{A name or index of a worksheet}
+\item{sheet}{The name or index of the worksheet to modify. Defaults to
+the current sheet.}
 
-\item{first_active_row}{Top row of active region}
+\item{first_active_row}{The index of the first row that should remain
+scrollable. Rows above this will be frozen.}
 
-\item{first_active_col}{Furthest left column of active region}
+\item{first_active_col}{The index or character label of the first column
+that should remain scrollable. Columns to the left will be frozen.}
 
-\item{first_row}{If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})}
+\item{first_row}{Logical; if \code{TRUE}, freezes the first row of the worksheet.}
 
-\item{first_col}{If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})}
+\item{first_col}{Logical; if \code{TRUE}, freezes the first column of the worksheet.}
 
-\item{...}{additional arguments}
+\item{...}{Additional arguments for internal case standardization.}
 }
 \description{
-Add a Freeze pane in a worksheet.
+The \code{wb_freeze_pane()} function locks a specific area of a worksheet to keep
+rows or columns visible while scrolling through other parts of the data. This
+is achieved by defining a "split" point, where all content above or to the
+left of the designated active region remains fixed.
 }
-\examples{
-## Create a new workbook
-wb <- wb_workbook("Kenshin")
+\details{
+The function operates by calculating \code{xSplit} and \code{ySplit} values based on
+the provided active region coordinates. The \code{first_active_row} and
+\code{first_active_col} parameters define the first cell that remains scrollable;
+consequently, the frozen area consists of all rows and columns preceding
+these indices.
 
+For common use cases, the \code{first_row} and \code{first_col} logical flags provide
+optimized shortcuts. Enabling \code{first_row} locks the top row (equivalent to
+setting the active region at row 2), while \code{first_col} locks the leftmost
+column (equivalent to setting the active region at column 2). If both are
+enabled, the function automatically freezes the intersection at cell "B2".
+
+The internal logic translates these coordinates into a \verb{<pane />} XML node,
+which specifies the \code{topLeftCell} of the scrollable region and assigns the
+\code{activePane} (e.g., "bottomLeft", "topRight", or "bottomRight") to ensure
+correct cursor behavior within the spreadsheet software.
+}
+\section{Notes}{
+
+\itemize{
+\item If \code{first_active_row} and \code{first_active_col} are both set to 1, or if all
+arguments are omitted, the function returns the workbook unchanged as
+there is no region to freeze.
+\item This function overwrites any existing pane configuration for the
+specified worksheet.
+}
+}
+
+\examples{
+wb <- wb_workbook()
 ## Add some worksheets
 wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")
@@ -47,6 +80,7 @@ wb$freeze_pane("Sheet 1", first_active_row = 5, first_active_col = 3)
 wb$freeze_pane("Sheet 2", first_col = TRUE) ## shortcut to first_active_col = 2
 wb$freeze_pane(3, first_row = TRUE) ## shortcut to first_active_row = 2
 wb$freeze_pane(4, first_active_row = 1, first_active_col = "D")
+
 }
 \seealso{
 Other workbook wrappers: 

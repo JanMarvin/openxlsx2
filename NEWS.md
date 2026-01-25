@@ -659,7 +659,7 @@ They will continue to work for some time, but changing to newer functions is rec
 
 * `wb_get_sheet_names()` gains a `escape` argument to allow special XML characters to be escaped. [252](https://github.com/JanMarvin/openxlsx2/issues/252)
 
-* `wb_color()` now accepts hex colors with leading sharp (e.g. "#FFFFF") [728](https://github.com/JanMarvin/openxlsx2/pull/728).
+* `wb_color()` now accepts hex colors with leading sharp (e.g. "#FFFFFF") [728](https://github.com/JanMarvin/openxlsx2/pull/728).
 
 * `wb_merge_cells()` gains a `solve` argument. This allows to solve cell intersecting regions. [733](https://github.com/JanMarvin/openxlsx2/pull/733)
 

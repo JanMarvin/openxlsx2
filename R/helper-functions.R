@@ -479,46 +479,65 @@ is_single_cell <- function(dims) {
   all(lengths(dims_to_rowcol(dims)) == 1)
 }
 
-#' Create sparklines object
+#' Create a sparklines object
 #'
-#' Create a sparkline to be added a workbook with [wb_add_sparklines()]
+#' @description
+#' `create_sparklines()` defines a set of sparklines. Compact, word-sized graphics
+#' that reside within a single cell. These are ideal for showing trends in a
+#' series of values, such as seasonal increases or decreases, or economic cycles,
+#' directly alongside the data.
 #'
-#' Colors are all predefined to be rgb. Maybe theme colors can be
-#' used too.
-#' @param sheet sheet
-#' @param dims Cell range of cells used to create the sparklines
-#' @param sqref Cell range of the destination of the sparklines.
-#' @param type Either `NULL`, `stacked` or `column`
-#' @param direction Either `NULL`, `row` (or `1`) or `col` (or `2`). Should
-#' sparklines be created in the row or column direction? Defaults to `NULL`.
-#' When `NULL` the direction is inferred from `dims` in cases where `dims`
-#' spans a single row or column and defaults to `row` otherwise.
-#' @param negative negative
-#' @param display_empty_cells_as Either `gap`, `span` or `zero`
-#' @param markers markers add marker to line
-#' @param high highlight highest value
-#' @param low highlight lowest value
-#' @param first highlight first value
-#' @param last highlight last value
-#' @param color_series colorSeries
-#' @param color_negative colorNegative
-#' @param color_axis colorAxis
-#' @param color_markers colorMarkers
-#' @param color_first colorFirst
-#' @param color_last colorLast
-#' @param color_high colorHigh
-#' @param color_low colorLow
-#' @param manual_max manualMax
-#' @param manual_min manualMin
-#' @param line_weight lineWeight
-#' @param date_axis dateAxis
-#' @param display_x_axis displayXAxis
-#' @param display_hidden displayHidden
-#' @param min_axis_type minAxisType
-#' @param max_axis_type maxAxisType
-#' @param right_to_left rightToLeft
-#' @param ... additional arguments
-#' @return A string containing XML code
+#' @details
+#' Sparklines are added to a workbook in "groups." A group shares the same
+#' visual properties (type, colors, line weight, and axis settings). Within a
+#' group, multiple individual sparklines are defined by pairing a data range
+#' (`dims`) with a destination cell (`sqref`).
+#'
+#' Types of Sparklines:
+#' * `NULL` (Default): A standard line chart.
+#' * `"column"`: A small column chart.
+#' * `"stacked"`: Often referred to as a "Win/Loss" chart, where each data point
+#'     is represented by a block indicating a positive or negative value.
+#'
+#' Directionality:
+#' The `direction` argument determines how the `dims` range is parsed. If you
+#' provide a multi-cell range like "A1:E10" as data for 10 sparklines,
+#' `direction = "row"` will treat each row as a separate data series, while
+#' `direction = "col"` will treat each column as a series.
+#'
+#' @param sheet The name of the worksheet where the data originates.
+#' @param dims A character string defining the source data range (e.g., "A1:E1").
+#' @param sqref A character string defining the destination cell(s) (e.g., "F1").
+#' @param type The type of sparkline: `NULL` (line), `"column"`, or `"stacked"`.
+#' @param direction The data orientation: `"row"` (default) or `"col"`.
+#'   If `NULL`, the function attempts to infer direction from the dimensions.
+#' @param negative Logical; highlight negative data points.
+#' @param markers Logical; highlight all data points (Line type only).
+#' @param high,low,first,last Logical; highlight the maximum, minimum,
+#'   first, or last data points in the series.
+#' @param color_series,color_negative,color_axis,color_markers,color_first [wb_color()]
+#'   objects defining the colors for various sparkline elements.
+#' @param color_last A [wb_color()] object for the color of the last point in the series.
+#' @param color_high A [wb_color()] object for the color of the highest point in the series.
+#' @param color_low A [wb_color()] object for the color of the lowest point in the series.
+#' @param date_axis Logical; if `TRUE`, uses a date axis for the sparklines,
+#'   allowing for irregular time intervals between data points.
+#' @param display_hidden Logical; if `TRUE`, data in hidden rows or columns is
+#'   plotted in the sparkline.
+#' @param min_axis_type,max_axis_type Character; defines the scaling for the
+#'   vertical axis. Options usually include "individual" (default), "group",
+#'   or "custom".
+#' @param right_to_left Logical; if `TRUE`, the sparkline is rendered from
+#'   right to left.
+#' @param display_empty_cells_as How to handle gaps in data: `"gap"`,
+#'   `"span"` (connect points), or `"zero"`.
+#' @param manual_max,manual_min Numeric; optional fixed values for the y-axis.
+#' @param line_weight Numeric; the thickness of the line (Line type only).
+#' @param display_x_axis Logical; show a horizontal axis.
+#' @param ... Additional arguments.
+#'
+#' @return A character string containing the XML structure for the sparkline group.
+#'
 #' @examples
 #' # create multiple sparklines
 #' sparklines <- c(

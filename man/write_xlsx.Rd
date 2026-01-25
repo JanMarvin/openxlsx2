@@ -17,13 +17,13 @@ write_xlsx(x, file, as_table = FALSE, ...)
   Arguments passed on to \code{\link[=wb_workbook]{wb_workbook}}, \code{\link[=wb_add_worksheet]{wb_add_worksheet}}, \code{\link[=wb_add_data_table]{wb_add_data_table}}, \code{\link[=wb_add_data]{wb_add_data}}, \code{\link[=wb_freeze_pane]{wb_freeze_pane}}, \code{\link[=wb_set_col_widths]{wb_set_col_widths}}, \code{\link[=wb_save]{wb_save}}, \code{\link[=wb_set_base_font]{wb_set_base_font}}
   \describe{
     \item{\code{creator}}{Creator of the workbook (your name). Defaults to login username or \code{options("openxlsx2.creator")} if set.}
-    \item{\code{sheet}}{A name for the new worksheet}
-    \item{\code{grid_lines}}{A logical. If \code{FALSE}, the worksheet grid lines will be
-hidden.}
-    \item{\code{tab_color}}{Color of the sheet tab. A  \code{\link[=wb_color]{wb_color()}},  a valid color (belonging to
-\code{grDevices::colors()}) or a valid hex color beginning with "#".}
-    \item{\code{zoom}}{The sheet zoom level, a numeric between 10 and 400 as a
-percentage. (A zoom value smaller than 10 will default to 10.)}
+    \item{\code{sheet}}{A character string for the worksheet name. Defaults to a
+sequentially generated name (e.g., "Sheet 1").}
+    \item{\code{grid_lines}}{Logical; if \code{FALSE}, the worksheet grid lines are hidden.}
+    \item{\code{tab_color}}{The color of the worksheet tab. Accepts a \code{\link[=wb_color]{wb_color()}} object,
+a standard R color name, or a hex color code (e.g., "#4F81BD").}
+    \item{\code{zoom}}{The sheet zoom level as a percentage; a numeric value between
+10 and 400. Values below 10 default to 10.}
     \item{\code{total_row}}{logical. With the default \code{FALSE} no total row is added.}
     \item{\code{start_col}}{A vector specifying the starting column to write \code{x} to.}
     \item{\code{start_row}}{A vector specifying the starting row to write \code{x} to.}
@@ -32,10 +32,12 @@ percentage. (A zoom value smaller than 10 will default to 10.)}
     \item{\code{na}}{Value used for replacing \code{NA} values from \code{x}. Default
 looks if \code{options("openxlsx2.na")} is set. Otherwise \code{\link[=na_strings]{na_strings()}}
 uses the special \verb{#N/A} value within the workbook.}
-    \item{\code{first_active_row}}{Top row of active region}
-    \item{\code{first_active_col}}{Furthest left column of active region}
-    \item{\code{first_row}}{If \code{TRUE}, freezes the first row (equivalent to \code{first_active_row = 2})}
-    \item{\code{first_col}}{If \code{TRUE}, freezes the first column (equivalent to \code{first_active_col = 2})}
+    \item{\code{first_active_row}}{The index of the first row that should remain
+scrollable. Rows above this will be frozen.}
+    \item{\code{first_active_col}}{The index or character label of the first column
+that should remain scrollable. Columns to the left will be frozen.}
+    \item{\code{first_row}}{Logical; if \code{TRUE}, freezes the first row of the worksheet.}
+    \item{\code{first_col}}{Logical; if \code{TRUE}, freezes the first column of the worksheet.}
     \item{\code{widths}}{Width to set \code{cols} to specified column width or \code{"auto"} for
 automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxlsx2
 sets the default width is 8.43, as this is the standard in some spreadsheet

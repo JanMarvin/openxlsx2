@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_dxfs_style}
 \alias{wb_add_dxfs_style}
-\title{Set a dxfs styling for the workbook}
+\title{Set a dxfs style for the workbook}
 \usage{
 wb_add_dxfs_style(
   wb,
@@ -23,41 +23,55 @@ wb_add_dxfs_style(
 )
 }
 \arguments{
-\item{wb}{A Workbook object.}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{name}{the style name}
+\item{name}{A unique character string to identify the DXF style.}
 
-\item{font_name}{the font name}
+\item{font_name}{Character; the font name.}
 
-\item{font_size}{the font size}
+\item{font_size}{Numeric; the font size.}
 
-\item{font_color}{the font color (a \code{wb_color()} object)}
+\item{font_color}{A \code{\link[=wb_color]{wb_color()}} object for the font.}
 
-\item{num_fmt}{the number format}
+\item{num_fmt}{The number format string or ID.}
 
-\item{border}{logical if borders are applied}
+\item{border}{Logical; if \code{TRUE}, applies borders to the style.}
 
-\item{border_color}{the border color}
+\item{border_color}{A \code{\link[=wb_color]{wb_color()}} object for the borders.}
 
-\item{border_style}{the border style}
+\item{border_style}{Character; the border style (e.g., "thin", "thick").
+Defaults to the "openxlsx2.borderStyle" option.}
 
-\item{bg_fill}{any background fill}
+\item{bg_fill}{A \code{\link[=wb_color]{wb_color()}} object for the background fill.}
 
-\item{gradient_fill}{any gradient fill}
+\item{gradient_fill}{An optional XML string for a gradient fill pattern.}
 
-\item{text_bold}{logical if text is bold}
+\item{text_bold}{Logical; if \code{TRUE}, applies bold formatting.}
 
-\item{text_italic}{logical if text is italic}
+\item{text_italic}{Logical; if \code{TRUE}, applies italic formatting.}
 
-\item{text_underline}{logical if text is underlined}
+\item{text_underline}{Logical; if \code{TRUE}, applies underline formatting.}
 
-\item{...}{additional arguments passed to \code{\link[=create_dxfs_style]{create_dxfs_style()}}}
+\item{...}{Additional arguments passed to \code{\link[=create_dxfs_style]{create_dxfs_style()}}.}
 }
 \value{
-The Workbook object, invisibly
+The \link{wbWorkbook} object, invisibly.
 }
 \description{
-These styles are used with conditional formatting and custom table styles.
+The \code{wb_add_dxfs_style()} function defines a "Differential Formatting" (DXF)
+style within a \code{wbWorkbook}. Unlike standard styles (XFs), which are assigned
+directly to cells, DXF styles are used as templates for dynamic formatting
+features such as conditional formatting rules and custom table styles.
+}
+\details{
+DXF styles are differential because they usually only define a subset of cell
+properties (e.g., just the font color or a background fill). When a conditional
+formatting rule is triggered, the properties defined in the DXF style are
+layered on top of the cell's existing base style.
+
+This function acts as a wrapper around \code{\link[=create_dxfs_style]{create_dxfs_style()}}, allowing you
+to bundle font, border, fill, and number format attributes into a named
+style that can be referenced later by its \code{name}.
 }
 \examples{
 wb <- wb_workbook()

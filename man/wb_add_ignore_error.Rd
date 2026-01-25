@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-workbook-wrappers.R
 \name{wb_add_ignore_error}
 \alias{wb_add_ignore_error}
-\title{Ignore error types on worksheet}
+\title{Ignore error types on a worksheet}
 \usage{
 wb_add_ignore_error(
   wb,
@@ -21,35 +21,67 @@ wb_add_ignore_error(
 )
 }
 \arguments{
-\item{wb}{A workbook}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{A sheet name or index.}
+\item{sheet}{The name or index of the worksheet. Defaults to the current sheet.}
 
-\item{dims}{Cell range to ignore the error}
+\item{dims}{A character string defining the cell range (e.g., "A1:A100").}
 
-\item{calculated_column}{calculatedColumn}
+\item{calculated_column}{Logical; if \code{TRUE}, ignores errors in
+calculated columns of a table.}
 
-\item{empty_cell_reference}{emptyCellReference}
+\item{empty_cell_reference}{Logical; if \code{TRUE}, ignores errors when a
+formula refers to an empty cell.}
 
-\item{eval_error}{evalError}
+\item{eval_error}{Logical; if \code{TRUE}, ignores errors resulting from
+formula evaluation (e.g., \verb{#DIV/0!}, \verb{#N/A}).}
 
-\item{formula}{formula}
+\item{formula}{Logical; if \code{TRUE}, ignores formula consistency errors.}
 
-\item{formula_range}{formulaRange}
+\item{formula_range}{Logical; if \code{TRUE}, ignores errors where a formula
+omits cells in a region.}
 
-\item{list_data_validation}{listDataValidation}
+\item{list_data_validation}{Logical; if \code{TRUE}, ignores errors related to
+list data validation mapping.}
 
-\item{number_stored_as_text}{If \code{TRUE}, will not display the error if numbers are stored as text.}
+\item{number_stored_as_text}{Logical; if \code{TRUE}, suppresses the error
+displayed when numeric values are stored as string/text types.}
 
-\item{two_digit_text_year}{twoDigitTextYear}
+\item{two_digit_text_year}{Logical; if \code{TRUE}, ignores warnings about
+dates containing two-digit years.}
 
-\item{unlocked_formula}{unlockedFormula}
+\item{unlocked_formula}{Logical; if \code{TRUE}, ignores errors for formulas
+in cells that are not locked.}
 
-\item{...}{additional arguments}
+\item{...}{Additional arguments.}
 }
 \value{
-The \code{wbWorkbook} object, invisibly.
+The \link{wbWorkbook} object, invisibly.
 }
 \description{
-This function allows to hide / ignore certain types of errors shown in a worksheet.
+The \code{wb_add_ignore_error()} function allows you to suppress specific types of
+background error checking warnings for a given cell range. This is useful for
+preventing the display of green error indicators (triangles) in cases where
+"errors" are intentional, such as numbers being stored as text for
+formatting purposes.
 }
+\details{
+Spreadsheet software performs background validation on formulas and data
+entries. When a cell triggers a rule, a visual indicator appears. This
+function modifies the \verb{<ignoredErrors>} section of the worksheet XML to
+whitelist specific ranges against specific rules.
+
+Most commonly, this is used with \code{number_stored_as_text = TRUE} when
+IDs or codes (like "00123") must be preserved as character strings but
+contain only numeric digits.
+}
+\section{Notes}{
+
+\itemize{
+\item This function does not fix the underlying data; it only instructs the
+spreadsheet application not to flag the specific error type visually.
+\item If multiple error types need to be ignored for the same range, you can
+set multiple arguments to \code{TRUE} in a single call.
+}
+}
+

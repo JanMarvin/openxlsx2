@@ -503,7 +503,7 @@ wb_add_data_table <- function(
 #'   # with parameters
 #' wb <- wb_add_pivot_table(wb, x = df,
 #'     filter = "am", rows = "cyl", cols = "gear", data = "disp",
-#'     params = list(no_style = TRUE, numfmt = c(formatCode = "##0.0"))
+#'     params = list(no_style = TRUE, numfmts = c(formatCode = "##0.0"))
 #'   )
 #' @family workbook wrappers
 #' @family worksheet content functions
@@ -1032,14 +1032,38 @@ wb_unmerge_cells <- function(wb, sheet = current_sheet(), dims = NULL, ...) {
 
 #' Add a chartsheet to a workbook
 #'
-#' A chartsheet is a special type of sheet that handles charts output. You must
-#' add a chart to the sheet. Otherwise, this will break the workbook.
+#' @description
+#' The `wb_add_chartsheet()` function appends a specialized chartsheet to a
+#' `wbWorkbook` object. Unlike standard worksheets, which contain a grid of cells,
+#' a chartsheet is dedicated exclusively to the display of a single, full-page
+#' chart.
 #'
-#' @param wb A Workbook object to attach the new chartsheet
-#' @param sheet A name for the new chartsheet
-#' @inheritParams wb_add_worksheet
+#' @details
+#' A chartsheet is a distinct sheet type in the OpenXML specification. It
+#' does not support standard cell data, grid lines, or typical worksheet
+#' features. Its primary purpose is to provide a high-level, focused view of a
+#' graphical representation.
+#'
+#' **Important:** A chartsheet must contain a chart object to be
+#' valid. Adding a chartsheet without subsequently attaching a chart via
+#' [wb_add_mschart()] will result in a corrupt workbook
+#' that may fail to open in spreadsheet software.
+#'
+#' Like standard worksheets, chartsheets support visual customization such as
+#' `tab_color`, `zoom` levels, and various `visible` states.
+#'
+#' @param wb A [wbWorkbook] object to which the new chartsheet will be attached.
+#' @param sheet A character string for the chartsheet name. Defaults to a
+#'   sequentially generated name (e.g., "Sheet 1").
+#' @param tab_color The color of the sheet tab. Accepts a [wb_color()] object,
+#'   a standard R color name, or a hex color code.
+#' @param zoom The zoom level as a percentage; a numeric value between 10 and 400.
+#' @param visible The visibility state of the sheet. Options include "visible",
+#'   "hidden", or "veryHidden".
+#' @param ... Additional arguments passed to internal configuration methods.
+#'
 #' @family workbook wrappers
-#' @seealso [wb_add_mschart()]
+#' @seealso [wb_add_mschart()], [wb_add_worksheet()]
 #' @export
 wb_add_chartsheet <- function(
   wb,
@@ -1061,46 +1085,73 @@ wb_add_chartsheet <- function(
 
 #' Add a worksheet to a workbook
 #'
-#' Add a worksheet to a [wbWorkbook] is the first step to build a workbook.
-#' With the function, you can also set the sheet view with `zoom`, set headers
-#' and footers as well as other features. See the function arguments.
+#' @description
+#' The `wb_add_worksheet()` function is a fundamental step in workbook construction,
+#' appending a new worksheet to a `wbWorkbook` object. It provides extensive
+#' parameters for configuring the sheet's initial state, including visibility,
+#' visual cues like grid lines, and metadata such as tab colors and page setup
+#' properties.
 #'
 #' @details
-#' Headers and footers can contain special tags
-#' * **&\[Page\]** Page number
-#' * **&\[Pages\]** Number of pages
-#' * **&\[Date\]** Current date
-#' * **&\[Time\]** Current time
-#' * **&\[Path\]** File path
-#' * **&\[File\]** File name
-#' * **&\[Tab\]** Worksheet name
+#' Worksheets can be configured with complex headers and footers that adapt to
+#' document layout requirements. The function supports distinct definitions for
+#' odd pages, even pages, and the first page of a document. Headers and footers
+#' are defined as character vectors of length three, representing the left,
+#' center, and right sections respectively.
 #'
-#' @param wb A `wbWorkbook` object to attach the new worksheet
-#' @param sheet A name for the new worksheet
-#' @param grid_lines A logical. If `FALSE`, the worksheet grid lines will be
-#'   hidden.
-#' @param row_col_headers A logical. If `FALSE`, the worksheet colname and rowname will be
-#'   hidden.
-#' @param tab_color Color of the sheet tab. A  [wb_color()],  a valid color (belonging to
-#'   `grDevices::colors()`) or a valid hex color beginning with "#".
-#' @param zoom The sheet zoom level, a numeric between 10 and 400 as a
-#'   percentage. (A zoom value smaller than 10 will default to 10.)
-#' @param header,odd_header,even_header,first_header,footer,odd_footer,even_footer,first_footer
-#'   Character vector of length 3 corresponding to positions left, center,
-#'   right.  `header` and `footer` are used to default additional arguments.
-#'   Setting `even`, `odd`, or `first`, overrides `header`/`footer`. Use `NA` to
-#'   skip a position.
-#' @param visible If `FALSE`, sheet is hidden else visible.
+#' Within these sections, special dynamic tags can be utilized to include
+#' automatic metadata:
+#' * `&[Page]`: The current page number
+#' * `&[Pages]`: The total number of pages
+#' * `&[Date]`: The current system date
+#' * `&[Time]`: The current system time
+#' * `&[Path]`: The file path of the workbook
+#' * `&[File]`: The name of the file
+#' * `&[Tab]`: The name of the worksheet
+#'
+#' The function also initializes the sheet view. Parameters like `zoom` and
+#' `grid_lines` determine how the sheet is presented upon opening the file in
+#' spreadsheet software. For advanced page configuration, such as DPI settings
+#' and paper sizes, the function integrates with the package-wide options system
+#' but allows for per-sheet overrides.
+#'
+#' @param wb A [wbWorkbook] object to which the new worksheet will be attached.
+#' @param sheet A character string for the worksheet name. Defaults to a
+#'   sequentially generated name (e.g., "Sheet 1").
+#' @param grid_lines Logical; if `FALSE`, the worksheet grid lines are hidden.
+#' @param row_col_headers Logical; if `FALSE`, row numbers and column letters are hidden.
+#' @param tab_color The color of the worksheet tab. Accepts a [wb_color()] object,
+#'   a standard R color name, or a hex color code (e.g., "#4F81BD").
+#' @param zoom The sheet zoom level as a percentage; a numeric value between
+#'   10 and 400. Values below 10 default to 10.
+#' @param header,footer Default character vectors of length three for the left,
+#'   center, and right sections of the header or footer.
+#' @param odd_header,odd_footer Specific definitions for odd-numbered pages.
+#'   Defaults to the values provided in `header` and `footer`.
+#' @param even_header,even_footer Specific definitions for even-numbered pages.
+#'   Defaults to the values provided in `header` and `footer`.
+#' @param first_header,first_footer Specific definitions for the first page
+#'   of the worksheet. Defaults to the values provided in `header` and `footer`.
+#' @param visible The visibility state of the sheet. One of "visible", "hidden",
+#'   or "veryHidden".
 #' @param has_drawing _defunct_
-#' @param paper_size An integer corresponding to a paper size. See [wb_page_setup()] for
-#'   details.
-#' @param orientation One of "portrait" or "landscape"
-#' @param hdpi,vdpi Horizontal and vertical DPI. Can be set with `options("openxlsx2.dpi" = X)`,
-#'   `options("openxlsx2.hdpi" = X)` or `options("openxlsx2.vdpi" = X)`
-#' @param ... Additional arguments
-#' @return The `wbWorkbook` object, invisibly.
+#' @param paper_size An integer code representing a standard paper size.
+#'   Refer to [wb_page_setup()] for a complete list of codes.
+#' @param orientation The page orientation, either "portrait" or "landscape".
+#' @param hdpi,vdpi The horizontal and vertical DPI (dots per inch) for
+#'   printing and rendering. Can be set globally via `options("openxlsx2.hdpi")`.
+#' @param ... Additional arguments passed to internal sheet configuration methods.
 #'
-#' @export
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * As of recent versions, the `has_drawing` argument has been removed and
+#'     is no longer part of the public API.
+#' * If `zoom` is provided outside the 10–400 range, it is automatically
+#'     clamped to the nearest boundary.
+#' * The `sheet` name is validated against a set of illegal characters
+#'     prohibited by spreadsheet software standards.
+#'
 #' @family workbook wrappers
 #' @examples
 #' ## Create a new workbook
@@ -1148,6 +1199,7 @@ wb_add_chartsheet <- function(
 #' wb$add_data(sheet = 6, 1:400)
 #' wb$add_data(sheet = 7, 1:400)
 #' wb$add_data(sheet = 8, 1:400)
+#' @export
 wb_add_worksheet <- function(
   wb,
   sheet           = next_sheet(),
@@ -1253,25 +1305,52 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet(), fr
 
 # worksheets --------------------------------------------------------------
 
-#' Freeze pane of a worksheet
+#' Freeze panes of a worksheet
 #'
-#' Add a Freeze pane in a worksheet.
+#' @description
+#' The `wb_freeze_pane()` function locks a specific area of a worksheet to keep
+#' rows or columns visible while scrolling through other parts of the data. This
+#' is achieved by defining a "split" point, where all content above or to the
+#' left of the designated active region remains fixed.
 #'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param first_active_row Top row of active region
-#' @param first_active_col Furthest left column of active region
-#' @param first_row If `TRUE`, freezes the first row (equivalent to `first_active_row = 2`)
-#' @param first_col If `TRUE`, freezes the first column (equivalent to `first_active_col = 2`)
-#' @param ... additional arguments
+#' @details
+#' The function operates by calculating `xSplit` and `ySplit` values based on
+#' the provided active region coordinates. The `first_active_row` and
+#' `first_active_col` parameters define the first cell that remains scrollable;
+#' consequently, the frozen area consists of all rows and columns preceding
+#' these indices.
 #'
-#' @export
-#' @family workbook wrappers
-#' @family worksheet content functions
+#' For common use cases, the `first_row` and `first_col` logical flags provide
+#' optimized shortcuts. Enabling `first_row` locks the top row (equivalent to
+#' setting the active region at row 2), while `first_col` locks the leftmost
+#' column (equivalent to setting the active region at column 2). If both are
+#' enabled, the function automatically freezes the intersection at cell "B2".
+#'
+#' The internal logic translates these coordinates into a `<pane />` XML node,
+#' which specifies the `topLeftCell` of the scrollable region and assigns the
+#' `activePane` (e.g., "bottomLeft", "topRight", or "bottomRight") to ensure
+#' correct cursor behavior within the spreadsheet software.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet to modify. Defaults to
+#'   the current sheet.
+#' @param first_active_row The index of the first row that should remain
+#'   scrollable. Rows above this will be frozen.
+#' @param first_active_col The index or character label of the first column
+#'   that should remain scrollable. Columns to the left will be frozen.
+#' @param first_row Logical; if `TRUE`, freezes the first row of the worksheet.
+#' @param first_col Logical; if `TRUE`, freezes the first column of the worksheet.
+#' @param ... Additional arguments for internal case standardization.
+#'
+#' @section Notes:
+#' * If `first_active_row` and `first_active_col` are both set to 1, or if all
+#'     arguments are omitted, the function returns the workbook unchanged as
+#'     there is no region to freeze.
+#' * This function overwrites any existing pane configuration for the
+#'     specified worksheet.
+#'
 #' @examples
-#' ## Create a new workbook
-#' wb <- wb_workbook("Kenshin")
-#'
+#' wb <- wb_workbook()
 #' ## Add some worksheets
 #' wb$add_worksheet("Sheet 1")
 #' wb$add_worksheet("Sheet 2")
@@ -1283,6 +1362,10 @@ wb_clone_worksheet <- function(wb, old = current_sheet(), new = next_sheet(), fr
 #' wb$freeze_pane("Sheet 2", first_col = TRUE) ## shortcut to first_active_col = 2
 #' wb$freeze_pane(3, first_row = TRUE) ## shortcut to first_active_row = 2
 #' wb$freeze_pane(4, first_active_row = 1, first_active_col = "D")
+#'
+#' @family workbook wrappers
+#' @family worksheet content functions
+#' @export
 wb_freeze_pane <- function(
   wb,
   sheet            = current_sheet(),
@@ -1440,24 +1523,49 @@ wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
 # images ------------------------------------------------------------------
 
 
-#' Insert the current plot into a worksheet
+#' Insert the current R plot into a worksheet
 #'
-#' The current plot is saved to a temporary image file using
-#' [grDevices::dev.copy()] This file is then written to the workbook using
-#' [wb_add_image()].
+#' @description
+#' The `wb_add_worksheet()` function captures the active R graphics device and
+#' embeds the displayed plot into a worksheet. This is achieved by copying the
+#' current plot to a temporary image file via [grDevices::dev.copy()] and
+#' subsequently invoking [wb_add_image()] to handle the workbook integration.
 #'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param dims Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
-#' @param row_offset,col_offset Offset for column and row
-#' @param width Width of figure. Defaults to `6` in.
-#' @param height Height of figure . Defaults to `4` in.
-#' @param file_type File type of image
-#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
-#' @param dpi Image resolution
-#' @param ... additional arguments
-#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()]
-#' @export
+#' @details
+#' Because this function relies on the active graphics device, a plot must be
+#' currently displayed in the R session (e.g., in the Plots pane or a separate
+#' window) for the capture to succeed. The function supports various file
+#' formats for the intermediate transition, including `"png"`, `"jpeg"`,
+#' `"tiff"`, and `"bmp"`.
+#'
+#' Positioning is managed through the spreadsheet coordinate system. Using a
+#' single cell in `dims` (e.g., "A1") establishes a one-cell anchor where the
+#' plot maintains its absolute dimensions. Providing a range (e.g., "A1:E10")
+#' creates a two-cell anchor, which may result in the plot resizing if columns
+#' or rows within that range are adjusted in spreadsheet software.
+#'
+#' For programmatic control over the output quality, the `dpi` argument
+#' influences the resolution of the captured device. Users working with
+#' high-resolution displays or requiring print-quality outputs should adjust
+#' the `dpi` and `units` accordingly.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet where the plot will be
+#'   inserted. Defaults to the current sheet.
+#' @param dims A character string defining the anchor point or range (e.g.,
+#'   "A1" or "A1:D4").
+#' @param width,height The numeric dimensions of the exported plot. Defaults
+#'   to 6x4 inches.
+#' @param row_offset,col_offset Numeric vectors for sub-cell positioning
+#'   offsets.
+#' @param file_type The image format for the temporary capture. Supported
+#'   types include `"png"`, `"jpeg"`, `"tiff"`, and `"bmp"`.
+#' @param units The measurement units for `width` and `height`. Must be
+#'   one of `"in"`, `"cm"`, or `"px"`.
+#' @param dpi The resolution in dots per inch for the image conversion.
+#' @param ... Additional arguments. Supports the deprecated `start_row`
+#'   and `start_col` parameters for backward compatibility.
+#'
 #' @examples
 #' if (requireNamespace("ggplot2") && interactive()) {
 #' ## Create a new workbook
@@ -1483,6 +1591,8 @@ wb_remove_col_widths <- function(wb, sheet = current_sheet(), cols) {
 #' wb$add_plot(1, dims = "J2", width = 16, height = 10, file_type = "png", units = "cm")
 #'
 #' }
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()]
+#' @export
 wb_add_plot <- function(
     wb,
     sheet      = current_sheet(),
@@ -1557,14 +1667,51 @@ wb_add_drawing <- function(
   )
 }
 
-#' Add mschart object to a worksheet
+#' Add an mschart object to a worksheet
 #'
-#' @param wb a workbook
-#' @param sheet the sheet on which the graph will appear
-#' @param dims the dimensions where the sheet will appear
-#' @param graph mschart object
-#' @param col_offset,row_offset offsets for column and row
-#' @param ... additional arguments
+#' @description
+#' The `wb_add_mschart()` function allows for the seamless integration of native
+#' charts created via the `mschart` package into a worksheet. Unlike static
+#' images or plots, these are dynamic, native spreadsheet charts that remain
+#' editable and can utilize data already present in the workbook or data
+#' provided directly at creation.
+#'
+#' @details
+#' The function acts as a bridge between the `ms_chart` objects and the
+#' spreadsheet's internal XML drawing structure. It interprets the chart settings
+#' and data series to generate the necessary DrawingML.
+#'
+#' There are two primary workflows for adding charts:
+#' 1. External Data: If the `graph` object contains a standard data frame,
+#'    `wb_add_mschart()` automatically writes this data to the worksheet
+#'    before rendering the chart.
+#' 2. Internal Data: If the `graph` object is initialized using a `wb_data`
+#'    object (created via [wb_data()]), the chart will directly reference the
+#'    existing cell ranges in the worksheet. This is the preferred method for
+#'    maintaining a single source of truth for your data.
+#'
+#' The chart is positioned using the `dims` argument. A single cell anchor
+#' (e.g., "A1") will place the top-left corner of the chart, while a range
+#' (e.g., "E5:L20") will scale the chart to fit that specific area.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet where the chart will be
+#'   placed. Defaults to the current sheet.
+#' @param dims A character string defining the chart's position or range
+#'   (e.g., "A1" or "F4:L20").
+#' @param graph An `ms_chart` object created with the `mschart` package.
+#' @param col_offset,row_offset Numeric values for fine-tuning the chart's
+#'   displacement from its anchor point.
+#' @param ... Additional arguments.
+#'
+#' @section Notes:
+#' * This function requires the `mschart` package to be installed.
+#' * Native charts are highly dependent on the calculation engine of the
+#'     spreadsheet software; if the underlying data changes, the chart will
+#'     update automatically when the file is opened.
+#' * The function generates unique internal IDs for the chart axes to ensure
+#'     compliance with the OpenXML specification.
+#'
 #' @examples
 #' if (requireNamespace("mschart")) {
 #' require(mschart)
@@ -2285,11 +2432,11 @@ wb_page_setup <- function(
 #' software is often unable to process these. Therefore using ascii characters
 #' is recommended.
 #'
-#' This protection only adds XML strings to the workbook. It will not ecnrypt
+#' This protection only adds XML strings to the workbook. It will not encrypt
 #' the file. For a full file encryption have a look at the `msoc` package.
 #'
 #' If the `openssl` package is installed, a SHA based password hash will be
-#' used. The legacy implementation not using `openssl` is prune to collions.
+#' used. The legacy implementation not using `openssl` is prune to collisions.
 #' @note
 #' The cryptographic hashing implementation used here has not been
 #' independently reviewed for security. It should not be used for
@@ -2351,11 +2498,11 @@ wb_protect_worksheet <- function(
 #' passwords can be unicode characters, spreadsheet software is often
 #' unable to process these. Therefore using ascii characters is recommended.
 #'
-#' This protection only adds XML strings to the workbook. It will not ecnrypt
+#' This protection only adds XML strings to the workbook. It will not encrypt
 #' the file. For a full file encryption have a look at the `msoc` package.
 #'
 #' If the `openssl` package is installed, a SHA based password hash will be
-#' used. The legacy implementation not using `openssl` is prune to collions.
+#' used. The legacy implementation not using `openssl` is prune to collisions.
 #' @note
 #' The cryptographic hashing implementation used here has not been
 #' independently reviewed for security. It should not be used for
@@ -2386,6 +2533,7 @@ wb_protect_worksheet <- function(
 #' @seealso [wb_protect_worksheet]
 #' @export
 #' @examples
+#' \donttest{
 #' wb <- wb_workbook()
 #' wb$add_worksheet("S1")
 #' wb_protect(wb, protect = TRUE, password = "Password", lock_structure = TRUE)
@@ -2403,7 +2551,7 @@ wb_protect_worksheet <- function(
 #'   username = "Test",
 #'   read_only_recommended = TRUE
 #' )
-#'
+#' }
 wb_protect <- function(
     wb,
     protect               = TRUE,
@@ -2822,12 +2970,39 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 
 #' Add a page break to a worksheet
 #'
-#' Insert page breaks into a worksheet
+#' @description
+#' The `wb_add_page_break()` function allows you to manually insert horizontal
+#' or vertical page breaks into a worksheet. These breaks determine where the
+#' spreadsheet software starts a new page when printing or generating a PDF.
 #'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param row,col Either a row number of column number.  One must be `NULL`
-#' @export
+#' @details
+#' Manual page breaks override the automatic breaks calculated by the software
+#' based on margins and paper size.
+#'
+#' * Row Breaks: When a `row` is specified, the horizontal break is placed
+#'     *above* the specified row. For example, setting `row = 10` ensures that
+#'     Row 10 starts on a new page.
+#' * Column Breaks: When a `col` is specified, the vertical break is placed
+#'     to the *left* of that column. For example, `col = "B"` (or `2`) ensures
+#'     Column B is the first column on the next vertical page.
+#'
+#' You must provide either a `row` or a `col` index, but not both in a single
+#' call. To create a page intersection (both horizontal and vertical), call
+#' the function twice.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param row Integer; the row number where the horizontal page break should
+#'   be inserted.
+#' @param col Integer or character; the column number or name (e.g., "B")
+#'   where the vertical page break should be inserted.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * Manual breaks are visible in "Page Break Preview" mode within most
+#'     spreadsheet applications.
+#'
 #' @seealso [wb_add_worksheet()]
 #' @examples
 #' wb <- wb_workbook()
@@ -2837,6 +3012,7 @@ wb_set_sheet_visibility <- function(wb, sheet = current_sheet(), value) {
 #' wb$add_page_break(sheet = 1, row = 10)
 #' wb$add_page_break(sheet = 1, row = 20)
 #' wb$add_page_break(sheet = 1, col = 2)
+#' @export
 wb_add_page_break <- function(wb, sheet = current_sheet(), row = NULL, col = NULL) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_page_break(sheet = sheet, row = row, col = col)
@@ -3220,21 +3396,47 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 
 #' Insert an image into a worksheet
 #'
-#' @param wb A workbook object
-#' @param sheet A name or index of a worksheet
-#' @param dims Dimensions where to plot. Default absolute anchor, single cell (eg. "A1")
-#'   oneCellAnchor, cell range (eg. "A1:D4") twoCellAnchor
-#' @param file An image file. Valid file types are:` "jpeg"`, `"png"`, `"bmp"`
-#' @param width Width of figure.
-#' @param height Height of figure.
-#' @param row_offset offset vector for one or two cell anchor within cell (row)
-#' @param col_offset offset vector for one or two cell anchor within cell (column)
-#' @param units Units of width and height. Can be `"in"`, `"cm"` or `"px"`
-#' @param dpi Image resolution used for conversion between units.
-#' @param address An optional character string specifying an external URL, relative or absolute path to a file, or "mailto:" string (e.g. "mailto:example@@example.com") that will be opened when the image is clicked.
-#' @param ... additional arguments
-#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_mschart()] [wb_add_plot()]
-#' @export
+#' @description
+#' The `wb_add_image()` function embeds external image files into a worksheet. It
+#' supports standard raster formats and provides granular control over positioning
+#' through a variety of anchoring methods. Images can be anchored to absolute
+#' positions, individual cells, or defined ranges, and can optionally function
+#' as clickable hyperlinks.
+#'
+#' @details
+#' Image placement is determined by the `dims` argument and internal anchoring
+#' logic. If a single cell is provided (e.g., "A1"), the image is placed using a
+#' one-cell anchor where the top-left corner is fixed to the cell. If a range
+#' is provided (e.g., "A1:D4"), a two-cell anchor is utilized, which can cause
+#' the image to scale with the underlying rows and columns.
+#'
+#' Position offsets (`row_offset` and `col_offset`) allow for sub-cell precision
+#' by shifting the image from its anchor point. Internally, all dimensions are
+#' converted to English Metric Units (EMUs), where 1 inch equals 914,400 EMUs,
+#' ensuring high-fidelity rendering across different display scales.
+#'
+#' Supported file types include `"jpeg"`, `"png"`, and `"bmp"`. If an `address`
+#' is provided, the function creates a relationship to an external target or
+#' email, transforming the image into a functional hyperlink.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet to receive the image.
+#'   Defaults to the current sheet.
+#' @param dims A character string defining the placement. A single cell (e.g., "A1")
+#'   uses a one-cell anchor; a range (e.g., "A1:D4") uses a two-cell anchor.
+#' @param file The path to the image file. Supported formats are JPEG, PNG, and BMP.
+#' @param width,height The numeric width and height of the image.
+#' @param row_offset,col_offset Offset vectors for fine-tuning the position within
+#'   the anchor cell(s).
+#' @param units The units for `width` and `height`. Must be one of `"in"` (inches),
+#'   `"cm"` (centimeters), or `"px"` (pixels).
+#' @param dpi The resolution (dots per inch) used for conversion when `units`
+#'   is set to `"px"`. Defaults to 300.
+#' @param address An optional character string specifying a URL, file path, or
+#'   "mailto:" link to be opened when the image is clicked.
+#' @param ... Additional arguments. Includes support for legacy `start_row` and
+#'   `start_col` parameters.
+#'
 #' @examples
 #' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 #'
@@ -3245,6 +3447,8 @@ wb_set_last_modified_by <- function(wb, name, ...) {
 #'   add_image(dims = "B2", file = img)$
 #'   add_worksheet()$
 #'   add_image(dims = "G3", file = img, width = 15, height = 12, units = "cm")
+#' @seealso [wb_add_chart_xml()] [wb_add_drawing()] [wb_add_mschart()] [wb_add_plot()]
+#' @export
 wb_add_image <- function(
   wb,
   sheet      = current_sheet(),
@@ -3307,19 +3511,52 @@ wb_add_chart_xml <- function(
 }
 
 
-#' Remove all values in a worksheet
+#' Clear content and formatting from a worksheet
 #'
-#' Remove content of a worksheet completely, or a region if specifying `dims`.
+#' @description
+#' The `wb_clean_sheet()` function removes data, formulas, and formatting from
+#' a worksheet. It can be used to wipe an entire sheet clean or to target
+#' specific cell regions (`dims`). This is particularly useful when you want
+#' to reuse an existing sheet structure but replace the data or reset the styling.
 #'
-#' @param wb A Workbook object
-#' @param sheet sheet to clean
-#' @param dims spreadsheet dimensions (optional)
-#' @param numbers remove all numbers
-#' @param characters remove all characters
-#' @param styles remove all styles
-#' @param merged_cells remove all merged_cells
-#' @param hyperlinks remove all hyperlinks
-#' @return A Workbook object
+#' @details
+#' Unlike deleting a worksheet, cleaning a sheet preserves the sheet's
+#' existence, name, and properties (like tab color or sheet views) while
+#' emptying the cell-level data.
+#'
+#' Selective Removal:
+#' By toggling the logical arguments, you can choose exactly what to discard.
+#' For example, you can remove data but keep the cell styles (borders, fills),
+#' or vice-versa.
+#'
+#' * Numbers/Characters: Targeting these specifically allows you to clear
+#'     constants while potentially leaving other elements intact.
+#' * Styles: Resets cells to the workbook's default appearance.
+#' * Merged Cells: Unmerges ranges; if `dims` is provided, only merges
+#'     within that range are broken.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet to clean. Defaults to the
+#'   current sheet.
+#' @param dims Optional character string defining a cell range (e.g., "A1:G20").
+#'   If `NULL`, the entire worksheet is cleaned.
+#' @param numbers Logical; if `TRUE`, removes all numeric values, booleans,
+#'   and error codes.
+#' @param characters Logical; if `TRUE`, removes all text strings (shared,
+#'   inline, or formula-based strings).
+#' @param styles Logical; if `TRUE`, removes all cell styles and resets
+#'   formatting to default.
+#' @param merged_cells Logical; if `TRUE`, unmerges all cells (or those
+#'   within `dims`).
+#' @param hyperlinks Logical; if `TRUE`, removes hyperlinks from the specified
+#'   region.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * Currently, this function does not remove objects like images, charts,
+#'     comments, or pivot tables.
+#'
 #' @export
 wb_clean_sheet <- function(
     wb,
@@ -3343,30 +3580,75 @@ wb_clean_sheet <- function(
   )
 }
 
-#' Preview a workbook in a spreadsheet software
+#' Preview a workbook in spreadsheet software
 #'
-#' You can also use the shorter `wb$open()` as a replacement.
-#' To open xlsx files, see [xl_open()].
+#' @description
+#' `wb_open()` provides a convenient interface to immediately view the contents
+#' of a `wbWorkbook` object within a spreadsheet application. This function
+#' serves as a high-level wrapper for [xl_open()], allowing users to inspect
+#' the results of programmatic workbook construction without explicitly
+#' managing file paths.
 #'
-#' @param wb a [wbWorkbook] object
-#' @param interactive If `FALSE` will throw a warning and not open the path.
-#'   This can be manually set to `TRUE`, otherwise when `NA` (default) uses
-#'   the value returned from [base::interactive()]
-#' @param flush if the flush option should be used
+#' @details
+#' The function operates by creating a temporary copy of the workbook on the
+#' local file system and subsequently invoking the system's default handler
+#' or a specified spreadsheet application. For users utilizing the R6
+#' interface, `wb$open()` is available as a shorter alias for this function.
+#'
+#' @param wb A [wbWorkbook] object to be previewed.
+#' @param interactive Logical; determines if the file should be opened. When
+#'   `NA` (the default), it inherits the value from [base::interactive()]. If
+#'   `FALSE`, a warning is issued and the file is not opened.
+#' @param flush Logical; if `TRUE`, the `flush` argument is passed to the internal
+#'   save call. This controls the XML processing method used when writing the
+#'   temporary file. For a detailed discussion on the performance and memory
+#'   implications of this parameter, see [wb_save()].
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @seealso [xl_open()], [wb_save()]
 #' @export
 wb_open <- function(wb, interactive = NA, flush = FALSE) {
   assert_workbook(wb)
   wb$open(interactive = interactive, flush = flush)
 }
 
-#' Set the default style in a workbook
+#' Register a style in a workbook
 #'
-#' wb wrapper to add style to workbook
+#' @description
+#' The `wb_add_style()` function serves as a general-purpose entry point for
+#' registering XML-based style definitions into a `wbWorkbook`. While specific
+#' wrappers like [wb_add_font()] target individual cell properties, `wb_add_style()`
+#' is used to add pre-constructed styles—such as custom table styles or
+#' differential formatting (DXF) styles—to the workbook's internal style manager.
 #'
-#' @param wb A workbook
-#' @param style style xml character, created by a `create_*()` function.
-#' @param style_name style name used optional argument
-#' @return The `wbWorkbook` object, invisibly.
+#' @details
+#' Styles in the OpenXML specification are stored in a centralized catalog
+#' (`styles.xml`). This function takes an XML character string, typically
+#' generated by a `create_*()` function, and registers it under a specific
+#' `style_name`.
+#'
+#' Once registered, these styles can be applied to cells, ranges, or tables
+#' by referencing their name. This is particularly useful for maintaining
+#' consistency across a large workbook or when creating complex "Table Styles"
+#' that define headers, footers, and banding in a single object.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param style A character string containing the XML definition of the style.
+#'   This is usually the output of functions like [create_cell_style()] or
+#'   [create_dxfs_style()].
+#' @param style_name Optional; a unique name for the style. If `NULL`, the
+#'   function attempts to derive a name from the object name or the internal
+#'   XML attributes (e.g., for table styles).
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * If the `style` provided is a `tableStyle` node, the function automatically
+#'     extracts the name from the XML attribute if `style_name` is not provided.
+#' * Registering a style does not automatically apply it to a cell; it only
+#'     makes the style available within the workbook's style catalog.
+#'
 #' @seealso
 #' * [create_border()]
 #' * [create_cell_style()]
@@ -3390,21 +3672,54 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
   wb$clone(deep = TRUE)$add_style(style, style_name)
 }
 
-#' Apply styling to a cell region
+#' Get or set cell style indices
 #'
-#' Setting a style across only impacts cells that are not yet part of a workbook. The effect is similar to setting the cell style for all cells in a row independently, though much quicker and less memory consuming.
+#' @description
+#' The `wb_get_cell_style()` and `wb_set_cell_style()` functions provide a
+#' direct way to manage the internal style index (XF ID) of a cell. This is
+#' particularly useful for "copy-pasting" the formatting from one cell to
+#' another or for applying pre-defined styles at scale without the overhead
+#' of creating new XML nodes for every cell.
+#'
+#' @details
+#' In the OpenXML format, formatting is not stored inside every cell. Instead,
+#' a workbook maintains a centralized style table, and each cell simply holds
+#' an integer index (the Cell Style ID) pointing to a record in that table.
+#'
+#' `wb_get_cell_style()` retrieves these indices for a specified range. If
+#' a cell has not been explicitly styled, the function returns the index for
+#' the default style.
+#'
+#' `wb_set_cell_style()` applies a specific index or style definition to a
+#' range. This is significantly faster and more memory-efficient than using high-level
+#' wrappers like `wb_add_font()` when applying the exact same style to thousands
+#' of individual cells.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1" or "A1:C10").
+#' @param style An integer style ID (XF ID), a character string of a registered
+#'   style name, or a cell dimension (e.g., "B1") from which to copy the style.
+#'
+#' @return
+#' * For `wb_get_cell_style()`: A named vector where names are cell addresses
+#'   (e.g., "A1") and values are the integer style indices.
+#' * For `wb_set_cell_style()`: The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * These functions are the most efficient way to handle repetitive styling
+#'     tasks in large worksheets.
+#' * If `style` is a character string that is not a cell dimension, it is
+#'     looked up in the workbook's Style Manager.
 #'
 #' @name wb_cell_style
-#' @param wb A `wbWorkbook` object
-#' @param sheet sheet
-#' @param dims A cell range in the worksheet
 #' @family styles
 #' @examples
-#' # set a style in b1
+#' # set a style in B1
 #' wb <- wb_workbook()$add_worksheet()$
 #'   add_numfmt(dims = "B1", numfmt = "#,0")
 #'
-#' # get style from b1 to assign it to a1
+#' # get style from B1 to assign it to A1
 #' numfmt <- wb$get_cell_style(dims = "B1")
 #'
 #' # assign style to a1
@@ -3443,21 +3758,58 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 
 #' Modify borders in a cell region of a worksheet
 #'
-#' wb wrapper to create borders for cell regions.
-#' Setting `update` to `NULL` removes the style and resets the cell to the workbook default.
+#' @description
+#' The `wb_add_border()` function provides a high-level interface for applying
+#' and managing cell borders within a `wbWorkbook`. It is designed to handle
+#' both single cells and multi-cell regions, with built-in logic to differentiate
+#' between exterior boundary borders and interior grid lines.
 #'
-#' @param wb A `wbWorkbook`
-#' @param sheet A worksheet
-#' @param dims Cell range in the worksheet e.g. "A1", "A1:A5", "A1:H5"
-#' @param bottom_color,left_color,right_color,top_color,inner_hcolor,inner_vcolor
-#'   a color, either something openxml knows or some RGB color
-#' @param left_border,right_border,top_border,bottom_border,inner_hgrid,inner_vgrid
-#'   the border style, if `NULL` no border is drawn.
-#'   See [create_border()] for possible border styles
-#' @param update Logical. Defaults to FALSE. If TRUE, and the border style includes NULL entries, existing borders may be updated with new ones. When overlapping cells (e.g., squares intersect), existing borders will be preserved where possible.
-#' @param diagonal_up,diagonal_down,diagonal_color (optional) arguments for diagonal border lines. If set, up and down must be a unique style (there can be only one) and the color must be a [wb_color()] object
-#' @param ... additional arguments
-#' @seealso [create_border()]
+#' @details
+#' When applied to a range of cells (e.g., "A1:C3"), `wb_add_border()` treats
+#' the selection as a single cohesive block. Parameters like `top_border` and
+#' `left_border` apply only to the outermost edges of the entire range. To
+#' draw lines between cells within the range, the `inner_hgrid` (horizontal)
+#' and `inner_vgrid` (vertical) arguments are used.
+#'
+#' The function supports all standard spreadsheet border styles (e.g., "thin",
+#' "thick", "double", "dotted"). If `update = TRUE`, the function attempts
+#' to merge new border definitions with existing ones, preserving overlapping
+#' styles where possible. Setting `update = NULL` acts as a reset, removing
+#' all border styles from the specified `dims` and returning them to the
+#' workbook default.
+#'
+#' For specialized needs, diagonal borders can be added using `diagonal_up`
+#' and `diagonal_down`. Note that the OpenXML specification typically restricts
+#' a cell to a single diagonal line style.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet to modify. Defaults to
+#'   the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1", "B2:G10").
+#' @param top_border,bottom_border,left_border,right_border The border style
+#'   for the exterior edges of the range.
+#' @param top_color,bottom_color,left_color,right_color The colors for the
+#'   exterior edges. Accepts [wb_color()] objects or hex codes.
+#' @param inner_hgrid,inner_vgrid The border style for internal horizontal
+#'   and vertical grid lines within a range.
+#' @param inner_hcolor,inner_vcolor The colors for internal grid lines.
+#' @param update Logical or `NULL`. If `TRUE`, updates existing borders.
+#'   If `NULL`, removes borders. If `FALSE` (default), overwrites existing
+#'   styles with the new definition.
+#' @param diagonal_up,diagonal_down Character string for the diagonal line
+#'   style (e.g., "thin").
+#' @param diagonal_color A [wb_color()] object for the diagonal lines.
+#' @param ... Additional arguments.
+#'
+#' @section Notes:
+#' * The function internally partitions the `dims` range into nine zones
+#'     (corners, edges, and core) to apply the correct combination of
+#'     exterior and interior borders efficiently.
+#' * Color and style arguments must be paired; if a style is `NULL`, any
+#'     assigned color for that side will be ignored.
+#' * All border styles are registered in the workbook's global style
+#'     catalog to ensure XML consistency.
+#'
 #' @examples
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb, "S1")
@@ -3520,6 +3872,7 @@ wb_set_cell_style_across <- function(wb, sheet = current_sheet(), style, cols = 
 #'     diagonal_color = wb_color("red")
 #'   )
 #' @family styles
+#' @seealso [create_border()]
 #' @export
 wb_add_border <- function(
     wb,
@@ -3570,23 +3923,49 @@ wb_add_border <- function(
 
 #' Modify the background fill color in a cell region
 #'
-#' Add fill to a cell region.
-#' Setting `color` to `NULL` removes the style and resets the cell to the workbook default.
+#' @description
+#' The `wb_add_fill()` function applies background colors, patterns, or gradients
+#' to a specified cell region. It allows for high-precision styling, ranging
+#' from simple solid fills to complex geometric patterns and linear or path-based
+#' gradients compliant with the OpenXML specification.
 #'
-#' @param wb a workbook
-#' @param sheet the worksheet
-#' @param dims the cell range
-#' @param color the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")
-#' @param pattern various default "none" but others are possible:
-#'  "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
-#'  "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
-#'  "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
-#'  "lightTrellis", "gray125", "gray0625"
-#' @param gradient_fill a gradient fill xml pattern.
-#' @param every_nth_col which col should be filled
-#' @param every_nth_row which row should be filled
-#' @param bg_color (optional) background [wb_color()]
-#' @param ... ...
+#' @details
+#' Background fills in spreadsheet software consist of a pattern type (the most
+#' common being "solid") and a foreground color. If a non-solid pattern is chosen
+#' (e.g., "darkVertical"), an optional `bg_color` can be specified to create a
+#' two-tone effect.
+#'
+#' The function also includes built-in logic for "nth" selection, which is
+#' particularly useful for manual "zebra-striping" or creating grid-like
+#' visual patterns without needing to manually construct a complex vector of
+#' cell addresses.
+#'
+#' Gradients:
+#' For advanced visual effects, `gradient_fill` accepts raw XML strings defining
+#' `<gradientFill>` nodes. These can specify `degree` (for linear gradients)
+#' or `type="path"` (for radial-style gradients) along with multiple color
+#' stops.
+#'
+#' Style Removal:
+#' Setting `color = NULL` removes the fill style from the specified region,
+#' reverting the cells to the workbook's default transparent background.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1:D10").
+#' @param color A [wb_color()] object or hex string representing the primary fill
+#'   (foreground) color. Defaults to yellow ("FFFFFF00").
+#' @param pattern Character; the pattern type. Common values include "solid",
+#'   "mediumGray", "lightGray", "darkGrid", and "lightTrellis". Defaults to "solid".
+#' @param gradient_fill An optional XML string defining a gradient fill pattern.
+#'   If provided, this overrides `color` and `pattern`.
+#' @param every_nth_col,every_nth_row Numeric; applies the fill only to every
+#'   $n$-th column or row within the specified `dims`. Useful for banding.
+#' @param bg_color An optional [wb_color()] for the background of a patterned fill.
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
 #' @examples
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb, "S1")
@@ -3637,36 +4016,67 @@ wb_add_fill <- function(
   )
 }
 
-#' Modify font in a cell region
+#' Modify font properties in a cell region
 #'
-#' Modify the font in a cell region with more precision
-#' You can specify the font in a cell with other cell styling functions,
-#' but `wb_add_font()` gives you more control.
+#' @description
+#' The `wb_add_font()` function provides granular control over the visual
+#' appearance of text within a specified cell region. While other styling
+#' functions include basic font options, `wb_add_font()` exposes the full range
+#' of font attributes supported by the OpenXML specification, allowing for
+#' precise adjustments to typeface, sizing, color, and emphasis.
 #'
-#' `wb_add_font()` provides all the options openxml accepts for a font node,
-#' not all have to be set. Usually `name`, `size` and `color` should be what the user wants.
-#' Setting `update` to `NULL` removes the style and resets the cell to the workbook default.
+#' @details
+#' This function operates on the font node of a cell's style. It is particularly
+#' powerful when used with the `update` argument, which allows users to modify
+#' specific attributes (like color) while preserving other existing font properties
+#' (like bold or font name).
 #'
-#' @param wb A Workbook object
-#' @param sheet the worksheet
-#' @param dims the cell range
-#' @param name Font name: default `"Aptos Narrow"`.
-#' @param color A [wb_color()], the color of the font. Default is "FF000000".
-#' @param size Font size: default is `11`.
-#' @param bold Logical, whether the font should be bold.
-#' @param italic Logical, whether the font should be italic.
-#' @param outline Logical, whether the font should have an outline.
-#' @param strike Logical, whether the font should have a strikethrough.
-#' @param underline underline, "single" or "double", default: ""
-#' @param family Character, the font family. Default is "2" (modern). "0" (auto), "1" (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). # 6-14 unused
-#' @param charset Character, the character set to be used. The list of valid IDs can be found in the **Details** section of [fmt_txt()].
-#' @param condense Logical, whether the font should be condensed.
-#' @param scheme Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".
-#' @param shadow Logical, whether the font should have a shadow.
-#' @param extend Logical, whether the font should be extended.
-#' @param vert_align Character, the vertical alignment of the font. Valid values are "baseline", "superscript", "subscript".
-#' @param update Logical/Character if logical, all elements are assumed to be selected, whereas if character, only matching elements are updated. This will not alter strings styled with [fmt_txt()].
-#' @param ... ...
+#' For common tasks, adjusting `name`, `size`, and `color` is sufficient.
+#' However, the function also supports advanced properties like `vert_align`
+#' (for subscripts/superscripts), `family` (font categories), and `scheme`
+#' (theme-based font sets).
+#'
+#' Note on Updates:
+#' * If `update = FALSE` (default), the function applies the new font
+#'   definition as a complete replacement for the existing font style.
+#' * If `update` is a character vector (e.g., `c("color", "size")`), only those
+#'   specific attributes are modified, and all other existing font properties
+#'   are retained.
+#' * Setting `update = NULL` removes the custom font style entirely, reverting
+#'   the cells to the workbook's default font.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1:K1").
+#' @param name Character; the font name. Defaults to "Aptos Narrow".
+#' @param color A [wb_color()] object or hex string defining the font color.
+#'   Defaults to black ("FF000000").
+#' @param size Numeric; the font size. Defaults to 11.
+#' @param bold Logical; applies bold formatting if `TRUE`.
+#' @param italic Logical; applies italic formatting if `TRUE`.
+#' @param outline Logical; applies an outline effect to the text.
+#' @param strike Logical; applies a strikethrough effect.
+#' @param underline Character; the underline style, such as "single" or "double".
+#' @param family Character; the font family index (e.g., "1" for Roman, "2" for Swiss).
+#' @param charset Character; the character set ID. See [fmt_txt()] for details.
+#' @param condense Logical; whether the font should be condensed.
+#' @param scheme Character; the font scheme. One of "minor", "major", or "none".
+#' @param shadow Logical; applies a shadow effect to the text.
+#' @param extend Logical; whether the font should be extended.
+#' @param vert_align Character; vertical alignment. Options are "baseline",
+#'   "superscript", or "subscript".
+#' @param update Logical or character vector. Controls whether to overwrite
+#'   the entire font style or only update specific properties.
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * This function modifies the cell-level style and does not alter rich text
+#'     strings created with [fmt_txt()].
+#' * Font styles are pooled in the workbook's style manager to ensure efficiency
+#'     and XML compliance.
+#'
 #' @examples
 #'  wb <- wb_workbook()
 #'  wb <- wb_add_worksheet(wb, "S1")
@@ -3818,38 +4228,71 @@ wb_add_numfmt <- function(
 
 #' Modify the style in a cell region
 #'
-#' Add cell style to a cell region
-#' @param wb a workbook
-#' @param sheet the worksheet
-#' @param dims the cell range
-#' @param ext_lst extension list something like `<extLst>...</extLst>`
-#' @param hidden logical cell is hidden
-#' @param horizontal align content horizontal ('general', 'left', 'center', 'right', 'fill', 'justify', 'centerContinuous', 'distributed')
-#' @param indent logical indent content
-#' @param justify_last_line logical justify last line
-#' @param locked logical cell is locked
-#' @param pivot_button unknown
-#' @param quote_prefix unknown
-#' @param reading_order reading order left to right
-#' @param relative_indent relative indentation
-#' @param shrink_to_fit logical shrink to fit
-#' @param text_rotation degrees of text rotation
-#' @param vertical vertical alignment of content ('top', 'center', 'bottom', 'justify', 'distributed')
-#' @param wrap_text wrap text in cell
-## alignments
-#' @param apply_alignment logical apply alignment
-#' @param apply_border logical apply border
-#' @param apply_fill logical apply fill
-#' @param apply_font logical apply font
-#' @param apply_number_format logical apply number format
-#' @param apply_protection logical apply protection
-## ids
-#' @param border_id border ID to apply
-#' @param fill_id fill ID to apply
-#' @param font_id font ID to apply
-#' @param num_fmt_id number format ID to apply
-#' @param xf_id xf ID to apply
-#' @param ... additional arguments
+#' @description
+#' The `wb_add_cell_style()` function provides direct access to the cell-level
+#' formatting record (the `xf` node) within a `wbWorkbook`. It is primarily
+#' used to control text alignment (horizontal and vertical), text rotation,
+#' indentation, and cell protection (locking and hiding).
+#'
+#' @details
+#' While functions like [wb_add_font()] or [wb_add_fill()] target specific
+#' sub-nodes of a style, `wb_add_cell_style()` manages the properties that
+#' govern how content is positioned within the cell boundaries and how it
+#' behaves when a worksheet is protected.
+#'
+#' This function also allows for the direct assignment of style element IDs
+#' (e.g., `font_id`, `fill_id`). This is an advanced feature that allows
+#' users to map pre-existing styles in the workbook's style catalog to specific
+#' cells.
+#'
+#' Alignment and Text Control:
+#' Options such as `wrap_text`, `shrink_to_fit`, and `text_rotation` are
+#' essential for managing high-density data or creating stylized headers.
+#' The `text_rotation` parameter accepts values in degrees (0–180), where
+#' values above 90 represent downward-slanting text.
+#'
+#' Protection:
+#' The `locked` and `hidden` parameters only take effect when worksheet
+#' protection is enabled (see [wb_protect_worksheet()]). By default, all
+#' cells in a spreadsheet are "locked," but this has no impact until the
+#' sheet is protected.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1:K1").
+#' @param horizontal Horizontal alignment. One of "general", "left", "center",
+#'   "right", "fill", "justify", "centerContinuous", or "distributed".
+#' @param vertical Vertical alignment. One of "top", "center", "bottom",
+#'   "justify", or "distributed".
+#' @param text_rotation Degrees of rotation (0 to 180).
+#' @param wrap_text Logical; enables line wrapping within the cell.
+#' @param shrink_to_fit Logical; automatically reduces font size to fit the
+#'   column width.
+#' @param indent Numeric; the indentation level for the cell content.
+#' @param locked Logical; if `TRUE`, the cell cannot be edited when the
+#'   sheet is protected.
+#' @param hidden Logical; if `TRUE`, formulas are hidden when the sheet
+#'   is protected.
+#' @param ext_lst Character; an optional XML string containing an extension list (`<extLst>`)
+#'   for the cell style.
+#' @param justify_last_line Logical; if `TRUE`, justifies the last line of text
+#'   within the cell (useful for distributed alignment).
+#' @param pivot_button Logical; indicates if a pivot button should be displayed for the cell.
+#' @param quote_prefix Logical; if `TRUE`, a single quote prefix is displayed in the
+#'   formula bar but not the cell itself (often used for numbers stored as text).
+#' @param reading_order Integer; the reading order for the cell content (e.g.,
+#'   1 for Left-to-Right, 2 for Right-to-Left).
+#' @param relative_indent Integer; the relative indentation level.
+#' @param xf_id Integer; a direct reference to a master style (XF) ID in the style catalog.
+#' @param font_id,fill_id,border_id,num_fmt_id Optional; direct integer IDs
+#'   referencing existing style sub-nodes.
+#' @param apply_alignment,apply_font,apply_fill,apply_border,apply_number_format,apply_protection
+#'   Logical; explicitly flags whether the spreadsheet software should
+#'   apply the corresponding style category.
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
 #' @examples
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb, "S1")
@@ -3984,27 +4427,43 @@ wb_add_named_style <- function(
   )
 }
 
-#' Set a dxfs styling for the workbook
+#' Set a dxfs style for the workbook
 #'
-#' These styles are used with conditional formatting and custom table styles.
+#' @description
+#' The `wb_add_dxfs_style()` function defines a "Differential Formatting" (DXF)
+#' style within a `wbWorkbook`. Unlike standard styles (XFs), which are assigned
+#' directly to cells, DXF styles are used as templates for dynamic formatting
+#' features such as conditional formatting rules and custom table styles.
 #'
-#' @param wb A Workbook object.
-#' @param name the style name
-#' @param font_name the font name
-#' @param font_size the font size
-#' @param font_color the font color (a `wb_color()` object)
-#' @param num_fmt the number format
-#' @param border logical if borders are applied
-#' @param border_color the border color
-#' @param border_style the border style
-#' @param bg_fill any background fill
-#' @param gradient_fill any gradient fill
-#' @param text_bold logical if text is bold
-#' @param text_italic logical if text is italic
-#' @param text_underline logical if text is underlined
-#' @param ... additional arguments passed to [create_dxfs_style()]
-#' @family workbook styling functions
-#' @return The Workbook object, invisibly
+#' @details
+#' DXF styles are differential because they usually only define a subset of cell
+#' properties (e.g., just the font color or a background fill). When a conditional
+#' formatting rule is triggered, the properties defined in the DXF style are
+#' layered on top of the cell's existing base style.
+#'
+#' This function acts as a wrapper around [create_dxfs_style()], allowing you
+#' to bundle font, border, fill, and number format attributes into a named
+#' style that can be referenced later by its `name`.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param name A unique character string to identify the DXF style.
+#' @param font_name Character; the font name.
+#' @param font_size Numeric; the font size.
+#' @param font_color A [wb_color()] object for the font.
+#' @param num_fmt The number format string or ID.
+#' @param border Logical; if `TRUE`, applies borders to the style.
+#' @param border_color A [wb_color()] object for the borders.
+#' @param border_style Character; the border style (e.g., "thin", "thick").
+#'   Defaults to the "openxlsx2.borderStyle" option.
+#' @param bg_fill A [wb_color()] object for the background fill.
+#' @param gradient_fill An optional XML string for a gradient fill pattern.
+#' @param text_bold Logical; if `TRUE`, applies bold formatting.
+#' @param text_italic Logical; if `TRUE`, applies italic formatting.
+#' @param text_underline Logical; if `TRUE`, applies underline formatting.
+#' @param ... Additional arguments passed to [create_dxfs_style()].
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
 #' @examples
 #' wb <- wb_workbook()
 #' wb <- wb_add_worksheet(wb)
@@ -4014,6 +4473,7 @@ wb_add_named_style <- function(
 #'    font_color = wb_color(hex = "FF9C0006"),
 #'    bg_fill = wb_color(hex = "FFFFC7CE")
 #'   )
+#' @family workbook styling functions
 #' @export
 wb_add_dxfs_style <- function(
   wb,
@@ -4457,9 +4917,16 @@ wb_clone_sheet_style <- function(wb, from = current_sheet(), to) {
 
 #' Add sparklines to a worksheet
 #'
-#' @param wb A `wbWorkbook`
-#' @param sheet sheet to add the sparklines to
-#' @param sparklines sparklines object created with [create_sparklines()]
+#' @description
+#' `wb_add_sparklines()` takes the XML definitions created by [create_sparklines()]
+#' and embeds them into the specified worksheet of a `wbWorkbook`.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet where the sparklines will
+#'   be rendered. Defaults to the current sheet.
+#' @param sparklines A character vector of sparkline XML strings generated
+#'   by [create_sparklines()].
+#'
 #' @seealso [create_sparklines()]
 #' @examples
 #'  sl <- create_sparklines("Sheet 1", dims = "A3:K3", sqref = "L3")
@@ -4473,23 +4940,55 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }
 
-#' Ignore error types on worksheet
+#' Ignore error types on a worksheet
 #'
-#' This function allows to hide / ignore certain types of errors shown in a worksheet.
-#' @param wb A workbook
-#' @param sheet A sheet name or index.
-#' @param dims Cell range to ignore the error
-#' @param calculated_column calculatedColumn
-#' @param empty_cell_reference emptyCellReference
-#' @param eval_error evalError
-#' @param formula formula
-#' @param formula_range formulaRange
-#' @param list_data_validation listDataValidation
-#' @param number_stored_as_text If `TRUE`, will not display the error if numbers are stored as text.
-#' @param two_digit_text_year twoDigitTextYear
-#' @param unlocked_formula unlockedFormula
-#' @param ... additional arguments
-#' @return The `wbWorkbook` object, invisibly.
+#' @description
+#' The `wb_add_ignore_error()` function allows you to suppress specific types of
+#' background error checking warnings for a given cell range. This is useful for
+#' preventing the display of green error indicators (triangles) in cases where
+#' "errors" are intentional, such as numbers being stored as text for
+#' formatting purposes.
+#'
+#' @details
+#' Spreadsheet software performs background validation on formulas and data
+#' entries. When a cell triggers a rule, a visual indicator appears. This
+#' function modifies the `<ignoredErrors>` section of the worksheet XML to
+#' whitelist specific ranges against specific rules.
+#'
+#' Most commonly, this is used with `number_stored_as_text = TRUE` when
+#' IDs or codes (like "00123") must be preserved as character strings but
+#' contain only numeric digits.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1:A100").
+#' @param number_stored_as_text Logical; if `TRUE`, suppresses the error
+#'   displayed when numeric values are stored as string/text types.
+#' @param eval_error Logical; if `TRUE`, ignores errors resulting from
+#'   formula evaluation (e.g., `#DIV/0!`, `#N/A`).
+#' @param formula Logical; if `TRUE`, ignores formula consistency errors.
+#' @param formula_range Logical; if `TRUE`, ignores errors where a formula
+#'   omits cells in a region.
+#' @param empty_cell_reference Logical; if `TRUE`, ignores errors when a
+#'   formula refers to an empty cell.
+#' @param list_data_validation Logical; if `TRUE`, ignores errors related to
+#'   list data validation mapping.
+#' @param two_digit_text_year Logical; if `TRUE`, ignores warnings about
+#'   dates containing two-digit years.
+#' @param unlocked_formula Logical; if `TRUE`, ignores errors for formulas
+#'   in cells that are not locked.
+#' @param calculated_column Logical; if `TRUE`, ignores errors in
+#'   calculated columns of a table.
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * This function does not fix the underlying data; it only instructs the
+#'     spreadsheet application not to flag the specific error type visually.
+#' * If multiple error types need to be ignored for the same range, you can
+#'     set multiple arguments to `TRUE` in a single call.
+#'
 #' @export
 wb_add_ignore_error <- function(
     wb,
@@ -4525,27 +5024,62 @@ wb_add_ignore_error <- function(
 
 #' Modify the default view of a worksheet
 #'
-#' This helps set a worksheet's appearance, such as the zoom, whether to show grid lines
+#' @description
+#' The `wb_set_sheetview()` function controls the visual presentation of a
+#' worksheet. It allows you to toggle UI elements like grid lines, row/column
+#' headers, and formula visibility, as well as setting the zoom level and
+#' view mode (e.g., Normal vs. Page Layout).
 #'
-#' @param wb A Workbook object
-#' @param sheet sheet
-#' @param color_id,default_grid_color Integer: A color, default is 64
-#' @param right_to_left Logical: if `TRUE` column ordering is right  to left
-#' @param show_formulas Logical: if `TRUE` cell formulas are shown
-#' @param show_grid_lines Logical: if `TRUE` the worksheet grid is shown
-#' @param show_outline_symbols Logical: if `TRUE` outline symbols are shown
-#' @param show_row_col_headers Logical: if `TRUE` row and column headers are shown
-#' @param show_ruler Logical: if `TRUE` a ruler is shown in page layout view
-#' @param show_white_space Logical: if `TRUE` margins are shown in page layout view
-#' @param show_zeros Logical: if `FALSE` cells containing zero are shown blank if `show_formulas = FALSE`
-#' @param tab_selected Integer: zero vector indicating the selected tab
-#' @param top_left_cell Cell: the cell shown in the top left corner / or top right with rightToLeft
-#' @param view View: "normal", "pageBreakPreview" or "pageLayout"
-#' @param window_protection Logical: if `TRUE` the panes are protected
-#' @param workbook_view_id integer: Pointing to some other view inside the workbook
+#' @details
+#' Sheet views are saved properties that tell the spreadsheet application
+#' how to render the sheet upon opening. These settings are specific to the
+#' worksheet and do not affect the actual data or styles of the cells.
+#'
+#' Common Use Cases:
+#' * Zooming: Use `zoom_scale` to make large datasets more readable or
+#'     to provide a high-level dashboard view.
+#' * Clean Layouts: For reports or dashboards, setting `show_grid_lines = FALSE`
+#'     and `show_row_col_headers = FALSE` creates a cleaner, application-like
+#'     interface.
+#' * Audit Mode: Setting `show_formulas = TRUE` is helpful for debugging
+#'     complex spreadsheets by displaying the formulas directly in the cells.
+#' * Right-to-Left: Essential for spreadsheets in languages like Arabic
+#'     or Hebrew.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param color_id,default_grid_color Integer; internal color index for grid
+#'   lines. Default is 64 (automatic).
+#' @param right_to_left Logical; if `TRUE`, column ordering is right-to-left.
+#' @param show_formulas Logical; if `TRUE`, cells display their formulas
+#'   instead of calculated values.
+#' @param show_grid_lines Logical; if `TRUE` (default), the worksheet grid
+#'   lines are visible.
+#' @param show_outline_symbols Logical; if `TRUE`, shows symbols for grouped
+#'   rows or columns.
+#' @param show_row_col_headers Logical; if `TRUE`, shows the letters (columns)
+#'   and numbers (rows) at the edges of the sheet.
+#' @param show_ruler Logical; if `TRUE`, a ruler is shown in "Page Layout" view.
+#' @param show_white_space Logical; if `TRUE`, margins and page gaps are shown
+#'   in "Page Layout" view.
+#' @param show_zeros Logical; if `FALSE`, cells containing a value of zero
+#'   appear blank.
+#' @param tab_selected Integer; a zero-based index indicating if this sheet
+#'   tab is selected.
+#' @param top_left_cell Character; the address of the cell that should be
+#'   positioned in the top-left corner of the view (e.g., "B10").
+#' @param view Character; the view mode. One of `"normal"`, `"pageBreakPreview"`,
+#'   or `"pageLayout"`.
+#' @param window_protection Logical; if `TRUE`, the panes within the sheet
+#'   view are protected.
+#' @param workbook_view_id Integer; links the sheet view to a specific
+#'   global workbook view.
 #' @param zoom_scale,zoom_scale_normal,zoom_scale_page_layout_view,zoom_scale_sheet_layout_view
-#'   Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.
-#' @param ... additional arguments
+#'   Integer; the zoom percentage (between 10 and 400).
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
 #' @examples
 #' wb <- wb_workbook()$add_worksheet()
 #'

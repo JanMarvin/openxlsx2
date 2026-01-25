@@ -48,11 +48,11 @@ passwords can be unicode characters, spreadsheet software is often
 unable to process these. Therefore using ascii characters is recommended.
 }
 \details{
-This protection only adds XML strings to the workbook. It will not ecnrypt
+This protection only adds XML strings to the workbook. It will not encrypt
 the file. For a full file encryption have a look at the \code{msoc} package.
 
 If the \code{openssl} package is installed, a SHA based password hash will be
-used. The legacy implementation not using \code{openssl} is prune to collions.
+used. The legacy implementation not using \code{openssl} is prune to collisions.
 
 Lock types:
 \itemize{
@@ -68,6 +68,7 @@ independently reviewed for security. It should not be used for
 production-level security or sensitive data without formal auditing.
 }
 \examples{
+\donttest{
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 wb_protect(wb, protect = TRUE, password = "Password", lock_structure = TRUE)
@@ -85,7 +86,7 @@ wb <- wb_protect(
   username = "Test",
   read_only_recommended = TRUE
 )
-
+}
 }
 \seealso{
 \link{wb_protect_worksheet}

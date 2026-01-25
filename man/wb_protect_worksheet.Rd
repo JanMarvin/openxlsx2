@@ -36,11 +36,11 @@ software is often unable to process these. Therefore using ascii characters
 is recommended.
 }
 \details{
-This protection only adds XML strings to the workbook. It will not ecnrypt
+This protection only adds XML strings to the workbook. It will not encrypt
 the file. For a full file encryption have a look at the \code{msoc} package.
 
 If the \code{openssl} package is installed, a SHA based password hash will be
-used. The legacy implementation not using \code{openssl} is prune to collions.
+used. The legacy implementation not using \code{openssl} is prune to collisions.
 }
 \note{
 The cryptographic hashing implementation used here has not been

@@ -669,6 +669,7 @@ wbWorksheet <- R6::R6Class(
         if (!is.numeric(row)) stop("`row` must be numeric")
         self$append("rowBreaks", sprintf('<brk id="%i" max="16383" man="1"/>', round(row)))
       } else if (!is.null(col)) {
+        col <- col2int(col)
         if (!is.numeric(col)) stop("`col` must be numeric")
         self$append("colBreaks", sprintf('<brk id="%i" max="1048575" man="1"/>', round(col)))
       }

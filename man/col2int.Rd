@@ -2,20 +2,63 @@
 % Please edit documentation in R/converters.R
 \name{col2int}
 \alias{col2int}
-\title{Convert spreadsheet column to integer}
+\title{Convert spreadsheet column notation to integers}
 \usage{
 col2int(x)
 }
 \arguments{
-\item{x}{A character vector}
+\item{x}{A character vector of column labels, a numeric vector of indices,
+or a factor. Supports range notation like "A:Z".}
 }
 \value{
-An integer column label (or \code{NULL} if \code{x} is \code{NULL})
+An integer vector representing the column indices. Returns \code{NULL}
+if the input \code{x} is \code{NULL}, or an empty integer vector if the length of
+\code{x} is zero.
 }
 \description{
-Converts a spreadsheet column in \code{A1} notation to an integer.
-\code{"A"} is \code{1}, \code{"B"} is \code{2}, ..., \code{"Z"} is \code{26} and \code{"AA"} is \code{27}.
+\code{col2int()} transforms spreadsheet-style column identifiers (e.g., "A", "B", "AA")
+into their corresponding integer indices. This utility is fundamental for
+programmatic data manipulation, where "A" is mapped to 1, "B" to 2, and "ZZ"
+to 702.
 }
+\details{
+The function is designed to handle various input formats encountered during
+spreadsheet data processing. In addition to single column labels, it supports
+range notation using the colon operator (e.g., "A:C"). When a range is
+detected, the function internally expands the notation into a complete
+sequence of integers (e.g., 1, 2, 3). This behavior is particularly useful
+when passing column selections to functions like \code{\link[=wb_to_df]{wb_to_df()}} or \code{\link[=wb_read]{wb_read()}}.
+
+Input validation ensures that only atomic vectors are processed. If the input
+is already numeric or a factor, the function ensures the values fall within
+the valid spreadsheet column range before coercion to integers. Note that
+the presence of \code{NA} values in the input will trigger an error to maintain
+data integrity during index calculation.
+}
+\section{Notes}{
+
+\itemize{
+\item Range expansion via \code{:} is performed iteratively until all sequences are
+resolved into individual integer components.
+\item In compliance with spreadsheet software standards, the function validates
+that indices do not exceed the maximum allowable column limit.
+}
+}
+
 \examples{
-col2int(LETTERS)
+# Convert standard labels
+col2int(c("A", "B", "Z"))
+
+# Convert ranges to integer sequences
+col2int("A:C")
+
+# Mix individual columns and ranges
+col2int(c("A", "C:E", "G"))
+
+# Handle numeric inputs
+col2int(c(1, 2, 26))
+
+}
+\seealso{
+\code{\link[=int2col]{int2col()}}
 }

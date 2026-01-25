@@ -7,14 +7,17 @@
 wb_add_sparklines(wb, sheet = current_sheet(), sparklines)
 }
 \arguments{
-\item{wb}{A \code{wbWorkbook}}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{sheet to add the sparklines to}
+\item{sheet}{The name or index of the worksheet where the sparklines will
+be rendered. Defaults to the current sheet.}
 
-\item{sparklines}{sparklines object created with \code{\link[=create_sparklines]{create_sparklines()}}}
+\item{sparklines}{A character vector of sparkline XML strings generated
+by \code{\link[=create_sparklines]{create_sparklines()}}.}
 }
 \description{
-Add sparklines to a worksheet
+\code{wb_add_sparklines()} takes the XML definitions created by \code{\link[=create_sparklines]{create_sparklines()}}
+and embeds them into the specified worksheet of a \code{wbWorkbook}.
 }
 \examples{
  sl <- create_sparklines("Sheet 1", dims = "A3:K3", sqref = "L3")

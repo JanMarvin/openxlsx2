@@ -30,47 +30,82 @@ wb_set_sheetview(
 )
 }
 \arguments{
-\item{wb}{A Workbook object}
+\item{wb}{A \link{wbWorkbook} object.}
 
-\item{sheet}{sheet}
+\item{sheet}{The name or index of the worksheet. Defaults to the current sheet.}
 
-\item{color_id, default_grid_color}{Integer: A color, default is 64}
+\item{color_id, default_grid_color}{Integer; internal color index for grid
+lines. Default is 64 (automatic).}
 
-\item{right_to_left}{Logical: if \code{TRUE} column ordering is right  to left}
+\item{right_to_left}{Logical; if \code{TRUE}, column ordering is right-to-left.}
 
-\item{show_formulas}{Logical: if \code{TRUE} cell formulas are shown}
+\item{show_formulas}{Logical; if \code{TRUE}, cells display their formulas
+instead of calculated values.}
 
-\item{show_grid_lines}{Logical: if \code{TRUE} the worksheet grid is shown}
+\item{show_grid_lines}{Logical; if \code{TRUE} (default), the worksheet grid
+lines are visible.}
 
-\item{show_outline_symbols}{Logical: if \code{TRUE} outline symbols are shown}
+\item{show_outline_symbols}{Logical; if \code{TRUE}, shows symbols for grouped
+rows or columns.}
 
-\item{show_row_col_headers}{Logical: if \code{TRUE} row and column headers are shown}
+\item{show_row_col_headers}{Logical; if \code{TRUE}, shows the letters (columns)
+and numbers (rows) at the edges of the sheet.}
 
-\item{show_ruler}{Logical: if \code{TRUE} a ruler is shown in page layout view}
+\item{show_ruler}{Logical; if \code{TRUE}, a ruler is shown in "Page Layout" view.}
 
-\item{show_white_space}{Logical: if \code{TRUE} margins are shown in page layout view}
+\item{show_white_space}{Logical; if \code{TRUE}, margins and page gaps are shown
+in "Page Layout" view.}
 
-\item{show_zeros}{Logical: if \code{FALSE} cells containing zero are shown blank if \code{show_formulas = FALSE}}
+\item{show_zeros}{Logical; if \code{FALSE}, cells containing a value of zero
+appear blank.}
 
-\item{tab_selected}{Integer: zero vector indicating the selected tab}
+\item{tab_selected}{Integer; a zero-based index indicating if this sheet
+tab is selected.}
 
-\item{top_left_cell}{Cell: the cell shown in the top left corner / or top right with rightToLeft}
+\item{top_left_cell}{Character; the address of the cell that should be
+positioned in the top-left corner of the view (e.g., "B10").}
 
-\item{view}{View: "normal", "pageBreakPreview" or "pageLayout"}
+\item{view}{Character; the view mode. One of \code{"normal"}, \code{"pageBreakPreview"},
+or \code{"pageLayout"}.}
 
-\item{window_protection}{Logical: if \code{TRUE} the panes are protected}
+\item{window_protection}{Logical; if \code{TRUE}, the panes within the sheet
+view are protected.}
 
-\item{workbook_view_id}{integer: Pointing to some other view inside the workbook}
+\item{workbook_view_id}{Integer; links the sheet view to a specific
+global workbook view.}
 
-\item{zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view, zoom_scale_sheet_layout_view}{Integer: the zoom scale should be between 10 and 400. These are values for current, normal etc.}
+\item{zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view, zoom_scale_sheet_layout_view}{Integer; the zoom percentage (between 10 and 400).}
 
-\item{...}{additional arguments}
+\item{...}{Additional arguments.}
 }
 \value{
+The \link{wbWorkbook} object, invisibly.
+
 The \code{wbWorkbook} object, invisibly
 }
 \description{
-This helps set a worksheet's appearance, such as the zoom, whether to show grid lines
+The \code{wb_set_sheetview()} function controls the visual presentation of a
+worksheet. It allows you to toggle UI elements like grid lines, row/column
+headers, and formula visibility, as well as setting the zoom level and
+view mode (e.g., Normal vs. Page Layout).
+}
+\details{
+Sheet views are saved properties that tell the spreadsheet application
+how to render the sheet upon opening. These settings are specific to the
+worksheet and do not affect the actual data or styles of the cells.
+
+Common Use Cases:
+\itemize{
+\item Zooming: Use \code{zoom_scale} to make large datasets more readable or
+to provide a high-level dashboard view.
+\item Clean Layouts: For reports or dashboards, setting \code{show_grid_lines = FALSE}
+and \code{show_row_col_headers = FALSE} creates a cleaner, application-like
+interface.
+\item Audit Mode: Setting \code{show_formulas = TRUE} is helpful for debugging
+complex spreadsheets by displaying the formulas directly in the cells.
+\item Right-to-Left: Essential for spreadsheets in languages like Arabic
+or Hebrew.
+}
 }
 \examples{
 wb <- wb_workbook()$add_worksheet()
