@@ -1,6 +1,9 @@
-# Freeze pane of a worksheet
+# Freeze panes of a worksheet
 
-Add a Freeze pane in a worksheet.
+The `wb_freeze_pane()` function locks a specific area of a worksheet to
+keep rows or columns visible while scrolling through other parts of the
+data. This is achieved by defining a "split" point, where all content
+above or to the left of the designated active region remains fixed.
 
 ## Usage
 
@@ -20,33 +23,66 @@ wb_freeze_pane(
 
 - wb:
 
-  A workbook object
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  A name or index of a worksheet
+  The name or index of the worksheet to modify. Defaults to the current
+  sheet.
 
 - first_active_row:
 
-  Top row of active region
+  The index of the first row that should remain scrollable. Rows above
+  this will be frozen.
 
 - first_active_col:
 
-  Furthest left column of active region
+  The index or character label of the first column that should remain
+  scrollable. Columns to the left will be frozen.
 
 - first_row:
 
-  If `TRUE`, freezes the first row (equivalent to
-  `first_active_row = 2`)
+  Logical; if `TRUE`, freezes the first row of the worksheet.
 
 - first_col:
 
-  If `TRUE`, freezes the first column (equivalent to
-  `first_active_col = 2`)
+  Logical; if `TRUE`, freezes the first column of the worksheet.
 
 - ...:
 
-  additional arguments
+  Additional arguments for internal case standardization.
+
+## Details
+
+The function operates by calculating `xSplit` and `ySplit` values based
+on the provided active region coordinates. The `first_active_row` and
+`first_active_col` parameters define the first cell that remains
+scrollable; consequently, the frozen area consists of all rows and
+columns preceding these indices.
+
+For common use cases, the `first_row` and `first_col` logical flags
+provide optimized shortcuts. Enabling `first_row` locks the top row
+(equivalent to setting the active region at row 2), while `first_col`
+locks the leftmost column (equivalent to setting the active region at
+column 2). If both are enabled, the function automatically freezes the
+intersection at cell "B2".
+
+The internal logic translates these coordinates into a `<pane />` XML
+node, which specifies the `topLeftCell` of the scrollable region and
+assigns the `activePane` (e.g., "bottomLeft", "topRight", or
+"bottomRight") to ensure correct cursor behavior within the spreadsheet
+software.
+
+## Notes
+
+- If `first_active_row` and `first_active_col` are both set to 1, or if
+  all arguments are omitted, the function returns the workbook unchanged
+  as there is no region to freeze.
+
+- This function overwrites any existing pane configuration for the
+  specified worksheet.
 
 ## See also
 
@@ -91,9 +127,7 @@ Other worksheet content functions:
 ## Examples
 
 ``` r
-## Create a new workbook
-wb <- wb_workbook("Kenshin")
-
+wb <- wb_workbook()
 ## Add some worksheets
 wb$add_worksheet("Sheet 1")
 wb$add_worksheet("Sheet 2")

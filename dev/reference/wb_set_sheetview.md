@@ -1,7 +1,9 @@
 # Modify the default view of a worksheet
 
-This helps set a worksheet's appearance, such as the zoom, whether to
-show grid lines
+The `wb_set_sheetview()` function controls the visual presentation of a
+worksheet. It allows you to toggle UI elements like grid lines,
+row/column headers, and formula visibility, as well as setting the zoom
+level and view mode (e.g., Normal vs. Page Layout).
 
 ## Usage
 
@@ -36,83 +38,113 @@ wb_set_sheetview(
 
 - wb:
 
-  A Workbook object
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  sheet
+  The name or index of the worksheet. Defaults to the current sheet.
 
 - color_id, default_grid_color:
 
-  Integer: A color, default is 64
+  Integer; internal color index for grid lines. Default is 64
+  (automatic).
 
 - right_to_left:
 
-  Logical: if `TRUE` column ordering is right to left
+  Logical; if `TRUE`, column ordering is right-to-left.
 
 - show_formulas:
 
-  Logical: if `TRUE` cell formulas are shown
+  Logical; if `TRUE`, cells display their formulas instead of calculated
+  values.
 
 - show_grid_lines:
 
-  Logical: if `TRUE` the worksheet grid is shown
+  Logical; if `TRUE` (default), the worksheet grid lines are visible.
 
 - show_outline_symbols:
 
-  Logical: if `TRUE` outline symbols are shown
+  Logical; if `TRUE`, shows symbols for grouped rows or columns.
 
 - show_row_col_headers:
 
-  Logical: if `TRUE` row and column headers are shown
+  Logical; if `TRUE`, shows the letters (columns) and numbers (rows) at
+  the edges of the sheet.
 
 - show_ruler:
 
-  Logical: if `TRUE` a ruler is shown in page layout view
+  Logical; if `TRUE`, a ruler is shown in "Page Layout" view.
 
 - show_white_space:
 
-  Logical: if `TRUE` margins are shown in page layout view
+  Logical; if `TRUE`, margins and page gaps are shown in "Page Layout"
+  view.
 
 - show_zeros:
 
-  Logical: if `FALSE` cells containing zero are shown blank if
-  `show_formulas = FALSE`
+  Logical; if `FALSE`, cells containing a value of zero appear blank.
 
 - tab_selected:
 
-  Integer: zero vector indicating the selected tab
+  Integer; a zero-based index indicating if this sheet tab is selected.
 
 - top_left_cell:
 
-  Cell: the cell shown in the top left corner / or top right with
-  rightToLeft
+  Character; the address of the cell that should be positioned in the
+  top-left corner of the view (e.g., "B10").
 
 - view:
 
-  View: "normal", "pageBreakPreview" or "pageLayout"
+  Character; the view mode. One of `"normal"`, `"pageBreakPreview"`, or
+  `"pageLayout"`.
 
 - window_protection:
 
-  Logical: if `TRUE` the panes are protected
+  Logical; if `TRUE`, the panes within the sheet view are protected.
 
 - workbook_view_id:
 
-  integer: Pointing to some other view inside the workbook
+  Integer; links the sheet view to a specific global workbook view.
 
 - zoom_scale, zoom_scale_normal, zoom_scale_page_layout_view,
   zoom_scale_sheet_layout_view:
 
-  Integer: the zoom scale should be between 10 and 400. These are values
-  for current, normal etc.
+  Integer; the zoom percentage (between 10 and 400).
 
 - ...:
 
-  additional arguments
+  Additional arguments.
 
 ## Value
 
+The
+[wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+object, invisibly.
+
 The `wbWorkbook` object, invisibly
+
+## Details
+
+Sheet views are saved properties that tell the spreadsheet application
+how to render the sheet upon opening. These settings are specific to the
+worksheet and do not affect the actual data or styles of the cells.
+
+Common Use Cases:
+
+- Zooming: Use `zoom_scale` to make large datasets more readable or to
+  provide a high-level dashboard view.
+
+- Clean Layouts: For reports or dashboards, setting
+  `show_grid_lines = FALSE` and `show_row_col_headers = FALSE` creates a
+  cleaner, application-like interface.
+
+- Audit Mode: Setting `show_formulas = TRUE` is helpful for debugging
+  complex spreadsheets by displaying the formulas directly in the cells.
+
+- Right-to-Left: Essential for spreadsheets in languages like Arabic or
+  Hebrew.
 
 ## Examples
 

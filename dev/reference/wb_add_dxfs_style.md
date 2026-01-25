@@ -1,7 +1,10 @@
-# Set a dxfs styling for the workbook
+# Set a dxfs style for the workbook
 
-These styles are used with conditional formatting and custom table
-styles.
+The `wb_add_dxfs_style()` function defines a "Differential Formatting"
+(DXF) style within a `wbWorkbook`. Unlike standard styles (XFs), which
+are assigned directly to cells, DXF styles are used as templates for
+dynamic formatting features such as conditional formatting rules and
+custom table styles.
 
 ## Usage
 
@@ -29,70 +32,91 @@ wb_add_dxfs_style(
 
 - wb:
 
-  A Workbook object.
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+  object.
 
 - name:
 
-  the style name
+  A unique character string to identify the DXF style.
 
 - font_name:
 
-  the font name
+  Character; the font name.
 
 - font_size:
 
-  the font size
+  Numeric; the font size.
 
 - font_color:
 
-  the font color (a
+  A
   [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
-  object)
+  object for the font.
 
 - num_fmt:
 
-  the number format
+  The number format string or ID.
 
 - border:
 
-  logical if borders are applied
+  Logical; if `TRUE`, applies borders to the style.
 
 - border_color:
 
-  the border color
+  A
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
+  object for the borders.
 
 - border_style:
 
-  the border style
+  Character; the border style (e.g., "thin", "thick"). Defaults to the
+  "openxlsx2.borderStyle" option.
 
 - bg_fill:
 
-  any background fill
+  A
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
+  object for the background fill.
 
 - gradient_fill:
 
-  any gradient fill
+  An optional XML string for a gradient fill pattern.
 
 - text_bold:
 
-  logical if text is bold
+  Logical; if `TRUE`, applies bold formatting.
 
 - text_italic:
 
-  logical if text is italic
+  Logical; if `TRUE`, applies italic formatting.
 
 - text_underline:
 
-  logical if text is underlined
+  Logical; if `TRUE`, applies underline formatting.
 
 - ...:
 
-  additional arguments passed to
-  [`create_dxfs_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_dxfs_style.md)
+  Additional arguments passed to
+  [`create_dxfs_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_dxfs_style.md).
 
 ## Value
 
-The Workbook object, invisibly
+The
+[wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+object, invisibly.
+
+## Details
+
+DXF styles are differential because they usually only define a subset of
+cell properties (e.g., just the font color or a background fill). When a
+conditional formatting rule is triggered, the properties defined in the
+DXF style are layered on top of the cell's existing base style.
+
+This function acts as a wrapper around
+[`create_dxfs_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_dxfs_style.md),
+allowing you to bundle font, border, fill, and number format attributes
+into a named style that can be referenced later by its `name`.
 
 ## See also
 

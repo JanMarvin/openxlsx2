@@ -78,19 +78,19 @@
 <dd><p>Creator of the workbook (your name). Defaults to login username or <code>options("openxlsx2.creator")</code> if set.</p></dd>
 
     <dt><code>sheet</code></dt>
-<dd><p>A name for the new worksheet</p></dd>
+<dd><p>A character string for the worksheet name. Defaults to a
+sequentially generated name (e.g., "Sheet 1").</p></dd>
 
     <dt><code>grid_lines</code></dt>
-<dd><p>A logical. If <code>FALSE</code>, the worksheet grid lines will be
-hidden.</p></dd>
+<dd><p>Logical; if <code>FALSE</code>, the worksheet grid lines are hidden.</p></dd>
 
     <dt><code>tab_color</code></dt>
-<dd><p>Color of the sheet tab. A  <code><a href="wb_color.html">wb_color()</a></code>,  a valid color (belonging to
-<code><a href="https://rdrr.io/r/grDevices/colors.html" class="external-link">grDevices::colors()</a></code>) or a valid hex color beginning with "#".</p></dd>
+<dd><p>The color of the worksheet tab. Accepts a <code><a href="wb_color.html">wb_color()</a></code> object,
+a standard R color name, or a hex color code (e.g., "#4F81BD").</p></dd>
 
     <dt><code>zoom</code></dt>
-<dd><p>The sheet zoom level, a numeric between 10 and 400 as a
-percentage. (A zoom value smaller than 10 will default to 10.)</p></dd>
+<dd><p>The sheet zoom level as a percentage; a numeric value between
+10 and 400. Values below 10 default to 10.</p></dd>
 
     <dt><code>total_row</code></dt>
 <dd><p>logical. With the default <code>FALSE</code> no total row is added.</p></dd>
@@ -113,16 +113,18 @@ looks if <code>options("openxlsx2.na")</code> is set. Otherwise <code><a href="w
 uses the special <code>#N/A</code> value within the workbook.</p></dd>
 
     <dt><code>first_active_row</code></dt>
-<dd><p>Top row of active region</p></dd>
+<dd><p>The index of the first row that should remain
+scrollable. Rows above this will be frozen.</p></dd>
 
     <dt><code>first_active_col</code></dt>
-<dd><p>Furthest left column of active region</p></dd>
+<dd><p>The index or character label of the first column
+that should remain scrollable. Columns to the left will be frozen.</p></dd>
 
     <dt><code>first_row</code></dt>
-<dd><p>If <code>TRUE</code>, freezes the first row (equivalent to <code>first_active_row = 2</code>)</p></dd>
+<dd><p>Logical; if <code>TRUE</code>, freezes the first row of the worksheet.</p></dd>
 
     <dt><code>first_col</code></dt>
-<dd><p>If <code>TRUE</code>, freezes the first column (equivalent to <code>first_active_col = 2</code>)</p></dd>
+<dd><p>Logical; if <code>TRUE</code>, freezes the first column of the worksheet.</p></dd>
 
     <dt><code>widths</code></dt>
 <dd><p>Width to set <code>cols</code> to specified column width or <code>"auto"</code> for

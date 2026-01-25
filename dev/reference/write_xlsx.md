@@ -44,24 +44,24 @@ write_xlsx(x, file, as_table = FALSE, ...)
 
   `sheet`
 
-  :   A name for the new worksheet
+  :   A character string for the worksheet name. Defaults to a
+      sequentially generated name (e.g., "Sheet 1").
 
   `grid_lines`
 
-  :   A logical. If `FALSE`, the worksheet grid lines will be hidden.
+  :   Logical; if `FALSE`, the worksheet grid lines are hidden.
 
   `tab_color`
 
-  :   Color of the sheet tab. A
-      [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md),
-      a valid color (belonging to
-      [`grDevices::colors()`](https://rdrr.io/r/grDevices/colors.html))
-      or a valid hex color beginning with "#".
+  :   The color of the worksheet tab. Accepts a
+      [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
+      object, a standard R color name, or a hex color code (e.g.,
+      "#4F81BD").
 
   `zoom`
 
-  :   The sheet zoom level, a numeric between 10 and 400 as a
-      percentage. (A zoom value smaller than 10 will default to 10.)
+  :   The sheet zoom level as a percentage; a numeric value between 10
+      and 400. Values below 10 default to 10.
 
   `total_row`
 
@@ -92,21 +92,21 @@ write_xlsx(x, file, as_table = FALSE, ...)
 
   `first_active_row`
 
-  :   Top row of active region
+  :   The index of the first row that should remain scrollable. Rows
+      above this will be frozen.
 
   `first_active_col`
 
-  :   Furthest left column of active region
+  :   The index or character label of the first column that should
+      remain scrollable. Columns to the left will be frozen.
 
   `first_row`
 
-  :   If `TRUE`, freezes the first row (equivalent to
-      `first_active_row = 2`)
+  :   Logical; if `TRUE`, freezes the first row of the worksheet.
 
   `first_col`
 
-  :   If `TRUE`, freezes the first column (equivalent to
-      `first_active_col = 2`)
+  :   Logical; if `TRUE`, freezes the first column of the worksheet.
 
   `widths`
 

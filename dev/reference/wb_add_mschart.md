@@ -1,6 +1,10 @@
-# Add mschart object to a worksheet
+# Add an mschart object to a worksheet
 
-Add mschart object to a worksheet
+The `wb_add_mschart()` function allows for the seamless integration of
+native charts created via the `mschart` package into a worksheet. Unlike
+static images or plots, these are dynamic, native spreadsheet charts
+that remain editable and can utilize data already present in the
+workbook or data provided directly at creation.
 
 ## Usage
 
@@ -20,27 +24,66 @@ wb_add_mschart(
 
 - wb:
 
-  a workbook
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  the sheet on which the graph will appear
+  The name or index of the worksheet where the chart will be placed.
+  Defaults to the current sheet.
 
 - dims:
 
-  the dimensions where the sheet will appear
+  A character string defining the chart's position or range (e.g., "A1"
+  or "F4:L20").
 
 - graph:
 
-  mschart object
+  An `ms_chart` object created with the `mschart` package.
 
 - col_offset, row_offset:
 
-  offsets for column and row
+  Numeric values for fine-tuning the chart's displacement from its
+  anchor point.
 
 - ...:
 
-  additional arguments
+  Additional arguments.
+
+## Details
+
+The function acts as a bridge between the `ms_chart` objects and the
+spreadsheet's internal XML drawing structure. It interprets the chart
+settings and data series to generate the necessary DrawingML.
+
+There are two primary workflows for adding charts:
+
+1.  External Data: If the `graph` object contains a standard data frame,
+    `wb_add_mschart()` automatically writes this data to the worksheet
+    before rendering the chart.
+
+2.  Internal Data: If the `graph` object is initialized using a
+    `wb_data` object (created via
+    [`wb_data()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_data.md)),
+    the chart will directly reference the existing cell ranges in the
+    worksheet. This is the preferred method for maintaining a single
+    source of truth for your data.
+
+The chart is positioned using the `dims` argument. A single cell anchor
+(e.g., "A1") will place the top-left corner of the chart, while a range
+(e.g., "E5:L20") will scale the chart to fit that specific area.
+
+## Notes
+
+- This function requires the `mschart` package to be installed.
+
+- Native charts are highly dependent on the calculation engine of the
+  spreadsheet software; if the underlying data changes, the chart will
+  update automatically when the file is opened.
+
+- The function generates unique internal IDs for the chart axes to
+  ensure compliance with the OpenXML specification.
 
 ## See also
 

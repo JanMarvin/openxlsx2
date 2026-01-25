@@ -69,12 +69,12 @@ wb_protect(
 ## Details
 
 This protection only adds XML strings to the workbook. It will not
-ecnrypt the file. For a full file encryption have a look at the `msoc`
+encrypt the file. For a full file encryption have a look at the `msoc`
 package.
 
 If the `openssl` package is installed, a SHA based password hash will be
 used. The legacy implementation not using `openssl` is prune to
-collions.
+collisions.
 
 Lock types:
 
@@ -99,6 +99,7 @@ production-level security or sensitive data without formal auditing.
 ## Examples
 
 ``` r
+# \donttest{
 wb <- wb_workbook()
 wb$add_worksheet("S1")
 wb_protect(wb, protect = TRUE, password = "Password", lock_structure = TRUE)
@@ -116,4 +117,5 @@ wb <- wb_protect(
   username = "Test",
   read_only_recommended = TRUE
 )
+# }
 ```

@@ -1,8 +1,11 @@
-# Modify font in a cell region
+# Modify font properties in a cell region
 
-Modify the font in a cell region with more precision You can specify the
-font in a cell with other cell styling functions, but `wb_add_font()`
-gives you more control.
+The `wb_add_font()` function provides granular control over the visual
+appearance of text within a specified cell region. While other styling
+functions include basic font options, `wb_add_font()` exposes the full
+range of font attributes supported by the OpenXML specification,
+allowing for precise adjustments to typeface, sizing, color, and
+emphasis.
 
 ## Usage
 
@@ -35,105 +38,133 @@ wb_add_font(
 
 - wb:
 
-  A Workbook object
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  the worksheet
+  The name or index of the worksheet. Defaults to the current sheet.
 
 - dims:
 
-  the cell range
+  A character string defining the cell range (e.g., "A1:K1").
 
 - name:
 
-  Font name: default `"Aptos Narrow"`.
+  Character; the font name. Defaults to "Aptos Narrow".
 
 - color:
 
   A
-  [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md),
-  the color of the font. Default is "FF000000".
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
+  object or hex string defining the font color. Defaults to black
+  ("FF000000").
 
 - size:
 
-  Font size: default is `11`.
+  Numeric; the font size. Defaults to 11.
 
 - bold:
 
-  Logical, whether the font should be bold.
+  Logical; applies bold formatting if `TRUE`.
 
 - italic:
 
-  Logical, whether the font should be italic.
+  Logical; applies italic formatting if `TRUE`.
 
 - outline:
 
-  Logical, whether the font should have an outline.
+  Logical; applies an outline effect to the text.
 
 - strike:
 
-  Logical, whether the font should have a strikethrough.
+  Logical; applies a strikethrough effect.
 
 - underline:
 
-  underline, "single" or "double", default: ""
+  Character; the underline style, such as "single" or "double".
 
 - charset:
 
-  Character, the character set to be used. The list of valid IDs can be
-  found in the **Details** section of
-  [`fmt_txt()`](https://janmarvin.github.io/openxlsx2/dev/reference/fmt_txt.md).
+  Character; the character set ID. See
+  [`fmt_txt()`](https://janmarvin.github.io/openxlsx2/dev/reference/fmt_txt.md)
+  for details.
 
 - condense:
 
-  Logical, whether the font should be condensed.
+  Logical; whether the font should be condensed.
 
 - extend:
 
-  Logical, whether the font should be extended.
+  Logical; whether the font should be extended.
 
 - family:
 
-  Character, the font family. Default is "2" (modern). "0" (auto), "1"
-  (roman), "2" (swiss), "3" (modern), "4" (script), "5" (decorative). \#
-  6-14 unused
+  Character; the font family index (e.g., "1" for Roman, "2" for Swiss).
 
 - scheme:
 
-  Character, the font scheme. Valid values are "minor", "major", "none".
-  Default is "minor".
+  Character; the font scheme. One of "minor", "major", or "none".
 
 - shadow:
 
-  Logical, whether the font should have a shadow.
+  Logical; applies a shadow effect to the text.
 
 - vert_align:
 
-  Character, the vertical alignment of the font. Valid values are
-  "baseline", "superscript", "subscript".
+  Character; vertical alignment. Options are "baseline", "superscript",
+  or "subscript".
 
 - update:
 
-  Logical/Character if logical, all elements are assumed to be selected,
-  whereas if character, only matching elements are updated. This will
-  not alter strings styled with
-  [`fmt_txt()`](https://janmarvin.github.io/openxlsx2/dev/reference/fmt_txt.md).
+  Logical or character vector. Controls whether to overwrite the entire
+  font style or only update specific properties.
 
 - ...:
 
-  ...
+  Additional arguments.
 
 ## Value
+
+The
+[wbWorkbook](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
+object, invisibly.
 
 A `wbWorkbook`, invisibly
 
 ## Details
 
-`wb_add_font()` provides all the options openxml accepts for a font
-node, not all have to be set. Usually `name`, `size` and `color` should
-be what the user wants. Setting `update` to `NULL` removes the style and
-resets the cell to the workbook default.
+This function operates on the font node of a cell's style. It is
+particularly powerful when used with the `update` argument, which allows
+users to modify specific attributes (like color) while preserving other
+existing font properties (like bold or font name).
+
+For common tasks, adjusting `name`, `size`, and `color` is sufficient.
+However, the function also supports advanced properties like
+`vert_align` (for subscripts/superscripts), `family` (font categories),
+and `scheme` (theme-based font sets).
+
+Note on Updates:
+
+- If `update = FALSE` (default), the function applies the new font
+  definition as a complete replacement for the existing font style.
+
+- If `update` is a character vector (e.g., `c("color", "size")`), only
+  those specific attributes are modified, and all other existing font
+  properties are retained.
+
+- Setting `update = NULL` removes the custom font style entirely,
+  reverting the cells to the workbook's default font.
+
+## Notes
+
+- This function modifies the cell-level style and does not alter rich
+  text strings created with
+  [`fmt_txt()`](https://janmarvin.github.io/openxlsx2/dev/reference/fmt_txt.md).
+
+- Font styles are pooled in the workbook's style manager to ensure
+  efficiency and XML compliance.
 
 ## See also
 

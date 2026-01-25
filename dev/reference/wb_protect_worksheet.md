@@ -49,12 +49,12 @@ wb_protect_worksheet(
 ## Details
 
 This protection only adds XML strings to the workbook. It will not
-ecnrypt the file. For a full file encryption have a look at the `msoc`
+encrypt the file. For a full file encryption have a look at the `msoc`
 package.
 
 If the `openssl` package is installed, a SHA based password hash will be
 used. The legacy implementation not using `openssl` is prune to
-collions.
+collisions.
 
 ## Note
 

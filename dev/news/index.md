@@ -1314,7 +1314,7 @@ changing to newer functions is recommended.
   escaped. [252](https://github.com/JanMarvin/openxlsx2/issues/252)
 
 - [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
-  now accepts hex colors with leading sharp (e.g. “#FFFFF”)
+  now accepts hex colors with leading sharp (e.g. “#FFFFFF”)
   [728](https://github.com/JanMarvin/openxlsx2/pull/728).
 
 - [`wb_merge_cells()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_merge_cells.md)
