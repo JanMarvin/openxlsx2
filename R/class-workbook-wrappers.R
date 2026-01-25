@@ -4866,23 +4866,55 @@ wb_add_sparklines <- function(wb, sheet = current_sheet(), sparklines) {
   wb$clone(deep = TRUE)$add_sparklines(sheet, sparklines)
 }
 
-#' Ignore error types on worksheet
+#' Ignore error types on a worksheet
 #'
-#' This function allows to hide / ignore certain types of errors shown in a worksheet.
-#' @param wb A workbook
-#' @param sheet A sheet name or index.
-#' @param dims Cell range to ignore the error
-#' @param calculated_column calculatedColumn
-#' @param empty_cell_reference emptyCellReference
-#' @param eval_error evalError
-#' @param formula formula
-#' @param formula_range formulaRange
-#' @param list_data_validation listDataValidation
-#' @param number_stored_as_text If `TRUE`, will not display the error if numbers are stored as text.
-#' @param two_digit_text_year twoDigitTextYear
-#' @param unlocked_formula unlockedFormula
-#' @param ... additional arguments
-#' @return The `wbWorkbook` object, invisibly.
+#' @description
+#' The `wb_add_ignore_error()` function allows you to suppress specific types of
+#' background error checking warnings for a given cell range. This is useful for
+#' preventing the display of green error indicators (triangles) in cases where
+#' "errors" are intentional, such as numbers being stored as text for
+#' formatting purposes.
+#'
+#' @details
+#' Spreadsheet software performs background validation on formulas and data
+#' entries. When a cell triggers a rule, a visual indicator appears. This
+#' function modifies the `<ignoredErrors>` section of the worksheet XML to
+#' whitelist specific ranges against specific rules.
+#'
+#' Most commonly, this is used with `number_stored_as_text = TRUE` when
+#' IDs or codes (like "00123") must be preserved as character strings but
+#' contain only numeric digits.
+#'
+#' @param wb A [wbWorkbook] object.
+#' @param sheet The name or index of the worksheet. Defaults to the current sheet.
+#' @param dims A character string defining the cell range (e.g., "A1:A100").
+#' @param number_stored_as_text Logical; if `TRUE`, suppresses the error
+#'   displayed when numeric values are stored as string/text types.
+#' @param eval_error Logical; if `TRUE`, ignores errors resulting from
+#'   formula evaluation (e.g., `#DIV/0!`, `#N/A`).
+#' @param formula Logical; if `TRUE`, ignores formula consistency errors.
+#' @param formula_range Logical; if `TRUE`, ignores errors where a formula
+#'   omits cells in a region.
+#' @param empty_cell_reference Logical; if `TRUE`, ignores errors when a
+#'   formula refers to an empty cell.
+#' @param list_data_validation Logical; if `TRUE`, ignores errors related to
+#'   list data validation mapping.
+#' @param two_digit_text_year Logical; if `TRUE`, ignores warnings about
+#'   dates containing two-digit years.
+#' @param unlocked_formula Logical; if `TRUE`, ignores errors for formulas
+#'   in cells that are not locked.
+#' @param calculated_column Logical; if `TRUE`, ignores errors in
+#'   calculated columns of a table.
+#' @param ... Additional arguments.
+#'
+#' @return The [wbWorkbook] object, invisibly.
+#'
+#' @section Notes:
+#' * This function does not fix the underlying data; it only instructs the
+#'     spreadsheet application not to flag the specific error type visually.
+#' * If multiple error types need to be ignored for the same range, you can
+#'     set multiple arguments to `TRUE` in a single call.
+#'
 #' @export
 wb_add_ignore_error <- function(
     wb,
