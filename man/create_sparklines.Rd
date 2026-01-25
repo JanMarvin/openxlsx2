@@ -56,14 +56,33 @@ create_sparklines(
 \item{high, low, first, last}{Logical; highlight the maximum, minimum,
 first, or last data points in the series.}
 
-\item{color_series, color_negative, color_axis, color_markers, color_first, }{color_last,color_high,color_low \code{\link[=wb_color]{wb_color()}} objects defining the colors
-for various sparkline elements.}
+\item{color_series, color_negative, color_axis, color_markers, color_first}{\code{\link[=wb_color]{wb_color()}}
+objects defining the colors for various sparkline elements.}
+
+\item{color_last}{A \code{\link[=wb_color]{wb_color()}} object for the color of the last point in the series.}
+
+\item{color_high}{A \code{\link[=wb_color]{wb_color()}} object for the color of the highest point in the series.}
+
+\item{color_low}{A \code{\link[=wb_color]{wb_color()}} object for the color of the lowest point in the series.}
 
 \item{manual_max, manual_min}{Numeric; optional fixed values for the y-axis.}
 
 \item{line_weight}{Numeric; the thickness of the line (Line type only).}
 
-\item{display_x_axis}{Logical; show a horizontal axis (useful for win/loss).}
+\item{date_axis}{Logical; if \code{TRUE}, uses a date axis for the sparklines,
+allowing for irregular time intervals between data points.}
+
+\item{display_x_axis}{Logical; show a horizontal axis.}
+
+\item{display_hidden}{Logical; if \code{TRUE}, data in hidden rows or columns is
+plotted in the sparkline.}
+
+\item{min_axis_type, max_axis_type}{Character; defines the scaling for the
+vertical axis. Options usually include "individual" (default), "group",
+or "custom".}
+
+\item{right_to_left}{Logical; if \code{TRUE}, the sparkline is rendered from
+right to left.}
 
 \item{direction}{The data orientation: \code{"row"} (default) or \code{"col"}.
 If \code{NULL}, the function attempts to infer direction from the dimensions.}

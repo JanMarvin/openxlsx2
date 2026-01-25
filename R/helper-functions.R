@@ -515,14 +515,25 @@ is_single_cell <- function(dims) {
 #' @param markers Logical; highlight all data points (Line type only).
 #' @param high,low,first,last Logical; highlight the maximum, minimum,
 #'   first, or last data points in the series.
-#' @param color_series,color_negative,color_axis,color_markers,color_first,
-#'   color_last,color_high,color_low [wb_color()] objects defining the colors
-#'   for various sparkline elements.
+#' @param color_series,color_negative,color_axis,color_markers,color_first [wb_color()]
+#'   objects defining the colors for various sparkline elements.
+#' @param color_last A [wb_color()] object for the color of the last point in the series.
+#' @param color_high A [wb_color()] object for the color of the highest point in the series.
+#' @param color_low A [wb_color()] object for the color of the lowest point in the series.
+#' @param date_axis Logical; if `TRUE`, uses a date axis for the sparklines,
+#'   allowing for irregular time intervals between data points.
+#' @param display_hidden Logical; if `TRUE`, data in hidden rows or columns is
+#'   plotted in the sparkline.
+#' @param min_axis_type,max_axis_type Character; defines the scaling for the
+#'   vertical axis. Options usually include "individual" (default), "group",
+#'   or "custom".
+#' @param right_to_left Logical; if `TRUE`, the sparkline is rendered from
+#'   right to left.
 #' @param display_empty_cells_as How to handle gaps in data: `"gap"`,
 #'   `"span"` (connect points), or `"zero"`.
 #' @param manual_max,manual_min Numeric; optional fixed values for the y-axis.
 #' @param line_weight Numeric; the thickness of the line (Line type only).
-#' @param display_x_axis Logical; show a horizontal axis (useful for win/loss).
+#' @param display_x_axis Logical; show a horizontal axis.
 #' @param ... Additional arguments.
 #'
 #' @return A character string containing the XML structure for the sparkline group.

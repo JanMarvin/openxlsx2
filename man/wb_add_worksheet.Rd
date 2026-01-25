@@ -59,6 +59,8 @@ of the worksheet. Defaults to the values provided in \code{header} and \code{foo
 \item{visible}{The visibility state of the sheet. One of "visible", "hidden",
 or "veryHidden".}
 
+\item{has_drawing}{\emph{defunct}}
+
 \item{paper_size}{An integer code representing a standard paper size.
 Refer to \code{\link[=wb_page_setup]{wb_page_setup()}} for a complete list of codes.}
 

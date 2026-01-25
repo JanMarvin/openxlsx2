@@ -46,6 +46,9 @@ wb_add_cell_style(
 \item{apply_alignment, apply_font, apply_fill, apply_border, apply_number_format, apply_protection}{Logical; explicitly flags whether the spreadsheet software should
 apply the corresponding style category.}
 
+\item{ext_lst}{Character; an optional XML string containing an extension list (\verb{<extLst>})
+for the cell style.}
+
 \item{font_id, fill_id, border_id, num_fmt_id}{Optional; direct integer IDs
 referencing existing style sub-nodes.}
 
@@ -57,8 +60,21 @@ is protected.}
 
 \item{indent}{Numeric; the indentation level for the cell content.}
 
+\item{justify_last_line}{Logical; if \code{TRUE}, justifies the last line of text
+within the cell (useful for distributed alignment).}
+
 \item{locked}{Logical; if \code{TRUE}, the cell cannot be edited when the
 sheet is protected.}
+
+\item{pivot_button}{Logical; indicates if a pivot button should be displayed for the cell.}
+
+\item{quote_prefix}{Logical; if \code{TRUE}, a single quote prefix is displayed in the
+formula bar but not the cell itself (often used for numbers stored as text).}
+
+\item{reading_order}{Integer; the reading order for the cell content (e.g.,
+1 for Left-to-Right, 2 for Right-to-Left).}
+
+\item{relative_indent}{Integer; the relative indentation level.}
 
 \item{shrink_to_fit}{Logical; automatically reduces font size to fit the
 column width.}
@@ -69,6 +85,8 @@ column width.}
 "justify", or "distributed".}
 
 \item{wrap_text}{Logical; enables line wrapping within the cell.}
+
+\item{xf_id}{Integer; a direct reference to a master style (XF) ID in the style catalog.}
 
 \item{...}{Additional arguments.}
 }

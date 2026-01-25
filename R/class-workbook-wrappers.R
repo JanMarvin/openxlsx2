@@ -1134,6 +1134,7 @@ wb_add_chartsheet <- function(
 #'   of the worksheet. Defaults to the values provided in `header` and `footer`.
 #' @param visible The visibility state of the sheet. One of "visible", "hidden",
 #'   or "veryHidden".
+#' @param has_drawing _defunct_
 #' @param paper_size An integer code representing a standard paper size.
 #'   Refer to [wb_page_setup()] for a complete list of codes.
 #' @param orientation The page orientation, either "portrait" or "landscape".
@@ -4271,6 +4272,17 @@ wb_add_numfmt <- function(
 #'   sheet is protected.
 #' @param hidden Logical; if `TRUE`, formulas are hidden when the sheet
 #'   is protected.
+#' @param ext_lst Character; an optional XML string containing an extension list (`<extLst>`)
+#'   for the cell style.
+#' @param justify_last_line Logical; if `TRUE`, justifies the last line of text
+#'   within the cell (useful for distributed alignment).
+#' @param pivot_button Logical; indicates if a pivot button should be displayed for the cell.
+#' @param quote_prefix Logical; if `TRUE`, a single quote prefix is displayed in the
+#'   formula bar but not the cell itself (often used for numbers stored as text).
+#' @param reading_order Integer; the reading order for the cell content (e.g.,
+#'   1 for Left-to-Right, 2 for Right-to-Left).
+#' @param relative_indent Integer; the relative indentation level.
+#' @param xf_id Integer; a direct reference to a master style (XF) ID in the style catalog.
 #' @param font_id,fill_id,border_id,num_fmt_id Optional; direct integer IDs
 #'   referencing existing style sub-nodes.
 #' @param apply_alignment,apply_font,apply_fill,apply_border,apply_number_format,apply_protection
