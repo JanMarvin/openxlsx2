@@ -1,6 +1,11 @@
 # Internal function to convert data frame from character to whatever is required
 convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_character = FALSE, col_names = FALSE) {
-  sel <- !is.na(names(types))
+
+  type_vals <- types[!is.na(names(types))]
+  if (length(type_vals) == 0) {
+    warning("could not convert. All missing in row used for variable names")
+    return(z)
+  }
 
   if (col_names) {
     # avoid scientific notation in column names
@@ -8,40 +13,31 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
     on.exit(options(op), add = TRUE)
   }
 
-  if (any(sel)) {
-    nums <- names(which(types[sel] == 1))
-    dtes <- names(which(types[sel] == 2))
-    poxs <- names(which(types[sel] == 3))
-    logs <- names(which(types[sel] == 4))
-    difs <- names(which(types[sel] == 5))
-    fmls <- names(which(types[sel] == 6))
-    # convert "#NUM!" to "NaN" -- then converts to NaN
-    # maybe consider this an option to instead return NA?
+  nums <- which(type_vals == 1)
+  dtes <- which(type_vals == 2)
+  poxs <- which(type_vals == 3)
+  logs <- which(type_vals == 4)
+  difs <- which(type_vals == 5)
+  fmls <- which(type_vals == 6)
 
-    if (as_character) {
-      date_conv_c     <- function(...) as.character(date_conv(...))
-      datetime_conv_c <- function(...) as.character(datetime_conv(...))
-      hms_conv_c      <- function(...) as.character(hms_conv(...))
-
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.character(as.numeric(replace(i, i == "#NUM!", "NaN"))))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv_c)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv_c)
-      if (length(logs)) z[logs] <- lapply(z[logs], function(i) as.character(as.logical(i)))
-      if (length(difs)) z[difs] <- lapply(z[difs], hms_conv_c)
-    } else {
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
-      if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
-      if (length(difs)) z[difs] <- lapply(z[difs], hms_conv)
-    }
-
-    for (i in seq_along(z)) { # convert df to class formula
-      if (names(z)[i] %in% fmls) class(z[[i]]) <- c(class(z[[i]]), "formula")
-    }
-
+  if (as_character) {
+    if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.character(convert_num(i)))
+    if (length(dtes)) z[dtes] <- lapply(z[dtes], function(i) as.character(date_conv(i)))
+    if (length(poxs)) z[poxs] <- lapply(z[poxs], function(i) as.character(datetime_conv(i)))
+    if (length(logs)) z[logs] <- lapply(z[logs], function(i) as.character(as.logical(i)))
+    if (length(difs)) z[difs] <- lapply(z[difs], function(i) as.character(hms_conv(i)))
   } else {
-    warning("could not convert. All missing in row used for variable names")
+    if (length(nums)) z[nums] <- lapply(z[nums], convert_num)
+    if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
+    if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
+    if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
+    if (length(difs)) z[difs] <- lapply(z[difs], hms_conv)
+  }
+
+  if (length(fmls)) {
+    for (i in fmls) {
+      class(z[[i]]) <- c(class(z[[i]]), "formula")
+    }
   }
 
   z

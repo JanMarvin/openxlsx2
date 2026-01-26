@@ -27,6 +27,11 @@ if (getRversion() < "4.4.0") {
   `%||%` <- function(x, y) if (is.null(x)) y else x
 }
 
+convert_num <- function(i) {
+  if (any(i == "#NUM!", na.rm = TRUE)) i <- replace(i, i == "#NUM!", "NaN")
+  as.numeric(i)
+}
+
 #' helper function to create temporary directory for testing purpose
 #' @param name for the temp file
 #' @param macros logical if the file extension is xlsm or xlsx
