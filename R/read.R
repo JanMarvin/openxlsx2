@@ -1,6 +1,11 @@
 # Internal function to convert data frame from character to whatever is required
 convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_character = FALSE, col_names = FALSE) {
-  sel <- !is.na(names(types))
+
+  type_vals <- types[!is.na(names(types))]
+  if (length(type_vals) == 0) {
+    warning("could not convert. All missing in row used for variable names")
+    return(z)
+  }
 
   if (col_names) {
     # avoid scientific notation in column names
@@ -8,40 +13,31 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
     on.exit(options(op), add = TRUE)
   }
 
-  if (any(sel)) {
-    nums <- names(which(types[sel] == 1))
-    dtes <- names(which(types[sel] == 2))
-    poxs <- names(which(types[sel] == 3))
-    logs <- names(which(types[sel] == 4))
-    difs <- names(which(types[sel] == 5))
-    fmls <- names(which(types[sel] == 6))
-    # convert "#NUM!" to "NaN" -- then converts to NaN
-    # maybe consider this an option to instead return NA?
+  nums <- which(type_vals == 1)
+  dtes <- which(type_vals == 2)
+  poxs <- which(type_vals == 3)
+  logs <- which(type_vals == 4)
+  difs <- which(type_vals == 5)
+  fmls <- which(type_vals == 6)
 
-    if (as_character) {
-      date_conv_c     <- function(...) as.character(date_conv(...))
-      datetime_conv_c <- function(...) as.character(datetime_conv(...))
-      hms_conv_c      <- function(...) as.character(hms_conv(...))
-
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.character(as.numeric(replace(i, i == "#NUM!", "NaN"))))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv_c)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv_c)
-      if (length(logs)) z[logs] <- lapply(z[logs], function(i) as.character(as.logical(i)))
-      if (length(difs)) z[difs] <- lapply(z[difs], hms_conv_c)
-    } else {
-      if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.numeric(replace(i, i == "#NUM!", "NaN")))
-      if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
-      if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
-      if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
-      if (length(difs)) z[difs] <- lapply(z[difs], hms_conv)
-    }
-
-    for (i in seq_along(z)) { # convert df to class formula
-      if (names(z)[i] %in% fmls) class(z[[i]]) <- c(class(z[[i]]), "formula")
-    }
-
+  if (as_character) {
+    if (length(nums)) z[nums] <- lapply(z[nums], function(i) as.character(convert_num(i)))
+    if (length(dtes)) z[dtes] <- lapply(z[dtes], function(i) as.character(date_conv(i)))
+    if (length(poxs)) z[poxs] <- lapply(z[poxs], function(i) as.character(datetime_conv(i)))
+    if (length(logs)) z[logs] <- lapply(z[logs], function(i) as.character(as.logical(i)))
+    if (length(difs)) z[difs] <- lapply(z[difs], function(i) as.character(hms_conv(i)))
   } else {
-    warning("could not convert. All missing in row used for variable names")
+    if (length(nums)) z[nums] <- lapply(z[nums], convert_num)
+    if (length(dtes)) z[dtes] <- lapply(z[dtes], date_conv)
+    if (length(poxs)) z[poxs] <- lapply(z[poxs], datetime_conv)
+    if (length(logs)) z[logs] <- lapply(z[logs], as.logical)
+    if (length(difs)) z[difs] <- lapply(z[difs], hms_conv)
+  }
+
+  if (length(fmls)) {
+    for (i in fmls) {
+      class(z[[i]]) <- c(class(z[[i]]), "formula")
+    }
   }
 
   z
@@ -541,42 +537,52 @@ wb_to_df <- function(
   if (NROW(cc) && !is.null(cc$c_s)) {
 
     # if a cell is t="s" the content is a sst and not da date
-    if (detect_dates && missing(types)) {
+
+    all_styles <- c(xlsx_date_style, xlsx_hms_style, xlsx_posix_style)
+    if (detect_dates && missing(types) && length(all_styles)) {
+
       uccs <- unique(cc$c_s)
-      ucct <- unique(cc$c_t)
 
-      cc$is_string <- rep_len(FALSE, nrow(cc))
-      strings <-  c("s", "str", "b", "inlineStr")
-      if (!is.null(cc$c_t) && any(ucct %in% strings))
-        cc$is_string <- cc$c_t %in% strings
+      if (any(uccs %in% all_styles)) {
 
-      if (any(uccs %in% xlsx_date_style)) {
-        sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
-        if (convert)
-          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
-        else
-          cc$val[sel] <- as.character(convert_date(cc$v[sel], origin = origin))
-        cc$typ[sel]  <- 2L
-      }
+        strings <- c("s", "str", "b", "inlineStr")
+        is_string <- !is.null(cc$c_t) & (cc$c_t %in% strings)
 
-      if (any(uccs %in% xlsx_hms_style)) {
-        sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
-        if (convert) {
-          # if hms is loaded, we have to avoid applying convert_hms() twice
-          cc$val[sel] <- cc$v[sel]
-        } else {
-          cc$val[sel] <- as.character(convert_hms(cc$v[sel]))
+        is_valid_val <- !is_string & cc$v != "" & (cc$c_t != "e" | is.na(cc$c_t))
+
+        if (any(uccs %in% xlsx_date_style)) {
+          sel <- is_valid_val & (cc$c_s %in% xlsx_date_style)
+          if (any(sel)) { # Only run if there are actual matches
+            if (convert)
+              cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
+            else
+              cc$val[sel] <- as.character(convert_date(cc$v[sel], origin = origin))
+            cc$typ[sel]  <- 2L
+          }
         }
-        cc$typ[sel]  <- 5L
-      }
 
-      if (any(uccs %in% xlsx_posix_style)) {
-        sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
-        if (convert)
-          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
-        else
-          cc$val[sel] <- as.character(convert_datetime(cc$v[sel], origin = origin))
-        cc$typ[sel]  <- 3L
+        if (any(uccs %in% xlsx_hms_style)) {
+          sel <- is_valid_val & (cc$c_s %in% xlsx_hms_style)
+          if (any(sel)) {
+            if (convert) {
+              cc$val[sel] <- cc$v[sel]
+            } else {
+              cc$val[sel] <- as.character(convert_hms(cc$v[sel]))
+            }
+            cc$typ[sel]  <- 5L
+          }
+        }
+
+        if (any(uccs %in% xlsx_posix_style)) {
+          sel <- is_valid_val & (cc$c_s %in% xlsx_posix_style)
+          if (any(sel)) {
+            if (convert)
+              cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
+            else
+              cc$val[sel] <- as.character(convert_datetime(cc$v[sel], origin = origin))
+            cc$typ[sel]  <- 3L
+          }
+        }
       }
     }
   }
@@ -768,11 +774,14 @@ wb_to_df <- function(
     # missing values and if assigned, convert below might break with unambiguous
     # names.
 
+    z_head  <- df_1(z)
+    tt_head <- df_1(tt)
+
     nams <- names(xlsx_cols_names)
     if (convert)
-      xlsx_cols_names <- convert_df(z[1, , drop = FALSE], guess_col_type(tt[1, , drop = FALSE]), date_conv, datetime_conv, hms_conv, as_character = TRUE, col_names = TRUE)
+      xlsx_cols_names <- convert_df(z_head, guess_col_type(tt_head), date_conv, datetime_conv, hms_conv, as_character = TRUE, col_names = TRUE)
     else
-      xlsx_cols_names <- z[1, , drop = FALSE]
+      xlsx_cols_names <- z_head
     names(xlsx_cols_names) <- nams
 
     z  <- z[-1, , drop = FALSE]
