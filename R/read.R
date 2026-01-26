@@ -764,11 +764,14 @@ wb_to_df <- function(
     # missing values and if assigned, convert below might break with unambiguous
     # names.
 
+    z_head  <- df_1(z)
+    tt_head <- df_1(tt)
+
     nams <- names(xlsx_cols_names)
     if (convert)
-      xlsx_cols_names <- convert_df(z[1, , drop = FALSE], guess_col_type(tt[1, , drop = FALSE]), date_conv, datetime_conv, hms_conv, as_character = TRUE, col_names = TRUE)
+      xlsx_cols_names <- convert_df(z_head, guess_col_type(tt_head), date_conv, datetime_conv, hms_conv, as_character = TRUE, col_names = TRUE)
     else
-      xlsx_cols_names <- z[1, , drop = FALSE]
+      xlsx_cols_names <- z_head
     names(xlsx_cols_names) <- nams
 
     z  <- z[-1, , drop = FALSE]
