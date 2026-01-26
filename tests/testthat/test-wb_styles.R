@@ -1582,6 +1582,8 @@ test_that("apply_numfmt handles AM/PM regardless of system locale", {
   orig_locale <- Sys.getlocale("LC_TIME")
   tryCatch({
     Sys.setlocale("LC_TIME", "en_GB.UTF-8")
+  }, warning = function(w) {
+    skip("Target locale en_GB.UTF-8 not available on this system")
   }, error = function(e) {
     skip("Target locale en_GB.UTF-8 not available on this system")
   })
