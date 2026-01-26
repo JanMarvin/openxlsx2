@@ -537,42 +537,52 @@ wb_to_df <- function(
   if (NROW(cc) && !is.null(cc$c_s)) {
 
     # if a cell is t="s" the content is a sst and not da date
-    if (detect_dates && missing(types)) {
+
+    all_styles <- c(xlsx_date_style, xlsx_hms_style, xlsx_posix_style)
+    if (detect_dates && missing(types) && length(all_styles)) {
+
       uccs <- unique(cc$c_s)
-      ucct <- unique(cc$c_t)
 
-      cc$is_string <- rep_len(FALSE, nrow(cc))
-      strings <-  c("s", "str", "b", "inlineStr")
-      if (!is.null(cc$c_t) && any(ucct %in% strings))
-        cc$is_string <- cc$c_t %in% strings
+      if (any(uccs %in% all_styles)) {
 
-      if (any(uccs %in% xlsx_date_style)) {
-        sel <- cc$c_s %in% xlsx_date_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
-        if (convert)
-          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
-        else
-          cc$val[sel] <- as.character(convert_date(cc$v[sel], origin = origin))
-        cc$typ[sel]  <- 2L
-      }
+        strings <- c("s", "str", "b", "inlineStr")
+        is_string <- !is.null(cc$c_t) & (cc$c_t %in% strings)
 
-      if (any(uccs %in% xlsx_hms_style)) {
-        sel <- cc$c_s %in% xlsx_hms_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
-        if (convert) {
-          # if hms is loaded, we have to avoid applying convert_hms() twice
-          cc$val[sel] <- cc$v[sel]
-        } else {
-          cc$val[sel] <- as.character(convert_hms(cc$v[sel]))
+        is_valid_val <- !is_string & cc$v != "" & (cc$c_t != "e" | is.na(cc$c_t))
+
+        if (any(uccs %in% xlsx_date_style)) {
+          sel <- is_valid_val & (cc$c_s %in% xlsx_date_style)
+          if (any(sel)) { # Only run if there are actual matches
+            if (convert)
+              cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin)
+            else
+              cc$val[sel] <- as.character(convert_date(cc$v[sel], origin = origin))
+            cc$typ[sel]  <- 2L
+          }
         }
-        cc$typ[sel]  <- 5L
-      }
 
-      if (any(uccs %in% xlsx_posix_style)) {
-        sel <- cc$c_s %in% xlsx_posix_style & !cc$is_string & cc$v != "" & cc$c_t != "e"
-        if (convert)
-          cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
-        else
-          cc$val[sel] <- as.character(convert_datetime(cc$v[sel], origin = origin))
-        cc$typ[sel]  <- 3L
+        if (any(uccs %in% xlsx_hms_style)) {
+          sel <- is_valid_val & (cc$c_s %in% xlsx_hms_style)
+          if (any(sel)) {
+            if (convert) {
+              cc$val[sel] <- cc$v[sel]
+            } else {
+              cc$val[sel] <- as.character(convert_hms(cc$v[sel]))
+            }
+            cc$typ[sel]  <- 5L
+          }
+        }
+
+        if (any(uccs %in% xlsx_posix_style)) {
+          sel <- is_valid_val & (cc$c_s %in% xlsx_posix_style)
+          if (any(sel)) {
+            if (convert)
+              cc$val[sel] <- date_to_unix(cc$v[sel], origin = origin, datetime = TRUE)
+            else
+              cc$val[sel] <- as.character(convert_datetime(cc$v[sel], origin = origin))
+            cc$typ[sel]  <- 3L
+          }
+        }
       }
     }
   }
