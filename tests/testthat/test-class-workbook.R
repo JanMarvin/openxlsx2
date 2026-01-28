@@ -1495,3 +1495,15 @@ test_that("standardize warning works", {
     "unused arguments"
   )
 })
+
+test_that("warn on duplicated names", {
+
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb, sheet = 'Sheet name')
+
+  expect_warning(
+    wb_add_worksheet(wb, sheet = 'Sheet name'),
+    "Fixing: a sheet with name \"Sheet name\" already exists. Creating a unique sheetname"
+  )
+
+})

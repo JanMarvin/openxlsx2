@@ -9502,7 +9502,7 @@ wbWorkbook <- R6::R6Class(
           )
       }
 
-      if (tolower(sheet) %in% self$sheet_names) {
+      if (tolower(sheet) %in% tolower(self$sheet_names)) {
         warning('Attempted to add a worksheet that is invalid or already exists.\n',
                 'Fixing: a sheet with name "', sheet, '" already exists. Creating a unique sheetname"', call. = FALSE)
         ## We simply append (1), while spreadsheet software would increase
