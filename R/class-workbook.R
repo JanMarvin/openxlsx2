@@ -5856,6 +5856,10 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       thrd <- self$worksheets[[sheet]]$relships$threadedComment
 
+      if (length(thrd) == 0) {
+        return(NULL)
+      }
+
       tc <- cbind(
         rbindlist(xml_attr(self$threadComments[[thrd]], "threadedComment")),
         text = xml_value(self$threadComments[[thrd]], "threadedComment", "text"),
