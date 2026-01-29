@@ -266,6 +266,9 @@ test_that("threaded comments work", {
   got <- wb_get_thread(wb, dims = "A1")[, -1]
   expect_equal(exp, got)
 
+  wb <- wb_workbook()$add_worksheet()
+  expect_equal(wb$get_thread(), NULL)
+
 })
 
 test_that("thread option works", {
