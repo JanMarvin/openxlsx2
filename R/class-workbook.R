@@ -5785,6 +5785,8 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(comment)) {
 
+        comment <- replace_legal_chars(comment)
+
         # For replies we can update the comment, but the id remains the parentId
         cmt_id <- st_guid()
 
@@ -5881,6 +5883,7 @@ wbWorkbook <- R6::R6Class(
       tc$dT <- as.POSIXct(tc$dT, format = "%Y-%m-%dT%H:%M:%SZ")
 
       if (is.null(tc$done)) tc$done <- rep_len("", nrow(tc))
+      tc$text <- replaceXMLEntities(tc$text)
 
       tc[c("dT", "ref", "displayName", "text", "done")]
     },
