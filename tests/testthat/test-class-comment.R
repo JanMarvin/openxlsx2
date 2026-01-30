@@ -457,3 +457,16 @@ test_that("get_comment works", {
   expect_equal(got, exp)
 
 })
+
+test_that("threaded comment: excaping XML works", {
+  wb <- wb_workbook(creator = "John Doe")
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_person(wb, name = "John Doe")
+  pid <- wb$get_person("John Doe")$id
+
+  cmt <- 'Five is < Twenty'
+  wb <- wb_add_thread(wb, sheet = 1, dims = "A1", person_id = pid, comment = cmt)
+
+  expect_equal(wb$get_thread()$text, cmt)
+  expect_true(grepl(cmt, wb$get_comment()$comment))
+})
