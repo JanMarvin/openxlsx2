@@ -5646,24 +5646,33 @@ wbWorkbook <- R6::R6Class(
 
       cmts <- list()
       if (length(cmmt) && length(self$comments) >= cmmt) {
-        cmts <- do.call(rbind, lapply(self$comments[[cmmt]], function(x) {
+
+        comments <- self$comments[[cmmt]]
+
+        if (!is.null(dims)) {
+          all_refs <- vapply(comments, `[[`, "ref", FUN.VALUE = NA_character_)
+          idx <- which(all_refs %in% dims)
+        } else {
+          # If dims is NULL, take everything
+          idx <- seq_along(comments)
+        }
+
+        if (length(idx) == 0) return(NULL)
+
+        cmts <- do.call(rbind, lapply(idx, function(i) {
+          x <- comments[[i]]
           data.frame(
             ref = x$ref,
             author = x$author,
             comment = paste0(x$comment, collapse = " "),
+            # Store the original index as the row name so add_thread() can find it
+            row.names = i,
             stringsAsFactors = FALSE
           )
         }))
 
-        if (!is.null(dims)) cmts <- cmts[cmts$ref %in% dims, ]
-        # print(cmts)
-        cmts <- cmts[c("ref", "author", "comment")]
-        if (NROW(cmts)) {
-          cmts$comment <- as_fmt_txt(cmts$comment)
-          cmts$cmmt_id <- cmmt
-        } else {
-          return(NULL)
-        }
+        cmts$comment <- as_fmt_txt(cmts$comment)
+        cmts$cmmt_id <- cmmt
       }
 
       cmts
@@ -5727,7 +5736,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       sheet <- private$get_sheet_index(sheet)
-      wb_cmt <- wb_get_comment(self, sheet, dims)
+      wb_cmt <- self$get_comment(sheet, dims)
 
       if (length(cmt <- wb_cmt$comment)) {
         # TODO not sure yet what to do
@@ -5735,7 +5744,7 @@ wbWorkbook <- R6::R6Class(
         cmt <- wb_comment(text = comment, author = "")
         self$add_comment(sheet = sheet, dims = dims, comment = cmt)
       }
-      wb_cmt <- wb_get_comment(self, sheet, dims)
+      wb_cmt <- self$get_comment(sheet, dims)
 
       if (!length(self$worksheets[[sheet]]$relships$threadedComment)) {
 
@@ -5816,7 +5825,7 @@ wbWorkbook <- R6::R6Class(
 
         if (reply) cmt_id <- parentId
 
-        wb_cmt <- wb_get_comment(self, sheet, dims)
+        wb_cmt <- self$get_comment(sheet, dims)
         sId <- wb_cmt$cmmt_id
         cId <- as.integer(rownames(wb_cmt))
 

@@ -82,7 +82,13 @@ test_that("read vml from sheet two works as expected", {
   expect_silent(wb <- wb_load(testfile_path("vml_numbering.xlsx")))
 
   expect_equal(length(wb$vml), 1L)
-  expect_equal(length(wb$vml_rels), 1L)
+  expect_equal(wb$vml_rels, NULL)
+
+  # extend test for https://github.com/JanMarvin/openxlsx2/issues/1556
+  wb$remove_comment(sheet = 2)
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  expect_silent(wb$save(tmp))
 
 })
 
