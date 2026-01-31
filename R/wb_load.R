@@ -1333,8 +1333,6 @@ wb_load <- function(
       vml_len <- max(as.integer(gsub("\\D+", "", basename(vmlDrawingXML))))
 
       wb$vml      <- rep(list(""), vml_len) # vector("list", vml_len)
-      wb$vml_rels <- rep(list(""), vml_len) # vector("list", vml_len)
-
 
       for (vml in vmlDrawingXML) {
 
@@ -1348,6 +1346,7 @@ wb_load <- function(
       }
 
       for (vml_rel in vmlDrawingRelsXML) {
+        wb$vml_rels <- rep(list(""), vml_len) # vector("list", vml_len)
 
         vml_file <- as.integer(gsub("\\D+", "", basename(vml_rel)))
 
