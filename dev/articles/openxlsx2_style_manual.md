@@ -1,9 +1,11 @@
 # Add styling to a workbook
 
-Welcome to the styling manual for `openxlsx2`. In this manual you will
-learn how to use `openxlsx2` to style your worksheets. data from
-xlsx-files to R as well as how to export data from R to xlsx, and how to
-import and modify these `openxml` workbooks in R.
+Welcome to the `openxlsx2` styling manual. This guide demonstrates how
+to transform raw data into professional reports by applying custom
+styles to your worksheets. You will learn how to manage colors, fonts,
+and borders using both high-level convenience functions and ‘bare-metal’
+technical approaches, as well as how to modify existing openxml
+workbooks directly within R.
 
 ``` r
 library(openxlsx2)
@@ -14,8 +16,8 @@ library(openxlsx2)
 ### Colors, text rotation and number formats
 
 Below we show you two ways how to create styled tables with `openxlsx2`
-one using the high level functions to style worksheet areas and one
-using the bare metal approach of creating the identical table. We show
+one using the high-level functions to style worksheet areas and one
+using the bare-metal approach of creating the identical table. We show
 both ways to create styles in `openxlsx2` to show how you could build on
 our functions or create your very own functions.
 
@@ -24,7 +26,7 @@ width.](img/worksheet_styling.jpg)
 
 The example below, with increased column width.
 
-#### the quick way: using high level functions
+#### the quick way: using high-level functions
 
 ``` r
 # add some dummy data
@@ -38,7 +40,7 @@ border_sty <- "thin"
 # using ) to avoid counting manually which `dims` are spanned.
 dims_mat_header <- wb_dims(rows = 1, cols = seq_len(ncol(mat)))
 # returns "A1:AB1"
-# prepare workbook with data and formated first row
+# prepare workbook with data and formatted first row
 wb <- wb_workbook()$
   add_worksheet("test")$
   add_data(x = mat)$
@@ -68,7 +70,7 @@ for (i in seq_along(x)) {
 # wb$open()
 ```
 
-#### the long way: using bare metal functions
+#### the long way: using bare-metal functions
 
 ``` r
 # create workbook
@@ -279,14 +281,14 @@ wb <- wb_workbook()$
 ### styled table
 
 Below we show you two ways how to create styled tables with `openxlsx2`
-one using the high level functions to style worksheet areas and one
-using the bare metal approach of creating the identical table.
+one using the high-level functions to style worksheet areas and one
+using the bare-metal approach of creating the identical table.
 
 ![Tiny table with minimal styling](img/styled_table.jpg)
 
 Tiny table with minimal styling
 
-#### the quick way: using high level functions
+#### the quick way: using high-level functions
 
 ``` r
 # add some dummy data to the worksheet
@@ -363,7 +365,7 @@ wb$set_cell_style(dims = cell, style = wb$styles_mgr$get_xf_id("bottom_styles"))
 
 ## Use workbook colors and modify them
 
-The loop below will apply the tint attribute to the fill color
+The loop below will apply the tint attribute to the fill color.
 
 ![Tint variations of the theme colors.](img/color_tint.jpg)
 

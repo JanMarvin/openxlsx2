@@ -84,11 +84,12 @@
 
     
     
-<p>Welcome to the styling manual for <code>openxlsx2</code>. In this
-manual you will learn how to use <code>openxlsx2</code> to style your
-worksheets. data from xlsx-files to R as well as how to export data from
-R to xlsx, and how to import and modify these <code>openxml</code>
-workbooks in R.</p>
+<p>Welcome to the <code>openxlsx2</code> styling manual. This guide
+demonstrates how to transform raw data into professional reports by
+applying custom styles to your worksheets. You will learn how to manage
+colors, fonts, and borders using both high-level convenience functions
+and ‘bare-metal’ technical approaches, as well as how to modify existing
+openxml workbooks directly within R.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/openxlsx2/">openxlsx2</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
@@ -98,8 +99,8 @@ workbooks in R.</p>
 <h3 id="colors-text-rotation-and-number-formats">Colors, text rotation and number formats<a class="anchor" aria-label="anchor" href="#colors-text-rotation-and-number-formats"></a>
 </h3>
 <p>Below we show you two ways how to create styled tables with
-<code>openxlsx2</code> one using the high level functions to style
-worksheet areas and one using the bare metal approach of creating the
+<code>openxlsx2</code> one using the high-level functions to style
+worksheet areas and one using the bare-metal approach of creating the
 identical table. We show both ways to create styles in
 <code>openxlsx2</code> to show how you could build on our functions or
 create your very own functions.</p>
@@ -109,7 +110,7 @@ The example below, with increased column width.
 </p>
 </div>
 <div class="section level4">
-<h4 id="the-quick-way-using-high-level-functions">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions"></a>
+<h4 id="the-quick-way-using-high-level-functions">the quick way: using high-level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions"></a>
 </h4>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># add some dummy data</span></span>
@@ -123,7 +124,7 @@ The example below, with increased column width.
 <span><span class="co"># using ) to avoid counting manually which `dims` are spanned.</span></span>
 <span><span class="va">dims_mat_header</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_dims.html">wb_dims</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># returns "A1:AB1"</span></span>
-<span><span class="co"># prepare workbook with data and formated first row</span></span>
+<span><span class="co"># prepare workbook with data and formatted first row</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"test"</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span><span class="op">)</span><span class="op">$</span></span>
@@ -153,7 +154,7 @@ The example below, with increased column width.
 <span><span class="co"># wb$open()</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="the-long-way-using-bare-metal-functions">the long way: using bare metal functions<a class="anchor" aria-label="anchor" href="#the-long-way-using-bare-metal-functions"></a>
+<h4 id="the-long-way-using-bare-metal-functions">the long way: using bare-metal functions<a class="anchor" aria-label="anchor" href="#the-long-way-using-bare-metal-functions"></a>
 </h4>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create workbook</span></span>
@@ -369,14 +370,14 @@ selected R classes.</p>
 <h3 id="styled-table">styled table<a class="anchor" aria-label="anchor" href="#styled-table"></a>
 </h3>
 <p>Below we show you two ways how to create styled tables with
-<code>openxlsx2</code> one using the high level functions to style
-worksheet areas and one using the bare metal approach of creating the
+<code>openxlsx2</code> one using the high-level functions to style
+worksheet areas and one using the bare-metal approach of creating the
 identical table.</p>
 <div class="float">
 <img src="img/styled_table.jpg" alt="Tiny table with minimal styling"><div class="figcaption">Tiny table with minimal styling</div>
 </div>
 <div class="section level4">
-<h4 id="the-quick-way-using-high-level-functions-1">the quick way: using high level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions-1"></a>
+<h4 id="the-quick-way-using-high-level-functions-1">the quick way: using high-level functions<a class="anchor" aria-label="anchor" href="#the-quick-way-using-high-level-functions-1"></a>
 </h4>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># add some dummy data to the worksheet</span></span>
@@ -455,7 +456,7 @@ identical table.</p>
 <div class="section level2">
 <h2 id="use-workbook-colors-and-modify-them">Use workbook colors and modify them<a class="anchor" aria-label="anchor" href="#use-workbook-colors-and-modify-them"></a>
 </h2>
-<p>The loop below will apply the tint attribute to the fill color</p>
+<p>The loop below will apply the tint attribute to the fill color.</p>
 <div class="figure">
 <img src="img/color_tint.jpg" class="r-plt" alt="Tint variations of the theme colors." width="100%"><p class="caption">
 Tint variations of the theme colors.

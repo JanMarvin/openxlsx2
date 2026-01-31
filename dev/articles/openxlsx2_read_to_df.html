@@ -213,10 +213,10 @@ underlying functions to see what is going on in the sheet. Using
 <h3 id="dims---read-specific-dimension">
 <code>dims</code> - read specific dimension<a class="anchor" aria-label="anchor" href="#dims---read-specific-dimension"></a>
 </h3>
-<p>Sometimes the entire worksheet contains to much data, in such case we
-provide functions to read only a selected dimension range. Such a range
-consists of either a specific cell like “A1” or a cell range in the
-notion used in the <code>openxml</code> standard</p>
+<p>Sometimes the entire worksheet contains too much data, in such case
+we provide functions to read only a selected dimension range. Such a
+range consists of either a specific cell like “A1” or a cell range in
+the notion used in the openxml standard</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read dimension without column names</span></span>
 <span><span class="fu"><a href="../reference/wb_to_df.html">wb_to_df</a></span><span class="op">(</span><span class="va">file</span>, dims <span class="op">=</span> <span class="st">"A2:C5"</span>, col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -309,9 +309,9 @@ above.</p>
 </h3>
 <p>Even though <code>openxlsx2</code> imports everything as requested,
 sometimes it might be helpful to remove empty lines from the data. These
-might be either left empty intentional or empty because they are were
+might be either left empty intentionally or empty because they are were
 formatted, but the cell value was removed afterwards. This was added
-mostly for backward comparability, but the default has been changed to
+mostly for backward compatibility, but the default has been changed to
 <code>FALSE</code>. The behavior has changed a bit as well. Previously
 empty cells were removed prior to the conversion to R data frames, now
 they are removed after the conversion and are removed only if they are
@@ -352,7 +352,7 @@ completely empty</p>
 <code>row_names</code> - keep rownames from input<a class="anchor" aria-label="anchor" href="#row_names---keep-rownames-from-input"></a>
 </h3>
 <p>Sometimes the data source might provide rownames as well. In such a
-case you can <code>openxlsx2</code> to treat the first column as
+case you can tell <code>openxlsx2</code> to treat the first column as
 rowname</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># convert first row to rownames</span></span>
