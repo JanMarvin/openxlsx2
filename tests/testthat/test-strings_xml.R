@@ -144,3 +144,12 @@ test_that("strings are equal", {
   got <- is_to_txt(exp_is)
   expect_equal(exp, got)
 })
+
+test_that("txt_to_is throws error on malformed XML-like input", {
+  malformed_xml <- "<r><invalid_tag"
+
+  expect_error(
+    txt_to_is(malformed_xml),
+    "Could not parse xml in txt_to_xml\\(\\)"
+  )
+})
