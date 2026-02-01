@@ -84,6 +84,11 @@ test_that("xml_attr", {
   xml <- read_xml(xml_str)
   expect_equal(getXMLXPtrAttrPath(xml, c("c", "b", "a")), exp)
 
+  xml <- read_xml('<node1 attr1="val1" attr2="val2" /><node2 id="test" />Foobar')
+  exp <- list(c(attr1 = "val1", attr2 = "val2"), c(id = "test"))
+  got <- getXMLXPtrAttrPath(xml, character(0))
+  expect_equal(got, exp)
+
 })
 
 test_that("xml_append_child", {
