@@ -112,14 +112,6 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
   vec_string res;
   uint32_t pugi_format_flags = pugi_format(doc);
 
-  // Validate tag names: no empty strings allowed
-  for (const std::string& tag : path) {
-    if (tag.empty()) {
-      Rcpp::stop("Tag names cannot be empty strings");
-    }
-  }
-
-  // Return whole document if no path is specified
   if (path.empty()) {
     xml_string_writer writer;
     doc->print(writer, " ", pugi_format_flags);
@@ -127,30 +119,29 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
     return Rcpp::wrap(res);
   }
 
-  // Step 1: start from top-level nodes that match path[0] or wildcard
+  for (const std::string& tag : path) {
+    if (tag.empty()) Rcpp::stop("Tag names cannot be empty strings");
+  }
   std::vector<pugi::xml_node> current_nodes;
-  if (path[0] == "*") {
-    for (pugi::xml_node node : doc->children()) {
-      current_nodes.push_back(node);
-    }
-  } else {
-    for (pugi::xml_node node : doc->children(path[0].c_str())) {
+  const std::string& first_tag = path[0];
+
+  for (pugi::xml_node node : doc->children()) {
+    if (first_tag == "*" || (node.type() == pugi::node_element && first_tag == node.name())) {
       current_nodes.push_back(node);
     }
   }
 
-  // Step 2: traverse remaining path
   for (size_t i = 1; i < path.size(); ++i) {
+    if (current_nodes.empty()) break;
+
     const std::string& tag = path[i];
     std::vector<pugi::xml_node> next_nodes;
 
+    next_nodes.reserve(current_nodes.size());
+
     for (const pugi::xml_node& node : current_nodes) {
-      if (tag == "*") {
-        for (pugi::xml_node child : node.children()) {
-          next_nodes.push_back(child);
-        }
-      } else {
-        for (pugi::xml_node child : node.children(tag.c_str())) {
+      for (pugi::xml_node child : node.children()) {
+        if (tag == "*" || (child.type() == pugi::node_element && tag == child.name())) {
           next_nodes.push_back(child);
         }
       }
@@ -159,7 +150,6 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
     current_nodes = std::move(next_nodes);
   }
 
-  // Step 3: serialize final result
   for (const pugi::xml_node& node : current_nodes) {
     xml_string_writer writer;
     node.print(writer, " ", pugi_format_flags);
