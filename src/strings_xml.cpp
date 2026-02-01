@@ -152,10 +152,9 @@ std::string txt_to_xml(
     t_node.append_child(pugi::node_pcdata).set_value(text.c_str());
   }
 
-  std::ostringstream oss;
-  doc.print(oss, " ", pugi_format_flags);
-
-  return oss.str();
+  xml_string_writer writer;
+  doc.print(writer, " ", pugi_format_flags);
+  return writer.result;
 }
 
 // [[Rcpp::export]]

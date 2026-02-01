@@ -36,9 +36,9 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
     return ptr;
   }
 
-  std::ostringstream oss;
-  doc->print(oss, " ", pugi_format_flags);
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  xml_string_writer writer;
+  doc->print(writer, " ", pugi_format_flags);
+  return Rcpp::wrap(Rcpp::String(writer.result));
 }
 
 inline uint32_t pugi_format(XPtrXML doc) {
@@ -121,9 +121,9 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
 
   // Return whole document if no path is specified
   if (path.empty()) {
-    std::ostringstream oss;
-    doc->print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
+    xml_string_writer writer;
+    doc->print(writer, " ", pugi_format_flags);
+    res.push_back(std::move(writer.result));
     return Rcpp::wrap(res);
   }
 
@@ -161,9 +161,9 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
 
   // Step 3: serialize final result
   for (const pugi::xml_node& node : current_nodes) {
-    std::ostringstream oss;
-    node.print(oss, " ", pugi_format_flags);
-    res.push_back(Rcpp::String(oss.str()));
+    xml_string_writer writer;
+    node.print(writer, " ", pugi_format_flags);
+    res.push_back(std::move(writer.result));
   }
 
   return Rcpp::wrap(res);
@@ -324,10 +324,9 @@ SEXP printXPtr(XPtrXML doc, std::string indent, bool raw, bool attr_indent) {
   }
   if (attr_indent) pugi_format_flags |= pugi::format_indent_attributes;
 
-  std::ostringstream oss;
-  doc->print(oss, indent.c_str(), pugi_format_flags);
-
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  xml_string_writer writer;
+  doc->print(writer, indent.c_str(), pugi_format_flags);
+  return Rcpp::wrap(Rcpp::String(writer.result));
 }
 
 // [[Rcpp::export]]
@@ -437,10 +436,9 @@ Rcpp::CharacterVector xml_attr_mod(
     }
   }
 
-  std::ostringstream oss;
-  doc.print(oss, " ", pugi_format_flags);
-
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  xml_string_writer writer;
+  doc.print(writer, " ", pugi_format_flags);
+  return Rcpp::wrap(Rcpp::String(writer.result));
 }
 
 //' create xml_node from R objects
@@ -520,10 +518,9 @@ Rcpp::CharacterVector xml_node_create(
     }
   }
 
-  std::ostringstream oss;
-  doc.print(oss, " ", pugi_format_flags);
-
-  return Rcpp::wrap(Rcpp::String(oss.str()));
+  xml_string_writer writer;
+  doc.print(writer, " ", pugi_format_flags);
+  return Rcpp::wrap(Rcpp::String(writer.result));
 }
 
 // [[Rcpp::export]]
@@ -561,9 +558,9 @@ SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string>
   if (pointer) {
     return node;
   } else {
-    std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
+    xml_string_writer writer;
+    node->print(writer, " ", pugi_format_flags);
+    return Rcpp::wrap(Rcpp::String(writer.result));
   }
 }
 
@@ -607,8 +604,8 @@ SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::str
   if (pointer) {
     return node;
   } else {
-    std::ostringstream oss;
-    node->print(oss, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(oss.str()));
+    xml_string_writer writer;
+    node->print(writer, " ", pugi_format_flags);
+    return Rcpp::wrap(Rcpp::String(writer.result));
   }
 }

@@ -6,6 +6,12 @@
 #define MAX_OOXML_COL_INT 16384
 #define MAX_OOXML_ROW_INT 1048576
 
+struct xml_string_writer : pugi::xml_writer {
+    std::string result;
+    void write(const void* data, size_t size) override {
+        result.append(static_cast<const char*>(data), size);
+    }
+};
 
 inline void check_xptr_validity(XPtrXML doc) {
   if (doc.get() == nullptr) {

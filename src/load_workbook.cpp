@@ -226,9 +226,9 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
           // <is>
           else if (std::strcmp(val.name(), is_str) == 0) {
-            std::ostringstream oss;
-            val.print(oss, " ", pugi::format_raw | pugi::format_no_escapes);
-            single_xml_col.is = oss.str();
+            xml_string_writer writer;
+            val.print(writer, " ", pugi::format_raw | pugi::format_no_escapes);
+            single_xml_col.is = std::move(writer.result);
           }  // </is>
 
           else if (std::strcmp(val.name(), f_str) == 0) {  // <f>
