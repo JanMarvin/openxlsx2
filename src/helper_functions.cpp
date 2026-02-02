@@ -909,9 +909,9 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, std::string vec_name, std::vector<std::
       if (nams.count(cld_name) == 0) {
         Rcpp::warning("%s: not found in %s name table", cld_name, vec_name);
       } else {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        std::string cld_value = oss.str();
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
+        std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
@@ -993,9 +993,9 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
         Rcpp::warning("%s: not found in %s name table", attr_j, vec_name);
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -1024,10 +1024,9 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
       }
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi::format_raw);
-
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi::format_raw);
+    z[i] = std::move(writer.result);
   }
 
   return z;

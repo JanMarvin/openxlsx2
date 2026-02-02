@@ -91,9 +91,9 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
         if (cld_name == "extLst") {
           R_xlen_t mtc = std::distance(nams.begin(), nams.find(cld_name));
           uint32_t pugi_format_flags = pugi::format_raw;
-          std::ostringstream oss;
-          cld.print(oss, " ", pugi_format_flags);
-          Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = Rcpp::String(oss.str());
+          xml_string_writer writer;
+          cld.print(writer, " ", pugi_format_flags);
+          Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = Rcpp::String(writer.result);
         } else {
           for (auto attrs : cld.attributes()) {
             std::string attr_name = attrs.name();
@@ -236,10 +236,9 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
       }
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -284,11 +283,11 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
         Rcpp::warning("%s: not found in font name table", name);
       } else {
         // TODO why is this needed here?
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = oss.str();
+        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::move(writer.result);
       }
 
     }  // end aligment, extLst, protection
@@ -331,10 +330,9 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
       }
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -415,10 +413,9 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
       }
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -484,9 +481,9 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
       if (nams.count(cld_name) == 0) {
         Rcpp::warning("%s: not found in border name table", cld_name);
       } else {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        std::string cld_value = oss.str();
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
+        std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
@@ -570,9 +567,9 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
         Rcpp::warning("%s: not found in border name table", attr_j);
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -614,11 +611,11 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
         Rcpp::warning("%s: not found in fill name table", name);
       } else {
         // TODO why is this needed here?
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = oss.str();
+        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::move(writer.result);
       }
 
     }  // end aligment, extLst, protection
@@ -661,10 +658,9 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
       }
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -729,9 +725,9 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
       if (nams.count(cld_name) == 0) {
         Rcpp::warning("%s: not found in cellstyle name table", cld_name);
       } else {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        std::string cld_value = oss.str();
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
+        std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
@@ -758,7 +754,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // openxml 2.8.1
-  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId"};
+  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId", "xr:uid"};
   std::vector<std::string> attrnams = df_cellstyle.names();
   std::set<std::string> nam_chlds{"extLst"};
 
@@ -769,37 +765,27 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
     for (R_xlen_t j = 0; j < k; ++j) {
       std::string attr_j = attrnams[static_cast<size_t>(j)];
 
-      // mimic which
-      auto res1 = nam_attrs.find(attr_j);
-      R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
-
-      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
-      std::iota(idx1.begin(), idx1.end(), 0);
-
-      auto res2 = nam_chlds.find(attr_j);
-      R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
-
-      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
-      std::iota(idx2.begin(), idx2.end(), 0);
+      bool is_attr = nam_attrs.count(attr_j) != 0;
+      bool is_child = nam_chlds.count(attr_j) != 0;
 
       // check if name is already known
-      if (nam_attrs.count(attr_j) != 0) {
+      if (is_attr) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
 
         // only write attributes where cv_s has a value
-        if (cv_s[0] != "") {
+        if (cv_s[0] != "" && cv_s[0] != NA_STRING) {
           // Rf_PrintValue(cv_s);
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
           cellstyle.append_attribute(attr_j.c_str()) = val_strl.c_str();
         }
       }
 
-      if (nam_chlds.count(attr_j) != 0) {
+      if (is_child) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
 
-        if (cv_s[0] != "") {
+        if (cv_s[0] != "" && cv_s[0] != NA_STRING) {
           std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
           pugi::xml_document border_node;
@@ -810,13 +796,13 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
         }
       }
 
-      if (idx1.empty() && idx2.empty())
+      if (!is_attr && !is_child)
         Rcpp::warning("%s: not found in cellStyle name table", attr_j);
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -882,9 +868,9 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
       if (nams.count(cld_name) == 0) {
         Rcpp::warning("%s: not found in tablestyle name table", cld_name);
       } else {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        cld_value += oss.str();
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
+        cld_value += writer.result;
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
@@ -969,9 +955,9 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
         Rcpp::warning("%s: not found in df_tablestyle name table", attr_j);
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -1012,9 +998,9 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
       if (nams.count(name) == 0) {
         Rcpp::warning("%s: not found in dxf name table", name);
       } else {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        std::string value = oss.str();
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
+        std::string value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = value;
@@ -1060,10 +1046,9 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
       }
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;
@@ -1104,9 +1089,9 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
       if (nams.count(name) == 0) {
         Rcpp::warning("%s: not found in color name table", name);
       } else {
-        std::ostringstream oss;
-        cld.print(oss, " ", pugi_format_flags);
-        std::string cld_value = oss.str();
+        xml_string_writer writer;
+        cld.print(writer, " ", pugi_format_flags);
+        std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
         Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
@@ -1153,10 +1138,9 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
       }
     }
 
-    std::ostringstream oss;
-    doc.print(oss, " ", pugi_format_flags);
-
-    z[i] = oss.str();
+    xml_string_writer writer;
+    doc.print(writer, " ", pugi_format_flags);
+    z[i] = std::move(writer.result);
   }
 
   return z;

@@ -62,6 +62,31 @@ test_that("border", {
 
 })
 
+test_that("fill", {
+
+  xlsxFile <- testfile_path("loadExample.xlsx")
+  wb <- wb_load(xlsxFile)
+
+  # likely not ordered entirely correct
+  exp <- c("gradientFill", "patternFill")
+
+  input <- wb$styles_mgr$styles$fills
+  got <- read_fill(as_xml(input))
+  expect_equal(sort(exp), sort(names(got)))
+
+  exp_dim <- c(4, 2)
+  expect_equal(exp_dim, dim(got))
+
+  expect_equal(input,
+               write_fill(got[exp]))
+
+  expect_warning(
+    got <- read_fill(read_xml('<fill><foo bar="0"/></fill>')),
+    "foo: not found in fill name table"
+  )
+
+})
+
 test_that("cellStyle", {
 
   xlsxFile <- testfile_path("loadExample.xlsx")
@@ -72,17 +97,28 @@ test_that("cellStyle", {
 
   input <- wb$styles_mgr$styles$cellStyles
   got <- read_cellStyle(as_xml(input))
-  expect_equal(sort(exp), sort(names(got)))
+  expect_equal(sort(names(got)), sort(exp))
 
   exp_dim <- c(2, 8)
-  expect_equal(exp_dim, dim(got))
+  expect_equal(dim(got), exp_dim)
 
-  expect_equal(input,
-               write_cellStyle(got[exp]))
+  expect_equal(write_cellStyle(got[exp]),
+               input)
 
   expect_warning(
     got <- read_cellStyle(read_xml('<cellStyle foo="0"/>')),
     "foo: not found in cellstyle name table"
+  )
+
+  valid_xml <- '<cellStyle><extLst><ext/></extLst></cellStyle>'
+  exp <- '<extLst><ext/></extLst>'
+  got <- read_cellStyle(as_xml(valid_xml))$extLst
+  expect_equal(got, exp)
+
+  invalid_xml <- '<cellStyle><unknown_child/></cellStyle>'
+  expect_warning(
+    got <- read_cellStyle(as_xml(invalid_xml)),
+    "unknown_child: not found in cellstyle name table"
   )
 
 })
@@ -258,4 +294,40 @@ test_that("create_font() works", {
 
   exp <- "<font><b val=\"1\"/><i val=\"1\"/><strike val=\"1\"/><condense val=\"1\"/><extend val=\"1\"/><outline val=\"1\"/><shadow val=\"1\"/><u val=\"double\"/><vertAlign val=\"superscript\"/><sz val=\"36\"/><color rgb=\"FFDDAA00\"/><name val=\"Impact\"/><family val=\"10\"/><charset val=\"1\"/><scheme val=\"major\"/></font>"
   expect_equal(got, exp)
+})
+
+test_that("write_cellStyle coverage", {
+
+  df_valid <- data.frame(
+    name = "Normal",
+    builtinId = "0",
+    extLst = "<extLst><ext uri='test'/></extLst>",
+    stringsAsFactors = FALSE
+  )
+
+  got <- write_cellStyle(df_valid)
+  expect_type(got, "character")
+  expect_match(got, "<cellStyle name=\"Normal\" builtinId=\"0\">")
+  expect_match(got, "<extLst><ext uri=\"test\"/></extLst>")
+
+  df_warn <- data.frame(
+    name = "Normal",
+    unknown_col = "some_value",
+    stringsAsFactors = FALSE
+  )
+
+  expect_warning(
+    write_cellStyle(df_warn),
+    "unknown_col: not found in cellStyle name table"
+  )
+
+  df_error <- data.frame(
+    extLst = "<extLst> Unclosed tag",
+    stringsAsFactors = FALSE
+  )
+
+  expect_error(
+    write_cellStyle(df_error),
+    "loading cellStyle node fail"
+  )
 })
