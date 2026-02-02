@@ -754,7 +754,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // openxml 2.8.1
-  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId"};
+  std::set<std::string> nam_attrs{"builtinId", "customBuiltin", "hidden", "iLevel", "name", "xfId", "xr:uid"};
   std::vector<std::string> attrnams = df_cellstyle.names();
   std::set<std::string> nam_chlds{"extLst"};
 
@@ -765,37 +765,27 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
     for (R_xlen_t j = 0; j < k; ++j) {
       std::string attr_j = attrnams[static_cast<size_t>(j)];
 
-      // mimic which
-      auto res1 = nam_attrs.find(attr_j);
-      R_xlen_t mtc1 = std::distance(nam_attrs.begin(), res1);
-
-      std::vector<int32_t> idx1(static_cast<size_t>(mtc1) + 1);
-      std::iota(idx1.begin(), idx1.end(), 0);
-
-      auto res2 = nam_chlds.find(attr_j);
-      R_xlen_t mtc2 = std::distance(nam_chlds.begin(), res2);
-
-      std::vector<int32_t> idx2(static_cast<size_t>(mtc2) + 1);
-      std::iota(idx2.begin(), idx2.end(), 0);
+      bool is_attr = nam_attrs.count(attr_j) != 0;
+      bool is_child = nam_chlds.count(attr_j) != 0;
 
       // check if name is already known
-      if (nam_attrs.count(attr_j) != 0) {
+      if (is_attr) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
 
         // only write attributes where cv_s has a value
-        if (cv_s[0] != "") {
+        if (cv_s[0] != "" && cv_s[0] != NA_STRING) {
           // Rf_PrintValue(cv_s);
           const std::string val_strl = Rcpp::as<std::string>(cv_s);
           cellstyle.append_attribute(attr_j.c_str()) = val_strl.c_str();
         }
       }
 
-      if (nam_chlds.count(attr_j) != 0) {
+      if (is_child) {
         Rcpp::CharacterVector cv_s = "";
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
 
-        if (cv_s[0] != "") {
+        if (cv_s[0] != "" && cv_s[0] != NA_STRING) {
           std::string font_i = Rcpp::as<std::string>(cv_s[0]);
 
           pugi::xml_document border_node;
@@ -806,7 +796,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
         }
       }
 
-      if (idx1.empty() && idx2.empty())
+      if (!is_attr && !is_child)
         Rcpp::warning("%s: not found in cellStyle name table", attr_j);
     }
 
