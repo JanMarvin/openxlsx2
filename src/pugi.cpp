@@ -150,11 +150,11 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
   }
 
   std::vector<pugi::xml_node> target_nodes = find_nodes_by_path(doc.get(), path);
-  Rcpp::CharacterVector res(target_nodes.size());
+  Rcpp::CharacterVector res(static_cast<R_xlen_t>(target_nodes.size()));
 
-  for (size_t i = 0; i < target_nodes.size(); ++i) {
+  for (R_xlen_t i = 0; i < res.size(); ++i) {
     xml_string_writer writer;
-    target_nodes[i].print(writer, " ", pugi_format_flags);
+    target_nodes[static_cast<size_t>(i)].print(writer, " ", pugi_format_flags);
     res[i] = Rcpp::String(writer.result);
   }
 
@@ -168,10 +168,10 @@ SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
   if (path.empty()) return Rcpp::CharacterVector::create();
 
   std::vector<pugi::xml_node> target_nodes = find_nodes_by_path(doc.get(), path);
-  Rcpp::CharacterVector res(target_nodes.size());
+  Rcpp::CharacterVector res(static_cast<R_xlen_t>(target_nodes.size()));
 
-  for (size_t i = 0; i < target_nodes.size(); ++i) {
-    res[i] = Rcpp::String(target_nodes[i].text().get());
+  for (R_xlen_t i = 0; i < res.size(); ++i) {
+    res[i] = Rcpp::String(target_nodes[static_cast<size_t>(i)].text().get());
   }
 
   return res;
@@ -194,15 +194,15 @@ SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
 
   if (target_nodes.empty()) return Rcpp::List::create();
 
-  Rcpp::List out(target_nodes.size());
-  for (size_t i = 0; i < target_nodes.size(); ++i) {
-    const auto& node = target_nodes[i];
+  Rcpp::List out(static_cast<R_xlen_t>(target_nodes.size()));
+  for (R_xlen_t i = 0; i < out.size(); ++i) {
+    const auto& node = target_nodes[static_cast<size_t>(i)];
 
-    size_t attr_count = std::distance(node.attributes_begin(), node.attributes_end());
+    R_xlen_t attr_count = static_cast<R_xlen_t>(std::distance(node.attributes_begin(), node.attributes_end()));
     Rcpp::CharacterVector attr_vals(attr_count);
     Rcpp::CharacterVector attr_names(attr_count);
 
-    size_t j = 0;
+    R_xlen_t j = 0;
     for (auto attr : node.attributes()) {
       attr_names[j] = Rcpp::String(attr.name());
       attr_vals[j] = Rcpp::String(attr.value());
