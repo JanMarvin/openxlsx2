@@ -19,11 +19,13 @@
   [\#1533](https://github.com/JanMarvin/openxlsx2/pull/1533)
 - Fix reading uninitialized cells
   [\#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
+- Various changes to comment and thread handling code
 
 ### Internal Changes
 
 - Cleanup and remove `waldo` from `testthat` helper functions
 - Update many manual pages
+- Cleanups for consistency in internal XML handler code
 
 ------------------------------------------------------------------------
 
