@@ -163,6 +163,7 @@ wb_load <- function(
     drawingsXML       <- grep_xml("/drawings/drawing[0-9]+.xml$")
     drawingRelsXML    <- grep_xml("/drawing[0-9]+.xml.rels$")
     vmlDrawingXML     <- grep_xml("/drawings/vmlDrawing[0-9]+\\.vml$")
+    if (length(vmlDrawingXML) == 0) vmlDrawingXML     <- grep_xml("/drawings/vmlDrawing\\.vml$")
     vmlDrawingRelsXML <- grep_xml("/vmlDrawing[0-9]+.vml.rels$")
     media             <- grep_xml("/image[0-9]+.[a-z]+$")
   }
@@ -1109,6 +1110,8 @@ wb_load <- function(
           xml_relship$Target[sel] <- gsub(".bin", ".xml", xml_relship$Target[sel])
         }
 
+        xml_relship$Target[xml_relship$Target == "/xl/drawings/vmldrawing.vml"] <- "/xl/drawings/vmlDrawing1.vml"
+
         if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
 
         # we do not ship this binary blob, therefore spreadsheet software may
@@ -1329,12 +1332,14 @@ wb_load <- function(
       cts <- c(cts, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
       vml_len <- max(as.integer(gsub("\\D+", "", basename(vmlDrawingXML))))
+      if (all(is.na(vml_len))) vml_len <- 1L
 
       wb$vml      <- rep(list(""), vml_len) # vector("list", vml_len)
 
       for (vml in vmlDrawingXML) {
 
         vml_file <- as.integer(gsub("\\D+", "", basename(vml)))
+        if (is.na(vml_file)) vml_file <- 1L
 
         # fix broken xml in vml buttons
         vml <- stringi::stri_read_lines(vml, encoding = "UTF-8")
