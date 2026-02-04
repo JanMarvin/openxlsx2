@@ -3786,7 +3786,13 @@ wbWorkbook <- R6::R6Class(
             WR <- rbindlist(xml_attr(WR, "Relationships", "Relationship"))
 
             if (NROW(WR)) { # in xlsb files it can be that WR has no rows
-              WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
+
+              # starts with ../ (the default)
+              WR$Target <- gsub("^\\.\\.", "/xl", WR$Target)
+              # just a filename (some files in charts folder)
+              WR$Target <- sub("^([^/])", paste0("/xl/", folder, "/\\1"), WR$Target)
+
+              WR$tmpDirPartName <- paste0(tmpDir, "/", WR$Target)
               WR$fileExists <- file.exists(WR$tmpDirPartName)
 
               # exclude hyperlinks
