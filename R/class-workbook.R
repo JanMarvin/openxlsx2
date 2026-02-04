@@ -2541,18 +2541,16 @@ wbWorkbook <- R6::R6Class(
         assert_class(x, "character")
         assert_named_region(names(x))
 
-        if (NROW(nr <- self$get_named_regions())) {
-          nr_name <- nr$name[nr$local == 0]
-
-          if (any(tolower(names(x)) %in% tolower(nr_name)))
-            stop("named regions cannot be duplicates")
-        }
-
         xml <- xml_node_create(
           "definedName",
           xml_children = x,
           xml_attributes = c(name = names(x))
         )
+
+        if (xml %in% self$workbook$definedNames) {
+          stop("named regions cannot be duplicates")
+        }
+
         private$append_workbook_field("definedNames", xml)
 
         message("formula registered to the workbook")
