@@ -531,3 +531,14 @@ test_that("named region checks work", {
   expect_error(wb$add_named_region(dims = "D1", name = "a b"), "letter or an underscore")
   expect_error(wb$add_named_region(dims = "D1", name = "A1"), "cell reference")
 })
+
+test_that("get_nr_from_definedName ignores functions", {
+  wb <- wb_workbook()
+  wb$workbook$definedNames <- c(
+    "<definedName name=\"myAddFunction\">_xlfn.LAMBDA(_xlpm.A,_xlpm.B,SUM(_xlpm.A,_xlpm.B))</definedName>",
+    "<definedName name=\"One_Million\">Sheet1!$D$2</definedName>"
+  )
+  exp <- "Sheet1!$D$2"
+  got <- get_nr_from_definedName(wb)$value
+  expect_equal(got, exp)
+})

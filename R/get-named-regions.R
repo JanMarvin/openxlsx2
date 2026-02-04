@@ -23,7 +23,10 @@ get_nr_from_definedName <- function(wb) {
     has_bang <- grepl("!", dn_pos, fixed = TRUE)
     dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
     dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
+    dn <- dn[!(dn$sheets == "" & grepl("^_(xlfn|xlnm)\\.", dn$value)), , drop = FALSE]
   }
+
+  if (nrow(dn) == 0) return(NULL)
 
   dn$id <- seq_len(nrow(dn))
 
