@@ -266,6 +266,9 @@ wbWorkbook <- R6::R6Class(
     #' @field tables.xml.rels tables.xml.rels
     tables.xml.rels = NULL,
 
+    #' @field tableSingleCells tableSingleCells
+    tableSingleCells = NULL,
+
     #' @field theme theme
     theme = NULL,
 
@@ -3313,6 +3316,23 @@ wbWorkbook <- R6::R6Class(
             }
           }
         }
+
+        if (length(self$tableSingleCells)) {
+
+          override <- rbind(
+            override,
+            # new entry for table
+            c("application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml",
+              sprintf("/xl/tables/tableSingleCells%s.xml", 1L))
+          )
+
+          write_file(
+            body = self$tableSingleCells,
+            fl = file.path(xlTablesDir, sprintf("tableSingleCells%s.xml", 1L))
+          )
+        }
+
+      }
 
       }
 

@@ -1278,6 +1278,11 @@ wb_load <- function(
         stringsAsFactors = FALSE
       )
 
+      tab1CXML <- grep_xml("/tables/tableSingleCells[0-9]+\\.xml$")
+      if (length(tab1CXML)) {
+        wb$tableSingleCells <- read_xml(tab1CXML, pointer = FALSE)
+      }
+
       # # These are applied in self$save()
       # cts <- c(cts, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', seq_len(nrow(wb$tables))))
 
