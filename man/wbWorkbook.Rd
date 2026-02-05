@@ -129,6 +129,8 @@ Note that the documentation is more complete in each of the wrapper functions.
 
 \item{\code{tables.xml.rels}}{tables.xml.rels}
 
+\item{\code{tableSingleCells}}{tableSingleCells}
+
 \item{\code{theme}}{theme}
 
 \item{\code{vbaProject}}{vbaProject}
@@ -161,6 +163,8 @@ worksheet names.}
 \item{\code{tmpDir}}{tmpDir}
 
 \item{\code{namedSheetViews}}{namedSheetViews}
+
+\item{\code{xmlMaps}}{xmlMaps}
 }
 \if{html}{\out{</div>}}
 }
