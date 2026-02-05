@@ -2986,7 +2986,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$tables)) {
         xlTablesDir     <- dir_create(tmpDir, "xl", "tables")
       }
-      if (length(self$tables.xml.rels)) {
+      if (length(self$tables.xml.rels) && any(self$tables.xml.rels != "")) {
         xlTablesRelsDir <- dir_create(xlTablesDir, "_rels")
       }
 
