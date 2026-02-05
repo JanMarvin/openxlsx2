@@ -204,6 +204,10 @@ rather than `?wbWorkbook`).
 
   tables.xml.rels
 
+- `tableSingleCells`:
+
+  tableSingleCells
+
 - `theme`:
 
   theme
@@ -267,6 +271,10 @@ rather than `?wbWorkbook`).
 - `namedSheetViews`:
 
   namedSheetViews
+
+- `xmlMaps`:
+
+  xmlMaps
 
 ## Methods
 
