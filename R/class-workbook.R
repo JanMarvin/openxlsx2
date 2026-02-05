@@ -318,6 +318,9 @@ wbWorkbook <- R6::R6Class(
     #' @field namedSheetViews namedSheetViews
     namedSheetViews = character(),
 
+    #' @field xmlMaps xmlMaps
+    xmlMaps = NULL,
+
     #' @description
     #' Creates a new `wbWorkbook` object
     #' @param title,subject,category,keywords,comments,manager,company workbook properties
@@ -3334,6 +3337,19 @@ wbWorkbook <- R6::R6Class(
 
       }
 
+      if (length(self$xmlMaps)) {
+        write_file(
+          head = "",
+          body = self$xmlMaps,
+          tail = "",
+          fl = file.path(tmpDir, "xl", "xmlMaps.xml")
+        )
+
+        override <- rbind(
+          override,
+          # new entry for table
+          c("application/xml", "/xl/xmlMaps.xml")
+        )
       }
 
       ## ct is updated as xml
@@ -10212,6 +10228,7 @@ wbWorkbook <- R6::R6Class(
       personInds       <- grep("person.xml",                                 self$workbook.xml.rels)
       calcChainInd     <- grep("calcChain.xml",                              self$workbook.xml.rels)
       richDataInd      <- grep("richData",                                   self$workbook.xml.rels)
+      xmlMaps          <- grep("xmlMaps",                                    self$workbook.xml.rels)
 
 
       ## Reordering of workbook.xml.rels
@@ -10233,7 +10250,8 @@ wbWorkbook <- R6::R6Class(
           tableInds,
           personInds,
           calcChainInd,
-          richDataInd
+          richDataInd,
+          xmlMaps
         )]
 
       ## Re assign rIds to children of workbook.xml.rels

@@ -1296,6 +1296,12 @@ wb_load <- function(
     } ## if (length(tablesXML))
 
 
+    xmlMapsXML <- grep_xml("/xmlMaps\\.xml$")
+    if (length(xmlMapsXML)) {
+      wb$xmlMaps <- read_xml(xmlMapsXML, pointer = FALSE)
+      wxr <- c(wxr, '<Relationship Id=\"rId0\" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/xmlMaps" Target="xmlMaps.xml"/>')
+    }
+
     ## Drawings ------------------------------------------------------------------------------------
     if (length(drawingsXML)) {
 
