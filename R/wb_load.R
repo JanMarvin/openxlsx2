@@ -142,41 +142,43 @@ wb_load <- function(
   wxr <- NULL
 
   # Fundamental workbook components
-  appXML            <- grep_xml("app.xml$")
-  coreXML           <- grep_xml("core.xml$")
-  customXML         <- grep_xml("custom.xml$")
-  workbookXML       <- grep_xml("workbook.xml$")
-  workbookBIN       <- grep_xml("workbook.bin$")
-  workbookXMLRels   <- grep_xml("workbook.xml.rels")
-  workbookBINRels   <- grep_xml("workbook.bin.rels")
-  stylesXML         <- grep_xml("styles.xml$")
-  stylesBIN         <- grep_xml("styles.bin$")
-  sharedStringsXML  <- grep_xml("sharedStrings.xml$")
-  sharedStringsBIN  <- grep_xml("sharedStrings.bin$")
-  themeXML          <- grep_xml("theme[0-9]+.xml$")
+  appXML            <- grep_xml("app\\.xml$")
+  coreXML           <- grep_xml("core\\.xml$")
+  customXML         <- grep_xml("custom\\.xml$")
+  workbookXML       <- grep_xml("workbook\\.xml$")
+  workbookBIN       <- grep_xml("workbook\\.bin$")
+  workbookXMLRels   <- grep_xml("workbook\\.xml\\.rels")
+  workbookBINRels   <- grep_xml("workbook\\.bin\\.rels")
+  stylesXML         <- grep_xml("styles\\.xml$")
+  stylesBIN         <- grep_xml("styles\\.bin$")
+  sharedStringsXML  <- grep_xml("sharedStrings\\.xml$")
+  sharedStringsBIN  <- grep_xml("sharedStrings\\.bin$")
+  themeXML          <- grep_xml("theme[0-9]+\\.xml$")
   vbaProject        <- grep_xml("vbaProject\\.bin$")
-  metadataXML       <- grep_xml("metadata.xml$")
+  metadataXML       <- grep_xml("metadata\\.xml$")
 
   xmlDirs <- unique(dirname(xmlFiles))
 
   # Drawings & Media
   drawingsXML <- drawingRelsXML <- vmlDrawingXML <- vmlDrawingRelsXML <- media <- character(0)
   if (any(grepl("xl/drawings|xl/media", xmlDirs))) {
-    drawingsXML       <- grep_xml("drawings/drawing[0-9]+.xml$")
-    drawingRelsXML    <- grep_xml("drawing[0-9]+.xml.rels$")
+    drawingsXML       <- grep_xml("drawings/drawing[0-9]+\\.xml$")
+    drawingRelsXML    <- grep_xml("drawing[0-9]+\\.xml\\.rels$")
     vmlDrawingXML     <- grep_xml("drawings/vmlDrawing[0-9]+\\.vml$")
-    vmlDrawingRelsXML <- grep_xml("vmlDrawing[0-9]+.vml.rels$")
+    # FIXME hack to work around lowercase filename without digit
+    if (length(vmlDrawingXML) == 0) vmlDrawingXML     <- grep_xml("/drawings/vmldrawing\\.vml$")
+    vmlDrawingRelsXML <- grep_xml("vmlDrawing[0-9]+.vml\\.rels$")
     media             <- grep_xml("image[0-9]+.[a-z]+$")
   }
 
   # Comments, Persons & Relationships
   sheetRelsXML <- sheetRelsBIN <- commentsXML <- commentsBIN <- personXML <- threadCommentsXML <- character(0)
   if (any(grepl("xl/worksheets/_rels|xl/comments|xl/threadedComments|xl/persons", xmlDirs))) {
-    sheetRelsXML      <- grep_xml("sheet[0-9]+.xml.rels$")
-    sheetRelsBIN      <- grep_xml("sheet[0-9]+.bin.rels$")
+    sheetRelsXML      <- grep_xml("sheet[0-9]+\\.xml\\.rels$")
+    sheetRelsBIN      <- grep_xml("sheet[0-9]+\\.bin\\.rels$")
     commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")
     commentsBIN       <- grep_xml("xl/comments[0-9]+\\.bin")
-    personXML         <- grep_xml("xl/persons/person.xml$")
+    personXML         <- grep_xml("xl/persons/person\\.xml$")
     threadCommentsXML <- grep_xml("xl/threadedComments/threadedComment[0-9]+\\.xml")
   }
 
@@ -187,66 +189,67 @@ wb_load <- function(
     chartExsXML       <- grep_xml("xl/charts/chartEx[0-9]+\\.xml$")
     chartsXML_colors  <- grep_xml("xl/charts/colors[0-9]+\\.xml$")
     chartsXML_styles  <- grep_xml("xl/charts/style[0-9]+\\.xml$")
-    chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+.xml.rels")
-    chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+.xml.rels")
+    chartsRels        <- grep_xml("xl/charts/_rels/chart[0-9]+\\.xml\\.rels")
+    chartExsRels      <- grep_xml("xl/charts/_rels/chartEx[0-9]+\\.xml\\.rels")
     chartSheetsXML    <- grep_xml("xl/chartsheets/sheet[0-9a-fA-F]*\\.(xml|bin)$")
   }
 
   # Tables, Connections & External Links
   tablesXML <- tablesBIN <- tableRelsXML <- queryTablesXML <- connectionsXML <- extLinksXML <- extLinksBIN <- extLinksRelsXML <- extLinksRelsBIN <- character(0)
   if (any(grepl("xl/tables|xl/queryTables|xl/externalLinks", xmlDirs))) {
-    tablesXML         <- grep_xml("tables/table[0-9]+.xml$")
-    tablesBIN         <- grep_xml("tables/table[0-9]+.bin$")
-    tableRelsXML      <- grep_xml("table[0-9]+.xml.rels$")
-    queryTablesXML    <- grep_xml("queryTable[0-9]+.xml$")
-    connectionsXML    <- grep_xml("connections.xml$")
-    extLinksXML       <- grep_xml("externalLink[0-9]+.xml$")
-    extLinksBIN       <- grep_xml("externalLink[0-9]+.bin$")
-    extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
-    extLinksRelsBIN   <- grep_xml("externalLink[0-9]+.bin.rels$")
+    tablesXML         <- grep_xml("tables/table[0-9]+\\.xml$")
+    tablesBIN         <- grep_xml("tables/table[0-9]+\\.bin$")
+    tableRelsXML      <- grep_xml("table[0-9]+\\.xml\\.rels$")
+    tab1CXML          <- grep_xml("tables/tableSingleCells[0-9]+\\.xml$")
+    queryTablesXML    <- grep_xml("queryTable[0-9]+\\.xml$")
+    connectionsXML    <- grep_xml("connections\\.xml$")
+    extLinksXML       <- grep_xml("externalLink[0-9]+\\.xml$")
+    extLinksBIN       <- grep_xml("externalLink[0-9]+\\.bin$")
+    extLinksRelsXML   <- grep_xml("externalLink[0-9]+\\.xml\\.rels$")
+    extLinksRelsBIN   <- grep_xml("externalLink[0-9]+\\.bin\\.rels$")
   }
 
   # Pivot Tables, Slicers & Timelines
   pivotTableXML <- pivotTableRelsXML <- pivotDefXML <- pivotDefRelsXML <- pivotCacheRecords <- slicerXML <- slicerCachesXML <- timelineXML <- timelineCachesXML <- character(0)
   if (any(grepl("xl/pivotTables|xl/pivotCache|xl/slicers|xl/timelines", xmlDirs))) {
-    pivotTableXML     <- grep_xml("pivotTable[0-9]+.xml$")
-    pivotTableRelsXML <- grep_xml("pivotTable[0-9]+.xml.rels$")
-    pivotDefXML       <- grep_xml("pivotCacheDefinition[0-9]+.xml$")
-    pivotDefRelsXML   <- grep_xml("pivotCacheDefinition[0-9]+.xml.rels$")
-    pivotCacheRecords <- grep_xml("pivotCacheRecords[0-9]+.xml$")
-    slicerXML         <- grep_xml("slicer[0-9]+.xml$")
-    slicerCachesXML   <- grep_xml("slicerCache[0-9]+.xml$")
-    timelineXML       <- grep_xml("timeline[0-9]+.xml$")
-    timelineCachesXML <- grep_xml("timelineCache[0-9]+.xml$")
+    pivotTableXML     <- grep_xml("pivotTable[0-9]+\\.xml$")
+    pivotTableRelsXML <- grep_xml("pivotTable[0-9]+\\.xml\\.rels$")
+    pivotDefXML       <- grep_xml("pivotCacheDefinition[0-9]+\\.xml$")
+    pivotDefRelsXML   <- grep_xml("pivotCacheDefinition[0-9]+\\.xml\\.rels$")
+    pivotCacheRecords <- grep_xml("pivotCacheRecords[0-9]+\\.xml$")
+    slicerXML         <- grep_xml("slicer[0-9]+\\.xml$")
+    slicerCachesXML   <- grep_xml("slicerCache[0-9]+\\.xml$")
+    timelineXML       <- grep_xml("timeline[0-9]+\\.xml$")
+    timelineCachesXML <- grep_xml("timelineCache[0-9]+\\.xml$")
   }
 
   # Rich Data
   rdarray <- rdrichvalue <- rdrichvaluestr <- rdRichValueTypes <- rdValWebImg <- rdValWebImgrels <- rdpropertybag <- rdpropertybagStr <- richStyles <- richValueRel <- richValueRelrels <- character(0)
   if (any(grepl("xl/richData", xmlDirs))) {
-    rdarray           <- grep_xml("richData/rdarray.xml")
-    rdrichvalue       <- grep_xml("richData/rdrichvalue.xml")
-    rdrichvaluestr    <- grep_xml("richData/rdrichvaluestructure.xml")
-    rdRichValueTypes  <- grep_xml("richData/rdRichValueTypes.xml")
-    rdValWebImg       <- grep_xml("richData/rdRichValueWebImage.xml")
-    rdValWebImgrels   <- grep_xml("richData/_rels/rdRichValueWebImage.xml.rels")
-    rdpropertybag     <- grep_xml("richData/rdsupportingpropertybag.xml")
-    rdpropertybagStr  <- grep_xml("richData/rdsupportingpropertybagstructure.xml")
-    richStyles        <- grep_xml("richData/richStyles.xml")
-    richValueRel      <- grep_xml("richData/richValueRel.xml")
-    richValueRelrels  <- grep_xml("richData/_rels/richValueRel.xml.rels")
+    rdarray           <- grep_xml("richData/rdarray\\.xml")
+    rdrichvalue       <- grep_xml("richData/rdrichvalue\\.xml")
+    rdrichvaluestr    <- grep_xml("richData/rdrichvaluestructure\\.xml")
+    rdRichValueTypes  <- grep_xml("richData/rdRichValueTypes\\.xml")
+    rdValWebImg       <- grep_xml("richData/rdRichValueWebImage\\.xml")
+    rdValWebImgrels   <- grep_xml("richData/_rels/rdRichValueWebImage\\.xml\\.rels")
+    rdpropertybag     <- grep_xml("richData/rdsupportingpropertybag\\.xml")
+    rdpropertybagStr  <- grep_xml("richData/rdsupportingpropertybagstructure\\.xml")
+    richStyles        <- grep_xml("richData/richStyles\\.xml")
+    richValueRel      <- grep_xml("richData/richValueRel\\.xml")
+    richValueRelrels  <- grep_xml("richData/_rels/richValueRel\\.xml\\.rels")
   }
 
   # Misc / Singletons
   customXmlDir       <- grep_xml("customXml/")
   docMetadataXML     <- grep_xml("docMetadata/")
-  calcChainXML       <- grep_xml("xl/calcChain.xml")
+  calcChainXML       <- grep_xml("xl/calcChain\\.xml")
   embeddings         <- grep_xml("xl/embeddings")
   activeX            <- grep_xml("xl/activeX")
-  python             <- grep_xml("xl/python.xml$")
+  python             <- grep_xml("xl/python\\.xml$")
   webextensions      <- grep_xml("xl/webextensions")
-  ctrlPropsXML       <- grep_xml("ctrlProps/ctrlProp[0-9]+.xml")
-  featureProperty    <- grep_xml("featurePropertyBag.xml$")
-  namedSheetViewsXML <- grep_xml("namedSheetViews/namedSheetView[0-9]+.xml$")
+  ctrlPropsXML       <- grep_xml("ctrlProps/ctrlProp[0-9]+\\.xml")
+  featureProperty    <- grep_xml("featurePropertyBag\\.xml$")
+  namedSheetViewsXML <- grep_xml("namedSheetViews/namedSheetView[0-9]+\\.xml$")
 
   cleanup_dir <- function(data_only) {
     grep_xml("media|vmlDrawing|customXml|embeddings|activeX|vbaProject|webextensions", ignore.case = TRUE, invert = TRUE)
@@ -452,8 +455,8 @@ wb_load <- function(
       on.exit(options(op), add = TRUE)
       msg <- paste0(
         "The `{%s}` namespace(s) has been removed from the xml files, for example:\n",
-        "\t<%s:field> changed to:\n",
-        "\t<field>\n",
+        "\t<%s:field/> changed to:\n",
+        "\t<field/>\n",
         "See 'Details' in ?openxlsx2::wb_load() for more information."
       )
       warning(sprintf(msg, xml_ns, xml_ns))
@@ -1111,6 +1114,9 @@ wb_load <- function(
           xml_relship$Target[sel] <- gsub(".bin", ".xml", xml_relship$Target[sel])
         }
 
+        # FIXME hack to work around lowercase filename without digit
+        xml_relship$Target[xml_relship$Target == "/xl/drawings/vmldrawing.vml"] <- "/xl/drawings/vmlDrawing1.vml"
+
         if (is.null(xml_relship$TargetMode)) xml_relship$TargetMode <- ""
 
         # we do not ship this binary blob, therefore spreadsheet software may
@@ -1277,6 +1283,22 @@ wb_load <- function(
         stringsAsFactors = FALSE
       )
 
+      if (length(tab1CXML)) {
+        # This is quite likely not entirely correct, but can be corrected once
+        # more files with tableSingleCells appear. So far there is only one and
+        # this file has only a single entry.
+        nms <- as.integer(gsub("\\D+", "", basename(tab1CXML)))
+
+        tab1cxml <- lapply(
+          tab1CXML,
+          read_xml,
+          pointer = FALSE
+        )
+        names(tab1cxml) <- nms
+
+        wb$tableSingleCells <- tab1cxml
+      }
+
       # # These are applied in self$save()
       # cts <- c(cts, sprintf('<Override PartName="/xl/tables/table%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/>', seq_len(nrow(wb$tables))))
 
@@ -1289,6 +1311,12 @@ wb_load <- function(
 
     } ## if (length(tablesXML))
 
+
+    xmlMapsXML <- grep_xml("/xmlMaps\\.xml$")
+    if (length(xmlMapsXML)) {
+      wb$xmlMaps <- read_xml(xmlMapsXML, pointer = FALSE)
+      wxr <- c(wxr, '<Relationship Id=\"rId0\" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/xmlMaps" Target="xmlMaps.xml"/>')
+    }
 
     ## Drawings ------------------------------------------------------------------------------------
     if (length(drawingsXML)) {
@@ -1331,12 +1359,16 @@ wb_load <- function(
       cts <- c(cts, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
       vml_len <- max(as.integer(gsub("\\D+", "", basename(vmlDrawingXML))))
+      # FIXME hack to work around lowercase filename without digit
+      if (all(is.na(vml_len))) vml_len <- 1L
 
       wb$vml      <- rep(list(""), vml_len) # vector("list", vml_len)
 
       for (vml in vmlDrawingXML) {
 
         vml_file <- as.integer(gsub("\\D+", "", basename(vml)))
+        # FIXME hack to work around lowercase filename without digit
+        if (is.na(vml_file)) vml_file <- 1L
 
         # fix broken xml in vml buttons
         vml <- stringi::stri_read_lines(vml, encoding = "UTF-8")

@@ -266,6 +266,9 @@ wbWorkbook <- R6::R6Class(
     #' @field tables.xml.rels tables.xml.rels
     tables.xml.rels = NULL,
 
+    #' @field tableSingleCells tableSingleCells
+    tableSingleCells = NULL,
+
     #' @field theme theme
     theme = NULL,
 
@@ -314,6 +317,9 @@ wbWorkbook <- R6::R6Class(
 
     #' @field namedSheetViews namedSheetViews
     namedSheetViews = character(),
+
+    #' @field xmlMaps xmlMaps
+    xmlMaps = NULL,
 
     #' @description
     #' Creates a new `wbWorkbook` object
@@ -2980,7 +2986,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$tables)) {
         xlTablesDir     <- dir_create(tmpDir, "xl", "tables")
       }
-      if (length(self$tables.xml.rels)) {
+      if (length(self$tables.xml.rels) && any(self$tables.xml.rels != "")) {
         xlTablesRelsDir <- dir_create(xlTablesDir, "_rels")
       }
 
@@ -3314,6 +3320,39 @@ wbWorkbook <- R6::R6Class(
           }
         }
 
+        if (length(self$tableSingleCells)) {
+
+          for (i in seq_along(self$tableSingleCells)) {
+            idx <- as.integer(names(self$tableSingleCells)[[i]])
+            override <- rbind(
+              override,
+              # new entry for tableSingleCells
+              c("application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml",
+                sprintf("/xl/tables/tableSingleCells%s.xml", idx))
+            )
+
+            write_file(
+              body = self$tableSingleCells[[i]],
+              fl = file.path(xlTablesDir, sprintf("tableSingleCells%s.xml", idx))
+            )
+          }
+        }
+
+      }
+
+      if (length(self$xmlMaps)) {
+        write_file(
+          head = "",
+          body = self$xmlMaps,
+          tail = "",
+          fl = file.path(xlDir, "xmlMaps.xml")
+        )
+
+        override <- rbind(
+          override,
+          # new entry for xmlMaps
+          c("application/xml", "/xl/xmlMaps.xml")
+        )
       }
 
       ## ct is updated as xml
@@ -3394,7 +3433,7 @@ wbWorkbook <- R6::R6Class(
 
       # featurePropertyBag
       if (length(self$featurePropertyBag)) {
-        featurePropertyBagDir <- dir_create(tmpDir, "xl", "featurePropertyBag")
+        featurePropertyBagDir <- dir_create(xlDir, "featurePropertyBag")
 
         write_file(
           body = self$featurePropertyBag,
@@ -3406,7 +3445,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(self$richData)) {
-        richDataDir <- dir_create(tmpDir, "xl", "richData")
+        richDataDir <- dir_create(xlDir, "richData")
         if (nchar(self$richData$rdarray)) {
           write_file(
             body = self$richData$rdarray,
@@ -3462,7 +3501,7 @@ wbWorkbook <- R6::R6Class(
           )
         }
         if (nchar(self$richData$rdValWebImgrels)) {
-          richDataRelDir <- dir_create(tmpDir, "xl", "richData", "_rels")
+          richDataRelDir <- dir_create(xlDir, "richData", "_rels")
           write_file(
             body = self$richData$rdValWebImgrels,
             fl = file.path(
@@ -3499,7 +3538,7 @@ wbWorkbook <- R6::R6Class(
           )
         }
         if (nchar(self$richData$richValueRelrels)) {
-          richDataRelDir <- dir_create(tmpDir, "xl", "richData", "_rels")
+          richDataRelDir <- dir_create(xlDir, "richData", "_rels")
           write_file(
             body = self$richData$richValueRelrels,
             fl = file.path(
@@ -3511,7 +3550,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(self$namedSheetViews)) {
-        namedSheetViewsDir <- dir_create(tmpDir, "xl", "namedSheetViews")
+        namedSheetViewsDir <- dir_create(xlDir, "namedSheetViews")
 
         for (i in seq_along(self$namedSheetViews)) {
           write_file(body = self$namedSheetViews[i], fl = file.path(namedSheetViewsDir, sprintf("namedSheetView%i.xml", i)))
@@ -3786,7 +3825,13 @@ wbWorkbook <- R6::R6Class(
             WR <- rbindlist(xml_attr(WR, "Relationships", "Relationship"))
 
             if (NROW(WR)) { # in xlsb files it can be that WR has no rows
-              WR$tmpDirPartName <- paste0(tmpDir, "/xl/", folder, "/", WR$Target)
+
+              # starts with ../ (the default)
+              WR$Target <- gsub("^\\.\\.", "/xl", WR$Target)
+              # just a filename (some files in charts folder)
+              WR$Target <- sub("^([^/])", paste0("/xl/", folder, "/\\1"), WR$Target)
+
+              WR$tmpDirPartName <- paste0(tmpDir, "/", WR$Target)
               WR$fileExists <- file.exists(WR$tmpDirPartName)
 
               # exclude hyperlinks
@@ -10186,6 +10231,7 @@ wbWorkbook <- R6::R6Class(
       personInds       <- grep("person.xml",                                 self$workbook.xml.rels)
       calcChainInd     <- grep("calcChain.xml",                              self$workbook.xml.rels)
       richDataInd      <- grep("richData",                                   self$workbook.xml.rels)
+      xmlMaps          <- grep("xmlMaps",                                    self$workbook.xml.rels)
 
 
       ## Reordering of workbook.xml.rels
@@ -10207,7 +10253,8 @@ wbWorkbook <- R6::R6Class(
           tableInds,
           personInds,
           calcChainInd,
-          richDataInd
+          richDataInd,
+          xmlMaps
         )]
 
       ## Re assign rIds to children of workbook.xml.rels
