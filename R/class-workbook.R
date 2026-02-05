@@ -3433,7 +3433,7 @@ wbWorkbook <- R6::R6Class(
 
       # featurePropertyBag
       if (length(self$featurePropertyBag)) {
-        featurePropertyBagDir <- dir_create(tmpDir, "xl", "featurePropertyBag")
+        featurePropertyBagDir <- dir_create(xlDir, "featurePropertyBag")
 
         write_file(
           body = self$featurePropertyBag,
@@ -3445,7 +3445,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(self$richData)) {
-        richDataDir <- dir_create(tmpDir, "xl", "richData")
+        richDataDir <- dir_create(xlDir, "richData")
         if (nchar(self$richData$rdarray)) {
           write_file(
             body = self$richData$rdarray,
@@ -3501,7 +3501,7 @@ wbWorkbook <- R6::R6Class(
           )
         }
         if (nchar(self$richData$rdValWebImgrels)) {
-          richDataRelDir <- dir_create(tmpDir, "xl", "richData", "_rels")
+          richDataRelDir <- dir_create(xlDir, "richData", "_rels")
           write_file(
             body = self$richData$rdValWebImgrels,
             fl = file.path(
@@ -3538,7 +3538,7 @@ wbWorkbook <- R6::R6Class(
           )
         }
         if (nchar(self$richData$richValueRelrels)) {
-          richDataRelDir <- dir_create(tmpDir, "xl", "richData", "_rels")
+          richDataRelDir <- dir_create(xlDir, "richData", "_rels")
           write_file(
             body = self$richData$richValueRelrels,
             fl = file.path(
@@ -3550,7 +3550,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (length(self$namedSheetViews)) {
-        namedSheetViewsDir <- dir_create(tmpDir, "xl", "namedSheetViews")
+        namedSheetViewsDir <- dir_create(xlDir, "namedSheetViews")
 
         for (i in seq_along(self$namedSheetViews)) {
           write_file(body = self$namedSheetViews[i], fl = file.path(namedSheetViewsDir, sprintf("namedSheetView%i.xml", i)))
