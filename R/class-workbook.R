@@ -4271,12 +4271,12 @@ wbWorkbook <- R6::R6Class(
 
       # if the default font name differes from the wanted name: update theme
       if (self$get_base_font()$name$val != font_name) {
-        if (!exists("font_type")) font_type <- "Regular"
+        if (!exists_local("font_type")) font_type <- "Regular"
 
         sel <- panose$family == font_name & panose$type == font_type
-        if (!any(sel) && !exists("font_panose")) {
+        if (!any(sel) && !exists_local("font_panose")) {
           panose_hex <- NULL
-        } else if (exists("font_panose")) {
+        } else if (exists_local("font_panose")) {
           # the input provides a panose value
           panose_hex <- font_panose
         } else {
@@ -6300,9 +6300,9 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(params$start_row)) start_row <- params$start_row
       if (!is.null(params$start_col)) start_col <- params$start_col
 
-      if (exists("start_row") || exists("start_col")) {
-        if (!exists("start_row")) start_row <- 1
-        if (!exists("start_col")) start_col <- 1
+      if (exists_local("start_row") || exists_local("start_col")) {
+        if (!exists_local("start_row")) start_row <- 1
+        if (!exists_local("start_col")) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
         start_col <- col2int(start_col)
         start_row <- as.integer(start_row)
@@ -6453,9 +6453,9 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(params$start_row)) start_row <- params$start_row
       if (!is.null(params$start_col)) start_col <- params$start_col
 
-      if (exists("start_row") || exists("start_col")) {
-        if (!exists("start_row")) start_row <- 1
-        if (!exists("start_col")) start_col <- 1
+      if (exists_local("start_row") || exists_local("start_col")) {
+        if (!exists_local("start_row")) start_row <- 1
+        if (!exists_local("start_col")) start_col <- 1
         .Deprecated(old = "start_row/start_col", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dim(start_row, start_col)
       }
@@ -6731,9 +6731,9 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(params$start_row)) start_row <- params$start_row
       if (!is.null(params$start_col)) start_col <- params$start_col
 
-      if (exists("start_row") || exists("start_col")) {
-        if (!exists("start_row")) start_row <- 1
-        if (!exists("start_col")) start_col <- 1
+      if (exists_local("start_row") || exists_local("start_col")) {
+        if (!exists_local("start_row")) start_row <- 1
+        if (!exists_local("start_col")) start_col <- 1
         .Deprecated(old = "start_col/start_row", new = "dims", package = "openxlsx2")
         dims <- rowcol_to_dim(start_row, start_col)
       }

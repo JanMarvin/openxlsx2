@@ -941,3 +941,14 @@ test_that("wb_dims with vectors is no long slow", {
 
   expect_silent(wb_dims(rows = idx[, "row"], cols = idx[, "col"]))
 })
+
+test_that("exists_local() works", {
+  start_col <- "foo"
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  wb <- wb_workbook()$
+    add_worksheet()
+
+  expect_silent(wb$add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5))
+})

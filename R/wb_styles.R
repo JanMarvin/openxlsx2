@@ -955,7 +955,7 @@ create_dxfs_style <- function(
     family = "", scheme = ""
   )
 
-  if (exists("pattern_type")) {
+  if (exists_local("pattern_type")) {
     pattern_type <- pattern_type
   } else {
     pattern_type <- "solid"
@@ -975,24 +975,24 @@ create_dxfs_style <- function(
 
   # untested
   if (!is.null(border)) {
-    left_color       <- if (exists("left_color"))       left_color   else border_color
-    left_style       <- if (exists("left_style"))       left_style   else border_style
-    right_color      <- if (exists("right_color"))      right_color  else border_color
-    right_style      <- if (exists("right_style"))      right_style  else border_style
-    top_color        <- if (exists("top_color"))        top_color    else border_color
-    top_style        <- if (exists("top_style"))        top_style    else border_style
-    bottom_color     <- if (exists("bottom_color"))     bottom_color else border_color
-    bottom_style     <- if (exists("bottom_style"))     bottom_style else border_style
-    start_color      <- if (exists("start_color"))      start_color else border_color
-    start_style      <- if (exists("start_style"))      start_style else border_style
-    end_color        <- if (exists("end_color"))        end_color else border_color
-    end_style        <- if (exists("end_style"))        end_style else border_style
-    horizontal_color <- if (exists("horizontal_color")) horizontal_color else border_color
-    horizontal_style <- if (exists("horizontal_style")) horizontal_style else border_style
-    vertical_color   <- if (exists("vertical_color"))   vertical_color else border_color
-    vertical_style   <- if (exists("vertical_style"))   vertical_style else border_style
-    diagonal_color   <- if (exists("diagonal_color"))   diagonal_color else border_color
-    diagonal_style   <- if (exists("diagonal_style"))   diagonal_style else border_style
+    left_color       <- if (exists_local("left_color"))       left_color   else border_color
+    left_style       <- if (exists_local("left_style"))       left_style   else border_style
+    right_color      <- if (exists_local("right_color"))      right_color  else border_color
+    right_style      <- if (exists_local("right_style"))      right_style  else border_style
+    top_color        <- if (exists_local("top_color"))        top_color    else border_color
+    top_style        <- if (exists_local("top_style"))        top_style    else border_style
+    bottom_color     <- if (exists_local("bottom_color"))     bottom_color else border_color
+    bottom_style     <- if (exists_local("bottom_style"))     bottom_style else border_style
+    start_color      <- if (exists_local("start_color"))      start_color else border_color
+    start_style      <- if (exists_local("start_style"))      start_style else border_style
+    end_color        <- if (exists_local("end_color"))        end_color else border_color
+    end_style        <- if (exists_local("end_style"))        end_style else border_style
+    horizontal_color <- if (exists_local("horizontal_color")) horizontal_color else border_color
+    horizontal_style <- if (exists_local("horizontal_style")) horizontal_style else border_style
+    vertical_color   <- if (exists_local("vertical_color"))   vertical_color else border_color
+    vertical_style   <- if (exists_local("vertical_style"))   vertical_style else border_style
+    diagonal_color   <- if (exists_local("diagonal_color"))   diagonal_color else border_color
+    diagonal_style   <- if (exists_local("diagonal_style"))   diagonal_style else border_style
 
     border <- create_border(
       left              = left_style,

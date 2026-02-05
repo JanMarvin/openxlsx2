@@ -27,6 +27,11 @@ if (getRversion() < "4.4.0") {
   `%||%` <- function(x, y) if (is.null(x)) y else x
 }
 
+# exists without inheriting
+exists_local <- function(x) {
+  exists(x, envir = parent.frame(), inherits = FALSE)
+}
+
 df_1 <- function(df) {
   # faster than df[1, , drop = FALSE]
   l <- lapply(df, `[[`, 1)
