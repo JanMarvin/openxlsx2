@@ -3322,17 +3322,20 @@ wbWorkbook <- R6::R6Class(
 
         if (length(self$tableSingleCells)) {
 
-          override <- rbind(
-            override,
-            # new entry for table
-            c("application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml",
-              sprintf("/xl/tables/tableSingleCells%s.xml", 1L))
-          )
+          for (i in seq_along(self$tableSingleCells)) {
+            idx <- as.integer(names(self$tableSingleCells)[[i]])
+            override <- rbind(
+              override,
+              # new entry for tableSingleCells
+              c("application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml",
+                sprintf("/xl/tables/tableSingleCells%s.xml", idx))
+            )
 
-          write_file(
-            body = self$tableSingleCells,
-            fl = file.path(xlTablesDir, sprintf("tableSingleCells%s.xml", 1L))
-          )
+            write_file(
+              body = self$tableSingleCells[[i]],
+              fl = file.path(xlTablesDir, sprintf("tableSingleCells%s.xml", idx))
+            )
+          }
         }
 
       }
@@ -3342,12 +3345,12 @@ wbWorkbook <- R6::R6Class(
           head = "",
           body = self$xmlMaps,
           tail = "",
-          fl = file.path(tmpDir, "xl", "xmlMaps.xml")
+          fl = file.path(xlDir, "xmlMaps.xml")
         )
 
         override <- rbind(
           override,
-          # new entry for table
+          # new entry for xmlMaps
           c("application/xml", "/xl/xmlMaps.xml")
         )
       }

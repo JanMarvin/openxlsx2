@@ -206,6 +206,7 @@ wb_load <- function(
     extLinksBIN       <- grep_xml("externalLink[0-9]+.bin$")
     extLinksRelsXML   <- grep_xml("externalLink[0-9]+.xml.rels$")
     extLinksRelsBIN   <- grep_xml("externalLink[0-9]+.bin.rels$")
+    tab1CXML          <- grep_xml("tables/tableSingleCells[0-9]+\\.xml$")
   }
 
   # Pivot Tables, Slicers & Timelines
@@ -1282,9 +1283,20 @@ wb_load <- function(
         stringsAsFactors = FALSE
       )
 
-      tab1CXML <- grep_xml("/tables/tableSingleCells[0-9]+\\.xml$")
       if (length(tab1CXML)) {
-        wb$tableSingleCells <- read_xml(tab1CXML, pointer = FALSE)
+        # This is quite likely not entirely correct, but can be corrected once
+        # more files with tableSingleCells appear. So far there is only one and
+        # this file has only a single entry.
+        nms <- as.integer(gsub("\\D+", "", basename(tab1CXML)))
+
+        tab1cxml <- lapply(
+          tab1CXML,
+          read_xml,
+          pointer = FALSE
+        )
+        names(tab1cxml) <- nms
+
+        wb$tableSingleCells <- tab1cxml
       }
 
       # # These are applied in self$save()
