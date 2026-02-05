@@ -453,8 +453,8 @@ wb_load <- function(
       on.exit(options(op), add = TRUE)
       msg <- paste0(
         "The `{%s}` namespace(s) has been removed from the xml files, for example:\n",
-        "\t<%s:field> changed to:\n",
-        "\t<field>\n",
+        "\t<%s:field/> changed to:\n",
+        "\t<field/>\n",
         "See 'Details' in ?openxlsx2::wb_load() for more information."
       )
       warning(sprintf(msg, xml_ns, xml_ns))
