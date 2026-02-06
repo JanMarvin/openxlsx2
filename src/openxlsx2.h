@@ -32,6 +32,10 @@ inline std::string to_string(Rcpp::Vector<16>::Proxy x) {
   return Rcpp::String(x);
 }
 
+inline bool sexp_str_less(SEXP a, SEXP b) {
+  return std::strcmp(CHAR(a), CHAR(b)) < 0;
+}
+
 inline void checkInterrupt(R_xlen_t& iteration, R_xlen_t frequency = 10000) {
   if (iteration % frequency == 0) {
     Rcpp::checkUserInterrupt();

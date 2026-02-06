@@ -175,72 +175,72 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
 SEXP rbindlist(Rcpp::List x) {
   R_xlen_t nn = Rf_xlength(x);
 
-  // --- 1. Collect all unique names ---
-  std::set<std::string> unique_names_set;
+  std::vector<SEXP> col_names;
+  col_names.reserve(16);
+
+  std::unordered_set<SEXP> seen;
+  seen.reserve(16);
+
   for (R_xlen_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
 
-    // Check if the SEXP has names attribute before casting to CharacterVector
-    if (!Rf_isNewList(x[i]) && !Rf_isVector(x[i])) continue;
-    if (Rcpp::as<Rcpp::List>(x[i]).hasAttribute("names")) {
-      Rcpp::CharacterVector names_i = Rcpp::as<Rcpp::List>(x[i]).attr("names");
-      for (R_xlen_t j = 0; j < Rf_xlength(names_i); ++j) {
-        unique_names_set.insert(Rcpp::as<std::string>(names_i[j]));
+    SEXP vec = x[i];
+    SEXP names = Rf_getAttrib(vec, R_NamesSymbol);
+    if (names == R_NilValue) continue;
+
+    R_xlen_t k = Rf_xlength(names);
+    for (R_xlen_t j = 0; j < k; ++j) {
+      SEXP nm = STRING_ELT(names, j);
+      if (seen.insert(nm).second) {
+        col_names.push_back(nm);
       }
     }
   }
 
-  // --- 2. Map names to final column index ---
-  std::vector<std::string> final_names(unique_names_set.begin(), unique_names_set.end());
-  R_xlen_t kk = static_cast<R_xlen_t>(final_names.size());
+  std::sort(col_names.begin(), col_names.end(), sexp_str_less);
 
-  std::unordered_map<std::string, R_xlen_t> name_to_idx;
-  name_to_idx.reserve(static_cast<uint64_t>(kk));
-  for (R_xlen_t i = 0; i < kk; ++i) {
-    name_to_idx[final_names[static_cast<uint64_t>(i)]] = i;
+  R_xlen_t kk = static_cast<R_xlen_t>(col_names.size());
+
+  std::unordered_map<SEXP, R_xlen_t> name_to_idx;
+  name_to_idx.reserve(static_cast<size_t>(kk));
+
+  for (R_xlen_t j = 0; j < kk; ++j) {
+    name_to_idx[col_names[static_cast<size_t>(j)]] = j;
   }
 
-  // --- 3. Allocate final DataFrame list ---
   Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
+  std::vector<SEXP> cols(static_cast<size_t>(kk));
+
+  for (R_xlen_t j = 0; j < kk; ++j) {
+    SEXP col = Rf_allocVector(STRSXP, nn);
+    SET_VECTOR_ELT(df, j, col);
+    cols[static_cast<size_t>(j)] = col;
   }
 
-  // Pre-fetch references to the output vectors for fast assignment
-  std::vector<Rcpp::CharacterVector> output_cols;
-  output_cols.reserve(static_cast<size_t>(kk));
-  for (R_xlen_t i = 0; i < kk; ++i) {
-    output_cols.push_back(Rcpp::as<Rcpp::CharacterVector>(df[i]));
-  }
-
-  // --- 4. Fill the final columns row by row ---
   for (R_xlen_t i = 0; i < nn; ++i) {
     if (Rf_isNull(x[i])) continue;
 
-    Rcpp::CharacterVector current_vec = x[i];
+    SEXP vec = x[i];
+    SEXP names = Rf_getAttrib(vec, R_NamesSymbol);
+    if (names == R_NilValue) continue;
 
-    // Check for names before accessing the attribute
-    if (!current_vec.hasAttribute("names")) continue;
+    R_xlen_t k = Rf_xlength(vec);
 
-    Rcpp::CharacterVector current_names = current_vec.attr("names");
-
-    for (R_xlen_t j = 0; j < Rf_xlength(current_vec); ++j) {
-      // Get the column name and find its index (O(1) average lookup)
-      std::string current_name = Rcpp::as<std::string>(current_names[j]);
-      auto it = name_to_idx.find(current_name);
-
+    for (R_xlen_t j = 0; j < k; ++j) {
+      SEXP nm = STRING_ELT(names, j);
+      auto it = name_to_idx.find(nm);
       if (it != name_to_idx.end()) {
-        R_xlen_t col_idx = it->second;
-
-        // Optimized assignment using pre-fetched vector reference
-        output_cols[static_cast<size_t>(col_idx)][i] = current_vec[j];
+        SET_STRING_ELT(
+          cols[static_cast<size_t>(it->second)],
+          i,
+          STRING_ELT(vec, j)
+        );
       }
     }
   }
 
-  // --- 5. Finalize DataFrame attributes ---
   df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
-  df.attr("names") = Rcpp::CharacterVector(final_names.begin(), final_names.end());
+  df.attr("names") = Rcpp::CharacterVector(col_names.begin(), col_names.end());
   df.attr("class") = "data.frame";
 
   return df;
