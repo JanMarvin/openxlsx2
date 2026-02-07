@@ -201,7 +201,14 @@ test_that("xlsb formula line breaks are handled", {
   ## increase the testing a bit more, for now this only checks that the file
   ## can be imported
   fl <- testfile_path("test_coverage.xlsb")
-  x <- capture.output(wb <- wb_load(fl)) # silence the unhandled warnings
+  warns <- capture_warnings(wb <- wb_load(fl))
+
+  unhandled_warns <- grep("Worksheet contains unhandled conditional formatting", warns, value = TRUE)
+  expect_length(unhandled_warns, 12)
   expect_equal(length(wb$get_sheet_names()), 3L)
+
+  exp <- c("Align: left", "Align: center", "Align: right")
+  got <- wb$to_df(dims = "A1:A3", col_names = FALSE)$A
+  expect_equal(got, exp)
 
 })
