@@ -1,5 +1,6 @@
 test_that("reading xlsb works", {
 
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   skip_online_checks()
 
   xlsxFile <- testfile_path("openxlsx2_example.xlsb")
@@ -21,6 +22,7 @@ test_that("reading xlsb works", {
 
 test_that("reading complex xlsb works", {
 
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   skip_online_checks()
 
   xlsxFile <- testfile_path("hyperlink.xlsb")
@@ -60,6 +62,7 @@ test_that("reading complex xlsb works", {
 
 test_that("worksheets with real world formulas", {
 
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   skip_online_checks()
 
   xlsxFile <- testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb")
@@ -119,6 +122,7 @@ test_that("worksheets with real world formulas", {
 
 test_that("xlsb formulas", {
 
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   fl <- testfile_path("formula_checks.xlsb")
   wb <- wb_load(fl)
 
@@ -141,6 +145,7 @@ test_that("xlsb formulas", {
 
 test_that("shared formulas are detected correctly", {
 
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   xlsb <- testfile_path("formula_checks.xlsb")
   xlsx <- testfile_path("formula_checks.xlsx")
 
@@ -156,6 +161,7 @@ test_that("shared formulas are detected correctly", {
 
 test_that("loading custom sheet view in xlsb files works", {
 
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   skip_online_checks()
 
   fl <- testfile_path("custom_sheet_view.xlsb")
@@ -169,6 +175,7 @@ test_that("loading custom sheet view in xlsb files works", {
 
 test_that("xlsb formula line breaks are handled", {
 
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   skip_online_checks()
 
   fl <- testfile_path("line_break.xlsb")
@@ -189,4 +196,25 @@ test_that("xlsb formula line breaks are handled", {
   fml2 <- gsub(" ", "", fml2)
 
   expect_equal(fml, fml2)
+})
+
+
+test_that("xlsb formula line breaks are handled", {
+
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_online_checks()
+
+  ## increase the testing a bit more, for now this only checks that the file
+  ## can be imported
+  fl <- testfile_path("test_coverage.xlsb")
+  warns <- capture_warnings(wb <- wb_load(fl))
+
+  unhandled_warns <- grep("Worksheet contains unhandled conditional formatting", warns, value = TRUE)
+  expect_length(unhandled_warns, 12)
+  expect_equal(length(wb$get_sheet_names()), 3L)
+
+  exp <- c("Align: left", "Align: center", "Align: right")
+  got <- wb$to_df(dims = "A1:A3", col_names = FALSE)$A
+  expect_equal(got, exp)
+
 })

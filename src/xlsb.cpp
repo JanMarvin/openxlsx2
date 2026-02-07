@@ -2306,7 +2306,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           if (wScaleSLV)
             out << " zoomScaleSheetLayoutView=\"" << wScaleSLV<< "\"";
 
-          out << ">" << std::endl;
+          out << ">";
 
           break;
         }
@@ -2571,6 +2571,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             for (size_t i = 0; i < colvec.size(); ++i) {
               out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
               out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
+              out << colvec[i].is  << std::endl;
               out << "<f " << colvec[i].f_attr << ">" << colvec[i].f << "</f>" << std::endl;
               out << "</c>" << std::endl;
             }
@@ -2716,6 +2717,24 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // out << "<c r=\"" << int_to_col(val1 + 1) << row + 1 << "\"" << cell_style(val2) << " t=\"s\">" << std::endl;
           // out << "<v>" << val3 << "</v>" << std::endl;
           // out << "</c>" << std::endl;
+
+          break;
+        }
+
+        case BrtCellSt: {
+          if (debug) Rcpp::Rcout << "BrtCellSt (inlineStr):" << bin.tellg() << std::endl;
+
+          std::vector<int32_t> cell;
+          cell = Cell(bin, swapit);
+          std::string a0 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
+          std::string value = XLWideString(bin, swapit); // not a RichStr?
+
+          xml_col column;
+          column.is = txt_to_xml(value, false, true, true, "is");
+          column.c_r = a0;
+          column.c_t = "inlineStr";
+          if (cell[1]) column.c_s = std::to_string(cell[1]);
+          colvec.push_back(column);
 
           break;
         }
@@ -4060,6 +4079,15 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         case BrtDXF:
         case BrtEndDXFs: {
           if (debug) Rcpp::Rcout << "BrtBegin/EndDXFs in worksheet (?)" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginIconSet:
+        case BrtEndIconSet:
+        case BrtCFVO: {
+          if (debug) Rcpp::Rcout << "IconSet in worksheet (?)" << std::endl;
+          Rcpp::warning("Worksheet contains unhandled conditional formatting.");
           bin.seekg(size, bin.cur);
           break;
         }

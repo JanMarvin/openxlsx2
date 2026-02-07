@@ -44,7 +44,8 @@
 #' parsing into pseudo xml files is of course slower than reading directly from
 #' the binary file. Our implementation is also still missing some functions:
 #' some array formulas are not yet correct, conditional formatting and data
-#' validation are not implemented, nor are pivot tables and slicers.
+#' validation are not implemented, nor are pivot tables and slicers. Support is
+#' limited to little endian platforms.
 #'
 #' The loaded workbook provides a finalizer that will be invoked after the first
 #' `gc()` call and will cause removal of a loaded temporary files. These files
@@ -291,6 +292,9 @@ wb_load <- function(
 
   # modifications for xlsb
   if (length(workbookBIN)) {
+
+    if (.Platform$endian == "big")
+      stop("XLSB is not supported on big endian.", call. = FALSE)
 
     threshold <- 10 * 1024^2 # 10MB
     if (file.info(file)$size > threshold) {

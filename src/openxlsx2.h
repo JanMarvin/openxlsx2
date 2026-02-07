@@ -24,6 +24,13 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x);
 SEXP si_to_txt(XPtrXML doc);
 SEXP is_to_txt(Rcpp::CharacterVector is_vec);
 
+std::string txt_to_xml(
+    const std::string& text,
+    bool no_escapes,
+    bool raw,
+    bool skip_control,
+    const std::string& type
+);
 std::string txt_to_is(std::string txt, bool no_escapes, bool raw, bool skip_control);
 std::string txt_to_si(std::string txt, bool no_escapes, bool raw, bool skip_control);
 
