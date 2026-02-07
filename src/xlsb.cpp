@@ -2306,7 +2306,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           if (wScaleSLV)
             out << " zoomScaleSheetLayoutView=\"" << wScaleSLV<< "\"";
 
-          out << ">" << std::endl;
+          out << ">";
 
           break;
         }

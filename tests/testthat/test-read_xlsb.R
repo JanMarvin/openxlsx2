@@ -190,3 +190,18 @@ test_that("xlsb formula line breaks are handled", {
 
   expect_equal(fml, fml2)
 })
+
+
+test_that("xlsb formula line breaks are handled", {
+
+  skip_online_checks()
+
+  testthat::skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+
+  ## increase the testing a bit more, for now this only checks that the file
+  ## can be imported
+  fl <- testfile_path("test_coverage.xlsb")
+  x <- capture.output(wb <- wb_load(fl)) # silence the unhandled warnings
+  expect_equal(length(wb$get_sheet_names()), 3L)
+
+})
