@@ -501,7 +501,7 @@ wbWorkbook <- R6::R6Class(
     append = function(field, value) {
       current <- self[[field]]
 
-      # TODO we should avoid appending like self$field <- c(self$field, elem)
+      # TODO we should avoid appending lists: self$field <- c(self$field, elem)
       # unfortnuately it is rather uncertain, if we will assign a list element
       # or an attomic element and how we will treat each
       if (R6::is.R6(value)) {
@@ -9895,41 +9895,41 @@ wbWorkbook <- R6::R6Class(
           }
         } else {
           ## Write worksheets
-          # ws <- self$worksheets[[i]]
-          hasHL <- length(self$worksheets[[i]]$hyperlinks) > 0
+          ws <- self$worksheets[[i]]
+          hasHL <- length(ws$hyperlinks) > 0
 
-          prior <- self$worksheets[[i]]$get_prior_sheet_data()
-          post <-  self$worksheets[[i]]$get_post_sheet_data()
+          prior <- ws$get_prior_sheet_data()
+          post <-  ws$get_post_sheet_data()
 
           if (use_pugixml_export) {
             # failsaves. check that all rows and cells
             # are available and in the correct order
-            if (!is.null(self$worksheets[[i]]$sheet_data$cc)) {
+            if (!is.null(ws$sheet_data$cc)) {
 
-              self$worksheets[[i]]$sheet_data$cc$r <- with(
-                self$worksheets[[i]]$sheet_data$cc,
+              ws$sheet_data$cc$r <- with(
+                ws$sheet_data$cc,
                 stringi::stri_join(c_r, row_r)
               )
-              cc <- self$worksheets[[i]]$sheet_data$cc
+              cc <- ws$sheet_data$cc
               # prepare data for output
 
               # there can be files, where row_attr is incomplete because a row
               # is lacking any attributes (presumably was added before saving)
               # still row_attr is what we want!
 
-              rows_attr <- self$worksheets[[i]]$sheet_data$row_attr
-              self$worksheets[[i]]$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
+              rows_attr <- ws$sheet_data$row_attr
+              ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
 
-              cc_rows <- self$worksheets[[i]]$sheet_data$row_attr$r
+              cc_rows <- ws$sheet_data$row_attr$r
               # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
               cc <- cc[cc$row_r %in% cc_rows, ]
 
               sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
-              self$worksheets[[i]]$sheet_data$cc <- cc[order(sort_key), ]
+              ws$sheet_data$cc <- cc[order(sort_key), ]
               rm(cc)
             } else {
-              self$worksheets[[i]]$sheet_data$row_attr <- NULL
-              self$worksheets[[i]]$sheet_data$cc <- NULL
+              ws$sheet_data$row_attr <- NULL
+              ws$sheet_data$cc <- NULL
             }
           }
 
@@ -9941,7 +9941,7 @@ wbWorkbook <- R6::R6Class(
             sheet_xml <- write_worksheet(
               prior      = prior,
               post       = post,
-              sheet_data = self$worksheets[[i]]$sheet_data
+              sheet_data = ws$sheet_data
             )
             write_xmlPtr(doc = sheet_xml, fl = ws_file)
 
@@ -9951,7 +9951,7 @@ wbWorkbook <- R6::R6Class(
               prior <- substr(prior, 1, nchar(prior) - 13) # remove " </worksheet>"
 
             write_worksheet_slim(
-              sheet_data = self$worksheets[[i]]$sheet_data,
+              sheet_data = ws$sheet_data,
               prior      = prior,
               post       = post,
               fl         = ws_file
