@@ -128,7 +128,7 @@ wb_load <- function(
   # sheet name number can be left out: "sheet.xml", an integer "sheet1.xml" or a hex
   # The same logic applies probably to all the other numbers as well. BUT this has
   # only been seen in a single xlsx file (the one with the x namespace). Presumably
-  # this breaks logics like: as.integer(gsub("\\D+", "", basename(xlsx)))
+  # this breaks logics like: as.integer(cdigit(basename(xlsx)))
   worksheetsXML     <- grep_xml("/worksheets/sheet[0-9a-fA-F]*\\.(xml|bin)$")
 
   if ((length(ContentTypesXML) == 0 || length(worksheetsXML) == 0) && !debug) {
@@ -1156,13 +1156,14 @@ wb_load <- function(
       if (ncol(wb_rels)) {
         # TODO this assumes arabic numbers in names and will break with hex numbers
         # since target can be any hyperlink, we have to expect various things here like uint64
-        wb_rels$tid <- suppressWarnings(as.integer(gsub("\\D+", "", basename2(wb_rels$Target))))
+        ## There is no more warning thrown
+        wb_rels$tid <- cdigit(basename2(wb_rels$Target), as_integer = TRUE)
         wb_rels$typ <- basename(wb_rels$Type)
 
         # for hyperlinks, we take the relationship id
         if (any(wb_rels$typ == "hyperlink")) {
           wb_rels$tid[wb_rels$typ == "hyperlink"] <- as.integer(
-            gsub("\\D+", "", basename2(wb_rels$Id[wb_rels$typ == "hyperlink"]))
+            cdigit(basename2(wb_rels$Id[wb_rels$typ == "hyperlink"]))
           )
         }
 
@@ -1291,7 +1292,7 @@ wb_load <- function(
         # This is quite likely not entirely correct, but can be corrected once
         # more files with tableSingleCells appear. So far there is only one and
         # this file has only a single entry.
-        nms <- as.integer(gsub("\\D+", "", basename(tab1CXML)))
+        nms <- cdigit(basename(tab1CXML), as_integer = TRUE)
 
         tab1cxml <- lapply(
           tab1CXML,
@@ -1325,7 +1326,7 @@ wb_load <- function(
     ## Drawings ------------------------------------------------------------------------------------
     if (length(drawingsXML)) {
 
-      drw_len <- max(as.integer(gsub("\\D+", "", basename(drawingsXML))))
+      drw_len <- max(cdigit(basename(drawingsXML), as_integer = TRUE))
 
       wb$drawings      <- rep_len(list(""), drw_len) # vector("list", drw_len)
       wb$drawings_rels <- rep_len(list(""), drw_len) # vector("list", drw_len)
@@ -1333,7 +1334,7 @@ wb_load <- function(
 
       for (drw in drawingsXML) {
 
-        drw_file <- as.integer(gsub("\\D+", "", basename(drw)))
+        drw_file <- cdigit(basename(drw), as_integer = TRUE)
 
         tmp_drw <- read_xml(drw, pointer = FALSE)
 
@@ -1350,7 +1351,7 @@ wb_load <- function(
 
       for (drw_rel in drawingRelsXML) {
 
-        drw_file <- as.integer(gsub("\\D+", "", basename(drw_rel)))
+        drw_file <- cdigit(basename(drw_rel), as_integer = TRUE)
 
         wb$drawings_rels[[drw_file]] <- xml_node(drw_rel, "Relationships", "Relationship")
       }
@@ -1362,7 +1363,7 @@ wb_load <- function(
     if (length(vmlDrawingXML)) {
       cts <- c(cts, '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>')
 
-      vml_len <- max(as.integer(gsub("\\D+", "", basename(vmlDrawingXML))))
+      vml_len <- max(as.integer(cdigit(basename(vmlDrawingXML))))
       # FIXME hack to work around lowercase filename without digit
       if (all(is.na(vml_len))) vml_len <- 1L
 
@@ -1370,7 +1371,7 @@ wb_load <- function(
 
       for (vml in vmlDrawingXML) {
 
-        vml_file <- as.integer(gsub("\\D+", "", basename(vml)))
+        vml_file <- cdigit(basename(vml), as_integer = TRUE)
         # FIXME hack to work around lowercase filename without digit
         if (is.na(vml_file)) vml_file <- 1L
 
@@ -1384,7 +1385,7 @@ wb_load <- function(
       for (vml_rel in vmlDrawingRelsXML) {
         wb$vml_rels <- rep(list(""), vml_len) # vector("list", vml_len)
 
-        vml_file <- as.integer(gsub("\\D+", "", basename(vml_rel)))
+        vml_file <- cdigit(basename(vml_rel), as_integer = TRUE)
 
         wb$vml_rels[[vml_file]] <- xml_node(vml_rel, "Relationships", "Relationship")
       }
@@ -1411,7 +1412,7 @@ wb_load <- function(
         matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
         matches <- unique(unlist(matches))
 
-        values  <- as.integer(gsub("\\D+", "", matches))
+        values  <- cdigit(matches, as_integer = TRUE)
 
         xmls    <- stringi::stri_replace_all_fixed(
           wb$styles_mgr$styles$fonts[values + 1],
@@ -1572,7 +1573,7 @@ wb_load <- function(
       # TODO provide a function that creates a wb_rels data frame
       wb_rels <- rbindlist(xml_attr(wxr, "Relationship"))
       wb_rels$typ <- basename(wb_rels$Type)
-      wb_rels$id  <- as.numeric(gsub("\\D", "", wb_rels$Id))
+      wb_rels$id  <- cdigit(wb_rels$Id, as_integer = TRUE)
       next_rid <- max(wb_rels$id) + 1
 
       wxr <- c(wxr,
@@ -1736,7 +1737,7 @@ wb_load <- function(
       if (any(sel)) {
 
         xti$ext_id <- NA_integer_
-        xti$ext_id[sel] <- as.integer(as.factor(as.integer(gsub("\\D+", "", xti$type[sel]))))
+        xti$ext_id[sel] <- as.integer(as.factor(cdigit(xti$type[sel], as_integer = TRUE)))
 
         # loop over it and create external link
         for (i in seq_len(nrow(xti[sel, ]))) {
@@ -1893,7 +1894,7 @@ wb_load <- function(
       matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
       matches <- unique(unlist(matches))
 
-      values  <- as.integer(gsub("\\D+", "", matches))
+      values  <- cdigit(matches, as_integer = TRUE)
 
       xmls    <- stringi::stri_replace_all_fixed(
         wb$styles_mgr$styles$fonts[values + 1],

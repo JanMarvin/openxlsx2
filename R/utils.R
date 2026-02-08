@@ -1081,7 +1081,7 @@ get_relship_id <- function(obj, x) {
 #' @noRd
 filename_id <- function(x) {
   vapply(X = x,
-         FUN = function(file) as.integer(gsub("\\D+", "", basename(file))),
+         FUN = function(file) cdigit(basename(file), as_integer = TRUE),
          FUN.VALUE = NA_integer_)
 }
 

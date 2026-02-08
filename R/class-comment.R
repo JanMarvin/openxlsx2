@@ -233,7 +233,7 @@ do_write_comment <- function(
   if (!all(identical(wb$worksheets_rels[[sheet]], character()))) {
     rels     <- rbindlist(xml_attr(wb$worksheets_rels[[sheet]], "Relationship"))
     rels$typ <- basename(rels$Type)
-    rels$id  <- as.integer(gsub("\\D+", "", rels$Id))
+    rels$id  <- cdigit(rels$Id, as_integer = TRUE)
     next_rid <- iterator(rels$id)
   }
 

@@ -813,7 +813,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
 
       if (name %in% paste0("Accent", 1:6)) {
 
-        accent_id <- gsub("\\D+", "", name)
+        accent_id <- cdigit(name)
 
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 0), name = font_name, family = "2", scheme = "minor")
 
@@ -830,7 +830,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
 
       if (name %in% paste0("20% - Accent", 1:6)) {
 
-        accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
+        accent_id <- cdigit(strsplit(name, " - ")[[1]][2])
 
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
@@ -847,7 +847,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
 
       if (name %in% paste0("40% - Accent", 1:6)) {
 
-        accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
+        accent_id <- cdigit(strsplit(name, " - ")[[1]][2])
 
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
@@ -864,7 +864,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
 
       if (name %in% paste0("60% - Accent", 1:6)) {
 
-        accent_id <- gsub("\\D+", "", strsplit(name, " - ")[[1]][2])
+        accent_id <- cdigit(strsplit(name, " - ")[[1]][2])
 
         font_xml <- create_font(sz = font_size, color = wb_color(theme = 1), name = font_name, family = "2", scheme = "minor")
 
