@@ -1033,19 +1033,29 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 }
 
 // [[Rcpp::export]]
-Rcpp::CharacterVector cdigit(Rcpp::CharacterVector x) {
-    int n = x.size();
-    Rcpp::CharacterVector res(n);
+SEXP cdigit(Rcpp::CharacterVector x, bool as_integer = false) {
+  R_xlen_t n = Rf_xlength(x);
 
-    for (int i = 0; i < n; i++) {
-
-        if (Rcpp::CharacterVector::is_na(x[i])) {
-            res[i] = NA_STRING;
-            continue;
-        }
-        const char* s = CHAR(STRING_ELT(x, i));
-        res[i] = filter_digits(s, true);
+  if (as_integer) {
+    Rcpp::IntegerVector res(n);
+    for (R_xlen_t i = 0; i < n; ++i) {
+      if (Rcpp::CharacterVector::is_na(x[i])) {
+        res[i] = NA_INTEGER;
+        continue;
+      }
+      std::string cleaned = filter_digits(CHAR(STRING_ELT(x, i)), true);
+      res[i] = (cleaned.empty()) ? NA_INTEGER : std::stoi(cleaned);
     }
-
     return res;
+  } else {
+    Rcpp::CharacterVector res(n);
+    for (R_xlen_t i = 0; i < n; ++i) {
+      if (Rcpp::CharacterVector::is_na(x[i])) {
+        res[i] = NA_STRING;
+        continue;
+      }
+      res[i] = filter_digits(CHAR(STRING_ELT(x, i)), true);
+    }
+    return res;
+  }
 }

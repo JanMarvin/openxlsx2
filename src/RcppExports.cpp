@@ -251,13 +251,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // cdigit
-Rcpp::CharacterVector cdigit(Rcpp::CharacterVector x);
-RcppExport SEXP _openxlsx2_cdigit(SEXP xSEXP) {
+SEXP cdigit(Rcpp::CharacterVector x, bool as_integer);
+RcppExport SEXP _openxlsx2_cdigit(SEXP xSEXP, SEXP as_integerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(cdigit(x));
+    Rcpp::traits::input_parameter< bool >::type as_integer(as_integerSEXP);
+    rcpp_result_gen = Rcpp::wrap(cdigit(x, as_integer));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -843,7 +844,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_read_xml2df", (DL_FUNC) &_openxlsx2_read_xml2df, 4},
     {"_openxlsx2_write_df2xml", (DL_FUNC) &_openxlsx2_write_df2xml, 4},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
-    {"_openxlsx2_cdigit", (DL_FUNC) &_openxlsx2_cdigit, 1},
+    {"_openxlsx2_cdigit", (DL_FUNC) &_openxlsx2_cdigit, 2},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 8},

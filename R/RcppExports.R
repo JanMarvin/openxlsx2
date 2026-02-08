@@ -88,8 +88,8 @@ df_to_xml <- function(name, df_col) {
     .Call(`_openxlsx2_df_to_xml`, name, df_col)
 }
 
-cdigit <- function(x) {
-    .Call(`_openxlsx2_cdigit`, x)
+cdigit <- function(x, as_integer = FALSE) {
+    .Call(`_openxlsx2_cdigit`, x, as_integer)
 }
 
 col_to_df <- function(doc) {
