@@ -645,7 +645,7 @@ wb_to_df <- function(
     # apply_numfmt expects numeric, character or date/posixct
     sel <- not_blank_or_bool_error & cc$typ %in% c(1L, 4L)
     if (any(sel)) {
-      cc$val[sel] <- apply_numfmt(as.numeric(cc$val[sel]), cc$num_fmt[sel])
+      cc$val[sel] <- apply_numfmt(as_numeric(cc$val[sel]), cc$num_fmt[sel])
       cc$typ[sel] <- 0L
     }
     sel <- not_blank_or_bool_error & cc$typ %in% c(0L, 2L, 3L, 5L)

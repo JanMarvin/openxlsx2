@@ -54,7 +54,7 @@ int2col <- function(x) {
 }
 
 check_range <- function(x) {
-  r <- suppressWarnings(range(as.numeric(x), na.rm = TRUE))
+  r <- suppressWarnings(range(as_numeric(x), na.rm = TRUE))
   any(r < 1 | r > 16384)
 }
 

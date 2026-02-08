@@ -466,7 +466,7 @@ wbWorksheet <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     fold_cols = function(col_df) {
 
-      col_df <- col_df[order(as.numeric(col_df$min)), ]
+      col_df <- col_df[order(as_numeric(col_df$min)), ]
 
       prop_cols <- setdiff(names(col_df), c("min", "max"))
       col_df$string <- apply(col_df[prop_cols], 1, paste, collapse = "|")
@@ -474,7 +474,7 @@ wbWorksheet <- R6::R6Class(
       # for a new group either min increases by more than one or the string changes
       is_new_group <- c(
         TRUE,
-        diff(as.numeric(col_df$min)) != 1 |
+        diff(as_numeric(col_df$min)) != 1 |
         col_df$string[-1] != col_df$string[-nrow(col_df)]
       )
 

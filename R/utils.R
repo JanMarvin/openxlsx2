@@ -42,7 +42,7 @@ df_1 <- function(df) {
 
 convert_num <- function(i) {
   if (any(i == "#NUM!", na.rm = TRUE)) i <- replace(i, i == "#NUM!", "NaN")
-  as.numeric(i)
+  as_numeric(i)
 }
 
 #' helper function to create temporary directory for testing purpose
