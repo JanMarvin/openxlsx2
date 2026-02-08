@@ -502,8 +502,8 @@ wbWorkbook <- R6::R6Class(
       current <- self[[field]]
 
       # TODO we should avoid appending lists: self$field <- c(self$field, elem)
-      # unfortnuately it is rather uncertain, if we will assign a list element
-      # or an attomic element and how we will treat each
+      # unfortunately it is rather uncertain, if we will assign a list element
+      # or an atomic element and how we will treat each
       if (R6::is.R6(value)) {
         self[[field]][[length(current) + 1]] <- value
       } else {
