@@ -709,7 +709,10 @@ wbWorksheet <- R6::R6Class(
     #' @param value a new value
     #' @return The `wbWorksheetObject`, invisibly
     append = function(field, value = NULL) {
-      self[[field]] <- c(self[[field]], value)
+      current <- self[[field]]
+
+      self[[field]] <- c(current, value)
+
       invisible(self)
     },
 

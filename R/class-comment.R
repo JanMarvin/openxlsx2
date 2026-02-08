@@ -319,7 +319,7 @@ do_write_comment <- function(
       if (length(wb$vml) == 0) {
         wb$vml <- list()
       }
-      wb$vml <- c(wb$vml, vml_xml)
+      wb$append("vml", vml_xml)
 
       wb$worksheets[[sheet]]$relships$vmlDrawing <- next_id
       if (!is.null(rID)) {

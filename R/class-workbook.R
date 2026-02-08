@@ -499,7 +499,18 @@ wbWorkbook <- R6::R6Class(
     #' @param field A valid field name
     #' @param value A value for the field
     append = function(field, value) {
-      self[[field]] <- c(self[[field]], value)
+      current <- self[[field]]
+
+      # TODO we should avoid appending like self$field <- c(self$field, elem)
+      # unfortnuately it is rather uncertain, if we will assign a list element
+      # or an attomic element and how we will treat each
+      if (R6::is.R6(value)) {
+        self[[field]][[length(current) + 1]] <- value
+      } else {
+        # is vector
+        self[[field]] <- c(current, value)
+      }
+
       invisible(self)
     },
 
