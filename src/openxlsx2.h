@@ -108,24 +108,35 @@ static inline uint32_t uint_col_to_int(std::string& a) {
   return sum;
 }
 
-static inline std::string rm_rownum(const std::string& str) {
-  std::string result;
-  for (char c : str) {
-    if (!std::isdigit(c)) {
-      result += c;
+
+// lookup table using 256 for all possible unsigned char values
+static const std::array<char, 256> DIGIT_MASK = [] {
+  std::array<char, 256> m = {{0}};
+  m['0'] = 1; m['1'] = 1; m['2'] = 1; m['3'] = 1; m['4'] = 1;
+  m['5'] = 1; m['6'] = 1; m['7'] = 1; m['8'] = 1; m['9'] = 1;
+  return m;
+}();
+
+static inline std::string filter_digits(const char* s, bool keep_digits) {
+    if (!s) return "";
+
+    std::string buffer;
+    while (*s) {
+        bool is_dig = DIGIT_MASK[static_cast<unsigned char>(*s)];
+        if (is_dig == keep_digits) {
+            buffer.push_back(*s);
+        }
+        s++;
     }
-  }
-  return result;
+    return buffer;
+}
+
+static inline std::string rm_rownum(const std::string& str) {
+  return filter_digits(str.c_str(), false);
 }
 
 static inline std::string rm_colnum(const std::string& str) {
-  std::string result;
-  for (char c : str) {
-    if (std::isdigit(c)) {
-      result += c;
-    }
-  }
-  return result;
+  return filter_digits(str.c_str(), true);
 }
 
 // Function to keep only digits in a string

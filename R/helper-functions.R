@@ -712,7 +712,7 @@ read_Content_Types <- function(x) {
 
   sel <- grepl("/sheet[0-9]+.xml$", or$PartName)
   or$sheet_id <- NA
-  or$sheet_id[sel] <- as.integer(gsub("\\D+", "", basename(or$PartName)[sel]))
+  or$sheet_id[sel] <- as.integer(cdigit(basename(or$PartName)[sel]))
 
 
   list(df, or)
@@ -747,7 +747,7 @@ read_workbook.xml.rels <- function(x) {
 
   sel <- grepl("/sheet[0-9]+.xml$", wxr$Target)
   wxr$sheet_id <- NA
-  wxr$sheet_id[sel] <- as.integer(gsub("\\D+", "", basename(wxr$Target)[sel]))
+  wxr$sheet_id[sel] <- as.integer(cdigit(basename(wxr$Target)[sel]))
   wxr
 }
 
@@ -812,7 +812,7 @@ to_string <- function(x) {
 get_next_id <- function(x, increase = 1L) {
   if (length(x)) {
     rlshp <- rbindlist(xml_attr(x, "Relationship"))
-    rlshp$id <- as.integer(gsub("\\D+", "", rlshp$Id))
+    rlshp$id <- as.integer(cdigit(rlshp$Id))
     next_id <- paste0("rId", max(rlshp$id) + increase)
   } else {
     next_id <- "rId1"

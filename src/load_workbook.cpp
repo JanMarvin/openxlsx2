@@ -182,11 +182,11 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
           single_xml_col.r = attr.value();
 
           // get col name
-          single_xml_col.c_r = rm_rownum(attr.value());
+          single_xml_col.c_r = filter_digits(attr.value(), false);
           has_colname = true;
 
           // get colnum
-          single_xml_col.row_r = rm_colnum(attr.value());
+          single_xml_col.row_r = filter_digits(attr.value(), true);
 
           // if some cells of the workbook have colnames but other dont,
           // this will increase itr_cols and avoid duplicates in cc

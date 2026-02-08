@@ -15,7 +15,7 @@ table_ids <- function(wb) {
   if (!all(identical(unlist(wb$worksheets_rels), character()))) {
     relship <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
     relship$typ <- basename(relship$Type)
-    relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+    relship$tid <- as.numeric(cdigit(relship$Target))
 
     z <- sort(relship$tid[relship$typ == "table"])
   }
@@ -576,7 +576,7 @@ wbWorkbook <- R6::R6Class(
         default_sheets <- self$sheet_names[grepl(default_sheet_name, self$sheet_names)]
         max_sheet_num <- max(
           0,
-          as.integer(gsub("\\D+", "", default_sheets))
+          as.integer(cdigit(default_sheets))
         )
         sheet <- paste0(
           default_sheet_name,
@@ -740,7 +740,7 @@ wbWorkbook <- R6::R6Class(
         default_sheets <- self$sheet_names[grepl(default_sheet_name, self$sheet_names)]
         max_sheet_num <- max(
           0,
-          as.integer(gsub("\\D+", "", default_sheets))
+          as.integer(cdigit(default_sheets))
         )
         sheet <- paste0(
           default_sheet_name,
@@ -1025,7 +1025,7 @@ wbWorkbook <- R6::R6Class(
           for (cf in chartfiles) {
             chartid <- NROW(self$charts) + 1L
             newname <- stringi::stri_join("chart", chartid, ".xml")
-            old_chart <- as.integer(gsub("\\D+", "", cf))
+            old_chart <- as.integer(cdigit(cf))
             self$charts <- rbind(self$charts, from$charts[old_chart, ])
 
             # Read the chartfile and adjust all formulas to point to the new
@@ -1328,7 +1328,7 @@ wbWorkbook <- R6::R6Class(
 
                 # we might have multiple media references on a sheet
                 for (i in seq_along(onams)) {
-                  media_id   <- as.integer(gsub("\\D+", "", onams[i]))
+                  media_id   <- as.integer(cdigit(onams[i]))
                   # take filetype + number + file extension
                   # e.g. "image5.jpg" and return "image2.jpg"
                   mnams[i] <- gsub("(\\d+)\\.(\\w+)", paste0(next_ids[i], ".\\2"), onams[i])
@@ -2622,7 +2622,7 @@ wbWorkbook <- R6::R6Class(
       rel_ids <- NULL
       if (length(self$worksheets_rels[[sheet]])) {
         relships <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-        rel_ids  <- as.integer(gsub("\\D+", "", relships$Id))
+        rel_ids  <- as.integer(cdigit(relships$Id))
       }
 
       max_id <- max(rel_ids, 0)
@@ -2744,7 +2744,7 @@ wbWorkbook <- R6::R6Class(
 
       if (length(self$worksheets_rels[[sheet]])) {
         relships <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
-        rel_ids  <- as.integer(gsub("\\D+", "", relships$Id[basename(relships$Type) == "hyperlink"]))
+        rel_ids  <- as.integer(cdigit(relships$Id[basename(relships$Type) == "hyperlink"]))
         self$worksheets[[sheet]]$relships$hyperlink <- rel_ids
       }
 
@@ -4148,7 +4148,7 @@ wbWorkbook <- R6::R6Class(
       to_nrow <- nrow(data) - 1
 
       start_col <- col2int(dims)
-      start_row <- as.integer(gsub("\\D+", "", dims))
+      start_row <- as.integer(cdigit(dims))
 
       to_cols <- seq.int(start_col, start_col + to_ncol)
       to_rows <- seq.int(start_row, start_row + to_nrow)
@@ -4190,7 +4190,7 @@ wbWorkbook <- R6::R6Class(
 
       to_cc[c("r", "row_r", "c_r")] <- data.frame(
         r     = to_dims_f,
-        row_r = gsub("\\D+", "", to_dims_f),
+        row_r = cdigit(to_dims_f),
         c_r   = int2col(col2int(to_dims_f)),
         stringsAsFactors = FALSE
       )
@@ -5221,7 +5221,7 @@ wbWorkbook <- R6::R6Class(
           xml_rels$type   <- basename(xml_rels$Type)
           xml_rels$target <- basename(xml_rels$Target)
           xml_rels$target[xml_rels$type == "hyperlink"] <- ""
-          xml_rels$target_ind <- as.numeric(gsub("\\D+", "", xml_rels$target))
+          xml_rels$target_ind <- as.numeric(cdigit(xml_rels$target))
         }
 
         # Removing these is probably a bad idea
@@ -6629,7 +6629,7 @@ wbWorkbook <- R6::R6Class(
 
           dims_list <- strsplit(dims, ":")[[1]]
           cols <- col2int(dims_list)
-          rows <- as.numeric(gsub("\\D+", "", dims_list))
+          rows <- as.numeric(cdigit(dims_list))
           if (length(col_offset) != 2) col_offset <- rep(col_offset, 2)
           if (length(row_offset) != 2) row_offset <- rep(row_offset, 2)
 
@@ -6656,7 +6656,7 @@ wbWorkbook <- R6::R6Class(
           xdr_typ <- "xdr:oneCellAnchor"
 
           cols <- col2int(dims)
-          rows <- as.numeric(gsub("\\D+", "", dims))
+          rows <- as.numeric(cdigit(dims))
 
           anchor <- paste0(
             "<xdr:from>",
@@ -6739,7 +6739,7 @@ wbWorkbook <- R6::R6Class(
       } else {
         relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
         relship$typ <- basename(relship$Type)
-        next_relship <- max(as.integer(gsub("\\D+", "", relship$Id))) + 1L
+        next_relship <- max(as.integer(cdigit(relship$Id))) + 1L
         has_no_drawing <- !any(relship$typ == "drawing")
       }
 
@@ -7053,7 +7053,7 @@ wbWorkbook <- R6::R6Class(
       } else {
         relship <- rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))
         relship$typ <- basename(relship$Type)
-        next_relship <- as.integer(gsub("\\D+", "", relship$Id)) + 1L
+        next_relship <- as.integer(cdigit(relship$Id)) + 1L
         has_no_drawing <- !any(relship$typ == "drawing")
         has_no_vmlDrawing <- !any(relship$typ == "vmlDrawing")
       }
@@ -9698,7 +9698,7 @@ wbWorkbook <- R6::R6Class(
       for (i in has_drawing) {
         rblst <- rbindlist(xml_attr(self$worksheets_rels[[i]], "Relationship"))
         rblst$type <- basename(rblst$Type)
-        rblst$id   <- as.integer(gsub("\\D+", "", rblst$Target))
+        rblst$id   <- as.integer(cdigit(rblst$Target))
         rblst$sheet <- i
 
         rlshp <- rbind(rlshp, rblst[rblst$type == "drawing", c("type", "id", "sheet")])
@@ -9961,7 +9961,7 @@ wbWorkbook <- R6::R6Class(
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               if (ncol(relship) && nrow(relship)) {
                 relship$typ <- basename(relship$Type)
-                relship$tid <- as.numeric(gsub("\\D+", "", relship$Target))
+                relship$tid <- as.numeric(cdigit(relship$Target))
 
                 relship$typ <- relship$tid <- NULL
                 if (is.null(relship$TargetMode)) relship$TargetMode <- ""

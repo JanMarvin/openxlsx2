@@ -1031,3 +1031,21 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 
   return z;
 }
+
+// [[Rcpp::export]]
+Rcpp::CharacterVector cdigit(Rcpp::CharacterVector x) {
+    int n = x.size();
+    Rcpp::CharacterVector res(n);
+
+    for (int i = 0; i < n; i++) {
+
+        if (Rcpp::CharacterVector::is_na(x[i])) {
+            res[i] = NA_STRING;
+            continue;
+        }
+        const char* s = CHAR(STRING_ELT(x, i));
+        res[i] = filter_digits(s, true);
+    }
+
+    return res;
+}
