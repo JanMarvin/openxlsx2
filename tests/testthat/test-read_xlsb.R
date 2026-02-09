@@ -94,7 +94,7 @@ test_that("worksheets with real world formulas", {
 
   exp <- structure(
     list(
-      A = c("1", "A1+1", NA, "SUM({\"1\",\"2\",\"3\"})", "SUMIFS(A1:A2,'[1]foo'!B2:B3,{\"A\"})"),
+      A = c("1", "A1+1", NA, "SUM({1,2,3})", "SUMIFS(A1:A2,'[1]foo'!B2:B3,{\"A\"})"),
       B = structure(c("A1+1", "B1+1", NA, "{\"a\"}", NA), class = c("character", "formula")),
       C = structure(c("B1+1", "C1+1", NA, NA, NA), class = c("character", "formula")),
       D = structure(c("C1+1", "D1+1", NA, NA, NA), class = c("character", "formula")),
@@ -215,6 +215,15 @@ test_that("xlsb formula line breaks are handled", {
 
   exp <- c("Align: left", "Align: center", "Align: right")
   got <- wb$to_df(dims = "A1:A3", col_names = FALSE)$A
+  expect_equal(got, exp)
+
+  fl <- testfile_path("test_coverage2.xlsb")
+  suppressWarnings(wb <- wb_load(fl))
+  cc <- wb$worksheets[[2]]$sheet_data$cc
+
+  exp <- c("SUM({1,2,3,4})", "SUM({\"1\",\"2\",\"3\",\"4\"})",
+           "SUM({1,#NUM!,3,4})", "SUM({TRUE,FALSE,TRUE})")
+  got <- cc$f[cc$r %in% paste0("D", 1:4)]
   expect_equal(got, exp)
 
 })
