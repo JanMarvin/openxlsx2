@@ -1091,9 +1091,7 @@ std::string array_elements(const std::vector<std::string>& elements, int32_t n, 
       size_t index = static_cast<size_t>(i * k + j);
       if (index < elements.size()) {
         // check if it needs escaping
-        ss << "\"";
-        ss << escape_quote(elements[index]);
-        ss << "\"";
+        ss << elements[index];
       }
     }
   }
@@ -2097,9 +2095,10 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
               if (debug) Rcpp::Rcout << "SerBool" << std::endl;
               uint8_t f = 0;
               f = readbin(f, sas, swapit);
+              std::string val = (f == 1) ? "TRUE" : "FALSE";
 
               if (debug) Rcpp::Rcout << (int32_t)f << std::endl;
-              array_elems.push_back(std::to_string((int32_t)f));
+              array_elems.push_back(val);
             }
 
             // SerErr
@@ -2135,6 +2134,7 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
               cch = readbin(cch, sas, swapit);
               std::string rgch(cch, '\0');
               rgch = read_xlwidestring(rgch, sas);
+              rgch = "\"" + escape_quote(rgch) + "\"";
 
               if (debug) Rcpp::Rcout << rgch << std::endl;
               array_elems.push_back(rgch);
