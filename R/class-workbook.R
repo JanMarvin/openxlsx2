@@ -4689,13 +4689,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      # create all A columns so that row_attr is available.
-      # Someone thought that it would be a splendid idea, if
-      # all row_attr needs to match cc. This is fine, though
-      # it brings the downside that these cells have to be
-      # initialized.
-      dims <- rowcol_to_dims(rows, 1)
-      private$do_cell_init(sheet, dims)
+      private$do_row_init(sheet, rows)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
       sel <- match(as.character(as.integer(rows)), row_attr$r)
@@ -9064,6 +9058,7 @@ wbWorkbook <- R6::R6Class(
 
         cells <- cells[!cells %in% cc$r]
         if (length(cells) > 0) {
+          # TODO can we use do_row_init()?
           private$do_cell_init(sheet, dims)
           self$set_cell_style(sheet = sheet, dims = cells, style = styid)
         }
@@ -10365,7 +10360,7 @@ wbWorkbook <- R6::R6Class(
 
       sheet_id <- private$get_sheet_index(sheet)
 
-      rows <- unique(as.character(rows))
+      rows <- unique(as.character(as.integer(rows)))
 
       row_attr <- self$worksheets[[sheet_id]]$sheet_data$row_attr
       rows_in_wb <- row_attr$r
