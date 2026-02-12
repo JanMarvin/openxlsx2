@@ -62,6 +62,7 @@ Source:
     Luke Symes
     Martins Liberts
     Mikael Elenius
+    Miriam Rainers
     Moritz Lell
     Noam Ross
     olivroy
@@ -74,6 +75,7 @@ Source:
     Shitao Wu
     shrektan
     Stefan Moog
+    Soren Heitmann
     Terrence Kunstek
     Tobias Heidler
     tobwen

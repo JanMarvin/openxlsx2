@@ -20,6 +20,9 @@
 - Fix reading uninitialized cells
   [\#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
 - Various changes to comment and thread handling code
+- Fixed immediate `finalize()` calls after
+  [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md)
+  [\#1576](https://github.com/JanMarvin/openxlsx2/pull/1576)
 
 ### Internal Changes
 
