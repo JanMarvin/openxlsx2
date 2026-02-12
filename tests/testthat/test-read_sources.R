@@ -248,6 +248,10 @@ test_that("load file with connection", {
   expect_match(wb$customXml[2], "customXml/item1.xml")
   expect_match(wb$customXml[3], "customXml/itemProps1.xml")
 
+  expect_true(file.exists(wb$customXml[2]))
+  gc()
+  expect_true(file.exists(wb$customXml[2]))
+
 })
 
 test_that("calcChain is updated", {
