@@ -108,7 +108,7 @@ wb_load <- function(
   ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))
   xmlFiles <- xmlFiles[ordr]
 
-  wb <- wb_workbook()
+  wb <- wbWorkbook$new()
   wb$path <- file
   wb$tmpDir <- xmlDir
 

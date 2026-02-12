@@ -9,6 +9,7 @@
 * In certain environments a zip tool is available via `Sys.which("zip")`, but `Sys.getenv("R_ZIPCMD")` is not configured. When writing, we would detect the first and continue trying `utils::zip()`, but never passed `Sys.which("zip")`. This has been corrected. [#1533](https://github.com/JanMarvin/openxlsx2/pull/1533)
 * Fix reading uninitialized cells [#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
 * Various changes to comment and thread handling code
+* Fixed immediate `finalize()` calls after `wb_load()`
 
 ## Internal Changes
 
