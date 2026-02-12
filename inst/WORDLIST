@@ -376,6 +376,7 @@ tabColor
 tabRatio
 tabSelected
 tableName
+tableSingleCells
 tableStyle
 tablename
 textLength
@@ -427,6 +428,7 @@ xls
 xlsb
 xlsm
 xlsx
+xmlMaps
 yWindow
 yaml
 yy
