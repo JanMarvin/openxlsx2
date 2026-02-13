@@ -24,9 +24,14 @@ inner_update <- function(
   cells_needed <- cells_needed[cells_needed != ""]
   if (length(cells_needed) == 0) return(wb)
 
+  ws <- wb$worksheets[[sheet_id]]
+
   # 1) pull sheet to modify from workbook; 2) modify it; 3) push it back
-  cc  <- wb$worksheets[[sheet_id]]$sheet_data$cc
-  row_attr <- wb$worksheets[[sheet_id]]$sheet_data$row_attr
+  cc  <- ws$sheet_data$cc
+  if (is.null(cc)) {
+    cc <- x
+  }
+  row_attr <- ws$sheet_data$row_attr
 
   # workbooks contain only entries for values currently present.
   # if A1 is filled, B1 is not filled and C1 is filled the sheet will only
@@ -35,30 +40,19 @@ inner_update <- function(
   rows_in_wb <- row_attr$r
 
   # check if there are rows not available
-  if (!all(rows %in% rows_in_wb)) {
+  missing_rows <- setdiff(rows, rows_in_wb)
+  if (length(missing_rows)) {
     # message("row(s) not in workbook")
 
-    missing_rows <- setdiff(rows, rows_in_wb)
-
-    # new row_attr
-    row_attr_missing <- empty_row_attr(n = length(missing_rows))
-    row_attr_missing$r <- missing_rows
-
-    row_attr <- rbind(row_attr, row_attr_missing)
-
-    # order
-    row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
-
-    wb$worksheets[[sheet_id]]$sheet_data$row_attr <- row_attr
+    wb$.__enclos_env__$private$do_row_init(sheet = sheet_id, rows = missing_rows)
     # provide output
-    rows_in_wb <- row_attr$r
-
+    rows_in_wb <- ws$sheet_data$row_attr$r
   }
 
-  if (!all(cells_needed %in% cells_in_wb)) {
-    # message("cell(s) not in workbook")
 
-    missing_cells <- setdiff(cells_needed, cells_in_wb)
+  missing_cells <- setdiff(cells_needed, cells_in_wb)
+  if (length(missing_cells)) {
+    # message("cell(s) not in workbook")
 
     # create missing cells
     cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
@@ -81,7 +75,7 @@ inner_update <- function(
     max_cell <- trimws(paste0(int2col(max(all_cols, na.rm = TRUE)), max(all_rows, na.rm = TRUE)))
 
     # i know, i know, i'm lazy
-    wb$worksheets[[sheet_id]]$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
+    ws$dimension <- paste0("<dimension ref=\"", min_cell, ":", max_cell, "\"/>")
   }
 
   # prepare required columns
@@ -148,7 +142,7 @@ inner_update <- function(
     cc[is.na(cc)] <- ""
 
   # push everything back to workbook
-  wb$worksheets[[sheet_id]]$sheet_data$cc  <- cc
+  ws$sheet_data$cc  <- cc
 
   wb
 }
@@ -538,7 +532,8 @@ write_data2 <- function(
     cc[2:nrow(cc), "f"] <- ""
   }
 
-  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc)) {
+  if (is.null(wb$worksheets[[sheetno]]$sheet_data$cc) &&
+      is.null(wb$worksheets[[sheetno]]$sheet_data$row_attr)) {
     # message("write_cell()")
 
     wb$worksheets[[sheetno]]$dimension <- paste0("<dimension ref=\"", dims, "\"/>")

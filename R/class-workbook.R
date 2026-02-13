@@ -4689,13 +4689,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      # create all A columns so that row_attr is available.
-      # Someone thought that it would be a splendid idea, if
-      # all row_attr needs to match cc. This is fine, though
-      # it brings the downside that these cells have to be
-      # initialized.
-      dims <- rowcol_to_dims(rows, 1)
-      private$do_cell_init(sheet, dims)
+      private$do_row_init(sheet, rows)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
       sel <- match(as.character(as.integer(rows)), row_attr$r)
@@ -5110,7 +5104,7 @@ wbWorkbook <- R6::R6Class(
       # check if additional rows are required
       has_rows <- sort(as.integer(self$worksheets[[sheet]]$sheet_data$row_attr$r))
       missing_rows <- setdiff(rows, has_rows)
-      if (length(missing_rows)) private$do_cell_init(sheet, paste0("A", sort(missing_rows)))
+      if (length(missing_rows)) private$do_row_init(sheet, sort(missing_rows))
 
       # fetch the row_attr data.frame
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
@@ -9064,6 +9058,7 @@ wbWorkbook <- R6::R6Class(
 
         cells <- cells[!cells %in% cc$r]
         if (length(cells) > 0) {
+          # TODO can we use do_row_init()?
           private$do_cell_init(sheet, dims)
           self$set_cell_style(sheet = sheet, dims = cells, style = styid)
         }
@@ -10355,6 +10350,32 @@ wbWorkbook <- R6::R6Class(
           "<externalReferences>",
           stringi::stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
           "</externalReferences>"
+        )
+      }
+
+      invisible(self)
+    },
+
+    do_row_init = function(sheet = current_sheet(), rows) {
+      sheet_id <- private$get_sheet_index(sheet)
+      ws <- self$worksheets[[sheet_id]]
+
+      rows <- unique(as.character(as.integer(rows)))
+      missing_rows <- setdiff(rows, ws$sheet_data$row_attr$r)
+
+      if (length(missing_rows)) {
+        row_attr_missing <- empty_row_attr(n = length(missing_rows))
+        row_attr_missing$r <- missing_rows
+
+        new_attr <- rbind(ws$sheet_data$row_attr, row_attr_missing)
+        ws$sheet_data$row_attr <- new_attr[order(as.numeric(new_attr$r)), ]
+      }
+
+      # We need an emptry cc frame, otherwise nothing is written
+      if (is.null(ws$sheet_data$cc)) {
+        ws$sheet_data$cc <- create_char_dataframe(
+          colnames = c("r", "row_r", "c_r", "c_s", "c_t", "v", "f", "f_attr", "is"),
+          n = 0
         )
       }
 
