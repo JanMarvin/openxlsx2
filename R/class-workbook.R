@@ -10357,37 +10357,24 @@ wbWorkbook <- R6::R6Class(
     },
 
     do_row_init = function(sheet = current_sheet(), rows) {
-
       sheet_id <- private$get_sheet_index(sheet)
-
-      rows <- unique(as.character(as.integer(rows)))
-
       ws <- self$worksheets[[sheet_id]]
 
-      row_attr <- ws$sheet_data$row_attr
-      rows_in_wb <- row_attr$r
+      rows <- unique(as.character(as.integer(rows)))
+      missing_rows <- setdiff(rows, ws$sheet_data$row_attr$r)
 
-      if (!all(rows %in% rows_in_wb)) {
-
-        missing_rows <- setdiff(rows, rows_in_wb)
-
+      if (length(missing_rows)) {
         row_attr_missing <- empty_row_attr(n = length(missing_rows))
         row_attr_missing$r <- missing_rows
 
-        row_attr <- rbind(row_attr, row_attr_missing)
-        row_attr <- row_attr[order(as.numeric(row_attr$r)), ]
-
-        ws$sheet_data$row_attr <- row_attr
+        new_attr <- rbind(ws$sheet_data$row_attr, row_attr_missing)
+        ws$sheet_data$row_attr <- new_attr[order(as.numeric(new_attr$r)), ]
       }
 
       # We need an emptry cc frame, otherwise nothing is written
       if (is.null(ws$sheet_data$cc)) {
-        nms <- c(
-          "r", "row_r", "c_r", "c_s", "c_t",
-          "v", "f", "f_attr", "is"
-        )
         ws$sheet_data$cc <- create_char_dataframe(
-          colnames = nms,
+          colnames = c("r", "row_r", "c_r", "c_s", "c_t", "v", "f", "f_attr", "is"),
           n = 0
         )
       }
