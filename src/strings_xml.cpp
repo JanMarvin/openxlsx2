@@ -1,6 +1,4 @@
-#include <cctype>
 #include <unordered_map>
-#include <sstream>
 
 #include "openxlsx2.h"
 

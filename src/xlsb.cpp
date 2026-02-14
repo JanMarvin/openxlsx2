@@ -1,11 +1,11 @@
 // #include <Rcpp/Lightest>
 
+#include <iomanip>
+
 #include "openxlsx2.h"
 #include "xlsb_defines.h"
 #include "xlsb_flags.h"
 #include "xlsb_funs.h"
-
-#include <iomanip>
 
 // [[Rcpp::export]]
 int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {

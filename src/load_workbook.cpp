@@ -1,4 +1,5 @@
 #include <set>
+
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]

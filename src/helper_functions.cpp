@@ -1,4 +1,5 @@
 #include <algorithm>
+
 #include "openxlsx2.h"
 
 // For R-devel 4.3 character length on Windows was modified. This caused an
