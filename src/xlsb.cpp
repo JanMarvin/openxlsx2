@@ -232,22 +232,22 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
           xnumFillToBottom = Xnum(bin, swapit);
           cNumStop = readbin(cNumStop, bin, swapit);
 
-          if (debug) {
+          if (debug) {  // #nocov start
             Rcpp::Rcout << "unused gradinet filll colors" <<
               xnumDegree << ": " << xnumFillToLeft << ": " << ": " <<
               xnumFillToRight << ": " << xnumFillToTop << "; " <<
               xnumFillToBottom << std::endl;
-          }
+          }  // #nocov end
 
           for (uint32_t i = 0; i < cNumStop; ++i) {
             // gradient fill colors and positions
             aColor = brtColor(bin, swapit);
             aPos   = Xnum(bin, swapit);
-            if (debug) {
+            if (debug) {  // #nocov start
               Rcpp::Rcout << "unused gradient Colors: " <<
                 to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) <<
                   ": " << aPos << std::endl;
-            }
+            }  // #nocov end
           }
 
           out << "<fill>" << std::endl;
@@ -568,10 +568,10 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
         }
 
         default: {
-          if (debug) {
+          if (debug) {  // #nocov start
             Rcpp::Rcout << "Unhandled Style: " << std::to_string(x) << ": " << std::to_string(size) << " @ "
                         << bin.tellg() << std::endl;
-          }
+          }  // #nocov end
           bin.seekg(size, bin.cur);
           break;
         }
@@ -647,7 +647,7 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
           std::string stStyleHeader = XLNullableWideString(bin, swapit);
           std::string stStyleData = XLNullableWideString(bin, swapit);
           std::string stStyleAgg = XLNullableWideString(bin, swapit);
-          if (debug) {
+          if (debug) {  // #nocov start
             Rcpp::Rcout << "table:" << std::endl;
             Rcpp::Rcout << stName << std::endl;
             Rcpp::Rcout << stDisplayName << std::endl;
@@ -655,7 +655,7 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
             Rcpp::Rcout << stStyleHeader << std::endl;
             Rcpp::Rcout << stStyleData << std::endl;
             Rcpp::Rcout << stStyleAgg << std::endl;
-          }
+          }  // #nocov end
 
           out << "<table xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
                  "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" "
@@ -941,7 +941,7 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
 
         default: {
           if (debug) {
-            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;
+            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;  // #nocov
           }
           bin.seekg(size, bin.cur);
           break;
@@ -1067,7 +1067,7 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
 
         default: {
           if (debug) {
-            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;
+            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;  // #nocov
           }
           bin.seekg(size, bin.cur);
           break;
@@ -1630,8 +1630,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           iTabID = readbin(iTabID, bin, swapit);
           std::string rid = XLNullableWideString(bin, swapit);
 
-          if (debug)
-            Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID << ": " << rid << std::endl;
+          if (debug) Rcpp::Rcout << "sheet vis: " << hsState << ": " << iTabID << ": " << rid << std::endl;
 
           std::string val = XLWideString(bin, swapit);
 
@@ -1682,7 +1681,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           if (view_flags2.reserved() != 0)
             Rcpp::stop("reserved not 0");
 
-          if (debug)
+          if (debug) {  // #nocov start
             Rprintf(
               "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
               (int32_t)view_flags.fHidden(),
@@ -1697,6 +1696,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
               (int32_t)view_flags2.fFutureFunction(),
               (int32_t)view_flags2.reserved()
             );
+          }  // #nocov end
 
           chKey = readbin(chKey, bin, swapit);
           // ascii key (0 if fFunc = 1 or fProc = 0 else >= 0x20)
@@ -1719,8 +1719,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
           comment = XLNullableWideString(bin, swapit);
 
-          if (debug)
-            Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
+          if (debug) Rcpp::Rcout << "definedName: " << name << ": " << comment << std::endl;
 
           if (view_flags.fProc() && fml.compare("") != 0) {
             /* -- something is wrong. error with some nhs macro xlsb file -- */
@@ -1781,32 +1780,28 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           // * BrtSupAddin addin XLL
           // * BrtSupBookSrc external link
         case BrtSupSelf: {
-          if (debug)
-            Rcpp::Rcout << "BrtSupSelf @" << bin.tellg() << std::endl;
+          if (debug) Rcpp::Rcout << "BrtSupSelf @" << bin.tellg() << std::endl;
           // Rcpp::Rcout << "<internalReference type=\"0\"/>" << std::endl;
           reference_type.push_back("0");
           break;
         }
 
         case BrtSupSame: {
-          if (debug)
-            Rcpp::Rcout << "BrtSupSame @" << bin.tellg() << std::endl;
+          if (debug) Rcpp::Rcout << "BrtSupSame @" << bin.tellg() << std::endl;
           // Rcpp::Rcout << "<internalReference type=\"1\"/>" << std::endl;
           reference_type.push_back("1");
           break;
         }
 
         case BrtPlaceholderName: {
-          if (debug)
-            Rcpp::Rcout << "BrtPlaceholderName @" << bin.tellg() << std::endl;
+          if (debug) Rcpp::Rcout << "BrtPlaceholderName @" << bin.tellg() << std::endl;
           std::string name = XLWideString(bin, swapit);
           // Rcpp::Rcout << "<internalReference name=\""<< name << "\"/>" << std::endl;
           break;
         }
 
         case BrtSupAddin: {
-          if (debug)
-            Rcpp::Rcout << "BrtSupAddin @" << bin.tellg() << std::endl;
+          if (debug) Rcpp::Rcout << "BrtSupAddin @" << bin.tellg() << std::endl;
           // Rcpp::Rcout << "<internalReference type=\"2\"/>" << std::endl;
           reference_type.push_back("2");
           break;
@@ -1818,8 +1813,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
             first_extern_sheet = false;
           }
 
-          if (debug)
-            Rcpp::Rcout << "BrtSupBookSrc @" << bin.tellg() << std::endl;
+          if (debug) Rcpp::Rcout << "BrtSupBookSrc @" << bin.tellg() << std::endl;
           // Rcpp::stop("BrtSupSelf");
           std::string strRelID = XLNullableWideString(bin, swapit);
           out << "<externalReference r:id=\"" << strRelID << "\"/>" << std::endl;
@@ -1828,8 +1822,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
         }
 
         case BrtSupTabs: {
-          if (debug)
-            Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
+          if (debug) Rcpp::Rcout << "<BrtSupTabs>" << std::endl;
           uint32_t cTab = 0;
 
           cTab = readbin(cTab, bin, swapit);
@@ -1939,8 +1932,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
             defNams.push_back("</definedNames>");
 
             for (size_t i = 0; i < defNams.size(); ++i) {
-              if (debug)
-                Rcpp::Rcout << defNams[i] << std::endl;
+              if (debug) Rcpp::Rcout << defNams[i] << std::endl;
               out << defNams[i] << std::endl;
             }
           }
@@ -1958,8 +1950,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           if (customWorkbookView.size()) {
             out << "<customWorkbookViews>" << std::endl;
             for (size_t i = 0; i < customWorkbookView.size(); ++i) {
-              if (debug)
-                Rcpp::Rcout << customWorkbookView[i] << std::endl;
+              if (debug) Rcpp::Rcout << customWorkbookView[i] << std::endl;
               out << customWorkbookView[i] << std::endl;
             }
             out << "</customWorkbookViews>" << std::endl;
@@ -1985,7 +1976,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
 
         default: {
           if (debug) {
-            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;
+            Rcpp::Rcout << std::to_string(x) << ": " << std::to_string(size) << " @ " << bin.tellg() << std::endl;  // #nocov
           }
           bin.seekg(size, bin.cur);
           break;
@@ -2107,10 +2098,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           colSync = readbin(colSync, bin, swapit);
           std::string strName = XLWideString(bin, swapit);
 
-          if (debug) {
+          if (debug) {  // #nocov start
             Rcpp::Rcout << "sheetPr tabColor:" << std::endl;
             Rf_PrintValue(Rcpp::wrap(color));
-          }
+          }  // #nocov end
 
           // for now we only handle color in sheetPR
           if (color[0] >= 1 && color[0] <= 3) {
@@ -2142,10 +2133,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // 0 index vectors
           // first row, last row, first col, last col
           dims = UncheckedRfX(bin, swapit);
-          if (debug) {
+          if (debug) {  // #nocov start
             Rcpp::Rcout << "dimension: ";
             Rf_PrintValue(Rcpp::wrap(dims));
-          }
+          }  // #nocov end
 
           std::string lref = int_to_col(dims[2] + 1) + std::to_string(dims[0] + 1);
           std::string rref = int_to_col(dims[3] + 1) + std::to_string(dims[1] + 1);
@@ -2361,8 +2352,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           phType = readbin(phType, bin, swapit);
           phAll = readbin(phAll, bin, swapit);
 
-          if (debug)
-            Rprintf("phnetic: %d, %d, %d", iFnt, phType, phAll);
+          if (debug) Rprintf("phnetic: %d, %d, %d", iFnt, phType, phAll);
 
           break;
         }
@@ -2381,10 +2371,11 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           BrtBeginHeaderFooterFlags view_flags(flags);
 
-          if (debug)
-          Rcpp::Rcout << stHeader<< ": " << stFooter << ": " <<
-            stHeaderEven << ": " << stFooterEven << ": " <<
+          if (debug) {  // #nocov start
+            Rcpp::Rcout << stHeader<< ": " << stFooter << ": " <<
+              stHeaderEven << ": " << stFooterEven << ": " <<
               stHeaderFirst << ": " << stFooterFirst << std::endl;
+          }  // #nocov end
 
           out << "<headerFooter" << std::endl;
           if (view_flags.fHFDiffOddEven()) out << " differentOddEven=\"" << view_flags.fHFDiffOddEven() << "\"" << std::endl;
@@ -2636,10 +2627,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
               colMic = readbin(colMic, bin, swapit);
               colLast = readbin(colLast, bin, swapit);
 
-              if (debug) {
+              if (debug) {  // #nocov start
                 spans = std::to_string(colMic + 1) + ":" + std::to_string(colLast + 1);
                 Rcpp::Rcout << (int32_t)clpn << ": " << spans << std::endl;
-              }
+              }  // #nocov end
 
               spans_int.push_back(colMic);
               spans_int.push_back(colLast);
@@ -2687,11 +2678,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           row = rw;
 
-          if (debug)
+          if (debug) {  // #nocov start
             Rcpp::Rcout << "ROW:" << (rw + 1) << " : " << ixfe << " : " << miyRw << " : " << (int32_t)fExtraAsc << " : " <<
               (int32_t)fExtraDsc << " : " << unk32 << " : " << (int32_t)fCollapsed << " : " << (int32_t)fDyZero << " : " <<
               (int32_t)fUnsynced << " : " << (int32_t)fGhostDirty << " : " << (int32_t)fReserved << " : " <<
               (int32_t)fPhShow << " : " << ccolspan << "; " << bin.tellg() << std::endl;
+          }  // #nocov end
 
           break;
         }
@@ -2871,9 +2863,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint32_t icmb = 0;
           icmb = readbin(icmb, bin, swapit);
 
-          if (debug)
-            Rcpp::Rcout << "cell contains unhandled cell metadata entry" <<
-              icmb << std::endl;
+          if (debug) Rcpp::Rcout << "cell contains unhandled cell metadata entry" << icmb << std::endl;
 
           break;
         }
@@ -3220,9 +3210,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           colFirst = UncheckedCol(bin, swapit) + 1L;
           colLast  = UncheckedCol(bin, swapit) + 1L;
 
-          if (debug)
-            Rprintf("MergeCell: %d %d %d %d\n",
-                    rwFirst, rwLast, colFirst, colLast);
+          if (debug) Rprintf("MergeCell: %d %d %d %d\n", rwFirst, rwLast, colFirst, colLast);
 
           out << "<mergeCell ref=\"" <<
             int_to_col(colFirst) << rwFirst << ":" <<
@@ -3897,20 +3885,21 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           BrtDValFlags view_flags2(flags);
 
-          if (debug)
-          Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
-            (uint32_t)view_flags2.valType(),
-            (uint32_t)view_flags2.errStyle(),
-            (uint32_t)view_flags2.unused(),
-            (uint32_t)view_flags2.fAllowBlank(),
-            (uint32_t)view_flags2.fSuppressCombo(),
-            (uint32_t)view_flags2.mdImeMode(),
-            (uint32_t)view_flags2.fShowInputMsg(),
-            (uint32_t)view_flags2.fShowErrorMsg(),
-            (uint32_t)view_flags2.typOperator(),
-            (uint32_t)view_flags2.fDVMinFmla(),
-            (uint32_t)view_flags2.fDVMaxFmla()
-          );
+          if (debug) {  // #nocov start
+            Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+              (uint32_t)view_flags2.valType(),
+              (uint32_t)view_flags2.errStyle(),
+              (uint32_t)view_flags2.unused(),
+              (uint32_t)view_flags2.fAllowBlank(),
+              (uint32_t)view_flags2.fSuppressCombo(),
+              (uint32_t)view_flags2.mdImeMode(),
+              (uint32_t)view_flags2.fShowInputMsg(),
+              (uint32_t)view_flags2.fShowErrorMsg(),
+              (uint32_t)view_flags2.typOperator(),
+              (uint32_t)view_flags2.fDVMinFmla(),
+              (uint32_t)view_flags2.fDVMaxFmla()
+            );
+          }  // #nocov end
 
           strErrorTitle  = XLNullableWideString(bin, swapit);
           strError       = XLNullableWideString(bin, swapit);
@@ -4055,12 +4044,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           cfRule << " text=\"" << strParam << "\"";
           cfRule << " >" << std::endl;
 
-          if (debug) {
+          if (debug) {  // #nocov start
             Rcpp::Rcout << cfRule.str() << std::endl;
             Rcpp::Rcout << rgce1 << std::endl;
             Rcpp::Rcout << rgce2 << std::endl;
             Rcpp::Rcout << rgce3 << std::endl;
-          }
+          }  // #nocov end
 
           break;
         }
