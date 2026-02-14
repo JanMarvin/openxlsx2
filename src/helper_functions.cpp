@@ -581,10 +581,11 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
   Rcpp::IntegerVector typs = zz["typ"];
 
   // Cache all column vectors to avoid repeated coercion
-  std::vector<Rcpp::CharacterVector> z_cols(static_cast<size_t>(z.size()));
-  std::vector<Rcpp::IntegerVector> tt_cols(static_cast<size_t>(tt.size()));
+  R_xlen_t num_cols = z.size();
+  std::vector<Rcpp::CharacterVector> z_cols(static_cast<size_t>(num_cols));
+  std::vector<Rcpp::IntegerVector> tt_cols(static_cast<size_t>(num_cols));
 
-  for (R_xlen_t j = 0; j < z.size(); ++j) {
+  for (R_xlen_t j = 0; j < num_cols; ++j) {
     z_cols[static_cast<size_t>(j)] = z[j];
     tt_cols[static_cast<size_t>(j)] = tt[j];
   }
@@ -593,9 +594,12 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
     int32_t col = cols[i];
     int32_t row = rows[i];
 
-    if (row != NA_INTEGER && col != NA_INTEGER) {
-      SET_STRING_ELT(z_cols[static_cast<size_t>(col)], row, STRING_ELT(vals, i));
-      INTEGER(tt_cols[static_cast<size_t>(col)])[row] = INTEGER(typs)[i];
+    R_xlen_t col_idx = static_cast<R_xlen_t>(col);
+    R_xlen_t row_idx = static_cast<R_xlen_t>(row);
+
+    if (row_idx != NA_INTEGER && col_idx != NA_INTEGER) {
+      SET_STRING_ELT(z_cols[col_idx], row_idx, STRING_ELT(vals, i));
+      INTEGER(tt_cols[col_idx])[row_idx] = INTEGER(typs)[i];
     }
   }
 }
@@ -682,6 +686,11 @@ void wide_to_long(
   SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
 
   R_xlen_t iter_count = 0;
+  const int MAX_VTYP_ID = 18; // enum celltype
+  std::vector<SEXP> vtyp_sexp_cache(MAX_VTYP_ID + 1);
+  for (int type_id = 0; type_id <= MAX_VTYP_ID; ++type_id) {
+    vtyp_sexp_cache[type_id] = Rf_mkChar(std::to_string(type_id).c_str());
+  }
 
   // --- 4. Main Wide-to-Long Loop ---
   for (R_xlen_t i = 0; i < m; ++i) {
@@ -801,9 +810,7 @@ void wide_to_long(
         SET_STRING_ELT(zz_c_t, pos, expr_sexp);
       }
 
-      if (has_typ) {
-        SET_STRING_ELT(zz_typ, pos, Rf_mkChar(std::to_string(vtyp).c_str()));
-      }
+      if (has_typ) SET_STRING_ELT(zz_typ, pos, vtyp_sexp_cache[vtyp]);
     }
   }
 }
