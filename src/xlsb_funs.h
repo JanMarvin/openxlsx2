@@ -1229,18 +1229,19 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
             PtgListFlags view_flags(flags);
 
-            if (debug)
-            Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
-              (uint32_t)view_flags.columns(),
-              (uint32_t)view_flags.commaSpace(),
-              (uint32_t)view_flags.invalid(),
-              (uint32_t)view_flags.nonresident(),
-              (uint32_t)view_flags.reserved2(),
-              (uint32_t)view_flags.rowType(),
-              (uint32_t)view_flags.squareBracketSpace(),
-              (uint32_t)view_flags.type(),
-              (uint32_t)view_flags.unused()
-            );
+            if (debug) {  // #nocov start
+              Rprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+                (uint32_t)view_flags.columns(),
+                (uint32_t)view_flags.commaSpace(),
+                (uint32_t)view_flags.invalid(),
+                (uint32_t)view_flags.nonresident(),
+                (uint32_t)view_flags.reserved2(),
+                (uint32_t)view_flags.rowType(),
+                (uint32_t)view_flags.squareBracketSpace(),
+                (uint32_t)view_flags.type(),
+                (uint32_t)view_flags.unused()
+              );
+            }  // #nocov end
 
             if (view_flags.nonresident())  // different workbook and invalid == 0
               ptgextra.push_back(typ);
@@ -1303,8 +1304,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
             fml_out += "\n";
 
             // Do something with this, just ... what?
-            if (debug)
-              Rprintf("PtgList: %d, %d, %d, %d\n", ixti, listIndex, colFirst, colLast);
+            if (debug) Rprintf("PtgList: %d, %d, %d, %d\n", ixti, listIndex, colFirst, colLast);
 
             // if (debug)
             // Rcpp::warning("formulas with table references are not implemented.");
@@ -2256,28 +2256,27 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_
 
   cb = readbin(cb, sas, swapit);  // is there a control bit, even if CB is empty?
 
-  if (debug)
-    Rcpp::Rcout << "cb: " << cb << std::endl;
+  if (debug) Rcpp::Rcout << "cb: " << cb << std::endl;
 
   pos = sas.tellg();
   // sas.seekg(cce, sas.cur);
 
   pos += cb;
 
-  if (debug) Rcpp::Rcout << ".";
-  if (debug) {
+  if (debug) {  // #nocov start
+    Rcpp::Rcout << ".";
     // Rprintf("Formula cb: %d\n", val1);
     Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
-  }
+  }  // #nocov end
 
   if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
   fml_out = rgcb(fml_out, sas, swapit, debug, row, pos, ptgextra);
 
-  if (debug) {
+  if (debug) {  // #nocov start
     Rcpp::Rcout << "...fml..." << std::endl;
     Rcpp::Rcout << fml_out << std::endl;
-  }
+  }  // #nocov end
 
   std::string inflix = parseRPN(fml_out);
 
@@ -2304,25 +2303,24 @@ std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t
 
   fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
 
-  if (debug)
-    Rcpp::Rcout << "cb: " << cb << std::endl;
+  if (debug) Rcpp::Rcout << "cb: " << cb << std::endl;
 
   pos = sas.tellg();
   pos += cb;
 
-  if (debug) Rcpp::Rcout << ".";
-  if (debug) {
+  if (debug) {  // #nocov start
+    Rcpp::Rcout << ".";
     Rprintf("%d: %d\n", (int)sas.tellg(), (int)pos);
-  }
+  }  // #nocov end
 
   if (debug) Rcpp::Rcout << "--- formula ---\n" << fml_out << std::endl;
 
   fml_out = rgcb(fml_out, sas, swapit, debug, row, pos, ptgextra);
 
-  if (debug) {
+  if (debug) {  // #nocov start
     Rcpp::Rcout << "...fml..." << std::endl;
     Rcpp::Rcout << fml_out << std::endl;
-  }
+  }  // #nocov end
 
   std::string inflix = parseRPN(fml_out);
 
