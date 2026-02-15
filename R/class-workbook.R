@@ -6706,22 +6706,39 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
+      path_choice <- c("xdr:wsDr", "*", "mc:AlternateContent", "mc:Choice", "xdr:graphicFrame", "xdr:nvGraphicFramePr", "xdr:cNvPr")
+      path_fallba <- c("xdr:wsDr", "*", "mc:AlternateContent", "mc:Fallback", "xdr:sp", "xdr:nvSpPr", "xdr:cNvPr")
+      # this can be nested several layers deep
+      path_pictur <- c("xdr:wsDr", "*", "*", "*", "xdr:cNvPr")
+
       cNvPr_id <- rbindlist(
         c(
           # the first two should match (both are from slicers and timelines)
-          xml_attr(self$drawings[[sheet_drawing]], c("xdr:wsDr", "*", "mc:AlternateContent", "mc:Choice", "xdr:graphicFrame", "xdr:nvGraphicFramePr", "xdr:cNvPr")),
-          xml_attr(self$drawings[[sheet_drawing]], c("xdr:wsDr", "*", "mc:AlternateContent", "mc:Fallback", "xdr:sp", "xdr:nvSpPr", "xdr:cNvPr")),
-          # other drawings (shapes)
-          xml_attr(self$drawings[[sheet_drawing]], c("xdr:wsDr", "*", "*", "*", "xdr:cNvPr"))
+          xml_attr(self$drawings[[sheet_drawing]], path_choice),
+          xml_attr(self$drawings[[sheet_drawing]], path_fallba),
+          xml_attr(self$drawings[[sheet_drawing]], path_pictur)
         )
       )
 
       draw_id <- max(as.integer(cNvPr_id$id) + 1L, 0)
 
-      # the id should be unique
-      pattern <- '(<xdr:cNvPr id=)"[0-9]+"'
-      replacement <- paste0('\\1"', draw_id, '"')
-      xml <- gsub(pattern, replacement, xml)
+      # several ids should be unique e.g. mc:AlternateContent. If an id is not unique
+      # the file should still open fine with spreadsheet software.
+      xml <- xml_attr_mod(
+        xml,
+        xml_attributes = c(id = as.character(draw_id)),
+        path = path_choice
+      )
+      xml <- xml_attr_mod(
+        xml,
+        xml_attributes = c(id = as.character(draw_id)),
+        path = path_fallba
+      )
+      xml <- xml_attr_mod(
+        xml,
+        xml_attributes = c(id = as.character(draw_id)),
+        path = path_pictur
+      )
 
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.

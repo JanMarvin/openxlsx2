@@ -388,17 +388,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // xml_attr_mod
-Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes, bool escapes, bool declaration, bool remove_empty_attr);
-RcppExport SEXP _openxlsx2_xml_attr_mod(SEXP xml_contentSEXP, SEXP xml_attributesSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP remove_empty_attrSEXP) {
+Rcpp::CharacterVector xml_attr_mod(std::string xml_content, Rcpp::CharacterVector xml_attributes, Rcpp::Nullable<std::vector<std::string>> path, bool escapes, bool declaration, bool remove_empty_attr);
+RcppExport SEXP _openxlsx2_xml_attr_mod(SEXP xml_contentSEXP, SEXP xml_attributesSEXP, SEXP pathSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP remove_empty_attrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type xml_content(xml_contentSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type xml_attributes(xml_attributesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::vector<std::string>> >::type path(pathSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
     Rcpp::traits::input_parameter< bool >::type remove_empty_attr(remove_empty_attrSEXP);
-    rcpp_result_gen = Rcpp::wrap(xml_attr_mod(xml_content, xml_attributes, escapes, declaration, remove_empty_attr));
+    rcpp_result_gen = Rcpp::wrap(xml_attr_mod(xml_content, xml_attributes, path, escapes, declaration, remove_empty_attr));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -855,7 +856,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_getXMLXPtrAttrPath", (DL_FUNC) &_openxlsx2_getXMLXPtrAttrPath, 2},
     {"_openxlsx2_printXPtr", (DL_FUNC) &_openxlsx2_printXPtr, 4},
     {"_openxlsx2_write_xml_file", (DL_FUNC) &_openxlsx2_write_xml_file, 2},
-    {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 5},
+    {"_openxlsx2_xml_attr_mod", (DL_FUNC) &_openxlsx2_xml_attr_mod, 6},
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
     {"_openxlsx2_xml_append_child_path", (DL_FUNC) &_openxlsx2_xml_append_child_path, 4},
     {"_openxlsx2_xml_remove_child_path", (DL_FUNC) &_openxlsx2_xml_remove_child_path, 5},

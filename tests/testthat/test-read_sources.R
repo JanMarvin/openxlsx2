@@ -125,19 +125,19 @@ test_that("encoding", {
     )
   }
 
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   exp <- "<xml>\n <a0>äöüß</a0>\n <A0>ÄÖÜ</A0>\n <a1>€</a1>\n</xml>"
   got <- paste(capture.output(
     read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2"))
   ), collapse = "\n")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<xml><a0>äöüß</a0><A0>ÄÖÜ</A0><a1>€</a1></xml>"
   got <- read_xml(system.file("extdata", "unicode.xml", package = "openxlsx2"),
                   pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -150,11 +150,11 @@ test_that("reading charts", {
 
   exp <- c("", "", "", "", "", "", "", "", "", "", "", "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartUserShapes\" Target=\"../drawings/drawing18.xml\"/></Relationships>", "", "", "")
   got <- wb$charts$rels
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
 
-  which(wb$get_sheet_names() == "Uebersicht_Quoten")
+  # which(wb$get_sheet_names() == "Uebersicht_Quoten")
   expect_warning(
     wb$add_image(19, file = img, start_row = 5, start_col = 3, width = 6, height = 5),
     "'start_col/start_row' is deprecated."
@@ -181,7 +181,7 @@ test_that("reading charts", {
     "<Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image7.jpg\"/>"
   )
   got <- wb$drawings_rels[[20]]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   wb$add_worksheet()
@@ -223,11 +223,11 @@ test_that("reading file with macro and custom xml", {
 
   exp <- "<sheetPr codeName=\"Sheet1\"/>"
   got <- wb$worksheets[[1]]$sheetPr
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/custom-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><property fmtid=\"{D5CDD505-2E9C-101B-9397-08002B2CF9AE}\" pid=\"2\" name=\"Source\"><vt:lpwstr>openxlsx2</vt:lpwstr></property></Properties>"
   got <- wb$custom
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("load file with connection", {
@@ -265,7 +265,7 @@ test_that("calcChain is updated", {
 
   exp <- "<calcChain xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><c r=\"A1\" i=\"1\" l=\"1\"/></calcChain>"
   got <- wb$calcChain
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_silent(wb$save(temp))
 
@@ -273,7 +273,7 @@ test_that("calcChain is updated", {
 
   exp <- character()
   got <- wb$calcChain
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_silent(wb$save(temp))
 
@@ -307,13 +307,13 @@ test_that("reading of formControl works", {
     "<formControlPr xmlns=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\" objectType=\"Drop\" dropStyle=\"combo\" dx=\"15\" noThreeD=\"1\" sel=\"0\" val=\"0\"/>"
   )
   got <- wb$ctrlProps
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   wb$save(temp)
   wb <- wb_load(temp)
 
   got <- wb$ctrlProps
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -328,14 +328,14 @@ test_that("reading xml escapes works", {
 
   exp <- "US & Canada"
   got <- unique(df$colB)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 
   df <- wb_to_df(wb, show_formula = TRUE)
 
   exp <- c("US & Canada", "B2")
   got <- df$colB
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -352,7 +352,7 @@ test_that("reading multiple slicers on a pivot table works", {
     "<Override PartName=\"/xl/slicerCaches/slicerCache2.xml\" ContentType=\"application/vnd.ms-excel.slicerCache+xml\"/>"
   )
   got <- wb$Content_Types[14:16]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c(
     "<Override PartName=\"/xl/slicers/slicer1.xml\" ContentType=\"application/vnd.ms-excel.slicer+xml\"/>",
@@ -360,7 +360,7 @@ test_that("reading multiple slicers on a pivot table works", {
     "<Override PartName=\"/xl/slicerCaches/slicerCache2.xml\" ContentType=\"application/vnd.ms-excel.slicerCache+xml\"/>"
   )
   got <- wb$Content_Types[14:16]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c(
     "<Relationship Id=\"rId20001\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" Target=\"pivotCache/pivotCacheDefinition1.xml\"/>",
@@ -368,7 +368,7 @@ test_that("reading multiple slicers on a pivot table works", {
     "<Relationship Id=\"rId100002\" Type=\"http://schemas.microsoft.com/office/2007/relationships/slicerCache\" Target=\"slicerCaches/slicerCache2.xml\"/>"
   )
   got <- wb$workbook.xml.rels[6:8]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("reading slicer for tables works", {
@@ -389,7 +389,7 @@ test_that("hyperlinks work", {
 
   exp <- "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink\" Target=\"https://www.github.com/JanMarvin/openxlsx2\" TargetMode=\"External\"/></Relationships>"
   got <- read_xml(paste0(temp_uzip, "/xl/worksheets/_rels/sheet1.xml.rels"), pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   unlink(temp_uzip, recursive = TRUE)
 })
@@ -444,20 +444,20 @@ test_that("show_hyperlink works", {
   # column B: mail gets "mailto:":
   exp <- "noreply@openxlsx2.com"
   got <- not_hl$B[5]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "mailto:noreply@openxlsx2.com"
   got <- has_hl$B[5]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # column B: hyperlink target url does not match hyperlink text
   exp <- "https://github.com/JanMarvin/openxlsx2"
   got <- not_hl$B[3]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "https://janmarvin.github.io/openxlsx2"
   got <- has_hl$B[3]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # everything identical in column C
   expect_equal(not_hl$C, has_hl$C)
@@ -465,11 +465,11 @@ test_that("show_hyperlink works", {
   # link to external file
   exp <- "test"
   got <- not_hl$D[1]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "hyperlink.xlsb"
   got <- has_hl$D[1]
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 })
 
 test_that("file extension handling works", {
@@ -498,7 +498,7 @@ test_that("loading d3p1 file works", {
 
   exp <- c(1347, 31)
   got <- dim(df)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -533,7 +533,7 @@ test_that("read file with data types", {
            rdValWebImg = 676L, rdValWebImgrels = 2617L, rdpropertybag = 19287L,
            rdpropertybagStr = 5995L, richStyles = 1480L)
   got <- vapply(wb$richData, nchar, NA_integer_)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_equal(18, length(wb$Content_Types))
 
@@ -544,7 +544,7 @@ test_that("read file with data types", {
   wb <- wb_load(tmp)
 
   got <- vapply(wb$richData, nchar, NA_integer_)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   expect_equal(18, length(wb$Content_Types))
 
