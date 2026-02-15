@@ -274,6 +274,7 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 //'
 //' @param xml_content some valid xml_node
 //' @param xml_attributes R vector of named attributes
+//' @param path optional path
 //' @param escapes bool if escapes should be used
 //' @param declaration bool if declaration should be imported
 //' @param remove_empty_attr bool remove empty attributes or ignore them
@@ -301,6 +302,7 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 Rcpp::CharacterVector xml_attr_mod(
   std::string xml_content,
   Rcpp::CharacterVector xml_attributes,
+  Rcpp::Nullable<std::vector<std::string>> path = R_NilValue,
   bool escapes = false,
   bool declaration = false,
   bool remove_empty_attr = true
@@ -321,22 +323,35 @@ Rcpp::CharacterVector xml_attr_mod(
     if (!result) Rcpp::stop("Loading xml_content node failed: \n %s ", xml_content);
   }
 
-  std::vector<std::string> new_attr_nam = xml_attributes.names();
-  std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attributes);
+  std::vector<pugi::xml_node> target_nodes;
 
-  for (auto cld : doc.children()) {
-    for (size_t i = 0; i < static_cast<size_t>(xml_attributes.length()); ++i) {
-      // check if attribute_val is empty. if yes, remove the attribute.
-      // otherwise add or update the attribute
-      if (new_attr_val[i].empty()) {
-        if (remove_empty_attr)
-          cld.remove_attribute(new_attr_nam[i].c_str());
-      } else {
-        // update attribute if found else add attribute
-        if (cld.attribute(new_attr_nam[i].c_str())) {
-          cld.attribute(new_attr_nam[i].c_str()).set_value(new_attr_val[i].c_str());
+  if (path.isNotNull()) {
+    std::vector<std::string> p = Rcpp::as<std::vector<std::string>>(path);
+    target_nodes = find_nodes_by_path(&doc, p);
+  } else {
+    // Default behavior: targets immediate children of the document
+    for (auto cld : doc.children()) {
+      target_nodes.push_back(cld);
+    }
+  }
+
+  if (!target_nodes.empty()) {
+    std::vector<std::string> new_attr_nam = xml_attributes.names();
+    std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attributes);
+
+    for (auto& node : target_nodes) {
+      for (size_t i = 0; i < static_cast<size_t>(xml_attributes.length()); ++i) {
+        if (new_attr_val[i].empty()) {
+          if (remove_empty_attr)
+            node.remove_attribute(new_attr_nam[i].c_str());
         } else {
-          cld.append_attribute(new_attr_nam[i].c_str()) = new_attr_val[i].c_str();
+          // Update attribute if found, else append
+          pugi::xml_attribute attr = node.attribute(new_attr_nam[i].c_str());
+          if (attr) {
+            attr.set_value(new_attr_val[i].c_str());
+          } else {
+            node.append_attribute(new_attr_nam[i].c_str()) = new_attr_val[i].c_str();
+          }
         }
       }
     }

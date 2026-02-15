@@ -144,6 +144,7 @@ write_xml_file <- function(xml_content, escapes) {
 #'
 #' @param xml_content some valid xml_node
 #' @param xml_attributes R vector of named attributes
+#' @param path optional path
 #' @param escapes bool if escapes should be used
 #' @param declaration bool if declaration should be imported
 #' @param remove_empty_attr bool remove empty attributes or ignore them
@@ -167,8 +168,8 @@ write_xml_file <- function(xml_content, escapes) {
 #'     # "<a qux=\"quux\">openxlsx2</a><b qux=\"quux\"/>"
 #'     xml_attr_mod(xml_node, xml_attr)
 #' @export
-xml_attr_mod <- function(xml_content, xml_attributes, escapes = FALSE, declaration = FALSE, remove_empty_attr = TRUE) {
-    .Call(`_openxlsx2_xml_attr_mod`, xml_content, xml_attributes, escapes, declaration, remove_empty_attr)
+xml_attr_mod <- function(xml_content, xml_attributes, path = NULL, escapes = FALSE, declaration = FALSE, remove_empty_attr = TRUE) {
+    .Call(`_openxlsx2_xml_attr_mod`, xml_content, xml_attributes, path, escapes, declaration, remove_empty_attr)
 }
 
 #' create xml_node from R objects

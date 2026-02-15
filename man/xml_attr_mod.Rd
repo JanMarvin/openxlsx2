@@ -7,6 +7,7 @@
 xml_attr_mod(
   xml_content,
   xml_attributes,
+  path = NULL,
   escapes = FALSE,
   declaration = FALSE,
   remove_empty_attr = TRUE
@@ -16,6 +17,8 @@ xml_attr_mod(
 \item{xml_content}{some valid xml_node}
 
 \item{xml_attributes}{R vector of named attributes}
+
+\item{path}{optional path}
 
 \item{escapes}{bool if escapes should be used}
 
