@@ -6771,12 +6771,8 @@ wbWorkbook <- R6::R6Class(
         )
 
         for (raster_file in raster_files) {
-          # copy raster to a unique filename so add_media registers a unique name
-          img_uid <- random_string(pattern = "[a-z0-9]")
-          unique_raster_name <- file.path(raster_dir, paste0(img_uid, ".", file_ext2(raster_file)))
-          file.copy(raster_file, unique_raster_name)
 
-          private$add_media(unique_raster_name)
+          private$add_media(raster_file)
           media_name <- names(self$media)[length(self$media)]
 
           # original rId embedded in the rvg-generated XML
