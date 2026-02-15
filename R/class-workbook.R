@@ -6611,6 +6611,16 @@ wbWorkbook <- R6::R6Class(
         self$append("drawings_rels", "")
       }
 
+      # auto-detect rvg raster prefix from XML comment
+      raster_prefix <- NULL
+      if (is.character(xml) && length(xml) == 1 && file.exists(xml)) {
+        xml_raw <- paste0(readLines(xml, warn = FALSE), collapse = "")
+        m <- regmatches(xml_raw, regexpr("<!-- rvg_raster_prefix:(.+?) -->", xml_raw, perl = TRUE))
+        if (length(m) == 1) {
+          raster_prefix <- sub("<!-- rvg_raster_prefix:(.+?) -->", "\\1", m, perl = TRUE)
+        }
+      }
+
       # prepare mschart drawing
       if (inherits(xml, "chart_id")) {
         xml <- drawings(self$drawings_rels[[sheet_drawing]], xml)
@@ -6759,6 +6769,39 @@ wbWorkbook <- R6::R6Class(
         drawings <- xml_add_child(drawings, xml_drawing)
       }
       self$drawings[[sheet_drawing]] <- drawings
+
+      # --- register raster files produced by rvg::dml_xlsx() ---
+      if (!is.null(raster_prefix)) {
+        raster_dir <- dirname(raster_prefix)
+        raster_uid <- basename(raster_prefix)
+        raster_files <- list.files(
+          path = raster_dir,
+          pattern = paste0("^", raster_uid, ".*\\.png$"),
+          full.names = TRUE
+        )
+
+        for (f in raster_files) {
+          private$add_media(f)
+          media_name <- names(self$media)[length(self$media)]
+
+          rel_id <- sub(
+            paste0(".*", raster_uid, "(rId\\d+)\\.png$"),
+            "\\1", f
+          )
+
+          old_rels <- self$drawings_rels[[sheet_drawing]]
+          if (all(is.na(old_rels)) || all(old_rels == ""))
+            old_rels <- NULL
+
+          self$drawings_rels[[sheet_drawing]] <- c(
+            old_rels,
+            sprintf(
+              '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
+              rel_id, media_name
+            )
+          )
+        }
+      }
 
       self$worksheets[[sheet]]$relships$drawing <- sheet_drawing
 
