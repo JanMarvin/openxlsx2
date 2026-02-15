@@ -545,6 +545,27 @@ test_that("add_drawing works", {
 
   expect_silent(wb$add_image(file = img))
 
+  skip_if_not_installed("rvg", minimum_version = "0.4.1")
+
+  tmp <- tempfile(fileext = ".xml")
+
+  p <- ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
+    geom_raster() +
+    scale_fill_viridis_c()
+
+  dml_xlsx(file = tmp, width = 6, height = 5, offx = 0, offy = 0)
+  print(p)
+  dev.off()
+
+  wb <- wb_workbook()$
+    add_worksheet("raster")$
+    add_drawing(xml = tmp, dims = "A1")
+
+  expect_equal(length(wb$drawings_rels[[1]]), 2L)
+  expect_equal(length(wb$media), 2L)
+
+  unlink(tmp, recursive = TRUE)
+
 })
 
 test_that("add_drawing works", {
