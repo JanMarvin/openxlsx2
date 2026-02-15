@@ -6758,6 +6758,56 @@ wbWorkbook <- R6::R6Class(
         path = path_pictur
       )
 
+      # --- register raster files produced by rvg::dml_xlsx() ---
+      if (!is.null(raster_prefix)) {
+        raster_dir <- dirname(raster_prefix)
+        raster_uid <- basename(raster_prefix)
+        raster_files <- list.files(
+          path = raster_dir,
+          pattern = paste0("^", raster_uid, ".*\\.png$"),
+          full.names = TRUE
+        )
+
+        for (raster_file in raster_files) {
+          # copy raster to a unique filename so add_media registers a unique name
+          img_uid <- random_string(pattern = "[a-z0-9]")
+          unique_raster_name <- file.path(raster_dir, paste0(img_uid, ".", file_ext2(raster_file)))
+          file.copy(raster_file, unique_raster_name)
+
+          private$add_media(unique_raster_name)
+          media_name <- names(self$media)[length(self$media)]
+
+          # original rId embedded in the rvg-generated XML
+          orig_rel_id <- sub(
+            paste0(".*", raster_uid, "(rId\\d+)\\.png$"),
+            "\\1", raster_file
+          )
+
+          # next available rId
+          existing_rels <- self$drawings_rels[[sheet_drawing]]
+          if (all(is.na(existing_rels)) || all(existing_rels == "")) {
+            existing_rels <- NULL
+          }
+          new_rel_id <- get_next_id(existing_rels)
+
+          # remap r:embed in this drawing's XML only
+          xml <- gsub(
+            sprintf('r:embed="%s"', orig_rel_id),
+            sprintf('r:embed="%s"', new_rel_id),
+            xml,
+            fixed = TRUE
+          )
+
+          self$drawings_rels[[sheet_drawing]] <- c(
+            existing_rels,
+            sprintf(
+              '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
+              new_rel_id, media_name
+            )
+          )
+        }
+      }
+
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.
       drawings <- self$drawings[[sheet_drawing]]
@@ -6769,39 +6819,6 @@ wbWorkbook <- R6::R6Class(
         drawings <- xml_add_child(drawings, xml_drawing)
       }
       self$drawings[[sheet_drawing]] <- drawings
-
-      # --- register raster files produced by rvg::dml_xlsx() ---
-      if (!is.null(raster_prefix)) {
-        raster_dir <- dirname(raster_prefix)
-        raster_uid <- basename(raster_prefix)
-        raster_files <- list.files(
-          path = raster_dir,
-          pattern = paste0("^", raster_uid, ".*\\.png$"),
-          full.names = TRUE
-        )
-
-        for (f in raster_files) {
-          private$add_media(f)
-          media_name <- names(self$media)[length(self$media)]
-
-          rel_id <- sub(
-            paste0(".*", raster_uid, "(rId\\d+)\\.png$"),
-            "\\1", f
-          )
-
-          old_rels <- self$drawings_rels[[sheet_drawing]]
-          if (all(is.na(old_rels)) || all(old_rels == ""))
-            old_rels <- NULL
-
-          self$drawings_rels[[sheet_drawing]] <- c(
-            old_rels,
-            sprintf(
-              '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
-              rel_id, media_name
-            )
-          )
-        }
-      }
 
       self$worksheets[[sheet]]$relships$drawing <- sheet_drawing
 
