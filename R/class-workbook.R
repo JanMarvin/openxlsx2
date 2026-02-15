@@ -6611,6 +6611,16 @@ wbWorkbook <- R6::R6Class(
         self$append("drawings_rels", "")
       }
 
+      # auto-detect rvg raster prefix from XML comment
+      raster_prefix <- NULL
+      if (is.character(xml) && length(xml) == 1 && file.exists(xml)) {
+        xml_raw <- paste0(readLines(xml, warn = FALSE), collapse = "")
+        m <- regmatches(xml_raw, regexpr("<!-- rvg_raster_prefix:(.+?) -->", xml_raw, perl = TRUE))
+        if (length(m) == 1) {
+          raster_prefix <- sub("<!-- rvg_raster_prefix:(.+?) -->", "\\1", m, perl = TRUE)
+        }
+      }
+
       # prepare mschart drawing
       if (inherits(xml, "chart_id")) {
         xml <- drawings(self$drawings_rels[[sheet_drawing]], xml)
@@ -6747,6 +6757,54 @@ wbWorkbook <- R6::R6Class(
         xml_attributes = c(id = as.character(draw_id)),
         path = path_pictur
       )
+
+      xml <- gsub("r:embed=\"", "r:embed=\"orig_", xml)
+
+      # --- register raster files produced by rvg::dml_xlsx() ---
+      if (!is.null(raster_prefix)) {
+        raster_dir <- dirname(raster_prefix)
+        raster_uid <- basename(raster_prefix)
+        raster_files <- list.files(
+          path = raster_dir,
+          pattern = paste0("^", raster_uid, ".*\\.png$"),
+          full.names = TRUE
+        )
+
+        for (raster_file in raster_files) {
+
+          private$add_media(raster_file)
+          media_name <- names(self$media)[length(self$media)]
+
+          # original rId embedded in the rvg-generated XML
+          orig_rel_id <- sub(
+            paste0(".*", raster_uid, "(rId\\d+)\\.png$"),
+            "\\1", raster_file
+          )
+
+          # next available rId
+          existing_rels <- self$drawings_rels[[sheet_drawing]]
+          if (all(is.na(existing_rels)) || all(existing_rels == "")) {
+            existing_rels <- NULL
+          }
+          new_rel_id <- get_next_id(existing_rels)
+
+          # remap r:embed in this drawing's XML only
+          xml <- gsub(
+            sprintf('r:embed="orig_%s"', orig_rel_id),
+            sprintf('r:embed="%s"', new_rel_id),
+            xml,
+            fixed = TRUE
+          )
+
+          self$drawings_rels[[sheet_drawing]] <- c(
+            existing_rels,
+            sprintf(
+              '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/%s"/>',
+              new_rel_id, media_name
+            )
+          )
+        }
+      }
 
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.
