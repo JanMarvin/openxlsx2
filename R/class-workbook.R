@@ -6758,6 +6758,8 @@ wbWorkbook <- R6::R6Class(
         path = path_pictur
       )
 
+      xml <- gsub("r:embed=\"", "r:embed=\"orig_", xml)
+
       # --- register raster files produced by rvg::dml_xlsx() ---
       if (!is.null(raster_prefix)) {
         raster_dir <- dirname(raster_prefix)
@@ -6792,7 +6794,7 @@ wbWorkbook <- R6::R6Class(
 
           # remap r:embed in this drawing's XML only
           xml <- gsub(
-            sprintf('r:embed="%s"', orig_rel_id),
+            sprintf('r:embed="orig_%s"', orig_rel_id),
             sprintf('r:embed="%s"', new_rel_id),
             xml,
             fixed = TRUE
