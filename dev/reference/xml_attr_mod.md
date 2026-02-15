@@ -10,6 +10,7 @@ the attribute vector.
 xml_attr_mod(
   xml_content,
   xml_attributes,
+  path = NULL,
   escapes = FALSE,
   declaration = FALSE,
   remove_empty_attr = TRUE
@@ -25,6 +26,10 @@ xml_attr_mod(
 - xml_attributes:
 
   R vector of named attributes
+
+- path:
+
+  optional path
 
 - escapes:
 
