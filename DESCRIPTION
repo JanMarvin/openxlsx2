@@ -32,7 +32,7 @@ Suggests:
     mschart (>= 0.4),
     openssl,
     rmarkdown,
-    rvg (>= 0.4.1),
+    rvg,
     testthat (>= 3.0.0),
     zip
 VignetteBuilder:
@@ -41,4 +41,3 @@ Encoding: UTF-8
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
-Remotes: davidgohel/rvg
