@@ -1368,6 +1368,24 @@ test_that("saving images with address works", {
 
 })
 
+test_that("wb_add_image() is cleaned up", {
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_image("Sheet 1", dims = "C5", file = img)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  expect_silent(wb$save(tmp))
+
+  fl <- wb$media[[1]]
+  expect_true(file.exists(fl))
+  rm(wb)
+  gc()
+  expect_false(file.exists(fl))
+})
+
 test_that("incomplete types work and character types work as well", {
 
   # create a labelled test

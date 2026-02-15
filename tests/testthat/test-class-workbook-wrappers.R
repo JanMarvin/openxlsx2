@@ -251,7 +251,8 @@ test_that("wb_set_col_widths() is a wrapper", {
 test_that("wb_add_image() is a wrapper", {
   path <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
   wb <- wb_workbook()$add_worksheet("a")
-  expect_wrapper("add_image", wb = wb, params = list(file = path, sheet = "a"))
+  # media contains a reference tmpDir
+  expect_wrapper("add_image", wb = wb, params = list(file = path, sheet = "a"), ignore_fields = c("tmpDir", "media"))
 })
 
 # wb_add_plot() -----------------------------------------------------------
@@ -273,7 +274,8 @@ test_that("wb_add_plot() is a wrapper", {
     "add_plot",
     "wb_add_plot",
     wb = wb,
-    params = list(sheet = "a")
+    params = list(sheet = "a"),
+    ignore_fields = c("tmpDir", "media")
   )
 
   # # check that it is actually working
