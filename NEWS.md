@@ -3,6 +3,7 @@
 ## New features
 
 * Provide new SHA base password hash based on `openssl`. This will be used if `openssl` is installed, otherwise the legacy implementation will be used. [#1538](https://github.com/JanMarvin/openxlsx2/pull/1538)
+* Add `path` argument to `xml_attr_mod()`. This allows changing the attribute of an XML node nested deeper in code.
 
 ## Fixes
 

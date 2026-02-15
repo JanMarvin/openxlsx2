@@ -332,6 +332,22 @@ test_that("xml_attr_mod", {
   xml_got <- xml_attr_mod(xml_node, xml_attr, remove_empty_attr = FALSE)
   expect_identical(xml_exp, xml_got)
 
+  # use path
+  xml_node <- "<a foo=\"bar\"><b>openxlsx2</b></a>"
+
+  exp <- "<a foo=\"baz\"><b>openxlsx2</b></a>"
+  got <- xml_attr_mod(xml_node, c(foo = "baz"))
+  expect_equal(got, exp)
+
+  exp <- "<a foo=\"bar\"><b foo=\"baz\">openxlsx2</b></a>"
+  got <- xml_attr_mod(xml_node, c(foo = "baz"), path = c("a", "b"))
+  expect_equal(got, exp)
+
+  xml_node <- "<a foo=\"bar\"><b><c>openxlsx2</c></b></a>"
+  exp <- "<a foo=\"bar\"><b foo=\"baz\"><c>openxlsx2</c></b></a>"
+  got <- xml_attr_mod(xml_node, c(foo = "baz"), path = c("a", "b"))
+  expect_equal(got, exp)
+
 })
 
 test_that("xml_node_create", {
