@@ -3570,9 +3570,17 @@ wbWorkbook <- R6::R6Class(
 
 
       ## media (copy file from origin to destination)
-      # TODO replace with seq_along()
-      for (x in self$media) {
-        file.copy(x, file.path(xlmediaDir, names(self$media)[which(self$media == x)]))
+      if (length(self$media)) {
+        if (any(duplicated(names(self$media)))) {
+          warning("Some media file names are duplicated; files may be overwritten.", call. = FALSE)  #nocov
+        }
+
+        for (i in seq_along(self$media)) {
+          current_path <- self$media[[i]]
+          current_name <- names(self$media)[i]
+          file.copy(from = current_path,
+                    to = file.path(xlmediaDir, current_name))
+        }
       }
 
       ## VBA Macro
@@ -9690,6 +9698,16 @@ wbWorkbook <- R6::R6Class(
       file
     ) {
 
+      if (length(self$path) == 0) {
+        xmlDir <- temp_dir("_openxlsx_wb_workbook")
+        self$tmpDir <- xmlDir
+      }
+
+      media_dir <- file.path(self$tmpDir, "xl", "media")
+      if (!dir.exists(media_dir)) {
+        dir.create(media_dir, recursive = TRUE)
+      }
+
       imageType <- file_ext2(file)
       mediaNo   <- length(self$media) + 1L
 
@@ -9706,10 +9724,12 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
-      ## write file path to media slot to copy across on save
-      tmp <- file
-      names(tmp) <- stringi::stri_join("image", mediaNo, ".", imageType)
-      self$append("media", tmp)
+      ## write file path to media slot
+      new_name <- stringi::stri_join("image", mediaNo, ".", imageType)
+      new_file <- file.path(media_dir, new_name)
+      file.copy(file, new_file)
+      names(new_file) <- new_name
+      self$append("media", new_file)
 
       invisible(self)
     },
