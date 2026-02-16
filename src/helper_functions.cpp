@@ -176,8 +176,8 @@ Rcpp::CharacterVector ox_int_to_col(Rcpp::NumericVector x) {
 SEXP rbindlist(Rcpp::List x) {
   R_xlen_t nn = Rf_xlength(x);
 
-  std::vector<SEXP> col_names;
-  col_names.reserve(16);
+  std::vector<SEXP> col_names_tmp;
+  col_names_tmp.reserve(16);
 
   std::unordered_set<SEXP> seen;
   seen.reserve(16);
@@ -193,29 +193,31 @@ SEXP rbindlist(Rcpp::List x) {
     for (R_xlen_t j = 0; j < k; ++j) {
       SEXP nm = STRING_ELT(names, j);
       if (seen.insert(nm).second) {
-        col_names.push_back(nm);
+        col_names_tmp.push_back(nm);
       }
     }
   }
 
-  std::sort(col_names.begin(), col_names.end(), sexp_str_less);
+  std::sort(col_names_tmp.begin(), col_names_tmp.end(), sexp_str_less);
 
-  R_xlen_t kk = static_cast<R_xlen_t>(col_names.size());
+  R_xlen_t kk = static_cast<R_xlen_t>(col_names_tmp.size());
 
   std::unordered_map<SEXP, R_xlen_t> name_to_idx;
   name_to_idx.reserve(static_cast<size_t>(kk));
 
   for (R_xlen_t j = 0; j < kk; ++j) {
-    name_to_idx[col_names[static_cast<size_t>(j)]] = j;
+    name_to_idx[col_names_tmp[static_cast<size_t>(j)]] = j;
   }
 
   Rcpp::List df(kk);
+  Rcpp::CharacterVector col_names(kk);
   std::vector<SEXP> cols(static_cast<size_t>(kk));
 
   for (R_xlen_t j = 0; j < kk; ++j) {
     SEXP col = Rf_allocVector(STRSXP, nn);
     SET_VECTOR_ELT(df, j, col);
     cols[static_cast<size_t>(j)] = col;
+    col_names[j] = col_names_tmp[j];
   }
 
   for (R_xlen_t i = 0; i < nn; ++i) {
@@ -241,7 +243,7 @@ SEXP rbindlist(Rcpp::List x) {
   }
 
   df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
-  df.attr("names") = Rcpp::CharacterVector(col_names.begin(), col_names.end());
+  df.attr("names") = col_names;
   df.attr("class") = "data.frame";
 
   return df;
@@ -688,9 +690,9 @@ void wide_to_long(
 
   R_xlen_t iter_count = 0;
   const int MAX_VTYP_ID = CELLTYPE_MAX;  // enum celltype
-  std::vector<SEXP> vtyp_sexp_cache(MAX_VTYP_ID + 1);
+  Rcpp::CharacterVector vtyp_sexp_cache(MAX_VTYP_ID + 1);
   for (int type_id = 0; type_id <= MAX_VTYP_ID; ++type_id) {
-    vtyp_sexp_cache[type_id] = Rf_mkChar(std::to_string(type_id).c_str());
+    vtyp_sexp_cache[type_id] = std::to_string(type_id);
   }
 
   // --- 4. Main Wide-to-Long Loop ---
