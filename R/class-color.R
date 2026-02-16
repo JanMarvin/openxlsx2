@@ -83,7 +83,7 @@ wb_color <- function(
   }
 
   if (!is.null(tint)) {
-    num <- suppressWarnings(as.numeric(tint))
+    num <- suppressWarnings(as_numeric(tint))
     if (length(num) != 1L || !is.finite(num) || num < -1 || num > 1)
       stop("`tint` must be a number from -1 to 1", call. = FALSE)
   }

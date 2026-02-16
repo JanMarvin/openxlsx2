@@ -652,7 +652,7 @@ create_sparklines <- function(
     max_axis_type <- match_oneof(max_axis_type, c("individual", "group", "custom"))
 
   if (!is.null(line_weight)) {
-    lw <- suppressWarnings(as.numeric(line_weight))
+    lw <- suppressWarnings(as_numeric(line_weight))
     if (length(lw) != 1L || !is.finite(lw) || lw < 0 || lw > 1584)
       stop("`line_weight` must be a number from 0 to 1584", call. = FALSE)
   }
@@ -816,7 +816,7 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
 to_string <- function(x) {
   lbls <- attr(x, "labels")
   x_chr <- as.character(x)
-  x_num <- suppressWarnings(as.numeric(x_chr))
+  x_num <- suppressWarnings(as_numeric(x_chr))
 
   has_labels <- !is.null(lbls) && !is.null(names(lbls))
   used_label <- logical(length(x))
@@ -1939,7 +1939,7 @@ is_xml_flag <- function(val) {
 
 # lim is list(min, max, whole = TRUE, below = TRUE), below excludes max
 in_xml_range <- function(val, lim) {
-  num <- suppressWarnings(as.numeric(val))
+  num <- suppressWarnings(as_numeric(val))
   length(num) > 0L && all(is.finite(num)) && all(num >= lim[[1]]) &&
     (if (isTRUE(lim$below)) all(num < lim[[2]]) else all(num <= lim[[2]])) &&
     (!isTRUE(lim$whole) || all(num == trunc(num)))

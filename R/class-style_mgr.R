@@ -363,47 +363,47 @@ style_mgr <- R6::R6Class("wbStylesMgr",
     #' @description get next numfmt id
     next_numfmt_id = function() {
       # TODO check: first free custom format begins at 165?
-      invisible(as.character(max(as.numeric(self$numfmt$id), 164) + 1))
+      invisible(as.character(max(as_numeric(self$numfmt$id), 164) + 1))
     },
 
     #' @description get next font id
     next_font_id = function() {
-      invisible(as.character(max(as.numeric(self$font$id), 0) + 1))
+      invisible(as.character(max(as_numeric(self$font$id), 0) + 1))
     },
 
     #' @description get next fill id
     next_fill_id = function() {
-      invisible(as.character(max(as.numeric(self$fill$id), 0) + 1))
+      invisible(as.character(max(as_numeric(self$fill$id), 0) + 1))
     },
 
     #' @description get next border id
     next_border_id = function() {
-      invisible(as.character(max(as.numeric(self$border$id), 0) + 1))
+      invisible(as.character(max(as_numeric(self$border$id), 0) + 1))
     },
 
     #' @description get next xf id
     next_xf_id = function() {
-      invisible(as.character(max(as.numeric(self$xf$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$xf$id), -1) + 1))
     },
 
     #' @description get next xf id
     next_cellstyle_id = function() {
-      invisible(as.character(max(as.numeric(self$cellStyle$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$cellStyle$id), -1) + 1))
     },
 
     #' @description get next xf id
     next_cellstylexf_id = function() {
-      invisible(as.character(max(as.numeric(self$cellStyleXf$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$cellStyleXf$id), -1) + 1))
     },
 
     #' @description get next dxf id
     next_dxf_id = function() {
-      invisible(as.character(max(as.numeric(self$dxf$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$dxf$id), -1) + 1))
     },
 
     #' @description get next tableStyle id
     next_tableStyle_id = function() {
-      invisible(as.character(max(as.numeric(self$tableStyle$id), -1) + 1))
+      invisible(as.character(max(as_numeric(self$tableStyle$id), -1) + 1))
     },
 
     #' @description get named style ids
@@ -474,7 +474,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
 
       # table styles reference dxf styles by index, these must exist
       if (sty_fmt == "tableStyle") {
-        dxf_ids <- as.numeric(unlist(regmatches(style, gregexpr("(?<=dxfId=\")[^\"]+", style, perl = TRUE))))
+        dxf_ids <- as_numeric(unlist(regmatches(style, gregexpr("(?<=dxfId=\")[^\"]+", style, perl = TRUE))))
         if (any(dxf_ids >= length(self$styles$dxfs))) {
           stop("the table style references a dxf style that does not exist in the workbook", call. = FALSE)
         }

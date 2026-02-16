@@ -262,7 +262,7 @@ create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
   formatCode <- escape_format_code(formatCode)
 
   df_numfmt <- data.frame(
-    numFmtId         = sprintf("%.0f", as.numeric(numFmtId)),
+    numFmtId         = sprintf("%.0f", as_numeric(numFmtId)),
     formatCode       = as_xml_attr(formatCode),
     stringsAsFactors = FALSE
   )
@@ -354,7 +354,7 @@ create_font <- function(
   }
 
   if (charset != "") {
-    num <- suppressWarnings(as.numeric(charset))
+    num <- suppressWarnings(as_numeric(charset))
     if (!is.finite(num) || num < 0 || num > 255 || num != trunc(num))
       stop("create_font(): `charset` must be a whole number from 0 to 255.", call. = FALSE)
     charset <- xml_node_create("charset", xml_attributes = c("val" = as_xml_attr(charset)))
@@ -415,7 +415,7 @@ create_font <- function(
   }
 
   if (sz != "") {
-    num <- suppressWarnings(as.numeric(sz))
+    num <- suppressWarnings(as_numeric(sz))
     if (!is.finite(num) || num < 1 || num > 409.55)
       stop("create_font(): `sz` must be a number from 1 to 409.55.", call. = FALSE)
     sz <- xml_node_create("sz", xml_attributes = c("val" = as_xml_attr(sz)))
@@ -692,7 +692,7 @@ create_cell_style <- function(
   }
   rot <- text_rotation[text_rotation != ""]
   if (length(rot) && !(in_xml_range(rot, list(0, 255, whole = TRUE)) &&
-                       all(as.numeric(rot) <= 180 | as.numeric(rot) == 255))) {
+                       all(as_numeric(rot) <= 180 | as_numeric(rot) == 255))) {
     stop("create_cell_style(): `text_rotation` must be a whole number from 0 to 180 or 255.", call. = FALSE)
   }
 
@@ -934,7 +934,7 @@ styles_on_sheet <- function(wb, sheet) {
   sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
   z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
   # cells without a style use the default one
-  as.numeric(z[z != ""])
+  as_numeric(z[z != ""])
 }
 
 #' get xml node for a specific style of a cell. function for internal use
@@ -949,7 +949,7 @@ get_cell_styles <- function(wb, sheet, cell) {
 
   idx <- rep_len(1, length(cellstyles))
   sel <- cellstyles != ""
-  idx[sel] <- as.numeric(cellstyles[sel]) + 1
+  idx[sel] <- as_numeric(cellstyles[sel]) + 1
 
   wb$styles_mgr$styles$cellXfs[idx]
 }
@@ -1725,7 +1725,7 @@ builtin_fmts_df <- data.frame(
 # style helper used in wb_to_df()
 get_numfmt_style <- function(wb, cc) {
   nms_uni_styles <- unique(cc$c_s)
-  uni_styles <- as.numeric(nms_uni_styles) + 1L
+  uni_styles <- as_numeric(nms_uni_styles) + 1L
   names(uni_styles) <- nms_uni_styles
   uni_styles <- uni_styles[!is.na(uni_styles)]
 
@@ -1837,7 +1837,7 @@ format_date_time <- function(value, format_code) {
 
     if (inherits(dt_val, "POSIXct")) {
       origin <- as.POSIXct("1899-12-31", tz = "UTC")
-      value <- as.numeric(difftime(dt_val, origin, units = "days"))
+      value <- as_numeric(difftime(dt_val, origin, units = "days"))
     }
 
     excel_res <- convert_to_excel_date(list(v = value))
@@ -1876,7 +1876,7 @@ format_date_time <- function(value, format_code) {
     res <- gsub("dddd", format(dt_val, "%A"), res, ignore.case = TRUE)
     res <- gsub("ddd", format(dt_val, "%a"), res, ignore.case = TRUE)
     res <- gsub("dd", format(dt_val, "%d"), res, ignore.case = TRUE)
-    res <- gsub("\\bd\\b", as.numeric(format(dt_val, "%d")), res, perl = TRUE, ignore.case = TRUE)
+    res <- gsub("\\bd\\b", as_numeric(format(dt_val, "%d")), res, perl = TRUE, ignore.case = TRUE)
 
     # Minute Protection logic
     res <- gsub("(?<=[Hh\\d]):mm", ":_MINP_", res, perl = TRUE)
@@ -1895,15 +1895,15 @@ format_date_time <- function(value, format_code) {
     res <- gsub("mmmm", format(dt_val, "%B"), res, ignore.case = TRUE)
     res <- gsub("mmm", format(dt_val, "%b"), res, ignore.case = TRUE)
     res <- gsub("mm", format(dt_val, "%m"), res, ignore.case = TRUE)
-    res <- gsub("\\bm\\b", as.numeric(format(dt_val, "%m")), res, perl = TRUE, ignore.case = TRUE)
+    res <- gsub("\\bm\\b", as_numeric(format(dt_val, "%m")), res, perl = TRUE, ignore.case = TRUE)
 
     # Restore Minutes
     res <- gsub("_MINP_", format(dt_val, "%M"), res)
-    res <- gsub("_MIN_", as.numeric(format(dt_val, "%M")), res)
+    res <- gsub("_MIN_", as_numeric(format(dt_val, "%M")), res)
 
     # Clock Time
     is_12h <- grepl("AM/PM|A/P", res, ignore.case = TRUE)
-    hour_val <- as.numeric(format(dt_val, "%H"))
+    hour_val <- as_numeric(format(dt_val, "%H"))
 
     # Determine AM/PM manually to bypass locale issues
     am_pm <- if (hour_val >= 12) "PM" else "AM"
@@ -1936,7 +1936,7 @@ format_date_time <- function(value, format_code) {
     res <- gsub(":mm", paste0(":", mins), res, ignore.case = TRUE)
     res <- gsub(":ss", paste0(":", secs), res, ignore.case = TRUE)
     # Handle single m if it's the only thing left
-    res <- gsub("\\bm\\b", as.numeric(mins), res, perl = TRUE)
+    res <- gsub("\\bm\\b", as_numeric(mins), res, perl = TRUE)
   }
 
   process_literals(res)
@@ -1982,7 +1982,7 @@ format_number <- function(value, format_code) {
       formatted_int <- ""
     } else {
       # Standard padding
-      formatted_int <- sprintf(paste0("%0", mandatory_int, ".0f"), as.numeric(int_part_val))
+      formatted_int <- sprintf(paste0("%0", mandatory_int, ".0f"), as_numeric(int_part_val))
     }
 
     # Handle the fractional part
@@ -2047,7 +2047,7 @@ format_fraction <- function(value, format_code) {
   denom_match <- regmatches(clean_fmt, regexpr("/([\\?\\d]+)", clean_fmt))
   denom_str <- gsub("/", "", denom_match)
 
-  limit <- if (grepl("^[\\d]+$", denom_str)) as.numeric(denom_str)
+  limit <- if (grepl("^[\\d]+$", denom_str)) as_numeric(denom_str)
   else if (nchar(denom_str) == 3) 999
   else if (nchar(denom_str) == 2) 99
   else 9
@@ -2228,7 +2228,7 @@ apply_numfmt <- function(value, format_code) {
 
             # Use sub to remove only the operator, keeping the rest (the number)
             limit_str <- sub("^[<>=!]+", "", clean_cond)
-            limit <- as.numeric(trimws(limit_str))
+            limit <- as_numeric(trimws(limit_str))
 
             match <- switch(op,
               "<"  = v < limit,

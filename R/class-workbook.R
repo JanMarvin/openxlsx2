@@ -5135,8 +5135,8 @@ wbWorkbook <- R6::R6Class(
       arguments <- c("font_size", "font_color", "font_name",
         "font_type", "font_panose")
       standardize(..., arguments = arguments)
-      if (length(font_size) != 1L || !is.finite(suppressWarnings(as.numeric(font_size))) ||
-          as.numeric(font_size) < 1 || as.numeric(font_size) > 409.55)
+      if (length(font_size) != 1L || !is.finite(suppressWarnings(as_numeric(font_size))) ||
+          as_numeric(font_size) < 1 || as_numeric(font_size) > 409.55)
         stop("Invalid font_size, it must be a number from 1 to 409.55", call. = FALSE)
       if (!is.character(font_name) || length(font_name) != 1L || is.na(font_name) ||
           !nzchar(strip_xml_control_chars(font_name)) || nchar(font_name) > 31)
@@ -5534,7 +5534,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      num_rows <- suppressWarnings(as.numeric(rows))
+      num_rows <- suppressWarnings(as_numeric(rows))
       if (anyNA(num_rows) || any(num_rows < 1 | num_rows > 1048576 | num_rows != trunc(num_rows)))
         stop("`rows` must be whole numbers from 1 to 1048576", call. = FALSE)
       if (!is.null(heights) && (anyNA(heights) || any(!is.finite(heights) | heights < 0)))
@@ -5846,7 +5846,7 @@ wbWorkbook <- R6::R6Class(
 
         offs <- sub("^auto", "", col_width[is_auto])
         offs[offs == ""] <- "0"
-        offs <- as.numeric(offs)
+        offs <- as_numeric(offs)
         if (length(unique(offs)) > 1L) {
           warning("Multiple different \"auto\" offsets supplied; using \"auto",
                   ifelse(offs[1L] < 0, "", "+"), offs[1L], "\" for all columns.")
@@ -5912,7 +5912,7 @@ wbWorkbook <- R6::R6Class(
       # create empty cols
       col_df <- wb_create_columns(self, sheet, cols)
 
-      select <- as.numeric(col_df$min) %in% cols
+      select <- as_numeric(col_df$min) %in% cols
       col_df$width[select] <- as_xml_attr(widths)
       col_df$hidden[select] <- tolower(hidden)
       col_df$bestFit[select] <- bestFit
@@ -7657,10 +7657,10 @@ wbWorkbook <- R6::R6Class(
           )
           anchor <- sprintf(
             anchor,
-            cols[1] - 1L, sprintf("%.0f", as.numeric(col_offset[1])),
-            rows[1] - 1L, sprintf("%.0f", as.numeric(row_offset[1])),
-            cols[2], sprintf("%.0f", as.numeric(col_offset[2])),
-            rows[2], sprintf("%.0f", as.numeric(row_offset[2]))
+            cols[1] - 1L, sprintf("%.0f", as_numeric(col_offset[1])),
+            rows[1] - 1L, sprintf("%.0f", as_numeric(row_offset[1])),
+            cols[2], sprintf("%.0f", as_numeric(col_offset[2])),
+            rows[2], sprintf("%.0f", as_numeric(row_offset[2]))
           )
 
         } else {
@@ -7679,8 +7679,8 @@ wbWorkbook <- R6::R6Class(
           )
           anchor <- sprintf(
             anchor,
-            cols[1] - 1L, sprintf("%.0f", as.numeric(col_offset[1])),
-            rows[1] - 1L, sprintf("%.0f", as.numeric(row_offset[1]))
+            cols[1] - 1L, sprintf("%.0f", as_numeric(col_offset[1])),
+            rows[1] - 1L, sprintf("%.0f", as_numeric(row_offset[1]))
           )
 
         }
@@ -7802,7 +7802,7 @@ wbWorkbook <- R6::R6Class(
       new_ids  <- stringi::stri_extract_all_regex(xml, id_regex)[[1]]
       if (!anyNA(used_ids) && !anyNA(new_ids) && any(new_ids %in% used_ids)) {
         loc <- stringi::stri_locate_all_regex(xml, id_regex)[[1]]
-        ids <- max(as.numeric(used_ids)) + seq_len(nrow(loc))
+        ids <- max(as_numeric(used_ids)) + seq_len(nrow(loc))
         xml <- stringi::stri_sub_replace_all(xml, from = loc[, 1], to = loc[, 2], replacement = sprintf("%.0f", ids))
       }
 
@@ -8390,8 +8390,8 @@ wbWorkbook <- R6::R6Class(
       self$workbook$workbookProtection <- xml_node_create(
         "workbookProtection",
         xml_attributes = c(
-          lockStructure = toString(as.numeric(lock_structure)),
-          lockWindows = toString(as.numeric(lock_windows)),
+          lockStructure = toString(as_numeric(lock_structure)),
+          lockWindows = toString(as_numeric(lock_windows)),
           algorithmName = password$algo,
           hashPassword = password$hash,
           saltValue = password$salt,
@@ -8932,7 +8932,7 @@ wbWorkbook <- R6::R6Class(
       ## scale ----
       if (!is.null(scale)) {
         scale <- scale %||% attrs$scale
-        scale <- as.numeric(scale)
+        scale <- as_numeric(scale)
         if ((scale < 10) || (scale > 400)) {
           message("Scale must be between 10 and 400. Scale was: ", scale)
           scale <- if (scale < 10) 10 else if (scale > 400) 400
@@ -10318,7 +10318,7 @@ wbWorkbook <- R6::R6Class(
       )
       private$check_args(dims = "dims")
       if (!is.null(text_rotation) && !identical(text_rotation, "") &&
-          as.numeric(text_rotation) > 180 && as.numeric(text_rotation) != 255) {
+          as_numeric(text_rotation) > 180 && as_numeric(text_rotation) != 255) {
         stop("add_cell_style(): `text_rotation` must be from 0 to 180, or 255 for vertical text.", call. = FALSE)
       }
       if (!is.null(horizontal) && !identical(horizontal, "")) {
@@ -10436,7 +10436,7 @@ wbWorkbook <- R6::R6Class(
       if (!all(grepl("^[A-Za-z]{1,3}[1-9][0-9]*$", dims))) {
         stop("set_cell_style(): `dims` must be cells like \"A1\" or a range like \"A1:B2\".", call. = FALSE)
       }
-      xf_id <- suppressWarnings(as.numeric(styid[styid != ""]))
+      xf_id <- suppressWarnings(as_numeric(styid[styid != ""]))
       if (anyNA(xf_id) || any(xf_id < 0 | xf_id != trunc(xf_id) | xf_id >= length(self$styles_mgr$styles$cellXfs))) {
         stop("set_cell_style(): `style` must be the id of a cell style in the workbook.", call. = FALSE)
       }
@@ -10923,7 +10923,7 @@ wbWorkbook <- R6::R6Class(
     get_active_sheet = function() {
       at <- rbindlist(xml_attr(self$workbook$bookViews, "bookViews", "workbookView"))$activeTab
       # return c index as R index
-      as.numeric(at) + 1
+      as_numeric(at) + 1
     },
 
     #' @description description set active sheet
@@ -11511,7 +11511,7 @@ wbWorkbook <- R6::R6Class(
             # there can be files, where row_attr is incomplete because a row
             # is lacking any attributes (presumably was added before saving)
             # still row_attr is what we want!
-            ra_num <- suppressWarnings(as.numeric(rows_attr[, "r"]))
+            ra_num <- suppressWarnings(as_numeric(rows_attr[, "r"]))
             if (anyNA(ra_num) || is.unsorted(ra_num)) {
               rows_attr <- rows_attr[order(ra_num), ]
               ws$sheet_data$row_attr <- rows_attr
@@ -11985,7 +11985,7 @@ wbWorkbook <- R6::R6Class(
         row_attr_missing$r <- missing_rows
 
         new_attr <- rbind(ws$sheet_data$row_attr, row_attr_missing)
-        ws$sheet_data$row_attr <- new_attr[order(as.numeric(new_attr$r)), ]
+        ws$sheet_data$row_attr <- new_attr[order(as_numeric(new_attr$r)), ]
       }
 
       # We need an emptry cc frame, otherwise nothing is written
