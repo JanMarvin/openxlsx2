@@ -87,7 +87,7 @@ wb_check_overwrite_tables <- function(
       exTable$rows <- lapply(
         exTable$tab_ref,
         function(rectCoords) {
-          as.numeric(unlist(regmatches(rectCoords, gregexpr("[0-9]+", rectCoords))))
+          as_numeric(unlist(regmatches(rectCoords, gregexpr("[0-9]+", rectCoords))))
         }
       )
       exTable$cols <- lapply(
@@ -159,7 +159,7 @@ wb_create_columns <- function(wb, sheet, cols) {
 
   col_df <- wb$worksheets[[sheet]]$unfold_cols()
 
-  needed_cols <- setdiff(cols, as.numeric(col_df$min))
+  needed_cols <- setdiff(cols, as_numeric(col_df$min))
 
   # found a few cols, but not all required cols. create the missing columns
   if (length(needed_cols)) {
@@ -167,19 +167,19 @@ wb_create_columns <- function(wb, sheet, cols) {
     if (NROW(col_df) == 0) {
       new_cols <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
     } else {
-      rr <- range(union(cols, as.numeric(col_df$min)))
+      rr <- range(union(cols, as_numeric(col_df$min)))
       beg <- rr[1]
       end <- rr[2]
 
       # new columns
       new_cols <- col_to_df(read_xml(wb$createCols(sheet, beg = beg, end = end)))
     }
-    new_cols <- new_cols[as.numeric(new_cols$min) %in% needed_cols, ]
+    new_cols <- new_cols[as_numeric(new_cols$min) %in% needed_cols, ]
 
     # rbind only the missing columns. avoiding dups
     sel <- !new_cols$min %in% col_df$min
     col_df <- rbind(col_df, new_cols[sel, ])
-    col_df <- col_df[order(as.numeric(col_df[, "min"])), ]
+    col_df <- col_df[order(as_numeric(col_df[, "min"])), ]
   }
 
   col_df
