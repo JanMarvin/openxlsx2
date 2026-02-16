@@ -68,7 +68,7 @@ expect_wrapper <- function(
   m_forms <- as.list(formals(method_fun))
   f_forms <- as.list(formals(fun_fun))
 
-  to_ignore <- unique(c("wb", "file", ignore))
+  to_ignore <- collapse::funique(c("wb", "file", ignore))
   m_forms   <- m_forms[!names(m_forms) %in% to_ignore]
   f_forms   <- f_forms[!names(f_forms) %in% to_ignore]
 

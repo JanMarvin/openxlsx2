@@ -943,7 +943,7 @@ wb_dims <- function(..., select = NULL) {
   # if cols is a column name from x
   if (!is.null(x) && is.character(cols_sel) && any(cols_sel %in% names(x))) {
     names(cols_all) <- names(x)
-    cols_sel <- match(cols_sel, names(cols_all))
+    cols_sel <- collapse::fmatch(cols_sel, names(cols_all))
   }
 
   # reduce to required length
@@ -1450,7 +1450,7 @@ calc_distance <- function(x) {
 # safer rbind
 rbind2 <- function(df1, df2) {
   if (is.null(df1)) return(df2)
-  nms <- unique(c(names(df1), names(df2)))
+  nms <- collapse::funique(c(names(df1), names(df2)))
   df1[setdiff(nms, names(df1))] <- ""
   df2[setdiff(nms, names(df2))] <- ""
   rbind(df1[nms], df2[nms])
