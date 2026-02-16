@@ -262,6 +262,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// as_numeric
+Rcpp::NumericVector as_numeric(Rcpp::Nullable<Rcpp::RObject> input);
+RcppExport SEXP _openxlsx2_as_numeric(SEXP inputSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::RObject> >::type input(inputSEXP);
+    rcpp_result_gen = Rcpp::wrap(as_numeric(input));
+    return rcpp_result_gen;
+END_RCPP
+}
 // col_to_df
 Rcpp::DataFrame col_to_df(XPtrXML doc);
 RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
@@ -846,6 +857,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_df2xml", (DL_FUNC) &_openxlsx2_write_df2xml, 4},
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_cdigit", (DL_FUNC) &_openxlsx2_cdigit, 2},
+    {"_openxlsx2_as_numeric", (DL_FUNC) &_openxlsx2_as_numeric, 1},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 8},

@@ -2,6 +2,7 @@
 #define OPENXLSX2_H
 
 #include "openxlsx2_types.h"
+#include "fast_float.h"
 
 #define MAX_OOXML_COL_INT 16384
 #define MAX_OOXML_ROW_INT 1048576
@@ -66,20 +67,98 @@ static inline std::string int_to_col(T cell) {
   return col_name;
 }
 
+// Use a portable likely/unlikely attribute if not on C++20
+#if __cplusplus >= 202002L
+#  define LIKELY(x) (x) [[likely]]
+#  define UNLIKELY(x) (x) [[unlikely]]
+#elif defined(__GNUC__) || defined(__clang__)
+#  define LIKELY(x) __builtin_expect(!!(x), 1)
+#  define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#  define LIKELY(x) (x)
+#  define UNLIKELY(x) (x)
+#endif
+
+static inline double as_double(const char* x) {
+  const size_t len = std::strlen(x);
+
+  switch (len) {
+  case 3:
+    // Check for "Inf" or "NaN"
+    if (x[0] == 'I') {
+      if (UNLIKELY(std::memcmp(x, "Inf", 3) == 0)) return R_PosInf;
+    } else if (x[0] == 'N') {
+      if (UNLIKELY(std::memcmp(x, "NaN", 3) == 0)) return R_NaN;
+    } else if (UNLIKELY(strcasecmp(x, "inf") == 0)) {
+      return NA_REAL;
+    } else if (UNLIKELY(strcasecmp(x, "nan") == 0)) {
+      return NA_REAL;
+    }
+    break;
+  case 4:
+    // Check for "+Inf" or "-Inf"
+    if (x[1] == 'I' || x[1] == 'i') { // Quick check for 'I'
+      if (x[0] == '+') {
+        if (UNLIKELY(std::memcmp(x, "+Inf", 4) == 0)) return R_PosInf;
+        if (UNLIKELY(strcasecmp(x, "+inf") == 0)) return NA_REAL;
+      } else if (x[0] == '-') {
+        if (UNLIKELY(std::memcmp(x, "-Inf", 4) == 0)) return R_NegInf;
+        if (UNLIKELY(strcasecmp(x, "-inf") == 0)) return NA_REAL;
+      }
+    }
+    break;
+  }
+
+  // --- High-performance numeric parsing ---
+  double dbl;
+  const char* const end = x + len;
+  auto result = fast_float::from_chars(x, end, dbl);
+  if (LIKELY(result.ec == std::errc() && result.ptr == end)) {
+    return dbl;
+  }
+
+  return NA_REAL;
+}
+
 // similar to is.numeric(x)
 // returns true if string can be written as numeric and is not Inf
 // @param x a string input
 static inline bool is_double(const char* x) {
-  char* endp;
-  double res;
+  const size_t len = std::strlen(x);
 
-  res = R_strtod(x, &endp);
-
-  if (strlen(endp) == 0 && std::isfinite(res)) {
-    return 1;
+  switch (len) {
+  case 3:
+    if (x[0] == 'I') {
+      if (UNLIKELY(std::memcmp(x, "Inf", 3) == 0)) return true;
+      if (UNLIKELY(strcasecmp(x, "inf") == 0)) return false;
+    } else if (x[0] == 'N') {
+      if (UNLIKELY(std::memcmp(x, "NaN", 3) == 0)) return true;
+      if (UNLIKELY(strcasecmp(x, "nan") == 0)) return false;
+    }
+    break;
+  case 4:
+    if ((x[0] == '+' || x[0] == '-') && (x[1] == 'I' || x[1] == 'i')) {
+      if (x[0] == '+') {
+        if (UNLIKELY(std::memcmp(x, "+Inf", 4) == 0)) return true;
+        if (UNLIKELY(strcasecmp(x, "+inf") == 0)) return false;
+      } else { // Must be '-'
+        if (UNLIKELY(std::memcmp(x, "-Inf", 4) == 0)) return true;
+        if (UNLIKELY(strcasecmp(x, "-inf") == 0)) return false;
+      }
+    }
+    break;
   }
 
-  return 0;
+  // --- High-performance numeric parsing ---
+  double dbl;
+  const char* const end = x + len;
+  auto result = fast_float::from_chars(x, end, dbl);
+
+  if (LIKELY(result.ec == std::errc() && result.ptr == end)) {
+    return true;
+  }
+
+  return false;
 }
 
 static inline bool has_cell(const std::string& str, const std::unordered_set<std::string>& vec) {

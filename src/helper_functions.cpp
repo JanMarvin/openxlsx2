@@ -1069,3 +1069,75 @@ SEXP cdigit(Rcpp::CharacterVector x, bool as_integer = false) {
     return res;
   }
 }
+
+// [[Rcpp::export]]
+Rcpp::NumericVector as_numeric(Rcpp::Nullable<Rcpp::RObject> input) {
+  if (input.isNull())
+    return Rcpp::NumericVector(0);
+
+  SEXP obj = input.get();
+
+  switch (TYPEOF(obj)) {
+
+  case INTSXP:
+  case REALSXP: {
+    // Handle Date/POSIXct specially
+    Rcpp::NumericVector num(obj);
+    if (Rf_inherits(obj, "Date") || Rf_inherits(obj, "POSIXct") || Rf_inherits(obj, "difftime")) {
+      Rcpp::NumericVector out = Rcpp::clone(num);
+      SET_ATTRIB(out, R_NilValue);
+      return out;
+    }
+
+    // If already REALSXP, just return as-is
+    if (TYPEOF(obj) == REALSXP)
+      return num;
+
+    // Integer → double conversion
+    R_xlen_t n = XLENGTH(obj);
+    Rcpp::NumericVector out(n);
+    const int* src = INTEGER(obj);
+    double* dst = REAL(out);
+
+    for (R_xlen_t i = 0; i < n; ++i)
+      dst[i] = (src[i] == NA_INTEGER) ? NA_REAL : static_cast<double>(src[i]);
+
+    return out;
+  }
+
+  case LGLSXP: {
+    // Logical → numeric (TRUE=1, FALSE=0, NA=NA)
+    R_xlen_t n = XLENGTH(obj);
+    Rcpp::NumericVector out(n);
+    const int* src = LOGICAL(obj);
+    double* dst = REAL(out);
+
+    for (R_xlen_t i = 0; i < n; ++i)
+      dst[i] = (src[i] == NA_LOGICAL) ? NA_REAL : (src[i] ? 1.0 : 0.0);
+
+    return out;
+  }
+
+  case STRSXP: {
+    // Character → numeric via as_double()
+    R_xlen_t n = XLENGTH(obj);
+    Rcpp::NumericVector out(n);
+    double* dst = REAL(out);
+
+    for (R_xlen_t i = 0; i < n; ++i) {
+      SEXP s = STRING_ELT(obj, i);
+      if (s == NA_STRING) {
+        dst[i] = NA_REAL;
+      } else {
+        const char* str = CHAR(s);
+        dst[i] = as_double(str);
+      }
+    }
+
+    return out;
+  }
+
+  default:
+    Rcpp::stop("Unhandled R object type in as_numeric()");
+  }
+}

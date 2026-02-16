@@ -92,6 +92,10 @@ cdigit <- function(x, as_integer = FALSE) {
     .Call(`_openxlsx2_cdigit`, x, as_integer)
 }
 
+as_numeric <- function(input) {
+    .Call(`_openxlsx2_as_numeric`, input)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
