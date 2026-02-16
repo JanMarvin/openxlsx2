@@ -549,12 +549,14 @@ test_that("add_drawing works", {
 
   tmp <- tempfile(fileext = ".xml")
 
-  p <- ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
-    geom_raster() +
-    scale_fill_viridis_c()
-
-  dml_xlsx(file = tmp, width = 6, height = 5, offx = 0, offy = 0)
-  print(p)
+  rvg::dml_xlsx(file = tmp, width = 6, height = 5, offx = 0, offy = 0)
+  print(
+    ggplot2::ggplot(
+      ggplot2::faithfuld, ggplot2::aes(waiting, eruptions, fill = density)
+    ) +
+      ggplot2::geom_raster() +
+      ggplot2::scale_fill_viridis_c()
+  )
   dev.off()
 
   wb <- wb_workbook()$
