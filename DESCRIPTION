@@ -9,7 +9,8 @@ Authors@R: c(
   person("Olivier", "Roy", role = "ctb"),
   person("Paul", "Schmidt", role = "ctb", comment = c(ORCID = "0000-0003-1528-2082")),
   person(family = "openxlsx authors", role = "cph", comment = "openxlsx package"),
-  person("Arseny", "Kapoulkine", role = c("ctb", "cph"), comment = "Author of included pugixml code")
+  person("Arseny", "Kapoulkine", role = c("ctb", "cph"), comment = "Author of included pugixml code"),
+  person(family = "fast_float authors", role = "cph", comment = "Authors of included fast_float code")
   )
 Description: Simplifies the creation of 'xlsx' files by
     providing a high level interface to writing, styling and editing

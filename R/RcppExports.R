@@ -100,6 +100,10 @@ cell_to_info_df <- function(x) {
     .Call(`_openxlsx2_cell_to_info_df`, x)
 }
 
+as_numeric <- function(input) {
+    .Call(`_openxlsx2_as_numeric`, input)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }
