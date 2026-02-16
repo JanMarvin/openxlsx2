@@ -158,7 +158,7 @@ dataframe_to_dims <- function(df, dim_break = FALSE) {
     mm[mm != "" | is.na(mm)] <- 1
     mm[mm == ""] <- 0
 
-    matrix <- matrix(as.numeric(mm), nrow(mm), ncol(mm))
+    matrix <- matrix(as_numeric(mm), nrow(mm), ncol(mm))
     dimnames(matrix) <- list(rownames(mm), colnames(mm))
 
     # remove columns and rows not in df
@@ -412,11 +412,11 @@ match_cell_r <- function(dims, cc_r, cc_row_r = NULL, cc_c_r = NULL) {
     cc_row_r <- cdigit(cc_r)
     cc_c_r   <- cdigit(cc_r, reverse = TRUE)
   }
-  cc_key <- as.numeric(cc_row_r) * 16384L + col2int(cc_c_r)
+  cc_key <- as_numeric(cc_row_r) * 16384L + col2int(cc_c_r)
 
   d_row <- cdigit(dims)
   d_col <- cdigit(dims, reverse = TRUE)
-  d_key <- as.numeric(d_row) * 16384L + col2int(d_col)
+  d_key <- as_numeric(d_row) * 16384L + col2int(d_col)
 
   match(d_key, cc_key)
 }

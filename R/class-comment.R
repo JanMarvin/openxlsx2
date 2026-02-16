@@ -424,8 +424,8 @@ vml_rm_note <- function(x, dims) {
   shapes$rows <- xml_value(shps, c("v:shape", "x:ClientData", "x:Row"))
   shapes$cols <- xml_value(shps, c("v:shape", "x:ClientData", "x:Column"))
   shapes$dims <- paste0(
-    int2col(as.numeric(shapes$cols) + 1),
-    as.numeric(shapes$rows) + 1
+    int2col(as_numeric(shapes$cols) + 1),
+    as_numeric(shapes$rows) + 1
   )
 
   sel <- which(shapes$dims == dims & shapes$type == "#_x0000_t202")
