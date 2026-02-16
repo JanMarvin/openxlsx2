@@ -167,4 +167,6 @@ This package is licensed under the MIT license and is based on
 [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and
 Philipp Schauberger; COPYRIGHT 2014-2022) and
 [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine;
-COPYRIGHT 2006-2026). Both released under the MIT license.
+COPYRIGHT 2006-2026), and
+[`fast_float`](https://github.com/fastfloat/fast_float) (COPYRIGHT
+2021). All released under the MIT license.
