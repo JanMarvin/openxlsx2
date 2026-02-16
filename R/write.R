@@ -69,7 +69,7 @@ inner_update <- function(
     cc <- cc[order(cc$key), ]
 
     # update dimensions (only required if new cols and rows are added) ------
-    all_rows <- as.numeric(unique(cc$row_r))
+    all_rows <- as_numeric(unique(cc$row_r))
     all_cols <- col2int(unique(cc$c_r))
 
     min_cell <- trimws(paste0(int2col(min(all_cols, na.rm = TRUE)), min(all_rows, na.rm = TRUE)))
