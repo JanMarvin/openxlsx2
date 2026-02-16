@@ -42,7 +42,7 @@ df_1 <- function(df) {
 
 convert_num <- function(i) {
   if (any(i == "#NUM!", na.rm = TRUE)) i <- replace(i, i == "#NUM!", "NaN")
-  as.numeric(i)
+  as_numeric(i)
 }
 
 #' helper function to create temporary directory for testing purpose
@@ -1378,12 +1378,12 @@ next_cell <- function(cell, cols = 0L, rows = 0L) {
     fixed_col1 <- match[2]
     col1 <- match[3]
     fixed_row1 <- match[4]
-    row1 <- as.numeric(match[5])
+    row1 <- as_numeric(match[5])
 
     fixed_col2 <- match[7]
     col2 <- match[8]
     fixed_row2 <- match[9]
-    row2 <- as.numeric(match[10])
+    row2 <- as_numeric(match[10])
 
     if (is.na(col2)) {
 

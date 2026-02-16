@@ -5034,7 +5034,7 @@ wbWorkbook <- R6::R6Class(
       # create empty cols
       col_df <- wb_create_columns(self, sheet, cols)
 
-      select <- as.numeric(col_df$min) %in% cols
+      select <- as_numeric(col_df$min) %in% cols
       col_df$width[select] <- as_xml_attr(widths)
       col_df$hidden[select] <- tolower(hidden)
       col_df$bestFit[select] <- bestFit
@@ -7269,8 +7269,8 @@ wbWorkbook <- R6::R6Class(
       self$workbook$workbookProtection <- xml_node_create(
         "workbookProtection",
         xml_attributes = c(
-          lockStructure = toString(as.numeric(lock_structure)),
-          lockWindows = toString(as.numeric(lock_windows)),
+          lockStructure = toString(as_numeric(lock_structure)),
+          lockWindows = toString(as_numeric(lock_windows)),
           algorithmName = password$algo,
           hashPassword = password$hash,
           saltValue = password$salt,
@@ -7764,7 +7764,7 @@ wbWorkbook <- R6::R6Class(
       ## scale ----
       if (!is.null(scale)) {
         scale <- scale %||% attrs$scale
-        scale <- as.numeric(scale)
+        scale <- as_numeric(scale)
         if ((scale < 10) || (scale > 400)) {
           message("Scale must be between 10 and 400. Scale was: ", scale)
           scale <- if (scale < 10) 10 else if (scale > 400) 400
@@ -9521,7 +9521,7 @@ wbWorkbook <- R6::R6Class(
     get_active_sheet = function() {
       at <- rbindlist(xml_attr(self$workbook$bookViews, "bookViews", "workbookView"))$activeTab
       # return c index as R index
-      as.numeric(at) + 1
+      as_numeric(at) + 1
     },
 
     #' @description description set active sheet
@@ -10008,13 +10008,13 @@ wbWorkbook <- R6::R6Class(
               # still row_attr is what we want!
 
               rows_attr <- ws$sheet_data$row_attr
-              ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
+              ws$sheet_data$row_attr <- rows_attr[order(as_numeric(rows_attr[, "r"])), ]
 
               cc_rows <- ws$sheet_data$row_attr$r
               # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
               cc <- cc[cc$row_r %in% cc_rows, ]
 
-              sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
+              sort_key <- as_numeric(cc$row_r) * 16384L + col2int(cc$c_r)
               ws$sheet_data$cc <- cc[order(sort_key), ]
               rm(cc)
             } else {
@@ -10463,7 +10463,7 @@ wbWorkbook <- R6::R6Class(
         row_attr_missing$r <- missing_rows
 
         new_attr <- rbind(ws$sheet_data$row_attr, row_attr_missing)
-        ws$sheet_data$row_attr <- new_attr[order(as.numeric(new_attr$r)), ]
+        ws$sheet_data$row_attr <- new_attr[order(as_numeric(new_attr$r)), ]
       }
 
       # We need an emptry cc frame, otherwise nothing is written

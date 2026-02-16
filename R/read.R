@@ -403,7 +403,7 @@ wb_to_df <- function(
   keep_cols <- colnames(z)
   keep_rows <- rownames(z)
 
-  maxRow <- max(as.numeric(keep_rows))
+  maxRow <- max(as_numeric(keep_rows))
   maxCol <- max(col2int(keep_cols))
 
   if (!is.null(start_row)) {
@@ -485,7 +485,7 @@ wb_to_df <- function(
   # bool
   if (any(cc_tab == "b")) {
     sel <- cc$c_t %in% "b"
-    cc$val[sel] <- as.logical(as.numeric(cc$v[sel]))
+    cc$val[sel] <- as.logical(as_numeric(cc$v[sel]))
     cc$typ[sel] <- 4L
   }
   # text in v
@@ -503,7 +503,7 @@ wb_to_df <- function(
   # test is sst
   if (any(cc_tab == "s")) {
     sel <- cc$c_t %in% c("s")
-    cc$val[sel] <- si_to_txt(sst[as.numeric(cc$v[sel]) + 1])
+    cc$val[sel] <- si_to_txt(sst[as_numeric(cc$v[sel]) + 1])
     cc$typ[sel] <- 0L
   }
 
@@ -645,7 +645,7 @@ wb_to_df <- function(
     # apply_numfmt expects numeric, character or date/posixct
     sel <- not_blank_or_bool_error & cc$typ %in% c(1L, 4L)
     if (any(sel)) {
-      cc$val[sel] <- apply_numfmt(as.numeric(cc$val[sel]), cc$num_fmt[sel])
+      cc$val[sel] <- apply_numfmt(as_numeric(cc$val[sel]), cc$num_fmt[sel])
       cc$typ[sel] <- 0L
     }
     sel <- not_blank_or_bool_error & cc$typ %in% c(0L, 2L, 3L, 5L)

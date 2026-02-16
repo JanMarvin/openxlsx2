@@ -127,7 +127,7 @@ Rcpp::IntegerVector col_to_int(Rcpp::CharacterVector x) {
 
     // check if the value is digit only, if yes, add it and continue the loop
     // at the top. This avoids slow:
-    // suppressWarnings(isTRUE(as.character(as.numeric(x)) == x))
+    // suppressWarnings(isTRUE(as.character(as_numeric(x)) == x))
     if (std::all_of(a.begin(), a.end(), ::isdigit)) {
       colNums[i] = std::stoi(a);
       continue;

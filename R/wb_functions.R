@@ -158,7 +158,7 @@ dataframe_to_dims <- function(df, dim_break = FALSE) {
     mm[mm != "" | is.na(mm)] <- 1
     mm[mm == ""] <- 0
 
-    matrix <- matrix(as.numeric(mm), nrow(mm), ncol(mm))
+    matrix <- matrix(as_numeric(mm), nrow(mm), ncol(mm))
     dimnames(matrix) <- list(rownames(mm), colnames(mm))
 
     # remove columns and rows not in df
