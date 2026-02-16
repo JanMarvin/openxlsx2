@@ -188,7 +188,7 @@ test_that("write xlsx", {
   expect_error(write_xlsx(df, tmp, with_filter = "NO"), "Argument with_filter must be TRUE or FALSE")
 
   wb <- write_xlsx(df, start_row = 2)
-  got <- min(as.numeric(wb$worksheets[[1]]$sheet_data$cc$row_r))
+  got <- min(as_numeric(wb$worksheets[[1]]$sheet_data$cc$row_r))
   expect_equal(got, 2.0)
 
   expect_error(write_xlsx(df, start_row = -1), "start_row must be a positive integer")

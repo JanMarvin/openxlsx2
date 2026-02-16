@@ -778,7 +778,7 @@ write_workbook.xml.rels <- function(x, rm_sheet = NULL) {
 to_string <- function(x) {
   lbls <- attr(x, "labels")
   x_chr <- as.character(x)
-  x_num <- suppressWarnings(as.numeric(x_chr))
+  x_num <- suppressWarnings(as_numeric(x_chr))
 
   has_labels <- !is.null(lbls) && !is.null(names(lbls))
   used_label <- logical(length(x))
