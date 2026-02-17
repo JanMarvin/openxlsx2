@@ -33,10 +33,11 @@ exists_local <- function(x) {
 }
 
 df_1 <- function(df) {
+  if (NROW(df) == 0) return(df[1, , drop = FALSE])
   # faster than df[1, , drop = FALSE]
   l <- lapply(df, `[[`, 1)
   class(l) <- "data.frame"
-  attr(l, "row.names") <- c(NA, -1L)
+  attr(l, "row.names") <- c(NA_integer_, -1L)
   l
 }
 

@@ -131,6 +131,19 @@ test_that("wb_to_df", {
   exp <- data.frame(A = "S3A1", B = "S3B1", stringsAsFactors = FALSE)
   expect_equal(got, exp, ignore_attr = TRUE)
 
+  ## read blank cells and avoid warnings and errors
+  wb <- wb_workbook()$add_worksheet()$add_data(x = 1, col_names = FALSE)
+
+  exp <- structure(list(character(0), character(0)),
+                  names = c(NA_character_, NA_character_),
+                  row.names = integer(0), class = "data.frame")
+  got <- wb$to_df(dims = "D2:E5", skip_empty_rows = TRUE)
+  expect_equal(got, exp)
+
+  exp <- structure(list(), names = character(0), row.names = 3:5, class = "data.frame")
+  got <- wb$to_df(dims = "D2:E5", skip_empty_cols = TRUE)
+  expect_equal(got, exp)
+
 })
 
 

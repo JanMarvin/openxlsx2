@@ -778,7 +778,7 @@ wb_to_df <- function(
     tt_head <- df_1(tt)
 
     nams <- names(xlsx_cols_names)
-    if (convert)
+    if (convert && ncol(z))
       xlsx_cols_names <- convert_df(z_head, guess_col_type(tt_head), date_conv, datetime_conv, hms_conv, as_character = TRUE, col_names = TRUE)
     else
       xlsx_cols_names <- z_head
@@ -829,7 +829,7 @@ wb_to_df <- function(
   }
 
   # could make it optional or explicit
-  if (convert) {
+  if (convert && ncol(z)) {
     z <- convert_df(z, types, date_conv, datetime_conv, hms_conv)
 
     ## this reduces the difference to releases < 1.15. If in mixed columns
