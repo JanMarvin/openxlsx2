@@ -217,7 +217,7 @@ SEXP rbindlist(Rcpp::List x) {
     SEXP col = Rf_allocVector(STRSXP, nn);
     SET_VECTOR_ELT(df, j, col);
     cols[static_cast<size_t>(j)] = col;
-    col_names[j] = col_names_tmp[j];
+    col_names[j] = col_names_tmp[static_cast<size_t>(j)];
   }
 
   for (R_xlen_t i = 0; i < nn; ++i) {
@@ -601,9 +601,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
       R_xlen_t col_idx = static_cast<R_xlen_t>(col);
       R_xlen_t row_idx = static_cast<R_xlen_t>(row);
 
-      SET_STRING_ELT(z_cols[col_idx], row_idx, STRING_ELT(vals, i));
-      INTEGER(tt_cols[col_idx])[row_idx] = INTEGER(typs)[i];
-    }
+      SET_STRING_ELT(z_cols[static_cast<size_t>(col_idx)], row_idx, STRING_ELT(vals, i));
+      INTEGER(tt_cols[static_cast<size_t>(col_idx)])[row_idx] = INTEGER(typs)[i];}
   }
 }
 
