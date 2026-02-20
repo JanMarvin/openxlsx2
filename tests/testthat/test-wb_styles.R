@@ -1209,6 +1209,9 @@ test_that("special formatting works", {
   got <- apply_numfmt(123456789, "0.00E+00")
   expect_equal(got, "1.23E+08")
 
+  got <- apply_numfmt(359138592146, format_code = "0")
+  expect_equal(got, "359138592146")
+
 })
 
 test_that("", {
@@ -1538,6 +1541,32 @@ test_that("wb_set_col_widths() works", {
   wb$set_col_widths(cols = 2:8, width = 4)
 
   exp <- "<col min=\"2\" max=\"8\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+  df <- data.frame(
+    NUM = round(runif(157) * 10 ^ 12),
+    FOO = NA,
+    stringsAsFactors = FALSE
+  )
+
+  wb <- wb_workbook() |>
+    wb_add_worksheet() |>
+    wb_add_data_table(x = df, na = "") |>
+    wb_add_numfmt(dims = wb_dims(x = df, cols = "NUM", col_names = TRUE), numfmt = 1) |>
+    wb_set_col_widths(cols = 2, widths = "auto")
+
+  exp <- "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+  wb <- wb_workbook() |>
+    wb_add_worksheet() |>
+    wb_add_data_table(x = df, na = "") |>
+    wb_add_numfmt(dims = wb_dims(x = df, cols = "NUM", col_names = TRUE), numfmt = 1) |>
+    wb_set_col_widths(cols = 3:5, widths = "auto")
+
+  exp <- character()
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(got, exp)
 
