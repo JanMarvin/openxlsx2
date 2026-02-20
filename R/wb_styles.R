@@ -1844,7 +1844,7 @@ format_number <- function(value, format_code) {
       formatted_int <- ""
     } else {
       # Standard padding
-      formatted_int <- sprintf(paste0("%0", mandatory_int, "d"), as.integer(int_part_val))
+      formatted_int <- sprintf(paste0("%0", mandatory_int, ".0f"), as.numeric(int_part_val))
     }
 
     # Handle the fractional part
