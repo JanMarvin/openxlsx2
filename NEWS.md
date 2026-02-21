@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* Fix missing header for older clang
+
+
+***************************************************************************
+
 # openxlsx2 1.24
 
 ## New features
