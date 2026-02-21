@@ -1,7 +1,9 @@
-# Create sparklines object
+# Create a sparklines object
 
-Create a sparkline to be added a workbook with
-[`wb_add_sparklines()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_sparklines.md)
+`create_sparklines()` defines a set of sparklines. Compact, word-sized
+graphics that reside within a single cell. These are ideal for showing
+trends in a series of values, such as seasonal increases or decreases,
+or economic cycles, directly alongside the data.
 
 ## Usage
 
@@ -44,134 +46,127 @@ create_sparklines(
 
 - sheet:
 
-  sheet
+  The name of the worksheet where the data originates.
 
 - dims:
 
-  Cell range of cells used to create the sparklines
+  A character string defining the source data range (e.g., "A1:E1").
 
 - sqref:
 
-  Cell range of the destination of the sparklines.
+  A character string defining the destination cell(s) (e.g., "F1").
 
 - type:
 
-  Either `NULL`, `stacked` or `column`
+  The type of sparkline: `NULL` (line), `"column"`, or `"stacked"`.
 
 - negative:
 
-  negative
+  Logical; highlight negative data points.
 
 - display_empty_cells_as:
 
-  Either `gap`, `span` or `zero`
+  How to handle gaps in data: `"gap"`, `"span"` (connect points), or
+  `"zero"`.
 
 - markers:
 
-  markers add marker to line
+  Logical; highlight all data points (Line type only).
 
-- high:
+- high, low, first, last:
 
-  highlight highest value
+  Logical; highlight the maximum, minimum, first, or last data points in
+  the series.
 
-- low:
+- color_series, color_negative, color_axis, color_markers, color_first:
 
-  highlight lowest value
-
-- first:
-
-  highlight first value
-
-- last:
-
-  highlight last value
-
-- color_series:
-
-  colorSeries
-
-- color_negative:
-
-  colorNegative
-
-- color_axis:
-
-  colorAxis
-
-- color_markers:
-
-  colorMarkers
-
-- color_first:
-
-  colorFirst
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  objects defining the colors for various sparkline elements.
 
 - color_last:
 
-  colorLast
+  A
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  object for the color of the last point in the series.
 
 - color_high:
 
-  colorHigh
+  A
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  object for the color of the highest point in the series.
 
 - color_low:
 
-  colorLow
+  A
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  object for the color of the lowest point in the series.
 
-- manual_max:
+- manual_max, manual_min:
 
-  manualMax
-
-- manual_min:
-
-  manualMin
+  Numeric; optional fixed values for the y-axis.
 
 - line_weight:
 
-  lineWeight
+  Numeric; the thickness of the line (Line type only).
 
 - date_axis:
 
-  dateAxis
+  Logical; if `TRUE`, uses a date axis for the sparklines, allowing for
+  irregular time intervals between data points.
 
 - display_x_axis:
 
-  displayXAxis
+  Logical; show a horizontal axis.
 
 - display_hidden:
 
-  displayHidden
+  Logical; if `TRUE`, data in hidden rows or columns is plotted in the
+  sparkline.
 
-- min_axis_type:
+- min_axis_type, max_axis_type:
 
-  minAxisType
-
-- max_axis_type:
-
-  maxAxisType
+  Character; defines the scaling for the vertical axis. Options usually
+  include "individual" (default), "group", or "custom".
 
 - right_to_left:
 
-  rightToLeft
+  Logical; if `TRUE`, the sparkline is rendered from right to left.
 
 - direction:
 
-  Either `NULL`, `row` (or `1`) or `col` (or `2`). Should sparklines be
-  created in the row or column direction? Defaults to `NULL`. When
-  `NULL` the direction is inferred from `dims` in cases where `dims`
-  spans a single row or column and defaults to `row` otherwise.
+  The data orientation: `"row"` (default) or `"col"`. If `NULL`, the
+  function attempts to infer direction from the dimensions.
 
 - ...:
 
-  additional arguments
+  Additional arguments.
 
 ## Value
 
-A string containing XML code
+A character string containing the XML structure for the sparkline group.
 
 ## Details
 
-Colors are all predefined to be rgb. Maybe theme colors can be used too.
+Sparklines are added to a workbook in "groups." A group shares the same
+visual properties (type, colors, line weight, and axis settings). Within
+a group, multiple individual sparklines are defined by pairing a data
+range (`dims`) with a destination cell (`sqref`).
+
+Types of Sparklines:
+
+- `NULL` (Default): A standard line chart.
+
+- `"column"`: A small column chart.
+
+- `"stacked"`: Often referred to as a "Win/Loss" chart, where each data
+  point is represented by a block indicating a positive or negative
+  value.
+
+Directionality: The `direction` argument determines how the `dims` range
+is parsed. If you provide a multi-cell range like "A1:E10" as data for
+10 sparklines, `direction = "row"` will treat each row as a separate
+data series, while `direction = "col"` will treat each column as a
+series.
 
 ## Examples
 

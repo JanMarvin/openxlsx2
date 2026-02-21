@@ -131,10 +131,10 @@ wb_to_df(file, show_formula = TRUE)
 
 ### `dims` - read specific dimension
 
-Sometimes the entire worksheet contains to much data, in such case we
+Sometimes the entire worksheet contains too much data, in such case we
 provide functions to read only a selected dimension range. Such a range
 consists of either a specific cell like “A1” or a cell range in the
-notion used in the `openxml` standard
+notion used in the openxml standard
 
 ``` r
 # read dimension without column names
@@ -230,12 +230,13 @@ wb_to_df(file, convert = FALSE)
 
 Even though `openxlsx2` imports everything as requested, sometimes it
 might be helpful to remove empty lines from the data. These might be
-either left empty intentional or empty because they are were formatted,
-but the cell value was removed afterwards. This was added mostly for
-backward comparability, but the default has been changed to `FALSE`. The
-behavior has changed a bit as well. Previously empty cells were removed
-prior to the conversion to R data frames, now they are removed after the
-conversion and are removed only if they are completely empty
+either left empty intentionally or empty because they are were
+formatted, but the cell value was removed afterwards. This was added
+mostly for backward compatibility, but the default has been changed to
+`FALSE`. The behavior has changed a bit as well. Previously empty cells
+were removed prior to the conversion to R data frames, now they are
+removed after the conversion and are removed only if they are completely
+empty
 
 ``` r
 # erase empty rows from dataset
@@ -272,7 +273,7 @@ wb_to_df(file, skip_empty_cols = TRUE)
 ### `row_names` - keep rownames from input
 
 Sometimes the data source might provide rownames as well. In such a case
-you can `openxlsx2` to treat the first column as rowname
+you can tell `openxlsx2` to treat the first column as rowname
 
 ``` r
 # convert first row to rownames

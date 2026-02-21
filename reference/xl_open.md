@@ -1,22 +1,11 @@
-# Open an xlsx file or a `wbWorkbook` object
+# Open a file or workbook object in spreadsheet software
 
-This function tries to open a Microsoft Excel (xls/xlsx) file or, an
+`xl_open()` is a portable utility designed to open spreadsheet files
+(such as .xlsx or .xls) or
 [wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
-with the proper application, in a portable manner.
-
-On Windows it uses `base::shell.exec()` (Windows only function) to
-determine the appropriate program.
-
-On Mac, (c) it uses system default handlers, given the file type.
-
-On Linux, it searches (via `which`) for available xls/xlsx reader
-applications (unless `options('openxlsx2.excelApp')` is set to the app
-bin path), and if it finds anything, sets
-`options('openxlsx2.excelApp')` to the program chosen by the user via a
-menu (if many are present, otherwise it will set the only available).
-Currently searched for apps are Libreoffice/Openoffice (`soffice` bin),
-Gnumeric (`gnumeric`), Calligra Sheets (`calligrasheets`) and ONLYOFFICE
-(`onlyoffice-desktopeditors`).
+objects using the appropriate application based on the host operating
+system. It handles the nuances of background execution to ensure the R
+interpreter remains unblocked.
 
 ## Usage
 
@@ -34,21 +23,46 @@ xl_open(x, interactive = NA, flush = FALSE)
 
 - x:
 
-  A path to a spreadsheet file or wbWorkbook object. This can be any
-  file type that can be opened in the corresponding software.
+  A character string specifying the path to a spreadsheet file or a
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+  object.
 
 - interactive:
 
-  If `FALSE` will throw a warning and not open the path. This can be
-  manually set to `TRUE`, otherwise when `NA` (default) uses the value
-  returned from
-  [`base::interactive()`](https://rdrr.io/r/base/interactive.html)
+  Logical; if `FALSE`, the function will not attempt to launch the
+  application. Defaults to the result of
+  [`base::interactive()`](https://rdrr.io/r/base/interactive.html).
 
 - flush:
 
-  If `TRUE` the `flush` argument of
+  Logical; if `TRUE`, the workbook is written to the temporary location
+  using the stream-based XML parser. See
   [`wb_save()`](https://janmarvin.github.io/openxlsx2/reference/wb_save.md)
-  will be used to create the output file. Applies only to workbooks.
+  for details.
+
+## Details
+
+The method for identifying and launching the software varies by
+platform:
+
+**Windows** utilizes `shell.exec()` to trigger the file association
+registered with the operating system.
+
+**macOS** utilizes the system `open` command, which respects default
+application handlers for the file type. Users can override the default
+by setting `options("openxlsx2.excelApp")`.
+
+**Linux** attempts to locate common spreadsheet utilities in the system
+path, including LibreOffice (`soffice`), Gnumeric (`gnumeric`), Calligra
+Sheets (`calligrasheets`), and ONLYOFFICE (`onlyoffice-desktopeditors`).
+If multiple applications are found during an interactive session, a menu
+is presented to the user to define their preference, which is then
+stored in `options("openxlsx2.excelApp")`.
+
+For `wbWorkbook` objects, the function automatically clones the
+workbook, detects the presence of macros (VBA) to determine the
+appropriate temporary file extension, and saves the content to a
+temporary location before opening.
 
 ## Examples
 

@@ -1,6 +1,9 @@
-# Helper to create a color
+# Create a color object for workbook styling
 
-Creates a `wbColour` object.
+`wb_color()` is a helper function used to define colors for fonts,
+fills, borders, and other styling elements. It creates a `wbColour`
+object that encapsulates color information in a format compatible with
+the OpenXML specification.
 
 ## Usage
 
@@ -20,48 +23,89 @@ wb_color(
 
 - name:
 
-  A name of a color known to R either as name or RGB/ARGB/RGBA value.
+  A character string. Can be a standard R color name (e.g., `"red"`,
+  `"steelblue"`) or a hex value.
 
 - auto:
 
-  A boolean.
+  A logical value. If `TRUE`, the spreadsheet application determines the
+  color automatically (usually for text contrast).
 
 - indexed:
 
-  An indexed color value. This color has to be provided by the workbook.
+  An integer referencing a legacy indexed color value.
 
 - hex:
 
-  A rgb color a RGB/ARGB/RGBA hex value with or without leading "#".
+  A character string representing a hex color (e.g., `"FF0000"`).
+  Leading "#" is optional.
 
 - theme:
 
-  A zero based index referencing a value in the theme.
+  A zero-based integer index referencing a value in the workbook's theme
+  (usually 0-11).
 
 - tint:
 
-  A tint value applied. Range from -1 (dark) to 1 (light).
+  A numeric value between -1.0 (darkest) and 1.0 (lightest) to modify
+  the base color.
 
 - format:
 
-  A colour format, one of ARGB (default) or RGBA.
+  The alpha channel format for hex strings: `"ARGB"` (default) or
+  `"RGBA"`.
 
 ## Value
 
-a `wbColour` object
+A `wbColour` object (a named character vector).
 
 ## Details
 
-The **format** of the hex color representation can be either RGB, ARGB,
-or RGBA. These hex formats differ only in a way how they encode the
-transparency value alpha, ARGB expecting the alpha value before the RGB
-values (default in spreadsheets), RGBA expects the alpha value after the
-RGB values (default in R), and RGB is not encoding transparency at all.
-If the colors some from functions such as `adjustcolor` that provide
-color in the RGBA format, it is necessary to specify the
-`format = "RGBA"` when calling the `wb_color()` function.
+Colors in spreadsheets can be defined in several ways. This function
+standardizes those inputs into a single object.
+
+Hex Color Formats: Hexadecimal colors represent the intensity of Red,
+Green, and Blue. A major point of confusion is the Alpha (transparency)
+channel:
+
+- ARGB (Default): Spreadsheet software expects the Alpha value before
+  the RGB values (e.g., `FFFF0000` for solid red).
+
+- RGBA: R functions like
+  [`grDevices::adjustcolor()`](https://rdrr.io/r/grDevices/adjustcolor.html)
+  place the Alpha value after the RGB values (e.g., `FF0000FF` for solid
+  red).
+
+- Use the `format` argument to tell `wb_color()` how to interpret your
+  hex string if it includes transparency.
+
+Theme Colors: Instead of hard-coding a hex value, you can use `theme`.
+These are indices (0-based) referencing the workbook's theme palette
+(e.g., "Text 1", "Accent 1"). Using theme colors allows the
+spreadsheet's appearance to change automatically if the user changes the
+workbook theme.
+
+Tints: The `tint` parameter modifies a color's lightness. A value of
+`-0.25` darkens the color by 25%, while `0.5` lightens it by 50%.
 
 ## See also
 
-[`wb_get_base_colors()`](https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.md)
+[`wb_get_base_colors()`](https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.md),
 [`grDevices::colors()`](https://rdrr.io/r/grDevices/colors.html)
+
+## Examples
+
+``` r
+# Using standard R colors
+font_col <- wb_color("darkblue")
+
+# Using Hex values with Alpha
+bg_col <- wb_color(hex = "FFED7D31") # ARGB for orange
+
+# Using Theme colors with a tint (4th accent color, 40% lighter)
+theme_col <- wb_color(theme = 4, tint = 0.4)
+
+# Converting R-style RGBA to spreadsheet-style ARGB
+r_col <- adjustcolor("red", alpha.f = 0.5)
+xlsx_col <- wb_color(hex = r_col, format = "RGBA")
+```

@@ -1,7 +1,10 @@
 # Modify borders in a cell region of a worksheet
 
-wb wrapper to create borders for cell regions. Setting `update` to
-`NULL` removes the style and resets the cell to the workbook default.
+The `wb_add_border()` function provides a high-level interface for
+applying and managing cell borders within a `wbWorkbook`. It is designed
+to handle both single cells and multi-cell regions, with built-in logic
+to differentiate between exterior boundary borders and interior grid
+lines.
 
 ## Usage
 
@@ -34,45 +37,89 @@ wb_add_border(
 
 - wb:
 
-  A `wbWorkbook`
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  A worksheet
+  The name or index of the worksheet to modify. Defaults to the current
+  sheet.
 
 - dims:
 
-  Cell range in the worksheet e.g. "A1", "A1:A5", "A1:H5"
+  A character string defining the cell range (e.g., "A1", "B2:G10").
 
-- bottom_color, left_color, right_color, top_color, inner_hcolor,
-  inner_vcolor:
+- top_color, bottom_color, left_color, right_color:
 
-  a color, either something openxml knows or some RGB color
+  The colors for the exterior edges. Accepts
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  objects or hex codes.
 
-- left_border, right_border, top_border, bottom_border, inner_hgrid,
-  inner_vgrid:
+- top_border, bottom_border, left_border, right_border:
 
-  the border style, if `NULL` no border is drawn. See
-  [`create_border()`](https://janmarvin.github.io/openxlsx2/reference/create_border.md)
-  for possible border styles
+  The border style for the exterior edges of the range.
+
+- inner_hgrid, inner_vgrid:
+
+  The border style for internal horizontal and vertical grid lines
+  within a range.
+
+- inner_hcolor, inner_vcolor:
+
+  The colors for internal grid lines.
 
 - update:
 
-  Logical. Defaults to FALSE. If TRUE, and the border style includes
-  NULL entries, existing borders may be updated with new ones. When
-  overlapping cells (e.g., squares intersect), existing borders will be
-  preserved where possible.
+  Logical or `NULL`. If `TRUE`, updates existing borders. If `NULL`,
+  removes borders. If `FALSE` (default), overwrites existing styles with
+  the new definition.
 
-- diagonal_up, diagonal_down, diagonal_color:
+- diagonal_up, diagonal_down:
 
-  (optional) arguments for diagonal border lines. If set, up and down
-  must be a unique style (there can be only one) and the color must be a
+  Character string for the diagonal line style (e.g., "thin").
+
+- diagonal_color:
+
+  A
   [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
-  object
+  object for the diagonal lines.
 
 - ...:
 
-  additional arguments
+  Additional arguments.
+
+## Details
+
+When applied to a range of cells (e.g., "A1:C3"), `wb_add_border()`
+treats the selection as a single cohesive block. Parameters like
+`top_border` and `left_border` apply only to the outermost edges of the
+entire range. To draw lines between cells within the range, the
+`inner_hgrid` (horizontal) and `inner_vgrid` (vertical) arguments are
+used.
+
+The function supports all standard spreadsheet border styles (e.g.,
+"thin", "thick", "double", "dotted"). If `update = TRUE`, the function
+attempts to merge new border definitions with existing ones, preserving
+overlapping styles where possible. Setting `update = NULL` acts as a
+reset, removing all border styles from the specified `dims` and
+returning them to the workbook default.
+
+For specialized needs, diagonal borders can be added using `diagonal_up`
+and `diagonal_down`. Note that the OpenXML specification typically
+restricts a cell to a single diagonal line style.
+
+## Notes
+
+- The function internally partitions the `dims` range into nine zones
+  (corners, edges, and core) to apply the correct combination of
+  exterior and interior borders efficiently.
+
+- Color and style arguments must be paired; if a style is `NULL`, any
+  assigned color for that side will be ignored.
+
+- All border styles are registered in the workbook's global style
+  catalog to ensure XML consistency.
 
 ## See also
 

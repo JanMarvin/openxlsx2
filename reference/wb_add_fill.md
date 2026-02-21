@@ -1,7 +1,10 @@
 # Modify the background fill color in a cell region
 
-Add fill to a cell region. Setting `color` to `NULL` removes the style
-and resets the cell to the workbook default.
+The `wb_add_fill()` function applies background colors, patterns, or
+gradients to a specified cell region. It allows for high-precision
+styling, ranging from simple solid fills to complex geometric patterns
+and linear or path-based gradients compliant with the OpenXML
+specification.
 
 ## Usage
 
@@ -24,52 +27,79 @@ wb_add_fill(
 
 - wb:
 
-  a workbook
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  the worksheet
+  The name or index of the worksheet. Defaults to the current sheet.
 
 - dims:
 
-  the cell range
+  A character string defining the cell range (e.g., "A1:D10").
 
 - color:
 
-  the colors to apply, e.g. yellow: wb_color(hex = "FFFFFF00")
+  A
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  object or hex string representing the primary fill (foreground) color.
+  Defaults to yellow ("FFFFFF00").
 
 - pattern:
 
-  various default "none" but others are possible: "solid", "mediumGray",
-  "darkGray", "lightGray", "darkHorizontal", "darkVertical", "darkDown",
-  "darkUp", "darkGrid", "darkTrellis", "lightHorizontal",
-  "lightVertical", "lightDown", "lightUp", "lightGrid", "lightTrellis",
-  "gray125", "gray0625"
+  Character; the pattern type. Common values include "solid",
+  "mediumGray", "lightGray", "darkGrid", and "lightTrellis". Defaults to
+  "solid".
 
 - gradient_fill:
 
-  a gradient fill xml pattern.
+  An optional XML string defining a gradient fill pattern. If provided,
+  this overrides `color` and `pattern`.
 
-- every_nth_col:
+- every_nth_col, every_nth_row:
 
-  which col should be filled
-
-- every_nth_row:
-
-  which row should be filled
+  Numeric; applies the fill only to every \$n\$-th column or row within
+  the specified `dims`. Useful for banding.
 
 - bg_color:
 
-  (optional) background
+  An optional
   [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  for the background of a patterned fill.
 
 - ...:
 
-  ...
+  Additional arguments.
 
 ## Value
 
+The
+[wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+object, invisibly.
+
 The `wbWorkbook` object, invisibly
+
+## Details
+
+Background fills in spreadsheet software consist of a pattern type (the
+most common being "solid") and a foreground color. If a non-solid
+pattern is chosen (e.g., "darkVertical"), an optional `bg_color` can be
+specified to create a two-tone effect.
+
+The function also includes built-in logic for "nth" selection, which is
+particularly useful for manual "zebra-striping" or creating grid-like
+visual patterns without needing to manually construct a complex vector
+of cell addresses.
+
+Gradients: For advanced visual effects, `gradient_fill` accepts raw XML
+strings defining `<gradientFill>` nodes. These can specify `degree` (for
+linear gradients) or `type="path"` (for radial-style gradients) along
+with multiple color stops.
+
+Style Removal: Setting `color = NULL` removes the fill style from the
+specified region, reverting the cells to the workbook's default
+transparent background.
 
 ## See also
 

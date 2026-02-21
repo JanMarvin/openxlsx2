@@ -263,7 +263,7 @@ It is possible to add new sheets and remove sheets, as well as to add or
 remove data. R-plots can be inserted and also the style of the workbook
 can be changed, new fonts, background colors and number formats. There
 is a wealth of options explained in the man pages and the additional
-style vignette (more vignettes to follow).
+style vignette.
 
 ## Exporting data
 

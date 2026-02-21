@@ -88,7 +88,7 @@ vector, unless specified otherwise.
   [`wb_get_thread()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_thread.md)
   : Add threaded comments to a cell in a worksheet
 - [`wb_freeze_pane()`](https://janmarvin.github.io/openxlsx2/reference/wb_freeze_pane.md)
-  : Freeze pane of a worksheet
+  : Freeze panes of a worksheet
 - [`wb_merge_cells()`](https://janmarvin.github.io/openxlsx2/reference/wb_merge_cells.md)
   [`wb_unmerge_cells()`](https://janmarvin.github.io/openxlsx2/reference/wb_merge_cells.md)
   : Merge cells within a worksheet
@@ -101,11 +101,11 @@ Add images or Excel charts to a worksheet with the mschart package. See
 - [`wb_add_image()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_image.md)
   : Insert an image into a worksheet
 - [`wb_add_plot()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_plot.md)
-  : Insert the current plot into a worksheet
+  : Insert the current R plot into a worksheet
 - [`wb_add_chartsheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_chartsheet.md)
   : Add a chartsheet to a workbook
 - [`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.md)
-  : Add mschart object to a worksheet
+  : Add an mschart object to a worksheet
 
 ## Style a workbook
 
@@ -123,7 +123,7 @@ Add styling to a cell region in a worksheet
 - [`wb_add_fill()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_fill.md)
   : Modify the background fill color in a cell region
 - [`wb_add_font()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_font.md)
-  : Modify font in a cell region
+  : Modify font properties in a cell region
 - [`wb_add_named_style()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_named_style.md)
   : Apply styling to a cell region with a named style
 - [`wb_add_numfmt()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_numfmt.md)
@@ -131,7 +131,7 @@ Add styling to a cell region in a worksheet
 - [`wb_get_cell_style()`](https://janmarvin.github.io/openxlsx2/reference/wb_cell_style.md)
   [`wb_set_cell_style()`](https://janmarvin.github.io/openxlsx2/reference/wb_cell_style.md)
   [`wb_set_cell_style_across()`](https://janmarvin.github.io/openxlsx2/reference/wb_cell_style.md)
-  : Apply styling to a cell region
+  : Get or set cell style indices
 
 ### Workbook styling
 
@@ -141,9 +141,9 @@ These styling functions apply formatting to the workbook globally.
   [`wb_get_base_font()`](https://janmarvin.github.io/openxlsx2/reference/base_font-wb.md)
   : Set the default font in a workbook
 - [`wb_add_dxfs_style()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_dxfs_style.md)
-  : Set a dxfs styling for the workbook
+  : Set a dxfs style for the workbook
 - [`wb_add_style()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_style.md)
-  : Set the default style in a workbook
+  : Register a style in a workbook
 - [`wb_set_base_colors()`](https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.md)
   [`wb_get_base_colors()`](https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.md)
   : Set the default colors in a workbook
@@ -154,15 +154,11 @@ Visualize the content of a workbook in a spreadsheet software and save
 it
 
 - [`wb_open()`](https://janmarvin.github.io/openxlsx2/reference/wb_open.md)
-  : Preview a workbook in a spreadsheet software
-
+  : Preview a workbook in spreadsheet software
 - [`wb_save()`](https://janmarvin.github.io/openxlsx2/reference/wb_save.md)
   : Save a workbook to file
-
 - [`xl_open()`](https://janmarvin.github.io/openxlsx2/reference/xl_open.md)
-  :
-
-  Open an xlsx file or a `wbWorkbook` object
+  : Open a file or workbook object in spreadsheet software
 
 ## Edit workbook defaults
 
@@ -215,7 +211,7 @@ helpful with editing a workbook. They are useful when you add content,
 styling or you want to modify certain elements.
 
 - [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
-  : Helper to create a color
+  : Create a color object for workbook styling
 
 - [`wb_comment()`](https://janmarvin.github.io/openxlsx2/reference/wb_comment.md)
   : Helper to create a comment object
@@ -259,7 +255,7 @@ styling or you want to modify certain elements.
   : Helper to create a shape
 
 - [`create_sparklines()`](https://janmarvin.github.io/openxlsx2/reference/create_sparklines.md)
-  : Create sparklines object
+  : Create a sparklines object
 
 - [`create_tablestyle()`](https://janmarvin.github.io/openxlsx2/reference/create_tablestyle.md)
   [`create_pivottablestyle()`](https://janmarvin.github.io/openxlsx2/reference/create_tablestyle.md)
@@ -286,14 +282,14 @@ These functions can be used to achieve more specialized operations.
 - [`wb_add_form_control()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_form_control.md)
   : Add a checkbox, radio button or drop menu to a cell in a worksheet
 - [`wb_add_ignore_error()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_ignore_error.md)
-  : Ignore error types on worksheet
+  : Ignore error types on a worksheet
 - [`wb_add_page_break()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_page_break.md)
   : Add a page break to a worksheet
 - [`wb_add_mips()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mips.md)
   [`wb_get_mips()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mips.md)
   : wb get and apply MIP section
 - [`wb_clean_sheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_clean_sheet.md)
-  : Remove all values in a worksheet
+  : Clear content and formatting from a worksheet
 - [`wb_clone_sheet_style()`](https://janmarvin.github.io/openxlsx2/reference/wb_clone_sheet_style.md)
   : Apply styling from a sheet to another within a workbook
 - [`wb_clone_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_clone_worksheet.md)
@@ -342,10 +338,10 @@ A curated list of XML functions used in openxlsx2.
 ### Other helpers
 
 - [`int2col()`](https://janmarvin.github.io/openxlsx2/reference/int2col.md)
-  : Convert integer to spreadsheet column
+  : Convert integers to spreadsheet column notation
 
 - [`col2int()`](https://janmarvin.github.io/openxlsx2/reference/col2int.md)
-  : Convert spreadsheet column to integer
+  : Convert spreadsheet column notation to integers
 
 - [`fmt_txt()`](https://janmarvin.github.io/openxlsx2/reference/fmt_txt.md)
   [`` `+`( ``*`<fmt_txt>`*`)`](https://janmarvin.github.io/openxlsx2/reference/fmt_txt.md)

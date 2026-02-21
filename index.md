@@ -136,7 +136,7 @@ if (interactive()) wb$open()
 ## Authors and contributions
 
 For a full list of all authors that have made this package possible and
-for whom we are greatful, please see:
+for whom we are grateful, please see:
 
 ``` r
 system.file("AUTHORS", package = "openxlsx2")

@@ -1,7 +1,9 @@
 # Add a chartsheet to a workbook
 
-A chartsheet is a special type of sheet that handles charts output. You
-must add a chart to the sheet. Otherwise, this will break the workbook.
+The `wb_add_chartsheet()` function appends a specialized chartsheet to a
+`wbWorkbook` object. Unlike standard worksheets, which contain a grid of
+cells, a chartsheet is dedicated exclusively to the display of a single,
+full-page chart.
 
 ## Usage
 
@@ -20,36 +22,54 @@ wb_add_chartsheet(
 
 - wb:
 
-  A Workbook object to attach the new chartsheet
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+  object to which the new chartsheet will be attached.
 
 - sheet:
 
-  A name for the new chartsheet
+  A character string for the chartsheet name. Defaults to a sequentially
+  generated name (e.g., "Sheet 1").
 
 - tab_color:
 
-  Color of the sheet tab. A
-  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md),
-  a valid color (belonging to
-  [`grDevices::colors()`](https://rdrr.io/r/grDevices/colors.html)) or a
-  valid hex color beginning with "#".
+  The color of the sheet tab. Accepts a
+  [`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+  object, a standard R color name, or a hex color code.
 
 - zoom:
 
-  The sheet zoom level, a numeric between 10 and 400 as a percentage. (A
-  zoom value smaller than 10 will default to 10.)
+  The zoom level as a percentage; a numeric value between 10 and 400.
 
 - visible:
 
-  If `FALSE`, sheet is hidden else visible.
+  The visibility state of the sheet. Options include "visible",
+  "hidden", or "veryHidden".
 
 - ...:
 
-  Additional arguments
+  Additional arguments passed to internal configuration methods.
+
+## Details
+
+A chartsheet is a distinct sheet type in the OpenXML specification. It
+does not support standard cell data, grid lines, or typical worksheet
+features. Its primary purpose is to provide a high-level, focused view
+of a graphical representation.
+
+**Important:** A chartsheet must contain a chart object to be valid.
+Adding a chartsheet without subsequently attaching a chart via
+[`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.md)
+will result in a corrupt workbook that may fail to open in spreadsheet
+software.
+
+Like standard worksheets, chartsheets support visual customization such
+as `tab_color`, `zoom` levels, and various `visible` states.
 
 ## See also
 
-[`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.md)
+[`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.md),
+[`wb_add_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.md)
 
 Other workbook wrappers:
 [`base_font-wb`](https://janmarvin.github.io/openxlsx2/reference/base_font-wb.md),

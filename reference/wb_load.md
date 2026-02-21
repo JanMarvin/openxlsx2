@@ -81,7 +81,7 @@ place. This parsing into pseudo xml files is of course slower than
 reading directly from the binary file. Our implementation is also still
 missing some functions: some array formulas are not yet correct,
 conditional formatting and data validation are not implemented, nor are
-pivot tables and slicers.
+pivot tables and slicers. Support is limited to little endian platforms.
 
 The loaded workbook provides a finalizer that will be invoked after the
 first [`gc()`](https://rdrr.io/r/base/gc.html) call and will cause

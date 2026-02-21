@@ -1,9 +1,14 @@
-# Insert the current plot into a worksheet
+# Insert the current R plot into a worksheet
 
-The current plot is saved to a temporary image file using
-[`grDevices::dev.copy()`](https://rdrr.io/r/grDevices/dev2.html) This
-file is then written to the workbook using
-[`wb_add_image()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_image.md).
+The
+[`wb_add_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_worksheet.md)
+function captures the active R graphics device and embeds the displayed
+plot into a worksheet. This is achieved by copying the current plot to a
+temporary image file via
+[`grDevices::dev.copy()`](https://rdrr.io/r/grDevices/dev2.html) and
+subsequently invoking
+[`wb_add_image()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_image.md)
+to handle the workbook integration.
 
 ## Usage
 
@@ -27,43 +32,66 @@ wb_add_plot(
 
 - wb:
 
-  A workbook object
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  A name or index of a worksheet
+  The name or index of the worksheet where the plot will be inserted.
+  Defaults to the current sheet.
 
 - dims:
 
-  Worksheet dimension, single cell ("A1") or cell range ("A1:D4")
+  A character string defining the anchor point or range (e.g., "A1" or
+  "A1:D4").
 
-- width:
+- width, height:
 
-  Width of figure. Defaults to `6` in.
-
-- height:
-
-  Height of figure . Defaults to `4` in.
+  The numeric dimensions of the exported plot. Defaults to 6x4 inches.
 
 - row_offset, col_offset:
 
-  Offset for column and row
+  Numeric vectors for sub-cell positioning offsets.
 
 - file_type:
 
-  File type of image
+  The image format for the temporary capture. Supported types include
+  `"png"`, `"jpeg"`, `"tiff"`, and `"bmp"`.
 
 - units:
 
-  Units of width and height. Can be `"in"`, `"cm"` or `"px"`
+  The measurement units for `width` and `height`. Must be one of `"in"`,
+  `"cm"`, or `"px"`.
 
 - dpi:
 
-  Image resolution
+  The resolution in dots per inch for the image conversion.
 
 - ...:
 
-  additional arguments
+  Additional arguments. Supports the deprecated `start_row` and
+  `start_col` parameters for backward compatibility.
+
+## Details
+
+Because this function relies on the active graphics device, a plot must
+be currently displayed in the R session (e.g., in the Plots pane or a
+separate window) for the capture to succeed. The function supports
+various file formats for the intermediate transition, including `"png"`,
+`"jpeg"`, `"tiff"`, and `"bmp"`.
+
+Positioning is managed through the spreadsheet coordinate system. Using
+a single cell in `dims` (e.g., "A1") establishes a one-cell anchor where
+the plot maintains its absolute dimensions. Providing a range (e.g.,
+"A1:E10") creates a two-cell anchor, which may result in the plot
+resizing if columns or rows within that range are adjusted in
+spreadsheet software.
+
+For programmatic control over the output quality, the `dpi` argument
+influences the resolution of the captured device. Users working with
+high-resolution displays or requiring print-quality outputs should
+adjust the `dpi` and `units` accordingly.
 
 ## See also
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.23.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.24</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,9 +44,34 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.23.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.24" id="openxlsx2-124">openxlsx2 1.24<a class="anchor" aria-label="anchor" href="#openxlsx2-124"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-24">New features<a class="anchor" aria-label="anchor" href="#new-features-1-24"></a></h3>
+<ul><li>Provide new SHA base password hash based on <code>openssl</code>. This will be used if <code>openssl</code> is installed, otherwise the legacy implementation will be used. <a href="https://github.com/JanMarvin/openxlsx2/pull/1538" class="external-link">#1538</a>
+</li>
+<li>Add <code>path</code> argument to <code><a href="../reference/xml_attr_mod.html">xml_attr_mod()</a></code>. This allows changing the attribute of an XML node nested deeper in code.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-24">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-24"></a></h3>
+<ul><li>In certain environments a zip tool is available via <code>Sys.which("zip")</code>, but <code>Sys.getenv("R_ZIPCMD")</code> is not configured. When writing, we would detect the first and continue trying <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code>, but never passed <code>Sys.which("zip")</code>. This has been corrected. <a href="https://github.com/JanMarvin/openxlsx2/pull/1533" class="external-link">#1533</a>
+</li>
+<li>Fix reading uninitialized cells <a href="https://github.com/JanMarvin/openxlsx2/pull/1546" class="external-link">#1546</a>
+</li>
+<li>Various changes to comment and thread handling code</li>
+<li>Fixed immediate <code>finalize()</code> calls after <code><a href="../reference/wb_load.html">wb_load()</a></code> <a href="https://github.com/JanMarvin/openxlsx2/pull/1576" class="external-link">#1576</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-1-24">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-24"></a></h3>
+<ul><li>Cleanup and remove <code>waldo</code> from <code>testthat</code> helper functions</li>
+<li>Update many manual pages</li>
+<li>Cleanups for consistency in internal XML handler code</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.23.1" id="openxlsx2-1231">openxlsx2 1.23.1<a class="anchor" aria-label="anchor" href="#openxlsx2-1231"></a></h2><p class="text-muted">CRAN release: 2026-01-19</p>
 <div class="section level3">
@@ -658,7 +683,7 @@ Users that want to remain on the old style should use <code>wb_workbook(theme = 
 <code>width</code> and <code>height</code> must now be of length 1. (In <code><a href="../reference/create_comment.html">create_comment()</a></code>, the first element is taken, other are ignored.)</li>
 </ul></li>
 <li><p><code><a href="../reference/sheet_names-wb.html">wb_get_sheet_names()</a></code> gains a <code>escape</code> argument to allow special XML characters to be escaped. <a href="https://github.com/JanMarvin/openxlsx2/issues/252" class="external-link">252</a></p></li>
-<li><p><code><a href="../reference/wb_color.html">wb_color()</a></code> now accepts hex colors with leading sharp (e.g. “#FFFFF”) <a href="https://github.com/JanMarvin/openxlsx2/pull/728" class="external-link">728</a>.</p></li>
+<li><p><code><a href="../reference/wb_color.html">wb_color()</a></code> now accepts hex colors with leading sharp (e.g. “#FFFFFF”) <a href="https://github.com/JanMarvin/openxlsx2/pull/728" class="external-link">728</a>.</p></li>
 <li><p><code><a href="../reference/wb_merge_cells.html">wb_merge_cells()</a></code> gains a <code>solve</code> argument. This allows to solve cell intersecting regions. <a href="https://github.com/JanMarvin/openxlsx2/pull/733" class="external-link">733</a></p></li>
 <li><p><code>wb_add_comment(comment = "x")</code> no longer errors when a comment as a character vector no longer fails (<a href="https://github.com/JanMarvin/openxlsx2/pull/758" class="external-link">758</a>, <a href="https://github.com/olivroy" class="external-link">@olivroy</a>)</p></li>
 </ul></div>

@@ -101,6 +101,8 @@ wb$add_worksheet("add_drawing")$
 
 }
 #> Loading required namespace: rvg
+#> Warning: Font families not found on this system and replaced by defaults:
+#> "sans". Use gdtools::font_family_exists() to check availability.
 ```
 
 ### Add `{mschart}` plots

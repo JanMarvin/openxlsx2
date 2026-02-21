@@ -1,6 +1,9 @@
 # Modify the style in a cell region
 
-Add cell style to a cell region
+The `wb_add_cell_style()` function provides direct access to the
+cell-level formatting record (the `xf` node) within a `wbWorkbook`. It
+is primarily used to control text alignment (horizontal and vertical),
+text rotation, indentation, and cell protection (locking and hiding).
 
 ## Usage
 
@@ -42,125 +45,134 @@ wb_add_cell_style(
 
 - wb:
 
-  a workbook
+  A
+  [wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+  object.
 
 - sheet:
 
-  the worksheet
+  The name or index of the worksheet. Defaults to the current sheet.
 
 - dims:
 
-  the cell range
+  A character string defining the cell range (e.g., "A1:K1").
 
-- apply_alignment:
+- apply_alignment, apply_font, apply_fill, apply_border,
+  apply_number_format, apply_protection:
 
-  logical apply alignment
-
-- apply_border:
-
-  logical apply border
-
-- apply_fill:
-
-  logical apply fill
-
-- apply_font:
-
-  logical apply font
-
-- apply_number_format:
-
-  logical apply number format
-
-- apply_protection:
-
-  logical apply protection
-
-- border_id:
-
-  border ID to apply
+  Logical; explicitly flags whether the spreadsheet software should
+  apply the corresponding style category.
 
 - ext_lst:
 
-  extension list something like `<extLst>...</extLst>`
+  Character; an optional XML string containing an extension list
+  (`<extLst>`) for the cell style.
 
-- fill_id:
+- font_id, fill_id, border_id, num_fmt_id:
 
-  fill ID to apply
-
-- font_id:
-
-  font ID to apply
+  Optional; direct integer IDs referencing existing style sub-nodes.
 
 - hidden:
 
-  logical cell is hidden
+  Logical; if `TRUE`, formulas are hidden when the sheet is protected.
 
 - horizontal:
 
-  align content horizontal ('general', 'left', 'center', 'right',
-  'fill', 'justify', 'centerContinuous', 'distributed')
+  Horizontal alignment. One of "general", "left", "center", "right",
+  "fill", "justify", "centerContinuous", or "distributed".
 
 - indent:
 
-  logical indent content
+  Numeric; the indentation level for the cell content.
 
 - justify_last_line:
 
-  logical justify last line
+  Logical; if `TRUE`, justifies the last line of text within the cell
+  (useful for distributed alignment).
 
 - locked:
 
-  logical cell is locked
-
-- num_fmt_id:
-
-  number format ID to apply
+  Logical; if `TRUE`, the cell cannot be edited when the sheet is
+  protected.
 
 - pivot_button:
 
-  unknown
+  Logical; indicates if a pivot button should be displayed for the cell.
 
 - quote_prefix:
 
-  unknown
+  Logical; if `TRUE`, a single quote prefix is displayed in the formula
+  bar but not the cell itself (often used for numbers stored as text).
 
 - reading_order:
 
-  reading order left to right
+  Integer; the reading order for the cell content (e.g., 1 for
+  Left-to-Right, 2 for Right-to-Left).
 
 - relative_indent:
 
-  relative indentation
+  Integer; the relative indentation level.
 
 - shrink_to_fit:
 
-  logical shrink to fit
+  Logical; automatically reduces font size to fit the column width.
 
 - text_rotation:
 
-  degrees of text rotation
+  Degrees of rotation (0 to 180).
 
 - vertical:
 
-  vertical alignment of content ('top', 'center', 'bottom', 'justify',
-  'distributed')
+  Vertical alignment. One of "top", "center", "bottom", "justify", or
+  "distributed".
 
 - wrap_text:
 
-  wrap text in cell
+  Logical; enables line wrapping within the cell.
 
 - xf_id:
 
-  xf ID to apply
+  Integer; a direct reference to a master style (XF) ID in the style
+  catalog.
 
 - ...:
 
-  additional arguments
+  Additional arguments.
 
 ## Value
 
+The
+[wbWorkbook](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
+object, invisibly.
+
 The `wbWorkbook` object, invisibly
+
+## Details
+
+While functions like
+[`wb_add_font()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_font.md)
+or
+[`wb_add_fill()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_fill.md)
+target specific sub-nodes of a style, `wb_add_cell_style()` manages the
+properties that govern how content is positioned within the cell
+boundaries and how it behaves when a worksheet is protected.
+
+This function also allows for the direct assignment of style element IDs
+(e.g., `font_id`, `fill_id`). This is an advanced feature that allows
+users to map pre-existing styles in the workbook's style catalog to
+specific cells.
+
+Alignment and Text Control: Options such as `wrap_text`,
+`shrink_to_fit`, and `text_rotation` are essential for managing
+high-density data or creating stylized headers. The `text_rotation`
+parameter accepts values in degrees (0–180), where values above 90
+represent downward-slanting text.
+
+Protection: The `locked` and `hidden` parameters only take effect when
+worksheet protection is enabled (see
+[`wb_protect_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_protect_worksheet.md)).
+By default, all cells in a spreadsheet are "locked," but this has no
+impact until the sheet is protected.
 
 ## See also
 
