@@ -18,7 +18,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/v1.24/inst/CITATION)
 
 (2026). openxlsx2: Read, Write and Edit 'xlsx' Files. R package version
 1.24. URL https://github.com/JanMarvin/openxlsx2.
