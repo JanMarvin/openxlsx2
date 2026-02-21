@@ -585,12 +585,12 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
 
   // Cache all column vectors to avoid repeated coercion
   R_xlen_t num_cols = z.size();
-  std::vector<Rcpp::CharacterVector> z_cols(static_cast<size_t>(num_cols));
-  std::vector<Rcpp::IntegerVector> tt_cols(static_cast<size_t>(num_cols));
+  std::vector<SEXP> z_cols(static_cast<size_t>(num_cols));
+  std::vector<int*> tt_cols(static_cast<size_t>(num_cols));
 
   for (R_xlen_t j = 0; j < num_cols; ++j) {
     z_cols[static_cast<size_t>(j)] = z[j];
-    tt_cols[static_cast<size_t>(j)] = tt[j];
+    tt_cols[static_cast<size_t>(j)] = INTEGER(SEXP(tt[j]));
   }
 
   for (R_xlen_t i = 0; i < n; ++i) {
@@ -602,7 +602,8 @@ void long_to_wide(Rcpp::DataFrame z, Rcpp::DataFrame tt, Rcpp::DataFrame zz) {
       R_xlen_t row_idx = static_cast<R_xlen_t>(row);
 
       SET_STRING_ELT(z_cols[static_cast<size_t>(col_idx)], row_idx, STRING_ELT(vals, i));
-      INTEGER(tt_cols[static_cast<size_t>(col_idx)])[row_idx] = INTEGER(typs)[i];}
+      tt_cols[static_cast<size_t>(col_idx)][row_idx] = typs[i];
+    }
   }
 }
 

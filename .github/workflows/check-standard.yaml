@@ -46,7 +46,7 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-            rvg=?source
+            ${{ (matrix.config.r == '4.1') && 'rvg=?source' || '' }}
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
