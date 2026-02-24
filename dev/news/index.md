@@ -2,6 +2,16 @@
 
 ## openxlsx2 (development version)
 
+### Fixes
+
+- Fix missing header for older clang
+
+------------------------------------------------------------------------
+
+## openxlsx2 1.24
+
+CRAN release: 2026-02-21
+
 ### New features
 
 - Provide new SHA base password hash based on `openssl`. This will be
