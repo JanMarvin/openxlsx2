@@ -1381,9 +1381,19 @@ test_that("wb_add_image() is cleaned up", {
 
   fl <- wb$media[[1]]
   expect_true(file.exists(fl))
+
+  sheets <- wb$clone()$get_sheet_names()
+  gc()
+  expect_true(file.exists(fl))
+
+  sheets <- wb$clone(deep = TRUE)$get_sheet_names()
+  gc()
+  expect_true(file.exists(fl))
+
   rm(wb)
   gc()
   expect_false(file.exists(fl))
+
 })
 
 test_that("incomplete types work and character types work as well", {

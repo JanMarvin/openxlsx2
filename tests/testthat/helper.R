@@ -3,7 +3,11 @@ expect_equal_workbooks <- function(object, expected, ..., ignore_fields = NULL) 
   assert_workbook(expected)
 
   # Check for invalid fields
-  fields <- c(names(wbWorkbook$public_fields), names(wbWorkbook$private_fields))
+  fields <- c(
+    names(wbWorkbook$public_fields),
+    names(wbWorkbook$private_fields),
+    names(wbWorkbook$active)
+  )
   bad_fields <- setdiff(ignore_fields, fields)
   if (length(bad_fields)) stop("Invalid fields: ", toString(bad_fields))
 
@@ -13,7 +17,7 @@ expect_equal_workbooks <- function(object, expected, ..., ignore_fields = NULL) 
     expected[[i]] <- NULL
   }
 
-  diffs <- all.equal(object, expected, ...)
+  diffs <- all.equal(object, expected, check.environment = FALSE, ...)
 
   if (!isTRUE(diffs)) {
     testthat::fail(paste(diffs, collapse = "\n"))
