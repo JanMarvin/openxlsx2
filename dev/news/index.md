@@ -5,6 +5,9 @@
 ### Fixes
 
 - Fix missing header for older clang
+- Fixed `finalize()` calls after `clone()` and `clone(deep = TRUE)`.
+  [\#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug
+  report as the previous fix for `finalize()`.)
 
 ------------------------------------------------------------------------
 
@@ -31,18 +34,18 @@ CRAN release: 2026-02-21
   [`utils::zip()`](https://rdrr.io/r/utils/zip.html), but never passed
   `Sys.which("zip")`. This has been corrected.
   [\#1533](https://github.com/JanMarvin/openxlsx2/pull/1533)
-- Fix reading uninitialized cells
+- Fix reading uninitialized cells.
   [\#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
-- Various changes to comment and thread handling code
+- Various changes to comment and thread handling code.
 - Fixed immediate `finalize()` calls after
-  [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md)
+  [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md).
   [\#1576](https://github.com/JanMarvin/openxlsx2/pull/1576)
 
 ### Internal Changes
 
-- Cleanup and remove `waldo` from `testthat` helper functions
-- Update many manual pages
-- Cleanups for consistency in internal XML handler code
+- Cleanup and remove `waldo` from `testthat` helper functions.
+- Update many manual pages.
+- Cleanups for consistency in internal XML handler code.
 
 ------------------------------------------------------------------------
 
