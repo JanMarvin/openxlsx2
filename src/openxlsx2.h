@@ -1,6 +1,8 @@
 #ifndef OPENXLSX2_H
 #define OPENXLSX2_H
 
+#include <array>
+
 #include "openxlsx2_types.h"
 
 #define MAX_OOXML_COL_INT 16384
