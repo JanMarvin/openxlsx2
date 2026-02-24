@@ -3,6 +3,7 @@
 ## Fixes
 
 * Fix missing header for older clang
+* Fixed `finalize()` calls after `clone()` and `clone(deep = TRUE)`. [#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug report as the previous fix for `finalize()`.)
 
 
 ***************************************************************************
@@ -17,15 +18,15 @@
 ## Fixes
 
 * In certain environments a zip tool is available via `Sys.which("zip")`, but `Sys.getenv("R_ZIPCMD")` is not configured. When writing, we would detect the first and continue trying `utils::zip()`, but never passed `Sys.which("zip")`. This has been corrected. [#1533](https://github.com/JanMarvin/openxlsx2/pull/1533)
-* Fix reading uninitialized cells [#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
-* Various changes to comment and thread handling code
-* Fixed immediate `finalize()` calls after `wb_load()` [#1576](https://github.com/JanMarvin/openxlsx2/pull/1576)
+* Fix reading uninitialized cells. [#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
+* Various changes to comment and thread handling code.
+* Fixed immediate `finalize()` calls after `wb_load()`. [#1576](https://github.com/JanMarvin/openxlsx2/pull/1576)
 
 ## Internal Changes
 
-* Cleanup and remove `waldo` from `testthat` helper functions
-* Update many manual pages
-* Cleanups for consistency in internal XML handler code
+* Cleanup and remove `waldo` from `testthat` helper functions.
+* Update many manual pages.
+* Cleanups for consistency in internal XML handler code.
 
 
 ***************************************************************************
@@ -49,7 +50,7 @@
 * The argument `na` replaces `na.strings` and `na.numbers` in read and write functions. Per default this is either a waiver in write functions or a character vector in read functions. If strings and numbers should be passed to a read function `na = list(strings = ..., numbers = ...)` should be used. In addition a matching option was added `option("openxlsx2.na")`. The previous default values and option remain for the foreseeable future. [#1499](https://github.com/JanMarvin/openxlsx2/pull/1499)
 * It is now possible to apply numeric formats via `wb_to_df(apply_numfmts = TRUE)` to preview numeric formats. The function is still experimental and incomplete. There is limited support for builtin styles. But this should improve setting the automatic column width for worksheets with numeric styles. [#1501](https://github.com/JanMarvin/openxlsx2/pull/1501)
 * Removal of `border`, `fill`, `font` and `numfmt` is possible setting these to `NULL`. [#1511](https://github.com/JanMarvin/openxlsx2/pull/1511)
-* Extend conditional formatting for databars.  ([#1523](https://github.com/JanMarvin/openxlsx2/pull/1523), @balthasars)
+* Extend conditional formatting for databars. ([#1523](https://github.com/JanMarvin/openxlsx2/pull/1523), @balthasars)
 
 ## Fixes
 
