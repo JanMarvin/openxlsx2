@@ -79,6 +79,22 @@ worksheet_lock_properties <- function() {
   )
 }
 
+## handle the files
+TempDirManager <- R6::R6Class("TempDirManager",
+  public = list(
+    path = NULL,
+    initialize = function(path) {
+      self$path <- path
+    }
+  ),
+  private = list(
+    finalize = function() {
+      if (!is.null(self$path) && dir.exists(self$path)) {
+        unlink(self$path, recursive = TRUE)
+      }
+    }
+  )
+)
 
 # R6 class ----------------------------------------------------------------
 # Lines 7 and 8 are needed until r-lib/roxygen2#1504 is fixed
@@ -145,6 +161,24 @@ wbWorkbook <- R6::R6Class(
   "wbWorkbook",
 
   # TODO which can be private?
+
+  ## active ----
+
+  active = list(
+    tmpDir = function(value) {
+      if (missing(value)) {
+        return(private$.tmpDir)
+      }
+
+      private$.tmpDir <- value
+
+      if (!is.null(value)) {
+        private$.dir_manager <- TempDirManager$new(value)
+      } else {
+        private$.dir_manager <- NULL
+      }
+    }
+  ),
 
   ## public ----
 
@@ -312,8 +346,7 @@ wbWorkbook <- R6::R6Class(
     #' @field path path
     path = character(),     # allows path to be set during initiation or later
 
-    #' @field tmpDir tmpDir
-    tmpDir = NULL,
+    # tmpDir = NULL, # is now an active binding
 
     #' @field namedSheetViews namedSheetViews
     namedSheetViews = character(),
@@ -9566,6 +9599,10 @@ wbWorkbook <- R6::R6Class(
   # functions that are used to make assignments
   private = list(
     ### fields ----
+    .tmpDir = NULL,
+
+    .dir_manager = NULL,
+
     current_sheet = 0L,
 
     # original sheet name values
@@ -9573,6 +9610,9 @@ wbWorkbook <- R6::R6Class(
 
     ### methods ----
     deep_clone = function(name, value) {
+      if (name == ".dir_manager") {
+        return(value)
+      }
       # Deep cloning method for workbooks.  This method also accesses
       # `$clone(deep = TRUE)` methods for `R6` fields.
       if (R6::is.R6(value)) {
@@ -9589,8 +9629,6 @@ wbWorkbook <- R6::R6Class(
 
     # Cleans up temporary files extracted during wb_load()
     finalize = function() {
-      if (!is.null(self$tmpDir) && dir.exists(self$tmpDir))
-        unlink(self$tmpDir, recursive = TRUE)
     },
 
     pappend = function(field, value = NULL) {
