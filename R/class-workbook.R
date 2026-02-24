@@ -4140,7 +4140,7 @@ wbWorkbook <- R6::R6Class(
       tab_attr[["ref"]] <- dims
 
       tab_autofilter <- NULL
-      if ("autofilter" %in% tab_nams) {
+      if ("autoFilter" %in% tab_nams) {
         tab_autofilter <- xml_node(xml, "table", "autoFilter")
         tab_autofilter <- xml_attr_mod(tab_autofilter, xml_attributes = c(ref = dims))
       }
