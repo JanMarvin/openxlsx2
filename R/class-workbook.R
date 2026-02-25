@@ -165,6 +165,8 @@ wbWorkbook <- R6::R6Class(
   ## active ----
 
   active = list(
+
+    #' @field tmpDir tmpDir
     tmpDir = function(value) {
       if (missing(value)) {
         return(private$.tmpDir)

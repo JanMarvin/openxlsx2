@@ -9,6 +9,7 @@ create_dxfs_style(
   font_size = NULL,
   font_color = NULL,
   num_fmt = NULL,
+  format_code = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
@@ -33,7 +34,9 @@ By default, the workbook base font size is used. (Defaults to 11)}
 or one of colors(). If \code{font_color} is NULL, the workbook base font colors is used.
 (Defaults to black)}
 
-\item{num_fmt}{Cell formatting. Some custom openxml format}
+\item{num_fmt}{Cell formatting. Previously this was a format code. To be backwards compatible, this still allows for a code}
+
+\item{format_code}{A custom format code}
 
 \item{border}{\code{NULL} or \code{TRUE}}
 
