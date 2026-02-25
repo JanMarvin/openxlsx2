@@ -264,10 +264,6 @@ rather than `?wbWorkbook`).
 
   path
 
-- `tmpDir`:
-
-  tmpDir
-
 - `namedSheetViews`:
 
   namedSheetViews
@@ -275,6 +271,12 @@ rather than `?wbWorkbook`).
 - `xmlMaps`:
 
   xmlMaps
+
+## Active bindings
+
+- `tmpDir`:
+
+  tmpDir
 
 ## Methods
 

@@ -9,6 +9,13 @@
   [\#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug
   report as the previous fix for `finalize()`.)
 
+### Breaking changes
+
+- [`create_dxfs_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_dxfs_style.md)
+  gained a new attribute `format_code` to allow varying number format
+  ids. If not set, the function behaves similar to before. But the
+  argument order has changed.
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.24

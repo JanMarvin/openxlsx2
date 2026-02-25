@@ -59,6 +59,7 @@
 <span>  font_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  font_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  num_fmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  format_code <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border_color <span class="op">=</span> <span class="fu"><a href="wb_color.html">wb_color</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderColor"</span>, <span class="st">"black"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  border_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openxlsx2.borderStyle"</span>, <span class="st">"thin"</span><span class="op">)</span>,</span>
@@ -94,7 +95,11 @@ or one of colors(). If <code>font_color</code> is NULL, the workbook base font c
 
 
 <dt id="arg-num-fmt">num_fmt<a class="anchor" aria-label="anchor" href="#arg-num-fmt"></a></dt>
-<dd><p>Cell formatting. Some custom openxml format</p></dd>
+<dd><p>Cell formatting. Previously this was a format code. To be backwards compatible, this still allows for a code</p></dd>
+
+
+<dt id="arg-format-code">format_code<a class="anchor" aria-label="anchor" href="#arg-format-code"></a></dt>
+<dd><p>A custom format code</p></dd>
 
 
 <dt id="arg-border">border<a class="anchor" aria-label="anchor" href="#arg-border"></a></dt>

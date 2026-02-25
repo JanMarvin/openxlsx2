@@ -53,6 +53,11 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>Fix missing header for older clang</li>
 <li>Fixed <code>finalize()</code> calls after <code>clone()</code> and <code>clone(deep = TRUE)</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1587" class="external-link">#1587</a> (Same bug report as the previous fix for <code>finalize()</code>.)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/create_dxfs_style.html">create_dxfs_style()</a></code> gained a new attribute <code>format_code</code> to allow varying number format ids. If not set, the function behaves similar to before. But the argument order has changed.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
