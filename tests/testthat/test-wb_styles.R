@@ -1214,7 +1214,7 @@ test_that("special formatting works", {
 
 })
 
-test_that("", {
+test_that("apply_numfmt works with vectors", {
   exp <- c(
     "4.00", "4.00", "7.00", "7.00", "8.00", "9.00", "10.00", "10.00",
     "10.00", "11.00", "11.00", "12.00", "12.00", "12.00", "12.00",
@@ -1623,4 +1623,16 @@ test_that("apply_numfmt handles AM/PM regardless of system locale", {
 
   got_short <- apply_numfmt("13:45:30", "hh:mm:ss A/P")
   expect_identical(got_short, "01:45:30 P")
+})
+
+test_that("", {
+
+  exp <- "<dxf><numFmt numFmtId=\"3\" formatCode=\"#,###.\"/></dxf>"
+  got <- create_dxfs_style(num_fmt = "#,###.")
+  expect_equal(got, exp)
+
+  exp <- "<dxf><numFmt numFmtId=\"1\" formatCode=\"#,###.\"/></dxf>"
+  got <- create_dxfs_style(num_fmt = 1, format_code = "#,###.")
+  expect_equal(got, exp)
+
 })

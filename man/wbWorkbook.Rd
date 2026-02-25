@@ -160,11 +160,16 @@ worksheet names.}
 
 \item{\code{path}}{path}
 
-\item{\code{tmpDir}}{tmpDir}
-
 \item{\code{namedSheetViews}}{namedSheetViews}
 
 \item{\code{xmlMaps}}{xmlMaps}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{tmpDir}}{tmpDir}
 }
 \if{html}{\out{</div>}}
 }

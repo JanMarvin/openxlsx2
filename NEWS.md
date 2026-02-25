@@ -5,6 +5,10 @@
 * Fix missing header for older clang
 * Fixed `finalize()` calls after `clone()` and `clone(deep = TRUE)`. [#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug report as the previous fix for `finalize()`.)
 
+## Breaking changes
+
+* `create_dxfs_style()` gained a new attribute `format_code` to allow varying number format ids. If not set, the function behaves similar to before. But the argument order has changed.
+
 
 ***************************************************************************
 
