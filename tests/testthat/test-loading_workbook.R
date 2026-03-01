@@ -576,6 +576,12 @@ test_that("test utils::zip", {
 
   expect_message(write_xlsx(x = mtcars, tmp), "utils::zip")
 
+  r_zipcmd <- Sys.getenv("R_ZIPCMD")
+  Sys.setenv("R_ZIPCMD" = "")
+  on.exit(Sys.setenv("R_ZIPCMD" = r_zipcmd), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, tmp), "utils::zip")
+
 })
 
 test_that("test (bsd)tar", {
