@@ -135,6 +135,9 @@ wb_workbook <- function(
 #' \donttest{
 #' wb_save(wb, file = temp_xlsx(), overwrite = TRUE)
 #'
+#' ## do not try to find zip in Rtools
+#' # options("openxlsx2.no_maybe_zip" = TRUE)
+#'
 #' ## do not use utils::zip, will try to use bsdtar
 #' # options("openxlsx2.no_utils_zip" = TRUE)
 #'
