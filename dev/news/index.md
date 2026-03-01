@@ -24,8 +24,6 @@
 
 ## openxlsx2 1.24
 
-CRAN release: 2026-02-21
-
 ### New features
 
 - Provide new SHA base password hash based on `openssl`. This will be
@@ -62,8 +60,6 @@ CRAN release: 2026-02-21
 
 ## openxlsx2 1.23.1
 
-CRAN release: 2026-01-19
-
 ### Fixes
 
 - Fix UBSAN error triggered by a test added in 1.23
@@ -73,8 +69,6 @@ CRAN release: 2026-01-19
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.23
-
-CRAN release: 2026-01-16
 
 ### New features
 
@@ -147,8 +141,6 @@ CRAN release: 2026-01-16
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.22
-
-CRAN release: 2025-12-07
 
 ### New features
 
@@ -227,8 +219,6 @@ wb <- wb_add_fill(wb, dims = wb_dims(x = mtcars))
 
 ## openxlsx2 1.21
 
-CRAN release: 2025-10-31
-
 ### Fixes
 
 - Improve date detection to ignore numfmt ‘GENERAL’
@@ -239,8 +229,6 @@ CRAN release: 2025-10-31
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.20
-
-CRAN release: 2025-09-29
 
 ### New features
 
@@ -263,8 +251,6 @@ CRAN release: 2025-09-29
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.19
-
-CRAN release: 2025-08-25
 
 ### New features
 
@@ -306,8 +292,6 @@ CRAN release: 2025-08-25
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.18
-
-CRAN release: 2025-07-29
 
 ### New features
 
@@ -352,8 +336,6 @@ wb$to_df(start_col = 1, start_row = 1, col_names = FALSE)
 
 ## openxlsx2 1.17
 
-CRAN release: 2025-07-04
-
 ### Fixes
 
 - [`wb_to_df()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.md)
@@ -376,8 +358,6 @@ CRAN release: 2025-07-04
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.16
-
-CRAN release: 2025-06-05
 
 ### New features
 
@@ -437,8 +417,6 @@ CRAN release: 2025-06-05
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.15
-
-CRAN release: 2025-04-25
 
 ### Maintenance
 
@@ -512,8 +490,6 @@ CRAN release: 2025-04-25
 
 ## openxlsx2 1.14
 
-CRAN release: 2025-03-20
-
 ### New features
 
 - A new experimental `flush` argument has been introduced to
@@ -562,8 +538,6 @@ CRAN release: 2025-03-20
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.13
-
-CRAN release: 2025-02-15
 
 ### New features
 
@@ -614,8 +588,6 @@ CRAN release: 2025-02-15
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.12
-
-CRAN release: 2024-12-19
 
 ### New features
 
@@ -683,8 +655,6 @@ CRAN release: 2024-12-19
 
 ## openxlsx2 1.11
 
-CRAN release: 2024-11-14
-
 ### New features
 
 - Add `hide_no_data_items` option in
@@ -705,8 +675,6 @@ CRAN release: 2024-11-14
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.10
-
-CRAN release: 2024-10-17
 
 ### New features
 
@@ -787,8 +755,6 @@ CRAN release: 2024-10-17
 
 ## openxlsx2 1.9
 
-CRAN release: 2024-09-08
-
 ### New features
 
 - Experimental support for shared formulas. Similar to spreadsheet
@@ -831,8 +797,6 @@ CRAN release: 2024-09-08
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.8
-
-CRAN release: 2024-07-07
 
 ### Maintenance
 
@@ -902,8 +866,6 @@ CRAN release: 2024-07-07
 
 ## openxlsx2 1.7
 
-CRAN release: 2024-06-02
-
 ### New features
 
 - Add function to remove conditional formatting from worksheet
@@ -940,8 +902,6 @@ CRAN release: 2024-06-02
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.6
-
-CRAN release: 2024-05-01
 
 ### New features
 
@@ -990,8 +950,6 @@ wb_dims(x = mtcars, cols = "non-existent-col")
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.5
-
-CRAN release: 2024-03-26
 
 (This was updated post release.)
 
@@ -1043,8 +1001,6 @@ wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = c(4, 5, 8))
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.4
-
-CRAN release: 2024-02-15
 
 ### New features
 
@@ -1131,8 +1087,6 @@ CRAN release: 2024-02-15
 
 ## openxlsx2 1.3
 
-CRAN release: 2024-01-12
-
 ### Documentation improvement
 
 - Further tweaks to documentation and vignettes to make them more
@@ -1191,8 +1145,6 @@ CRAN release: 2024-01-12
 
 ## openxlsx2 1.2
 
-CRAN release: 2023-11-29
-
 ### New features
 
 - Add new params to
@@ -1220,8 +1172,6 @@ CRAN release: 2023-11-29
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.1
-
-CRAN release: 2023-10-23
 
 ### New features
 
@@ -1287,8 +1237,6 @@ CRAN release: 2023-10-23
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.0
-
-CRAN release: 2023-08-25
 
 ### Breaking changes
 
@@ -1403,8 +1351,6 @@ changing to newer functions is recommended.
 
 ## openxlsx2 0.8
 
-CRAN release: 2023-08-07
-
 ### API Change
 
 - Function arguments are now defaulting to `snake_case`. For the time
@@ -1506,8 +1452,6 @@ CRAN release: 2023-08-07
 
 ## openxlsx2 0.7.1
 
-CRAN release: 2023-06-30
-
 ### New features
 
 - It is now possible to apply a specific theme to a workbook.
@@ -1585,8 +1529,6 @@ CRAN release: 2023-06-30
 
 ## openxlsx2 0.7
 
-CRAN release: 2023-05-26
-
 ### New features
 
 - The `dims` argument of
@@ -1640,8 +1582,6 @@ CRAN release: 2023-05-26
 
 ## openxlsx2 0.6.1
 
-CRAN release: 2023-04-21
-
 ### New features
 
 - Improve
@@ -1692,8 +1632,6 @@ CRAN release: 2023-04-21
 
 ## openxlsx2 0.6
 
-CRAN release: 2023-04-02
-
 ### New features
 
 - Styles arguments now accept logical and numeric arguments where
@@ -1743,8 +1681,6 @@ CRAN release: 2023-04-02
 ------------------------------------------------------------------------
 
 ## openxlsx2 0.5.1
-
-CRAN release: 2023-02-26
 
 ### New features
 
@@ -1798,8 +1734,6 @@ CRAN release: 2023-02-26
 ------------------------------------------------------------------------
 
 ## openxlsx2 0.5
-
-CRAN release: 2023-01-29
 
 ### New features
 
@@ -1885,8 +1819,6 @@ CRAN release: 2023-01-29
 
 ## openxlsx2 0.4.1
 
-CRAN release: 2022-12-18
-
 ### New features
 
 - Provide new argument `calc_chain` to
@@ -1945,8 +1877,6 @@ CRAN release: 2022-12-18
 ------------------------------------------------------------------------
 
 ## openxlsx2 0.4
-
-CRAN release: 2022-12-05
 
 ### New features
 
@@ -2040,8 +1970,6 @@ CRAN release: 2022-12-05
 
 ## openxlsx2 0.3.1
 
-CRAN release: 2022-10-31
-
 ### New features
 
 - Functions adding data to a workbook now bring an `applyCellStyle`
@@ -2129,8 +2057,6 @@ CRAN release: 2022-10-31
 ------------------------------------------------------------------------
 
 ## openxlsx2 0.3
-
-CRAN release: 2022-09-30
 
 ### New features
 

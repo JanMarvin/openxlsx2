@@ -149,6 +149,9 @@ listed in <code>Imports</code> and must be installed separately if needed.</p>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">wb_save</span><span class="op">(</span><span class="va">wb</span>, file <span class="op">=</span> <span class="fu"><a href="temp_xlsx.html">temp_xlsx</a></span><span class="op">(</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## do not try to find zip in Rtools</span></span></span>
+<span class="r-in"><span><span class="co"># options("openxlsx2.no_maybe_zip" = TRUE)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## do not use utils::zip, will try to use bsdtar</span></span></span>
 <span class="r-in"><span><span class="co"># options("openxlsx2.no_utils_zip" = TRUE)</span></span></span>
 <span class="r-in"><span></span></span>
