@@ -1232,6 +1232,10 @@ test_that("apply_numfmt works with vectors", {
 })
 
 test_that("apply_numfmts works", {
+  orig_locale <- Sys.getlocale("LC_TIME")
+  on.exit(Sys.setlocale("LC_TIME", orig_locale))
+  Sys.setlocale("LC_TIME", "C")
+
   df <- data.frame(
     is_active  = c(TRUE, FALSE, TRUE, NA, FALSE),
     count      = c(10L, 25L, NA, 7L, 15L),
@@ -1304,6 +1308,10 @@ test_that("escaped numfmt works", {
 })
 
 test_that("day names work", {
+  orig_locale <- Sys.getlocale("LC_TIME")
+  on.exit(Sys.setlocale("LC_TIME", orig_locale))
+  Sys.setlocale("LC_TIME", "C")
+
   val <- "2025-01-05" # This is a Sunday
   expect_identical(apply_numfmt(val, "ddd"), "Sun")
   expect_identical(apply_numfmt(val, "dddd"), "Sunday")
@@ -1601,6 +1609,7 @@ test_that("checking  the same numfmts twice works", {
 })
 
 test_that("applying styles works", {
+  skip_if(getRversion() < "4.0.0") # R 3.6 is not handling unicode
   xl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   exp <- "96.55\u00a0%"
   got <- wb_to_df(xl, apply_numfmts = TRUE, dims = "I7", col_names = FALSE)[["I"]]
