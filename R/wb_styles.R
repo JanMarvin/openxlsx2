@@ -2025,6 +2025,8 @@ apply_numfmt <- function(value, format_code) {
   if (inherits(value, "hms") || inherits(value, "difftime")) {
     value <- convert_datetime(value)
   }
+  orig_class <- class(value)
+  orig_tzone <- if (!is.null(attr(value, "tzone"))) attr(value, "tzone")
 
   # Standardize input lengths
   max_len <- max(length(value), length(format_code))
@@ -2067,6 +2069,9 @@ apply_numfmt <- function(value, format_code) {
     # --- Value Processing ---
     results[idx] <- vapply(v_subset, function(v) {
       if (is.na(v)) return(NA_character_)
+      # in R 3.6 functions (e.g. rep_len & vapply) drop class and tzone
+      class(v) <- orig_class
+      if (!is.null(orig_tzone)) attr(v, "tzone") <- orig_tzone
 
       # Type Detection
       is_numeric <- is.numeric(v)

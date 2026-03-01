@@ -396,21 +396,24 @@ test_that("factors are treated as character", {
 test_that("wb_to_df respects the row order", {
 
   ## select rows 1 and 2 while the column names are in row 2
-  got <- wb_workbook() |>
-    wb_add_worksheet() |>
-    wb_add_data(
-      x = letters,
-      dims = "A2:Z2",
-      col_names = FALSE
-    ) |>
-    wb_add_data(
-      x = 1:26,
-      dims = "A1:Z1",
-      col_names = FALSE
-    ) |>
-    wb_to_df(
-      rows = 2:1
-    )
+  got <- wb_workbook()
+  got <- wb_add_worksheet(got)
+  got <- wb_add_data(
+    got,
+    x = letters,
+    dims = "A2:Z2",
+    col_names = FALSE
+  )
+  got <- wb_add_data(
+    got,
+    x = 1:26,
+    dims = "A1:Z1",
+    col_names = FALSE
+  )
+  got <- wb_to_df(
+    got,
+    rows = 2:1
+  )
 
   exp <- data.frame(t(1:26))
   names(exp) <- letters
