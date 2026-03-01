@@ -4,6 +4,7 @@
 
 * Fix missing header for older clang
 * Fixed `finalize()` calls after `clone()` and `clone(deep = TRUE)`. [#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug report as the previous fix for `finalize()`.)
+* If no zip tool is available on Windows and `R_ZIPCMD` is unset, we no longer unsuccessfully attempt to use `utils::zip()`. [1591](https://github.com/JanMarvin/openxlsx2/pull/1591)
 
 ## Breaking changes
 

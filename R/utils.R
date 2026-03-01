@@ -1560,7 +1560,8 @@ zipzip <- function(zip_path, source_dir, compression_level = 9) {
 zip_output <- function(zip_path, source_dir, compression_level = 9) {
 
   # on Windows we might have an Rtools folder somewhere with a zip.exe ...
-  if (.Platform$OS.type == "windows" && Sys.getenv("R_ZIPCMD") == "") {
+  if (.Platform$OS.type == "windows" && Sys.getenv("R_ZIPCMD") == "" &&
+      !isTRUE(getOption("openxlsx2.no_maybe_zip"))) {
     # Windows 10 pre 2017, Windows 7 or older
     env <- Sys.getenv()
     env <- env[grepl("^RTOOLS[A-Z0-9_]+_HOME$", names(env))]
@@ -1571,7 +1572,7 @@ zip_output <- function(zip_path, source_dir, compression_level = 9) {
   }
 
   if (!isTRUE(getOption("openxlsx2.no_utils_zip"))) {
-    if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD", "zip") != "") {
+    if (Sys.which("zip") != "" || Sys.getenv("R_ZIPCMD") != "") {
       res <- utilszip(
         zip_path = zip_path,
         source_dir = source_dir,
