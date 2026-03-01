@@ -930,10 +930,10 @@ test_that("dims work", {
 
 test_that("update font works", {
 
-  wb <- wb_workbook() |>
-    wb_add_worksheet() |>
-    wb_add_data(x = letters) |>
-    wb_add_font(dims = wb_dims(x = letters), name = "Calibri", size = 20, update = c("name", "size", "scheme"))
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data(wb, x = letters)
+  wb <- wb_add_font(wb, dims = wb_dims(x = letters), name = "Calibri", size = 20, update = c("name", "size", "scheme"))
 
   exp <- "<font><sz val=\"20\"/><color theme=\"1\"/><name val=\"Calibri\"/><family val=\"2\"/></font>"
   got <- wb$styles_mgr$styles$fonts[2]
@@ -1550,21 +1550,21 @@ test_that("wb_set_col_widths() works", {
     stringsAsFactors = FALSE
   )
 
-  wb <- wb_workbook() |>
-    wb_add_worksheet() |>
-    wb_add_data_table(x = df, na = "") |>
-    wb_add_numfmt(dims = wb_dims(x = df, cols = "NUM", col_names = TRUE), numfmt = 1) |>
-    wb_set_col_widths(cols = 2, widths = "auto")
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(wb, x = df, na = "")
+  wb <- wb_add_numfmt(wb, dims = wb_dims(x = df, cols = "NUM", col_names = TRUE), numfmt = 1)
+  wb <- wb_set_col_widths(wb, cols = 2, widths = "auto")
 
   exp <- "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(got, exp)
 
-  wb <- wb_workbook() |>
-    wb_add_worksheet() |>
-    wb_add_data_table(x = df, na = "") |>
-    wb_add_numfmt(dims = wb_dims(x = df, cols = "NUM", col_names = TRUE), numfmt = 1) |>
-    wb_set_col_widths(cols = 3:5, widths = "auto")
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(wb, x = df, na = "")
+  wb <- wb_add_numfmt(wb, dims = wb_dims(x = df, cols = "NUM", col_names = TRUE), numfmt = 1)
+  wb <- wb_set_col_widths(wb, cols = 3:5, widths = "auto")
 
   exp <- character()
   got <- wb$worksheets[[1]]$cols_attr
