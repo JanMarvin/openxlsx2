@@ -1480,8 +1480,8 @@ if (getRversion() < "4.0.0") {
 ## the R solution
 utilszip <- function(zip_path, source_dir, compression_level = 9) {
   if (!is.null(getOption("openxlsx2.debug"))) message("utils::zip")
-  zip_tool <- if (Sys.getenv("R_ZIPCMD", "zip") != "") {
-    Sys.getenv("R_ZIPCMD", "zip")
+  zip_tool <- if (Sys.getenv("R_ZIPCMD") != "") {
+    Sys.getenv("R_ZIPCMD")
   } else {
     Sys.which("zip")
   }
