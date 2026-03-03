@@ -798,7 +798,7 @@ wbWorkbook <- R6::R6Class(
       private$validate_new_sheet(sheet)
       sheet_name <- replace_legal_chars(sheet)
 
-      if (!is.logical(grid_lines) | length(grid_lines) > 1) {
+      if (!is.logical(grid_lines) || length(grid_lines) > 1) {
         fail <- TRUE
         msg <- c(msg, "grid_lines must be a logical of length 1.")
       }
@@ -823,32 +823,32 @@ wbWorkbook <- R6::R6Class(
       }
       #nocov end
 
-      if (!is.null(odd_header) & length(odd_header) != 3) {
+      if (!is.null(odd_header) && length(odd_header) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("header"))
       }
 
-      if (!is.null(odd_footer) & length(odd_footer) != 3) {
+      if (!is.null(odd_footer) && length(odd_footer) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("footer"))
       }
 
-      if (!is.null(even_header) & length(even_header) != 3) {
+      if (!is.null(even_header) && length(even_header) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("evenHeader"))
       }
 
-      if (!is.null(even_footer) & length(even_footer) != 3) {
+      if (!is.null(even_footer) && length(even_footer) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("evenFooter"))
       }
 
-      if (!is.null(first_header) & length(first_header) != 3) {
+      if (!is.null(first_header) && length(first_header) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("firstHeader"))
       }
 
-      if (!is.null(first_footer) & length(first_footer) != 3) {
+      if (!is.null(first_footer) && length(first_footer) != 3) {
         fail <- TRUE
         msg <- c(msg, lcr("firstFooter"))
       }
@@ -2992,7 +2992,7 @@ wbWorkbook <- R6::R6Class(
       assert_class(overwrite, "logical")
       assert_class(flush, "logical")
 
-      if (file.exists(file) & !overwrite) {
+      if (file.exists(file) && !overwrite) {
         stop("File already exists!")
       }
 
@@ -3080,7 +3080,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## xl/comments.xml
-      if (nComments > 0 | nVML > 0) {
+      if (nComments > 0 || nVML > 0) {
 
 
         # TODO use seq_len() or seq_along()?
@@ -5602,7 +5602,7 @@ wbWorkbook <- R6::R6Class(
       # fine to do the validation before the actual check to prevent other errors
       sheet <- private$get_sheet_index(sheet)
 
-      if (is.null(first_active_row) & is.null(first_active_col) & !first_row & !first_col) {
+      if (is.null(first_active_row) && is.null(first_active_col) && !first_row && !first_col) {
         return(invisible(self))
       }
 
@@ -5611,15 +5611,15 @@ wbWorkbook <- R6::R6Class(
       if (!is.logical(first_col)) stop("first_col must be TRUE/FALSE")
 
       # make overwrides for arguments
-      if (first_row & !first_col) {
+      if (first_row && !first_col) {
         first_active_col <- NULL
         first_active_row <- NULL
         first_col <- FALSE
-      } else if (first_col & !first_row) {
+      } else if (first_col && !first_row) {
         first_active_row <- NULL
         first_active_col <- NULL
         first_row <- FALSE
-      } else if (first_row & first_col) {
+      } else if (first_row && first_col) {
         first_active_row <- 2L
         first_active_col <- 2L
         first_row <- FALSE
@@ -5641,23 +5641,23 @@ wbWorkbook <- R6::R6Class(
         } else if (first_col) {
           '<pane xSplit="1" topLeftCell="B1" activePane="topRight" state="frozen"/>'
         } else {
-          if (first_active_row == 1 & first_active_col == 1) {
+          if (first_active_row == 1 && first_active_col == 1) {
             ## nothing to do
             # return(NULL)
             return(invisible(self))
           }
 
-          if (first_active_row > 1 & first_active_col == 1) {
+          if (first_active_row > 1 && first_active_col == 1) {
             attrs <- sprintf('ySplit="%s"', first_active_row - 1L)
             activePane <- "bottomLeft"
           }
 
-          if (first_active_row == 1 & first_active_col > 1) {
+          if (first_active_row == 1 && first_active_col > 1) {
             attrs <- sprintf('xSplit="%s"', first_active_col - 1L)
             activePane <- "topRight"
           }
 
-          if (first_active_row > 1 & first_active_col > 1) {
+          if (first_active_row > 1 && first_active_col > 1) {
             attrs <- sprintf('ySplit="%s" xSplit="%s"',
               first_active_row - 1L,
               first_active_col - 1L
