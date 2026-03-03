@@ -1575,7 +1575,7 @@ reverse_conditions <- function(conditions) {
     value_str <- if (is.character(value)) {
       shQuote(value, type = "cmd")
     } else {
-       value
+      value
     }
 
     # merge for potential "%in%"

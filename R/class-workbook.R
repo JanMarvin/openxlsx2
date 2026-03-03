@@ -4000,12 +4000,6 @@ wbWorkbook <- R6::R6Class(
         tActive <- self$tables$tab_act
       }
 
-      ### autofilter
-      autofilter <- if (!isFALSE(withFilter)) {
-        autofilter_ref <- ref
-        xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = autofilter_ref))
-      }
-
       trf <- NULL
       has_total_row <- FALSE
       has_total_lbl <- FALSE
@@ -4075,7 +4069,7 @@ wbWorkbook <- R6::R6Class(
         #headerRowDxfId="1"
       )
 
-
+      ### autofilter
       # run this if withFilter is something (TRUE or a character)
       autofilter <- NULL
       if (!isFALSE(withFilter)) {
