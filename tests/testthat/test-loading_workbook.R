@@ -644,7 +644,7 @@ test_that("saving using zip::zip", {
 
 })
 
-test_that("Windows can handle blank R_ZIPCMD", {
+test_that("Windows can handle unset or blank R_ZIPCMD", {
   skip_on_cran()
   skip_if_not_installed("zip")
 
@@ -665,6 +665,10 @@ test_that("Windows can handle blank R_ZIPCMD", {
     {
       Sys.unsetenv("R_ZIPCMD")
       expect_equal(Sys.which("zip"), "")
+      expect_equal(Sys.getenv("R_ZIPCMD"), "")
+      expect_message(write_xlsx(x = mtcars, tmp), "zip::zip")
+
+      Sys.setenv("R_ZIPCMD" = "")
       expect_equal(Sys.getenv("R_ZIPCMD"), "")
       expect_message(write_xlsx(x = mtcars, tmp), "zip::zip")
     },
