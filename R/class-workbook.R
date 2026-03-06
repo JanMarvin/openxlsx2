@@ -9248,6 +9248,7 @@ wbWorkbook <- R6::R6Class(
     #' @param font_size the font size
     #' @param font_color the font color (a `wb_color()` object)
     #' @param num_fmt the number format
+    #' @param format_code the format code
     #' @param border logical if borders are applied
     #' @param border_color the border color
     #' @param border_style the border style
@@ -9265,6 +9266,7 @@ wbWorkbook <- R6::R6Class(
       font_size      = NULL,
       font_color     = NULL,
       num_fmt        = NULL,
+      format_code    = NULL,
       border         = NULL,
       border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
       border_style   = getOption("openxlsx2.borderStyle", "thin"),
@@ -9278,11 +9280,16 @@ wbWorkbook <- R6::R6Class(
 
       standardize(...)
 
+      if (is.null(num_fmt) && !is.null(format_code)) {
+        num_fmt <- NROW(self$styles_mgr$dxf)
+      }
+
       xml_style <- create_dxfs_style(
         font_name      = font_name,
         font_size      = font_size,
         font_color     = font_color,
         num_fmt        = num_fmt,
+        format_code    = format_code,
         border         = border,
         border_color   = border_color,
         border_style   = border_style,
@@ -9293,6 +9300,11 @@ wbWorkbook <- R6::R6Class(
         text_underline = text_underline,
         ...            = ...
       )
+
+      # TODO the dxf styles are as unique wb_add_numfmt(), because
+      # the format_code is increased and a numfmt might be embedded
+      # in other style elements.
+      if (missing(name)) name <- xml_style
 
       if (!is.null(self$styles_mgr$dxf) && any(name %in% self$styles_mgr$dxf$name))
         warning("dxfs style names should be unique", call. = FALSE)

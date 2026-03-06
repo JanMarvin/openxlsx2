@@ -4453,7 +4453,8 @@ wb_add_named_style <- function(
 #' @param font_name Character; the font name.
 #' @param font_size Numeric; the font size.
 #' @param font_color A [wb_color()] object for the font.
-#' @param num_fmt The number format string or ID.
+#' @param num_fmt Cell formatting. Previously this was a format code. To be backwards compatible, this still allows for a code
+#' @param format_code A custom format code
 #' @param border Logical; if `TRUE`, applies borders to the style.
 #' @param border_color A [wb_color()] object for the borders.
 #' @param border_style Character; the border style (e.g., "thin", "thick").
@@ -4485,6 +4486,7 @@ wb_add_dxfs_style <- function(
   font_size      = NULL,
   font_color     = NULL,
   num_fmt        = NULL,
+  format_code    = NULL,
   border         = NULL,
   border_color   = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style   = getOption("openxlsx2.borderStyle", "thin"),
@@ -4496,6 +4498,8 @@ wb_add_dxfs_style <- function(
   ...
 ) {
 
+  if (missing(name)) name <- substitute()
+
   assert_workbook(wb)
   wb$clone(deep = TRUE)$add_dxfs_style(
     name           = name,
@@ -4503,6 +4507,7 @@ wb_add_dxfs_style <- function(
     font_size      = font_size,
     font_color     = font_color,
     num_fmt        = num_fmt,
+    format_code    = format_code,
     border         = border,
     border_color   = border_color,
     border_style   = border_style,
