@@ -874,6 +874,7 @@ write_data_table <- function(
   assert_class(lastColumn, "logical")
   assert_class(bandedRows, "logical")
   assert_class(bandedCols, "logical")
+  assert_class(params, "list",  or_null = TRUE)
 
   # force with globalenv() options
   x <- force(x)
@@ -1157,9 +1158,13 @@ write_data_table <- function(
     ref2 <- paste0(int2col(startCol + nCol - !rowNames), startRow + nRow)
     ref  <- paste(ref1, ref2, sep = ":")
 
+    numfmts <- NULL
     if (is.list(params)) {
       if (!is.null(params$choose))
         withFilter <- params$choose
+
+      if (!is.null(params$numfmts))
+        numfmts <- params$numfmts
     }
 
     ## create table.xml and assign an id to worksheet tables
@@ -1176,7 +1181,8 @@ write_data_table <- function(
       showFirstColumn   = firstColumn,
       showLastColumn    = lastColumn,
       showRowStripes    = bandedRows,
-      showColumnStripes = bandedCols
+      showColumnStripes = bandedCols,
+      numfmts           = numfmts
     )
   }
 
