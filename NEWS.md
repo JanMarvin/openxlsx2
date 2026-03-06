@@ -8,7 +8,7 @@
 
 ## Breaking changes
 
-* `create_dxfs_style()` gained a new attribute `format_code` to allow varying number format ids. If not set, the function behaves similar to before. But the argument order has changed.
+* `create_dxfs_style()` and `wb_add_dxfs_style()` gained a new attribute `format_code` to allow varying number format ids. If not set, the function behaves similar to before. But the argument order has changed.
 
 
 ***************************************************************************

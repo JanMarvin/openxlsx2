@@ -3706,6 +3706,7 @@ These styles are used with conditional formatting and custom table styles
   font_size = NULL,
   font_color = NULL,
   num_fmt = NULL,
+  format_code = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
@@ -3730,6 +3731,8 @@ These styles are used with conditional formatting and custom table styles
 \item{\code{font_color}}{the font color (a \code{wb_color()} object)}
 
 \item{\code{num_fmt}}{the number format}
+
+\item{\code{format_code}}{the format code}
 
 \item{\code{border}}{logical if borders are applied}
 

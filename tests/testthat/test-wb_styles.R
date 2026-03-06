@@ -1634,7 +1634,7 @@ test_that("apply_numfmt handles AM/PM regardless of system locale", {
   expect_identical(got_short, "01:45:30 P")
 })
 
-test_that("", {
+test_that("dxf number formats work", {
 
   exp <- "<dxf><numFmt numFmtId=\"3\" formatCode=\"#,###.\"/></dxf>"
   got <- create_dxfs_style(num_fmt = "#,###.")
@@ -1643,5 +1643,19 @@ test_that("", {
   exp <- "<dxf><numFmt numFmtId=\"1\" formatCode=\"#,###.\"/></dxf>"
   got <- create_dxfs_style(num_fmt = 1, format_code = "#,###.")
   expect_equal(got, exp)
+
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_dxfs_style(
+    wb, format_code = "0.00%"
+  )
+  wb <- wb_add_dxfs_style(
+    wb, format_code = "0,000"
+  )
+  # this will get duplicated
+  wb <- wb_add_dxfs_style(
+    wb, format_code = "0,000"
+  )
+  expect_equal(nrow(wb$styles_mgr$dxf), 3L)
 
 })

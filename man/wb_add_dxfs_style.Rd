@@ -11,6 +11,7 @@ wb_add_dxfs_style(
   font_size = NULL,
   font_color = NULL,
   num_fmt = NULL,
+  format_code = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
@@ -33,7 +34,9 @@ wb_add_dxfs_style(
 
 \item{font_color}{A \code{\link[=wb_color]{wb_color()}} object for the font.}
 
-\item{num_fmt}{The number format string or ID.}
+\item{num_fmt}{Cell formatting. Previously this was a format code. To be backwards compatible, this still allows for a code}
+
+\item{format_code}{A custom format code}
 
 \item{border}{Logical; if \code{TRUE}, applies borders to the style.}
 
