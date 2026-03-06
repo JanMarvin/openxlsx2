@@ -3985,7 +3985,8 @@ wbWorkbook <- R6::R6Class(
       showFirstColumn   = 0,
       showLastColumn    = 0,
       showRowStripes    = 1,
-      showColumnStripes = 0
+      showColumnStripes = 0,
+      numfmts           = NULL
     ) {
 
       id <- as.character(last_table_id(self) + 1) # otherwise will start at 0 for table 1 length indicates the last known
@@ -4034,13 +4035,25 @@ wbWorkbook <- R6::R6Class(
         id <- which(colNames %in% x)
         trf_id <- if (has_total_row) trf[[id]] else NULL
         lbl_id <- if (has_total_lbl && !is.na(lbl[[id]])) lbl[[id]] else NULL
+        numfmt <- if (!is.null(numfmts) && x %in% names(numfmts)) {
+          nf <- numfmts[[x]]
+          if (is.numeric(nf)) {
+            nf
+          } else {
+            self$add_dxfs_style(format_code = nf)
+            nrow(self$styles_mgr$dxf) - 1L
+          }
+        }
+
         xml_node_create(
           "tableColumn",
           xml_attributes = c(
             id                = id,
             name              = x,
             totalsRowFunction = trf_id,
-            totalsRowLabel    = lbl_id
+            totalsRowLabel    = lbl_id,
+            dataDxfId         = as_xml_attr(numfmt)
+            # dataCellStyle = "Percent" # a named style
           )
         )
       })
