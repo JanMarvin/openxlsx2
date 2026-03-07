@@ -7,6 +7,7 @@
 #' @param whitespace should whitespace pcdata be imported
 #' @param empty_tags should `<b/>` or `<b></b>` be returned
 #' @param skip_control should whitespace character be exported
+#' @param comments should comments be parsed (1) or only comments returned (2)
 #' @details Read xml files or strings to pointer and checks if the input is
 #' valid XML.
 #' If the input is read into a character object, it will be reevaluated every
@@ -40,7 +41,7 @@
 #'   read_xml(xml, declaration = TRUE)
 #'
 #' @export
-read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE) {
+read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, comments = FALSE) {
 
   z <- NULL
   xml <- unclass(xml)
@@ -83,8 +84,9 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
     }
   }
 
-  z <- readXML(xml, isfile, escapes, declaration, whitespace, empty_tags, skip_control, pointer)
+  z <- readXML(xml, isfile, escapes, declaration, whitespace, comments, empty_tags, skip_control, pointer)
 
+  if (comments == 2) return(trimws(z))
   z
 }
 

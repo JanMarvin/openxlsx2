@@ -6,6 +6,10 @@
 * Fixed `finalize()` calls after `clone()` and `clone(deep = TRUE)`. [#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug report as the previous fix for `finalize()`.)
 * If no zip tool is available (e.g., in R without Rtools on Windows and `R_ZIPCMD` is unset), the package no longer attempts to use `utils::zip()`. [#1591](https://github.com/JanMarvin/openxlsx2/pull/1591)
 
+## Internal Changes
+
+* `read_xml()` got a `comments` argument that can either read XML comments or return only XML comments
+
 ## Breaking changes
 
 * `create_dxfs_style()` and `wb_add_dxfs_style()` gained a new argument `format_code` to allow varying number format ids. If not set, the function behaves similarly to before. But the argument order has changed.

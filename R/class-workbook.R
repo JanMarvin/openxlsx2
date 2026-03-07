@@ -6649,10 +6649,9 @@ wbWorkbook <- R6::R6Class(
       # auto-detect rvg raster prefix from XML comment
       raster_prefix <- NULL
       if (is.character(xml) && length(xml) == 1 && !to_long(xml) && file.exists(xml)) {
-        xml_raw <- paste0(readLines(xml, warn = FALSE), collapse = "")
-        m <- regmatches(xml_raw, regexpr("<!-- rvg_raster_prefix:(.+?) -->", xml_raw, perl = TRUE))
-        if (length(m) == 1) {
-          raster_prefix <- sub("<!-- rvg_raster_prefix:(.+?) -->", "\\1", m, perl = TRUE)
+        xml_cmmnts <- read_xml(xml, comments = 2)
+        if (any(sel <- grepl("^rvg_raster_prefix", xml_cmmnts))) {
+          raster_prefix <- gsub("^rvg_raster_prefix:", "", xml_cmmnts[sel])
         }
       }
 

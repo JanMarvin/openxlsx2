@@ -1,8 +1,8 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control, bool pointer) {
-  xmldoc* doc = new xmldoc;
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, int comments, bool empty_tags, bool skip_control, bool pointer) {
+  std::unique_ptr<xmldoc> doc(new xmldoc());
   pugi::xml_parse_result result;
 
   // pugi::parse_default without escapes flag
@@ -11,6 +11,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   if (declaration) pugi_parse_flags |= pugi::parse_declaration;
   if (whitespace) pugi_parse_flags |= pugi::parse_ws_pcdata_single;
   if (!whitespace) pugi_parse_flags |= pugi::parse_trim_pcdata;
+  if (comments) pugi_parse_flags |= pugi::parse_comments;
 
   if (isfile) {
     result = doc->load_file(path.c_str(), pugi_parse_flags, pugi::encoding_utf8);
@@ -22,13 +23,32 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
     Rcpp::stop("xml import unsuccessful");
   }
 
+  if (comments == 2) {
+    Rcpp::CharacterVector comment_vec;
+    std::vector<pugi::xml_node> stack;
+    stack.push_back(*doc);
+
+    while (!stack.empty()) {
+      pugi::xml_node node = stack.back();
+      stack.pop_back();
+
+      if (node.type() == pugi::node_comment) {
+        comment_vec.push_back(node.value());
+      }
+      for (pugi::xml_node child = node.last_child(); child; child = child.previous_sibling()) {
+        stack.push_back(child);
+      }
+    }
+    return Rcpp::wrap(comment_vec);
+  }
+
   uint32_t pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
   if (empty_tags) pugi_format_flags |= pugi::format_no_empty_element_tags;
   if (skip_control) pugi_format_flags |= pugi::format_skip_control_chars;
 
   if (pointer) {
-    XPtrXML ptr(doc, true);
+    XPtrXML ptr(doc.release(), true);
     ptr.attr("class") = Rcpp::CharacterVector::create("pugi_xml");
     ptr.attr("escapes") = escapes;
     ptr.attr("empty_tags") = empty_tags;
