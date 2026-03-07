@@ -264,10 +264,6 @@ rather than `?wbWorkbook`).
 
   path
 
-- `tmpDir`:
-
-  tmpDir
-
 - `namedSheetViews`:
 
   namedSheetViews
@@ -275,6 +271,12 @@ rather than `?wbWorkbook`).
 - `xmlMaps`:
 
   xmlMaps
+
+## Active bindings
+
+- `tmpDir`:
+
+  tmpDir
 
 ## Methods
 
@@ -4849,6 +4851,7 @@ custom table styles
       font_size = NULL,
       font_color = NULL,
       num_fmt = NULL,
+      format_code = NULL,
       border = NULL,
       border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
       border_style = getOption("openxlsx2.borderStyle", "thin"),
@@ -4883,6 +4886,10 @@ custom table styles
 - `num_fmt`:
 
   the number format
+
+- `format_code`:
+
+  the format code
 
 - `border`:
 

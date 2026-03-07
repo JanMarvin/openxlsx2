@@ -11,6 +11,7 @@ create_dxfs_style(
   font_size = NULL,
   font_color = NULL,
   num_fmt = NULL,
+  format_code = NULL,
   border = NULL,
   border_color = wb_color(getOption("openxlsx2.borderColor", "black")),
   border_style = getOption("openxlsx2.borderStyle", "thin"),
@@ -47,7 +48,12 @@ create_dxfs_style(
 
 - num_fmt:
 
-  Cell formatting. Some custom openxml format
+  Cell formatting. Previously this was a format code. To be backwards
+  compatible, this still allows for a code
+
+- format_code:
+
+  A custom format code
 
 - border:
 

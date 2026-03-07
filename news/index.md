@@ -1,5 +1,36 @@
 # Changelog
 
+## openxlsx2 1.25
+
+### Fixes
+
+- Fixed missing header for older clang. This fixes the CRAN Mac builds
+  [\#1585](https://github.com/JanMarvin/openxlsx2/pull/1585)
+- Fixed `finalize()` calls after `clone()` and `clone(deep = TRUE)`.
+  [\#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug
+  report as the previous fix for `finalize()`.)
+- If no zip tool is available (e.g., in R without Rtools on Windows and
+  `R_ZIPCMD` is unset), the package no longer attempts to use
+  [`utils::zip()`](https://rdrr.io/r/utils/zip.html).
+  [\#1591](https://github.com/JanMarvin/openxlsx2/pull/1591)
+
+### Internal Changes
+
+- [`read_xml()`](https://janmarvin.github.io/openxlsx2/reference/read_xml.md)
+  got a `comments` argument that can either read XML comments or return
+  only XML comments
+
+### Breaking changes
+
+- [`create_dxfs_style()`](https://janmarvin.github.io/openxlsx2/reference/create_dxfs_style.md)
+  and
+  [`wb_add_dxfs_style()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_dxfs_style.md)
+  gained a new argument `format_code` to allow varying number format
+  ids. If not set, the function behaves similarly to before. But the
+  argument order has changed.
+
+------------------------------------------------------------------------
+
 ## openxlsx2 1.24
 
 CRAN release: 2026-02-21
@@ -23,18 +54,18 @@ CRAN release: 2026-02-21
   [`utils::zip()`](https://rdrr.io/r/utils/zip.html), but never passed
   `Sys.which("zip")`. This has been corrected.
   [\#1533](https://github.com/JanMarvin/openxlsx2/pull/1533)
-- Fix reading uninitialized cells
+- Fix reading uninitialized cells.
   [\#1546](https://github.com/JanMarvin/openxlsx2/pull/1546)
-- Various changes to comment and thread handling code
+- Various changes to comment and thread handling code.
 - Fixed immediate `finalize()` calls after
-  [`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md)
+  [`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md).
   [\#1576](https://github.com/JanMarvin/openxlsx2/pull/1576)
 
 ### Internal Changes
 
-- Cleanup and remove `waldo` from `testthat` helper functions
-- Update many manual pages
-- Cleanups for consistency in internal XML handler code
+- Cleanup and remove `waldo` from `testthat` helper functions.
+- Update many manual pages.
+- Cleanups for consistency in internal XML handler code.
 
 ------------------------------------------------------------------------
 
