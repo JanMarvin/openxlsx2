@@ -285,8 +285,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // readXML
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, bool empty_tags, bool skip_control, bool pointer);
-RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP whitespaceSEXP, SEXP empty_tagsSEXP, SEXP skip_controlSEXP, SEXP pointerSEXP) {
+SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, int comments, bool empty_tags, bool skip_control, bool pointer);
+RcppExport SEXP _openxlsx2_readXML(SEXP pathSEXP, SEXP isfileSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP whitespaceSEXP, SEXP commentsSEXP, SEXP empty_tagsSEXP, SEXP skip_controlSEXP, SEXP pointerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -295,10 +295,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type declaration(declarationSEXP);
     Rcpp::traits::input_parameter< bool >::type whitespace(whitespaceSEXP);
+    Rcpp::traits::input_parameter< int >::type comments(commentsSEXP);
     Rcpp::traits::input_parameter< bool >::type empty_tags(empty_tagsSEXP);
     Rcpp::traits::input_parameter< bool >::type skip_control(skip_controlSEXP);
     Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
-    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration, whitespace, empty_tags, skip_control, pointer));
+    rcpp_result_gen = Rcpp::wrap(readXML(path, isfile, escapes, declaration, whitespace, comments, empty_tags, skip_control, pointer));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -848,7 +849,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_cdigit", (DL_FUNC) &_openxlsx2_cdigit, 2},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
-    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 8},
+    {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 9},
     {"_openxlsx2_is_xml", (DL_FUNC) &_openxlsx2_is_xml, 1},
     {"_openxlsx2_getXMLXPtrNamePath", (DL_FUNC) &_openxlsx2_getXMLXPtrNamePath, 2},
     {"_openxlsx2_getXMLXPtrPath", (DL_FUNC) &_openxlsx2_getXMLXPtrPath, 2},

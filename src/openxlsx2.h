@@ -2,6 +2,7 @@
 #define OPENXLSX2_H
 
 #include <array>
+#include <memory>
 
 #include "openxlsx2_types.h"
 

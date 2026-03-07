@@ -3,11 +3,11 @@ test_that("read_xml", {
 
   exp <- "<a/>"
   got <- read_xml("<a/>", empty_tags = FALSE, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<a></a>"
   got <- read_xml("<a/>", empty_tags = TRUE, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   # a pointer
   x <- read_xml("<a><b/></a>")
@@ -65,25 +65,25 @@ test_that("read_xml", {
 
   exp <- "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><t xml:space=\"preserve\"> </t>"
   got <- readLines(tmp, warn = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   xml <- '<a><b><c1/></b></a><a><b><c2/></b></a>'
 
   exp <- c("<a><b><c1/></b></a>", "<a><b><c2/></b></a>")
   got <- xml_node(xml, "a")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- c("<b><c1/></b>", "<b><c2/></b>")
   got <- xml_node(xml, "a", "b")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<c1/>"
   got <- xml_node(xml, "a", "b", "c1")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   exp <- "<c2/>"
   got <- xml_node(xml, "a", "b", "c2")
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
 })
 
@@ -390,13 +390,29 @@ test_that("works with x namespace", {
 
   exp <- "<x:a><x:b/></x:a>"
   got <- read_xml(tmp, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
 
   op <- options("openxlsx2.namespace_xml" = "x")
   on.exit(options(op), add = TRUE)
 
   exp <- "<a><b/></a>"
   got <- read_xml(tmp, pointer = FALSE)
-  expect_equal(exp, got)
+  expect_equal(got, exp)
+
+})
+
+test_that("reading comments works", {
+
+  xml <- "<foo><!-- bar --><baz><!-- moo --></baz></foo>"
+  exp <- "<foo><baz/></foo>"
+  got <- read_xml(xml, comments = FALSE, pointer = FALSE)
+  expect_equal(got, exp)
+
+  got <- read_xml(xml, comments = TRUE, pointer = FALSE)
+  expect_equal(got, xml)
+
+  exp <- c("bar", "moo")
+  got <- read_xml(xml, comments = 2, pointer = FALSE)
+  expect_equal(got, exp)
 
 })

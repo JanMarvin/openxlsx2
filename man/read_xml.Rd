@@ -11,7 +11,8 @@ read_xml(
   declaration = FALSE,
   whitespace = TRUE,
   empty_tags = FALSE,
-  skip_control = TRUE
+  skip_control = TRUE,
+  comments = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ no escapes. Assuming that the input already provides valid information.}
 \item{empty_tags}{should \verb{<b/>} or \verb{<b></b>} be returned}
 
 \item{skip_control}{should whitespace character be exported}
+
+\item{comments}{should comments be parsed (1) or only comments returned (2)}
 }
 \description{
 read xml file

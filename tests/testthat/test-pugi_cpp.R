@@ -5,26 +5,26 @@ test_that("read_xml", {
   # TODO add test for isfile
   # and do some actual tests
 
-  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
-  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
-  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
-  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
+  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
+  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
+  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
+  expect_silent(z <- readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
 
   exp <- "<a>A & B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
 
   exp <- "<?xml test=\"yay\"?><a>A & B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = FALSE, declaration = TRUE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
 
   exp <- "<a>A &amp; B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = FALSE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
 
   exp <- "<?xml test=\"yay\"?><a>A &amp; B</a>"
-  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
+  expect_equal(exp, readXML(xml, isfile = FALSE, escapes = TRUE, declaration = TRUE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
 
   xml <- "<a>"
-  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
-  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
+  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = TRUE))
+  expect_error(readXML(xml, isfile = FALSE, escapes = FALSE, declaration = FALSE, whitespace = TRUE, comments = FALSE, empty_tags = FALSE, skip_control = TRUE, pointer = FALSE))
 
 })
 
