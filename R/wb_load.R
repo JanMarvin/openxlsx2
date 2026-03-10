@@ -158,7 +158,7 @@ wb_load <- function(
   vbaProject        <- grep_xml("vbaProject\\.bin$")
   metadataXML       <- grep_xml("metadata\\.xml$")
 
-  xmlDirs <- unique(dirname(xmlFiles))
+  xmlDirs <- collapse::funique(dirname(xmlFiles))
 
   # Drawings & Media
   drawingsXML <- drawingRelsXML <- vmlDrawingXML <- vmlDrawingRelsXML <- media <- character(0)
@@ -267,7 +267,7 @@ wb_load <- function(
   )
 
   file_names <- basename2(xmlFiles)
-  file_folders <- unique(basename(dirname(xmlFiles)))
+  file_folders <- collapse::funique(basename(dirname(xmlFiles)))
   known <- c(
     basename(xmlDir), "_rels", "activeX", "charts", "chartsheets",
     "ctrlProps", "customXml", "docMetadata", "docProps", "drawings",
@@ -757,7 +757,7 @@ wb_load <- function(
   ## xl\media
   if (!data_only && length(media)) {
     mediaNames <- regmatches(media, regexpr("image[0-9]+\\.[a-z]+$", media))
-    fileTypes <- unique(gsub("image[0-9]+\\.", "", mediaNames))
+    fileTypes <- collapse::funique(gsub("image[0-9]+\\.", "", mediaNames))
 
     contentNodes <- sprintf('<Default Extension="%s" ContentType="image/%s"/>', fileTypes, fileTypes)
     contentNodes[fileTypes == "emf"] <- '<Default Extension="emf" ContentType="image/x-emf"/>'
@@ -979,7 +979,7 @@ wb_load <- function(
 
             freezePane <- paste0(
               vapply(
-                unique(xml_nams),
+                collapse::funique(xml_nams),
                 function(x) {
                   xml <- xml_node(sheetViews, "sheetViews", "sheetView", x)
                   paste(xml, collapse = "")
@@ -1100,7 +1100,7 @@ wb_load <- function(
         xml_relship$base <- basename2(xml_relship$Target)
 
         # silently remove empty drawing/vml references created by openxlsx
-        if (any(missing_rels <- is.na(match(xml_relship$base, file_names) & !xml_relship$typ == "hyperlink"))) {
+        if (any(missing_rels <- is.na(collapse::fmatch(xml_relship$base, file_names) & !xml_relship$typ == "hyperlink"))) {
           relship_missing <- which(missing_rels)
           if (debug) warning(
             "relationship missing in input file: ",  paste0(xml_relship$Target[relship_missing], collapse = ", "),
@@ -1410,7 +1410,7 @@ wb_load <- function(
         SST      <- c(comments)
 
         matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
-        matches <- unique(unlist(matches))
+        matches <- collapse::funique(unlist(matches))
 
         values  <- cdigit(matches, as_integer = TRUE)
 
@@ -1494,7 +1494,7 @@ wb_load <- function(
     if (length(embeddings)) {
 
       # get the embedded files extensions
-      files <- unique(gsub(".+\\.(\\w+)$", "\\1", embeddings))
+      files <- collapse::funique(gsub(".+\\.(\\w+)$", "\\1", embeddings))
 
       # get the required ContentTypes
       extensions <- rbindlist(xml_attr(content_type, "Types", "Default"))
@@ -1608,7 +1608,7 @@ wb_load <- function(
     hasRels <- tmp %in% basename(tableRelsXML)
 
     ## order tableRelsXML
-    tableRelsXML <- tableRelsXML[match(tmp[hasRels], basename(tableRelsXML))]
+    tableRelsXML <- tableRelsXML[collapse::fmatch(tmp[hasRels], basename(tableRelsXML))]
 
     ##
     wb$tables.xml.rels <- character(length = length(tablesXML))
@@ -1892,7 +1892,7 @@ wb_load <- function(
       SST      <- c(wb$sharedStrings)
 
       matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
-      matches <- unique(unlist(matches))
+      matches <- collapse::funique(unlist(matches))
 
       values  <- cdigit(matches, as_integer = TRUE)
 
