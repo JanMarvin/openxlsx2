@@ -6792,10 +6792,9 @@ wbWorkbook <- R6::R6Class(
         path = path_pictur
       )
 
-      xml <- gsub("r:embed=\"", "r:embed=\"orig_", xml)
-
       # --- register raster files produced by rvg::dml_xlsx() ---
       if (!is.null(raster_prefix)) {
+        xml <- gsub("r:embed=\"", "r:embed=\"orig_", xml)
         raster_dir <- dirname(raster_prefix)
         raster_uid <- basename(raster_prefix)
         raster_files <- list.files(
