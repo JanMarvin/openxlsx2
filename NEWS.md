@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* Restore `wb_add_image()` that was broken in 1.24 [#1598](https://github.com/JanMarvin/openxlsx2/pull/1598)
+
+
+***************************************************************************
+
 # openxlsx2 1.25
 
 ## Fixes
