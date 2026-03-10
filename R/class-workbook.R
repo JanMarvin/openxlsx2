@@ -9806,7 +9806,7 @@ wbWorkbook <- R6::R6Class(
       file
     ) {
 
-      if (length(self$path) == 0) {
+      if (length(self$tmpDir) == 0) {
         xmlDir <- temp_dir("_openxlsx_wb_workbook")
         self$tmpDir <- xmlDir
       }
