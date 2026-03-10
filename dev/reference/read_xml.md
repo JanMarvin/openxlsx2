@@ -12,7 +12,8 @@ read_xml(
   declaration = FALSE,
   whitespace = TRUE,
   empty_tags = FALSE,
-  skip_control = TRUE
+  skip_control = TRUE,
+  comments = FALSE
 )
 ```
 
@@ -46,6 +47,10 @@ read_xml(
 - skip_control:
 
   should whitespace character be exported
+
+- comments:
+
+  should comments be parsed (1) or only comments returned (2)
 
 ## Details
 

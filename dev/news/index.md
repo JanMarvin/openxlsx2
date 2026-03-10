@@ -4,22 +4,42 @@
 
 ### Fixes
 
-- Fix missing header for older clang
+- Restore
+  [`wb_add_image()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_image.md)
+  that was broken in 1.24
+  [\#1598](https://github.com/JanMarvin/openxlsx2/pull/1598)
+
+------------------------------------------------------------------------
+
+## openxlsx2 1.25
+
+CRAN release: 2026-03-07
+
+### Fixes
+
+- Fixed missing header for older clang. This fixes the CRAN Mac builds
+  [\#1585](https://github.com/JanMarvin/openxlsx2/pull/1585)
 - Fixed `finalize()` calls after `clone()` and `clone(deep = TRUE)`.
   [\#1587](https://github.com/JanMarvin/openxlsx2/pull/1587) (Same bug
   report as the previous fix for `finalize()`.)
-- If no zip tool is available on Windows and `R_ZIPCMD` is unset, we no
-  longer unsuccessfully attempt to use
+- If no zip tool is available (e.g., in R without Rtools on Windows and
+  `R_ZIPCMD` is unset), the package no longer attempts to use
   [`utils::zip()`](https://rdrr.io/r/utils/zip.html).
-  [1591](https://github.com/JanMarvin/openxlsx2/pull/1591)
+  [\#1591](https://github.com/JanMarvin/openxlsx2/pull/1591)
+
+### Internal Changes
+
+- [`read_xml()`](https://janmarvin.github.io/openxlsx2/dev/reference/read_xml.md)
+  got a `comments` argument that can either read XML comments or return
+  only XML comments
 
 ### Breaking changes
 
 - [`create_dxfs_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_dxfs_style.md)
   and
   [`wb_add_dxfs_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_dxfs_style.md)
-  gained a new attribute `format_code` to allow varying number format
-  ids. If not set, the function behaves similar to before. But the
+  gained a new argument `format_code` to allow varying number format
+  ids. If not set, the function behaves similarly to before. But the
   argument order has changed.
 
 ------------------------------------------------------------------------

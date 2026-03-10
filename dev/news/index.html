@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.24.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.25.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,15 +51,29 @@
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>Fix missing header for older clang</li>
+<ul><li>Restore <code><a href="../reference/wb_add_image.html">wb_add_image()</a></code> that was broken in 1.24 <a href="https://github.com/JanMarvin/openxlsx2/pull/1598" class="external-link">#1598</a>
+</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.25" id="openxlsx2-125">openxlsx2 1.25<a class="anchor" aria-label="anchor" href="#openxlsx2-125"></a></h2><p class="text-muted">CRAN release: 2026-03-07</p>
+<div class="section level3">
+<h3 id="fixes-1-25">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-25"></a></h3>
+<ul><li>Fixed missing header for older clang. This fixes the CRAN Mac builds <a href="https://github.com/JanMarvin/openxlsx2/pull/1585" class="external-link">#1585</a>
+</li>
 <li>Fixed <code>finalize()</code> calls after <code>clone()</code> and <code>clone(deep = TRUE)</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1587" class="external-link">#1587</a> (Same bug report as the previous fix for <code>finalize()</code>.)</li>
-<li>If no zip tool is available on Windows and <code>R_ZIPCMD</code> is unset, we no longer unsuccessfully attempt to use <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1591" class="external-link">1591</a>
+<li>If no zip tool is available (e.g., in R without Rtools on Windows and <code>R_ZIPCMD</code> is unset), the package no longer attempts to use <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1591" class="external-link">#1591</a>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="internal-changes-1-25">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-25"></a></h3>
 <ul><li>
-<code><a href="../reference/create_dxfs_style.html">create_dxfs_style()</a></code> and <code><a href="../reference/wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> gained a new attribute <code>format_code</code> to allow varying number format ids. If not set, the function behaves similar to before. But the argument order has changed.</li>
+<code><a href="../reference/read_xml.html">read_xml()</a></code> got a <code>comments</code> argument that can either read XML comments or return only XML comments</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-1-25">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-25"></a></h3>
+<ul><li>
+<code><a href="../reference/create_dxfs_style.html">create_dxfs_style()</a></code> and <code><a href="../reference/wb_add_dxfs_style.html">wb_add_dxfs_style()</a></code> gained a new argument <code>format_code</code> to allow varying number format ids. If not set, the function behaves similarly to before. But the argument order has changed.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
