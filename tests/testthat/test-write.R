@@ -780,7 +780,7 @@ test_that("slicer extension 'hide_no_data_items' works", {
 
   wb$
     add_pivot_table(df, sheet = "pivot", dims = "A3", slicer = c("slicervar1", "slicervar2"), rows = c("var"), data = "speed", params = list(name = "pivot_1"))$
-    add_slicer(x = df, sheet = "pivot", dims = "D3:E9", slicer = "slicervar1", pivot_table = "pivot_1", param = list(hide_no_data_items = TRUE))$
+    add_slicer(x = df, sheet = "pivot", dims = "D3:E9", slicer = "slicervar1", pivot_table = "pivot_1", params = list(hide_no_data_items = TRUE))$
     add_slicer(x = df, sheet = "pivot", dims = "F3:G9", slicer = "slicervar2", pivot_table = "pivot_1")
 
   expect_true(grepl("x15:slicerCacheHideItemsWithNoData", wb$slicerCaches[[1]]))
@@ -919,7 +919,7 @@ test_that("partial labels work", {
   attr(df$var4, "labels") <- c(No = 0, Maybe = 2)                # partial labels
   attr(df$var5, "labels") <- c(Undecided = -1)                   # unmatched label
 
-  df$var6 <- factor(df$var6, levels = c(1, 0, 2), label = c("Yes", "No", "Maybe"))
+  df$var6 <- factor(df$var6, levels = c(1, 0, 2), labels = c("Yes", "No", "Maybe"))
 
 
   got <- write_xlsx(x = df)$to_df()
