@@ -83,7 +83,7 @@ test_that("merged cells are excluded from col width `auto` calculation", {
     add_data(x = "the `cars` dataset", dims = "A1")$
     merge_cells(dims = "A1:B1")$
     add_data(x = head(cars), dims = "A2")$
-    set_col_widths(cols = "A:B", width = "auto")
+    set_col_widths(cols = "A:B", widths = "auto")
 
   exp <- c(
     "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"5.711\"/>",
@@ -1349,7 +1349,7 @@ test_that("pivot tables with formulas work", {
       rows = "vs",
       # For this case, the formula must return a single value
       data = c("disp", "cyl", "=cyl/disp" = "Field1", "=Field1 * _xlfn.MAX(am)" = "Rand"),
-      param = list(
+      params = list(
         numfmts = c(
           formatCode = c("#,##0.0"),
           formatCode = c("#,##0.0"),
@@ -1371,7 +1371,7 @@ test_that("pivot tables downfill works", {
     dims = "B2",
     rows = c("cyl", "vs"),
     data = "mpg",
-    param = list(compact = FALSE, downfill = TRUE)
+    params = list(compact = FALSE, downfill = TRUE)
   )
   expect_true(grepl("fillDownLabels", wb$pivotTables))
 })
@@ -1384,7 +1384,7 @@ test_that("pivot tables downfill works", {
     dims = "B2",
     rows = c("cyl", "vs"),
     data = "mpg",
-    param = list(compact = FALSE, downfill = TRUE)
+    params = list(compact = FALSE, downfill = TRUE)
   )
   expect_true(grepl("fillDownLabels", wb$pivotTables))
 })

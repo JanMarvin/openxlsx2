@@ -1508,14 +1508,14 @@ test_that("removing border works", {
 
 test_that("wb_set_col_widths() works", {
   wb <- wb_workbook()$add_worksheet()$
-    set_col_widths(cols = 2:7, width = "auto")
+    set_col_widths(cols = 2:7, widths = "auto")
   exp <- character()
   got <- wb$worksheets[[1]]$cols_attr
   expect_equal(got, exp)
 
 
   wb$add_data(x = cars, dims = "B2")$
-    set_col_widths(cols = 1:4, width = "auto")
+    set_col_widths(cols = 1:4, widths = "auto")
 
   exp <- c(
     "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"5.711\"/>",
@@ -1526,7 +1526,7 @@ test_that("wb_set_col_widths() works", {
 
 
   wb <- wb_workbook()$add_worksheet()$
-    set_col_widths(cols = 2:3, width = 6)
+    set_col_widths(cols = 2:3, widths = 6)
 
   exp <- "<col min=\"2\" max=\"3\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"6.711\"/>"
   got <- wb$worksheets[[1]]$cols_attr
@@ -1534,8 +1534,8 @@ test_that("wb_set_col_widths() works", {
 
 
   wb <- wb_workbook()$add_worksheet()
-  wb$set_col_widths(cols = 1:4, width = 4)
-  wb$set_col_widths(cols = 7:8, width = 4)
+  wb$set_col_widths(cols = 1:4, widths = 4)
+  wb$set_col_widths(cols = 7:8, widths = 4)
 
   exp <- c(
     "<col min=\"1\" max=\"4\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>",
@@ -1545,8 +1545,8 @@ test_that("wb_set_col_widths() works", {
   expect_equal(got, exp)
 
   wb <- wb_workbook()$add_worksheet()
-  wb$set_col_widths(cols = 3:7, width = 5)
-  wb$set_col_widths(cols = 2:8, width = 4)
+  wb$set_col_widths(cols = 3:7, widths = 5)
+  wb$set_col_widths(cols = 2:8, widths = 4)
 
   exp <- "<col min=\"2\" max=\"8\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"4.711\"/>"
   got <- wb$worksheets[[1]]$cols_attr

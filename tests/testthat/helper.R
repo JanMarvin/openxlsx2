@@ -166,6 +166,12 @@ testsetup <- function() {
       exp <- "2023-07-20T23:32:14Z"
       got <- wb_workbook()$get_properties()[["datetime_created"]]
       testthat::expect_equal(got, exp)
+
+      options(
+        warnPartialMatchDollar = TRUE,
+        warnPartialMatchArgs   = TRUE,
+        warnPartialMatchAttr   = TRUE
+      )
     })
   }
 }
