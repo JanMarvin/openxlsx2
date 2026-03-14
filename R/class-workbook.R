@@ -1570,6 +1570,7 @@ wbWorkbook <- R6::R6Class(
     #'   `na_strings()` uses the special `#N/A` value within the workbook.
     #' @param inline_strings write characters as inline strings
     #' @param total_row write total rows to table
+    #' @param params optional parameters passed to the data table creation
     #' @param ... additional arguments
     #' @return The `wbWorkbook` object
     add_data_table = function(
@@ -1593,6 +1594,7 @@ wbWorkbook <- R6::R6Class(
         na                = na_strings(),
         inline_strings    = TRUE,
         total_row         = FALSE,
+        params            = NULL,
         ...
     ) {
 
@@ -1631,7 +1633,8 @@ wbWorkbook <- R6::R6Class(
         remove_cell_style = remove_cell_style,
         na                = na,
         inline_strings    = inline_strings,
-        total_row         = total_row
+        total_row         = total_row,
+        params            = params
       )
       invisible(self)
     },
@@ -3997,13 +4000,6 @@ wbWorkbook <- R6::R6Class(
         tActive <- self$tables$tab_act
       }
 
-
-      ### autofilter
-      autofilter <- if (withFilter) {
-        autofilter_ref <- ref
-        xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = autofilter_ref))
-      }
-
       trf <- NULL
       has_total_row <- FALSE
       has_total_lbl <- FALSE
@@ -4072,6 +4068,48 @@ wbWorkbook <- R6::R6Class(
         totalsRowShown = as_xml_attr(has_total_row)
         #headerRowDxfId="1"
       )
+
+      ### autofilter
+      # run this if withFilter is something (TRUE or a character)
+      autofilter <- NULL
+      if (!isFALSE(withFilter)) {
+        if (!isFALSE(totalsRowCount)) {
+          # exclude total row from filter
+          rowcol         <- dims_to_rowcol(ref)
+          autofilter_ref <- rowcol_to_dims(as.integer(rowcol[[2]])[-length(rowcol[[2]])], rowcol[[1]])
+        } else {
+          autofilter_ref <- ref
+        }
+
+        ### autofilter
+        autofilter <- xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = autofilter_ref))
+      }
+
+      if (is.character(withFilter)) {
+        fltr_nms <- names(withFilter)
+        fltr_nms <- paste0("x$", escape_varname(fltr_nms))
+
+        filter <- vapply(
+          seq_along(fltr_nms),
+          function(i) {
+            gsub("^x", replacement = fltr_nms[i], x = withFilter[i])
+          },
+          NA_character_
+        )
+        names(filter) <- names(withFilter)
+
+        assert_class(filter, "character")
+
+        ## prepare condition list & autofilter xml
+        fltr       <- create_conditions(filter)
+        autofilter <- prepare_autofilter(colNames, autofilter_ref, conditions = fltr)
+
+        ## revese the condition to make sure that we have lower strings
+        ## select the rows to hide and hide them
+        filter <- reverse_conditions(fltr)
+        sel    <- rows_to_hide(self, sheet, ref, filter)
+        self$set_row_heights(rows = sel, hidden = TRUE)
+      }
 
       tab_xml_new <- xml_node_create(
           xml_name = "table",
