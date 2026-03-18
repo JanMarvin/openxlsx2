@@ -6961,11 +6961,14 @@ wbWorkbook <- R6::R6Class(
 
       next_chart <- NROW(self$charts) + 1
 
+      # allow passing colors and style. Construct rels if needed
+      # figure out if chart or chartEx is required. do the slot
+      # assignment and avoid simple stacking
       chart <- data.frame(
         chart   = xml,
-        colors  = colors1_xml,
-        style   = styleplot_xml,
-        rels    = chart1_rels_xml(next_chart),
+        colors  = "", # colors1_xml,
+        style   = "", # styleplot_xml,
+        rels    = "", # chart1_rels_xml(next_chart),
         chartEx = "",
         relsEx  = "",
         stringsAsFactors = FALSE
