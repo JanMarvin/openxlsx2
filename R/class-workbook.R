@@ -6959,30 +6959,43 @@ wbWorkbook <- R6::R6Class(
         sheet_drawing <- length(self$drawings) + 1L
       }
 
-      next_chart <- NROW(self$charts) + 1
+      n_charts <- NROW(self$charts)
+      chart_slot <- min(which(!nzchar(self$charts$chart)), n_charts + 1L)
 
-      # allow passing colors and style. Construct rels if needed
-      # figure out if chart or chartEx is required. do the slot
-      # assignment and avoid simple stacking
-      chart <- data.frame(
-        chart   = xml,
-        colors  = "", # colors1_xml,
-        style   = "", # styleplot_xml,
-        rels    = "", # chart1_rels_xml(next_chart),
-        chartEx = "",
-        relsEx  = "",
-        stringsAsFactors = FALSE
-      )
+      chart <- if (chart_slot > n_charts) {
+        data.frame(
+          chart   = "",
+          colors  = "", # colors1_xml,
+          style   = "", # styleplot_xml,
+          rels    = "", # chart1_rels_xml(next_chart),
+          chartEx = "",
+          relsEx  = "",
+          stringsAsFactors = FALSE
+        )
+      }
 
       self$charts <- rbind(self$charts, chart)
 
-      class(next_chart) <- c("integer", "chart_id")
+      self$charts$chart[[chart_slot]] <- xml
+
+      # style_slot   <- which(!nzchar(self$charts$style))
+      # colors_slot  <- which(!nzchar(self$charts$colors))
+      # chartEx_slot <- which(!nzchar(self$charts$chartEx))
+      # rels_slot    <- which(!nzchar(self$charts$rels))
+      # relsEx_slot  <- which(!nzchar(self$charts$relsEx))
+
+      # TODO
+      # allow passing colors and style. Construct rels if needed
+      # figure out if chart or chartEx is required. do the slot
+      # assignment and avoid simple stacking
+
+      class(chart_slot) <- c("integer", "chart_id")
 
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet      = sheet,
         dims       = dims,
-        xml        = next_chart,
+        xml        = chart_slot,
         col_offset = col_offset,
         row_offset = row_offset
       )
@@ -6991,7 +7004,7 @@ wbWorkbook <- R6::R6Class(
 
       self$drawings_rels[[sheet_drawing]] <- drawings_rels(
         self$drawings_rels[[sheet_drawing]],
-        next_chart
+        chart_slot
       )
 
       invisible(self)

@@ -648,13 +648,23 @@ drawings <- function(drawings, drawing_id) {
     pointer   = FALSE)
 }
 
-chart1_rels_xml <- function(x) {
+chart1_rels_xml <- function(x, y) {
   sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">
 <Relationship Id=\"rId2\" Type=\"http://schemas.microsoft.com/office/2011/relationships/chartColorStyle\" Target=\"colors%s.xml\"/>
 <Relationship Id=\"rId1\" Type=\"http://schemas.microsoft.com/office/2011/relationships/chartStyle\" Target=\"style%s.xml\"/>
 </Relationships>",
           x,
-          x
+          y
+  )
+}
+
+chartEx1_rels_xml <- function(x, y) {
+  sprintf("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">
+  <Relationship Id=\"rId2\" Type=\"http://schemas.microsoft.com/office/2011/relationships/chartColorStyle\" Target=\"colors%s.xml\"/>
+  <Relationship Id=\"rId1\" Type=\"http://schemas.microsoft.com/office/2011/relationships/chartStyle\" Target=\"style%s.xml\"/>
+  </Relationships>",
+          x,
+          y
   )
 }
 
