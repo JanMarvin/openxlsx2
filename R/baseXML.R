@@ -613,7 +613,7 @@ drawings <- function(drawings, drawing_id) {
         <xdr:ext cx="9313333" cy="6070985" />
         <xdr:graphicFrame macro="">
         <xdr:nvGraphicFramePr>
-          <xdr:cNvPr id="2" name="Chart %s">
+          <xdr:cNvPr id="%s" name="Chart %s">
           <a:extLst>
             <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
             <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="%s"/>
@@ -626,7 +626,7 @@ drawings <- function(drawings, drawing_id) {
         </xdr:nvGraphicFramePr>
         <xdr:xfrm>
           <a:off x="0" y="0" />
-          <a:ext cx="0" cy="0" />
+          <a:ext cx="9313333" cy="6070985" />
         </xdr:xfrm>
         <a:graphic>
           <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart">
@@ -636,6 +636,7 @@ drawings <- function(drawings, drawing_id) {
         </xdr:graphicFrame>
         <xdr:clientData />
       </xdr:absoluteAnchor>',
+      drawing_id,
       drawing_id,
       st_guid(),
       rel_len + 1L
