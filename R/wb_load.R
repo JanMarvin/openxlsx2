@@ -1157,14 +1157,14 @@ wb_load <- function(
         # TODO this assumes arabic numbers in names and will break with hex numbers
         # since target can be any hyperlink, we have to expect various things here like uint64
         ## There is no more warning thrown
-        wb_rels$tid <- cdigit(basename2(wb_rels$Target), as_integer = TRUE)
         wb_rels$typ <- basename(wb_rels$Type)
+        sel <- wb_rels$typ == "hyperlink"
+
+        wb_rels$tid[!sel] <- cdigit(basename2(wb_rels$Target[!sel]), as_integer = TRUE)
 
         # for hyperlinks, we take the relationship id
-        if (any(wb_rels$typ == "hyperlink")) {
-          wb_rels$tid[wb_rels$typ == "hyperlink"] <- as.integer(
-            cdigit(basename2(wb_rels$Id[wb_rels$typ == "hyperlink"]))
-          )
+        if (any(sel)) {
+          wb_rels$tid[sel] <- cdigit(basename2(wb_rels$Id[sel]), as_integer = TRUE)
         }
 
         cmmts <- wb_rels$tid[wb_rels$typ == "comments"]
