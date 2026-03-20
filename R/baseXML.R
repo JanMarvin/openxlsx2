@@ -574,27 +574,7 @@ genTimelineCachesExtLst <- function(i) {
   )
 }
 
-
-colors1_xml <- "<cs:colorStyle xmlns:cs=\"http://schemas.microsoft.com/office/drawing/2012/chartStyle\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" meth=\"cycle\" id=\"10\">
-<a:schemeClr val=\"accent1\"/>
-<a:schemeClr val=\"accent2\"/>
-<a:schemeClr val=\"accent3\"/>
-<a:schemeClr val=\"accent4\"/>
-<a:schemeClr val=\"accent5\"/>
-<a:schemeClr val=\"accent6\"/>
-<cs:variation/>
-<cs:variation><a:lumMod val=\"60000\"/></cs:variation>
-<cs:variation><a:lumMod val=\"80000\"/><a:lumOff val=\"20000\"/></cs:variation>
-<cs:variation><a:lumMod val=\"80000\"/></cs:variation>
-<cs:variation><a:lumMod val=\"60000\"/><a:lumOff val=\"40000\"/></cs:variation>
-<cs:variation><a:lumMod val=\"50000\"/></cs:variation>
-<cs:variation><a:lumMod val=\"70000\"/><a:lumOff val=\"30000\"/></cs:variation>
-<cs:variation><a:lumMod val=\"70000\"/></cs:variation>
-<cs:variation><a:lumMod val=\"50000\"/><a:lumOff val=\"50000\"/></cs:variation>
-</cs:colorStyle>"
-
-drawings <- function(drawings, drawing_id) {
-
+drawings <- function(drawings, drawing_id, is_chartEx) {
 
   rel_len <- length(xml_node(drawings, "Relationship"))
 
@@ -643,6 +623,35 @@ drawings <- function(drawings, drawing_id) {
     )
   )
 
+  if (is_chartEx) {
+    drawing <- sprintf(
+
+     '<xdr:absoluteAnchor>
+        <xdr:pos x="0" y="0" />
+        <xdr:ext cx="9313333" cy="6070985" />
+        <xdr:graphicFrame macro="">
+          <xdr:nvGraphicFramePr>
+          <xdr:cNvPr id="%s" name="Chart %s" />
+          <xdr:cNvGraphicFramePr />
+          </xdr:nvGraphicFramePr>
+          <xdr:xfrm>
+          <a:off x="0" y="0" />
+          <a:ext cx="4572000" cy="2926080" />
+          </xdr:xfrm>
+          <a:graphic>
+          <a:graphicData uri="http://schemas.microsoft.com/office/drawing/2014/chartex">
+            <cx:chart xmlns:cx="http://schemas.microsoft.com/office/drawing/2014/chartex" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:id="rId%s" />
+          </a:graphicData>
+          </a:graphic>
+        </xdr:graphicFrame>
+        <xdr:clientData />
+      </xdr:absoluteAnchor>',
+      drawing_id,
+      drawing_id,
+      rel_len + 1L
+    )
+  }
+
   xml_add_child(
     xml_node  = drawings,
     xml_child = drawing,
@@ -678,13 +687,15 @@ drawings_rels <- function(drawings, x) {
 
   rel_len <- length(xml_node(drawings, "Relationship"))
 
+  if (inherits(x, "chart_id"))
+    xml_str <- "<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart%s.xml\"/>"
+
+  if (inherits(x, "chartEx_id"))
+    xml_str <- "<Relationship Id=\"rId%s\" Type=\"http://schemas.microsoft.com/office/2014/relationships/chartEx\" Target=\"../charts/chartEx%s.xml\"/>"
+
   c(
     drawings,
-    sprintf(
-      "<Relationship Id=\"rId%s\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart\" Target=\"../charts/chart%s.xml\"/>",
-      rel_len + 1,
-      x
-    )
+    sprintf(xml_str, rel_len + 1, x)
   )
 }
 

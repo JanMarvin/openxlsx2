@@ -6702,8 +6702,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       # prepare mschart drawing
-      if (inherits(xml, "chart_id")) {
-        xml <- drawings(self$drawings_rels[[sheet_drawing]], xml)
+      if (inherits(xml, "chart_id") | inherits(xml, "chartEx_id")) {
+        xml <- drawings(self$drawings_rels[[sheet_drawing]], xml, inherits(xml, "chartEx_id"))
       }
 
       xml <- read_xml(xml, pointer = FALSE)
@@ -6925,12 +6925,16 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Add xml chart
     #' @param xml xml
+    #' @param style style
+    #' @param color color
     #' @param col_offset,row_offset positioning parameters
     #' @return The `wbWorkbook` object
     add_chart_xml = function(
       sheet      = current_sheet(),
       dims       = NULL,
       xml,
+      style      = "",
+      color      = "",
       col_offset = 0,
       row_offset = 0,
       ...
@@ -6960,14 +6964,27 @@ wbWorkbook <- R6::R6Class(
       }
 
       n_charts <- NROW(self$charts)
-      chart_slot <- min(which(!nzchar(self$charts$chart)), n_charts + 1L)
 
-      chart <- if (chart_slot > n_charts) {
+      is_chart <- xml_node_name(xml) == "c:chartSpace"
+      is_chartEx <- xml_node_name(xml) == "cx:chartSpace"
+
+      chart_slot   <- if (is_chart) {
+        min(which(!nzchar(self$charts$chart)), n_charts + 1L)
+      } else {
+        0
+      }
+      chartEx_slot <- if (is_chartEx) {
+        min(which(!nzchar(self$charts$chartEx)), n_charts + 1L)
+      } else {
+        0
+      }
+
+      chart <- if (chart_slot > n_charts || chartEx_slot > n_charts) {
         data.frame(
           chart   = "",
-          colors  = "", # colors1_xml,
-          style   = "", # styleplot_xml,
-          rels    = "", # chart1_rels_xml(next_chart),
+          colors  = "",
+          style   = "",
+          rels    = "",
           chartEx = "",
           relsEx  = "",
           stringsAsFactors = FALSE
@@ -6976,26 +6993,34 @@ wbWorkbook <- R6::R6Class(
 
       self$charts <- rbind(self$charts, chart)
 
-      self$charts$chart[[chart_slot]] <- xml
+      colors_slot  <- min(which(!nzchar(self$charts$colors)))
+      style_slot   <- min(which(!nzchar(self$charts$style)))
+      rels_slot    <- min(which(!nzchar(self$charts$rels)))
+      relsEx_slot  <- min(which(!nzchar(self$charts$relsEx)))
 
-      # style_slot   <- which(!nzchar(self$charts$style))
-      # colors_slot  <- which(!nzchar(self$charts$colors))
-      # chartEx_slot <- which(!nzchar(self$charts$chartEx))
-      # rels_slot    <- which(!nzchar(self$charts$rels))
-      # relsEx_slot  <- which(!nzchar(self$charts$relsEx))
+      if (is_chart) self$charts$chart[[chart_slot]] <- xml
+      if (is_chartEx) self$charts$chartEx[[chartEx_slot]] <- xml
 
-      # TODO
-      # allow passing colors and style. Construct rels if needed
-      # figure out if chart or chartEx is required. do the slot
-      # assignment and avoid simple stacking
+      if (nzchar(color) && nzchar(style) && is_chart) {
+        self$charts$colors[[colors_slot]] <- color
+        self$charts$style[[style_slot]] <- style
+        self$charts$rels[[rels_slot]] <- chart1_rels_xml(colors_slot, style_slot)
+      } else if (nzchar(color) && nzchar(style) && is_chartEx) {
+        self$charts$colors[[colors_slot]] <- color
+        self$charts$style[[style_slot]] <- style
+        self$charts$relsEx[[relsEx_slot]] <- chart1_rels_xml(colors_slot, style_slot)
+      }
 
       class(chart_slot) <- c("integer", "chart_id")
+      class(chartEx_slot) <- c("integer", "chartEx_id")
+
+      chart_xml <- if (is_chart) chart_slot else chartEx_slot
 
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet      = sheet,
         dims       = dims,
-        xml        = chart_slot,
+        xml        = chart_xml,
         col_offset = col_offset,
         row_offset = row_offset
       )
@@ -7004,7 +7029,7 @@ wbWorkbook <- R6::R6Class(
 
       self$drawings_rels[[sheet_drawing]] <- drawings_rels(
         self$drawings_rels[[sheet_drawing]],
-        chart_slot
+        chart_xml
       )
 
       invisible(self)

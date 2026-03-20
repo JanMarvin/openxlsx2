@@ -2319,6 +2319,8 @@ Add xml chart
   sheet = current_sheet(),
   dims = NULL,
   xml,
+  style = "",
+  color = "",
   col_offset = 0,
   row_offset = 0,
   ...
@@ -2333,6 +2335,10 @@ Add xml chart
 \item{\code{dims}}{Cell range in a sheet}
 
 \item{\code{xml}}{xml}
+
+\item{\code{style}}{style}
+
+\item{\code{color}}{color}
 
 \item{\code{col_offset, row_offset}}{positioning parameters}
 

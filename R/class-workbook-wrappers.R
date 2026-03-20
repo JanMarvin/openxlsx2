@@ -3492,6 +3492,8 @@ wb_add_image <- function(
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear
 #' @param xml chart xml
+#' @param style chart style
+#' @param color chart color
 #' @param col_offset,row_offset positioning
 #' @param ... additional arguments
 #' @seealso [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
@@ -3501,6 +3503,8 @@ wb_add_chart_xml <- function(
   sheet      = current_sheet(),
   dims       = NULL,
   xml,
+  style      = "",
+  color      = "",
   col_offset = 0,
   row_offset = 0,
   ...
@@ -3509,6 +3513,8 @@ wb_add_chart_xml <- function(
   wb$clone(deep = TRUE)$add_chart_xml(
     sheet      = sheet,
     xml        = xml,
+    style      = style,
+    color      = color,
     dims       = dims,
     col_offset = col_offset,
     row_offset = row_offset,
