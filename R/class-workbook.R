@@ -2992,8 +2992,16 @@ wbWorkbook <- R6::R6Class(
       assert_class(overwrite, "logical")
       assert_class(flush, "logical")
 
+      if (length(file) > 1) {
+        stop("Multiple files provided.", .call = FALSE)
+      }
+
+      if (!file.exists(dirname(file))) {
+        stop("Path to file does not exist.", .call = FALSE)
+      }
+
       if (file.exists(file) && !overwrite) {
-        stop("File already exists!")
+        stop("File already exists!", .call = FALSE)
       }
 
       valid_extensions <- c("xlsx", "xlsm") # "xlsb"
