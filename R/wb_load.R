@@ -83,10 +83,14 @@ wb_load <- function(
     file <- xlsx_file %||% file
   }
 
+  if (length(file) > 1) {
+    stop("Multiple files provided.", .call = FALSE)
+  }
+
   file <- getFile(file)
 
   if (!file.exists(file)) {
-    stop("File does not exist.")
+    stop("File does not exist.", .call = FALSE)
   }
 
   ## create temp dir

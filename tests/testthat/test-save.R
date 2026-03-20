@@ -656,3 +656,15 @@ test_that("utilszip works with empty R_ZIPCMD", {
 
   unlink(tmp)
 })
+
+test_that("file asserts", {
+
+  files <- c("foo.xlsx", "bar.xlsx")
+
+  expect_error(wb_load(files), "Multiple files provided.")
+
+  expect_error(write_xlsx(list(mtcars, cars), file = files), "Multiple files provided.")
+
+  expect_error(write_xlsx(cars, "foo/bar/baz.xlsx"), "Path to file does not exist.")
+
+})
