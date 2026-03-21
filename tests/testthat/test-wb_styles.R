@@ -1634,6 +1634,16 @@ test_that("apply_numfmt handles AM/PM regardless of system locale", {
   expect_identical(got_short, "01:45:30 P")
 })
 
+test_that("apply_numfmt handles problematic input safely", {
+
+  problematic_fmt <- "[>1,000]#,##0;[<1,000]0"
+  expect_equal(apply_numfmt(1200, problematic_fmt), "1,200")
+
+  neg_fmt <- "[< -50]-0;0"
+  expect_equal(apply_numfmt(-75, neg_fmt), "-75")
+  expect_equal(apply_numfmt(-10, neg_fmt), "10")
+})
+
 test_that("dxf number formats work", {
 
   exp <- "<dxf><numFmt numFmtId=\"3\" formatCode=\"#,###.\"/></dxf>"

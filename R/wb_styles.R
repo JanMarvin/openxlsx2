@@ -2085,17 +2085,39 @@ apply_numfmt <- function(value, format_code) {
       sec_idx <- 1
 
       # 1. Section Selection Logic
-      if (is_numeric && any(grepl("^\\[[<>=!]+[0-9.]+\\]", sections))) {
+      if (is_numeric && any(grepl("^\\[[<>=!]+[ 0-9.-]+\\]", sections))) {
         for (i in seq_along(sections)) {
           sec <- sections[[i]]
-          if (grepl("^\\[([<>=!]+[0-9.]+)\\]", sec)) {
-            cond_str <- gsub("^\\[([<>=!]+[0-9.]+)\\].*", "\\1", sec)
-            if (eval(parse(text = paste(v, cond_str)))) {
+
+          if (grepl("^\\[([<>=!]+[ 0-9.-]+)\\]", sec)) {
+            cond_str <- gsub("^\\[([<>=!]+[ 0-9.-]+)\\].*", "\\1", sec)
+
+            clean_cond <- trimws(cond_str)
+            op_match <- regexpr("^[<>=!]+", clean_cond)
+            op <- trimws(regmatches(clean_cond, op_match))
+
+            # Use sub to remove only the operator, keeping the rest (the number)
+            limit_str <- sub("^[<>=!]+", "", clean_cond)
+            limit <- as.numeric(trimws(limit_str))
+
+            match <- switch(op,
+              "<"  = v < limit,
+              "<=" = v <= limit,
+              ">"  = v > limit,
+              ">=" = v >= limit,
+              "="  = v == limit,
+              "==" = v == limit,
+              "<>" = v != limit,
+              FALSE
+            )
+
+            if (isTRUE(match)) {
               sec_idx <- i
               condition_matched <- TRUE
               break
             }
           } else {
+            # This is the fallback section (e.g. the '0' in '[< -50]-0;0')
             sec_idx <- i
             condition_matched <- TRUE
             break
@@ -2103,6 +2125,7 @@ apply_numfmt <- function(value, format_code) {
         }
       }
 
+      # 2. Default Fallback (Only if NO condition matched)
       if (!condition_matched) {
         if (is_numeric) {
           if (v > 0 || (v == 0 && n_sec < 3)) {
@@ -2110,7 +2133,7 @@ apply_numfmt <- function(value, format_code) {
           } else if (v < 0) {
             if (n_sec >= 2) {
               sec_idx <- 2
-              v <- abs(v)
+              v <- abs(v) # Standard logic: neg section shows abs value
             } else {
               sec_idx <- 1
             }
