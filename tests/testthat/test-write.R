@@ -1572,3 +1572,210 @@ test_that("writing Inf, -Inf and NaN works", {
   got <- wb$to_df(col_names = FALSE)$A
   expect_equal(lbl, got)
 })
+
+test_that("writing tables with filters works", {
+
+  exp <- mtcars[mtcars$cyl %in% c(4, 8) & mtcars$am != 1 & mtcars$vs == 1, ]
+
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+      wb,
+      x = mtcars,
+      params = list(
+        choose = c(cyl = "x %in% c(4, 8)",
+                   am = c("x != 1"),
+                   vs = c("x == 1")
+                   )
+        )
+      )
+
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  wb <- write_xlsx(
+      x = mtcars,
+      as_table = TRUE,
+      params = list(
+        choose = c(cyl = "x %in% c(4, 8)",
+                   am = c("x != 1"),
+                   vs = c("x == 1")
+        )
+      )
+    )
+
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  choose <- c(city = "x %in% c(\"Berlin\", \"Paris\")")
+
+  df <- data.frame(
+    city = c("berlin", "Berlin", "BERLIN", "Hamburg", "Paris", "Lyon"),
+    cnty = c(1, 1, 1, 1, 2, 2)
+  )
+
+  # create workbook
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(wb, x = df, params = list(choose = choose))
+
+  exp <- c("berlin", "Berlin", "BERLIN", "Paris")
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)$city
+  expect_equal(exp, got)
+
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = list(
+      choose = c(cyl = "x > 4 & x < 8", gear = "x == 3 | x > 4")
+    )
+  )
+
+  exp <- c(
+    "<customFilters and=\"1\"><customFilter operator=\"greaterThan\" val=\"4\"/><customFilter operator=\"lessThan\" val=\"8\"/></customFilters>",
+    "<customFilters and=\"0\"><customFilter operator=\"equal\" val=\"3\"/><customFilter operator=\"greaterThan\" val=\"4\"/></customFilters>"
+  )
+  got <- xml_node(wb$tables$tab_xml, c("table", "autoFilter", "filterColumn", "customFilters"))
+  expect_equal(exp, got)
+
+  # Test: >= operator
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = list(
+      choose = c(mpg = "x >= 20")
+    )
+  )
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  exp <- mtcars[mtcars$mpg >= 20, ]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # Test: <= operator
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = list(
+      choose = c(mpg = "x <= 15")
+    )
+  )
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  exp <- mtcars[mtcars$mpg <= 15, ]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # Test: < operator
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = list(
+      choose = c(mpg = "x < 16")
+    )
+  )
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  exp <- mtcars[mtcars$mpg < 16, ]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # Test: > operator
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = list(
+      choose = c(mpg = "x > 25")
+    )
+  )
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  exp <- mtcars[mtcars$mpg > 25, ]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # Test: Single column with single condition
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = list(
+      choose = c(cyl = "x == 4")
+    )
+  )
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  exp <- mtcars[mtcars$cyl == 4, ]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # Test: NULL params
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = NULL
+  )
+  got <- wb_to_df(wb)
+  expect_equal(mtcars, got, ignore_attr = TRUE)
+
+  # Test: OR with multiple values
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = mtcars,
+    params = list(
+      choose = c(cyl = "x %in% c(4, 6) | x == 8")
+    )
+  )
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  exp <- mtcars[mtcars$cyl %in% c(4, 6) | mtcars$cyl == 8, ]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  # Test: Column name with spaces
+  df_spaces <- mtcars
+  names(df_spaces)[1] <- "m p g"
+
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_data_table(
+    wb,
+    x = df_spaces,
+    params = list(
+      choose = c(`m p g` = "x > 20")
+    )
+  )
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  exp <- df_spaces[df_spaces[["m p g"]] > 20, ]
+  expect_equal(exp, got, ignore_attr = TRUE)
+
+  wb <- wb_workbook()
+  wb <- wb_add_worksheet(wb)
+
+  expect_error(
+    wb <- wb_add_data_table(
+      wb,
+      x = df_spaces,
+      params = list(
+        choose = c(x = "x > undefined_variable")
+      )
+    ),
+    "Condition variable not found in table"
+  )
+
+  wb <- wb_add_data_table(
+    wb,
+    x = df_spaces,
+    params = list(
+      choose = c(`disp` = "x > undefined_variable")
+    )
+  )
+
+  exp <- "<autoFilter ref=\"A1:K33\"><filterColumn colId=\"2\"><filters/></filterColumn></autoFilter>"
+  got <- xml_node(wb$tables$tab_xml, c("table", "autoFilter"))
+  expect_equal(exp, got)
+
+})
