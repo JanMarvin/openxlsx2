@@ -27,6 +27,7 @@ wb_add_data_table(
   na = na_strings(),
   inline_strings = TRUE,
   total_row = FALSE,
+  params = NULL,
   ...
 )
 ```
@@ -123,6 +124,10 @@ wb_add_data_table(
 - total_row:
 
   logical. With the default `FALSE` no total row is added.
+
+- params:
+
+  list. Optional arguments passed to the data table creation.
 
 - ...:
 

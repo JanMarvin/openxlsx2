@@ -2,6 +2,11 @@
 
 ## openxlsx2 (development version)
 
+### New features
+
+- Tables now accept a new `params` argument that can be used for
+  filtering. [\#1126](https://github.com/JanMarvin/openxlsx2/pull/1126)
+
 ### Fixes
 
 - Restore
