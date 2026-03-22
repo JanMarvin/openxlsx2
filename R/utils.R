@@ -1481,6 +1481,25 @@ escape_varname <- function(var_name) {
   }, NA_character_)
 }
 
+#' functions we expect in a filter
+#' @keywords internal
+#' @noRd
+expected_funs <- list(
+  `$`    = base::`$`,
+  `[[`   = base::`[[`,
+  `%in%` = base::`%in%`,
+  `c`    = base::`c`,
+  `(`    = base::`(`,
+  `>=`   = base::`>=`,
+  `<=`   = base::`<=`,
+  `==`   = base::`==`,
+  `!=`   = base::`!=`,
+  `>`    = base::`>`,
+  `<`    = base::`<`,
+  `&`    = base::`&`,
+  `|`    = base::`|`
+)
+
 #' helper to parse the string into something that can be converted into openxml
 #' column filters
 #' @param filter_expr an expression like "x$cyl != 4"
@@ -1497,12 +1516,13 @@ create_conditions <- function(filter_expr) {
   }
 
   get_vals <- function(fltr_xpr, operator) {
-    args <- trimws(strsplit(fltr_xpr, operator)[[1]])
+    args <- trimws(strsplit(fltr_xpr, operator, fixed = TRUE)[[1]])
 
     nams <- gsub("`", "", gsub("^x\\$", "", args[1]))
-    vals <- eval(parse(text = args[2]))
+    safe_env  <- list2env(expected_funs, parent = emptyenv())
+    expr <- parse(text = args[2])[[1]]
 
-    # openxml does not care about case sensitivity
+    vals <- eval(expr, envir = safe_env)
     vals <- if (is.character(vals)) tolower(vals) else vals
 
     list(nams = nams, vals = vals)
@@ -1511,45 +1531,45 @@ create_conditions <- function(filter_expr) {
   for (fltr_xpr in filter_expr) {
 
     # Extract conditions for "equal"
-    if (grepl("%in%", fltr_xpr)) {
+    if (grepl("%in%", fltr_xpr, fixed = TRUE)) {
       values <- get_vals(fltr_xpr, "%in%")
       conditions[[values$nams]] <- add_condition("equal", values)
     }
 
     # Extract conditions for "equal" using ==
-    if (grepl("==", fltr_xpr)) {
+    if (grepl("==", fltr_xpr, fixed = TRUE)) {
       values <- get_vals(fltr_xpr, "==")
       conditions[[values$nams]] <- add_condition("equal", values)
     }
 
     # Extract conditions for "notEqual"
-    if (grepl("!=", fltr_xpr)) {
+    if (grepl("!=", fltr_xpr, fixed = TRUE)) {
       values <- get_vals(fltr_xpr, "!=")
       conditions[[values$nams]] <- add_condition("notEqual", values)
     }
 
     # Extract conditions for "lessThan"
-    if (grepl("<[^=]", fltr_xpr)) {  # "<" but not "<="
+    if (grepl("<[^=]", fltr_xpr, fixed = TRUE)) {
       values <- get_vals(fltr_xpr, "<")
       conditions[[values$nams]] <- add_condition("lessThan", values)
     }
 
     # Extract conditions for "lessThanOrEqual"
-    if (grepl("<=", fltr_xpr)) {
+    if (grepl("<=", fltr_xpr, fixed = TRUE)) {
       values <- get_vals(fltr_xpr, "<=")
       conditions[[values$nams]] <- add_condition("lessThanOrEqual", values)
     }
 
     # Extract conditions for "greaterThan"
-    if (grepl(">[^=]", fltr_xpr)) {  # ">" but not ">="
+    if (grepl(">[^=]", fltr_xpr)) {
       values <- get_vals(fltr_xpr, ">")
       conditions[[values$nams]] <- add_condition("greaterThan", values)
     }
 
     # Extract conditions for "greaterThanOrEqual"
-    if (grepl(">=", fltr_xpr)) {
+    if (grepl(">=", fltr_xpr, fixed = TRUE)) {
       values <- get_vals(fltr_xpr, ">=")
-      conditions <- add_condition("greaterThanOrEqual", values)
+      conditions[[values$nams]] <- add_condition("greaterThanOrEqual", values)
     }
   }
 
@@ -1611,7 +1631,7 @@ reverse_conditions <- function(conditions) {
 prepare_autofilter <- function(colNames, autofilter_ref, conditions) {
 
   cond_vars <- names(conditions)
-  if (any(!cond_vars %in% colNames)) stop("Condtion variable not found in table.")
+  if (any(!cond_vars %in% colNames)) stop("Condition variable not found in table.")
 
   autoFilter <- xml_node_create("autoFilter", xml_attributes = c(ref = autofilter_ref))
 
@@ -1681,11 +1701,21 @@ rows_to_hide <- function(wb, sheet, ref, filter) {
   x <- wb_to_df(wb, sheet = sheet, dims = ref)
   rows_all <- rownames(x)
 
-  chrs <- vapply(x, is.character, NA)
+  if (is.null(filter) || length(filter) == 0) return(integer(0))
+
+  chrs <- vapply(x, is.character, TRUE)
   x[chrs] <- lapply(x[chrs], tolower)
 
-  x <- x[eval(parse(text = paste0(filter, collapse = "&"))), , drop = FALSE]
-  rows_sel <- rownames(x)
+  safe_env <- list2env(expected_funs, parent = emptyenv())
+  safe_env$x <- x
+
+  logical_list <- lapply(filter, function(f) {
+    expr <- parse(text = tolower(f))[[1]]
+    eval(expr, envir = safe_env)
+  })
+
+  combined_logical <- Reduce(`&`, logical_list)
+  rows_sel <- rownames(x[combined_logical, , drop = FALSE])
 
   out <- rows_all[!rows_all %in% rows_sel]
   as.integer(out)

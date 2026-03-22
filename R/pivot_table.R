@@ -227,8 +227,15 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
   }
 
   if (!is.null(choose)) {
-    # change order
-    choose <- eval(parse(text = choose), data.frame(x = dat, stringsAsFactors = FALSE))[item_order]
+    df_context <- data.frame(x = dat, stringsAsFactors = FALSE)
+
+    safe_env <- list2env(expected_funs, parent = emptyenv())
+    safe_env$x <- df_context$x
+
+    expr <- parse(text = choose)[[1]]
+    choose_vec <- eval(expr, envir = safe_env)
+    choose <- choose_vec[item_order]
+
     hide <- as_xml_attr(!choose)
     sele <- as_xml_attr(choose)
   } else {
