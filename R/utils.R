@@ -1481,28 +1481,144 @@ escape_varname <- function(var_name) {
   }, NA_character_)
 }
 
-#' functions we expect in a filter
+#' Create a safe evaluation environment for filters
 #' @keywords internal
 #' @noRd
-expected_funs <- list(
-  `$`    = base::`$`,
-  `[[`   = base::`[[`,
-  `%in%` = base::`%in%`,
-  `c`    = base::`c`,
-  `(`    = base::`(`,
-  `>=`   = base::`>=`,
-  `<=`   = base::`<=`,
-  `==`   = base::`==`,
-  `!=`   = base::`!=`,
-  `>`    = base::`>`,
-  `<`    = base::`<`,
-  `&`    = base::`&`,
-  `|`    = base::`|`
+create_filter_env <- function() {
+  expected_funs <- list(
+    `$`    = base::`$`,
+    `[[`   = base::`[[`,
+    `%in%` = base::`%in%`,
+    `c`    = base::`c`,
+    `(`    = base::`(`,
+    `>=`   = base::`>=`,
+    `<=`   = base::`<=`,
+    `==`   = base::`==`,
+    `!=`   = base::`!=`,
+    `>`    = base::`>`,
+    `<`    = base::`<`,
+    `&`    = base::`&`,
+    `|`    = base::`|`
+  )
+  list2env(expected_funs, parent = emptyenv())
+}
+
+#' operator mapping we allow in a filter
+#' @keywords internal
+#' @noRd
+op_map <- list(
+  "=="   = "equal",
+  "!="   = "notEqual",
+  ">"    = "greaterThan",
+  ">="   = "greaterThanOrEqual",
+  "<"    = "lessThan",
+  "<="   = "lessThanOrEqual",
+  "%in%" = "equal"
 )
 
-#' helper to parse the string into something that can be converted into openxml
-#' column filters
-#' @param filter_expr an expression like "x$cyl != 4"
+#' operator reverse mapping in a filter
+#' @keywords internal
+#' @noRd
+reverse_op_map <- list(
+  "equal" = "%in%",
+  "notEqual" = "!=",
+  "greaterThan" = ">",
+  "greaterThanOrEqual" = ">=",
+  "lessThan" = "<",
+  "lessThanOrEqual" = "<="
+)
+
+#' Extract a single condition from "x > 4"
+#' @keywords internal
+#' @noRd
+extract_single_condition <- function(expr_str, filter_env) {
+
+  expr_str <- trimws(expr_str)
+
+  operators <- c("<=", ">=", "!=", "==", "%in%", "<", ">")
+
+  for (op in operators) {
+    if (!grepl(op, expr_str, fixed = TRUE)) {
+      next
+    }
+
+    parts <- strsplit(expr_str, op, fixed = TRUE)[[1]]
+
+    if (length(parts) != 2) {
+      next
+    }
+
+    lhs <- trimws(parts[1])
+    rhs <- trimws(parts[2])
+
+    if (lhs != "x") {
+      next
+    }
+
+    # Evaluate RHS to get the value
+    vals <- tryCatch({
+      expr_rhs <- parse(text = rhs)[[1]]
+      eval(expr_rhs, envir = filter_env)
+    }, error = function(e) {
+      NULL
+    })
+
+    # If evaluation failed, skip this operator
+    if (is.null(vals)) {
+      next
+    }
+
+    if (is.character(vals)) {
+      vals <- tolower(vals)
+    }
+
+    ooxml_op <- op_map[[op]]
+
+    return(list(
+      operator = ooxml_op,
+      vals = if (op == "%in%") vals else list(vals)
+    ))
+  }
+
+  NULL
+}
+
+#' Parse a single column filter expression
+#' @param expr_str expression string like "x > 4 & x < 8"
+#' @keywords internal
+#' @noRd
+parse_filter_expression <- function(expr_str) {
+
+  expr_str <- trimws(expr_str)
+  filters_list <- list()
+  logic_op <- "and"
+
+  if (grepl("|", expr_str, fixed = TRUE) && !grepl("&", expr_str, fixed = TRUE)) {
+    logic_op <- "or"
+    parts <- strsplit(expr_str, "|", fixed = TRUE)[[1]]
+  } else if (grepl("&", expr_str, fixed = TRUE)) {
+    logic_op <- "and"
+    parts <- strsplit(expr_str, "&", fixed = TRUE)[[1]]
+  } else {
+    parts <- expr_str
+  }
+
+  filter_env <- create_filter_env()
+
+  for (part in parts) {
+    part <- trimws(part)
+    filter_obj <- extract_single_condition(part, filter_env)
+    if (!is.null(filter_obj)) {
+      filters_list[[length(filters_list) + 1]] <- filter_obj
+    }
+  }
+
+  list(filters = filters_list, logic = logic_op)
+}
+
+#' Parse named filter expressions into structured conditions
+#' @param filter_expr named character vector
+#'   e.g. c(cyl = "x >= 4 & x < 8", am = "x != 1")
 #' @keywords internal
 #' @noRd
 create_conditions <- function(filter_expr) {
@@ -1510,67 +1626,9 @@ create_conditions <- function(filter_expr) {
   conditions <- vector("list", length(filter_expr))
   names(conditions) <- names(filter_expr)
 
-  # Define a helper function to add conditions to the list
-  add_condition <- function(operator, value) {
-    list(val = value$vals, operator = operator)
-  }
-
-  get_vals <- function(fltr_xpr, operator) {
-    args <- trimws(strsplit(fltr_xpr, operator, fixed = TRUE)[[1]])
-
-    nams <- gsub("`", "", gsub("^x\\$", "", args[1]))
-    safe_env  <- list2env(expected_funs, parent = emptyenv())
-    expr <- parse(text = args[2])[[1]]
-
-    vals <- eval(expr, envir = safe_env)
-    vals <- if (is.character(vals)) tolower(vals) else vals
-
-    list(nams = nams, vals = vals)
-  }
-
-  for (fltr_xpr in filter_expr) {
-
-    # Extract conditions for "equal"
-    if (grepl("%in%", fltr_xpr, fixed = TRUE)) {
-      values <- get_vals(fltr_xpr, "%in%")
-      conditions[[values$nams]] <- add_condition("equal", values)
-    }
-
-    # Extract conditions for "equal" using ==
-    if (grepl("==", fltr_xpr, fixed = TRUE)) {
-      values <- get_vals(fltr_xpr, "==")
-      conditions[[values$nams]] <- add_condition("equal", values)
-    }
-
-    # Extract conditions for "notEqual"
-    if (grepl("!=", fltr_xpr, fixed = TRUE)) {
-      values <- get_vals(fltr_xpr, "!=")
-      conditions[[values$nams]] <- add_condition("notEqual", values)
-    }
-
-    # Extract conditions for "lessThan"
-    if (grepl("<[^=]", fltr_xpr, fixed = TRUE)) {
-      values <- get_vals(fltr_xpr, "<")
-      conditions[[values$nams]] <- add_condition("lessThan", values)
-    }
-
-    # Extract conditions for "lessThanOrEqual"
-    if (grepl("<=", fltr_xpr, fixed = TRUE)) {
-      values <- get_vals(fltr_xpr, "<=")
-      conditions[[values$nams]] <- add_condition("lessThanOrEqual", values)
-    }
-
-    # Extract conditions for "greaterThan"
-    if (grepl(">[^=]", fltr_xpr)) {
-      values <- get_vals(fltr_xpr, ">")
-      conditions[[values$nams]] <- add_condition("greaterThan", values)
-    }
-
-    # Extract conditions for "greaterThanOrEqual"
-    if (grepl(">=", fltr_xpr, fixed = TRUE)) {
-      values <- get_vals(fltr_xpr, ">=")
-      conditions[[values$nams]] <- add_condition("greaterThanOrEqual", values)
-    }
+  for (col_name in names(filter_expr)) {
+    expr_str <- filter_expr[[col_name]]
+    conditions[[col_name]] <- parse_filter_expression(expr_str)
   }
 
   conditions
@@ -1584,41 +1642,48 @@ create_conditions <- function(filter_expr) {
 reverse_conditions <- function(conditions) {
 
   filter_expr <- vector("character", length(conditions))
-  i <- 1
+  names(filter_expr) <- names(conditions)
 
-  for (name in names(conditions)) {
-    condition <- conditions[[name]]
+  for (i in seq_along(conditions)) {
+    col_name <- names(conditions)[i]
+    condition <- conditions[[col_name]]
 
-    operator <- condition$operator
-    value    <- condition$val
+    filters_list <- condition$filters
+    logic_op <- condition$logic
+    col_expr_parts <- character()
 
-    value_str <- if (is.character(value)) {
-      shQuote(value, type = "cmd")
-    } else {
-      value
+    for (filter_obj in filters_list) {
+      op <- filter_obj$operator
+      vals <- filter_obj$vals
+
+      r_op <- reverse_op_map[[op]]
+
+      if (r_op == "%in%") {
+        val_str <- paste0("c(", paste0(shQuote(vals, type = "cmd"), collapse = ", "), ")")
+        expr <- paste0("x %in% ", val_str)
+      } else {
+        val_str <- if (is.character(vals[[1]])) {
+          shQuote(vals[[1]], type = "cmd")
+        } else {
+          vals[[1]]
+        }
+        expr <- paste0("x ", r_op, " ", val_str)
+      }
+
+      col_expr_parts <- c(col_expr_parts, expr)
     }
 
-    # merge for potential "%in%"
-    if (operator == "equal") value_str <- paste0("c(", paste0(value_str, collapse = ", "), ")")
+    if (length(col_expr_parts) > 1) {
+      sep <- if (logic_op == "and") " & " else " | "
+      combined <- paste0(col_expr_parts, collapse = sep)
+      combined <- paste0("(", combined, ")")
+    } else {
+      combined <- col_expr_parts[1]
+    }
 
-    name <- escape_varname(name)
-
-    expr <- switch(
-      operator,
-      "equal"              = paste0("x$", name, " %in% ", value_str), # not ==
-      "notEqual"           = paste0("x$", name, " != ", value_str),
-      "lessThan"           = paste0("x$", name, " < ", value_str),
-      "lessThanOrEqual"    = paste0("x$", name, " <= ", value_str),
-      "greaterThan"        = paste0("x$", name, " > ", value_str),
-      "greaterThanOrEqual" = paste0("x$", name, " >= ", value_str),
-      stop("Unknown operator: ", operator)
-    )
-
-    filter_expr[i] <- expr
-    i <- i + 1
+    filter_expr[i] <- combined
   }
 
-  # Return the vector of filter expressions
   filter_expr
 }
 
@@ -1631,66 +1696,70 @@ reverse_conditions <- function(conditions) {
 prepare_autofilter <- function(colNames, autofilter_ref, conditions) {
 
   cond_vars <- names(conditions)
-  if (any(!cond_vars %in% colNames)) stop("Condition variable not found in table.")
+  if (any(!cond_vars %in% colNames)) {
+    stop("Condition variable not found in table.")
+  }
 
   autoFilter <- xml_node_create("autoFilter", xml_attributes = c(ref = autofilter_ref))
+  filter_columns <- NULL
 
+  for (col_name in cond_vars) {
+    condition <- conditions[[col_name]]
+    filters_list <- condition$filters
+    logic_op <- condition$logic
 
-  aF <- NULL
-  for (cond_var in cond_vars) {
-    colId <- which(colNames == cond_var) - 1L
+    colId <- which(colNames == col_name) - 1L
 
-    condition <- conditions[[cond_var]]
+    filterColumn <- xml_node_create(
+      "filterColumn",
+      xml_attributes = c(colId = as_xml_attr(colId))
+    )
 
-    ## == default or %in% with multiple values
-    if (condition$operator == "equal") {
-      filter <- vapply(
-        condition$val,
-        function(x) {
-          xml_node_create("filter", xml_attributes = c(val = as_xml_attr(x)))
-        },
-        FUN.VALUE = NA_character_
-      )
+    has_custom <- any(sapply(filters_list, function(f) {
+      f$operator %in% c("notEqual", "lessThan", "lessThanOrEqual", "greaterThan", "greaterThanOrEqual")
+    }))
 
-      filters      <- xml_node_create("filters")
-      filterColumn <- xml_node_create("filterColumn", xml_attributes = c(colId = as_xml_attr(colId)))
+    if (has_custom) {
+      customFilters_children <- NULL
+      and_attr <- if (logic_op == "and") "1" else "0"
 
-      filters      <- xml_add_child(filters, filter)
+      for (filter_obj in filters_list) {
+        for (val in filter_obj$vals) {
+          customFilter <- xml_node_create(
+            "customFilter",
+            xml_attributes = c(operator = filter_obj$operator, val = as_xml_attr(val))
+          )
+          customFilters_children <- c(customFilters_children, customFilter)
+        }
+      }
+
+      customFilters <- xml_node_create("customFilters", xml_attributes = c(and = and_attr))
+      customFilters <- xml_add_child(customFilters, customFilters_children)
+      filterColumn <- xml_add_child(filterColumn, customFilters)
+
+    } else {
+      filters_children <- NULL
+
+      for (filter_obj in filters_list) {
+        for (val in filter_obj$vals) {
+          filter_elem <- xml_node_create("filter", xml_attributes = c(val = as_xml_attr(val)))
+          filters_children <- c(filters_children, filter_elem)
+        }
+      }
+
+      filters <- xml_node_create("filters")
+      filters <- xml_add_child(filters, filters_children)
       filterColumn <- xml_add_child(filterColumn, filters)
     }
 
-    ## != notEqual, < lessThan, <= lessThanOrEqual, > greaterThan, >= greaterThanOrEqual
-    ## TODO provide replacement function
-    ops <- c("notEqual", "lessThan", "lessThanOrEqual", "greaterThan", "greaterThanOrEqual")
-    if (condition$operator %in% ops) {
-      customFilter <- vapply(
-        condition$val,
-        function(x) {
-          xml_node_create(
-            "customFilter",
-            xml_attributes = c(operator = condition$operator,
-                               val = as_xml_attr(x))
-          )
-        },
-        FUN.VALUE = NA_character_
-      )
-
-      customFilters <- xml_node_create("customFilters")
-      filterColumn  <- xml_node_create("filterColumn", xml_attributes = c(colId = as_xml_attr(colId)))
-
-      customFilters <- xml_add_child(customFilters, customFilter)
-      filterColumn  <- xml_add_child(filterColumn, customFilters)
-    }
-
-    aF <- c(aF, filterColumn)
+    filter_columns <- c(filter_columns, filterColumn)
   }
 
-  autoFilter <- xml_add_child(autoFilter, aF)
-
+  autoFilter <- xml_add_child(autoFilter, filter_columns)
   autoFilter
 }
 
-#' get rows to hide (in _all but not in _sel)
+#' Determine which rows to hide based on filter expressions
 #' @param wb a wbWorkbook
 #' @param sheet the sheet index
 #' @param ref the dims
@@ -1698,25 +1767,35 @@ prepare_autofilter <- function(colNames, autofilter_ref, conditions) {
 #' @keywords internal
 #' @noRd
 rows_to_hide <- function(wb, sheet, ref, filter) {
+
   x <- wb_to_df(wb, sheet = sheet, dims = ref)
   rows_all <- rownames(x)
 
   if (is.null(filter) || length(filter) == 0) return(integer(0))
 
-  chrs <- vapply(x, is.character, TRUE)
-  x[chrs] <- lapply(x[chrs], tolower)
+  filter_env <- create_filter_env() # nolint: object_usage_linter
 
-  safe_env <- list2env(expected_funs, parent = emptyenv())
-  safe_env$x <- x
+  logical_list <- lapply(names(filter), function(col_name) {
+    expr_str <- filter[[col_name]]
+    col_vals <- x[[col_name]]
 
-  logical_list <- lapply(filter, function(f) {
-    expr <- parse(text = tolower(f))[[1]]
-    eval(expr, envir = safe_env)
+    if (is.character(col_vals)) {
+      col_vals <- tolower(col_vals)
+    }
+
+    filter_env$x <- col_vals
+
+    tryCatch({
+      expr <- parse(text = expr_str)[[1]]
+      eval(expr, envir = filter_env)
+    }, error = function(e) {
+      stop("Error evaluating filter for column '", col_name, "': ", expr_str,
+           "\n", conditionMessage(e))
+    })
   })
 
   combined_logical <- Reduce(`&`, logical_list)
   rows_sel <- rownames(x[combined_logical, , drop = FALSE])
-
   out <- rows_all[!rows_all %in% rows_sel]
   as.integer(out)
 }

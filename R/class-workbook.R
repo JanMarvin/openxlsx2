@@ -4093,29 +4093,16 @@ wbWorkbook <- R6::R6Class(
         autofilter <- xml_node_create(xml_name = "autoFilter", xml_attributes = c(ref = autofilter_ref))
       }
 
-      if (is.character(withFilter)) {
-        fltr_nms <- names(withFilter)
-        fltr_nms <- paste0("x$", escape_varname(fltr_nms))
-
-        filter <- vapply(
-          seq_along(fltr_nms),
-          function(i) {
-            gsub("^x", replacement = fltr_nms[i], x = withFilter[i])
-          },
-          NA_character_
-        )
-        names(filter) <- names(withFilter)
-
-        assert_class(filter, "character")
+      if (is.character(withFilter) && !is.null(names(withFilter))) {
+        # withFilter is now in the format: c(cyl = "x > 4 & x < 8", am = "x != 1")
 
         ## prepare condition list & autofilter xml
-        fltr       <- create_conditions(filter)
+        fltr <- create_conditions(withFilter)
         autofilter <- prepare_autofilter(colNames, autofilter_ref, conditions = fltr)
 
-        ## revese the condition to make sure that we have lower strings
-        ## select the rows to hide and hide them
+        ## reverse the condition to determine which rows to hide
         filter <- reverse_conditions(fltr)
-        sel    <- rows_to_hide(self, sheet, ref, filter)
+        sel <- rows_to_hide(self, sheet, ref, filter)
         self$set_row_heights(rows = sel, hidden = TRUE)
       }
 

@@ -229,11 +229,11 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
   if (!is.null(choose)) {
     df_context <- data.frame(x = dat, stringsAsFactors = FALSE)
 
-    safe_env <- list2env(expected_funs, parent = emptyenv())
-    safe_env$x <- df_context$x
+    filter_env <- create_filter_env()
+    filter_env$x <- df_context$x
 
     expr <- parse(text = choose)[[1]]
-    choose_vec <- eval(expr, envir = safe_env)
+    choose_vec <- eval(expr, envir = filter_env)
     choose <- choose_vec[item_order]
 
     hide <- as_xml_attr(!choose)
