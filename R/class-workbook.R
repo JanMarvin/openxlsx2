@@ -3971,6 +3971,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showLastColumn showLastColumn
     #' @param showRowStripes showRowStripes
     #' @param showColumnStripes showColumnStripes
+    #' @param numfmts numfmts
     #' @return The `wbWorksheet` object, invisibly
     buildTable = function(
       sheet             = current_sheet(),
@@ -6702,8 +6703,8 @@ wbWorkbook <- R6::R6Class(
       }
 
       # prepare mschart drawing
-      if (inherits(xml, "chart_id")) {
-        xml <- drawings(self$drawings_rels[[sheet_drawing]], xml)
+      if (inherits(xml, "chart_id") || inherits(xml, "chartEx_id")) {
+        xml <- drawings(self$drawings_rels[[sheet_drawing]], xml, inherits(xml, "chartEx_id"))
       }
 
       xml <- read_xml(xml, pointer = FALSE)
@@ -6925,12 +6926,16 @@ wbWorkbook <- R6::R6Class(
 
     #' @description Add xml chart
     #' @param xml xml
+    #' @param style style
+    #' @param color color
     #' @param col_offset,row_offset positioning parameters
     #' @return The `wbWorkbook` object
     add_chart_xml = function(
       sheet      = current_sheet(),
       dims       = NULL,
       xml,
+      style      = "",
+      color      = "",
       col_offset = 0,
       row_offset = 0,
       ...
@@ -6959,27 +6964,67 @@ wbWorkbook <- R6::R6Class(
         sheet_drawing <- length(self$drawings) + 1L
       }
 
-      next_chart <- NROW(self$charts) + 1
+      n_charts <- NROW(self$charts)
 
-      chart <- data.frame(
-        chart   = xml,
-        colors  = colors1_xml,
-        style   = styleplot_xml,
-        rels    = chart1_rels_xml(next_chart),
-        chartEx = "",
-        relsEx  = "",
-        stringsAsFactors = FALSE
-      )
+      is_chart <- xml_node_name(xml) == "c:chartSpace"
+      is_chartEx <- xml_node_name(xml) == "cx:chartSpace"
+
+      chart_slot   <- if (is_chart) {
+        min(which(!nzchar(self$charts$chart)), n_charts + 1L)
+      } else {
+        0
+      }
+      class(chart_slot) <- c("integer", "chart_id")
+
+      chartEx_slot <- if (is_chartEx) {
+        min(which(!nzchar(self$charts$chartEx)), n_charts + 1L)
+      } else {
+        0
+      }
+      class(chartEx_slot) <- c("integer", "chartEx_id")
+
+      chart <- if (chart_slot > n_charts || chartEx_slot > n_charts) {
+        data.frame(
+          chart   = "",
+          colors  = "",
+          style   = "",
+          rels    = "",
+          chartEx = "",
+          relsEx  = "",
+          stringsAsFactors = FALSE
+        )
+      }
 
       self$charts <- rbind(self$charts, chart)
 
-      class(next_chart) <- c("integer", "chart_id")
+      if (is_chart) self$charts$chart[[chart_slot]] <- xml
+      if (is_chartEx) self$charts$chartEx[[chartEx_slot]] <- xml
+
+      if (nzchar(color) && nzchar(style)) {
+
+        colors_slot  <- min(which(!nzchar(self$charts$colors)))
+        style_slot   <- min(which(!nzchar(self$charts$style)))
+        rels_slot    <- min(which(!nzchar(self$charts$rels)))
+        relsEx_slot  <- min(which(!nzchar(self$charts$relsEx)))
+
+        if (is_chart) {
+          self$charts$colors[[colors_slot]] <- color
+          self$charts$style[[style_slot]] <- style
+          self$charts$rels[[rels_slot]] <- chart1_rels_xml(colors_slot, style_slot)
+        } else if (is_chartEx) {
+          self$charts$colors[[colors_slot]] <- color
+          self$charts$style[[style_slot]] <- style
+          self$charts$relsEx[[relsEx_slot]] <- chart1_rels_xml(colors_slot, style_slot)
+        }
+      }
+
+      chart_xml <- if (is_chart) chart_slot else chartEx_slot
 
       # create drawing. add it to self$drawings, the worksheet and rels
       self$add_drawing(
         sheet      = sheet,
         dims       = dims,
-        xml        = next_chart,
+        xml        = chart_xml,
         col_offset = col_offset,
         row_offset = row_offset
       )
@@ -6988,10 +7033,68 @@ wbWorkbook <- R6::R6Class(
 
       self$drawings_rels[[sheet_drawing]] <- drawings_rels(
         self$drawings_rels[[sheet_drawing]],
-        next_chart
+        chart_xml
       )
 
       invisible(self)
+    },
+
+    #' @description Add xml chart
+    #' @param sheet sheet
+    #' @param dims dims
+    #' @param graph graph
+    #' @return The `wbWorkbook` object
+    add_encharter = function(
+      sheet = current_sheet(),
+      dims = NULL,
+      graph
+    ) {
+
+      assert_class(graph, "EncharterBase")
+
+      if (inherits(graph, "Chart")) {
+        chart_xml <- graph$render(u_ids = random_string(n = 5, length = 8, pattern = "[0-9]"))
+        self$add_chart_xml(sheet = sheet, dims = dims, xml = chart_xml)
+      } else { # if (inherits(graph, "ChartEx"))
+
+        # Find the highest ID to prevent collisions
+        existing_names <- self$get_named_regions()$name
+        chart_ids <- grep("^_xlchart\\.v1\\.", existing_names, value = TRUE)
+        id_base <- 1L
+        if (length(chart_ids) > 0) {
+          id_nums <- as.integer(gsub("_xlchart\\.v1\\.", "", chart_ids))
+          id_base <- max(id_nums, na.rm = TRUE) + 1L
+        }
+
+        chart_xml <- graph$render(id_start = id_base, guid = st_guid())
+
+        h_at <- attr(chart_xml, "head")
+        b_at <- attr(chart_xml, "body")
+        all_refs <- c(h_at, b_at)
+
+        # add named regions
+        for (i in seq_along(all_refs)) {
+          ref <- all_refs[i]
+
+          # Check: Must contain '!' and have at least one character after it
+          # This prevents literal strings (e.g. "Total!") from being treated as ranges
+          is_valid_ref <- !is.na(ref) && ref != "" && grepl("!.+", ref)
+          if (!is_valid_ref) next
+
+          sheet_part <- gsub("^'?(.*?)'?!.*$", "\\1", ref)
+          range_part <- gsub("^.*!", "", ref)
+          self$add_named_region(sheet = sheet_part, dims = range_part, name = names(all_refs)[i], hidden = "1")
+        }
+
+        self$add_chart_xml(
+          sheet = sheet,
+          dims = dims,
+          xml = chart_xml,
+          color = graph$color_xml,
+          style = graph$style_xml
+        )
+
+      }
     },
 
     #' @description Add mschart chart to the workbook

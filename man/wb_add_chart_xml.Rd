@@ -9,6 +9,8 @@ wb_add_chart_xml(
   sheet = current_sheet(),
   dims = NULL,
   xml,
+  style = "",
+  color = "",
   col_offset = 0,
   row_offset = 0,
   ...
@@ -22,6 +24,10 @@ wb_add_chart_xml(
 \item{dims}{the dimensions where the sheet will appear}
 
 \item{xml}{chart xml}
+
+\item{style}{chart style}
+
+\item{color}{chart color}
 
 \item{col_offset, row_offset}{positioning}
 

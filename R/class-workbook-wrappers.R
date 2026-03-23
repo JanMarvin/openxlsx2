@@ -1673,6 +1673,28 @@ wb_add_drawing <- function(
   )
 }
 
+#' Add a Chart object to a workbook sheet
+#'
+#' @description
+#' Renders a \code{Chart} R6 object and injects the resulting XML into an
+#' \code{openxlsx2} workbook at the specified location.
+#'
+#' @param wb An \code{openxlsx2} workbook object.
+#' @param sheet Sheet name or index where the chart will be placed.
+#' @param dims Character string defining the cell range (e.g., "E2:M20").
+#' @param graph An initialized \code{Chart} R6 object.
+#'
+#' @return The workbook object, invisibly.
+#' @export
+wb_add_encharter <- function(wb, sheet = current_sheet(), dims = NULL, graph) {
+  assert_workbook(wb)
+  wb$clone(deep = TRUE)$add_encharter(
+    sheet = sheet,
+    dims  = dims,
+    graph = graph
+  )
+}
+
 #' Add an mschart object to a worksheet
 #'
 #' @description
@@ -3492,6 +3514,8 @@ wb_add_image <- function(
 #' @param sheet the sheet on which the graph will appear
 #' @param dims the dimensions where the sheet will appear
 #' @param xml chart xml
+#' @param style chart style
+#' @param color chart color
 #' @param col_offset,row_offset positioning
 #' @param ... additional arguments
 #' @seealso [wb_add_drawing()] [wb_add_image()] [wb_add_mschart()] [wb_add_plot()]
@@ -3501,6 +3525,8 @@ wb_add_chart_xml <- function(
   sheet      = current_sheet(),
   dims       = NULL,
   xml,
+  style      = "",
+  color      = "",
   col_offset = 0,
   row_offset = 0,
   ...
@@ -3509,6 +3535,8 @@ wb_add_chart_xml <- function(
   wb$clone(deep = TRUE)$add_chart_xml(
     sheet      = sheet,
     xml        = xml,
+    style      = style,
+    color      = color,
     dims       = dims,
     col_offset = col_offset,
     row_offset = row_offset,

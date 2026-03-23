@@ -1471,16 +1471,6 @@ file_ext2 <- function(filepath) {
   sub(".*\\.", "", basename2(filepath))
 }
 
-#' escape var name with upticks
-#' @param var_name variable name
-#' @keywords internal
-#' @noRd
-escape_varname <- function(var_name) {
-  vapply(var_name, function(x) {
-    ifelse(grepl("\\s", x), sprintf("`%s`", x), x)
-  }, NA_character_)
-}
-
 #' Create a safe evaluation environment for filters
 #' @keywords internal
 #' @noRd
