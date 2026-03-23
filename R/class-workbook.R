@@ -3971,6 +3971,7 @@ wbWorkbook <- R6::R6Class(
     #' @param showLastColumn showLastColumn
     #' @param showRowStripes showRowStripes
     #' @param showColumnStripes showColumnStripes
+    #' @param numfmts numfmts
     #' @return The `wbWorksheet` object, invisibly
     buildTable = function(
       sheet             = current_sheet(),

@@ -1224,6 +1224,8 @@ Build table
 \item{\code{showRowStripes}}{showRowStripes}
 
 \item{\code{showColumnStripes}}{showColumnStripes}
+
+\item{\code{numfmts}}{numfmts}
 }
 \if{html}{\out{</div>}}
 }
