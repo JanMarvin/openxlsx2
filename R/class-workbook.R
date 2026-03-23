@@ -6703,7 +6703,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       # prepare mschart drawing
-      if (inherits(xml, "chart_id") | inherits(xml, "chartEx_id")) {
+      if (inherits(xml, "chart_id") || inherits(xml, "chartEx_id")) {
         xml <- drawings(self$drawings_rels[[sheet_drawing]], xml, inherits(xml, "chartEx_id"))
       }
 
