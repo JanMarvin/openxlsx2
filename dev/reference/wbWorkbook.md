@@ -404,6 +404,8 @@ rather than `?wbWorkbook`).
 
 - [`wbWorkbook$add_chart_xml()`](#method-wbWorkbook-add_chart_xml)
 
+- [`wbWorkbook$add_encharter()`](#method-wbWorkbook-add_encharter)
+
 - [`wbWorkbook$add_mschart()`](#method-wbWorkbook-add_mschart)
 
 - [`wbWorkbook$add_form_control()`](#method-wbWorkbook-add_form_control)
@@ -1701,7 +1703,8 @@ Build table
       showFirstColumn = 0,
       showLastColumn = 0,
       showRowStripes = 1,
-      showColumnStripes = 0
+      showColumnStripes = 0,
+      numfmts = NULL
     )
 
 #### Arguments
@@ -1757,6 +1760,10 @@ Build table
 - `showColumnStripes`:
 
   showColumnStripes
+
+- `numfmts`:
+
+  numfmts
 
 #### Returns
 
@@ -3085,6 +3092,8 @@ Add xml chart
       sheet = current_sheet(),
       dims = NULL,
       xml,
+      style = "",
+      color = "",
       col_offset = 0,
       row_offset = 0,
       ...
@@ -3104,6 +3113,14 @@ Add xml chart
 
   xml
 
+- `style`:
+
+  style
+
+- `color`:
+
+  color
+
 - `col_offset, row_offset`:
 
   positioning parameters
@@ -3111,6 +3128,34 @@ Add xml chart
 - `...`:
 
   additional arguments
+
+#### Returns
+
+The `wbWorkbook` object
+
+------------------------------------------------------------------------
+
+### Method `add_encharter()`
+
+Add xml chart
+
+#### Usage
+
+    wbWorkbook$add_encharter(sheet = current_sheet(), dims = NULL, graph)
+
+#### Arguments
+
+- `sheet`:
+
+  sheet
+
+- `dims`:
+
+  dims
+
+- `graph`:
+
+  graph
 
 #### Returns
 

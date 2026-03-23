@@ -104,6 +104,8 @@ Add images or Excel charts to a worksheet with the mschart package. See
   : Insert the current R plot into a worksheet
 - [`wb_add_chartsheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_chartsheet.md)
   : Add a chartsheet to a workbook
+- [`wb_add_encharter()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_encharter.md)
+  : Add a Chart object to a workbook sheet
 - [`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_mschart.md)
   : Add an mschart object to a worksheet
 
