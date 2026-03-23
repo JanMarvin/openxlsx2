@@ -63,6 +63,7 @@ reference:
   - wb_add_image
   - wb_add_plot
   - wb_add_chartsheet
+  - wb_add_encharter
   - wb_add_mschart
 
 - title: Style a workbook

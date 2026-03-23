@@ -237,6 +237,7 @@ worksheet names.}
 \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
 \item \href{#method-wbWorkbook-add_drawing}{\code{wbWorkbook$add_drawing()}}
 \item \href{#method-wbWorkbook-add_chart_xml}{\code{wbWorkbook$add_chart_xml()}}
+\item \href{#method-wbWorkbook-add_encharter}{\code{wbWorkbook$add_encharter()}}
 \item \href{#method-wbWorkbook-add_mschart}{\code{wbWorkbook$add_mschart()}}
 \item \href{#method-wbWorkbook-add_form_control}{\code{wbWorkbook$add_form_control()}}
 \item \href{#method-wbWorkbook-print}{\code{wbWorkbook$print()}}
@@ -1190,7 +1191,8 @@ Build table
   showFirstColumn = 0,
   showLastColumn = 0,
   showRowStripes = 1,
-  showColumnStripes = 0
+  showColumnStripes = 0,
+  numfmts = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -2343,6 +2345,30 @@ Add xml chart
 \item{\code{col_offset, row_offset}}{positioning parameters}
 
 \item{\code{...}}{additional arguments}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \code{wbWorkbook} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_encharter"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_encharter}{}}}
+\subsection{Method \code{add_encharter()}}{
+Add xml chart
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{wbWorkbook$add_encharter(sheet = current_sheet(), dims = NULL, graph)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sheet}}{sheet}
+
+\item{\code{dims}}{dims}
+
+\item{\code{graph}}{graph}
 }
 \if{html}{\out{</div>}}
 }
