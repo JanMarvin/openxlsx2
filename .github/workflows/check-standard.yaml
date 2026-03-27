@@ -32,7 +32,7 @@ jobs:
       openxlsx2_testthat_fullrun: ${{ matrix.config.openxlsx2_testthat_fullrun }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -48,6 +48,11 @@ jobs:
             any::rcmdcheck
             ${{ (matrix.config.r == '4.1') && 'rvg=?source' || '' }}
           needs: check
+
+      - name: Install encharter
+        run: |
+          pak::pkg_install("JanMarvin/encharter")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
