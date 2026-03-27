@@ -1065,6 +1065,11 @@ wbWorkbook <- R6::R6Class(
 
         # For charts we have to modify the name of the chart in the xml code
         # give each chart its own filename (images can re-use the same file, but charts can't)
+
+        # FIXME this is no longer correct. default mschart and encharter create self contained
+        # chart XML files and only modern charts created by encharter require additonal style
+        # and color XML files. We have to inspect rels and relsEx to see if style and color are
+        # required.
         for (dl in seq_along(drawings_rels)) {
           chartfiles <- reg_match(drawings_rels[dl], "(?<=charts/)chart[0-9]+\\.xml")
 
@@ -7004,8 +7009,10 @@ wbWorkbook <- R6::R6Class(
 
         colors_slot  <- min(which(!nzchar(self$charts$colors)))
         style_slot   <- min(which(!nzchar(self$charts$style)))
-        rels_slot    <- min(which(!nzchar(self$charts$rels)))
-        relsEx_slot  <- min(which(!nzchar(self$charts$relsEx)))
+        rels_slot    <- ifelse(is_chart, min(which(!nzchar(self$charts$rels))), 0)
+        relsEx_slot  <- ifelse(is_chartEx, min(which(!nzchar(self$charts$relsEx))), 0)
+
+        stopifnot(rels_slot == chart_slot && relsEx_slot == chartEx_slot)
 
         if (is_chart) {
           self$charts$colors[[colors_slot]] <- color
