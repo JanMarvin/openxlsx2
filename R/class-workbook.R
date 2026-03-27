@@ -7075,6 +7075,15 @@ wbWorkbook <- R6::R6Class(
 
         chart_xml <- graph$render(id_start = id_base, guid = st_guid())
 
+        # assign this first: otherwise add_named_region() will impact current_sheet()
+        self$add_chart_xml(
+          sheet = sheet,
+          dims = dims,
+          xml = chart_xml,
+          color = graph$color_xml,
+          style = graph$style_xml
+        )
+
         h_at <- attr(chart_xml, "head")
         b_at <- attr(chart_xml, "body")
         all_refs <- c(h_at, b_at)
@@ -7093,13 +7102,7 @@ wbWorkbook <- R6::R6Class(
           self$add_named_region(sheet = sheet_part, dims = range_part, name = names(all_refs)[i], hidden = "1")
         }
 
-        self$add_chart_xml(
-          sheet = sheet,
-          dims = dims,
-          xml = chart_xml,
-          color = graph$color_xml,
-          style = graph$style_xml
-        )
+        invisible(self)
 
       }
     },

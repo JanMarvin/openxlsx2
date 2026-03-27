@@ -751,8 +751,7 @@ test_that("chartex charts work", {
     add_series(
       header = "Data!$B$1",
       cat    = "Data!$A$2:$A$13",
-      data   = "Data!$B$2:$B$13",
-      type   = "barChart"
+      data   = "Data!$B$2:$B$13"
     )
 
   wf_chart <- encharter::ec("waterfall")$
@@ -769,6 +768,7 @@ test_that("chartex charts work", {
   wb <- wb_add_encharter(wb, sheet = "Data", graph = bar_chart)
   ## add second chart
   wb <- wb_add_worksheet(wb, sheet = "WaterfallData")
+  expect_equal(wb$validate_sheet(current_sheet()), 2)
   wb <- wb_add_data(wb, sheet = "WaterfallData", x = df_wf)
   wb <- wb_add_encharter(wb, graph = wf_chart)
 
@@ -776,19 +776,22 @@ test_that("chartex charts work", {
 
   ## add the second chart it a second time
   wb <- wb_add_worksheet(wb)
+  expect_equal(wb$validate_sheet(current_sheet()), 3)
   wb <- wb_add_encharter(wb, graph = wf_chart)
 
   expect_equal(nrow(wb$charts), 2L)
 
   ## and a third time
-  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_chartsheet(wb)
+  expect_equal(wb$validate_sheet(current_sheet()), 4)
   wb <- wb_add_encharter(wb, graph = wf_chart)
 
   expect_equal(nrow(wb$charts), 3L)
   expect_equal(sum(nzchar(wb$charts$chart)), 1)
 
   ## and now the bar chart
-  wb <- wb_add_worksheet(wb)
+  wb <- wb_add_chartsheet(wb)
+  expect_equal(wb$validate_sheet(current_sheet()), 5)
   wb <- wb_add_encharter(wb, graph = bar_chart)
 
   expect_equal(nrow(wb$charts), 3L)
