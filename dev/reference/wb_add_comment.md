@@ -79,7 +79,7 @@ png(file = tmp, bg = "transparent")
 plot(1:10)
 rect(1, 5, 3, 7, col = "white")
 dev.off()
-#> agg_record_1d405106e4f2 
+#> agg_record_1e3329fb944a 
 #>                       2 
 
 c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
