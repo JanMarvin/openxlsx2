@@ -29,6 +29,7 @@ LinkingTo:
 Suggests:
     ggplot2,
     knitr,
+    encharter,
     mschart (>= 0.4),
     openssl,
     rmarkdown,
@@ -41,3 +42,4 @@ Encoding: UTF-8
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
+Remotes: JanMarvin/encharter
