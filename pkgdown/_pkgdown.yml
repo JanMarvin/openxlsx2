@@ -156,6 +156,7 @@ reference:
   - starts_with("xml_")
   - as_xml
   - starts_with("print.pugi")
+  - starts_with("as.character.pugi")
 
 - subtitle: Other helpers
   contents:

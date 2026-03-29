@@ -208,6 +208,24 @@ print.pugi_xml <- function(x, indent = " ", raw = FALSE, attr_indent = FALSE, ..
   if (raw) cat("\n")
 }
 
+#' as.character pugi_xml
+#' @method as.character pugi_xml
+#' @param x a class pugi_xml object
+#' @param ... additional arguments see [print.pugi_xml()]
+#' @examples
+#'   # a pointer
+#'   x <- read_xml("<a><b/></a>")
+#'   as.character(x)
+#'   as.character(x, raw = FALSE)
+#' @export
+as.character.pugi_xml <- function(x, ...) {
+  args <- list(...)
+  indent <- args$indent %||% " "
+  raw <- args$raw %||% TRUE
+  attr_indent <- args$attr_indent %||% FALSE
+  printXPtr(x, indent = indent, raw = raw, attr_indent = attr_indent)
+}
+
 #' loads character string to pugixml and returns an externalptr
 #' @details
 #' might be useful for larger documents where single nodes are shortened

@@ -1,6 +1,9 @@
 
 test_that("read_xml", {
 
+  xml <- "<a><b/></a>"
+  expect_equal(as.character(read_xml(xml)), xml)
+
   exp <- "<a/>"
   got <- read_xml("<a/>", empty_tags = FALSE, pointer = FALSE)
   expect_equal(got, exp)
