@@ -495,6 +495,8 @@ A curated list of XML functions used in openxlsx2.
   : loads character string to pugixml and returns an externalptr
 - [`print(`*`<pugi_xml>`*`)`](https://janmarvin.github.io/openxlsx2/dev/reference/print.pugi_xml.md)
   : print pugi_xml
+- [`as.character(`*`<pugi_xml>`*`)`](https://janmarvin.github.io/openxlsx2/dev/reference/as.character.pugi_xml.md)
+  : as.character pugi_xml
 
 ### Other helpers
 
