@@ -1377,7 +1377,8 @@ do_write_formula <- function(
   }
 
   if (array || cm) {
-    if (length(dfx$X) == 1) {
+    # only if single input
+    if (identical(dim(dfx), c(1L, 1L))) {
       attr(dfx, "f_ref") <- dims
     }
   }

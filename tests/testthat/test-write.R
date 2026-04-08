@@ -1205,6 +1205,18 @@ test_that("writing vectors direction with dims works", {
 
 })
 
+test_that("array formulas on range work", {
+  wb <- wb_workbook()$add_worksheet()$add_formula(
+    x = "daily_sales[[#Headers],[sales_price]:[total_gross_profit]]",
+    dims = "A1:G1",
+    array = TRUE
+  )
+
+  exp <- "t=\"array\" ref=\"A1:G1\""
+  got <- wb$worksheets[[1]]$sheet_data$cc$f_attr
+  expect_equal(exp, got)
+})
+
 test_that("dims size warnings work", {
 
   op <- options("openxlsx2.warn_if_dims_dont_fit" = TRUE)
