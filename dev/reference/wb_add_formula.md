@@ -201,5 +201,4 @@ wb$add_worksheet()$
 wb$add_formula(x = c(YESTERDAY = "_xlfn.LAMBDA(TODAY() - 1)"))
 #> formula registered to the workbook
 wb$add_formula(x = "=YESTERDAY()", dims = "A1", cm = TRUE)
-#> Warning: modifications with cm formulas are experimental. use at own risk
 ```

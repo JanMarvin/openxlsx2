@@ -194,8 +194,6 @@ the user that they are array formulas. Using these is implemented in
 <code class="sourceCode R"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span><span class="op">)</span><span class="op">$</span></span>
 <span>  <span class="fu">add_formula</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"SUM(ABS(A2:A7))"</span>, dims <span class="op">=</span> <span class="st">"D2"</span>, cm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in write_data2(wb = wb, sheet = sheet, data = x, name = name, colNames</span></span>
-<span><span class="co">#&gt; = colNames, : modifications with cm formulas are experimental. use at own risk</span></span>
 <span><span class="co"># wb$open()</span></span></code></pre></div>
 </div>
 <div class="section level2">

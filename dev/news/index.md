@@ -13,6 +13,8 @@
   [`wb_add_image()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_image.md)
   that was broken in 1.24
   [\#1598](https://github.com/JanMarvin/openxlsx2/pull/1598)
+- Formulas with `array = TRUE` now extend over the selected `dims`
+  range. The `cm = TRUE` warning was removed.
 
 ------------------------------------------------------------------------
 
