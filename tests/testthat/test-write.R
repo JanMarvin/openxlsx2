@@ -1193,16 +1193,25 @@ test_that("writing vectors direction with dims works", {
     add_formula(x = c("SUM(A2:A7)", "SUM(B2:B7)"), dims = "A9:B9")$
     add_formula(x = c("{SUM(A2:A7)}", "{SUM(B2:B7)}"), dims = "A10:B10")
 
-  expect_warning(
-    wb$add_formula(x = c("{SUM(A2:A7)}", "{SUM(B2:B7)}"), dims = "A11:B11", cm = TRUE),
-    "modifications with cm formulas are experimental. use at own risk"
-  )
+  wb$add_formula(x = c("{SUM(A2:A7)}", "{SUM(B2:B7)}"), dims = "A11:B11", cm = TRUE)
 
   exp <- c("A1", "B1", "A2", "B2", "A3", "B3", "A4", "B4", "A5", "B5",
            "A6", "B6", "A7", "B7", "A9", "B9", "A10", "B10", "A11", "B11")
   got <- wb$worksheets[[1]]$sheet_data$cc$r
   expect_equal(exp, got)
 
+})
+
+test_that("array formulas on range work", {
+  wb <- wb_workbook()$add_worksheet()$add_formula(
+    x = "daily_sales[[#Headers],[sales_price]:[total_gross_profit]]",
+    dims = "A1:G1",
+    array = TRUE
+  )
+
+  exp <- "t=\"array\" ref=\"A1:G1\""
+  got <- wb$worksheets[[1]]$sheet_data$cc$f_attr
+  expect_equal(exp, got)
 })
 
 test_that("dims size warnings work", {

@@ -34,10 +34,7 @@ test_that("writing formulas with cell metadata works", {
   wb <- wb_workbook()$
     add_worksheet()
 
-  expect_warning(
-    wb$add_formula(x = 'SUM(ABS(A2:A11))', cm = TRUE),
-    "modifications with cm formulas are experimental. use at own risk"
-  )
+  wb$add_formula(x = 'SUM(ABS(A2:A11))', cm = TRUE)
 
   exp <- data.frame(
     r = "A1", row_r = "1", c_r = "A", c_s = "", c_t = "",
@@ -86,7 +83,7 @@ test_that("formual escaping works", {
     add_formula(dims = "A2", x = "'A&B'!A1")$
     add_formula(dims = "A3", x = "SUM('A&B'!A1)", array = TRUE)
 
-  expect_warning(wb$add_formula(dims = "A4", x = "SUM('A&B'!A1)", cm = TRUE))
+  wb$add_formula(dims = "A4", x = "SUM('A&B'!A1)", cm = TRUE)
 
   tmp <- temp_xlsx()
   on.exit(unlink(tmp), add = TRUE)
@@ -245,7 +242,7 @@ test_that("writing cm formulas and writing to sheets with cm formulas works", {
   wb <- wb_workbook()$add_worksheet()
   wb$add_data(x = c(1, 1), dims = "D1:D2")
   wb$add_data(x = c(1, 1), dims = "D4:E4")
-  expect_warning(wb$add_formula(dims = "G1", x = "MMULT(D4:E4,D1:D2)", cm = TRUE))
+  wb$add_formula(dims = "G1", x = "MMULT(D4:E4,D1:D2)", cm = TRUE)
 
   expect_equal("1", wb$worksheets[[1]]$sheet_data$cc$c_cm[2])
 
@@ -325,13 +322,10 @@ test_that("cm works more like array", {
     add_data(x = cars)$
     add_data(dims = "D1", x = "Unique Values of Speed")
 
-  expect_warning(
-    wb$add_formula(
-      dims = wb_dims(x = unique(cars$speed), from_dims = "D2"),
-      x = paste0("_xlfn.UNIQUE(", wb_dims(x = cars, cols = "speed"), ")"),
-      cm = TRUE
-    ),
-    "modifications with cm formulas are experimental"
+  wb$add_formula(
+    dims = wb_dims(x = unique(cars$speed), from_dims = "D2"),
+    x = paste0("_xlfn.UNIQUE(", wb_dims(x = cars, cols = "speed"), ")"),
+    cm = TRUE
   )
 
   got <- table(wb$worksheets[[1]]$sheet_data$cc$f)[["_xlfn.UNIQUE(A2:A51)"]]
