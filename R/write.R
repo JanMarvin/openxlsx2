@@ -380,7 +380,7 @@ write_data2 <- function(
   }
 
   if (!is.null(attr(data, "c_cm"))) {
-    warning("modifications with cm formulas are experimental. use at own risk")
+    # warning("modifications with cm formulas are experimental. use at own risk")
     c_cm <- attr(data, "c_cm")
   } else {
     c_cm <- ""
