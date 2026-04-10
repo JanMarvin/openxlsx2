@@ -13,12 +13,12 @@ wb_add_encharter(wb, sheet = current_sheet(), dims = NULL, graph)
 
 \item{dims}{Character string defining the cell range (e.g., "E2:M20").}
 
-\item{graph}{An initialized \code{Chart} R6 object.}
+\item{graph}{An initialized \code{encharter} R6 object.}
 }
 \value{
 The workbook object, invisibly.
 }
 \description{
-Renders a \code{Chart} R6 object and injects the resulting XML into an
+Renders a \code{encharter} R6 object and injects the resulting XML into an
 \code{openxlsx2} workbook at the specified location.
 }

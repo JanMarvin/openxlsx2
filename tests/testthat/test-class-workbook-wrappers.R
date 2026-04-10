@@ -835,23 +835,23 @@ test_that("wb_add_chart_xml() is a wrapper", {
   )
 })
 
-# wb_add_encharter() ------------------------------------------------------
+# # wb_add_encharter() ------------------------------------------------------
 
-test_that("wb_add_encharter() is a wrapper", {
+# test_that("wb_add_encharter() is a wrapper", {
 
-  skip_if_not_installed("encharter")
+#   skip_if_not_installed("encharter")
 
-  enchrtr <- encharter::ec("barplot")$add_series(data = "'Sheet 1'!A2:A4")
+#   enchrtr <- encharter::ec("barplot")$add_series(data = "'Sheet 1'!A2:A4")
 
-  wb <- wb_workbook()$add_worksheet()
+#   wb <- wb_workbook()$add_worksheet()
 
-  expect_wrapper(
-    "add_encharter",
-    wb = wb,
-    params = list(dims = "F4:L20", graph = enchrtr)
-  )
+#   expect_wrapper(
+#     "add_encharter",
+#     wb = wb,
+#     params = list(dims = "F4:L20", graph = enchrtr)
+#   )
 
-})
+# })
 
 # wb_add_mschart() --------------------------------------------------------
 

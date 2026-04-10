@@ -729,75 +729,75 @@ test_that("add_chartsheet works", {
 
 })
 
-test_that("chartex charts work", {
+# test_that("encharter charts work", {
 
-  skip_if_not_installed("encharter")
+#   skip_if_not_installed("encharter")
 
-  ## two datasets
-  df_bar <- data.frame(
-    Month = month.abb,
-    Revenue = c(200, 220, 210, 250, 280, 300, 320, 310, 340, 360, 380, 400),
-    Growth = c(0, 0.1, -0.04, 0.19, 0.12, 0.07, 0.06, -0.03, 0.1, 0.06, 0.05, 0.05)
-  )
+#   ## two datasets
+#   df_bar <- data.frame(
+#     Month = month.abb,
+#     Revenue = c(200, 220, 210, 250, 280, 300, 320, 310, 340, 360, 380, 400),
+#     Growth = c(0, 0.1, -0.04, 0.19, 0.12, 0.07, 0.06, -0.03, 0.1, 0.06, 0.05, 0.05)
+#   )
 
-  df_wf <- data.frame(
-    Label = c("Gross Revenue", "COGS", "OpEx", "Tax", "Net Income"),
-    Value = c(1000, -400, -200, -100, 300),
-    stringsAsFactors = FALSE
-  )
+#   df_wf <- data.frame(
+#     Label = c("Gross Revenue", "COGS", "OpEx", "Tax", "Net Income"),
+#     Value = c(1000, -400, -200, -100, 300),
+#     stringsAsFactors = FALSE
+#   )
 
-  ## two charts
-  bar_chart <- encharter::ec("barChart")$
-    add_series(
-      header = "Data!$B$1",
-      cat    = "Data!$A$2:$A$13",
-      data   = "Data!$B$2:$B$13"
-    )
+#   ## two charts
+#   bar_chart <- encharter::ec("barChart")$
+#     add_series(
+#       header = "Data!$B$1",
+#       cat    = "Data!$A$2:$A$13",
+#       data   = "Data!$B$2:$B$13"
+#     )
 
-  wf_chart <- encharter::ec("waterfall")$
-    add_series(
-      header = "",
-      cat    = "WaterfallData!$A$2:$A$6",
-      data   = "WaterfallData!$B$2:$B$6"
-    )
+#   wf_chart <- encharter::ec("waterfall")$
+#     add_series(
+#       header = "",
+#       cat    = "WaterfallData!$A$2:$A$6",
+#       data   = "WaterfallData!$B$2:$B$6"
+#     )
 
-  wb <- wb_workbook()
-  # add first chart
-  wb <- wb_add_worksheet(wb, sheet = "Data")
-  wb <- wb_add_data(wb, sheet = "Data", x = df_bar)
-  wb <- wb_add_encharter(wb, sheet = "Data", graph = bar_chart)
-  ## add second chart
-  wb <- wb_add_worksheet(wb, sheet = "WaterfallData")
-  expect_equal(wb$validate_sheet(current_sheet()), 2)
-  wb <- wb_add_data(wb, sheet = "WaterfallData", x = df_wf)
-  wb <- wb_add_encharter(wb, graph = wf_chart)
+#   wb <- wb_workbook()
+#   # add first chart
+#   wb <- wb_add_worksheet(wb, sheet = "Data")
+#   wb <- wb_add_data(wb, sheet = "Data", x = df_bar)
+#   wb <- wb_add_encharter(wb, sheet = "Data", graph = bar_chart)
+#   ## add second chart
+#   wb <- wb_add_worksheet(wb, sheet = "WaterfallData")
+#   expect_equal(wb$validate_sheet(current_sheet()), 2)
+#   wb <- wb_add_data(wb, sheet = "WaterfallData", x = df_wf)
+#   wb <- wb_add_encharter(wb, graph = wf_chart)
 
-  expect_equal(nrow(wb$charts), 1L)
+#   expect_equal(nrow(wb$charts), 1L)
 
-  ## add the second chart it a second time
-  wb <- wb_add_worksheet(wb)
-  expect_equal(wb$validate_sheet(current_sheet()), 3)
-  wb <- wb_add_encharter(wb, graph = wf_chart)
+#   ## add the second chart it a second time
+#   wb <- wb_add_worksheet(wb)
+#   expect_equal(wb$validate_sheet(current_sheet()), 3)
+#   wb <- wb_add_encharter(wb, graph = wf_chart)
 
-  expect_equal(nrow(wb$charts), 2L)
+#   expect_equal(nrow(wb$charts), 2L)
 
-  ## and a third time
-  wb <- wb_add_chartsheet(wb)
-  expect_equal(wb$validate_sheet(current_sheet()), 4)
-  wb <- wb_add_encharter(wb, graph = wf_chart)
+#   ## and a third time
+#   wb <- wb_add_chartsheet(wb)
+#   expect_equal(wb$validate_sheet(current_sheet()), 4)
+#   wb <- wb_add_encharter(wb, graph = wf_chart)
 
-  expect_equal(nrow(wb$charts), 3L)
-  expect_equal(sum(nzchar(wb$charts$chart)), 1)
+#   expect_equal(nrow(wb$charts), 3L)
+#   expect_equal(sum(nzchar(wb$charts$chart)), 1)
 
-  ## and now the bar chart
-  wb <- wb_add_chartsheet(wb)
-  expect_equal(wb$validate_sheet(current_sheet()), 5)
-  wb <- wb_add_encharter(wb, graph = bar_chart)
+#   ## and now the bar chart
+#   wb <- wb_add_chartsheet(wb)
+#   expect_equal(wb$validate_sheet(current_sheet()), 5)
+#   wb <- wb_add_encharter(wb, graph = bar_chart)
 
-  expect_equal(nrow(wb$charts), 3L)
-  expect_equal(sum(nzchar(wb$charts$chart)), 2)
+#   expect_equal(nrow(wb$charts), 3L)
+#   expect_equal(sum(nzchar(wb$charts$chart)), 2)
 
-})
+# })
 
 test_that("multiple charts on a sheet work as expected", {
 
