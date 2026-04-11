@@ -1788,3 +1788,18 @@ test_that("writing tables with filters works", {
   expect_equal(exp, got)
 
 })
+
+test_that("All vectors behave identical", {
+  x <- seq.Date(from = Sys.Date(), to = Sys.Date() + 25L)
+  y <- letters
+  z <- 1:26
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = y, dims = "A1")$
+    add_data(x = x, dims = "B1")$
+    add_data(x = z, dims = "C1")
+
+  exp <- data.frame(A = y, B = x, C = z, stringsAsFactors = FALSE)
+  got <- wb$to_df(col_names = FALSE)
+  expect_equal(got, exp)
+})
