@@ -206,6 +206,10 @@ conv_to_excel_date <- function(x, date1904 = FALSE) {
 #' @export
 convert_to_excel_date <- function(df, date1904 = FALSE) {
 
+  if (is.null(df)) {
+    return(NULL)
+  }
+
   is_date <- vapply(
     df,
     function(x) {
@@ -213,6 +217,10 @@ convert_to_excel_date <- function(df, date1904 = FALSE) {
     },
     NA
   )
+
+  if (all(is_date) && is.atomic(df)) {
+    return(conv_to_excel_date(df, date1904 = date1904))
+  }
 
   df[is_date] <- lapply(df[is_date], FUN = conv_to_excel_date, date1904 = date1904)
 

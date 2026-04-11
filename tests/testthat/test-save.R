@@ -72,6 +72,9 @@ test_that("write_data2", {
   wb$add_worksheet("sheet4")
   write_data2(wb, "sheet4", as.data.frame(Titanic), startRow = 2, startCol = 2)
 
+  wb$add_worksheet("sheet5")
+  write_data2(wb, "sheet5", list(c(Sys.Date(), Sys.Date() - 1L)))
+
   file <- temp_xlsx()
   on.exit(unlink(file), add = TRUE)
 

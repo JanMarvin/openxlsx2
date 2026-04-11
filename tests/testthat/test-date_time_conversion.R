@@ -274,3 +274,19 @@ test_that("date_to_unix() works", {
   got <- date_to_unix(c("49999", "#VALUE!", "23414.1313"))
   expect_equal(got, exp)
 })
+
+test_that("convert_to_excel_date() works with vectors", {
+
+  exp <- NULL
+  got <- convert_to_excel_date(NULL)
+  expect_equal(got, exp)
+
+  exp <- list("foo")
+  got <- convert_to_excel_date("foo")
+  expect_equal(got, exp)
+
+  exp <- 45658
+  got <- convert_to_excel_date(as.Date("2025-01-01"))
+  expect_equal(got, exp)
+
+})
