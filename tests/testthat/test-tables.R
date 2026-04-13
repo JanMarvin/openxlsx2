@@ -321,7 +321,7 @@ test_that("remove_tables works", {
     add_data(x = df_s, dims = dims_s)$
     add_data_table(x = df_t, dims = dims_t)
 
-  expect_error(wb$remove_tables(table = "foo"), "does not exist")
+  expect_error(wb$remove_tables(table = "foo"), "not found on sheet")
 
   expect_silent(wb$remove_tables())
 
@@ -345,4 +345,17 @@ test_that("table names with line break work", {
   got <- unlist(xml_attr(wb$tables$tab_xml, c("table", "tableColumns", "tableColumn")))[["name"]]
   expect_equal(got, exp)
 
+})
+
+test_that("removing multiple tables at once works", {
+  hm <- head(mtcars)
+  tm <- tail(mtcars)
+  wb <- write_xlsx(list(hm, tm), as_table = TRUE)
+  expect_error(wb$remove_tables(table = c("Table1", "Table2")), "not found on sheet.")
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data_table(dims = "A1", x = hm)$
+    add_data_table(dims = "A10", x = tm)
+  wb$remove_tables(table = c("Table1", "Table2"))
+  expect_true(all(wb$tables$tab_sheet == 0))
 })

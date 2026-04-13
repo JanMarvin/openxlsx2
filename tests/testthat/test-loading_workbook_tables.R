@@ -36,5 +36,5 @@ test_that("Tables loaded correctly", {
   expect_equal(unname(attr(wb$worksheets[[3]]$tableParts, "tableName")), "Table3")
   # expect_equal(names(attr(wb$worksheets[[3]]$tableParts, "tableName")), "A1:K30")
 
-  expect_error(wb_remove_tables(wb, sheet = 1, table = "Table2"), regexp = "table 'Table2' does not exist")
+  expect_error(wb_remove_tables(wb, sheet = 1, table = "Table2"), regexp = "'Table2' not found on sheet")
 })
