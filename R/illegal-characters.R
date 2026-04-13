@@ -42,6 +42,16 @@ replace_illegal_chars <- function(x, replacement = " ") {
   stringi::stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
 }
 
+# TODO investigate if this should be integrated into replace_legal_chars()
+escape_newline_and_tab <- function(x) {
+  stringi::stri_replace_all_fixed(
+    x,
+    c("\n",       "\t"),
+    c("_x000a_", "_x0009_"),
+    vectorize_all = FALSE
+  )
+}
+
 #' Clean worksheet name
 #'
 #' Cleans a worksheet name by removing legal characters.

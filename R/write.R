@@ -1089,6 +1089,7 @@ write_data_table <- function(
 
     ## replace invalid XML characters
     col_names <- replace_legal_chars(colnames(x))
+    col_names <- escape_newline_and_tab(col_names)
     if (rowNames) col_names <- c("_rowNames_", col_names)
 
     ## Table name validation

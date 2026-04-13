@@ -28,6 +28,7 @@ last_table_id <- function(wb) {
 }
 
 fun_tab_cols <- function(tab_cols) {
+  tab_cols <- escape_newline_and_tab(tab_cols)
   tabCols <- NULL
   for (i in seq_along(tab_cols)) {
     tmp <- xml_node_create(
@@ -8335,16 +8336,19 @@ wbWorkbook <- R6::R6Class(
       ## delete table object and all data in it
       sheet <- private$get_sheet_index(sheet)
 
+      all_tabs_on_sheet <- self$tables$tab_name[self$tables$tab_sheet == sheet]
+
       if (missing(table)) {
-        table <- self$tables$tab_name
-      } else  if (!table %in% self$tables$tab_name) {
+        table <- all_tabs_on_sheet
+      } else if (!all(table %in% all_tabs_on_sheet)) {
         if (length(table) < 1) {
           stop("table argument must be at least 1")
         }
-        stop(sprintf("table '%s' does not exist.\n
-                     Call `wb_get_tables()` to get existing table names", table),
-             call. = FALSE)
+        msg <- "table(s) '%s' not found on sheet.\nCall `wb_get_tables()` to get existing table names"
+        stop(sprintf(msg, setdiff(table, all_tabs_on_sheet)), call. = FALSE)
       }
+
+      table <- intersect(table, all_tabs_on_sheet)
 
       for (tbl in table) {
         ## delete table object (by flagging as deleted)
