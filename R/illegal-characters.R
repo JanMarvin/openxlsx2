@@ -19,12 +19,9 @@ has_illegal_chars <- function(x) {
 
 # vectors for character types
 illegal_chars <- function() { c("\\", "/", "?", "*", ":", "[", "]") } # nolint
-legal_chars <- function() {
-  c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f", "\n",      "\t")
-}
-legal_sub   <- function() {
-  c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   "",   "_x000a_", "_x0009_")
-}
+legal_chars   <- function() { c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f") } # nolint
+legal_sub     <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   ""  ) } # nolint
+
 #' converts & to &amp;
 #' @param x some xml string
 #' @noRd
@@ -43,6 +40,16 @@ replace_illegal_chars <- function(x, replacement = " ") {
   x <- as.character(x)
   x <- stringi::stri_escape_unicode(x)
   stringi::stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
+}
+
+# TODO investigate if this should be integrated into replace_legal_chars()
+escape_newline_and_tab <- function(x) {
+  stringi::stri_replace_all_fixed(
+    x,
+    c("\n",       "\t"),
+    c("_x000a_", "_x0009_"),
+    vectorize_all = FALSE
+  )
 }
 
 #' Clean worksheet name
@@ -67,8 +74,8 @@ clean_worksheet_name <- function(x, replacement = " ") {
 replaceXMLEntities <- function(x) {
   stringi::stri_replace_all_fixed(
     x,
-    c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "_x000a_", "_x0009_"),
-    c("&",     '"',      "'",      "<",    ">",    "\n",       "\t"),
+    c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;"),
+    c("&",     '"',      "'",      "<",    ">"),
     vectorize_all = FALSE
   )
 }
