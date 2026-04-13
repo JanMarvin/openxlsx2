@@ -19,9 +19,12 @@ has_illegal_chars <- function(x) {
 
 # vectors for character types
 illegal_chars <- function() { c("\\", "/", "?", "*", ":", "[", "]") } # nolint
-legal_chars   <- function() { c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f") } # nolint
-legal_sub     <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   ""  ) } # nolint
-
+legal_chars <- function() {
+  c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f", "\n",      "\t")
+}
+legal_sub   <- function() {
+  c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   "",   "_x000a_", "_x0009_")
+}
 #' converts & to &amp;
 #' @param x some xml string
 #' @noRd
