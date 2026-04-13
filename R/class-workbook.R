@@ -28,6 +28,7 @@ last_table_id <- function(wb) {
 }
 
 fun_tab_cols <- function(tab_cols) {
+  tab_cols <- escape_newline_and_tab(tab_cols)
   tabCols <- NULL
   for (i in seq_along(tab_cols)) {
     tmp <- xml_node_create(

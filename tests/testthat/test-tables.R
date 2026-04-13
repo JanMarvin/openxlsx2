@@ -332,9 +332,17 @@ test_that("remove_tables works", {
 test_that("table names with line break work", {
   wb <- wb_workbook()$
     add_worksheet("sheet1")$
-    add_data_table(x = data.frame(`line1\nline2` = c(1, 2, 3), check.names = FALSE))
+    add_data_table(x = data.frame(`line1\nline2` = c(1, 2, 3), check.names = FALSE),
+                   table_name = "Tab")
 
   exp <- "line1_x000a_line2"
   got <- unlist(xml_attr(wb$tables$tab_xml, c("table", "tableColumns", "tableColumn")))[["name"]]
   expect_equal(got, exp)
+
+  wb$add_data(dims = "A5", x = 1L)
+  wb$update_table(dims = "A1:A5", tabname = "Tab1")
+
+  got <- unlist(xml_attr(wb$tables$tab_xml, c("table", "tableColumns", "tableColumn")))[["name"]]
+  expect_equal(got, exp)
+
 })
