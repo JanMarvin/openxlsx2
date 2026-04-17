@@ -126,8 +126,6 @@ user that they are array formulas. Using these is implemented in
 wb <- wb_workbook()$add_worksheet()$
   add_data(x = head(cars))$
   add_formula(x = "SUM(ABS(A2:A7))", dims = "D2", cm = TRUE)
-#> Warning in write_data2(wb = wb, sheet = sheet, data = x, name = name, colNames
-#> = colNames, : modifications with cm formulas are experimental. use at own risk
 # wb$open()
 ```
 

@@ -1,6 +1,28 @@
 # Changelog
 
+## openxlsx2 1.26
+
+### New features
+
+- Tables now accept a new `params` argument that can be used for
+  filtering. [\#1126](https://github.com/JanMarvin/openxlsx2/pull/1126)
+- Added support for `encharter`.
+  [\#1602](https://github.com/JanMarvin/openxlsx2/pull/1602)
+
+### Fixes
+
+- Restore
+  [`wb_add_image()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_image.md)
+  that was broken in 1.24
+  [\#1598](https://github.com/JanMarvin/openxlsx2/pull/1598)
+- Formulas with `array = TRUE` now extend over the selected `dims`
+  range. The `cm = TRUE` warning was removed.
+
+------------------------------------------------------------------------
+
 ## openxlsx2 1.25
+
+CRAN release: 2026-03-07
 
 ### Fixes
 

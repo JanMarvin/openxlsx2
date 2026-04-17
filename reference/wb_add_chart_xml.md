@@ -10,6 +10,8 @@ wb_add_chart_xml(
   sheet = current_sheet(),
   dims = NULL,
   xml,
+  style = "",
+  color = "",
   col_offset = 0,
   row_offset = 0,
   ...
@@ -33,6 +35,14 @@ wb_add_chart_xml(
 - xml:
 
   chart xml
+
+- style:
+
+  chart style
+
+- color:
+
+  chart color
 
 - col_offset, row_offset:
 

@@ -14,6 +14,7 @@
 <url><loc>https://janmarvin.github.io/openxlsx2/news/index.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/active_sheet-wb.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/apply_numfmt.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/as.character.pugi_xml.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/as_xml.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/base_font-wb.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/clean_worksheet_name.html</loc></url>
@@ -75,6 +76,7 @@
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_data_validation.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_drawing.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_dxfs_style.html</loc></url>
+<url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_encharter.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_fill.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_font.html</loc></url>
 <url><loc>https://janmarvin.github.io/openxlsx2/reference/wb_add_form_control.html</loc></url>
