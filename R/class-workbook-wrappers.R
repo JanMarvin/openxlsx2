@@ -1676,13 +1676,13 @@ wb_add_drawing <- function(
 #' Add a Chart object to a workbook sheet
 #'
 #' @description
-#' Renders a \code{Chart} R6 object and injects the resulting XML into an
-#' \code{openxlsx2} workbook at the specified location.
+#' Renders a `encharter` R6 object and injects the resulting XML into an
+#' `openxlsx2` workbook at the specified location.
 #'
-#' @param wb An \code{openxlsx2} workbook object.
+#' @param wb An `openxlsx2` workbook object.
 #' @param sheet Sheet name or index where the chart will be placed.
 #' @param dims Character string defining the cell range (e.g., "E2:M20").
-#' @param graph An initialized \code{Chart} R6 object.
+#' @param graph An initialized `encharter` R6 object.
 #'
 #' @return The workbook object, invisibly.
 #' @export

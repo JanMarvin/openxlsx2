@@ -1,7 +1,7 @@
 Type: Package
 Package: openxlsx2
 Title: Read, Write and Edit 'xlsx' Files
-Version: 1.25.0.9000
+Version: 1.26
 Language: en-US
 Authors@R: c(
   person("Jordan Mark", "Barbone", email = "jmbarbone@gmail.com", role = "aut", comment = c(ORCID = "0000-0001-9788-3628")),
@@ -29,7 +29,6 @@ LinkingTo:
 Suggests:
     ggplot2,
     knitr,
-    encharter,
     mschart (>= 0.4),
     openssl,
     rmarkdown,
@@ -42,4 +41,3 @@ Encoding: UTF-8
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
-Remotes: JanMarvin/encharter
