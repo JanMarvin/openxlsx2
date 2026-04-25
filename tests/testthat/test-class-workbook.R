@@ -749,15 +749,15 @@ test_that("encharter charts work", {
   ## two charts
   bar_chart <- encharter::ec("barChart")$
     add_series(
-      header = "Data!$B$1",
-      cat    = "Data!$A$2:$A$13",
+      name   = "Data!$B$1",
+      label  = "Data!$A$2:$A$13",
       data   = "Data!$B$2:$B$13"
     )
 
   wf_chart <- encharter::ec("waterfall")$
     add_series(
-      header = "",
-      cat    = "WaterfallData!$A$2:$A$6",
+      name   = "",
+      label  = "WaterfallData!$A$2:$A$6",
       data   = "WaterfallData!$B$2:$B$6"
     )
 
