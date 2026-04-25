@@ -2,10 +2,18 @@
 
 ## openxlsx2 (development version)
 
+------------------------------------------------------------------------
+
+## openxlsx2 1.26
+
+CRAN release: 2026-04-17
+
 ### New features
 
 - Tables now accept a new `params` argument that can be used for
   filtering. [\#1126](https://github.com/JanMarvin/openxlsx2/pull/1126)
+- Added support for `encharter`.
+  [\#1602](https://github.com/JanMarvin/openxlsx2/pull/1602)
 
 ### Fixes
 

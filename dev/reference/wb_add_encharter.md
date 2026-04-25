@@ -1,6 +1,6 @@
 # Add a Chart object to a workbook sheet
 
-Renders a `Chart` R6 object and injects the resulting XML into an
+Renders a `encharter` R6 object and injects the resulting XML into an
 `openxlsx2` workbook at the specified location.
 
 ## Usage
@@ -25,7 +25,7 @@ wb_add_encharter(wb, sheet = current_sheet(), dims = NULL, graph)
 
 - graph:
 
-  An initialized `Chart` R6 object.
+  An initialized `encharter` R6 object.
 
 ## Value
 
