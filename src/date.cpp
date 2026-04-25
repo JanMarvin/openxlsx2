@@ -29,7 +29,7 @@ Rcpp::CharacterVector date_to_unix(Rcpp::CharacterVector x, std::string origin =
     char* endp = nullptr;
     double val = R_strtod(x[i], &endp);
 
-    if (endp == x[i] || !R_finite(val)) {
+    if (endp == static_cast<const char*>(x[i]) || !R_finite(val)) {
       // If error expressions such as #VALUE! appear
       // in x and are not filtered out.
       result[i] = NA_STRING;
