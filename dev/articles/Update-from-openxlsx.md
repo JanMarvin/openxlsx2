@@ -16,12 +16,14 @@ The basic read function changed from `read.xlsx` to `read_xlsx`. Using a
 default xlsx file included in the package:
 
 ``` r
+
 file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
 
 The old syntax looked like this:
 
 ``` r
+
 # read in openxlsx
 openxlsx::read.xlsx(xlsxFile = file)
 ```
@@ -29,6 +31,7 @@ openxlsx::read.xlsx(xlsxFile = file)
 This has changed to this:
 
 ``` r
+
 # read in openxlsx2
 openxlsx2::read_xlsx(file = file)
 ```
@@ -69,12 +72,14 @@ existing file name, this file will be replaced.
 Setting the output to some temporary xlsx file
 
 ``` r
+
 output <- temp_xlsx()
 ```
 
 The previous write function looks like this:
 
 ``` r
+
 # write in openxlsx
 openxlsx::write.xlsx(iris, file = output, colNames = TRUE)
 ```
@@ -82,6 +87,7 @@ openxlsx::write.xlsx(iris, file = output, colNames = TRUE)
 The new function looks quite similar:
 
 ``` r
+
 # write in openxlsx2
 openxlsx2::write_xlsx(iris, file = output, col_names = TRUE)
 ```
@@ -98,12 +104,14 @@ A major feature in `openxlsx` are workbooks. Obviously they remain a
 central piece in `openxlsx2`. Previous you would load them with:
 
 ``` r
+
 wb <- openxlsx::loadWorkbook(file = file)
 ```
 
 In `openxlsx2` loading was changed to:
 
 ``` r
+
 wb <- wb_load(file = file)
 ```
 
@@ -119,6 +127,7 @@ One of the biggest user facing change was the removal of the
 [`openxlsx::addStyle()`](https://ycphs.github.io/openxlsx/reference/addStyle.html)
 
 ``` r
+
 # openxlsx
 ## Create a new workbook
 wb <- createWorkbook(creator = "My name here")
@@ -136,6 +145,7 @@ setColWidths(wb, 1, cols = 1, widths = 21)
 In `openxlsx2` the same code looks something like this:
 
 ``` r
+
 # openxlsx2 chained
 border_color <- wb_color(hex = "4F81BD")
 wb <- wb_workbook(creator = "My name here")$
@@ -167,6 +177,7 @@ would be the functions to use with pipes `%>%` or `|>`.
 With pipes the code from above becomes
 
 ``` r
+
 # openxlsx2 with pipes
 border_color <- wb_color(hex = "4F81BD")
 wb <- wb_workbook(creator = "My name here") |>
@@ -189,6 +200,7 @@ wb <- wb_workbook(creator = "My name here") |>
 Be aware that chains modify an object in place and pipes do not.
 
 ``` r
+
 # openxlsx2
 wbp <- wb_workbook() |> wb_add_worksheet()
 wbc <- wb_workbook()$add_worksheet()
@@ -223,6 +235,7 @@ for extended examples on formatting.
 Here is a minimal example:
 
 ``` r
+
 # openxlsx2 with chains
 wb <- wb_workbook()$
   add_worksheet("a")$
@@ -242,6 +255,7 @@ Similarly, data validation has been updated and improved. This
 `openxlsx` code for data validation
 
 ``` r
+
 # openxlsx
 wb <- createWorkbook()
 addWorksheet(wb, "Sheet 1")
@@ -255,6 +269,7 @@ dataValidation(wb, 1,
 looks in `openxlsx2` something like this:
 
 ``` r
+
 # openxlsx2 with chains
 wb <- wb_workbook()$
   add_worksheet("Sheet 1")$

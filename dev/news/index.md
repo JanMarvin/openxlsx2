@@ -239,6 +239,7 @@ CRAN release: 2025-12-07
   [\#1454](https://github.com/JanMarvin/openxlsx2/pull/1454)
 
 ``` r
+
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb)
 
@@ -380,6 +381,7 @@ CRAN release: 2025-07-29
   actual data starts later.
 
 ``` r
+
 wb <- wb_workbook()$add_worksheet()$add_data(x = head(cars), dims = "D4")
 # previously this would return a data frame of 6 x 2 and now it returns 10 x 5
 wb$to_df(start_col = 1, start_row = 1, col_names = FALSE)
@@ -994,6 +996,7 @@ CRAN release: 2024-05-01
   [993](https://github.com/JanMarvin/openxlsx2/pull/993)
 
 ``` r
+
 # force a dataset into a specific cell dimension
 wb <- wb_workbook()$add_worksheet()
 wb$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
@@ -1011,6 +1014,7 @@ wb$add_data(dims = "I2:J2;A1:B2;G5:H6", x = matrix(1:8, 4, 2), enforce = TRUE)
   [@olivroy](https://github.com/olivroy)).
 
 ``` r
+
 # Previously created a wrong dims
 wb_dims(x = mtcars, cols = "non-existent-col")
 # Now errors
@@ -1065,6 +1069,7 @@ CRAN release: 2024-03-26
   a two dimensional `x` object.
 
 ``` r
+
 # before (workaround needed)
 wb$add_data(dims = wb_dims(rows = 1, cols = 1:3), x = t(c(4, 5, 8)), col_names = FALSE)
 # now (listens to dims)

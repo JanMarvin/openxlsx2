@@ -12,6 +12,7 @@ allows to break many new ground.
 You can install the stable version of `openxlsx2` with:
 
 ``` r
+
 install.packages('openxlsx2')
 ```
 
@@ -19,6 +20,7 @@ You can install the development version of `openxlsx2` from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("JanMarvin/openxlsx2")
 ```
@@ -26,6 +28,7 @@ remotes::install_github("JanMarvin/openxlsx2")
 Or from [r-universe](https://janmarvin.r-universe.dev/openxlsx2) with:
 
 ``` r
+
 # Enable repository from janmarvin
 options(repos = c(
   janmarvin = 'https://janmarvin.r-universe.dev',
@@ -72,6 +75,7 @@ pages](https://janmarvin.github.io/openxlsx2/reference/index.html), the
 find them under:
 
 ``` r
+
 vignette(package = "openxlsx2")
 ```
 
@@ -80,6 +84,7 @@ vignette(package = "openxlsx2")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
+
 library(openxlsx2)
 # read xlsx or xlsm files
 path <- system.file("extdata/openxlsx2_example.xlsx", package = "openxlsx2")
@@ -139,6 +144,7 @@ For a full list of all authors that have made this package possible and
 for whom we are grateful, please see:
 
 ``` r
+
 system.file("AUTHORS", package = "openxlsx2")
 ```
 

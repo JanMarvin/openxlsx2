@@ -8,6 +8,7 @@ technical approaches, as well as how to modify existing openxml
 workbooks directly within R.
 
 ``` r
+
 library(openxlsx2)
 ```
 
@@ -29,6 +30,7 @@ The example below, with increased column width.
 #### the quick way: using high-level functions
 
 ``` r
+
 # add some dummy data
 set.seed(123)
 random_numbers <- 44444 + seq(-555, 555, length.out = 28 * 28)
@@ -73,6 +75,7 @@ for (i in seq_along(x)) {
 #### the long way: using bare-metal functions
 
 ``` r
+
 # create workbook
 wb <- wb_workbook()$add_worksheet("test")
 
@@ -167,6 +170,7 @@ classes.
 ### numfmts
 
 ``` r
+
 ## Create Workbook object and add worksheets
 wb <- wb_workbook()
 wb$add_worksheet("S1")
@@ -200,6 +204,7 @@ In addition, you can set the style to be picked up using `openxlsx2`
 options.
 
 ``` r
+
 wb <- wb_workbook()$add_worksheet("test")
 
 options("openxlsx2.dateFormat" = "yyyy")
@@ -232,6 +237,7 @@ wb$add_data("test", df)
 ### wb_set_col_widths
 
 ``` r
+
 wb <- wb_workbook()$
   add_worksheet()$
   add_data(x = mtcars, row_names = TRUE)
@@ -245,6 +251,7 @@ wb$set_col_widths(cols = cols, widths = "auto")
 ### add borders
 
 ``` r
+
 wb <- wb_workbook()$
 # full inner grid
   add_worksheet(sheet = "S1", grid_lines = FALSE)$
@@ -291,6 +298,7 @@ Tiny table with minimal styling
 #### the quick way: using high-level functions
 
 ``` r
+
 # add some dummy data to the worksheet
 mat <- matrix(1:4, ncol = 2, nrow = 2)
 colnames(mat) <- make.names(seq_len(ncol(mat)))
@@ -318,6 +326,7 @@ wb <- wb_workbook()$
 #### the long way: creating everything from the bone
 
 ``` r
+
 # add some dummy data to the worksheet
 mat <- matrix(1:4, ncol = 2, nrow = 2)
 colnames(mat) <- make.names(seq_len(ncol(mat)))
@@ -372,6 +381,7 @@ The loop below will apply the tint attribute to the fill color.
 Tint variations of the theme colors.
 
 ``` r
+
 wb <- wb_workbook()$add_worksheet("S1")
 
 tints <- seq(-0.9, 0.9, by = 0.1)
@@ -399,6 +409,7 @@ returns only some styles, so you have to make sure that the copy-from
 and copy-to dimensions match in a meaningful way.
 
 ``` r
+
 wb <- wb_load(system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2"))
 
 wb$set_cell_style(1, "A30:G35", wb$get_cell_style(1, "A10:G15"))
@@ -413,6 +424,7 @@ is possible to style strings independently of the cell containing the
 string.
 
 ``` r
+
 txt <- paste(
   fmt_txt("Embracing the full potential of "),
   fmt_txt("openxlsx2", bold = TRUE, size = 16),
@@ -429,6 +441,7 @@ longer string. It is even possible to use
 as `na`:
 
 ``` r
+
 df <- mtcars
 df[df < 4] <- NA
 
@@ -453,6 +466,7 @@ style is created, it must also be assigned to the workbook. After that
 you can use it in the workbook like any other table style.
 
 ``` r
+
 # a red table style
 dx0 <- create_dxfs_style(
   border = TRUE,

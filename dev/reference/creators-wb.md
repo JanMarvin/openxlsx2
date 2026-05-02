@@ -58,6 +58,7 @@ Other workbook wrappers:
 ## Examples
 
 ``` r
+
 # workbook made with default creator (see [wbWorkbook])
 wb <- wb_workbook()
 wb_get_creators(wb)

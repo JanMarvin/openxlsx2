@@ -282,7 +282,7 @@ rather than `?wbWorkbook`).
 
 ### Public methods
 
-- [`wbWorkbook$new()`](#method-wbWorkbook-new)
+- [`wbWorkbook$new()`](#method-wbWorkbook-initialize)
 
 - [`wbWorkbook$append()`](#method-wbWorkbook-append)
 
@@ -510,7 +510,7 @@ rather than `?wbWorkbook`).
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `wbWorkbook$new()`
 
 Creates a new `wbWorkbook` object
 
@@ -568,7 +568,7 @@ a `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method [`append()`](https://rdrr.io/r/base/append.html)
+### `wbWorkbook$append()`
 
 Append a field. This method is intended for internal use
 
@@ -588,7 +588,7 @@ Append a field. This method is intended for internal use
 
 ------------------------------------------------------------------------
 
-### Method `append_sheets()`
+### `wbWorkbook$append_sheets()`
 
 Append to `self$workbook$sheets` This method is intended for internal
 use
@@ -605,7 +605,7 @@ use
 
 ------------------------------------------------------------------------
 
-### Method `validate_sheet()`
+### `wbWorkbook$validate_sheet()`
 
 validate sheet
 
@@ -625,7 +625,7 @@ The integer position of the sheet
 
 ------------------------------------------------------------------------
 
-### Method `add_chartsheet()`
+### `wbWorkbook$add_chartsheet()`
 
 Add a chart sheet to the workbook
 
@@ -667,7 +667,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_worksheet()`
+### `wbWorkbook$add_worksheet()`
 
 Add worksheet to the `wbWorkbook` object
 
@@ -784,7 +784,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `clone_worksheet()`
+### `wbWorkbook$clone_worksheet()`
 
 Clone a workbooksheet to another workbook
 
@@ -812,7 +812,7 @@ Clone a workbooksheet to another workbook
 
 ------------------------------------------------------------------------
 
-### Method `add_data()`
+### `wbWorkbook$add_data()`
 
 add data
 
@@ -917,7 +917,7 @@ add data
 
 ------------------------------------------------------------------------
 
-### Method `add_data_table()`
+### `wbWorkbook$add_data_table()`
 
 add a data table
 
@@ -1046,7 +1046,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_pivot_table()`
+### `wbWorkbook$add_pivot_table()`
 
 add pivot table
 
@@ -1128,7 +1128,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_slicer()`
+### `wbWorkbook$add_slicer()`
 
 add pivot table
 
@@ -1175,7 +1175,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `remove_slicer()`
+### `wbWorkbook$remove_slicer()`
 
 add pivot table
 
@@ -1195,7 +1195,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_timeline()`
+### `wbWorkbook$add_timeline()`
 
 add pivot table
 
@@ -1242,7 +1242,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `remove_timeline()`
+### `wbWorkbook$remove_timeline()`
 
 add pivot table
 
@@ -1262,7 +1262,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_formula()`
+### `wbWorkbook$add_formula()`
 
 Add formula
 
@@ -1344,7 +1344,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_hyperlink()`
+### `wbWorkbook$add_hyperlink()`
 
 Add hyperlink
 
@@ -1391,7 +1391,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `remove_hyperlink()`
+### `wbWorkbook$remove_hyperlink()`
 
 remove hyperlink
 
@@ -1415,7 +1415,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_style()`
+### `wbWorkbook$add_style()`
 
 add style
 
@@ -1439,7 +1439,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `to_df()`
+### `wbWorkbook$to_df()`
 
 to_df
 
@@ -1588,7 +1588,7 @@ a data frame
 
 ------------------------------------------------------------------------
 
-### Method [`load()`](https://rdrr.io/r/base/load.html)
+### `wbWorkbook$load()`
 
 load workbook
 
@@ -1620,7 +1620,7 @@ The `wbWorkbook` object invisibly
 
 ------------------------------------------------------------------------
 
-### Method [`save()`](https://rdrr.io/r/base/save.html)
+### `wbWorkbook$save()`
 
 Save the workbook
 
@@ -1653,7 +1653,7 @@ The `wbWorkbook` object invisibly
 
 ------------------------------------------------------------------------
 
-### Method [`open()`](https://rdrr.io/r/base/connections.html)
+### `wbWorkbook$open()`
 
 open wbWorkbook in spreadsheet software
 
@@ -1684,7 +1684,7 @@ The `wbWorkbook`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `buildTable()`
+### `wbWorkbook$buildTable()`
 
 Build table
 
@@ -1771,7 +1771,7 @@ The `wbWorksheet` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `update_table()`
+### `wbWorkbook$update_table()`
 
 update a data_table
 
@@ -1799,7 +1799,7 @@ The `wbWorksheet` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `copy_cells()`
+### `wbWorkbook$copy_cells()`
 
 copy cells around in a workbook
 
@@ -1851,7 +1851,7 @@ The `wbWorksheet` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `get_base_font()`
+### `wbWorkbook$get_base_font()`
 
 Get the base font
 
@@ -1865,7 +1865,7 @@ A list of of the font
 
 ------------------------------------------------------------------------
 
-### Method `set_base_font()`
+### `wbWorkbook$set_base_font()`
 
 Set the base font
 
@@ -1902,7 +1902,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `get_base_colors()`
+### `wbWorkbook$get_base_colors()`
 
 Get the base color
 
@@ -1922,7 +1922,7 @@ Get the base color
 
 ------------------------------------------------------------------------
 
-### Method `get_base_colours()`
+### `wbWorkbook$get_base_colours()`
 
 Get the base colour
 
@@ -1942,7 +1942,7 @@ Get the base colour
 
 ------------------------------------------------------------------------
 
-### Method `set_base_colors()`
+### `wbWorkbook$set_base_colors()`
 
 Set the base color
 
@@ -1966,7 +1966,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `set_base_colours()`
+### `wbWorkbook$set_base_colours()`
 
 Set the base colour
 
@@ -1990,7 +1990,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `get_bookview()`
+### `wbWorkbook$get_bookview()`
 
 Get the book views
 
@@ -2004,7 +2004,7 @@ A dataframe with the bookview properties
 
 ------------------------------------------------------------------------
 
-### Method `remove_bookview()`
+### `wbWorkbook$remove_bookview()`
 
 Get the book views
 
@@ -2024,7 +2024,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `set_bookview()`
+### `wbWorkbook$set_bookview()`
 
 #### Usage
 
@@ -2114,7 +2114,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `get_sheet_names()`
+### `wbWorkbook$get_sheet_names()`
 
 Get sheet names
 
@@ -2136,7 +2136,7 @@ substitutions.
 
 ------------------------------------------------------------------------
 
-### Method `set_sheet_names()`
+### `wbWorkbook$set_sheet_names()`
 
 Sets a sheet name
 
@@ -2160,7 +2160,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `set_row_heights()`
+### `wbWorkbook$set_row_heights()`
 
 Sets a row height for a sheet
 
@@ -2202,7 +2202,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `remove_row_heights()`
+### `wbWorkbook$remove_row_heights()`
 
 Removes a row height for a sheet
 
@@ -2226,7 +2226,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `createCols()`
+### `wbWorkbook$createCols()`
 
 creates column object for worksheet
 
@@ -2254,7 +2254,7 @@ creates column object for worksheet
 
 ------------------------------------------------------------------------
 
-### Method `group_cols()`
+### `wbWorkbook$group_cols()`
 
 Group cols
 
@@ -2291,7 +2291,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `ungroup_cols()`
+### `wbWorkbook$ungroup_cols()`
 
 ungroup cols
 
@@ -2315,7 +2315,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `remove_col_widths()`
+### `wbWorkbook$remove_col_widths()`
 
 Remove row heights from a worksheet
 
@@ -2339,7 +2339,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `set_col_widths()`
+### `wbWorkbook$set_col_widths()`
 
 Set column widths
 
@@ -2377,7 +2377,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `group_rows()`
+### `wbWorkbook$group_rows()`
 
 Group rows
 
@@ -2414,7 +2414,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `ungroup_rows()`
+### `wbWorkbook$ungroup_rows()`
 
 ungroup rows
 
@@ -2438,7 +2438,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `remove_worksheet()`
+### `wbWorkbook$remove_worksheet()`
 
 Remove a worksheet
 
@@ -2458,7 +2458,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_data_validation()`
+### `wbWorkbook$add_data_validation()`
 
 Adds data validation
 
@@ -2547,7 +2547,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `merge_cells()`
+### `wbWorkbook$merge_cells()`
 
 Set cell merging for a sheet
 
@@ -2589,7 +2589,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `unmerge_cells()`
+### `wbWorkbook$unmerge_cells()`
 
 Removes cell merging for a sheet
 
@@ -2617,7 +2617,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `freeze_pane()`
+### `wbWorkbook$freeze_pane()`
 
 Set freeze panes for a sheet
 
@@ -2664,7 +2664,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_comment()`
+### `wbWorkbook$add_comment()`
 
 Add comment
 
@@ -2696,7 +2696,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `get_comment()`
+### `wbWorkbook$get_comment()`
 
 Get comments
 
@@ -2720,7 +2720,7 @@ A data frame containing comments
 
 ------------------------------------------------------------------------
 
-### Method [`remove_comment()`](https://janmarvin.github.io/openxlsx2/dev/reference/comment_internal.md)
+### `wbWorkbook$remove_comment()`
 
 Remove comment
 
@@ -2748,7 +2748,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_thread()`
+### `wbWorkbook$add_thread()`
 
 add threaded comment to worksheet
 
@@ -2791,7 +2791,7 @@ add threaded comment to worksheet
 
 ------------------------------------------------------------------------
 
-### Method `get_thread()`
+### `wbWorkbook$get_thread()`
 
 Get threads
 
@@ -2815,7 +2815,7 @@ A data frame containing threads
 
 ------------------------------------------------------------------------
 
-### Method `add_conditional_formatting()`
+### `wbWorkbook$add_conditional_formatting()`
 
 Add conditional formatting
 
@@ -2871,7 +2871,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `remove_conditional_formatting()`
+### `wbWorkbook$remove_conditional_formatting()`
 
 Remove conditional formatting
 
@@ -2908,7 +2908,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_image()`
+### `wbWorkbook$add_image()`
 
 Insert an image into a sheet
 
@@ -2976,7 +2976,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_plot()`
+### `wbWorkbook$add_plot()`
 
 Add plot. A wrapper for add_image()
 
@@ -3039,7 +3039,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_drawing()`
+### `wbWorkbook$add_drawing()`
 
 Add xml drawing
 
@@ -3082,7 +3082,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_chart_xml()`
+### `wbWorkbook$add_chart_xml()`
 
 Add xml chart
 
@@ -3135,7 +3135,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_encharter()`
+### `wbWorkbook$add_encharter()`
 
 Add xml chart
 
@@ -3163,7 +3163,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_mschart()`
+### `wbWorkbook$add_mschart()`
 
 Add mschart chart to the workbook
 
@@ -3206,7 +3206,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_form_control()`
+### `wbWorkbook$add_form_control()`
 
 Add form control to workbook
 
@@ -3258,7 +3258,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `wbWorkbook$print()`
 
 Prints the `wbWorkbook` object
 
@@ -3272,7 +3272,7 @@ The `wbWorkbook` object, invisibly; called for its side-effects
 
 ------------------------------------------------------------------------
 
-### Method `protect()`
+### `wbWorkbook$protect()`
 
 Protect a workbook
 
@@ -3334,7 +3334,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `protect_worksheet()`
+### `wbWorkbook$protect_worksheet()`
 
 protect worksheet
 
@@ -3376,7 +3376,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `get_properties()`
+### `wbWorkbook$get_properties()`
 
 Get properties of a workbook
 
@@ -3386,7 +3386,7 @@ Get properties of a workbook
 
 ------------------------------------------------------------------------
 
-### Method `set_properties()`
+### `wbWorkbook$set_properties()`
 
 Set a property of a workbook
 
@@ -3419,7 +3419,7 @@ Set a property of a workbook
 
 ------------------------------------------------------------------------
 
-### Method `add_mips()`
+### `wbWorkbook$add_mips()`
 
 add mips string
 
@@ -3435,7 +3435,7 @@ add mips string
 
 ------------------------------------------------------------------------
 
-### Method `get_mips()`
+### `wbWorkbook$get_mips()`
 
 get mips string
 
@@ -3455,7 +3455,7 @@ get mips string
 
 ------------------------------------------------------------------------
 
-### Method `set_creators()`
+### `wbWorkbook$set_creators()`
 
 Set creator(s)
 
@@ -3471,7 +3471,7 @@ Set creator(s)
 
 ------------------------------------------------------------------------
 
-### Method `add_creators()`
+### `wbWorkbook$add_creators()`
 
 Add creator(s)
 
@@ -3487,7 +3487,7 @@ Add creator(s)
 
 ------------------------------------------------------------------------
 
-### Method `remove_creators()`
+### `wbWorkbook$remove_creators()`
 
 Remove creator(s)
 
@@ -3503,7 +3503,7 @@ Remove creator(s)
 
 ------------------------------------------------------------------------
 
-### Method `set_last_modified_by()`
+### `wbWorkbook$set_last_modified_by()`
 
 Change the last modified by
 
@@ -3527,7 +3527,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `set_page_setup()`
+### `wbWorkbook$set_page_setup()`
 
 set_page_setup() this function is intended to supersede page_setup(),
 but is not yet stable
@@ -3712,7 +3712,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `page_setup()`
+### `wbWorkbook$page_setup()`
 
 page_setup()
 
@@ -3814,7 +3814,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `set_header_footer()`
+### `wbWorkbook$set_header_footer()`
 
 Sets headers and footers
 
@@ -3881,7 +3881,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `get_tables()`
+### `wbWorkbook$get_tables()`
 
 get tables
 
@@ -3902,7 +3902,7 @@ if empty
 
 ------------------------------------------------------------------------
 
-### Method `remove_tables()`
+### `wbWorkbook$remove_tables()`
 
 remove tables
 
@@ -3930,7 +3930,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_filter()`
+### `wbWorkbook$add_filter()`
 
 add filters
 
@@ -3958,7 +3958,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `remove_filter()`
+### `wbWorkbook$remove_filter()`
 
 remove filters
 
@@ -3978,7 +3978,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `set_grid_lines()`
+### `wbWorkbook$set_grid_lines()`
 
 grid lines
 
@@ -4006,7 +4006,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `grid_lines()`
+### `wbWorkbook$grid_lines()`
 
 grid lines
 
@@ -4034,7 +4034,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_named_region()`
+### `wbWorkbook$add_named_region()`
 
 add a named region
 
@@ -4146,7 +4146,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `get_named_regions()`
+### `wbWorkbook$get_named_regions()`
 
 get named regions in a workbook
 
@@ -4170,7 +4170,7 @@ A `data.frame` of named regions
 
 ------------------------------------------------------------------------
 
-### Method `remove_named_region()`
+### `wbWorkbook$remove_named_region()`
 
 remove a named region
 
@@ -4194,7 +4194,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `set_order()`
+### `wbWorkbook$set_order()`
 
 set worksheet order
 
@@ -4214,7 +4214,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `get_sheet_visibility()`
+### `wbWorkbook$get_sheet_visibility()`
 
 Get sheet visibility
 
@@ -4228,7 +4228,7 @@ Returns sheet visibility
 
 ------------------------------------------------------------------------
 
-### Method `set_sheet_visibility()`
+### `wbWorkbook$set_sheet_visibility()`
 
 Set sheet visibility
 
@@ -4252,7 +4252,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_page_break()`
+### `wbWorkbook$add_page_break()`
 
 Add a page break
 
@@ -4280,7 +4280,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `clean_sheet()`
+### `wbWorkbook$clean_sheet()`
 
 clean sheet (remove all values)
 
@@ -4332,7 +4332,7 @@ The `wbWorksheetObject`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_border()`
+### `wbWorkbook$add_border()`
 
 create borders for cell region
 
@@ -4397,7 +4397,7 @@ The `wbWorkbook`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_fill()`
+### `wbWorkbook$add_fill()`
 
 provide simple fill function
 
@@ -4464,7 +4464,7 @@ The `wbWorksheetObject`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_font()`
+### `wbWorkbook$add_font()`
 
 provide simple font function
 
@@ -4576,7 +4576,7 @@ The `wbWorkbook`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_numfmt()`
+### `wbWorkbook$add_numfmt()`
 
 provide simple number format function
 
@@ -4604,7 +4604,7 @@ The `wbWorksheetObject`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_cell_style()`
+### `wbWorkbook$add_cell_style()`
 
 provide simple cell style format function
 
@@ -4761,7 +4761,7 @@ The `wbWorkbook` object, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `get_cell_style()`
+### `wbWorkbook$get_cell_style()`
 
 get sheet style
 
@@ -4785,7 +4785,7 @@ a character vector of cell styles
 
 ------------------------------------------------------------------------
 
-### Method `set_cell_style()`
+### `wbWorkbook$set_cell_style()`
 
 set sheet style
 
@@ -4813,7 +4813,7 @@ The `wbWorksheetObject`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `set_cell_style_across()`
+### `wbWorkbook$set_cell_style_across()`
 
 set style across columns and/or rows
 
@@ -4850,7 +4850,7 @@ The `wbWorkbook` object
 
 ------------------------------------------------------------------------
 
-### Method `add_named_style()`
+### `wbWorkbook$add_named_style()`
 
 set sheet style
 
@@ -4888,7 +4888,7 @@ The `wbWorkbook`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_dxfs_style()`
+### `wbWorkbook$add_dxfs_style()`
 
 create dxfs style These styles are used with conditional formatting and
 custom table styles
@@ -4984,7 +4984,7 @@ The `wbWorksheetObject`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `clone_sheet_style()`
+### `wbWorkbook$clone_sheet_style()`
 
 clone style from one sheet to another
 
@@ -5004,7 +5004,7 @@ clone style from one sheet to another
 
 ------------------------------------------------------------------------
 
-### Method `add_sparklines()`
+### `wbWorkbook$add_sparklines()`
 
 apply sparkline to worksheet
 
@@ -5024,7 +5024,7 @@ apply sparkline to worksheet
 
 ------------------------------------------------------------------------
 
-### Method `add_ignore_error()`
+### `wbWorkbook$add_ignore_error()`
 
 Ignore error on worksheet
 
@@ -5097,7 +5097,7 @@ Ignore error on worksheet
 
 ------------------------------------------------------------------------
 
-### Method `set_sheetview()`
+### `wbWorkbook$set_sheetview()`
 
 add sheetview
 
@@ -5206,7 +5206,7 @@ The `wbWorksheetObject`, invisibly
 
 ------------------------------------------------------------------------
 
-### Method `add_person()`
+### `wbWorkbook$add_person()`
 
 add person to workbook
 
@@ -5239,7 +5239,7 @@ add person to workbook
 
 ------------------------------------------------------------------------
 
-### Method `get_person()`
+### `wbWorkbook$get_person()`
 
 description get person
 
@@ -5255,7 +5255,7 @@ description get person
 
 ------------------------------------------------------------------------
 
-### Method `get_active_sheet()`
+### `wbWorkbook$get_active_sheet()`
 
 description get active sheet
 
@@ -5265,7 +5265,7 @@ description get active sheet
 
 ------------------------------------------------------------------------
 
-### Method `set_active_sheet()`
+### `wbWorkbook$set_active_sheet()`
 
 description set active sheet
 
@@ -5281,7 +5281,7 @@ description set active sheet
 
 ------------------------------------------------------------------------
 
-### Method `get_selected()`
+### `wbWorkbook$get_selected()`
 
 description get selected sheets
 
@@ -5291,7 +5291,7 @@ description get selected sheets
 
 ------------------------------------------------------------------------
 
-### Method `set_selected()`
+### `wbWorkbook$set_selected()`
 
 set selected sheet
 
@@ -5307,7 +5307,7 @@ set selected sheet
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `wbWorkbook$clone()`
 
 The objects of this class are cloneable with this method.
 

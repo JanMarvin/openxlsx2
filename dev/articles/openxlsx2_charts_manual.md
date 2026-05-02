@@ -15,6 +15,7 @@ to.
 ## 
 
 ``` r
+
 library(openxlsx2) # openxlsx2 >= 0.4 for mschart and rvg support
 
 ## create a workbook
@@ -28,6 +29,7 @@ and save the output and pass it to the worksheet with
 [`wb_add_image()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_image.md).
 
 ``` r
+
 myplot <- tempfile(fileext = ".jpg")
 jpeg(myplot)
 print(plot(AirPassengers))
@@ -48,6 +50,7 @@ afterwards use
 [`wb_add_plot()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_plot.md).
 
 ``` r
+
 if (requireNamespace("ggplot2")) {
 
 library(ggplot2)
@@ -78,6 +81,7 @@ device comes in handy. You can pass the output via
 [`wb_add_drawing()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_drawing.md).
 
 ``` r
+
 if (requireNamespace("ggplot2") && requireNamespace("rvg")) {
 
 library(rvg)
@@ -125,6 +129,7 @@ object contains references to the data on the worksheet and allows using
 data “as is”.
 
 ``` r
+
 if (requireNamespace("mschart")) {
 
 library(mschart) # mschart >= 0.4 for openxlsx2 support

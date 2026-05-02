@@ -39,6 +39,7 @@ wb_set_sheet_visibility(wb, sheet = current_sheet(), value)
 ## Examples
 
 ``` r
+
 wb <- wb_workbook()
 wb$add_worksheet(sheet = "S1", visible = FALSE)
 wb$add_worksheet(sheet = "S2", visible = TRUE)

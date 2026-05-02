@@ -189,6 +189,8 @@ COPYRIGHT 2006-2025). Both released under the MIT license.
 
 Authors:
 
+- Jan Marvin Garbuszus <jan.garbuszus@ruhr-uni-bochum.de>
+
 - Jordan Mark Barbone <jmbarbone@gmail.com>
   ([ORCID](https://orcid.org/0000-0001-9788-3628))
 

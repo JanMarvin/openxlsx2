@@ -25,6 +25,7 @@ A character vector of table names on the specified sheet
 ## Examples
 
 ``` r
+
 wb <- wb_workbook()
 wb$add_worksheet(sheet = "Sheet 1")
 wb$add_data_table(x = iris)
