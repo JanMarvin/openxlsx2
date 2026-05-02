@@ -90,12 +90,12 @@ wb <- wb_add_fill(wb, dims = "C3", color = wb_color("yellow"))
 wb <- wb_set_cell_style_across(wb, style = "C3", cols = "C:D", rows = 3:4)
 }
 \seealso{
-Other styles: 
-\code{\link{wb_add_border}()},
-\code{\link{wb_add_cell_style}()},
-\code{\link{wb_add_fill}()},
-\code{\link{wb_add_font}()},
-\code{\link{wb_add_named_style}()},
-\code{\link{wb_add_numfmt}()}
+Other styles:
+\code{\link[=wb_add_border]{wb_add_border()}},
+\code{\link[=wb_add_cell_style]{wb_add_cell_style()}},
+\code{\link[=wb_add_fill]{wb_add_fill()}},
+\code{\link[=wb_add_font]{wb_add_font()}},
+\code{\link[=wb_add_named_style]{wb_add_named_style()}},
+\code{\link[=wb_add_numfmt]{wb_add_numfmt()}}
 }
 \concept{styles}

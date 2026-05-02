@@ -180,6 +180,7 @@ for examples
 
 Authors:
 \itemize{
+  \item Jan Marvin Garbuszus \email{jan.garbuszus@ruhr-uni-bochum.de}
   \item Jordan Mark Barbone \email{jmbarbone@gmail.com} (\href{https://orcid.org/0000-0001-9788-3628}{ORCID})
 }
 

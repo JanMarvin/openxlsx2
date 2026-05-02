@@ -159,12 +159,12 @@ wb$add_worksheet()$
 \seealso{
 \code{\link[=create_border]{create_border()}}
 
-Other styles: 
-\code{\link{wb_add_cell_style}()},
-\code{\link{wb_add_fill}()},
-\code{\link{wb_add_font}()},
-\code{\link{wb_add_named_style}()},
-\code{\link{wb_add_numfmt}()},
+Other styles:
+\code{\link[=wb_add_cell_style]{wb_add_cell_style()}},
+\code{\link[=wb_add_fill]{wb_add_fill()}},
+\code{\link[=wb_add_font]{wb_add_font()}},
+\code{\link[=wb_add_named_style]{wb_add_named_style()}},
+\code{\link[=wb_add_numfmt]{wb_add_numfmt()}},
 \code{\link{wb_cell_style}}
 }
 \concept{styles}

@@ -14,7 +14,7 @@ write_xlsx(x, file, as_table = FALSE, ...)
 \item{as_table}{If \code{TRUE}, will write as a data table, instead of data.}
 
 \item{...}{
-  Arguments passed on to \code{\link[=wb_workbook]{wb_workbook}}, \code{\link[=wb_add_worksheet]{wb_add_worksheet}}, \code{\link[=wb_add_data_table]{wb_add_data_table}}, \code{\link[=wb_add_data]{wb_add_data}}, \code{\link[=wb_freeze_pane]{wb_freeze_pane}}, \code{\link[=wb_set_col_widths]{wb_set_col_widths}}, \code{\link[=wb_save]{wb_save}}, \code{\link[=wb_set_base_font]{wb_set_base_font}}
+  Arguments passed on to \code{\link{wb_workbook}}, \code{\link{wb_add_worksheet}}, \code{\link{wb_add_data_table}}, \code{\link{wb_add_data}}, \code{\link{wb_freeze_pane}}, \code{\link{wb_set_col_widths}}, \code{\link{wb_save}}, \code{\link{wb_set_base_font}}
   \describe{
     \item{\code{creator}}{Creator of the workbook (your name). Defaults to login username or \code{options("openxlsx2.creator")} if set.}
     \item{\code{sheet}}{A character string for the worksheet name. Defaults to a

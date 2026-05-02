@@ -63,13 +63,13 @@ border <- create_border(
 \seealso{
 \code{\link[=wb_add_border]{wb_add_border()}}
 
-Other style creating functions: 
-\code{\link{create_cell_style}()},
-\code{\link{create_colors_xml}()},
-\code{\link{create_dxfs_style}()},
-\code{\link{create_fill}()},
-\code{\link{create_font}()},
-\code{\link{create_numfmt}()},
-\code{\link{create_tablestyle}()}
+Other style creating functions:
+\code{\link[=create_cell_style]{create_cell_style()}},
+\code{\link[=create_colors_xml]{create_colors_xml()}},
+\code{\link[=create_dxfs_style]{create_dxfs_style()}},
+\code{\link[=create_fill]{create_fill()}},
+\code{\link[=create_font]{create_font()}},
+\code{\link[=create_numfmt]{create_numfmt()}},
+\code{\link[=create_tablestyle]{create_tablestyle()}}
 }
 \concept{style creating functions}

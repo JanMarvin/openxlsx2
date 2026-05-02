@@ -25,13 +25,13 @@ colors <- create_colors_xml()
 wb <- wb_workbook()$add_worksheet()$set_base_colors(xml = colors)
 }
 \seealso{
-Other style creating functions: 
-\code{\link{create_border}()},
-\code{\link{create_cell_style}()},
-\code{\link{create_dxfs_style}()},
-\code{\link{create_fill}()},
-\code{\link{create_font}()},
-\code{\link{create_numfmt}()},
-\code{\link{create_tablestyle}()}
+Other style creating functions:
+\code{\link[=create_border]{create_border()}},
+\code{\link[=create_cell_style]{create_cell_style()}},
+\code{\link[=create_dxfs_style]{create_dxfs_style()}},
+\code{\link[=create_fill]{create_fill()}},
+\code{\link[=create_font]{create_font()}},
+\code{\link[=create_numfmt]{create_numfmt()}},
+\code{\link[=create_tablestyle]{create_tablestyle()}}
 }
 \concept{style creating functions}

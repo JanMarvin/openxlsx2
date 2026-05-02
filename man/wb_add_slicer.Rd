@@ -34,7 +34,7 @@ wb_remove_timeline(wb, sheet = current_sheet())
 \arguments{
 \item{wb}{A Workbook object containing a worksheet.}
 
-\item{x}{A \code{data.frame} that inherits the \code{\link[=wb_data]{wb_data}} class.}
+\item{x}{A \code{data.frame} that inherits the \code{\link{wb_data}} class.}
 
 \item{dims}{The worksheet cell where the pivot table is placed}
 
@@ -144,43 +144,43 @@ wb$add_timeline(
 )
 }
 \seealso{
-Other workbook wrappers: 
+Other workbook wrappers:
 \code{\link{base_font-wb}},
 \code{\link{col_widths-wb}},
 \code{\link{creators-wb}},
 \code{\link{grouping-wb}},
 \code{\link{row_heights-wb}},
-\code{\link{wb_add_chartsheet}()},
-\code{\link{wb_add_data}()},
-\code{\link{wb_add_data_table}()},
-\code{\link{wb_add_formula}()},
-\code{\link{wb_add_hyperlink}()},
-\code{\link{wb_add_pivot_table}()},
-\code{\link{wb_add_worksheet}()},
+\code{\link[=wb_add_chartsheet]{wb_add_chartsheet()}},
+\code{\link[=wb_add_data]{wb_add_data()}},
+\code{\link[=wb_add_data_table]{wb_add_data_table()}},
+\code{\link[=wb_add_formula]{wb_add_formula()}},
+\code{\link[=wb_add_hyperlink]{wb_add_hyperlink()}},
+\code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}},
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}},
 \code{\link{wb_base_colors}},
-\code{\link{wb_clone_worksheet}()},
-\code{\link{wb_copy_cells}()},
-\code{\link{wb_freeze_pane}()},
-\code{\link{wb_merge_cells}()},
-\code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_workbook}()}
+\code{\link[=wb_clone_worksheet]{wb_clone_worksheet()}},
+\code{\link[=wb_copy_cells]{wb_copy_cells()}},
+\code{\link[=wb_freeze_pane]{wb_freeze_pane()}},
+\code{\link[=wb_merge_cells]{wb_merge_cells()}},
+\code{\link[=wb_save]{wb_save()}},
+\code{\link[=wb_set_last_modified_by]{wb_set_last_modified_by()}},
+\code{\link[=wb_workbook]{wb_workbook()}}
 
-Other worksheet content functions: 
+Other worksheet content functions:
 \code{\link{col_widths-wb}},
 \code{\link{filter-wb}},
 \code{\link{grouping-wb}},
 \code{\link{named_region-wb}},
 \code{\link{row_heights-wb}},
-\code{\link{wb_add_conditional_formatting}()},
-\code{\link{wb_add_data}()},
-\code{\link{wb_add_data_table}()},
-\code{\link{wb_add_formula}()},
-\code{\link{wb_add_hyperlink}()},
-\code{\link{wb_add_pivot_table}()},
-\code{\link{wb_add_thread}()},
-\code{\link{wb_freeze_pane}()},
-\code{\link{wb_merge_cells}()}
+\code{\link[=wb_add_conditional_formatting]{wb_add_conditional_formatting()}},
+\code{\link[=wb_add_data]{wb_add_data()}},
+\code{\link[=wb_add_data_table]{wb_add_data_table()}},
+\code{\link[=wb_add_formula]{wb_add_formula()}},
+\code{\link[=wb_add_hyperlink]{wb_add_hyperlink()}},
+\code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}},
+\code{\link[=wb_add_thread]{wb_add_thread()}},
+\code{\link[=wb_freeze_pane]{wb_freeze_pane()}},
+\code{\link[=wb_merge_cells]{wb_merge_cells()}}
 }
 \concept{workbook wrappers}
 \concept{worksheet content functions}

@@ -87,9 +87,9 @@ wb <- wb_add_dxfs_style(
   )
 }
 \seealso{
-Other workbook styling functions: 
+Other workbook styling functions:
 \code{\link{base_font-wb}},
-\code{\link{wb_add_style}()},
+\code{\link[=wb_add_style]{wb_add_style()}},
 \code{\link{wb_base_colors}}
 }
 \concept{workbook styling functions}

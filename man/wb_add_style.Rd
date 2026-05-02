@@ -66,9 +66,9 @@ wb <- wb_add_style(wb, yellow)
 \item \code{\link[=create_numfmt]{create_numfmt()}}
 }
 
-Other workbook styling functions: 
+Other workbook styling functions:
 \code{\link{base_font-wb}},
-\code{\link{wb_add_dxfs_style}()},
+\code{\link[=wb_add_dxfs_style]{wb_add_dxfs_style()}},
 \code{\link{wb_base_colors}}
 }
 \concept{workbook styling functions}

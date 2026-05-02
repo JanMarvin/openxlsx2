@@ -49,12 +49,12 @@ wb$add_named_style(dims = dims, name = name)
 wb$add_data(dims = dims, x = name)
 }
 \seealso{
-Other styles: 
-\code{\link{wb_add_border}()},
-\code{\link{wb_add_cell_style}()},
-\code{\link{wb_add_fill}()},
-\code{\link{wb_add_font}()},
-\code{\link{wb_add_numfmt}()},
+Other styles:
+\code{\link[=wb_add_border]{wb_add_border()}},
+\code{\link[=wb_add_cell_style]{wb_add_cell_style()}},
+\code{\link[=wb_add_fill]{wb_add_fill()}},
+\code{\link[=wb_add_font]{wb_add_font()}},
+\code{\link[=wb_add_numfmt]{wb_add_numfmt()}},
 \code{\link{wb_cell_style}}
 }
 \concept{styles}

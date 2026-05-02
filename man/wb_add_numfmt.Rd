@@ -106,12 +106,12 @@ wb <- wb_workbook()$add_worksheet("S1")$add_data("S1", mtcars)
 wb$add_numfmt("S1", "A1:A33", numfmt = 1)
 }
 \seealso{
-Other styles: 
-\code{\link{wb_add_border}()},
-\code{\link{wb_add_cell_style}()},
-\code{\link{wb_add_fill}()},
-\code{\link{wb_add_font}()},
-\code{\link{wb_add_named_style}()},
+Other styles:
+\code{\link[=wb_add_border]{wb_add_border()}},
+\code{\link[=wb_add_cell_style]{wb_add_cell_style()}},
+\code{\link[=wb_add_fill]{wb_add_fill()}},
+\code{\link[=wb_add_font]{wb_add_font()}},
+\code{\link[=wb_add_named_style]{wb_add_named_style()}},
 \code{\link{wb_cell_style}}
 }
 \concept{styles}

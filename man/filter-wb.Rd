@@ -64,20 +64,20 @@ wb_remove_filter(wb, 3) ## Does not affect tables!
 \seealso{
 \code{\link[=wb_add_data]{wb_add_data()}}, \code{\link[=wb_add_data_table]{wb_add_data_table()}}
 
-Other worksheet content functions: 
+Other worksheet content functions:
 \code{\link{col_widths-wb}},
 \code{\link{grouping-wb}},
 \code{\link{named_region-wb}},
 \code{\link{row_heights-wb}},
-\code{\link{wb_add_conditional_formatting}()},
-\code{\link{wb_add_data}()},
-\code{\link{wb_add_data_table}()},
-\code{\link{wb_add_formula}()},
-\code{\link{wb_add_hyperlink}()},
-\code{\link{wb_add_pivot_table}()},
-\code{\link{wb_add_slicer}()},
-\code{\link{wb_add_thread}()},
-\code{\link{wb_freeze_pane}()},
-\code{\link{wb_merge_cells}()}
+\code{\link[=wb_add_conditional_formatting]{wb_add_conditional_formatting()}},
+\code{\link[=wb_add_data]{wb_add_data()}},
+\code{\link[=wb_add_data_table]{wb_add_data_table()}},
+\code{\link[=wb_add_formula]{wb_add_formula()}},
+\code{\link[=wb_add_hyperlink]{wb_add_hyperlink()}},
+\code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}},
+\code{\link[=wb_add_slicer]{wb_add_slicer()}},
+\code{\link[=wb_add_thread]{wb_add_thread()}},
+\code{\link[=wb_freeze_pane]{wb_freeze_pane()}},
+\code{\link[=wb_merge_cells]{wb_merge_cells()}}
 }
 \concept{worksheet content functions}

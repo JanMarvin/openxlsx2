@@ -22,7 +22,7 @@ wb_copy_cells(
 
 \item{dims}{A cell where to place the copy}
 
-\item{data}{A \code{\link[=wb_data]{wb_data}} object containing cells to copy}
+\item{data}{A \code{\link{wb_data}} object containing cells to copy}
 
 \item{as_value}{Should a copy of the value be written?}
 
@@ -53,26 +53,26 @@ wb$
 \seealso{
 \code{\link[=wb_data]{wb_data()}}
 
-Other workbook wrappers: 
+Other workbook wrappers:
 \code{\link{base_font-wb}},
 \code{\link{col_widths-wb}},
 \code{\link{creators-wb}},
 \code{\link{grouping-wb}},
 \code{\link{row_heights-wb}},
-\code{\link{wb_add_chartsheet}()},
-\code{\link{wb_add_data}()},
-\code{\link{wb_add_data_table}()},
-\code{\link{wb_add_formula}()},
-\code{\link{wb_add_hyperlink}()},
-\code{\link{wb_add_pivot_table}()},
-\code{\link{wb_add_slicer}()},
-\code{\link{wb_add_worksheet}()},
+\code{\link[=wb_add_chartsheet]{wb_add_chartsheet()}},
+\code{\link[=wb_add_data]{wb_add_data()}},
+\code{\link[=wb_add_data_table]{wb_add_data_table()}},
+\code{\link[=wb_add_formula]{wb_add_formula()}},
+\code{\link[=wb_add_hyperlink]{wb_add_hyperlink()}},
+\code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}},
+\code{\link[=wb_add_slicer]{wb_add_slicer()}},
+\code{\link[=wb_add_worksheet]{wb_add_worksheet()}},
 \code{\link{wb_base_colors}},
-\code{\link{wb_clone_worksheet}()},
-\code{\link{wb_freeze_pane}()},
-\code{\link{wb_merge_cells}()},
-\code{\link{wb_save}()},
-\code{\link{wb_set_last_modified_by}()},
-\code{\link{wb_workbook}()}
+\code{\link[=wb_clone_worksheet]{wb_clone_worksheet()}},
+\code{\link[=wb_freeze_pane]{wb_freeze_pane()}},
+\code{\link[=wb_merge_cells]{wb_merge_cells()}},
+\code{\link[=wb_save]{wb_save()}},
+\code{\link[=wb_set_last_modified_by]{wb_set_last_modified_by()}},
+\code{\link[=wb_workbook]{wb_workbook()}}
 }
 \concept{workbook wrappers}

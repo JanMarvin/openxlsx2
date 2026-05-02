@@ -47,7 +47,7 @@ and \code{start_col} parameters for backward compatibility.}
 \description{
 The \code{wb_add_worksheet()} function captures the active R graphics device and
 embeds the displayed plot into a worksheet. This is achieved by copying the
-current plot to a temporary image file via \code{\link[grDevices:dev2]{grDevices::dev.copy()}} and
+current plot to a temporary image file via \code{\link[grDevices:dev.copy]{grDevices::dev.copy()}} and
 subsequently invoking \code{\link[=wb_add_image]{wb_add_image()}} to handle the workbook integration.
 }
 \details{

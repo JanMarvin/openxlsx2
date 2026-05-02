@@ -95,13 +95,13 @@ Create a custom (pivot) table style.
 These functions are for expert use only. Use other styling functions instead.
 }
 \seealso{
-Other style creating functions: 
-\code{\link{create_border}()},
-\code{\link{create_cell_style}()},
-\code{\link{create_colors_xml}()},
-\code{\link{create_dxfs_style}()},
-\code{\link{create_fill}()},
-\code{\link{create_font}()},
-\code{\link{create_numfmt}()}
+Other style creating functions:
+\code{\link[=create_border]{create_border()}},
+\code{\link[=create_cell_style]{create_cell_style()}},
+\code{\link[=create_colors_xml]{create_colors_xml()}},
+\code{\link[=create_dxfs_style]{create_dxfs_style()}},
+\code{\link[=create_fill]{create_fill()}},
+\code{\link[=create_font]{create_font()}},
+\code{\link[=create_numfmt]{create_numfmt()}}
 }
 \concept{style creating functions}
