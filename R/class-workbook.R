@@ -1,5 +1,3 @@
-
-
 # helpers -----------------------------------------------------------------
 
 guard_ws <- function(x) {
@@ -8922,8 +8920,9 @@ wbWorkbook <- R6::R6Class(
       dims <- unlist(did, use.names = FALSE)
 
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -8997,8 +8996,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -9103,8 +9103,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       if (!is.null(numfmt) && inherits(numfmt, "character")) {
@@ -9209,8 +9210,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       for (style in styles) {
@@ -9301,7 +9303,8 @@ wbWorkbook <- R6::R6Class(
       # in openxlsx2 < 1.19
       # sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
       # in 1.19 switched to match, but the match result was unsorted
-      sel <- sort(match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r))
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- sort(match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r))
 
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
 
