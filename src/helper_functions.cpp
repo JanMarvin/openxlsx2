@@ -1043,10 +1043,11 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
 }
 
 // [[Rcpp::export]]
-SEXP cdigit(Rcpp::CharacterVector x, bool as_integer = false) {
+SEXP cdigit(Rcpp::CharacterVector x, bool as_integer = false, bool reverse = false) {
   R_xlen_t n = Rf_xlength(x);
 
   if (as_integer) {
+    if (reverse) Rcpp::stop("reverse and as_integer do not go along");
     Rcpp::IntegerVector res(n);
     for (R_xlen_t i = 0; i < n; ++i) {
       if (Rcpp::CharacterVector::is_na(x[i])) {
@@ -1064,7 +1065,11 @@ SEXP cdigit(Rcpp::CharacterVector x, bool as_integer = false) {
         res[i] = NA_STRING;
         continue;
       }
-      res[i] = filter_digits(CHAR(STRING_ELT(x, i)), true);
+      if (reverse) {
+        res[i] = filter_digits(CHAR(STRING_ELT(x, i)), false);
+      } else {
+        res[i] = filter_digits(CHAR(STRING_ELT(x, i)), true);
+      }
     }
     return res;
   }

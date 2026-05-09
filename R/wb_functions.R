@@ -401,18 +401,21 @@ style_is_hms <- function(cellXfs, numfmt_date) {
 }
 
 # Match cell addresses (e.g. "B17") against cc$r via integer keys.
+# TODO: A better solution would be to not call cdigit twice per dim. Instead
+# once as function that returns all characters and all non-characters as two
+# character vectors
 match_cell_r <- function(dims, cc_r, cc_row_r = NULL, cc_c_r = NULL) {
   if (length(dims) == 0L) return(integer(0))
   if (length(cc_r) == 0L) return(rep_len(NA_integer_, length(dims)))
 
   if (is.null(cc_row_r) || is.null(cc_c_r)) {
-    cc_row_r <- gsub("[[:upper:]]", "", cc_r)
-    cc_c_r   <- gsub("[[:digit:]]", "", cc_r)
+    cc_row_r <- cdigit(cc_r)
+    cc_c_r   <- cdigit(cc_r, reverse = TRUE)
   }
   cc_key <- as.numeric(cc_row_r) * 16384L + col2int(cc_c_r)
 
-  d_row <- gsub("[[:upper:]]", "", dims)
-  d_col <- gsub("[[:digit:]]", "", dims)
+  d_row <- cdigit(dims)
+  d_col <- cdigit(dims, reverse = TRUE)
   d_key <- as.numeric(d_row) * 16384L + col2int(d_col)
 
   match(d_key, cc_key)
