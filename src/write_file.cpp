@@ -149,29 +149,33 @@ void xml_sheet_data_slim(
           }
           file << ">";
 
+          const char* f_cstr = CHAR(STRING_ELT(cc_f, i));
           file << to_string(cc_f[i]).c_str();
-          if (!f_si && std::string(cc_f[i]).find("\"si\"=") != std::string::npos) f_si = true;
+          if (!f_si && std::strstr(f_cstr, "\"si\"=") != nullptr) f_si = true;
 
           file << "</f>";
         }
 
         // v node: value stored from evaluated formula
         if (!cc_v[i].empty()) {
-          if (!f_si & (std::string(cc_v[i]).compare(xml_preserver.c_str()) == 0)) {
+          const char* v_cstr = CHAR(STRING_ELT(cc_v, i));
+          if (!f_si && v_cstr[0] == ' ' && v_cstr[1] == '\0') {
             // this looks strange
             file << "<v xml:space=\"preserve\">";
             file << " ";
             file << "</v>";
           } else {
+            // mirror xml_cols_to_df: only c_t == "str" can carry utf8 in v.
+            // numeric / formula-evaluated values are ASCII; skip the Rcpp::String round trip.
             if (cc_c_t[i].empty() && cc_f_attr[i].empty())
-              file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
+              file << "<v>" << v_cstr << "</v>";
             else
-              file << "<v>" << static_cast<const char*>(cc_v[i]) << "</v>";
+              file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
           }
         }
 
         // <is><t> ... </t></is>
-        if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
+        if (std::strcmp(CHAR(STRING_ELT(cc_c_t, i)), "inlineStr") == 0) {
           if (!cc_is[i].empty()) {
             file << to_string(cc_is[i]).c_str();
           }
