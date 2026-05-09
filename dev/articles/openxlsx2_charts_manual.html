@@ -91,12 +91,13 @@ assumes that you have basic knowledge how to handle
 <code>R</code> <code>graphics</code> functions like <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>
 or <code><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot()</a></code> and <code>grDevices</code>, or with the
 packages <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>, <a href="https://ardata-fr.github.io/officeverse/" class="external-link">rvg</a> or
-<a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a>. There are plenty of other manuals that cover
-using these better than we could ever tell you to.</p>
+<a href="https://janmarvin.github.io/encharter/" class="external-link">encharter</a> and <a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a>. There are plenty of
+other manuals that cover using these better than we could ever tell you
+to.</p>
 <div class="section level2">
 <h2 id="section"></h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/openxlsx2/">openxlsx2</a></span><span class="op">)</span> <span class="co"># openxlsx2 &gt;= 0.4 for mschart and rvg support</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/openxlsx2/">openxlsx2</a></span><span class="op">)</span> <span class="co"># openxlsx2 &gt;= 1.26 for enharter support</span></span>
 <span></span>
 <span><span class="co">## create a workbook</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -179,19 +180,79 @@ the output via <code><a href="../reference/wb_add_drawing.html">wb_add_drawing()
 <span><span class="co">#&gt; "sans". Use gdtools::font_family_exists() to check availability.</span></span></code></pre></div>
 </div>
 <div class="section level3">
+<h3 id="adding-encharter-plots">Adding <code>{encharter}</code> plots<a class="anchor" aria-label="anchor" href="#adding-encharter-plots"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"encharter"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://janmarvin.github.io/encharter/" class="external-link">encharter</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  Product <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Software"</span>, <span class="st">"Services"</span>, <span class="st">"Hardware"</span>, <span class="st">"Support"</span><span class="op">)</span>,</span>
+<span>  Q1      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">310</span>, <span class="fl">195</span>, <span class="fl">140</span>, <span class="fl">85</span><span class="op">)</span>,</span>
+<span>  Q2      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">340</span>, <span class="fl">210</span>, <span class="fl">130</span>, <span class="fl">90</span><span class="op">)</span>,</span>
+<span>  Q3      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">375</span>, <span class="fl">225</span>, <span class="fl">125</span>, <span class="fl">95</span><span class="op">)</span>,</span>
+<span>  Q4      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">420</span>, <span class="fl">250</span>, <span class="fl">120</span>, <span class="fl">105</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span>, <span class="st">"add_encharter"</span>, grid_lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_data_table.html">wb_add_data_table</a></span><span class="op">(</span></span>
+<span>  <span class="va">wb</span>, sheet <span class="op">=</span> <span class="st">"add_encharter"</span>, x <span class="op">=</span> <span class="va">df_bar</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A1"</span>, table_style <span class="op">=</span> <span class="st">"TableStyleMedium2"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/col_widths-wb.html">wb_set_col_widths</a></span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="st">"add_encharter"</span>, cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">8</span>, <span class="fl">8</span>, <span class="fl">8</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wb_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_data.html">wb_data</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">chart</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://janmarvin.github.io/encharter/reference/encharter.html" class="external-link">ec</a></span><span class="op">(</span><span class="st">"barChart"</span><span class="op">)</span></span>
+<span><span class="va">chart</span><span class="op">$</span><span class="fu">set_chart_title</span><span class="op">(</span><span class="st">"Quarterly Revenue by Product (EUR k)"</span>, bold <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">chart</span><span class="op">$</span><span class="fu">set_y_axis</span><span class="op">(</span>min <span class="op">=</span> <span class="fl">0</span>, format <span class="op">=</span> <span class="st">"#,##0"</span>, grid_lines <span class="op">=</span> <span class="cn">TRUE</span>, grid_color <span class="op">=</span> <span class="st">"EEEEEE"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">colors</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2E4057"</span>, <span class="st">"048A81"</span>, <span class="st">"E84855"</span>, <span class="st">"F4A261"</span><span class="op">)</span></span>
+<span><span class="va">quarters</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Q1"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q4"</span><span class="op">)</span></span>
+<span><span class="va">cols</span>      <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>,  <span class="st">"C"</span>,  <span class="st">"D"</span>,  <span class="st">"E"</span><span class="op">)</span></span>
+<span><span class="va">variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">wb_df</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">quarters</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">chart</span><span class="op">$</span><span class="fu">add_series</span><span class="op">(</span></span>
+<span>    name   <span class="op">=</span> <span class="va">variables</span><span class="op">[</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1L</span><span class="op">]</span>,</span>
+<span>    label  <span class="op">=</span> <span class="va">variables</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
+<span>    data   <span class="op">=</span> <span class="va">wb_df</span>,</span>
+<span>    color  <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">chart</span><span class="op">$</span><span class="fu">set_legend_style</span><span class="op">(</span>pos <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_add_encharter.html">wb_add_encharter</a></span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="st">"add_encharter"</span>, graph <span class="op">=</span> <span class="va">chart</span>, dims <span class="op">=</span> <span class="st">"G1:P18"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Loading required namespace: encharter</span></span></code></pre></div>
+<p>A broad selection of potential chart types available to
+<a href="https://janmarvin.github.io/encharter/" class="external-link">encharter</a> <span class="citation">[@encharter]</span> can
+be found in the project homepage: <a href="https://github.com/JanMarvin/encharter" class="external-link uri">https://github.com/JanMarvin/encharter</a> and in its
+examples folder. The package was created specifically to support various
+chart types in <code>openxlsx2</code>. This includes combo charts, as
+well as several chart features such as trend lines, secondary axis and
+modern spreadsheet charts such as Box and Whisker charts. The package
+supports the <code>openxlsx2</code> functions <code><a href="../reference/wb_color.html">wb_color()</a></code>
+and <code><a href="../reference/fmt_txt.html">fmt_txt()</a></code> to tweak colors and text.</p>
+<div class="section level4">
+<h4 id="add-and-fill-a-chartsheet">Add and fill a chartsheet<a class="anchor" aria-label="anchor" href="#add-and-fill-a-chartsheet"></a>
+</h4>
+<p>Finally it is possible to add <code>encharter</code> objects into
+chartsheets. These are special sheets that contain only a chart object,
+referencing data from another sheet.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># add chartsheet</span></span>
+<span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="va">wb</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_chartsheet.html">wb_add_chartsheet</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/wb_add_encharter.html">wb_add_encharter</a></span><span class="op">(</span>graph <span class="op">=</span> <span class="va">chart</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
 <h3 id="add-mschart-plots">Add <code>{mschart}</code> plots<a class="anchor" aria-label="anchor" href="#add-mschart-plots"></a>
 </h3>
-<p>If you want native open xml charts, have a look at
-<a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a>. Create one of the chart files and pass it to the
-workbook with <code><a href="../reference/wb_add_mschart.html">wb_add_mschart()</a></code>. There are two options
-possible. 1. Either the default <a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a> output identical
-to the one in <a href="https://ardata-fr.github.io/officeverse/" class="external-link">officer</a>. Passing a data object and let
-<a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a> prepare the data. In this case
-<code><a href="../reference/wb_add_mschart.html">wb_add_mschart()</a></code> will add a new data region. 2. Passing a
-<code><a href="../reference/wb_data.html">wb_data()</a></code> object to <a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a>. This object
-contains references to the data on the worksheet and allows using data
-“as is”.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Support for the <a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a> package provides functionality
+to add charts that can be used with spreadsheets. This might be useful
+for users of the <a href="https://ardata-fr.github.io/officeverse/" class="external-link">officer</a> package.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"mschart"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/officeverse/" class="external-link">mschart</a></span><span class="op">)</span> <span class="co"># mschart &gt;= 0.4 for openxlsx2 support</span></span>
@@ -205,55 +266,6 @@ contains references to the data on the worksheet and allows using data
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"add_mschart"</span><span class="op">)</span><span class="op">$</span><span class="fu">add_mschart</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"A10:G25"</span>, graph <span class="op">=</span> <span class="va">mylc</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="co">## create chart referencing worksheet cells as input</span></span>
-<span><span class="co"># write data starting at B2</span></span>
-<span><span class="va">wb</span><span class="op">$</span><span class="fu">add_worksheet</span><span class="op">(</span><span class="st">"add_mschart - wb_data"</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtcars</span>, dims <span class="op">=</span> <span class="st">"B2"</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_data</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span><span class="op">)</span>, dims <span class="op">=</span> <span class="st">"A2"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># create wb_data object this will tell this mschart</span></span>
-<span><span class="co"># from this PR to create a file corresponding to openxlsx2</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wb_data.html">wb_data</a></span><span class="op">(</span><span class="va">wb</span>, dims <span class="op">=</span> <span class="st">"A2:G10"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># create a few mscharts</span></span>
-<span><span class="va">scatter_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ardata-fr.github.io/mschart/reference/ms_scatterchart.html" class="external-link">ms_scatterchart</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  x <span class="op">=</span> <span class="st">"mpg"</span>,</span>
-<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"disp"</span>, <span class="st">"hp"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">bar_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ardata-fr.github.io/mschart/reference/ms_barchart.html" class="external-link">ms_barchart</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  x <span class="op">=</span> <span class="st">"name"</span>,</span>
-<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"disp"</span>, <span class="st">"hp"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">area_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ardata-fr.github.io/mschart/reference/ms_areachart.html" class="external-link">ms_areachart</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  x <span class="op">=</span> <span class="st">"name"</span>,</span>
-<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"disp"</span>, <span class="st">"hp"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">line_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ardata-fr.github.io/mschart/reference/ms_linechart.html" class="external-link">ms_linechart</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  x <span class="op">=</span> <span class="st">"name"</span>,</span>
-<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"disp"</span>, <span class="st">"hp"</span><span class="op">)</span>,</span>
-<span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"disp"</span>, <span class="st">"hp"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># add the charts to the data</span></span>
-<span><span class="va">wb</span><span class="op">$</span></span>
-<span>  <span class="fu">add_mschart</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"F4:L20"</span>, graph <span class="op">=</span> <span class="va">scatter_plot</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_mschart</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"F21:L37"</span>, graph <span class="op">=</span> <span class="va">bar_plot</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_mschart</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"M4:S20"</span>, graph <span class="op">=</span> <span class="va">area_plot</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_mschart</span><span class="op">(</span>dims <span class="op">=</span> <span class="st">"M21:S37"</span>, graph <span class="op">=</span> <span class="va">line_plot</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># add chartsheet</span></span>
-<span><span class="va">wb</span><span class="op">$</span></span>
-<span>  <span class="fu">add_chartsheet</span><span class="op">(</span><span class="op">)</span><span class="op">$</span></span>
-<span>  <span class="fu">add_mschart</span><span class="op">(</span>graph <span class="op">=</span> <span class="va">scatter_plot</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; Loading required namespace: mschart</span></span>
 <span><span class="co">#&gt; </span></span>
