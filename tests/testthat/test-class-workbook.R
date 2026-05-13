@@ -520,13 +520,12 @@ test_that("add_drawing works", {
   tmp <- tempfile(fileext = "drawing.xml")
 
   ## rvg example
-  rvg::dml_xlsx(file =  tmp, fonts = list(sans = "DejaVu Sans"))
+  rvg::dml_xlsx(file =  tmp)
   print(
     ggplot2::ggplot(
       data = iris,
       mapping = ggplot2::aes(x = Sepal.Length, y = Petal.Width)) +
       ggplot2::geom_point() +
-      ggplot2::labs(title = "With font DejaVu Sans") +
       ggplot2::theme_minimal(base_family = "sans", base_size = 18)
   )
   dev.off()
