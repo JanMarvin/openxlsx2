@@ -163,7 +163,7 @@
 
 #define FASTFLOAT_VERSION_MAJOR 8
 #define FASTFLOAT_VERSION_MINOR 2
-#define FASTFLOAT_VERSION_PATCH 4
+#define FASTFLOAT_VERSION_PATCH 5
 
 #define FASTFLOAT_STRINGIZE_IMPL(x) #x
 #define FASTFLOAT_STRINGIZE(x) FASTFLOAT_STRINGIZE_IMPL(x)
@@ -543,7 +543,7 @@ fastfloat_strncasecmp(UC const *actual_mixedcase, UC const *expected_lowercase,
     size_t sz{8 / (sizeof(UC))};
     for (size_t i = 0; i < length; i += sz) {
       val1 = val2 = 0;
-      sz = std::min(sz, length - i);
+      sz = sz < (length - i) ? sz : length - i;
       ::memcpy(&val1, actual_mixedcase + i, sz * sizeof(UC));
       ::memcpy(&val2, expected_lowercase + i, sz * sizeof(UC));
       val1 |= mask;
@@ -2261,7 +2261,7 @@ parse_int_string(UC const *p, UC const *pend, T &value,
           ((digits + 0x46464646u) | (digits - 0x30303030u)) & 0x80808080u;
       uint32_t tz = (uint32_t)countr_zero_32(magic); // 7, 15, 23, 31, or 32
       uint32_t nd = (tz == 32) ? 4 : (tz >> 3);
-      nd = (uint32_t)std::min((size_t)nd, len);
+      nd = (uint32_t)(nd < len ? nd : len);
       if (nd == 0) {
         if (has_leading_zeros) {
           value = 0;
@@ -3993,7 +3993,6 @@ struct bigint : pow5_tables<> {
 #ifndef FASTFLOAT_DIGIT_COMPARISON_H
 #define FASTFLOAT_DIGIT_COMPARISON_H
 
-#include <algorithm>
 #include <cstdint>
 #include <cstring>
 #include <iterator>
@@ -4098,7 +4097,7 @@ fastfloat_really_inline FASTFLOAT_CONSTEXPR14 void round(adjusted_mantissa &am,
   if (-am.power2 >= mantissa_shift) {
     // have a denormal float
     int32_t shift = -am.power2 + 1;
-    cb(am, std::min<int32_t>(shift, 64));
+    cb(am, (shift < 64 ? shift : 64));
     // check for round-up: if rounding-nearest carried us to the hidden bit.
     am.power2 = (am.mantissa <
                  (uint64_t(1) << binary_format<T>::mantissa_explicit_bits()))
@@ -4596,7 +4595,7 @@ template <> struct from_chars_caller<std::float32_t> {
     // if std::float32_t is defined, and we are in C++23 mode; macro set for
     // float32; set value to float due to equivalence between float and
     // float32_t
-    float val;
+    float val = 0.0f;
     auto ret = from_chars_advanced(first, last, val, options);
     value = val;
     return ret;
@@ -4613,7 +4612,7 @@ template <> struct from_chars_caller<std::float64_t> {
     // if std::float64_t is defined, and we are in C++23 mode; macro set for
     // float64; set value as double due to equivalence between double and
     // float64_t
-    double val;
+    double val = 0.0;
     auto ret = from_chars_advanced(first, last, val, options);
     value = val;
     return ret;
@@ -4897,8 +4896,7 @@ template <size_t TypeIx> struct from_chars_advanced_caller {
 
 template <> struct from_chars_advanced_caller<1> {
   template <typename T, typename UC>
-  fastfloat_really_inline
-  FASTFLOAT_CONSTEXPR20 static from_chars_result_t<UC>
+  fastfloat_really_inline FASTFLOAT_CONSTEXPR20 static from_chars_result_t<UC>
   call(UC const *first, UC const *last, T &value,
        parse_options_t<UC> options) noexcept {
     return from_chars_float_advanced(first, last, value, options);
