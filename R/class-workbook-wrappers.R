@@ -3762,7 +3762,7 @@ wb_add_style <- function(wb, style = NULL, style_name = NULL) {
 #' @export
 wb_get_cell_style <- function(wb, sheet = current_sheet(), dims) {
   assert_workbook(wb)
-  wb$clone()$get_cell_style(sheet, dims)
+  wb$get_cell_style(sheet, dims)
 }
 
 #' @rdname wb_cell_style

@@ -4,6 +4,11 @@
 
 * `wb_dims()` no longer slows down when called with large data frames. [#1624](https://github.com/JanMarvin/openxlsx2/pull/1624)
 
+## Internal Changes
+
+* `cc` gained a `key` column (`as.numeric(row) * 16384L + col2int(col))`). This avoids recreating this key various times.
+* `wb_get_cell_style()` no longer clones.
+
 
 ***************************************************************************
 

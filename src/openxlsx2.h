@@ -90,7 +90,7 @@ static inline bool has_cell(const std::string& str, const std::unordered_set<std
 }
 
 // driver function for col_to_int
-static inline uint32_t uint_col_to_int(std::string& a) {
+static inline uint32_t uint_col_to_int(const std::string& a) {
   char A = 'A';
   int32_t aVal = (int)A - 1;
   uint32_t sum = 0;
@@ -152,15 +152,14 @@ inline int32_t cell_to_rowint(const std::string& str) {
   return res;
 }
 
-static inline std::string str_toupper(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::toupper(c); });
-  return s;
-}
-
 // Function to remove digits from a string
 static inline int32_t cell_to_colint(const std::string& str) {
   std::string result = rm_rownum(str);
-  result = str_toupper(result);
+
+  for (char &c : result) {
+    if (c >= 'a' && c <= 'z') c -= 32;
+  }
+
   return static_cast<int32_t>(uint_col_to_int(result));
 }
 
@@ -199,6 +198,7 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   R_xlen_t n = static_cast<R_xlen_t>(x.size());
 
   // --- 1. Initialization ---
+  Rcpp::NumericVector key      = Rcpp::NumericVector(n);
 
   // Base columns
   Rcpp::CharacterVector r      = Rcpp::CharacterVector(n);
@@ -228,6 +228,7 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
     // Use Rcpp::String only where needed for correct UTF-8 handling (e.g., cell content).
 
     // Core attributes (usually simple ASCII, safe with direct assignment)
+    key[i]    = x[ii].key;
     if (!x[ii].r.empty())      r[i]      = x[ii].r;
     if (!x[ii].row_r.empty())  row_r[i]  = x[ii].row_r;
     if (!x[ii].c_r.empty())    c_r[i]    = x[ii].c_r;
@@ -257,6 +258,8 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   Rcpp::CharacterVector df_names;
 
   // Base columns
+  df_list.push_back(std::move(key));
+  df_names.push_back("key");
   df_list.push_back(std::move(r));
   df_names.push_back("r");
   df_list.push_back(std::move(row_r));

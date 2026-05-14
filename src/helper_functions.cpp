@@ -658,6 +658,7 @@ void wide_to_long(
   bool has_cm = zz.containsElementNamed("c_cm");
   bool has_typ = zz.containsElementNamed("typ");
 
+  Rcpp::NumericVector zz_key      = Rcpp::as<Rcpp::NumericVector>(zz["key"]);
   Rcpp::CharacterVector zz_row_r  = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
   Rcpp::CharacterVector zz_c_r    = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
   Rcpp::CharacterVector zz_v      = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
@@ -719,11 +720,20 @@ void wide_to_long(
         SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
         SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r_str).c_str()));
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r_str).c_str()));
+
+        double dkey = static_cast<double>(std::atoi(rm_colnum(cell_r_str).c_str())) * 16384L + uint_col_to_int(rm_rownum(cell_r_str));
+
+        SET_REAL_ELT(zz_key, pos, dkey);
+
       } else {
         const std::string& cell_r_str = col + row;
         SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
         SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
+
+        double dkey = static_cast<double>(std::atoi(row.c_str())) * 16384L + uint_col_to_int(col);
+
+        SET_REAL_ELT(zz_key, pos, dkey);
       }
 
       std::string ref_str = "";
@@ -1073,4 +1083,114 @@ SEXP cdigit(Rcpp::CharacterVector x, bool as_integer = false, bool reverse = fal
     }
     return res;
   }
+}
+
+// Convert a vector of cell addresses ("B17") directly to the numeric cc key
+// (row * 16384 + col). Single pass per string: no intermediate row/col vectors,
+// no grepl/chartr. NA in -> NA_REAL out. Mirrors the key built in
+// load_workbook.cpp and wide_to_long().
+// [[Rcpp::export]]
+Rcpp::NumericVector cell_to_key(Rcpp::CharacterVector x) {
+  R_xlen_t n = Rf_xlength(x);
+  Rcpp::NumericVector res(n);
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    if (Rcpp::CharacterVector::is_na(x[i])) {
+      res[i] = NA_REAL;
+      continue;
+    }
+
+    const char* s = CHAR(STRING_ELT(x, i));
+
+    uint32_t col = 0;
+    bool have_col = false;
+    double row = 0;
+    bool have_row = false;
+
+    for (const char* p = s; *p; ++p) {
+      unsigned char c = static_cast<unsigned char>(*p);
+      if (DIGIT_MASK[c]) {
+        row = row * 10 + (c - '0');
+        have_row = true;
+      } else {
+        // column letter; accept upper or lower case
+        char up = (c >= 'a' && c <= 'z') ? (c - 32) : c;
+        if (up < 'A' || up > 'Z')
+          Rcpp::stop("found non alphanumeric character in cell address");
+        col = col * 26 + static_cast<uint32_t>(up - 'A' + 1);
+        have_col = true;
+      }
+    }
+
+    if (!have_col || !have_row)
+      Rcpp::stop("incomplete cell address in cell_to_key");
+    if (col == 0 || col > MAX_OOXML_COL_INT)
+      Rcpp::stop("Column exceeds valid range");
+    if (row < 1 || row > MAX_OOXML_ROW_INT)
+      Rcpp::stop("Row exceeds valid range");
+
+    res[i] = row * 16384.0 + static_cast<double>(col);
+  }
+
+  return res;
+}
+
+// [[Rcpp::export]]
+Rcpp::DataFrame cell_to_info_df(Rcpp::CharacterVector x) {
+  R_xlen_t n = x.size();
+
+  Rcpp::NumericVector key(n);
+  Rcpp::CharacterVector row_r(n);
+  Rcpp::CharacterVector c_r(n);
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    if (Rcpp::CharacterVector::is_na(x[i])) {
+      key[i]   = NA_REAL;
+      row_r[i] = NA_STRING;
+      c_r[i]   = NA_STRING;
+      continue;
+    }
+
+    std::string s = Rcpp::as<std::string>(x[i]);
+    int32_t col_val = 0;
+    std::string r_str = "";
+    std::string c_str = "";
+
+    for (char c : s) {
+      if (c >= '0' && c <= '9') {
+        r_str += c;
+      } else {
+        c_str += c;
+        // Fast ASCII-only uppercase conversion
+        char up = (c >= 'a' && c <= 'z') ? (c - 32) : c;
+        if (up >= 'A' && up <= 'Z') {
+          col_val = col_val * 26 + (up - 'A' + 1);
+        }
+      }
+    }
+
+    // Calculate key: as.numeric(row) * 16384 + col_val
+    if (!r_str.empty()) {
+      key[i] = std::atof(r_str.c_str()) * 16384.0 + col_val;
+    } else {
+      key[i] = NA_REAL;
+    }
+
+    row_r[i] = r_str;
+    c_r[i]   = c_str;
+  }
+
+  // Create the list and manually set data.frame attributes
+  Rcpp::List res = Rcpp::List::create(
+    Rcpp::Named("key")   = key,
+    Rcpp::Named("r")     = x,
+    Rcpp::Named("row_r") = row_r,
+    Rcpp::Named("c_r")   = c_r
+  );
+
+  res.attr("names")     = Rcpp::CharacterVector::create("key", "r", "row_r", "c_r");
+  res.attr("class")     = "data.frame";
+  res.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -static_cast<int>(n));
+
+  return res;
 }

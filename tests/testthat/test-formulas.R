@@ -37,6 +37,7 @@ test_that("writing formulas with cell metadata works", {
   wb$add_formula(x = 'SUM(ABS(A2:A11))', cm = TRUE)
 
   exp <- data.frame(
+    key = 16385.0,
     r = "A1", row_r = "1", c_r = "A", c_s = "", c_t = "",
     c_cm = "1", v = "", f = "SUM(ABS(A2:A11))",
     f_attr = "t=\"array\" ref=\"A1\"", is = "",
@@ -340,7 +341,8 @@ test_that("reading shared formulas with dims works", {
     uniqueCount = "3")
 
   wb$worksheets[[1]]$sheet_data$cc <- structure(
-    list(r = c("A1", "A2", "B2", "C2", "D2", "E2", "A3", "B3", "C3", "D3", "E3", "A4", "B4", "C4", "D4", "E4", "A5", "B5", "C5", "D5", "E5"),
+    list(key = c(16385, 32769, 32770, 32771, 32772, 32773, 49153, 49154, 49155, 49156, 49157, 65537, 65538, 65539, 65540, 65541, 81921, 81922, 81923, 81924, 81925),
+         r = c("A1", "A2", "B2", "C2", "D2", "E2", "A3", "B3", "C3", "D3", "E3", "A4", "B4", "C4", "D4", "E4", "A5", "B5", "C5", "D5", "E5"),
          row_r = c("1", "2", "2", "2", "2", "2", "3", "3", "3", "3", "3", "4", "4", "4", "4", "4", "5", "5", "5", "5", "5"),
          c_r = c("A", "A", "B", "C", "D", "E", "A", "B", "C", "D", "E", "A", "B", "C", "D", "E", "A", "B", "C", "D", "E"),
          c_s = c("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),

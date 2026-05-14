@@ -5,7 +5,8 @@ test_that("write_formula", {
 
   # array formula for a single cell
   exp <- structure(
-    list(r = "E2", row_r = "2", c_r = "E", c_s = "",
+    list(key = 32773,
+           r = "E2", row_r = "2", c_r = "E", c_s = "",
          c_t = "",
          v = "", f = "SUM(C2:C11*D2:D11)",
          f_attr = "t=\"array\" ref=\"E2\"",
@@ -22,7 +23,7 @@ test_that("write_formula", {
 
   cc <- wb$worksheets[[1]]$sheet_data$cc
   got <- cc[cc$row_r == "2" & cc$c_r == "E", ]
-  expect_equal(exp[1:9], got[1:9])
+  expect_equal(exp[1:10], got[1:10])
 
 
   rownames(exp) <- 1L
@@ -222,7 +223,8 @@ test_that("update cell(s)", {
     add_fill(dims = "B2:G8", color = wb_colour("yellow"))$
     add_data(dims = "C3", x = Sys.Date())$
     add_data(dims = "E4", x = Sys.Date(), remove_cell_style = TRUE)
-  exp <- structure(list(r = c("B2", "C2", "D2", "E2", "F2", "G2"),
+  exp <- structure(list(key = c(32770, 32771, 32772, 32773, 32774, 32775),
+                        r = c("B2", "C2", "D2", "E2", "F2", "G2"),
                         row_r = c("2", "2", "2", "2", "2", "2"),
                         c_r = c("B", "C", "D", "E", "F", "G"),
                         c_s = c("1", "1", "1", "1", "1", "1"),

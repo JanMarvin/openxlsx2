@@ -92,6 +92,14 @@ cdigit <- function(x, as_integer = FALSE, reverse = FALSE) {
     .Call(`_openxlsx2_cdigit`, x, as_integer, reverse)
 }
 
+cell_to_key <- function(x) {
+    .Call(`_openxlsx2_cell_to_key`, x)
+}
+
+cell_to_info_df <- function(x) {
+    .Call(`_openxlsx2_cell_to_info_df`, x)
+}
+
 col_to_df <- function(doc) {
     .Call(`_openxlsx2_col_to_df`, doc)
 }

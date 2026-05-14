@@ -55,17 +55,18 @@ inner_update <- function(
     # message("cell(s) not in workbook")
 
     # create missing cells
-    cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
-    cc_missing$r     <- missing_cells
-    cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
-    cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
+    cc_missing <- cell_to_info_df(missing_cells)
+
+    other_cols <- setdiff(names(cc), names(cc_missing))
+    for (col in other_cols) {
+      cc_missing[[col]] <- ""
+    }
 
     # assign to cc
-    cc <- rbind(cc, cc_missing)
+    cc <- rbind(cc, cc_missing[names(cc)])
 
     # order cc (not really necessary, will be done when saving)
-    sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
-    cc <- cc[order(sort_key), ]
+    cc <- cc[order(cc$key), ]
 
     # update dimensions (only required if new cols and rows are added) ------
     all_rows <- as.numeric(unique(cc$row_r))
@@ -85,7 +86,7 @@ inner_update <- function(
   if (any("c_ph" %in% all_cols)) has_ph <- "c_ph" else has_ph <- NULL
   if (any("c_vm" %in% all_cols)) has_vm <- "c_vm" else has_vm <- NULL
 
-  replacement <- c("r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
+  replacement <- c("key", "r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
                    "v", "f", "f_attr", "is")
 
   if (removeCellStyle) {
@@ -96,14 +97,14 @@ inner_update <- function(
     replacementX  <- replacement[-which(replacement == "c_s")]
   }
 
-  sel <- match(x$r, cc$r)
+  sel <- match(x$key, cc$key)
 
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
   # values with the formula. If the entire cc is replaced with x, we can skip.
   if (!all(cc$f_attr == "")) {
     ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
-    if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
+    if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$key %in% x$key)) {
 
       # collect all the shared formulas that we have to convert
       sel_fsi <- ff$si %in% unique(sf)
@@ -160,13 +161,17 @@ inner_update <- function(
 initialize_cell <- function(wb, sheet, new_cells) {
 
   sheet_id <- wb$.__enclos_env__$private$get_sheet_index(sheet)
-  nms <- names(wb$worksheets[[sheet_id]]$sheet_data$cc)
+  cc_names <- names(wb$worksheets[[sheet_id]]$sheet_data$cc)
 
   # create artificial cc for the missing cells
-  x <- create_char_dataframe(n = length(new_cells), colnames = nms)
-  x$r     <- new_cells
-  x$row_r <- gsub("[[:upper:]]", "", new_cells)
-  x$c_r   <- gsub("[[:digit:]]", "", new_cells)
+  x <- cell_to_info_df(new_cells)
+
+  other_cols <- setdiff(cc_names, names(x))
+  for (col in other_cols) {
+    x[[col]] <- ""
+  }
+
+  x <- x[cc_names]
 
   rows <- unique(x$row_r)
   cells_needed <- new_cells
@@ -422,6 +427,9 @@ write_data2 <- function(
     colnames = nms,
     n = nrow(data) * ncol(data)
   )
+  cc$key <- vector("numeric", length = nrow(data) * ncol(data))
+
+  cc <- cc[c("key", setdiff(names(cc), "key"))]
 
   sel <- which(dc == openxlsx2_celltype[["logical"]])
   for (i in sel) {

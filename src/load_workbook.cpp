@@ -48,74 +48,65 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
   return df;
 }
 
-inline Rcpp::DataFrame row_to_df(XPtrXML doc) {
+// Names of the attributes captured into the row_attr data.frame.
+static const char* const ROW_ATTR_NAMES[] = {
+  "r", "spans", "s", "ht", "hidden", "collapsed", "customFormat",
+  "customHeight", "x14ac:dyDescent", "outlineLevel", "ph", "thickBot", "thickTop"
+};
+static const R_xlen_t ROW_ATTR_KK =
+  static_cast<R_xlen_t>(sizeof(ROW_ATTR_NAMES) / sizeof(ROW_ATTR_NAMES[0]));
 
-  check_xptr_validity(doc);
-
-  auto ws = doc->child("worksheet").child("sheetData");
-
-  std::vector<std::string> row_nams = {
-    "r",
-    "spans",
-    "s",
-    "ht",
-    "hidden",
-    "collapsed",
-    "customFormat",
-    "customHeight",
-    "x14ac:dyDescent",
-    "outlineLevel",
-    "ph",
-    "thickBot",
-    "thickTop"
-  };
-  std::unordered_map<std::string, R_xlen_t> name_to_index;
-  for (size_t i = 0; i < row_nams.size(); ++i)
-    name_to_index[row_nams[i]] = static_cast<R_xlen_t>(i);
-
-  R_xlen_t nn = std::distance(ws.children("row").begin(), ws.children("row").end());
-  R_xlen_t kk = static_cast<R_xlen_t>(row_nams.size());
-
-  // 1. create the list
-  Rcpp::List df(kk);
-  for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(nn));
+// Allocate the row_attr data.frame sized to n_rows. The columns are filled
+// later, inline in loadvals()'s main row loop, so the <row> tree is only
+// traversed once. Returns the data.frame; col_ptrs is filled with the column
+// SEXPs (so the caller can SET_STRING_ELT directly without re-resolving).
+inline Rcpp::DataFrame alloc_row_df(R_xlen_t n_rows, std::vector<SEXP>& col_ptrs) {
+  Rcpp::List df(ROW_ATTR_KK);
+  col_ptrs.resize(static_cast<size_t>(ROW_ATTR_KK));
+  for (R_xlen_t i = 0; i < ROW_ATTR_KK; ++i) {
+    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(n_rows));
+    col_ptrs[static_cast<size_t>(i)] = VECTOR_ELT(df, i);
   }
 
-  // 2. fill the list
-  // <row ...>
-  R_xlen_t row_idx = 0;
-  for (auto row : ws.children("row")) {
-    bool has_rowname = false;
+  Rcpp::CharacterVector nms(ROW_ATTR_KK);
+  for (R_xlen_t i = 0; i < ROW_ATTR_KK; ++i) nms[i] = ROW_ATTR_NAMES[i];
 
-    for (auto attrs : row.attributes()) {
-      std::string attr_name = attrs.name();
-      std::string attr_value = attrs.value();
-
-      auto it = name_to_index.find(attr_name);
-      if (it != name_to_index.end()) {
-        Rcpp::CharacterVector col = df[it->second];
-        col[row_idx] = attr_value;
-        if (attr_name == "r") has_rowname = true;
-      } else {
-        Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
-      }
-    }
-
-    if (!has_rowname) {
-      Rcpp::CharacterVector col = df[name_to_index["r"]];
-      col[row_idx] = std::to_string(row_idx + 1);
-    }
-
-    ++row_idx;
-  }
-
-  // 3. Create a data.frame
-  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -nn);
-  df.attr("names") = row_nams;
+  df.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -n_rows);
+  df.attr("names") = nms;
   df.attr("class") = "data.frame";
-
   return df;
+}
+
+// Fill one row's attributes into the pre-allocated row_attr columns.
+// col_ptrs / name lookup come from alloc_row_df(). Mirrors the old row_to_df
+// body for a single <row>.
+inline void fill_row_attr(const pugi::xml_node& row, R_xlen_t row_idx,
+                          const std::vector<SEXP>& col_ptrs) {
+  bool has_rowname = false;
+
+  for (auto attrs : row.attributes()) {
+    const char* attr_name = attrs.name();
+
+    // linear scan over ROW_ATTR_NAMES: the list is short (13) and this avoids
+    // constructing a std::string per attribute for a map lookup
+    R_xlen_t hit = -1;
+    for (R_xlen_t k = 0; k < ROW_ATTR_KK; ++k) {
+      if (std::strcmp(attr_name, ROW_ATTR_NAMES[k]) == 0) { hit = k; break; }
+    }
+
+    if (hit >= 0) {
+      SET_STRING_ELT(col_ptrs[static_cast<size_t>(hit)], row_idx,
+                     Rf_mkChar(attrs.value()));
+      if (hit == 0) has_rowname = true; // "r" is index 0
+    } else {
+      Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
+    }
+  }
+
+  if (!has_rowname) {
+    SET_STRING_ELT(col_ptrs[0], row_idx,
+                   Rf_mkChar(std::to_string(row_idx + 1).c_str()));
+  }
 }
 
 // this function imports the data from the dataset and returns row_attr and cc
@@ -128,12 +119,16 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
 
   bool has_cm = false, has_ph = false, has_vm = false;
 
-  // character
-  Rcpp::DataFrame row_attributes;
-
+  // One cheap pass over <row> to size both the row_attr data.frame and the
+  // cell vector reserve. Previously the <row>/<c> tree was walked four times
+  // (row count + row fill in row_to_df, cell count here, then the main loop);
+  // now it is walked once for sizing and once to fill everything.
+  R_xlen_t n_rows = 0;
   R_xlen_t total_cells_count = 0;
   for (auto worksheet_row : ws.children("row")) {
-    total_cells_count += std::distance(worksheet_row.children("c").begin(), worksheet_row.children("c").end());
+    ++n_rows;
+    total_cells_count += std::distance(worksheet_row.children("c").begin(),
+                                       worksheet_row.children("c").end());
   }
 
   std::vector<xml_col> xml_cols;
@@ -158,11 +153,17 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
    * Col information is returned as dataframe returning only a fraction of known
    * tags and attributes.
    ****************************************************************************/
-  row_attributes = row_to_df(doc);
+  std::vector<SEXP> row_attr_cols;
+  Rcpp::DataFrame row_attributes = alloc_row_df(n_rows, row_attr_cols);
   xml_col single_xml_col;
 
   R_xlen_t idx = 0, itr_rows = 0;
   for (auto worksheet : ws.children("row")) {
+
+    // fill this row's attributes into row_attr inline (was a separate
+    // traversal in row_to_df)
+    fill_row_attr(worksheet, itr_rows, row_attr_cols);
+
     /* ---------------------------------------------------------------------- */
     /* read cval, and ctyp -------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
@@ -217,6 +218,9 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         single_xml_col.row_r = std::to_string(itr_rows + 1);
         single_xml_col.r = single_xml_col.c_r + single_xml_col.row_r;
       }
+
+      single_xml_col.key = static_cast<double>(std::atoi(single_xml_col.row_r.c_str())) * 16384L +
+        uint_col_to_int(single_xml_col.c_r);
 
       // val ------------------------------------------------------------------
       if (col.first_child()) {

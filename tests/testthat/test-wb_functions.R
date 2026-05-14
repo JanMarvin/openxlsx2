@@ -557,7 +557,7 @@ test_that("creating a formula matrix works", {
     shared = TRUE
   )
 
-  exp <- c(210, 9)
+  exp <- c(210, 10)
   got <- dim(wb$worksheets[[1]]$sheet_data$cc)
   expect_equal(exp, got)
 
@@ -578,7 +578,7 @@ test_that("writing formula dataframes works", {
     dims   = wb_dims(x = df, from_row = 13, col_names = FALSE)
   )
 
-  exp <- c(210, 9)
+  exp <- c(210, 10)
   got <- dim(wb$worksheets[[1]]$sheet_data$cc)
   expect_equal(exp, got)
 
