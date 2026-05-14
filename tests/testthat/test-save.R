@@ -412,6 +412,7 @@ test_that("write cells without data", {
 
   exp <- structure(
     list(
+      key = c(32770.0, 32771.0, 49154.0, 49155.0),
       r = c("B2", "C2", "B3", "C3"),
       row_r = c("2", "2", "3", "3"),
       c_r = c("B", "C", "B", "C"),

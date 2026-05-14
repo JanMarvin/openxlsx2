@@ -218,6 +218,9 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
         single_xml_col.r = single_xml_col.c_r + single_xml_col.row_r;
       }
 
+      single_xml_col.key = static_cast<double>(std::atoi(single_xml_col.row_r.c_str())) * 16384L +
+        uint_col_to_int(single_xml_col.c_r);
+
       // val ------------------------------------------------------------------
       if (col.first_child()) {
         for (auto val : col.children()) {

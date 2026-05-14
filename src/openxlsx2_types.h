@@ -11,6 +11,7 @@
 #include <RcppCommon.h>
 
 struct xml_col {
+  double key;
   std::string r;
   std::string row_r;
   std::string c_r;     // CellReference
@@ -25,6 +26,7 @@ struct xml_col {
   std::string is;      // inlineStr
 
   void clear() {
+      key = NA_REAL;
       r.clear(); row_r.clear(); c_r.clear(); c_s.clear(); c_t.clear();
       c_cm.clear(); c_ph.clear(); c_vm.clear();
       v.clear(); f.clear(); f_attr.clear(); is.clear();

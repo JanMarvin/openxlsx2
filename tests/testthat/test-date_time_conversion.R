@@ -48,6 +48,7 @@ test_that("convert hms works", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = x, col_names = FALSE)
 
   exp <- data.frame(
+    key = 16385.0,
     r = "A1", row_r = "1", c_r = "A", c_s = "1", c_t = "",
     v = "0.509189814814815",
     f = "", f_attr = "", is = "",

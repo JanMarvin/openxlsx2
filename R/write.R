@@ -55,17 +55,18 @@ inner_update <- function(
     # message("cell(s) not in workbook")
 
     # create missing cells
-    cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
+    cc_missing <- create_char_dataframe(setdiff(names(cc), "key"), length(missing_cells))
     cc_missing$r     <- missing_cells
     cc_missing$row_r <- cdigit(cc_missing$r)
     cc_missing$c_r   <- cdigit(cc_missing$r, reverse = TRUE)
+
+    cc_missing <- cbind(key = as.numeric(cc_missing$row_r) * 16384L + col2int(cc_missing$c_r), cc_missing)
 
     # assign to cc
     cc <- rbind(cc, cc_missing)
 
     # order cc (not really necessary, will be done when saving)
-    sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
-    cc <- cc[order(sort_key), ]
+    cc <- cc[order(cc$key), ]
 
     # update dimensions (only required if new cols and rows are added) ------
     all_rows <- as.numeric(unique(cc$row_r))
@@ -85,7 +86,7 @@ inner_update <- function(
   if (any("c_ph" %in% all_cols)) has_ph <- "c_ph" else has_ph <- NULL
   if (any("c_vm" %in% all_cols)) has_vm <- "c_vm" else has_vm <- NULL
 
-  replacement <- c("r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
+  replacement <- c("key", "r", "row_r", "c_r", "c_s", "c_t", has_cm, has_ph, has_vm,
                    "v", "f", "f_attr", "is")
 
   if (removeCellStyle) {
@@ -167,6 +168,8 @@ initialize_cell <- function(wb, sheet, new_cells) {
   x$r     <- new_cells
   x$row_r <- cdigit(new_cells)
   x$c_r   <- cdigit(new_cells, reverse = TRUE)
+
+  x <- cbind(key = as.numeric(x$row_r) * 16384L + col2int(x$c_r), x)
 
   rows <- unique(x$row_r)
   cells_needed <- new_cells
@@ -422,6 +425,7 @@ write_data2 <- function(
     colnames = nms,
     n = nrow(data) * ncol(data)
   )
+  cc <- cbind(key = vector("numeric", length = nrow(data) * ncol(data)), cc)
 
   sel <- which(dc == openxlsx2_celltype[["logical"]])
   for (i in sel) {

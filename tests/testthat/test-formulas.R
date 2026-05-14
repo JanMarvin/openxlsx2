@@ -37,6 +37,7 @@ test_that("writing formulas with cell metadata works", {
   wb$add_formula(x = 'SUM(ABS(A2:A11))', cm = TRUE)
 
   exp <- data.frame(
+    key = 16385.0,
     r = "A1", row_r = "1", c_r = "A", c_s = "", c_t = "",
     c_cm = "1", v = "", f = "SUM(ABS(A2:A11))",
     f_attr = "t=\"array\" ref=\"A1\"", is = "",

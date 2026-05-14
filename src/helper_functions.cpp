@@ -658,6 +658,7 @@ void wide_to_long(
   bool has_cm = zz.containsElementNamed("c_cm");
   bool has_typ = zz.containsElementNamed("typ");
 
+  Rcpp::NumericVector zz_key      = Rcpp::as<Rcpp::NumericVector>(zz["key"]);
   Rcpp::CharacterVector zz_row_r  = Rcpp::as<Rcpp::CharacterVector>(zz["row_r"]);
   Rcpp::CharacterVector zz_c_r    = Rcpp::as<Rcpp::CharacterVector>(zz["c_r"]);
   Rcpp::CharacterVector zz_v      = Rcpp::as<Rcpp::CharacterVector>(zz["v"]);
@@ -719,11 +720,20 @@ void wide_to_long(
         SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
         SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r_str).c_str()));
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r_str).c_str()));
+
+        double dkey = static_cast<double>(std::atoi(rm_colnum(cell_r_str).c_str())) * 16384L + uint_col_to_int(rm_rownum(cell_r_str));
+
+        SET_REAL_ELT(zz_key, pos, dkey);
+
       } else {
         const std::string& cell_r_str = col + row;
         SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
         SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
         SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
+
+        double dkey = static_cast<double>(std::atoi(row.c_str())) * 16384L + uint_col_to_int(col);
+
+        SET_REAL_ELT(zz_key, pos, dkey);
       }
 
       std::string ref_str = "";
