@@ -8,6 +8,14 @@
   no longer slows down when called with large data frames.
   [\#1624](https://github.com/JanMarvin/openxlsx2/pull/1624)
 
+### Internal Changes
+
+- `cc` gained a `key` column
+  (`as.numeric(row) * 16384L + col2int(col))`). This avoids recreating
+  this key various times.
+- [`wb_get_cell_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_cell_style.md)
+  no longer clones.
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.26
