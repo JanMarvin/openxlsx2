@@ -1084,3 +1084,53 @@ SEXP cdigit(Rcpp::CharacterVector x, bool as_integer = false, bool reverse = fal
     return res;
   }
 }
+
+// Convert a vector of cell addresses ("B17") directly to the numeric cc key
+// (row * 16384 + col). Single pass per string: no intermediate row/col vectors,
+// no grepl/chartr. NA in -> NA_REAL out. Mirrors the key built in
+// load_workbook.cpp and wide_to_long().
+// [[Rcpp::export]]
+Rcpp::NumericVector cell_to_key(Rcpp::CharacterVector x) {
+  R_xlen_t n = Rf_xlength(x);
+  Rcpp::NumericVector res(n);
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    if (Rcpp::CharacterVector::is_na(x[i])) {
+      res[i] = NA_REAL;
+      continue;
+    }
+
+    const char* s = CHAR(STRING_ELT(x, i));
+
+    uint32_t col = 0;
+    bool have_col = false;
+    double row = 0;
+    bool have_row = false;
+
+    for (const char* p = s; *p; ++p) {
+      unsigned char c = static_cast<unsigned char>(*p);
+      if (DIGIT_MASK[c]) {
+        row = row * 10 + (c - '0');
+        have_row = true;
+      } else {
+        // column letter; accept upper or lower case
+        char up = static_cast<char>(std::toupper(c));
+        if (up < 'A' || up > 'Z')
+          Rcpp::stop("found non alphanumeric character in cell address");
+        col = col * 26 + static_cast<uint32_t>(up - 'A' + 1);
+        have_col = true;
+      }
+    }
+
+    if (!have_col || !have_row)
+      Rcpp::stop("incomplete cell address in cell_to_key");
+    if (col == 0 || col > MAX_OOXML_COL_INT)
+      Rcpp::stop("Column exceeds valid range");
+    if (row < 1 || row > MAX_OOXML_ROW_INT)
+      Rcpp::stop("Row exceeds valid range");
+
+    res[i] = row * 16384.0 + static_cast<double>(col);
+  }
+
+  return res;
+}

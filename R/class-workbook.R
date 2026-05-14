@@ -9292,7 +9292,6 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorksheetObject`, invisibly
     set_cell_style = function(sheet = current_sheet(), dims, style) {
 
-      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
       if (all(grepl("[A-Za-z]", style))) {
@@ -9305,11 +9304,26 @@ wbWorkbook <- R6::R6Class(
         styid <- style
       }
 
-      # in openxlsx2 < 1.19
-      # sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
-      # in 1.19 switched to match, but the match result was unsorted
-      sel <- sort(match(cell_to_key(dims[dims != ""]), self$worksheets[[sheet]]$sheet_data$cc$key))
+      # Resolve dims to cc indices via the numeric key. do_cell_init is only
+      # needed when some target cells do not exist yet; internal callers
+      # (add_numfmt, add_font, ...) pass cells that were just initialized, so
+      # the match below succeeds outright and the init is skipped.
+      if (inherits(dims, "data.frame")) dims <- unlist(dims, use.names = FALSE)
+      # range strings ("A1:D9", "A1,C3") must be expanded to single addresses
+      if (length(dims) == 1 && grepl(":|;|,", dims)) {
+        dims <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
+      }
+      dims <- dims[!is.na(dims) & dims != ""]
+      cc_key <- self$worksheets[[sheet]]$sheet_data$cc$key
+      sel <- match(cell_to_key(dims), cc_key)
 
+      if (anyNA(sel)) {
+        dims <- private$do_cell_init(sheet, dims, keep = TRUE)
+        cc_key <- self$worksheets[[sheet]]$sheet_data$cc$key
+        sel <- match(cell_to_key(dims[dims != ""]), cc_key)
+      }
+
+      sel <- sort(sel)
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
 
       invisible(self)
@@ -10749,9 +10763,7 @@ wbWorkbook <- R6::R6Class(
 
         cc <- self$worksheets[[sheet]]$sheet_data$cc
 
-        exp_row <- cdigit(exp_cells, as_integer = TRUE)
-        exp_col <- cdigit(exp_cells, reverse = TRUE)
-        exp_key <- as.numeric(exp_row) * 16384L + col2int(exp_col)
+        exp_key <- cell_to_key(exp_cells)
 
         miss_idx <- which(!(exp_key %in% cc$key))
 
