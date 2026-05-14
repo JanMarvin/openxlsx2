@@ -1114,7 +1114,7 @@ Rcpp::NumericVector cell_to_key(Rcpp::CharacterVector x) {
         have_row = true;
       } else {
         // column letter; accept upper or lower case
-        char up = (c >= 'a' && c <= 'z') ? (c - 32) : c;
+        char up = (c >= 'a' && c <= 'z') ? static_cast<char>(c - 32) : static_cast<char>(c);
         if (up < 'A' || up > 'Z')
           Rcpp::stop("found non alphanumeric character in cell address");
         col = col * 26 + static_cast<uint32_t>(up - 'A' + 1);
@@ -1151,33 +1151,40 @@ Rcpp::DataFrame cell_to_info_df(Rcpp::CharacterVector x) {
       continue;
     }
 
-    std::string s = Rcpp::as<std::string>(x[i]);
-    int32_t col_val = 0;
-    std::string r_str = "";
-    std::string c_str = "";
+    const char* s = CHAR(STRING_ELT(x, i));
+    const char* row_start = nullptr;
 
-    for (char c : s) {
-      if (c >= '0' && c <= '9') {
-        r_str += c;
+    uint32_t col_val = 0;
+    double row_val = 0;
+
+    for (const char* p = s; *p; ++p) {
+      unsigned char c = static_cast<unsigned char>(*p);
+
+      if (DIGIT_MASK[c]) {
+        if (!row_start) row_start = p;
+        row_val = row_val * 10 + (c - '0');
       } else {
-        c_str += c;
-        // Fast ASCII-only uppercase conversion
-        char up = (c >= 'a' && c <= 'z') ? (c - 32) : c;
-        if (up >= 'A' && up <= 'Z') {
-          col_val = col_val * 26 + (up - 'A' + 1);
-        }
+        // Fast ASCII normalization to uppercase
+        char up = (c >= 'a' && c <= 'z') ? static_cast<char>(c - 32) : static_cast<char>(c);
+        col_val = col_val * 26 + static_cast<uint32_t>(up - 'A' + 1);
       }
     }
 
-    // Calculate key: as.numeric(row) * 16384 + col_val
-    if (!r_str.empty()) {
-      key[i] = std::atof(r_str.c_str()) * 16384.0 + col_val;
-    } else {
-      key[i] = NA_REAL;
+    if (col_val < 1 || col_val > 16384) {
+      Rcpp::stop("Column index %d is out of valid range (1-16384)", col_val);
+    }
+    if (row_val < 1 || row_val > 1048576) {
+      Rcpp::stop("Row index %.0f is out of valid range (1-1,048,576)", row_val);
+    }
+    if (!row_start) {
+      Rcpp::stop("Invalid cell format: missing row numbers");
     }
 
-    row_r[i] = r_str;
-    c_r[i]   = c_str;
+    // Calculate key: as.numeric(row) * 16384 + col_val
+    key[i] = row_val * 16384.0 + static_cast<double>(col_val);
+    row_r[i] = row_start;
+    int col_len = static_cast<int>(row_start - s);
+    c_r[i] = Rf_mkCharLen(s, col_len);
   }
 
   // Create the list and manually set data.frame attributes
