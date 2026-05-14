@@ -8919,12 +8919,11 @@ wbWorkbook <- R6::R6Class(
       rows <- (seq_len(nrow(did)) %% every_nth_row) == 0
       did <- did[rows, cols, drop = FALSE]
 
-      private$do_cell_init(sheet, dims = dims, df = did)
+      sel <- private$do_cell_init(sheet, dims = dims, df = did, return_sel = TRUE)
       dims <- unlist(did, use.names = FALSE)
 
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
       cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
@@ -8932,6 +8931,7 @@ wbWorkbook <- R6::R6Class(
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
+        dim_sel <- sel[cc$c_s == style]
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
 
         if (!is.null(color)) {
@@ -8950,7 +8950,7 @@ wbWorkbook <- R6::R6Class(
         }
         self$styles_mgr$add(xf_new_fill, xf_new_fill)
         s_id <- self$styles_mgr$get_xf_id(xf_new_fill)
-        self$set_cell_style(sheet, dim, s_id)
+        private$set_cell_style_sel(sheet, dim_sel, s_id)
       }
 
       invisible(self)
@@ -8997,10 +8997,9 @@ wbWorkbook <- R6::R6Class(
         ...
     ) {
       sheet <- private$get_sheet_index(sheet)
-      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
+      sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
       cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
@@ -9008,6 +9007,7 @@ wbWorkbook <- R6::R6Class(
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
+        dim_sel <- sel[cc$c_s == style]
 
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
 
@@ -9089,7 +9089,7 @@ wbWorkbook <- R6::R6Class(
 
         self$styles_mgr$add(xf_new_font, xf_new_font)
         s_id <- self$styles_mgr$get_xf_id(xf_new_font)
-        self$set_cell_style(sheet, dim, s_id)
+        private$set_cell_style_sel(sheet, dim_sel, s_id)
       }
 
       invisible(self)
@@ -9104,10 +9104,9 @@ wbWorkbook <- R6::R6Class(
         numfmt
     ) {
       sheet <- private$get_sheet_index(sheet)
-      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
+      sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
       cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
@@ -9115,6 +9114,7 @@ wbWorkbook <- R6::R6Class(
 
         for (style in styles) {
           dim <- cc[cc$c_s == style, "r"]
+          dim_sel <- sel[cc$c_s == style]
 
           new_numfmt <- create_numfmt(
             numFmtId = self$styles_mgr$next_numfmt_id(),
@@ -9126,13 +9126,14 @@ wbWorkbook <- R6::R6Class(
           xf_new_numfmt <- set_numfmt(xf_prev, self$styles_mgr$get_numfmt_id(new_numfmt))
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
-          self$set_cell_style(sheet, dim, s_id)
+          private$set_cell_style_sel(sheet, dim_sel, s_id)
         }
 
       } else { # format is numeric
 
         for (style in styles) {
           dim <- cc[cc$c_s == style, "r"]
+          dim_sel <- sel[cc$c_s == style]
           xf_prev <- get_cell_styles(self, sheet, dim[[1]])
           if (is.null(numfmt))
             xf_new_numfmt <- remove_numfmt(xf_prev)
@@ -9140,7 +9141,7 @@ wbWorkbook <- R6::R6Class(
             xf_new_numfmt <- set_numfmt(xf_prev, numfmt)
           self$styles_mgr$add(xf_new_numfmt, xf_new_numfmt)
           s_id <- self$styles_mgr$get_xf_id(xf_new_numfmt)
-          self$set_cell_style(sheet, dim, s_id)
+          private$set_cell_style_sel(sheet, dim_sel, s_id)
         }
 
       }
@@ -9211,15 +9212,15 @@ wbWorkbook <- R6::R6Class(
       standardize_case_names(...)
 
       sheet <- private$get_sheet_index(sheet)
-      dims <- private$do_cell_init(sheet, dims, keep = TRUE)
+      sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
       cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
+        dim_sel <- sel[cc$c_s == style]
         xf_prev <- get_cell_styles(self, sheet, dim[[1]])
         xf_new_cellstyle <- set_cellstyle(
           xf_node           = xf_prev,
@@ -9251,7 +9252,7 @@ wbWorkbook <- R6::R6Class(
         )
         self$styles_mgr$add(xf_new_cellstyle, xf_new_cellstyle)
         s_id <- self$styles_mgr$get_xf_id(xf_new_cellstyle)
-        self$set_cell_style(sheet, dim, s_id)
+        private$set_cell_style_sel(sheet, dim_sel, s_id)
       }
 
       invisible(self)
@@ -9318,15 +9319,10 @@ wbWorkbook <- R6::R6Class(
       sel <- match(cell_to_key(dims), cc_key)
 
       if (anyNA(sel)) {
-        dims <- private$do_cell_init(sheet, dims, keep = TRUE)
-        cc_key <- self$worksheets[[sheet]]$sheet_data$cc$key
-        sel <- match(cell_to_key(dims[dims != ""]), cc_key)
+        sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
       }
 
-      sel <- sort(sel)
-      self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
-
-      invisible(self)
+      private$set_cell_style_sel(sheet, sel, styid)
     },
 
     #' @description set style across columns and/or rows
@@ -10724,7 +10720,21 @@ wbWorkbook <- R6::R6Class(
     # dims_to_dataframe call has to happen in the function. In this case, we
     # should at least minimize the calls to dims_to_dataframe(fill). These
     # are costly with large dataframes.
-    do_cell_init = function(sheet = current_sheet(), dims, df = NULL, keep = FALSE) {
+
+    # Assign a style id to cc rows identified by index (not address). Internal
+    # style-setting functions (add_numfmt, add_font, ...) already hold the
+    # resolved cc indices, so they call this directly instead of going through
+    # set_cell_style, which would re-key and re-match the addresses against the
+    # whole cc$key column.
+    set_cell_style_sel = function(sheet, sel, styid) {
+      sheet <- private$get_sheet_index(sheet)
+      sel <- sort(sel[!is.na(sel)])
+      self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
+      invisible(self)
+    },
+
+    do_cell_init = function(sheet = current_sheet(), dims, df = NULL, keep = FALSE,
+                            return_sel = FALSE) {
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -10746,6 +10756,13 @@ wbWorkbook <- R6::R6Class(
           dims = dims
         )
 
+        if (return_sel) {
+          cc <- self$worksheets[[sheet]]$sheet_data$cc
+          exp_cells <- unlist(if (!is.null(df)) df else dims_to_dataframe(dims, fill = TRUE),
+                              use.names = FALSE)
+          exp_cells <- exp_cells[!is.na(exp_cells) & exp_cells != ""]
+          return(match(cell_to_key(exp_cells), cc$key))
+        }
         if (keep) return(self$worksheets[[sheet]]$sheet_data$cc$r)
 
       } else {
@@ -10765,11 +10782,18 @@ wbWorkbook <- R6::R6Class(
 
         exp_key <- cell_to_key(exp_cells)
 
-        miss_idx <- which(!(exp_key %in% cc$key))
+        # one match() serves both the missing-cell detection and return_sel
+        hit <- match(exp_key, cc$key)
+        miss_idx <- which(is.na(hit))
 
         if (length(miss_idx) > 0L) {
           self <- initialize_cell(self, sheet = sheet, new_cells = exp_cells[miss_idx])
+          # cc grew; the previously-found positions are stale
+          if (return_sel)
+            hit <- match(exp_key, self$worksheets[[sheet]]$sheet_data$cc$key)
         }
+
+        if (return_sel) return(hit)
 
         if (keep) return(exp_cells)
       }

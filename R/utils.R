@@ -948,9 +948,14 @@ wb_dims <- function(..., select = NULL) {
   }
 
   # reduce to required length
-  # intersect() is faster than %in% for long vectors
-  col_span <- if (is.null(cols_sel)) cols_all else intersect(cols_all, cols_sel)
-  row_span <- if (is.null(rows_sel)) rows_all else intersect(rows_all, rows_sel)
+  # intersect() is faster than %in% for long vectors, but when no cols/rows arg
+  # was supplied the selection is the full base and intersect is a costly
+  # identity -- skip it. Test is.null() on the original *_arg, not identical()
+  # on the (possibly ALTREP, possibly huge) vectors.
+  cols_defaulted <- is.null(cols_arg)
+  rows_defaulted <- is.null(rows_arg)
+  col_span <- if (is.null(cols_sel) || cols_defaulted) cols_all else intersect(cols_all, cols_sel)
+  row_span <- if (is.null(rows_sel) || rows_defaulted) rows_all else intersect(rows_all, rows_sel)
 
   # if required add column name and row name
   if (col_names) row_span <- c(max(min(row_span, 1), 1L), row_span + 1L)
