@@ -2,6 +2,12 @@
 
 ## openxlsx2 (development version)
 
+### Fixes
+
+- [`wb_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_dims.md)
+  no longer slows down when called with large data frames.
+  [\#1624](https://github.com/JanMarvin/openxlsx2/pull/1624)
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.26
