@@ -1114,7 +1114,7 @@ Rcpp::NumericVector cell_to_key(Rcpp::CharacterVector x) {
         have_row = true;
       } else {
         // column letter; accept upper or lower case
-        char up = static_cast<char>(std::toupper(c));
+        char up = (c >= 'a' && c <= 'z') ? (c - 32) : c;
         if (up < 'A' || up > 'Z')
           Rcpp::stop("found non alphanumeric character in cell address");
         col = col * 26 + static_cast<uint32_t>(up - 'A' + 1);
@@ -1131,6 +1131,66 @@ Rcpp::NumericVector cell_to_key(Rcpp::CharacterVector x) {
 
     res[i] = row * 16384.0 + static_cast<double>(col);
   }
+
+  return res;
+}
+
+// [[Rcpp::export]]
+Rcpp::DataFrame cell_to_info_df(Rcpp::CharacterVector x) {
+  R_xlen_t n = x.size();
+
+  Rcpp::NumericVector key(n);
+  Rcpp::CharacterVector row_r(n);
+  Rcpp::CharacterVector c_r(n);
+
+  for (R_xlen_t i = 0; i < n; ++i) {
+    if (Rcpp::CharacterVector::is_na(x[i])) {
+      key[i]   = NA_REAL;
+      row_r[i] = NA_STRING;
+      c_r[i]   = NA_STRING;
+      continue;
+    }
+
+    std::string s = Rcpp::as<std::string>(x[i]);
+    int32_t col_val = 0;
+    std::string r_str = "";
+    std::string c_str = "";
+
+    for (char c : s) {
+      if (c >= '0' && c <= '9') {
+        r_str += c;
+      } else {
+        c_str += c;
+        // Fast ASCII-only uppercase conversion
+        char up = (c >= 'a' && c <= 'z') ? (c - 32) : c;
+        if (up >= 'A' && up <= 'Z') {
+          col_val = col_val * 26 + (up - 'A' + 1);
+        }
+      }
+    }
+
+    // Calculate key: as.numeric(row) * 16384 + col_val
+    if (!r_str.empty()) {
+      key[i] = std::atof(r_str.c_str()) * 16384.0 + col_val;
+    } else {
+      key[i] = NA_REAL;
+    }
+
+    row_r[i] = r_str;
+    c_r[i]   = c_str;
+  }
+
+  // Create the list and manually set data.frame attributes
+  Rcpp::List res = Rcpp::List::create(
+    Rcpp::Named("key")   = key,
+    Rcpp::Named("r")     = x,
+    Rcpp::Named("row_r") = row_r,
+    Rcpp::Named("c_r")   = c_r
+  );
+
+  res.attr("names")     = Rcpp::CharacterVector::create("key", "r", "row_r", "c_r");
+  res.attr("class")     = "data.frame";
+  res.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -static_cast<int>(n));
 
   return res;
 }

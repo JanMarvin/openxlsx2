@@ -274,6 +274,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cell_to_info_df
+Rcpp::DataFrame cell_to_info_df(Rcpp::CharacterVector x);
+RcppExport SEXP _openxlsx2_cell_to_info_df(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cell_to_info_df(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // col_to_df
 Rcpp::DataFrame col_to_df(XPtrXML doc);
 RcppExport SEXP _openxlsx2_col_to_df(SEXP docSEXP) {
@@ -860,6 +871,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_df_to_xml", (DL_FUNC) &_openxlsx2_df_to_xml, 2},
     {"_openxlsx2_cdigit", (DL_FUNC) &_openxlsx2_cdigit, 3},
     {"_openxlsx2_cell_to_key", (DL_FUNC) &_openxlsx2_cell_to_key, 1},
+    {"_openxlsx2_cell_to_info_df", (DL_FUNC) &_openxlsx2_cell_to_info_df, 1},
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 9},

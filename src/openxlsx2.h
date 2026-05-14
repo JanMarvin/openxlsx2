@@ -152,15 +152,14 @@ inline int32_t cell_to_rowint(const std::string& str) {
   return res;
 }
 
-static inline std::string str_toupper(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::toupper(c); });
-  return s;
-}
-
 // Function to remove digits from a string
 static inline int32_t cell_to_colint(const std::string& str) {
   std::string result = rm_rownum(str);
-  result = str_toupper(result);
+
+  for (char &c : result) {
+    if (c >= 'a' && c <= 'z') c -= 32;
+  }
+
   return static_cast<int32_t>(uint_col_to_int(result));
 }
 

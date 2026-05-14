@@ -55,15 +55,15 @@ inner_update <- function(
     # message("cell(s) not in workbook")
 
     # create missing cells
-    cc_missing <- create_char_dataframe(setdiff(names(cc), "key"), length(missing_cells))
-    cc_missing$r     <- missing_cells
-    cc_missing$row_r <- cdigit(cc_missing$r)
-    cc_missing$c_r   <- cdigit(cc_missing$r, reverse = TRUE)
+    cc_missing <- cell_to_info_df(missing_cells)
 
-    cc_missing <- cbind(key = as.numeric(cc_missing$row_r) * 16384L + col2int(cc_missing$c_r), cc_missing)
+    other_cols <- setdiff(names(cc), names(cc_missing))
+    for (col in other_cols) {
+      cc_missing[[col]] <- ""
+    }
 
     # assign to cc
-    cc <- rbind(cc, cc_missing)
+    cc <- rbind(cc, cc_missing[names(cc)])
 
     # order cc (not really necessary, will be done when saving)
     cc <- cc[order(cc$key), ]
@@ -161,15 +161,17 @@ inner_update <- function(
 initialize_cell <- function(wb, sheet, new_cells) {
 
   sheet_id <- wb$.__enclos_env__$private$get_sheet_index(sheet)
-  nms <- names(wb$worksheets[[sheet_id]]$sheet_data$cc)
+  cc_names <- names(wb$worksheets[[sheet_id]]$sheet_data$cc)
 
   # create artificial cc for the missing cells
-  x <- create_char_dataframe(n = length(new_cells), colnames = nms)
-  x$r     <- new_cells
-  x$row_r <- cdigit(new_cells)
-  x$c_r   <- cdigit(new_cells, reverse = TRUE)
+  x <- cell_to_info_df(new_cells)
 
-  x <- cbind(key = as.numeric(x$row_r) * 16384L + col2int(x$c_r), x)
+  other_cols <- setdiff(cc_names, names(x))
+  for (col in other_cols) {
+    x[[col]] <- ""
+  }
+
+  x <- x[cc_names]
 
   rows <- unique(x$row_r)
   cells_needed <- new_cells
@@ -425,7 +427,9 @@ write_data2 <- function(
     colnames = nms,
     n = nrow(data) * ncol(data)
   )
-  cc <- cbind(key = vector("numeric", length = nrow(data) * ncol(data)), cc)
+  cc$key <- vector("numeric", length = nrow(data) * ncol(data))
+
+  cc <- cc[c("key", setdiff(names(cc), "key"))]
 
   sel <- which(dc == openxlsx2_celltype[["logical"]])
   for (i in sel) {
