@@ -8920,9 +8920,8 @@ wbWorkbook <- R6::R6Class(
       dims <- unlist(did, use.names = FALSE)
 
 
-      sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
-      cc <- sd[sel, c("r", "c_s")]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -8996,9 +8995,8 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
-      cc <- sd[sel, c("r", "c_s")]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -9103,9 +9101,8 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
-      cc <- sd[sel, c("r", "c_s")]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       if (!is.null(numfmt) && inherits(numfmt, "character")) {
@@ -9210,9 +9207,8 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r)
-      cc <- sd[sel, c("r", "c_s")]
+      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
+      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       for (style in styles) {
@@ -9303,8 +9299,7 @@ wbWorkbook <- R6::R6Class(
       # in openxlsx2 < 1.19
       # sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
       # in 1.19 switched to match, but the match result was unsorted
-      sd <- self$worksheets[[sheet]]$sheet_data$cc
-      sel <- sort(match_cell_r(dims[dims != ""], sd$r, sd$row_r, sd$c_r))
+      sel <- sort(match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r))
 
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
 
@@ -10743,12 +10738,19 @@ wbWorkbook <- R6::R6Class(
 
         exp_cells <- unlist(need_cells, use.names = FALSE)
         exp_cells <- exp_cells[!is.na(exp_cells) & exp_cells != ""]
-        got_cells <- self$worksheets[[sheet]]$sheet_data$cc$r
 
-        missing_cells <- setdiff(exp_cells, got_cells)
+        cc <- self$worksheets[[sheet]]$sheet_data$cc
 
-        if (length(missing_cells) > 0) {
-          self <- initialize_cell(self, sheet = sheet, new_cells = missing_cells)
+        exp_row <- cdigit(exp_cells, as_integer = TRUE)
+        exp_col <- cdigit(exp_cells, reverse = TRUE)
+        exp_key <- as.numeric(exp_row) * 16384L + col2int(exp_col)
+
+        got_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
+
+        miss_idx <- which(!(exp_key %in% got_key))
+
+        if (length(miss_idx) > 0L) {
+          self <- initialize_cell(self, sheet = sheet, new_cells = exp_cells[miss_idx])
         }
 
         if (keep) return(exp_cells)

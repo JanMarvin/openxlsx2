@@ -57,8 +57,8 @@ inner_update <- function(
     # create missing cells
     cc_missing <- create_char_dataframe(names(cc), length(missing_cells))
     cc_missing$r     <- missing_cells
-    cc_missing$row_r <- gsub("[[:upper:]]", "", cc_missing$r)
-    cc_missing$c_r   <- gsub("[[:digit:]]", "", cc_missing$r)
+    cc_missing$row_r <- cdigit(cc_missing$r)
+    cc_missing$c_r   <- cdigit(cc_missing$r, reverse = TRUE)
 
     # assign to cc
     cc <- rbind(cc, cc_missing)
@@ -165,8 +165,8 @@ initialize_cell <- function(wb, sheet, new_cells) {
   # create artificial cc for the missing cells
   x <- create_char_dataframe(n = length(new_cells), colnames = nms)
   x$r     <- new_cells
-  x$row_r <- gsub("[[:upper:]]", "", new_cells)
-  x$c_r   <- gsub("[[:digit:]]", "", new_cells)
+  x$row_r <- cdigit(new_cells)
+  x$c_r   <- cdigit(new_cells, reverse = TRUE)
 
   rows <- unique(x$row_r)
   cells_needed <- new_cells
