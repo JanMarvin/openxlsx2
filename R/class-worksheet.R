@@ -1,4 +1,3 @@
-
 # class -------------------------------------------------------------------
 
 #' R6 class for a Workbook Worksheet
@@ -623,7 +622,7 @@ wbWorksheet <- R6::R6Class(
         cols <- colnames(ddims)
 
         dims <- unlist(ddims, use.names = FALSE)
-        sel <- cc$r %in% dims
+        sel <- cc$key %in% cell_to_key(dims)
       }
 
       # TODO remaining things

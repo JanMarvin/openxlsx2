@@ -97,14 +97,14 @@ inner_update <- function(
     replacementX  <- replacement[-which(replacement == "c_s")]
   }
 
-  sel <- match(x$r, cc$r)
+  sel <- match(x$key, cc$key)
 
   # to avoid bricking the worksheet, we make sure that we do not overwrite the
   # reference cell of a shared formula. To be on the save side, we replace all
   # values with the formula. If the entire cc is replaced with x, we can skip.
   if (!all(cc$f_attr == "")) {
     ff <- rbindlist(xml_attr(paste0("<f ", cc$f_attr, "/>"), "f"))
-    if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$r %in% x$r)) {
+    if (length(sf <- ff$si[sel & ff$t[sel] == "shared" & ff$ref[sel] != ""]) && !all(cc$key %in% x$key)) {
 
       # collect all the shared formulas that we have to convert
       sel_fsi <- ff$si %in% unique(sf)

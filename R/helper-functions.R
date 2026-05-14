@@ -1492,9 +1492,9 @@ shared_as_fml <- function(cc, cc_shared) {
   cc_shared$f_si   <- NULL
 
   # reduce and assign
-  cc_shared <- cc_shared[which(cc_shared$r %in% cc$r), ]
+  cc_shared <- cc_shared[which(cc_shared$key %in% cc$key), ]
 
-  cc[match(cc_shared$r, cc$r), names(cc_shared)] <- cc_shared
+  cc[match(cc_shared$key, cc$key), names(cc_shared)] <- cc_shared
   cc
 }
 

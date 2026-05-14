@@ -4290,7 +4290,7 @@ wbWorkbook <- R6::R6Class(
       # initialize dims we write to as empty cells
       private$do_cell_init(sheet, to_dims)
 
-      to_cc <- cc[match(from_dims, cc$r), ]
+      to_cc <- cc[match(cell_to_key(from_dims), cc$key), ]
       from_cells <- to_cc$r
 
       to_cc[c("r", "row_r", "c_r")] <- data.frame(
@@ -4299,6 +4299,8 @@ wbWorkbook <- R6::R6Class(
         c_r   = int2col(col2int(to_dims_f)),
         stringsAsFactors = FALSE
       )
+      # r/row_r/c_r were just rewritten to the destination; key must follow
+      to_cc$key <- cell_to_key(to_dims_f)
 
       if (as_ref) {
         from_sheet_name <- self$get_sheet_names(escape = TRUE)[[from_sheet]]
@@ -4306,11 +4308,12 @@ wbWorkbook <- R6::R6Class(
         to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_dims)
       }
 
-      # uninitialized cells are NA_character_
-      to_cc[is.na(to_cc)] <- ""
+      # uninitialized cells are NA_character_ (key is numeric and already set)
+      char_cols <- setdiff(names(to_cc), "key")
+      to_cc[char_cols][is.na(to_cc[char_cols])] <- ""
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc[match(to_dims_f, cc$r), ] <- to_cc
+      cc[match(cell_to_key(to_dims_f), cc$key), ] <- to_cc
 
       self$worksheets[[sheet]]$sheet_data$cc <- cc
 
@@ -8920,8 +8923,9 @@ wbWorkbook <- R6::R6Class(
       dims <- unlist(did, use.names = FALSE)
 
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -8995,8 +8999,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
@@ -9101,8 +9106,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       if (!is.null(numfmt) && inherits(numfmt, "character")) {
@@ -9207,8 +9213,9 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
       dims <- private$do_cell_init(sheet, dims, keep = TRUE)
 
-      sel <- match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r)
-      cc <- self$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
+      sel <- match(cell_to_key(dims[dims != ""]), sd$key)
+      cc <- sd[sel, c("r", "c_s")]
       styles <- unique(cc[["c_s"]])
 
       for (style in styles) {
@@ -9258,24 +9265,26 @@ wbWorkbook <- R6::R6Class(
         dims <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
 
-      # We need to return a cell style, even if the cell is not part of the
-      # workbook. Since we need to return the values in the corret order, we
-      # initiate a cell, if needed. Because the initiation of a cell alters the
-      # workbook, we do it on a clone.
       wanted_dims <- unlist(dims, use.names = FALSE)
-      need_dims   <- wanted_dims[!wanted_dims %in% self$worksheets[[sheet]]$sheet_data$cc$r]
-      if (length(need_dims)) # could be enough to pass wanted_dims
-        temp <- self$clone()$.__enclos_env__$private$do_cell_init(sheet, need_dims)
-      else
-        temp <- self
+      wanted_dims <- wanted_dims[!is.na(wanted_dims) & wanted_dims != ""]
+      sd <- self$worksheets[[sheet]]$sheet_data$cc
 
-      sel <- temp$worksheets[[sheet]]$sheet_data$cc$r %in% wanted_dims
+      # Match wanted cells against cc via the numeric key. Cells not yet in cc
+      # would have been given c_s == "" by do_cell_init (the default-style
+      # sentinel); we produce that directly instead of cloning the whole
+      # workbook just to materialize defaults.
+      w_key <- cell_to_key(wanted_dims)
+      hit <- match(w_key, sd$key)
 
-      sty <- temp$worksheets[[sheet]]$sheet_data$cc[sel, c("r", "c_s")]
+      cs <- rep_len("", length(wanted_dims))
+      present <- !is.na(hit)
+      cs[present] <- sd$c_s[hit[present]]
 
-      x <- sty$c_s
-      names(x) <- sty$r
-      x
+      # Original returned cells in cc's (row, col) order; preserve that.
+      ord <- order(w_key)
+      cs <- cs[ord]
+      names(cs) <- wanted_dims[ord]
+      cs
     },
 
     #' @description set sheet style
@@ -9299,7 +9308,7 @@ wbWorkbook <- R6::R6Class(
       # in openxlsx2 < 1.19
       # sel <- self$worksheets[[sheet]]$sheet_data$cc$r %in% dims
       # in 1.19 switched to match, but the match result was unsorted
-      sel <- sort(match(dims[dims != ""], self$worksheets[[sheet]]$sheet_data$cc$r))
+      sel <- sort(match(cell_to_key(dims[dims != ""]), self$worksheets[[sheet]]$sheet_data$cc$key))
 
       self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
 
@@ -9333,7 +9342,7 @@ wbWorkbook <- R6::R6Class(
         cells <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
         cc    <- self$worksheets[[sheet]]$sheet_data$cc
 
-        cells <- cells[!cells %in% cc$r]
+        cells <- cells[!cell_to_key(cells) %in% cc$key]
         if (length(cells) > 0) {
           # TODO can we use do_row_init()?
           private$do_cell_init(sheet, dims)
@@ -10225,8 +10234,7 @@ wbWorkbook <- R6::R6Class(
               # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
               cc <- cc[cc$row_r %in% cc_rows, ]
 
-              sort_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
-              ws$sheet_data$cc <- cc[order(sort_key), ]
+              ws$sheet_data$cc <- cc[order(cc$key), ]
               rm(cc)
             } else {
               ws$sheet_data$row_attr <- NULL
@@ -10745,9 +10753,7 @@ wbWorkbook <- R6::R6Class(
         exp_col <- cdigit(exp_cells, reverse = TRUE)
         exp_key <- as.numeric(exp_row) * 16384L + col2int(exp_col)
 
-        got_key <- as.numeric(cc$row_r) * 16384L + col2int(cc$c_r)
-
-        miss_idx <- which(!(exp_key %in% got_key))
+        miss_idx <- which(!(exp_key %in% cc$key))
 
         if (length(miss_idx) > 0L) {
           self <- initialize_cell(self, sheet = sheet, new_cells = exp_cells[miss_idx])

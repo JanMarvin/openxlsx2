@@ -380,6 +380,15 @@ style_is_posix <- function(cellXfs, numfmt_date) {
   z
 }
 
+# Convert a vector of cell addresses ("B17") to the numeric cc$key value
+# (row * 16384 + col). Mirrors how key is built in load_workbook.cpp,
+# wide_to_long() and write.R. row * 16384 exceeds int32 for rows > ~131k,
+# so the row part is promoted to double before the multiplication.
+cell_to_key <- function(x) {
+  if (length(x) == 0L) return(numeric(0))
+  as.numeric(row2int(x)) * 16384L + col2int(x)
+}
+
 #' check if style is hms. internal function
 #'
 #' @param cellXfs cellXfs xml nodes
