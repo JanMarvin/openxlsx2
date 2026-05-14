@@ -228,7 +228,7 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
     // Use Rcpp::String only where needed for correct UTF-8 handling (e.g., cell content).
 
     // Core attributes (usually simple ASCII, safe with direct assignment)
-    if (!Rcpp::NumericVector::is_na(x[ii].key))     key[i]    = x[ii].key;
+    key[i]    = x[ii].key;
     if (!x[ii].r.empty())      r[i]      = x[ii].r;
     if (!x[ii].row_r.empty())  row_r[i]  = x[ii].row_r;
     if (!x[ii].c_r.empty())    c_r[i]    = x[ii].c_r;
