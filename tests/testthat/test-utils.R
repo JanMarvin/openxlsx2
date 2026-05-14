@@ -952,3 +952,10 @@ test_that("exists_local() works", {
 
   expect_silent(wb$add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5))
 })
+
+test_that("assert_class() no longer slows down wb_dims()", {
+  df <- data.frame(matrix(rnorm(1e5 * 25), 1e6, 25))
+  exp <- "A2:A1000001"
+  got <- wb_dims(x = df, cols = "X1")
+  expect_equal(got, exp)
+})

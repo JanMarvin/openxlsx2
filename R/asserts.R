@@ -1,13 +1,15 @@
 # Use arg_nm to override the default name of the argument in case of an error message.
 assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL, envir = parent.frame(), arg_nm = NULL) {
 
-  sx <- as.character(substitute(x, envir))
-  if (length(sx) == 0 || !is.null(arg_nm)) {
-    sx <- arg_nm %||% "argument"
-  }
+  missing_x <- tryCatch({ force(x); FALSE }, # nolint
+                        error = function(e) grepl("missing", conditionMessage(e), fixed = TRUE))
 
-  if (missing(x)) {
-    stop("input ", sx, " is missing", call. = FALSE)
+  if (missing_x) {
+    nm <- arg_nm %||% {
+      sx <- substitute(x, envir)
+      if (is.symbol(sx) || is.call(sx)) deparse(sx, nlines = 1L) else "argument"
+    }
+    stop("input ", nm, " is missing", call. = FALSE)
   }
 
   ok <- if (all) {
@@ -17,16 +19,20 @@ assert_class <- function(x, class, or_null = FALSE, all = FALSE, package = NULL,
   }
 
   if (!is.null(package)) {
-    ok <- ok & isTRUE(attr(class(x), "package") == package)
+    ok <- ok && isTRUE(attr(class(x), "package") == package)
   }
 
   if (or_null) {
-    ok <- ok | is.null(x)
-    class <- c(class, "null")
+    ok <- ok || is.null(x)
   }
 
   if (!ok) {
-    msg <- sprintf("%s must be class %s", sx, paste(class, collapse = " or "))
+    nm <- arg_nm %||% {
+      sx <- substitute(x, envir)
+      if (is.symbol(sx) || is.call(sx)) deparse(sx, nlines = 1L) else "argument"
+    }
+    cls <- if (or_null) c(class, "null") else class
+    msg <- sprintf("%s must be class %s", nm, paste(cls, collapse = " or "))
     stop(simpleError(msg))
   }
 
