@@ -1793,15 +1793,17 @@ wb_load <- function(
             print(nri)
 
           for (j in seq_along(wb$worksheets)) {
-            if (any(sel <- grepl(paste0(nri$name_id, collapse = "|"), wb$worksheets[[j]]$sheet_data$cc$f))) {
-              wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
-                stringi::stri_replace_all_fixed(
-                  wb$worksheets[[j]]$sheet_data$cc$f[sel],
-                  nri$name_id,
-                  nri$name,
-                  vectorize_all = FALSE
-                )
+            cc <- wb$worksheets[[j]]$sheet_data$cc
+            if (any(sel <- grepl(paste0(nri$name_id, collapse = "|"), cc$f))) {
+              cc$f[sel] <- stringi::stri_replace_all_fixed(
+                cc$f[sel],
+                nri$name_id,
+                nri$name,
+                vectorize_all = FALSE
+              )
+              wb$worksheets[[j]]$sheet_data$cc <- cc
             }
+            rm(cc)
 
 
             if (!wb$is_chartsheet[[j]])
@@ -1829,11 +1831,12 @@ wb_load <- function(
             print(tri)
 
           for (j in seq_along(wb$worksheets)) {
-            if (any(sel <- grepl(paste0(tri$name_id, collapse = "|"), wb$worksheets[[j]]$sheet_data$cc$f))) {
+            cc <- wb$worksheets[[j]]$sheet_data$cc
+            if (any(sel <- grepl(paste0(tri$name_id, collapse = "|"), cc$f))) {
 
               for (i in seq_len(nrow(tri))) {
 
-                sel <- grepl(paste0(tri$name_id, collapse = "|"), wb$worksheets[[j]]$sheet_data$cc$f)
+                sel <- grepl(paste0(tri$name_id, collapse = "|"), cc$f)
 
                 from_xlsb <- c(tri$name_id[i], paste0("[openxlsx2col_", tri$id[i], "_", seq_along(unlist(tri$vars[i])) - 1L, "]"))
                 to_xlsx   <- c(tri$tab_name[i], paste0("[", unlist(tri$vars[i]), "]"))
@@ -1847,13 +1850,12 @@ wb_load <- function(
                     vectorize_all = FALSE
                   )
 
-                wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
-                  stringi::stri_replace_all_fixed(
-                    wb$worksheets[[j]]$sheet_data$cc$f[sel],
-                    from_xlsb,
-                    to_xlsx,
-                    vectorize_all = FALSE
-                  )
+                cc$f[sel] <- stringi::stri_replace_all_fixed(
+                  cc$f[sel],
+                  from_xlsb,
+                  to_xlsx,
+                  vectorize_all = FALSE
+                )
 
                 wb$workbook$definedNames <-
                   stringi::stri_replace_all_fixed(
@@ -1863,22 +1865,26 @@ wb_load <- function(
                     vectorize_all = FALSE
                   )
               }
+              wb$worksheets[[j]]$sheet_data$cc <- cc
             }
+            rm(cc)
           }
 
         }
 
         # this might be terribly slow!
         for (j in seq_along(wb$worksheets)) {
-          if (any(sel <- wb$worksheets[[j]]$sheet_data$cc$f != "")) {
-            wb$worksheets[[j]]$sheet_data$cc$f[sel] <-
-              stringi::stri_replace_all_fixed(
-                wb$worksheets[[j]]$sheet_data$cc$f[sel],
-                xti$name_id,
-                xti$sheets,
-                vectorize_all = FALSE
-              )
+          cc <- wb$worksheets[[j]]$sheet_data$cc
+          if (any(sel <- cc$f != "")) {
+            cc$f[sel] <- stringi::stri_replace_all_fixed(
+              cc$f[sel],
+              xti$name_id,
+              xti$sheets,
+              vectorize_all = FALSE
+            )
+            wb$worksheets[[j]]$sheet_data$cc <- cc
           }
+          rm(cc)
         }
       }
     }

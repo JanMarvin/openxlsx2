@@ -10774,7 +10774,9 @@ wbWorkbook <- R6::R6Class(
     set_cell_style_sel = function(sheet, sel, styid) {
       sheet <- private$get_sheet_index(sheet)
       sel <- sort(sel[!is.na(sel)])
-      self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      cc$c_s[sel] <- styid
+      self$worksheets[[sheet]]$sheet_data$cc <- cc
       invisible(self)
     },
 
