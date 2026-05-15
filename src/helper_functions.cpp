@@ -842,7 +842,7 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
     SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(n));
   }
 
-  Rcpp::IntegerVector rvec = Rcpp::IntegerVector::create(NA_INTEGER, n);
+  Rcpp::IntegerVector rvec = Rcpp::IntegerVector::create(NA_INTEGER, -n);
 
   // 3. Create a data.frame
   df.attr("row.names") = rvec;

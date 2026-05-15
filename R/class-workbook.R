@@ -10244,25 +10244,42 @@ wbWorkbook <- R6::R6Class(
             # are available and in the correct order
             if (!is.null(ws$sheet_data$cc)) {
 
-              ws$sheet_data$cc$r <- with(
-                ws$sheet_data$cc,
-                stringi::stri_join(c_r, row_r)
-              )
               cc <- ws$sheet_data$cc
-              # prepare data for output
+
+              # r is maintained in sync with c_r/row_r/key by every mutation
+              # path (wide_to_long, inner_update, copy-cells). Rebuilding it
+              # on every save was a 16M-element stri_join + full-cc copy
+              # defending against an inconsistency that, if it existed, would
+              # also break cc$key and the entire styling lookup -- so it can't
+              # be present here in isolation. Trust the invariant.
 
               # there can be files, where row_attr is incomplete because a row
               # is lacking any attributes (presumably was added before saving)
               # still row_attr is what we want!
 
               rows_attr <- ws$sheet_data$row_attr
-              ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
+              ra_num <- suppressWarnings(as.numeric(rows_attr[, "r"]))
+              if (anyNA(ra_num) || is.unsorted(ra_num)) {
+                ws$sheet_data$row_attr <- rows_attr[order(ra_num), ]
+              } else {
+                ws$sheet_data$row_attr <- rows_attr
+              }
 
               cc_rows <- ws$sheet_data$row_attr$r
-              # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
-              cc <- cc[cc$row_r %in% cc_rows, ]
+              # Drop any cc rows whose row is not in row_attr. In a clean
+              # workbook this is a no-op; the check was added as a failsafe
+              # for files where mutation paths produced a mismatch. If this
+              # actually fires, the upstream that left cc and row_attr out of
+              # sync is the real bug.
+              mismatched <- !cc$row_r %in% cc_rows
+              if (any(mismatched)) {
+                cc <- cc[!mismatched, ]
+              }
 
-              ws$sheet_data$cc <- cc[order(cc$key), ]
+              # cc is kept sorted by key by every mutation path; verify cheaply
+              # instead of unconditionally copying the full frame.
+              if (is.unsorted(cc$key)) cc <- cc[order(cc$key), ]
+              ws$sheet_data$cc <- cc
               rm(cc)
             } else {
               ws$sheet_data$row_attr <- NULL
