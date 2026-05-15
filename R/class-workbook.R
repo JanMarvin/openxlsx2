@@ -4287,8 +4287,10 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      # initialize dims we write to as empty cells
-      private$do_cell_init(sheet, to_dims)
+      # initialize dims we write to as empty cells; keep the resolved cc
+      # indices for the final assignment below (was a separate match against
+      # the full cc$key column)
+      to_sel <- private$do_cell_init(sheet, to_dims, return_sel = TRUE)
 
       to_cc <- cc[match(cell_to_key(from_dims), cc$key), ]
       from_cells <- to_cc$r
@@ -4313,7 +4315,7 @@ wbWorkbook <- R6::R6Class(
       to_cc[char_cols][is.na(to_cc[char_cols])] <- ""
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc[match(cell_to_key(to_dims_f), cc$key), ] <- to_cc
+      cc[to_sel, ] <- to_cc
 
       self$worksheets[[sheet]]$sheet_data$cc <- cc
 
@@ -8802,7 +8804,20 @@ wbWorkbook <- R6::R6Class(
 
       df    <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims = dims, df = df)
+      # Resolve all cells once to cc indices. apply_logic is called up to 9
+      # times for the same df (corners, edges, middle); each used to call
+      # self$set_cell_style with addresses, re-keying and re-matching the full
+      # cc$key column on every call.
+      cell_sel <- private$do_cell_init(sheet, dims = dims, df = df, return_sel = TRUE)
+      # cell_sel is in the order of unlist(df, use.names = FALSE) minus the
+      # NA / "" entries that do_cell_init drops. df from dims_to_dataframe with
+      # fill = TRUE contains no NA, but may contain "" for sparse ranges; build
+      # an index array of the same shape as df so we can subset by row/col.
+      df_flat <- unlist(df, use.names = FALSE)
+      sel_full <- rep_len(NA_integer_, length(df_flat))
+      keep <- !is.na(df_flat) & df_flat != ""
+      sel_full[keep] <- cell_sel
+      sel_mat <- matrix(sel_full, nrow = nrow(df), ncol = ncol(df))
 
       smp   <- random_string()
       nr    <- nrow(df)
@@ -8811,6 +8826,9 @@ wbWorkbook <- R6::R6Class(
       apply_logic <- function(row_idx, col_idx, tag) {
         target_dims <- as.character(unlist(df[row_idx, col_idx]))
         if (length(target_dims) == 0) return(NULL)
+
+        target_sel <- as.integer(sel_mat[row_idx, col_idx])
+        target_sel <- target_sel[!is.na(target_sel)]
 
         xf_prev <- get_cell_styles(self, sheet, target_dims)
 
@@ -8852,7 +8870,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         self$styles_mgr$add(xf_new, xf_new)
-        self$set_cell_style(sheet, target_dims, self$styles_mgr$get_xf_id(xf_new))
+        private$set_cell_style_sel(sheet, target_sel, self$styles_mgr$get_xf_id(xf_new))
       }
 
       rows_mid <- if (nr > 2) 2:(nr - 1) else integer(0)
@@ -10221,35 +10239,62 @@ wbWorkbook <- R6::R6Class(
           prior <- ws$get_prior_sheet_data()
           post <-  ws$get_post_sheet_data()
 
-          if (use_pugixml_export) {
-            # failsaves. check that all rows and cells
-            # are available and in the correct order
-            if (!is.null(ws$sheet_data$cc)) {
+          # failsafe: keep row_attr sorted and cc aligned + sorted before
+          # handing to either writer. Every legitimate mutation path already
+          # maintains these invariants, so the checks are no-ops in the
+          # common case; the work only runs if something upstream left state
+          # dirty. Previously this only ran for the pugixml export path.
+          if (!is.null(ws$sheet_data$cc)) {
 
-              ws$sheet_data$cc$r <- with(
-                ws$sheet_data$cc,
-                stringi::stri_join(c_r, row_r)
-              )
-              cc <- ws$sheet_data$cc
-              # prepare data for output
+            # Extract once, mutate locally, push back at the end. R6 field
+            # assignment is expensive even when the value is unchanged, so
+            # avoid touching ws$sheet_data$* unless something actually
+            # changed.
+            cc        <- ws$sheet_data$cc
+            rows_attr <- ws$sheet_data$row_attr
 
-              # there can be files, where row_attr is incomplete because a row
-              # is lacking any attributes (presumably was added before saving)
-              # still row_attr is what we want!
+            # r is maintained in sync with c_r/row_r/key by every mutation
+            # path (wide_to_long, inner_update, copy-cells). Rebuilding it
+            # on every save was a 16M-element stri_join + full-cc copy
+            # defending against an inconsistency that, if it existed, would
+            # also break cc$key and the entire styling lookup -- so it can't
+            # be present here in isolation. Trust the invariant.
 
-              rows_attr <- ws$sheet_data$row_attr
-              ws$sheet_data$row_attr <- rows_attr[order(as.numeric(rows_attr[, "r"])), ]
-
-              cc_rows <- ws$sheet_data$row_attr$r
-              # c("row_r", "c_r",  "r", "v", "c_t", "c_s", "c_cm", "c_ph", "c_vm", "f", "f_attr", "is")
-              cc <- cc[cc$row_r %in% cc_rows, ]
-
-              ws$sheet_data$cc <- cc[order(cc$key), ]
-              rm(cc)
-            } else {
-              ws$sheet_data$row_attr <- NULL
-              ws$sheet_data$cc <- NULL
+            # there can be files, where row_attr is incomplete because a row
+            # is lacking any attributes (presumably was added before saving)
+            # still row_attr is what we want!
+            ra_num <- suppressWarnings(as.numeric(rows_attr[, "r"]))
+            if (anyNA(ra_num) || is.unsorted(ra_num)) {
+              rows_attr <- rows_attr[order(ra_num), ]
+              ws$sheet_data$row_attr <- rows_attr
             }
+
+            cc_rows <- rows_attr$r
+            cc_dirty <- FALSE
+
+            # Drop any cc rows whose row is not in row_attr. In a clean
+            # workbook this is a no-op; the check was added as a failsafe
+            # for files where mutation paths produced a mismatch. If this
+            # actually fires, the upstream that left cc and row_attr out of
+            # sync is the real bug.
+            mismatched <- !cc$row_r %in% cc_rows
+            if (any(mismatched)) {
+              cc <- cc[!mismatched, ]
+              cc_dirty <- TRUE
+            }
+
+            # cc is kept sorted by key by every mutation path; verify cheaply
+            # instead of unconditionally copying the full frame.
+            if (is.unsorted(cc$key)) {
+              cc <- cc[order(cc$key), ]
+              cc_dirty <- TRUE
+            }
+
+            if (cc_dirty) ws$sheet_data$cc <- cc
+            rm(cc, rows_attr)
+          } else {
+            ws$sheet_data$row_attr <- NULL
+            ws$sheet_data$cc <- NULL
           }
 
           ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
@@ -10729,7 +10774,9 @@ wbWorkbook <- R6::R6Class(
     set_cell_style_sel = function(sheet, sel, styid) {
       sheet <- private$get_sheet_index(sheet)
       sel <- sort(sel[!is.na(sel)])
-      self$worksheets[[sheet]]$sheet_data$cc$c_s[sel] <- styid
+      cc <- self$worksheets[[sheet]]$sheet_data$cc
+      cc$c_s[sel] <- styid
+      self$worksheets[[sheet]]$sheet_data$cc <- cc
       invisible(self)
     },
 
