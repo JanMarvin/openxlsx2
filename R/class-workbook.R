@@ -10239,52 +10239,62 @@ wbWorkbook <- R6::R6Class(
           prior <- ws$get_prior_sheet_data()
           post <-  ws$get_post_sheet_data()
 
-          if (use_pugixml_export) {
-            # failsaves. check that all rows and cells
-            # are available and in the correct order
-            if (!is.null(ws$sheet_data$cc)) {
+          # failsafe: keep row_attr sorted and cc aligned + sorted before
+          # handing to either writer. Every legitimate mutation path already
+          # maintains these invariants, so the checks are no-ops in the
+          # common case; the work only runs if something upstream left state
+          # dirty. Previously this only ran for the pugixml export path.
+          if (!is.null(ws$sheet_data$cc)) {
 
-              cc <- ws$sheet_data$cc
+            # Extract once, mutate locally, push back at the end. R6 field
+            # assignment is expensive even when the value is unchanged, so
+            # avoid touching ws$sheet_data$* unless something actually
+            # changed.
+            cc        <- ws$sheet_data$cc
+            rows_attr <- ws$sheet_data$row_attr
 
-              # r is maintained in sync with c_r/row_r/key by every mutation
-              # path (wide_to_long, inner_update, copy-cells). Rebuilding it
-              # on every save was a 16M-element stri_join + full-cc copy
-              # defending against an inconsistency that, if it existed, would
-              # also break cc$key and the entire styling lookup -- so it can't
-              # be present here in isolation. Trust the invariant.
+            # r is maintained in sync with c_r/row_r/key by every mutation
+            # path (wide_to_long, inner_update, copy-cells). Rebuilding it
+            # on every save was a 16M-element stri_join + full-cc copy
+            # defending against an inconsistency that, if it existed, would
+            # also break cc$key and the entire styling lookup -- so it can't
+            # be present here in isolation. Trust the invariant.
 
-              # there can be files, where row_attr is incomplete because a row
-              # is lacking any attributes (presumably was added before saving)
-              # still row_attr is what we want!
-
-              rows_attr <- ws$sheet_data$row_attr
-              ra_num <- suppressWarnings(as.numeric(rows_attr[, "r"]))
-              if (anyNA(ra_num) || is.unsorted(ra_num)) {
-                ws$sheet_data$row_attr <- rows_attr[order(ra_num), ]
-              } else {
-                ws$sheet_data$row_attr <- rows_attr
-              }
-
-              cc_rows <- ws$sheet_data$row_attr$r
-              # Drop any cc rows whose row is not in row_attr. In a clean
-              # workbook this is a no-op; the check was added as a failsafe
-              # for files where mutation paths produced a mismatch. If this
-              # actually fires, the upstream that left cc and row_attr out of
-              # sync is the real bug.
-              mismatched <- !cc$row_r %in% cc_rows
-              if (any(mismatched)) {
-                cc <- cc[!mismatched, ]
-              }
-
-              # cc is kept sorted by key by every mutation path; verify cheaply
-              # instead of unconditionally copying the full frame.
-              if (is.unsorted(cc$key)) cc <- cc[order(cc$key), ]
-              ws$sheet_data$cc <- cc
-              rm(cc)
-            } else {
-              ws$sheet_data$row_attr <- NULL
-              ws$sheet_data$cc <- NULL
+            # there can be files, where row_attr is incomplete because a row
+            # is lacking any attributes (presumably was added before saving)
+            # still row_attr is what we want!
+            ra_num <- suppressWarnings(as.numeric(rows_attr[, "r"]))
+            if (anyNA(ra_num) || is.unsorted(ra_num)) {
+              rows_attr <- rows_attr[order(ra_num), ]
+              ws$sheet_data$row_attr <- rows_attr
             }
+
+            cc_rows <- rows_attr$r
+            cc_dirty <- FALSE
+
+            # Drop any cc rows whose row is not in row_attr. In a clean
+            # workbook this is a no-op; the check was added as a failsafe
+            # for files where mutation paths produced a mismatch. If this
+            # actually fires, the upstream that left cc and row_attr out of
+            # sync is the real bug.
+            mismatched <- !cc$row_r %in% cc_rows
+            if (any(mismatched)) {
+              cc <- cc[!mismatched, ]
+              cc_dirty <- TRUE
+            }
+
+            # cc is kept sorted by key by every mutation path; verify cheaply
+            # instead of unconditionally copying the full frame.
+            if (is.unsorted(cc$key)) {
+              cc <- cc[order(cc$key), ]
+              cc_dirty <- TRUE
+            }
+
+            if (cc_dirty) ws$sheet_data$cc <- cc
+            rm(cc, rows_attr)
+          } else {
+            ws$sheet_data$row_attr <- NULL
+            ws$sheet_data$cc <- NULL
           }
 
           ws_file <- file.path(xlworksheetsDir, sprintf("sheet%s.xml", i))
