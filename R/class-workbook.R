@@ -4287,8 +4287,10 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      # initialize dims we write to as empty cells
-      private$do_cell_init(sheet, to_dims)
+      # initialize dims we write to as empty cells; keep the resolved cc
+      # indices for the final assignment below (was a separate match against
+      # the full cc$key column)
+      to_sel <- private$do_cell_init(sheet, to_dims, return_sel = TRUE)
 
       to_cc <- cc[match(cell_to_key(from_dims), cc$key), ]
       from_cells <- to_cc$r
@@ -4313,7 +4315,7 @@ wbWorkbook <- R6::R6Class(
       to_cc[char_cols][is.na(to_cc[char_cols])] <- ""
 
       cc <- self$worksheets[[sheet]]$sheet_data$cc
-      cc[match(cell_to_key(to_dims_f), cc$key), ] <- to_cc
+      cc[to_sel, ] <- to_cc
 
       self$worksheets[[sheet]]$sheet_data$cc <- cc
 
@@ -8802,7 +8804,20 @@ wbWorkbook <- R6::R6Class(
 
       df    <- dims_to_dataframe(dims, fill = TRUE)
       sheet <- private$get_sheet_index(sheet)
-      private$do_cell_init(sheet, dims = dims, df = df)
+      # Resolve all cells once to cc indices. apply_logic is called up to 9
+      # times for the same df (corners, edges, middle); each used to call
+      # self$set_cell_style with addresses, re-keying and re-matching the full
+      # cc$key column on every call.
+      cell_sel <- private$do_cell_init(sheet, dims = dims, df = df, return_sel = TRUE)
+      # cell_sel is in the order of unlist(df, use.names = FALSE) minus the
+      # NA / "" entries that do_cell_init drops. df from dims_to_dataframe with
+      # fill = TRUE contains no NA, but may contain "" for sparse ranges; build
+      # an index array of the same shape as df so we can subset by row/col.
+      df_flat <- unlist(df, use.names = FALSE)
+      sel_full <- rep_len(NA_integer_, length(df_flat))
+      keep <- !is.na(df_flat) & df_flat != ""
+      sel_full[keep] <- cell_sel
+      sel_mat <- matrix(sel_full, nrow = nrow(df), ncol = ncol(df))
 
       smp   <- random_string()
       nr    <- nrow(df)
@@ -8811,6 +8826,9 @@ wbWorkbook <- R6::R6Class(
       apply_logic <- function(row_idx, col_idx, tag) {
         target_dims <- as.character(unlist(df[row_idx, col_idx]))
         if (length(target_dims) == 0) return(NULL)
+
+        target_sel <- as.integer(sel_mat[row_idx, col_idx])
+        target_sel <- target_sel[!is.na(target_sel)]
 
         xf_prev <- get_cell_styles(self, sheet, target_dims)
 
@@ -8852,7 +8870,7 @@ wbWorkbook <- R6::R6Class(
         }
 
         self$styles_mgr$add(xf_new, xf_new)
-        self$set_cell_style(sheet, target_dims, self$styles_mgr$get_xf_id(xf_new))
+        private$set_cell_style_sel(sheet, target_sel, self$styles_mgr$get_xf_id(xf_new))
       }
 
       rows_mid <- if (nr > 2) 2:(nr - 1) else integer(0)
