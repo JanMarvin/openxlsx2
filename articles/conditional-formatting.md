@@ -1,10 +1,12 @@
 # Add conditional formatting to a workbook
 
 ``` r
+
 library(openxlsx2)
 ```
 
 ``` r
+
 wb <- wb_workbook()
 wb$add_dxfs_style(name = "negStyle", font_color = wb_color(hex = "FF9C0006"), bg_fill = wb_color(hex = "FFFFC7CE"))
 wb$add_dxfs_style(name = "posStyle", font_color = wb_color(hex = "FF006100"), bg_fill = wb_color(hex = "FFC6EFCE"))
@@ -17,6 +19,7 @@ wb$add_dxfs_style(name = "posStyle", font_color = wb_color(hex = "FF006100"), bg
 Basic conditional formatting
 
 ``` r
+
 wb$add_worksheet("cellIs")
 wb$add_data("cellIs", -5:5)
 wb$add_data("cellIs", LETTERS[1:11], start_col = 2)
@@ -41,6 +44,7 @@ wb$add_conditional_formatting(
 Moving row conditional formatting
 
 ``` r
+
 wb$add_worksheet("Moving Row")
 wb$add_data("Moving Row", -5:5)
 wb$add_data("Moving Row", LETTERS[1:11], start_col = 2)
@@ -65,6 +69,7 @@ wb$add_conditional_formatting(
 Moving column conditional formatting
 
 ``` r
+
 wb$add_worksheet("Moving Col")
 wb$add_data("Moving Col", -5:5)
 wb$add_data("Moving Col", LETTERS[1:11], start_col = 2)
@@ -91,6 +96,7 @@ Dependent conditional formatting
 ### Highlight entire range cols X rows dependent only on cell A1
 
 ``` r
+
 wb$add_worksheet("Dependent on")
 wb$add_data("Dependent on", -5:5)
 wb$add_data("Dependent on", LETTERS[1:11], start_col = 2)
@@ -111,6 +117,7 @@ wb$add_conditional_formatting(
 ### Highlight cells in column 1 based on value in column 2
 
 ``` r
+
 wb$add_data("Dependent on", data.frame(x = 1:10, y = runif(10)), startRow = 15)
 wb$add_conditional_formatting(
   "Dependent on",
@@ -133,6 +140,7 @@ wb$add_conditional_formatting(
 Duplicated conditional formatting
 
 ``` r
+
 wb$add_worksheet("Duplicates")
 wb$add_data("Duplicates", sample(LETTERS[1:15], size = 10, replace = TRUE))
 wb$add_conditional_formatting(
@@ -149,6 +157,7 @@ wb$add_conditional_formatting(
 Contains text conditional formatting
 
 ``` r
+
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 wb$add_worksheet("containsText")
 wb$add_data("containsText", sapply(1:10, fn))
@@ -167,6 +176,7 @@ wb$add_conditional_formatting(
 Not contains text conditional formatting
 
 ``` r
+
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 my_dat <- sapply(1:10, fn)
 
@@ -187,6 +197,7 @@ wb$add_conditional_formatting(
 Begins with conditional formatting
 
 ``` r
+
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 wb$add_worksheet("beginsWith")
 wb$add_data("beginsWith", sapply(1:100, fn))
@@ -205,6 +216,7 @@ wb$add_conditional_formatting(
 Ends with conditional formatting
 
 ``` r
+
 fn <- function(x) paste(sample(LETTERS, 10), collapse = "-")
 wb$add_worksheet("endsWith")
 wb$add_data("endsWith", x = sapply(1:100, fn))
@@ -224,6 +236,7 @@ image\_)](img/cf_color_scale.jpg)
 Colorscale conditional formatting (*Yep, that is a color scale image*)
 
 ``` r
+
 df <- read_xlsx("https://github.com/JanMarvin/openxlsx-data/raw/main/readTest.xlsx", sheet = 5)
 wb$add_worksheet("colorScale", zoom = 30)
 wb$add_data(x = df, col_names = FALSE) ## write data.frame
@@ -235,6 +248,7 @@ Rule is a vector or colors of length 2 or 3 (any hex color or any of
 style or L.
 
 ``` r
+
 wb$add_conditional_formatting(
   sheet = "colorScale",
   dims = wb_dims(
@@ -257,6 +271,7 @@ wb$set_row_heights("colorScale", rows = seq_len(nrow(df)), heights = 7.5)
 Databar conditional formatting
 
 ``` r
+
 wb$add_worksheet("databar")
 ## Databars
 wb$add_data("databar", -5:5, start_col = 1)
@@ -335,6 +350,7 @@ Between conditional formatting
 Highlight cells in interval \[-2, 2\]
 
 ``` r
+
 wb$add_worksheet("between")
 wb$add_data("between", -5:5)
 wb$add_conditional_formatting(
@@ -353,12 +369,14 @@ wb$add_worksheet("topN")
 Top n conditional formatting
 
 ``` r
+
 wb$add_data("topN", data.frame(x = 1:10, y = sample(1:100, 10)))
 ```
 
 Highlight top 5 values in column `x`
 
 ``` r
+
 wb$add_conditional_formatting(
   "topN",
   dims = wb_dims(rows = 2:11, cols = 1),
@@ -371,6 +389,7 @@ wb$add_conditional_formatting(
 Highlight top 20 percentage in column `y`
 
 ``` r
+
 wb$add_conditional_formatting(
   "topN",
   dims = wb_dims(rows = 2:11, cols = 2),
@@ -388,12 +407,14 @@ wb$add_worksheet("bottomN")
 Bottom n conditional formatting
 
 ``` r
+
 wb$add_data("bottomN", data.frame(x = 1:10, y = sample(1:100, 10)))
 ```
 
 Highlight bottom 5 values in column `x`
 
 ``` r
+
 wb$add_conditional_formatting(
   "bottomN",
   dims = wb_dims(rows = 2:11, cols = 1),
@@ -406,6 +427,7 @@ wb$add_conditional_formatting(
 Highlight bottom 20 percentage in column y
 
 ``` r
+
 wb$add_conditional_formatting(
   "bottomN",
   cols = 2,
@@ -430,6 +452,7 @@ Logical operators conditional formatting
 You can use logical Operators in spreadsheet formulas
 
 ``` r
+
 wb$add_data("logical operators", 1:10)
 wb$add_conditional_formatting(
   "logical operators",

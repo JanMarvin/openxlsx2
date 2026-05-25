@@ -21,12 +21,14 @@ First let’s assume that you have a working installation of `openxlsx2`
 otherwise run the lines below to install the latest CRAN release:
 
 ``` r
+
 install.packages("openxlsx2")
 ```
 
 Now we load the library:
 
 ``` r
+
 library(openxlsx2)
 ```
 
@@ -40,6 +42,7 @@ spreadsheet file is allowed to carry. Therefore if you have a file that
 you want to work with, you can load it with:
 
 ``` r
+
 wb <- wb_load("your_file.xlsx")
 ```
 
@@ -55,11 +58,12 @@ and
 [`wb_add_data()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_data.md).
 The wrapper functions are piped together using the native `R` pipe
 operator `|>`, but similarly you can use the classic `magrittr` pipe
-operator `%>%`. [¹](#fn1) We assume that you have a dataset `your_data`,
+operator `%>%`. [^1] We assume that you have a dataset `your_data`,
 either a vector, a matrix or a data frame and want to write this in a
 worksheet:
 
 ``` r
+
 wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_data(x = your_data)
 ```
 
@@ -73,12 +77,14 @@ Let’s try this with actual data. We use the `mtcars` dataset. In the
 code we switch the fictional `your_data` with `mtcars`:
 
 ``` r
+
 wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_data(x = mtcars)
 ```
 
 Let’s see what the output looks like:
 
 ``` r
+
 wb
 #> A Workbook object.
 #>  
@@ -101,6 +107,7 @@ the same worksheet. Basically the current sheet is updated whenever a
 new worksheet is added to the workbook.
 
 ``` r
+
 wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_worksheet() |> wb_add_data(x = mtcars)
 ```
 
@@ -108,6 +115,7 @@ This will create two sheets `"Sheet 1"` and `"Sheet 2"` and the data
 will be written to the second sheet.
 
 ``` r
+
 wb
 #> A Workbook object.
 #>  
@@ -128,6 +136,7 @@ which are mere aliases for
 So lets have a look at the top of the output:
 
 ``` r
+
 wb |> wb_to_df() |> head()
 #> sheet found, but contains no data
 #> NULL
@@ -138,6 +147,7 @@ Ah! The output is on the second sheet. We need either `sheet = 2` or
 index position and their name might differ.
 
 ``` r
+
 wb |> wb_to_df(sheet = "Sheet 2") |> head()
 #>    mpg cyl disp  hp drat    wt  qsec vs am gear carb
 #> 2 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
@@ -153,6 +163,7 @@ successfully read from the workbook. Now you want to export the workbook
 to a file:
 
 ``` r
+
 wb |> wb_save(file = "my_first_worksheet.xlsx")
 ```
 
@@ -160,12 +171,14 @@ Alternatively you can directly open it in a spreadsheet software (if you
 have one installed):
 
 ``` r
+
 wb |> wb_open()
 ```
 
 Once again, lets try this with the `USPersonalExpenditure` dataset:
 
 ``` r
+
 wb <- wb_workbook()
 wb_add_worksheet(wb, sheet = "USexp")
 wb_add_data(wb, "USexp", USPersonalExpenditure)
@@ -180,6 +193,7 @@ effect. Wrapper functions do not alter the workbook objects they are
 executed on. You can check that the workbook has no worksheets:
 
 ``` r
+
 wb |> wb_get_sheet_names()
 #> named character(0)
 ```
@@ -188,6 +202,7 @@ Once we assign a sheet, this changes, and the data was correctly
 written:
 
 ``` r
+
 wb <- wb_workbook()
 wb <- wb_add_worksheet(wb, sheet = "USexp")
 wb <- wb_add_data(wb, "USexp", USPersonalExpenditure)
@@ -212,6 +227,7 @@ function of the same name without the prefix. So our data writing
 example from above can be written as:
 
 ``` r
+
 wb <- wb_workbook()$add_worksheet("USexp")$add_data(x = USPersonalExpenditure)
 wb$to_df()
 #>     1940   1945  1950 1955  1960
@@ -240,6 +256,7 @@ place.
 Importing a file into a workbook looks like this:
 
 ``` r
+
 # the file we are going to load
 file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 # loading the file into the workbook
@@ -276,6 +293,7 @@ which will create an xlsx file. This file can be tweaked further. See
 to see all the options. (further explanation and examples will follow).
 
 ``` r
+
 write_xlsx(x = mtcars, file = "mtcars.xlsx")
 ```
 
@@ -291,6 +309,7 @@ existing file. Of course, on Windows, files that are locked (for
 example, if they were opened by another process) will not be replaced.
 
 ``` r
+
 # replace the existing file
 wb$save("mtcars.xlsx")
 
@@ -308,6 +327,7 @@ rather simple in the first few columns it might get confusing after the
 26. Therefore we provide a wrapper to construct it:
 
 ``` r
+
 # various options
 wb_dims(from_row = 4)
 #> [1] "A4"
@@ -406,11 +426,10 @@ memory efficiency), and by all means use other ways to store data
 improve, so if you have found a way to improve what we are currently
 doing, please let us know and open an issue or a pull request.
 
-------------------------------------------------------------------------
-
-1.  Basically a pipe operator allows to write code from left to right.
+[^1]: Basically a pipe operator allows to write code from left to right.
     Without pipes the code would look like this:
 
     ``` downlit
+
     wb <- wb_add_data(wb_add_worksheet(wb_workbook()), x = your_data)
     ```

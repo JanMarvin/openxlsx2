@@ -23,6 +23,7 @@ We begin with the `openxlsx2_example.xlsx` file by telling R where to
 find this file on our system
 
 ``` r
+
 file <- system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2")
 ```
 
@@ -30,6 +31,7 @@ The object contains a path to the xlsx file and we pass this file to our
 function to read the workbook into R
 
 ``` r
+
 # import workbook
 library(openxlsx2)
 wb_to_df(file)
@@ -63,6 +65,7 @@ for the data frame. This is the default behavior, but not always wanted
 or expected. Therefore this behavior can be disabled by the user.
 
 ``` r
+
 # do not convert first row to column names
 wb_to_df(file, col_names = FALSE)
 #>        B    C  D     E     F          G            H       I        J
@@ -89,6 +92,7 @@ a case we provide an option to disable the date conversion entirely. In
 this case the underlying numerical value will be returned.
 
 ``` r
+
 # do not try to identify dates in the data
 wb_to_df(file, detect_dates = FALSE)
 #>     Var1 Var2 <NA>  Var3  Var4  Var5         Var6    Var7       Var8
@@ -114,6 +118,7 @@ functions to see what is going on in the sheet. Using `show_formula`
 this is possible
 
 ``` r
+
 # return the underlying spreadsheet formula instead of their values
 wb_to_df(file, show_formula = TRUE)
 #>     Var1 Var2 <NA>  Var3  Var4       Var5         Var6            Var7     Var8
@@ -137,6 +142,7 @@ consists of either a specific cell like “A1” or a cell range in the
 notion used in the openxml standard
 
 ``` r
+
 # read dimension without column names
 wb_to_df(file, dims = "A2:C5", col_names = FALSE)
 #>    A    B    C
@@ -154,6 +160,7 @@ in[`?wb_dims`](https://janmarvin.github.io/openxlsx2/reference/wb_dims.md)
 for more details.
 
 ``` r
+
 # read dimension without column names with `wb_dims()`
 wb_to_df(file, dims = wb_dims(rows = 2:5, cols = 1:3), col_names = FALSE)
 #>    A    B    C
@@ -169,6 +176,7 @@ If you do not want to read a specific cell, but a cell range you can use
 the column attribute. This attribute takes a numeric vector as argument
 
 ``` r
+
 # read selected cols
 wb_to_df(file, cols = c("A:B", "G"))
 #>    <NA>  Var1       Var5
@@ -189,6 +197,7 @@ wb_to_df(file, cols = c("A:B", "G"))
 The same goes with rows. You can select them using numeric vectors
 
 ``` r
+
 # read selected rows
 wb_to_df(file, rows = c(2, 4, 6))
 #>    Var1 Var2 <NA>  Var3  Var4       Var5 Var6 Var7     Var8
@@ -211,6 +220,7 @@ created warnings. In such a case you can look at the raw input data. If
 you want to disable date detection as well, please see the entry above.
 
 ``` r
+
 # convert characters to numerics and date (logical too?)
 wb_to_df(file, convert = FALSE)
 #>     Var1 Var2 <NA>  Var3  Var4       Var5         Var6    Var7     Var8
@@ -239,6 +249,7 @@ removed after the conversion and are removed only if they are completely
 empty
 
 ``` r
+
 # erase empty rows from dataset
 tail(wb_to_df(file, sheet = 1, skip_empty_rows = TRUE))
 #>     Var1 Var2 <NA> Var3  Var4       Var5 Var6 Var7     Var8
@@ -255,6 +266,7 @@ tail(wb_to_df(file, sheet = 1, skip_empty_rows = TRUE))
 The same for columns
 
 ``` r
+
 # erase empty cols from dataset
 wb_to_df(file, skip_empty_cols = TRUE)
 #>     Var1 Var2  Var3  Var4       Var5         Var6    Var7     Var8
@@ -276,6 +288,7 @@ Sometimes the data source might provide rownames as well. In such a case
 you can tell `openxlsx2` to treat the first column as rowname
 
 ``` r
+
 # convert first row to rownames
 wb_to_df(file, sheet = 2, dims = "C6:G9", row_names = TRUE)
 #>                mpg cyl disp  hp
@@ -291,6 +304,7 @@ worksheet, this can be provided via types. This parameter takes a named
 numeric. `0` is character, `1` is numeric and `2` is date
 
 ``` r
+
 # define type of the data.frame
 wb_to_df(file, cols = c(2, 5), types = c("Var1" = 0, "Var3" = 1))
 #>     Var1   Var3
@@ -314,6 +328,7 @@ To define the row where to begin reading, define it via the `start_row`
 parameter
 
 ``` r
+
 # start in row 5
 wb_to_df(file, start_row = 5, col_names = FALSE)
 #>        B  C  D      E     F          G  H       I        J
@@ -334,6 +349,7 @@ missing values and other values we are not interested. Such strings can
 be passed as character vector via `na`
 
 ``` r
+
 # na strings
 wb_to_df(file, na = "")
 #>     Var1 Var2 <NA>  Var3  Var4       Var5         Var6    Var7     Var8

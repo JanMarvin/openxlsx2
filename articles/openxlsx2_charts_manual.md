@@ -8,6 +8,7 @@ either the default `R` `graphics` functions like
 [`barplot()`](https://rdrr.io/r/graphics/barplot.html) and `grDevices`,
 or with the packages [ggplot2](https://ggplot2.tidyverse.org),
 [rvg](https://ardata-fr.github.io/officeverse/) or
+[encharter](https://janmarvin.github.io/encharter/) and
 [mschart](https://ardata-fr.github.io/officeverse/). There are plenty of
 other manuals that cover using these better than we could ever tell you
 to.
@@ -15,7 +16,8 @@ to.
 ## 
 
 ``` r
-library(openxlsx2) # openxlsx2 >= 0.4 for mschart and rvg support
+
+library(openxlsx2) # openxlsx2 >= 1.26 for enharter support
 
 ## create a workbook
 wb <- wb_workbook()
@@ -28,6 +30,7 @@ and save the output and pass it to the worksheet with
 [`wb_add_image()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_image.md).
 
 ``` r
+
 myplot <- tempfile(fileext = ".jpg")
 jpeg(myplot)
 print(plot(AirPassengers))
@@ -48,6 +51,7 @@ afterwards use
 [`wb_add_plot()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_plot.md).
 
 ``` r
+
 if (requireNamespace("ggplot2")) {
 
 library(ggplot2)
@@ -78,6 +82,7 @@ device comes in handy. You can pass the output via
 [`wb_add_drawing()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_drawing.md).
 
 ``` r
+
 if (requireNamespace("ggplot2") && requireNamespace("rvg")) {
 
 library(rvg)
@@ -105,26 +110,90 @@ wb$add_worksheet("add_drawing")$
 #> "sans". Use gdtools::font_family_exists() to check availability.
 ```
 
-### Add `{mschart}` plots
-
-If you want native open xml charts, have a look at
-[mschart](https://ardata-fr.github.io/officeverse/). Create one of the
-chart files and pass it to the workbook with
-[`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.md).
-There are two options possible. 1. Either the default
-[mschart](https://ardata-fr.github.io/officeverse/) output identical to
-the one in [officer](https://ardata-fr.github.io/officeverse/). Passing
-a data object and let
-[mschart](https://ardata-fr.github.io/officeverse/) prepare the data. In
-this case
-[`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.md)
-will add a new data region. 2. Passing a
-[`wb_data()`](https://janmarvin.github.io/openxlsx2/reference/wb_data.md)
-object to [mschart](https://ardata-fr.github.io/officeverse/). This
-object contains references to the data on the worksheet and allows using
-data “as is”.
+### Adding `{encharter}` plots
 
 ``` r
+
+if (requireNamespace("encharter")) {
+library(encharter)
+
+df_bar <- data.frame(
+  Product = c("Software", "Services", "Hardware", "Support"),
+  Q1      = c(310, 195, 140, 85),
+  Q2      = c(340, 210, 130, 90),
+  Q3      = c(375, 225, 125, 95),
+  Q4      = c(420, 250, 120, 105)
+)
+
+wb <- wb_add_worksheet(wb, "add_encharter", grid_lines = FALSE)
+wb <- wb_add_data_table(
+  wb, sheet = "add_encharter", x = df_bar,
+  dims = "A1", table_style = "TableStyleMedium2"
+)
+wb <- wb_set_col_widths(wb, sheet = "add_encharter", cols = 1:5, widths = c(12, 8, 8, 8, 8))
+wb_df <- wb_data(wb)
+
+chart <- ec("barChart")
+chart$set_chart_title("Quarterly Revenue by Product (EUR k)", bold = TRUE)
+chart$set_y_axis(min = 0, format = "#,##0", grid_lines = TRUE, grid_color = "EEEEEE")
+
+colors    <- c("2E4057", "048A81", "E84855", "F4A261")
+quarters  <- c("Q1", "Q2", "Q3", "Q4")
+cols      <- c("B",  "C",  "D",  "E")
+variables <- names(wb_df)
+for (i in seq_along(quarters)) {
+  chart$add_series(
+    name   = variables[i + 1L],
+    label  = variables[1L],
+    data   = wb_df,
+    color  = colors[i]
+  )
+}
+
+chart$set_legend_style(pos = "bottom")
+
+wb <- wb_add_encharter(wb, sheet = "add_encharter", graph = chart, dims = "G1:P18")
+}
+#> Loading required namespace: encharter
+```
+
+A broad selection of potential chart types available to
+[encharter](https://janmarvin.github.io/encharter/) \[@encharter\] can
+be found in the project homepage:
+<https://github.com/JanMarvin/encharter> and in its examples folder. The
+package was created specifically to support various chart types in
+`openxlsx2`. This includes combo charts, as well as several chart
+features such as trend lines, secondary axis and modern spreadsheet
+charts such as Box and Whisker charts. The package supports the
+`openxlsx2` functions
+[`wb_color()`](https://janmarvin.github.io/openxlsx2/reference/wb_color.md)
+and
+[`fmt_txt()`](https://janmarvin.github.io/openxlsx2/reference/fmt_txt.md)
+to tweak colors and text.
+
+#### Add and fill a chartsheet
+
+Finally it is possible to add `encharter` objects into chartsheets.
+These are special sheets that contain only a chart object, referencing
+data from another sheet.
+
+``` r
+
+# add chartsheet
+wb <- wb |>
+  wb_add_chartsheet() |>
+  wb_add_encharter(graph = chart)
+```
+
+### Add `{mschart}` plots
+
+Support for the [mschart](https://ardata-fr.github.io/officeverse/)
+package provides functionality to add charts that can be used with
+spreadsheets. This might be useful for users of the
+[officer](https://ardata-fr.github.io/officeverse/) package.
+
+``` r
+
 if (requireNamespace("mschart")) {
 
 library(mschart) # mschart >= 0.4 for openxlsx2 support
@@ -138,55 +207,6 @@ mylc <- ms_linechart(
 )
 
 wb$add_worksheet("add_mschart")$add_mschart(dims = "A10:G25", graph = mylc)
-
-
-## create chart referencing worksheet cells as input
-# write data starting at B2
-wb$add_worksheet("add_mschart - wb_data")$
-  add_data(x = mtcars, dims = "B2")$
-  add_data(x = data.frame(name = rownames(mtcars)), dims = "A2")
-
-# create wb_data object this will tell this mschart
-# from this PR to create a file corresponding to openxlsx2
-dat <- wb_data(wb, dims = "A2:G10")
-
-# create a few mscharts
-scatter_plot <- ms_scatterchart(
-  data = dat,
-  x = "mpg",
-  y = c("disp", "hp")
-)
-
-bar_plot <- ms_barchart(
-  data = dat,
-  x = "name",
-  y = c("disp", "hp")
-)
-
-area_plot <- ms_areachart(
-  data = dat,
-  x = "name",
-  y = c("disp", "hp")
-)
-
-line_plot <- ms_linechart(
-  data = dat,
-  x = "name",
-  y = c("disp", "hp"),
-  labels = c("disp", "hp")
-)
-
-# add the charts to the data
-wb$
-  add_mschart(dims = "F4:L20", graph = scatter_plot)$
-  add_mschart(dims = "F21:L37", graph = bar_plot)$
-  add_mschart(dims = "M4:S20", graph = area_plot)$
-  add_mschart(dims = "M21:S37", graph = line_plot)
-
-# add chartsheet
-wb$
-  add_chartsheet()$
-  add_mschart(graph = scatter_plot)
 }
 #> Loading required namespace: mschart
 #> 
