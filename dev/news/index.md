@@ -4,6 +4,16 @@
 
 ### Fixes
 
+- Build vignette if `encharter` is not available.
+
+------------------------------------------------------------------------
+
+## openxlsx2 1.27
+
+CRAN release: 2026-05-25
+
+### Fixes
+
 - [`wb_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_dims.md)
   no longer slows down when called with large data frames.
   [\#1624](https://github.com/JanMarvin/openxlsx2/pull/1624)
