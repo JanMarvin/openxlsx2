@@ -55,36 +55,11 @@ enum celltype {
   CELLTYPE_MAX  // always the last
 };
 
-// Forward declaration of wrap specialization before Rcpp.h
-namespace Rcpp {
-template <>
-SEXP wrap(const vec_string& x);
-}
-
-// check for 1.0.8.0
 #if RCPP_DEV_VERSION >= 1000800
 #include <Rcpp/Lightest>
 #else
 #include <Rcpp.h>
 #endif
-
-// custom wrap function
-// Converts the imported values from c++ std::vector<xml_col> to an R vector.
-namespace Rcpp {
-
-template <>
-inline SEXP wrap(const vec_string& x) {
-  R_xlen_t n = static_cast<R_xlen_t>(x.size());
-  Rcpp::CharacterVector z(n);
-
-  for (R_xlen_t i = 0; i < n; ++i) {
-    z[i] = Rcpp::String(x[static_cast<size_t>(i)]);
-  }
-
-  return z;
-}
-
-}  // namespace Rcpp
 
 inline void xml_col::clear() {
   key = NA_REAL;
