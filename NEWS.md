@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* Build vignette if `encharter` is not available.
+
+
+***************************************************************************
+
 # openxlsx2 1.27
 
 ## Fixes

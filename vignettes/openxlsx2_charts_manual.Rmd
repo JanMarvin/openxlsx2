@@ -145,10 +145,12 @@ A broad selection of potential chart types available to `{encharter}` [@encharte
 Finally it is possible to add `encharter` objects into chartsheets. These are special sheets that contain only a chart object, referencing data from another sheet.
 
 ```{r chartsheet}
+if (requireNamespace("encharter")) {
 # add chartsheet
 wb <- wb |>
   wb_add_chartsheet() |>
   wb_add_encharter(graph = chart)
+}
 ```
 
 
