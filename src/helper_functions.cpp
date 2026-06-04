@@ -1023,32 +1023,29 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
 
 // [[Rcpp::export]]
 Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
-  auto n = df_col.nrow();
+  int n    = df_col.nrow();
+  int ncol = df_col.ncol();
   Rcpp::CharacterVector z(n);
   Rcpp::CharacterVector attrnams = df_col.names();
 
-  for (auto i = 0; i < n; ++i) {
-    pugi::xml_document doc;
+  std::vector<Rcpp::CharacterVector> cols(static_cast<size_t>(ncol));
+  for (int j = 0; j < ncol; ++j)
+    cols[static_cast<size_t>(j)] = Rcpp::as<Rcpp::CharacterVector>(df_col[j]);
 
+  pugi::xml_document doc;
+  for (int i = 0; i < n; ++i) {
+    doc.reset();
     pugi::xml_node col = doc.append_child(name.c_str());
-
-    for (auto j = 0; j < df_col.ncol(); ++j) {
-      Rcpp::CharacterVector cv_s = "";
-      cv_s = Rcpp::as<Rcpp::CharacterVector>(df_col[j])[i];
-
-      // only write attributes where cv_s has a value
-      if (cv_s[0] != "") {
-        // Rf_PrintValue(cv_s);
-        const std::string val_strl = Rcpp::as<std::string>(cv_s);
-        col.append_attribute(attrnams[j]) = val_strl.c_str();
+    for (int j = 0; j < ncol; ++j) {
+      const Rcpp::String& s = cols[static_cast<size_t>(j)][i];
+      if (s != "") {
+        col.append_attribute(attrnams[j]) = std::string(s).c_str();
       }
     }
-
     xml_string_writer writer;
     doc.print(writer, " ", pugi::format_raw);
     z[i] = std::move(writer.result);
   }
-
   return z;
 }
 
