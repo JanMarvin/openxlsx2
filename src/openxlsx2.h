@@ -38,8 +38,9 @@ std::string txt_to_is(std::string txt, bool no_escapes, bool raw, bool skip_cont
 std::string txt_to_si(std::string txt, bool no_escapes, bool raw, bool skip_control);
 
 // helper function to access element from Rcpp::Character Vector as string
-inline std::string to_string(Rcpp::Vector<16>::Proxy x) {
-  return Rcpp::String(x);
+inline const char * to_cstring(Rcpp::Vector<16>::Proxy x) {
+  Rcpp::String tmp = Rcpp::String(x);
+  return tmp.get_cstring();
 }
 
 inline bool sexp_str_less(SEXP a, SEXP b) {
