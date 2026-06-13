@@ -150,7 +150,7 @@ void xml_sheet_data_slim(
           file << ">";
 
           const char* f_cstr = CHAR(STRING_ELT(cc_f, i));
-          file << to_string(cc_f[i]).c_str();
+          file << to_cstring(cc_f[i]);
           if (!f_si && std::strstr(f_cstr, "\"si\"=") != nullptr) f_si = true;
 
           file << "</f>";
@@ -170,14 +170,14 @@ void xml_sheet_data_slim(
             if (cc_c_t[i].empty() && cc_f_attr[i].empty())
               file << "<v>" << v_cstr << "</v>";
             else
-              file << "<v>" << to_string(cc_v[i]).c_str() << "</v>";
+              file << "<v>" << to_cstring(cc_v[i]) << "</v>";
           }
         }
 
         // <is><t> ... </t></is>
         if (std::strcmp(CHAR(STRING_ELT(cc_c_t, i)), "inlineStr") == 0) {
           if (!cc_is[i].empty()) {
-            file << to_string(cc_is[i]).c_str();
+            file << to_cstring(cc_is[i]);
           }
         }
 
@@ -385,7 +385,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
 
       // Add the content of <f>
       if (!cc_f[i].empty()) {
-        f.append_child(pugi::node_pcdata).set_value(to_string(cc_f[i]).c_str());
+        f.append_child(pugi::node_pcdata).set_value(to_cstring(cc_f[i]));
       }
     }
 
@@ -398,7 +398,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
         if (cc_c_t[i].empty() && cc_f_attr[i].empty())
           cell.append_child("v").append_child(pugi::node_pcdata).set_value(static_cast<const char*>(cc_v[i]));
         else
-          cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_string(cc_v[i]).c_str());
+          cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_cstring(cc_v[i]));
       }
     }
 
@@ -406,7 +406,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
     if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
       if (!cc_is[i].empty()) {
         pugi::xml_document is_node;
-        pugi::xml_parse_result result = is_node.load_string(to_string(cc_is[i]).c_str(), pugi_parse_flags);
+        pugi::xml_parse_result result = is_node.load_string(to_cstring(cc_is[i]), pugi_parse_flags);
         if (!result) Rcpp::stop("loading inlineStr node while writing failed");
 
         cell.append_copy(is_node.first_child());
