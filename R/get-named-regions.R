@@ -61,8 +61,7 @@ get_named_regions_tab <- function(wb) {
 
 #' @rdname named_region-wb
 #' @param tables Should included both data tables and named regions in the result?
-#' @param x Deprecated. Use `wb`. For workbook input use [wb_load()] to first load
-#'   the xlsx file as a workbook.
+#' @param builtins Logical if builtin named ranges should be included.
 #' @seealso [wb_get_tables()]
 #' @returns A data frame with the all named regions in `wb`. Or `NULL`, if none are found.
 #' @export
@@ -76,19 +75,7 @@ get_named_regions_tab <- function(wb) {
 #' wb1 <- wb_load(out_file)
 #' wb1$get_named_regions()
 #'
-wb_get_named_regions <- function(wb, tables = FALSE, x = NULL) {
-  # TODO merge this doc with wb_add_named_region
-  if (!is.null(x)) {
-    # Will only show up if the user named `x`
-    .Deprecated("wb", old = "x", msg = "Use `wb` instead in `wb_get_named_regions()`")
-
-    if (!missing(wb)) {
-      # if a user tries to provide both x and wb.
-      stop("x is a deprecated argument. Use wb instead. can't be supplied. Use `wb` only.")
-    }
-
-    wb <- x
-  }
+wb_get_named_regions <- function(wb, tables = FALSE, builtins = TRUE) {
 
   if (!inherits(wb, "wbWorkbook")) {
     if (getOption("openxlsx2.soon_deprecated", default = FALSE)) {
@@ -102,5 +89,5 @@ wb_get_named_regions <- function(wb, tables = FALSE, x = NULL) {
   }
 
   assert_workbook(wb)
-  wb$get_named_regions(tables = tables)
+  wb$get_named_regions(tables = tables, builtins = builtins)
 }

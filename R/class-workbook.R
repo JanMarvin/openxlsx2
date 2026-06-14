@@ -8577,12 +8577,9 @@ wbWorkbook <- R6::R6Class(
 
     #' @description get named regions in a workbook
     #' @param tables Return tables as well?
-    #' @param x Not used.
+    #' @param builtins Return builtins as well?
     #' @return A `data.frame` of named regions
-    get_named_regions = function(tables = FALSE, x = NULL) {
-      if (!is.null(x)) {
-        stop("x should not be provided to get_named_regions.", call. = FALSE)
-      }
+    get_named_regions = function(tables = FALSE, builtins = TRUE) {
       z <- NULL
 
       if (length(self$workbook$definedNames)) {
@@ -8600,8 +8597,14 @@ wbWorkbook <- R6::R6Class(
 
       }
 
+      if (!builtins && nrow(z)) {
+        sel <- grepl("_xlnm.", z$name, fixed = TRUE)
+        z <- z[!sel, ]
+      }
+
       z
     },
+
     #' @description remove a named region
     #' @param name name
     #' @return The `wbWorkbook` object
