@@ -1021,6 +1021,25 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, std::string vec_name, std
   return z;
 }
 
+static std::string unescape_xml(const char* s) {
+  std::string out;
+  out.reserve(std::strlen(s));
+  const char* p = s;
+  while (*p) {
+    if (*p == '&') {
+      if      (std::strncmp(p, "&amp;",  5) == 0) { out += '&';  p += 5; }
+      else if (std::strncmp(p, "&lt;",   4) == 0) { out += '<';  p += 4; }
+      else if (std::strncmp(p, "&gt;",   4) == 0) { out += '>';  p += 4; }
+      else if (std::strncmp(p, "&quot;", 6) == 0) { out += '"';  p += 6; }
+      else if (std::strncmp(p, "&apos;", 6) == 0) { out += '\''; p += 6; }
+      else { out += *p++; }
+    } else {
+      out += *p++;
+    }
+  }
+  return out;
+}
+
 // [[Rcpp::export]]
 Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
   R_xlen_t n    = df_col.nrow();
@@ -1040,7 +1059,11 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
       const Rcpp::String& s = cols[static_cast<size_t>(j)][i];
       const char* cs = s.get_cstring();
       if (cs[0] != '\0') {
-        col.append_attribute(attrnams[static_cast<int32_t>(j)]) = cs;
+        if (std::strchr(cs, '&')) {
+          col.append_attribute(attrnams[static_cast<int32_t>(j)]) = unescape_xml(cs).c_str();
+        } else {
+          col.append_attribute(attrnams[static_cast<int32_t>(j)]) = cs;
+        }
       }
     }
     xml_string_writer writer;

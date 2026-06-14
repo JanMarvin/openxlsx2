@@ -660,3 +660,25 @@ test_that("hashing passwords works", {
   expect_false(verifyPasswordSHA("openxlsx", stored_hash = hp$hash, stored_salt = hp$salt, stored_spin = hp$spin, stored_algo = hp$algo))
 
 })
+
+test_that("escaping hyperlinks works", {
+  df <- data.frame(
+    id  = c("A1", "A2"),
+    url = c(
+      "https://example.com/search?q=test&x=1",
+      "https://example.com/page?a=10&b=20"
+    )
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet("Sheet1")$
+    add_worksheet("Sheet2")$
+    add_data(sheet = "Sheet1", x = df["id"])$
+    add_hyperlink(sheet = "Sheet1", dims = wb_dims(rows = 2:3, cols = 1), target = df$url)$
+    add_data_table(sheet = "Sheet2", x = df["id"])
+
+  exp <- wb$worksheets_rels[[1]]
+  got <- df_to_xml("Relationship", rbindlist(xml_attr(exp, "Relationship"))[c("Id", "Type", "Target", "TargetMode")])
+  expect_identical(got, exp)
+
+})
