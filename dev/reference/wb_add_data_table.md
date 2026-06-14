@@ -197,7 +197,7 @@ string with one of the following functions for each variable:
 create a text input using a named character with name `text` like:
 `c(text = "Total")`. It's also possible to pass other spreadsheet
 software functions if they return a single value and hence `"SUM"` would
-work too.
+work too. Its also possible to provide a custom formula body.
 
 ## See also
 

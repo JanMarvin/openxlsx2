@@ -10,6 +10,9 @@
   were broken.
   [\#1636](https://github.com/JanMarvin/openxlsx2/pull/1636),
   [\#1637](https://github.com/JanMarvin/openxlsx2/pull/1637)
+- It is now possible to pass custom formula arguments to total rows when
+  writing data tables.
+  [\#1638](https://github.com/JanMarvin/openxlsx2/pull/1638)
 
 ------------------------------------------------------------------------
 
