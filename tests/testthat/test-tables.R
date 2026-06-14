@@ -359,3 +359,29 @@ test_that("removing multiple tables at once works", {
   wb$remove_tables(table = c("Table1", "Table2"))
   expect_true(all(wb$tables$tab_sheet == 0))
 })
+
+test_that("custom formulas in total rows work", {
+  coupe <- data.frame(
+    SURFACE = 1:10,
+    `2026` = c(NA, "x", NA, "x", NA, NA, "x", NA, NA, "x"),
+    `2027` = c("x", NA, NA, NA, "x", NA, NA, "x", NA, NA),
+    check.names = FALSE
+  )
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data_table(
+      table_name = "coupe",
+      x = coupe,
+      na = NULL,
+      total_row = c(
+        'sum',
+        'SUMIF(coupe[2026],\"<>\",coupe[SURFACE])',
+        'SUMIF(coupe[2027],\"<>\",coupe[SURFACE])'
+      )
+    )
+
+  exp <- c("SUMIF(coupe[2026],\"&lt;&gt;\",coupe[SURFACE])", "SUMIF(coupe[2027],\"&lt;&gt;\",coupe[SURFACE])")
+  got <- wb$worksheets[[1]]$sheet_data$cc[c(35, 36), "f"]
+  expect_identical(got, exp)
+})

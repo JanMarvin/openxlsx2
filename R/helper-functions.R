@@ -1271,7 +1271,8 @@ known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
         lbl[i] <- as_xml_attr(ttl[i])
       } else {
         # works, but in excel the formula is added to tables.xml as a child to the column
-        fml[i] <- paste0(ttl[i], "(", table, "[", nms_x[i], "])")
+        # if a formula with a body is provided, assume that the user knows what to expect
+        fml[i] <- ifelse(grepl("\\(", ttl[i]), ttl[i], paste0(ttl[i], "(", table, "[", nms_x[i], "])"))
         atr[i] <- "custom"
       }
 
