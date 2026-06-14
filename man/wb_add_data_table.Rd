@@ -138,7 +138,8 @@ with one of the following functions for each variable: \code{"average"},
 It is possible to leave the cell empty \code{"none"} or to create a text input
 using a named character with name \code{text} like: \code{c(text = "Total")}.
 It's also possible to pass other spreadsheet software functions if they
-return a single value and hence \code{"SUM"} would work too.
+return a single value and hence \code{"SUM"} would work too. Its also possible
+to provide a custom formula body.
 }
 
 \examples{
