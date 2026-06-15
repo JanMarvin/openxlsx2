@@ -33,7 +33,7 @@ wb_add_named_region(
 
 wb_remove_named_region(wb, sheet = current_sheet(), name = NULL)
 
-wb_get_named_regions(wb, tables = FALSE, x = NULL)
+wb_get_named_regions(wb, tables = FALSE, builtins = TRUE)
 ```
 
 ## Arguments
@@ -85,11 +85,9 @@ wb_get_named_regions(wb, tables = FALSE, x = NULL)
 
   Should included both data tables and named regions in the result?
 
-- x:
+- builtins:
 
-  Deprecated. Use `wb`. For workbook input use
-  [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md)
-  to first load the xlsx file as a workbook.
+  Logical if builtin named ranges should be included.
 
 ## Value
 

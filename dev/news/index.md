@@ -13,6 +13,14 @@
 - It is now possible to pass custom formula arguments to total rows when
   writing data tables.
   [\#1638](https://github.com/JanMarvin/openxlsx2/pull/1638)
+- Add `builtins` argument to
+  [`wb_get_named_regions()`](https://janmarvin.github.io/openxlsx2/dev/reference/named_region-wb.md).
+  [\#1639](https://github.com/JanMarvin/openxlsx2/pull/1639)
+
+### Breaking changes
+
+- Long deprecated argument `x` was removed from
+  [`wb_get_named_regions()`](https://janmarvin.github.io/openxlsx2/dev/reference/named_region-wb.md).
 
 ------------------------------------------------------------------------
 
