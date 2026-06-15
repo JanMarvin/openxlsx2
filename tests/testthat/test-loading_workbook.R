@@ -782,3 +782,25 @@ test_that("loading keeps every vmlDrawing.vml.rels (#1557 regression)", {
   expect_equal(count_vmlrels(tmp2), 3)
 
 })
+
+test_that("dangling pageSetup printerSettings r:id is dropped on load (#1640)", {
+
+  # worksheets in this file carry a pageSetup r:id pointing to printerSettings
+  # binary blobs. openxlsx2 intentionally does not keep those blobs, so the
+  # reference dangled and triggered a repair prompt on round-trip.
+  fl <- testfile_path("unemployment-nrw202208.xlsx")
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  has_rid <- function(wb) {
+    ps <- vapply(wb$worksheets, function(ws) paste0(ws$pageSetup, collapse = ""), NA_character_)
+    any(grepl("r:id", ps, fixed = TRUE))
+  }
+
+  wb <- wb_load(fl)
+  expect_false(has_rid(wb))
+
+  expect_silent(wb$save(tmp))
+  expect_false(has_rid(wb_load(tmp)))
+
+})

@@ -929,6 +929,12 @@ wb_load <- function(
         ws[[node]] <- xml_node(chartsheet_xml, "chartsheet", node)
       }
 
+      # printerSettings binary blobs are intentionally not kept (see the
+      # sheet rels handling below), so a pageSetup r:id would dangle and
+      # trigger a repair prompt in spreadsheet software. Drop the reference.
+      if (length(ws$pageSetup))
+        ws$pageSetup <- xml_attr_mod(ws$pageSetup, xml_attributes = c(`r:id` = ""))
+
     } else {
       worksheet_xml <- read_xml(sheets$target[i])
 
@@ -948,6 +954,12 @@ wb_load <- function(
         for (node in standard_nodes) {
           ws[[node]] <- xml_node(worksheet_xml, "worksheet", node)
         }
+
+        # printerSettings binary blobs are intentionally not kept (see the
+        # sheet rels handling below), so a pageSetup r:id would dangle and
+        # trigger a repair prompt in spreadsheet software. Drop the reference.
+        if (length(ws$pageSetup))
+          ws$pageSetup <- xml_attr_mod(ws$pageSetup, xml_attributes = c(`r:id` = ""))
 
         ws$colBreaks <- xml_node(worksheet_xml, "worksheet", "colBreaks", "brk")
         ws$rowBreaks <- xml_node(worksheet_xml, "worksheet", "rowBreaks", "brk")
