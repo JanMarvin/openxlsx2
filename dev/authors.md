@@ -66,6 +66,7 @@ Source:
     Moritz Lell
     Noam Ross
     olivroy
+    Paul Schmidt
     Philipp Schauberger
     Reinhold Kainhofer
     Renaud
