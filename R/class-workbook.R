@@ -247,6 +247,9 @@ wbWorkbook <- R6::R6Class(
     #' @field python python
     python = NULL,
 
+    #' @field diagrams diagrams
+    diagrams = NULL,
+
     #' @field webextensions webextensions
     webextensions = NULL,
 
@@ -3156,6 +3159,13 @@ wbWorkbook <- R6::R6Class(
             file.copy(fl, activeXRelsDir, overwrite = TRUE)
           else
             file.copy(fl, activeXDir, overwrite = TRUE)
+        }
+      }
+
+      if (length(self$diagrams)) {
+        diagramsDir     <- dir_create(tmpDir, "xl", "diagrams")
+        for (fl in self$diagrams) {
+            file.copy(fl, diagramsDir, overwrite = TRUE)
         }
       }
 

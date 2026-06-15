@@ -1,14 +1,17 @@
 # openxlsx2 (development version)
 
-## Fixes
+## New features
 
-* `wb_load()` no longer drops all but the last worksheet's `vmlDrawing*.vml.rels` on a load + save round-trip. The `wb$vml_rels` initialisation was inside the read loop and wiped on every iteration ([#1641](https://github.com/JanMarvin/openxlsx2/pull/1641), @SchmidtPaul).
+* Initial support for files with diagrams. [#1643](https://github.com/JanMarvin/openxlsx2/pull/1643)
+
+## Fixes
 
 * Build vignette if `encharter` is not available.
 * Enhanced `df_to_xml()` speed and prevented double-escaping of XML entities, resolving an issue where hyperlinks with ampersands (`&`) were broken. [#1636](https://github.com/JanMarvin/openxlsx2/pull/1636), [#1637](https://github.com/JanMarvin/openxlsx2/pull/1637)
 * It is now possible to pass custom formula arguments to total rows when writing data tables. [#1638](https://github.com/JanMarvin/openxlsx2/pull/1638)
 * Add `builtins` argument to `wb_get_named_regions()`. [#1639](https://github.com/JanMarvin/openxlsx2/pull/1639)
-* `wb_load()` now drops the `pageSetup` `r:id` reference pointing to the intentionally unshipped `printerSettings` binary blob, avoiding a dangling relationship that triggered a repair prompt on round-trip. [#1640](https://github.com/JanMarvin/openxlsx2/issues/1640)
+* `wb_load()` no longer drops all but the last worksheet's `vmlDrawing*.vml.rels` on a load + save round-trip. The `wb$vml_rels` initialisation was inside the read loop and wiped on every iteration ([#1641](https://github.com/JanMarvin/openxlsx2/pull/1641), @SchmidtPaul).
+* `wb_load()` now drops the `pageSetup` `r:id` reference pointing to the intentionally unshipped `printerSettings` binary blob, avoiding a dangling relationship that triggered a repair prompt on round-trip ([#1640](https://github.com/JanMarvin/openxlsx2/issues/1640), @SchmidtPaul)
 
 ## Breaking changes
 
