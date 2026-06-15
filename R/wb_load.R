@@ -1386,8 +1386,10 @@ wb_load <- function(
         wb$vml[vml_file] <- read_xml(vml, pointer = FALSE)
       }
 
-      for (vml_rel in vmlDrawingRelsXML) {
+      if (length(vmlDrawingRelsXML))
         wb$vml_rels <- rep(list(""), vml_len) # vector("list", vml_len)
+
+      for (vml_rel in vmlDrawingRelsXML) {
 
         vml_file <- cdigit(basename(vml_rel), as_integer = TRUE)
 
