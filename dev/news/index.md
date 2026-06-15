@@ -27,6 +27,12 @@
   [`wb_get_named_regions()`](https://janmarvin.github.io/openxlsx2/dev/reference/named_region-wb.md).
   [\#1639](https://github.com/JanMarvin/openxlsx2/pull/1639)
 
+- [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md)
+  now drops the `pageSetup` `r:id` reference pointing to the
+  intentionally unshipped `printerSettings` binary blob, avoiding a
+  dangling relationship that triggered a repair prompt on round-trip.
+  [\#1640](https://github.com/JanMarvin/openxlsx2/issues/1640)
+
 ### Breaking changes
 
 - Long deprecated argument `x` was removed from

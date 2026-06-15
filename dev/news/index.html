@@ -56,6 +56,7 @@
 <li><p>Enhanced <code>df_to_xml()</code> speed and prevented double-escaping of XML entities, resolving an issue where hyperlinks with ampersands (<code>&amp;</code>) were broken. <a href="https://github.com/JanMarvin/openxlsx2/pull/1636" class="external-link">#1636</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1637" class="external-link">#1637</a></p></li>
 <li><p>It is now possible to pass custom formula arguments to total rows when writing data tables. <a href="https://github.com/JanMarvin/openxlsx2/pull/1638" class="external-link">#1638</a></p></li>
 <li><p>Add <code>builtins</code> argument to <code><a href="../reference/named_region-wb.html">wb_get_named_regions()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1639" class="external-link">#1639</a></p></li>
+<li><p><code><a href="../reference/wb_load.html">wb_load()</a></code> now drops the <code>pageSetup</code> <code>r:id</code> reference pointing to the intentionally unshipped <code>printerSettings</code> binary blob, avoiding a dangling relationship that triggered a repair prompt on round-trip. <a href="https://github.com/JanMarvin/openxlsx2/issues/1640" class="external-link">#1640</a></p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
