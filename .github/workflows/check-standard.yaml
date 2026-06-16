@@ -49,11 +49,6 @@ jobs:
             ${{ (matrix.config.r == '4.1') && 'rvg=?source' || '' }}
           needs: check
 
-      - name: Install encharter
-        run: |
-          pak::pkg_install("JanMarvin/encharter")
-        shell: Rscript {0}
-
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true

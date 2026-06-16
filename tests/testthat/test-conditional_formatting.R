@@ -947,7 +947,7 @@ test_that("wb_conditional_formatting - data bar: `axisPosition` works as it shou
 test_that("create dxfs style without font family and size", {
 
   # a workbook with this style loads, but has no highlighting
-  exp <- "<dxf></dxf>"
+  exp <- "<dxf/>"
   got <- create_dxfs_style()
   expect_equal(exp, got)
 
