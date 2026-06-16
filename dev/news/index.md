@@ -39,6 +39,10 @@
 - Long deprecated argument `x` was removed from
   [`wb_get_named_regions()`](https://janmarvin.github.io/openxlsx2/dev/reference/named_region-wb.md).
 
+### Internal Changes
+
+- Bump `pugixml` to 1.16
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.27
