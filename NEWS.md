@@ -17,6 +17,10 @@
 
 * Long deprecated argument `x` was removed from `wb_get_named_regions()`.
 
+## Internal Changes
+
+* Bump `pugixml` to 1.16
+
 
 ***************************************************************************
 
