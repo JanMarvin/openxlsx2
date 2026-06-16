@@ -131,6 +131,10 @@ rather than `?wbWorkbook`).
 
   python
 
+- `diagrams`:
+
+  diagrams
+
 - `webextensions`:
 
   webextensions
