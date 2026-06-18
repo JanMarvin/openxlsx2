@@ -948,6 +948,30 @@ test_that("update font works", {
 
 })
 
+test_that("add_font(update=) handles a range spanning multiple cell styles", {
+
+  # B3 and B4 get different number formats, so the targeted range B3:B5 spans
+  # two distinct cell styles. The loop over styles must keep the numeric cell
+  # index intact across iterations (regression: the update= branch reused `sel`).
+  df <- data.frame(a = 1:5, b = c(1.1, 2.2, 3.3, 4.4, 5.5))
+  wb <- wb_workbook()$add_worksheet("S")
+  wb$add_data("S", df, start_row = 1)
+  wb$add_numfmt("S", dims = wb_dims(rows = 3, cols = 2), numfmt = "0.0")
+  wb$add_numfmt("S", dims = wb_dims(rows = 4, cols = 2), numfmt = "0.000")
+
+  expect_no_error(
+    wb$add_font("S", dims = wb_dims(rows = 3:5, cols = 2),
+                color = wb_color("A0A0A0"), update = "color")
+  )
+
+  # every targeted cell keeps its own base style and receives a style id
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  stys <- cc$c_s[cc$r %in% c("B3", "B4", "B5")]
+  expect_length(stys, 3)
+  expect_false(any(is.na(stys) | stys == ""))
+
+})
+
 test_that("adding bg_color and diagonal borders work", {
 
   wb <- wb_workbook()$

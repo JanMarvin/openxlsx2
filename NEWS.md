@@ -12,6 +12,7 @@
 * Add `builtins` argument to `wb_get_named_regions()`. [#1639](https://github.com/JanMarvin/openxlsx2/pull/1639)
 * `wb_load()` no longer drops all but the last worksheet's `vmlDrawing*.vml.rels` on a load + save round-trip. The `wb$vml_rels` initialisation was inside the read loop and wiped on every iteration ([#1641](https://github.com/JanMarvin/openxlsx2/pull/1641), @SchmidtPaul).
 * `wb_load()` now drops the `pageSetup` `r:id` reference pointing to the intentionally unshipped `printerSettings` binary blob, avoiding a dangling relationship that triggered a repair prompt on round-trip ([#1640](https://github.com/JanMarvin/openxlsx2/issues/1640), @SchmidtPaul)
+* `wb_add_font(update = )` no longer corrupts the worksheet when the targeted range spans two or more distinct cell styles. The loop over styles reused the `sel` variable for the font-element selector, clobbering the numeric cell index it also depends on (regression from [#1625](https://github.com/JanMarvin/openxlsx2/pull/1625), @SchmidtPaul).
 
 ## Breaking changes
 
