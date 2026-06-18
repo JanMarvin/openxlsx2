@@ -9090,7 +9090,9 @@ wbWorkbook <- R6::R6Class(
               underline = "u",
               vert_align = "vertAlign"
             )
-            sel <- font_properties[update]
+            # font-element selector: keep this separate from `sel`, which holds
+            # the numeric cell index reused as `dim_sel <- sel[...]` each iteration
+            font_sel <- font_properties[update]
 
             font_id  <- as.integer(vapply(xml_attr(xf_prev, "xf"), "[[", "fontId", FUN.VALUE = NA_character_)) + 1L
             font_xml <- self$styles_mgr$styles$fonts[[font_id]]
@@ -9100,15 +9102,15 @@ wbWorkbook <- R6::R6Class(
             new_font <- read_font(read_xml(new_font))
 
             # update elements
-            old_font[sel] <- new_font[sel]
+            old_font[font_sel] <- new_font[font_sel]
 
             # write as xml font
 
-            sel <- c(
+            font_sel <- c(
               "b", "i", "strike", "condense", "extend", "outline", "shadow",
               "u", "vertAlign", "sz", "color", "name", "family", "charset", "scheme"
             )
-            new_font <- write_font(old_font[sel])
+            new_font <- write_font(old_font[font_sel])
           }
 
           self$styles_mgr$add(new_font, new_font)
