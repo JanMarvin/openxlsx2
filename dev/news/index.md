@@ -33,6 +33,12 @@
   dangling relationship that triggered a repair prompt on round-trip
   ([\#1640](https://github.com/JanMarvin/openxlsx2/issues/1640),
   [@SchmidtPaul](https://github.com/SchmidtPaul))
+- `wb_add_font(update = )` no longer corrupts the worksheet when the
+  targeted range spans two or more distinct cell styles. The loop over
+  styles reused the `sel` variable for the font-element selector,
+  clobbering the numeric cell index it also depends on (regression from
+  [\#1625](https://github.com/JanMarvin/openxlsx2/pull/1625),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
 
 ### Breaking changes
 
