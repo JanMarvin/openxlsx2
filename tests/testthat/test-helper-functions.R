@@ -446,6 +446,19 @@ test_that("validate_colors() works", {
   expect_equal(got, exp)
 })
 
+test_that("wb_color() applies the alpha format only once (#1341)", {
+
+  # `name` is an alternative to `hex`; the format must be applied only once.
+  # Regression guard: both validate_color() calls used to fire, swapping the
+  # RGBA alpha a second time (blue: FF0000FF -> FFFF0000 = red).
+  expect_equal(wb_color(name = "blue", format = "RGBA")[["rgb"]], "FF0000FF")
+  expect_equal(wb_color(name = "red",  format = "RGBA")[["rgb"]], "FFFF0000")
+
+  # ARGB default and the hex= path stay correct (single swap)
+  expect_equal(wb_color(name = "blue")[["rgb"]], "FF0000FF")
+  expect_equal(wb_color(hex = "FF0000FF", format = "RGBA")[["rgb"]], "FFFF0000")
+})
+
 test_that("basename2() works", {
 
   long_path <- paste0(

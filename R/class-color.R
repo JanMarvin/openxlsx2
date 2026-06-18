@@ -73,8 +73,14 @@ wb_color <- function(
   ) {
   format <- match.arg(format)
 
-  if (!is.null(name)) hex <-  validate_color(name, format = format)
-  if (!is.null(hex))  hex <-  validate_color(hex, format = format)
+  # `name` and `hex` are alternative inputs: validate exactly once. If both
+  # branches ran, validate_color() would re-apply the RGBA alpha-swap to the
+  # already-ARGB value (e.g. name = "blue" -> FF0000FF -> FFFF0000). See #1341.
+  if (!is.null(name)) {
+    hex <- validate_color(name, format = format)
+  } else if (!is.null(hex)) {
+    hex <- validate_color(hex, format = format)
+  }
 
   z <- c(
     auto    = as_xml_attr(auto),
