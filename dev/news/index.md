@@ -39,6 +39,13 @@
   clobbering the numeric cell index it also depends on (regression from
   [\#1625](https://github.com/JanMarvin/openxlsx2/pull/1625),
   [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- `wb_color(name = , format = "RGBA")` no longer returns the wrong
+  colour. `name` and `hex` are alternative inputs, but both
+  `validate_color()` calls fired, applying the RGBA alpha-swap twice
+  (e.g. `name = "blue"` came out as red); the calls are now mutually
+  exclusive (regression from
+  [\#1341](https://github.com/JanMarvin/openxlsx2/pull/1341),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
 
 ### Breaking changes
 

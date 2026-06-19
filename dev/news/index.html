@@ -69,6 +69,8 @@
 <code><a href="../reference/wb_load.html">wb_load()</a></code> now drops the <code>pageSetup</code> <code>r:id</code> reference pointing to the intentionally unshipped <code>printerSettings</code> binary blob, avoiding a dangling relationship that triggered a repair prompt on round-trip (<a href="https://github.com/JanMarvin/openxlsx2/issues/1640" class="external-link">#1640</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>)</li>
 <li>
 <code>wb_add_font(update = )</code> no longer corrupts the worksheet when the targeted range spans two or more distinct cell styles. The loop over styles reused the <code>sel</code> variable for the font-element selector, clobbering the numeric cell index it also depends on (regression from <a href="https://github.com/JanMarvin/openxlsx2/pull/1625" class="external-link">#1625</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
+<li>
+<code>wb_color(name = , format = "RGBA")</code> no longer returns the wrong colour. <code>name</code> and <code>hex</code> are alternative inputs, but both <code>validate_color()</code> calls fired, applying the RGBA alpha-swap twice (e.g. <code>name = "blue"</code> came out as red); the calls are now mutually exclusive (regression from <a href="https://github.com/JanMarvin/openxlsx2/pull/1341" class="external-link">#1341</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
