@@ -33,3 +33,31 @@ test_that("deprecation warning works", {
   )
 
 })
+
+test_that("functions consuming ... warn on unknown arguments (#1646)", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars[1:3, ])
+
+  # these used to absorb unknown arguments silently (no warning at all).
+  # NB: use names that are not prefixes of a real argument, otherwise R's
+  # partial matching would bind them before they reach `...`.
+  expect_warning(
+    wb$add_conditional_formatting(dims = "A2:A4", rule = ">3", nonexistent = 1),
+    "unused arguments \\(nonexistent\\)"
+  )
+  expect_warning(
+    wb$merge_cells(dims = "A1:B1", directon = "row"),
+    "unused arguments \\(directon\\)"
+  )
+  expect_warning(
+    wb$unmerge_cells(dims = "A1:B1", nonexistent = 1),
+    "unused arguments \\(nonexistent\\)"
+  )
+  expect_warning(
+    wb$set_base_colors(nonexistent = 1),
+    "unused arguments \\(nonexistent\\)"
+  )
+
+  # a valid argument is not flagged
+  expect_no_warning(wb$merge_cells(dims = "F2:G2"))
+})
