@@ -1790,3 +1790,10 @@ test_that("writing tables with filters works", {
   expect_equal(exp, got)
 
 })
+
+test_that("set_row_heigths sets key", {
+  wb <- openxlsx2::wb_workbook(title = "Some title", creator = "Me")
+  wb$add_worksheet("Some_worksheet_name")
+  wb$set_row_heights(rows = 1L, heights = 28.5)
+  expect_silent(wb$add_cell_style(horizontal = "center", vertical = "center"))
+})
