@@ -4518,6 +4518,10 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object
     set_base_colors = function(theme = "Office", ...) {
 
+      # warn on unknown/misspelled arguments; xml is the only extra key consumed
+      arguments <- c(ls(), "xml")
+      standardize_case_names(..., arguments = arguments)
+
       xml <- list(...)$xml
 
       if (is.null(xml)) {
@@ -5613,6 +5617,10 @@ wbWorkbook <- R6::R6Class(
     #' @return The `wbWorkbook` object, invisibly
     merge_cells = function(sheet = current_sheet(), dims = NULL, solve = FALSE, direction = NULL, ...) {
 
+      # warn on unknown/misspelled arguments; cols/rows are the deprecated keys
+      arguments <- c(ls(), "cols", "rows")
+      standardize_case_names(..., arguments = arguments)
+
       cols <- list(...)[["cols"]]
       rows <- list(...)[["rows"]]
 
@@ -5630,6 +5638,10 @@ wbWorkbook <- R6::R6Class(
     #' Removes cell merging for a sheet
     #' @return The `wbWorkbook` object, invisibly
     unmerge_cells = function(sheet = current_sheet(), dims = NULL, ...) {
+
+      # warn on unknown/misspelled arguments; cols/rows are the deprecated keys
+      arguments <- c(ls(), "cols", "rows")
+      standardize_case_names(..., arguments = arguments)
 
       cols <- list(...)[["cols"]]
       rows <- list(...)[["rows"]]
@@ -6088,6 +6100,10 @@ wbWorkbook <- R6::R6Class(
         ),
         ...
     ) {
+
+      # warn on unknown/misspelled arguments; cols/rows are the deprecated keys
+      arguments <- c(ls(), "cols", "rows")
+      standardize_case_names(..., arguments = arguments)
 
       cols <- list(...)[["cols"]]
       rows <- list(...)[["rows"]]
