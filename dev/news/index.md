@@ -55,6 +55,12 @@
   functions
   ([\#1646](https://github.com/JanMarvin/openxlsx2/issues/1646),
   [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- The
+  [`wb_dims()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_dims.md)
+  documentation stated that `rows = 0` would affect only the column
+  names, but that combination has always raised an error; the line now
+  points to `select = "col_names"` instead
+  ([\#1651](https://github.com/JanMarvin/openxlsx2/pull/1651)@SchmidtPaul).
 
 ### Breaking changes
 

@@ -107,7 +107,7 @@ If you need another behavior, use <code>wb_dims()</code> without supplying <code
 <li><p><code>from_row</code> / <code>from_col</code> / <code>from_dims</code> the starting position of <code>x</code>
 (The <code>dims</code> returned will assume that the top left corner of <code>x</code> is at <code>from_row / from_col</code></p></li>
 <li><p><code>rows</code> Optional Which row span in <code>x</code> should this apply to.
-If <code>rows</code> = 0, only column names will be affected.</p></li>
+To affect only the column names, use <code>select = "col_names"</code>.</p></li>
 <li><p><code>cols</code> a range of columns id in <code>x</code>, or one of the column names of <code>x</code>
 (length 1 only accepted for column names of <code>x</code>.)</p></li>
 <li><p><code>row_names</code> A logical, this is to let <code>wb_dims()</code> know that <code>x</code> has row names or not.
