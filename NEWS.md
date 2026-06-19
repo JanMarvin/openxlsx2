@@ -15,6 +15,7 @@
 * `wb_add_font(update = )` no longer corrupts the worksheet when the targeted range spans two or more distinct cell styles. The loop over styles reused the `sel` variable for the font-element selector, clobbering the numeric cell index it also depends on (regression from [#1625](https://github.com/JanMarvin/openxlsx2/pull/1625), @SchmidtPaul).
 * `wb_color(name = , format = "RGBA")` no longer returns the wrong colour. `name` and `hex` are alternative inputs, but both `validate_color()` calls fired, applying the RGBA alpha-swap twice (e.g. `name = "blue"` came out as red); the calls are now mutually exclusive ([#1649](https://github.com/JanMarvin/openxlsx2/pull/1649), @SchmidtPaul).
 * `wb_add_conditional_formatting()`, `wb_merge_cells()`, `wb_unmerge_cells()` and `wb_set_base_colors()` now warn about unknown or misspelled arguments instead of silently dropping them, bringing them in line with the other `wb_add_*` functions ([#1646](https://github.com/JanMarvin/openxlsx2/issues/1646), @SchmidtPaul).
+* The `wb_dims()` documentation stated that `rows = 0` would affect only the column names, but that combination has always raised an error; the line now points to `select = "col_names"` instead ([#1651](https://github.com/JanMarvin/openxlsx2/pull/1651)@SchmidtPaul).
 
 ## Breaking changes
 

@@ -41,7 +41,7 @@ If you need another behavior, use \code{wb_dims()} without supplying \code{x}.
 \item \code{from_row} / \code{from_col} / \code{from_dims} the starting position of \code{x}
 (The \code{dims} returned will assume that the top left corner of \code{x} is at \code{from_row / from_col}
 \item \code{rows} Optional Which row span in \code{x} should this apply to.
-If \code{rows} = 0, only column names will be affected.
+To affect only the column names, use \code{select = "col_names"}.
 \item \code{cols} a range of columns id in \code{x}, or one of the column names of \code{x}
 (length 1 only accepted for column names of \code{x}.)
 \item \code{row_names} A logical, this is to let \code{wb_dims()} know that \code{x} has row names or not.
