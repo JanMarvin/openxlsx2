@@ -61,6 +61,9 @@
   names, but that combination has always raised an error; the line now
   points to `select = "col_names"` instead
   ([\#1651](https://github.com/JanMarvin/openxlsx2/pull/1651)@SchmidtPaul).
+- Fixed
+  [`wb_set_row_heights()`](https://janmarvin.github.io/openxlsx2/dev/reference/row_heights-wb.md)
+  which did not set the key variable.
 
 ### Breaking changes
 
