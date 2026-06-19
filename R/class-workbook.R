@@ -10774,7 +10774,7 @@ wbWorkbook <- R6::R6Class(
       # We need an emptry cc frame, otherwise nothing is written
       if (is.null(ws$sheet_data$cc)) {
         ws$sheet_data$cc <- create_char_dataframe(
-          colnames = c("r", "row_r", "c_r", "c_s", "c_t", "v", "f", "f_attr", "is"),
+          colnames = c("key", "r", "row_r", "c_r", "c_s", "c_t", "v", "f", "f_attr", "is"),
           n = 0
         )
       }
