@@ -43,8 +43,17 @@
   colour. `name` and `hex` are alternative inputs, but both
   `validate_color()` calls fired, applying the RGBA alpha-swap twice
   (e.g. `name = "blue"` came out as red); the calls are now mutually
-  exclusive (regression from
-  [\#1341](https://github.com/JanMarvin/openxlsx2/pull/1341),
+  exclusive ([\#1649](https://github.com/JanMarvin/openxlsx2/pull/1649),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_conditional_formatting.md),
+  [`wb_merge_cells()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_merge_cells.md),
+  [`wb_unmerge_cells()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_merge_cells.md)
+  and
+  [`wb_set_base_colors()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_base_colors.md)
+  now warn about unknown or misspelled arguments instead of silently
+  dropping them, bringing them in line with the other `wb_add_*`
+  functions
+  ([\#1646](https://github.com/JanMarvin/openxlsx2/issues/1646),
   [@SchmidtPaul](https://github.com/SchmidtPaul)).
 
 ### Breaking changes
