@@ -583,7 +583,7 @@ determine_select_valid <- function(args, select = NULL) {
 #' * `from_row` / `from_col` / `from_dims` the starting position of `x`
 #'   (The `dims` returned will assume that the top left corner of `x` is at `from_row / from_col`
 #' * `rows` Optional Which row span in `x` should this apply to.
-#'   If `rows` = 0, only column names will be affected.
+#'   To affect only the column names, use `select = "col_names"`.
 #' * `cols` a range of columns id in `x`, or one of the column names of `x`
 #'   (length 1 only accepted for column names of `x`.)
 #' * `row_names` A logical, this is to let `wb_dims()` know that `x` has row names or not.

@@ -96,6 +96,11 @@ test_that("`wb_dims()` works/errors as expected with unnamed arguments", {
   expect_error(wb_dims(rows = c(1), cols = c(-1)), "You must supply positive values to `cols`")
   expect_error(wb_dims(rows = c(-1), cols = c(1)), "You must supply positive values to `rows`")
 
+  # `rows = 0` is rejected; `select = "col_names"` is the documented way to
+  # target only the header row
+  expect_error(wb_dims(x = mtcars, rows = 0), "You must supply positive values to `rows`")
+  expect_no_error(wb_dims(x = mtcars, select = "col_names"))
+
   expect_error(wb_dims(1, 2, 3))
 })
 
