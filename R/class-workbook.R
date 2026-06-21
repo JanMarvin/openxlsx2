@@ -3314,6 +3314,10 @@ wbWorkbook <- R6::R6Class(
         fl = file.path(relsDir, ".rels")
       )
 
+      app_parts <- wb_create_app_xml(self)
+      self$app$HeadingPairs <- app_parts$HeadingPairs
+      self$app$TitlesOfParts <- app_parts$TitlesOfParts
+
       ## write app.xml
       write_file(
         head = '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">',
@@ -8623,7 +8627,7 @@ wbWorkbook <- R6::R6Class(
 
       }
 
-      if (!builtins && nrow(z)) {
+      if (!builtins && NROW(z)) {
         sel <- grepl("_xlnm.", z$name, fixed = TRUE)
         z <- z[!sel, ]
       }

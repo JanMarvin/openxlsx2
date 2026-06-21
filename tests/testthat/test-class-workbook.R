@@ -1599,3 +1599,68 @@ test_that("warn on duplicated names", {
   )
 
 })
+
+test_that("updating app.xml works", {
+
+  skip_online_checks()
+  skip_if_not_installed("encharter")
+
+  df_raw <- data.frame(
+    Region = rep(c("North", "South", "East", "West"), each = 5),
+    Sales = c(1200, 1500, 1100, 1700, 1400, 2100, 2300, 2200, 2500, 2400,
+              3100, 3400, 3200, 3500, 3300, 4100, 4500, 4200, 4700, 4400),
+    stringsAsFactors = FALSE
+  )
+
+  wb <- wb_workbook()
+  wb$add_worksheet("Data&Sheet")
+  wb$add_worksheet("AnalysisSheet")
+  wb$add_data("Data&Sheet", x = df_raw)
+  wb$add_data_table("Data&Sheet", x = df_raw, dims = "A1:B21", table_name = "SalesTable")
+  wb$add_named_region(
+    name = "TotalSalesRange",
+    dims = "B2:B21",
+    sheet = "Data&Sheet"
+  )
+
+  df_wb <- wb_data(wb, sheet = "Data&Sheet", dims = "A1:B21")
+  wb$add_pivot_table(
+    x = df_wb,
+    sheet = "AnalysisSheet",
+    dims = "A3",
+    rows = "Region",
+    data = "Sales",
+    fun = "sum"
+  )
+
+  chart <- encharter::ec("line")
+  chart$set_chart_title("Regional Sales Trend")
+  chart$add_series(
+    name = "Data&Sheet!$B$1",
+    label = "Data&Sheet!$A$2:$A$21",
+    data = "Data&Sheet!$B$2:$B$21"
+  )
+
+  wb$add_encharter(graph = chart, sheet = "AnalysisSheet", dims = "D1:K15")
+
+  # 7. Add a dedicated Chartsheet
+  wb$add_chartsheet("SalesChartSheet")
+  wb$add_encharter(graph = chart, sheet = "SalesChartSheet")
+  got <- wb_create_app_xml(wb)
+
+  fl <- testfile_path("test_app.xlsx")
+  wb2 <- wb_load(fl)
+
+  expect_equal(got$HeadingPairs, wb2$app$HeadingPairs)
+  expect_equal(got$TitlesOfParts, wb2$app$TitlesOfParts)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb$save(tmp)
+
+  wb <- wb_load(tmp)
+
+  expect_equal(wb$app$HeadingPairs, wb2$app$HeadingPairs)
+  expect_equal(wb$app$TitlesOfParts, wb2$app$TitlesOfParts)
+
+})
