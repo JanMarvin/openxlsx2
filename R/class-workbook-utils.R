@@ -250,3 +250,63 @@ replace_waiver <- function(x, wb) {
   sheet_name <- wb$clone()$get_sheet_names(escape = TRUE)[[sheetno]]
   stringi::stri_replace_all_fixed(x, rpl, sheet_name)
 }
+
+# create parts of app.xml
+wb_create_app_xml <- function(wb) {
+  all_sheet_names  <- wb$get_sheet_names(escape = TRUE)
+  sel <- wb$is_chartsheet
+
+  # split
+  work_sheets <- all_sheet_names[!sel]
+  chart_sheets <- all_sheet_names[sel]
+
+  # only named ranges, no builtins (_xl...) nor tables
+  named_ranges <- wb$get_named_regions(tables = FALSE, builtins = FALSE)$name
+
+  cats <- list(
+    Worksheets     = work_sheets,
+    Charts         = chart_sheets,
+    `Named Ranges` = named_ranges
+  )
+  cats <- cats[lengths(cats) > 0]
+
+  # HeadingPairs (Vector size = 2 * number of active categories)
+  heading_variants <- unlist(lapply(names(cats), function(nm) {
+    v1 <- xml_node_create("vt:lpstr", xml_children = nm)
+    v2 <- xml_node_create("vt:i4", xml_children = as.character(length(cats[[nm]])))
+
+    c(
+      xml_node_create("vt:variant", xml_children = v1),
+      xml_node_create("vt:variant", xml_children = v2)
+    )
+  }), use.names = FALSE)
+
+  heading_pairs <- xml_node_create(
+    "HeadingPairs",
+    xml_children = xml_node_create(
+      "vt:vector",
+      xml_attributes = c(size = as.character(length(heading_variants)), baseType = "variant"),
+      xml_children = heading_variants
+    )
+  )
+
+  # TitlesOfParts (Vector size = total sum of all assets)
+  title_strings <- unlist(cats, use.names = FALSE)
+  vtlpstr <- vapply(title_strings, function(x) {
+    xml_node_create("vt:lpstr", xml_children = x)
+  }, character(1))
+
+  titles_of_parts <- xml_node_create(
+    "TitlesOfParts",
+    xml_children = xml_node_create(
+      "vt:vector",
+      xml_attributes = c(size = as.character(length(vtlpstr)), baseType = "lpstr"),
+      xml_children = vtlpstr
+    )
+  )
+
+  list(
+    HeadingPairs = heading_pairs,
+    TitlesOfParts = titles_of_parts
+  )
+}
