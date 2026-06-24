@@ -83,7 +83,7 @@ standardize_case_names <- function(..., return = FALSE, arguments = NULL) {
 
   sel <- !got %in% arguments
   if (any(sel)) {
-    warning("unused arguments (", paste(got[sel], collapse = ", "), ")", call. = sys.call(1))
+    warning("unused arguments (", paste(got[sel], collapse = ", "), ")", call. = FALSE)
   }
 
   if (return) args
