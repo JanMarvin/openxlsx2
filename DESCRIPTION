@@ -27,9 +27,9 @@ Imports:
 LinkingTo:
     Rcpp
 Suggests:
+    encharter,
     ggplot2,
     knitr,
-    encharter,
     mschart (>= 0.4),
     openssl,
     rmarkdown,
