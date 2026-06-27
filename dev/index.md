@@ -1,11 +1,11 @@
 # openxlsx2
 
-This R package is a modern reinterpretation of the widely used popular
+This R package is a modern reinterpretation of the widely used
 `openxlsx` package. Similar to its predecessor, it simplifies the
 creation of xlsx files by providing a clean interface for writing,
 designing and editing worksheets. Based on a powerful XML library and
 focusing on modern programming flows in pipes or chains, `openxlsx2`
-allows to break many new ground.
+breaks new ground.
 
 ## Installation
 
@@ -42,7 +42,7 @@ install.packages('openxlsx2')
 `openxlsx2` aims to be the swiss knife for working with the openxml
 spreadsheet formats xlsx, xlsm and (limited) xlsb (other formats of
 other spreadsheet software are not supported). We offer two different
-variants how to work with `openxlsx2`.
+ways to work with `openxlsx2`.
 
 - The first one is to simply work with R objects. It is possible to read
   ([`read_xlsx()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.html))
@@ -52,23 +52,23 @@ variants how to work with `openxlsx2`.
   to support various features of the openxml format, including reading
   and writing named ranges and tables. Furthermore, there are several
   ways to read certain information of an openxml spreadsheet without
-  having opened it in a spreadsheet software before, e.g. to get the
+  having opened it in spreadsheet software before, e.g. to get the
   contained sheet names or tables.
-- As a second variant `openxlsx2` offers the work with so called
+- As a second variant `openxlsx2` offers working with so-called
   [`wbWorkbook`](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.html)
   objects. Here an openxml file is read into a corresponding
   `wbWorkbook` object
   ([`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.html))
   or a new one is created
   ([`wb_workbook()`](https://janmarvin.github.io/openxlsx2/reference/wb_workbook.html)).
-  Afterwards the object can be further modified using various functions.
-  For example, worksheets can be added or removed, the layout of cells
-  or entire worksheets can be changed, and cells can be modified
+  The object can then be further modified using various functions. For
+  example, worksheets can be added or removed, the layout of cells or
+  entire worksheets can be changed, and cells can be modified
   (overwritten or rewritten). Afterwards the `wbWorkbook` objects can be
   written as openxml files and processed by suitable spreadsheet
   software.
 
-Many examples how to work with `openxlsx2` are in our [manual
+Many examples of how to work with `openxlsx2` are in our [manual
 pages](https://janmarvin.github.io/openxlsx2/reference/index.html), the
 [book](https://janmarvin.github.io/ox2-book/) and in our
 [vignettes](https://janmarvin.github.io/openxlsx2/articles/). You can
