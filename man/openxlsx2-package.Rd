@@ -6,11 +6,11 @@
 \alias{openxlsx2-package}
 \title{xlsx reading, writing and editing.}
 \description{
-This R package is a modern reinterpretation of the widely used popular
+This R package is a modern reinterpretation of the widely used
 \code{openxlsx} package. Similar to its predecessor, it simplifies the creation of xlsx
 files by providing a clean interface for writing, designing and editing worksheets.
 Based on a powerful XML library and focusing on modern programming flows in pipes
-or chains, \code{openxlsx2} allows to break many new ground.
+or chains, \code{openxlsx2} breaks new ground.
 }
 \details{
 The \code{openxlsx2} package provides comprehensive functionality for interacting
@@ -26,7 +26,7 @@ manipulations, including:
 \item Enhancing spreadsheets with comments (\code{\link[=wb_add_comment]{wb_add_comment()}}),
 images (\code{\link[=wb_add_image]{wb_add_image()}}), plots (\code{\link[=wb_add_plot]{wb_add_plot()}}), charts (\code{\link[=wb_add_mschart]{wb_add_mschart()}}),
 and pivot tables (\code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}}).
-Customizing cell styles using fonts (\code{\link[=wb_add_font]{wb_add_font()}}),
+\item Customizing cell styles using fonts (\code{\link[=wb_add_font]{wb_add_font()}}),
 number formats (\code{\link[=wb_add_numfmt]{wb_add_numfmt()}}), backgrounds (\code{\link[=wb_add_fill]{wb_add_fill()}}),
 and alignments (\code{\link[=wb_add_cell_style]{wb_add_cell_style()}}). Inserting custom text strings with
 \code{\link[=fmt_txt]{fmt_txt()}} and creating comprehensive table styles with \code{\link[=create_tablestyle]{create_tablestyle()}}.
