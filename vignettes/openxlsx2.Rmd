@@ -64,6 +64,11 @@ Let's try this with actual data. We use the `mtcars` dataset. In the code we swi
 wb <- wb_workbook() |> wb_add_worksheet() |> wb_add_data(x = mtcars)
 ```
 
+```{r include=FALSE}
+# if modern_r is false there is no wb
+wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+```
+
 Let's see what the output looks like:
 ```{r}
 wb
