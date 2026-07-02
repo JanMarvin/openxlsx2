@@ -11,7 +11,7 @@ It is important to note that named regions are not case-sensitive and must be un
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.27</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.28</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@ It is important to note that named regions are not case-sensitive and must be un
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Modify named regions in a worksheet</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.27/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a>, <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.27/R/get-named-regions.R" class="external-link"><code>R/get-named-regions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/class-workbook-wrappers.R" class="external-link"><code>R/class-workbook-wrappers.R</code></a>, <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/get-named-regions.R" class="external-link"><code>R/get-named-regions.R</code></a></small>
       <div class="d-none name"><code>named_region-wb.Rd</code></div>
     </div>
 
@@ -85,7 +85,7 @@ It is important to note that named regions are not case-sensitive and must be un
 <span></span>
 <span><span class="fu">wb_remove_named_region</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">wb_get_named_regions</span><span class="op">(</span><span class="va">wb</span>, tables <span class="op">=</span> <span class="cn">FALSE</span>, x <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">wb_get_named_regions</span><span class="op">(</span><span class="va">wb</span>, tables <span class="op">=</span> <span class="cn">FALSE</span>, builtins <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -137,9 +137,8 @@ names must be case-insensitive unique.</p></dd>
 <dd><p>Should included both data tables and named regions in the result?</p></dd>
 
 
-<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Deprecated. Use <code>wb</code>. For workbook input use <code><a href="wb_load.html">wb_load()</a></code> to first load
-the xlsx file as a workbook.</p></dd>
+<dt id="arg-builtins">builtins<a class="anchor" aria-label="anchor" href="#arg-builtins"></a></dt>
+<dd><p>Logical if builtin named ranges should be included.</p></dd>
 
 </dl></div>
     <div class="section level2">

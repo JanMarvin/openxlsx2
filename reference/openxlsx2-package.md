@@ -1,11 +1,11 @@
 # xlsx reading, writing and editing.
 
-This R package is a modern reinterpretation of the widely used popular
+This R package is a modern reinterpretation of the widely used
 `openxlsx` package. Similar to its predecessor, it simplifies the
 creation of xlsx files by providing a clean interface for writing,
 designing and editing worksheets. Based on a powerful XML library and
 focusing on modern programming flows in pipes or chains, `openxlsx2`
-allows to break many new ground.
+breaks new ground.
 
 ## Details
 
@@ -42,7 +42,8 @@ manipulations, including:
   ([`wb_add_mschart()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_mschart.md)),
   and pivot tables
   ([`wb_add_pivot_table()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_pivot_table.md)).
-  Customizing cell styles using fonts
+
+- Customizing cell styles using fonts
   ([`wb_add_font()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_font.md)),
   number formats
   ([`wb_add_numfmt()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_numfmt.md)),
@@ -173,7 +174,7 @@ This package is licensed under the MIT license and is based on
 [`openxlsx`](https://github.com/ycphs/openxlsx) (by Alexander Walker and
 Philipp Schauberger; COPYRIGHT 2014-2022) and
 [`pugixml`](https://github.com/zeux/pugixml) (by Arseny Kapoulkine;
-COPYRIGHT 2006-2025). Both released under the MIT license.
+COPYRIGHT 2006-2026). Both released under the MIT license.
 
 ## See also
 

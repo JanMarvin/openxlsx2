@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.27</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.28</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,11 +44,49 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.27/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.27" id="openxlsx2-127">openxlsx2 1.27<a class="anchor" aria-label="anchor" href="#openxlsx2-127"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.28" id="openxlsx2-128">openxlsx2 1.28<a class="anchor" aria-label="anchor" href="#openxlsx2-128"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-28">New features<a class="anchor" aria-label="anchor" href="#new-features-1-28"></a></h3>
+<ul><li>Initial support for files with diagrams. <a href="https://github.com/JanMarvin/openxlsx2/pull/1643" class="external-link">#1643</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-28">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-28"></a></h3>
+<ul><li>Build vignette if <code>encharter</code> is not available.</li>
+<li>Enhanced <code>df_to_xml()</code> speed and prevented double-escaping of XML entities, resolving an issue where hyperlinks with ampersands (<code>&amp;</code>) were broken. <a href="https://github.com/JanMarvin/openxlsx2/pull/1636" class="external-link">#1636</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1637" class="external-link">#1637</a>
+</li>
+<li>It is now possible to pass custom formula arguments to total rows when writing data tables. <a href="https://github.com/JanMarvin/openxlsx2/pull/1638" class="external-link">#1638</a>
+</li>
+<li>Add <code>builtins</code> argument to <code><a href="../reference/named_region-wb.html">wb_get_named_regions()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1639" class="external-link">#1639</a>
+</li>
+<li>
+<code><a href="../reference/wb_load.html">wb_load()</a></code> no longer drops all but the last worksheet’s <code>vmlDrawing*.vml.rels</code> on a load + save round-trip. The <code>wb$vml_rels</code> initialisation was inside the read loop and wiped on every iteration (<a href="https://github.com/JanMarvin/openxlsx2/pull/1641" class="external-link">#1641</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
+<li>
+<code><a href="../reference/wb_load.html">wb_load()</a></code> now drops the <code>pageSetup</code> <code>r:id</code> reference pointing to the intentionally unshipped <code>printerSettings</code> binary blob, avoiding a dangling relationship that triggered a repair prompt on round-trip (<a href="https://github.com/JanMarvin/openxlsx2/issues/1640" class="external-link">#1640</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>)</li>
+<li>
+<code>wb_add_font(update = )</code> no longer corrupts the worksheet when the targeted range spans two or more distinct cell styles. The loop over styles reused the <code>sel</code> variable for the font-element selector, clobbering the numeric cell index it also depends on (regression from <a href="https://github.com/JanMarvin/openxlsx2/pull/1625" class="external-link">#1625</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
+<li>
+<code>wb_color(name = , format = "RGBA")</code> no longer returns the wrong colour. <code>name</code> and <code>hex</code> are alternative inputs, but both <code>validate_color()</code> calls fired, applying the RGBA alpha-swap twice (e.g. <code>name = "blue"</code> came out as red); the calls are now mutually exclusive (<a href="https://github.com/JanMarvin/openxlsx2/pull/1649" class="external-link">#1649</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
+<li>
+<code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code>, <code><a href="../reference/wb_merge_cells.html">wb_merge_cells()</a></code>, <code><a href="../reference/wb_merge_cells.html">wb_unmerge_cells()</a></code> and <code><a href="../reference/wb_base_colors.html">wb_set_base_colors()</a></code> now warn about unknown or misspelled arguments instead of silently dropping them, bringing them in line with the other <code>wb_add_*</code> functions (<a href="https://github.com/JanMarvin/openxlsx2/issues/1646" class="external-link">#1646</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
+<li>The <code><a href="../reference/wb_dims.html">wb_dims()</a></code> documentation stated that <code>rows = 0</code> would affect only the column names, but that combination has always raised an error; the line now points to <code>select = "col_names"</code> instead (<a href="https://github.com/JanMarvin/openxlsx2/pull/1651" class="external-link">#1651</a>@SchmidtPaul).</li>
+<li>Fixed <code><a href="../reference/row_heights-wb.html">wb_set_row_heights()</a></code> which did not set the key variable.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-1-28">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-28"></a></h3>
+<ul><li>Long deprecated argument <code>x</code> was removed from <code><a href="../reference/named_region-wb.html">wb_get_named_regions()</a></code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-1-28">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-28"></a></h3>
+<ul><li>Bump <code>pugixml</code> to 1.16</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.27" id="openxlsx2-127">openxlsx2 1.27<a class="anchor" aria-label="anchor" href="#openxlsx2-127"></a></h2><p class="text-muted">CRAN release: 2026-05-25</p>
 <div class="section level3">
 <h3 id="fixes-1-27">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-27"></a></h3>
 <ul><li>

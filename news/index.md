@@ -1,6 +1,84 @@
 # Changelog
 
+## openxlsx2 1.28
+
+### New features
+
+- Initial support for files with diagrams.
+  [\#1643](https://github.com/JanMarvin/openxlsx2/pull/1643)
+
+### Fixes
+
+- Build vignette if `encharter` is not available.
+- Enhanced `df_to_xml()` speed and prevented double-escaping of XML
+  entities, resolving an issue where hyperlinks with ampersands (`&`)
+  were broken.
+  [\#1636](https://github.com/JanMarvin/openxlsx2/pull/1636),
+  [\#1637](https://github.com/JanMarvin/openxlsx2/pull/1637)
+- It is now possible to pass custom formula arguments to total rows when
+  writing data tables.
+  [\#1638](https://github.com/JanMarvin/openxlsx2/pull/1638)
+- Add `builtins` argument to
+  [`wb_get_named_regions()`](https://janmarvin.github.io/openxlsx2/reference/named_region-wb.md).
+  [\#1639](https://github.com/JanMarvin/openxlsx2/pull/1639)
+- [`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md)
+  no longer drops all but the last worksheet’s `vmlDrawing*.vml.rels` on
+  a load + save round-trip. The `wb$vml_rels` initialisation was inside
+  the read loop and wiped on every iteration
+  ([\#1641](https://github.com/JanMarvin/openxlsx2/pull/1641),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- [`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md)
+  now drops the `pageSetup` `r:id` reference pointing to the
+  intentionally unshipped `printerSettings` binary blob, avoiding a
+  dangling relationship that triggered a repair prompt on round-trip
+  ([\#1640](https://github.com/JanMarvin/openxlsx2/issues/1640),
+  [@SchmidtPaul](https://github.com/SchmidtPaul))
+- `wb_add_font(update = )` no longer corrupts the worksheet when the
+  targeted range spans two or more distinct cell styles. The loop over
+  styles reused the `sel` variable for the font-element selector,
+  clobbering the numeric cell index it also depends on (regression from
+  [\#1625](https://github.com/JanMarvin/openxlsx2/pull/1625),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- `wb_color(name = , format = "RGBA")` no longer returns the wrong
+  colour. `name` and `hex` are alternative inputs, but both
+  `validate_color()` calls fired, applying the RGBA alpha-swap twice
+  (e.g. `name = "blue"` came out as red); the calls are now mutually
+  exclusive ([\#1649](https://github.com/JanMarvin/openxlsx2/pull/1649),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_conditional_formatting.md),
+  [`wb_merge_cells()`](https://janmarvin.github.io/openxlsx2/reference/wb_merge_cells.md),
+  [`wb_unmerge_cells()`](https://janmarvin.github.io/openxlsx2/reference/wb_merge_cells.md)
+  and
+  [`wb_set_base_colors()`](https://janmarvin.github.io/openxlsx2/reference/wb_base_colors.md)
+  now warn about unknown or misspelled arguments instead of silently
+  dropping them, bringing them in line with the other `wb_add_*`
+  functions
+  ([\#1646](https://github.com/JanMarvin/openxlsx2/issues/1646),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- The
+  [`wb_dims()`](https://janmarvin.github.io/openxlsx2/reference/wb_dims.md)
+  documentation stated that `rows = 0` would affect only the column
+  names, but that combination has always raised an error; the line now
+  points to `select = "col_names"` instead
+  ([\#1651](https://github.com/JanMarvin/openxlsx2/pull/1651)@SchmidtPaul).
+- Fixed
+  [`wb_set_row_heights()`](https://janmarvin.github.io/openxlsx2/reference/row_heights-wb.md)
+  which did not set the key variable.
+
+### Breaking changes
+
+- Long deprecated argument `x` was removed from
+  [`wb_get_named_regions()`](https://janmarvin.github.io/openxlsx2/reference/named_region-wb.md).
+
+### Internal Changes
+
+- Bump `pugixml` to 1.16
+
+------------------------------------------------------------------------
+
 ## openxlsx2 1.27
+
+CRAN release: 2026-05-25
 
 ### Fixes
 

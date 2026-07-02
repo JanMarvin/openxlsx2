@@ -131,6 +131,10 @@ rather than `?wbWorkbook`).
 
   python
 
+- `diagrams`:
+
+  diagrams
+
 - `webextensions`:
 
   webextensions
@@ -4152,7 +4156,7 @@ get named regions in a workbook
 
 #### Usage
 
-    wbWorkbook$get_named_regions(tables = FALSE, x = NULL)
+    wbWorkbook$get_named_regions(tables = FALSE, builtins = TRUE)
 
 #### Arguments
 
@@ -4160,9 +4164,9 @@ get named regions in a workbook
 
   Return tables as well?
 
-- `x`:
+- `builtins`:
 
-  Not used.
+  Return builtins as well?
 
 #### Returns
 

@@ -179,10 +179,12 @@ data from another sheet.
 
 ``` r
 
+if (requireNamespace("encharter")) {
 # add chartsheet
 wb <- wb |>
   wb_add_chartsheet() |>
   wb_add_encharter(graph = chart)
+}
 ```
 
 ### Add `{mschart}` plots
