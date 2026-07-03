@@ -2,6 +2,8 @@
 
 ## openxlsx2 1.28
 
+CRAN release: 2026-07-02
+
 ### New features
 
 - Initial support for files with diagrams.
