@@ -30,7 +30,7 @@
 #' * Non-integer numeric values will typically be coerced or truncated; however,
 #'     infinite values will trigger an error to prevent invalid coordinate
 #'     generation.
-#' @seealso [col2int()]
+#' @seealso [col2int()] for inverse operation
 #'
 #' @examples
 #' # Convert a single index
@@ -93,7 +93,9 @@ check_range <- function(x) {
 #' * In compliance with spreadsheet software standards, the function validates
 #'     that indices do not exceed the maximum allowable column limit.
 #'
-#' @seealso [int2col()]
+#' @seealso 
+#' [int2col()] for inverse operation
+#' [c2i()] for short interface
 #'
 #' @examples
 #' # Convert standard labels
