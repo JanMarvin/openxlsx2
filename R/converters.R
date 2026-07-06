@@ -137,6 +137,43 @@ col2int <- function(x) {
   col_to_int(x)
 }
 
+#' Short way of converting spreadsheet column notations to integers
+#'
+#' @description
+#' `c2i()` is a wrapper for `col2int()` to supply one short string of spreadsheet-style
+#' column identifiers separated by spaces (e.g., "A:C F P:AD") and convert them into
+#' corresponding integer indices. `col2int()` supports range notation like "A:Z",
+#' treats lower and upper case letters interchangeably and accepts mixing numeric
+#' and alphabetic characters.
+#'
+#' @param x One non-empty character string.
+#'
+#' @return An integer vector representing the column indices.
+#'
+#' @seealso [col2int()]
+#'
+#' @examples
+#' # Convert standard labels and ranges
+#' c2i("B:G X AF:AK BH")
+#'
+#' # Mix different alphabetic and numeric identifiers
+#' c2i("1 d:H 12:p Z DH")
+#'
+#' @export
+c2i <- function(x) {
+  if (!is.character(x)) {
+    stop("x must be character")
+  }
+  if (length(x) != 1) {
+    stop("x must be one string")
+  }
+  if (x == "") {
+    stop("x must be non-empty string")
+  }
+  x_split <- strsplit(x, split=" ", fixed=TRUE)[[1]]
+  col2int(x_split)
+}
+
 #' Converter spreadsheet row to integer
 #'
 #' Converts character row to integer and checks that the range is valid
