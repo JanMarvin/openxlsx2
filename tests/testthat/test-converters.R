@@ -19,6 +19,20 @@ test_that("col2int", {
 
 })
 
+test_that("c2i", {
+  expect_equal(c2i("a"), 1)
+  expect_equal(c2i("1"), 1)
+  expect_equal(c2i("A"), 1)
+  expect_equal(c2i("A C:D"), c(1, 3, 4))
+  expect_equal(c2i("1 C:D K"), c(1, 3, 4, 11))
+  expect_equal(c2i("A C:D K AA:AD"), c(1, 3, 4, 11, 27, 28, 29, 30))
+
+  expect_error(c2i(list()), "x must be character")
+  expect_error(c2i(1:4), "x must be character")
+  expect_error(c2i(""), "x must be non-empty string")
+  expect_error(c2i(c("A B", "C D")), "x must be one string")
+})
+
 test_that("get_cell_refs", {
 
   got <- get_cell_refs(data.frame(1:3, 2:4))
