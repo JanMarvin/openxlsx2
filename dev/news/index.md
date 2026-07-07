@@ -4,6 +4,17 @@
 
 ### New features
 
+- `col2int` allows splitting on “,” and “;”.
+  [\#1659](https://github.com/JanMarvin/openxlsx2/pull/1659)
+
+------------------------------------------------------------------------
+
+## openxlsx2 1.28
+
+CRAN release: 2026-07-02
+
+### New features
+
 - Initial support for files with diagrams.
   [\#1643](https://github.com/JanMarvin/openxlsx2/pull/1643)
 
