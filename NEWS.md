@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## New features
+
+* `col2int` allows splitting on "," and ";". [#1659](https://github.com/JanMarvin/openxlsx2/pull/1659)
+
+
+***************************************************************************
+
 # openxlsx2 1.28
 
 ## New features

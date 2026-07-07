@@ -69,25 +69,27 @@ check_range <- function(x) {
 #' @details
 #' The function is designed to handle various input formats encountered during
 #' spreadsheet data processing. In addition to single column labels, it supports
-#' range notation using the colon operator (e.g., "A:C"). When a range is
-#' detected, the function internally expands the notation into a complete
-#' sequence of integers (e.g., 1, 2, 3). This behavior is particularly useful
-#' when passing column selections to functions like [wb_to_df()] or [wb_read()].
+#' comma or semicolon separated values (e.g., "A,B:C") and range notation using
+#' the colon operator (e.g., "A:C"). When a range is detected, the function
+#' internally expands the notation into a complete sequence of integers
+#' (e.g., 1, 2, 3). This behavior is particularly useful when passing column
+#' selections to functions like [wb_to_df()] or [wb_read()].
 #'
 #' Input validation ensures that only atomic vectors are processed. If the input
 #' is already numeric or a factor, the function ensures the values fall within
 #' the valid spreadsheet column range before coercion to integers. Note that
-#' the presence of `NA` values in the input will trigger an error to maintain
-#' data integrity during index calculation.
+#' the presence of `NA` values or empty strings in the input will trigger an
+#' error to maintain data integrity during index calculation.
 #'
 #' @param x A character vector of column labels, a numeric vector of indices,
-#'   or a factor. Supports range notation like "A:Z".
+#'   or a factor. Supports range notation like "A:Z" and separators `,` and `;`.
 #'
 #' @return An integer vector representing the column indices. Returns `NULL`
 #'   if the input `x` is `NULL`, or an empty integer vector if the length of
 #'   `x` is zero.
 #'
 #' @section Notes:
+#' * Comma and semicolon separators are split before range expansion.
 #' * Range expansion via `:` is performed iteratively until all sequences are
 #'     resolved into individual integer components.
 #' * In compliance with spreadsheet software standards, the function validates
@@ -103,6 +105,7 @@ check_range <- function(x) {
 #' col2int("A:C")
 #'
 #' # Mix individual columns and ranges
+#' col2int("A,B:C")
 #' col2int(c("A", "C:E", "G"))
 #'
 #' # Handle numeric inputs
@@ -123,6 +126,8 @@ col2int <- function(x) {
   }
 
   if (anyNA(x)) stop("x contains NA")
+
+  if (length(x) == 1 && nzchar(x)) x <- unlist(strsplit(x, "[,;]"))
 
   if (any(grepl(":", x))) {
     # loop through x until all ":" are replaced with integer sequences
