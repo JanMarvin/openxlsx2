@@ -17,6 +17,10 @@ test_that("col2int", {
   expect_equal(col2int(c("A", "C:D", "K", "AA:AD")), c(1, 3, 4, 11, 27, 28, 29, 30))
   expect_error(col2int(c("a", NA_character_, "c")), "x contains NA")
 
+  # split on , and ;
+  expect_equal(col2int(c("A,C:D")), c(1, 3, 4))
+  expect_equal(col2int(c("A;C:D,K")), c(1, 3, 4, 11))
+  expect_equal(col2int(c("A,C:D,K,AA:AD")), c(1, 3, 4, 11, 27, 28, 29, 30))
 })
 
 test_that("get_cell_refs", {

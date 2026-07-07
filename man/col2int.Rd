@@ -8,7 +8,7 @@ col2int(x)
 }
 \arguments{
 \item{x}{A character vector of column labels, a numeric vector of indices,
-or a factor. Supports range notation like "A:Z".}
+or a factor. Supports range notation like "A:Z" and separators \verb{,} and \verb{;}.}
 }
 \value{
 An integer vector representing the column indices. Returns \code{NULL}
@@ -24,20 +24,22 @@ to 702.
 \details{
 The function is designed to handle various input formats encountered during
 spreadsheet data processing. In addition to single column labels, it supports
-range notation using the colon operator (e.g., "A:C"). When a range is
-detected, the function internally expands the notation into a complete
-sequence of integers (e.g., 1, 2, 3). This behavior is particularly useful
-when passing column selections to functions like \code{\link[=wb_to_df]{wb_to_df()}} or \code{\link[=wb_read]{wb_read()}}.
+comma or semicolon separated values (e.g., "A,B:C") and range notation using
+the colon operator (e.g., "A:C"). When a range is detected, the function
+internally expands the notation into a complete sequence of integers
+(e.g., 1, 2, 3). This behavior is particularly useful when passing column
+selections to functions like \code{\link[=wb_to_df]{wb_to_df()}} or \code{\link[=wb_read]{wb_read()}}.
 
 Input validation ensures that only atomic vectors are processed. If the input
 is already numeric or a factor, the function ensures the values fall within
 the valid spreadsheet column range before coercion to integers. Note that
-the presence of \code{NA} values in the input will trigger an error to maintain
-data integrity during index calculation.
+the presence of \code{NA} values or empty strings in the input will trigger an
+error to maintain data integrity during index calculation.
 }
 \section{Notes}{
 
 \itemize{
+\item Comma and semicolon separators are split before range expansion.
 \item Range expansion via \code{:} is performed iteratively until all sequences are
 resolved into individual integer components.
 \item In compliance with spreadsheet software standards, the function validates
@@ -53,6 +55,7 @@ col2int(c("A", "B", "Z"))
 col2int("A:C")
 
 # Mix individual columns and ranges
+col2int("A,B:C")
 col2int(c("A", "C:E", "G"))
 
 # Handle numeric inputs
