@@ -1,5 +1,5 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   conditional-formatting: conditional-formatting.html
@@ -9,7 +9,7 @@ articles:
   openxlsx2_style_manual: openxlsx2_style_manual.html
   openxlsx2: openxlsx2.html
   Update-from-openxlsx: Update-from-openxlsx.html
-last_built: 2026-07-07T06:16Z
+last_built: 2026-07-16T20:07Z
 urls:
   reference: https://janmarvin.github.io/openxlsx2/reference
   article: https://janmarvin.github.io/openxlsx2/articles
