@@ -18,7 +18,7 @@ test_that("wb_to_df", {
          ),
          c("3209324 This", NA, NA, NA, NA, NA, NA, NA, NA, NA),
          c("#DIV/0!", NA, "#NUM!", NA, NA, NA, NA, NA, NA, NA)),
-    .Names = c("Var1", "Var2", NA, "Var3", "Var4", "Var5", "Var6", "Var7"),
+    "names" = c("Var1", "Var2", NA, "Var3", "Var4", "Var5", "Var6", "Var7"),
     row.names = c(2:11),
     class = "data.frame"
   )
