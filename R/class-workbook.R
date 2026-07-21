@@ -9565,7 +9565,7 @@ wbWorkbook <- R6::R6Class(
           wb_style <- create_char_dataframe(names(org_style), n = 0)
 
         # remove all values
-        org_style <- org_style[c("r", "row_r", "c_r", "c_s")]
+        org_style <- org_style[c("key", "r", "row_r", "c_r", "c_s")]
 
         # do not merge c_s and do not create duplicates
         merged_style <- merge(org_style,
