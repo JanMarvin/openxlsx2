@@ -7,6 +7,12 @@
 - `col2int` allows splitting on “,” and “;”.
   [\#1659](https://github.com/JanMarvin/openxlsx2/pull/1659)
 
+### Fixes
+
+- [`wb_clone_sheet_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_clone_sheet_style.md)
+  was missing a `key` column.
+  [\#1663](https://github.com/JanMarvin/openxlsx2/pull/1663)
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.28
