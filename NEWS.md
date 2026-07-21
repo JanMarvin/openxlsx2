@@ -4,6 +4,10 @@
 
 * `col2int` allows splitting on "," and ";". [#1659](https://github.com/JanMarvin/openxlsx2/pull/1659)
 
+## Fixes
+
+* `wb_clone_sheet_style()` was missing a `key` column. [#1663](https://github.com/JanMarvin/openxlsx2/pull/1663)
+
 
 ***************************************************************************
 

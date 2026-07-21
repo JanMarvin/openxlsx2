@@ -29,6 +29,9 @@ test_that("wb_clone_sheet_style", {
     wb$worksheets[[2]]$sheet_data$cc$r
   )
 
+  expect_true(all(wb$worksheets[[1]]$sheet_data$cc$key != ""))
+  expect_true(all(wb$worksheets[[2]]$sheet_data$cc$key != ""))
+
   expect_equal(
     wb$worksheets[[1]]$sheet_data$cc$c_s,
     wb$worksheets[[2]]$sheet_data$cc$c_s[ord]
