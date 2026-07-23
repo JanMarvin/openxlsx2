@@ -163,7 +163,7 @@
 
 #define FASTFLOAT_VERSION_MAJOR 8
 #define FASTFLOAT_VERSION_MINOR 2
-#define FASTFLOAT_VERSION_PATCH 5
+#define FASTFLOAT_VERSION_PATCH 10
 
 #define FASTFLOAT_STRINGIZE_IMPL(x) #x
 #define FASTFLOAT_STRINGIZE(x) FASTFLOAT_STRINGIZE_IMPL(x)
@@ -340,6 +340,32 @@ using parse_options = parse_options_t<char>;
 #define fastfloat_really_inline __forceinline
 #else
 #define fastfloat_really_inline inline __attribute__((always_inline))
+#endif
+
+// Branch-probability hint marking the rare slow-path branches as cold, so the
+// optimizer keeps the out-of-line slow-path re-parse off the hot path (and does
+// not duplicate the force-inlined hot scanner into the caller, which bloated
+// the hot frame and hurt ILP on some targets). Used at the call site as
+//   if fastfloat_unlikely(cond) { ... }
+// (the macro supplies the parentheses). It expands to the standard [[unlikely]]
+// attribute when supported, otherwise to __builtin_expect on GCC/Clang, or
+// to a no-op elsewhere (e.g. pre-C++20 MSVC, which has no equivalent hint).
+#ifdef __has_cpp_attribute
+#if __has_cpp_attribute(unlikely) >= 201803L
+// g++-9 hits hits this branch, but then fails to compile
+// [[unlikely]]. This happens only with g++-9.
+#if !defined(__GNUC__) || (__GNUC__ != 9)
+#define FASTFLOAT_USE_UNLIKELY_ATTR
+#endif
+#endif
+#endif
+
+#ifdef FASTFLOAT_USE_UNLIKELY_ATTR
+#define fastfloat_unlikely(x) (x) [[unlikely]]
+#elif defined(__GNUC__) || defined(__clang__)
+#define fastfloat_unlikely(x) (__builtin_expect(!!(x), 0))
+#else
+#define fastfloat_unlikely(x) (x)
 #endif
 
 #ifndef FASTFLOAT_ASSERT
@@ -1584,12 +1610,12 @@ constexpr chars_format adjust_for_feature_macros(chars_format fmt) {
 namespace fast_float {
 /**
  * This function parses the character sequence [first,last) for a number. It
- * parses floating-point numbers expecting a locale-indepent format equivalent
- * to what is used by std::strtod in the default ("C") locale. The resulting
- * floating-point value is the closest floating-point values (using either float
- * or double), using the "round to even" convention for values that would
- * otherwise fall right in-between two values. That is, we provide exact parsing
- * according to the IEEE standard.
+ * parses floating-point numbers expecting a locale-independent format
+ * equivalent to what is used by std::strtod in the default ("C") locale. The
+ * resulting floating-point value is the closest floating-point values (using
+ * either float or double), using the "round to even" convention for values that
+ * would otherwise fall right in-between two values. That is, we provide exact
+ * parsing according to the IEEE standard.
  *
  * Given a successful parse, the pointer (`ptr`) in the returned value is set to
  * point right after the parsed number, and the `value` referenced is set to the
@@ -1933,6 +1959,21 @@ loop_parse_if_eight_digits(char const *&p, char const *const pend,
             p)); // in rare cases, this will overflow, but that's ok
     p += 8;
   }
+  // Consume a remaining 4-7 digit run in a single SWAR step instead of
+  // byte-by-byte (reuses the existing 4-digit helpers). The parsed result is
+  // identical either way. Gated to clang: on gcc the extra 4-digit check
+  // regresses inputs whose remainder is shorter than 4 digits (it becomes pure
+  // overhead there); clang does not show that.
+#if defined(__clang__)
+  if ((pend - p) >= 4) {
+    uint32_t const val4 = read4_to_u32(p);
+    if (is_made_of_four_digits_fast(val4)) {
+      i = i * 10000 +
+          parse_four_digits_unrolled(val4); // may overflow, that's ok
+      p += 4;
+    }
+  }
+#endif
 }
 
 enum class parse_error {
@@ -1982,10 +2023,17 @@ report_parse_error(UC const *p, parse_error error) {
 
 // Assuming that you use no more than 19 digits, this will
 // parse an ASCII string.
+//
+// store_spans is a *runtime* flag (not a template parameter, deliberately: a
+// template would create a second instantiation of this whole function and the
+// extra icache pressure wipes out the gain). When false, the integer/fraction
+// spans (read only by the rare digit_comp slow path) are not materialized,
+// which keeps the fat parsed_number_string_t off the hot path. The caller
+// re-parses with store_spans=true if the slow path is actually reached.
 template <bool basic_json_fmt, typename UC>
 fastfloat_really_inline FASTFLOAT_CONSTEXPR20 parsed_number_string_t<UC>
-parse_number_string(UC const *p, UC const *pend,
-                    parse_options_t<UC> options) noexcept {
+parse_number_string(UC const *p, UC const *pend, parse_options_t<UC> options,
+                    bool store_spans = true) noexcept {
   chars_format const fmt = detail::adjust_for_feature_macros(options.format);
   UC const decimal_point = options.decimal_point;
 
@@ -2021,17 +2069,42 @@ parse_number_string(UC const *p, UC const *pend,
 
   uint64_t i = 0; // an unsigned int avoids signed overflows (which are bad)
 
-  while ((p != pend) && is_integer(*p)) {
-    // a multiplication by 10 is cheaper than an arbitrary integer
-    // multiplication
-    i = 10 * i +
-        uint64_t(*p -
-                 UC('0')); // might overflow, we will handle the overflow later
+  // Straight-line unroll of the integer-part scan: most integer parts are
+  // 1-5 digits, so peeling the first iterations eliminates the loop back-edge
+  // for the common case. Semantics are identical to the original `while` loop:
+  // i = 10*i + digit, advancing p.
+  if ((p != pend) && is_integer(*p)) {
+    i = uint64_t(*p - UC('0'));
     ++p;
+    if ((p != pend) && is_integer(*p)) {
+      i = 10 * i + uint64_t(*p - UC('0'));
+      ++p;
+      if ((p != pend) && is_integer(*p)) {
+        i = 10 * i + uint64_t(*p - UC('0'));
+        ++p;
+        if ((p != pend) && is_integer(*p)) {
+          i = 10 * i + uint64_t(*p - UC('0'));
+          ++p;
+          if ((p != pend) && is_integer(*p)) {
+            i = 10 * i + uint64_t(*p - UC('0'));
+            ++p;
+            while ((p != pend) && is_integer(*p)) {
+              // a multiplication by 10 is cheaper than an arbitrary integer
+              // multiplication
+              i = 10 * i +
+                  uint64_t(*p - UC('0')); // might overflow, handled later
+              ++p;
+            }
+          }
+        }
+      }
+    }
   }
   UC const *const end_of_integer_part = p;
   int64_t digit_count = int64_t(end_of_integer_part - start_digits);
-  answer.integer = span<UC const>(start_digits, size_t(digit_count));
+  if (store_spans) {
+    answer.integer = span<UC const>(start_digits, size_t(digit_count));
+  }
   FASTFLOAT_IF_CONSTEXPR17(basic_json_fmt) {
     // at least 1 digit in integer part, without leading zeros
     if (digit_count == 0) {
@@ -2058,7 +2131,9 @@ parse_number_string(UC const *p, UC const *pend,
       i = i * 10 + digit; // in rare cases, this will overflow, but that's ok
     }
     exponent = before - p;
-    answer.fraction = span<UC const>(before, size_t(p - before));
+    if (store_spans) {
+      answer.fraction = span<UC const>(before, size_t(p - before));
+    }
     digit_count -= exponent;
   }
   FASTFLOAT_IF_CONSTEXPR17(basic_json_fmt) {
@@ -2143,29 +2218,35 @@ parse_number_string(UC const *p, UC const *pend,
 
     if (digit_count > 19) {
       answer.too_many_digits = true;
-      // Let us start again, this time, avoiding overflows.
-      // We don't need to call if is_integer, since we use the
-      // pre-tokenized spans from above.
-      i = 0;
-      p = answer.integer.ptr;
-      UC const *int_end = p + answer.integer.len();
-      uint64_t const minimal_nineteen_digit_integer{1000000000000000000};
-      while ((i < minimal_nineteen_digit_integer) && (p != int_end)) {
-        i = i * 10 + uint64_t(*p - UC('0'));
-        ++p;
-      }
-      if (i >= minimal_nineteen_digit_integer) { // We have a big integer
-        exponent = end_of_integer_part - p + exp_number;
-      } else { // We have a value with a fractional component.
-        p = answer.fraction.ptr;
-        UC const *frac_end = p + answer.fraction.len();
-        while ((i < minimal_nineteen_digit_integer) && (p != frac_end)) {
+      // The truncation recompute below reads the integer/fraction spans. When
+      // store_spans is false we didn't materialize them, so just flag
+      // too_many_digits; the caller re-parses with store_spans=true to obtain
+      // the corrected mantissa/exponent before taking the slow path.
+      if (store_spans) {
+        // Let us start again, this time, avoiding overflows.
+        // We don't need to call if is_integer, since we use the
+        // pre-tokenized spans from above.
+        i = 0;
+        p = answer.integer.ptr;
+        UC const *int_end = p + answer.integer.len();
+        uint64_t const minimal_nineteen_digit_integer{1000000000000000000};
+        while ((i < minimal_nineteen_digit_integer) && (p != int_end)) {
           i = i * 10 + uint64_t(*p - UC('0'));
           ++p;
         }
-        exponent = answer.fraction.ptr - p + exp_number;
+        if (i >= minimal_nineteen_digit_integer) { // We have a big integer
+          exponent = end_of_integer_part - p + exp_number;
+        } else { // We have a value with a fractional component.
+          p = answer.fraction.ptr;
+          UC const *frac_end = p + answer.fraction.len();
+          while ((i < minimal_nineteen_digit_integer) && (p != frac_end)) {
+            i = i * 10 + uint64_t(*p - UC('0'));
+            ++p;
+          }
+          exponent = answer.fraction.ptr - p + exp_number;
+        }
+        // We have now corrected both exponent and i, to a truncated value
       }
-      // We have now corrected both exponent and i, to a truncated value
     }
   }
   answer.exponent = exponent;
@@ -2212,7 +2293,8 @@ parse_int_string(UC const *p, UC const *pend, T &value,
 
   UC const *const start_digits = p;
 
-  FASTFLOAT_IF_CONSTEXPR17((std::is_same<T, std::uint8_t>::value)) {
+  FASTFLOAT_IF_CONSTEXPR17(
+      (std::is_same<T, std::uint8_t>::value && sizeof(UC) == 1)) {
     if (base == 10) {
       const size_t len = (size_t)(pend - p);
       if (len == 0) {
@@ -2304,7 +2386,8 @@ parse_int_string(UC const *p, UC const *pend, T &value,
     }
   }
 
-  FASTFLOAT_IF_CONSTEXPR17((std::is_same<T, std::uint16_t>::value)) {
+  FASTFLOAT_IF_CONSTEXPR17(
+      (std::is_same<T, std::uint16_t>::value && sizeof(UC) == 1)) {
     if (base == 10) {
       const size_t len = size_t(pend - p);
       if (len == 0) {
@@ -2391,9 +2474,27 @@ parse_int_string(UC const *p, UC const *pend, T &value,
   }
   // this check can be eliminated for all other types, but they will all require
   // a max_digits(base) equivalent
-  if (digit_count == max_digits && i < min_safe_u64(base)) {
-    answer.ec = std::errc::result_out_of_range;
-    return answer;
+  if (digit_count == max_digits) {
+    // At the max_digits boundary the accumulator `i` may have wrapped around
+    // 2^64. A plain `i < min_safe_u64(base)` test is not sufficient: for any
+    // base whose max_digits-length range exceeds 2^64 (base 10 reaches
+    // ~5.4 * 2^64 at 20 digits) the value can wrap a whole multiple of 2^64 and
+    // land back above min_safe, slipping through. Decide exactly in O(1) using
+    // the leading digit, following the approach used in simdjson:
+    //   ms   == min_safe_u64(base) == base^(max_digits-1), the smallest
+    //           max_digits-length value.
+    //   dmax == the largest leading digit whose number can still fit in u64.
+    // The leading-digit band [d*ms, (d+1)*ms) has width ms < 2^64, so within
+    // the single band where d == dmax the value straddles 2^64 at most once,
+    // and a single threshold separates wrapped from non-wrapped values. A
+    // leading digit above dmax always overflows; below dmax always fits.
+    uint64_t const ms = min_safe_u64(base);
+    uint64_t const dmax = (std::numeric_limits<uint64_t>::max)() / ms;
+    uint64_t const lead = ch_to_digit(*start_digits);
+    if (lead > dmax || (lead == dmax && i < dmax * ms)) {
+      answer.ec = std::errc::result_out_of_range;
+      return answer;
+    }
   }
 
   // check other types overflow
@@ -4729,6 +4830,23 @@ from_chars_advanced(parsed_number_string_t<UC> &pns, T &value) noexcept {
   return answer;
 }
 
+// Slow path: re-parse materializing the integer/fraction spans the hot no-span
+// parse skipped, then run the full algorithm. The two callers reach it only
+// through a fastfloat_unlikely branch, so the optimizer keeps this re-parse off
+// the hot path on its own (no function-level noinline needed).
+// from_chars_advanced already handles both the too_many_digits disambiguation
+// and the am.power2<0 digit_comp recompute, so both slow branches collapse to
+// one helper call.
+template <typename T, typename UC>
+FASTFLOAT_CONSTEXPR20 from_chars_result_t<UC>
+parse_number_slow_path(UC const *first, UC const *last, T &value,
+                       parse_options_t<UC> options, bool bjf) noexcept {
+  parsed_number_string_t<UC> pns =
+      bjf ? parse_number_string<true, UC>(first, last, options, true)
+          : parse_number_string<false, UC>(first, last, options, true);
+  return from_chars_advanced(pns, value);
+}
+
 template <typename T, typename UC>
 fastfloat_really_inline FASTFLOAT_CONSTEXPR20 from_chars_result_t<UC>
 from_chars_float_advanced(UC const *first, UC const *last, T &value,
@@ -4752,10 +4870,15 @@ from_chars_float_advanced(UC const *first, UC const *last, T &value,
     answer.ptr = first;
     return answer;
   }
+  bool const bjf = uint64_t(fmt & detail::basic_json_fmt) != 0;
+
+  // Fast path: parse WITHOUT materializing the integer/fraction spans (read
+  // only by the rare slow paths). Skipping their stores keeps the fat
+  // parsed_number_string_t off the hot path. store_spans is a runtime argument,
+  // so this reuses the single parse_number_string instantiation.
   parsed_number_string_t<UC> pns =
-      uint64_t(fmt & detail::basic_json_fmt)
-          ? parse_number_string<true, UC>(first, last, options)
-          : parse_number_string<false, UC>(first, last, options);
+      bjf ? parse_number_string<true, UC>(first, last, options, false)
+          : parse_number_string<false, UC>(first, last, options, false);
   if (!pns.valid) {
     if (uint64_t(fmt & chars_format::no_infnan)) {
       answer.ec = std::errc::invalid_argument;
@@ -4766,8 +4889,49 @@ from_chars_float_advanced(UC const *first, UC const *last, T &value,
     }
   }
 
-  // call overload that takes parsed_number_string_t directly.
-  return from_chars_advanced(pns, value);
+  // Slow path A (rare): > 19 significant digits. The no-span parse left the
+  // mantissa un-truncated and skipped the span-based recompute; the cold helper
+  // re-parses with spans and runs the full algorithm.
+  //
+// We have to disable -Wc++20-extensions for the [[unlikely]] attribute
+// See comment for @jwakely at
+// https://github.com/fastfloat/fast_float/pull/387#discussion_r3366943539
+// This is unfortunate.
+#ifdef __clang__
+#pragma clang diagnostic push
+#if (!defined(__APPLE_CC__) && __clang_major__ >= 10) || (__clang_major__ >= 13)
+#pragma clang diagnostic ignored "-Wc++20-extensions"
+#endif
+#endif
+  if fastfloat_unlikely (pns.too_many_digits) {
+    return parse_number_slow_path<T, UC>(first, last, value, options, bjf);
+  }
+  answer.ec = std::errc(); // be optimistic
+  answer.ptr = pns.lastmatch;
+
+  if (clinger_fast_path_impl(pns.mantissa, pns.exponent, pns.negative, value)) {
+    return answer;
+  }
+
+  adjusted_mantissa am =
+      compute_float<binary_format<T>>(pns.exponent, pns.mantissa);
+  // Slow path B (rare): Eisel-Lemire could not resolve; digit_comp needs the
+  // integer/fraction spans. Route to the cold helper (clinger there is a
+  // dead-effect since it already failed here; the cold re-parse + digit_comp
+  // via from_chars_advanced reproduces this branch).
+  if fastfloat_unlikely (am.power2 < 0) {
+    return parse_number_slow_path<T, UC>(first, last, value, options, bjf);
+  }
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+  to_float(pns.negative, am, value);
+  // Test for over/underflow.
+  if ((pns.mantissa != 0 && am.mantissa == 0 && am.power2 == 0) ||
+      am.power2 == binary_format<T>::infinite_power()) {
+    answer.ec = std::errc::result_out_of_range;
+  }
+  return answer;
 }
 
 template <typename T, typename UC, typename>
