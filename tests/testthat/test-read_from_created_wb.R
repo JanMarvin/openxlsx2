@@ -471,3 +471,16 @@ test_that("reading all cols or rows works", {
   expect_equal(exp, dim(got))
 
 })
+
+test_that("filter with negative values", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = head(mtcars))
+  exp <- head(mtcars[c(1, 6), c("mpg", "cyl", "disp", "carb")])
+  got <- wb$to_df(rows = -3:-6, cols = -4:-10)
+  expect_equal(got, exp, ignore_attr = TRUE)
+
+
+  # removal and addition cancel each other out
+  expect_equal(wb$to_df(rows = c(-3, 3), cols = c(-4, 4), col_names = FALSE)$D, 110)
+
+})

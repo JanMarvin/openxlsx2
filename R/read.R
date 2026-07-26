@@ -71,6 +71,8 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' column A to the last column in row 9. If neither `dims` nor `named_region`
 #' is provided, the function automatically calculates the range based on the
 #' minimum and maximum populated cells, modified by `start_row` and `start_col`.
+#' Additionally, passing negative values to the `cols` or `rows` arguments acts
+#' as a filter to exclude specific columns or rows from the resulting data frame.
 #'
 #' Type conversion is governed by an internal guessing engine. If `detect_dates`
 #' is enabled, serial dates are converted to R Date or POSIXct objects. All
@@ -283,7 +285,7 @@ wb_to_df <- function(
     file <- xlsx_file %||% file
   }
 
-  if (!is.null(cols)) cols <- col2int(cols)
+  if (!is.null(cols) && is.character(cols)) cols <- col2int(cols)
 
   if (inherits(file, "wbWorkbook")) {
     wb <- file
@@ -423,19 +425,32 @@ wb_to_df <- function(
   }
 
   if (!is.null(rows)) {
-    keep_rows <- as.character(as.integer(rows))
 
-    if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
-      z  <- z[sel, , drop = FALSE]
-      tt <- tt[sel, , drop = FALSE]
-    } else {
-      z  <- z[keep_rows, , drop = FALSE]
-      tt <- tt[keep_rows, , drop = FALSE]
+    rm_rows <- as.character(as.integer(abs(rows[sign(rows) == -1L])))
 
-      ints <- as.integer(keep_rows)
-      rownames(z)  <- ints
-      rownames(tt) <- ints
+    if (length(rm_rows)) {
+      if (!anyNA(sel <- match(rm_rows, rownames(z)))) {
+        z  <- z[-sel, , drop = FALSE]
+        tt <- tt[-sel, , drop = FALSE]
+      }
     }
+
+    keep_rows <- as.character(as.integer(rows[sign(rows) == 1L]))
+
+    if (length(keep_rows)) {
+      if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
+        z  <- z[sel, , drop = FALSE]
+        tt <- tt[sel, , drop = FALSE]
+      } else {
+        z  <- z[keep_rows, , drop = FALSE]
+        tt <- tt[keep_rows, , drop = FALSE]
+
+        ints <- as.integer(keep_rows)
+        rownames(z)  <- ints
+        rownames(tt) <- ints
+      }
+    }
+
   }
 
   if (!is.null(start_col)) {
@@ -457,18 +472,31 @@ wb_to_df <- function(
   }
 
   if (!is.null(cols)) {
-    keep_cols <- int2col(cols)
 
-    if (!all(keep_cols %in% colnames(z))) {
-      keep_col <- keep_cols[!keep_cols %in% colnames(z)]
+    # works only with numeric columns
+    rm_cols <- int2col(abs(cols[sign(cols) == -1L]))
 
-      z[keep_col] <- NA_character_
-      tt[keep_col] <- NA_integer_
+    if (length(rm_cols)) {
+      if (!anyNA(sel <- match(rm_cols, colnames(z)))) {
+        z  <- z[, -sel, drop = FALSE]
+        tt <- tt[, -sel, drop = FALSE]
+      }
     }
 
-    sel <- match(keep_cols, colnames(z))
-    z  <- z[, sel, drop = FALSE]
-    tt <- tt[, sel, drop = FALSE]
+    keep_cols <- int2col(cols[sign(cols) == 1L])
+
+    if (length(keep_cols)) {
+      if (!all(keep_cols %in% colnames(z))) {
+        keep_col <- keep_cols[!keep_cols %in% colnames(z)]
+
+        z[keep_col] <- NA_character_
+        tt[keep_col] <- NA_integer_
+      }
+
+      sel <- match(keep_cols, colnames(z))
+      z  <- z[, sel, drop = FALSE]
+      tt <- tt[, sel, drop = FALSE]
+    }
   }
 
   keep_rows <- intersect(keep_rows, rnams)
