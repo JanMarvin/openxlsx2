@@ -290,7 +290,15 @@ wb_to_df <- function(
     file <- xlsx_file %||% file
   }
 
-  if (!is.null(cols) && is.character(cols)) cols <- col2int(cols)
+  if (!is.null(cols)) {
+    if (all(cols > 0)) {
+      cols <- col2int(cols)
+    } else if (!is.character(cols)) {
+      cols <- as.integer(cols)
+    } else {
+      col2int(cols) # will intentionally throw an error
+    }
+  }
 
   if (inherits(file, "wbWorkbook")) {
     wb <- file
@@ -431,18 +439,21 @@ wb_to_df <- function(
 
   if (!is.null(rows)) {
 
-    rm_rows <- as.character(as.integer(abs(rows[sign(rows) == -1L])))
+    # shrink z and tt and reduce keep_rows
+    rm_rows <- character()
+    if (any(sel <- rows < 0)) {
+      rm_rows <- as.character(as.integer(abs(rows[sel])))
 
-    if (length(rm_rows)) {
       if (!anyNA(sel <- match(rm_rows, rownames(z)))) {
         z  <- z[-sel, , drop = FALSE]
         tt <- tt[-sel, , drop = FALSE]
       }
     }
 
-    keep_rows <- as.character(as.integer(rows[sign(rows) == 1L]))
+    if (any(sel <- rows > 0)) {
+      keep_rows <- as.character(as.integer(rows[sel]))
 
-    if (length(keep_rows)) {
+      # FIXME why do we match over characters?
       if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
         z  <- z[sel, , drop = FALSE]
         tt <- tt[sel, , drop = FALSE]
@@ -456,6 +467,11 @@ wb_to_df <- function(
       }
     }
 
+    if (length(rm_rows)) {
+      has_dims <- TRUE # to reduce cc
+      if (is.null(keep_rows)) keep_rows <- as.character(rownames(z))
+      keep_rows <- setdiff(keep_rows, rm_rows)
+    }
   }
 
   if (!is.null(start_col)) {
@@ -478,30 +494,31 @@ wb_to_df <- function(
 
   if (!is.null(cols)) {
 
-    # works only with numeric columns
-    rm_cols <- int2col(abs(cols[sign(cols) == -1L]))
+    # shrink z and tt and reduce keep_rows
+    rm_cols <- character()
+    if (any(sel <- cols < 0)) {
+      rm_cols <- int2col(abs(cols[sel]))
+    }
+
+    keep_cols <- int2col(cols[cols > 0])
 
     if (length(rm_cols)) {
-      if (!anyNA(sel <- match(rm_cols, colnames(z)))) {
-        z  <- z[, -sel, drop = FALSE]
-        tt <- tt[, -sel, drop = FALSE]
-      }
+      has_dims <- TRUE # to reduce cc
+      if (length(keep_cols) == 0) keep_cols <- colnames(z)
+      keep_cols <- setdiff(keep_cols, rm_cols)
     }
 
-    keep_cols <- int2col(cols[sign(cols) == 1L])
+    # extend z and tt
+    if (!all(keep_cols %in% colnames(z))) {
+      keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 
-    if (length(keep_cols)) {
-      if (!all(keep_cols %in% colnames(z))) {
-        keep_col <- keep_cols[!keep_cols %in% colnames(z)]
-
-        z[keep_col] <- NA_character_
-        tt[keep_col] <- NA_integer_
-      }
-
-      sel <- match(keep_cols, colnames(z))
-      z  <- z[, sel, drop = FALSE]
-      tt <- tt[, sel, drop = FALSE]
+      z[keep_col] <- NA_character_
+      tt[keep_col] <- NA_integer_
     }
+
+    sel <- match(keep_cols, colnames(z))
+    z  <- z[, sel, drop = FALSE]
+    tt <- tt[, sel, drop = FALSE]
   }
 
   keep_rows <- intersect(keep_rows, rnams)

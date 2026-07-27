@@ -479,8 +479,7 @@ test_that("filter with negative values", {
   got <- wb$to_df(rows = -3:-6, cols = -4:-10)
   expect_equal(got, exp, ignore_attr = TRUE)
 
-
-  # removal and addition cancel each other out
-  expect_equal(wb$to_df(rows = c(-3, 3), cols = c(-4, 4), col_names = FALSE)$D, 110)
+  # removal has precedence
+  expect_equal(wb$to_df(rows = c(-3, 3), cols = c(-4, 4), col_names = FALSE)$D, NULL)
 
 })
