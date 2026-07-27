@@ -106,6 +106,11 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' missing value definitions, accepting either a character vector or a named
 #' list to differentiate between string and numeric `NA` types.
 #'
+#' The XML parser makes trade-offs to extract raw cell values efficiently and is
+#' agnostic regarding cell formatting. Visual styling attributes (such as bold,
+#' italics, or background fill) and rich text inline formatting (such as superscripts)
+#' are not handled or restored in the extracted data frame values.
+#'
 #' @section Notes:
 #' Recent versions of `openxlsx2` have introduced several changes to the
 #' `wb_to_df()` API:

@@ -186,6 +186,11 @@ layouts, \code{fill_merged_cells} propagates the value of a top-left merged cell
 to all cells within the merge range. The \code{na} argument supports sophisticated
 missing value definitions, accepting either a character vector or a named
 list to differentiate between string and numeric \code{NA} types.
+
+The XML parser makes trade-offs to extract raw cell values efficiently and is
+agnostic regarding cell formatting. Visual styling attributes (such as bold,
+italics, or background fill) and rich text inline formatting (such as superscripts)
+are not handled or restored in the extracted data frame values.
 }
 \section{Notes}{
 
