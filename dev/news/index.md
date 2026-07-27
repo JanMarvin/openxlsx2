@@ -6,6 +6,10 @@
 
 - `col2int` allows splitting on “,” and “;”.
   [\#1659](https://github.com/JanMarvin/openxlsx2/pull/1659)
+- It is now possible to filter columns and rows with negative integer
+  values passed to `cols` and `rows` in
+  [`wb_to_df()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.md).
+  [\#166](https://github.com/JanMarvin/openxlsx2/pull/1666)
 
 ### Fixes
 
