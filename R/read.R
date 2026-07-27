@@ -71,6 +71,8 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' column A to the last column in row 9. If neither `dims` nor `named_region`
 #' is provided, the function automatically calculates the range based on the
 #' minimum and maximum populated cells, modified by `start_row` and `start_col`.
+#' Additionally, passing negative values to the `cols` or `rows` arguments acts
+#' as a filter to exclude specific columns or rows from the resulting data frame.
 #'
 #' Type conversion is governed by an internal guessing engine. If `detect_dates`
 #' is enabled, serial dates are converted to R Date or POSIXct objects. All
@@ -103,6 +105,11 @@ convert_df <- function(z, types, date_conv, datetime_conv, hms_conv, as_characte
 #' to all cells within the merge range. The `na` argument supports sophisticated
 #' missing value definitions, accepting either a character vector or a named
 #' list to differentiate between string and numeric `NA` types.
+#'
+#' The XML parser makes trade-offs to extract raw cell values efficiently and is
+#' agnostic regarding cell formatting. Visual styling attributes (such as bold,
+#' italics, or background fill) and rich text inline formatting (such as superscripts)
+#' are not handled or restored in the extracted data frame values.
 #'
 #' @section Notes:
 #' Recent versions of `openxlsx2` have introduced several changes to the
@@ -283,7 +290,15 @@ wb_to_df <- function(
     file <- xlsx_file %||% file
   }
 
-  if (!is.null(cols)) cols <- col2int(cols)
+  if (!is.null(cols)) {
+    if (all(cols > 0)) {
+      cols <- col2int(cols)
+    } else if (!is.character(cols)) {
+      cols <- as.integer(cols)
+    } else {
+      col2int(cols) # will intentionally throw an error
+    }
+  }
 
   if (inherits(file, "wbWorkbook")) {
     wb <- file
@@ -423,18 +438,39 @@ wb_to_df <- function(
   }
 
   if (!is.null(rows)) {
-    keep_rows <- as.character(as.integer(rows))
 
-    if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
-      z  <- z[sel, , drop = FALSE]
-      tt <- tt[sel, , drop = FALSE]
-    } else {
-      z  <- z[keep_rows, , drop = FALSE]
-      tt <- tt[keep_rows, , drop = FALSE]
+    # shrink z and tt and reduce keep_rows
+    rm_rows <- character()
+    if (any(sel <- rows < 0)) {
+      rm_rows <- as.character(as.integer(abs(rows[sel])))
 
-      ints <- as.integer(keep_rows)
-      rownames(z)  <- ints
-      rownames(tt) <- ints
+      if (!anyNA(sel <- match(rm_rows, rownames(z)))) {
+        z  <- z[-sel, , drop = FALSE]
+        tt <- tt[-sel, , drop = FALSE]
+      }
+    }
+
+    if (any(sel <- rows > 0)) {
+      keep_rows <- as.character(as.integer(rows[sel]))
+
+      # FIXME why do we match over characters?
+      if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
+        z  <- z[sel, , drop = FALSE]
+        tt <- tt[sel, , drop = FALSE]
+      } else {
+        z  <- z[keep_rows, , drop = FALSE]
+        tt <- tt[keep_rows, , drop = FALSE]
+
+        ints <- as.integer(keep_rows)
+        rownames(z)  <- ints
+        rownames(tt) <- ints
+      }
+    }
+
+    if (length(rm_rows)) {
+      has_dims <- TRUE # to reduce cc
+      if (is.null(keep_rows)) keep_rows <- as.character(rownames(z))
+      keep_rows <- setdiff(keep_rows, rm_rows)
     }
   }
 
@@ -457,8 +493,22 @@ wb_to_df <- function(
   }
 
   if (!is.null(cols)) {
-    keep_cols <- int2col(cols)
 
+    # shrink z and tt and reduce keep_rows
+    rm_cols <- character()
+    if (any(sel <- cols < 0)) {
+      rm_cols <- int2col(abs(cols[sel]))
+    }
+
+    keep_cols <- int2col(cols[cols > 0])
+
+    if (length(rm_cols)) {
+      has_dims <- TRUE # to reduce cc
+      if (length(keep_cols) == 0) keep_cols <- colnames(z)
+      keep_cols <- setdiff(keep_cols, rm_cols)
+    }
+
+    # extend z and tt
     if (!all(keep_cols %in% colnames(z))) {
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 

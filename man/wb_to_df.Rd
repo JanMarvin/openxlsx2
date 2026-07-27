@@ -152,6 +152,8 @@ column C, while \code{dims = "A-:+9"} reads from the first populated row in
 column A to the last column in row 9. If neither \code{dims} nor \code{named_region}
 is provided, the function automatically calculates the range based on the
 minimum and maximum populated cells, modified by \code{start_row} and \code{start_col}.
+Additionally, passing negative values to the \code{cols} or \code{rows} arguments acts
+as a filter to exclude specific columns or rows from the resulting data frame.
 
 Type conversion is governed by an internal guessing engine. If \code{detect_dates}
 is enabled, serial dates are converted to R Date or POSIXct objects. All
@@ -184,6 +186,11 @@ layouts, \code{fill_merged_cells} propagates the value of a top-left merged cell
 to all cells within the merge range. The \code{na} argument supports sophisticated
 missing value definitions, accepting either a character vector or a named
 list to differentiate between string and numeric \code{NA} types.
+
+The XML parser makes trade-offs to extract raw cell values efficiently and is
+agnostic regarding cell formatting. Visual styling attributes (such as bold,
+italics, or background fill) and rich text inline formatting (such as superscripts)
+are not handled or restored in the extracted data frame values.
 }
 \section{Notes}{
 
