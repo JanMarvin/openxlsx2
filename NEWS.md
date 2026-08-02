@@ -3,11 +3,12 @@
 ## New features
 
 * `col2int` allows splitting on "," and ";". [#1659](https://github.com/JanMarvin/openxlsx2/pull/1659)
-* It is now possible to filter columns and rows with negative integer values passed to `cols` and `rows` in `wb_to_df()`.  [#166](https://github.com/JanMarvin/openxlsx2/pull/1666)
+* It is now possible to filter columns and rows with negative integer values passed to `cols` and `rows` in `wb_to_df()`. [#1666](https://github.com/JanMarvin/openxlsx2/pull/1666)
 
 ## Fixes
 
 * `wb_clone_sheet_style()` was missing a `key` column. [#1663](https://github.com/JanMarvin/openxlsx2/pull/1663)
+* Changing the order with `wb_set_order()` now changes the local sheet id. [#1667](https://github.com/JanMarvin/openxlsx2/pull/1667)
 
 
 ***************************************************************************
