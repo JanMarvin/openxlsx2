@@ -9,13 +9,17 @@
 - It is now possible to filter columns and rows with negative integer
   values passed to `cols` and `rows` in
   [`wb_to_df()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_to_df.md).
-  [\#166](https://github.com/JanMarvin/openxlsx2/pull/1666)
+  [\#1666](https://github.com/JanMarvin/openxlsx2/pull/1666)
 
 ### Fixes
 
 - [`wb_clone_sheet_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_clone_sheet_style.md)
   was missing a `key` column.
   [\#1663](https://github.com/JanMarvin/openxlsx2/pull/1663)
+- Changing the order with
+  [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_order.md)
+  now changes the local sheet id.
+  [\#1667](https://github.com/JanMarvin/openxlsx2/pull/1667)
 
 ------------------------------------------------------------------------
 
