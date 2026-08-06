@@ -1169,8 +1169,8 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
           if (debug) Rcpp::Rcout << "<BrtExternTableStart>" << std::endl;
           uint8_t flags = 0;
           uint32_t iTab = 0;
-          iTab = readbin(iTab, bin, debug);
-          flags = readbin(flags, bin, debug);
+          iTab = readbin(iTab, bin, swapit);
+          flags = readbin(flags, bin, swapit);
 
           first_row = true;
           out << "<sheetData sheetId=\"" << iTab << "\">" << std::endl;
@@ -1246,7 +1246,9 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
           if (debug) Rcpp::Rcout << "<BrtExternCellString>" << std::endl;
 
           int32_t col = UncheckedCol(bin, swapit);
+          if (col > 16384) Rcpp::stop("Column out of bounds");
           std::string value = XLWideString(bin, swapit);
+          if (value.length() >= 32768) Rcpp::stop("String to long");
           out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\" t=\"str\">" << std::endl;
           out << "<v>" << escape_xml(value) << "</v>" << std::endl;
           out << "</cell>" << std::endl;

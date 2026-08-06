@@ -8,7 +8,8 @@
 ## Fixes
 
 * `wb_clone_sheet_style()` was missing a `key` column. [#1663](https://github.com/JanMarvin/openxlsx2/pull/1663)
-* Changing the order with `wb_set_order()` now changes the local sheet id. [#1667](https://github.com/JanMarvin/openxlsx2/pull/1667)
+* Changing the order with `wb_set_order()` now changes the local sheet id. [#1668](https://github.com/JanMarvin/openxlsx2/pull/1668)
+* Fixes to XLSB parser, including a typo in external references and some nulled `XLWideString` [#1670](https://github.com/JanMarvin/openxlsx2/pull/1670)
 
 
 ***************************************************************************

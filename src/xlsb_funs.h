@@ -257,6 +257,7 @@ std::string LPWideString(std::istream& sas, bool swapit) {
 std::string XLWideString(std::istream& sas, bool swapit) {
   uint32_t len = 0;
   len = readbin(len, sas, swapit);
+  if (len == 0xFFFFFFFF || len == 0) return "";
   std::string str(len, '\0');
   return read_xlwidestring(str, sas);
 }
