@@ -19,7 +19,10 @@
 - Changing the order with
   [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_order.md)
   now changes the local sheet id.
-  [\#1667](https://github.com/JanMarvin/openxlsx2/pull/1667)
+  [\#1668](https://github.com/JanMarvin/openxlsx2/pull/1668)
+- Fixes to XLSB parser, including a typo in external references and some
+  nulled `XLWideString`
+  [\#1670](https://github.com/JanMarvin/openxlsx2/pull/1670)
 
 ------------------------------------------------------------------------
 
