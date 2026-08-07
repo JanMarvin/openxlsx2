@@ -7421,7 +7421,7 @@ wbWorkbook <- R6::R6Class(
           ))
       }
 
-      cat(unlist(showText))
+      cat(unlist(showText), "\n")
       invisible(self)
     },
 

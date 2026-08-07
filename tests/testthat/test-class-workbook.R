@@ -1129,7 +1129,7 @@ test_that("wbWorkbook print works", {
            " ",
            "Worksheets:",
            " Sheets: Sheet 1, Sheet 1 (1), Sheet & NoSheet ",
-           " Write order: 1, 2, 3")
+           " Write order: 1, 2, 3 ")
   got <- capture.output(wb)
   expect_equal(got, exp)
 
