@@ -1711,7 +1711,10 @@ wb_load <- function(
       # handling of externalReferences.bin
       if (debug) print(xti)
 
-      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 0
+      sel_deleted <- xti$firstSheet == 0
+      if (any(sel_deleted)) xti$sheets[sel_deleted] <- "#REF"
+
+      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 1
 
       if (any(sel)) {
 
@@ -1738,25 +1741,34 @@ wb_load <- function(
           }
       }
 
+      collapse_double_ref <- function(x) {
+        x <- stringi::stri_replace_all_fixed(x, "#REF!#REF!", "#REF!")
+        stringi::stri_replace_all_regex(
+          x,
+          "#REF!\\$?[A-Za-z]{1,3}\\$?[0-9]*(:\\$?[A-Za-z]{1,3}\\$?[0-9]*)?",
+          "#REF!"
+        )
+      }
+
       for (i in seq_along(wb$tables$tab_xml)) {
         wb$tables$tab_xml[i] <-
-          stringi::stri_replace_all_fixed(
+          collapse_double_ref(stringi::stri_replace_all_fixed(
             wb$tables$tab_xml[i],
             xti$name_id,
             xti$sheets,
             vectorize_all = FALSE
-          )
+          ))
       }
 
       for (i in seq_along(wb$worksheets)) {
         if (!wb$is_chartsheet[[i]])
           wb$worksheets[[i]]$extLst <-
-            stringi::stri_replace_all_fixed(
+            collapse_double_ref(stringi::stri_replace_all_fixed(
               wb$worksheets[[i]]$extLst,
               xti$name_id,
               xti$sheets,
               vectorize_all = FALSE
-            )
+            ))
       }
 
       ### for external references we need to get the required sheet names first
@@ -1771,7 +1783,7 @@ wb_load <- function(
 
       # TODO: How are references to the same external link,
       # but different sheet handled?
-      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 0
+      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 1
 
       if (any(sel)) {
 
@@ -1787,9 +1799,11 @@ wb_load <- function(
           if (ref %in% seq_along(extSheets)) {
 
             if (want == 0) next
+            if (!(want %in% seq_along(extSheets[[ref]]))) next
             sheetName <- extSheets[[ref]][[want]]
             if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
               want <- xti$lastSheet[sel][i]
+              if (!(want %in% seq_along(extSheets[[ref]]))) next
               sheetName <- paste0(sheetName, ":", extSheets[[ref]][[want]])
             }
             # should be a single reference now
@@ -1813,12 +1827,12 @@ wb_load <- function(
         if (length(wb$workbook$definedNames)) {
 
           wb$workbook$definedNames <-
-            stringi::stri_replace_all_fixed(
+            collapse_double_ref(stringi::stri_replace_all_fixed(
               wb$workbook$definedNames,
               xti$name_id,
               xti$sheets,
               vectorize_all = FALSE
-            )
+            ))
 
           # replace named region in formulas
           nri         <- wb$get_named_regions()
@@ -1911,12 +1925,12 @@ wb_load <- function(
         for (j in seq_along(wb$worksheets)) {
           cc <- wb$worksheets[[j]]$sheet_data$cc
           if (any(sel <- cc$f != "")) {
-            cc$f[sel] <- stringi::stri_replace_all_fixed(
+            cc$f[sel] <- collapse_double_ref(stringi::stri_replace_all_fixed(
               cc$f[sel],
               xti$name_id,
               xti$sheets,
               vectorize_all = FALSE
-            )
+            ))
             wb$worksheets[[j]]$sheet_data$cc <- cc
           }
           rm(cc)

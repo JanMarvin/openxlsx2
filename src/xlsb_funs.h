@@ -224,9 +224,9 @@ std::string to_utf8(const std::u16string& u16str) {
 }
 
 std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
-  size_t size = mystring.size();  // cchCharacters
+  size_t size = mystring.size();
   std::u16string str;
-  str.resize(size);  // rgchData is cchCharacters * 2 bytes = `size` UTF-16 code units
+  str.resize(size);
 
   if (size && !sas.read((char*)&str[0], static_cast<std::streamsize>(size * 2)))
     Rcpp::stop("char: a binary read error occurred");
@@ -238,7 +238,7 @@ std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
 }
 
 void check_len(std::istream& sas, uint64_t need_bytes) {
-  if (need_bytes < 0x10000) return;  // common case: skip the seek round-trip
+  if (need_bytes < 0x10000) return;
   std::streampos cur = sas.tellg();
   if (cur == std::streampos(-1)) return;
   sas.seekg(0, std::ios::end);
@@ -733,6 +733,24 @@ std::string Area(std::istream& sas, bool swapit) {
 
   std::string out;
 
+  if (row0 == 0 && row1 == 1048575) {
+    if (!fColRel0) out += "$";
+    out += int_to_col(col0[0] + 1);
+    out += ":";
+    if (!fColRel1) out += "$";
+    out += int_to_col(col1[0] + 1);
+    return out;
+  }
+
+  if (col0[0] == 0 && col1[0] == 16383) {
+    if (!fRwRel0) out += "$";
+    out += std::to_string(row0 + 1);
+    out += ":";
+    if (!fRwRel1) out += "$";
+    out += std::to_string(row1 + 1);
+    return out;
+  }
+
   if (!fColRel0) out += "$";
   out += int_to_col(col0[0] + 1);
 
@@ -762,6 +780,9 @@ std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
   bool fRwRel0  = col_rel0[2];
   bool fColRel1 = col_rel1[1];
   bool fRwRel1  = col_rel1[2];
+
+  bool wholeColumn = (row_rel0 == 0 && row_rel1 == 1048575);
+  bool wholeRow = (col_rel0[0] == 0 && col_rel1[0] == 16383);
 
   std::string out;
 
@@ -799,6 +820,24 @@ std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
       col_rel1[0] += 0x4000;
     else if (col_rel1[0] > 0x3FFF)
       col_rel1[0] -= 0x4000;
+  }
+
+  if (wholeColumn) {
+    if (!fColRel0) out += "$";
+    out += int_to_col(col_rel0[0] + 1);
+    out += ":";
+    if (!fColRel1) out += "$";
+    out += int_to_col(col_rel1[0] + 1);
+    return out;
+  }
+
+  if (wholeRow) {
+    if (!fRwRel0) out += "$";
+    out += std::to_string(row_rel0 + 1);
+    out += ":";
+    if (!fRwRel1) out += "$";
+    out += std::to_string(row_rel1 + 1);
+    return out;
   }
 
   if (!fColRel0) out += "$";
@@ -1590,7 +1629,9 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
       case PtgNum: {
         if (debug) Rcpp::Rcout << "PtgNum" <<std::endl;
         double value = Xnum(sas, swapit);
-        fml_out += std::to_string(value);
+        std::stringstream numstr;
+        numstr << std::setprecision(16) << value;
+        fml_out += numstr.str();
         fml_out += "\n";
         break;
       }
@@ -1666,11 +1707,13 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         if (debug) Rprintf("XtiIndex: %d\n", ixti);
         ixti = readbin(ixti, sas, swapit);  // XtiIndex
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti == 0xFFFF) {
+          fml_out += "#REF!";
+        } else {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += Loc(sas, swapit);
         fml_out += "\n";
 
@@ -1718,11 +1761,13 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         ixti = readbin(ixti, sas, swapit);
         if (debug) Rprintf("ixti in PtgArea3d: %d\n", ixti);
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti == 0xFFFF) {
+          fml_out += "#REF!";
+        } else {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += Area(sas, swapit);
         fml_out += "\n";
 
@@ -1851,11 +1896,11 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         unused1 = readbin(unused1, sas, swapit);
         unused2 = readbin(unused2, sas, swapit);
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti != 0xFFFF) {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += "#REF!";
         fml_out += "\n";
 
@@ -1901,11 +1946,11 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         unused2 = readbin(unused2, sas, swapit);
         unused3 = readbin(unused3, sas, swapit);
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti != 0xFFFF) {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += "#REF!";
         fml_out += "\n";
 
@@ -1979,7 +2024,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
         int8_t boolean = 0;
         boolean = readbin(boolean, sas, swapit);
-        fml_out += std::to_string(boolean);
+        fml_out += boolean ? "TRUE" : "FALSE";
         fml_out += "\n";
         break;
       }

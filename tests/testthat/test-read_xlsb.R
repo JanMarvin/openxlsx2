@@ -128,7 +128,7 @@ test_that("xlsb formulas", {
 
   exp <- c("", "D2:E2", "A1,B1", "A1 A2", "1+1", "1-1", "1*1", "1/1",
           "1%", "1^1", "1=1", "1&gt;1", "1&gt;=1", "1&lt;1", "1&lt;=1",
-          "1&lt;&gt;1", "+A3", "-R2", "(1)", "SUM(1, )", "1", "2.500000",
+          "1&lt;&gt;1", "+A3", "-R2", "(1)", "SUM(1, )", "1", "2.5",
           "\"a\"", "\"A\"&amp;\"B\"", "Sheet2!B2", "'[1]Sheet3'!A2")
   got <- unique(wb$worksheets[[1]]$sheet_data$cc$f)
   expect_equal(exp, got)
