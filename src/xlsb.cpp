@@ -1236,7 +1236,7 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
           int32_t col = UncheckedCol(bin, swapit);
           value = Xnum(bin, swapit);
           out << "<cell r=\"" << int_to_col(col + 1) << row + 1 << "\">" << std::endl;
-          out << "<v>" << value << "</v>" << std::endl;
+          out << "<v>" << std::setprecision(16) << value << "</v>" << std::endl;
           out << "</cell>" << std::endl;
 
           break;

@@ -1590,7 +1590,9 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
       case PtgNum: {
         if (debug) Rcpp::Rcout << "PtgNum" <<std::endl;
         double value = Xnum(sas, swapit);
-        fml_out += std::to_string(value);
+        std::stringstream numstr;
+        numstr << std::setprecision(16) << value;
+        fml_out += numstr.str();
         fml_out += "\n";
         break;
       }
@@ -1666,11 +1668,13 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         if (debug) Rprintf("XtiIndex: %d\n", ixti);
         ixti = readbin(ixti, sas, swapit);  // XtiIndex
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti == 0xFFFF) {
+          fml_out += "#REF!";
+        } else {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += Loc(sas, swapit);
         fml_out += "\n";
 
@@ -1718,11 +1722,13 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         ixti = readbin(ixti, sas, swapit);
         if (debug) Rprintf("ixti in PtgArea3d: %d\n", ixti);
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti == 0xFFFF) {
+          fml_out += "#REF!";
+        } else {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += Area(sas, swapit);
         fml_out += "\n";
 
@@ -1851,11 +1857,11 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         unused1 = readbin(unused1, sas, swapit);
         unused2 = readbin(unused2, sas, swapit);
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti != 0xFFFF) {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += "#REF!";
         fml_out += "\n";
 
@@ -1901,11 +1907,11 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
         unused2 = readbin(unused2, sas, swapit);
         unused3 = readbin(unused3, sas, swapit);
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << ixti;
-
-        // A1 notation cell
-        fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti != 0xFFFF) {
+          std::stringstream paddedStr;
+          paddedStr << std::setw(12) << std::setfill('0') << ixti;
+          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        }
         fml_out += "#REF!";
         fml_out += "\n";
 
