@@ -1711,7 +1711,13 @@ wb_load <- function(
       # handling of externalReferences.bin
       if (debug) print(xti)
 
-      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 0
+      # raw firstSheet == -1 (now 0 after the +1L shift above) means the
+      # referenced sheet was deleted: MS-XLSB 2.5.173 Xti.firstSheet == -1
+      # "the first sheet in the reference cannot be found"
+      sel_deleted <- xti$firstSheet == 0
+      if (any(sel_deleted)) xti$sheets[sel_deleted] <- "#REF"
+
+      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 1
 
       if (any(sel)) {
 
@@ -1771,7 +1777,7 @@ wb_load <- function(
 
       # TODO: How are references to the same external link,
       # but different sheet handled?
-      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 0
+      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 1
 
       if (any(sel)) {
 
@@ -1787,9 +1793,11 @@ wb_load <- function(
           if (ref %in% seq_along(extSheets)) {
 
             if (want == 0) next
+            if (!(want %in% seq_along(extSheets[[ref]]))) next
             sheetName <- extSheets[[ref]][[want]]
             if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
               want <- xti$lastSheet[sel][i]
+              if (!(want %in% seq_along(extSheets[[ref]]))) next
               sheetName <- paste0(sheetName, ":", extSheets[[ref]][[want]])
             }
             # should be a single reference now
