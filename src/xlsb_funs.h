@@ -1985,7 +1985,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
 
         int8_t boolean = 0;
         boolean = readbin(boolean, sas, swapit);
-        fml_out += std::to_string(boolean);
+        fml_out += boolean ? "TRUE" : "FALSE";
         fml_out += "\n";
         break;
       }
