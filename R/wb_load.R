@@ -1711,12 +1711,6 @@ wb_load <- function(
       # handling of externalReferences.bin
       if (debug) print(xti)
 
-      # raw firstSheet == -1 (now 0 after the +1L shift above) means the
-      # referenced sheet was deleted: MS-XLSB 2.5.173 Xti.firstSheet == -1
-      # "the first sheet in the reference cannot be found"
-      # NOTE: no trailing "!" here - the formula template already has a
-      # literal "!" right after the placeholder (see xlsb_funs.h rgce()),
-      # so "#REF!" here would double up into "#REF!!..."
       sel_deleted <- xti$firstSheet == 0
       if (any(sel_deleted)) xti$sheets[sel_deleted] <- "#REF"
 
@@ -1747,13 +1741,13 @@ wb_load <- function(
           }
       }
 
-      # PtgRefErr3d/PtgAreaErr3d already emit a literal "#REF!" for the
-      # broken cell/range themselves. If the sheet is ALSO deleted (xti
-      # substitution above -> "#REF"), the two markers stack into
-      # "#REF!#REF!", which is not something real Excel ever produces -
-      # a deleted sheet collapses the whole reference to one "#REF!".
       collapse_double_ref <- function(x) {
-        stringi::stri_replace_all_fixed(x, "#REF!#REF!", "#REF!")
+        x <- stringi::stri_replace_all_fixed(x, "#REF!#REF!", "#REF!")
+        stringi::stri_replace_all_regex(
+          x,
+          "#REF!\\$?[A-Za-z]{1,3}\\$?[0-9]*(:\\$?[A-Za-z]{1,3}\\$?[0-9]*)?",
+          "#REF!"
+        )
       }
 
       for (i in seq_along(wb$tables$tab_xml)) {

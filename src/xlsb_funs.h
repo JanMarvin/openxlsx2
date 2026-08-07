@@ -224,9 +224,9 @@ std::string to_utf8(const std::u16string& u16str) {
 }
 
 std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
-  size_t size = mystring.size();  // cchCharacters
+  size_t size = mystring.size();
   std::u16string str;
-  str.resize(size);  // rgchData is cchCharacters * 2 bytes = `size` UTF-16 code units
+  str.resize(size);
 
   if (size && !sas.read((char*)&str[0], static_cast<std::streamsize>(size * 2)))
     Rcpp::stop("char: a binary read error occurred");
@@ -238,7 +238,7 @@ std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
 }
 
 void check_len(std::istream& sas, uint64_t need_bytes) {
-  if (need_bytes < 0x10000) return;  // common case: skip the seek round-trip
+  if (need_bytes < 0x10000) return;
   std::streampos cur = sas.tellg();
   if (cur == std::streampos(-1)) return;
   sas.seekg(0, std::ios::end);
@@ -733,6 +733,24 @@ std::string Area(std::istream& sas, bool swapit) {
 
   std::string out;
 
+  if (row0 == 0 && row1 == 1048575) {
+    if (!fColRel0) out += "$";
+    out += int_to_col(col0[0] + 1);
+    out += ":";
+    if (!fColRel1) out += "$";
+    out += int_to_col(col1[0] + 1);
+    return out;
+  }
+
+  if (col0[0] == 0 && col1[0] == 16383) {
+    if (!fRwRel0) out += "$";
+    out += std::to_string(row0 + 1);
+    out += ":";
+    if (!fRwRel1) out += "$";
+    out += std::to_string(row1 + 1);
+    return out;
+  }
+
   if (!fColRel0) out += "$";
   out += int_to_col(col0[0] + 1);
 
@@ -762,6 +780,9 @@ std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
   bool fRwRel0  = col_rel0[2];
   bool fColRel1 = col_rel1[1];
   bool fRwRel1  = col_rel1[2];
+
+  bool wholeColumn = (row_rel0 == 0 && row_rel1 == 1048575);
+  bool wholeRow = (col_rel0[0] == 0 && col_rel1[0] == 16383);
 
   std::string out;
 
@@ -799,6 +820,24 @@ std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
       col_rel1[0] += 0x4000;
     else if (col_rel1[0] > 0x3FFF)
       col_rel1[0] -= 0x4000;
+  }
+
+  if (wholeColumn) {
+    if (!fColRel0) out += "$";
+    out += int_to_col(col_rel0[0] + 1);
+    out += ":";
+    if (!fColRel1) out += "$";
+    out += int_to_col(col_rel1[0] + 1);
+    return out;
+  }
+
+  if (wholeRow) {
+    if (!fRwRel0) out += "$";
+    out += std::to_string(row_rel0 + 1);
+    out += ":";
+    if (!fRwRel1) out += "$";
+    out += std::to_string(row_rel1 + 1);
+    return out;
   }
 
   if (!fColRel0) out += "$";
