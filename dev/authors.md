@@ -46,6 +46,7 @@ Source:
     david-f1976
     debarros
     Evan Cortens
+    Felix Ventura de Oliveira
     Florian Weimer
     Gregory Fiumara
     Gregory Warnes
