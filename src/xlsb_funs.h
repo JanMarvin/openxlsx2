@@ -325,12 +325,12 @@ int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
   // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
 
   if (sar2 != 0 && sar3 != 0 && sar4 != 0) {
-    int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    int32_t recordType = ((sar4 & 0x7F) << 21) | ((sar3 & 0x7F) << 14) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
     return recordType;
   }
 
   if (sar2 != 0 && sar3 != 0 && sar4 == 0) {
-    int32_t recordType = ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    int32_t recordType = ((sar3 & 0x7F) << 14) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
     return recordType;
   }
 
