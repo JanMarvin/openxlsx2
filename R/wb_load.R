@@ -1714,6 +1714,9 @@ wb_load <- function(
       # raw firstSheet == -1 (now 0 after the +1L shift above) means the
       # referenced sheet was deleted: MS-XLSB 2.5.173 Xti.firstSheet == -1
       # "the first sheet in the reference cannot be found"
+      # NOTE: no trailing "!" here - the formula template already has a
+      # literal "!" right after the placeholder (see xlsb_funs.h rgce()),
+      # so "#REF!" here would double up into "#REF!!..."
       sel_deleted <- xti$firstSheet == 0
       if (any(sel_deleted)) xti$sheets[sel_deleted] <- "#REF"
 
@@ -1744,25 +1747,34 @@ wb_load <- function(
           }
       }
 
+      # PtgRefErr3d/PtgAreaErr3d already emit a literal "#REF!" for the
+      # broken cell/range themselves. If the sheet is ALSO deleted (xti
+      # substitution above -> "#REF"), the two markers stack into
+      # "#REF!#REF!", which is not something real Excel ever produces -
+      # a deleted sheet collapses the whole reference to one "#REF!".
+      collapse_double_ref <- function(x) {
+        stringi::stri_replace_all_fixed(x, "#REF!#REF!", "#REF!")
+      }
+
       for (i in seq_along(wb$tables$tab_xml)) {
         wb$tables$tab_xml[i] <-
-          stringi::stri_replace_all_fixed(
+          collapse_double_ref(stringi::stri_replace_all_fixed(
             wb$tables$tab_xml[i],
             xti$name_id,
             xti$sheets,
             vectorize_all = FALSE
-          )
+          ))
       }
 
       for (i in seq_along(wb$worksheets)) {
         if (!wb$is_chartsheet[[i]])
           wb$worksheets[[i]]$extLst <-
-            stringi::stri_replace_all_fixed(
+            collapse_double_ref(stringi::stri_replace_all_fixed(
               wb$worksheets[[i]]$extLst,
               xti$name_id,
               xti$sheets,
               vectorize_all = FALSE
-            )
+            ))
       }
 
       ### for external references we need to get the required sheet names first
@@ -1821,12 +1833,12 @@ wb_load <- function(
         if (length(wb$workbook$definedNames)) {
 
           wb$workbook$definedNames <-
-            stringi::stri_replace_all_fixed(
+            collapse_double_ref(stringi::stri_replace_all_fixed(
               wb$workbook$definedNames,
               xti$name_id,
               xti$sheets,
               vectorize_all = FALSE
-            )
+            ))
 
           # replace named region in formulas
           nri         <- wb$get_named_regions()
@@ -1919,12 +1931,12 @@ wb_load <- function(
         for (j in seq_along(wb$worksheets)) {
           cc <- wb$worksheets[[j]]$sheet_data$cc
           if (any(sel <- cc$f != "")) {
-            cc$f[sel] <- stringi::stri_replace_all_fixed(
+            cc$f[sel] <- collapse_double_ref(stringi::stri_replace_all_fixed(
               cc$f[sel],
               xti$name_id,
               xti$sheets,
               vectorize_all = FALSE
-            )
+            ))
             wb$worksheets[[j]]$sheet_data$cc <- cc
           }
           rm(cc)
