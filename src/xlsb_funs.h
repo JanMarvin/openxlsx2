@@ -224,25 +224,35 @@ std::string to_utf8(const std::u16string& u16str) {
 }
 
 std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
-  size_t size = mystring.size();
+  size_t size = mystring.size();  // cchCharacters
   std::u16string str;
-  str.resize(size * 2);
+  str.resize(size);  // rgchData is cchCharacters * 2 bytes = `size` UTF-16 code units
 
-  if (!sas.read((char*)&str[0], static_cast<uint32_t>(str.size())))
+  if (size && !sas.read((char*)&str[0], static_cast<std::streamsize>(size * 2)))
     Rcpp::stop("char: a binary read error occurred");
 
   std::string outstr = to_utf8(str);
-  if (str.size()/2 != size) Rcpp::warning("String size unexpected");
-  // cannot resize but have to remove '\0' from string
-  // mystring.resize(size);
   outstr.erase(std::remove(outstr.begin(), outstr.end(), '\0'), outstr.end());
 
   return (outstr);
 }
 
+void check_len(std::istream& sas, uint64_t need_bytes) {
+  if (need_bytes < 0x10000) return;  // common case: skip the seek round-trip
+  std::streampos cur = sas.tellg();
+  if (cur == std::streampos(-1)) return;
+  sas.seekg(0, std::ios::end);
+  std::streampos end = sas.tellg();
+  sas.seekg(cur, std::ios::beg);
+  if (end == std::streampos(-1) || end < cur) return;
+  if (static_cast<uint64_t>(end) - static_cast<uint64_t>(cur) < need_bytes)
+    Rcpp::stop("corrupt file: string length exceeds remaining data");
+}
+
 std::string PtrStr(std::istream& sas, bool swapit) {
   uint16_t len = 0;
   len = readbin(len, sas, swapit);
+  check_len(sas, static_cast<uint64_t>(len) * 2);
   std::string str(len, '\0');
   return read_xlwidestring(str, sas);
 }
@@ -250,6 +260,7 @@ std::string PtrStr(std::istream& sas, bool swapit) {
 std::string LPWideString(std::istream& sas, bool swapit) {
   uint16_t len = 0;
   len = readbin(len, sas, swapit);
+  check_len(sas, static_cast<uint64_t>(len) * 2);
   std::string str(len, '\0');
   return read_xlwidestring(str, sas);
 }
@@ -258,6 +269,7 @@ std::string XLWideString(std::istream& sas, bool swapit) {
   uint32_t len = 0;
   len = readbin(len, sas, swapit);
   if (len == 0xFFFFFFFF || len == 0) return "";
+  check_len(sas, static_cast<uint64_t>(len) * 2);
   std::string str(len, '\0');
   return read_xlwidestring(str, sas);
 }
@@ -269,6 +281,7 @@ std::string XLNullableWideString(std::istream& sas, bool swapit) {
   if (len == 0xFFFFFFFF) {
     return "";
   }
+  check_len(sas, static_cast<uint64_t>(len) * 2);
   std::string str(len, '\0');
 
   return read_xlwidestring(str, sas);
@@ -314,12 +327,12 @@ int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
   // Rcpp::Rcout << sar1 << ": " << sar2 << ": " << sar3 << ": " << sar4 << std::endl;
 
   if (sar2 != 0 && sar3 != 0 && sar4 != 0) {
-    int32_t recordType = ((sar4 & 0x7F) << 7) | ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    int32_t recordType = ((sar4 & 0x7F) << 21) | ((sar3 & 0x7F) << 14) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
     return recordType;
   }
 
   if (sar2 != 0 && sar3 != 0 && sar4 == 0) {
-    int32_t recordType = ((sar3 & 0x7F) << 7) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
+    int32_t recordType = ((sar3 & 0x7F) << 14) | ((sar2 & 0x7F) << 7) | (sar1 & 0x7F);
     return recordType;
   }
 
