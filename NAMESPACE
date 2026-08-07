@@ -177,36 +177,42 @@ export(xml_rm_child)
 export(xml_value)
 import(R6)
 import(Rcpp)
-importFrom(grDevices,bmp)
-importFrom(grDevices,col2rgb)
-importFrom(grDevices,colors)
-importFrom(grDevices,dev.copy)
-importFrom(grDevices,dev.list)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,jpeg)
-importFrom(grDevices,palette)
-importFrom(grDevices,png)
-importFrom(grDevices,rgb)
-importFrom(grDevices,tiff)
-importFrom(stringi,stri_encode)
-importFrom(stringi,stri_extract_all_regex)
-importFrom(stringi,stri_extract_first_regex)
-importFrom(stringi,stri_join)
-importFrom(stringi,stri_match_first_regex)
-importFrom(stringi,stri_opts_collator)
-importFrom(stringi,stri_order)
-importFrom(stringi,stri_pad_left)
-importFrom(stringi,stri_rand_strings)
-importFrom(stringi,stri_read_lines)
-importFrom(stringi,stri_replace_all_fixed)
-importFrom(stringi,stri_replace_all_regex)
-importFrom(stringi,stri_split_fixed)
-importFrom(stringi,stri_sub)
-importFrom(stringi,stri_unescape_unicode)
-importFrom(utils,download.file)
-importFrom(utils,head)
-importFrom(utils,menu)
-importFrom(utils,read.csv)
-importFrom(utils,unzip)
-importFrom(utils,zip)
+importFrom(grDevices,
+  bmp,
+  col2rgb,
+  colors,
+  dev.copy,
+  dev.list,
+  dev.off,
+  jpeg,
+  palette,
+  png,
+  rgb,
+  tiff
+)
+importFrom(stringi,
+  stri_encode,
+  stri_extract_all_regex,
+  stri_extract_first_regex,
+  stri_join,
+  stri_match_first_regex,
+  stri_opts_collator,
+  stri_order,
+  stri_pad_left,
+  stri_rand_strings,
+  stri_read_lines,
+  stri_replace_all_fixed,
+  stri_replace_all_regex,
+  stri_split_fixed,
+  stri_sub,
+  stri_unescape_unicode
+)
+importFrom(utils,
+  download.file,
+  head,
+  menu,
+  read.csv,
+  unzip,
+  zip
+)
 useDynLib(openxlsx2, .registration=TRUE)
