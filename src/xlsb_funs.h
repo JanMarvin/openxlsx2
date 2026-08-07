@@ -240,10 +240,12 @@ std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
 void check_len(std::istream& sas, uint64_t need_bytes) {
   if (need_bytes < 0x10000) return;  // common case: skip the seek round-trip
   std::streampos cur = sas.tellg();
+  if (cur == std::streampos(-1)) return;
   sas.seekg(0, std::ios::end);
   std::streampos end = sas.tellg();
   sas.seekg(cur, std::ios::beg);
-  if (static_cast<uint64_t>(end - cur) < need_bytes)
+  if (end == std::streampos(-1) || end < cur) return;
+  if (static_cast<uint64_t>(end) - static_cast<uint64_t>(cur) < need_bytes)
     Rcpp::stop("corrupt file: string length exceeds remaining data");
 }
 
