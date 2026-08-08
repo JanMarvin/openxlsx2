@@ -104,7 +104,7 @@ test_that("hyperlink font size works", {
     add_formula(x = create_hyperlink(text = "foo", file = "bar"))
 
   exp <- c(
-    "<font><sz val=\"13\"/><color theme=\"1\"/><name val=\"Monaco\"/><family val=\"2\"/><scheme val=\"minor\"/></font>",
+    "<font><sz val=\"13\"/><color theme=\"1\"/><name val=\"Monaco\"/><family val=\"2\"/></font>",
     "<font><u val=\"single\"/><sz val=\"13\"/><color theme=\"10\"/><name val=\"Monaco\"/></font>"
   )
   got <- wb$styles_mgr$styles$fonts
