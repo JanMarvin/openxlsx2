@@ -24,6 +24,13 @@
   nulled `XLWideString`
   [\#1670](https://github.com/JanMarvin/openxlsx2/pull/1670)
 
+### Breaking changes
+
+- Default value for `scheme` was changed to `""` in
+  [`create_font()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_font.md).
+  Documentation regarding `scheme` argument was updated.
+  [\#1673](https://github.com/JanMarvin/openxlsx2/pull/1673)
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.28

@@ -17,7 +17,7 @@ create_font(
   i = "",
   name = "Aptos Narrow",
   outline = "",
-  scheme = "minor",
+  scheme = "",
   shadow = "",
   strike = "",
   sz = "11",
@@ -73,8 +73,10 @@ create_font(
 
 - scheme:
 
-  Character, the font scheme. Valid values are "minor", "major", "none".
-  Default is "minor".
+  Character, the font scheme. Valid values are `"minor"`, `"major"`,
+  `"none"`, or `""`. Default is `""`. If set to `"minor"` or `"major"`,
+  the spreadsheet software will pick the font from the active theme,
+  using `name` only as a fallback.
 
 - shadow:
 
