@@ -14,7 +14,7 @@ create_font(
   i = "",
   name = "Aptos Narrow",
   outline = "",
-  scheme = "minor",
+  scheme = "",
   shadow = "",
   strike = "",
   sz = "11",
@@ -42,7 +42,7 @@ create_font(
 
 \item{outline}{Logical, whether the font should have an outline.}
 
-\item{scheme}{Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".}
+\item{scheme}{Character, the font scheme. Valid values are \code{"minor"}, \code{"major"}, \code{"none"}, or \code{""}. Default is \code{""}. If set to \code{"minor"} or \code{"major"}, the spreadsheet software will pick the font from the active theme, using \code{name} only as a fallback.}
 
 \item{shadow}{Logical, whether the font should have a shadow.}
 

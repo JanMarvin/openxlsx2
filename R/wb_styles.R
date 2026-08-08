@@ -254,7 +254,7 @@ create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
 #' @param i Logical, whether the font should be italic.
 #' @param name Character, the name of the font. Default is "Aptos Narrow".
 #' @param outline Logical, whether the font should have an outline.
-#' @param scheme Character, the font scheme. Valid values are "minor", "major", "none". Default is "minor".
+#' @param scheme Character, the font scheme. Valid values are `"minor"`, `"major"`, `"none"`, or `""`. Default is `""`. If set to `"minor"` or `"major"`, the spreadsheet software will pick the font from the active theme, using `name` only as a fallback.
 #' @param shadow Logical, whether the font should have a shadow.
 #' @param strike Logical, whether the font should have a strikethrough.
 #' @param sz Character, the size of the font. Default is "11".
@@ -296,7 +296,7 @@ create_font <- function(
     i          = "",
     name       = "Aptos Narrow",
     outline    = "",
-    scheme     = "minor",
+    scheme     = "",
     shadow     = "",
     strike     = "",
     sz         = "11",

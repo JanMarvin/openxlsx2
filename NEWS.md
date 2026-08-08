@@ -11,6 +11,10 @@
 * Changing the order with `wb_set_order()` now changes the local sheet id. [#1668](https://github.com/JanMarvin/openxlsx2/pull/1668)
 * Fixes to XLSB parser, including a typo in external references and some nulled `XLWideString` [#1670](https://github.com/JanMarvin/openxlsx2/pull/1670)
 
+## Breaking changes
+
+* Default value for `scheme` was changed to `""` in `create_font()`. Documentation regarding `scheme` argument was updated. [#1673](https://github.com/JanMarvin/openxlsx2/pull/1673)
+
 
 ***************************************************************************
 
