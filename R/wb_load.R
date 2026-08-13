@@ -1745,7 +1745,7 @@ wb_load <- function(
         x <- stringi::stri_replace_all_fixed(x, "#REF!#REF!", "#REF!")
         stringi::stri_replace_all_regex(
           x,
-          "#REF!\\$?[A-Za-z]{1,3}\\$?[0-9]*(:\\$?[A-Za-z]{1,3}\\$?[0-9]*)?",
+          "#REF!(\\$?[A-Za-z]{1,3}\\$?[0-9]*|\\$?[0-9]+)(:(\\$?[A-Za-z]{1,3}\\$?[0-9]*|\\$?[0-9]+))?",
           "#REF!"
         )
       }
