@@ -77,12 +77,12 @@ inline Rcpp::DataFrame alloc_row_df(R_xlen_t n_rows, std::vector<SEXP>& col_ptrs
   return df;
 }
 
-// Fill one row's attributes into the pre-allocated row_attr columns.
-// col_ptrs / name lookup come from alloc_row_df(). Mirrors the old row_to_df
-// body for a single <row>.
-inline void fill_row_attr(const pugi::xml_node& row, R_xlen_t row_idx,
-                          const std::vector<SEXP>& col_ptrs) {
-  bool has_rowname = false;
+// Fill one row's attributes into the pre-allocated row_attr columns. col_ptrs /
+// name lookup come from alloc_row_df(). Mirrors the old row_to_df body for a
+// single <row>. Returns the "r" value (into pugi's buffer) or nullptr.
+inline const char* fill_row_attr(const pugi::xml_node& row, R_xlen_t row_idx,
+                                 const std::vector<SEXP>& col_ptrs) {
+  const char* r_val = nullptr;
 
   for (auto attrs : row.attributes()) {
     const char* attr_name = attrs.name();
@@ -94,19 +94,23 @@ inline void fill_row_attr(const pugi::xml_node& row, R_xlen_t row_idx,
       if (std::strcmp(attr_name, ROW_ATTR_NAMES[k]) == 0) { hit = k; break; }
     }
 
-    if (hit >= 0) {
-      SET_STRING_ELT(col_ptrs[static_cast<size_t>(hit)], row_idx,
-                     Rf_mkChar(attrs.value()));
-      if (hit == 0) has_rowname = true; // "r" is index 0
-    } else {
+    if (hit < 0) {
       Rcpp::Rcout << attr_name << ": not found in row name table" << std::endl;
+      continue;
     }
+
+    SET_STRING_ELT(col_ptrs[static_cast<size_t>(hit)], row_idx, Rf_mkChar(attrs.value()));
+    if (hit == 0) r_val = attrs.value(); // "r" is index 0
   }
 
-  if (!has_rowname) {
-    SET_STRING_ELT(col_ptrs[0], row_idx,
-                   Rf_mkChar(std::to_string(row_idx + 1).c_str()));
-  }
+  return r_val;
+}
+
+// only called for rows/cells that ship no "r": continue counting from the last
+// row that did, else fall back to the position in <sheetData>
+inline int32_t resolve_row(const char* last_r, R_xlen_t last_r_idx, R_xlen_t row_idx) {
+  if (!last_r) return static_cast<int32_t>(row_idx + 1);
+  return static_cast<int32_t>(std::atoi(last_r) + (row_idx - last_r_idx));
 }
 
 // this function imports the data from the dataset and returns row_attr and cc
@@ -157,12 +161,20 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
   Rcpp::DataFrame row_attributes = alloc_row_df(n_rows, row_attr_cols);
   xml_col single_xml_col;
 
+  const char* last_r = nullptr;
+  R_xlen_t last_r_idx = 0;
   R_xlen_t idx = 0, itr_rows = 0;
   for (auto worksheet : ws.children("row")) {
 
     // fill this row's attributes into row_attr inline (was a separate
     // traversal in row_to_df)
-    fill_row_attr(worksheet, itr_rows, row_attr_cols);
+    if (const char* r_val = fill_row_attr(worksheet, itr_rows, row_attr_cols)) {
+      last_r = r_val;
+      last_r_idx = itr_rows;
+    } else {
+      SET_STRING_ELT(row_attr_cols[0], itr_rows,
+                     Rf_mkChar(std::to_string(resolve_row(last_r, last_r_idx, itr_rows)).c_str()));
+    }
 
     /* ---------------------------------------------------------------------- */
     /* read cval, and ctyp -------------------------------------------------- */
@@ -215,7 +227,7 @@ void loadvals(Rcpp::Environment sheet_data, XPtrXML doc) {
       // if the file provides dimensions, they could be fixed later
       if (!has_colname) {
         single_xml_col.c_r = int_to_col(itr_cols + 1);
-        single_xml_col.row_r = std::to_string(itr_rows + 1);
+        single_xml_col.row_r = std::to_string(resolve_row(last_r, last_r_idx, itr_rows));
         single_xml_col.r = single_xml_col.c_r + single_xml_col.row_r;
       }
 
