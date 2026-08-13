@@ -804,3 +804,42 @@ test_that("dangling pageSetup printerSettings r:id is dropped on load (#1640)", 
   expect_false(has_rid(wb_load(tmp)))
 
 })
+
+test_that("rows without r attribute continue from the last explicit r", {
+
+  xml <- '<worksheet><sheetData>
+<row customHeight="1" ht="15.75"/>
+<row customHeight="1" ht="15.75"><c r="C2" s="2" t="s"><v>0</v></c></row>
+<row customHeight="1" ht="15.75"><c r="C3" s="3"><v>314</v></c></row>
+<row r="5" customHeight="1" ht="15.75"/>
+<row customHeight="1" ht="15.75"><c r="C6" s="2" t="s"><v>1</v></c></row>
+<row customHeight="1" ht="15.75"><c r="C7" s="3"><v>200000</v></c></row>
+</sheetData></worksheet>'
+
+  sd <- new.env()
+  loadvals(sd, read_xml(xml, pointer = TRUE))
+
+  expect_equal(sd$row_attr$r, c("1", "2", "3", "5", "6", "7"))
+  expect_equal(sd$row_attr$ht, rep("15.75", 6))
+  expect_equal(sd$cc$row_r, c("2", "3", "6", "7"))
+  expect_equal(sd$cc$v, c("0", "314", "1", "200000"))
+})
+
+test_that("cells without r inherit the resolved row number", {
+
+  xml <- '<worksheet><sheetData>
+<row customHeight="1" ht="15.75"/>
+<row customHeight="1" ht="15.75"><c s="2" t="s"><v>0</v></c></row>
+<row customHeight="1" ht="15.75"><c s="3"><v>314</v></c></row>
+<row r="5" customHeight="1" ht="15.75"/>
+<row customHeight="1" ht="15.75"><c s="2" t="s"><v>1</v></c></row>
+<row customHeight="1" ht="15.75"><c s="3"><v>200000</v></c></row>
+</sheetData></worksheet>'
+
+  sd <- new.env()
+  loadvals(sd, read_xml(xml, pointer = TRUE))
+
+  expect_equal(sd$row_attr$r, c("1", "2", "3", "5", "6", "7"))
+  expect_equal(sd$cc$r, c("A2", "A3", "A6", "A7"))
+  expect_equal(sd$cc$row_r, c("2", "3", "6", "7"))
+})
