@@ -21,7 +21,7 @@ package's data extraction and configuration parameters."><meta property="og:imag
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.28</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.29</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@ package's data extraction and configuration parameters."><meta property="og:imag
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Create a data frame from a Workbook</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.28/R/read.R" class="external-link"><code>R/read.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/read.R" class="external-link"><code>R/read.R</code></a></small>
       <div class="d-none name"><code>wb_to_df.Rd</code></div>
     </div>
 
@@ -256,7 +256,9 @@ instance, <code>dims = "A2:C+"</code> reads from A2 to the last available row in
 column C, while <code>dims = "A-:+9"</code> reads from the first populated row in
 column A to the last column in row 9. If neither <code>dims</code> nor <code>named_region</code>
 is provided, the function automatically calculates the range based on the
-minimum and maximum populated cells, modified by <code>start_row</code> and <code>start_col</code>.</p>
+minimum and maximum populated cells, modified by <code>start_row</code> and <code>start_col</code>.
+Additionally, passing negative values to the <code>cols</code> or <code>rows</code> arguments acts
+as a filter to exclude specific columns or rows from the resulting data frame.</p>
 <p>Type conversion is governed by an internal guessing engine. If <code>detect_dates</code>
 is enabled, serial dates are converted to R Date or POSIXct objects. All
 datetimes are standardized to UTC. The function's handling of time variables
@@ -285,6 +287,10 @@ layouts, <code>fill_merged_cells</code> propagates the value of a top-left merge
 to all cells within the merge range. The <code>na</code> argument supports sophisticated
 missing value definitions, accepting either a character vector or a named
 list to differentiate between string and numeric <code>NA</code> types.</p>
+<p>The XML parser makes trade-offs to extract raw cell values efficiently and is
+agnostic regarding cell formatting. Visual styling attributes (such as bold,
+italics, or background fill) and rich text inline formatting (such as superscripts)
+are not handled or restored in the extracted data frame values.</p>
     </div>
     <div class="section level2">
     <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a></h2>
@@ -537,7 +543,7 @@ the dedicated chapter in the <code>openxlsx2</code> book for real-life case stud
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

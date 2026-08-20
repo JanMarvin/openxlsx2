@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.28</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.29</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,9 +44,37 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.28/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.29" id="openxlsx2-129">openxlsx2 1.29<a class="anchor" aria-label="anchor" href="#openxlsx2-129"></a></h2><p class="text-muted">CRAN release: 2026-08-20</p>
+<div class="section level3">
+<h3 id="new-features-1-29">New features<a class="anchor" aria-label="anchor" href="#new-features-1-29"></a></h3>
+<ul><li>
+<code>col2int</code> allows splitting on “,” and “;”. <a href="https://github.com/JanMarvin/openxlsx2/pull/1659" class="external-link">#1659</a>
+</li>
+<li>It is now possible to filter columns and rows with negative integer values passed to <code>cols</code> and <code>rows</code> in <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1666" class="external-link">#1666</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-1-29">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-29"></a></h3>
+<ul><li>
+<code><a href="../reference/wb_clone_sheet_style.html">wb_clone_sheet_style()</a></code> was missing a <code>key</code> column. <a href="https://github.com/JanMarvin/openxlsx2/pull/1663" class="external-link">#1663</a>
+</li>
+<li>Changing the order with <code><a href="../reference/wb_order.html">wb_set_order()</a></code> now changes the local sheet id in named regions. <a href="https://github.com/JanMarvin/openxlsx2/pull/1668" class="external-link">#1668</a>
+</li>
+<li>Fixes to XLSB parser, including a typo in external references and some nulled <code>XLWideString</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1670" class="external-link">#1670</a>
+</li>
+<li>Row attributes for input files without explicit row attribute in the internal XML were imported with incorrect order. While omitting the row attribute is a feature of the standard, it is rarely used. <a href="https://github.com/JanMarvin/openxlsx2/pull/1677" class="external-link">#1677</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-1-29">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-29"></a></h3>
+<ul><li>Default value for <code>scheme</code> was changed to <code>""</code> in <code><a href="../reference/create_font.html">create_font()</a></code>. Documentation regarding <code>scheme</code> argument was updated. <a href="https://github.com/JanMarvin/openxlsx2/pull/1673" class="external-link">#1673</a>
+</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.28" id="openxlsx2-128">openxlsx2 1.28<a class="anchor" aria-label="anchor" href="#openxlsx2-128"></a></h2><p class="text-muted">CRAN release: 2026-07-02</p>
 <div class="section level3">
@@ -1238,7 +1266,7 @@ Users that want to remain on the old style should use <code>wb_workbook(theme = 
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

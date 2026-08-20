@@ -16,7 +16,7 @@ col2int(x)
 - x:
 
   A character vector of column labels, a numeric vector of indices, or a
-  factor. Supports range notation like "A:Z".
+  factor. Supports range notation like "A:Z" and separators `,` and `;`.
 
 ## Value
 
@@ -28,10 +28,11 @@ zero.
 
 The function is designed to handle various input formats encountered
 during spreadsheet data processing. In addition to single column labels,
-it supports range notation using the colon operator (e.g., "A:C"). When
-a range is detected, the function internally expands the notation into a
-complete sequence of integers (e.g., 1, 2, 3). This behavior is
-particularly useful when passing column selections to functions like
+it supports comma or semicolon separated values (e.g., "A,B:C") and
+range notation using the colon operator (e.g., "A:C"). When a range is
+detected, the function internally expands the notation into a complete
+sequence of integers (e.g., 1, 2, 3). This behavior is particularly
+useful when passing column selections to functions like
 [`wb_to_df()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md)
 or
 [`wb_read()`](https://janmarvin.github.io/openxlsx2/reference/wb_to_df.md).
@@ -39,10 +40,13 @@ or
 Input validation ensures that only atomic vectors are processed. If the
 input is already numeric or a factor, the function ensures the values
 fall within the valid spreadsheet column range before coercion to
-integers. Note that the presence of `NA` values in the input will
-trigger an error to maintain data integrity during index calculation.
+integers. Note that the presence of `NA` values or empty strings in the
+input will trigger an error to maintain data integrity during index
+calculation.
 
 ## Notes
+
+- Comma and semicolon separators are split before range expansion.
 
 - Range expansion via `:` is performed iteratively until all sequences
   are resolved into individual integer components.
@@ -67,6 +71,8 @@ col2int("A:C")
 #> [1] 1 2 3
 
 # Mix individual columns and ranges
+col2int("A,B:C")
+#> [1] 1 2 3
 col2int(c("A", "C:E", "G"))
 #> [1] 1 3 4 5 7
 

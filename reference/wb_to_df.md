@@ -198,7 +198,9 @@ available row in column C, while `dims = "A-:+9"` reads from the first
 populated row in column A to the last column in row 9. If neither `dims`
 nor `named_region` is provided, the function automatically calculates
 the range based on the minimum and maximum populated cells, modified by
-`start_row` and `start_col`.
+`start_row` and `start_col`. Additionally, passing negative values to
+the `cols` or `rows` arguments acts as a filter to exclude specific
+columns or rows from the resulting data frame.
 
 Type conversion is governed by an internal guessing engine. If
 `detect_dates` is enabled, serial dates are converted to R Date or
@@ -234,6 +236,12 @@ top-left merged cell to all cells within the merge range. The `na`
 argument supports sophisticated missing value definitions, accepting
 either a character vector or a named list to differentiate between
 string and numeric `NA` types.
+
+The XML parser makes trade-offs to extract raw cell values efficiently
+and is agnostic regarding cell formatting. Visual styling attributes
+(such as bold, italics, or background fill) and rich text inline
+formatting (such as superscripts) are not handled or restored in the
+extracted data frame values.
 
 ## Notes
 

@@ -13,7 +13,7 @@ to 702.'><meta property="og:image" content="https://janmarvin.github.io/openxlsx
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.28</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.29</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@ to 702.'><meta property="og:image" content="https://janmarvin.github.io/openxlsx
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Convert spreadsheet column notation to integers</h1>
-      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/v1.28/R/converters.R" class="external-link"><code>R/converters.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/JanMarvin/openxlsx2/blob/main/R/converters.R" class="external-link"><code>R/converters.R</code></a></small>
       <div class="d-none name"><code>col2int.Rd</code></div>
     </div>
 
@@ -72,7 +72,7 @@ to 702.</p>
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A character vector of column labels, a numeric vector of indices,
-or a factor. Supports range notation like "A:Z".</p></dd>
+or a factor. Supports range notation like "A:Z" and separators <code>,</code> and <code>;</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -85,21 +85,23 @@ if the input <code>x</code> is <code>NULL</code>, or an empty integer vector if 
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function is designed to handle various input formats encountered during
 spreadsheet data processing. In addition to single column labels, it supports
-range notation using the colon operator (e.g., "A:C"). When a range is
-detected, the function internally expands the notation into a complete
-sequence of integers (e.g., 1, 2, 3). This behavior is particularly useful
-when passing column selections to functions like <code><a href="wb_to_df.html">wb_to_df()</a></code> or <code><a href="wb_to_df.html">wb_read()</a></code>.</p>
+comma or semicolon separated values (e.g., "A,B:C") and range notation using
+the colon operator (e.g., "A:C"). When a range is detected, the function
+internally expands the notation into a complete sequence of integers
+(e.g., 1, 2, 3). This behavior is particularly useful when passing column
+selections to functions like <code><a href="wb_to_df.html">wb_to_df()</a></code> or <code><a href="wb_to_df.html">wb_read()</a></code>.</p>
 <p>Input validation ensures that only atomic vectors are processed. If the input
 is already numeric or a factor, the function ensures the values fall within
 the valid spreadsheet column range before coercion to integers. Note that
-the presence of <code>NA</code> values in the input will trigger an error to maintain
-data integrity during index calculation.</p>
+the presence of <code>NA</code> values or empty strings in the input will trigger an
+error to maintain data integrity during index calculation.</p>
     </div>
     <div class="section level2">
     <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a></h2>
 
 
-<ul><li><p>Range expansion via <code>:</code> is performed iteratively until all sequences are
+<ul><li><p>Comma and semicolon separators are split before range expansion.</p></li>
+<li><p>Range expansion via <code>:</code> is performed iteratively until all sequences are
 resolved into individual integer components.</p></li>
 <li><p>In compliance with spreadsheet software standards, the function validates
 that indices do not exceed the maximum allowable column limit.</p></li>
@@ -120,6 +122,8 @@ that indices do not exceed the maximum allowable column limit.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Mix individual columns and ranges</span></span></span>
+<span class="r-in"><span><span class="fu">col2int</span><span class="op">(</span><span class="st">"A,B:C"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 3</span>
 <span class="r-in"><span><span class="fu">col2int</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"C:E"</span>, <span class="st">"G"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 3 4 5 7</span>
 <span class="r-in"><span></span></span>
@@ -138,7 +142,7 @@ that indices do not exceed the maximum allowable column limit.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
