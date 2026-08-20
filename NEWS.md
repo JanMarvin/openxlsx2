@@ -1,4 +1,4 @@
-# openxlsx2 (development version)
+# openxlsx2 1.29
 
 ## New features
 
@@ -8,8 +8,9 @@
 ## Fixes
 
 * `wb_clone_sheet_style()` was missing a `key` column. [#1663](https://github.com/JanMarvin/openxlsx2/pull/1663)
-* Changing the order with `wb_set_order()` now changes the local sheet id. [#1668](https://github.com/JanMarvin/openxlsx2/pull/1668)
-* Fixes to XLSB parser, including a typo in external references and some nulled `XLWideString` [#1670](https://github.com/JanMarvin/openxlsx2/pull/1670)
+* Changing the order with `wb_set_order()` now changes the local sheet id in named regions. [#1668](https://github.com/JanMarvin/openxlsx2/pull/1668)
+* Fixes to XLSB parser, including a typo in external references and some nulled `XLWideString`. [#1670](https://github.com/JanMarvin/openxlsx2/pull/1670)
+* Row attributes for input files without explicit row attribute in the internal XML were imported with incorrect order. While omitting the row attribute is a feature of the standard, it is rarely used. [#1677](https://github.com/JanMarvin/openxlsx2/pull/1677)
 
 ## Breaking changes
 
