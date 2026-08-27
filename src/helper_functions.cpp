@@ -1,3 +1,4 @@
+#include <cstring>
 #include <algorithm>
 
 #include "openxlsx2.h"
@@ -618,6 +619,46 @@ Rcpp::LogicalVector is_charnum(Rcpp::CharacterVector x) {
   return out;
 }
 
+// fast path for plain text cells: builds "<is><t>...</t></is>" /
+// "<si><t>...</t></si>" without a pugi document per cell. Mirrors
+// txt_to_is()/txt_to_si() with (no_escapes = 0, raw = 1, skip_control = 1)
+// for text that is not a rich text run ("<r>" prefix).
+static inline void plain_txt_to_ist(const char* s, const char* tag, std::string& out) {
+  out.clear();
+    out += '<'; out += tag; out += '>';
+
+  size_t len = std::strlen(s);
+  if (len == 0) {
+    out += "<t/></"; out += tag; out += '>';
+    return;
+  }
+
+  bool preserve =
+    std::isspace(static_cast<unsigned char>(s[0])) ||
+    std::isspace(static_cast<unsigned char>(s[len - 1]));
+
+  if (preserve) out += "<t xml:space=\"preserve\">";
+  else          out += "<t>";
+
+  for (const unsigned char* p = reinterpret_cast<const unsigned char*>(s); *p; ++p) {
+    switch (*p) {
+      case '&': out += "&amp;"; break;
+      case '<': out += "&lt;";  break;
+      case '>': out += "&gt;";  break;
+      default:
+        if (*p < 0x20 && *p != '\t' && *p != '\n' && *p != '\r') break;  // format_skip_control_chars
+        out += static_cast<char>(*p);
+    }
+  }
+
+  out += "</t></"; out += tag; out += '>';
+}
+
+static inline bool is_rich_text(const char* s) {
+  return std::strncmp(s, "<r>", 3) == 0 || std::strncmp(s, "<r/>", 4) == 0;
+}
+
+
 // similar to dcast converts cc dataframe to z dataframe
 // [[Rcpp::export]]
 void wide_to_long(
@@ -648,6 +689,18 @@ void wide_to_long(
   std::vector<std::string> scols(static_cast<size_t>(m));
   for (size_t i = 0; i < static_cast<size_t>(m); ++i) {
     scols[i] = int_to_col(static_cast<size_t>(start_col) + i);
+  }
+
+  // one CHARSXP per row / per column instead of one per cell
+  Rcpp::CharacterVector srow_sexp(n), scol_sexp(m);
+  std::vector<double> drow(static_cast<size_t>(n)), dcol(static_cast<size_t>(m));
+  for (R_xlen_t j = 0; j < n; ++j) {
+    srow_sexp[j] = srows[static_cast<size_t>(j)];
+    drow[static_cast<size_t>(j)] = static_cast<double>(start_row + j) * 16384.0;
+  }
+  for (R_xlen_t i = 0; i < m; ++i) {
+    scol_sexp[i] = scols[static_cast<size_t>(i)];
+    dcol[static_cast<size_t>(i)] = static_cast<double>(start_col + i);
   }
 
   // --- 2. Rcpp/C API Setup ---
@@ -690,6 +743,8 @@ void wide_to_long(
   SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
 
   R_xlen_t iter_count = 0;
+  std::string cell_buf, is_buf;
+  is_buf.reserve(128);
   const int MAX_VTYP_ID = CELLTYPE_MAX;  // enum celltype
   Rcpp::CharacterVector vtyp_sexp_cache(MAX_VTYP_ID + 1);
   for (int type_id = 0; type_id <= MAX_VTYP_ID; ++type_id) {
@@ -717,23 +772,24 @@ void wide_to_long(
       if (has_dims) {
         R_xlen_t col_pos = (i * n) + j;
         const std::string& cell_r_str = dims[static_cast<size_t>(col_pos)];
+        std::string cell_row = rm_colnum(cell_r_str);
+        std::string cell_col = rm_rownum(cell_r_str);
         SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
-        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(rm_colnum(cell_r_str).c_str()));
-        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(rm_rownum(cell_r_str).c_str()));
+        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(cell_row.c_str()));
+        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(cell_col.c_str()));
 
-        double dkey = static_cast<double>(std::atoi(rm_colnum(cell_r_str).c_str())) * 16384L + uint_col_to_int(rm_rownum(cell_r_str));
+        double dkey = static_cast<double>(std::atoi(cell_row.c_str())) * 16384L + uint_col_to_int(cell_col);
 
         SET_REAL_ELT(zz_key, pos, dkey);
 
       } else {
-        const std::string& cell_r_str = col + row;
-        SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_r_str.c_str()));
-        SET_STRING_ELT(zz_row_r, pos, Rf_mkChar(row.c_str()));
-        SET_STRING_ELT(zz_c_r, pos, Rf_mkChar(col.c_str()));
+        cell_buf.assign(col);
+        cell_buf += row;
+        SET_STRING_ELT(zz_r, pos, Rf_mkChar(cell_buf.c_str()));
+        SET_STRING_ELT(zz_row_r, pos, STRING_ELT(srow_sexp, j));
+        SET_STRING_ELT(zz_c_r, pos, STRING_ELT(scol_sexp, i));
 
-        double dkey = static_cast<double>(std::atoi(row.c_str())) * 16384L + uint_col_to_int(col);
-
-        SET_REAL_ELT(zz_key, pos, dkey);
+        SET_REAL_ELT(zz_key, pos, drow[static_cast<size_t>(j)] + dcol[static_cast<size_t>(i)]);
       }
 
       std::string ref_str = "";
@@ -774,10 +830,20 @@ void wide_to_long(
           } else {
             if (inline_strings) {
               SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
-              SET_STRING_ELT(zz_is, pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
+              if (is_rich_text(vals)) {
+                SET_STRING_ELT(zz_is, pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
+              } else {
+                plain_txt_to_ist(vals, "is", is_buf);
+                SET_STRING_ELT(zz_is, pos, Rf_mkChar(is_buf.c_str()));
+              }
             } else {
               SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
-              SET_STRING_ELT(zz_v, pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
+              if (is_rich_text(vals)) {
+                SET_STRING_ELT(zz_v, pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
+              } else {
+                plain_txt_to_ist(vals, "si", is_buf);
+                SET_STRING_ELT(zz_v, pos, Rf_mkChar(is_buf.c_str()));
+              }
             }
           }
           break;
@@ -837,9 +903,11 @@ Rcpp::DataFrame create_char_dataframe(Rcpp::CharacterVector colnames, R_xlen_t n
   R_xlen_t kk = Rf_xlength(colnames);
 
   // 1. create the list
+  // Rf_allocVector() already initializes STRSXP elements to R_BlankString,
+  // Rcpp::CharacterVector(n) would redundantly fill all n elements again
   Rcpp::List df(kk);
   for (R_xlen_t i = 0; i < kk; ++i) {
-    SET_VECTOR_ELT(df, i, Rcpp::CharacterVector(n));
+    SET_VECTOR_ELT(df, i, Rf_allocVector(STRSXP, n));
   }
 
   Rcpp::IntegerVector rvec = Rcpp::IntegerVector::create(NA_INTEGER, -n);
