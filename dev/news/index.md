@@ -2,6 +2,12 @@
 
 ## openxlsx2 (development version)
 
+------------------------------------------------------------------------
+
+## openxlsx2 1.29
+
+CRAN release: 2026-08-20
+
 ### New features
 
 - `col2int` allows splitting on “,” and “;”.
@@ -18,11 +24,15 @@
   [\#1663](https://github.com/JanMarvin/openxlsx2/pull/1663)
 - Changing the order with
   [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_order.md)
-  now changes the local sheet id.
+  now changes the local sheet id in named regions.
   [\#1668](https://github.com/JanMarvin/openxlsx2/pull/1668)
 - Fixes to XLSB parser, including a typo in external references and some
-  nulled `XLWideString`
+  nulled `XLWideString`.
   [\#1670](https://github.com/JanMarvin/openxlsx2/pull/1670)
+- Row attributes for input files without explicit row attribute in the
+  internal XML were imported with incorrect order. While omitting the
+  row attribute is a feature of the standard, it is rarely used.
+  [\#1677](https://github.com/JanMarvin/openxlsx2/pull/1677)
 
 ### Breaking changes
 

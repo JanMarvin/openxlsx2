@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.28.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.29.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,8 +49,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
+<hr></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.29" id="openxlsx2-129">openxlsx2 1.29<a class="anchor" aria-label="anchor" href="#openxlsx2-129"></a></h2><p class="text-muted">CRAN release: 2026-08-20</p>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-1-29">New features<a class="anchor" aria-label="anchor" href="#new-features-1-29"></a></h3>
 <ul><li>
 <code>col2int</code> allows splitting on “,” and “;”. <a href="https://github.com/JanMarvin/openxlsx2/pull/1659" class="external-link">#1659</a>
 </li>
@@ -58,17 +61,19 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<h3 id="fixes-1-29">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-29"></a></h3>
 <ul><li>
 <code><a href="../reference/wb_clone_sheet_style.html">wb_clone_sheet_style()</a></code> was missing a <code>key</code> column. <a href="https://github.com/JanMarvin/openxlsx2/pull/1663" class="external-link">#1663</a>
 </li>
-<li>Changing the order with <code><a href="../reference/wb_order.html">wb_set_order()</a></code> now changes the local sheet id. <a href="https://github.com/JanMarvin/openxlsx2/pull/1668" class="external-link">#1668</a>
+<li>Changing the order with <code><a href="../reference/wb_order.html">wb_set_order()</a></code> now changes the local sheet id in named regions. <a href="https://github.com/JanMarvin/openxlsx2/pull/1668" class="external-link">#1668</a>
 </li>
-<li>Fixes to XLSB parser, including a typo in external references and some nulled <code>XLWideString</code> <a href="https://github.com/JanMarvin/openxlsx2/pull/1670" class="external-link">#1670</a>
+<li>Fixes to XLSB parser, including a typo in external references and some nulled <code>XLWideString</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1670" class="external-link">#1670</a>
+</li>
+<li>Row attributes for input files without explicit row attribute in the internal XML were imported with incorrect order. While omitting the row attribute is a feature of the standard, it is rarely used. <a href="https://github.com/JanMarvin/openxlsx2/pull/1677" class="external-link">#1677</a>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-1-29">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-29"></a></h3>
 <ul><li>Default value for <code>scheme</code> was changed to <code>""</code> in <code><a href="../reference/create_font.html">create_font()</a></code>. Documentation regarding <code>scheme</code> argument was updated. <a href="https://github.com/JanMarvin/openxlsx2/pull/1673" class="external-link">#1673</a>
 </li>
 </ul><hr></div>
