@@ -1862,7 +1862,14 @@ p7zip <- function(zip_path, source_dir, compression_level = 9) {
 ## the previous solution
 zipzip <- function(zip_path, source_dir, compression_level = 9) {
   if (!is.null(getOption("openxlsx2.debug"))) message("zip::zip")
-  suppressMessages(requireNamespace("zip"))
+  if (!requireNamespace("zip", quietly = TRUE)) {
+    stop(
+      "Saving the file requires a zip tool. No system zip tool was found ",
+      "and the 'zip' package is not installed. Please run ",
+      "`install.packages(\"zip\")`.",
+      call. = FALSE
+    )
+  }
   zip::zip(
     zipfile = zip_path,
     files = list.files(source_dir, full.names = FALSE),
@@ -1882,6 +1889,17 @@ zipzip <- function(zip_path, source_dir, compression_level = 9) {
 # a zip tool and now we are in a mess where we have to check if a zip tool is
 # available. And there are several cases where it is not
 zip_output <- function(zip_path, source_dir, compression_level = 9) {
+
+  # WebAssembly (webR) cannot spawn processes: system zip tools are never
+  # available and probing for them can misbehave. Use the zip package.
+  if (grepl("emscripten", paste(R.version$os, R.version$platform)) &&
+      !isTRUE(getOption("openxlsx2.no_wasm_check"))) {
+    return(zipzip(
+      zip_path = zip_path,
+      source_dir = source_dir,
+      compression_level = compression_level
+    ))
+  }
 
   # on Windows we might have an Rtools folder somewhere with a zip.exe ...
   if (.Platform$OS.type == "windows" && Sys.getenv("R_ZIPCMD") == "" &&
