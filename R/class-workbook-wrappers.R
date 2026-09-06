@@ -1474,7 +1474,9 @@ wb_remove_row_heights <- function(wb, sheet = current_sheet(), rows) {
 #' @param sheet A name or index of a worksheet, a vector in the case of `remove_`
 #' @param cols Indices of cols to set/remove column widths.
 #' @param widths Width to set `cols` to specified column width or `"auto"` for
-#'   automatic sizing. `widths` is recycled to the length of `cols`. openxlsx2
+#'   automatic sizing. `"auto"` accepts an offset, e.g. `"auto+2"` or `"auto-1"`,
+#'   which is added to (subtracted from) every automatically sized column.
+#'   `widths` is recycled to the length of `cols`. openxlsx2
 #'   sets the default width is 8.43, as this is the standard in some spreadsheet
 #'   software. See **Details** for general information on column widths.
 #' @param hidden Logical vector recycled to the length of `cols`.

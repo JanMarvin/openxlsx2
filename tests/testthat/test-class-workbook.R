@@ -93,6 +93,30 @@ test_that("merged cells are excluded from col width `auto` calculation", {
   expect_equal(got, exp)
 })
 
+test_that("col width \"auto\" accepts an offset", {
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_data(x = head(cars))$
+    set_col_widths(cols = "A:B", widths = "auto+5")
+
+  exp <- c(
+    "<col min=\"1\" max=\"1\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"10.711\"/>",
+    "<col min=\"2\" max=\"2\" bestFit=\"1\" customWidth=\"1\" hidden=\"false\" width=\"9.711\"/>"
+  )
+  expect_equal(wb$worksheets[[1]]$cols_attr, exp)
+
+  expect_error(
+    wb$set_col_widths(cols = "A:B", widths = "auto5"),
+    "Invalid `widths` entry"
+  )
+
+  expect_warning(
+    wb$set_col_widths(cols = "A:B", widths = c("auto+5", "auto+7")),
+    "using \"auto\\+5\""
+  )
+
+})
+
 test_that("option maxWidth works", {
 
   op <- options("openxlsx2.maxWidth" = 6)

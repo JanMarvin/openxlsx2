@@ -689,7 +689,7 @@ wb_to_df <- function(
   if (apply_numfmts) {
 
     cc <- get_numfmt_style(wb, cc)
-    kc <- if (!is.null(cols)) cc$c_r %in% col2int(cols) else TRUE
+    kc <- if (!is.null(cols)) col2int(cc$c_r) %in% col2int(cols) else TRUE
 
     not_blank_or_bool_error <- cc$num_fmt != "" & !cc$c_t %in% c("b", "e") & kc
 
