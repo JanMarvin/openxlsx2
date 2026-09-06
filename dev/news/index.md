@@ -2,6 +2,14 @@
 
 ## openxlsx2 (development version)
 
+### Fixes
+
+- A logic bug in `apply_numfmts()` was fixed that occured in combination
+  with `cols` used via
+  [`wb_set_col_widths()`](https://janmarvin.github.io/openxlsx2/dev/reference/col_widths-wb.md).
+  In addition automatic sizing can now be tweaked via an offset
+  `"auto+n"`. [\#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.29
