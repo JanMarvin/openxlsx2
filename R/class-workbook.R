@@ -5084,7 +5084,25 @@ wbWorkbook <- R6::R6Class(
 
       base_font <- wb_get_base_font(self)
 
-      if (any(widths == "auto")) {
+      # "auto" with an optional offset: "auto+2" adds 2 width units to every
+      # automatically sized column, "auto-1" subtracts 1
+      is_auto <- grepl("^auto([+-][0-9]+([.][0-9]+)?)?$", col_width)
+      bad_auto <- startsWith(as.character(col_width), "auto") & !is_auto
+      if (any(bad_auto)) {
+        stop("Invalid `widths` entry \"", col_width[bad_auto][1],
+             "\". Use \"auto\", \"auto+n\" or \"auto-n\", e.g. \"auto+2\".")
+      }
+
+      if (any(is_auto)) {
+
+        offs <- sub("^auto", "", col_width[is_auto])
+        offs[offs == ""] <- "0"
+        offs <- as.numeric(offs)
+        if (length(unique(offs)) > 1L) {
+          warning("Multiple different \"auto\" offsets supplied; using \"auto",
+                  ifelse(offs[1L] < 0, "", "+"), offs[1L], "\" for all columns.")
+        }
+        auto_offset <- offs[1L]
 
         if (is.null(self$worksheets[[sheet]]$sheet_data$cc)) {
           # sheet has no data
@@ -5125,6 +5143,8 @@ wbWorkbook <- R6::R6Class(
         },
         NA_real_
         )
+
+        col_width <- pmax(col_width + auto_offset, 0)
       }
 
       # all are equal sized. we ignore cells which have NA
