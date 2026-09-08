@@ -3,7 +3,7 @@
 ## Fixes
 
 * A logic bug in `apply_numfmts()` was fixed that occured in combination with `cols` used via `wb_set_col_widths()`. In addition automatic sizing can now be tweaked via an offset `"auto+n"`. [#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)
-* `wb_add_conditional_formatting()` no longer builds every block but the first from the previous block's leftovers when `dims` is non consecutive. `rule` was overwritten inside the loop over the blocks, so a `"colorScale"` got the colors as `cfvo` values, a `"containsText"` searched for the style name and a `"dataBar"` failed with `subscript out of bounds` (broken for every type but `"expression"` since [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347), @SchmidtPaul).
+* `wb_add_conditional_formatting()` no longer builds every block but the first from the previous block's leftovers when `dims` is non consecutive. `rule` was overwritten inside the loop over the blocks, so a `"colorScale"` got the colors as `cfvo` values, a `"containsText"` searched for the style name and a `"dataBar"` failed with `subscript out of bounds`. Broken for every type but `"expression"` since [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) ([#1684](https://github.com/JanMarvin/openxlsx2/pull/1684), @SchmidtPaul).
 
 
 ***************************************************************************
