@@ -1078,6 +1078,164 @@ test_that("warning on cols > 2 and dims", {
 
 })
 
+test_that("colorScale is reset for each block of non consecutive dims", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
+  wb$add_conditional_formatting(
+    dims  = wb_dims(rows = c(2, 3, 5), cols = 1),
+    type  = "colorScale",
+    style = c("#FFFFFF", "#63BE7B")
+  )
+
+  exp <- data.frame(
+    sqref = c("A2:A3", "A5:A5"),
+    cf = c(
+      '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="min"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>',
+      '<cfRule type="colorScale" priority="2"><colorScale><cfvo type="min"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>'
+    ),
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+  expect_save(wb)
+
+  # an explicit rule must not be replaced by the colors either
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
+  wb$add_conditional_formatting(
+    dims  = wb_dims(rows = c(2, 3, 5), cols = 1),
+    type  = "colorScale",
+    style = c("#FFFFFF", "#63BE7B"),
+    rule  = c(1, 5)
+  )
+
+  exp <- data.frame(
+    sqref = c("A2:A3", "A5:A5"),
+    cf = c(
+      '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="num" val="1"/><cfvo type="num" val="5"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>',
+      '<cfRule type="colorScale" priority="2"><colorScale><cfvo type="num" val="1"/><cfvo type="num" val="5"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>'
+    ),
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+
+  # a gap in the rows and in the columns gives four blocks, all of them equal
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1:5, b = 1:5, c = 1:5))
+  wb$add_conditional_formatting(
+    dims  = wb_dims(rows = c(2, 3, 5), cols = c(1, 3)),
+    type  = "colorScale",
+    style = c("#FFFFFF", "#FFEB84", "#63BE7B")
+  )
+
+  exp <- c("A2:A3", "C2:C3", "A5:A5", "C5:C5")
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  exp <- '<colorScale><cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FFFFEB84"/><color rgb="FF63BE7B"/></colorScale>'
+  got <- unique(gsub("^<cfRule[^>]*>|</cfRule>$", "", wb$worksheets[[1]]$conditionalFormatting$cf))
+  expect_identical(exp, got)
+
+})
+
+test_that("dataBar is reset for each block of non consecutive dims", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
+  wb$add_conditional_formatting(
+    dims  = wb_dims(rows = c(2, 3, 5), cols = 1),
+    type  = "dataBar",
+    style = c("#FFFFFF", "#63BE7B")
+  )
+
+  exp <- data.frame(
+    sqref = c("A2:A3", "A5:A5"),
+    cf = c(
+      '<cfRule type="dataBar" priority="1"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FF63BE7B"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>',
+      '<cfRule type="dataBar" priority="2"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FF63BE7B"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40001}</x14:id></ext></extLst></cfRule>'
+    ),
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+  expect_save(wb)
+
+  # a single color used to end up as a length one rule and error out. The
+  # result is the same as above, the second color is not part of the cfRule
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
+  expect_silent(
+    wb$add_conditional_formatting(
+      dims  = wb_dims(rows = c(2, 3, 5), cols = 1),
+      type  = "dataBar",
+      style = "#63BE7B"
+    )
+  )
+
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+
+})
+
+test_that("text rules are reset for each block of non consecutive dims", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = "b", b = "b", c = "b"))
+  wb$add_dxfs_style(name = "hit", bg_fill = wb_color("red"))
+  wb$add_conditional_formatting(
+    dims  = wb_dims(rows = 2, cols = c(1, 3)),
+    type  = "containsText",
+    rule  = "b",
+    style = "hit"
+  )
+
+  exp <- data.frame(
+    sqref = c("A2:A2", "C2:C2"),
+    cf = c(
+      '<cfRule type="containsText" dxfId="0" priority="1" operator="containsText" text="b"><formula>NOT(ISERROR(SEARCH("b", A2)))</formula></cfRule>',
+      '<cfRule type="containsText" dxfId="0" priority="2" operator="containsText" text="b"><formula>NOT(ISERROR(SEARCH("b", C2)))</formula></cfRule>'
+    ),
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+  expect_save(wb)
+
+  # the neighboring types read the rule the same way
+  for (type in c("notContainsText", "beginsWith", "endsWith")) {
+    wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = "b", b = "b", c = "b"))
+    wb$add_dxfs_style(name = "hit", bg_fill = wb_color("red"))
+    wb$add_conditional_formatting(
+      dims  = wb_dims(rows = 2, cols = c(1, 3)),
+      type  = type,
+      rule  = "b",
+      style = "hit"
+    )
+
+    exp <- c("b", "b")
+    got <- gsub('.* text="([^"]*)".*', "\\1", wb$worksheets[[1]]$conditionalFormatting$cf)
+    expect_identical(exp, got, info = type)
+  }
+
+})
+
+test_that("expression is anchored to each block of non consecutive dims", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1, b = 1, c = 1))
+  wb$add_conditional_formatting(
+    dims = wb_dims(rows = 2, cols = c(1, 3)),
+    rule = "<0"
+  )
+
+  exp <- data.frame(
+    sqref = c("A2:A2", "C2:C2"),
+    cf = c(
+      '<cfRule type="expression" dxfId="0" priority="1"><formula>A2&lt;0</formula></cfRule>',
+      '<cfRule type="expression" dxfId="0" priority="2"><formula>C2&lt;0</formula></cfRule>'
+    ),
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+
+})
+
 test_that("un_list works", {
 
   tmp <- temp_xlsx()

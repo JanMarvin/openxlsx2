@@ -6182,6 +6182,10 @@ wbWorkbook <- R6::R6Class(
       for (row in rows) {
         for (col in cols) {
 
+          # branches below overwrite `rule`; every block must start from the
+          # user input, not from the previous iteration
+          rule <- orig_rule
+
           switch(
             type,
 
@@ -6190,11 +6194,9 @@ wbWorkbook <- R6::R6Class(
               # entered to be exactly as an spreadsheet expression would be written?
               msg <- "When type == 'expression', "
 
-              if (!is.character(orig_rule) || length(orig_rule) != 1L) {
+              if (!is.character(rule) || length(rule) != 1L) {
                 stop(msg, "rule must be a single length character vector")
               }
-
-              rule <- orig_rule
 
               rule <- gsub("!=", "<>", rule)
               rule <- gsub("==", "=", rule)
