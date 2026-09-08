@@ -9,6 +9,16 @@
   [`wb_set_col_widths()`](https://janmarvin.github.io/openxlsx2/dev/reference/col_widths-wb.md).
   In addition automatic sizing can now be tweaked via an offset
   `"auto+n"`. [\#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)
+- [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_conditional_formatting.md)
+  no longer builds every block but the first from the previous block’s
+  leftovers when `dims` is non consecutive. `rule` was overwritten
+  inside the loop over the blocks, so a `"colorScale"` got the colors as
+  `cfvo` values, a `"containsText"` searched for the style name and a
+  `"dataBar"` failed with `subscript out of bounds`. Broken for every
+  type but `"expression"` since
+  [\#1347](https://github.com/JanMarvin/openxlsx2/pull/1347)
+  ([\#1684](https://github.com/JanMarvin/openxlsx2/pull/1684),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
 
 ------------------------------------------------------------------------
 

@@ -53,6 +53,8 @@
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>A logic bug in <code>apply_numfmts()</code> was fixed that occured in combination with <code>cols</code> used via <code><a href="../reference/col_widths-wb.html">wb_set_col_widths()</a></code>. In addition automatic sizing can now be tweaked via an offset <code>"auto+n"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1683" class="external-link">#1683</a>
 </li>
+<li>
+<code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> no longer builds every block but the first from the previous block’s leftovers when <code>dims</code> is non consecutive. <code>rule</code> was overwritten inside the loop over the blocks, so a <code>"colorScale"</code> got the colors as <code>cfvo</code> values, a <code>"containsText"</code> searched for the style name and a <code>"dataBar"</code> failed with <code>subscript out of bounds</code>. Broken for every type but <code>"expression"</code> since <a href="https://github.com/JanMarvin/openxlsx2/pull/1347" class="external-link">#1347</a> (<a href="https://github.com/JanMarvin/openxlsx2/pull/1684" class="external-link">#1684</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 </ul><hr></div>
 </div>
     <div class="section level2">

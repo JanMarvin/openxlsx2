@@ -92,8 +92,8 @@ png(file = tmp, bg = "transparent")
 plot(1:10)
 rect(1, 5, 3, 7, col = "white")
 dev.off()
-#> agg_record_19e27bb91acd 
-#>                       2 
+#> agg_record_1c7becc3dbc 
+#>                      2 
 
 c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
 wb$add_comment(dims = "B12", comment = c1, file = tmp)
