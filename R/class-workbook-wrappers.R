@@ -3510,6 +3510,52 @@ wb_add_image <- function(
   )
 }
 
+#' Add an image to a worksheet header or footer
+#'
+#' Places an image in one of the three sections of a worksheet header or
+#' footer. Header images are shown in the page layout view and in print output.
+#'
+#' @param wb A workbook object
+#' @param sheet A worksheet of the workbook
+#' @param file An image file in png, jpeg, gif, bmp, emf, or wmf.
+#' @param position The section the image is placed in, left, center or right
+#' @param location Either header or footer
+#' @param width,height The size of the image. Excel stores a size, not a scale
+#'   factor, so a picture is stretched to whatever is given here.
+#' @param units The units of `width` and `height`, in, cm or pt
+#' @return The `wbWorkbook` object, invisibly
+#' @examples
+#' img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+#'
+#' wb <- wb_workbook()$add_worksheet()
+#' wb <- wb_add_header_footer_image(wb, file = img, position = "right")
+#' wb <- wb_set_sheetview(wb, view = "pageLayout")
+#' @seealso [wb_add_image()] [wb_set_header_footer()]
+#' @family workbook wrappers
+#' @export
+wb_add_header_footer_image <- function(
+  wb,
+  sheet    = current_sheet(),
+  file,
+  position = c("left", "center", "right"),
+  location = c("header", "footer"),
+  width    = 2,
+  height   = 1,
+  units    = c("in", "cm", "pt")
+) {
+  assert_workbook(wb)
+  wb <- wb$clone()
+  wb$add_header_footer_image(
+    sheet    = sheet,
+    file     = file,
+    position = position,
+    location = location,
+    width    = width,
+    height   = height,
+    units    = units
+  )
+}
+
 
 #' Add a chart XML to a worksheet
 #'

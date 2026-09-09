@@ -177,6 +177,7 @@ Other workbook wrappers:
 \code{\link[=wb_add_chartsheet]{wb_add_chartsheet()}},
 \code{\link[=wb_add_data]{wb_add_data()}},
 \code{\link[=wb_add_formula]{wb_add_formula()}},
+\code{\link[=wb_add_header_footer_image]{wb_add_header_footer_image()}},
 \code{\link[=wb_add_hyperlink]{wb_add_hyperlink()}},
 \code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}},
 \code{\link[=wb_add_slicer]{wb_add_slicer()}},
