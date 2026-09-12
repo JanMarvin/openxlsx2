@@ -236,6 +236,7 @@ worksheet names.}
     \item \href{#method-wbWorkbook-add_conditional_formatting}{\code{wbWorkbook$add_conditional_formatting()}}
     \item \href{#method-wbWorkbook-remove_conditional_formatting}{\code{wbWorkbook$remove_conditional_formatting()}}
     \item \href{#method-wbWorkbook-add_image}{\code{wbWorkbook$add_image()}}
+    \item \href{#method-wbWorkbook-add_header_footer_image}{\code{wbWorkbook$add_header_footer_image()}}
     \item \href{#method-wbWorkbook-add_plot}{\code{wbWorkbook$add_plot()}}
     \item \href{#method-wbWorkbook-add_drawing}{\code{wbWorkbook$add_drawing()}}
     \item \href{#method-wbWorkbook-add_chart_xml}{\code{wbWorkbook$add_chart_xml()}}
@@ -2083,6 +2084,42 @@ are repeated across length of \code{cols}}
       \item{\code{dpi}}{dpi}
       \item{\code{address}}{address}
       \item{\code{...}}{additional arguments}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The \code{wbWorkbook} object, invisibly
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-wbWorkbook-add_header_footer_image"></a>}}
+\if{latex}{\out{\hypertarget{method-wbWorkbook-add_header_footer_image}{}}}
+\subsection{\code{wbWorkbook$add_header_footer_image()}}{
+  Insert an image into a sheet header or footer
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{wbWorkbook$add_header_footer_image(
+  sheet = current_sheet(),
+  file,
+  position = c("left", "center", "right"),
+  location = c("header", "footer"),
+  width = 2,
+  height = 1,
+  units = c("in", "cm", "pt")
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{sheet}}{The name of the sheet}
+      \item{\code{file}}{file}
+      \item{\code{position}}{left, center or right}
+      \item{\code{location}}{header or footer}
+      \item{\code{width}}{width}
+      \item{\code{height}}{height}
+      \item{\code{units}}{units}
     }
     \if{html}{\out{</div>}}
   }

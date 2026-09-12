@@ -243,7 +243,8 @@ wbWorksheet <- R6::R6Class(
         table            = integer(),
         threadedComment  = integer(),
         timeline         = integer(),
-        vmlDrawing       = integer()
+        vmlDrawing       = integer(),
+        vmlDrawingHF     = integer()
       )
 
       invisible(self)

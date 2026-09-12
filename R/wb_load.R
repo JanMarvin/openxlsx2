@@ -1169,6 +1169,7 @@ wb_load <- function(
       trcmt <- integer()
       tmlne <- integer()
       vmldr <- integer()
+      vmlhf <- integer()
 
       if (ncol(wb_rels)) {
         # TODO this assumes arabic numbers in names and will break with hex numbers
@@ -1193,6 +1194,15 @@ wb_load <- function(
         trcmt <- wb_rels$tid[wb_rels$typ == "threadedComment"]
         tmlne <- wb_rels$tid[wb_rels$typ == "timeline"]
         vmldr <- wb_rels$tid[wb_rels$typ == "vmlDrawing"]
+
+        # comments and header images are both vmlDrawing relationships. Only
+        # the sheet tells them apart, via legacyDrawing and legacyDrawingHF.
+        hf_id <- unlist(reg_match0(wb$worksheets[[ws]]$legacyDrawingHF,
+                                   '(?<=r:id=")[^"]+'))
+        if (length(hf_id)) {
+          vmlhf <- wb_rels$tid[wb_rels$Id %in% hf_id]
+          vmldr <- vmldr[!vmldr %in% vmlhf]
+        }
       }
 
       # currently we use only a selected set of these
@@ -1206,7 +1216,8 @@ wb_load <- function(
         table            = table,
         threadedComment  = trcmt,
         timeline         = tmlne,
-        vmlDrawing       = vmldr
+        vmlDrawing       = vmldr,
+        vmlDrawingHF     = vmlhf
       )
     }
 

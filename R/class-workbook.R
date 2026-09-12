@@ -1212,6 +1212,7 @@ wbWorkbook <- R6::R6Class(
       # The IDs in the drawings array are sheet-specific, so within the new
       # cloned sheet the same IDs can be used => no need to modify drawings
       vml_id <- from$worksheets[[old]]$relships$vmlDrawing
+      vhf_id <- from$worksheets[[old]]$relships$vmlDrawingHF
       cmt_id <- from$worksheets[[old]]$relships$comments
       trd_id <- from$worksheets[[old]]$relships$threadedComment
 
@@ -1219,6 +1220,15 @@ wbWorkbook <- R6::R6Class(
         self$append("vml",      from$vml[[vml_id]])
         self$append("vml_rels", from$vml_rels[[vml_id]])
         self$worksheets[[newSheetIndex]]$relships$vmlDrawing <- length(self$vml)
+      }
+
+      # the cloned sheet needs a part of its own, otherwise a picture added to
+      # one of the two sheets shows up in the header of both
+      self$worksheets[[newSheetIndex]]$relships$vmlDrawingHF <- integer()
+      if (length(vhf_id)) {
+        self$append("vml",      from$vml[[vhf_id]])
+        self$append("vml_rels", from$vml_rels[[vhf_id]])
+        self$worksheets[[newSheetIndex]]$relships$vmlDrawingHF <- length(self$vml)
       }
 
       if (length(cmt_id)) {
@@ -5371,13 +5381,14 @@ wbWorkbook <- R6::R6Class(
         comment_id    <- self$worksheets[[sheet]]$relships$comments
         drawing_id    <- self$worksheets[[sheet]]$relships$drawing
         thrComment_id <- self$worksheets[[sheet]]$relships$threadComments
-        vmlDrawing_id <- self$worksheets[[sheet]]$relships$vmlDrawing
+        vmlDrawing_id <- c(self$worksheets[[sheet]]$relships$vmlDrawing,
+                           self$worksheets[[sheet]]$relships$vmlDrawingHF)
         if (length(comment_id))    self$comments[[comment_id]]          <- ""
         if (length(drawing_id))    self$drawings[[drawing_id]]          <- ""
         if (length(drawing_id))    self$drawings_rels[[drawing_id]]     <- ""
         if (length(thrComment_id)) self$threadComments[[thrComment_id]] <- ""
-        if (length(vmlDrawing_id)) self$vml[[vmlDrawing_id]]            <- ""
-        if (length(vmlDrawing_id)) self$vml_rels[[vmlDrawing_id]]       <- ""
+        if (length(vmlDrawing_id)) self$vml[vmlDrawing_id]              <- ""
+        if (length(vmlDrawing_id)) self$vml_rels[vmlDrawing_id]         <- ""
 
         #### Modify Content_Types
         ## remove drawing
@@ -6622,6 +6633,116 @@ wbWorkbook <- R6::R6Class(
           relship
         )
       }
+
+      invisible(self)
+    },
+
+    #' @description
+    #' Insert an image into a sheet header or footer
+    #' @param file file
+    #' @param position left, center or right
+    #' @param location header or footer
+    #' @param width width
+    #' @param height height
+    #' @param units units
+    #' @return The `wbWorkbook` object, invisibly
+    add_header_footer_image = function(
+      sheet    = current_sheet(),
+      file,
+      position = c("left", "center", "right"),
+      location = c("header", "footer"),
+      width    = 2,
+      height   = 1,
+      units    = c("in", "cm", "pt")
+    ) {
+
+      sheet    <- private$get_sheet_index(sheet)
+      position <- match.arg(position)
+      location <- match.arg(location)
+      units    <- match.arg(units)
+
+      if (!file.exists(file)) stop("`file` does not exist", call. = FALSE)
+
+      ext <- tolower(sub(".*\\.", "", basename(file)))
+      if (!ext %in% c("png", "jpg", "jpeg", "gif", "bmp", "emf", "wmf"))
+        stop("`", ext, "` is not an image type Excel accepts in headers", call. = FALSE)
+
+      size <- c(width, height) * c("in" = 72, cm = 72 / 2.54, pt = 1)[[units]]
+
+      # the shape id is what ties the picture to a section of the header
+      shp_id <- paste0(
+        c(left = "L", center = "C", right = "R")[[position]],
+        c(header = "H", footer = "F")[[location]]
+      )
+
+      vml_id <- self$worksheets[[sheet]]$relships$vmlDrawingHF
+      if (!length(vml_id)) {
+        vml_id <- length(self$vml) + 1L
+        self$vml[[vml_id]]      <- vml_hf_empty
+        self$vml_rels[[vml_id]] <- character()
+        self$worksheets[[sheet]]$relships$vmlDrawingHF <- vml_id
+
+        rels <- self$worksheets_rels[[sheet]]
+        rid  <- if (length(rels)) {
+          max(as.integer(sub('.*"rId(\\d+)".*', "\\1", rels))) + 1L
+        } else {
+          1L
+        }
+        private$append_sheet_rels(sheet, sprintf(
+          paste0(
+            '<Relationship Id="rId%i" Type="http://schemas.openxmlformats.org',
+            '/officeDocument/2006/relationships/vmlDrawing"',
+            ' Target="../drawings/vmlDrawing%i.vml"/>'
+          ), rid, vml_id))
+        self$worksheets[[sheet]]$legacyDrawingHF <-
+          sprintf('<legacyDrawingHF r:id="rId%i"/>', rid)
+
+        if (!any(grepl('Extension="vml"', self$Content_Types)))
+          self$append("Content_Types", paste0(
+            '<Default Extension="vml" ContentType=',
+            '"application/vnd.openxmlformats-officedocument.vmlDrawing"/>'))
+      }
+
+      if (grepl(sprintf('<v:shape id="%s"', shp_id), self$vml[[vml_id]], fixed = TRUE))
+        stop("the ", position, " ", location, " already holds an image", call. = FALSE)
+
+      if (!any(grepl(sprintf('Extension="%s"', ext), self$Content_Types)))
+        self$append("Content_Types", sprintf(
+          '<Default Extension="%s" ContentType="image/%s"/>',
+          ext, if (ext %in% c("jpg", "jpeg")) "jpeg" else ext))
+
+      img_no <- length(self$media) + 1L
+      self$media[[img_no]]      <- file
+      names(self$media)[img_no] <- sprintf("image%i.%s", img_no, ext)
+
+      n      <- length(self$vml_rels[[vml_id]]) + 1L
+      rel_id <- sprintf("rId%i", n)
+      self$vml_rels[[vml_id]] <- c(self$vml_rels[[vml_id]], sprintf(
+        paste0(
+          '<Relationship Id="%s" Type="http://schemas.openxmlformats.org',
+          '/officeDocument/2006/relationships/image" Target="../media/%s"/>'
+        ), rel_id, names(self$media)[img_no]))
+
+      # aspectratio is locked on the shapetype and released per shape, which is
+      # what allows a picture to be stretched away from its native ratio
+      shape <- sprintf(
+        paste0(
+          '<v:shape id="%s" o:spid="_x0000_s%i" type="#_x0000_t75"',
+          ' style="position:absolute;margin-left:0;margin-top:0;',
+          'width:%spt;height:%spt;z-index:%i">',
+          '<v:imagedata o:relid="%s" o:title="%s"/>',
+          '<o:lock v:ext="edit" rotation="t" aspectratio="f"/></v:shape>'
+        ),
+        shp_id, 1024L + n, format(size[1L], trim = TRUE), format(size[2L], trim = TRUE),
+        n, rel_id, sub("\\.[^.]*$", "", basename(file)))
+      self$vml[[vml_id]] <- sub("</xml>\\s*$", paste0(shape, "</xml>"), self$vml[[vml_id]])
+
+      # &G marks the section the picture belongs to
+      fld <- paste0("odd", if (location == "header") "Header" else "Footer")
+      hf  <- self$worksheets[[sheet]]$headerFooter
+      if (is.null(hf[[fld]])) hf[[fld]] <- c("", "", "")
+      hf[[fld]][match(position, c("left", "center", "right"))] <- "&amp;G"
+      self$worksheets[[sheet]]$headerFooter <- hf
 
       invisible(self)
     },
