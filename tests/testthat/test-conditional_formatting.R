@@ -1078,8 +1078,10 @@ test_that("warning on cols > 2 and dims", {
 
 })
 
-test_that("colorScale is reset for each block of non consecutive dims", {
+test_that("non consecutive dims are covered by a single rule", {
 
+  # one conditionalFormatting element carries every range of the selection,
+  # so an aggregating type gets one scale over the whole selection
   wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
   wb$add_conditional_formatting(
     dims  = wb_dims(rows = c(2, 3, 5), cols = 1),
@@ -1088,18 +1090,22 @@ test_that("colorScale is reset for each block of non consecutive dims", {
   )
 
   exp <- data.frame(
-    sqref = c("A2:A3", "A5:A5"),
-    cf = c(
-      '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="min"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>',
-      '<cfRule type="colorScale" priority="2"><colorScale><cfvo type="min"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>'
-    ),
+    sqref = "A2:A3 A5:A5",
+    cf = '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="min"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>',
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_identical(exp, got)
   expect_save(wb)
 
-  # an explicit rule must not be replaced by the colors either
+  # the ranges survive a round trip
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb$save(tmp)
+  got <- wb_load(tmp)$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical("A2:A3 A5:A5", got)
+
+  # an explicit rule is kept
   wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
   wb$add_conditional_formatting(
     dims  = wb_dims(rows = c(2, 3, 5), cols = 1),
@@ -1109,17 +1115,14 @@ test_that("colorScale is reset for each block of non consecutive dims", {
   )
 
   exp <- data.frame(
-    sqref = c("A2:A3", "A5:A5"),
-    cf = c(
-      '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="num" val="1"/><cfvo type="num" val="5"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>',
-      '<cfRule type="colorScale" priority="2"><colorScale><cfvo type="num" val="1"/><cfvo type="num" val="5"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>'
-    ),
+    sqref = "A2:A3 A5:A5",
+    cf = '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="num" val="1"/><cfvo type="num" val="5"/><color rgb="FFFFFFFF"/><color rgb="FF63BE7B"/></colorScale></cfRule>',
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_identical(exp, got)
 
-  # a gap in the rows and in the columns gives four blocks, all of them equal
+  # a gap in the rows and in the columns gives four ranges in one element
   wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1:5, b = 1:5, c = 1:5))
   wb$add_conditional_formatting(
     dims  = wb_dims(rows = c(2, 3, 5), cols = c(1, 3)),
@@ -1127,18 +1130,16 @@ test_that("colorScale is reset for each block of non consecutive dims", {
     style = c("#FFFFFF", "#FFEB84", "#63BE7B")
   )
 
-  exp <- c("A2:A3", "C2:C3", "A5:A5", "C5:C5")
+  exp <- "A2:A3 C2:C3 A5:A5 C5:C5"
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
 
-  exp <- '<colorScale><cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FFFFEB84"/><color rgb="FF63BE7B"/></colorScale>'
-  got <- unique(gsub("^<cfRule[^>]*>|</cfRule>$", "", wb$worksheets[[1]]$conditionalFormatting$cf))
+  # three colors are one scale over the whole selection, not one per block
+  exp <- '<cfRule type="colorScale" priority="1"><colorScale><cfvo type="min"/><cfvo type="percentile" val="50"/><cfvo type="max"/><color rgb="FFFFFFFF"/><color rgb="FFFFEB84"/><color rgb="FF63BE7B"/></colorScale></cfRule>'
+  got <- wb$worksheets[[1]]$conditionalFormatting$cf
   expect_identical(exp, got)
 
-})
-
-test_that("dataBar is reset for each block of non consecutive dims", {
-
+  # dataBar carries the ranges in its x14 extension as well
   wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
   wb$add_conditional_formatting(
     dims  = wb_dims(rows = c(2, 3, 5), cols = 1),
@@ -1147,19 +1148,45 @@ test_that("dataBar is reset for each block of non consecutive dims", {
   )
 
   exp <- data.frame(
-    sqref = c("A2:A3", "A5:A5"),
-    cf = c(
-      '<cfRule type="dataBar" priority="1"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FF63BE7B"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>',
-      '<cfRule type="dataBar" priority="2"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FF63BE7B"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40001}</x14:id></ext></extLst></cfRule>'
-    ),
+    sqref = "A2:A3 A5:A5",
+    cf = '<cfRule type="dataBar" priority="1"><dataBar showValue="1"><cfvo type="min"/><cfvo type="max"/><color rgb="FF63BE7B"/></dataBar><extLst><ext uri="{B025F937-C7B1-47D3-B67F-A62EFF666E3E}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:id>{F7189283-14F7-4DE0-9601-54DE9DB40000}</x14:id></ext></extLst></cfRule>',
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_identical(exp, got)
+
+  got <- xml_node(wb$worksheets[[1]]$extLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting")
+  expect_length(got, 1L)
+  expect_true(grepl("<xm:sqref>A2:A3 A5:A5</xm:sqref>", got, fixed = TRUE))
   expect_save(wb)
 
-  # a single color used to end up as a length one rule and error out. The
-  # result is the same as above, the second color is not part of the cfRule
+  # so does an iconSet that is stored in the x14 extension
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
+  wb$add_conditional_formatting(
+    dims   = wb_dims(rows = c(2, 3, 5), cols = 1),
+    type   = "iconSet",
+    rule   = c(0, 5, 9),
+    params = list(iconSet = "3Stars")
+  )
+
+  # this one lives in the extension entirely, there is no sqref on the sheet
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  got <- xml_node(wb$worksheets[[1]]$extLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting")
+  expect_length(got, 1L)
+  expect_true(grepl("<xm:sqref>A2:A3 A5:A5</xm:sqref>", got, fixed = TRUE))
+
+  # and it survives a round trip. expect_save() reads the conditionalFormatting
+  # of the sheet, which this type does not write, so it cannot be used here
+  path <- temp_xlsx()
+  on.exit(unlink(path), add = TRUE)
+  expect_silent(wb_save(wb, path))
+  expect_silent(wb1 <- wb_load(path))
+
+  got <- xml_node(wb1$worksheets[[1]]$extLst, "ext", "x14:conditionalFormattings", "x14:conditionalFormatting")
+  expect_true(grepl("<xm:sqref>A2:A3 A5:A5</xm:sqref>", got, fixed = TRUE))
+
+  # a single color used to end up as a length one rule and error out
   wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(v = 1:5))
   expect_silent(
     wb$add_conditional_formatting(
@@ -1168,14 +1195,15 @@ test_that("dataBar is reset for each block of non consecutive dims", {
       style = "#63BE7B"
     )
   )
-
+  # the result is the same as above, the second color is not part of the cfRule
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_identical(exp, got)
 
 })
 
-test_that("text rules are reset for each block of non consecutive dims", {
+test_that("rules are anchored to the first range of non consecutive dims", {
 
+  # text rules write the top left cell of the first range into their formula
   wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = "b", b = "b", c = "b"))
   wb$add_dxfs_style(name = "hit", bg_fill = wb_color("red"))
   wb$add_conditional_formatting(
@@ -1186,11 +1214,8 @@ test_that("text rules are reset for each block of non consecutive dims", {
   )
 
   exp <- data.frame(
-    sqref = c("A2:A2", "C2:C2"),
-    cf = c(
-      '<cfRule type="containsText" dxfId="0" priority="1" operator="containsText" text="b"><formula>NOT(ISERROR(SEARCH("b", A2)))</formula></cfRule>',
-      '<cfRule type="containsText" dxfId="0" priority="2" operator="containsText" text="b"><formula>NOT(ISERROR(SEARCH("b", C2)))</formula></cfRule>'
-    ),
+    sqref = "A2:A2 C2:C2",
+    cf = '<cfRule type="containsText" dxfId="0" priority="1" operator="containsText" text="b"><formula>NOT(ISERROR(SEARCH("b", A2)))</formula></cfRule>',
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
@@ -1208,15 +1233,13 @@ test_that("text rules are reset for each block of non consecutive dims", {
       style = "hit"
     )
 
-    exp <- c("b", "b")
     got <- gsub('.* text="([^"]*)".*', "\\1", wb$worksheets[[1]]$conditionalFormatting$cf)
-    expect_identical(exp, got, info = type)
+    expect_identical("b", got, info = type)
+    expect_identical("A2:A2 C2:C2", wb$worksheets[[1]]$conditionalFormatting$sqref, info = type)
   }
 
-})
-
-test_that("expression is anchored to each block of non consecutive dims", {
-
+  # a bare operator is attached to the top left cell of the first range. From
+  # there the reference moves along every range, so C2 is checked as C2<0
   wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1, b = 1, c = 1))
   wb$add_conditional_formatting(
     dims = wb_dims(rows = 2, cols = c(1, 3)),
@@ -1224,15 +1247,271 @@ test_that("expression is anchored to each block of non consecutive dims", {
   )
 
   exp <- data.frame(
-    sqref = c("A2:A2", "C2:C2"),
-    cf = c(
-      '<cfRule type="expression" dxfId="0" priority="1"><formula>A2&lt;0</formula></cfRule>',
-      '<cfRule type="expression" dxfId="0" priority="2"><formula>C2&lt;0</formula></cfRule>'
-    ),
+    sqref = "A2:A2 C2:C2",
+    cf = '<cfRule type="expression" dxfId="0" priority="1"><formula>A2&lt;0</formula></cfRule>',
     stringsAsFactors = FALSE
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_identical(exp, got)
+
+  # a rule with a reference is written as is
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A2:A5,C2:C2", rule = "B2>0")
+
+  exp <- data.frame(
+    sqref = "A2:A5 C2:C2",
+    cf = '<cfRule type="expression" dxfId="0" priority="1"><formula>B2&gt;0</formula></cfRule>',
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+
+})
+
+test_that("non rectangular dims only format the cells that were selected", {
+
+  # L shape: the second block is one cell tall, the first one is four cells
+  # tall. Pooling the rows across blocks stretched C2 down to C5.
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A2:A5,C2:C2", rule = "==1")
+
+  exp <- "A2:A5 C2:C2"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+  expect_save(wb)
+
+  # T shape: rows and columns are consecutive across the two blocks, so the
+  # cross product collapsed into the single range A1:E5, formatting 25 cells
+  # where 9 were selected
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:E1,C2:C5", rule = "==1")
+
+  exp <- "A1:E1 C2:C5"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # two cells on a diagonal used to become the four corners of a rectangle
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A2,C4", rule = "==1")
+
+  exp <- "A2:A2 C4:C4"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # the example the NEWS entry of #1347 gives for the feature
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B2,C2:D3", rule = "==1")
+
+  exp <- "A1:B2 C2:D3"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # consecutive rows sharing the same columns are merged into a single range,
+  # gaps in the columns are split into runs
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = wb_dims(rows = c(2, 3, 5), cols = c(1, 3)), rule = "==1")
+
+  exp <- "A2:A3 C2:C3 A5:A5 C5:C5"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # the equivalence #1183 established still holds: an equal sized non
+  # consecutive dims behaves like the non equal sized spelling of it
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:A5,C1:D5", rule = "==1")
+  wb$add_conditional_formatting(dims = "A1,C1:D1,A2:A5,C2:D5", rule = "==1")
+
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical("A1:A5 C1:D5", got[1])
+  expect_identical(got[1], got[2])
+
+  # blocks written side by side are folded back into the single range the
+  # pooling used to produce
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B4,C1:C4", rule = "==1")
+  wb$add_conditional_formatting(dims = "A1:A4,B1:B4,C1:C4", rule = "==1")
+
+  exp <- c("A1:C4", "A1:C4")
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # the ranges are written top to bottom, left to right, whatever order the
+  # blocks were given in, so the anchor does not depend on the spelling
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A3:B4,C1:D2", rule = "==1")
+
+  exp <- data.frame(
+    sqref = "C1:D2 A3:B4",
+    cf = '<cfRule type="expression" dxfId="0" priority="1"><formula>C1=1</formula></cfRule>',
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+
+  # merging on one axis can enable a merge on the other, so a tiled rectangle
+  # has to collapse completely rather than one step short
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B2,C1:D2,A3:B4,C3:D4", rule = "==1")
+
+  exp <- "A1:D4"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # an empty block is skipped, an empty selection is an error
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B2,,C3:D4", rule = "==1")
+
+  exp <- "A1:B2 C3:D4"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  expect_error(
+    wb$add_conditional_formatting(dims = "", rule = "==1"),
+    "does not select any cell"
+  )
+
+  # and it fails before anything is registered, no style is left behind
+  wb2 <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  expect_error(
+    wb2$add_conditional_formatting(dims = "", rule = "==1"),
+    "does not select any cell"
+  )
+  expect_length(wb2$styles_mgr$styles$dxfs, 0L)
+
+  # the dims spelling removes the element again
+  wb$remove_conditional_formatting(dims = "A1:B2,C3:D4")
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  # removing goes through the same range builder as adding, so any spelling
+  # of the same selection matches the stored sqref
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B4,C1:C4", rule = "==1")
+  expect_identical("A1:C4", wb$worksheets[[1]]$conditionalFormatting$sqref)
+
+  wb$remove_conditional_formatting(dims = "A1:B4,C1:C4")
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  wb$add_conditional_formatting(dims = "C1:D2,A3:B4", rule = "==1")
+  wb$remove_conditional_formatting(dims = "A3:B4;C1:D2")
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  # every element of a dims vector stays a selection of its own, the way this
+  # matched the stored sqref before the range builder was in between
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 6, 6), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B2", rule = "==1")
+  wb$add_conditional_formatting(dims = "D4:E5", rule = "==1")
+  expect_identical(c("A1:B2", "D4:E5"), wb$worksheets[[1]]$conditionalFormatting$sqref)
+
+  wb$remove_conditional_formatting(dims = c("A1:B2", "D4:E5"))
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  # a rectangle built from a vector of consecutive rows and columns is a
+  # single range as before, whatever the rule references. This is the shape
+  # `correlation::cormatrix_to_excel()` builds.
+  wb <- wb_workbook()$add_worksheet("Values")$add_data(x = matrix(1, 5, 5))
+  wb$add_dxfs_style(name = "gray", bg_fill = wb_color("gray"))
+  wb$add_conditional_formatting(
+    dims  = wb_dims(cols = 2:6, rows = 2:6),
+    rule  = "Values!B2 = 1",
+    style = "gray"
+  )
+
+  exp <- data.frame(
+    sqref = "B2:F6",
+    cf = '<cfRule type="expression" dxfId="0" priority="1"><formula>Values!B2 = 1</formula></cfRule>',
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+
+})
+
+test_that("overlapping blocks of a dims are cut apart", {
+
+  # A sqref must not name a cell twice: Excel counts a repeated cell as a
+  # second cell, so over "A1:C3 B2:D4" a duplicatedValues rule marks B2:C3 as
+  # duplicates of themselves even when every value differs, and uniqueValues
+  # drops them. Excel writes the second block minus what the first covers.
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:C3,B2:D4", rule = "==1")
+
+  exp <- "A1:C3 D2:D4 B4:C4"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+  expect_save(wb)
+
+  # the same 14 cells, and the same ranges, whichever order they are written
+  # in: cutting runs over the blocks sorted, not over the spelling
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "B2:D4,A1:C3", rule = "==1")
+  expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting$sqref)
+
+  # so the element is found again either way
+  wb$remove_conditional_formatting(dims = "A1:C3,B2:D4")
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  # two blocks can start in the same cell, and sorting them by that cell alone
+  # leaves the order they were written in standing, which the ranges must not
+  # depend on
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 6, 6), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "D3:F5,D3:E6", rule = "==1")
+  wb$add_conditional_formatting(dims = "D3:E6,D3:F5", rule = "==1")
+
+  exp <- c("D3:F5 D6:E6", "D3:F5 D6:E6")
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # a block the selection already covers adds nothing
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:D4,B2:C3", rule = "==1")
+  wb$add_conditional_formatting(dims = "A1:B2,A1:B2", rule = "==1")
+
+  exp <- c("A1:D4", "A1:B2")
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # blocks meeting in a single cell
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:C3,C3:E5", rule = "==1")
+
+  exp <- "A1:C3 D3:E5 C4:C5"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # a chain of three, each overlapping the next, cut against every earlier
+  # block rather than only the one before it
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:C3,B2:D4,C3:E5", rule = "==1")
+
+  exp <- "A1:C3 D2:D5 E3:E5 B4:C4 C5:C5"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_identical(exp, got)
+
+  # and the same chain written backwards: with more than one earlier block to
+  # cut against, the subtractions have to run in the sorted order too, not in
+  # the order the blocks happen to be indexed in
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "C3:E5,B2:D4,A1:C3", rule = "==1")
+  expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting$sqref)
+
+  # cutting must not move the anchor: it stays the top left cell of the first
+  # range of the cut selection, which here is neither A1 nor the block that
+  # was written first
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "C3:E5,B2:D4", rule = "==1")
+
+  exp <- data.frame(
+    sqref = "B2:D4 E3:E5 C5:D5",
+    cf = '<cfRule type="expression" dxfId="0" priority="1"><formula>B2=1</formula></cfRule>',
+    stringsAsFactors = FALSE
+  )
+  got <- wb$worksheets[[1]]$conditionalFormatting
+  expect_identical(exp, got)
+
+  # disjoint blocks are not touched by any of this
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B2,C2:D3", rule = "==1")
+  expect_identical("A1:B2 C2:D3", wb$worksheets[[1]]$conditionalFormatting$sqref)
 
 })
 

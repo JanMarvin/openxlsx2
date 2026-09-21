@@ -1,9 +1,17 @@
 # openxlsx2 (development version)
 
+## New features
+
+* `wb_add_conditional_formatting()` now applies a single rule to a non consecutive `dims`, as a spreadsheet application does for such a selection. The ranges are written into one `sqref` (`"A1:B2 C2:D3"`) instead of one element per block, so only the cells that were selected are formatted: `"A1:B2,C2:D3"`, the example the feature was introduced with, used to become a single `A1:D3`. Blocks that overlap are cut apart, because a cell named twice in a `sqref` is counted twice. This completes the non consecutive `dims` from [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) and matches what `wb_add_fill()` and friends do for the same `dims` since [#1015](https://github.com/JanMarvin/openxlsx2/pull/1015) ([#1688](https://github.com/JanMarvin/openxlsx2/issues/1688), [#1689](https://github.com/JanMarvin/openxlsx2/pull/1689), @SchmidtPaul).
+
 ## Fixes
 
 * A logic bug in `apply_numfmts()` was fixed that occured in combination with `cols` used via `wb_set_col_widths()`. In addition automatic sizing can now be tweaked via an offset `"auto+n"`. [#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)
 * `wb_add_conditional_formatting()` no longer builds every block but the first from the previous block's leftovers when `dims` is non consecutive. `rule` was overwritten inside the loop over the blocks, so a `"colorScale"` got the colors as `cfvo` values, a `"containsText"` searched for the style name and a `"dataBar"` failed with `subscript out of bounds`. Broken for every type but `"expression"` since [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) ([#1684](https://github.com/JanMarvin/openxlsx2/pull/1684), @SchmidtPaul).
+
+## Breaking changes
+
+* A non consecutive `dims` in `wb_add_conditional_formatting()` is covered by one rule instead of one per block. An aggregating type such as `"colorScale"` gets a single scale over the whole selection, and a relative reference in a rule is anchored to the top left cell of the first range rather than restarting in every block ([#1688](https://github.com/JanMarvin/openxlsx2/issues/1688), [#1689](https://github.com/JanMarvin/openxlsx2/pull/1689), @SchmidtPaul).
 
 
 ***************************************************************************

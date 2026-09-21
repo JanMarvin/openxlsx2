@@ -4828,7 +4828,7 @@ wb_add_form_control <- function(
 #' @details
 #' Conditional formatting `type` accept different parameters. Unless noted,
 #' unlisted parameters are ignored.
-#' If an expression is pointing to a cell `"A1=1"`, this cell reference is fluid and not fixed like `"$A$1=1"`. It will behave similar to a formula, when `dims` is spanning multiple columns or rows (A1, A2, A3 ... in vertical direction, A1, B1, C1 ... in horizontal direction). If `dims` is a non consecutive range ("A1:B2,D1:F2"), the expression is applied to each range. For the second `dims` range it will be evaluated again as `"A1=1"`.
+#' If an expression is pointing to a cell `"A1=1"`, this cell reference is fluid and not fixed like `"$A$1=1"`. It will behave similar to a formula, when `dims` is spanning multiple columns or rows (A1, A2, A3 ... in vertical direction, A1, B1, C1 ... in horizontal direction). If `dims` is a non consecutive range ("A1:B2,D1:F2"), the selection is covered by a single rule, as it would be in a spreadsheet application: the ranges are ordered top to bottom and left to right first, the expression is anchored to the top left cell of the first of them and moves along the cells of every range from there, so in `D1` it is evaluated as `"D1=1"`. The order the ranges were written in does not matter, `"A3:B4,C1:D2"` is anchored in `C1`. Blocks that overlap are cut apart, so that no cell is covered twice.
 #' \describe{
 #'   \item{`expression`}{
 #'     `[style]`\cr A `Style` object\cr\cr
