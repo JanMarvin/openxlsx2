@@ -282,6 +282,19 @@ test_that("type = 'endsWith' works", {
   expect_save(wb)
 })
 
+test_that("a text type rejects a rule that is not text", {
+  # the beginsWith check used to test the literal "character" instead of the
+  # rule and could never fire
+  for (type in c("containsText", "notContainsText", "beginsWith", "endsWith")) {
+    wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = "b"))
+    expect_error(
+      wb$add_conditional_formatting(dims = "A2", type = type, rule = 1),
+      "rule must be a character vector",
+      info = type
+    )
+  }
+})
+
 test_that("type = 'colorScale' works", {
 
   wb <- wb_workbook()
@@ -1315,6 +1328,12 @@ test_that("non rectangular dims only format the cells that were selected", {
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
 
+  # ten or more runs stay in column order, the runs are grouped by a number
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 2, 21), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1,C1,E1,G1,I1,K1,M1,O1,Q1,S1,U1", rule = "==1")
+  exp <- "A1:A1 C1:C1 E1:E1 G1:G1 I1:I1 K1:K1 M1:M1 O1:O1 Q1:Q1 S1:S1 U1:U1"
+  expect_identical(exp, wb$worksheets[[1]]$conditionalFormatting$sqref)
+
   # the equivalence #1183 established still holds: an equal sized non
   # consecutive dims behaves like the non equal sized spelling of it
   wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
@@ -1419,6 +1438,21 @@ test_that("non rectangular dims only format the cells that were selected", {
   wb$remove_conditional_formatting(dims = "A1:C3,B2:D4")
   expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
 
+  # and the stored spelling itself is accepted as dims, as it was when this
+  # compared the strings directly
+  wb$add_conditional_formatting(dims = "A1:C3,B2:D4", rule = "==1")
+  wb$remove_conditional_formatting(dims = "A1:C3 D2:D4 B4:C4")
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  # a stored sqref this cannot read, a whole row of a loaded file, is left
+  # alone instead of stopping the removal of every other rule
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 6, 6), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1:B2", rule = "==1")
+  wb$add_conditional_formatting(dims = "D4:E5", rule = "==1")
+  wb$worksheets[[1]]$conditionalFormatting$sqref[2] <- "1:1"
+  wb$remove_conditional_formatting(dims = "A1:B2")
+  expect_identical("1:1", wb$worksheets[[1]]$conditionalFormatting$sqref)
+
   # a rectangle built from a vector of consecutive rows and columns is a
   # single range as before, whatever the rule references. This is the shape
   # `correlation::cormatrix_to_excel()` builds.
@@ -1521,12 +1555,6 @@ test_that("overlapping blocks of a dims are cut apart", {
   )
   got <- wb$worksheets[[1]]$conditionalFormatting
   expect_identical(exp, got)
-
-  # disjoint blocks are not touched by any of this
-  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
-  wb$add_conditional_formatting(dims = "A1:B2,C2:D3", rule = "==1")
-  expect_identical("A1:B2 C2:D3", wb$worksheets[[1]]$conditionalFormatting$sqref)
-
 })
 
 test_that("un_list works", {

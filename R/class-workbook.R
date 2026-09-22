@@ -6148,11 +6148,8 @@ wbWorkbook <- R6::R6Class(
       values <- NULL
       params <- validate_cf_params(params)
 
-      # `dims` can consist of several blocks ("A2:A5,C2:C2"). Rows and columns
-      # must not be pooled across them: looping over the cross product of all
-      # rows and all columns also covers cells the user never named as soon as
-      # the blocks do not add up to a rectangle. This runs before a style is
-      # registered, so an unusable `dims` leaves the workbook untouched.
+      # `dims` may consist of several blocks ("A2:A5,C2:C2"). This runs before
+      # a style is registered, so an unusable `dims` leaves the workbook untouched.
       cf_ranges <- cf_dims_to_sqref(dims)
 
       if (is.null(cf_ranges))
@@ -6176,11 +6173,7 @@ wbWorkbook <- R6::R6Class(
 
       # a single conditionalFormatting element carries every range of the
       # selection, "A1:B2 C2:D3", so one rule covers the whole selection
-      sqref <- cf_ranges[["sqref"]]
-
-      # top left cell of the first range
-      row <- cf_ranges[["row"]]
-      col <- cf_ranges[["col"]]
+      sqref <- cf_ranges$sqref
 
       switch(
         type,
@@ -6200,10 +6193,7 @@ wbWorkbook <- R6::R6Class(
 
           if (!grepl("[A-Z]", substr(rule, 1, 2))) {
             ## formula looks like "operatorX" , attach top left cell to rule
-            rule <- paste0(
-              get_cell_refs(data.frame(row[1], col[1], stringsAsFactors = FALSE)),
-              rule
-            )
+            rule <- paste0(cf_ranges$anchor, rule)
           } ## else, there is a letter in the formula and apply as is
 
         },
@@ -6446,14 +6436,12 @@ wbWorkbook <- R6::R6Class(
             # whichever way it is written: "A1:B4,C1:C4" as well as "A1:C4",
             # and a loaded file's "A5" or "A1:C3 B4:C4 D2:D4" as well. Every
             # element of dims is one selection of its own, as it was when this
-            # matched the stored sqref directly.
-            sqrefs <- unlist(lapply(dims, function(x) cf_dims_to_sqref(x)[["sqref"]]))
-            stored <- vapply(
-              cf$sqref,
-              function(x) cf_dims_to_sqref(gsub(" ", ",", x, fixed = TRUE))[["sqref"]] %||% NA_character_,
-              NA_character_,
-              USE.NAMES = FALSE
-            )
+            # matched the stored sqref directly. A stored sqref this cannot read
+            # is never matched, it must not stop the removal of the others.
+            sqrefs <- unlist(lapply(dims, function(x) cf_dims_to_sqref(x)$sqref))
+            stored <- vapply(cf$sqref, function(x) {
+              tryCatch(cf_dims_to_sqref(x)$sqref, error = function(e) NULL) %||% NA_character_
+            }, NA_character_, USE.NAMES = FALSE)
             if (length(sqrefs) && any(sel <- stored %in% sqrefs)) {
               cf <- cf[!sel, ]
             }
