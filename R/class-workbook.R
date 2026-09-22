@@ -6355,7 +6355,7 @@ wbWorkbook <- R6::R6Class(
           # - rule is text to look for
           msg <- "When type == 'beginsWith', "
 
-          if (!is.character("character")) {
+          if (!is.character(rule)) {
             stop(msg, "rule must be a character vector of length 1.")
           }
 
@@ -6441,19 +6441,26 @@ wbWorkbook <- R6::R6Class(
 
           if (!is.null(dims)) {
             # a non consecutive dims is stored as the sqref of a single
-            # element, "A1:B2 C2:D3". Going through the same range builder as
-            # add_conditional_formatting() finds it whichever way the same
-            # selection is written, "A1:B4,C1:C4" as well as "A1:C4". Every
+            # element, "A1:B2 C2:D3". Both sides go through the same range
+            # builder as add_conditional_formatting(), so a selection is found
+            # whichever way it is written: "A1:B4,C1:C4" as well as "A1:C4",
+            # and a loaded file's "A5" or "A1:C3 B4:C4 D2:D4" as well. Every
             # element of dims is one selection of its own, as it was when this
             # matched the stored sqref directly.
             sqrefs <- unlist(lapply(dims, function(x) cf_dims_to_sqref(x)[["sqref"]]))
-            if (length(sqrefs) && any(sel <- cf$sqref %in% sqrefs)) {
+            stored <- vapply(
+              cf$sqref,
+              function(x) cf_dims_to_sqref(gsub(" ", ",", x, fixed = TRUE))[["sqref"]] %||% NA_character_,
+              NA_character_,
+              USE.NAMES = FALSE
+            )
+            if (length(sqrefs) && any(sel <- stored %in% sqrefs)) {
               cf <- cf[!sel, ]
             }
           } else if (first) {
-              cf <- cf[-1, ]
+            cf <- cf[-1, ]
           } else if (last) {
-              cf <- cf[-nrow(cf), ]
+            cf <- cf[-nrow(cf), ]
           }
 
           if (nrow(cf) == 0) cf <- character()

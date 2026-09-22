@@ -22,12 +22,6 @@ cf_block_minus <- function(b, p) {
   if (length(outside))
     out[[length(out) + 1L]] <- list(row = b[["row"]], col = outside)
 
-  # cf_cut_overlaps(), the only caller, sorts the blocks and only ever cuts
-  # against ones that start no later, so this never triggers from there. Kept
-  # for a caller that does not sort.
-  if (b[["row"]][1] < p[["row"]][1])
-    out[[length(out) + 1L]] <- list(row = c(b[["row"]][1], p[["row"]][1] - 1L), col = shared)
-
   if (b[["row"]][2] > p[["row"]][2])
     out[[length(out) + 1L]] <- list(row = c(p[["row"]][2] + 1L, b[["row"]][2]), col = shared)
 
@@ -36,13 +30,15 @@ cf_block_minus <- function(b, p) {
 
 #' cut overlapping blocks apart so that no cell is listed twice
 #'
-#' A `sqref` never repeats a cell: for `"A1:C3,B2:D4"` Excel writes
-#' `A1:C3 B4:C4 D2:D4`, the second block minus what the first one already
-#' covers. We write the same ranges, ordered top to bottom and left to right
-#' rather than in the order they were cut, so `"A1:C3 D2:D4 B4:C4"`. Repeating
-#' a cell is not cosmetic, Excel counts it twice: with every value distinct, a
-#' `duplicatedValues` rule over `A1:C3 B2:D4` marks the four repeated cells as
-#' duplicates of themselves and `uniqueValues` drops them.
+#' The standard allows a `sqref` to name a cell more than once (`ST_Sqref` is
+#' a plain list of `ST_Ref`), but Excel never writes one that does: for
+#' `"A1:C3,B2:D4"` it writes `A1:C3 B4:C4 D2:D4`, the second block minus what
+#' the first one already covers. We write the same ranges, ordered top to
+#' bottom and left to right rather than in the order they were cut, so
+#' `"A1:C3 D2:D4 B4:C4"`. Repeating a cell is not cosmetic, Excel counts it
+#' twice: with every value distinct, a `duplicatedValues` rule over
+#' `A1:C3 B2:D4` marks the four repeated cells as duplicates of themselves and
+#' `uniqueValues` drops them.
 #'
 #' Blocks are taken top to bottom, left to right, and each keeps only the part
 #' no earlier block covers, so the result does not depend on the order the
@@ -61,43 +57,36 @@ cf_cut_overlaps <- function(blocks) {
   col_beg <- vapply(blocks, function(b) min(b[["col"]]), NA_integer_)
   col_end <- vapply(blocks, function(b) max(b[["col"]]), NA_integer_)
 
-  # Which pairs can overlap at all? Bounding boxes are enough to rule a pair
-  # out and this is vectorised, so a dims of disjoint blocks - the usual case,
-  # and the one a dims with very many blocks tends to be - returns below for
-  # the price of one matrix, and one that does overlap only ever cuts against
-  # the few blocks it really meets.
-  hit <- outer(row_beg, row_end, "<=")
-  hit <- hit & t(hit)
-  in_col <- outer(col_beg, col_end, "<=")
-  hit <- hit & in_col & t(in_col)
-  diag(hit) <- FALSE
-
-  if (!any(hit)) return(blocks)
-
   # A total order, not just the top left corner: two blocks can start in the
   # same cell, and order() would then keep them in the order they were
   # written, which is what this must not depend on.
   ord <- order(row_beg, col_beg, row_end, col_end)
-  pos <- integer(length(ord))
-  pos[ord] <- seq_along(ord)
+
+  # Sweep down the sheet. `active` holds the earlier blocks that reach the
+  # current row; a block whose last row lies above the current first row is
+  # dropped for good, because every later block starts no higher. Disjoint
+  # blocks, the usual case, keep this set at a handful of entries.
 
   kept <- list()
+  active <- integer()
 
   for (i in ord) {
+    active <- active[row_end[active] >= row_beg[i]]
+
     parts <- list(blocks[[i]])
 
     # Cutting against the earlier blocks themselves rather than against the
-    # parts they were reduced to gives the same cells - the parts kept so far
-    # cover exactly the union of those blocks - and keeps this to the pairs
-    # the matrix marked.
-    earlier <- which(hit[, i] & pos < pos[i])
+    # parts they were reduced to gives the same cells: the parts kept so far
+    # cover exactly the union of those blocks.
+    for (j in active) {
+      if (col_end[j] < col_beg[i] || col_beg[j] > col_end[i]) next
 
-    for (j in earlier[order(pos[earlier])]) {
       parts <- unlist(lapply(parts, cf_block_minus, p = blocks[[j]]), recursive = FALSE)
       if (!length(parts)) break
     }
 
     kept <- c(kept, parts)
+    active <- c(active, i)
   }
 
   kept

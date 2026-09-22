@@ -1405,6 +1405,20 @@ test_that("non rectangular dims only format the cells that were selected", {
   wb$remove_conditional_formatting(dims = c("A1:B2", "D4:E5"))
   expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
 
+  # the stored sqref is normalised as well, so a spreadsheet application's
+  # spelling of a loaded file matches: a bare cell and overlapping blocks
+  # written in the order they were cut
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 6, 6), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A5", rule = "==1")
+  wb$add_conditional_formatting(dims = "A1:C3,B2:D4", rule = "==1")
+  wb$worksheets[[1]]$conditionalFormatting$sqref <- c("A5", "A1:C3 B4:C4 D2:D4")
+
+  wb$remove_conditional_formatting(dims = "A5")
+  expect_identical("A1:C3 B4:C4 D2:D4", wb$worksheets[[1]]$conditionalFormatting$sqref)
+
+  wb$remove_conditional_formatting(dims = "A1:C3,B2:D4")
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
   # a rectangle built from a vector of consecutive rows and columns is a
   # single range as before, whatever the rule references. This is the shape
   # `correlation::cormatrix_to_excel()` builds.
