@@ -753,12 +753,12 @@ write_data2 <- function(
     cc <- wb$worksheets[[sheetno]]$sheet_data$cc
 
     sel <- grepl("<si>", cc$v)
-    cc_sst <- stringi::stri_unique(cc[sel, "v"])
+    v <- cc$v[sel]
+    Encoding(v) <- "UTF-8"
 
-    wb$sharedStrings <- stringi::stri_unique(c(wb$sharedStrings, cc_sst))
+    wb$sharedStrings <- stringi::stri_unique(c(wb$sharedStrings, stringi::stri_unique(v)))
 
-    sel <- grepl("<si>", cc$v)
-    cc$v[sel] <- as.character(match(cc$v[sel], wb$sharedStrings) - 1L)
+    cc$v[sel] <- as.character(match(v, wb$sharedStrings) - 1L)
 
     text        <- si_to_txt(wb$sharedStrings)
     uniqueCount <- length(wb$sharedStrings)

@@ -1797,3 +1797,28 @@ test_that("set_row_heigths sets key", {
   wb$set_row_heights(rows = 1L, heights = 28.5)
   expect_silent(wb$add_cell_style(horizontal = "center", vertical = "center"))
 })
+
+test_that("shared strings are matched in a non-UTF-8 session", {
+
+  loc <- Sys.getlocale("LC_CTYPE")
+  on.exit(Sys.setlocale("LC_CTYPE", loc), add = TRUE)
+  Sys.setlocale("LC_CTYPE", "C")
+
+  x <- "R\u00b2"
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  wb <- wb_workbook()$
+    add_worksheet("A")$
+    add_data(x = data.frame(v = x), col_names = FALSE, inline_strings = FALSE)
+  wb$save(tmp)
+
+  wb <- wb_load(tmp)$
+    add_worksheet("B")$
+    add_data(sheet = "B", x = data.frame(v = x), col_names = FALSE, inline_strings = FALSE)
+  wb$save(tmp)
+
+  got <- wb_to_df(tmp, sheet = "B", col_names = FALSE)$A
+  expect_equal(enc2utf8(got), x)
+
+})
