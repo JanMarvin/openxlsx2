@@ -1,161 +1,64 @@
-#' what is left of block `b` once block `p` has had its cells
-#'
-#' Cut columns first: the columns `p` does not cover keep the full height of
-#' `b`, in the shared columns only what lies below `p` is kept. That is the
-#' decomposition a spreadsheet application writes for such a selection. `b`
-#' never starts above `p`, [cf_cut_overlaps()] takes care of that order.
-#'
-#' @param b,p blocks, each `list(row = c(first, last), col = <column numbers>)`
-#'   with `col` sorted: the merge key, the runs and the anchor rely on it
-#' @returns list of blocks covering the cells of `b` that are not in `p`
-#' @noRd
-cf_block_minus <- function(b, p) {
-
-  shared <- intersect(b$col, p$col)
-  if (!length(shared) || b$row[1] > p$row[2] || b$row[2] < p$row[1]) return(list(b))
-
-  out <- list()
-  outside <- setdiff(b$col, p$col)
-  if (length(outside))
-    out <- c(out, list(list(row = b$row, col = outside)))
-  if (b$row[2] > p$row[2])
-    out <- c(out, list(list(row = c(p$row[2] + 1L, b$row[2]), col = shared)))
-  out
-}
-
-#' cut overlapping blocks apart so that no cell is listed twice
-#'
-#' Excel never writes a `sqref` that names a cell twice: for `"A1:C3,B2:D4"`
-#' it writes `A1:C3 B4:C4 D2:D4`, the second block minus what the first one
-#' covers (we write the same ranges top to bottom, left to right, so
-#' `A1:C3 D2:D4 B4:C4`). Repeating a cell is not cosmetic, Excel counts it
-#' twice: a `duplicatedValues` rule over `A1:C3 B2:D4` marks the four repeated
-#' cells as duplicates of themselves.
-#'
-#' Blocks are swept top to bottom, left to right, by all four corners so that
-#' two blocks starting in the same cell do not depend on the order they were
-#' written in. Each keeps only the part no earlier block covers; cutting
-#' against the earlier blocks themselves gives the same cells as cutting
-#' against what is left of them. `active` holds the earlier blocks that still
-#' reach the current row, one ending above it is dropped for good because
-#' every later block starts no higher.
-#'
-#' @param blocks list of blocks, each `list(row = c(first, last), col = <cols>)`
-#' @returns the same blocks with every overlap removed
-#' @noRd
-cf_cut_overlaps <- function(blocks) {
-
-  if (length(blocks) < 2L) return(blocks)
-
-  row_beg <- vapply(blocks, function(b) b$row[1], NA_integer_)
-  row_end <- vapply(blocks, function(b) b$row[2], NA_integer_)
-  col_beg <- vapply(blocks, function(b) min(b$col), NA_integer_)
-  col_end <- vapply(blocks, function(b) max(b$col), NA_integer_)
-
-  kept <- list()
-  active <- integer()
-
-  for (i in order(row_beg, col_beg, row_end, col_end)) {
-    active <- active[row_end[active] >= row_beg[i]]
-    parts <- list(blocks[[i]])
-
-    for (j in active[col_end[active] >= col_beg[i] & col_beg[active] <= col_end[i]]) {
-      parts <- unlist(lapply(parts, cf_block_minus, p = blocks[[j]]), recursive = FALSE)
-      if (!length(parts)) break
-    }
-
-    kept <- c(kept, parts)
-    active <- c(active, i)
-  }
-
-  kept
-}
-
-#' merge the blocks of a group whose rows touch or overlap
-#'
-#' Every block of `grp` has the same `col`, that is what [cf_dims_to_sqref()]
-#' groups them by, so one `col` stands for all of them.
-#' @noRd
-cf_merge_rows <- function(grp) {
-  grp <- grp[order(vapply(grp, function(b) b$row[1], NA_integer_))]
-  beg <- vapply(grp, function(b) b$row[1], NA_integer_)
-  end <- vapply(grp, function(b) b$row[2], NA_integer_)
-
-  # a block opens a new range when it starts more than one row below every
-  # block before it; cummax(), because a block can lie inside an earlier one
-  id <- cumsum(c(TRUE, beg[-1] > cummax(end)[-length(end)] + 1L))
-
-  unname(lapply(split(seq_along(grp), id), function(i) {
-    list(row = c(beg[i[1]], max(end[i])), col = grp[[1]]$col)
-  }))
-}
-
 #' turn a possibly non consecutive `dims` into the ranges of a single `sqref`
 #'
-#' Blocks are merged along one axis whenever they agree on the other one,
-#' which never changes the selected cells: same columns and touching rows, or
-#' same rows and any columns. So `"A2,A3,A5"` collapses into A2:A3 and A5:A5,
-#' and blocks written side by side ("A1:B4,C1:C4") stay the single range
-#' pooling used to produce. Merging on one axis can enable a merge on the
-#' other, so this runs to a fixed point; both passes only ever merge, so the
-#' number of blocks falls until it stands still. Blocks that differ on both
-#' axes are never merged, their union is no rectangle. Overlapping blocks are
-#' cut apart first, see [cf_cut_overlaps()].
-#'
-#' Both adding and removing go through this, so a stored `sqref` is found
-#' again whatever spelling the merge can normalise: `"A1:B4,C1:C4"` as well as
-#' `"A1:C4"`, and a file's own `"A1:C3 B4:C4 D2:D4"` as well. A pinwheel
-#' tiling of a rectangle stays several ranges and does not match the single
-#' range the same cells were stored as.
+#' The selection is reduced to its set of cells and rebuilt into ranges
+#' deterministically, so the result depends only on which cells are selected,
+#' not on how `dims` was written. That gives two guarantees:
+#' - no cell is named twice, which matters because Excel counts a repeated
+#'   cell twice (a `duplicatedValues` rule would mark it as its own duplicate)
+#' - the same selection always yields the same `sqref`, which is what
+#'   `remove_conditional_formatting()` relies on to find a stored rule
 #'
 #' @param dims a dims string with one or several blocks, separated by `,`, `;`
 #'   or the space of a stored `sqref`
-#' @returns `NULL` if `dims` selects no cell at all, otherwise a list of the
-#'   `sqref` and the top left cell of its first range, the `anchor`
+#' @returns `NULL` if `dims` selects no cell, otherwise a list of the `sqref`
+#'   and the top left cell of its first range, the `anchor`
 #' @noRd
 cf_dims_to_sqref <- function(dims) {
 
   pieces <- unlist(strsplit(dims, split = "[,; ]"))
-  blocks <- lapply(pieces[nzchar(pieces)], function(x) {
-    bdims <- dims_to_rowcol(x, as_integer = FALSE)
-    list(row = range(as.integer(bdims$row)), col = sort(unique(col2int(bdims$col))))
-  })
+  pieces <- pieces[nzchar(pieces)]
 
-  if (!length(blocks)) return(NULL)
+  if (!length(pieces)) return(NULL)
 
-  blocks <- cf_cut_overlaps(blocks)
-
-  repeat {
-    n <- length(blocks)
-
-    key <- vapply(blocks, function(b) paste(b$col, collapse = ","), NA_character_)
-    blocks <- unlist(lapply(split(blocks, key), cf_merge_rows), recursive = FALSE)
-
-    key <- vapply(blocks, function(b) paste(b$row, collapse = ":"), NA_character_)
-    blocks <- unname(lapply(split(blocks, key), function(grp) {
-      list(row = grp[[1]]$row, col = sort(unique(unlist(lapply(grp, `[[`, "col")))))
-    }))
-
-    if (length(blocks) == n) break
+  # a single block is already a rectangle, avoid expanding it to cells
+  if (length(pieces) == 1L) {
+    d <- dims_to_rowcol(pieces, as_integer = FALSE)
+    rows <- range(as.integer(d$row))
+    cols <- range(col2int(d$col))
+    return(list(
+      sqref  = rowcol_to_dims(rows, cols),
+      anchor = rowcol_to_dim(rows[1], cols[1])
+    ))
   }
 
-  # blocks top to bottom, left to right: relative references in a rule are
-  # anchored to the top left cell of the first range, as a spreadsheet
-  # application does
-  blocks <- blocks[order(
-    vapply(blocks, function(b) b$row[1], NA_integer_),
-    vapply(blocks, function(b) min(b$col), NA_integer_)
-  )]
+  # one row per selected cell; unique() removes overlaps
+  cells <- lapply(pieces, function(x) {
+    d <- dims_to_rowcol(x, as_integer = FALSE)
+    expand.grid(row = as.integer(d$row), col = col2int(d$col))
+  })
+  cells <- unique(do.call(rbind, cells))
+  cells <- cells[order(cells$col, cells$row), ]
 
-  # gaps in the columns of a block are split into consecutive runs
-  ranges <- unlist(lapply(blocks, function(b) {
-    runs <- split(b$col, cumsum(c(1L, diff(b$col) != 1L)))
-    vapply(runs, function(cc) rowcol_to_dims(b$row, range(cc)), NA_character_)
+  # split each column into runs of consecutive rows
+  first <- which(c(TRUE, diff(cells$col) != 0 | diff(cells$row) != 1))
+  last <- c(first[-1] - 1L, nrow(cells))
+  runs <- data.frame(r1 = cells$row[first], r2 = cells$row[last], c1 = cells$col[first])
+
+  # neighboring columns with identical runs are joined into one rectangle
+  runs <- runs[order(runs$r1, runs$r2, runs$c1), ]
+  grp <- cumsum(c(TRUE, diff(runs$r1) != 0 | diff(runs$r2) != 0 | diff(runs$c1) != 1))
+  rng <- do.call(rbind, lapply(split(runs, grp), function(g) {
+    data.frame(r1 = g$r1[1], r2 = g$r2[1], c1 = g$c1[1], c2 = g$c1[nrow(g)])
   }))
 
+  # top to bottom, left to right: relative references in a rule are anchored
+  # to the top left cell of the first range
+  rng <- rng[order(rng$r1, rng$c1), ]
+
   list(
-    sqref  = paste(ranges, collapse = " "),
-    anchor = rowcol_to_dim(blocks[[1]]$row[1], blocks[[1]]$col[1])
+    sqref  = paste(mapply(function(r1, r2, c1, c2) rowcol_to_dims(c(r1, r2), c(c1, c2)),
+                          rng$r1, rng$r2, rng$c1, rng$c2), collapse = " "),
+    anchor = rowcol_to_dim(rng$r1[1], rng$c1[1])
   )
 }
 

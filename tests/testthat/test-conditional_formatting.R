@@ -1299,7 +1299,7 @@ test_that("non rectangular dims only format the cells that were selected", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
   wb$add_conditional_formatting(dims = "A1:E1,C2:C5", rule = "==1")
 
-  exp <- "A1:E1 C2:C5"
+  exp <- "A1:B1 C1:C5 D1:E1"
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
 
@@ -1483,7 +1483,7 @@ test_that("overlapping blocks of a dims are cut apart", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
   wb$add_conditional_formatting(dims = "A1:C3,B2:D4", rule = "==1")
 
-  exp <- "A1:C3 D2:D4 B4:C4"
+  exp <- "A1:A3 B1:C4 D2:D4"
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
   expect_save(wb)
@@ -1505,7 +1505,7 @@ test_that("overlapping blocks of a dims are cut apart", {
   wb$add_conditional_formatting(dims = "D3:F5,D3:E6", rule = "==1")
   wb$add_conditional_formatting(dims = "D3:E6,D3:F5", rule = "==1")
 
-  exp <- c("D3:F5 D6:E6", "D3:F5 D6:E6")
+  exp <- c("D3:E6 F3:F5", "D3:E6 F3:F5")
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
 
@@ -1522,7 +1522,7 @@ test_that("overlapping blocks of a dims are cut apart", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
   wb$add_conditional_formatting(dims = "A1:C3,C3:E5", rule = "==1")
 
-  exp <- "A1:C3 D3:E5 C4:C5"
+  exp <-"A1:B3 C1:C5 D3:E5"
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
 
@@ -1531,7 +1531,7 @@ test_that("overlapping blocks of a dims are cut apart", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
   wb$add_conditional_formatting(dims = "A1:C3,B2:D4,C3:E5", rule = "==1")
 
-  exp <- "A1:C3 D2:D5 E3:E5 B4:C4 C5:C5"
+  exp <- "A1:A3 B1:B4 C1:C5 D2:D5 E3:E5"
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
 
@@ -1549,7 +1549,7 @@ test_that("overlapping blocks of a dims are cut apart", {
   wb$add_conditional_formatting(dims = "C3:E5,B2:D4", rule = "==1")
 
   exp <- data.frame(
-    sqref = "B2:D4 E3:E5 C5:D5",
+    sqref = "B2:B4 C2:D5 E3:E5",
     cf = '<cfRule type="expression" dxfId="0" priority="1"><formula>B2=1</formula></cfRule>',
     stringsAsFactors = FALSE
   )
