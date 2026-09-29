@@ -6436,12 +6436,18 @@ wbWorkbook <- R6::R6Class(
             # whichever way it is written: "A1:B4,C1:C4" as well as "A1:C4",
             # and a loaded file's "A5" or "A1:C3 B4:C4 D2:D4" as well. Every
             # element of dims is one selection of its own, as it was when this
-            # matched the stored sqref directly. A stored sqref this cannot read
-            # is never matched, it must not stop the removal of the others.
-            sqrefs <- unlist(lapply(dims, function(x) cf_dims_to_sqref(x)$sqref))
-            stored <- vapply(cf$sqref, function(x) {
-              tryCatch(cf_dims_to_sqref(x)$sqref, error = function(e) NULL) %||% NA_character_
-            }, NA_character_, USE.NAMES = FALSE)
+            # matched the stored sqref directly. Only cell ranges go through
+            # the builder, a whole column "A:A" or row "1:1" of a loaded file
+            # is compared as written: dims_to_rowcol() reads "A:A" as A1 and
+            # cannot read "1:1".
+            canon <- function(x) {
+              p <- unlist(strsplit(x, "[,; ]"))
+              p <- p[nzchar(p)]
+              if (!length(p) || !all(grepl("^[$]?[A-Z]+[$]?[0-9]+(:[$]?[A-Z]+[$]?[0-9]+)?$", p))) return(x)
+              tryCatch(cf_dims_to_sqref(x)$sqref, error = function(e) x)
+            }
+            sqrefs <- vapply(dims, canon, NA_character_, USE.NAMES = FALSE)
+            stored <- vapply(cf$sqref, canon, NA_character_, USE.NAMES = FALSE)
             if (length(sqrefs) && any(sel <- stored %in% sqrefs)) {
               cf <- cf[!sel, ]
             }

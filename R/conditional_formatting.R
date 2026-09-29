@@ -20,29 +20,22 @@ cf_dims_to_sqref <- function(dims) {
 
   if (!length(pieces)) return(NULL)
 
-  # a single block is already a rectangle, avoid expanding it to cells
-  if (length(pieces) == 1L) {
-    d <- dims_to_rowcol(pieces, as_integer = FALSE)
-    rows <- range(as.integer(d$row))
-    cols <- range(col2int(d$col))
-    return(list(
-      sqref  = rowcol_to_dims(rows, cols),
-      anchor = rowcol_to_dim(rows[1], cols[1])
-    ))
-  }
-
-  # one row per selected cell; unique() removes overlaps
-  cells <- lapply(pieces, function(x) {
+  # every block adds its first and last row to each of its columns
+  runs <- do.call(rbind, lapply(pieces, function(x) {
     d <- dims_to_rowcol(x, as_integer = FALSE)
-    expand.grid(row = as.integer(d$row), col = col2int(d$col))
-  })
-  cells <- unique(do.call(rbind, cells))
-  cells <- cells[order(cells$col, cells$row), ]
+    rows <- range(as.integer(d$row))
+    data.frame(r1 = rows[1], r2 = rows[2], c1 = col2int(d$col))
+  }))
 
-  # split each column into runs of consecutive rows
-  first <- which(c(TRUE, diff(cells$col) != 0 | diff(cells$row) != 1))
-  last <- c(first[-1] - 1L, nrow(cells))
-  runs <- data.frame(r1 = cells$row[first], r2 = cells$row[last], c1 = cells$col[first])
+  # per column, row ranges that overlap or touch are joined into runs of rows.
+  # reach is the last row covered so far in the column, a range starting
+  # more than one row below it opens a new run. Blocks are never expanded
+  # to cells.
+  runs <- runs[order(runs$c1, runs$r1), ]
+  reach <- ave(runs$r2, runs$c1, FUN = cummax)
+  first <- c(TRUE, diff(runs$c1) != 0 | runs$r1[-1] > reach[-nrow(runs)] + 1L)
+  last <- c(which(first)[-1] - 1L, nrow(runs))
+  runs <- data.frame(r1 = runs$r1[first], r2 = reach[last], c1 = runs$c1[first])
 
   # neighboring columns with identical runs are joined into one rectangle
   runs <- runs[order(runs$r1, runs$r2, runs$c1), ]

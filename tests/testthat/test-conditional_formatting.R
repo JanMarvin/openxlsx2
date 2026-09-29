@@ -1452,6 +1452,18 @@ test_that("non rectangular dims only format the cells that were selected", {
   wb$worksheets[[1]]$conditionalFormatting$sqref[2] <- "1:1"
   wb$remove_conditional_formatting(dims = "A1:B2")
   expect_identical("1:1", wb$worksheets[[1]]$conditionalFormatting$sqref)
+  wb$remove_conditional_formatting(dims = "1:1")
+  expect_identical(character(), wb$worksheets[[1]]$conditionalFormatting)
+
+  # a whole column is not the first cell of that column
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 6, 6), col_names = FALSE)
+  wb$add_conditional_formatting(dims = "A1", rule = "==1")
+  wb$add_conditional_formatting(dims = "C1", rule = "==1")
+  wb$worksheets[[1]]$conditionalFormatting$sqref <- c("A:A", "C1")
+  wb$remove_conditional_formatting(dims = "A1")
+  expect_identical("A:A", wb$worksheets[[1]]$conditionalFormatting$sqref[1])
+  wb$remove_conditional_formatting(dims = "A:A")
+  expect_identical("C1", wb$worksheets[[1]]$conditionalFormatting$sqref)
 
   # a rectangle built from a vector of consecutive rows and columns is a
   # single range as before, whatever the rule references. This is the shape
@@ -1522,7 +1534,7 @@ test_that("overlapping blocks of a dims are cut apart", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 5, 5), col_names = FALSE)
   wb$add_conditional_formatting(dims = "A1:C3,C3:E5", rule = "==1")
 
-  exp <-"A1:B3 C1:C5 D3:E5"
+  exp <- "A1:B3 C1:C5 D3:E5"
   got <- wb$worksheets[[1]]$conditionalFormatting$sqref
   expect_identical(exp, got)
 
