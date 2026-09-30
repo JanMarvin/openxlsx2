@@ -187,6 +187,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Olivier Roy [contributor]
+  \item Paul Schmidt (\href{https://orcid.org/0000-0003-1528-2082}{ORCID}) [contributor]
   \item  openxlsx authors (openxlsx package) [copyright holder]
   \item Arseny Kapoulkine (Author of included pugixml code) [contributor, copyright holder]
 }

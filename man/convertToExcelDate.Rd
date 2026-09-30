@@ -3,6 +3,9 @@
 \name{convertToExcelDate}
 \alias{convertToExcelDate}
 \title{Defunct: Convert to spreadsheet data}
+\usage{
+convertToExcelDate(df, date1904 = FALSE)
+}
 \arguments{
 \item{df}{dataframe}
 

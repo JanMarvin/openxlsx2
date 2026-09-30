@@ -99,7 +99,15 @@ wb_color <- function(
 
 #' @export
 #' @rdname wb_color
-#' @usage NULL
+#' @usage wb_colour(
+#'   name = NULL,
+#'   auto = NULL,
+#'   indexed = NULL,
+#'   hex = NULL,
+#'   theme = NULL,
+#'   tint = NULL,
+#'   format = c("ARGB", "RGBA")
+#' )
 wb_colour <- wb_color
 
 is_wbColour <- function(x) inherits(x, "wbColour")

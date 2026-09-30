@@ -1540,7 +1540,7 @@ create_colors_xml <- function(
 
 #' @export
 #' @rdname create_colors_xml
-#' @usage NULL
+#' @usage create_colours_xml(name = "Base R", dark = NULL, accent = NULL, link = NULL)
 create_colours_xml <- create_colors_xml
 
 # OOXML builtin formats

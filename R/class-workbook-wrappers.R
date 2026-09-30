@@ -1923,11 +1923,11 @@ wb_get_base_colors <- function(wb, xml = FALSE, plot = TRUE) {
 }
 #' @export
 #' @rdname wb_base_colors
-#' @usage NULL
+#' @usage wb_set_base_colours(wb, theme = "Office", ...)
 wb_set_base_colours <- wb_set_base_colors
 #' @export
 #' @rdname wb_base_colors
-#' @usage NULL
+#' @usage wb_get_base_colours(wb, xml = FALSE, plot = TRUE)
 wb_get_base_colours <- wb_get_base_colors
 
 

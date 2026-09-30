@@ -85,7 +85,7 @@ remove_comment <- function(
 #' Defunct: Convert to spreadsheet data
 #'
 #' Use [convert_to_excel_date()].
-#' @usage NULL
+#' @usage convertToExcelDate(df, date1904 = FALSE)
 #' @inheritParams convert_to_excel_date
 #' @keywords internal
 #' @export

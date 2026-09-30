@@ -24,7 +24,9 @@ wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 \item{cols}{Indices of cols to set/remove column widths.}
 
 \item{widths}{Width to set \code{cols} to specified column width or \code{"auto"} for
-automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxlsx2
+automatic sizing. \code{"auto"} accepts an offset, e.g. \code{"auto+2"} or \code{"auto-1"},
+which is added to (subtracted from) every automatically sized column.
+\code{widths} is recycled to the length of \code{cols}. openxlsx2
 sets the default width is 8.43, as this is the standard in some spreadsheet
 software. See \strong{Details} for general information on column widths.}
 

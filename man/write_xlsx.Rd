@@ -39,7 +39,9 @@ that should remain scrollable. Columns to the left will be frozen.}
     \item{\code{first_row}}{Logical; if \code{TRUE}, freezes the first row of the worksheet.}
     \item{\code{first_col}}{Logical; if \code{TRUE}, freezes the first column of the worksheet.}
     \item{\code{widths}}{Width to set \code{cols} to specified column width or \code{"auto"} for
-automatic sizing. \code{widths} is recycled to the length of \code{cols}. openxlsx2
+automatic sizing. \code{"auto"} accepts an offset, e.g. \code{"auto+2"} or \code{"auto-1"},
+which is added to (subtracted from) every automatically sized column.
+\code{widths} is recycled to the length of \code{cols}. openxlsx2
 sets the default width is 8.43, as this is the standard in some spreadsheet
 software. See \strong{Details} for general information on column widths.}
     \item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{file} already exists.}
