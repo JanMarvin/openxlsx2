@@ -83,7 +83,9 @@
 
 <dt id="arg-widths">widths<a class="anchor" aria-label="anchor" href="#arg-widths"></a></dt>
 <dd><p>Width to set <code>cols</code> to specified column width or <code>"auto"</code> for
-automatic sizing. <code>widths</code> is recycled to the length of <code>cols</code>. openxlsx2
+automatic sizing. <code>"auto"</code> accepts an offset, e.g. <code>"auto+2"</code> or <code>"auto-1"</code>,
+which is added to (subtracted from) every automatically sized column.
+<code>widths</code> is recycled to the length of <code>cols</code>. openxlsx2
 sets the default width is 8.43, as this is the standard in some spreadsheet
 software. See <strong>Details</strong> for general information on column widths.</p></dd>
 

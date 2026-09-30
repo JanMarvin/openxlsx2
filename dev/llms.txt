@@ -313,6 +313,8 @@ These styling functions apply formatting to the workbook globally.
   : Register a style in a workbook
 - [`wb_set_base_colors()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_base_colors.md)
   [`wb_get_base_colors()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_base_colors.md)
+  [`wb_set_base_colours()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_base_colors.md)
+  [`wb_get_base_colours()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_base_colors.md)
   : Set the default colors in a workbook
 
 ## View and save a workbook
@@ -378,6 +380,7 @@ helpful with editing a workbook. They are useful when you add content,
 styling or you want to modify certain elements.
 
 - [`wb_color()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
+  [`wb_colour()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_color.md)
   : Create a color object for workbook styling
 
 - [`wb_comment()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_comment.md)
@@ -401,6 +404,7 @@ styling or you want to modify certain elements.
   : Create cell style
 
 - [`create_colors_xml()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_colors_xml.md)
+  [`create_colours_xml()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_colors_xml.md)
   : Create custom color xml schemes
 
 - [`create_dxfs_style()`](https://janmarvin.github.io/openxlsx2/dev/reference/create_dxfs_style.md)

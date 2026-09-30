@@ -17,6 +17,16 @@ wb_color(
   tint = NULL,
   format = c("ARGB", "RGBA")
 )
+
+wb_colour(
+  name = NULL,
+  auto = NULL,
+  indexed = NULL,
+  hex = NULL,
+  theme = NULL,
+  tint = NULL,
+  format = c("ARGB", "RGBA")
+)
 ```
 
 ## Arguments

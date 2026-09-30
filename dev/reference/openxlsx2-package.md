@@ -199,6 +199,9 @@ Other contributors:
 
 - Olivier Roy \[contributor\]
 
+- Paul Schmidt ([ORCID](https://orcid.org/0000-0003-1528-2082))
+  \[contributor\]
+
 - openxlsx authors (openxlsx package) \[copyright holder\]
 
 - Arseny Kapoulkine (Author of included pugixml code) \[contributor,

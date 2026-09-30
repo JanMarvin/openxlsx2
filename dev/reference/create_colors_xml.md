@@ -17,6 +17,8 @@ links.
 
 ``` r
 create_colors_xml(name = "Base R", dark = NULL, accent = NULL, link = NULL)
+
+create_colours_xml(name = "Base R", dark = NULL, accent = NULL, link = NULL)
 ```
 
 ## Arguments

@@ -8,6 +8,10 @@ Modify / get the default colors of the workbook.
 wb_set_base_colors(wb, theme = "Office", ...)
 
 wb_get_base_colors(wb, xml = FALSE, plot = TRUE)
+
+wb_set_base_colours(wb, theme = "Office", ...)
+
+wb_get_base_colours(wb, xml = FALSE, plot = TRUE)
 ```
 
 ## Arguments

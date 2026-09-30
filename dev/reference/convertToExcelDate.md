@@ -3,6 +3,12 @@
 Use
 [`convert_to_excel_date()`](https://janmarvin.github.io/openxlsx2/dev/reference/convert_to_excel_date.md).
 
+## Usage
+
+``` r
+convertToExcelDate(df, date1904 = FALSE)
+```
+
 ## Arguments
 
 - df:
