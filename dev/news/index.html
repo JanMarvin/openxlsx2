@@ -50,11 +50,20 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> now covers a non consecutive <code>dims</code> with a single rule and writes its ranges into one <code>sqref</code> (<code>"A1:B2 C2:D3"</code>), so only the selected cells are formatted: <code>"A1:B2,C2:D3"</code>, the example <a href="https://github.com/JanMarvin/openxlsx2/pull/1347" class="external-link">#1347</a> introduced the feature with, used to become a single <code>A1:D3</code>. Overlapping blocks are cut apart, because a cell named twice in a <code>sqref</code> is counted twice (<a href="https://github.com/JanMarvin/openxlsx2/issues/1688" class="external-link">#1688</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1689" class="external-link">#1689</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>A logic bug in <code>apply_numfmts()</code> was fixed that occured in combination with <code>cols</code> used via <code><a href="../reference/col_widths-wb.html">wb_set_col_widths()</a></code>. In addition automatic sizing can now be tweaked via an offset <code>"auto+n"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1683" class="external-link">#1683</a>
 </li>
 <li>
 <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> no longer builds every block but the first from the previous block’s leftovers when <code>dims</code> is non consecutive. <code>rule</code> was overwritten inside the loop over the blocks, so a <code>"colorScale"</code> got the colors as <code>cfvo</code> values, a <code>"containsText"</code> searched for the style name and a <code>"dataBar"</code> failed with <code>subscript out of bounds</code>. Broken for every type but <code>"expression"</code> since <a href="https://github.com/JanMarvin/openxlsx2/pull/1347" class="external-link">#1347</a> (<a href="https://github.com/JanMarvin/openxlsx2/pull/1684" class="external-link">#1684</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>A non consecutive <code>dims</code> in <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> is covered by one rule instead of one per block. An aggregating type such as <code>"colorScale"</code> gets a single scale over the whole selection, and a relative reference in a rule is anchored to the top left cell of the first range rather than restarting in every block (<a href="https://github.com/JanMarvin/openxlsx2/issues/1688" class="external-link">#1688</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1689" class="external-link">#1689</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -111,8 +120,10 @@
 <code>wb_color(name = , format = "RGBA")</code> no longer returns the wrong colour. <code>name</code> and <code>hex</code> are alternative inputs, but both <code>validate_color()</code> calls fired, applying the RGBA alpha-swap twice (e.g. <code>name = "blue"</code> came out as red); the calls are now mutually exclusive (<a href="https://github.com/JanMarvin/openxlsx2/pull/1649" class="external-link">#1649</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 <li>
 <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code>, <code><a href="../reference/wb_merge_cells.html">wb_merge_cells()</a></code>, <code><a href="../reference/wb_merge_cells.html">wb_unmerge_cells()</a></code> and <code><a href="../reference/wb_base_colors.html">wb_set_base_colors()</a></code> now warn about unknown or misspelled arguments instead of silently dropping them, bringing them in line with the other <code>wb_add_*</code> functions (<a href="https://github.com/JanMarvin/openxlsx2/issues/1646" class="external-link">#1646</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
-<li>The <code><a href="../reference/wb_dims.html">wb_dims()</a></code> documentation stated that <code>rows = 0</code> would affect only the column names, but that combination has always raised an error; the line now points to <code>select = "col_names"</code> instead (<a href="https://github.com/JanMarvin/openxlsx2/pull/1651" class="external-link">#1651</a>@SchmidtPaul).</li>
+<li>The <code><a href="../reference/wb_dims.html">wb_dims()</a></code> documentation stated that <code>rows = 0</code> would affect only the column names, but that combination has always raised an error; the line now points to <code>select = "col_names"</code> instead (<a href="https://github.com/JanMarvin/openxlsx2/pull/1651" class="external-link">#1651</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 <li>Fixed <code><a href="../reference/row_heights-wb.html">wb_set_row_heights()</a></code> which did not set the key variable.</li>
+<li>
+<code>wb_add_conditional_formatting(type = "beginsWith")</code> tested a string literal instead of <code>rule</code>, so a <code>rule</code> that is not text slipped through. It is now rejected like in the other text types.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-1-28">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-28"></a></h3>

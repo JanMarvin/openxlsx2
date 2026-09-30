@@ -2,6 +2,19 @@
 
 ## openxlsx2 (development version)
 
+### New features
+
+- [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_conditional_formatting.md)
+  now covers a non consecutive `dims` with a single rule and writes its
+  ranges into one `sqref` (`"A1:B2 C2:D3"`), so only the selected cells
+  are formatted: `"A1:B2,C2:D3"`, the example
+  [\#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) introduced
+  the feature with, used to become a single `A1:D3`. Overlapping blocks
+  are cut apart, because a cell named twice in a `sqref` is counted
+  twice ([\#1688](https://github.com/JanMarvin/openxlsx2/issues/1688),
+  [\#1689](https://github.com/JanMarvin/openxlsx2/pull/1689),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+
 ### Fixes
 
 - A logic bug in `apply_numfmts()` was fixed that occured in combination
@@ -18,6 +31,18 @@
   type but `"expression"` since
   [\#1347](https://github.com/JanMarvin/openxlsx2/pull/1347)
   ([\#1684](https://github.com/JanMarvin/openxlsx2/pull/1684),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+
+### Breaking changes
+
+- A non consecutive `dims` in
+  [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_conditional_formatting.md)
+  is covered by one rule instead of one per block. An aggregating type
+  such as `"colorScale"` gets a single scale over the whole selection,
+  and a relative reference in a rule is anchored to the top left cell of
+  the first range rather than restarting in every block
+  ([\#1688](https://github.com/JanMarvin/openxlsx2/issues/1688),
+  [\#1689](https://github.com/JanMarvin/openxlsx2/pull/1689),
   [@SchmidtPaul](https://github.com/SchmidtPaul)).
 
 ------------------------------------------------------------------------
@@ -123,10 +148,14 @@ CRAN release: 2026-07-02
   documentation stated that `rows = 0` would affect only the column
   names, but that combination has always raised an error; the line now
   points to `select = "col_names"` instead
-  ([\#1651](https://github.com/JanMarvin/openxlsx2/pull/1651)@SchmidtPaul).
+  ([\#1651](https://github.com/JanMarvin/openxlsx2/pull/1651),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
 - Fixed
   [`wb_set_row_heights()`](https://janmarvin.github.io/openxlsx2/dev/reference/row_heights-wb.md)
   which did not set the key variable.
+- `wb_add_conditional_formatting(type = "beginsWith")` tested a string
+  literal instead of `rule`, so a `rule` that is not text slipped
+  through. It is now rejected like in the other text types.
 
 ### Breaking changes
 

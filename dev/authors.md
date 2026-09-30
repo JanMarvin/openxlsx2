@@ -9,6 +9,9 @@
 
 - **Olivier Roy**. Contributor.
 
+- **Paul Schmidt**. Contributor.
+  [](https://orcid.org/0000-0003-1528-2082)
+
 - **openxlsx authors**. Copyright holder.  
   openxlsx package
 
