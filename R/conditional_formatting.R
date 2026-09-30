@@ -1,3 +1,60 @@
+#' turn a possibly non consecutive `dims` into the ranges of a single `sqref`
+#'
+#' The selection is reduced to its set of cells and rebuilt into ranges
+#' deterministically, so the result depends only on which cells are selected,
+#' not on how `dims` was written. That gives two guarantees:
+#' - no cell is named twice, which matters because Excel counts a repeated
+#'   cell twice (a `duplicatedValues` rule would mark it as its own duplicate)
+#' - the same selection always yields the same `sqref`, which is what
+#'   `remove_conditional_formatting()` relies on to find a stored rule
+#'
+#' @param dims a dims string with one or several blocks, separated by `,`, `;`
+#'   or the space of a stored `sqref`
+#' @returns `NULL` if `dims` selects no cell, otherwise a list of the `sqref`
+#'   and the top left cell of its first range, the `anchor`
+#' @noRd
+cf_dims_to_sqref <- function(dims) {
+
+  pieces <- unlist(strsplit(dims, split = "[,; ]"))
+  pieces <- pieces[nzchar(pieces)]
+
+  if (!length(pieces)) return(NULL)
+
+  # every block adds its first and last row to each of its columns
+  runs <- do.call(rbind, lapply(pieces, function(x) {
+    d <- dims_to_rowcol(x, as_integer = FALSE)
+    rows <- range(as.integer(d$row))
+    data.frame(r1 = rows[1], r2 = rows[2], c1 = col2int(d$col))
+  }))
+
+  # per column, row ranges that overlap or touch are joined into runs of rows.
+  # reach is the last row covered so far in the column, a range starting
+  # more than one row below it opens a new run. Blocks are never expanded
+  # to cells.
+  runs <- runs[order(runs$c1, runs$r1), ]
+  reach <- ave(runs$r2, runs$c1, FUN = cummax)
+  first <- c(TRUE, diff(runs$c1) != 0 | runs$r1[-1] > reach[-nrow(runs)] + 1L)
+  last <- c(which(first)[-1] - 1L, nrow(runs))
+  runs <- data.frame(r1 = runs$r1[first], r2 = reach[last], c1 = runs$c1[first])
+
+  # neighboring columns with identical runs are joined into one rectangle
+  runs <- runs[order(runs$r1, runs$r2, runs$c1), ]
+  grp <- cumsum(c(TRUE, diff(runs$r1) != 0 | diff(runs$r2) != 0 | diff(runs$c1) != 1))
+  rng <- do.call(rbind, lapply(split(runs, grp), function(g) {
+    data.frame(r1 = g$r1[1], r2 = g$r2[1], c1 = g$c1[1], c2 = g$c1[nrow(g)])
+  }))
+
+  # top to bottom, left to right: relative references in a rule are anchored
+  # to the top left cell of the first range
+  rng <- rng[order(rng$r1, rng$c1), ]
+
+  list(
+    sqref  = paste(mapply(function(r1, r2, c1, c2) rowcol_to_dims(c(r1, r2), c(c1, c2)),
+                          rng$r1, rng$r2, rng$c1, rng$c2), collapse = " "),
+    anchor = rowcol_to_dim(rng$r1[1], rng$c1[1])
+  )
+}
+
 #' conditional formatting rules
 #' @name cf_rules
 #' @param formula formula

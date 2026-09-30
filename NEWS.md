@@ -1,9 +1,17 @@
 # openxlsx2 (development version)
 
+## New features
+
+* `wb_add_conditional_formatting()` now covers a non consecutive `dims` with a single rule and writes its ranges into one `sqref` (`"A1:B2 C2:D3"`), so only the selected cells are formatted: `"A1:B2,C2:D3"`, the example [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) introduced the feature with, used to become a single `A1:D3`. Overlapping blocks are cut apart, because a cell named twice in a `sqref` is counted twice ([#1688](https://github.com/JanMarvin/openxlsx2/issues/1688), [#1689](https://github.com/JanMarvin/openxlsx2/pull/1689), @SchmidtPaul).
+
 ## Fixes
 
 * A logic bug in `apply_numfmts()` was fixed that occured in combination with `cols` used via `wb_set_col_widths()`. In addition automatic sizing can now be tweaked via an offset `"auto+n"`. [#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)
 * `wb_add_conditional_formatting()` no longer builds every block but the first from the previous block's leftovers when `dims` is non consecutive. `rule` was overwritten inside the loop over the blocks, so a `"colorScale"` got the colors as `cfvo` values, a `"containsText"` searched for the style name and a `"dataBar"` failed with `subscript out of bounds`. Broken for every type but `"expression"` since [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) ([#1684](https://github.com/JanMarvin/openxlsx2/pull/1684), @SchmidtPaul).
+
+## Breaking changes
+
+* A non consecutive `dims` in `wb_add_conditional_formatting()` is covered by one rule instead of one per block. An aggregating type such as `"colorScale"` gets a single scale over the whole selection, and a relative reference in a rule is anchored to the top left cell of the first range rather than restarting in every block ([#1688](https://github.com/JanMarvin/openxlsx2/issues/1688), [#1689](https://github.com/JanMarvin/openxlsx2/pull/1689), @SchmidtPaul).
 
 
 ***************************************************************************
@@ -46,8 +54,9 @@
 * `wb_add_font(update = )` no longer corrupts the worksheet when the targeted range spans two or more distinct cell styles. The loop over styles reused the `sel` variable for the font-element selector, clobbering the numeric cell index it also depends on (regression from [#1625](https://github.com/JanMarvin/openxlsx2/pull/1625), @SchmidtPaul).
 * `wb_color(name = , format = "RGBA")` no longer returns the wrong colour. `name` and `hex` are alternative inputs, but both `validate_color()` calls fired, applying the RGBA alpha-swap twice (e.g. `name = "blue"` came out as red); the calls are now mutually exclusive ([#1649](https://github.com/JanMarvin/openxlsx2/pull/1649), @SchmidtPaul).
 * `wb_add_conditional_formatting()`, `wb_merge_cells()`, `wb_unmerge_cells()` and `wb_set_base_colors()` now warn about unknown or misspelled arguments instead of silently dropping them, bringing them in line with the other `wb_add_*` functions ([#1646](https://github.com/JanMarvin/openxlsx2/issues/1646), @SchmidtPaul).
-* The `wb_dims()` documentation stated that `rows = 0` would affect only the column names, but that combination has always raised an error; the line now points to `select = "col_names"` instead ([#1651](https://github.com/JanMarvin/openxlsx2/pull/1651)@SchmidtPaul).
+* The `wb_dims()` documentation stated that `rows = 0` would affect only the column names, but that combination has always raised an error; the line now points to `select = "col_names"` instead ([#1651](https://github.com/JanMarvin/openxlsx2/pull/1651), @SchmidtPaul).
 * Fixed `wb_set_row_heights()` which did not set the key variable.
+* `wb_add_conditional_formatting(type = "beginsWith")` tested a string literal instead of `rule`, so a `rule` that is not text slipped through. It is now rejected like in the other text types.
 
 ## Breaking changes
 
