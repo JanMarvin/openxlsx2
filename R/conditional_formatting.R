@@ -32,7 +32,7 @@ cf_dims_to_sqref <- function(dims) {
   # more than one row below it opens a new run. Blocks are never expanded
   # to cells.
   runs <- runs[order(runs$c1, runs$r1), ]
-  reach <- ave(runs$r2, runs$c1, FUN = cummax)
+  reach <- ave2(runs$r2, runs$c1, FUN = cummax)
   first <- c(TRUE, diff(runs$c1) != 0 | runs$r1[-1] > reach[-nrow(runs)] + 1L)
   last <- c(which(first)[-1] - 1L, nrow(runs))
   runs <- data.frame(r1 = runs$r1[first], r2 = reach[last], c1 = runs$c1[first])
