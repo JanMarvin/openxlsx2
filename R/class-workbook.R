@@ -494,7 +494,7 @@ wbWorkbook <- R6::R6Class(
         themes <- readRDS(thm_rds)
 
         if (is.character(theme)) {
-          sel <- match(theme, names(themes))
+          sel <- collapse::fmatch(theme, names(themes))
           err <- is.na(sel)
         } else {
           sel <- theme
@@ -1098,7 +1098,7 @@ wbWorkbook <- R6::R6Class(
         dn_local[is.na(dn_local)] <- ""
         has_names <- any(
           !startsWith(dn_attr$name, "_xlchart.v1.") &
-            (dn_local == as.character(match(old, from$sheetOrder) - 1L) |
+            (dn_local == as.character(collapse::fmatch(old, from$sheetOrder) - 1L) |
                stringi::stri_detect_regex(xml_value(from$workbook$definedNames, "definedName"), ref_pattern))
         )
       }
@@ -1194,7 +1194,7 @@ wbWorkbook <- R6::R6Class(
             if (chartid > NROW(self$charts)) self$charts <- rbind(self$charts, empty_chart)
 
             for (part in c("colors", "style")) {
-              part_ids <- unique(reg_match(chart_rels, paste0("(?<=", part, ")[0-9]+(?=\\.xml)")))
+              part_ids <- collapse::funique(reg_match(chart_rels, paste0("(?<=", part, ")[0-9]+(?=\\.xml)")))
               for (part_id in part_ids) {
                 new_part <- min(which(!nzchar(self$charts[[part]])), NROW(self$charts) + 1L)
                 if (new_part > NROW(self$charts)) self$charts <- rbind(self$charts, empty_chart)
@@ -1207,7 +1207,7 @@ wbWorkbook <- R6::R6Class(
               }
             }
 
-            us_ids <- unique(reg_match(chart_rels, "(?<=drawings/drawing)[0-9]+(?=\\.xml)"))
+            us_ids <- collapse::funique(reg_match(chart_rels, "(?<=drawings/drawing)[0-9]+(?=\\.xml)"))
             for (us_id in us_ids) {
               user_shapes      <- c(user_shapes, list(from$drawings[[as.integer(us_id)]]))
               user_shapes_rels <- c(user_shapes_rels, list(from$drawings_rels[[as.integer(us_id)]]))
@@ -1220,7 +1220,7 @@ wbWorkbook <- R6::R6Class(
 
             # references to the old sheet in chart formulas point to the new
             # sheet, quoted or not
-            f_old <- unique(stringi::stri_extract_all_regex(
+            f_old <- collapse::funique(stringi::stri_extract_all_regex(
               chart,
               "<([A-Za-z0-9]+):f(?: [^>]*)?>[^<]*</\\1:f>",
               omit_no_match = TRUE
@@ -1236,7 +1236,7 @@ wbWorkbook <- R6::R6Class(
             # keeping the distance between the ids of this chart.
             if (is_chartEx) {
               xl_pattern <- "_xlchart\\.v1\\.[0-9]+"
-              xl_old <- unique(stringi::stri_extract_all_regex(chart, xl_pattern, omit_no_match = TRUE)[[1]])
+              xl_old <- collapse::funique(stringi::stri_extract_all_regex(chart, xl_pattern, omit_no_match = TRUE)[[1]])
 
               if (length(xl_old)) {
                 used_names <- unlist(stringi::stri_extract_all_regex(self$charts$chartEx, xl_pattern, omit_no_match = TRUE))
@@ -1288,7 +1288,7 @@ wbWorkbook <- R6::R6Class(
 
         # SmartArt diagrams are files of their own. Each one gets a copy with
         # a file name not yet used in this workbook.
-        dgm_old <- unique(unlist(regmatches(drawings_rels, gregexpr("(?<=\\.\\./diagrams/)[A-Za-z]+[0-9]+\\.xml", drawings_rels, perl = TRUE))))
+        dgm_old <- collapse::funique(unlist(regmatches(drawings_rels, gregexpr("(?<=\\.\\./diagrams/)[A-Za-z]+[0-9]+\\.xml", drawings_rels, perl = TRUE))))
         if (length(dgm_old)) {
           dgm_types <- c(
             colors     = "application/vnd.openxmlformats-officedocument.drawingml.diagramColors+xml",
@@ -1445,12 +1445,12 @@ wbWorkbook <- R6::R6Class(
         max_block <- max(c(1L, used_blocks, used_ids %/% 1024L))
 
         vml_new <- self$vml[[new_vml]]
-        spid_old <- unique(as.integer(unlist(regmatches(vml_new, gregexpr("(?<=_x0000_s)[0-9]+", vml_new, perl = TRUE)))))
+        spid_old <- collapse::funique(as.integer(unlist(regmatches(vml_new, gregexpr("(?<=_x0000_s)[0-9]+", vml_new, perl = TRUE)))))
 
         if (length(spid_old)) {
-          blocks_old <- sort(unique(spid_old %/% 1024L))
+          blocks_old <- sort(collapse::funique(spid_old %/% 1024L))
           blocks_new <- max_block + seq_along(blocks_old)
-          spid_new   <- blocks_new[match(spid_old %/% 1024L, blocks_old)] * 1024L + spid_old %% 1024L
+          spid_new   <- blocks_new[collapse::fmatch(spid_old %/% 1024L, blocks_old)] * 1024L + spid_old %% 1024L
           spid_tmp   <- sprintf("clone_spid_%s_", seq_along(spid_old))
 
           vml_new <- stringi::stri_replace_all_regex(
@@ -1547,7 +1547,7 @@ wbWorkbook <- R6::R6Class(
       for (part in c("ctrlProp", "namedSheetView")) {
         field <- paste0(part, "s")
         ws_rels  <- self$worksheets_rels[[newSheetIndex]]
-        part_ids <- unique(unlist(regmatches(ws_rels, gregexpr(paste0("(?<=\\.\\./", field, "/", part, ")[0-9]+(?=\\.xml)"), ws_rels, perl = TRUE))))
+        part_ids <- collapse::funique(unlist(regmatches(ws_rels, gregexpr(paste0("(?<=\\.\\./", field, "/", part, ")[0-9]+(?=\\.xml)"), ws_rels, perl = TRUE))))
         if (length(part_ids) == 0) next
         content_type <- if (part == "ctrlProp") "application/vnd.ms-excel.controlproperties+xml" else "application/vnd.ms-excel.namedsheetviews+xml"
         new_ids <- length(self[[field]]) + seq_along(part_ids)
@@ -1575,7 +1575,7 @@ wbWorkbook <- R6::R6Class(
       # workbook. For another workbook, images used directly by the sheet or
       # by its vml drawing are copied as well.
       ws_rels <- self$worksheets_rels[[newSheetIndex]]
-      emb_old <- unique(unlist(regmatches(ws_rels, gregexpr('(?<=Target="\\.\\./embeddings/)[^"]+', ws_rels, perl = TRUE))))
+      emb_old <- collapse::funique(unlist(regmatches(ws_rels, gregexpr('(?<=Target="\\.\\./embeddings/)[^"]+', ws_rels, perl = TRUE))))
       if (length(emb_old)) {
         emb_dir  <- temp_dir("_openxlsx_clone_embeddings")
         emb_have <- if (length(self$embeddings)) basename2(self$embeddings) else character()
@@ -1603,7 +1603,7 @@ wbWorkbook <- R6::R6Class(
 
       new_vml <- self$worksheets[[newSheetIndex]]$relships$vmlDrawing
       vml_rels <- if (length(new_vml)) self$vml_rels[[new_vml]] else character()
-      med_old <- unique(unlist(regmatches(
+      med_old <- collapse::funique(unlist(regmatches(
         c(ws_rels, vml_rels),
         gregexpr('(?<=Target="\\.\\./media/)[^"]+', c(ws_rels, vml_rels), perl = TRUE)
       )))
@@ -1656,7 +1656,7 @@ wbWorkbook <- R6::R6Class(
         if (is.null(local_id)) local_id <- rep("", length(from_dn))
         local_id[is.na(local_id)] <- ""
 
-        is_local  <- local_id == as.character(match(old, from$sheetOrder) - 1L)
+        is_local  <- local_id == as.character(collapse::fmatch(old, from$sheetOrder) - 1L)
         is_global <- local_id == "" &
           !startsWith(from_dn_attr$name, "_xlchart.v1.") &
           !tolower(from_dn_attr$name) %in% tolower(from_dn_attr$name[is_local]) &
@@ -1796,7 +1796,7 @@ wbWorkbook <- R6::R6Class(
               drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_rels]], "Relationship"))
               # only images need a default content type, charts have their own
               # override and an extension can be declared once only
-              fe <- unique(file_ext2(drels$Target[basename(drels$Type) == "image"]))
+              fe <- collapse::funique(file_ext2(drels$Target[basename(drels$Type) == "image"]))
               declared <- stringi::stri_match_first_regex(self$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
               fe <- setdiff(fe, declared)
 
@@ -1808,7 +1808,7 @@ wbWorkbook <- R6::R6Class(
                 sel <- basename(drels$Type) == "image"
                 targets <- basename2(drels$Target[sel])
                 # only the media referenced by this drawing are copied
-                onams <- unique(targets[targets %in% names(from$media)])
+                onams <- collapse::funique(targets[targets %in% names(from$media)])
                 media_names <- from$media[onams]
 
                 # we might have multiple media references on a sheet, each gets
@@ -1888,7 +1888,7 @@ wbWorkbook <- R6::R6Class(
         # only if styles are present
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
-          new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s, names(new_sty))])
+          new_s   <- unname(new_sty[collapse::fmatch(self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           self$worksheets[[newSheetIndex]]$sheet_data$cc$c_s <- new_s
           rm(style, new_s, new_sty)
@@ -1899,7 +1899,7 @@ wbWorkbook <- R6::R6Class(
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
           cols    <- self$worksheets[[newSheetIndex]]$unfold_cols()
-          new_s   <- unname(new_sty[match(cols$style, names(new_sty))])
+          new_s   <- unname(new_sty[collapse::fmatch(cols$style, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           cols$style <- new_s
           self$worksheets[[newSheetIndex]]$fold_cols(cols)
@@ -1910,7 +1910,7 @@ wbWorkbook <- R6::R6Class(
         # only if styles are present
         if (!is.null(style)) {
           new_sty <- set_cellstyles(self, style = style)
-          new_s   <- unname(new_sty[match(self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s, names(new_sty))])
+          new_s   <- unname(new_sty[collapse::fmatch(self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s, names(new_sty))])
           new_s[is.na(new_s)] <- ""
           self$worksheets[[newSheetIndex]]$sheet_data$row_attr$s <- new_s
           rm(style, new_s, new_sty)
@@ -1926,7 +1926,7 @@ wbWorkbook <- R6::R6Class(
           sel       <- which(self$tables$tab_sheet == newSheetIndex)
           dxf_users <- c(if (NROW(cf)) cf$cf, ws$autoFilter, ws$sortState, self$tables$tab_xml[sel])
           dxf_ids   <- unlist(regmatches(dxf_users, gregexpr("(?<=[dD]xfId=\")[0-9]+(?=\")", dxf_users, perl = TRUE)))
-          dxf_ids   <- sort(unique(as.integer(dxf_ids)))
+          dxf_ids   <- sort(collapse::funique(as.integer(dxf_ids)))
           dxf_ids   <- dxf_ids[dxf_ids < length(from_dxfs)]
         } else {
           dxf_ids   <- integer()
@@ -1992,7 +1992,7 @@ wbWorkbook <- R6::R6Class(
             formulas,
             gregexpr(sprintf(ext_pattern, "[0-9]+", "[0-9]+"), formulas, perl = TRUE)
           ))
-          ext_old <- sort(unique(as.integer(gsub("[^0-9]", "", ext_old))))
+          ext_old <- sort(collapse::funique(as.integer(gsub("[^0-9]", "", ext_old))))
           ext_old <- ext_old[ext_old <= length(from$externalLinks)]
 
           if (length(ext_old)) {
@@ -4368,7 +4368,7 @@ wbWorkbook <- R6::R6Class(
       ## write [Content_type]
       write_file(
         head = '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">',
-        body = pxml(unique(ct)),
+        body = pxml(collapse::funique(ct)),
         tail = "</Types>",
         fl = file.path(tmpDir, "[Content_Types].xml")
       )
@@ -5009,7 +5009,7 @@ wbWorkbook <- R6::R6Class(
       # the full cc$key column)
       to_sel <- private$do_cell_init(sheet, to_dims, return_sel = TRUE)
 
-      to_cc <- cc[match(cell_to_key(from_dims), cc$key), ]
+      to_cc <- cc[collapse::fmatch(cell_to_key(from_dims), cc$key), ]
       from_cells <- to_cc$r
 
       to_cc[c("r", "row_r", "c_r")] <- data.frame(
@@ -5061,7 +5061,7 @@ wbWorkbook <- R6::R6Class(
           old <- from_dims_df[has_hl]
           new <- to_dims_df_f[has_hl]
 
-          for (hls in match(hyperlink_in_wb, old)) {
+          for (hls in collapse::fmatch(hyperlink_in_wb, old)) {
 
             # prepare the updated link
             need_clone <- hyperlink_in_wb[hls]
@@ -5242,7 +5242,7 @@ wbWorkbook <- R6::R6Class(
         colors <- readRDS(clr_rds)
 
         if (is.character(theme)) {
-          sel <- match(theme, names(colors))
+          sel <- collapse::fmatch(theme, names(colors))
           err <- is.na(sel)
         } else {
           sel <- theme
@@ -5545,7 +5545,7 @@ wbWorkbook <- R6::R6Class(
       private$do_row_init(sheet, rows)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
-      sel <- match(as.character(as.integer(rows)), row_attr$r)
+      sel <- collapse::fmatch(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
 
       if (!is.null(heights)) {
@@ -5583,7 +5583,7 @@ wbWorkbook <- R6::R6Class(
         return(invisible(self))
       }
 
-      sel <- match(as.character(as.integer(rows)), row_attr$r)
+      sel <- collapse::fmatch(as.character(as.integer(rows)), row_attr$r)
       sel <- sel[!is.na(sel)]
       row_attr[sel, "ht"] <- ""
       row_attr[sel, "customHeight"] <- ""
@@ -5625,7 +5625,7 @@ wbWorkbook <- R6::R6Class(
           if (is.list(x)) lapply(x, col2int)
           else col2int(x)
         })
-        unis <- unique(unlist(cols))
+        unis <- collapse::funique(unlist(cols))
         levels <- vector("character", length(unis))
 
         lvls <- names(cols)
@@ -5847,7 +5847,7 @@ wbWorkbook <- R6::R6Class(
         offs <- sub("^auto", "", col_width[is_auto])
         offs[offs == ""] <- "0"
         offs <- as.numeric(offs)
-        if (length(unique(offs)) > 1L) {
+        if (length(collapse::funique(offs)) > 1L) {
           warning("Multiple different \"auto\" offsets supplied; using \"auto",
                   ifelse(offs[1L] < 0, "", "+"), offs[1L], "\" for all columns.")
         }
@@ -5944,7 +5944,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (is.list(rows)) {
-        unis <- unique(unlist(rows))
+        unis <- collapse::funique(unlist(rows))
         levels <- vector("character", length(unis))
 
         lvls <- names(rows)
@@ -6096,7 +6096,7 @@ wbWorkbook <- R6::R6Class(
       sheet_names <- self$sheet_names
       nSheets     <- length(sheet_names)
       sheet_names <- sheet_names[[sheet]]
-      position    <- match(sheet, self$sheetOrder) - 1L
+      position    <- collapse::fmatch(sheet, self$sheetOrder) - 1L
       book_views  <- if (length(self$workbook$bookViews)) self$get_bookview() else NULL
 
       ## definedNames
@@ -7190,7 +7190,7 @@ wbWorkbook <- R6::R6Class(
         },
 
         between = {
-          rule <- range(rule)
+          rule <- collapse::frange(rule)
         },
 
         topN = {
@@ -8502,7 +8502,7 @@ wbWorkbook <- R6::R6Class(
         category = "cp:category"
       )
       # use names
-      names(properties) <- names(name_replace)[match(names(properties), name_replace)]
+      names(properties) <- names(name_replace)[collapse::fmatch(names(properties), name_replace)]
 
 
       if (!is.null(self$app$Company)) {
@@ -9062,7 +9062,7 @@ wbWorkbook <- R6::R6Class(
 
       ## print Titles ----
       if (!is.null(print_title_rows) || !is.null(print_title_cols)) {
-        lid <- match(sheet, self$sheetOrder) - 1L
+        lid <- collapse::fmatch(sheet, self$sheetOrder) - 1L
         if (length(self$workbook$definedNames)) {
           dn_attr <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))
           old_pt <- which(dn_attr$name == "_xlnm.Print_Titles" & dn_attr$localSheetId == as.character(lid))
@@ -9087,7 +9087,7 @@ wbWorkbook <- R6::R6Class(
           stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(print_title_cols))
+        cols <- int2col(collapse::frange(print_title_cols))
         private$create_named_region(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
@@ -9104,8 +9104,8 @@ wbWorkbook <- R6::R6Class(
           stop("print_title_cols must be numeric.")
         }
 
-        cols <- int2col(range(print_title_cols))
-        rows <- range(print_title_rows)
+        cols <- int2col(collapse::frange(print_title_cols))
+        rows <- collapse::frange(print_title_rows)
 
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
@@ -9506,7 +9506,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       localSheetId <- ""
-      if (local_sheet) localSheetId <- as.character(match(sheet, self$sheetOrder) - 1L)
+      if (local_sheet) localSheetId <- as.character(collapse::fmatch(sheet, self$sheetOrder) - 1L)
 
       ## check name doesn't already exist
       ## named region
@@ -9663,7 +9663,7 @@ wbWorkbook <- R6::R6Class(
       if (length(self$workbook$definedNames)) {
         dn_lid <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$localSheetId
         local <- which(dn_lid != "")
-        new_lid <- match(self$sheetOrder[as.integer(dn_lid[local]) + 1L], sheets) - 1L
+        new_lid <- collapse::fmatch(self$sheetOrder[as.integer(dn_lid[local]) + 1L], sheets) - 1L
         for (j in seq_along(local)) {
           self$workbook$definedNames[local[j]] <- xml_attr_mod(
             self$workbook$definedNames[local[j]],
@@ -9674,7 +9674,7 @@ wbWorkbook <- R6::R6Class(
 
       active <- self$get_active_sheet()
       for (view in which(!is.na(active))) {
-        self$set_bookview(active_tab = match(self$sheetOrder[active[view]], sheets) - 1L, view = view)
+        self$set_bookview(active_tab = collapse::fmatch(self$sheetOrder[active[view]], sheets) - 1L, view = view)
       }
 
       self$sheetOrder <- sheets
@@ -9910,21 +9910,21 @@ wbWorkbook <- R6::R6Class(
           }
 
           border_obj <- unname(border_obj)
-          border_uni <- unique(border_obj)
+          border_uni <- collapse::funique(border_obj)
           s_names    <- paste0(smp, tag, seq_along(border_uni))
 
           self$styles_mgr$add(border_uni, s_names)
           # s_names can repeat names of an earlier call, look up the borders by their xml
-          b_pos <- match(border_uni, self$styles_mgr$styles$borders)
-          b_ids <- as.character(b_pos - 1L)[match(border_obj, border_uni)]
+          b_pos <- collapse::fmatch(border_uni, self$styles_mgr$styles$borders)
+          b_ids <- as.character(b_pos - 1L)[collapse::fmatch(border_obj, border_uni)]
           b_ids <- rep_len(b_ids, length(xf_prev))
 
           xf_key <- paste(b_ids, xf_prev)
           xf_one <- !duplicated(xf_key)
-          xf_new <- set_border(xf_prev[xf_one], b_ids[xf_one])[match(xf_key, xf_key[xf_one])]
+          xf_new <- set_border(xf_prev[xf_one], b_ids[xf_one])[collapse::fmatch(xf_key, xf_key[xf_one])]
         }
 
-        xf_uni <- unique(xf_new)
+        xf_uni <- collapse::funique(xf_new)
         self$styles_mgr$add(xf_uni, xf_uni)
         private$set_cell_style_sel(sheet, target_sel, self$styles_mgr$get_xf_id(xf_new))
       }
@@ -10000,7 +10000,7 @@ wbWorkbook <- R6::R6Class(
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- sd[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
 
@@ -10076,7 +10076,7 @@ wbWorkbook <- R6::R6Class(
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- sd[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       standardize(...)
       private$check_args(dims = "dims")
@@ -10189,7 +10189,7 @@ wbWorkbook <- R6::R6Class(
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- sd[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       if (!is.null(numfmt) && inherits(numfmt, "character")) {
 
@@ -10334,7 +10334,7 @@ wbWorkbook <- R6::R6Class(
 
       sd <- self$worksheets[[sheet]]$sheet_data$cc
       cc <- sd[sel, c("r", "c_s")]
-      styles <- unique(cc[["c_s"]])
+      styles <- collapse::funique(cc[["c_s"]])
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -10393,7 +10393,7 @@ wbWorkbook <- R6::R6Class(
       # sentinel); we produce that directly instead of cloning the whole
       # workbook just to materialize defaults.
       w_key <- cell_to_key(wanted_dims)
-      hit <- match(w_key, sd$key)
+      hit <- collapse::fmatch(w_key, sd$key)
 
       cs <- rep_len("", length(wanted_dims))
       present <- !is.na(hit)
@@ -10441,7 +10441,7 @@ wbWorkbook <- R6::R6Class(
         stop("set_cell_style(): `style` must be the id of a cell style in the workbook.", call. = FALSE)
       }
       cc_key <- self$worksheets[[sheet]]$sheet_data$cc$key
-      sel <- match(cell_to_key(dims), cc_key)
+      sel <- collapse::fmatch(cell_to_key(dims), cc_key)
 
       if (anyNA(sel)) {
         sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
@@ -10930,7 +10930,7 @@ wbWorkbook <- R6::R6Class(
     set_active_sheet = function(sheet = current_sheet()) {
       by_position <- is.numeric(sheet)
       sheet <- private$get_sheet_index(sheet)
-      if (!by_position) sheet <- match(sheet, self$sheetOrder)
+      if (!by_position) sheet <- collapse::fmatch(sheet, self$sheetOrder)
       self$set_bookview(active_tab = sheet - 1L)
     },
 
@@ -11186,8 +11186,8 @@ wbWorkbook <- R6::R6Class(
 
       if (is.character(sheet)) {
         sheet <- tolower(sheet)
-        m1 <- match(sheet, tolower(self$sheet_names))
-        m2 <- match(sheet, tolower(private$original_sheet_names))
+        m1 <- collapse::fmatch(sheet, tolower(self$sheet_names))
+        m2 <- collapse::fmatch(sheet, tolower(private$original_sheet_names))
 
         bad <- is.na(m1) & is.na(m2)
 
@@ -11268,7 +11268,7 @@ wbWorkbook <- R6::R6Class(
       ## update Content_Types
       if (!any(grepl(stri_join("image/", imageType), self$Content_Types))) {
         self$Content_Types <-
-          unique(c(
+          collapse::funique(c(
             sprintf(
               '<Default Extension="%s" ContentType="image/%s"/>',
               imageType,
@@ -11977,7 +11977,7 @@ wbWorkbook <- R6::R6Class(
       sheet_id <- private$get_sheet_index(sheet)
       ws <- self$worksheets[[sheet_id]]
 
-      rows <- unique(as.character(as.integer(rows)))
+      rows <- collapse::funique(as.character(as.integer(rows)))
       missing_rows <- setdiff(rows, ws$sheet_data$row_attr$r)
 
       if (length(missing_rows)) {
@@ -12056,7 +12056,7 @@ wbWorkbook <- R6::R6Class(
           exp_cells <- unlist(if (!is.null(df)) df else dims_to_dataframe(dims, fill = TRUE),
                               use.names = FALSE)
           exp_cells <- exp_cells[!is.na(exp_cells) & exp_cells != ""]
-          return(match(cell_to_key(exp_cells), cc$key))
+          return(collapse::fmatch(cell_to_key(exp_cells), cc$key))
         }
         if (keep) return(self$worksheets[[sheet]]$sheet_data$cc$r)
 
@@ -12077,15 +12077,15 @@ wbWorkbook <- R6::R6Class(
 
         exp_key <- cell_to_key(exp_cells)
 
-        # one match() serves both the missing-cell detection and return_sel
-        hit <- match(exp_key, cc$key)
+        # one collapse::fmatch() serves both the missing-cell detection and return_sel
+        hit <- collapse::fmatch(exp_key, cc$key)
         miss_idx <- which(is.na(hit))
 
         if (length(miss_idx) > 0L) {
           self <- initialize_cell(self, sheet = sheet, new_cells = exp_cells[miss_idx])
           # cc grew; the previously-found positions are stale
           if (return_sel)
-            hit <- match(exp_key, self$worksheets[[sheet]]$sheet_data$cc$key)
+            hit <- collapse::fmatch(exp_key, self$worksheets[[sheet]]$sheet_data$cc$key)
         }
 
         if (return_sel) return(hit)

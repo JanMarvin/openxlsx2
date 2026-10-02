@@ -23,7 +23,7 @@ cf_dims_to_sqref <- function(dims) {
   # every block adds its first and last row to each of its columns
   runs <- do.call(rbind, lapply(pieces, function(x) {
     d <- dims_to_rowcol(x, as_integer = FALSE)
-    rows <- range(as.integer(d$row))
+    rows <- collapse::frange(as.integer(d$row))
     data.frame(r1 = rows[1], r2 = rows[2], c1 = col2int(d$col))
   }))
 

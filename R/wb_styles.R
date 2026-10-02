@@ -932,7 +932,7 @@ set_cellstyle <- function(
 #' @export
 styles_on_sheet <- function(wb, sheet) {
   sheet_id <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
-  z <- unique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
+  z <- collapse::funique(wb$worksheets[[sheet_id]]$sheet_data$cc$c_s)
   # cells without a style use the default one
   as.numeric(z[z != ""])
 }
@@ -1141,7 +1141,7 @@ update_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) 
 
   ## the current border for the cell
   get_border <- c_s$borderId
-  uni_border <- unique(get_border)
+  uni_border <- collapse::funique(get_border)
   borders <- read_border(read_xml(wb$styles_mgr$styles$borders))[uni_border, ]
 
   # While an update was requested, the original cell might have been borderless
@@ -1158,7 +1158,7 @@ update_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) 
     "diagonalUp", "diagonal", "vertical", "horizontal", "outline"
   )
 
-  write_border(borders[nms])[match(get_border, uni_border)]
+  write_border(borders[nms])[collapse::fmatch(get_border, uni_border)]
 }
 
 ## The functions below are only partially covered, but span over 300+ LOC ##
@@ -1724,7 +1724,7 @@ builtin_fmts_df <- data.frame(
 
 # style helper used in wb_to_df()
 get_numfmt_style <- function(wb, cc) {
-  nms_uni_styles <- unique(cc$c_s)
+  nms_uni_styles <- collapse::funique(cc$c_s)
   uni_styles <- as.numeric(nms_uni_styles) + 1L
   names(uni_styles) <- nms_uni_styles
   uni_styles <- uni_styles[!is.na(uni_styles)]
@@ -1766,7 +1766,7 @@ get_numfmt_style <- function(wb, cc) {
   )
 
   # 1. Calculate the match indices
-  idx <- match(cc$c_s, styles$style_id)
+  idx <- collapse::fmatch(cc$c_s, styles$style_id)
 
   # 2. Only map values where a match was found
   # This prevents errors if idx contains NAs
@@ -2165,7 +2165,7 @@ apply_numfmt <- function(value, format_code) {
 
   results <- character(max_len)
 
-  unique_fmts <- unique(format_code)
+  unique_fmts <- collapse::funique(format_code)
 
   for (fmt_raw in unique_fmts) {
     idx <- which(format_code == fmt_raw)

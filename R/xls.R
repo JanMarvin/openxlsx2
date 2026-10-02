@@ -73,7 +73,7 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE, sheet = N
     head_tags <- regmatches(wb_head, gregexpr("<sheet [^>]*/>", wb_head))[[1]]
     head_names <- sub(".*name=\"([^\"]*)\".*", "\\1", head_tags)
     head_names <- stringi::stri_replace_all_fixed(head_names, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
-    keep <- if (is.numeric(sheet)) as.integer(sheet) else match(sheet, head_names)
+    keep <- if (is.numeric(sheet)) as.integer(sheet) else collapse::fmatch(sheet, head_names)
     keep <- keep[!is.na(keep) & keep >= 1L & keep <= nsheets]
   }
   for (i in seq_len(nsheets)) {
@@ -254,7 +254,7 @@ xls_chart_caches <- function(xmlDir) {
     m <- regmatches(f, regexec("^(?:'((?:[^']|'')+)'|([^'!]+))!\\$?([A-Z]+)\\$?([0-9]+)(?::\\$?([A-Z]+)\\$?([0-9]+))?$", f, perl = TRUE))[[1]]
     if (!length(m)) return(NULL)
     name <- if (nzchar(m[2])) gsub("''", "'", m[2], fixed = TRUE) else m[3]
-    sheet <- match(name, sheet_names)
+    sheet <- collapse::fmatch(name, sheet_names)
     if (is.na(sheet)) return(NULL)
     c1 <- col2int(m[4])
     r1 <- as.integer(m[5])
@@ -264,7 +264,7 @@ xls_chart_caches <- function(xmlDir) {
 
     rows <- r1:r2
     cols <- int2col(c1:c2)
-    at <- match(paste0(rep(cols, times = length(rows)), rep(rows, each = length(cols))), cells$ref)
+    at <- collapse::fmatch(paste0(rep(cols, times = length(rows)), rep(rows, each = length(cols))), cells$ref)
     pts <- cells$text[at]
     nums <- !is.na(at) & cells$num[at]
     list(pts = pts, numeric = all(nums[!is.na(pts)]))
@@ -273,7 +273,7 @@ xls_chart_caches <- function(xmlDir) {
   for (chart in charts) {
     xml <- paste(readLines(chart, warn = FALSE, encoding = "UTF-8"), collapse = "")
     refs <- regmatches(xml, gregexpr("<c:(?:num|str)Ref><c:f>[^<]*</c:f></c:(?:num|str)Ref>", xml, perl = TRUE))[[1]]
-    for (ref in unique(refs)) {
+    for (ref in collapse::funique(refs)) {
       f <- sub("^<c:(?:num|str)Ref><c:f>([^<]*)</c:f>.*", "\\1", ref, perl = TRUE)
       was_string <- startsWith(ref, "<c:strRef>")
       got <- fill(f)
