@@ -177,6 +177,11 @@ export(xml_rm_child)
 export(xml_value)
 import(R6)
 import(Rcpp)
+importFrom(collapse,
+  fmatch,
+  frange,
+  funique
+)
 importFrom(grDevices,
   bmp,
   col2rgb,

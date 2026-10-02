@@ -167,7 +167,7 @@ wb_create_columns <- function(wb, sheet, cols) {
     if (NROW(col_df) == 0) {
       new_cols <- col_to_df(read_xml(wb$createCols(sheet, n = max(cols))))
     } else {
-      rr <- range(union(cols, as_numeric(col_df$min)))
+      rr <- collapse::frange(union(cols, as_numeric(col_df$min)))
       beg <- rr[1]
       end <- rr[2]
 
