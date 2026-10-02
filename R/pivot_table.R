@@ -211,7 +211,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
         item_order <- c(item_order, setdiff(dat, item_order))
       }
 
-      item_order <- match(item_order, dat)
+      item_order <- collapse::fmatch(item_order, dat)
 
     } else {
       # add remaining items
@@ -257,7 +257,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
     item <- sapply(
       seq_along(vals),
       # # TODO this sets the order of the pivot elements
-      # c(seq_along(unique(data[[x]])) - 1L, "default"),
+      # c(seq_along(collapse::funique(data[[x]])) - 1L, "default"),
       function(val) {
         if (vals[val] == "default")
           xml_node_create("item", xml_attributes = c(t = vals[val]))
@@ -279,7 +279,7 @@ get_items <- function(data, x, item_order, slicer = FALSE, choose = NULL, has_de
 row_col_items <- function(data, z, var) {
   var <- abs(var)
   item <- sapply(
-    c(seq_along(unique(data[, var])) - 1L, "grand"),
+    c(seq_along(collapse::funique(data[, var])) - 1L, "grand"),
     function(val) {
       if (val == "0") {
         xml_node_create("i", xml_children = xml_node_create("x"))
@@ -313,7 +313,7 @@ create_pivot_table <- function(
     use_filter <- FALSE
     # message("no filter")
   } else {
-    filter_pos <- match(filter, names(x))
+    filter_pos <- collapse::fmatch(filter, names(x))
     use_filter <- TRUE
   }
 
@@ -322,7 +322,7 @@ create_pivot_table <- function(
     use_rows <- FALSE
     # message("no rows")
   } else {
-    rows_pos <- match(rows, names(x))
+    rows_pos <- collapse::fmatch(rows, names(x))
     use_rows <- TRUE
   }
 
@@ -331,7 +331,7 @@ create_pivot_table <- function(
     use_cols <- FALSE
     # message("no cols")
   } else {
-    cols_pos <- match(cols, names(x))
+    cols_pos <- collapse::fmatch(cols, names(x))
     use_cols <- TRUE
   }
 
@@ -340,7 +340,7 @@ create_pivot_table <- function(
     use_data <- FALSE
     # message("no data")
   } else {
-    data_pos <- match(data, names(x))
+    data_pos <- collapse::fmatch(data, names(x))
     use_data <- TRUE
     if (length(data_pos) > 1) {
       cols_pos <- c(-1L, cols_pos[cols_pos > 0])
@@ -421,7 +421,7 @@ create_pivot_table <- function(
         if (!abs(sort) %in% seq_along(rows_pos))
           warning("invalid sort position found")
 
-        if (!abs(sort) == match(i, rows_pos))
+        if (!abs(sort) == collapse::fmatch(i, rows_pos))
           sort <- NULL
       }
 
@@ -444,7 +444,7 @@ create_pivot_table <- function(
         if (!abs(sort) %in% seq_along(cols_pos))
           warning("invalid sort position found")
 
-        if (!abs(sort) == match(i, cols_pos))
+        if (!abs(sort) == collapse::fmatch(i, cols_pos))
           sort <- NULL
       }
     }
