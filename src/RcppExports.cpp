@@ -165,8 +165,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // wide_to_long
-void wide_to_long(Rcpp::DataFrame z, std::vector<int32_t> vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::Nullable<Rcpp::CharacterVector> refed, int32_t string_nums, bool na_null, bool na_missing, std::string na_strings, bool inline_strings, std::string c_cm, std::vector<std::string> dims);
-RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refedSEXP, SEXP string_numsSEXP, SEXP na_nullSEXP, SEXP na_missingSEXP, SEXP na_stringsSEXP, SEXP inline_stringsSEXP, SEXP c_cmSEXP, SEXP dimsSEXP) {
+void wide_to_long(Rcpp::DataFrame z, std::vector<int32_t> vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::Nullable<Rcpp::CharacterVector> refed, int32_t string_nums, bool na_null, bool na_missing, std::string na_strings, bool inline_strings, std::string c_cm, std::vector<std::string> dims, std::vector<std::string> special_vals, std::vector<int32_t> special_types);
+RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refedSEXP, SEXP string_numsSEXP, SEXP na_nullSEXP, SEXP na_missingSEXP, SEXP na_stringsSEXP, SEXP inline_stringsSEXP, SEXP c_cmSEXP, SEXP dimsSEXP, SEXP special_valsSEXP, SEXP special_typesSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type z(zSEXP);
@@ -183,7 +183,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type inline_strings(inline_stringsSEXP);
     Rcpp::traits::input_parameter< std::string >::type c_cm(c_cmSEXP);
     Rcpp::traits::input_parameter< std::vector<std::string> >::type dims(dimsSEXP);
-    wide_to_long(z, vtyps, zz, ColNames, start_col, start_row, refed, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type special_vals(special_valsSEXP);
+    Rcpp::traits::input_parameter< std::vector<int32_t> >::type special_types(special_typesSEXP);
+    wide_to_long(z, vtyps, zz, ColNames, start_col, start_row, refed, string_nums, na_null, na_missing, na_strings, inline_strings, c_cm, dims, special_vals, special_types);
     return R_NilValue;
 END_RCPP
 }
@@ -863,7 +865,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_dims_to_df", (DL_FUNC) &_openxlsx2_dims_to_df, 5},
     {"_openxlsx2_long_to_wide", (DL_FUNC) &_openxlsx2_long_to_wide, 3},
     {"_openxlsx2_is_charnum", (DL_FUNC) &_openxlsx2_is_charnum, 1},
-    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 14},
+    {"_openxlsx2_wide_to_long", (DL_FUNC) &_openxlsx2_wide_to_long, 16},
     {"_openxlsx2_create_char_dataframe", (DL_FUNC) &_openxlsx2_create_char_dataframe, 2},
     {"_openxlsx2_create_int_dataframe", (DL_FUNC) &_openxlsx2_create_int_dataframe, 1},
     {"_openxlsx2_read_xml2df", (DL_FUNC) &_openxlsx2_read_xml2df, 4},

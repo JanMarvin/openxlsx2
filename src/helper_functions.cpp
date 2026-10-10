@@ -675,7 +675,9 @@ void wide_to_long(
     std::string na_strings,
     bool inline_strings,
     std::string c_cm,
-    std::vector<std::string> dims
+    std::vector<std::string> dims,
+    std::vector<std::string> special_vals,
+    std::vector<int32_t> special_types
 ) {
   R_xlen_t n = static_cast<R_xlen_t>(z.nrow());
   R_xlen_t m = static_cast<R_xlen_t>(z.ncol());
@@ -741,6 +743,42 @@ void wide_to_long(
   SEXP value_sexp      = Rf_mkChar("#VALUE!");
   SEXP na_strings_sexp = Rf_mkChar(final_na_string_content.c_str());
   SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
+
+  // Optional replacement values for Inf, -Inf and NaN. Order of the vectors:
+  // 0 = Inf, 1 = -Inf, 2 = NaN. Type: 0 = unused (write #NUM!/#VALUE!),
+  // 1 = write as number, 2 = write as text. Defaults leave behavior unchanged.
+  Rcpp::CharacterVector special_cv(3);
+  std::vector<int32_t> special_kind(3, 0);
+  if (special_vals.size() == 3 && special_types.size() == 3) {
+    for (size_t k = 0; k < 3; ++k) {
+      special_kind[k] = special_types[k];
+      if (special_types[k] == 1) {
+        special_cv[k] = special_vals[k];
+      } else if (special_types[k] == 2) {
+        special_cv[k] = inline_strings ?
+          txt_to_is(special_vals[k], 0, 1, 1) :
+          txt_to_si(special_vals[k], 0, 1, 1);
+      }
+    }
+  }
+
+  // returns true if a replacement was written for special value k
+  auto set_special = [&](size_t k, R_xlen_t pos) -> bool {
+    if (special_kind[k] == 1) {
+      SET_STRING_ELT(zz_v, pos, STRING_ELT(special_cv, static_cast<R_xlen_t>(k)));
+      SET_STRING_ELT(zz_c_t, pos, blank_sexp);
+      SET_STRING_ELT(zz_is, pos, blank_sexp);
+      return true;
+    }
+    if (special_kind[k] == 2) {
+      SEXP txt = STRING_ELT(special_cv, static_cast<R_xlen_t>(k));
+      SET_STRING_ELT(zz_c_t, pos, inline_strings ? inlineStr_sexp : sharedStr_sexp);
+      SET_STRING_ELT(zz_is, pos, inline_strings ? txt : blank_sexp);
+      SET_STRING_ELT(zz_v, pos, !inline_strings ? txt : blank_sexp);
+      return true;
+    }
+    return false;
+  };
 
   R_xlen_t iter_count = 0;
   std::string cell_buf, is_buf;
@@ -881,12 +919,22 @@ void wide_to_long(
           }
         }
       } else if ((vtyp == numeric && strcmp(vals, "NaN") == 0) || (vtyp == factor && strcmp(vals, "_openxlsx_NaN") == 0)) {
-        SET_STRING_ELT(zz_v, pos, value_sexp);
-        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
-      } else if ((vtyp == numeric && (strcmp(vals, "-Inf") == 0 || strcmp(vals, "Inf") == 0)) ||
-                 (vtyp == factor && (strcmp(vals, "_openxlsx_nInf") == 0 || strcmp(vals, "_openxlsx_Inf") == 0))) {
-        SET_STRING_ELT(zz_v, pos, num_sexp);
-        SET_STRING_ELT(zz_c_t, pos, expr_sexp);
+        if (!set_special(2, pos)) {
+          SET_STRING_ELT(zz_v, pos, value_sexp);
+          SET_STRING_ELT(zz_c_t, pos, expr_sexp);
+        }
+      } else if ((vtyp == numeric && strcmp(vals, "-Inf") == 0) ||
+                 (vtyp == factor && strcmp(vals, "_openxlsx_nInf") == 0)) {
+        if (!set_special(1, pos)) {
+          SET_STRING_ELT(zz_v, pos, num_sexp);
+          SET_STRING_ELT(zz_c_t, pos, expr_sexp);
+        }
+      } else if ((vtyp == numeric && strcmp(vals, "Inf") == 0) ||
+                 (vtyp == factor && strcmp(vals, "_openxlsx_Inf") == 0)) {
+        if (!set_special(0, pos)) {
+          SET_STRING_ELT(zz_v, pos, num_sexp);
+          SET_STRING_ELT(zz_c_t, pos, expr_sexp);
+        }
       }
 
       if (has_typ) SET_STRING_ELT(zz_typ, pos, vtyp_sexp_cache[vtyp]);

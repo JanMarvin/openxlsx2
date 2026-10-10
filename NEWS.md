@@ -4,6 +4,8 @@
 
 * `wb_add_conditional_formatting()` now covers a non consecutive `dims` with a single rule and writes its ranges into one `sqref` (`"A1:B2 C2:D3"`), so only the selected cells are formatted: `"A1:B2,C2:D3"`, the example [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) introduced the feature with, used to become a single `A1:D3`. Overlapping blocks are cut apart, because a cell named twice in a `sqref` is counted twice ([#1688](https://github.com/JanMarvin/openxlsx2/issues/1688), [#1689](https://github.com/JanMarvin/openxlsx2/pull/1689), @SchmidtPaul).
 
+* Added the options `openxlsx2.na_inf_pos`, `openxlsx2.na_inf_neg` and `openxlsx2.na_nan`. They define the value that is written to the worksheet instead of `Inf`, `-Inf` and `NaN` in `write_xlsx()`, `wb_add_data()` and `wb_add_data_table()`. A single number is written as a number, a single string as text. This allows to mark, for example, censored values (`"<5"`, `">5"`). The default `NULL` keeps the previous behavior: `Inf` and `-Inf` are written as `#NUM!` and `NaN` as `#VALUE!`. The values are not mapped back to `Inf`/`NaN` when reading.
+
 ## Fixes
 
 * A logic bug in `apply_numfmts()` was fixed that occured in combination with `cols` used via `wb_set_col_widths()`. In addition automatic sizing can now be tweaked via an offset `"auto+n"`. [#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)

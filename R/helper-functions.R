@@ -1858,3 +1858,42 @@ create_shape <- function(
 
   read_xml(xml, pointer = FALSE)
 }
+
+#' Read the options for replacing `Inf`, `-Inf` and `NaN`
+#'
+#' Looks up `options("openxlsx2.na_inf_pos")`, `options("openxlsx2.na_inf_neg")`
+#' and `options("openxlsx2.na_nan")`. If an option is `NULL` (default) the
+#' value is written as before (`#NUM!` for `Inf`/`-Inf`, `#VALUE!` for `NaN`).
+#' A single finite number is written as a number, a single string as text.
+#' @returns a list with `values` (character) and `types` (integer: 0 = unused,
+#'   1 = number, 2 = text) in the order `Inf`, `-Inf`, `NaN`.
+#' @noRd
+get_special_na_options <- function() {
+  nms <- c("na_inf_pos", "na_inf_neg", "na_nan")
+  values <- character(3)
+  types  <- integer(3)
+
+  for (i in seq_along(nms)) {
+    opt <- paste0("openxlsx2.", nms[i])
+    val <- getOption(opt)
+    if (is.null(val)) next
+
+    if (length(val) != 1L || is.na(val) ||
+        !(is.character(val) || (is.numeric(val) && is.finite(val)))) {
+      stop(
+        "option `", opt, "` must be NULL, a single string or a single finite number",
+        call. = FALSE
+      )
+    }
+
+    if (is.character(val)) {
+      values[i] <- as.character(val)
+      types[i]  <- 2L
+    } else {
+      values[i] <- format(val, digits = 15, scientific = FALSE, trim = TRUE)
+      types[i]  <- 1L
+    }
+  }
+
+  list(values = values, types = types)
+}

@@ -484,6 +484,8 @@ write_data2 <- function(
     clls <- paste0(colnames(rtyp[1, 1]), rownames(rtyp[1, 1]))
   }
 
+  special <- get_special_na_options()
+
   wide_to_long(
     data,
     dc,
@@ -498,7 +500,9 @@ write_data2 <- function(
     na_strings     = na,
     inline_strings = inline_strings,
     c_cm           = c_cm,
-    dims           = clls
+    dims           = clls,
+    special_vals   = special$values,
+    special_types  = special$types
   )
 
   if (enforce) {

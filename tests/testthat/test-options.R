@@ -76,3 +76,59 @@ test_that("na option works", {
   wb <- write_xlsx(matrix(NA, 2, 2))
   expect_equal(unique(wb$worksheets[[1]]$sheet_data$cc$c_t), c("inlineStr", ""))
 })
+
+test_that("na_inf_pos, na_inf_neg and na_nan options replace Inf, -Inf and NaN", {
+
+  x <- data.frame(a = c(1, Inf, -Inf, NaN, NA))
+
+  # default: unchanged behavior
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x, inline_strings = FALSE)
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  expect_equal(cc$c_t[3:5], c("e", "e", "e"))
+  expect_equal(cc$v[3:5], c("#NUM!", "#NUM!", "#VALUE!"))
+
+  # strings
+  op <- options(
+    "openxlsx2.na_inf_pos" = ">5",
+    "openxlsx2.na_inf_neg" = "<5",
+    "openxlsx2.na_nan"     = "n/a"
+  )
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x)
+  got <- wb_to_df(wb)
+  expect_equal(got$a, c("1", ">5", "<5", "n/a", NA_character_))
+
+  # shared strings
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x, inline_strings = FALSE)
+  got <- wb_to_df(wb)
+  expect_equal(got$a, c("1", ">5", "<5", "n/a", NA_character_))
+
+  # numbers are written as numbers
+  options(
+    "openxlsx2.na_inf_pos" = 1e6,
+    "openxlsx2.na_inf_neg" = -1e6,
+    "openxlsx2.na_nan"     = NULL
+  )
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x)
+  got <- wb_to_df(wb)
+  # the column is read as character since it contains error cells
+  expect_equal(as.numeric(got$a[1:3]), c(1, 1e6, -1e6))
+
+  # options are independent: only Inf replaced
+  options("openxlsx2.na_inf_pos" = "hi", "openxlsx2.na_inf_neg" = NULL)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x, inline_strings = FALSE)
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  expect_equal(cc$v[4:5], c("#NUM!", "#VALUE!"))
+
+  # character columns containing "Inf" are untouched
+  options("openxlsx2.na_inf_pos" = "hi")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = c("Inf", "-Inf", "NaN")))
+  expect_equal(wb_to_df(wb)$a, c("Inf", "-Inf", "NaN"))
+
+  # invalid
+  options("openxlsx2.na_inf_pos" = c("a", "b"))
+  expect_error(wb_workbook()$add_worksheet()$add_data(x = x), "option `openxlsx2.na_inf_pos`")
+  options("openxlsx2.na_inf_pos" = Inf)
+  expect_error(wb_workbook()$add_worksheet()$add_data(x = x), "option `openxlsx2.na_inf_pos`")
+})
