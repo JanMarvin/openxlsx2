@@ -1458,7 +1458,13 @@ or a named list: list(strings = ..., numbers = ...). Blank cells are always conv
 <h3 id="wbworkbook-save-"><code>wbWorkbook$save()</code><a class="anchor" aria-label="anchor" href="#wbworkbook-save-"></a></h3>
 <p>Save the workbook</p><div class="section">
 <h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>file <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, path <span class="op">=</span> <span class="cn">NULL</span>, flush <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">wbWorkbook</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span></span>
+<span>  file <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">path</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  flush <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  use_modification_date <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div><p></p><div class="section">
 <h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file</code></dt>
@@ -1472,6 +1478,10 @@ or a named list: list(strings = ..., numbers = ...). Blank cells are always conv
 
       <dt><code>flush</code></dt>
 <dd><p>Experimental, streams the worksheet file to disk</p></dd>
+
+      <dt><code>use_modification_date</code></dt>
+<dd><p>If <code>TRUE</code>, sets timestamps of files within the
+resulting xlsx to the <code>datetime_modified</code> property of <code>wb</code>.</p></dd>
 
 
 </dl><p></p></div>

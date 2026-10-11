@@ -1630,7 +1630,13 @@ Save the workbook
 
 #### Usage
 
-    wbWorkbook$save(file = self$path, overwrite = TRUE, path = NULL, flush = FALSE)
+    wbWorkbook$save(
+      file = self$path,
+      overwrite = TRUE,
+      path = NULL,
+      flush = FALSE,
+      use_modification_date = FALSE
+    )
 
 #### Arguments
 
@@ -1650,6 +1656,11 @@ Save the workbook
 - `flush`:
 
   Experimental, streams the worksheet file to disk
+
+- `use_modification_date`:
+
+  If `TRUE`, sets timestamps of files within the resulting xlsx to the
+  `datetime_modified` property of `wb`.
 
 #### Returns
 

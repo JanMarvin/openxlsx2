@@ -14,6 +14,14 @@
   twice ([\#1688](https://github.com/JanMarvin/openxlsx2/issues/1688),
   [\#1689](https://github.com/JanMarvin/openxlsx2/pull/1689),
   [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- Add `use_modification_date` argument to
+  [`wb_save()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_save.md).
+  This allows the resulting xlsx file to be cryptographically
+  deterministic when given the same `wbWorkbook` object and when using
+  the same zipping utility, which may prove to be convenient if the file
+  is tracked within a Git repository
+  ([\#1696](https://github.com/JanMarvin/openxlsx2/pull/1696),
+  [@jistria](https://github.com/jistria)).
 
 ### Fixes
 
