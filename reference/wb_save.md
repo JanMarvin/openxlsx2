@@ -5,7 +5,14 @@ Save a workbook to file
 ## Usage
 
 ``` r
-wb_save(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE)
+wb_save(
+  wb,
+  file = NULL,
+  overwrite = TRUE,
+  path = NULL,
+  flush = FALSE,
+  use_modification_date = FALSE
+)
 ```
 
 ## Arguments
@@ -29,6 +36,11 @@ wb_save(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE)
 - flush:
 
   Experimental, streams the worksheet file to disk
+
+- use_modification_date:
+
+  If `TRUE`, sets timestamps of files within the resulting xlsx to the
+  `datetime_modified` property of `wb`.
 
 ## Value
 
@@ -68,6 +80,11 @@ and is not reliable with 7-Zip on macOS.
 
 As an additional fallback, the `zip` package can be used. It is no
 longer listed in `Imports` and must be installed separately if needed.
+
+The `use_modification_date` argument causes the resulting xlsx file to
+be cryptographically deterministic when given the same `wbWorkbook`
+object and when using the same zipping utility, which may prove to be
+convenient if the file is tracked within a Git repository.
 
 ## See also
 

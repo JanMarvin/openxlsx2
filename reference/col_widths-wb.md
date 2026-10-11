@@ -33,9 +33,11 @@ wb_remove_col_widths(wb, sheet = current_sheet(), cols)
 - widths:
 
   Width to set `cols` to specified column width or `"auto"` for
-  automatic sizing. `widths` is recycled to the length of `cols`.
-  openxlsx2 sets the default width is 8.43, as this is the standard in
-  some spreadsheet software. See **Details** for general information on
+  automatic sizing. `"auto"` accepts an offset, e.g. `"auto+2"` or
+  `"auto-1"`, which is added to (subtracted from) every automatically
+  sized column. `widths` is recycled to the length of `cols`. openxlsx2
+  sets the default width is 8.43, as this is the standard in some
+  spreadsheet software. See **Details** for general information on
   column widths.
 
 - hidden:

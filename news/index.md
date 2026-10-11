@@ -1,5 +1,60 @@
 # Changelog
 
+## openxlsx2 1.30
+
+### New features
+
+- [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_conditional_formatting.md)
+  now covers a non consecutive `dims` with a single rule and writes its
+  ranges into one `sqref` (`"A1:B2 C2:D3"`), so only the selected cells
+  are formatted: `"A1:B2,C2:D3"`, the example
+  [\#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) introduced
+  the feature with, used to become a single `A1:D3`. Overlapping blocks
+  are cut apart, because a cell named twice in a `sqref` is counted
+  twice ([\#1688](https://github.com/JanMarvin/openxlsx2/issues/1688),
+  [\#1689](https://github.com/JanMarvin/openxlsx2/pull/1689),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+- Add `use_modification_date` argument to
+  [`wb_save()`](https://janmarvin.github.io/openxlsx2/reference/wb_save.md).
+  This allows the resulting xlsx file to be cryptographically
+  deterministic when given the same `wbWorkbook` object and when using
+  the same zipping utility, which may prove to be convenient if the file
+  is tracked within a Git repository
+  ([\#1696](https://github.com/JanMarvin/openxlsx2/pull/1696),
+  [@jistria](https://github.com/jistria)).
+
+### Fixes
+
+- A logic bug in `apply_numfmts()` was fixed that occurred in
+  combination with `cols` used via
+  [`wb_set_col_widths()`](https://janmarvin.github.io/openxlsx2/reference/col_widths-wb.md).
+  In addition automatic sizing can now be tweaked via an offset
+  `"auto+n"`. [\#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)
+- [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_conditional_formatting.md)
+  no longer builds every block but the first from the previous block’s
+  leftovers when `dims` is non consecutive. `rule` was overwritten
+  inside the loop over the blocks, so a `"colorScale"` got the colors as
+  `cfvo` values, a `"containsText"` searched for the style name and a
+  `"dataBar"` failed with `subscript out of bounds`. Broken for every
+  type but `"expression"` since
+  [\#1347](https://github.com/JanMarvin/openxlsx2/pull/1347)
+  ([\#1684](https://github.com/JanMarvin/openxlsx2/pull/1684),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+
+### Breaking changes
+
+- A non consecutive `dims` in
+  [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/reference/wb_add_conditional_formatting.md)
+  is covered by one rule instead of one per block. An aggregating type
+  such as `"colorScale"` gets a single scale over the whole selection,
+  and a relative reference in a rule is anchored to the top left cell of
+  the first range rather than restarting in every block
+  ([\#1688](https://github.com/JanMarvin/openxlsx2/issues/1688),
+  [\#1689](https://github.com/JanMarvin/openxlsx2/pull/1689),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
+
+------------------------------------------------------------------------
+
 ## openxlsx2 1.29
 
 CRAN release: 2026-08-20
@@ -101,10 +156,14 @@ CRAN release: 2026-07-02
   documentation stated that `rows = 0` would affect only the column
   names, but that combination has always raised an error; the line now
   points to `select = "col_names"` instead
-  ([\#1651](https://github.com/JanMarvin/openxlsx2/pull/1651)@SchmidtPaul).
+  ([\#1651](https://github.com/JanMarvin/openxlsx2/pull/1651),
+  [@SchmidtPaul](https://github.com/SchmidtPaul)).
 - Fixed
   [`wb_set_row_heights()`](https://janmarvin.github.io/openxlsx2/reference/row_heights-wb.md)
   which did not set the key variable.
+- `wb_add_conditional_formatting(type = "beginsWith")` tested a string
+  literal instead of `rule`, so a `rule` that is not text slipped
+  through. It is now rejected like in the other text types.
 
 ### Breaking changes
 

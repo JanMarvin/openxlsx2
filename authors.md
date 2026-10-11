@@ -9,6 +9,9 @@
 
 - **Olivier Roy**. Contributor.
 
+- **Paul Schmidt**. Contributor.
+  [](https://orcid.org/0000-0003-1528-2082)
+
 - **openxlsx authors**. Copyright holder.  
   openxlsx package
 
@@ -21,12 +24,12 @@ Source:
 [`inst/CITATION`](https://github.com/JanMarvin/openxlsx2/blob/main/inst/CITATION)
 
 (2026). openxlsx2: Read, Write and Edit 'xlsx' Files. R package version
-1.29. URL https://github.com/JanMarvin/openxlsx2.
+1.30. URL https://github.com/JanMarvin/openxlsx2.
 
     @Manual{,
       title = {openxlsx2: Read, Write and Edit 'xlsx' Files},
       year = {2026},
-      note = {R package version 1.29},
+      note = {R package version 1.30},
       url = {https://janmarvin.github.io/openxlsx2/},
     }
 
