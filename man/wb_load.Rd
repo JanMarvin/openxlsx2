@@ -2,12 +2,12 @@
 % Please edit documentation in R/wb_load.R
 \name{wb_load}
 \alias{wb_load}
-\title{Load an existing .xlsx, .xlsm or .xlsb file}
+\title{Load an existing .xlsx, .xlsm, .xlsb or .xls file}
 \usage{
 wb_load(file, sheet, data_only = FALSE, ...)
 }
 \arguments{
-\item{file}{A path to an existing .xlsx, .xlsm or .xlsb file}
+\item{file}{A path to an existing .xlsx, .xlsm, .xlsb or .xls file}
 
 \item{sheet}{optional sheet parameter. if this is applied, only the selected
 sheet will be loaded. This can be a numeric, a string or \code{NULL}.}
@@ -67,6 +67,13 @@ the binary file. Our implementation is also still missing some functions:
 some array formulas are not yet correct, conditional formatting and data
 validation are not implemented, nor are pivot tables and slicers. Support is
 limited to little endian platforms.
+
+Legacy binary files (\code{xls}, Excel 97 to 2003) are read the same way: the
+file is parsed into pseudo-openxml files. Values, formulas, styles, merged
+cells, hyperlinks, comments, data validation, tables, simple conditional
+formatting, color scales, data bars, icon sets, external references and page
+settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D and combination charts) and chart sheets are imported. Pivot tables and files from Excel 95
+or earlier are not supported, nor are encrypted files.
 
 The loaded workbook provides a finalizer that will be invoked after the first
 \code{gc()} call and will cause removal of a loaded temporary files. These files

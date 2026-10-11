@@ -1,4 +1,4 @@
-#' Load an existing .xlsx, .xlsm or .xlsb file
+#' Load an existing .xlsx, .xlsm, .xlsb or .xls file
 #'
 #' `wb_load()` returns a [wbWorkbook] object conserving the content of the
 #' original input file, including data, styles, media. This workbook can be
@@ -47,11 +47,18 @@
 #' validation are not implemented, nor are pivot tables and slicers. Support is
 #' limited to little endian platforms.
 #'
+#' Legacy binary files (`xls`, Excel 97 to 2003) are read the same way: the
+#' file is parsed into pseudo-openxml files. Values, formulas, styles, merged
+#' cells, hyperlinks, comments, data validation, tables, simple conditional
+#' formatting, color scales, data bars, icon sets, external references and page
+#' settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D and combination charts) and chart sheets are imported. Pivot tables and files from Excel 95
+#' or earlier are not supported, nor are encrypted files.
+#'
 #' The loaded workbook provides a finalizer that will be invoked after the first
 #' `gc()` call and will cause removal of a loaded temporary files. These files
 #' are not tracked across workbooks.
 #'
-#' @param file A path to an existing .xlsx, .xlsm or .xlsb file
+#' @param file A path to an existing .xlsx, .xlsm, .xlsb or .xls file
 #' @param sheet optional sheet parameter. if this is applied, only the selected
 #'   sheet will be loaded. This can be a numeric, a string or `NULL`.
 #' @param data_only mode to import if only a data frame should be returned. This
@@ -99,14 +106,21 @@ wb_load <- function(
   # do not unlink after loading
   # on.exit(unlink(xmlDir, recursive = TRUE), add = TRUE)
 
-  ## Unzip files to temp directory
-  xmlFiles <- withCallingHandlers(
-    utils::unzip(file, exdir = xmlDir),
-    warning = function(w) {
-      msg <- paste("Unable to open and load file: ", file)
-      stop(msg, call. = FALSE)
-    }
-  )
+  # xls files are not zip files, they start with the signature of an OLE2 container
+  ole2_magic <- as.raw(c(0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1))
+
+  if (identical(readBin(file, "raw", 8L), ole2_magic)) {
+    xmlFiles <- xls_unpack(file, xmlDir, data_only, debug)
+  } else {
+    ## Unzip files to temp directory
+    xmlFiles <- withCallingHandlers(
+      utils::unzip(file, exdir = xmlDir),
+      warning = function(w) {
+        msg <- paste("Unable to open and load file: ", file)
+        stop(msg, call. = FALSE)
+      }
+    )
+  }
 
   # we need to read the files in human order: 1, 2, 10 and not 1, 10, 2.
   ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))

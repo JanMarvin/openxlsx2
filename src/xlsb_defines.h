@@ -993,7 +993,7 @@ enum PtgStructure2 {
   PtgAttrIfError = 0x80
 };
 
-std::string XLView(const uint32_t val) {
+inline std::string XLView(const uint32_t val) {
   switch(val) {
     case 0x00000000 : return "normal";
     case 0x00000001 : return "pageBreakPreview";
@@ -1003,7 +1003,7 @@ std::string XLView(const uint32_t val) {
 }
 
 template <typename T>
-std::string HSState(const T val) {
+inline std::string HSState(const T val) {
   switch(val) {
     case 0 : return "visible";
     case 1 : return "hidden";
@@ -1014,7 +1014,7 @@ std::string HSState(const T val) {
 
 // #nocov start
 // copied from the website
-std::string Cetab(const uint16_t val) {
+inline std::string Cetab(const uint16_t val) {
   switch(val) {
     case 0x0000 : return "BEEP";
     case 0x0001 : return "OPEN";
@@ -1417,7 +1417,7 @@ std::string Cetab(const uint16_t val) {
 }
 
 // some functions provide a fixed number of arguments
-std::string Ftab(const uint16_t val) {
+inline std::string Ftab(const uint16_t val) {
   switch(val) {
     case 0x0000 : return "COUNT";
     case 0x0001 : return "IF";

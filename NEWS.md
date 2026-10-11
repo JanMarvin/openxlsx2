@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## New features
+
+* Initial support for `xls` parsing. This is similar to how we handle `xlsb` files. We create some pseudo XML from the binary file and import this with `wb_load()` as if the input was provided as `xlsx`/`xlsm` file.
+
 ## Fixes
 
 * `wb_add_data_table(..., total_row = ...)` checked for max column length instead of max row length and refused to write anything beyond the maximum number of columns. [#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
