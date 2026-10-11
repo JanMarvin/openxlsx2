@@ -4,7 +4,14 @@
 \alias{wb_save}
 \title{Save a workbook to file}
 \usage{
-wb_save(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE)
+wb_save(
+  wb,
+  file = NULL,
+  overwrite = TRUE,
+  path = NULL,
+  flush = FALSE,
+  use_modification_date = FALSE
+)
 }
 \arguments{
 \item{wb}{A \code{wbWorkbook} object to write to file}
@@ -16,6 +23,9 @@ wb_save(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE)
 \item{path}{Deprecated argument. Please use \code{file} in new code.}
 
 \item{flush}{Experimental, streams the worksheet file to disk}
+
+\item{use_modification_date}{If \code{TRUE}, sets timestamps of files within the
+resulting xlsx to the \code{datetime_modified} property of \code{wb}.}
 }
 \value{
 the \code{wbWorkbook} object, invisibly
@@ -55,6 +65,11 @@ not reliable with 7-Zip on macOS.
 
 As an additional fallback, the \code{zip} package can be used. It is no longer
 listed in \code{Imports} and must be installed separately if needed.
+
+The \code{use_modification_date} argument causes the resulting xlsx file to be
+cryptographically deterministic when given the same \code{wbWorkbook} object and
+when using the same zipping utility, which may prove to be convenient if the
+file is tracked within a Git repository.
 }
 \examples{
 ## Create a new workbook and add a worksheet

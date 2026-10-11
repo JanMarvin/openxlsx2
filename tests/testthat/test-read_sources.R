@@ -578,13 +578,15 @@ test_that("reading unintialized cells", {
 
 test_that("reading file with xmlMaps works", {
   skip_online_checks()
+  tempFile <- temp_xlsx()
+  on.exit(unlink(tempFile), add = TRUE)
   xlsxFile <- testfile_path("Calc_support_xmlMaps.xlsx")
   expect_warning(
     wb <- openxlsx2::wb_load(xlsxFile),
     "has been removed from the xml files"
   )
   expect_true(!is.null(wb$xmlMaps))
-  expect_silent(wb$save("/tmp/test.xlsx"))
+  expect_silent(wb$save(tempFile))
 })
 
 test_that("skipping builtins works", {

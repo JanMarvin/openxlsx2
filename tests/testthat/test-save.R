@@ -669,3 +669,60 @@ test_that("file asserts", {
   expect_error(write_xlsx(cars, "foo/bar/baz.xlsx"), "Path to file does not exist.")
 
 })
+
+test_that("xlsx is not deterministic by default", {
+  skip_on_cran()
+
+  tempFile1 <- temp_xlsx()
+  on.exit(unlink(tempFile1), add = TRUE)
+  tempFile2 <- temp_xlsx()
+  on.exit(unlink(tempFile2), add = TRUE)
+
+  wb <- wb_workbook(creator = "test", datetime_created = as.POSIXct("2026-01-01 00:00:00"))$
+    add_worksheet()$
+    add_data(x = 1)
+
+  wb_save(wb, tempFile1)
+  Sys.sleep(2)
+  wb_save(wb, tempFile2)
+
+  expect_false(tools::md5sum(tempFile1) == tools::md5sum(tempFile2))
+})
+
+test_that("xlsx is deterministic when use_modification_date is TRUE", {
+  skip_on_cran()
+
+  tempFile1 <- temp_xlsx()
+  on.exit(unlink(tempFile1), add = TRUE)
+  tempFile2 <- temp_xlsx()
+  on.exit(unlink(tempFile2), add = TRUE)
+
+  wb <- wb_workbook(creator = "test", datetime_created = as.POSIXct("2026-01-01 00:00:00"))$
+    add_worksheet()$
+    add_data(x = 1)
+
+  wb_save(wb, tempFile1, use_modification_date = TRUE)
+  Sys.sleep(2)
+  wb_save(wb, tempFile2, use_modification_date = TRUE)
+
+  expect_equal(tools::md5sum(tempFile1), tools::md5sum(tempFile2), ignore_attr = TRUE)
+})
+
+test_that("timestamps differ when use_modification_date is TRUE", {
+  skip_on_cran()
+
+  tempFile1 <- temp_xlsx()
+  on.exit(unlink(tempFile1), add = TRUE)
+  tempFile2 <- temp_xlsx()
+  on.exit(unlink(tempFile2), add = TRUE)
+
+  wb <- wb_workbook(creator = "test", datetime_created = as.POSIXct("2026-01-01 00:00:00"))$
+    add_worksheet()$
+    add_data(x = 1)
+
+  wb_save(wb, tempFile1, use_modification_date = TRUE)
+  Sys.sleep(2)
+  wb_save(wb, tempFile2, use_modification_date = TRUE)
+
+  expect_false(file.mtime(tempFile1) == file.mtime(tempFile2))
+})
