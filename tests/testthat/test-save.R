@@ -681,9 +681,10 @@ test_that("xlsx is not deterministic by default", {
     add_data(x = 1)
 
   wb_save(wb, tempFile1)
+  Sys.sleep(2)
   wb_save(wb, tempFile2)
 
-  expect_equal(tools::md5sum(tempFile1), tools::md5sum(tempFile2), ignore_attr = TRUE)
+  expect_false(tools::md5sum(tempFile1) == tools::md5sum(tempFile2))
 })
 
 test_that("xlsx is deterministic when use_modification_date is TRUE", {
@@ -697,6 +698,7 @@ test_that("xlsx is deterministic when use_modification_date is TRUE", {
     add_data(x = 1)
 
   wb_save(wb, tempFile1, use_modification_date = TRUE)
+  Sys.sleep(2)
   wb_save(wb, tempFile2, use_modification_date = TRUE)
 
   expect_equal(tools::md5sum(tempFile1), tools::md5sum(tempFile2), ignore_attr = TRUE)
@@ -713,6 +715,7 @@ test_that("timestamps differ when use_modification_date is TRUE", {
     add_data(x = 1)
 
   wb_save(wb, tempFile1, use_modification_date = TRUE)
+  Sys.sleep(2)
   wb_save(wb, tempFile2, use_modification_date = TRUE)
 
   expect_false(file.mtime(tempFile1) == file.mtime(tempFile2))

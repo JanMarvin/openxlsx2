@@ -159,7 +159,7 @@ wb_workbook <- function(
 #' }
 wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE, use_modification_date = FALSE) {
   assert_workbook(wb)
-  wb$clone()$save(file = file, overwrite = overwrite, path = path, flush = flush, use_modification_date = FALSE)
+  wb$clone()$save(file = file, overwrite = overwrite, path = path, flush = flush, use_modification_date = use_modification_date)
 }
 
 # add data ----------------------------------------------------------------

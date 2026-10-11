@@ -3,7 +3,7 @@
 ## New features
 
 * `wb_add_conditional_formatting()` now covers a non consecutive `dims` with a single rule and writes its ranges into one `sqref` (`"A1:B2 C2:D3"`), so only the selected cells are formatted: `"A1:B2,C2:D3"`, the example [#1347](https://github.com/JanMarvin/openxlsx2/pull/1347) introduced the feature with, used to become a single `A1:D3`. Overlapping blocks are cut apart, because a cell named twice in a `sqref` is counted twice ([#1688](https://github.com/JanMarvin/openxlsx2/issues/1688), [#1689](https://github.com/JanMarvin/openxlsx2/pull/1689), @SchmidtPaul).
-* Add `use_modification_date` argument to `wb_save()`. This allows the resulting xlsx file to be cryptographically deterministic when given the same `wbWorkbook` object and when using the same zipping utility, which may prove to be convenient if the file is tracked within a Git repository, [#1696](https://github.com/JanMarvin/openxlsx2/pull/1696).
+* Add `use_modification_date` argument to `wb_save()`. This allows the resulting xlsx file to be cryptographically deterministic when given the same `wbWorkbook` object and when using the same zipping utility, which may prove to be convenient if the file is tracked within a Git repository ([#1696](https://github.com/JanMarvin/openxlsx2/pull/1696), @jistria).
 
 ## Fixes
 
