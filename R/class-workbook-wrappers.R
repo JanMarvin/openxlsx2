@@ -114,7 +114,7 @@ wb_workbook <- function(
 #'
 #' As an additional fallback, the `zip` package can be used. It is no longer
 #' listed in `Imports` and must be installed separately if needed.
-#' 
+#'
 #' The `use_modification_date` argument causes the resulting xlsx file to be
 #' cryptographically deterministic when given the same `wbWorkbook` object and
 #' when using the same zipping utility, which may prove to be convenient if the
