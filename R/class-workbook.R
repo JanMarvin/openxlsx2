@@ -3984,7 +3984,7 @@ wbWorkbook <- R6::R6Class(
       # (re)assign file path (if successful)
       self$path <- file
       invisible(self)
-      },
+    },
 
     #' @description open wbWorkbook in spreadsheet software
     #' @details minor helper wrapping xl_open which does the entire same thing

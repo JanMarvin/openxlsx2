@@ -671,6 +671,8 @@ test_that("file asserts", {
 })
 
 test_that("xlsx is not deterministic by default", {
+  skip_on_cran()
+
   tempFile1 <- temp_xlsx()
   on.exit(unlink(tempFile1), add = TRUE)
   tempFile2 <- temp_xlsx()
@@ -688,6 +690,8 @@ test_that("xlsx is not deterministic by default", {
 })
 
 test_that("xlsx is deterministic when use_modification_date is TRUE", {
+  skip_on_cran()
+
   tempFile1 <- temp_xlsx()
   on.exit(unlink(tempFile1), add = TRUE)
   tempFile2 <- temp_xlsx()
@@ -705,6 +709,8 @@ test_that("xlsx is deterministic when use_modification_date is TRUE", {
 })
 
 test_that("timestamps differ when use_modification_date is TRUE", {
+  skip_on_cran()
+
   tempFile1 <- temp_xlsx()
   on.exit(unlink(tempFile1), add = TRUE)
   tempFile2 <- temp_xlsx()
