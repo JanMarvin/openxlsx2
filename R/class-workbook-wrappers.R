@@ -114,12 +114,19 @@ wb_workbook <- function(
 #'
 #' As an additional fallback, the `zip` package can be used. It is no longer
 #' listed in `Imports` and must be installed separately if needed.
+#' 
+#' The `use_modification_date` argument causes the resulting xlsx file to be
+#' cryptographically deterministic when given the same `wbWorkbook` object and
+#' when using the same zipping utility, which may prove to be convenient if the
+#' file is tracked within a Git repository.
 #'
 #' @param wb A `wbWorkbook` object to write to file
 #' @param file A path to save the workbook to
 #' @param overwrite If `FALSE`, will not overwrite when `file` already exists.
 #' @param path Deprecated argument. Please use `file` in new code.
 #' @param flush Experimental, streams the worksheet file to disk
+#' @param use_modification_date If `TRUE`, sets timestamps of files within the
+#'   resulting xlsx to the `datetime_modified` property of `wb`.
 #'
 #' @export
 #' @family workbook wrappers
@@ -150,9 +157,9 @@ wb_workbook <- function(
 #' # if the last one is left blank the fallback is zip::zip
 #' openxlsx2::write_xlsx(x = cars, temp_xlsx())
 #' }
-wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE) {
+wb_save <- function(wb, file = NULL, overwrite = TRUE, path = NULL, flush = FALSE, use_modification_date = FALSE) {
   assert_workbook(wb)
-  wb$clone()$save(file = file, overwrite = overwrite, path = path, flush = flush)
+  wb$clone()$save(file = file, overwrite = overwrite, path = path, flush = flush, use_modification_date = FALSE)
 }
 
 # add data ----------------------------------------------------------------

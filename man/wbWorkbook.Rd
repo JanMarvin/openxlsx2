@@ -1031,7 +1031,13 @@ or a named list: list(strings = ..., numbers = ...). Blank cells are always conv
   Save the workbook
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{wbWorkbook$save(file = self$path, overwrite = TRUE, path = NULL, flush = FALSE)}
+    \preformatted{wbWorkbook$save(
+  file = self$path,
+  overwrite = TRUE,
+  path = NULL,
+  flush = FALSE,
+  use_modification_date = FALSE
+)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -1041,6 +1047,8 @@ or a named list: list(strings = ..., numbers = ...). Blank cells are always conv
       \item{\code{overwrite}}{If \code{FALSE}, will not overwrite when \code{path} exists}
       \item{\code{path}}{Deprecated argument previously used for file. Please use file in new code.}
       \item{\code{flush}}{Experimental, streams the worksheet file to disk}
+      \item{\code{use_modification_date}}{If \code{TRUE}, sets timestamps of files within the
+resulting xlsx to the \code{datetime_modified} property of \code{wb}.}
     }
     \if{html}{\out{</div>}}
   }

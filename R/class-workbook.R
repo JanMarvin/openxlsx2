@@ -2990,8 +2990,10 @@ wbWorkbook <- R6::R6Class(
     #' @param overwrite If `FALSE`, will not overwrite when `path` exists
     #' @param path Deprecated argument previously used for file. Please use file in new code.
     #' @param flush Experimental, streams the worksheet file to disk
+    #' @param use_modification_date If `TRUE`, sets timestamps of files within the
+    #'   resulting xlsx to the `datetime_modified` property of `wb`.
     #' @return The `wbWorkbook` object invisibly
-    save = function(file = self$path, overwrite = TRUE, path = NULL, flush = FALSE) {
+    save = function(file = self$path, overwrite = TRUE, path = NULL, flush = FALSE, use_modification_date = FALSE) {
 
       if (!is.null(path)) {
         .Deprecated(old = "wb_save(path)", new = "wb_save(file)", package = "openxlsx2")
@@ -3001,6 +3003,7 @@ wbWorkbook <- R6::R6Class(
       assert_class(file, "character")
       assert_class(overwrite, "logical")
       assert_class(flush, "logical")
+      assert_class(use_modification_date, "logical")
 
       if (length(file) > 1) {
         stop("Multiple files provided.", .call = FALSE)
@@ -3943,22 +3946,25 @@ wbWorkbook <- R6::R6Class(
         getOption("openxlsx2.compresssionevel") %||%
         6L
 
-      # Set timestamps on created files and folders to the user-specified last modified time;
-      # datetime_modified. This facilitates the creation of a reproducible file.
-      Sys.setFileTime(
-        list.files(
-          path = tmpDir,
-          all.files = TRUE,
-          full.names = TRUE,
-          recursive = TRUE,
-          include.dirs = TRUE
-        ),
-        as.POSIXct(
-          self$get_properties()["datetime_modified"],
-          format = "%Y-%m-%dT%H:%M:%SZ",
-          tz = "UTC"
+      if (use_modification_date) {
+        # Set timestamps on created files and folders to the user-specified
+        # last modified time; datetime_modified. This facilitates the creation
+        # of a cryptographically deterministic file.
+        Sys.setFileTime(
+          list.files(
+            path = tmpDir,
+            all.files = TRUE,
+            full.names = TRUE,
+            recursive = TRUE,
+            include.dirs = TRUE
+          ),
+          as.POSIXct(
+            self$get_properties()["datetime_modified"],
+            format = "%Y-%m-%dT%H:%M:%SZ",
+            tz = "UTC"
+          )
         )
-      )
+      }
 
       zipped <- zip_output(
         zip_path = tmpFile,
@@ -3978,7 +3984,7 @@ wbWorkbook <- R6::R6Class(
       # (re)assign file path (if successful)
       self$path <- file
       invisible(self)
-    },
+      },
 
     #' @description open wbWorkbook in spreadsheet software
     #' @details minor helper wrapping xl_open which does the entire same thing
