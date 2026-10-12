@@ -19,11 +19,17 @@
 #include "xls_defines.h"
 
 // Every BIFF8 record is: id (2 bytes), size (2 bytes), data. Returns false at the
-// end of the stream.
+// end of the stream. Padding of fewer than 4 bytes behind the last record is the end.
 inline bool XLS_RECORD(uint16_t& rid, uint16_t& rsize, std::istream& sas, bool swapit) {
   if (sas.peek() == std::char_traits<char>::eof()) return false;
-  rid = readbin(rid, sas, swapit);
-  rsize = readbin(rsize, sas, swapit);
+  uint16_t id = 0, size = 0;
+  if (!sas.read(reinterpret_cast<char*>(&id), sizeof(id)) || !sas.read(reinterpret_cast<char*>(&size), sizeof(size))) {
+    sas.clear();
+    sas.seekg(0, std::ios_base::end);
+    return false;
+  }
+  rid = swapit ? swap_endian(id) : id;
+  rsize = swapit ? swap_endian(size) : size;
   return true;
 }
 

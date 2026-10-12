@@ -59,7 +59,7 @@ struct XlsFontInfo {
     out << "<sz val=\"" << xls_num(dyHeight / 20.0) << "\"/>";
     if (!color_attr.empty()) out << "<color" << color_attr << "/>";
     else if (icv != 0x7FFF && icv != 64) out << "<color rgb=\"" << xls_argb(palette, icv) << "\"/>";
-    out << "<" << name_tag << " val=\"" << escape_xml(name) << "\"/>";
+    if (!name.empty()) out << "<" << name_tag << " val=\"" << escape_xml(name) << "\"/>";
     if (bFamily) out << "<family val=\"" << static_cast<int>(bFamily) << "\"/>";
     if (bCharSet) out << "<charset val=\"" << static_cast<int>(bCharSet) << "\"/>";
     out << "</" << outer << ">";
@@ -1407,16 +1407,7 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
       }
       if (name.empty() || !style_seen.insert(name).second) continue;
 
-      std::string xml_name;
-      for (size_t c = 0; c < name.size(); ++c) {
-        switch (name[c]) {
-          case '&': xml_name += "&amp;"; break;
-          case '<': xml_name += "&lt;"; break;
-          case '>': xml_name += "&gt;"; break;
-          case '"': xml_name += "&quot;"; break;
-          default: xml_name += name[c];
-        }
-      }
+      std::string xml_name = escape_xml(name);
       cell_styles += "<cellStyle name=\"" + xml_name + "\" xfId=\"" + std::to_string(style_xf_index[st.ixfe]) + "\"";
       if (st.istyBuiltIn >= 0) cell_styles += " builtinId=\"" + std::to_string(st.istyBuiltIn) + "\"";
       if (st.builtin && (st.istyBuiltIn == 1 || st.istyBuiltIn == 2)) cell_styles += " iLevel=\"" + std::to_string(st.iLevel) + "\"";
