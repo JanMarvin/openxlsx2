@@ -497,6 +497,9 @@ int32_t xls_extract(std::string filePath, std::string outPath, bool debug) {
   if (workbook.size() < 8 || cfb_u16(workbook, 0) != XlsBOF || cfb_u16(workbook, 4) != 0x0600)
     Rcpp::stop("xls: only Excel 97-2003 files are supported");
 
+  if (!cfb_stream(file, "_VBA_PROJECT").empty() || !cfb_stream(file, "PROJECT").empty())
+    Rcpp::warning("The xls file contains a VBA project. Macros are not imported.");
+
   if (debug) Rcpp::Rcout << "Workbook stream: " << workbook.size() << " bytes" << std::endl;
 
   std::ofstream out(outPath, std::ios::out | std::ios::binary);
@@ -1664,7 +1667,9 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       std::string author;
     };
     std::vector<Note> notes;
-    std::map<uint16_t, std::string> note_text;
+    std::map<uint16_t, std::u16string> note_text;
+    std::map<uint16_t, std::vector<std::pair<uint16_t, uint16_t> > > note_runs;  // start of the run and font
+    std::map<uint16_t, XlsShape> note_shapes;
     int32_t last_note_object = -1;
     std::map<std::string, std::string> tooltips;  // by range
     std::stringstream cols;
@@ -2014,6 +2019,49 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           }
         }
         bin.seekg(pnext, std::ios_base::beg);
+      }
+    }
+
+    // the fonts of the workbook for the formatted text of comments
+    std::vector<XlsFontInfo> note_fonts;
+    std::vector<uint32_t> note_palette(XlsDefaultPalette, XlsDefaultPalette + 56);
+    if (!data_only) {
+      bin.clear();
+      bin.seekg(0, std::ios_base::beg);
+      int gdepth = 0;
+      uint16_t grid = 0, grsize = 0;
+      while (XLS_RECORD(grid, grsize, bin, swapit)) {
+        std::streampos gnext = bin.tellg() + std::streamoff(grsize);
+        if (grid == XlsBOF) ++gdepth;
+        if (grid == XlsEOF) --gdepth;
+        if (gdepth <= 0) break;
+        if (grid == XlsFont) {
+          XlsFontInfo f;
+          f.dyHeight = readbin(f.dyHeight, bin, swapit);
+          f.grbit = readbin(f.grbit, bin, swapit);
+          f.icv = readbin(f.icv, bin, swapit);
+          f.bls = readbin(f.bls, bin, swapit);
+          f.sss = readbin(f.sss, bin, swapit);
+          f.uls = readbin(f.uls, bin, swapit);
+          f.bFamily = readbin(f.bFamily, bin, swapit);
+          f.bCharSet = readbin(f.bCharSet, bin, swapit);
+          bin.seekg(1, std::ios::cur);
+          f.name = XLUnicodeString(bin, swapit, false);
+          note_fonts.push_back(f);
+        }
+        if (grid == XlsPalette) {
+          uint16_t ccv = 0;
+          ccv = readbin(ccv, bin, swapit);
+          for (size_t k = 0; k < ccv && k < note_palette.size(); ++k) {
+            uint8_t r = 0, gg = 0, b = 0, reserved = 0;
+            r = readbin(r, bin, swapit);
+            gg = readbin(gg, bin, swapit);
+            b = readbin(b, bin, swapit);
+            reserved = readbin(reserved, bin, swapit);
+            note_palette[k] = (static_cast<uint32_t>(r) << 16) | (static_cast<uint32_t>(gg) << 8) | b;
+          }
+        }
+        bin.seekg(gnext, std::ios_base::beg);
       }
     }
 
@@ -2819,6 +2867,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             if (!pending_shapes.empty()) {
               XlsShape shape = pending_shapes.front();
               pending_shapes.erase(pending_shapes.begin());
+              if (type == 0x19 && shape.has_anchor) note_shapes[id] = shape;
               bool is_shape = type == 0x01 || type == 0x02 || type == 0x03 || type == 0x04 || type == 0x09 || type == 0x1E;
               if (shape.has_anchor && ((type == 0x08 && shape.blip > 0) || type == 0x05 || is_shape)) {
                 DrawingItem item;
@@ -2859,10 +2908,12 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
 
         case XlsTxO: {
           // options, rotation, 6 bytes we do not use, length of the text, length
-          // of the formatting. The text is in the CONTINUE record that follows.
-          uint16_t cch = 0;
+          // of the formatting. The text is in the CONTINUE record that follows, then
+          // the formatting: a run of 8 bytes for every change of the font.
+          uint16_t cch = 0, cb_runs = 0;
           bin.seekg(10, std::ios_base::cur);
           cch = readbin(cch, bin, swapit);
+          cb_runs = readbin(cb_runs, bin, swapit);
 
           if (last_note_object >= 0 && cch > 0) {
             bin.seekg(next, std::ios_base::beg);
@@ -2871,7 +2922,20 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             std::streampos text_end = bin.tellg() + std::streamoff(crsize);
             uint8_t flags = 0;
             flags = readbin(flags, bin, swapit);
-            note_text[static_cast<uint16_t>(last_note_object)] = to_utf8(xls_chars(bin, swapit, cch, (flags & 0x01) != 0, text_end));
+            uint16_t note_id = static_cast<uint16_t>(last_note_object);
+            note_text[note_id] = xls_chars(bin, swapit, cch, (flags & 0x01) != 0, text_end);
+
+            bin.seekg(text_end, std::ios_base::beg);
+            if (cb_runs >= 8 && XLS_RECORD(crid, crsize, bin, swapit) && crid == XlsContinue) {
+              for (uint32_t k = 0; k + 8 <= crsize; k += 8) {
+                uint16_t ich = 0, ifnt = 0;
+                uint32_t reserved = 0;
+                ich = readbin(ich, bin, swapit);
+                ifnt = readbin(ifnt, bin, swapit);
+                reserved = readbin(reserved, bin, swapit);
+                note_runs[note_id].push_back(std::make_pair(ich, ifnt));
+              }
+            }
           }
           last_note_object = -1;
           break;
@@ -3396,8 +3460,28 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       for (size_t i = 0; i < notes.size(); ++i) {
         size_t author_id = static_cast<size_t>(std::find(authors.begin(), authors.end(), notes[i].author) - authors.begin());
         com << "<comment ref=\"" << int_to_col(notes[i].col + 1) << notes[i].row + 1 << "\" authorId=\"" << author_id << "\">"
-            << "<text><r><rPr><sz val=\"9\"/><color indexed=\"81\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr>"
-            << "<t xml:space=\"preserve\">" << escape_xml(note_text[notes[i].id]) << "</t></r></text></comment>" << std::endl;
+            << "<text>";
+        const std::u16string& chars = note_text[notes[i].id];
+        const std::vector<std::pair<uint16_t, uint16_t> >& runs = note_runs[notes[i].id];
+        if (runs.size() < 2) {
+          com << "<r><rPr><sz val=\"9\"/><color indexed=\"81\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr>"
+              << "<t xml:space=\"preserve\">" << escape_xml(to_utf8(chars)) << "</t></r>";
+        } else {
+          // the last run only marks the end of the text
+          for (size_t r = 0; r + 1 < runs.size(); ++r) {
+            size_t from = std::min<size_t>(runs[r].first, chars.size());
+            size_t to = std::min<size_t>(runs[r + 1].first, chars.size());
+            if (r + 2 == runs.size()) to = chars.size();
+            if (to <= from) continue;
+            // the number 4 is not used for fonts
+            size_t font_id = runs[r].second;
+            if (font_id > 4) --font_id;
+            com << "<r>";
+            if (font_id < note_fonts.size()) com << note_fonts[font_id].xml(note_palette, "rPr", "rFont");
+            com << "<t xml:space=\"preserve\">" << escape_xml(to_utf8(chars.substr(from, to - from))) << "</t></r>";
+          }
+        }
+        com << "</text></comment>" << std::endl;
       }
       com << "</commentList>" << std::endl;
       com << "</comments>" << std::endl;
@@ -3424,8 +3508,20 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             << ";visibility:hidden;mso-wrap-style:tight\" fillcolor=\"#ffffe1\" o:insetmode=\"auto\">"
             << "<v:fill color2=\"#ffffe1\"/><v:shadow color=\"black\" obscured=\"t\"/><v:path o:connecttype=\"none\"/>"
             << "<v:textbox style=\"mso-direction-alt:auto\"><div style=\"text-align:left\"/></v:textbox>"
-            << "<x:ClientData ObjectType=\"Note\"><x:MoveWithCells/><x:SizeWithCells/><x:Anchor>" << col + 1 << ", 15, "
-            << (row > 0 ? row - 1 : 0) << ", 10, " << col + 3 << ", 15, " << row + 4 << ", 4</x:Anchor><x:AutoFill>False</x:AutoFill>"
+            << "<x:ClientData ObjectType=\"Note\"><x:MoveWithCells/><x:SizeWithCells/><x:Anchor>";
+        std::map<uint16_t, XlsShape>::const_iterator ns = note_shapes.find(notes[i].id);
+        if (ns != note_shapes.end()) {
+          // offsets in the file are fractions of the cell, in the shape they are pixels
+          const XlsShape& a = ns->second;
+          double w1 = col_px.count(a.col1) ? col_px[a.col1] : 64.0, w2 = col_px.count(a.col2) ? col_px[a.col2] : 64.0;
+          double h1 = rows.count(a.row1) && rows[a.row1].custom ? rows[a.row1].height * 4.0 / 3.0 : 20.0;
+          double h2 = rows.count(a.row2) && rows[a.row2].custom ? rows[a.row2].height * 4.0 / 3.0 : 20.0;
+          vml << a.col1 << ", " << std::lround(a.dx1 / 1024.0 * w1) << ", " << a.row1 << ", " << std::lround(a.dy1 / 256.0 * h1) << ", "
+              << a.col2 << ", " << std::lround(a.dx2 / 1024.0 * w2) << ", " << a.row2 << ", " << std::lround(a.dy2 / 256.0 * h2);
+        } else {
+          vml << col + 1 << ", 15, " << (row > 0 ? row - 1 : 0) << ", 10, " << col + 3 << ", 15, " << row + 4 << ", 4";
+        }
+        vml << "</x:Anchor><x:AutoFill>False</x:AutoFill>"
             << "<x:Row>" << row << "</x:Row><x:Column>" << col << "</x:Column></x:ClientData></v:shape>" << std::endl;
       }
       vml << "</xml>" << std::endl;

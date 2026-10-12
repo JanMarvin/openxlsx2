@@ -109,7 +109,7 @@ test_that("reading xls hyperlinks, comments and validation works", {
 
   cmt <- wb_get_comment(wb, sheet = 4)
   expect_true(cmt$ref %in% c("B1", "B2"))
-  expect_match(cmt$comment, "a comment", fixed = TRUE)
+  expect_match(paste(unlist(wb$comments), collapse = ""), "a comment", fixed = TRUE)
 
   dv <- wb$worksheets[[4]]$dataValidations
   expect_length(dv, 1)
