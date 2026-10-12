@@ -139,15 +139,48 @@ int32_t pivotcache_bin(std::string filePath, std::string outPath, bool debug) {
         if (fields.empty()) break;
         XlsPivotCacheField& f = fields.back();
         uint32_t fl = xls_pv_u16(d, 0);
-        // only the combinations that are known are written for fields without items
-        if ((fl & ~0x0543u) == 0 && (fl & 0x0040u) != 0 && d.size() >= 22) {
-          uint64_t b1 = static_cast<uint64_t>(xls_pv_u32(d, 6)) | (static_cast<uint64_t>(xls_pv_u32(d, 10)) << 32);
-          uint64_t b2 = static_cast<uint64_t>(xls_pv_u32(d, 14)) | (static_cast<uint64_t>(xls_pv_u32(d, 18)) << 32);
-          double lo = 0, hi = 0;
-          std::memcpy(&lo, &b1, sizeof(lo));
-          std::memcpy(&hi, &b2, sizeof(hi));
-          f.attrs = std::string(" containsSemiMixedTypes=\"0\" containsString=\"0\" containsNumber=\"1\" minValue=\"") + xls_num(lo) +
-                    "\" maxValue=\"" + xls_num(hi) + "\"";
+        // flags: 0x1 semi mixed types, 0x2 non date, 0x4 date, 0x8 string, 0x10 blank, 0x40 number,
+        // 0x80 integer, 0x100 minimum and maximum. Fields with items get them from the items.
+        if (d.size() >= 6 && xls_pv_u32(d, 2) == 0) {
+          std::string a;
+          if ((fl & 0x01u) == 0) a += " containsSemiMixedTypes=\"0\"";
+          if ((fl & 0x02u) == 0) a += " containsNonDate=\"0\"";
+          if ((fl & 0x04u) != 0) a += " containsDate=\"1\"";
+          if ((fl & 0x08u) == 0) a += " containsString=\"0\"";
+          if ((fl & 0x10u) != 0) a += " containsBlank=\"1\"";
+          if ((fl & 0x40u) != 0) a += " containsNumber=\"1\"";
+          if ((fl & 0x80u) != 0) a += " containsInteger=\"1\"";
+          if ((fl & 0x100u) != 0 && d.size() >= 22) {
+            uint64_t b1 = static_cast<uint64_t>(xls_pv_u32(d, 6)) | (static_cast<uint64_t>(xls_pv_u32(d, 10)) << 32);
+            uint64_t b2 = static_cast<uint64_t>(xls_pv_u32(d, 14)) | (static_cast<uint64_t>(xls_pv_u32(d, 18)) << 32);
+            double serial[2] = {0, 0};
+            std::memcpy(&serial[0], &b1, sizeof(double));
+            std::memcpy(&serial[1], &b2, sizeof(double));
+            if ((fl & 0x04u) == 0) {
+              a += " minValue=\"" + xls_num(serial[0]) + "\" maxValue=\"" + xls_num(serial[1]) + "\"";
+            } else {
+              // dates are serial numbers, converted to year, month and day
+              std::string iso[2];
+              for (int k = 0; k < 2; ++k) {
+                double whole = std::floor(serial[k]);
+                long z = static_cast<long>(whole) - 25569 + 719468;
+                long era = (z >= 0 ? z : z - 146096) / 146097;
+                long doe = z - era * 146097;
+                long yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+                long doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+                long mp = (5 * doy + 2) / 153;
+                long day = doy - (153 * mp + 2) / 5 + 1;
+                long month = mp < 10 ? mp + 3 : mp - 9;
+                long year = yoe + era * 400 + (month <= 2 ? 1 : 0);
+                long secs = std::lround((serial[k] - whole) * 86400.0);
+                char buf[32];
+                std::snprintf(buf, sizeof(buf), "%04ld-%02ld-%02ldT%02ld:%02ld:%02ld", year, month, day, secs / 3600, (secs / 60) % 60, secs % 60);
+                iso[k] = buf;
+              }
+              a += " minDate=\"" + iso[0] + "\" maxDate=\"" + iso[1] + "\"";
+            }
+          }
+          f.attrs = a;
         }
         break;
       }
@@ -156,39 +189,79 @@ int32_t pivotcache_bin(std::string filePath, std::string outPath, bool debug) {
         in_items = false;
         break;
 
-      case BrtPCDIString:
+      case BrtPCDIMissing:
       case BrtPCDINumber:
       case BrtPCDIBoolean:
       case BrtPCDIError:
-      case BrtPCDIMissing:
-      case BrtPCDIDatetime: {
+      case BrtPCDIString:
+      case BrtPCDIDatetime:
+      case BrtPCDIAMissing:
+      case BrtPCDIANumber:
+      case BrtPCDIABoolean:
+      case BrtPCDIAError:
+      case BrtPCDIAString:
+      case BrtPCDIADatetime:
+      case BrtBeginPCDIRun: {
         if (!in_items || fields.empty()) break;
         XlsPivotCacheField& f = fields.back();
         f.attrs.clear();
-        if (recs[i].id == BrtPCDIString) {
-          size_t pos = 0;
-          f.items += "<s v=\"" + escape_xml(pivot_string(d, pos)) + "\"/>";
-          ++f.n_str;
-        } else if (recs[i].id == BrtPCDINumber) {
-          uint64_t bits = static_cast<uint64_t>(xls_pv_u32(d, 0)) | (static_cast<uint64_t>(xls_pv_u32(d, 4)) << 32);
-          double x = 0;
-          std::memcpy(&x, &bits, sizeof(x));
-          if (f.n_num == 0 || x < f.min) f.min = x;
-          if (f.n_num == 0 || x > f.max) f.max = x;
-          if (x == std::floor(x)) ++f.n_int;
-          f.items += "<n v=\"" + xls_num(x) + "\"/>";
-          ++f.n_num;
-        } else if (recs[i].id == BrtPCDIBoolean) {
-          f.items += std::string("<b v=\"") + ((!d.empty() && d[0] != 0) ? "1" : "0") + "\"/>";
-          ++f.n_other;
-        } else if (recs[i].id == BrtPCDIError) {
-          f.items += "<e v=\"" + xls_error(d.empty() ? static_cast<uint8_t>(0) : d[0]) + "\"/>";
-          ++f.n_other;
+
+        // items are missing 0, number 1, boolean 2, error 3, string 4, datetime 5. The
+        // items with attributes carry six more bytes, they are not imported. A run holds
+        // many items of the same type.
+        int kind = 0;
+        size_t n_items = 1, pos = 0;
+        if (recs[i].id == BrtBeginPCDIRun) {
+          uint32_t run_type = xls_pv_u16(d, 0);
+          n_items = xls_pv_u32(d, 2);
+          pos = 6;
+          if (run_type == 1) kind = 1;
+          else if (run_type == 2) kind = 4;
+          else if (run_type == 0x20) kind = 5;
+          else return -1;
         } else {
-          f.items += "<m/>";
-          ++f.n_blank;
+          kind = recs[i].id >= BrtPCDIAMissing ? recs[i].id - BrtPCDIAMissing : recs[i].id - BrtPCDIMissing;
         }
-        ++f.count;
+
+        for (size_t k = 0; k < n_items && pos <= d.size(); ++k) {
+          if (kind == 4) {
+            f.items += "<s v=\"" + escape_xml(pivot_string(d, pos)) + "\"/>";
+            ++f.n_str;
+          } else if (kind == 1) {
+            uint64_t bits = static_cast<uint64_t>(xls_pv_u32(d, pos)) | (static_cast<uint64_t>(xls_pv_u32(d, pos + 4)) << 32);
+            pos += 8;
+            double x = 0;
+            std::memcpy(&x, &bits, sizeof(x));
+            if (f.n_num == 0 || x < f.min) f.min = x;
+            if (f.n_num == 0 || x > f.max) f.max = x;
+            if (x == std::floor(x)) ++f.n_int;
+            f.items += "<n v=\"" + xls_num(x) + "\"/>";
+            ++f.n_num;
+          } else if (kind == 2) {
+            f.items += std::string("<b v=\"") + ((pos < d.size() && d[pos] != 0) ? "1" : "0") + "\"/>";
+            ++pos;
+            ++f.n_other;
+          } else if (kind == 3) {
+            f.items += "<e v=\"" + xls_error(pos < d.size() ? d[pos] : static_cast<uint8_t>(0)) + "\"/>";
+            ++pos;
+            ++f.n_other;
+          } else if (kind == 5) {
+            char buf[32];
+            std::snprintf(buf, sizeof(buf), "%04u-%02u-%02uT%02u:%02u:%02u", xls_pv_u16(d, pos), xls_pv_u16(d, pos + 2),
+                          pos + 4 < d.size() ? d[pos + 4] : 0u, pos + 5 < d.size() ? d[pos + 5] : 0u,
+                          pos + 6 < d.size() ? d[pos + 6] : 0u, pos + 7 < d.size() ? d[pos + 7] : 0u);
+            pos += 8;
+            std::string dt = buf;
+            if (f.n_date == 0 || dt < f.min_date) f.min_date = dt;
+            if (f.n_date == 0 || dt > f.max_date) f.max_date = dt;
+            f.items += "<d v=\"" + dt + "\"/>";
+            ++f.n_date;
+          } else {
+            f.items += "<m/>";
+            ++f.n_blank;
+          }
+          ++f.count;
+        }
         break;
       }
 
@@ -212,6 +285,8 @@ int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
 
   XlsPivotView v;
   int64_t cache_id = -1;
+  int line_axis = -1;
+  bool in_format = false;
   v.axes.resize(2);
 
   for (size_t i = 0; i < recs.size(); ++i) {
@@ -221,6 +296,14 @@ int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
     switch (recs[i].id) {
       case BrtBeginSXView: {
         cache_id = xls_pv_u32(d, 28);
+        if (d.size() > 5) {
+          v.row_grand = (d[5] & 0x20) != 0;
+          v.col_grand = (d[5] & 0x40) != 0;
+        }
+        if (d.size() > 15) {
+          v.outline = (d[8] & 0x02) != 0;
+          v.version = d[14];
+        }
         size_t pos = 32;
         v.name = pivot_string(d, pos);
         v.data_name = pivot_string(d, pos);
@@ -240,6 +323,10 @@ int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
       case BrtBeginSXVD: {
         XlsPivotField f;
         f.axis = static_cast<uint16_t>(xls_pv_u32(d, 0) & 0x0F);
+        f.default_subtotal = d.size() > 1 && (d[1] & 0x01) != 0;
+        f.numfmt = xls_pv_u32(d, 4);
+        f.multi = d.size() > 10 && (d[10] & 0x08) != 0;
+        f.sort = d.size() > 9 ? static_cast<uint8_t>((d[9] & 0x30) == 0x30 ? 1 : ((d[9] & 0x30) == 0x10 ? 2 : 0)) : static_cast<uint8_t>(0);
         size_t pos = 16;
         f.name = pivot_string(d, pos);
         v.fields.push_back(f);
@@ -271,6 +358,66 @@ int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
         }
         break;
       }
+
+      case BrtBeginSXLIRws:
+      case BrtBeginSXLICols:
+        line_axis = recs[i].id == BrtBeginSXLIRws ? 0 : 1;
+        break;
+
+      case BrtEndSXLIRws:
+      case BrtEndSXLICols:
+        line_axis = -1;
+        break;
+
+      case BrtBeginSXLI:
+        if (line_axis >= 0 && d.size() >= 12) {
+          XlsPivotLine l;
+          l.reuse = static_cast<uint16_t>(xls_pv_u16(d, 0));
+          l.type = d[2];
+          l.data = xls_pv_u32(d, 8);
+          v.lines[line_axis].push_back(l);
+        }
+        break;
+
+      case BrtBeginISXVIs:
+        if (line_axis >= 0 && !v.lines[line_axis].empty()) {
+          for (size_t k = 0; k + 4 <= d.size(); k += 4) v.lines[line_axis].back().x.push_back(xls_pv_u32(d, k));
+        }
+        break;
+
+      case BrtBeginSXFormat:
+        if (d.size() >= 6) {
+          XlsPivotFormat f;
+          f.dxf = xls_pv_u32(d, 2);
+          v.formats.push_back(f);
+          in_format = true;
+        }
+        break;
+
+      case BrtEndSXFormat:
+        in_format = false;
+        break;
+
+      case BrtBeginPRule:
+        if (in_format && !v.formats.empty() && d.size() >= 8) {
+          XlsPivotFormat& f = v.formats.back();
+          f.field = static_cast<int32_t>(xls_pv_u32(d, 0));
+          f.type = d[4];
+          f.flags = d[5];
+          f.axis = static_cast<uint8_t>(xls_pv_u16(d, 6) & 0x0F);
+          f.position = static_cast<uint8_t>((xls_pv_u16(d, 6) >> 4) & 0xFF);
+          in_format = false;
+        }
+        break;
+
+      case BrtTableStyleClient:
+        if (d.size() >= 6) {
+          v.style_flags = static_cast<uint16_t>(xls_pv_u16(d, 0));
+          size_t pos = 2;
+          std::string style = pivot_string(d, pos);
+          if (!style.empty()) v.style = style;
+        }
+        break;
 
       case BrtBeginSXPI: {
         XlsPivotPage p;

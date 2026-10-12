@@ -36,6 +36,9 @@ struct XlsPivotField {
   uint16_t axis = 0;
   std::string name;
   std::vector<XlsPivotItem> items;
+  bool default_subtotal = true, multi = false;
+  uint32_t numfmt = 0;
+  uint8_t sort = 0;
 };
 
 struct XlsPivotDataField {
@@ -45,6 +48,19 @@ struct XlsPivotDataField {
 
 struct XlsPivotPage {
   uint16_t field = 0, item = 0;
+};
+
+struct XlsPivotLine {
+  uint16_t reuse = 0;
+  uint8_t type = 0;
+  uint32_t data = 0;
+  std::vector<uint32_t> x;
+};
+
+struct XlsPivotFormat {
+  uint32_t dxf = 0;
+  int32_t field = -1;
+  uint8_t type = 0, flags = 0, axis = 0, position = 0;
 };
 
 struct XlsPivotView {
@@ -57,6 +73,12 @@ struct XlsPivotView {
   std::vector<std::vector<uint16_t>> axes;  // SXIVD: row fields, then column fields
   std::vector<XlsPivotPage> pages;
   std::vector<XlsPivotDataField> data;
+  std::vector<XlsPivotLine> lines[2];
+  bool row_grand = true, col_grand = true, outline = false;
+  unsigned version = 8;
+  std::vector<XlsPivotFormat> formats;
+  std::string style = "PivotStyleLight16";
+  uint16_t style_flags = 0x32;
 };
 
 inline uint32_t xls_pv_u16(const std::vector<uint8_t>& r, size_t at) {
@@ -158,15 +180,16 @@ struct XlsPivotCacheField {
   std::string name;
   std::string items;
   std::string attrs;
-  size_t expected = 0, count = 0, n_str = 0, n_num = 0, n_int = 0, n_blank = 0, n_other = 0;
+  size_t expected = 0, count = 0, n_str = 0, n_num = 0, n_int = 0, n_blank = 0, n_other = 0, n_date = 0;
   double min = 0, max = 0;
+  std::string min_date, max_date;
 };
 
 inline std::string xls_pivot_cache_write(const std::vector<XlsPivotCacheField>& fields, uint32_t n_records, const XlsPivotSource& src,
                                          uint32_t slicer_id = 0) {
   std::string out = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
   out += "<pivotCacheDefinition xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
-         "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId1\" "
+         "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId1\" refreshedBy=\"openxlsx2\" "
          "invalid=\"1\" refreshOnLoad=\"1\" refreshedDate=\"1\" createdVersion=\"8\" refreshedVersion=\"8\" "
          "minRefreshableVersion=\"3\" recordCount=\"" + std::to_string(n_records) + "\">";
   out += "<cacheSource type=\"worksheet\"><worksheetSource ";
@@ -181,6 +204,9 @@ inline std::string xls_pivot_cache_write(const std::vector<XlsPivotCacheField>& 
     out += "<cacheField name=\"" + escape_xml(f.name) + "\" numFmtId=\"0\"><sharedItems";
     if (!f.attrs.empty()) {
       out += f.attrs;
+    } else if (f.count > 0 && f.n_date + f.n_blank == f.count && f.n_date > 0) {
+      out += std::string(f.n_blank == 0 ? " containsSemiMixedTypes=\"0\"" : "") + " containsNonDate=\"0\" containsDate=\"1\" containsString=\"0\" minDate=\"" +
+             f.min_date + "\" maxDate=\"" + f.max_date + "\"";
     } else if (f.count > 0 && f.n_num == f.count) {
       out += " containsSemiMixedTypes=\"0\" containsString=\"0\" containsNumber=\"1\"";
       if (f.n_int == f.n_num) out += " containsInteger=\"1\"";
@@ -292,8 +318,12 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
          "applyPatternFormats=\"0\" applyAlignmentFormats=\"0\" applyWidthHeightFormats=\"1\"";
   if (!v.data_name.empty()) out += " dataCaption=\"" + escape_xml(v.data_name) + "\"";
   if (data_on_rows) out += " dataOnRows=\"1\"";
-  out += " updatedVersion=\"8\" minRefreshableVersion=\"3\" useAutoFormatting=\"1\" itemPrintTitles=\"1\" createdVersion=\"8\" indent=\"0\" "
-         "outlineData=\"1\" multipleFieldFilters=\"0\">";
+  if (!v.row_grand) out += " rowGrandTotals=\"0\"";
+  if (!v.col_grand) out += " colGrandTotals=\"0\"";
+  out += " updatedVersion=\"" + std::to_string(v.version) + "\" minRefreshableVersion=\"3\" useAutoFormatting=\"1\" itemPrintTitles=\"1\" "
+         "createdVersion=\"" + std::to_string(v.version) + "\" indent=\"0\"";
+  if (v.outline) out += " outline=\"1\"";
+  out += " outlineData=\"1\" multipleFieldFilters=\"0\">";
 
   out += "<location ref=\"" + ref + "\" firstHeaderRow=\"" + std::to_string(v.head_row >= v.row1 ? v.head_row - v.row1 : 0) +
          "\" firstDataRow=\"" + std::to_string(v.data_row >= v.row1 ? v.data_row - v.row1 : 0) +
@@ -311,6 +341,14 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
     else if (f.axis & 0x04) out += " axis=\"axisPage\"";
     if (f.axis & 0x08) out += " dataField=\"1\"";
     out += " showAll=\"0\"";
+    bool has_hidden = false;
+    for (size_t k = 0; k < f.items.size(); ++k)
+      if (f.items[k].flags & 0x01) has_hidden = true;
+    if ((has_hidden || f.multi) && (f.axis & 0x07) != 0) out += " multipleItemSelectionAllowed=\"1\"";
+    if (f.numfmt != 0) out += " numFmtId=\"" + std::to_string(f.numfmt) + "\"";
+    if (f.sort == 1) out += " sortType=\"ascending\"";
+    if (f.sort == 2) out += " sortType=\"descending\"";
+    if (!f.default_subtotal) out += " defaultSubtotal=\"0\"";
     if (f.items.empty() || (f.axis & 0x07) == 0) {
       out += "/>";
       continue;
@@ -321,6 +359,8 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
       out += "<item";
       if (!it.name.empty()) out += " n=\"" + escape_xml(it.name) + "\"";
       if (it.flags & 0x01) out += " h=\"1\"";
+      if (it.flags & 0x02) out += " sd=\"0\"";
+      if (it.flags & 0x08) out += " m=\"1\"";
       if (it.type == 0) {
         out += " x=\"" + std::to_string(it.cache) + "\"";
       } else if (it.type < 14) {
@@ -332,15 +372,71 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
   }
   out += "</pivotFields>";
 
-  for (size_t a = 0; a < v.axes.size() && a < 2; ++a) {
-    if (v.axes[a].empty()) continue;
-    const char* tag = a == 0 ? "rowFields" : "colFields";
-    out += std::string("<") + tag + " count=\"" + std::to_string(v.axes[a].size()) + "\">";
-    for (size_t k = 0; k < v.axes[a].size(); ++k) {
-      int x = v.axes[a][k] == 0xFFFE ? -2 : static_cast<int>(v.axes[a][k]);
-      out += "<field x=\"" + std::to_string(x) + "\"/>";
+  for (size_t a = 0; a < 2; ++a) {
+    bool has_fields = a < v.axes.size() && !v.axes[a].empty();
+    if (has_fields) {
+      const char* tag = a == 0 ? "rowFields" : "colFields";
+      out += std::string("<") + tag + " count=\"" + std::to_string(v.axes[a].size()) + "\">";
+      for (size_t k = 0; k < v.axes[a].size(); ++k) {
+        int x = v.axes[a][k] == 0xFFFE ? -2 : static_cast<int>(v.axes[a][k]);
+        out += "<field x=\"" + std::to_string(x) + "\"/>";
+      }
+      out += std::string("</") + tag + ">";
     }
-    out += std::string("</") + tag + ">";
+
+    // the lines of the table: one for each shown item of the first field and the grand
+    // total, for the data fields one for each data field. Excel writes them again when
+    // the table is refreshed.
+    std::string lines;
+    size_t n_lines = 0;
+    if (!v.lines[a].empty()) {
+      static const char* line_type[] = {"data", "default", "sum", "countA", "avg", "max", "min", "product",
+                                        "count", "stdDev", "stdDevP", "var", "varP", "grand", "blank"};
+      for (const XlsPivotLine& l : v.lines[a]) {
+        lines += "<i";
+        if (l.reuse > 0) lines += " r=\"" + std::to_string(l.reuse) + "\"";
+        if (l.type > 0 && l.type < 15) lines += std::string(" t=\"") + line_type[l.type] + "\"";
+        if (l.data > 0) lines += " i=\"" + std::to_string(l.data) + "\"";
+        lines += ">";
+        for (uint32_t x : l.x) {
+          if (x == 0x001000FEu) continue;
+          lines += "<x";
+          if (x > 0) lines += " v=\"" + std::to_string(x) + "\"";
+          lines += "/>";
+        }
+        lines += "</i>";
+      }
+      n_lines = v.lines[a].size();
+    } else if (!has_fields) {
+      if (a == 1) {
+        lines = "<i/>";
+        n_lines = 1;
+      }
+    } else if (v.axes[a][0] == 0xFFFE) {
+      for (size_t k = 0; k < v.data.size(); ++k) {
+        lines += "<i";
+        if (k > 0) lines += " i=\"" + std::to_string(k) + "\"";
+        lines += "><x";
+        if (k > 0) lines += " v=\"" + std::to_string(k) + "\"";
+        lines += "/></i>";
+        ++n_lines;
+      }
+    } else if (v.axes[a][0] < v.fields.size()) {
+      const XlsPivotField& f = v.fields[v.axes[a][0]];
+      for (size_t k = 0; k < f.items.size(); ++k) {
+        if (f.items[k].type != 0 || (f.items[k].flags & 0x01)) continue;
+        lines += "<i><x";
+        if (k > 0) lines += " v=\"" + std::to_string(k) + "\"";
+        lines += "/></i>";
+        ++n_lines;
+      }
+      lines += "<i t=\"grand\"><x/></i>";
+      ++n_lines;
+    }
+    if (n_lines > 0) {
+      const char* tag = a == 0 ? "rowItems" : "colItems";
+      out += std::string("<") + tag + " count=\"" + std::to_string(n_lines) + "\">" + lines + "</" + tag + ">";
+    }
   }
 
   if (n_page > 0) {
@@ -371,8 +467,36 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
     out += "</dataFields>";
   }
 
-  out += "<pivotTableStyleInfo name=\"PivotStyleLight16\" showRowHeaders=\"1\" showColHeaders=\"1\" showRowStripes=\"0\" "
-         "showColStripes=\"0\" showLastColumn=\"1\"/>";
+  if (!v.formats.empty()) {
+    static const char* const area_type[7] = {"none", "normal", "data", "all", "origin", "button", "topRight"};
+    out += "<formats count=\"" + std::to_string(v.formats.size()) + "\">";
+    for (const XlsPivotFormat& f : v.formats) {
+      out += "<format dxfId=\"" + std::to_string(f.dxf) + "\"><pivotArea";
+      if (f.field >= 0) out += " field=\"" + std::to_string(f.field) + "\"";
+      if (f.type < 7) out += std::string(" type=\"") + area_type[f.type] + "\"";
+      if (!(f.flags & 0x01)) out += " dataOnly=\"0\"";
+      if (f.flags & 0x02) out += " labelOnly=\"1\"";
+      if (f.flags & 0x04) out += " grandRow=\"1\"";
+      if (f.flags & 0x08) out += " grandCol=\"1\"";
+      if (f.flags & 0x10) out += " cacheIndex=\"1\"";
+      if (!(f.flags & 0x20)) out += " outline=\"0\"";
+      if (f.axis == 1) out += " axis=\"axisRow\"";
+      else if (f.axis == 2) out += " axis=\"axisCol\"";
+      else if (f.axis == 4) out += " axis=\"axisPage\"";
+      else if (f.axis == 8) out += " axis=\"axisData\"";
+      out += " fieldPosition=\"" + std::to_string(f.position) + "\"";
+      out += "/></format>";
+    }
+    out += "</formats>";
+  }
+
+  out += "<pivotTableStyleInfo name=\"" + escape_xml(v.style) + "\"";
+  if (v.style_flags & 0x01) out += " showFirstColumn=\"1\"";
+  out += std::string(" showRowHeaders=\"") + ((v.style_flags & 0x10) ? "1" : "0") + "\"";
+  out += std::string(" showColHeaders=\"") + ((v.style_flags & 0x20) ? "1" : "0") + "\"";
+  out += std::string(" showRowStripes=\"") + ((v.style_flags & 0x04) ? "1" : "0") + "\"";
+  out += std::string(" showColStripes=\"") + ((v.style_flags & 0x08) ? "1" : "0") + "\"";
+  out += std::string(" showLastColumn=\"") + ((v.style_flags & 0x02) ? "1" : "0") + "\"/>";
   out += "</pivotTableDefinition>\n";
   return out;
 }
