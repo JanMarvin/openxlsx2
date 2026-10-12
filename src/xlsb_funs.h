@@ -4,6 +4,10 @@
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
+#include <iomanip>
+#include <map>
+#include <sstream>
+#include <vector>
 #include <string>
 #include <type_traits>
 #include "xlsb_flags.h"
@@ -2388,6 +2392,159 @@ inline std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, 
   std::string inflix = parseRPN(fml_out);
 
   return inflix;
+}
+
+// XFPropColor and BrtColor: flags with the type of the color (7 bits), index, tint and RGBA
+inline std::string xlsb_color_attr(const std::vector<uint8_t>& d, size_t at) {
+  if (at + 8 > d.size()) return std::string();
+  unsigned type = (d[at] >> 1) & 0x7Fu;
+  unsigned icv = d[at + 1];
+  int tint = static_cast<int16_t>(static_cast<uint16_t>(d[at + 2] | (d[at + 3] << 8)));
+
+  std::string x;
+  if (type == 0) {
+    return " auto=\"1\"";
+  } else if (type == 1) {
+    return " indexed=\"" + std::to_string(icv) + "\"";
+  } else if (type == 2) {
+    char hex[16];
+    std::snprintf(hex, sizeof(hex), "%02X%02X%02X%02X", d[at + 7], d[at + 4], d[at + 5], d[at + 6]);
+    x = std::string(" rgb=\"") + hex + "\"";
+  } else if (type == 3) {
+    x = " theme=\"" + std::to_string(icv) + "\"";
+  } else {
+    return std::string();
+  }
+  if (tint != 0) {
+    std::stringstream stream;
+    stream << std::setprecision(16) << (static_cast<double>(tint) / 32767.0);
+    x += " tint=\"" + stream.str() + "\"";
+  }
+  return x;
+}
+
+// BrtDXF: flags, reserved and the number of XFProps, then the XFProps (type, size and data)
+inline std::string xlsb_dxf(const std::vector<uint8_t>& d) {
+  std::map<unsigned, size_t> props;
+  if (d.size() >= 6) {
+    unsigned count = d[4] | (d[5] << 8);
+    size_t pos = 6;
+    for (unsigned i = 0; i < count && pos + 4 <= d.size(); ++i) {
+      unsigned type = d[pos] | (d[pos + 1] << 8);
+      size_t cb = static_cast<size_t>(d[pos + 2] | (d[pos + 3] << 8));
+      if (cb < 4 || pos + cb > d.size()) break;
+      props[type] = pos + 4;
+      pos += cb;
+    }
+  }
+
+  auto u8 = [&](unsigned type, unsigned &val) {
+    auto it = props.find(type);
+    if (it == props.end() || it->second >= d.size()) return false;
+    val = d[it->second];
+    return true;
+  };
+  auto u16 = [&](unsigned type, unsigned &val) {
+    auto it = props.find(type);
+    if (it == props.end() || it->second + 2 > d.size()) return false;
+    val = d[it->second] | (d[it->second + 1] << 8);
+    return true;
+  };
+
+  unsigned v = 0;
+  std::string font, numfmt, fill, border;
+
+  if (u16(0x19, v)) font += v >= 600 ? "<b/>" : "<b val=\"0\"/>";
+  if (u8(0x1C, v)) font += v ? "<i/>" : "<i val=\"0\"/>";
+  if (u8(0x1D, v)) font += v ? "<strike/>" : "<strike val=\"0\"/>";
+  if (u8(0x1E, v) && v) font += "<outline/>";
+  if (u8(0x1F, v) && v) font += "<shadow/>";
+  if (u8(0x20, v) && v) font += "<condense/>";
+  if (u8(0x21, v) && v) font += "<extend/>";
+  if (u16(0x1A, v)) {
+    if (v == 0) font += "<u val=\"none\"/>";
+    else if (v == 1) font += "<u/>";
+    else if (v == 2) font += "<u val=\"double\"/>";
+    else if (v == 0x21) font += "<u val=\"singleAccounting\"/>";
+    else if (v == 0x22) font += "<u val=\"doubleAccounting\"/>";
+  }
+  if (u16(0x1B, v)) {
+    if (v == 0) font += "<vertAlign val=\"baseline\"/>";
+    else if (v == 1) font += "<vertAlign val=\"superscript\"/>";
+    else if (v == 2) font += "<vertAlign val=\"subscript\"/>";
+  }
+  if (props.count(0x24) && props[0x24] + 4 <= d.size()) {
+    size_t at = props[0x24];
+    unsigned twips = d[at] | (d[at + 1] << 8) | (d[at + 2] << 16);
+    font += "<sz val=\"" + std::to_string(twips / 20) + (twips % 20 ? ".5" : "") + "\"/>";
+  }
+  if (props.count(0x05)) {
+    std::string attr = xlsb_color_attr(d, props[0x05]);
+    if (!attr.empty()) font += "<color" + attr + "/>";
+  }
+  if (props.count(0x18) && props[0x18] + 2 <= d.size()) {
+    size_t at = props[0x18];
+    size_t cch = static_cast<size_t>(d[at] | (d[at + 1] << 8));
+    std::u16string name;
+    for (size_t i = 0; i < cch && at + 4 + 2 * i <= d.size(); ++i)
+      name.push_back(static_cast<char16_t>(d[at + 2 + 2 * i] | (d[at + 3 + 2 * i] << 8)));
+    if (!name.empty()) font += "<name val=\"" + escape_xml(to_utf8(name)) + "\"/>";
+  }
+
+  if (props.count(0x26) && props[0x26] + 2 <= d.size()) {
+    size_t at = props[0x26];
+    size_t cch = static_cast<size_t>(d[at] | (d[at + 1] << 8));
+    std::u16string code;
+    for (size_t i = 0; i < cch && at + 4 + 2 * i <= d.size(); ++i)
+      code.push_back(static_cast<char16_t>(d[at + 2 + 2 * i] | (d[at + 3 + 2 * i] << 8)));
+    unsigned ifmt = 0;
+    if (!u16(0x29, ifmt)) ifmt = 164;
+    numfmt = "<numFmt numFmtId=\"" + std::to_string(ifmt) + "\" formatCode=\"" + escape_xml(to_utf8(code)) + "\"/>";
+  }
+
+  static const char* const patterns[19] = {"none", "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+                                           "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+                                           "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+                                           "lightTrellis", "gray125", "gray0625"};
+  std::string pattern, colors;
+  if (u8(0x00, v) && v < 19) pattern = std::string(" patternType=\"") + patterns[v] + "\"";
+  if (props.count(0x01)) {
+    std::string attr = xlsb_color_attr(d, props[0x01]);
+    if (!attr.empty()) colors += "<fgColor" + attr + "/>";
+  }
+  if (props.count(0x02)) {
+    std::string attr = xlsb_color_attr(d, props[0x02]);
+    if (!attr.empty()) colors += "<bgColor" + attr + "/>";
+  }
+  if (!pattern.empty() || !colors.empty()) fill = "<fill><patternFill" + pattern + ">" + colors + "</patternFill></fill>";
+
+  static const char* const styles[14] = {"", "thin", "medium", "dashed", "dotted", "thick", "double", "hair",
+                                         "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot",
+                                         "slantDashDot"};
+  static const unsigned side_type[7] = {0x08, 0x09, 0x06, 0x07, 0x0A, 0x0B, 0x0C};
+  static const char* const side_name[7] = {"left", "right", "top", "bottom", "diagonal", "vertical", "horizontal"};
+  for (size_t k = 0; k < 7; ++k) {
+    auto it = props.find(side_type[k]);
+    if (it == props.end() || it->second + 10 > d.size()) continue;
+    unsigned style = d[it->second + 8] | (d[it->second + 9] << 8);
+    border += std::string("<") + side_name[k];
+    if (style == 0 || style >= 14) {
+      border += "/>";
+    } else {
+      border += std::string(" style=\"") + styles[style] + "\"";
+      std::string attr = xlsb_color_attr(d, it->second);
+      border += attr.empty() ? "/>" : "><color" + attr + "/></" + side_name[k] + ">";
+    }
+  }
+  std::string border_attr;
+  if (u8(0x0D, v) && v) border_attr += " diagonalUp=\"1\"";
+  if (u8(0x0E, v) && v) border_attr += " diagonalDown=\"1\"";
+  if (!border.empty()) border = "<border" + border_attr + ">" + border + "</border>";
+
+  std::string dxf = "<dxf>";
+  if (!font.empty()) dxf += "<font>" + font + "</font>";
+  dxf += numfmt + fill + border + "</dxf>";
+  return dxf;
 }
 
 #endif

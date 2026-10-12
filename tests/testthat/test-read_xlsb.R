@@ -210,7 +210,7 @@ test_that("xlsb formula line breaks are handled", {
   warns <- capture_warnings(wb <- wb_load(fl))
 
   unhandled_warns <- grep("Worksheet contains unhandled conditional formatting", warns, value = TRUE)
-  expect_length(unhandled_warns, 12)
+  expect_length(unhandled_warns, 0)
   expect_equal(length(wb$get_sheet_names()), 3L)
 
   exp <- c("Align: left", "Align: center", "Align: right")
@@ -242,6 +242,8 @@ test_that("pivot tables are imported from xlsb", {
   expect_match(wb$pivotTables[[1]], "<dataField name=\"Sum of Sepal Length\" fld=\"0\"", fixed = TRUE)
   expect_match(wb$pivotTables[[1]], "<location ref=\"G2:K6\"", fixed = TRUE)
   expect_match(wb$pivotTables[[2]], "subtotal=\"average\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[1]], "outline=\"1\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[1]], "<rowItems count=", fixed = TRUE)
   expect_match(wb$pivotDefinitions[[1]], "<worksheetSource name=\"Table2\"/>", fixed = TRUE)
   expect_match(wb$pivotDefinitions[[1]], "<s v=\"virginica\"/><s v=\"setosa\"/><s v=\"versicolor\"/>", fixed = TRUE)
 
@@ -257,4 +259,25 @@ test_that("pivot tables are imported from xlsb", {
   wb2 <- wb_load(tmp)
   expect_length(wb2$pivotTables, 2L)
   expect_length(wb2$slicers, 1L)
+})
+
+test_that("conditional formatting is imported from xlsb", {
+
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_online_checks()
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_equal(wb$worksheets[[2]]$conditionalFormatting$sqref, "I2:N5")
+  expect_match(
+    wb$worksheets[[2]]$conditionalFormatting$cf,
+    "<cfRule type=\"cellIs\" operator=\"greaterThan\" dxfId=\"0\" priority=\"1\"><formula>0.5</formula></cfRule>",
+    fixed = TRUE
+  )
+  expect_equal(
+    wb$styles_mgr$styles$dxfs[1],
+    "<dxf><font><color rgb=\"FF9C0006\"/></font><fill><patternFill><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
+  )
+
+  wb <- wb_load(testfile_path("test_coverage.xlsb"))
+  expect_match(wb$worksheets[[1]]$conditionalFormatting$cf[1], "<iconSet iconSet=\"5Arrows\"><cfvo type=\"num\" val=\"-67\"/>", fixed = TRUE)
 })

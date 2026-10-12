@@ -540,20 +540,16 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
           uint32_t cdxfs = 0;
           cdxfs = readbin(cdxfs, bin, swapit);
 
-          out << "<dxfs>" << std::endl;
+          out << "<dxfs count=\"" << cdxfs << "\">" << std::endl;
           break;
         }
 
-          // This is a todo. the xfPropDataBlob is almost the entire styles part again
-          // case BrtDXF: {
-          //   uint16_t flags = 0, reserved = 0, cprops = 0;
-          //   flags = readbin(flags, bin, swapit);
-          //   reserved = readbin(reserved, bin, swapit);
-          //   cprops = readbin(cprops, bin, swapit);
-          //
-          //   out << "<dxfs>" << std::endl;
-          //  break;
-          // }
+        case BrtDXF: {
+          std::vector<uint8_t> dxf(static_cast<size_t>(size));
+          bin.read(reinterpret_cast<char*>(dxf.data()), size);
+          out << xlsb_dxf(dxf) << std::endl;
+          break;
+        }
 
         case BrtEndDXFs: {
           out << "</dxfs>" << std::endl;
@@ -2030,6 +2026,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
     bool in_sheet_data = false;
     bool end_of_worksheet = false;
     bool extlst_open = false, ext_open = false;
+    bool cf_iconset = false;
+    int32_t cf_row = 0, cf_col = 0;
     auto open_ext = [&](const char *uri) {
       if (!extlst_open) out << "<extLst>";
       extlst_open = ext_open = true;
@@ -3982,7 +3980,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtBeginConditionalFormattings:
         case BrtBeginConditionalFormatting14: {
-          if (debug) Rcpp::Rcout << "BrtBegin/EndDCon" << std::endl;
+          if (debug) Rcpp::Rcout << "BrtBeginConditionalFormattings" << std::endl;
 
           Rcpp::warning("Worksheet contains unhandled conditional formatting.");
           bin.seekg(size, bin.cur);
@@ -3990,24 +3988,24 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         }
 
         case BrtBeginConditionalFormatting: {
-
           if (debug) Rcpp::Rcout << "<conditionalFormatting>" << std::endl;
 
           uint32_t ccf = 0, fPivot = 0;
-          std::vector<int32_t> sqrfx;
-
-          ccf = readbin(ccf, bin, swapit);  // not needed?
+          ccf = readbin(ccf, bin, swapit);
           fPivot = readbin(fPivot, bin, swapit);
 
-          sqrfx = UncheckedSqRfX(bin, swapit);
-          std::string lref = int_to_col(sqrfx[3] + 1) + std::to_string(sqrfx[1] + 1);
-          std::string rref = int_to_col(sqrfx[4] + 1) + std::to_string(sqrfx[2] + 1);
-
+          std::vector<int32_t> sqrfx = UncheckedSqRfX(bin, swapit);
           std::string sqref;
-          if (lref.compare(rref) == 0) {
-            sqref = lref;
-          } else {
-            sqref =  lref + ":" + rref;
+          for (int32_t k = 0; k < sqrfx[0]; ++k) {
+            size_t at = 1 + 4 * static_cast<size_t>(k);
+            std::string lref = int_to_col(sqrfx[at + 2] + 1) + std::to_string(sqrfx[at] + 1);
+            std::string rref = int_to_col(sqrfx[at + 3] + 1) + std::to_string(sqrfx[at + 1] + 1);
+            if (k > 0) sqref += " ";
+            sqref += lref == rref ? lref : lref + ":" + rref;
+          }
+          if (sqrfx[0] > 0) {
+            cf_row = sqrfx[1];
+            cf_col = sqrfx[3];
           }
 
           out << "<conditionalFormatting";
@@ -4020,6 +4018,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtBeginCFRule: {
           if (debug) Rcpp::Rcout << "<cfRule>" << std::endl;
+
+          std::streampos rec_end = bin.tellg() + static_cast<std::streamoff>(size);
 
           uint16_t flags = 0;
           uint32_t iType = 0, iTemplate = 0, dxfId = 0, iPri = 0, iParam = 0, reserved1 = 0, reserved2 = 0;
@@ -4042,43 +4042,176 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           int32_t sharedFormula = false;
           std::string rgce1, rgce2, rgce3;
           if (cbFmla1 != 0x00000000) {
-            rgce1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+            rgce1 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
           }
           if (cbFmla2 != 0x00000000) {
-            rgce2 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+            rgce2 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
           }
           if (cbFmla3 != 0x00000000) {
-            rgce3 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+            rgce3 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
           }
 
-          BrtBeginCFRuleFlags view_flags(flags);
+          static const char* const operators[9] = {"", "between", "notBetween", "equal", "notEqual", "greaterThan",
+                                                   "lessThan", "greaterThanOrEqual", "lessThanOrEqual"};
+          static const char* const periods[10] = {"today", "tomorrow", "yesterday", "last7Days", "lastMonth",
+                                                  "nextMonth", "thisWeek", "nextWeek", "lastWeek", "thisMonth"};
+          static const char* const text_types[4] = {"containsText", "notContainsText", "beginsWith", "endsWith"};
+          static const char* const text_operators[4] = {"containsText", "notContains", "beginsWith", "endsWith"};
 
+          bool has_dxf = false;
           std::stringstream cfRule;
           cfRule << "<cfRule";
-          // the type is defined by iType and iTemplate eg:
-          // CF_TYPE_EXPRIS & CF_TEMPLATE_CONTAINSNOBLANKS
-          // (but then again, not sure why iType is needed)
-          cfRule << " type=\"" << iType << "/" << iTemplate << "\"";
-          cfRule << " dxfId=\"" << dxfId << "\"";
+
+          if (iType == 1) {
+            cfRule << " type=\"cellIs\"";
+            if (iParam >= 1 && iParam <= 8) cfRule << " operator=\"" << operators[iParam] << "\"";
+            has_dxf = true;
+          } else if (iType == 2) {
+            has_dxf = true;
+            if (iTemplate == 2) cfRule << " type=\"uniqueValues\"";
+            else if (iTemplate == 3) {
+              uint32_t k = iParam < 4 ? iParam : 0;
+              cfRule << " type=\"" << text_types[k] << "\" operator=\"" << text_operators[k] << "\" text=\"" << escape_xml(strParam) << "\"";
+            }
+            else if (iTemplate == 4) cfRule << " type=\"containsBlanks\"";
+            else if (iTemplate == 5) cfRule << " type=\"notContainsBlanks\"";
+            else if (iTemplate == 6) cfRule << " type=\"containsErrors\"";
+            else if (iTemplate == 7) cfRule << " type=\"notContainsErrors\"";
+            else if (iTemplate >= 8 && iTemplate <= 17) cfRule << " type=\"timePeriod\" timePeriod=\"" << periods[iTemplate - 8] << "\"";
+            else if (iTemplate >= 18 && iTemplate <= 19) {
+              cfRule << " type=\"aboveAverage\"";
+              if (iTemplate == 19) cfRule << " aboveAverage=\"0\"";
+              if (iParam > 0) cfRule << " stdDev=\"" << iParam << "\"";
+            }
+            else if (iTemplate == 20) cfRule << " type=\"duplicateValues\"";
+            else if (iTemplate >= 21 && iTemplate <= 22) {
+              cfRule << " type=\"aboveAverage\"";
+              if (iTemplate == 22) cfRule << " aboveAverage=\"0\"";
+              cfRule << " equalAverage=\"1\"";
+              if (iParam > 0) cfRule << " stdDev=\"" << iParam << "\"";
+            }
+            else cfRule << " type=\"expression\"";
+          } else if (iType == 3) {
+            cfRule << " type=\"colorScale\"";
+          } else if (iType == 4) {
+            cfRule << " type=\"dataBar\"";
+          } else if (iType == 5) {
+            cfRule << " type=\"top10\" rank=\"" << iParam << "\"";
+            if (flags & 0x10) cfRule << " percent=\"1\"";
+            if (flags & 0x08) cfRule << " bottom=\"1\"";
+            has_dxf = true;
+          } else if (iType == 6) {
+            cfRule << " type=\"iconSet\"";
+          }
+
+          if (has_dxf && dxfId != 0xFFFFFFFFu) cfRule << " dxfId=\"" << dxfId << "\"";
           cfRule << " priority=\"" << iPri << "\"";
-          cfRule << " operator=\"" << iParam << "\"";
-          cfRule << " stopIfTrue=\"" << view_flags.fStopTrue() << "\"";
-          cfRule << " percent=\"" << view_flags.fPercent() << "\"";
-          cfRule << " aboveAverage=\"" << view_flags.fAbove() << "\"";
-          cfRule << " bottom=\"" << view_flags.fBottom() << "\"";
-          // rank="" ???
-          // stdDev="" ??
-          // timePeriod="" ??
-          cfRule << " text=\"" << strParam << "\"";
-          cfRule << " >" << std::endl;
+          if (flags & 0x02) cfRule << " stopIfTrue=\"1\"";
+          cfRule << ">";
+          if (!rgce1.empty()) cfRule << "<formula>" << rgce1 << "</formula>";
+          if (!rgce2.empty()) cfRule << "<formula>" << rgce2 << "</formula>";
+          if (!rgce3.empty()) cfRule << "<formula>" << rgce3 << "</formula>";
 
-          if (debug) {  // #nocov start
-            Rcpp::Rcout << cfRule.str() << std::endl;
-            Rcpp::Rcout << rgce1 << std::endl;
-            Rcpp::Rcout << rgce2 << std::endl;
-            Rcpp::Rcout << rgce3 << std::endl;
-          }  // #nocov end
+          if (debug) Rcpp::Rcout << cfRule.str() << std::endl;
+          out << cfRule.str() << std::endl;
 
+          bin.seekg(rec_end);
+          break;
+        }
+
+        case BrtBeginColorScale: {
+          out << "<colorScale>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndColorScale: {
+          out << "</colorScale>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginDatabar: {
+          uint8_t bLenMin = 0, bLenMax = 0, fShowValue = 0;
+          bLenMin = readbin(bLenMin, bin, swapit);
+          bLenMax = readbin(bLenMax, bin, swapit);
+          fShowValue = readbin(fShowValue, bin, swapit);
+          out << "<dataBar minLength=\"" << static_cast<unsigned>(bLenMin) << "\" maxLength=\"" << static_cast<unsigned>(bLenMax) << "\"";
+          if (!fShowValue) out << " showValue=\"0\"";
+          out << ">" << std::endl;
+          bin.seekg(size - 3, bin.cur);
+          break;
+        }
+
+        case BrtEndDatabar: {
+          out << "</dataBar>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginIconSet: {
+          static const char* const icons[17] = {"3Arrows", "3ArrowsGray", "3Flags", "3TrafficLights1", "3Signs",
+                                                "3TrafficLights2", "3Symbols", "3Symbols2", "4Arrows", "4ArrowsGray",
+                                                "4RedToBlack", "4Rating", "4TrafficLights", "5Arrows", "5ArrowsGray",
+                                                "5Rating", "5Quarters"};
+          uint32_t iSet = 0;
+          uint16_t icon_flags = 0;
+          iSet = readbin(iSet, bin, swapit);
+          icon_flags = readbin(icon_flags, bin, swapit);
+          out << "<iconSet iconSet=\"" << icons[iSet < 17 ? iSet : 0] << "\"";
+          if (icon_flags & 0x02) out << " showValue=\"0\"";
+          if (!(icon_flags & 0x04)) out << " reverse=\"1\"";
+          out << ">" << std::endl;
+          cf_iconset = true;
+          bin.seekg(size - 6, bin.cur);
+          break;
+        }
+
+        case BrtEndIconSet: {
+          out << "</iconSet>" << std::endl;
+          cf_iconset = false;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtCFVO: {
+          std::streampos rec_end = bin.tellg() + static_cast<std::streamoff>(size);
+
+          uint32_t iType = 0, fSaveGTE = 0, fGTE = 0, cbFmla = 0;
+          double numParam = 0;
+          iType = readbin(iType, bin, swapit);
+          numParam = readbin(numParam, bin, swapit);
+          fSaveGTE = readbin(fSaveGTE, bin, swapit);
+          fGTE = readbin(fGTE, bin, swapit);
+          cbFmla = readbin(cbFmla, bin, swapit);
+
+          std::string fml;
+          if (cbFmla != 0) {
+            int32_t sharedFormula = false;
+            fml = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
+          }
+
+          static const char* const names[8] = {"num", "num", "min", "max", "percent", "percentile", "num", "formula"};
+          out << "<cfvo type=\"" << names[iType < 8 ? iType : 0] << "\"";
+          if (!fml.empty()) {
+            out << " val=\"" << fml << "\"";
+          } else if (iType != 2 && iType != 3) {
+            std::stringstream num;
+            num << std::setprecision(15) << numParam;
+            out << " val=\"" << num.str() << "\"";
+          }
+          if (cf_iconset && !fGTE) out << " gte=\"0\"";
+          out << "/>" << std::endl;
+
+          bin.seekg(rec_end);
+          break;
+        }
+
+        case BrtColor: {
+          std::vector<uint8_t> color(static_cast<size_t>(size));
+          bin.read(reinterpret_cast<char*>(color.data()), size);
+          std::string attr = xlsb_color_attr(color, 0);
+          out << "<color" << (attr.empty() ? " auto=\"1\"" : attr) << "/>" << std::endl;
           break;
         }
 
@@ -4100,19 +4233,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
-        case BrtBeginIconSet:
-        case BrtEndIconSet:
-        case BrtCFVO: {
-          if (debug) Rcpp::Rcout << "IconSet in worksheet (?)" << std::endl;
-          Rcpp::warning("Worksheet contains unhandled conditional formatting.");
-          bin.seekg(size, bin.cur);
-          break;
-        }
-
         case BrtEndCFRule: {
           if (debug) Rcpp::Rcout << "</cfRule>" << std::endl;
-          // Rcpp::Rcout << "</cfRule>" << std::endl;
-
+          out << "</cfRule>" << std::endl;
           break;
         }
 
