@@ -1,4 +1,5 @@
 test_that("reading xls values works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_values.xls")
   wb <- wb_load(fl)
 
@@ -18,6 +19,7 @@ test_that("reading xls values works", {
 })
 
 test_that("reading xls styles works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_styles.xls")
   wb <- wb_load(fl)
 
@@ -38,6 +40,7 @@ test_that("reading xls styles works", {
 })
 
 test_that("reading xls formulas works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_formulas.xls")
   wb <- wb_load(fl)
 
@@ -62,6 +65,7 @@ test_that("reading xls formulas works", {
 })
 
 test_that("reading an xls saved by Excel works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   wb <- wb_load(fl)
 
@@ -89,6 +93,7 @@ test_that("reading an xls saved by Excel works", {
 })
 
 test_that("reading xls hyperlinks, comments and validation works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   wb <- wb_load(fl)
 
@@ -114,6 +119,7 @@ test_that("reading xls hyperlinks, comments and validation works", {
 })
 
 test_that("reading an xls table works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   wb <- wb_load(fl)
 
@@ -127,6 +133,7 @@ test_that("reading an xls table works", {
 })
 
 test_that("reading xls conditional formatting works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   wb <- wb_load(fl)
 
@@ -143,6 +150,7 @@ test_that("reading xls conditional formatting works", {
 })
 
 test_that("reading xls rich text works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   wb <- wb_load(fl)
 
@@ -156,6 +164,7 @@ test_that("reading xls rich text works", {
 })
 
 test_that("reading xls page margins works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   wb <- wb_load(fl)
 
@@ -165,6 +174,7 @@ test_that("reading xls page margins works", {
 })
 
 test_that("reading xls color scales, data bars and icon sets works", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   wb <- wb_load(fl)
 
@@ -177,6 +187,7 @@ test_that("reading xls color scales, data bars and icon sets works", {
 })
 
 test_that("pictures in xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   skip_if(length(wb$media) == 0L, "xls_source.xls has no pictures yet")
@@ -189,6 +200,7 @@ test_that("pictures in xls are imported", {
 })
 
 test_that("loadExample.xls matches loadExample.xlsx", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   a <- wb_load(testfile_path("loadExample.xlsx"))
   b <- wb_load(testfile_path("loadExample.xls"))
@@ -210,6 +222,7 @@ test_that("loadExample.xls matches loadExample.xlsx", {
 })
 
 test_that("charts in xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("loadExample.xls"))
   charts <- unlist(wb$charts)
@@ -231,6 +244,7 @@ test_that("charts in xls are imported", {
 })
 
 test_that("chart sheets in xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   skip_if(!any(wb$is_chartsheet), "xls_source.xls has no chart sheet yet")
@@ -238,6 +252,7 @@ test_that("chart sheets in xls are imported", {
 })
 
 test_that("document properties and workbook views of an xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("loadExample.xls"))
   expect_match(wb$core, "<dc:creator>Alex</dc:creator>", fixed = TRUE)
@@ -246,12 +261,14 @@ test_that("document properties and workbook views of an xls are imported", {
 })
 
 test_that("sheet format and outline settings of an xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   expect_match(wb$worksheets[[2]]$sheetFormatPr, "outlineLevelRow=\"1\"", fixed = TRUE)
 })
 
 test_that("named cell styles of an xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   cs <- wb$styles_mgr$styles$cellStyles
@@ -261,12 +278,14 @@ test_that("named cell styles of an xls are imported", {
 })
 
 test_that("sheet dimensions of an xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   expect_equal(wb$worksheets[[1]]$dimension, "<dimension ref=\"A1:H7\"/>")
 })
 
 test_that("ignored errors of an xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   ie <- unlist(lapply(wb$worksheets, function(x) x$ignoredErrors))
@@ -275,12 +294,14 @@ test_that("ignored errors of an xls are imported", {
 })
 
 test_that("a single-cell sheet of an xls has the dimension A1", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   expect_equal(wb$worksheets[[8]]$dimension, "<dimension ref=\"A1\"/>")
 })
 
 test_that("sort state of an xls auto filter is imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   expect_equal(
@@ -290,6 +311,7 @@ test_that("sort state of an xls auto filter is imported", {
 })
 
 test_that("charts of an xls get cached values and the default data label block", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("loadExample.xls"))
   chart <- paste(unlist(wb$charts), collapse = "")
@@ -298,6 +320,7 @@ test_that("charts of an xls get cached values and the default data label block",
 })
 
 test_that("legends, data bars and filter names of an xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("loadExample.xls"))
   expect_match(paste(unlist(wb$charts), collapse = ""), "<c:legendPos val=\"r\"/><c:overlay", fixed = TRUE)
@@ -309,6 +332,7 @@ test_that("legends, data bars and filter names of an xls are imported", {
 })
 
 test_that("data bars of an xls get the extension Excel uses for them", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
   wb <- wb_load(testfile_path("xls_source.xls"))
   ws <- wb$worksheets[[5]]
@@ -317,6 +341,7 @@ test_that("data bars of an xls get the extension Excel uses for them", {
 })
 
 test_that("data_only skips everything but the cells", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   fl <- testfile_path("xls_source.xls")
   skip_if(!file.exists(fl))
 

@@ -54,6 +54,7 @@
 #' settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D
 #' and combination charts) and chart sheets are imported. Pivot tables and
 #' files from Excel 95 or earlier are not supported, nor are encrypted files.
+#' Support is limited to little endian platforms.
 #'
 #' The loaded workbook provides a finalizer that will be invoked after the first
 #' `gc()` call and will cause removal of a loaded temporary files. These files
@@ -111,6 +112,9 @@ wb_load <- function(
   ole2_magic <- as.raw(c(0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1))
 
   if (identical(readBin(file, "raw", 8L), ole2_magic)) {
+    if (.Platform$endian == "big")
+      stop("XLS is not supported on big endian.", call. = FALSE)
+
     xmlFiles <- xls_unpack(file, xmlDir, data_only, debug)
   } else {
     ## Unzip files to temp directory
