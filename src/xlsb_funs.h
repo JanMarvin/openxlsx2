@@ -639,7 +639,7 @@ inline int32_t UncheckedRw(std::istream& sas, bool swapit) {
 inline uint16_t ColShort(std::istream& sas, bool swapit) {
   uint16_t col = 0;
   col = readbin(col, sas, swapit);
-  if (col >= 0 && col <= 16383)
+  if (col <= 16383)
     return col;
   else
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
@@ -917,10 +917,6 @@ inline std::vector<int32_t> brtColor(std::istream& sas, bool swapit) {
   bGreen = readbin(bGreen, sas, swapit);
   bBlue  = readbin(bBlue, sas, swapit);
   bAlpha = readbin(bAlpha, sas, swapit);
-
-  if (bRed > 255 || bGreen > 255 || bBlue > 255 || bAlpha > 255) {
-    Rcpp::stop("invalid color");
-  }
 
   std::vector<int32_t> out(7);
   out[0] = xColorType;
