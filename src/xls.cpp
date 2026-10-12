@@ -373,6 +373,7 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
 
         // the tokens, then what belongs to them (constants of arrays)
         raw.rgce.cce = cce;
+        if (next < bin.tellg()) Rcpp::stop("xls: record overrun");
         raw.rgce.data.resize(static_cast<size_t>(next - bin.tellg()));
         if (!raw.rgce.data.empty()) bin.read(reinterpret_cast<char*>(&raw.rgce.data[0]), static_cast<std::streamsize>(raw.rgce.data.size()));
         raw_names.push_back(raw);
@@ -2238,6 +2239,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           pending.col = col;
           pending.xf = ixfe;
           pending_rgce.cce = cce;
+          if (next < bin.tellg()) Rcpp::stop("xls: record overrun");
           pending_rgce.data.assign(static_cast<size_t>(next - bin.tellg()), 0);
           if (!pending_rgce.data.empty()) bin.read(reinterpret_cast<char*>(&pending_rgce.data[0]), static_cast<std::streamsize>(pending_rgce.data.size()));
 
@@ -2283,6 +2285,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           cce = readbin(cce, bin, swapit);
           XlsRgce rgce;
           rgce.cce = cce;
+          if (next < bin.tellg()) Rcpp::stop("xls: record overrun");
           rgce.data.assign(static_cast<size_t>(next - bin.tellg()), 0);
           if (!rgce.data.empty()) bin.read(reinterpret_cast<char*>(&rgce.data[0]), static_cast<std::streamsize>(rgce.data.size()));
           shared_formulas[has_pending ? std::make_pair(pending.row, pending.col)
@@ -2304,6 +2307,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           cce = readbin(cce, bin, swapit);
           XlsRgce rgce;
           rgce.cce = cce;
+          if (next < bin.tellg()) Rcpp::stop("xls: record overrun");
           rgce.data.assign(static_cast<size_t>(next - bin.tellg()), 0);
           if (!rgce.data.empty()) bin.read(reinterpret_cast<char*>(&rgce.data[0]), static_cast<std::streamsize>(rgce.data.size()));
           std::string ref = int_to_col(col1 + 1) + std::to_string(row1 + 1);

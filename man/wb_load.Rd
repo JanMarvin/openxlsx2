@@ -72,8 +72,9 @@ Legacy binary files (\code{xls}, Excel 97 to 2003) are read the same way: the
 file is parsed into pseudo-openxml files. Values, formulas, styles, merged
 cells, hyperlinks, comments, data validation, tables, simple conditional
 formatting, color scales, data bars, icon sets, external references and page
-settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D and combination charts) and chart sheets are imported. Pivot tables and files from Excel 95
-or earlier are not supported, nor are encrypted files.
+settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D
+and combination charts) and chart sheets are imported. Pivot tables and
+files from Excel 95 or earlier are not supported, nor are encrypted files.
 
 The loaded workbook provides a finalizer that will be invoked after the first
 \code{gc()} call and will cause removal of a loaded temporary files. These files

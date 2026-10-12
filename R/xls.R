@@ -55,10 +55,15 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
       quiet <- file(nullfile(), "w")
       sink(quiet, type = "message")
       con <- gzcon(rawConnection(gz))
-      data <- tryCatch(readBin(con, "raw", usize[i]), error = function(e) NULL)
-      close(con)
-      sink(type = "message")
-      close(quiet)
+      data <- tryCatch(
+        readBin(con, "raw", usize[i]),
+        error = function(e) NULL,
+        finally = {
+          sink(type = "message")
+          close(quiet)
+          close(con)
+        }
+      )
       if (length(data) != usize[i]) data <- NULL
     }
     if (is.null(data)) media[i] <- "" else writeBin(data, path("xl", "media", media[i]))
@@ -208,7 +213,7 @@ xls_chart_caches <- function(xmlDir) {
     Reduce(function(a, b) a * 26L + b, ch, 0L)
   }
 
-  sheets <- list()
+  sheets <- new.env()
   read_sheet <- function(i) {
     key <- as.character(i)
     if (!is.null(sheets[[key]])) return(sheets[[key]])
@@ -234,7 +239,7 @@ xls_chart_caches <- function(xmlDir) {
         }
       }
     }
-    sheets[[key]] <<- cells
+    sheets[[key]] <- cells
     cells
   }
 
@@ -245,7 +250,8 @@ xls_chart_caches <- function(xmlDir) {
     name <- if (nzchar(m[2])) gsub("''", "'", m[2], fixed = TRUE) else m[3]
     sheet <- match(name, sheet_names)
     if (is.na(sheet)) return(NULL)
-    c1 <- col_number(m[4]); r1 <- as.integer(m[5])
+    c1 <- col_number(m[4])
+    r1 <- as.integer(m[5])
     c2 <- if (nzchar(m[6])) col_number(m[6]) else c1
     r2 <- if (nzchar(m[7])) as.integer(m[7]) else r1
     cells <- read_sheet(sheet)
