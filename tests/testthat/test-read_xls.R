@@ -351,3 +351,56 @@ test_that("data_only skips everything but the cells", {
   expect_equal(length(wb$tables), 0L)
   expect_equal(wb_to_df(wb, col_names = FALSE), wb_to_df(full, col_names = FALSE))
 })
+
+test_that("pivot tables are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  fl <- testfile_path("xls_pivot.xls")
+  skip_if(!file.exists(fl))
+
+  wb <- wb_load(fl)
+  expect_equal(length(wb$pivotTables), 2L)
+  expect_equal(length(wb$pivotDefinitions), 1L)
+
+  pt1 <- wb$pivotTables[[1]]
+  expect_match(pt1, '<location ref="A3:C14"', fixed = TRUE)
+  expect_match(pt1, '<rowFields count="2"><field x="0"/><field x="1"/></rowFields>', fixed = TRUE)
+  expect_match(pt1, '<colFields count="1"><field x="-2"/></colFields>', fixed = TRUE)
+  expect_match(pt1, '<pageField fld="4"', fixed = TRUE)
+  expect_match(pt1, 'subtotal="average"', fixed = TRUE)
+
+  def <- wb$pivotDefinitions[[1]]
+  expect_match(def, '<worksheetSource ref="A1:E13" sheet="data"/>', fixed = TRUE)
+  expect_match(def, '<cacheField name="Species"', fixed = TRUE)
+  expect_match(def, '<s v="a"/><s v="b"/><s v="c"/>', fixed = TRUE)
+
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  wb2 <- wb_load(tmp)
+  expect_equal(length(wb2$pivotTables), 2L)
+
+  expect_equal(length(wb_load(fl, data_only = TRUE, sheet = 1)$pivotTables), 0L)
+})
+
+test_that("shape numbers of comments do not overlap", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  fl <- testfile_path("xls_comments.xls")
+  skip_if(!file.exists(fl))
+
+  wb <- wb_load(fl)
+  ids <- lapply(wb$vml, function(x) as.integer(regmatches(x, gregexpr("(?<=_x0000_s)[0-9]+", x, perl = TRUE))[[1]]))
+  expect_equal(sum(duplicated(unlist(ids))), 0L)
+  expect_equal(lengths(ids), lengths(wb$comments))
+  expect_match(wb$vml[[1]], 'data="1,2"', fixed = TRUE)
+})
+
+test_that("xls paths with a tilde are expanded", {
+  skip_on_cran()
+  home <- tempfile()
+  dir.create(home)
+  file.copy(testfile_path("loadExample.xls"), file.path(home, "loadExample.xls"))
+  old <- Sys.getenv("HOME")
+  Sys.setenv(HOME = home)
+  on.exit(Sys.setenv(HOME = old))
+  wb <- wb_load("~/loadExample.xls")
+  expect_equal(length(wb$get_sheet_names()), 4L)
+})

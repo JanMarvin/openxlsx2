@@ -1385,7 +1385,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
     bool first_extern_sheet = true;
     bool has_revision_record = false;
 
-    std::vector<std::string> defNams, xtis, reference_type, customWorkbookView;
+    std::vector<std::string> defNams, xtis, reference_type, customWorkbookView, pivotCaches;
     defNams.push_back("<definedNames>");
     xtis.push_back("<xtis>");
 
@@ -1770,6 +1770,19 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           break;
         }
 
+        case BrtBeginPivotCacheIDs:
+        case BrtEndPivotCacheIDs:
+        case BrtEndPivotCacheID:
+          break;
+
+        case BrtBeginPivotCacheID: {
+          uint32_t idSx = 0;
+          idSx = readbin(idSx, bin, swapit);
+          std::string relId = XLNullableWideString(bin, swapit);
+          pivotCaches.push_back("<pivotCache cacheId=\"" + std::to_string(idSx) + "\" r:id=\"" + relId + "\"/>");
+          break;
+        }
+
         case BrtBeginExternals: {
           if (debug) Rcpp::Rcout << "<BrtBeginExternals>" << std::endl;
           // bin.seekg(size, bin.cur);
@@ -1959,6 +1972,12 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           }
 
 
+          if (pivotCaches.size()) {
+            out << "<pivotCaches>" << std::endl;
+            for (size_t i = 0; i < pivotCaches.size(); ++i) out << pivotCaches[i] << std::endl;
+            out << "</pivotCaches>" << std::endl;
+          }
+
           if (debug) Rcpp::Rcout << "</workbook>" << std::endl;
           out << "</workbook>" << std::endl;
           bin.seekg(size, bin.cur);
@@ -2010,6 +2029,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
     bool first_row = true;
     bool in_sheet_data = false;
     bool end_of_worksheet = false;
+    bool extlst_open = false, ext_open = false;
+    auto open_ext = [&](const char *uri) {
+      if (!extlst_open) out << "<extLst>";
+      extlst_open = ext_open = true;
+      out << "<ext uri=\"" << uri << "\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">" << std::endl;
+    };
     bool has_revision_record = false;
     std::string fml_type;
 
@@ -3796,6 +3821,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           if (idvMac > 65534) Rcpp::stop("idvMac to big");
 
+          open_ext("{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}");
           out << "<x14:dataValidations count=\"" <<
             std::to_string(idvMac) <<
             "\" xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\""
@@ -4143,19 +4169,49 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         case BrtFRTBegin: {
           if (debug) Rcpp::Rcout << "BrtFRTBegin" << std::endl;
 
-          // we only handle this for data validation lists.
-          out << "<extLst>" <<
-            "<ext uri=\"{CCE6A557-97BC-4b89-ADB6-D9C93CAAB3DF}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\">" <<
-              std::endl;
+          ProductVersion(bin, swapit, debug, true);
 
-          ProductVersion(bin, swapit, debug, true);  // reserved must be 0
+          break;
+        }
 
+        case BrtBeginSlicersEx: {
+          open_ext("{A8765BA9-456A-4dab-B4F3-ACF838C121DE}");
+          out << "<x14:slicerList>";
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginSlicerEx: {
+          std::streampos start = bin.tellg();
+          bin.seekg(4, bin.cur);
+          uint16_t cch = 0;
+          cch = readbin(cch, bin, swapit);
+          std::string rid;
+          for (uint16_t i = 0; i < cch; ++i) {
+            uint16_t ch = 0;
+            ch = readbin(ch, bin, swapit);
+            rid += static_cast<char>(ch);
+          }
+          out << "<x14:slicer r:id=\"" << rid << "\"/>";
+          bin.seekg(start + static_cast<std::streamoff>(size), bin.beg);
+          break;
+        }
+
+        case BrtEndSlicerEx: {
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtEndSlicersEx: {
+          out << "</x14:slicerList>";
+          bin.seekg(size, bin.cur);
           break;
         }
 
         case BrtFRTEnd: {
           if (debug) Rcpp::Rcout << "BrtFRTEnd" << std::endl;
-          out << "</ext></extLst>" << std::endl;
+          if (ext_open) out << "</ext>" << std::endl;
+          ext_open = false;
           bin.seekg(size, bin.cur);
           break;
         }
@@ -4172,6 +4228,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           }
 
           if (debug)  Rcpp::Rcout << "</worksheet>" << bin.tellg() << std::endl;
+
+          if (extlst_open) out << "</extLst>" << std::endl;
 
           if (chartsheet)
             out << "</chartsheet>" << std::endl;

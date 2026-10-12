@@ -354,8 +354,8 @@ sheettypes_xls <- function(filePath) {
     .Call(`_openxlsx2_sheettypes_xls`, filePath)
 }
 
-worksheet_xls <- function(filePath, sheet, outPath, relsPath, commentsPath, vmlPath, comment_file, tablesDir, table_file, media, drawingPath, drawingRelsPath, drawing_file, chartsDir, chart_file, data_only, debug) {
-    .Call(`_openxlsx2_worksheet_xls`, filePath, sheet, outPath, relsPath, commentsPath, vmlPath, comment_file, tablesDir, table_file, media, drawingPath, drawingRelsPath, drawing_file, chartsDir, chart_file, data_only, debug)
+worksheet_xls <- function(filePath, sheet, outPath, relsPath, commentsPath, vmlPath, comment_file, tablesDir, table_file, media, drawingPath, drawingRelsPath, drawing_file, chartsDir, chart_file, xlDir, xlsPath, pivot_file, known_caches, data_only, debug) {
+    .Call(`_openxlsx2_worksheet_xls`, filePath, sheet, outPath, relsPath, commentsPath, vmlPath, comment_file, tablesDir, table_file, media, drawingPath, drawingRelsPath, drawing_file, chartsDir, chart_file, xlDir, xlsPath, pivot_file, known_caches, data_only, debug)
 }
 
 styles_bin <- function(filePath, outPath, debug) {
@@ -384,5 +384,21 @@ workbook_bin <- function(filePath, outPath, debug) {
 
 worksheet_bin <- function(filePath, chartsheet, outPath, debug) {
     .Call(`_openxlsx2_worksheet_bin`, filePath, chartsheet, outPath, debug)
+}
+
+pivotcache_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_pivotcache_bin`, filePath, outPath, debug)
+}
+
+pivottable_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_pivottable_bin`, filePath, outPath, debug)
+}
+
+slicer_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_slicer_bin`, filePath, outPath, debug)
+}
+
+slicercache_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_slicercache_bin`, filePath, outPath, debug)
 }
 

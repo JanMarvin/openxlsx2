@@ -149,6 +149,19 @@ inline std::u16string XLUnicodeRichString(std::istream& sas, bool swapit, std::s
   return chars;
 }
 
+inline std::string xls_error(uint8_t code) {
+  switch (code) {
+    case 0x00: return "#NULL!";
+    case 0x07: return "#DIV/0!";
+    case 0x0F: return "#VALUE!";
+    case 0x17: return "#REF!";
+    case 0x1D: return "#NAME?";
+    case 0x24: return "#NUM!";
+    case 0x2A: return "#N/A";
+    default: return "#VALUE!";
+  }
+}
+
 // number as text that reads back as the same double
 inline std::string xls_num(double d) {
   std::string s;

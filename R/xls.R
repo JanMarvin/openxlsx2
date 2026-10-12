@@ -14,7 +14,7 @@
 #' @noRd
 xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
 
-  for (dir in c("_rels", "xl/_rels", "xl/worksheets", "xl/worksheets/_rels", "xl/chartsheets", "xl/chartsheets/_rels", "xl/tables", "xl/drawings", "xl/drawings/_rels", "xl/charts", "xl/media", "xl/externalLinks/_rels", "docProps")) {
+  for (dir in c("_rels", "xl/_rels", "xl/worksheets", "xl/worksheets/_rels", "xl/chartsheets", "xl/chartsheets/_rels", "xl/tables", "xl/drawings", "xl/drawings/_rels", "xl/charts", "xl/media", "xl/externalLinks/_rels", "xl/pivotTables/_rels", "xl/pivotCache/_rels", "docProps")) {
     dir.create(file.path(xmlDir, dir), recursive = TRUE)
   }
 
@@ -82,6 +82,8 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
   ntables <- 0L
   ndrawings <- 0L
   ncharts <- 0L
+  npivots <- 0L
+  cache_ids <- integer()
   for (i in seq_len(nsheets)) {
     n <- worksheet_xls(
       stream, i,
@@ -98,6 +100,10 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
       ndrawings + 1L,
       path("xl", "charts"),
       ncharts + 1L,
+      path("xl"),
+      file,
+      npivots + 1L,
+      cache_ids,
       data_only,
       debug
     )
@@ -105,7 +111,10 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
     ntables <- ntables + n[2]
     ndrawings <- ndrawings + n[3]
     ncharts <- ncharts + n[4]
+    npivots <- npivots + n[5]
+    cache_ids <- c(cache_ids, n[-(1:5)])
   }
+  ncaches <- length(cache_ids)
 
   # the parts that come with a zip file
   ns_pkg <- "http://schemas.openxmlformats.org/package/2006/relationships"
@@ -137,6 +146,9 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
       sprintf('<Override PartName="/xl/drawings/drawing%d.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>', seq_len(ndrawings)),
       sprintf('<Override PartName="/xl/charts/chart%d.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>', seq_len(ncharts)),
       sprintf('<Override PartName="/xl/tables/table%d.xml" ContentType="%s.table+xml"/>', seq_len(ntables), ns_ml),
+      sprintf('<Override PartName="/xl/pivotTables/pivotTable%d.xml" ContentType="%s.pivotTable+xml"/>', seq_len(npivots), ns_ml),
+      sprintf('<Override PartName="/xl/pivotCache/pivotCacheDefinition%d.xml" ContentType="%s.pivotCacheDefinition+xml"/>', seq_len(ncaches), ns_ml),
+      sprintf('<Override PartName="/xl/pivotCache/pivotCacheRecords%d.xml" ContentType="%s.pivotCacheRecords+xml"/>', seq_len(ncaches), ns_ml),
       "</Types>"
     ),
     path("[Content_Types].xml"),
@@ -165,11 +177,20 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
       if (has_strings) sprintf('<Relationship Id="rId%d" Type="%s/sharedStrings" Target="sharedStrings.xml"/>', nsheets + 2L, ns_doc),
       sprintf('<Relationship Id="rId%d" Type="%s/externalLink" Target="externalLinks/externalLink%d.xml"/>', nsheets + 2L + seq_len(nextern), ns_doc, seq_len(nextern)),
       if (has_theme) sprintf('<Relationship Id="rId%d" Type="%s/theme" Target="theme/theme1.xml"/>', nsheets + 3L + nextern, ns_doc),
+      sprintf('<Relationship Id="rId%d" Type="%s/pivotCacheDefinition" Target="pivotCache/pivotCacheDefinition%d.xml"/>', nsheets + 4L + nextern + seq_len(ncaches), ns_doc, seq_len(ncaches)),
       "</Relationships>"
     ),
     path("xl", "_rels", "workbook.xml.rels"),
     useBytes = TRUE
   )
+
+  if (ncaches > 0L) {
+    wbfile <- path("xl", "workbook.xml")
+    wbxml <- paste(readLines(wbfile, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+    caches <- sprintf('<pivotCache cacheId="%d" r:id="rId%d"/>', seq_len(ncaches), nsheets + 4L + nextern + seq_len(ncaches))
+    wbxml <- sub("</workbook>", paste0("<pivotCaches>", paste(caches, collapse = ""), "</pivotCaches></workbook>"), wbxml, fixed = TRUE)
+    writeLines(wbxml, wbfile, useBytes = TRUE)
+  }
 
   if (!data_only) {
     xls_chart_caches(xmlDir)
@@ -213,7 +234,7 @@ xls_chart_caches <- function(xmlDir) {
     Reduce(function(a, b) a * 26L + b, ch, 0L)
   }
 
-  sheets <- new.env()
+  sheets <- new.env() # nolint
   read_sheet <- function(i) {
     key <- as.character(i)
     if (!is.null(sheets[[key]])) return(sheets[[key]])

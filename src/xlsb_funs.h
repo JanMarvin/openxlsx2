@@ -2,6 +2,7 @@
 #define XLSB_FUNS_H
 
 #include <cstdint>
+#include <cstdio>
 #include <fstream>
 #include <string>
 #include <type_traits>
@@ -159,7 +160,14 @@ inline std::string escape_xml(const std::string& input) {
         result += "&gt;";
         break;
       default:
-        result += c;
+        if (static_cast<unsigned char>(c) < 0x20 && c != '\t' && c != '\n' && c != '\r') {
+          // not allowed in XML, written the way Excel writes it
+          char code[8];
+          std::snprintf(code, sizeof(code), "_x%04X_", static_cast<unsigned>(static_cast<unsigned char>(c)));
+          result += code;
+        } else {
+          result += c;
+        }
         break;
     }
   }
@@ -993,13 +1001,13 @@ inline std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
   return out.str();
 }
 
-static double Xnum(std::istream& sas, bool swapit) {
+inline double Xnum(std::istream& sas, bool swapit) {
   double out = 0;
   out = readbin(out, sas, swapit);
   return out;
 }
 
-static double RkNumber(int32_t val) {
+inline double RkNumber(int32_t val) {
   double out;
   if (val & 0x02) {  // integer
     int32_t tmp = val >> 2;

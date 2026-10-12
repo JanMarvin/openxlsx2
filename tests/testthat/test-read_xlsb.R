@@ -227,3 +227,34 @@ test_that("xlsb formula line breaks are handled", {
   expect_equal(got, exp)
 
 })
+
+test_that("pivot tables are imported from xlsb", {
+
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_online_checks()
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+
+  expect_length(wb$pivotTables, 2L)
+  expect_length(wb$pivotDefinitions, 2L)
+  expect_match(wb$workbook$pivotCaches, "<pivotCache cacheId=\"24\"", fixed = TRUE)
+
+  expect_match(wb$pivotTables[[1]], "<dataField name=\"Sum of Sepal Length\" fld=\"0\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[1]], "<location ref=\"G2:K6\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[2]], "subtotal=\"average\"", fixed = TRUE)
+  expect_match(wb$pivotDefinitions[[1]], "<worksheetSource name=\"Table2\"/>", fixed = TRUE)
+  expect_match(wb$pivotDefinitions[[1]], "<s v=\"virginica\"/><s v=\"setosa\"/><s v=\"versicolor\"/>", fixed = TRUE)
+
+  expect_match(wb$slicers, "<slicer name=\"Species\" cache=\"Slicer_Species\" caption=\"Species\"", fixed = TRUE)
+  expect_match(wb$slicerCaches, "<pivotTable tabId=\"1\" name=\"PivotTable1\"/>", fixed = TRUE)
+  expect_match(wb$slicerCaches, "<tabular pivotCacheId=\"2\"><items count=\"3\">", fixed = TRUE)
+  expect_match(wb$pivotDefinitions[[1]], "<x14:pivotCacheDefinition pivotCacheId=\"2\"/>", fixed = TRUE)
+  expect_match(wb$worksheets[[1]]$extLst, "<x14:slicerList><x14:slicer r:id=\"rId5\"/>", fixed = TRUE, all = FALSE)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb$save(tmp)
+  wb2 <- wb_load(tmp)
+  expect_length(wb2$pivotTables, 2L)
+  expect_length(wb2$slicers, 1L)
+})

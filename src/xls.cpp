@@ -14,6 +14,7 @@
 #include "xls_defines.h"
 #include "xls_funs.h"
 #include "xls_drawing.h"
+#include "xls_pivot.h"
 
 // The xls reader works like the xlsb reader: the workbook is split into the
 // parts of an xlsx file (workbook.xml, styles.xml, sharedStrings.xml, sheets),
@@ -72,6 +73,7 @@ struct XlsExternBook {
 };
 
 struct XlsGlobals {
+  std::vector<XlsPivotSource> pivot_sources;
   bool date1904 = false;
   std::string code_name;
   bool lock_structure = false, lock_windows = false;
@@ -166,6 +168,7 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
   // SupBook: 0 this workbook, 1 add-in functions, 2 another workbook
   std::vector<uint8_t> supbooks;
   std::vector<size_t> supbook_external;
+  std::vector<std::vector<std::string>> supbook_sheets;
   std::vector<std::vector<std::string> > supbook_names;
   // ExternSheet: for each XTI the supbook, the first and the last sheet
   std::vector<std::vector<uint16_t> > xtis;
@@ -286,6 +289,36 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
         break;
       }
 
+      case XlsSXStreamID: {
+        std::vector<uint8_t> rec(rsize);
+        bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+        XlsPivotSource source;
+        source.id = static_cast<uint16_t>(xls_pv_u16(rec, 0));
+        g.pivot_sources.push_back(source);
+        break;
+      }
+
+      case XlsSXVS: {
+        std::vector<uint8_t> rec(rsize);
+        bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+        if (!g.pivot_sources.empty()) g.pivot_sources.back().type = static_cast<uint16_t>(xls_pv_u16(rec, 0));
+        break;
+      }
+
+      case XlsDConRef: {
+        std::vector<uint8_t> rec(rsize);
+        bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+        if (!g.pivot_sources.empty()) xls_pv_dconref(rec, g.pivot_sources.back());
+        break;
+      }
+
+      case XlsDConName: {
+        std::vector<uint8_t> rec(rsize);
+        bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+        if (!g.pivot_sources.empty()) xls_pv_dconname(rec, g.pivot_sources.back());
+        break;
+      }
+
       case XlsDate1904: {
         uint16_t flag = 0;
         flag = readbin(flag, bin, swapit);
@@ -309,6 +342,7 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
         cch = readbin(cch, bin, swapit);
         supbooks.push_back(cch == 0x0401 ? 0 : (cch == 0x3A01 ? 1 : 2));
         supbook_external.push_back(0);
+        supbook_sheets.push_back(std::vector<std::string>());
         supbook_names.push_back(std::vector<std::string>());
         if (cch != 0x0401 && cch != 0x3A01) {
           XlsExternBook book;
@@ -317,8 +351,23 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
           flag = readbin(flag, bin, swapit);
           book.path = xls_virt_path(xls_chars(bin, swapit, cch, (flag & 0x01) != 0, rec_end));
           for (uint16_t i = 0; i < ctab; ++i) book.sheets.push_back(XLUnicodeString(bin, swapit, true, rec_end));
-          g.externals.push_back(book);
-          supbook_external.back() = g.externals.size();
+          size_t found = g.externals.size();
+          for (size_t i = 0; i < g.externals.size(); ++i) {
+            if (g.externals[i].path == book.path) {
+              found = i;
+              break;
+            }
+          }
+          if (found == g.externals.size()) {
+            g.externals.push_back(book);
+          } else {
+            for (size_t i = 0; i < book.sheets.size(); ++i) {
+              if (std::find(g.externals[found].sheets.begin(), g.externals[found].sheets.end(), book.sheets[i]) == g.externals[found].sheets.end())
+                g.externals[found].sheets.push_back(book.sheets[i]);
+            }
+          }
+          supbook_external.back() = found + 1;
+          supbook_sheets.back() = book.sheets;
         }
         break;
       }
@@ -397,9 +446,9 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
     if (internal && first < g.sheets.size() && last < g.sheets.size()) {
       prefix = xls_sheet_prefix(g.sheets[first].name, g.sheets[last].name);
     } else if (book < supbooks.size() && supbooks[book] == 2) {
-      const XlsExternBook& ext = g.externals[supbook_external[book] - 1];
-      if (first < ext.sheets.size() && last < ext.sheets.size())
-        prefix = xls_sheet_prefix(ext.sheets[first], ext.sheets[last],
+      const std::vector<std::string>& sn = supbook_sheets[book];
+      if (first < sn.size() && last < sn.size())
+        prefix = xls_sheet_prefix(sn[first], sn[last],
                                   "[" + std::to_string(supbook_external[book]) + "]");
     }
     g.ctx.xti.push_back(prefix);
@@ -422,19 +471,6 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
   }
 
   return g;
-}
-
-std::string xls_error(uint8_t code) {
-  switch (code) {
-    case 0x00: return "#NULL!";
-    case 0x07: return "#DIV/0!";
-    case 0x0F: return "#VALUE!";
-    case 0x17: return "#REF!";
-    case 0x1D: return "#NAME?";
-    case 0x24: return "#NUM!";
-    case 0x2A: return "#N/A";
-    default: return "#VALUE!";
-  }
 }
 
 }  // namespace
@@ -1457,7 +1493,8 @@ Rcpp::IntegerVector sheettypes_xls(std::string filePath) {
 Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::string outPath, std::string relsPath, std::string commentsPath,
                                   std::string vmlPath, int32_t comment_file, std::string tablesDir, int32_t table_file,
                                   Rcpp::CharacterVector media, std::string drawingPath, std::string drawingRelsPath,
-                                  int32_t drawing_file, std::string chartsDir, int32_t chart_file, bool data_only, bool debug) {
+                                  int32_t drawing_file, std::string chartsDir, int32_t chart_file, std::string xlDir, std::string xlsPath, int32_t pivot_file,
+                                  Rcpp::IntegerVector known_caches, bool data_only, bool debug) {
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1503,7 +1540,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       out << "<sheetViews><sheetView workbookViewId=\"0\" zoomToFit=\"1\"/></sheetViews>" << std::endl;
       if (cx.empty()) {
         out << "</chartsheet>" << std::endl;
-        return Rcpp::IntegerVector::create(0, 0, 0, 0);
+        return Rcpp::IntegerVector::create(0, 0, 0, 0, 0);
       }
       out << "<drawing r:id=\"rId1\"/>" << std::endl << "</chartsheet>" << std::endl;
 
@@ -1537,7 +1574,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       rel << "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">" << std::endl;
       rel << "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" "
           << "Target=\"../drawings/drawing" << drawing_file << ".xml\"/>" << std::endl << "</Relationships>" << std::endl;
-      return Rcpp::IntegerVector::create(0, 0, 1, 1);
+      return Rcpp::IntegerVector::create(0, 0, 1, 1, 0);
     }
 
     out << "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
@@ -1572,6 +1609,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
     std::vector<XlsShape> pending_shapes;
     std::vector<DrawingItem> items;
     std::vector<XlsChartRecord> chart_recs;
+    std::vector<XlsPivotView> pv_views;
     bool in_chart = false;
     bool after_obj = false;  // CONTINUE records that follow an object may hold the shape of the next one
     std::vector<std::string> merges;
@@ -2065,6 +2103,12 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           case XlsDv:
           case XlsHLink:
           case XlsHLinkTooltip:
+          case XlsSxView:
+          case XlsSxvd:
+          case XlsSXVI:
+          case XlsSxIvd:
+          case XlsSXPI:
+          case XlsSXDI:
             bin.seekg(next, std::ios_base::beg);
             continue;
           default:
@@ -2850,7 +2894,16 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           bin.seekg(2, std::ios_base::cur);
           n.id = readbin(n.id, bin, swapit);
           n.author = XLUnicodeString(bin, swapit, true);
-          notes.push_back(n);
+          // a cell has one comment
+          bool replaced = false;
+          for (size_t i = 0; i < notes.size(); ++i) {
+            if (notes[i].row == n.row && notes[i].col == n.col) {
+              notes[i] = n;
+              replaced = true;
+              break;
+            }
+          }
+          if (!replaced) notes.push_back(n);
           break;
         }
 
@@ -3026,6 +3079,69 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           std::vector<uint8_t> rec(rsize);
           bin.read(reinterpret_cast<char*>(rec.data()), rsize);
           hlinks.push_back(xls_hlink(rec));
+          break;
+        }
+
+        case XlsSxView: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          XlsPivotView v;
+          xls_pv_view(rec, v);
+          if (v.cache < g.pivot_sources.size()) v.source = g.pivot_sources[v.cache];
+          pv_views.push_back(v);
+          break;
+        }
+
+        case XlsSxvd: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          if (pv_views.empty()) break;
+          XlsPivotField f;
+          xls_pv_field(rec, f);
+          pv_views.back().fields.push_back(f);
+          break;
+        }
+
+        case XlsSXVI: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          if (pv_views.empty() || pv_views.back().fields.empty()) break;
+          XlsPivotItem item;
+          xls_pv_item(rec, item);
+          pv_views.back().fields.back().items.push_back(item);
+          break;
+        }
+
+        case XlsSxIvd: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          if (pv_views.empty()) break;
+          std::vector<uint16_t> axis;
+          for (size_t i = 0; i + 2 <= rec.size(); i += 2) axis.push_back(static_cast<uint16_t>(xls_pv_u16(rec, i)));
+          pv_views.back().axes.push_back(axis);
+          break;
+        }
+
+        case XlsSXPI: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          if (pv_views.empty()) break;
+          for (size_t i = 0; i + 6 <= rec.size(); i += 6) {
+            XlsPivotPage page;
+            page.field = static_cast<uint16_t>(xls_pv_u16(rec, i));
+            page.item = static_cast<uint16_t>(xls_pv_u16(rec, i + 2));
+            pv_views.back().pages.push_back(page);
+          }
+          break;
+        }
+
+        case XlsSXDI: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          if (pv_views.empty()) break;
+          XlsPivotDataField d;
+          xls_pv_data(rec, d);
+          pv_views.back().data.push_back(d);
           break;
         }
 
@@ -3289,7 +3405,8 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       for (size_t i = 0; i < notes.size(); ++i) {
         size_t author_id = static_cast<size_t>(std::find(authors.begin(), authors.end(), notes[i].author) - authors.begin());
         com << "<comment ref=\"" << int_to_col(notes[i].col + 1) << notes[i].row + 1 << "\" authorId=\"" << author_id << "\">"
-            << "<text><t xml:space=\"preserve\">" << escape_xml(note_text[notes[i].id]) << "</t></text></comment>" << std::endl;
+            << "<text><r><rPr><sz val=\"9\"/><color indexed=\"81\"/><rFont val=\"Tahoma\"/><family val=\"2\"/></rPr>"
+            << "<t xml:space=\"preserve\">" << escape_xml(note_text[notes[i].id]) << "</t></r></text></comment>" << std::endl;
       }
       com << "</commentList>" << std::endl;
       com << "</comments>" << std::endl;
@@ -3301,12 +3418,17 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       vml << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
       vml << "<xml xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" "
           << "xmlns:x=\"urn:schemas-microsoft-com:office:excel\">" << std::endl;
-      vml << "<o:shapelayout v:ext=\"edit\"><o:idmap v:ext=\"edit\" data=\"" << comment_file << "\"/></o:shapelayout>" << std::endl;
+      // a block of 1024 shape numbers per idmap entry. Every sheet has 64 blocks for itself
+      int32_t first_block = (comment_file - 1) * 64 + 1;
+      int32_t n_blocks = static_cast<int32_t>(notes.size() / 1024) + 1;
+      vml << "<o:shapelayout v:ext=\"edit\"><o:idmap v:ext=\"edit\" data=\"";
+      for (int32_t b = 0; b < n_blocks; ++b) vml << (b > 0 ? "," : "") << first_block + b;
+      vml << "\"/></o:shapelayout>" << std::endl;
       vml << "<v:shapetype id=\"_x0000_t202\" coordsize=\"21600,21600\" o:spt=\"202\" path=\"m,l,21600r21600,l21600,xe\">"
           << "<v:stroke joinstyle=\"miter\"/><v:path gradientshapeok=\"t\" o:connecttype=\"rect\"/></v:shapetype>" << std::endl;
       for (size_t i = 0; i < notes.size(); ++i) {
         uint32_t col = notes[i].col, row = notes[i].row;
-        vml << "<v:shape id=\"_x0000_s" << comment_file * 1024 + 1 + static_cast<int32_t>(i) << "\" type=\"#_x0000_t202\" "
+        vml << "<v:shape id=\"_x0000_s" << first_block * 1024 + 1 + static_cast<int32_t>(i) << "\" type=\"#_x0000_t202\" "
             << "style=\"position:absolute;margin-left:107.25pt;margin-top:172.5pt;width:147pt;height:96pt;z-index:" << i + 1
             << ";visibility:hidden;mso-wrap-style:tight\" fillcolor=\"#ffffe1\" o:insetmode=\"auto\">"
             << "<v:fill color2=\"#ffffe1\"/><v:shadow color=\"black\" obscured=\"t\"/><v:path o:connecttype=\"none\"/>"
@@ -3384,8 +3506,9 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
              << "</xdr:spPr></xdr:sp><xdr:clientData/></xdr:twoCellAnchor>" << std::endl;
           continue;
         }
-        if (item.blip > media.size() || Rcpp::as<std::string>(media[item.blip - 1]).empty()) continue;
-        std::string file = Rcpp::as<std::string>(media[item.blip - 1]);
+        R_xlen_t blip = static_cast<R_xlen_t>(item.blip);
+        if (blip > media.size() || Rcpp::as<std::string>(media[blip - 1]).empty()) continue;
+        std::string file = Rcpp::as<std::string>(media[blip - 1]);
         drawing_rels.push_back(std::make_pair(std::string("image"), file));
         ++shape_no;
 
@@ -3413,7 +3536,63 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       drel << "</Relationships>" << std::endl;
     }
 
-    if (!rels.empty() || !notes.empty() || !table_files.empty() || !items.empty()) {
+    // pivot tables: the cache of a table is written once, the first time it is used
+    std::vector<int32_t> pivot_files;
+    std::vector<int32_t> cache_ids(known_caches.begin(), known_caches.end());
+    size_t n_known = cache_ids.size();
+    if (!pv_views.empty()) {
+      std::ifstream xf(xlsPath, std::ios::in | std::ios::binary | std::ios::ate);
+      std::vector<uint8_t> xls_bytes(static_cast<size_t>(xf.tellg()));
+      xf.seekg(0, std::ios_base::beg);
+      xf.read(reinterpret_cast<char*>(xls_bytes.data()), static_cast<std::streamsize>(xls_bytes.size()));
+
+      for (size_t i = 0; i < pv_views.size(); ++i) {
+        XlsPivotView& v = pv_views[i];
+        if (!v.source.supported()) {
+          Rcpp::warning("xls: the pivot table %s on sheet %d is not based on a worksheet and is not imported.", v.name.c_str(), sheet);
+          continue;
+        }
+
+        size_t at = 0;
+        while (at < cache_ids.size() && cache_ids[at] != v.source.id) ++at;
+        if (at == cache_ids.size()) {
+          char stream_name[8];
+          std::snprintf(stream_name, sizeof(stream_name), "%04X", v.source.id);
+          std::vector<uint8_t> cache = cfb_stream(xls_bytes, stream_name);
+          if (cache.empty()) {
+            Rcpp::warning("xls: the cache of the pivot table %s on sheet %d is missing and the table is not imported.", v.name.c_str(), sheet);
+            continue;
+          }
+          cache_ids.push_back(v.source.id);
+          int32_t number = static_cast<int32_t>(cache_ids.size());
+
+          std::ofstream def(xlDir + "/pivotCache/pivotCacheDefinition" + std::to_string(number) + ".xml");
+          def << xls_pivot_cache_xml(cache, v.source);
+          std::ofstream rec_rel(xlDir + "/pivotCache/_rels/pivotCacheDefinition" + std::to_string(number) + ".xml.rels");
+          rec_rel << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
+          rec_rel << "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
+                  << "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords\" "
+                  << "Target=\"pivotCacheRecords" << number << ".xml\"/></Relationships>" << std::endl;
+          std::ofstream records(xlDir + "/pivotCache/pivotCacheRecords" + std::to_string(number) + ".xml");
+          records << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
+          records << "<pivotCacheRecords xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"0\"/>" << std::endl;
+        }
+
+        int32_t cache_number = static_cast<int32_t>(at + 1);
+        int32_t file = pivot_file + static_cast<int32_t>(pivot_files.size());
+        pivot_files.push_back(file);
+
+        std::ofstream pt(xlDir + "/pivotTables/pivotTable" + std::to_string(file) + ".xml");
+        pt << xls_pivot_view_xml(v, cache_number);
+        std::ofstream ptrel(xlDir + "/pivotTables/_rels/pivotTable" + std::to_string(file) + ".xml.rels");
+        ptrel << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
+        ptrel << "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
+              << "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition\" "
+              << "Target=\"../pivotCache/pivotCacheDefinition" << cache_number << ".xml\"/></Relationships>" << std::endl;
+      }
+    }
+
+    if (!rels.empty() || !notes.empty() || !table_files.empty() || !items.empty() || !pivot_files.empty()) {
       std::ofstream rel(relsPath);
       rel << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
       rel << "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">" << std::endl;
@@ -3440,6 +3619,11 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             << "Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/table\" "
             << "Target=\"../tables/table" << table_files[i] << ".xml\"/>" << std::endl;
       }
+      for (size_t i = 0; i < pivot_files.size(); ++i) {
+        rel << "<Relationship Id=\"rId" << first_table_rel + table_files.size() + i << "\" "
+            << "Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotTable\" "
+            << "Target=\"../pivotTables/pivotTable" << pivot_files[i] << ".xml\"/>" << std::endl;
+      }
       rel << "</Relationships>" << std::endl;
     }
 
@@ -3449,7 +3633,11 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
 
     out.close();
     bin.close();
-    return Rcpp::IntegerVector::create(static_cast<int>(notes.size()), static_cast<int>(tables.size()), static_cast<int>(items.empty() ? 0 : 1), static_cast<int>(nchart));
+    Rcpp::IntegerVector result = Rcpp::IntegerVector::create(static_cast<int>(notes.size()), static_cast<int>(tables.size()),
+                                                             static_cast<int>(items.empty() ? 0 : 1), static_cast<int>(nchart),
+                                                             static_cast<int>(pivot_files.size()));
+    for (size_t i = n_known; i < cache_ids.size(); ++i) result.push_back(cache_ids[i]);
+    return result;
   } else {
     Rcpp::stop("xls: the file can not be read");
   }

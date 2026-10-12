@@ -65,16 +65,19 @@ file as if it had been provided in xlsx file format in the first place. This
 parsing into pseudo xml files is of course slower than reading directly from
 the binary file. Our implementation is also still missing some functions:
 some array formulas are not yet correct, conditional formatting and data
-validation are not implemented, nor are pivot tables and slicers. Support is
-limited to little endian platforms.
+validation are not implemented. Pivot tables based on a worksheet and their
+slicers are imported. The pivot caches are refreshed when the file is opened
+in a spreadsheet software. Support is limited to little endian platforms.
 
 Legacy binary files (\code{xls}, Excel 97 to 2003) are read the same way: the
 file is parsed into pseudo-openxml files. Values, formulas, styles, merged
 cells, hyperlinks, comments, data validation, tables, simple conditional
 formatting, color scales, data bars, icon sets, external references and page
 settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D
-and combination charts) and chart sheets are imported. Pivot tables and
-files from Excel 95 or earlier are not supported, nor are encrypted files.
+and combination charts), chart sheets and pivot tables based on a worksheet
+are imported. The pivot caches are refreshed when the file is opened in a
+spreadsheet software. Files from Excel 95 or earlier are not supported, nor
+are encrypted files.
 Support is limited to little endian platforms.
 
 The loaded workbook provides a finalizer that will be invoked after the first

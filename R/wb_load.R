@@ -44,16 +44,19 @@
 #' parsing into pseudo xml files is of course slower than reading directly from
 #' the binary file. Our implementation is also still missing some functions:
 #' some array formulas are not yet correct, conditional formatting and data
-#' validation are not implemented, nor are pivot tables and slicers. Support is
-#' limited to little endian platforms.
+#' validation are not implemented. Pivot tables based on a worksheet and their
+#' slicers are imported. The pivot caches are refreshed when the file is opened
+#' in a spreadsheet software. Support is limited to little endian platforms.
 #'
 #' Legacy binary files (`xls`, Excel 97 to 2003) are read the same way: the
 #' file is parsed into pseudo-openxml files. Values, formulas, styles, merged
 #' cells, hyperlinks, comments, data validation, tables, simple conditional
 #' formatting, color scales, data bars, icon sets, external references and page
 #' settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D
-#' and combination charts) and chart sheets are imported. Pivot tables and
-#' files from Excel 95 or earlier are not supported, nor are encrypted files.
+#' and combination charts), chart sheets and pivot tables based on a worksheet
+#' are imported. The pivot caches are refreshed when the file is opened in a
+#' spreadsheet software. Files from Excel 95 or earlier are not supported, nor
+#' are encrypted files.
 #' Support is limited to little endian platforms.
 #'
 #' The loaded workbook provides a finalizer that will be invoked after the first
@@ -115,7 +118,7 @@ wb_load <- function(
     if (.Platform$endian == "big")
       stop("XLS is not supported on big endian.", call. = FALSE)
 
-    xmlFiles <- xls_unpack(file, xmlDir, data_only, debug)
+    xmlFiles <- xls_unpack(path.expand(file), xmlDir, data_only, debug)
   } else {
     ## Unzip files to temp directory
     xmlFiles <- withCallingHandlers(
@@ -235,7 +238,13 @@ wb_load <- function(
 
   # Pivot Tables, Slicers & Timelines
   pivotTableXML <- pivotTableRelsXML <- pivotDefXML <- pivotDefRelsXML <- pivotCacheRecords <- slicerXML <- slicerCachesXML <- timelineXML <- timelineCachesXML <- character(0)
+  pivotTableBIN <- pivotDefBIN <- slicerBIN <- slicerCacheBIN <- character(0)
+  xlsb_pivot_dropped <- xlsb_slicer_dropped <- FALSE
   if (any(grepl("xl/pivotTables|xl/pivotCache|xl/slicers|xl/timelines", xmlDirs))) {
+    pivotTableBIN     <- grep_xml("pivotTable[0-9]+\\.bin$")
+    pivotDefBIN       <- grep_xml("pivotCacheDefinition[0-9]+\\.bin$")
+    slicerBIN         <- grep_xml("slicers/slicer[0-9]+\\.bin$")
+    slicerCacheBIN    <- grep_xml("slicerCaches/slicerCache[0-9]+\\.bin$")
     pivotTableXML     <- grep_xml("pivotTable[0-9]+\\.xml$")
     pivotTableRelsXML <- grep_xml("pivotTable[0-9]+\\.xml\\.rels$")
     pivotDefXML       <- grep_xml("pivotCacheDefinition[0-9]+\\.xml$")
@@ -356,6 +365,51 @@ wb_load <- function(
 
     if (!data_only && length(chartSheetsXML)) {
       chartSheetsXML <- gsub(".bin$", ".xml", chartSheetsXML)
+    }
+
+    if (!data_only && length(pivotTableBIN) && length(pivotDefBIN)) {
+      pivotDefXML <- gsub("\\.bin$", ".xml", pivotDefBIN)
+      pivotTableXML <- gsub("\\.bin$", ".xml", pivotTableBIN)
+
+      def_ok <- vapply(seq_along(pivotDefBIN), function(i) pivotcache_bin(pivotDefBIN[i], pivotDefXML[i], debug), integer(1))
+      tbl_ok <- vapply(seq_along(pivotTableBIN), function(i) pivottable_bin(pivotTableBIN[i], pivotTableXML[i], debug), integer(1))
+
+      if (any(def_ok < 0L) || any(tbl_ok < 0L)) {
+        unlink(c(pivotDefXML, pivotTableXML))
+        pivotDefXML <- pivotTableXML <- character(0)
+        xlsb_pivot_dropped <- TRUE
+      } else {
+        pivotCacheRecords <- gsub("pivotCacheDefinition", "pivotCacheRecords", pivotDefXML)
+        pivotDefRelsXML <- file.path(dirname(pivotDefXML), "_rels", paste0(basename(pivotDefXML), ".rels"))
+        pivotTableRelsXML <- file.path(dirname(pivotTableXML), "_rels", paste0(basename(pivotTableXML), ".rels"))
+        for (i in seq_along(pivotCacheRecords)) {
+          writeLines('<pivotCacheRecords xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="0"/>', pivotCacheRecords[i])
+          writeLines(sprintf(
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords" Target="%s"/></Relationships>',
+            basename(pivotCacheRecords[i])
+          ), pivotDefRelsXML[i])
+        }
+        for (i in seq_along(pivotTableBIN)) {
+          rels <- readLines(file.path(dirname(pivotTableBIN[i]), "_rels", paste0(basename(pivotTableBIN[i]), ".rels")), warn = FALSE)
+          writeLines(gsub("\\.bin\"", ".xml\"", rels), pivotTableRelsXML[i])
+        }
+      }
+    }
+
+    if (!data_only && length(slicerBIN) && length(slicerCacheBIN) && length(pivotTableXML) && !xlsb_pivot_dropped) {
+      slicerXML <- gsub("\\.bin$", ".xml", slicerBIN)
+      slicerCachesXML <- gsub("\\.bin$", ".xml", slicerCacheBIN)
+
+      slicer_ok <- vapply(seq_along(slicerBIN), function(i) slicer_bin(slicerBIN[i], slicerXML[i], debug), integer(1))
+      cache_ok <- vapply(seq_along(slicerCacheBIN), function(i) slicercache_bin(slicerCacheBIN[i], slicerCachesXML[i], debug), integer(1))
+
+      if (any(slicer_ok < 0L) || any(cache_ok < 0L)) {
+        unlink(c(slicerXML, slicerCachesXML))
+        slicerXML <- slicerCachesXML <- character(0)
+        xlsb_slicer_dropped <- TRUE
+      }
+    } else {
+      xlsb_slicer_dropped <- TRUE
     }
 
     if (!data_only && length(commentsBIN)) {
@@ -752,6 +806,13 @@ wb_load <- function(
 
     caches <- xml_node(workbook_xml, "workbook", "pivotCaches", "pivotCache")
 
+    if (length(workbookBIN) && length(caches)) {
+      cache_rels <- rbindlist(xml_attr(workbookXMLRels, "Relationships", "Relationship"))
+      cache_ids <- gsub('^.*r:id="|"[^"]*$', "", caches)
+      cache_no <- cdigit(basename2(cache_rels$Target[match(cache_ids, cache_rels$Id)]), as_integer = TRUE)
+      caches <- caches[order(cache_no)]
+    }
+
     for (i in seq_along(caches)) {
       caches[i] <- gsub('"rId[0-9]+"', sprintf('"rId%s"', rIds[i]), caches[i])
     }
@@ -1146,8 +1207,13 @@ wb_load <- function(
         }
 
         # print(xml_relship)
-        if (any(xml_relship$typ %in% c("comments", "table"))) { #  %% length(tablesBIN)
-          sel <- xml_relship$typ %in% c("comments", "table")
+        if (length(workbookBIN)) {
+          drop <- (xlsb_slicer_dropped & xml_relship$typ == "slicer") | (xlsb_pivot_dropped & xml_relship$typ == "pivotTable")
+          xml_relship <- xml_relship[!drop, ]
+        }
+
+        if (any(xml_relship$typ %in% c("comments", "table", "pivotTable", "slicer"))) { #  %% length(tablesBIN)
+          sel <- xml_relship$typ %in% c("comments", "table", "pivotTable", "slicer")
           # message("table")
           # print(gsub(".bin", ".xml", xml_relship$Target[sel]))
           # message("---")
@@ -1259,11 +1325,15 @@ wb_load <- function(
       wxr <- c(wxr, sprintf('<Relationship Id="rId%s" Type="http://schemas.microsoft.com/office/2007/relationships/slicerCache" Target="slicerCaches/slicerCache%s.xml"/>', 1E5 + seq_slicer_cache, seq_slicer_cache))
 
       # get extLst object. select the slicerCaches and replace it
-      ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")
-      is_slicer <- which(ext_nams %in% c("x14:slicerCaches", "x15:slicerCaches"))
-      ext <- xml_node(wb$workbook$extLst, "extLst", "ext")
-      ext[is_slicer] <- genSlicerCachesExtLst(1E5 + seq_along(slicerCachesXML))
-      wb$workbook$extLst <- xml_node_create("extLst", xml_children = ext)
+      if (length(workbookBIN)) {
+        wb$workbook$extLst <- xml_node_create("extLst", xml_children = genSlicerCachesExtLst(1E5 + seq_along(slicerCachesXML)))
+      } else {
+        ext_nams <- xml_node_name(wb$workbook$extLst, "extLst", "ext")
+        is_slicer <- which(ext_nams %in% c("x14:slicerCaches", "x15:slicerCaches"))
+        ext <- xml_node(wb$workbook$extLst, "extLst", "ext")
+        ext[is_slicer] <- genSlicerCachesExtLst(1E5 + seq_along(slicerCachesXML))
+        wb$workbook$extLst <- xml_node_create("extLst", xml_children = ext)
+      }
     }
 
     ## Timeline -------------------------------------------------------------------------------------
