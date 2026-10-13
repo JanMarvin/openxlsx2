@@ -424,3 +424,66 @@ test_that("pivot table style of xls is imported", {
   style <- function(wb) regmatches(wb$pivotTables, regexpr("<pivotTableStyleInfo[^>]*>", wb$pivotTables))
   expect_equal(style(b), style(a))
 })
+
+test_that("shared string counts of xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+  wb <- wb_load(testfile_path("loadExample.xls"))
+  expect_equal(attr(wb$sharedStrings, "uniqueCount"), as.character(length(wb$sharedStrings)))
+})
+
+test_that("page layout view of xls is imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+  fl <- testfile_path("xls_source.xls")
+  raw_xls <- readBin(fl, "raw", file.size(fl))
+  plv <- as.raw(c(0x8b, 0x08, 0x10, 0x00, 0x8b, 0x08))
+  at <- which(raw_xls == plv[1])
+  at <- at[vapply(at, function(i) all(raw_xls[i + 0:5] == plv), NA)][1]
+  raw_xls[at + 16] <- as.raw(80)
+  raw_xls[at + 18] <- as.raw(3)
+  tmp <- tempfile(fileext = ".xls")
+  on.exit(unlink(tmp), add = TRUE)
+  writeBin(raw_xls, tmp)
+  wb <- wb_load(tmp)
+  views <- unlist(lapply(wb$worksheets, function(x) x$sheetViews))
+  expect_equal(sum(grepl('view="pageLayout"', views, fixed = TRUE)), 1L)
+  expect_true(any(grepl('zoomScalePageLayoutView="80"', views, fixed = TRUE)))
+})
+
+test_that("rels of chart sheets are read if no worksheet has rels", {
+  skip_on_cran()
+  tmp <- tempfile("chartsheet_rels")
+  dir.create(tmp)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = 1)$add_chartsheet()
+  fl <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(fl), add = TRUE)
+  wb$save(fl)
+  fls <- utils::unzip(fl, exdir = tmp)
+  dir.create(file.path(tmp, "xl", "chartsheets", "_rels"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(file.path(tmp, "xl", "drawings"), showWarnings = FALSE)
+  sheet <- grep("chartsheets/sheet[0-9]+[.]xml$", fls, value = TRUE)
+  xml <- paste(readLines(sheet, warn = FALSE), collapse = "")
+  xml <- sub("</chartsheet>", "<drawing r:id=\"rId1\"/></chartsheet>", xml, fixed = TRUE)
+  if (!grepl("xmlns:r=", xml, fixed = TRUE))
+    xml <- sub("<chartsheet ", "<chartsheet xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" ", xml, fixed = TRUE)
+  writeLines(xml, sheet)
+  writeLines(paste0(
+    "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">",
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing1.xml\"/>",
+    "</Relationships>"
+  ), file.path(tmp, "xl", "chartsheets", "_rels", basename(paste0(sheet, ".rels"))))
+  writeLines(
+    "<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\"/>",
+    file.path(tmp, "xl", "drawings", "drawing1.xml")
+  )
+  out <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(out), add = TRUE)
+  old <- setwd(tmp)
+  zip::zip(out, files = list.files(tmp, recursive = TRUE, all.files = TRUE), mode = "mirror")
+  setwd(old)
+
+  wb2 <- wb_load(out)
+  expect_true(any(grepl("drawing1.xml", unlist(wb2$worksheets_rels), fixed = TRUE)))
+})

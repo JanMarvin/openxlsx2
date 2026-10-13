@@ -201,7 +201,7 @@ wb_load <- function(
 
   # Comments, Persons & Relationships
   sheetRelsXML <- sheetRelsBIN <- commentsXML <- commentsBIN <- personXML <- threadCommentsXML <- character(0)
-  if (any(grepl("xl/worksheets/_rels|xl/comments|xl/threadedComments|xl/persons", xmlDirs))) {
+  if (any(grepl("xl/worksheets/_rels|xl/chartsheets/_rels|xl/comments|xl/threadedComments|xl/persons", xmlDirs))) {
     sheetRelsXML      <- grep_xml("sheet[0-9]+\\.xml\\.rels$")
     sheetRelsBIN      <- grep_xml("sheet[0-9]+\\.bin\\.rels$")
     commentsXML       <- grep_xml("xl/comments[0-9]+\\.xml")

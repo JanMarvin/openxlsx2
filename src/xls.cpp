@@ -940,8 +940,27 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
   if (bin) {
     bin.seekg(0, std::ios_base::beg);
 
+    uint32_t sst_total = 0, sst_unique = 0;
+    int sst_depth = 0;
+    uint16_t sst_rid = 0, sst_rsize = 0;
+    while (XLS_RECORD(sst_rid, sst_rsize, bin, swapit)) {
+      std::streampos sst_next = bin.tellg() + std::streamoff(sst_rsize);
+      if (sst_rid == XlsBOF) ++sst_depth;
+      if (sst_rid == XlsEOF) --sst_depth;
+      if (sst_depth <= 0) break;
+      if (sst_rid == XlsSST) {
+        sst_total = readbin(sst_total, bin, swapit);
+        sst_unique = readbin(sst_unique, bin, swapit);
+        break;
+      }
+      bin.seekg(sst_next, std::ios_base::beg);
+    }
+    bin.clear();
+    bin.seekg(0, std::ios_base::beg);
+
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
-    out << "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">" << std::endl;
+    out << "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"" << sst_total
+        << "\" uniqueCount=\"" << sst_unique << "\">" << std::endl;
 
     std::vector<XlsFontInfo> fonts;
     std::vector<uint32_t> palette(XlsDefaultPalette, XlsDefaultPalette + 56);
@@ -1636,7 +1655,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
     // view, print and page settings
     std::string tab_color;
     bool fit_to_page = false, have_window = false, have_pane = false;
-    uint16_t window_flags = 0, zoom = 0;
+    uint16_t window_flags = 0, zoom = 0, zoom_plv = 0, plv_flags = 0;
     uint16_t pane_x = 0, pane_y = 0, pane_row = 0, pane_col = 0;
     double margins[6] = {0.7, 0.7, 0.75, 0.75, 0.3, 0.3};
     bool have_margin = false;
@@ -1758,7 +1777,10 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         if (!(window_flags & 0x0004)) out << " showRowColHeaders=\"0\"";
         if (!(window_flags & 0x0010)) out << " showZeros=\"0\"";
         if (window_flags & 0x0200) out << " tabSelected=\"1\"";
+        if (plv_flags & 0x0001) out << " view=\"pageLayout\"";
+        else if (window_flags & 0x0800) out << " view=\"pageBreakPreview\"";
         if (zoom > 0 && zoom != 100) out << " zoomScale=\"" << zoom << "\" zoomScaleNormal=\"" << zoom << "\"";
+        if ((plv_flags & 0x0001) && zoom_plv >= 10 && zoom_plv <= 400 && zoom_plv != 100) out << " zoomScalePageLayoutView=\"" << zoom_plv << "\"";
         out << " workbookViewId=\"0\"";
         bool has_pane = have_pane && (window_flags & 0x0008) && (pane_x > 0 || pane_y > 0);
         if (!has_pane && selections.empty()) {
@@ -1971,6 +1993,14 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             case XlsWindow2: {
               window_flags = readbin(window_flags, bin, swapit);
               have_window = true;
+              break;
+            }
+
+            case XlsPLV: {
+              // header of a FRT record (12), zoom, flags
+              bin.seekg(12, std::ios_base::cur);
+              zoom_plv = readbin(zoom_plv, bin, swapit);
+              plv_flags = readbin(plv_flags, bin, swapit);
               break;
             }
 

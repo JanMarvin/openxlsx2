@@ -313,3 +313,15 @@ test_that("default column width is imported from xlsb", {
   wb <- wb_load(testfile_path("loadExample.xlsb"))
   expect_match(wb$worksheets[[1]]$sheetFormatPr, "defaultColWidth=\"8.832", fixed = TRUE)
 })
+
+test_that("xlsb styles use documented attribute values", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+  wb <- wb_load(testfile_path("test_coverage.xlsb"))
+  expect_true(any(grepl("horizontal=\"centerContinuous\"", wb$styles_mgr$styles$cellXfs, fixed = TRUE)))
+  expect_false(any(grepl("center-across", wb$styles_mgr$styles$cellXfs, fixed = TRUE)))
+
+  wb <- wb_load(testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb"))
+  expect_false(any(grepl("<color hex=", wb$styles_mgr$styles$borders, fixed = TRUE)))
+  expect_true(any(grepl("<color rgb=", wb$styles_mgr$styles$borders, fixed = TRUE)))
+})

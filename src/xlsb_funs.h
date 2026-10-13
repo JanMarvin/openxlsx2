@@ -391,7 +391,7 @@ inline std::string halign(int32_t style) {
     if (style == 3) hali = "right";
     if (style == 4) hali = "fill";
     if (style == 5) hali = "justify";
-    if (style == 6) hali = "center-across";
+    if (style == 6) hali = "centerContinuous";
     if (style == 7) hali = "distributed";
 
     out = out + " horizontal=\"" + hali + "\"";
@@ -993,7 +993,7 @@ inline std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
     if (color[0] == 0x01)
       out << "><color indexed=\"" << color[1] << "\" />";
     if (color[0] == 0x02)
-      out << "><color hex=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />";
+      out << "><color rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />";
     if (color[0] == 0x03)
       out << "><color theme=\"" << color[1] << "\" tint=\"" << stream.str() << "\" />";
 
