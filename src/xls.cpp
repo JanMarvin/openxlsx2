@@ -1821,9 +1821,10 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
     int n_unsupported = 0;
     int first_unsupported = -1;
 
-    auto row_attributes = [](const Row& r) {
+    auto row_attributes = [&default_row_height](const Row& r) {
       std::string attr;
       if (r.custom) attr += " ht=\"" + xls_num(r.height) + "\" customHeight=\"1\"";
+      else if (r.height > 0 && r.height != default_row_height) attr += " ht=\"" + xls_num(r.height) + "\"";
       if (r.hidden) attr += " hidden=\"1\"";
       if (r.outline) attr += " outlineLevel=\"" + std::to_string(r.outline) + "\"";
       return attr;

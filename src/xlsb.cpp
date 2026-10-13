@@ -2030,6 +2030,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
     bin.seekg(0, std::ios_base::beg);
 
     bool first_row = true;
+    uint16_t def_row_twips = 0;
     bool in_sheet_data = false;
     bool end_of_worksheet = false;
     bool extlst_open = false, ext_open = false;
@@ -2578,6 +2579,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           cchDefColWidth = readbin(cchDefColWidth, bin, swapit);
           miyDefRwHeight = readbin(miyDefRwHeight, bin, swapit);
           fmt_flags = readbin(fmt_flags, bin, swapit);
+          def_row_twips = miyDefRwHeight;
           iOutLevelRw = readbin(iOutLevelRw, bin, swapit);
           iOutLevelCol = readbin(iOutLevelCol, bin, swapit);
 
@@ -2696,9 +2698,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           out << rw + 1 << "\"";
 
           if (view_flags.fUnsynced() != 0) {
-            // Rcpp::Rcout << " ht=\"" << miyRw/20 << "\"" << std::endl;
-            out << " ht=\"" << miyRw/20 << "\"";
+            out << " ht=\"" << static_cast<double>(miyRw) / 20 << "\"";
             out << " customHeight=\"" << view_flags.fUnsynced() << "\"";
+          } else if (miyRw > 0 && miyRw != def_row_twips) {
+            out << " ht=\"" << static_cast<double>(miyRw) / 20 << "\"";
           }
 
           if (ccolspan)
