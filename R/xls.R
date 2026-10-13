@@ -198,7 +198,10 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
   }
   if (!has_strings) unlink(path("xl", "sharedStrings.xml"))
 
-  list.files(xmlDir, recursive = TRUE, full.names = TRUE, all.files = TRUE)
+  # unzip() returns paths with forward slashes on Windows, wb_load() compares
+  # these paths with the output of dirname(), which uses forward slashes too
+  files <- list.files(xmlDir, recursive = TRUE, full.names = TRUE, all.files = TRUE)
+  gsub("\\", "/", files, fixed = TRUE)
 }
 
 xls_chart_caches <- function(xmlDir) {
