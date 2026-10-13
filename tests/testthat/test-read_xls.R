@@ -349,7 +349,9 @@ test_that("data_only skips everything but the cells", {
   full <- wb_load(fl, sheet = 3)
   expect_equal(length(wb$charts), 0L)
   expect_equal(length(wb$tables), 0L)
-  expect_equal(wb_to_df(wb, col_names = FALSE), wb_to_df(full, col_names = FALSE))
+  expect_message(a <- wb_to_df(wb, col_names = FALSE), "contains no data")
+  expect_message(b <- wb_to_df(full, col_names = FALSE), "contains no data")
+  expect_equal(a, b)
 })
 
 test_that("pivot tables are imported", {
@@ -403,4 +405,22 @@ test_that("xls paths with a tilde are expanded", {
   on.exit(Sys.setenv(HOME = old))
   wb <- wb_load("~/loadExample.xls")
   expect_equal(length(wb$get_sheet_names()), 4L)
+})
+
+test_that("conditional formatting of xls uses the full colors", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+  wb <- wb_load(testfile_path("loadExample.xls"))
+  dxfs <- wb$styles_mgr$styles$dxfs
+  expect_match(dxfs, "FFFFC7CE", fixed = TRUE, all = FALSE)
+  expect_match(dxfs, "FF9C0006", fixed = TRUE, all = FALSE)
+})
+
+test_that("pivot table style of xls is imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+  a <- wb_load(testfile_path("loadExample.xlsx"))
+  b <- wb_load(testfile_path("loadExample.xls"))
+  style <- function(wb) regmatches(wb$pivotTables, regexpr("<pivotTableStyleInfo[^>]*>", wb$pivotTables))
+  expect_equal(style(b), style(a))
 })

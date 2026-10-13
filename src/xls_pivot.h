@@ -183,14 +183,16 @@ struct XlsPivotCacheField {
   size_t expected = 0, count = 0, n_str = 0, n_num = 0, n_int = 0, n_blank = 0, n_other = 0, n_date = 0;
   double min = 0, max = 0;
   std::string min_date, max_date;
+  uint32_t flags = 0;
+  bool shared = false;
 };
 
 inline std::string xls_pivot_cache_write(const std::vector<XlsPivotCacheField>& fields, uint32_t n_records, const XlsPivotSource& src,
-                                         uint32_t slicer_id = 0) {
+                                         uint32_t slicer_id = 0, bool refresh = true) {
   std::string out = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
   out += "<pivotCacheDefinition xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
-         "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId1\" refreshedBy=\"openxlsx2\" "
-         "invalid=\"1\" refreshOnLoad=\"1\" refreshedDate=\"1\" createdVersion=\"8\" refreshedVersion=\"8\" "
+         "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId1\" refreshedBy=\"openxlsx2\" " +
+         std::string(refresh ? "invalid=\"1\" refreshOnLoad=\"1\" " : "") + "refreshedDate=\"1\" createdVersion=\"8\" refreshedVersion=\"8\" "
          "minRefreshableVersion=\"3\" recordCount=\"" + std::to_string(n_records) + "\">";
   out += "<cacheSource type=\"worksheet\"><worksheetSource ";
   if (!src.name.empty()) {

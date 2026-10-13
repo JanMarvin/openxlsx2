@@ -567,6 +567,56 @@ inline const char* xls_builtin_format(uint32_t id) {
   }
 }
 
+// CFColor: how the color is referenced (1 palette, 2 RGB, 3 theme), the value and the tint
+struct XlsCfColor {
+  uint32_t type = 0, value = 0;
+  double tint = 0;
+};
+
+// The attributes of a color element: the color of a palette, RGB (r, g, b, a) or a theme color.
+// Colors that are not set or automatic return an empty string.
+inline std::string xls_color_attr(const XlsCfColor& col, const std::vector<uint32_t>& palette) {
+  std::string x;
+  if (col.type == 1) {
+    x = " rgb=\"" + xls_argb(palette, col.value) + "\"";
+  } else if (col.type == 2) {
+    char hex[16];
+    std::snprintf(hex, sizeof(hex), "FF%02X%02X%02X", col.value & 0xFFu, (col.value >> 8) & 0xFFu, (col.value >> 16) & 0xFFu);
+    x = std::string(" rgb=\"") + hex + "\"";
+  } else if (col.type == 3) {
+    x = " theme=\"" + std::to_string(col.value) + "\"";
+  } else {
+    return x;
+  }
+  if (col.tint != 0) x += " tint=\"" + xls_num(col.tint) + "\"";
+  return x;
+}
+
+// ExtProp structures of XFExt and CFEx: type, size (including these 4 bytes) and the
+// data. Colors (FullColorExt) are the type of the color (2 bytes), the tint (2 bytes,
+// -32768 to 32767 for -1 to 1) and the value (4 bytes), followed by 8 unused bytes.
+// Fills the colors by type and returns the indent (type 0x0F), 0 if not set.
+inline void xls_extprops(const std::vector<uint8_t>& rec, size_t pos, size_t count,
+                         std::map<uint16_t, XlsCfColor>& colors, uint16_t& indent) {
+  auto u16 = [&](size_t at) -> uint32_t { return at + 1 < rec.size() ? static_cast<uint32_t>(rec[at] | (rec[at + 1] << 8)) : 0u; };
+  for (size_t i = 0; i < count; ++i) {
+    if (pos + 4 > rec.size()) return;
+    uint16_t type = static_cast<uint16_t>(u16(pos));
+    size_t cb = u16(pos + 2);
+    if (cb < 4 || pos + cb > rec.size()) return;
+    if ((type == 0x04 || type == 0x05 || (type >= 0x07 && type <= 0x0B) || type == 0x0D) && cb >= 12) {
+      XlsCfColor c;
+      c.type = u16(pos + 4);
+      c.tint = static_cast<int16_t>(u16(pos + 6)) / 32767.0;
+      c.value = u16(pos + 8) | (u16(pos + 10) << 16);
+      colors[type] = c;
+    } else if (type == 0x0F && cb >= 6) {
+      indent = static_cast<uint16_t>(u16(pos + 4));
+    }
+    pos += cb;
+  }
+}
+
 // The formatting of a conditional format (DXFN, [MS-XLS] 2.5.95) as a dxf. A DXFN
 // starts with flags: for the values "ninch" (ignore) bits, and bits that tell which
 // of the parts follow. The parts have a fixed order: number format, font,
@@ -574,7 +624,8 @@ inline const char* xls_builtin_format(uint32_t id) {
 // rec holds the record, pos is the start of the DXFN and moves to its end.
 // Returns false if the record is too short.
 inline bool xls_dxfn(const std::vector<uint8_t>& rec, size_t& pos, const std::vector<uint32_t>& palette,
-                     const std::map<uint16_t, std::string>& formats, int numfmt_id, std::string& dxf) {
+                     const std::map<uint16_t, std::string>& formats, int numfmt_id, std::string& dxf,
+                     const std::map<uint16_t, XlsCfColor>* ext = nullptr) {
   auto u8 = [&](size_t at) -> uint32_t { return at < rec.size() ? rec[at] : 0u; };
   auto u16 = [&](size_t at) -> uint32_t { return u8(at) | (u8(at + 1) << 8); };
   auto u32 = [&](size_t at) -> uint32_t { return u16(at) | (u16(at + 2) << 16); };
@@ -594,6 +645,16 @@ inline bool xls_dxfn(const std::vector<uint8_t>& rec, size_t& pos, const std::ve
   bool num_is_text = (flags2 & 0x0001) != 0;
 
   std::string font, num, fill, border;
+  auto full_color = [&](uint16_t type, const std::string& palette_attr) {
+    if (ext != nullptr) {
+      auto it = ext->find(type);
+      if (it != ext->end()) {
+        std::string attr = xls_color_attr(it->second, palette);
+        if (!attr.empty()) return attr;
+      }
+    }
+    return palette_attr;
+  };
 
   if (has_num) {
     if (num_is_text) {
@@ -653,7 +714,7 @@ inline bool xls_dxfn(const std::vector<uint8_t>& rec, size_t& pos, const std::ve
     }
     if (!sss_ninch && sss == 1) font += "<vertAlign val=\"superscript\"/>";
     if (!sss_ninch && sss == 2) font += "<vertAlign val=\"subscript\"/>";
-    if (icv >= 0 && icv != 0x7FFF && icv < 66) font += "<color rgb=\"" + xls_argb(palette, static_cast<uint32_t>(icv)) + "\"/>";
+    if (icv >= 0 && icv != 0x7FFF && icv < 66) font += "<color" + full_color(0x0D, " rgb=\"" + xls_argb(palette, static_cast<uint32_t>(icv)) + "\"") + "/>";
   }
 
   if (has_align) pos += 8;
@@ -667,14 +728,15 @@ inline bool xls_dxfn(const std::vector<uint8_t>& rec, size_t& pos, const std::ve
     uint32_t style[4] = {b0 & 0x0F, (b0 >> 4) & 0x0F, (b0 >> 8) & 0x0F, (b0 >> 12) & 0x0F};
     uint32_t color[4] = {b1 & 0x7F, (b1 >> 7) & 0x7F, b2 & 0x7F, (b2 >> 7) & 0x7F};
     static const char* const sides[4] = {"left", "right", "top", "bottom"};
+    static const uint16_t side_ext[4] = {0x09, 0x0A, 0x07, 0x08};
     for (int k = 0; k < 4; ++k) {
       if ((flags >> (10 + k)) & 1) continue;
       border += std::string("<") + sides[k];
       if (style[k] == 0 || style[k] >= 14) {
         border += "/>";
       } else {
-        border += std::string(" style=\"") + XlsBorderStyles[style[k]] + "\"><color rgb=\"" + xls_argb(palette, color[k]) +
-                  "\"/></" + sides[k] + ">";
+        border += std::string(" style=\"") + XlsBorderStyles[style[k]] + "\"><color" + full_color(side_ext[k], " rgb=\"" + xls_argb(palette, color[k]) + "\"") +
+                  "/></" + sides[k] + ">";
       }
     }
   }
@@ -684,8 +746,8 @@ inline bool xls_dxfn(const std::vector<uint8_t>& rec, size_t& pos, const std::ve
     pos += 4;
     uint32_t fls = (p >> 10) & 0x3F, fg = (p >> 16) & 0x7F, bg = (p >> 23) & 0x7F;
     std::string inner;
-    if (!((flags >> 17) & 1)) inner += "<fgColor rgb=\"" + xls_argb(palette, fg) + "\"/>";
-    if (!((flags >> 18) & 1)) inner += "<bgColor rgb=\"" + xls_argb(palette, bg) + "\"/>";
+    if (!((flags >> 17) & 1)) inner += "<fgColor" + full_color(0x04, " rgb=\"" + xls_argb(palette, fg) + "\"") + "/>";
+    if (!((flags >> 18) & 1)) inner += "<bgColor" + full_color(0x05, " rgb=\"" + xls_argb(palette, bg) + "\"") + "/>";
     std::string type;
     if (!((flags >> 16) & 1) && fls < 19) type = std::string(" patternType=\"") + XlsFillPatterns[fls] + "\"";
     if (!type.empty() || !inner.empty()) fill = "<fill><patternFill" + type + ">" + inner + "</patternFill></fill>";
@@ -712,7 +774,8 @@ struct XlsCfRule {
 };
 
 inline bool xls_cf(const std::vector<uint8_t>& rec, const std::vector<uint32_t>& palette,
-                   const std::map<uint16_t, std::string>& formats, int numfmt_id, XlsCfRule& cf) {
+                   const std::map<uint16_t, std::string>& formats, int numfmt_id, XlsCfRule& cf,
+                   const std::map<uint16_t, XlsCfColor>* ext = nullptr) {
   if (rec.size() < 6) return false;
   cf.type = rec[0];
   cf.comparison = rec[1];
@@ -720,7 +783,7 @@ inline bool xls_cf(const std::vector<uint8_t>& rec, const std::vector<uint32_t>&
   size_t cce2 = static_cast<size_t>(rec[4] | (rec[5] << 8));
 
   size_t pos = 6;
-  if (!xls_dxfn(rec, pos, palette, formats, numfmt_id, cf.dxf)) return false;
+  if (!xls_dxfn(rec, pos, palette, formats, numfmt_id, cf.dxf, ext)) return false;
   if (pos + cce1 + cce2 > rec.size()) return false;
 
   cf.rgce1.assign(rec.begin() + static_cast<std::ptrdiff_t>(pos), rec.begin() + static_cast<std::ptrdiff_t>(pos + cce1));
@@ -735,56 +798,6 @@ struct XlsCfvo {
   double num = 0;
   bool equal = true;  // icon sets: does a value equal to the threshold pass it
 };
-
-// CFColor: how the color is referenced (1 palette, 2 RGB, 3 theme), the value and the tint
-struct XlsCfColor {
-  uint32_t type = 0, value = 0;
-  double tint = 0;
-};
-
-// The attributes of a color element: the color of a palette, RGB (r, g, b, a) or a theme color.
-// Colors that are not set or automatic return an empty string.
-inline std::string xls_color_attr(const XlsCfColor& col, const std::vector<uint32_t>& palette) {
-  std::string x;
-  if (col.type == 1) {
-    x = " rgb=\"" + xls_argb(palette, col.value) + "\"";
-  } else if (col.type == 2) {
-    char hex[16];
-    std::snprintf(hex, sizeof(hex), "FF%02X%02X%02X", col.value & 0xFFu, (col.value >> 8) & 0xFFu, (col.value >> 16) & 0xFFu);
-    x = std::string(" rgb=\"") + hex + "\"";
-  } else if (col.type == 3) {
-    x = " theme=\"" + std::to_string(col.value) + "\"";
-  } else {
-    return x;
-  }
-  if (col.tint != 0) x += " tint=\"" + xls_num(col.tint) + "\"";
-  return x;
-}
-
-// ExtProp structures of XFExt and CFEx: type, size (including these 4 bytes) and the
-// data. Colors (FullColorExt) are the type of the color (2 bytes), the tint (2 bytes,
-// -32768 to 32767 for -1 to 1) and the value (4 bytes), followed by 8 unused bytes.
-// Fills the colors by type and returns the indent (type 0x0F), 0 if not set.
-inline void xls_extprops(const std::vector<uint8_t>& rec, size_t pos, size_t count,
-                         std::map<uint16_t, XlsCfColor>& colors, uint16_t& indent) {
-  auto u16 = [&](size_t at) -> uint32_t { return at + 1 < rec.size() ? static_cast<uint32_t>(rec[at] | (rec[at + 1] << 8)) : 0u; };
-  for (size_t i = 0; i < count; ++i) {
-    if (pos + 4 > rec.size()) return;
-    uint16_t type = static_cast<uint16_t>(u16(pos));
-    size_t cb = u16(pos + 2);
-    if (cb < 4 || pos + cb > rec.size()) return;
-    if ((type == 0x04 || type == 0x05 || (type >= 0x07 && type <= 0x0B) || type == 0x0D) && cb >= 12) {
-      XlsCfColor c;
-      c.type = u16(pos + 4);
-      c.tint = static_cast<int16_t>(u16(pos + 6)) / 32767.0;
-      c.value = u16(pos + 8) | (u16(pos + 10) << 16);
-      colors[type] = c;
-    } else if (type == 0x0F && cb >= 6) {
-      indent = static_cast<uint16_t>(u16(pos + 4));
-    }
-    pos += cb;
-  }
-}
 
 // CF12: the rules of Excel 2007 and later. Rules on a formula or a value have
 // a dxf like the CF record. The others have color scales, data bars or icon sets.
@@ -835,6 +848,14 @@ inline bool xls_cf12(const std::vector<uint8_t>& rec, const std::vector<uint32_t
   } else {
     size_t at = pos;
     if (!xls_dxfn(rec, at, palette, formats, numfmt_id, cf.dxf)) return false;
+    // the extension (XFExtNoFRT): 3 reserved words, the number of properties and the properties
+    if (at + 8 <= pos + cb_dxf && pos + cb_dxf <= n) {
+      std::map<uint16_t, XlsCfColor> colors;
+      uint16_t indent = 0;
+      xls_extprops(rec, at + 8, u16(at + 6), colors, indent);
+      size_t again = pos;
+      if (!colors.empty()) xls_dxfn(rec, again, palette, formats, numfmt_id, cf.dxf, &colors);
+    }
     cf.has_dxf = true;
     pos += cb_dxf;
   }

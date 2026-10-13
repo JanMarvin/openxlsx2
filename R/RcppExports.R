@@ -386,8 +386,8 @@ worksheet_bin <- function(filePath, chartsheet, outPath, debug) {
     .Call(`_openxlsx2_worksheet_bin`, filePath, chartsheet, outPath, debug)
 }
 
-pivotcache_bin <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_pivotcache_bin`, filePath, outPath, debug)
+pivotcache_bin <- function(filePath, outPath, recordsPath, recordsOut, debug) {
+    .Call(`_openxlsx2_pivotcache_bin`, filePath, outPath, recordsPath, recordsOut, debug)
 }
 
 pivottable_bin <- function(filePath, outPath, debug) {

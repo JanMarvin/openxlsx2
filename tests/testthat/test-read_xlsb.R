@@ -281,3 +281,35 @@ test_that("conditional formatting is imported from xlsb", {
   wb <- wb_load(testfile_path("test_coverage.xlsb"))
   expect_match(wb$worksheets[[1]]$conditionalFormatting$cf[1], "<iconSet iconSet=\"5Arrows\"><cfvo type=\"num\" val=\"-67\"/>", fixed = TRUE)
 })
+
+test_that("pivot cache records are imported from xlsb unless the cache is refreshed", {
+
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_online_checks()
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_false(grepl("refreshOnLoad", wb$pivotDefinitions[[1]], fixed = TRUE))
+  expect_match(wb$pivotRecords[[1]], "<r><n v=\"", fixed = TRUE)
+  expect_match(wb$pivotRecords[[1]], "<x v=\"", fixed = TRUE)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb$save(tmp)
+  wb2 <- wb_load(tmp)
+  expect_length(wb2$pivotTables, 2L)
+  expect_match(wb2$pivotRecords[[1]], "<r>", fixed = TRUE)
+
+  op <- options("openxlsx2.pivot_refresh" = TRUE)
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_match(wb$pivotDefinitions[[1]], "refreshOnLoad=\"1\"", fixed = TRUE)
+  expect_match(wb$pivotRecords[[1]], "count=\"0\"", fixed = TRUE)
+})
+
+test_that("default column width is imported from xlsb", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_match(wb$worksheets[[1]]$sheetFormatPr, "defaultColWidth=\"8.832", fixed = TRUE)
+})

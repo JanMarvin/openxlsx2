@@ -1,3 +1,5 @@
+#include <cstdio>
+#include <cstring>
 #include <fstream>
 #include <iterator>
 
@@ -78,7 +80,7 @@ std::string pivot_string(const std::vector<uint8_t>& r, size_t& pos) {
 }  // namespace
 
 // [[Rcpp::export]]
-int32_t pivotcache_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t pivotcache_bin(std::string filePath, std::string outPath, std::string recordsPath, std::string recordsOut, bool debug) {
   std::vector<BinRecord> recs = pivot_records(filePath);
   if (recs.empty()) return -1;
 
@@ -139,6 +141,8 @@ int32_t pivotcache_bin(std::string filePath, std::string outPath, bool debug) {
         if (fields.empty()) break;
         XlsPivotCacheField& f = fields.back();
         uint32_t fl = xls_pv_u16(d, 0);
+        f.flags = fl;
+        f.shared = d.size() >= 6 && xls_pv_u32(d, 2) > 0;
         // flags: 0x1 semi mixed types, 0x2 non date, 0x4 date, 0x8 string, 0x10 blank, 0x40 number,
         // 0x80 integer, 0x100 minimum and maximum. Fields with items get them from the items.
         if (d.size() >= 6 && xls_pv_u32(d, 2) == 0) {
@@ -272,8 +276,101 @@ int32_t pivotcache_bin(std::string filePath, std::string outPath, bool debug) {
 
   if (src_type != 0 || (src.name.empty() && src.ref.empty()) || fields.empty()) return -1;
 
+  // The records: fields with items store the index of the item, the others the value. A file in
+  // which a record does not end where its fields end is not imported, the cache is refreshed.
+  bool refresh = true;
+  if (!recordsPath.empty()) {
+    std::ifstream rin(recordsPath, std::ios::in | std::ios::binary);
+    std::vector<uint8_t> bytes((std::istreambuf_iterator<char>(rin)), std::istreambuf_iterator<char>());
+    std::ofstream rout(recordsOut);
+    std::vector<uint8_t> rec;
+    std::string line;
+    uint32_t n_rec = 0;
+    bool ok = !bytes.empty();
+
+    rout << "<pivotCacheRecords xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
+            "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">";
+
+    size_t pos = 0, n = bytes.size();
+    while (ok && pos < n) {
+      uint32_t id = bytes[pos++];
+      if ((id & 0x80) != 0) {
+        if (pos >= n) break;
+        id = (id & 0x7Fu) | ((bytes[pos++] & 0x7Fu) << 7);
+      }
+      uint32_t size = 0;
+      bool done = false;
+      for (unsigned k = 0; k < 4 && pos < n; ++k) {
+        uint8_t b = bytes[pos++];
+        size |= static_cast<uint32_t>(b & 0x7Fu) << (7 * k);
+        if ((b & 0x80) == 0) {
+          done = true;
+          break;
+        }
+      }
+      if (!done || size > n - pos) {
+        ok = false;
+        break;
+      }
+      if (id == BrtPCRRecordDt) {
+        ok = false;
+        break;
+      }
+      if (id != BrtPCRRecord) {
+        pos += size;
+        continue;
+      }
+
+      rec.assign(bytes.begin() + static_cast<std::ptrdiff_t>(pos), bytes.begin() + static_cast<std::ptrdiff_t>(pos + size));
+      pos += size;
+
+      size_t at = 0;
+      line = "<r>";
+      for (size_t k = 0; ok && k < fields.size(); ++k) {
+        const XlsPivotCacheField& f = fields[k];
+        if (f.shared) {
+          if (at + 4 > rec.size()) { ok = false; break; }
+          line += "<x v=\"" + std::to_string(xls_pv_u32(rec, at)) + "\"/>";
+          at += 4;
+        } else if ((f.flags & 0x08u) != 0) {
+          std::string str = pivot_string(rec, at);
+          line += "<s v=\"" + escape_xml(str) + "\"/>";
+        } else if ((f.flags & 0x40u) != 0 && (f.flags & 0x04u) == 0) {
+          if (at + 8 > rec.size()) { ok = false; break; }
+          uint64_t bits = static_cast<uint64_t>(xls_pv_u32(rec, at)) | (static_cast<uint64_t>(xls_pv_u32(rec, at + 4)) << 32);
+          double num = 0;
+          std::memcpy(&num, &bits, sizeof(double));
+          line += "<n v=\"" + xls_num(num) + "\"/>";
+          at += 8;
+        } else if ((f.flags & 0x04u) != 0 && (f.flags & 0x40u) == 0) {
+          if (at + 8 > rec.size()) { ok = false; break; }
+          char buf[128];
+          std::snprintf(buf, sizeof(buf), "%04u-%02u-%02uT%02u:%02u:%02u", xls_pv_u16(rec, at), xls_pv_u16(rec, at + 2),
+                        static_cast<unsigned>(rec[at + 4]), static_cast<unsigned>(rec[at + 5]), static_cast<unsigned>(rec[at + 6]),
+                        static_cast<unsigned>(rec[at + 7]));
+          line += std::string("<d v=\"") + buf + "\"/>";
+          at += 8;
+        } else {
+          ok = false;
+        }
+      }
+      if (at != rec.size()) ok = false;
+      line += "</r>";
+      rout << line;
+      ++n_rec;
+    }
+
+    rout << "</pivotCacheRecords>\n";
+    rout.close();
+    if (ok && n_rec > 0) {
+      refresh = false;
+      n_records = n_rec;
+    }
+    if (refresh) std::remove(recordsOut.c_str());
+  }
+
   std::ofstream out(outPath);
-  out << xls_pivot_cache_write(fields, n_records, src, slicer_id);
+  out << xls_pivot_cache_write(fields, n_records, src, slicer_id, refresh);
   return static_cast<int32_t>(fields.size());
 }
 

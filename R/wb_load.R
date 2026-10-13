@@ -371,7 +371,10 @@ wb_load <- function(
       pivotDefXML <- gsub("\\.bin$", ".xml", pivotDefBIN)
       pivotTableXML <- gsub("\\.bin$", ".xml", pivotTableBIN)
 
-      def_ok <- vapply(seq_along(pivotDefBIN), function(i) pivotcache_bin(pivotDefBIN[i], pivotDefXML[i], debug), integer(1))
+      pivotRecordsBIN <- gsub("pivotCacheDefinition", "pivotCacheRecords", pivotDefBIN)
+      pivotRecordsXML <- gsub("pivotCacheDefinition", "pivotCacheRecords", pivotDefXML)
+      pivotRecordsBIN[!file.exists(pivotRecordsBIN) | isTRUE(getOption("openxlsx2.pivot_refresh", FALSE))] <- ""
+      def_ok <- vapply(seq_along(pivotDefBIN), function(i) pivotcache_bin(pivotDefBIN[i], pivotDefXML[i], pivotRecordsBIN[i], pivotRecordsXML[i], debug), integer(1))
       tbl_ok <- vapply(seq_along(pivotTableBIN), function(i) pivottable_bin(pivotTableBIN[i], pivotTableXML[i], debug), integer(1))
 
       if (any(def_ok < 0L) || any(tbl_ok < 0L)) {
@@ -383,7 +386,9 @@ wb_load <- function(
         pivotDefRelsXML <- file.path(dirname(pivotDefXML), "_rels", paste0(basename(pivotDefXML), ".rels"))
         pivotTableRelsXML <- file.path(dirname(pivotTableXML), "_rels", paste0(basename(pivotTableXML), ".rels"))
         for (i in seq_along(pivotCacheRecords)) {
-          writeLines('<pivotCacheRecords xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="0"/>', pivotCacheRecords[i])
+          if (!file.exists(pivotCacheRecords[i])) {
+            writeLines('<pivotCacheRecords xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="0"/>', pivotCacheRecords[i])
+          }
           writeLines(sprintf(
             '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords" Target="%s"/></Relationships>',
             basename(pivotCacheRecords[i])

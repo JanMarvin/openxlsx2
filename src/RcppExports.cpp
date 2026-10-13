@@ -995,15 +995,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // pivotcache_bin
-int32_t pivotcache_bin(std::string filePath, std::string outPath, bool debug);
-RcppExport SEXP _openxlsx2_pivotcache_bin(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
+int32_t pivotcache_bin(std::string filePath, std::string outPath, std::string recordsPath, std::string recordsOut, bool debug);
+RcppExport SEXP _openxlsx2_pivotcache_bin(SEXP filePathSEXP, SEXP outPathSEXP, SEXP recordsPathSEXP, SEXP recordsOutSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< std::string >::type outPath(outPathSEXP);
+    Rcpp::traits::input_parameter< std::string >::type recordsPath(recordsPathSEXP);
+    Rcpp::traits::input_parameter< std::string >::type recordsOut(recordsOutSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(pivotcache_bin(filePath, outPath, debug));
+    rcpp_result_gen = Rcpp::wrap(pivotcache_bin(filePath, outPath, recordsPath, recordsOut, debug));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1126,7 +1128,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_sharedstrings_bin", (DL_FUNC) &_openxlsx2_sharedstrings_bin, 3},
     {"_openxlsx2_workbook_bin", (DL_FUNC) &_openxlsx2_workbook_bin, 3},
     {"_openxlsx2_worksheet_bin", (DL_FUNC) &_openxlsx2_worksheet_bin, 4},
-    {"_openxlsx2_pivotcache_bin", (DL_FUNC) &_openxlsx2_pivotcache_bin, 3},
+    {"_openxlsx2_pivotcache_bin", (DL_FUNC) &_openxlsx2_pivotcache_bin, 5},
     {"_openxlsx2_pivottable_bin", (DL_FUNC) &_openxlsx2_pivottable_bin, 3},
     {"_openxlsx2_slicer_bin", (DL_FUNC) &_openxlsx2_slicer_bin, 3},
     {"_openxlsx2_slicercache_bin", (DL_FUNC) &_openxlsx2_slicercache_bin, 3},

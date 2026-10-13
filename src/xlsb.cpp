@@ -2564,7 +2564,25 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtWsFmtInfo: {
           if (debug) Rcpp::Rcout << "BrtWsFmtInfo: " << bin.tellg() << std::endl;
-          bin.seekg(size, bin.cur);
+          uint32_t dxGCol = 0;
+          uint16_t cchDefColWidth = 0, miyDefRwHeight = 0, fmt_flags = 0;
+          uint8_t iOutLevelRw = 0, iOutLevelCol = 0;
+          dxGCol = readbin(dxGCol, bin, swapit);
+          cchDefColWidth = readbin(cchDefColWidth, bin, swapit);
+          miyDefRwHeight = readbin(miyDefRwHeight, bin, swapit);
+          fmt_flags = readbin(fmt_flags, bin, swapit);
+          iOutLevelRw = readbin(iOutLevelRw, bin, swapit);
+          iOutLevelCol = readbin(iOutLevelCol, bin, swapit);
+
+          out << "<sheetFormatPr";
+          if (cchDefColWidth > 0) out << " baseColWidth=\"" << cchDefColWidth << "\"";
+          if (dxGCol > 0 && dxGCol <= 255u * 256u) out << " defaultColWidth=\"" << static_cast<double>(dxGCol) / 256 << "\"";
+          out << " defaultRowHeight=\"" << static_cast<double>(miyDefRwHeight) / 20 << "\"";
+          if (fmt_flags & 0x0001) out << " customHeight=\"1\"";
+          if (fmt_flags & 0x0002) out << " zeroHeight=\"1\"";
+          if (iOutLevelRw > 0) out << " outlineLevelRow=\"" << static_cast<uint32_t>(iOutLevelRw) << "\"";
+          if (iOutLevelCol > 0) out << " outlineLevelCol=\"" << static_cast<uint32_t>(iOutLevelCol) << "\"";
+          out << "/>" << std::endl;
           break;
         }
 

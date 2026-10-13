@@ -1426,16 +1426,39 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
     // The formatting of conditional formats is in the CF records on the sheets.
     // They are numbered in the order of the stream, the sheets use the same numbers.
     std::vector<std::string> dxfs;
+    std::vector<std::vector<uint8_t>> cf_recs;
+    size_t cf_base = 0;
     bin.clear();
     bin.seekg(0, std::ios_base::beg);
     while (XLS_RECORD(rid, rsize, bin, swapit)) {
       std::streampos next = bin.tellg() + std::streamoff(rsize);
+      if (rid == XlsCondFmt) cf_base = dxfs.size();
       if (rid == XlsCF) {
         std::vector<uint8_t> rec(rsize);
         bin.read(reinterpret_cast<char*>(rec.data()), rsize);
         XlsCfRule cf;
         if (xls_cf(rec, palette, formats, 164 + static_cast<int>(dxfs.size()), cf)) dxfs.push_back(cf.dxf);
         else dxfs.push_back("<dxf/>");
+        cf_recs.push_back(rec);
+      }
+      if (rid == XlsCFEx && rsize > 30) {
+        // full colors of a CF rule: fIsCF12 (4 bytes), nID, icf, cp, template, priority, flags, fHasDXF, DXFN12
+        std::vector<uint8_t> rec(rsize);
+        bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+        auto u16 = [&](size_t at) { return static_cast<size_t>(rec[at] | (rec[at + 1] << 8)); };
+        size_t idx = cf_base + u16(18);
+        size_t cb_dxf = u16(26) | (u16(28) << 16);
+        if (u16(12) == 0 && u16(14) == 0 && rec[25] == 1 && idx < cf_recs.size() && !cf_recs[idx].empty() && 30 + cb_dxf <= rec.size()) {
+          size_t at = 30;
+          std::string unused;
+          if (xls_dxfn(rec, at, palette, formats, 164, unused) && at + 8 <= 30 + cb_dxf) {
+            std::map<uint16_t, XlsCfColor> colors;
+            uint16_t indent = 0;
+            xls_extprops(rec, at + 8, u16(at + 6), colors, indent);
+            XlsCfRule cf;
+            if (!colors.empty() && xls_cf(cf_recs[idx], palette, formats, 164 + static_cast<int>(idx), cf, &colors)) dxfs[idx] = cf.dxf;
+          }
+        }
       }
       if (rid == XlsCF12) {
         std::vector<uint8_t> rec(rsize);
@@ -1445,6 +1468,7 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
         if (rec.size() > 12 && (rec[12] == 1 || rec[12] == 2)) {
           if (xls_cf12(rec, palette, formats, 164 + static_cast<int>(dxfs.size()), cf) && cf.has_dxf) dxfs.push_back(cf.dxf);
           else dxfs.push_back("<dxf/>");
+          cf_recs.emplace_back();
         }
       }
       bin.clear();
@@ -2148,6 +2172,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           case XlsSxIvd:
           case XlsSXPI:
           case XlsSXDI:
+          case XlsSXAddl:
             bin.seekg(next, std::ios_base::beg);
             continue;
           default:
@@ -3144,6 +3169,20 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           xls_pv_view(rec, v);
           if (v.cache < g.pivot_sources.size()) v.source = g.pivot_sources[v.cache];
           pv_views.push_back(v);
+          break;
+        }
+
+        case XlsSXAddl: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          // table style of the pivot table: class view, type 0x1E; flags, the length and the name
+          if (pv_views.empty() || rec.size() < 16 || rec[4] != 0x00 || rec[5] != 0x1E) break;
+          size_t cch = static_cast<size_t>(rec[14] | (rec[15] << 8));
+          if (16 + 2 * cch > rec.size()) break;
+          std::u16string name;
+          for (size_t k = 0; k < cch; ++k) name.push_back(static_cast<char16_t>(rec[16 + 2 * k] | (rec[17 + 2 * k] << 8)));
+          if (!name.empty()) pv_views.back().style = to_utf8(name);
+          pv_views.back().style_flags = static_cast<uint16_t>(rec[12] | (rec[13] << 8));
           break;
         }
 
