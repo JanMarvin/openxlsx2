@@ -52,7 +52,7 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
       # less than it holds can not fill the memory
       gz <- c(as.raw(c(0x1f, 0x8b, 8, 0, 0, 0, 0, 0, 0, 255)), zlib[-c(1:2, length(zlib) - 3:0)], raw(8))
       # the check sum of the made up gzip trailer fails and is reported on stderr
-      quiet <- file(nullfile(), "w")
+      quiet <- file(if (.Platform$OS.type == "windows") "nul:" else "/dev/null", "w")
       sink(quiet, type = "message")
       con <- gzcon(rawConnection(gz))
       data <- tryCatch(

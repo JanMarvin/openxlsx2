@@ -475,6 +475,93 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
 
 }  // namespace
 
+namespace {
+
+// Source code is stored compressed in the stream of a VBA module (MS-OVBA 2.4.1):
+// a signature byte 1, then chunks with a 2 byte header (size, and a flag that tells
+// if the chunk is compressed) and tokens that are literals or copies of earlier bytes.
+std::string xls_vba_decompress(const std::vector<uint8_t>& in, size_t pos) {
+  std::string out;
+  if (pos >= in.size() || in[pos] != 0x01) return out;
+  ++pos;
+  while (pos + 2 <= in.size()) {
+    uint16_t header = static_cast<uint16_t>(in[pos] | (in[pos + 1] << 8));
+    if (((header >> 12) & 0x07) != 3) break;
+    size_t end = std::min(in.size(), pos + static_cast<size_t>(header & 0x0FFF) + 3);
+    bool packed = (header & 0x8000) != 0;
+    pos += 2;
+    size_t start = out.size();
+    if (!packed) {
+      while (pos < end && out.size() - start < 4096) out.push_back(static_cast<char>(in[pos++]));
+      continue;
+    }
+    while (pos < end) {
+      uint8_t flags = in[pos++];
+      for (int bit = 0; bit < 8 && pos < end; ++bit) {
+        if (!(flags & (1 << bit))) {
+          out.push_back(static_cast<char>(in[pos++]));
+          continue;
+        }
+        if (pos + 2 > end) return out;
+        uint16_t token = static_cast<uint16_t>(in[pos] | (in[pos + 1] << 8));
+        pos += 2;
+        size_t done = out.size() - start;
+        unsigned bits = 4;
+        while (bits < 12 && (static_cast<size_t>(1) << bits) < done) ++bits;
+        size_t length = static_cast<size_t>(token & (0xFFFFu >> bits)) + 3;
+        size_t offset = static_cast<size_t>(token >> (16 - bits)) + 1;
+        if (offset > done) return out;
+        for (size_t k = 0; k < length; ++k) out.push_back(out[out.size() - offset]);
+      }
+    }
+  }
+  return out;
+}
+
+// A workbook that was saved with a VBA project but has no code in it is not a
+// workbook with macros. The project always has the modules of the workbook and
+// the sheets; they are empty unless someone wrote code. Standard modules, class
+// modules and forms are counted as code, for the modules of the workbook and the
+// sheets the source is read and has to be more than the attributes Excel adds.
+bool xls_has_vba_code(const std::vector<uint8_t>& file) {
+  std::vector<uint8_t> project = cfb_stream(file, "PROJECT");
+  if (project.empty()) return false;
+
+  std::string text(project.begin(), project.end());
+  size_t at = 0;
+  while (at < text.size()) {
+    // lines end with \r\n or \n\r, both are handled as separators
+    size_t eol = text.find_first_of("\r\n", at);
+    if (eol == std::string::npos) eol = text.size();
+    std::string line = text.substr(at, eol - at);
+    at = eol + 1;
+
+    if (line.compare(0, 7, "Module=") == 0 || line.compare(0, 6, "Class=") == 0 || line.compare(0, 10, "BaseClass=") == 0) return true;
+    if (line.compare(0, 9, "Document=") != 0) continue;
+
+    std::string name = line.substr(9, line.find('/') == std::string::npos ? std::string::npos : line.find('/') - 9);
+    std::vector<uint8_t> module = cfb_stream(file, name);
+    for (size_t i = 0; i < module.size(); ++i) {
+      if (module[i] != 0x01) continue;
+      std::string source = xls_vba_decompress(module, i);
+      if (source.compare(0, 9, "Attribute") != 0) continue;
+      size_t line_at = 0;
+      while (line_at < source.size()) {
+        size_t line_end = source.find_first_of("\r\n", line_at);
+        if (line_end == std::string::npos) line_end = source.size();
+        std::string src = source.substr(line_at, line_end - line_at);
+        line_at = line_end + 1;
+        while (!src.empty() && src.back() == ' ') src.pop_back();
+        if (!src.empty() && src.compare(0, 10, "Attribute ") != 0 && src != "Option Explicit") return true;
+      }
+      break;
+    }
+  }
+  return false;
+}
+
+}  // namespace
+
 // The stream called Workbook inside of the xls file, saved to outPath. This is
 // what the other functions read.
 // [[Rcpp::export]]
@@ -497,8 +584,8 @@ int32_t xls_extract(std::string filePath, std::string outPath, bool debug) {
   if (workbook.size() < 8 || cfb_u16(workbook, 0) != XlsBOF || cfb_u16(workbook, 4) != 0x0600)
     Rcpp::stop("xls: only Excel 97-2003 files are supported");
 
-  if (!cfb_stream(file, "_VBA_PROJECT").empty() || !cfb_stream(file, "PROJECT").empty())
-    Rcpp::warning("The xls file contains a VBA project. Macros are not imported.");
+  if (xls_has_vba_code(file))
+    Rcpp::warning("The xls file contains VBA code. Macros are not imported.");
 
   if (debug) Rcpp::Rcout << "Workbook stream: " << workbook.size() << " bytes" << std::endl;
 
