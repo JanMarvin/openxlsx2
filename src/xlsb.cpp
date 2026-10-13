@@ -1924,8 +1924,8 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           break;
         }
 
-          if (debug) Rcpp::Rcout << "<BrtWbFactoid>" << std::endl;
         case BrtWbFactoid: {  // ???
+          if (debug) Rcpp::Rcout << "<BrtWbFactoid>" << std::endl;
           bin.seekg(size, bin.cur);
           break;
         }

@@ -173,7 +173,7 @@ int32_t pivotcache_bin(std::string filePath, std::string outPath, bool debug) {
                 long month = mp < 10 ? mp + 3 : mp - 9;
                 long year = yoe + era * 400 + (month <= 2 ? 1 : 0);
                 long secs = std::lround((serial[k] - whole) * 86400.0);
-                char buf[32];
+                char buf[128];
                 std::snprintf(buf, sizeof(buf), "%04ld-%02ld-%02ldT%02ld:%02ld:%02ld", year, month, day, secs / 3600, (secs / 60) % 60, secs % 60);
                 iso[k] = buf;
               }
