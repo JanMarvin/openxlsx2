@@ -1446,9 +1446,9 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
         std::vector<uint8_t> rec(rsize);
         bin.read(reinterpret_cast<char*>(rec.data()), rsize);
         auto u16 = [&](size_t at) { return static_cast<size_t>(rec[at] | (rec[at + 1] << 8)); };
-        size_t idx = cf_base + u16(18);
+        size_t cf_idx = cf_base + u16(18);
         size_t cb_dxf = u16(26) | (u16(28) << 16);
-        if (u16(12) == 0 && u16(14) == 0 && rec[25] == 1 && idx < cf_recs.size() && !cf_recs[idx].empty() && 30 + cb_dxf <= rec.size()) {
+        if (u16(12) == 0 && u16(14) == 0 && rec[25] == 1 && cf_idx < cf_recs.size() && !cf_recs[cf_idx].empty() && 30 + cb_dxf <= rec.size()) {
           size_t at = 30;
           std::string unused;
           if (xls_dxfn(rec, at, palette, formats, 164, unused) && at + 8 <= 30 + cb_dxf) {
@@ -1456,7 +1456,7 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
             uint16_t indent = 0;
             xls_extprops(rec, at + 8, u16(at + 6), colors, indent);
             XlsCfRule cf;
-            if (!colors.empty() && xls_cf(cf_recs[idx], palette, formats, 164 + static_cast<int>(idx), cf, &colors)) dxfs[idx] = cf.dxf;
+            if (!colors.empty() && xls_cf(cf_recs[cf_idx], palette, formats, 164 + static_cast<int>(cf_idx), cf, &colors)) dxfs[cf_idx] = cf.dxf;
           }
         }
       }

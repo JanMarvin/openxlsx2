@@ -43,10 +43,11 @@
 #' file as if it had been provided in xlsx file format in the first place. This
 #' parsing into pseudo xml files is of course slower than reading directly from
 #' the binary file. Our implementation is also still missing some functions:
-#' some array formulas are not yet correct, conditional formatting and data
-#' validation are not implemented. Pivot tables based on a worksheet and their
-#' slicers are imported. The pivot caches are refreshed when the file is opened
-#' in a spreadsheet software. Support is limited to little endian platforms.
+#' some array formulas are not yet correct and data validation is not
+#' implemented. Conditional formatting, pivot tables based on a worksheet and
+#' their slicers are imported. The records of the pivot caches are imported, see
+#' `options("openxlsx2.pivot_refresh")`. Support is limited to little endian
+#' platforms.
 #'
 #' Legacy binary files (`xls`, Excel 97 to 2003) are read the same way: the
 #' file is parsed into pseudo-openxml files. Values, formulas, styles, merged
