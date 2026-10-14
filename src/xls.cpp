@@ -1742,7 +1742,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
     // view, print and page settings
     std::string tab_color;
     bool fit_to_page = false, have_window = false, have_pane = false;
-    uint16_t window_flags = 0, zoom = 0, zoom_plv = 0, plv_flags = 0;
+    uint16_t window_flags = 0, zoom = 0, zoom_plv = 0, plv_flags = 0, zoom_slv = 0;
     uint16_t pane_x = 0, pane_y = 0, pane_row = 0, pane_col = 0;
     double margins[6] = {0.7, 0.7, 0.75, 0.75, 0.3, 0.3};
     bool have_margin = false;
@@ -1867,7 +1867,12 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         if (window_flags & 0x0200) out << " tabSelected=\"1\"";
         if (plv_flags & 0x0001) out << " view=\"pageLayout\"";
         else if (window_flags & 0x0800) out << " view=\"pageBreakPreview\"";
-        if (zoom > 0 && zoom != 100) out << " zoomScale=\"" << zoom << "\" zoomScaleNormal=\"" << zoom << "\"";
+        bool slv = !(plv_flags & 0x0001) && (window_flags & 0x0800) && zoom_slv >= 10 && zoom_slv <= 400;
+        if (slv) {
+          if (zoom_slv != 100) out << " zoomScale=\"" << zoom_slv << "\"";
+          if (zoom > 0 && zoom != 100) out << " zoomScaleNormal=\"" << zoom << "\"";
+          if (zoom_slv != 100) out << " zoomScaleSheetLayoutView=\"" << zoom_slv << "\"";
+        } else if (zoom > 0 && zoom != 100) out << " zoomScale=\"" << zoom << "\" zoomScaleNormal=\"" << zoom << "\"";
         if ((plv_flags & 0x0001) && zoom_plv >= 10 && zoom_plv <= 400 && zoom_plv != 100) out << " zoomScalePageLayoutView=\"" << zoom_plv << "\"";
         out << " workbookViewId=\"0\"";
         bool has_pane = have_pane && (window_flags & 0x0008) && (pane_x > 0 || pane_y > 0);
@@ -2080,6 +2085,8 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
 
             case XlsWindow2: {
               window_flags = readbin(window_flags, bin, swapit);
+              bin.seekg(8, std::ios_base::cur);
+              zoom_slv = readbin(zoom_slv, bin, swapit);
               have_window = true;
               break;
             }

@@ -451,6 +451,27 @@ test_that("page layout view of xls is imported", {
   expect_true(any(grepl('zoomScalePageLayoutView="80"', views, fixed = TRUE)))
 })
 
+test_that("page break preview of xls is imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+  fl <- testfile_path("xls_source.xls")
+  raw_xls <- readBin(fl, "raw", file.size(fl))
+  w2 <- as.raw(c(0x3e, 0x02, 0x12, 0x00))
+  at <- which(raw_xls == w2[1])
+  at <- at[vapply(at, function(i) all(raw_xls[i + 0:3] == w2), NA)][1]
+  raw_xls[at + 5] <- as.raw(bitwOr(as.integer(raw_xls[at + 5]), 0x08L))
+  raw_xls[at + 14] <- as.raw(60)
+  raw_xls[at + 15] <- as.raw(0)
+  tmp <- tempfile(fileext = ".xls")
+  on.exit(unlink(tmp), add = TRUE)
+  writeBin(raw_xls, tmp)
+  wb <- wb_load(tmp)
+  views <- unlist(lapply(wb$worksheets, function(x) x$sheetViews))
+  expect_true(any(grepl('view="pageBreakPreview"', views, fixed = TRUE)))
+  expect_true(any(grepl('zoomScaleSheetLayoutView="60"', views, fixed = TRUE)))
+  expect_true(any(grepl('zoomScale="60"', views, fixed = TRUE)))
+})
+
 test_that("rels of chart sheets are read if no worksheet has rels", {
   skip_on_cran()
   tmp <- tempfile("chartsheet_rels")
