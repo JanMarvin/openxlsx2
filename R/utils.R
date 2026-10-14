@@ -833,7 +833,7 @@ wb_dims <- function(..., select = NULL) {
   }
 
   fcol <- col2int(fcol)
-  frow <- col2int(frow)
+  frow <- row2int(frow)
 
   left  <- args$left
   right <- args$right
