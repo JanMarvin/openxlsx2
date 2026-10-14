@@ -508,3 +508,56 @@ test_that("rels of chart sheets are read if no worksheet has rels", {
   wb2 <- wb_load(out)
   expect_true(any(grepl("drawing1.xml", unlist(wb2$worksheets_rels), fixed = TRUE)))
 })
+
+test_that("xls files created from the xls_cov workbooks are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+
+  expected <- list(
+    xls_cov_views = c("freeze", "freeze_row", "freeze_col", "split", "hidden_outline", "protected", "very_hidden"),
+    xls_cov_features = c("filter", "merge_val", "cf", "links", "page", "fit"),
+    xls_cov_names_formulas = c("data", "calc"),
+    xls_cov_values = "values",
+    xls_cov_drawings = c("img", "chart", "chartsheet"),
+    xls_cov_pivot_external = c("src", "pivot", "pivot2", "ext")
+  )
+
+  for (nm in names(expected)) {
+    fl <- testfile_path(paste0(nm, ".xls"))
+
+    wb <- wb_load(fl)
+    expect_equal(wb$get_sheet_names(escape = TRUE), expected[[nm]], ignore_attr = TRUE, info = nm)
+
+    tmp <- tempfile(fileext = ".xlsx")
+    wb$save(tmp)
+    wb2 <- wb_load(tmp)
+    expect_equal(length(wb2$worksheets), length(expected[[nm]]), info = nm)
+    unlink(tmp)
+  }
+
+  wb <- wb_load(testfile_path("xls_cov_views.xls"))
+  panes <- unlist(lapply(wb$worksheets, function(x) x$freezePane))
+  expect_equal(sum(grepl('state="frozen"', panes, fixed = TRUE)), 3L)
+  expect_equal(sum(grepl('state="split"', panes, fixed = TRUE)), 1L)
+
+  wb <- wb_load(testfile_path("xls_cov_features.xls"))
+  expect_true(length(wb$worksheets[[1]]$autoFilter) > 0)
+  expect_true(length(wb$worksheets[[2]]$mergeCells) > 0)
+  expect_true(length(wb$worksheets[[2]]$dataValidations) > 0)
+  expect_true(length(wb$worksheets[[3]]$conditionalFormatting) > 0)
+  expect_true(length(wb$worksheets[[4]]$hyperlinks) > 0)
+
+  wb <- wb_load(testfile_path("xls_cov_names_formulas.xls"))
+  expect_true(nrow(wb_get_named_regions(wb)) > 0)
+  fml <- wb_to_df(wb, sheet = "calc", col_names = FALSE, show_formula = TRUE)
+  expect_true(sum(grepl("^[A-Z]", unlist(fml[[3]]))) > 50)
+
+  wb <- wb_load(testfile_path("xls_cov_values.xls"))
+  df <- wb_to_df(wb, sheet = "values")
+  expect_true(nrow(df) >= 9)
+  expect_equal(nchar(df[[1]][3]), 32767L)
+
+  wb <- wb_load(testfile_path("xls_cov_drawings.xls"))
+  expect_true(length(wb$charts) > 0)
+  expect_true(length(wb$media) > 0)
+})

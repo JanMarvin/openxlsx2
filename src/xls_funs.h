@@ -2,6 +2,7 @@
 #define XLS_FUNS_H
 
 #include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <iomanip>
 #include <limits>
@@ -20,6 +21,18 @@
 
 // Every BIFF8 record is: id (2 bytes), size (2 bytes), data. Returns false at the
 // end of the stream. Padding of fewer than 4 bytes behind the last record is the end.
+inline uint16_t* xls_last_records() {
+  static uint16_t last[2] = {0, 0};
+  return last;
+}
+
+inline std::string xls_cut_off() {
+  char buf[64];
+  std::snprintf(buf, sizeof(buf), "xls: string is cut off (record 0x%04X, followed by 0x%04X)",
+                static_cast<unsigned>(xls_last_records()[0]), static_cast<unsigned>(xls_last_records()[1]));
+  return std::string(buf);
+}
+
 inline bool XLS_RECORD(uint16_t& rid, uint16_t& rsize, std::istream& sas, bool swapit) {
   if (sas.peek() == std::char_traits<char>::eof()) return false;
   uint16_t id = 0, size = 0;
@@ -30,6 +43,10 @@ inline bool XLS_RECORD(uint16_t& rid, uint16_t& rsize, std::istream& sas, bool s
   }
   rid = swapit ? swap_endian(id) : id;
   rsize = swapit ? swap_endian(size) : size;
+  if (rid != XlsContinue) {
+    xls_last_records()[0] = xls_last_records()[1];
+    xls_last_records()[1] = rid;
+  }
   return true;
 }
 
@@ -43,7 +60,7 @@ inline void xls_skip(std::istream& sas, bool swapit, size_t n, std::streampos& r
   while (n > 0) {
     if (sas.tellg() >= rec_end) {
       uint16_t rid = 0, rsize = 0;
-      if (!XLS_RECORD(rid, rsize, sas, swapit) || rid != XlsContinue) Rcpp::stop("xls: string is cut off");
+      if (!XLS_RECORD(rid, rsize, sas, swapit) || rid != XlsContinue) Rcpp::stop(xls_cut_off());
       rec_end = sas.tellg() + std::streamoff(rsize);
       continue;
     }
@@ -62,7 +79,7 @@ inline std::u16string xls_chars(std::istream& sas, bool swapit, size_t cch, bool
   while (out.size() < cch) {
     if (sas.tellg() >= rec_end) {
       uint16_t rid = 0, rsize = 0;
-      if (!XLS_RECORD(rid, rsize, sas, swapit) || rid != XlsContinue) Rcpp::stop("xls: string is cut off");
+      if (!XLS_RECORD(rid, rsize, sas, swapit) || rid != XlsContinue) Rcpp::stop(xls_cut_off());
       rec_end = sas.tellg() + std::streamoff(rsize);
       uint8_t flags = 0;
       flags = readbin(flags, sas, swapit);
@@ -71,7 +88,7 @@ inline std::u16string xls_chars(std::istream& sas, bool swapit, size_t cch, bool
     }
     size_t avail = static_cast<size_t>(rec_end - sas.tellg());
     size_t fit = wide ? avail / 2 : avail;
-    if (fit == 0) Rcpp::stop("xls: string is cut off");
+    if (fit == 0) Rcpp::stop(xls_cut_off());
     size_t n = std::min(cch - out.size(), fit);
     for (size_t i = 0; i < n; ++i) {
       if (wide) {
@@ -143,7 +160,7 @@ inline std::u16string XLUnicodeRichString(std::istream& sas, bool swapit, std::s
   for (uint16_t i = 0; i < crun; ++i) {
     if (sas.tellg() >= rec_end) {
       uint16_t rid = 0, rsize = 0;
-      if (!XLS_RECORD(rid, rsize, sas, swapit) || rid != XlsContinue) Rcpp::stop("xls: string is cut off");
+      if (!XLS_RECORD(rid, rsize, sas, swapit) || rid != XlsContinue) Rcpp::stop(xls_cut_off());
       rec_end = sas.tellg() + std::streamoff(rsize);
     }
     uint16_t ich = 0, ifnt = 0;

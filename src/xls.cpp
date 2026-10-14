@@ -1770,6 +1770,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
     std::vector<Selection> selections;
     bool h_center = false, v_center = false, print_grid = false, print_headers = false;
     std::map<uint16_t, std::string> filter_columns;
+    uint32_t af_row_first = 0, af_row_last = 0, af_col_first = 0, af_entries = 0;
     bool have_autofilter = false, protect_sheet = false, protect_objects = false, protect_scenarios = false;
     uint16_t password = 0;
     std::vector<uint16_t> row_breaks, col_breaks;
@@ -1875,7 +1876,8 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         } else if (zoom > 0 && zoom != 100) out << " zoomScale=\"" << zoom << "\" zoomScaleNormal=\"" << zoom << "\"";
         if ((plv_flags & 0x0001) && zoom_plv >= 10 && zoom_plv <= 400 && zoom_plv != 100) out << " zoomScalePageLayoutView=\"" << zoom_plv << "\"";
         out << " workbookViewId=\"0\"";
-        bool has_pane = have_pane && (window_flags & 0x0008) && (pane_x > 0 || pane_y > 0);
+        bool has_pane = have_pane && (pane_x > 0 || pane_y > 0);
+        bool frozen = (window_flags & 0x0008) != 0;
         if (!has_pane && selections.empty()) {
           out << "/></sheetViews>" << std::endl;
         } else {
@@ -1886,7 +1888,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             if (pane_y > 0) out << " ySplit=\"" << pane_y << "\"";
             out << " topLeftCell=\"" << int_to_col(pane_col + 1u) << pane_row + 1u << "\" activePane=\""
                 << (pane_x > 0 && pane_y > 0 ? "bottomRight" : (pane_y > 0 ? "bottomLeft" : "topRight"))
-                << "\" state=\"frozen\"/>";
+                << "\" state=\"" << (frozen ? "frozen" : "split") << "\"/>";
           }
           static const char* const pane_names[4] = {"bottomRight", "topRight", "bottomLeft", "topLeft"};
           for (size_t k = 0; k < selections.size(); ++k) {
@@ -2031,6 +2033,9 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
               row_last = readbin(row_last, bin, swapit);
               col_first = readbin(col_first, bin, swapit);
               col_last = readbin(col_last, bin, swapit);
+              af_row_first = row_first;
+              af_row_last = row_last;
+              af_col_first = col_first;
               dimension_ref = "A1";
               if (row_last > row_first && col_last > col_first) {
                 dimension_ref = int_to_col(static_cast<uint32_t>(col_first) + 1) + std::to_string(row_first + 1);
@@ -2134,7 +2139,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             }
 
             case XlsHeaderFooter: {
-              // header of a FRT record (12), view (16), flags, 4 lengths and the strings, each with a flag for the encoding
+              // header of a FRT record (12), view (16), flags, 4 lengths and the strings, each as an XLUnicodeString
               bin.seekg(28, std::ios_base::cur);
               uint16_t flags = 0, len[4] = {0, 0, 0, 0};
               flags = readbin(flags, bin, swapit);
@@ -2143,9 +2148,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
               std::streampos rec_end = pnext;
               for (int k = 0; k < 4; ++k) {
                 if (len[k] == 0) continue;
-                uint8_t enc = 0;
-                enc = readbin(enc, bin, swapit);
-                *target[k] = to_utf8(xls_chars(bin, swapit, len[k], (enc & 0x01) != 0, rec_end));
+                *target[k] = XLUnicodeString(bin, swapit, true, rec_end);
               }
               hf_diff_even = (flags & 0x0001) != 0;
               hf_diff_first = (flags & 0x0002) != 0;
@@ -2641,9 +2644,13 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           break;
         }
 
-        case XlsAutoFilterInfo:
+        case XlsAutoFilterInfo: {
+          uint16_t entries = 0;
+          entries = readbin(entries, bin, swapit);
+          af_entries = entries;
           have_autofilter = true;
           break;
+        }
 
         case XlsAutoFilter: {
           // column, options, two operands of 10 bytes: type, comparison and 8 bytes of value.
@@ -3428,6 +3435,11 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         size_t colon = ref.find(':');
         size_t digits = ref.find_first_of("0123456789");
         ref = ref.substr(0, digits) + std::to_string(std::stoul(ref.substr(digits, colon - digits)) - 1) + ref.substr(colon);
+      }
+      if (ref.empty() && af_entries > 0 && af_row_last > af_row_first) {
+        // without the name, the range is the used range of the sheet
+        ref = int_to_col(af_col_first + 1) + std::to_string(af_row_first + 1) + ":" +
+              int_to_col(af_col_first + af_entries) + std::to_string(af_row_last);
       }
       if (!ref.empty()) {
         if (filter_columns.empty() && filter_state.empty()) {
