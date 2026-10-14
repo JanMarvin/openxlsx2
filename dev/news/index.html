@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openxlsx2</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.29.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.30.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,20 +50,29 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
+<ul><li>
+<code>wb_add_data_table(..., total_row = ...)</code> checked for max column length instead of max row length and refused to write anything beyond the maximum number of columns. <a href="https://github.com/JanMarvin/openxlsx2/pull/1700" class="external-link">#1700</a>
+</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.30" id="openxlsx2-130">openxlsx2 1.30<a class="anchor" aria-label="anchor" href="#openxlsx2-130"></a></h2><p class="text-muted">CRAN release: 2026-10-11</p>
+<div class="section level3">
+<h3 id="new-features-1-30">New features<a class="anchor" aria-label="anchor" href="#new-features-1-30"></a></h3>
 <ul><li>
 <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> now covers a non consecutive <code>dims</code> with a single rule and writes its ranges into one <code>sqref</code> (<code>"A1:B2 C2:D3"</code>), so only the selected cells are formatted: <code>"A1:B2,C2:D3"</code>, the example <a href="https://github.com/JanMarvin/openxlsx2/pull/1347" class="external-link">#1347</a> introduced the feature with, used to become a single <code>A1:D3</code>. Overlapping blocks are cut apart, because a cell named twice in a <code>sqref</code> is counted twice (<a href="https://github.com/JanMarvin/openxlsx2/issues/1688" class="external-link">#1688</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1689" class="external-link">#1689</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 <li>Add <code>use_modification_date</code> argument to <code><a href="../reference/wb_save.html">wb_save()</a></code>. This allows the resulting xlsx file to be cryptographically deterministic when given the same <code>wbWorkbook</code> object and when using the same zipping utility, which may prove to be convenient if the file is tracked within a Git repository (<a href="https://github.com/JanMarvin/openxlsx2/pull/1696" class="external-link">#1696</a>, <a href="https://github.com/jistria" class="external-link">@jistria</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
-<ul><li>A logic bug in <code>apply_numfmts()</code> was fixed that occured in combination with <code>cols</code> used via <code><a href="../reference/col_widths-wb.html">wb_set_col_widths()</a></code>. In addition automatic sizing can now be tweaked via an offset <code>"auto+n"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1683" class="external-link">#1683</a>
+<h3 id="fixes-1-30">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-30"></a></h3>
+<ul><li>A logic bug in <code>apply_numfmts()</code> was fixed that occurred in combination with <code>cols</code> used via <code><a href="../reference/col_widths-wb.html">wb_set_col_widths()</a></code>. In addition automatic sizing can now be tweaked via an offset <code>"auto+n"</code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1683" class="external-link">#1683</a>
 </li>
 <li>
 <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> no longer builds every block but the first from the previous block’s leftovers when <code>dims</code> is non consecutive. <code>rule</code> was overwritten inside the loop over the blocks, so a <code>"colorScale"</code> got the colors as <code>cfvo</code> values, a <code>"containsText"</code> searched for the style name and a <code>"dataBar"</code> failed with <code>subscript out of bounds</code>. Broken for every type but <code>"expression"</code> since <a href="https://github.com/JanMarvin/openxlsx2/pull/1347" class="external-link">#1347</a> (<a href="https://github.com/JanMarvin/openxlsx2/pull/1684" class="external-link">#1684</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-1-30">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-30"></a></h3>
 <ul><li>A non consecutive <code>dims</code> in <code><a href="../reference/wb_add_conditional_formatting.html">wb_add_conditional_formatting()</a></code> is covered by one rule instead of one per block. An aggregating type such as <code>"colorScale"</code> gets a single scale over the whole selection, and a relative reference in a rule is anchored to the top left cell of the first range rather than restarting in every block (<a href="https://github.com/JanMarvin/openxlsx2/issues/1688" class="external-link">#1688</a>, <a href="https://github.com/JanMarvin/openxlsx2/pull/1689" class="external-link">#1689</a>, <a href="https://github.com/SchmidtPaul" class="external-link">@SchmidtPaul</a>).</li>
 </ul><hr></div>
 </div>

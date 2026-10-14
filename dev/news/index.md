@@ -2,6 +2,19 @@
 
 ## openxlsx2 (development version)
 
+### Fixes
+
+- `wb_add_data_table(..., total_row = ...)` checked for max column
+  length instead of max row length and refused to write anything beyond
+  the maximum number of columns.
+  [\#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
+
+------------------------------------------------------------------------
+
+## openxlsx2 1.30
+
+CRAN release: 2026-10-11
+
 ### New features
 
 - [`wb_add_conditional_formatting()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_conditional_formatting.md)
@@ -25,8 +38,8 @@
 
 ### Fixes
 
-- A logic bug in `apply_numfmts()` was fixed that occured in combination
-  with `cols` used via
+- A logic bug in `apply_numfmts()` was fixed that occurred in
+  combination with `cols` used via
   [`wb_set_col_widths()`](https://janmarvin.github.io/openxlsx2/dev/reference/col_widths-wb.md).
   In addition automatic sizing can now be tweaked via an offset
   `"auto+n"`. [\#1683](https://github.com/JanMarvin/openxlsx2/pull/1683)
