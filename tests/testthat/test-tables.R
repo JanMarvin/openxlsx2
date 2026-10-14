@@ -385,3 +385,7 @@ test_that("custom formulas in total rows work", {
   got <- wb$worksheets[[1]]$sheet_data$cc[c(35, 36), "f"]
   expect_identical(got, exp)
 })
+
+test_that("writing long tables with total row works", {
+  expect_silent(wb <- wb_workbook()$add_worksheet()$add_data_table(x = data.frame(x = 1:17000), total_row = "SUM"))
+})

@@ -1,3 +1,12 @@
+# openxlsx2 (development version)
+
+## Fixes
+
+* `wb_add_data_table(..., total_row = ...)` checked for max column length instead of max row length and refused to write anything beyond the maximum number of columns. [#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
+
+
+***************************************************************************
+
 # openxlsx2 1.30
 
 ## New features
